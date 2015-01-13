@@ -1,0 +1,23 @@
+<%= form_for(@fieldset) do |f| %>
+  <% if @fieldset.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@fieldset.errors.count, "error") %> prohibited this fieldset from being saved:</h2>
+
+      <ul>
+      <% @fieldset.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= f.hidden_field :project_id %>
+
+  <div class="field">
+    <%= f.label :display_label %><br>
+    <%= f.text_field :display_label, class: 'form-control' %>
+  </div>
+  <div class="actions">
+    <%= f.submit('Save', class: 'btn btn-primary') %>
+  </div>
+<% end %>

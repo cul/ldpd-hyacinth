@@ -1,0 +1,29 @@
+<%= form_for(@xml_datastream) do |f| %>
+  <% if @xml_datastream.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@xml_datastream.errors.count, "error") %> prohibited this xml_datastream from being saved:</h2>
+
+      <ul>
+      <% @xml_datastream.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :string_key %><br>
+    <%= f.text_field :string_key %>
+  </div>
+  <div class="field">
+    <%= f.label :display_label %><br>
+    <%= f.text_field :display_label %>
+  </div>
+  <div class="field">
+    <%= f.label :xml_translation_json %><br>
+    <%= f.text_area :xml_translation_json %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

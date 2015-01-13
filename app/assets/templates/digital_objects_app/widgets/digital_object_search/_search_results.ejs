@@ -1,0 +1,15 @@
+<%
+  //Passed params:
+  //searchResponse
+%>
+<div class="pagination-top">
+  <%= Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_search/_pagination.ejs', {searchResponse: searchResponse}) %>
+</div>
+<% var searchResultNumber = searchResponse['start'] %>
+<% for (var i = 0; i < searchResponse['results'].length; i++) { %>
+  <%= Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_search/_result.ejs', {searchResult: new Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult(searchResponse['results'][i]), searchResultNumber: searchResultNumber }) %>
+  <% searchResultNumber++ %>
+<% } %>
+<div class="pagination-bottom">
+  <%= Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_search/_pagination.ejs', {searchResponse: searchResponse}) %>
+</div>

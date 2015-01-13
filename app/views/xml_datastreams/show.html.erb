@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>String key:</strong>
+  <%= @xml_datastream.string_key %>
+</p>
+
+<p>
+  <strong>Display label:</strong>
+  <%= @xml_datastream.display_label %>
+</p>
+
+<p>
+  <strong>Xml translation json:</strong>
+  <%= @xml_datastream.xml_translation_json %>
+</p>
+
+<%= link_to 'Edit', edit_xml_datastream_path(@xml_datastream) %> |
+<%= link_to 'Back', xml_datastreams_path %>

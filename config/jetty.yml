@@ -1,0 +1,10 @@
+# Note: Just because we're setting startup_wait to 40,
+# that doesn't mean that startup will always take 40 seconds.
+# That just means that we'll allow up to 40 seconds for startup.
+
+default:
+  startup_wait: 45
+  jetty_port: 9983
+  java_opts:
+    - "-XX:MaxPermSize=128m"
+    - "-Xmx256m"

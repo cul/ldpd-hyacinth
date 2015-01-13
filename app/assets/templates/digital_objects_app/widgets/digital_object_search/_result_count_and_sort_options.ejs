@@ -1,0 +1,52 @@
+<%
+  //Passed params:
+  //
+  //searchResponse
+%>
+
+<div class="result-count-and-sort-options">
+  <div class="row">
+    <div class="col-md-8 form-horizontal">
+      <div class="form-group-sm">
+        <div class="control-label alignleft">
+          <% var start = searchResponse['start'] + 1 %>
+          <% var end = (searchResponse['start'] + searchResponse['per_page'] < searchResponse['total']) ? (searchResponse['start'] + searchResponse['per_page']) : searchResponse['total'] %>
+          <small>
+            <% if (searchResponse['total'] > 0) { %>
+              <%= (start != end) ? start + ' - ' + end : start %> of
+            <% } %>
+            <%= searchResponse['total'] + ' ' + (searchResponse['total'] == 1 ? 'result' : 'results') %> (<%= searchResponse['search_time_in_millis']/1000 %> seconds)
+          </small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <%
+        var perPageOptions = [
+          {value: 20, displayLabel: 'Per Page: 20'},
+          {value: 40, displayLabel: 'Per Page: 40'},
+          {value: 60, displayLabel: 'Per Page: 60'}
+        ]
+      %>
+      <select name="per_page" class="form-control input-sm">
+        <% for(var i = 0; i < perPageOptions.length; i++) { %>
+          <option value="<%= perPageOptions[i]['value'] %>"><%= perPageOptions[i]['displayLabel'] %></option>
+        <% } %>
+      </select>
+    </div>
+    <div class="col-md-2">
+      <%
+        var sortOptions = [
+          {value: 'score desc', displayLabel: 'Sort: Relevance'},
+          {value: 'sort_title_ssort asc', displayLabel: 'Sort: Title (A-Z)'},
+          {value: 'sort_title_ssort desc', displayLabel: 'Sort: Title (Z-A)'}
+        ]
+      %>
+      <select name="sort" class="form-control input-sm">
+        <% for(var i = 0; i < sortOptions.length; i++) { %>
+          <option value="<%= sortOptions[i]['value'] %>"><%= sortOptions[i]['displayLabel'] %></option>
+        <% } %>
+      </select>
+    </div>
+  </div>
+</div>

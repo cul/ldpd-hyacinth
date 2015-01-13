@@ -1,0 +1,22 @@
+<h1>Projects</h1>
+<table class="table table-condensed table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Display Label</th>
+      <th>String Key</th>
+      <th>PID</th>
+      <th>PID Generator</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @projects.each do |project| %>
+      <tr>
+        <td><%= link_to project.display_label, edit_project_path(project) %></td>
+        <td><%= project.string_key %></td>
+        <td><%= project.pid %></td>
+        <td><%= project.pid_generator.namespace %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

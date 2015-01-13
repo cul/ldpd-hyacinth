@@ -1,0 +1,15 @@
+# Default user accounts.  These should be changed for apps in production.
+
+default_user_1:
+  email: 'hyacinth-admin@library.columbia.edu'
+  password: 'iamtheadmin'
+  first_name: 'Admin'
+  last_name: 'User'
+  is_admin: true
+
+default_user_2:
+  email: 'hyacinth-test@library.columbia.edu'
+  password: 'iamthetest'
+  first_name: 'Test'
+  last_name: 'User'
+  is_admin: false

@@ -1,0 +1,98 @@
+<%
+  //Passed params:
+  //searchResponse
+%>
+<%
+  var pagingInnerWindow = 2;
+  var pagingOuterWindow = 0;
+%>
+
+<%  if(searchResponse['total'] > searchResponse['per_page']) { %>
+
+  <%
+    var page = searchResponse['page'];
+    var perPage = searchResponse['per_page'];
+    var totalPages = (searchResponse['total'] % searchResponse['per_page'] == 0) ? searchResponse['total'] / searchResponse['per_page'] : parseInt(searchResponse['total'] / searchResponse['per_page']) + 1;
+    var showPreviousPageLink = page > 1;
+    var showNextPageLink = page < totalPages;
+    var showFirstPageLink = page > 1;
+    var showLastPageLink = page < totalPages;
+
+    var innerStart = (page - pagingInnerWindow > 1) ? (page - pagingInnerWindow) : 1;
+    var innerEnd = (page + pagingInnerWindow < totalPages) ? (page + pagingInnerWindow) : totalPages;
+
+    var leftOuterStart = 1;
+    var leftOuterEnd = (innerStart - 1 < pagingOuterWindow) ? innerStart - 1 : pagingOuterWindow;
+
+    var rightOuterStart = (totalPages - innerEnd > pagingOuterWindow) ? totalPages - pagingOuterWindow + 1: innerEnd + 1;
+    var rightOuterEnd = totalPages;
+
+    var showLeftEllipsis = innerStart - leftOuterEnd > 1;
+    var showRightEllipsis = rightOuterStart - innerEnd > 1;
+  %>
+
+  <nav class="pull-right">
+    <ul class="pagination pagination-sm">
+      <% if (showPreviousPageLink) { %>
+        <li><a href="#" class="goto-page" data-page="<%= page - 1 %>"><span class="glyphicon glyphicon-backward"></span></a></li>
+      <% } else { %>
+        <li class="disabled"><span><span class="glyphicon glyphicon-backward"></span></span></li>
+      <% } %>
+
+      <% if (showNextPageLink) { %>
+        <li><a href="#" class="goto-page" data-page="<%= page + 1 %>"><span class="glyphicon glyphicon-forward"></span></a></li>
+      <% } else { %>
+        <li class="disabled"><span><span class="glyphicon glyphicon-forward"></span></span></li>
+      <% } %>
+    </ul>
+  </nav>
+
+  <nav class="pull-left">
+    <ul class="pagination pagination-sm">
+
+    <% if (showFirstPageLink) { %>
+      <li><a href="#" class="goto-page" data-page="<%= 1 %>">First</a></li>
+    <% } else { %>
+      <li class="disabled"><span>First</span></li>
+    <% } %>
+
+    <% //Left outer window %>
+    <% for(var i = leftOuterStart; i <= leftOuterEnd; i++) { %>
+        <li><a href="#" class="goto-page" data-page="<%= i %>"><%= i %></a></li>
+    <% } %>
+
+    <% if (showLeftEllipsis) { %>
+      <li class="disabled"><span class="current-page">&hellip;</span></li>
+    <% } %>
+
+    <% //Inner window %>
+    <% for(var i = innerStart; i <= innerEnd ; i++) { %>
+        <% if (page == i) { %>
+          <li class="active"><span class="current-page"><%= i %></span></li>
+        <% } else { %>
+          <li><a href="#" class="goto-page" data-page="<%= i %>"><%= i %></a></li>
+        <% } %>
+    <% } %>
+
+    <% if (showRightEllipsis) { %>
+      <li class="disabled"><span class="current-page">&hellip;</span></li>
+    <% } %>
+
+    <% //Right outer window %>
+
+    <% for(var i = rightOuterStart; i <= rightOuterEnd; i++) { %>
+        <li><a href="#" class="goto-page" data-page="<%= i %>"><%= i %></a></li>
+    <% } %>
+
+    <% if (showLastPageLink) { %>
+      <li><a href="#" class="goto-page" data-page="<%= totalPages %>">Last</a></li>
+    <% } else { %>
+      <li class="disabled"><span>Last</span></li>
+    <% } %>
+
+    </ul>
+  </nav>
+
+  <div class="clearfix"></div>
+
+<%  } %>

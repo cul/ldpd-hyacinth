@@ -1,0 +1,22 @@
+<p>
+  <strong>Pid:</strong>
+  <%= @controlled_vocabulary.pid %>
+</p>
+
+<p>
+  <strong>String key:</strong>
+  <%= @controlled_vocabulary.string_key %>
+</p>
+
+<p>
+  <strong>Display label:</strong>
+  <%= @controlled_vocabulary.display_label %>
+</p>
+
+<p>
+  <strong>Pid generator:</strong>
+  <%= @controlled_vocabulary.pid_generator.display_label %>
+</p>
+
+<%= link_to 'Edit', edit_controlled_vocabulary_path(@controlled_vocabulary) %> |
+<%= link_to 'Back', controlled_vocabularies_path %>

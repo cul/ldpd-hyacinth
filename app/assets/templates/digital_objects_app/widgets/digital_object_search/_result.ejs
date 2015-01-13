@@ -1,0 +1,40 @@
+<%
+  //Passed params:
+  //
+  //searchResult (of type DigitalObjectSearchResult)
+  //searchResultNumber (within complete set of current search Results) (might be undefined)
+%>
+<% var resultShowHashUrl = '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: searchResult.getPid(), searchResultNumber: searchResultNumber}) %>
+<div class="search-result shadow-box">
+
+  <div class="row">
+
+    <div class="col-xs-10">
+      <div>
+        <a href="<%= resultShowHashUrl %>"><%= searchResult.getPid() %></a>
+      </div>
+      <div><strong>Title:</strong> <%- searchResult.getTitle() %></div>
+
+      <%
+      var parent_pids = searchResult.getParentDigitalObjectPids();
+      var child_pids = searchResult.getOrderedChildDigitalObjectPids();
+      %>
+      <% if (parent_pids.length > 0) { %>
+        <div><small><strong><%= parent_pids.length == 1 ? 'Parent' : 'Parents'  %>:</strong> <%= $.map(parent_pids, function(pid){return '<a href="#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: pid}) + '">' + pid + '</a>';}).join(', ') %></small></div>
+      <% } %>
+      <% if (child_pids.length > 0) { %>
+        <div><small><strong>Children:</strong> <%= child_pids.length %></small></div>
+      <% } %>
+    </div>
+    <div class="col-xs-2">
+      <!-- Thumbnail image will go here, if present -->
+    </div>
+    <div class="clearfix"></div>
+  </div>
+
+  <div>
+    <span class="label label-default"><%- searchResult.getDigitalObjectTypeDisplayLabel() %></span>
+    <span class="label label-primary"><%- searchResult.getProjectDisplayLabel() %></span>
+  </div>
+
+</div>

@@ -1,0 +1,19 @@
+<table class="table table-condensed table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Is admin</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @users.each do |user| %>
+      <tr>
+        <td><%= link_to(user.first_name + ' ' + user.last_name, edit_user_path(user)) %></td>
+        <td><%= user.email %></td>
+        <td><%= user.is_admin ? 'true' : 'false' %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

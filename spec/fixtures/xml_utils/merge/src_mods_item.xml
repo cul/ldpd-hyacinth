@@ -1,0 +1,21 @@
+<mods xmlns="http://www.loc.gov/mods/v3">
+  <identifier type="local">brand_new_identifier_1234</identifier>
+  <titleInfo>
+    <title>Brand New Title</title>
+  </titleInfo>
+  <name authority="naf" type="personal">
+    <namePart>Wayne, Bruce</name>
+  </name>
+  <name authority="naf" type="personal">
+    <namePart>Kent, Clark</name>
+  </name>
+  <name authority="naf" type="event">
+    <namePart>A Great Big Party</name>
+  </name>
+  <name authority="wonka" type="corporate">
+    <namePart>The Willy Wonka Candy Company</name>
+  </name>
+  <name>
+    <namePart>A Name With No Authority And No Type</name>
+  </name>
+</mods>

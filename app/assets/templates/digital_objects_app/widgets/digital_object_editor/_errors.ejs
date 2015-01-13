@@ -1,0 +1,13 @@
+<%
+  //Passed params:
+  //
+  //errors
+%>
+
+<div class="alert alert-danger">
+  <ul class="list-unstyled">
+    <% $.each(errors, function(error_key, error_message){ %>
+      <li>&bull; <%= error_message %></li>
+    <% }); %>
+  </ul>
+</div>

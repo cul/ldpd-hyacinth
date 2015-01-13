@@ -1,0 +1,3 @@
+Hyacinth.DigitalObjectsApp.Model = function() {
+
+};

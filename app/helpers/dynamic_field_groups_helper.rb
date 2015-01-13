@@ -1,0 +1,2 @@
+module DynamicFieldGroupsHelper
+end

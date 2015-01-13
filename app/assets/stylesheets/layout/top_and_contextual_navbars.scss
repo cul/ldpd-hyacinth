@@ -1,0 +1,28 @@
+#top-navbar {
+  #hyacinth-nav-icon {
+    float:left;
+    width:28px;
+    height:28px;
+    margin:5px 5px 0px 0px;
+  }
+}
+
+#contextual_nav > .navbar {
+    padding: 0px 10px;
+    border-radius:4px;
+    margin-bottom:20px;
+}
+
+@media (min-width:868px) {
+    #contextual_nav > .navbar {
+        padding: 0px 8px;
+    }
+}
+
+#contextual_nav .nav-title {
+    font-size:1.2em;
+}
+
+#contextual_nav .navbar-nav.navbar-right:last-child {
+    margin-right:0px;
+}

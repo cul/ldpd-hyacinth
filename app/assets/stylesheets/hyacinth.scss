@@ -1,0 +1,125 @@
+@import 'bootstrap-variables';
+@import "bootstrap-sprockets";
+@import "bootstrap";
+
+body {
+    padding-top:60px;
+    //background: image-url("blueprint.gif") repeat;
+}
+
+body.content-only {
+    padding-top:0px;
+}
+
+#main-wrapper {
+    //background-color:#fff;
+    //border-radius:3px;
+    //border:1px solid #449ace;
+    //padding:20px;
+}
+
+#debug {
+    margin-top:20px;
+    //border-color:#888;
+}
+
+h1 {
+  margin-top:0px;
+  margin-bottom:20px;
+  color:#333;
+  text-shadow:1px 1px 0px #bbb;
+  border-bottom:1px solid #ccc;
+  padding-bottom:10px;
+}
+
+h2 {
+  color: #a46a00;
+  margin-top:0px;
+}
+
+.label {
+  position:relative;
+  top:2px;
+}
+
+.ellipsis {
+    display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    /* note --- line-height of 120% seems to stops the cut-off of the bottoms of letters */
+}
+
+.table {
+    margin-bottom: 1em;
+}
+
+.word-wrap {word-wrap:break-word;}
+
+.alignleft {text-align:left !important;}
+.alignright {text-align:right !important;}
+.aligncenter {text-align:center !important;}
+
+.nav-title .navbar-brand:hover {
+    color:$navbar-inverse-link-color;
+    cursor:default;
+}
+
+.nav.nav-tabs {
+  margin-bottom:15px;
+}
+
+#alert-container {
+    z-index:99999;
+    position:fixed;
+    max-width:500px;
+    right:15px;
+    .close {
+        margin-left:10px;
+    }
+
+    .alert {
+        width:350px;
+    }
+}
+
+.shadow-box {
+    border:1px solid #f8f8f8;
+    box-shadow:1px 1px 3px #ddd;
+}
+
+/*
+table.baseline-headings th {
+  vertical-align: bottom !important;
+}
+
+table.baseline-headings th h3 {
+  margin:10px 0px 0px !important;
+}
+
+table.middle-aligned-cells td {
+    vertical-align: middle !important;
+}
+
+.green {
+    color:#00aa00;
+}
+
+.red {
+    color:#cc0000;
+}
+
+.alert {
+    margin-bottom:15px;
+}
+
+.nomartop {
+    margin-top:0px;
+}
+
+.monospace {
+    font-family:monospace;
+}
+
+.condensed_checkboxes .checkbox {
+  margin:0px;
+}
+
+*/

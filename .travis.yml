@@ -1,0 +1,17 @@
+language: ruby
+cache: bundler
+sudo: false
+rvm:
+  - 2.2
+
+matrix:
+  include:
+    - rvm: 2.1
+    - rvm: 1.9.3
+
+notifications:
+  irc: "irc.freenode.org#ldpddev"
+
+env:
+  global:
+    - NOKOGIRI_USE_SYSTEM_LIBRARIES=true

@@ -1,0 +1,19 @@
+<%
+  //Passed params:
+  //
+  //searchResponse
+%>
+<%= Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_search/_search_form.ejs', {searchResponse: searchResponse}) %>
+
+<div class="row">
+  <div class="col-md-8">
+    <div class="search-results">
+      <%= Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_search/_search_results.ejs', {searchResponse: searchResponse}) %>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="facets">
+      <%= Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_search/_facets.ejs', {searchResponse: searchResponse}) %>
+    </div>
+  </div>
+</div>

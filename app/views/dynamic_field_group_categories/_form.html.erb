@@ -1,0 +1,25 @@
+<%= form_for(@dynamic_field_group_category) do |f| %>
+  <% if @dynamic_field_group_category.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@dynamic_field_group_category.errors.count, "error") %> prohibited this dynamic_field_group_category from being saved:</h2>
+
+      <ul>
+      <% @dynamic_field_group_category.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :display_label %><br>
+    <%= f.text_field :display_label %>
+  </div>
+  <div class="field">
+    <%= f.label :sort_order %><br>
+    <%= f.text_field :sort_order %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

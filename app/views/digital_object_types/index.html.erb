@@ -1,0 +1,29 @@
+<h1>Listing digital_object_types</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>String key</th>
+      <th>Display label</th>
+      <th>Sort order</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @digital_object_types.each do |digital_object_type| %>
+      <tr>
+        <td><%= digital_object_type.string_key %></td>
+        <td><%= digital_object_type.display_label %></td>
+        <td><%= digital_object_type.sort_order %></td>
+        <td><%= link_to 'Show', digital_object_type %></td>
+        <td><%= link_to 'Edit', edit_digital_object_type_path(digital_object_type) %></td>
+        <td><%= link_to 'Destroy', digital_object_type, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Digital object type', new_digital_object_type_path %>

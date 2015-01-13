@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>String key:</strong>
+  <%= @digital_object_type.string_key %>
+</p>
+
+<p>
+  <strong>Display label:</strong>
+  <%= @digital_object_type.display_label %>
+</p>
+
+<p>
+  <strong>Sort order:</strong>
+  <%= @digital_object_type.sort_order %>
+</p>
+
+<%= link_to 'Edit', edit_digital_object_type_path(@digital_object_type) %> |
+<%= link_to 'Back', digital_object_types_path %>

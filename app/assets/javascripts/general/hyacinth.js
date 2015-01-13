@@ -1,0 +1,191 @@
+// Hyacinth: Application-wide JS
+// All this logic will automatically be available in application.js.
+var Hyacinth = {};
+
+Hyacinth.unexpectedAjaxErrorMessage = 'An unexpected error occurred while connecting to the server.  Please try your request again.';
+
+$(document).ready(function(){
+  Hyacinth.setupMultiselectWidgets();
+  Hyacinth.monitorAlertsForFadeOut();
+
+  // Set up the DigitalObjectsApp if we're on the right page
+  if($('#digital-object-dynamic-content').length > 0) {
+    Hyacinth.DigitalObjectsApp.init('digital-object-dynamic-content');
+  }
+
+});
+
+Hyacinth.setupMultiselectWidgets = function(){
+  $('select.multiselect').each(function(){
+    $(this).multiselect({
+      disableIfEmpty: true,
+      nonSelectedText: $(this).attr('data-multiselect-nonselected-text') || 'None selected',
+      buttonContainer: '<div class="btn-group btn-group-justified alignleft" />',
+      buttonClass: 'btn btn-default',
+      buttonWidth: '100%'
+    })
+  });
+};
+
+Hyacinth.addAlert = function(alertHtml, type) {
+
+  var alertClass = '';
+
+  switch(type) {
+    case 'info':
+      alertClass = 'alert-info';
+      break;
+    case 'warning':
+      alertClass = 'alert-warning';
+      break;
+    case 'success':
+      alertClass = 'alert-success';
+      break;
+    case 'danger':
+      alertClass = 'alert-danger';
+      break;
+    default:
+      alert('Unknown alert type: ' + type + '. HTML: ' + alertHtml);
+      return;
+  }
+
+  $newAlert = $('<div class="alert ' + alertClass + '">' + alertHtml + '<button type="button" class="close" data-dismiss="alert">×</button></div>');
+  $newAlert.hide();
+  $('#alert-container').prepend($newAlert);
+  //The line below gives us simultaneous fade-in AND slide-down animations.
+  $newAlert.fadeIn({ duration: 600, queue: false }).css('display', 'none').slideDown(400);
+}
+
+Hyacinth.monitorAlertsForFadeOut = function() {
+  setInterval(function(){
+    //Periodically check for presence of alerts
+    $alerts = $('#alert-container .alert:not([data-marked-for-fadeout]');
+    if($alerts.length > 0) {
+      $alerts.each(function(){
+        //Mark for fadeout
+        $(this).attr('data-marked-for-fadeout', 'true');
+        var $alert = $(this);
+        //And set a fadeout timeout for this element
+        setTimeout(function(){
+          $alert.fadeOut(400, function(){
+            //And finally, remove the element
+            $alert.remove();
+          });
+        }, 3000);
+      });
+    }
+  }, 2000);
+};
+
+/****************
+ * UI Animation *
+ ****************/
+
+Hyacinth.scrollToTopOfWindow = function(animationTimeInMillis){
+
+  if (typeof(animationTimeInMillis) == 'undefined') {
+    animationTimeInMillis = 600;
+  }
+
+  $('html, body').animate({
+      scrollTop: 0
+    }, animationTimeInMillis
+ );
+};
+
+/*********************
+ * Utility Functions *
+ *********************/
+
+Hyacinth.defineNamespace = function(namespace) {
+  var lastNamespaceLayer = window;
+  var namespaceLayers = namespace.split('.');
+  for(var i = 0; i < namespaceLayers.length; i++) {
+    if (typeof(lastNamespaceLayer[namespaceLayers[i]]) == 'undefined') {
+      lastNamespaceLayer[namespaceLayers[i]] = {};
+    }
+    lastNamespaceLayer = lastNamespaceLayer[namespaceLayers[i]];
+  }
+};
+
+Hyacinth.extendClass = function(childClass, parentClass) {
+  // childClass extends parentClass
+  childClass.prototype = Object.create(parentClass.prototype); // Set the childClass prototype to a new Object that's based on the parentClass prototype
+  childClass.prototype.constructor = childClass; // Make sure to re-set the child class constructor
+};
+
+Hyacinth.getLocationOrigin = function() {
+  return window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port: '');
+};
+
+//Object helpers
+Hyacinth.defineNamespace('Hyacinth.ObjectHelpers');
+
+Hyacinth.ObjectHelpers.clone = function(obj) {
+  return $.extend({}, obj);
+};
+Hyacinth.ObjectHelpers.deepClone = function(obj) {
+  return $.extend(true, {}, obj);
+};
+//Merges two objects and returns a new copy.
+//This is NOT a deep merge.
+Hyacinth.ObjectHelpers.merge = function(obj1, obj2) {
+  return $.extend({}, obj1, obj2);
+};
+//Deletes a key in the passed object and returns the object
+Hyacinth.ObjectHelpers.deleteKey = function(obj, key) {
+  delete obj[key];
+  return obj;
+}
+
+/***********
+ * COOKIES *
+ ***********/
+
+Hyacinth.createCookie = function(name, value, days) {
+    var expires;
+
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toGMTString();
+    } else {
+        expires = "";
+    }
+    document.cookie = escape(name) + "=" + escape(value) + expires + "; path=/";
+}
+
+Hyacinth.readCookie = function(name) {
+    var nameEQ = escape(name) + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return unescape(c.substring(nameEQ.length, c.length));
+    }
+    return null;
+}
+
+Hyacinth.eraseCookie = function(name) {
+    createCookie(name, "", -1);
+}
+
+
+/*********
+ * MODAL *
+ *********/
+
+Hyacinth.showMainModal = function(title, bodyContent, footerContent) {
+  $('#main-modal .modal-title').html(title);
+  $('#main-modal .modal-body').html(bodyContent);
+  $('#main-modal .modal-footer').html(footerContent);
+  $('#main-modal').modal('show');
+};
+
+Hyacinth.hideMainModal = function() {
+  $('#main-modal').modal('hide');
+};
+
+Hyacinth.getModalElement = function() {
+  return $('#main-modal')[0];
+};

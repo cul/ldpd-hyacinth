@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hyacinth</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <%= render 'layout_shared/extra_head_includes' %>
+</head>
+<body>
+  <%= render 'layout_shared/global_nav' %>
+
+  <div id="alert-container">
+    <% if ! notice.blank? %><div class="alert alert-info"><button type="button" class="close" data-dismiss="alert">&times;</button><%= notice %></div><% end %>
+    <% if ! alert.blank? %><div class="alert alert-danger"><button type="button" class="close" data-dismiss="alert">&times;</button><%= alert %></div><% end %>
+  </div>
+
+  <%= render 'layout_shared/contextual_nav' %>
+
+  <div class="container">
+    <div id="main-wrapper">
+      <div id="main-content">
+        <%= yield %>
+      </div>
+    </div>
+
+    <% if Rails.env == 'development' || Rails.env == 'hyacinth_dev' %>
+      <pre id="debug"><%
+      %><%= ('Solr search time: ' + (@solr_search.query_time/1000.0).to_s + ' seconds<br />').html_safe if ! @solr_search.blank? %><%
+        %><%= ('Time spent in controller: ' + (@time_before_render-@page_load_start_time).to_s + ' seconds<br />').html_safe %><%
+        %><%= ('Time spent in view: ' + (Time.now-@time_before_render).to_s + ' seconds<br />').html_safe %><%
+        %><%= ('Total page load time: ' + (Time.now-@page_load_start_time).to_s + ' seconds').html_safe %><%
+      %></pre>
+    <% end %>
+  </div><!--/#main-wrapper-->
+
+  <div id="main-modal" class="modal fade">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h4 class="modal-title">Modal</h4>
+        </div>
+        <div class="modal-body">
+          <p></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div>
+</body>
+</html>

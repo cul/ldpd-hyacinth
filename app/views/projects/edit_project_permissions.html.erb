@@ -1,0 +1,68 @@
+<%= render partial: 'edit_project_nav' %>
+
+<% current_project_user_ids = @project.project_permissions.map{|project_permission| project_permission.user.id} %>
+<% users_that_have_not_been_added_to_this_project = current_project_user_ids.blank? ? User.all : User.where('id NOT IN(' + current_project_user_ids.join(',') + ')') %>
+
+<%= form_for(@project, :url => {:action => 'update_project_permissions'}) do |f| %>
+
+  <% if @project.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</h2>
+
+      <ul>
+      <% @project.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <table id="project_permissions_user_add_form" class="table table-condensed table-bordered table-striped">
+      <thead>
+        <tr>
+          <th class="col-md-5">Name</th>
+          <th class="col-md-1">Read</th>
+          <th class="col-md-1">Create</th>
+          <th class="col-md-1">Update</th>
+          <th class="col-md-1">Delete</th>
+          <th class="col-md-2">Project Admin</th>
+          <th class="col-md-1">Remove?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= f.fields_for :project_permissions, @project.project_permissions.sort_by{ |project_permission| project_permission.user.full_name } do |project_permission_form| %>
+          <tr>
+            <td><%= project_permission_form.object.user.full_name %></td>
+            <td><label><%= project_permission_form.check_box :can_read, :checked => 'checked', :disabled => 'disabled' %></label></td>
+            <td><label><%= project_permission_form.check_box :can_create %></label></td>
+            <td><label><%= project_permission_form.check_box :can_update %></label></td>
+            <td><label><%= project_permission_form.check_box :can_delete %></label></td>
+            <td><label><%= project_permission_form.check_box :is_project_admin %></label></td>
+            <td><label><%= project_permission_form.check_box :_destroy %></label></td>
+          </tr>
+        <% end %>
+
+        <% if users_that_have_not_been_added_to_this_project.length > 0 %>
+          <%= f.fields_for :project_permissions, @project.project_permissions.build do |project_permission_form| %>
+            <tr id="add-new-user-row">
+              <td><%= project_permission_form.collection_select(:user_id, users_that_have_not_been_added_to_this_project, :id, :full_name, {:include_blank => '- Select a user -'}, {:class => 'form-control input-sm'}) %></td>
+              <td><label><%= project_permission_form.check_box :can_read, :checked => 'checked', :disabled => 'disabled' %></label></td>
+              <td><label><%= project_permission_form.check_box :can_create %></label></td>
+              <td><label><%= project_permission_form.check_box :can_update %></label></td>
+              <td><label><%= project_permission_form.check_box :can_delete %></label></td>
+              <td><label><%= project_permission_form.check_box :is_project_admin %></label></td>
+              <td></td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr><td colspan="7"><strong>All registered users have been added to this project.</strong></td></tr>
+        <% end %>
+
+      </tbody>
+  </table>
+
+  <div class="actions">
+    <%= f.submit('Save', class: 'btn btn-primary') %>
+  </div>
+
+<% end %>

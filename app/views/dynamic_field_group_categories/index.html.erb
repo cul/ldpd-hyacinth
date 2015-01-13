@@ -1,0 +1,27 @@
+<h1>Listing dynamic_field_group_categories</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Display label</th>
+      <th>Sort order</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @dynamic_field_group_categories.each do |dynamic_field_group_category| %>
+      <tr>
+        <td><%= dynamic_field_group_category.display_label %></td>
+        <td><%= dynamic_field_group_category.sort_order %></td>
+        <td><%= link_to 'Show', dynamic_field_group_category %></td>
+        <td><%= link_to 'Edit', edit_dynamic_field_group_category_path(dynamic_field_group_category) %></td>
+        <td><%= link_to 'Destroy', dynamic_field_group_category, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Dynamic field category', new_dynamic_field_group_category_path %>

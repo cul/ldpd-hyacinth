@@ -1,0 +1,21 @@
+<h1>Controlled Vocabularies</h1>
+
+<%= render partial: 'search_form' %>
+
+<% if @controlled_vocabularies.length == 0 %>
+  No Controlled Vocabularies have been created yet.
+<% else %>
+
+  <table class="table table-bordered table-striped">
+    <tbody>
+      <% @controlled_vocabularies.each do |controlled_vocabulary| %>
+        <tr>
+          <td class="col-xs-7"><%= controlled_vocabulary.display_label %></td>
+          <td class="col-xs-2 aligncenter"><%= link_to 'Edit', edit_controlled_vocabulary_path(controlled_vocabulary) %></td>
+          <td class="col-xs-3 aligncenter"><%= link_to (current_user.can_manage_controlled_vocabulary_terms?(controlled_vocabulary) ? 'Manage' : 'View') + ' Authorized Terms', authorized_terms_controlled_vocabulary_path(controlled_vocabulary) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+<% end %>

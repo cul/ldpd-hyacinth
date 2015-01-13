@@ -1,0 +1,32 @@
+<%
+  //Passed params:
+  //
+  //searchResponse
+%>
+<form class="digital-object-search-form">
+  <div class="row">
+    <div class="col-md-2">
+      <select name="search_field" class="form-control input-sm">
+        <option value="search_keyword_teim">Keyword</options>
+        <option value="search_title_teim">Title</options>
+        <option value="search_identifier_sim">Identifier</options>
+      </select>
+    </div>
+    <div class="col-md-8">
+      <input type="text" name="q" placeholder="Search terms..." class="form-control input-sm"/>
+    </div>
+    <div class="col-md-1">
+      <a href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'index'}) %>" class="btn btn-default btn-sm btn-block"><span class="glyphicon glyphicon-remove"></span></a>
+    </div>
+    <div class="col-md-1">
+      <button type="submit" class="btn btn-primary btn-sm btn-block"><span class="glyphicon glyphicon-search"></span></button>
+    </div>
+
+  </div>
+
+  <hr />
+
+  <%= Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_search/_query_constraint_pills.ejs', {searchResponse: searchResponse}) %>
+  <%= Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_search/_result_count_and_sort_options.ejs', {searchResponse: searchResponse}) %>
+
+</form>

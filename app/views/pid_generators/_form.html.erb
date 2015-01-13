@@ -1,0 +1,33 @@
+<%= form_for(@pid_generator) do |f| %>
+  <% if @pid_generator.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@pid_generator.errors.count, "error") %> prohibited this pid_generator from being saved:</h2>
+
+      <ul>
+      <% @pid_generator.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :namespace %><br>
+    <%= f.text_field :namespace, :class => 'form-control' %>
+  </div>
+  <div class="field">
+    <%= f.label :template %> (See Ruby NOID Gem spec template information.)<br>
+    <%= @pid_generator.new_record? ? PidGenerator::DEFAULT_TEMPLATE : f.object.template %>
+  </div>
+  <div class="actions">
+    <%= f.submit(:class => 'btn btn-primary btn-sm', :value => 'Create New PID Generator') %>
+    <%=
+    link_to('Cancel New PID Generator Creation',
+      pid_generators_path, {
+        :class => 'btn btn-danger btn-sm',
+        data: { confirm: 'Are you sure you want to cancel this new PID Generator creation?' },
+      })
+    %>
+  </div>
+
+<% end %>

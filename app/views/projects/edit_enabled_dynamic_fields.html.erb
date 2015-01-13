@@ -1,0 +1,34 @@
+<%= render partial: 'edit_project_nav' %>
+
+<% dynamic_fields_that_are_enabled_for_this_digital_object_type = @project.enabled_dynamic_fields.where(digital_object_type: @digital_object_type).map{|enabled_dynamic_field| enabled_dynamic_field.dynamic_field} %>
+
+<%= form_for(@project, :url => {:action => 'update_enabled_dynamic_fields'}) do |f| %>
+
+  <% if @project.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</h2>
+
+      <ul>
+      <% @project.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div id="nested_enabled_dynamic_fields_form">
+    <% DynamicFieldGroupCategory.all.each do |dynamic_field_group_category| %>
+      <%= "<h2>#{dynamic_field_group_category.display_label}</h2>".html_safe if dynamic_field_group_category.dynamic_field_groups.present? %>
+      <% dynamic_field_group_category.dynamic_field_groups.each do |top_level_dynamic_field_group| %>
+        <%= "<h3>#{top_level_dynamic_field_group.display_label}</h3>".html_safe if top_level_dynamic_field_group.get_child_dynamic_fields_and_dynamic_field_groups.present? %>
+        <% top_level_dynamic_field_group.get_child_dynamic_fields_and_dynamic_field_groups.each do |dynamic_field_or_dynamic_field_group| %>
+          <%= do_recursive_enabled_dynamic_field_render(f, @digital_object_type, dynamic_field_or_dynamic_field_group) %>
+        <% end %>
+      <% end %>
+    <% end %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit('Save', class: 'btn btn-primary') %>
+  </div>
+<% end %>

@@ -1,0 +1,65 @@
+<%= form_for(@dynamic_field) do |f| %>
+
+  <%= dynamic_field_breadcrumbs(@dynamic_field, @dynamic_field.new_record?) %>
+
+  <% if @dynamic_field.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@dynamic_field.errors.count, "error") %> prohibited this dynamic_field from being saved:</h2>
+      <ul>
+      <% @dynamic_field.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="field">
+        <%= f.label :string_key, 'String key (cannot be changed)' %><br>
+        <%= f.text_field :string_key, {class: 'form-control', disabled: ( ! @dynamic_field.new_record? )} %>
+      </div>
+      <div class="field">
+        <%= f.label :display_label %><br>
+        <%= f.text_field :display_label, {class: 'form-control'} %>
+      </div>
+      <div class="field">
+        <%= f.label :dynamic_field_type %><br>
+        <%= f.select(:dynamic_field_type, DynamicField::TYPES_TO_LABELS.invert, {}, {class: 'form-control'}) %>
+      </div>
+      <div class="field">
+        <%= f.label :controlled_vocabulary_id, 'Controlled Vocabulary (For type: Authorized Term)' %><br>
+        <%= f.collection_select(:controlled_vocabulary_id, ControlledVocabulary.all, :id, :display_label, {include_blank: '- None -'}, {class: 'form-control'}) %>
+      </div>
+      <div class="field checkbox">
+        <%= f.label(:is_keyword_searchable, (f.check_box(:is_keyword_searchable)).html_safe + ' Keyword Searchable?') %>
+      </div>
+      <div class="field checkbox">
+        <%= f.label(:is_single_field_searchable, (f.check_box(:is_single_field_searchable)).html_safe + ' Single Field Searchable?') %>
+      </div>
+      <div class="field checkbox">
+        <%= f.label(:is_facet_field, (f.check_box(:is_facet_field)).html_safe + ' Facet field?') %>
+      </div>
+      <div class="field">
+        <%= f.label :facet_field_label %><br>
+        <%= f.text_field :facet_field_label, {class: 'form-control'} %>
+      </div>
+      <div class="field checkbox">
+        <%= f.label(:is_searchable_identifier_field, (f.check_box(:is_searchable_identifier_field)).html_safe + ' Searchable Identifier Field?') %>
+      </div>
+      <div class="field checkbox">
+        <%= f.label(:is_searchable_title_field, (f.check_box(:is_searchable_title_field)).html_safe + ' Searchable Title Field?') %>
+      </div>
+      <div class="actions">
+        <%= f.submit('Save', {class: 'btn btn-primary'}) %>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="field">
+        <%= f.label :additional_data_json %><br>
+        <%= f.text_area :additional_data_json, {class: 'form-control', id: 'additional-data-json-editor-textarea', cols: 12} %>
+        <div id="additional-data-json-editor" class="json-editor"></div>
+      </div>
+    </div>
+  </div>
+<% end %>

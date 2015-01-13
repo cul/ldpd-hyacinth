@@ -1,0 +1,22 @@
+<% unless @contextual_nav_options['nav_title'].blank? && @contextual_nav_options['nav_items'].blank? %>
+
+<div id="contextual_nav" class="container">
+  <div class="navbar navbar-inverse">
+    <ul class="nav navbar-nav">
+      <li class="nav-title">
+        <% if @contextual_nav_options['nav_title']['url'].blank? %>
+          <span class="navbar-brand"><%= @contextual_nav_options['nav_title']['label'] %></span>
+        <% else %>
+          <%= link_to @contextual_nav_options['nav_title']['label'], @contextual_nav_options['nav_title']['url'], @contextual_nav_options['nav_title']['options'] %>
+        <% end %>
+      </li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <% @contextual_nav_options['nav_items'].each {|item|
+        %><li><%= link_to item[:label], item[:url], item[:options] %></li><%
+      } %>
+    </ul>
+  </div><!-- /.navbar -->
+</div>
+
+<% end %>

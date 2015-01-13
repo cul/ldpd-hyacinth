@@ -1,0 +1,89 @@
+<% Hyacinth.ContextualNav.setNavTitle('&laquo; Digital Objects', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'index'})); %>
+<% Hyacinth.ContextualNav.setNavItems([]); %>
+
+<h1>New Digital Object</h1>
+
+<div>
+
+  <% if ( ! Hyacinth.DigitalObjectsApp.params['project_string_key'] ) { %>
+
+    <form id="project-select-form">
+      <div class="field">
+        <label for="project_string_key">Project</label><br/>
+        <div class="row">
+          <div class="col-xs-8">
+            <select class="form-control input-sm" name="project_string_key">
+              <% for(var i = 0; i < projects.length; i++) { %>
+                <%= '<option value="' + projects[i]['string_key'] + '">' + projects[i]['display_label'] + '</option>' %>
+              <% } %>
+            </select>
+          </div>
+          <div class="col-sm-4">
+            <input class="btn btn-primary btn-sm" type="submit" value="Select" />
+          </div>
+        </div>
+      </div>
+    </form>
+
+  <% } else { %>
+
+    <form id="project-and-digital-object-type-select-form">
+      <div class="field">
+
+        <% if (Hyacinth.DigitalObjectsApp.params['parent_digital_object_pid']) { %>
+          <label for="project_string_key">Parent:</label>
+          <a href="#<%= Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: Hyacinth.DigitalObjectsApp.params['parent_digital_object_pid']}) %>"><%= Hyacinth.DigitalObjectsApp.params['parent_digital_object_pid'] %></a>
+          <br />
+        <% } %>
+
+        <label for="project_string_key">Project</label><br/>
+        <div class="row">
+          <div class="col-sm-8">
+              <%
+                var indexOfSelectedProject;
+                for (var i = 0; i < projects.length; i++) {
+                  if (projects[i]['string_key'] == Hyacinth.DigitalObjectsApp.params['project_string_key']) {
+                    indexOfSelectedProject = i;
+                    %>
+                    <input type="hidden" name="project_string_key" value="<%= projects[i]['string_key'] %>" />
+                    <select disabled="disabled" class="form-control input-sm">
+                      <%= '<option value="' + projects[i]['string_key'] + '">' + projects[i]['display_label'] + '</option>' %>
+                    </select>
+                    <%
+                    break;
+                  }
+                }
+              %>
+          </div>
+          <div class="col-sm-4">
+            <% paramsWithoutProject = Hyacinth.ObjectHelpers.deleteKey(Hyacinth.ObjectHelpers.clone(Hyacinth.DigitalObjectsApp.params), 'project_string_key'); %>
+            <% if( ! Hyacinth.DigitalObjectsApp.params['parent_digital_object_pid'] ) { %>
+              <a href="#<%= Hyacinth.DigitalObjectsApp.paramsToHashValue(paramsWithoutProject) %>" class="btn btn-default btn-sm">Change</a>
+            <% } else { %>
+              <input type="hidden" name="parent_digital_object_pid" value="<%= Hyacinth.DigitalObjectsApp.params['parent_digital_object_pid'] %>" />
+            <% } %>
+          </div>
+        </div>
+        <br />
+        <label for="digital_object_type">Digital Object Type</label><br/>
+        <div class="row">
+          <div class="col-sm-8">
+            <select class="form-control input-sm" name="digital_object_type_string_key">
+              <%
+                for (var i = 0; i < projects[indexOfSelectedProject]['enabled_digital_object_types'].length; i++) {
+                    if(projects[indexOfSelectedProject]['enabled_digital_object_types'][i]['string_key'] == 'asset') {continue;} //Ignore digital_object_type string key "asset" because those are normally created by the upload action
+                    %><%= '<option value="' + projects[indexOfSelectedProject]['enabled_digital_object_types'][i]['string_key'] + '">' + projects[indexOfSelectedProject]['enabled_digital_object_types'][i]['display_label'] + '</option>' %><%
+                }
+              %>
+            </select>
+          </div>
+          <div class="col-sm-4">
+            <input class="btn btn-primary btn-sm" type="submit" value="Go" />
+          </div>
+        </div>
+      </div>
+    </form>
+
+  <% } %>
+
+</div>

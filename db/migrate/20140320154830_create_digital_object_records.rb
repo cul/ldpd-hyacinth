@@ -1,0 +1,10 @@
+class CreateDigitalObjectRecords < ActiveRecord::Migration
+  def change
+    create_table :digital_object_records do |t|
+      t.string :pid, unique: true
+      t.references :created_by
+      t.references :updated_by
+      t.timestamps
+    end
+  end
+end

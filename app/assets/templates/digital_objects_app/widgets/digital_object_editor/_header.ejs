@@ -1,0 +1,113 @@
+<%
+  //Passed params:
+  //
+  //digitalObject
+  //mode
+  //fieldsets
+%>
+<div class="digital-object-editor-header">
+  <h1><%= digitalObject.digital_object_type['display_label'] %>: <%- digitalObject.getTitle() %></h1>
+  <div class="row">
+    <div class="col-md-8">
+
+      <div class="form-horizontal">
+
+        <div class="form-group">
+          <label class="col-sm-3">
+            <%= (digitalObject.getProjects().length > 1 ? 'Projects' : 'Project') + ':' %>
+          </label>
+          <div class="col-sm-9">
+            <%= $.map(digitalObject.getProjects(), function(project){return project['display_label']}).join(', ') %>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="col-sm-3">
+            PID:
+          </label>
+          <div class="col-sm-9">
+            <%= digitalObject.getPid() || '- Assigned After Save -' %>
+          </div>
+        </div>
+
+        <% var parentDigitalObjectPids = digitalObject.getParentDigitalObjectPids() %>
+        <% if (parentDigitalObjectPids.length > 0) { %>
+          <div class="form-group">
+            <label class="col-sm-3">
+              <%= parentDigitalObjectPids.length == 1 ? 'Parent' : 'Parents'  %>
+            </label>
+            <div class="col-sm-9">
+              <%= $.map(parentDigitalObjectPids, function(pid){return '<a href="#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: pid}) + '">' + pid + '</a>';}).join(', ') %>
+            </div>
+          </div>
+        <% } %>
+
+        <% if ( ! digitalObject.isNewRecord() ) { %>
+
+          <% var numberOfChildAssets = digitalObject.getOrderedChildDigitalObjectPids().length %>
+          <% if (numberOfChildAssets > 0) { %>
+            <div class="form-group">
+              <label class="col-sm-3">
+                <%= (digitalObject.digital_object_type.string_key == 'item') ? 'Child Assets' : 'Child Digital Objects' %>:
+              </label>
+              <div class="col-sm-9">
+                <a href="#<%= Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'manage_children', pid: digitalObject.getPid()}) %>">
+                  <%= numberOfChildAssets %>
+                  <%= (digitalObject.digital_object_type.string_key == 'item') ? (numberOfChildAssets == 1 ? 'Asset' : 'Assets') : (numberOfChildAssets == 1 ? 'Digital Object' : 'Digital Objects') %>
+                  &raquo;
+                </a>
+              </div>
+            </div>
+          <% } %>
+
+          <% if (digitalObject.getState() != 'A') { %>
+            <div class="form-group">
+              <label class="col-sm-3">
+                State:
+              </label>
+              <div class="col-sm-9">
+                <strong class="<%= digitalObject.getState() == 'D' ? 'text-danger' : 'text-info' %>"><%= digitalObject.getStateAsDisplayLabel() %></strong>
+                <% if(mode == 'edit') { %>
+                  (<a href="#" class="undelete-digital-object-button" data-pid="<%= digitalObject.getPid() %>">Restore</a>)
+                <% } %>
+              </div>
+            </div>
+          <% } %>
+
+          <div class="form-group">
+            <label class="col-sm-3">
+              View As:
+            </label>
+            <div class="col-sm-9">
+              <a href="<%= digitalObject.getJsonViewUrl() %>" target="_blank">JSON</a>
+              <!-- <a href="<%= digitalObject.getModsXmlViewUrl() %>" target="_blank">XML</a> -->
+            </div>
+          </div>
+        <% } %>
+
+      </div>
+
+    </div>
+    <div class="col-md-2">
+      <!-- Thumbnail image will go here -->
+    </div>
+  </div>
+</div>
+<hr />
+<div class="form-horizontal">
+  <% if (mode == 'edit' && fieldsets.length > 0) { %>
+    <div class="form-group">
+      <label class="col-sm-2 control-label alignleft">Editing View</label>
+      <div class="col-sm-10">
+        <% var lastSelectedFieldset = Hyacinth.readCookie('last_selected_fieldset'); %>
+        <select class="fieldset-selector form-control input-sm">
+          <option <%= lastSelectedFieldset == 'all-fieldsets' ? 'selected="selected"' : '' %> value="all-fieldsets">All Fields</option>
+          <% for (var i = 0; i < fieldsets.length; i++) { %>
+            <option value="fieldset-<%= fieldsets[i]['id'] %>" <%= lastSelectedFieldset == ('fieldset-' + fieldsets[i]['id']) ? 'selected="selected"' : '' %>><%= fieldsets[i]['display_label'] %></option>
+          <% } %>
+        </select>
+      </div>
+    </div>
+    <hr />
+  <% } %>
+</div>

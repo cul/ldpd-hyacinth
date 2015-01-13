@@ -1,0 +1,30 @@
+<h1 class="page-title">PID Generators</h1>
+
+<table class="table table-condensed table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Namespace</th>
+      <th>Template</th>
+      <th>Seed</th>
+      <th>Sequence</th>
+      <th>Number Of PIDs Left</th>
+      <th>Maximum Number of PIDs</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @pid_generators.each do |pid_generator| %>
+      <tr>
+        <td><%= link_to pid_generator.namespace, edit_pid_generator_path(pid_generator) %></td>
+        <td><%= pid_generator.template %></td>
+        <td><%= pid_generator.seed %></td>
+        <td><%= pid_generator.sequence %></td>
+        <% max_pids = pid_generator.max_pids %>
+        <td><%= (max_pids - pid_generator.sequence).to_s %></td>
+        <td><%= max_pids %></td>
+        <td><%= link_to 'Delete', pid_generator, method: :delete, data: { confirm: 'Are you sure?' }, :class => 'btn btn-default btn-xs' %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

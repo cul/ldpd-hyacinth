@@ -1,0 +1,68 @@
+<%= form_for(@dynamic_field_group) do |f| %>
+
+  <%= dynamic_field_breadcrumbs(@dynamic_field_group, @dynamic_field_group.new_record?) %>
+
+  <% if @dynamic_field_group.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@dynamic_field_group.errors.count, "error") %> prohibited this dynamic_field_group from being saved:</h2>
+      <ul>
+      <% @dynamic_field_group.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="field">
+        <%= f.label :string_key, 'String key (cannot be changed)' %><br>
+        <%= f.text_field :string_key, {class: 'form-control', disabled: ( ! @dynamic_field_group.new_record? )} %>
+      </div>
+      <div class="field">
+        <%= f.label :display_label %><br>
+        <%= f.text_field :display_label, {class: 'form-control'} %>
+      </div>
+      <div class="field">
+        <%= f.label :xml_datastream_id %><br>
+        <%= f.collection_select(:xml_datastream_id, XmlDatastream.all, :id, :display_label, {include_blank: 'None'}, {class: 'form-control'}) %>
+      </div>
+      <div class="field">
+        <%= f.label :dynamic_field_group_category_id %><br>
+        <%= f.collection_select(:dynamic_field_group_category_id, DynamicFieldGroupCategory.all, :id, :display_label, {}, {class: 'form-control'}) %>
+      </div>
+      <div class="field checkbox">
+        <%= f.label(:is_repeatable, (f.check_box(:is_repeatable)).html_safe + ' Repeatable?') %>
+      </div>
+      <div class="field">
+        <%= f.label :xml_translation_json %><br>
+        <%= f.text_area :xml_translation_json, {class: 'form-control', id: 'xml-translation-editor-textarea', cols: 12} %>
+        <div id="xml-translation-editor" class="json-editor"></div>
+      </div>
+      <div class="actions">
+        <%= f.submit('Save', class: 'btn btn-primary') %>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="well">
+        <h2>Child Fields and Field Groups</h2>
+        <% if @child_dynamic_fields_and_dynamic_field_groups.present? %>
+          <table class="table table-bordered table-striped">
+            <% @child_dynamic_fields_and_dynamic_field_groups.each do |dynamic_field_or_dynamic_field_group| %>
+              <tr>
+                <td class="col-sm-10">
+                  <%= dynamic_field_or_dynamic_field_group.display_label %> <%= '<span class="label label-default pull-right">Group</span>'.html_safe if dynamic_field_or_dynamic_field_group.is_a?(DynamicFieldGroup) %>
+                </td>
+                <td class="col-sm-2 aligncenter">
+                  <%= link_to 'Edit', (dynamic_field_or_dynamic_field_group.is_a?(DynamicField) ? edit_dynamic_field_path(dynamic_field_or_dynamic_field_group) : edit_dynamic_field_group_path(dynamic_field_or_dynamic_field_group)) %>
+                </td>
+              </tr>
+            <% end %>
+          </table>
+        <% else %>
+          - None -
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

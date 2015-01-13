@@ -1,0 +1,31 @@
+<h1>Authorized Term Search</h1>
+
+<%= render partial: 'search_form' %>
+
+<% if @authorized_terms.length == 0 %>
+    No Authorized Terms found.
+<% else %>
+
+  <%= paginate @authorized_terms %>
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th class="col-xs-5">Value</th>
+        <th class="col-xs-2">Authority</th>
+        <th class="col-xs-3">Controlled Vocabulary</th>
+        <th class="col-xs-2"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @authorized_terms.each do |authorized_term| %>
+        <tr>
+          <td><%= authorized_term.value %></td>
+          <td><%= authorized_term.authority %></td>
+          <td><%= authorized_term.controlled_vocabulary.display_label %></td>
+          <td class="aligncenter"><%= link_to 'View', authorized_term_path(authorized_term), class: 'btn btn-default btn-xs' %> <%= link_to 'Edit', edit_authorized_term_path(authorized_term), class: 'btn btn-default btn-xs' %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= paginate @authorized_terms %>
+<% end %>

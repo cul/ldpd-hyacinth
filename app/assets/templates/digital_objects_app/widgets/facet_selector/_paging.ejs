@@ -1,0 +1,6 @@
+<% if (page > 1 || moreAvailable) { %>
+  <div class="btn-group paging" role="group" aria-label="paging">
+    <button <%= page > 1 ? '' : 'disabled="disabled"' %> type="button" class="btn btn-default btn-xs previous-page"><span class="glyphicon glyphicon-backward"></span></button>
+    <button <%= moreAvailable ? '' : 'disabled="disabled"' %> type="button" class="btn btn-default btn-xs next-page"><span class="glyphicon glyphicon-forward"></span></button>
+  </div>
+<% } %>

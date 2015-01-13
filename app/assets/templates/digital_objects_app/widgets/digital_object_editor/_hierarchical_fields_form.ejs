@@ -1,0 +1,31 @@
+<%
+  //Passed params:
+  //
+  //dynamicFieldHierarchy
+  //mode
+  //dynamicFieldIdsToEnabledDynamicFields
+%>
+<form class="editor-form">
+  <div class="errors"></div>
+  <div class="dynamic_field_group_content">
+    <% for (var i = 0; i < dynamicFieldHierarchy.length; i++) { %>
+      <% // Iterate through categories %>
+      <% var dynamicFieldGroupCategory = dynamicFieldHierarchy[i] %>
+      <% if (dynamicFieldGroupCategory['dynamic_field_groups'].length > 0) { %>
+        <h2 class="dynamic_field_group_category_label"><%= dynamicFieldGroupCategory['display_label'] %></h2>
+        <% for (var j = 0; j < dynamicFieldGroupCategory['dynamic_field_groups'].length; j++) { %>
+          <% // Iterate through top level dynamic_field_groups %>
+          <%= Hyacinth.DigitalObjectsApp.DigitalObjectEditor.recursivelyRenderDynamicFieldOrDynamicFieldGroup(dynamicFieldGroupCategory['dynamic_field_groups'][j], mode, dynamicFieldIdsToEnabledDynamicFields) %>
+        <% } %>
+      <% } %>
+    <% } %>
+  </div>
+  <% if (mode == 'edit') { %>
+    <div>
+      <hr />
+      <input type="submit" class="btn btn-primary pull-right editor-submit-button" value="Save" />
+      <div class="clearfix"></div>
+    </div>
+  <% } %>
+
+</form>

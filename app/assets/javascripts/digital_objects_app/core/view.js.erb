@@ -1,0 +1,17 @@
+Hyacinth.DigitalObjectsApp.View = function() {
+
+};
+
+<%
+  path_to_ejs_template_dir = File.join(Rails.root, 'app/assets/templates')
+  mapping = {}
+  Dir.glob(File.join(path_to_ejs_template_dir, '**/*.ejs')).each do |file|
+    relative_template_path = file.gsub(path_to_ejs_template_dir + '/', '')
+    mapping[relative_template_path] = asset_path(relative_template_path)
+  end
+%>
+Hyacinth.DigitalObjectsApp.View.templateMappings = <%= mapping.to_json %>;
+
+Hyacinth.DigitalObjectsApp.View.getEjsTemplateUrl = function(ejs_template_path) {
+  return Hyacinth.DigitalObjectsApp.View.templateMappings[ejs_template_path];
+};

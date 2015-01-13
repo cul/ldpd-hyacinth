@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Namespace:</strong>
+  <%= @pid_generator.namespace %>
+</p>
+
+<p>
+  <strong>Template:</strong>
+  <%= @pid_generator.template %>
+</p>
+
+<p>
+  <strong>Seed:</strong>
+  <%= @pid_generator.seed %>
+</p>
+
+<p>
+  <strong>Sequence:</strong>
+  <%= @pid_generator.sequence %>
+</p>
+
+<%= link_to 'Edit', edit_pid_generator_path(@pid_generator) %> |
+<%= link_to 'Back', pid_generators_path %>

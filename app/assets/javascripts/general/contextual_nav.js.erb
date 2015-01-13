@@ -1,0 +1,74 @@
+Hyacinth.defineNamespace('Hyacinth.ContextualNav');
+Hyacinth.ContextualNav.elementId = 'contextual_nav';
+
+Hyacinth.ContextualNav.setNavTitle = function(label, url){
+
+  $contextualNav = $('#' + Hyacinth.ContextualNav.elementId);
+
+  var $titleElement = null;
+  if (url) {
+    $titleElement =$('<a></a>').html(
+      label
+    ).attr({
+      href: url,
+    });
+  } else {
+    $titleElement =$('<span></span>').html(
+      label
+    ).attr({
+      class: 'navbar-brand'
+    });
+  }
+
+  $contextualNav.find('.nav-title').html($titleElement);
+};
+
+//@param navItems - Example: [{label: 'Item 1', url: '/something', {label: 'Item 2', url: '#something_else'}}]
+Hyacinth.ContextualNav.setNavItems = function(navItems){
+
+  $contextualNav = $('#' + Hyacinth.ContextualNav.elementId);
+
+  $contextualNav.find('.navbar-right').html('');
+
+  for (var i = 0; i < navItems.length; i++) {
+
+    var $navElement = null;
+    var currentNavItem = navItems[i];
+    if (currentNavItem['label']) {
+
+      if (currentNavItem['url']) {
+        $navElement = $('<a></a>').html(
+          currentNavItem['label']
+        ).attr({
+          href: currentNavItem['url'],
+        });
+      } else {
+        $navElement = $('<p></p>').html(
+          currentNavItem['label']
+        ).addClass('navbar-text');
+      }
+
+      //Handle 'label' and 'url' and 'class' in a special way,
+      //but everything else can be handle as a normal attribute.
+      //This is mostly for handling data-* attributes
+
+      if (currentNavItem['class']) {
+        $navElement.addClass(currentNavItem['class']);
+      }
+
+      //Add custom attributes
+      var speciallyHandledProperties = ['url', 'label', 'class'];
+      $.each(currentNavItem, function(key, value){
+        if (speciallyHandledProperties.indexOf(key) > -1) {
+          return;
+        }
+        $navElement.attr(key, value);
+      });
+
+      $navElement = $('<li></li>').html($navElement);
+
+      $contextualNav.find('.navbar-right').append($navElement);
+    }
+  }
+
+};

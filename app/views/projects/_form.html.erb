@@ -1,0 +1,49 @@
+<%= render partial: 'edit_project_nav' unless params[:action] == 'new' || params[:action] == 'create' %>
+
+<%= form_for(@project) do |f| %>
+  <% if @project.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</h2>
+
+      <ul>
+      <% @project.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="field">
+        <%= f.label :string_key %>
+        <%= f.text_field :string_key, {class: 'form-control', disabled: ! @project.new_record?} %>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="field">
+        <%= f.label :display_label %>
+        <%= f.text_field :display_label, {class: 'form-control'} %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6">
+      <div class="field">
+        <%= f.label :pid %>
+        <%= f.text_field :pid, {class: 'form-control', disabled: true, value: @project.new_record? ? '- Automatically Generated -' : @project.pid} %>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="field">
+        <%= f.label :pid_generator_id, 'PID Generator' %>
+        <%= f.collection_select(:pid_generator_id, PidGenerator.all.sort_by { |pid_generator| pid_generator.namespace }, :id, :namespace, {}, {:class => 'form-control'}) %>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <%= f.submit('Save', class: 'btn btn-primary') %>
+  </div>
+<% end %>

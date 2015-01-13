@@ -1,0 +1,52 @@
+<div id="top-navbar" class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <%= link_to image_tag('hyacinth-logo.png', :id => 'hyacinth-nav-icon') + ' <span class="navbar-brand">Hyacinth</span>'.html_safe, '/', :id => 'hyacinth-logo-wrapper' %>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <% if user_signed_in? %>
+          <li><%= link_to 'Digital Objects', digital_objects_path %></li>
+          <% if current_user.is_project_admin_for_at_least_one_project? %>
+            <li><%= link_to 'Projects', projects_path %></li>
+          <% end %>
+          <% if current_user.can_edit_at_least_one_controlled_vocabulary? %>
+            <li><%= link_to 'Controlled Vocabularies', controlled_vocabularies_path %></li>
+          <% end %>
+          <% if current_user.is_admin? %>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manage <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <% if current_user.is_admin? %>
+                  <li><%= link_to 'Dynamic Fields', dynamic_fields_path %></li>
+                  <li><%= link_to 'XML Datastreams', xml_datastreams_path %></li>
+                  <li><%= link_to 'Dynamic Field Categories', dynamic_field_group_categories_path %></li>
+                  <li><%= link_to 'PID Generators', pid_generators_path %></li>
+                  <li><%= link_to 'Users', users_path %></li>
+                <% end %>
+              </ul>
+            </li>
+          <% end %>
+        <% end %>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <% if user_signed_in? %>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= current_user.first_name %> <%= current_user.last_name %> <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <% if current_user.is_admin? %>
+                <li><%= link_to 'System Information', system_information_path %></li>
+              <% end %>
+              <li><%= link_to('Sign Out', destroy_user_session_path, {method: :delete}) %></li>
+            </ul>
+          <% end %>
+        </li>
+      </ul>
+    </div><!--/.navbar-collapse -->
+  </div>
+</div>

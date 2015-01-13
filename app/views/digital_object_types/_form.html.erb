@@ -1,0 +1,30 @@
+<%= form_for(@digital_object_type) do |f| %>
+  <% if @digital_object_type.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@digital_object_type.errors.count, "error") %> prohibited this digital_object_type from being saved:</h2>
+
+      <ul>
+      <% @digital_object_type.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :string_key %><br>
+    <%= f.text_field :string_key, {class: 'form-control', disabled: ( ! @digital_object_type.new_record? )} %>
+  </div>
+  <div class="field">
+    <%= f.label :display_label %><br>
+    <%= f.text_field :display_label, {class: 'form-control'} %>
+  </div>
+  <div class="field">
+    <%= f.label :sort_order %><br>
+    <%= f.text_field :sort_order, {class: 'form-control'} %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit('Save', {class: 'btn btn-primary'}) %>
+  </div>
+<% end %>

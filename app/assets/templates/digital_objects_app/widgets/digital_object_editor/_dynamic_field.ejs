@@ -1,0 +1,72 @@
+<%
+  //Passed params:
+  //
+  //dynamic_field
+  //mode
+  //dynamicFieldIdsToEnabledDynamicFields
+%>
+<%
+var associatedEnabledDynamicField = dynamicFieldIdsToEnabledDynamicFields[dynamic_field['id']];
+var fieldIsEnabled = associatedEnabledDynamicField ? true : false;
+var fieldIsLocked = associatedEnabledDynamicField ? associatedEnabledDynamicField['locked'] : false; //This field might not be enabled. Default to false.
+var fieldIsRequired = associatedEnabledDynamicField ? associatedEnabledDynamicField['required'] : false; //This field might not be enabled. Default to false.
+var defaultValue = associatedEnabledDynamicField ? associatedEnabledDynamicField['default_value'] : ''; //This field might not be enabled. Default to ''.
+var fieldsetIds = associatedEnabledDynamicField ? associatedEnabledDynamicField['fieldset_ids'] : [];
+%>
+
+<div class="dynamic_field <%= fieldIsEnabled ? 'enabled' : '' %> all-fieldsets <%= (fieldsetIds.length > 0 ? 'fieldset-' + fieldsetIds.join(' fieldset-') : '') %> <%= mode == 'show' || fieldIsLocked ? 'readonly-display' : '' %>" data-string-key="<%= dynamic_field['string_key'] %>" data-dynamic-field-type="<%= dynamic_field['dynamic_field_type'] %>">
+  <div class="row">
+    <div class="col-md-4">
+      <div class="field-label"><input type="checkbox" class="copy-field" /> <%= dynamic_field['display_label'] %><%= fieldIsRequired && mode =='edit' ? ' *' : '' %></div>
+    </div>
+    <div class="col-md-8">
+      <%= $('<div></div>').append($('<span class="default-value"></span>').attr('data-default-value', defaultValue)).html() %>
+      <% if (mode == 'show' || fieldIsLocked) { %>
+        <div class="readonly-display-value"></div>
+      <% } %>
+      <%
+        switch(dynamic_field['dynamic_field_type']) {
+        case 'textarea':
+          %><textarea name="<%= dynamic_field['string_key'] %>" rows="4" class="form-field-element form-control input-sm clearable tabable <%= mode == 'show' || fieldIsLocked ? 'hidden' : '' %>"></textarea><%
+          break;
+        case 'integer':
+          %><input type="number" name="<%= dynamic_field['string_key'] %>" class="form-field-element form-control input-sm clearable tabable <%= mode == 'show' || fieldIsLocked ? 'hidden' : '' %>"/><%
+          break;
+        case 'boolean':
+          %><input type="checkbox" name="<%= dynamic_field['string_key'] %>" class="form-field-element input-sm clearable tabable <%= mode == 'show' || fieldIsLocked ? 'hidden' : '' %>" /><%
+          break;
+        case 'date':
+          %><input type="text" name="<%= dynamic_field['string_key'] %>" class="form-field-element form-control input-sm clearable tabable <%= mode == 'show' || fieldIsLocked ? 'hidden' : '' %>" placeholder="YYYY-MM-DD" /><%
+          break;
+        case 'select':
+          %>
+          <select name="<%= dynamic_field['string_key'] %>" class="form-field-element form-control input-sm clearable tabable <%= mode == 'show' || fieldIsLocked ? 'hidden' : '' %>">
+            <% for(var i = 0; i < dynamic_field['select_options'].length; i++) { %>
+              <option value="<%= dynamic_field['select_options'][i]['value'] %>"><%= dynamic_field['select_options'][i]['display_label'] %></option>
+            <% } %>
+          </select>
+          <%
+          break;
+        case 'authorized_term_value':
+          %>
+          <div class="authorized_term  <%= mode == 'show' || fieldIsLocked ? 'hidden' : '' %>">
+            <div class="input-group">
+              <input type="text" class="form-control form-field-element <%= dynamic_field['dynamic_field_type'] %>_field input-sm" name="<%= dynamic_field['string_key'] %>" data-controlled-vocabulary-string-key="<%= dynamic_field['controlled_vocabulary']['string_key'] %>" data-controlled-vocabulary-display-label="<%= dynamic_field['controlled_vocabulary']['display_label'] %>" value="" />
+              <span class="input-group-btn"><button type="button" class="authorized_term_search_button btn btn-default btn-sm tabable"><span class="glyphicon glyphicon-search"></span></button></span>
+            </div>
+          </div>
+          <%
+          break;
+        case 'string':
+        case 'authorized_term_value_uri':
+        case 'authorized_term_authority':
+        case 'authorized_term_authority_uri':
+          %><input type="text" name="<%= dynamic_field['string_key'] %>" class="form-field-element <%= dynamic_field['dynamic_field_type'] %>_field form-control input-sm clearable tabable <%= mode == 'show' || fieldIsLocked ? 'hidden' : '' %>"/><%
+          break;
+        default:
+          %>Unknown field type: <%= dynamic_field['dynamic_field_type'] %><%
+        }
+      %>
+    </div>
+  </div>
+</div>

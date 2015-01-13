@@ -1,0 +1,46 @@
+<%
+  //Passed params:
+  //
+  //parentDigitalObject
+%>
+<% Hyacinth.ContextualNav.setNavTitle('&laquo; Leave Asset Upload', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: parentDigitalObject.getPid()})); %>
+<% Hyacinth.ContextualNav.setNavItems([]); %>
+
+
+<h1><%= parentDigitalObject.digital_object_type['display_label'] %>: <%- parentDigitalObject.getTitle() %></h1>
+<strong><%= (parentDigitalObject.getProjects().length > 1 ? 'Projects' : 'Project') + ':' %></strong> <%= $.map(parentDigitalObject.getProjects(), function(project){return project['display_label']}).join(', ') %>
+<br />
+<strong>PID:</strong> <%= parentDigitalObject.getPid() %>
+<hr />
+
+<h2>Add New Child Assets</h2>
+<p>
+  <strong>&bull; Files will be uploaded <em>immediately</em> after being dropped in the drop zone or selected via dialog.</strong>
+  <br />
+  <strong>&bull; Single files larger than 2GB must be upload via FTP to the Hyacinth upload directory.</srong>
+</p>
+<form class="digital-object-asset-upload-form" action="/digital_objects/<%= parentDigitalObject.getPid() %>/upload_assets" method="POST" enctype="multipart/form-data">
+
+    <div class="upload-drop-zone aligncenter">
+      Click here or drag and drop one or more files
+      <br />
+      <small>Max size: 2GB</small>
+      <input class="asset-upload-file-input" type="file" name="files[]" multiple="">
+    </div>
+
+    <div class="progress">
+      <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+        <span class="sr-only">0% Complete</span>
+      </div>
+    </div>
+
+    <!-- The extended global progress state -->
+    <div class="extended-progress-info">&nbsp;</div>
+
+    <!-- The table listing the files available for upload/download -->
+    <table role="presentation" class="table table-striped">
+      <tbody class="uploaded-files">
+
+      </tbody>
+    </table>
+</form>

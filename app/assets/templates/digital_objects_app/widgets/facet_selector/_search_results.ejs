@@ -1,0 +1,43 @@
+<%
+  //Passed params:
+  //
+  //facetFieldName
+  //facetValues
+  //page
+  //moreAvailable
+  //sort
+%>
+
+<div class="sort-switcher">
+  <div class="row">
+    <div class="col-xs-6">
+      <strong>Current Sort:</strong> <%= sort == 'index' ? 'A - Z' : 'Count' %>
+    </div>
+    <div class="col-xs-6 alignright">
+      <a href="#" class="switch-sort-link" data-new-sort="<%= sort == 'index' ? 'count' : 'index' %>">
+        <span class="glyphicon glyphicon-sort"></span>
+        Sort <%= sort == 'index' ? 'by Count' : 'Alphabetically' %>
+      </a>
+    </div>
+  </div>
+</div>
+
+<%= Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/facet_selector/_paging.ejs', {page: page, moreAvailable: moreAvailable}) %>
+
+<ul>
+  <% if (facetValues.length > 0) { %>
+    <% for (var i = 0; i < facetValues.length; i++) { %>
+      <li>
+        <% if (Hyacinth.DigitalObjectsApp.DigitalObjectSearch.facetValueExistsInParams(facetFieldName, facetValues[i]['value'])) { %>
+          <%- facetValues[i]['value'] %> (<%- facetValues[i]['count'] %>) <a class="remove-facet-link" href="#" data-facet-value="<%= encodeURIComponent(facetValues[i]['value']) %>"><span class="glyphicon glyphicon-remove"></span></a>
+        <% } else { %>
+          <a class="add-facet-link" href="#" data-facet-value="<%= encodeURIComponent(facetValues[i]['value']) %>"><%- facetValues[i]['value'] %> (<%- facetValues[i]['count'] %>)</a>
+        <% } %>
+      </li>
+    <% } %>
+  <% } else { %>
+    <li>No values found.</li>
+  <% } %>
+</ul>
+
+<%= Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/facet_selector/_paging.ejs', {page: page, moreAvailable: moreAvailable}) %>

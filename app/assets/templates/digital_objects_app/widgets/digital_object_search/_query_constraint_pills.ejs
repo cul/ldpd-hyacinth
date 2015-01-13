@@ -1,0 +1,15 @@
+<%
+  //Passed params:
+  //
+  //searchResponse
+%>
+
+<div class="query-constraints">
+  <% $.each(searchResponse['facets'], function(i, facet){ %>
+    <% if(Hyacinth.DigitalObjectsApp.DigitalObjectSearch.facetsExistInParams()) { %>
+      <% Hyacinth.DigitalObjectsApp.DigitalObjectSearch.getFacetFieldValuesFromParams(facet['facet_field_name']).forEach(function(facetValue){ %>
+        <a href="#" class="remove-facet-link btn btn-default btn-xs" data-facet-field-name="<%= facet['facet_field_name'] %>" data-uri-encoded-value="<%= encodeURIComponent(facetValue) %>"><%= facet['display_label'] %> &rsaquo; <%- facetValue %> <span class="glyphicon glyphicon-remove"></span></a>
+      <% }); %>
+    <% } %>
+  <% }); %>
+</div>

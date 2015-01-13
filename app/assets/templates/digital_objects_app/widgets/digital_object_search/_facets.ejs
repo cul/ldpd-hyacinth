@@ -1,0 +1,38 @@
+<%
+  //Passed params:
+  //
+  //searchResponse
+%>
+
+<% if(Hyacinth.DigitalObjectsApp.DigitalObjectSearch.facetsExistInParams() || (searchResponse['facets'].length > 0 && $.grep(searchResponse['facets'], function(facet){return facet.values.length > 0; }).length > 0)) { %>
+  <h3 class="facet-heading">Refine Your Search</h3>
+  <% $.each(searchResponse['facets'], function(i, facet){ %>
+    <% if (facet['values'].length > 0) { %>
+      <div class="facet-group">
+        <div class="facet-group-heading">
+          <a href="#" class="toggle-facet-view">
+            <span class="facet-display-label"><%= facet['display_label'] %></span>
+            <button type="button" class="btn btn-default btn-xs pull-right"><span class="glyphicon glyphicon-chevron-right"></span></button>
+          </a>
+        </div>
+        <div class="facet-value-list <%= Hyacinth.DigitalObjectsApp.DigitalObjectSearch.facetFieldExistsInParams(facet['facet_field_name']) ? '' : 'collapsed' %>">
+          <% $.each(facet['values'], function(j, value_and_count){ %>
+            <% var facetIsActive = Hyacinth.DigitalObjectsApp.DigitalObjectSearch.facetValueExistsInParams(facet['facet_field_name'], value_and_count['value']) %>
+            <div>
+              <span class="count label label-info pull-right"><%= value_and_count['count'] %></span>
+              <% if (facetIsActive) { %>
+                <%- value_and_count['value'] %> <a href="#" class="remove-facet-link" data-facet-field-name="<%= facet['facet_field_name'] %>" data-uri-encoded-value="<%= encodeURIComponent(value_and_count['value']) %>"><span class="glyphicon glyphicon-remove"></span></a>
+              <% } else { %>
+                <a href="#" class="add-facet-link" data-facet-field-name="<%= facet['facet_field_name'] %>" data-uri-encoded-value="<%= encodeURIComponent(value_and_count['value']) %>"><%- value_and_count['value'] %></a>
+              <% } %>
+            </div>
+          <% }); %>
+          <% if (facet['more_available']) { %>
+            <div><a class="show-facet-selector btn btn-default btn-xs" data-facet-field-name="<%- facet['facet_field_name'] %>" data-facet-display-label="<%- facet['display_label'] %>">More &raquo;</a></div>
+          <% } %>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+    <% } %>
+  <% }); %>
+<% } %>

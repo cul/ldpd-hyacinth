@@ -1,0 +1,43 @@
+<%= form_for(@authorized_term) do |f| %>
+  <% if @authorized_term.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@authorized_term.errors.count, "error") %> prohibited this authorized_term from being saved:</h2>
+
+      <ul>
+      <% @authorized_term.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :controlled_vocabulary_id %><br>
+    <%= f.hidden_field :controlled_vocabulary_id %>
+    <%= f.text_field :controlled_vocabulary_id_for_display, value: @authorized_term.controlled_vocabulary.display_label, disabled: true, class: 'form-control' %>
+  </div>
+  <div class="field">
+    <%= f.label :value %><br>
+    <%= f.text_field :value, {class: 'form-control'} %>
+  </div>
+  <div class="field">
+    <%= f.label :value_uri %><br>
+    <%= f.text_field :value_uri, disabled: ! @authorized_term.new_record?, class: 'form-control' %>
+  </div>
+  <div class="field">
+    <%= f.label :authority %><br>
+    <%= f.text_field :authority, {class: 'form-control'} %>
+  </div>
+  <div class="field">
+    <%= f.label :authority_uri %><br>
+    <%= f.text_field :authority_uri, {class: 'form-control'} %>
+  </div>
+  <div class="field">
+    <%= f.label :pid %><br>
+    <%= f.text_field :pid, {class: 'form-control', disabled: true, value: @authorized_term.new_record? ? '- Automatically Generated -' : @authorized_term.pid} %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit('Save', class: 'btn btn-primary') %>
+  </div>
+<% end %>

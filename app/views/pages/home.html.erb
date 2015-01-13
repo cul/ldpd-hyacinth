@@ -1,0 +1,36 @@
+<h1 class="page-title">Welcome to Hyacinth!</h1>
+
+<div class="row">
+  <div id="sign-in-box-container" class="col-md-4">
+    <div id="sign-in-box">
+      <% if user_signed_in? %>
+        <h4>You Are Signed In</h4>
+        <div class="signed-in-as"><%= current_user.full_name %></div>
+        <%= link_to('Sign Out', destroy_user_session_path, {method: :delete, :class => 'btn btn-default'}) %>
+      <% else %>
+        <h4>Sign In Options</h4>
+        <div class="row">
+          <div class="col-md-6">
+            <%= link_to('Columbia CAS', user_do_cas_login_path, :class => 'btn btn-primary btn-sm btn-block') %>
+          </div>
+          <div class="col-md-6">
+            <%= link_to('Email', new_user_session_path, :class => 'btn btn-primary btn-sm btn-block') %>
+          </div>
+        </div>
+        <%#= link_to('Columbia UNI Login', user_do_wind_login_path, :class => 'btn btn-primary btn-sm') %>
+      <% end %>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <p>Hyacinth is a Project-based system for managing Digital Objects.</p>
+    <p>Projects contain three different types of Digital Objects:</p>
+    <ul>
+      <li>Items - Single metadata records</li>
+      <li>Assets - File resource and associated file metadata</li>
+      <li>Groups - Collections of Items or other Groups</li>
+    </ul>
+    <p>Hyacinth allows users to define any number of custom metadata fields for each Digital Object type listed above.</p>
+    <p>It's really cool.</p>
+    </p>
+  </div>
+</div>

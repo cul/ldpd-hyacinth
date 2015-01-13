@@ -1,0 +1,24 @@
+<% if (currentUserCanAddTerms) { %>
+  <button class="btn btn-link btn-xs pull-right add_new_authorized_term">Add A New Term +</button>
+<% } %>
+
+<%= Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/authorized_term_selector/_paging.ejs', {page: page, moreAvailable: moreAvailable}) %>
+
+<ul>
+  <% if (authorizedTerms.length > 0) { %>
+    <% for (var i = 0; i < authorizedTerms.length; i++) { %>
+      <li>
+        <button type="button" class="btn btn-default btn-xs choose_authorized_term_button"
+        data-value-uri="<%= encodeURIComponent(authorizedTerms[i]['value_uri']) %>"
+        data-authority="<%= encodeURIComponent(authorizedTerms[i]['authority']) %>"
+        data-authority-uri="<%= encodeURIComponent(authorizedTerms[i]['authority_uri']) %>"
+        data-value="<%= encodeURIComponent(authorizedTerms[i]['value']) %>"
+        ><%- authorizedTerms[i]['value'] %></button>
+      </li>
+    <% } %>
+  <% } else { %>
+    <li>No terms found.</li>
+  <% } %>
+</ul>
+
+<%= Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/authorized_term_selector/_paging.ejs', {page: page, moreAvailable: moreAvailable}) %>

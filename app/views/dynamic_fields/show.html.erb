@@ -1,0 +1,74 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>String key:</strong>
+  <%= @dynamic_field.string_key %>
+</p>
+
+<p>
+  <strong>Display label:</strong>
+  <%= @dynamic_field.display_label %>
+</p>
+
+<p>
+  <strong>Parent dynamic field group:</strong>
+  <%= @dynamic_field.parent_dynamic_field_group %>
+</p>
+
+<p>
+  <strong>Sort order:</strong>
+  <%= @dynamic_field.sort_order %>
+</p>
+
+<p>
+  <strong>Dynamic field type:</strong>
+  <%= @dynamic_field.dynamic_field_type %>
+</p>
+
+<p>
+  <strong>Additional data json:</strong>
+  <%= @dynamic_field.additional_data_json %>
+</p>
+
+<p>
+  <strong>Is keyword searchable:</strong>
+  <%= @dynamic_field.is_keyword_searchable %>
+</p>
+
+<p>
+  <strong>Is single field searchable:</strong>
+  <%= @dynamic_field.is_single_field_searchable %>
+</p>
+
+<p>
+  <strong>Is facet:</strong>
+  <%= @dynamic_field.is_facet_field %>
+</p>
+
+<p>
+  <strong>Facet field label:</strong>
+  <%= @dynamic_field.facet_field_label %>
+</p>
+
+<p>
+  <strong>Is searchable identifier field:</strong>
+  <%= @dynamic_field.is_searchable_identifier_field %>
+</p>
+
+<p>
+  <strong>Is searchable title field:</strong>
+  <%= @dynamic_field.is_searchable_title_field %>
+</p>
+
+<p>
+  <strong>Created by:</strong>
+  <%= @dynamic_field.created_by %>
+</p>
+
+<p>
+  <strong>Updated by:</strong>
+  <%= @dynamic_field.updated_by %>
+</p>
+
+<%= link_to 'Edit', edit_dynamic_field_path(@dynamic_field) %> |
+<%= link_to 'Back', dynamic_fields_path %>

@@ -1,0 +1,18 @@
+<h1>Dynamic Fields</h1>
+
+<% @dynamic_field_group_categories.each do |dynamic_field_group_category| %>
+  <% next if dynamic_field_group_category.dynamic_field_groups.length == 0 %>
+
+  <h2><%= dynamic_field_group_category.display_label %></h2>
+  <table class="table table-bordered table-striped">
+    <tbody>
+      <% dynamic_field_group_category.dynamic_field_groups.each do |dynamic_field_group| %>
+        <tr>
+          <td class="col-sm-10"><%= dynamic_field_group.display_label %> <span class="label label-default pull-right">Group</span></td>
+          <td class="col-sm-2 aligncenter"><%= link_to 'Edit', edit_dynamic_field_group_path(dynamic_field_group) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+<% end %>

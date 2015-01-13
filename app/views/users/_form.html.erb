@@ -1,0 +1,103 @@
+<%= form_for(@user) do |f| %>
+  <% if @user.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+
+      <ul>
+      <% @user.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if params[:change_password] %>
+
+    <%= hidden_field_tag 'change_password', true %>
+
+    <div class="field">
+      <%= f.label :password, 'New Password' %><br>
+      <%= f.password_field :password, :class => 'form-control' %>
+    </div>
+    <div class="field">
+      <%= f.label :password_confirmation, 'New Password Confirmation' %><br>
+      <%= f.password_field :password_confirmation, :class => 'form-control' %>
+    </div>
+
+  <% else %>
+
+    <div class="field">
+      <%= f.label :email %><br>
+      <% if @user.new_record? %>
+        <%= f.text_field :email, :class => 'form-control' %>
+      <% else %>
+        <%= @user.email %>
+      <% end %>
+    </div>
+    <div class="field">
+      <%= f.label :first_name %><br>
+      <%= f.text_field :first_name, :class => 'form-control' %>
+    </div>
+    <div class="field">
+      <%= f.label :last_name %><br>
+      <%= f.text_field :last_name, :class => 'form-control' %>
+    </div>
+    <% if @user.new_record? %>
+      <div class="field">
+        <%= f.label :password %><br>
+        <%= f.password_field :password, :class => 'form-control' %>
+      </div>
+      <div class="field">
+        <%= f.label :password_confirmation %><br>
+        <%= f.password_field :password_confirmation, :class => 'form-control' %>
+      </div>
+      <div class="field">
+        <%= label_tag 'Generate Random Password' %><br>
+        <div class="input-group">
+          <span class="input-group-btn">
+            <button class="btn btn-default" type="button" id="generate_random_password_button">Generate</button>
+          </span>
+          <%= text_field nil, nil, :class => 'form-control', :name => nil, :id => 'generated_random_password', :readonly => true %>
+        </div><!-- /input-group -->
+      </div>
+    <% else %>
+      <div class="field">
+        <%= f.label :password %><br>
+        &bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull; &nbsp; <%= link_to 'Change Password', edit_user_path(@user, {:change_password => true}) %>
+      </div>
+    <% end %>
+    <div class="field checkbox">
+      <%= f.label(:is_admin, (f.check_box(:is_admin)).html_safe + 'Is Admin') %><br>
+      <%=  %>
+    </div>
+  <% end %>
+
+  <%= f.submit(:class => 'btn btn-primary btn-sm', :value => (@user.new_record? ? 'Create New User' : (params[:change_password] ? 'Change Password' : 'Update User'))) %>
+  <%
+    if @user.new_record?
+      %><%=
+      link_to('Cancel New User Creation',
+        users_path, {
+          :class => 'btn btn-danger btn-sm',
+          data: { confirm: 'Are you sure you want to cancel this new user creation?' },
+        })
+      %><%
+    else
+      if params[:change_password]
+        %><%=
+        link_to('Cancel', edit_user_path(@user), {
+            :class => 'btn btn-danger btn-sm'
+          })
+        %><%
+      else
+        %><%=
+        link_to('Abandon Edits', user_path(@user), {
+            :class => 'btn btn-danger btn-sm',
+            data: { confirm: 'Are you sure you want to abandon these edits?'} ,
+          })
+        %><%
+      end
+    end
+  %>
+
+<% end %>

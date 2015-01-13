@@ -1,0 +1,6 @@
+<mods:mods xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mods="http://www.loc.gov/mods/v3" xsi:schemaLocation="http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd">
+  <mods:identifier type="local">brand_new_identifier_1234</mods:identifier>
+  <mods:titleInfo>
+    <mods:title>Brand New Title</mods:title>
+  </mods:titleInfo>
+</mods:mods>

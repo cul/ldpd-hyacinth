@@ -1,0 +1,29 @@
+<h1>Listing xml_datastreams</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>String key</th>
+      <th>Display label</th>
+      <th>Xml translation json</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @xml_datastreams.each do |xml_datastream| %>
+      <tr>
+        <td><%= xml_datastream.string_key %></td>
+        <td><%= xml_datastream.display_label %></td>
+        <td><%= xml_datastream.xml_translation_json %></td>
+        <td><%= link_to 'Show', xml_datastream %></td>
+        <td><%= link_to 'Edit', edit_xml_datastream_path(xml_datastream) %></td>
+        <td><%= link_to 'Destroy', xml_datastream, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Xml datastream', new_xml_datastream_path %>

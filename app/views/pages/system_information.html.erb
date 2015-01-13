@@ -1,0 +1,20 @@
+<h1 class="page-title">Hyacinth System Information</h1>
+
+<%
+  stats = {
+    'Version' => File.read(File.join(Rails.root, '/VERSION')).strip,
+    'App Filesystem Location' => Rails.root,
+    'Hyacinth Solr URL' => HYACINTH['solr_url'],
+    'Hydra Solr URL' => ActiveFedora.solr_config[:url],
+    'Fedora URL' => ActiveFedora.config.credentials[:url],
+    'Default Asset Home' => HYACINTH['default_asset_home'],
+  }
+%>
+
+<% stats.each do |key, value| %>
+<div class="row">
+  <div class="col-md-3"><strong><%= key %></strong></div>
+  <div class="col-md-9"><%= value %></div>
+</div>
+<br />
+<% end %>

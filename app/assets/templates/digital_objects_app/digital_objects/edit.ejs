@@ -1,0 +1,22 @@
+<%
+  //Passed params:
+  //
+  //digitalObject
+%>
+<% Hyacinth.ContextualNav.setNavTitle('&laquo; Leave Editing Mode', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: Hyacinth.DigitalObjectsApp.params['pid']})); %>
+<%
+  var navItems = [];
+  if (digitalObject.getState() == 'A') {
+    navItems.push(
+      {
+        label: 'Delete',
+        url: '#',
+        class: 'delete-digital-object-button',
+        'data-pid': Hyacinth.DigitalObjectsApp.params['pid']
+      }
+    );
+  }
+%>
+<% Hyacinth.ContextualNav.setNavItems(navItems); %>
+
+<div id="digital-object-editor">Loading...</div>

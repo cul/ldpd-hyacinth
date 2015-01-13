@@ -1,0 +1,54 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>String key:</strong>
+  <%= @dynamic_field_group.string_key %>
+</p>
+
+<p>
+  <strong>Display label:</strong>
+  <%= @dynamic_field_group.display_label %>
+</p>
+
+<p>
+  <strong>Parent dynamic field group:</strong>
+  <%= @dynamic_field_group.parent_dynamic_field_group %>
+</p>
+
+<p>
+  <strong>Sort order:</strong>
+  <%= @dynamic_field_group.sort_order %>
+</p>
+
+<p>
+  <strong>Is repeatable:</strong>
+  <%= @dynamic_field_group.is_repeatable %>
+</p>
+
+<p>
+  <strong>Xml datastream:</strong>
+  <%= @dynamic_field_group.xml_datastream %>
+</p>
+
+<p>
+  <strong>Xml translation json:</strong>
+  <%= @dynamic_field_group.xml_translation_json %>
+</p>
+
+<p>
+  <strong>Dynamic field category:</strong>
+  <%= @dynamic_field_group.dynamic_field_group_category %>
+</p>
+
+<p>
+  <strong>Created by:</strong>
+  <%= @dynamic_field_group.created_by %>
+</p>
+
+<p>
+  <strong>Updated by:</strong>
+  <%= @dynamic_field_group.updated_by %>
+</p>
+
+<%= link_to 'Edit', edit_dynamic_field_group_path(@dynamic_field_group) %> |
+<%= link_to 'Back', dynamic_field_groups_path %>

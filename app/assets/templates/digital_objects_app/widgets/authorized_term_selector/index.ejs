@@ -1,0 +1,39 @@
+<div class="authorized_term_selector">
+  <div class="authorized_term_search">
+    <input class="form-control input-sm authorized_term_search_q" name="q" type="text" placeholder="Search by value or URI..." autocomplete="off">
+    <div class="authorized_term_search_results"></div>
+  </div>
+
+  <div class="authorized_term_adder">
+    <%
+      fields_and_display_labels = [
+        {name: 'value', display_label: 'Value (required)'},
+        {name: 'value_uri', display_label: 'Value URI'},
+        {name: 'authority', display_label: 'Authority'},
+        {name: 'authority_uri', display_label: 'Authority URI'}
+      ]
+    %>
+
+    <form class="add_authorized_term_form">
+      <% for (var i = 0; i < fields_and_display_labels.length; i++) { %>
+        <div class="row field">
+          <div class="col-md-2">
+            <%= fields_and_display_labels[i]['display_label'] %>
+          </div>
+          <div class="col-md-10">
+            <input type="text" name="<%= fields_and_display_labels[i]['name'] %>" class="form-control input-sm" />
+          </div>
+        </div>
+      <% } %>
+
+      <div class="errors"></div>
+
+      <div>
+        <button type="submit" class="btn btn-primary btn-sm pull-right add_authorized_term_form_submit_button">Add Term</button>
+        <div class="clearfix"></div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

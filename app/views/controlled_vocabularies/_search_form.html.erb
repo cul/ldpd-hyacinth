@@ -1,0 +1,10 @@
+<%= form_tag({action: 'search'}, {method: 'get'}) do |f| %>
+  <div class="input-group">
+      <%= text_field_tag :q, params[:q], class: 'form-control input-sm', placeholder: 'Search all Controlled Vocabularies for a value or URI...' %>
+      <div class="input-group-btn">
+        <%= link_to '<span class="glyphicon glyphicon-remove"></span>'.html_safe, controlled_vocabularies_path, class: 'btn btn-default btn-sm' %>
+        <%= submit_tag 'Search', class: 'btn btn-default btn-sm' %>
+      </div>
+  </div>
+<% end %>
+<br />

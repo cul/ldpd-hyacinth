@@ -1,0 +1,43 @@
+<%= form_for(@controlled_vocabulary) do |f| %>
+  <% if @controlled_vocabulary.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@controlled_vocabulary.errors.count, "error") %> prohibited this controlled_vocabulary from being saved:</h2>
+
+      <ul>
+      <% @controlled_vocabulary.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <% if @controlled_vocabulary.new_record? %>
+  <div class="alert alert-info">Note: It generally works out best if Controlled Vocabulary names are singular rather than plural. (i.e. "Format" rather than "Formats").</div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :pid %><br>
+    <%= f.text_field :pid, {class: 'form-control', disabled: true, value: @controlled_vocabulary.new_record? ? '- Automatically Generated -' : @controlled_vocabulary.pid} %>
+  </div>
+
+  <div class="field">
+    <%= f.label :string_key, 'String key (cannot be changed)' %><br>
+    <%= f.text_field :string_key, {class: 'form-control', disabled: ( ! @controlled_vocabulary.new_record? )} %>
+  </div>
+  <div class="field">
+    <%= f.label :display_label %><br>
+    <%= f.text_field :display_label, {class: 'form-control'} %>
+  </div>
+  <div class="field">
+    <%= f.label :pid_generator_id, 'PID Generator' %>
+    <%= f.collection_select(:pid_generator_id, PidGenerator.all.sort_by { |pid_generator| pid_generator.namespace }, :id, :namespace, {}, {:class => 'form-control'}) %>
+  </div>
+
+  <div class="field">
+    <%= f.label(:only_managed_by_admins, (f.check_box(:only_managed_by_admins)).html_safe + ' Only admins can manage Authorized Terms for this Controlled Vocabulary') %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit('Save', class: 'btn btn-primary') %>
+  </div>
+<% end %>

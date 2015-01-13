@@ -1,0 +1,21 @@
+<%= render partial: 'edit_project_nav' %>
+
+<table class="table table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Fieldset Name</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @fieldsets.each do |fieldset| %>
+      <tr>
+        <td class="col-xs-10"><%= fieldset.display_label %></td>
+        <td class="col-xs-2 aligncenter"><%= link_to 'Edit', edit_fieldset_path(fieldset) %></td>
+      </tr>
+    <% end %>
+    <%= '<tr><td colspan="2">No fieldsets have been created.</td></tr>'.html_safe if @fieldsets.length == 0 %>
+
+
+  </tbody>
+</table>

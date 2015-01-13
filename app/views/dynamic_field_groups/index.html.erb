@@ -1,0 +1,43 @@
+<h1>Listing dynamic_field_groups</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>String key</th>
+      <th>Display label</th>
+      <th>Parent dynamic field group</th>
+      <th>Sort order</th>
+      <th>Is repeatable</th>
+      <th>Xml datastream</th>
+      <th>Xml translation json</th>
+      <th>Dynamic field category</th>
+      <th>Created by</th>
+      <th>Updated by</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @dynamic_field_groups.each do |dynamic_field_group| %>
+      <tr>
+        <td><%= dynamic_field_group.string_key %></td>
+        <td><%= dynamic_field_group.display_label %></td>
+        <td><%= dynamic_field_group.parent_dynamic_field_group %></td>
+        <td><%= dynamic_field_group.sort_order %></td>
+        <td><%= dynamic_field_group.is_repeatable %></td>
+        <td><%= dynamic_field_group.xml_datastream %></td>
+        <td><%= dynamic_field_group.xml_translation_json %></td>
+        <td><%= dynamic_field_group.dynamic_field_group_category %></td>
+        <td><%= dynamic_field_group.created_by %></td>
+        <td><%= dynamic_field_group.updated_by %></td>
+        <td><%= link_to 'Show', dynamic_field_group %></td>
+        <td><%= link_to 'Edit', edit_dynamic_field_group_path(dynamic_field_group) %></td>
+        <td><%= link_to 'Destroy', dynamic_field_group, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Dynamic field group', new_dynamic_field_group_path %>
