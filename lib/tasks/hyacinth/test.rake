@@ -2,6 +2,7 @@ namespace :hyacinth do
 
   namespace :test do
 
+    # Note: Don't include Rails environment for this task, since enviroment includes a check for the presence of database.yml
     task :setup_config_files_for_test_environment do
 
       # database.yml

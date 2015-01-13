@@ -38,7 +38,6 @@ namespace :hyacinth do
 
     jetty_params = Jettywrapper.load_config
     error = Jettywrapper.wrap(jetty_params) do
-      Rake::Task["hyacinth:test:setup_config_files_for_test_environment"].invoke
       Rake::Task["hyacinth:fedora:reload_cmodels"].invoke
       Rake::Task["db:drop"].invoke
       Rake::Task["db:create"].invoke
