@@ -470,7 +470,7 @@ DEPENDENCIES
   jquery.fileupload-rails
   kaminari
   mime-types
-  mysql2 (>= 0.3.13)
+  mysql2 (= 0.3.13)
   noid (>= 0.7.1)
   nokogiri (~> 1.6.3)
   poltergeist
