@@ -271,7 +271,7 @@ namespace :hyacinth do
         # TODO: This is temporary.  Handle relatedItem elements with actual Fedora object relationships.  We need to support theoretically unlimited relatedItem nesting.
         related_item = DynamicFieldGroup.create!(string_key: 'related_item', display_label: 'Related Item / Containing Entity', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_contextual_data,
           dynamic_fields: [
-            DynamicField.new(string_key: 'related_item_type', display_label: 'Type', dynamic_field_type: dynamic_field_type: DynamicField::Type::SELECT, is_single_field_searchable: true, additional_data_json: {
+            DynamicField.new(string_key: 'related_item_type', display_label: 'Type', dynamic_field_type: DynamicField::Type::SELECT, is_single_field_searchable: true, additional_data_json: {
               select_options: [
                 {value: '', display_label: '- Select an Option -'},
                 {value: 'host', display_label: 'Host'},
