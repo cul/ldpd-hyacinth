@@ -3,13 +3,13 @@ cache: bundler
 sudo: false
 
 #rvm:
-#  - 2.2
-#  - 2.1
-#  - 1.9.3
+  - 2.2
+  #- 2.1
+  #- 1.9.3
 
 matrix:
   include:
-    - rvm: 2.2
+    #- rvm: 2.2
     - rvm: 2.1
     - rvm: 1.9.3
 
@@ -21,6 +21,7 @@ env:
     - NOKOGIRI_USE_SYSTEM_LIBRARIES=true
 
 before_script:
+  - sudo apt-get install -y libmysqlclient-dev
   - bundle exec rake hyacinth:test:setup_config_files_for_test_environment
   
 script: bundle exec rake hyacinth:ci
