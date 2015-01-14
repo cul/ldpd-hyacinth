@@ -1,6 +1,7 @@
 puts '---------------------------'
 puts 'Initializing Hyacinth in environment: ' + Rails.env
 puts '---------------------------'
+puts 'Rails ENV: ' + Rails.env
 puts 'Fedora URL: ' + ActiveFedora.config.credentials[:url]
 puts 'Solr URL: ' + ActiveFedora.solr_config[:url]
 puts '---------------------------'

@@ -12,7 +12,7 @@ module DynamicFieldAndDynamicFieldGroup::SharedValidations
 
     if self.is_a?(DynamicField)
 
-      if DynamicField.where(string_key: self.string_key).where(self.new_record? ? 'true' : 'id  != ' + self.id.to_s).length > 0
+      if DynamicField.where(string_key: self.string_key).where(self.new_record? ? '1 = 1' : 'id  != ' + self.id.to_s).length > 0
         errors.add(:string_key, "must be unique.  This string_key is already taken by another DynamicField.")
       end
 
@@ -26,7 +26,7 @@ module DynamicFieldAndDynamicFieldGroup::SharedValidations
         errors.add(:string_key, "must be unique.  This string_key is already taken by a DynamicField.")
       end
 
-      if DynamicFieldGroup.where(string_key: self.string_key).where(self.new_record? ? 'true' : 'id  != ' + self.id.to_s).length > 0
+      if DynamicFieldGroup.where(string_key: self.string_key).where(self.new_record? ? '1 = 1' : 'id  != ' + self.id.to_s).length > 0
         errors.add(:string_key, "must be unique.  This string_key is already taken by another DynamicFieldGroup.")
       end
 
