@@ -1,6 +1,6 @@
 language: ruby
 cache: bundler
-sudo: false
+sudo: true
 
 rvm:
   - 2.2
