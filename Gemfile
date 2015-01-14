@@ -103,7 +103,8 @@ group :development, :test do
   gem 'factory_girl_rails', '>= 4.4.1'
 end
 
+
 # Alternate development webserver
-gem 'puma'
-#gem 'thin'
-#gem 'unicorn'
+gem 'puma', group: :development
+#gem 'thin', group: :development
+#gem 'unicorn', group: :development
