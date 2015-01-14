@@ -2,7 +2,7 @@ language: ruby
 cache: bundler
 sudo: false
 
-#rvm:
+rvm:
   - 2.2
   #- 2.1
   #- 1.9.3
