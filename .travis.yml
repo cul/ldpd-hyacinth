@@ -1,6 +1,6 @@
 language: ruby
 cache: bundler
-sudo: true
+sudo: false
 
 rvm:
   - 2.2
@@ -21,7 +21,6 @@ env:
     - NOKOGIRI_USE_SYSTEM_LIBRARIES=true
 
 before_script:
-  - sudo apt-get install -y libmysqlclient-dev
   - bundle exec rake hyacinth:test:setup_config_files_for_test_environment
   
 script: bundle exec rake hyacinth:ci
