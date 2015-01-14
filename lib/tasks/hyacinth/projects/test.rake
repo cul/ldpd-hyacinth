@@ -22,12 +22,12 @@ namespace :hyacinth do
         # Create AuthorizedTerms and add them to the correct ControlledVocabularies
         AuthorizedTerm.create!(
           value: 'Test Repository',
+          code: 'NNC-FAKE-CODE',
           authority: 'nnc',
           controlled_vocabulary: ControlledVocabulary.find_by(string_key: 'repository')
         )
         AuthorizedTerm.create!(
           value: 'Test Collection',
-          authority: 'nnc',
           controlled_vocabulary: ControlledVocabulary.find_by(string_key: 'collection')
         )
 

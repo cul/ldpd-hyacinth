@@ -41,7 +41,7 @@ dfc_other = DynamicFieldGroupCategory.create!(display_label: 'Other')
 dfc_asset_data = DynamicFieldGroupCategory.create!(display_label: 'Asset Data')
 
 # Create ControlledVocabularies (and any pre-populated terms)
-repository_controlled_vocabulary = ControlledVocabulary.create!(string_key: 'repository', display_label: 'Repository', pid_generator: default_pid_generator, authorized_terms: [])
+physical_location_controlled_vocabulary = ControlledVocabulary.create!(string_key: 'physical_location', display_label: 'Physical Location', pid_generator: default_pid_generator, authorized_terms: [])
 collection_controlled_vocabulary = ControlledVocabulary.create!(string_key: 'collection', display_label: 'Collection', pid_generator: default_pid_generator, authorized_terms: [])
 
 form_controlled_vocabulary = ControlledVocabulary.create!(string_key: 'form', display_label: 'Form', pid_generator: default_pid_generator, only_managed_by_admins: true, authorized_terms: [
@@ -120,12 +120,13 @@ form = DynamicFieldGroup.create!(string_key: 'form', display_label: 'Form', xml_
   ]
 )
 
-repository = DynamicFieldGroup.create!(string_key: 'repository', display_label: 'Repository', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_location_and_holdings,
+physical_location = DynamicFieldGroup.create!(string_key: 'physical_location', display_label: 'Physical Location', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_location_and_holdings,
   dynamic_fields: [
-    DynamicField.new(string_key: 'repository_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE, controlled_vocabulary: repository_controlled_vocabulary, is_facet_field: true, facet_field_label: 'Repository'),
-    DynamicField.new(string_key: 'repository_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI),
-    DynamicField.new(string_key: 'repository_authority', display_label: 'Authority', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY),
-    DynamicField.new(string_key: 'repository_authority_uri', display_label: 'Authority URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY_URI)
+    DynamicField.new(string_key: 'physical_location_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE, controlled_vocabulary: physical_location_controlled_vocabulary, is_facet_field: true, facet_field_label: 'Physical Location'),
+    DynamicField.new(string_key: 'physical_location_code', display_label: 'Code', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_CODE),
+    DynamicField.new(string_key: 'physical_location_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI),
+    DynamicField.new(string_key: 'physical_location_authority', display_label: 'Authority', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY),
+    DynamicField.new(string_key: 'physical_location_authority_uri', display_label: 'Authority URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY_URI)
   ]
 )
 

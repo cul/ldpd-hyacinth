@@ -27,7 +27,7 @@ class AuthorizedTerm < ActiveRecord::Base
     if self.value_uri.blank?
       # Our local authority URI is the reposiory url for this object
 
-      # The repository connection could be over http or https, but we don't want URIs to be inconsistent if we switch the connection type later on.
+      # The Fedora connection could be over http or https, but we don't want URIs to be inconsistent if we switch the connection type later on.
       # Always use "http" for now (like other authorities, including id.loc.gov and schema.org).  If this ever changes, we'll want to do a global update anyway.
       self.value_uri = (ActiveFedora.config.credentials[:url] + '/objects/' + self.pid).gsub(/^https/, 'http')
     end
@@ -48,6 +48,17 @@ class AuthorizedTerm < ActiveRecord::Base
     write_attribute_return_value = write_attribute(:value_uri, new_value_uri)
     update_unique_value_and_value_uri_hash!
     return write_attribute_return_value
+  end
+
+  def as_json(options={})
+
+    return {
+      value: self.value,
+      code: self.code,
+      value_uri: self.value_uri,
+      authority: self.authority,
+      authority_uri: self.authority_uri
+    }
   end
 
 end

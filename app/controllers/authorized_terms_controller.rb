@@ -30,6 +30,7 @@ class AuthorizedTermsController < ApplicationController
         format.json {
           render json: {
             value: @authorized_term.value,
+            value: @authorized_term.code,
             value_uri: @authorized_term.value_uri,
             authority: @authorized_term.authority,
             authority_uri: @authorized_term.authority_uri
@@ -77,7 +78,7 @@ class AuthorizedTermsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def authorized_term_params
-    params.require(:authorized_term).permit(:pid, :value, :value_uri, :authority, :authority_uri, :controlled_vocabulary_id)
+    params.require(:authorized_term).permit(:pid, :value, :code, :value_uri, :authority, :authority_uri, :controlled_vocabulary_id)
   end
 
   def adjust_params_if_controlled_vocabulary_string_key_is_present

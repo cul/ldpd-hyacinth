@@ -9,10 +9,11 @@
     <% for (var i = 0; i < authorizedTerms.length; i++) { %>
       <li>
         <button type="button" class="btn btn-default btn-xs choose_authorized_term_button"
+        data-value="<%= encodeURIComponent(authorizedTerms[i]['value']) %>"
+        data-code="<%= encodeURIComponent(authorizedTerms[i]['code']) %>"
         data-value-uri="<%= encodeURIComponent(authorizedTerms[i]['value_uri']) %>"
         data-authority="<%= encodeURIComponent(authorizedTerms[i]['authority']) %>"
         data-authority-uri="<%= encodeURIComponent(authorizedTerms[i]['authority_uri']) %>"
-        data-value="<%= encodeURIComponent(authorizedTerms[i]['value']) %>"
         ><%- authorizedTerms[i]['value'] %></button>
       </li>
     <% } %>

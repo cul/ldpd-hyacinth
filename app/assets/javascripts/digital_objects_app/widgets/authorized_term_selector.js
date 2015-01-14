@@ -13,10 +13,12 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector = function(containerElementId,
   this.updateInProgress = false;
 
   var $possibleAuthorizedTermValueUriElement = $parentDynamicFieldGroup.children('.dynamic_field_group_content').children('.dynamic_field[data-dynamic-field-type="authorized_term_value_uri"]');
+  var $possibleAuthorizedTermCodeElement = $parentDynamicFieldGroup.children('.dynamic_field_group_content').children('.dynamic_field[data-dynamic-field-type="authorized_term_code"]');
   var $possibleAuthorizedTermAuthorityElement = $parentDynamicFieldGroup.children('.dynamic_field_group_content').children('.dynamic_field[data-dynamic-field-type="authorized_term_authority"]');
   var $possibleAuthorizedTermAuthorityUriElement = $parentDynamicFieldGroup.children('.dynamic_field_group_content').children('.dynamic_field[data-dynamic-field-type="authorized_term_authority_uri"]');
 
   this.$authorizedTermValueUriElement = ($possibleAuthorizedTermValueUriElement.length == 1) ? $possibleAuthorizedTermValueUriElement.find('.authorized_term_value_uri_field') : null;
+  this.$authorizedTermCodeElement = ($possibleAuthorizedTermCodeElement.length == 1) ? $possibleAuthorizedTermCodeElement.find('.authorized_term_code_field') : null;
   this.$authorizedTermAuthorityElement = ($possibleAuthorizedTermAuthorityElement.length == 1) ? $possibleAuthorizedTermAuthorityElement.find('.authorized_term_authority_field') : null;
   this.$authorizedTermAuthorityUriElement = ($possibleAuthorizedTermAuthorityUriElement.length == 1) ? $possibleAuthorizedTermAuthorityUriElement.find('.authorized_term_authority_uri_field') : null;
 
@@ -54,10 +56,14 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
     e.preventDefault();
 
     var value = decodeURIComponent($(this).attr('data-value'));
+    var code = '';
     var valueUri = '';
     var authority = '';
     var authorityUri = '';
 
+    if ($(this).attr('data-code') != 'undefined') {
+      code = decodeURIComponent($(this).attr('data-code'));
+    }
     if ($(this).attr('data-value-uri') != 'undefined') {
       valueUri = decodeURIComponent($(this).attr('data-value-uri'));
     }
@@ -69,6 +75,7 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
     }
 
     that.$authorizedTermValueElement.val(value);
+    if (that.$authorizedTermCodeElement != null) { that.$authorizedTermCodeElement.val(code); }
     if (that.$authorizedTermValueUriElement != null) { that.$authorizedTermValueUriElement.val(valueUri); }
     if (that.$authorizedTermAuthorityElement != null) { that.$authorizedTermAuthorityElement.val(authority); }
     if (that.$authorizedTermAuthorityUriElement != null) { that.$authorizedTermAuthorityUriElement.val(authorityUri); }
@@ -122,6 +129,7 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
       data: {
         authorized_term: {
           value: $(this).find('input[name="value"]').val(),
+          code: $(this).find('input[name="code"]').val(),
           value_uri: $(this).find('input[name="value_uri"]').val(),
           authority: $(this).find('input[name="authority"]').val(),
           authority_uri: $(this).find('input[name="authority_uri"]').val(),
@@ -139,6 +147,7 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
 
         fields_and_display_labels = [
           {name: 'value', display_label: 'Value (required)'},
+          {name: 'code', display_label: 'Code'},
           {name: 'value_uri', display_label: 'Value URI'},
           {name: 'authority', display_label: 'Authority'},
           {name: 'authority_uri', display_label: 'Authority URI'}
@@ -160,6 +169,7 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
         that.$authorizedTermValueElement.attr('data-display-value', createAuthorizedTermResponse['value']);
 
         that.$authorizedTermValueElement.val(createAuthorizedTermResponse['value']);
+        if (that.$authorizedTermCodeElement != null) { that.$authorizedTermCodeElement.val(createAuthorizedTermResponse['code']); }
         if (that.$authorizedTermValueUriElement != null) { that.$authorizedTermValueUriElement.val(createAuthorizedTermResponse['value_uri']); }
         if (that.$authorizedTermAuthorityElement != null) { that.$authorizedTermAuthorityElement.val(createAuthorizedTermResponse['authority']); }
         if (that.$authorizedTermAuthorityUriElement != null) { that.$authorizedTermAuthorityUriElement.val(createAuthorizedTermResponse['authority_uri']); }
@@ -241,6 +251,7 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.dispose = function()
   this.$containerElement.find('input.authorized_term_search_q').off('keydown');
   this.$containerElement = null;
   this.$authorizedTermValueElement = null;
+  this.$authorizedTermCodeElement = null;
   this.$authorizedTermValueUriElement = null;
   this.$authorizedTermAuthorityElement = null;
   this.$authorizedTermAuthorityUriElement = null;

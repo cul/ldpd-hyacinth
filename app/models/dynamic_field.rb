@@ -10,6 +10,7 @@ class DynamicField < ActiveRecord::Base
     SELECT = 'select'
     DATE = 'date'
     AUTHORIZED_TERM_VALUE = 'authorized_term_value'
+    AUTHORIZED_TERM_CODE = 'authorized_term_code'
     AUTHORIZED_TERM_VALUE_URI = 'authorized_term_value_uri'
     AUTHORIZED_TERM_AUTHORITY = 'authorized_term_authority'
     AUTHORIZED_TERM_AUTHORITY_URI = 'authorized_term_authority_uri'
@@ -23,6 +24,7 @@ class DynamicField < ActiveRecord::Base
     DynamicField::Type::SELECT => 'Select',
     DynamicField::Type::DATE => 'Date',
     DynamicField::Type::AUTHORIZED_TERM_VALUE => 'Authorized Term - Value',
+    DynamicField::Type::AUTHORIZED_TERM_CODE => 'Authorized Term - Code',
     DynamicField::Type::AUTHORIZED_TERM_VALUE_URI => 'Authorized Term - Value URI',
     DynamicField::Type::AUTHORIZED_TERM_AUTHORITY => 'Authorized Term - Authority',
     DynamicField::Type::AUTHORIZED_TERM_AUTHORITY_URI => 'Authorized Term - Authority URI'

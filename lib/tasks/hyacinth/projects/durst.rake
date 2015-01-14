@@ -38,12 +38,12 @@ namespace :hyacinth do
         # Create AuthorizedTerms and add them to the correct ControlledVocabularies
         AuthorizedTerm.create!(
           value: 'Avery Architectural & Fine Arts Library, Columbia University',
-          authority: 'nnc',
-          controlled_vocabulary: ControlledVocabulary.find_by(string_key: 'repository')
+          code: 'NNC-A',
+          authority: 'marcorg',
+          controlled_vocabulary: ControlledVocabulary.find_by(string_key: 'physical_location')
         )
         AuthorizedTerm.create!(
           value: 'Seymour B. Durst Old York Library Collection',
-          authority: 'nnc',
           controlled_vocabulary: ControlledVocabulary.find_by(string_key: 'collection')
         )
 
@@ -268,36 +268,23 @@ namespace :hyacinth do
           ]
         )
 
-        # TODO: This is temporary.  Handle relatedItem elements with actual Fedora object relationships.  We need to support theoretically unlimited relatedItem nesting.
-        related_item = DynamicFieldGroup.create!(string_key: 'related_item', display_label: 'Related Item / Containing Entity', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_contextual_data,
+        series = DynamicFieldGroup.create!(string_key: 'series', display_label: 'Series', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_contextual_data,
           dynamic_fields: [
-            DynamicField.new(string_key: 'related_item_type', display_label: 'Type', dynamic_field_type: DynamicField::Type::SELECT, is_single_field_searchable: true, additional_data_json: {
-              select_options: [
-                {value: '', display_label: '- Select an Option -'},
-                {value: 'host', display_label: 'Host'},
-                {value: 'series', display_label: 'Series'}
-              ]
-            }.to_json),
-            DynamicField.new(string_key: 'related_item_display_label', display_label: 'Display Label', dynamic_field_type: DynamicField::Type::STRING)
+            DynamicField.new(string_key: 'series_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
           ]
         )
-          # --> Start Child DynamicFieldGroups
-           related_item_title = DynamicFieldGroup.create!(string_key: 'related_item_title', display_label: 'Title', parent_dynamic_field_group: related_item, is_repeatable: true,
-              dynamic_fields: [
-                DynamicField.new(string_key: 'related_item_title_type', display_label: 'Type', dynamic_field_type: DynamicField::Type::SELECT, additional_data_json: {
-                  select_options: [
-                    {value: '', display_label: 'Title'},
-                    {value: 'abbreviated', display_label: 'Abbreviated'},
-                    {value: 'translated', display_label: 'Translated'},
-                    {value: 'alternative', display_label: 'Alternative'},
-                    {value: 'uniform', display_label: 'Uniform'}
-                  ]
-                }.to_json),
-                DynamicField.new(string_key: 'related_item_title_non_sort_portion', display_label: 'Non-Sort Portion', dynamic_field_type: DynamicField::Type::STRING),
-                DynamicField.new(string_key: 'related_item_title_sort_portion', display_label: 'Sort Portion', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_searchable_title_field: true)
-              ]
-            )
-          # --> End Child DynamicFieldGroups
+
+        box_title = DynamicFieldGroup.create!(string_key: 'box_title', display_label: 'Box Title', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_contextual_data,
+          dynamic_fields: [
+            DynamicField.new(string_key: 'box_title_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
+          ]
+        )
+
+        group_title = DynamicFieldGroup.create!(string_key: 'group_title', display_label: 'Group Title', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_contextual_data,
+          dynamic_fields: [
+            DynamicField.new(string_key: 'group_title_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
+          ]
+        )
 
         clio_identifier = DynamicFieldGroup.create!(string_key: 'clio_identifier', display_label: 'CLIO ID', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers, xml_extraction_priority: 1,
           dynamic_fields: [
@@ -378,6 +365,12 @@ namespace :hyacinth do
           dynamic_fields: [DynamicField.new(string_key: 'durst_favorite_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::BOOLEAN, is_single_field_searchable: true)]
         )
 
+        record_content_source = DynamicFieldGroup.create!(string_key: 'record_content_source', display_label: 'Record Content Source (Record Creator)', xml_datastream: nil, dynamic_field_group_category: dfc_record_info, is_repeatable: false,
+          dynamic_fields: [DynamicField.new(string_key: 'record_content_source_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::BOOLEAN, is_single_field_searchable: true)]
+        )
+
+
+
 
 
         # Enable title fields for Items, Groups and Assets
@@ -391,8 +384,7 @@ namespace :hyacinth do
           DynamicFieldGroup.find_by(string_key: 'title').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'collection').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'form').dynamic_fields +
-          DynamicFieldGroup.find_by(string_key: 'repository').dynamic_fields +
-
+          DynamicFieldGroup.find_by(string_key: 'physical_location').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'synced_with_catalog').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'marc_005_last_modified').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'digitized_by_columbia').dynamic_fields +
@@ -425,8 +417,7 @@ namespace :hyacinth do
           DynamicFieldGroup.find_by(string_key: 'note').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'extent').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'orientation').dynamic_fields +
-          DynamicFieldGroup.find_by(string_key: 'related_item').dynamic_fields +
-          DynamicFieldGroup.find_by(string_key: 'related_item_title').dynamic_fields +
+          DynamicFieldGroup.find_by(string_key: 'series').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'box_title').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'group_title').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'clio_identifier').dynamic_fields +

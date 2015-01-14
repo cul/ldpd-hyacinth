@@ -36,7 +36,7 @@ class ControlledVocabulariesController < ApplicationController
       end
 
       @authorized_terms = AuthorizedTerm.includes(:controlled_vocabulary).where(
-        'value LIKE ? OR value_uri LIKE ?', '%' + params[:q] + '%', '%' + params[:q] + '%'
+        'value LIKE ? OR code LIKE ? OR value_uri LIKE ?', '%' + params[:q] + '%', '%' + params[:q] + '%', '%' + params[:q] + '%'
       ).order(:value => :asc).page(page).per(per_page)
     end
 
@@ -134,9 +134,10 @@ class ControlledVocabulariesController < ApplicationController
       format.html {
         # Render normal html view
       }
+
       format.json {
         render json: {
-          authorized_terms: @authorized_terms.map{|authorized_term| {value: authorized_term.value, value_uri: authorized_term.value_uri} },
+          authorized_terms: @authorized_terms.as_json,
           more_available: (@authorized_terms.next_page != nil),
           current_user_can_add_terms: current_user.can_manage_controlled_vocabulary_terms?(@controlled_vocabulary)
         }
