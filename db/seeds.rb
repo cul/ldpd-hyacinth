@@ -36,6 +36,7 @@ dfc_geographic_data = DynamicFieldGroupCategory.create!(display_label: 'Geograph
 dfc_notes = DynamicFieldGroupCategory.create!(display_label: 'Notes')
 dfc_digitization = DynamicFieldGroupCategory.create!(display_label: 'Digitization')
 dfc_contextual_data = DynamicFieldGroupCategory.create!(display_label: 'Contextual Data')
+dfc_record_info = DynamicFieldGroupCategory.create!(display_label: 'Record Information')
 dfc_other = DynamicFieldGroupCategory.create!(display_label: 'Other')
 dfc_asset_data = DynamicFieldGroupCategory.create!(display_label: 'Asset Data')
 
@@ -87,7 +88,7 @@ form_controlled_vocabulary = ControlledVocabulary.create!(string_key: 'form', di
 # Create core DynamicFieldGroups and DynamicFields
 title = DynamicFieldGroup.create!(string_key: 'title', display_label: 'Title', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
   dynamic_fields: [
-    DynamicField.new(string_key: 'alternative_title_type', display_label: 'Type', dynamic_field_type: DynamicField::Type::SELECT, additional_data_json: {
+    DynamicField.new(string_key: 'title_type', display_label: 'Type', dynamic_field_type: DynamicField::Type::SELECT, additional_data_json: {
       select_options: [
         {value: '', display_label: 'Title'},
         {value: 'abbreviated', display_label: 'Abbreviated'},
