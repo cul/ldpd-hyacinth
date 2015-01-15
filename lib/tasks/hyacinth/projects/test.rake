@@ -24,7 +24,7 @@ namespace :hyacinth do
           value: 'Test Repository',
           code: 'NNC-FAKE-CODE',
           authority: 'nnc',
-          controlled_vocabulary: ControlledVocabulary.find_by(string_key: 'repository')
+          controlled_vocabulary: ControlledVocabulary.find_by(string_key: 'physical_location')
         )
         AuthorizedTerm.create!(
           value: 'Test Collection',
@@ -51,7 +51,7 @@ namespace :hyacinth do
           test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: dynamic_field, digital_object_type: dot_group)
         end
 
-        (DynamicFieldGroup.find_by(string_key: 'collection').dynamic_fields + DynamicFieldGroup.find_by(string_key: 'form').dynamic_fields + DynamicFieldGroup.find_by(string_key: 'repository').dynamic_fields).each do |dynamic_field|
+        (DynamicFieldGroup.find_by(string_key: 'collection').dynamic_fields + DynamicFieldGroup.find_by(string_key: 'form').dynamic_fields + DynamicFieldGroup.find_by(string_key: 'physical_location').dynamic_fields).each do |dynamic_field|
           test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: dynamic_field, digital_object_type: dot_item)
         end
 
