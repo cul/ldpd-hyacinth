@@ -29,6 +29,8 @@ hyacinth.yml
 secrets.yml
 solr.yml
 
+*_user_accounts.yml
+
 # Ignore hydra-jetty
 /jetty
 
