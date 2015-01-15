@@ -19,6 +19,15 @@
     padding:0;
   }
 
+  .editor-form {
+    .form-navigation-dropup {
+      position:fixed;
+      right:20px;
+      bottom:20px;
+      z-index:999;
+    }
+  }
+
   .dynamic_field_group_content {
     padding:.5em;
     border:1px solid #ddd;

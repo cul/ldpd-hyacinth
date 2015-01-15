@@ -6,6 +6,15 @@
   //dynamicFieldIdsToEnabledDynamicFields
 %>
 <form class="editor-form">
+  <div class="btn-group dropup form-navigation-dropup">
+    <a href="#" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+      Jump <span class="caret"></span>
+      <span class="sr-only">Toggle Dropdown</span>
+    </a>
+    <ul class="dropdown-menu dropdown-menu-right" role="menu">
+    </ul>
+  </div>
+
   <div class="errors"></div>
   <div class="dynamic_field_group_content">
     <% for (var i = 0; i < dynamicFieldHierarchy.length; i++) { %>

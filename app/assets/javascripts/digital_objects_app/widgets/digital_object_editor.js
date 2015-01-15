@@ -417,7 +417,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
     });
   }
 
-  //Make fielsets selector functional
+  //Make fielset selector functional
   if (that.mode == 'edit' && that.$containerElement.find('.fieldset-selector').length > 0) {
 
     that.$containerElement.on('change', '.fieldset-selector', function(e) {
@@ -467,6 +467,9 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
         lastKnownNumVisibleDynamicFieldGroups = currentlyKnownNumVisibleDynamicFieldGroups;
       }
 
+      //Refresh navigation dropup options based on visible DynamicFieldGroupCategories
+      that.refreshNavigationDropupOptions();
+
     });
 
     //And trigger the fieldset change event to set the currently visible fields
@@ -476,8 +479,25 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
   //And finally, refresh tab indexes
   Hyacinth.DigitalObjectsApp.DigitalObjectEditor.refreshTabIndexes($editorForm);
 
+  //Bind navigation dropup click handlers
+  this.$containerElement.find('.form-navigation-dropup').find('.dropdown-menu').on('click', 'li', function(e){
+    e.preventDefault();
+    var selector = '.dynamic_field_group_category_label:contains("' + $(this).children('a').html() + '")';
+    Hyacinth.scrollToElement($(selector), 400);
+  });
 
+  //Refresh navigation dropup options based on visible DynamicFieldGroupCategories
+  this.refreshNavigationDropupOptions();
 };
+
+Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.refreshNavigationDropupOptions = function() {
+  var $formNavigationDropupMenu = this.$containerElement.find('.form-navigation-dropup').find('.dropdown-menu');
+  var newDropdownHtml = '';
+  this.$containerElement.find('.dynamic_field_group_category_label:visible').each(function(){
+    newDropdownHtml += '<li><a href="#">' + _.escape($(this).html()) + '</a></li>';
+  });
+  $formNavigationDropupMenu.html(newDropdownHtml);
+}
 
 //Clean up event handlers
 Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.dispose = function() {
@@ -488,6 +508,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.dispose = function() {
     this.currentAuthorizedTermSelector.dispose(); //Always clean up the old instance and any event bindings it might have
     this.currentAuthorizedTermSelector = null;
   }
+
+  this.$containerElement.find('.form-navigation-dropup').find('.dropdown-menu').off('click');
 
   this.$containerElement.find('.editor-form').off('submit');
   this.$containerElement.find('.editor-form').off('click');

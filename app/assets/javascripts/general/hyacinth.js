@@ -93,6 +93,20 @@ Hyacinth.scrollToTopOfWindow = function(animationTimeInMillis){
  );
 };
 
+Hyacinth.scrollToElement = function(element, animationTimeInMillis){
+
+  var $element = $(element);
+
+  if (typeof(animationTimeInMillis) == 'undefined') {
+    animationTimeInMillis = 600;
+  }
+
+  $('html, body').animate({
+      scrollTop: $element.offset().top - ($element.height() + $('#top-navbar').height())
+    }, animationTimeInMillis
+ );
+};
+
 /*********************
  * Utility Functions *
  *********************/
