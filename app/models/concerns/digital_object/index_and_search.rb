@@ -118,7 +118,7 @@ module DigitalObject::IndexAndSearch
 
       # facet_params are for specifying how you want to RECEIVE facets.
       # This has nothing to do with using the facet feature to apply facet filters.
-      unless facet_params == false
+      unless facet_params.to_s == "false"
         facet_fields = facet_params['field'] if facet_params['field'].present?
         facet_limit = facet_params['per_page'].to_i if facet_params['per_page'].present?
         facet_offset = (facet_params['page'].to_i - 1) * facet_limit if facet_params['page'].present?
