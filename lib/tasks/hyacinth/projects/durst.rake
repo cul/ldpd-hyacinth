@@ -151,6 +151,12 @@ namespace :hyacinth do
           ]
         )
 
+        subject_durst = DynamicFieldGroup.create!(string_key: 'subject_durst', display_label: 'Subject Durst', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_subject_data, is_repeatable: true,
+          dynamic_fields: [
+            DynamicField.new(string_key: 'subject_durst_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, facet_field_label: 'Subject Durst', is_keyword_searchable: true, is_single_field_searchable: true)
+          ]
+        )
+
         subject_temporal = DynamicFieldGroup.create!(string_key: 'subject_temporal', display_label: 'Subject Temporal', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_subject_data, is_repeatable: true,
           dynamic_fields: [
             DynamicField.new(string_key: 'subject_temporal_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, facet_field_label: 'Subject Temporal', is_keyword_searchable: true, is_single_field_searchable: true),
@@ -445,13 +451,14 @@ namespace :hyacinth do
           DynamicFieldGroup.find_by(string_key: 'alternative_title').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'abstract').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'name').dynamic_fields +
-          DynamicFieldGroup.find_by(string_key: 'name_role').dynamic_fields +
+          # DynamicFieldGroup.find_by(string_key: 'name_role').dynamic_fields + # Not used for Durst
           DynamicFieldGroup.find_by(string_key: 'publisher').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'place_of_origin').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'date_other').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'edition').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'table_of_contents').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'subject_topic').dynamic_fields +
+          DynamicFieldGroup.find_by(string_key: 'subject_durst').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'subject_temporal').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'subject_name').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'subject_title').dynamic_fields +
