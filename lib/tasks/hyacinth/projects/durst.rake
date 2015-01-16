@@ -80,10 +80,18 @@ namespace :hyacinth do
 
         name = DynamicFieldGroup.create!(string_key: 'name', display_label: 'Name', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
           dynamic_fields: [
+            DynamicField.new(string_key: 'name_type', display_label: 'Type', dynamic_field_type: DynamicField::Type::SELECT, is_single_field_searchable: true, additional_data_json: {
+              select_options: [
+                {value: '', display_label: '- Select an Option -'},
+                {value: 'personal', display_label: 'Personal'},
+                {value: 'corporate', display_label: 'Corporate'},
+                {value: 'conference', display_label: 'Event'}
+              ]
+            }.to_json),
             DynamicField.new(string_key: 'name_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, facet_field_label: 'Name', is_keyword_searchable: true, is_single_field_searchable: true),
             DynamicField.new(string_key: 'name_value_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI, is_single_field_searchable: true),
             DynamicField.new(string_key: 'name_authority', display_label: 'Authority', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY),
-            DynamicField.new(string_key: 'name_authority_uri', display_label: 'Authority URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY_URI)
+            DynamicField.new(string_key: 'name_authority_uri', display_label: 'Authority URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY_URI),
           ]
         )
           # --> Start Child DynamicFieldGroups
