@@ -96,8 +96,8 @@ gem 'noid', '>= 0.7.1'
 #gem 'noid', :git => 'git://github.com/cul/noid', :branch => 'fixed_sequences'
 
 # Testing!
+gem 'rspec-rails', '~> 3.1'
 group :development, :test do
-  gem 'rspec-rails', '~> 3.1'
   gem 'capybara'
   gem 'poltergeist' # For headless-browser JavaScript testing
   gem 'factory_girl_rails', '>= 4.4.1'
