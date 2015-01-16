@@ -412,7 +412,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
       if ($formElement.is(':checkbox')) {
         $(this).html($formElement.is(":checked"));
       } else {
-        $(this).html(_.escape($formElement.val()));
+        $(this).html(_.escape($formElement.val()).replace(/(?:\r\n|\r|\n)/g, '<br />'));
       }
     });
   }
