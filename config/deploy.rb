@@ -52,8 +52,9 @@ namespace :deploy do
   task :symlink_shared do
     run "ln -nfs #{deploy_to}shared/database.yml #{release_path}/config/database.yml"
     run "ln -nfs #{deploy_to}shared/fedora.yml #{release_path}/config/fedora.yml"
-    run "ln -nfs #{deploy_to}shared/default_user_accounts.yml #{release_path}/config/default_user_accounts.yml"
     run "ln -nfs #{deploy_to}shared/hyacinth.yml #{release_path}/config/hyacinth.yml"
+    run "ln -nfs #{deploy_to}shared/secrets.yml #{release_path}/config/secrets.yml"
+    run "ln -nfs #{deploy_to}shared/solr.yml #{release_path}/config/solr.yml"
 
     run "mkdir -p #{release_path}/db"
     run "ln -nfs #{deploy_to}shared/#{rails_env}.sqlite3 #{release_path}/db/#{rails_env}.sqlite3"
