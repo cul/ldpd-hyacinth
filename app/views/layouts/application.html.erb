@@ -22,7 +22,7 @@
       </div>
     </div>
 
-    <% if Rails.env == 'development' || Rails.env == 'hyacinth_dev' %>
+    <% if false %>
       <pre id="debug"><%
       %><%= ('Solr search time: ' + (@solr_search.query_time/1000.0).to_s + ' seconds<br />').html_safe if ! @solr_search.blank? %><%
         %><%= ('Time spent in controller: ' + (@time_before_render-@page_load_start_time).to_s + ' seconds<br />').html_safe %><%

@@ -6,6 +6,9 @@ Jettywrapper.url = "https://github.com/elo2112/hydra-jetty/archive/#{jetty_zip_b
 namespace :hyacinth do
 
   begin
+    # This code is in a begin/rescue block so that the Rakefile is usable
+    # in an environment where RSpec is unavailable (i.e. production).
+
     require 'rspec/core/rake_task'
     RSpec::Core::RakeTask.new(:rspec) do |spec|
       spec.pattern = FileList['spec/**/*_spec.rb']
@@ -18,8 +21,8 @@ namespace :hyacinth do
       spec.pattern += FileList['spec/*_spec.rb']
       spec.rcov = true
     end
-  rescue Exception => e
-    puts "Exception creating rspec rake tasks: check for development environment?"
+  rescue LoadError => e
+    puts "[Warning] Exception creating rspec rake tasks.  This message can be ignored in environments that intentionally do not pull in the RSpec gem (i.e. production)."
     puts e
   end
 

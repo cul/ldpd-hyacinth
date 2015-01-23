@@ -80,7 +80,7 @@ gem 'equivalent-xml'
 gem 'devise', '>= 3.4.1'
 
 # CUL Fedora Dependencies and Content Models
-gem 'cul_scv_hydra', '>= 0.21.4'
+gem 'cul_scv_hydra', '>= v0.21.5'
 #gem 'cul_scv_hydra', :github => 'cul/cul_scv_hydra'
 #gem 'cul_scv_hydra', :path => '../cul_scv_hydra'
 gem 'jettywrapper', '>= 1.5.1'
@@ -97,8 +97,8 @@ gem 'noid', '>= 0.7.1'
 #gem 'noid', :git => 'git://github.com/cul/noid', :branch => 'fixed_sequences'
 
 # Testing!
-gem 'rspec-rails', '~> 3.1'
 group :development, :test do
+  gem 'rspec-rails', '~> 3.1'
   gem 'capybara'
   gem 'poltergeist' # For headless-browser JavaScript testing
   gem 'factory_girl_rails', '>= 4.4.1'
