@@ -42,14 +42,26 @@ class DigitalObject::Asset < DigitalObject::Base
     return @errors.blank?
   end
 
-  def set_file_and_original_filename(path_to_file, original_filename)
+  def set_file_and_original_filename_and_calculate_checksum(path_to_file, original_filename)
     # Create 'content' datastream on GenericResource object
 
     mime_type = DigitalObject::Asset.filename_to_mime_type(original_filename)
 
     # "controlGroup => 'E'" below means "External Referenced Content" -- as in, a file that's referenced by Fedora but not stored internally
     file_content_datastream = @fedora_object.create_datastream(ActiveFedora::Datastream, 'content', :controlGroup => 'E', :mimeType => mime_type, :dsLabel => original_filename, :versionable => true)
-    file_content_datastream.dsLocation = 'file:/' + path_to_file
+    file_content_datastream.dsLocation = 'file:' + path_to_file # Note: This will result in paths like "file:/something/here.txt"  We DO NOT want a double slash at the beginnings of these paths.
+
+    # Calculate checksum for file, using 4096-byte buffered approach to save memory for large files
+    sha256 = Digest::SHA256.new
+    File.open(path_to_file, 'r') do |file|
+      while buff = file.read(4096)
+        sha256.update(buff)
+      end
+    end
+
+    file_content_datastream.checksum = sha256.hexdigest
+    file_content_datastream.checksumType = 'SHA-256'
+
     @fedora_object.add_datastream(file_content_datastream)
   end
 

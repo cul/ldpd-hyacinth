@@ -469,6 +469,7 @@ DEPENDENCIES
   jquery-rails
   jquery.fileupload-rails
   kaminari
+  libv8 (>= 3.16.14.7)
   mime-types
   mysql2 (= 0.3.13)
   noid (>= 0.7.1)

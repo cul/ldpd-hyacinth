@@ -117,20 +117,8 @@ namespace :hyacinth do
 
         date_other = DynamicFieldGroup.create!(string_key: 'date_other', display_label: 'Date Other', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
           dynamic_fields: [
-            DynamicField.new(string_key: 'date_other_point', display_label: 'Point', dynamic_field_type: DynamicField::Type::SELECT, is_single_field_searchable: true, additional_data_json: {
-              select_options: [
-                {value: '', display_label: 'Single Point or Textual Date'},
-                {value: 'start', display_label: 'start'},
-                {value: 'end', display_label: 'end'}
-              ]
-            }.to_json),
-            DynamicField.new(string_key: 'date_other_key_date', display_label: 'Key Date', dynamic_field_type: DynamicField::Type::SELECT, additional_data_json: {
-              select_options: [
-                {value: '', display_label: 'no'},
-                {value: 'yes', display_label: 'yes'}
-              ]
-            }.to_json),
-            DynamicField.new(string_key: 'date_other_value', display_label: 'Date', dynamic_field_type: DynamicField::Type::DATE, is_single_field_searchable: true),
+            DynamicField.new(string_key: 'date_other_start_value', display_label: 'Single or Start Date', dynamic_field_type: DynamicField::Type::DATE, is_single_field_searchable: true),
+            DynamicField.new(string_key: 'date_other_end_value', display_label: 'End Date', dynamic_field_type: DynamicField::Type::DATE, is_single_field_searchable: true),
             DynamicField.new(string_key: 'date_other_type', display_label: 'Type', dynamic_field_type: DynamicField::Type::SELECT, additional_data_json: {
               select_options: [
                 {value: '', display_label: '- Not Specified -'},
@@ -140,6 +128,10 @@ namespace :hyacinth do
               ]
             }.to_json)
           ]
+        )
+
+        date_other_textual = DynamicFieldGroup.create!(string_key: 'date_other_textual', display_label: 'Textual Date', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
+          dynamic_fields: [DynamicField.new(string_key: 'date_other_textual_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_single_field_searchable: true)]
         )
 
         edition = DynamicFieldGroup.create!(string_key: 'edition', display_label: 'Edition', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
@@ -240,14 +232,17 @@ namespace :hyacinth do
             )
             DynamicFieldGroup.create!(string_key: 'subject_hierarchical_geographic_city_section', display_label: 'City Section', parent_dynamic_field_group: subject_hierarchical_geographic, is_repeatable: true,
               dynamic_fields: [
-                DynamicField.new(string_key: 'subject_hierarchical_geographic_city_section_type', display_label: 'Type', dynamic_field_type: DynamicField::Type::SELECT, additional_data_json: {
-                  select_options: [
-                    {value: '', display_label: '- Not Specified -'},
-                    {value: 'zip code', display_label: 'zip code'},
-                    {value: 'street', display_label: 'street'},
-                  ]
-                }.to_json),
                 DynamicField.new(string_key: 'subject_hierarchical_geographic_city_section_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
+              ]
+            )
+            DynamicFieldGroup.create!(string_key: 'subject_hierarchical_geographic_zip_code', display_label: 'ZIP Code', parent_dynamic_field_group: subject_hierarchical_geographic, is_repeatable: true,
+              dynamic_fields: [
+                DynamicField.new(string_key: 'subject_hierarchical_geographic_zip_code_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
+              ]
+            )
+            DynamicFieldGroup.create!(string_key: 'subject_hierarchical_geographic_street', display_label: 'Street', parent_dynamic_field_group: subject_hierarchical_geographic, is_repeatable: true,
+              dynamic_fields: [
+                DynamicField.new(string_key: 'subject_hierarchical_geographic_street_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
               ]
             )
           # --> End Child DynamicFieldGroups
@@ -270,7 +265,7 @@ namespace :hyacinth do
           ]
         )
 
-        view_direction = DynamicFieldGroup.create!(string_key: 'view_direction', display_label: 'View Direction', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_notes, xml_extraction_priority: 1,
+        view_direction = DynamicFieldGroup.create!(string_key: 'view_direction', display_label: 'View Direction', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_notes,
           dynamic_fields: [
             DynamicField.new(string_key: 'view_direction_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
           ]
@@ -289,7 +284,7 @@ namespace :hyacinth do
           ]
         )
 
-        orientation = DynamicFieldGroup.create!(string_key: 'orientation', display_label: 'Orientation', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_notes, xml_extraction_priority: 1,
+        orientation = DynamicFieldGroup.create!(string_key: 'orientation', display_label: 'Orientation', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_notes,
           dynamic_fields: [
             DynamicField.new(string_key: 'orientation_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
           ]
@@ -297,7 +292,7 @@ namespace :hyacinth do
 
         series = DynamicFieldGroup.create!(string_key: 'series', display_label: 'Series', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_contextual_data,
           dynamic_fields: [
-            DynamicField.new(string_key: 'series_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
+            DynamicField.new(string_key: 'series_title', display_label: 'Title', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
           ]
         )
 
@@ -313,71 +308,66 @@ namespace :hyacinth do
           ]
         )
 
-        clio_identifier = DynamicFieldGroup.create!(string_key: 'clio_identifier', display_label: 'CLIO ID', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers, xml_extraction_priority: 1,
+        clio_identifier = DynamicFieldGroup.create!(string_key: 'clio_identifier', display_label: 'CLIO ID', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers,
           dynamic_fields: [
             DynamicField.new(string_key: 'clio_identifier_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true)
           ]
         )
 
-        dims_identifier = DynamicFieldGroup.create!(string_key: 'dims_identifier', display_label: 'DIMS ID', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers, xml_extraction_priority: 1,
+        dims_identifier = DynamicFieldGroup.create!(string_key: 'dims_identifier', display_label: 'DIMS ID', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers,
           dynamic_fields: [
             DynamicField.new(string_key: 'dims_identifier_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true)
           ]
         )
 
-        local_durst_identifier = DynamicFieldGroup.create!(string_key: 'local_durst_identifier', display_label: 'Durst Postcard Identifier', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers, xml_extraction_priority: 1,
+        durst_postcard_identifier = DynamicFieldGroup.create!(string_key: 'durst_postcard_identifier', display_label: 'Durst Postcard Identifier', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers,
           dynamic_fields: [
-            DynamicField.new(string_key: 'local_durst_identifier_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true)
+            DynamicField.new(string_key: 'durst_postcard_identifier_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true)
           ]
         )
 
-        local_nnc_identifier = DynamicFieldGroup.create!(string_key: 'local_nnc_identifier', display_label: '[CUL-Assigned] Postcard Identifier', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers, xml_extraction_priority: 1,
+        cul_assigned_postcard_identifier = DynamicFieldGroup.create!(string_key: 'cul_assigned_postcard_identifier', display_label: 'CUL-Assigned Postcard Identifier', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers,
           dynamic_fields: [
-            DynamicField.new(string_key: 'local_nnc_identifier_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true)
+            DynamicField.new(string_key: 'cul_assigned_postcard_identifier_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true)
           ]
         )
 
-        # This information will be available in any child items
-        #filename_front_identifier = DynamicFieldGroup.create!(string_key: 'filename_front_identifier', display_label: 'Filename Front Identifier', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers, xml_extraction_priority: 1,
-        #  dynamic_fields: [
-        #    DynamicField.new(string_key: 'filename_front_identifier_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true)
-        #  ]
-        #)
-        #
-        # This information will be available in any child items
-        #filename_back_identifier = DynamicFieldGroup.create!(string_key: 'filename_back_identifier', display_label: 'Filename Back Identifier', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers, xml_extraction_priority: 1,
-        #  dynamic_fields: [
-        #    DynamicField.new(string_key: 'filename_back_identifier_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true)
-        #  ]
-        #)
-
-        isbn_identifier = DynamicFieldGroup.create!(string_key: 'isbn_identifier', display_label: 'ISBN', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers, xml_extraction_priority: 1,
+        filename_front_identifier = DynamicFieldGroup.create!(string_key: 'filename_front_identifier', display_label: 'Filename Front Identifier', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers,
           dynamic_fields: [
-            DynamicField.new(string_key: 'isbn_identifier_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true)
+            DynamicField.new(string_key: 'filename_front_identifier_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true)
           ]
         )
 
-        issn_identifier = DynamicFieldGroup.create!(string_key: 'issn_identifier', display_label: 'ISSN', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers, xml_extraction_priority: 1,
+        filename_back_identifier = DynamicFieldGroup.create!(string_key: 'filename_back_identifier', display_label: 'Filename Back Identifier', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers,
           dynamic_fields: [
-            DynamicField.new(string_key: 'issn_identifier_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true)
+            DynamicField.new(string_key: 'filename_back_identifier_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true)
           ]
         )
 
-        # TODO: This is temporary.  Location information should be stored in a set of nested DynamicFieldGroups.
+        isbn = DynamicFieldGroup.create!(string_key: 'isbn', display_label: 'ISBN', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers,
+          dynamic_fields: [
+            DynamicField.new(string_key: 'isbn_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true)
+          ]
+        )
+
+        issn = DynamicFieldGroup.create!(string_key: 'issn', display_label: 'ISSN', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers,
+          dynamic_fields: [
+            DynamicField.new(string_key: 'issn_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true)
+          ]
+        )
+
         shelf_location = DynamicFieldGroup.create!(string_key: 'shelf_location', display_label: 'Shelf Location', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_location_and_holdings,
           dynamic_fields: [
             DynamicField.new(string_key: 'shelf_location_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
           ]
         )
 
-        # TODO: This is temporary.  Location information should be stored in a set of nested DynamicFieldGroups.
         enumeration_and_chronology = DynamicFieldGroup.create!(string_key: 'enumeration_and_chronology', display_label: 'Enumeration and Chronology', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_location_and_holdings,
           dynamic_fields: [
             DynamicField.new(string_key: 'enumeration_and_chronology_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
           ]
         )
 
-        # TODO: This is temporary.  Location information should be stored in a set of nested DynamicFieldGroups.
         sublocation = DynamicFieldGroup.create!(string_key: 'sublocation', display_label: 'Sublocation', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_location_and_holdings,
           dynamic_fields: [
             DynamicField.new(string_key: 'sublocation_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
@@ -478,6 +468,8 @@ namespace :hyacinth do
           DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_borough').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_city').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_city_section').dynamic_fields +
+          DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_zip_code').dynamic_fields +
+          DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_street').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'coordinates').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'scale').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'genre').dynamic_fields +
@@ -490,10 +482,10 @@ namespace :hyacinth do
           DynamicFieldGroup.find_by(string_key: 'group_title').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'clio_identifier').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'dims_identifier').dynamic_fields +
-          DynamicFieldGroup.find_by(string_key: 'local_durst_identifier').dynamic_fields +
-          DynamicFieldGroup.find_by(string_key: 'local_nnc_identifier').dynamic_fields +
-          DynamicFieldGroup.find_by(string_key: 'isbn_identifier').dynamic_fields +
-          DynamicFieldGroup.find_by(string_key: 'issn_identifier').dynamic_fields +
+          DynamicFieldGroup.find_by(string_key: 'durst_postcard_identifier').dynamic_fields +
+          DynamicFieldGroup.find_by(string_key: 'cul_assigned_postcard_identifier').dynamic_fields +
+          DynamicFieldGroup.find_by(string_key: 'isbn').dynamic_fields +
+          DynamicFieldGroup.find_by(string_key: 'issn').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'shelf_location').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'enumeration_and_chronology').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'sublocation').dynamic_fields +

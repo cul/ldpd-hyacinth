@@ -77,7 +77,6 @@ ActiveRecord::Schema.define(version: 20141104010523) do
     t.boolean  "is_repeatable",                   limit: 1,     default: false, null: false
     t.integer  "xml_datastream_id",               limit: 4
     t.text     "xml_translation_json",            limit: 65535
-    t.integer  "xml_extraction_priority",         limit: 4,     default: 0,     null: false
     t.integer  "dynamic_field_group_category_id", limit: 4
     t.integer  "created_by_id",                   limit: 4
     t.integer  "updated_by_id",                   limit: 4

@@ -6,6 +6,11 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.controllerName = 'digital_ob
 Hyacinth.extendClass(Hyacinth.DigitalObjectsApp.DigitalObjectsController, Hyacinth.DigitalObjectsApp.Controller); //Extend controller
 Hyacinth.DigitalObjectsApp.registerController(Hyacinth.DigitalObjectsApp.DigitalObjectsController);  //Register controller
 
+//beforeAction -- special method that's run before all actions
+Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.beforeAction = function() {
+  $('#digital-object-dynamic-content').html('Loading...');
+}
+
 //Index Action - Searches
 Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.index = function() {
 

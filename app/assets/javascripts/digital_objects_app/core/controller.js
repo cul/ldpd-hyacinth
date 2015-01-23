@@ -3,6 +3,11 @@ Hyacinth.DigitalObjectsApp.Controller = function() {
 Hyacinth.DigitalObjectsApp.Controller.controllerName = 'controller'; //Class variable
 
 Hyacinth.DigitalObjectsApp.Controller.prototype.runAction = function(actionName) {
+
+  if(typeof(this.beforeAction) !== 'undefined') {
+    this.beforeAction();
+  }
+
   if(typeof(this[actionName]) !== 'undefined') {
     this[actionName]();
   } else {

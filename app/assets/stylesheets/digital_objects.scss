@@ -28,6 +28,12 @@
     }
   }
 
+  .dynamic_field_group + .dynamic_field_group {
+    .dynamic_field_group_content {
+      border-top-width:0px;
+    }
+  }
+
   .dynamic_field_group_content {
     padding:.5em;
     border:1px solid #ddd;

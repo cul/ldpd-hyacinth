@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 class DigitalObjectsController < ApplicationController
   before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :data_for_ordered_child_editor, :upload_assets]
   before_action :set_contextual_nav_options
@@ -37,6 +39,8 @@ class DigitalObjectsController < ApplicationController
   # POST /digital_objects.json
   def create
 
+    test_mode = params['test'].present? && params['test'] == 'true'
+
     project = Project.find_by(string_key: digital_object_params['project_string_key'])
     digital_object_type = DigitalObjectType.find_by(string_key: digital_object_params['digital_object_type_string_key'])
 
@@ -46,9 +50,11 @@ class DigitalObjectsController < ApplicationController
     @digital_object.updated_by = current_user
     @digital_object.projects << project
 
-    if digital_object_params['dynamic_field_data_json'].present?
-      raise 'Invalid JSON given for dynamic_field_data_json' unless Hyacinth::Utils::JsonUtils.is_valid_json?(digital_object_params['dynamic_field_data_json'])
-      @digital_object.update_dynamic_field_data(JSON(digital_object_params['dynamic_field_data_json']))
+    unless digital_object_params['dynamic_field_data_json'].nil?
+      dynamic_field_data_json = Hyacinth::Utils::StringUtils.clean_utf8_string(digital_object_params['dynamic_field_data_json'])
+      #dynamic_field_data_json = digital_object_params['dynamic_field_data_json']
+      raise 'Invalid JSON given for dynamic_field_data_json' unless Hyacinth::Utils::JsonUtils.is_valid_json?(dynamic_field_data_json)
+      @digital_object.update_dynamic_field_data(JSON(dynamic_field_data_json))
     end
 
     if digital_object_params['parent_digital_object_pids']
@@ -56,7 +62,7 @@ class DigitalObjectsController < ApplicationController
     end
 
     respond_to do |format|
-      if @digital_object.save
+      if (test_mode ? @digital_object.valid? : @digital_object.save)
         format.json {
           render json: {
             success: true,
@@ -77,6 +83,8 @@ class DigitalObjectsController < ApplicationController
   # PATCH/PUT /digital_objects/1.json
   def update
 
+    test_mode = params['test'].present? && params['test'] == 'true'
+
     if digital_object_params['dynamic_field_data_json'].present?
       raise 'Invalid JSON given for dynamic_field_data_json' unless Hyacinth::Utils::JsonUtils.is_valid_json?(digital_object_params['dynamic_field_data_json'])
       @digital_object.update_dynamic_field_data(JSON(digital_object_params['dynamic_field_data_json']))
@@ -93,7 +101,7 @@ class DigitalObjectsController < ApplicationController
     @digital_object.updated_by = current_user
 
     respond_to do |format|
-      if @digital_object.save
+      if (test_mode ? @digital_object.valid? : @digital_object.save)
         format.json {
           render json: {
             success: true
@@ -280,7 +288,7 @@ class DigitalObjectsController < ApplicationController
               end
             end
 
-            new_asset_digital_object.set_file_and_original_filename(path_to_file_in_hyacinth_asset_directory, original_filename)
+            new_asset_digital_object.set_file_and_original_filename_and_calculate_checksum(path_to_file_in_hyacinth_asset_directory, original_filename)
             new_asset_digital_object.set_original_file_path(original_file_path)
             new_asset_digital_object.set_dc_type_based_on_filename(original_filename)
 

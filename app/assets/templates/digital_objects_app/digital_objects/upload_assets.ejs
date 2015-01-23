@@ -14,11 +14,11 @@
 <hr />
 
 <h2>Add New Child Assets</h2>
-<p>
-  <strong>&bull; Files will be uploaded <em>immediately</em> after being dropped in the drop zone or selected via dialog.</strong>
-  <br />
-  <strong>&bull; Single files larger than 2GB must be upload via FTP to the Hyacinth upload directory.</srong>
-</p>
+<ul>
+  <li>Files will be uploaded <em>immediately</em> after being dropped in the drop zone or selected via dialog.</li>
+  <li>The progress indicator below displays upload progress, but additional server-side processing occurs after the upload is complete.</li>
+  <li>Single files larger than 2GB must be upload via FTP to the Hyacinth upload directory.</li>
+</ul>
 <form class="digital-object-asset-upload-form" action="/digital_objects/<%= parentDigitalObject.getPid() %>/upload_assets" method="POST" enctype="multipart/form-data">
 
     <div class="upload-drop-zone aligncenter">

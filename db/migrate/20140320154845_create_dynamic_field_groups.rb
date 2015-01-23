@@ -10,7 +10,6 @@ class CreateDynamicFieldGroups < ActiveRecord::Migration
       # Fields for top level DynamicFieldGroups
       t.references :xml_datastream, index: true, null: true
       t.text :xml_translation_json
-      t.integer :xml_extraction_priority, null: false, default: 0 # Higher priority groups will be extracted before other same-level groups.  Important for fields that map to overlapping xpath elements like /note[type="something"] and /note
       t.references :dynamic_field_group_category, null: true, index: true
 
       t.references :created_by # References User, specified in model

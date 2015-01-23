@@ -37,22 +37,23 @@ module DigitalObject::Validation
       }
     end
 
-    date_fields = get_enabled_dynamic_fields.map{|enabled_dynamic_field| enabled_dynamic_field.dynamic_field}.select{|dynamic_field| dynamic_field.dynamic_field_type == DynamicField::Type::DATE}
-    if date_fields.present?
-      counter = 0
-      date_fields.each {|date_field|
-        counter = 0
-        if flattened_dynamic_field_data_with_blank_fields.has_key?(date_field.string_key)
-          flattened_dynamic_field_data_with_blank_fields[date_field.string_key].each {|value|
-            # Date fields must match the expected ISO-8601 regex (YYYY, YYYY-MM or YYYY-MM-DD)
-            unless value.blank? || value =~ /\A-*\d{4}\z/ || value =~ /\A-*\d{4}-\d{2}\z/ || value =~ /\A-*\d{4}-\d{2}-\d{2}\z/
-              @errors.add(date_field.string_key + '.' + counter.to_s, 'Invalid date format: ' + date_field.parent_dynamic_field_group.display_label + ' -> ' + date_field.display_label + '.  Must be YYYY, YYYY-MM or YYYY-MM-DD.')
-            end
-            counter += 1
-          }
-        end
-      }
-    end
+    # Note: No longer validating date field values because dates aren't always numeric/consistent (i.e. "uuuu" for undated values) and we need to support import for incorrectly formatted values
+    #date_fields = get_enabled_dynamic_fields.map{|enabled_dynamic_field| enabled_dynamic_field.dynamic_field}.select{|dynamic_field| dynamic_field.dynamic_field_type == DynamicField::Type::DATE}
+    #if date_fields.present?
+    #  counter = 0
+    #  date_fields.each {|date_field|
+    #    counter = 0
+    #    if flattened_dynamic_field_data_with_blank_fields.has_key?(date_field.string_key)
+    #      flattened_dynamic_field_data_with_blank_fields[date_field.string_key].each {|value|
+    #        # Date fields must match the expected ISO-8601 regex (YYYY, YYYY-MM or YYYY-MM-DD)
+    #        unless value.blank? || value =~ /\A-*\d{4}\z/ || value =~ /\A-*\d{4}-\d{2}\z/ || value =~ /\A-*\d{4}-\d{2}-\d{2}\z/
+    #          @errors.add(date_field.string_key + '.' + counter.to_s, 'Invalid date format: ' + date_field.parent_dynamic_field_group.display_label + ' -> ' + date_field.display_label + '.  Must be YYYY, YYYY-MM or YYYY-MM-DD.')
+    #        end
+    #        counter += 1
+    #      }
+    #    end
+    #  }
+    #end
 
     # All DigitalObject must have a @fedora_object with a dc_type within its set of VALID_DC_TYPES
     unless self.class.valid_dc_types.include?(self.dc_type)
