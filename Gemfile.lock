@@ -81,7 +81,7 @@ GEM
     bootstrap-sass (3.3.1.0)
       sass (~> 3.2)
     builder (3.2.2)
-    cancancan (1.10.0)
+    cancancan (1.10.1)
     capistrano (2.12.0)
       highline
       net-scp (>= 1.0.0)
@@ -107,7 +107,7 @@ GEM
     coffee-script-source (1.8.0)
     cul_image_props (0.3.5)
       nokogiri
-    cul_scv_hydra (0.21.4)
+    cul_scv_hydra (0.21.5)
       active-fedora (~> 7.0)
       active-triples (~> 0.2.2)
       active_fedora_finders (>= 0.5.0)
@@ -226,9 +226,9 @@ GEM
     mime-types (2.4.3)
     mini_portile (0.6.2)
     minitest (5.5.0)
-    mods (0.0.23)
+    mods (2.0.0)
       iso-639
-      nokogiri
+      nokogiri (< 1.6.6)
       nom-xml
     mono_logger (1.1.0)
     multi_json (1.10.1)
@@ -459,7 +459,7 @@ DEPENDENCIES
   capybara
   coderay
   coffee-rails
-  cul_scv_hydra (>= 0.21.4)
+  cul_scv_hydra (>= 0.21.5)
   devise (>= 3.4.1)
   equivalent-xml
   factory_girl_rails (>= 4.4.1)
