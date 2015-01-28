@@ -1,5 +1,9 @@
 Hyacinth.DigitalObjectsApp.DigitalObjectEditor = function(containerElementId, options) {
 
+
+  
+
+
   this.$containerElement = $('#' + containerElementId);
   this.mode = options['mode'] || 'edit'; //Valid options: ['edit', 'show']
   this.digitalObject = options['digitalObject'];

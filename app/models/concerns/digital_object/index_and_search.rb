@@ -1,6 +1,8 @@
 module DigitalObject::IndexAndSearch
   extend ActiveSupport::Concern
 
+  LUCENE_SPECIAL_CHARACTERS_TO_ESCAPE_EXCLUDING_BACKSLASH = ['+', '-', '&&', '||', '!', '(', ')', '{', '}', '[', ']', '^', '"', '~', '*', '?', ':', '/']
+
   #################
   # Solr Indexing #
   #################
@@ -106,7 +108,7 @@ module DigitalObject::IndexAndSearch
       solr_params['fq'] = []
       solr_params['q'] = user_search_params[:q] if user_search_params[:q].present?
       solr_params['qf'] = user_search_params[:search_field] || 'search_keyword_teim'
-      solr_params['sort'] = user_search_params[:sort] || 'score desc'
+      solr_params['sort'] = user_search_params[:sort] || 'sort_title_ssort asc'
 
       # Only retrieve active ('A') items
       solr_params['fq'] << 'state_sim:A'
@@ -138,8 +140,43 @@ module DigitalObject::IndexAndSearch
         user_search_params[:f].each do |facet_field, values|
           #match = ['+', '-', '&', '|', '!', '(', ')', '{', '}', '[', ']', '^', '~', '*', '?', ':', '"', ';', ' '];
           #next_fq = facet_field + ': ("' + values.map{|value| match.each{|o| value.gsub!(o, '\\' + o)}; value }.join('" AND "') + '")'
+
+          # Wrap value in double quotes so we don't have to worry about other characters to escape (because they're in quotes)
+          # All we need to do is escape quotes and backslashes
+
           next_fq = facet_field + ': ("' + values.map{|value| value.gsub('\\', '\\\\\\').gsub('"', '\\"') }.join('" AND "') + '")'
           solr_params['fq'] << next_fq
+        end
+      end
+
+      # Also add currently applied filters, building fq values based on "operator" values and making sure to escape values
+      if user_search_params[:fq].present?
+        user_search_params[:fq].each do |filter_field, values|
+
+          # Note: API values may be interpreted as a hash instead of a value.  This is handled.
+          # Hash like this: {"0" => {"greater_than" => "something"}, "1" => {"less_than" => "something else"}}
+          # Instead of the Array form: [{"greater_than" => "something"}, {"less_than" => "something else"}]
+          (values.is_a?(Array) ? values : values.values).each do |operator_and_value|
+            operator_and_value.each do |operator, value|
+
+              # Wrap value in double quotes so we don't have to worry about other characters to escape (because they're in quotes)
+              # All we need to do is escape quotes and backslashes
+              safe_value = '"' + value.gsub('\\', '\\\\\\').gsub('"', '\\"') + '"'
+
+              if operator == 'present'
+                next_fq = filter_field + ':[* TO *]'
+              elsif operator == 'absent'
+                next_fq = '-' + filter_field + ':["" TO *]'
+              elsif operator == 'equals'
+                next_fq = filter_field + ': ' + safe_value
+              else
+                raise 'Unexpected operator: ' + operator
+              end
+
+              solr_params['fq'] << next_fq
+            end
+          end
+
         end
       end
 
@@ -163,7 +200,7 @@ module DigitalObject::IndexAndSearch
             display_label = 'Asset Type'
           else
             # Use user-configured display labels set for dynamic_field facet labels
-            display_label = dynamic_field_string_keys_to_dynamic_fields[solr_field_name.gsub(/^df_/, '').gsub(/_sim$/, '')].facet_field_label
+            display_label = dynamic_field_string_keys_to_dynamic_fields[solr_field_name.gsub(/^df_/, '').gsub(/_sim$/, '')].standalone_field_label
           end
 
           facet_values_and_counts = []
@@ -197,7 +234,8 @@ module DigitalObject::IndexAndSearch
         'page' => page,
         'per_page' => per_page,
         'results' => solr_response['response']['docs'],
-        'facets' => facet_data
+        'facets' => facet_data,
+        'single_field_searchable_fields' => DynamicField.where(is_single_field_searchable: true).order([:standalone_field_label, :string_key]).map{|dynamic_field| {standalone_field_label: dynamic_field.standalone_field_label, string_key: dynamic_field.string_key}}
       }
     end
 

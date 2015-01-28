@@ -6,10 +6,10 @@
   //nextSearchResultPid (may be null)
   //totalNumSearchResults (may be null)
 %>
-<% if(Hyacinth.DigitalObjectsApp.currentSearchParams == null) { %>
+<% if(Hyacinth.DigitalObjectsApp.mostRecentSearchParams == null) { %>
   <% Hyacinth.ContextualNav.setNavTitle('&laquo; Digital Objects', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'index'})) %>
 <% } else { %>
-  <% Hyacinth.ContextualNav.setNavTitle('&laquo; Back To Search', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'index', search: Hyacinth.DigitalObjectsApp.currentSearchParams})) %>
+  <% Hyacinth.ContextualNav.setNavTitle('&laquo; Back To Search', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'index', search: Hyacinth.DigitalObjectsApp.mostRecentSearchParams})) %>
 <% } %>
 
 <%
@@ -34,22 +34,21 @@ navItems.push({label: 'Edit', url: '#' + Hyacinth.DigitalObjectsApp.paramsToHash
 <% Hyacinth.ContextualNav.setNavItems(navItems); %>
 
 <%
-if (typeof(Hyacinth.DigitalObjectsApp.params['searchResultNumber']) != 'undefined' && (previousSearchResultPid || nextSearchResultPid)) {
-  var searchResultNumber = parseInt(Hyacinth.DigitalObjectsApp.params['searchResultNumber']);
+if (Hyacinth.DigitalObjectsApp.mostRecentSearchResult != null && (previousSearchResultPid || nextSearchResultPid)) {
   %>
   <div class="result-count-and-sort-options">
     <div class="row">
       <div class="col-md-8">
         <%
         if (totalNumSearchResults) {
-          %><small><%= (searchResultNumber + 1) + ' of ' + totalNumSearchResults %></small><%
+          %><small><%= (Hyacinth.DigitalObjectsApp.mostRecentSearchResult + 1) + ' of ' + totalNumSearchResults %></small><%
         }
         %>
       </div>
       <div class="col-md-4 alignright">
         <%
         if(previousSearchResultPid) {
-          %><a class="btn btn-default btn-xs" href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: previousSearchResultPid, searchResultNumber: searchResultNumber - 1}) %>"><span class="glyphicon glyphicon-backward"></span></a><%
+          %><a class="btn btn-default btn-xs show-result-link" href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: previousSearchResultPid, searchResultNumber: Hyacinth.DigitalObjectsApp.mostRecentSearchResult - 1}) %>"><span class="glyphicon glyphicon-backward"></span></a><%
         } else {
           %><a class="disabled btn btn-default btn-xs"><span class="glyphicon glyphicon-backward"></span></a><%
         }
@@ -57,7 +56,7 @@ if (typeof(Hyacinth.DigitalObjectsApp.params['searchResultNumber']) != 'undefine
 
         <%
         if(nextSearchResultPid) {
-          %><a class="btn btn-default btn-xs" href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: nextSearchResultPid, searchResultNumber: searchResultNumber +1}) %>"><span class="glyphicon glyphicon-forward"></span></a><%
+          %><a class="btn btn-default btn-xs show-result-link" href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: nextSearchResultPid, searchResultNumber: Hyacinth.DigitalObjectsApp.mostRecentSearchResult + 1}) %>"><span class="glyphicon glyphicon-forward"></span></a><%
         } else {
           %><a class="disabled btn btn-default btn-xs"><span class="glyphicon glyphicon-forward"></span></a><%
         }

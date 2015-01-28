@@ -44,14 +44,14 @@ module FacetsHelper
   end
 
   def render_hidden_form_fields_for_params
-    
+
     html_to_return = ''
-    
+
     params_to_exclude = [:controller, :action, :f, :search_type, :q, :utf8] # These are handled in other ways.  Not in the iterator below.
     # Handle top level params
     params.each {|param_key, param_value|
       next if params_to_exclude.include?(param_key.to_sym)
-      
+
       if param_value.is_a?(Array)
         param_value.each {|single_val_from_array|
           html_to_return += hidden_field_tag(param_key + '[]', single_val_from_array, :id => nil)
@@ -59,9 +59,9 @@ module FacetsHelper
       else
         html_to_return += hidden_field_tag(param_key, param_value, :id => nil)
       end
-      
+
     }
-    
+
     # Handle facets
     if params[:f]
       params[:f].each {|facet_field, facet_values|
@@ -70,7 +70,7 @@ module FacetsHelper
         }
       }
     end
-    
+
     return html_to_return.html_safe
   end
 
@@ -86,13 +86,13 @@ module FacetsHelper
 
         if all_item_facet_fields[facet_field][:display_label].present?
           # First check for specifically-defined facet field label in case we want to override the label
-          facet_field_label = all_item_facet_fields[facet_field][:display_label]
+          standalone_field_label = all_item_facet_fields[facet_field][:display_label]
         else
           raise 'Missing display label for facet field: ' + facet_field
         end
 
         facet_values.each {|facet_value|
-          html_to_return += link_to('<span class="glyphicon glyphicon-remove"></span> '.html_safe + facet_field_label + ': '.html_safe + facet_value, url_for_remove_facet(facet_field, facet_value), :class => 'btn btn-default btn-xs facet_pill') + ' '.html_safe
+          html_to_return += link_to('<span class="glyphicon glyphicon-remove"></span> '.html_safe + standalone_field_label + ': '.html_safe + facet_value, url_for_remove_facet(facet_field, facet_value), :class => 'btn btn-default btn-xs facet_pill') + ' '.html_safe
         }
       }
     end

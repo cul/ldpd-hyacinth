@@ -100,7 +100,7 @@ ActiveRecord::Schema.define(version: 20141104010523) do
     t.text     "additional_data_json",           limit: 65535
     t.boolean  "is_keyword_searchable",          limit: 1,     default: false,    null: false
     t.boolean  "is_facet_field",                 limit: 1,     default: false,    null: false
-    t.string   "facet_field_label",              limit: 255,   default: "",       null: false
+    t.string   "standalone_field_label",              limit: 255,   default: "",       null: false
     t.boolean  "is_searchable_identifier_field", limit: 1,     default: false,    null: false
     t.boolean  "is_searchable_title_field",      limit: 1,     default: false,    null: false
     t.boolean  "is_single_field_searchable",     limit: 1,     default: false,    null: false

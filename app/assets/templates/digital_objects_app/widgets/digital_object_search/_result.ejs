@@ -4,14 +4,13 @@
   //searchResult (of type DigitalObjectSearchResult)
   //searchResultNumber (within complete set of current search Results) (might be undefined)
 %>
-<% var resultShowHashUrl = '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: searchResult.getPid(), searchResultNumber: searchResultNumber}) %>
 <div class="search-result shadow-box">
 
   <div class="row">
 
     <div class="col-xs-10">
       <div>
-        <a href="<%= resultShowHashUrl %>"><%= searchResult.getPid() %></a>
+        <a href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: searchResult.getPid(), searchResultNumber: searchResultNumber}) %>"><%= searchResult.getPid() %></a>
       </div>
       <div><strong>Title:</strong> <%- searchResult.getTitle() %></div>
 

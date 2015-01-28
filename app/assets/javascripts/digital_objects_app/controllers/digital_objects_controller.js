@@ -217,10 +217,11 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.show = function() 
 
   var that = this;
 
-  if (typeof(Hyacinth.DigitalObjectsApp.params['searchResultNumber']) != 'undefined') {
-    var searchResultNumber = parseInt(Hyacinth.DigitalObjectsApp.params['searchResultNumber']);
+  //Check for presence of Hyacinth.DigitalObjectsApp.mostRecentSearchParams because without it, searchResultNumber doesn't mean anything (and it might have just come from a copied/pasted url)
+  if (Hyacinth.DigitalObjectsApp.mostRecentSearchParams != null && typeof(Hyacinth.DigitalObjectsApp.params['searchResultNumber']) != 'undefined') {
+    Hyacinth.DigitalObjectsApp.mostRecentSearchResult = parseInt(Hyacinth.DigitalObjectsApp.params['searchResultNumber']);
   } else {
-    var searchResultNumber = null;
+    Hyacinth.DigitalObjectsApp.mostRecentSearchResult = Hyacinth.DigitalObjectsApp.mostRecentSearchResult || null;
   }
 
   $.ajax({
@@ -228,8 +229,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.show = function() 
     type: 'POST',
     data: {
       pid: Hyacinth.DigitalObjectsApp.params['pid'],
-      search_result_number: (searchResultNumber == null) ? null : searchResultNumber,
-      search: (searchResultNumber == null) ? null : Hyacinth.DigitalObjectsApp.currentSearchParams
+      search_result_number: Hyacinth.DigitalObjectsApp.mostRecentSearchResult,
+      search: (Hyacinth.DigitalObjectsApp.mostRecentSearchResult == null) ? null : Hyacinth.DigitalObjectsApp.mostRecentSearchParams
     },
     cache: false
   }).done(function(data_for_editor){

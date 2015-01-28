@@ -12,4 +12,24 @@
       <% }); %>
     <% } %>
   <% }); %>
+
+  <% if (Hyacinth.DigitalObjectsApp.params['search'] && Hyacinth.DigitalObjectsApp.params['search']['fq']) { %>
+    <% $.each(Hyacinth.DigitalObjectsApp.params['search']['fq'], function(filterSolrStringKey, values){ %>
+      <% values.forEach(function(operatorAndValue){ %>
+        <% $.each(operatorAndValue, function(operator, filterValue){ %>
+          <a href="#" class="remove-filter-link btn btn-default btn-xs"
+          data-filter-field-name="<%= filterSolrStringKey %>"
+          data-uri-encoded-operator="<%= encodeURIComponent(operator) %>"
+          data-uri-encoded-value="<%= encodeURIComponent(filterValue) %>">
+          <%= filterSolrStringKey %>
+          &rsaquo;
+          <strong><%- operator %></strong>
+          <%= filterValue.length > 0 ? '&rsaquo;' : '' %>
+          <%- filterValue %>
+          <span class="glyphicon glyphicon-remove"></span>
+          </a>
+        <% }); %>
+      <% }); %>
+    <% }); %>
+  <% } %>
 </div>

@@ -88,7 +88,7 @@ namespace :hyacinth do
                 {value: 'conference', display_label: 'Event'}
               ]
             }.to_json),
-            DynamicField.new(string_key: 'name_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, facet_field_label: 'Name', is_keyword_searchable: true, is_single_field_searchable: true),
+            DynamicField.new(string_key: 'name_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, standalone_field_label: 'Name', is_keyword_searchable: true, is_single_field_searchable: true),
             DynamicField.new(string_key: 'name_value_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI, is_single_field_searchable: true),
             DynamicField.new(string_key: 'name_authority', display_label: 'Authority', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY),
             DynamicField.new(string_key: 'name_authority_uri', display_label: 'Authority URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY_URI),
@@ -115,6 +115,25 @@ namespace :hyacinth do
           dynamic_fields: [DynamicField.new(string_key: 'place_of_origin_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_single_field_searchable: true)]
         )
 
+        date_created = DynamicFieldGroup.create!(string_key: 'date_created', display_label: 'Date Other', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
+          dynamic_fields: [
+            DynamicField.new(string_key: 'date_created_start_value', display_label: 'Single or Start Date', dynamic_field_type: DynamicField::Type::DATE, is_single_field_searchable: true),
+            DynamicField.new(string_key: 'date_created_end_value', display_label: 'End Date', dynamic_field_type: DynamicField::Type::DATE, is_single_field_searchable: true),
+            DynamicField.new(string_key: 'date_created_type', display_label: 'Type', dynamic_field_type: DynamicField::Type::SELECT, additional_data_json: {
+              select_options: [
+                {value: '', display_label: '- Not Specified -'},
+                {value: 'approximate', display_label: 'Approximate'},
+                {value: 'inferred', display_label: 'Inferred'},
+                {value: 'questionable', display_label: 'Questionable'}
+              ]
+            }.to_json)
+          ]
+        )
+
+        date_created_textual = DynamicFieldGroup.create!(string_key: 'date_created_textual', display_label: 'Textual Date', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
+          dynamic_fields: [DynamicField.new(string_key: 'date_created_textual_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_single_field_searchable: true)]
+        )
+
         date_other = DynamicFieldGroup.create!(string_key: 'date_other', display_label: 'Date Other', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
           dynamic_fields: [
             DynamicField.new(string_key: 'date_other_start_value', display_label: 'Single or Start Date', dynamic_field_type: DynamicField::Type::DATE, is_single_field_searchable: true),
@@ -134,6 +153,25 @@ namespace :hyacinth do
           dynamic_fields: [DynamicField.new(string_key: 'date_other_textual_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_single_field_searchable: true)]
         )
 
+        date_issued = DynamicFieldGroup.create!(string_key: 'date_issued', display_label: 'Date Other', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
+          dynamic_fields: [
+            DynamicField.new(string_key: 'date_issued_start_value', display_label: 'Single or Start Date', dynamic_field_type: DynamicField::Type::DATE, is_single_field_searchable: true),
+            DynamicField.new(string_key: 'date_issued_end_value', display_label: 'End Date', dynamic_field_type: DynamicField::Type::DATE, is_single_field_searchable: true),
+            DynamicField.new(string_key: 'date_issued_type', display_label: 'Type', dynamic_field_type: DynamicField::Type::SELECT, additional_data_json: {
+              select_options: [
+                {value: '', display_label: '- Not Specified -'},
+                {value: 'approximate', display_label: 'Approximate'},
+                {value: 'inferred', display_label: 'Inferred'},
+                {value: 'questionable', display_label: 'Questionable'}
+              ]
+            }.to_json)
+          ]
+        )
+
+        date_issued_textual = DynamicFieldGroup.create!(string_key: 'date_issued_textual', display_label: 'Textual Date', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
+          dynamic_fields: [DynamicField.new(string_key: 'date_issued_textual_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_single_field_searchable: true)]
+        )
+
         edition = DynamicFieldGroup.create!(string_key: 'edition', display_label: 'Edition', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
           dynamic_fields: [DynamicField.new(string_key: 'edition_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_single_field_searchable: true)]
         )
@@ -144,7 +182,7 @@ namespace :hyacinth do
 
         subject_topic = DynamicFieldGroup.create!(string_key: 'subject_topic', display_label: 'Subject Topic', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_subject_data, is_repeatable: true,
           dynamic_fields: [
-            DynamicField.new(string_key: 'subject_topic_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, facet_field_label: 'Subject Topic', is_keyword_searchable: true, is_single_field_searchable: true),
+            DynamicField.new(string_key: 'subject_topic_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, standalone_field_label: 'Subject Topic', is_keyword_searchable: true, is_single_field_searchable: true),
             DynamicField.new(string_key: 'subject_topic_value_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI, is_single_field_searchable: true),
             DynamicField.new(string_key: 'subject_topic_authority', display_label: 'Authority', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY),
             DynamicField.new(string_key: 'subject_topic_authority_uri', display_label: 'Authority URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY_URI)
@@ -153,13 +191,13 @@ namespace :hyacinth do
 
         subject_durst = DynamicFieldGroup.create!(string_key: 'subject_durst', display_label: 'Subject Durst', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_subject_data, is_repeatable: true,
           dynamic_fields: [
-            DynamicField.new(string_key: 'subject_durst_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, facet_field_label: 'Subject Durst', is_keyword_searchable: true, is_single_field_searchable: true)
+            DynamicField.new(string_key: 'subject_durst_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, standalone_field_label: 'Subject Durst', is_keyword_searchable: true, is_single_field_searchable: true)
           ]
         )
 
         subject_temporal = DynamicFieldGroup.create!(string_key: 'subject_temporal', display_label: 'Subject Temporal', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_subject_data, is_repeatable: true,
           dynamic_fields: [
-            DynamicField.new(string_key: 'subject_temporal_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, facet_field_label: 'Subject Temporal', is_keyword_searchable: true, is_single_field_searchable: true),
+            DynamicField.new(string_key: 'subject_temporal_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, standalone_field_label: 'Subject Temporal', is_keyword_searchable: true, is_single_field_searchable: true),
             DynamicField.new(string_key: 'subject_temporal_value_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI, is_single_field_searchable: true),
             DynamicField.new(string_key: 'subject_temporal_authority', display_label: 'Authority', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY),
             DynamicField.new(string_key: 'subject_temporal_authority_uri', display_label: 'Authority URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY_URI)
@@ -168,7 +206,7 @@ namespace :hyacinth do
 
         subject_name = DynamicFieldGroup.create!(string_key: 'subject_name', display_label: 'Subject Name', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_subject_data, is_repeatable: true,
           dynamic_fields: [
-            DynamicField.new(string_key: 'subject_name_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, facet_field_label: 'Subject Name', is_keyword_searchable: true, is_single_field_searchable: true),
+            DynamicField.new(string_key: 'subject_name_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, standalone_field_label: 'Subject Name', is_keyword_searchable: true, is_single_field_searchable: true),
             DynamicField.new(string_key: 'subject_name_value_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI, is_single_field_searchable: true),
             DynamicField.new(string_key: 'subject_name_authority', display_label: 'Authority', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY),
             DynamicField.new(string_key: 'subject_name_authority_uri', display_label: 'Authority URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY_URI)
@@ -177,7 +215,7 @@ namespace :hyacinth do
 
         subject_title = DynamicFieldGroup.create!(string_key: 'subject_title', display_label: 'Subject Title', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_subject_data, is_repeatable: true,
           dynamic_fields: [
-            DynamicField.new(string_key: 'subject_title_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, facet_field_label: 'Subject Title', is_keyword_searchable: true, is_single_field_searchable: true),
+            DynamicField.new(string_key: 'subject_title_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, standalone_field_label: 'Subject Title', is_keyword_searchable: true, is_single_field_searchable: true),
             DynamicField.new(string_key: 'subject_title_value_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI, is_single_field_searchable: true),
             DynamicField.new(string_key: 'subject_title_authority', display_label: 'Authority', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY),
             DynamicField.new(string_key: 'subject_title_authority_uri', display_label: 'Authority URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY_URI)
@@ -186,7 +224,7 @@ namespace :hyacinth do
 
         subject_geographic = DynamicFieldGroup.create!(string_key: 'subject_geographic', display_label: 'Subject Place', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_geographic_data, is_repeatable: true,
           dynamic_fields: [
-            DynamicField.new(string_key: 'subject_geographic_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, facet_field_label: 'Subject Geographic', is_keyword_searchable: true, is_single_field_searchable: true),
+            DynamicField.new(string_key: 'subject_geographic_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, standalone_field_label: 'Subject Geographic', is_keyword_searchable: true, is_single_field_searchable: true),
             DynamicField.new(string_key: 'subject_geographic_value_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI, is_single_field_searchable: true),
             DynamicField.new(string_key: 'subject_geographic_authority', display_label: 'Authority', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY),
             DynamicField.new(string_key: 'subject_geographic_authority_uri', display_label: 'Authority URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY_URI)

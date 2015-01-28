@@ -5,7 +5,8 @@ Hyacinth.DigitalObjectsApp.registeredControllerClasses = {};
 
 //Main objects
 Hyacinth.DigitalObjectsApp.currentController = null;
-Hyacinth.DigitalObjectsApp.currentSearchParams = null;
+Hyacinth.DigitalObjectsApp.mostRecentSearchParams = null;
+Hyacinth.DigitalObjectsApp.mostRecentSearchResult = null;
 
 /* Used to start the app and set things up */
 Hyacinth.DigitalObjectsApp.init = function() {

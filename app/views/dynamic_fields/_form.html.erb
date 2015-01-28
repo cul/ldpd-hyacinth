@@ -41,8 +41,8 @@
         <%= f.label(:is_facet_field, (f.check_box(:is_facet_field)).html_safe + ' Facet field?') %>
       </div>
       <div class="field">
-        <%= f.label :facet_field_label %><br>
-        <%= f.text_field :facet_field_label, {class: 'form-control'} %>
+        <%= f.label :standalone_field_label %><br>
+        <%= f.text_field :standalone_field_label, {class: 'form-control'} %>
       </div>
       <div class="field checkbox">
         <%= f.label(:is_searchable_identifier_field, (f.check_box(:is_searchable_identifier_field)).html_safe + ' Searchable Identifier Field?') %>

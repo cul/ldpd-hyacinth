@@ -36,3 +36,36 @@
     <% } %>
   <% }); %>
 <% } %>
+
+<h3>Custom Filter</h3>
+
+<form class="custom-filter-form">
+
+  <div class="row">
+    <div class="col-xs-12">
+      <select class="form-control input-sm custom_filter_field" name="custom_filter_field">
+        <% searchResponse['single_field_searchable_fields'].forEach(function(dynamic_field){ %>
+          <option value="<%= 'df_' + dynamic_field['string_key'] + '_sim' %>"><%= dynamic_field['standalone_field_label'].length > 0 ? dynamic_field['standalone_field_label'] : dynamic_field['string_key'] %></option>
+        <% }) %>
+      </select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-6">
+      <select name="custom_filter_operator" class="form-control input-sm">
+        <option value="present">Is Present</option>
+        <option value="absent">Is Absent</option>
+        <option value="equals">Equals</option>
+      </select>
+    </div>
+    <div class="col-xs-6">
+      <input type="text" class="form-control input-sm" name="custom_filter_value" />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12">
+      <button type="submit" class="btn btn-primary btn-block btn-sm"><span class="glyphicon glyphicon-ok"></span> Apply Filter</button>
+    </div>
+  </div>
+</div>

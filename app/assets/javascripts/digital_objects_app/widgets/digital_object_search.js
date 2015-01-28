@@ -112,10 +112,10 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.init = function() {
     Hyacinth.DigitalObjectsApp.params['search'] = {'search' : 'true'};
   }
 
-  //Update currentSearchParams with a copy of the current search params.  This will be used for:
+  //Update mostRecentSearchParams with a copy of the current search params.  This will be used for:
   // 1) Returning to the last set of search results
   // 2) Paging through results, one by one.
-  Hyacinth.DigitalObjectsApp.currentSearchParams = Hyacinth.ObjectHelpers.deepClone(Hyacinth.DigitalObjectsApp.params['search']);
+  Hyacinth.DigitalObjectsApp.mostRecentSearchParams = Hyacinth.ObjectHelpers.deepClone(Hyacinth.DigitalObjectsApp.params['search']);
 
   //Load search results for current params
   $.ajax({
@@ -175,9 +175,27 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.init = function() {
       that.removeFacetFromCurrentSearch($(this).attr('data-facet-field-name'), decodeURIComponent($(this).attr('data-uri-encoded-value')));
     });
 
+    //Bind filter removal handlers
+    that.$containerElement.find('.query-constraints .remove-filter-link').on('click', function(e){
+      e.preventDefault();
+      that.removeFilterFromCurrentSearch($(this).attr('data-filter-field-name'), decodeURIComponent($(this).attr('data-uri-encoded-operator')), decodeURIComponent($(this).attr('data-uri-encoded-value')));
+    });
+
     //Setup More Facets Dialog
     that.$containerElement.find('.show-facet-selector').on('click', function(){
       Hyacinth.DigitalObjectsApp.DigitalObjectSearch.showFacetSelectorModal($(this));
+    });
+
+    //Bind custom filter handler
+    that.$containerElement.find('.custom-filter-form').on('submit', function(e){
+      e.preventDefault();
+      var field = $(this).find('[name="custom_filter_field"]').val();
+      var operator = $(this).find('[name="custom_filter_operator"]').val();
+      var value = $(this).find('[name="custom_filter_value"]').val();
+      if (operator == 'present' || operator == 'absent') {
+        value = ''; //Value doesn't make sense to send if we choose the present or absent operators
+      }
+      that.addFilterToCurrentSearch(field, operator, value);
     });
 
     //Pre-populate form values based on params
@@ -273,14 +291,58 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.removeFacetFromCurrentS
   document.location.hash = Hyacinth.DigitalObjectsApp.paramsToHashValue(newParams);
 };
 
+Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.addFilterToCurrentSearch = function(filterFieldName, filterOperator, filterValue) {
+  var newParams = Hyacinth.ObjectHelpers.deepClone(Hyacinth.DigitalObjectsApp.params);
+  if(typeof(newParams['search']['fq']) == 'undefined') {
+    newParams['search']['fq'] = {};
+  }
+  if(typeof(newParams['search']['fq'][filterFieldName]) == 'undefined') {
+    newParams['search']['fq'][filterFieldName] = [];
+  }
+  var valToSend = {};
+  valToSend[filterOperator] = filterValue;
+  newParams['search']['fq'][filterFieldName].push(valToSend);
+  document.location.hash = Hyacinth.DigitalObjectsApp.paramsToHashValue(newParams);
+};
+
+Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.removeFilterFromCurrentSearch = function(filterFieldName, filterOperator, filterValue) {
+  console.log([filterFieldName, filterOperator, filterValue]);
+  var newParams = Hyacinth.ObjectHelpers.deepClone(Hyacinth.DigitalObjectsApp.params);
+  if(typeof(newParams['search']['fq']) == 'undefined') {
+    return;
+  }
+  if(typeof(newParams['search']['fq'][filterFieldName]) == 'undefined') {
+    return;
+  }
+  var indexOfValue = -1;
+  newParams['search']['fq'][filterFieldName].forEach(function(operatorAndValue, index){
+    $.each(operatorAndValue, function(operator, existingValue){
+      if (operator == filterOperator && existingValue == filterValue) {
+        indexOfValue = index;
+      }
+    });
+  });
+
+  if(indexOfValue == -1) {
+    return;
+  }
+
+  //Remove item from array
+  newParams['search']['fq'][filterFieldName].splice(indexOfValue, 1); //Splice acts directly on the array
+  document.location.hash = Hyacinth.DigitalObjectsApp.paramsToHashValue(newParams);
+};
+
 //Clean up event handlers
 Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.dispose = function() {
   this.$containerElement.removeData(Hyacinth.DigitalObjectsApp.DigitalObjectSearch.DIGITAL_OBJECT_SEARCH_DATA_KEY) // Break this (circular) reference.  This is important!
+  this.$containerElement.on('click');
   this.$containerElement.off('submit');
   this.$containerElement.off('change');
   this.$containerElement.find('.facet-group .toggle-facet-view').off('click');
   this.$containerElement.find('.facet-group .add-facet-link').off('click');
   this.$containerElement.find('.facet-group .remove-facet-link, .query-constraints .remove-facet-link').off('click');
+  this.$containerElement.find('.custom-filter-form').off('submit');
+  this.$containerElement.find('.query-constraints .remove-filter-link').off('click');
   this.$containerElement.find('.pagination').find('.goto-page').off('click');
   this.$containerElement.find('.show-facet-selector').off('click');
   if (this.currentAuthorizedTermSelector != null) {
