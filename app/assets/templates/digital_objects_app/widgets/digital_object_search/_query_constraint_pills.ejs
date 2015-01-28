@@ -21,7 +21,8 @@
           data-filter-field-name="<%= filterSolrStringKey %>"
           data-uri-encoded-operator="<%= encodeURIComponent(operator) %>"
           data-uri-encoded-value="<%= encodeURIComponent(filterValue) %>">
-          <%= filterSolrStringKey %>
+          <% filterSolrStringKeyAsDynamicFieldStringKey = filterSolrStringKey.replace(/^df_/, '').replace(/_sim$/, '') %>
+          <%= searchResponse['single_field_searchable_fields'][filterSolrStringKeyAsDynamicFieldStringKey] || filterSolrStringKey %>
           &rsaquo;
           <strong><%- operator %></strong>
           <%= filterValue.length > 0 ? '&rsaquo;' : '' %>

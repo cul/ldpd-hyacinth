@@ -235,7 +235,7 @@ module DigitalObject::IndexAndSearch
         'per_page' => per_page,
         'results' => solr_response['response']['docs'],
         'facets' => facet_data,
-        'single_field_searchable_fields' => DynamicField.where(is_single_field_searchable: true).order([:standalone_field_label, :string_key]).map{|dynamic_field| {standalone_field_label: dynamic_field.standalone_field_label, string_key: dynamic_field.string_key}}
+        'single_field_searchable_fields' => Hash[ DynamicField.where(is_single_field_searchable: true).order([:standalone_field_label, :string_key]).map{|dynamic_field| [dynamic_field.string_key, dynamic_field.standalone_field_label]} ]
       }
     end
 

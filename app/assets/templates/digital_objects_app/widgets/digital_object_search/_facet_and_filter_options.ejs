@@ -44,8 +44,8 @@
   <div class="row">
     <div class="col-xs-12">
       <select class="form-control input-sm custom_filter_field" name="custom_filter_field">
-        <% searchResponse['single_field_searchable_fields'].forEach(function(dynamic_field){ %>
-          <option value="<%= 'df_' + dynamic_field['string_key'] + '_sim' %>"><%= dynamic_field['standalone_field_label'].length > 0 ? dynamic_field['standalone_field_label'] : dynamic_field['string_key'] %></option>
+        <% $.each(searchResponse['single_field_searchable_fields'],function(dynamic_field_string_key, standalone_field_label){ %>
+          <option value="<%= 'df_' + dynamic_field_string_key + '_sim' %>"><%= standalone_field_label.length > 0 ? standalone_field_label : dynamic_field_string_key %></option>
         <% }) %>
       </select>
     </div>
