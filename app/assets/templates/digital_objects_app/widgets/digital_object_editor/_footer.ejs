@@ -1,5 +1,6 @@
 <div>
   <hr />
   <input type="submit" class="btn btn-primary pull-right" value="Save" />
+  <a href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: Hyacinth.DigitalObjectsApp.params['pid']}) %>" onclick="return confirm(Hyacinth.Text.unsavedChangesMessage);" class="btn btn-danger pull-right">Cancel</a>
   <div class="clearfix"></div>
 </div>

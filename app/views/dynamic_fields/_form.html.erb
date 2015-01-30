@@ -32,6 +32,9 @@
         <%= f.collection_select(:controlled_vocabulary_id, ControlledVocabulary.all, :id, :display_label, {include_blank: '- None -'}, {class: 'form-control'}) %>
       </div>
       <div class="field checkbox">
+        <%= f.label(:required_for_group_save, (f.check_box(:required_for_group_save)).html_safe + ' Required For Group Save?') %>
+      </div>
+      <div class="field checkbox">
         <%= f.label(:is_keyword_searchable, (f.check_box(:is_keyword_searchable)).html_safe + ' Keyword Searchable?') %>
       </div>
       <div class="field checkbox">

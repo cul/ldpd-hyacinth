@@ -86,7 +86,7 @@ form_controlled_vocabulary = ControlledVocabulary.create!(string_key: 'form', di
 ])
 
 # Create core DynamicFieldGroups and DynamicFields
-title = DynamicFieldGroup.create!(string_key: 'title', display_label: 'Title', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
+title = DynamicFieldGroup.create!(string_key: 'title', display_label: 'Title', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
   dynamic_fields: [
     DynamicField.new(string_key: 'title_non_sort_portion', display_label: 'Non-Sort Portion', dynamic_field_type: DynamicField::Type::STRING),
     DynamicField.new(string_key: 'title_sort_portion', display_label: 'Sort Portion', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_searchable_title_field: true)

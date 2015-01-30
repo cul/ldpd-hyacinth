@@ -93,7 +93,7 @@ Hyacinth.scrollToTopOfWindow = function(animationTimeInMillis){
  );
 };
 
-Hyacinth.scrollToElement = function(element, animationTimeInMillis){
+Hyacinth.scrollToElement = function(element, animationTimeInMillis, callback){
 
   var $element = $(element);
 
@@ -103,7 +103,7 @@ Hyacinth.scrollToElement = function(element, animationTimeInMillis){
 
   $('html, body').animate({
       scrollTop: $element.offset().top - ($element.height() + $('#top-navbar').height())
-    }, animationTimeInMillis
+    }, animationTimeInMillis, callback
  );
 };
 

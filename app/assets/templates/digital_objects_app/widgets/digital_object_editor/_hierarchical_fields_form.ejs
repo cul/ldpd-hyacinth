@@ -30,9 +30,10 @@
     <% } %>
   </div>
   <% if (mode == 'edit') { %>
-    <div>
+    <div class="alignright">
       <hr />
-      <input type="submit" class="btn btn-primary pull-right editor-submit-button" value="Save" />
+      <a href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: Hyacinth.DigitalObjectsApp.params['pid']}) %>" onclick="return confirm(Hyacinth.Text.unsavedChangesMessage);" class="btn btn-danger">Cancel</a>
+      <input type="submit" class="btn btn-primary editor-submit-button" value="Save" />
       <div class="clearfix"></div>
     </div>
   <% } %>

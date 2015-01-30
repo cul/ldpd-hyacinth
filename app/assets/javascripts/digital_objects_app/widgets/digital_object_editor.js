@@ -1,7 +1,7 @@
 Hyacinth.DigitalObjectsApp.DigitalObjectEditor = function(containerElementId, options) {
 
 
-  
+
 
 
   this.$containerElement = $('#' + containerElementId);
@@ -487,7 +487,9 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
   this.$containerElement.find('.form-navigation-dropup').find('.dropdown-menu').on('click', 'li', function(e){
     e.preventDefault();
     var selector = '.dynamic_field_group_category_label:contains("' + $(this).children('a').html() + '")';
-    Hyacinth.scrollToElement($(selector), 400);
+    Hyacinth.scrollToElement($(selector), 400, function(){
+      $(selector).addClass("highlightPageElement");
+    });
   });
 
   //Refresh navigation dropup options based on visible DynamicFieldGroupCategories

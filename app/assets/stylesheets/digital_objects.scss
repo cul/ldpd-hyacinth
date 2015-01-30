@@ -32,6 +32,11 @@
     .dynamic_field_group_content {
       border-top-width:0px;
     }
+
+    .field-label.at-least-one-required::after {
+      content: "" !important;
+    }
+
   }
 
   .dynamic_field_group_content {
@@ -85,10 +90,8 @@
         .field-label {
           position:relative;
           top:5px;
-          margin-bottom:.5em;
-        }
 
-        .field-label {
+          margin-bottom:.5em;
           display:inline-block;
           font-size:.95em;
           font-weight:bold; /* Redundancy for windows rendering */
@@ -99,8 +102,14 @@
           font-size:.95em;
         }
     }
+
+    .dynamic_field .field-label.at-least-one-required::after {
+      content: " *"
+    }
+
   }
 }
+
 
 .authorized_term_selector {
 

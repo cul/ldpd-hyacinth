@@ -3,7 +3,7 @@
   //
   //digitalObject
 %>
-<% Hyacinth.ContextualNav.setNavTitle('&laquo; Leave Editing Mode', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: Hyacinth.DigitalObjectsApp.params['pid']})); %>
+<% Hyacinth.ContextualNav.setNavTitle('&laquo; Leave Editing Mode', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: Hyacinth.DigitalObjectsApp.params['pid']}), true); %>
 <%
   var navItems = [];
   if (digitalObject.getState() == 'A') {

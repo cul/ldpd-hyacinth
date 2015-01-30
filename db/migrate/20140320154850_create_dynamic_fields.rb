@@ -12,6 +12,7 @@ class CreateDynamicFields < ActiveRecord::Migration
 
       t.boolean :is_keyword_searchable, null: false, default: false
       t.boolean :is_facet_field, null: false, default: false
+      t.boolean :required_for_group_save, null: false, default: false
       t.string :standalone_field_label, null: false, default: ''
       t.boolean :is_searchable_identifier_field, null: false, default: false
       t.boolean :is_searchable_title_field, null: false, default: false

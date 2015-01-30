@@ -86,41 +86,36 @@ h2 {
     box-shadow:1px 1px 3px #ddd;
 }
 
-/*
-table.baseline-headings th {
-  vertical-align: bottom !important;
+/*************
+ * Animation *
+ *************/
+
+@-webkit-keyframes fadeIt {
+  0%   { background-color: #FFFFFF; }
+  50%  { background-color: #AD301B; }
+  100% { background-color: #FFFFFF; }
+}
+@-moz-keyframes fadeIt {
+  0%   { background-color: #FFFFFF; }
+  50%  { background-color: #AD301B; }
+  100% { background-color: #FFFFFF; }
+}
+@-o-keyframes fadeIt {
+  0%   { background-color: #FFFFFF; }
+  50%  { background-color: #AD301B; }
+  100% { background-color: #FFFFFF; }
+}
+@keyframes fadeIt {
+  0%   { background-color: #FFFFFF; }
+  50%  { background-color: #AD301B; }
+  100% { background-color: #FFFFFF; }
 }
 
-table.baseline-headings th h3 {
-  margin:10px 0px 0px !important;
-}
 
-table.middle-aligned-cells td {
-    vertical-align: middle !important;
+.highlightPageElement {
+    background-image:none !important;
+    -webkit-animation: fadeIt 3s ease-in-out;
+       -moz-animation: fadeIt 3s ease-in-out;
+         -o-animation: fadeIt 3s ease-in-out;
+            animation: fadeIt 3s ease-in-out;
 }
-
-.green {
-    color:#00aa00;
-}
-
-.red {
-    color:#cc0000;
-}
-
-.alert {
-    margin-bottom:15px;
-}
-
-.nomartop {
-    margin-top:0px;
-}
-
-.monospace {
-    font-family:monospace;
-}
-
-.condensed_checkboxes .checkbox {
-  margin:0px;
-}
-
-*/

@@ -17,7 +17,7 @@ var fieldsetIds = associatedEnabledDynamicField ? associatedEnabledDynamicField[
 <div class="dynamic_field <%= fieldIsEnabled ? 'enabled' : '' %> all-fieldsets <%= (fieldsetIds.length > 0 ? 'fieldset-' + fieldsetIds.join(' fieldset-') : '') %> <%= mode == 'show' || fieldIsLocked ? 'readonly-display' : '' %>" data-string-key="<%= dynamic_field['string_key'] %>" data-dynamic-field-type="<%= dynamic_field['dynamic_field_type'] %>">
   <div class="row">
     <div class="col-md-4">
-      <div class="field-label"><input type="checkbox" class="copy-field" /> <%= dynamic_field['display_label'] %><%= fieldIsRequired && mode =='edit' ? ' *' : '' %></div>
+      <div class="field-label <%= fieldIsRequired && mode =='edit' ? ' at-least-one-required' : '' %>"><input type="checkbox" class="copy-field" /> <%= dynamic_field['display_label'] %></div>
     </div>
     <div class="col-md-8">
       <%= $('<div></div>').append($('<span class="default-value"></span>').attr('data-default-value', defaultValue)).html() %>

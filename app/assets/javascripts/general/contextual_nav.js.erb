@@ -1,9 +1,13 @@
 Hyacinth.defineNamespace('Hyacinth.ContextualNav');
 Hyacinth.ContextualNav.elementId = 'contextual_nav';
 
-Hyacinth.ContextualNav.setNavTitle = function(label, url){
+Hyacinth.ContextualNav.setNavTitle = function(label, url, showUnsavedChangePrompt){
 
   $contextualNav = $('#' + Hyacinth.ContextualNav.elementId);
+
+  if (typeof(showUnsavedChangePrompt) == 'undefined') {
+    showUnsavedChangePrompt = false;
+  }
 
   var $titleElement = null;
   if (url) {
@@ -12,6 +16,11 @@ Hyacinth.ContextualNav.setNavTitle = function(label, url){
     ).attr({
       href: url,
     });
+
+    if (showUnsavedChangePrompt) {
+      $titleElement.attr('onclick', 'return confirm(Hyacinth.Text.unsavedChangesMessage);');
+    }
+
   } else {
     $titleElement =$('<span></span>').html(
       label

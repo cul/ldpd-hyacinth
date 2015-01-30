@@ -47,7 +47,8 @@ class DynamicField < ActiveRecord::Base
       string_key: self.string_key,
       display_label: self.display_label,
       sort_order: self.sort_order,
-      dynamic_field_type: self.dynamic_field_type
+      dynamic_field_type: self.dynamic_field_type,
+      required_for_group_save: self.required_for_group_save
     }
 
     # Certain dynamic_field_types have additional data that should be sent as part of the json response
