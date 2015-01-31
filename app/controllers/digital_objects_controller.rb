@@ -51,8 +51,8 @@ class DigitalObjectsController < ApplicationController
     @digital_object.projects << project
 
     unless digital_object_params['dynamic_field_data_json'].nil?
-      dynamic_field_data_json = Hyacinth::Utils::StringUtils.clean_utf8_string(digital_object_params['dynamic_field_data_json'])
-      #dynamic_field_data_json = digital_object_params['dynamic_field_data_json']
+      #dynamic_field_data_json = Hyacinth::Utils::StringUtils.clean_utf8_string(digital_object_params['dynamic_field_data_json'])
+      dynamic_field_data_json = digital_object_params['dynamic_field_data_json']
       raise 'Invalid JSON given for dynamic_field_data_json' unless Hyacinth::Utils::JsonUtils.is_valid_json?(dynamic_field_data_json)
       @digital_object.update_dynamic_field_data(JSON(dynamic_field_data_json))
     end
