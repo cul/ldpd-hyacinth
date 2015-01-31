@@ -32,7 +32,11 @@
   <% if (mode == 'edit') { %>
     <div class="alignright">
       <hr />
-      <a href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: Hyacinth.DigitalObjectsApp.params['pid']}) %>" onclick="return confirm(Hyacinth.Text.unsavedChangesMessage);" class="btn btn-danger">Cancel</a>
+      <% if (Hyacinth.DigitalObjectsApp.params['action'] == 'new') { %>
+        <a href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'index'}) %>" onclick="return confirm(Hyacinth.Text.unsavedChangesMessage);" class="btn btn-danger">Cancel</a>
+      <% } else { %>
+        <a href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: Hyacinth.DigitalObjectsApp.params['pid']}) %>" onclick="return confirm(Hyacinth.Text.unsavedChangesMessage);" class="btn btn-danger">Cancel</a>
+      <% } %>
       <input type="submit" class="btn btn-primary editor-submit-button" value="Save" />
       <div class="clearfix"></div>
     </div>
