@@ -57,13 +57,14 @@ class DigitalObject::Base
     return sort_title
   end
 
-  # Adds a new title
-  def add_title(non_sort_portion, sort_portion, type='')
-    @dynamic_field_data['title'] = [] if @dynamic_field_data['title'].blank?
-    @dynamic_field_data['title'] << {
-      'title_non_sort_portion' => non_sort_portion,
-      'title_sort_portion' => sort_portion
-    }
+  # Sets the title
+  def set_title(non_sort_portion, sort_portion)
+    @dynamic_field_data['title'] = [
+      {
+        'title_non_sort_portion' => non_sort_portion,
+        'title_sort_portion' => sort_portion
+      }
+    ]
   end
 
   # Marks a record as inactive

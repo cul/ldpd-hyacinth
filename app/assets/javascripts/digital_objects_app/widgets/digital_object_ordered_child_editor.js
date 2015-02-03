@@ -3,6 +3,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectOrderedChildEditor = function(containerE
   this.$containerElement = $('#' + containerElementId);
   this.digitalObject = options['digitalObject'];
   this.orderedChildDigitalObjects = options['orderedChildDigitalObjects'];
+  this.tooManyToShow = options['tooManyToShow'];
 
   this.init();
 };
@@ -54,7 +55,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectOrderedChildEditor.prototype.init = func
   this.$containerElement.html(
     Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_ordered_child_editor/index.ejs', {
       digitalObject: this.digitalObject,
-      orderedChildDigitalObjects: this.orderedChildDigitalObjects
+      orderedChildDigitalObjects: this.orderedChildDigitalObjects,
+      tooManyToShow: this.tooManyToShow
     })
   );
 

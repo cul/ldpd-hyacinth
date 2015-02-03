@@ -285,6 +285,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_children = 
   }).done(function(data_for_ordered_child_editor){
 
     var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_ordered_child_editor['digital_object']);
+    var tooManyToShow = data_for_ordered_child_editor['too_many_to_show'];
     var orderedChildDigitalObjects = $.map(data_for_ordered_child_editor['ordered_child_digital_objects'], function(child_digital_object){
       return Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(child_digital_object)
     });
@@ -293,7 +294,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_children = 
 
     var digitalObjectOrderedChildEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectOrderedChildEditor('digital-object-ordered-child-editor', {
       digitalObject: digitalObject,
-      orderedChildDigitalObjects: orderedChildDigitalObjects
+      orderedChildDigitalObjects: orderedChildDigitalObjects,
+      tooManyToShow: tooManyToShow
     });
 
     //Event cleanup

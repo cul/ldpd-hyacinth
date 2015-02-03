@@ -3,6 +3,7 @@
   //
   //digitalObject
   //orderedChildDigitalObjects
+  //tooManyToShow
 %>
 <h1><%= digitalObject.digital_object_type['display_label'] %>: <%- digitalObject.getTitle() %></h1>
 <strong><%= (digitalObject.getProjects().length > 1 ? 'Projects' : 'Project') + ':' %></strong> <%= $.map(digitalObject.getProjects(), function(project){return project['display_label']}).join(', ') %>
@@ -12,32 +13,40 @@
 
 <h2 class="reorder-heading">Reoder Child Digital Objects</h2>
 
-<form class="ordered-child-editor-form">
-<% orderedChildDigitalObjects.forEach(function(childDigitalObject){ %>
-  <% if (childDigitalObject.getState() != 'A') { return; } %>
-  <div class="ordered-child shadow-box" data-pid="<%= childDigitalObject.getPid() %>">
-    <div class="row">
-      <div class="col-xs-2">
-        <button class="btn btn-default btn-sm shift-child-up"><span class="glyphicon glyphicon-arrow-up"></span></button>
-        <br />
-        <button class="btn btn-default btn-sm shift-child-down"><span class="glyphicon glyphicon-arrow-down"></span></button>
-      </div>
-      <div class="col-xs-8">
-          <strong><%- childDigitalObject.getTitle() %></strong>
+<% if (tooManyToShow) { %>
+  Too many child object to show.
+  <br /><br />
+  Total: <%= digitalObject.getOrderedChildDigitalObjectPids().length %>
+<% } else { %>
+
+  <form class="ordered-child-editor-form">
+  <% orderedChildDigitalObjects.forEach(function(childDigitalObject){ %>
+    <% if (childDigitalObject.getState() != 'A') { return; } %>
+    <div class="ordered-child shadow-box" data-pid="<%= childDigitalObject.getPid() %>">
+      <div class="row">
+        <div class="col-xs-2">
+          <button class="btn btn-default btn-sm shift-child-up"><span class="glyphicon glyphicon-arrow-up"></span></button>
           <br />
-          <strong>PID:</strong> <a href="#<%= Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: childDigitalObject.getPid()}) %>"><%= childDigitalObject.getPid() %></a>
-          <br />
-          <span class="label label-default"><%= childDigitalObject.digital_object_type['display_label'] %></span>
-      </div>
-      <div class="col-xs-2">
-        <!-- Image will go here, if present -->
+          <button class="btn btn-default btn-sm shift-child-down"><span class="glyphicon glyphicon-arrow-down"></span></button>
+        </div>
+        <div class="col-xs-8">
+            <strong><%- childDigitalObject.getTitle() %></strong>
+            <br />
+            <strong>PID:</strong> <a href="#<%= Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: childDigitalObject.getPid()}) %>"><%= childDigitalObject.getPid() %></a>
+            <br />
+            <span class="label label-default"><%= childDigitalObject.digital_object_type['display_label'] %></span>
+        </div>
+        <div class="col-xs-2">
+          <!-- Image will go here, if present -->
+        </div>
       </div>
     </div>
-  </div>
-<% }); %>
+  <% }); %>
 
-<div class="actions">
-  <input type="submit" class="btn btn-primary pull-right editor-submit-button" value="Save" />
-  <div class="clearfix"></div>
-</div>
-</form>
+  <div class="actions">
+    <input type="submit" class="btn btn-primary pull-right editor-submit-button" value="Save" />
+    <div class="clearfix"></div>
+  </div>
+  </form>
+
+<% } %>

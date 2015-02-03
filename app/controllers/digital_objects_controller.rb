@@ -194,13 +194,30 @@ class DigitalObjectsController < ApplicationController
 
   def data_for_ordered_child_editor
 
-    ordered_child_digital_objects = @digital_object.ordered_child_digital_object_pids.blank? ? [] : @digital_object.ordered_child_digital_object_pids.map{|pid|DigitalObject::Base.find(pid)}
+    max_number_of_child_assets_to_load = 20 # More than this would be unreasonably slow to load (at least right now).
+                                            # We don't want to return a partial set because this is used for ordering.
+
+    too_many_to_show = false
+
+    if @digital_object.ordered_child_digital_object_pids.blank?
+      ordered_child_digital_objects = []
+    else
+      child_pids = @digital_object.ordered_child_digital_object_pids
+      if child_pids.length <= max_number_of_child_assets_to_load
+        ordered_child_digital_objects = child_pids.map{|pid|DigitalObject::Base.find(pid)}
+      else
+        ordered_child_digital_objects = []
+        too_many_to_show = true
+      end
+    end
+
 
     respond_to do |format|
       format.json {
         render json: {
           digital_object: @digital_object,
-          ordered_child_digital_objects: ordered_child_digital_objects
+          ordered_child_digital_objects: ordered_child_digital_objects,
+          too_many_to_show: too_many_to_show
         }
       }
     end
@@ -389,7 +406,7 @@ class DigitalObjectsController < ApplicationController
     new_asset_digital_object = DigitalObject::Asset.new
     new_asset_digital_object.projects = @digital_object.projects
     new_asset_digital_object.parent_digital_object_pids << @digital_object.pid
-    new_asset_digital_object.add_title(title_non_sort_portion, title_sort_portion)
+    new_asset_digital_object.set_title(title_non_sort_portion, title_sort_portion)
 
     # Save new_asset_digital_object so that we can get a pid that we'll use to place the uploaded file in the right place
     if new_asset_digital_object.save
