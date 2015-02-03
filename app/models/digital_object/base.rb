@@ -251,7 +251,6 @@ class DigitalObject::Base
 
   # JSON representation
   def as_json(options={})
-
     return {
       pid: self.pid,
       title: self.get_title,

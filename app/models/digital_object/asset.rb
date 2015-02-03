@@ -11,7 +11,7 @@ class DigitalObject::Asset < DigitalObject::Base
     # Default to 'Unknown' dc_type.  We expect other code to properly set this
     # once the asset file type is known, but this avoid a blank value for dc_type
     # and helps to identify errors when a dc_type has been improperly set.
-    self.dc_type = VALID_DC_TYPES.first
+    self.dc_type ||= VALID_DC_TYPES.first
   end
 
   # Called during before_save, after all validations have passed
@@ -72,6 +72,9 @@ class DigitalObject::Asset < DigitalObject::Base
     # Add original_filename property to content datastream using <info:fedora/fedora-system:def/model#downloadFilename> relationship
     @fedora_object.rels_int.add_relationship(content_ds, 'info:fedora/fedora-system:def/model#downloadFilename', original_filename, true) # last param *true* means that this is a literal value rather than a relationship
 
+    # TODO: Eventually set true orientations, but we're setting everything as upright ('top-left') for now, just to have a value
+    @fedora_object.rels_int.add_relationship(content_ds, :orientation, 'top-left', true) # last param *true* means that this is a literal value rather than a relationship
+
   end
 
   def get_filesystem_location
@@ -131,23 +134,24 @@ class DigitalObject::Asset < DigitalObject::Base
   def set_dc_type_based_on_filename(original_filename)
 
     mime_type = DigitalObject::Asset.filename_to_mime_type(original_filename)
-    dc_type = 'Unknown'
+
+    possible_dc_type = 'Unknown'
 
     if mime_type.start_with?('image')
-      dc_type = 'StillImage'
+      possible_dc_type = 'StillImage'
     elsif mime_type.start_with?('video')
-      dc_type = 'MovingImage'
+      possible_dc_type = 'MovingImage'
     elsif mime_type.start_with?('audio')
-      dc_type = 'Sound'
+      possible_dc_type = 'Sound'
     elsif mime_type.start_with?('text')
-      dc_type = 'Text'
+      possible_dc_type = 'Text'
     elsif mime_type.index('excel') || mime_type.index('spreadsheet') || mime_type.index('xls') || mime_type.index('application/sql')
-      dc_type = 'Dataset'
+      possible_dc_type = 'Dataset'
     elsif mime_type.start_with?('application')
-      dc_type = 'Software'
+      possible_dc_type = 'Software'
     end
 
-    self.dc_type = dc_type
+    self.dc_type = possible_dc_type
   end
 
   def self.filename_to_mime_type(filename)
@@ -157,6 +161,7 @@ class DigitalObject::Asset < DigitalObject::Base
     else
       mime_type = 'application/octet-stream' # generic catch-all for unknown content types
     end
+    return mime_type
   end
 
   def to_solr

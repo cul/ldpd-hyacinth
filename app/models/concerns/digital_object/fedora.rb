@@ -83,6 +83,7 @@ module DigitalObject::Fedora
 
   def load_dc_type_from_fedora_object!
     self.dc_type = @fedora_object.datastreams['DC'].dc_type
+    self.dc_type = self.dc_type[0] if self.dc_type.is_a?(Array)
   end
 
   def load_parent_digital_object_pid_relationships_from_fedora_object!

@@ -5,7 +5,7 @@ class DigitalObject::Item < DigitalObject::Base
 
   def initialize(*args)
     super(*args)
-    self.dc_type = VALID_DC_TYPES.first
+    self.dc_type ||= VALID_DC_TYPES.first
   end
 
   # Called during before_save, after all validations have passed
