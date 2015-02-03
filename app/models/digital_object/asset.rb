@@ -99,7 +99,7 @@ class DigitalObject::Asset < DigitalObject::Base
     content_ds = @fedora_object.datastreams['content']
     if content_ds.present?
       relationship = @fedora_object.rels_int.relationships(content_ds, :extent)
-      if relationship
+      if relationship.present?
         return relationship.first.object.value.to_s
       end
     end
@@ -111,7 +111,7 @@ class DigitalObject::Asset < DigitalObject::Base
     content_ds = @fedora_object.datastreams['content']
     if content_ds.present?
       relationship = @fedora_object.rels_int.relationships(content_ds, 'info:fedora/fedora-system:def/model#downloadFilename')
-      if relationship
+      if relationship.present?
         return relationship.first.object.value
       end
     end
@@ -157,6 +157,13 @@ class DigitalObject::Asset < DigitalObject::Base
     else
       mime_type = 'application/octet-stream' # generic catch-all for unknown content types
     end
+  end
+
+  def to_solr
+    doc = super
+    doc['original_filename_sim'] = self.get_original_filename
+    doc['original_file_path_sim'] = self.get_original_file_path
+    return doc
   end
 
   # JSON representation
