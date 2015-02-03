@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 class DigitalObjectsController < ApplicationController
-  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :data_for_ordered_child_editor, :upload_assets, :download]
+  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :data_for_ordered_child_editor, :download]
   before_action :set_contextual_nav_options
 
   # GET /digital_objects
@@ -238,15 +238,38 @@ class DigitalObjectsController < ApplicationController
 
     overall_errors = []
 
-    # Only DigitalObject::Item objects can have child assets
-    unless @digital_object.is_a?(DigitalObject::Item)
-      overall_errors << "You can only upload assets to a parent Digital Object of type Item.  Object with pid #{@digital_object.pid} is of type: #{@digital_object.digital_object_type.display_label}"
+    if params['parent_digital_object_pid']
+      parent_digital_object = DigitalObject::Base.find(params['parent_digital_object_pid'])
+
+      # Only DigitalObject::Item objects can have child assets
+      unless parent_digital_object.is_a?(DigitalObject::Item)
+        overall_errors << "You can only upload assets to a parent Digital Object of type Item.  Object with pid #{parent_digital_object.pid} is of type: #{parent_digital_object.digital_object_type.display_label}"
+      end
+
+      projects = parent_digital_object.projects
+    elsif params['project_string_key'].present?
+      parent_digital_object = nil
+      project = Project.find_by(string_key: params['project_string_key'])
+      if project.present?
+        projects = [project]
+      else
+        overall_errors << "Could not find project for string key: #{params['project_string_key']}"
+      end
+    else
+      overall_errors << "Missing project string key.  Supply param project_string_key OR referene a parent digital object."
     end
+
 
     file_data = []
 
+    if overall_errors.present?
+      file_data << {
+        "name" => 'Error',
+        "size" => 0,
+        "errors" => overall_errors
+      }
     # Case 1: We're receiving file data from an HTTP upload
-    if params['files'].present?
+    elsif params['files'].present?
 
       # Immediately unlink all files.  This is recommended for POSIX systems,
       # but the code below should still work on non-POSIX systems (like Windows).
@@ -269,7 +292,7 @@ class DigitalObjectsController < ApplicationController
             file_data << {
               "name" => uploaded_file.original_filename,
               "size" => uploaded_file.tempfile.size,
-              "errors" => "Invalid UTF-8 characters found in filename.  Unable to upload."
+              "errors" => ["Invalid UTF-8 characters found in filename.  Unable to upload."]
             }
           else
             original_file_path = '' # For now, always blank for HTTP file uploads
@@ -278,7 +301,7 @@ class DigitalObjectsController < ApplicationController
             if test_mode
               puts 'Test mode output: Would have created new Asset for: ' + uploaded_file.original_filename
             else
-              file_data << handle_single_file_upload(original_filename, original_file_path, 'internal', uploaded_file.tempfile)
+              file_data << handle_single_file_upload(original_filename, original_file_path, 'internal', uploaded_file.tempfile, projects, parent_digital_object)
             end
           end
         ensure
@@ -301,7 +324,7 @@ class DigitalObjectsController < ApplicationController
         file_data << {
           "name" => original_file_path,
           "size" => 0,
-          "errors" => "Invalid UTF-8 characters found in file path.  Unable to upload."
+          "errors" => ["Invalid UTF-8 characters found in file path.  Unable to upload."]
         }
       else
         # Make sure that the file actually exists
@@ -309,7 +332,7 @@ class DigitalObjectsController < ApplicationController
           file_data << {
             "name" => original_file_path,
             "size" => 0,
-            "errors" => "No file found at path: " + original_file_path
+            "errors" => ["No file found at path: " + original_file_path]
           }
         end
 
@@ -318,7 +341,7 @@ class DigitalObjectsController < ApplicationController
         else
           # 'r' == read, 'b' == binary mode
           File.open(original_file_path, 'rb') do |file|
-            file_data << handle_single_file_upload(original_filename, original_file_path, params['import_type'], file)
+            file_data << handle_single_file_upload(original_filename, original_file_path, params['import_type'], file, projects, parent_digital_object)
           end
 
           if params['import_type'] == 'internal' && file_data.last['errors'].blank?
@@ -399,7 +422,7 @@ class DigitalObjectsController < ApplicationController
   # Hash format: {'name' => 'file.tif', size => '12345', errors => ['Some error']}
   #
   # param import_type: Valid values
-  def handle_single_file_upload(original_filename, original_file_path, import_type, file_to_upload)
+  def handle_single_file_upload(original_filename, original_file_path, import_type, file_to_upload, projects, parent_digital_object)
 
     file_size = file_to_upload.size
     puts 'File size: ' + file_size.to_s
@@ -411,7 +434,7 @@ class DigitalObjectsController < ApplicationController
 
     valid_import_types = ['internal', 'external']
     unless valid_import_types.include?(import_type)
-      upload_response['errors'] = 'Param import_type must be one of: ' + valid_import_types.join(', ')
+      upload_response['errors'] = ['Param import_type must be one of: ' + valid_import_types.join(', ')]
       return upload_response
     end
 
@@ -429,8 +452,8 @@ class DigitalObjectsController < ApplicationController
     }
 
     new_asset_digital_object = DigitalObject::Asset.new
-    new_asset_digital_object.projects = @digital_object.projects
-    new_asset_digital_object.parent_digital_object_pids << @digital_object.pid
+    new_asset_digital_object.projects = projects
+    new_asset_digital_object.parent_digital_object_pids << parent_digital_object.pid if parent_digital_object.present?
     new_asset_digital_object.set_title(title_non_sort_portion, title_sort_portion)
 
     # Save new_asset_digital_object so that we can get a pid that we'll use to place the uploaded file in the right place
@@ -484,7 +507,7 @@ class DigitalObjectsController < ApplicationController
         original_file_checksum = 'SHA-256:' + original_file_sha256_hexdigest
         final_copy_file_checksum = new_asset_digital_object.get_checksum
         if original_file_checksum != final_copy_file_checksum
-          upload_response['errors'] = "Error during file copy.  Copied file checksum (#{final_copy_file_checksum}) doesn't match original (#{original_file_checksum}).  Delete uploaded record and try again."
+          upload_response['errors'] = ["Error during file copy.  Copied file checksum (#{final_copy_file_checksum}) doesn't match original (#{original_file_checksum}).  Delete uploaded record and try again."]
         return upload_response
         end
       end

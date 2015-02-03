@@ -28,10 +28,11 @@ class DigitalObject::Asset < DigitalObject::Base
   def valid?
     super # Always run shared parent class validation
 
-    # Assets must have at least one parent Item
-    if self.state == 'A' && parent_digital_object_pids.length == 0
-      @errors.add(:parent_digital_object_pids, 'An Asset must have at least one parent Item')
-    end
+    ## Assets must have at least one parent Item
+    # Update: This is not necessarily true.
+    #if self.state == 'A' && parent_digital_object_pids.length == 0
+    #  @errors.add(:parent_digital_object_pids, 'An Asset must have at least one parent Item')
+    #end
 
     # Assets can only be children of DigitalObject::Item objects
     parent_digital_object_pids.each {|parent_digital_object_pid|

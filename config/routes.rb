@@ -28,10 +28,10 @@ Hyacinth::Application.routes.draw do
     collection do
       match 'search', via: [:get, :post]
       match 'data_for_editor', via: [:get, :post]
+      post 'upload_assets'
     end
     member do
       get 'data_for_ordered_child_editor'
-      post 'upload_assets'
       get 'download'
     end
   end

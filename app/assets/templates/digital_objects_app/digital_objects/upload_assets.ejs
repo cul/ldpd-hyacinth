@@ -19,8 +19,8 @@
   <li>The progress indicator below displays upload progress, but additional server-side processing occurs after the upload is complete.</li>
   <li>Single files larger than 2GB must be upload via FTP to the Hyacinth upload directory.</li>
 </ul>
-<form class="digital-object-asset-upload-form" action="/digital_objects/<%= parentDigitalObject.getPid() %>/upload_assets" method="POST" enctype="multipart/form-data">
-
+<form class="digital-object-asset-upload-form" action="/digital_objects/upload_assets" method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="parent_digital_object_pid" value="<%= parentDigitalObject.getPid() %>" />
     <div class="upload-drop-zone aligncenter">
       Click here or drag and drop one or more files
       <br />

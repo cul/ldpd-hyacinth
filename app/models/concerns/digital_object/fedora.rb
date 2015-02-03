@@ -4,6 +4,20 @@ module DigitalObject::Fedora
   PROJECT_MEMBERSHIP_PREDICATE = :is_constituent_of
   HYACINTH_DATASTREAM_NAME = 'hyacinth'
 
+  ###############################
+  # General data access methods #
+  ###############################
+
+  def get_hyacinth_data
+
+    hyacinth_ds = @fedora_object.datastreams[HYACINTH_DATASTREAM_NAME]
+    if hyacinth_ds && hyacinth_ds.content.present?
+      return JSON(hyacinth_ds.content)
+    end
+
+    return {}
+  end
+
   ######################################
   # Fedora object data writing methods #
   ######################################
@@ -23,7 +37,7 @@ module DigitalObject::Fedora
   end
 
   def set_fedora_ordered_child_digital_object_pids
-    hyacinth_data = JSON(@fedora_object.datastreams[HYACINTH_DATASTREAM_NAME].content)
+    hyacinth_data = get_hyacinth_data()
     hyacinth_data['ordered_child_digital_object_pids'] = @ordered_child_digital_object_pids
     @fedora_object.datastreams[HYACINTH_DATASTREAM_NAME].content = hyacinth_data.to_json
   end
@@ -68,7 +82,7 @@ module DigitalObject::Fedora
   end
 
   def set_fedora_dynamic_field_data
-    hyacinth_data = JSON(@fedora_object.datastreams[HYACINTH_DATASTREAM_NAME].content)
+    hyacinth_data = get_hyacinth_data()
     hyacinth_data['dynamic_field_data'] = @dynamic_field_data
     @fedora_object.datastreams[HYACINTH_DATASTREAM_NAME].content = hyacinth_data.to_json
   end
@@ -91,7 +105,7 @@ module DigitalObject::Fedora
   end
 
   def load_ordered_child_digital_object_pids_from_fedora_object!
-    hyacinth_data = JSON(@fedora_object.datastreams[HYACINTH_DATASTREAM_NAME].content)
+    hyacinth_data = get_hyacinth_data()
     @ordered_child_digital_object_pids = hyacinth_data['ordered_child_digital_object_pids'] || []
   end
 
