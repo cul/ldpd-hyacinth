@@ -31,6 +31,9 @@ solr.yml
 
 *_user_accounts.yml
 
+# subs.yml doesn't need to be stored here because it's not currently related to Hyacinth
+config/subs.yml
+
 # Ignore hydra-jetty
 /jetty
 

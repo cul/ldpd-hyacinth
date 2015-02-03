@@ -152,7 +152,7 @@ class ProjectsController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def project_params
     params.require(:project).permit(
-      :id, :display_label, :string_key, :pid_generator_id,
+      :id, :display_label, :string_key, :pid_generator_id, :full_path_to_custom_asset_directory,
       :enabled_dynamic_fields_attributes => [ :id, :digital_object_type_id, :dynamic_field_id, :default_value, :required, :hidden, :locked, :_destroy, :fieldset_ids => [] ],
       #:project_external_data_sources_attributes => [:id, :project_id, :external_data_source_id, :_destroy,
       #  :externally_synced_dynamic_fields_attributes => [:id, :project_external_data_source_id, :dynamic_field_id, :_destroy]

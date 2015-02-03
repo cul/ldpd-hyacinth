@@ -65,6 +65,27 @@ class DigitalObject::Asset < DigitalObject::Base
     @fedora_object.add_datastream(file_content_datastream)
   end
 
+  def get_filesystem_location
+    content_ds = @fedora_object.datastreams['content']
+    if content_ds.present?
+      content_ds.dsLocation.gsub(/^file:/,'')
+    else
+      return nil
+    end
+  end
+
+  def get_checksum
+    content_ds = @fedora_object.datastreams['content']
+    if content_ds.present?
+      checksum = ''
+      checksum += content_ds.checksumType + ':' if content_ds.checksumType
+      checksum += content_ds.checksum if content_ds.checksum
+      return checksum
+    else
+      return nil
+    end
+  end
+
   def get_original_filename
     return @fedora_object.datastreams["content"].present? ? @fedora_object.datastreams["content"].label : ''
   end
@@ -106,6 +127,19 @@ class DigitalObject::Asset < DigitalObject::Base
     else
       mime_type = 'application/octet-stream' # generic catch-all for unknown content types
     end
+  end
+
+  # JSON representation
+  def as_json(options={})
+    json = super(options)
+
+    json['asset_data'] = {
+      filesystem_location: self.get_filesystem_location,
+      checksum: self.get_checksum
+    }
+
+    return json
+
   end
 
 end

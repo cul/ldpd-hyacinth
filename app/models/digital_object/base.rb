@@ -151,40 +151,43 @@ class DigitalObject::Base
   def get_enabled_dynamic_fields
 
     # If there's only one project, things are simple.  Just return the EnabledDynamicFields for that project.
+    # For now, the idea is that objects can be published to multiple publish targets, but they're only managed by one project.
     if self.projects.length == 1
       return self.projects.first.get_enabled_dynamic_fields(self.digital_object_type)
+    else
+      raise 'Not currently supporting objects with more than one project.'
     end
 
-    # If this DigitalObject has more than one project, this is more complicated because
-    # each project has its own EnabledDynamicField properties, and some may overlap for
-    # the same DynamicField.  (Only one version may be locked, one may have a
-    # default value, one may be required, etc.)
-
-    # This method's job is to resolve all of the potential merging mess.
-
-    # Current merge strategy.  Always favor the EnabledDynamicField rules (required, locked, etc.)
-    # of the project with the earlier created date, since the one with the newer date is "borrowing/sharing"
-    # with the original project.
-
-    # TODO: When importing existing projects into Hyacinth, make sure that the Project gets its created
-    # date from its associated Fedora object.
-
-    all_enabled_dynamic_fields = []
-    # Always sort projects in the same order so that the enabled_dynamic_field merge order is consistent
-    self.projects.sort_by{|project|project.created}.each do |project|
-
-      enabled_dynamic_fields = project.get_enabled_dynamic_fields(self.digital_object_type)
-
-      if all_enabled_dynamic_fields.length == 0
-        all_enabled_dynamic_fields += enabled_dynamic_fields
-      else
-        # Only get EnabledDynamicFields with dynamic_field_id values that aren't already in all_enabled_dynamic_fields
-        current_dynamic_field_id_values = all_enabled_dynamic_fields.map{|enabled_df| enabled_df.dynamic_field_id}
-        all_enabled_dynamic_fields += enabled_dynamic_fields.select{|enabled_df| current_dynamic_field_id_values.include?(enabled_df) }
-      end
-
-    end
-    return all_enabled_dynamic_fields
+    ## If this DigitalObject has more than one project, this is more complicated because
+    ## each project has its own EnabledDynamicField properties, and some may overlap for
+    ## the same DynamicField.  (Only one version may be locked, one may have a
+    ## default value, one may be required, etc.)
+    #
+    ## This method's job is to resolve all of the potential merging mess.
+    #
+    ## Current merge strategy.  Always favor the EnabledDynamicField rules (required, locked, etc.)
+    ## of the project with the earlier created date, since the one with the newer date is "borrowing/sharing"
+    ## with the original project.
+    #
+    ## TODO: When importing existing projects into Hyacinth, make sure that the Project gets its created
+    ## date from its associated Fedora object.
+    #
+    #all_enabled_dynamic_fields = []
+    ## Always sort projects in the same order so that the enabled_dynamic_field merge order is consistent
+    #self.projects.sort_by{|project|project.created}.each do |project|
+    #
+    #  enabled_dynamic_fields = project.get_enabled_dynamic_fields(self.digital_object_type)
+    #
+    #  if all_enabled_dynamic_fields.length == 0
+    #    all_enabled_dynamic_fields += enabled_dynamic_fields
+    #  else
+    #    # Only get EnabledDynamicFields with dynamic_field_id values that aren't already in all_enabled_dynamic_fields
+    #    current_dynamic_field_id_values = all_enabled_dynamic_fields.map{|enabled_df| enabled_df.dynamic_field_id}
+    #    all_enabled_dynamic_fields += enabled_dynamic_fields.select{|enabled_df| current_dynamic_field_id_values.include?(enabled_df) }
+    #  end
+    #
+    #end
+    #return all_enabled_dynamic_fields
   end
 
   def save
@@ -252,6 +255,7 @@ class DigitalObject::Base
       pid: self.pid,
       title: self.get_title,
       state: @fedora_object ? @fedora_object.state : 'A',
+      dc_type: self.dc_type,
       projects: self.projects,
       digital_object_type: self.digital_object_type,
       dynamic_field_data: @dynamic_field_data,

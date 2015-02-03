@@ -176,10 +176,11 @@ ActiveRecord::Schema.define(version: 20141104010523) do
   add_index "project_permissions", ["user_id"], name: "index_project_permissions_on_user_id", using: :btree
 
   create_table "projects", force: :cascade do |t|
-    t.string   "pid",              limit: 255
-    t.integer  "pid_generator_id", limit: 4
-    t.string   "display_label",    limit: 255
-    t.string   "string_key",       limit: 255
+    t.string   "pid",                                 limit: 255
+    t.integer  "pid_generator_id",                    limit: 4
+    t.string   "display_label",                       limit: 255
+    t.string   "string_key",                          limit: 255
+    t.text     "full_path_to_custom_asset_directory", limit: 65535
     t.datetime "created_at"
     t.datetime "updated_at"
   end

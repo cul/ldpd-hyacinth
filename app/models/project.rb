@@ -12,6 +12,7 @@ class Project < ActiveRecord::Base
   belongs_to :pid_generator
 
   validates :display_label, :string_key, presence: true
+  validate :validate_custom_asset_directory
 
   after_save :ensure_that_title_fields_are_enabled_and_required
   before_save :set_defaults_for_blank_fields
@@ -41,6 +42,14 @@ class Project < ActiveRecord::Base
   # Returns enabled dynamic fields (with eager-loaded nested dynamic_field data because we use that frequently)
   def get_enabled_dynamic_fields(digital_object_type)
     return self.enabled_dynamic_fields.includes(:dynamic_field).where(digital_object_type: digital_object_type).to_a
+  end
+
+  def get_asset_directory
+    if self.full_path_to_custom_asset_directory.present?
+      self.full_path_to_custom_asset_directory
+    else
+      File.join(HYACINTH['default_asset_home'], self.string_key)
+    end
   end
 
   #def validate_presence_of_title_fields
@@ -248,6 +257,21 @@ class Project < ActiveRecord::Base
   private
 
   def set_defaults_for_blank_fields
+
+  end
+
+  def validate_custom_asset_directory
+    if full_path_to_custom_asset_directory.present?
+
+      puts 'Checking out: ' + self.get_asset_directory
+
+      unless (File.exists?(self.get_asset_directory) &&
+          File.readable?(self.get_asset_directory) &&
+          File.writable?(self.get_asset_directory)
+        )
+        errors.add(:full_path_to_custom_asset_directory, 'could not be written to.  Ensure that the path exists and has the correct read/write permissions: "' + full_path_to_custom_asset_directory + '"')
+      end
+    end
 
   end
 

@@ -39,7 +39,7 @@ class DigitalObjectsController < ApplicationController
   # POST /digital_objects.json
   def create
 
-    test_mode = params['test'].present? && params['test'] == 'true'
+    test_mode = params['test'].present? && params['test'].to_s == 'true'
 
     project = Project.find_by(string_key: digital_object_params['project_string_key'])
     digital_object_type = DigitalObjectType.find_by(string_key: digital_object_params['digital_object_type_string_key'])
@@ -209,6 +209,8 @@ class DigitalObjectsController < ApplicationController
 
   def upload_assets
 
+    test_mode = params['test'].present? && params['test'].to_s == 'true'
+
     overall_errors = []
 
     # Only DigitalObject::Item objects can have child assets
@@ -230,85 +232,66 @@ class DigitalObjectsController < ApplicationController
       # And here: http://docs.ruby-lang.org/en/2.1.0/Tempfile.html (See: "Unlink-before-close")
 
       params['files'].each {|uploaded_file|
-        uploaded_file.tempfile.unlink # On Windows, this silently fails.  We still need to use a begin/ensure clause with file.tempfile.close.
+        uploaded_file.tempfile.unlink # On Windows, this silently fails.  That's okay.  We still need to use a begin/ensure clause with file.tempfile.close.
       }
 
-      params['files'].each {|uploaded_file|
+      params['files'].each do |uploaded_file|
         begin
 
-          # If we don't utf-8 clean the original filename and original file path and there are weird characters (like "\xC2"), Ruby will die a horrible death.  Let's keep Ruby alive.
-          original_filename = Hyacinth::Utils::StringUtils.clean_utf8_string(uploaded_file.original_filename).strip
-          original_filename_without_extension = File.basename(original_filename)
-          original_file_path = '' # For now, always blank for HTTP file uploads
+          # Check for invalid characters in filename.  Reject if non-utf8.
+          # If we get weird characters (like "\xC2"), Ruby will die a horrible death.  Let's keep Ruby alive.
+          if uploaded_file.original_filename != Hyacinth::Utils::StringUtils.clean_utf8_string(uploaded_file.original_filename)
+            file_data << {
+              "name" => uploaded_file.original_filename,
+              "size" => uploaded_file.tempfile.length,
+              "errors" => "Invalid UTF-8 characters found in filename.  Unable to upload."
+            }
+          else
+            original_file_path = '' # For now, always blank for HTTP file uploads
+            original_filename = uploaded_file.original_filename
 
-          file_data_for_json_response = {
-            "name" => original_filename,
-            "size" => uploaded_file.tempfile.length,
-          }
-
-          title_non_sort_portion = ''
-          title_sort_portion = original_filename_without_extension
-          # Separate non-sort-portion for strings beginning with certain non-sort words (i.e. 'The', 'A', 'An')
-          ['The', 'An' 'A'].each{|article|
-            if original_filename_without_extension.downcase.slice(article.downcase + ' ').present?
-              title_non_sort_portion = article
-              title_sort_portion = original_filename_without_extension[article.length + 1, original_filename_without_extension.length]
-              break
-            end
-          }
-
-          new_asset_digital_object = DigitalObject::Asset.new
-          new_asset_digital_object.projects = @digital_object.projects
-          new_asset_digital_object.parent_digital_object_pids << @digital_object.pid
-          new_asset_digital_object.add_title(title_non_sort_portion, title_sort_portion)
-
-          # Save new_asset_digital_object so that we can get a pid that we'll use to place the uploaded file in the right place
-          if new_asset_digital_object.save
-            path_to_file_in_hyacinth_asset_directory = Hyacinth::Utils::PathUtils.path_to_asset_file(new_asset_digital_object.pid, original_filename)
-
-            if File.exists?(path_to_file_in_hyacinth_asset_directory)
-              raise 'Pre-file-write test unexpectedly found existing file at target location: ' + path_to_file_in_hyacinth_asset_directory
+            if test_mode
+              puts 'Test mode output: Would have created new Asset for: ' + uploaded_file.original_filename
+            else
+              file_data << handle_single_file_upload(original_filename, original_file_path, 'internal', uploaded_file.tempfile)
             end
 
-            # Recursively make necessary directories
-            FileUtils.mkdir_p(File.dirname(path_to_file_in_hyacinth_asset_directory))
 
-            # Test write abilities
-            FileUtils.touch(path_to_file_in_hyacinth_asset_directory)
-            unless File.exists?(path_to_file_in_hyacinth_asset_directory)
-              raise 'Unable to write to file path: ' + path_to_file_in_hyacinth_asset_directory
-            end
-
-            # Copy file to final asset destination directory
-            # Using a write buffer of 4096 bytes so that we don't use too much memory when copying large files.
-            # 'w' == write, 'b' == binary mode
-            File.open(path_to_file_in_hyacinth_asset_directory, 'wb') do |file|
-              while buff = uploaded_file.tempfile.read(4096)
-                file.write(buff)
-              end
-            end
-
-            new_asset_digital_object.set_file_and_original_filename_and_calculate_checksum(path_to_file_in_hyacinth_asset_directory, original_filename)
-            new_asset_digital_object.set_original_file_path(original_file_path)
-            new_asset_digital_object.set_dc_type_based_on_filename(original_filename)
-
-            new_asset_digital_object.save
           end
-
-          file_data_for_json_response['errors'] = new_asset_digital_object.errors if new_asset_digital_object.errors.present?
-
-          file_data << file_data_for_json_response
-
         ensure
            uploaded_file.tempfile.close!  # Closes the file handle. If the file wasn't unlinked earlier
                                 # because #unlink failed, then this method will attempt
                                 # to do so again.
         end
-      }
+      end
 
-    elsif params['filesystem_file_locations']
-      # Case 2: We're receiving file data from a list of filesystem locations.
-      # TODO: This isn't currently supported, but will be at some point.
+    elsif params['local_filesystem_file_path']
+
+      # Case 2: We're receiving file data from a local filesystem location.
+
+      # Check for invalid characters in filename.  Reject if non-utf8.
+      # If we get weird characters (like "\xC2"), Ruby will die a horrible death.  Let's keep Ruby alive.
+      if original_file_path != Hyacinth::Utils::StringUtils.clean_utf8_string(uploaded_file.original_filename)
+        file_data << {
+          "name" => uploaded_file.original_filename,
+          "size" => uploaded_file.tempfile.length,
+          "errors" => "Invalid UTF-8 characters found in file path.  Unable to upload."
+        }
+      else
+
+        original_file_path = local_filesystem_file_path
+        original_filename = Pathname.new(original_file_path).basename
+
+        if test_mode
+          puts 'Test mode output: Would have created new Asset for file at: ' + original_file_path
+        else
+          # 'r' == read, 'b' == binary mode
+          File.open(original_file_path, 'rb') do |file|
+            file_data << handle_single_file_upload(original_filename, original_file_path, params['import_type'], file)
+          end
+        end
+
+      end
 
     end
 
@@ -319,6 +302,7 @@ class DigitalObjectsController < ApplicationController
         }
       }
     end
+
   end
 
   private
@@ -369,6 +353,84 @@ class DigitalObjectsController < ApplicationController
     #else
     #  require_hyacinth_admin!
     #end
+
+  end
+
+  # Handles a file upload and returns a hash with information about the upload.
+  # Hash format: {'name' => 'file.tif', size => '12345', errors => ['Some error']}
+  #
+  # param import_type: Valid values
+  def handle_single_file_upload(original_filename, original_file_path, import_type, file_to_upload)
+
+    upload_response = {
+      "name" => original_filename,
+      "size" => file_to_upload.length
+    }
+
+    valid_import_types = ['internal', 'external']
+    unless valid_import_types.include?(import_type)
+      upload_response['errors'] = 'Import type must be one of: ' + valid_import_types.join(', ')
+      return upload_response
+    end
+
+    original_filename_without_extension = File.basename(original_filename)
+
+    title_non_sort_portion = ''
+    title_sort_portion = original_filename_without_extension
+    # Separate non-sort-portion for strings beginning with certain non-sort words (i.e. 'The', 'A', 'An')
+    ['The', 'An' 'A'].each{|article|
+      if original_filename_without_extension.downcase.slice(article.downcase + ' ').present?
+        title_non_sort_portion = article
+        title_sort_portion = original_filename_without_extension[article.length + 1, original_filename_without_extension.length]
+        break
+      end
+    }
+
+    new_asset_digital_object = DigitalObject::Asset.new
+    new_asset_digital_object.projects = @digital_object.projects
+    new_asset_digital_object.parent_digital_object_pids << @digital_object.pid
+    new_asset_digital_object.add_title(title_non_sort_portion, title_sort_portion)
+
+    # Save new_asset_digital_object so that we can get a pid that we'll use to place the uploaded file in the right place
+    if new_asset_digital_object.save
+      path_to_final_save_location = Hyacinth::Utils::PathUtils.path_to_asset_file(new_asset_digital_object.pid, new_asset_digital_object.projects.first, original_filename)
+
+      if File.exists?(path_to_final_save_location)
+        raise 'Pre-file-write test unexpectedly found existing file at target location: ' + path_to_final_save_location
+      end
+
+      # Recursively make necessary directories
+      FileUtils.mkdir_p(File.dirname(path_to_final_save_location))
+
+      # Test write abilities
+      FileUtils.touch(path_to_final_save_location)
+      unless File.exists?(path_to_final_save_location)
+        raise 'Unable to write to file path: ' + path_to_final_save_location
+      end
+
+      if import_type == 'internal'
+        # Copy file to final asset destination directory
+        # Using a write buffer of 4096 bytes so that we don't use too much memory when copying large files.
+        # 'w' == write, 'b' == binary mode
+        File.open(path_to_final_save_location, 'wb') do |file|
+          while buff = file_to_upload.read(4096)
+            file.write(buff)
+          end
+        end
+      elsif import_type == 'external'
+        path_to_final_save_location = original_file_path
+      end
+
+      new_asset_digital_object.set_file_and_original_filename_and_calculate_checksum(path_to_final_save_location, original_filename)
+      new_asset_digital_object.set_original_file_path(original_file_path)
+      new_asset_digital_object.set_dc_type_based_on_filename(original_filename)
+
+      new_asset_digital_object.save
+    end
+
+    upload_response['errors'] = new_asset_digital_object.errors if new_asset_digital_object.errors.present?
+
+    return upload_response
 
   end
 
