@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 class DigitalObjectsController < ApplicationController
-  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :data_for_ordered_child_editor, :upload_assets]
+  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :data_for_ordered_child_editor, :upload_assets, :download]
   before_action :set_contextual_nav_options
 
   # GET /digital_objects
@@ -32,6 +32,14 @@ class DigitalObjectsController < ApplicationController
         render xml: '<?xml version="1.0" encoding="UTF-8"?><error>XML view is not available.</error>'
 
       }
+    end
+  end
+
+  def download
+    if @digital_object.is_a?(DigitalObject::Asset)
+      send_file @digital_object.get_filesystem_location
+    else
+      render text: @digital_object.digital_object_type.display_label.pluralize + ' do not have download URLs.  Try downloading an Asset instead.'
     end
   end
 
@@ -130,7 +138,7 @@ class DigitalObjectsController < ApplicationController
       else
         format.json {
           render json: {
-            errors: 'An unexpected error occurred during deletion.'
+            errors: @digital_object.errors
           }
         }
       end
@@ -260,7 +268,7 @@ class DigitalObjectsController < ApplicationController
           if uploaded_file.original_filename != Hyacinth::Utils::StringUtils.clean_utf8_string(uploaded_file.original_filename)
             file_data << {
               "name" => uploaded_file.original_filename,
-              "size" => uploaded_file.tempfile.length,
+              "size" => uploaded_file.tempfile.size,
               "errors" => "Invalid UTF-8 characters found in filename.  Unable to upload."
             }
           else
@@ -272,8 +280,6 @@ class DigitalObjectsController < ApplicationController
             else
               file_data << handle_single_file_upload(original_filename, original_file_path, 'internal', uploaded_file.tempfile)
             end
-
-
           end
         ensure
            uploaded_file.tempfile.close!  # Closes the file handle. If the file wasn't unlinked earlier
@@ -286,18 +292,26 @@ class DigitalObjectsController < ApplicationController
 
       # Case 2: We're receiving file data from a local filesystem location.
 
+      original_file_path = params['local_filesystem_file_path'].to_s
+      original_filename = File.basename(original_file_path)
+
       # Check for invalid characters in filename.  Reject if non-utf8.
       # If we get weird characters (like "\xC2"), Ruby will die a horrible death.  Let's keep Ruby alive.
-      if original_file_path != Hyacinth::Utils::StringUtils.clean_utf8_string(uploaded_file.original_filename)
+      if original_file_path != Hyacinth::Utils::StringUtils.clean_utf8_string(original_file_path)
         file_data << {
-          "name" => uploaded_file.original_filename,
-          "size" => uploaded_file.tempfile.length,
+          "name" => original_file_path,
+          "size" => 0,
           "errors" => "Invalid UTF-8 characters found in file path.  Unable to upload."
         }
       else
-
-        original_file_path = local_filesystem_file_path
-        original_filename = Pathname.new(original_file_path).basename
+        # Make sure that the file actually exists
+        unless File.exists?(original_file_path)
+          file_data << {
+            "name" => original_file_path,
+            "size" => 0,
+            "errors" => "No file found at path: " + original_file_path
+          }
+        end
 
         if test_mode
           puts 'Test mode output: Would have created new Asset for file at: ' + original_file_path
@@ -306,6 +320,14 @@ class DigitalObjectsController < ApplicationController
           File.open(original_file_path, 'rb') do |file|
             file_data << handle_single_file_upload(original_filename, original_file_path, params['import_type'], file)
           end
+
+          if params['import_type'] == 'internal' && file_data.last['errors'].blank?
+            # Since this was an internal upload, we copied the file to some Hyacinth-asset-directory location.
+            # If we're here, the save (i.e. file copy) went through without a problem (and we verified checksums
+            # before and after), so it's now safe to delete the original file.
+            File.unlink(original_file_path)
+          end
+
         end
 
       end
@@ -379,18 +401,21 @@ class DigitalObjectsController < ApplicationController
   # param import_type: Valid values
   def handle_single_file_upload(original_filename, original_file_path, import_type, file_to_upload)
 
+    file_size = file_to_upload.size
+    puts 'File size: ' + file_size.to_s
+
     upload_response = {
       "name" => original_filename,
-      "size" => file_to_upload.length
+      "size" => file_size
     }
 
     valid_import_types = ['internal', 'external']
     unless valid_import_types.include?(import_type)
-      upload_response['errors'] = 'Import type must be one of: ' + valid_import_types.join(', ')
+      upload_response['errors'] = 'Param import_type must be one of: ' + valid_import_types.join(', ')
       return upload_response
     end
 
-    original_filename_without_extension = File.basename(original_filename)
+    original_filename_without_extension = File.basename(original_filename, '.*')
 
     title_non_sort_portion = ''
     title_sort_portion = original_filename_without_extension
@@ -410,23 +435,34 @@ class DigitalObjectsController < ApplicationController
 
     # Save new_asset_digital_object so that we can get a pid that we'll use to place the uploaded file in the right place
     if new_asset_digital_object.save
-      path_to_final_save_location = Hyacinth::Utils::PathUtils.path_to_asset_file(new_asset_digital_object.pid, new_asset_digital_object.projects.first, original_filename)
-
-      if File.exists?(path_to_final_save_location)
-        raise 'Pre-file-write test unexpectedly found existing file at target location: ' + path_to_final_save_location
-      end
-
-      # Recursively make necessary directories
-      FileUtils.mkdir_p(File.dirname(path_to_final_save_location))
-
-      # Test write abilities
-      FileUtils.touch(path_to_final_save_location)
-      unless File.exists?(path_to_final_save_location)
-        raise 'Unable to write to file path: ' + path_to_final_save_location
-      end
 
       if import_type == 'internal'
+
+        # Generate checksum for original file -- before copy -- using 4096-byte buffered approach to save memory for large files
+        original_file_sha256 = Digest::SHA256.new
+        while buff = file_to_upload.read(4096)
+          original_file_sha256.update(buff)
+        end
+        original_file_sha256_hexdigest = original_file_sha256.hexdigest
+        puts 'Original file hash: ' + original_file_sha256_hexdigest
+        file_to_upload.rewind # seek back to start of file for future reading
+
         # Copy file to final asset destination directory
+        path_to_final_save_location = Hyacinth::Utils::PathUtils.path_to_asset_file(new_asset_digital_object.pid, new_asset_digital_object.projects.first, original_filename)
+
+        if File.exists?(path_to_final_save_location)
+          raise 'Pre-file-write test unexpectedly found existing file at target location: ' + path_to_final_save_location
+        end
+
+        # Recursively make necessary directories
+        FileUtils.mkdir_p(File.dirname(path_to_final_save_location))
+
+        # Test write abilities
+        FileUtils.touch(path_to_final_save_location)
+        unless File.exists?(path_to_final_save_location)
+          raise 'Unable to write to file path: ' + path_to_final_save_location
+        end
+
         # Using a write buffer of 4096 bytes so that we don't use too much memory when copying large files.
         # 'w' == write, 'b' == binary mode
         File.open(path_to_final_save_location, 'wb') do |file|
@@ -434,13 +470,24 @@ class DigitalObjectsController < ApplicationController
             file.write(buff)
           end
         end
+
       elsif import_type == 'external'
         path_to_final_save_location = original_file_path
       end
 
-      new_asset_digital_object.set_file_and_original_filename_and_calculate_checksum(path_to_final_save_location, original_filename)
+      new_asset_digital_object.set_file_and_file_size_and_original_filename_and_calculate_checksum(path_to_final_save_location, original_filename, file_size)
       new_asset_digital_object.set_original_file_path(original_file_path)
       new_asset_digital_object.set_dc_type_based_on_filename(original_filename)
+
+      # If internal file, confirm that new checksum matches old checksum.  Return error if not.
+      if import_type == 'internal'
+        original_file_checksum = 'SHA-256:' + original_file_sha256_hexdigest
+        final_copy_file_checksum = new_asset_digital_object.get_checksum
+        if original_file_checksum != final_copy_file_checksum
+          upload_response['errors'] = "Error during file copy.  Copied file checksum (#{final_copy_file_checksum}) doesn't match original (#{original_file_checksum}).  Delete uploaded record and try again."
+        return upload_response
+        end
+      end
 
       new_asset_digital_object.save
     end

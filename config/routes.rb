@@ -32,6 +32,7 @@ Hyacinth::Application.routes.draw do
     member do
       get 'data_for_ordered_child_editor'
       post 'upload_assets'
+      get 'download'
     end
   end
 

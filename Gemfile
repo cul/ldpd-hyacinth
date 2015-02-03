@@ -88,6 +88,9 @@ gem 'jettywrapper', '>= 1.5.1'
 # CUL active_fedora rels-int fixes
 gem 'active_fedora_relsint', :git=>'git://github.com/cul/active_fedora_relsint'
 
+# URI Escaping
+gem 'addressable'
+
 # Use resque for background jobs
 #gem 'resque', '~> 2.0.0.pre.1', github: 'resque/resque'
 gem 'resque', '~> 1.0'

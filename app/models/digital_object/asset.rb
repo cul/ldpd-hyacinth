@@ -1,3 +1,5 @@
+require 'addressable/uri'
+
 class DigitalObject::Asset < DigitalObject::Base
 
   VALID_DC_TYPES = ['Unknown', 'Dataset', 'MovingImage', 'Software', 'Sound', 'StillImage', 'Text']
@@ -27,7 +29,7 @@ class DigitalObject::Asset < DigitalObject::Base
     super # Always run shared parent class validation
 
     # Assets must have at least one parent Item
-    if parent_digital_object_pids.length == 0
+    if self.state == 'A' && parent_digital_object_pids.length == 0
       @errors.add(:parent_digital_object_pids, 'An Asset must have at least one parent Item')
     end
 
@@ -42,14 +44,14 @@ class DigitalObject::Asset < DigitalObject::Base
     return @errors.blank?
   end
 
-  def set_file_and_original_filename_and_calculate_checksum(path_to_file, original_filename)
+  def set_file_and_file_size_and_original_filename_and_calculate_checksum(path_to_file, original_filename, file_size)
     # Create 'content' datastream on GenericResource object
 
     mime_type = DigitalObject::Asset.filename_to_mime_type(original_filename)
 
     # "controlGroup => 'E'" below means "External Referenced Content" -- as in, a file that's referenced by Fedora but not stored internally
-    file_content_datastream = @fedora_object.create_datastream(ActiveFedora::Datastream, 'content', :controlGroup => 'E', :mimeType => mime_type, :dsLabel => original_filename, :versionable => true)
-    file_content_datastream.dsLocation = 'file:' + path_to_file # Note: This will result in paths like "file:/something/here.txt"  We DO NOT want a double slash at the beginnings of these paths.
+    content_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, 'content', :controlGroup => 'E', :mimeType => mime_type, :dsLabel => original_filename, :versionable => true)
+    content_ds.dsLocation = Addressable::URI.encode('file:' + path_to_file) # Note: This will result in paths like "file:/something%20great/here.txt"  We DO NOT want a double slash at the beginnings of these paths.
 
     # Calculate checksum for file, using 4096-byte buffered approach to save memory for large files
     sha256 = Digest::SHA256.new
@@ -59,16 +61,23 @@ class DigitalObject::Asset < DigitalObject::Base
       end
     end
 
-    file_content_datastream.checksum = sha256.hexdigest
-    file_content_datastream.checksumType = 'SHA-256'
+    content_ds.checksum = sha256.hexdigest
+    content_ds.checksumType = 'SHA-256'
 
-    @fedora_object.add_datastream(file_content_datastream)
+    @fedora_object.add_datastream(content_ds)
+
+    # Add size property to content datastream using :extent predicate
+    @fedora_object.rels_int.add_relationship(content_ds, :extent, file_size.to_s, true) # last param *true* means that this is a literal value rather than a relationship
+
+    # Add original_filename property to content datastream using <info:fedora/fedora-system:def/model#downloadFilename> relationship
+    @fedora_object.rels_int.add_relationship(content_ds, 'info:fedora/fedora-system:def/model#downloadFilename', original_filename, true) # last param *true* means that this is a literal value rather than a relationship
+
   end
 
   def get_filesystem_location
     content_ds = @fedora_object.datastreams['content']
     if content_ds.present?
-      content_ds.dsLocation.gsub(/^file:/,'')
+      Addressable::URI.unencode(content_ds.dsLocation).gsub(/^file:/,'')
     else
       return nil
     end
@@ -86,8 +95,29 @@ class DigitalObject::Asset < DigitalObject::Base
     end
   end
 
+  def get_file_size_in_bytes
+    content_ds = @fedora_object.datastreams['content']
+    if content_ds.present?
+      relationship = @fedora_object.rels_int.relationships(content_ds, :extent)
+      if relationship
+        return relationship.first.object.value.to_s
+      end
+    end
+
+    return nil
+  end
+
   def get_original_filename
-    return @fedora_object.datastreams["content"].present? ? @fedora_object.datastreams["content"].label : ''
+    content_ds = @fedora_object.datastreams['content']
+    if content_ds.present?
+      relationship = @fedora_object.rels_int.relationships(content_ds, 'info:fedora/fedora-system:def/model#downloadFilename')
+      if relationship
+        return relationship.first.object.value
+      end
+    end
+
+    return nil
+    #return @fedora_object.datastreams["content"].present? ? @fedora_object.datastreams["content"].label : ''
   end
 
   def set_original_file_path(original_file_path)
@@ -135,7 +165,10 @@ class DigitalObject::Asset < DigitalObject::Base
 
     json['asset_data'] = {
       filesystem_location: self.get_filesystem_location,
-      checksum: self.get_checksum
+      checksum: self.get_checksum,
+      file_size_in_bytes: self.get_file_size_in_bytes,
+      original_filename: self.get_original_filename,
+      original_file_path: self.get_original_file_path,
     }
 
     return json
