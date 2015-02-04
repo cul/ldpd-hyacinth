@@ -10,6 +10,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult = function(searchResultData
   this.parentDigitalObjectPids = searchResultData['parent_digital_object_pids_ssm'] || [];
   this.orderedChildDigitalObjectPids = searchResultData['ordered_child_digital_object_pids_ssm'] || [];
   this.dcType = searchResultData['dc_type_ssm'] || '';
+  this.hyacinthType = searchResultData['hyacinth_type_ssm'] || '';
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.getDcType = function(){
@@ -26,6 +27,10 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.getTitle = functi
 
 Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.getProjectDisplayLabel = function(){
   return this.projectDisplayLabel;
+};
+
+Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.getHyacinthType = function(){
+  return this.hyacinthType;
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.getDigitalObjectTypeDisplayLabel = function(){
