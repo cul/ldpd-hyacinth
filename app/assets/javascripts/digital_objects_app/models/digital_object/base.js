@@ -10,6 +10,7 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base = function(digital_object_data) {
   this.dynamic_field_data = digital_object_data['dynamic_field_data'];
   this.parent_digital_object_pids = digital_object_data['parent_digital_object_pids'] || [];
   this.ordered_child_digital_object_pids = digital_object_data['ordered_child_digital_object_pids'] || [];
+  this.dc_type = digital_object_data['dc_type'] || '';
 };
 
 // Class methods
@@ -43,6 +44,10 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getOrderedChildDigitalOb
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getState = function() {
   return this.state;
+};
+
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getDcType = function() {
+  return this.dc_type;
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getStateAsDisplayLabel = function(){

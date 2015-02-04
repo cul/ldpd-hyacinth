@@ -50,6 +50,8 @@ ActiveRecord::Schema.define(version: 20141104010523) do
     t.datetime "updated_at"
   end
 
+  add_index "digital_object_records", ["pid"], name: "index_digital_object_records_on_pid", unique: true, using: :btree
+
   create_table "digital_object_types", force: :cascade do |t|
     t.string   "string_key",    limit: 255
     t.string   "display_label", limit: 255

@@ -122,7 +122,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.init = function() {
     url: '/digital_objects/search.json',
     type: 'POST',
     data: {
-      search: Hyacinth.DigitalObjectsApp.params['search']
+      search: Hyacinth.DigitalObjectsApp.params['search'],
+      include_single_field_searchable_field_list: true
     },
     cache: false
   }).done(function(searchResponse){

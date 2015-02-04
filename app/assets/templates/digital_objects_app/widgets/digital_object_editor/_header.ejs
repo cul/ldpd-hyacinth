@@ -136,8 +136,10 @@
       </div>
 
     </div>
-    <div class="col-md-2">
-      <!-- Thumbnail image will go here -->
+    <div class="col-md-4">
+      <% if ( digitalObject instanceof Hyacinth.DigitalObjectsApp.DigitalObject.Asset && Hyacinth.repositoryCacheUrl && digitalObject.getDcType() == 'StillImage') { %>
+        <img class="img-responsive pull-right" src="<%= Hyacinth.repositoryCacheUrl + '/images/' + digitalObject.getPid() + '/square/256.jpg' %>" title="<%= digitalObject.getPid() %>" />
+      <% } %>
     </div>
   </div>
 </div>

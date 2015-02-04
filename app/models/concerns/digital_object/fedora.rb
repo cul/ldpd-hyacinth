@@ -11,7 +11,7 @@ module DigitalObject::Fedora
   def get_hyacinth_data
 
     hyacinth_ds = @fedora_object.datastreams[HYACINTH_DATASTREAM_NAME]
-    if hyacinth_ds && hyacinth_ds.content.present?
+    if hyacinth_ds.present? && hyacinth_ds.content.present?
       return JSON(hyacinth_ds.content)
     end
 

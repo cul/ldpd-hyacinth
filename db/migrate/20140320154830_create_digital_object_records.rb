@@ -6,5 +6,7 @@ class CreateDigitalObjectRecords < ActiveRecord::Migration
       t.references :updated_by
       t.timestamps
     end
+
+    add_index :digital_object_records, :pid, unique: true
   end
 end

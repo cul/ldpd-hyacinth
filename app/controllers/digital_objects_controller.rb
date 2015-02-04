@@ -12,7 +12,12 @@ class DigitalObjectsController < ApplicationController
   def search
     respond_to do |format|
       format.json {
-        render json: DigitalObject::Base.search(params['search'].present? ? params['search'] : {}, params['facet'].present? ? params['facet'] : {})
+
+        search_response = DigitalObject::Base.search(params['search'].present? ? params['search'] : {}, params['facet'].present? ? params['facet'] : {})
+        if params['include_single_field_searchable_field_list'] && params['include_single_field_searchable_field_list'].to_s == 'true'
+          search_response['single_field_searchable_fields'] = Hash[ DynamicField.where(is_single_field_searchable: true).order([:standalone_field_label, :string_key]).map{|dynamic_field| [dynamic_field.string_key, dynamic_field.standalone_field_label]} ]
+        end
+        render json: search_response
       }
     end
   end

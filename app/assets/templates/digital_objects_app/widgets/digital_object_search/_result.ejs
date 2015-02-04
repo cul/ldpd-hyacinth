@@ -26,7 +26,11 @@
       <% } %>
     </div>
     <div class="col-xs-2">
-      <!-- Thumbnail image will go here, if present -->
+      <% if(searchResult.getDigitalObjectTypeDisplayLabel() == 'Asset' && Hyacinth.repositoryCacheUrl) { %>
+        <% if(searchResult.getDcType() == 'StillImage') { %>
+          <img class="img-responsive" src="<%= Hyacinth.repositoryCacheUrl + '/images/' + searchResult.getPid() + '/square/256.jpg' %>" title="<%= searchResult.getPid() %>" />
+        <% } %>
+      <% } %>
     </div>
     <div class="clearfix"></div>
   </div>

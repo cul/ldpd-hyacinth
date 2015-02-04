@@ -8,6 +8,7 @@ puts '---------------------------'
 puts ''
 
 HYACINTH = YAML.load_file("#{Rails.root.to_s}/config/hyacinth.yml")[Rails.env]
+
 #
 ## Raise error if default pid generator is not specified
 #raise 'Missing default pid generator.  Please set one in your hyacinth.yml file.' if HYACINTH['default_pid_generator_namespace'].nil?

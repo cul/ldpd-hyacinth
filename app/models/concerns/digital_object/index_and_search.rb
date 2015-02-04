@@ -59,9 +59,11 @@ module DigitalObject::IndexAndSearch
     doc[:search_identifier_sim] = search_identifier_sim
     doc[:search_title_teim] = search_title_teim
 
+    doc[:dc_type_ssm] = self.dc_type # Store dc_type for all records, assets or not
+
     # Special indexing additions for Assets
     if self.is_a?(DigitalObject::Asset)
-      doc[:asset_dc_type_sim] = self.dc_type
+      doc[:asset_dc_type_sim] = self.dc_type # This is a special Asset-only facet field
     end
 
     return doc
@@ -234,9 +236,9 @@ module DigitalObject::IndexAndSearch
         'page' => page,
         'per_page' => per_page,
         'results' => solr_response['response']['docs'],
-        'facets' => facet_data,
-        'single_field_searchable_fields' => Hash[ DynamicField.where(is_single_field_searchable: true).order([:standalone_field_label, :string_key]).map{|dynamic_field| [dynamic_field.string_key, dynamic_field.standalone_field_label]} ]
+        'facets' => facet_data
       }
+
     end
 
     def get_previous_and_next_in_search(current_result_number, search_params)
