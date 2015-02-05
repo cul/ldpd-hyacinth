@@ -271,6 +271,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.addFacetToCurrentSearch
     newParams['search']['f'][facetFieldName] = [];
   }
   newParams['search']['f'][facetFieldName].push(facetValue);
+  newParams['search']['page'] = 1;
   document.location.hash = Hyacinth.DigitalObjectsApp.paramsToHashValue(newParams);
 };
 
@@ -289,6 +290,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.removeFacetFromCurrentS
 
   //Remove item from array
   newParams['search']['f'][facetFieldName].splice(indexOfValue, 1); //Splice acts directly on the array
+  newParams['search']['page'] = 1;
   document.location.hash = Hyacinth.DigitalObjectsApp.paramsToHashValue(newParams);
 };
 
@@ -303,6 +305,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.addFilterToCurrentSearc
   var valToSend = {};
   valToSend[filterOperator] = filterValue;
   newParams['search']['fq'][filterFieldName].push(valToSend);
+  newParams['search']['page'] = 1;
   document.location.hash = Hyacinth.DigitalObjectsApp.paramsToHashValue(newParams);
 };
 
@@ -330,6 +333,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.removeFilterFromCurrent
 
   //Remove item from array
   newParams['search']['fq'][filterFieldName].splice(indexOfValue, 1); //Splice acts directly on the array
+  newParams['search']['page'] = 1;
   document.location.hash = Hyacinth.DigitalObjectsApp.paramsToHashValue(newParams);
 };
 

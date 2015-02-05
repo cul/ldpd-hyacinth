@@ -236,17 +236,31 @@
 
   .search-results {
 
+    .img-responsive.thumbnail {
+      margin-bottom:0;
+    }
+
     .pagination-top .pagination {
       margin-top:0;
     }
 
     .search-result {
-      padding:.5em .5em 1em;
+      padding:.5em .5em .5em .75em;
       margin-bottom:.5em;
     }
 
     .search-result:nth-child(2n) {
       background: #f5f5f5;
+    }
+
+    .search-result-summary {
+      padding-bottom:1.5em;
+    }
+
+    .footer-label {
+      position: relative;
+      top: -1.5em;
+      margin-bottom: -1.5em;
     }
 
   }

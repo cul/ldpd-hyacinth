@@ -36,6 +36,10 @@ class PidGenerator < ActiveRecord::Base
     newly_minted_pid = nil
 
     PidGenerator.transaction do
+
+      # We always lock on @db_record (and wrap in a transaction)
+      self.lock! # Within the established transaction, lock on this object's row.  Remember: "lock!" also reloads object data from the db, so perform all modifications AFTER this call.
+
       begin
         pid_minter = Noid::Minter.new(:template => self.namespace + ':' + self.template)
       rescue Exception => e
@@ -46,6 +50,7 @@ class PidGenerator < ActiveRecord::Base
       newly_minted_pid = pid_minter.mint
 
       self.increment!(:sequence)
+      self.save
     end
 
     if newly_minted_pid.nil?

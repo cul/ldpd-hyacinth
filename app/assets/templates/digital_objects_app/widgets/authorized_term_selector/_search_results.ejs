@@ -9,11 +9,11 @@
     <% for (var i = 0; i < authorizedTerms.length; i++) { %>
       <li>
         <button type="button" class="btn btn-default btn-xs choose_authorized_term_button"
-        data-value="<%= encodeURIComponent(authorizedTerms[i]['value']) %>"
-        data-code="<%= encodeURIComponent(authorizedTerms[i]['code']) %>"
-        data-value-uri="<%= encodeURIComponent(authorizedTerms[i]['value_uri']) %>"
-        data-authority="<%= encodeURIComponent(authorizedTerms[i]['authority']) %>"
-        data-authority-uri="<%= encodeURIComponent(authorizedTerms[i]['authority_uri']) %>"
+        data-value="<%= authorizedTerms[i]['value'] ? encodeURIComponent(authorizedTerms[i]['value']) : '' %>"
+        data-code="<%= authorizedTerms[i]['code'] ?  encodeURIComponent(authorizedTerms[i]['code']) : ''  %>"
+        data-value-uri="<%= authorizedTerms[i]['value_uri'] ?  encodeURIComponent(authorizedTerms[i]['value_uri']) : '' %>"
+        data-authority="<%= authorizedTerms[i]['authority'] ?  encodeURIComponent(authorizedTerms[i]['authority']) : '' %>"
+        data-authority-uri="<%= authorizedTerms[i]['authority_uri'] ?  encodeURIComponent(authorizedTerms[i]['authority_uri']) : '' %>"
         ><%- authorizedTerms[i]['value'] %></button>
       </li>
     <% } %>

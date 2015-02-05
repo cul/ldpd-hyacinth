@@ -61,16 +61,16 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
     var authority = '';
     var authorityUri = '';
 
-    if ($(this).attr('data-code') != 'undefined') {
+    if (!! $(this).attr('data-code')) {
       code = decodeURIComponent($(this).attr('data-code'));
     }
-    if ($(this).attr('data-value-uri') != 'undefined') {
+    if (!! $(this).attr('data-value-uri')) {
       valueUri = decodeURIComponent($(this).attr('data-value-uri'));
     }
-    if ($(this).attr('data-authority') != 'undefined') {
+    if (!! $(this).attr('data-authority')) {
       authority = decodeURIComponent($(this).attr('data-authority'));
     }
-    if ($(this).attr('data-authority-uri') != 'undefined') {
+    if (!! $(this).attr('data-authority-uri')) {
       authorityUri = decodeURIComponent($(this).attr('data-authority-uri'));
     }
 
