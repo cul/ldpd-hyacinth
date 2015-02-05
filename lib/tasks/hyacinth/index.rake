@@ -33,7 +33,7 @@ namespace :hyacinth do
         begin
           DigitalObject::Base.find(digital_object_record.pid).update_index(false) # Passing false here so that we don't do one solr commit per update
         rescue RestClient::Unauthorized, Rubydora::RubydoraError => e
-          logger.error('Error: Skipping ' + digital_object_record.pid + "\nException Message: " + e.message)
+          logger.error('Error: Skipping ' + digital_object_record.pid + "\nException: #{e.class}, Message: #{e.message}")
         end
         progressbar.increment
       end
