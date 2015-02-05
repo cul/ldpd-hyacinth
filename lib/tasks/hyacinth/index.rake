@@ -30,7 +30,11 @@ namespace :hyacinth do
       progressbar = ProgressBar.create(:title => "Reindex", :starting_at => start_at, :total => DigitalObjectRecord.count, :format => '%a |%b>>%i| %p%% %c/%C %t')
 
       DigitalObjectRecord.find_each(batch_size: 500, start: start_at) do |digital_object_record|
-        DigitalObject::Base.find(digital_object_record.pid).update_index(false) # Passing false here so that we don't do one solr commit per update
+        begin
+          DigitalObject::Base.find(digital_object_record.pid).update_index(false) # Passing false here so that we don't do one solr commit per update
+        rescue RestClient::Unauthorized => e
+          logger.error('Error: Skipping ' + digital_object_record.pid + "\nException Message: " + e.message)
+        end
         progressbar.increment
       end
 
