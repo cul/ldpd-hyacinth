@@ -13,7 +13,7 @@ class UsersController < ApplicationController
     wind_login_uri = wind_server_uri + '/login'
     wind_validate_uri = wind_server_uri + '/validate'
     wind_logout_uri = wind_server_uri + '/logout'
-    wind_realm = 'culscv'
+    wind_realm = 'ldpd_non_sso'
 
     if user_signed_in?
       redirect_to root_path

@@ -95,6 +95,9 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
+    capybara-webkit (1.4.1)
+      capybara (>= 2.3.0, < 2.5.0)
+      json
     childprocess (0.5.5)
       ffi (~> 1.0, >= 1.0.11)
     cliver (0.3.2)
@@ -256,7 +259,7 @@ GEM
       nokogiri (>= 1.4.2)
       solrizer (~> 3.3)
     orm_adapter (0.5.0)
-    poltergeist (1.5.1)
+    poltergeist (1.6.0)
       capybara (~> 2.1)
       cliver (~> 0.3.1)
       multi_json (~> 1.0)
@@ -266,7 +269,7 @@ GEM
     rack (1.6.0)
     rack-protection (1.5.3)
       rack
-    rack-test (0.6.2)
+    rack-test (0.6.3)
       rack (>= 1.0)
     rails (4.2.0)
       actionmailer (= 4.2.0)
@@ -460,6 +463,7 @@ DEPENDENCIES
   bootstrap-sass (~> 3.3)
   capistrano (~> 2.12.0)
   capybara
+  capybara-webkit
   coderay
   coffee-rails
   cul_scv_hydra (>= 0.21.5)

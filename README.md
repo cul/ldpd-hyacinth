@@ -36,4 +36,4 @@ bundle exec rake db:seed RAILS_ENV=development
 bundle exec rake hyacinth:ci
 ```
 
-Note: Hyacinth requires JavaScript for integration tests and uses the capybara and poltergrist gems (you'll probably need to install phantomjs)
+Note: Hyacinth requires JavaScript for integration tests and uses the capybara and poltergrist gems.  You'll need to install phantomjs and have it available on your PATH.
