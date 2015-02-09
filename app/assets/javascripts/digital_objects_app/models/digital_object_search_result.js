@@ -29,6 +29,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.getProjectDisplay
   return this.projectDisplayLabel;
 };
 
+//Possible values include 'asset', 'item', 'group', 'exhibition'
 Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.getHyacinthType = function(){
   return this.hyacinthType;
 };
@@ -43,4 +44,12 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.getParentDigitalO
 
 Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.getOrderedChildDigitalObjectPids = function(){
   return this.orderedChildDigitalObjectPids;
+};
+
+Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.hasImage = function() {
+  return this.getHyacinthType() == 'asset' || this.getHyacinthType() == 'item';
+}
+
+Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.getImageUrl = function(type, size){
+  return Hyacinth.repositoryCacheUrl + '/images/' + this.getPid() + '/' + type + '/' + size + '.jpg';
 };

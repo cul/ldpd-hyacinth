@@ -137,8 +137,8 @@
 
     </div>
     <div class="col-md-4">
-      <% if ( digitalObject instanceof Hyacinth.DigitalObjectsApp.DigitalObject.Asset && Hyacinth.repositoryCacheUrl && digitalObject.getDcType() == 'StillImage') { %>
-        <img class="img-responsive thumbnail pull-right" src="<%= Hyacinth.repositoryCacheUrl + '/images/' + digitalObject.getPid() + '/square/256.jpg' %>" title="<%= digitalObject.getPid() %>" />
+      <% if ( digitalObject.hasImage()) { %>
+        <img class="img-responsive thumbnail pull-right" src="<%= digitalObject.getImageUrl('scaled', 256) %>" title="<%= digitalObject.getPid() %>" />
       <% } %>
     </div>
   </div>

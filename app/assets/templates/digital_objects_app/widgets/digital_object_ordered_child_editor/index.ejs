@@ -11,12 +11,14 @@
 <strong>PID:</strong> <%= digitalObject.getPid() %>
 <hr />
 
-<h2 class="reorder-heading">Reoder Child Digital Objects</h2>
+<h2 class="manage-children-heading">Manage Child Digital Objects</h2>
 
 <% if (tooManyToShow) { %>
   Too many child object to show.
   <br /><br />
   Total: <%= digitalObject.getOrderedChildDigitalObjectPids().length %>
+<% } else if (orderedChildDigitalObjects.length == 0) { %>
+  This object has no child Digital Assets.
 <% } else { %>
 
   <form class="ordered-child-editor-form">
@@ -37,8 +39,8 @@
             <span class="label label-default"><%= childDigitalObject.digital_object_type['display_label'] %></span>
         </div>
         <div class="col-xs-2">
-          <% if ( childDigitalObject instanceof Hyacinth.DigitalObjectsApp.DigitalObject.Asset && Hyacinth.repositoryCacheUrl && childDigitalObject.getDcType() == 'StillImage') { %>
-            <img class="img-responsive thumbnail pull-right" src="<%= Hyacinth.repositoryCacheUrl + '/images/' + childDigitalObject.getPid() + '/square/256.jpg' %>" title="<%= childDigitalObject.getPid() %>" />
+          <% if ( childDigitalObject.hasImage()) { %>
+            <img class="img-responsive thumbnail pull-right" src="<%= childDigitalObject.getImageUrl('square', 128) %>" title="<%= childDigitalObject.getPid() %>" />
           <% } %>
         </div>
       </div>

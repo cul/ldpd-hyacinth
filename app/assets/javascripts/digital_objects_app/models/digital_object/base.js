@@ -76,6 +76,15 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getProjects = function()
   return this.projects;
 };
 
+// hasImage method is meant to be overridden by DigitalObject subclasses
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.hasImage = function() {
+  return false;
+}
+
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getImageUrl = function(type, size){
+  return Hyacinth.repositoryCacheUrl + '/images/' + this.getPid() + '/' + type + '/' + size + '.jpg';
+};
+
 /***************************************************************
  * Digital Object subclasses that are meant to be instantiated *
  ***************************************************************/
