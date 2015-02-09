@@ -6,14 +6,14 @@ require 'rspec/rails'
 require 'capybara/rails'
 require 'capybara/poltergeist'
 
-#Capybara.register_driver :poltergeist do |app|
-#  Capybara::Poltergeist::Driver.new(app,
-#    :timeout => 60
-#  )
-#end
+Capybara.register_driver :poltergeist do |app|
+  Capybara::Poltergeist::Driver.new(app,
+    :timeout => 60
+  )
+end
 
 Capybara.javascript_driver = :poltergeist
-Capybara.default_wait_time = 15 # We need to wait for some ajax requests might take longer than the default 2 seconds.  Max out at 15 seconds.
+Capybara.default_wait_time = 30 # Some ajax requests might take longer than the default waut time of 2 seconds.  Max out at 15 seconds when testing.
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are

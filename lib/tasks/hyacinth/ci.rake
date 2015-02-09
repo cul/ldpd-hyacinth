@@ -46,7 +46,9 @@ namespace :hyacinth do
       Rake::Task["db:create"].invoke
       Rake::Task["db:migrate"].invoke
       Rake::Task["db:seed"].invoke
+      ENV['CLEAR'] = 'true' # Set ENV variable for reindex task
       Rake::Task['hyacinth:index:reindex'].invoke
+      ENV['CLEAR'] = nil  # Clear ENV variable because we're done with it
       Rake::Task['hyacinth:projects:test:setup'].invoke
       Rake::Task['hyacinth:coverage'].invoke
     end

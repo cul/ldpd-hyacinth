@@ -3,7 +3,7 @@
 # That just means that we'll allow up to 40 seconds for startup.
 
 default:
-  startup_wait: 45
+  startup_wait: 75
   jetty_port: 9983
   java_opts:
     - "-XX:MaxPermSize=128m"

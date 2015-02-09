@@ -59,7 +59,7 @@ class User < ActiveRecord::Base
   def can_manage_controlled_vocabulary_terms?(controlled_vocabulary)
     return true if self.is_admin?
 
-    projects_for_which_user_can_create_or_edit = ProjectPermission.where(user: self).where('project_permissions.can_create = true OR project_permissions.can_update = true').pluck(:project_id)
+    projects_for_which_user_can_create_or_edit = ProjectPermission.where(user: self).where('project_permissions.can_create = ? OR project_permissions.can_update = ?', true, true).pluck(:project_id)
 
     if projects_for_which_user_can_create_or_edit.present?
       subset_of_projects_that_use_specific_controlled_vocabulary = EnabledDynamicField.joins(dynamic_field: [:controlled_vocabulary]).where(project_id: projects_for_which_user_can_create_or_edit, 'dynamic_fields.controlled_vocabulary_id' => controlled_vocabulary.id).where('controlled_vocabularies.only_managed_by_admins = false').pluck(:project_id)
@@ -72,7 +72,7 @@ class User < ActiveRecord::Base
   def can_edit_at_least_one_controlled_vocabulary?
     return true if self.is_admin?
 
-    projects_for_which_user_can_create_or_edit = ProjectPermission.where(user: self).where('project_permissions.can_create = true OR project_permissions.can_update = true').pluck(:project_id)
+    projects_for_which_user_can_create_or_edit = ProjectPermission.where(user: self).where('project_permissions.can_create = ? OR project_permissions.can_update = ?', true, true).pluck(:project_id)
 
     if projects_for_which_user_can_create_or_edit.present?
       subset_of_projects_that_use_controlled_vocabularies = EnabledDynamicField.joins(dynamic_field: [:controlled_vocabulary]).where(project_id: projects_for_which_user_can_create_or_edit).where('dynamic_fields.controlled_vocabulary_id IS NOT NULL AND controlled_vocabularies.only_managed_by_admins = false').pluck(:project_id)

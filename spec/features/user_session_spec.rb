@@ -9,6 +9,7 @@ describe "Email-based user signin" do
       fill_in 'user_password', :with => 'iamthetest'
     end
     click_button 'Sign in'
+
     expect(page).to have_content 'New Digital Object'
   end
 end
