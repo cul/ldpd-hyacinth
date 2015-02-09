@@ -106,9 +106,7 @@ gem 'noid', '>= 0.7.1'
 group :development, :test do
   gem 'rspec-rails', '~> 3.1'
   gem 'capybara'
-  #gem 'selenium-webdriver'
   gem 'poltergeist' # For headless-browser JavaScript testing
-  gem 'capybara-webkit' # For headless-browser JavaScript testing
   gem 'factory_girl_rails', '>= 4.4.1'
 end
 

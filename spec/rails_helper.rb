@@ -12,7 +12,8 @@ require 'capybara/poltergeist'
 #  )
 #end
 
-Capybara.javascript_driver = :webkit
+Capybara.javascript_driver = :poltergeist
+Capybara.default_wait_time = 15 # We need to wait for some ajax requests might take longer than the default 2 seconds.  Max out at 15 seconds.
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
