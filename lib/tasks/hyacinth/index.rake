@@ -45,6 +45,27 @@ namespace :hyacinth do
 
     end
 
+    task :delete_from_index => :environment do
+      if ENV['PIDS'].present?
+        pids = ENV['PIDS'].split(',')
+      else
+        puts 'Error: Please supply a value for PIDS (one or more comma-separated Hyacinth PIDs)'
+        next
+      end
+
+      pids.each {|pid|
+        Hyacinth::Utils::SolrUtils.solr.delete_by_query "pid:#{pid.gsub(':','\:')}"
+      }
+
+      Hyacinth::Utils::SolrUtils.solr.commit # Only commit at the end
+    end
+
+
+
+
+
+
+
     task :multithreading_test => :environment do
 
       start_time = Time.now

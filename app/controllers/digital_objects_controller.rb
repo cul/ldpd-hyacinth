@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 class DigitalObjectsController < ApplicationController
-  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :data_for_ordered_child_editor, :download]
+  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor, :download, :add_parent]
   before_action :set_contextual_nav_options
 
   # GET /digital_objects
@@ -70,8 +70,9 @@ class DigitalObjectsController < ApplicationController
       @digital_object.update_dynamic_field_data(JSON(dynamic_field_data_json))
     end
 
-    if digital_object_params['parent_digital_object_pids']
-      @digital_object.parent_digital_object_pids = digital_object_params['parent_digital_object_pids']
+    if digital_object_params['parent_digital_object_pid']
+      parent_digital_object = DigitalObject::Base.find(digital_object_params['parent_digital_object_pid'])
+      @digital_object.add_parent_digital_object(parent_digital_object)
     end
 
     respond_to do |format|
@@ -103,18 +104,53 @@ class DigitalObjectsController < ApplicationController
       @digital_object.update_dynamic_field_data(JSON(digital_object_params['dynamic_field_data_json']))
     end
 
-    if digital_object_params['state']
-      @digital_object.state = digital_object_params['state']
-    end
-
     if digital_object_params['ordered_child_digital_object_pids']
-      @digital_object.ordered_child_digital_object_pids = digital_object_params['ordered_child_digital_object_pids']
+
+      # First verify that the incoming list of ordered_child_digital_object_pids
+      # includes the same values as the existing list (ignoring order).  This is
+      # not a place for adding or removing values -- just reordering them.
+      # Return an error if the lists differ.
+
+      unless @digital_object.ordered_child_digital_object_pids.length == (@digital_object.ordered_child_digital_object_pids | digital_object_params['ordered_child_digital_object_pids']).length
+        @digital_object.errors.add(:ordered_child_digital_object_pids, ' - During reordering, sent child digital object pids must match existing pids.')
+      else
+        digital_object_params['ordered_child_digital_object_pids'].each do |pid|
+          unless @digital_object.ordered_child_digital_object_pids.include?(pid)
+            child_digital_object = DigitalObject::Base.find(pid)
+            child_digital_object.add_parent_digital_object(@digital_object)
+            child_digitial_object.save
+          end
+        end
+        @digital_object.ordered_child_digital_object_pids = digital_object_params['ordered_child_digital_object_pids']
+      end
     end
 
     @digital_object.updated_by = current_user
 
     respond_to do |format|
       if (test_mode ? @digital_object.valid? : @digital_object.save)
+        format.json {
+          render json: {
+            success: true
+          }
+        }
+      else
+        format.json {
+          render json: {
+            errors: @digital_object.errors
+          }
+        }
+      end
+    end
+  end
+
+  # PUT /digital_objects/1/undelete.json
+  def undestroy
+
+    @digital_object.state = 'A'
+
+    respond_to do |format|
+      if @digital_object.save
         format.json {
           render json: {
             success: true
@@ -148,7 +184,6 @@ class DigitalObjectsController < ApplicationController
         }
       end
     end
-
   end
 
   def data_for_editor
@@ -244,6 +279,7 @@ class DigitalObjectsController < ApplicationController
     overall_errors = []
 
     if params['parent_digital_object_pid']
+      puts 'parent retrieval 1'
       parent_digital_object = DigitalObject::Base.find(params['parent_digital_object_pid'])
 
       # Only DigitalObject::Item objects can have child assets
@@ -372,6 +408,24 @@ class DigitalObjectsController < ApplicationController
 
   end
 
+  def add_parent
+    parent_digital_object = DigitalObject::Base.find(params[:parent_pid])
+    @digital_object.add_parent_digital_object(parent_digital_object)
+    result = @digital_object.save
+
+    response = {
+      'success' => result,
+    }
+
+    response['errors'] = @digital_object.errors unless result
+
+    respond_to do |format|
+      format.json {
+        render json: response
+      }
+    end
+  end
+
   private
 
   # Use callbacks to share common setup or constraints between actions.
@@ -382,7 +436,7 @@ class DigitalObjectsController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def digital_object_params
     params.require(:digital_object).permit(
-      :dynamic_field_data_json, :state, :project_string_key, :digital_object_type_string_key,
+      :dynamic_field_data_json, :project_string_key, :digital_object_type_string_key,
       :parent_digital_object_pids => [], :ordered_child_digital_object_pids => []
     )
     #params.require(:digital_object).permit! # Permit any hash keys under digital_object. This is more open than other controllers because we're receiving dynamic data structures (based on user-defined DynamicFields)
@@ -458,7 +512,7 @@ class DigitalObjectsController < ApplicationController
 
     new_asset_digital_object = DigitalObject::Asset.new
     new_asset_digital_object.projects = projects
-    new_asset_digital_object.parent_digital_object_pids << parent_digital_object.pid if parent_digital_object.present?
+    new_asset_digital_object.add_parent_digital_object(parent_digital_object) if parent_digital_object.present?
     new_asset_digital_object.set_title(title_non_sort_portion, title_sort_portion)
 
     # Save new_asset_digital_object so that we can get a pid that we'll use to place the uploaded file in the right place

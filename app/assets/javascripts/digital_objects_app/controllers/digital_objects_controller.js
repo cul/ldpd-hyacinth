@@ -176,13 +176,10 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.edit = function() 
       if (confirmResponse) {
         //After successful deletion, refresh the page
         $.ajax({
-          url: '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '.json',
+          url: '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '/undelete.json',
           type: 'POST',
           data: {
-            '_method': 'PUT', //For proper RESTful Rails requests
-            digital_object: {
-              'state': 'A'
-            }
+            '_method': 'PUT' //For proper RESTful Rails requests
           },
           cache: false
         }).done(function(updateResponse){

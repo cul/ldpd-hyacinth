@@ -29,10 +29,9 @@
     </div>
     <div class="col-xs-2">
       <% if(searchResult.getHyacinthType() == 'asset' && Hyacinth.repositoryCacheUrl) { %>
-        <% //TODO: Uncomment the line below once you've reindexed all assets in prod %>
-        <% //if(searchResult.getDcType() == 'StillImage') { %>
+        <% if(searchResult.getDcType() == 'StillImage') { %>
           <img class="img-responsive thumbnail" src="<%= Hyacinth.repositoryCacheUrl + '/images/' + searchResult.getPid() + '/square/256.jpg' %>" title="<%= searchResult.getPid() %>" />
-        <% //} %>
+        <% } %>
       <% } %>
     </div>
     <div class="clearfix"></div>

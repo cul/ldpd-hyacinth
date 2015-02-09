@@ -15,6 +15,11 @@ module DigitalObject::Validation
       @errors.add(:state, 'Must be one of: ' + VALID_STATES.join(', '))
     end
 
+    # State cannot be set to 'D' if this object has children
+    if self.state == 'D' && self.ordered_child_digital_object_pids.length > 0
+      errors.add(:destroy, 'Cannot set Digital Object as deleted because it has children.  Detach or delete all children first, then try deleting again.')
+    end
+
     # At least one project is required
     if self.projects.length < 1
       @errors.add(:project, 'Must have at least one project')

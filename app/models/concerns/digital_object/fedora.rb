@@ -36,36 +36,36 @@ module DigitalObject::Fedora
     @fedora_object.datastreams['DC'].dc_type = self.dc_type
   end
 
-  def set_fedora_ordered_child_digital_object_pids
-    hyacinth_data = get_hyacinth_data()
-    hyacinth_data['ordered_child_digital_object_pids'] = @ordered_child_digital_object_pids
-    @fedora_object.datastreams[HYACINTH_DATASTREAM_NAME].content = hyacinth_data.to_json
-  end
-
-  # Sets :cul_member_of RELS-EXT attributes for parent fedora objects
-  def set_fedora_parent_digital_object_pid_relationships(options={})
+  # Sets :cul_member_of  RELS-EXT attributes for parent fedora objects
+  def set_fedora_parent_digital_object_pid_relationships
     # This method also ensures that we only save pids for Objects that actually exist.  Invalid pids will cause it to fail.
 
     # Clear old parent_digital_object relationship
     @fedora_object.clear_relationship(:cul_member_of)
 
     @parent_digital_object_pids.each do |parent_digital_object_pid|
-      parent_digital_object_obj = ActiveFedora::Base.find(parent_digital_object_pid)
+      obj = ActiveFedora::Base.find(parent_digital_object_pid)
       # Add new parent_digital_object relationship
-      if options[:obsolete]
-        @fedora_object.add_relationship(:cul_obsolete_from, parent_digital_object_obj.internal_uri)
-      else
-        @fedora_object.add_relationship(:cul_member_of, parent_digital_object_obj.internal_uri)
-      end
+      @fedora_object.add_relationship(:cul_member_of, obj.internal_uri)
     end
+
     @fedora_object.datastreams["RELS-EXT"].content_will_change!
   end
 
-  # Sets :cul_obsolete_from RELS-EXT attributes for current project pids and clears old :cul_member_of relationships
-  # Also clears out old projects
-  def clear_fedora_parent_digital_object_pids_and_set_fedora_relationships_as_as_obsolete
-    self.set_fedora_parent_digital_object_pid_relationships({obsolete: true})
-    @parent_digital_object_pids = []
+  # Sets :cul_obsolete_from RELS-EXT attributes for parent fedora objects
+  def set_fedora_obsolete_parent_digital_object_pid_relationships
+    # This method also ensures that we only save pids for Objects that actually exist.  Invalid pids will cause it to fail.
+
+    # Clear old parent_digital_object relationship
+    @fedora_object.clear_relationship(:cul_obsolete_from)
+
+    @obsolete_parent_digital_object_pids.each do |obsolete_parent_digital_object_pid|
+      obj = ActiveFedora::Base.find(obsolete_parent_digital_object_pid)
+      # Add new obsolete_parent_digital_object relationship
+      @fedora_object.add_relationship(:cul_obsolete_from, obj.internal_uri)
+    end
+
+    @fedora_object.datastreams["RELS-EXT"].content_will_change!
   end
 
   def set_fedora_project_relationships
@@ -81,9 +81,11 @@ module DigitalObject::Fedora
     @fedora_object.datastreams["RELS-EXT"].content_will_change!
   end
 
-  def set_fedora_dynamic_field_data
+  def set_fedora_hyacinth_ds_data
     hyacinth_data = get_hyacinth_data()
     hyacinth_data['dynamic_field_data'] = @dynamic_field_data
+    puts "saving @ordered_child_digital_object_pids for #{self.pid}: " + @ordered_child_digital_object_pids.inspect
+    hyacinth_data['ordered_child_digital_object_pids'] = @ordered_child_digital_object_pids
     @fedora_object.datastreams[HYACINTH_DATASTREAM_NAME].content = hyacinth_data.to_json
   end
 
@@ -102,11 +104,34 @@ module DigitalObject::Fedora
 
   def load_parent_digital_object_pid_relationships_from_fedora_object!
     @parent_digital_object_pids = @fedora_object.relationships(:cul_member_of).map{|val| val.gsub('info:fedora/', '') }
+    @obsolete_parent_digital_object_pids = @fedora_object.relationships(:cul_obsolete_from).map{|val| val.gsub('info:fedora/', '') }
   end
 
-  def load_ordered_child_digital_object_pids_from_fedora_object!
+  def load_fedora_hyacinth_ds_data_from_fedora_object!
     hyacinth_data = get_hyacinth_data()
+    @dynamic_field_data = hyacinth_data['dynamic_field_data'] || {}
     @ordered_child_digital_object_pids = hyacinth_data['ordered_child_digital_object_pids'] || []
+
+    if HYACINTH['treat_fedora_resource_index_updates_as_immediate']
+      # If and only if Fedora Resource Index updates are set to be immediate, we can rely on the index for
+      # aggregating missing memberOf values and appending them to this list.  If Resource Index updates aren't
+      # immediate, this is unsafe.  Resource Update flush settings must be configured in fedora.fcfg.
+
+      puts self.pid + ': Child objects before merge: ' + @ordered_child_digital_object_pids.inspect
+      # - To be safe, do a Fedora Resource Index search for all upward-pointing member relationships from child objects:
+      # - Append missing members
+      # - Remove nonexistent members
+      risearch_members = Cul::Scv::Hydra::RisearchMembers.get_direct_member_pids(self.pid)
+      puts self.pid + ': Risearch objects: ' + risearch_members.inspect
+
+      # Example of logic below:
+      #>>>> ( [1, 2, 7] | [6, 7] ) & [7, 6]
+      #  => [6, 7]
+      # Maintains order of existing items, adds missing items, cleans up nonexistent items
+      @ordered_child_digital_object_pids = (@ordered_child_digital_object_pids | risearch_members) & risearch_members
+      puts self.pid + ': Child objects after merge: ' + @ordered_child_digital_object_pids.inspect
+    end
+
   end
 
   def load_project_relationships_from_fedora_object!
@@ -125,11 +150,6 @@ module DigitalObject::Fedora
       :blob => hyacinth_data.to_json
     )
     return hyacinth_ds
-  end
-
-  def load_dynamic_field_data_from_fedora_object!
-    hyacinth_data = JSON(@fedora_object.datastreams[HYACINTH_DATASTREAM_NAME].content)
-    @dynamic_field_data = hyacinth_data['dynamic_field_data'] || {}
   end
 
 end

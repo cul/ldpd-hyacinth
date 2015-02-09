@@ -49,24 +49,21 @@ class PidGenerator < ActiveRecord::Base
       pid_minter.seed(self.seed.to_i, self.sequence)
       newly_minted_pid = pid_minter.mint
 
-      self.increment!(:sequence)
+      self.increment!(:sequence) # Immediately increment sequence so this PID will never be available again for another record.
       self.save
     end
 
+    # Do not continue with the lock when checking with Fedora.  No need to block threads during the check.
     if newly_minted_pid.nil?
-      raise 'Unexpected error during PID generation.'
+      raise 'Unexpected error during PID generation.  Value of pid is nil.'
     else
       # Verify that this PID has not been used before
-      begin
-        if ActiveFedora::Base.exists?(newly_minted_pid)
-          # If Fedora is available, check to see if an object in Fedora already exists with this PID
-          puts 'PID ' + newly_minted_pid + ' already exists in Fedora.  Generating new PID.'
+      if ActiveFedora::Base.exists?(newly_minted_pid)
+        # If Fedora is available, check to see if an object in Fedora already exists with this PID
+        puts 'PID ' + newly_minted_pid + ' already exists in Fedora.  Generating new PID.'
 
-          # Generate a new pid
-          newly_minted_pid = self.next_pid
-        end
-      rescue Errno::ECONNREFUSED => e
-        raise 'Fedora is unavailable, so it was not possible to check whether an object with PID ' + newly_minted_pid  + ' exists.'
+        # Generate a new pid
+        newly_minted_pid = self.next_pid
       end
     end
 

@@ -1,13 +1,17 @@
 class DigitalObject::Base
 
+  include ActiveModel::Dirty
   include DigitalObject::IndexAndSearch
   include DigitalObject::Validation
   include DigitalObject::Fedora
   include DigitalObject::DigitalObjectRecord
   include DigitalObject::DynamicField
 
-  attr_accessor :projects, :parent_digital_object_pids, :ordered_child_digital_object_pids, :created_by, :updated_by, :state, :struct_data, :dc_type
-  attr_reader :errors, :fedora_object, :updated_at, :created_at, :dynamic_field_data
+  # For ActiveModel::Dirty
+  define_attribute_methods :parent_digital_object_pids, :obsolete_parent_digital_object_pids, :ordered_child_digital_object_pids
+
+  attr_accessor :projects, :created_by, :updated_by, :state, :struct_data, :dc_type, :ordered_child_digital_object_pids
+  attr_reader :errors, :fedora_object, :parent_digital_object_pids, :updated_at, :created_at, :dynamic_field_data
 
   VALID_DC_TYPES = [] # There are no valid dc types for DigitalObject::Base
 
@@ -19,6 +23,7 @@ class DigitalObject::Base
     if self.new_record?
       @projects = []
       @parent_digital_object_pids = []
+      @obsolete_parent_digital_object_pids = []
       @ordered_child_digital_object_pids = []
       @dynamic_field_data = {}
       @state = 'A'
@@ -27,11 +32,10 @@ class DigitalObject::Base
       @db_record.with_lock do # with_lock creates a transaction and locks on the called object's row
         load_created_and_updated_data_from_db_record!
         load_parent_digital_object_pid_relationships_from_fedora_object!
-        load_ordered_child_digital_object_pids_from_fedora_object!
         load_state_from_fedora_object!
         load_dc_type_from_fedora_object!
         load_project_relationships_from_fedora_object!
-        load_dynamic_field_data_from_fedora_object!
+        load_fedora_hyacinth_ds_data_from_fedora_object!
       end
     end
 
@@ -67,26 +71,64 @@ class DigitalObject::Base
     ]
   end
 
-  # Marks a record as inactive
-  def destroy
-    self.state = 'D' # A state of 'D' means "deleted" in Fedora
-    old_parent_digital_objects = @parent_digital_object_pids
-    self.clear_fedora_parent_digital_object_pids_and_set_fedora_relationships_as_as_obsolete
+  def add_parent_digital_object(parent_digital_object)
+    new_parent_digital_object_pid = parent_digital_object.pid
 
-    if self.save
-      # Update parent object ordered_child_digital_object_pids by removing this pid from their lists
-      if old_parent_digital_objects.present?
-        old_parent_digital_objects.each do |old_parent_digital_object_pid|
-          old_parent_digital_object = DigitalObject::Base.find(old_parent_digital_object_pid)
-          if old_parent_digital_object.ordered_child_digital_object_pids.include?(self.pid)
-            old_parent_digital_object.ordered_child_digital_object_pids.delete(self.pid)
-            old_parent_digital_object.save
+    unless @parent_digital_object_pids.include?(new_parent_digital_object_pid)
+      parent_digital_object_pids_will_change!
+      @parent_digital_object_pids << new_parent_digital_object_pid
+    end
+
+    if @obsolete_parent_digital_object_pids.include?(new_parent_digital_object_pid)
+      obsolete_parent_digital_object_pids_will_change!
+      @obsolete_parent_digital_object_pids.delete(new_parent_digital_object_pid)
+    end
+  end
+
+  def remove_parent_digital_object(parent_digital_object)
+    parent_digital_object_pid = parent_digital_object.pid
+    if @parent_digital_object_pids.include?(parent_digital_object_pid)
+      parent_digital_object_pids_will_change!
+      obsolete_parent_digital_object_pids_will_change!
+      deleted_pid = @parent_digital_object_pids.delete(parent_digital_object_pid)
+      @obsolete_parent_digital_object_pids << deleted_pid unless @obsolete_parent_digital_object_pids.include?(deleted_pid)
+    end
+  end
+
+  # This method is only required for when the ResourceIndex doesn't have immediate updates turned on
+  def remove_ordered_child_digital_object_pid(digital_object_pid)
+    if @ordered_child_digital_object_pids.include?(digital_object_pid)
+      @ordered_child_digital_object_pids.delete(digital_object_pid)
+    end
+  end
+
+  # This method is only required for when the ResourceIndex doesn't have immediate updates turned on
+  def add_ordered_child_digital_object_pid(digital_object_pid)
+    unless @ordered_child_digital_object_pids.include?(digital_object_pid)
+      @ordered_child_digital_object_pids << digital_object_pid
+      puts 'added ---> ' +  digital_object_pid.to_s
+    end
+  end
+
+  # Marks a record as deletedm but doesn't completely purge it from the system
+  def destroy
+
+    @db_record.with_lock do
+      # Set state of 'D' for this object, which means "deleted" in Fedora
+      self.state = 'D'
+
+
+      if valid?
+        if @parent_digital_object_pids.present?
+          # If present, convert this DigitalObject's parent membership relationships to obsolete parent relationships (for future auditing/troubleshooting purposes)
+          @parent_digital_object_pids.each do |parent_digital_object_pid|
+            obj = DigitalObject::Base.find(parent_digital_object_pid)
+            self.remove_parent_digital_object(obj)
           end
         end
+
+        return self.save
       end
-      return true
-    else
-      return false
     end
   end
 
@@ -116,7 +158,7 @@ class DigitalObject::Base
     digital_object_record = ::DigitalObjectRecord.find_by(pid: pid)
 
     if digital_object_record.blank?
-      raise "Couldn't find DigitalObject with pid #{pid}"
+      raise Hyacinth::DigitalObjectNotFoundError.new("Couldn't find DigitalObject with pid #{pid}")
     end
 
     fobj = ActiveFedora::Base.find(pid)
@@ -204,31 +246,72 @@ class DigitalObject::Base
           @db_record.lock! # Within the established transaction, lock on this object's row.  Remember: "lock!" also reloads object data from the db, so perform all @db_record modifications AFTER this call.
         end
         remove_blank_fields_from_dynamic_field_data!
-
         set_created_and_updated_data_from_db_record
-        set_fedora_dynamic_field_data
+        set_fedora_hyacinth_ds_data
         set_fedora_project_relationships
         set_fedora_object_state
         set_fedora_object_dc_type
-        set_fedora_ordered_child_digital_object_pids
-        set_fedora_parent_digital_object_pid_relationships
         set_fedora_object_dc_title_and_label
+
+        set_fedora_parent_digital_object_pid_relationships if parent_digital_object_pids_changed?
+        set_fedora_obsolete_parent_digital_object_pid_relationships if obsolete_parent_digital_object_pids_changed?
+
         @fedora_object.save
         @db_record.save! # Save timestamps + updates to modifed_by, etc.
 
-        if parent_digital_object_pids.present?
-          parent_digital_object_pids.each do |parent_digital_object_pid|
-            parent_digital_object = DigitalObject::Base.find(parent_digital_object_pid)
-            # Append this record's pid to the end of its parent_digital_object's
-            # ordered_child_digital_object_pids list if it's not already in the list.
-            # This logic handles creation of new child records and easy addition of
-            # existing child records to existing parents.
-            unless parent_digital_object.ordered_child_digital_object_pids.include?(self.pid)
-              parent_digital_object.ordered_child_digital_object_pids << self.pid
-              parent_digital_object.save
+        if parent_digital_object_pids_changed?
+
+          removed_parents = parent_digital_object_pids_was - parent_digital_object_pids
+          new_parents = parent_digital_object_pids - parent_digital_object_pids_was
+
+          # Parent changes MUST be saved after Fedora object changes because they rely on the state of the live Fedora Object.
+          # Update all removed parents AND new parents so they have the latest member changes.
+
+          if HYACINTH['treat_fedora_resource_index_updates_as_immediate']
+            # If Fedora's Resource Index is set to update IMMEDIATELY
+            # after object modification, we can use the lines below,
+            # simply re-saving each affected parent.  If not, this is unsafe to use.
+            # Resource Update flush settings must be configured in fedora.fcfg.
+
+            (removed_parents + new_parents).each do |digital_obj_pid|
+              parent_obj = DigitalObject::Base.find(digital_obj_pid)
+              unless parent_obj.save
+                @errors.add(:parent_digital_object, parent_obj.errors)
+              end
             end
+          else
+
+            # If Fedora Resource Index changes aren't immediate, we canot simply re-save the parents.
+            # The Resource Index is unlikely to have been updated at this point (and sometimes takes 10
+            # seconds or longer to update).  We'll need to manually remove pid references from parent lists
+            # of ordered_child_digital_object_pids.
+
+            removed_parents.each do |digital_obj_pid|
+              removed_parent_obj = DigitalObject::Base.find(digital_obj_pid)
+              removed_parent_obj.remove_ordered_child_digital_object_pid(self.pid)
+              unless removed_parent_obj.save
+                @errors.add(:obsolete_parent_digital_object_pid, removed_parent_obj.errors)
+              end
+            end
+
+            new_parents.each do |digital_obj_pid|
+              new_parent_obj = DigitalObject::Base.find(digital_obj_pid)
+              new_parent_obj.add_ordered_child_digital_object_pid(self.pid)
+              unless new_parent_obj.save
+                @errors.add(:parent_digital_object_pid, new_parent_obj.errors)
+                return false
+              end
+            end
+
           end
+
+          if @errors.present?
+            return false
+          end
+
         end
+
+        @db_record.save! # Save timestamps + updates to modifed_by, etc.
 
         self.update_index
         return true
