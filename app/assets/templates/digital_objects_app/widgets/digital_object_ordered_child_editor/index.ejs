@@ -30,14 +30,16 @@
           <button class="btn btn-default btn-sm shift-child-down"><span class="glyphicon glyphicon-arrow-down"></span></button>
         </div>
         <div class="col-xs-8">
-            <strong><%- childDigitalObject.getTitle() %></strong>
-            <br />
             <strong>PID:</strong> <a href="#<%= Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: childDigitalObject.getPid()}) %>"><%= childDigitalObject.getPid() %></a>
+            <br />
+            <strong>Title: <%- childDigitalObject.getTitle() %></strong>
             <br />
             <span class="label label-default"><%= childDigitalObject.digital_object_type['display_label'] %></span>
         </div>
         <div class="col-xs-2">
-          <!-- Image will go here, if present -->
+          <% if ( childDigitalObject instanceof Hyacinth.DigitalObjectsApp.DigitalObject.Asset && Hyacinth.repositoryCacheUrl && childDigitalObject.getDcType() == 'StillImage') { %>
+            <img class="img-responsive thumbnail pull-right" src="<%= Hyacinth.repositoryCacheUrl + '/images/' + childDigitalObject.getPid() + '/square/256.jpg' %>" title="<%= childDigitalObject.getPid() %>" />
+          <% } %>
         </div>
       </div>
     </div>

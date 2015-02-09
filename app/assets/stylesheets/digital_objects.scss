@@ -318,6 +318,12 @@
   .ordered-child {
       padding:1em;
       margin-bottom:.5em;
+
+      img.thumbnail {
+        max-height: 100px;
+        width:auto;
+        margin-bottom:0;
+      }
    }
 
    .actions {

@@ -409,9 +409,17 @@ class DigitalObjectsController < ApplicationController
   end
 
   def add_parent
+
+    test_mode = params['test'].present? && params['test'].to_s == 'true'
+
     parent_digital_object = DigitalObject::Base.find(params[:parent_pid])
-    @digital_object.add_parent_digital_object(parent_digital_object)
-    result = @digital_object.save
+
+    if test_mode
+      result = true
+    else
+      @digital_object.add_parent_digital_object(parent_digital_object)
+      result = @digital_object.save
+    end
 
     response = {
       'success' => result,

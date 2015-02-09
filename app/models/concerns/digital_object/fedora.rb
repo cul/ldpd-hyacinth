@@ -84,7 +84,6 @@ module DigitalObject::Fedora
   def set_fedora_hyacinth_ds_data
     hyacinth_data = get_hyacinth_data()
     hyacinth_data['dynamic_field_data'] = @dynamic_field_data
-    puts "saving @ordered_child_digital_object_pids for #{self.pid}: " + @ordered_child_digital_object_pids.inspect
     hyacinth_data['ordered_child_digital_object_pids'] = @ordered_child_digital_object_pids
     @fedora_object.datastreams[HYACINTH_DATASTREAM_NAME].content = hyacinth_data.to_json
   end
