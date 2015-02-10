@@ -31,8 +31,8 @@ ActiveRecord::Migration.check_pending! if defined?(ActiveRecord::Migration)
 
 # This module authenticates users for request specs.
 module ValidUserRequestHelper
-  def request_spec_sign_in_test_user
-      @user ||= FactoryGirl.create :user
+  def request_spec_sign_in_admin_user
+      @user ||= FactoryGirl.create(:admin_user)
       post_via_redirect user_session_path, 'user[email]' => @user.email, 'user[password]' => @user.password
   end
 end
@@ -46,7 +46,10 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = true
 
-
+  # additional factory_girl configuration
+  config.before(:suite) do
+    FactoryGirl.lint
+  end
 
   # We're having issues with PhantomJS timing out.  See: https://github.com/teampoltergeist/poltergeist/issues/375
   # Hopefully this will fix the problem.  Solution from: https://gist.github.com/afn/c04ccfe71d648763b306
@@ -82,8 +85,8 @@ RSpec.configure do |config|
 
   # Added so that we can test Devise logins
   config.include Devise::TestHelpers, :type => :controller # Don't use this for request specs.  Simulate real login mechanism for request specs.
-  def sign_in_test_user()
-    sign_in(FactoryGirl.create(:user))
+  def sign_in_admin_user()
+    sign_in(FactoryGirl.create(:admin_user))
   end
 
   config.include ValidUserRequestHelper, :type => :request

@@ -8,7 +8,7 @@ RSpec.describe "DigitalObjects", :type => :request do
     end
 
     it "returns a 200 (success) status when a user IS logged in" do
-      request_spec_sign_in_test_user()
+      request_spec_sign_in_admin_user()
 
       get digital_objects_path
       expect(response.status).to be(200)
