@@ -44,17 +44,15 @@
 
         <% if ( ! digitalObject.isNewRecord() ) { %>
 
-          <% var numberOfChildAssets = digitalObject.getOrderedChildDigitalObjectPids().length %>
-          <% if (numberOfChildAssets > 0) { %>
+          <% var numberOfChildObjects = digitalObject.getOrderedChildDigitalObjectPids().length %>
+          <% if (numberOfChildObjects > 0) { %>
             <div class="form-group">
               <label class="col-sm-3">
-                <%= (digitalObject.digital_object_type.string_key == 'item') ? 'Child Assets' : 'Child Digital Objects' %>:
+                Child Objects:
               </label>
               <div class="col-sm-9">
                 <a href="#<%= Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'manage_children', pid: digitalObject.getPid()}) %>">
-                  <%= numberOfChildAssets %>
-                  <%= (digitalObject.digital_object_type.string_key == 'item') ? (numberOfChildAssets == 1 ? 'Asset' : 'Assets') : (numberOfChildAssets == 1 ? 'Digital Object' : 'Digital Objects') %>
-                  &raquo;
+                  <%= numberOfChildObjects + ' ' + (numberOfChildObjects == 1 ? 'Child Object' : 'Child Objects') %> &raquo;
                 </a>
               </div>
             </div>
@@ -138,7 +136,33 @@
     </div>
     <div class="col-md-4">
       <% if ( digitalObject.hasImage()) { %>
-        <img class="img-responsive thumbnail pull-right" src="<%= digitalObject.getImageUrl('scaled', 256) %>" title="<%= digitalObject.getPid() %>" />
+        <div class="thumbnail aligncenter child-digital-object-preview">
+          <% var orderedChildDigitalObjectPids = digitalObject.getOrderedChildDigitalObjectPids(); %>
+          <h4 class="preview-heading">Child Digital Objects</h4>
+          <table>
+            <tr>
+              <td class="<%= orderedChildDigitalObjectPids.length > 1 ? 'col-xs-6' : 'col-xs-12 aligncenter' %>">
+                <a href="#<%= Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: orderedChildDigitalObjectPids[0]}) %>">
+                  <img class="img-responsive thumbnail" src="<%= Hyacinth.DigitalObjectsApp.DigitalObject.Base.getImageUrl(orderedChildDigitalObjectPids[0], 'scaled', 256) %>" title="<%= orderedChildDigitalObjectPids[0] %>" />
+                </a>
+              </td>
+              <% if (orderedChildDigitalObjectPids.length > 1) { %>
+                <td class="col-xs-6">
+                  <a href="#<%= Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: orderedChildDigitalObjectPids[1]}) %>">
+                    <img class="img-responsive thumbnail" src="<%= Hyacinth.DigitalObjectsApp.DigitalObject.Base.getImageUrl(orderedChildDigitalObjectPids[1], 'scaled', 256) %>" title="<%= orderedChildDigitalObjectPids[1] %>" />
+                  </a>
+                </td>
+              <% } %>
+            </tr>
+          </table>
+          <div class="clearfix"></div>
+          <div class="caption">
+          <!--
+            <a href="#<%= Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'view_children', pid: digitalObject.getPid()}) %>"
+            class="btn btn-block btn-default btn-xs">View All (<%= orderedChildDigitalObjectPids.length %>) &raquo;</a>
+            -->
+          </div>
+        </div>
       <% } %>
     </div>
   </div>

@@ -217,8 +217,10 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.show = function() 
   //Check for presence of Hyacinth.DigitalObjectsApp.mostRecentSearchParams because without it, searchResultNumber doesn't mean anything (and it might have just come from a copied/pasted url)
   if (Hyacinth.DigitalObjectsApp.mostRecentSearchParams != null && typeof(Hyacinth.DigitalObjectsApp.params['searchResultNumber']) != 'undefined') {
     Hyacinth.DigitalObjectsApp.mostRecentSearchResult = parseInt(Hyacinth.DigitalObjectsApp.params['searchResultNumber']);
+    Hyacinth.DigitalObjectsApp.mostRecentSearchResultPid = Hyacinth.DigitalObjectsApp.params['pid'];
   } else {
     Hyacinth.DigitalObjectsApp.mostRecentSearchResult = Hyacinth.DigitalObjectsApp.mostRecentSearchResult || null;
+    Hyacinth.DigitalObjectsApp.mostRecentSearchResultPid = Hyacinth.DigitalObjectsApp.mostRecentSearchResultPid || null;
   }
 
   $.ajax({

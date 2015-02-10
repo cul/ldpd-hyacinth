@@ -34,34 +34,45 @@ navItems.push({label: 'Edit', url: '#' + Hyacinth.DigitalObjectsApp.paramsToHash
 <% Hyacinth.ContextualNav.setNavItems(navItems); %>
 
 <%
-if (Hyacinth.DigitalObjectsApp.mostRecentSearchResult != null && (previousSearchResultPid || nextSearchResultPid)) {
+if (Hyacinth.DigitalObjectsApp.mostRecentSearchResult != null && (previousSearchResultPid || nextSearchResultPid || Hyacinth.DigitalObjectsApp.mostRecentSearchResultPid)) {
+  console.log('previousSearchResultPid: ' + previousSearchResultPid);
+  console.log('nextSearchResultPid: ' + nextSearchResultPid);
+  console.log('Hyacinth.DigitalObjectsApp.mostRecentSearchResultPid: ' + Hyacinth.DigitalObjectsApp.mostRecentSearchResultPid);
   %>
   <div class="result-count-and-sort-options">
     <div class="row">
-      <div class="col-md-8">
-        <%
-        if (totalNumSearchResults) {
-          %><small><%= (Hyacinth.DigitalObjectsApp.mostRecentSearchResult + 1) + ' of ' + totalNumSearchResults %></small><%
-        }
-        %>
-      </div>
-      <div class="col-md-4 alignright">
-        <%
-        if(previousSearchResultPid) {
-          %><a class="btn btn-default btn-xs show-result-link" href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: previousSearchResultPid, searchResultNumber: Hyacinth.DigitalObjectsApp.mostRecentSearchResult - 1}) %>"><span class="glyphicon glyphicon-backward"></span></a><%
-        } else {
-          %><a class="disabled btn btn-default btn-xs"><span class="glyphicon glyphicon-backward"></span></a><%
-        }
-        %>
+      <% if ( ! Hyacinth.DigitalObjectsApp.params['searchResultNumber'] ) { %>
+        <% if (Hyacinth.DigitalObjectsApp.mostRecentSearchResultPid) { %>
+          <div class="col-md-12">
+            <small><a class="btn btn-default btn-xs" href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: Hyacinth.DigitalObjectsApp.mostRecentSearchResultPid, searchResultNumber: Hyacinth.DigitalObjectsApp.mostRecentSearchResult}) %>">&laquo; Back to most recent search result (<%= Hyacinth.DigitalObjectsApp.mostRecentSearchResultPid %>)</a></small>
+          </div>
+        <% } %>
+      <% } else { %>
+        <div class="col-md-8">
+          <%
+          if (totalNumSearchResults) {
+            %><small><%= (Hyacinth.DigitalObjectsApp.mostRecentSearchResult + 1) + ' of ' + totalNumSearchResults %></small><%
+          }
+          %>
+        </div>
+        <div class="col-md-4 alignright">
+          <%
+          if(previousSearchResultPid) {
+            %><a class="btn btn-default btn-xs show-result-link" href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: previousSearchResultPid, searchResultNumber: Hyacinth.DigitalObjectsApp.mostRecentSearchResult - 1}) %>"><span class="glyphicon glyphicon-backward"></span></a><%
+          } else {
+            %><a class="disabled btn btn-default btn-xs"><span class="glyphicon glyphicon-backward"></span></a><%
+          }
+          %>
 
-        <%
-        if(nextSearchResultPid) {
-          %><a class="btn btn-default btn-xs show-result-link" href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: nextSearchResultPid, searchResultNumber: Hyacinth.DigitalObjectsApp.mostRecentSearchResult + 1}) %>"><span class="glyphicon glyphicon-forward"></span></a><%
-        } else {
-          %><a class="disabled btn btn-default btn-xs"><span class="glyphicon glyphicon-forward"></span></a><%
-        }
-        %>
-      </div>
+          <%
+          if(nextSearchResultPid) {
+            %><a class="btn btn-default btn-xs show-result-link" href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: nextSearchResultPid, searchResultNumber: Hyacinth.DigitalObjectsApp.mostRecentSearchResult + 1}) %>"><span class="glyphicon glyphicon-forward"></span></a><%
+          } else {
+            %><a class="disabled btn btn-default btn-xs"><span class="glyphicon glyphicon-forward"></span></a><%
+          }
+          %>
+        </div>
+      <% } %>
       <div class="clearfix"></div>
     </div>
   </div>

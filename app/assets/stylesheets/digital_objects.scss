@@ -12,6 +12,22 @@
     .digital-object-summary {
       word-wrap: break-word;
     }
+
+    .thumbnail {
+      margin: 0 auto;
+    }
+
+    .child-digital-object-preview {
+      table  {
+        width:100%;
+      }
+      .preview-heading {
+        font-size: 13px;
+        margin:.5em .5em 1em;
+        padding-bottom:.75em;
+        border-bottom:1px solid #ddd;
+      }
+    }
   }
 
   .dynamic_field_group_category_label {
@@ -236,7 +252,7 @@
 
   .search-results {
 
-    .img-responsive.thumbnail {
+    .thumbnail {
       margin-bottom:0;
     }
 
@@ -319,7 +335,7 @@
       padding:1em;
       margin-bottom:.5em;
 
-      img.thumbnail {
+      .thumbnail {
         max-height: 100px;
         width:auto;
         margin-bottom:0;

@@ -24,6 +24,10 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData =
   return new digitalObjectTypeStringKeysToClasses[digital_object_data['digital_object_type']['string_key']](digital_object_data);
 };
 
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.getImageUrl = function(pid, type, size){
+  return Hyacinth.repositoryCacheUrl + '/images/' + pid + '/' + type + '/' + size + '.jpg';
+};
+
 //Instance methods
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getJsonViewUrl = function() {
@@ -40,6 +44,10 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getParentDigitalObjectPi
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getOrderedChildDigitalObjectPids = function() {
   return this.ordered_child_digital_object_pids;
+};
+
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getNumberOfChildDigitalObjects = function() {
+  return this.getOrderedChildDigitalObjectPids().length;
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getState = function() {
@@ -82,7 +90,7 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.hasImage = function() {
 }
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getImageUrl = function(type, size){
-  return Hyacinth.repositoryCacheUrl + '/images/' + this.getPid() + '/' + type + '/' + size + '.jpg';
+  Hyacinth.DigitalObjectsApp.DigitalObject.Base.getImageUrl(this.getPid(), type, size);
 };
 
 /***************************************************************
