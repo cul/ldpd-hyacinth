@@ -135,8 +135,14 @@
 
     </div>
     <div class="col-md-4">
-      <% var orderedChildDigitalObjectPids = digitalObject.getOrderedChildDigitalObjectPids(); %>
-      <% if ( orderedChildDigitalObjectPids.length > 0 ) { %>
+
+      <% if (digitalObject instanceof Hyacinth.DigitalObjectsApp.DigitalObject.Asset) { %>
+        <div class="thumbnail aligncenter child-digital-object-preview">
+          <h4 class="preview-heading">Asset</h4>
+          <img class="img-responsive thumbnail" src="<%= Hyacinth.DigitalObjectsApp.DigitalObject.Base.getImageUrl(digitalObject.getPid(), 'scaled', 256) %>" title="<%= digitalObject.getPid() %>" />
+        </div>
+      <% } else if ( digitalObject.getOrderedChildDigitalObjectPids().length > 0 ) { %>
+        <% var orderedChildDigitalObjectPids = digitalObject.getOrderedChildDigitalObjectPids() %>
         <div class="thumbnail aligncenter child-digital-object-preview">
           <h4 class="preview-heading">Child Digital Objects</h4>
           <table>
