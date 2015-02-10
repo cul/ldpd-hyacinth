@@ -135,9 +135,9 @@
 
     </div>
     <div class="col-md-4">
-      <% if ( digitalObject.hasImage()) { %>
+      <% var orderedChildDigitalObjectPids = digitalObject.getOrderedChildDigitalObjectPids(); %>
+      <% if ( orderedChildDigitalObjectPids.length > 0 ) { %>
         <div class="thumbnail aligncenter child-digital-object-preview">
-          <% var orderedChildDigitalObjectPids = digitalObject.getOrderedChildDigitalObjectPids(); %>
           <h4 class="preview-heading">Child Digital Objects</h4>
           <table>
             <tr>

@@ -219,7 +219,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.show = function() 
     Hyacinth.DigitalObjectsApp.mostRecentSearchResult = parseInt(Hyacinth.DigitalObjectsApp.params['searchResultNumber']);
     Hyacinth.DigitalObjectsApp.mostRecentSearchResultPid = Hyacinth.DigitalObjectsApp.params['pid'];
   } else {
-    Hyacinth.DigitalObjectsApp.mostRecentSearchResult = Hyacinth.DigitalObjectsApp.mostRecentSearchResult || null;
+    Hyacinth.DigitalObjectsApp.mostRecentSearchResult = (typeof(Hyacinth.DigitalObjectsApp.mostRecentSearchResult) == 'undefined' ? null : Hyacinth.DigitalObjectsApp.mostRecentSearchResult);
     Hyacinth.DigitalObjectsApp.mostRecentSearchResultPid = Hyacinth.DigitalObjectsApp.mostRecentSearchResultPid || null;
   }
 
