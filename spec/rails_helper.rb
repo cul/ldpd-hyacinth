@@ -8,12 +8,13 @@ require 'capybara/poltergeist'
 
 Capybara.register_driver :poltergeist do |app|
   Capybara::Poltergeist::Driver.new(app,
-    :timeout => 60
+    :timeout => 20
   )
 end
 
+
 Capybara.javascript_driver = :poltergeist
-Capybara.default_wait_time = 30 # Some ajax requests might take longer than the default waut time of 2 seconds.  Max out at 15 seconds when testing.
+Capybara.default_wait_time = 20 # Some ajax requests might take longer than the default waut time of 2 seconds.  Max out at 15 seconds when testing.
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -45,6 +46,25 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = true
 
+
+
+  # We're having issues with PhantomJS timing out.  See: https://github.com/teampoltergeist/poltergeist/issues/375
+  # Hopefully this will fix the problem.  Solution from: https://gist.github.com/afn/c04ccfe71d648763b306
+  config.around(:each, type: :feature) do |ex|
+    example = RSpec.current_example
+    # Try three times
+    3.times do |i|
+      example.instance_variable_set('@exception', nil)
+      self.instance_variable_set('@__memoized', nil) # clear let variables
+      ex.run
+      break unless example.exception.is_a?(Capybara::Poltergeist::TimeoutError)
+      puts("\nCapybara::Poltergeist::TimeoutError at #{example.location}\n   Restarting phantomjs and retrying...")
+      restart_phantomjs
+    end
+  end
+
+
+
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and
   # `post` in specs under `spec/controllers`.
@@ -67,4 +87,21 @@ RSpec.configure do |config|
   end
 
   config.include ValidUserRequestHelper, :type => :request
+
+
+  def restart_phantomjs
+    puts "-> Restarting phantomjs: iterating through capybara sessions..."
+    session_pool = Capybara.send('session_pool')
+    session_pool.each do |mode,session|
+      msg = "  => #{mode} -- "
+      driver = session.driver
+      if driver.is_a?(Capybara::Poltergeist::Driver)
+        msg += "restarting"
+        driver.restart
+      else
+        msg += "not poltergeist: #{driver.class}"
+      end
+      puts msg
+    end
+  end
 end
