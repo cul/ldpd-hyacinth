@@ -47,7 +47,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.getOrderedChildDi
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.hasImage = function() {
-  return this.getHyacinthType() == 'asset' || this.getHyacinthType() == 'item';
+  return this.getHyacinthType() == 'asset' || (this.getHyacinthType() == 'item' && this.getOrderedChildDigitalObjectPids().length > 0);
 }
 
 Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.getImageUrl = function(type, size){
