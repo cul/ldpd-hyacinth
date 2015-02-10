@@ -21,7 +21,7 @@ default_pid_generator = PidGenerator.create!(namespace: HYACINTH['default_pid_ge
 
 # Create XmlDatastreams
 desc_metadata_xml_ds = XmlDatastream.create(string_key: 'descMetadata', display_label: 'descMetadata',
-  xml_translation_json: {
+  xml_translation: {
     'key' => 'value'
   }.to_json
 )

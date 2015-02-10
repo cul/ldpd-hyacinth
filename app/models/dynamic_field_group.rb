@@ -69,8 +69,8 @@ class DynamicFieldGroup < ActiveRecord::Base
 
   # Validations
   def validate_json_fields
-    if self.xml_translation_json.present? && ! Hyacinth::Utils::JsonUtils.is_valid_json?(self.xml_translation_json)
-      errors.add(:xml_translation_json, "does not validate as JSON.  Value: " + self.xml_translation_json.to_s)
+    if self.xml_translation.present? && ! Hyacinth::Utils::JsonUtils.is_valid_json?(self.xml_translation)
+      errors.add(:xml_translation, "does not validate as JSON.  Value: " + self.xml_translation.to_s)
     end
   end
 
@@ -100,11 +100,11 @@ class DynamicFieldGroup < ActiveRecord::Base
     end
 
     # additional_data_json #
-    self.xml_translation_json = {}.to_json if self.xml_translation_json.blank?
+    self.xml_translation = {}.to_json if self.xml_translation.blank?
   end
 
   def clean_up_json_fields
-    self.xml_translation_json = JSON.pretty_generate(JSON(self.xml_translation_json), :indent => '    ')
+    self.xml_translation = JSON.pretty_generate(JSON(self.xml_translation), :indent => '    ')
   end
 
 end

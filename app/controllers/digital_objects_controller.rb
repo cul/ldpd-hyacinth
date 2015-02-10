@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 class DigitalObjectsController < ApplicationController
-  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor, :download, :add_parent]
+  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor, :download, :add_parent, :mods]
   before_action :set_contextual_nav_options
 
   # GET /digital_objects
@@ -28,14 +28,16 @@ class DigitalObjectsController < ApplicationController
       format.json {
         render json: @digital_object
       }
-      format.xml {
-        #if params[:xml_type].blank? || params[:xml_type] == 'mods'
-        #  render xml: @digital_object.as_mods_xml
-        #else
-        #  render xml: '<?xml version="1.0" encoding="UTF-8"?><error>Unknown XML export format: ' + params[:xml_type] + '</error>'
-        #end
-        render xml: '<?xml version="1.0" encoding="UTF-8"?><error>XML view is not available.</error>'
+    end
+  end
 
+  def mods
+
+    xml_output = @digital_object.render_xml_datastream(XmlDatastream.find_by(string_key: 'descMetadata'))
+
+    respond_to do |format|
+      format.xml {
+        render xml: xml_output
       }
     end
   end

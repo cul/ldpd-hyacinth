@@ -31,7 +31,7 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getJsonViewUrl = functio
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getModsXmlViewUrl = function() {
-  return Hyacinth.getLocationOrigin() + '/digital_objects/' + this.getPid() + '.xml';
+  return Hyacinth.getLocationOrigin() + '/digital_objects/' + this.getPid() + '/mods.xml';
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getParentDigitalObjectPids = function() {

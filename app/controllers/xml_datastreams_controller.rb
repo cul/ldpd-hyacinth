@@ -69,6 +69,6 @@ class XmlDatastreamsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def xml_datastream_params
-      params.require(:xml_datastream).permit(:string_key, :display_label, :xml_translation_json)
+      params.require(:xml_datastream).permit(:string_key, :display_label, :xml_translation)
     end
 end

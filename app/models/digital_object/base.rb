@@ -6,6 +6,7 @@ class DigitalObject::Base
   include DigitalObject::Fedora
   include DigitalObject::DigitalObjectRecord
   include DigitalObject::DynamicField
+  include DigitalObject::XmlDatastreamRendering
 
   # For ActiveModel::Dirty
   define_attribute_methods :parent_digital_object_pids, :obsolete_parent_digital_object_pids, :ordered_child_digital_object_pids

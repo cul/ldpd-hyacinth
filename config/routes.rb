@@ -33,6 +33,7 @@ Hyacinth::Application.routes.draw do
     member do
       get 'data_for_ordered_child_editor'
       get 'download'
+      get 'mods'
       put 'undelete', action: 'undestroy'
       match 'add_parent/:parent_pid', action: 'add_parent', via: [:get, :put]
     end

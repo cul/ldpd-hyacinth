@@ -75,6 +75,6 @@ class DynamicFieldGroupsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def dynamic_field_group_params
-      params.require(:dynamic_field_group).permit(:string_key, :display_label, :parent_dynamic_field_group_id, :sort_order, :is_repeatable, :xml_datastream_id, :xml_translation_json, :dynamic_field_group_category_id, :created_by_id, :updated_by_id)
+      params.require(:dynamic_field_group).permit(:string_key, :display_label, :parent_dynamic_field_group_id, :sort_order, :is_repeatable, :xml_datastream_id, :xml_translation, :dynamic_field_group_category_id, :created_by_id, :updated_by_id)
     end
 end

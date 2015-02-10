@@ -78,7 +78,7 @@ ActiveRecord::Schema.define(version: 20141104010523) do
     t.integer  "sort_order",                                      null: false
     t.boolean  "is_repeatable",                   default: false, null: false
     t.integer  "xml_datastream_id"
-    t.text     "xml_translation_json"
+    t.text     "xml_translation"
     t.integer  "dynamic_field_group_category_id"
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
@@ -213,7 +213,7 @@ ActiveRecord::Schema.define(version: 20141104010523) do
   create_table "xml_datastreams", force: :cascade do |t|
     t.string   "string_key",           limit: 64
     t.string   "display_label"
-    t.text     "xml_translation_json"
+    t.text     "xml_translation"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

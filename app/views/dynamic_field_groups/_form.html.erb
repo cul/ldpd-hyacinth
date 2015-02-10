@@ -35,8 +35,8 @@
         <%= f.label(:is_repeatable, (f.check_box(:is_repeatable)).html_safe + ' Repeatable?') %>
       </div>
       <div class="field">
-        <%= f.label :xml_translation_json %><br>
-        <%= f.text_area :xml_translation_json, {class: 'form-control', id: 'xml-translation-editor-textarea', cols: 12} %>
+        <%= f.label :xml_translation %><br>
+        <%= f.text_area :xml_translation, {class: 'form-control', id: 'xml-translation-editor-textarea', cols: 12} %>
         <div id="xml-translation-editor" class="json-editor"></div>
       </div>
       <div class="actions">
