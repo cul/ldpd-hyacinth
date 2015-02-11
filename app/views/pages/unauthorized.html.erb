@@ -1,3 +1,9 @@
 <h1 class="page-title">Not Signed In</h1>
 
 <p>You must be signed in to view this page.  <%= link_to('Click here', home_path) %> to sign in.</p>
+
+<script>
+  //If we're here, it's possible that the user came to this page with a hash in the url.
+  //Store the hash so that it can be used once the user has successfully logged in.
+  Hyacinth.createCookie('hash_at_login', window.location.hash.substring(1))
+</script>

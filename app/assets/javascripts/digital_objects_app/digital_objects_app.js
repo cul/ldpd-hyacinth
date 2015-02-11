@@ -10,6 +10,15 @@ Hyacinth.DigitalObjectsApp.mostRecentSearchResult = null;
 
 /* Used to start the app and set things up */
 Hyacinth.DigitalObjectsApp.init = function() {
+
+  //It's possible that the user tried to get a hash-based URL before logging in.
+  //If so, we stored that hash.  Let's check to see if that hash value is available.
+  var hashValue = Hyacinth.readCookie('hash_at_login');
+  if (hashValue != null) {
+    Hyacinth.eraseCookie('hash_at_login');
+    window.location.hash = hashValue;
+  }
+
   //Setup hash change listener
   $(window).on('hashchange', Hyacinth.DigitalObjectsApp.handleHashChange);
   //Call hash change listener method to get things started for the current hash
