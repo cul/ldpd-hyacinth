@@ -5,5 +5,7 @@
 <script>
   //If we're here, it's possible that the user came to this page with a hash in the url.
   //Store the hash so that it can be used once the user has successfully logged in.
-  Hyacinth.createCookie('hash_at_login', window.location.hash.substring(1))
+  if (window.location.hash > 0) {
+    Hyacinth.createCookie('hash_at_login', window.location.hash.substring(1))
+  }
 </script>
