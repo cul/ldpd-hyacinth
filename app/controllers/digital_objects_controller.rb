@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 class DigitalObjectsController < ApplicationController
-  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor, :download, :add_parent, :mods]
+  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor, :download, :add_parent, :mods, :media_view]
   before_action :set_contextual_nav_options
 
   # GET /digital_objects
@@ -48,6 +48,12 @@ class DigitalObjectsController < ApplicationController
     else
       render text: @digital_object.digital_object_type.display_label.pluralize + ' do not have download URLs.  Try downloading an Asset instead.'
     end
+  end
+
+  # A view for image zooming, video players, audio players, etc.
+  def media_view
+    raise 'This view is only available for assets.' unless @digital_object.is_a?(DigitalObject::Asset)
+    render layout: 'content_only'
   end
 
   # POST /digital_objects

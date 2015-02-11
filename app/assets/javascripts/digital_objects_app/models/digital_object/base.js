@@ -90,7 +90,7 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.hasImage = function() {
 }
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getImageUrl = function(type, size){
-  Hyacinth.DigitalObjectsApp.DigitalObject.Base.getImageUrl(this.getPid(), type, size);
+  return Hyacinth.DigitalObjectsApp.DigitalObject.Base.getImageUrl(this.getPid(), type, size);
 };
 
 /***************************************************************

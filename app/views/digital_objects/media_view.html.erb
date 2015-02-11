@@ -1,0 +1,48 @@
+<% if @digital_object.dc_type == 'StillImage' %>
+
+  <script>
+    $(document).ready(function(){
+      var tileSources = [Hyacinth.repositoryCacheUrl + "/iiif/<%= @digital_object.pid %>/info.json"];
+
+      var initialPage = 0;
+
+      Hyacinth.openSeaDragonViewer = OpenSeadragon({
+          id:            "zoom-content",
+          prefixUrl:     "/openseadragon-images/",
+          tileSources: tileSources,
+          springStiffness:        10,
+          showReferenceStrip:     (tileSources.length > 1),
+          autoHideControls:       true,
+          controlsFadeDelay: 100,
+          controlsFadeLength: 500,
+          referenceStripSizeRatio: 0.15,
+          showNavigator:  true,
+          initialPage: initialPage,
+          //zoomInButton:   "zoom-in-control",
+          //zoomOutButton:  "zoom-out-control",
+          //homeButton:     "zoom-home-control",
+          //fullPageButton: "zoom-full-control",
+          //nextButton:     "zoom-next-control",
+          //previousButton: "zoom-prev-control",
+          showSequenceControl:  (tileSources.length > 1)
+        });
+
+      Hyacinth.openSeaDragonViewer.addHandler('open',function(){
+        $('#zoom-content .loading-message').remove();
+      },null);
+
+      //Resize immediately
+      $('#zoom-content').height($(window).height()).width($(window).width());
+      //Resize on window resize
+      $(window).on('resize', function(){
+        $('#zoom-content').height($(window).height()).width($(window).width());
+      });
+    });
+  </script>
+  <div id="zoom-content" style="width: 800px; height: 600px;">
+    <div class="loading-message">Loading...</div>
+  </div>
+
+<% else %>
+  Not currently handling Assets of type: <%= @digital_object.dc_type %>
+<% end %>
