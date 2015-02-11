@@ -14,7 +14,7 @@
     }
 
     .thumbnail {
-      margin: 0 auto;
+      margin: 0 auto .2em;
     }
 
     .child-digital-object-preview {
@@ -389,6 +389,12 @@
     margin-bottom:1em;
   }
 
+}
+
+#digital-object-media-view {
+  width:100%;
+  height:100%;
+  border:none;
 }
 
 /*

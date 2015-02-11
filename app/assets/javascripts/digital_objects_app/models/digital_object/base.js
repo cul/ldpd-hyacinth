@@ -28,6 +28,16 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.getImageUrl = function(pid, type, 
   return Hyacinth.repositoryCacheUrl + '/images/' + pid + '/' + type + '/' + size + '.jpg';
 };
 
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.showMediaViewModal = function(pid){
+  Hyacinth.showMainModal(
+    'Media View: ' + pid,
+    '<iframe id="digital-object-media-view" src="/digital_objects/' + pid + '/media_view"></iframe>',
+    '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'
+  );
+
+  $('#digital-object-media-view').height($(window).height() - 240);
+};
+
 //Instance methods
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getJsonViewUrl = function() {

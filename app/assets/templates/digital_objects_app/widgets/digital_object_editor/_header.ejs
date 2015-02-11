@@ -140,6 +140,11 @@
         <div class="thumbnail aligncenter child-digital-object-preview">
           <h4 class="preview-heading">Asset</h4>
           <img class="img-responsive thumbnail" src="<%= Hyacinth.DigitalObjectsApp.DigitalObject.Base.getImageUrl(digitalObject.getPid(), 'scaled', 256) %>" title="<%= digitalObject.getPid() %>" />
+          <div class="caption">
+            <% if (digitalObject.getDcType() == 'StillImage') { %>
+              <a href="#" class="btn btn-block btn-primary btn-xs" onclick="Hyacinth.DigitalObjectsApp.DigitalObject.Base.showMediaViewModal('<%= digitalObject.getPid() %>'); return false;">View Zoomable Image</a>
+            <% } %>
+          </div>
         </div>
       <% } else if ( digitalObject.getOrderedChildDigitalObjectPids().length > 0 ) { %>
         <% var orderedChildDigitalObjectPids = digitalObject.getOrderedChildDigitalObjectPids() %>
@@ -163,7 +168,8 @@
           </table>
           <div class="clearfix"></div>
           <div class="caption">
-          <!--
+            <!--
+            TODO: Create view page for all child assets
             <a href="#<%= Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'view_children', pid: digitalObject.getPid()}) %>"
             class="btn btn-block btn-default btn-xs">View All (<%= orderedChildDigitalObjectPids.length %>) &raquo;</a>
             -->
