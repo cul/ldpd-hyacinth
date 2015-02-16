@@ -257,8 +257,8 @@ class DigitalObject::Base
         set_fedora_parent_digital_object_pid_relationships if parent_digital_object_pids_changed?
         set_fedora_obsolete_parent_digital_object_pid_relationships if obsolete_parent_digital_object_pids_changed?
 
-        @fedora_object.save
         @db_record.save! # Save timestamps + updates to modifed_by, etc.
+        @fedora_object.save
 
         if parent_digital_object_pids_changed?
 

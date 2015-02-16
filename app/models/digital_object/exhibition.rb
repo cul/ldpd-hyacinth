@@ -8,7 +8,7 @@ class DigitalObject::Exhibition < DigitalObject::Base
     self.dc_type ||= VALID_DC_TYPES.first
   end
 
-  # Called during before_save, after all validations have passed
+  # Called during save, after all validations have passed
   def get_new_fedora_object
     pid = self.next_pid
     concept = Concept.new(:pid => pid)

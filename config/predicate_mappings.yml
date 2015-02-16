@@ -55,6 +55,7 @@
     :y_sampling: ySamplingFrequency
     :sampling_unit: samplingFrequencyUnit
   http://purl.org/dc/terms/:
+    :contributor: contributor
     :extent: extent
     :format: format
     :format_of: isFormatOf
