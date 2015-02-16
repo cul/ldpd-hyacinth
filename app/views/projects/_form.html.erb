@@ -47,7 +47,7 @@
     <div class="col-md-12">
       <div class="field">
         <%= f.label :full_path_to_custom_asset_directory, 'Custom Asset Directory (leave blank for default)' %>
-        <%= f.text_field :full_path_to_custom_asset_directory, {class: 'form-control', placeholder: File.join(HYACINTH['default_asset_home'], @project.string_key)} %>
+        <%= f.text_field :full_path_to_custom_asset_directory, {class: 'form-control', placeholder: 'Default: ' + File.join(HYACINTH['default_asset_home'], @project.new_record? ? '[ project string key ]' : @project.string_key)} %>
       </div>
     </div>
   </div>

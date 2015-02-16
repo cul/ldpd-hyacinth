@@ -15,7 +15,7 @@ class Project < ActiveRecord::Base
   validate :validate_custom_asset_directory
 
   after_save :ensure_that_title_fields_are_enabled_and_required
-  before_save :set_defaults_for_blank_fields
+  before_save :set_defaults_for_blank_fields, :update_fedora_object!
 
   # Returns the associated Fedora Object
   def fedora_object
@@ -29,14 +29,17 @@ class Project < ActiveRecord::Base
   def create_associated_fedora_object!
     pid = self.next_pid
     bag_aggregator = BagAggregator.new(:pid => pid)
+    @fedora_object = bag_aggregator
+    self.pid = @fedora_object.pid
+  end
 
-    bag_aggregator.datastreams["DC"].dc_identifier = [pid]
-    bag_aggregator.datastreams["DC"].dc_type = 'Project'
-    bag_aggregator.datastreams["DC"].dc_title = 'Project: ' + self.display_label
-    bag_aggregator.label = bag_aggregator.datastreams["DC"].dc_title[0]
-    bag_aggregator.save
-
-    self.pid = bag_aggregator.pid
+  def update_fedora_object!
+    self.fedora_object.datastreams["DC"].dc_identifier = [pid]
+    self.fedora_object.datastreams["DC"].dc_type = 'Project'
+    title = 'Project: ' + self.display_label
+    self.fedora_object.datastreams["DC"].dc_title = title
+    self.fedora_object.label = title
+    self.fedora_object.save
   end
 
   # Returns enabled dynamic fields (with eager-loaded nested dynamic_field data because we use that frequently)
