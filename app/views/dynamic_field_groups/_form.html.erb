@@ -14,7 +14,7 @@
   <% end %>
 
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-7">
       <div class="field">
         <%= f.label :string_key, 'String key (cannot be changed)' %><br>
         <%= f.text_field :string_key, {class: 'form-control', disabled: ( ! @dynamic_field_group.new_record? )} %>
@@ -43,7 +43,7 @@
         <%= f.submit('Save', class: 'btn btn-primary') %>
       </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-5">
       <div class="well">
         <h2>Child Fields and Field Groups</h2>
         <% if @child_dynamic_fields_and_dynamic_field_groups.present? %>

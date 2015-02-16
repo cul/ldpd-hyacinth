@@ -42,7 +42,7 @@ class XmlDatastreamsController < ApplicationController
   def update
     respond_to do |format|
       if @xml_datastream.update(xml_datastream_params)
-        format.html { redirect_to @xml_datastream, notice: 'Xml datastream was successfully updated.' }
+        format.html { redirect_to edit_xml_datastream_path(@xml_datastream), notice: 'Xml datastream was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: 'edit' }

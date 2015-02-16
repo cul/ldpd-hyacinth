@@ -7,7 +7,7 @@
 %>
 <div class="dynamic_field_group_display_label" data-associated-dfg-string-key="<%= dynamic_field_group['string_key'] %>"><%= dynamic_field_group['display_label'] %></div>
 
-<div class="dynamic_field_group" data-string-key="<%= dynamic_field_group['string_key'] %>" style="padding-right:105px;">
+<div class="dynamic_field_group" data-string-key="<%= dynamic_field_group['string_key'] %>" style="<%= (mode == 'edit') ? 'padding-right:105px;' : '' %>">
   <div class="field-management-buttons pull-right" style="width:100px;margin-right:-105px;">
     <div class="btn-group pull-right" role="group" aria-label="add-remove-up-down">
       <% if(mode == 'edit') { %>

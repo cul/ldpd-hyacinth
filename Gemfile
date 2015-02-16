@@ -76,7 +76,7 @@ gem 'capistrano', '~> 2.12.0', group: :development
 gem 'kaminari'
 
 # For building and parsing XML
-gem 'nokogiri', '~> 1.6.3'
+gem 'nokogiri', '~> 1.6.5'
 gem 'equivalent-xml'
 
 # For authentication

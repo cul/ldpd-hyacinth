@@ -13,17 +13,18 @@
 
   <div class="field">
     <%= f.label :string_key %><br>
-    <%= f.text_field :string_key %>
+    <%= f.text_field :string_key, class: 'form-control' %>
   </div>
   <div class="field">
     <%= f.label :display_label %><br>
-    <%= f.text_field :display_label %>
+    <%= f.text_field :display_label, class: 'form-control' %>
   </div>
   <div class="field">
     <%= f.label :xml_translation %><br>
-    <%= f.text_area :xml_translation %>
+    <%= f.text_area :xml_translation, {class: 'form-control', id: 'xml-translation-editor-textarea', cols: 12} %>
+    <div id="xml-translation-editor" class="json-editor"></div>
   </div>
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit('Save', class: 'btn btn-primary') %>
   </div>
 <% end %>

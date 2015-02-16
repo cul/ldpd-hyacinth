@@ -22,7 +22,32 @@ default_pid_generator = PidGenerator.create!(namespace: HYACINTH['default_pid_ge
 # Create XmlDatastreams
 desc_metadata_xml_ds = XmlDatastream.create(string_key: 'descMetadata', display_label: 'descMetadata',
   xml_translation: {
-    'key' => 'value'
+    "element" => "mods:mods",
+    "attrs" => {
+      "xmlns:xlink" => {
+        "val" => "http://www.w3.org/1999/xlink"
+      },
+      "version" => {
+        "val" => "3.5"
+      },
+      "xmlns:xsi" => {
+        "val" => "http://www.w3.org/2001/XMLSchema-instance"
+      },
+      "xmlns:mods" => {
+        "val" => "http://www.loc.gov/mods/v3"
+      },
+      "xsi:schemaLocation" => {
+        "val" => "http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"
+      }
+    },
+    "content" => [
+      {
+        "yield" => "title"
+      },
+      {
+        "element" => "mods:originInfo"
+      }
+    ]
   }.to_json
 )
 
@@ -90,7 +115,28 @@ title = DynamicFieldGroup.create!(string_key: 'title', display_label: 'Title', x
   dynamic_fields: [
     DynamicField.new(string_key: 'title_non_sort_portion', display_label: 'Non-Sort Portion', dynamic_field_type: DynamicField::Type::STRING),
     DynamicField.new(string_key: 'title_sort_portion', display_label: 'Sort Portion', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_searchable_title_field: true)
-  ]
+  ],
+  xml_translation: {
+    "element" => "mods:titleInfo",
+    "content" => [
+      {
+        "element" => "mods:nonSort",
+        "content" => [
+          {
+              "val" => "{{title_non_sort_portion}}"
+          }
+        ]
+      },
+      {
+        "element" => "mods:title",
+        "content" => [
+          {
+              "val" => "{{title_sort_portion}}"
+          }
+        ]
+      }
+    ]
+  }.to_json
 )
 
 collection = DynamicFieldGroup.create!(string_key: 'collection', display_label: 'Collection', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata,

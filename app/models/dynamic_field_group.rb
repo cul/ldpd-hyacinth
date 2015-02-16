@@ -18,6 +18,10 @@ class DynamicFieldGroup < ActiveRecord::Base
   before_save :set_defaults_for_blank_fields
   before_save :clean_up_json_fields
 
+  def self.get_top_level_dynamic_field_groups
+    return DynamicFieldGroup.where(parent_dynamic_field_group: nil)
+  end
+
   def get_child_dynamic_fields_and_dynamic_field_groups
     child_dynamic_fields_and_dynamic_field_groups = []
     if self.child_dynamic_field_groups.present?

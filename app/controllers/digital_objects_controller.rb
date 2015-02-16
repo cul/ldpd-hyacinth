@@ -37,7 +37,7 @@ class DigitalObjectsController < ApplicationController
 
     respond_to do |format|
       format.xml {
-        render xml: xml_output
+        render text: xml_output, content_type: 'text/xml'
       }
     end
   end

@@ -476,7 +476,7 @@ DEPENDENCIES
   mime-types
   mysql2 (= 0.3.13)
   noid (>= 0.7.1)
-  nokogiri (~> 1.6.3)
+  nokogiri (~> 1.6.5)
   poltergeist
   puma
   rails (~> 4.2.0)

@@ -578,7 +578,9 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.removeNonEnabledNonBlan
 
   $editorForm.find('.dynamic_field:not(.enabled)').each(function(){
     var stringKey = $(this).attr('data-string-key');
-    if ($(this).find('[name="' + stringKey + '"]').val() == '') {
+
+    var $input = $(this).find('[name="' + stringKey + '"]');
+    if ($input.val() == '' || ($input.is(':checkbox') && ! $input.is(':checked'))) {
       //Found NON-enabled field with empty value.  Remove it!
       $(this).remove();
     }
