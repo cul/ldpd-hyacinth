@@ -55,8 +55,8 @@ RSpec.configure do |config|
   # Hopefully this will fix the problem.  Solution from: https://gist.github.com/afn/c04ccfe71d648763b306
   config.around(:each, type: :feature) do |ex|
     example = RSpec.current_example
-    # Try three times
-    3.times do |i|
+    # Try four times
+    4.times do |i|
       example.instance_variable_set('@exception', nil)
       self.instance_variable_set('@__memoized', nil) # clear let variables
       ex.run
