@@ -60,12 +60,6 @@ namespace :hyacinth do
       Hyacinth::Utils::SolrUtils.solr.commit # Only commit at the end
     end
 
-
-
-
-
-
-
     task :multithreading_test => :environment do
 
       start_time = Time.now

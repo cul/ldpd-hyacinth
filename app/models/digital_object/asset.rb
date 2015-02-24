@@ -45,14 +45,14 @@ class DigitalObject::Asset < DigitalObject::Base
     return @errors.blank?
   end
 
-  def set_file_and_file_size_and_original_filename_and_calculate_checksum(path_to_file, original_filename, file_size)
-    # Create 'content' datastream on GenericResource object
-
-    mime_type = DigitalObject::Asset.filename_to_mime_type(original_filename)
+  def set_file_and_file_size_and_original_file_path_and_calculate_checksum(path_to_file, original_file_path, file_size)
 
     # "controlGroup => 'E'" below means "External Referenced Content" -- as in, a file that's referenced by Fedora but not stored internally
-    content_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, 'content', :controlGroup => 'E', :mimeType => mime_type, :dsLabel => original_filename, :versionable => true)
-    content_ds.dsLocation = Addressable::URI.encode('file:' + path_to_file) # Note: This will result in paths like "file:/something%20great/here.txt"  We DO NOT want a double slash at the beginnings of these paths.
+    ds_location = Addressable::URI.encode('file:' + path_to_file) # Note: This will result in paths like "file:/something%20great/here.txt"  We DO NOT want a double slash at the beginnings of these paths.
+    original_filename = File.basename(path_to_file)
+    content_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, 'content', :controlGroup => 'E', :mimeType => DigitalObject::Asset.filename_to_mime_type(original_filename), :dsLabel => original_filename, :versionable => true)
+    content_ds.dsLocation = ds_location
+    @fedora_object.datastreams["DC"].dc_source = ds_location
 
     # Calculate checksum for file, using 4096-byte buffered approach to save memory for large files
     sha256 = Digest::SHA256.new
@@ -75,6 +75,8 @@ class DigitalObject::Asset < DigitalObject::Base
 
     # TODO: Eventually set true orientations, but we're setting everything as upright ('top-left') for now, just to have a value
     @fedora_object.rels_int.add_relationship(content_ds, :orientation, 'top-left', true) # last param *true* means that this is a literal value rather than a relationship
+
+    set_original_file_path(original_file_path) # This also updates the 'content' datastream label
 
   end
 
@@ -112,6 +114,14 @@ class DigitalObject::Asset < DigitalObject::Base
   end
 
   def get_original_filename
+
+    # TODO: Eventually, once we're sure that all records have an original_file_path set, no need to still reference the content ds rels_int relationship to downloadFilename
+
+    original_file_path = get_original_file_path
+    if original_file_path.present?
+      return File.basename(original_file_path)
+    end
+
     content_ds = @fedora_object.datastreams['content']
     if content_ds.present?
       relationship = @fedora_object.rels_int.relationships(content_ds, 'info:fedora/fedora-system:def/model#downloadFilename')
@@ -121,20 +131,31 @@ class DigitalObject::Asset < DigitalObject::Base
     end
 
     return nil
-    #return @fedora_object.datastreams["content"].present? ? @fedora_object.datastreams["content"].label : ''
   end
 
   def set_original_file_path(original_file_path)
-    @fedora_object.datastreams["DC"].dc_source = original_file_path
+    @fedora_object.clear_relationship(:original_name)
+    @fedora_object.add_relationship(:original_name, original_file_path, true)
+
+    original_filename = get_original_filename()
+    set_dc_type_based_on_filename(original_filename)
+    @fedora_object.datastreams['content'].dsLabel = original_filename
+    @fedora_object.datastreams['content'].mimeType = DigitalObject::Asset.filename_to_mime_type(original_filename)
   end
 
   def get_original_file_path
-    return @fedora_object.datastreams["DC"].dc_source.present? ? @fedora_object.datastreams["DC"].dc_source.first : ''
+    # TODO: Once you're sure that all original_file_path values are stored in the original_name relationship rather than DC source, change code to only use the original_name relationship
+    original_file_name = @fedora_object.relationships(:original_name).first.to_s
+    if original_file_name.present?
+      return original_file_name
+    else
+      return @fedora_object.datastreams["DC"].dc_source.present? ? @fedora_object.datastreams["DC"].dc_source.first : ''
+    end
   end
 
-  def set_dc_type_based_on_filename(original_filename)
+  def set_dc_type_based_on_filename(filename)
 
-    mime_type = DigitalObject::Asset.filename_to_mime_type(original_filename)
+    mime_type = DigitalObject::Asset.filename_to_mime_type(filename)
 
     possible_dc_type = 'Unknown'
 

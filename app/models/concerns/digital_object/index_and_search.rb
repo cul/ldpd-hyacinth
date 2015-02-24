@@ -20,6 +20,7 @@ module DigitalObject::IndexAndSearch
       ordered_child_digital_object_pids_sim: self.ordered_child_digital_object_pids,
       number_of_ordered_child_digital_object_pids_ssm: self.ordered_child_digital_object_pids.length,
       number_of_ordered_child_digital_object_pids_sim: self.ordered_child_digital_object_pids.length,
+      has_child_digital_objects_bi: self.ordered_child_digital_object_pids.length > 0,
       sort_title_ssort: self.get_sort_title,
       hyacinth_type_sim: digital_object_type.string_key,
       hyacinth_type_ssm: digital_object_type.string_key,
@@ -95,8 +96,8 @@ module DigitalObject::IndexAndSearch
       dynamic_field_string_keys_to_dynamic_fields = {}
       facet_fields = []
 
-      # Manually add Digital Object Type, Project and Asset Type facets in first positions
-      facet_fields << ['digital_object_type_display_label_sim', 'project_display_label_sim', 'asset_dc_type_sim']
+      # Manually add certain non-dynamic-field facets
+      facet_fields << ['digital_object_type_display_label_sim', 'project_display_label_sim', 'asset_dc_type_sim', 'has_child_digital_objects_bi']
 
       ::DynamicField.all.each {|dynamic_field|
         dynamic_field_string_keys_to_dynamic_fields[dynamic_field.string_key] = dynamic_field
@@ -204,6 +205,8 @@ module DigitalObject::IndexAndSearch
             display_label = 'Digital Object Type'
           elsif solr_field_name == 'asset_dc_type_sim'
             display_label = 'Asset Type'
+          elsif solr_field_name == 'has_child_digital_objects_bi'
+            display_label = 'Has Child Digital Objects?'
           else
             # Use user-configured display labels set for dynamic_field facet labels
             display_label = dynamic_field_string_keys_to_dynamic_fields[solr_field_name.gsub(/^df_/, '').gsub(/_sim$/, '')].standalone_field_label

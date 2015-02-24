@@ -344,13 +344,12 @@ class DigitalObjectsController < ApplicationController
               "errors" => ["Invalid UTF-8 characters found in filename.  Unable to upload."]
             }
           else
-            original_file_path = '' # For now, always blank for HTTP file uploads
-            original_filename = uploaded_file.original_filename
+            original_file_path = uploaded_file.original_filename
 
             if test_mode
               puts 'Test mode output: Would have created new Asset for: ' + uploaded_file.original_filename
             else
-              file_data << handle_single_file_upload(original_filename, original_file_path, 'internal', uploaded_file.tempfile, projects, parent_digital_object)
+              file_data << handle_single_file_upload(original_file_path, 'internal', uploaded_file.tempfile, projects, parent_digital_object)
             end
           end
         ensure
@@ -365,7 +364,6 @@ class DigitalObjectsController < ApplicationController
       # Case 2: We're receiving file data from a local filesystem location.
 
       original_file_path = params['local_filesystem_file_path'].to_s
-      original_filename = File.basename(original_file_path)
 
       # Check for invalid characters in filename.  Reject if non-utf8.
       # If we get weird characters (like "\xC2"), Ruby will die a horrible death.  Let's keep Ruby alive.
@@ -390,7 +388,7 @@ class DigitalObjectsController < ApplicationController
         else
           # 'r' == read, 'b' == binary mode
           File.open(original_file_path, 'rb') do |file|
-            file_data << handle_single_file_upload(original_filename, original_file_path, params['import_type'], file, projects, parent_digital_object)
+            file_data << handle_single_file_upload(original_file_path, params['import_type'], file, projects, parent_digital_object)
           end
 
           if params['import_type'] == 'internal' && file_data.last['errors'].blank?
@@ -497,13 +495,13 @@ class DigitalObjectsController < ApplicationController
   # Hash format: {'name' => 'file.tif', size => '12345', errors => ['Some error']}
   #
   # param import_type: Valid values
-  def handle_single_file_upload(original_filename, original_file_path, import_type, file_to_upload, projects, parent_digital_object)
+  def handle_single_file_upload(original_file_path, import_type, file_to_upload, projects, parent_digital_object)
 
     file_size = file_to_upload.size
     puts 'File size: ' + file_size.to_s
 
     upload_response = {
-      "name" => original_filename,
+      "name" => original_file_path,
       "size" => file_size
     }
 
@@ -513,23 +511,10 @@ class DigitalObjectsController < ApplicationController
       return upload_response
     end
 
-    original_filename_without_extension = File.basename(original_filename, '.*')
-
-    title_non_sort_portion = ''
-    title_sort_portion = original_filename_without_extension
-    # Separate non-sort-portion for strings beginning with certain non-sort words (i.e. 'The', 'A', 'An')
-    ['The', 'An' 'A'].each{|article|
-      if original_filename_without_extension.downcase.slice(article.downcase + ' ').present?
-        title_non_sort_portion = article
-        title_sort_portion = original_filename_without_extension[article.length + 1, original_filename_without_extension.length]
-        break
-      end
-    }
-
     new_asset_digital_object = DigitalObject::Asset.new
     new_asset_digital_object.projects = projects
     new_asset_digital_object.add_parent_digital_object(parent_digital_object) if parent_digital_object.present?
-    new_asset_digital_object.set_title(title_non_sort_portion, title_sort_portion)
+    new_asset_digital_object.set_title('', File.basename(original_file_path))
 
     # Save new_asset_digital_object so that we can get a pid that we'll use to place the uploaded file in the right place
     if new_asset_digital_object.save
@@ -546,7 +531,7 @@ class DigitalObjectsController < ApplicationController
         file_to_upload.rewind # seek back to start of file for future reading
 
         # Copy file to final asset destination directory
-        path_to_final_save_location = Hyacinth::Utils::PathUtils.path_to_asset_file(new_asset_digital_object.pid, new_asset_digital_object.projects.first, original_filename)
+        path_to_final_save_location = Hyacinth::Utils::PathUtils.path_to_asset_file(new_asset_digital_object.pid, new_asset_digital_object.projects.first, File.basename(original_file_path))
 
         if File.exists?(path_to_final_save_location)
           raise 'Pre-file-write test unexpectedly found existing file at target location: ' + path_to_final_save_location
@@ -573,9 +558,7 @@ class DigitalObjectsController < ApplicationController
         path_to_final_save_location = original_file_path
       end
 
-      new_asset_digital_object.set_file_and_file_size_and_original_filename_and_calculate_checksum(path_to_final_save_location, original_filename, file_size)
-      new_asset_digital_object.set_original_file_path(original_file_path)
-      new_asset_digital_object.set_dc_type_based_on_filename(original_filename)
+      new_asset_digital_object.set_file_and_file_size_and_original_file_path_and_calculate_checksum(path_to_final_save_location, original_file_path, file_size)
 
       # If internal file, confirm that new checksum matches old checksum.  Return error if not.
       if import_type == 'internal'

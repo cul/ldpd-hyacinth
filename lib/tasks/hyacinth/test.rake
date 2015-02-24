@@ -24,7 +24,8 @@ namespace :hyacinth do
       fedora_yml['test'] = {
         :user => 'fedoraAdmin',
         :password => 'fedoraAdmin',
-        :url => 'http://localhost:9983/fedora-test'
+        :url => 'http://localhost:9983/fedora-test',
+        :time_zone => 'America/New_York'
       }
       File.open(fedora_yml_file, 'w') {|f| f.write fedora_yml.to_yaml }
 
