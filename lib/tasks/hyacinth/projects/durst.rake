@@ -534,8 +534,10 @@ namespace :hyacinth do
           durst_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: dynamic_field, digital_object_type: dot_item)
         end
 
-        # TODO: Create PublishTarget for Test project
+      end
 
+      task :refresh_xml_translation_rules => :environment do
+        
       end
 
     end
