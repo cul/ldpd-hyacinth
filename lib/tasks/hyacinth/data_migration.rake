@@ -17,16 +17,27 @@ namespace :hyacinth do
       i = start_at
 
       DigitalObjectRecord.find_each(batch_size: 500, start: start_at) do |digital_object_record|
-        obj = DigitalObject::Base.find(digital_object_record.pid)
 
-        puts 'Processing ' + digital_object_record.pid + ' ...'
+        begin
 
-        if obj.state != 'D' && obj.is_a?(DigitalObject::Asset)
-          obj.set_original_file_path(obj.get_original_file_path)
-          obj.get_original_file_path
-          puts "Updated Asset - #{i} of #{total}"
-        else
-          puts "Skipping non-Asset (or deleted) object - #{i} of #{total}"
+          puts "Processing #{digital_object_record.pid} (#{digital_object_record.id}) ..."
+
+          obj = DigitalObject::Base.find(digital_object_record.pid)
+
+          if obj.state != 'D' && obj.is_a?(DigitalObject::Asset)
+
+            current_file_path = obj.get_original_file_path
+            current_file_path = current_file_path.first if current_file_path.is_a?(Array)
+            current_file_path = current_file_path.gsub(/^\["/, '').gsub(/"\]$/, '') if current_file_path.start_with?("[\"") && current_file_path.end_with?("\"]") # Correction for recent issue
+
+            obj.set_original_file_path(current_file_path)
+            obj.save
+            puts "Updated Asset - #{i} of #{total}"
+          else
+            puts "Skipping non-Asset (or deleted) object - #{i} of #{total}"
+          end
+        rescue RestClient::Unauthorized, Rubydora::RubydoraError => e
+          Rails.logger.error 'Error: Skipping ' + digital_object_record.pid + "\nException: #{e.class}, Message: #{e.message}"
         end
 
         i += 1

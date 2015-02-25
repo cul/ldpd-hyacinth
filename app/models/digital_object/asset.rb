@@ -134,6 +134,9 @@ class DigitalObject::Asset < DigitalObject::Base
   end
 
   def set_original_file_path(original_file_path)
+
+    original_file_path = original_file_path.first if original_file_path.is_a?(Array)
+
     @fedora_object.clear_relationship(:original_name)
     @fedora_object.add_relationship(:original_name, original_file_path, true)
 

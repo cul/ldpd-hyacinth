@@ -87,6 +87,8 @@ gem 'cul_scv_hydra', '>= 0.21.7'
 #gem 'cul_scv_hydra', :github => 'cul/cul_scv_hydra'
 #gem 'cul_scv_hydra', :path => '../cul_scv_hydra'
 gem 'jettywrapper', '>= 1.5.1'
+# Temporarily use patched rdf xml library
+gem 'rdf-rdfxml', :github => 'barmintor/rdf-rdfxml', :branch => 'illegal-xml'
 
 # CUL active_fedora rels-int fixes
 gem 'active_fedora_relsint', :git=>'git://github.com/cul/active_fedora_relsint'
