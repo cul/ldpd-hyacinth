@@ -126,7 +126,8 @@ namespace :hyacinth do
                 {value: 'inferred', display_label: 'Inferred'},
                 {value: 'questionable', display_label: 'Questionable'}
               ]
-            }.to_json)
+            }.to_json),
+            DynamicField.new(string_key: 'date_created_key_date', display_label: 'Key Date?', dynamic_field_type: DynamicField::Type::BOOLEAN)
           ]
         )
 
@@ -145,7 +146,8 @@ namespace :hyacinth do
                 {value: 'inferred', display_label: 'Inferred'},
                 {value: 'questionable', display_label: 'Questionable'}
               ]
-            }.to_json)
+            }.to_json),
+            DynamicField.new(string_key: 'date_other_key_date', display_label: 'Key Date?', dynamic_field_type: DynamicField::Type::BOOLEAN)
           ]
         )
 
@@ -164,7 +166,8 @@ namespace :hyacinth do
                 {value: 'inferred', display_label: 'Inferred'},
                 {value: 'questionable', display_label: 'Questionable'}
               ]
-            }.to_json)
+            }.to_json),
+            DynamicField.new(string_key: 'date_issued_key_date', display_label: 'Key Date?', dynamic_field_type: DynamicField::Type::BOOLEAN)
           ]
         )
 
@@ -537,7 +540,305 @@ namespace :hyacinth do
       end
 
       task :refresh_xml_translation_rules => :environment do
-        
+
+        xml_datastream = XmlDatastream.find_by(string_key: 'descMetadata')
+        xml_datastream.xml_translation = {
+          "element" => "mods:mods",
+          "attrs" => {
+            "xmlns:xlink" => "http://www.w3.org/1999/xlink",
+            "version" => "3.5",
+            "xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
+            "xmlns:mods" => "http://www.loc.gov/mods/v3",
+            "xsi:schemaLocation" => "http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"
+          },
+          "content" => [
+            {
+              "yield" => "title"
+            },
+            {
+              "yield" => "alternative_title"
+            },
+            {
+              "yield" => "abstract"
+            },
+            #{
+            #  "element" => "mods:relatedItem",
+            #  "attr" => {
+            #    "type" => "host",
+            #    "displayLabel" => "Project",
+            #  },
+            #  "content" => "{{project_display_label}}"
+            #},
+            {
+              "yield" => "collection"
+            },
+            {
+              "yield" => "coordinates"
+            },
+            {
+              "yield" => "name"
+            },
+            {
+              "element" => "mods:originInfo",
+              "content" => [
+                {
+                  "yield" => "publisher"
+                },
+                {
+                  "yield" => "date_created"
+                },
+                {
+                  "yield" => "date_created_textual"
+                },
+                {
+                  "yield" => "date_other"
+                },
+                {
+                  "yield" => "date_other_textual"
+                },
+                {
+                  "yield" => "date_issued"
+                },
+                {
+                  "yield" => "date_issued_textual"
+                },
+                {
+                  "yield" => "place_of_origin"
+                }
+              ]
+            }
+          ]
+        }.to_json
+        xml_datastream.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'collection')
+        field_group.xml_translation = [
+          {
+            "element" => "mods:relatedItem",
+            "attrs" => {
+              "type" => "host",
+              "displayLabel" => "Collection"
+            },
+            "content" => [
+              {
+                "element" => "mods:titleInfo",
+                "attrs" => {
+                  "valueUri" => "{{collection_uri}}",
+                  "authority" => "{{collection_authority}}",
+                  "authorityUri" => "{{collection_authority_uri}}"
+                },
+                "content" => [
+                  {
+                    "element" => "mods:title",
+                    "content" => "{{collection_value}}"
+                  }
+                ]
+              }
+            ]
+          }
+        ].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'alternative_title')
+        field_group.xml_translation = [
+          {
+            "element" => "mods:titleInfo",
+            "attrs" => {
+              "type" => "alternative"
+            },
+            "content" => [
+              {
+                "element" => "mods:title",
+                "content" => "{{alternative_title_sort_portion}} {{alternative_title_non_sort_portion}}"
+              }
+            ]
+          }
+        ].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'abstract')
+        field_group.xml_translation = [{
+          "element" => "mods:abstract",
+          "content" => "{{abstract_value}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'name')
+        field_group.xml_translation = [{
+          "element" => "mods:name",
+          "attrs" => {
+            "type" => "{{name_type}}",
+            "valueUri" => "{{name_value_uri}}",
+            "authority" => "{{name_authority}}",
+            "authorityUri" => "{{name_authority_uri}}"
+          },
+          "content" => [
+            {
+              "val" => "{{name_value}}"
+            },
+            {
+              "yield" => "name_role"
+            },
+          ]
+        }].to_json
+        field_group.save!
+
+            field_group = DynamicFieldGroup.find_by(string_key: 'name_role')
+            field_group.xml_translation = [{
+              "element" => "mods:role",
+              "content" => [
+                {
+                  "element" => "mods:roleTerm",
+                  "attrs" => {
+                    "type" => "{{name_role_type}}",
+                  },
+                  "content" => "{{name_role_value}}"
+                }
+              ]
+            }].to_json
+            field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'publisher')
+        field_group.xml_translation = [{
+          "element" => "mods:publisher",
+          "content" => "{{publisher_value}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'abstract')
+        field_group.xml_translation = [{
+          "element" => "mods:abstract",
+          "content" => "{{abstract_value}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'place_of_origin')
+        field_group.xml_translation = [{
+          "element" => "mods:publisher",
+          "content" => "{{place_of_origin_value}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'date_created')
+        field_group.xml_translation = [{
+          "render_if" => [
+            "{{date_created_start_value}}" => "present",
+            "{{date_created_end_value}}" => "present",
+          ],
+          "element" => "mods:dateCreated",
+          "attrs" => {
+            "encoding" => "w3cdtf"
+          },
+          "content" => "{{date_created_textual}}"
+        },
+        {
+          "element" => "mods:dateCreated",
+          "attrs" => {
+            "encoding" => "w3cdtf"
+          },
+          "content" => "{{date_created_textual}}"
+        },
+        {
+          "element" => "mods:dateCreated",
+          "attrs" => {
+            "encoding" => "w3cdtf"
+          },
+          "content" => "{{date_created_textual}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'date_created_textual')
+        field_group.xml_translation = [{
+            "element" => "mods:dateCreated",
+            "content" => "{{date_created_textual}}"
+        }].to_json
+        field_group.save!
+
+
+        #Date Created
+        #Date Created Textual
+        #Date Other
+        #Date Other Textual
+        #Date Issued
+        #Date Issued Textual
+        #Edition
+        #Table of Contents
+        #Genre
+        #Record Origin
+        #
+        #CLIO ID
+        #DIMS ID
+        #Durst Postcard Identifier
+        #CUL-Assigned Postcard Identifier
+        #Filename Front Identifier
+        #Filename Back Identifier
+        #ISBN
+        #ISSN
+        #
+        #Form
+        #Scale
+        #Extent
+        #
+        #Physical Location
+        #Shelf Location
+        #Enumeration and Chronology
+        #Sublocation
+        #URL
+        #
+        #Subject Topic
+        #Subject Durst
+        #Subject Temporal
+        #Subject Name
+        #Subject Title
+        #
+        #Subject Place
+        #Subject Hierarchical Geographic
+        #Coordinates
+        #
+        #View Direction
+        #Note
+        #Orientation
+        #
+        #Series
+        #Box Title
+        #Group Title
+        #
+        #Record Content Source (Institutional Record Creator)
+        #Language of Cataloging
+        #CUL Scan Note
+        #
+        #Marc 005 Last Modified
+        #Durst Favorite
+        #Type of Resource
+
+
+
+
+
+
+
+
+
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'coordinates')
+        field_group.xml_translation = [{
+            "element" => "mods:subject",
+            "content" => [
+              {
+                "element" => "mods:cartographics",
+                "content" => [
+                  {
+                    "element" => "mods:coordinates",
+                    "content" => "{{coordinates_value}}"
+                  }
+                ]
+              }
+            ]
+        }].to_json
+        field_group.save!
+
+
+
       end
 
     end

@@ -15,6 +15,7 @@ class DynamicFieldGroupsController < ApplicationController
   # GET /dynamic_field_groups/new
   def new
     @dynamic_field_group = DynamicFieldGroup.new
+    @dynamic_field_group.parent_dynamic_field_group_id = params[:parent_dynamic_field_group_id] if params[:parent_dynamic_field_group_id]
   end
 
   # GET /dynamic_field_groups/1/edit
@@ -60,11 +61,22 @@ class DynamicFieldGroupsController < ApplicationController
   # DELETE /dynamic_field_groups/1
   # DELETE /dynamic_field_groups/1.json
   def destroy
-    @dynamic_field_group.destroy
-    respond_to do |format|
-      format.html { redirect_to dynamic_field_groups_url }
-      format.json { head :no_content }
+
+    if @dynamic_field_group.get_child_dynamic_fields_and_dynamic_field_groups.length > 0
+      respond_to do |format|
+        format.html { redirect_to edit_dynamic_field_group_path(@dynamic_field_group), alert: 'You must delete all child dynamic fields and dynamic field groups before you can delete this dynamic field group.' }
+        format.json { render json: 'You must delete all child dynamic fields and dynamic field groups before you can delete this dynamic field group.', status: :unprocessable_entity }
+      end
+    else
+      @dynamic_field_group.destroy
+      respond_to do |format|
+        format.html { redirect_to dynamic_fields_url , notice: 'Dynamic Field Group was successfully deleted.'}
+        format.json { head :no_content }
+      end
     end
+
+
+
   end
 
   private

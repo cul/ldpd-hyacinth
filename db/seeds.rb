@@ -24,21 +24,11 @@ desc_metadata_xml_ds = XmlDatastream.create(string_key: 'descMetadata', display_
   xml_translation: {
     "element" => "mods:mods",
     "attrs" => {
-      "xmlns:xlink" => {
-        "val" => "http://www.w3.org/1999/xlink"
-      },
-      "version" => {
-        "val" => "3.5"
-      },
-      "xmlns:xsi" => {
-        "val" => "http://www.w3.org/2001/XMLSchema-instance"
-      },
-      "xmlns:mods" => {
-        "val" => "http://www.loc.gov/mods/v3"
-      },
-      "xsi:schemaLocation" => {
-        "val" => "http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"
-      }
+      "xmlns:xlink" => "http://www.w3.org/1999/xlink",
+      "version" => "3.5",
+      "xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
+      "xmlns:mods" => "http://www.loc.gov/mods/v3",
+      "xsi:schemaLocation" => "http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"
     },
     "content" => [
       {
@@ -121,19 +111,11 @@ title = DynamicFieldGroup.create!(string_key: 'title', display_label: 'Title', x
     "content" => [
       {
         "element" => "mods:nonSort",
-        "content" => [
-          {
-              "val" => "{{title_non_sort_portion}}"
-          }
-        ]
+        "content" => "{{title_non_sort_portion}}"
       },
       {
         "element" => "mods:title",
-        "content" => [
-          {
-              "val" => "{{title_sort_portion}}"
-          }
-        ]
+        "content" => "{{title_sort_portion}}"
       }
     ]
   }.to_json

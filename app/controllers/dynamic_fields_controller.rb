@@ -21,6 +21,7 @@ class DynamicFieldsController < ApplicationController
   # GET /dynamic_fields/new
   def new
     @dynamic_field = DynamicField.new
+    @dynamic_field.parent_dynamic_field_group_id = params[:parent_dynamic_field_group_id] if params[:parent_dynamic_field_group_id]
   end
 
   # GET /dynamic_fields/1/edit
@@ -66,8 +67,16 @@ class DynamicFieldsController < ApplicationController
   # DELETE /dynamic_fields/1.json
   def destroy
     @dynamic_field.destroy
+
     respond_to do |format|
-      format.html { redirect_to dynamic_fields_url }
+      format.html {
+        if @dynamic_field.parent_dynamic_field_group_id.present?
+          redirect_location = edit_dynamic_field_group_path(@dynamic_field.parent_dynamic_field_group_id)
+        else
+          redirect_location = dynamic_fields_path
+        end
+        redirect_to redirect_location, notice: 'Dynamic Field was successfully deleted.'
+      }
       format.json { head :no_content }
     end
   end

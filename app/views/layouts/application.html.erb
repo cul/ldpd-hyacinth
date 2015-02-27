@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Hyacinth</title>
+  <title>Hyacinth<%= " (#{Rails.env})" unless Rails.env == 'hyacinth_prod' %></title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <%= render 'layout_shared/extra_head_includes' %>
 </head>

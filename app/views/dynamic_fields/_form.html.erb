@@ -15,6 +15,7 @@
 
   <div class="row">
     <div class="col-md-6">
+      <%= f.hidden_field :parent_dynamic_field_group_id %>
       <div class="field">
         <%= f.label :string_key, 'String key (cannot be changed)' %><br>
         <%= f.text_field :string_key, {class: 'form-control', disabled: ( ! @dynamic_field.new_record? )} %>
@@ -31,9 +32,11 @@
         <%= f.label :controlled_vocabulary_id, 'Controlled Vocabulary (For type: Authorized Term)' %><br>
         <%= f.collection_select(:controlled_vocabulary_id, ControlledVocabulary.all, :id, :display_label, {include_blank: '- None -'}, {class: 'form-control'}) %>
       </div>
+      <!--
       <div class="field checkbox">
         <%= f.label(:required_for_group_save, (f.check_box(:required_for_group_save)).html_safe + ' Required For Group Save?') %>
       </div>
+      -->
       <div class="field checkbox">
         <%= f.label(:is_keyword_searchable, (f.check_box(:is_keyword_searchable)).html_safe + ' Keyword Searchable?') %>
       </div>
@@ -63,6 +66,11 @@
         <%= f.text_area :additional_data_json, {class: 'form-control', id: 'additional-data-json-editor-textarea', cols: 12} %>
         <div id="additional-data-json-editor" class="json-editor"></div>
       </div>
+      <% unless @dynamic_field.new_record? %>
+      <div>
+        <%= link_to 'Permanently Delete This Dynamic Field', @dynamic_field, class: 'btn btn-danger btn-sm btn-block', method: :delete, data: { confirm: 'Are you sure you want to permanently delete this Dynamic Field?  This action cannot be undone.' } %>
+      </div>
+      <% end %>
     </div>
   </div>
 <% end %>
