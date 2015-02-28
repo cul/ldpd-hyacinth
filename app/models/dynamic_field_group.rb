@@ -104,7 +104,7 @@ class DynamicFieldGroup < ActiveRecord::Base
     end
 
     # additional_data_json #
-    self.xml_translation = {}.to_json if self.xml_translation.blank?
+    self.xml_translation = [].to_json if self.xml_translation.blank?
   end
 
   def clean_up_json_fields

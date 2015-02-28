@@ -546,10 +546,10 @@ namespace :hyacinth do
           "element" => "mods:mods",
           "attrs" => {
             "xmlns:xlink" => "http://www.w3.org/1999/xlink",
-            "version" => "3.5",
+            "version" => "3.6",
             "xmlns:xsi" => "http://www.w3.org/2001/XMLSchema-instance",
             "xmlns:mods" => "http://www.loc.gov/mods/v3",
-            "xsi:schemaLocation" => "http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-5.xsd"
+            "xsi:schemaLocation" => "http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-6.xsd"
           },
           "content" => [
             {
@@ -597,24 +597,24 @@ namespace :hyacinth do
                 {
                   "yield" => "publisher"
                 },
-                {
-                  "yield" => "date_created"
-                },
-                {
-                  "yield" => "date_created_textual"
-                },
-                {
-                  "yield" => "date_other"
-                },
-                {
-                  "yield" => "date_other_textual"
-                },
-                {
-                  "yield" => "date_issued"
-                },
-                {
-                  "yield" => "date_issued_textual"
-                },
+                #{
+                #  "yield" => "date_created"
+                #},
+                #{
+                #  "yield" => "date_created_textual"
+                #},
+                #{
+                #  "yield" => "date_other"
+                #},
+                #{
+                #  "yield" => "date_other_textual"
+                #},
+                #{
+                #  "yield" => "date_issued"
+                #},
+                #{
+                #  "yield" => "date_issued_textual"
+                #},
                 {
                   "yield" => "place_of_origin"
                 }

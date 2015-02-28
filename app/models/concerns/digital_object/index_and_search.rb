@@ -113,9 +113,10 @@ module DigitalObject::IndexAndSearch
         solr_params['start'] = (page - 1) * per_page # Default to page-based start values, unless specific start value is specified
       end
       solr_params['fq'] = []
-      solr_params['q'] = user_search_params[:q] if user_search_params[:q].present?
-      solr_params['qf'] = user_search_params[:search_field] || 'search_keyword_teim'
-      solr_params['sort'] = user_search_params[:sort] || 'sort_title_ssort asc'
+      solr_params['q'] = user_search_params['q'] if user_search_params['q'].present?
+      solr_params['qf'] = user_search_params['search_field'] || 'search_keyword_teim'
+      solr_params['sort'] = user_search_params['sort'] || 'sort_title_ssort asc'
+      solr_params['fl'] = user_search_params['fl'] if user_search_params['fl'].present?
 
       # Only retrieve active ('A') items
       solr_params['fq'] << 'state_sim:A'
@@ -143,8 +144,8 @@ module DigitalObject::IndexAndSearch
       end
 
       # Add filters for currently applied facet filters, making sure to escape values
-      if user_search_params[:f].present?
-        user_search_params[:f].each do |facet_field, values|
+      if user_search_params['f'].present?
+        user_search_params['f'].each do |facet_field, values|
           #match = ['+', '-', '&', '|', '!', '(', ')', '{', '}', '[', ']', '^', '~', '*', '?', ':', '"', ';', ' '];
           #next_fq = facet_field + ': ("' + values.map{|value| match.each{|o| value.gsub!(o, '\\' + o)}; value }.join('" AND "') + '")'
 
@@ -157,8 +158,8 @@ module DigitalObject::IndexAndSearch
       end
 
       # Also add currently applied filters, building fq values based on "operator" values and making sure to escape values
-      if user_search_params[:fq].present?
-        user_search_params[:fq].each do |filter_field, values|
+      if user_search_params['fq'].present?
+        user_search_params['fq'].each do |filter_field, values|
 
           # Note: API values may be interpreted as a hash instead of a value.  This is handled.
           # Hash like this: {"0" => {"greater_than" => "something"}, "1" => {"less_than" => "something else"}}

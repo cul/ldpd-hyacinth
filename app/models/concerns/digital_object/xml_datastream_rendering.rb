@@ -27,8 +27,6 @@ module DigitalObject::XmlDatastreamRendering
     if attrs.present?
       attrs.each do |attr_key, attr_val|
 
-        puts "#{attr_key.inspect}: #{attr_val.inspect}"
-
         # Allow for string value as a shortcut for {'val' => 'some string'}
         if attr_val.is_a?(String)
           attr_val = {'val' => attr_val}
@@ -96,7 +94,6 @@ module DigitalObject::XmlDatastreamRendering
   def render_value_with_substitutions(value, dynamic_field_data)
     value.gsub(/(\{\{(?:(?!\}\}).)+\}\})/) do |sub|
       sub_without_braces = sub[2, sub.length-4]
-
       if sub_without_braces.start_with?('$')
         # Then this is a special substitution that we handle differently.
         if sub_without_braces == '$project.display_label'
