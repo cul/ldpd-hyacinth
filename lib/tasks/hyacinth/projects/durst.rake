@@ -33,7 +33,7 @@ namespace :hyacinth do
 
 
         # Create Durst project
-        durst_project = Project.create!(string_key: 'durst', display_label: 'Durst', pid_generator: cul_pid_generator)
+        durst_project = Project.create!(string_key: 'durst', display_label: 'Seymour B. Durst Old York Library', pid_generator: cul_pid_generator)
 
         possible_durst_user_file = File.join(Rails.root, '/config/durst_user_accounts.yml')
         if File.exists?(possible_durst_user_file)
@@ -291,7 +291,7 @@ namespace :hyacinth do
 
         coordinates = DynamicFieldGroup.create!(string_key: 'coordinates', display_label: 'Coordinates', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_geographic_data,
           dynamic_fields: [
-            DynamicField.new(string_key: 'coordinates_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
+            DynamicField.new(string_key: 'coordinates_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, standalone_field_label: 'Coordinates')
           ]
         )
 
@@ -561,14 +561,24 @@ namespace :hyacinth do
             {
               "yield" => "abstract"
             },
-            #{
-            #  "element" => "mods:relatedItem",
-            #  "attr" => {
-            #    "type" => "host",
-            #    "displayLabel" => "Project",
-            #  },
-            #  "content" => "{{project_display_label}}"
-            #},
+            {
+              "element" => "mods:relatedItem",
+              "attrs" => {
+                "type" => "host",
+                "displayLabel" => "Project",
+              },
+              "content" => [
+                {
+                  "element" => "mods:titleInfo",
+                  "content" => [
+                    {
+                      "element" => "mods:title",
+                      "content" => "{{$project.display_label}}"
+                    }
+                  ]
+                }
+              ]
+            },
             {
               "yield" => "collection"
             },
@@ -577,6 +587,9 @@ namespace :hyacinth do
             },
             {
               "yield" => "name"
+            },
+            {
+              "yield" => "subject_hierarchical_geographic"
             },
             {
               "element" => "mods:originInfo",
@@ -604,6 +617,14 @@ namespace :hyacinth do
                 },
                 {
                   "yield" => "place_of_origin"
+                }
+              ]
+            },
+            {
+              "element" => "mods:physicalDescription",
+              "content" => [
+                {
+                  "yield" => "form"
                 }
               ]
             }
@@ -719,40 +740,40 @@ namespace :hyacinth do
         }].to_json
         field_group.save!
 
-        field_group = DynamicFieldGroup.find_by(string_key: 'date_created')
-        field_group.xml_translation = [{
-          "render_if" => [
-            "{{date_created_start_value}}" => "present",
-            "{{date_created_end_value}}" => "present",
-          ],
-          "element" => "mods:dateCreated",
-          "attrs" => {
-            "encoding" => "w3cdtf"
-          },
-          "content" => "{{date_created_textual}}"
-        },
-        {
-          "element" => "mods:dateCreated",
-          "attrs" => {
-            "encoding" => "w3cdtf"
-          },
-          "content" => "{{date_created_textual}}"
-        },
-        {
-          "element" => "mods:dateCreated",
-          "attrs" => {
-            "encoding" => "w3cdtf"
-          },
-          "content" => "{{date_created_textual}}"
-        }].to_json
-        field_group.save!
-
-        field_group = DynamicFieldGroup.find_by(string_key: 'date_created_textual')
-        field_group.xml_translation = [{
-            "element" => "mods:dateCreated",
-            "content" => "{{date_created_textual}}"
-        }].to_json
-        field_group.save!
+        #field_group = DynamicFieldGroup.find_by(string_key: 'date_created')
+        #field_group.xml_translation = [{
+        #  "render_if" => [
+        #    "{{date_created_start_value}}" => "present",
+        #    "{{date_created_end_value}}" => "present",
+        #  ],
+        #  "element" => "mods:dateCreated",
+        #  "attrs" => {
+        #    "encoding" => "w3cdtf"
+        #  },
+        #  "content" => "{{date_created_textual}}"
+        #},
+        #{
+        #  "element" => "mods:dateCreated",
+        #  "attrs" => {
+        #    "encoding" => "w3cdtf"
+        #  },
+        #  "content" => "{{date_created_textual}}"
+        #},
+        #{
+        #  "element" => "mods:dateCreated",
+        #  "attrs" => {
+        #    "encoding" => "w3cdtf"
+        #  },
+        #  "content" => "{{date_created_textual}}"
+        #}].to_json
+        #field_group.save!
+        #
+        #field_group = DynamicFieldGroup.find_by(string_key: 'date_created_textual')
+        #field_group.xml_translation = [{
+        #    "element" => "mods:dateCreated",
+        #    "content" => "{{date_created_textual}}"
+        #}].to_json
+        #field_group.save!
 
 
         #Date Created
@@ -775,7 +796,21 @@ namespace :hyacinth do
         #ISBN
         #ISSN
         #
-        #Form
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'form')
+        field_group.xml_translation = [{
+          "element" => "mods:form",
+          "attrs" => {
+            "valueUri" => "{{form_uri}}",
+            "authority" => "{{form_authority}}",
+            "authorityUri" => "{{form_authority_uri}}",
+          },
+          "content" => [
+            "{{form_value}}"
+          ]
+        }].to_json
+        field_group.save!
+
         #Scale
         #Extent
         #
@@ -792,7 +827,109 @@ namespace :hyacinth do
         #Subject Title
         #
         #Subject Place
-        #Subject Hierarchical Geographic
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic')
+        field_group.xml_translation = [{
+          "element" => "mods:subject",
+          "content" => [
+            {
+              "element" => "mods:hierarchicalGeographic",
+              "content" => [
+                {"yield" => "subject_hierarchical_geographic_country"},
+                {"yield" => "subject_hierarchical_geographic_province"},
+                {"yield" => "subject_hierarchical_geographic_region"},
+                {"yield" => "subject_hierarchical_geographic_state"},
+                {"yield" => "subject_hierarchical_geographic_county"},
+                {"yield" => "subject_hierarchical_geographic_borough"},
+                {"yield" => "subject_hierarchical_geographic_city"},
+                {"yield" => "subject_hierarchical_geographic_city_section"},
+                {"yield" => "subject_hierarchical_geographic_zip_code"},
+                {"yield" => "subject_hierarchical_geographic_street"}
+              ]
+            }
+          ]
+        }].to_json
+        field_group.save!
+
+            field_group = DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_country')
+            field_group.xml_translation = [{
+              "element" => "mods:country",
+              "content" => "{{subject_hierarchical_geographic_country_value}}"
+            }].to_json
+            field_group.save!
+
+            field_group = DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_province')
+            field_group.xml_translation = [{
+              "element" => "mods:province",
+              "content" => "{{subject_hierarchical_geographic_province_value}}"
+            }].to_json
+            field_group.save!
+
+            field_group = DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_region')
+            field_group.xml_translation = [{
+              "element" => "mods:region",
+              "content" => "{{subject_hierarchical_geographic_region_value}}"
+            }].to_json
+            field_group.save!
+
+            field_group = DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_state')
+            field_group.xml_translation = [{
+              "element" => "mods:state",
+              "content" => "{{subject_hierarchical_geographic_state_value}}"
+            }].to_json
+            field_group.save!
+
+            field_group = DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_county')
+            field_group.xml_translation = [{
+              "element" => "mods:county",
+              "content" => "{{subject_hierarchical_geographic_county_value}}"
+            }].to_json
+            field_group.save!
+
+            field_group = DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_borough')
+            field_group.xml_translation = [{
+              "element" => "mods:citySection",
+              "attrs" => {
+                "citySectionType" => "borough"
+              },
+              "content" => "{{subject_hierarchical_geographic_borough_value}}"
+            }].to_json
+            field_group.save!
+
+            field_group = DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_city')
+            field_group.xml_translation = [{
+              "element" => "mods:city",
+              "content" => "{{subject_hierarchical_geographic_city_value}}"
+            }].to_json
+            field_group.save!
+
+            field_group = DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_city_section')
+            field_group.xml_translation = [{
+              "element" => "mods:citySection",
+              "content" => "{{subject_hierarchical_geographic_city_section_value}}"
+            }].to_json
+            field_group.save!
+
+            field_group = DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_zip_code')
+            field_group.xml_translation = [{
+              "element" => "mods:citySection",
+              "attrs" => {
+                "citySectionType" => "ZIP code"
+              },
+              "content" => "{{subject_hierarchical_geographic_zip_code_value}}"
+            }].to_json
+            field_group.save!
+
+            field_group = DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_street')
+            field_group.xml_translation = [{
+              "element" => "mods:citySection",
+              "attrs" => {
+                "citySectionType" => "Street"
+              },
+              "content" => "{{subject_hierarchical_geographic_street_value}}"
+            }].to_json
+            field_group.save!
+
         #Coordinates
         #
         #View Direction

@@ -321,6 +321,76 @@ class DigitalObject::Base
     return false
   end
 
+  def publish
+    # Save all XmlDatastreams that have data
+
+    # TODO: Temporarily doing a manual hard-coded save of descMetadata for now.  Eventually handle all custom XmlDatastreams in a non-hard-coded way.
+    ds_name = 'descMetadata'
+    if @fedora_object.datastreams[ds_name].present?
+      ds = @fedora_object.datastreams[ds_name]
+    else
+      # Create datastream if it doesn't exist
+      ds = @fedora_object.create_datastream(ActiveFedora::Datastream, ds_name,
+        :controlGroup => 'M',
+        :mimeType => 'text/xml',
+        :dsLabel => ds_name,
+        :versionable => true,
+        :blob => ''
+      )
+      @fedora_object.add_datastream(ds)
+    end
+    ds.content = self.render_xml_datastream(XmlDatastream.find_by(string_key: ds_name))
+
+    # Save ordered child data to structMetadata datastream
+    struct_ds_name = 'structMetadata'
+    if self.ordered_child_digital_object_pids.present?
+
+      #if @fedora_object.datastreams[struct_ds_name].present?
+      #  puts 'found existing struct ds'
+      #  struct_ds = @fedora_object.datastreams[struct_ds_name]
+      #else
+      #  puts 'creating new struct ds'
+      #  # Create datastream if it doesn't exist
+      #  struct_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, struct_ds_name,
+      #    :controlGroup => 'M',
+      #    :mimeType => 'text/xml',
+      #    :dsLabel => struct_ds_name,
+      #    :versionable => false,
+      #    :blob => ''
+      #  )
+      #  @fedora_object.add_datastream(struct_ds)
+      #end
+
+      #struct_ds = @fedora_object.datastreams[struct_ds_name]
+
+      #ng_xml_doc = Nokogiri::XML::Document.new
+      #mets_struct_map_top_level_element = ng_xml_doc.create_element('mets:StructMap')
+      #mets_struct_map_top_level_element.add_namespace_definition('mets', 'http://www.loc.gov/METS/')
+      #ng_xml_doc.add_child(mets_struct_map_top_level_element)
+      #ordered_child_digital_object_pids.each do |pid|
+      #  child_div = @ng_xml_doc.create_element('mets:div')
+      #  child_div.set_attribute('ID', pid)
+      #  mets_struct_map_top_level_element.add_child(child_div)
+      #end
+      #@fedora_object.datastreams[struct_ds_name].ng_xml = ng_xml_doc
+
+      struct_ds = Cul::Scv::Hydra::Datastreams::StructMetadata.new(nil, 'structMetadata', label:'Sequence', type:'logical')
+      ordered_child_digital_object_pids.each_with_index do |pid, index|
+        struct_ds.create_div_node(nil, {order: (index+1), label: "Asset #{index+1}", contentids: pid})
+      end
+	  	@fedora_object.datastreams[struct_ds_name].ng_xml = struct_ds.ng_xml
+    else
+      # No child objects.  If struct datastream is present, perform cleanup by deleting it.
+      if @fedora_object.datastreams[struct_ds_name].present?
+        @fedora_object.datastreams[struct_ds_name].delete
+      end
+    end
+
+    @fedora_object.save
+
+    return (! @errors.present?)
+  end
+
   def next_pid
     self.projects.first.next_pid
   end

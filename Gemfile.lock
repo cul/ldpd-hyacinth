@@ -17,6 +17,21 @@ GIT
       rdf-rdfa (~> 1.1, >= 1.1.4.1)
       rdf-xsd (~> 1.1)
 
+PATH
+  remote: ../cul_scv_hydra
+  specs:
+    cul_scv_hydra (0.22.2)
+      active-fedora (~> 7.0)
+      active-triples (~> 0.2.2)
+      active_fedora_finders (>= 0.5.0)
+      active_fedora_relsint
+      blacklight
+      cul_image_props
+      httpclient
+      hydra-head (~> 7)
+      mods
+      rdf (>= 1.1.5)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -121,17 +136,6 @@ GEM
     coffee-script-source (1.9.1)
     cul_image_props (0.3.5)
       nokogiri
-    cul_scv_hydra (0.22.2)
-      active-fedora (~> 7.0)
-      active-triples (~> 0.2.2)
-      active_fedora_finders (>= 0.5.0)
-      active_fedora_relsint
-      blacklight
-      cul_image_props
-      httpclient
-      hydra-head (~> 7)
-      mods
-      rdf (>= 1.1.5)
     daemons (1.1.9)
     deprecation (0.2.1)
       activesupport
@@ -473,7 +477,7 @@ DEPENDENCIES
   capybara
   coderay
   coffee-rails
-  cul_scv_hydra (>= 0.21.7)
+  cul_scv_hydra!
   devise (>= 3.4.1)
   equivalent-xml
   factory_girl_rails (>= 4.4.1)

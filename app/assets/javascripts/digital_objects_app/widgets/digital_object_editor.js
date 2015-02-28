@@ -1,9 +1,5 @@
 Hyacinth.DigitalObjectsApp.DigitalObjectEditor = function(containerElementId, options) {
 
-
-
-
-
   this.$containerElement = $('#' + containerElementId);
   this.mode = options['mode'] || 'edit'; //Valid options: ['edit', 'show']
   this.digitalObject = options['digitalObject'];
@@ -272,67 +268,20 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
   var $editorForm = this.$containerElement.find('.editor-form');
 
   //Bind event handlers
+
   $editorForm.on('submit', function(e){
-
     e.preventDefault();
-    var $submitButton = $(this).find('.editor-submit-button');
-    $submitButton.attr('data-original-value', $submitButton.val()).val('Saving...');
-    Hyacinth.addAlert('Saving...', 'info');
-    $editorForm.find('.errors').html(''); //Clear existing errors
-    $editorForm.find('.dynamic_field.has-error').removeClass('has-error'); //Remove current error classes
+    that.submitEditorForm(false);
+  });
 
-    var serializedFormAsJsonString = JSON.stringify(Hyacinth.DigitalObjectsApp.DigitalObjectEditor.serializeFormDataToObject($(this)[0]));
+  $editorForm.on('click', '.editor-submit-button', function(e){
+    e.preventDefault();
+    that.submitEditorForm(false);
+  });
 
-    var digitalObjectData = {
-      digital_object_type_string_key: that.digitalObject.digital_object_type['string_key'],
-      project_string_key: that.digitalObject.projects[0]['string_key'],
-      dynamic_field_data_json: serializedFormAsJsonString
-    };
-
-    if (that.digitalObject.isNewRecord()) {
-      digitalObjectData['parent_digital_object_pids'] = that.digitalObject.getParentDigitalObjectPids();
-    }
-
-    $.ajax({
-      url: that.digitalObject.isNewRecord() ? ('/digital_objects.json') : ('/digital_objects/' + that.digitalObject.getPid() + '.json'),
-      type: 'POST',
-      data: {
-        '_method': that.digitalObject.isNewRecord() ? 'POST' : 'PUT', //For proper RESTful Rails requests
-        digital_object: digitalObjectData
-      },
-      cache: false
-    }).done(function(digitalObjectCreationResponse){
-      $submitButton.val($submitButton.attr('data-original-value'));
-
-      if (digitalObjectCreationResponse['errors']) {
-        Hyacinth.addAlert('Errors encountered during save. Please review your fields and try again.', 'danger');
-        $.each(digitalObjectCreationResponse['errors'], function(error_key, error_message){
-          var errorWithPossibleNumberIndicator = error_key.split('.');
-          if(errorWithPossibleNumberIndicator.length > 1) {
-            //This error refers to a specifically-numbered field (e.g. note_value.2)
-            var stringKeyOfProblemField = errorWithPossibleNumberIndicator[0];
-            var instanceNumberOfProblemField = errorWithPossibleNumberIndicator[1];
-            $('.dynamic_field[data-string-key="' + stringKeyOfProblemField + '"]:eq(' + instanceNumberOfProblemField + ')').addClass('has-error');
-          }
-        });
-        $editorForm.find('.errors').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_editor/_errors.ejs', {errors: digitalObjectCreationResponse['errors']}));
-        Hyacinth.scrollToTopOfWindow();
-      } else {
-        Hyacinth.addAlert('Digital Object saved.', 'success');
-
-        //For NEW records, upon successful save, redirect to edit view for new pid
-        if (that.digitalObject.isNewRecord() ) {
-          document.location.hash = Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: digitalObjectCreationResponse['pid']})
-        } else {
-          document.location.hash = Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: that.digitalObject.getPid() })
-        }
-        Hyacinth.scrollToTopOfWindow(0);
-      }
-
-    }).fail(function(){
-      $submitButton.val($submitButton.attr('data-original-value'));
-      alert(Hyacinth.unexpectedAjaxErrorMessage);
-    });
+  $editorForm.on('click', '.editor-submit-and-publish-button', function(e){
+    e.preventDefault();
+    that.submitEditorForm(true);
   });
 
   $editorForm.on('click', '.add-dynamic-field-group', function(e){
@@ -495,6 +444,69 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
   //Refresh navigation dropup options based on visible DynamicFieldGroupCategories
   this.refreshNavigationDropupOptions();
 };
+
+Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.submitEditorForm = function(publish) {
+
+  var $editorForm = this.$containerElement.find('.editor-form');
+
+  Hyacinth.addAlert('Saving...', 'info');
+  $editorForm.find('.errors').html(''); //Clear existing errors
+  $editorForm.find('.dynamic_field.has-error').removeClass('has-error'); //Remove current error classes
+
+  var serializedFormAsJsonString = JSON.stringify(Hyacinth.DigitalObjectsApp.DigitalObjectEditor.serializeFormDataToObject($editorForm));
+
+  var digitalObjectData = {
+    digital_object_type_string_key: this.digitalObject.digital_object_type['string_key'],
+    project_string_key: this.digitalObject.projects[0]['string_key'],
+    dynamic_field_data_json: serializedFormAsJsonString
+  };
+
+  if (this.digitalObject.isNewRecord()) {
+    digitalObjectData['parent_digital_object_pids'] = this.digitalObject.getParentDigitalObjectPids();
+  }
+
+  var that = this;
+
+  $.ajax({
+    url: this.digitalObject.isNewRecord() ? ('/digital_objects.json') : ('/digital_objects/' + this.digitalObject.getPid() + '.json'),
+    type: 'POST',
+    data: {
+      '_method': this.digitalObject.isNewRecord() ? 'POST' : 'PUT', //For proper RESTful Rails requests
+      digital_object: digitalObjectData,
+      publish: publish
+    },
+    cache: false
+  }).done(function(digitalObjectCreationResponse){
+
+    if (digitalObjectCreationResponse['errors']) {
+      Hyacinth.addAlert('Errors encountered during save. Please review your fields and try again.', 'danger');
+      $.each(digitalObjectCreationResponse['errors'], function(error_key, error_message){
+        var errorWithPossibleNumberIndicator = error_key.split('.');
+        if(errorWithPossibleNumberIndicator.length > 1) {
+          //This error refers to a specifically-numbered field (e.g. note_value.2)
+          var stringKeyOfProblemField = errorWithPossibleNumberIndicator[0];
+          var instanceNumberOfProblemField = errorWithPossibleNumberIndicator[1];
+          $('.dynamic_field[data-string-key="' + stringKeyOfProblemField + '"]:eq(' + instanceNumberOfProblemField + ')').addClass('has-error');
+        }
+      });
+      $editorForm.find('.errors').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_editor/_errors.ejs', {errors: digitalObjectCreationResponse['errors']}));
+      Hyacinth.scrollToTopOfWindow();
+    } else {
+      Hyacinth.addAlert('Digital Object saved' + (publish ? ' and <strong>published</strong>.' : '.'), 'success');
+
+      //For NEW records, upon successful save, redirect to edit view for new pid
+      if ( that.digitalObject.isNewRecord() ) {
+        document.location.hash = Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: digitalObjectCreationResponse['pid']})
+      } else {
+        document.location.hash = Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: that.digitalObject.getPid() })
+      }
+      Hyacinth.scrollToTopOfWindow(0);
+    }
+
+  }).fail(function(){
+    alert(Hyacinth.unexpectedAjaxErrorMessage);
+  });
+}
 
 Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.refreshNavigationDropupOptions = function() {
   var $formNavigationDropupMenu = this.$containerElement.find('.form-navigation-dropup').find('.dropdown-menu');

@@ -84,7 +84,7 @@ class DigitalObjectsController < ApplicationController
     end
 
     respond_to do |format|
-      if (test_mode ? @digital_object.valid? : @digital_object.save)
+      if (test_mode ? @digital_object.valid? : @digital_object.save && (params['publish'].to_s == 'true' ? @digital_object.publish : true))
         format.json {
           render json: {
             success: true,
@@ -136,7 +136,7 @@ class DigitalObjectsController < ApplicationController
     @digital_object.updated_by = current_user
 
     respond_to do |format|
-      if (test_mode ? @digital_object.valid? : @digital_object.save)
+      if (test_mode ? @digital_object.valid? : (@digital_object.save && (params['publish'].to_s == 'true' ? @digital_object.publish : true)))
         format.json {
           render json: {
             success: true

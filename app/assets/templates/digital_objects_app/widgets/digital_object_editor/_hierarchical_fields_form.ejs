@@ -32,13 +32,19 @@
   <% if (mode == 'edit') { %>
     <div class="alignright">
       <hr />
-      <% if (Hyacinth.DigitalObjectsApp.params['action'] == 'new') { %>
-        <a href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'index'}) %>" onclick="return confirm(Hyacinth.Text.unsavedChangesMessage);" class="btn btn-danger">Cancel</a>
-      <% } else { %>
-        <a href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: Hyacinth.DigitalObjectsApp.params['pid']}) %>" onclick="return confirm(Hyacinth.Text.unsavedChangesMessage);" class="btn btn-danger">Cancel</a>
-      <% } %>
-      <input type="submit" class="btn btn-primary editor-submit-button" value="Save" />
+      <p>
+        <% if (Hyacinth.DigitalObjectsApp.params['action'] == 'new') { %>
+          <a href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'index'}) %>" onclick="return confirm(Hyacinth.Text.unsavedChangesMessage);" class="btn btn-danger">Cancel</a>
+        <% } else { %>
+          <a href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: Hyacinth.DigitalObjectsApp.params['pid']}) %>" onclick="return confirm(Hyacinth.Text.unsavedChangesMessage);" class="btn btn-danger">Cancel</a>
+        <% } %>
+        <input type="submit" class="btn btn-primary editor-submit-button" value="Save" />
+        <div class="clearfix"></div>
+      </p>
+      <p>
+      <input type="submit" class="btn btn-primary editor-submit-and-publish-button" value="Save And Publish" />
       <div class="clearfix"></div>
+      </p>
     </div>
   <% } %>
 

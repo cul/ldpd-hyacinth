@@ -50,13 +50,19 @@ module DigitalObject::XmlDatastreamRendering
     # Add child content
     content = xml_translation_logic['content']
 
-    # Allow for string value as a shortcut for {'val' => 'some string'}
+    # Allow for string value as a shortcut for [{'val' => 'some string'}]
     if content.is_a?(String)
       content = [{'val' => content}]
     end
 
     if content.present?
       content.each do |value|
+
+        # Array elements that are strings will be treated like val objects: {'val' => 'some string'}
+        if value.is_a?(String)
+          value = {'val' => value}
+        end
+
         if value.has_key?('yield')
           # Yield to dynamic_field_group renderer logic
           dynamic_field_group_string_key = value['yield']
@@ -90,7 +96,15 @@ module DigitalObject::XmlDatastreamRendering
   def render_value_with_substitutions(value, dynamic_field_data)
     value.gsub(/(\{\{(?:(?!\}\}).)+\}\})/) do |sub|
       sub_without_braces = sub[2, sub.length-4]
-      if ! dynamic_field_data[sub_without_braces].is_a?(Array) && dynamic_field_data.has_key?(sub_without_braces)
+
+      if sub_without_braces.start_with?('$')
+        # Then this is a special substitution that we handle differently.
+        if sub_without_braces == '$project.display_label'
+          self.projects.first.display_label
+        else
+          ''
+        end
+      elsif ! dynamic_field_data[sub_without_braces].is_a?(Array) && dynamic_field_data.has_key?(sub_without_braces)
         dynamic_field_data[sub_without_braces]
       else
         ''
