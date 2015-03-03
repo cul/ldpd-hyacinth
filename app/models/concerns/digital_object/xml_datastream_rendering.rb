@@ -17,6 +17,24 @@ module DigitalObject::XmlDatastreamRendering
 
   def render_xml_translation_with_data(ng_xml_document, parent_element, xml_translation_logic, dynamic_field_data, dynamic_field_group_string_keys_to_objects)
 
+    # First, check for presence of "render_if" key, which will determine whether we should return immediately.
+    if xml_translation_logic['render_if'].present?
+      render_if_logic = xml_translation_logic['render_if']
+
+      if render_if_logic['present'].present?
+        render_if_logic['present'].each do |field_or_field_group_to_check_for|
+          return if dynamic_field_data[field_or_field_group_to_check_for].nil?
+        end
+      end
+
+      if render_if_logic['absent'].present?
+        render_if_logic['absent'].each do |field_or_field_group_to_check_for|
+          return unless dynamic_field_data[field_or_field_group_to_check_for].nil?
+        end
+      end
+
+    end
+
     # Create new element
     element_name = xml_translation_logic['element'] || []
 
@@ -30,9 +48,16 @@ module DigitalObject::XmlDatastreamRendering
         # Allow for string value as a shortcut for {'val' => 'some string'}
         if attr_val.is_a?(String)
           attr_val = {'val' => attr_val}
+        else
+
+          # The output of a ternary evaluation gets placed in a {'val' => 'some value'}, so the normal 'val' evaluation code still runs.
+          if attr_val['ternary'].present?
+            attr_val['val'] = render_output_of_ternary(attr_val['ternary'], dynamic_field_data)
+          end
+
         end
 
-        if attr_val['val']
+        if attr_val['val'].present?
           trimmed_val = attr_val['val'].strip
           if attr_key.start_with?('xmlns')
             # Do not treat xmlns attribute additions like other attribute additions.  Add namespace definition instead.
@@ -42,6 +67,7 @@ module DigitalObject::XmlDatastreamRendering
             new_element.set_attribute(attr_key, processed_val) unless processed_val.blank?
           end
         end
+
       end
     end
 
@@ -57,8 +83,16 @@ module DigitalObject::XmlDatastreamRendering
       content.each do |value|
 
         # Array elements that are strings will be treated like val objects: {'val' => 'some string'}
+        puts 'value is: ' + value.inspect
         if value.is_a?(String)
           value = {'val' => value}
+        else
+
+          # The output of a ternary evaluation gets placed in a {'val' => 'some value'}, so the normal 'val' evaluation code still runs.
+          if value['ternary'].present?
+            value['val'] = render_output_of_ternary(value['ternary'], dynamic_field_data)
+          end
+
         end
 
         if value.has_key?('yield')
@@ -107,6 +141,14 @@ module DigitalObject::XmlDatastreamRendering
         ''
       end
     end
+  end
+
+  def render_output_of_ternary(ternary_arr, dynamic_field_data)
+    # The value of a ternary key is a three-element array.
+    # - The first element is a variable to evaluate as true or false.
+    # - The second is the value to use if the variable evaluates to true.
+    # - The third is the value to use if the variable evaluates to false.
+    return (dynamic_field_data[ternary_arr[0]]) ? ternary_arr[1] : ternary_arr[2]
   end
 
   def recursively_remove_blank_xml_elements!(ng_xml_doc)

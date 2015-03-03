@@ -107,9 +107,15 @@ class DigitalObjectsController < ApplicationController
 
     test_mode = params['test'].present? && params['test'] == 'true'
 
+    if params['incremental'].present? && params['incremental'] == 'false'
+      incremental_update = false
+    else
+      incremental_update = true
+    end
+
     if digital_object_params['dynamic_field_data_json'].present?
       raise 'Invalid JSON given for dynamic_field_data_json' unless Hyacinth::Utils::JsonUtils.is_valid_json?(digital_object_params['dynamic_field_data_json'])
-      @digital_object.update_dynamic_field_data(JSON(digital_object_params['dynamic_field_data_json']))
+      @digital_object.update_dynamic_field_data(JSON(digital_object_params['dynamic_field_data_json']), incremental_update)
     end
 
     if digital_object_params['ordered_child_digital_object_pids']

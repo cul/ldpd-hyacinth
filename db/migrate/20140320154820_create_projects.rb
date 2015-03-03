@@ -11,5 +11,8 @@ class CreateProjects < ActiveRecord::Migration
       t.timestamps
     end
 
+    add_index :projects, :display_label, :unique => true
+    add_index :projects, :string_key, :unique => true
+
   end
 end

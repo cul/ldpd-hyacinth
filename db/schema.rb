@@ -162,6 +162,8 @@ ActiveRecord::Schema.define(version: 20141104010523) do
     t.datetime "updated_at"
   end
 
+  add_index "pid_generators", ["namespace"], name: "index_pid_generators_on_namespace", unique: true, using: :btree
+
   create_table "project_permissions", force: :cascade do |t|
     t.integer  "project_id",       limit: 4
     t.integer  "user_id",          limit: 4
@@ -187,7 +189,9 @@ ActiveRecord::Schema.define(version: 20141104010523) do
     t.datetime "updated_at"
   end
 
+  add_index "projects", ["display_label"], name: "index_projects_on_display_label", unique: true, using: :btree
   add_index "projects", ["pid_generator_id"], name: "index_projects_on_pid_generator_id", using: :btree
+  add_index "projects", ["string_key"], name: "index_projects_on_string_key", unique: true, using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "first_name",             limit: 255

@@ -7,5 +7,7 @@ class CreatePidGenerators < ActiveRecord::Migration
       t.integer :sequence, null: false, default: 0
       t.timestamps
     end
+
+    add_index :pid_generators, :namespace, :unique => true
   end
 end

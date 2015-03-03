@@ -2,10 +2,14 @@ require 'rails_helper'
 
 RSpec.describe DigitalObject::Base, :type => :model do
 
+  it "has a default dynamic_field_data value of {}" do
+    @digital_object = DigitalObject::Item.new()
+    expect(@digital_object.dynamic_field_data).to eq({})
+  end
+
   it "properly merges existing dynamic_field_data with new data (via update_dynamic_field_data method)" do
 
     @digital_object = DigitalObject::Item.new()
-    expect(@digital_object.dynamic_field_data).to eq({})
 
     hsh1 = {
       "title" => [
@@ -75,6 +79,42 @@ RSpec.describe DigitalObject::Base, :type => :model do
     #Secondary set of data to merge
     @digital_object.update_dynamic_field_data(hsh2)
     expect(@digital_object.dynamic_field_data).to eq(merged_hsh)
+
+  end
+
+  it "overwrites existing dynamic_field_data with new data (via update_dynamic_field_data method with false argument)" do
+    @digital_object = DigitalObject::Item.new()
+
+    hsh1 = {
+      "title" => [
+        {
+          "non_sort_portion" => "The",
+          "sort_portion" => "Catcher in the Rye"
+        }
+      ],
+      "collection" => [
+        {
+          "authorized_term_uri" => "http://localhost:8080/fedora/objects/cul:p5hqbzkh2p"
+        }
+      ]
+    }
+
+    hsh2 = {
+      "note" => [
+        {
+          "value" => "Test",
+          "type" => "Custom"
+        }
+      ]
+    }
+
+    #Initial set of data
+    @digital_object.update_dynamic_field_data(hsh1)
+    expect(@digital_object.dynamic_field_data).to eq(hsh1)
+
+    #Secondary set of data to merge
+    @digital_object.update_dynamic_field_data(hsh2, false)
+    expect(@digital_object.dynamic_field_data).to eq(hsh2)
 
   end
 

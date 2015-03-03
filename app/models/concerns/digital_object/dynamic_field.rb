@@ -1,10 +1,16 @@
 module DigitalObject::DynamicField
   extend ActiveSupport::Concern
 
-  def update_dynamic_field_data(new_dynamic_field_data)
-    # This is an incremental update, not a complete rewrite of the existing @dynamic_field_data
-    merged_dynamic_field_data = @dynamic_field_data.deep_merge(new_dynamic_field_data)
-    @dynamic_field_data = merged_dynamic_field_data
+  def update_dynamic_field_data(new_dynamic_field_data, incremental=true)
+
+    if incremental
+      # This is an incremental update, not a complete rewrite of the existing @dynamic_field_data
+      merged_dynamic_field_data = @dynamic_field_data.deep_merge(new_dynamic_field_data)
+      @dynamic_field_data = merged_dynamic_field_data
+    else
+      # Replace existing dynamic_fiel_data with newly supplied value
+      @dynamic_field_data = new_dynamic_field_data
+    end
   end
 
   def remove_blank_fields_from_dynamic_field_data!(df_data=@dynamic_field_data)

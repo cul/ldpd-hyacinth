@@ -4,6 +4,19 @@ namespace :hyacinth do
 
   namespace :publish do
 
+    def publish_object_by_pid(pid)
+      begin
+        obj = DigitalObject::Base.find(pid)
+        obj.publish
+      rescue => e
+        # Errors raised on different threads won't show up on the console, so we need to print them.
+        error_message = 'Publish Error: Skipping ' + pid + "\nException: #{e.class}, Message: #{e.message}"
+        puts error_message
+        #puts e.backtrace.join("\n")
+        Rails.logger.error(error_message)
+      end
+    end
+
     task :by_project_string_key => :environment do
 
       if ENV['THREADS'].present?
@@ -54,7 +67,8 @@ namespace :hyacinth do
       puts 'Publishing pids...'
 
       pool = Thread.pool(thread_pool_size)
-      counter, mutex = 0, Mutex.new
+      counter = 0
+      mutex = Mutex.new
       total = list_of_pids.length
       start_time = Time.now
 
@@ -71,22 +85,13 @@ namespace :hyacinth do
       # other items, and remove it from the list_of_pids using Array#shift.
 
       first_pid = list_of_pids.shift # remove first element
-      obj = DigitalObject::Base.find(first_pid)
-      obj.publish
+      publish_object_by_pid(first_pid)
+      counter += 1
+      print "Published #{counter} of #{total} | #{Time.now - start_time} seconds" + "\r"
 
       list_of_pids.each do |pid|
         pool.process {
-          begin
-            obj = DigitalObject::Base.find(pid)
-            obj.publish
-          rescue => e
-            # Errors raised on different threads won't show up on the console, so we need to print them.
-            error_message = 'Publish Error: Skipping ' + pid + "\nException: #{e.class}, Message: #{e.message}"
-            puts error_message
-            #puts e.backtrace.join("\n")
-            Rails.logger.error(error_message)
-          end
-
+          publish_object_by_pid(pid)
           mutex.synchronize do
             counter += 1
             print "Published #{counter} of #{total} | #{Time.now - start_time} seconds" + "\r"

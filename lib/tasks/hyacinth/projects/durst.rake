@@ -49,6 +49,9 @@ namespace :hyacinth do
           }
         end
 
+        # Create controlled vocabulary
+        physical_location_controlled_vocabulary = ControlledVocabulary.create!(string_key: 'physical_location', display_label: 'Physical Location', pid_generator: cul_pid_generator, authorized_terms: [])
+
         # Create AuthorizedTerms and add them to the correct ControlledVocabularies
         AuthorizedTerm.create!(
           value: 'Avery Architectural & Fine Arts Library, Columbia University',
@@ -398,29 +401,31 @@ namespace :hyacinth do
           ]
         )
 
-        shelf_location = DynamicFieldGroup.create!(string_key: 'shelf_location', display_label: 'Shelf Location', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_location_and_holdings,
-          dynamic_fields: [
-            DynamicField.new(string_key: 'shelf_location_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
-          ]
-        )
-
-        enumeration_and_chronology = DynamicFieldGroup.create!(string_key: 'enumeration_and_chronology', display_label: 'Enumeration and Chronology', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_location_and_holdings,
-          dynamic_fields: [
-            DynamicField.new(string_key: 'enumeration_and_chronology_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
-          ]
-        )
-
-        sublocation = DynamicFieldGroup.create!(string_key: 'sublocation', display_label: 'Sublocation', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_location_and_holdings,
-          dynamic_fields: [
-            DynamicField.new(string_key: 'sublocation_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
-          ]
-        )
-
-        url = DynamicFieldGroup.create!(string_key: 'url', display_label: 'URL', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_location_and_holdings,
-          dynamic_fields: [
-            DynamicField.new(string_key: 'url_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true, standalone_field_label: 'URL')
-          ]
-        )
+        location = DynamicFieldGroup.create!(string_key: 'location', display_label: 'Location', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_location_and_holdings)
+          # --> Start 'location' field group child DynamicFieldGroups
+            DynamicFieldGroup.create!(string_key: 'location_physical_location', display_label: 'Physical Location', is_repeatable: false, parent_dynamic_field_group: location, dynamic_fields: [
+              DynamicField.new(string_key: 'location_physical_location_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE, controlled_vocabulary: ControlledVocabulary.find_by(string_key: 'physical_location'), is_facet_field: true, standalone_field_label: 'Physical Location'),
+              DynamicField.new(string_key: 'location_physical_location_code', display_label: 'Code', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_CODE),
+              DynamicField.new(string_key: 'location_physical_location_value_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI),
+              DynamicField.new(string_key: 'location_physical_location_authority', display_label: 'Authority', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY),
+              DynamicField.new(string_key: 'location_physical_location_authority_uri', display_label: 'Authority URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY_URI)
+            ])
+            DynamicFieldGroup.create!(string_key: 'location_url', display_label: 'URL', is_repeatable: true, parent_dynamic_field_group: location, dynamic_fields: [
+              DynamicField.new(string_key: 'location_url_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true, standalone_field_label: 'URL')
+            ])
+            location_holding = DynamicFieldGroup.create!(string_key: 'location_holding', display_label: 'Holding', is_repeatable: true, parent_dynamic_field_group: location)
+              # --> Start 'location_holding' field group child DynamicFieldGroups
+                sublocation = DynamicFieldGroup.create!(string_key: 'location_holding_sublocation', display_label: 'Sublocation', is_repeatable: true, parent_dynamic_field_group: location_holding, dynamic_fields: [
+                    DynamicField.new(string_key: 'location_holding_sublocation_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
+                ])
+                shelf_location = DynamicFieldGroup.create!(string_key: 'location_holding_shelf_location', display_label: 'Shelf Location', is_repeatable: false, parent_dynamic_field_group: location_holding, dynamic_fields: [
+                    DynamicField.new(string_key: 'location_holding_shelf_location_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
+                ])
+                enumeration_and_chronology = DynamicFieldGroup.create!(string_key: 'location_holding_enumeration_and_chronology', display_label: 'Enumeration and Chronology', is_repeatable: true, parent_dynamic_field_group: location_holding, dynamic_fields: [
+                    DynamicField.new(string_key: 'location_holding_enumeration_and_chronology_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
+                ])
+              # --> End 'location_holding' field group child DynamicFieldGroups
+          # --> Start 'location' field group child DynamicFieldGroups
 
         durst_favorite = DynamicFieldGroup.create!(string_key: 'durst_favorite', display_label: 'Durst Favorite', xml_datastream: nil, dynamic_field_group_category: dfc_other, is_repeatable: false,
           dynamic_fields: [
@@ -478,7 +483,6 @@ namespace :hyacinth do
         (
           DynamicFieldGroup.find_by(string_key: 'collection').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'form').dynamic_fields +
-          DynamicFieldGroup.find_by(string_key: 'physical_location').dynamic_fields +
 
           DynamicFieldGroup.find_by(string_key: 'marc_005_last_modified').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'alternative_title').dynamic_fields +
@@ -523,10 +527,11 @@ namespace :hyacinth do
           DynamicFieldGroup.find_by(string_key: 'cul_assigned_postcard_identifier').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'isbn').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'issn').dynamic_fields +
-          DynamicFieldGroup.find_by(string_key: 'shelf_location').dynamic_fields +
-          DynamicFieldGroup.find_by(string_key: 'enumeration_and_chronology').dynamic_fields +
-          DynamicFieldGroup.find_by(string_key: 'sublocation').dynamic_fields +
-          DynamicFieldGroup.find_by(string_key: 'url').dynamic_fields +
+          DynamicFieldGroup.find_by(string_key: 'location_physical_location').dynamic_fields +
+          DynamicFieldGroup.find_by(string_key: 'location_url').dynamic_fields +
+          DynamicFieldGroup.find_by(string_key: 'location_holding_sublocation').dynamic_fields +
+          DynamicFieldGroup.find_by(string_key: 'location_holding_shelf_location').dynamic_fields +
+          DynamicFieldGroup.find_by(string_key: 'location_holding_enumeration_and_chronology').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'durst_favorite').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'type_of_resource').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'record_content_source').dynamic_fields +
@@ -552,15 +557,17 @@ namespace :hyacinth do
             "xsi:schemaLocation" => "http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/v3/mods-3-6.xsd"
           },
           "content" => [
-            {
-              "yield" => "title"
-            },
-            {
-              "yield" => "alternative_title"
-            },
-            {
-              "yield" => "abstract"
-            },
+            {"yield" => "title"},
+            {"yield" => "alternative_title"},
+            {"yield" => "abstract"},
+            {"yield" => "clio_identifier"},
+            {"yield" => "dims_identifier"},
+            {"yield" => "durst_postcard_identifier"},
+            {"yield" => "cul_assigned_postcard_identifier"},
+            {"yield" => "filename_front_identifier"},
+            {"yield" => "filename_back_identifier"},
+            {"yield" => "isbn"},
+            {"yield" => "issn"},
             {
               "element" => "mods:relatedItem",
               "attrs" => {
@@ -579,55 +586,68 @@ namespace :hyacinth do
                 }
               ]
             },
-            {
-              "yield" => "collection"
-            },
-            {
-              "yield" => "coordinates"
-            },
-            {
-              "yield" => "name"
-            },
-            {
-              "yield" => "subject_hierarchical_geographic"
-            },
+            {"yield" => "collection"},
+            {"yield" => "coordinates"},
+            {"yield" => "name"},
+            {"yield" => "subject_hierarchical_geographic"},
+            {"yield" => "table_of_contents"},
+            {"yield" => "genre"},
+            {"yield" => "scale"},
+            {"yield" => "location"},
+            {"yield" => "subject_topic"},
+            {"yield" => "subject_durst"},
+            {"yield" => "subject_temporal"},
+            {"yield" => "subject_name"},
+            {"yield" => "subject_title"},
+            {"yield" => "subject_geographic"},
+            {"yield" => "view_direction"},
+            {"yield" => "note"},
+            {"yield" => "series"},
+            {"yield" => "box_title"},
+            {"yield" => "group_title"},
+            {"yield" => "type_of_resource"},
             {
               "element" => "mods:originInfo",
               "content" => [
-                {
-                  "yield" => "publisher"
-                },
-                #{
-                #  "yield" => "date_created"
-                #},
-                #{
-                #  "yield" => "date_created_textual"
-                #},
-                #{
-                #  "yield" => "date_other"
-                #},
-                #{
-                #  "yield" => "date_other_textual"
-                #},
-                #{
-                #  "yield" => "date_issued"
-                #},
-                #{
-                #  "yield" => "date_issued_textual"
-                #},
-                {
-                  "yield" => "place_of_origin"
-                }
+                {"yield" => "publisher"},
+                {"yield" => "date_created"},
+                {"yield" => "date_created_textual"},
+                {"yield" => "date_other"},
+                {"yield" => "date_other_textual"},
+                {"yield" => "date_issued"},
+                {"yield" => "date_issued_textual"},
+                {"yield" => "place_of_origin"},
+                {"yield" => "edition"},
               ]
             },
             {
               "element" => "mods:physicalDescription",
               "content" => [
-                {
-                  "yield" => "form"
-                }
+                {"yield" => "form"},
+                {"yield" => "extent"},
+                {"yield" => "orientation"}
               ]
-            }
+            },
+            {
+              "element" => "mods:recordInfo",
+              "content" => [
+                {"yield" => "record_origin"},
+                {"yield" => "record_content_source"},
+                {
+                  "element" => "mods:languageOfCataloging",
+                  "content" => [
+                    {
+                      "element" => "mods:languageTerm",
+                      "attrs" => {
+                        "authority" => "iso639-2b",
+                      },
+                      "content" => "eng"
+                    }
+                  ]
+                },
+              ]
+            },
+
           ]
         }.to_json
         xml_datastream.save!
@@ -646,7 +666,7 @@ namespace :hyacinth do
                 "attrs" => {
                   "valueUri" => "{{collection_uri}}",
                   "authority" => "{{collection_authority}}",
-                  "authorityUri" => "{{collection_authority_uri}}"
+                  "authorityURI" => "{{collection_authority_uri}}"
                 },
                 "content" => [
                   {
@@ -691,7 +711,7 @@ namespace :hyacinth do
             "type" => "{{name_type}}",
             "valueUri" => "{{name_value_uri}}",
             "authority" => "{{name_authority}}",
-            "authorityUri" => "{{name_authority_uri}}"
+            "authorityURI" => "{{name_authority_uri}}"
           },
           "content" => [
             {
@@ -735,67 +755,280 @@ namespace :hyacinth do
 
         field_group = DynamicFieldGroup.find_by(string_key: 'place_of_origin')
         field_group.xml_translation = [{
-          "element" => "mods:publisher",
-          "content" => "{{place_of_origin_value}}"
+          "element" => "mods:place",
+          "content" => [{
+            "element" => "mods:placeTerm",
+            "content" => "{{place_of_origin_value}}"
+          }]
         }].to_json
         field_group.save!
 
-        #field_group = DynamicFieldGroup.find_by(string_key: 'date_created')
-        #field_group.xml_translation = [{
-        #  "render_if" => [
-        #    "{{date_created_start_value}}" => "present",
-        #    "{{date_created_end_value}}" => "present",
-        #  ],
-        #  "element" => "mods:dateCreated",
-        #  "attrs" => {
-        #    "encoding" => "w3cdtf"
-        #  },
-        #  "content" => "{{date_created_textual}}"
-        #},
-        #{
-        #  "element" => "mods:dateCreated",
-        #  "attrs" => {
-        #    "encoding" => "w3cdtf"
-        #  },
-        #  "content" => "{{date_created_textual}}"
-        #},
-        #{
-        #  "element" => "mods:dateCreated",
-        #  "attrs" => {
-        #    "encoding" => "w3cdtf"
-        #  },
-        #  "content" => "{{date_created_textual}}"
-        #}].to_json
-        #field_group.save!
-        #
-        #field_group = DynamicFieldGroup.find_by(string_key: 'date_created_textual')
-        #field_group.xml_translation = [{
-        #    "element" => "mods:dateCreated",
-        #    "content" => "{{date_created_textual}}"
-        #}].to_json
-        #field_group.save!
+        field_group = DynamicFieldGroup.find_by(string_key: 'date_created')
+        field_group.xml_translation = [
+          {
+            "render_if" => {
+               "present" => ["date_created_start_value"],
+               "absent" => ["date_created_end_value"],
+             },
+            "element" => "mods:dateCreated",
+            "attrs" => {
+              "encoding" => "w3cdtf",
+              "keyDate" => {
+                "ternary" => ["date_created_key_date", "yes", ""]
+              },
+              "qualifier" => "{{date_created_type}}"
+            },
+            "content" => "{{date_created_start_value}}"
+          },
+          {
+            "render_if" => {
+               "present" => ["date_created_start_value", "date_created_end_value"]
+             },
+            "element" => "mods:dateCreated",
+            "attrs" => {
+              "encoding" => "w3cdtf",
+              "keyDate" => {
+                "ternary" => ["date_created_key_date", "yes", ""]
+              },
+              "qualifier" => "{{date_created_type}}",
+              "point" => "start"
+            },
+            "content" => "{{date_created_start_value}}"
+          },
+          {
+            "render_if" => {
+               "present" => ["date_created_start_value", "date_created_end_value"]
+             },
+            "element" => "mods:dateCreated",
+            "attrs" => {
+              "encoding" => "w3cdtf",
+              "point" => "end"
+            },
+            "content" => "{{date_created_end_value}}"
+          }
+        ].to_json
+        field_group.save!
 
+        field_group = DynamicFieldGroup.find_by(string_key: 'date_created_textual')
+        field_group.xml_translation = [{
+            "element" => "mods:dateCreated",
+            "content" => "{{date_created_textual}}"
+        }].to_json
+        field_group.save!
 
-        #Date Created
-        #Date Created Textual
-        #Date Other
-        #Date Other Textual
-        #Date Issued
-        #Date Issued Textual
-        #Edition
-        #Table of Contents
-        #Genre
-        #Record Origin
-        #
-        #CLIO ID
-        #DIMS ID
-        #Durst Postcard Identifier
-        #CUL-Assigned Postcard Identifier
-        #Filename Front Identifier
-        #Filename Back Identifier
-        #ISBN
-        #ISSN
-        #
+        field_group = DynamicFieldGroup.find_by(string_key: 'date_other')
+        field_group.xml_translation = [
+          {
+            "render_if" => {
+               "present" => ["date_other_start_value"],
+               "absent" => ["date_other_end_value"],
+             },
+            "element" => "mods:dateOther",
+            "attrs" => {
+              "encoding" => "w3cdtf",
+              "keyDate" => {
+                "ternary" => ["date_other_key_date", "yes", ""]
+              },
+              "qualifier" => "{{date_other_type}}"
+            },
+            "content" => "{{date_other_start_value}}"
+          },
+          {
+            "render_if" => {
+               "present" => ["date_other_start_value", "date_other_end_value"]
+             },
+            "element" => "mods:dateOther",
+            "attrs" => {
+              "encoding" => "w3cdtf",
+              "keyDate" => {
+                "ternary" => ["date_other_key_date", "yes", ""]
+              },
+              "qualifier" => "{{date_other_type}}",
+              "point" => "start"
+            },
+            "content" => "{{date_other_start_value}}"
+          },
+          {
+            "render_if" => {
+               "present" => ["date_other_start_value", "date_other_end_value"]
+             },
+            "element" => "mods:dateOther",
+            "attrs" => {
+              "encoding" => "w3cdtf",
+              "point" => "end"
+            },
+            "content" => "{{date_other_end_value}}"
+          }
+        ].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'date_other_textual')
+        field_group.xml_translation = [{
+            "element" => "mods:dateOther",
+            "content" => "{{date_other_textual}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'date_issued')
+        field_group.xml_translation = [
+          {
+            "render_if" => {
+               "present" => ["date_issued_start_value"],
+               "absent" => ["date_issued_end_value"],
+             },
+            "element" => "mods:dateIssued",
+            "attrs" => {
+              "encoding" => "w3cdtf",
+              "keyDate" => {
+                "ternary" => ["date_issued_key_date", "yes", ""]
+              },
+              "qualifier" => "{{date_issued_type}}"
+            },
+            "content" => "{{date_issued_start_value}}"
+          },
+          {
+            "render_if" => {
+               "present" => ["date_issued_start_value", "date_issued_end_value"]
+             },
+            "element" => "mods:dateIssued",
+            "attrs" => {
+              "encoding" => "w3cdtf",
+              "keyDate" => {
+                "ternary" => ["date_issued_key_date", "yes", ""]
+              },
+              "qualifier" => "{{date_issued_type}}",
+              "point" => "start"
+            },
+            "content" => "{{date_issued_start_value}}"
+          },
+          {
+            "render_if" => {
+               "present" => ["date_issued_start_value", "date_issued_end_value"]
+             },
+            "element" => "mods:dateIssued",
+            "attrs" => {
+              "encoding" => "w3cdtf",
+              "point" => "end"
+            },
+            "content" => "{{date_issued_end_value}}"
+          }
+        ].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'date_issued_textual')
+        field_group.xml_translation = [{
+            "element" => "mods:dateIssued",
+            "content" => "{{date_issued_textual}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'edition')
+        field_group.xml_translation = [{
+          "element" => "mods:edition",
+          "content" => "{{edition_value}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'table_of_contents')
+        field_group.xml_translation = [{
+          "element" => "mods:tableOfContents",
+          "content" => "{{table_of_contents_value}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'genre')
+        field_group.xml_translation = [{
+          "element" => "mods:genre",
+          "content" => "{{genre_value}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'record_origin')
+        field_group.xml_translation = [{
+          "element" => "mods:recordOrigin",
+          "content" => "{{record_origin_value}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'clio_identifier')
+        field_group.xml_translation = [{
+          "element" => "mods:identifier",
+          "attrs" => {
+            "type" => "CLIO"
+          },
+          "content" => "{{clio_identifier_value}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'dims_identifier')
+        field_group.xml_translation = [{
+          "element" => "mods:identifier",
+          "attrs" => {
+            "type" => "DIMS"
+          },
+          "content" => "{{dims_identifier_value}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'durst_postcard_identifier')
+        field_group.xml_translation = [{
+          "element" => "mods:identifier",
+          "attrs" => {
+            "type" => "local_Durst"
+          },
+          "content" => "{{durst_postcard_identifier_value}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'cul_assigned_postcard_identifier')
+        field_group.xml_translation = [{
+          "element" => "mods:identifier",
+          "attrs" => {
+            "type" => "local_NNC"
+          },
+          "content" => "{{cul_assigned_postcard_identifier_value}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'filename_front_identifier')
+        field_group.xml_translation = [{
+          "element" => "mods:identifier",
+          "attrs" => {
+            "type" => "filename_front"
+          },
+          "content" => "{{filename_front_identifier_value}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'filename_back_identifier')
+        field_group.xml_translation = [{
+          "element" => "mods:identifier",
+          "attrs" => {
+            "type" => "filename_back"
+          },
+          "content" => "{{filename_back_identifier_value}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'isbn')
+        field_group.xml_translation = [{
+          "element" => "mods:identifier",
+          "attrs" => {
+            "type" => "isbn"
+          },
+          "content" => "{{isbn_value}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'issn')
+        field_group.xml_translation = [{
+          "element" => "mods:identifier",
+          "attrs" => {
+            "type" => "issn"
+          },
+          "content" => "{{issn_value}}"
+        }].to_json
+        field_group.save!
 
         field_group = DynamicFieldGroup.find_by(string_key: 'form')
         field_group.xml_translation = [{
@@ -803,7 +1036,7 @@ namespace :hyacinth do
           "attrs" => {
             "valueUri" => "{{form_uri}}",
             "authority" => "{{form_authority}}",
-            "authorityUri" => "{{form_authority_uri}}",
+            "authorityURI" => "{{form_authority_uri}}",
           },
           "content" => [
             "{{form_value}}"
@@ -811,22 +1044,221 @@ namespace :hyacinth do
         }].to_json
         field_group.save!
 
-        #Scale
-        #Extent
-        #
-        #Physical Location
-        #Shelf Location
-        #Enumeration and Chronology
-        #Sublocation
-        #URL
-        #
-        #Subject Topic
-        #Subject Durst
-        #Subject Temporal
-        #Subject Name
-        #Subject Title
-        #
-        #Subject Place
+        field_group = DynamicFieldGroup.find_by(string_key: 'scale')
+        field_group.xml_translation = [{
+            "element" => "mods:subject",
+            "content" => [
+              {
+                "element" => "mods:cartographics",
+                "content" => [
+                  {
+                    "element" => "mods:scale",
+                    "content" => "{{scale_value}}"
+                  }
+                ]
+              }
+            ]
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'extent')
+        field_group.xml_translation = [{
+            "element" => "mods:extent",
+            "content" => "{{extent_value}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'location')
+        field_group.xml_translation = [{
+          "element" => "mods:location",
+          "content" => [
+            {"yield" => "location_physical_location"},
+            {"yield" => "location_url"},
+            {"yield" => "location_holding"},
+          ]
+        }].to_json
+        field_group.save!
+
+            field_group = DynamicFieldGroup.find_by(string_key: 'location_physical_location')
+            field_group.xml_translation = [
+              {
+                "render_if" => {
+                  "present" => ["location_physical_location_code"]
+                },
+                "element" => "mods:physicalLocation",
+                "attrs" => {
+                  "authority" => "marcorg"
+                },
+                "content" => "{{location_physical_location_code}}"
+              },
+              {
+                "element" => "mods:physicalLocation",
+                "attrs" => {
+                  "valueUri" => "{{location_physical_location_value_uri}}",
+                  "authority" => "{{location_physical_location_authority}}",
+                  "authorityURI" => "{{location_physical_location_authority_uri}}",
+                },
+                "content" => "{{location_physical_location_value}}"
+              }
+            ].to_json
+            field_group.save!
+
+            field_group = DynamicFieldGroup.find_by(string_key: 'location_url')
+            field_group.xml_translation = [
+              {
+                "element" => "mods:url",
+                "content" => "{{location_url_value}}"
+              }
+            ].to_json
+            field_group.save!
+
+            field_group = DynamicFieldGroup.find_by(string_key: 'location_holding')
+            field_group.xml_translation = [
+              {
+                "element" => "mods:holdingSimple",
+                "content" => [{
+                  "element" => "mods:copyInformation",
+                  "content" => [
+                    {"yield" => "location_holding_sublocation"},
+                    {"yield" => "location_holding_shelf_location"},
+                    {"yield" => "location_holding_enumeration_and_chronology"}
+                  ]
+                }]
+              }
+            ].to_json
+            field_group.save!
+
+              field_group = DynamicFieldGroup.find_by(string_key: 'location_holding_sublocation')
+              field_group.xml_translation = [
+                {
+                  "element" => "mods:subLocation",
+                  "content" => "{{location_holding_sublocation_value}}"
+                }
+              ].to_json
+              field_group.save!
+
+              field_group = DynamicFieldGroup.find_by(string_key: 'location_holding_shelf_location')
+              field_group.xml_translation = [
+                {
+                  "element" => "mods:shelfLocator",
+                  "content" => "{{location_holding_shelf_location_value}}"
+                }
+              ].to_json
+              field_group.save!
+
+              field_group = DynamicFieldGroup.find_by(string_key: 'location_holding_enumeration_and_chronology')
+              field_group.xml_translation = [
+                {
+                  "element" => "mods:enumerationAndChronology",
+                  "content" => "{{location_holding_enumeration_and_chronology_value}}"
+                }
+              ].to_json
+              field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'subject_topic')
+        field_group.xml_translation = [{
+            "element" => "mods:subject",
+            "attrs" => {
+              "valueUri" => "{{subject_topic_value_uri}}",
+              "authority" => "{{subject_topic_authority}}",
+              "authorityURI" => "{{subject_topic_authority_uri}}",
+            },
+            "content" => [
+              {
+                "element" => "mods:topic",
+                "content" => "{{subject_topic_value}}"
+              }
+            ]
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'subject_durst')
+        field_group.xml_translation = [{
+            "element" => "mods:subject",
+            "attrs" => {
+              "authority" => "Durst",
+            },
+            "content" => [
+              {
+                "element" => "mods:topic",
+                "content" => "{{subject_durst_value}}"
+              }
+            ]
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'subject_temporal')
+        field_group.xml_translation = [{
+            "element" => "mods:subject",
+            "attrs" => {
+              "valueUri" => "{{subject_temporal_value_uri}}",
+              "authority" => "{{subject_temporal_authority}}",
+              "authorityURI" => "{{subject_temporal_authority_uri}}",
+            },
+            "content" => [
+              {
+                "element" => "mods:temporal",
+                "content" => "{{subject_temporal_value}}"
+              }
+            ]
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'subject_name')
+        field_group.xml_translation = [{
+            "element" => "mods:subject",
+            "attrs" => {
+              "valueUri" => "{{subject_name_value_uri}}",
+              "authority" => "{{subject_name_authority}}",
+              "authorityURI" => "{{subject_name_authority_uri}}",
+            },
+            "content" => [
+              {
+                "element" => "mods:name",
+                "content" => "{{subject_name_value}}"
+              }
+            ]
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'subject_title')
+        field_group.xml_translation = [{
+            "element" => "mods:subject",
+            "attrs" => {
+              "valueUri" => "{{subject_title_value_uri}}",
+              "authority" => "{{subject_title_authority}}",
+              "authorityURI" => "{{subject_title_authority_uri}}",
+            },
+            "content" => [
+              {
+                "element" => "mods:titleInfo",
+                "content" => [
+                  {
+                    "element" => "mods:title",
+                    "content" => "{{subject_title_value}}"
+                  }
+                ]
+              }
+            ]
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'subject_geographic')
+        field_group.xml_translation = [{
+            "element" => "mods:subject",
+            "attrs" => {
+              "valueUri" => "{{subject_geographic_value_uri}}",
+              "authority" => "{{subject_geographic_authority}}",
+              "authorityURI" => "{{subject_geographic_authority_uri}}",
+            },
+            "content" => [
+              {
+                "element" => "mods:geographic",
+                "content" => "{{subject_geographic_value}}"
+              }
+            ]
+        }].to_json
+        field_group.save!
 
         field_group = DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic')
         field_group.xml_translation = [{
@@ -914,7 +1346,7 @@ namespace :hyacinth do
             field_group.xml_translation = [{
               "element" => "mods:citySection",
               "attrs" => {
-                "citySectionType" => "ZIP code"
+                "citySectionType" => "zip code"
               },
               "content" => "{{subject_hierarchical_geographic_zip_code_value}}"
             }].to_json
@@ -924,38 +1356,11 @@ namespace :hyacinth do
             field_group.xml_translation = [{
               "element" => "mods:citySection",
               "attrs" => {
-                "citySectionType" => "Street"
+                "citySectionType" => "street"
               },
               "content" => "{{subject_hierarchical_geographic_street_value}}"
             }].to_json
             field_group.save!
-
-        #Coordinates
-        #
-        #View Direction
-        #Note
-        #Orientation
-        #
-        #Series
-        #Box Title
-        #Group Title
-        #
-        #Record Content Source (Institutional Record Creator)
-        #Language of Cataloging
-        #CUL Scan Note
-        #
-        #Marc 005 Last Modified
-        #Durst Favorite
-        #Type of Resource
-
-
-
-
-
-
-
-
-
 
         field_group = DynamicFieldGroup.find_by(string_key: 'coordinates')
         field_group.xml_translation = [{
@@ -974,6 +1379,129 @@ namespace :hyacinth do
         }].to_json
         field_group.save!
 
+        field_group = DynamicFieldGroup.find_by(string_key: 'view_direction')
+        field_group.xml_translation = [{
+            "element" => "mods:note",
+            "attrs" => {
+              "type" => "View direction"
+            },
+            "content" => "{{view_direction_value}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'note')
+        field_group.xml_translation = [{
+            "element" => "mods:note",
+            "attrs" => {
+              "type" => "{{note_type}}"
+            },
+            "content" => "{{note_value}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'orientation')
+        field_group.xml_translation = [{
+            "element" => "mods:note",
+            "attrs" => {
+              "type" => "Orientation"
+            },
+            "content" => "{{orientation_value}}"
+        }].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'series')
+        field_group.xml_translation = [
+          {
+            "element" => "mods:relatedItem",
+            "attrs" => {
+              "type" => "series",
+            },
+            "content" => [
+              {
+                "element" => "mods:titleInfo",
+                "content" => [
+                  {
+                    "element" => "mods:title",
+                    "content" => "{{series_title}}"
+                  }
+                ]
+              }
+            ]
+          }
+        ].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'box_title')
+        field_group.xml_translation = [
+          {
+            "element" => "mods:relatedItem",
+            "attrs" => {
+              "type" => "host",
+              "displayLabel" => "Box Title"
+            },
+            "content" => [
+              {
+                "element" => "mods:titleInfo",
+                "content" => [
+                  {
+                    "element" => "mods:title",
+                    "content" => "{{box_title_value}}"
+                  }
+                ]
+              }
+            ]
+          }
+        ].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'group_title')
+        field_group.xml_translation = [
+          {
+            "element" => "mods:relatedItem",
+            "attrs" => {
+              "type" => "host",
+              "displayLabel" => "Group Title"
+            },
+            "content" => [
+              {
+                "element" => "mods:titleInfo",
+                "content" => [
+                  {
+                    "element" => "mods:title",
+                    "content" => "{{group_title_value}}"
+                  }
+                ]
+              }
+            ]
+          }
+        ].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'record_content_source')
+        field_group.xml_translation = [
+          {
+            "element" => "mods:recordContentSource",
+            "attrs" => {
+              "authority" => "marcorg"
+            },
+            "content" => "{{record_content_source_value}}"
+          }
+        ].to_json
+        field_group.save!
+
+        field_group = DynamicFieldGroup.find_by(string_key: 'type_of_resource')
+        field_group.xml_translation = [
+          {
+            "element" => "mods:typeOfResource",
+            "attrs" => {
+              "collection" => {
+                "ternary" => ["type_of_resource_is_collection", "yes", ""]
+              }
+            },
+            "content" => "{{type_of_resource_value}}"
+          }
+        ].to_json
+        field_group.save!
 
 
       end
