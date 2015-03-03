@@ -173,6 +173,9 @@
     <!-- you must define copyField source and dest fields explicity or schemaBrowser doesn't work -->
     <field name="all_text_timv" type="text" stored="false" indexed="true" multiValued="true" termVectors="true" termPositions="true" termOffsets="true"/>
 
+    <!-- new solr4 location, required for records with multiple coordinates -->
+    <field name="geo" type="location_rpt" indexed="true" stored="true" multiValued="true" />
+
     <!-- deprecated fields from pre-Solr 4.0 pre-hydra 5.0 -->
 <!--    
     <field name="marc_display" type="string" indexed="false" stored="true" multiValued="false"/>

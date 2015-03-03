@@ -275,9 +275,9 @@ namespace :hyacinth do
                 DynamicField.new(string_key: 'subject_hierarchical_geographic_city_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
               ]
             )
-            DynamicFieldGroup.create!(string_key: 'subject_hierarchical_geographic_city_section', display_label: 'City Section', parent_dynamic_field_group: subject_hierarchical_geographic, is_repeatable: true,
+            DynamicFieldGroup.create!(string_key: 'subject_hierarchical_geographic_neighborhood', display_label: 'Neighborhood', parent_dynamic_field_group: subject_hierarchical_geographic, is_repeatable: true,
               dynamic_fields: [
-                DynamicField.new(string_key: 'subject_hierarchical_geographic_city_section_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
+                DynamicField.new(string_key: 'subject_hierarchical_geographic_neighborhood_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
               ]
             )
             DynamicFieldGroup.create!(string_key: 'subject_hierarchical_geographic_zip_code', display_label: 'ZIP Code', parent_dynamic_field_group: subject_hierarchical_geographic, is_repeatable: true,
@@ -508,7 +508,7 @@ namespace :hyacinth do
           DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_county').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_borough').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_city').dynamic_fields +
-          DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_city_section').dynamic_fields +
+          DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_neighborhood').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_zip_code').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_street').dynamic_fields +
           DynamicFieldGroup.find_by(string_key: 'coordinates').dynamic_fields +
@@ -1274,7 +1274,7 @@ namespace :hyacinth do
                 {"yield" => "subject_hierarchical_geographic_county"},
                 {"yield" => "subject_hierarchical_geographic_borough"},
                 {"yield" => "subject_hierarchical_geographic_city"},
-                {"yield" => "subject_hierarchical_geographic_city_section"},
+                {"yield" => "subject_hierarchical_geographic_neighborhood"},
                 {"yield" => "subject_hierarchical_geographic_zip_code"},
                 {"yield" => "subject_hierarchical_geographic_street"}
               ]
@@ -1335,10 +1335,13 @@ namespace :hyacinth do
             }].to_json
             field_group.save!
 
-            field_group = DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_city_section')
+            field_group = DynamicFieldGroup.find_by(string_key: 'subject_hierarchical_geographic_neighborhood')
             field_group.xml_translation = [{
               "element" => "mods:citySection",
-              "content" => "{{subject_hierarchical_geographic_city_section_value}}"
+              "attrs" => {
+                "citySectionType" => "neighborhood"
+              },
+              "content" => "{{subject_hierarchical_geographic_neighborhood_value}}"
             }].to_json
             field_group.save!
 
