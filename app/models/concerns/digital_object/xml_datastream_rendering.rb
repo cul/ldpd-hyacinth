@@ -83,7 +83,6 @@ module DigitalObject::XmlDatastreamRendering
       content.each do |value|
 
         # Array elements that are strings will be treated like val objects: {'val' => 'some string'}
-        puts 'value is: ' + value.inspect
         if value.is_a?(String)
           value = {'val' => value}
         else
