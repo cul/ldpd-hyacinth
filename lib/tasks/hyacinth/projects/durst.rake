@@ -715,7 +715,8 @@ namespace :hyacinth do
           },
           "content" => [
             {
-              "val" => "{{name_value}}"
+              "element" => "mods:namePart",
+              "content" => "{{name_value}}"
             },
             {
               "yield" => "name_role"
