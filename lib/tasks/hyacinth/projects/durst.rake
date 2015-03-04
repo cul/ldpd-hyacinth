@@ -72,8 +72,7 @@ namespace :hyacinth do
 
         alternative_title = DynamicFieldGroup.create!(string_key: 'alternative_title', display_label: 'Alternative Title', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
           dynamic_fields: [
-            DynamicField.new(string_key: 'alternative_title_non_sort_portion', display_label: 'Non-Sort Portion', dynamic_field_type: DynamicField::Type::STRING),
-            DynamicField.new(string_key: 'alternative_title_sort_portion', display_label: 'Sort Portion', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_searchable_title_field: true)
+            DynamicField.new(string_key: 'alternative_title_value', display_label: 'Sort Portion', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_searchable_title_field: true)
           ]
         )
 
@@ -690,7 +689,7 @@ namespace :hyacinth do
             "content" => [
               {
                 "element" => "mods:title",
-                "content" => "{{alternative_title_sort_portion}} {{alternative_title_non_sort_portion}}"
+                "content" => "{{alternative_title_value}}"
               }
             ]
           }
