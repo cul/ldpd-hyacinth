@@ -345,38 +345,11 @@ class DigitalObject::Base
     struct_ds_name = 'structMetadata'
     if self.ordered_child_digital_object_pids.present?
 
-      #if @fedora_object.datastreams[struct_ds_name].present?
-      #  puts 'found existing struct ds'
-      #  struct_ds = @fedora_object.datastreams[struct_ds_name]
-      #else
-      #  puts 'creating new struct ds'
-      #  # Create datastream if it doesn't exist
-      #  struct_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, struct_ds_name,
-      #    :controlGroup => 'M',
-      #    :mimeType => 'text/xml',
-      #    :dsLabel => struct_ds_name,
-      #    :versionable => false,
-      #    :blob => ''
-      #  )
-      #  @fedora_object.add_datastream(struct_ds)
-      #end
-
-      #struct_ds = @fedora_object.datastreams[struct_ds_name]
-
-      #ng_xml_doc = Nokogiri::XML::Document.new
-      #mets_struct_map_top_level_element = ng_xml_doc.create_element('mets:StructMap')
-      #mets_struct_map_top_level_element.add_namespace_definition('mets', 'http://www.loc.gov/METS/')
-      #ng_xml_doc.add_child(mets_struct_map_top_level_element)
-      #ordered_child_digital_object_pids.each do |pid|
-      #  child_div = @ng_xml_doc.create_element('mets:div')
-      #  child_div.set_attribute('ID', pid)
-      #  mets_struct_map_top_level_element.add_child(child_div)
-      #end
-      #@fedora_object.datastreams[struct_ds_name].ng_xml = ng_xml_doc
+      #TODO: Use Solr to get titles of child objects.  Fall back to "Child 1", "Child 2", etc. if a title is not found for some reason.
 
       struct_ds = Cul::Scv::Hydra::Datastreams::StructMetadata.new(nil, 'structMetadata', label:'Sequence', type:'logical')
       ordered_child_digital_object_pids.each_with_index do |pid, index|
-        struct_ds.create_div_node(nil, {order: (index+1), label: "Asset #{index+1}", contentids: pid})
+        struct_ds.create_div_node(nil, {order: (index+1), label: "Child #{index+1}", contentids: pid})
       end
 	  	@fedora_object.datastreams[struct_ds_name].ng_xml = struct_ds.ng_xml
     else
