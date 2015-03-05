@@ -83,7 +83,7 @@ gem 'equivalent-xml'
 gem 'devise', '>= 3.4.1'
 
 # CUL Fedora Dependencies and Content Models
-gem 'cul_scv_hydra', '>= 0.22.8'
+gem 'cul_scv_hydra', '>= 0.22.9'
 #gem 'cul_scv_hydra', :github => 'cul/cul_scv_hydra'
 #gem 'cul_scv_hydra', :path => '../cul_scv_hydra'
 gem 'jettywrapper', '>= 1.5.1'

@@ -121,7 +121,7 @@ GEM
     coffee-script-source (1.9.1)
     cul_image_props (0.3.5)
       nokogiri
-    cul_scv_hydra (0.22.8)
+    cul_scv_hydra (0.22.9)
       active-fedora (~> 7.0)
       active-triples (~> 0.2.2)
       active_fedora_finders (>= 0.5.0)
@@ -473,7 +473,7 @@ DEPENDENCIES
   capybara
   coderay
   coffee-rails
-  cul_scv_hydra (>= 0.22.8)
+  cul_scv_hydra (>= 0.22.9)
   devise (>= 3.4.1)
   equivalent-xml
   factory_girl_rails (>= 4.4.1)
