@@ -31,7 +31,7 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.getImageUrl = function(pid, type, 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.showMediaViewModal = function(pid){
   Hyacinth.showMainModal(
     'Media View: ' + pid,
-    '<iframe id="digital-object-media-view" src="/digital_objects/' + pid + '/media_view"></iframe>',
+    '<iframe id="digital-object-media-view" src="/digital_objects/' + pid + '/media_view" allowfullscreen></iframe>',
     '<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>'
   );
 
