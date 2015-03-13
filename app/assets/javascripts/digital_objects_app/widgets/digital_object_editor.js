@@ -429,6 +429,45 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
     that.$containerElement.find('.fieldset-selector').change();
   }
 
+  if (this.digitalObject instanceof Hyacinth.DigitalObjectsApp.DigitalObject.Asset) {
+    $('.rotate-dropdown-options li a').on('click', function(e){
+      e.preventDefault();
+      var rotateBy = parseInt($(this).attr('data-rotate-by'));
+      var $thumbnailImg = $(this).closest('.child-digital-object-preview').find('img.thumbnail');
+      $thumbnailImg.css('opacity', '.3');
+      $.ajax({
+        url: '/digital_objects/' + that.digitalObject.getPid() + '/rotate_image',
+        type: 'POST',
+        data: {
+          rotate_by: rotateBy
+        },
+        cache: false
+      }).done(function(digitalObjectCreationResponse){
+
+        //$.get( $thumbnailImg.attr('src'), function( data ) {
+        //  //$thumbnailImg.attr('src', $thumbnailImg.attr('src'));
+        //  //$thumbnailImg.css('opacity', '1');
+        //  $thumbnailImg.attr('src', $thumbnailImg.attr('src') + '?' + new Date());
+        //  $thumbnailImg.css('opacity', '1');
+        //});
+
+
+        //Hyacinth.DigitalObjectsApp.DigitalObjectEditor.attemptToRefreshCacheForImageUrl($thumbnailImg.attr('src'), function(){
+        //  $thumbnailImg.attr('src', $thumbnailImg.attr('src') + '?' + new Date().getTime());
+        //  $thumbnailImg.css('opacity', '1');
+        //});
+
+        $thumbnailImg.attr('src', $thumbnailImg.attr('src') + '?' + new Date().getTime());
+        $thumbnailImg.css('opacity', '1');
+
+        Hyacinth.addAlert('Image has been rotated.<br /><br /><strong>Note:</strong> A hard page refresh may be required to view the change.', 'info')
+
+      }).fail(function(){
+        alert(Hyacinth.unexpectedAjaxErrorMessage);
+      });
+    });
+  }
+
   //And finally, refresh tab indexes
   Hyacinth.DigitalObjectsApp.DigitalObjectEditor.refreshTabIndexes($editorForm);
 
@@ -599,4 +638,23 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.removeNonEnabledNonBlan
   });
 
   this.removeEmptyDynamicFieldGroups();
+};
+
+
+Hyacinth.DigitalObjectsApp.DigitalObjectEditor.attemptToRefreshCacheForImageUrl = function(url, callback) {
+  //var i = new Image();
+  //i.src = url + '?' + new Date().getTime();
+  //var $newDiv = $('<div style="display:none;"></div>');
+  //$newDiv.append(i);
+  //$('body').append($newDiv);
+  //i.onload = function(){
+  //  callback();
+  //  $newDiv.remove();
+  //};
+
+
+  $.get( url, function( data ) {
+    callback();
+  });
+
 };

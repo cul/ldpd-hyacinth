@@ -28,6 +28,7 @@ fedora.yml
 hyacinth.yml
 secrets.yml
 solr.yml
+repository_cache.yml
 
 *_user_accounts.yml
 

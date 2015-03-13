@@ -29,7 +29,7 @@
     </div>
     <div class="col-xs-2">
       <% if ( searchResult.hasImage()) { %>
-        <img class="img-responsive thumbnail pull-right" src="<%= searchResult.getImageUrl('square', 128) %>" title="<%= searchResult.getPid() %>" />
+        <img class="img-responsive thumbnail pull-right" src="<%= searchResult.getImageUrl('scaled', 128) %>" title="<%= searchResult.getPid() %>" />
       <% } %>
     </div>
     <div class="clearfix"></div>

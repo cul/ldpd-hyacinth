@@ -55,6 +55,7 @@ namespace :deploy do
     run "ln -nfs #{deploy_to}shared/hyacinth.yml #{release_path}/config/hyacinth.yml"
     run "ln -nfs #{deploy_to}shared/secrets.yml #{release_path}/config/secrets.yml"
     run "ln -nfs #{deploy_to}shared/solr.yml #{release_path}/config/solr.yml"
+    run "ln -nfs #{deploy_to}shared/repository_cache.yml #{release_path}/config/repository_cache.yml"
 
     run "mkdir -p #{release_path}/db"
     run "ln -nfs #{deploy_to}shared/#{rails_env}.sqlite3 #{release_path}/db/#{rails_env}.sqlite3"

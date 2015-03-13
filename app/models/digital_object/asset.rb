@@ -189,6 +189,18 @@ class DigitalObject::Asset < DigitalObject::Base
     return mime_type
   end
 
+  def regenrate_image_derivatives!
+    credentials = ActionController::HttpAuthentication::Basic.encode_credentials(REPOSITORY_CACHE_CONFIG['username'], REPOSITORY_CACHE_CONFIG['password'])
+    response = JSON(RestClient.post(REPOSITORY_CACHE_CONFIG['url'] + "/images/#{self.pid}/regenerate", {fake: 'fake'}, {Authorization: credentials}))
+
+    #
+    #resource = RestClient::Resource.new( REPOSITORY_CACHE_CONFIG['url'] + "/images/#{self.pid}/regenerate", REPOSITORY_CACHE_CONFIG['username'], REPOSITORY_CACHE_CONFIG['password'] )
+    ##resource.post( {}, :Authorization => $auth )
+    #response = resource.post({})
+
+    return response['success'].to_s == 'true'
+  end
+
   def to_solr
     doc = super
     doc['original_filename_sim'] = self.get_original_filename

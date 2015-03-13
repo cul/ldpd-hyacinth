@@ -143,6 +143,20 @@
           <div class="caption">
             <% if (digitalObject.getDcType() == 'StillImage') { %>
               <a href="#" class="btn btn-block btn-primary btn-xs" onclick="Hyacinth.DigitalObjectsApp.DigitalObject.Base.showMediaViewModal('<%= digitalObject.getPid() %>'); return false;">View Zoomable Image</a>
+              <% if (mode == 'show') { %>
+                <br />
+                <!-- Single button -->
+                <div class="btn-group">
+                  <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                    Change Image Rotation <span class="caret"></span>
+                  </button>
+                  <ul class="rotate-dropdown-options dropdown-menu" role="menu">
+                    <li><a href="#" data-rotate-by="90">Rotate 90˚ clockwise</a></li>
+                    <li><a href="#" data-rotate-by="180">Rotate 180˚ clockwise</a></li>
+                    <li><a href="#" data-rotate-by="270">Rotate 270˚ clockwise</a></li>
+                  </ul>
+                </div>
+              <% } %>
             <% } %>
           </div>
         </div>

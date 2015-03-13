@@ -37,6 +37,7 @@ Hyacinth::Application.routes.draw do
       get 'mods'
       put 'undelete', action: 'undestroy'
       match 'add_parent/:parent_pid', action: 'add_parent', via: [:get, :put]
+      post 'rotate_image', action: 'rotate_image'
     end
   end
 
