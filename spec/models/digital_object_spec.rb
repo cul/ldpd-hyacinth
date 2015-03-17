@@ -14,19 +14,19 @@ RSpec.describe DigitalObject::Base, :type => :model do
     hsh1 = {
       "title" => [
         {
-          "non_sort_portion" => "The",
-          "sort_portion" => "Catcher in the Rye"
+          "title_non_sort_portion" => "The",
+          "title_sort_portion" => "Catcher in the Rye"
         }
       ],
       "collection" => [
         {
-          "authorized_term_uri" => "http://localhost:8080/fedora/objects/cul:p5hqbzkh2p"
+          "collection_authorized_term_uri" => "http://localhost:8080/fedora/objects/cul:p5hqbzkh2p"
         }
       ],
       "note" => [
         {
-          "value" => "Test",
-          "type" => "Custom"
+          "note_value" => "Test",
+          "note_type" => "Custom"
         }
       ]
     }
@@ -34,17 +34,17 @@ RSpec.describe DigitalObject::Base, :type => :model do
     hsh2 = {
       "title" => [
         {
-          "sort_portion" => "Some Catcher in Some Rye"
+          "title_sort_portion" => "Some Catcher in Some Rye"
         }
       ],
       "note" => [
         {
-          "value" => "Great Note",
-          "type" => "Great"
+          "note_value" => "Great Note",
+          "note_type" => "Great"
         },
         {
-          "value" => "Awesome Note",
-          "type" => "Awesome"
+          "note_value" => "Awesome Note",
+          "note_type" => "Awesome"
         }
       ]
     }
@@ -52,22 +52,22 @@ RSpec.describe DigitalObject::Base, :type => :model do
     merged_hsh = {
       "title" => [
         {
-          "sort_portion" => "Some Catcher in Some Rye"
+          "title_sort_portion" => "Some Catcher in Some Rye"
         }
       ],
       "collection" => [
         {
-          "authorized_term_uri" => "http://localhost:8080/fedora/objects/cul:p5hqbzkh2p"
+          "collection_authorized_term_uri" => "http://localhost:8080/fedora/objects/cul:p5hqbzkh2p"
         }
       ],
       "note" => [
         {
-          "value" => "Great Note",
-          "type" => "Great"
+          "note_value" => "Great Note",
+          "note_type" => "Great"
         },
         {
-          "value" => "Awesome Note",
-          "type" => "Awesome"
+          "note_value" => "Awesome Note",
+          "note_type" => "Awesome"
         }
       ]
     }
@@ -88,13 +88,13 @@ RSpec.describe DigitalObject::Base, :type => :model do
     hsh1 = {
       "title" => [
         {
-          "non_sort_portion" => "The",
-          "sort_portion" => "Catcher in the Rye"
+          "title_non_sort_portion" => "The",
+          "title_sort_portion" => "Catcher in the Rye"
         }
       ],
       "collection" => [
         {
-          "authorized_term_uri" => "http://localhost:8080/fedora/objects/cul:p5hqbzkh2p"
+          "collection_authorized_term_uri" => "http://localhost:8080/fedora/objects/cul:p5hqbzkh2p"
         }
       ]
     }
@@ -102,8 +102,8 @@ RSpec.describe DigitalObject::Base, :type => :model do
     hsh2 = {
       "note" => [
         {
-          "value" => "Test",
-          "type" => "Custom"
+          "note_value" => "Test",
+          "note_type" => "Custom"
         }
       ]
     }
@@ -125,29 +125,29 @@ RSpec.describe DigitalObject::Base, :type => :model do
     new_dynamic_field_data = {
       "title" => [
         {
-          "non_sort_portion" => "",
-          "sort_portion" => "Catcher in the Rye"
+          "title_non_sort_portion" => "",
+          "title_sort_portion" => "Catcher in the Rye"
         }
       ],
       "name" => [
         {
-          "value" => "",
-          "role" => [
+          "name_value" => "",
+          "name_role" => [
             {
-              "value" => ""
+              "name_role_value" => ""
             }
           ]
         }
       ],
       "collection" => [
         {
-          "authorized_term_uri" => "http://localhost:8080/fedora/objects/cul:p5hqbzkh2p"
+          "collection_authorized_term_uri" => "http://localhost:8080/fedora/objects/cul:p5hqbzkh2p"
         }
       ],
       "note" => [
         {
-          "value" => "",
-          "type" => ""
+          "note_value" => "",
+          "note_type" => ""
         }
       ]
     }
@@ -155,12 +155,12 @@ RSpec.describe DigitalObject::Base, :type => :model do
     expected = {
       "title" => [
         {
-          "sort_portion" => "Catcher in the Rye"
+          "title_sort_portion" => "Catcher in the Rye"
         }
       ],
       "collection" => [
         {
-          "authorized_term_uri" => "http://localhost:8080/fedora/objects/cul:p5hqbzkh2p"
+          "collection_authorized_term_uri" => "http://localhost:8080/fedora/objects/cul:p5hqbzkh2p"
         }
       ]
     }
@@ -170,6 +170,82 @@ RSpec.describe DigitalObject::Base, :type => :model do
     expect(@digital_object.dynamic_field_data).to eq(expected)
 
   end
+
+  describe "#remove_dynamic_field_data_key!" do
+
+    it "can remove one or more specific keys, at varying levels, within the dynamic_field_data" do
+
+      @digital_object = DigitalObject::Item.new()
+
+      new_dynamic_field_data = {
+        "title" => [
+          {
+            "title_non_sort_portion" => "The",
+            "title_sort_portion" => "Catcher in the Rye"
+          }
+        ],
+        "note" => [
+          {
+            "note_value" => "My note",
+            "note_type" => "Great Note"
+          },
+          {
+            "note_value" => "My other note",
+            "note_type" => "Really Great Note"
+          }
+        ]
+      }
+
+      expected = {
+        "note" => [
+          {
+            "note_value" => "My note",
+          },
+          {
+            "note_value" => "My other note",
+          }
+        ]
+      }
+
+      @digital_object.update_dynamic_field_data(new_dynamic_field_data)
+      @digital_object.remove_dynamic_field_data_key!('title')
+      @digital_object.remove_dynamic_field_data_key!('note_type')
+      expect(@digital_object.dynamic_field_data).to eq(expected)
+    end
+
+    it "clears empty parent elements after perfoming a key deletion" do
+
+      @digital_object = DigitalObject::Item.new()
+
+      new_dynamic_field_data = {
+        "name" => [
+          {
+            "name_value" => "Smith, John",
+            "name_role" => [
+              {
+                "name_role_value" => "Creator"
+              }
+            ]
+          }
+        ]
+      }
+
+      expected = {
+        "name" => [
+          {
+            "name_value" => "Smith, John",
+          }
+        ]
+      }
+
+      @digital_object.update_dynamic_field_data(new_dynamic_field_data)
+      @digital_object.remove_dynamic_field_data_key!('name_role_value')
+      expect(@digital_object.dynamic_field_data).to eq(expected)
+    end
+
+  end
+
+
 
 
 

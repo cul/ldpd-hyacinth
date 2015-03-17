@@ -460,7 +460,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
         $thumbnailImg.attr('src', $thumbnailImg.attr('src') + '?' + new Date().getTime());
         $thumbnailImg.css('opacity', '1');
 
-        Hyacinth.addAlert('Image has been rotated.<br /><br /><strong>Note:</strong> A hard page refresh may be required to view the change.', 'info')
+        Hyacinth.addAlert('Image has been rotated and queued for derivative regeneration.<br /><br /><strong>Note:</strong> A hard page refresh may be required to view the change.', 'info')
 
       }).fail(function(){
         alert(Hyacinth.unexpectedAjaxErrorMessage);
