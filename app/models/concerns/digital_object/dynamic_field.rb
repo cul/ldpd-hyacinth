@@ -53,7 +53,7 @@ module DigitalObject::DynamicField
       end
     }
 
-    # Step 3: Clean up any blank fields
+    # Step 3: Clean up any blank fields that were created as a result of the deletion
     remove_blank_fields_from_dynamic_field_data!(df_data)
 
   end

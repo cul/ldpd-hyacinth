@@ -8,6 +8,9 @@ class DigitalObject::Base
   include DigitalObject::DynamicField
   include DigitalObject::XmlDatastreamRendering
 
+  NUM_FEDORA_RETRY_ATTEMPTS = 3
+  DELAY_BETWEEN_FEDORA_RETRY_ATTEMPTS = 5.seconds
+
   # For ActiveModel::Dirty
   define_attribute_methods :parent_digital_object_pids, :obsolete_parent_digital_object_pids, :ordered_child_digital_object_pids
 
@@ -162,7 +165,23 @@ class DigitalObject::Base
       raise Hyacinth::DigitalObjectNotFoundError.new("Couldn't find DigitalObject with pid #{pid}")
     end
 
-    fobj = ActiveFedora::Base.find(pid)
+    # Handle Fedora timeouts / unreachable host.  Try up to 3 times.
+    fobj = nil
+    NUM_FEDORA_RETRY_ATTEMPTS.times { |i|
+      begin
+        fobj = ActiveFedora::Base.find(pid)
+        break
+      rescue RestClient::RequestTimeout, Errno::EHOSTUNREACH => e
+        remaining_attempts = (NUM_FEDORA_RETRY_ATTEMPTS-1) - i
+        if remaining_attempts == 0
+          raise e
+        else
+          Rails.logger.error "Error: Could not connect to fedora. (#{e.class.to_s + ': ' + e.message}).  Will retry #{remaining_attempts} more #{remaining_attempts == 1 ? 'time' : 'times'} (after a #{DELAY_BETWEEN_FEDORA_RETRY_ATTEMPTS} second delay)."
+          sleep DELAY_BETWEEN_FEDORA_RETRY_ATTEMPTS
+        end
+      end
+    }
+
     class_to_instantiate = DigitalObject::Base.get_class_for_fedora_object(fobj)
     return class_to_instantiate.new(digital_object_record, fobj)
   end
@@ -258,7 +277,22 @@ class DigitalObject::Base
         set_fedora_obsolete_parent_digital_object_pid_relationships if obsolete_parent_digital_object_pids_changed?
 
         @db_record.save! # Save timestamps + updates to modifed_by, etc.
-        @fedora_object.save
+
+        # Handle Fedora timeouts / unreachable host.  Try up to 3 times.
+        NUM_FEDORA_RETRY_ATTEMPTS.times { |i|
+          begin
+            @fedora_object.save
+            break
+          rescue RestClient::RequestTimeout, Errno::EHOSTUNREACH => e
+            remaining_attempts = (NUM_FEDORA_RETRY_ATTEMPTS-1) - i
+            if remaining_attempts == 0
+              raise e
+            else
+              Rails.logger.error "Error: Could not connect to fedora. (#{e.class.to_s + ': ' + e.message}).  Will retry #{remaining_attempts} more #{remaining_attempts == 1 ? 'time' : 'times'} (after a #{DELAY_BETWEEN_FEDORA_RETRY_ATTEMPTS} second delay)."
+              sleep DELAY_BETWEEN_FEDORA_RETRY_ATTEMPTS
+            end
+          end
+        }
 
         if parent_digital_object_pids_changed?
 
@@ -345,11 +379,11 @@ class DigitalObject::Base
     struct_ds_name = 'structMetadata'
     if self.ordered_child_digital_object_pids.present?
 
-      #TODO: Use Solr to get titles of child objects.  Fall back to "Child 1", "Child 2", etc. if a title is not found for some reason.
+      #TODO: Use Solr to get titles of child objects.  Fall back to "Item 1", "Item 2", etc. if a title is not found for some reason.
 
       struct_ds = Cul::Scv::Hydra::Datastreams::StructMetadata.new(nil, 'structMetadata', label:'Sequence', type:'logical')
       ordered_child_digital_object_pids.each_with_index do |pid, index|
-        struct_ds.create_div_node(nil, {order: (index+1), label: "Child #{index+1}", contentids: pid})
+        struct_ds.create_div_node(nil, {order: (index+1), label: "Item #{index+1}", contentids: pid})
       end
 	  	@fedora_object.datastreams[struct_ds_name].ng_xml = struct_ds.ng_xml
     else
@@ -359,7 +393,21 @@ class DigitalObject::Base
       end
     end
 
-    @fedora_object.save
+    # Handle Fedora timeouts / unreachable host.  Try up to 3 times.
+    NUM_FEDORA_RETRY_ATTEMPTS.times { |i|
+      begin
+        @fedora_object.save
+        break
+      rescue RestClient::RequestTimeout, Errno::EHOSTUNREACH => e
+        remaining_attempts = (NUM_FEDORA_RETRY_ATTEMPTS-1) - i
+        if remaining_attempts == 0
+          raise e
+        else
+          Rails.logger.error "Error: Could not connect to fedora. (#{e.class.to_s + ': ' + e.message}).  Will retry #{remaining_attempts} more #{remaining_attempts == 1 ? 'time' : 'times'} (after a #{DELAY_BETWEEN_FEDORA_RETRY_ATTEMPTS} second delay)."
+          sleep DELAY_BETWEEN_FEDORA_RETRY_ATTEMPTS
+        end
+      end
+    }
 
     return (! @errors.present?)
   end
