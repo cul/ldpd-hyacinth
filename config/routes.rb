@@ -38,6 +38,7 @@ Hyacinth::Application.routes.draw do
       put 'undelete', action: 'undestroy'
       match 'add_parent/:parent_pid', action: 'add_parent', via: [:get, :put]
       post 'rotate_image', action: 'rotate_image'
+      post 'swap_order_of_first_two_child_assets', actions: 'swap_order_of_first_two_child_assets'
     end
   end
 

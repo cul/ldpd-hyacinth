@@ -199,6 +199,55 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.init = function() {
       that.addFilterToCurrentSearch(field, operator, value);
     });
 
+    //Swap front / back image handler
+    that.$containerElement.find('.swap-front-back').on('click', function(){
+
+      var $thumbnailImg = $(this).closest('.thumbnail-wrapper').find('img.thumbnail');
+      var pid = $thumbnailImg.attr('data-pid');
+      Hyacinth.addAlert('Swapping front and back images...', 'info');
+      $.ajax({
+        url: '/digital_objects/' + pid + '/swap_order_of_first_two_child_assets',
+        type: 'POST',
+        cache: false
+      }).done(function(swapResponse){
+        if (swapResponse['success']) {
+          console.log($thumbnailImg.attr('src').replace(/(.+\/images\/)([^\/]+)(\/.+)/, '$1' + swapResponse['ordered_child_digital_object_pids'][0] + '$3'));
+          $thumbnailImg.attr('src', $thumbnailImg.attr('src').replace(/(.+\/images\/)([^\/]+)(\/.+)/, '$1' + swapResponse['ordered_child_digital_object_pids'][0] + '$3'));
+          Hyacinth.addAlert('Images swapped.', 'info');
+        } else {
+          Hyacinth.addAlert('An error occurred during the rotation attempt:<br />' + swapResponse['errors'].join(', '), 'danger');
+        }
+      });
+    });
+
+    //Bind image rotate handlers
+    $('.rotate-dropdown-options li a').on('click', function(e){
+      e.preventDefault();
+      var rotateBy = parseInt($(this).attr('data-rotate-by'));
+      var $thumbnailImg = $(this).closest('.thumbnail-wrapper').find('img.thumbnail');
+      var pid = $thumbnailImg.attr('data-pid');
+      $thumbnailImg.css('opacity', '.3');
+      Hyacinth.addAlert('Rotating image...', 'info');
+      $.ajax({
+        url: '/digital_objects/' + pid + '/rotate_image',
+        type: 'POST',
+        data: {
+          rotate_by: rotateBy
+        },
+        cache: false
+      }).done(function(rotationResponse){
+        $thumbnailImg.css('opacity', '1');
+        if (rotationResponse['success']) {
+          $thumbnailImg.attr('src', $thumbnailImg.attr('src') + '?' + new Date().getTime());
+          Hyacinth.addAlert('Image has been rotated and queued for derivative regeneration.<br /><br /><strong>Note:</strong> A hard page refresh will be required to view the change globally (because of browser caching).', 'info');
+        } else {
+          Hyacinth.addAlert('An error occurred during the rotation attempt:<br />' + rotationResponse['errors'].join(', '), 'danger');
+        }
+      }).fail(function(){
+        alert(Hyacinth.unexpectedAjaxErrorMessage);
+      });
+    });
+
     //Pre-populate form values based on params
     var $searchForm = that.$containerElement.find('.digital-object-search-form');
 
@@ -350,6 +399,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.dispose = function() {
   this.$containerElement.find('.query-constraints .remove-filter-link').off('click');
   this.$containerElement.find('.pagination').find('.goto-page').off('click');
   this.$containerElement.find('.show-facet-selector').off('click');
+  this.$containerElement.find('.swap-front-back').off('click');
+  this.$containerElement.find('.rotate-dropdown-options li a').off('click');
   if (this.currentAuthorizedTermSelector != null) {
     this.currentFacetSelector.dispose(); //Always clean up the old instance and any event bindings it might have
     this.currentFacetSelector = null;

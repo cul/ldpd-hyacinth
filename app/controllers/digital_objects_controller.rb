@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 class DigitalObjectsController < ApplicationController
-  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor, :download, :add_parent, :mods, :media_view, :rotate_image]
+  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor, :download, :add_parent, :mods, :media_view, :rotate_image, :swap_order_of_first_two_child_assets]
   before_action :set_contextual_nav_options
 
   # GET /digital_objects
@@ -452,20 +452,37 @@ class DigitalObjectsController < ApplicationController
     if @digital_object.is_a?(DigitalObject::Asset) && @digital_object.dc_type == 'StillImage'
       rotate_by = params[:rotate_by].to_i
       @digital_object.fedora_object.orientation -= rotate_by
-      @digital_object.fedora_object.save
-      unless @digital_object.regenrate_image_derivatives!
+      unless @digital_object.save && @digital_object.regenrate_image_derivatives!
         errors << 'An error occurred during image regeneration.'
       end
     else
       errors << "Only Assets of type StillImage can be rotated.  This is a #{@digital_object.digital_object_type.display_label} of type #{@digital_object.dc_type}"
     end
-
+    
     if errors.present?
       render json: {errors: errors}
     else
       render json: {success: true}
     end
 
+  end
+
+  def swap_order_of_first_two_child_assets
+    errors = []
+    if @digital_object.is_a?(DigitalObject::Item) && @digital_object.ordered_child_digital_object_pids.length == 2
+      @digital_object.ordered_child_digital_object_pids = @digital_object.ordered_child_digital_object_pids.reverse
+      unless @digital_object.save
+        errors << 'An error occurred during image regeneration.'
+      end
+    else
+      errors << "Only Items with 2 child assets have have their first two assets swapped.  This is a #{@digital_object.digital_object_type.display_label} with #{@digital_object.ordered_child_digital_object_pids.length} child assets."
+    end
+
+    if errors.present?
+      render json: {errors: errors}
+    else
+      render json: {success: true, ordered_child_digital_object_pids: @digital_object.ordered_child_digital_object_pids}
+    end
   end
 
   private

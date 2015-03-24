@@ -252,17 +252,22 @@
 
   .search-results {
 
-    .thumbnail {
-      margin-bottom:0;
-    }
-
     .pagination-top .pagination {
       margin-top:0;
     }
 
     .search-result {
-      padding:.5em .5em .5em .75em;
+      padding:.5em .5em 0 .75em;
       margin-bottom:.5em;
+
+      .thumbnail-wrapper {
+
+        margin-bottom:-.5em;
+
+        .thumbnail {
+          margin-bottom:.2em;
+        }
+      }
     }
 
     .search-result:nth-child(2n) {
@@ -274,9 +279,10 @@
     }
 
     .footer-label {
+      display:inline-block;
       position: relative;
-      top: -1.5em;
-      margin-bottom: -1.5em;
+      top: -1em;
+      margin-bottom: -1em;
     }
 
   }

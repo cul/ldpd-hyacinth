@@ -435,6 +435,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
       var rotateBy = parseInt($(this).attr('data-rotate-by'));
       var $thumbnailImg = $(this).closest('.child-digital-object-preview').find('img.thumbnail');
       $thumbnailImg.css('opacity', '.3');
+      Hyacinth.addAlert('Rotating image...', 'info');
       $.ajax({
         url: '/digital_objects/' + that.digitalObject.getPid() + '/rotate_image',
         type: 'POST',
@@ -442,26 +443,14 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
           rotate_by: rotateBy
         },
         cache: false
-      }).done(function(digitalObjectCreationResponse){
-
-        //$.get( $thumbnailImg.attr('src'), function( data ) {
-        //  //$thumbnailImg.attr('src', $thumbnailImg.attr('src'));
-        //  //$thumbnailImg.css('opacity', '1');
-        //  $thumbnailImg.attr('src', $thumbnailImg.attr('src') + '?' + new Date());
-        //  $thumbnailImg.css('opacity', '1');
-        //});
-
-
-        //Hyacinth.DigitalObjectsApp.DigitalObjectEditor.attemptToRefreshCacheForImageUrl($thumbnailImg.attr('src'), function(){
-        //  $thumbnailImg.attr('src', $thumbnailImg.attr('src') + '?' + new Date().getTime());
-        //  $thumbnailImg.css('opacity', '1');
-        //});
-
-        $thumbnailImg.attr('src', $thumbnailImg.attr('src') + '?' + new Date().getTime());
+      }).done(function(rotationResponse){
         $thumbnailImg.css('opacity', '1');
-
-        Hyacinth.addAlert('Image has been rotated and queued for derivative regeneration.<br /><br /><strong>Note:</strong> A hard page refresh may be required to view the change.', 'info')
-
+        if (rotationResponse['success']) {
+          $thumbnailImg.attr('src', $thumbnailImg.attr('src') + '?' + new Date().getTime());
+          Hyacinth.addAlert('Image has been rotated and queued for derivative regeneration.<br /><br /><strong>Note:</strong> A hard page refresh will be required to view the change globally (because of browser caching).', 'info');
+        } else {
+          Hyacinth.addAlert('An error occurred during the rotation attempt:<br />' + rotationResponse['errors'].join(', '), 'danger');
+        }
       }).fail(function(){
         alert(Hyacinth.unexpectedAjaxErrorMessage);
       });

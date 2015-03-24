@@ -32,9 +32,14 @@ Hyacinth.setupMultiselectWidgets = function(){
   });
 };
 
-Hyacinth.addAlert = function(alertHtml, type) {
+Hyacinth.addAlert = function(alertHtml, type, duration) {
 
   var alertClass = '';
+
+  //Set Default Duration
+  if(typeof(duration) == 'undefined') {
+    duration = 3000;
+  }
 
   switch(type) {
     case 'info':
@@ -54,7 +59,7 @@ Hyacinth.addAlert = function(alertHtml, type) {
       return;
   }
 
-  $newAlert = $('<div class="alert ' + alertClass + '">' + alertHtml + '<button type="button" class="close" data-dismiss="alert">×</button></div>');
+  $newAlert = $('<div class="alert ' + alertClass + '" data-duration="' + duration + '">' + alertHtml + '<button type="button" class="close" data-dismiss="alert">×</button></div>');
   $newAlert.hide();
   $('#alert-container').prepend($newAlert);
   //The line below gives us simultaneous fade-in AND slide-down animations.
@@ -70,13 +75,19 @@ Hyacinth.monitorAlertsForFadeOut = function() {
         //Mark for fadeout
         $(this).attr('data-marked-for-fadeout', 'true');
         var $alert = $(this);
-        //And set a fadeout timeout for this element
+        //And set a fadeout timeout for this element, using the specified duration if present.
+        if($alert.is('[data-duration]')) {
+          var duration = parseInt($alert.attr('data-duration'));
+        } else {
+          var duration = 3000;
+        }
+
         setTimeout(function(){
           $alert.fadeOut(400, function(){
             //And finally, remove the element
             $alert.remove();
           });
-        }, 3000);
+        }, duration);
       });
     }
   }, 2000);
