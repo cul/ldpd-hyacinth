@@ -19,13 +19,6 @@ namespace :hyacinth do
         # Create Test project
         test_project = Project.create!(string_key: 'test', display_label: 'Test', pid_generator: test_pid_generator)
 
-        # Create AuthorizedTerms and add them to the correct ControlledVocabularies
-        AuthorizedTerm.create!(
-          value: 'Test Repository',
-          code: 'NNC-FAKE-CODE',
-          authority: 'nnc',
-          controlled_vocabulary: ControlledVocabulary.find_by(string_key: 'physical_location')
-        )
         AuthorizedTerm.create!(
           value: 'Test Collection',
           controlled_vocabulary: ControlledVocabulary.find_by(string_key: 'collection')
@@ -51,7 +44,7 @@ namespace :hyacinth do
           test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: dynamic_field, digital_object_type: dot_group)
         end
 
-        (DynamicFieldGroup.find_by(string_key: 'collection').dynamic_fields + DynamicFieldGroup.find_by(string_key: 'form').dynamic_fields + DynamicFieldGroup.find_by(string_key: 'physical_location').dynamic_fields).each do |dynamic_field|
+        (DynamicFieldGroup.find_by(string_key: 'collection').dynamic_fields + DynamicFieldGroup.find_by(string_key: 'form').dynamic_fields).each do |dynamic_field|
           test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: dynamic_field, digital_object_type: dot_item)
         end
 
