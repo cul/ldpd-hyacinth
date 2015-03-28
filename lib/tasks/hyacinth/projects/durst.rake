@@ -90,6 +90,7 @@ namespace :hyacinth do
                 {value: 'conference', display_label: 'Event'}
               ]
             }.to_json),
+            DynamicField.new(string_key: 'name_usage_primary', display_label: 'Primary?', dynamic_field_type: DynamicField::Type::BOOLEAN),
             DynamicField.new(string_key: 'name_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, is_keyword_searchable: true, is_single_field_searchable: true, standalone_field_label: 'Name'),
             DynamicField.new(string_key: 'name_value_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI, is_single_field_searchable: true, standalone_field_label: 'Name Value URI'),
             DynamicField.new(string_key: 'name_authority', display_label: 'Authority', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY),
@@ -708,6 +709,13 @@ namespace :hyacinth do
           "element" => "mods:name",
           "attrs" => {
             "type" => "{{name_type}}",
+            "usage" => {
+                "ternary" => [
+                    "name_usage_primary",
+                    "primary",
+                    ""
+                ]
+            },
             "valueUri" => "{{name_value_uri}}",
             "authority" => "{{name_authority}}",
             "authorityURI" => "{{name_authority_uri}}"

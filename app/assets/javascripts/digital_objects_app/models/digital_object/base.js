@@ -19,7 +19,7 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData =
     item: Hyacinth.DigitalObjectsApp.DigitalObject.Item,
     asset: Hyacinth.DigitalObjectsApp.DigitalObject.Asset,
     group:  Hyacinth.DigitalObjectsApp.DigitalObject.Group,
-    exhibition: Hyacinth.DigitalObjectsApp.DigitalObject.Exhibition
+    publish_target: Hyacinth.DigitalObjectsApp.DigitalObject.PublishTarget
   }
   return new digitalObjectTypeStringKeysToClasses[digital_object_data['digital_object_type']['string_key']](digital_object_data);
 };
@@ -119,8 +119,8 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Group = function(digital_object_data){
 };
 Hyacinth.extendClass(Hyacinth.DigitalObjectsApp.DigitalObject.Group, Hyacinth.DigitalObjectsApp.DigitalObject.Base); //Extend
 
-// Exhibition - Subclass
-Hyacinth.DigitalObjectsApp.DigitalObject.Exhibition = function(digital_object_data){
+// PublishTarget - Subclass
+Hyacinth.DigitalObjectsApp.DigitalObject.PublishTarget = function(digital_object_data){
   Hyacinth.DigitalObjectsApp.DigitalObject.Base.call(this, digital_object_data); // call parent constructor
 };
-Hyacinth.extendClass(Hyacinth.DigitalObjectsApp.DigitalObject.Exhibition, Hyacinth.DigitalObjectsApp.DigitalObject.Base); //Extend
+Hyacinth.extendClass(Hyacinth.DigitalObjectsApp.DigitalObject.PublishTarget, Hyacinth.DigitalObjectsApp.DigitalObject.Base); //Extend

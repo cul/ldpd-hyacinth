@@ -1,7 +1,7 @@
-class DigitalObject::Exhibition < DigitalObject::Base
+class DigitalObject::PublishTarget < DigitalObject::Base
 
   VALID_DC_TYPES = ['Exhibition']
-  DIGITAL_OBJECT_TYPE_STRING_KEY = 'exhibition'
+  DIGITAL_OBJECT_TYPE_STRING_KEY = 'publish_target'
 
   def initialize(*args)
     super(*args)

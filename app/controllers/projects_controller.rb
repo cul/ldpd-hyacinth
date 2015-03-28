@@ -177,7 +177,7 @@ class ProjectsController < ApplicationController
     when 'index'
       @contextual_nav_options['nav_items'].push(label: 'Add New Project', url: new_project_path) if current_user.is_admin?
     when 'edit', 'update'
-      @contextual_nav_options['nav_items'].push(label: 'Delete This Project', url: project_path(@project.id), options: {method: :delete, data: { confirm: 'Are you sure you want to delete this Project?' } }) if current_user.is_admin? and @project.string_key != 'exhibitions'
+      @contextual_nav_options['nav_items'].push(label: 'Delete This Project', url: project_path(@project.id), options: {method: :delete, data: { confirm: 'Are you sure you want to delete this Project?' } }) if current_user.is_admin? and @project.string_key != 'publish_targets'
     when 'fieldsets'
       @contextual_nav_options['nav_items'].push(label: 'New Fieldset', url: new_fieldset_path(project_id: @project.id))
     end

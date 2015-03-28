@@ -3,7 +3,7 @@
 <!-- Nav tabs -->
 <ul class="nav nav-tabs">
   <li <%= 'class="active"'.html_safe if params[:action] == 'edit' %>><%= link_to 'Core Data', edit_project_path(@project) %></li>
-	<% (@project.string_key == 'exhibitions' ? DigitalObjectType.where(string_key: 'exhibition') : DigitalObjectType.where.not(string_key: 'exhibition')).each do |digital_object_type| %>
+	<% (@project.string_key == 'publish_targets' ? DigitalObjectType.where(string_key: 'publish_target') : DigitalObjectType.where.not(string_key: 'publish_target')).each do |digital_object_type| %>
 		<li <%= 'class="active"'.html_safe if (params[:action] == 'edit_enabled_dynamic_fields' && @digital_object_type == digital_object_type) %>><%= link_to 'Fields For ' + digital_object_type.display_label.pluralize, edit_enabled_dynamic_fields_project_path(@project, digital_object_type) %></li>
 	<% end %>
 	<li <%= 'class="active"'.html_safe if params[:action] == 'edit_project_permissions' %>><%= link_to 'Permissions', edit_project_permissions_project_path(@project) %></li>

@@ -29,7 +29,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.getProjectDisplay
   return this.projectDisplayLabel;
 };
 
-//Possible values include 'asset', 'item', 'group', 'exhibition'
+//Possible values include 'asset', 'item', 'group', 'publish_target'
 Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.getHyacinthType = function(){
   return this.hyacinthType;
 };

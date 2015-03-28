@@ -171,7 +171,7 @@ class DigitalObject::Base
       begin
         fobj = ActiveFedora::Base.find(pid)
         break
-      rescue RestClient::RequestTimeout, Errno::EHOSTUNREACH => e
+      rescue RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH => e
         remaining_attempts = (NUM_FEDORA_RETRY_ATTEMPTS-1) - i
         if remaining_attempts == 0
           raise e
@@ -200,7 +200,7 @@ class DigitalObject::Base
     when GenericResource
       return DigitalObject::Asset if (fobj.datastreams['DC'].dc_type & DigitalObject::Asset.valid_dc_types).length > 0
     when Concept
-      return DigitalObject::Exhibition if (fobj.datastreams['DC'].dc_type & DigitalObject::Exhibition.valid_dc_types).length > 0
+      return DigitalObject::PublishTarget if (fobj.datastreams['DC'].dc_type & DigitalObject::PublishTarget.valid_dc_types).length > 0
     end
 
     raise 'Cannot determine type of fedora object ' + fobj.class.to_s + ' with pid: ' + fobj.pid + ' and dc_type: ' + fobj.datastreams['DC'].dc_type.inspect
@@ -283,7 +283,7 @@ class DigitalObject::Base
           begin
             @fedora_object.save
             break
-          rescue RestClient::RequestTimeout, Errno::EHOSTUNREACH => e
+          rescue RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH => e
             remaining_attempts = (NUM_FEDORA_RETRY_ATTEMPTS-1) - i
             if remaining_attempts == 0
               raise e
@@ -398,7 +398,7 @@ class DigitalObject::Base
       begin
         @fedora_object.save
         break
-      rescue RestClient::RequestTimeout, Errno::EHOSTUNREACH => e
+      rescue RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH => e
         remaining_attempts = (NUM_FEDORA_RETRY_ATTEMPTS-1) - i
         if remaining_attempts == 0
           raise e
