@@ -1,7 +1,5 @@
 class Project < ActiveRecord::Base
 
-  before_create :create_associated_fedora_object!
-
   has_many :enabled_dynamic_fields, :dependent => :destroy
   accepts_nested_attributes_for :enabled_dynamic_fields, :allow_destroy => true
 
@@ -9,13 +7,18 @@ class Project < ActiveRecord::Base
   has_many :project_permissions, :dependent => :destroy
   accepts_nested_attributes_for :project_permissions, :allow_destroy => true, reject_if: proc { |attributes| attributes['id'].blank? && attributes['user_id'].blank? }
 
+  has_many :publish_targets, :through => :enabled_publish_targets
+  has_many :enabled_publish_targets, :dependent => :destroy
+  accepts_nested_attributes_for :enabled_publish_targets, :allow_destroy => true
+
   belongs_to :pid_generator
 
   validates :display_label, :string_key, presence: true
   validate :validate_custom_asset_directory
 
-  before_save :set_defaults_for_blank_fields
+  before_create :create_associated_fedora_object!
   after_save :update_fedora_object!, :ensure_that_title_fields_are_enabled_and_required
+  after_destroy :mark_fedora_object_as_deleted!
 
   # Returns the associated Fedora Object
   def fedora_object
@@ -43,6 +46,10 @@ class Project < ActiveRecord::Base
     self.fedora_object.datastreams["DC"].dc_title = self.display_label
     self.fedora_object.label = self.display_label
     self.fedora_object.save
+  end
+
+  def mark_fedora_object_as_deleted!
+    self.fedora_object.state = 'D'
   end
 
   # Returns enabled dynamic fields (with eager-loaded nested dynamic_field data because we use that frequently)
@@ -118,10 +125,6 @@ class Project < ActiveRecord::Base
   end
 
   private
-
-  def set_defaults_for_blank_fields
-
-  end
 
   def validate_custom_asset_directory
     if full_path_to_custom_asset_directory.present?

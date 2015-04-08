@@ -1,5 +1,7 @@
 class DynamicFieldsController < ApplicationController
+  before_action :require_hyacinth_admin!
   before_action :set_dynamic_field, only: [:show, :edit, :update, :destroy]
+  before_action :set_contextual_nav_options
 
   # GET /dynamic_fields
   # GET /dynamic_fields.json
@@ -82,13 +84,30 @@ class DynamicFieldsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_dynamic_field
-      @dynamic_field = DynamicField.find(params[:id])
+
+  # Use callbacks to share common setup or constraints between actions.
+  def set_dynamic_field
+    @dynamic_field = DynamicField.find(params[:id])
+  end
+
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def dynamic_field_params
+    params.require(:dynamic_field).permit(:string_key, :display_label, :parent_dynamic_field_group_id, :sort_order, :dynamic_field_type, :controlled_vocabulary_id, :additional_data_json, :required_for_group_save, :is_keyword_searchable, :is_facet_field, :standalone_field_label, :is_searchable_identifier_field, :is_searchable_title_field, :is_single_field_searchable, :created_by_id, :updated_by_id)
+  end
+
+  def set_contextual_nav_options
+
+    if params[:action] == 'index'
+      @contextual_nav_options['nav_title']['label'] =  'Dynamic Fields'.html_safe
+    else
+      @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Dynamic Fields'.html_safe
+      @contextual_nav_options['nav_title']['url'] = dynamic_fields_path
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def dynamic_field_params
-      params.require(:dynamic_field).permit(:string_key, :display_label, :parent_dynamic_field_group_id, :sort_order, :dynamic_field_type, :controlled_vocabulary_id, :additional_data_json, :required_for_group_save, :is_keyword_searchable, :is_facet_field, :standalone_field_label, :is_searchable_identifier_field, :is_searchable_title_field, :is_single_field_searchable, :created_by_id, :updated_by_id)
+
+    if params[:action] == 'index'
+      @contextual_nav_options['nav_items'].push(label: 'Add New Dynamic Field Group', url: new_dynamic_field_group_path)
     end
+
+  end
 end

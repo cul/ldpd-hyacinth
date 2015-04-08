@@ -1,5 +1,5 @@
 class ProjectsController < ApplicationController
-  before_action :set_project, only: [:show, :edit, :update, :destroy, :enabled_dynamic_fields, :edit_enabled_dynamic_fields, :update_enabled_dynamic_fields, :edit_project_permissions, :update_project_permissions, :fieldsets]
+  before_action :set_project, only: [:show, :edit, :update, :destroy, :enabled_dynamic_fields, :edit_enabled_dynamic_fields, :update_enabled_dynamic_fields, :edit_project_permissions, :update_project_permissions, :fieldsets, :edit_publish_targets, :update_publish_targets]
   before_action :require_appropriate_permissions!
   before_action :set_contextual_nav_options
 
@@ -103,6 +103,19 @@ class ProjectsController < ApplicationController
     end
   end
 
+  # GET /projects/1/edit_publish_targets
+  def edit_publish_targets
+  end
+
+  # PATCH/PUT /projects/1/update_publish_targets
+  def update_publish_targets
+    if @project.update(project_params)
+      redirect_to edit_publish_targets_project_path(@project), notice: 'Your changes have been saved.'
+    else
+      render action: 'edit_publish_targets'
+    end
+  end
+
   # GET /projects/1/edit_enabled_dynamic_fields/1
   def edit_enabled_dynamic_fields
     @digital_object_type = DigitalObjectType.find(params[:digital_object_type_id])
@@ -158,6 +171,7 @@ class ProjectsController < ApplicationController
       #  :externally_synced_dynamic_fields_attributes => [:id, :project_external_data_source_id, :dynamic_field_id, :_destroy]
       #],
       :project_permissions_attributes => [:id, :_destroy, :user_id, :can_create, :can_read, :can_update, :can_delete, :is_project_admin],
+      :enabled_publish_targets_attributes => [:id, :_destroy, :publish_target_id],
       :fieldset_attributes => [:display_label, :project_id]
     )
   end
@@ -177,7 +191,7 @@ class ProjectsController < ApplicationController
     when 'index'
       @contextual_nav_options['nav_items'].push(label: 'Add New Project', url: new_project_path) if current_user.is_admin?
     when 'edit', 'update'
-      @contextual_nav_options['nav_items'].push(label: 'Delete This Project', url: project_path(@project.id), options: {method: :delete, data: { confirm: 'Are you sure you want to delete this Project?' } }) if current_user.is_admin? and @project.string_key != 'publish_targets'
+      @contextual_nav_options['nav_items'].push(label: 'Delete This Project', url: project_path(@project.id), options: {method: :delete, data: { confirm: 'Are you sure you want to delete this Project?' } }) if current_user.is_admin?
     when 'fieldsets'
       @contextual_nav_options['nav_items'].push(label: 'New Fieldset', url: new_fieldset_path(project_id: @project.id))
     end

@@ -10,8 +10,6 @@ class DigitalObjectType < ActiveRecord::Base
       return DigitalObject::Group
     when 'asset'
       return DigitalObject::Asset
-    when 'publish_target'
-      return DigitalObject::PublishTarget
     else
       return nil
     end

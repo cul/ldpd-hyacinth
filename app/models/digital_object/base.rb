@@ -14,7 +14,7 @@ class DigitalObject::Base
   # For ActiveModel::Dirty
   define_attribute_methods :parent_digital_object_pids, :obsolete_parent_digital_object_pids, :ordered_child_digital_object_pids
 
-  attr_accessor :projects, :created_by, :updated_by, :state, :struct_data, :dc_type, :ordered_child_digital_object_pids
+  attr_accessor :projects, :publish_targets, :created_by, :updated_by, :state, :struct_data, :dc_type, :ordered_child_digital_object_pids
   attr_reader :errors, :fedora_object, :parent_digital_object_pids, :updated_at, :created_at, :dynamic_field_data
 
   VALID_DC_TYPES = [] # There are no valid dc types for DigitalObject::Base
@@ -26,6 +26,7 @@ class DigitalObject::Base
 
     if self.new_record?
       @projects = []
+      @publish_targets = []
       @parent_digital_object_pids = []
       @obsolete_parent_digital_object_pids = []
       @ordered_child_digital_object_pids = []
@@ -38,7 +39,7 @@ class DigitalObject::Base
         load_parent_digital_object_pid_relationships_from_fedora_object!
         load_state_from_fedora_object!
         load_dc_type_from_fedora_object!
-        load_project_relationships_from_fedora_object!
+        load_project_and_publisher_relationships_from_fedora_object!
         load_fedora_hyacinth_ds_data_from_fedora_object!
       end
     end
@@ -199,8 +200,6 @@ class DigitalObject::Base
       return DigitalObject::Item if (fobj.datastreams['DC'].dc_type & DigitalObject::Item.valid_dc_types).length > 0
     when GenericResource
       return DigitalObject::Asset if (fobj.datastreams['DC'].dc_type & DigitalObject::Asset.valid_dc_types).length > 0
-    when Concept
-      return DigitalObject::PublishTarget if (fobj.datastreams['DC'].dc_type & DigitalObject::PublishTarget.valid_dc_types).length > 0
     end
 
     raise 'Cannot determine type of fedora object ' + fobj.class.to_s + ' with pid: ' + fobj.pid + ' and dc_type: ' + fobj.datastreams['DC'].dc_type.inspect
@@ -268,7 +267,7 @@ class DigitalObject::Base
         remove_blank_fields_from_dynamic_field_data!
         set_created_and_updated_data_from_db_record
         set_fedora_hyacinth_ds_data
-        set_fedora_project_relationships
+        set_fedora_project_and_publisher_relationships
         set_fedora_object_state
         set_fedora_object_dc_type
         set_fedora_object_dc_title_and_label
@@ -420,6 +419,15 @@ class DigitalObject::Base
     return self::VALID_DC_TYPES
   end
 
+  def allowed_publish_targets
+    publish_targets_to_return = []
+    self.projects.each do |project|
+      publish_targets_to_return += project.publish_targets
+    end
+    publish_targets_to_return.uniq!
+    return publish_targets_to_return
+  end
+
   ######################
   # JSON Serialization #
   ######################
@@ -432,6 +440,8 @@ class DigitalObject::Base
       state: @fedora_object ? @fedora_object.state : 'A',
       dc_type: self.dc_type,
       projects: self.projects,
+      allowed_publish_targets: self.allowed_publish_targets,
+      publish_targets: self.publish_targets,
       digital_object_type: self.digital_object_type,
       dynamic_field_data: @dynamic_field_data,
       ordered_child_digital_object_pids: self.ordered_child_digital_object_pids,

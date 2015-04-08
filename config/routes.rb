@@ -52,10 +52,14 @@ Hyacinth::Application.routes.draw do
   devise_for :users
   resources :users
 
+  resources :publish_targets
+
   resources :projects do
     member do
       get 'edit_project_permissions', :action => 'edit_project_permissions', :as => 'edit_project_permissions' # edit_project_permissions_project_path
       patch 'update_project_permissions'
+      get 'edit_publish_targets', :action => 'edit_publish_targets', :as => 'edit_publish_targets' # edit_publish_targets_project_path
+      patch 'update_publish_targets'
       get 'edit_enabled_dynamic_fields/:digital_object_type_id', :action => 'edit_enabled_dynamic_fields', :as => 'edit_enabled_dynamic_fields' # edit_enabled_dynamic_fields_project_path
       patch 'update_enabled_dynamic_fields/:digital_object_type_id', :action => 'update_enabled_dynamic_fields'
       get 'fieldsets', :action => 'fieldsets', :as => 'fieldsets' # fieldsets_project_path

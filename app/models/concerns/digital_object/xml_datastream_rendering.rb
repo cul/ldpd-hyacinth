@@ -33,6 +33,12 @@ module DigitalObject::XmlDatastreamRendering
         end
       end
 
+      if render_if_logic['equal'].present?
+        render_if_logic['equal'].each_pair do |field_string_key, value_to_compare_to|
+          return unless dynamic_field_data[field_string_key].present? && dynamic_field_data[field_string_key] == value_to_compare_to
+        end
+      end
+
     end
 
     # Create new element

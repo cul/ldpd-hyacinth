@@ -252,7 +252,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
     Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_editor/_hierarchical_fields_form.ejs', {
       dynamicFieldHierarchy: this.dynamicFieldHierarchy,
       mode: this.mode,
-      dynamicFieldIdsToEnabledDynamicFields: this.dynamicFieldIdsToEnabledDynamicFields
+      dynamicFieldIdsToEnabledDynamicFields: this.dynamicFieldIdsToEnabledDynamicFields,
+      digitalObject: this.digitalObject
     })
   );
 

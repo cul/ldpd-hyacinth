@@ -14,7 +14,6 @@ YAML.load_file('config/default_user_accounts.yml').each {|service_user_entry, se
 dot_item = DigitalObjectType.create!(string_key: 'item', display_label: 'Item', sort_order: 0)
 dot_group = DigitalObjectType.create!(string_key: 'group', display_label: 'Group', sort_order: 1)
 dot_asset = DigitalObjectType.create!(string_key: 'asset', display_label: 'Asset', sort_order: 2)
-dot_publish_target = DigitalObjectType.create!(string_key: 'publish_target', display_label: 'Publish Target', sort_order: 3)
 
 # Create CUL PidGenerator
 default_pid_generator = PidGenerator.create!(namespace: HYACINTH['default_pid_generator_namespace'])
@@ -138,5 +137,3 @@ form = DynamicFieldGroup.create!(string_key: 'form', display_label: 'Form', xml_
   ]
 )
 
-# Create the publish_targets project, which is essential for publishing items
-publish_targets_project = Project.create!(string_key: 'publish_targets', display_label: 'Publish Targets', pid_generator: default_pid_generator)

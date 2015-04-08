@@ -68,7 +68,7 @@ module DigitalObject::Fedora
     @fedora_object.datastreams["RELS-EXT"].content_will_change!
   end
 
-  def set_fedora_project_relationships
+  def set_fedora_project_and_publisher_relationships
     raise 'Only assets can have more than one project!' if @projects.length > 1 && self.class != DigitalObject::Asset
 
     # Clear old project relationship
@@ -78,6 +78,15 @@ module DigitalObject::Fedora
       # Add new project relationship
       @fedora_object.add_relationship(PROJECT_MEMBERSHIP_PREDICATE, project_obj.internal_uri)
     end
+
+    # Clear old publish target relationship
+    @fedora_object.clear_relationship(:publisher)
+    @publish_targets.each do |publish_target|
+      publish_target_obj = publish_target.fedora_object
+      # Add new project relationship
+      @fedora_object.add_relationship(:publisher, publish_target_obj.internal_uri)
+    end
+
     @fedora_object.datastreams["RELS-EXT"].content_will_change!
   end
 
@@ -133,10 +142,15 @@ module DigitalObject::Fedora
 
   end
 
-  def load_project_relationships_from_fedora_object!
-
+  def load_project_and_publisher_relationships_from_fedora_object!
+    # Get project relationships
     pids = @fedora_object.relationships(PROJECT_MEMBERSHIP_PREDICATE).map{|val| val.gsub('info:fedora/', '') }
     @projects = Project.where(pid: pids).to_a
+
+    # Get publish target relationships
+    pids = @fedora_object.relationships(:publisher).map{|val| val.gsub('info:fedora/', '') }
+    @publish_targets = PublishTarget.where(pid: pids).to_a
+    raise "Mismatch between number of Publish Target pids (#{pids.length}) and number of returned PublishTarget objects (#{@publish_targets.length}).  Maybe need to add Publish Target to Hyacinth?" if pids.length != @publish_targets.length
   end
 
   def get_new_hyacinth_datastream

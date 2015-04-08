@@ -9,7 +9,7 @@ class EnabledDynamicField < ActiveRecord::Base
 
   def as_json(options={})
     return {
-      dynamic_field_id: 1,
+      dynamic_field_id: self.dynamic_field_id,
       default_value: self.default_value,
       hidden: self.hidden,
       locked: self.locked,

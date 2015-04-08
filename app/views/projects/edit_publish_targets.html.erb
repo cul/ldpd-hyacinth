@@ -1,0 +1,53 @@
+<%= render partial: 'edit_project_nav' %>
+
+<% enabled_publish_targets = @project.publish_targets %>
+<% non_enabled_publish_targets = enabled_publish_targets.blank? ? PublishTarget.all : PublishTarget.where.not('id', enabled_publish_targets.map{|enabled_publish_target|enabled_publish_target.id}) %>
+
+<%= form_for(@project, :url => {:action => 'update_publish_targets'}) do |f| %>
+
+  <% if @project.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</h2>
+
+      <ul>
+      <% @project.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <table id="publish_target_add_form" class="table table-condensed table-bordered table-striped">
+      <thead>
+        <tr>
+          <th class="col-md-5">Name</th>
+          <th class="col-md-1">Remove?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= f.fields_for :enabled_publish_targets, @project.enabled_publish_targets.sort_by{ |enabled_publish_target| enabled_publish_target.publish_target.display_label } do |enabled_publish_target_form| %>
+          <tr>
+            <td><%= enabled_publish_target_form.object.publish_target.display_label %></td>
+            <td><label><%= enabled_publish_target_form.check_box :_destroy %></label></td>
+          </tr>
+        <% end %>
+
+        <% if non_enabled_publish_targets.length > 0 %>
+          <%= f.fields_for :enabled_publish_targets, @project.enabled_publish_targets.build do |enabled_publish_target_form| %>
+            <tr id="add-new-publish-target-row">
+              <td><%= enabled_publish_target_form.collection_select(:publish_target_id, non_enabled_publish_targets, :id, :display_label, {:include_blank => '- Select a publish target -'}, {:class => 'form-control input-sm'}) %></td>
+              <td></td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr><td colspan="7"><strong>All publish targets have been added to this project.</strong></td></tr>
+        <% end %>
+
+      </tbody>
+  </table>
+
+  <div class="actions">
+    <%= f.submit('Save', class: 'btn btn-primary') %>
+  </div>
+
+<% end %>
