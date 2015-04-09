@@ -31,14 +31,27 @@
     <% } %>
   </div>
 
-  <hr />
-  <h2>Publish To:</h2>
-  <div class="publish-targets">
-    <% activePublishTargets = _.map(digitalObject.publish_targets, function(pub_tar){ return pub_tar['pid']; }); %>
-    <% digitalObject.allowed_publish_targets.forEach(function(allowedPublishTarget){ %>
-      <input type="checkbox" value="<%= allowedPublishTarget['pid'] %>" <%= activePublishTargets.indexOf(allowedPublishTarget['pid']) > -1 ? 'checked="checked"' : '' %> /> <%= allowedPublishTarget['display_label'] %>
-    <% }); %>
-  </div>
+  <% if ( digitalObject.publish_targets.length > 0 || (mode == 'edit' && digitalObject.allowed_publish_targets.length > 0) ) { %>
+    <hr />
+    <h2>Publish To:</h2>
+    <div class="publish-targets">
+      <% activePublishTargets = _.map(digitalObject.publish_targets, function(pub_tar){ return pub_tar['pid']; }); %>
+      <% digitalObject.allowed_publish_targets.forEach(function(allowedPublishTarget){ %>
+        <% if (mode == 'edit') { %>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" class="publish-target-checkbox" value="<%= allowedPublishTarget['pid'] %>" <%= activePublishTargets.indexOf(allowedPublishTarget['pid']) > -1 ? 'checked="checked"' : '' %> /> <%= allowedPublishTarget['display_label'] %>
+            </label>
+          </div>
+        <% } else { %>
+          <div>
+            &check; <%= allowedPublishTarget['display_label'] %>
+          </div>
+        <% } %>
+
+      <% }); %>
+    </div>
+  <% } %>
 
   <% if (mode == 'edit') { %>
     <div class="alignright">

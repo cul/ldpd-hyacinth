@@ -151,8 +151,8 @@ ActiveRecord::Schema.define(version: 20141104010555) do
     t.datetime "updated_at"
   end
 
-  add_index "enabled_publish_targets", ["publish_target_id"], name: "index_enabled_publish_targets_on_publish_target_id", using: :btree
   add_index "enabled_publish_targets", ["project_id"], name: "index_enabled_publish_targets_on_project_id", using: :btree
+  add_index "enabled_publish_targets", ["publish_target_id"], name: "index_enabled_publish_targets_on_publish_target_id", using: :btree
 
   create_table "fieldsets", force: :cascade do |t|
     t.string   "display_label", limit: 255

@@ -62,8 +62,8 @@ class DigitalObjectsController < ApplicationController
 
     test_mode = params['test'].present? && params['test'].to_s == 'true'
 
-    project = Project.find_by(string_key: digital_object_params['project_string_key'])
-    digital_object_type = DigitalObjectType.find_by(string_key: digital_object_params['digital_object_type_string_key'])
+    project = Project.find_by(string_key: params['digital_object']['project_string_key'])
+    digital_object_type = DigitalObjectType.find_by(string_key: params['digital_object']['digital_object_type_string_key'])
 
     class_to_instantiate = digital_object_type.get_associated_model
     @digital_object = class_to_instantiate.new
@@ -71,15 +71,27 @@ class DigitalObjectsController < ApplicationController
     @digital_object.updated_by = current_user
     @digital_object.projects << project
 
-    unless digital_object_params['dynamic_field_data_json'].nil?
-      #dynamic_field_data_json = Hyacinth::Utils::StringUtils.clean_utf8_string(digital_object_params['dynamic_field_data_json'])
-      dynamic_field_data_json = digital_object_params['dynamic_field_data_json']
+    unless params['digital_object']['dynamic_field_data_json'].nil?
+      #dynamic_field_data_json = Hyacinth::Utils::StringUtils.clean_utf8_string(params['digital_object']['dynamic_field_data_json'])
+      dynamic_field_data_json = params['digital_object']['dynamic_field_data_json']
       raise 'Invalid JSON given for dynamic_field_data_json' unless Hyacinth::Utils::JsonUtils.is_valid_json?(dynamic_field_data_json)
       @digital_object.update_dynamic_field_data(JSON(dynamic_field_data_json))
     end
 
-    if digital_object_params['parent_digital_object_pid']
-      parent_digital_object = DigitalObject::Base.find(digital_object_params['parent_digital_object_pid'])
+    if params['digital_object'].has_key?('publish_targets')
+      if params['digital_object']['publish_targets'].present?
+        publish_targets = PublishTarget.where(pid: params['digital_object']['publish_targets']).to_a
+        if publish_targets.length != params['digital_object']['publish_targets'].length
+          raise 'Could not find all desired publish targets.'
+        end
+        @digital_object.publish_targets = publish_targets
+      else
+        @digital_object.publish_targets = []
+      end
+    end
+
+    if params['digital_object']['parent_digital_object_pid']
+      parent_digital_object = DigitalObject::Base.find(params['digital_object']['parent_digital_object_pid'])
       @digital_object.add_parent_digital_object(parent_digital_object)
     end
 
@@ -113,29 +125,41 @@ class DigitalObjectsController < ApplicationController
       incremental_update = true
     end
 
-    if digital_object_params['dynamic_field_data_json'].present?
-      raise 'Invalid JSON given for dynamic_field_data_json' unless Hyacinth::Utils::JsonUtils.is_valid_json?(digital_object_params['dynamic_field_data_json'])
-      @digital_object.update_dynamic_field_data(JSON(digital_object_params['dynamic_field_data_json']), incremental_update)
+    if params['digital_object']['dynamic_field_data_json'].present?
+      raise 'Invalid JSON given for dynamic_field_data_json' unless Hyacinth::Utils::JsonUtils.is_valid_json?(params['digital_object']['dynamic_field_data_json'])
+      @digital_object.update_dynamic_field_data(JSON(params['digital_object']['dynamic_field_data_json']), incremental_update)
     end
 
-    if digital_object_params['ordered_child_digital_object_pids']
+    if params['digital_object'].has_key?('publish_targets')
+      if params['digital_object']['publish_targets'].present?
+        publish_targets = PublishTarget.where(pid: params['digital_object']['publish_targets']).to_a
+        if publish_targets.length != params['digital_object']['publish_targets'].length
+          raise 'Could not find all desired publish targets.'
+        end
+        @digital_object.publish_targets = publish_targets
+      else
+        @digital_object.publish_targets = []
+      end
+    end
+
+    if params['digital_object']['ordered_child_digital_object_pids']
 
       # First verify that the incoming list of ordered_child_digital_object_pids
       # includes the same values as the existing list (ignoring order).  This is
       # not a place for adding or removing values -- just reordering them.
       # Return an error if the lists differ.
 
-      unless @digital_object.ordered_child_digital_object_pids.length == (@digital_object.ordered_child_digital_object_pids | digital_object_params['ordered_child_digital_object_pids']).length
+      unless @digital_object.ordered_child_digital_object_pids.length == (@digital_object.ordered_child_digital_object_pids | params['digital_object']['ordered_child_digital_object_pids']).length
         @digital_object.errors.add(:ordered_child_digital_object_pids, ' - During reordering, sent child digital object pids must match existing pids.')
       else
-        digital_object_params['ordered_child_digital_object_pids'].each do |pid|
+        params['digital_object']['ordered_child_digital_object_pids'].each do |pid|
           unless @digital_object.ordered_child_digital_object_pids.include?(pid)
             child_digital_object = DigitalObject::Base.find(pid)
             child_digital_object.add_parent_digital_object(@digital_object)
             child_digitial_object.save
           end
         end
-        @digital_object.ordered_child_digital_object_pids = digital_object_params['ordered_child_digital_object_pids']
+        @digital_object.ordered_child_digital_object_pids = params['digital_object']['ordered_child_digital_object_pids']
       end
     end
 
@@ -458,7 +482,7 @@ class DigitalObjectsController < ApplicationController
     else
       errors << "Only Assets of type StillImage can be rotated.  This is a #{@digital_object.digital_object_type.display_label} of type #{@digital_object.dc_type}"
     end
-    
+
     if errors.present?
       render json: {errors: errors}
     else
@@ -490,15 +514,6 @@ class DigitalObjectsController < ApplicationController
   # Use callbacks to share common setup or constraints between actions.
   def set_digital_object
     @digital_object = DigitalObject::Base.find(params[:id])
-  end
-
-  # Never trust parameters from the scary internet, only allow the white list through.
-  def digital_object_params
-    params.require(:digital_object).permit(
-      :dynamic_field_data_json, :project_string_key, :digital_object_type_string_key,
-      :parent_digital_object_pids => [], :ordered_child_digital_object_pids => []
-    )
-    #params.require(:digital_object).permit! # Permit any hash keys under digital_object. This is more open than other controllers because we're receiving dynamic data structures (based on user-defined DynamicFields)
   end
 
   def set_contextual_nav_options

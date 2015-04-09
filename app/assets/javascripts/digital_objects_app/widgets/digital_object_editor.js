@@ -485,13 +485,26 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.submitEditorForm = func
 
   var serializedFormAsJsonString = JSON.stringify(Hyacinth.DigitalObjectsApp.DigitalObjectEditor.serializeFormDataToObject($editorForm));
 
+  var publishTargets = null;
+  $editorForm.find('.publish-targets .publish-target-checkbox').each(function(){
+    if ($(this).prop('checked')) {
+      if (publishTargets == null) {
+        publishTargets = [];
+      }
+      publishTargets.push($(this).val())
+    }
+  });
+
+  console.log('Publish targets: ' + publishTargets);
+
   var digitalObjectData = {
     digital_object_type_string_key: this.digitalObject.digital_object_type['string_key'],
-    project_string_key: this.digitalObject.projects[0]['string_key'],
-    dynamic_field_data_json: serializedFormAsJsonString
+    dynamic_field_data_json: serializedFormAsJsonString,
+    publish_targets: publishTargets
   };
 
   if (this.digitalObject.isNewRecord()) {
+    digitalObjectData['project_string_key'] = this.digitalObject.projects[0]['string_key'];
     digitalObjectData['parent_digital_object_pids'] = this.digitalObject.getParentDigitalObjectPids();
   }
 
