@@ -87,7 +87,7 @@ module DigitalObject::IndexAndSearch
     # Solr Search #
     ###############
 
-    def search(user_search_params = {}, facet_params = {})
+    def search(user_search_params = {}, facet_params = {}, user_for_permission_context = nil)
 
       per_page = user_search_params['per_page'].present? ? user_search_params['per_page'].to_i : 20
       page = user_search_params['page'].present? ? user_search_params['page'].to_i : 1
@@ -185,6 +185,24 @@ module DigitalObject::IndexAndSearch
             end
           end
 
+        end
+      end
+
+      if user_for_permission_context.present?
+        unless user_for_permission_context.is_admin?
+
+          puts 'Projects: ' + user_for_permission_context.projects.inspect
+
+          user_allowed_projects = user_for_permission_context.projects
+          if user_allowed_projects.length > 0
+            solr_params['fq'] << 'project_string_key_sim:(' + user_for_permission_context.projects.map{|project| project.string_key}.join(' OR ')  + ')'
+          else
+            # No projects. Return 0 rows from result set and return no facets.
+            solr_params['rows'] = 0
+            solr_params['facet'] = false
+            # And guarantee no results with fq tat will return zero results
+            solr_params['fq'] << 'hyacinth_type_sim:none'
+          end
         end
       end
 
