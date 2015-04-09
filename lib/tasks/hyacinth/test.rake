@@ -60,6 +60,17 @@ namespace :hyacinth do
       }
       File.open(solr_yml_file, 'w') {|f| f.write solr_yml.to_yaml }
 
+      # repository_cache.yml
+      repository_cache_yml_file = File.join(Rails.root, 'config/repository_cache.yml')
+      FileUtils.touch(repository_cache_yml_file) # Create if it doesn't exist
+      repository_cache_yml = YAML.load_file(repository_cache_yml_file) || {}
+      repository_cache_yml['test'] = {
+        'url' => 'http://localhost:3001',
+        'username' => 'fake_user',
+        'password' => 'fake_password',
+      }
+      File.open(repository_cache_yml_file, 'w') {|f| f.write repository_cache_yml.to_yaml }
+
     end
 
     task :create_sample_digital_objects => :environment do
