@@ -25,6 +25,10 @@
     <%= f.text_field :value_uri, disabled: ! @authorized_term.new_record?, class: 'form-control' %>
   </div>
   <div class="field">
+    <%= f.label :code %><br>
+    <%= f.text_field :code, {class: 'form-control'} %>
+  </div>
+  <div class="field">
     <%= f.label :authority %><br>
     <%= f.text_field :authority, {class: 'form-control'} %>
   </div>
