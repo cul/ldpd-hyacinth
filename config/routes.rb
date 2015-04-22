@@ -36,7 +36,7 @@ Hyacinth::Application.routes.draw do
       get 'media_view'
       get 'mods'
       put 'undelete', action: 'undestroy'
-      match 'add_parent/:parent_pid', action: 'add_parent', via: [:get, :put]
+      put 'add_parent', action: 'add_parent'
       post 'rotate_image', action: 'rotate_image'
       post 'swap_order_of_first_two_child_assets', actions: 'swap_order_of_first_two_child_assets'
     end

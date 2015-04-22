@@ -397,3 +397,55 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.upload_assets = fu
   });
 
 };
+
+//Add Parent Action - Add a parent Digital Object to this Digital Object
+Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.add_parent = function() {
+
+  var that = this;
+
+  $.ajax({
+    url: '/digital_objects/data_for_editor.json',
+    data: {pid: Hyacinth.DigitalObjectsApp.params['pid']},
+    cache: false
+  }).done(function(data_for_editor){
+
+    var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
+    $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/add_parent.ejs', {digitalObject: digitalObject}));
+
+    $('#add-parent-form').on('submit', function(e){
+      var parentPid = $('#parent-pid').val();
+      e.preventDefault();
+      $('#add-parent-button').prop('disabled', true);
+      $.ajax({
+        url: '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '/add_parent.json',
+        type: 'POST',
+        data: {
+          '_method': 'PUT', //For proper RESTful Rails requests
+          parent_pid: parentPid
+        },
+        cache: false
+      }).done(function(add_parent_response){
+        $('#add-parent-button').prop('disabled', false);
+        if (add_parent_response['success'] == true) {
+          Hyacinth.addAlert('Parent added.', 'success');
+          $('#current-parent-digital-objects').append('<li>' + parentPid + '</li>')
+        } else {
+          Hyacinth.addAlert('&bull; ' + add_parent_response['errors'].join('<br />&bull; '), 'danger');
+        }
+      }).fail(function(){
+        alert(Hyacinth.unexpectedAjaxErrorMessage);
+        $('#add-parent-button').prop('disabled', false);
+      });
+      return false;
+    });
+    
+    //Event cleanup
+    that.dispose = function(){
+      $('#add-parent-form').off('submit');
+    };
+
+  }).fail(function(){
+    alert(Hyacinth.unexpectedAjaxErrorMessage);
+  });
+
+};

@@ -1,0 +1,32 @@
+<%
+  //Passed params:
+  //
+  //digitalObject
+%>
+<% Hyacinth.ContextualNav.setNavTitle('&laquo; Back', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: Hyacinth.DigitalObjectsApp.params['pid']})); %>
+<% Hyacinth.ContextualNav.setNavItems([]); %>
+
+<h1><%= digitalObject.digital_object_type['display_label'] %>: <%- digitalObject.getTitle() %></h1>
+<strong><%= (digitalObject.getProjects().length > 1 ? 'Projects' : 'Project') + ':' %></strong> <%= $.map(digitalObject.getProjects(), function(project){return project['display_label']}).join(', ') %>
+<br />
+<strong>PID:</strong> <%= digitalObject.getPid() %>
+<hr />
+<% var allowedParentTypeLabel = digitalObject.digital_object_type['string_key'] == 'asset' ? 'Item' : 'Group' %>
+<h2>Add Parent <%= allowedParentTypeLabel %></h2>
+<div id="errors"></div>
+<form id="add-parent-form">
+  <div class="input-group">
+    <input type="text" id="parent-pid" class="form-control" placeholder="Parent <%= allowedParentTypeLabel %> PID">
+    <span class="input-group-btn">
+      <button id="add-parent-button" class="btn btn-primary" type="submit">Add</button>
+    </span>
+  </div><!-- /input-group -->
+</form>
+<br />
+<h2>Current Parent <%= allowedParentTypeLabel %>s</h2>
+<div id="current-parent-digital-objects">
+  <% digitalObject.parent_digital_object_pids.forEach(function(pid){ %>
+    <li><%= '<a href="#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: pid}) + '">' + pid + '</a>' %></li>
+    
+  <% }) %>
+</div>

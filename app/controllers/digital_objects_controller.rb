@@ -451,21 +451,51 @@ class DigitalObjectsController < ApplicationController
   def add_parent
 
     test_mode = params['test'].present? && params['test'].to_s == 'true'
-
-    parent_digital_object = DigitalObject::Base.find(params[:parent_pid])
-
-    if test_mode
-      result = true
-    else
-      @digital_object.add_parent_digital_object(parent_digital_object)
-      result = @digital_object.save
+    errors = []
+    
+    if @digital_object.pid == params[:parent_pid]
+      errors << "An object cannot be its own parent.  That's crazy!"
+    end
+    
+    if @digital_object.parent_digital_object_pids.include?(params[:parent_pid])
+      errors << 'Object already has parent: ' + params[:parent_pid]
+    end
+    
+    if errors.blank?
+      begin
+        parent_digital_object = DigitalObject::Base.find(params[:parent_pid])
+        
+        # If child is Asset, then parent must be Item
+        # If child is Item or Group, then parent must be Group
+        if @digital_object.is_a?(DigitalObject::Asset)
+          errors << "Parent must be an Item" unless parent_digital_object.is_a?(DigitalObject::Item)
+        else
+          errors << "Parent must be a Group" unless parent_digital_object.is_a?(DigitalObject::Group)
+        end  
+        
+        unless errors.present? || test_mode
+          @digital_object.add_parent_digital_object(parent_digital_object)
+          @digital_object.save
+        end
+        
+      rescue Hyacinth::DigitalObjectNotFoundError
+        errors << 'Could not find Digital Object with PID: ' + params[:parent_pid]
+      end
+      
     end
 
-    response = {
-      'success' => result,
-    }
-
-    response['errors'] = @digital_object.errors unless result
+    errors += @digital_object.errors.to_a
+    
+    if errors.present?
+      response = {
+        success: false,
+        errors: errors
+      }
+    else
+      response = {
+        success: true
+      }
+    end
 
     respond_to do |format|
       format.json {
