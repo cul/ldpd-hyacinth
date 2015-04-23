@@ -399,7 +399,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.upload_assets = fu
 };
 
 //Add Parent Action - Add a parent Digital Object to this Digital Object
-Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.add_parent = function() {
+Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_parents = function() {
 
   var that = this;
 
@@ -410,10 +410,10 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.add_parent = funct
   }).done(function(data_for_editor){
 
     var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
-    $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/add_parent.ejs', {digitalObject: digitalObject}));
+    $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/manage_parents.ejs', {digitalObject: digitalObject}));
 
     $('#add-parent-form').on('submit', function(e){
-      var parentPid = $('#parent-pid').val();
+      var parentPid = $('#add-parent-form').find('[name="additional_parent_pid"]').val();
       e.preventDefault();
       $('#add-parent-button').prop('disabled', true);
       $.ajax({
@@ -428,13 +428,43 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.add_parent = funct
         $('#add-parent-button').prop('disabled', false);
         if (add_parent_response['success'] == true) {
           Hyacinth.addAlert('Parent added.', 'success');
-          $('#current-parent-digital-objects').append('<li>' + parentPid + '</li>')
+          Hyacinth.DigitalObjectsApp.reloadCurrentAction();
         } else {
           Hyacinth.addAlert('&bull; ' + add_parent_response['errors'].join('<br />&bull; '), 'danger');
         }
       }).fail(function(){
         alert(Hyacinth.unexpectedAjaxErrorMessage);
         $('#add-parent-button').prop('disabled', false);
+      });
+      return false;
+    });
+    
+    $('#remove-parent-form').on('submit', function(e){
+      var parentsToRemove = [];
+      $('#remove-parent-form').find('[name="parent_pid"]:checked').each(function(){
+        parentsToRemove.push($(this).val());
+      });
+      e.preventDefault();
+      $('#remove-selected-parents-button').prop('disabled', true);
+      $.ajax({
+        url: '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '/remove_parents.json',
+        type: 'POST',
+        data: {
+          '_method': 'PUT', //For proper RESTful Rails requests
+          parent_pids: parentsToRemove
+        },
+        cache: false
+      }).done(function(remove_parents_response){
+        $('#remove-selected-parents-button').prop('disabled', false);
+        if (remove_parents_response['success'] == true) {
+          Hyacinth.addAlert('Selected parents habe been removed.', 'success');
+          Hyacinth.DigitalObjectsApp.reloadCurrentAction();
+        } else {
+          Hyacinth.addAlert('&bull; ' + remove_parents_response['errors'].join('<br />&bull; '), 'danger');
+        }
+      }).fail(function(){
+        alert(Hyacinth.unexpectedAjaxErrorMessage);
+        $('#remove-selected-parents-button').prop('disabled', false);
       });
       return false;
     });

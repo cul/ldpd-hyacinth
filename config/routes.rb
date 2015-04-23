@@ -37,6 +37,7 @@ Hyacinth::Application.routes.draw do
       get 'mods'
       put 'undelete', action: 'undestroy'
       put 'add_parent', action: 'add_parent'
+      put 'remove_parents', action: 'remove_parents'
       post 'rotate_image', action: 'rotate_image'
       post 'swap_order_of_first_two_child_assets', actions: 'swap_order_of_first_two_child_assets'
     end

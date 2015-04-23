@@ -16,7 +16,7 @@
 <div id="errors"></div>
 <form id="add-parent-form">
   <div class="input-group">
-    <input type="text" id="parent-pid" class="form-control" placeholder="Parent <%= allowedParentTypeLabel %> PID">
+    <input type="text" name="additional_parent_pid" class="form-control" placeholder="Parent <%= allowedParentTypeLabel %> PID">
     <span class="input-group-btn">
       <button id="add-parent-button" class="btn btn-primary" type="submit">Add</button>
     </span>
@@ -24,9 +24,22 @@
 </form>
 <br />
 <h2>Current Parent <%= allowedParentTypeLabel %>s</h2>
-<div id="current-parent-digital-objects">
-  <% digitalObject.parent_digital_object_pids.forEach(function(pid){ %>
-    <li><%= '<a href="#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: pid}) + '">' + pid + '</a>' %></li>
-    
-  <% }) %>
+<form id="remove-parent-form">
+  <% if (digitalObject.parent_digital_object_pids.length == 0) { %>
+    None
+  <% } else { %>
+    <ul>
+    <% digitalObject.parent_digital_object_pids.forEach(function(pid){ %>
+      <li>
+        <div class="checkbox">
+          <label>
+            <input name="parent_pid" type="checkbox" value="<%= pid %>" />
+            <%= '<a href="#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: pid}) + '">' + pid + '</a>' %>
+          </label>
+        </div>
+      </li>
+    <% }) %>
+    </ul>
+    <button id="remove-selected-parents-button" class="btn btn-primary" type="submit">Remove Selected Parents</button>
+  <% } %>
 </div>

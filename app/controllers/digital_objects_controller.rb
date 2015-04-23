@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 class DigitalObjectsController < ApplicationController
-  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor, :download, :add_parent, :mods, :media_view, :rotate_image, :swap_order_of_first_two_child_assets]
+  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor, :download, :add_parent, :remove_parents, :mods, :media_view, :rotate_image, :swap_order_of_first_two_child_assets]
   before_action :set_contextual_nav_options
 
   # GET /digital_objects
@@ -321,7 +321,6 @@ class DigitalObjectsController < ApplicationController
     overall_errors = []
 
     if params['parent_digital_object_pid']
-      puts 'parent retrieval 1'
       parent_digital_object = DigitalObject::Base.find(params['parent_digital_object_pid'])
 
       # Only DigitalObject::Item objects can have child assets
@@ -478,6 +477,49 @@ class DigitalObjectsController < ApplicationController
           @digital_object.save
         end
         
+      rescue Hyacinth::DigitalObjectNotFoundError
+        errors << 'Could not find Digital Object with PID: ' + params[:parent_pid]
+      end
+      
+    end
+
+    errors += @digital_object.errors.to_a
+    
+    if errors.present?
+      response = {
+        success: false,
+        errors: errors
+      }
+    else
+      response = {
+        success: true
+      }
+    end
+
+    respond_to do |format|
+      format.json {
+        render json: response
+      }
+    end
+  end
+  
+  def remove_parents
+
+    test_mode = params['test'].present? && params['test'].to_s == 'true'
+    errors = []
+    
+    errors << 'You must specify at least one pid to remove.' if params[:parent_pids].blank?
+    
+    if errors.blank?
+      begin
+        params[:parent_pids].each do |pid|
+          parent_digital_object = DigitalObject::Base.find(pid)
+          @digital_object.remove_parent_digital_object(parent_digital_object)
+        end
+        
+        unless errors.present? || test_mode
+          @digital_object.save
+        end
       rescue Hyacinth::DigitalObjectNotFoundError
         errors << 'Could not find Digital Object with PID: ' + params[:parent_pid]
       end
