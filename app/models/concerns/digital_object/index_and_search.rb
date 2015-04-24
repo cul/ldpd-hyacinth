@@ -14,6 +14,7 @@ module DigitalObject::IndexAndSearch
     doc = {
       pid: self.pid,
       title_ssm: self.get_title,
+      sort_title_ssort: self.get_sort_title,
       parent_digital_object_pids_ssm: self.parent_digital_object_pids,
       parent_digital_object_pids_sim: self.parent_digital_object_pids,
       ordered_child_digital_object_pids_ssm: self.ordered_child_digital_object_pids,
@@ -21,7 +22,6 @@ module DigitalObject::IndexAndSearch
       number_of_ordered_child_digital_object_pids_ssm: self.ordered_child_digital_object_pids.length,
       number_of_ordered_child_digital_object_pids_sim: self.ordered_child_digital_object_pids.length,
       has_child_digital_objects_bi: self.ordered_child_digital_object_pids.length > 0,
-      sort_title_ssort: self.get_sort_title,
       hyacinth_type_sim: digital_object_type.string_key,
       hyacinth_type_ssm: digital_object_type.string_key,
       state_sim: self.state,
@@ -29,6 +29,10 @@ module DigitalObject::IndexAndSearch
       digital_object_type_display_label_sim: self.digital_object_type.display_label,
       digital_object_type_display_label_ssm: self.digital_object_type.display_label,
       project_string_key_sim: self.projects.map{|project|project.string_key},
+      project_pid_sim: self.projects.map{|project|project.pid},
+      project_pid_ssm: self.projects.map{|project|project.pid},
+      publish_target_pid_sim: self.publish_targets.map{|publish_target|publish_target.pid},
+      publish_target_pid_ssm: self.publish_targets.map{|publish_target|publish_target.pid},
       flattened_dynamic_field_data_ssm: flattened_dynamic_field_data.to_json # This is kept here for caching/performance purposes, flat display of any field without having to check with Fedora.
     }
 
