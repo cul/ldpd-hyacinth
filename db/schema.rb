@@ -207,6 +207,9 @@ ActiveRecord::Schema.define(version: 20141104010555) do
     t.string "pid",           limit: 255
     t.string "display_label", limit: 255
     t.string "publish_url",   limit: 2000
+    t.string "encrypted_api_key",   limit: 255
+    t.string "encrypted_api_key_salt",   limit: 255
+    t.string "encrypted_api_key_iv",   limit: 255
   end
 
   add_index "publish_targets", ["pid"], name: "index_publish_targets_on_pid", unique: true, using: :btree

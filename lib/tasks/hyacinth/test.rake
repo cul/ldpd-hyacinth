@@ -37,7 +37,8 @@ namespace :hyacinth do
         'solr_url' => 'http://localhost:9983/solr/hyacinth-test',
         'default_pid_generator_namespace' => 'cul',
         'default_asset_home' => File.join(Rails.root, 'tmp/asset_home_test'),
-        'upload_directory' => File.join(Rails.root, 'tmp/upload_test')
+        'upload_directory' => File.join(Rails.root, 'tmp/upload_test'),
+        'publish_target_api_key_encryption_key' => 'some_encryption_key'
       }
       File.open(hyacinth_yml_file, 'w') {|f| f.write hyacinth_yml.to_yaml }
 

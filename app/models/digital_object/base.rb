@@ -408,7 +408,22 @@ class DigitalObject::Base
       end
     }
 
-    return (! @errors.present?)
+    return false if @errors.present?
+      
+    # Tell external publish targets to reindex this object
+    self.publish_targets.each do |publish_target|
+      publish_url = publish_target.publish_url
+      api_key = publish_target.api_key
+      puts 'Sending to url: ' + publish_url + ' with params ' + {pid: self.pid, api_key: api_key}.inspect
+      json_response = JSON(RestClient.get publish_url, {pid: self.pid, api_key: api_key})
+      
+      unless json_response['success'] && json_response['success'].to_s == 'true'
+        @errors.add(:publish_target, 'Error encountered while publishing to ' + publish_target.display_label)
+      end
+    end
+    
+    return @errors.blank?
+    
   end
 
   def next_pid

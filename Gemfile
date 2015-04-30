@@ -30,6 +30,9 @@ gem 'faker'
 # File uploads
 gem 'jquery.fileupload-rails'
 
+# Encrypting certain attributes
+gem 'attr_encrypted', '>= 1.3.3'
+
 # Mime Type detection
 gem 'mime-types'
 

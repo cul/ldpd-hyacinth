@@ -9,6 +9,8 @@ puts ''
 
 HYACINTH = YAML.load_file("#{Rails.root.to_s}/config/hyacinth.yml")[Rails.env]
 
+raise 'Error: Please set a value for publish_target_api_key_encryption_key in your hyacinth.yml file' if HYACINTH['publish_target_api_key_encryption_key'].blank?
+
 # For EXTREME debugging with full stack traces.  Woo!
 Rails.backtrace_cleaner.remove_silencers! if Rails.env.development?
 

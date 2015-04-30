@@ -2,12 +2,15 @@ class PublishTarget < ActiveRecord::Base
 
   has_many :projects, :through => :enabled_publish_targets
   has_many :enabled_publish_targets, :dependent => :destroy
+  
+  attr_encrypted :api_key, :key => HYACINTH['publish_target_api_key_encryption_key'], mode: :per_attribute_iv_and_salt
 
   before_create :create_associated_fedora_object!
   after_save :update_fedora_object!
   after_destroy :mark_fedora_object_as_deleted!
 
   validates :publish_url, length: { maximum: 1000, too_long: "can only have a maximum of %{count} characters." }
+  validates :api_key, length: { maximum: 100, too_long: "can only have a maximum of %{count} characters." }
 
   # Returns the associated Fedora Object
   def fedora_object
