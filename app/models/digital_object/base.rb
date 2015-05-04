@@ -414,7 +414,6 @@ class DigitalObject::Base
     self.publish_targets.each do |publish_target|
       publish_url = publish_target.publish_url
       api_key = publish_target.api_key
-      Rails.logger.error 'Sending to url: ' + publish_url + ' with params ' + {pid: self.pid, api_key: api_key}.inspect
       json_response = JSON(RestClient.post publish_url, {pid: self.pid, api_key: api_key})
       
       unless json_response['success'] && json_response['success'].to_s == 'true'

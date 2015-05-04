@@ -3,6 +3,41 @@ namespace :hyacinth do
 
     # Durst namespace for Durst project tasks
     namespace :durst do
+      
+      task :add_durst_publish_targets => :environment do
+        
+        durst_project_pid = 'cul:7h44j0zpcs'
+  
+        start_time = Time.now
+        pids = Cul::Hydra::RisearchMembers.get_project_constituent_pids(durst_project_pid, true)
+        total = pids.length
+        puts "Found #{total} project members."
+        counter = 0
+  
+        pids.each do |pid|
+          counter += 1
+          
+          begin
+            obj = ActiveFedora::Base.find(pid)
+  
+            # Add publish target, unless this is a BagAggregator
+            unless obj.is_a?(BagAggregator)
+              obj.clear_relationship(:publisher)
+              obj.add_relationship(:publisher, 'info:fedora/cul:sqv9s4mwg3')
+            end
+            
+            obj.save
+          rescue SystemExit, Interrupt => e
+            # Allow system interrupt (ctrl+c)
+            raise e
+          rescue Exception => e
+            Rails.logger.error "Encountered problem with #{pid}.  Skipping record.  Exception: #{e.message}"
+          end
+          
+          puts "Added publish target to #{pid} | #{counter} of #{total} | #{Time.now - start_time} seconds"
+        end
+  
+      end
 
       task :setup => :environment do
 
