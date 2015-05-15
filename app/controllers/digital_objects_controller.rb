@@ -338,7 +338,7 @@ class DigitalObjectsController < ApplicationController
         overall_errors << "Could not find project for string key: #{params['project_string_key']}"
       end
     else
-      overall_errors << "Missing project string key.  Supply param project_string_key OR referene a parent digital object."
+      overall_errors << "Missing project string key.  Supply param project_string_key OR reference a parent digital object."
     end
 
 
@@ -362,7 +362,7 @@ class DigitalObjectsController < ApplicationController
       # And here: http://docs.ruby-lang.org/en/2.1.0/Tempfile.html (See: "Unlink-before-close")
 
       params['files'].each {|uploaded_file|
-        uploaded_file.tempfile.unlink # On Windows, this silently fails.  That's okay.  We still need to use a begin/ensure clause with file.tempfile.close.
+        uploaded_file.tempfile.unlink # On Windows, this silently fails.  That's okay, and this is deliberate.  We still need to use a begin/ensure clause with file.tempfile.close.
       }
 
       params['files'].each do |uploaded_file|
@@ -387,53 +387,65 @@ class DigitalObjectsController < ApplicationController
           end
         ensure
            uploaded_file.tempfile.close!  # Closes the file handle. If the file wasn't unlinked earlier
-                                # because #unlink failed, then this method will attempt
-                                # to do so again.
+                                          # because #unlink failed, then this method will attempt
+                                          # to do so again.
         end
       end
 
-    elsif params['local_filesystem_file_path']
+    elsif params['local_filesystem_file_path'] || params['path_in_upload_directory']
 
       # Case 2: We're receiving file data from a local filesystem location.
 
-      original_file_path = params['local_filesystem_file_path'].to_s
-
-      # Check for invalid characters in filename.  Reject if non-utf8.
-      # If we get weird characters (like "\xC2"), Ruby will die a horrible death.  Let's keep Ruby alive.
-      if original_file_path != Hyacinth::Utils::StringUtils.clean_utf8_string(original_file_path)
-        file_data << {
-          "name" => original_file_path,
-          "size" => 0,
-          "errors" => ["Invalid UTF-8 characters found in file path.  Unable to upload."]
-        }
-      else
-        # Make sure that the file actually exists
-        unless File.exists?(original_file_path)
-          file_data << {
-            "name" => original_file_path,
-            "size" => 0,
-            "errors" => ["No file found at path: " + original_file_path]
-          }
-        end
-
-        if test_mode
-          puts 'Test mode output: Would have created new Asset for file at: ' + original_file_path
-        else
-          # 'r' == read, 'b' == binary mode
-          File.open(original_file_path, 'rb') do |file|
-            file_data << handle_single_file_upload(original_file_path, params['import_type'], file, projects, parent_digital_object)
-          end
-
-          if params['import_type'] == 'internal' && file_data.last['errors'].blank?
-            # Since this was an internal upload, we copied the file to some Hyacinth-asset-directory location.
-            # If we're here, the save (i.e. file copy) went through without a problem (and we verified checksums
-            # before and after), so it's now safe to delete the original file.
-            File.unlink(original_file_path)
-          end
-
-        end
-
+      if params['local_filesystem_file_path']
+        raise 'Only administrators can upload from a directory other than the Hyacinth Upload Directory' unless current_user.is_admin?
+        original_file_path = params['local_filesystem_file_path'].to_s
+      elsif params['path_in_upload_directory']
+        original_file_path = File.join(HYACINTH['upload_directory'], params['path_in_upload_directory'].to_s)
       end
+      
+      new_file = {
+        "name" => original_file_path,
+        "size" => 0,
+        "errors" => []
+      }
+      
+      # Paths cannot contain "/.." or "../"
+      if original_file_path.index('/..') || original_file_path.index('../')
+        new_file['errors'] << 'Paths cannot contain: ".."'
+      else
+
+        # Check for invalid characters in filename.  Reject if non-utf8.
+        # If we get weird characters (like "\xC2"), Ruby will die a horrible death.  Let's keep Ruby alive.
+        if original_file_path != Hyacinth::Utils::StringUtils.clean_utf8_string(original_file_path)
+          new_file['errors'] << "Invalid UTF-8 characters found in file path.  Unable to upload."
+        else
+          # Make sure that the file actually exists
+          unless File.exists?(original_file_path)
+            new_file['errors'] << "No file found at path: " + original_file_path
+          else
+            if test_mode
+              puts 'Test mode output: Would have created new Asset for file at: ' + original_file_path
+            else
+              # 'r' == read, 'b' == binary mode
+              File.open(original_file_path, 'rb') do |file|
+                new_file = handle_single_file_upload(original_file_path, params['import_type'], file, projects, parent_digital_object)
+              end
+    
+              ### Keeping the section below commented out because we don't currently want to delete the source files that we're importing.
+              #if params['import_type'] == 'internal' && file_data.last['errors'].blank?
+              #  # Since this was an internal upload, we copied the file to some Hyacinth-asset-directory location.
+              #  # If we're here, the save (i.e. file copy) went through without a problem (and we verified checksums
+              #  # before and after), so it's now safe to delete the original file.
+              #  File.unlink(original_file_path)
+              #end
+    
+            end
+          end
+  
+        end
+      end
+      
+      file_data << new_file
 
     end
 
@@ -584,6 +596,41 @@ class DigitalObjectsController < ApplicationController
       render json: {success: true, ordered_child_digital_object_pids: @digital_object.ordered_child_digital_object_pids}
     end
   end
+  
+  def upload_directory_listing
+    
+    directory_path = params[:directory_path] || ''
+    errors = []
+			
+    #Return a directory listing for the specified directory within mod/assets
+    
+    #For safety, don't allow file paths with ".." in them.
+    #If we encounter this, change the entire directoryPath to an empty string.
+    if directory_path.index("..") != nil
+      directory_path = ""
+      errors << "Paths are not allowed to contain \"..\""
+    end
+    
+    #Get list of files contained within directory_path
+    full_path_to_directory = File.join(HYACINTH['upload_directory'], directory_path)
+    entries = Dir.entries(full_path_to_directory)
+    
+    directory_data = []
+    entries.each do |entry|
+      next if entry == '.' || entry == '..'
+      entry_to_add = {}
+      entry_to_add['name'] = entry
+      entry_to_add['isDirectory'] = File.directory?(File.join(full_path_to_directory, entry))
+      entry_to_add['path'] = directory_path + '/' + entry
+      directory_data << entry_to_add
+    end
+        
+    response = {}
+    response["errors"] = errors if errors.present?
+    response["directoryData"] = directory_data
+    
+    render json: response
+  end
 
   private
 
@@ -638,7 +685,8 @@ class DigitalObjectsController < ApplicationController
 
     upload_response = {
       "name" => original_file_path,
-      "size" => file_size
+      "size" => file_size,
+      "errors" => []
     }
 
     valid_import_types = ['internal', 'external']
@@ -670,23 +718,23 @@ class DigitalObjectsController < ApplicationController
         path_to_final_save_location = Hyacinth::Utils::PathUtils.path_to_asset_file(new_asset_digital_object.pid, new_asset_digital_object.projects.first, File.basename(original_file_path))
 
         if File.exists?(path_to_final_save_location)
-          raise 'Pre-file-write test unexpectedly found existing file at target location: ' + path_to_final_save_location
-        end
-
-        # Recursively make necessary directories
-        FileUtils.mkdir_p(File.dirname(path_to_final_save_location))
-
-        # Test write abilities
-        FileUtils.touch(path_to_final_save_location)
-        unless File.exists?(path_to_final_save_location)
-          raise 'Unable to write to file path: ' + path_to_final_save_location
-        end
-
-        # Using a write buffer of 4096 bytes so that we don't use too much memory when copying large files.
-        # 'w' == write, 'b' == binary mode
-        File.open(path_to_final_save_location, 'wb') do |file|
-          while buff = file_to_upload.read(4096)
-            file.write(buff)
+          upload_response['errors'] << 'Pre-file-write test unexpectedly found existing file at target location: ' + path_to_final_save_location
+        else
+          # Recursively make necessary directories
+          FileUtils.mkdir_p(File.dirname(path_to_final_save_location))
+  
+          # Test write abilities
+          FileUtils.touch(path_to_final_save_location)
+          unless File.exists?(path_to_final_save_location)
+            upload_response['errors'] << 'Unable to write to file path: ' + path_to_final_save_location
+          else
+            # Using a write buffer of 4096 bytes so that we don't use too much memory when copying large files.
+            # 'w' == write, 'b' == binary mode
+            File.open(path_to_final_save_location, 'wb') do |file|
+              while buff = file_to_upload.read(4096)
+                file.write(buff)
+              end
+            end
           end
         end
 
@@ -701,7 +749,7 @@ class DigitalObjectsController < ApplicationController
         original_file_checksum = 'SHA-256:' + original_file_sha256_hexdigest
         final_copy_file_checksum = new_asset_digital_object.get_checksum
         if original_file_checksum != final_copy_file_checksum
-          upload_response['errors'] = ["Error during file copy.  Copied file checksum (#{final_copy_file_checksum}) doesn't match original (#{original_file_checksum}).  Delete uploaded record and try again."]
+          upload_response['errors'] << "Error during file copy.  Copied file checksum (#{final_copy_file_checksum}) doesn't match original (#{original_file_checksum}).  Delete uploaded record and try again."
         return upload_response
         end
       end

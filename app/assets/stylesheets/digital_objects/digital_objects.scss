@@ -355,46 +355,53 @@
 
 }
 
-.digital-object-asset-upload-form {
-
-  margin-top:1.5em;
-
-  .upload-drop-zone {
-
-    position:relative;
-    overflow:hidden;
-    font-size:1.5em;
-    padding:2em;
-    border:2px dashed #ccc;
-    color:#ccc;
-    margin-bottom:1em;
-
-    .asset-upload-file-input {
-      position: absolute;
-      top: 0;
-      right: 0;
-      margin: 0;
-      opacity: 0;
-      -ms-filter: 'alpha(opacity=0)';
-      font-size: 200px;
-      direction: ltr;
-      cursor: pointer;
+#digital-object-asset-upload {
+  
+  .digital-object-asset-upload-form {
+  
+    
+    .browser-upload {
+      margin-top:1em;
     }
-
-  }
-
-  .fileinput-button {
-
+  
+    .upload-drop-zone {
+  
       position:relative;
       overflow:hidden;
-
-
+      font-size:1.5em;
+      padding:2em;
+      border:2px dashed #ccc;
+      color:#ccc;
+      margin-bottom:1em;
+  
+      .asset-upload-file-input {
+        position: absolute;
+        top: 0;
+        right: 0;
+        margin: 0;
+        opacity: 0;
+        -ms-filter: 'alpha(opacity=0)';
+        font-size: 200px;
+        direction: ltr;
+        cursor: pointer;
+      }
+  
     }
-
-  .extended-progress-info {
-    margin-bottom:1em;
+  
+    .fileinput-button {
+        position:relative;
+        overflow:hidden;
+      }
+  
+    .extended-progress-info {
+      margin-bottom:1em;
+    }
+  
   }
-
+  
+  .uploaded-files {
+    
+  }
 }
 
 #digital-object-media-view {

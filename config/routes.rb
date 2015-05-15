@@ -29,6 +29,7 @@ Hyacinth::Application.routes.draw do
       match 'search', via: [:get, :post]
       match 'data_for_editor', via: [:get, :post]
       post 'upload_assets'
+      get 'upload_directory_listing'
     end
     member do
       get 'data_for_ordered_child_editor'
@@ -39,7 +40,7 @@ Hyacinth::Application.routes.draw do
       put 'add_parent', action: 'add_parent'
       put 'remove_parents', action: 'remove_parents'
       post 'rotate_image', action: 'rotate_image'
-      post 'swap_order_of_first_two_child_assets', actions: 'swap_order_of_first_two_child_assets'
+      post 'swap_order_of_first_two_child_assets', action: 'swap_order_of_first_two_child_assets'
     end
   end
 

@@ -380,7 +380,7 @@ class DigitalObject::Base
 
       #TODO: Use Solr to get titles of child objects.  Fall back to "Item 1", "Item 2", etc. if a title is not found for some reason.
 
-      struct_ds = Cul::Scv::Hydra::Datastreams::StructMetadata.new(nil, 'structMetadata', label:'Sequence', type:'logical')
+      struct_ds = Cul::Hydra::Datastreams::StructMetadata.new(nil, 'structMetadata', label:'Sequence', type:'logical')
       ordered_child_digital_object_pids.each_with_index do |pid, index|
         struct_ds.create_div_node(nil, {order: (index+1), label: "Item #{index+1}", contentids: pid})
       end

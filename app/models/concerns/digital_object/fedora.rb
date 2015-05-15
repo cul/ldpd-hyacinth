@@ -129,7 +129,7 @@ module DigitalObject::Fedora
       # - To be safe, do a Fedora Resource Index search for all upward-pointing member relationships from child objects:
       # - Append missing members
       # - Remove nonexistent members
-      risearch_members = Cul::Scv::Hydra::RisearchMembers.get_direct_member_pids(self.pid)
+      risearch_members = Cul::Hydra::RisearchMembers.get_direct_member_pids(self.pid)
       puts self.pid + ': Risearch objects: ' + risearch_members.inspect
 
       # Example of logic below:

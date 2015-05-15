@@ -13,38 +13,64 @@
 <strong>PID:</strong> <%= parentDigitalObject.getPid() %>
 <hr />
 
-<h2>Add New Child Assets</h2>
-<ul>
-  <li>Files will be uploaded <em>immediately</em> after being dropped in the drop zone or selected via dialog.</li>
-  <li>The progress indicator below displays upload progress, but additional server-side processing occurs after the upload is complete.</li>
-  <li>Single files larger than 1GB must be upload via FTP to the Hyacinth upload directory.</li>
-</ul>
-<form class="digital-object-asset-upload-form" action="/digital_objects/upload_assets" method="POST" enctype="multipart/form-data">
-    <input type="hidden" name="parent_digital_object_pid" value="<%= parentDigitalObject.getPid() %>" />
-    <div class="upload-drop-zone aligncenter">
-      Click here or drag and drop one or more files
-      <br />
-      <small>Max size: 1GB</small>
-      <input class="asset-upload-file-input" type="file" name="files[]" multiple="">
+<div id="digital-object-asset-upload" class="row">
+    <div class="col-md-8">
+        
+        <div role="tabpanel">
+        
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#browser_upload" aria-controls="browser_upload" role="tab" data-toggle="tab">Browser Upload</a></li>
+            <li role="presentation"><a href="#filesystem_upload" aria-controls="filesystem_upload" role="tab" data-toggle="tab">Filesystem Upload</a></li>
+          </ul>
+        
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="browser_upload">
+                <form class="digital-object-asset-upload-form" action="/digital_objects/upload_assets" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="parent_digital_object_pid" value="<%= parentDigitalObject.getPid() %>" />
+                    
+                    <div class="browser-upload">
+                      
+                      <div class="upload-drop-zone aligncenter">
+                        Click here or drag and drop one or more files
+                        <br />
+                        <small>Max size: 1GB</small>
+                        <input class="asset-upload-file-input" type="file" name="files[]" multiple="">
+                      </div>
+                  
+                      <div class="progress">
+                        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                          <span class="sr-only">0% Complete</span>
+                        </div>
+                      </div>
+                    </div>
+                
+                    <!-- The extended global progress state -->
+                    <div class="extended-progress-info">&nbsp;</div>
+                
+                </form>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="filesystem_upload"></div>
+          </div>
+        
+        </div>
+        <hr />
     </div>
-
-    <div class="progress">
-      <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
-        <span class="sr-only">0% Complete</span>
-      </div>
+    <div class="col-md-4">
+        <div class="uploaded-files">
+            <h4>Uploaded Files</h4>
+            <!-- The table listing the files available for upload/download -->
+            <table class="uploaded-files-table table table-striped table-bordered">
+                <thead>
+                    <th class="col-xs-8">File</th>
+                    <th class="col-xs-2">Size</th>
+                    <th class="col-xs-2">Status</th>
+                </thead>
+                <tbody>
+                    <tr class="placeholder"><td colspan="3">Newly uploaded files will appear here</td></tr>
+                </tbody>
+            </table>
+        </div>
     </div>
-
-    <!-- The extended global progress state -->
-    <div class="extended-progress-info">&nbsp;</div>
-
-    <h3>Uploaded Files Will Appear Below Here When Your Upload Is Complete</h3>
-    <p>Please wait until you see each file appear before leaving the page.</p>
-    <hr />
-
-    <!-- The table listing the files available for upload/download -->
-    <table role="presentation" class="table table-striped">
-      <tbody class="uploaded-files">
-
-      </tbody>
-    </table>
-</form>
+</div>

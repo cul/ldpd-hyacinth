@@ -1,0 +1,47 @@
+/* File Browser Widget */
+.widget.file-browser-widget {
+
+  position:relative;
+
+  .title {
+    font-size:16px;
+    line-height: 16px;
+    border:1px solid #ddd;
+    padding:.25em;
+    background-color:#f0f0f0;
+  }
+
+  .content {
+    border:1px solid #ddd;
+    padding:.5em;
+    max-height:300px;
+  }
+
+}
+.file-browser-widget {
+  .content {
+    overflow: hidden;
+    overflow-y: scroll;
+    min-height:200px;
+
+    .current-path-nav {
+      margin:.5em 0;
+    }
+
+    .current-path-nav {
+      margin-bottom:.25em;
+    }
+
+    ul.directory-listing {
+      padding-left:0;
+
+      li:nth-child(odd) { background-color:#eee }
+      li:nth-child(even) { background-color:#fff }
+      
+      a .glyphicon {
+        padding-right:3px;
+      }
+
+    }
+  }
+}

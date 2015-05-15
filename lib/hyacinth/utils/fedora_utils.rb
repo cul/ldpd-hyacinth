@@ -48,7 +48,7 @@ module Hyacinth::Utils::FedoraUtils
     and
     $pid <mulgara:is> <info:fedora/' + child_fedora_object_pid + '>'
 
-    search_response = JSON(Cul::Scv::Fedora.repository.find_by_itql(immediate_member_query, {
+    search_response = JSON(Cul::Hydra::Fedora.repository.find_by_itql(immediate_member_query, {
       :type => 'tuples',
       :format => 'json',
       :limit => '',

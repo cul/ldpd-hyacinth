@@ -29,7 +29,7 @@ namespace :hyacinth do
         next
       end
 
-      members = Cul::Scv::Hydra::RisearchMembers.get_recursive_member_pids(top_level_pid, true, 'ContentAggregator')
+      members = Cul::Hydra::RisearchMembers.get_recursive_member_pids(top_level_pid, true, 'ContentAggregator')
 
       counter = 0
       members.each do |pid|

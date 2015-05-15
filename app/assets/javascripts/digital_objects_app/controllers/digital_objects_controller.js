@@ -323,7 +323,32 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.upload_assets = fu
     var parentDigitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
 
     $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/upload_assets.ejs', {parentDigitalObject: parentDigitalObject}));
-
+    
+    var fileBrowserWidget = new Hyacinth.DigitalObjectsApp.FileBrowserWidget();
+    fileBrowserWidget.setTitle('Upload Directory Browser');
+    fileBrowserWidget.setActionButtonLabel('Upload');
+    fileBrowserWidget.onActionButtonClick = function(){
+      
+      Hyacinth.addAlert('Performing upload...', 'info');
+      
+      $.ajax({
+        url: '/digital_objects/upload_assets.json',
+        type: 'POST',
+        data: {
+          parent_digital_object_pid: Hyacinth.DigitalObjectsApp.params['parent_digital_object_pid'],
+          path_in_upload_directory: fileBrowserWidget.getPathFieldValue(),
+          import_type: 'internal'
+        },
+        cache: false
+      }).done(function(upload_response){
+        that.handleUploadResponse(upload_response);
+      }).fail(function(){
+        alert(Hyacinth.unexpectedAjaxErrorMessage);
+      });
+      
+    };
+    $('#filesystem_upload').append(fileBrowserWidget.$el);
+    
     var $uploadForm = $('.digital-object-asset-upload-form');
 
     $uploadForm.fileupload({
@@ -351,39 +376,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.upload_assets = fu
           $uploadForm.find('.extended-progress-info').html('Upload rate: ' + bitrateDisplayValue);
         },
         done: function (e, data) {
-
-          if (data['result']['errors']) {
-            alert('An error occurred');
-          } else {
-
-            var $uploadedFiles = $uploadForm.find('.uploaded-files');
-            $.each(data['result']['files'], function (index, file) {
-
-                var fileSize = file.size;
-                var fileSizeDisplayValue = null;
-                if (fileSize > 1000000000) {
-                  fileSizeDisplayValue = parseInt(fileSize/1000000000) + ' kB';
-                } else if (fileSize > 1000000) {
-                  fileSizeDisplayValue = parseInt(fileSize/1000000) + ' MB';
-                } else {
-                  fileSizeDisplayValue = parseInt(fileSize/1000) + ' kb';
-                }
-                var date = new Date();
-
-                $(
-                  '<tr>' +
-                    '<td class="col-xs-8">' + file.name + '</td>' +
-                    '<td class="col-xs-2">' + fileSizeDisplayValue + '</td>' +
-                    '<td class="col-xs-12 text-success">' +
-                      '<span class="glyphicon glyphicon-ok-sign"></span> ' +
-                      date.toISOString().substring(0, 10) + ' ' + date.toTimeString().substring(0, 8) +
-                    '</td>' +
-                  '</tr>'
-                ).prependTo($uploadedFiles);
-
-                Hyacinth.addAlert('File upload complete: ' + file.name, 'info');
-            });
-          }
+          that.handleUploadResponse(data['result']);
         }
     });
 
@@ -397,6 +390,45 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.upload_assets = fu
   });
 
 };
+
+Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.handleUploadResponse = function(response_data) {
+
+  var $uploadedFilesTableBody = $('.uploaded-files-table tbody');
+  $.each(response_data['files'], function (index, file) {
+    
+    if (file['errors'].length > 0) {
+      Hyacinth.addAlert(file['errors'][0], 'danger');
+    } else {
+      if ($uploadedFilesTableBody.find('.placeholder').length > 0) {
+        $uploadedFilesTableBody.find('.placeholder').remove();
+      }
+  
+      var fileSize = file['size'];
+      var fileSizeDisplayValue = null;
+      if (fileSize > 1000000000) {
+        fileSizeDisplayValue = parseInt(fileSize/1000000000) + ' kB';
+      } else if (fileSize > 1000000) {
+        fileSizeDisplayValue = parseInt(fileSize/1000000) + ' MB';
+      } else {
+        fileSizeDisplayValue = parseInt(fileSize/1000) + ' kb';
+      }
+      var date = new Date();
+  
+      $(
+        '<tr>' +
+          '<td>' + file.name + '</td>' +
+          '<td class="aligncenter">' + fileSizeDisplayValue + '</td>' +
+          '<td class="text-success aligncenter">' +
+            '<span class="glyphicon glyphicon-ok-sign"></span> ' +
+            //date.toISOString().substring(0, 10) + ' ' + date.toTimeString().substring(0, 8) +
+          '</td>' +
+        '</tr>'
+      ).prependTo($uploadedFilesTableBody);
+  
+      Hyacinth.addAlert('File upload complete: ' + file.name, 'info');
+    }
+  });
+}
 
 //Add Parent Action - Add a parent Digital Object to this Digital Object
 Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_parents = function() {
@@ -457,7 +489,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_parents = f
       }).done(function(remove_parents_response){
         $('#remove-selected-parents-button').prop('disabled', false);
         if (remove_parents_response['success'] == true) {
-          Hyacinth.addAlert('Selected parents habe been removed.', 'success');
+          Hyacinth.addAlert('Selected parents have been removed.', 'success');
           Hyacinth.DigitalObjectsApp.reloadCurrentAction();
         } else {
           Hyacinth.addAlert('&bull; ' + remove_parents_response['errors'].join('<br />&bull; '), 'danger');

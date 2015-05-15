@@ -1,0 +1,29 @@
+<%
+// local params:
+// currentPath
+// directoryData
+%>
+
+<div class="current-path-nav">
+  <% var builtPath = ''; %>
+  <% currentPath.split('/').forEach(function(partOfPath){ %><%
+    %><% builtPath += (partOfPath == '' ? '' : '/' + partOfPath); %><%
+    %><a href="#" class="directory" data-uri-encoded-path="<%= encodeURIComponent(builtPath) %>"><%= partOfPath == '' ? 'Top Level' : '/' + partOfPath %></a><%= partOfPath == '' ? ' &raquo; ' : '' %><%
+  %><% }); %>
+  <a href="#" class="refresh-button pull-right"><span class="glyphicon glyphicon-refresh"></span></a>
+</div>
+
+<ul class="directory-listing">
+<% if (directoryData.length == 0) { %>
+  <li>No files in this directory.</li>
+<% } else { %>
+  <% directoryData.forEach(function(fileOrDirectory){ %>
+    <li>
+      <a class="<%= fileOrDirectory['isDirectory'] ? 'directory' : 'file' %>" data-uri-encoded-path="<%= encodeURIComponent(fileOrDirectory['path']) %>" href="#">
+        <span class="glyphicon <%= fileOrDirectory['isDirectory'] ? 'glyphicon-folder-open' : 'glyphicon-file' %>"></span>
+        <%= fileOrDirectory['name'] %>
+      </a>
+    </li>
+  <% }); %>
+<% } %>
+</ul>
