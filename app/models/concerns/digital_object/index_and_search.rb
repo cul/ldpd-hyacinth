@@ -2,6 +2,8 @@ module DigitalObject::IndexAndSearch
   extend ActiveSupport::Concern
 
   LUCENE_SPECIAL_CHARACTERS_TO_ESCAPE_EXCLUDING_BACKSLASH = ['+', '-', '&&', '||', '!', '(', ')', '{', '}', '[', ']', '^', '"', '~', '*', '?', ':', '/']
+  RUBY_BACKSLASH_MATCH = '\\'
+  RUBY_BACKSLASH_ESCAPE = '\\\\\\'
 
   #################
   # Solr Indexing #
@@ -97,17 +99,6 @@ module DigitalObject::IndexAndSearch
       page = user_search_params['page'].present? ? user_search_params['page'].to_i : 1
       manually_selected_start_value = user_search_params['start'].present? ? user_search_params['start'].to_i : nil
 
-      dynamic_field_string_keys_to_dynamic_fields = {}
-      facet_fields = []
-
-      # Manually add certain non-dynamic-field facets
-      facet_fields << ['digital_object_type_display_label_sim', 'project_display_label_sim', 'asset_dc_type_sim', 'has_child_digital_objects_bi']
-
-      ::DynamicField.all.each {|dynamic_field|
-        dynamic_field_string_keys_to_dynamic_fields[dynamic_field.string_key] = dynamic_field
-        facet_fields << 'df_' + dynamic_field.string_key + '_sim' if dynamic_field.is_facet_field
-      }
-
       solr_params = {}
 
       solr_params['rows'] = per_page
@@ -124,6 +115,9 @@ module DigitalObject::IndexAndSearch
 
       # Only retrieve active ('A') items
       solr_params['fq'] << 'state_sim:A'
+      
+      # Looking for specific set of PIDs
+      solr_params['fq'] << 'pid:("' + user_search_params['pids'].join('" OR "') + '")' if user_search_params['pids'].present?
 
       # Facet preferences (if faceting is enabled)
       facet_limit = 10 # default
@@ -133,7 +127,21 @@ module DigitalObject::IndexAndSearch
       # facet_params are for specifying how you want to RECEIVE facets.
       # This has nothing to do with using the facet feature to apply facet filters.
       unless facet_params.to_s == "false"
-        facet_fields = facet_params['field'] if facet_params['field'].present?
+        
+        if facet_params['field'].present?
+          facet_fields = facet_params['field']
+        else
+          # Set up default facet fields
+          dynamic_field_string_keys_to_dynamic_fields = {}
+          facet_fields = []
+          # Manually add certain non-dynamic-field facets
+          facet_fields << ['digital_object_type_display_label_sim', 'project_display_label_sim', 'asset_dc_type_sim', 'has_child_digital_objects_bi']
+          ::DynamicField.all.each {|dynamic_field|
+            dynamic_field_string_keys_to_dynamic_fields[dynamic_field.string_key] = dynamic_field
+            facet_fields << 'df_' + dynamic_field.string_key + '_sim' if dynamic_field.is_facet_field
+          }
+        end
+        
         facet_limit = facet_params['per_page'].to_i if facet_params['per_page'].present?
         facet_offset = (facet_params['page'].to_i - 1) * facet_limit if facet_params['page'].present?
         facet_sort = facet_params['sort'] if facet_params['sort'].present?

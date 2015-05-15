@@ -25,6 +25,22 @@ class DigitalObjectsController < ApplicationController
       }
     end
   end
+  
+  def titles_for_pids
+    
+    pids = params[:pids]
+    
+    respond_to do |format|
+      format.json {
+        search_response = DigitalObject::Base.search(
+          { 'pids' => pids },
+          false,
+          current_user
+        )
+        render json: search_response
+      }
+    end
+  end
 
   # GET /digital_objects/cul:123.json
   def show

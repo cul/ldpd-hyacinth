@@ -30,6 +30,7 @@ Hyacinth::Application.routes.draw do
       match 'data_for_editor', via: [:get, :post]
       post 'upload_assets'
       get 'upload_directory_listing'
+      get 'titles_for_pids'
     end
     member do
       get 'data_for_ordered_child_editor'
