@@ -41,6 +41,12 @@ namespace :hyacinth do
       else
         start_at = 0
       end
+      
+      # We run into autoloading issues when running in a multithreaded context,
+      # so we'll have the application eager load all classes now.
+      puts 'Eager loading application classes to avoid multithreading issues...'
+      Rails.application.eager_load!
+      puts 'Eager load done.'
 
       list_of_pids = []
       found_results = true
@@ -82,12 +88,6 @@ namespace :hyacinth do
         mutex = Mutex.new
         total = list_of_pids.length
         start_time = Time.now
-
-        puts 'Eager loading application classes to avoid multithreading issues...'
-        # We run into autoloading issues when running in a multithreaded context,
-        # so we'll have the application eager load all classes now.
-        Rails.application.eager_load!
-        puts 'Eager load done.'
 
         puts 'list_of_pids size: ' + list_of_pids.length.to_s
 
