@@ -412,12 +412,15 @@ class DigitalObject::Base
       
     # Tell external publish targets to reindex this object
     self.publish_targets.each do |publish_target|
-      publish_url = publish_target.publish_url
-      api_key = publish_target.api_key
-      json_response = JSON(RestClient.post publish_url, {pid: self.pid, api_key: api_key})
+      if publish_target.publish_url.present?
       
-      unless json_response['success'] && json_response['success'].to_s == 'true'
-        @errors.add(:publish_target, 'Error encountered while publishing to ' + publish_target.display_label)
+        api_key = publish_target.api_key
+        json_response = JSON(RestClient.post publish_target.publish_url, {pid: self.pid, api_key: api_key})
+        
+        unless json_response['success'] && json_response['success'].to_s == 'true'
+          @errors.add(:publish_target, 'Error encountered while publishing to ' + publish_target.display_label)
+        end
+        
       end
     end
     
