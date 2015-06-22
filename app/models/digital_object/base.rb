@@ -444,6 +444,30 @@ class DigitalObject::Base
     publish_targets_to_return.uniq!
     return publish_targets_to_return
   end
+  
+  def self.titles_for_pids(pids, user_for_access)
+  
+    pids_to_titles = {}
+    
+    if pids.present?
+      search_response = DigitalObject::Base.search(
+        {
+          'pids' => pids,
+          'fl' => 'pid,title_ssm',
+          'per_page' => 99999
+        },
+        false,
+        user_for_access
+      )
+      if search_response['results'].present?
+        search_response['results'].each do |result|
+          pids_to_titles[result['pid']] = result['title_ssm'].first
+        end
+      end
+    end
+    
+    return pids_to_titles
+  end
 
   ######################
   # JSON Serialization #

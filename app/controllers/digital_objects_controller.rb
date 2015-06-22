@@ -28,16 +28,9 @@ class DigitalObjectsController < ApplicationController
   
   def titles_for_pids
     
-    pids = params[:pids]
-    
     respond_to do |format|
       format.json {
-        search_response = DigitalObject::Base.search(
-          { 'pids' => pids },
-          false,
-          current_user
-        )
-        render json: search_response
+        render json: DigitalObject::Base.titles_for_pids(params[:pids].blank? ? [] : params[:pids], current_user)
       }
     end
   end
@@ -300,30 +293,31 @@ class DigitalObjectsController < ApplicationController
 
   def data_for_ordered_child_editor
 
-    max_number_of_child_assets_to_load = 20 # More than this would be unreasonably slow to load (at least right now).
-                                            # We don't want to return a partial set because this is used for ordering.
+    ordered_child_search_results = []
 
-    too_many_to_show = false
-
-    if @digital_object.ordered_child_digital_object_pids.blank?
-      ordered_child_digital_objects = []
-    else
+    if @digital_object.ordered_child_digital_object_pids.present?
       child_pids = @digital_object.ordered_child_digital_object_pids
-      if child_pids.length <= max_number_of_child_assets_to_load
-        ordered_child_digital_objects = child_pids.map{|pid|DigitalObject::Base.find(pid)}
-      else
-        ordered_child_digital_objects = []
-        too_many_to_show = true
+      
+      pids_to_search_results = {}
+      search_response = DigitalObject::Base.search({'pids' => child_pids, 'per_page' => 99999}, false, current_user)
+      if search_response['results'].present?
+        search_response['results'].each do |result|
+          pids_to_search_results[result['pid']] = result
+        end
       end
+      
+      child_pids.each do |pid|
+        ordered_child_search_results.push(pids_to_search_results[pid].present? ? pids_to_search_results[pid] : {'pid' => pid})
+      end
+      
     end
-
 
     respond_to do |format|
       format.json {
         render json: {
           digital_object: @digital_object,
-          ordered_child_digital_objects: ordered_child_digital_objects,
-          too_many_to_show: too_many_to_show
+          ordered_child_search_results: ordered_child_search_results,
+          too_many_to_show: false # We are always showing all children.  Might change this later if this becomes a problem.
         }
       }
     end

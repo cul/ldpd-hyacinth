@@ -285,8 +285,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_children = 
 
     var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_ordered_child_editor['digital_object']);
     var tooManyToShow = data_for_ordered_child_editor['too_many_to_show'];
-    var orderedChildDigitalObjects = $.map(data_for_ordered_child_editor['ordered_child_digital_objects'], function(child_digital_object){
-      return Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(child_digital_object)
+    var orderedChildDigitalObjects = $.map(data_for_ordered_child_editor['ordered_child_search_results'], function(child_digital_object){
+      return new Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult(child_digital_object);
     });
 
     $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/manage_children.ejs', {digitalObject: digitalObject, orderedChildDigitalObjects: orderedChildDigitalObjects}));

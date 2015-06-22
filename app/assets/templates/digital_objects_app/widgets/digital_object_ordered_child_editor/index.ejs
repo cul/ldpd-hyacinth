@@ -13,6 +13,8 @@
 
 <h2 class="manage-children-heading">Manage Child Digital Objects</h2>
 
+<p><%= orderedChildDigitalObjects.length %> Children Total</p>
+
 <% if (tooManyToShow) { %>
   Too many child object to show.
   <br /><br />
@@ -23,7 +25,6 @@
 
   <form class="ordered-child-editor-form">
   <% orderedChildDigitalObjects.forEach(function(childDigitalObject){ %>
-    <% if (childDigitalObject.getState() != 'A') { return; } %>
     <div class="ordered-child shadow-box" data-pid="<%= childDigitalObject.getPid() %>">
       <div class="row">
         <div class="col-xs-2">
@@ -36,7 +37,7 @@
             <br />
             <strong>Title: <%- childDigitalObject.getTitle() %></strong>
             <br />
-            <span class="label label-default"><%= childDigitalObject.digital_object_type['display_label'] %></span>
+            <span class="label label-default"><%= childDigitalObject.getDigitalObjectTypeDisplayLabel() %></span>
         </div>
         <div class="col-xs-2">
           <% if ( childDigitalObject.hasImage()) { %>
