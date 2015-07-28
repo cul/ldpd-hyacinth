@@ -11,9 +11,9 @@ Supported Browsers:
 ### First Time Setup:
 Hyacinth has the following dependencies:
 - Ruby 1.9.3 or 2.x (tested with 1.9.3 and 2.1.3)
-- MySQL (tested with 5.5)
+- Sqlite3 or MySQL (tested with MySQL 5.5)
 - Apache Solr (tested with 4.9)
-- Fedora (tested with 3.7 and 3.8)
+- Fedora 3.8.1
 
 First, you'll need to import relevant content models into Fedora:
 ```sh
