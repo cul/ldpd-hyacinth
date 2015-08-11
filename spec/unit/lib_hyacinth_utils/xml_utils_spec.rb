@@ -5,12 +5,12 @@ context 'Hyacinth::Utils::XmlUtils' do
 
   before(:all) do
     @mods_namespace_hash = {'mods' => 'http://www.loc.gov/mods/v3'}
-    @src_mods_item_xml = fixture('xml_utils/merge/src_mods_item.xml').read
-    @src_mods_item_with_mods_prefix_xml = fixture('xml_utils/merge/src_mods_item.xml').read
-    @dst_mods_item_xml = fixture('xml_utils/merge/dst_mods_item.xml').read
-    @dst_mods_item_with_mods_prefix_xml = fixture('xml_utils/merge/dst_mods_item_with_mods_prefix.xml').read
-    @merged_mods_item_ng = Nokogiri::XML(fixture('xml_utils/merge/merged_mods_item.xml').read)
-    @merged_mods_item_with_mods_prefix_ng = Nokogiri::XML(fixture('xml_utils/merge/merged_mods_item_with_mods_prefix.xml').read)
+    @src_mods_item_xml = fixture('lib/hyacinth/utils/xml_utils/merge/src_mods_item.xml').read
+    @src_mods_item_with_mods_prefix_xml = fixture('lib/hyacinth/utils/xml_utils/merge/src_mods_item.xml').read
+    @dst_mods_item_xml = fixture('lib/hyacinth/utils/xml_utils/merge/dst_mods_item.xml').read
+    @dst_mods_item_with_mods_prefix_xml = fixture('lib/hyacinth/utils/xml_utils/merge/dst_mods_item_with_mods_prefix.xml').read
+    @merged_mods_item_ng = Nokogiri::XML(fixture('lib/hyacinth/utils/xml_utils/merge/merged_mods_item.xml').read)
+    @merged_mods_item_with_mods_prefix_ng = Nokogiri::XML(fixture('lib/hyacinth/utils/xml_utils/merge/merged_mods_item_with_mods_prefix.xml').read)
   end
 
   before(:each) do

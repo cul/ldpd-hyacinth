@@ -495,8 +495,6 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.submitEditorForm = func
     }
   });
 
-  console.log('Publish targets: ' + publishTargets);
-
   var digitalObjectData = {
     digital_object_type_string_key: this.digitalObject.digital_object_type['string_key'],
     dynamic_field_data_json: serializedFormAsJsonString,

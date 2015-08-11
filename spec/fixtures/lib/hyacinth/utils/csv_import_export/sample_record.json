@@ -1,0 +1,178 @@
+{
+   "pid":"cul:fbg79cnp6f",
+   "title":"the life and times of New York's favorite club",
+   "state":"A",
+   "dc_type":"InteractiveResource",
+   "projects":[
+      {
+         "pid":"cul:7h44j0zpcs",
+         "display_label":"Seymour B. Durst Old York Library",
+         "string_key":"durst"
+      }
+   ],
+   "allowed_publish_targets":[
+      {
+         "pid":"cul:sqv9s4mwg3",
+         "display_label":"Seymour B. Durst Old York Library"
+      }
+   ],
+   "publish_targets":[
+      {
+         "pid":"cul:sqv9s4mwg3",
+         "display_label":"Seymour B. Durst Old York Library"
+      }
+   ],
+   "digital_object_type":{
+      "id":1,
+      "display_label":"Item",
+      "string_key":"item"
+   },
+   "dynamic_field_data":{
+      "dims_identifier":[
+         {
+            "dims_identifier_value":"DIM004698"
+         }
+      ],
+      "clio_identifier":[
+         {
+            "clio_identifier_type":"print",
+            "clio_identifier_value":"60385"
+         }
+      ],
+      "collection":[
+         {
+            "collection_value":"Seymour B. Durst Old York Library Collection"
+         }
+      ],
+      "record_content_source":[
+         {
+            "record_content_source_value":"NNC"
+         }
+      ],
+      "publisher":[
+         {
+            "publisher_value":"Viking Press"
+         }
+      ],
+      "marc_005_last_modified":[
+         {
+            "marc_005_last_modified_value":"20130318140043.0"
+         }
+      ],
+      "title":[
+         {
+            "title_sort_portion":"\"21\" : the life and times of New York's favorite club"
+         }
+      ],
+      "subject_hierarchical_geographic":[
+         {
+            "subject_hierarchical_geographic_zip_code":[
+               {
+                  "subject_hierarchical_geographic_zip_code_value":"10019"
+               }
+            ],
+            "subject_hierarchical_geographic_neighborhood":[
+               {
+                  "subject_hierarchical_geographic_neighborhood_value":"Midtown-Midtown South"
+               }
+            ],
+            "subject_hierarchical_geographic_state":[
+               {
+                  "subject_hierarchical_geographic_state_value":"NY"
+               }
+            ],
+            "subject_hierarchical_geographic_street":[
+               {
+                  "subject_hierarchical_geographic_street_value":"21 W. 52nd Street"
+               }
+            ],
+            "subject_hierarchical_geographic_city":[
+               {
+                  "subject_hierarchical_geographic_city_value":"New York"
+               }
+            ],
+            "subject_hierarchical_geographic_borough":[
+               {
+                  "subject_hierarchical_geographic_borough_value":"Manhattan"
+               }
+            ]
+         }
+      ],
+      "extent":[
+         {
+            "extent_value":"191 p. : ill. ; 26 cm."
+         }
+      ],
+      "subject_durst":[
+         {
+            "subject_durst_value":"Institution (Club)",
+            "subject_durst_code":"INST-CLUB"
+         }
+      ],
+      "isbn":[
+         {
+            "isbn_value":"0670734608"
+         }
+      ],
+      "name":[
+         {
+            "name_value":"Kaytor, Marilyn",
+            "name_type":"personal",
+            "name_usage_primary":true
+         }
+      ],
+      "note":[
+         {
+            "note_value":"Includes index"
+         }
+      ],
+      "coordinates":[
+         {
+            "coordinates_value":"40.76041447180112, -73.97775327587597"
+         }
+      ],
+      "subject_name":[
+         {
+            "subject_name_value":"Jack and Charlie's \"21,\" N.Y.",
+            "subject_name_type":"corporate"
+         },
+         {
+            "subject_name_value":"21 (Restaurant : New York, N.Y.)",
+            "subject_name_type":"corporate"
+         }
+      ],
+      "form":[
+         {
+            "form_authority":"aat",
+            "form_value":"books"
+         }
+      ],
+      "date_other_textual":[
+         {
+            "date_other_textual_value":"1975"
+         }
+      ],
+      "place_of_origin":[
+         {
+            "place_of_origin_value":"New York"
+         }
+      ],
+      "date_issued":[
+         {
+            "date_issued_start_value":"1975",
+            "date_issued_key_date":true
+         }
+      ],
+      "type_of_resource":[
+         {
+            "type_of_resource":"text"
+         }
+      ]
+   },
+   "ordered_child_digital_object_pids":[
+
+   ],
+   "parent_digital_object_pids":[
+
+   ]
+}
