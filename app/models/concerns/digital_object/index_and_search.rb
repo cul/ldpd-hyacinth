@@ -127,12 +127,15 @@ module DigitalObject::IndexAndSearch
       # facet_params are for specifying how you want to RECEIVE facets.
       # This has nothing to do with using the facet feature to apply facet filters.
       unless facet_params.to_s == "false"
+
+        dynamic_field_string_keys_to_dynamic_fields = {}
         
         if facet_params['field'].present?
-          facet_fields = facet_params['field']
+          facet_fields = [facet_params['field']]
+          dynamic_field = ::DynamicField.find_by(string_key: (facet_params['field'].gsub(/^df_/, '').gsub(/_sim$/, '')))
+          dynamic_field_string_keys_to_dynamic_fields[dynamic_field.string_key] = dynamic_field if dynamic_field.present?
         else
           # Set up default facet fields
-          dynamic_field_string_keys_to_dynamic_fields = {}
           facet_fields = []
           # Manually add certain non-dynamic-field facets
           facet_fields << ['digital_object_type_display_label_sim', 'project_display_label_sim', 'asset_dc_type_sim', 'has_child_digital_objects_bi']
@@ -202,8 +205,6 @@ module DigitalObject::IndexAndSearch
 
       if user_for_permission_context.present?
         unless user_for_permission_context.is_admin?
-
-          puts 'Projects: ' + user_for_permission_context.projects.inspect
 
           user_allowed_projects = user_for_permission_context.projects
           if user_allowed_projects.length > 0
