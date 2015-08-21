@@ -53,6 +53,6 @@ Integration tests are great and we should run them.  Here's how:
 bundle exec rake hyacinth:ci
 ```
 
-Note 1: If you're doing development and running jetty on port 9983, be sure to stop it before running the integration tests.  These tests also start a jetty process that tries to run on port 9983.
+Note 1: By default, jetty will run on port 8983 in the development environment and 9983 in the test environment.
 
 Note 2: Hyacinth requires JavaScript for integration tests and uses the capybara and poltergrist gems.  You'll need to install PhantomJS and have it available on your PATH.

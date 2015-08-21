@@ -4,12 +4,10 @@ namespace :hyacinth do
 
     # Note: Don't include Rails environment for this task, since enviroment includes a check for the presence of database.yml
     task :config_files do
-      
-      # Gather params
-      solr_port = ENV['solr_port'] || 9983
-      fedora_port = ENV['fedora_port'] || 9983
 
       # Set up files
+      default_development_port = 8983
+      default_test_port = 9983
 
       # database.yml
       database_yml_file = File.join(Rails.root, 'config/database.yml')
@@ -33,7 +31,7 @@ namespace :hyacinth do
         fedora_yml[env_name] = {
           :user => 'fedoraAdmin',
           :password => 'fedoraAdmin',
-          :url => 'http://localhost:' + fedora_port.to_s + (env_name == 'test' ? '/fedora-test' : '/fedora'),
+          :url => 'http://localhost:' + (env_name == 'test' ? default_test_port : default_development_port).to_s + (env_name == 'test' ? '/fedora-test' : '/fedora'),
           :time_zone => 'America/New_York'
         }
       end
@@ -45,7 +43,7 @@ namespace :hyacinth do
       hyacinth_yml = YAML.load_file(hyacinth_yml_file) || {}
       ['development', 'test'].each do |env_name|
         hyacinth_yml[env_name] = {
-          'solr_url' => 'http://localhost:' + solr_port.to_s + '/solr/' + 'hyacinth-' + env_name,
+          'solr_url' => 'http://localhost:' + (env_name == 'test' ? default_test_port : default_development_port).to_s + '/solr/' + 'hyacinth-' + env_name,
           'default_pid_generator_namespace' => 'cul',
           'default_asset_home' => File.join(Rails.root, 'tmp/asset_home_' + env_name),
           'upload_directory' => File.join(Rails.root, 'tmp/upload_' + env_name),
@@ -72,7 +70,7 @@ namespace :hyacinth do
       solr_yml = YAML.load_file(solr_yml_file) || {}
       ['development', 'test'].each do |env_name|
         solr_yml[env_name] = {
-          'url' => 'http://localhost:' + solr_port.to_s + '/solr/' + env_name
+          'url' => 'http://localhost:' + (env_name == 'test' ? default_test_port : default_development_port).to_s + '/solr/' + env_name
         }
       end
       File.open(solr_yml_file, 'w') {|f| f.write solr_yml.to_yaml }
