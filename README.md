@@ -3,10 +3,10 @@
 Your friendly, neighborhood metadata editor.
 
 Supported Browsers:
-- Chrome: 39+
-- Firefox: 34+
-- Safari: 7.1+
-- Internet Explorer: 10+
+- Chrome: 44+
+- Firefox: 40+
+- Safari: 8+
+- Internet Explorer: 11+
 
 ### Requirements
 Hyacinth has the following dependencies:
@@ -34,7 +34,16 @@ Then navigate to http://localhost:3000 in your browser and log in using the "Ema
 **Default admin credentials:**
 
 Email: hyacinth-admin@library.columbia.edu
+
 Password: iamtheadmin
+
+**Stopping hydra-jetty:**
+
+To stop jetty later on, run:
+
+```sh
+bundle exec rake jetty:start
+```
 
 ### Running Integration Tests:
 
