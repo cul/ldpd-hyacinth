@@ -37,6 +37,7 @@ config/subs.yml
 
 # Ignore hydra-jetty
 /jetty
+/jetty-test
 
 # Ignore OS-specific
 .DS_Store
