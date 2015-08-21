@@ -15,6 +15,8 @@ Hyacinth has the following dependencies:
 - Apache Solr (tested with 4.9)
 - Fedora 3.7 through 3.8.x (though 3.8.1 is recommended because of a concurrent writing issue with 3.7 through 3.8.0)
 
+Note: The Fedora ResourceIndex module must be turned on.  It is on by default in the Hyacinth hydra-jetty instance, but not in standalone Fedora installations.
+
 ### First Time Setup:
 ```sh
 git clone https://github.com/cul/hyacinth.git # Clone the repo
@@ -23,13 +25,13 @@ bundle install # Install gem dependencies
 bundle exec rake hyacinth:setup:config_files # Set up required config files
 bundle exec rake db:migrate # Run database migrations
 bundle exec rake jetty:clean # Download and unpack a new Hyacinth hydra-jetty instance
-bundle exec rake jetty:start # Start jetty (which includes Fedora and Solr, running on port 9983)
-bundle exec rake hyacinth:fedora:reload_cmodels # Import required content models into Fedora
+bundle exec rake jetty:start # Start jetty, which includes Fedora and Solr, running on port 9983. This will take a minute.
+bundle exec rake hyacinth:fedora:reload_cmodels # Import required content models into Fedora (Note: It is safe to ignore any "404 Resource Not Found" output messages encountered during this step. These are expected because the content models do not already exist in Fedora and therefore cannot be found.)
 bundle exec rake db:seed # Set up default data (including default users)
 rails s -p 3000 # Start the application using rails server
 ```
 
-Then navigate to http://localhost:3000 in your browser and log in using the "Email" method.
+Then navigate to http://localhost:3000 in your browser and sign in using the "Email" method.
 
 **Default admin credentials:**
 
@@ -37,18 +39,20 @@ Email: hyacinth-admin@library.columbia.edu
 
 Password: iamtheadmin
 
-**Stopping hydra-jetty:**
-
-To stop jetty later on, run:
+**To stop jetty later on, run:**
 
 ```sh
 bundle exec rake jetty:stop
 ```
 
-### Running Integration Tests:
+### Running Integration Tests (for developers):
+
+Integration tests are great and we should run them.  Here's how:
 
 ```sh
 bundle exec rake hyacinth:ci
 ```
 
-Note: Hyacinth requires JavaScript for integration tests and uses the capybara and poltergrist gems.  You'll need to install PhantomJS and have it available on your PATH.
+Note 1: If you're doing development and running jetty on port 9983, be sure to stop it before running the integration tests.  These tests also start a jetty process that tries to run on port 9983.
+
+Note 2: Hyacinth requires JavaScript for integration tests and uses the capybara and poltergrist gems.  You'll need to install PhantomJS and have it available on your PATH.
