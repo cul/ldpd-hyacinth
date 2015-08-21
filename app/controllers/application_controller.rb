@@ -45,11 +45,12 @@ class ApplicationController < ActionController::Base
   end
   
   def after_sign_out_path_for(resource)
-    if session[:signed_in_using_uni]
+    if cookies[:signed_in_using_uni]
       # Log out of CAS sessions
-      'https://cas.columbia.edu/cas/logout?service=' + URI::escape(root_url)
+      cookies.delete(:signed_in_using_uni)
+      return 'https://cas.columbia.edu/cas/logout?service=' + URI::escape(root_url)
     else
-      root_url
+      return root_url
     end
   end
 
