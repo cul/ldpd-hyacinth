@@ -42,7 +42,7 @@ Password: iamtheadmin
 To stop jetty later on, run:
 
 ```sh
-bundle exec rake jetty:start
+bundle exec rake jetty:stop
 ```
 
 ### Running Integration Tests:
