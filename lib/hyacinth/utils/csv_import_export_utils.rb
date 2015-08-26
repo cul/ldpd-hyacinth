@@ -37,28 +37,35 @@ class Hyacinth::Utils::CsvImportExportUtils
     current_builder_path = [] # e.g. ['name', 'name_role']
     
     row_data.each_with_index do |cell_value,index|
-      next if cell_value.blank?
-      
-      # Handle internal field, which is named with a leading underscore
       if column_indices_to_headers[index].start_with?('_')
-        
+        # Handle internal field, which is named with a leading underscore
         self.process_internal_field_value(digital_object_data, cell_value, column_indices_to_headers[index])
       else
-        # Handle dynamic field
+        # Handle dynamic field, which never starts with a leading underscore
+        self.process_dynamic_field_value(digital_object_data, cell_value, column_indices_to_headers[index], current_builder_path)
       end
-
     end
     
   end
   
   def self.process_internal_field_value(digital_object_data, value, internal_field_header_name)
+    return if value.blank?
+    
     digital_object_data[ internal_field_header_name ] ||= []
     digital_object_data[ internal_field_header_name ] << value
   end
-
-
-
-
+  
+  def self.process_dynamic_field_value(digital_object_data, value, internal_field_header_name, current_builder_path)
+    return if value.blank?
+    
+    #Found: title:title_non_sort_portion
+    dynamic_field_group_path = internal_field_header_name.split(':') # e.g. title
+    dynamic_field_name = dynamic_field_group_path.pop # e.g. title_non_sort_portion
+    
+    
+    digital_object_data[ internal_field_header_name ] ||= []
+    digital_object_data[ internal_field_header_name ] << value
+  end
 
   ##############################
   # Digital Object Data to CSV #

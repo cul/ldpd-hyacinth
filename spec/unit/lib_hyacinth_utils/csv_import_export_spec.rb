@@ -2,12 +2,12 @@ require 'rails_helper'
 
 context 'Hyacinth::Utils::CsvImportExportUtils' do
 
+  let(:digital_object_data) { JSON.parse( fixture('lib/hyacinth/utils/csv_import_export/sample_record.json').read ) }
+
   before(:context) do
-    @expected_digital_object_data = JSON.parse( fixture('lib/hyacinth/utils/csv_import_export/sample_record.json').read )
   end
 
   before(:example) do
-    
   end
 
   describe ".csv_to_digital_object_data" do
@@ -18,13 +18,17 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
   end
 
   describe ".process_internal_field_value" do
-    it "works" do
-      digital_object_data = {}
-      value = 'abc:123'
-      internal_field_header_name = '_pid'
-      Hyacinth::Utils::CsvImportExportUtils.process_internal_field_value(digital_object_data, value, internal_field_header_name)
-      
+    
+    let(:digital_object_data) { {} }
+
+    it "properly handles a non-blank field value" do
+      Hyacinth::Utils::CsvImportExportUtils.process_internal_field_value(digital_object_data, 'abc:123', '_pid')
       expect(digital_object_data).to eq({'_pid' => ['abc:123']})
+    end
+    
+    it "properly handles a blank field value" do
+      Hyacinth::Utils::CsvImportExportUtils.process_internal_field_value(digital_object_data, '', '_pid')
+      expect(digital_object_data).to eq({})
     end
   end
 
