@@ -58,13 +58,36 @@ class Hyacinth::Utils::CsvImportExportUtils
   def self.process_dynamic_field_value(digital_object_data, value, internal_field_header_name, current_builder_path)
     return if value.blank?
     
-    #Found: title:title_non_sort_portion
-    dynamic_field_group_path = internal_field_header_name.split(':') # e.g. title
-    dynamic_field_name = dynamic_field_group_path.pop # e.g. title_non_sort_portion
+    # Current builder path is ['title']
+    # New goal path is: ['name']
+    # Need to determine difference
+    #Difference is: ['name']
+    
+    #Found: name:name_value
+    new_builder_path = internal_field_header_name.split(':') # e.g. ['name']
+    new_dynamic_field_name = new_dynamic_field_group_path.pop # e.g. 'name_value'
+    
+    builder_path_difference = self.get_builder_path_difference(current_builder_path, new_builder_path) # returns ['name']
     
     
-    digital_object_data[ internal_field_header_name ] ||= []
-    digital_object_data[ internal_field_header_name ] << value
+    #if digital_object_data[dynamic_field_group_path[0]].nil?
+    #  digital_object_data[dynamic_field_group_path[0]] = []
+    #end
+    #
+    #if digital_object_data[dynamic_field_group_path[0]][dynamic_field_group_path[1]].nil?
+    #  digital_object_data[dynamic_field_group_path[0]] = []
+    #end
+    #
+    #
+    #
+    #
+    #digital_object_data[ internal_field_header_name ] ||= []
+    #digital_object_data[ internal_field_header_name ] << value
+  end
+  
+  
+  def self.get_builder_path_difference(old_builder_path, new_builder_path)
+    
   end
 
   ##############################

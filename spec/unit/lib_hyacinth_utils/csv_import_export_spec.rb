@@ -18,7 +18,6 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
   end
 
   describe ".process_internal_field_value" do
-    
     let(:digital_object_data) { {} }
 
     it "properly handles a non-blank field value" do
@@ -28,6 +27,19 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
     
     it "properly handles a blank field value" do
       Hyacinth::Utils::CsvImportExportUtils.process_internal_field_value(digital_object_data, '', '_pid')
+      expect(digital_object_data).to eq({})
+    end
+  end
+  
+  describe ".process_dynamic_field_value" do
+    let(:digital_object_data) { {} }
+
+    it "properly handles a non-blank field value" do
+      skip 'Implementation pending'
+    end
+    
+    it "properly handles a blank field value" do
+      Hyacinth::Utils::CsvImportExportUtils.process_dynamic_field_value(digital_object_data, '', 'some_dynamic_field', [])
       expect(digital_object_data).to eq({})
     end
   end
