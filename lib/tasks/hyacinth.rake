@@ -1,7 +1,6 @@
 require "active-fedora"
 require 'jettywrapper'
-jetty_zip_basename = 'hyacinth-fedora-3.7-with-risearch'
-Jettywrapper.url = "https://github.com/elo2112/hydra-jetty/archive/#{jetty_zip_basename}.zip"
+Jettywrapper.url = "https://github.com/cul/hydra-jetty/archive/hyacinth-fedora-3.8.1-with-risearch.zip"
 
 def print_out_solr_and_fedora_urls
   puts '---------------------------'
@@ -12,7 +11,5 @@ def print_out_solr_and_fedora_urls
 end
 
 namespace :hyacinth do
-
-  
 
 end

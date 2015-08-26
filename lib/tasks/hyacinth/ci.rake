@@ -28,8 +28,7 @@ namespace :hyacinth do
   task :ci do
     
     Rails.env = 'test'
-    Jettywrapper.url = "https://github.com/elo2112/hydra-jetty/archive/hyacinth-fedora-3.7-with-risearch.zip"
-    Jettywrapper.jetty_dir = File.join(Rails.root, 'jetty-test')
+    #Jettywrapper.url = "https://github.com/cul/hydra-jetty/archive/hyacinth-fedora-3.8.1-with-risearch.zip"
     Jettywrapper.jetty_dir = File.join(Rails.root, 'jetty-test')
 
     unless File.exists?(Jettywrapper.jetty_dir)
