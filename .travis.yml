@@ -5,8 +5,7 @@ sudo: false
 rvm:
   - 2.1
   
-jdk:
-  - oraclejdk8
+jdk: 'oraclejdk8'
 
 matrix:
   include:
