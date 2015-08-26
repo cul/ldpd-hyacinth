@@ -1,7 +1,5 @@
 require "active-fedora"
 require 'jettywrapper'
-jetty_zip_basename = 'hyacinth-fedora-3.7-with-risearch'
-Jettywrapper.url = "https://github.com/elo2112/hydra-jetty/archive/#{jetty_zip_basename}.zip"
 
 namespace :hyacinth do
 
@@ -28,18 +26,19 @@ namespace :hyacinth do
 
   desc "CI build"
   task :ci do
+    
+    Rails.env = 'test'
+    Jettywrapper.jetty_dir = File.join(Rails.root, 'jetty-test')
 
-    unless File.exists?(File.join(Rails.root, 'jetty'))
+    unless File.exists?(Jettywrapper.jetty_dir)
       puts "\n"
-      puts 'No jetty found.  Downloading / unzipping a copy now.'
+      puts 'No test jetty found.  Will download / unzip a copy now.'
       puts "\n"
     end
-
+    
     Rake::Task["jetty:clean"].invoke
-
-    Rails.env = "test"
-
-    jetty_params = Jettywrapper.load_config
+    
+    jetty_params = Jettywrapper.load_config.merge({jetty_home: Jettywrapper.jetty_dir})
     error = Jettywrapper.wrap(jetty_params) do
       Rake::Task["hyacinth:fedora:reload_cmodels"].invoke
       Rake::Task["db:drop"].invoke

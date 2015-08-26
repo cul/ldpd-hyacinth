@@ -61,7 +61,7 @@ class UsersController < ApplicationController
 
         unless possible_user.nil?
           sign_in possible_user, :bypass => true
-          session[:signed_in_using_uni] = true # TODO use this session variable to know when to do a Wind logout upon Devise logout
+          cookies[:signed_in_using_uni] = true # Use this cookie to know when to do a Wind logout upon Devise logout
           flash[:notice] = 'You are now logged in.'
 
           redirect_to root_path, :status => 302
@@ -131,7 +131,7 @@ class UsersController < ApplicationController
 
         unless possible_user.nil?
           sign_in possible_user, :bypass => true
-          session[:signed_in_using_uni] = true # TODO use this session variable to know when to do a Wind logout upon Devise logout
+          cookies[:signed_in_using_uni] = true # Use this cookie to know when to do a CAS logout upon Devise logout
           flash[:notice] = 'You are now logged in.'
 
           redirect_to root_path, :status => 302

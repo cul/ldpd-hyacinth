@@ -43,6 +43,16 @@ class ApplicationController < ActionController::Base
   def after_sign_in_path_for(resource)
     session["login_redirect_to"] || root_path
   end
+  
+  def after_sign_out_path_for(resource)
+    if cookies[:signed_in_using_uni]
+      # Log out of CAS sessions
+      cookies.delete(:signed_in_using_uni)
+      return 'https://cas.columbia.edu/cas/logout?service=' + URI::escape(root_url)
+    else
+      return root_url
+    end
+  end
 
   # Permission/Authorization methods
 
