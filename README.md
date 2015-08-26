@@ -14,6 +14,7 @@ Hyacinth has the following dependencies:
 - Sqlite3 or MySQL (tested with MySQL 5.5)
 - Apache Solr (tested with 4.9)
 - Fedora 3.7 through 3.8.x (though 3.8.1 is recommended because of a concurrent writing issue with 3.7 through 3.8.0)
+- Java 8 for running CI tests (using hydra-jetty).
 
 Note: The Fedora ResourceIndex module must be turned on.  It is on by default in the Hyacinth hydra-jetty instance, but not in standalone Fedora installations.
 
