@@ -146,7 +146,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
       ],
       "note" => [
         {
-          "note_value" => "",
+          "note_value" => "                         ", # A bunch of spaces
           "note_type" => ""
         }
       ]
