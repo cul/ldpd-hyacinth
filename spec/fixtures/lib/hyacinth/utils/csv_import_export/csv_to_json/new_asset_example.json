@@ -1,0 +1,26 @@
+{
+   "identifier" : ["projectname.001.1", "alternate_identifier"],
+   "parent_pid_or_identifier" : ["projectname.001", "another_parent_identifier"],
+   "type" : {
+      "string_key" : "asset"
+    },
+   "import_file_path":"/path/to/file.tiff",
+   "project" : {
+      "string_key" : "the_project"
+    },
+   "publish_target":[
+      {
+         "string_key" : "publish_target1"
+      },
+      {
+         "string_key" : "publish_target2"
+      },
+   ],
+   "dynamic_field_data":{
+      "title":[
+         {
+            "title_sort_portion":"file.tiff"
+         }
+      ]
+   }
+}

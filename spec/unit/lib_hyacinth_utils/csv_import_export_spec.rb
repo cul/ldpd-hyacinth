@@ -2,8 +2,6 @@ require 'rails_helper'
 
 context 'Hyacinth::Utils::CsvImportExportUtils' do
 
-  let(:digital_object_data) { JSON.parse( fixture('lib/hyacinth/utils/csv_import_export/sample_record.json').read ) }
-
   before(:context) do
   end
 
@@ -11,6 +9,11 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
   end
 
   describe ".csv_to_digital_object_data" do
+    
+    let(:expected_new_item) { JSON.parse( fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/new_item_example.json').read ) }
+    let(:expected_new_asset) { JSON.parse( fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/new_asset_example.json').read ) }
+    let(:expected_existing_item) { JSON.parse( fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/existing_item_update_example.json').read ) }
+    
     it "converts properly" do
       #@digital_object_data = Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(fixture('lib/hyacinth/utils/csv_import_export/sample_record.csv').read)
       skip 'Implementation pending'

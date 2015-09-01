@@ -1,0 +1,27 @@
+{
+   "pid" : "cul:123",
+   "identifier" : ["another_identifier"],
+   "parent_pid_or_identifier" : ["cul:parent123"],
+   "type" : {
+      "string_key" : "item"
+    },
+    "project" : {
+      "string_key" : "the_project"
+    },
+   "publish_target":[
+      {
+         "string_key" : "publish_target1"
+      },
+      {
+         "string_key" : "publish_target2"
+      },
+   ],
+   "dynamic_field_data":{
+      "title":[
+         {
+            "title_sort_portion":"New Catcher in the Rye",
+            "title_non_sort_portion":"A"
+         }
+      ]
+   }
+}
