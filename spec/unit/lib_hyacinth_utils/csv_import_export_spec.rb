@@ -85,15 +85,6 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
   
   describe ".put_object_at_builder_path" do
     
-    describe "builder path requirements" do
-      it "the given builder path cannot end with a numeric value (which would indicate an insertion at a specific array index)" do
-        non_existent_path = ['name', 0]
-        expect {
-          Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(builder_path_test_object, non_existent_path, {'something' => 'cool'}, false)
-        }.to raise_error('When adding an object, your builder path cannot end with a specific array index (e.g. ["a", 3]). Specify the location of an array object to append the new object to that array.')
-      end
-    end
-    
     describe "working with non-existant target paths" do
       it "raises an exception if the given builder path doesn't exist and create_missing_path == false" do
         non_existent_path = ['banana', 4, 'chair']
@@ -102,7 +93,7 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
         }.to raise_error('Path not found.  To create path, pass a value true to the create_missing_path method parameter.')
       end
       
-      it "properly adds a simple top level element" do
+      it "properly adds a simple top level element to a hash" do
         
         object_to_modify = {}
         builder_path = ['title']
@@ -112,12 +103,10 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
         }
         
         expected = {
-          "title" => [
-            {
-              "title_sort_portion" => "The",
-              "title_non_sort_portion" => "Great Gatsby"
-            }
-          ]
+          "title" =>  {
+            "title_sort_portion" => "The",
+            "title_non_sort_portion" => "Great Gatsby"
+          }
         }
         
         Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(object_to_modify, builder_path, object_to_add, true)
@@ -125,15 +114,81 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
         expect(object_to_modify).to eq(expected)
       end
       
-      it "properly adds TWO simple top level element of the same type when none existed at the start" do
+      it "properly adds a simple top level element to an array" do
         
-        object_to_modify = {}
-        builder_path = ['title']
-        first_object_to_add = {
+        object_to_modify = []
+        builder_path = [0]
+        object_to_add = {
           "title_sort_portion" => "The",
           "title_non_sort_portion" => "Great Gatsby"
         }
-        second_object_to_add = {
+        
+        expected = [
+          {
+            "title" =>  {
+              "title_sort_portion" => "The",
+              "title_non_sort_portion" => "Great Gatsby"
+            }
+          }
+        ]
+        
+        Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(object_to_modify, builder_path, object_to_add, true)
+        
+        expect(object_to_modify).to eq(expected)
+      end
+      
+      it "can create a set of nested hashes for a non-existant path" do
+        
+        object_to_modify = {}
+        builder_path = ['a', 'b', 'c', 'd']
+        object_to_add = 'zzz'
+        
+        expected = {
+          "a" =>  {
+            "b" => {
+              "c" => {
+                "d" => object_to_add
+              }
+            }
+          }
+        }
+
+        Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(object_to_modify, builder_path, object_to_add, true)
+        expect(object_to_modify).to eq(expected)
+      end
+      
+      it "can create a set of nested arrays for a non-existant path" do
+        
+        object_to_modify = []
+        builder_path = [0, 0, 0, 0]
+        object_to_add = 'aaa'
+        
+        expected = [
+          [
+            [
+              [
+                [
+                  object_to_add
+                ]
+              ]
+            ]
+          ]
+        ]
+
+        Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(object_to_modify, builder_path, object_to_add, true)
+        expect(object_to_modify).to eq(expected)
+      end
+      
+      it "can add two new elements to the same array at the specified indexes" do
+        
+        object_to_modify = {}
+        builder_path_1 = ['title', 1]
+        obj1 = {
+          "title_sort_portion" => "The",
+          "title_non_sort_portion" => "Great Gatsby"
+        }
+        builder_path_1 = ['title', 0]
+        obj2 = {
           "title_sort_portion" => "The",
           "title_non_sort_portion" => "Hobbit"
         }
@@ -142,29 +197,30 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
           "title" => [
             {
               "title_sort_portion" => "The",
-              "title_non_sort_portion" => "Great Gatsby"
+              "title_non_sort_portion" => "Hobbit"
             },
             {
               "title_sort_portion" => "The",
-              "title_non_sort_portion" => "Hobbit"
+              "title_non_sort_portion" => "Great Gatsby"
             }
           ]
         }
         
-        Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(object_to_modify, builder_path, first_object_to_add, true)
-        Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(object_to_modify, builder_path, second_object_to_add, true)
+        Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(object_to_modify, builder_path_1, obj1, true)
+        Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(object_to_modify, builder_path_2, obj2, true)
         
         expect(object_to_modify).to eq(expected)
       end
       
-      it "adds a doubly-nested object into an empty top level object" do
+      it "can add a doubly-nested object into an empty top level object" do
         
         object_to_modify = {}
-        builder_path = ['location', 0, 'location_holding', 0, 'location_holding_sublocation']
-        first_object_to_add = {
+        builder_path_1 = ['location', 0, 'location_holding', 0, 'location_holding_sublocation', 1]
+        builder_path_2 = ['location', 0, 'location_holding', 0, 'location_holding_sublocation', 0]
+        obj1 = {
           "value" => "Some sublocation",
         }
-        second_object_to_add = {
+        obj2 = {
           "value" => "Another sublocation",
         }
         
@@ -175,10 +231,10 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
                 {
                   "location_holding_sublocation" => [
                     {
-                      "value" => "Some sublocation"
+                      "value" => "Another sublocation"
                     },
                     {
-                      "value" => "Another sublocation"
+                      "value" => "Some sublocation"
                     }
                   ]
                 }
@@ -187,8 +243,8 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
           ]
         }
         
-        Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(object_to_modify, builder_path, first_object_to_add, true)
-        Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(object_to_modify, builder_path, second_object_to_add, true)
+        Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(object_to_modify, builder_path, obj1, true)
+        Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(object_to_modify, builder_path, obj2, true)
         
         expect(object_to_modify).to eq(expected)
       end
@@ -197,20 +253,72 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
     
     describe "working with existing target paths" do
       
-      it "properly appends a new object to the target array at the given builder path" do
-        valid_path = ['name', 0, 'name_role']
-        new_object = {
-          "name_role_value" => {
-             "value" => "Groundskeeper",
-             "uri" => "http://id.loc.gov/roles/zzz"
-          },
-          "name_role_type" => "text"
+      it "raises an exception if it attempts to access a hash index at an array" do
+        
+        object_to_modify = []
+        builder_path = ['title']
+        object_to_add = {
+          "key" => "value"
         }
         
-        Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(builder_path_test_object, valid_path, new_object, false)
-        array_at_specified_builder_path = Hyacinth::Utils::CsvImportExportUtils.get_object_at_builder_path(builder_path_test_object, valid_path)
+        expect {
+          Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(object_to_modify, builder_path, object_to_add, true)
+        }.to raise_error
         
-        expect( array_at_specified_builder_path ).to include( new_object )
+      end
+      
+      it "replaces an existing hash element with a new value" do
+        valid_path = ['name', 0, 'name_role', 1, 'name_role_type']
+        two_name_object = {
+          "name" => [
+            {
+              "name_role" => [
+                {
+                   "name_role_type" => "type1"
+                }
+              ]
+            },
+            {
+              "name_role" => [
+                {
+                   "name_role_type" => "type2"
+                }
+              ]
+            }
+          ]
+        }
+        new_value = 'new_type2'
+        Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(two_name_object, valid_path, new_value, false)
+        expect( two_name_object['name'][0]['name_role'][1]['name_role_type'] ).to eq( new_value )
+      end
+      
+      it "replaces an existing array element with a new value" do
+        valid_path = ['name', 0, 'name_role', 1]
+        two_name_object = {
+          "name" => [
+            {
+              "name_role" => [
+                {
+                   "name_role_type" => "type1"
+                }
+              ]
+            },
+            {
+              "name_role" => [
+                {
+                   "name_role_type" => "type2"
+                }
+              ]
+            }
+          ]
+        }
+        new_value = [
+          {
+            "name_other_field" => "other_value"
+          }
+        ]
+        Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(two_name_object, valid_path, new_value, false)
+        expect( two_name_object['name'][0]['name_role'][1] ).to eq( new_value )
       end
       
     end
@@ -224,8 +332,8 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
       skip 'Implementation pending'
       
       current_builder_path = []
-      Hyacinth::Utils::CsvImportExportUtils.process_dynamic_field_value(new_digital_object_data, 'The', 'title:title_non_sort_portion', current_builder_path)
-      Hyacinth::Utils::CsvImportExportUtils.process_dynamic_field_value(new_digital_object_data, 'Catcher in the Rye', 'title:title_sort_portion', current_builder_path)
+      Hyacinth::Utils::CsvImportExportUtils.process_dynamic_field_value(new_digital_object_data, 'The', 'title-0:title_non_sort_portion', current_builder_path)
+      Hyacinth::Utils::CsvImportExportUtils.process_dynamic_field_value(new_digital_object_data, 'Catcher in the Rye', 'title-0:title_sort_portion', current_builder_path)
       expected = {
         "title" => [
           {

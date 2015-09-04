@@ -66,142 +66,53 @@ class Hyacinth::Utils::CsvImportExportUtils
     return pointer
   end
   
-  def self.put_object_at_builder_path(object_to_modify, builder_path_arr, object_to_put, create_missing_path=false)
-    
-    raise 'When adding an object, your builder path cannot end with a specific array index (e.g. ["a", 3]). Specify the location of an array object to append the new object to that array.' if builder_path_arr.last.is_a?(Fixnum)
+  def self.put_object_at_builder_path(object_to_modify, builder_path_arr, object_to_put, create_missing_path=true)
     
     obj_at_builder_path = self.get_object_at_builder_path(object_to_modify, builder_path_arr)
     raise 'Path not found.  To create path, pass a value true to the create_missing_path method parameter.' if obj_at_builder_path.nil? && (! create_missing_path)
     
+    # ['name', 0, 'name_value', 'uri']
+    # ['name', 0, 'name_value', 'value']
+    
     if obj_at_builder_path.nil?
-      # There is no object at this builder path.  Let's build the path.
-      partial_builder_path_arr = [] # title
+      pointer = object_to_modify
       
-      # Traverse the object, starting at the top of the hierarchy, to build the path as needed
-      builder_path_arr.each do |element|
-        partial_builder_path_arr.push(element)
-        
-        # Verify that an object exists as we move down the chain
-        possible_object_at_partial_builder_path = self.get_object_at_builder_path(object_to_modify, partial_builder_path_arr)
-        if possible_object_at_partial_builder_path
-          next
-        else
-          # Note: For the final elemen, we don't want to include a zero-index hash because we don't plan to add anything to it
-          reached_max_required_depth = partial_builder_path_arr.length == builder_path_arr.length
-          
-          latest_key = partial_builder_path_arr.pop
-          self.get_object_at_builder_path(object_to_modify, partial_builder_path_arr)[latest_key] = reached_max_required_depth ? [] : [{}]
-          partial_builder_path_arr.push(latest_key)
+      builder_path_arr.each_with_index do |element, i|
+        if i == (builder_path_arr.length-1)
+          pointer[element] = object_to_put
+          return
         end
+        
+        if pointer[element].nil?
+          # We need to create this part of the path
+          if builder_path_arr[i+i].is_a?(Fixnum)
+            pointer[element] = []
+          else
+            pointer[element] = {}
+          end
+        end
+        
+        pointer = pointer[element]
       end
-      
+    else
+      obj_at_builder_path = object_to_put
     end
     
-    # Object at builder path exists at this point.  It either already existed or was just created.  Let's add the new object_to_put to it.
-    obj_at_builder_path ||= self.get_object_at_builder_path(object_to_modify, partial_builder_path_arr)
     
-    # Note: obj_at_builder_path is always an array because it's not possible to give a builder_path that ends with an array index
-    obj_at_builder_path.push(object_to_put)
   end
   
   def self.process_dynamic_field_value(digital_object_data, value, dynamic_field_header_name, current_builder_path)
     
-    new_builder_path = dynamic_field_header_name.split(':')
-    new_dynamic_field_name = new_builder_path.pop
+    new_builder_path = dynamic_field_header_name.gsub(/-(\d+)/, ':\1').split(':').each{|piece| piece.match(/^\d+$/) ? piece.to_i : piece } # This line converts 'name-0:name_role-0:name_role_type' to ['name', 0, 'name_role', 0, 'name_role_type']
+    new_dynamic_field_name = new_builder_path.pop # 'name_role_type'
     
     puts 'new_builder_path: ' + new_builder_path.inspect
     puts 'new_dynamic_field_name: ' + new_dynamic_field_name.inspect
     
-    # At this point, new_builder_path is ['title']
+    # At this point, new_builder_path is ['title', 0]
     # At this point, new_dynamic_field_name is 'title_non_sort_portion'
     
-    object_at_builder_path = self.get_object_at_builder_path(digital_object_data, new_builder_path)
-    if object_at_builder_path
-      current_builder_path = new_builder_path # TODO: Is this necessary? No change?
-      object_at_builder_path[new_dynamic_field_name] = value
-    else
-      new_obj = {}
-      new_obj[new_dynamic_field_name] = value
-      self.put_object_at_builder_path(digital_object_data, new_builder_path, new_obj, true)
-      current_builder_path = new_builder_path.push(self.get_object_at_builder_path(digital_object_data, new_builder_path).length)
-    end
-    
-    #current_builder_path = ['title', 0]
-    #
-    #jpath = JsonPath.new('$')
-    
-    #{
-    #  "title":[]
-    #}
-    #
-    #{
-    #  "title":[
-    #    {}
-    #  ]
-    #}
-    #
-    #{
-    #  "title":[
-    #    {
-    #      "title_non_sort_portion" : "The"
-    #    }
-    #  ]
-    #}
-    #
-    ## Pointer location: ['title'][0]
-    #pointer = ['title', 0]
-    #
-    ## Next header value -> title:sort_portion
-    ## Means: ['title'][0]
-    #
-    #{
-    #  "title":[]
-    #}
-    #
-    #{
-    #  "title":[
-    #    {}
-    #  ]
-    #}
-    #
-    #{
-    #  "title":[
-    #    {
-    #      "title_non_sort_portion" : "The"
-    #    }
-    #  ]
-    #}
-    #
-    ## Pointer location: ['title'][0]
-    #
-    
-    
-    
-    # Current builder path is ['title']
-    # New goal path is: ['name']
-    # Need to determine difference
-    #Difference is: ['name']
-    
-    #Found: name:name_value
-    #new_builder_path = dynamic_field_header_name.split(':') # e.g. ['name']
-    #new_dynamic_field_name = new_dynamic_field_group_path.pop # e.g. 'name_value'
-    #
-    #builder_path_difference = self.get_builder_path_difference(current_builder_path, new_builder_path) # returns ['name']
-    
-    
-    #if digital_object_data[dynamic_field_group_path[0]].nil?
-    #  digital_object_data[dynamic_field_group_path[0]] = []
-    #end
-    #
-    #if digital_object_data[dynamic_field_group_path[0]][dynamic_field_group_path[1]].nil?
-    #  digital_object_data[dynamic_field_group_path[0]] = []
-    #end
-    #
-    #
-    #
-    #
-    #digital_object_data[ internal_field_header_name ] ||= []
-    #digital_object_data[ internal_field_header_name ] << value
+    self.put_object_at_builder_path(digital_object_data, new_builder_path + [new_dynamic_field_name], value, true)
   end
 
   ##############################
