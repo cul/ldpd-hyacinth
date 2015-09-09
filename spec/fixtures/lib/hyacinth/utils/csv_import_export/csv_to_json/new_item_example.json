@@ -2,19 +2,19 @@
    "identifier" : ["projectname.001"],
    "type" : {
       "string_key" : "item"
-    },
-    "project" : {
+   },
+   "project" : {
       "string_key" : "the_project"
-    },
+   },
    "publish_target":[
       {
          "string_key" : "publish_target1"
       },
       {
          "string_key" : "publish_target2"
-      },
+      }
    ],
-   "dynamic_field_data":{
+   "dynamic_field_data": {
       "title":[
          {
             "title_sort_portion":"Catcher in the Rye",
@@ -24,14 +24,14 @@
       "name":[
          {
             "name_value": {
-               value: "Salinger, J. D.",
-               uri: "http://id.loc.gov/authorities/names/n50016589"
+               "value" : "Salinger, J. D.",
+               "uri" : "http://id.loc.gov/authorities/names/n50016589"
             },
             "name_role":[
                {
                   "name_role_value":{
-                     value: "Author",
-                     uri: "http://id.loc.gov/roles/123"
+                     "value" : "Author",
+                     "uri" : "http://id.loc.gov/roles/123"
                   },
                   "name_role_type":"text"
                }
@@ -39,21 +39,21 @@
          },
          {
             "name_value": {
-               value: "Lincoln, Abraham",
-               uri: "http://id.loc.gov/authorities/names/n79006779"
+               "value" : "Lincoln, Abraham",
+               "uri" : "http://id.loc.gov/authorities/names/n79006779"
             },
             "name_role":[
                {
-                  "name_role_value":{
-                     value: "Illustrator",
-                     uri: "http://id.loc.gov/roles/456"
+                  "name_role_value": {
+                     "value" : "Illustrator",
+                     "uri" : "http://id.loc.gov/roles/456"
                   },
                   "name_role_type":"text"
                },
                {
                   "name_role_value":{
-                     value: "Editor",
-                     uri: "http://id.loc.gov/roles/789"
+                     "value" : "Editor",
+                     "uri" : "http://id.loc.gov/roles/789"
                   },
                   "name_role_type":"text"
                }

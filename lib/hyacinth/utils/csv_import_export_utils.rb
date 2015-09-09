@@ -37,6 +37,9 @@ class Hyacinth::Utils::CsvImportExportUtils
     current_builder_path = [] # e.g. ['name', 0, 'name_role', 0]
     
     row_data.each_with_index do |cell_value,index|
+      
+      cell_value = '' if cell_value.nil? # If the cell value is nil, convert it into an empty string
+      
       if column_indices_to_headers[index].start_with?('_')
         # Handle internal field, which is named with a leading underscore
         self.process_internal_field_value(digital_object_data, cell_value, column_indices_to_headers[index])
@@ -46,6 +49,7 @@ class Hyacinth::Utils::CsvImportExportUtils
       end
     end
     
+    return digital_object_data
   end
   
   def self.process_internal_field_value(digital_object_data, value, internal_field_header_name)
@@ -60,27 +64,6 @@ class Hyacinth::Utils::CsvImportExportUtils
     
     # Remove underscore from first builder path element name
     new_builder_path[0] = new_builder_path[0][1..-1]
-    
-    #if new_builder_path.length == 1
-    #  # Simple case, e.g. ['pid']
-    #  digital_object_data[ new_builder_path[0] ] = value
-    #elsif new_builder_path.length == 2
-    #  # Complex case, e.g. ['identifier', 0] or ['project', 'string_key']
-    #  if new_builder_path[1].is_a?(Fixnum)
-    #    # e.g. ['identifier', 0]
-    #    digital_object_data[ new_builder_path[0] ] ||= []
-    #    digital_object_data[ new_builder_path[0] ][ new_builder_path[1] ] = value
-    #  else
-    #    # e.g. ['project', 'string_key']
-    #    digital_object_data[ new_builder_path[0] ] ||= {}
-    #    digital_object_data[ new_builder_path[0] ][ new_builder_path[1] ] = value
-    #  end
-    #else #new_builder_path.length == 3
-    #  # Complex case, e.g. ['publish_target', 1, 'string_key']
-    #  digital_object_data[ new_builder_path[0] ] ||= []
-    #  digital_object_data[ new_builder_path[0] ][ new_builder_path[1] ] ||= {}
-    #  digital_object_data[ new_builder_path[0] ][ new_builder_path[1] ][ new_builder_path[2] ] = value
-    #end
     
     self.put_object_at_builder_path(digital_object_data, new_builder_path, value, create_missing_path=true)
     

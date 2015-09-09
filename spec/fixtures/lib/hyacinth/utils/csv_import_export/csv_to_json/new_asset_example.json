@@ -1,6 +1,6 @@
 {
    "identifier" : ["projectname.001.1", "alternate_identifier"],
-   "parent_pid_or_identifier" : ["projectname.001", "another_parent_identifier"],
+   "parent_pid_or_identifier" : ["cul:parent1", "some_parent_identifier"],
    "type" : {
       "string_key" : "asset"
     },
@@ -19,7 +19,8 @@
    "dynamic_field_data":{
       "title":[
          {
-            "title_sort_portion":"file.tiff"
+            "title_sort_portion":"file.tiff",
+            "title_non_sort_portion":""
          }
       ]
    }

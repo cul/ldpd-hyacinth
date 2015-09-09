@@ -38,10 +38,28 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
     let(:expected_new_asset) { JSON.parse( fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/new_asset_example.json').read ) }
     let(:expected_existing_item) { JSON.parse( fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/existing_item_update_example.json').read ) }
     
-    it "converts properly" do
-      #@digital_object_data = Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(fixture('lib/hyacinth/utils/csv_import_export/sample_record.csv').read)
-      skip 'Implementation pending'
+    let(:expected_new_item_csv_data) { fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/new_item_example.csv').read }
+    let(:expected_new_asset_csv_data) { fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/new_asset_example.csv').read }
+    let(:expected_existing_item_csv_data) { fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/existing_item_update_example.csv').read }
+    
+    it "converts properly for a new item" do
+      created_records = Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(expected_new_item_csv_data)
+      created_new_item = created_records.first
+      expect(created_new_item).to eq(expected_new_item)
     end
+    
+    it "converts properly for a new asset" do
+      created_records = Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(expected_new_asset_csv_data)
+      created_new_asset = created_records.first
+      expect(created_new_asset).to eq(expected_new_asset)
+    end
+    
+    it "converts properly for an existing item" do
+      created_records = Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(expected_existing_item_csv_data)
+      created_existing_item = created_records.first
+      expect(created_existing_item).to eq(expected_existing_item)
+    end
+    
   end
 
   describe ".process_internal_field_value" do

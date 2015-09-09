@@ -14,13 +14,21 @@
       },
       {
          "string_key" : "publish_target2"
-      },
+      }
    ],
    "dynamic_field_data":{
       "title":[
          {
             "title_sort_portion":"New Catcher in the Rye",
             "title_non_sort_portion":"A"
+         }
+      ],
+      "name":[
+         {
+            "name_value": {
+               "value" : "",
+               "uri" : ""
+            }
          }
       ]
    }
