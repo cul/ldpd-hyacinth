@@ -49,8 +49,41 @@ class Hyacinth::Utils::CsvImportExportUtils
   end
   
   def self.process_internal_field_value(digital_object_data, value, internal_field_header_name)
-    digital_object_data[ internal_field_header_name ] ||= []
-    digital_object_data[ internal_field_header_name ] << value
+    
+    raise "Internal field header names must begin with an underscore ('_')" if internal_field_header_name[0] != '_'
+    
+    # Converts '_publish_target-2.string_key' to ['_publish_target', 2, 'string_key']
+    new_builder_path = internal_field_header_name.split(/[\.-]/).map{|piece|
+      raise 'Internal field header names cannot be 0-indexed. Must be 1-indexed.' if piece == '0'
+      piece.match(/^\d+$/) ? piece.to_i - 1 : piece # This line converts ['_publish_target', '2', 'string_key'] to ['_publish_target', 2, 'string_key']
+    }
+    
+    # Remove underscore from first builder path element name
+    new_builder_path[0] = new_builder_path[0][1..-1]
+    
+    #if new_builder_path.length == 1
+    #  # Simple case, e.g. ['pid']
+    #  digital_object_data[ new_builder_path[0] ] = value
+    #elsif new_builder_path.length == 2
+    #  # Complex case, e.g. ['identifier', 0] or ['project', 'string_key']
+    #  if new_builder_path[1].is_a?(Fixnum)
+    #    # e.g. ['identifier', 0]
+    #    digital_object_data[ new_builder_path[0] ] ||= []
+    #    digital_object_data[ new_builder_path[0] ][ new_builder_path[1] ] = value
+    #  else
+    #    # e.g. ['project', 'string_key']
+    #    digital_object_data[ new_builder_path[0] ] ||= {}
+    #    digital_object_data[ new_builder_path[0] ][ new_builder_path[1] ] = value
+    #  end
+    #else #new_builder_path.length == 3
+    #  # Complex case, e.g. ['publish_target', 1, 'string_key']
+    #  digital_object_data[ new_builder_path[0] ] ||= []
+    #  digital_object_data[ new_builder_path[0] ][ new_builder_path[1] ] ||= {}
+    #  digital_object_data[ new_builder_path[0] ][ new_builder_path[1] ][ new_builder_path[2] ] = value
+    #end
+    
+    self.put_object_at_builder_path(digital_object_data, new_builder_path, value, create_missing_path=true)
+    
   end
   
   def self.get_object_at_builder_path(obj, builder_path_arr)
@@ -71,9 +104,6 @@ class Hyacinth::Utils::CsvImportExportUtils
     obj_at_builder_path = self.get_object_at_builder_path(object_to_modify, builder_path_arr)
     raise 'Path not found.  To create path, pass a value true to the create_missing_path method parameter.' if obj_at_builder_path.nil? && (! create_missing_path)
     
-    # ['name', 0, 'name_value', 'uri']
-    # ['name', 0, 'name_value', 'value']
-    
     if obj_at_builder_path.nil?
       pointer = object_to_modify
       
@@ -85,7 +115,7 @@ class Hyacinth::Utils::CsvImportExportUtils
         
         if pointer[element].nil?
           # We need to create this part of the path
-          if builder_path_arr[i+i].is_a?(Fixnum)
+          if builder_path_arr[i+1].is_a?(Fixnum)
             pointer[element] = []
           else
             pointer[element] = {}
@@ -95,24 +125,28 @@ class Hyacinth::Utils::CsvImportExportUtils
         pointer = pointer[element]
       end
     else
-      obj_at_builder_path = object_to_put
+      builder_path_arr_without_last_element = builder_path_arr.slice(0, builder_path_arr.length - 1)
+      obj_at_builder_path = self.get_object_at_builder_path(object_to_modify, builder_path_arr_without_last_element)
+      obj_at_builder_path[builder_path_arr.last] = object_to_put
     end
-    
     
   end
   
   def self.process_dynamic_field_value(digital_object_data, value, dynamic_field_header_name, current_builder_path)
-    
-    new_builder_path = dynamic_field_header_name.gsub(/-(\d+)/, ':\1').split(':').each{|piece| piece.match(/^\d+$/) ? piece.to_i : piece } # This line converts 'name-0:name_role-0:name_role_type' to ['name', 0, 'name_role', 0, 'name_role_type']
-    new_dynamic_field_name = new_builder_path.pop # 'name_role_type'
-    
-    puts 'new_builder_path: ' + new_builder_path.inspect
-    puts 'new_dynamic_field_name: ' + new_dynamic_field_name.inspect
-    
-    # At this point, new_builder_path is ['title', 0]
-    # At this point, new_dynamic_field_name is 'title_non_sort_portion'
-    
-    self.put_object_at_builder_path(digital_object_data, new_builder_path + [new_dynamic_field_name], value, true)
+    # Note: All dynamic field data goes under a top level key called 'dynamic_field_data'
+    # TODO: ['dynamic_field_data'] should probably be a globally-available constant rather than a hard-coded value here
+    digital_object_data['dynamic_field_data'] ||= {}
+    new_builder_path = dynamic_field_header_name.split(/[:-]/).map{|piece|
+      raise 'Dynamic field header names cannot be 0-indexed. Must be 1-indexed.' if piece == '0'
+      
+      piece.match(/^\d+$/) ? piece.to_i - 1 : piece # This line converts 'name-0:name_role-0:name_role_type' to ['name', 0, 'name_role', 0, 'name_role_type']
+    }
+    if new_builder_path.last.index('.')
+      # Convert ['aaa', 0, 'bbb', 0, 'ccc.ddd'] into ['aaa', 0, 'bbb', 0, 'ccc', 'ddd']
+      new_last_two_elements = new_builder_path.pop.split('.') # Temporarily pop and split last element
+      new_builder_path += new_last_two_elements # Add new two elements to new_builder_path
+    end
+    self.put_object_at_builder_path(digital_object_data['dynamic_field_data'], new_builder_path, value, true)
   end
 
   ##############################

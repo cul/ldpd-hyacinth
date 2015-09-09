@@ -45,15 +45,63 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
   end
 
   describe ".process_internal_field_value" do
+    
+    
+    it "raises an exception if a supplied field name does not begin with an underscore ('_')" do
+      expect {
+        Hyacinth::Utils::CsvImportExportUtils.process_internal_field_value(new_digital_object_data, 'zzz', 'field_name_that_does_not_start_with_an_underscore')
+      }.to raise_error("Internal field header names must begin with an underscore ('_')")
+    end
 
     it "properly handles a non-blank field value" do
       Hyacinth::Utils::CsvImportExportUtils.process_internal_field_value(new_digital_object_data, 'abc:123', '_pid')
-      expect(new_digital_object_data).to eq({'_pid' => ['abc:123']})
+      expect(new_digital_object_data).to eq({'pid' => 'abc:123'})
     end
     
-    it "properly handles a blank field value (as an empty string)" do
+    it "properly handles a non-blank field value that uses dot-notation" do
+      Hyacinth::Utils::CsvImportExportUtils.process_internal_field_value(new_digital_object_data, 'item', '_type.string_key')
+      expect(new_digital_object_data).to eq(
+        {
+          'type' => {
+            'string_key' => 'item'
+          }
+        }
+      )
+    end
+    
+    it "properly handles a blank field value for a simple field name" do
       Hyacinth::Utils::CsvImportExportUtils.process_internal_field_value(new_digital_object_data, '', '_pid')
-      expect(new_digital_object_data).to eq({'_pid' => ['']})
+      expect(new_digital_object_data).to eq({'pid' => ''})
+    end
+    
+    it "properly handles a blank field value for a multivalued field" do
+      Hyacinth::Utils::CsvImportExportUtils.process_internal_field_value(new_digital_object_data, '', '_identifier-1')
+      Hyacinth::Utils::CsvImportExportUtils.process_internal_field_value(new_digital_object_data, '', '_identifier-2')
+      expect(new_digital_object_data).to eq({'identifier' => ['', '']})
+    end
+    
+    it "properly handles a blank field value for a multivalued field that uses dot-notation" do
+      Hyacinth::Utils::CsvImportExportUtils.process_internal_field_value(new_digital_object_data, '', '_publish_target-1.string_key')
+      Hyacinth::Utils::CsvImportExportUtils.process_internal_field_value(new_digital_object_data, '', '_publish_target-2.string_key')
+      expect(new_digital_object_data).to eq(
+        {
+          'publish_target' => [
+            {
+              'string_key' => ''
+            },
+            {
+              'string_key' => ''
+            }
+          ]
+        }
+      )
+    end
+    
+    it "raises an exception if a 0-indexed internal field header is supplied (because headers should be 1-indexed)" do
+      current_builder_path = []
+      expect {
+        Hyacinth::Utils::CsvImportExportUtils.process_internal_field_value(new_digital_object_data, 'value', '_publish_target-0.string_key')
+      }.to raise_error('Internal field header names cannot be 0-indexed. Must be 1-indexed.')
     end
   end
   
@@ -125,10 +173,8 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
         
         expected = [
           {
-            "title" =>  {
-              "title_sort_portion" => "The",
-              "title_non_sort_portion" => "Great Gatsby"
-            }
+            "title_sort_portion" => "The",
+            "title_non_sort_portion" => "Great Gatsby"
           }
         ]
         
@@ -167,9 +213,7 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
           [
             [
               [
-                [
-                  object_to_add
-                ]
+                object_to_add
               ]
             ]
           ]
@@ -187,7 +231,7 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
           "title_sort_portion" => "The",
           "title_non_sort_portion" => "Great Gatsby"
         }
-        builder_path_1 = ['title', 0]
+        builder_path_2 = ['title', 0]
         obj2 = {
           "title_sort_portion" => "The",
           "title_non_sort_portion" => "Hobbit"
@@ -243,10 +287,53 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
           ]
         }
         
-        Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(object_to_modify, builder_path, obj1, true)
-        Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(object_to_modify, builder_path, obj2, true)
+        Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(object_to_modify, builder_path_1, obj1, true)
+        Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(object_to_modify, builder_path_2, obj2, true)
         
         expect(object_to_modify).to eq(expected)
+      end
+      
+      it "adds a key to an existing hash" do
+        valid_path = ['name', 1, 'name_role', 0, 'name_role_value']
+        two_name_object = {
+          "name" => [
+            {
+              "name_role" => [
+                {
+                   "name_role_type" => "type1"
+                }
+              ]
+            },
+            {
+              "name_role" => [
+                {
+                   "name_role_type" => "type2"
+                }
+              ]
+            }
+          ]
+        }
+        expected = {
+          "name" => [
+            {
+              "name_role" => [
+                {
+                   "name_role_type" => "type1"
+                }
+              ]
+            },
+            {
+              "name_role" => [
+                {
+                  "name_role_value" => "value1",
+                  "name_role_type" => "type2"
+                }
+              ]
+            }
+          ]
+        }
+        Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(two_name_object, valid_path, 'value1', true)
+        expect( two_name_object ).to eq( expected )
       end
       
     end
@@ -268,7 +355,7 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
       end
       
       it "replaces an existing hash element with a new value" do
-        valid_path = ['name', 0, 'name_role', 1, 'name_role_type']
+        valid_path = ['name', 1, 'name_role', 0, 'name_role_type']
         two_name_object = {
           "name" => [
             {
@@ -287,13 +374,30 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
             }
           ]
         }
-        new_value = 'new_type2'
-        Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(two_name_object, valid_path, new_value, false)
-        expect( two_name_object['name'][0]['name_role'][1]['name_role_type'] ).to eq( new_value )
+        expected = {
+          "name" => [
+            {
+              "name_role" => [
+                {
+                   "name_role_type" => "type1"
+                }
+              ]
+            },
+            {
+              "name_role" => [
+                {
+                   "name_role_type" => "type3"
+                }
+              ]
+            }
+          ]
+        }
+        Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(two_name_object, valid_path, 'type3', false)
+        expect( two_name_object ).to eq( expected )
       end
       
       it "replaces an existing array element with a new value" do
-        valid_path = ['name', 0, 'name_role', 1]
+        valid_path = ['name', 1, 'name_role', 0]
         two_name_object = {
           "name" => [
             {
@@ -318,7 +422,7 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
           }
         ]
         Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(two_name_object, valid_path, new_value, false)
-        expect( two_name_object['name'][0]['name_role'][1] ).to eq( new_value )
+        expect( two_name_object['name'][1]['name_role'][0] ).to eq( new_value )
       end
       
     end
@@ -328,27 +432,61 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
   describe ".process_dynamic_field_value" do
 
     it "properly handles a non-blank field value" do
-      
-      skip 'Implementation pending'
-      
       current_builder_path = []
-      Hyacinth::Utils::CsvImportExportUtils.process_dynamic_field_value(new_digital_object_data, 'The', 'title-0:title_non_sort_portion', current_builder_path)
-      Hyacinth::Utils::CsvImportExportUtils.process_dynamic_field_value(new_digital_object_data, 'Catcher in the Rye', 'title-0:title_sort_portion', current_builder_path)
+      Hyacinth::Utils::CsvImportExportUtils.process_dynamic_field_value(new_digital_object_data, 'The', 'title-1:title_non_sort_portion', current_builder_path)
+      Hyacinth::Utils::CsvImportExportUtils.process_dynamic_field_value(new_digital_object_data, 'Catcher in the Rye', 'title-1:title_sort_portion', current_builder_path)
       expected = {
-        "title" => [
-          {
-            "title_sort_portion" => "The",
-            "title_non_sort_portion" => "Catcher in the Rye"
-          }
-        ]
+        "dynamic_field_data" => {
+          "title" => [
+            {
+              "title_non_sort_portion" => "The",
+              "title_sort_portion" => "Catcher in the Rye"
+            }
+          ]
+        }
       }
-      expect(new_digital_object_data).to equal(expected)
+      expect(new_digital_object_data).to eq(expected)
+    end
+    
+    it "properly handles a dot-notated field" do
+      current_builder_path = []
+      Hyacinth::Utils::CsvImportExportUtils.process_dynamic_field_value(new_digital_object_data, 'Salinger, J. D.', 'name-1:name_value.value', current_builder_path)
+      Hyacinth::Utils::CsvImportExportUtils.process_dynamic_field_value(new_digital_object_data, 'http://id.loc.gov/authorities/names/n50016589', 'name-1:name_value.uri', current_builder_path)
+      expected = {
+        "dynamic_field_data" => {
+          "name" => [
+            {
+              "name_value" => {
+                "value" => "Salinger, J. D.",
+                "uri" => "http://id.loc.gov/authorities/names/n50016589"
+              }
+            }
+          ]
+        }
+      }
+      expect(new_digital_object_data).to eq(expected)
     end
     
     it "properly handles a blank field value (as an empty string)" do
-      skip 'Implementation pending'
-      #Hyacinth::Utils::CsvImportExportUtils.process_dynamic_field_value(new_digital_object_data, '', 'some_dynamic_field', [])
-      #expect(new_digital_object_data).to eq({'some_dynamic_field' => ''})
+      current_builder_path = []
+      Hyacinth::Utils::CsvImportExportUtils.process_dynamic_field_value(new_digital_object_data, '', 'title-1:title_sort_portion', current_builder_path)
+      expected = {
+        "dynamic_field_data" => {
+          "title" => [
+            {
+              "title_sort_portion" => ""
+            }
+          ]
+        }
+      }
+      expect(new_digital_object_data).to eq(expected)
+    end
+    
+    it "raises an exception if a 0-indexed dynamic field header is supplied (because headers should be 1-indexed)" do
+      current_builder_path = []
+      expect {
+        Hyacinth::Utils::CsvImportExportUtils.process_dynamic_field_value(new_digital_object_data, 'Catcher in the Rye', 'title-0:title_sort_portion', current_builder_path)
+      }.to raise_error('Dynamic field header names cannot be 0-indexed. Must be 1-indexed.')
     end
   end
   
