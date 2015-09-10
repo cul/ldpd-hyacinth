@@ -37,10 +37,12 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
     let(:expected_new_item) { JSON.parse( fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/new_item_example.json').read ) }
     let(:expected_new_asset) { JSON.parse( fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/new_asset_example.json').read ) }
     let(:expected_existing_item) { JSON.parse( fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/existing_item_update_example.json').read ) }
+    let(:expected_multiple_digital_objects) { JSON.parse( fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/multiple_digital_objects_example.json').read ) }
     
     let(:expected_new_item_csv_data) { fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/new_item_example.csv').read }
     let(:expected_new_asset_csv_data) { fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/new_asset_example.csv').read }
     let(:expected_existing_item_csv_data) { fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/existing_item_update_example.csv').read }
+    let(:expected_multiple_digital_objects_csv_data) { fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/multiple_digital_objects_example.csv').read }
     
     it "converts properly for a new item" do
       Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(expected_new_item_csv_data) do |digital_object_data|
@@ -58,6 +60,17 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
       Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(expected_existing_item_csv_data) do |digital_object_data|
         expect(digital_object_data).to eq(expected_existing_item)
       end
+    end
+    
+    it "converts properly for multiple digital objects in the same spreadsheet" do
+      
+      counter = 0
+      
+      Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(expected_multiple_digital_objects_csv_data) do |digital_object_data|
+        expect(digital_object_data).to eq(expected_multiple_digital_objects[counter])
+        counter += 1
+      end
+      
     end
     
   end

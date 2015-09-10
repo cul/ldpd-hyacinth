@@ -1,35 +1,166 @@
-{
-   "pid" : "cul:123",
-   "identifier" : ["another_identifier"],
-   "parent_pid_or_identifier" : ["cul:parent123"],
-   "type" : {
-      "string_key" : "item"
-    },
-    "project" : {
-      "string_key" : "the_project"
-    },
-   "publish_target":[
-      {
-         "string_key" : "publish_target1"
-      },
-      {
-         "string_key" : "publish_target2"
-      }
-   ],
-   "dynamic_field_data":{
-      "title":[
+[
+   {
+      "pid" : "",
+      "identifier" : ["new_asset1"],
+      "parent_pid_or_identifier" : ["cul:456"],
+      "type" : {
+         "string_key" : "asset"
+       },
+       "project" : {
+         "string_key" : "the_project"
+       },
+      "publish_target":[
          {
-            "title_sort_portion":"New Catcher in the Rye",
-            "title_non_sort_portion":"A"
+            "string_key" : "publish_target2"
+         },
+         {
+            "string_key" : ""
          }
       ],
-      "name":[
-         {
-            "name_value": {
-               "value" : "",
-               "uri" : ""
+      "dynamic_field_data":{
+         "title":[
+            {
+               "title_sort_portion":"file.tiff",
+               "title_non_sort_portion":""
             }
+         ],
+         "name":[
+            {
+               "name_value": {
+                  "value" : "",
+                  "uri" : ""
+               }
+            },
+            {
+               "name_value": {
+                  "value" : "",
+                  "uri" : ""
+               }
+            }
+         ]
+      }
+   },
+   {
+      "pid" : "",
+      "identifier" : ["new_item1"],
+      "parent_pid_or_identifier" : [""],
+      "type" : {
+         "string_key" : "item"
+       },
+       "project" : {
+         "string_key" : "the_project"
+       },
+      "publish_target":[
+         {
+            "string_key" : "publish_target1"
+         },
+         {
+            "string_key" : "publish_target2"
          }
-      ]
+      ],
+      "dynamic_field_data":{
+         "title":[
+            {
+               "title_sort_portion":"New Item 1 Book",
+               "title_non_sort_portion":"The"
+            }
+         ],
+         "name":[
+            {
+               "name_value": {
+                  "value" : "Lincoln, Abraham",
+                  "uri" : "http://id.loc.gov/authorities/names/n79006779"
+               }
+            },
+            {
+               "name_value": {
+                  "value" : "Salinger, J. D.",
+                  "uri" : "http://id.loc.gov/authorities/names/n50016589"
+               }
+            }
+         ]
+      }
+   },
+   {
+      "pid" : "cul:456",
+      "identifier" : [""],
+      "parent_pid_or_identifier" : [""],
+      "type" : {
+         "string_key" : "item"
+       },
+       "project" : {
+         "string_key" : "the_project"
+       },
+      "publish_target":[
+         {
+            "string_key" : "publish_target2"
+         },
+         {
+            "string_key" : ""
+         }
+      ],
+      "dynamic_field_data":{
+         "title":[
+            {
+               "title_sort_portion":"Existing Item Book",
+               "title_non_sort_portion":"An"
+            }
+         ],
+         "name":[
+            {
+               "name_value": {
+                  "value" : "",
+                  "uri" : ""
+               }
+            },
+            {
+               "name_value": {
+                  "value" : "Lincoln, Abe",
+                  "uri" : "http://id.loc.gov/authorities/names/n79006779"
+               }
+            }
+         ]
+      }
+   },
+   {
+      "pid" : "",
+      "identifier" : ["new_asset2"],
+      "parent_pid_or_identifier" : ["new_item1"],
+      "type" : {
+         "string_key" : "asset"
+       },
+       "project" : {
+         "string_key" : "the_project"
+       },
+      "publish_target":[
+         {
+            "string_key" : ""
+         },
+         {
+            "string_key" : "publish_target2"
+         }
+      ],
+      "dynamic_field_data":{
+         "title":[
+            {
+               "title_sort_portion":"another_file.tiff",
+               "title_non_sort_portion":""
+            }
+         ],
+         "name":[
+            {
+               "name_value": {
+                  "value" : "",
+                  "uri" : ""
+               }
+            },
+            {
+               "name_value": {
+                  "value" : "",
+                  "uri" : ""
+               }
+            }
+         ]
+      }
    }
-}
+]
