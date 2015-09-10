@@ -43,21 +43,21 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
     let(:expected_existing_item_csv_data) { fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/existing_item_update_example.csv').read }
     
     it "converts properly for a new item" do
-      created_records = Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(expected_new_item_csv_data)
-      created_new_item = created_records.first
-      expect(created_new_item).to eq(expected_new_item)
+      Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(expected_new_item_csv_data) do |digital_object_data|
+        expect(digital_object_data).to eq(expected_new_item)
+      end
     end
     
     it "converts properly for a new asset" do
-      created_records = Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(expected_new_asset_csv_data)
-      created_new_asset = created_records.first
-      expect(created_new_asset).to eq(expected_new_asset)
+      Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(expected_new_asset_csv_data) do |digital_object_data|
+        expect(digital_object_data).to eq(expected_new_asset)
+      end
     end
     
     it "converts properly for an existing item" do
-      created_records = Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(expected_existing_item_csv_data)
-      created_existing_item = created_records.first
-      expect(created_existing_item).to eq(expected_existing_item)
+      Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(expected_existing_item_csv_data) do |digital_object_data|
+        expect(digital_object_data).to eq(expected_existing_item)
+      end
     end
     
   end

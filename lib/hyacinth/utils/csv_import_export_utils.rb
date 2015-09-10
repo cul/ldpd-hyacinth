@@ -13,9 +13,7 @@ class Hyacinth::Utils::CsvImportExportUtils
       line_counter += 1
 
       # first line is human readable, so we ignore it
-      if line_counter == 0
-        next
-      end
+      next if line_counter == 0
 
       # second line is the real header line, so store it as such
       if line_counter == 1 
@@ -25,10 +23,9 @@ class Hyacinth::Utils::CsvImportExportUtils
 
       # process the rest of the lines ...
       digital_object_data = self.process_csv_row(column_indices_to_headers, row)
-      digital_object_data_results << digital_object_data unless digital_object_data.blank?
+      
+      yield digital_object_data
     end
-    
-    return digital_object_data_results
   end
   
   # Process a single CSV data row and return digital_object_data
