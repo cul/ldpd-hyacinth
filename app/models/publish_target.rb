@@ -9,6 +9,7 @@ class PublishTarget < ActiveRecord::Base
   after_save :update_fedora_object!
   after_destroy :mark_fedora_object_as_deleted!
 
+  validates :string_key, length: { maximum: 100, message: ' is required (100 characters max).' }, allow_blank: false
   validates :publish_url, length: { maximum: 1000, too_long: "can only have a maximum of %{count} characters." }
   validates :api_key, length: { maximum: 100, too_long: "can only have a maximum of %{count} characters." }
 

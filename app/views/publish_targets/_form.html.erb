@@ -20,6 +20,15 @@
     <%= f.label :pid %>
     <%= f.text_field :pid, {class: 'form-control', disabled: true, value: @publish_target.new_record? ? '- Automatically Generated -' : @publish_target.pid} %>
   </div>
+  
+  <div class="field">
+    <%= f.label :string_key %> (cannot be changed)
+    <% if @publish_target.new_record? %>
+      <%= f.text_field :string_key, {class: 'form-control'} %>
+    <% else %>
+      <%= f.text_field :string_key, {class: 'form-control', disabled: true, value: @publish_target.string_key} %>
+    <% end %>
+  </div>
 
   <div class="field">
     <%= f.label :publish_url %>
