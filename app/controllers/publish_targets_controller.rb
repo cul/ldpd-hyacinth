@@ -81,7 +81,7 @@ class PublishTargetsController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def publish_target_params
     params.require(:publish_target).permit(
-      :id, :display_label, :publish_url, :api_key
+      :id, :display_label, :string_key, :publish_url, :api_key
     )
   end
 
