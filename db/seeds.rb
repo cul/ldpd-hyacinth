@@ -99,7 +99,7 @@ form_controlled_vocabulary = ControlledVocabulary.create!(string_key: 'form', di
 ])
 
 # Create core DynamicFieldGroups and DynamicFields
-title = DynamicFieldGroup.create!(string_key: 'title', display_label: 'Title', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
+title = DynamicFieldGroup.create!(string_key: 'title', display_label: 'Title', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
   dynamic_fields: [
     DynamicField.new(string_key: 'title_non_sort_portion', display_label: 'Non-Sort Portion', dynamic_field_type: DynamicField::Type::STRING),
     DynamicField.new(string_key: 'title_sort_portion', display_label: 'Sort Portion', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_searchable_title_field: true)
@@ -119,7 +119,7 @@ title = DynamicFieldGroup.create!(string_key: 'title', display_label: 'Title', x
   }.to_json
 )
 
-collection = DynamicFieldGroup.create!(string_key: 'collection', display_label: 'Collection', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata,
+collection = DynamicFieldGroup.create!(string_key: 'collection', display_label: 'Collection', dynamic_field_group_category: dfc_descriptive_metadata,
   dynamic_fields: [
     DynamicField.new(string_key: 'collection_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE, controlled_vocabulary: collection_controlled_vocabulary, is_facet_field: true, is_single_field_searchable: true, standalone_field_label: 'Collection'),
     DynamicField.new(string_key: 'collection_value_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI),
@@ -128,7 +128,7 @@ collection = DynamicFieldGroup.create!(string_key: 'collection', display_label: 
   ]
 )
 
-form = DynamicFieldGroup.create!(string_key: 'form', display_label: 'Form', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_physical_information, is_repeatable: true,
+form = DynamicFieldGroup.create!(string_key: 'form', display_label: 'Form', dynamic_field_group_category: dfc_physical_information, is_repeatable: true,
   dynamic_fields: [
     DynamicField.new(string_key: 'form_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE, controlled_vocabulary: form_controlled_vocabulary, is_facet_field: true, standalone_field_label: 'Format'),
     DynamicField.new(string_key: 'form_value_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI),

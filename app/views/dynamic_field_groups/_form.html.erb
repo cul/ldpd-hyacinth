@@ -24,10 +24,6 @@
         <%= f.label :display_label %><br>
         <%= f.text_field :display_label, {class: 'form-control'} %>
       </div>
-      <div class="field">
-        <%= f.label :xml_datastream_id %><br>
-        <%= f.collection_select(:xml_datastream_id, XmlDatastream.all, :id, :display_label, {include_blank: 'None'}, {class: 'form-control'}) %>
-      </div>
       <% unless @dynamic_field_group.parent_dynamic_field_group.present? %>
         <% # dynamic_field_group_category only applies to top level dynamic field groups %>
         <div class="field">

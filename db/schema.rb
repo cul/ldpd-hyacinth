@@ -77,7 +77,6 @@ ActiveRecord::Schema.define(version: 20150909213948) do
     t.integer  "parent_dynamic_field_group_id",   limit: 4
     t.integer  "sort_order",                      limit: 4,                     null: false
     t.boolean  "is_repeatable",                   limit: 1,     default: false, null: false
-    t.integer  "xml_datastream_id",               limit: 4
     t.text     "xml_translation",                 limit: 65535
     t.integer  "dynamic_field_group_category_id", limit: 4
     t.integer  "created_by_id",                   limit: 4
@@ -90,7 +89,6 @@ ActiveRecord::Schema.define(version: 20150909213948) do
   add_index "dynamic_field_groups", ["parent_dynamic_field_group_id"], name: "index_dynamic_field_groups_on_parent_dynamic_field_group_id", using: :btree
   add_index "dynamic_field_groups", ["string_key", "parent_dynamic_field_group_id"], name: "unique_string_key_for_same_parent_dynamic_field_group", unique: true, using: :btree
   add_index "dynamic_field_groups", ["string_key"], name: "index_dynamic_field_groups_on_string_key", using: :btree
-  add_index "dynamic_field_groups", ["xml_datastream_id"], name: "index_dynamic_field_groups_on_xml_datastream_id", using: :btree
 
   create_table "dynamic_fields", force: :cascade do |t|
     t.string   "string_key",                     limit: 255,                      null: false

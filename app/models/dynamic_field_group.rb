@@ -2,7 +2,6 @@ class DynamicFieldGroup < ActiveRecord::Base
 
   include DynamicFieldAndDynamicFieldGroup::SharedValidations
 
-  belongs_to :xml_datastream
   has_many :dynamic_fields, class_name: 'DynamicField', foreign_key: 'parent_dynamic_field_group_id'
 
   belongs_to :dynamic_field_group_category

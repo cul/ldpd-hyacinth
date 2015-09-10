@@ -9,6 +9,8 @@ class DynamicField < ActiveRecord::Base
     BOOLEAN = 'boolean'
     SELECT = 'select'
     DATE = 'date'
+    CONTROLLED_TERM = 'controlled_term'
+    
     AUTHORIZED_TERM_VALUE = 'authorized_term_value'
     AUTHORIZED_TERM_CODE = 'authorized_term_code'
     AUTHORIZED_TERM_VALUE_URI = 'authorized_term_value_uri'
@@ -23,6 +25,7 @@ class DynamicField < ActiveRecord::Base
     DynamicField::Type::BOOLEAN => 'Boolean',
     DynamicField::Type::SELECT => 'Select',
     DynamicField::Type::DATE => 'Date',
+    DynamicField::Type::CONTROLLED_TERM => 'Controlled Term',
     DynamicField::Type::AUTHORIZED_TERM_VALUE => 'Authorized Term - Value',
     DynamicField::Type::AUTHORIZED_TERM_CODE => 'Authorized Term - Code',
     DynamicField::Type::AUTHORIZED_TERM_VALUE_URI => 'Authorized Term - Value URI',

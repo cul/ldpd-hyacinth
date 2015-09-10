@@ -101,21 +101,21 @@ namespace :hyacinth do
 
         # Create required dynamic fields that don't currently exist
 
-        marc_005_last_modified = DynamicFieldGroup.create!(string_key: 'marc_005_last_modified', display_label: 'Marc 005 Last Modified', xml_datastream: nil, dynamic_field_group_category: dfc_other, is_repeatable: false,
+        marc_005_last_modified = DynamicFieldGroup.create!(string_key: 'marc_005_last_modified', display_label: 'Marc 005 Last Modified', dynamic_field_group_category: dfc_other, is_repeatable: false,
           dynamic_fields: [DynamicField.new(string_key: 'marc_005_last_modified_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, standalone_field_label: 'Marc 005 Last Modified')]
         )
 
-        alternative_title = DynamicFieldGroup.create!(string_key: 'alternative_title', display_label: 'Alternative Title', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
+        alternative_title = DynamicFieldGroup.create!(string_key: 'alternative_title', display_label: 'Alternative Title', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
           dynamic_fields: [
             DynamicField.new(string_key: 'alternative_title_value', display_label: 'Sort Portion', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_searchable_title_field: true)
           ]
         )
 
-        abstract = DynamicFieldGroup.create!(string_key: 'abstract', display_label: 'Abstract', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
+        abstract = DynamicFieldGroup.create!(string_key: 'abstract', display_label: 'Abstract', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
           dynamic_fields: [DynamicField.new(string_key: 'abstract_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::TEXTAREA, is_keyword_searchable: true)]
         )
 
-        name = DynamicFieldGroup.create!(string_key: 'name', display_label: 'Name', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
+        name = DynamicFieldGroup.create!(string_key: 'name', display_label: 'Name', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
           dynamic_fields: [
             DynamicField.new(string_key: 'name_type', display_label: 'Type', dynamic_field_type: DynamicField::Type::SELECT, additional_data_json: {
               select_options: [
@@ -145,15 +145,15 @@ namespace :hyacinth do
             ])
           # --> End Child DynamicFieldGroups
 
-        publisher = DynamicFieldGroup.create!(string_key: 'publisher', display_label: 'Publisher', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
+        publisher = DynamicFieldGroup.create!(string_key: 'publisher', display_label: 'Publisher', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
           dynamic_fields: [DynamicField.new(string_key: 'publisher_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_single_field_searchable: true, standalone_field_label: 'Publisher')]
         )
 
-        place_of_origin = DynamicFieldGroup.create!(string_key: 'place_of_origin', display_label: 'Place of Origin', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
+        place_of_origin = DynamicFieldGroup.create!(string_key: 'place_of_origin', display_label: 'Place of Origin', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
           dynamic_fields: [DynamicField.new(string_key: 'place_of_origin_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_single_field_searchable: true, standalone_field_label: 'Place of Origin')]
         )
 
-        date_created = DynamicFieldGroup.create!(string_key: 'date_created', display_label: 'Date Created', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
+        date_created = DynamicFieldGroup.create!(string_key: 'date_created', display_label: 'Date Created', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
           dynamic_fields: [
             DynamicField.new(string_key: 'date_created_start_value', display_label: 'Single or Start Date', dynamic_field_type: DynamicField::Type::DATE, is_single_field_searchable: true, standalone_field_label: 'Date Created - Start or Single Date'),
             DynamicField.new(string_key: 'date_created_end_value', display_label: 'End Date', dynamic_field_type: DynamicField::Type::DATE, is_single_field_searchable: true, standalone_field_label: 'Date Created - End Date'),
@@ -169,11 +169,11 @@ namespace :hyacinth do
           ]
         )
 
-        date_created_textual = DynamicFieldGroup.create!(string_key: 'date_created_textual', display_label: 'Date Created Textual', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
+        date_created_textual = DynamicFieldGroup.create!(string_key: 'date_created_textual', display_label: 'Date Created Textual', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
           dynamic_fields: [DynamicField.new(string_key: 'date_created_textual_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_single_field_searchable: true, standalone_field_label: 'Date Created - Textual')]
         )
 
-        date_other = DynamicFieldGroup.create!(string_key: 'date_other', display_label: 'Date Other', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
+        date_other = DynamicFieldGroup.create!(string_key: 'date_other', display_label: 'Date Other', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
           dynamic_fields: [
             DynamicField.new(string_key: 'date_other_start_value', display_label: 'Single or Start Date', dynamic_field_type: DynamicField::Type::DATE, is_single_field_searchable: true, standalone_field_label: 'Date Other - Start or Single Date'),
             DynamicField.new(string_key: 'date_other_end_value', display_label: 'End Date', dynamic_field_type: DynamicField::Type::DATE, is_single_field_searchable: true, standalone_field_label: 'Date Other - End Date'),
@@ -189,11 +189,11 @@ namespace :hyacinth do
           ]
         )
 
-        date_other_textual = DynamicFieldGroup.create!(string_key: 'date_other_textual', display_label: 'Date Other Textual', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
+        date_other_textual = DynamicFieldGroup.create!(string_key: 'date_other_textual', display_label: 'Date Other Textual', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
           dynamic_fields: [DynamicField.new(string_key: 'date_other_textual_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_single_field_searchable: true, standalone_field_label: 'Date Other - Textual')]
         )
 
-        date_issued = DynamicFieldGroup.create!(string_key: 'date_issued', display_label: 'Date Issued', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
+        date_issued = DynamicFieldGroup.create!(string_key: 'date_issued', display_label: 'Date Issued', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
           dynamic_fields: [
             DynamicField.new(string_key: 'date_issued_start_value', display_label: 'Single or Start Date', dynamic_field_type: DynamicField::Type::DATE, is_single_field_searchable: true, standalone_field_label: 'Date Issued - Start or Single Date'),
             DynamicField.new(string_key: 'date_issued_end_value', display_label: 'End Date', dynamic_field_type: DynamicField::Type::DATE, is_single_field_searchable: true, standalone_field_label: 'Date Issued - End Date'),
@@ -209,19 +209,19 @@ namespace :hyacinth do
           ]
         )
 
-        date_issued_textual = DynamicFieldGroup.create!(string_key: 'date_issued_textual', display_label: 'Date Issued Textual', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
+        date_issued_textual = DynamicFieldGroup.create!(string_key: 'date_issued_textual', display_label: 'Date Issued Textual', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
           dynamic_fields: [DynamicField.new(string_key: 'date_issued_textual_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_single_field_searchable: true, standalone_field_label: 'Date Issued - Textual')]
         )
 
-        edition = DynamicFieldGroup.create!(string_key: 'edition', display_label: 'Edition', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
+        edition = DynamicFieldGroup.create!(string_key: 'edition', display_label: 'Edition', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
           dynamic_fields: [DynamicField.new(string_key: 'edition_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_single_field_searchable: true, standalone_field_label: 'Edition')]
         )
 
-        table_of_contents = DynamicFieldGroup.create!(string_key: 'table_of_contents', display_label: 'Table of Contents', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
+        table_of_contents = DynamicFieldGroup.create!(string_key: 'table_of_contents', display_label: 'Table of Contents', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
           dynamic_fields: [DynamicField.new(string_key: 'table_of_contents_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::TEXTAREA, is_keyword_searchable: true)]
         )
 
-        subject_topic = DynamicFieldGroup.create!(string_key: 'subject_topic', display_label: 'Subject Topic', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_subject_data, is_repeatable: true,
+        subject_topic = DynamicFieldGroup.create!(string_key: 'subject_topic', display_label: 'Subject Topic', dynamic_field_group_category: dfc_subject_data, is_repeatable: true,
           dynamic_fields: [
             DynamicField.new(string_key: 'subject_topic_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, is_keyword_searchable: true, is_single_field_searchable: true, standalone_field_label: 'Subject Topic'),
             DynamicField.new(string_key: 'subject_topic_value_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI, is_single_field_searchable: true, standalone_field_label: 'Subject Topic Value URI'),
@@ -230,14 +230,14 @@ namespace :hyacinth do
           ]
         )
 
-        subject_durst = DynamicFieldGroup.create!(string_key: 'subject_durst', display_label: 'Subject Durst', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_subject_data, is_repeatable: true,
+        subject_durst = DynamicFieldGroup.create!(string_key: 'subject_durst', display_label: 'Subject Durst', dynamic_field_group_category: dfc_subject_data, is_repeatable: true,
           dynamic_fields: [
             DynamicField.new(string_key: 'subject_durst_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, is_keyword_searchable: true, is_single_field_searchable: true, standalone_field_label: 'Subject Durst'),
             DynamicField.new(string_key: 'subject_durst_code', display_label: 'Code', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_single_field_searchable: true, standalone_field_label: 'Subject Durst Code')
           ]
         )
 
-        subject_temporal = DynamicFieldGroup.create!(string_key: 'subject_temporal', display_label: 'Subject Temporal', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_subject_data, is_repeatable: true,
+        subject_temporal = DynamicFieldGroup.create!(string_key: 'subject_temporal', display_label: 'Subject Temporal', dynamic_field_group_category: dfc_subject_data, is_repeatable: true,
           dynamic_fields: [
             DynamicField.new(string_key: 'subject_temporal_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, is_keyword_searchable: true, is_single_field_searchable: true, standalone_field_label: 'Subject Temporal'),
             DynamicField.new(string_key: 'subject_temporal_value_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI, is_single_field_searchable: true, standalone_field_label: 'Subject Temporal Value URI'),
@@ -246,7 +246,7 @@ namespace :hyacinth do
           ]
         )
 
-        subject_name = DynamicFieldGroup.create!(string_key: 'subject_name', display_label: 'Subject Name', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_subject_data, is_repeatable: true,
+        subject_name = DynamicFieldGroup.create!(string_key: 'subject_name', display_label: 'Subject Name', dynamic_field_group_category: dfc_subject_data, is_repeatable: true,
           dynamic_fields: [
             DynamicField.new(string_key: 'subject_name_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, is_keyword_searchable: true, is_single_field_searchable: true, standalone_field_label: 'Subject Name'),
             DynamicField.new(string_key: 'subject_name_value_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI, is_single_field_searchable: true, standalone_field_label: 'Subject Name Value URI'),
@@ -255,7 +255,7 @@ namespace :hyacinth do
           ]
         )
 
-        subject_title = DynamicFieldGroup.create!(string_key: 'subject_title', display_label: 'Subject Title', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_subject_data, is_repeatable: true,
+        subject_title = DynamicFieldGroup.create!(string_key: 'subject_title', display_label: 'Subject Title', dynamic_field_group_category: dfc_subject_data, is_repeatable: true,
           dynamic_fields: [
             DynamicField.new(string_key: 'subject_title_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, is_keyword_searchable: true, is_single_field_searchable: true, standalone_field_label: 'Subject Title'),
             DynamicField.new(string_key: 'subject_title_value_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI, is_single_field_searchable: true, standalone_field_label: 'Subject Title Value URI'),
@@ -264,7 +264,7 @@ namespace :hyacinth do
           ]
         )
 
-        subject_geographic = DynamicFieldGroup.create!(string_key: 'subject_geographic', display_label: 'Subject Place', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_geographic_data, is_repeatable: true,
+        subject_geographic = DynamicFieldGroup.create!(string_key: 'subject_geographic', display_label: 'Subject Place', dynamic_field_group_category: dfc_geographic_data, is_repeatable: true,
           dynamic_fields: [
             DynamicField.new(string_key: 'subject_geographic_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, is_keyword_searchable: true, is_single_field_searchable: true, standalone_field_label: 'Subject Geographic'),
             DynamicField.new(string_key: 'subject_geographic_value_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI, is_single_field_searchable: true, standalone_field_label: 'Subject Geographic Value URI'),
@@ -273,7 +273,7 @@ namespace :hyacinth do
           ]
         )
 
-        subject_hierarchical_geographic = DynamicFieldGroup.create!(string_key: 'subject_hierarchical_geographic', display_label: 'Subject Hierarchical Geographic', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_geographic_data, is_repeatable: true)
+        subject_hierarchical_geographic = DynamicFieldGroup.create!(string_key: 'subject_hierarchical_geographic', display_label: 'Subject Hierarchical Geographic', dynamic_field_group_category: dfc_geographic_data, is_repeatable: true)
           # --> Start Child DynamicFieldGroups
             DynamicFieldGroup.create!(string_key: 'subject_hierarchical_geographic_country', display_label: 'Country', parent_dynamic_field_group: subject_hierarchical_geographic, is_repeatable: false,
               dynamic_fields: [
@@ -327,116 +327,116 @@ namespace :hyacinth do
             )
           # --> End Child DynamicFieldGroups
 
-        coordinates = DynamicFieldGroup.create!(string_key: 'coordinates', display_label: 'Coordinates', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_geographic_data,
+        coordinates = DynamicFieldGroup.create!(string_key: 'coordinates', display_label: 'Coordinates', is_repeatable: true, dynamic_field_group_category: dfc_geographic_data,
           dynamic_fields: [
             DynamicField.new(string_key: 'coordinates_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, standalone_field_label: 'Coordinates')
           ]
         )
 
-        scale = DynamicFieldGroup.create!(string_key: 'scale', display_label: 'Scale', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_physical_information,
+        scale = DynamicFieldGroup.create!(string_key: 'scale', display_label: 'Scale', is_repeatable: true, dynamic_field_group_category: dfc_physical_information,
           dynamic_fields: [
             DynamicField.new(string_key: 'scale_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
           ]
         )
 
-        genre = DynamicFieldGroup.create!(string_key: 'genre', display_label: 'Genre', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata,
+        genre = DynamicFieldGroup.create!(string_key: 'genre', display_label: 'Genre', is_repeatable: true, dynamic_field_group_category: dfc_descriptive_metadata,
           dynamic_fields: [
             DynamicField.new(string_key: 'genre_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_single_field_searchable: true, is_searchable_identifier_field: true, standalone_field_label: 'Genre')
           ]
         )
 
-        view_direction = DynamicFieldGroup.create!(string_key: 'view_direction', display_label: 'View Direction', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_notes,
+        view_direction = DynamicFieldGroup.create!(string_key: 'view_direction', display_label: 'View Direction', is_repeatable: false, dynamic_field_group_category: dfc_notes,
           dynamic_fields: [
             DynamicField.new(string_key: 'view_direction_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
           ]
         )
 
-        note = DynamicFieldGroup.create!(string_key: 'note', display_label: 'Note', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_notes,
+        note = DynamicFieldGroup.create!(string_key: 'note', display_label: 'Note', is_repeatable: true, dynamic_field_group_category: dfc_notes,
           dynamic_fields: [
             DynamicField.new(string_key: 'note_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::TEXTAREA, is_keyword_searchable: true),
             DynamicField.new(string_key: 'note_type', display_label: 'Type', dynamic_field_type: DynamicField::Type::STRING)
           ]
         )
 
-        extent = DynamicFieldGroup.create!(string_key: 'extent', display_label: 'Extent', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_physical_information,
+        extent = DynamicFieldGroup.create!(string_key: 'extent', display_label: 'Extent', is_repeatable: true, dynamic_field_group_category: dfc_physical_information,
           dynamic_fields: [
             DynamicField.new(string_key: 'extent_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
           ]
         )
 
-        orientation = DynamicFieldGroup.create!(string_key: 'orientation', display_label: 'Orientation', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_notes,
+        orientation = DynamicFieldGroup.create!(string_key: 'orientation', display_label: 'Orientation', is_repeatable: false, dynamic_field_group_category: dfc_notes,
           dynamic_fields: [
             DynamicField.new(string_key: 'orientation_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
           ]
         )
 
-        series = DynamicFieldGroup.create!(string_key: 'series', display_label: 'Series', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_contextual_data,
+        series = DynamicFieldGroup.create!(string_key: 'series', display_label: 'Series', is_repeatable: true, dynamic_field_group_category: dfc_contextual_data,
           dynamic_fields: [
             DynamicField.new(string_key: 'series_title', display_label: 'Title', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
           ]
         )
 
-        box_title = DynamicFieldGroup.create!(string_key: 'box_title', display_label: 'Box Title', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_contextual_data,
+        box_title = DynamicFieldGroup.create!(string_key: 'box_title', display_label: 'Box Title', is_repeatable: false, dynamic_field_group_category: dfc_contextual_data,
           dynamic_fields: [
             DynamicField.new(string_key: 'box_title_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
           ]
         )
 
-        group_title = DynamicFieldGroup.create!(string_key: 'group_title', display_label: 'Group Title', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_contextual_data,
+        group_title = DynamicFieldGroup.create!(string_key: 'group_title', display_label: 'Group Title', is_repeatable: false, dynamic_field_group_category: dfc_contextual_data,
           dynamic_fields: [
             DynamicField.new(string_key: 'group_title_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true)
           ]
         )
 
-        clio_identifier = DynamicFieldGroup.create!(string_key: 'clio_identifier', display_label: 'CLIO ID', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers,
+        clio_identifier = DynamicFieldGroup.create!(string_key: 'clio_identifier', display_label: 'CLIO ID', is_repeatable: true, dynamic_field_group_category: dfc_identifiers,
           dynamic_fields: [
             DynamicField.new(string_key: 'clio_identifier_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true, standalone_field_label: 'CLIO Identifier')
           ]
         )
 
-        dims_identifier = DynamicFieldGroup.create!(string_key: 'dims_identifier', display_label: 'DIMS ID', is_repeatable: true, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers,
+        dims_identifier = DynamicFieldGroup.create!(string_key: 'dims_identifier', display_label: 'DIMS ID', is_repeatable: true, dynamic_field_group_category: dfc_identifiers,
           dynamic_fields: [
             DynamicField.new(string_key: 'dims_identifier_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true, standalone_field_label: 'DIMS Identifier')
           ]
         )
 
-        durst_postcard_identifier = DynamicFieldGroup.create!(string_key: 'durst_postcard_identifier', display_label: 'Durst Postcard Identifier', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers,
+        durst_postcard_identifier = DynamicFieldGroup.create!(string_key: 'durst_postcard_identifier', display_label: 'Durst Postcard Identifier', is_repeatable: false, dynamic_field_group_category: dfc_identifiers,
           dynamic_fields: [
             DynamicField.new(string_key: 'durst_postcard_identifier_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true, standalone_field_label: 'Durst Postcard Identifier')
           ]
         )
 
-        cul_assigned_postcard_identifier = DynamicFieldGroup.create!(string_key: 'cul_assigned_postcard_identifier', display_label: 'CUL-Assigned Postcard Identifier', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers,
+        cul_assigned_postcard_identifier = DynamicFieldGroup.create!(string_key: 'cul_assigned_postcard_identifier', display_label: 'CUL-Assigned Postcard Identifier', is_repeatable: false, dynamic_field_group_category: dfc_identifiers,
           dynamic_fields: [
             DynamicField.new(string_key: 'cul_assigned_postcard_identifier_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true, standalone_field_label: 'CUL-Assigned Postcard Identifier')
           ]
         )
 
-        filename_front_identifier = DynamicFieldGroup.create!(string_key: 'filename_front_identifier', display_label: 'Filename Front Identifier', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers,
+        filename_front_identifier = DynamicFieldGroup.create!(string_key: 'filename_front_identifier', display_label: 'Filename Front Identifier', is_repeatable: false, dynamic_field_group_category: dfc_identifiers,
           dynamic_fields: [
             DynamicField.new(string_key: 'filename_front_identifier_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true, standalone_field_label: 'Filename Front Identifier')
           ]
         )
 
-        filename_back_identifier = DynamicFieldGroup.create!(string_key: 'filename_back_identifier', display_label: 'Filename Back Identifier', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers,
+        filename_back_identifier = DynamicFieldGroup.create!(string_key: 'filename_back_identifier', display_label: 'Filename Back Identifier', is_repeatable: false, dynamic_field_group_category: dfc_identifiers,
           dynamic_fields: [
             DynamicField.new(string_key: 'filename_back_identifier_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true, standalone_field_label: 'Filename Back Identifier')
           ]
         )
 
-        isbn = DynamicFieldGroup.create!(string_key: 'isbn', display_label: 'ISBN', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers,
+        isbn = DynamicFieldGroup.create!(string_key: 'isbn', display_label: 'ISBN', is_repeatable: false, dynamic_field_group_category: dfc_identifiers,
           dynamic_fields: [
             DynamicField.new(string_key: 'isbn_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true, standalone_field_label: 'ISBN')
           ]
         )
 
-        issn = DynamicFieldGroup.create!(string_key: 'issn', display_label: 'ISSN', is_repeatable: false, xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_identifiers,
+        issn = DynamicFieldGroup.create!(string_key: 'issn', display_label: 'ISSN', is_repeatable: false, dynamic_field_group_category: dfc_identifiers,
           dynamic_fields: [
             DynamicField.new(string_key: 'issn_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_single_field_searchable: true, is_searchable_identifier_field: true, standalone_field_label: 'ISSN')
           ]
         )
 
-        location = DynamicFieldGroup.create!(string_key: 'location', display_label: 'Location', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_location_and_holdings)
+        location = DynamicFieldGroup.create!(string_key: 'location', display_label: 'Location', dynamic_field_group_category: dfc_location_and_holdings)
           # --> Start 'location' field group child DynamicFieldGroups
             DynamicFieldGroup.create!(string_key: 'location_physical_location', display_label: 'Physical Location', is_repeatable: false, parent_dynamic_field_group: location, dynamic_fields: [
               DynamicField.new(string_key: 'location_physical_location_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE, controlled_vocabulary: ControlledVocabulary.find_by(string_key: 'physical_location'), is_facet_field: true, standalone_field_label: 'Physical Location'),
@@ -462,13 +462,13 @@ namespace :hyacinth do
               # --> End 'location_holding' field group child DynamicFieldGroups
           # --> Start 'location' field group child DynamicFieldGroups
 
-        durst_favorite = DynamicFieldGroup.create!(string_key: 'durst_favorite', display_label: 'Durst Favorite', xml_datastream: nil, dynamic_field_group_category: dfc_other, is_repeatable: false,
+        durst_favorite = DynamicFieldGroup.create!(string_key: 'durst_favorite', display_label: 'Durst Favorite', dynamic_field_group_category: dfc_other, is_repeatable: false,
           dynamic_fields: [
             DynamicField.new(string_key: 'durst_favorite_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::BOOLEAN, is_single_field_searchable: true, standalone_field_label: 'Is Durst Favorite?')
           ]
         )
 
-        type_of_resource = DynamicFieldGroup.create!(string_key: 'type_of_resource', display_label: 'Type of Resource', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_other, is_repeatable: false,
+        type_of_resource = DynamicFieldGroup.create!(string_key: 'type_of_resource', display_label: 'Type of Resource', dynamic_field_group_category: dfc_other, is_repeatable: false,
           dynamic_fields: [
             DynamicField.new(string_key: 'type_of_resource_value', display_label: 'Type of Resource', dynamic_field_type: DynamicField::Type::SELECT, is_single_field_searchable: true, standalone_field_label: 'Type of Resource', additional_data_json: {
               select_options: [
@@ -490,19 +490,19 @@ namespace :hyacinth do
           ]
         )
 
-        record_content_source = DynamicFieldGroup.create!(string_key: 'record_content_source', display_label: 'Record Content Source (Institutional Record Creator)', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_record_info, is_repeatable: false,
+        record_content_source = DynamicFieldGroup.create!(string_key: 'record_content_source', display_label: 'Record Content Source (Institutional Record Creator)', dynamic_field_group_category: dfc_record_info, is_repeatable: false,
           dynamic_fields: [DynamicField.new(string_key: 'record_content_source_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING)]
         )
 
-        record_origin = DynamicFieldGroup.create!(string_key: 'record_origin', display_label: 'Record Origin', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
+        record_origin = DynamicFieldGroup.create!(string_key: 'record_origin', display_label: 'Record Origin', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
           dynamic_fields: [DynamicField.new(string_key: 'record_origin_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::TEXTAREA, is_keyword_searchable: true)]
         )
 
-        language_of_cataloging = DynamicFieldGroup.create!(string_key: 'language_of_cataloging', display_label: 'Language of Cataloging', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_record_info, is_repeatable: false,
+        language_of_cataloging = DynamicFieldGroup.create!(string_key: 'language_of_cataloging', display_label: 'Language of Cataloging', dynamic_field_group_category: dfc_record_info, is_repeatable: false,
           dynamic_fields: [DynamicField.new(string_key: 'language_of_cataloging_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING)]
         )
 
-        cul_scan_note = DynamicFieldGroup.create!(string_key: 'cul_scan_note', display_label: 'CUL Scan Note', xml_datastream: desc_metadata_xml_ds, dynamic_field_group_category: dfc_record_info, is_repeatable: false,
+        cul_scan_note = DynamicFieldGroup.create!(string_key: 'cul_scan_note', display_label: 'CUL Scan Note', dynamic_field_group_category: dfc_record_info, is_repeatable: false,
           dynamic_fields: [DynamicField.new(string_key: 'cul_scan_note_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING)]
         )
 

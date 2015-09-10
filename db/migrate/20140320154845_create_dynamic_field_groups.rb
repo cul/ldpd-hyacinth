@@ -8,7 +8,6 @@ class CreateDynamicFieldGroups < ActiveRecord::Migration
       t.boolean :is_repeatable, null: false, default: false
 
       # Fields for top level DynamicFieldGroups
-      t.references :xml_datastream, index: true, null: true
       t.text :xml_translation
       t.references :dynamic_field_group_category, null: true, index: true
 
