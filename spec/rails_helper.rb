@@ -56,7 +56,7 @@ RSpec.configure do |config|
   config.around(:each, type: :feature) do |ex|
     example = RSpec.current_example
     # Try four times
-    5.times do |i|
+    3.times do |i|
       example.instance_variable_set('@exception', nil)
       self.instance_variable_set('@__memoized', nil) # clear let variables
       ex.run
