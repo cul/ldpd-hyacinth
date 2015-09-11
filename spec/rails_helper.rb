@@ -8,13 +8,13 @@ require 'capybara/poltergeist'
 
 Capybara.register_driver :poltergeist do |app|
   Capybara::Poltergeist::Driver.new(app,
-    :timeout => 20
+    :timeout => 30
   )
 end
 
 
 Capybara.javascript_driver = :poltergeist
-Capybara.default_wait_time = 20 # Some ajax requests might take longer than the default waut time of 2 seconds.  Max out at 15 seconds when testing.
+Capybara.default_wait_time = 30 # Some ajax requests might take longer than the default waut time of 2 seconds.
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -56,7 +56,7 @@ RSpec.configure do |config|
   config.around(:each, type: :feature) do |ex|
     example = RSpec.current_example
     # Try four times
-    4.times do |i|
+    5.times do |i|
       example.instance_variable_set('@exception', nil)
       self.instance_variable_set('@__memoized', nil) # clear let variables
       ex.run
