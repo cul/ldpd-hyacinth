@@ -20,6 +20,6 @@ env:
     - NOKOGIRI_USE_SYSTEM_LIBRARIES=true
 
 before_script:
-  - bundle exec rake hyacinth:test:setup_config_files_for_test_environment
+  - bundle exec rake hyacinth:setup:config_files
   
 script: bundle exec rake hyacinth:ci
