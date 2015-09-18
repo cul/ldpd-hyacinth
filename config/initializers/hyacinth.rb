@@ -14,6 +14,10 @@ raise 'Error: Please set a value for publish_target_api_key_encryption_key in yo
 # For EXTREME debugging with full stack traces.  Woo!
 Rails.backtrace_cleaner.remove_silencers! if Rails.env.development?
 
+# Create upload_directory and default_asset_home directory if they don't exist
+FileUtils.mkdir_p(HYACINTH['upload_directory']) if HYACINTH['upload_directory']
+FileUtils.mkdir_p(HYACINTH['default_asset_home']) if HYACINTH['default_asset_home']
+
 #
 ## Raise error if default pid generator is not specified
 #raise 'Missing default pid generator.  Please set one in your hyacinth.yml file.' if HYACINTH['default_pid_generator_namespace'].nil?
