@@ -18,9 +18,9 @@ namespace :hyacinth do
       # Update solr.xml configuration file so that it recognizes this code
       solr_xml_data = File.read(File.join(Jettywrapper.jetty_dir, 'solr/solr.xml'))
       solr_xml_data.gsub!('<!-- ADD CORES HERE -->',
-        '<core name="hyacinth_' + env_name + '" instanceDir="hyacinth_test" />' + "\n" +
-        '    <core name="hyacinth_hydra_' + env_name + '" instanceDir="hyacinth_hydra_test" />' + "\n" +
-        '    <core name="uri_service_' + env_name + '" instanceDir="uri_service_test" />'
+        '<core name="hyacinth_' + env_name + '" instanceDir="hyacinth_' + env_name + '" />' + "\n" +
+        '    <core name="hyacinth_hydra_' + env_name + '" instanceDir="hyacinth_hydra_' + env_name + '" />' + "\n" +
+        '    <core name="uri_service_' + env_name + '" instanceDir="uri_service_' + env_name + '" />'
       )
       File.open(File.join(Jettywrapper.jetty_dir, 'solr/solr.xml'), 'w') { |file| file.write(solr_xml_data) }
     end
