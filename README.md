@@ -26,6 +26,7 @@ bundle install # Install gem dependencies
 bundle exec rake hyacinth:setup:config_files # Set up required config files
 bundle exec rake db:migrate # Run database migrations
 bundle exec rake jetty:clean # Download and unpack a new Hyacinth hydra-jetty instance
+bundle exec rake hyacinth:setup:solr_cores # Copy required cores to newly-unpacked hydra-jetty instance
 bundle exec rake jetty:start # Start jetty, which includes Fedora and Solr (running on port 8983 in the development environment). This will take a minute.
 bundle exec rake hyacinth:fedora:reload_cmodels # Import required content models into Fedora (Note: It is safe to ignore any "404 Resource Not Found" output messages encountered during this step. These are expected because the content models do not already exist in Fedora and therefore cannot be found.)
 bundle exec rake db:seed # Set up default data (including default users)

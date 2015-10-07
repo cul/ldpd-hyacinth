@@ -27,7 +27,9 @@ namespace :hyacinth do
   desc "CI build"
   task :ci do
     
-    Rails.env = 'test'
+    ENV['RAILS_ENV'] = 'test'
+    Rails.env = ENV['RAILS_ENV']
+    
     Jettywrapper.jetty_dir = File.join(Rails.root, 'jetty-test')
 
     unless File.exists?(Jettywrapper.jetty_dir)
@@ -37,6 +39,7 @@ namespace :hyacinth do
     end
     
     Rake::Task["jetty:clean"].invoke
+    Rake::Task["hyacinth:setup:solr_cores"].invoke
     
     jetty_params = Jettywrapper.load_config.merge({jetty_home: Jettywrapper.jetty_dir})
     error = Jettywrapper.wrap(jetty_params) do

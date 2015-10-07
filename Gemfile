@@ -1,13 +1,14 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 4.2.0'
+gem 'rails', '~> 4.2.4'
 
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
 gem 'mysql2', '0.3.18'
 
 # Use SCSS for stylesheets
+gem 'sass'
 gem 'sass-rails'
 
 # Bootstrap include
@@ -91,6 +92,7 @@ gem 'cul_hydra', '>= 1.0.1'
 gem 'jettywrapper', '>= 1.5.1'
 # Temporarily use specific commit because new version of gem hasn't been released yet.  Latest is 1.1.3.
 gem 'rdf-rdfxml', :github => 'ruby-rdf/rdf-rdfxml', :ref => '78c13fe5dbcecaf1f56abe9535d00f16c670a764'
+gem 'uri_service', '0.2'
 #gem 'uri_service', :path => '../uri_service'
 
 # Specify min version for active_fedora_relsint because of a needed fix
@@ -109,9 +111,9 @@ gem 'noid', '>= 0.7.1'
 
 # Testing!
 group :development, :test do
-  gem 'rspec-rails', '~> 3.1'
-  gem 'capybara'
-  gem 'poltergeist' # For headless-browser JavaScript testing
+  gem 'rspec-rails', '~> 3.3'
+  gem 'capybara', '>= 2.5'
+  gem 'poltergeist', '>= 1.7' # For headless-browser JavaScript testing
   gem 'factory_girl_rails', '>= 4.4.1'
 end
 

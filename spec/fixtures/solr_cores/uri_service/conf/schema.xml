@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<schema name="UriService" version="1.0">
+
+  <uniqueKey>uri</uniqueKey>
+
+  <fields>
+		
+		<!-- Main fields -->
+    <field name="uri" type="string" stored="true" indexed="true" multiValued="false" required="true"/>
+		<field name="value" 									type="string" stored="true" indexed="true" multiValued="false" required="true"/>
+		<field name="vocabulary_string_key" 	type="string" stored="true" indexed="true" multiValued="false" required="true"/>
+		<field name="is_local" 								type="boolean" stored="true" indexed="true" multiValued="false" required="true"/>
+    <field name="timestamp" 							type="date" indexed="true" stored="true" default="NOW" multiValued="false"/>
+		
+		<!-- Suggest fields -->
+		<dynamicField name="*_suggest" type="text_suggest" stored="false" indexed="true" multiValued="false"/>
+		<dynamicField name="*_suggest_edge" type="text_suggest_edge" stored="false" indexed="true" multiValued="false"/>
+		<dynamicField name="*_suggest_ngram" type="text_suggest_ngram" stored="false" indexed="true" multiValued="false"/>
+		
+		<!-- string (_s...) -->
+    <dynamicField name="*_si" type="string" stored="false" indexed="true" multiValued="false"/>
+    <dynamicField name="*_sim" type="string" stored="false" indexed="true" multiValued="true"/>
+    <dynamicField name="*_ss" type="string" stored="true" indexed="false" multiValued="false"/>
+    <dynamicField name="*_ssm" type="string" stored="true" indexed="false" multiValued="true"/>
+    <dynamicField name="*_ssi" type="string" stored="true" indexed="true" multiValued="false"/>
+    <dynamicField name="*_ssim" type="string" stored="true" indexed="true" multiValued="true"/>
+		<dynamicField name="*_ssort" type="alphaNumericSort" stored="false" indexed="true" multiValued="false"/>
+		
+		<!-- text (_t...) -->
+    <dynamicField name="*_ti" type="text" stored="false" indexed="true" multiValued="false"/>
+    <dynamicField name="*_tim" type="text" stored="false" indexed="true" multiValued="true"/>
+    <dynamicField name="*_ts" type="text" stored="true" indexed="false" multiValued="false"/>
+    <dynamicField name="*_tsm" type="text" stored="true" indexed="false" multiValued="true"/>
+    <dynamicField name="*_tsi" type="text" stored="true" indexed="true" multiValued="false"/>
+    <dynamicField name="*_tsim" type="text" stored="true" indexed="true" multiValued="true"/>
+
+    <!-- integer (_i...) -->
+    <dynamicField name="*_ii" type="int" stored="false" indexed="true" multiValued="false"/>
+    <dynamicField name="*_iim" type="int" stored="false" indexed="true" multiValued="true"/>
+    <dynamicField name="*_is" type="int" stored="true" indexed="false" multiValued="false"/>
+    <dynamicField name="*_ism" type="int" stored="true" indexed="false" multiValued="true"/>
+    <dynamicField name="*_isi" type="int" stored="true" indexed="true" multiValued="false"/>
+    <dynamicField name="*_isim" type="int" stored="true" indexed="true" multiValued="true"/>
+
+    <!-- trie integer (_it...) (for faster range queries) -->
+    <dynamicField name="*_iti" type="tint" stored="false" indexed="true" multiValued="false"/>
+    <dynamicField name="*_itim" type="tint" stored="false" indexed="true" multiValued="true"/>
+    <dynamicField name="*_its" type="tint" stored="true" indexed="false" multiValued="false"/>
+    <dynamicField name="*_itsm" type="tint" stored="true" indexed="false" multiValued="true"/>
+    <dynamicField name="*_itsi" type="tint" stored="true" indexed="true" multiValued="false"/>
+    <dynamicField name="*_itsim" type="tint" stored="true" indexed="true" multiValued="true"/>
+		
+		<!-- boolean (_b...) -->
+    <dynamicField name="*_bi" type="boolean" stored="false" indexed="true" multiValued="false"/>
+    <dynamicField name="*_bs" type="boolean" stored="true" indexed="false" multiValued="false"/>
+    <dynamicField name="*_bsi" type="boolean" stored="true" indexed="true" multiValued="false"/>
+		
+  </fields>
+
+  <!-- suggest copyFields -->
+	<copyField source="value" dest="value_suggest" />
+	<copyField source="value" dest="value_suggest_edge" />
+	<copyField source="value" dest="value_suggest_ngram" />
+	<!-- sort copyFields -->
+	<copyField source="value" dest="value_ssort" />
+
+  <types>
+    <fieldType name="string" class="solr.StrField" sortMissingLast="true" />
+    <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
+
+    <!-- Default numeric field types.  -->
+    <fieldType name="int" class="solr.TrieIntField" precisionStep="0" positionIncrementGap="0"/>
+    <fieldType name="float" class="solr.TrieFloatField" precisionStep="0" positionIncrementGap="0"/>
+    <fieldType name="long" class="solr.TrieLongField" precisionStep="0" positionIncrementGap="0"/>
+    <fieldType name="double" class="solr.TrieDoubleField" precisionStep="0" positionIncrementGap="0"/>
+
+    <!-- trie numeric field types for faster range queries -->
+    <fieldType name="tint" class="solr.TrieIntField" precisionStep="8" positionIncrementGap="0"/>
+    <fieldType name="tfloat" class="solr.TrieFloatField" precisionStep="8" positionIncrementGap="0"/>
+    <fieldType name="tlong" class="solr.TrieLongField" precisionStep="8" positionIncrementGap="0"/>
+    <fieldType name="tdouble" class="solr.TrieDoubleField" precisionStep="8" positionIncrementGap="0"/>
+		
+		<!-- The format for this date field is of the form 1995-12-31T23:59:59Z
+         Optional fractional seconds are allowed: 1995-12-31T23:59:59.999Z
+      -->
+    <fieldType name="date" class="solr.TrieDateField" precisionStep="0" positionIncrementGap="0"/>
+    <!-- A Trie based date field for faster date range queries and date faceting. -->
+    <fieldType name="tdate" class="solr.TrieDateField" precisionStep="6" positionIncrementGap="0"/>
+
+    <fieldType name="text" class="solr.TextField" omitNorms="false">
+      <analyzer>
+        <tokenizer class="solr.ICUTokenizerFactory"/>
+        <filter class="solr.ICUFoldingFilterFactory"/>  <!-- NFKC, case folding, diacritics removed -->
+				<filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0" splitOnCaseChange="1"/>
+        <filter class="solr.TrimFilterFactory"/>
+      </analyzer>
+		</fieldType>
+		
+		<!-- Text suggest: For partial matches that will be boosted lower than exact or left-edge matches, e.g. match 'bro' in "A brown fox". -->
+		<fieldType name="text_suggest_ngram" class="solr.TextField">
+      <analyzer>
+        <tokenizer class="solr.ICUTokenizerFactory"/>
+        <filter class="solr.ICUFoldingFilterFactory"/>  <!-- NFKC, case folding, diacritics removed -->
+				<filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0" splitOnCaseChange="1"/>
+        <filter class="solr.TrimFilterFactory"/>
+				
+				<filter class="solr.NGramFilterFactory" minGramSize="3" maxGramSize="50"/>
+      </analyzer>
+		</fieldType>
+
+    <fieldType name="alphaNumericSort" class="solr.TextField" sortMissingLast="true" omitNorms="true">
+      <analyzer>
+        <tokenizer class="solr.KeywordTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory" />
+        <filter class="solr.TrimFilterFactory" />
+        <filter class="solr.PatternReplaceFilterFactory"
+                pattern="^(a |an |the |les |la |le |l'|de la |du |des )" replacement="" replace="all"
+        />
+        <filter class="solr.PatternReplaceFilterFactory"
+                pattern="([^a-z0-9])" replacement="" replace="all"
+        />
+      </analyzer>
+    </fieldType>
+		
+		<!-- Text Suggest: For left-edge matches, e.g. match 'A bro' but not 'brown' in "A brown fox". -->
+		
+		<fieldType name="text_suggest_edge" class="solr.TextField">
+      <analyzer>
+        <tokenizer class="solr.ICUTokenizerFactory"/>
+        <filter class="solr.ICUFoldingFilterFactory"/>  <!-- NFKC, case folding, diacritics removed -->
+				<filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0" splitOnCaseChange="1"/>
+        <filter class="solr.TrimFilterFactory"/>
+				<filter class="solr.EdgeNGramFilterFactory" minGramSize="3" maxGramSize="50"/>
+      </analyzer>
+		</fieldType>
+		 
+		<!-- Text Suggest: For whole term matches. These will be weighted the highest -->
+		<fieldType name="text_suggest" class="solr.TextField" positionIncrementGap="100">
+      <analyzer>
+        <tokenizer class="solr.ICUTokenizerFactory"/>
+        <filter class="solr.ICUFoldingFilterFactory"/>  <!-- NFKC, case folding, diacritics removed -->
+				<filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0" splitOnCaseChange="1"/>
+        <filter class="solr.TrimFilterFactory"/>
+      </analyzer>
+		</fieldType>
+
+  </types>
+
+</schema>
