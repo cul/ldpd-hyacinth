@@ -9,7 +9,10 @@ describe "Email-based user signin" do
       fill_in 'user_password', :with => 'iamthetest'
     end
     click_button 'Sign in'
-
+    wait_for_ajax
+    #puts 'Page body: ' + page.body
+    #save_and_open_page
+    #page.driver.debug
     expect(page).to have_content 'New Digital Object'
   end
 end

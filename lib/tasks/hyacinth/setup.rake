@@ -1,6 +1,29 @@
 namespace :hyacinth do
-
+  
   namespace :setup do
+    
+    task :solr_cores do
+      env_name = ENV['RAILS_ENV'] || 'development'
+      
+      ## Copy cores ##
+      FileUtils.cp_r('spec/fixtures/solr_cores/hyacinth', File.join(Jettywrapper.jetty_dir, 'solr'))
+      FileUtils.mv(File.join(Jettywrapper.jetty_dir, 'solr/hyacinth'), File.join(Jettywrapper.jetty_dir, 'solr/hyacinth_' + env_name))
+      FileUtils.cp_r('spec/fixtures/solr_cores/hyacinth_hydra', File.join(Jettywrapper.jetty_dir, 'solr'))
+      FileUtils.mv(File.join(Jettywrapper.jetty_dir, 'solr/hyacinth_hydra'), File.join(Jettywrapper.jetty_dir, 'solr/hyacinth_hydra_' + env_name))
+      FileUtils.cp_r('spec/fixtures/solr_cores/uri_service', File.join(Jettywrapper.jetty_dir, 'solr'))
+      FileUtils.mv(File.join(Jettywrapper.jetty_dir, 'solr/uri_service'), File.join(Jettywrapper.jetty_dir, 'solr/uri_service_' + env_name))
+      ## Copy solr.xml template ##
+      FileUtils.cp_r('spec/fixtures/solr.xml', File.join(Jettywrapper.jetty_dir, 'solr'))
+    
+      # Update solr.xml configuration file so that it recognizes this code
+      solr_xml_data = File.read(File.join(Jettywrapper.jetty_dir, 'solr/solr.xml'))
+      solr_xml_data.gsub!('<!-- ADD CORES HERE -->',
+        '<core name="hyacinth_' + env_name + '" instanceDir="hyacinth_test" />' + "\n" +
+        '    <core name="hyacinth_hydra_' + env_name + '" instanceDir="hyacinth_hydra_test" />' + "\n" +
+        '    <core name="uri_service_' + env_name + '" instanceDir="uri_service_test" />'
+      )
+      File.open(File.join(Jettywrapper.jetty_dir, 'solr/solr.xml'), 'w') { |file| file.write(solr_xml_data) }
+    end
 
     # Note: Don't include Rails environment for this task, since enviroment includes a check for the presence of database.yml
     task :config_files do
@@ -43,7 +66,7 @@ namespace :hyacinth do
       hyacinth_yml = YAML.load_file(hyacinth_yml_file) || {}
       ['development', 'test'].each do |env_name|
         hyacinth_yml[env_name] = {
-          'solr_url' => 'http://localhost:' + (env_name == 'test' ? default_test_port : default_development_port).to_s + '/solr/' + 'hyacinth-' + env_name,
+          'solr_url' => 'http://localhost:' + (env_name == 'test' ? default_test_port : default_development_port).to_s + '/solr/' + 'hyacinth_' + env_name,
           'default_pid_generator_namespace' => 'cul',
           'default_asset_home' => File.join(Rails.root, 'tmp/asset_home_' + env_name),
           'upload_directory' => File.join(Rails.root, 'tmp/upload_' + env_name),
@@ -70,7 +93,7 @@ namespace :hyacinth do
       solr_yml = YAML.load_file(solr_yml_file) || {}
       ['development', 'test'].each do |env_name|
         solr_yml[env_name] = {
-          'url' => 'http://localhost:' + (env_name == 'test' ? default_test_port : default_development_port).to_s + '/solr/' + env_name
+          'url' => 'http://localhost:' + (env_name == 'test' ? default_test_port : default_development_port).to_s + '/solr/hyacinth_hydra_' + env_name
         }
       end
       File.open(solr_yml_file, 'w') {|f| f.write solr_yml.to_yaml }
@@ -81,8 +104,9 @@ namespace :hyacinth do
       uri_service_yml = YAML.load_file(uri_service_yml_file) || {}
       ['development', 'test'].each do |env_name|
         uri_service_yml[env_name] = {
+          'local_uri_base' => 'http://id.library.columbia.edu/term/',
           'solr' => {
-            'url' => 'http://localhost:' + (env_name == 'test' ? default_test_port : default_development_port).to_s + '/solr/' + uri_service + env_name,
+            'url' => 'http://localhost:' + (env_name == 'test' ? default_test_port : default_development_port).to_s + '/solr/uri_service_' + env_name,
             'pool_size' => 5,
             'pool_timeout' => 5000
           },

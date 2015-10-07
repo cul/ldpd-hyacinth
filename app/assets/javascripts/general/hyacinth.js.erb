@@ -69,7 +69,7 @@ Hyacinth.addAlert = function(alertHtml, type, duration) {
 Hyacinth.monitorAlertsForFadeOut = function() {
   setInterval(function(){
     //Periodically check for presence of alerts
-    $alerts = $('#alert-container .alert:not([data-marked-for-fadeout]');
+    $alerts = $('#alert-container .alert:not([data-marked-for-fadeout])');
     if($alerts.length > 0) {
       $alerts.each(function(){
         //Mark for fadeout
