@@ -1,21 +1,36 @@
 <h1>Controlled Vocabularies</h1>
 
-<%= render partial: 'search_form' %>
-
-<% if @controlled_vocabularies.length == 0 %>
+<% if @controlled_vocabularies.blank? && @additional_uri_service_controlled_vocabularies.blank? %>
   No Controlled Vocabularies have been created yet.
 <% else %>
-
+  
+  <% if @controlled_vocabularies.present? %>
+    <h3>Registered Controlled Vocabularies</h3>
+    <table class="table table-bordered table-striped">
+      <tbody>
+        <% @controlled_vocabularies.each do |controlled_vocabulary| %>
+          <tr>
+            <td class="col-xs-7"><%= controlled_vocabulary.display_label %></td>
+            <td class="col-xs-2 aligncenter"><%= link_to 'Edit', edit_controlled_vocabulary_path(controlled_vocabulary) %></td>
+            <td class="col-xs-3 aligncenter"><%= link_to (current_user.can_manage_controlled_vocabulary_terms?(controlled_vocabulary) ? 'Manage' : 'View') + ' Terms', terms_controlled_vocabulary_path(controlled_vocabulary) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+  
+  <% if @additional_uri_service_controlled_vocabularies.present? %>
+  <h3>Unregistered Controlled Vocabularies</h3>
   <table class="table table-bordered table-striped">
     <tbody>
-      <% @controlled_vocabularies.each do |controlled_vocabulary| %>
+      <% @additional_uri_service_controlled_vocabularies.each do |uri_service_controlled_vocabulary| %>
         <tr>
-          <td class="col-xs-7"><%= controlled_vocabulary.display_label %></td>
-          <td class="col-xs-2 aligncenter"><%= link_to 'Edit', edit_controlled_vocabulary_path(controlled_vocabulary) %></td>
-          <td class="col-xs-3 aligncenter"><%= link_to (current_user.can_manage_controlled_vocabulary_terms?(controlled_vocabulary) ? 'Manage' : 'View') + ' Authorized Terms', authorized_terms_controlled_vocabulary_path(controlled_vocabulary) %></td>
+          <td class="col-xs-7"><%= uri_service_controlled_vocabulary['display_label'] %></td>
+          <td class="col-xs-2 aligncenter"><%= link_to 'Add', new_controlled_vocabulary_path(string_key: uri_service_controlled_vocabulary['string_key'], display_label: uri_service_controlled_vocabulary['display_label']) %></td>
         </tr>
       <% end %>
     </tbody>
   </table>
+  <% end %>
 
 <% end %>

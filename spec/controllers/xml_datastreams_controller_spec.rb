@@ -20,7 +20,7 @@ require 'rails_helper'
 
 RSpec.describe XmlDatastreamsController, :type => :controller do
 
-  before { sign_in_admin_user() }
+  before { sign_in_admin_user_controller_spec() }
 
   # This should return the minimal set of attributes required to create a valid
   # XmlDatastream. As you add validations to XmlDatastream, be sure to

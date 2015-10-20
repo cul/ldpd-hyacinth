@@ -30,6 +30,7 @@ secrets.yml
 solr.yml
 repository_cache.yml
 uri_service.yml
+term_additional_fields.yml
 
 *_user_accounts.yml
 

@@ -10,9 +10,6 @@ describe "Email-based user signin" do
     end
     click_button 'Sign in'
     wait_for_ajax
-    #puts 'Page body: ' + page.body
-    #save_and_open_page
-    #page.driver.debug
     expect(page).to have_content 'New Digital Object'
   end
 end

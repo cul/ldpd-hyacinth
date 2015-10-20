@@ -3,7 +3,7 @@
       "pid" : "",
       "identifier" : ["new_asset1"],
       "parent_pid_or_identifier" : ["cul:456"],
-      "type" : {
+      "digital_object_type" : {
          "string_key" : "asset"
        },
        "project" : {
@@ -44,7 +44,7 @@
       "pid" : "",
       "identifier" : ["new_item1"],
       "parent_pid_or_identifier" : [""],
-      "type" : {
+      "digital_object_type" : {
          "string_key" : "item"
        },
        "project" : {
@@ -85,7 +85,7 @@
       "pid" : "cul:456",
       "identifier" : [""],
       "parent_pid_or_identifier" : [""],
-      "type" : {
+      "digital_object_type" : {
          "string_key" : "item"
        },
        "project" : {
@@ -126,7 +126,7 @@
       "pid" : "",
       "identifier" : ["new_asset2"],
       "parent_pid_or_identifier" : ["new_item1"],
-      "type" : {
+      "digital_object_type" : {
          "string_key" : "asset"
        },
        "project" : {

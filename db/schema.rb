@@ -13,34 +13,14 @@
 
 ActiveRecord::Schema.define(version: 20150909213948) do
 
-  create_table "authorized_terms", force: :cascade do |t|
-    t.string   "pid"
-    t.text     "value",                                      null: false
-    t.text     "code"
-    t.text     "value_uri"
-    t.string   "unique_value_and_value_uri_hash", limit: 64
-    t.text     "authority"
-    t.text     "authority_uri"
-    t.integer  "controlled_vocabulary_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "authorized_terms", ["controlled_vocabulary_id"], name: "index_authorized_terms_on_controlled_vocabulary_id"
-  add_index "authorized_terms", ["unique_value_and_value_uri_hash"], name: "index_authorized_terms_on_unique_value_and_value_uri_hash"
-
   create_table "controlled_vocabularies", force: :cascade do |t|
-    t.string   "pid"
     t.string   "string_key"
-    t.string   "display_label"
-    t.integer  "pid_generator_id"
     t.boolean  "only_managed_by_admins", default: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "controlled_vocabularies", ["only_managed_by_admins"], name: "index_controlled_vocabularies_on_only_managed_by_admins"
-  add_index "controlled_vocabularies", ["pid_generator_id"], name: "index_controlled_vocabularies_on_pid_generator_id"
 
   create_table "digital_object_records", force: :cascade do |t|
     t.string   "pid"
@@ -91,27 +71,27 @@ ActiveRecord::Schema.define(version: 20150909213948) do
   add_index "dynamic_field_groups", ["string_key"], name: "index_dynamic_field_groups_on_string_key"
 
   create_table "dynamic_fields", force: :cascade do |t|
-    t.string   "string_key",                                        null: false
-    t.string   "display_label",                                     null: false
+    t.string   "string_key",                                          null: false
+    t.string   "display_label",                                       null: false
     t.integer  "parent_dynamic_field_group_id"
-    t.integer  "sort_order",                                        null: false
-    t.string   "dynamic_field_type",             default: "string", null: false
-    t.integer  "controlled_vocabulary_id"
+    t.integer  "sort_order",                                          null: false
+    t.string   "dynamic_field_type",               default: "string", null: false
+    t.string   "controlled_vocabulary_string_key"
     t.text     "additional_data_json"
-    t.boolean  "is_keyword_searchable",          default: false,    null: false
-    t.boolean  "is_facet_field",                 default: false,    null: false
-    t.boolean  "required_for_group_save",        default: false,    null: false
-    t.string   "standalone_field_label",         default: "",       null: false
-    t.boolean  "is_searchable_identifier_field", default: false,    null: false
-    t.boolean  "is_searchable_title_field",      default: false,    null: false
-    t.boolean  "is_single_field_searchable",     default: false,    null: false
+    t.boolean  "is_keyword_searchable",            default: false,    null: false
+    t.boolean  "is_facet_field",                   default: false,    null: false
+    t.boolean  "required_for_group_save",          default: false,    null: false
+    t.string   "standalone_field_label",           default: "",       null: false
+    t.boolean  "is_searchable_identifier_field",   default: false,    null: false
+    t.boolean  "is_searchable_title_field",        default: false,    null: false
+    t.boolean  "is_single_field_searchable",       default: false,    null: false
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "dynamic_fields", ["controlled_vocabulary_id"], name: "index_dynamic_fields_on_controlled_vocabulary_id"
+  add_index "dynamic_fields", ["controlled_vocabulary_string_key"], name: "index_dynamic_fields_on_controlled_vocabulary_string_key"
   add_index "dynamic_fields", ["parent_dynamic_field_group_id"], name: "index_dynamic_fields_on_parent_dynamic_field_group_id"
   add_index "dynamic_fields", ["string_key", "parent_dynamic_field_group_id"], name: "unique_string_key_and_parent_dynamic_field_group", unique: true
   add_index "dynamic_fields", ["string_key"], name: "index_dynamic_fields_on_string_key"

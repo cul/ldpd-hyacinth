@@ -2,8 +2,8 @@ class DigitalObjectType < ActiveRecord::Base
 
   default_scope { order('sort_order') }
 
-  def get_associated_model
-    case self.string_key
+  def self.get_model_for_string_key(string_key)
+    case string_key
     when 'item'
       return DigitalObject::Item
     when 'group'
@@ -11,7 +11,7 @@ class DigitalObjectType < ActiveRecord::Base
     when 'asset'
       return DigitalObject::Asset
     else
-      return nil
+      raise Hyacinth::Exceptions::InvalidDigitalObjectTypeError, 'Invalid DigitalObjectType string key: ' + string_key.to_s
     end
   end
 

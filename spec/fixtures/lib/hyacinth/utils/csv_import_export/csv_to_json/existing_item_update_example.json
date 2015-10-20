@@ -2,7 +2,7 @@
    "pid" : "cul:123",
    "identifier" : ["another_identifier"],
    "parent_pid_or_identifier" : ["cul:parent123"],
-   "type" : {
+   "digital_object_type" : {
       "string_key" : "item"
     },
     "project" : {

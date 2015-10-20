@@ -9,6 +9,217 @@ class DigitalObjectsController < ApplicationController
   def index
   end
 
+  # POST /digital_objects
+  # POST /digital_objects.json
+  def create
+    
+    if params[:digital_object].blank?
+      render json: {
+        success: false,
+        errors: ['Missing param digital_object']
+      }
+      return
+    end
+    
+    digital_object_data = params[:digital_object]
+    
+    # Convert json-encoded dynamic_field_data_json to dynamic_field_data hash
+    # Note: We submit dynamic_field_data_json to the API to easily preserve element order
+    # without having to number every array element, but it's still possible to submit
+    # the dynamic_field_data param with non-json-encoded data.
+    unless digital_object_data['dynamic_field_data_json'].nil?
+      raise 'Invalid JSON given for dynamic_field_data_json' unless Hyacinth::Utils::JsonUtils.is_valid_json?(digital_object_data['dynamic_field_data_json'])
+      digital_object_data['dynamic_field_data'] = JSON.parse(digital_object_data['dynamic_field_data'])
+      digital_object_data['dynamic_field_data_json'].delete
+    end
+    
+    begin
+      @digital_object = DigitalObjectType.get_model_for_string_key(digital_object_data['digital_object_type']['string_key']).new()
+    rescue Hyacinth::Exceptions::InvalidDigitalObjectTypeError
+      render json: {
+        success: false,
+        errors: ['Invalid digital_object_type string_key: ' + digital_object_data['digital_object_type']['string_key'].to_s]
+      }
+      return
+    end
+    
+    @digital_object.created_by = current_user
+    @digital_object.updated_by = current_user
+    @digital_object.update(digital_object_data, false)
+
+    test_mode = params['test'].present? && params['test'].to_s == 'true'
+
+    
+    if (test_mode ? @digital_object.valid? : @digital_object.save) && (params['publish'].to_s == 'true' ? @digital_object.publish : true)
+      render json: {
+        success: true,
+        pid: @digital_object.pid
+      }
+    else
+      render json: {
+        errors: @digital_object.errors
+      }
+    end
+    
+  end
+  
+  # DELETE /digital_objects/1
+  # DELETE /digital_objects/1.json
+  def destroy
+    respond_to do |format|
+      if @digital_object.destroy
+        format.json {
+          render json: {
+            success: true
+          }
+        }
+      else
+        format.json {
+          render json: {
+            errors: @digital_object.errors
+          }
+        }
+      end
+    end
+  end
+
+  # PATCH/PUT /digital_objects/1
+  # PATCH/PUT /digital_objects/1.json
+  def update
+    
+    if params[:digital_object].blank?
+      render json: {
+        success: false,
+        errors: ['Missing param digital_object']
+      }
+      return
+    end
+    
+    digital_object_data = params[:digital_object]
+    
+    # Convert json-encoded dynamic_field_data_json to dynamic_field_data hash
+    # Note: We submit dynamic_field_data_json to the API to easily preserve element order
+    # without having to number every array element, but it's still possible to submit
+    # the dynamic_field_data param with non-json-encoded data.
+    unless digital_object_data['dynamic_field_data_json'].nil?
+      raise 'Invalid JSON given for dynamic_field_data_json' unless Hyacinth::Utils::JsonUtils.is_valid_json?(digital_object_data['dynamic_field_data_json'])
+      digital_object_data['dynamic_field_data'] = JSON.parse(digital_object_data['dynamic_field_data'])
+      digital_object_data['dynamic_field_data_json'].delete
+    end
+    
+    begin
+      @digital_object = DigitalObjectType.get_model_for_string_key(digital_object_data['digital_object_type']['string_key']).new()
+    rescue Hyacinth::Exceptions::InvalidDigitalObjectTypeError
+      render json: {
+        success: false,
+        errors: ['Invalid digital_object_type string_key: ' + digital_object_data['digital_object_type']['string_key']]
+      }
+      return
+    end
+    
+    @digital_object.updated_by = current_user
+    
+    # Default behavior is to merge dynamic fields by default, unless told not to.
+    if params['merge_dynamic_fields'].present? && params['merge_dynamic_fields'].to_s == 'false'
+      merge_dynamic_fields = false
+    else
+      merge_dynamic_fields = true
+    end
+    
+    @digital_object.update(digital_object_data, merge_dynamic_fields)
+
+    test_mode = params['test'].present? && params['test'].to_s == 'true'
+
+    respond_to do |format|
+      if (test_mode ? @digital_object.valid? : @digital_object.save) && (params['publish'].to_s == 'true' ? @digital_object.publish : true)
+        format.json {
+          render json: {
+            success: true,
+            pid: @digital_object.pid
+          }
+        }
+      else
+        format.json {
+          render json: {
+            errors: @digital_object.errors
+          }
+        }
+      end
+    end
+  end
+
+  # PUT /digital_objects/1/undelete.json
+  def undestroy
+
+    @digital_object.state = 'A'
+
+    respond_to do |format|
+      if @digital_object.save
+        format.json {
+          render json: {
+            success: true
+          }
+        }
+      else
+        format.json {
+          render json: {
+            errors: @digital_object.errors
+          }
+        }
+      end
+    end
+  end
+
+  def data_for_editor
+    if params[:pid]
+      # A DigitalObject pid is expected when we're working with an existing DigialObject
+      @digital_object = DigitalObject::Base.find(params[:pid])
+      projects = @digital_object.projects
+      fieldsets = Fieldset.where(project: projects)
+      enabled_dynamic_fields = @digital_object.get_enabled_dynamic_fields
+    elsif params[:project_string_key]
+      # A DigitalObject id is not available when we're working with a new item, so we expect a project_id and digital_object_type_id instead
+      project = Project.find_by(string_key: params[:project_string_key])
+      digital_object_type = DigitalObjectType.find_by(string_key: params[:digital_object_type_string_key])
+
+      fieldsets = Fieldset.where(project: project)
+      enabled_dynamic_fields = project.get_enabled_dynamic_fields(digital_object_type)
+
+      # Return an empty DigitalObject instance with the correct project
+      @digital_object = DigitalObjectType.get_model_for_string_key(digital_object_type.string_key).new
+      @digital_object.projects << project
+    end
+
+    dynamic_field_hierarchy = DynamicFieldGroupCategory.all # Get all DyanamicFieldGroupCategories (which recursively includes sub-dynamic_field_groups and dynamic_fields)
+    dynamic_field_ids_to_enabled_dynamic_fields = Hash[enabled_dynamic_fields.map{|enabled_dynamic_field| [enabled_dynamic_field.dynamic_field_id, enabled_dynamic_field]}]
+
+    data_for_editor_response = {
+      digital_object: @digital_object,
+      dynamic_field_hierarchy: dynamic_field_hierarchy,
+      fieldsets: fieldsets,
+      dynamic_field_ids_to_enabled_dynamic_fields: dynamic_field_ids_to_enabled_dynamic_fields,
+    }
+
+    if params['search_result_number'].present? && params['search'].present?
+      current_result_number = params['search_result_number'].to_i
+      search_params = params['search']
+
+      previous_result_pid, next_result_pid, total_num_results = DigitalObject::Base.get_previous_and_next_in_search(current_result_number, search_params)
+
+      data_for_editor_response['previous_and_next_data'] = {}
+      data_for_editor_response['previous_and_next_data']['previous_pid'] = previous_result_pid
+      data_for_editor_response['previous_and_next_data']['next_pid'] = next_result_pid
+      data_for_editor_response['previous_and_next_data']['total_num_results'] = total_num_results
+    end
+
+    respond_to do |format|
+      format.json {
+        render json: data_for_editor_response
+      }
+    end
+
+  end
+  
   def search
     respond_to do |format|
       format.json {
@@ -67,228 +278,6 @@ class DigitalObjectsController < ApplicationController
   def media_view
     raise 'This view is only available for assets.' unless @digital_object.is_a?(DigitalObject::Asset)
     render layout: 'content_only'
-  end
-
-  # POST /digital_objects
-  # POST /digital_objects.json
-  def create
-
-    test_mode = params['test'].present? && params['test'].to_s == 'true'
-
-    project = Project.find_by(string_key: params['digital_object']['project_string_key'])
-    digital_object_type = DigitalObjectType.find_by(string_key: params['digital_object']['digital_object_type_string_key'])
-
-    class_to_instantiate = digital_object_type.get_associated_model
-    @digital_object = class_to_instantiate.new
-    @digital_object.created_by = current_user
-    @digital_object.updated_by = current_user
-    @digital_object.projects << project
-
-    unless params['digital_object']['dynamic_field_data_json'].nil?
-      #dynamic_field_data_json = Hyacinth::Utils::StringUtils.clean_utf8_string(params['digital_object']['dynamic_field_data_json'])
-      dynamic_field_data_json = params['digital_object']['dynamic_field_data_json']
-      raise 'Invalid JSON given for dynamic_field_data_json' unless Hyacinth::Utils::JsonUtils.is_valid_json?(dynamic_field_data_json)
-      @digital_object.update_dynamic_field_data(JSON(dynamic_field_data_json))
-    end
-
-    if params['digital_object'].has_key?('publish_targets')
-      if params['digital_object']['publish_targets'].present?
-        publish_targets = PublishTarget.where(pid: params['digital_object']['publish_targets']).to_a
-        if publish_targets.length != params['digital_object']['publish_targets'].length
-          raise 'Could not find all desired publish targets.'
-        end
-        @digital_object.publish_targets = publish_targets
-      else
-        @digital_object.publish_targets = []
-      end
-    end
-
-    if params['digital_object']['parent_digital_object_pid']
-      parent_digital_object = DigitalObject::Base.find(params['digital_object']['parent_digital_object_pid'])
-      @digital_object.add_parent_digital_object(parent_digital_object)
-    end
-
-    respond_to do |format|
-      if (test_mode ? @digital_object.valid? : @digital_object.save && (params['publish'].to_s == 'true' ? @digital_object.publish : true))
-        format.json {
-          render json: {
-            success: true,
-            pid: @digital_object.pid
-          }
-        }
-      else
-        format.json {
-          render json: {
-            errors: @digital_object.errors
-          }
-        }
-      end
-    end
-  end
-
-  # PATCH/PUT /digital_objects/1
-  # PATCH/PUT /digital_objects/1.json
-  def update
-
-    test_mode = params['test'].present? && params['test'] == 'true'
-
-    if params['incremental'].present? && params['incremental'] == 'false'
-      incremental_update = false
-    else
-      incremental_update = true
-    end
-
-    if params['digital_object']['dynamic_field_data_json'].present?
-      raise 'Invalid JSON given for dynamic_field_data_json' unless Hyacinth::Utils::JsonUtils.is_valid_json?(params['digital_object']['dynamic_field_data_json'])
-      @digital_object.update_dynamic_field_data(JSON(params['digital_object']['dynamic_field_data_json']), incremental_update)
-    end
-
-    if params['digital_object'].has_key?('publish_targets')
-      if params['digital_object']['publish_targets'].present?
-        publish_targets = PublishTarget.where(pid: params['digital_object']['publish_targets']).to_a
-        if publish_targets.length != params['digital_object']['publish_targets'].length
-          raise 'Could not find all desired publish targets.'
-        end
-        @digital_object.publish_targets = publish_targets
-      else
-        @digital_object.publish_targets = []
-      end
-    end
-
-    if params['digital_object']['ordered_child_digital_object_pids']
-
-      # First verify that the incoming list of ordered_child_digital_object_pids
-      # includes the same values as the existing list (ignoring order).  This is
-      # not a place for adding or removing values -- just reordering them.
-      # Return an error if the lists differ.
-
-      unless @digital_object.ordered_child_digital_object_pids.length == (@digital_object.ordered_child_digital_object_pids | params['digital_object']['ordered_child_digital_object_pids']).length
-        @digital_object.errors.add(:ordered_child_digital_object_pids, ' - During reordering, sent child digital object pids must match existing pids.')
-      else
-        params['digital_object']['ordered_child_digital_object_pids'].each do |pid|
-          unless @digital_object.ordered_child_digital_object_pids.include?(pid)
-            child_digital_object = DigitalObject::Base.find(pid)
-            child_digital_object.add_parent_digital_object(@digital_object)
-            child_digitial_object.save
-          end
-        end
-        @digital_object.ordered_child_digital_object_pids = params['digital_object']['ordered_child_digital_object_pids']
-      end
-    end
-
-    @digital_object.updated_by = current_user
-
-    respond_to do |format|
-      if (test_mode ? @digital_object.valid? : (@digital_object.save && (params['publish'].to_s == 'true' ? @digital_object.publish : true)))
-        format.json {
-          render json: {
-            success: true
-          }
-        }
-      else
-        format.json {
-          render json: {
-            errors: @digital_object.errors
-          }
-        }
-      end
-    end
-  end
-
-  # PUT /digital_objects/1/undelete.json
-  def undestroy
-
-    @digital_object.state = 'A'
-
-    respond_to do |format|
-      if @digital_object.save
-        format.json {
-          render json: {
-            success: true
-          }
-        }
-      else
-        format.json {
-          render json: {
-            errors: @digital_object.errors
-          }
-        }
-      end
-    end
-  end
-
-  # DELETE /digital_objects/1
-  # DELETE /digital_objects/1.json
-  def destroy
-    respond_to do |format|
-      if @digital_object.destroy
-        format.json {
-          render json: {
-            success: true
-          }
-        }
-      else
-        format.json {
-          render json: {
-            errors: @digital_object.errors
-          }
-        }
-      end
-    end
-  end
-
-  def data_for_editor
-
-    if params[:pid]
-      # A DigitalObject pid is expected when we're working with an existing DigialObject
-      @digital_object = DigitalObject::Base.find(params[:pid])
-      projects = @digital_object.projects
-      digital_object_type = @digital_object.digital_object_type
-
-      fieldsets = Fieldset.where(project: projects)
-      enabled_dynamic_fields = @digital_object.get_enabled_dynamic_fields
-    elsif params[:project_string_key]
-      # A DigitalObject id is not available when we're working with a new item, so we expect a project_id and digital_object_type_id instead
-      project = Project.find_by(string_key: params[:project_string_key])
-      digital_object_type = DigitalObjectType.find_by(string_key: params[:digital_object_type_string_key])
-
-      fieldsets = Fieldset.where(project: project)
-      enabled_dynamic_fields = project.get_enabled_dynamic_fields(digital_object_type)
-
-      # Return an empty DigitalObject instance with the project
-
-      @digital_object = digital_object_type.get_associated_model().new
-      @digital_object.projects << project
-    end
-
-    dynamic_field_hierarchy = DynamicFieldGroupCategory.all # Get all DyanamicFieldGroupCategories (which recursively includes sub-dynamic_field_groups and dynamic_fields)
-    dynamic_field_ids_to_enabled_dynamic_fields = Hash[enabled_dynamic_fields.map{|enabled_dynamic_field| [enabled_dynamic_field.dynamic_field_id, enabled_dynamic_field]}]
-
-    data_for_editor_response = {
-      digital_object: @digital_object,
-      dynamic_field_hierarchy: dynamic_field_hierarchy,
-      fieldsets: fieldsets,
-      dynamic_field_ids_to_enabled_dynamic_fields: dynamic_field_ids_to_enabled_dynamic_fields,
-    }
-
-    if params['search_result_number'].present? && params['search'].present?
-      current_result_number = params['search_result_number'].to_i
-      search_params = params['search']
-
-      previous_result_pid, next_result_pid, total_num_results = DigitalObject::Base.get_previous_and_next_in_search(current_result_number, search_params)
-
-      data_for_editor_response['previous_and_next_data'] = {}
-      data_for_editor_response['previous_and_next_data']['previous_pid'] = previous_result_pid
-      data_for_editor_response['previous_and_next_data']['next_pid'] = next_result_pid
-      data_for_editor_response['previous_and_next_data']['total_num_results'] = total_num_results
-    end
-
-    respond_to do |format|
-      format.json {
-        render json: data_for_editor_response
-      }
-    end
-
   end
 
   def data_for_ordered_child_editor
@@ -499,7 +488,7 @@ class DigitalObjectsController < ApplicationController
           @digital_object.save
         end
         
-      rescue Hyacinth::DigitalObjectNotFoundError
+      rescue Hyacinth::Exceptions::DigitalObjectNotFoundError
         errors << 'Could not find Digital Object with PID: ' + params[:parent_pid]
       end
       
@@ -542,7 +531,7 @@ class DigitalObjectsController < ApplicationController
         unless errors.present? || test_mode
           @digital_object.save
         end
-      rescue Hyacinth::DigitalObjectNotFoundError
+      rescue Hyacinth::Exceptions::DigitalObjectNotFoundError
         errors << 'Could not find Digital Object with PID: ' + params[:parent_pid]
       end
       

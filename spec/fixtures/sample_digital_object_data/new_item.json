@@ -1,17 +1,17 @@
 {
-   "identifier" : ["projectname.001"],
+   "identifier" : ["identifier.001", "identifier.002"],
    "digital_object_type" : {
       "string_key" : "item"
    },
    "project" : {
-      "string_key" : "the_project"
+      "string_key" : "test"
    },
    "publish_target":[
       {
-         "string_key" : "publish_target1"
+         "string_key" : "test_publish_target_1"
       },
       {
-         "string_key" : "publish_target2"
+         "string_key" : "test_publish_target_2"
       }
    ],
    "dynamic_field_data": {

@@ -9,10 +9,9 @@ end
 
 describe "Permission-restricted resources" do
 
-  let(:non_admin_user) { FactoryGirl.create(:non_admin_user) }
-
   it "does something", :js => true do
-    #visit '/users/sign_in'
-    #expect(page).to have_content 'New Digital Object'
+    feature_spec_sign_in_admin_user
+    wait_for_ajax
+    expect(page).to have_content 'New Digital Object'
   end
 end

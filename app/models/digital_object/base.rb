@@ -14,10 +14,12 @@ class DigitalObject::Base
   # For ActiveModel::Dirty
   define_attribute_methods :parent_digital_object_pids, :obsolete_parent_digital_object_pids, :ordered_child_digital_object_pids
 
-  attr_accessor :projects, :publish_targets, :created_by, :updated_by, :state, :struct_data, :dc_type, :ordered_child_digital_object_pids
+  attr_accessor :projects, :publish_targets, :identifiers, :created_by, :updated_by, :state, :struct_data, :dc_type, :ordered_child_digital_object_pids
   attr_reader :errors, :fedora_object, :parent_digital_object_pids, :updated_at, :created_at, :dynamic_field_data
 
   VALID_DC_TYPES = [] # There are no valid dc types for DigitalObject::Base
+  
+  def require_subclass_override!; raise 'This method must be overridden by a subclass'; end
 
   def initialize(digital_object_record=::DigitalObjectRecord.new, fedora_obj=nil)
     raise 'The DigitalObject::Base class cannot be instantiated.  You can only instantiate subclasses like DigitalObject::Item' if self.class == DigitalObject
@@ -27,6 +29,7 @@ class DigitalObject::Base
     if self.new_record?
       @projects = []
       @publish_targets = []
+      @identifiers = []
       @parent_digital_object_pids = []
       @obsolete_parent_digital_object_pids = []
       @ordered_child_digital_object_pids = []
@@ -39,12 +42,72 @@ class DigitalObject::Base
         load_parent_digital_object_pid_relationships_from_fedora_object!
         load_state_from_fedora_object!
         load_dc_type_from_fedora_object!
+        load_dc_identifiers_from_fedora_object!
         load_project_and_publisher_relationships_from_fedora_object!
         load_fedora_hyacinth_ds_data_from_fedora_object!
       end
     end
 
     @errors = ActiveModel::Errors.new(self)
+  end
+  
+  # Updates the DigitalObject with the given digital_object_data
+  def update(digital_object_data, merge_dynamic_fields)
+    
+    # Identifiers (multiple)
+    if digital_object_data['identifier']
+      self.identifiers = digital_object_data['identifier']
+    end
+    
+    # Project (only one)
+    if digital_object_data['project']
+      project_find_criteria = digital_object_data['project'] # i.e. {string_key: 'proj'} or {pid: 'abc:123'}
+      self.projects = [Project.find_by(project_find_criteria)]
+    end
+    
+    # Publish Targets (multiple)
+    if digital_object_data['publish_target']
+      self.publish_targets = []
+      digital_object_data['publish_target'].each do |publish_target_find_criteria|
+        publish_target = PublishTarget.find_by(publish_target_find_criteria) # i.e. {string_key: 'target1'} or {pid: 'abc:123'}
+        if publish_target.nil?
+          raise Hyacinth::Exceptions::PublishTargetNotFoundError, "Could not find Publish Target: #{publish_target_find_criteria.inspect}"
+        else
+          self.publish_targets.push(publish_target)
+        end
+      end
+    end
+    
+    # Parent PID or Identifier
+    if digital_object_data['parent_pid_or_identifier']
+      digital_object_data['parent_pid_or_identifier'].each do |parent_pid_or_identifier|
+        digital_object = DigitalObject::Base.find_by_pid_or_identifier(parent_pid_or_identifier)
+        if digital_object.nil?
+          raise Hyacinth::Exceptions::DigitalObjectNotFound, "Could not find parent DigitalObject with pid or identifier: #{parent_pid_or_identifier}"
+        else
+          add_parent_digital_object(digital_object)
+        end
+      end
+    end
+    
+    # Ordered child PIDS
+    if digital_object_data['ordered_child_digital_object_pids']
+      digital_object_data['ordered_child_digital_object_pids'].each do |child_pid|
+        self.ordered_child_digital_object_pids = []
+        digital_object = DigitalObject::Base.find_by_pid(child_pid)
+        if digital_object.nil?
+          raise Hyacinth::Exceptions::DigitalObjectNotFound, "Could not find child DigitalObject with pid: #{child_pid}"
+        else
+          add_ordered_child_digital_object_pid(digital_object)
+        end
+      end
+    end
+    
+    # Dynamic Field Data
+    if digital_object_data['dynamic_field_data']
+      self.update_dynamic_field_data(digital_object_data['dynamic_field_data'], merge_dynamic_fields)
+    end
+    
   end
 
   # Returns the primary title
@@ -77,6 +140,8 @@ class DigitalObject::Base
   end
 
   def add_parent_digital_object(parent_digital_object)
+    return if parent_digital_object.nil?
+    
     new_parent_digital_object_pid = parent_digital_object.pid
 
     unless @parent_digital_object_pids.include?(new_parent_digital_object_pid)
@@ -115,7 +180,7 @@ class DigitalObject::Base
     end
   end
 
-  # Marks a record as deletedm but doesn't completely purge it from the system
+  # Marks a record as deleted, but doesn't completely purge it from the system
   def destroy
 
     @db_record.with_lock do
@@ -142,8 +207,6 @@ class DigitalObject::Base
     raise 'Purge is not currently supported.  Use the destroy method instead, which marks an object as deleted.'
   end
 
-  def require_subclass_override!; raise 'This method must be overridden by a subclass'; end
-
   # Get a new, unsaved, appropriately-configured instance of the right tyoe of Fedora object a DigitalObject subclass
   def get_new_fedora_object; require_subclass_override!; end
 
@@ -159,11 +222,12 @@ class DigitalObject::Base
 
   # Find/Save/Validate
 
+  # Finds objects by PID
   def self.find(pid)
     digital_object_record = ::DigitalObjectRecord.find_by(pid: pid)
 
-    if digital_object_record.blank?
-      raise Hyacinth::DigitalObjectNotFoundError.new("Couldn't find DigitalObject with pid #{pid}")
+    if digital_object_record.nil?
+      raise Hyacinth::Exceptions::DigitalObjectNotFoundError, "Couldn't find DigitalObject with pid #{pid}"
     end
 
     # Handle Fedora timeouts / unreachable host.  Try up to 3 times.
@@ -185,6 +249,19 @@ class DigitalObject::Base
 
     class_to_instantiate = DigitalObject::Base.get_class_for_fedora_object(fobj)
     return class_to_instantiate.new(digital_object_record, fobj)
+  end
+  
+  # Like self.find(), but returns nil when a DigitalObject isn't found instead of raising an error
+  def self.find_by_pid(pid)
+    begin
+      return self.find(pid)
+    rescue Hyacinth::Exceptions::DigitalObjectNotFoundError
+      return nil
+    end
+  end
+  
+  def self.find_by_pid_or_identifier(pid_or_identifier)
+    return self.find_by_pid(pid) || self.find_by_pid(Cul::Hydra::RisearchMembers.get_pid_for_identifier(pid_or_identifier))
   end
 
   # Returns the DigitalObject::Something class for the given Fedora object.
@@ -270,6 +347,7 @@ class DigitalObject::Base
         set_fedora_project_and_publisher_relationships
         set_fedora_object_state
         set_fedora_object_dc_type
+        set_fedora_object_dc_identifiers
         set_fedora_object_dc_title_and_label
 
         set_fedora_parent_digital_object_pid_relationships if parent_digital_object_pids_changed?
