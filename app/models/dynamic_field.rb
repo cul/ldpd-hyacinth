@@ -10,12 +10,6 @@ class DynamicField < ActiveRecord::Base
     SELECT = 'select'
     DATE = 'date'
     CONTROLLED_TERM = 'controlled_term'
-    
-    AUTHORIZED_TERM_VALUE = 'authorized_term_value'
-    AUTHORIZED_TERM_CODE = 'authorized_term_code'
-    AUTHORIZED_TERM_VALUE_URI = 'authorized_term_value_uri'
-    AUTHORIZED_TERM_AUTHORITY = 'authorized_term_authority'
-    AUTHORIZED_TERM_AUTHORITY_URI = 'authorized_term_authority_uri'
   end
 
   TYPES_TO_LABELS = {
@@ -26,15 +20,9 @@ class DynamicField < ActiveRecord::Base
     DynamicField::Type::SELECT => 'Select',
     DynamicField::Type::DATE => 'Date',
     DynamicField::Type::CONTROLLED_TERM => 'Controlled Term',
-    DynamicField::Type::AUTHORIZED_TERM_VALUE => 'Authorized Term - Value',
-    DynamicField::Type::AUTHORIZED_TERM_CODE => 'Authorized Term - Code',
-    DynamicField::Type::AUTHORIZED_TERM_VALUE_URI => 'Authorized Term - Value URI',
-    DynamicField::Type::AUTHORIZED_TERM_AUTHORITY => 'Authorized Term - Authority',
-    DynamicField::Type::AUTHORIZED_TERM_AUTHORITY_URI => 'Authorized Term - Authority URI'
   }
 
   belongs_to :parent_dynamic_field_group, class_name: 'DynamicFieldGroup'
-  belongs_to :controlled_vocabulary
   belongs_to :created_by, class_name: 'User'
   belongs_to :updated_by, class_name: 'User'
 
@@ -89,6 +77,9 @@ class DynamicField < ActiveRecord::Base
   def validate_dynamic_field_type
     unless DynamicField::TYPES_TO_LABELS.keys.include?(self.dynamic_field_type)
       errors.add(:dynamic_field_type, "is not an allowed value.")
+    end
+    if self.dynamic_field_type == DynamicField::Type::CONTROLLED_TERM && self.controlled_vocabulary_string_key.blank?
+      errors.add(:controlled_vocabulary_string_key, "cannot be blank for DynamicFields of type " + DynamicField::Type::CONTROLLED_TERM + '.')
     end
   end
 

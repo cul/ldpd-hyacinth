@@ -60,9 +60,27 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
 
   # Added so that we can test Devise logins
-  config.include Devise::TestHelpers, :type => :controller # Don't use this for request specs.  Simulate real login mechanism for request specs.
-  def sign_in_admin_user()
+  config.include Devise::TestHelpers, :type => :controller # Cannot use this for request/feature specs
+  def sign_in_admin_user_controller_spec()
     sign_in(FactoryGirl.create(:admin_user))
+  end
+  
+  ## Set Warden (which backs devise) in test mode for 
+  #config.include Warden::Test::Helpers
+  #config.before :suite do
+  #  Warden.test_mode!
+  #end
+  #config.after :each do
+  #  Warden.test_reset!
+  #end
+  
+  def feature_spec_sign_in_admin_user
+    visit '/users/sign_in'
+    within("#new_user") do
+      fill_in 'user_email', :with => 'hyacinth-test@library.columbia.edu'
+      fill_in 'user_password', :with => 'iamthetest'
+    end
+    click_button 'Sign in'
   end
   
 end

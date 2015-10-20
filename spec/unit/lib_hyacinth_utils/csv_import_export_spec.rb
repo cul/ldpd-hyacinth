@@ -381,7 +381,7 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
         
         expect {
           Hyacinth::Utils::CsvImportExportUtils.put_object_at_builder_path(object_to_modify, builder_path, object_to_add, true)
-        }.to raise_error
+        }.to raise_error(Hyacinth::Exceptions::BuilderPathNotFoundError)
         
       end
       

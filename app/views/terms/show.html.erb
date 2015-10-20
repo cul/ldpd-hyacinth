@@ -1,0 +1,29 @@
+<h1>Authorized Term: <%= @term['value'] %></h1>
+
+<div class="row">
+  <div class="col-md-3"><label>Controlled Vocabulary</label></div>
+  <div class="col-md-9"><%= @controlled_vocabulary.display_label %></div>
+</div>
+
+<div class="row">
+  <div class="col-md-3"><label>Local Term?</label></div>
+  <div class="col-md-9"><%= @term['is_local'].to_s %></div>
+</div>
+
+<div class="row">
+  <div class="col-md-3"><label>Value</label></div>
+  <div class="col-md-9"><%= @term['value'] %></div>
+</div>
+
+<div class="row">
+  <div class="col-md-3"><label>URI</label></div>
+  <div class="col-md-9"><%= @term['uri'] %></div>
+</div>
+
+<% @term.each do |key, val| %>
+  <% next if ['uri', 'value', 'vocabulary_string_key', 'is_local'].include?(key) %>
+  <div class="row">
+    <div class="col-md-3"><label><%= key %></label></div>
+    <div class="col-md-9"><%= val %></div>
+  </div>
+<% end %>

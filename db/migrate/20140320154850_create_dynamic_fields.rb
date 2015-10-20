@@ -7,7 +7,7 @@ class CreateDynamicFields < ActiveRecord::Migration
       t.integer :sort_order, null: false
 
       t.string :dynamic_field_type, null: false, default: DynamicField::Type::STRING
-      t.references :controlled_vocabulary, index: true, null: true
+      t.string :controlled_vocabulary_string_key, index: true, null: true
       t.text :additional_data_json
 
       t.boolean :is_keyword_searchable, null: false, default: false

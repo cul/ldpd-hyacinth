@@ -1,24 +1,44 @@
 class ControlledVocabulary < ActiveRecord::Base
-  belongs_to :pid_generator
-  has_many :authorized_terms
 
-  before_create :create_associated_fedora_object!
-
-  def next_pid
-    self.pid_generator.next_pid
+  before_create :create_corresponding_uri_service_vocabulary, unless: :corresponding_uri_service_vocabulary_exists?
+  after_destroy :delete_corresponding_uri_service_vocabulary, unless: :corresponding_uri_service_vocabulary_has_terms?
+  
+  before_update :update_uri_service_display_label
+  
+  attr_accessor :display_label
+  
+  def display_label()
+    return '' if self.string_key.nil? # New record
+    
+    @display_label ||= UriService.client.find_vocabulary(self.string_key)[:display_label]
+  end
+  
+  def display_label=(new_display_label)
+    @display_label = new_display_label
+  end
+  
+  def update_uri_service_display_label
+    UriService.client.update_vocabulary(self.string_key, @display_label)
+  end
+  
+  def corresponding_uri_service_vocabulary_exists?
+    return UriService.client.find_vocabulary(self.string_key).present?
   end
 
-  def create_associated_fedora_object!
-    pid = self.next_pid
-    bag_aggregator = BagAggregator.new(:pid => pid)
+  def create_corresponding_uri_service_vocabulary
+    unless self.corresponding_uri_service_vocabulary_exists?
+      return UriService.client.create_vocabulary(self.string_key, self.display_label)
+    end
+  end
+  
+  def corresponding_uri_service_vocabulary_has_terms?
+    return UriService.client.list_terms(self.string_key).length > 0
+  end
 
-    bag_aggregator.datastreams["DC"].dc_identifier = [pid]
-    bag_aggregator.datastreams["DC"].dc_type = 'ControlledVocabulary'
-    bag_aggregator.datastreams["DC"].dc_title = 'ControlledVocabulary: ' + self.display_label
-    bag_aggregator.label = bag_aggregator.datastreams["DC"].dc_title[0]
-    bag_aggregator.save
-
-    self.pid = bag_aggregator.pid
+  def delete_corresponding_uri_service_vocabulary
+    unless self.corresponding_uri_service_vocabulary_has_terms?
+      UriService.client.delete_vocabulary(self.string_key)
+    end
   end
 
 end

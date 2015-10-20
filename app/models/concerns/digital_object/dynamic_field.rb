@@ -1,12 +1,10 @@
 module DigitalObject::DynamicField
   extend ActiveSupport::Concern
 
-  def update_dynamic_field_data(new_dynamic_field_data, incremental=true)
-
-    if incremental
-      # This is an incremental update, not a complete rewrite of the existing @dynamic_field_data
-      merged_dynamic_field_data = @dynamic_field_data.deep_merge(new_dynamic_field_data)
-      @dynamic_field_data = merged_dynamic_field_data
+  def update_dynamic_field_data(new_dynamic_field_data, merge)
+    if merge
+      # During a merge, new top level key-value pairs are added and existing top level keys have their values replace by new values
+      @dynamic_field_data.merge!(new_dynamic_field_data)
     else
       # Replace existing dynamic_fiel_data with newly supplied value
       @dynamic_field_data = new_dynamic_field_data
@@ -63,7 +61,7 @@ module DigitalObject::DynamicField
   #################################
 
   # Returns a flat (single layer) hash of all dynamic_field string_keys to their values
-  # Note: Does NOT omit `.blank?` values
+  # Does NOT omit `.blank?` values by default, unless true is passed for the omit_blank_values param
   def get_flattened_dynamic_field_data(omit_blank_values=false)
     return recursively_gather_dynamic_field_data_values(@dynamic_field_data, omit_blank_values)
   end

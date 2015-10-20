@@ -54,50 +54,6 @@ dfc_record_info = DynamicFieldGroupCategory.create!(display_label: 'Record Infor
 dfc_other = DynamicFieldGroupCategory.create!(display_label: 'Other')
 dfc_asset_data = DynamicFieldGroupCategory.create!(display_label: 'Asset Data')
 
-# Create ControlledVocabularies (and any pre-populated terms)
-collection_controlled_vocabulary = ControlledVocabulary.create!(string_key: 'collection', display_label: 'Collection', pid_generator: default_pid_generator, authorized_terms: [])
-
-form_controlled_vocabulary = ControlledVocabulary.create!(string_key: 'form', display_label: 'Form', pid_generator: default_pid_generator, only_managed_by_admins: true, authorized_terms: [
-  # From: https://wiki.cul.columbia.edu/display/metadata/Form+Terms
-  AuthorizedTerm.new(value: 'albums', authority: 'aat', value_uri: 'http://id.loc.gov/vocabulary/graphicMaterials/tgm000229'),
-  AuthorizedTerm.new(value: 'architectural drawings', authority: 'gmgpc', value_uri: 'http://id.loc.gov/vocabulary/graphicMaterials/tgm000455'),
-  AuthorizedTerm.new(value: 'books', authority: 'aat', value_uri: 'http://id.loc.gov/vocabulary/graphicMaterials/tgm001221'),
-  AuthorizedTerm.new(value: 'caricatures and cartoons', authority: 'lcsh', value_uri: 'http://id.loc.gov/authorities/subjects/sh99001244.html'),
-  AuthorizedTerm.new(value: 'clippings', authority: 'gmgpc', value_uri: 'http://www.loc.gov/pictures/collection/tgm/item/tgm002169/'),
-  AuthorizedTerm.new(value: 'corporation reports', authority: 'aat', value_uri: 'http://id.loc.gov/authorities/subjects/sh85032921.html'),
-  AuthorizedTerm.new(value: 'correspondence', authority: 'aat', value_uri: 'http://vocab.getty.edu/aat/300026877'),
-  AuthorizedTerm.new(value: 'drawings', authority: 'gmgpc', value_uri: 'http://id.loc.gov/vocabulary/graphicMaterials/tgm003279'),
-  AuthorizedTerm.new(value: 'ephemera', authority: 'aat', value_uri: 'http://vocab.getty.edu/aat/300028881'),
-  AuthorizedTerm.new(value: 'filmstrips', authority: 'aat', value_uri: 'http://vocab.getty.edu/aat/300028048'),
-  AuthorizedTerm.new(value: 'illustrations', authority: 'gmgpc', value_uri: 'http://www.loc.gov/pictures/collection/tgm/item/tgm005314/'),
-  AuthorizedTerm.new(value: 'lantern slides', authority: 'aat', value_uri: 'http://vocab.getty.edu/aat/300134977'),
-  AuthorizedTerm.new(value: 'manuscripts', authority: 'lcsh', value_uri: 'http://id.loc.gov/authorities/subjects/sh85080672.html'),
-  AuthorizedTerm.new(value: 'maps', authority: 'aat', value_uri: 'http://id.loc.gov/vocabulary/graphicMaterials/tgm006261'),
-  AuthorizedTerm.new(value: 'minutes (administrative records)', authority: 'aat', value_uri: 'http://vocab.getty.edu/aat/300027440'),
-  AuthorizedTerm.new(value: 'mixed materials', authority: 'local'),
-  AuthorizedTerm.new(value: 'moving images', authority: 'aat', value_uri: 'http://vocab.getty.edu/aat/300263857'),
-  AuthorizedTerm.new(value: 'music', authority: 'local'),
-  AuthorizedTerm.new(value: 'negatives', authority: 'gmgpc', value_uri: 'http://id.loc.gov/vocabulary/graphicMaterials/tgm007029'),
-  AuthorizedTerm.new(value: 'objects', authority: 'aat', value_uri: 'http://id.loc.gov/vocabulary/graphicMaterials/tgm007159'),
-  AuthorizedTerm.new(value: 'oral histories', authority: 'local', value_uri: 'http://id.loc.gov/authorities/subjects/sh2008025718.html'),
-  AuthorizedTerm.new(value: 'other', authority: 'local'),
-  AuthorizedTerm.new(value: 'paintings', authority: 'gmgpc', value_uri: 'http://id.loc.gov/vocabulary/graphicMaterials/tgm007393'),
-  AuthorizedTerm.new(value: 'pamphlets', authority: 'aat', value_uri: 'http://id.loc.gov/vocabulary/graphicMaterials/tgm007415'),
-  AuthorizedTerm.new(value: 'papyri', authority: 'aat', value_uri: 'http://vocab.getty.edu/resource/aat/300055047'),
-  AuthorizedTerm.new(value: 'periodicals', authority: 'aat', value_uri: 'http://id.loc.gov/vocabulary/graphicMaterials/tgm007641'),
-  AuthorizedTerm.new(value: 'photographs', authority: 'aat', value_uri: 'http://id.loc.gov/vocabulary/graphicMaterials/tgm007721'),
-  AuthorizedTerm.new(value: 'playing cards', authority: 'aat', value_uri: 'http://id.loc.gov/vocabulary/graphicMaterials/tgm007907'),
-  AuthorizedTerm.new(value: 'postcards', authority: 'aat', value_uri: 'http://id.loc.gov/vocabulary/graphicMaterials/tgm008103'),
-  AuthorizedTerm.new(value: 'posters', authority: 'aat', value_uri: 'http://id.loc.gov/vocabulary/graphicMaterials/tgm008104'),
-  AuthorizedTerm.new(value: 'printed ephemera', authority: 'aat', value_uri: 'http://vocab.getty.edu/aat/300264821'),
-  AuthorizedTerm.new(value: 'prints', authority: 'gmgpc', value_uri: 'http://id.loc.gov/vocabulary/graphicMaterials/tgm008237'),
-  AuthorizedTerm.new(value: 'record covers', authority: 'aat', value_uri: 'http://vocab.getty.edu/aat/300247936'),
-  AuthorizedTerm.new(value: 'scrapbooks', authority: 'aat', value_uri: 'http://id.loc.gov/vocabulary/graphicMaterials/tgm009266'),
-  AuthorizedTerm.new(value: 'slides (photographs)', authority: 'aat', value_uri: 'http://vocab.getty.edu/resource/aat/300128371'),
-  AuthorizedTerm.new(value: 'sound recordings', authority: 'aat', value_uri: 'http://id.loc.gov/vocabulary/graphicMaterials/tgm009874'),
-  AuthorizedTerm.new(value: 'video recordings', authority: 'aat', value_uri: 'http://vocab.getty.edu/aat/300028682')
-])
-
 # Create core DynamicFieldGroups and DynamicFields
 title = DynamicFieldGroup.create!(string_key: 'title', display_label: 'Title', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
   dynamic_fields: [
@@ -119,21 +75,19 @@ title = DynamicFieldGroup.create!(string_key: 'title', display_label: 'Title', d
   }.to_json
 )
 
+#collection
 collection = DynamicFieldGroup.create!(string_key: 'collection', display_label: 'Collection', dynamic_field_group_category: dfc_descriptive_metadata,
   dynamic_fields: [
-    DynamicField.new(string_key: 'collection_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE, controlled_vocabulary: collection_controlled_vocabulary, is_facet_field: true, is_single_field_searchable: true, standalone_field_label: 'Collection'),
-    DynamicField.new(string_key: 'collection_value_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI),
-    DynamicField.new(string_key: 'collection_authority', display_label: 'Authority', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY),
-    DynamicField.new(string_key: 'collection_authority_uri', display_label: 'Authority URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY_URI)
+    DynamicField.new(string_key: 'collection_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::CONTROLLED_TERM, controlled_vocabulary_string_key: 'collection', is_facet_field: true, is_single_field_searchable: true, standalone_field_label: 'Collection'),
+    DynamicField.new(string_key: 'collection_preferred_label', display_label: 'Preferred Label', dynamic_field_type: DynamicField::Type::STRING),
   ]
 )
 
+#form
 form = DynamicFieldGroup.create!(string_key: 'form', display_label: 'Form', dynamic_field_group_category: dfc_physical_information, is_repeatable: true,
   dynamic_fields: [
-    DynamicField.new(string_key: 'form_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE, controlled_vocabulary: form_controlled_vocabulary, is_facet_field: true, standalone_field_label: 'Format'),
-    DynamicField.new(string_key: 'form_value_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI),
-    DynamicField.new(string_key: 'form_authority', display_label: 'Authority', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY),
-    DynamicField.new(string_key: 'form_authority_uri', display_label: 'Authority URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY_URI)
+    DynamicField.new(string_key: 'form_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::CONTROLLED_TERM, controlled_vocabulary_string_key: 'form', is_facet_field: true, standalone_field_label: 'Format'),
+    DynamicField.new(string_key: 'form_preferred_label', display_label: 'Preferred Label', dynamic_field_type: DynamicField::Type::STRING),
   ]
 )
 

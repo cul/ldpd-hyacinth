@@ -98,6 +98,25 @@ namespace :hyacinth do
       end
       File.open(solr_yml_file, 'w') {|f| f.write solr_yml.to_yaml }
       
+      # term_additional_fields.yml
+      term_additional_fields_yml_file = File.join(Rails.root, 'config/term_additional_fields.yml')
+      FileUtils.touch(term_additional_fields_yml_file) # Create if it doesn't exist
+      term_additional_fields_yml = YAML.load_file(term_additional_fields_yml_file) || {}
+      ['development', 'test'].each do |env_name|
+        term_additional_fields_yml[env_name] = {
+          'code' => {
+            'display_label' => 'Code (Optional)'
+          },
+          'authority' => {
+            'display_label' => 'Authority (Optional)'
+          },
+          'authority_uri' => {
+            'display_label' => 'Authority URI (Optional)'
+          }
+        }
+      end
+      File.open(term_additional_fields_yml_file, 'w') {|f| f.write term_additional_fields_yml.to_yaml }
+      
       # uri_service.yml
       uri_service_yml_file = File.join(Rails.root, 'config/uri_service.yml')
       FileUtils.touch(uri_service_yml_file) # Create if it doesn't exist
@@ -132,65 +151,6 @@ namespace :hyacinth do
         }
       end
       File.open(repository_cache_yml_file, 'w') {|f| f.write repository_cache_yml.to_yaml }
-
-    end
-
-    task :create_sample_digital_objects => :environment do
-
-      test_project = Project.find_by(string_key: 'test')
-      test_user = User.find_by(email: 'hyacinth-test@library.columbia.edu')
-
-      number_of_records_to_create = 400
-      counter = 0
-
-      start_time = Time.now
-
-      number_of_records_to_create.times {
-
-        digital_object = DigitalObject::Item.new
-        digital_object.projects << test_project
-        digital_object.created_by = test_user
-        digital_object.updated_by = test_user
-
-        random_adj = RandomWord.adjs.next
-        random_adj.capitalize if random_adj
-        random_noun = RandomWord.nouns.next
-        random_noun.capitalize if random_noun
-        random_title = random_adj.to_s + ' ' + random_noun.to_s
-
-        digital_object.update_dynamic_field_data(
-          {
-            'title' => [
-              {
-                'title_sort_portion' => random_title
-              }
-            ],
-            'name' => [
-              {
-                'name_value' => Faker::Name.name
-              },
-              {
-                'name_value' => Faker::Name.name
-              }
-            ],
-            'note' => [
-              {
-                'note_value' => Faker::Lorem.paragraph
-              }
-            ]
-          }
-        )
-
-        unless digital_object.save
-          puts 'Errors: ' + digital_object.errors.inspect
-        end
-
-        counter += 1
-        puts "Processed #{counter} of #{number_of_records_to_create}"
-
-      }
-
-      puts 'Done.  Took ' + (Time.now - start_time).to_s + ' seconds.'
 
     end
 

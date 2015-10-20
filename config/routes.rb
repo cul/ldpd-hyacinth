@@ -1,10 +1,12 @@
 Hyacinth::Application.routes.draw do
 
-  resources :authorized_terms
+  resources :terms, constraints: { id: /.+/ } #constraints: { id: /.+(?<!\/edit)/ }
+  #except: ['edit']
+  #get 'terms/edit/:id' => 'terms#edit', :as => 'edit_term', constraints: { id: /.+/ }
 
   resources :controlled_vocabularies do
     member do
-      get 'authorized_terms', :action => 'authorized_terms', :as => 'authorized_terms' # authorized_terms_controlled_vocabulary_path
+      get 'terms', :action => 'terms', :as => 'terms' # terms_controlled_vocabulary_path
     end
     collection do
       match 'search', via: [:get, :post]

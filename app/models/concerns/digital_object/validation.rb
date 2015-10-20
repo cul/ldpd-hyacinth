@@ -20,14 +20,14 @@ module DigitalObject::Validation
       errors.add(:destroy, 'Cannot set Digital Object as deleted because it has children.  Detach or delete all children first, then try deleting again.')
     end
 
-    # At least one project is required
-    if self.projects.length < 1
-      @errors.add(:project, 'Must have at least one project')
+    # Exacrly one project is required
+    if self.projects.length != 1
+      @errors.add(:projects, 'Must have a project')
     end
 
     enabled_dynamic_fields = self.get_enabled_dynamic_fields
     flattened_dynamic_field_data_without_blank_fields = get_flattened_dynamic_field_data(true)
-    flattened_dynamic_field_data_with_blank_fields = get_flattened_dynamic_field_data()
+    #flattened_dynamic_field_data_with_blank_fields = get_flattened_dynamic_field_data()
 
     # Validate the presence of required fields.
     # If a field is required, it must appear at least once in the dynamic_field_data

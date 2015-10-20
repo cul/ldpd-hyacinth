@@ -35,6 +35,10 @@ module DigitalObject::Fedora
   def set_fedora_object_dc_type
     @fedora_object.datastreams['DC'].dc_type = self.dc_type
   end
+  
+  def set_fedora_object_dc_identifiers
+    @fedora_object.datastreams['DC'].dc_identifier = self.identifiers
+  end
 
   # Sets :cul_member_of  RELS-EXT attributes for parent fedora objects
   def set_fedora_parent_digital_object_pid_relationships
@@ -69,7 +73,7 @@ module DigitalObject::Fedora
   end
 
   def set_fedora_project_and_publisher_relationships
-    raise 'Only assets can have more than one project!' if @projects.length > 1 && self.class != DigitalObject::Asset
+    raise 'Cannot have more than one project!' if @projects.length > 1
 
     # Clear old project relationship
     @fedora_object.clear_relationship(PROJECT_MEMBERSHIP_PREDICATE)
@@ -109,7 +113,11 @@ module DigitalObject::Fedora
     self.dc_type = @fedora_object.datastreams['DC'].dc_type
     self.dc_type = self.dc_type[0] if self.dc_type.is_a?(Array)
   end
-
+  
+  def load_dc_identifiers_from_fedora_object!
+    self.identifiers = @fedora_object.datastreams['DC'].dc_identifier
+  end
+  
   def load_parent_digital_object_pid_relationships_from_fedora_object!
     @parent_digital_object_pids = @fedora_object.relationships(:cul_member_of).map{|val| val.gsub('info:fedora/', '') }
     @obsolete_parent_digital_object_pids = @fedora_object.relationships(:cul_obsolete_from).map{|val| val.gsub('info:fedora/', '') }

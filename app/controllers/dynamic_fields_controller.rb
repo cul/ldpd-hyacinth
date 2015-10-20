@@ -92,7 +92,7 @@ class DynamicFieldsController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def dynamic_field_params
-    params.require(:dynamic_field).permit(:string_key, :display_label, :parent_dynamic_field_group_id, :sort_order, :dynamic_field_type, :controlled_vocabulary_id, :additional_data_json, :required_for_group_save, :is_keyword_searchable, :is_facet_field, :standalone_field_label, :is_searchable_identifier_field, :is_searchable_title_field, :is_single_field_searchable, :created_by_id, :updated_by_id)
+    params.require(:dynamic_field).permit(:string_key, :display_label, :parent_dynamic_field_group_id, :sort_order, :dynamic_field_type, :controlled_vocabulary_string_key, :additional_data_json, :required_for_group_save, :is_keyword_searchable, :is_facet_field, :standalone_field_label, :is_searchable_identifier_field, :is_searchable_title_field, :is_single_field_searchable, :created_by_id, :updated_by_id)
   end
 
   def set_contextual_nav_options

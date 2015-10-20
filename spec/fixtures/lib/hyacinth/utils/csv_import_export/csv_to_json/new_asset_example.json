@@ -1,7 +1,7 @@
 {
    "identifier" : ["projectname.001.1", "alternate_identifier"],
    "parent_pid_or_identifier" : ["cul:parent1", "some_parent_identifier"],
-   "type" : {
+   "digital_object_type" : {
       "string_key" : "asset"
     },
    "import_file_path":"/path/to/file.tiff",

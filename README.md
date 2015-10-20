@@ -53,6 +53,10 @@ bundle exec rake jetty:start # Start jetty
 rails s -p 3000 # Start the application using rails server
 ```
 
+### A Note About Image Thumbnails:
+
+Image thumbnail generation is currently unavailable because Hyacinth delegates that functionality to a separate, asynchronous image processing application called "Repository Cache," which is still under development (and not yet publicly available).  Core Hyacinth metadata editing features do not depend on Repository Cache, but you won't be able to see in-app thumnails without it.
+
 ### Running Integration Tests (for developers):
 
 Integration tests are great and we should run them.  Here's how:

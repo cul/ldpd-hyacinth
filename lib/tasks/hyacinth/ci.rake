@@ -51,7 +51,7 @@ namespace :hyacinth do
       ENV['CLEAR'] = 'true' # Set ENV variable for reindex task
       Rake::Task['hyacinth:index:reindex'].invoke
       ENV['CLEAR'] = nil  # Clear ENV variable because we're done with it
-      Rake::Task['hyacinth:projects:test:setup'].invoke
+      Rake::Task['hyacinth:test:setup_test_project'].invoke
       Rake::Task['hyacinth:coverage'].invoke
     end
     raise "test failures: #{error}" if error

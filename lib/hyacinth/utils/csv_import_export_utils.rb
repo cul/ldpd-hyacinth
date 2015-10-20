@@ -62,13 +62,19 @@ class Hyacinth::Utils::CsvImportExportUtils
     # Remove underscore from first builder path element name
     new_builder_path[0] = new_builder_path[0][1..-1]
     
-    self.put_object_at_builder_path(digital_object_data, new_builder_path, value, create_missing_path=true)
+    self.put_object_at_builder_path(digital_object_data, new_builder_path, value, true)
     
   end
   
   def self.get_object_at_builder_path(obj, builder_path_arr)
     pointer = obj
     builder_path_arr.each do |element|
+      
+      # If pointer is an array and element is a string, this is an invalid path and we should raise an error.
+      if pointer.is_a?(Array) && element.is_a?(String)
+        raise Hyacinth::Exceptions::BuilderPathNotFoundError, "Invalid path.  Attempted to access string key at array index."
+      end
+      
       # Element will be either a Fixnum (for array access) or a String (for hash access)
       if pointer[element]
         pointer = pointer[element]
@@ -82,7 +88,10 @@ class Hyacinth::Utils::CsvImportExportUtils
   def self.put_object_at_builder_path(object_to_modify, builder_path_arr, object_to_put, create_missing_path=true)
     
     obj_at_builder_path = self.get_object_at_builder_path(object_to_modify, builder_path_arr)
-    raise 'Path not found.  To create path, pass a value true to the create_missing_path method parameter.' if obj_at_builder_path.nil? && (! create_missing_path)
+    
+    if obj_at_builder_path.nil? && (! create_missing_path)
+      raise Hyacinth::Exceptions::BuilderPathNotFoundError, 'Path not found.  To create path, pass a value true to the create_missing_path method parameter.'
+    end
     
     if obj_at_builder_path.nil?
       pointer = object_to_modify
