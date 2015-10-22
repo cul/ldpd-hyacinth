@@ -44,6 +44,7 @@ namespace :hyacinth do
     jetty_params = Jettywrapper.load_config.merge({jetty_home: Jettywrapper.jetty_dir})
     error = Jettywrapper.wrap(jetty_params) do
       Rake::Task["hyacinth:fedora:reload_cmodels"].invoke
+      Rake::Task["uri_service:db:setup"].invoke
       Rake::Task["db:drop"].invoke
       Rake::Task["db:create"].invoke
       Rake::Task["db:migrate"].invoke

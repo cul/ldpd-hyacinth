@@ -59,8 +59,8 @@ class DigitalObject::Base
       self.identifiers = digital_object_data['identifier']
     end
     
-    # Project (only one)
-    if digital_object_data['project']
+    # Project (only one) -- Only allow setting this if this DigitalObject is a new record
+    if self.new_record? && digital_object_data['project']
       project_find_criteria = digital_object_data['project'] # i.e. {string_key: 'proj'} or {pid: 'abc:123'}
       self.projects = [Project.find_by(project_find_criteria)]
     end
@@ -291,8 +291,11 @@ class DigitalObject::Base
 
     # If there's only one project, things are simple.  Just return the EnabledDynamicFields for that project.
     # For now, the idea is that objects can be published to multiple publish targets, but they're only managed by one project.
-    if self.projects.length == 1
-      return self.projects.first.get_enabled_dynamic_fields(self.digital_object_type)
+    puts 'Those Projects: ' + @projects.inspect
+    if @projects.length == 0
+      raise 'At least one project is required.'
+    elsif @projects.length == 1
+      return @projects.first.get_enabled_dynamic_fields(self.digital_object_type)
     else
       raise 'Not currently supporting objects with more than one project.'
     end
