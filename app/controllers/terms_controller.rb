@@ -110,7 +110,8 @@ class TermsController < ApplicationController
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_term
-    @term = UriService.client.find_term_by_uri(params[:id])
+    @term = UriService.client.find_term_by(uri: params[:id])
+    raise ActionController::RoutingError.new('Could not find Term with URI: ' + params[:id]) if @term.nil?
   end
   
   def set_controlled_vocabulary

@@ -8,13 +8,26 @@
   <% if (authorizedTerms.length > 0) { %>
     <% for (var i = 0; i < authorizedTerms.length; i++) { %>
       <li>
-        <button type="button" class="btn btn-default btn-xs choose_authorized_term_button"
-        data-value="<%= authorizedTerms[i]['value'] ? encodeURIComponent(authorizedTerms[i]['value']) : '' %>"
-        data-code="<%= authorizedTerms[i]['code'] ?  encodeURIComponent(authorizedTerms[i]['code']) : ''  %>"
-        data-value-uri="<%= authorizedTerms[i]['value_uri'] ?  encodeURIComponent(authorizedTerms[i]['value_uri']) : '' %>"
-        data-authority="<%= authorizedTerms[i]['authority'] ?  encodeURIComponent(authorizedTerms[i]['authority']) : '' %>"
-        data-authority-uri="<%= authorizedTerms[i]['authority_uri'] ?  encodeURIComponent(authorizedTerms[i]['authority_uri']) : '' %>"
-        ><%- authorizedTerms[i]['value'] %></button>
+        <div class="btn-group">
+          <button type="button" class="btn btn-default btn-xs choose_authorized_term_button"
+          data-value="<%= authorizedTerms[i]['value'] ? encodeURIComponent(authorizedTerms[i]['value']) : '' %>"
+          data-uri="<%= authorizedTerms[i]['uri'] ?  encodeURIComponent(authorizedTerms[i]['uri']) : '' %>"
+          ><%- authorizedTerms[i]['value'] %></button>
+          <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="caret"></span>
+            <span class="sr-only">Toggle Dropdown</span>
+          </button>
+          <ul class="dropdown-menu" style="padding:.5em 0em;">
+            <li><a>URI: <%- authorizedTerms[i]['uri'] %></a></li>
+            <li role="separator" class="divider"></li>
+            <% $.each(authorizedTerms[i], function(key, value){ %>
+              <% if(key == 'uri') {return;} %>
+              <% if(key == 'value') {return;} %>
+              <% if(key == 'vocabulary_string_key') {return;} %>
+              <li><a><strong><%- key %></strong>: <%- value %></a></li>
+            <% }); %>
+          </ul>
+        </div>
       </li>
     <% } %>
   <% } else { %>

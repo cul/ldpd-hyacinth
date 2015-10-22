@@ -29,8 +29,8 @@ class DigitalObjectsController < ApplicationController
     # the dynamic_field_data param with non-json-encoded data.
     unless digital_object_data['dynamic_field_data_json'].nil?
       raise 'Invalid JSON given for dynamic_field_data_json' unless Hyacinth::Utils::JsonUtils.is_valid_json?(digital_object_data['dynamic_field_data_json'])
-      digital_object_data['dynamic_field_data'] = JSON.parse(digital_object_data['dynamic_field_data'])
-      digital_object_data['dynamic_field_data_json'].delete
+      digital_object_data['dynamic_field_data'] = JSON.parse(digital_object_data['dynamic_field_data_json'])
+      digital_object_data.delete('dynamic_field_data_json')
     end
     
     begin
@@ -103,18 +103,8 @@ class DigitalObjectsController < ApplicationController
     # the dynamic_field_data param with non-json-encoded data.
     unless digital_object_data['dynamic_field_data_json'].nil?
       raise 'Invalid JSON given for dynamic_field_data_json' unless Hyacinth::Utils::JsonUtils.is_valid_json?(digital_object_data['dynamic_field_data_json'])
-      digital_object_data['dynamic_field_data'] = JSON.parse(digital_object_data['dynamic_field_data'])
-      digital_object_data['dynamic_field_data_json'].delete
-    end
-    
-    begin
-      @digital_object = DigitalObjectType.get_model_for_string_key(digital_object_data['digital_object_type']['string_key']).new()
-    rescue Hyacinth::Exceptions::InvalidDigitalObjectTypeError
-      render json: {
-        success: false,
-        errors: ['Invalid digital_object_type string_key: ' + digital_object_data['digital_object_type']['string_key']]
-      }
-      return
+      digital_object_data['dynamic_field_data'] = JSON.parse(digital_object_data['dynamic_field_data_json'])
+      digital_object_data.delete('dynamic_field_data_json')
     end
     
     @digital_object.updated_by = current_user

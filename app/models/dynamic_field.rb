@@ -43,12 +43,14 @@ class DynamicField < ActiveRecord::Base
     }
 
     # Certain dynamic_field_types have additional data that should be sent as part of the json response
-    additional_data = self.get_additional_data
-
     if dynamic_field_type == self.class::Type::SELECT
+      additional_data = self.get_additional_data
       hash_to_return[:select_options] = additional_data['select_options'].present? ? additional_data['select_options'] : {}
-    elsif dynamic_field_type == self.class::Type::AUTHORIZED_TERM_VALUE
-      hash_to_return[:controlled_vocabulary] = self.controlled_vocabulary.as_json(only: [:string_key, :display_label])
+    elsif dynamic_field_type == self.class::Type::CONTROLLED_TERM
+      hash_to_return[:controlled_vocabulary] = {}
+      controlled_vocabulary = ControlledVocabulary.find_by(string_key: self.controlled_vocabulary_string_key)
+      hash_to_return[:controlled_vocabulary]['string_key'] = self.controlled_vocabulary_string_key
+      hash_to_return[:controlled_vocabulary]['display_label'] = controlled_vocabulary.nil? ? 'Missing Vocabulary: ' + controlled_vocabulary_string_key : controlled_vocabulary.display_label
     end
 
     return hash_to_return

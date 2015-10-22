@@ -115,11 +115,12 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.serializeDynamicFieldElement = fu
  * AuthorizedTerm Selection *
  ****************************/
 
-Hyacinth.DigitalObjectsApp.DigitalObjectEditor.showTermSelectorModal = function(authorizedTermField) {
+Hyacinth.DigitalObjectsApp.DigitalObjectEditor.showTermSelectorModal = function(controlledTermUriField, controlledTermValueDisplayElement) {
 
-  var $authorizedTermField = $(authorizedTermField);
-
-  var editor = Hyacinth.DigitalObjectsApp.DigitalObjectEditor.getEditorInstanceForElement($authorizedTermField);
+  var $controlledTermUriField = $(controlledTermUriField);
+  var $controlledTermValueDisplayElement = $(controlledTermValueDisplayElement);
+  
+  var editor = Hyacinth.DigitalObjectsApp.DigitalObjectEditor.getEditorInstanceForElement($controlledTermUriField);
 
   if (editor.currentAuthorizedTermSelector != null) {
     editor.currentAuthorizedTermSelector.dispose(); //Always clean up the old instance and any event bindings it might have
@@ -127,12 +128,12 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.showTermSelectorModal = function(
   }
 
   Hyacinth.showMainModal(
-    'Controlled Vocabulary: ' + $authorizedTermField.attr('data-controlled-vocabulary-display-label'),
+    'Controlled Vocabulary: ' + $controlledTermUriField.attr('data-controlled-vocabulary-display-label'),
     '<div id="authorized-term-selector"></div>',
     '<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>'
   );
 
-  editor.currentAuthorizedTermSelector = new Hyacinth.DigitalObjectsApp.AuthorizedTermSelector('authorized-term-selector', $authorizedTermField);
+  editor.currentAuthorizedTermSelector = new Hyacinth.DigitalObjectsApp.AuthorizedTermSelector('authorized-term-selector', $controlledTermUriField, $controlledTermValueDisplayElement);
 };
 
 /******************
@@ -217,9 +218,12 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.populateFormElementsWithDynamicFi
       //This is an individual dynamicField VALUE
       var $input = $elementsWithStringKey.find('[name="' + stringKey + '"]');
 
-      //And in addition to setting the value, check this field if it's a checkbox with a value of true
+      //Set the value, handling checkboxes accordingly
       if ($input.is(':checkbox') && value == true) {
         $input.prop('checked', true); //We don't set a checkbox value with .val().  We want to set the checked property.
+      } else if($input.hasClass('controlled_term_uri_field')) {
+        $input.val(value['uri']); //Set uri as hidden field value
+        $input.closest('.controlled_term_field').find('.controlled_term_value_display').html(value['value']); //Set value as display value
       } else {
         $input.val(value);
       }
@@ -341,139 +345,179 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
       }
     });
   }
-
-  //Make AuthorizedTerm search buttons functional
-  $editorForm.on('click', '.authorized_term_search_button', function(e){
-    e.preventDefault();
-    var $authorizedTermField = $(this).closest('.authorized_term').find('.authorized_term_value_field');
-    Hyacinth.DigitalObjectsApp.DigitalObjectEditor.showTermSelectorModal($authorizedTermField);
-  });
-
-  if (that.mode == 'show') {
-    that.removeEmptyFieldsForShowMode();
-  } else {
-    //edit mode
-    that.removeNonEnabledNonBlankFieldsForEditMode();
-  }
-
-  // If .readonly-display-value divs are present, that means that some values should be rendered there instead of form inputs
-  // This is the case for the editor 'show' mode and for locked fields in 'edit' mode
-  // Render these form values in a div instead of in input fields
-  var $readonlyDisplayValueElements = $editorForm.find('.readonly-display-value');
-  if ($readonlyDisplayValueElements.length > 0) {
-    $readonlyDisplayValueElements.each(function(){
-      $dynamicFieldElement = $(this).closest('.dynamic_field');
-      $formElement = $dynamicFieldElement.find('[name="' + $dynamicFieldElement.attr('data-string-key') + '"]');
-      if ($formElement.is(':checkbox')) {
-        $(this).html($formElement.is(":checked"));
-      } else {
-        $(this).html(_.escape($formElement.val()).replace(/(?:\r\n|\r|\n)/g, '<br />'));
-      }
-    });
-  }
-
-  //Make fielset selector functional
-  if (that.mode == 'edit' && that.$containerElement.find('.fieldset-selector').length > 0) {
-
-    that.$containerElement.on('change', '.fieldset-selector', function(e) {
-
-      var selectedFieldset = $(this).val();
-      Hyacinth.createCookie('last_selected_fieldset', selectedFieldset, 30);
-
-      //Show all dynamic_fields, dynamic_field_groups, dynamic_field_group_display_labels and dynamic_field_group_category_labels
-      $editorForm.find('.dynamic_field, .dynamic_field_group, .dynamic_field_group_display_label, .dynamic_field_group_category_label').show();
-
-      //Hide all dynamic_fields
-      $editorForm.find('.dynamic_field').hide();
-      // Show fieldset-relevant dynamic_fields
-      $editorForm.find('.dynamic_field.' + selectedFieldset).each(function(){
-        $(this).show();
-      });
-
-      var lastKnownNumVisibleDynamicFieldGroups = 0;
-      var currentlyKnownNumVisibleDynamicFieldGroups = 0;
-      while(true) {
-        lastKnownNumVisibleDynamicFieldGroups = $editorForm.find('.dynamic_field_group:visible').length;
-
-        //Hide all dynamic_field_groups that have no visible child dynamic_fields or dynamic_field_groups
-        $editorForm.find('.dynamic_field_group').each(function(){
-          if ($(this).children('.dynamic_field_group_content').children('.dynamic_field:visible, .dynamic_field_group:visible').length == 0) {
-            $(this).hide();
-          }
-        });
-
-        $editorForm.find('.dynamic_field_group_display_label').each(function(){
-          if ($(this).next('.dynamic_field_group:visible').length == 0) {
-            $(this).hide();
-          }
-        });
-
-        $editorForm.find('.dynamic_field_group_category_label').each(function(){
-          if ($(this).next('.dynamic_field_group_display_label:visible').length == 0) {
-            $(this).hide();
-          }
-        });
-
-        currentlyKnownNumVisibleDynamicFieldGroups = $editorForm.find('.dynamic_field_group:visible').length;
-
-        if (currentlyKnownNumVisibleDynamicFieldGroups == lastKnownNumVisibleDynamicFieldGroups) {
-          break;
-        }
-        lastKnownNumVisibleDynamicFieldGroups = currentlyKnownNumVisibleDynamicFieldGroups;
-      }
-
-      //Refresh navigation dropup options based on visible DynamicFieldGroupCategories
-      that.refreshNavigationDropupOptions();
-
-    });
-
-    //And trigger the fieldset change event to set the currently visible fields
-    that.$containerElement.find('.fieldset-selector').change();
-  }
-
-  if (this.digitalObject instanceof Hyacinth.DigitalObjectsApp.DigitalObject.Asset) {
-    $('.rotate-dropdown-options li a').on('click', function(e){
+  
+  //Populate values (based on URIs) for all controlled_term_field elements
+  this.populateValuesForControlledTermFields(function(){
+    //Make AuthorizedTerm search buttons functional
+    $editorForm.on('click', '.authorized_term_search_button', function(e){
       e.preventDefault();
-      var rotateBy = parseInt($(this).attr('data-rotate-by'));
-      var $thumbnailImg = $(this).closest('.child-digital-object-preview').find('img.thumbnail');
-      $thumbnailImg.css('opacity', '.3');
-      Hyacinth.addAlert('Rotating image...', 'info');
-      $.ajax({
-        url: '/digital_objects/' + that.digitalObject.getPid() + '/rotate_image',
-        type: 'POST',
-        data: {
-          rotate_by: rotateBy
-        },
-        cache: false
-      }).done(function(rotationResponse){
-        $thumbnailImg.css('opacity', '1');
-        if (rotationResponse['success']) {
-          $thumbnailImg.attr('src', $thumbnailImg.attr('src') + '?' + new Date().getTime());
-          Hyacinth.addAlert('Image has been rotated and queued for derivative regeneration.<br /><br /><strong>Note:</strong> A hard page refresh will be required to view the change globally (because of browser caching).', 'info');
+      var $controlledTermUriField = $(this).closest('.controlled_term_field').find('.controlled_term_uri_field');
+      var $controlledTermValueDisplayElement = $(this).closest('.controlled_term_field').find('.controlled_term_value_display');
+      Hyacinth.DigitalObjectsApp.DigitalObjectEditor.showTermSelectorModal($controlledTermUriField, $controlledTermValueDisplayElement);
+    });
+    
+    //Make AuthorizedTerm clear button functional
+    $editorForm.on('click', '.controlled_term_clear_button', function(e){
+      e.preventDefault();
+      var $controlledTermUriField = $(this).closest('.controlled_term_field').find('.controlled_term_uri_field');
+      var $controlledTermValueDisplayElement = $(this).closest('.controlled_term_field').find('.controlled_term_value_display');
+      $controlledTermUriField.val('');
+      $controlledTermValueDisplayElement.html('- Select a value -');
+      $(this).addClass('hidden');
+    });
+  
+    if (that.mode == 'show') {
+      that.removeEmptyFieldsForShowMode();
+    } else {
+      //edit mode
+      that.removeNonEnabledNonBlankFieldsForEditMode();
+    }
+  
+    // If .readonly-display-value divs are present, that means that some values should be rendered there instead of form inputs
+    // This is the case for the editor 'show' mode and for locked fields in 'edit' mode
+    // Render these form values in a div instead of in input fields
+    var $readonlyDisplayValueElements = $editorForm.find('.readonly-display-value');
+    if ($readonlyDisplayValueElements.length > 0) {
+      $readonlyDisplayValueElements.each(function(){
+        $dynamicFieldElement = $(this).closest('.dynamic_field');
+        $formElement = $dynamicFieldElement.find('[name="' + $dynamicFieldElement.attr('data-string-key') + '"]');
+        if ($formElement.is(':checkbox')) {
+          $(this).html($formElement.is(":checked"));
+        } else if ($formElement.hasClass('controlled_term_uri_field')) {
+          console.log($formElement.closest('.controlled_term_field').find('.controlled_term_value_display'));
+          $(this).html($formElement.closest('.controlled_term_field').find('.controlled_term_value_display').html());
         } else {
-          Hyacinth.addAlert('An error occurred during the rotation attempt:<br />' + rotationResponse['errors'].join(', '), 'danger');
+          $(this).html(_.escape($formElement.val()).replace(/(?:\r\n|\r|\n)/g, '<br />'));
         }
-      }).fail(function(){
-        alert(Hyacinth.unexpectedAjaxErrorMessage);
+      });
+    }
+  
+    //Make fieldset selector functional
+    if (that.mode == 'edit' && that.$containerElement.find('.fieldset-selector').length > 0) {
+  
+      that.$containerElement.on('change', '.fieldset-selector', function(e) {
+  
+        var selectedFieldset = $(this).val();
+        Hyacinth.createCookie('last_selected_fieldset', selectedFieldset, 30);
+  
+        //Show all dynamic_fields, dynamic_field_groups, dynamic_field_group_display_labels and dynamic_field_group_category_labels
+        $editorForm.find('.dynamic_field, .dynamic_field_group, .dynamic_field_group_display_label, .dynamic_field_group_category_label').show();
+  
+        //Hide all dynamic_fields
+        $editorForm.find('.dynamic_field').hide();
+        // Show fieldset-relevant dynamic_fields
+        $editorForm.find('.dynamic_field.' + selectedFieldset).each(function(){
+          $(this).show();
+        });
+  
+        var lastKnownNumVisibleDynamicFieldGroups = 0;
+        var currentlyKnownNumVisibleDynamicFieldGroups = 0;
+        while(true) {
+          lastKnownNumVisibleDynamicFieldGroups = $editorForm.find('.dynamic_field_group:visible').length;
+  
+          //Hide all dynamic_field_groups that have no visible child dynamic_fields or dynamic_field_groups
+          $editorForm.find('.dynamic_field_group').each(function(){
+            if ($(this).children('.dynamic_field_group_content').children('.dynamic_field:visible, .dynamic_field_group:visible').length == 0) {
+              $(this).hide();
+            }
+          });
+  
+          $editorForm.find('.dynamic_field_group_display_label').each(function(){
+            if ($(this).next('.dynamic_field_group:visible').length == 0) {
+              $(this).hide();
+            }
+          });
+  
+          $editorForm.find('.dynamic_field_group_category_label').each(function(){
+            if ($(this).next('.dynamic_field_group_display_label:visible').length == 0) {
+              $(this).hide();
+            }
+          });
+  
+          currentlyKnownNumVisibleDynamicFieldGroups = $editorForm.find('.dynamic_field_group:visible').length;
+  
+          if (currentlyKnownNumVisibleDynamicFieldGroups == lastKnownNumVisibleDynamicFieldGroups) {
+            break;
+          }
+          lastKnownNumVisibleDynamicFieldGroups = currentlyKnownNumVisibleDynamicFieldGroups;
+        }
+  
+        //Refresh navigation dropup options based on visible DynamicFieldGroupCategories
+        that.refreshNavigationDropupOptions();
+  
+      });
+  
+      //And trigger the fieldset change event to set the currently visible fields
+      that.$containerElement.find('.fieldset-selector').change();
+    }
+  
+    if (that.digitalObject instanceof Hyacinth.DigitalObjectsApp.DigitalObject.Asset) {
+      $('.rotate-dropdown-options li a').on('click', function(e){
+        e.preventDefault();
+        var rotateBy = parseInt($(this).attr('data-rotate-by'));
+        var $thumbnailImg = $(this).closest('.child-digital-object-preview').find('img.thumbnail');
+        $thumbnailImg.css('opacity', '.3');
+        Hyacinth.addAlert('Rotating image...', 'info');
+        $.ajax({
+          url: '/digital_objects/' + that.digitalObject.getPid() + '/rotate_image',
+          type: 'POST',
+          data: {
+            rotate_by: rotateBy
+          },
+          cache: false
+        }).done(function(rotationResponse){
+          $thumbnailImg.css('opacity', '1');
+          if (rotationResponse['success']) {
+            $thumbnailImg.attr('src', $thumbnailImg.attr('src') + '?' + new Date().getTime());
+            Hyacinth.addAlert('Image has been rotated and queued for derivative regeneration.<br /><br /><strong>Note:</strong> A hard page refresh will be required to view the change globally (because of browser caching).', 'info');
+          } else {
+            Hyacinth.addAlert('An error occurred during the rotation attempt:<br />' + rotationResponse['errors'].join(', '), 'danger');
+          }
+        }).fail(function(){
+          alert(Hyacinth.unexpectedAjaxErrorMessage);
+        });
+      });
+    }
+  
+    //And finally, refresh tab indexes
+    Hyacinth.DigitalObjectsApp.DigitalObjectEditor.refreshTabIndexes($editorForm);
+  
+    //Bind navigation dropup click handlers
+    that.$containerElement.find('.form-navigation-dropup').find('.dropdown-menu').on('click', 'li', function(e){
+      e.preventDefault();
+      var selector = '.dynamic_field_group_category_label:contains("' + $(this).children('a').html() + '")';
+      Hyacinth.scrollToElement($(selector), 400, function(){
+        $(selector).addClass("highlightPageElement");
       });
     });
-  }
-
-  //And finally, refresh tab indexes
-  Hyacinth.DigitalObjectsApp.DigitalObjectEditor.refreshTabIndexes($editorForm);
-
-  //Bind navigation dropup click handlers
-  this.$containerElement.find('.form-navigation-dropup').find('.dropdown-menu').on('click', 'li', function(e){
-    e.preventDefault();
-    var selector = '.dynamic_field_group_category_label:contains("' + $(this).children('a').html() + '")';
-    Hyacinth.scrollToElement($(selector), 400, function(){
-      $(selector).addClass("highlightPageElement");
-    });
+  
+    //Refresh navigation dropup options based on visible DynamicFieldGroupCategories
+    that.refreshNavigationDropupOptions();
   });
 
-  //Refresh navigation dropup options based on visible DynamicFieldGroupCategories
-  this.refreshNavigationDropupOptions();
 };
+
+Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.populateValuesForControlledTermFields = function(callback) {
+  
+  //Collect list of URIs
+  var listOfUris = [];
+  this.$containerElement.find('.controlled_term_field[data-initialized="false"]').find('.controlled_term_uri_field').each(function(){
+    //console.log($(this));
+    listOfUris = $(this).val();
+  });
+  
+  //console.log('found:' + listOfUris);
+  
+  //Resolve URIs to values
+  
+  //Apply values to URI fields
+  this.$containerElement.find('.controlled_term_field[data-initialized="false"]').find('.controlled_term_uri_field').each(function(){
+    
+  });
+  
+  callback();
+}
+
 
 Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.submitEditorForm = function(publish) {
 
@@ -491,18 +535,18 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.submitEditorForm = func
       if (publishTargets == null) {
         publishTargets = [];
       }
-      publishTargets.push($(this).val())
+      publishTargets.push({pid: $(this).val()})
     }
   });
 
   var digitalObjectData = {
-    digital_object_type_string_key: this.digitalObject.digital_object_type['string_key'],
+    digital_object_type: {string_key: this.digitalObject.digital_object_type['string_key']},
     dynamic_field_data_json: serializedFormAsJsonString,
     publish_targets: publishTargets
   };
 
   if (this.digitalObject.isNewRecord()) {
-    digitalObjectData['project_string_key'] = this.digitalObject.projects[0]['string_key'];
+    digitalObjectData['project'] = {string_key: this.digitalObject.projects[0]['string_key']};
     digitalObjectData['parent_digital_object_pids'] = this.digitalObject.getParentDigitalObjectPids();
   }
 

@@ -139,7 +139,7 @@ class ControlledVocabulariesController < ApplicationController
 
       format.json {
         render json: {
-          terms: JSON.generate(@terms[0..(per_page-1)]),
+          terms: @terms[0..(per_page-1)],
           more_available: (@terms.length > per_page),
           current_user_can_add_terms: current_user.can_manage_controlled_vocabulary_terms?(@controlled_vocabulary)
         }
@@ -155,6 +155,8 @@ class ControlledVocabulariesController < ApplicationController
     else
       @controlled_vocabulary = ControlledVocabulary.find_by(string_key: params[:id])
     end
+    
+    raise ActionController::RoutingError.new('Controlled vocabulary not found') if @controlled_vocabulary.nil?
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.

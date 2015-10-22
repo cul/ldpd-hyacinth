@@ -47,21 +47,19 @@ var fieldsetIds = associatedEnabledDynamicField ? associatedEnabledDynamicField[
           </select>
           <%
           break;
-        case 'authorized_term_value':
+        case 'controlled_term':
           %>
-          <div class="authorized_term  <%= mode == 'show' || fieldIsLocked ? 'hidden' : '' %>">
-            <div class="input-group">
-              <input type="text" class="form-control form-field-element <%= dynamic_field['dynamic_field_type'] %>_field input-sm" name="<%= dynamic_field['string_key'] %>" data-controlled-vocabulary-string-key="<%= dynamic_field['controlled_vocabulary']['string_key'] %>" data-controlled-vocabulary-display-label="<%= dynamic_field['controlled_vocabulary']['display_label'] %>" value="" />
-              <span class="input-group-btn"><button type="button" class="authorized_term_search_button btn btn-default btn-sm tabable"><span class="glyphicon glyphicon-search"></span></button></span>
+          <div class="controlled_term_field <%= mode == 'show' || fieldIsLocked ? 'hidden' : '' %>" data-initialized="false">
+            <input type="hidden" class="form-control form-field-element controlled_term_uri_field input-sm" name="<%= dynamic_field['string_key'] %>" data-controlled-vocabulary-string-key="<%= dynamic_field['controlled_vocabulary']['string_key'] %>" data-controlled-vocabulary-display-label="<%= dynamic_field['controlled_vocabulary']['display_label'] %>" value=""/>
+            <div class="form-control" style="padding-left:6px;padding-right:6px;">
+              <button type="button" class="btn btn-default btn-xs controlled_term_value_display authorized_term_search_button">- Select a value -</button>
+              <button type="button" class="btn btn-danger btn-xs controlled_term_clear_button hidden"><span class="glyphicon glyphicon-remove"></span></button>
+              <button type="button" style="padding:3px 8px; margin-top:-3px;margin-right:-3px;" class="authorized_term_search_button pull-right btn btn-default btn-sm tabable"><span class="glyphicon glyphicon-search"></span></button>
             </div>
           </div>
           <%
           break;
         case 'string':
-        case 'authorized_term_code':
-        case 'authorized_term_value_uri':
-        case 'authorized_term_authority':
-        case 'authorized_term_authority_uri':
           %><input type="text" name="<%= dynamic_field['string_key'] %>" class="form-field-element <%= dynamic_field['dynamic_field_type'] %>_field form-control input-sm clearable tabable <%= mode == 'show' || fieldIsLocked ? 'hidden' : '' %>"/><%
           break;
         default:
