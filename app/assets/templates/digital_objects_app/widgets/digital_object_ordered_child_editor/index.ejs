@@ -6,7 +6,7 @@
   //tooManyToShow
 %>
 <h1><%= digitalObject.digital_object_type['display_label'] %>: <%- digitalObject.getTitle() %></h1>
-<strong><%= (digitalObject.getProjects().length > 1 ? 'Projects' : 'Project') + ':' %></strong> <%= $.map(digitalObject.getProjects(), function(project){return project['display_label']}).join(', ') %>
+<strong>Project</strong> <%= digitalObject.getProject()['display_label'] %>
 <br />
 <strong>PID:</strong> <%= digitalObject.getPid() %>
 <hr />

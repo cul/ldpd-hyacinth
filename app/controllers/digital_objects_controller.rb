@@ -13,44 +13,35 @@ class DigitalObjectsController < ApplicationController
   # POST /digital_objects.json
   def create
     
-    if params[:digital_object].blank?
-      render json: {
-        success: false,
-        errors: ['Missing param digital_object']
-      }
-      return
+    if params[:digital_object_data_json].blank?
+      render json: { success: false, errors: ['Missing param digital_object_data_json'] } and return
     end
     
-    digital_object_data = params[:digital_object]
+    digital_object_data = convert_dynamic_field_data_json(params[:digital_object_data_json])
     
-    # Convert json-encoded dynamic_field_data_json to dynamic_field_data hash
-    # Note: We submit dynamic_field_data_json to the API to easily preserve element order
-    # without having to number every array element, but it's still possible to submit
-    # the dynamic_field_data param with non-json-encoded data.
-    unless digital_object_data['dynamic_field_data_json'].nil?
-      raise 'Invalid JSON given for dynamic_field_data_json' unless Hyacinth::Utils::JsonUtils.is_valid_json?(digital_object_data['dynamic_field_data_json'])
-      digital_object_data['dynamic_field_data'] = JSON.parse(digital_object_data['dynamic_field_data_json'])
-      digital_object_data.delete('dynamic_field_data_json')
+    if digital_object_data['digital_object_type'].blank?
+      render json: { success: false, errors: ['Missing digital_object_data_json[digital_object_type]'] } and return
     end
     
     begin
       @digital_object = DigitalObjectType.get_model_for_string_key(digital_object_data['digital_object_type']['string_key']).new()
     rescue Hyacinth::Exceptions::InvalidDigitalObjectTypeError
-      render json: {
-        success: false,
-        errors: ['Invalid digital_object_type string_key: ' + digital_object_data['digital_object_type']['string_key'].to_s]
-      }
-      return
+      render json: { success: false, errors: ['Invalid digital_object_type specified: digital_object_type => ' + digital_object_data['digital_object_type'].inspect] } and return
+    end
+    
+    begin
+      @digital_object.set_digital_object_data(digital_object_data, false)
+    rescue Hyacinth::Exceptions::PublishTargetNotFoundError, Hyacinth::Exceptions::DigitalObjectNotFound => e
+      render json: { success: false, errors: [e.message] } and return
     end
     
     @digital_object.created_by = current_user
     @digital_object.updated_by = current_user
-    @digital_object.update(digital_object_data, false)
 
-    test_mode = params['test'].present? && params['test'].to_s == 'true'
+    test_mode = params['test'].to_s == 'true'
+    do_publish = !test_mode && params['publish'].to_s == 'true'
 
-    
-    if (test_mode ? @digital_object.valid? : @digital_object.save) && (params['publish'].to_s == 'true' ? @digital_object.publish : true)
+    if (test_mode ? @digital_object.valid? : @digital_object.save) && (do_publish ? @digital_object.publish : true)
       render json: {
         success: true,
         pid: @digital_object.pid
@@ -87,27 +78,11 @@ class DigitalObjectsController < ApplicationController
   # PATCH/PUT /digital_objects/1.json
   def update
     
-    if params[:digital_object].blank?
-      render json: {
-        success: false,
-        errors: ['Missing param digital_object']
-      }
-      return
+    if params[:digital_object_data_json].blank?
+      render json: { success: false, errors: ['Missing param digital_object_data_json'] } and return
     end
     
-    digital_object_data = params[:digital_object]
-    
-    # Convert json-encoded dynamic_field_data_json to dynamic_field_data hash
-    # Note: We submit dynamic_field_data_json to the API to easily preserve element order
-    # without having to number every array element, but it's still possible to submit
-    # the dynamic_field_data param with non-json-encoded data.
-    unless digital_object_data['dynamic_field_data_json'].nil?
-      raise 'Invalid JSON given for dynamic_field_data_json' unless Hyacinth::Utils::JsonUtils.is_valid_json?(digital_object_data['dynamic_field_data_json'])
-      digital_object_data['dynamic_field_data'] = JSON.parse(digital_object_data['dynamic_field_data_json'])
-      digital_object_data.delete('dynamic_field_data_json')
-    end
-    
-    @digital_object.updated_by = current_user
+    digital_object_data = convert_dynamic_field_data_json(params[:digital_object_data_json])
     
     # Default behavior is to merge dynamic fields by default, unless told not to.
     if params['merge_dynamic_fields'].present? && params['merge_dynamic_fields'].to_s == 'false'
@@ -116,12 +91,14 @@ class DigitalObjectsController < ApplicationController
       merge_dynamic_fields = true
     end
     
-    @digital_object.update(digital_object_data, merge_dynamic_fields)
+    @digital_object.set_digital_object_data(digital_object_data, merge_dynamic_fields)
+    @digital_object.updated_by = current_user
 
-    test_mode = params['test'].present? && params['test'].to_s == 'true'
+    test_mode = params['test'].to_s == 'true'
+    do_publish = !test_mode && params['publish'].to_s == 'true'
 
     respond_to do |format|
-      if (test_mode ? @digital_object.valid? : @digital_object.save) && (params['publish'].to_s == 'true' ? @digital_object.publish : true)
+      if (test_mode ? @digital_object.valid? : @digital_object.save) && (do_publish ? @digital_object.publish : true)
         format.json {
           render json: {
             success: true,
@@ -164,8 +141,8 @@ class DigitalObjectsController < ApplicationController
     if params[:pid]
       # A DigitalObject pid is expected when we're working with an existing DigialObject
       @digital_object = DigitalObject::Base.find(params[:pid])
-      projects = @digital_object.projects
-      fieldsets = Fieldset.where(project: projects)
+      project = @digital_object.project
+      fieldsets = Fieldset.where(project: project)
       enabled_dynamic_fields = @digital_object.get_enabled_dynamic_fields
     elsif params[:project_string_key]
       # A DigitalObject id is not available when we're working with a new item, so we expect a project_id and digital_object_type_id instead
@@ -177,7 +154,7 @@ class DigitalObjectsController < ApplicationController
 
       # Return an empty DigitalObject instance with the correct project
       @digital_object = DigitalObjectType.get_model_for_string_key(digital_object_type.string_key).new
-      @digital_object.projects << project
+      @digital_object.project = project
     end
 
     dynamic_field_hierarchy = DynamicFieldGroupCategory.all # Get all DyanamicFieldGroupCategories (which recursively includes sub-dynamic_field_groups and dynamic_fields)
@@ -188,6 +165,7 @@ class DigitalObjectsController < ApplicationController
       dynamic_field_hierarchy: dynamic_field_hierarchy,
       fieldsets: fieldsets,
       dynamic_field_ids_to_enabled_dynamic_fields: dynamic_field_ids_to_enabled_dynamic_fields,
+      allowed_publish_targets: @digital_object.allowed_publish_targets.map{|pub| {display_label: pub.display_label, pid: pub.pid} }
     }
 
     if params['search_result_number'].present? && params['search'].present?
@@ -317,19 +295,16 @@ class DigitalObjectsController < ApplicationController
         overall_errors << "You can only upload assets to a parent Digital Object of type Item.  Object with pid #{parent_digital_object.pid} is of type: #{parent_digital_object.digital_object_type.display_label}"
       end
 
-      projects = parent_digital_object.projects
+      project = parent_digital_object.project
     elsif params['project_string_key'].present?
       parent_digital_object = nil
       project = Project.find_by(string_key: params['project_string_key'])
-      if project.present?
-        projects = [project]
-      else
+      unless project.present?
         overall_errors << "Could not find project for string key: #{params['project_string_key']}"
       end
     else
       overall_errors << "Missing project string key.  Supply param project_string_key OR reference a parent digital object."
     end
-
 
     file_data = []
 
@@ -371,7 +346,7 @@ class DigitalObjectsController < ApplicationController
             if test_mode
               puts 'Test mode output: Would have created new Asset for: ' + uploaded_file.original_filename
             else
-              file_data << handle_single_file_upload(original_file_path, 'internal', uploaded_file.tempfile, projects, parent_digital_object)
+              file_data << handle_single_file_upload(original_file_path, 'internal', uploaded_file.tempfile, project, parent_digital_object)
             end
           end
         ensure
@@ -417,7 +392,7 @@ class DigitalObjectsController < ApplicationController
             else
               # 'r' == read, 'b' == binary mode
               File.open(original_file_path, 'rb') do |file|
-                new_file = handle_single_file_upload(original_file_path, params['import_type'], file, projects, parent_digital_object)
+                new_file = handle_single_file_upload(original_file_path, params['import_type'], file, project, parent_digital_object)
               end
     
               ### Keeping the section below commented out because we don't currently want to delete the source files that we're importing.
@@ -662,12 +637,21 @@ class DigitalObjectsController < ApplicationController
     #end
 
   end
+  
+  def convert_dynamic_field_data_json(digital_object_data_json)
+    # Convert json-encoded digital_object_data_json to hash
+    # Note: We submit digital_object_data to the API as JSON to preserve array order, since http param order isn't guaranteed
+    unless digital_object_data_json.nil?
+      raise 'Invalid JSON given for digital_object_data_json' unless Hyacinth::Utils::JsonUtils.is_valid_json?(digital_object_data_json)
+      return JSON.parse(digital_object_data_json)
+    end
+  end
 
   # Handles a file upload and returns a hash with information about the upload.
   # Hash format: {'name' => 'file.tif', size => '12345', errors => ['Some error']}
   #
   # param import_type: Valid values
-  def handle_single_file_upload(original_file_path, import_type, file_to_upload, projects, parent_digital_object)
+  def handle_single_file_upload(original_file_path, import_type, file_to_upload, project, parent_digital_object)
 
     file_size = file_to_upload.size
     puts 'File size: ' + file_size.to_s
@@ -685,7 +669,7 @@ class DigitalObjectsController < ApplicationController
     end
 
     new_asset_digital_object = DigitalObject::Asset.new
-    new_asset_digital_object.projects = projects
+    new_asset_digital_object.project = project
     new_asset_digital_object.add_parent_digital_object(parent_digital_object) if parent_digital_object.present?
     new_asset_digital_object.set_title('', File.basename(original_file_path))
 
@@ -704,7 +688,7 @@ class DigitalObjectsController < ApplicationController
         file_to_upload.rewind # seek back to start of file for future reading
 
         # Copy file to final asset destination directory
-        path_to_final_save_location = Hyacinth::Utils::PathUtils.path_to_asset_file(new_asset_digital_object.pid, new_asset_digital_object.projects.first, File.basename(original_file_path))
+        path_to_final_save_location = Hyacinth::Utils::PathUtils.path_to_asset_file(new_asset_digital_object.pid, new_asset_digital_object.project, File.basename(original_file_path))
 
         if File.exists?(path_to_final_save_location)
           upload_response['errors'] << 'Pre-file-write test unexpectedly found existing file at target location: ' + path_to_final_save_location

@@ -1,10 +1,20 @@
 module DynamicFieldAndDynamicFieldGroup::SharedValidations
   extend ActiveSupport::Concern
+  
+  RESERVED_STRING_KEYS = ['uri']
 
   included do
     validate :validate_unique_df_and_dfg_string_key
+    validate :validate_reserved_df_and_dfg_string_key
     validates :display_label, presence: true
     validates :string_key, presence: true, format: { with: STRING_KEY_REGEX, message: "String key values must start with a letter, can only have up to 240 characters and can only contain lower case letters, numbers and underscores." }
+  end
+  
+  def validate_reserved_df_and_dfg_string_key
+    # No dynamic_field or dynamic_field_group is allowed to have certain reserved string_keys
+    if RESERVED_STRING_KEYS.include?(self.string_key)
+      errors.add(:string_key, "#{self.string_key} is a reserved key and cannot be used.  Please choose a different string_key.")
+    end
   end
 
   def validate_unique_df_and_dfg_string_key

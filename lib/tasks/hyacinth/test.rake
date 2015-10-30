@@ -67,7 +67,7 @@ namespace :hyacinth do
       number_of_records_to_create.times {
 
         digital_object = DigitalObject::Item.new
-        digital_object.projects << test_project
+        digital_object.project = test_project
         digital_object.created_by = test_user
         digital_object.updated_by = test_user
 

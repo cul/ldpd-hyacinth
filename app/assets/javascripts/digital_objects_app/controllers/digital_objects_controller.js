@@ -107,7 +107,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.new = function() {
       digitalObject: digitalObject,
       fieldsets: data_for_editor['fieldsets'],
       dynamicFieldHierarchy: data_for_editor['dynamic_field_hierarchy'],
-      dynamicFieldIdsToEnabledDynamicFields: data_for_editor['dynamic_field_ids_to_enabled_dynamic_fields']
+      dynamicFieldIdsToEnabledDynamicFields: data_for_editor['dynamic_field_ids_to_enabled_dynamic_fields'],
+      allowedPublishTargets: data_for_editor['allowed_publish_targets']
     });
 
     //Event cleanup
@@ -142,7 +143,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.edit = function() 
       digitalObject: digitalObject,
       fieldsets: data_for_editor['fieldsets'],
       dynamicFieldHierarchy: data_for_editor['dynamic_field_hierarchy'],
-      dynamicFieldIdsToEnabledDynamicFields: data_for_editor['dynamic_field_ids_to_enabled_dynamic_fields']
+      dynamicFieldIdsToEnabledDynamicFields: data_for_editor['dynamic_field_ids_to_enabled_dynamic_fields'],
+      allowedPublishTargets: data_for_editor['allowed_publish_targets']
     });
 
     //For deleting DigitalObjects
@@ -257,7 +259,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.show = function() 
       digitalObject: digitalObject,
       fieldsets: data_for_editor['fieldsets'],
       dynamicFieldHierarchy: data_for_editor['dynamic_field_hierarchy'],
-      dynamicFieldIdsToEnabledDynamicFields: data_for_editor['dynamic_field_ids_to_enabled_dynamic_fields']
+      dynamicFieldIdsToEnabledDynamicFields: data_for_editor['dynamic_field_ids_to_enabled_dynamic_fields'],
+      allowedPublishTargets: data_for_editor['allowed_publish_targets']
     });
 
     //Event cleanup

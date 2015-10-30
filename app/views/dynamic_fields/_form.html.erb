@@ -29,8 +29,8 @@
         <%= f.select(:dynamic_field_type, DynamicField::TYPES_TO_LABELS.invert, {}, {class: 'form-control'}) %>
       </div>
       <div class="field">
-        <%= f.label :controlled_vocabulary_id, 'Controlled Vocabulary (For type: Authorized Term)' %><br>
-        <%= f.collection_select(:controlled_vocabulary_id, ControlledVocabulary.all, :id, :display_label, {include_blank: '- None -'}, {class: 'form-control'}) %>
+        <%= f.label :controlled_vocabulary_string_key, 'Controlled Vocabulary (For type: Controlled Term)' %><br>
+        <%= f.collection_select(:controlled_vocabulary_string_key, ControlledVocabulary.all, :string_key, :display_label, {include_blank: '- None -'}, {class: 'form-control'}) %>
       </div>
       <!--
       <div class="field checkbox">

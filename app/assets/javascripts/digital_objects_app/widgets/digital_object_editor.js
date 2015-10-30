@@ -6,6 +6,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor = function(containerElementId, op
   this.fieldsets = options['fieldsets'] || [];
   this.dynamicFieldHierarchy = options['dynamicFieldHierarchy'] || [];
   this.dynamicFieldIdsToEnabledDynamicFields = options['dynamicFieldIdsToEnabledDynamicFields'] || [];
+  this.allowedPublishTargets = options['allowedPublishTargets'] || [];
   this.globalTabIndex = 0;
   this.currentAuthorizedTermSelector = null;
 
@@ -75,7 +76,6 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.serializeDynamicFieldGroupElement
 
   //Handle child dynamicFields
   for(var i = 0; i < $childDynamicFields.length; i++) {
-    //Skip serializedFormAsJsonString if it's disabled.
     $dynamicFieldElement = $($childDynamicFields[i]);
     var stringKey = $dynamicFieldElement.attr('data-string-key');
     if ( $dynamicFieldElement.find('[name="' + stringKey + '"]').is(':enabled') ) {
@@ -223,7 +223,9 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.populateFormElementsWithDynamicFi
         $input.prop('checked', true); //We don't set a checkbox value with .val().  We want to set the checked property.
       } else if($input.hasClass('controlled_term_uri_field')) {
         $input.val(value['uri']); //Set uri as hidden field value
-        $input.closest('.controlled_term_field').find('.controlled_term_value_display').html(value['value']); //Set value as display value
+        $controlledTermFieldWrapperElement = $input.closest('.controlled_term_field');
+        $controlledTermFieldWrapperElement.find('.controlled_term_value_display').html(value['value']); //Set value as display value
+        $controlledTermFieldWrapperElement.find('.controlled_term_clear_button').removeClass('hidden'); //Show controlled_term_clear_button so that value can be cleared
       } else {
         $input.val(value);
       }
@@ -257,7 +259,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
       dynamicFieldHierarchy: this.dynamicFieldHierarchy,
       mode: this.mode,
       dynamicFieldIdsToEnabledDynamicFields: this.dynamicFieldIdsToEnabledDynamicFields,
-      digitalObject: this.digitalObject
+      digitalObject: this.digitalObject,
+      allowedPublishTargets: this.allowedPublishTargets
     })
   );
 
@@ -527,8 +530,6 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.submitEditorForm = func
   $editorForm.find('.errors').html(''); //Clear existing errors
   $editorForm.find('.dynamic_field.has-error').removeClass('has-error'); //Remove current error classes
 
-  var serializedFormAsJsonString = JSON.stringify(Hyacinth.DigitalObjectsApp.DigitalObjectEditor.serializeFormDataToObject($editorForm));
-
   var publishTargets = null;
   $editorForm.find('.publish-targets .publish-target-checkbox').each(function(){
     if ($(this).prop('checked')) {
@@ -541,13 +542,13 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.submitEditorForm = func
 
   var digitalObjectData = {
     digital_object_type: {string_key: this.digitalObject.digital_object_type['string_key']},
-    dynamic_field_data_json: serializedFormAsJsonString,
+    dynamic_field_data: Hyacinth.DigitalObjectsApp.DigitalObjectEditor.serializeFormDataToObject($editorForm),
     publish_targets: publishTargets
   };
 
   if (this.digitalObject.isNewRecord()) {
-    digitalObjectData['project'] = {string_key: this.digitalObject.projects[0]['string_key']};
-    digitalObjectData['parent_digital_object_pids'] = this.digitalObject.getParentDigitalObjectPids();
+    digitalObjectData['project'] = {string_key: this.digitalObject.project['string_key']};
+    digitalObjectData['parent_digital_objects'] = $.map(this.digitalObject.getParentDigitalObjectPids(), function(val){ return {pid: val} });
   }
 
   var that = this;
@@ -557,7 +558,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.submitEditorForm = func
     type: 'POST',
     data: {
       '_method': this.digitalObject.isNewRecord() ? 'POST' : 'PUT', //For proper RESTful Rails requests
-      digital_object: digitalObjectData,
+      digital_object_data_json: JSON.stringify(digitalObjectData),
       publish: publish
     },
     cache: false

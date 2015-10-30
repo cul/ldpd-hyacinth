@@ -45,7 +45,7 @@ class TermsController < ApplicationController
             term_params['additional_fields']
           )
         end
-      rescue UriService::NonExistentVocabularyError, UriService::InvalidUriError, UriService::ExistingUriError, UriService::InvalidAdditionalFieldKeyError => e
+      rescue UriService::NonExistentVocabularyError, UriService::InvalidUriError, UriService::ExistingUriError, UriService::InvalidAdditionalFieldKeyError, UriService::DisallowedDuplicateLocalTermValueError => e
         @errors << e.message
       end
     end

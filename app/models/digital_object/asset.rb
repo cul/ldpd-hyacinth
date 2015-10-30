@@ -20,12 +20,10 @@ class DigitalObject::Asset < DigitalObject::Base
     pid = self.next_pid
     generic_resource = GenericResource.new(:pid => pid)
 
-    generic_resource.datastreams["DC"].dc_identifier = [pid]
-
     return generic_resource
   end
 
-  def valid?
+  def validate
     super # Always run shared parent class validation
 
     ## Assets must have at least one parent Item

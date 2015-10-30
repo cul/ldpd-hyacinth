@@ -14,10 +14,10 @@
 
         <div class="form-group">
           <label class="col-sm-3">
-            <%= (digitalObject.getProjects().length > 1 ? 'Projects' : 'Project') + ':' %>
+            Project:
           </label>
           <div class="col-sm-9">
-            <%= $.map(digitalObject.getProjects(), function(project){return project['display_label']}).join(', ') %>
+            <%= digitalObject.getProject()['display_label'] %>
           </div>
         </div>
 

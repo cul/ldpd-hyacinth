@@ -100,15 +100,16 @@ Hyacinth.DigitalObjectsApp.DigitalObjectOrderedChildEditor.prototype.init = func
         orderedPids.push($(this).attr('data-pid'));
       });
     }
+    
+    var digitalObjectData = {ordered_child_digital_objects: orderedPids};
+    digitalObjectData['ordered_child_digital_objects'] = $.map(orderedPids, function(val){ return {pid: val} });
 
     $.ajax({
       url: '/digital_objects/' + that.digitalObject.getPid() + '.json',
       type: 'POST',
       data: {
         '_method': 'PUT', //For proper RESTful Rails requests
-        digital_object : {
-          ordered_child_digital_object_pids: orderedPids
-        },
+        digital_object_data_json : JSON.stringify(digitalObjectData),
       },
       cache: false
     }).done(function(digitalObjectCreationResponse){

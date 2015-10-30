@@ -14,61 +14,62 @@ class DigitalObject::Base
   # For ActiveModel::Dirty
   define_attribute_methods :parent_digital_object_pids, :obsolete_parent_digital_object_pids, :ordered_child_digital_object_pids
 
-  attr_accessor :projects, :publish_targets, :identifiers, :created_by, :updated_by, :state, :struct_data, :dc_type, :ordered_child_digital_object_pids
+  attr_accessor :project, :publish_targets, :identifiers, :created_by, :updated_by, :state, :dc_type, :ordered_child_digital_object_pids
   attr_reader :errors, :fedora_object, :parent_digital_object_pids, :updated_at, :created_at, :dynamic_field_data
 
   VALID_DC_TYPES = [] # There are no valid dc types for DigitalObject::Base
   
   def require_subclass_override!; raise 'This method must be overridden by a subclass'; end
-
-  def initialize(digital_object_record=::DigitalObjectRecord.new, fedora_obj=nil)
-    raise 'The DigitalObject::Base class cannot be instantiated.  You can only instantiate subclasses like DigitalObject::Item' if self.class == DigitalObject
-    @db_record = digital_object_record
-    @fedora_object = fedora_obj
-
-    if self.new_record?
-      @projects = []
-      @publish_targets = []
-      @identifiers = []
-      @parent_digital_object_pids = []
-      @obsolete_parent_digital_object_pids = []
-      @ordered_child_digital_object_pids = []
-      @dynamic_field_data = {}
-      @state = 'A'
-    else
-      # For existing records, we always lock on @db_record during Fedora reads/writes (and wrap in a transaction)
-      @db_record.with_lock do # with_lock creates a transaction and locks on the called object's row
-        load_created_and_updated_data_from_db_record!
-        load_parent_digital_object_pid_relationships_from_fedora_object!
-        load_state_from_fedora_object!
-        load_dc_type_from_fedora_object!
-        load_dc_identifiers_from_fedora_object!
-        load_project_and_publisher_relationships_from_fedora_object!
-        load_fedora_hyacinth_ds_data_from_fedora_object!
-      end
-    end
-
+  
+  def initialize()
+    raise 'The DigitalObject::Base class cannot be instantiated.  You can only instantiate subclasses like DigitalObject::Item' if self.class == DigitalObject::Base
+    @db_record = ::DigitalObjectRecord.new
+    @fedora_object = nil
+    @project = []
+    @publish_targets = []
+    @identifiers = []
+    @parent_digital_object_pids = []
+    @obsolete_parent_digital_object_pids = []
+    @ordered_child_digital_object_pids = []
+    @dynamic_field_data = {}
+    @state = 'A'
     @errors = ActiveModel::Errors.new(self)
   end
   
+  def init_from_digital_object_record_and_fedora_object(digital_object_record, fedora_obj)
+    @db_record = digital_object_record
+    @fedora_object = fedora_obj
+    
+    # For existing records, we always lock on @db_record during Fedora reads/writes (and wrap in a transaction)
+    @db_record.with_lock do # with_lock creates a transaction and locks on the called object's row
+      load_created_and_updated_data_from_db_record!
+      load_parent_digital_object_pid_relationships_from_fedora_object!
+      load_state_from_fedora_object!
+      load_dc_type_from_fedora_object!
+      load_dc_identifiers_from_fedora_object!
+      load_project_and_publisher_relationships_from_fedora_object!
+      load_fedora_hyacinth_ds_data_from_fedora_object!
+    end
+  end
+  
   # Updates the DigitalObject with the given digital_object_data
-  def update(digital_object_data, merge_dynamic_fields)
+  def set_digital_object_data(digital_object_data, merge_dynamic_fields)
     
     # Identifiers (multiple)
-    if digital_object_data['identifier']
-      self.identifiers = digital_object_data['identifier']
+    if digital_object_data['identifiers']
+      self.identifiers = digital_object_data['identifiers']
     end
     
     # Project (only one) -- Only allow setting this if this DigitalObject is a new record
     if self.new_record? && digital_object_data['project']
       project_find_criteria = digital_object_data['project'] # i.e. {string_key: 'proj'} or {pid: 'abc:123'}
-      self.projects = [Project.find_by(project_find_criteria)]
+      self.project = Project.find_by(project_find_criteria)
     end
     
     # Publish Targets (multiple)
-    if digital_object_data['publish_target']
+    if digital_object_data['publish_targets']
       self.publish_targets = []
-      digital_object_data['publish_target'].each do |publish_target_find_criteria|
+      digital_object_data['publish_targets'].each do |publish_target_find_criteria|
         publish_target = PublishTarget.find_by(publish_target_find_criteria) # i.e. {string_key: 'target1'} or {pid: 'abc:123'}
         if publish_target.nil?
           raise Hyacinth::Exceptions::PublishTargetNotFoundError, "Could not find Publish Target: #{publish_target_find_criteria.inspect}"
@@ -78,28 +79,51 @@ class DigitalObject::Base
       end
     end
     
-    # Parent PID or Identifier
-    if digital_object_data['parent_pid_or_identifier']
-      digital_object_data['parent_pid_or_identifier'].each do |parent_pid_or_identifier|
-        digital_object = DigitalObject::Base.find_by_pid_or_identifier(parent_pid_or_identifier)
-        if digital_object.nil?
-          raise Hyacinth::Exceptions::DigitalObjectNotFound, "Could not find parent DigitalObject with pid or identifier: #{parent_pid_or_identifier}"
+    # Parent Digital Objects (PID or Identifier)
+    if digital_object_data['parent_digital_objects']
+      self.parent_digital_object_pids = [] # Clear because we're about to set new values
+      digital_object_data['parent_digital_objects'].each do |parent_digital_object_find_criteria|
+        if parent_digital_object_find_criteria['pid'].present?
+          digital_object = DigitalObject::Base.find_by_pid(parent_digital_object_find_criteria['pid'])
+        elsif parent_digital_object_find_criteria['identifier'].present?
+          digital_object_results = DigitalObject::Base.find_all_by_identifier(parent_digital_object_find_criteria['identifier'])
+          if digital_object_results.length == 0
+            raise Hyacinth::Exceptions::DigitalObjectNotFound, "Could not find parent DigitalObject with find criteria: #{parent_digital_object_find_criteria.inspect}"
+          elsif digital_object_results.length == 1
+            digital_object = digital_object_results.first
+          else
+            raise "While linking object to parent objects, expected one DigitalObject, but found #{digital_object_results.length.to_s} DigitalObjects" +
+                  "with identifier: #{parent_digital_object_find_criteria['identifier']}.  You'll need to use a pid instead."
+          end
         else
-          add_parent_digital_object(digital_object)
+          raise 'Invalid parent_digital_object find criteria: ' + parent_digital_object_find_criteria.inspect
         end
+        
+        add_parent_digital_object(digital_object)
       end
     end
     
-    # Ordered child PIDS
-    if digital_object_data['ordered_child_digital_object_pids']
-      digital_object_data['ordered_child_digital_object_pids'].each do |child_pid|
-        self.ordered_child_digital_object_pids = []
-        digital_object = DigitalObject::Base.find_by_pid(child_pid)
-        if digital_object.nil?
-          raise Hyacinth::Exceptions::DigitalObjectNotFound, "Could not find child DigitalObject with pid: #{child_pid}"
+    # Ordered child Digital Objects (PID or Identifier)
+    if digital_object_data['ordered_child_digital_objects']
+      self.ordered_child_digital_object_pids = [] # Clear because we're about to set new values
+      digital_object_data['ordered_child_digital_objects'].each do |child_digital_object_find_criteria|
+        if child_digital_object_find_criteria['pid'].present?
+          digital_object = DigitalObject::Base.find_by_pid(child_digital_object_find_criteria['pid'])
+        elsif child_digital_object_find_criteria['identifier'].present?
+          digital_object_results = DigitalObject::Base.find_all_by_identifier(child_digital_object_find_criteria['identifier'])
+          if digital_object_results.length == 0
+            raise Hyacinth::Exceptions::DigitalObjectNotFound, "Could not find child DigitalObject with find criteria: #{child_digital_object_find_criteria.inspect}"
+          elsif digital_object_results.length == 1
+            digital_object = digital_object_results.first
+          else
+            raise "While linking object to parent objects, expected one DigitalObject, but found #{digital_object_results.length.to_s} DigitalObjects" +
+                  "with identifier: #{child_digital_object_find_criteria['identifier']}.  You'll need to use a pid instead."
+          end
         else
-          add_ordered_child_digital_object_pid(digital_object)
+          raise 'Invalid child object find criteria: ' + child_digital_object_find_criteria.inspect
         end
+        
+        add_ordered_child_digital_object(digital_object)
       end
     end
     
@@ -107,7 +131,6 @@ class DigitalObject::Base
     if digital_object_data['dynamic_field_data']
       self.update_dynamic_field_data(digital_object_data['dynamic_field_data'], merge_dynamic_fields)
     end
-    
   end
 
   # Returns the primary title
@@ -173,10 +196,12 @@ class DigitalObject::Base
   end
 
   # This method is only required for when the ResourceIndex doesn't have immediate updates turned on
-  def add_ordered_child_digital_object_pid(digital_object_pid)
-    unless @ordered_child_digital_object_pids.include?(digital_object_pid)
-      @ordered_child_digital_object_pids << digital_object_pid
-      puts 'added ---> ' +  digital_object_pid.to_s
+  def add_ordered_child_digital_object(new_child_digital_object)
+    return if new_child_digital_object.nil?
+    new_child_digital_object_pid = new_child_digital_object.pid
+    
+    unless @ordered_child_digital_object_pids.include?(new_child_digital_object_pid)
+      @ordered_child_digital_object_pids << new_child_digital_object_pid
     end
   end
 
@@ -221,6 +246,15 @@ class DigitalObject::Base
   end
 
   # Find/Save/Validate
+  
+  # Returns true if the given pid exists or if all pids in the given array exist
+  def self.exists?(pid_or_pids)
+    if pid_or_pids.is_a?(Array)
+      return (pid_or_pids.length == DigitalObjectRecord.where?(pid_or_pids).count)
+    else
+      return DigitalObjectRecord.exists?(pid_or_pids)
+    end
+  end
 
   # Finds objects by PID
   def self.find(pid)
@@ -246,9 +280,10 @@ class DigitalObject::Base
         end
       end
     }
-
-    class_to_instantiate = DigitalObject::Base.get_class_for_fedora_object(fobj)
-    return class_to_instantiate.new(digital_object_record, fobj)
+    
+    digital_object = DigitalObject::Base.get_class_for_fedora_object(fobj).new()
+    digital_object.init_from_digital_object_record_and_fedora_object(digital_object_record, fobj)
+    return digital_object
   end
   
   # Like self.find(), but returns nil when a DigitalObject isn't found instead of raising an error
@@ -288,48 +323,13 @@ class DigitalObject::Base
   end
 
   def get_enabled_dynamic_fields
-
     # If there's only one project, things are simple.  Just return the EnabledDynamicFields for that project.
     # For now, the idea is that objects can be published to multiple publish targets, but they're only managed by one project.
-    puts 'Those Projects: ' + @projects.inspect
-    if @projects.length == 0
-      raise 'At least one project is required.'
-    elsif @projects.length == 1
-      return @projects.first.get_enabled_dynamic_fields(self.digital_object_type)
+    if @project.blank?
+      raise 'A project is required.'
     else
-      raise 'Not currently supporting objects with more than one project.'
+      return @project.get_enabled_dynamic_fields(self.digital_object_type)
     end
-
-    ## If this DigitalObject has more than one project, this is more complicated because
-    ## each project has its own EnabledDynamicField properties, and some may overlap for
-    ## the same DynamicField.  (Only one version may be locked, one may have a
-    ## default value, one may be required, etc.)
-    #
-    ## This method's job is to resolve all of the potential merging mess.
-    #
-    ## Current merge strategy.  Always favor the EnabledDynamicField rules (required, locked, etc.)
-    ## of the project with the earlier created date, since the one with the newer date is "borrowing/sharing"
-    ## with the original project.
-    #
-    ## TODO: When importing existing projects into Hyacinth, make sure that the Project gets its created
-    ## date from its associated Fedora object.
-    #
-    #all_enabled_dynamic_fields = []
-    ## Always sort projects in the same order so that the enabled_dynamic_field merge order is consistent
-    #self.projects.sort_by{|project|project.created}.each do |project|
-    #
-    #  enabled_dynamic_fields = project.get_enabled_dynamic_fields(self.digital_object_type)
-    #
-    #  if all_enabled_dynamic_fields.length == 0
-    #    all_enabled_dynamic_fields += enabled_dynamic_fields
-    #  else
-    #    # Only get EnabledDynamicFields with dynamic_field_id values that aren't already in all_enabled_dynamic_fields
-    #    current_dynamic_field_id_values = all_enabled_dynamic_fields.map{|enabled_df| enabled_df.dynamic_field_id}
-    #    all_enabled_dynamic_fields += enabled_dynamic_fields.select{|enabled_df| current_dynamic_field_id_values.include?(enabled_df) }
-    #  end
-    #
-    #end
-    #return all_enabled_dynamic_fields
   end
 
   def save
@@ -411,7 +411,7 @@ class DigitalObject::Base
 
             new_parents.each do |digital_obj_pid|
               new_parent_obj = DigitalObject::Base.find(digital_obj_pid)
-              new_parent_obj.add_ordered_child_digital_object_pid(self.pid)
+              new_parent_obj.add_ordered_child_digital_object(self)
               unless new_parent_obj.save
                 @errors.add(:parent_digital_object_pid, new_parent_obj.errors)
                 return false
@@ -510,7 +510,7 @@ class DigitalObject::Base
   end
 
   def next_pid
-    self.projects.first.next_pid
+    self.project.next_pid
   end
 
   def self.valid_dc_types
@@ -518,12 +518,7 @@ class DigitalObject::Base
   end
 
   def allowed_publish_targets
-    publish_targets_to_return = []
-    self.projects.each do |project|
-      publish_targets_to_return += project.publish_targets
-    end
-    publish_targets_to_return.uniq!
-    return publish_targets_to_return
+    return project.publish_targets
   end
   
   def self.titles_for_pids(pids, user_for_access)
@@ -561,13 +556,12 @@ class DigitalObject::Base
       title: self.get_title,
       state: @fedora_object ? @fedora_object.state : 'A',
       dc_type: self.dc_type,
-      projects: self.projects,
-      allowed_publish_targets: self.allowed_publish_targets,
-      publish_targets: self.publish_targets,
-      digital_object_type: self.digital_object_type,
+      project: self.project,
+      publish_targets: self.publish_targets.each{|pub| {string_key: pub.string_key, pid: pub.pid} },
+      digital_object_type: { string_key: self.digital_object_type.string_key, display_label: self.digital_object_type.display_label },
       dynamic_field_data: @dynamic_field_data,
-      ordered_child_digital_object_pids: self.ordered_child_digital_object_pids,
-      parent_digital_object_pids: self.parent_digital_object_pids
+      ordered_child_digital_objects: self.ordered_child_digital_object_pids.map{|the_pid|{pid: the_pid}},
+      parent_digital_objects: self.parent_digital_object_pids.map{|the_pid|{pid: the_pid}}
     }
 
   end

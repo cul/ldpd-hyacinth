@@ -13,7 +13,6 @@ class DigitalObject::Item < DigitalObject::Base
     pid = self.next_pid
     content_aggregator = ContentAggregator.new(:pid => pid)
 
-    content_aggregator.datastreams["DC"].dc_identifier = [pid]
     return content_aggregator
   end
 

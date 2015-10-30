@@ -136,7 +136,7 @@ module DigitalObject::XmlDatastreamRendering
       if sub_without_braces.start_with?('$')
         # Then this is a special substitution that we handle differently.
         if sub_without_braces == '$project.display_label'
-          self.projects.first.display_label
+          self.project.display_label
         else
           ''
         end
