@@ -81,14 +81,14 @@ class DigitalObject::Base
     
     # Parent Digital Objects (PID or Identifier)
     if digital_object_data['parent_digital_objects']
-      self.parent_digital_object_pids = [] # Clear because we're about to set new values
+      @parent_digital_object_pids = [] # Clear because we're about to set new values
       digital_object_data['parent_digital_objects'].each do |parent_digital_object_find_criteria|
         if parent_digital_object_find_criteria['pid'].present?
           digital_object = DigitalObject::Base.find_by_pid(parent_digital_object_find_criteria['pid'])
         elsif parent_digital_object_find_criteria['identifier'].present?
           digital_object_results = DigitalObject::Base.find_all_by_identifier(parent_digital_object_find_criteria['identifier'])
           if digital_object_results.length == 0
-            raise Hyacinth::Exceptions::DigitalObjectNotFound, "Could not find parent DigitalObject with find criteria: #{parent_digital_object_find_criteria.inspect}"
+            raise Hyacinth::Exceptions::DigitalObjectNotFoundError, "Could not find parent DigitalObject with find criteria: #{parent_digital_object_find_criteria.inspect}"
           elsif digital_object_results.length == 1
             digital_object = digital_object_results.first
           else
@@ -105,14 +105,14 @@ class DigitalObject::Base
     
     # Ordered child Digital Objects (PID or Identifier)
     if digital_object_data['ordered_child_digital_objects']
-      self.ordered_child_digital_object_pids = [] # Clear because we're about to set new values
+      @ordered_child_digital_object_pids = [] # Clear because we're about to set new values
       digital_object_data['ordered_child_digital_objects'].each do |child_digital_object_find_criteria|
         if child_digital_object_find_criteria['pid'].present?
           digital_object = DigitalObject::Base.find_by_pid(child_digital_object_find_criteria['pid'])
         elsif child_digital_object_find_criteria['identifier'].present?
           digital_object_results = DigitalObject::Base.find_all_by_identifier(child_digital_object_find_criteria['identifier'])
           if digital_object_results.length == 0
-            raise Hyacinth::Exceptions::DigitalObjectNotFound, "Could not find child DigitalObject with find criteria: #{child_digital_object_find_criteria.inspect}"
+            raise Hyacinth::Exceptions::DigitalObjectNotFoundError, "Could not find child DigitalObject with find criteria: #{child_digital_object_find_criteria.inspect}"
           elsif digital_object_results.length == 1
             digital_object = digital_object_results.first
           else
