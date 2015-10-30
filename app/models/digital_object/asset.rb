@@ -71,7 +71,7 @@ class DigitalObject::Asset < DigitalObject::Base
     # Add original_filename property to content datastream using <info:fedora/fedora-system:def/model#downloadFilename> relationship
     @fedora_object.rels_int.add_relationship(content_ds, 'info:fedora/fedora-system:def/model#downloadFilename', original_filename, true) # last param *true* means that this is a literal value rather than a relationship
 
-    # TODO: Eventually set true orientations, but we're setting everything as upright ('top-left') for now, just to have a value
+    # Assume top-left orientation at upload time. This can be corrected later in the app.
     @fedora_object.rels_int.add_relationship(content_ds, :orientation, 'top-left', true) # last param *true* means that this is a literal value rather than a relationship
 
     set_original_file_path(original_file_path) # This also updates the 'content' datastream label

@@ -31,7 +31,7 @@ class DigitalObjectsController < ApplicationController
     
     begin
       @digital_object.set_digital_object_data(digital_object_data, false)
-    rescue Hyacinth::Exceptions::PublishTargetNotFoundError, Hyacinth::Exceptions::DigitalObjectNotFound => e
+    rescue Hyacinth::Exceptions::PublishTargetNotFoundError, Hyacinth::Exceptions::DigitalObjectNotFoundError => e
       render json: { success: false, errors: [e.message] } and return
     end
     
@@ -236,7 +236,7 @@ class DigitalObjectsController < ApplicationController
 
   def download
     if @digital_object.is_a?(DigitalObject::Asset)
-      send_file @digital_object.get_filesystem_location
+      send_file @digital_object.get_filesystem_location, filename: @digital_object.get_original_filename
     else
       render text: @digital_object.digital_object_type.display_label.pluralize + ' do not have download URLs.  Try downloading an Asset instead.'
     end
