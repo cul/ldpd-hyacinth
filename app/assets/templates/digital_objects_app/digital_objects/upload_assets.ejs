@@ -8,7 +8,7 @@
 
 
 <h1><%= parentDigitalObject.digital_object_type['display_label'] %>: <%- parentDigitalObject.getTitle() %></h1>
-<strong><%= (parentDigitalObject.getProjects().length > 1 ? 'Projects' : 'Project') + ':' %></strong> <%= $.map(parentDigitalObject.getProjects(), function(project){return project['display_label']}).join(', ') %>
+<strong>Project:</strong> <%= parentDigitalObject.getProject()['display_label'] %>
 <br />
 <strong>PID:</strong> <%= parentDigitalObject.getPid() %>
 <hr />

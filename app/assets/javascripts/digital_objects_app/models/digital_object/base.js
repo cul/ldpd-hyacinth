@@ -5,14 +5,13 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base = function(digital_object_data) {
   this.pid = digital_object_data['pid'];
   this.title = digital_object_data['title'];
   this.state = digital_object_data['state'];
-  this.projects = digital_object_data['projects'];
+  this.project = digital_object_data['project'];
   this.digital_object_type = digital_object_data['digital_object_type'];
   this.dynamic_field_data = digital_object_data['dynamic_field_data'];
-  this.parent_digital_object_pids = digital_object_data['parent_digital_object_pids'] || [];
-  this.ordered_child_digital_object_pids = digital_object_data['ordered_child_digital_object_pids'] || [];
+  this.parent_digital_object_pids = $.map(digital_object_data['parent_digital_objects'], function(parent_digital_object){ return parent_digital_object['pid']; });
+  this.ordered_child_digital_object_pids = $.map(digital_object_data['ordered_child_digital_objects'], function(child_digital_object){ return child_digital_object['pid']; });
   this.dc_type = digital_object_data['dc_type'] || '';
   this.publish_targets = digital_object_data['publish_targets'] || [];
-  this.allowed_publish_targets = digital_object_data['allowed_publish_targets'] || [];
 };
 
 // Class methods
@@ -91,8 +90,8 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getPid = function(){
   return this.pid;
 };
 
-Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getProjects = function(){
-  return this.projects;
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getProject = function(){
+  return this.project;
 };
 
 // hasImage method is meant to be overridden by DigitalObject subclasses

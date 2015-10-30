@@ -76,11 +76,12 @@ title = DynamicFieldGroup.create!(string_key: 'title', display_label: 'Title', d
 )
 
 # Create collection and form controlled vocabularies if they don't already exist
-['collection' => 'Collection', 'form' => 'Form'].each do |string_key, display_label|
+{'collection' => 'Collection', 'form' => 'Form'}.each do |string_key, display_label|
   if UriService.client.find_vocabulary(string_key).nil?
     @controlled_vocabulary = ControlledVocabulary.new
     @controlled_vocabulary.string_key = string_key
     @controlled_vocabulary.display_label = display_label
+    @controlled_vocabulary.save
   end
 end
 

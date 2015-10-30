@@ -30,17 +30,16 @@ module DigitalObject::IndexAndSearch
       state_ssm: self.state,
       digital_object_type_display_label_sim: self.digital_object_type.display_label,
       digital_object_type_display_label_ssm: self.digital_object_type.display_label,
-      project_string_key_sim: self.projects.map{|project|project.string_key},
-      project_pid_sim: self.projects.map{|project|project.pid},
-      project_pid_ssm: self.projects.map{|project|project.pid},
+      project_string_key_sim: self.project.string_key,
+      project_pid_sim: self.project.pid,
+      project_pid_ssm: self.project.pid,
       publish_target_pid_sim: self.publish_targets.map{|publish_target|publish_target.pid},
       publish_target_pid_ssm: self.publish_targets.map{|publish_target|publish_target.pid},
       flattened_dynamic_field_data_ssm: flattened_dynamic_field_data.to_json # This is kept here for caching/performance purposes, flat display of any field without having to check with Fedora.
     }
 
-    project_display_labels = self.projects.map{|project|project.display_label}
-    doc[:project_display_label_sim] = project_display_labels
-    doc[:project_display_label_ssm] = project_display_labels
+    doc[:project_display_label_sim] = self.project.display_label
+    doc[:project_display_label_ssm] = self.project.display_label
 
     search_keyword_teim = []
     search_identifier_sim = []

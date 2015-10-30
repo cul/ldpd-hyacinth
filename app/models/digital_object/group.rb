@@ -13,7 +13,6 @@ class DigitalObject::Group < DigitalObject::Base
     pid = self.next_pid
     bag_aggregator = BagAggregator.new(:pid => pid)
 
-    bag_aggregator.datastreams["DC"].dc_identifier = [pid]
     return bag_aggregator
   end
 
