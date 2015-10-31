@@ -9,6 +9,19 @@ module DigitalObject::DynamicField
       # Replace existing dynamic_fiel_data with newly supplied value
       @dynamic_field_data = new_dynamic_field_data
     end
+    
+    # Remove blank fields
+    remove_blank_fields_from_dynamic_field_data!(@dynamic_field_data)
+    
+    # Next steps:
+    # 1) Register any non-existent newly-supplied URIs
+    
+    # TODO
+    
+    # 2) Correct associated URI fields (value, etc.), regardless of what user entered, by running remove_extra_uri_data_from_dynamic_field_data!() followed by add_extra_uri_data_to_dynamic_field_data!()
+    self.remove_extra_uri_data_from_dynamic_field_data!(@dynamic_field_data)
+    
+    self.add_extra_uri_data_to_dynamic_field_data!(@dynamic_field_data)
   end
 
   def remove_blank_fields_from_dynamic_field_data!(df_data=@dynamic_field_data)
@@ -25,13 +38,18 @@ module DigitalObject::DynamicField
         value.delete_if{|element|
           element.blank?
         }
-
+      elsif value.is_a?(Hash)
+        # This code will run when we're dealing with something like a controlled
+        # term field, which is a hash that contains a hash as a value.
+        remove_blank_fields_from_dynamic_field_data!(value)
       end
     }
+    
     # Step 2: Delete blank values on this object level
     df_data.delete_if{|key, value|
       value.blank?
     }
+    
   end
 
   def remove_dynamic_field_data_key!(dynamic_field_or_field_group_name, df_data=@dynamic_field_data)
@@ -75,10 +93,19 @@ module DigitalObject::DynamicField
       else
         unless (omit_blank_values && value.blank?)
           flat_hash[key] = [] unless flat_hash.has_key?(key)
-          flat_hash[key] << value
+          
+          if value.is_a?(Hash) && value.has_key?('uri')
+            #This is a URI value.  Get value of 'value' key.
+            flat_hash[key] << value['value']
+          else
+            #This is just a regular non-controlled-field dynamic_field value.
+            flat_hash[key] << value
+          end
+          
         end
       end
     }
+    
     return flat_hash
   end
 
