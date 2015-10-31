@@ -57,6 +57,11 @@ class Project < ActiveRecord::Base
     return self.enabled_dynamic_fields.includes(:dynamic_field).where(digital_object_type: digital_object_type).to_a
   end
 
+  # Get dynamic_field_ids for enabled dynamic fields, irregardless of object type, no duplicates
+  def get_ids_of_enabled_dynamic_fields_no_duplicates
+    return self.enabled_dynamic_fields.select(:dynamic_field_id).distinct.pluck(:dynamic_field_id).to_a
+  end
+
   def get_asset_directory
     if self.full_path_to_custom_asset_directory.present?
       self.full_path_to_custom_asset_directory

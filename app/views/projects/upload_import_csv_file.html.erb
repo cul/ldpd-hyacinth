@@ -1,0 +1,7 @@
+<%= render 'import_export_csv_nav' %>
+<h1>File will be seleted and uploaded from here</h1>
+
+<%= form_tag({:action => :process_import_csv_file}, multipart: true) do %>
+  <%= file_field_tag :import_file %>
+  <%= submit_tag( "Import" ) %>
+<% end %>

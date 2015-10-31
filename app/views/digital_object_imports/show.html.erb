@@ -1,0 +1,32 @@
+<h1>Digital Object Import (id: <%= @digital_object_import.id %>)</h1>
+<p>
+  <strong>Created on: </strong>
+  <%= @digital_object_import.created_at.localtime %>
+</p>
+<p>
+  <strong>Updated on: </strong>
+  <%= @digital_object_import.updated_at.localtime %>
+</p>
+<p>
+  <strong>Import Job:</strong>
+  <%= link_to @digital_object_import.import_job.name, import_job_path(@digital_object_import.import_job) %>
+</p>
+<p>
+  <strong>Status:</strong>
+  <%= @digital_object_import.status %>
+</p>
+<p>
+  <strong>Digital object data:</strong>
+  <br>
+  <%= @digital_object_import.digital_object_data %>
+</p>
+<p>
+  <strong>Errors:</strong>
+  <br>
+  <%= 'TO BE IMPLEMENTED' %>
+</p>
+<% if @import_job %>
+<%= link_to 'Return to listing', import_job_digital_object_imports_path(@import_job) %>
+<% else %>
+<%= link_to 'Return to listing', digital_object_imports_path %>
+<% end %>

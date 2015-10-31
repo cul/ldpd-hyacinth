@@ -1,0 +1,18 @@
+<%= render partial: 'import_export_csv_nav' %>
+<h1>Let's select some headers for import!</h1>
+<h5> Here are the ids (no duplicates) of the enabled dynamic fields, in an array:</h5>
+<p>
+<%= @enabled_dynamic_fields_ids %>
+</p>
+<h5> Here are the dynamic fields corresponding to the above ids </h5>
+<%@enabled_dynamic_fields_csv_header.each do |dynamic_field| %>
+<p>
+<%= dynamic_field.inspect %>
+<br>
+<%= dynamic_field.display_label %>
+<br>
+<%= dynamic_field.string_key %>
+</p>
+<% end %>
+
+
