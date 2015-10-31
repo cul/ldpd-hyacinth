@@ -13,7 +13,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
     
     let(:sample_item_digital_object_data) { JSON.parse( fixture('sample_digital_object_data/new_item.json').read ) }
     
-    it "sets the correct fields" do  
+    it "sets the correct fields" do
       @digital_object = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
       @digital_object.set_digital_object_data(sample_item_digital_object_data, false)
       

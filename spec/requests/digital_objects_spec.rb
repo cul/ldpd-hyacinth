@@ -31,7 +31,7 @@ RSpec.describe "DigitalObjects", :type => :request do
         response_json = JSON.parse(response.body)
         expect(response_json).to eq({
           'success' => false,
-          'errors' => ['Missing param digital_object']
+          'errors' => ['Missing param digital_object_data_json']
         })
       end
       
@@ -41,21 +41,21 @@ RSpec.describe "DigitalObjects", :type => :request do
         sample_item_digital_object_data['digital_object_type']['string_key'] = 'invalid_type'
         
         post(digital_objects_path, {
-          digital_object: sample_item_digital_object_data
+          digital_object_data_json: JSON.generate(sample_item_digital_object_data)
         })
         
         expect(response.status).to be(200)
         response_json = JSON.parse(response.body)
         expect(response_json).to eq({
           'success' => false,
-          'errors' => ['Invalid digital_object_type string_key: invalid_type']
+          'errors' => ['Invalid digital_object_type specified: digital_object_type => {"string_key"=>"invalid_type"}']
         })
       end
       
       it "successfully creates an object when the correct set of parameters are supplied" do
         request_spec_sign_in_admin_user()
         post(digital_objects_path, {
-          digital_object: sample_item_digital_object_data
+          digital_object_data_json: JSON.generate(sample_item_digital_object_data)
         })
         
         expect(response.status).to be(200)

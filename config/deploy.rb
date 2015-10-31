@@ -59,6 +59,7 @@ namespace :deploy do
 
     run "mkdir -p #{release_path}/db"
     run "ln -nfs #{deploy_to}shared/#{rails_env}.sqlite3 #{release_path}/db/#{rails_env}.sqlite3"
+    run "ln -nfs #{deploy_to}shared/uri_service_#{rails_env}.sqlite3 #{release_path}/db/uri_service_#{rails_env}.sqlite3"
   end
 
 

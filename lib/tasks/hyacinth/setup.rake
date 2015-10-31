@@ -131,7 +131,7 @@ namespace :hyacinth do
           },
           'database' => {
             'adapter' => 'sqlite',
-            'database' => 'db/' + env_name + '.sqlite3',
+            'database' => 'db/uri_service_' + env_name + '.sqlite3',
             'max_connections' => 5,
             'pool_timeout' => 5000
           }

@@ -11,11 +11,8 @@ namespace :hyacinth do
       
       ENV['RAILS_ENV'] = Rails.env
       
-      # Clear UriService data
-      UriService.client.db[UriService::VOCABULARIES].delete
-      UriService.client.db[UriService::TERMS].delete
-      UriService.client.reindex_all_terms(true, false)
-      # Setup UriService tables if they haven't already been set up
+      # Clear UriService data and set up required tables
+      Rake::Task["uri_service:db:drop_tables_and_clear_solr"].invoke
       Rake::Task["uri_service:db:setup"].invoke
       
       # Reset Hyacinth stuff
