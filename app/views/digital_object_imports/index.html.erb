@@ -1,0 +1,39 @@
+<% if @import_job %>
+<h1>Digital Object Imports for <%= link_to @import_job.name, import_job_path(@import_job) %></h1>
+<% else %>
+<h1>Digital Object Imports for all import jobs</h1>
+<% end %>
+<table class="table table-condensed table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Id</th>
+      <th>Status</th>
+      <th>Created at</th>
+      <th>Updated at</th>
+      <% if not @import_job %>
+      <th>Import job</th>
+      <% end %>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @digital_object_imports.each do |digital_object_import| %>
+      <tr>
+	<% if @import_job %>
+        <td><%= link_to digital_object_import.id, import_job_digital_object_import_path(digital_object_import.import_job,digital_object_import) %></td>
+	<% else %>
+        <td><%= link_to digital_object_import.id, digital_object_import_path(digital_object_import) %></td>
+	<% end %>
+        <td><%= digital_object_import.status %></td>
+        <td><%= digital_object_import.created_at.localtime %></td>
+        <td><%= digital_object_import.updated_at.localtime %></td>
+	<% if not @import_job %>
+	<td><%= link_to digital_object_import.import_job.name , import_job_path(digital_object_import.import_job) %></td>
+	<% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<% if @import_job %>
+<%= link_to 'Return to import job', import_job_path(@import_job) %>
+<% end %>

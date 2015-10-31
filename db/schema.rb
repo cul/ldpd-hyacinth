@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150909213948) do
+ActiveRecord::Schema.define(version: 20151007200326) do
 
   create_table "controlled_vocabularies", force: :cascade do |t|
     t.string   "string_key"
@@ -21,6 +21,17 @@ ActiveRecord::Schema.define(version: 20150909213948) do
   end
 
   add_index "controlled_vocabularies", ["only_managed_by_admins"], name: "index_controlled_vocabularies_on_only_managed_by_admins"
+
+  create_table "digital_object_imports", force: :cascade do |t|
+    t.text     "digital_object_data"
+    t.integer  "status",                null: false
+    t.text     "digital_object_errors"
+    t.integer  "import_job_id",         null: false
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
+  end
+
+  add_index "digital_object_imports", ["import_job_id"], name: "index_digital_object_imports_on_import_job_id"
 
   create_table "digital_object_records", force: :cascade do |t|
     t.string   "pid"
@@ -140,6 +151,15 @@ ActiveRecord::Schema.define(version: 20150909213948) do
   end
 
   add_index "fieldsets", ["project_id"], name: "index_fieldsets_on_project_id"
+
+  create_table "import_jobs", force: :cascade do |t|
+    t.string   "name",       null: false
+    t.integer  "user_id",    null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "import_jobs", ["user_id"], name: "index_import_jobs_on_user_id"
 
   create_table "pid_generators", force: :cascade do |t|
     t.string   "namespace"

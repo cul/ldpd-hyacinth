@@ -26,6 +26,15 @@ Hyacinth::Application.routes.draw do
   resources :pid_generators
   resources :xml_datastreams
 
+  # add actions as needed, remove "only:" restriction if all actions needed
+  resources :import_jobs, only: [:index, :show] do
+
+    resources :digital_object_imports, only: [:index, :show]
+
+  end
+
+  resources :digital_object_imports, only: [:index, :show]
+
   resources :digital_objects do
     collection do
       match 'search', via: [:get, :post]
@@ -68,6 +77,10 @@ Hyacinth::Application.routes.draw do
       get 'edit_enabled_dynamic_fields/:digital_object_type_id', :action => 'edit_enabled_dynamic_fields', :as => 'edit_enabled_dynamic_fields' # edit_enabled_dynamic_fields_project_path
       patch 'update_enabled_dynamic_fields/:digital_object_type_id', :action => 'update_enabled_dynamic_fields'
       get 'fieldsets', :action => 'fieldsets', :as => 'fieldsets' # fieldsets_project_path
+      get 'select_dynamic_fields_for_csv_export', :action => 'select_dynamic_fields_for_csv_export', :as => 'select_dynamic_fields_for_csv_export' # select_dynamic_fields_for_csv_export
+      get 'select_dynamic_fields_csv_header_for_import', :action => 'select_dynamic_fields_csv_header_for_import', :as => 'select_dynamic_fields_csv_header_for_import' # select_dynamic_fields_csv_header_for_import
+      get 'upload_import_csv_file', :action => 'upload_import_csv_file', :as => 'upload_import_csv_file' # upload_import_csv_file
+      post 'process_import_csv_file', :action => 'process_import_csv_file', :as => 'process_import_csv_file' # process_import_csv_file
     end
 
     collection do

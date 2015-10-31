@@ -1,5 +1,5 @@
 class ProjectsController < ApplicationController
-  before_action :set_project, only: [:show, :edit, :update, :destroy, :enabled_dynamic_fields, :edit_enabled_dynamic_fields, :update_enabled_dynamic_fields, :edit_project_permissions, :update_project_permissions, :fieldsets, :edit_publish_targets, :update_publish_targets]
+  before_action :set_project, only: [:show, :edit, :update, :destroy, :enabled_dynamic_fields, :edit_enabled_dynamic_fields, :update_enabled_dynamic_fields, :edit_project_permissions, :update_project_permissions, :fieldsets, :edit_publish_targets, :update_publish_targets, :select_dynamic_fields_for_csv_export, :select_dynamic_fields_csv_header_for_import, :upload_import_csv_file, :process_import_csv_file]
   before_action :require_appropriate_permissions!
   before_action :set_contextual_nav_options
 
@@ -153,6 +153,50 @@ class ProjectsController < ApplicationController
         render json: projects_with_enabled_digital_object_types
       }
     end
+  end
+
+  # GET /project/select_dynamic_fields_for_csv_export
+  def select_dynamic_fields_for_csv_export
+  end
+
+  # GET /project/select_dynamic_fields_csv_header_for_import
+  def select_dynamic_fields_csv_header_for_import
+
+    # dynamic fields can be enabled for different digitial object types (item, asset, group) within a project
+    # so a specific field may show up more than once in a query result which returns duplicates. We do not
+    # want duplicates in our result set.
+    @enabled_dynamic_fields_ids = @project.get_ids_of_enabled_dynamic_fields_no_duplicates
+
+    @enabled_dynamic_fields_csv_header = ::DynamicField.find(@enabled_dynamic_fields_ids)
+
+  end
+
+  # GET /project/select_import_csv_file
+  def upload_import_csv_file
+  end
+
+  # POST /project/process_import_csv_file
+  def process_import_csv_file
+
+    import_file = params[:import_file]
+    @import_filename = import_file.original_filename
+    
+    import_job = ImportJob.create!(name: @import_filename, user: current_user)
+    @array_of_digital_object_data = Array.new
+    Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(import_file.read) do |digital_object_data|
+      # if neither the project pid nor project string_key are specified in the import data, insert the project pid
+      digital_object_data['project']['pid'] = @project.pid if ( digital_object_data['project']['string_key'].blank? &&
+                                                              digital_object_data['project']['pid'].blank? )
+      # encode the data as JSON string for insertion into the database
+      digital_object_data_encoded_as_json = ActiveSupport::JSON.encode digital_object_data
+      @array_of_digital_object_data.push(digital_object_data_encoded_as_json)
+      digital_object_import = DigitalObjectImport.create!(import_job: import_job, 
+                                                          digital_object_data: digital_object_data_encoded_as_json)
+      import_job.digital_object_imports << digital_object_import
+      # queue up digital_object_import for procssing -- entails queueing up the id of the instance
+      Resque.enqueue(ProcessDigitalObjectImportJob, digital_object_import.id)
+    end
+
   end
 
   private
