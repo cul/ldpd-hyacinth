@@ -1,7 +1,7 @@
 [
    {
       "pid" : "",
-      "identifier" : ["new_asset1"],
+      "identifiers" : ["new_asset1"],
       "parent_pid_or_identifier" : ["cul:456"],
       "digital_object_type" : {
          "string_key" : "asset"
@@ -9,7 +9,7 @@
        "project" : {
          "string_key" : "the_project"
        },
-      "publish_target":[
+      "publish_targets":[
          {
             "string_key" : "publish_target2"
          },
@@ -42,7 +42,7 @@
    },
    {
       "pid" : "",
-      "identifier" : ["new_item1"],
+      "identifiers" : ["new_item1"],
       "parent_pid_or_identifier" : [""],
       "digital_object_type" : {
          "string_key" : "item"
@@ -50,7 +50,7 @@
        "project" : {
          "string_key" : "the_project"
        },
-      "publish_target":[
+      "publish_targets":[
          {
             "string_key" : "publish_target1"
          },
@@ -83,7 +83,7 @@
    },
    {
       "pid" : "cul:456",
-      "identifier" : [""],
+      "identifiers" : [""],
       "parent_pid_or_identifier" : [""],
       "digital_object_type" : {
          "string_key" : "item"
@@ -91,7 +91,7 @@
        "project" : {
          "string_key" : "the_project"
        },
-      "publish_target":[
+      "publish_targets":[
          {
             "string_key" : "publish_target2"
          },
@@ -124,7 +124,7 @@
    },
    {
       "pid" : "",
-      "identifier" : ["new_asset2"],
+      "identifiers" : ["new_asset2"],
       "parent_pid_or_identifier" : ["new_item1"],
       "digital_object_type" : {
          "string_key" : "asset"
@@ -132,7 +132,7 @@
        "project" : {
          "string_key" : "the_project"
        },
-      "publish_target":[
+      "publish_targets":[
          {
             "string_key" : ""
          },

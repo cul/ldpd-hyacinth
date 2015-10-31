@@ -1,6 +1,6 @@
 {
    "pid" : "cul:123",
-   "identifier" : ["another_identifier"],
+   "identifiers" : ["another_identifier"],
    "parent_pid_or_identifier" : ["cul:parent123"],
    "digital_object_type" : {
       "string_key" : "item"
@@ -8,7 +8,7 @@
     "project" : {
       "string_key" : "the_project"
     },
-   "publish_target":[
+   "publish_targets":[
       {
          "string_key" : "publish_target1"
       },

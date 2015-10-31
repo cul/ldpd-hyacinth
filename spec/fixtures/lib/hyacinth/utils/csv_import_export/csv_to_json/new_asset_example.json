@@ -1,5 +1,5 @@
 {
-   "identifier" : ["projectname.001.1", "alternate_identifier"],
+   "identifiers" : ["projectname.001.1", "alternate_identifier"],
    "parent_pid_or_identifier" : ["cul:parent1", "some_parent_identifier"],
    "digital_object_type" : {
       "string_key" : "asset"
@@ -8,7 +8,7 @@
    "project" : {
       "string_key" : "the_project"
     },
-   "publish_target":[
+   "publish_targets":[
       {
          "string_key" : "publish_target1"
       },

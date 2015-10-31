@@ -1,5 +1,5 @@
 {
-   "identifier" : ["projectname.00001"],
+   "identifiers" : ["identifier.001", "identifier.002"],
    "parent_digital_object" : [
       {
          "identifier": "group.001"
@@ -11,7 +11,7 @@
    "project" : {
       "string_key" : "test"
    },
-   "publish_target":[
+   "publish_targets":[
       {
          "string_key" : "test_publish_target_1"
       },
