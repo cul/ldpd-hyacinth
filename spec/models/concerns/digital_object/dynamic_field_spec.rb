@@ -144,6 +144,14 @@ RSpec.describe DigitalObject::Base, :type => :model do
               ]
             }
           ],
+          "controlled_field_group" => [
+            {
+              "controlled_field" =>  {
+                "controlled_field_uri" => "",
+                "controlled_field_value" => "",
+              }
+            }
+          ],
           "collection" => [
             {
               "collection_authorized_term_uri" => "http://localhost:8080/fedora/objects/cul:p5hqbzkh2p"

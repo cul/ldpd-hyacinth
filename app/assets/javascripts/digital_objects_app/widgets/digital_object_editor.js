@@ -105,9 +105,12 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.serializeDynamicFieldElement = fu
 
   if ($input.is(':checkbox')) {
     return $input.is(":checked"); // If we use val() on a checkbox, we'll get values like 'on' and 'off'
+  } else if($input.hasClass('controlled_term_uri_field')) {
+    return {uri: $input.val()};
   } else {
     return $input.val();
   }
+  
 };
 
 
@@ -387,7 +390,6 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
         if ($formElement.is(':checkbox')) {
           $(this).html($formElement.is(":checked"));
         } else if ($formElement.hasClass('controlled_term_uri_field')) {
-          console.log($formElement.closest('.controlled_term_field').find('.controlled_term_value_display'));
           $(this).html($formElement.closest('.controlled_term_field').find('.controlled_term_value_display').html());
         } else {
           $(this).html(_.escape($formElement.val()).replace(/(?:\r\n|\r|\n)/g, '<br />'));

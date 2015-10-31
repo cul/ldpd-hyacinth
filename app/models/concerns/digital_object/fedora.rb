@@ -129,8 +129,7 @@ module DigitalObject::Fedora
   end
 
   def add_extra_uri_data_to_dynamic_field_data!(dynamic_field_data)
-    
-    hashes_to_modify = [] # TODO: Aggregate all hashes into array and do single URI lookup for better performance (fewer UriService calls)
+    #hashes_to_modify = [] # TODO: Aggregate all hashes into array and do single URI lookup for better performance (fewer UriService calls)
     
     get_controlled_term_field_string_keys().each do |controlled_term_df_string_key|
       Hyacinth::Utils::HashUtils::find_nested_hashes_that_contain_key(dynamic_field_data, controlled_term_df_string_key).each do |dynamic_field_group_value|
@@ -183,7 +182,6 @@ module DigitalObject::Fedora
       #  => [6, 7]
       # Maintains order of existing items, adds missing items, cleans up nonexistent items
       @ordered_child_digital_object_pids = (@ordered_child_digital_object_pids | risearch_members) & risearch_members
-      puts self.pid + ': Child objects after merge: ' + @ordered_child_digital_object_pids.inspect
     end
 
   end

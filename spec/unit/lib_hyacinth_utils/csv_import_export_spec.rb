@@ -498,6 +498,25 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
       expect(new_digital_object_data).to eq(expected)
     end
     
+    it "properly handles a dot-notated field with a blank value" do
+      current_builder_path = []
+      Hyacinth::Utils::CsvImportExportUtils.process_dynamic_field_value(new_digital_object_data, '', 'name-1:name_value.value', current_builder_path)
+      Hyacinth::Utils::CsvImportExportUtils.process_dynamic_field_value(new_digital_object_data, '', 'name-1:name_value.uri', current_builder_path)
+      expected = {
+        "dynamic_field_data" => {
+          "name" => [
+            {
+              "name_value" => {
+                "value" => "",
+                "uri" => ""
+              }
+            }
+          ]
+        }
+      }
+      expect(new_digital_object_data).to eq(expected)
+    end
+    
     it "properly handles a blank field value (as an empty string)" do
       current_builder_path = []
       Hyacinth::Utils::CsvImportExportUtils.process_dynamic_field_value(new_digital_object_data, '', 'title-1:title_sort_portion', current_builder_path)

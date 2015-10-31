@@ -344,7 +344,6 @@ class DigitalObject::Base
           # For existing records, we always lock on @db_record during Fedora reads/writes (and wrap in a transaction)
           @db_record.lock! # Within the established transaction, lock on this object's row.  Remember: "lock!" also reloads object data from the db, so perform all @db_record modifications AFTER this call.
         end
-        remove_blank_fields_from_dynamic_field_data!
         set_created_and_updated_data_from_db_record
         set_fedora_hyacinth_ds_data
         set_fedora_project_and_publisher_relationships
