@@ -1,3 +1,13 @@
+<%
+  //Passed params:
+  //
+  //authorizedTerms
+  //page
+  //moreAvailable
+  //currentUserCanAddTerms
+  //additionalFieldsForControlledVocabulary
+%>
+
 <% if (currentUserCanAddTerms) { %>
   <button class="btn btn-link btn-xs pull-right add_new_authorized_term">Add A New Term +</button>
 <% } %>
@@ -18,13 +28,20 @@
             <span class="sr-only">Toggle Dropdown</span>
           </button>
           <ul class="dropdown-menu" style="padding:.5em 0em;">
-            <li><a>URI: <%- authorizedTerms[i]['uri'] %></a></li>
+            <li><a><strong>URI</strong>: <%- authorizedTerms[i]['uri'] %></a></li>
             <li role="separator" class="divider"></li>
             <% $.each(authorizedTerms[i], function(key, value){ %>
               <% if(key == 'uri') {return;} %>
               <% if(key == 'value') {return;} %>
               <% if(key == 'vocabulary_string_key') {return;} %>
-              <li><a><strong><%- key %></strong>: <%- value %></a></li>
+              <%
+                if (key == 'type') {
+                  display_label = 'Type';
+                } else {
+                  display_label = additionalFieldsForControlledVocabulary[key] ? additionalFieldsForControlledVocabulary[key]['display_label'] : key
+                }
+              %>
+              <li><a><strong><%- display_label %></strong>: <%- value %></a></li>
             <% }); %>
           </ul>
         </div>

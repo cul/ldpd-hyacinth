@@ -31,7 +31,7 @@
     <%= label_tag 'term[value]', 'Value' %><br>
     <%= text_field_tag 'term[value]', params[:term]['value'] || (@term.nil? ? '' : @term['value']) || '', {class: 'form-control'} %>
   </div>
-  <div class="field uri-field">
+  <div class="field term-uri-field">
     <%= label_tag 'term[uri]', 'URI (Leave blank for local term)' %><br>
     <%= hidden_field_tag 'term[uri]', params[:term]['uri'] || (@term.nil? ? '' : @term['uri']) || '', disabled: (@term.nil?) %>
     <%= text_field_tag 'term[uri]', params[:term]['uri'] || (@term.nil? ? '' : @term['uri']) || '', disabled: !(@term.nil?), class: 'form-control' %>
