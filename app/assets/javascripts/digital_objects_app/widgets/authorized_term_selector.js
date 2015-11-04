@@ -111,6 +111,26 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
     that.$containerElement.find('.authorized_term_search').show();
     that.$containerElement.find('.authorized_term_adder').hide();
   });
+  
+  //add_authorized_term_form type select element should hide or show certain form fields
+  this.$containerElement.find('.add_authorized_term_form').on('change', '.term-type-select', function(e){
+    var type = $(this).val();
+    var $addAuthorizedTermForm = $(this).closest('.add_authorized_term_form');
+    if (type == 'external') {
+        $addAuthorizedTermForm.find('.term-uri-field').show();
+        $addAuthorizedTermForm.find('.term-additional-field').show();
+    } else if (type == 'local') {
+        $addAuthorizedTermForm.find('.term-uri-field').hide();
+        $addAuthorizedTermForm.find('.term-uri-field').find('input').val(''); // clear value of uri input
+        $addAuthorizedTermForm.find('.term-additional-field').show();
+    } else if (type == 'temporary') {
+        $addAuthorizedTermForm.find('.term-uri-field').hide().val('');
+        $addAuthorizedTermForm.find('.term-uri-field').find('input').val(''); // clear value of uri input
+        $addAuthorizedTermForm.find('.term-additional-field').hide();
+        $addAuthorizedTermForm.find('.term-additional-field').find('input').val(''); // clear values of child inputs
+    }
+  });
+  this.$containerElement.find('.add_authorized_term_form').find('.term-type-select').change();  //Manually trigger change event at load time
 
   this.$containerElement.find('.add_authorized_term_form').on('submit', function(e){
     e.preventDefault();
@@ -196,7 +216,17 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.generateAuthorizedTe
   var orderedFieldNames = ['value', 'uri'].concat(_.keys(this.additionalFieldsForControlledVocabulary).sort());
   
   orderedFieldNames.forEach(function(field_name){
-    htmlToReturn += '<div class="row field">' +
+    
+    var fieldClass = null;
+    if(field_name == 'uri') {
+        fieldClass = 'term-uri-field';
+    } else if (field_name == 'value') {
+        fieldClass = 'term-value-field';
+    } else {
+        fieldClass = 'term-additional-field';
+    }
+    
+    htmlToReturn += '<div class="row field ' + fieldClass + '">' +
       '<div class="col-md-2">' +
         formFieldsToRender[field_name]['display_label'] +
       '</div>' +
@@ -236,7 +266,8 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.updateSearchResults 
         authorizedTerms: termResponse['terms'],
         page: that.currentPage,
         moreAvailable: termResponse['more_available'],
-        currentUserCanAddTerms: termResponse['current_user_can_add_terms']
+        currentUserCanAddTerms: termResponse['current_user_can_add_terms'],
+        additionalFieldsForControlledVocabulary: that.additionalFieldsForControlledVocabulary
       })
     );
 
