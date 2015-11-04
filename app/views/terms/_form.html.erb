@@ -1,4 +1,4 @@
-<%= form_tag(@term.nil? ? terms_path : term_path(@term['uri']), method: @term.nil? ? 'post' : 'put') do %>
+<%= form_tag(@term.nil? ? terms_path : term_path(@term['uri']), method: @term.nil? ? 'post' : 'put', id: 'add-or-edit-term-form') do %>
   <% if @errors.present? %>
     <div id="error_explanation">
       <h2><%= pluralize(@errors.count, "error") %> prohibited this authorized_term from being saved:</h2>
@@ -15,6 +15,14 @@
   <% params[:term]['additional_fields'] = {} if params[:term][:additional_fields].blank? %>
 
   <div class="field">
+    <%= label_tag 'term[type]', 'Term Type' %>
+    <%= select_tag('term[type]', options_for_select(
+      {'External' => UriService::TermType::EXTERNAL, 'Local' => UriService::TermType::LOCAL, 'Temporary' => UriService::TermType::TEMPORARY},
+      params[:term]['type'] || (@term.nil? ? 'external' : @term['value'])
+    ), class: 'form-control', id: 'term-type-selector') %>
+  </div>
+
+  <div class="field">
     <%= label_tag 'term[controlled_vocabulary_string_key]', 'Controlled Vocabulary' %>
     <%= hidden_field_tag 'term[controlled_vocabulary_string_key]', @controlled_vocabulary.string_key %>
     <%= text_field_tag 'term[controlled_vocabulary_string_key]', @controlled_vocabulary.display_label, disabled: true, class: 'form-control' %>
@@ -23,17 +31,19 @@
     <%= label_tag 'term[value]', 'Value' %><br>
     <%= text_field_tag 'term[value]', params[:term]['value'] || (@term.nil? ? '' : @term['value']) || '', {class: 'form-control'} %>
   </div>
-  <div class="field">
+  <div class="field uri-field">
     <%= label_tag 'term[uri]', 'URI (Leave blank for local term)' %><br>
-    <%= hidden_field_tag 'term[uri]', params[:term]['uri'] || (@term.nil? ? '' : @term['uri']) || '' %>
+    <%= hidden_field_tag 'term[uri]', params[:term]['uri'] || (@term.nil? ? '' : @term['uri']) || '', disabled: (@term.nil?) %>
     <%= text_field_tag 'term[uri]', params[:term]['uri'] || (@term.nil? ? '' : @term['uri']) || '', disabled: !(@term.nil?), class: 'form-control' %>
   </div>
   
-  <% TERM_ADDITIONAL_FIELDS.each do |field_name, field_config| %>
-    <div class="field">
-      <%= label_tag "term[additional_fields][#{field_name}]", field_config['display_label'] + ' (Optional)' %><br>
-      <%= text_field_tag( "term[additional_fields][#{field_name}]", params[:term]['additional_fields'][field_name] || (@term.nil? ? '' : @term[field_name]) || '', {class: 'form-control'} ) %>
-    </div>
+  <% if TERM_ADDITIONAL_FIELDS[@controlled_vocabulary.string_key] %>
+    <% TERM_ADDITIONAL_FIELDS[@controlled_vocabulary.string_key].each do |field_name, field_config| %>
+      <div class="field term-additional-field">
+        <%= label_tag "term[#{field_name}]", field_config['display_label'] + ' (Optional)' %><br>
+        <%= text_field_tag( "term[#{field_name}]", params[:term][field_name] || (@term.nil? ? '' : @term[field_name]) || '', {class: 'form-control'} ) %>
+      </div>
+    <% end %>
   <% end %>
 
   <div class="actions">

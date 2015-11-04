@@ -7,13 +7,27 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector = function(containerElementId,
 
   this.controlledVocabularyStringKey = this.$controlledTermUriFieldElement.attr('data-controlled-vocabulary-string-key');
   this.controlledVocabularyDisplayLabel = this.$controlledTermUriFieldElement.attr('data-controlled-vocabulary-display-label');
+  this.additionalFieldsForControlledVocabulary = {};
   
   this.latestSearchPhrase = null;
   this.currentPage = 1;
   this.autoUpdateIntervalId = null;
   this.updateInProgress = false;
-
-  this.init();
+  
+  //Get additional fields for this controlled vocabulary and then run init() function.
+  
+  var that = this;
+  
+  $.ajax({
+      url: '/controlled_vocabularies/' + this.controlledVocabularyStringKey + '/term_additional_fields.json',
+      type: 'GET',
+      cache: false
+    }).done(function(termAdditionalFieldsResponse){
+      that.additionalFieldsForControlledVocabulary = termAdditionalFieldsResponse;
+      that.init(); // Call widget init function!
+    }).fail(function(){
+      alert(Hyacinth.unexpectedAjaxErrorMessage);
+    });
 };
 
 /*******************************
@@ -42,7 +56,7 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
   //Add class to container element and add object reference to the container element
   this.$containerElement.addClass(Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.SELECTOR_ELEMENT_CLASS); //Add class to container element
   this.$containerElement.data(Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.SELECTOR_DATA_KEY, this); //Assign this editor object as data to the container element so that we can access it later
-
+  
   this.$containerElement.on('click', '.choose_authorized_term_button', function(e){
     e.preventDefault();
 
@@ -70,6 +84,9 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
   this.$containerElement.html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/authorized_term_selector/index.ejs'));
 
   this.$containerElement.find('.authorized_term_adder').hide();
+  
+  //Set up add_authorized_term_form fields
+  this.$containerElement.find('.add_authorized_term_form').find('.term_fields').html(this.generateAuthorizedTermFormFieldHtml());
 
   this.updateSearchResults(); //Immediately update the search results
 
@@ -88,6 +105,12 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
     that.$containerElement.find('.authorized_term_search').hide();
     that.$containerElement.find('.authorized_term_adder').show();
   });
+  
+  this.$containerElement.on('click', '.back_to_term_search', function(e){
+    e.preventDefault();
+    that.$containerElement.find('.authorized_term_search').show();
+    that.$containerElement.find('.authorized_term_adder').hide();
+  });
 
   this.$containerElement.find('.add_authorized_term_form').on('submit', function(e){
     e.preventDefault();
@@ -95,52 +118,38 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
     var $submitButton = that.$containerElement.find('.add_authorized_term_form').find('.add_authorized_term_form_submit_button');
     $submitButton.attr('data-original-html', $submitButton.html()).html('Adding term...');
 
+    var termData = {
+      controlled_vocabulary_string_key: that.controlledVocabularyStringKey,
+      type: $(this).find('.term-type-select').val()
+    };
+    $(this).find('.term_fields').find('.term-field-form-element').each(function(){
+      termData[$(this).attr('name')] = $(this).val();
+    })
+    
     $.ajax({
       url: '/terms.json',
       type: 'POST',
       data: {
-        authorized_term: {
-          value: $(this).find('input[name="value"]').val(),
-          value_uri: $(this).find('input[name="value_uri"]').val(),
-          controlled_vocabulary_string_key: that.controlledVocabularyStringKey
-        }
+        term: termData
       },
       cache: false
-    }).done(function(createAuthorizedTermResponse){
+    }).done(function(createTermResponse){
 
       var $submitButton = that.$containerElement.find('.add_authorized_term_form').find('.add_authorized_term_form_submit_button');
       $submitButton.html($submitButton.attr('data-original-html'));
 
-      if (typeof(createAuthorizedTermResponse['errors']) !== 'undefined') {
+      if (typeof(createTermResponse['errors']) !== 'undefined') {
         var errors = '<ul class="errors">';
-
-        fields_and_display_labels = [
-          {name: 'value', display_label: 'Value (required)'},
-          {name: 'uri', display_label: 'URI (leave blank for local term)'}
-        ]
-
-        for (var i = 0; i < fields_and_display_labels.length; i++) {
-          if(typeof(createAuthorizedTermResponse['errors'][fields_and_display_labels[i]['name']]) !== 'undefined') {
-            errors += '<li><strong>' + fields_and_display_labels[i]['display_label'] + '</strong> ' + createAuthorizedTermResponse['errors'][fields_and_display_labels[i]['name']].join('</li><li><strong>' + fields_and_display_labels[i]['display_label'] + '</strong> ') + '</li>';
-          }
-        }
-
+        createTermResponse['errors'].forEach(function(errorMessage){
+          errors += '<li>' + _.escape(errorMessage) + '</li>';
+        });
         errors += '</ul>';
 
         that.$containerElement.find('.add_authorized_term_form').find('.errors').html('<div class="alert alert-danger">' + errors + '</div>');
       } else {
         //Success!
-
-        that.$authorizedTermValueElement.val(createAuthorizedTermResponse['value_uri']);
-        that.$authorizedTermValueElement.attr('data-display-value', createAuthorizedTermResponse['value']);
-
-        that.$authorizedTermValueElement.val(createAuthorizedTermResponse['value']);
-        if (that.$authorizedTermCodeElement != null) { that.$authorizedTermCodeElement.val(createAuthorizedTermResponse['code']); }
-        if (that.$authorizedTermValueUriElement != null) { that.$authorizedTermValueUriElement.val(createAuthorizedTermResponse['value_uri']); }
-        if (that.$authorizedTermAuthorityElement != null) { that.$authorizedTermAuthorityElement.val(createAuthorizedTermResponse['authority']); }
-        if (that.$authorizedTermAuthorityUriElement != null) { that.$authorizedTermAuthorityUriElement.val(createAuthorizedTermResponse['authority_uri']); }
-
-
+        that.$controlledTermUriFieldElement.val(createTermResponse['uri']);
+        that.$controlledTermValueDisplayElement.html(createTermResponse['value']);
         Hyacinth.hideMainModal();
       }
     }).fail(function(){
@@ -168,6 +177,36 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
     that.updateSearchResults();
   }, 250);
 
+};
+
+Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.generateAuthorizedTermFormFieldHtml = function() {
+  
+  var htmlToReturn = '';
+  
+  var defaultFields = {
+    'value' : {
+      'display_label' : 'Value'
+    },
+    'uri' : {
+      'display_label' : 'URI'
+    }
+  }
+  
+  var formFieldsToRender = Hyacinth.ObjectHelpers.merge(this.additionalFieldsForControlledVocabulary, defaultFields);
+  var orderedFieldNames = ['value', 'uri'].concat(_.keys(this.additionalFieldsForControlledVocabulary).sort());
+  
+  orderedFieldNames.forEach(function(field_name){
+    htmlToReturn += '<div class="row field">' +
+      '<div class="col-md-2">' +
+        formFieldsToRender[field_name]['display_label'] +
+      '</div>' +
+      '<div class="col-md-10">' +
+        '<input type="text" name="' + field_name + '" class="form-control input-sm term-field-form-element" />' +
+      '</div>' +
+    '</div>';
+  });
+  
+  return htmlToReturn;
 };
 
 Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.updateSearchResults = function() {

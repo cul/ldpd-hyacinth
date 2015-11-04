@@ -26,26 +26,35 @@ class TermsController < ApplicationController
     @errors = []
     term_prms = term_params
     
+    @errors << 'A type is required for a new Term.' if term_prms['type'].blank?
     @errors << 'A Controlled Vocabulary must be set for a new Term.' if term_prms['controlled_vocabulary_string_key'].blank?
     @errors << 'A value is required for a new Term.' if term_prms['value'].blank?
     
     unless @errors.present?
+      
+      type = term_prms.delete('type')
+      
+      new_term_opts = {}
+      new_term_opts[:vocabulary_string_key] = term_prms.delete('controlled_vocabulary_string_key')
+      new_term_opts[:value] = term_prms.delete('value')
+      
+      # Delete fields that are blank. This is okay because we're in the create method and aren't using blank fields to clear out existing fields.
+      term_prms.delete_if{|key, value| value.blank?}
+      
+      new_term_opts[:uri] = term_prms.delete('uri') if term_prms.has_key?('uri')
+      
+      unless type == UriService::TermType::TEMPORARY
+        # Do not set additional_fields for TEMPORARY terms.
+        # For non-TEMPORARY terms, assume treat all remaining (non-deleted) parameters as additional_fields.
+        new_term_opts[:additional_fields] = term_prms if term_prms.present?
+      end
+      
       begin
-        if term_params['uri'].present?
-          @term = UriService.client.create_term(
-            term_params['controlled_vocabulary_string_key'],
-            term_params['value'],
-            term_params['uri'],
-            term_params['additional_fields']
-          )
-        else
-          @term = UriService.client.create_local_term(
-            term_params['controlled_vocabulary_string_key'],
-            term_params['value'],
-            term_params['additional_fields']
-          )
-        end
-      rescue UriService::NonExistentVocabularyError, UriService::InvalidUriError, UriService::ExistingUriError, UriService::InvalidAdditionalFieldKeyError, UriService::DisallowedDuplicateLocalTermValueError => e
+        @term = UriService.client.create_term(
+          type,
+          new_term_opts
+        )
+      rescue UriService::NonExistentVocabularyError, UriService::InvalidUriError, UriService::ExistingUriError, UriService::InvalidAdditionalFieldKeyError, UriService::InvalidOptsError => e
         @errors << e.message
       end
     end
@@ -73,8 +82,8 @@ class TermsController < ApplicationController
     term_prms = term_params
     
     begin
-      @term = UriService.client.update_term(term_params['uri'],
-        { value: term_params['value'], additional_fields: term_params['additional_fields']}
+      @term = UriService.client.update_term(term_prms['uri'],
+        { value: term_prms['value'], additional_fields: term_prms['additional_fields']}
       )
     rescue UriService::NonExistentUriError, UriService::InvalidAdditionalFieldKeyError => e
       @errors << e.message
@@ -110,7 +119,7 @@ class TermsController < ApplicationController
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_term
-    @term = UriService.client.find_term_by(uri: params[:id])
+    @term = UriService.client.find_term_by_uri(params[:id])
     raise ActionController::RoutingError.new('Could not find Term with URI: ' + params[:id]) if @term.nil?
   end
   
@@ -127,9 +136,8 @@ class TermsController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def term_params
     params.require(:term).permit([
-      :controlled_vocabulary_string_key, :value, :uri,
-      {:additional_fields => TERM_ADDITIONAL_FIELDS.map{|key, value| key.to_sym}}
-    ])
+      :controlled_vocabulary_string_key, :value, :uri, :type,
+    ] + (TERM_ADDITIONAL_FIELDS[params[:term]['controlled_vocabulary_string_key']].map{|key, value| key.to_sym}))
   end
 
   def adjust_params_if_controlled_vocabulary_string_key_is_present

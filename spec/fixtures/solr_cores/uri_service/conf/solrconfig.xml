@@ -25,6 +25,10 @@
       <str name="qf">value_suggest^30 value_suggest_ngram^50.0 uri^60.0</str>
       <str name="pf">value_suggest_edge^50.0</str>
       <str name="sort">score desc,value_ssort asc</str>
+      <str name="fl">
+        *,
+        score
+      </str>
     </lst>
   </requestHandler>
 

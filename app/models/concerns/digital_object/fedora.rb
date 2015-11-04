@@ -135,7 +135,7 @@ module DigitalObject::Fedora
       Hyacinth::Utils::HashUtils::find_nested_hashes_that_contain_key(dynamic_field_data, controlled_term_df_string_key).each do |dynamic_field_group_value|
         uri = dynamic_field_group_value[controlled_term_df_string_key]
         raise 'Expected string, but got ' + uri.class.name unless uri.is_a?(String)
-        term = UriService.client.find_term_by(uri: uri)
+        term = UriService.client.find_term_by_uri(uri)
         dynamic_field_group_value[controlled_term_df_string_key] = term
       end
     end

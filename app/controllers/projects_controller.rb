@@ -229,8 +229,6 @@ class ProjectsController < ApplicationController
       @contextual_nav_options['nav_title']['url'] = projects_path
     end
 
-
-
     case params[:action]
     when 'index'
       @contextual_nav_options['nav_items'].push(label: 'Add New Project', url: new_project_path) if current_user.is_admin?
