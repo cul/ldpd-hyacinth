@@ -53,9 +53,9 @@ namespace :deploy do
     run "ln -nfs #{deploy_to}shared/database.yml #{release_path}/config/database.yml"
     run "ln -nfs #{deploy_to}shared/fedora.yml #{release_path}/config/fedora.yml"
     run "ln -nfs #{deploy_to}shared/hyacinth.yml #{release_path}/config/hyacinth.yml"
+    run "ln -nfs #{deploy_to}shared/repository_cache.yml #{release_path}/config/repository_cache.yml"
     run "ln -nfs #{deploy_to}shared/secrets.yml #{release_path}/config/secrets.yml"
     run "ln -nfs #{deploy_to}shared/solr.yml #{release_path}/config/solr.yml"
-    run "ln -nfs #{deploy_to}shared/repository_cache.yml #{release_path}/config/repository_cache.yml"
     run "ln -nfs #{deploy_to}shared/term_additional_fields.yml #{release_path}/config/term_additional_fields.yml"
     run "ln -nfs #{deploy_to}shared/uri_service.yml #{release_path}/config/uri_service.yml"
 
