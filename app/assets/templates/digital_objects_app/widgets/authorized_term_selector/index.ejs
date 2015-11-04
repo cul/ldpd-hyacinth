@@ -5,32 +5,38 @@
   </div>
 
   <div class="authorized_term_adder">
+    
     <%
       fields_and_display_labels = [
-        {name: 'value', display_label: 'Value (required)'},
-        {name: 'code', display_label: 'Code'},
-        {name: 'value_uri', display_label: 'Value URI'},
-        {name: 'authority', display_label: 'Authority'},
-        {name: 'authority_uri', display_label: 'Authority URI'}
+        {name: 'term[value]', display_label: 'Value'},
+        {name: 'term[uri]', display_label: 'URI'},
+        //{name: 'another_field1', display_label: 'Another Field 1'},
+        //{name: 'another_field2', display_label: 'Another Field 2'},
       ]
     %>
 
     <form class="add_authorized_term_form">
-      <% for (var i = 0; i < fields_and_display_labels.length; i++) { %>
-        <div class="row field">
-          <div class="col-md-2">
-            <%= fields_and_display_labels[i]['display_label'] %>
-          </div>
-          <div class="col-md-10">
-            <input type="text" name="<%= fields_and_display_labels[i]['name'] %>" class="form-control input-sm" />
-          </div>
-        </div>
-      <% } %>
-
+      
       <div class="errors"></div>
+      
+      <div class="row field">
+        <div class="col-md-2">
+          Type
+        </div>
+        <div class="col-md-10">
+          <select name="term[type]" class="form-control input-sm term-type-select">
+            <option value="external">External</option>
+            <option value="local">Local</option>
+            <option value="temporary">Temporary</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="term_fields"></div>
 
       <div>
         <button type="submit" class="btn btn-primary btn-sm pull-right add_authorized_term_form_submit_button">Add Term</button>
+        <button class="btn btn-link btn-sm pull-right back_to_term_search">&laquo; Back To Term Search</button>
         <div class="clearfix"></div>
       </div>
     </div>

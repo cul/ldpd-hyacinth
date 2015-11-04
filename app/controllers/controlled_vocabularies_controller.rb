@@ -1,5 +1,5 @@
 class ControlledVocabulariesController < ApplicationController
-  before_action :set_controlled_vocabulary, only: [:show, :edit, :update, :destroy, :terms]
+  before_action :set_controlled_vocabulary, only: [:show, :edit, :update, :destroy, :terms, :term_additional_fields]
   before_action :require_appropriate_permissions!
   before_action :set_contextual_nav_options
 
@@ -13,48 +13,6 @@ class ControlledVocabulariesController < ApplicationController
     controlled_vocabulary_string_keys = @controlled_vocabularies.map{|vocabulary|vocabulary.string_key}
     @additional_uri_service_controlled_vocabularies = UriService.client.list_vocabularies(1000) # Ridiculously high limit to show all
     @additional_uri_service_controlled_vocabularies.delete_if{|uri_service_vocabulary| controlled_vocabulary_string_keys.include?(uri_service_vocabulary['string_key'])}
-  end
-
-  # GET or POST /controlled_vocabularies/search
-  # GET or POST /controlled_vocabularies/search.json
-  def search
-    ## TODO: Possibly use Solr for this kind of search?  This is for early testing purposes.
-    #
-    #if params[:page]
-    #  page = params[:page].to_i
-    #else
-    #  page = 1
-    #end
-    #
-    #if params[:uri_list].present?
-    #  # Always return all results for a uri_list.  No paging, no limit, no sorting.
-    #  @terms = AuthorizedTerm.includes(:controlled_vocabulary).where(
-    #    value_uri: params[:uri_list]
-    #  )
-    #else
-    #  if params[:per_page]
-    #    per_page = params[:per_page].to_i
-    #    per_page = 5 if per_page < 5 # Even for small screens, show at least 5 terms per page
-    #  else
-    #    per_page = 20
-    #  end
-    #
-    #  @terms = AuthorizedTerm.includes(:controlled_vocabulary).where(
-    #    'value LIKE ? OR code LIKE ? OR value_uri LIKE ?', '%' + params[:q] + '%', '%' + params[:q] + '%', '%' + params[:q] + '%'
-    #  ).order(:value => :asc).page(page).per(per_page)
-    #end
-    #
-    #respond_to do |format|
-    #  format.html {
-    #    # Render normal html view
-    #  }
-    #  format.json {
-    #    render json: {
-    #      terms: @terms.map{|authorized_term| {value: authorized_term.value, value_uri: authorized_term.value_uri} },
-    #      more_available: params[:uri_list].present? ? false : (@terms.next_page != nil)
-    #    }
-    #  }
-    #end
   end
 
   # GET /controlled_vocabularies/1
@@ -114,22 +72,22 @@ class ControlledVocabulariesController < ApplicationController
   def terms
 
     if params[:page]
-      page = params[:page].to_i
+      @page = params[:page].to_i
     else
-      page = 1
+      @page = 1
     end
 
     if params[:per_page]
-      per_page = params[:per_page].to_i
-      per_page = 5 if per_page < 5 # Show at least 5 terms per page
+      @per_page = params[:per_page].to_i
+      @per_page = 5 if @per_page < 5 # Show at least 5 terms per page
     else
-      per_page = 20
+      @per_page = 5
     end
 
     if params[:q].blank?
-      @terms = UriService.client.list_terms(@controlled_vocabulary.string_key, per_page+1, ((page-1)*per_page))
+      @terms = UriService.client.list_terms(@controlled_vocabulary.string_key, @per_page+1, ((@page-1)*@per_page))
     else
-      @terms = UriService.client.find_terms_by_query(@controlled_vocabulary.string_key, params[:q], per_page+1, ((page-1)*per_page))
+      @terms = UriService.client.find_terms_by_query(@controlled_vocabulary.string_key, params[:q], @per_page+1, ((@page-1)*@per_page))
     end
 
     respond_to do |format|
@@ -139,10 +97,18 @@ class ControlledVocabulariesController < ApplicationController
 
       format.json {
         render json: {
-          terms: @terms[0..(per_page-1)],
-          more_available: (@terms.length > per_page),
+          terms: @terms[0..(@per_page-1)],
+          more_available: (@terms.length > @per_page),
           current_user_can_add_terms: current_user.can_manage_controlled_vocabulary_terms?(@controlled_vocabulary)
         }
+      }
+    end
+  end
+  
+  def term_additional_fields
+    respond_to do |format|
+      format.json {
+        render json: TERM_ADDITIONAL_FIELDS[@controlled_vocabulary.string_key]
       }
     end
   end

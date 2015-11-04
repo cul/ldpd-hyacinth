@@ -4,7 +4,7 @@
   <div class="input-group">
       <%= text_field_tag :q, params[:q], class: 'form-control input-sm', placeholder: 'Search for values...' %>
       <div class="input-group-btn">
-        <%= link_to '<span class="glyphicon glyphicon-remove"></span>'.html_safe, controlled_vocabularies_path, class: 'btn btn-default btn-sm' %>
+        <%= link_to '<span class="glyphicon glyphicon-remove"></span>'.html_safe, terms_controlled_vocabulary_path(@controlled_vocabulary), class: 'btn btn-default btn-sm' %>
         <%= submit_tag 'Search', class: 'btn btn-default btn-sm', name: nil %>
       </div>
   </div>
@@ -14,25 +14,38 @@
 <% if @terms.length == 0 %>
     No Terms found.
 <% else %>
-
   
+  <%= render 'terms_prev_next' %>
+
   <table class="table table-bordered table-striped">
     <thead>
       <tr>
         <th class="col-xs-5">Value</th>
+        <th class="col-xs-5">Type</th>
         <th class="col-xs-2">URI</th>
         <th class="col-xs-2"></th>
       </tr>
     </thead>
     <tbody>
-      <% @terms.each do |term| %>
+      <% counter = 1 %>
+      <% @terms.each_with_index do |term| %>
         <tr>
           <td><%= term['value'] %></td>
+          <td><%= term['type'] %></td>
           <td><%= term['uri'] %></td>
           <td class="aligncenter"><%= link_to 'View', term_path(term['uri']), class: 'btn btn-default btn-xs' %> <%= link_to 'Edit', edit_term_path(term['uri']), class: 'btn btn-default btn-xs' %></td>
         </tr>
+        <%
+          if counter == @per_page
+            break
+          else
+            counter += 1
+          end
+        %>
       <% end %>
     </tbody>
   </table>
+  
+  <%= render 'terms_prev_next' %>
   
 <% end %>

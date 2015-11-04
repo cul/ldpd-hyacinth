@@ -1,12 +1,13 @@
 Hyacinth::Application.routes.draw do
 
-  resources :terms, constraints: { id: /.+/ } #constraints: { id: /.+(?<!\/edit)/ }
+  resources :terms, constraints: { id: URI::regexp }
   #except: ['edit']
   #get 'terms/edit/:id' => 'terms#edit', :as => 'edit_term', constraints: { id: /.+/ }
 
   resources :controlled_vocabularies do
     member do
       get 'terms', :action => 'terms', :as => 'terms' # terms_controlled_vocabulary_path
+      get 'term_additional_fields', :action => 'term_additional_fields', :as => 'term_additional_fields' # term_additional_fields_controlled_vocabulary_path
     end
     collection do
       match 'search', via: [:get, :post]

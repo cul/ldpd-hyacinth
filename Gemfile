@@ -92,7 +92,7 @@ gem 'cul_hydra', '>= 1.0.1'
 gem 'jettywrapper', '>= 1.5.1'
 # Temporarily use specific commit because new version of gem hasn't been released yet.  Latest is 1.1.3.
 gem 'rdf-rdfxml', :github => 'ruby-rdf/rdf-rdfxml', :ref => '78c13fe5dbcecaf1f56abe9535d00f16c670a764'
-gem 'uri_service', '0.2.12'
+gem 'uri_service', '0.3.1'
 #gem 'uri_service', :path => '../uri_service'
 
 # Specify min version for active_fedora_relsint because of a needed fix

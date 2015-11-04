@@ -3,5 +3,6 @@
 
 <%= form_tag({:action => :process_import_csv_file}, multipart: true) do %>
   <%= file_field_tag :import_file %>
-  <%= submit_tag( "Import" ) %>
+  <br />
+  <%= submit_tag( "Import", class: 'btn btn-default btn-sm' ) %>
 <% end %>

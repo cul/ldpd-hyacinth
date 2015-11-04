@@ -1,4 +1,4 @@
-<h1>Authorized Term: <%= @term['value'] %></h1>
+<h1><%= @term['type'].capitalize %> Term: <%= @term['value'] %></h1>
 
 <div class="row">
   <div class="col-md-3"><label>Controlled Vocabulary</label></div>
@@ -6,8 +6,8 @@
 </div>
 
 <div class="row">
-  <div class="col-md-3"><label>Local Term?</label></div>
-  <div class="col-md-9"><%= @term['is_local'].to_s %></div>
+  <div class="col-md-3"><label>Type</label></div>
+  <div class="col-md-9"><%= @term['type'] %></div>
 </div>
 
 <div class="row">
@@ -21,9 +21,12 @@
 </div>
 
 <% @term.each do |key, val| %>
-  <% next if ['uri', 'value', 'vocabulary_string_key', 'is_local'].include?(key) %>
+  <% next if ['uri', 'value', 'vocabulary_string_key', 'type'].include?(key) %>
+  
+  <% display_value = (TERM_ADDITIONAL_FIELDS[@controlled_vocabulary.string_key] && TERM_ADDITIONAL_FIELDS[@controlled_vocabulary.string_key][key]) ? TERM_ADDITIONAL_FIELDS[@controlled_vocabulary.string_key][key]['display_label'] :  key + ' (no friendly label)' %>
+  
   <div class="row">
-    <div class="col-md-3"><label><%= key %></label></div>
+    <div class="col-md-3"><label><%= display_value %></label></div>
     <div class="col-md-9"><%= val %></div>
   </div>
 <% end %>

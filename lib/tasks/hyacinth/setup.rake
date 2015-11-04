@@ -104,16 +104,21 @@ namespace :hyacinth do
       term_additional_fields_yml = YAML.load_file(term_additional_fields_yml_file) || {}
       ['development', 'test'].each do |env_name|
         term_additional_fields_yml[env_name] = {
-          'code' => {
-            'display_label' => 'Code (Optional)'
+          'collection' => {
+            'code' => {
+              'display_label' => 'Code'
+            }
           },
-          'authority' => {
-            'display_label' => 'Authority (Optional)'
+          'form' => {
+            'authority' => {
+              'display_label' => 'Authority'
+            },
+            'authority_uri' => {
+              'display_label' => 'Authority URI'
+            }
           },
-          'authority_uri' => {
-            'display_label' => 'Authority URI (Optional)'
-          }
         }
+        
       end
       File.open(term_additional_fields_yml_file, 'w') {|f| f.write term_additional_fields_yml.to_yaml }
       
@@ -124,6 +129,7 @@ namespace :hyacinth do
       ['development', 'test'].each do |env_name|
         uri_service_yml[env_name] = {
           'local_uri_base' => 'http://id.library.columbia.edu/term/',
+          'temporary_uri_base' => 'temp:',
           'solr' => {
             'url' => 'http://localhost:' + (env_name == 'test' ? default_test_port : default_development_port).to_s + '/solr/uri_service_' + env_name,
             'pool_size' => 5,
