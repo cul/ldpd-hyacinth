@@ -117,11 +117,11 @@ GEM
       execjs
     coffee-script-source (1.9.1)
     connection_pool (2.2.0)
-    cul_hydra (1.0.1)
+    cul_hydra (1.3.0)
       active-fedora (~> 7.0)
       active-triples (~> 0.2.2)
       active_fedora_finders (>= 0.5.0)
-      active_fedora_relsint
+      active_fedora_relsint (~> 0.4)
       blacklight
       cul_image_props
       httpclient
@@ -129,6 +129,7 @@ GEM
       mods
       rdf (>= 1.1.5)
       sparql (= 1.1.4)
+      thread
     cul_image_props (0.3.5)
       nokogiri
     daemons (1.1.9)
@@ -477,7 +478,7 @@ DEPENDENCIES
   capybara (>= 2.5)
   coderay
   coffee-rails
-  cul_hydra (>= 1.0.1)
+  cul_hydra (>= 1.3.0)
   devise (>= 3.4.1)
   equivalent-xml
   factory_girl_rails (>= 4.4.1)
