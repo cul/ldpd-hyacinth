@@ -71,7 +71,8 @@ namespace :hyacinth do
           'default_asset_home' => File.join(Rails.root, 'tmp/asset_home_' + env_name),
           'upload_directory' => File.join(Rails.root, 'tmp/upload_' + env_name),
           'publish_target_api_key_encryption_key' => 'some_encryption_key',
-          'treat_fedora_resource_index_updates_as_immediate' => false
+          'treat_fedora_resource_index_updates_as_immediate' => false,
+          'queue_long_jobs' => (env_name == 'test') ? false : true
         }
       end
       File.open(hyacinth_yml_file, 'w') {|f| f.write hyacinth_yml.to_yaml }
@@ -158,6 +159,19 @@ namespace :hyacinth do
         }
       end
       File.open(repository_cache_yml_file, 'w') {|f| f.write repository_cache_yml.to_yaml }
+      
+      # resque.yml
+      resque_yml_file = File.join(Rails.root, 'config/resque.yml')
+      FileUtils.touch(resque_yml_file) # Create if it doesn't exist
+      resque_yml = YAML.load_file(resque_yml_file) || {}
+      ['development', 'test'].each do |env_name|
+        resque_yml[env_name] = {          
+          'url' => 'localhost:6379',
+          'namespace' => 'hyacinth_' + env_name,
+          'workers' => 1
+        }
+      end
+      File.open(resque_yml_file, 'w') {|f| f.write resque_yml.to_yaml }
 
     end
 
