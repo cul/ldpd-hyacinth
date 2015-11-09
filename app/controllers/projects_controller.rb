@@ -181,22 +181,40 @@ class ProjectsController < ApplicationController
     import_file = params[:import_file]
     @import_filename = import_file.original_filename
     
-    import_job = ImportJob.create!(name: @import_filename, user: current_user)
+    @import_job = ImportJob.new(name: @import_filename, user: current_user)
     @array_of_digital_object_data = Array.new
-    Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(import_file.read) do |digital_object_data|
-      # if neither the project pid nor project string_key are specified in the import data, insert the project pid
-      digital_object_data['project']['pid'] = @project.pid if ( digital_object_data['project']['string_key'].blank? &&
-                                                              digital_object_data['project']['pid'].blank? )
-      # encode the data as JSON string for insertion into the database
-      digital_object_data_encoded_as_json = ActiveSupport::JSON.encode digital_object_data
-      @array_of_digital_object_data.push(digital_object_data_encoded_as_json)
-      digital_object_import = DigitalObjectImport.create!(import_job: import_job, 
-                                                          digital_object_data: digital_object_data_encoded_as_json)
-      import_job.digital_object_imports << digital_object_import
-      # queue up digital_object_import for procssing -- entails queueing up the id of the instance
-      Resque.enqueue(ProcessDigitalObjectImportJob, digital_object_import.id)
+    
+    begin
+      Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(import_file.read) do |digital_object_data|
+        unless @import_job.new_record?
+          @import_job.save
+        end
+        
+        # if neither the project pid nor project string_key are specified in the import data, insert the project pid
+        digital_object_data['project']['pid'] = @project.pid if ( digital_object_data['project']['string_key'].blank? &&
+                                                                digital_object_data['project']['pid'].blank? )
+        # encode the data as JSON string for insertion into the database
+        digital_object_data_encoded_as_json = ActiveSupport::JSON.encode digital_object_data
+        @array_of_digital_object_data.push(digital_object_data_encoded_as_json)
+        digital_object_import = DigitalObjectImport.create!(import_job: @import_job,
+                                                            digital_object_data: digital_object_data_encoded_as_json)
+        #####@import_job.digital_object_imports << digital_object_import
+        # queue up digital_object_import for procssing -- entails queueing up the id of the instance
+        Hyacinth::Queue.process_digital_object_import(digital_object_import.id)
+      end
+    rescue CSV::MalformedCSVError
+      # Handle invalid CSV
+      @import_job.errors.add(:invalid_csv, 'Invalid CSV File')
     end
-
+    
+    if @import_job.errors.any?
+      render action: 'upload_import_csv_file_project_path'
+    else
+      #redirect_to upload_import_csv_file_project_path(@project)
+    end
+    
+    
+    
   end
 
   private

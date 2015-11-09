@@ -1,4 +1,17 @@
 <%= render 'import_export_csv_nav' %>
+
+<% if @project.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@project.errors.count, "error") %> prohibited this project from being saved:</h2>
+
+      <ul>
+      <% @project.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
 <h1>File will be seleted and uploaded from here</h1>
 
 <%= form_tag({:action => :process_import_csv_file}, multipart: true) do %>

@@ -23,7 +23,11 @@
 <p>
   <strong>Errors:</strong>
   <br>
-  <%= 'TO BE IMPLEMENTED' %>
+  <% if @digital_object_import.digital_object_errors.present? %>
+    <ul><li><%= @digital_object_import.digital_object_errors.join('</li><li>').html_safe %></li></ul>
+  <% else %>
+    None
+  <% end %>
 </p>
 <% if @import_job %>
 <%= link_to 'Return to listing', import_job_digital_object_imports_path(@import_job) %>

@@ -7,17 +7,20 @@ class ImportJob < ActiveRecord::Base
 
 
   def success?
+    
+    return (DigitalObjectImport.where(import_job_id: self.id, status: [DigitalObjectImport.statuses[:pending], DigitalObjectImport.statuses[:failure]]).count == 0)
+    
 
-    # DigitalObjectImport.where(import_job: self).each do |import|
-    digital_object_imports.each do |import|
-
-      # puts 'Here is the DigitalObjectImport inside the where:' +  import.inspect
-      return false if (import.pending? || import.failure?)
-
-    end
-
-    # if got here, the all imports were successfull
-    true
+    ## DigitalObjectImport.where(import_job: self).each do |import|
+    #digital_object_imports.each do |import|
+    #
+    #  # puts 'Here is the DigitalObjectImport inside the where:' +  import.inspect
+    #  return false if (import.pending? || import.failure?)
+    #
+    #end
+    #
+    ## if got here, the all imports were successfull
+    #true
 
   end
 

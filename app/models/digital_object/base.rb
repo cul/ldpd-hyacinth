@@ -64,6 +64,9 @@ class DigitalObject::Base
     if self.new_record? && digital_object_data['project']
       project_find_criteria = digital_object_data['project'] # i.e. {string_key: 'proj'} or {pid: 'abc:123'}
       self.project = Project.find_by(project_find_criteria)
+      if self.project.nil?
+        raise Hyacinth::Exceptions::ProjectNotFoundError, "Could not find Project: #{project_find_criteria.inspect}"
+      end
     end
     
     # Publish Targets (multiple)
