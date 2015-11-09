@@ -32,6 +32,7 @@ ActiveRecord::Schema.define(version: 20151007200326) do
   end
 
   add_index "digital_object_imports", ["import_job_id"], name: "index_digital_object_imports_on_import_job_id"
+  add_index "digital_object_imports", ["status"], name: "index_digital_object_imports_on_status"
 
   create_table "digital_object_records", force: :cascade do |t|
     t.string   "pid"
