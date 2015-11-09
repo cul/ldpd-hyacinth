@@ -1,6 +1,8 @@
 set :default_stage, "hyacinth_dev"
 set :stages, %w(hyacinth_dev hyacinth_test hyacinth_prod)
 
+set :keep_releases, 2 # Only keep 2 releases at a time
+
 require 'capistrano/ext/multistage'
 require 'bundler/capistrano'
 require 'date'
@@ -54,6 +56,7 @@ namespace :deploy do
     run "ln -nfs #{deploy_to}shared/fedora.yml #{release_path}/config/fedora.yml"
     run "ln -nfs #{deploy_to}shared/hyacinth.yml #{release_path}/config/hyacinth.yml"
     run "ln -nfs #{deploy_to}shared/repository_cache.yml #{release_path}/config/repository_cache.yml"
+    run "ln -nfs #{deploy_to}shared/resque.yml #{release_path}/config/resque.yml"
     run "ln -nfs #{deploy_to}shared/secrets.yml #{release_path}/config/secrets.yml"
     run "ln -nfs #{deploy_to}shared/solr.yml #{release_path}/config/solr.yml"
     run "ln -nfs #{deploy_to}shared/term_additional_fields.yml #{release_path}/config/term_additional_fields.yml"
@@ -69,6 +72,11 @@ namespace :deploy do
   task :assets do
     run "cd #{release_path}; RAILS_ENV=#{rails_env} bundle exec rake assets:clean assets:precompile"
   end
+  
+  desc "Restart Resque Workers"
+  task :restart_workers, :roles => :worker do
+    run_remote_rake "resque:restart_workers"
+  end
 
 end
 
@@ -76,3 +84,18 @@ end
 
 after 'deploy:update_code', 'deploy:symlink_shared'
 before "deploy:create_symlink", "deploy:assets"
+
+
+
+# For resetting Resque workers
+
+after 'deploy:restart', 'deploy:restart_workers'
+
+def run_remote_rake(rake_cmd)
+  rake_args = ENV['RAKE_ARGS'].to_s.split(',')
+
+  cmd = "cd #{fetch(:latest_release)} && bundle exec #{fetch(:rake, "rake")} RAILS_ENV=#{fetch(:rails_env, "production")} #{rake_cmd}"
+  cmd += "['#{rake_args.join("','")}']" unless rake_args.empty?
+  run cmd
+  set :rakefile, nil if exists?(:rakefile)
+end

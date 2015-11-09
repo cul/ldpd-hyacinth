@@ -1,6 +1,6 @@
 class ProcessDigitalObjectImportJob
 
-  @queue = :ids_of_digital_object_imports
+  @queue = Hyacinth::Queue::DIGITAL_OBJECT_IMPORT
 
   def self.perform(doi_id)
 

@@ -13,6 +13,7 @@
 
 # Ignore all logfiles and tempfiles
 /log/*.log
+/log/resque*
 /tmp
 
 # Ignore local Guardfile customation file
@@ -31,6 +32,7 @@ solr.yml
 repository_cache.yml
 uri_service.yml
 term_additional_fields.yml
+resque.yml
 
 *_user_accounts.yml
 

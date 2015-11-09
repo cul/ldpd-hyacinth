@@ -1,5 +1,7 @@
-Hyacinth::Application.routes.draw do
+require 'resque/server'
 
+Hyacinth::Application.routes.draw do
+  
   resources :terms, constraints: { id: URI::regexp }
   #except: ['edit']
   #get 'terms/edit/:id' => 'terms#edit', :as => 'edit_term', constraints: { id: /.+/ }
@@ -66,6 +68,16 @@ Hyacinth::Application.routes.draw do
   get '/users/do_cas_login', to: 'users#do_cas_login', as: :user_do_cas_login
   devise_for :users
   resources :users
+  
+  # Make sure that the resque user restriction below is AFTER `devise_for :users`
+  
+  resque_web_constraint = lambda do |request|
+    current_user = request.env['warden'].user
+    current_user.present? && current_user.respond_to?(:is_admin?) && current_user.is_admin?
+  end
+  constraints resque_web_constraint do
+    mount Resque::Server.new, at: "/resque"
+  end
 
   resources :publish_targets
 
