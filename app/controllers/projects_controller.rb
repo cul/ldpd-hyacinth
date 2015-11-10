@@ -208,9 +208,9 @@ class ProjectsController < ApplicationController
     end
     
     if @import_job.errors.any?
-      render action: 'upload_import_csv_file_project_path'
+      render action: 'upload_import_csv_file'
     else
-      #redirect_to upload_import_csv_file_project_path(@project)
+      redirect_to import_job_path(@import_job)
     end
     
     
