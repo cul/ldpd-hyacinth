@@ -5,21 +5,21 @@
   //mode
   //dynamicFieldIdsToEnabledDynamicFields
 %>
-<div class="dynamic_field_group_display_label" data-associated-dfg-string-key="<%= dynamic_field_group['string_key'] %>"><%= dynamic_field_group['display_label'] %></div>
 
-<div class="dynamic_field_group" data-string-key="<%= dynamic_field_group['string_key'] %>" style="<%= (mode == 'edit') ? 'padding-right:105px;' : '' %>">
-  <div class="field-management-buttons pull-right" style="width:100px;margin-right:-105px;">
-    <div class="btn-group pull-right" role="group" aria-label="add-remove-up-down">
-      <% if(mode == 'edit') { %>
-        <button type="button" class="btn btn-danger btn-xs remove-dynamic-field-group"><span class="glyphicon glyphicon-minus"></button>
-      <% } %>
-      <% if(mode == 'edit' && dynamic_field_group['is_repeatable']) { %>
-        <button type="button" class="btn btn-default btn-xs shift-dynamic-field-group-down"><span class="glyphicon glyphicon-arrow-down"></span></button>
-        <button type="button" class="btn btn-default btn-xs shift-dynamic-field-group-up"><span class="glyphicon glyphicon-arrow-up"></span></button>
-        <button type="button" class="btn btn-success btn-xs add-dynamic-field-group"><span class="glyphicon glyphicon-plus"></button>
-      <% } %>
+
+<div class="dynamic_field_group" data-string-key="<%= dynamic_field_group['string_key'] %>" data-is-repeatable="<%= dynamic_field_group['is_repeatable'] %>">
+
+  <div class="dynamic_field_group_display_label">
+    <span class="label_content"><%= dynamic_field_group['display_label'] %></span> <span class="label_counter"></span>
+
+    <% if(mode == 'edit' && dynamic_field_group['is_repeatable']) { %>
+    <div class="field-management-buttons">
+      <a href="#" class="remove-dynamic-field-group btn btn-danger btn-xs"><span class="glyphicon glyphicon-minus"></a>
+      <a href="#" class="shift-dynamic-field-group-down btn btn-default btn-xs"><span class="glyphicon glyphicon-arrow-down"></span></a>
+      <a href="#" class="shift-dynamic-field-group-up btn btn-default btn-xs"><span class="glyphicon glyphicon-arrow-up"></span></a>
+      <a href="#" class="add-dynamic-field-group btn btn-success btn-xs"><span class="glyphicon glyphicon-plus"></a>
     </div>
-    <div class="clearfix"></div>
+    <% } %>
   </div>
 
   <div class="dynamic_field_group_content">

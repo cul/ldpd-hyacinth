@@ -29,9 +29,13 @@
       }
     }
   }
+  
+  .dynamic_field_group {
+    
+  }
 
   .dynamic_field_group_category_label {
-    margin:.75em 0 .5em 0;
+    margin:.5em 0;
   }
 
   .editor-form > .dynamic_field_group_content {
@@ -46,87 +50,82 @@
       bottom:20px;
       z-index:999;
     }
-  }
-
-  .dynamic_field_group + .dynamic_field_group {
-    .dynamic_field_group_content {
-      border-top-width:0px;
-    }
-
-    .field-label.at-least-one-required::after {
-      content: "" !important;
-    }
 
   }
-
+  
+  .editor-form {
+    .dynamic_field_group .field-label {
+      font-size:13px;
+    }
+  }
+  
+  .editor-form.edit {
+    .dynamic_field_group .field-label {
+      position:relative;
+      top:6px;
+    }
+  }
+  
+  .dynamic_field_group_display_label {
+    border-bottom:1px solid #77eeee;
+    padding:.25em;
+    margin-top:.25em;
+    font-size:13px;
+    background:#3dc5df;
+    color:#fff;
+    text-shadow:1px 1px 0px #aaa;
+  }
+  
+  .dynamic_field_group_display_label:hover {
+    background: #28a0ba;
+  }
+  
   .dynamic_field_group_content {
-    padding:.5em;
-    border:1px solid #ddd;
-    border-width:2px;
-    border-radius:0px 3px 3px 3px;
-
-
-    /* Alternating colors for nested dynamic_field_group_content elements */
-    /*
-    .dynamic_field_group_content {
-      background-color: #fff;
-      .dynamic_field_group_content {
-        background-color: #f2f2f2;
-        .dynamic_field_group_content {
-          background-color: #fff;
-          .dynamic_field_group_content {
-            background-color: #f2f2f2;
-          }
-        }
-      }
+    padding:2px 2px;
+    border:solid #77eeee;
+    border-width:0px 1px 2px 3px;
+  }
+  
+  .dynamic_field {
+    padding:0 .25em;
+  }
+  
+  input[type="text"].form-control,
+  .controlled-term-pill-box {
+    height:26px;
+    border-color:#ccc;
+    margin:1px 0px;
+  }
+  input[type="text"].form-control {
+    padding:6px;
+  }
+  .controlled-term-pill-box {
+    padding:1px;
+  }
+  
+  .controlled-term-pill-box button {
+    padding-top:2px;
+    padding-bottom:0px;
+  }
+  
+  .controlled-term-pill-box .controlled_term_clear_button {
+    height:17px;
+    font-size:11px;
+    padding:0px 2px;
+  }
+  
+  .field-management-buttons {
+    float:right;
+    
+    .btn {
+      height:18px;
+      padding:0 2px;
+      font-size:11px;
     }
-    */
-
-    .dynamic_field_group_display_label {
-
-      font-weight:bold; /* Redundancy for windows rendering */
-      font-weight:500;
-      display:inline-block;
-      font-size:1.1em;
-      margin-top:.5em;
-      border:2px solid #ddd;
-      border-width: 2px 2px 0px 2px;
-      border-radius:3px 3px 0px 0px;
-      padding:.25em .5em;
-      background: #eee;
-    }
-
-    .dynamic_field.readonly-display {
-      .field-label {
-        position:relative;
-        top:0px;
-        margin-bottom:0;
-      }
-    }
-
-    .dynamic_field {
-        padding:.25em .25em;
-
-        .field-label {
-          position:relative;
-          top:5px;
-
-          margin-bottom:.5em;
-          display:inline-block;
-          font-size:.95em;
-          font-weight:bold; /* Redundancy for windows rendering */
-          font-weight:500;
-        }
-
-        .readonly-display-value {
-          font-size:.95em;
-        }
-    }
-
-    .dynamic_field .field-label.at-least-one-required::after {
-      content: " *"
-    }
-
+    
+  }
+  .readonly-display-value {
+    font-size:13px;
   }
 }
 

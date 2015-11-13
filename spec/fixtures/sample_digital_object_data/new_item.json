@@ -37,8 +37,7 @@
                   "name_role_value":{
                      "value" : "Author",
                      "uri" : "http://id.loc.gov/roles/123"
-                  },
-                  "name_role_type":"text"
+                  }
                }
             ]
          },
@@ -52,15 +51,13 @@
                   "name_role_value": {
                      "value" : "Illustrator",
                      "uri" : "http://id.loc.gov/roles/456"
-                  },
-                  "name_role_type":"text"
+                  }
                },
                {
                   "name_role_value":{
                      "value" : "Editor",
                      "uri" : "http://id.loc.gov/roles/789"
-                  },
-                  "name_role_type":"text"
+                  }
                }
             ]
          }

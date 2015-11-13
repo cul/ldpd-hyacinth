@@ -91,31 +91,31 @@ h2 {
  *************/
 
 @-webkit-keyframes fadeIt {
-  0%   { background-color: #FFFFFF; }
-  50%  { background-color: #ffff90; border-radius: 10px; padding: 5px 7px;}
+  /*0%   { background-color: #FFFFFF; }*/
+  0%  { background-color: #ffff90; border-radius: 10px; }
   100% { background-color: #FFFFFF; }
 }
 @-moz-keyframes fadeIt {
-  0%   { background-color: #FFFFFF; }
-  50%  { background-color: #ffff90; border-radius: 10px; padding: 5px 7px; }
+  /*0%   { background-color: #FFFFFF; }*/
+  0%  { background-color: #ffff90; border-radius: 10px; }
   100% { background-color: #FFFFFF; }
 }
 @-o-keyframes fadeIt {
-  0%   { background-color: #FFFFFF; }
-  50%  { background-color: #ffff90; border-radius: 10px; padding: 5px 7px; }
+  /*0%   { background-color: #FFFFFF; }*/
+  0%  { background-color: #ffff90; border-radius: 10px; }
   100% { background-color: #FFFFFF; }
 }
 @keyframes fadeIt {
-  0%   { background-color: #FFFFFF; }
-  50%  { background-color: #ffff90; border-radius: 10px; padding: 5px 7px; }
+  /*0%   { background-color: #FFFFFF; }*/
+  0%  { background-color: #ffff90; border-radius: 10px; }
   100% { background-color: #FFFFFF; }
 }
 
 
 .highlightPageElement {
-    /*background-image:none !important;
+    background-image:none !important;
     -webkit-animation: fadeIt 2s ease-in-out;
        -moz-animation: fadeIt 2s ease-in-out;
          -o-animation: fadeIt 2s ease-in-out;
-            animation: fadeIt 2s ease-in-out;*/
+            animation: fadeIt 2s ease-in-out;
 }

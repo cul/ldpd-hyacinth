@@ -213,8 +213,6 @@ class ProjectsController < ApplicationController
       redirect_to import_job_path(@import_job)
     end
     
-    
-    
   end
 
   private

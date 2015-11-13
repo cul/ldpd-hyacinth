@@ -115,35 +115,35 @@ namespace :hyacinth do
           dynamic_fields: [DynamicField.new(string_key: 'abstract_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::TEXTAREA, is_keyword_searchable: true)]
         )
 
-        name = DynamicFieldGroup.create!(string_key: 'name', display_label: 'Name', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
-          dynamic_fields: [
-            DynamicField.new(string_key: 'name_type', display_label: 'Type', dynamic_field_type: DynamicField::Type::SELECT, additional_data_json: {
-              select_options: [
-                {value: '', display_label: '- Select an Option -'},
-                {value: 'personal', display_label: 'Personal'},
-                {value: 'corporate', display_label: 'Corporate'},
-                {value: 'conference', display_label: 'Event'}
-              ]
-            }.to_json),
-            DynamicField.new(string_key: 'name_usage_primary', display_label: 'Primary?', dynamic_field_type: DynamicField::Type::BOOLEAN),
-            DynamicField.new(string_key: 'name_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, is_keyword_searchable: true, is_single_field_searchable: true, standalone_field_label: 'Name'),
-            DynamicField.new(string_key: 'name_value_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI, is_single_field_searchable: true, standalone_field_label: 'Name Value URI'),
-            DynamicField.new(string_key: 'name_authority', display_label: 'Authority', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY),
-            DynamicField.new(string_key: 'name_authority_uri', display_label: 'Authority URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY_URI),
-          ]
-        )
-          # --> Start Child DynamicFieldGroups
-            DynamicFieldGroup.create!(string_key: 'name_role', display_label: 'Role', is_repeatable: true, parent_dynamic_field_group: name, dynamic_fields: [
-              DynamicField.new(string_key: 'name_role_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING),
-              DynamicField.new(string_key: 'name_role_type', display_label: 'Type', dynamic_field_type: DynamicField::Type::SELECT, additional_data_json: {
-                select_options: [
-                  {value: '', display_label: '- Select an Option -'},
-                  {value: 'text', display_label: 'text'},
-                  {value: 'code', display_label: 'code'}
-                ]
-              }.to_json)
-            ])
-          # --> End Child DynamicFieldGroups
+        #name = DynamicFieldGroup.create!(string_key: 'name', display_label: 'Name', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
+        #  dynamic_fields: [
+        #    DynamicField.new(string_key: 'name_type', display_label: 'Type', dynamic_field_type: DynamicField::Type::SELECT, additional_data_json: {
+        #      select_options: [
+        #        {value: '', display_label: '- Select an Option -'},
+        #        {value: 'personal', display_label: 'Personal'},
+        #        {value: 'corporate', display_label: 'Corporate'},
+        #        {value: 'conference', display_label: 'Event'}
+        #      ]
+        #    }.to_json),
+        #    DynamicField.new(string_key: 'name_usage_primary', display_label: 'Primary?', dynamic_field_type: DynamicField::Type::BOOLEAN),
+        #    DynamicField.new(string_key: 'name_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_facet_field: true, is_keyword_searchable: true, is_single_field_searchable: true, standalone_field_label: 'Name'),
+        #    DynamicField.new(string_key: 'name_value_uri', display_label: 'Value URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_VALUE_URI, is_single_field_searchable: true, standalone_field_label: 'Name Value URI'),
+        #    DynamicField.new(string_key: 'name_authority', display_label: 'Authority', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY),
+        #    DynamicField.new(string_key: 'name_authority_uri', display_label: 'Authority URI', dynamic_field_type: DynamicField::Type::AUTHORIZED_TERM_AUTHORITY_URI),
+        #  ]
+        #)
+        #  # --> Start Child DynamicFieldGroups
+        #    DynamicFieldGroup.create!(string_key: 'name_role', display_label: 'Role', is_repeatable: true, parent_dynamic_field_group: name, dynamic_fields: [
+        #      DynamicField.new(string_key: 'name_role_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING),
+        #      DynamicField.new(string_key: 'name_role_type', display_label: 'Type', dynamic_field_type: DynamicField::Type::SELECT, additional_data_json: {
+        #        select_options: [
+        #          {value: '', display_label: '- Select an Option -'},
+        #          {value: 'text', display_label: 'text'},
+        #          {value: 'code', display_label: 'code'}
+        #        ]
+        #      }.to_json)
+        #    ])
+        #  # --> End Child DynamicFieldGroups
 
         publisher = DynamicFieldGroup.create!(string_key: 'publisher', display_label: 'Publisher', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
           dynamic_fields: [DynamicField.new(string_key: 'publisher_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_single_field_searchable: true, standalone_field_label: 'Publisher')]

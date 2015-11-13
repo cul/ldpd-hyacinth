@@ -75,8 +75,8 @@ title = DynamicFieldGroup.create!(string_key: 'title', display_label: 'Title', d
   }.to_json
 )
 
-# Create collection and form controlled vocabularies if they don't already exist
-{'collection' => 'Collection', 'form' => 'Form'}.each do |string_key, display_label|
+# Create collection, form, name and name_role controlled vocabularies if they don't already exist
+{'collection' => 'Collection', 'form' => 'Form', 'name' => 'Name', 'name_role' => 'Role'}.each do |string_key, display_label|
   if UriService.client.find_vocabulary(string_key).nil?
     @controlled_vocabulary = ControlledVocabulary.new
     @controlled_vocabulary.string_key = string_key
@@ -101,3 +101,14 @@ form = DynamicFieldGroup.create!(string_key: 'form', display_label: 'Form', dyna
   ]
 )
 
+#name
+name = DynamicFieldGroup.create!(string_key: 'name', display_label: 'Name', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
+  dynamic_fields: [
+    DynamicField.new(string_key: 'name_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::CONTROLLED_TERM, controlled_vocabulary_string_key: 'name', is_facet_field: true, standalone_field_label: 'Name'),
+    DynamicField.new(string_key: 'name_preferred_label', display_label: 'Preferred Label', dynamic_field_type: DynamicField::Type::STRING),
+  ]
+)
+# --> Child DynamicFieldGroups for name
+DynamicFieldGroup.create!(string_key: 'name_role', display_label: 'Role', is_repeatable: true, parent_dynamic_field_group: name, dynamic_fields: [
+  DynamicField.new(string_key: 'name_role_value', display_label: 'Value', dynamic_field_type: DynamicField::Type::CONTROLLED_TERM, controlled_vocabulary_string_key: 'name_role')
+])

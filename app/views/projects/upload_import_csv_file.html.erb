@@ -1,6 +1,6 @@
 <%= render 'import_export_csv_nav' %>
 
-<% if @import_job.errors.any? %>
+<% if @import_job && @import_job.errors.any? %>
   <div id="error_explanation">
     <h2><%= pluralize(@import_job.errors.count, "error") %> prohibited this project from being saved:</h2>
   

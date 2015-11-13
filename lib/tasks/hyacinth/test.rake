@@ -51,7 +51,11 @@ namespace :hyacinth do
       # Create Test Publish Targets
       publish_target_1 = PublishTarget.create!(display_label: 'Test Publish Target 1', string_key: 'test_publish_target_1', publish_url: 'http://localhost/fake1', api_key: 'abcdefg')
       publish_target_2 = PublishTarget.create!(display_label: 'Test Publish Target 2', string_key: 'test_publish_target_2', publish_url: 'http://localhost/fake2', api_key: 'zyxwvut')
-
+      
+      # Create EnabledPublishTarget for test project and new publish targets
+      EnabledPublishTarget.create!(project: test_project, publish_target: publish_target_1)
+      EnabledPublishTarget.create!(project: test_project, publish_target: publish_target_2)
+      
     end
 
     task :create_sample_digital_objects => :environment do

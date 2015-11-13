@@ -41,10 +41,30 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.nextGlobalTabIndex = function() {
   return Hyacinth.DigitalObjectsApp.DigitalObjectEditor.globalTabIndex++; // returns current value and then increments
 };
 
-Hyacinth.DigitalObjectsApp.DigitalObjectEditor.refreshTabIndexes = function(formElement) {
+Hyacinth.DigitalObjectsApp.DigitalObjectEditor.refreshTabIndexesAndDynamicFieldGroupCounters = function(formElement) {
+  //Refresh tab indexes
   Hyacinth.DigitalObjectsApp.DigitalObjectEditor.globalTabIndex = 1; //html tabindex attributes must start with 1, not 0
   formElement.find('.tabable').each(function(){
     $(this).attr('tabindex', Hyacinth.DigitalObjectsApp.DigitalObjectEditor.nextGlobalTabIndex());
+  });
+  
+  //Renumber Dynamic Field Groups
+  formElement.find('.label_counter').html(''); //clear current numbers
+  formElement.find('.dynamic_field_group').each(function(){
+    
+    if ($(this).attr('data-is-repeatable') == 'false') {
+      return;
+    }
+    
+    var prevCounterText = $(this).prev('.dynamic_field_group').find('.label_counter').html();
+    var prevLabelText = $(this).prev('.dynamic_field_group').find('.label_content').html();
+    
+    if (prevLabelText == $(this).find('.label_content').html()) {
+      var nextNumber = typeof(prevCounterText) == 'undefined' ? 1 : parseInt(prevCounterText) + 1;
+      $(this).find('.label_counter').html(nextNumber);
+    } else {
+      $(this).find('.label_counter').html('1');
+    }
   });
 };
 
@@ -303,7 +323,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
     Hyacinth.DigitalObjectsApp.DigitalObjectEditor.addDynamicFieldGroup($dynamicFieldGroup);
 
     $dynamicFieldGroup.find('.add-dynamic-field-group').blur(); //Seems weird, but I need to do this to blur the clicked button.  Directly calling blur on the button element isn't working.
-    Hyacinth.DigitalObjectsApp.DigitalObjectEditor.refreshTabIndexes($dynamicFieldGroup.closest('.editor-form'));
+    Hyacinth.DigitalObjectsApp.DigitalObjectEditor.refreshTabIndexesAndDynamicFieldGroupCounters($dynamicFieldGroup.closest('.editor-form'));
   });
 
   $editorForm.on('click', '.remove-dynamic-field-group', function(e){
@@ -314,30 +334,31 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
     if ($dynamicFieldGroup.parent().children('.dynamic_field_group[data-string-key="' + stringKey + '"]').length == 1) {
       Hyacinth.DigitalObjectsApp.DigitalObjectEditor.addDynamicFieldGroup($dynamicFieldGroup);
     }
+    $editorForm = $dynamicFieldGroup.closest('.editor-form');
     $dynamicFieldGroup.remove();
     $dynamicFieldGroup.find('.add-dynamic-field-group').blur(); //Seems weird, but I need to do this to blur the clicked button.  Directly calling blur on the button element isn't working.
-    Hyacinth.DigitalObjectsApp.DigitalObjectEditor.refreshTabIndexes($dynamicFieldGroup.closest('.editor-form'));
+    Hyacinth.DigitalObjectsApp.DigitalObjectEditor.refreshTabIndexesAndDynamicFieldGroupCounters($editorForm);
   });
 
   $editorForm.on('click', '.shift-dynamic-field-group-down', function(e){
     e.preventDefault();
     var $dynamicFieldGroup = $(this).closest('.dynamic_field_group');
-    var $nextDynamicFieldGroup = $dynamicFieldGroup.next('.dynamic_field_group');
+    var $nextDynamicFieldGroup = $dynamicFieldGroup.next('.dynamic_field_group[data-string-key="' + $dynamicFieldGroup.attr('data-string-key') + '"]');
     if ($nextDynamicFieldGroup) {
       $dynamicFieldGroup.insertAfter($nextDynamicFieldGroup);
       $dynamicFieldGroup.find('.shift-dynamic-field-group-down').blur(); //Seems weird, but I need to do this to blur the clicked button.  Directly calling blur on the button element isn't working.
-      Hyacinth.DigitalObjectsApp.DigitalObjectEditor.refreshTabIndexes($dynamicFieldGroup.closest('.editor-form'));
+      Hyacinth.DigitalObjectsApp.DigitalObjectEditor.refreshTabIndexesAndDynamicFieldGroupCounters($dynamicFieldGroup.closest('.editor-form'));
     }
   });
 
   $editorForm.on('click', '.shift-dynamic-field-group-up', function(e){
     e.preventDefault();
     var $dynamicFieldGroup = $(this).closest('.dynamic_field_group');
-    var $prevDynamicFieldGroup = $dynamicFieldGroup.prev('.dynamic_field_group');
+    var $prevDynamicFieldGroup = $dynamicFieldGroup.prev('.dynamic_field_group[data-string-key="' + $dynamicFieldGroup.attr('data-string-key') + '"]');
     if ($prevDynamicFieldGroup) {
       $prevDynamicFieldGroup.insertAfter($dynamicFieldGroup);
       $dynamicFieldGroup.find('.shift-dynamic-field-group-up').blur(); //Seems weird, but I need to do this to blur the clicked button.  Directly calling blur on the button element isn't working.
-      Hyacinth.DigitalObjectsApp.DigitalObjectEditor.refreshTabIndexes($dynamicFieldGroup.closest('.editor-form'));
+      Hyacinth.DigitalObjectsApp.DigitalObjectEditor.refreshTabIndexesAndDynamicFieldGroupCounters($dynamicFieldGroup.closest('.editor-form'));
     }
   });
 
@@ -420,24 +441,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
         while(true) {
           lastKnownNumVisibleDynamicFieldGroups = $editorForm.find('.dynamic_field_group:visible').length;
   
-          //Hide all dynamic_field_groups that have no visible child dynamic_fields or dynamic_field_groups
-          $editorForm.find('.dynamic_field_group').each(function(){
-            if ($(this).children('.dynamic_field_group_content').children('.dynamic_field:visible, .dynamic_field_group:visible').length == 0) {
-              $(this).hide();
-            }
-          });
-  
-          $editorForm.find('.dynamic_field_group_display_label').each(function(){
-            if ($(this).next('.dynamic_field_group:visible').length == 0) {
-              $(this).hide();
-            }
-          });
-  
-          $editorForm.find('.dynamic_field_group_category_label').each(function(){
-            if ($(this).next('.dynamic_field_group_display_label:visible').length == 0) {
-              $(this).hide();
-            }
-          });
+          that.hideUnneededDynamicFieldGroupsAndCategoryLabels()
   
           currentlyKnownNumVisibleDynamicFieldGroups = $editorForm.find('.dynamic_field_group:visible').length;
   
@@ -483,16 +487,18 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
         });
       });
     }
+    
+    that.hideUnneededDynamicFieldGroupsAndCategoryLabels();
   
     //And finally, refresh tab indexes
-    Hyacinth.DigitalObjectsApp.DigitalObjectEditor.refreshTabIndexes($editorForm);
+    Hyacinth.DigitalObjectsApp.DigitalObjectEditor.refreshTabIndexesAndDynamicFieldGroupCounters($editorForm);
   
     //Bind navigation dropup click handlers
     that.$containerElement.find('.form-navigation-dropup').find('.dropdown-menu').on('click', 'li', function(e){
       e.preventDefault();
       var selector = '.dynamic_field_group_category_label:contains("' + $(this).children('a').html() + '")';
       Hyacinth.scrollToElement($(selector), 400, function(){
-        $(selector).addClass("highlightPageElement");
+        //$(selector).addClass("highlightPageElement"); //Uncomment this to enable highlighting via css class
       });
     });
   
@@ -500,6 +506,25 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
     that.refreshNavigationDropupOptions();
   });
 
+};
+
+Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.hideUnneededDynamicFieldGroupsAndCategoryLabels = function() {
+  
+  var $editorForm = this.$containerElement.find('.editor-form');
+  
+  //Hide all dynamic_field_groups that have no visible child dynamic_fields or dynamic_field_groups
+  $editorForm.find('.dynamic_field_group').each(function(){
+    if ($(this).children('.dynamic_field_group_content').children('.dynamic_field:visible, .dynamic_field_group:visible').length == 0) {
+      $(this).hide();
+    }
+  });
+
+  $editorForm.find('.dynamic_field_group_category_label').each(function(){
+    if ($(this).next('.dynamic_field_group:visible').length == 0) {
+      $(this).hide();
+    }
+  });
+  
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.populateValuesForControlledTermFields = function(callback) {
@@ -636,24 +661,6 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.removeEmptyDynamicField
       }
     });
   }
-
-  // Also delete all .dynamic_field_group_display_label elements
-  // that aren't immediately followed by a .dynamic_field_group element
-  $editorForm.find('.dynamic_field_group_display_label').each(function(){
-    if ($(this).next('.dynamic_field_group').length == 0) {
-      //This dynamic_field_group_display_label's next element is NOT a dynamic_field_group.  Remove it!
-      $(this).remove();
-    }
-  });
-
-  // And finally, delete all .dynamic_field_group_category_label elements
-  // that aren't immediately followed by a .dynamic_field_group_display_label element
-  $editorForm.find('.dynamic_field_group_category_label').each(function(){
-    if ($(this).next('.dynamic_field_group_display_label').length == 0) {
-      //This dynamic_field_group_category_label's next element is NOT a dynamic_field_group_display_label.  Remove it!
-      $(this).remove();
-    }
-  });
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.removeEmptyFieldsForShowMode = function(){
