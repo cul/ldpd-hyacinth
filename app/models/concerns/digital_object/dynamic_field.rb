@@ -10,8 +10,11 @@ module DigitalObject::DynamicField
       @dynamic_field_data = new_dynamic_field_data
     end
     
-    # Remove blank fields
+    # Remove blank fields (all-whitespace fields DO count as blank)
     remove_blank_fields_from_dynamic_field_data!(@dynamic_field_data)
+    
+    # Trim whitespace for all remaining String fields
+    trim_whitespace_for_dynamic_field_data!(@dynamic_field_data)
     
     # Handle URI fields:
     
@@ -50,6 +53,22 @@ module DigitalObject::DynamicField
     # Step 2: Delete blank values on this object level
     df_data.delete_if{|key, value|
       value.blank?
+    }
+    
+  end
+  
+  def trim_whitespace_for_dynamic_field_data!(df_data=@dynamic_field_data)
+    # Step 1: Recursively handle values on lower levels
+    df_data.each {|key, value|
+      if value.is_a?(Array)
+        value.each {|element|
+          trim_whitespace_for_dynamic_field_data!(element)
+        }
+      elsif value.is_a?(Hash)
+        trim_whitespace_for_dynamic_field_data!(value)
+      elsif value.is_a?(String)
+        value.strip!
+      end
     }
     
   end

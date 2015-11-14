@@ -2,16 +2,10 @@
 Hyacinth.defineNamespace('Hyacinth.DigitalObjectsApp.DigitalObject');
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base = function(digital_object_data) {
-  this.pid = digital_object_data['pid'];
-  this.title = digital_object_data['title'];
-  this.state = digital_object_data['state'];
-  this.project = digital_object_data['project'];
-  this.digital_object_type = digital_object_data['digital_object_type'];
-  this.dynamic_field_data = digital_object_data['dynamic_field_data'];
-  this.parent_digital_object_pids = $.map(digital_object_data['parent_digital_objects'], function(parent_digital_object){ return parent_digital_object['pid']; });
-  this.ordered_child_digital_object_pids = $.map(digital_object_data['ordered_child_digital_objects'], function(child_digital_object){ return child_digital_object['pid']; });
-  this.dc_type = digital_object_data['dc_type'] || '';
-  this.publish_targets = digital_object_data['publish_targets'] || [];
+  var that = this;
+  $.each(digital_object_data, function(key, val){
+    that[key] = val;
+  });
 };
 
 // Class methods
@@ -20,7 +14,7 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData =
     item: Hyacinth.DigitalObjectsApp.DigitalObject.Item,
     asset: Hyacinth.DigitalObjectsApp.DigitalObject.Asset,
     group:  Hyacinth.DigitalObjectsApp.DigitalObject.Group
-  }
+  };
   return new digitalObjectTypeStringKeysToClasses[digital_object_data['digital_object_type']['string_key']](digital_object_data);
 };
 
@@ -49,15 +43,15 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getModsXmlViewUrl = func
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getParentDigitalObjectPids = function() {
-  return this.parent_digital_object_pids;
+  return $.map(this.parent_digital_objects, function(parent_digital_object){ return parent_digital_object['pid']; });
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getOrderedChildDigitalObjectPids = function() {
-  return this.ordered_child_digital_object_pids;
+  return $.map(this.ordered_child_digital_objects, function(child_digital_object){ return child_digital_object['pid']; });
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getNumberOfChildDigitalObjects = function() {
-  return this.getOrderedChildDigitalObjectPids().length;
+  return this.ordered_child_digital_objects.length;
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getState = function() {

@@ -30,8 +30,8 @@
     }
   }
   
-  .dynamic_field_group {
-    
+  .dynamic_field_group .dynamic_field_group {
+    margin: 0 .4em;
   }
 
   .dynamic_field_group_category_label {
@@ -67,23 +67,22 @@
   }
   
   .dynamic_field_group_display_label {
-    border-bottom:1px solid #77eeee;
+    border:1px solid #ddd;
     padding:.25em;
     margin-top:.25em;
     font-size:13px;
-    background:#3dc5df;
-    color:#fff;
-    text-shadow:1px 1px 0px #aaa;
+    background:#eee;
   }
   
   .dynamic_field_group_display_label:hover {
-    background: #28a0ba;
+    background:#d2d2d2;
+    border-color:#bbb;
   }
   
   .dynamic_field_group_content {
-    padding:2px 2px;
-    border:solid #77eeee;
-    border-width:0px 1px 2px 3px;
+    padding:5px 2px;
+    border:solid #eee;
+    border-width:0px 2px 2px 2px;
   }
   
   .dynamic_field {
@@ -116,10 +115,11 @@
   
   .field-management-buttons {
     float:right;
+    margin-top:-1px;
     
     .btn {
-      height:18px;
-      padding:0 2px;
+      height:19px;
+      padding:1px 3px;
       font-size:11px;
     }
     

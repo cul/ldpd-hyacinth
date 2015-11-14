@@ -555,6 +555,7 @@ class DigitalObject::Base
   def as_json(options={})
     return {
       pid: self.pid,
+      identifiers: self.identifiers,
       title: self.get_title,
       state: @fedora_object ? @fedora_object.state : 'A',
       dc_type: self.dc_type,

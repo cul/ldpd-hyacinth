@@ -23,7 +23,7 @@ class PublishTarget < ActiveRecord::Base
   end
 
   def create_associated_fedora_object!
-    pid = PidGenerator.find_by(namespace: HYACINTH['default_pid_generator_namespace']).next_pid
+    pid = PidGenerator.default_pid_generator.next_pid
     concept = Concept.new(:pid => pid)
     @fedora_object = concept
     self.pid = @fedora_object.pid

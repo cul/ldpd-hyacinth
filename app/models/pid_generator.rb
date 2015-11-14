@@ -8,6 +8,10 @@ class PidGenerator < ActiveRecord::Base
 
   validates :namespace, presence: true, uniqueness: true, allow_blank: false, allow_nil: false
   validate :validate_sample_mint
+  
+  def self.default_pid_generator
+    return @default_pid_generator || PidGenerator.find_by(namespace: HYACINTH['default_pid_generator_namespace'])
+  end
 
   def self.get_namespace_from_pid(pid)
     captures = pid.match(/(.+):.+/).captures

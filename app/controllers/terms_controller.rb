@@ -137,7 +137,10 @@ class TermsController < ApplicationController
   def term_params
     params.require(:term).permit([
       :controlled_vocabulary_string_key, :value, :uri, :type,
-    ] + (TERM_ADDITIONAL_FIELDS[params[:term]['controlled_vocabulary_string_key']].map{|key, value| key.to_sym}))
+    ] + (
+      TERM_ADDITIONAL_FIELDS[params[:term]['controlled_vocabulary_string_key']].blank? ? [] :
+      TERM_ADDITIONAL_FIELDS[params[:term]['controlled_vocabulary_string_key']].map{|key, value| key.to_sym})
+    )
   end
 
   def adjust_params_if_controlled_vocabulary_string_key_is_present

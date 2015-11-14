@@ -28,13 +28,13 @@
       ],
       "name":[
          {
-            "name_value": {
+            "name_term": {
                "value" : "Salinger, J. D.",
                "uri" : "http://id.loc.gov/authorities/names/n50016589"
             },
             "name_role":[
                {
-                  "name_role_value":{
+                  "name_role_term":{
                      "value" : "Author",
                      "uri" : "http://id.loc.gov/roles/123"
                   }
@@ -42,19 +42,19 @@
             ]
          },
          {
-            "name_value": {
+            "name_term": {
                "value" : "Lincoln, Abraham",
                "uri" : "http://id.loc.gov/authorities/names/n79006779"
             },
             "name_role":[
                {
-                  "name_role_value": {
+                  "name_role_term": {
                      "value" : "Illustrator",
                      "uri" : "http://id.loc.gov/roles/456"
                   }
                },
                {
-                  "name_role_value":{
+                  "name_role_term":{
                      "value" : "Editor",
                      "uri" : "http://id.loc.gov/roles/789"
                   }

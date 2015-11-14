@@ -177,10 +177,83 @@ RSpec.describe DigitalObject::Base, :type => :model do
             }
           ]
         }
+        
+        @digital_object.remove_blank_fields_from_dynamic_field_data!(new_dynamic_field_data)
+        expect(new_dynamic_field_data).to eq(expected)
     
-        @digital_object.update_dynamic_field_data(new_dynamic_field_data, false)
-        @digital_object.remove_blank_fields_from_dynamic_field_data!
-        expect(@digital_object.dynamic_field_data).to eq(expected)
+      end
+    end
+    
+    describe "#trim_whitespace_for_dynamic_field_data!" do
+      it "can recursively trim whitespace in dynamic field data" do
+    
+        @digital_object = DigitalObject::Item.new()
+    
+        new_dynamic_field_data = {
+          "alternate_title" => [
+            {
+              "title_non_sort_portion" => "No Extra Spaces",
+              "title_sort_portion" => "    Catcher in the Rye    "
+            }
+          ],
+          "name" => [
+            {
+              "name_value" => " This has space ",
+              "name_role" => [
+                {
+                  "name_role_value" => " This value has spaaaace     "
+                },
+                {
+                  "name_role_value" => "Unchanged role without extra space"
+                }
+              ]
+            }
+          ],
+          "some_field_group" => [
+            {
+              "some_field" => "Great value here",
+              "controlled_field" =>  {
+                "controlled_field_uri" => "        http://id.library.columbia.edu/with/leading/space",
+                "controlled_field_value" => "Value with trailing space       ",
+              }
+            }
+          ]
+        }
+    
+        expected = {
+          "alternate_title" => [
+            {
+              "title_non_sort_portion" => "No Extra Spaces",
+              "title_sort_portion" => "Catcher in the Rye"
+            }
+          ],
+          "name" => [
+            {
+              "name_value" => "This has space",
+              "name_role" => [
+                {
+                  "name_role_value" => "This value has spaaaace"
+                },
+                {
+                  "name_role_value" => "Unchanged role without extra space"
+                }
+              ]
+            }
+          ],
+          "some_field_group" => [
+            {
+              "some_field" => "Great value here",
+              "controlled_field" =>  {
+                "controlled_field_uri" => "http://id.library.columbia.edu/with/leading/space",
+                "controlled_field_value" => "Value with trailing space",
+              }
+            }
+          ]
+        }
+        
+        puts '------------------------------------'
+        @digital_object.trim_whitespace_for_dynamic_field_data!(new_dynamic_field_data)
+        expect(new_dynamic_field_data).to eq(expected)
     
       end
     end
