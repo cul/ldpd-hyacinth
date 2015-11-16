@@ -3,6 +3,11 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 #digital-object-editor {
+  
+  hr {
+    margin-top:10px;
+    margin-bottom:10px;
+  }
 
   .digital-object-editor-header {
     .form-group {
@@ -34,7 +39,7 @@
     margin: 0 .4em;
   }
 
-  .dynamic_field_group_category_label {
+  .editor-form-header {
     margin:.5em 0;
   }
 
@@ -89,28 +94,32 @@
     padding:0 .25em;
   }
   
-  input[type="text"].form-control,
-  .controlled-term-pill-box {
-    height:26px;
-    border-color:#ccc;
-    margin:1px 0px;
-  }
-  input[type="text"].form-control {
-    padding:6px;
-  }
-  .controlled-term-pill-box {
-    padding:1px;
-  }
+  .dynamic_field_group {
   
-  .controlled-term-pill-box button {
-    padding-top:2px;
-    padding-bottom:0px;
-  }
-  
-  .controlled-term-pill-box .controlled_term_clear_button {
-    height:17px;
-    font-size:11px;
-    padding:0px 2px;
+    input[type="text"].form-control,
+    .controlled-term-pill-box {
+      height:26px;
+      border-color:#ccc;
+      margin:1px 0px;
+    }
+    input[type="text"].form-control {
+      padding:6px;
+    }
+    .controlled-term-pill-box {
+      padding:1px;
+    }
+    
+    .controlled-term-pill-box button {
+      padding-top:2px;
+      padding-bottom:0px;
+    }
+    
+    .controlled-term-pill-box .controlled_term_clear_button {
+      height:17px;
+      font-size:11px;
+      padding:0px 2px;
+    }
+    
   }
   
   .field-management-buttons {
@@ -126,6 +135,19 @@
   }
   .readonly-display-value {
     font-size:13px;
+  }
+  
+  .identifiers .input-group {
+    margin-bottom:2px;
+    
+    .btn.btn-xs {
+      padding:2px 5px;
+    }
+    
+    input[type="text"].form-control {
+      height:24px;
+      padding:2px 4px;
+    }
   }
 }
 

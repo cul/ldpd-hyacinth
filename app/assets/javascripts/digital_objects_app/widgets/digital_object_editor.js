@@ -212,6 +212,14 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.addDynamicFieldGroup = function(d
   $dynamicFieldGroup.after($clonedElement);
 }
 
+//Creates a new identifier field, based on the given identifier element.  The new group coupy is placed in the DOM, after the source element.
+Hyacinth.DigitalObjectsApp.DigitalObjectEditor.addIdentifier = function(identifierElement) {
+  var $identifier = $(identifierElement);
+  var $clonedElement = $identifier.clone(false); //Make a copy of the element, but do not copy element data and events.
+  $clonedElement.find('input[type="text"]').val(''); //Clear text field
+  $identifier.after($clonedElement);
+}
+
 //Populate form with data
 
 Hyacinth.DigitalObjectsApp.DigitalObjectEditor.populateFormElementsWithDynamicFieldData = function(dynamicFieldDataForThisLevel, containerForThisLevel, mode){
@@ -316,6 +324,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
     that.submitEditorForm(true);
   });
 
+  //Set up dynamic field group add/remove/shift buttons
+  
   $editorForm.on('click', '.add-dynamic-field-group', function(e){
     e.preventDefault();
     var $dynamicFieldGroup = $(this).closest('.dynamic_field_group');
@@ -336,7 +346,6 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
     }
     $editorForm = $dynamicFieldGroup.closest('.editor-form');
     $dynamicFieldGroup.remove();
-    $dynamicFieldGroup.find('.add-dynamic-field-group').blur(); //Seems weird, but I need to do this to blur the clicked button.  Directly calling blur on the button element isn't working.
     Hyacinth.DigitalObjectsApp.DigitalObjectEditor.refreshTabIndexesAndDynamicFieldGroupCounters($editorForm);
   });
 
@@ -360,6 +369,28 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
       $dynamicFieldGroup.find('.shift-dynamic-field-group-up').blur(); //Seems weird, but I need to do this to blur the clicked button.  Directly calling blur on the button element isn't working.
       Hyacinth.DigitalObjectsApp.DigitalObjectEditor.refreshTabIndexesAndDynamicFieldGroupCounters($dynamicFieldGroup.closest('.editor-form'));
     }
+  });
+  
+  //Set up identifier add/remove buttons
+  
+  $editorForm.on('click', '.add-identifier', function(e){
+    e.preventDefault();
+    var $identifier = $(this).closest('.identifier');
+    Hyacinth.DigitalObjectsApp.DigitalObjectEditor.addIdentifier($identifier);
+    $identifier.find('.add-identifier').blur(); //Seems weird, but I need to do this to blur the clicked button.  Directly calling blur on the button element isn't working.
+    Hyacinth.DigitalObjectsApp.DigitalObjectEditor.refreshTabIndexesAndDynamicFieldGroupCounters($identifier.closest('.editor-form'));
+  });
+
+  $editorForm.on('click', '.remove-identifier', function(e){
+    e.preventDefault();
+    var $identifier = $(this).closest('.identifier');
+    //If this is the last identifier, create a new, blank instance before deleting the selected instance
+    if ($identifier.parent().children('.identifier').length == 1) {
+      Hyacinth.DigitalObjectsApp.DigitalObjectEditor.addIdentifier($identifier);
+    }
+    $editorForm = $identifier.closest('.editor-form');
+    $identifier.remove();
+    Hyacinth.DigitalObjectsApp.DigitalObjectEditor.refreshTabIndexesAndDynamicFieldGroupCounters($editorForm);
   });
 
   //When in edit mode, assign default values to applicable fields
@@ -566,11 +597,19 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.submitEditorForm = func
       publishTargets.push({pid: $(this).val()})
     }
   });
+  
+  var identifiers = [];
+  $editorForm.find('.identifiers input[name="identifier"]').each(function(){
+    if ($(this).val().trim() != '') {
+      identifiers.push($(this).val());
+    }
+  });
 
   var digitalObjectData = {
     digital_object_type: {string_key: this.digitalObject.digital_object_type['string_key']},
     dynamic_field_data: Hyacinth.DigitalObjectsApp.DigitalObjectEditor.serializeFormDataToObject($editorForm),
-    publish_targets: publishTargets
+    publish_targets: publishTargets,
+    identifiers: identifiers
   };
 
   if (this.digitalObject.isNewRecord()) {

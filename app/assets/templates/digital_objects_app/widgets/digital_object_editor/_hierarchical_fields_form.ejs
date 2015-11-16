@@ -23,7 +23,7 @@
       <% // Iterate through categories %>
       <% var dynamicFieldGroupCategory = dynamicFieldHierarchy[i] %>
       <% if (dynamicFieldGroupCategory['dynamic_field_groups'].length > 0) { %>
-        <h2 class="dynamic_field_group_category_label"><%= dynamicFieldGroupCategory['display_label'] %></h2>
+        <h2 class="editor-form-header dynamic_field_group_category_label"><%= dynamicFieldGroupCategory['display_label'] %></h2>
         <% for (var j = 0; j < dynamicFieldGroupCategory['dynamic_field_groups'].length; j++) { %>
           <% // Iterate through top level dynamic_field_groups %>
           <%= Hyacinth.DigitalObjectsApp.DigitalObjectEditor.recursivelyRenderDynamicFieldOrDynamicFieldGroup(dynamicFieldGroupCategory['dynamic_field_groups'][j], mode, dynamicFieldIdsToEnabledDynamicFields) %>
@@ -32,9 +32,26 @@
     <% } %>
   </div>
 
+  <h2 class="editor-form-header">Identifiers</h2>
+  <div class="identifiers">
+    <% var identifiers = digitalObject.identifiers.length < 1 ? digitalObject.identifiers.concat([""]) : digitalObject.identifiers; %>
+    <% identifiers.forEach(function(identifier){ %>
+      <% if (mode == 'edit') { %>
+        <div class="identifier input-group">
+          <input type="text" name="identifier" value="<%- identifier %>" class="form-control input-sm tabable">
+          <span class="input-group-btn">
+            <button type="button" class="remove-identifier btn btn-xs btn-danger"><span class="glyphicon glyphicon-minus"></span></button>
+            <button type="button" class="add-identifier btn btn-xs btn-success"><span class="glyphicon glyphicon-plus"></span></button>
+          </span>
+        </div>
+      <% } else { %>
+        <div><%= identifier %></div>
+      <% } %>
+    <% }); %>
+  </div>
+  
   <% if ( digitalObject.publish_targets.length > 0 || (mode == 'edit' && allowedPublishTargets.length > 0) ) { %>
-    <hr />
-    <h2>Publish Targets:</h2>
+    <h2 class="editor-form-header">Publish Targets</h2>
     <div class="publish-targets">
       <% activePublishTargets = _.map(digitalObject.publish_targets, function(pub_tar){ return pub_tar['pid']; }); %>
       <% allowedPublishTargets.forEach(function(allowedPublishTarget){ %>
