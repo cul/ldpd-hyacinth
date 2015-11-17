@@ -94,6 +94,13 @@
     padding:0 .25em;
   }
   
+  .editor-form.show {
+    .dynamic_field {
+      padding-top:1px;
+      padding-bottom:1px;
+    }
+  }
+  
   .dynamic_field_group {
   
     input[type="text"].form-control,

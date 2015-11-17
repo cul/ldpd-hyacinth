@@ -10,6 +10,11 @@ namespace :hyacinth do
         # omeka_identifier -> omeka_identifier_value
         # language -> language_term
         # location -> location_url_object_in_context
+        
+        # location -> holding -> location_holding_sublocation_term (instead of location_holding_sublocation_value)
+        
+        
+        
       end
       
     end

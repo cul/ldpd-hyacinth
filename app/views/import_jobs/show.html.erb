@@ -5,11 +5,11 @@
 </p>
 <p>
   <strong>User:</strong>
-  <%=@import_job.user.first_name%> <%=@import_job.user.last_name%></h1>
+  <%= @import_job.user.first_name %> <%= @import_job.user.last_name %></h1>
 </p>
 <p>
   <strong>Email:</strong>
-  <%=@import_job.user.email%></h1>
+  <%= @import_job.user.email %></h1>
 </p>
 <table class="table table-condensed table-bordered table-striped">
   <thead>
@@ -26,7 +26,7 @@
         <td><%= @count_pending %></td>
         <td><%= @count_success %></td>
         <td><%= @count_failure %></td>
-        <td><%= link_to @count_total, import_job_digital_object_imports_path(@import_job) %></td>
+        <td><%= link_to @count_total.to_s + ' (view)', import_job_digital_object_imports_path(@import_job) %></td>
       </tr>
   </tbody>
 </table>

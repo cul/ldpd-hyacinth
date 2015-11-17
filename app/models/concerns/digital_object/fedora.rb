@@ -3,19 +3,26 @@ module DigitalObject::Fedora
 
   PROJECT_MEMBERSHIP_PREDICATE = :is_constituent_of
   HYACINTH_DATASTREAM_NAME = 'hyacinth'
+  HYACINTH_STRUCT_DATASTREAM_NAME = 'hyacinth_struct'
 
   ###############################
   # General data access methods #
   ###############################
 
-  def get_hyacinth_data
-
+  def get_hyacinth_ds_data
     hyacinth_ds = @fedora_object.datastreams[HYACINTH_DATASTREAM_NAME]
     if hyacinth_ds.present? && hyacinth_ds.content.present?
       return JSON(hyacinth_ds.content)
     end
-
     return {}
+  end
+  
+  def get_hyacinth_struct_ds_data
+    hyacinth_struct_ds = @fedora_object.datastreams[HYACINTH_STRUCT_DATASTREAM_NAME]
+    if hyacinth_struct_ds.present? && hyacinth_struct_ds.content.present?
+      return JSON(hyacinth_struct_ds.content)
+    end
+    return []
   end
 
   ######################################
@@ -93,12 +100,16 @@ module DigitalObject::Fedora
   end
 
   def set_fedora_hyacinth_ds_data
-    hyacinth_data = get_hyacinth_data()
-    # Making a copy so we don't modifiy the in-memory copy, then saving the modified copy to Fedora
-    copy_of_current_dynamic_field_data = Marshal.load(Marshal.dump(@dynamic_field_data))
-    hyacinth_data['dynamic_field_data'] = remove_extra_uri_data_from_dynamic_field_data!(copy_of_current_dynamic_field_data)
-    hyacinth_data['ordered_child_digital_object_pids'] = @ordered_child_digital_object_pids
-    @fedora_object.datastreams[HYACINTH_DATASTREAM_NAME].content = hyacinth_data.to_json
+    # Create required hyacinth datastreams if they don't exist
+    create_required_hyacinth_datastreams_if_not_exist!
+    
+    # Set Hyacinth data
+    copy_of_current_dynamic_field_data = Marshal.load(Marshal.dump(@dynamic_field_data)) # Making a copy so we don't modifiy the in-memory copy, then saving the modified copy to Fedora
+    @fedora_object.datastreams[HYACINTH_DATASTREAM_NAME].content = JSON.generate({
+      'dynamic_field_data' => remove_extra_uri_data_from_dynamic_field_data!(copy_of_current_dynamic_field_data)
+    })
+    # Set Hyacinth struct data
+    @fedora_object.datastreams[HYACINTH_STRUCT_DATASTREAM_NAME].content = JSON.generate(@ordered_child_digital_object_pids)
   end
 
   ######################################
@@ -211,11 +222,15 @@ module DigitalObject::Fedora
   end
 
   def load_fedora_hyacinth_ds_data_from_fedora_object!
-    hyacinth_data = get_hyacinth_data()
+    
+    # Load Hyacinth data
+    hyacinth_data = get_hyacinth_ds_data()
     @dynamic_field_data = hyacinth_data['dynamic_field_data'] || {}
     self.add_extra_uri_data_to_dynamic_field_data!(@dynamic_field_data)
-    @ordered_child_digital_object_pids = hyacinth_data['ordered_child_digital_object_pids'] || []
-
+    
+    # Load Hyacinth struct data
+    @ordered_child_digital_object_pids = get_hyacinth_struct_ds_data()
+    
     if HYACINTH['treat_fedora_resource_index_updates_as_immediate']
       # If and only if Fedora Resource Index updates are set to be immediate, we can rely on the index for
       # aggregating missing memberOf values and appending them to this list.  If Resource Index updates aren't
@@ -250,6 +265,18 @@ module DigitalObject::Fedora
         "The following Fedora objects have not been imported into Hyacinth as Publish targets: " + (pids - @publish_targets.map{|pub|pub.pid}).inspect
     end
   end
+  
+  def create_required_hyacinth_datastreams_if_not_exist!
+    if @fedora_object.datastreams[HYACINTH_DATASTREAM_NAME].nil?
+      hyacinth_ds = get_new_hyacinth_datastream
+      @fedora_object.add_datastream(hyacinth_ds)
+    end
+    
+    if @fedora_object.datastreams[HYACINTH_STRUCT_DATASTREAM_NAME].nil?
+      hyacinth_struct_ds = get_new_hyacinth_struct_datastream
+    @fedora_object.add_datastream(hyacinth_struct_ds)
+    end
+  end
 
   def get_new_hyacinth_datastream
     hyacinth_data = {}
@@ -259,6 +286,18 @@ module DigitalObject::Fedora
       :dsLabel => HYACINTH_DATASTREAM_NAME,
       :versionable => true,
       :blob => hyacinth_data.to_json
+    )
+    return hyacinth_ds
+  end
+  
+  def get_new_hyacinth_struct_datastream
+    struct_data = {}
+    hyacinth_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, HYACINTH_STRUCT_DATASTREAM_NAME,
+      :controlGroup => 'M',
+      :mimeType => 'application/json',
+      :dsLabel => HYACINTH_STRUCT_DATASTREAM_NAME,
+      :versionable => false,
+      :blob => struct_data.to_json
     )
     return hyacinth_ds
   end

@@ -25,16 +25,16 @@
 <br />
 <h2>Current Parent <%= allowedParentTypeLabel %>s</h2>
 <form id="remove-parent-form">
-  <% if (digitalObject.parent_digital_object_pids.length == 0) { %>
+  <% if (digitalObject.parent_digital_objects.length == 0) { %>
     None
   <% } else { %>
     <ul>
-    <% digitalObject.parent_digital_object_pids.forEach(function(pid){ %>
+    <% digitalObject.parent_digital_objects.forEach(function(parent_digital_object){ %>
       <li>
         <div class="checkbox">
           <label>
-            <input name="parent_pid" type="checkbox" value="<%= pid %>" />
-            <%= '<a href="#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: pid}) + '">' + pid + '</a>' %>
+            <input name="parent_pid" type="checkbox" value="<%= parent_digital_object['pid'] %>" />
+            <%= '<a href="#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: parent_digital_object['pid']}) + '">' + parent_digital_object['pid'] + '</a>' %>
           </label>
         </div>
       </li>

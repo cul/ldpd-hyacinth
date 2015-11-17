@@ -31,9 +31,7 @@ Hyacinth::Application.routes.draw do
 
   # add actions as needed, remove "only:" restriction if all actions needed
   resources :import_jobs, only: [:index, :show] do
-
     resources :digital_object_imports, only: [:index, :show]
-
   end
 
   resources :digital_object_imports, only: [:index, :show]

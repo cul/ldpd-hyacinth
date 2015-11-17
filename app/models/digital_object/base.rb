@@ -341,8 +341,6 @@ class DigitalObject::Base
         if self.new_record?
           @fedora_object = self.get_new_fedora_object
           @db_record.pid = @fedora_object.pid
-          hyacinth_ds = get_new_hyacinth_datastream
-          @fedora_object.add_datastream(hyacinth_ds)
         else
           # For existing records, we always lock on @db_record during Fedora reads/writes (and wrap in a transaction)
           @db_record.lock! # Within the established transaction, lock on this object's row.  Remember: "lock!" also reloads object data from the db, so perform all @db_record modifications AFTER this call.
