@@ -18,7 +18,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
       @digital_object.set_digital_object_data(sample_item_digital_object_data, false)
       
       expect(@digital_object).to be_instance_of(DigitalObject::Item)
-      expect(@digital_object.identifiers).to eq(["identifier.001", "identifier.002"])
+      expect(@digital_object.identifiers).to eq(["item.001"])
       expect(@digital_object.project.string_key).to eq('test')
       expect(@digital_object.publish_targets.map{|publish_target| publish_target.string_key}.sort).to eq(['test_publish_target_1', 'test_publish_target_2'])
       expect(@digital_object.dynamic_field_data).to eq(sample_item_digital_object_data['dynamic_field_data'])

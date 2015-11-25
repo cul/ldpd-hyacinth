@@ -335,6 +335,9 @@ class DigitalObject::Base
           # For existing records, we always lock on @db_record during Fedora reads/writes (and wrap in a transaction)
           @db_record.lock! # Within the established transaction, lock on this object's row.  Remember: "lock!" also reloads object data from the db, so perform all @db_record modifications AFTER this call.
         end
+        
+        run_post_validation_pre_save_logic()
+        
         set_created_and_updated_data_from_db_record
         set_fedora_hyacinth_ds_data
         set_fedora_project_and_publisher_relationships
@@ -345,8 +348,6 @@ class DigitalObject::Base
 
         set_fedora_parent_digital_object_pid_relationships if parent_digital_object_pids_changed?
         set_fedora_obsolete_parent_digital_object_pid_relationships if obsolete_parent_digital_object_pids_changed?
-        
-        run_post_validation_pre_save_logic()
         
         @db_record.save! # Save timestamps + updates to modifed_by, etc.
 
