@@ -385,8 +385,11 @@
 
 #digital-object-asset-upload {
   
-  .digital-object-asset-upload-form {
+  .upload-files-table {
+    word-break: break-word;
+  }
   
+  .digital-object-asset-upload-form {
     
     .browser-upload {
       margin-top:1em;

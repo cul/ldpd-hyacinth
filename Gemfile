@@ -28,6 +28,9 @@ gem 'ruby-progressbar'
 gem 'random-word'
 gem 'faker'
 
+# For retrying code blocks that may return an error
+gem 'retriable', '~> 2.1'
+
 # File uploads
 gem 'jquery.fileupload-rails'
 

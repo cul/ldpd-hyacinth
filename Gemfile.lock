@@ -361,6 +361,7 @@ GEM
     rest-client (1.7.3)
       mime-types (>= 1.16, < 3.0)
       netrc (~> 0.7)
+    retriable (2.1.0)
     rsolr (1.0.10)
       builder (>= 2.1.2)
     rspec-core (3.3.2)
@@ -499,6 +500,7 @@ DEPENDENCIES
   random-word
   rdf-rdfxml!
   resque (~> 1.0)
+  retriable (~> 2.1)
   rspec-rails (~> 3.3)
   ruby-progressbar
   sass

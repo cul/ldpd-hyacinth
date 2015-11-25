@@ -29,23 +29,84 @@ class DigitalObjectsController < ApplicationController
       render json: { success: false, errors: ['Invalid digital_object_type specified: digital_object_type => ' + digital_object_data['digital_object_type'].inspect] } and return
     end
     
-    begin
-      @digital_object.set_digital_object_data(digital_object_data, false)
-    rescue Hyacinth::Exceptions::PublishTargetNotFoundError, Hyacinth::Exceptions::DigitalObjectNotFoundError, Hyacinth::Exceptions::ProjectNotFoundError => e
-      render json: { success: false, errors: [e.message] } and return
+    # We need to do two things here for Asset uploads:
+    # 1) Make sure that non-admins can only do uploads via post data or upload directory
+    # 2) Transform digital_object_data['import_file'] value for post data uploads so that we reference the temp file that Rails created during the upload.
+    if @digital_object.is_a?(DigitalObject::Asset)
+      if digital_object_data['import_file'].blank?
+        render json: { success: false, errors: ['Missing digital_object_data_json[import_file] for new Asset'] } and return
+      end
+      
+      import_type = digital_object_data['import_file']['import_type']
+      if import_type.blank?
+        render json: { success: false, errors: ['Missing digital_object_data_json[import_file][import_type] for new Asset'] } and return
+      end
+      
+      if (! current_user.is_admin?) && import_type != DigitalObject::Asset::IMPORT_TYPE_POST_DATA && import_type != DigitalObject::Asset::IMPORT_TYPE_UPLOAD_DIRECTORY
+        render json: { success: false, errors: ['Only admins can perform file imports of type: ' + import_type] } and return
+      end
+      
+      # Now we'll transform digital_object_data['import_file'] if this is a post data upload
+      if import_type == DigitalObject::Asset::IMPORT_TYPE_POST_DATA
+        
+        if params[:file].blank?
+          render json: { success: false, errors: ['An attached file is required in the request data for imports of type: ' + import_type] } and return
+        end
+        
+        # Immediately unlink the uploaded file.  This is recommended for POSIX systems,
+        # but the code below should still work on non-POSIX systems (like Windows).
+        # Why do we do this?  Cleans up temp files as quickly as possible so they
+        # don't wait around to be garbage collected.  With lots of file uploads,
+        # accumulation of too many temp files could be problematic.
+        # Recommended here: http://www.ruby-doc.org/stdlib-1.9.3/libdoc/tempfile/rdoc/Tempfile.html (See: "Unlink after creation")
+        # And here: http://docs.ruby-lang.org/en/2.1.0/Tempfile.html (See: "Unlink-before-close")
+        upload = params[:file]
+        
+        digital_object_data['import_file'] = {
+          'import_type' => DigitalObject::Asset::IMPORT_TYPE_POST_DATA,
+          'import_path' => upload.tempfile.path,
+          'original_file_path' => upload.original_filename
+        }
+      end
     end
     
-    @digital_object.created_by = current_user
-    @digital_object.updated_by = current_user
+    success = false
+    
+    begin
+    
+      begin
+        @digital_object.set_digital_object_data(digital_object_data, false)
+      rescue Hyacinth::Exceptions::PublishTargetNotFoundError, Hyacinth::Exceptions::DigitalObjectNotFoundError, Hyacinth::Exceptions::ProjectNotFoundError => e
+        render json: { success: false, errors: [e.message] } and return
+      end
+      
+      @digital_object.created_by = current_user
+      @digital_object.updated_by = current_user
+  
+      test_mode = params['test'].to_s == 'true'
+      do_publish = !test_mode && params['publish'].to_s == 'true'
+      
+      success = (test_mode ? @digital_object.valid? : @digital_object.save) && (do_publish ? @digital_object.publish : true)
+    
+    ensure
+      # If we're dealing with a file upload (which isn't always the case), make sure to close the file when we're done
+      if params[:file].present?
+        params[:file].tempfile.close
+        params[:file].tempfile.unlink
+      end
+    end
 
-    test_mode = params['test'].to_s == 'true'
-    do_publish = !test_mode && params['publish'].to_s == 'true'
-
-    if (test_mode ? @digital_object.valid? : @digital_object.save) && (do_publish ? @digital_object.publish : true)
+    if success
       render json: {
         success: true,
         pid: @digital_object.pid
-      }
+      }.merge(@digital_object.is_a?(DigitalObject::Asset) ? {
+        'uploaded_file_confirmation' => {
+          'name' => @digital_object.get_original_filename,
+          'size' => @digital_object.get_file_size_in_bytes,
+          'errors' => @digital_object.errors.full_messages
+        }
+      } : {})
     else
       render json: {
         errors: @digital_object.errors
@@ -281,148 +342,6 @@ class DigitalObjectsController < ApplicationController
 
   end
 
-  def upload_assets
-
-    test_mode = params['test'].present? && params['test'].to_s == 'true'
-
-    overall_errors = []
-
-    if params['parent_digital_object_pid']
-      parent_digital_object = DigitalObject::Base.find(params['parent_digital_object_pid'])
-
-      # Only DigitalObject::Item objects can have child assets
-      unless parent_digital_object.is_a?(DigitalObject::Item)
-        overall_errors << "You can only upload assets to a parent Digital Object of type Item.  Object with pid #{parent_digital_object.pid} is of type: #{parent_digital_object.digital_object_type.display_label}"
-      end
-
-      project = parent_digital_object.project
-    elsif params['project_string_key'].present?
-      parent_digital_object = nil
-      project = Project.find_by(string_key: params['project_string_key'])
-      unless project.present?
-        overall_errors << "Could not find project for string key: #{params['project_string_key']}"
-      end
-    else
-      overall_errors << "Missing project string key.  Supply param project_string_key OR reference a parent digital object."
-    end
-
-    file_data = []
-
-    if overall_errors.present?
-      file_data << {
-        "name" => 'Error',
-        "size" => 0,
-        "errors" => overall_errors
-      }
-    # Case 1: We're receiving file data from an HTTP upload
-    elsif params['files'].present?
-
-      # Immediately unlink all files.  This is recommended for POSIX systems,
-      # but the code below should still work on non-POSIX systems (like Windows).
-      # Why do we do this?  Cleans up temp files as quickly as possible so they
-      # don't wait around to be garbage collected.  With lots of file uploads,
-      # accumulation of too many temp files could be problematic.
-      # Recommended here: http://www.ruby-doc.org/stdlib-1.9.3/libdoc/tempfile/rdoc/Tempfile.html (See: "Unlink after creation")
-      # And here: http://docs.ruby-lang.org/en/2.1.0/Tempfile.html (See: "Unlink-before-close")
-
-      params['files'].each {|uploaded_file|
-        uploaded_file.tempfile.unlink # On Windows, this silently fails.  That's okay, and this is deliberate.  We still need to use a begin/ensure clause with file.tempfile.close.
-      }
-
-      params['files'].each do |uploaded_file|
-        begin
-
-          # Check for invalid characters in filename.  Reject if non-utf8.
-          # If we get weird characters (like "\xC2"), Ruby will die a horrible death.  Let's keep Ruby alive.
-          if uploaded_file.original_filename != Hyacinth::Utils::StringUtils.clean_utf8_string(uploaded_file.original_filename)
-            file_data << {
-              "name" => uploaded_file.original_filename,
-              "size" => uploaded_file.tempfile.size,
-              "errors" => ["Invalid UTF-8 characters found in filename.  Unable to upload."]
-            }
-          else
-            original_file_path = uploaded_file.original_filename
-
-            if test_mode
-              puts 'Test mode output: Would have created new Asset for: ' + uploaded_file.original_filename
-            else
-              file_data << handle_single_file_upload(original_file_path, 'internal', uploaded_file.tempfile, project, parent_digital_object)
-            end
-          end
-        ensure
-           uploaded_file.tempfile.close!  # Closes the file handle. If the file wasn't unlinked earlier
-                                          # because #unlink failed, then this method will attempt
-                                          # to do so again.
-        end
-      end
-
-    elsif params['local_filesystem_file_path'] || params['path_in_upload_directory']
-
-      # Case 2: We're receiving file data from a local filesystem location.
-
-      if params['local_filesystem_file_path']
-        raise 'Only administrators can upload from a directory other than the Hyacinth Upload Directory' unless current_user.is_admin?
-        original_file_path = params['local_filesystem_file_path'].to_s
-      elsif params['path_in_upload_directory']
-        original_file_path = File.join(HYACINTH['upload_directory'], params['path_in_upload_directory'].to_s)
-      end
-      
-      new_file = {
-        "name" => original_file_path,
-        "size" => 0,
-        "errors" => []
-      }
-      
-      # Paths cannot contain "/.." or "../"
-      if original_file_path.index('/..') || original_file_path.index('../')
-        new_file['errors'] << 'Paths cannot contain: ".."'
-      else
-
-        # Check for invalid characters in filename.  Reject if non-utf8.
-        # If we get weird characters (like "\xC2"), Ruby will die a horrible death.  Let's keep Ruby alive.
-        if original_file_path != Hyacinth::Utils::StringUtils.clean_utf8_string(original_file_path)
-          new_file['errors'] << "Invalid UTF-8 characters found in file path.  Unable to upload."
-        else
-          # Make sure that the file actually exists
-          unless File.exists?(original_file_path)
-            new_file['errors'] << "No file found at path: " + original_file_path
-          else
-            if test_mode
-              puts 'Test mode output: Would have created new Asset for file at: ' + original_file_path
-            else
-              # 'r' == read, 'b' == binary mode
-              File.open(original_file_path, 'rb') do |file|
-                new_file = handle_single_file_upload(original_file_path, params['import_type'], file, project, parent_digital_object)
-              end
-    
-              ### Keeping the section below commented out because we don't currently want to delete the source files that we're importing.
-              #if params['import_type'] == 'internal' && file_data.last['errors'].blank?
-              #  # Since this was an internal upload, we copied the file to some Hyacinth-asset-directory location.
-              #  # If we're here, the save (i.e. file copy) went through without a problem (and we verified checksums
-              #  # before and after), so it's now safe to delete the original file.
-              #  File.unlink(original_file_path)
-              #end
-    
-            end
-          end
-  
-        end
-      end
-      
-      file_data << new_file
-
-    end
-
-    respond_to do |format|
-      format.json {
-        render json: {
-          'files' => file_data
-        }
-      }
-    end
-
-  end
-
   def add_parent
 
     test_mode = params['test'].present? && params['test'].to_s == 'true'
@@ -551,7 +470,7 @@ class DigitalObjectsController < ApplicationController
         errors << 'An error occurred during image regeneration.'
       end
     else
-      errors << "Only Items with 2 child assets have have their first two assets swapped.  This is a #{@digital_object.digital_object_type.display_label} with #{@digital_object.ordered_child_digital_object_pids.length} child assets."
+      errors << "Only Items with 2 child assets can have have their first two assets swapped.  This is a #{@digital_object.digital_object_type.display_label} with #{@digital_object.ordered_child_digital_object_pids.length} child assets."
     end
 
     if errors.present?

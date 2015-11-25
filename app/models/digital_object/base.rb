@@ -9,7 +9,7 @@ class DigitalObject::Base
   include DigitalObject::XmlDatastreamRendering
 
   NUM_FEDORA_RETRY_ATTEMPTS = 3
-  DELAY_BETWEEN_FEDORA_RETRY_ATTEMPTS = 5.seconds
+  DELAY_IN_SECONDS_BETWEEN_FEDORA_RETRY_ATTEMPTS = 5
 
   # For ActiveModel::Dirty
   define_attribute_methods :parent_digital_object_pids, :obsolete_parent_digital_object_pids, :ordered_child_digital_object_pids
@@ -131,24 +131,25 @@ class DigitalObject::Base
     end
     
     # Dynamic Field Data
-    if digital_object_data['dynamic_field_data']
+    if digital_object_data['dynamic_field_data'].present?
       self.update_dynamic_field_data(digital_object_data['dynamic_field_data'], merge_dynamic_fields)
     end
+    
   end
 
   # Returns the primary title
-  def get_title
+  def get_title(return_notitle_placeholder_if_blank=true)
     title = ''
     if @dynamic_field_data['title'] && @dynamic_field_data['title'].first && @dynamic_field_data['title'].first['title_non_sort_portion']
       title += @dynamic_field_data['title'].first['title_non_sort_portion'] + ' '
     end
-    title += self.get_sort_title
+    title += self.get_sort_title(return_notitle_placeholder_if_blank)
     return title
   end
 
   # Returns the sort portion of the primary title
-  def get_sort_title
-    sort_title = '[No Title]'
+  def get_sort_title(return_notitle_placeholder_if_blank=true)
+    sort_title = return_notitle_placeholder_if_blank ? '[No Title]' : ''
     if @dynamic_field_data['title'] && @dynamic_field_data['title'].first && @dynamic_field_data['title'].first['title_sort_portion']
       sort_title = @dynamic_field_data['title'].first['title_sort_portion']
     end
@@ -245,7 +246,7 @@ class DigitalObject::Base
   # Getters
 
   def pid
-    return self.new_record? ? nil : @fedora_object.pid
+    return @fedora_object.present? ? @fedora_object.pid : nil
   end
 
   # Find/Save/Validate
@@ -267,22 +268,11 @@ class DigitalObject::Base
       raise Hyacinth::Exceptions::DigitalObjectNotFoundError, "Couldn't find DigitalObject with pid #{pid}"
     end
 
-    # Handle Fedora timeouts / unreachable host.  Try up to 3 times.
+    # Retry after Fedora timeouts / unreachable host
     fobj = nil
-    NUM_FEDORA_RETRY_ATTEMPTS.times { |i|
-      begin
-        fobj = ActiveFedora::Base.find(pid)
-        break
-      rescue RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH => e
-        remaining_attempts = (NUM_FEDORA_RETRY_ATTEMPTS-1) - i
-        if remaining_attempts == 0
-          raise e
-        else
-          Rails.logger.error "Error: Could not connect to fedora. (#{e.class.to_s + ': ' + e.message}).  Will retry #{remaining_attempts} more #{remaining_attempts == 1 ? 'time' : 'times'} (after a #{DELAY_BETWEEN_FEDORA_RETRY_ATTEMPTS} second delay)."
-          sleep DELAY_BETWEEN_FEDORA_RETRY_ATTEMPTS
-        end
-      end
-    }
+    Retriable.retriable on: [RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH], tries: NUM_FEDORA_RETRY_ATTEMPTS, base_interval: DELAY_IN_SECONDS_BETWEEN_FEDORA_RETRY_ATTEMPTS do
+      fobj = ActiveFedora::Base.find(pid)
+    end
     
     digital_object = DigitalObject::Base.get_class_for_fedora_object(fobj).new()
     digital_object.init_from_digital_object_record_and_fedora_object(digital_object_record, fobj)
@@ -355,24 +345,15 @@ class DigitalObject::Base
 
         set_fedora_parent_digital_object_pid_relationships if parent_digital_object_pids_changed?
         set_fedora_obsolete_parent_digital_object_pid_relationships if obsolete_parent_digital_object_pids_changed?
-
+        
+        run_post_validation_pre_save_logic()
+        
         @db_record.save! # Save timestamps + updates to modifed_by, etc.
 
-        # Handle Fedora timeouts / unreachable host.  Try up to 3 times.
-        NUM_FEDORA_RETRY_ATTEMPTS.times { |i|
-          begin
-            @fedora_object.save
-            break
-          rescue RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH => e
-            remaining_attempts = (NUM_FEDORA_RETRY_ATTEMPTS-1) - i
-            if remaining_attempts == 0
-              raise e
-            else
-              Rails.logger.error "Error: Could not connect to fedora. (#{e.class.to_s + ': ' + e.message}).  Will retry #{remaining_attempts} more #{remaining_attempts == 1 ? 'time' : 'times'} (after a #{DELAY_BETWEEN_FEDORA_RETRY_ATTEMPTS} second delay)."
-              sleep DELAY_BETWEEN_FEDORA_RETRY_ATTEMPTS
-            end
-          end
-        }
+        # Retry after Fedora timeouts / unreachable host
+        Retriable.retriable on: [RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH], tries: NUM_FEDORA_RETRY_ATTEMPTS, base_interval: DELAY_IN_SECONDS_BETWEEN_FEDORA_RETRY_ATTEMPTS do
+          @fedora_object.save
+        end
 
         if parent_digital_object_pids_changed?
 
@@ -391,7 +372,7 @@ class DigitalObject::Base
             (removed_parents + new_parents).each do |digital_obj_pid|
               parent_obj = DigitalObject::Base.find(digital_obj_pid)
               unless parent_obj.save
-                @errors.add(:parent_digital_object, parent_obj.errors)
+                @errors.add(:parent_digital_objects, parent_obj.errors)
               end
             end
           else
@@ -434,6 +415,10 @@ class DigitalObject::Base
     end
     return false
   end
+  
+  def run_post_validation_pre_save_logic
+    # This method is intended to be overridden by DigitalObject::Base child classes
+  end
 
   def publish
     # Save all XmlDatastreams that have data
@@ -473,21 +458,10 @@ class DigitalObject::Base
       end
     end
 
-    # Handle Fedora timeouts / unreachable host.  Try up to 3 times.
-    NUM_FEDORA_RETRY_ATTEMPTS.times { |i|
-      begin
-        @fedora_object.save
-        break
-      rescue RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH => e
-        remaining_attempts = (NUM_FEDORA_RETRY_ATTEMPTS-1) - i
-        if remaining_attempts == 0
-          raise e
-        else
-          Rails.logger.error "Error: Could not connect to fedora. (#{e.class.to_s + ': ' + e.message}).  Will retry #{remaining_attempts} more #{remaining_attempts == 1 ? 'time' : 'times'} (after a #{DELAY_BETWEEN_FEDORA_RETRY_ATTEMPTS} second delay)."
-          sleep DELAY_BETWEEN_FEDORA_RETRY_ATTEMPTS
-        end
-      end
-    }
+    # Retry after Fedora timeouts / unreachable host
+    Retriable.retriable on: [RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH], tries: NUM_FEDORA_RETRY_ATTEMPTS, base_interval: DELAY_IN_SECONDS_BETWEEN_FEDORA_RETRY_ATTEMPTS do
+      @fedora_object.save
+    end
 
     return false if @errors.present?
       

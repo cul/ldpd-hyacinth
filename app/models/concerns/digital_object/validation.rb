@@ -32,9 +32,13 @@ module DigitalObject::Validation
   end
   
   def validate
-    # All DigitalObjects MUST have a sort title (though a non-sort portion of the title is not required)
+    # DigitalObjects MUST have a sort title (though a non-sort portion of the title is not required)
+    # ...except if this is a new Asset, since a missing title on a new asset means that we will use
+    # the attached file name as the title later in the save process.
     unless @dynamic_field_data['title'] && @dynamic_field_data['title'][0] && @dynamic_field_data['title'][0]['title_sort_portion'].present?
-      @errors.add(:title_sort_portion, 'Every Digital Object must have a Title -> Sort Portion')
+      unless self.new_record? && self.is_a?(DigitalObject::Asset)
+        @errors.add(:title_sort_portion, 'Every Digital Object must have a Title -> Sort Portion')
+      end
     end
 
     # State must be among VALID_STATES

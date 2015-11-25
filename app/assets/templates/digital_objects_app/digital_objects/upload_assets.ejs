@@ -14,7 +14,7 @@
 <hr />
 
 <div id="digital-object-asset-upload" class="row">
-    <div class="col-md-8">
+    <div class="col-md-7">
         
         <div role="tabpanel">
         
@@ -27,16 +27,15 @@
           <!-- Tab panes -->
           <div class="tab-content">
             <div role="tabpanel" class="tab-pane active" id="browser_upload">
-                <form class="digital-object-asset-upload-form" action="/digital_objects/upload_assets" method="POST" enctype="multipart/form-data">
-                    <input type="hidden" name="parent_digital_object_pid" value="<%= parentDigitalObject.getPid() %>" />
+                <form class="digital-object-asset-upload-form">
                     
                     <div class="browser-upload">
                       
                       <div class="upload-drop-zone aligncenter">
                         Click here or drag and drop one or more files
                         <br />
-                        <small>Max size: 1GB</small>
-                        <input class="asset-upload-file-input" type="file" name="files[]" multiple="">
+                        <small>Max size per file: 1GB</small>
+                        <input class="asset-upload-file-input" type="file" name="file" multiple="">
                       </div>
                   
                       <div class="progress">
@@ -57,7 +56,7 @@
         </div>
         <hr />
     </div>
-    <div class="col-md-4">
+    <div class="col-md-5">
         <div class="uploaded-files">
             <h4>Uploaded Files</h4>
             <!-- The table listing the files available for upload/download -->

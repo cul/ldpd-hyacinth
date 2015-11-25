@@ -327,6 +327,20 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.upload_assets = fu
 
     $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/upload_assets.ejs', {parentDigitalObject: parentDigitalObject}));
     
+    digital_object_data_for_new_asset = {
+      project: {
+        pid: parentDigitalObject.project['pid']
+      },
+      parent_digital_objects: [
+        {
+          pid: parentDigitalObject['pid']
+        }
+      ],
+      digital_object_type: {
+        string_key: 'asset'
+      }
+    }
+    
     var fileBrowserWidget = new Hyacinth.DigitalObjectsApp.FileBrowserWidget();
     fileBrowserWidget.setTitle('Upload Directory Browser');
     fileBrowserWidget.setActionButtonLabel('Upload');
@@ -334,13 +348,19 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.upload_assets = fu
       
       Hyacinth.addAlert('Performing upload...', 'info');
       
+      digital_object_data_for_new_asset['import_file'] = {
+        import_type : "upload_directory",
+        import_path : fileBrowserWidget.getPathFieldValue()
+      }
+      
+      var filename = fileBrowserWidget.getPathFieldValue().replace(/^.*[\\\/]/, '');
+      that.addUploadPlaceholder(filename);
+      
       $.ajax({
-        url: '/digital_objects/upload_assets.json',
+        url: '/digital_objects.json',
         type: 'POST',
         data: {
-          parent_digital_object_pid: Hyacinth.DigitalObjectsApp.params['parent_digital_object_pid'],
-          path_in_upload_directory: fileBrowserWidget.getPathFieldValue(),
-          import_type: 'internal'
+          digital_object_data_json: JSON.stringify(digital_object_data_for_new_asset)
         },
         cache: false
       }).done(function(upload_response){
@@ -354,11 +374,22 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.upload_assets = fu
     
     var $uploadForm = $('.digital-object-asset-upload-form');
 
+    digital_object_data_for_new_asset['import_file'] = {
+      import_type : "post_data",
+      import_path : fileBrowserWidget.getPathFieldValue()
+    }
+    
     $uploadForm.fileupload({
         dataType: 'json',
+        url: '/digital_objects.json',
+        type: 'POST',
+        formData: {
+          digital_object_data_json: JSON.stringify(digital_object_data_for_new_asset)
+        },
         add: function (e, data) {
             $uploadForm.find('.progress .progress-bar').css('width', 0 + '%');
             setTimeout(function() {
+              that.addUploadPlaceholder(data['files'][0]['name']);
               data.submit();
             }, 1000);
         },
@@ -394,43 +425,58 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.upload_assets = fu
 
 };
 
+Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.addUploadPlaceholder = function(filename) {
+  
+  var $uploadedFilesTableBody = $('.uploaded-files-table tbody');
+  if ($uploadedFilesTableBody.find('.placeholder').length > 0) {
+    $uploadedFilesTableBody.find('.placeholder').remove();
+  }
+  
+  $(
+    '<tr data-file-placeholder-for="' + _.escape(filename) + '">' +
+      '<td>' + filename + '</td>' +
+      '<td class="aligncenter">-</td>' +
+      '<td class="aligncenter">Pending...</td>' +
+    '</tr>'
+  ).appendTo($uploadedFilesTableBody);
+  
+};
+
 Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.handleUploadResponse = function(response_data) {
 
   var $uploadedFilesTableBody = $('.uploaded-files-table tbody');
-  $.each(response_data['files'], function (index, file) {
+  
+  var name = response_data['uploaded_file_confirmation']['name'];
+  var size = response_data['uploaded_file_confirmation']['size'];
+  var errors = response_data['uploaded_file_confirmation']['errors'];
     
-    if (file['errors'].length > 0) {
-      Hyacinth.addAlert(file['errors'][0], 'danger');
+  if (errors.length > 0) {
+    Hyacinth.addAlert(errors[0], 'danger');
+  } else {
+    var fileSize = size;
+    var fileSizeDisplayValue = null;
+    if (fileSize > 1000000000) {
+      fileSizeDisplayValue = parseInt(fileSize/1000000000) + ' GB';
+    } else if (fileSize > 1000000) {
+      fileSizeDisplayValue = parseInt(fileSize/1000000) + ' MB';
+    } else if (fileSize > 1000) {
+      fileSizeDisplayValue = parseInt(fileSize/1000) + ' kB';
     } else {
-      if ($uploadedFilesTableBody.find('.placeholder').length > 0) {
-        $uploadedFilesTableBody.find('.placeholder').remove();
-      }
-  
-      var fileSize = file['size'];
-      var fileSizeDisplayValue = null;
-      if (fileSize > 1000000000) {
-        fileSizeDisplayValue = parseInt(fileSize/1000000000) + ' kB';
-      } else if (fileSize > 1000000) {
-        fileSizeDisplayValue = parseInt(fileSize/1000000) + ' MB';
-      } else {
-        fileSizeDisplayValue = parseInt(fileSize/1000) + ' kb';
-      }
-      var date = new Date();
-  
-      $(
-        '<tr>' +
-          '<td>' + file.name + '</td>' +
-          '<td class="aligncenter">' + fileSizeDisplayValue + '</td>' +
-          '<td class="text-success aligncenter">' +
-            '<span class="glyphicon glyphicon-ok-sign"></span> ' +
-            //date.toISOString().substring(0, 10) + ' ' + date.toTimeString().substring(0, 8) +
-          '</td>' +
-        '</tr>'
-      ).prependTo($uploadedFilesTableBody);
-  
-      Hyacinth.addAlert('File upload complete: ' + file.name, 'info');
+      fileSizeDisplayValue = parseInt(fileSize) + ' B';
     }
-  });
+    var date = new Date();
+    
+    $uploadedFilesTableBody.find('tr[data-file-placeholder-for="' + _.escape(name) + '"]').html(
+      '<td>' + name + '</td>' +
+      '<td class="aligncenter">' + fileSizeDisplayValue + '</td>' +
+      '<td class="text-success aligncenter">' +
+        '<span class="glyphicon glyphicon-ok-sign"></span> ' +
+      '</td>'
+    );
+
+    Hyacinth.addAlert('File upload complete: ' + name, 'info');
+  }
+  
 }
 
 //Add Parent Action - Add a parent Digital Object to this Digital Object

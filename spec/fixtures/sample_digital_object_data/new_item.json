@@ -1,5 +1,5 @@
 {
-   "identifiers" : ["identifier.001", "identifier.002"],
+   "identifiers" : ["item.001"],
    "parent_digital_object" : [
       {
          "identifier": "group.001"

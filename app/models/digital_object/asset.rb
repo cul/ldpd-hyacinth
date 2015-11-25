@@ -4,9 +4,19 @@ class DigitalObject::Asset < DigitalObject::Base
 
   VALID_DC_TYPES = ['Unknown', 'Dataset', 'MovingImage', 'Software', 'Sound', 'StillImage', 'Text']
   DIGITAL_OBJECT_TYPE_STRING_KEY = 'asset'
+  
+  IMPORT_TYPE_INTERNAL = 'internal'
+  IMPORT_TYPE_EXTERNAL = 'external'
+  IMPORT_TYPE_POST_DATA = 'post_data'
+  IMPORT_TYPE_UPLOAD_DIRECTORY = 'upload_directory'
+  VALID_FILE_IMPORT_TYPES = [IMPORT_TYPE_INTERNAL, IMPORT_TYPE_EXTERNAL, IMPORT_TYPE_POST_DATA, IMPORT_TYPE_UPLOAD_DIRECTORY]
 
   def initialize(*args)
     super(*args)
+    
+    @import_file_import_type = nil
+    @import_file_import_path = nil
+    @import_file_original_file_path = nil
 
     # Default to 'Unknown' dc_type.  We expect other code to properly set this
     # once the asset file type is known, but this avoid a blank value for dc_type
@@ -22,61 +32,192 @@ class DigitalObject::Asset < DigitalObject::Base
 
     return generic_resource
   end
+  
+  def run_post_validation_pre_save_logic
+    super
 
-  def validate
-    super # Always run shared parent class validation
-
-    ## Assets must have at least one parent Item
-    # Update: This is not necessarily true.
-    #if self.state == 'A' && parent_digital_object_pids.length == 0
-    #  @errors.add(:parent_digital_object_pids, 'An Asset must have at least one parent Item')
-    #end
-
-    # Assets can only be children of DigitalObject::Item objects
-    parent_digital_object_pids.each {|parent_digital_object_pid|
-      parent_digital_object = DigitalObject::Base.find(parent_digital_object_pid)
-      unless parent_digital_object.is_a?(DigitalObject::Item)
-        @errors.add(:parent_digital_object_pids, 'Assets are only allowed to be children of Items.  Found parent of type: ' + parent_digital_object.digital_object_type.display_label)
-      end
-    }
-
-    return @errors.blank?
+    # If @import_file_data is set, then we want to import a file as part of our save operation
+    self.do_file_import if self.new_record?
   end
-
-  def set_file_and_file_size_and_original_file_path_and_calculate_checksum(path_to_file, original_file_path, file_size)
-
-    # "controlGroup => 'E'" below means "External Referenced Content" -- as in, a file that's referenced by Fedora but not stored internally
-    ds_location = Addressable::URI.encode('file:' + path_to_file) # Note: This will result in paths like "file:/something%20great/here.txt"  We DO NOT want a double slash at the beginnings of these paths.
-    original_filename = File.basename(path_to_file)
+  
+  # Returns true if file import was successful, false otherwise
+  def do_file_import
+    
+    path_to_final_save_location = nil
+    import_file_sha256 = Digest::SHA256.new
+    import_file_sha256_hexdigest = nil
+    import_file_size = nil
+    
+    # If this is an upload directory import, we'll adjust the import file path
+    # and pretend that it's actually an internal file import
+    if @import_file_import_type == IMPORT_TYPE_UPLOAD_DIRECTORY
+      @import_file_import_path = File.join(HYACINTH['upload_directory'], @import_file_import_path)
+      @import_file_import_type = IMPORT_TYPE_INTERNAL
+    end
+    
+    # Generate checksum using 4096-byte buffered approach (to keep memory usage low for large files)
+    # If this is an internal file, also copy the file to its internal destination
+    File.open(@import_file_import_path, 'rb') do |import_file| # 'r' == write, 'b' == binary mode
+      
+      import_file_size = import_file.size
+      
+      if @import_file_import_type == IMPORT_TYPE_INTERNAL || @import_file_import_type == IMPORT_TYPE_POST_DATA
+        puts "ooo: #{self.pid.inspect}, #{self.project.inspect}, #{File.basename(@import_file_import_path).inspect}"
+        path_to_final_save_location = Hyacinth::Utils::PathUtils.path_to_asset_file(self.pid, self.project, File.basename(@import_file_import_path))
+        
+        if File.exists?(path_to_final_save_location)
+          raise 'Could not upload new internally-stored file because existing file was already found at target location: ' + path_to_final_save_location
+        end
+        
+        # Recursively make necessary directories
+        FileUtils.mkdir_p(File.dirname(path_to_final_save_location))
+        
+        # Test write abilities by touching the target file
+        FileUtils.touch(path_to_final_save_location)
+        unless File.exists?(path_to_final_save_location)
+          raise 'Unable to write to file path: ' + path_to_final_save_location
+        end
+        
+        # Copy file to target path_to_final_save_location while generating checksum of original
+        File.open(path_to_final_save_location, 'wb') do |new_file| # 'w' == write, 'b' == binary mode
+          while buff = import_file.read(4096)
+            import_file_sha256.update(buff)
+            new_file.write(buff)
+          end
+        end
+        import_file_sha256_hexdigest = import_file_sha256.hexdigest
+        
+        # Confirm that checksum of newly written file matches original checksum.  Delete new file and raise error if it doesn't.
+        copied_file_sha256 = Digest::SHA256.new
+        File.open(path_to_final_save_location, 'rb') do |copied_file| # 'r' == write, 'b' == binary mode
+          while buff = copied_file.read(4096)
+            copied_file_sha256.update(buff)
+          end
+        end
+        copied_file_sha256_hexdigest = copied_file_sha256.hexdigest
+        
+        if copied_file_sha256_hexdigest != import_file_sha256_hexdigest
+          FileUtils.rm(path_to_final_save_location) # Important to delete new file
+          raise "Error during file copy.  Copied file checksum (#{copied_file_sha256_hexdigest}) didn't match import file (#{import_file_sha256_hexdigest}).  Try file import again."
+        end
+        
+      elsif @import_file_import_type == IMPORT_TYPE_EXTERNAL
+        # Generate checksum for file
+        while buff = import_file.read(4096)
+          import_file_sha256.update(buff)
+        end
+        
+        # Set path_to_final_save_location as original file path
+        path_to_final_save_location = @import_file_import_path
+        import_file_sha256_hexdigest = import_file_sha256.hexdigest
+      else
+        raise 'Did not expect @import_file_import_type: ' + @import_file_import_type.inspect
+      end
+    end
+    
+    # At this point, there is a file at path_to_final_save_location and
+    # import_file_sha256_hexdigest has been calculated, and
+    # import_file_size has been set, regardless of import type.
+    
+    original_filename = File.basename(@import_file_original_file_path || @import_file_import_path)
+    
+    # If the title of this Asset is blank, use the filename as the title
+    puts 'current title is: ' + self.get_title(false).inspect
+    if self.get_title(false).blank?
+      self.set_title('', original_filename)
+    end
+    puts 'title could be: ' + original_filename.inspect
+    
+    puts 'new title is: ' + self.get_title.inspect
+    
+    # Create datastream for file
+    
+    # "controlGroup => 'E'" below means "External Referenced Content" -- as in, a file that's referenced by Fedora but not stored in Fedora's internal data store
+    ds_location = Addressable::URI.encode('file:' + path_to_final_save_location) # Note: This will result in paths like "file:/something%20great/here.txt"  We DO NOT want a double slash at the beginnings of these paths.
     content_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, 'content', :controlGroup => 'E', :mimeType => DigitalObject::Asset.filename_to_mime_type(original_filename), :dsLabel => original_filename, :versionable => true)
     content_ds.dsLocation = ds_location
     @fedora_object.datastreams["DC"].dc_source = ds_location
-
-    # Calculate checksum for file, using 4096-byte buffered approach to save memory for large files
-    sha256 = Digest::SHA256.new
-    File.open(path_to_file, 'r') do |file|
-      while buff = file.read(4096)
-        sha256.update(buff)
-      end
-    end
-
-    content_ds.checksum = sha256.hexdigest
+    content_ds.checksum = import_file_sha256_hexdigest
     content_ds.checksumType = 'SHA-256'
-
     @fedora_object.add_datastream(content_ds)
 
     # Add size property to content datastream using :extent predicate
-    @fedora_object.rels_int.add_relationship(content_ds, :extent, file_size.to_s, true) # last param *true* means that this is a literal value rather than a relationship
+    @fedora_object.rels_int.add_relationship(content_ds, :extent, import_file_size.to_s, true) # last param *true* means that this is a literal value rather than a relationship
 
-    # Add original_filename property to content datastream using <info:fedora/fedora-system:def/model#downloadFilename> relationship
+    # Add original filename property to content datastream using <info:fedora/fedora-system:def/model#downloadFilename> relationship
     @fedora_object.rels_int.add_relationship(content_ds, 'info:fedora/fedora-system:def/model#downloadFilename', original_filename, true) # last param *true* means that this is a literal value rather than a relationship
 
     # Assume top-left orientation at upload time. This can be corrected later in the app.
     @fedora_object.rels_int.add_relationship(content_ds, :orientation, 'top-left', true) # last param *true* means that this is a literal value rather than a relationship
 
-    set_original_file_path(original_file_path) # This also updates the 'content' datastream label
-
+    set_original_file_path(@import_file_original_file_path || @import_file_import_path) # This also updates the 'content' datastream label
   end
+
+  def validate
+    super # Always run shared parent class validation
+    
+    # New Assets must have certain import variables set
+    if self.new_record?
+      if @import_file_import_path.blank?
+        @errors.add(:import_file_import_path, 'New Assets must have @import_file_import_path set.')
+      end
+      
+      if @import_file_import_type.blank?
+        @errors.add(:import_file_import_type, 'New Assets must have @import_file_import_type set.')
+      end
+      
+      unless DigitalObject::Asset::VALID_FILE_IMPORT_TYPES.include?(@import_file_import_type)
+        raise "Invalid @import_file_import_type: " + @import_file_import_type.inspect
+      end
+    end
+    
+    # Update: Assets can be parts of filesystem objects too. Disabling this
+    # check for now, but we'll get back to this later.
+    ## Assets can only be children of DigitalObject::Item objects
+    #parent_digital_object_pids.each {|parent_digital_object_pid|
+    #  parent_digital_object = DigitalObject::Base.find(parent_digital_object_pid)
+    #  unless parent_digital_object.is_a?(DigitalObject::Item)
+    #    @errors.add(:parent_digital_object_pids, 'Assets are only allowed to be children of Items.  Found parent of type: ' + parent_digital_object.digital_object_type.display_label)
+    #  end
+    #}
+
+    return @errors.blank?
+  end
+
+  #def set_file_and_file_size_and_original_file_path_and_calculate_checksum(path_to_file, original_file_path, file_size)
+  #
+  #  # "controlGroup => 'E'" below means "External Referenced Content" -- as in, a file that's referenced by Fedora but not stored internally
+  #  ds_location = Addressable::URI.encode('file:' + path_to_file) # Note: This will result in paths like "file:/something%20great/here.txt"  We DO NOT want a double slash at the beginnings of these paths.
+  #  original_filename = File.basename(path_to_file)
+  #  content_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, 'content', :controlGroup => 'E', :mimeType => DigitalObject::Asset.filename_to_mime_type(original_filename), :dsLabel => original_filename, :versionable => true)
+  #  content_ds.dsLocation = ds_location
+  #  @fedora_object.datastreams["DC"].dc_source = ds_location
+  #
+  #  # Calculate checksum for file, using 4096-byte buffered approach to save memory for large files
+  #  sha256 = Digest::SHA256.new
+  #  File.open(path_to_file, 'r') do |file|
+  #    while buff = file.read(4096)
+  #      sha256.update(buff)
+  #    end
+  #  end
+  #
+  #  content_ds.checksum = sha256.hexdigest
+  #  content_ds.checksumType = 'SHA-256'
+  #
+  #  @fedora_object.add_datastream(content_ds)
+  #
+  #  # Add size property to content datastream using :extent predicate
+  #  @fedora_object.rels_int.add_relationship(content_ds, :extent, file_size.to_s, true) # last param *true* means that this is a literal value rather than a relationship
+  #
+  #  # Add original_filename property to content datastream using <info:fedora/fedora-system:def/model#downloadFilename> relationship
+  #  @fedora_object.rels_int.add_relationship(content_ds, 'info:fedora/fedora-system:def/model#downloadFilename', original_filename, true) # last param *true* means that this is a literal value rather than a relationship
+  #
+  #  # Assume top-left orientation at upload time. This can be corrected later in the app.
+  #  @fedora_object.rels_int.add_relationship(content_ds, :orientation, 'top-left', true) # last param *true* means that this is a literal value rather than a relationship
+  #
+  #  set_original_file_path(original_file_path) # This also updates the 'content' datastream label
+  #
+  #end
 
   def get_filesystem_location
     content_ds = @fedora_object.datastreams['content']
@@ -132,9 +273,7 @@ class DigitalObject::Asset < DigitalObject::Base
   end
 
   def set_original_file_path(original_file_path)
-
     original_file_path = original_file_path.first if original_file_path.is_a?(Array)
-
     @fedora_object.clear_relationship(:original_name)
     @fedora_object.add_relationship(:original_name, original_file_path, true)
 
@@ -151,6 +290,58 @@ class DigitalObject::Asset < DigitalObject::Base
       return original_file_name
     else
       return @fedora_object.datastreams["DC"].dc_source.present? ? @fedora_object.datastreams["DC"].dc_source.first : ''
+    end
+  end
+
+  def set_digital_object_data(digital_object_data, merge_dynamic_fields)
+    super(digital_object_data, merge_dynamic_fields)
+    
+    # File upload (for assets only, and only if this object's current data validates successfully)
+    if digital_object_data['import_file'].present?
+      
+      # Check for presentce of import file original file path (which is optional, but may be set by the user)
+      @import_file_original_file_path = digital_object_data['import_file']['original_file_path']
+      
+      # Determine import_file_import_type
+      @import_file_import_type = digital_object_data['import_file']['import_type']
+      if @import_file_import_type.blank?
+        raise "Missing type for import_file: digital_object_data['import_file']['import_type']"
+      end
+      unless VALID_FILE_IMPORT_TYPES.include?(@import_file_import_type)
+        raise "Invalid type for import_file: digital_object_data['import_file']['import_type']: " + @import_file_import_type.inspect
+      end
+      
+      # Get import file path
+      @import_file_import_path = digital_object_data['import_file']['import_path']
+      if @import_file_import_path.blank?
+        puts 'dod: ' + digital_object_data.inspect
+        raise "Missing path for import_file: digital_object_data['import_file']['import_path']"
+      end
+      
+      # Check for invalid characters in import path.  Reject if non-utf8.
+      # If we get weird characters (like "\xC2"), Ruby will die a horrible death.  Let's keep Ruby alive.
+      if @import_file_import_path != Hyacinth::Utils::StringUtils.clean_utf8_string(@import_file_import_path)
+        raise "Invalid UTF-8 characters found in file path.  Unable to upload."
+      end
+      
+      # Make sure that the file exists and is readable
+      if @import_file_import_type == IMPORT_TYPE_UPLOAD_DIRECTORY
+        actual_path_to_validate = File.join(HYACINTH['upload_directory'], @import_file_import_path)
+      else
+        actual_path_to_validate = @import_file_import_path
+      end
+      unless File.exist?(actual_path_to_validate)
+        raise "No file found at path: " + actual_path_to_validate
+      end
+      unless File.readable?(actual_path_to_validate)
+        raise "File exists, but is not readable due to a permissions issue: " + actual_path_to_validate
+      end
+      
+      # Paths cannot contain "/.." or "../"
+      if @import_file_import_path.index('/..') || @import_file_import_path.index('../')
+        raise 'File paths cannot contain: "..". Please specify a full path.'
+      end
+      
     end
   end
 

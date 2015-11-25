@@ -18,6 +18,7 @@ RSpec.describe "DigitalObjects", :type => :request do
   describe "authenticated actions" do
     
     let(:sample_item_digital_object_data) { JSON.parse( fixture('sample_digital_object_data/new_item.json').read ) }
+    let(:sample_asset_digital_object_data) { JSON.parse( fixture('sample_digital_object_data/new_asset.json').read ) }
     
     before :example do
       request_spec_sign_in_admin_user()
@@ -52,7 +53,7 @@ RSpec.describe "DigitalObjects", :type => :request do
         })
       end
       
-      it "successfully creates an object when the correct set of parameters are supplied" do
+      it "successfully creates an Item when the correct set of parameters are supplied" do
         request_spec_sign_in_admin_user()
         post(digital_objects_path, {
           digital_object_data_json: JSON.generate(sample_item_digital_object_data)
@@ -63,6 +64,34 @@ RSpec.describe "DigitalObjects", :type => :request do
         expect(response_json['success']).to eq(true)
         expect(response_json['pid'].length).not_to eq(0)
       end
+      
+      it "successfully creates an Asset (via filesystem upload) when the correct set of parameters are supplied" do
+        skip 'todo'
+        #request_spec_sign_in_admin_user()
+        #post(digital_objects_path, {
+        #  digital_object_data_json: JSON.generate(sample_asset_digital_object_data)
+        #})
+        #
+        #expect(response.status).to be(200)
+        #response_json = JSON.parse(response.body)
+        #expect(response_json['success']).to eq(true)
+        #expect(response_json['pid'].length).not_to eq(0)
+      end
+    
+    it "successfully creates an Asset (via POST resuqest data) when the correct set of parameters are supplied" do
+        skip 'todo'
+        #request_spec_sign_in_admin_user()
+        #post(digital_objects_path, {
+        #  digital_object_data_json: JSON.generate(sample_asset_digital_object_data)
+        #})
+        #
+        #expect(response.status).to be(200)
+        #response_json = JSON.parse(response.body)
+        #expect(response_json['success']).to eq(true)
+        #expect(response_json['pid'].length).not_to eq(0)
+      end
+    
+    
     end
   end
   
