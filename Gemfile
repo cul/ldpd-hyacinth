@@ -91,9 +91,10 @@ gem 'cul_hydra', '>= 1.0.1'
 gem 'jettywrapper', '>= 1.5.1'
 # Temporarily use specific commit because new version of gem hasn't been released yet.  Latest is 1.1.3.
 gem 'rdf-rdfxml', :github => 'ruby-rdf/rdf-rdfxml', :ref => '78c13fe5dbcecaf1f56abe9535d00f16c670a764'
+#gem 'uri_service', :path => '../uri_service'
 
-# CUL active_fedora rels-int fixes
-gem 'active_fedora_relsint', :git=>'git://github.com/cul/active_fedora_relsint'
+# Specify min version for active_fedora_relsint because of a needed fix
+gem 'active_fedora_relsint', '>= 0.4.1'
 
 # URI Escaping
 gem 'addressable'

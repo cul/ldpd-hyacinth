@@ -1,12 +1,4 @@
 GIT
-  remote: git://github.com/cul/active_fedora_relsint
-  revision: e5af2906f1ddca5f051dcc61fbcfea81b43c92de
-  specs:
-    active_fedora_relsint (0.3.0)
-      active-fedora (>= 7.0)
-      activesupport (>= 3.2.0, < 5.0)
-
-GIT
   remote: git://github.com/ruby-rdf/rdf-rdfxml.git
   revision: 78c13fe5dbcecaf1f56abe9535d00f16c670a764
   ref: 78c13fe5dbcecaf1f56abe9535d00f16c670a764
@@ -58,6 +50,9 @@ GEM
       active-fedora (>= 7.0.0)
       activerecord
       nokogiri
+    active_fedora_relsint (0.4.1)
+      active-fedora (~> 7.0)
+      activesupport (>= 3.2.0, < 5.0)
     activejob (4.2.0)
       activesupport (= 4.2.0)
       globalid (>= 0.3.0)
@@ -468,7 +463,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  active_fedora_relsint!
+  active_fedora_relsint (>= 0.4.1)
   addressable
   attr_encrypted (>= 1.3.3)
   autoprefixer-rails
