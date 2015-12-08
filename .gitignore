@@ -29,6 +29,7 @@ hyacinth.yml
 secrets.yml
 solr.yml
 repository_cache.yml
+uri_service.yml
 
 *_user_accounts.yml
 

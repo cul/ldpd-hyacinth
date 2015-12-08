@@ -58,7 +58,7 @@ namespace :hyacinth do
       secrets_yml = YAML.load_file(secrets_yml_file) || {}
       ['development', 'test'].each do |env_name|
         secrets_yml[env_name] = {
-          'secret_key_base' => '6a30eac555d5cddd6d7b11d1bf9e815ba94032a2d0e88f1c12964f360ae5f90ecfbb7c6413616b10fc80b9ef9bede5926fbc9699332e9484b4221038751227d5', # This was randomly generated
+          'secret_key_base' => SecureRandom.hex(64),
           'session_store_key' =>  '_hyacinth_' + env_name + '_session_key'
         }
       end
@@ -74,7 +74,28 @@ namespace :hyacinth do
         }
       end
       File.open(solr_yml_file, 'w') {|f| f.write solr_yml.to_yaml }
-
+      
+      # uri_service.yml
+      uri_service_yml_file = File.join(Rails.root, 'config/uri_service.yml')
+      FileUtils.touch(uri_service_yml_file) # Create if it doesn't exist
+      uri_service_yml = YAML.load_file(uri_service_yml_file) || {}
+      ['development', 'test'].each do |env_name|
+        uri_service_yml[env_name] = {
+          'solr' => {
+            'url' => 'http://localhost:' + (env_name == 'test' ? default_test_port : default_development_port).to_s + '/solr/' + uri_service + env_name,
+            'pool_size' => 5,
+            'pool_timeout' => 5000
+          },
+          'database' => {
+            'adapter' => 'sqlite',
+            'database' => 'db/' + env_name + '.sqlite3',
+            'max_connections' => 5,
+            'pool_timeout' => 5000
+          }
+        }
+      end
+      File.open(uri_service_yml_file, 'w') {|f| f.write uri_service_yml.to_yaml }
+      
       # repository_cache.yml
       repository_cache_yml_file = File.join(Rails.root, 'config/repository_cache.yml')
       FileUtils.touch(repository_cache_yml_file) # Create if it doesn't exist
