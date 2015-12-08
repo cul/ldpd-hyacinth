@@ -219,7 +219,7 @@ module DigitalObject::IndexAndSearch
         end
       end
 
-      solr_response = Hyacinth::Utils::SolrUtils.solr.get('select', params: solr_params)
+      solr_response = Hyacinth::Utils::SolrUtils.solr.post('select', {data: solr_params}) # Use post so we don't run into long query limits (limited by what solr's server will accept via GET)
 
       Rails.logger.debug('Solr Params: ' + solr_response['responseHeader']['params'].inspect)
       Rails.logger.debug('Solr Response: ' + solr_response.inspect)
