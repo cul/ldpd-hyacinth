@@ -359,8 +359,33 @@ describe DigitalObject::DynamicField, :type => :unit do
     end
     
     describe ".recursively_generate_csv_style_flattened_dynamic_field_data" do
-      it "works as expected" do
-        new_dynamic_field_data = {
+      let(:flattened_csv_style_dynamic_field_data) do
+        {
+          'title-1:title_non_sort_portion' => 'The',
+          'title-1:title_sort_portion' => 'Catcher in the Rye',
+          'note-1:note_value' => 'My note',
+          'note-1:note_type' => 'Great Note',
+          'note-2:note_value' => 'My other note',
+          'note-2:note_type' => 'Really Great Note',
+          'name-1:name_note' => 'A note about this name',
+          'name-1:name_term.uri' => 'http://id.library.columbia.edu/term/123',
+          'name-1:name_term.value' => 'Smith, John',
+          'name-1:name_role-1:name_role_term.uri' => 'http://id.library.columbia.edu/term/222',
+          'name-1:name_role-1:name_role_term.value' => 'Author',
+          'name-1:name_role-2:name_role_term.uri' => 'http://id.library.columbia.edu/term/333',
+          'name-1:name_role-2:name_role_term.value' => 'Illustrator',
+          'name-2:name_note' => 'A different name note',
+          'name-2:name_term.uri' => 'http://id.library.columbia.edu/term/456',
+          'name-2:name_term.value' => 'Garfield',
+          'name-2:name_role-1:name_role_term.uri' => 'http://id.library.columbia.edu/term/444',
+          'name-2:name_role-1:name_role_term.value' => 'Editor',
+          'name-2:name_role-2:name_role_term.uri' => 'http://id.library.columbia.edu/term/555',
+          'name-2:name_role-2:name_role_term.value' => 'Composer'
+        }
+      end
+
+      let(:new_dynamic_field_data) do
+        {
           "title" => [
             {
               "title_non_sort_portion" => "The",
@@ -422,31 +447,18 @@ describe DigitalObject::DynamicField, :type => :unit do
             }
           ]
         }
-        
-        flattened_csv_style_dynamic_field_data = {
-          'title-1:title_non_sort_portion' => 'The',
-          'title-1:title_sort_portion' => 'Catcher in the Rye',
-          'note-1:note_value' => 'My note',
-          'note-1:note_type' => 'Great Note',
-          'note-2:note_value' => 'My other note',
-          'note-2:note_type' => 'Really Great Note',
-          'name-1:name_note' => 'A note about this name',
-          'name-1:name_term.uri' => 'http://id.library.columbia.edu/term/123',
-          'name-1:name_term.value' => 'Smith, John',
-          'name-1:name_role-1:name_role_term.uri' => 'http://id.library.columbia.edu/term/222',
-          'name-1:name_role-1:name_role_term.value' => 'Author',
-          'name-1:name_role-2:name_role_term.uri' => 'http://id.library.columbia.edu/term/333',
-          'name-1:name_role-2:name_role_term.value' => 'Illustrator',
-          'name-2:name_note' => 'A different name note',
-          'name-2:name_term.uri' => 'http://id.library.columbia.edu/term/456',
-          'name-2:name_term.value' => 'Garfield',
-          'name-2:name_role-1:name_role_term.uri' => 'http://id.library.columbia.edu/term/444',
-          'name-2:name_role-1:name_role_term.value' => 'Editor',
-          'name-2:name_role-2:name_role_term.uri' => 'http://id.library.columbia.edu/term/555',
-          'name-2:name_role-2:name_role_term.value' => 'Composer',
-        }
-        
+      end
+
+      it "works as expected" do     
         expect(test_class.recursively_generate_csv_style_flattened_dynamic_field_data(new_dynamic_field_data)).to eq(flattened_csv_style_dynamic_field_data)
+      end
+      context "only the keys" do
+        let(:test_class) do
+          _c = Class.new
+          _c.send :include, Hyacinth::Csv::Flatten
+        end
+        subject { test_class.keys_for_document('dynamic_field_data' => new_dynamic_field_data) }
+        it { is_expected.to eql(flattened_csv_style_dynamic_field_data.keys)}
       end
     end
   end

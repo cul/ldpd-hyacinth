@@ -131,8 +131,8 @@ class DigitalObject::Base
     end
     
     # Dynamic Field Data
-    if digital_object_data['dynamic_field_data'].present?
-      self.update_dynamic_field_data(digital_object_data['dynamic_field_data'], merge_dynamic_fields)
+    if digital_object_data[Hyacinth::Csv::Fields::Dynamic::DATA_KEY].present?
+      self.update_dynamic_field_data(digital_object_data[Hyacinth::Csv::Fields::Dynamic::DATA_KEY], merge_dynamic_fields)
     end
     
   end
