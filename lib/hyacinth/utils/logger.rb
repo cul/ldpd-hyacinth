@@ -22,4 +22,16 @@ class Hyacinth::Utils::Logger
   def write(level, message)
     puts "#{level.to_s.capitalize}: #{message}"
   end
+
+  module Behavior
+    def logger
+      @logger ||= begin
+        if defined?(Rails.logger)
+          Rails.logger
+        else
+          Hyacinth::Utils::Logger.new
+        end
+      end
+    end
+  end
 end

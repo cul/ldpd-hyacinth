@@ -1,4 +1,6 @@
 class Hyacinth::Utils::ModsUtils
+  extend Logger::Behavior
+
   def self.create_element_path_in_doc(xml_doc, arr_path_to_element)
     current_path = ''
     element_to_append_to = ''
@@ -17,16 +19,6 @@ class Hyacinth::Utils::ModsUtils
       else
         logger.debug '-- xpath found'
         element_to_append_to = current_path_xpath_result.first
-      end
-    end
-  end
-
-  def self.logger
-    @logger ||= begin
-      if defined?(Rails.logger)
-        Rails.logger
-      else
-        Hyacinth::Utils::Logger.new
       end
     end
   end
