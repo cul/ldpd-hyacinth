@@ -1,0 +1,28 @@
+<table class="table table-condensed table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Search params</th>
+      <th>User</th>
+      <th>Path to csv file</th>
+      <th>Status</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% if @csv_exports.blank? %>
+      <tr><td colspan="5">There are currently no CSV Exports.</td></tr>
+    <% else %>
+      <% @csv_exports.each do |csv_export| %>
+        <tr>
+          <td><%= csv_export.search_params %></td>
+          <td><%= csv_export.user %></td>
+          <td><%= csv_export.path_to_csv_file %></td>
+          <td><%= csv_export.status %></td>
+          <td><%= link_to 'Download', csv_export %></td>
+          <td><%= link_to 'Delete', csv_export, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>

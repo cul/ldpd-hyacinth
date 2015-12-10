@@ -76,7 +76,7 @@ class DigitalObjectsController < ApplicationController
     
       begin
         @digital_object.set_digital_object_data(digital_object_data, false)
-      rescue Hyacinth::Exceptions::PublishTargetNotFoundError, Hyacinth::Exceptions::DigitalObjectNotFoundError, Hyacinth::Exceptions::ProjectNotFoundError => e
+      rescue Hyacinth::Exceptions::PublishTargetNotFoundError, Hyacinth::Exceptions::DigitalObjectNotFoundError, Hyacinth::Exceptions::ParentDigitalObjectNotFoundError, Hyacinth::Exceptions::ProjectNotFoundError => e
         render json: { success: false, errors: [e.message] } and return
       end
       
@@ -249,6 +249,24 @@ class DigitalObjectsController < ApplicationController
 
   end
   
+  def search_results_to_csv
+    
+    csv_export = CsvExport.create(
+      user: current_user,
+      search_params: JSON.generate(params['search'].present? ? params['search'] : {})
+    )
+    
+    Hyacinth::Queue::export_search_results_to_csv(csv_export.id)
+    
+    respond_to do |format|
+      format.json {
+        render json: {
+          success: true
+        }
+      }
+    end
+  end
+  
   def search
     respond_to do |format|
       format.json {
@@ -262,6 +280,7 @@ class DigitalObjectsController < ApplicationController
           search_response['single_field_searchable_fields'] = Hash[ DynamicField.where(is_single_field_searchable: true).order([:standalone_field_label, :string_key]).map{|dynamic_field| [dynamic_field.string_key, dynamic_field.standalone_field_label]} ]
         end
         render json: search_response
+        
       }
     end
   end

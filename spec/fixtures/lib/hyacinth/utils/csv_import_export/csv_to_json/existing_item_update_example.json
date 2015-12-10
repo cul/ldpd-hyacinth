@@ -1,7 +1,11 @@
 {
    "pid" : "cul:123",
    "identifiers" : ["another_identifier"],
-   "parent_pid_or_identifier" : ["cul:parent123"],
+   "parent_digital_object" : [
+      {
+         "identifier" : "cul:parent123"
+      }
+   ],
    "digital_object_type" : {
       "string_key" : "item"
     },

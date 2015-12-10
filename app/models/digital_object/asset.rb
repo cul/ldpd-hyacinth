@@ -62,7 +62,6 @@ class DigitalObject::Asset < DigitalObject::Base
       import_file_size = import_file.size
       
       if @import_file_import_type == IMPORT_TYPE_INTERNAL || @import_file_import_type == IMPORT_TYPE_POST_DATA
-        puts "ooo: #{self.pid.inspect}, #{self.project.inspect}, #{File.basename(@import_file_import_path).inspect}"
         path_to_final_save_location = Hyacinth::Utils::PathUtils.path_to_asset_file(self.pid, self.project, File.basename(@import_file_import_path))
         
         if File.exists?(path_to_final_save_location)
@@ -122,13 +121,10 @@ class DigitalObject::Asset < DigitalObject::Base
     original_filename = File.basename(@import_file_original_file_path || @import_file_import_path)
     
     # If the title of this Asset is blank, use the filename as the title
-    puts 'current title is: ' + self.get_title(false).inspect
+    
     if self.get_title(false).blank?
       self.set_title('', original_filename)
     end
-    puts 'title could be: ' + original_filename.inspect
-    
-    puts 'new title is: ' + self.get_title.inspect
     
     # Create datastream for file
     
@@ -314,7 +310,6 @@ class DigitalObject::Asset < DigitalObject::Base
       # Get import file path
       @import_file_import_path = digital_object_data['import_file']['import_path']
       if @import_file_import_path.blank?
-        puts 'dod: ' + digital_object_data.inspect
         raise "Missing path for import_file: digital_object_data['import_file']['import_path']"
       end
       

@@ -2,7 +2,11 @@
    {
       "pid" : "",
       "identifiers" : ["new_asset1"],
-      "parent_pid_or_identifier" : ["cul:456"],
+      "parent_digital_object" : [
+         {
+            "identifier" : "cul:456"
+         }
+      ],
       "digital_object_type" : {
          "string_key" : "asset"
        },
@@ -43,7 +47,11 @@
    {
       "pid" : "",
       "identifiers" : ["new_item1"],
-      "parent_pid_or_identifier" : [""],
+      "parent_digital_object" : [
+         {
+            "identifier" : ""
+         }
+      ],
       "digital_object_type" : {
          "string_key" : "item"
        },
@@ -84,7 +92,11 @@
    {
       "pid" : "cul:456",
       "identifiers" : [""],
-      "parent_pid_or_identifier" : [""],
+      "parent_digital_object" : [
+         {
+            "identifier" : ""
+         }
+      ],
       "digital_object_type" : {
          "string_key" : "item"
        },
@@ -125,7 +137,11 @@
    {
       "pid" : "",
       "identifiers" : ["new_asset2"],
-      "parent_pid_or_identifier" : ["new_item1"],
+      "parent_digital_object" : [
+         {
+            "identifier" : "new_item1"
+         }
+      ],
       "digital_object_type" : {
          "string_key" : "asset"
        },

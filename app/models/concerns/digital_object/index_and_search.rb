@@ -35,7 +35,8 @@ module DigitalObject::IndexAndSearch
       project_pid_ssm: self.project.pid,
       publish_target_pid_sim: self.publish_targets.map{|publish_target|publish_target.pid},
       publish_target_pid_ssm: self.publish_targets.map{|publish_target|publish_target.pid},
-      flattened_dynamic_field_data_ssm: flattened_dynamic_field_data.to_json # This is kept here for caching/performance purposes, flat display of any field without having to check with Fedora.
+      flattened_dynamic_field_data_ssm: flattened_dynamic_field_data.to_json, # This is kept here for caching/performance purposes, flat display of any field without having to check with Fedora.
+      digital_object_data_ss: self.to_json
     }
 
     doc[:project_display_label_sim] = self.project.display_label
@@ -91,6 +92,31 @@ module DigitalObject::IndexAndSearch
     ###############
     # Solr Search #
     ###############
+    
+    # Iterates through search results, performing searches in batches behind the scenes.  Useful when reading from large datasets (e.g. for CSV export).
+    # - Does not return facets
+    # - Ignores 'per_page' and 'page' keys given in search_params (because we're returning all results in batches)
+    def search_in_batches(search_params, user_for_permission_context, batch_size)
+      search_params['per_page'] = batch_size
+      search_params['page'] = 1
+      
+      while(true) do
+        
+        search_result_batch = self.search(search_params, false, user_for_permission_context)
+        
+        if search_result_batch['results'].blank?
+          break
+        else
+          search_result_batch['results'].each do |solr_doc|
+            yield JSON.parse(solr_doc['digital_object_data_ss'])
+            search_params['page'] += 1
+          end
+        end
+        
+        break #Temporarily break while testing
+      
+      end
+    end
 
     def search(user_search_params = {}, facet_params = {}, user_for_permission_context = nil)
 

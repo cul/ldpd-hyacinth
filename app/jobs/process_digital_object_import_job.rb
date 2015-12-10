@@ -2,10 +2,10 @@ class ProcessDigitalObjectImportJob
 
   @queue = Hyacinth::Queue::DIGITAL_OBJECT_IMPORT
 
-  def self.perform(doi_id)
+  def self.perform(digital_object_import_id)
 
     # Retrieve DigitalObjectImport instance from table
-    digital_object_import = DigitalObjectImport.find(doi_id)
+    digital_object_import = DigitalObjectImport.find(digital_object_import_id)
     
     # User who created this job
     user = digital_object_import.import_job.user
@@ -20,7 +20,7 @@ class ProcessDigitalObjectImportJob
     
     begin
       @digital_object.set_digital_object_data(digital_object_data, true)
-    rescue Hyacinth::Exceptions::PublishTargetNotFoundError, Hyacinth::Exceptions::DigitalObjectNotFoundError, Hyacinth::Exceptions::ProjectNotFoundError => e
+    rescue Hyacinth::Exceptions::PublishTargetNotFoundError, Hyacinth::Exceptions::DigitalObjectNotFoundError, Hyacinth::Exceptions::ParentDigitalObjectNotFoundError, Hyacinth::Exceptions::ProjectNotFoundError => e
        digital_object_import.digital_object_errors << e.message
     end
     

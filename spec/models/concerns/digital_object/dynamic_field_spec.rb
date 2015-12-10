@@ -332,11 +332,11 @@ RSpec.describe DigitalObject::Base, :type => :model do
   
     end
     
-    describe "#get_flattened_dynamic_field_data" do
+    describe "::recursively_generate_flattened_dynamic_field_data" do
       
       it "works as expected" do
         new_dynamic_field_data = {
-          "alternate_title" => [
+          "title" => [
             {
               "title_non_sort_portion" => "The",
               "title_sort_portion" => "Catcher in the Rye"
@@ -373,10 +373,102 @@ RSpec.describe DigitalObject::Base, :type => :model do
           "name_role_value" => ["Great Note"]
         }
         
-        @digital_object = DigitalObject::Item.new()
-        @digital_object.update_dynamic_field_data(new_dynamic_field_data, false)
+        expect(DigitalObject::Base.recursively_generate_flattened_dynamic_field_data(new_dynamic_field_data)).to eq(flattened_dynamic_field_data)
         
-        expect(@digital_object.get_flattened_dynamic_field_data).to eq(flattened_dynamic_field_data)
+      end
+      
+    end
+    
+    describe "#recursively_generate_csv_style_flattened_dynamic_field_data" do
+      
+      it "works as expected" do
+        new_dynamic_field_data = {
+          "title" => [
+            {
+              "title_non_sort_portion" => "The",
+              "title_sort_portion" => "Catcher in the Rye"
+            }
+          ],
+          "note" => [
+            {
+              "note_value" => "My note",
+              "note_type" => "Great Note"
+            },
+            {
+              "note_value" => "My other note",
+              "note_type" => "Really Great Note"
+            }
+          ],
+          "name" => [
+            {
+              "name_note" => "A note about this name",
+              "name_term" => {
+                "uri" => "http://id.library.columbia.edu/term/123",
+                "value" => "Smith, John"
+              },
+              "name_role" => [
+                {
+                  "name_role_term" => {
+                    "uri" => "http://id.library.columbia.edu/term/222",
+                    "value" => "Author"
+                  }
+                },
+                {
+                  "name_role_term" => {
+                    "uri" => "http://id.library.columbia.edu/term/333",
+                    "value" => "Illustrator"
+                  }
+                }
+              ]
+            },
+            {
+              "name_note" => "A different name note",
+              "name_term" => {
+                "uri" => "http://id.library.columbia.edu/term/456",
+                "value" => "Garfield"
+              },
+              "name_role" => [
+                {
+                  "name_role_term" => {
+                    "uri" => "http://id.library.columbia.edu/term/444",
+                    "value" => "Editor"
+                  }
+                },
+                {
+                  "name_role_term" => {
+                    "uri" => "http://id.library.columbia.edu/term/555",
+                    "value" => "Composer"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+        
+        flattened_csv_style_dynamic_field_data = {
+          'title-1:title_non_sort_portion' => 'The',
+          'title-1:title_sort_portion' => 'Catcher in the Rye',
+          'note-1:note_value' => 'My note',
+          'note-1:note_type' => 'Great Note',
+          'note-2:note_value' => 'My other note',
+          'note-2:note_type' => 'Really Great Note',
+          'name-1:name_note' => 'A note about this name',
+          'name-1:name_term.uri' => 'http://id.library.columbia.edu/term/123',
+          'name-1:name_term.value' => 'Smith, John',
+          'name-1:name_role-1:name_role_term.uri' => 'http://id.library.columbia.edu/term/222',
+          'name-1:name_role-1:name_role_term.value' => 'Author',
+          'name-1:name_role-2:name_role_term.uri' => 'http://id.library.columbia.edu/term/333',
+          'name-1:name_role-2:name_role_term.value' => 'Illustrator',
+          'name-2:name_note' => 'A different name note',
+          'name-2:name_term.uri' => 'http://id.library.columbia.edu/term/456',
+          'name-2:name_term.value' => 'Garfield',
+          'name-2:name_role-1:name_role_term.uri' => 'http://id.library.columbia.edu/term/444',
+          'name-2:name_role-1:name_role_term.value' => 'Editor',
+          'name-2:name_role-2:name_role_term.uri' => 'http://id.library.columbia.edu/term/555',
+          'name-2:name_role-2:name_role_term.value' => 'Composer',
+        }
+        
+        expect(DigitalObject::Base.recursively_generate_csv_style_flattened_dynamic_field_data(new_dynamic_field_data)).to eq(flattened_csv_style_dynamic_field_data)
         
       end
       

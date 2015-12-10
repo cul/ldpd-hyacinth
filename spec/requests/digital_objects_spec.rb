@@ -65,32 +65,42 @@ RSpec.describe "DigitalObjects", :type => :request do
         expect(response_json['pid'].length).not_to eq(0)
       end
       
-      it "successfully creates an Asset (via filesystem upload) when the correct set of parameters are supplied" do
-        skip 'todo'
-        #request_spec_sign_in_admin_user()
-        #post(digital_objects_path, {
-        #  digital_object_data_json: JSON.generate(sample_asset_digital_object_data)
-        #})
-        #
-        #expect(response.status).to be(200)
-        #response_json = JSON.parse(response.body)
-        #expect(response_json['success']).to eq(true)
-        #expect(response_json['pid'].length).not_to eq(0)
+      describe "Create an Asset with attached file when the correct set of parameters are supplied" do
+        
+        it "works via post data upload (simulating browser form submission)" do
+          request_spec_sign_in_admin_user()
+          
+          asset_digital_object_data = sample_asset_digital_object_data
+          
+          # Manually override import_file settings to set the fixture to type == post data
+          asset_digital_object_data['import_file'] = {
+            'import_type' => DigitalObject::Asset::IMPORT_TYPE_POST_DATA
+          }
+          
+          post(digital_objects_path, {
+            digital_object_data_json: JSON.generate(sample_asset_digital_object_data),
+            file: fixture_file_upload('/sample_upload_files/lincoln.jpg', 'image/jpeg')
+          })
+          
+          expect(response.status).to be(200)
+          response_json = JSON.parse(response.body)
+          expect(response_json['success']).to eq(true)
+          expect(response_json['pid'].length).not_to eq(0)
+        end
+        
+        it "works via *upload directory* filesystem upload, copying the target file to the internal Hyacinth data store" do
+          skip 'todo'
+        end
+        
+        it "works via filesystem upload (upload type: internal), copying the target file to the internal Hyacinth internal data store" do
+          skip 'todo'
+        end
+        
+        it "works via filesystem upload (upload type: external), referencing the target external file instead of copying the file to the Hyacinth internal data store" do
+          skip 'todo'
+        end
+        
       end
-    
-    it "successfully creates an Asset (via POST resuqest data) when the correct set of parameters are supplied" do
-        skip 'todo'
-        #request_spec_sign_in_admin_user()
-        #post(digital_objects_path, {
-        #  digital_object_data_json: JSON.generate(sample_asset_digital_object_data)
-        #})
-        #
-        #expect(response.status).to be(200)
-        #response_json = JSON.parse(response.body)
-        #expect(response_json['success']).to eq(true)
-        #expect(response_json['pid'].length).not_to eq(0)
-      end
-    
     
     end
   end

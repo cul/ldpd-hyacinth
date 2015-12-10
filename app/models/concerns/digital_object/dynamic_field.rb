@@ -102,32 +102,67 @@ module DigitalObject::DynamicField
   # Returns a flat (single layer) hash of all dynamic_field string_keys to their values
   # Does NOT omit `.blank?` values by default, unless true is passed for the omit_blank_values param
   def get_flattened_dynamic_field_data(omit_blank_values=false)
-    return recursively_gather_dynamic_field_data_values(@dynamic_field_data, omit_blank_values)
+    return self.class.recursively_generate_flattened_dynamic_field_data(@dynamic_field_data, omit_blank_values)
+  end
+  
+  # Returns a csv-formatted flat (single layer) hash of all csv-header-style full-dynamic_field-path string_keys to their values
+  # Does NOT omit `.blank?` values by default, unless true is passed for the omit_blank_values param
+  def get_csv_style_flattened_dynamic_field_data(omit_blank_values=false)
+    #code
   end
 
-  def recursively_gather_dynamic_field_data_values(df_data, omit_blank_values = false, flat_hash = {})
-    df_data.each {|key, value|
-      if value.is_a?(Array)
-        value.each {|data_hsh|
-          self.recursively_gather_dynamic_field_data_values(data_hsh, omit_blank_values, flat_hash)
-        }
-      else
-        unless (omit_blank_values && value.blank?)
-          flat_hash[key] = [] unless flat_hash.has_key?(key)
-          
-          if value.is_a?(Hash) && value.has_key?('uri')
-            #This is a URI value.  Get value of 'value' key.
-            flat_hash[key] << value['value']
-          else
-            #This is just a regular non-controlled-field dynamic_field value.
-            flat_hash[key] << value
+  module ClassMethods
+
+    def recursively_generate_flattened_dynamic_field_data(df_data, omit_blank_values = false, flat_hash = {})
+      df_data.each {|key, value|
+        if value.is_a?(Array)
+          value.each {|data_hsh|
+            self.recursively_generate_flattened_dynamic_field_data(data_hsh, omit_blank_values, flat_hash)
+          }
+        else
+          unless (omit_blank_values && value.blank?)
+            flat_hash[key] = [] unless flat_hash.has_key?(key)
+            
+            if value.is_a?(Hash) && value.has_key?('uri')
+              #This is a URI value.  Get value of 'value' key.
+              flat_hash[key] << value['value']
+            else
+              #This is just a regular non-controlled-field dynamic_field value.
+              flat_hash[key] << value
+            end
+            
           end
-          
+        end
+      }
+      
+      return flat_hash
+    end
+    
+    def recursively_generate_csv_style_flattened_dynamic_field_data(df_data, omit_blank_values = false, flat_hash = {}, current_path_string='')
+      df_data.each do |key, value|
+        if value.is_a?(Array)
+          new_path_string = current_path_string + (current_path_string.length > 0 ? ':' : '') + key
+          value.each_with_index do |data_hsh, index|
+            self.recursively_generate_csv_style_flattened_dynamic_field_data(data_hsh, omit_blank_values, flat_hash, new_path_string + '-' + (index+1).to_s)
+          end
+        else
+          unless (omit_blank_values && value.blank?)
+            new_path_string = current_path_string + ':' + key
+            if value.is_a?(Hash) && value.has_key?('uri')
+              #This is a controlled term value hash.
+              value.each do |term_key, term_value|
+                flat_hash[new_path_string + '.' + term_key] = term_value
+              end
+            else
+              #This is just a regular non-controlled-field dynamic_field value.
+              flat_hash[new_path_string] = value
+            end
+          end
         end
       end
-    }
-    
-    return flat_hash
+      
+      return flat_hash
+    end
   end
 
 end

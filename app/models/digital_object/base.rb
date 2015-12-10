@@ -55,6 +55,30 @@ class DigitalObject::Base
   # Updates the DigitalObject with the given digital_object_data
   def set_digital_object_data(digital_object_data, merge_dynamic_fields)
     
+    # Parent Digital Objects (PID or Identifier)
+    if digital_object_data['parent_digital_objects']
+      @parent_digital_object_pids = [] # Clear because we're about to set new values
+      digital_object_data['parent_digital_objects'].each do |parent_digital_object_find_criteria|
+        if parent_digital_object_find_criteria['pid'].present?
+          digital_object = DigitalObject::Base.find_by_pid(parent_digital_object_find_criteria['pid'])
+        elsif parent_digital_object_find_criteria['identifier'].present?
+          digital_object_results = DigitalObject::Base.find_all_by_identifier(parent_digital_object_find_criteria['identifier'])
+          if digital_object_results.length == 0
+            raise Hyacinth::Exceptions::ParentDigitalObjectNotFoundError, "Could not find parent DigitalObject with find criteria: #{parent_digital_object_find_criteria.inspect}"
+          elsif digital_object_results.length == 1
+            digital_object = digital_object_results.first
+          else
+            raise "While linking object to parent objects, expected one DigitalObject, but found #{digital_object_results.length.to_s} DigitalObjects" +
+                  "with identifier: #{parent_digital_object_find_criteria['identifier']}.  You'll need to use a pid instead."
+          end
+        else
+          raise 'Invalid parent_digital_object find criteria: ' + parent_digital_object_find_criteria.inspect
+        end
+        
+        add_parent_digital_object(digital_object)
+      end
+    end
+    
     # Identifiers (multiple)
     if digital_object_data['identifiers']
       self.identifiers = digital_object_data['identifiers']
@@ -79,30 +103,6 @@ class DigitalObject::Base
         else
           self.publish_targets.push(publish_target)
         end
-      end
-    end
-    
-    # Parent Digital Objects (PID or Identifier)
-    if digital_object_data['parent_digital_objects']
-      @parent_digital_object_pids = [] # Clear because we're about to set new values
-      digital_object_data['parent_digital_objects'].each do |parent_digital_object_find_criteria|
-        if parent_digital_object_find_criteria['pid'].present?
-          digital_object = DigitalObject::Base.find_by_pid(parent_digital_object_find_criteria['pid'])
-        elsif parent_digital_object_find_criteria['identifier'].present?
-          digital_object_results = DigitalObject::Base.find_all_by_identifier(parent_digital_object_find_criteria['identifier'])
-          if digital_object_results.length == 0
-            raise Hyacinth::Exceptions::DigitalObjectNotFoundError, "Could not find parent DigitalObject with find criteria: #{parent_digital_object_find_criteria.inspect}"
-          elsif digital_object_results.length == 1
-            digital_object = digital_object_results.first
-          else
-            raise "While linking object to parent objects, expected one DigitalObject, but found #{digital_object_results.length.to_s} DigitalObjects" +
-                  "with identifier: #{parent_digital_object_find_criteria['identifier']}.  You'll need to use a pid instead."
-          end
-        else
-          raise 'Invalid parent_digital_object find criteria: ' + parent_digital_object_find_criteria.inspect
-        end
-        
-        add_parent_digital_object(digital_object)
       end
     end
     

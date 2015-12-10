@@ -2,6 +2,7 @@ require 'resque/server'
 
 Hyacinth::Application.routes.draw do
   
+  resources :csv_exports
   resources :terms, constraints: { id: URI::regexp }
   #except: ['edit']
   #get 'terms/edit/:id' => 'terms#edit', :as => 'edit_term', constraints: { id: /.+/ }
@@ -39,6 +40,7 @@ Hyacinth::Application.routes.draw do
   resources :digital_objects do
     collection do
       match 'search', via: [:get, :post]
+      match 'search_results_to_csv', via: [:get, :post]
       match 'data_for_editor', via: [:get, :post]
       post 'upload_assets'
       get 'upload_directory_listing'
