@@ -96,6 +96,7 @@ Style/SignalException:
 Rails/Output:
   Exclude:
     - 'lib/generators/**/*'
+    - 'lib/hyacinth/utils/logger.rb'
 
 Rails/Date:
   Enabled: false
