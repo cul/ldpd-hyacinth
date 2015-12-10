@@ -33,7 +33,7 @@ namespace :hyacinth do
   end
 
   desc "CI build"
-  task :ci do
+  task ci: 'hyacinth:rubocop' do
     
     ENV['RAILS_ENV'] = 'test'
     Rails.env = ENV['RAILS_ENV']
