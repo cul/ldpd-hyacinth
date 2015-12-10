@@ -1,16 +1,13 @@
 require 'resque/server'
 
 Hyacinth::Application.routes.draw do
-  
   resources :csv_exports
-  resources :terms, constraints: { id: URI::regexp }
-  #except: ['edit']
-  #get 'terms/edit/:id' => 'terms#edit', :as => 'edit_term', constraints: { id: /.+/ }
+  resources :terms, constraints: { id: URI.regexp }
 
   resources :controlled_vocabularies do
     member do
-      get 'terms', :action => 'terms', :as => 'terms' # terms_controlled_vocabulary_path
-      get 'term_additional_fields', :action => 'term_additional_fields', :as => 'term_additional_fields' # term_additional_fields_controlled_vocabulary_path
+      get 'terms', action: 'terms', as: 'terms' # terms_controlled_vocabulary_path
+      get 'term_additional_fields', action: 'term_additional_fields', as: 'term_additional_fields' # term_additional_fields_controlled_vocabulary_path
     end
     collection do
       match 'search', via: [:get, :post]
@@ -68,9 +65,9 @@ Hyacinth::Application.routes.draw do
   get '/users/do_cas_login', to: 'users#do_cas_login', as: :user_do_cas_login
   devise_for :users
   resources :users
-  
+
   # Make sure that the resque user restriction below is AFTER `devise_for :users`
-  
+
   resque_web_constraint = lambda do |request|
     current_user = request.env['warden'].user
     current_user.present? && current_user.respond_to?(:is_admin?) && current_user.is_admin?
@@ -83,21 +80,21 @@ Hyacinth::Application.routes.draw do
 
   resources :projects do
     member do
-      get 'edit_project_permissions', :action => 'edit_project_permissions', :as => 'edit_project_permissions' # edit_project_permissions_project_path
+      get 'edit_project_permissions', action: 'edit_project_permissions', as: 'edit_project_permissions' # edit_project_permissions_project_path
       patch 'update_project_permissions'
-      get 'edit_publish_targets', :action => 'edit_publish_targets', :as => 'edit_publish_targets' # edit_publish_targets_project_path
+      get 'edit_publish_targets', action: 'edit_publish_targets', as: 'edit_publish_targets' # edit_publish_targets_project_path
       patch 'update_publish_targets'
-      get 'edit_enabled_dynamic_fields/:digital_object_type_id', :action => 'edit_enabled_dynamic_fields', :as => 'edit_enabled_dynamic_fields' # edit_enabled_dynamic_fields_project_path
-      patch 'update_enabled_dynamic_fields/:digital_object_type_id', :action => 'update_enabled_dynamic_fields'
-      get 'fieldsets', :action => 'fieldsets', :as => 'fieldsets' # fieldsets_project_path
-      get 'select_dynamic_fields_for_csv_export', :action => 'select_dynamic_fields_for_csv_export', :as => 'select_dynamic_fields_for_csv_export' # select_dynamic_fields_for_csv_export
-      get 'select_dynamic_fields_csv_header_for_import', :action => 'select_dynamic_fields_csv_header_for_import', :as => 'select_dynamic_fields_csv_header_for_import' # select_dynamic_fields_csv_header_for_import
-      get 'upload_import_csv_file', :action => 'upload_import_csv_file', :as => 'upload_import_csv_file' # upload_import_csv_file
-      post 'process_import_csv_file', :action => 'process_import_csv_file', :as => 'process_import_csv_file' # process_import_csv_file
+      get 'edit_enabled_dynamic_fields/:digital_object_type_id', action: 'edit_enabled_dynamic_fields', as: 'edit_enabled_dynamic_fields' # edit_enabled_dynamic_fields_project_path
+      patch 'update_enabled_dynamic_fields/:digital_object_type_id', action: 'update_enabled_dynamic_fields'
+      get 'fieldsets', action: 'fieldsets', as: 'fieldsets' # fieldsets_project_path
+      get 'select_dynamic_fields_for_csv_export', action: 'select_dynamic_fields_for_csv_export', as: 'select_dynamic_fields_for_csv_export' # select_dynamic_fields_for_csv_export
+      get 'select_dynamic_fields_csv_header_for_import', action: 'select_dynamic_fields_csv_header_for_import', as: 'select_dynamic_fields_csv_header_for_import' # select_dynamic_fields_csv_header_for_import
+      get 'upload_import_csv_file', action: 'upload_import_csv_file', as: 'upload_import_csv_file' # upload_import_csv_file
+      post 'process_import_csv_file', action: 'process_import_csv_file', as: 'process_import_csv_file' # process_import_csv_file
     end
 
     collection do
-      get 'where_current_user_can_create', :action => 'where_current_user_can_create'
+      get 'where_current_user_can_create', action: 'where_current_user_can_create'
     end
   end
 
