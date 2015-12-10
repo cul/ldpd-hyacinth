@@ -34,4 +34,6 @@ class Hyacinth::Utils::Logger
       end
     end
   end
+
+  extend Behavior
 end
