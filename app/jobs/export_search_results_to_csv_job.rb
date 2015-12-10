@@ -66,8 +66,7 @@ class ExportSearchResultsToCsvJob
       end
     end
         
-    # Sort column_names_to_column_indexes
-    # TODO: Need to do real sort
+    # Sort column names and store name-to-numeric-index mapping in sorted_column_names_to_column_indexes
     sorted_column_names_to_column_indexes = {}
     
     # First collect all fields that start with underscore and
@@ -75,7 +74,13 @@ class ExportSearchResultsToCsvJob
     separator_regex = Regexp.new('[-:.]')
     column_names_to_column_indexes.keys.sort {|a, b|
       
-      if a.start_with?('_') && ! b.start_with?('_')
+      if a == '_pid'
+        # Always sort _pid first
+        next -1
+      elsif b == '_pid'
+        # Always sort _pid first
+        next 1
+      elsif a.start_with?('_') && ! b.start_with?('_')
         # Always sort underscore fields before non-underscore fields first
         next -1
       elsif ! a.start_with?('_') && b.start_with?('_')
