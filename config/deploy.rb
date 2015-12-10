@@ -21,7 +21,7 @@ end
 set :scm, :git
 set :git_enable_submodules, 1
 set :deploy_via, :remote_cache
-set :repository,  "git@github.com:cul/hyacinth.git"
+set :repository, "git@github.com:cul/hyacinth.git"
 set :use_sudo, false
 
 # Note: The line below is meaningless. It's just a workaround for Rails 4.0 because
@@ -34,7 +34,7 @@ set :asset_env, "RAILS_GROUPS=assets DATABASE_URL=mysql2://user:pass@127.0.0.1/d
 
 namespace :deploy do
   desc "Add tag based on current version"
-  task :auto_tag, :roles => :app do
+  task :auto_tag, roles: :app do
     current_version = 'v' +
                       IO.read("VERSION").strip +
                       "/" +
@@ -46,7 +46,7 @@ namespace :deploy do
   end
 
   desc "Restart Application"
-  task :restart, :roles => :app do
+  task :restart, roles: :app do
     run "mkdir -p #{current_path}/tmp/cookies"
     run "touch #{current_path}/tmp/restart.txt"
   end
@@ -67,25 +67,19 @@ namespace :deploy do
     run "ln -nfs #{deploy_to}shared/uri_service_#{rails_env}.sqlite3 #{release_path}/db/uri_service_#{rails_env}.sqlite3"
   end
 
-
   desc "Compile assets"
   task :assets do
     run "cd #{release_path}; RAILS_ENV=#{rails_env} bundle exec rake assets:clean assets:precompile"
   end
-  
+
   desc "Restart Resque Workers"
-  task :restart_workers, :roles => :worker do
+  task :restart_workers, roles: :worker do
     run_remote_rake "resque:restart_workers"
   end
-
 end
-
-
 
 after 'deploy:update_code', 'deploy:symlink_shared'
 before "deploy:create_symlink", "deploy:assets"
-
-
 
 # For resetting Resque workers
 
@@ -94,7 +88,7 @@ after 'deploy:restart', 'deploy:restart_workers'
 def run_remote_rake(rake_cmd)
   rake_args = ENV['RAKE_ARGS'].to_s.split(',')
 
-  cmd = "cd #{fetch(:latest_release)} && bundle exec #{fetch(:rake, "rake")} RAILS_ENV=#{fetch(:rails_env, "production")} #{rake_cmd}"
+  cmd = "cd #{fetch(:latest_release)} && bundle exec #{fetch(:rake, 'rake')} RAILS_ENV=#{fetch(:rails_env, 'production')} #{rake_cmd}"
   cmd += "['#{rake_args.join("','")}']" unless rake_args.empty?
   run cmd
   set :rakefile, nil if exists?(:rakefile)

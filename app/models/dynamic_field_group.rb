@@ -72,7 +72,7 @@ class DynamicFieldGroup < ActiveRecord::Base
 
   # Validations
   def validate_json_fields
-    if self.xml_translation.present? && ! Hyacinth::Utils::JsonUtils.is_valid_json?(self.xml_translation)
+    if self.xml_translation.present? && ! Hyacinth::Utils::JsonUtils.valid_json?(self.xml_translation)
       errors.add(:xml_translation, "does not validate as JSON.  Value: " + self.xml_translation.to_s)
     end
   end

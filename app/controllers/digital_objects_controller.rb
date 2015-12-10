@@ -580,7 +580,7 @@ class DigitalObjectsController < ApplicationController
     # Convert json-encoded digital_object_data_json to hash
     # Note: We submit digital_object_data to the API as JSON to preserve array order, since http param order isn't guaranteed
     unless digital_object_data_json.nil?
-      raise 'Invalid JSON given for digital_object_data_json' unless Hyacinth::Utils::JsonUtils.is_valid_json?(digital_object_data_json)
+      raise 'Invalid JSON given for digital_object_data_json' unless Hyacinth::Utils::JsonUtils.valid_json?(digital_object_data_json)
       return JSON.parse(digital_object_data_json)
     end
   end

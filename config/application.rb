@@ -33,6 +33,5 @@ module Hyacinth
     # Custom asset paths
     config.assets.paths << Rails.root.join("templates") # EJS Templates
     Sprockets.register_engine '.ejs', Tilt::PlainTemplate
-
   end
 end
