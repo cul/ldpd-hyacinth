@@ -13,7 +13,6 @@ AllCops:
     - 'spec/**/*'
     - 'vendor/**/*'
     - 'app/controllers/**/*'
-    - 'app/jobs/**/*'
     - 'app/helpers/**/*'
     - 'app/models/**/*'
     - 'app/views/**/*'
