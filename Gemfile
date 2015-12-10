@@ -118,6 +118,8 @@ group :development, :test do
   gem 'capybara', '>= 2.5'
   gem 'poltergeist', '>= 1.7' # For headless-browser JavaScript testing
   gem 'factory_girl_rails', '>= 4.4.1'
+  gem 'rubocop', require: false
+  gem 'rubocop-rspec', require: false
 end
 
 
