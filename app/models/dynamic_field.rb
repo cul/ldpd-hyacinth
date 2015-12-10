@@ -86,7 +86,7 @@ class DynamicField < ActiveRecord::Base
   end
 
   def validate_json_fields
-    if self.additional_data_json.present? && ! Hyacinth::Utils::JsonUtils.is_valid_json?(self.additional_data_json)
+    if self.additional_data_json.present? && ! Hyacinth::Utils::JsonUtils.valid_json?(self.additional_data_json)
       errors.add(:additional_data_json, "does not validate as JSON.")
     end
   end
