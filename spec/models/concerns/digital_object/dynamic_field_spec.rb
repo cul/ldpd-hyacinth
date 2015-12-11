@@ -1,14 +1,16 @@
 require 'rails_helper'
 
-RSpec.describe DigitalObject::Base, :type => :model do
-  
+describe DigitalObject::DynamicField, :type => :unit do
+  let(:test_class) do
+    _c = Class.new
+    _c.send :include, DigitalObject::DynamicField
+  end
+
+  let(:digital_object) { test_class.new }
+
   describe "DynamicField concern" do
-    
     describe "#update_dynamic_field_data" do
       it "merges existing dynamic_field_data with new data" do
-    
-        @digital_object = DigitalObject::Item.new()
-    
         hsh1 = {
           "alternate_title" => [
             {
@@ -73,20 +75,17 @@ RSpec.describe DigitalObject::Base, :type => :model do
             }
           ]
         }
-    
+
         #Initial set of data
-        @digital_object.update_dynamic_field_data(hsh1, false)
-        expect(@digital_object.dynamic_field_data).to eq(hsh1)
-    
+        digital_object.update_dynamic_field_data(hsh1, false)
+        expect(digital_object.dynamic_field_data).to eq(hsh1)
+
         #Secondary set of data to merge
-        @digital_object.update_dynamic_field_data(hsh2, true)
-        expect(@digital_object.dynamic_field_data).to eq(merged_hsh)
-    
+        digital_object.update_dynamic_field_data(hsh2, true)
+        expect(digital_object.dynamic_field_data).to eq(merged_hsh)
       end
-    
-      it "overwrites all existing dynamic_field_data with new data when false argument is passed for merge param" do
-        @digital_object = DigitalObject::Item.new()
-    
+
+      it "overwrites all existing dynamic_field_data with new data when false argument is passed for merge param" do  
         hsh1 = {
           "alternate_title" => [
             {
@@ -111,22 +110,17 @@ RSpec.describe DigitalObject::Base, :type => :model do
         }
     
         #Initial set of data
-        @digital_object.update_dynamic_field_data(hsh1, false)
-        expect(@digital_object.dynamic_field_data).to eq(hsh1)
+        digital_object.update_dynamic_field_data(hsh1, false)
+        expect(digital_object.dynamic_field_data).to eq(hsh1)
     
         #Secondary set of data to merge
-        @digital_object.update_dynamic_field_data(hsh2, false)
-        expect(@digital_object.dynamic_field_data).to eq(hsh2)
-    
+        digital_object.update_dynamic_field_data(hsh2, false)
+        expect(digital_object.dynamic_field_data).to eq(hsh2)
       end
-      
     end
     
     describe "#remove_blank_fields_from_dynamic_field_data" do
-      it "can recursively remove all blank fields from dynamic field data" do
-    
-        @digital_object = DigitalObject::Item.new()
-    
+      it "can recursively remove all blank fields from dynamic field data" do    
         new_dynamic_field_data = {
           "alternate_title" => [
             {
@@ -178,17 +172,13 @@ RSpec.describe DigitalObject::Base, :type => :model do
           ]
         }
         
-        @digital_object.remove_blank_fields_from_dynamic_field_data!(new_dynamic_field_data)
+        digital_object.remove_blank_fields_from_dynamic_field_data!(new_dynamic_field_data)
         expect(new_dynamic_field_data).to eq(expected)
-    
       end
     end
     
     describe "#trim_whitespace_for_dynamic_field_data!" do
-      it "can recursively trim whitespace in dynamic field data" do
-    
-        @digital_object = DigitalObject::Item.new()
-    
+      it "can recursively trim whitespace in dynamic field data" do    
         new_dynamic_field_data = {
           "alternate_title" => [
             {
@@ -250,20 +240,16 @@ RSpec.describe DigitalObject::Base, :type => :model do
             }
           ]
         }
-        
+
         puts '------------------------------------'
-        @digital_object.trim_whitespace_for_dynamic_field_data!(new_dynamic_field_data)
+        digital_object.trim_whitespace_for_dynamic_field_data!(new_dynamic_field_data)
         expect(new_dynamic_field_data).to eq(expected)
     
       end
     end
   
     describe "#remove_dynamic_field_data_key!" do
-  
-      it "can remove one or more specific keys, at varying levels, within the dynamic_field_data" do
-  
-        @digital_object = DigitalObject::Item.new()
-  
+      it "can remove one or more specific keys, at varying levels, within the dynamic_field_data" do  
         new_dynamic_field_data = {
           "alternate_title" => [
             {
@@ -294,16 +280,13 @@ RSpec.describe DigitalObject::Base, :type => :model do
           ]
         }
   
-        @digital_object.update_dynamic_field_data(new_dynamic_field_data, false)
-        @digital_object.remove_dynamic_field_data_key!('alternate_title')
-        @digital_object.remove_dynamic_field_data_key!('note_type')
-        expect(@digital_object.dynamic_field_data).to eq(expected)
+        digital_object.update_dynamic_field_data(new_dynamic_field_data, false)
+        digital_object.remove_dynamic_field_data_key!('alternate_title')
+        digital_object.remove_dynamic_field_data_key!('note_type')
+        expect(digital_object.dynamic_field_data).to eq(expected)
       end
   
-      it "clears empty parent elements after perfoming a key deletion" do
-  
-        @digital_object = DigitalObject::Item.new()
-  
+      it "clears empty parent elements after perfoming a key deletion" do  
         new_dynamic_field_data = {
           "name" => [
             {
@@ -316,7 +299,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
             }
           ]
         }
-  
+
         expected = {
           "name" => [
             {
@@ -325,15 +308,13 @@ RSpec.describe DigitalObject::Base, :type => :model do
           ]
         }
   
-        @digital_object.update_dynamic_field_data(new_dynamic_field_data, false)
-        @digital_object.remove_dynamic_field_data_key!('name_role_value')
-        expect(@digital_object.dynamic_field_data).to eq(expected)
+        digital_object.update_dynamic_field_data(new_dynamic_field_data, false)
+        digital_object.remove_dynamic_field_data_key!('name_role_value')
+        expect(digital_object.dynamic_field_data).to eq(expected)
       end
-  
     end
     
-    describe "::recursively_generate_flattened_dynamic_field_data" do
-      
+    describe ".recursively_generate_flattened_dynamic_field_data" do
       it "works as expected" do
         new_dynamic_field_data = {
           "title" => [
@@ -374,13 +355,10 @@ RSpec.describe DigitalObject::Base, :type => :model do
         }
         
         expect(DigitalObject::Base.recursively_generate_flattened_dynamic_field_data(new_dynamic_field_data)).to eq(flattened_dynamic_field_data)
-        
       end
-      
     end
     
-    describe "#recursively_generate_csv_style_flattened_dynamic_field_data" do
-      
+    describe ".recursively_generate_csv_style_flattened_dynamic_field_data" do
       it "works as expected" do
         new_dynamic_field_data = {
           "title" => [
@@ -468,12 +446,8 @@ RSpec.describe DigitalObject::Base, :type => :model do
           'name-2:name_role-2:name_role_term.value' => 'Composer',
         }
         
-        expect(DigitalObject::Base.recursively_generate_csv_style_flattened_dynamic_field_data(new_dynamic_field_data)).to eq(flattened_csv_style_dynamic_field_data)
-        
+        expect(test_class.recursively_generate_csv_style_flattened_dynamic_field_data(new_dynamic_field_data)).to eq(flattened_csv_style_dynamic_field_data)
       end
-      
     end
-    
   end
-
 end
