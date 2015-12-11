@@ -1,8 +1,10 @@
 module Hyacinth::Exceptions
-  class DigitalObjectNotFoundError < StandardError; end
-  class ParentDigitalObjectNotFoundError < StandardError; end
-  class ProjectNotFoundError < StandardError; end
-  class PublishTargetNotFoundError < StandardError; end
-  class BuilderPathNotFoundError < StandardError; end
-  class InvalidDigitalObjectTypeError < StandardError; end
+  class HyacinthError < StandardError; end
+  class NotFoundError < HyacinthError; end
+  class DigitalObjectNotFoundError < NotFoundError; end
+  class ParentDigitalObjectNotFoundError < NotFoundError; end
+  class ProjectNotFoundError < NotFoundError; end
+  class PublishTargetNotFoundError < NotFoundError; end
+  class BuilderPathNotFoundError < NotFoundError; end
+  class InvalidDigitalObjectTypeError < HyacinthError; end
 end
