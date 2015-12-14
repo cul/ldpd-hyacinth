@@ -3,7 +3,7 @@
 <% if @import_job && @import_job.errors.any? %>
   <div id="error_explanation">
     <h2><%= pluralize(@import_job.errors.count, "error") %> prohibited this project from being saved:</h2>
-  
+
     <ul>
     <% @import_job.errors.full_messages.each do |msg| %>
       <li><%= msg %></li>
@@ -11,11 +11,4 @@
     </ul>
   </div>
 <% end %>
-
-<h1>File will be seleted and uploaded from here</h1>
-
-<%= form_tag({:action => :process_import_csv_file}, multipart: true) do %>
-  <%= file_field_tag :import_file %>
-  <br />
-  <%= submit_tag( "Import", class: 'btn btn-default btn-sm' ) %>
-<% end %>
+<%= render 'form' %>
