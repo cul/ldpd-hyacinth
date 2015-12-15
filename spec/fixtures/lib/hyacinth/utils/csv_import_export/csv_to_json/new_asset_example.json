@@ -1,6 +1,6 @@
 {
    "identifiers" : ["projectname.001.1", "alternate_identifier"],
-   "parent_digital_object" : [
+   "parent_digital_objects" : [
       {
          "identifier" : "cul:parent1"
       },
@@ -26,8 +26,8 @@
    "dynamic_field_data":{
       "title":[
          {
-            "title_sort_portion":"file.tiff",
-            "title_non_sort_portion":""
+            "title_non_sort_portion":"",
+            "title_sort_portion":"file.tiff"
          }
       ]
    }

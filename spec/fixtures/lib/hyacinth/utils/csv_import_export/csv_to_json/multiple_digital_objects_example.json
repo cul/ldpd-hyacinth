@@ -2,7 +2,7 @@
    {
       "pid" : "",
       "identifiers" : ["new_asset1"],
-      "parent_digital_object" : [
+      "parent_digital_objects" : [
          {
             "identifier" : "cul:456"
          }
@@ -47,7 +47,7 @@
    {
       "pid" : "",
       "identifiers" : ["new_item1"],
-      "parent_digital_object" : [
+      "parent_digital_objects" : [
          {
             "identifier" : ""
          }
@@ -92,7 +92,7 @@
    {
       "pid" : "cul:456",
       "identifiers" : [""],
-      "parent_digital_object" : [
+      "parent_digital_objects" : [
          {
             "identifier" : ""
          }
@@ -137,7 +137,7 @@
    {
       "pid" : "",
       "identifiers" : ["new_asset2"],
-      "parent_digital_object" : [
+      "parent_digital_objects" : [
          {
             "identifier" : "new_item1"
          }

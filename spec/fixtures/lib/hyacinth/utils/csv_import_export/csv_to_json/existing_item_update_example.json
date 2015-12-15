@@ -1,7 +1,7 @@
 {
    "pid" : "cul:123",
    "identifiers" : ["another_identifier"],
-   "parent_digital_object" : [
+   "parent_digital_objects" : [
       {
          "identifier" : "cul:parent123"
       }
