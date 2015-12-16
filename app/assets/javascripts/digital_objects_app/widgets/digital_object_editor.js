@@ -588,12 +588,9 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.submitEditorForm = func
   $editorForm.find('.errors').html(''); //Clear existing errors
   $editorForm.find('.dynamic_field.has-error').removeClass('has-error'); //Remove current error classes
 
-  var publishTargets = null;
+  var publishTargets = [];
   $editorForm.find('.publish-targets .publish-target-checkbox').each(function(){
     if ($(this).prop('checked')) {
-      if (publishTargets == null) {
-        publishTargets = [];
-      }
       publishTargets.push({pid: $(this).val()})
     }
   });
