@@ -15,7 +15,7 @@ class DigitalObject::Base
   define_attribute_methods :parent_digital_object_pids, :obsolete_parent_digital_object_pids, :ordered_child_digital_object_pids
 
   attr_accessor :project, :publish_targets, :identifiers, :created_by, :updated_by, :state, :dc_type, :ordered_child_digital_object_pids
-  attr_reader :errors, :fedora_object, :parent_digital_object_pids, :updated_at, :created_at, :dynamic_field_data
+  attr_reader :errors, :fedora_object, :parent_digital_object_pids, :updated_at, :created_at
 
   VALID_DC_TYPES = [] # There are no valid dc types for DigitalObject::Base
   
@@ -131,8 +131,8 @@ class DigitalObject::Base
     end
     
     # Dynamic Field Data
-    if digital_object_data['dynamic_field_data'].present?
-      self.update_dynamic_field_data(digital_object_data['dynamic_field_data'], merge_dynamic_fields)
+    if digital_object_data[Hyacinth::Csv::Fields::Dynamic::DATA_KEY].present?
+      self.update_dynamic_field_data(digital_object_data[Hyacinth::Csv::Fields::Dynamic::DATA_KEY], merge_dynamic_fields)
     end
     
   end

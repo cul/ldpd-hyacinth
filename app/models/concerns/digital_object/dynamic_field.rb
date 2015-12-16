@@ -1,6 +1,11 @@
 module DigitalObject::DynamicField
   extend ActiveSupport::Concern
 
+  included do
+    include DigitalObject::UriServiceValues
+    attr_accessor :dynamic_field_data
+  end
+
   def update_dynamic_field_data(new_dynamic_field_data, merge)
     if merge
       # During a merge, new top level key-value pairs are added and existing top level keys have their values replace by new values
@@ -9,52 +14,45 @@ module DigitalObject::DynamicField
       # Replace existing dynamic_fiel_data with newly supplied value
       @dynamic_field_data = new_dynamic_field_data
     end
-    
+
     # Remove blank fields (all-whitespace fields DO count as blank)
     remove_blank_fields_from_dynamic_field_data!(@dynamic_field_data)
-    
+
     # Trim whitespace for all remaining String fields
     trim_whitespace_for_dynamic_field_data!(@dynamic_field_data)
-    
+
     # Handle URI fields:
-    
+
     # 1) Register any non-existent newly-supplied URIs, adding URIs as needed
-    self.register_new_uris_and_values_for_dynamic_field_data!(@dynamic_field_data)
-    
+    register_new_uris_and_values_for_dynamic_field_data!(@dynamic_field_data)
+
     # 2) Correct associated URI fields (value, etc.), regardless of what user entered,
     # by running remove_extra_uri_data_from_dynamic_field_data!() followed by
     # add_extra_uri_data_to_dynamic_field_data!()
-    self.remove_extra_uri_data_from_dynamic_field_data!(@dynamic_field_data)
-    self.add_extra_uri_data_to_dynamic_field_data!(@dynamic_field_data)
-    
+    remove_extra_uri_data_from_dynamic_field_data!(@dynamic_field_data)
+    add_extra_uri_data_to_dynamic_field_data!(@dynamic_field_data)
   end
 
   def remove_blank_fields_from_dynamic_field_data!(df_data=@dynamic_field_data)
     # Step 1: Recursively handle values on lower levels
-    df_data.each {|key, value|
+    df_data.each do |key, value|
       if value.is_a?(Array)
-
         # Recurse through non-empty elements
-        value.each {|element|
+        value.each do |element|
           remove_blank_fields_from_dynamic_field_data!(element)
-        }
+        end
 
         # Delete blank array element values on this array level (including empty object ({}) values)
-        value.delete_if{|element|
-          element.blank?
-        }
+        value.delete_if { |element| element.blank? }
       elsif value.is_a?(Hash)
         # This code will run when we're dealing with something like a controlled
         # term field, which is a hash that contains a hash as a value.
         remove_blank_fields_from_dynamic_field_data!(value)
       end
-    }
+    end
     
     # Step 2: Delete blank values on this object level
-    df_data.delete_if{|key, value|
-      value.blank?
-    }
-    
+    df_data.delete_if { |key, value| value.blank? }
   end
   
   def trim_whitespace_for_dynamic_field_data!(df_data=@dynamic_field_data)

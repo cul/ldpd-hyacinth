@@ -8,7 +8,7 @@ class Hyacinth::Utils::CsvImportExportUtils
 
   def self.csv_to_digital_object_data(csv_data_string)
     line_counter = -1
-    column_indices_to_headers = nil
+    header = Hyacinth::Csv::Header.new
 
     CSV.parse(csv_data_string) do |row|
       line_counter += 1
@@ -18,118 +18,46 @@ class Hyacinth::Utils::CsvImportExportUtils
 
       # second line is the real header line, so store it as such
       if line_counter == 1
-        column_indices_to_headers = row
+        header.fields = row.map { |header_data| header_to_input_field(header_data) }
         next
       end
 
       # process the rest of the lines ...
-      digital_object_data = process_csv_row(column_indices_to_headers, row)
-
-      yield digital_object_data
+      yield header.document_for(row)
     end
+  end
+
+  def self.header_to_input_field(header_data)
+    Hyacinth::Csv::Header.header_to_input_field(header_data)
   end
 
   # Process a single CSV data row and return digital_object_data
-  def self.process_csv_row(column_indices_to_headers, row_data)
-    digital_object_data = {}
-    current_builder_path = [] # e.g. ['name', 0, 'name_role', 0]
-
-    row_data.each_with_index do |cell_value, index|
-      cell_value = '' if cell_value.nil? # If the cell value is nil, convert it into an empty string
-
-      if column_indices_to_headers[index].start_with?('_')
-        # Handle internal field, which is named with a leading underscore
-        process_internal_field_value(digital_object_data, cell_value, column_indices_to_headers[index])
-      else
-        # Handle dynamic field, which never starts with a leading underscore
-        process_dynamic_field_value(digital_object_data, cell_value, column_indices_to_headers[index], current_builder_path)
-      end
-    end
-
-    digital_object_data
+  def self.process_csv_row(headers, row_data)
+    Hyacinth::Csv::Header.new(headers).document_for(row_data)
   end
 
-  def self.process_internal_field_value(digital_object_data, value, internal_field_header_name)
-    raise "Internal field header names must begin with an underscore ('_')" if internal_field_header_name[0] != '_'
+  def self.process_internal_field_value(digital_object_data, value, input_field)
+    input_field = Hyacinth::Csv::Fields::Internal.new(input_field) unless input_field.is_a? Hyacinth::Csv::Fields::Internal
 
-    # Converts '_publish_target-2.string_key' to ['_publish_target', 2, 'string_key']
-    new_builder_path = internal_field_header_name.split(/[\.-]/).map do |piece|
-      raise 'Internal field header names cannot be 0-indexed. Must be 1-indexed.' if piece == '0'
-      piece.match(/^\d+$/) ? piece.to_i - 1 : piece # This line converts ['_publish_target', '2', 'string_key'] to ['_publish_target', 2, 'string_key']
-    end
-
-    # Remove underscore from first builder path element name
-    new_builder_path[0] = new_builder_path[0][1..-1]
-
-    put_object_at_builder_path(digital_object_data, new_builder_path, value, true)
+    put_object_at_builder_path(digital_object_data, input_field, value, true)
   end
 
-  def self.get_object_at_builder_path(obj, builder_path_arr)
-    pointer = obj
-    builder_path_arr.each do |element|
-      # If pointer is an array and element is a string, this is an invalid path and we should raise an error.
-      raise Hyacinth::Exceptions::BuilderPathNotFoundError, PATH_INVALID if pointer.is_a?(Array) && element.is_a?(String)
-
-      # Element will be either a Fixnum (for array access) or a String (for hash access)
-      if pointer[element]
-        pointer = pointer[element]
-      else
-        return nil
-      end
-    end
-    pointer
+  def self.get_object_at_builder_path(obj, input_field)
+    input_field = Hyacinth::Csv::Fields::Base.new(input_field) if input_field.is_a? Array
+    input_field.get_value(obj)
   end
 
-  def self.put_object_at_builder_path(object_to_modify, builder_path_arr, object_to_put, create_missing_path = true)
-    obj_at_builder_path = get_object_at_builder_path(object_to_modify, builder_path_arr)
-
-    if obj_at_builder_path.nil?
-      raise Hyacinth::Exceptions::BuilderPathNotFoundError, PATH_MISSING unless create_missing_path
-      create_object_at_builder_path(object_to_modify, builder_path_arr, object_to_put)
-    else
-      builder_path_arr_without_last_element = builder_path_arr.slice(0, builder_path_arr.length - 1)
-      obj_at_builder_path = get_object_at_builder_path(object_to_modify, builder_path_arr_without_last_element)
-      obj_at_builder_path[builder_path_arr.last] = object_to_put
-    end
+  def self.put_object_at_builder_path(object_to_modify, input_field, object_to_put, create_missing_path = true)
+    input_field = Hyacinth::Csv::Fields::Base.new(input_field) if input_field.is_a? Array
+    input_field.put_value(object_to_modify, object_to_put, create_missing_path)
   end
 
-  def self.create_object_at_builder_path(object_to_modify, builder_path_arr, object_to_put)
-    pointer = object_to_modify
-
-    builder_path_arr.each_with_index do |element, i|
-      if i == (builder_path_arr.length - 1)
-        pointer[element] = object_to_put
-        break
-      end
-
-      if pointer[element].nil?
-        # We need to create this part of the path
-        if builder_path_arr[i + 1].is_a?(Fixnum)
-          pointer[element] = []
-        else
-          pointer[element] = {}
-        end
-      end
-
-      pointer = pointer[element]
-    end
-  end
-
-  def self.process_dynamic_field_value(digital_object_data, value, dynamic_field_header_name, _current_builder_path)
+  def self.process_dynamic_field_value(digital_object_data, value, input_field, _current_builder_path)
     # Note: All dynamic field data goes under a top level key called 'dynamic_field_data'
-    # TODO: ['dynamic_field_data'] should probably be a globally-available constant rather than a hard-coded value here
-    digital_object_data['dynamic_field_data'] ||= {}
-    new_builder_path = dynamic_field_header_name.split(/[:-]/).map do |piece|
-      raise 'Dynamic field header names cannot be 0-indexed. Must be 1-indexed.' if piece == '0'
+    digital_object_data[Hyacinth::Csv::Fields::Dynamic::DATA_KEY] ||= {}
+    input_field = Hyacinth::Csv::Fields::Dynamic.new(input_field) unless input_field.is_a? Hyacinth::Csv::Fields::Dynamic
 
-      piece.match(/^\d+$/) ? piece.to_i - 1 : piece # This line converts 'name-0:name_role-0:name_role_type' to ['name', 0, 'name_role', 0, 'name_role_type']
-    end
-    if new_builder_path.last.index('.')
-      # Convert ['aaa', 0, 'bbb', 0, 'ccc.ddd'] into ['aaa', 0, 'bbb', 0, 'ccc', 'ddd']
-      new_last_two_elements = new_builder_path.pop.split('.') # Temporarily pop and split last element
-      new_builder_path += new_last_two_elements # Add new two elements to new_builder_path
-    end
-    put_object_at_builder_path(digital_object_data['dynamic_field_data'], new_builder_path, value, true)
+    put_object_at_builder_path(digital_object_data, input_field, value, true)
   end
 
   ##############################
