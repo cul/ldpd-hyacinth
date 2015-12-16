@@ -140,8 +140,15 @@ module DigitalObject::XmlDatastreamRendering
         else
           ''
         end
-      elsif ! dynamic_field_data[sub_without_braces].is_a?(Array) && dynamic_field_data.has_key?(sub_without_braces)
+      elsif dynamic_field_data.has_key?(sub_without_braces) && ! dynamic_field_data[sub_without_braces].is_a?(Array)
         dynamic_field_data[sub_without_braces]
+      elsif sub_without_braces.index('.') # This is dot notation for uri-based terms
+        term_part_arr = sub_without_braces.split('.')
+        if dynamic_field_data[term_part_arr[0]].is_a?(Hash) && dynamic_field_data[term_part_arr[0]][term_part_arr[1]].present?
+          dynamic_field_data[term_part_arr[0]][term_part_arr[1]]
+        else
+          ''
+        end
       else
         ''
       end
