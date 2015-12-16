@@ -4,9 +4,12 @@ namespace :hyacinth do
 
   namespace :digital_object do
 
-    # Purge COMPLETELY eliminates records (in the DB, in Fedora and in Solr)
-    # This is much more extreme than a regular delete (in which a record is marked as deleted,
-    # but not actually erased from existence)
+    # Purge COMPLETELY eliminates records in the DB, in Fedora and in Solr.
+    #
+    # This rake task manually deletes each part of a DigitalObject (solr, fedora, database)
+    # and can be used to clean up partially deleted records.  This can be more helpful for
+    # cleanup than a call to DigitalObject.delete(true), which can only purge a valid instance
+    # of a DigitalObject.
     task :purge => :environment do
 
       if ENV['PIDS'].present?
@@ -37,7 +40,7 @@ namespace :hyacinth do
         end
 
         # Remove from solr
-        Hyacinth::Utils::SolrUtils.solr.delete_by_query "pid:#{pid.gsub(':','\:')}"
+        Hyacinth::Utils::SolrUtils.solr.delete_by_query "pid:#{UriService.solr_escape(pid)}"
 
         # Delete from Fedora
         begin

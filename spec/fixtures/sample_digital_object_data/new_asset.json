@@ -1,6 +1,6 @@
 {
    "identifiers" : ["asset.001"],
-   "parent_digital_object" : [
+   "parent_digital_objects" : [
       {
          "identifier": "item.001"
       }

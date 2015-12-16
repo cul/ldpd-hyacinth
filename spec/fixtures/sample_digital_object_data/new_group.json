@@ -1,5 +1,5 @@
 {
-   "identifier" : ["group.001"],
+   "identifiers" : ["group.001"],
    "digital_object_type" : {
       "string_key" : "group"
    },

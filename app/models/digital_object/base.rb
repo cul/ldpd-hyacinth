@@ -209,13 +209,13 @@ class DigitalObject::Base
     end
   end
 
-  # Marks a record as deleted, but doesn't completely purge it from the system
-  def destroy
+  # By default, marks a record as deleted, but doesn't completely purge it from the system.
+  # Pass true for the purge param to completely eradicate this record.
+  def destroy(purge=false)
 
     @db_record.with_lock do
       # Set state of 'D' for this object, which means "deleted" in Fedora
       self.state = 'D'
-
 
       if valid?
         if @parent_digital_object_pids.present?
@@ -225,10 +225,29 @@ class DigitalObject::Base
             self.remove_parent_digital_object(obj)
           end
         end
-
-        return self.save
+        
+        if purge
+          # We're going to delete everything associated with this record
+          
+          # Delete from Solr
+          Hyacinth::Utils::SolrUtils.solr.delete_by_query "pid:#{UriService.solr_escape(pid)}"
+          
+          # Delete from Fedora
+          Retriable.retriable on: [RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH], tries: NUM_FEDORA_RETRY_ATTEMPTS, base_interval: DELAY_IN_SECONDS_BETWEEN_FEDORA_RETRY_ATTEMPTS do
+            @fedora_obj.delete
+          end
+          
+          # Delete db record
+          @db_record.destroy
+          
+          return true
+        else
+          return self.save
+        end
       end
     end
+    
+    return false
   end
 
   # Note: purge method is not currently implemented.  If implemented some day, this would completely delete all traces of an object from Fedora.
@@ -288,8 +307,36 @@ class DigitalObject::Base
     end
   end
   
-  def self.find_by_pid_or_identifier(pid_or_identifier)
-    return self.find_by_pid(pid) || self.find_by_pid(Cul::Hydra::RisearchMembers.get_pid_for_identifier(pid_or_identifier))
+  def self.find_all_by_identifier(identifier)
+    
+    # First attempt a solr lookup.  If records are found in solr, we don't need to do a Fedora lookup.
+    
+    search_response = DigitalObject::Base.search(
+      {
+        'f' => {'identifiers_sim' => [identifier]},
+        'fl' => 'pid',
+        'per_page' => 99999
+      },
+      false,
+      nil # Pass nil for user_for_permission_context arg because this is just an identifier lookup method and isn't related to user permissions
+    )
+    
+    pids = []
+    
+    if search_response['results'].present?
+      search_response['results'].each do |result|
+        pids << result['pid']
+      end
+    else
+      # Fall back to Fedora resource index lookup
+      pids = Cul::Hydra::RisearchMembers.get_all_pids_for_identifier(identifier)
+    end
+    
+    digital_objects_to_return = []
+    pids.each do |obj_pid|
+      digital_objects_to_return << self.find_by_pid(obj_pid)
+    end
+    return digital_objects_to_return
   end
 
   # Returns the DigitalObject::Something class for the given Fedora object.

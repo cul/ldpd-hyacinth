@@ -15,6 +15,7 @@ module DigitalObject::IndexAndSearch
 
     doc = {
       pid: self.pid,
+      identifiers_sim: self.identifiers,
       title_ssm: self.get_title,
       sort_title_ssort: self.get_sort_title,
       parent_digital_object_pids_ssm: self.parent_digital_object_pids,
@@ -33,8 +34,8 @@ module DigitalObject::IndexAndSearch
       project_string_key_sim: self.project.string_key,
       project_pid_sim: self.project.pid,
       project_pid_ssm: self.project.pid,
-      publish_target_pid_sim: self.publish_targets.map{|publish_target|publish_target.pid},
-      publish_target_pid_ssm: self.publish_targets.map{|publish_target|publish_target.pid},
+      publish_target_pids_sim: self.publish_targets.map{|publish_target|publish_target.pid},
+      publish_target_pids_ssm: self.publish_targets.map{|publish_target|publish_target.pid},
       flattened_dynamic_field_data_ssm: flattened_dynamic_field_data.to_json, # This is kept here for caching/performance purposes, flat display of any field without having to check with Fedora.
       digital_object_data_ss: self.to_json
     }
@@ -47,7 +48,9 @@ module DigitalObject::IndexAndSearch
     search_title_teim = []
 
     # Special indexing rules for title field and non-dynamic fields
+    
     search_identifier_sim << self.pid
+    search_identifier_sim.push(*self.identifiers) # Also append all identifiers to the array
     search_keyword_teim << self.pid
 
     # Go through dynamic fields and find out which ones are:
@@ -246,7 +249,7 @@ module DigitalObject::IndexAndSearch
 
       solr_response = Hyacinth::Utils::SolrUtils.solr.post('select', {data: solr_params}) # Use post so we don't run into long query limits (limited by what solr's server will accept via GET)
 
-      Rails.logger.debug('Solr Params: ' + solr_response['responseHeader']['params'].inspect)
+      Rails.logger.info('Solr Params: ' + solr_response['responseHeader']['params'].inspect)
       Rails.logger.debug('Solr Response: ' + solr_response.inspect)
 
       # Convert facet data to nice, more useful form
