@@ -95,7 +95,7 @@ GEM
       autoprefixer-rails (>= 5.0.0.1)
       sass (>= 3.2.19)
     builder (3.2.2)
-    cancancan (1.10.1)
+    cancancan (1.12.0)
     capistrano (2.12.0)
       highline
       net-scp (>= 1.0.0)
@@ -491,6 +491,7 @@ DEPENDENCIES
   autoprefixer-rails
   bootstrap-multiselect-rails
   bootstrap-sass (~> 3.3)
+  cancancan (~> 1.12.0)
   capistrano (~> 2.12.0)
   capybara (>= 2.5)
   coderay
@@ -530,3 +531,6 @@ DEPENDENCIES
   uglifier (>= 1.3.0)
   underscore-rails
   uri_service (= 0.3.1)
+
+BUNDLED WITH
+   1.10.6
