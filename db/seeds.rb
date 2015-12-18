@@ -14,6 +14,7 @@ YAML.load_file('config/default_user_accounts.yml').each {|service_user_entry, se
 dot_item = DigitalObjectType.create!(string_key: 'item', display_label: 'Item', sort_order: 0)
 dot_group = DigitalObjectType.create!(string_key: 'group', display_label: 'Group', sort_order: 1)
 dot_asset = DigitalObjectType.create!(string_key: 'asset', display_label: 'Asset', sort_order: 2)
+dot_file_system = DigitalObjectType.create!(string_key: 'file_system', display_label: 'FileSystem', sort_order: 3)
 
 # Create CUL PidGenerator
 default_pid_generator = PidGenerator.create!(namespace: HYACINTH['default_pid_generator_namespace'])

@@ -21,7 +21,7 @@ class DigitalObject::Base
   
   def require_subclass_override!; raise 'This method must be overridden by a subclass'; end
   
-  def initialize()
+  def initialize(*args)
     raise 'The DigitalObject::Base class cannot be instantiated.  You can only instantiate subclasses like DigitalObject::Item' if self.class == DigitalObject::Base
     @db_record = ::DigitalObjectRecord.new
     @fedora_object = nil
@@ -352,6 +352,8 @@ class DigitalObject::Base
       return DigitalObject::Item if (fobj.datastreams['DC'].dc_type & DigitalObject::Item.valid_dc_types).length > 0
     when GenericResource
       return DigitalObject::Asset if (fobj.datastreams['DC'].dc_type & DigitalObject::Asset.valid_dc_types).length > 0
+    when Collection
+      return DigitalObject::FileSystem if (fobj.datastreams['DC'].dc_type & DigitalObject::FileSystem.valid_dc_types).length > 0
     end
 
     raise 'Cannot determine type of fedora object ' + fobj.class.to_s + ' with pid: ' + fobj.pid + ' and dc_type: ' + fobj.datastreams['DC'].dc_type.inspect
@@ -468,7 +470,7 @@ class DigitalObject::Base
     # This method is intended to be overridden by DigitalObject::Base child classes
   end
 
-  def publish
+  def publish_descriptions
     # Save all XmlDatastreams that have data
 
     # TODO: Temporarily doing a manual hard-coded save of descMetadata for now.  Eventually handle all custom XmlDatastreams in a non-hard-coded way.
@@ -487,7 +489,9 @@ class DigitalObject::Base
       @fedora_object.add_datastream(ds)
     end
     ds.content = self.render_xml_datastream(XmlDatastream.find_by(string_key: ds_name))
+  end
 
+  def publish_structures
     # Save ordered child data to structMetadata datastream
     struct_ds_name = 'structMetadata'
     if self.ordered_child_digital_object_pids.present?
@@ -505,8 +509,13 @@ class DigitalObject::Base
         @fedora_object.datastreams[struct_ds_name].delete
       end
     end
+  end
 
-    # Retry after Fedora timeouts / unreachable host
+  def publish
+    publish_descriptions
+    publish_structures
+
+    # Save withg retry after Fedora timeouts / unreachable host
     Retriable.retriable on: [RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH], tries: NUM_FEDORA_RETRY_ATTEMPTS, base_interval: DELAY_IN_SECONDS_BETWEEN_FEDORA_RETRY_ATTEMPTS do
       @fedora_object.save
     end
@@ -526,9 +535,7 @@ class DigitalObject::Base
         
       end
     end
-    
     return @errors.blank?
-    
   end
 
   def next_pid

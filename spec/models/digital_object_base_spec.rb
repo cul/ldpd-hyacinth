@@ -83,4 +83,41 @@ RSpec.describe DigitalObject::Base, :type => :model do
     
   end
 
+  describe '.get_class_for_fedora_object' do
+    let!(:fedora_object) do
+      fedora_object = cmodel.new
+      fedora_object.datastreams['DC'].dc_type = model.const_get('VALID_DC_TYPES').clone
+      fedora_object
+    end
+
+    subject { DigitalObject::Base.get_class_for_fedora_object(fedora_object) }
+
+    context 'with a GenericResource' do
+      let(:cmodel) { GenericResource }
+      let(:model) { DigitalObject::Asset }
+
+      it { is_expected.to be model }
+    end
+
+    context 'with a ContentAggregator' do
+      let(:cmodel) { ContentAggregator }
+      let(:model) { DigitalObject::Item }
+
+      it { is_expected.to be model }
+    end
+
+    context 'with a BagAggregator' do
+      let(:cmodel) { BagAggregator }
+      let(:model) { DigitalObject::Group }
+
+      it { is_expected.to be model }
+    end
+
+    context 'with a Collection' do
+      let(:cmodel) { Collection }
+      let(:model) { DigitalObject::FileSystem }
+
+      it { is_expected.to be model }
+    end
+  end
 end

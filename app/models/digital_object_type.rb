@@ -8,6 +8,8 @@ class DigitalObjectType < ActiveRecord::Base
       return DigitalObject::Item
     when 'group'
       return DigitalObject::Group
+    when 'file_system'
+      return DigitalObject::FileSystem
     when 'asset'
       return DigitalObject::Asset
     else
