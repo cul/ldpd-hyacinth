@@ -2,7 +2,7 @@ class DigitalObject::FileSystem < DigitalObject::Base
   VALID_DC_TYPES = ['FileSystem']
   DIGITAL_OBJECT_TYPE_STRING_KEY = 'group'
 
-  def initialize(*args)
+  def initialize
     super
     self.dc_type ||= VALID_DC_TYPES.first
   end

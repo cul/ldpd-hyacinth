@@ -21,7 +21,7 @@ class DigitalObject::Base
   
   def require_subclass_override!; raise 'This method must be overridden by a subclass'; end
   
-  def initialize(*args)
+  def initialize
     raise 'The DigitalObject::Base class cannot be instantiated.  You can only instantiate subclasses like DigitalObject::Item' if self.class == DigitalObject::Base
     @db_record = ::DigitalObjectRecord.new
     @fedora_object = nil
