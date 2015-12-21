@@ -81,7 +81,7 @@ Hyacinth::Application.routes.draw do
       resource :permissions, controller: 'projects/permissions', only: [:edit, :update], as: :project_permissions
       resource :publish_targets, controller: 'projects/publish_targets', only: [:edit, :update], as: :project_publish_targets
       resource :dynamic_fields, controller: 'projects/dynamic_fields', only: [:edit, :update], as: :enabled_dynamic_fields
-      resources :fieldsets, as: 'project_fieldsets'
+      resources :fieldsets, controller: 'projects/fieldsets', as: :project_fieldsets
       # TODO: Move select_dynamic_fields_for_csv_export to projects/exports/new
       get 'select_dynamic_fields_for_csv_export', action: 'select_dynamic_fields_for_csv_export', as: 'select_dynamic_fields_for_csv_export' # select_dynamic_fields_for_csv_export
       # TODO: Figure out what the intent of select_dynamic_fields_csv_header_for_import is

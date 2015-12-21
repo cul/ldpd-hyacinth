@@ -3,6 +3,7 @@ module Projects
     include Hyacinth::ProjectsBehavior
 
     before_action :set_project, only: [:show, :edit, :update, :destroy]
+    before_action :set_contextual_nav_options
 
     def require_appropriate_permissions!
 
@@ -36,6 +37,11 @@ module Projects
       else
         render action: 'edit'
       end
+    end
+
+    def set_contextual_nav_options
+      @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Projects'.html_safe
+      @contextual_nav_options['nav_title']['url'] = projects_path
     end
   end
 end

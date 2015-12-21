@@ -3,6 +3,6 @@
 <%= form_tag({:action => :create}, multipart: true) do %>
   <%= file_field_tag :import_file %>
   <br />
-  <%= f.hidden_field :project_id %>
+  <%= hidden_field_tag :project_id, params[:project_id]%>
   <%= submit_tag( "Import", class: 'btn btn-default btn-sm' ) %>
 <% end %>

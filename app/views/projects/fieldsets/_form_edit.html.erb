@@ -1,4 +1,4 @@
-<%= form_for @fieldset, url: project_fieldsets_path do |f| %>
+<%= form_for @fieldset, url: project_fieldset_path do |f| %>
   <% if @fieldset.errors.any? %>
     <div id="error_explanation">
       <h2><%= pluralize(@fieldset.errors.count, "error") %> prohibited this fieldset from being saved:</h2>

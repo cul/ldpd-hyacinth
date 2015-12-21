@@ -1,7 +1,6 @@
 module Projects
   class SubresourceController < ApplicationController
     before_action :require_appropriate_permissions!
-    before_action :set_contextual_nav_options
 
     def require_appropriate_permissions!
 
@@ -21,7 +20,5 @@ module Projects
       end
     end
 
-    def set_contextual_nav_options
-    end
   end
 end

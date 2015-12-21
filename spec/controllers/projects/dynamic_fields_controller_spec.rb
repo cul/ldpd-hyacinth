@@ -42,7 +42,7 @@ RSpec.describe Projects::DynamicFieldsController, :type => :controller do
       allow(DigitalObjectType).to receive(:find).with(digital_object_type_id).and_return(digital_object_type)
       patch :update, {id: project_id, digital_object_type_id: digital_object_type_id, project: {a: :b} }, valid_session
     end
-    it { expect(response).to redirect_to("/projects/#{project_id}/dynamic_fields/edit")}
+    it { expect(response).to redirect_to("/projects/#{project_id}/dynamic_fields/edit?digital_object_type_id=#{digital_object_type_id}")}
   end
 
   describe '#show' do
