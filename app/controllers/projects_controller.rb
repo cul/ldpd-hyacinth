@@ -1,4 +1,5 @@
 class ProjectsController < ApplicationController
+  include Hyacinth::ProjectsBehavior
   before_action :set_project, only: [:show, :edit, :update, :destroy, :enabled_dynamic_fields, :edit_enabled_dynamic_fields, :update_enabled_dynamic_fields, :edit_project_permissions, :update_project_permissions, :fieldsets, :edit_publish_targets, :update_publish_targets, :select_dynamic_fields_for_csv_export, :select_dynamic_fields_csv_header_for_import, :upload_import_csv_file, :process_import_csv_file]
   before_action :require_appropriate_permissions!
   before_action :set_contextual_nav_options
@@ -90,52 +91,7 @@ class ProjectsController < ApplicationController
     end
   end
 
-  # GET /projects/1/edit_project_permissions
-  def edit_project_permissions
-  end
-
-  # PATCH/PUT /projects/1/update_project_permissions
-  def update_project_permissions
-    if @project.update(project_params)
-      redirect_to edit_project_permissions_project_path(@project), notice: 'Your changes have been saved.'
-    else
-      render action: 'edit_project_permissions'
-    end
-  end
-
-  # GET /projects/1/edit_publish_targets
-  def edit_publish_targets
-  end
-
-  # PATCH/PUT /projects/1/update_publish_targets
-  def update_publish_targets
-    if @project.update(project_params)
-      redirect_to edit_publish_targets_project_path(@project), notice: 'Your changes have been saved.'
-    else
-      render action: 'edit_publish_targets'
-    end
-  end
-
-  # GET /projects/1/edit_enabled_dynamic_fields/1
-  def edit_enabled_dynamic_fields
-    @digital_object_type = DigitalObjectType.find(params[:digital_object_type_id])
-  end
-
-  # PATCH/PUT /projects/1/updated_enabled_dynamic_fields/1
-  def update_enabled_dynamic_fields
-
-    if @project.update(project_params)
-      redirect_to edit_enabled_dynamic_fields_project_path(@project, params[:digital_object_type_id]), notice: 'Your changes have been saved.'
-    else
-      render action: 'edit_enabled_dynamic_fields'
-    end
-  end
-
-  # GET /projects/1/fieldsets
-  def fieldsets
-    @fieldsets = Fieldset.where(project: @project)
-  end
-
+  # TODO: Fold this into the :index view with a request param
   # GET /projects/where_current_user_can_create
   def where_current_user_can_create
     respond_to do |format|
@@ -171,70 +127,7 @@ class ProjectsController < ApplicationController
 
   end
 
-  # GET /project/select_import_csv_file
-  def upload_import_csv_file
-  end
-
-  # POST /project/process_import_csv_file
-  def process_import_csv_file
-
-    import_file = params[:import_file]
-    @import_filename = import_file.original_filename
-    
-    @import_job = ImportJob.new(name: @import_filename, user: current_user)
-    @array_of_digital_object_data = Array.new
-    
-    begin
-      Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(import_file.read) do |digital_object_data|
-        unless @import_job.new_record?
-          @import_job.save
-        end
-        
-        # if neither the project pid nor project string_key are specified in the import data, insert the project pid
-        digital_object_data['project']['pid'] = @project.pid if ( digital_object_data['project']['string_key'].blank? &&
-                                                                digital_object_data['project']['pid'].blank? )
-        # encode the data as JSON string for insertion into the database
-        digital_object_data_encoded_as_json = ActiveSupport::JSON.encode digital_object_data
-        @array_of_digital_object_data.push(digital_object_data_encoded_as_json)
-        digital_object_import = DigitalObjectImport.create!(import_job: @import_job,
-                                                            digital_object_data: digital_object_data_encoded_as_json)
-        #####@import_job.digital_object_imports << digital_object_import
-        # queue up digital_object_import for procssing -- entails queueing up the id of the instance
-        Hyacinth::Queue.process_digital_object_import(digital_object_import.id)
-      end
-    rescue CSV::MalformedCSVError
-      # Handle invalid CSV
-      @import_job.errors.add(:invalid_csv, 'Invalid CSV File')
-    end
-    
-    if @import_job.errors.any?
-      render action: 'upload_import_csv_file'
-    else
-      redirect_to import_job_path(@import_job)
-    end
-    
-  end
-
   private
-
-  # Use callbacks to share common setup or constraints between actions.
-  def set_project
-    @project = Project.find(params[:id])
-  end
-
-  # Never trust parameters from the scary internet, only allow the white list through.
-  def project_params
-    params.require(:project).permit(
-      :id, :display_label, :string_key, :pid_generator_id, :full_path_to_custom_asset_directory,
-      :enabled_dynamic_fields_attributes => [ :id, :digital_object_type_id, :dynamic_field_id, :default_value, :required, :hidden, :locked, :_destroy, :fieldset_ids => [] ],
-      #:project_external_data_sources_attributes => [:id, :project_id, :external_data_source_id, :_destroy,
-      #  :externally_synced_dynamic_fields_attributes => [:id, :project_external_data_source_id, :dynamic_field_id, :_destroy]
-      #],
-      :project_permissions_attributes => [:id, :_destroy, :user_id, :can_create, :can_read, :can_update, :can_delete, :is_project_admin],
-      :enabled_publish_targets_attributes => [:id, :_destroy, :publish_target_id],
-      :fieldset_attributes => [:display_label, :project_id]
-    )
-  end
 
   def set_contextual_nav_options
 
@@ -250,8 +143,6 @@ class ProjectsController < ApplicationController
       @contextual_nav_options['nav_items'].push(label: 'Add New Project', url: new_project_path) if current_user.is_admin?
     when 'edit', 'update'
       @contextual_nav_options['nav_items'].push(label: 'Delete This Project', url: project_path(@project.id), options: {method: :delete, data: { confirm: 'Are you sure you want to delete this Project?' } }) if current_user.is_admin?
-    when 'fieldsets'
-      @contextual_nav_options['nav_items'].push(label: 'New Fieldset', url: new_fieldset_path(project_id: @project.id))
     end
 
   end

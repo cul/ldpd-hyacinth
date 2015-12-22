@@ -1,7 +1,7 @@
 require 'resque/server'
 
 Hyacinth::Application.routes.draw do
-  resources :csv_exports
+  resources :csv_exports, only: [:index, :create, :show, :destroy]
   resources :terms, constraints: { id: URI.regexp }
 
   resources :controlled_vocabularies do
@@ -13,8 +13,6 @@ Hyacinth::Application.routes.draw do
       match 'search', via: [:get, :post]
     end
   end
-
-  resources :fieldsets
 
   resources :digital_object_types
 
@@ -28,7 +26,7 @@ Hyacinth::Application.routes.draw do
   resources :xml_datastreams
 
   # add actions as needed, remove "only:" restriction if all actions needed
-  resources :import_jobs, only: [:index, :show] do
+  resources :import_jobs, only: [:index, :new, :create, :show, :destroy] do
     resources :digital_object_imports, only: [:index, :show]
   end
 
@@ -80,17 +78,14 @@ Hyacinth::Application.routes.draw do
 
   resources :projects do
     member do
-      get 'edit_project_permissions', action: 'edit_project_permissions', as: 'edit_project_permissions' # edit_project_permissions_project_path
-      patch 'update_project_permissions'
-      get 'edit_publish_targets', action: 'edit_publish_targets', as: 'edit_publish_targets' # edit_publish_targets_project_path
-      patch 'update_publish_targets'
-      get 'edit_enabled_dynamic_fields/:digital_object_type_id', action: 'edit_enabled_dynamic_fields', as: 'edit_enabled_dynamic_fields' # edit_enabled_dynamic_fields_project_path
-      patch 'update_enabled_dynamic_fields/:digital_object_type_id', action: 'update_enabled_dynamic_fields'
-      get 'fieldsets', action: 'fieldsets', as: 'fieldsets' # fieldsets_project_path
+      resource :permissions, controller: 'projects/permissions', only: [:edit, :update], as: :project_permissions
+      resource :publish_targets, controller: 'projects/publish_targets', only: [:edit, :update], as: :project_publish_targets
+      resource :dynamic_fields, controller: 'projects/dynamic_fields', only: [:edit, :update], as: :enabled_dynamic_fields
+      resources :fieldsets, controller: 'projects/fieldsets', as: :project_fieldsets
+      # TODO: Move select_dynamic_fields_for_csv_export to projects/exports/new
       get 'select_dynamic_fields_for_csv_export', action: 'select_dynamic_fields_for_csv_export', as: 'select_dynamic_fields_for_csv_export' # select_dynamic_fields_for_csv_export
+      # TODO: Figure out what the intent of select_dynamic_fields_csv_header_for_import is
       get 'select_dynamic_fields_csv_header_for_import', action: 'select_dynamic_fields_csv_header_for_import', as: 'select_dynamic_fields_csv_header_for_import' # select_dynamic_fields_csv_header_for_import
-      get 'upload_import_csv_file', action: 'upload_import_csv_file', as: 'upload_import_csv_file' # upload_import_csv_file
-      post 'process_import_csv_file', action: 'process_import_csv_file', as: 'process_import_csv_file' # process_import_csv_file
     end
 
     collection do

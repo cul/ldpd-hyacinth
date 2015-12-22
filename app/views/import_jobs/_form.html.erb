@@ -1,0 +1,8 @@
+<h1>File will be seleted and uploaded from here</h1>
+
+<%= form_tag({:action => :create}, multipart: true) do %>
+  <%= file_field_tag :import_file %>
+  <br />
+  <%= hidden_field_tag :project_id, params[:project_id]%>
+  <%= submit_tag( "Import", class: 'btn btn-default btn-sm' ) %>
+<% end %>

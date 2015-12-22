@@ -1,8 +1,8 @@
-<%= render partial: 'edit_project_nav' %>
+<%= render partial: 'projects/edit_project_nav' %>
 
-<% dynamic_fields_that_are_enabled_for_this_digital_object_type = @project.enabled_dynamic_fields.where(digital_object_type: @digital_object_type).map{|enabled_dynamic_field| enabled_dynamic_field.dynamic_field} %>
+<% dynamic_fields_that_are_enabled_for_this_digital_object_type = @project.enabled_dynamic_fields.where(digital_object_type: @digital_object_type).load %>
 
-<%= form_for(@project, :url => {:action => 'update_enabled_dynamic_fields'}) do |f| %>
+<%= form_for(@project, url: enabled_dynamic_fields_path(@project, digital_object_type_id: @digital_object_type.id), method: 'patch') do |f| %>
 
   <% if @project.errors.any? %>
     <div id="error_explanation">
