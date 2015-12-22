@@ -1,9 +1,10 @@
 <%= render 'import_export_csv_nav' %>
+<h1>Process file <%= @import_filename %> !</h1>
 
 <% if @import_job && @import_job.errors.any? %>
   <div id="error_explanation">
     <h2><%= pluralize(@import_job.errors.count, "error") %> prohibited this project from being saved:</h2>
-  
+
     <ul>
     <% @import_job.errors.full_messages.each do |msg| %>
       <li><%= msg %></li>
@@ -11,11 +12,15 @@
     </ul>
   </div>
 <% end %>
+<%= render 'form' %>
 
-<h1>File will be seleted and uploaded from here</h1>
+<% if @array_of_digital_object_data.empty? %>
+<p> Array is empty </p>
+<% end %>
 
-<%= form_tag({:action => :process_import_csv_file}, multipart: true) do %>
-  <%= file_field_tag :import_file %>
-  <br />
-  <%= submit_tag( "Import", class: 'btn btn-default btn-sm' ) %>
+<% @array_of_digital_object_data.each do |digital_object_data| %>
+   <p>
+     About to process a digital object
+     <%= digital_object_data.inspect %>
+   </p>
 <% end %>
