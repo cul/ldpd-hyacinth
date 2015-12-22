@@ -18,6 +18,9 @@ gem 'autoprefixer-rails' # Recommended by bootstrap-sass
 # Gem for nice multi-select widget
 gem 'bootstrap-multiselect-rails'
 
+# Authz, pinned to final Ruby 1.9.x compatible gem
+gem 'cancancan', '~>1.12.0'
+
 # Pretty printing
 gem 'coderay'
 

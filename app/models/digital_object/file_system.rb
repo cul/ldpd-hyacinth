@@ -1,6 +1,5 @@
-class DigitalObject::Group < DigitalObject::Base
-
-  VALID_DC_TYPES = ['Collection']
+class DigitalObject::FileSystem < DigitalObject::Base
+  VALID_DC_TYPES = ['FileSystem']
   DIGITAL_OBJECT_TYPE_STRING_KEY = 'group'
 
   def initialize
@@ -11,9 +10,10 @@ class DigitalObject::Group < DigitalObject::Base
   # Called during save, after all validations have passed
   def get_new_fedora_object
     pid = self.next_pid
-    bag_aggregator = BagAggregator.new(:pid => pid)
-
-    return bag_aggregator
+    Collection.new(:pid => pid)
   end
 
+  def publish_structures
+    # TODO: deal with FileSystem structuring in Hyacinth 
+  end
 end
