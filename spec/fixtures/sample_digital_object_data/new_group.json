@@ -6,7 +6,7 @@
    "project" : {
       "string_key" : "test"
    },
-   "publish_target":[
+   "publish_targets":[
       {
          "string_key" : "test_publish_target_1"
       }
