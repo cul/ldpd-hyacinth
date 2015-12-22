@@ -11,8 +11,8 @@ class DigitalObject::Asset < DigitalObject::Base
   IMPORT_TYPE_UPLOAD_DIRECTORY = 'upload_directory'
   VALID_FILE_IMPORT_TYPES = [IMPORT_TYPE_INTERNAL, IMPORT_TYPE_EXTERNAL, IMPORT_TYPE_POST_DATA, IMPORT_TYPE_UPLOAD_DIRECTORY]
 
-  def initialize(*args)
-    super(*args)
+  def initialize
+    super
     
     @import_file_import_type = nil
     @import_file_import_path = nil
