@@ -90,7 +90,7 @@ gem 'equivalent-xml'
 gem 'devise', '>= 3.4.1'
 
 # CUL Fedora Dependencies and Content Models
-gem 'cul_hydra', '>= 1.3.1'
+gem 'cul_hydra', '>= 1.3.2'
 #gem 'cul_hydra', :path => '../cul_hydra'
 gem 'jettywrapper', '>= 1.5.1'
 # Temporarily use specific commit because new version of gem hasn't been released yet.  Latest is 1.1.3.
