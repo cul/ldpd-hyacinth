@@ -5,6 +5,8 @@ class DigitalObject::Asset < DigitalObject::Base
   VALID_DC_TYPES = ['Unknown', 'Dataset', 'MovingImage', 'Software', 'Sound', 'StillImage', 'Text']
   DIGITAL_OBJECT_TYPE_STRING_KEY = 'asset'
   
+  DEFAULT_ASSET_NAME = 'Asset' # For when a title is not supplied and we're not doing with a filesystem upload
+  
   IMPORT_TYPE_INTERNAL = 'internal'
   IMPORT_TYPE_EXTERNAL = 'external'
   IMPORT_TYPE_POST_DATA = 'post_data'
@@ -120,9 +122,10 @@ class DigitalObject::Asset < DigitalObject::Base
     
     original_filename = File.basename(@import_file_original_file_path || @import_file_import_path)
     
-    # If the title of this Asset is blank, use the filename as the title
-    
-    if self.get_title(false).blank?
+    # If the title of this Asset is the DEFAULT_ASSET_NAME, use the original filename as the title.
+    # If the title of this Asset is NOT equal to DEFAULT_ASSET_NAME, that means that a title was
+    # manually set by the user in this Asset's digital_object_data.
+    if self.get_title(false) == DEFAULT_ASSET_NAME
       self.set_title('', original_filename)
     end
     

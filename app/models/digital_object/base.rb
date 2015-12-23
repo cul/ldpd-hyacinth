@@ -135,6 +135,12 @@ class DigitalObject::Base
       self.update_dynamic_field_data(digital_object_data[Hyacinth::Csv::Fields::Dynamic::DATA_KEY], merge_dynamic_fields)
     end
     
+    # If this is an Asset, and its title is blank after dynamic field data
+    # is applied, use the DEFAULT_ASSET_NAME. This allows validation to complete,
+    #and the title will be later inferred from the filename during the upload step.
+    if self.is_a?(DigitalObject::Asset) && self.get_title(false).blank?
+      self.set_title('', DigitalObject::Asset::DEFAULT_ASSET_NAME)
+    end
   end
 
   # Returns the primary title

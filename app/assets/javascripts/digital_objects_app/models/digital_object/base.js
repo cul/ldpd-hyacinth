@@ -13,7 +13,8 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData =
   var digitalObjectTypeStringKeysToClasses = {
     item: Hyacinth.DigitalObjectsApp.DigitalObject.Item,
     asset: Hyacinth.DigitalObjectsApp.DigitalObject.Asset,
-    group:  Hyacinth.DigitalObjectsApp.DigitalObject.Group
+    group:  Hyacinth.DigitalObjectsApp.DigitalObject.Group,
+    file_system:  Hyacinth.DigitalObjectsApp.DigitalObject.FileSystem
   };
   return new digitalObjectTypeStringKeysToClasses[digital_object_data['digital_object_type']['string_key']](digital_object_data);
 };
@@ -96,19 +97,3 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.hasImage = function() {
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getImageUrl = function(type, size){
   return Hyacinth.DigitalObjectsApp.DigitalObject.Base.getImageUrl(this.getPid(), type, size);
 };
-
-/***************************************************************
- * Digital Object subclasses that are meant to be instantiated *
- ***************************************************************/
-
-// Item - Subclass
-Hyacinth.DigitalObjectsApp.DigitalObject.Item = function(digital_object_data){
-  Hyacinth.DigitalObjectsApp.DigitalObject.Base.call(this, digital_object_data); // call parent constructor
-};
-Hyacinth.extendClass(Hyacinth.DigitalObjectsApp.DigitalObject.Item, Hyacinth.DigitalObjectsApp.DigitalObject.Base); //Extend
-
-// Group - Subclass
-Hyacinth.DigitalObjectsApp.DigitalObject.Group = function(digital_object_data){
-  Hyacinth.DigitalObjectsApp.DigitalObject.Base.call(this, digital_object_data); // call parent constructor
-};
-Hyacinth.extendClass(Hyacinth.DigitalObjectsApp.DigitalObject.Group, Hyacinth.DigitalObjectsApp.DigitalObject.Base); //Extend

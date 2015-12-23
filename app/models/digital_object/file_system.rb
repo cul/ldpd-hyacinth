@@ -1,6 +1,6 @@
 class DigitalObject::FileSystem < DigitalObject::Base
   VALID_DC_TYPES = ['FileSystem']
-  DIGITAL_OBJECT_TYPE_STRING_KEY = 'group'
+  DIGITAL_OBJECT_TYPE_STRING_KEY = 'file_system'
 
   def initialize
     super
