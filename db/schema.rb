@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151202164848) do
+ActiveRecord::Schema.define(version: 20151223174138) do
 
   create_table "controlled_vocabularies", force: :cascade do |t|
     t.string   "string_key",             limit: 255
@@ -42,6 +42,7 @@ ActiveRecord::Schema.define(version: 20151202164848) do
     t.integer  "import_job_id",         limit: 4,                 null: false
     t.datetime "created_at",                                      null: false
     t.datetime "updated_at",                                      null: false
+    t.integer  "requeue_count",         limit: 4,     default: 0, null: false
   end
 
   add_index "digital_object_imports", ["import_job_id"], name: "index_digital_object_imports_on_import_job_id", using: :btree
