@@ -1,5 +1,6 @@
 class ProcessDigitalObjectImportJob
   @queue = Hyacinth::Queue::DIGITAL_OBJECT_IMPORT
+  MAX_REQUEUES = 3
 
   def self.perform(digital_object_import_id)
     # Retrieve DigitalObjectImport instance from table
@@ -18,6 +19,13 @@ class ProcessDigitalObjectImportJob
 
     begin
       digital_object.set_digital_object_data(digital_object_data, true)
+    rescue Hyacinth::Exceptions::ParentDigitalObjectNotFoundError => e
+      Hyacinth::Utils::Logger.logger.debug "****** #{self.class.name} Parent Not Found"
+      Hyacinth::Utils::Logger.logger.debug "****** requeue_count is #{digital_object_import.requeue_count}"
+      digital_object_import.requeue_count += 1
+      digital_object_import.save!
+      Hyacinth::Queue.process_digital_object_import(digital_object_import.id) unless digital_object_import.requeue_count > MAX_REQUEUES
+      digital_object_import.digital_object_errors << e.message
     rescue Hyacinth::Exceptions::NotFoundError => e
       digital_object_import.digital_object_errors << e.message
     end
@@ -32,6 +40,6 @@ class ProcessDigitalObjectImportJob
       digital_object_import.failure!
     end
 
-    Hyacinth::Utils::Logger.debug "#{self.class.name} Done Processing"
+    Hyacinth::Utils::Logger.logger.debug "#{self.class.name} Done Processing"
   end
 end
