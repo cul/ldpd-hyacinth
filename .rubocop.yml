@@ -14,6 +14,7 @@ AllCops:
     - 'vendor/**/*'
     - 'app/controllers/**/*'
     - 'app/helpers/**/*'
+    - 'app/jobs/export_search_results_to_csv_job.rb'
     - 'app/models/**/*'
     - 'app/views/**/*'
 

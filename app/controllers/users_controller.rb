@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :require_hyacinth_admin!, except: [:do_wind_login, :do_cas_login]
+  before_action :require_hyacinth_admin!, except: [:do_wind_login, :do_cas_login, :current_user_data]
   before_action :set_user, only: [:show, :edit, :update, :destroy]
   before_action :set_contextual_nav_options
 
@@ -154,6 +154,14 @@ class UsersController < ApplicationController
   # GET /users.json
   def index
     @users = User.all
+  end
+
+  def current_user_data
+    respond_to do |format|
+      format.json {
+        render json: current_user
+      }
+    end
   end
 
   # GET /users/1

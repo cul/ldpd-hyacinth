@@ -1,16 +1,24 @@
 class CsvExportsController < ApplicationController
-  before_action :set_csv_export, only: [:show, :edit, :update, :destroy]
+  before_action :set_csv_export, only: [:show, :edit, :update, :destroy, :download]
   before_action :set_contextual_nav_options
 
   # GET /csv_exports
   # GET /csv_exports.json
   def index
-    @csv_exports = CsvExport.all
+    @csv_exports = CsvExport.all.order(id: :desc)
   end
 
   # GET /csv_exports/1
   # GET /csv_exports/1.json
   def show
+  end
+  
+  def download
+    if @csv_export.success?
+      send_file @csv_export.path_to_csv_file, filename: File.basename(@csv_export.path_to_csv_file)
+    else
+      render text: 'No download is available for this export job because the job has a status of: ' + @csv_export.status
+    end
   end
 
   # GET /csv_exports/new

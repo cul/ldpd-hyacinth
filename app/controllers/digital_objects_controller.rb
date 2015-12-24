@@ -261,7 +261,8 @@ class DigitalObjectsController < ApplicationController
     respond_to do |format|
       format.json {
         render json: {
-          success: true
+          success: true,
+          csv_export_id: csv_export.id
         }
       }
     end

@@ -25,6 +25,7 @@
           <th class="col-md-1">Create</th>
           <th class="col-md-1">Update</th>
           <th class="col-md-1">Delete</th>
+          <th class="col-md-1">Publish</th>
           <th class="col-md-2">Project Admin</th>
           <th class="col-md-1">Remove?</th>
         </tr>
@@ -37,6 +38,7 @@
             <td><label><%= project_permission_form.check_box :can_create %></label></td>
             <td><label><%= project_permission_form.check_box :can_update %></label></td>
             <td><label><%= project_permission_form.check_box :can_delete %></label></td>
+            <td><label><%= project_permission_form.check_box :can_publish %></label></td>
             <td><label><%= project_permission_form.check_box :is_project_admin %></label></td>
             <td><label><%= project_permission_form.check_box :_destroy %></label></td>
           </tr>
@@ -50,6 +52,7 @@
               <td><label><%= project_permission_form.check_box :can_create %></label></td>
               <td><label><%= project_permission_form.check_box :can_update %></label></td>
               <td><label><%= project_permission_form.check_box :can_delete %></label></td>
+              <td><label><%= project_permission_form.check_box :can_publish %></label></td>
               <td><label><%= project_permission_form.check_box :is_project_admin %></label></td>
               <td></td>
             </tr>

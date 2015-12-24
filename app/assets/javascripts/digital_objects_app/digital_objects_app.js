@@ -10,6 +10,13 @@ Hyacinth.DigitalObjectsApp.mostRecentSearchResult = null;
 
 /* Used to start the app and set things up */
 Hyacinth.DigitalObjectsApp.init = function() {
+  
+  //Handle unauthorized responses with a global ajax handler for the 401 status code
+  $.ajaxSetup({
+      statusCode: {
+          401: Hyacinth.promptForLogin
+      }
+  });
 
   //It's possible that the user tried to get a hash-based URL before logging in.
   //If so, we stored that hash.  Let's check to see if that hash value is available.
@@ -18,17 +25,26 @@ Hyacinth.DigitalObjectsApp.init = function() {
     Hyacinth.eraseCookie('hash_at_login');
     window.location.hash = hashValue;
   }
+  
+  //Get user permissions and run callback function to set up rest of the app
+  Hyacinth.DigitalObjectsApp.setupCurrentUser(function(){
+    //Setup hash change listener
+    $(window).on('hashchange', Hyacinth.DigitalObjectsApp.handleHashChange);
+    //Call hash change listener method to get things started for the current hash
+    Hyacinth.DigitalObjectsApp.handleHashChange();
+  });
+}
 
-  //Setup hash change listener
-  $(window).on('hashchange', Hyacinth.DigitalObjectsApp.handleHashChange);
-  //Call hash change listener method to get things started for the current hash
-  Hyacinth.DigitalObjectsApp.handleHashChange();
-
-  //Handle unauthorized responses with a global ajax handler for the 401 status code
-  $.ajaxSetup({
-      statusCode: {
-          401: Hyacinth.promptForLogin
-      }
+Hyacinth.DigitalObjectsApp.setupCurrentUser = function(callback) {
+  
+  $.ajax({
+    url: '/users/current_user_data.json',
+    cache: false
+  }).done(function(current_user_data){
+    Hyacinth.DigitalObjectsApp.currentUser = current_user_data;
+    callback();
+  }).fail(function(reponse){
+    alert(Hyacinth.unexpectedAjaxErrorMessage);
   });
 }
 

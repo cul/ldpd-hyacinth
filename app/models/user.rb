@@ -28,12 +28,35 @@ class User < ActiveRecord::Base
 
     return false
   end
+  
+  # Returns details about what this user can and cannot do
+  def get_permissions
+    
+    project_permissions = []
+    ProjectPermission.includes(:project).where(user: self).each do |project_permission|
+      project_permissions << {
+        project_string_key: project_permission.project.string_key,
+        project_pid: project_permission.project.pid,
+        is_project_admin: project_permission.is_project_admin,
+        can_create: project_permission.can_create,
+        can_read: project_permission.can_read,
+        can_update: project_permission.can_update,
+        can_delete: project_permission.can_delete,
+        can_publish: project_permission.can_publish,
+      }
+    end
+    
+    return {
+      is_admin: self.is_admin?,
+      projects: project_permissions
+    }
+  end
 
   def has_project_permission?(project, permission_type)
 
     return true if self.is_admin?
 
-    valid_permission_types = [:create, :read, :update, :delete, :admin]
+    valid_permission_types = [:create, :read, :update, :delete, :publish, :project_admin]
     raise 'Permission type must be a symbol (' + permission_type.to_s + ')' if ! permission_type.is_a?(Symbol)
     raise 'Invalid Permission type: ' + permission_type unless valid_permission_types.include?(permission_type)
 
@@ -43,7 +66,7 @@ class User < ActiveRecord::Base
       if possible_project_permission.is_project_admin
         return true
       else
-        if permission_type != :admin
+        if permission_type != :project_admin
           return true if possible_project_permission.send(('can_' + permission_type.to_s).to_sym)
         end
       end
@@ -80,6 +103,16 @@ class User < ActiveRecord::Base
     end
 
     return false
+  end
+  
+  def as_json(options={})
+    return {
+      id: self.id,
+      first_name: self.first_name,
+      last_name: self.last_name,
+      is_admin: self.is_admin,
+      permissions: self.get_permissions
+    }
   end
 
 end

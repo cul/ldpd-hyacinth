@@ -16,6 +16,7 @@ class ProjectPermission < ActiveRecord::Base
       self.can_read = true
       self.can_update = true
       self.can_delete = true
+      self.can_publish = true
     end
 
   end

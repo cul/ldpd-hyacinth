@@ -1,7 +1,12 @@
 require 'resque/server'
 
 Hyacinth::Application.routes.draw do
-  resources :csv_exports, only: [:index, :create, :show, :destroy]
+  resources :csv_exports, only: [:index, :create, :show, :destroy] do
+    member do
+      get 'download'
+    end
+  end
+
   resources :terms, constraints: { id: URI.regexp }
 
   resources :controlled_vocabularies do
@@ -62,7 +67,11 @@ Hyacinth::Application.routes.draw do
   get '/users/do_wind_login', to: 'users#do_wind_login', as: :user_do_wind_login
   get '/users/do_cas_login', to: 'users#do_cas_login', as: :user_do_cas_login
   devise_for :users
-  resources :users
+  resources :users do
+    collection do
+      get 'current_user_data'
+    end
+  end
 
   # Make sure that the resque user restriction below is AFTER `devise_for :users`
 

@@ -14,7 +14,7 @@ module Projects
       when 'edit', 'update', 'destroy',
         'edit_project_permissions', 'update_project_permissions',
         'edit_enabled_dynamic_fields', 'update_enabled_dynamic_fields', 'fieldsets'
-        require_project_permission!(@project, :admin)
+        require_project_permission!(@project, :project_admin)
       else
         require_hyacinth_admin!
       end

@@ -57,12 +57,14 @@ class ApplicationController < ActionController::Base
   # Permission/Authorization methods
 
   def render_forbidden!
-    format.html {
-      render 'pages/forbidden', :status => :forbidden
-    }
-    format.all {
-      render json: {error: 'Forbidden'}, :status => :forbidden
-    }
+    respond_to do |format|
+      format.html {
+        render 'pages/forbidden', :status => :forbidden
+      }
+      format.all {
+        render json: {error: 'Forbidden'}, :status => :forbidden
+      }
+    end
   end
 
   def render_unauthorized!

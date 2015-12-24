@@ -8,9 +8,8 @@ require 'capybara/poltergeist'
 
 Capybara.register_driver :poltergeist do |app|
   Capybara::Poltergeist::Driver.new(app,
-    :timeout => 30,
     :window_size  => [1280, 1440],
-    :timeout => 120
+    :timeout => 30
   )
 end
 

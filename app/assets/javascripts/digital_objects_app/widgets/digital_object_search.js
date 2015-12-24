@@ -147,6 +147,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.init = function() {
 
     //Hide facets
     $('.facet-group .facet-value-list.collapsed, .facet-group .facet-value-list.collapsed .count').hide();
+    //Bind facet hide/show toggle
     that.$containerElement.find('.facet-group .toggle-facet-view').on('click', function(e){
       e.preventDefault();
       var $facetViewList = $(this).closest('.facet-group').find('.facet-value-list');
@@ -269,6 +270,12 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.init = function() {
       e.preventDefault();
       that.submitSearchForm(1);
     });
+    
+    //Bind CSV export button
+    that.$containerElement.on('click', '.csv_export_button', function(e){
+      e.preventDefault();
+      that.exportSearchResultsToCsv();
+    });
 
     //Bind sort change handler
     that.$containerElement.on('change', '[name="sort"]', function(e){
@@ -295,20 +302,41 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.init = function() {
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.submitSearchForm = function(page) {
-
-  var $searchForm = this.$containerElement.find('.digital-object-search-form');
-
-  //Merge form values into params and redirect
-  var newParams = Hyacinth.ObjectHelpers.deepClone(Hyacinth.DigitalObjectsApp.params);
-  newParams['search']['search_field'] = $searchForm.find('[name="search_field"]').val();
-  newParams['search']['q'] = $searchForm.find('[name="q"]').val();
-  newParams['search']['sort'] = $searchForm.find('[name="sort"]').val();
-  newParams['search']['per_page'] = $searchForm.find('[name="per_page"]').val();
-  newParams['search']['page'] = page;
-  newParams['search']['search_counter'] = this.searchCounter;
+  currentSearchFormParams = this.getCurrentSearchFormParams();
+  currentSearchFormParams['search']['page'] = page;
   this.searchCounter++;
+  document.location.hash = Hyacinth.DigitalObjectsApp.paramsToHashValue(currentSearchFormParams);
+}
 
-  document.location.hash = Hyacinth.DigitalObjectsApp.paramsToHashValue(newParams);
+Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.exportSearchResultsToCsv = function() {
+  $.ajax({
+    url: '/digital_objects/search_results_to_csv.json',
+    type: 'POST',
+    data: {
+      search: Hyacinth.DigitalObjectsApp.params['search']
+    },
+    cache: false
+  }).done(function(exportResponse){
+    Hyacinth.addAlert('Export has been queued as a background job. <a target="_blank" href="/csv_exports?highlight=' + exportResponse['csv_export_id'] + '">Click here</a> to monitor the job status.', 'success', 10000);
+    console.log(exportResponse);
+    
+  }).fail(function(){
+    alert(Hyacinth.unexpectedAjaxErrorMessage);
+  });
+}
+
+Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.getCurrentSearchFormParams = function() {
+    var $searchForm = this.$containerElement.find('.digital-object-search-form');
+
+    //Merge form values into params
+    var currentSearchFormParams = Hyacinth.ObjectHelpers.deepClone(Hyacinth.DigitalObjectsApp.params);
+    currentSearchFormParams['search']['search_field'] = $searchForm.find('[name="search_field"]').val();
+    currentSearchFormParams['search']['q'] = $searchForm.find('[name="q"]').val();
+    currentSearchFormParams['search']['sort'] = $searchForm.find('[name="sort"]').val();
+    currentSearchFormParams['search']['per_page'] = $searchForm.find('[name="per_page"]').val();
+    currentSearchFormParams['search']['search_counter'] = this.searchCounter;
+    
+    return currentSearchFormParams;
 }
 
 Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.addFacetToCurrentSearch = function(facetFieldName, facetValue) {

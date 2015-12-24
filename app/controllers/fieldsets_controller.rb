@@ -93,7 +93,7 @@ class FieldsetsController < ApplicationController
 
     case params[:action]
     when 'new', 'create', 'edit', 'update', 'delete'
-      require_project_permission!(@project, :admin)
+      require_project_permission!(@project, :project_admin)
     else
       require_hyacinth_admin!
     end

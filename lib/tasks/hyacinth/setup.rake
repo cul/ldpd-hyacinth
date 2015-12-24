@@ -73,7 +73,8 @@ namespace :hyacinth do
           'csv_export_directory' => File.join(Rails.root, 'tmp/csv_exports_' + env_name),
           'publish_target_api_key_encryption_key' => 'some_encryption_key',
           'treat_fedora_resource_index_updates_as_immediate' => false,
-          'queue_long_jobs' => (env_name == 'test') ? false : true
+          'queue_long_jobs' => (env_name == 'test') ? false : true,
+          'time_zone' => 'America/New_York'
         }
       end
       File.open(hyacinth_yml_file, 'w') {|f| f.write hyacinth_yml.to_yaml }

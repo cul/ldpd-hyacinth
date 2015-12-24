@@ -1,11 +1,13 @@
 <table class="table table-condensed table-bordered table-striped">
   <thead>
     <tr>
+      <th>Export ID</th>
       <th>Search params</th>
       <th>User</th>
-      <th>Path to csv file</th>
+      <th>Creation Date</th>
       <th>Status</th>
-      <th colspan="3"></th>
+      <th>Download</th>
+      <th>Delete?</th>
     </tr>
   </thead>
 
@@ -14,13 +16,14 @@
       <tr><td colspan="5">There are currently no CSV Exports.</td></tr>
     <% else %>
       <% @csv_exports.each do |csv_export| %>
-        <tr>
+        <tr <%= (params[:highlight] && params[:highlight] == csv_export.id.to_s) ? 'class="info"'.html_safe : '' %>>
+          <td><%= csv_export.id %></td>
           <td><%= csv_export.search_params %></td>
-          <td><%= csv_export.user %></td>
-          <td><%= csv_export.path_to_csv_file %></td>
+          <td><%= csv_export.user.full_name %></td>
+          <td><%= csv_export.created_at.in_time_zone(HYACINTH['time_zone']) %></td>
           <td><%= csv_export.status %></td>
-          <td><%= link_to 'Download', csv_export %></td>
-          <td><%= link_to 'Delete', csv_export, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+          <td><%= csv_export.success? ? link_to('Download', download_csv_export_path(csv_export)) : 'pending' %></td>
+          <td><%= true ? link_to('Delete', csv_export, method: :delete, data: { confirm: 'Are you sure?' }) : 'pending' %></td>
         </tr>
       <% end %>
     <% end %>

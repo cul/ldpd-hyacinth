@@ -16,6 +16,9 @@
               <%= (start != end) ? start + ' - ' + end : start %> of
             <% } %>
             <%= searchResponse['total'] + ' ' + (searchResponse['total'] == 1 ? 'result' : 'results') %> (<%= searchResponse['search_time_in_millis']/1000 %> seconds)
+            <% if (Hyacinth.DigitalObjectsApp.currentUser['is_admin']) { %>
+              &bull; <a class="csv_export_button" href="#">Export Current Search to CSV</a>
+            <% } %>
           </small>
         </div>
       </div>
