@@ -127,4 +127,21 @@ RSpec.describe DigitalObjectImport, :type => :model do
 
   end
 
+  context "attribute requeue_count :" do
+    
+    it "is initialized to 0" do
+
+      expect(@test_digital_object_import.requeue_count).to eq(0)
+
+    end
+
+    it "is incremented" do
+
+      @test_digital_object_import.requeue_count += 1
+      expect(@test_digital_object_import.requeue_count).to eq(1)
+
+    end
+    
+  end
+
 end

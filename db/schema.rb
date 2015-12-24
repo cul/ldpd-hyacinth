@@ -42,6 +42,7 @@ ActiveRecord::Schema.define(version: 20151223183540) do
     t.integer  "import_job_id",                     null: false
     t.datetime "created_at",                        null: false
     t.datetime "updated_at",                        null: false
+    t.integer  "requeue_count",         default: 0, null: false
   end
 
   add_index "digital_object_imports", ["import_job_id"], name: "index_digital_object_imports_on_import_job_id"
