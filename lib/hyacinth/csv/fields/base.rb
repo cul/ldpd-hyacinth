@@ -72,7 +72,8 @@ module Hyacinth
         def <=>(other)
           return 0 unless other.is_a? Hyacinth::Csv::Fields::Base
           min_array_length = [builder_path.length, other.builder_path.length].min
-          min_array_length.times.detect(0) { |i| 0 != (a_arr[i] <=> b_arr[i]) }
+          ix = min_array_length.times.detect { |i| 0 != (builder_path[i] <=> other.builder_path[i]) }
+          ix ? (builder_path[ix] <=> other.builder_path[ix]) : 0
         end
 
         def self.from_header(header)

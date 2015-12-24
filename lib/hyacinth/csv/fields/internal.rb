@@ -32,8 +32,8 @@ module Hyacinth
         def <=>(other)
           return -1 if other.is_a? Hyacinth::Csv::Fields::Dynamic
           return 0 unless other.is_a? Hyacinth::Csv::Fields::Internal
-          return -1 if builder_path[0] == "_pid"
-          return 1 if other.builder_path[0] == "_pid"
+          return -1 if builder_path[0] == "pid"
+          return 1 if other.builder_path[0] == "pid"
           super
         end
       end

@@ -19,6 +19,9 @@ module Hyacinth::Csv::Flatten
         if value.is_a?(Array)
           key_prefix = prefix + [key]
           keys += pointers_for_array(value, omit_blank_values, key_prefix)
+        elsif uri_hash?(value)
+          key_prefix = prefix + [key]
+          keys += pointers_for_uri(value, omit_blank_values, key_prefix)
         elsif value.is_a?(Hash)
           key_prefix = prefix + [key]
           keys += pointers_for_hash(value, omit_blank_values, key_prefix)
@@ -46,6 +49,17 @@ module Hyacinth::Csv::Flatten
     def pointer_for_value(key, value, omit_blank_values, prefix = [])
       return nil if omit_blank_values && value.blank?
       prefix + [key]
+    end
+
+    def uri_hash?(hash)
+      hash.is_a?(Hash) && hash.key?('uri') && !hash['uri'].is_a?(Hash)
+    end
+
+    def pointers_for_uri(hash, omit_blank_values, prefix = [])
+      return nil if omit_blank_values && hash.blank?
+      hash.collect do |key, value|
+        pointer_for_value("#{prefix[-1]}.#{key}", value, omit_blank_values, prefix[0...-1])
+      end.compact
     end
   end
 end

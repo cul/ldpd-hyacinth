@@ -122,52 +122,45 @@ RSpec.describe "DigitalObjects", :type => :request do
         })
       end
     
-      it "works with a GET request" do
-        get search_results_to_csv_digital_objects_path, {format: 'json'}
-        expect(response.status).to be(200)
-        response_json = JSON.parse(response.body)
-        
-        expect(response_json['success']).to eq(true)
-        expect(response_json['csv_export_id']).to be_a(Fixnum)
-        
-        # Text environment processes jobs immediately, so the export should be done and should have a status of "success"
-        export_id = response_json['csv_export_id'] # Get export id from json response
-        csv_export = CsvExport.find(export_id)
-        expect(csv_export.success?).to eq(true)
-        
-        # Text environment processes jobs immediately, so the export should be done and should have a status of "success"
-        path_to_csv_file = csv_export.path_to_csv_file # Get download location from csv_export record
-        csv = CSV.read(path_to_csv_file)
-        # The PID field is randomly generated, so we'll copy the pid from the result to the csv fixture that we're testing against
-        generated_pid = csv[1][0] # The _pid field is ALWAYS the first column for an export, so we know that the record's pid will be in the row with index 1 and column with index 0
-        sample_item_as_csv_export[1][0] = generated_pid
-        expect(csv).to eq(sample_item_as_csv_export)
+      let(:response_status) { response.status }
+      let(:response_json) { JSON.parse(response.body) }
+      let(:export_id) { response_json['csv_export_id'] }
+      let(:csv_export) { CsvExport.find(export_id) }
+      # Get download location from csv_export record
+      let(:path_to_csv_file) { csv_export.path_to_csv_file }
+      let(:csv) { CSV.read(path_to_csv_file) }
+      let(:generated_pid) { csv[1][0] }
+      context "search request method is GET" do
+        before { get search_results_to_csv_digital_objects_path, {format: 'json'} }
+
+        it do
+          expect(response_status).to be(200)
+          expect(response_json['success']).to eq(true)
+          expect(export_id).to be_a(Fixnum)
+          # Text environment processes jobs immediately, so the export should be done and should have a status of "success"
+          expect(csv_export.success?).to eq(true)
+          expect(csv[0][0]).to eq('_pid')
+          # The PID field is randomly generated, so we'll copy the pid from the result to the csv fixture that we're testing against
+          sample_item_as_csv_export[1][0] = generated_pid
+          expect(csv).to eq(sample_item_as_csv_export)
+        end
       end
       
-      it "works with a POST request" do
-        post search_results_to_csv_digital_objects_path, {format: 'json'}
-        expect(response.status).to be(200)
-        response_json = JSON.parse(response.body)
-        
-        expect(response_json['success']).to eq(true)
-        expect(response_json['csv_export_id']).to be_a(Fixnum)
-        
-        # Text environment processes jobs immediately, so the export should be done and should have a status of "success"
-        export_id = response_json['csv_export_id'] # Get export id from json response
-        csv_export = CsvExport.find(export_id)
-        expect(csv_export.success?).to eq(true)
-        
-        # Text environment processes jobs immediatel# Text environment processes jobs immediately, so the export should be done and should have a status of "success"
-        path_to_csv_file = csv_export.path_to_csv_file # Get download location from csv_export record
-        csv = CSV.read(path_to_csv_file)
-        # The PID field is randomly generated, so we'll copy the pid from the result to the csv fixture that we're testing against
-        generated_pid = csv[1][0] # The _pid field is ALWAYS the first column for an export, so we know that the record's pid will be in the row with index 1 and column with index 0
-        sample_item_as_csv_export[1][0] = generated_pid
-        expect(csv).to eq(sample_item_as_csv_export)
-      end
-      
+      context "search request method is POST" do
+        before { post search_results_to_csv_digital_objects_path, {format: 'json'} }
+
+        it do
+          expect(response_status).to be(200)
+          expect(response_json['success']).to eq(true)
+          expect(export_id).to be_a(Fixnum)
+          # Text environment processes jobs immediately, so the export should be done and should have a status of "success"
+          expect(csv_export.success?).to eq(true)
+          expect(csv[0][0]).to eq('_pid')
+          # The PID field is randomly generated, so we'll copy the pid from the result to the csv fixture that we're testing against
+          sample_item_as_csv_export[1][0] = generated_pid
+          expect(csv).to eq(sample_item_as_csv_export)
+        end
+      end      
     end
-  
   end
-  
 end
