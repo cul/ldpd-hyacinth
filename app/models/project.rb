@@ -58,7 +58,7 @@ class Project < ActiveRecord::Base
   end
 
   # Get dynamic_field_ids for enabled dynamic fields, irregardless of object type, no duplicates
-  def get_ids_of_enabled_dynamic_fields_no_duplicates
+  def get_ids_of_dynamic_fields_that_are_enabled
     return self.enabled_dynamic_fields.select(:dynamic_field_id).distinct.pluck(:dynamic_field_id).to_a
   end
 

@@ -42,8 +42,8 @@ class ExportSearchResultsToCsvJob
         end
         # publish_targets
         digital_object_data['publish_targets'].each_with_index do |publish_target, publish_target_index|
-          column_names_to_column_indexes["_publish_targets-#{publish_target_index+1}"] = column_names_to_column_indexes.length unless column_names_to_column_indexes.has_key?("_publish_targets-#{publish_target_index+1}")
-          row[column_names_to_column_indexes["_publish_targets-#{publish_target_index+1}"]] = publish_target
+          column_names_to_column_indexes["_publish_targets-#{publish_target_index+1}.string_key"] = column_names_to_column_indexes.length unless column_names_to_column_indexes.has_key?("_publish_targets-#{publish_target_index+1}")
+          row[column_names_to_column_indexes["_publish_targets-#{publish_target_index+1}.string_key"]] = publish_target['string_key']
         end
         
         # asset-only fields

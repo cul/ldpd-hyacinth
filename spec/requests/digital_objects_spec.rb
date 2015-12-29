@@ -103,6 +103,47 @@ RSpec.describe "DigitalObjects", :type => :request do
       end
     
     end
+
+
+    describe "/digital_objects/search_results_to_csv.json" do
+    
+      before :example do
+        
+        puts 'running this before example...'
+        
+        # delete all current item records
+        destroy_all_hyacinth_records()
+        
+        # create new item record
+        post(digital_objects_path, {
+          digital_object_data_json: JSON.generate(sample_item_digital_object_data)
+        })
+      end
+    
+      it "works with a GET request" do
+        get search_results_to_csv_digital_objects_path, {format: 'json'}
+        expect(response.status).to be(200)
+        response_json = JSON.parse(response.body)
+        
+        puts 'response_json is: ' + response_json.inspect
+        
+        expect(response_json['success']).to eq(true)
+        expect(response_json['csv_export_id']).to be_a(Fixnum)
+      end
+      
+      it "works with a POST request" do
+        post search_results_to_csv_digital_objects_path, {format: 'json'}
+        expect(response.status).to be(200)
+        response_json = JSON.parse(response.body)
+        
+        puts 'response_json is: ' + response_json.inspect
+        
+        expect(response_json['success']).to eq(true)
+        expect(response_json['csv_export_id']).to be_a(Fixnum)
+      end
+      
+    end
+  
   end
   
 end

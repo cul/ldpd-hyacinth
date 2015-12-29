@@ -13,7 +13,7 @@
 
   <tbody>
     <% if @csv_exports.blank? %>
-      <tr><td colspan="5">There are currently no CSV Exports.</td></tr>
+      <tr><td colspan="7">There are currently no CSV Exports.</td></tr>
     <% else %>
       <% @csv_exports.each do |csv_export| %>
         <tr <%= (params[:highlight] && params[:highlight] == csv_export.id.to_s) ? 'class="info"'.html_safe : '' %>>

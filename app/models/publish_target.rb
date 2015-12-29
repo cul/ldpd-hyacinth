@@ -1,3 +1,4 @@
+
 class PublishTarget < ActiveRecord::Base
 
   has_many :projects, :through => :enabled_publish_targets
@@ -45,7 +46,8 @@ class PublishTarget < ActiveRecord::Base
   def as_json(options={})
     return {
       pid: self.pid,
-      display_label: self.display_label
+      display_label: self.display_label,
+      string_key: self.string_key
     }
   end
 

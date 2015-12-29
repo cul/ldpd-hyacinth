@@ -240,7 +240,7 @@ class DigitalObject::Base
           
           # Delete from Fedora
           Retriable.retriable on: [RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH], tries: NUM_FEDORA_RETRY_ATTEMPTS, base_interval: DELAY_IN_SECONDS_BETWEEN_FEDORA_RETRY_ATTEMPTS do
-            @fedora_obj.delete
+            @fedora_object.delete
           end
           
           # Delete db record

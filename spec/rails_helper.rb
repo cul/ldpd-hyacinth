@@ -37,7 +37,7 @@ RSpec.configure do |config|
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = true
+  config.use_transactional_fixtures = false # We don't want to run specs in transactions because this will cause DigitalObject DB/Fedora/Solr records to get out of sync
 
   # additional factory_girl configuration
   config.before(:suite) do
@@ -81,6 +81,13 @@ RSpec.configure do |config|
       fill_in 'user_password', :with => 'iamthetest'
     end
     click_button 'Sign in'
+  end
+  
+  def destroy_all_hyacinth_records
+    DigitalObjectRecord.all.each do |digital_object_record|
+      digital_object = DigitalObject::Base.find(digital_object_record.pid)
+      digital_object.destroy(true)
+    end
   end
   
 end

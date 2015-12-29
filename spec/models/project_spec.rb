@@ -55,35 +55,43 @@ RSpec.describe Project, type: :model do
 
   end
 
-  context 'Poject#get_ids_of_enabled_dynamic_fields_no_duplicates ' do
-
+  context 'Poject#get_ids_of_dynamic_fields_that_are_enabled ' do
 
     it 'handles the simple case of just one enabled_dynamic_field' do
+      
+      # Clear current @test_project.enabled_dynamic_fields
+      @test_project.update(enabled_dynamic_fields: [])
 
-      # Let's add some enabled_dynamic_fields to @test_project
+      # Then add one enabled_dynamic_field to @test_project
       @test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: @test_dynamic_field_1, digital_object_type: @dot_item)
       
-      expect(@test_project.get_ids_of_enabled_dynamic_fields_no_duplicates).to contain_exactly(@test_dynamic_field_1.id)
+      expect(@test_project.get_ids_of_dynamic_fields_that_are_enabled).to contain_exactly(@test_dynamic_field_1.id)
 
     end
 
     it 'handles the case of two enabled_dynamic_fields containing DynamicFields' do
 
-      # Let's add some enabled_dynamic_fields to @test_project
+      # Clear current @test_project.enabled_dynamic_fields
+      @test_project.update(enabled_dynamic_fields: [])
+
+      # Then add some enabled_dynamic_fields to @test_project
       @test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: @test_dynamic_field_1, digital_object_type: @dot_item)
       @test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: @test_dynamic_field_2, digital_object_type: @dot_asset)
       
-      expect(@test_project.get_ids_of_enabled_dynamic_fields_no_duplicates).to contain_exactly(@test_dynamic_field_1.id,@test_dynamic_field_2.id)
+      expect(@test_project.get_ids_of_dynamic_fields_that_are_enabled).to contain_exactly(@test_dynamic_field_1.id,@test_dynamic_field_2.id)
 
     end
 
     it 'handles the case of two enabled_dynamic_fields containing the same Dynamic_field, but with difference digital_object_type' do
+  
+      # Clear current @test_project.enabled_dynamic_fields
+      @test_project.update(enabled_dynamic_fields: [])
 
-      # Let's add some enabled_dynamic_fields to @test_project
+      # Then add some enabled_dynamic_fields to @test_project
       @test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: @test_dynamic_field_1, digital_object_type: @dot_item)
       @test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: @test_dynamic_field_1, digital_object_type: @dot_asset)
       
-      expect(@test_project.get_ids_of_enabled_dynamic_fields_no_duplicates).to contain_exactly(@test_dynamic_field_1.id)
+      expect(@test_project.get_ids_of_dynamic_fields_that_are_enabled).to contain_exactly(@test_dynamic_field_1.id)
 
     end
 
