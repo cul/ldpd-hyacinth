@@ -36,8 +36,6 @@ module Hyacinth
             end
           end
           header = parts.join(':')
-          header.sub!(/\:uri$/, '.uri')
-          header.sub!(/\:value$/, '.value')
           header
         end
 
