@@ -2,7 +2,9 @@ module DigitalObject::Fedora
   extend ActiveSupport::Concern
 
   PROJECT_MEMBERSHIP_PREDICATE = :is_constituent_of
-  HYACINTH_DATASTREAM_NAME = 'hyacinth'
+  DEPRECATED_HYACINTH_DATASTREAM_NAME = 'hyacinth'
+  HYACINTH_CORE_DATASTREAM_NAME = 'hyacinth_core'
+  HYACINTH_STRUCT_DATASTREAM_NAME = 'hyacinth_struct'
 
   ###############################
   # General data access methods #
@@ -10,7 +12,7 @@ module DigitalObject::Fedora
 
   def get_hyacinth_data
 
-    hyacinth_ds = @fedora_object.datastreams[HYACINTH_DATASTREAM_NAME]
+    hyacinth_ds = @fedora_object.datastreams[DEPRECATED_HYACINTH_DATASTREAM_NAME]
     if hyacinth_ds.present? && hyacinth_ds.content.present?
       return JSON(hyacinth_ds.content)
     end
@@ -91,10 +93,38 @@ module DigitalObject::Fedora
   end
 
   def set_fedora_hyacinth_ds_data
+    
+    create_required_hyacinth_datastreams_if_not_exist!
+    
     hyacinth_data = get_hyacinth_data()
     hyacinth_data['dynamic_field_data'] = @dynamic_field_data
     hyacinth_data['ordered_child_digital_object_pids'] = @ordered_child_digital_object_pids
-    @fedora_object.datastreams[HYACINTH_DATASTREAM_NAME].content = hyacinth_data.to_json
+    @fedora_object.datastreams[DEPRECATED_HYACINTH_DATASTREAM_NAME].content = hyacinth_data.to_json
+    
+    # For future upgrade compatibility, also serialize data to the HYACINTH_CORE_DATASTREAM_NAME and HYACINTH_STRUCT_DATASTREAM_NAME datastreams
+    # Set HYACINTH_CORE_DATASTREAM_NAME data
+    @fedora_object.datastreams[HYACINTH_CORE_DATASTREAM_NAME].content = JSON.generate({'dynamic_field_data' => @dynamic_field_data})
+    # Set HYACINTH_STRUCT_DATASTREAM_NAME data
+    @fedora_object.datastreams[HYACINTH_STRUCT_DATASTREAM_NAME].content = JSON.generate(@ordered_child_digital_object_pids)
+  end
+  
+  def create_required_hyacinth_datastreams_if_not_exist!
+    if @fedora_object.datastreams[DEPRECATED_HYACINTH_DATASTREAM_NAME].nil?
+      deprecated_hyacinth_ds = get_new_deprecated_hyacinth_datastream
+      @fedora_object.add_datastream(deprecated_hyacinth_ds)
+    end
+    
+    # New datastreams below for future upgrade compatibility
+    
+    if @fedora_object.datastreams[HYACINTH_CORE_DATASTREAM_NAME].nil?
+      hyacinth_core_ds = get_new_hyacinth_core_datastream
+      @fedora_object.add_datastream(hyacinth_core_ds)
+    end
+    
+    if @fedora_object.datastreams[HYACINTH_STRUCT_DATASTREAM_NAME].nil?
+      hyacinth_struct_ds = get_new_hyacinth_struct_datastream
+    @fedora_object.add_datastream(hyacinth_struct_ds)
+    end
   end
 
   ######################################
@@ -153,16 +183,37 @@ module DigitalObject::Fedora
     raise "Mismatch between number of Publish Target pids (#{pids.length}) and number of returned PublishTarget objects (#{@publish_targets.length}).  Maybe need to add Publish Target to Hyacinth?" if pids.length != @publish_targets.length
   end
 
-  def get_new_hyacinth_datastream
-    hyacinth_data = {}
-    hyacinth_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, HYACINTH_DATASTREAM_NAME,
+  def get_new_deprecated_hyacinth_datastream
+    deprecated_hyacinth_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, DEPRECATED_HYACINTH_DATASTREAM_NAME,
       :controlGroup => 'M',
       :mimeType => 'application/json',
-      :dsLabel => HYACINTH_DATASTREAM_NAME,
+      :dsLabel => DEPRECATED_HYACINTH_DATASTREAM_NAME,
       :versionable => true,
-      :blob => hyacinth_data.to_json
+      :blob => JSON.generate({})
     )
-    return hyacinth_ds
+    return deprecated_hyacinth_ds
+  end
+  
+  def get_new_hyacinth_core_datastream
+    hyacinth_core_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, HYACINTH_CORE_DATASTREAM_NAME,
+      :controlGroup => 'M',
+      :mimeType => 'application/json',
+      :dsLabel => HYACINTH_CORE_DATASTREAM_NAME,
+      :versionable => true,
+      :blob => JSON.generate({})
+    )
+    return hyacinth_core_ds
+  end
+  
+  def get_new_hyacinth_struct_datastream
+    hyacinth_struct_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, HYACINTH_STRUCT_DATASTREAM_NAME,
+      :controlGroup => 'M',
+      :mimeType => 'application/json',
+      :dsLabel => HYACINTH_STRUCT_DATASTREAM_NAME,
+      :versionable => false,
+      :blob => JSON.generate([])
+    )
+    return hyacinth_struct_ds
   end
 
 end
