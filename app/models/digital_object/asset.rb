@@ -125,7 +125,7 @@ class DigitalObject::Asset < DigitalObject::Base
     # If the title of this Asset is the DEFAULT_ASSET_NAME, use the original filename as the title.
     # If the title of this Asset is NOT equal to DEFAULT_ASSET_NAME, that means that a title was
     # manually set by the user in this Asset's digital_object_data.
-    if self.get_title(false) == DEFAULT_ASSET_NAME
+    if self.get_title == DEFAULT_ASSET_NAME
       self.set_title('', original_filename)
     end
     

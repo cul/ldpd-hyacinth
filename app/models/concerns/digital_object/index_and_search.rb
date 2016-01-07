@@ -16,7 +16,7 @@ module DigitalObject::IndexAndSearch
     doc = {
       pid: self.pid,
       identifiers_sim: self.identifiers,
-      title_ssm: self.get_title,
+      title_ssm: self.get_title(placeholder_if_blank: true),
       sort_title_ssort: self.get_sort_title,
       parent_digital_object_pids_ssm: self.parent_digital_object_pids,
       parent_digital_object_pids_sim: self.parent_digital_object_pids,

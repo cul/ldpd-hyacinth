@@ -138,24 +138,24 @@ class DigitalObject::Base
     # If this is an Asset, and its title is blank after dynamic field data
     # is applied, use the DEFAULT_ASSET_NAME. This allows validation to complete,
     #and the title will be later inferred from the filename during the upload step.
-    if self.is_a?(DigitalObject::Asset) && self.get_title(false).blank?
+    if self.is_a?(DigitalObject::Asset) && self.get_title.blank?
       self.set_title('', DigitalObject::Asset::DEFAULT_ASSET_NAME)
     end
   end
 
   # Returns the primary title
-  def get_title(return_notitle_placeholder_if_blank=true)
+  def get_title(opts={})
     title = ''
-    if @dynamic_field_data['title'] && @dynamic_field_data['title'].first && @dynamic_field_data['title'].first['title_non_sort_portion']
+    if @dynamic_field_data['title'] && @dynamic_field_data['title'].first && @dynamic_field_data['title'].first['title_non_sort_portion'].present?
       title += @dynamic_field_data['title'].first['title_non_sort_portion'] + ' '
     end
-    title += self.get_sort_title(return_notitle_placeholder_if_blank)
+    title += self.get_sort_title(opts)
     return title
   end
 
   # Returns the sort portion of the primary title
-  def get_sort_title(return_notitle_placeholder_if_blank=true)
-    sort_title = return_notitle_placeholder_if_blank ? '[No Title]' : ''
+  def get_sort_title(opts={})
+    sort_title = opts[:placeholder_if_blank] ? '[No Title]' : ''
     if @dynamic_field_data['title'] && @dynamic_field_data['title'].first && @dynamic_field_data['title'].first['title_sort_portion']
       sort_title = @dynamic_field_data['title'].first['title_sort_portion']
     end
@@ -589,7 +589,7 @@ class DigitalObject::Base
     return {
       pid: self.pid,
       identifiers: self.identifiers,
-      title: self.get_title,
+      title: self.get_title(placeholder_if_blank: true),
       state: @fedora_object ? @fedora_object.state : 'A',
       dc_type: self.dc_type,
       project: self.project,

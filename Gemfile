@@ -77,9 +77,6 @@ end
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby'
 
-# Use Capistrano for deployment
-gem 'capistrano', '~> 2.12.0', group: :development
-
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
@@ -124,6 +121,23 @@ group :development, :test do
   gem 'factory_girl_rails', '>= 4.4.1'
   gem 'rubocop', require: false
   gem 'rubocop-rspec', require: false
+end
+
+# Development!
+group :development do
+  # Use Capistrano for deployment
+  gem 'capistrano', '~> 3.4.0', require: false
+  # Rails and Bundler integrations were moved out from Capistrano 3
+  gem 'capistrano-rails', '~> 1.1', require: false
+  gem 'capistrano-bundler', '~> 1.1', require: false
+  # "idiomatic support for your preferred ruby version manager"
+  gem 'capistrano-rvm', '~> 0.1', require: false
+  # The `deploy:restart` hook for passenger applications is now in a separate gem
+  # Just add it to your Gemfile and require it in your Capfile.
+  gem 'capistrano-passenger', '~> 0.1', require: false
+  
+  # Access an IRB console on exception pages or by using <%= console %> in views
+  gem 'web-console', '~> 2.0'
 end
 
 
