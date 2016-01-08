@@ -503,6 +503,3 @@ DEPENDENCIES
   thread
   uglifier (>= 1.3.0)
   underscore-rails
-
-BUNDLED WITH
-   1.11.2
