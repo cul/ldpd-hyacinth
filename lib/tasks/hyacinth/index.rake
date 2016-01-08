@@ -25,24 +25,36 @@ namespace :hyacinth do
       # Go through all known DigitalObjectRecords in the DB and reindex them.
       # Do this in batches so that we don't return data for millions of records, all at once.
 
-      total = DigitalObjectRecord.count
-      puts "Reindexing #{total} Digital #{total == 1 ? 'Object' : 'Objects'}..."
-      progressbar = ProgressBar.create(:title => "Reindex", :starting_at => start_at, :total => total, :format => '%a |%b>>%i| %p%% %c/%C %t')
-
-      DigitalObjectRecord.find_each(batch_size: 500, start: start_at) do |digital_object_record|
+      Hyacinth::Utils::DigitalObjectUtils.in_batches(start_at, 500, "Reindex") do |digital_object_record|
         begin
           DigitalObject::Base.find(digital_object_record.pid).update_index(false) # Passing false here so that we don't do one solr commit per update
         rescue RestClient::Unauthorized, Rubydora::RubydoraError => e
           Rails.logger.error('Error: Skipping ' + digital_object_record.pid + "\nException: #{e.class}, Message: #{e.message}")
         end
-        progressbar.increment
       end
 
-      Hyacinth::Utils::SolrUtils.solr.commit # Only commit at the end
-      progressbar.finish
+    end
 
-      puts "Done!"
+    task :update_objects => :environment do
+      if ENV['START_AT'].present?
+        start_at = ENV['START_AT'].to_i
+        puts 'Starting at: ' + start_at.to_s
+      else
+        start_at = 0
+      end
 
+      # Go through all known DigitalObjectRecords in the DB and reindex them.
+      # Do this in batches so that we don't return data for millions of records, all at once.
+
+      Hyacinth::Utils::DigitalObjectUtils.in_batches(start_at, 500, "Reindex") do |digital_object_record|
+        begin
+          object = ActiveFedora::Base.find(digital_object_record.pid)
+          object.inner_object.lastModifiedDate = Time.now
+          object.save(:update_index =>false) # Passing false here so that we don't do one solr commit per update
+        rescue RestClient::Unauthorized, Rubydora::RubydoraError => e
+          Rails.logger.error('Error: Skipping ' + digital_object_record.pid + "\nException: #{e.class}, Message: #{e.message}")
+        end
+      end
     end
 
     task :delete_from_index => :environment do
