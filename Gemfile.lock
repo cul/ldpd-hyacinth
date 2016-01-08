@@ -268,7 +268,7 @@ GEM
     net-http-persistent (2.9.4)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
-    net-ssh (3.0.1)
+    net-ssh (2.9.2)
     netrc (0.10.3)
     noid (0.7.1)
     nokogiri (1.6.6.2)
@@ -532,6 +532,7 @@ DEPENDENCIES
   libv8 (>= 3.16.14.13)
   mime-types
   mysql2 (= 0.3.18)
+  net-ssh (~> 2.9)
   noid (>= 0.7.1)
   nokogiri (~> 1.6.5)
   poltergeist (>= 1.7)

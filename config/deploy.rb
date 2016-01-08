@@ -84,7 +84,7 @@ namespace :deploy do
 
       within release_path do
         with rails_env: fetch(:rails_env) do
-          execute :rake, 'resque:restart_workers RAILS_ENV=' + fetch(:rails_env).to_s
+          execute :rake, 'resque:restart_workers'
         end
       end
     end
