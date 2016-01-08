@@ -62,10 +62,10 @@ set :passenger_restart_with_touch, true
 
 namespace :deploy do
   ## Workaround for ensuring that rails_env is set via either rails_env or stage
-  #before :starting, :set_rails_env do
+  # before :starting, :set_rails_env do
   #  set :rails_env, (fetch(:rails_env) || fetch(:stage))
-  #end
-  
+  # end
+
   desc "Add tag based on current version"
   task :auto_tag do
     current_version_and_yyymmd_tag = "v" + IO.read("VERSION").to_s.strip + "/" + Date.today.strftime("%Y%m%d")
