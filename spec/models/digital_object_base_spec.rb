@@ -253,7 +253,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
     end
 
     context 'with a BagAggregator' do
-      let(:cmodel) { BagAggregator }
+      let(:cmodel) { Collection }
       let(:model) { DigitalObject::Group }
 
       it { is_expected.to be model }

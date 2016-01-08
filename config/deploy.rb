@@ -5,7 +5,7 @@ set :application, 'hyacinth'
 set :repo_url, 'git@github.com:cul/hyacinth.git'
 
 # Default branch is :master
-#ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp # Current branch is suggested by default
+# ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp # Current branch is suggested by default
 ask :branch, proc { `git tag --sort=version:refname`.split("\n").last } # Latest tag is suggested by default
 
 # Default deploy_to directory is /var/www/my_app_name
@@ -61,11 +61,15 @@ set :keep_releases, 3
 set :passenger_restart_with_touch, true
 
 namespace :deploy do
+  ## Workaround for ensuring that rails_env is set via either rails_env or stage
+  #before :starting, :set_rails_env do
+  #  set :rails_env, (fetch(:rails_env) || fetch(:stage))
+  #end
   
   desc "Add tag based on current version"
   task :auto_tag do
     current_version_and_yyymmd_tag = "v" + IO.read("VERSION").to_s.strip + "/" + Date.today.strftime("%Y%m%d")
-    tag = ask(:'tag', current_version_and_yyymmd_tag)
+    ask(:tag, current_version_and_yyymmd_tag)
     tag = fetch(:tag)
 
     system("git tag -a #{tag} -m 'auto-tagged' && git push origin --tags")
@@ -77,10 +81,12 @@ namespace :deploy do
       # within release_path do
       #   execute :rake, 'cache:clear'
       # end
-      
-      #execute :rake, 'cache:clear'
-      
+
+      within release_path do
+        with rails_env: fetch(:rails_env) do
+          execute :rake, 'resque:restart_workers RAILS_ENV=' + fetch(:rails_env).to_s
+        end
+      end
     end
   end
-
 end

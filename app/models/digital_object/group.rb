@@ -11,7 +11,7 @@ class DigitalObject::Group < DigitalObject::Base
   # Called during save, after all validations have passed
   def get_new_fedora_object
     pid = self.next_pid
-    bag_aggregator = BagAggregator.new(:pid => pid)
+    bag_aggregator = Collection.new(:pid => pid)
 
     return bag_aggregator
   end

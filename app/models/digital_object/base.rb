@@ -348,21 +348,25 @@ class DigitalObject::Base
   # Returns the DigitalObject::Something class for the given Fedora object.
   # Only handles types expected by Hyacinth
   def self.get_class_for_fedora_object(fobj)
-    # This seems weird, but when comparing against classes, you do "case object" instead of "case object.class", but still compare against classes.
-    # This is because of how === comparison works on classes
-    # http://stackoverflow.com/questions/3801469/how-to-catch-errnoeconnreset-class-in-case-when
-    case fobj
-    when BagAggregator
-      return DigitalObject::Group if (fobj.datastreams['DC'].dc_type & DigitalObject::Group.valid_dc_types).length > 0
-    when ContentAggregator
-      return DigitalObject::Item if (fobj.datastreams['DC'].dc_type & DigitalObject::Item.valid_dc_types).length > 0
-    when GenericResource
-      return DigitalObject::Asset if (fobj.datastreams['DC'].dc_type & DigitalObject::Asset.valid_dc_types).length > 0
-    when Collection
-      return DigitalObject::FileSystem if (fobj.datastreams['DC'].dc_type & DigitalObject::FileSystem.valid_dc_types).length > 0
+    
+    if fobj.datastreams['DC'] && fobj.datastreams['DC'].dc_type
+      obj_dc_type = fobj.datastreams['DC'].dc_type # returned dc_type is an array
+    
+      # This seems weird, but when comparing against classes, you do "case object" instead of "case object.class", but still compare against classes.
+      # This is because of how === comparison works on classes
+      # http://stackoverflow.com/questions/3801469/how-to-catch-errnoeconnreset-class-in-case-when
+      case fobj
+      when Collection
+        return DigitalObject::Group if (obj_dc_type & DigitalObject::Group.valid_dc_types).length > 0
+        return DigitalObject::FileSystem if (obj_dc_type & DigitalObject::FileSystem.valid_dc_types).length > 0
+      when ContentAggregator
+        return DigitalObject::Item if (obj_dc_type & DigitalObject::Item.valid_dc_types).length > 0
+      when GenericResource
+        return DigitalObject::Asset if (obj_dc_type & DigitalObject::Asset.valid_dc_types).length > 0
+      end
     end
 
-    raise 'Cannot determine type of fedora object ' + fobj.class.to_s + ' with pid: ' + fobj.pid + ' and dc_type: ' + fobj.datastreams['DC'].dc_type.inspect
+    raise "Cannot determine Hyacinth type for fedora object #{fobj.pid} with class #{fobj.class.to_s} and dc_type: #{fobj.datastreams['DC'].dc_type.to_s}"
   end
 
   def digital_object_type
