@@ -49,9 +49,9 @@ namespace :hyacinth do
       Hyacinth::Utils::DigitalObjectUtils.in_batches(start_at, 500, "Reindex") do |digital_object_record|
         begin
           object = ActiveFedora::Base.find(digital_object_record.pid)
-          object.inner_object.lastModifiedDate = Time.now
+          object.inner_object.lastModifiedDate = Time.now.utc.to_formatted_s(:iso8601)
           object.save(:update_index =>false) # Passing false here so that we don't do one solr commit per update
-        rescue RestClient::Unauthorized, Rubydora::RubydoraError => e
+        rescue RestClient::ResourceNotFound, RestClient::Unauthorized, Rubydora::RubydoraError => e
           Rails.logger.error('Error: Skipping ' + digital_object_record.pid + "\nException: #{e.class}, Message: #{e.message}")
         end
       end
