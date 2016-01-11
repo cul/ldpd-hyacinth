@@ -2,6 +2,20 @@ namespace :hyacinth do
 
   namespace :test do
     
+    task :clear_default_asset_home_test_project_content => :environment do
+      
+      unless Rails.env == 'test'
+        puts 'This task is only meant for the test environment.'
+        next
+      end
+      
+      default_asset_home_test_project_directory = File.join(HYACINTH['default_asset_home'], 'test')
+      
+      puts "Deleting test environment default asset home content: #{default_asset_home_test_project_directory}..."
+      FileUtils.rm_rf(default_asset_home_test_project_directory)
+      puts "Test environment default asset home content has been deleted."
+    end
+    
     task :setup_test_project => :environment do
       # Load certain records that we'll be referencing
       dot_item = DigitalObjectType.find_by(string_key: 'item')

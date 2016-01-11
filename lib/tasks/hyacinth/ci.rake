@@ -53,6 +53,7 @@ namespace :hyacinth do
     error = Jettywrapper.wrap(jetty_params) do
       Rake::Task["hyacinth:fedora:reload_cmodels"].invoke
       Rake::Task["uri_service:db:drop_tables_and_clear_solr"].invoke
+      Rake::Task["hyacinth:test:clear_default_asset_home_test_project_content"].invoke
       Rake::Task["uri_service:db:setup"].invoke
       Rake::Task["db:drop"].invoke
       Rake::Task["db:create"].invoke
