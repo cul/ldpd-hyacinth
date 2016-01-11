@@ -76,7 +76,7 @@ class DigitalObjectsController < ApplicationController
     
       begin
         @digital_object.set_digital_object_data(digital_object_data, false)
-      rescue Hyacinth::Exceptions::PublishTargetNotFoundError, Hyacinth::Exceptions::DigitalObjectNotFoundError, Hyacinth::Exceptions::ParentDigitalObjectNotFoundError, Hyacinth::Exceptions::ProjectNotFoundError => e
+      rescue Hyacinth::Exceptions::PublishTargetNotFoundError, Hyacinth::Exceptions::DigitalObjectNotFoundError, Hyacinth::Exceptions::ParentDigitalObjectNotFoundError, Hyacinth::Exceptions::ProjectNotFoundError, Hyacinth::Exceptions::AssociatedFedoraObjectNotFoundError => e
         render json: { success: false, errors: [e.message] } and return
       end
       

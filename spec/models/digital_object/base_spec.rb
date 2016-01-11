@@ -1,6 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe DigitalObject::Base, :type => :model do
+  
+  let(:sample_item_digital_object_data) {
+    dod = JSON.parse( fixture('sample_digital_object_data/new_item.json').read )
+    dod['identifiers'] = ['item.' + SecureRandom.uuid] # random identifer to avoid collisions
+    dod
+  }
+  
 
   describe "#initialize" do
     it "has a default dynamic_field_data value of {}" do
@@ -23,11 +30,6 @@ RSpec.describe DigitalObject::Base, :type => :model do
         'original_file_path' => file_path
       }
       
-      dod
-    }
-    let(:sample_item_digital_object_data) {
-      dod = JSON.parse( fixture('sample_digital_object_data/new_item.json').read )
-      dod['identifiers'] = ['item.' + SecureRandom.uuid] # random identifer to avoid collisions
       dod
     }
     let(:sample_group_digital_object_data) {
@@ -59,12 +61,12 @@ RSpec.describe DigitalObject::Base, :type => :model do
       it "raises an exception for an object that references a project that doesn't exist" do
         # Set project for new item data
         sample_item_digital_object_data['project'] = {
-          'string_key' => 'zzzzzzzzzz_does_not_exist_zzzzzzzzzz'
+          'string_key' => 'aaaaaaaaaaa_does_not_exist_aaaaaaaaaaa'
         }
         
-        new_item_with_parent_group = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+        new_item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
         expect {
-          new_item_with_parent_group.set_digital_object_data(sample_item_digital_object_data, false)
+          new_item.set_digital_object_data(sample_item_digital_object_data, false)
         }.to raise_error(Hyacinth::Exceptions::ProjectNotFoundError)
       end
       
@@ -76,11 +78,20 @@ RSpec.describe DigitalObject::Base, :type => :model do
           }
         ]
         
-        new_item_with_parent_group = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+        new_item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
         expect {
-          new_item_with_parent_group.set_digital_object_data(sample_item_digital_object_data, false)
+          new_item.set_digital_object_data(sample_item_digital_object_data, false)
         }.to raise_error(Hyacinth::Exceptions::PublishTargetNotFoundError)
       end
+      
+      it "raises an exception for a new object that references a pid that cannot be resolved to an existing Fedora object" do
+        new_item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+        sample_item_digital_object_data['pid'] = 'definitely:does_not_exist_zzzzz'
+        expect {
+          new_item.set_digital_object_data(sample_item_digital_object_data, false)
+        }.to raise_error(Hyacinth::Exceptions::AssociatedFedoraObjectNotFoundError)
+      end
+      
     end
     
     describe "for DigitalObject::Group" do
@@ -227,6 +238,35 @@ RSpec.describe DigitalObject::Base, :type => :model do
       end
     end
     
+  end
+  
+  describe "#save" do
+    it "saves the object, which can then be found using DigitalObject::Base.find" do
+        item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+        item.set_digital_object_data(sample_item_digital_object_data, false)
+        item.save
+        expect(DigitalObject::Base.find(item.pid).pid).to eq(item.pid)
+    end
+  
+    it "can create a new DigitalObject for an existing Fedora object that isn't being tracked by Hyacinth" do
+        pid = 'test:existingobject'
+        content_aggregator = ContentAggregator.new(:pid => pid)
+        content_aggregator.save
+        
+        expect(content_aggregator.pid).to eq(pid) # New Fedora object has been assigned given pid
+        expect(DigitalObject::Base.find_by_pid(pid)).to eq(nil) # Hyacinth is not aware of any object with given pid
+    
+        # Create object with given pid
+        sample_item_digital_object_data['pid'] = pid
+        item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+        item.set_digital_object_data(sample_item_digital_object_data, false)
+        expect(item.pid).to eq(pid) # pid should be set for the item
+        
+        # Save item, which should then refer to the existing Fedora object
+        item.save
+        
+        expect(item.fedora_object).to eq(content_aggregator)
+    end
   end
 
   describe '.get_class_for_fedora_object' do

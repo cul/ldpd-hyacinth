@@ -55,6 +55,26 @@ class DigitalObject::Base
   # Updates the DigitalObject with the given digital_object_data
   def set_digital_object_data(digital_object_data, merge_dynamic_fields)
     
+    # PID
+    if digital_object_data['pid']
+      if digital_object_data['pid'].nil?
+        raise 'Cannot provide pid with null value. Either specify a non-null pid or do not specify a pid at all.'
+      else
+        if self.pid.nil?
+          # This object has no pid and therefore must be new. Link it to the fedora object with the given pid.
+          begin
+            @fedora_object = ActiveFedora::Base.find(digital_object_data['pid'])
+          rescue ActiveFedora::ObjectNotFoundError => e
+            raise Hyacinth::Exceptions::AssociatedFedoraObjectNotFoundError, "Tried to set associated Fedora object for new DigitalObject, but could not find Fedora object with pid #{digital_object_data['pid']}"
+          end
+        else
+          if self.pid != digital_object_data['pid']
+            raise "Cannot set a different pid for a DigitalObject with an existing pid.  (Tried to replace pid #{self.pid} with #{digital_object_data['pid']}.)"
+          end
+        end
+      end
+    end
+    
     # Parent Digital Objects (PID or Identifier)
     if digital_object_data['parent_digital_objects']
       @parent_digital_object_pids = [] # Clear because we're about to set new values
@@ -388,7 +408,7 @@ class DigitalObject::Base
     if self.valid?
       DigitalObjectRecord.transaction do
         if self.new_record?
-          @fedora_object = self.get_new_fedora_object
+          @fedora_object = self.get_new_fedora_object unless @fedora_object.present?
           @db_record.pid = @fedora_object.pid
         else
           # For existing records, we always lock on @db_record during Fedora reads/writes (and wrap in a transaction)

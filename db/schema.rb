@@ -11,16 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151223183540) do
+ActiveRecord::Schema.define(version: 20160104192553) do
 
   create_table "controlled_vocabularies", force: :cascade do |t|
     t.string   "string_key"
     t.boolean  "only_managed_by_admins", default: false
+    t.integer  "pid_generator_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "controlled_vocabularies", ["only_managed_by_admins"], name: "index_controlled_vocabularies_on_only_managed_by_admins"
+  add_index "controlled_vocabularies", ["pid_generator_id"], name: "index_controlled_vocabularies_on_pid_generator_id"
 
   create_table "csv_exports", force: :cascade do |t|
     t.text     "search_params"
@@ -83,6 +85,7 @@ ActiveRecord::Schema.define(version: 20151223183540) do
     t.integer  "parent_dynamic_field_group_id"
     t.integer  "sort_order",                                      null: false
     t.boolean  "is_repeatable",                   default: false, null: false
+    t.integer  "xml_datastream_id"
     t.text     "xml_translation"
     t.integer  "dynamic_field_group_category_id"
     t.integer  "created_by_id"
@@ -95,6 +98,7 @@ ActiveRecord::Schema.define(version: 20151223183540) do
   add_index "dynamic_field_groups", ["parent_dynamic_field_group_id"], name: "index_dynamic_field_groups_on_parent_dynamic_field_group_id"
   add_index "dynamic_field_groups", ["string_key", "parent_dynamic_field_group_id"], name: "unique_string_key_for_same_parent_dynamic_field_group", unique: true
   add_index "dynamic_field_groups", ["string_key"], name: "index_dynamic_field_groups_on_string_key"
+  add_index "dynamic_field_groups", ["xml_datastream_id"], name: "index_dynamic_field_groups_on_xml_datastream_id"
 
   create_table "dynamic_fields", force: :cascade do |t|
     t.string   "string_key",                                          null: false
@@ -102,7 +106,7 @@ ActiveRecord::Schema.define(version: 20151223183540) do
     t.integer  "parent_dynamic_field_group_id"
     t.integer  "sort_order",                                          null: false
     t.string   "dynamic_field_type",               default: "string", null: false
-    t.string   "controlled_vocabulary_string_key"
+    t.integer  "controlled_vocabulary_id"
     t.text     "additional_data_json"
     t.boolean  "is_keyword_searchable",            default: false,    null: false
     t.boolean  "is_facet_field",                   default: false,    null: false
@@ -115,9 +119,11 @@ ActiveRecord::Schema.define(version: 20151223183540) do
     t.integer  "updated_by_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "controlled_vocabulary_string_key"
   end
 
-  add_index "dynamic_fields", ["controlled_vocabulary_string_key"], name: "index_dynamic_fields_on_controlled_vocabulary_string_key"
+  add_index "dynamic_fields", ["controlled_vocabulary_id"], name: "index_dynamic_fields_on_controlled_vocabulary_id"
+  add_index "dynamic_fields", ["controlled_vocabulary_string_key"], name: "index_dynamic_fields_on_controlled_vocabulary_string_key", unique: true
   add_index "dynamic_fields", ["parent_dynamic_field_group_id"], name: "index_dynamic_fields_on_parent_dynamic_field_group_id"
   add_index "dynamic_fields", ["string_key", "parent_dynamic_field_group_id"], name: "unique_string_key_and_parent_dynamic_field_group", unique: true
   add_index "dynamic_fields", ["string_key"], name: "index_dynamic_fields_on_string_key"
@@ -214,6 +220,7 @@ ActiveRecord::Schema.define(version: 20151223183540) do
   end
 
   add_index "projects", ["display_label"], name: "index_projects_on_display_label", unique: true
+  add_index "projects", ["pid"], name: "index_projects_on_pid", unique: true
   add_index "projects", ["pid_generator_id"], name: "index_projects_on_pid_generator_id"
   add_index "projects", ["string_key"], name: "index_projects_on_string_key", unique: true
 

@@ -26,7 +26,6 @@ RSpec.describe "DigitalObjects", :type => :request do
     
     describe "POST /digital_objects" do
       it "returns an error message if the digital_object param is not supplied" do
-        request_spec_sign_in_admin_user()
         post(digital_objects_path, {})
         expect(response.status).to be(200)
         response_json = JSON.parse(response.body)
@@ -37,7 +36,6 @@ RSpec.describe "DigitalObjects", :type => :request do
       end
       
       it "returns an error message if an invalid digital_object_type param is supplied" do
-        request_spec_sign_in_admin_user()
         
         sample_item_digital_object_data['digital_object_type']['string_key'] = 'invalid_type'
         
@@ -54,7 +52,6 @@ RSpec.describe "DigitalObjects", :type => :request do
       end
       
       it "successfully creates an Item when the correct set of parameters are supplied" do
-        request_spec_sign_in_admin_user()
         post(digital_objects_path, {
           digital_object_data_json: JSON.generate(sample_item_digital_object_data)
         })
@@ -68,7 +65,6 @@ RSpec.describe "DigitalObjects", :type => :request do
       describe "Create an Asset with attached file when the correct set of parameters are supplied" do
         
         it "works via post data upload (simulating browser form submission)" do
-          request_spec_sign_in_admin_user()
           
           asset_digital_object_data = sample_asset_digital_object_data
           
@@ -89,15 +85,81 @@ RSpec.describe "DigitalObjects", :type => :request do
         end
         
         it "works via *upload directory* filesystem upload, copying the target file to the internal Hyacinth data store" do
-          skip 'todo'
+          asset_digital_object_data = sample_asset_digital_object_data
+          
+          # Copy fixture file to upload directory file path
+          upload_directory_file_path = 'some_dir/lincoln.jpg'
+          dest_path = File.join(HYACINTH['upload_directory'], upload_directory_file_path)
+          FileUtils.mkdir_p(File.dirname(dest_path)) # Make path if it doesn't exist
+          FileUtils.cp(fixture('sample_upload_files/lincoln.jpg').path, dest_path) # Copy fixture
+          
+          # Manually override import_file settings to set the fixture to type == post data
+          asset_digital_object_data['import_file'] = {
+            'import_type' => DigitalObject::Asset::IMPORT_TYPE_UPLOAD_DIRECTORY,
+            'import_path' => upload_directory_file_path,
+            'original_file_path' => upload_directory_file_path
+          }
+          
+          post(digital_objects_path, {
+            digital_object_data_json: JSON.generate(sample_asset_digital_object_data)
+          })
+          
+          expect(response.status).to be(200)
+          response_json = JSON.parse(response.body)
+          expect(response_json['success']).to eq(true)
+          expect(response_json['pid'].length).not_to eq(0)
         end
         
-        it "works via filesystem upload (upload type: internal), copying the target file to the internal Hyacinth internal data store" do
-          skip 'todo'
+        it "works via filesystem upload (upload type: internal), copying the target file to the Hyacinth internal data store" do
+          asset_digital_object_data = sample_asset_digital_object_data
+          
+          path_to_fixture_file = fixture('sample_upload_files/lincoln.jpg').path
+          # Manually override import_file settings to set the fixture to type == post data
+          asset_digital_object_data['import_file'] = {
+            'import_type' => DigitalObject::Asset::IMPORT_TYPE_INTERNAL,
+            'import_path' => path_to_fixture_file,
+            'original_file_path' => path_to_fixture_file
+          }
+          
+          post(digital_objects_path, {
+            digital_object_data_json: JSON.generate(sample_asset_digital_object_data)
+          })
+          
+          expect(response.status).to be(200)
+          response_json = JSON.parse(response.body)
+          expect(response_json['success']).to eq(true)
+          expect(response_json['pid'].length).not_to eq(0)
+          
+          # Make sure that path to DigitalObject::Asset is internal, and stored within the hyacinth asset directory
+          digital_object = DigitalObject::Base.find(response_json['pid'])
+          expect(digital_object.get_filesystem_location).to start_with(HYACINTH['default_asset_home'])
+          expect(digital_object.get_original_file_path).to eq(path_to_fixture_file)
         end
         
         it "works via filesystem upload (upload type: external), referencing the target external file instead of copying the file to the Hyacinth internal data store" do
-          skip 'todo'
+          asset_digital_object_data = sample_asset_digital_object_data
+          
+          path_to_fixture_file = fixture('sample_upload_files/lincoln.jpg').path
+          # Manually override import_file settings to set the fixture to type == post data
+          asset_digital_object_data['import_file'] = {
+            'import_type' => DigitalObject::Asset::IMPORT_TYPE_EXTERNAL,
+            'import_path' => path_to_fixture_file,
+            'original_file_path' => path_to_fixture_file
+          }
+          
+          post(digital_objects_path, {
+            digital_object_data_json: JSON.generate(sample_asset_digital_object_data)
+          })
+          
+          expect(response.status).to be(200)
+          response_json = JSON.parse(response.body)
+          expect(response_json['success']).to eq(true)
+          expect(response_json['pid'].length).not_to eq(0)
+          
+          # Make sure that path to DigitalObject::Asset is external, and continues to exist in the external directory referenced during the upload
+          digital_object = DigitalObject::Base.find(response_json['pid'])
+          expect(digital_object.get_filesystem_location).to eq(path_to_fixture_file)
+          expect(digital_object.get_original_file_path).to eq(path_to_fixture_file)
         end
         
       end
