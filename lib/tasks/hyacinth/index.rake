@@ -56,6 +56,23 @@ namespace :hyacinth do
       end
     end
 
+    task :update_object_list => :environment do
+      path = ENV['PIDS']
+      raise "PIDS argument is required" unless path
+
+      # Go through all known DigitalObjectRecords in the DB and reindex them.
+      # Do this in batches so that we don't return data for millions of records, all at once.
+
+      Hyacinth::Utils::DigitalObjectUtils.in_list(path, :pid) do |digital_object_record|
+        begin
+          object = DigitalObject::Base.find(digital_object_record.pid)
+          object.save
+        rescue RestClient::ResourceNotFound, RestClient::Unauthorized, Rubydora::RubydoraError => e
+          Rails.logger.error('Error: Skipping ' + digital_object_record.pid + "\nException: #{e.class}, Message: #{e.message}")
+        end
+      end
+    end
+
     task :delete_from_index => :environment do
       if ENV['PIDS'].present?
         pids = ENV['PIDS'].split(',')
