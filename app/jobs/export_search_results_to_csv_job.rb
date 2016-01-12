@@ -47,7 +47,10 @@ class ExportSearchResultsToCsvJob
     map['_digital_object_type.string_key'] ||= map.length
     DigitalObject::Base.search_in_batches(search_params, user, 50) do |digital_object_data|
       ### Handle core fields
-      # identifiers
+      # identifiers, except for the pid which is its own column
+      digital_object_data.fetch('identifiers', []).reject! do |identifier|
+        identifier == digital_object_data['pid']
+      end
       digital_object_data.fetch('identifiers', []).size.times do |index|
         map["_identifiers-#{index + 1}"] ||= map.length
       end
@@ -84,6 +87,7 @@ class ExportSearchResultsToCsvJob
   def self.write_csv(path_to_csv_file, field_list, field_index_map)
     # Open new CSV for writing
     CSV.open(path_to_csv_file, 'wb') do |final_csv|
+      final_csv << ['placeholder']
       # Write out column headers
       final_csv << field_list
 

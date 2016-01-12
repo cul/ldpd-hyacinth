@@ -12,42 +12,62 @@ class ProcessDigitalObjectImportJob
     digital_object_data = JSON.parse(digital_object_import.digital_object_data)
 
     if digital_object_data['pid'].present?
-      begin
-        digital_object = DigitalObject::Base.find(digital_object_data['pid'])
-      rescue Hyacinth::Exceptions::DigitalObjectNotFoundError => e
-        digital_object_import.digital_object_errors << e.message
-      end
+      digital_object = existing_object_for_update(digital_object_data, user, digital_object_import)
     else
-      begin
-        digital_object = DigitalObjectType.get_model_for_string_key(digital_object_data['digital_object_type']['string_key']).new
-      rescue Hyacinth::Exceptions::InvalidDigitalObjectTypeError
-        digital_object_import.digital_object_errors << 'Invalid digital_object_type specified: digital_object_type => ' + digital_object_data['digital_object_type'].inspect
-      end
+      digital_object = new_object(digital_object_data, user, digital_object_import)
     end
 
-    begin
-      digital_object.set_digital_object_data(digital_object_data, true)
-    rescue Hyacinth::Exceptions::ParentDigitalObjectNotFoundError => e
-      Hyacinth::Utils::Logger.logger.debug "****** #{self.class.name} Parent Not Found"
-      Hyacinth::Utils::Logger.logger.debug "****** requeue_count is #{digital_object_import.requeue_count}"
-      digital_object_import.requeue_count += 1
-      digital_object_import.save!
-      Hyacinth::Queue.process_digital_object_import(digital_object_import.id) unless digital_object_import.requeue_count > MAX_REQUEUES
-      digital_object_import.digital_object_errors << e.message
-    rescue Hyacinth::Exceptions::NotFoundError => e
-      digital_object_import.digital_object_errors << e.message
-    end
+    status = assign_data(digital_object, digital_object_data, digital_object_import)
 
-    digital_object.created_by = user
-    digital_object.updated_by = user
+    return if status == :requeued
 
-    if digital_object_import.digital_object_errors.blank? && digital_object.save
+    if status == :success && digital_object.save
       digital_object_import.success!
-    else
+    else # if status == :failure
       digital_object_import.digital_object_errors += digital_object.errors.full_messages
       digital_object_import.failure!
     end
+  end
 
-    Hyacinth::Utils::Logger.logger.debug "#{self.class.name} Done Processing"
+  def self.assign_data(digital_object, digital_object_data, digital_object_import)
+    return :failure unless digital_object.present?
+    digital_object.set_digital_object_data(digital_object_data, true)
+    :success
+  rescue Hyacinth::Exceptions::ParentDigitalObjectNotFoundError => e
+    digital_object_import.digital_object_errors << e.message
+    requeue_job(digital_object_import)
+  rescue Hyacinth::Exceptions::NotFoundError => e
+    digital_object_import.digital_object_errors << e.message
+    :failure
+  end
+
+  def self.requeue_job(digital_object_import)
+    digital_object_import.requeue_count += 1
+    digital_object_import.save!
+    if digital_object_import.requeue_count <= MAX_REQUEUES
+      Hyacinth::Queue.process_digital_object_import(digital_object_import.id)
+      :requeued
+    else
+      :failure
+    end
+  end
+
+  def self.existing_object_for_update(digital_object_data, user, digital_object_import)
+    digital_object = DigitalObject::Base.find(digital_object_data['pid'])
+    digital_object.updated_by = user
+    digital_object
+  rescue Hyacinth::Exceptions::DigitalObjectNotFoundError => e
+    digital_object_import.digital_object_errors << e.message
+    nil
+  end
+
+  def self.new_object(digital_object_data, user, digital_object_import)
+    digital_object = DigitalObjectType.get_model_for_string_key(digital_object_data['digital_object_type']['string_key']).new
+    digital_object.created_by = user
+    digital_object.updated_by = user
+    digital_object
+  rescue Hyacinth::Exceptions::InvalidDigitalObjectTypeError => e
+    digital_object_import.digital_object_errors << e.message
+    nil
   end
 end
