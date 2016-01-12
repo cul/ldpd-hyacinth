@@ -64,7 +64,7 @@ class DigitalObject::Base
           # This object has no pid and therefore must be new. Link it to the fedora object with the given pid.
           begin
             @fedora_object = ActiveFedora::Base.find(digital_object_data['pid'])
-          rescue ActiveFedora::ObjectNotFoundError => e
+          rescue ActiveFedora::ObjectNotFoundError
             raise Hyacinth::Exceptions::AssociatedFedoraObjectNotFoundError, "Tried to set associated Fedora object for new DigitalObject, but could not find Fedora object with pid #{digital_object_data['pid']}"
           end
         else
@@ -407,6 +407,7 @@ class DigitalObject::Base
   def save
     if self.valid?
       DigitalObjectRecord.transaction do
+        
         if self.new_record?
           @fedora_object = self.get_new_fedora_object unless @fedora_object.present?
           @db_record.pid = @fedora_object.pid
@@ -414,6 +415,9 @@ class DigitalObject::Base
           # For existing records, we always lock on @db_record during Fedora reads/writes (and wrap in a transaction)
           @db_record.lock! # Within the established transaction, lock on this object's row.  Remember: "lock!" also reloads object data from the db, so perform all @db_record modifications AFTER this call.
         end
+        
+        # Add pid to identifiers if not present
+        @identifiers << pid unless @identifiers.include?(pid)
         
         run_post_validation_pre_save_logic()
         

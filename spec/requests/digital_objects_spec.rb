@@ -172,9 +172,6 @@ RSpec.describe "DigitalObjects", :type => :request do
       let(:sample_item_as_csv_export) { CSV.parse( fixture('sample_digital_object_data/sample_item_as_csv_export.csv').read ) }
     
       before :example do
-        
-        puts 'running this before example...'
-        
         # delete all current item records
         destroy_all_hyacinth_records()
         

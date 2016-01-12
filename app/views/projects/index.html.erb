@@ -6,7 +6,6 @@
       <th>String Key</th>
       <th>PID</th>
       <th>PID Generator</th>
-      <th>Import/Export</th>
     </tr>
   </thead>
 
@@ -17,7 +16,6 @@
         <td><%= project.string_key %></td>
         <td><%= project.pid %></td>
         <td><%= project.pid_generator.namespace %></td>
-        <td><%= link_to "Import", new_import_job_path(project_id: project.id), {role: "button", class: "btn btn-default btn-xs"} %></td>
       </tr>
     <% end %>
   </tbody>

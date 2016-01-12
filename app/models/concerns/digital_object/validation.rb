@@ -79,6 +79,13 @@ module DigitalObject::Validation
     else
       @errors.add(:project, 'Must have a project')
     end
+    
+    # Make sure that none of the identifiers match an existing Fedora object that is NOT this object's pid
+    @identifiers.each do |identifier|
+      if identifier != self.pid && ActiveFedora::Base.exists?(identifier)
+        @errors.add(:identifier, "Cannot assign identifier #{identifier} because a Fedora object with this pid already exists.")
+      end
+    end
 
     # Note: No longer validating date field values because dates aren't always numeric/consistent (i.e. "uuuu" for undated values) and we need to support import for incorrectly formatted values
     #date_fields = get_enabled_dynamic_fields.map{|enabled_dynamic_field| enabled_dynamic_field.dynamic_field}.select{|dynamic_field| dynamic_field.dynamic_field_type == DynamicField::Type::DATE}

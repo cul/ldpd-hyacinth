@@ -11,10 +11,18 @@ class ProcessDigitalObjectImportJob
 
     digital_object_data = JSON.parse(digital_object_import.digital_object_data)
 
-    begin
-      digital_object = DigitalObjectType.get_model_for_string_key(digital_object_data['digital_object_type']['string_key']).new
-    rescue Hyacinth::Exceptions::InvalidDigitalObjectTypeError
-      digital_object_import.digital_object_errors << 'Invalid digital_object_type specified: digital_object_type => ' + digital_object_data['digital_object_type'].inspect
+    if digital_object_data['pid'].present?
+      begin
+        digital_object = DigitalObject::Base.find(digital_object_data['pid'])
+      rescue Hyacinth::Exceptions::DigitalObjectNotFoundError => e
+        digital_object_import.digital_object_errors << e.message
+      end
+    else
+      begin
+        digital_object = DigitalObjectType.get_model_for_string_key(digital_object_data['digital_object_type']['string_key']).new
+      rescue Hyacinth::Exceptions::InvalidDigitalObjectTypeError
+        digital_object_import.digital_object_errors << 'Invalid digital_object_type specified: digital_object_type => ' + digital_object_data['digital_object_type'].inspect
+      end
     end
 
     begin

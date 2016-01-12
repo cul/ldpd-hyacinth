@@ -7,6 +7,7 @@ module DigitalObject::DynamicField
   end
 
   def update_dynamic_field_data(new_dynamic_field_data, merge)
+    
     if merge
       # During a merge, new top level key-value pairs are added and existing top level keys have their values replace by new values
       @dynamic_field_data.merge!(new_dynamic_field_data)
@@ -34,6 +35,9 @@ module DigitalObject::DynamicField
   end
 
   def remove_blank_fields_from_dynamic_field_data!(df_data=@dynamic_field_data)
+    
+    return if df_data.frozen? # We can't modify a frozen hash (e.g. uri-based controlled vocabulary field), so we won't.
+    
     # Step 1: Recursively handle values on lower levels
     df_data.each do |key, value|
       if value.is_a?(Array)
