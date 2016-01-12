@@ -7,23 +7,24 @@ class Hyacinth::Utils::CsvImportExportUtils
   ##############################
 
   def self.csv_to_digital_object_data(csv_data_string)
-    line_counter = -1
     header = Hyacinth::Csv::Header.new
 
+    csv_row_number = -1
+
     CSV.parse(csv_data_string) do |row|
-      line_counter += 1
+      csv_row_number += 1
 
       # first line is human readable, so we ignore it
-      next if line_counter == 0
+      next if csv_row_number == 0
 
       # second line is the real header line, so store it as such
-      if line_counter == 1
+      if csv_row_number == 1
         header.fields = row.map { |header_data| header_to_input_field(header_data) }
         next
       end
 
       # process the rest of the lines ...
-      yield header.document_for(row)
+      yield header.document_for(row), csv_row_number
     end
   end
 
@@ -60,11 +61,37 @@ class Hyacinth::Utils::CsvImportExportUtils
     put_object_at_builder_path(digital_object_data, input_field, value, true)
   end
 
-  ##############################
-  # Digital Object Data to CSV #
-  ##############################
+  def self.create_import_job_from_csv_data(csv_data_string, import_filename, user)
+    import_job = ImportJob.new(name: import_filename, user: user)
 
-  def self.digital_object_data_to_csv(_digital_object_data)
-    ''
+    # First, run through the CSV and do a quick validation
+    begin
+      Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(csv_data_string) do |digital_object_data, csv_row_number|
+        # Do some quick CSV data checks to find easy mistakes and avoid queueing jobs that we know will fail
+
+        # 1) Check for project
+        import_job.errors.add(:invalid_csv, "Missing project for row: #{csv_row_number + 1}") if digital_object_data['project'].blank?
+      end
+    rescue CSV::MalformedCSVError
+      # Handle invalid CSV
+      import_job.errors.add(:invalid_csv, 'Invalid CSV File')
+    end
+
+    # Assuming there were no validation errors, run through the CSV data again and do an import for real
+    unless import_job.errors.any?
+      import_job.save
+
+      Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(csv_data_string) do |digital_object_data|
+        digital_object_import = DigitalObjectImport.create!(
+          import_job: import_job,
+          digital_object_data: JSON.generate(digital_object_data)
+        )
+
+        # Queue up digital_object_import for procssing
+        Hyacinth::Queue.process_digital_object_import(digital_object_import.id)
+      end
+    end
+
+    import_job
   end
 end

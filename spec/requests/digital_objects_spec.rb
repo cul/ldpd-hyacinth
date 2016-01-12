@@ -14,7 +14,7 @@ RSpec.describe "DigitalObjects", :type => :request do
       expect(response.status).to be(200)
     end
   end
-  
+
   describe "authenticated actions" do
     
     let(:sample_item_digital_object_data) { JSON.parse( fixture('sample_digital_object_data/new_item.json').read ) }
@@ -34,7 +34,7 @@ RSpec.describe "DigitalObjects", :type => :request do
           'errors' => ['Missing param digital_object_data_json']
         })
       end
-      
+
       it "returns an error message if an invalid digital_object_type param is supplied" do
         
         sample_item_digital_object_data['digital_object_type']['string_key'] = 'invalid_type'
@@ -50,7 +50,7 @@ RSpec.describe "DigitalObjects", :type => :request do
           'errors' => ['Invalid digital_object_type specified: digital_object_type => {"string_key"=>"invalid_type"}']
         })
       end
-      
+
       it "successfully creates an Item when the correct set of parameters are supplied" do
         post(digital_objects_path, {
           digital_object_data_json: JSON.generate(sample_item_digital_object_data)
@@ -63,16 +63,16 @@ RSpec.describe "DigitalObjects", :type => :request do
       end
       
       describe "Create an Asset with attached file when the correct set of parameters are supplied" do
-        
+      
         it "works via post data upload (simulating browser form submission)" do
-          
+      
           asset_digital_object_data = sample_asset_digital_object_data
-          
+      
           # Manually override import_file settings to set the fixture to type == post data
           asset_digital_object_data['import_file'] = {
             'import_type' => DigitalObject::Asset::IMPORT_TYPE_POST_DATA
           }
-          
+      
           post(digital_objects_path, {
             digital_object_data_json: JSON.generate(sample_asset_digital_object_data),
             file: fixture_file_upload('/sample_upload_files/lincoln.jpg', 'image/jpeg')
@@ -172,9 +172,6 @@ RSpec.describe "DigitalObjects", :type => :request do
       let(:sample_item_as_csv_export) { CSV.parse( fixture('sample_digital_object_data/sample_item_as_csv_export.csv').read ) }
     
       before :example do
-        
-        puts 'running this before example...'
-        
         # delete all current item records
         destroy_all_hyacinth_records()
         
@@ -191,7 +188,7 @@ RSpec.describe "DigitalObjects", :type => :request do
       # Get download location from csv_export record
       let(:path_to_csv_file) { csv_export.path_to_csv_file }
       let(:csv) { CSV.read(path_to_csv_file) }
-      let(:generated_pid) { csv[1][0] }
+      let(:generated_pid) { csv[2][0] }
       context "search request method is GET" do
         before { get search_results_to_csv_digital_objects_path, {format: 'json'} }
 
@@ -201,13 +198,13 @@ RSpec.describe "DigitalObjects", :type => :request do
           expect(export_id).to be_a(Fixnum)
           # Text environment processes jobs immediately, so the export should be done and should have a status of "success"
           expect(csv_export.success?).to eq(true)
-          expect(csv[0][0]).to eq('_pid')
+          expect(csv[1][0]).to eq('_pid')
           # The PID field is randomly generated, so we'll copy the pid from the result to the csv fixture that we're testing against
-          sample_item_as_csv_export[1][0] = generated_pid
+          sample_item_as_csv_export[2][0] = generated_pid
           expect(csv).to eq(sample_item_as_csv_export)
         end
       end
-      
+
       context "search request method is POST" do
         before { post search_results_to_csv_digital_objects_path, {format: 'json'} }
 
@@ -217,9 +214,9 @@ RSpec.describe "DigitalObjects", :type => :request do
           expect(export_id).to be_a(Fixnum)
           # Text environment processes jobs immediately, so the export should be done and should have a status of "success"
           expect(csv_export.success?).to eq(true)
-          expect(csv[0][0]).to eq('_pid')
+          expect(csv[1][0]).to eq('_pid')
           # The PID field is randomly generated, so we'll copy the pid from the result to the csv fixture that we're testing against
-          sample_item_as_csv_export[1][0] = generated_pid
+          sample_item_as_csv_export[2][0] = generated_pid
           expect(csv).to eq(sample_item_as_csv_export)
         end
       end      
