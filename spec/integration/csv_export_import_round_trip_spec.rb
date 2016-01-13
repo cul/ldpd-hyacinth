@@ -31,7 +31,6 @@ describe "CSV Export Import Round Trip Spec" do
     it "works" do
       newly_created_digital_objects = []
       
-      # Create some items
       10.times do |i|
         
         ### Create group ###
@@ -103,6 +102,7 @@ describe "CSV Export Import Round Trip Spec" do
         digital_object.set_digital_object_data({
           'identifiers' => [], # Note: Clearing identifiers still leaves the pid as an identifier, which is fine
           'publish_targets' => [],
+          'parent_digital_objects' => [],
           'dynamic_field_data' => {
             # A title is required, otherwise the object won't validate
             'title' => [
