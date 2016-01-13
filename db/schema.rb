@@ -117,7 +117,6 @@ ActiveRecord::Schema.define(version: 20160104192553) do
     t.string   "controlled_vocabulary_string_key", limit: 255
   end
 
-  add_index "dynamic_fields", ["controlled_vocabulary_string_key"], name: "index_dynamic_fields_on_controlled_vocabulary_string_key", unique: true, using: :btree
   add_index "dynamic_fields", ["parent_dynamic_field_group_id"], name: "index_dynamic_fields_on_parent_dynamic_field_group_id", using: :btree
   add_index "dynamic_fields", ["string_key", "parent_dynamic_field_group_id"], name: "unique_string_key_and_parent_dynamic_field_group", unique: true, using: :btree
   add_index "dynamic_fields", ["string_key"], name: "index_dynamic_fields_on_string_key", using: :btree
