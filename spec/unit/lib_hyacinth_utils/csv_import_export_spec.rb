@@ -5,7 +5,7 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
   let(:new_digital_object_data) { {} }
   
   let(:builder_path_test_object) {
-    obj = {
+    {
       "name" => [
         {
            "name_value" => {
@@ -63,14 +63,12 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
     end
     
     it "converts properly for multiple digital objects in the same spreadsheet" do
-      
       counter = 0
       
       Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(expected_multiple_digital_objects_csv_data) do |digital_object_data|
         expect(digital_object_data).to eq(expected_multiple_digital_objects[counter])
         counter += 1
       end
-      
     end
     
   end

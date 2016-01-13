@@ -257,6 +257,7 @@ class DigitalObject::Base
           
           # Delete from Solr
           Hyacinth::Utils::SolrUtils.solr.delete_by_query "pid:#{UriService.solr_escape(pid)}"
+          Hyacinth::Utils::SolrUtils.solr.commit
           
           # Delete from Fedora
           Retriable.retriable on: [RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH], tries: NUM_FEDORA_RETRY_ATTEMPTS, base_interval: DELAY_IN_SECONDS_BETWEEN_FEDORA_RETRY_ATTEMPTS do

@@ -16,9 +16,6 @@
       "publish_targets":[
          {
             "string_key" : "publish_target2"
-         },
-         {
-            "string_key" : ""
          }
       ],
       "dynamic_field_data":{
@@ -47,11 +44,7 @@
    {
       "pid" : "",
       "identifiers" : ["new_item1"],
-      "parent_digital_objects" : [
-         {
-            "identifier" : ""
-         }
-      ],
+      "parent_digital_objects" : [],
       "digital_object_type" : {
          "string_key" : "item"
        },
@@ -91,12 +84,8 @@
    },
    {
       "pid" : "cul:456",
-      "identifiers" : [""],
-      "parent_digital_objects" : [
-         {
-            "identifier" : ""
-         }
-      ],
+      "identifiers" : [],
+      "parent_digital_objects" : [],
       "digital_object_type" : {
          "string_key" : "item"
        },
@@ -106,9 +95,6 @@
       "publish_targets":[
          {
             "string_key" : "publish_target2"
-         },
-         {
-            "string_key" : ""
          }
       ],
       "dynamic_field_data":{
@@ -149,9 +135,6 @@
          "string_key" : "the_project"
        },
       "publish_targets":[
-         {
-            "string_key" : ""
-         },
          {
             "string_key" : "publish_target2"
          }

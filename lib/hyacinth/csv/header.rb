@@ -15,6 +15,13 @@ module Hyacinth
           fields[index].put_value(digital_object_data, cell_value, true)
         end
 
+        # Clean up digital_object_data top level fields, removing any blank array values generated from blank spreadsheet cells
+        digital_object_data.each do |_key, value|
+          # If this value is an array, remove any blank strings or hashes with only blank values
+          next unless value.is_a?(Array) && value.length > 0
+          value.reject! { |el| el.blank? || (el.is_a?(Hash) && el.select { |_k, v| v.present? }.blank?) } # Remove blank elements or hashes with all blank values
+        end
+
         digital_object_data
       end
 

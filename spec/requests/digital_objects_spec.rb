@@ -171,16 +171,6 @@ RSpec.describe "DigitalObjects", :type => :request do
     
       let(:sample_item_as_csv_export) { CSV.parse( fixture('sample_digital_object_data/sample_item_as_csv_export.csv').read ) }
     
-      before :example do
-        # delete all current item records
-        destroy_all_hyacinth_records()
-        
-        # create new item record
-        post(digital_objects_path, {
-          digital_object_data_json: JSON.generate(sample_item_digital_object_data)
-        })
-      end
-    
       let(:response_status) { response.status }
       let(:response_json) { JSON.parse(response.body) }
       let(:export_id) { response_json['csv_export_id'] }
@@ -190,9 +180,15 @@ RSpec.describe "DigitalObjects", :type => :request do
       let(:csv) { CSV.read(path_to_csv_file) }
       let(:generated_pid) { csv[2][0] }
       context "search request method is GET" do
-        before { get search_results_to_csv_digital_objects_path, {format: 'json'} }
+        before {
+          destroy_all_hyacinth_records() # delete all current item records
+          get search_results_to_csv_digital_objects_path, {format: 'json'}
+        }
 
         it do
+          
+          # TODO: Update fixtures (sample item json file and expected csv file) to include reference to a parent object
+          
           expect(response_status).to be(200)
           expect(response_json['success']).to eq(true)
           expect(export_id).to be_a(Fixnum)
@@ -206,7 +202,10 @@ RSpec.describe "DigitalObjects", :type => :request do
       end
 
       context "search request method is POST" do
-        before { post search_results_to_csv_digital_objects_path, {format: 'json'} }
+        before {
+          destroy_all_hyacinth_records() # delete all current item records
+          post search_results_to_csv_digital_objects_path, {format: 'json'}
+        }
 
         it do
           expect(response_status).to be(200)

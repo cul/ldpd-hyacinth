@@ -40,6 +40,15 @@ class Hyacinth::Utils::CsvImportExportUtils
   def self.process_internal_field_value(digital_object_data, value, input_field)
     input_field = Hyacinth::Csv::Fields::Internal.new(input_field) unless input_field.is_a? Hyacinth::Csv::Fields::Internal
 
+    # If this value is an array, remove any blank strings or hashes with only blank values
+    if value.is_a?(Array) && value.length > 0
+      if value[0].is_a?(String)
+        value.reject!(&:blank?) # Remove blank String elements
+      elsif value[0].is_a?(Hash)
+        value.reject! { |_key, val| val.blank? } # Remove hash elements with blank values
+      end
+    end
+
     put_object_at_builder_path(digital_object_data, input_field, value, true)
   end
 

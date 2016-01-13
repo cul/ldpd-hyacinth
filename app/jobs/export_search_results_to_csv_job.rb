@@ -47,6 +47,7 @@ class ExportSearchResultsToCsvJob
     map['_digital_object_type.string_key'] ||= map.length
     DigitalObject::Base.search_in_batches(search_params, user, 50) do |digital_object_data|
       ### Handle core fields
+
       # identifiers, except for the pid which is its own column
       digital_object_data.fetch('identifiers', []).reject! do |identifier|
         identifier == digital_object_data['pid']
@@ -54,6 +55,12 @@ class ExportSearchResultsToCsvJob
       digital_object_data.fetch('identifiers', []).size.times do |index|
         map["_identifiers-#{index + 1}"] ||= map.length
       end
+
+      # parent_digital_objects
+      digital_object_data.fetch('parent_digital_objects', []).size.times do |index|
+        map["_parent_digital_objects-#{index + 1}.pid"] ||= map.length
+      end
+
       # publish_targets
       digital_object_data.fetch('publish_targets', []).size.times do |index|
         map["_publish_targets-#{index + 1}.string_key"] ||= map.length
