@@ -151,8 +151,8 @@ class DigitalObject::Base
     end
     
     # Dynamic Field Data
-    if digital_object_data[Hyacinth::Csv::Fields::Dynamic::DATA_KEY].present?
-      self.update_dynamic_field_data(digital_object_data[Hyacinth::Csv::Fields::Dynamic::DATA_KEY], merge_dynamic_fields)
+    if digital_object_data[DigitalObject::DynamicField::DATA_KEY].present?
+      self.update_dynamic_field_data(digital_object_data[DigitalObject::DynamicField::DATA_KEY], merge_dynamic_fields)
     end
     
     # If this is an Asset, and its title is blank after dynamic field data
@@ -237,21 +237,15 @@ class DigitalObject::Base
 
   # By default, marks a record as deleted, but doesn't completely purge it from the system.
   # Pass true for the purge param to completely eradicate this record.
-  def destroy(purge=false)
+  # Pass true for the force param to eradicate the record even if it doesn't pass
+  # validation. This will delete a record without updating other records that reference it (i.e. child records).
+  def destroy(purge=false, force=false)
 
     @db_record.with_lock do
       # Set state of 'D' for this object, which means "deleted" in Fedora
       self.state = 'D'
 
-      if valid?
-        if @parent_digital_object_pids.present?
-          # If present, convert this DigitalObject's parent membership relationships to obsolete parent relationships (for future auditing/troubleshooting purposes)
-          @parent_digital_object_pids.each do |parent_digital_object_pid|
-            obj = DigitalObject::Base.find(parent_digital_object_pid)
-            self.remove_parent_digital_object(obj)
-          end
-        end
-        
+      if valid? || force
         if purge
           # We're going to delete everything associated with this record
           
@@ -269,8 +263,18 @@ class DigitalObject::Base
           
           return true
         else
+          if @parent_digital_object_pids.present?
+            # If present, convert this DigitalObject's parent membership relationships to obsolete parent relationships (for future auditing/troubleshooting purposes)
+            @parent_digital_object_pids.each do |parent_digital_object_pid|
+              obj = DigitalObject::Base.find(parent_digital_object_pid)
+              self.remove_parent_digital_object(obj)
+            end
+          end
+          
           return self.save
         end
+      else
+        Hyacinth::Utils::Logger.error "Tried to delete Hyacinth record with pid #{self.pid}, but record was not valid. Errors: #{self.errors.messages.inspect}"
       end
     end
     

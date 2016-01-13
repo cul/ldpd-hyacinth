@@ -2,7 +2,6 @@ module Hyacinth
   module Csv
     module Fields
       class Dynamic < Base
-        DATA_KEY = 'dynamic_field_data'
         def parse_path(dynamic_field_header_name)
           new_builder_path = dynamic_field_header_name.split(/[:-]/).map do |piece|
             raise 'Dynamic field header names cannot be 0-indexed. Must be 1-indexed.' if piece == '0'
@@ -18,12 +17,12 @@ module Hyacinth
         end
 
         def put_value(object, value, create_missing_path = true)
-          super(object[DATA_KEY] ||= {}, value, create_missing_path)
+          super(object[DigitalObject::DynamicField::DATA_KEY] ||= {}, value, create_missing_path)
         end
 
         def get_value(object)
           # TODO: Come up with a better way to prevent duping the DFD key
-          super(object.fetch(DATA_KEY, object))
+          super(object.fetch(DigitalObject::DynamicField::DATA_KEY, object))
         end
 
         def to_header

@@ -17,8 +17,6 @@ class ControlledVocabulary < ActiveRecord::Base
       @display_label = UriService.client.find_vocabulary(self.string_key)[:display_label]
     end
     
-    puts 'return ' + @display_label
-    
     return @display_label
     
   end

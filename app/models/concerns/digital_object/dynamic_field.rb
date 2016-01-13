@@ -1,5 +1,7 @@
 module DigitalObject::DynamicField
   extend ActiveSupport::Concern
+  
+  DATA_KEY = 'dynamic_field_data'
 
   included do
     include DigitalObject::UriServiceValues

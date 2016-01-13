@@ -133,9 +133,6 @@ class Project < ActiveRecord::Base
 
   def validate_custom_asset_directory
     if full_path_to_custom_asset_directory.present?
-
-      puts 'Checking out: ' + self.get_asset_directory
-
       unless (File.exists?(self.get_asset_directory) &&
           File.readable?(self.get_asset_directory) &&
           File.writable?(self.get_asset_directory)
@@ -143,7 +140,6 @@ class Project < ActiveRecord::Base
         errors.add(:full_path_to_custom_asset_directory, 'could not be written to.  Ensure that the path exists and has the correct read/write permissions: "' + full_path_to_custom_asset_directory + '"')
       end
     end
-
   end
 
 end

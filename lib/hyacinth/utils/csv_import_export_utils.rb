@@ -64,7 +64,7 @@ class Hyacinth::Utils::CsvImportExportUtils
 
   def self.process_dynamic_field_value(digital_object_data, value, input_field, _current_builder_path)
     # Note: All dynamic field data goes under a top level key called 'dynamic_field_data'
-    digital_object_data[Hyacinth::Csv::Fields::Dynamic::DATA_KEY] ||= {}
+    digital_object_data[DigitalObject::DynamicField::DATA_KEY] ||= {}
     input_field = Hyacinth::Csv::Fields::Dynamic.new(input_field) unless input_field.is_a? Hyacinth::Csv::Fields::Dynamic
 
     put_object_at_builder_path(digital_object_data, input_field, value, true)

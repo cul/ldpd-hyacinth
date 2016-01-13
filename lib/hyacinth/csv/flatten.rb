@@ -4,7 +4,7 @@ module Hyacinth::Csv::Flatten
   module ClassMethods
     def keys_for_document(document, omit_blank_values = false)
       document = document.clone
-      df_data = document.delete(Hyacinth::Csv::Fields::Dynamic::DATA_KEY) || {}
+      df_data = document.delete(DigitalObject::DynamicField::DATA_KEY) || {}
 
       internals = pointers_for_hash(document, omit_blank_values)
       internals.map! { |pointer| Hyacinth::Csv::Fields::Internal.new(pointer) }
