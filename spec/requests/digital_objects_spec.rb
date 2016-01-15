@@ -194,10 +194,6 @@ RSpec.describe "DigitalObjects", :type => :request do
         }
 
         it do
-          
-          # TODO: Make this test even more thorough by updating fixtures (sample item
-          # json file and expected csv file) to include reference to a parent object
-          
           expect(response_status).to be(200)
           expect(response_json['success']).to eq(true)
           expect(export_id).to be_a(Fixnum)

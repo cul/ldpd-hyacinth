@@ -274,7 +274,7 @@ class DigitalObject::Base
           return self.save
         end
       else
-        Hyacinth::Utils::Logger.error "Tried to delete Hyacinth record with pid #{self.pid}, but record was not valid. Errors: #{self.errors.messages.inspect}"
+        Hyacinth::Utils::Logger.logger.error "Tried to delete Hyacinth record with pid #{self.pid}, but record was not valid. Errors: #{self.errors.messages.inspect}"
       end
     end
     

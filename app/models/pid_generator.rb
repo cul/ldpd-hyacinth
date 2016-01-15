@@ -64,7 +64,7 @@ class PidGenerator < ActiveRecord::Base
       # Verify that this PID has not been used before
       if ActiveFedora::Base.exists?(newly_minted_pid)
         # If Fedora is available, check to see if an object in Fedora already exists with this PID
-        Hyacinth::Utils::Logger.info 'PID ' + newly_minted_pid + ' already exists in Fedora.  Generating new PID.'
+        Hyacinth::Utils::Logger.logger.info 'PID ' + newly_minted_pid + ' already exists in Fedora.  Generating new PID.'
 
         # Generate a new pid
         newly_minted_pid = self.next_pid

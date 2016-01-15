@@ -11,7 +11,6 @@ module Hyacinth
 
         data.each_with_index do |cell_value, index|
           cell_value = '' if cell_value.nil? # If the cell value is nil, convert it into an empty string
-
           fields[index].put_value(digital_object_data, cell_value, true)
         end
 

@@ -6,6 +6,7 @@
       <th>User</th>
       <th>Creation Date</th>
       <th>Status</th>
+      <th>Number of Records Processed</th>
       <th>Download</th>
       <th>Delete?</th>
     </tr>
@@ -21,7 +22,11 @@
           <td><%= csv_export.search_params %></td>
           <td><%= csv_export.user.full_name %></td>
           <td><%= csv_export.created_at.in_time_zone(HYACINTH['time_zone']) %></td>
-          <td><%= csv_export.status %></td>
+          <td>
+            <%= csv_export.status %>
+            <%= csv_export.pending? ? '' : ('<br /><small>(' + csv_export.duration.to_s + ' seconds)</small>').html_safe %>
+          </td>
+          <td><%= csv_export.number_of_records_processed %></td>
           <td><%= csv_export.success? ? link_to('Download', download_csv_export_path(csv_export)) : 'pending' %></td>
           <td><%= true ? link_to('Delete', csv_export, method: :delete, data: { confirm: 'Are you sure?' }) : 'pending' %></td>
         </tr>

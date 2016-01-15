@@ -46,6 +46,13 @@ gem 'attr_encrypted', '>= 1.3.3'
 # Mime Type detection
 gem 'mime-types'
 
+# Character encoding detection
+gem 'charlock_holmes'
+
+# Excel spreadsheets
+gem 'spreadsheet'
+gem 'rubyXL'
+
 # Multithreaded tasks
 gem 'thread'
 

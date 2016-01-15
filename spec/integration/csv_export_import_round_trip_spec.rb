@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe "CSV Export Import Round Trip Spec" do
+describe "CSV Export-Import Round Trip" do
   
   before :example do
     # delete all current item records
