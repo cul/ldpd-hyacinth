@@ -73,13 +73,14 @@ class ExportSearchResultsToCsvJob
       end
 
       ### Handle dynamic fields
-      # For controlled fields, skip the 'vocabulary_string_key' and
-      # 'type' fields because they're not helpful
+      # For controlled fields, skip the 'vocabulary_string_key', 'type' and
+      # 'internal_id' fields because they're not helpful
       flat_keys = keys_for_document(digital_object_data, true).reject do |csv_header|
-        csv_header.ends_with?('.vocabulary_string_key') ||
-        csv_header.ends_with?('.type') ||
-        csv_header.ends_with?('.pid') ||
-        csv_header.ends_with?('.display_label')
+        reject_field = false
+        ['.vocabulary_string_key', '.type', '.internal_id', '.pid', '.display_label'].each do |ending|
+          reject_field = true if csv_header.ends_with?(ending)
+        end
+        reject_field
       end
       flat_keys -= SUPPRESSED_ON_EXPORT
       flat_keys.each do |csv_header|
