@@ -1,4 +1,4 @@
-<%= form_tag(@term.nil? ? terms_path : term_path(@term['uri']), method: @term.nil? ? 'post' : 'put', id: 'add-or-edit-term-form') do %>
+<%= form_tag(@term.nil? ? terms_path : term_path(@term['internal_id']), method: @term.nil? ? 'post' : 'put', id: 'add-or-edit-term-form') do %>
   <% if @errors.present? %>
     <div id="error_explanation">
       <h2><%= pluralize(@errors.count, "error") %> prohibited this authorized_term from being saved:</h2>
@@ -31,8 +31,12 @@
     <%= label_tag 'term[value]', 'Value' %><br>
     <%= text_field_tag 'term[value]', params[:term]['value'] || (@term.nil? ? '' : @term['value']) || '', {class: 'form-control'} %>
   </div>
+  <div class="field term-authority-field">
+    <%= label_tag 'term[authority]', 'Authority' %><br>
+    <%= text_field_tag 'term[authority]', params[:term]['authority'] || (@term.nil? ? '' : @term['authority']) || '', {class: 'form-control'} %>
+  </div>
   <div class="field term-uri-field">
-    <%= label_tag 'term[uri]', 'URI (Leave blank for local term)' %><br>
+    <%= label_tag 'term[uri]', 'URI' %><br>
     <%= hidden_field_tag 'term[uri]', params[:term]['uri'] || (@term.nil? ? '' : @term['uri']) || '', disabled: (@term.nil?) %>
     <%= text_field_tag 'term[uri]', params[:term]['uri'] || (@term.nil? ? '' : @term['uri']) || '', disabled: !(@term.nil?), class: 'form-control' %>
   </div>

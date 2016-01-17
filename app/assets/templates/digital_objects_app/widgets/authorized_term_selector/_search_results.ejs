@@ -33,10 +33,13 @@
             <% $.each(authorizedTerms[i], function(key, value){ %>
               <% if(key == 'uri') {return;} %>
               <% if(key == 'value') {return;} %>
+              <% if(key == 'internal_id') {return;} %>
               <% if(key == 'vocabulary_string_key') {return;} %>
               <%
                 if (key == 'type') {
                   display_label = 'Type';
+                } else if (key == 'authority') {
+                  display_label = 'Authority';
                 } else {
                   display_label = additionalFieldsForControlledVocabulary[key] ? additionalFieldsForControlledVocabulary[key]['display_label'] : key
                 }

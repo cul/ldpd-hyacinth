@@ -7,7 +7,7 @@ Hyacinth::Application.routes.draw do
     end
   end
 
-  resources :terms, constraints: { id: URI.regexp }
+  resources :terms
 
   resources :controlled_vocabularies do
     member do

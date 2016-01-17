@@ -33,7 +33,7 @@
           <td><%= term['value'] %></td>
           <td><%= term['type'] %></td>
           <td><%= term['uri'] %></td>
-          <td class="aligncenter"><%= link_to 'View', term_path(term['uri']), class: 'btn btn-default btn-xs' %> <%= link_to 'Edit', edit_term_path(term['uri']), class: 'btn btn-default btn-xs' %></td>
+          <td class="aligncenter"><%= link_to 'View', term_path(term['internal_id']), class: 'btn btn-default btn-xs' %> <%= link_to 'Edit', edit_term_path(term['internal_id']), class: 'btn btn-default btn-xs' %></td>
         </tr>
         <%
           if counter == @per_page

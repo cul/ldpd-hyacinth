@@ -15,13 +15,25 @@
   <div class="col-md-9"><%= @term['value'] %></div>
 </div>
 
+<% if @term['authority'] %>
+<div class="row">
+  <div class="col-md-3"><label>Authority</label></div>
+  <div class="col-md-9"><%= @term['authority'] %></div>
+</div>
+<% end %>
+
 <div class="row">
   <div class="col-md-3"><label>URI</label></div>
   <div class="col-md-9"><%= @term['uri'] %></div>
 </div>
 
+<div class="row">
+  <div class="col-md-3"><label>Internal ID</label></div>
+  <div class="col-md-9"><%= @term['internal_id'] %></div>
+</div>
+
 <% @term.each do |key, val| %>
-  <% next if ['uri', 'value', 'vocabulary_string_key', 'type'].include?(key) %>
+  <% next if ['uri', 'value', 'vocabulary_string_key', 'type', 'internal_id', 'authority'].include?(key) %>
   
   <% display_value = (TERM_ADDITIONAL_FIELDS[@controlled_vocabulary.string_key] && TERM_ADDITIONAL_FIELDS[@controlled_vocabulary.string_key][key]) ? TERM_ADDITIONAL_FIELDS[@controlled_vocabulary.string_key][key]['display_label'] :  key + ' (no friendly label)' %>
   

@@ -117,13 +117,16 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
     var type = $(this).val();
     var $addAuthorizedTermForm = $(this).closest('.add_authorized_term_form');
     if (type == 'external') {
+        $addAuthorizedTermForm.find('.term-authority-field').show();
         $addAuthorizedTermForm.find('.term-uri-field').show();
         $addAuthorizedTermForm.find('.term-additional-field').show();
     } else if (type == 'local') {
+        $addAuthorizedTermForm.find('.term-authority-field').show();
         $addAuthorizedTermForm.find('.term-uri-field').hide();
         $addAuthorizedTermForm.find('.term-uri-field').find('input').val(''); // clear value of uri input
         $addAuthorizedTermForm.find('.term-additional-field').show();
     } else if (type == 'temporary') {
+        $addAuthorizedTermForm.find('.term-authority-field').hide();
         $addAuthorizedTermForm.find('.term-uri-field').hide().val('');
         $addAuthorizedTermForm.find('.term-uri-field').find('input').val(''); // clear value of uri input
         $addAuthorizedTermForm.find('.term-additional-field').hide();
@@ -207,13 +210,16 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.generateAuthorizedTe
     'value' : {
       'display_label' : 'Value'
     },
+    'authority' : {
+      'display_label' : 'Authority'
+    },
     'uri' : {
       'display_label' : 'URI'
     }
   }
   
   var formFieldsToRender = Hyacinth.ObjectHelpers.merge(this.additionalFieldsForControlledVocabulary, defaultFields);
-  var orderedFieldNames = ['value', 'uri'].concat(_.keys(this.additionalFieldsForControlledVocabulary).sort());
+  var orderedFieldNames = ['value', 'authority', 'uri'].concat(_.keys(this.additionalFieldsForControlledVocabulary).sort());
   
   orderedFieldNames.forEach(function(field_name){
     
@@ -222,6 +228,8 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.generateAuthorizedTe
         fieldClass = 'term-uri-field';
     } else if (field_name == 'value') {
         fieldClass = 'term-value-field';
+    } else if (field_name == 'authority') {
+        fieldClass = 'term-authority-field';
     } else {
         fieldClass = 'term-additional-field';
     }

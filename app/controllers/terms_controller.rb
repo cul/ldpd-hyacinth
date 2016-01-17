@@ -37,15 +37,19 @@ class TermsController < ApplicationController
       new_term_opts = {}
       new_term_opts[:vocabulary_string_key] = term_prms.delete('controlled_vocabulary_string_key')
       new_term_opts[:value] = term_prms.delete('value')
+      new_term_opts[:authority] = term_prms.delete('authority')
       
       # Delete fields that are blank. This is okay because we're in the create method and aren't using blank fields to clear out existing fields.
       term_prms.delete_if{|key, value| value.blank?}
       
       new_term_opts[:uri] = term_prms.delete('uri') if term_prms.has_key?('uri')
       
-      unless type == UriService::TermType::TEMPORARY
-        # Do not set additional_fields for TEMPORARY terms.
+      if type == UriService::TermType::TEMPORARY
+        # If authority is set for a TEMPORARY term (which it shouldn't be), then unset it.  Otherwise we'll get an error.
+        new_term_opts.delete(:authority) if new_term_opts.has_key?(:authority)
+      else
         # For non-TEMPORARY terms, assume treat all remaining (non-deleted) parameters as additional_fields.
+        # TEMPORARY terms do not have additional_fields.
         new_term_opts[:additional_fields] = term_prms if term_prms.present?
       end
       
@@ -61,7 +65,7 @@ class TermsController < ApplicationController
 
     respond_to do |format|
       if @errors.blank?
-        format.html { redirect_to term_path(@term['uri']), notice: 'Term was successfully created.' }
+        format.html { redirect_to term_path(@term['internal_id']), notice: 'Term was successfully created.' }
         format.json {
           render json: @term
         }
@@ -83,7 +87,7 @@ class TermsController < ApplicationController
     
     begin
       @term = UriService.client.update_term(term_prms['uri'],
-        { value: term_prms['value'], additional_fields: term_prms['additional_fields']}
+        { value: term_prms['value'], authority: term_prms['authority'], additional_fields: term_prms['additional_fields']}
       )
     rescue UriService::NonExistentUriError, UriService::InvalidAdditionalFieldKeyError => e
       @errors << e.message
@@ -91,7 +95,7 @@ class TermsController < ApplicationController
 
     respond_to do |format|
       if @errors.blank?
-        format.html { redirect_to term_path(@term['uri']), notice: 'Term was successfully updated.' }
+        format.html { redirect_to term_path(@term['internal_id']), notice: 'Term was successfully updated.' }
         format.json {
           render json: @term
         }
@@ -119,8 +123,8 @@ class TermsController < ApplicationController
   private
   # Use callbacks to share common setup or constraints between actions.
   def set_term
-    @term = UriService.client.find_term_by_uri(params[:id])
-    raise ActionController::RoutingError.new('Could not find Term with URI: ' + params[:id]) if @term.nil?
+    @term = UriService.client.find_term_by_internal_id(params[:id])
+    raise ActionController::RoutingError.new("Could not find Term with internal_id: #{params[:id]}") if @term.nil?
   end
   
   def set_controlled_vocabulary
@@ -136,7 +140,7 @@ class TermsController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def term_params
     params.require(:term).permit([
-      :controlled_vocabulary_string_key, :value, :uri, :type,
+      :controlled_vocabulary_string_key, :value, :uri, :type, :authority,
     ] + (
       TERM_ADDITIONAL_FIELDS[params[:term]['controlled_vocabulary_string_key']].blank? ? [] :
       TERM_ADDITIONAL_FIELDS[params[:term]['controlled_vocabulary_string_key']].map{|key, value| key.to_sym})
@@ -165,12 +169,12 @@ class TermsController < ApplicationController
 
     case params[:action]
     when 'show'
-      @contextual_nav_options['nav_items'].push(label: 'Edit', url: edit_term_path(@term['uri'])) if current_user.can_manage_controlled_vocabulary_terms?(@controlled_vocabulary)
+      @contextual_nav_options['nav_items'].push(label: 'Edit', url: edit_term_path(@term['internal_id'])) if current_user.can_manage_controlled_vocabulary_terms?(@controlled_vocabulary)
     when 'edit', 'update'
       @contextual_nav_options['nav_title']['label'] =  ('&laquo; Cancel Edit').html_safe
-      @contextual_nav_options['nav_title']['url'] = term_path(@term['uri'])
+      @contextual_nav_options['nav_title']['url'] = term_path(@term['internal_id'])
 
-      @contextual_nav_options['nav_items'].push(label: 'Delete This Term', url: term_path(@term['uri']), options: {method: :delete, data: { confirm: 'Are you sure you want to delete this Term?' } }) if current_user.can_manage_controlled_vocabulary_terms?(@controlled_vocabulary)
+      @contextual_nav_options['nav_items'].push(label: 'Delete This Term', url: term_path(@term['internal_id']), options: {method: :delete, data: { confirm: 'Are you sure you want to delete this Term?' } }) if current_user.can_manage_controlled_vocabulary_terms?(@controlled_vocabulary)
     end
 
   end

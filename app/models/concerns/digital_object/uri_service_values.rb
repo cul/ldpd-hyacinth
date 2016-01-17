@@ -14,12 +14,15 @@ module DigitalObject::UriServiceValues
           if dynamic_field_group_value[controlled_term_df_string_key]['uri'].present?
             uri = nil
             value = nil
+            authority = nil
             additional_fields = {}
             dynamic_field_group_value[controlled_term_df_string_key].each do |key, val|
               if key == 'uri'
                 uri = val
               elsif key == 'value'
                 value = val
+              elsif key == 'authority'
+                authority = val
               else
                 additional_fields[key] = val
               end
@@ -28,7 +31,6 @@ module DigitalObject::UriServiceValues
             if uri.blank? && value.present?
               # If URI is blank and a value is present, then we'll assign this value to a temporary term, only considering the string value
               temporary_term = UriService.client.create_term(UriService::TermType::TEMPORARY, {vocabulary_string_key: controlled_vocabulary_string_key, value: value})
-              temporary_term['uri']
               dynamic_field_group_value[controlled_term_df_string_key] = term # Update dynamic_field_data
             else
               # URI is present, so we'll check whether it exists already.
@@ -36,7 +38,7 @@ module DigitalObject::UriServiceValues
               # If it doesn't exist, register it as a new EXTERNAL term
               term = UriService.client.find_term_by_uri(uri)
               if term.nil?
-                new_external_term = UriService.client.create_term(UriService::TermType::EXTERNAL, {vocabulary_string_key: controlled_vocabulary_string_key, value: value, uri: uri, additional_fields: additional_fields})
+                new_external_term = UriService.client.create_term(UriService::TermType::EXTERNAL, {vocabulary_string_key: controlled_vocabulary_string_key, value: value, uri: uri, authority: authority, additional_fields: additional_fields})
                 dynamic_field_group_value[controlled_term_df_string_key] = new_external_term # Update dynamic_field_data
               else
                 # Term exists. Assign term data to record.
