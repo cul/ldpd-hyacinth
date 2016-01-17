@@ -44,6 +44,9 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
     let(:expected_existing_item_csv_data) { fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/existing_item_update_example.csv').read }
     let(:expected_multiple_digital_objects_csv_data) { fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/multiple_digital_objects_example.csv').read }
     
+    let(:special_chars_csv_utf8_file) { fixture('sample_digital_object_data/special_char_csv_fixtures/special_chars_csv_utf8.csv') }
+    let(:special_chars_csv_latin1_file) { fixture('sample_digital_object_data/special_char_csv_fixtures/special_chars_csv_latin1.csv') }
+    
     it "converts properly for a new item" do
       Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(expected_new_item_csv_data) do |digital_object_data|
         expect(digital_object_data).to eq(expected_new_item)
@@ -71,6 +74,19 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
       end
     end
     
+    it "properly interprets non-ASCII characters from a Latin1 CSV file" do
+      csv_data = special_chars_csv_latin1_file.read
+      Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(csv_data) do |digital_object_data|
+        expect(digital_object_data['dynamic_field_data']['title'][0]['title_sort_portion']).to eq('Title with special chars † áéíøü')
+      end
+    end
+    
+    it "properly interprets non-ASCII characters from a UTF-8 CSV file" do
+      csv_data = special_chars_csv_utf8_file.read
+      Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(csv_data) do |digital_object_data|
+        expect(digital_object_data['dynamic_field_data']['title'][0]['title_sort_portion']).to eq('Title with special chars † áéíøü')
+      end
+    end
   end
 
   describe ".process_internal_field_value" do
@@ -127,7 +143,6 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
     end
     
     it "raises an exception if a 0-indexed internal field header is supplied (because headers should be 1-indexed)" do
-      current_builder_path = []
       expect {
         Hyacinth::Utils::CsvImportExportUtils.process_internal_field_value(new_digital_object_data, 'value', '_publish_target-0.string_key')
       }.to raise_error('Internal field header names cannot be 0-indexed. Must be 1-indexed.')

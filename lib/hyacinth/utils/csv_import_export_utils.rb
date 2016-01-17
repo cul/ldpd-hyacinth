@@ -7,6 +7,14 @@ class Hyacinth::Utils::CsvImportExportUtils
   ##############################
 
   def self.csv_to_digital_object_data(csv_data_string)
+    # Convert CSV data to UTF-8 if it isn't already UTF-8
+    detection = CharlockHolmes::EncodingDetector.detect(csv_data_string)
+    if detection[:ruby_encoding] != Encoding::UTF_8.to_s || detection[:confidence] != 100
+      csv_data_string = CharlockHolmes::Converter.convert csv_data_string, detection[:encoding], Encoding::UTF_8.to_s # Convert to UTF-8
+    else
+      csv_data_string = csv_data_string.force_encoding(Encoding::UTF_8) # Force UTF-8 all the time because that's what Hyacinth uses internally
+    end
+
     header = Hyacinth::Csv::Header.new
 
     csv_row_number = -1
@@ -90,10 +98,11 @@ class Hyacinth::Utils::CsvImportExportUtils
     unless import_job.errors.any?
       import_job.save
 
-      Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(csv_data_string) do |digital_object_data|
+      Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(csv_data_string) do |digital_object_data, csv_row_number|
         digital_object_import = DigitalObjectImport.create!(
           import_job: import_job,
-          digital_object_data: JSON.generate(digital_object_data)
+          digital_object_data: JSON.generate(digital_object_data),
+          csv_row_number: csv_row_number + 1
         )
 
         # Queue up digital_object_import for procssing

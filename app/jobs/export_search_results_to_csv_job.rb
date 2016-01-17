@@ -8,6 +8,8 @@ class ExportSearchResultsToCsvJob
   @queue = Hyacinth::Queue::DIGITAL_OBJECT_CSV_EXPORT
 
   def self.perform(csv_export_id)
+    start_time = Time.now
+
     csv_export = CsvExport.find(csv_export_id)
     user = csv_export.user
     search_params = JSON.parse(csv_export.search_params)
@@ -19,6 +21,7 @@ class ExportSearchResultsToCsvJob
     # Headers will gathere in memory, and then sorted later on.
     # Then the final CSV will be generated from the in-memory headers
     # and the temporary CSV file.
+    number_of_records_processed = 0
     CSV.open(path_to_csv_file + '.tmp', 'wb') do |csv|
       map_temp_field_indexes(search_params, user, temp_field_indexes) do |column_map, digital_object_data|
         headers = column_map.each_with_object([]) do |entry, memo|
@@ -27,6 +30,8 @@ class ExportSearchResultsToCsvJob
         # Write entire row to CSV file
         row = Hyacinth::Csv::Row.from_document(digital_object_data, headers)
         csv << row.fields
+        number_of_records_processed += 1
+        csv_export.update(number_of_records_processed) if number_of_records_processed % 1000 == 0
       end
     end
 
@@ -36,6 +41,9 @@ class ExportSearchResultsToCsvJob
     # Delete temporary CSV
     FileUtils.rm(path_to_csv_file + '.tmp')
     csv_export.path_to_csv_file = path_to_csv_file
+
+    csv_export.duration = (Time.now - start_time)
+    csv_export.number_of_records_processed = number_of_records_processed
     csv_export.success!
     csv_export.save
   end
@@ -95,7 +103,12 @@ class ExportSearchResultsToCsvJob
   def self.write_csv(path_to_csv_file, field_list, field_index_map)
     # Open new CSV for writing
     CSV.open(path_to_csv_file, 'wb') do |final_csv|
-      final_csv << ['placeholder']
+      # Write out human-friendly column display labels
+      # TODO: Actually write out human-friendly column display labels.
+      # For now, we're just redundantly writing out a second copy of the less
+      # human-friendly machine-parsable hyacinth column headers.
+      final_csv << field_list
+
       # Write out column headers
       final_csv << field_list
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160104192553) do
+ActiveRecord::Schema.define(version: 20160114164514) do
 
   create_table "controlled_vocabularies", force: :cascade do |t|
     t.string   "string_key",             limit: 255
@@ -23,13 +23,15 @@ ActiveRecord::Schema.define(version: 20160104192553) do
   add_index "controlled_vocabularies", ["only_managed_by_admins"], name: "index_controlled_vocabularies_on_only_managed_by_admins", using: :btree
 
   create_table "csv_exports", force: :cascade do |t|
-    t.text     "search_params",    limit: 65535
-    t.integer  "user_id",          limit: 4
-    t.text     "path_to_csv_file", limit: 65535
-    t.text     "export_errors",    limit: 65535
-    t.integer  "status",           limit: 4,     default: 0, null: false
-    t.datetime "created_at",                                 null: false
-    t.datetime "updated_at",                                 null: false
+    t.text     "search_params",               limit: 65535
+    t.integer  "user_id",                     limit: 4
+    t.text     "path_to_csv_file",            limit: 65535
+    t.text     "export_errors",               limit: 65535
+    t.integer  "status",                      limit: 4,     default: 0, null: false
+    t.datetime "created_at",                                            null: false
+    t.datetime "updated_at",                                            null: false
+    t.integer  "duration",                    limit: 4,     default: 0, null: false
+    t.integer  "number_of_records_processed", limit: 4,     default: 0, null: false
   end
 
   add_index "csv_exports", ["status"], name: "index_csv_exports_on_status", using: :btree
@@ -43,6 +45,7 @@ ActiveRecord::Schema.define(version: 20160104192553) do
     t.datetime "created_at",                                      null: false
     t.datetime "updated_at",                                      null: false
     t.integer  "requeue_count",         limit: 4,     default: 0, null: false
+    t.integer  "csv_row_number",        limit: 4
   end
 
   add_index "digital_object_imports", ["import_job_id"], name: "index_digital_object_imports_on_import_job_id", using: :btree
