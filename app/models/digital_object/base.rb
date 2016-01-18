@@ -250,7 +250,7 @@ class DigitalObject::Base
           # We're going to delete everything associated with this record
           
           # Delete from Solr
-          Hyacinth::Utils::SolrUtils.solr.delete_by_query "pid:#{UriService.solr_escape(pid)}"
+          Hyacinth::Utils::SolrUtils.solr.delete_by_query "pid:#{Hyacinth::Utils::SolrUtils.solr_escape(pid)}"
           Hyacinth::Utils::SolrUtils.solr.commit
           
           # Delete from Fedora

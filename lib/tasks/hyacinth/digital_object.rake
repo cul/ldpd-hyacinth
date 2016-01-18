@@ -40,7 +40,7 @@ namespace :hyacinth do
         end
 
         # Remove from solr
-        Hyacinth::Utils::SolrUtils.solr.delete_by_query "pid:#{UriService.solr_escape(pid)}"
+        Hyacinth::Utils::SolrUtils.solr.delete_by_query "pid:#{Hyacinth::Utils::SolrUtils.solr_escape(pid)}"
 
         # Delete from Fedora
         begin
