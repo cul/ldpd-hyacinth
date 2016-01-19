@@ -89,25 +89,27 @@ class DynamicFieldGroupsController < ApplicationController
       @child_dynamic_fields_and_dynamic_field_groups = @dynamic_field_group.get_child_dynamic_fields_and_dynamic_field_groups
       
       # Determine which children need to be swapped
-      index_of_child_to_shift = @child_dynamic_fields_and_dynamic_field_groups.index { |el| el.string_key == dynamic_field_or_dynamic_field_group_string_key }
-      element1 = @child_dynamic_fields_and_dynamic_field_groups[index_of_child_to_shift]
-      element2 = nil
+      index_of_child_to_shift = @child_dynamic_fields_and_dynamic_field_groups.index { |child| child.string_key == dynamic_field_or_dynamic_field_group_string_key }
       if direction == 'up'
-        element2 = @child_dynamic_fields_and_dynamic_field_groups[index_of_child_to_shift-1]
+        index_of_other_child_to_swap_with = index_of_child_to_shift - 1
+        index_of_other_child_to_swap_with = @child_dynamic_fields_and_dynamic_field_groups.length - 1 if index_of_other_child_to_swap_with < 0
       elsif direction == 'down'
-        element2 = @child_dynamic_fields_and_dynamic_field_groups[index_of_child_to_shift+1] || @child_dynamic_fields_and_dynamic_field_groups[0]
+        index_of_other_child_to_swap_with = index_of_child_to_shift + 1
+        index_of_other_child_to_swap_with = 0 if index_of_other_child_to_swap_with >= @child_dynamic_fields_and_dynamic_field_groups.length
       end
       
-      # Swap sort_order of elements and save in a transaction so that it's an all-or-nothing save
-      unless element2.nil?
-        old_element1_sort_order = element1.sort_order
-        element1.sort_order = element2.sort_order
-        element2.sort_order = old_element1_sort_order
-        DynamicFieldGroup.transaction do
-          element1.save!
-          element2.save!
+      # Swap order of children to swap
+      child1 = @child_dynamic_fields_and_dynamic_field_groups[index_of_child_to_shift]
+      child2 = @child_dynamic_fields_and_dynamic_field_groups[index_of_other_child_to_swap_with]
+      @child_dynamic_fields_and_dynamic_field_groups[index_of_child_to_shift] = child2
+      @child_dynamic_fields_and_dynamic_field_groups[index_of_other_child_to_swap_with] = child1
+      
+      # Re-number the order all elements in @child_dynamic_fields_and_dynamic_field_groups to correct any existing ordering issues
+      DynamicFieldGroup.transaction do
+        @child_dynamic_fields_and_dynamic_field_groups.each_with_index do |child, index|
+          child.sort_order = index
+          child.save!
         end
-        
         success = true
       end
     end
