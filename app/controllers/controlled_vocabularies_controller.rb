@@ -76,12 +76,16 @@ class ControlledVocabulariesController < ApplicationController
     else
       @page = 1
     end
-
+    
     if params[:per_page]
       @per_page = params[:per_page].to_i
       @per_page = 5 if @per_page < 5 # Show at least 5 terms per page
     else
-      @per_page = 5
+      if request.format == 'text/html'
+        @per_page = 20
+      else
+        @per_page = 5
+      end
     end
 
     if params[:q].blank?
