@@ -4,7 +4,7 @@ class Hyacinth::Utils::SolrUtils
     # If you need to change the read/open timeouts for solr: RSolr.connect({:read_timeout => 120, :open_timeout => 120})
     @solr ||= RSolr.connect(url: HYACINTH['solr_url'])
   end
-  
+
   def self.solr_escape(str)
     UriService.solr_escape(str)
   end

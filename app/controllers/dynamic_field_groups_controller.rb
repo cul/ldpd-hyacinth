@@ -98,8 +98,6 @@ class DynamicFieldGroupsController < ApplicationController
         element2 = @child_dynamic_fields_and_dynamic_field_groups[index_of_child_to_shift+1] || @child_dynamic_fields_and_dynamic_field_groups[0]
       end
       
-      puts "element2 is : #{element2.inspect}"
-      
       # Swap sort_order of elements and save in a transaction so that it's an all-or-nothing save
       unless element2.nil?
         old_element1_sort_order = element1.sort_order
