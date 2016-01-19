@@ -1,5 +1,5 @@
 class DynamicFieldGroupsController < ApplicationController
-  before_action :set_dynamic_field_group, only: [:show, :edit, :update, :destroy]
+  before_action :set_dynamic_field_group, only: [:show, :edit, :update, :destroy, :shift_child_field_or_group]
 
   # GET /dynamic_field_groups
   # GET /dynamic_field_groups.json
@@ -74,9 +74,54 @@ class DynamicFieldGroupsController < ApplicationController
         format.json { head :no_content }
       end
     end
-
-
-
+  end
+  
+  # PATCH/PUT /dynamic_field_groups/1/shift_child_field_or_group
+  def shift_child_field_or_group
+    
+    success = false
+    
+    if params[:dynamic_field_or_dynamic_field_group_string_key].present?
+      dynamic_field_or_dynamic_field_group_string_key = params[:dynamic_field_or_dynamic_field_group_string_key]
+      direction = params[:direction]
+      
+      # Get children
+      @child_dynamic_fields_and_dynamic_field_groups = @dynamic_field_group.get_child_dynamic_fields_and_dynamic_field_groups
+      
+      # Determine which children need to be swapped
+      index_of_child_to_shift = @child_dynamic_fields_and_dynamic_field_groups.index { |el| el.string_key == dynamic_field_or_dynamic_field_group_string_key }
+      element1 = @child_dynamic_fields_and_dynamic_field_groups[index_of_child_to_shift]
+      element2 = nil
+      if direction == 'up'
+        element2 = @child_dynamic_fields_and_dynamic_field_groups[index_of_child_to_shift-1]
+      elsif direction == 'down'
+        element2 = @child_dynamic_fields_and_dynamic_field_groups[index_of_child_to_shift+1] || @child_dynamic_fields_and_dynamic_field_groups[0]
+      end
+      
+      puts "element2 is : #{element2.inspect}"
+      
+      # Swap sort_order of elements and save in a transaction so that it's an all-or-nothing save
+      unless element2.nil?
+        old_element1_sort_order = element1.sort_order
+        element1.sort_order = element2.sort_order
+        element2.sort_order = old_element1_sort_order
+        DynamicFieldGroup.transaction do
+          element1.save!
+          element2.save!
+        end
+        
+        success = true
+      end
+    end
+    
+    respond_to do |format|
+      if success
+        format.html { redirect_to edit_dynamic_field_group_path(@dynamic_field_group), notice: 'Child ordering was successfully updated.' }
+      else
+        format.html { redirect_to edit_dynamic_field_group_path(@dynamic_field_group), :flash => { :error => "An unexpected error occurred." } }
+      end
+    end
+    
   end
 
   private

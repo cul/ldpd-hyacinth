@@ -1,20 +1,19 @@
-<%= form_for(@dynamic_field_group) do |f| %>
+<%= dynamic_field_breadcrumbs(@dynamic_field_group, @dynamic_field_group.new_record?) %>
 
-  <%= dynamic_field_breadcrumbs(@dynamic_field_group, @dynamic_field_group.new_record?) %>
+<% if @dynamic_field_group.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@dynamic_field_group.errors.count, "error") %> prohibited this dynamic_field_group from being saved:</h2>
+    <ul>
+    <% @dynamic_field_group.errors.full_messages.each do |message| %>
+      <li><%= message %></li>
+    <% end %>
+    </ul>
+  </div>
+<% end %>
 
-  <% if @dynamic_field_group.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@dynamic_field_group.errors.count, "error") %> prohibited this dynamic_field_group from being saved:</h2>
-      <ul>
-      <% @dynamic_field_group.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <div class="row">
-    <div class="col-md-7">
+<div class="row">
+  <div class="col-md-7">
+    <%= form_for(@dynamic_field_group, url: shift_child_field_or_group_dynamic_field_group_path, method: 'patch') do |f| %>
       <%= f.hidden_field :parent_dynamic_field_group_id %>
       <div class="field">
         <%= f.label :string_key, 'String key (cannot be changed)' %><br>
@@ -42,36 +41,45 @@
       <div class="actions">
         <%= f.submit('Save', class: 'btn btn-primary') %>
       </div>
-    </div>
-    <div class="col-md-5">
-      <div class="well">
-        <h2>Child Fields and Field Groups</h2>
-        <% if @child_dynamic_fields_and_dynamic_field_groups.present? %>
-          <table class="table table-bordered table-striped">
-            <% @child_dynamic_fields_and_dynamic_field_groups.each do |dynamic_field_or_dynamic_field_group| %>
-              <tr>
-                <td class="col-sm-10">
-                  <%= dynamic_field_or_dynamic_field_group.string_key %> <%= '<span class="label label-default pull-right">Group</span>'.html_safe if dynamic_field_or_dynamic_field_group.is_a?(DynamicFieldGroup) %>
+    <% end %>
+  </div>
+  <div class="col-md-5">
+    <div class="well">
+      <h2>Child Fields and Field Groups</h2>
+      <% if @child_dynamic_fields_and_dynamic_field_groups.present? %>
+        <table class="table table-bordered table-striped">
+          <% @child_dynamic_fields_and_dynamic_field_groups.each do |dynamic_field_or_dynamic_field_group| %>
+            <tr>
+              <td class="col-sm-7">
+                <%= dynamic_field_or_dynamic_field_group.string_key %> <%= '<span class="label label-default pull-right">Group</span>'.html_safe if dynamic_field_or_dynamic_field_group.is_a?(DynamicFieldGroup) %>
+              </td>
+              <td class="col-sm-2 aligncenter">
+                <%= link_to 'Edit', (dynamic_field_or_dynamic_field_group.is_a?(DynamicField) ? edit_dynamic_field_path(dynamic_field_or_dynamic_field_group) : edit_dynamic_field_group_path(dynamic_field_or_dynamic_field_group)) %>
+              </td>
+              <% unless @child_dynamic_fields_and_dynamic_field_groups.length == 1 %>
+                <td class="col-sm-3 aligncenter">
+                  <%= form_for @dynamic_field_group, url: {action: "shift_child_field_or_group"} do |f| %>
+                    <%= hidden_field_tag 'dynamic_field_or_dynamic_field_group_string_key', dynamic_field_or_dynamic_field_group.string_key %>
+                    <%= f.button '<span class="glyphicon glyphicon glyphicon-arrow-down"></span>'.html_safe, type:'submit', name: 'direction', value: 'down', class: 'btn btn-default btn-xs' %>
+                    <%= f.button '<span class="glyphicon glyphicon glyphicon-arrow-up"></span>'.html_safe, type:'submit', name: 'direction', value: 'up', class: 'btn btn-default btn-xs' %>
+                  <% end %>
                 </td>
-                <td class="col-sm-2 aligncenter">
-                  <%= link_to 'Edit', (dynamic_field_or_dynamic_field_group.is_a?(DynamicField) ? edit_dynamic_field_path(dynamic_field_or_dynamic_field_group) : edit_dynamic_field_group_path(dynamic_field_or_dynamic_field_group)) %>
-                </td>
-              </tr>
-            <% end %>
-          </table>
-        <% else %>
-          <p>- None -</p>
-        <% end %>
-        <% unless @dynamic_field_group.new_record? %>
-          <%= link_to '<span class="glyphicon glyphicon-plus"></span> New Child Field'.html_safe, new_dynamic_field_path(parent_dynamic_field_group_id: @dynamic_field_group), class: 'btn btn-default btn-sm' %>
-          <%= link_to '<span class="glyphicon glyphicon-plus"></span> New Child Field Group'.html_safe, new_dynamic_field_group_path(parent_dynamic_field_group_id: @dynamic_field_group), class: 'btn btn-default btn-sm' %>
-        <% end %>
-      </div>
+              <% end %>
+            </tr>
+          <% end %>
+        </table>
+      <% else %>
+        <p>- None -</p>
+      <% end %>
       <% unless @dynamic_field_group.new_record? %>
-      <div>
-        <%= link_to 'Permanently Delete This Dynamic Field Group', @dynamic_field_group, class: 'btn btn-danger btn-sm btn-block', method: :delete, data: { confirm: 'Are you sure you want to permanently delete this Dynamic Field Group?  This action cannot be undone.' } %>
-      </div>
+        <%= link_to '<span class="glyphicon glyphicon-plus"></span> New Child Field'.html_safe, new_dynamic_field_path(parent_dynamic_field_group_id: @dynamic_field_group), class: 'btn btn-default btn-sm' %>
+        <%= link_to '<span class="glyphicon glyphicon-plus"></span> New Child Field Group'.html_safe, new_dynamic_field_group_path(parent_dynamic_field_group_id: @dynamic_field_group), class: 'btn btn-default btn-sm' %>
       <% end %>
     </div>
+    <% unless @dynamic_field_group.new_record? %>
+    <div>
+      <%= link_to 'Permanently Delete This Dynamic Field Group', @dynamic_field_group, class: 'btn btn-danger btn-sm btn-block', method: :delete, data: { confirm: 'Are you sure you want to permanently delete this Dynamic Field Group?  This action cannot be undone.' } %>
+    </div>
+    <% end %>
   </div>
-<% end %>
+</div>

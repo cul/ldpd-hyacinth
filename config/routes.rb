@@ -22,7 +22,11 @@ Hyacinth::Application.routes.draw do
   resources :digital_object_types
 
   resources :dynamic_fields
-  resources :dynamic_field_groups
+  resources :dynamic_field_groups do
+    member do
+      patch 'shift_child_field_or_group'
+    end
+  end
   resources :dynamic_field_group_categories
 
   resources :thumbs, only: [:show]

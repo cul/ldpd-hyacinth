@@ -80,7 +80,7 @@ title = DynamicFieldGroup.create!(string_key: 'title', display_label: 'Title', d
 )
 
 # Create collection, form, name and name_role controlled vocabularies if they don't already exist
-{'collection' => 'Collection', 'form' => 'Form', 'name' => 'Name', 'name_role' => 'Role'}.each do |string_key, display_label|
+{'collection' => 'Collection', 'form' => 'Form', 'location' => 'Location', 'name' => 'Name', 'name_role' => 'Role'}.each do |string_key, display_label|
   if UriService.client.find_vocabulary(string_key).nil?
     @controlled_vocabulary = ControlledVocabulary.new
     @controlled_vocabulary.string_key = string_key
@@ -102,6 +102,14 @@ form = DynamicFieldGroup.create!(string_key: 'form', display_label: 'Form', dyna
   dynamic_fields: [
     DynamicField.new(string_key: 'form_term', display_label: 'Value', dynamic_field_type: DynamicField::Type::CONTROLLED_TERM, controlled_vocabulary_string_key: 'form', is_facet_field: true, standalone_field_label: 'Format'),
     #DynamicField.new(string_key: 'form_preferred_label', display_label: 'Preferred Label', dynamic_field_type: DynamicField::Type::STRING),
+  ]
+)
+
+#location
+location = DynamicFieldGroup.create!(string_key: 'location', display_label: 'location', dynamic_field_group_category: dfc_location_and_holdings, is_repeatable: true,
+  dynamic_fields: [
+    DynamicField.new(string_key: 'location_term', display_label: 'Value', dynamic_field_type: DynamicField::Type::CONTROLLED_TERM, controlled_vocabulary_string_key: 'location', is_facet_field: true, standalone_field_label: 'Location'),
+    #DynamicField.new(string_key: 'location_preferred_label', display_label: 'Preferred Label', dynamic_field_type: DynamicField::Type::STRING),
   ]
 )
 
