@@ -55,6 +55,14 @@ class DigitalObject::Base
   # Updates the DigitalObject with the given digital_object_data
   def set_digital_object_data(digital_object_data, merge_dynamic_fields)
     
+    puts 'digital_object_data ---> ' + digital_object_data.inspect
+    
+    # If a user sets the merge field in the spreadsheet, then override the value of this method's passed merge_dynamic_fields param
+    if digital_object_data['merge_dynamic_fields'] && ['true', 'false'].include?(digital_object_data['merge_dynamic_fields'].downcase)
+      merge_dynamic_fields = (digital_object_data['merge_dynamic_fields'].downcase == 'true')
+      puts 'merge override. new value: ' + merge_dynamic_fields.to_s
+    end
+    
     # PID
     if digital_object_data['pid']
       if digital_object_data['pid'].nil?
