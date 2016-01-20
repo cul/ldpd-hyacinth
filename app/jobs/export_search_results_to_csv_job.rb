@@ -31,7 +31,7 @@ class ExportSearchResultsToCsvJob
         row = Hyacinth::Csv::Row.from_document(digital_object_data, headers)
         csv << row.fields
         number_of_records_processed += 1
-        csv_export.update(number_of_records_processed) if number_of_records_processed % 1000 == 0
+        csv_export.update(number_of_records_processed: number_of_records_processed) if number_of_records_processed % 1000 == 0
       end
     end
 
