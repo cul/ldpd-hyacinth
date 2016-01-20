@@ -4,6 +4,10 @@ module Hyacinth
       attr_accessor :fields
       def initialize(fields = [])
         self.fields = fields.map { |field| (field.is_a? String) ? Header.header_to_input_field(field) : field }
+        
+        # Cache currently known boolean and integer DynamicField string keys at time of instance initialization
+        @known_boolean_field_string_keys = DynamicField.select('string_key').where(dynamic_field_type: DynamicField::Type::BOOLEAN).pluck('string_key')
+        @known_integer_field_string_keys = DynamicField.select('string_key').where(dynamic_field_type: DynamicField::Type::INTEGER).pluck('string_key')
       end
 
       def document_for(data = [])
@@ -11,6 +15,12 @@ module Hyacinth
 
         data.each_with_index do |cell_value, index|
           cell_value = '' if cell_value.nil? # If the cell value is nil, convert it into an empty string
+
+          # Convert field value to boolean if it's a boolean field
+          cell_value = (cell_value.downcase == 'true') if @known_boolean_field_string_keys.include?(fields[index].builder_path.last)
+          # Convert field value to integer if it's an integer field
+          cell_value = cell_value.to_i if @known_integer_field_string_keys.include?(fields[index].builder_path.last)
+
           fields[index].put_value(digital_object_data, cell_value, true)
         end
 
