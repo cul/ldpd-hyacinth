@@ -9,7 +9,7 @@ module ProjectsHelper
       html_to_return += '<div class="enabled_dynamic_field_row">'
       html_to_return += '<div class="row">'
 
-      html_to_return += '<div class="col-md-2"><span class="label label-info">' + CGI::escapeHTML(dynamic_field_or_dynamic_field_group.display_label) + '</span></div>'
+      html_to_return += '<div class="col-md-2"><span class="label label-info" title="' + CGI::escapeHTML(dynamic_field_or_dynamic_field_group.string_key) + '">' + CGI::escapeHTML(dynamic_field_or_dynamic_field_group.display_label) + '</span></div>'
 
       enabled_dynamic_field = project_object.enabled_dynamic_fields.find { |o| o.dynamic_field == dynamic_field_or_dynamic_field_group && o.digital_object_type == digital_object_type } || project_object.enabled_dynamic_fields.build(dynamic_field: dynamic_field_or_dynamic_field_group, digital_object_type: digital_object_type)
 
