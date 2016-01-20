@@ -1,7 +1,7 @@
 module DynamicFieldAndDynamicFieldGroup::SharedValidations
   extend ActiveSupport::Concern
   
-  RESERVED_STRING_KEYS = ['uri']
+  RESERVED_STRING_KEYS = ['uri', 'value']
 
   included do
     validate :validate_unique_df_and_dfg_string_key

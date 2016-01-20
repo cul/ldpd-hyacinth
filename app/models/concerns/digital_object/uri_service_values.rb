@@ -11,7 +11,8 @@ module DigitalObject::UriServiceValues
     if Hyacinth::Utils::HashUtils::find_nested_hash_values(dynamic_field_data, 'uri').length > 0   
       get_controlled_term_field_string_keys_to_controlled_vocabulary_string_keys().each do |controlled_term_df_string_key, controlled_vocabulary_string_key|
         Hyacinth::Utils::HashUtils::find_nested_hashes_that_contain_key(dynamic_field_data, controlled_term_df_string_key).each do |dynamic_field_group_value|
-          if dynamic_field_group_value[controlled_term_df_string_key]['uri'].present?
+          # We check for the presence of a 'uri' key (in the case of external or local terms) or a 'value' key (for temporary terms)
+          if dynamic_field_group_value[controlled_term_df_string_key]['uri'].present? || dynamic_field_group_value[controlled_term_df_string_key]['value'].present?
             uri = nil
             value = nil
             authority = nil
@@ -31,7 +32,7 @@ module DigitalObject::UriServiceValues
             if uri.blank? && value.present?
               # If URI is blank and a value is present, then we'll assign this value to a temporary term, only considering the string value
               temporary_term = UriService.client.create_term(UriService::TermType::TEMPORARY, {vocabulary_string_key: controlled_vocabulary_string_key, value: value})
-              dynamic_field_group_value[controlled_term_df_string_key] = term # Update dynamic_field_data
+              dynamic_field_group_value[controlled_term_df_string_key] = temporary_term # Update dynamic_field_data
             else
               # URI is present, so we'll check whether it exists already.
               # If it does, retrieve its controlled value and update dynamic_field_data to correct errors
@@ -57,7 +58,7 @@ module DigitalObject::UriServiceValues
     get_controlled_term_field_string_keys_to_controlled_vocabulary_string_keys().each do |controlled_term_df_string_key, controlled_vocabulary_string_key|
       Hyacinth::Utils::HashUtils::find_nested_hashes_that_contain_key(dynamic_field_data, controlled_term_df_string_key).each do |dynamic_field_group_value|
         uri = dynamic_field_group_value[controlled_term_df_string_key]
-        raise 'Expected string, but got ' + uri.class.name unless uri.is_a?(String)
+        raise "Expected uri to be a string, but got #{uri.class.name} with value: #{uri.inspect}" unless uri.is_a?(String)
         term = UriService.client.find_term_by_uri(uri)
         dynamic_field_group_value[controlled_term_df_string_key] = term
       end
