@@ -2,14 +2,13 @@ class ImportJobsController < ApplicationController
   
   before_action :set_contextual_nav_options
 
-  # fcd1, 10/19/15: TODO: implement access control:
-  # admin type user can see all ImportJobs
-  # for non-admin type user, only show ImportJobs belonging to user
   # GET /import_jobs
-  def index
-
-    @import_jobs = ImportJob.all
-
+  def index    
+    if current_user.is_admin?
+      @import_jobs = ImportJob.all # TODO: Add pagination feature using: .page(page).per(per_page)
+    else
+      @import_jobs = ImportJob.where(user: current_user) # TODO: Add pagination feature using: .page(page).per(per_page)
+    end
   end
 
   # GET /import_jobs/1

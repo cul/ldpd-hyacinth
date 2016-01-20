@@ -15,7 +15,7 @@
   <%= link_to(
 		status_string_key.capitalize,
 		import_job_digital_object_imports_path(@import_job, {status: status_string_key}),
-		class: 'btn btn-default btn-sm' + (@status_filter == status_string_key ? ' active' : '')
+		class: 'btn btn-default btn-sm' + (@status_filter == status_string_key.to_sym ? ' active' : '')
   ) %>
 <% end %>
 </p>
