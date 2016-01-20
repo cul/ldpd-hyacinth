@@ -12,6 +12,10 @@
   <%= link_to @digital_object_import.import_job.name, import_job_path(@digital_object_import.import_job) %>
 </p>
 <p>
+  <strong>CSV Row Number:</strong>
+  <%= @digital_object_import.csv_row_number %>
+</p>
+<p>
   <strong>Status:</strong>
   <%= @digital_object_import.status %>
 </p>

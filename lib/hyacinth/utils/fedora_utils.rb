@@ -51,14 +51,12 @@ module Hyacinth::Utils::FedoraUtils
 
     begin
       namespace_fedora_object = BagAggregator.find(namespace_pid)
-      logger.debug 'Found'
     rescue ActiveFedora::ObjectNotFoundError
       # Create top_level_all_content_fedora_object if it wasn't found
       namespace_fedora_object = BagAggregator.new(pid: namespace_pid)
       namespace_fedora_object.label = 'Top level object for the ' + namespace_string + ' namespace'
       namespace_fedora_object.datastreams["DC"].dc_identifier = namespace_string + '_namespace'
-      namespace_fedora_object.save
-      logger.debug 'did not find!!!'
+      namespace_fedora_object.save(update_index: false)
     end
 
     namespace_fedora_object

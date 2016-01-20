@@ -45,7 +45,7 @@ class Project < ActiveRecord::Base
     self.fedora_object.datastreams["DC"].dc_type = 'Project'
     self.fedora_object.datastreams["DC"].dc_title = self.display_label
     self.fedora_object.label = self.display_label
-    self.fedora_object.save
+    self.fedora_object.save(update_index: false)
   end
 
   def mark_fedora_object_as_deleted!

@@ -4,7 +4,7 @@
 <h1>Digital Object Imports for all import jobs</h1>
 <% end %>
 
-<div>
+<p>
 <%= link_to(
 	  'All',
 	  import_job_digital_object_imports_path(@import_job),
@@ -18,7 +18,7 @@
 		class: 'btn btn-default btn-sm' + (@status_filter == status_string_key ? ' active' : '')
   ) %>
 <% end %>
-</div>
+</p>
 
 <%= paginate @digital_object_imports %>
 

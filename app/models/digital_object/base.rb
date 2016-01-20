@@ -441,7 +441,7 @@ class DigitalObject::Base
 
         # Retry after Fedora timeouts / unreachable host
         Retriable.retriable on: [RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH], tries: NUM_FEDORA_RETRY_ATTEMPTS, base_interval: DELAY_IN_SECONDS_BETWEEN_FEDORA_RETRY_ATTEMPTS do
-          @fedora_object.save
+          @fedora_object.save(update_index: false)
         end
 
         if parent_digital_object_pids_changed?
@@ -556,7 +556,7 @@ class DigitalObject::Base
 
     # Save withg retry after Fedora timeouts / unreachable host
     Retriable.retriable on: [RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH], tries: NUM_FEDORA_RETRY_ATTEMPTS, base_interval: DELAY_IN_SECONDS_BETWEEN_FEDORA_RETRY_ATTEMPTS do
-      @fedora_object.save
+      @fedora_object.save(update_index: false)
     end
 
     return false if @errors.present?
