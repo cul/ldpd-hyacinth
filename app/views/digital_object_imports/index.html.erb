@@ -3,6 +3,25 @@
 <% else %>
 <h1>Digital Object Imports for all import jobs</h1>
 <% end %>
+
+<div>
+<%= link_to(
+	  'All',
+	  import_job_digital_object_imports_path(@import_job),
+	  class: 'btn btn-default btn-sm' + (@status_filter.nil? ? ' active' : '')
+) %>
+
+<% DigitalObjectImport.statuses.each do |status_string_key, _status_numberic_value| %>
+  <%= link_to(
+		status_string_key.capitalize,
+		import_job_digital_object_imports_path(@import_job, {status: status_string_key}),
+		class: 'btn btn-default btn-sm' + (@status_filter == status_string_key ? ' active' : '')
+  ) %>
+<% end %>
+</div>
+
+<%= paginate @digital_object_imports %>
+
 <table class="table table-condensed table-bordered table-striped">
   <thead>
     <tr>
@@ -34,6 +53,11 @@
     <% end %>
   </tbody>
 </table>
+
+<%= paginate @digital_object_imports %>
+
 <% if @import_job %>
+<div>
 <%= link_to 'Return to import job', import_job_path(@import_job) %>
+</div>
 <% end %>
