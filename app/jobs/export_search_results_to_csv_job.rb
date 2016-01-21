@@ -1,8 +1,6 @@
 class ExportSearchResultsToCsvJob
   include Hyacinth::Csv::Flatten
 
-  POINTER_SEPARATOR = Regexp.new('[-:.]')
-
   SUPPRESSED_ON_EXPORT = ['_dc_type', '_state', '_title']
 
   @queue = Hyacinth::Queue::DIGITAL_OBJECT_CSV_EXPORT

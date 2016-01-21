@@ -4,6 +4,21 @@ namespace :hyacinth do
 
   namespace :index do
 
+    desc "Reindex asynchronously using Resque background jobs. Note: This task updates documents in Solr, but for performance reasons does NOT do a Solr commit after making changes."
+    task :reindex_async => :environment do
+      total = DigitalObjectRecord.count
+      progressbar = ProgressBar.create(:title => "Queue Reindex Jobs", :starting_at => 0, :total => total, :format => '%a |%b>>%i| %p%% %c/%C %t')
+      
+      DigitalObjectRecord.find_each(batch_size: 500, start: 0) do |digital_object_record|
+        Hyacinth::Queue.reindex_digital_object(digital_object_record.pid)
+        progressbar.increment
+      end
+      
+      progressbar.finish
+      
+      puts "Done!"
+    end
+
     task :reindex => :environment do
 
       if ENV['START_AT'].present?
