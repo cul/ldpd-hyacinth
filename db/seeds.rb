@@ -106,7 +106,7 @@ form = DynamicFieldGroup.create!(string_key: 'form', display_label: 'Form', dyna
 )
 
 #location
-location = DynamicFieldGroup.create!(string_key: 'location', display_label: 'location', dynamic_field_group_category: dfc_location_and_holdings, is_repeatable: true,
+location = DynamicFieldGroup.create!(string_key: 'location', display_label: 'Location', dynamic_field_group_category: dfc_location_and_holdings, is_repeatable: true,
   dynamic_fields: [
     DynamicField.new(string_key: 'location_term', display_label: 'Value', dynamic_field_type: DynamicField::Type::CONTROLLED_TERM, controlled_vocabulary_string_key: 'location', is_facet_field: true, standalone_field_label: 'Location'),
     #DynamicField.new(string_key: 'location_preferred_label', display_label: 'Preferred Label', dynamic_field_type: DynamicField::Type::STRING),
