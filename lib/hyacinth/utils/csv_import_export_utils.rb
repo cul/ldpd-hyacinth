@@ -90,7 +90,7 @@ class Hyacinth::Utils::CsvImportExportUtils
         # Do some quick CSV data checks to find easy mistakes and avoid queueing jobs that we know will fail
 
         # 1) Check for project
-        import_job.errors.add(:invalid_csv, "Missing project for row: #{csv_row_number + 1}") if digital_object_data['project'].blank?
+        import_job.errors.add(:invalid_csv, "Missing project for row: #{csv_row_number + 1}") if digital_object_data['project'].blank? && digital_object_data['pid'].blank?
       end
     rescue CSV::MalformedCSVError
       # Handle invalid CSV

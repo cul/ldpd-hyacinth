@@ -32,7 +32,11 @@ class ImportJobsController < ApplicationController
     
     @import_job = Hyacinth::Utils::CsvImportExportUtils.create_import_job_from_csv_data(import_file.read, @import_filename, current_user)
     
-    redirect_to import_job_path(@import_job) unless @import_job.errors.any?
+    if @import_job.errors.any?
+      render action: 'new'
+    else
+      redirect_to import_job_path(@import_job)
+    end
   end
 
   private

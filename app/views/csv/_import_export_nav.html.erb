@@ -1,9 +1,0 @@
-<h1 class="page-title">Project: <%= @project && @project.display_label %></h1>
-
-<!-- Nav tabs -->
-<ul class="nav nav-tabs">
-  <!-- fcd1, 09/28/15: Uncomment following when export functionality is implemented -->
-  <!-- <li <%= 'class="active"'.html_safe if params[:action] == 'select_dynamic_fields_for_csv_export' %>><%= link_to 'Export Csv', select_dynamic_fields_for_csv_export_project_path(@project) %></li> -->
-  <li <%= 'class="active"'.html_safe if params[:action] == 'upload_import_csv_file' %>><%= link_to 'Import Csv File', upload_import_csv_file_project_path(@project) %></li>
-  <li <%= 'class="active"'.html_safe if params[:action] == 'select_dynamic_fields_csv_header_for_import' %>><%= link_to 'Generate Csv Headers', select_dynamic_fields_csv_header_for_import_project_path(@project) %></li>
-</ul>
