@@ -167,7 +167,7 @@ class ControlledVocabulariesController < ApplicationController
   def require_appropriate_permissions!
 
     case params[:action]
-    when 'index', 'terms'
+    when 'index', 'terms', 'term_additional_fields'
       # Do nothing
     else
       require_hyacinth_admin!
