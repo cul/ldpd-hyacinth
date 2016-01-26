@@ -404,8 +404,6 @@ class DigitalObject::Base
   end
 
   def get_enabled_dynamic_fields
-    # If there's only one project, things are simple.  Just return the EnabledDynamicFields for that project.
-    # For now, the idea is that objects can be published to multiple publish targets, but they're only managed by one project.
     if @project.blank?
       raise 'A project is required.'
     else

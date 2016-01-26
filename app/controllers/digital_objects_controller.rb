@@ -2,7 +2,9 @@
 
 class DigitalObjectsController < ApplicationController
   before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor, :download, :add_parent, :remove_parents, :mods, :media_view, :rotate_image, :swap_order_of_first_two_child_assets]
+  before_action :set_digital_object_for_data_for_editor_action, only: [:data_for_editor]
   before_action :set_contextual_nav_options
+  before_action :require_appropriate_project_permissions!
 
   # GET /digital_objects
   # GET /digital_objects.json
@@ -199,25 +201,10 @@ class DigitalObjectsController < ApplicationController
   end
 
   def data_for_editor
-    if params[:pid]
-      # A DigitalObject pid is expected when we're working with an existing DigialObject
-      @digital_object = DigitalObject::Base.find(params[:pid])
-      project = @digital_object.project
-      fieldsets = Fieldset.where(project: project)
-      enabled_dynamic_fields = @digital_object.get_enabled_dynamic_fields
-    elsif params[:project_string_key]
-      # A DigitalObject id is not available when we're working with a new item, so we expect a project_id and digital_object_type_id instead
-      project = Project.find_by(string_key: params[:project_string_key])
-      digital_object_type = DigitalObjectType.find_by(string_key: params[:digital_object_type_string_key])
-
-      fieldsets = Fieldset.where(project: project)
-      enabled_dynamic_fields = project.get_enabled_dynamic_fields(digital_object_type)
-
-      # Return an empty DigitalObject instance with the correct project
-      @digital_object = DigitalObjectType.get_model_for_string_key(digital_object_type.string_key).new
-      @digital_object.project = project
-    end
-
+    project = @digital_object.project
+    fieldsets = Fieldset.where(project: project)
+    enabled_dynamic_fields = @digital_object.get_enabled_dynamic_fields
+    
     dynamic_field_hierarchy = DynamicFieldGroupCategory.all # Get all DyanamicFieldGroupCategories (which recursively includes sub-dynamic_field_groups and dynamic_fields)
     dynamic_field_ids_to_enabled_dynamic_fields = Hash[enabled_dynamic_fields.map{|enabled_dynamic_field| [enabled_dynamic_field.dynamic_field_id, enabled_dynamic_field]}]
 
@@ -541,6 +528,20 @@ class DigitalObjectsController < ApplicationController
   def set_digital_object
     @digital_object = DigitalObject::Base.find(params[:id])
   end
+  
+  def set_digital_object_for_data_for_editor_action
+    if params[:pid]
+      # A DigitalObject pid is expected when we're working with an existing DigialObject
+      @digital_object = DigitalObject::Base.find(params[:pid])
+    elsif params[:project_string_key]
+      # A DigitalObject id is not available when we're working with a new item, so we expect a project_id and digital_object_type_id instead
+      project = Project.find_by(string_key: params[:project_string_key])
+      digital_object_type = DigitalObjectType.find_by(string_key: params[:digital_object_type_string_key])
+      # Return an empty DigitalObject instance with the correct project
+      @digital_object = DigitalObjectType.get_model_for_string_key(digital_object_type.string_key).new
+      @digital_object.project = project
+    end
+  end
 
   def set_contextual_nav_options
     @contextual_nav_options['nav_title']['label'] = 'Digital Objects'
@@ -548,23 +549,26 @@ class DigitalObjectsController < ApplicationController
 
   def require_appropriate_project_permissions!
     case params[:action]
-    when 'index'
-      # Do nothing.  Index is open to all logged-in users.
+    when 'index', 'search', 'upload_directory_listing', 'titles_for_pids'
+      # Do nothing.  These actions are open to all logged-in users.
+    when 'show', 'data_for_editor', 'mods', 'download', 'data_for_ordered_child_editor'
+      require_project_permission!(@digital_object.project, :read)
     when 'create'
       digital_object_data = convert_digital_object_data_json(params[:digital_object_data_json])
       project_find_criteria = digital_object_data['project'] # i.e. {string_key: 'proj'} or {pid: 'abc:123'}
       associated_project = Project.find_by(project_find_criteria)
       require_project_permission!(associated_project, :create)
-    when 'show'
-      require_project_permission!(@digital_object.project, :read)
-    when 'edit', 'update', 'reorder_child_digital_objects'
+      # Also require publish permission if params[:publish] is set to true
+      require_project_permission!(associated_project, :publish) if params[:publish].to_s == 'true'
+    when 'edit', 'update', 'reorder_child_digital_objects', 'add_parent', 'remove_parents', 'rotate_image', 'swap_order_of_first_two_child_assets'
       require_project_permission!(@digital_object.project, :update)
-    when 'destroy'
+      # Also require publish permission if params[:publish] is set to true for the 'edit' action
+      require_project_permission!(@digital_object.project, :publish) if params[:publish].to_s == 'true'
+    when 'destroy', 'undestroy'
       require_project_permission!(@digital_object.project, :delete)
     else
       require_hyacinth_admin!
     end
-
   end
   
   def convert_digital_object_data_json(digital_object_data_json)

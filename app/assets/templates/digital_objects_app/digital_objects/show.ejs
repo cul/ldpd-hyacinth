@@ -29,7 +29,10 @@ if (digitalObject.digital_object_type.string_key == 'item') {
 }
 
 navItems.push({label: 'Manage Parents', url: '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'manage_parents', pid: Hyacinth.DigitalObjectsApp.params['pid']})});
-navItems.push({label: 'Edit', url: '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'edit', pid: Hyacinth.DigitalObjectsApp.params['pid']})});
+
+if (Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) {
+  navItems.push({label: 'Edit', url: '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'edit', pid: Hyacinth.DigitalObjectsApp.params['pid']})});
+}
 
 %>
 <% Hyacinth.ContextualNav.setNavItems(navItems); %>

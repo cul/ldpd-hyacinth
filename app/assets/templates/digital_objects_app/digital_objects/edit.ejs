@@ -6,7 +6,7 @@
 <% Hyacinth.ContextualNav.setNavTitle('&laquo; Leave Editing Mode', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: Hyacinth.DigitalObjectsApp.params['pid']}), true); %>
 <%
   var navItems = [];
-  if (digitalObject.getState() == 'A') {
+  if (digitalObject.getState() == 'A' && Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_delete')) {
     navItems.push(
       {
         label: 'Delete',

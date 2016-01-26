@@ -100,7 +100,9 @@
         <div class="clearfix"></div>
       </p>
       <p>
+      <% if(Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_publish')) { %>
       <input type="submit" class="btn btn-primary editor-submit-and-publish-button" value="Save And Publish" />
+      <% } %>
       <div class="clearfix"></div>
       </p>
     </div>
