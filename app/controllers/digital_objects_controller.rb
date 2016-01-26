@@ -17,7 +17,7 @@ class DigitalObjectsController < ApplicationController
       render json: { success: false, errors: ['Missing param digital_object_data_json'] } and return
     end
     
-    digital_object_data = convert_dynamic_field_data_json(params[:digital_object_data_json])
+    digital_object_data = convert_digital_object_data_json(params[:digital_object_data_json])
     
     if digital_object_data['digital_object_type'].blank?
       render json: { success: false, errors: ['Missing digital_object_data_json[digital_object_type]'] } and return
@@ -143,7 +143,7 @@ class DigitalObjectsController < ApplicationController
       render json: { success: false, errors: ['Missing param digital_object_data_json'] } and return
     end
     
-    digital_object_data = convert_dynamic_field_data_json(params[:digital_object_data_json])
+    digital_object_data = convert_digital_object_data_json(params[:digital_object_data_json])
     
     # Default behavior is to merge dynamic fields by default, unless told not to.
     if params['merge_dynamic_fields'].present? && params['merge_dynamic_fields'].to_s == 'false'
@@ -547,37 +547,27 @@ class DigitalObjectsController < ApplicationController
   end
 
   def require_appropriate_project_permissions!
-
-    #case params[:action]
-    #when 'index', 'get'
-    #  # Do nothing.  Index is open to all logged-in users.
-    #when 'new', 'create'
-    #  if request.format == 'json'
-    #    # For JSON Request the project is set using a string_key
-    #    associated_project = Project.where(string_key: params[:digital_object]['project_string_key']).first
-    #    require_project_permission!(associated_project, :create)
-    #  else
-    #    # For JSON Request the project is set using a project_id
-    #    unless params[:digital_object].blank?
-    #      associated_project = Project.find(params[:digital_object]['project_id'])
-    #      require_project_permission!(associated_project, :create)
-    #    end
-    #  end
-    #when 'upload_assets'
-    #  require_project_permission!(@digital_object.project, :create)
-    #when 'show'
-    #  require_project_permission!(@digital_object.project, :read)
-    #when 'edit', 'update', 'reorder_child_digital_objects'
-    #  require_project_permission!(@digital_object.project, :update)
-    #when 'destroy'
-    #  require_project_permission!(@digital_object.project, :delete)
-    #else
-    #  require_hyacinth_admin!
-    #end
+    case params[:action]
+    when 'index'
+      # Do nothing.  Index is open to all logged-in users.
+    when 'create'
+      digital_object_data = convert_digital_object_data_json(params[:digital_object_data_json])
+      project_find_criteria = digital_object_data['project'] # i.e. {string_key: 'proj'} or {pid: 'abc:123'}
+      associated_project = Project.find_by(project_find_criteria)
+      require_project_permission!(associated_project, :create)
+    when 'show'
+      require_project_permission!(@digital_object.project, :read)
+    when 'edit', 'update', 'reorder_child_digital_objects'
+      require_project_permission!(@digital_object.project, :update)
+    when 'destroy'
+      require_project_permission!(@digital_object.project, :delete)
+    else
+      require_hyacinth_admin!
+    end
 
   end
   
-  def convert_dynamic_field_data_json(digital_object_data_json)
+  def convert_digital_object_data_json(digital_object_data_json)
     # Convert json-encoded digital_object_data_json to hash
     # Note: We submit digital_object_data to the API as JSON to preserve array order, since http param order isn't guaranteed
     unless digital_object_data_json.nil?

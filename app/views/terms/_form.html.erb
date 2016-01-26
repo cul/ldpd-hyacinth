@@ -26,12 +26,11 @@
       params[:term]['type'] || (@term.nil? ? 'external' : @term['type'])
     ), class: 'form-control', id: 'term-type-selector', disabled: ! @term.nil?) %>
   </div>
-
   <div class="field">
     <%= label_tag 'term[controlled_vocabulary_string_key]', 'Controlled Vocabulary' %>
     <%= hidden_field_tag 'term[controlled_vocabulary_string_key]', @controlled_vocabulary.string_key %>
     <%= text_field_tag 'term[controlled_vocabulary_string_key]', @controlled_vocabulary.display_label, disabled: true, class: 'form-control' %>
-  </div>
+  </div>  
   <div class="field">
     <%= label_tag 'term[value]', 'Value' %><br>
     <%= text_field_tag 'term[value]', params[:term]['value'] || (@term.nil? ? '' : @term['value']) || '', {class: 'form-control', disabled: is_temporary_term } %>
@@ -40,11 +39,19 @@
     <%= label_tag 'term[authority]', 'Authority' %><br>
     <%= text_field_tag 'term[authority]', params[:term]['authority'] || (@term.nil? ? '' : @term['authority']) || '', {class: 'form-control'} %>
   </div>
-  <div class="field term-uri-field">
-    <%= label_tag 'term[uri]', 'URI' %><br>
-    <%= hidden_field_tag 'term[uri]', params[:term]['uri'] || (@term.nil? ? '' : @term['uri']) || '', disabled: (@term.nil?) %>
-    <%= text_field_tag 'term[uri]', params[:term]['uri'] || (@term.nil? ? '' : @term['uri']) || '', disabled: !(@term.nil?), class: 'form-control' %>
-  </div>
+  
+  <% if @term.nil? %>
+    <div class="field term-uri-field">
+      <%= label_tag 'term[uri]', 'URI' %><br>
+      <%= text_field_tag 'term[uri]', params[:term]['uri'] || (@term.nil? ? '' : @term['uri']) || '', class: 'form-control' %>
+    </div>
+  <% else %>
+    <% # This URI field is just for display purposes (and only seen when editing an existing term %>
+    <div class="field">
+      <%= label_tag 'term[uri]', 'URI' %><br>
+      <%= text_field_tag 'term[uri]', @term['uri'], disabled: true, class: 'form-control' %>
+    </div>
+  <% end %>
   
   <% if TERM_ADDITIONAL_FIELDS[@controlled_vocabulary.string_key] %>
     <% TERM_ADDITIONAL_FIELDS[@controlled_vocabulary.string_key].each do |field_name, field_config| %>
