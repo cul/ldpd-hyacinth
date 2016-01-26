@@ -13,13 +13,18 @@
   <% # Create params[:term]['additional_fields'] to allow for easier form value population below by handling absent params %>
   <% params[:term] = {} if params[:term].blank? %>
   <% params[:term]['additional_fields'] = {} if params[:term][:additional_fields].blank? %>
+  <% is_temporary_term = ! @term.nil? && @term['type'] == UriService::TermType::TEMPORARY %>
+  
+  <% if is_temporary_term %>
+    <div class="alert alert-info">Note: Temporary terms cannot be changed. Delete unused temporary terms or create new ones.</div>
+  <% end %>
 
   <div class="field">
     <%= label_tag 'term[type]', 'Term Type' %>
     <%= select_tag('term[type]', options_for_select(
       {'External' => UriService::TermType::EXTERNAL, 'Local' => UriService::TermType::LOCAL, 'Temporary' => UriService::TermType::TEMPORARY},
-      params[:term]['type'] || (@term.nil? ? 'external' : @term['value'])
-    ), class: 'form-control', id: 'term-type-selector') %>
+      params[:term]['type'] || (@term.nil? ? 'external' : @term['type'])
+    ), class: 'form-control', id: 'term-type-selector', disabled: ! @term.nil?) %>
   </div>
 
   <div class="field">
@@ -29,7 +34,7 @@
   </div>
   <div class="field">
     <%= label_tag 'term[value]', 'Value' %><br>
-    <%= text_field_tag 'term[value]', params[:term]['value'] || (@term.nil? ? '' : @term['value']) || '', {class: 'form-control'} %>
+    <%= text_field_tag 'term[value]', params[:term]['value'] || (@term.nil? ? '' : @term['value']) || '', {class: 'form-control', disabled: is_temporary_term } %>
   </div>
   <div class="field term-authority-field">
     <%= label_tag 'term[authority]', 'Authority' %><br>

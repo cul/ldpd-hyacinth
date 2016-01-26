@@ -86,10 +86,10 @@ class TermsController < ApplicationController
     term_prms = term_params
     
     begin
-      @term = UriService.client.update_term(term_prms['uri'],
+      @term = UriService.client.update_term(@term['uri'],
         { value: term_prms['value'], authority: term_prms['authority'], additional_fields: term_prms['additional_fields']}
       )
-    rescue UriService::NonExistentUriError, UriService::InvalidAdditionalFieldKeyError => e
+    rescue UriService::NonExistentUriError, UriService::InvalidAdditionalFieldKeyError, UriService::CannotChangeTemporaryTerm => e
       @errors << e.message
     end
 
