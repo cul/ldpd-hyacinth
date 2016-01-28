@@ -43,6 +43,9 @@ Hyacinth.DigitalObjectsApp.setupCurrentUser = function(callback) {
   }).done(function(current_user_data){
     Hyacinth.DigitalObjectsApp.currentUser = current_user_data;
     Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission = function(project_pid, permission_type){
+      if (this.is_admin) {
+        return true;
+      }
       var project = _.find(this.permissions.projects, function(project) { return project['project_pid'] == project_pid; } );
       if (typeof(project) != 'undefined') {
         return project[permission_type];
