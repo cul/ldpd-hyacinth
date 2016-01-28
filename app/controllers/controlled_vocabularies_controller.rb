@@ -112,7 +112,7 @@ class ControlledVocabulariesController < ApplicationController
   def term_additional_fields
     respond_to do |format|
       format.json {
-        render json: TERM_ADDITIONAL_FIELDS[@controlled_vocabulary.string_key]
+        render json: TERM_ADDITIONAL_FIELDS[@controlled_vocabulary.string_key] || {}
       }
     end
   end
