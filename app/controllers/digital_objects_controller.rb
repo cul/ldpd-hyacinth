@@ -4,42 +4,46 @@ class DigitalObjectsController < ApplicationController
   before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor, :download, :add_parent, :remove_parents, :mods, :media_view, :rotate_image, :swap_order_of_first_two_child_assets]
   before_action :set_digital_object_for_data_for_editor_action, only: [:data_for_editor]
   before_action :set_contextual_nav_options
+  before_action :set_digital_object_data_or_render_error, only: [:create, :update]
   before_action :require_appropriate_project_permissions!
 
   # GET /digital_objects
   # GET /digital_objects.json
   def index
   end
+  
+  def set_digital_object_data_or_render_error
+    if params[:digital_object_data_json].blank?
+      render json: { success: false, errors: ['Missing param digital_object_data_json'] } and return
+      false
+    else
+      @digital_object_data = convert_digital_object_data_json(params[:digital_object_data_json])
+      true
+    end
+  end
 
   # POST /digital_objects
   # POST /digital_objects.json
   def create
-    
-    if params[:digital_object_data_json].blank?
-      render json: { success: false, errors: ['Missing param digital_object_data_json'] } and return
-    end
-    
-    digital_object_data = convert_digital_object_data_json(params[:digital_object_data_json])
-    
-    if digital_object_data['digital_object_type'].blank?
+    if @digital_object_data['digital_object_type'].blank?
       render json: { success: false, errors: ['Missing digital_object_data_json[digital_object_type]'] } and return
     end
     
     begin
-      @digital_object = DigitalObjectType.get_model_for_string_key(digital_object_data['digital_object_type']['string_key']).new()
+      @digital_object = DigitalObjectType.get_model_for_string_key(@digital_object_data['digital_object_type']['string_key']).new()
     rescue Hyacinth::Exceptions::InvalidDigitalObjectTypeError
-      render json: { success: false, errors: ['Invalid digital_object_type specified: digital_object_type => ' + digital_object_data['digital_object_type'].inspect] } and return
+      render json: { success: false, errors: ['Invalid digital_object_type specified: digital_object_type => ' + @digital_object_data['digital_object_type'].inspect] } and return
     end
     
     # We need to do two things here for Asset uploads:
     # 1) Make sure that non-admins can only do uploads via post data or upload directory
-    # 2) Transform digital_object_data['import_file'] value for post data uploads so that we reference the temp file that Rails created during the upload.
+    # 2) Transform @digital_object_data['import_file'] value for post data uploads so that we reference the temp file that Rails created during the upload.
     if @digital_object.is_a?(DigitalObject::Asset)
-      if digital_object_data['import_file'].blank?
+      if @digital_object_data['import_file'].blank?
         render json: { success: false, errors: ['Missing digital_object_data_json[import_file] for new Asset'] } and return
       end
       
-      import_type = digital_object_data['import_file']['import_type']
+      import_type = @digital_object_data['import_file']['import_type']
       if import_type.blank?
         render json: { success: false, errors: ['Missing digital_object_data_json[import_file][import_type] for new Asset'] } and return
       end
@@ -48,7 +52,7 @@ class DigitalObjectsController < ApplicationController
         render json: { success: false, errors: ['Only admins can perform file imports of type: ' + import_type] } and return
       end
       
-      # Now we'll transform digital_object_data['import_file'] if this is a post data upload
+      # Now we'll transform @digital_object_data['import_file'] if this is a post data upload
       if import_type == DigitalObject::Asset::IMPORT_TYPE_POST_DATA
         
         if params[:file].blank?
@@ -64,7 +68,7 @@ class DigitalObjectsController < ApplicationController
         # And here: http://docs.ruby-lang.org/en/2.1.0/Tempfile.html (See: "Unlink-before-close")
         upload = params[:file]
         
-        digital_object_data['import_file'] = {
+        @digital_object_data['import_file'] = {
           'import_type' => DigitalObject::Asset::IMPORT_TYPE_POST_DATA,
           'import_path' => upload.tempfile.path,
           'original_file_path' => upload.original_filename
@@ -77,7 +81,7 @@ class DigitalObjectsController < ApplicationController
     begin
     
       begin
-        @digital_object.set_digital_object_data(digital_object_data, false)
+        @digital_object.set_digital_object_data(@digital_object_data, false)
       rescue Hyacinth::Exceptions::PublishTargetNotFoundError, Hyacinth::Exceptions::DigitalObjectNotFoundError, Hyacinth::Exceptions::ParentDigitalObjectNotFoundError, Hyacinth::Exceptions::ProjectNotFoundError, Hyacinth::Exceptions::AssociatedFedoraObjectNotFoundError => e
         render json: { success: false, errors: [e.message] } and return
       end
@@ -140,13 +144,6 @@ class DigitalObjectsController < ApplicationController
   # PATCH/PUT /digital_objects/1
   # PATCH/PUT /digital_objects/1.json
   def update
-    
-    if params[:digital_object_data_json].blank?
-      render json: { success: false, errors: ['Missing param digital_object_data_json'] } and return
-    end
-    
-    digital_object_data = convert_digital_object_data_json(params[:digital_object_data_json])
-    
     # Default behavior is to merge dynamic fields by default, unless told not to.
     if params['merge_dynamic_fields'].present? && params['merge_dynamic_fields'].to_s == 'false'
       merge_dynamic_fields = false
@@ -154,7 +151,7 @@ class DigitalObjectsController < ApplicationController
       merge_dynamic_fields = true
     end
     
-    @digital_object.set_digital_object_data(digital_object_data, merge_dynamic_fields)
+    @digital_object.set_digital_object_data(@digital_object_data, merge_dynamic_fields)
     @digital_object.updated_by = current_user
 
     test_mode = params['test'].to_s == 'true'
@@ -554,15 +551,15 @@ class DigitalObjectsController < ApplicationController
     when 'show', 'data_for_editor', 'mods', 'download', 'data_for_ordered_child_editor'
       require_project_permission!(@digital_object.project, :read)
     when 'create'
-      digital_object_data = convert_digital_object_data_json(params[:digital_object_data_json])
-      project_find_criteria = digital_object_data['project'] # i.e. {string_key: 'proj'} or {pid: 'abc:123'}
+      # Access logic inside action method
+      project_find_criteria = @digital_object_data['project'] # i.e. {string_key: 'proj'} or {pid: 'abc:123'}
       associated_project = Project.find_by(project_find_criteria)
       require_project_permission!(associated_project, :create)
       # Also require publish permission if params[:publish] is set to true
       require_project_permission!(associated_project, :publish) if params[:publish].to_s == 'true'
-    when 'edit', 'update', 'reorder_child_digital_objects', 'add_parent', 'remove_parents', 'rotate_image', 'swap_order_of_first_two_child_assets'
+    when 'update', 'reorder_child_digital_objects', 'add_parent', 'remove_parents', 'rotate_image', 'swap_order_of_first_two_child_assets'
       require_project_permission!(@digital_object.project, :update)
-      # Also require publish permission if params[:publish] is set to true for the 'edit' action
+      # Also require publish permission if params[:publish] is set to true (note: applies to the 'update' action)
       require_project_permission!(@digital_object.project, :publish) if params[:publish].to_s == 'true'
     when 'destroy', 'undestroy'
       require_project_permission!(@digital_object.project, :delete)

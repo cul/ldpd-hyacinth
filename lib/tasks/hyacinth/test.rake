@@ -52,7 +52,8 @@ namespace :hyacinth do
        DynamicFieldGroup.find_by(string_key: 'collection').dynamic_fields +
        DynamicFieldGroup.find_by(string_key: 'form').dynamic_fields +
        DynamicFieldGroup.find_by(string_key: 'name').dynamic_fields +
-       DynamicFieldGroup.find_by(string_key: 'name_role').dynamic_fields
+       DynamicFieldGroup.find_by(string_key: 'name_role').dynamic_fields +
+       DynamicFieldGroup.find_by(string_key: 'location').dynamic_fields
       ).each do |dynamic_field|
         test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: dynamic_field, digital_object_type: dot_item)
       end
