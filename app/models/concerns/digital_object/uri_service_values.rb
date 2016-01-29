@@ -87,9 +87,9 @@ module DigitalObject::UriServiceValues
       Hyacinth::Utils::HashUtils::find_nested_hashes_that_contain_key(dynamic_field_data, controlled_term_df_string_key).each do |dynamic_field_group_value|
         if dynamic_field_group_value[controlled_term_df_string_key]['uri'].blank?
           if dynamic_field_group_value[controlled_term_df_string_key]['value'].blank?
-            raise Hyacinth::Exceptions::MalformedControlledTermFieldValue, "Malformed data for controlled term field value (for field #{controlled_term_df_string_key}).  Must supply either uri or value field."
+            raise Hyacinth::Exceptions::MalformedControlledTermFieldValue, "Malformed data for controlled term field value (for field #{controlled_term_df_string_key}). Must supply either uri or value field. Got: " + dynamic_field_group_value[controlled_term_df_string_key].inspect
           elsif dynamic_field_group_value[controlled_term_df_string_key]['authority'].present?
-            raise Hyacinth::Exceptions::MalformedControlledTermFieldValue, "Malformed data for controlled term field value (for field #{controlled_term_df_string_key}).  Cannot supply authority without URI."
+            raise Hyacinth::Exceptions::MalformedControlledTermFieldValue, "Malformed data for controlled term field value (for field #{controlled_term_df_string_key}).  Cannot supply authority without URI. Got: " + dynamic_field_group_value[controlled_term_df_string_key].inspect
           end
         end
       end
