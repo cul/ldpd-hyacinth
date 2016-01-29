@@ -44,6 +44,9 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
     let(:expected_existing_item_csv_data) { fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/existing_item_update_example.csv').read }
     let(:expected_multiple_digital_objects_csv_data) { fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/multiple_digital_objects_example.csv').read }
     
+    let(:new_item_with_blank_column_header_csv_data) { fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/new_item_with_blank_column_header_example.csv').read }
+    let(:new_item_with_blank_column_header_json) { JSON.parse( fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/new_item_with_blank_column_header_example.json').read ) }
+    
     let(:special_chars_csv_utf8_file) { fixture('sample_digital_object_data/special_char_csv_fixtures/special_chars_csv_utf8.csv') }
     let(:special_chars_csv_latin1_file) { fixture('sample_digital_object_data/special_char_csv_fixtures/special_chars_csv_latin1.csv') }
     
@@ -74,17 +77,26 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
       end
     end
     
-    it "properly interprets non-ASCII characters from a Latin1 CSV file" do
-      csv_data = special_chars_csv_latin1_file.read
-      Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(csv_data) do |digital_object_data|
-        expect(digital_object_data['dynamic_field_data']['title'][0]['title_sort_portion']).to eq('Title with special chars † áéíøü')
+    it "ignores columns with an empty hyacinth string key column header" do
+      Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(new_item_with_blank_column_header_csv_data) do |digital_object_data|
+        puts digital_object_data.inspect
+        expect(digital_object_data.sort).to eq(new_item_with_blank_column_header_json.sort)
       end
     end
     
-    it "properly interprets non-ASCII characters from a UTF-8 CSV file" do
-      csv_data = special_chars_csv_utf8_file.read
-      Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(csv_data) do |digital_object_data|
-        expect(digital_object_data['dynamic_field_data']['title'][0]['title_sort_portion']).to eq('Title with special chars † áéíøü')
+    context "character encoding" do
+      it "properly interprets non-ASCII characters from a Latin1 CSV file" do
+        csv_data = special_chars_csv_latin1_file.read
+        Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(csv_data) do |digital_object_data|
+          expect(digital_object_data['dynamic_field_data']['title'][0]['title_sort_portion']).to eq('Title with special chars † áéíøü')
+        end
+      end
+      
+      it "properly interprets non-ASCII characters from a UTF-8 CSV file" do
+        csv_data = special_chars_csv_utf8_file.read
+        Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(csv_data) do |digital_object_data|
+          expect(digital_object_data['dynamic_field_data']['title'][0]['title_sort_portion']).to eq('Title with special chars † áéíøü')
+        end
       end
     end
   end

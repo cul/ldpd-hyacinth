@@ -1,0 +1,59 @@
+{  
+   "pid":"",
+   "digital_object_type":{  
+      "string_key":"item"
+   },
+   "identifiers":[  
+      "varsityshow_pbb"
+   ],
+   "parent_identifiers":[  
+
+   ],
+   "dynamic_field_data":{  
+      "collection":[  
+         {  
+            "collection_term":{  
+               "value":"Varsity Show Records",
+               "uri":"http://id.library.columbia.edu/term/1e58cace-f927-41ee-9465-599bef4f5efe"
+            }
+         }
+      ],
+      "name":[  
+         {  
+            "name_term":{  
+               "value":"Associated Press",
+               "authority":"naf",
+               "uri":"http://id.loc.gov/authorities/names/n80075894"
+            },
+            "name_type":"corporate",
+            "name_role":[  
+               {  
+                  "name_role_term":{  
+                     "authority":"marcrelator",
+                     "uri":"http://id.loc.gov/vocabulary/relators/aut",
+                     "value":"Author"
+                  }
+               }
+            ]
+         }
+      ],
+      "note":[  
+         {  
+            "note_value":"The note",
+            "note_type":"local"
+         },
+         {  
+            "note_value":"UA Scan #1047"
+         }
+      ],
+      "title":[  
+         {  
+            "title_sort_portion":"Pony Ballet",
+            "title_non_sort_portion":"The"
+         }
+      ]
+   },
+   "project":{  
+      "string_key":"varsity_show"
+   }
+}

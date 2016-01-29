@@ -1,0 +1,16 @@
+pid,type,identifier_title,_parent_identifiers-1,relatedItem_collection,Collection 1 -> Term (uri),name_primary,name_primary_type,name_primary_Relator_authority,name_primary_Relator_authority_identifier,Name 1 -> Name Role 1 -> Term (value),name_primary_authority,name_primary_authority_identifier,note 1,Note 1 -> Type,note_holdings,Project (String Key),title,title_nonSort
+_pid,_digital_object_type.string_key,_identifiers-1,_parent_identifiers-1,collection-1:collection_term.value,collection-1:collection_term.uri,name-1:name_term.value,name-1:name_type,name-1:name_role-1:name_role_term.authority,name-1:name_role-1:name_role_term.uri,name-1:name_role-1:name_role_term.value,name-1:name_term.authority,name-1:name_term.uri,note-1:note_value,note-1:note_type,note-2:note_value,_project.string_key,title-1:title_sort_portion,title-1:title_non_sort_portion
+,item,varsityshow_pbb,,Varsity Show Records,http://id.library.columbia.edu/term/1e58cace-f927-41ee-9465-599bef4f5efe,Associated Press,corporate,,,,naf,http://id.loc.gov/authorities/names/n80075894,,,UA Scan #1047,varsity_show,Pony Ballet,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,

@@ -60,21 +60,17 @@ class DigitalObject::Base
     end
     
     # PID
-    if digital_object_data['pid']
-      if digital_object_data['pid'].nil?
-        raise 'Cannot provide pid with null value. Either specify a non-null pid or do not specify a pid at all.'
+    if digital_object_data['pid'].present?
+      if self.pid.nil?
+        # This object has no pid and therefore must be new. Link it to the fedora object with the given pid.
+        begin
+          @fedora_object = ActiveFedora::Base.find(digital_object_data['pid'])
+        rescue ActiveFedora::ObjectNotFoundError
+          raise Hyacinth::Exceptions::AssociatedFedoraObjectNotFoundError, "Tried to set associated Fedora object for new DigitalObject, but could not find Fedora object with pid #{digital_object_data['pid']}"
+        end
       else
-        if self.pid.nil?
-          # This object has no pid and therefore must be new. Link it to the fedora object with the given pid.
-          begin
-            @fedora_object = ActiveFedora::Base.find(digital_object_data['pid'])
-          rescue ActiveFedora::ObjectNotFoundError
-            raise Hyacinth::Exceptions::AssociatedFedoraObjectNotFoundError, "Tried to set associated Fedora object for new DigitalObject, but could not find Fedora object with pid #{digital_object_data['pid']}"
-          end
-        else
-          if self.pid != digital_object_data['pid']
-            raise "Cannot set a different pid for a DigitalObject with an existing pid.  (Tried to replace pid #{self.pid} with #{digital_object_data['pid']}.)"
-          end
+        if self.pid != digital_object_data['pid']
+          raise "Cannot set a different pid for a DigitalObject with an existing pid.  (Tried to replace pid #{self.pid} with #{digital_object_data['pid']}.)"
         end
       end
     end

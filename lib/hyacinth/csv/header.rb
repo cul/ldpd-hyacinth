@@ -14,7 +14,9 @@ module Hyacinth
         digital_object_data = {}
 
         data.each_with_index do |cell_value, index|
-          cell_value = '' if cell_value.nil? # If the cell value is nil, convert it into an empty string
+          next if fields[index].blank? # Ignore columns that have a nil (absent) hyacinth header value
+
+          cell_value ||= '' # If the cell value is nil, convert it into an empty string
           cell_value = cast_cell_value_if_necessary(cell_value, fields[index].builder_path.last)
           fields[index].put_value(digital_object_data, cell_value, true)
         end
@@ -49,6 +51,8 @@ module Hyacinth
       def self.from_document(_document = {}); end
 
       def self.header_to_input_field(header_data)
+        return if header_data.blank? # Skip blank headers
+
         if header_data.start_with?('_')
           # Handle internal field, which is named with a leading underscore
           Hyacinth::Csv::Fields::Internal.new(header_data)

@@ -30,6 +30,7 @@ class Hyacinth::Utils::CsvImportExportUtils
 
       # second line is the real header line, so store it as such
       if csv_row_number == 1
+        # Ignore blank headers
         header.fields = row.map { |header_data| header_to_input_field(header_data) }
         next
       end
