@@ -1,7 +1,7 @@
 class ExportSearchResultsToCsvJob
   include Hyacinth::Csv::Flatten
 
-  SUPPRESSED_ON_EXPORT = ['_dc_type', '_state', '_title']
+  SUPPRESSED_ON_EXPORT = ['_dc_type', '_state', '_title', '_created', '_modified', '_created_by', '_modified_by']
 
   @queue = Hyacinth::Queue::DIGITAL_OBJECT_CSV_EXPORT
 
@@ -16,7 +16,7 @@ class ExportSearchResultsToCsvJob
     temp_field_indexes = {}
 
     # Create temporary CSV file that contains data, but no headers.
-    # Headers will gathere in memory, and then sorted later on.
+    # Headers will be gathered in memory, and then sorted later on.
     # Then the final CSV will be generated from the in-memory headers
     # and the temporary CSV file.
     number_of_records_processed = 0
