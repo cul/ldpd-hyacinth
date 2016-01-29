@@ -619,6 +619,10 @@ class DigitalObject::Base
   def as_json(options={})
     return {
       pid: self.pid,
+      created: @db_record.created_at,
+      modified: @db_record.updated_at,
+      created_by: @db_record.created_by.full_name,
+      modified_by: @db_record.updated_by.full_name,
       identifiers: self.identifiers,
       title: self.get_title(placeholder_if_blank: true),
       state: @fedora_object ? @fedora_object.state : 'A',
