@@ -92,6 +92,37 @@ RSpec.describe DigitalObject::Base, :type => :model do
         }.to raise_error(Hyacinth::Exceptions::AssociatedFedoraObjectNotFoundError)
       end
       
+      context "raises an exception for malformed controlled term field data" do
+        it "rejects controlled term data that lacks both uri and value fields" do
+          new_item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+          sample_item_digital_object_data['dynamic_field_data']['collection'] = [
+            {  
+              "collection_term" => {
+                "custom_field" => "zzz",
+              }
+            }
+          ]
+          expect {
+            new_item.set_digital_object_data(sample_item_digital_object_data, false)
+          }.to raise_error(Hyacinth::Exceptions::MalformedControlledTermFieldValue)
+        end
+        
+        it "rejects controlled term data that contains an authority without a URI" do
+          new_item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+          sample_item_digital_object_data['dynamic_field_data']['collection'] = [
+            {  
+              "collection_term" => {
+                "authority" => "abc",
+                "value" => "Varsity Show Records",
+              }
+            }
+          ]
+          expect {
+            new_item.set_digital_object_data(sample_item_digital_object_data, false)
+          }.to raise_error(Hyacinth::Exceptions::MalformedControlledTermFieldValue)
+        end
+      end
+      
     end
     
     describe "for DigitalObject::Group" do

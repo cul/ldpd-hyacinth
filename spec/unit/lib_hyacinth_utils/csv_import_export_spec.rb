@@ -79,7 +79,6 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
     
     it "ignores columns with an empty hyacinth string key column header" do
       Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(new_item_with_blank_column_header_csv_data) do |digital_object_data|
-        puts digital_object_data.inspect
         expect(digital_object_data.sort).to eq(new_item_with_blank_column_header_json.sort)
       end
     end

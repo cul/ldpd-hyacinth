@@ -40,7 +40,7 @@ class ProcessDigitalObjectImportJob
   rescue Hyacinth::Exceptions::ParentDigitalObjectNotFoundError => e
     digital_object_import.digital_object_errors << e.message
     requeue_job(digital_object_import)
-  rescue Hyacinth::Exceptions::NotFoundError => e
+  rescue Hyacinth::Exceptions::NotFoundError, Hyacinth::Exceptions::MalformedControlledTermFieldValue => e
     digital_object_import.digital_object_errors << e.message
     :failure
   end

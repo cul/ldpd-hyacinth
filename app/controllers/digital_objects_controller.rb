@@ -4,7 +4,7 @@ class DigitalObjectsController < ApplicationController
   before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor, :download, :add_parent, :remove_parents, :mods, :media_view, :rotate_image, :swap_order_of_first_two_child_assets]
   before_action :set_digital_object_for_data_for_editor_action, only: [:data_for_editor]
   before_action :set_contextual_nav_options
-  before_action :set_digital_object_data_or_render_error, only: [:create, :update]
+  before_action :set_var_digital_object_data_or_render_error, only: [:create, :update]
   before_action :require_appropriate_project_permissions!
 
   # GET /digital_objects
@@ -12,7 +12,7 @@ class DigitalObjectsController < ApplicationController
   def index
   end
   
-  def set_digital_object_data_or_render_error
+  def set_var_digital_object_data_or_render_error
     if params[:digital_object_data_json].blank?
       render json: { success: false, errors: ['Missing param digital_object_data_json'] } and return
       false
@@ -82,7 +82,7 @@ class DigitalObjectsController < ApplicationController
     
       begin
         @digital_object.set_digital_object_data(@digital_object_data, false)
-      rescue Hyacinth::Exceptions::PublishTargetNotFoundError, Hyacinth::Exceptions::DigitalObjectNotFoundError, Hyacinth::Exceptions::ParentDigitalObjectNotFoundError, Hyacinth::Exceptions::ProjectNotFoundError, Hyacinth::Exceptions::AssociatedFedoraObjectNotFoundError => e
+      rescue Hyacinth::Exceptions::NotFoundError, Hyacinth::Exceptions::MalformedControlledTermFieldValue => e
         render json: { success: false, errors: [e.message] } and return
       end
       
@@ -151,7 +151,12 @@ class DigitalObjectsController < ApplicationController
       merge_dynamic_fields = true
     end
     
-    @digital_object.set_digital_object_data(@digital_object_data, merge_dynamic_fields)
+    begin
+      @digital_object.set_digital_object_data(@digital_object_data, merge_dynamic_fields)
+    rescue Hyacinth::Exceptions::NotFoundError, Hyacinth::Exceptions::MalformedControlledTermFieldValue => e
+      render json: { success: false, errors: [e.message] } and return
+    end
+    
     @digital_object.updated_by = current_user
 
     test_mode = params['test'].to_s == 'true'

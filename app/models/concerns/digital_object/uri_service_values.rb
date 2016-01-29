@@ -81,4 +81,18 @@ module DigitalObject::UriServiceValues
 
     return dynamic_field_data
   end
+  
+  def raise_exception_if_malformed_controlled_field_data!(dynamic_field_data)
+    get_controlled_term_field_string_keys_to_controlled_vocabulary_string_keys().each do |controlled_term_df_string_key, controlled_vocabulary_string_key|
+      Hyacinth::Utils::HashUtils::find_nested_hashes_that_contain_key(dynamic_field_data, controlled_term_df_string_key).each do |dynamic_field_group_value|
+        if dynamic_field_group_value[controlled_term_df_string_key]['uri'].blank?
+          if dynamic_field_group_value[controlled_term_df_string_key]['value'].blank?
+            raise Hyacinth::Exceptions::MalformedControlledTermFieldValue, "Malformed data for controlled term field value (for field #{controlled_term_df_string_key}).  Must supply either uri or value field."
+          elsif dynamic_field_group_value[controlled_term_df_string_key]['authority'].present?
+            raise Hyacinth::Exceptions::MalformedControlledTermFieldValue, "Malformed data for controlled term field value (for field #{controlled_term_df_string_key}).  Cannot supply authority without URI."
+          end
+        end
+      end
+    end  
+  end
 end

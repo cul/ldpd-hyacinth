@@ -25,6 +25,9 @@ module DigitalObject::DynamicField
     trim_whitespace_for_dynamic_field_data!(@dynamic_field_data)
 
     # Handle URI fields:
+    
+    # Validate URI fields and raise exception if any of them are malformed
+    raise_exception_if_malformed_controlled_field_data!(@dynamic_field_data)
 
     # 1) Register any non-existent newly-supplied URIs, adding URIs as needed
     register_new_uris_and_values_for_dynamic_field_data!(@dynamic_field_data)

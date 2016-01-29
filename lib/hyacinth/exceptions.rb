@@ -10,6 +10,5 @@ module Hyacinth::Exceptions
   class BuilderPathNotFoundError < NotFoundError; end
 
   class InvalidDigitalObjectTypeError < HyacinthError; end
-
-  class NonUtf8CsvError < StandardError; end
+  class MalformedControlledTermFieldValue < HyacinthError; end
 end
