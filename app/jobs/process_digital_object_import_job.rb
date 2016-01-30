@@ -11,7 +11,7 @@ class ProcessDigitalObjectImportJob
 
     digital_object_data = JSON.parse(digital_object_import.digital_object_data)
 
-    if digital_object_data['pid'].present?
+    if digital_object_data['pid'].present? && DigitalObject::Base.exists?(digital_object_data['pid'])
       digital_object = existing_object_for_update(digital_object_data, user, digital_object_import)
     else
       digital_object = new_object(digital_object_data, user, digital_object_import)
