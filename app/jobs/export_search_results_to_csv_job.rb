@@ -2,6 +2,7 @@ class ExportSearchResultsToCsvJob
   include Hyacinth::Csv::Flatten
 
   SUPPRESSED_ON_EXPORT = ['_dc_type', '_state', '_title', '_created', '_modified', '_created_by', '_modified_by']
+  INTERNAL_FIELD_REGEXES_ALLOWED_ON_IMPORT = ['_pid', '_digital_object_type.string_key', /^_parent_digital_objects-\d+\.(identifier|pid)$/, /^_identifiers-\d+$/, /^_project\.(string_key|pid)$/, /^_publish_targets-\d+\.(string_key|pid)$/, /^_parent_digital_objects-\d+\.(identifier|pid)$/]
 
   @queue = Hyacinth::Queue::DIGITAL_OBJECT_CSV_EXPORT
 

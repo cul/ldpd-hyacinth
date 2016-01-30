@@ -40,16 +40,11 @@ class ControlledVocabulary < ActiveRecord::Base
   end
   
   def corresponding_uri_service_vocabulary_has_terms?
-    puts 'term check: ' + UriService.client.list_terms(self.string_key).length.inspect
     return UriService.client.list_terms(self.string_key).length > 0
   end
 
   def delete_corresponding_uri_service_vocabulary
-    
-    puts 'has terms? ' + self.corresponding_uri_service_vocabulary_has_terms?.inspect
-    
     unless self.corresponding_uri_service_vocabulary_has_terms?
-      puts 'Deleting ' + self.string_key.inspect
       UriService.client.delete_vocabulary(self.string_key)
     end
   end

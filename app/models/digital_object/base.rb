@@ -303,11 +303,8 @@ class DigitalObject::Base
   
   # Returns true if the given pid exists or if all pids in the given array exist
   def self.exists?(pid_or_pids)
-    if pid_or_pids.is_a?(Array)
-      return (pid_or_pids.length == DigitalObjectRecord.where?(pid_or_pids).count)
-    else
-      return DigitalObjectRecord.exists?(pid_or_pids)
-    end
+    pids = pid_or_pids.is_a?(Array) ? pid_or_pids : [pid_or_pids]
+    return (pids.length == ::DigitalObjectRecord.where(pid: pids).count)
   end
 
   # Finds objects by PID

@@ -31,7 +31,7 @@ describe "CSV Export-Import Round Trip" do
     it "works" do
       newly_created_digital_objects = []
       
-      10.times do |i|
+      5.times do |i|
         
         ### Create group ###
         group_digital_object_data['identifiers'] = ["test:csv_export_import_group_#{i}"]
@@ -87,7 +87,7 @@ describe "CSV Export-Import Round Trip" do
         new_asset.save
         newly_created_digital_objects << new_asset
       end
-      
+
       # Create first CsvExport instance and process it immediately
       first_csv_export = CsvExport.create(
         user: User.find_by(is_admin: true), # Admin users have access to all records

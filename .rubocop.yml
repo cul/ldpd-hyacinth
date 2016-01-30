@@ -34,6 +34,8 @@ Metrics/MethodLength:
 
 Metrics/ClassLength:
   Exclude: []
+  CountComments: false  # count full line comments?
+  Max: 200
 
 Metrics/ModuleLength:
   Exclude: []

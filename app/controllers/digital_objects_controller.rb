@@ -589,7 +589,6 @@ class DigitalObjectsController < ApplicationController
   def handle_single_file_upload(original_file_path, import_type, file_to_upload, project, parent_digital_object)
 
     file_size = file_to_upload.size
-    puts 'File size: ' + file_size.to_s
 
     upload_response = {
       "name" => original_file_path,
@@ -619,7 +618,6 @@ class DigitalObjectsController < ApplicationController
           original_file_sha256.update(buff)
         end
         original_file_sha256_hexdigest = original_file_sha256.hexdigest
-        puts 'Original file hash: ' + original_file_sha256_hexdigest
         file_to_upload.rewind # seek back to start of file for future reading
 
         # Copy file to final asset destination directory

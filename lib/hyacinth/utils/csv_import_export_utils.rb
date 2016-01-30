@@ -85,12 +85,16 @@ class Hyacinth::Utils::CsvImportExportUtils
   def self.create_import_job_from_csv_data(csv_data_string, import_filename, user)
     import_job = ImportJob.new(name: import_filename, user: user)
 
-    # First, run through the CSV and do a quick validation
+    # First, run through the CSV and do some quick validations
+
+    # Validate csv headers to make sure that all fields exist
+    validate_csv_headers(csv_data_string, import_job)
+
     begin
       Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(csv_data_string) do |digital_object_data, csv_row_number|
         # Do some quick CSV data checks to find easy mistakes and avoid queueing jobs that we know will fail
 
-        # 1) Check for project
+        # Project is required for new DigitalObjects
         import_job.errors.add(:invalid_csv, "Missing project for row: #{csv_row_number + 1}") if digital_object_data['project'].blank? && digital_object_data['pid'].blank?
       end
     rescue CSV::MalformedCSVError
@@ -113,7 +117,65 @@ class Hyacinth::Utils::CsvImportExportUtils
         Hyacinth::Queue.process_digital_object_import(digital_object_import.id)
       end
     end
-
     import_job
+  end
+
+  def self.validate_csv_headers(csv_data_string, import_job)
+    # Generate list of all dynamic field path regular expressions
+    dynamic_field_regexes_allowed_on_import = all_dynamic_field_regexes
+
+    # And validate against those field paths
+    index_of_first_new_line_char = csv_data_string.index("\n")
+    index_of_second_new_line_char = csv_data_string.index("\n", index_of_first_new_line_char + 1)
+    second_line_of_csv = csv_data_string[(index_of_first_new_line_char + 1)...(index_of_second_new_line_char)]
+
+    # We're only using CSV.parse on the second row of data in the CSV file
+    CSV.parse(second_line_of_csv) do |row|
+      row.each do |header_string|
+        next if header_string.nil? # Ignore blank headers
+        next if valid_internal_field?(header_string)
+        next if valid_dynamic_field?(header_string, dynamic_field_regexes_allowed_on_import)
+        next if /^_asset_data\..+/.match(header_string) # Ignore _asset_data headers upon import. They often appear in CSV exports (with helpful read-only info about assets) and are ignored during import.
+        import_job.errors.add(:invalid_csv_header, header_string)
+      end
+    end
+  end
+
+  def self.all_dynamic_field_regexes
+    dynamic_field_regexes = []
+    string_keys_to_dynamic_fields = Hash[DynamicField.includes(:parent_dynamic_field_group).all.map { |dynamic_field| [dynamic_field.string_key, dynamic_field] }]
+    string_keys_to_dynamic_field_groups = Hash[DynamicFieldGroup.includes(:parent_dynamic_field_group).all.map { |dynamic_field_group| [dynamic_field_group.string_key, dynamic_field_group] }]
+
+    string_keys_to_dynamic_fields.each do |dynamic_field_string_key, dynamic_field|
+      regex_to_build = dynamic_field_string_key
+      regex_to_build += '\\..+' if dynamic_field.dynamic_field_type == DynamicField::Type::CONTROLLED_TERM
+
+      next_df_or_dfg = dynamic_field
+      while next_df_or_dfg.parent_dynamic_field_group.present?
+        next_string_key = next_df_or_dfg.parent_dynamic_field_group.string_key
+        next_df_or_dfg = string_keys_to_dynamic_field_groups[next_string_key]
+        regex_to_build = next_string_key + '-\\d+:' + regex_to_build
+      end
+
+      regex_to_build = '^' + regex_to_build
+
+      dynamic_field_regexes << Regexp.new(regex_to_build)
+    end
+
+    dynamic_field_regexes
+  end
+
+  def self.valid_internal_field?(header_string)
+    ExportSearchResultsToCsvJob::INTERNAL_FIELD_REGEXES_ALLOWED_ON_IMPORT.each do |internal_field_regex|
+      return true if internal_field_regex.match(header_string)
+    end
+    false
+  end
+
+  def self.valid_dynamic_field?(header_string, dynamic_field_regexes)
+    dynamic_field_regexes.each do |dynamic_field_regex|
+      return true if dynamic_field_regex.match(header_string)
+    end
+    false
   end
 end

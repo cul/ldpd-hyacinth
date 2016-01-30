@@ -37,14 +37,13 @@ class DigitalObject::Asset < DigitalObject::Base
   
   def run_post_validation_pre_save_logic
     super
-
-    # If @import_file_data is set, then we want to import a file as part of our save operation
-    self.do_file_import if self.new_record?
+    
+    # For new DigitalObjects, we want to import a file as part of our save operation (assuming that this new object doesn't already have an associated Fedora object with a 'content' datastream)
+    self.do_file_import if self.new_record? && @fedora_object.present? && @fedora_object.datastreams['content'].blank?
   end
   
   # Returns true if file import was successful, false otherwise
   def do_file_import
-    
     path_to_final_save_location = nil
     import_file_sha256 = Digest::SHA256.new
     import_file_sha256_hexdigest = nil
@@ -156,7 +155,7 @@ class DigitalObject::Asset < DigitalObject::Base
     super # Always run shared parent class validation
     
     # New Assets must have certain import variables set
-    if self.new_record?
+    if self.new_record? && self.pid.nil?
       if @import_file_import_path.blank?
         @errors.add(:import_file_import_path, 'New Assets must have @import_file_import_path set.')
       end
@@ -182,41 +181,6 @@ class DigitalObject::Asset < DigitalObject::Base
 
     return @errors.blank?
   end
-
-  #def set_file_and_file_size_and_original_file_path_and_calculate_checksum(path_to_file, original_file_path, file_size)
-  #
-  #  # "controlGroup => 'E'" below means "External Referenced Content" -- as in, a file that's referenced by Fedora but not stored internally
-  #  ds_location = Addressable::URI.encode('file:' + path_to_file) # Note: This will result in paths like "file:/something%20great/here.txt"  We DO NOT want a double slash at the beginnings of these paths.
-  #  original_filename = File.basename(path_to_file)
-  #  content_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, 'content', :controlGroup => 'E', :mimeType => DigitalObject::Asset.filename_to_mime_type(original_filename), :dsLabel => original_filename, :versionable => true)
-  #  content_ds.dsLocation = ds_location
-  #  @fedora_object.datastreams["DC"].dc_source = ds_location
-  #
-  #  # Calculate checksum for file, using 4096-byte buffered approach to save memory for large files
-  #  sha256 = Digest::SHA256.new
-  #  File.open(path_to_file, 'r') do |file|
-  #    while buff = file.read(4096)
-  #      sha256.update(buff)
-  #    end
-  #  end
-  #
-  #  content_ds.checksum = sha256.hexdigest
-  #  content_ds.checksumType = 'SHA-256'
-  #
-  #  @fedora_object.add_datastream(content_ds)
-  #
-  #  # Add size property to content datastream using :extent predicate
-  #  @fedora_object.rels_int.add_relationship(content_ds, :extent, file_size.to_s, true) # last param *true* means that this is a literal value rather than a relationship
-  #
-  #  # Add original_filename property to content datastream using <info:fedora/fedora-system:def/model#downloadFilename> relationship
-  #  @fedora_object.rels_int.add_relationship(content_ds, 'info:fedora/fedora-system:def/model#downloadFilename', original_filename, true) # last param *true* means that this is a literal value rather than a relationship
-  #
-  #  # Assume top-left orientation at upload time. This can be corrected later in the app.
-  #  @fedora_object.rels_int.add_relationship(content_ds, :orientation, 'top-left', true) # last param *true* means that this is a literal value rather than a relationship
-  #
-  #  set_original_file_path(original_file_path) # This also updates the 'content' datastream label
-  #
-  #end
 
   def get_filesystem_location
     content_ds = @fedora_object.datastreams['content']
