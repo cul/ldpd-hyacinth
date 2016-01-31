@@ -37,16 +37,14 @@ class DigitalObject::Asset < DigitalObject::Base
   
   def run_post_validation_pre_save_logic
     super
-    
     # For new DigitalObjects, we want to import a file as part of our save operation (assuming that this new object doesn't already have an associated Fedora object with a 'content' datastream)
     self.do_file_import if self.new_record? && @fedora_object.present? && @fedora_object.datastreams['content'].blank?
     
-    set_dc_type_based_on_filename(get_original_filename)
+    set_dc_type_based_on_filename(get_original_filename) if self.dc_type == 'Unknown' # Attempt to correct dc_type for 'Unknown' dc_type DigitalObjects
   end
   
-  def run_after_save_logic
-    super
-    
+  def run_after_create_logic
+    # For new Hyacinth records, perform post processing on the asset file (image derivative generation, fulltext extraction, etc.)
     regenrate_image_derivatives! if self.dc_type == 'StillImage'
   end
   

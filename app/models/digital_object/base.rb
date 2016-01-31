@@ -409,9 +409,11 @@ class DigitalObject::Base
       DigitalObjectRecord.transaction do
         
         if self.new_record?
+          save_called_for_new_record = true
           @fedora_object = self.get_new_fedora_object unless @fedora_object.present?
           @db_record.pid = @fedora_object.pid
         else
+          save_called_for_new_record = false
           # For existing records, we always lock on @db_record during Fedora reads/writes (and wrap in a transaction)
           @db_record.lock! # Within the established transaction, lock on this object's row.  Remember: "lock!" also reloads object data from the db, so perform all @db_record modifications AFTER this call.
         end
@@ -496,7 +498,10 @@ class DigitalObject::Base
         self.update_index
         
         # If we got here, then everything is good. Run after-save logic
+        
+        run_after_create_logic() if save_called_for_new_record
         run_after_save_logic()
+        
         return true
       end
     end
@@ -508,6 +513,10 @@ class DigitalObject::Base
   end
   
   def run_after_save_logic
+    # This method is intended to be overridden by DigitalObject::Base child classes
+  end
+  
+  def run_after_create_logic
     # This method is intended to be overridden by DigitalObject::Base child classes
   end
 
