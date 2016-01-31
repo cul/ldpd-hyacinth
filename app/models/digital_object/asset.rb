@@ -40,6 +40,14 @@ class DigitalObject::Asset < DigitalObject::Base
     
     # For new DigitalObjects, we want to import a file as part of our save operation (assuming that this new object doesn't already have an associated Fedora object with a 'content' datastream)
     self.do_file_import if self.new_record? && @fedora_object.present? && @fedora_object.datastreams['content'].blank?
+    
+    set_dc_type_based_on_filename(get_original_filename)
+  end
+  
+  def run_after_save_logic
+    super
+    
+    regenrate_image_derivatives! if self.dc_type == 'StillImage'
   end
   
   # Returns true if file import was successful, false otherwise
@@ -241,7 +249,6 @@ class DigitalObject::Asset < DigitalObject::Base
     @fedora_object.add_relationship(:original_name, original_file_path, true)
 
     original_filename = get_original_filename()
-    set_dc_type_based_on_filename(original_filename)
     @fedora_object.datastreams['content'].dsLabel = original_filename
     @fedora_object.datastreams['content'].mimeType = DigitalObject::Asset.filename_to_mime_type(original_filename)
   end
@@ -342,14 +349,18 @@ class DigitalObject::Asset < DigitalObject::Base
 
   def regenrate_image_derivatives!
     credentials = ActionController::HttpAuthentication::Basic.encode_credentials(REPOSITORY_CACHE_CONFIG['username'], REPOSITORY_CACHE_CONFIG['password'])
-    response = JSON(RestClient.post(REPOSITORY_CACHE_CONFIG['url'] + "/images/#{self.pid}/regenerate", {fake: 'fake'}, {Authorization: credentials}))
-
-    #
+    
     #resource = RestClient::Resource.new( REPOSITORY_CACHE_CONFIG['url'] + "/images/#{self.pid}/regenerate", REPOSITORY_CACHE_CONFIG['username'], REPOSITORY_CACHE_CONFIG['password'] )
     ##resource.post( {}, :Authorization => $auth )
     #response = resource.post({})
-
-    return response['success'].to_s == 'true'
+    
+    begin
+      response = JSON(RestClient.post(REPOSITORY_CACHE_CONFIG['url'] + "/images/#{self.pid}/regenerate", {}, {Authorization: credentials}))
+      return response['success'].to_s == 'true'
+    rescue Errno::ECONNREFUSED
+      Hyacinth::Utils::Logger.logger.error("Tried to regenerate image derivatives for #{self.pid}, but could not connect to Repository Cache server at: #{REPOSITORY_CACHE_CONFIG['url']}")
+      return false
+    end
   end
 
   def to_solr

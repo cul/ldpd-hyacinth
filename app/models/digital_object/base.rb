@@ -494,6 +494,9 @@ class DigitalObject::Base
         @db_record.save! # Save timestamps + updates to modifed_by, etc.
 
         self.update_index
+        
+        # If we got here, then everything is good. Run after-save logic
+        run_after_save_logic()
         return true
       end
     end
@@ -501,6 +504,10 @@ class DigitalObject::Base
   end
   
   def run_post_validation_pre_save_logic
+    # This method is intended to be overridden by DigitalObject::Base child classes
+  end
+  
+  def run_after_save_logic
     # This method is intended to be overridden by DigitalObject::Base child classes
   end
 
