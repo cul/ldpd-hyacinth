@@ -108,7 +108,7 @@
               </label>
               <div class="col-sm-9">
                 <a href="<%= Hyacinth.getLocationOrigin() + '/digital_objects/' + digitalObject.getPid() + '/download' %>" target="_blank"><span class="glyphicon glyphicon-download"></span> Download</a>
-                (<%= digitalObject.getFileSizeInBytes() %> bytes)
+                (<%= digitalObject.getFileSizeString() %>) [<%= digitalObject.getFileSizeInBytes() %> bytes]
               </div>
             </div>
             <div class="form-group">
