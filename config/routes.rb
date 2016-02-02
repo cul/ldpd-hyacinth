@@ -91,7 +91,7 @@ Hyacinth::Application.routes.draw do
 
   resources :projects do
     resources :fieldsets, controller: 'projects/fieldsets', as: :project_fieldsets
-    
+
     member do
       resource :permissions, controller: 'projects/permissions', only: [:edit, :update], as: :project_permissions
       resource :publish_targets, controller: 'projects/publish_targets', only: [:edit, :update], as: :project_publish_targets
