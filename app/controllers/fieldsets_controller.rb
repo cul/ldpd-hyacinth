@@ -26,7 +26,7 @@ class FieldsetsController < ApplicationController
 
     respond_to do |format|
       if @fieldset.save
-        format.html { redirect_to edit_project_fieldset_path(@fieldset), notice: 'Fieldset was successfully created.' }
+        format.html { redirect_to edit_project_project_fieldset_path(@project, @fieldset), notice: 'Fieldset was successfully created.' }
       else
         format.html { render action: 'new' }
       end
@@ -38,7 +38,7 @@ class FieldsetsController < ApplicationController
   def update
     respond_to do |format|
       if @fieldset.update(fieldset_params)
-        format.html { redirect_to edit_project_fieldset_path(@fieldset), notice: 'Fieldset was successfully updated.' }
+        format.html { redirect_to edit_project_project_fieldset_path(@project, @fieldset), notice: 'Fieldset was successfully updated.' }
       else
         format.html { render action: 'edit' }
       end
@@ -77,15 +77,15 @@ class FieldsetsController < ApplicationController
 
     case params[:action]
     when 'new'
-      @contextual_nav_options['nav_title']['url'] = project_fieldsets_path(params[:project_id])
+      @contextual_nav_options['nav_title']['url'] = project_project_fieldsets_path(@project)
     when 'create'
-      @contextual_nav_options['nav_title']['url'] = project_fieldsets_path(params[:fieldset]['project_id'])
+      @contextual_nav_options['nav_title']['url'] = project_project_fieldsets_path(params[:fieldset]['project_id'])
     when 'index'
-      @contextual_nav_options['nav_title']['url'] = project_fieldsets_path(params[:project_id])
-      @contextual_nav_options['nav_items'].push(label: 'New Fieldset', url: new_project_fieldset_path(project_id: @project.id))
+      @contextual_nav_options['nav_title']['url'] = project_project_fieldsets_path(@project)
+      @contextual_nav_options['nav_items'].push(label: 'New Fieldset', url: new_project_project_fieldset_path(project_id: @project.id))
     when 'edit', 'update', 'show'
-      @contextual_nav_options['nav_title']['url'] = project_fieldsets_path(@fieldset.project)
-      @contextual_nav_options['nav_items'].push(label: 'Delete This Fieldset', url: project_fieldset_path(@fieldset), options: {method: :delete, data: { confirm: 'Are you sure you want to delete this Fieldset?' } })
+      @contextual_nav_options['nav_title']['url'] = project_project_fieldsets_path(@project, @fieldset.project)
+      @contextual_nav_options['nav_items'].push(label: 'Delete This Fieldset', url: project_project_fieldset_path(@fieldset), options: {method: :delete, data: { confirm: 'Are you sure you want to delete this Fieldset?' } })
     end
   end
 

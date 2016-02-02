@@ -14,5 +14,5 @@
   <li <%= 'class="active"'.html_safe if (params[:controller] == 'projects/publish_targets' && params[:action] == 'edit') %>>
       <%= link_to 'Publish Targets', edit_project_publish_targets_path(@project) %></li>
   <li <%= 'class="active"'.html_safe if (params[:controller] == 'projects/fieldsets' && params[:action] == 'index') %>>
-      <%= link_to 'Fieldsets', project_fieldsets_path(@project) %></li>
+      <%= link_to 'Fieldsets', project_project_fieldsets_path(@project) %></li>
 </ul>

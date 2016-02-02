@@ -3,22 +3,8 @@ module Projects
     include Hyacinth::ProjectsBehavior
 
     before_action :set_project, only: [:show, :edit, :update, :destroy]
+    before_action :require_appropriate_permissions!
     before_action :set_contextual_nav_options
-
-    def require_appropriate_permissions!
-
-      case params[:action]
-      when 'index', 'show'
-        unless current_user.is_project_admin_for_at_least_one_project?
-          require_hyacinth_admin!
-        end
-      when 'edit', 'update', 'destroy'
-        require_project_permission!(@project, :project_admin)
-      else
-        require_hyacinth_admin!
-      end
-
-    end
 
     # GET /projects/1/publish_targets/edit
     def edit
@@ -41,6 +27,8 @@ module Projects
         render action: 'edit'
       end
     end
+    
+    private
 
     def set_contextual_nav_options
       @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Projects'.html_safe
