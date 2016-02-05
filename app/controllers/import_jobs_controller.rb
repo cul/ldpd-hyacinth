@@ -27,10 +27,13 @@ class ImportJobsController < ApplicationController
 
   # POST /import_jobs
   def create
-    import_file = params[:import_file]
-    @import_filename = import_file.original_filename
-    
-    @import_job = Hyacinth::Utils::CsvImportExportUtils.create_import_job_from_csv_data(import_file.read, @import_filename, current_user)
+    if params[:import_file]
+      import_file = params[:import_file]
+      @import_job = Hyacinth::Utils::CsvImportExportUtils.create_import_job_from_csv_data(import_file.read, import_file.original_filename, current_user)
+    else
+      @import_job = ImportJob.new
+      @import_job.errors.add(:file, 'is required.')
+    end
     
     if @import_job.errors.any?
       render action: 'new'
