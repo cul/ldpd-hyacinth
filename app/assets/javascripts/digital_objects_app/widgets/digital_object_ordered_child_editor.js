@@ -84,49 +84,52 @@ Hyacinth.DigitalObjectsApp.DigitalObjectOrderedChildEditor.prototype.init = func
 
   });
 
-  this.$containerElement.find('.ordered-child-editor-form').on('submit', function(e){
-
-    e.preventDefault();
-    var $submitButton = $(this).find('.editor-submit-button');
-    $submitButton.attr('data-original-value', $submitButton.val()).val('Saving...');
-    Hyacinth.addAlert('Saving...', 'info');
-
-    var orderedPids = [];
-
-    $orderedChildren = that.$containerElement.find('.ordered-child');
-
-    if ($orderedChildren.length > 0) {
-      $orderedChildren.each(function(){
-        orderedPids.push($(this).attr('data-pid'));
-      });
-    }
-    
-    var digitalObjectData = {ordered_child_digital_objects: orderedPids};
-    digitalObjectData['ordered_child_digital_objects'] = $.map(orderedPids, function(val){ return {pid: val} });
-
-    $.ajax({
-      url: '/digital_objects/' + that.digitalObject.getPid() + '.json',
-      type: 'POST',
-      data: {
-        '_method': 'PUT', //For proper RESTful Rails requests
-        digital_object_data_json : JSON.stringify(digitalObjectData),
-      },
-      cache: false
-    }).done(function(digitalObjectCreationResponse){
-      $submitButton.val($submitButton.attr('data-original-value'));
-
-      if (digitalObjectCreationResponse['errors']) {
-        Hyacinth.addAlert('Errors encountered during save. Please try again.', 'danger');
-      } else {
-        Hyacinth.addAlert('Digital Object saved.', 'success');
+  //Save button is only visible if a user has the right permissions
+  if(this.$containerElement.find('.ordered-child-editor-form').length > 0) {
+    this.$containerElement.find('.ordered-child-editor-form').on('submit', function(e){
+  
+      e.preventDefault();
+      var $submitButton = $(this).find('.editor-submit-button');
+      $submitButton.attr('data-original-value', $submitButton.val()).val('Saving...');
+      Hyacinth.addAlert('Saving...', 'info');
+  
+      var orderedPids = [];
+  
+      $orderedChildren = that.$containerElement.find('.ordered-child');
+  
+      if ($orderedChildren.length > 0) {
+        $orderedChildren.each(function(){
+          orderedPids.push($(this).attr('data-pid'));
+        });
       }
-
-    }).fail(function(){
-      $submitButton.val($submitButton.attr('data-original-value'));
-      alert(Hyacinth.unexpectedAjaxErrorMessage);
+      
+      var digitalObjectData = {ordered_child_digital_objects: orderedPids};
+      digitalObjectData['ordered_child_digital_objects'] = $.map(orderedPids, function(val){ return {pid: val} });
+  
+      $.ajax({
+        url: '/digital_objects/' + that.digitalObject.getPid() + '.json',
+        type: 'POST',
+        data: {
+          '_method': 'PUT', //For proper RESTful Rails requests
+          digital_object_data_json : JSON.stringify(digitalObjectData),
+        },
+        cache: false
+      }).done(function(digitalObjectCreationResponse){
+        $submitButton.val($submitButton.attr('data-original-value'));
+  
+        if (digitalObjectCreationResponse['errors']) {
+          Hyacinth.addAlert('Errors encountered during save. Please try again.', 'danger');
+        } else {
+          Hyacinth.addAlert('Digital Object saved.', 'success');
+        }
+  
+      }).fail(function(){
+        $submitButton.val($submitButton.attr('data-original-value'));
+        alert(Hyacinth.unexpectedAjaxErrorMessage);
+      });
+  
     });
-
-  });
+  }
 
 };
 
