@@ -46,6 +46,15 @@
   <div class="row">
     <div class="col-md-12">
       <div class="field">
+        <%= f.label :uri, 'Project URI' %>
+        <%= f.text_field :uri, {class: 'form-control'} %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="field">
         <%= f.label :full_path_to_custom_asset_directory, 'Custom Asset Directory (leave blank for default)' %>
         <%= f.text_field :full_path_to_custom_asset_directory, {class: 'form-control', placeholder: 'Default: ' + File.join(HYACINTH['default_asset_home'], @project.new_record? ? '[ project string key ]' : @project.string_key)} %>
       </div>
