@@ -124,6 +124,7 @@ class Project < ActiveRecord::Base
   def as_json(options={})
     return {
       pid: self.pid,
+      uri: self.uri.present? ? self.uri : nil,
       display_label: self.display_label,
       string_key: self.string_key
     }
