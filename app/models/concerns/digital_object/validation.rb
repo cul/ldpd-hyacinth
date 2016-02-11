@@ -2,23 +2,24 @@ module DigitalObject::Validation
   extend ActiveSupport::Concern
 
   VALID_STATES = ['A', 'I', 'D'] # These are based on Fedora values: Active, Inactive and Deleted
-  
-  # Require the following methods for use with ActiveModel::Errors
+  FEDORA_VALID_PID_REGEX = /^([A-Za-z0-9]|-|\.)+:(([A-Za-z0-9])|-|\.|~|_|(%[0-9A-F]{2}))+$/
   
   included do
-    extend ActiveModel::Naming
+    extend ActiveModel::Naming # Required for use with ActiveModel::Errors
   end
   
   class_methods do
+    # Required for use with ActiveModel::Errors
     def human_attribute_name(attr, options = {})
       attr
     end
-  
+    # Required for use with ActiveModel::Errors
     def lookup_ancestors
       [self]
     end
   end
   
+  # Required for use with ActiveModel::Errors
   def read_attribute_for_validation(attr)
     send(attr)
   end
@@ -78,9 +79,9 @@ module DigitalObject::Validation
       @errors.add(:project, 'Must have a project')
     end
     
-    # Make sure that none of the identifiers match an existing Fedora object that is NOT this object's pid
+    # Make sure that none of the identifiers conflict with the PID of another existing Fedora object
     @identifiers.each do |identifier|
-      if identifier != self.pid && ActiveFedora::Base.exists?(identifier)
+      if identifier != self.pid && identifier.match(FEDORA_VALID_PID_REGEX) && ActiveFedora::Base.exists?(identifier)
         @errors.add(:identifier, "Cannot assign identifier #{identifier} because a Fedora object with this pid already exists.")
       end
     end
