@@ -13,7 +13,7 @@
         <div>
           <a href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: searchResult.getPid(), searchResultNumber: searchResultNumber}) %>"><%= searchResult.getPid() %></a>
         </div>
-        <div><strong>Title:</strong> <%- searchResult.getTitle() %></div>
+        <div class="title-display"><strong>Title:</strong> <%- searchResult.getTitle() %></div>
 
         <%
         var parent_pids = searchResult.getParentDigitalObjectPids();

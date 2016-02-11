@@ -58,7 +58,6 @@ module DigitalObject::Validation
 
     # Exactly one project is required
     if self.project.present?
-      
       enabled_dynamic_fields = self.get_enabled_dynamic_fields
       flattened_dynamic_field_data_without_blank_fields = get_flattened_dynamic_field_data(true)
       #flattened_dynamic_field_data_with_blank_fields = get_flattened_dynamic_field_data()
@@ -75,7 +74,6 @@ module DigitalObject::Validation
           @errors.add(string_key + '.0', 'Missing required field: ' + dynamic_field.parent_dynamic_field_group.display_label + ' -> ' + dynamic_field.display_label) unless flattened_dynamic_field_data_without_blank_fields.has_key?(string_key)
         }
       end
-      
     else
       @errors.add(:project, 'Must have a project')
     end

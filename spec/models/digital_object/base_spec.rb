@@ -279,24 +279,39 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(DigitalObject::Base.find(item.pid).pid).to eq(item.pid)
     end
   
-    it "can create a new DigitalObject for an existing Fedora object that isn't being tracked by Hyacinth" do
-        pid = 'test:existingobject'
-        content_aggregator = ContentAggregator.new(:pid => pid)
+    it "can create a new DigitalObject for an existing Fedora object that isn't being tracked by Hyacinth, and preserves identifiers, parents and publish targets from that Fedora object" do
+        
+        existing_parent_object_pid = 'test:existing_parent_object'
+        existing_parent_object = Collection.new(:pid => existing_parent_object_pid)
+        existing_parent_object.save
+        
+        publish_target = PublishTarget.first
+        publish_target_fedora_object = publish_target.fedora_object
+        
+        existing_object_pid = 'test:existingobject'
+        existing_object_identifier = 'custom_identifier'
+        content_aggregator = ContentAggregator.new(:pid => existing_object_pid)
+        content_aggregator.datastreams['DC'].dc_identifier = [existing_object_identifier]
+        content_aggregator.add_relationship(:cul_member_of, existing_parent_object.internal_uri)
+        content_aggregator.add_relationship(:publisher, publish_target_fedora_object.internal_uri)
         content_aggregator.save
         
-        expect(content_aggregator.pid).to eq(pid) # New Fedora object has been assigned given pid
-        expect(DigitalObject::Base.find_by_pid(pid)).to eq(nil) # Hyacinth is not aware of any object with given pid
+        expect(content_aggregator.pid).to eq(existing_object_pid) # New Fedora object has been assigned given pid
+        expect(DigitalObject::Base.find_by_pid(existing_object_pid)).to eq(nil) # Hyacinth is not aware of any object with given pid
     
         # Create object with given pid
-        sample_item_digital_object_data['pid'] = pid
+        sample_item_digital_object_data['pid'] = existing_object_pid
         item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
         item.set_digital_object_data(sample_item_digital_object_data, false)
-        expect(item.pid).to eq(pid) # pid should be set for the item
+        expect(item.pid).to eq(existing_object_pid) # pid should be set for the item
         
         # Save item, which should then refer to the existing Fedora object
         item.save
         
         expect(item.fedora_object).to eq(content_aggregator)
+        expect(item.fedora_object.datastreams['DC'].dc_identifier.include?(existing_object_identifier)).to be(true)
+        expect(item.parent_digital_object_pids.include?(existing_parent_object_pid)).to be(true)
+        expect(item.publish_targets.include?(publish_target)).to be(true)
     end
   end
 

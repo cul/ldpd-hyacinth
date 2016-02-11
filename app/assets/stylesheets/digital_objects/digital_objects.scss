@@ -304,6 +304,9 @@
 
     .search-result-summary {
       padding-bottom:1.5em;
+      .title-display {
+        word-break: break-word;
+      }
     }
 
     .footer-label {

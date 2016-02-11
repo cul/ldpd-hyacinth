@@ -82,13 +82,11 @@ class Hyacinth::Utils::CsvImportExportUtils
     put_object_at_builder_path(digital_object_data, input_field, value, true)
   end
 
-  def self.create_import_job_from_csv_data(csv_data_string, import_filename, user)
-    import_job = ImportJob.new(name: import_filename, user: user)
-
-    # First, run through the CSV and do some quick validations
-
+  def self.validate_import_job_csv_data(csv_data_string, user, import_job)
     # Validate csv headers to make sure that all fields exist
     validate_csv_headers(csv_data_string, import_job)
+
+    project_search_criteria_referenced_in_spreadsheet = []
 
     begin
       Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(csv_data_string) do |digital_object_data, csv_row_number|
@@ -96,11 +94,37 @@ class Hyacinth::Utils::CsvImportExportUtils
 
         # Project is required for new DigitalObjects
         import_job.errors.add(:invalid_csv, "Missing project for row: #{csv_row_number + 1}") if digital_object_data['project'].blank? && digital_object_data['pid'].blank?
+
+        # Collect list of projects present in spreadsheet so that we can ensure that the given user is allowed to create/update data in those projects
+        project_search_criteria_referenced_in_spreadsheet << digital_object_data['project']
       end
     rescue CSV::MalformedCSVError
       # Handle invalid CSV
       import_job.errors.add(:invalid_csv, 'Invalid CSV File')
     end
+
+    project_search_criteria_referenced_in_spreadsheet.uniq!
+
+    validate_project_permission_for_project_string_keys(user, project_search_criteria_referenced_in_spreadsheet, import_job)
+  end
+
+  def self.validate_project_permission_for_project_string_keys(user, project_search_criteria_referenced_in_spreadsheet, import_job)
+    project_search_criteria_referenced_in_spreadsheet.each do |project_search_criteria|
+      project = Project.find_by(project_search_criteria)
+      if project.nil?
+        import_job.errors.add(:project, 'not found with search criteria: ' + project_search_criteria.inspect)
+      elsif user.present? && (!user.has_project_permission?(project, :create) || !user.has_project_permission?(project, :update))
+        # User must have create and update permissions for a project in order to do CSV imports
+        import_job.errors.add(:project_permission_denied, 'for import into project with string key: ' + project_string_key)
+      end
+    end
+  end
+
+  def self.create_import_job_from_csv_data(csv_data_string, import_filename, user)
+    import_job = ImportJob.new(name: import_filename, user: user)
+
+    # First, run through the CSV and do some quick validations
+    validate_import_job_csv_data(csv_data_string, user, import_job)
 
     # Assuming there were no validation errors, run through the CSV data again and do an import for real
     unless import_job.errors.any?

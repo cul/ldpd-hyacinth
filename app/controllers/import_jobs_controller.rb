@@ -27,9 +27,15 @@ class ImportJobsController < ApplicationController
 
   # POST /import_jobs
   def create
+    
     if params[:import_file]
       import_file = params[:import_file]
-      @import_job = Hyacinth::Utils::CsvImportExportUtils.create_import_job_from_csv_data(import_file.read, import_file.original_filename, current_user)
+      if params[:submit] == 'validate'
+        @import_job = ImportJob.new
+        Hyacinth::Utils::CsvImportExportUtils.validate_import_job_csv_data(import_file.read, current_user, @import_job)
+      else
+        @import_job = Hyacinth::Utils::CsvImportExportUtils.create_import_job_from_csv_data(import_file.read, import_file.original_filename, current_user)
+      end
     else
       @import_job = ImportJob.new
       @import_job.errors.add(:file, 'is required.')
@@ -38,7 +44,12 @@ class ImportJobsController < ApplicationController
     if @import_job.errors.any?
       render action: 'new'
     else
-      redirect_to import_job_path(@import_job)
+      if params[:submit] == 'validate'
+        flash[:notice] = 'The submitted CSV file appears to be valid.' if @import_job.errors.blank?
+        render action: 'new'
+      else
+        redirect_to import_job_path(@import_job)
+      end
     end
   end
 

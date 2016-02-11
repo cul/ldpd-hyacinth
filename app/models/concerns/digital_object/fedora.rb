@@ -152,7 +152,7 @@ module DigitalObject::Fedora
       # - To be safe, do a Fedora Resource Index search for all upward-pointing member relationships from child objects:
       # - Append missing members
       # - Remove nonexistent members
-      risearch_members = Cul::Hydra::RisearchMembers.get_direct_member_pids(self.pid)
+      risearch_members = Cul::Hydra::RisearchMembers.get_direct_member_pids(self.pid, true)
 
       # Example of logic below:
       #>>>> ( [1, 2, 7] | [6, 7] ) & [7, 6]
@@ -165,10 +165,9 @@ module DigitalObject::Fedora
 
   def load_project_and_publisher_relationships_from_fedora_object!
     # Get project relationships
-    pid = @fedora_object.relationships(PROJECT_MEMBERSHIP_PREDICATE).map{|val| val.gsub('info:fedora/', '') }.first
-    raise "Missing project for DigitalObject #{self.pid}. This needs to be fixed." if pid.nil?
-    @project = Project.find_by(pid: pid)
-    raise "Could not find project with pid #{pid} for DigitalObject #{self.pid}." if @project.nil?
+    project_pid = @fedora_object.relationships(PROJECT_MEMBERSHIP_PREDICATE).map{|val| val.gsub('info:fedora/', '') }.first
+    Hyacinth::Utils::Logger.logger.info "Missing project for DigitalObject #{project_pid}. This needs to be fixed." if project_pid.nil?
+    @project = project_pid.nil? ? nil : Project.find_by(pid: project_pid)
 
     # Get publish target relationships
     pids = @fedora_object.relationships(:publisher).map{|val| val.gsub('info:fedora/', '') }

@@ -10,7 +10,6 @@ module DigitalObject::IndexAndSearch
   #################
 
   def to_solr
-
     flattened_dynamic_field_data = get_flattened_dynamic_field_data(true)
 
     doc = {
@@ -81,7 +80,6 @@ module DigitalObject::IndexAndSearch
     end
 
     return doc
-
   end
 
   def update_index(commit=true)

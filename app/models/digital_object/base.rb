@@ -25,7 +25,7 @@ class DigitalObject::Base
     raise 'The DigitalObject::Base class cannot be instantiated.  You can only instantiate subclasses like DigitalObject::Item' if self.class == DigitalObject::Base
     @db_record = ::DigitalObjectRecord.new
     @fedora_object = nil
-    @project = []
+    @project = nil
     @publish_targets = []
     @identifiers = []
     @parent_digital_object_pids = []
@@ -65,6 +65,7 @@ class DigitalObject::Base
         # This object has no pid and therefore must be new. Link it to the fedora object with the given pid.
         begin
           @fedora_object = ActiveFedora::Base.find(digital_object_data['pid'])
+          init_from_digital_object_record_and_fedora_object(@db_record, @fedora_object)
         rescue ActiveFedora::ObjectNotFoundError
           raise Hyacinth::Exceptions::AssociatedFedoraObjectNotFoundError, "Tried to set associated Fedora object for new DigitalObject, but could not find Fedora object with pid #{digital_object_data['pid']}"
         end
@@ -77,7 +78,8 @@ class DigitalObject::Base
     
     # Parent Digital Objects (PID or Identifier)
     if digital_object_data['parent_digital_objects']
-      @parent_digital_object_pids = [] # Clear because we're about to set new values
+      @parent_digital_object_pids = [] unless self.new_record? # We might have existing values if we're creating a new record with an existing Fedora object, so only clear existing data if this is an update to an existing Hyacinth record
+      
       digital_object_data['parent_digital_objects'].each do |parent_digital_object_find_criteria|
         if parent_digital_object_find_criteria['pid'].present?
           digital_object = DigitalObject::Base.find_by_pid(parent_digital_object_find_criteria['pid'])
@@ -101,7 +103,8 @@ class DigitalObject::Base
     
     # Identifiers (multiple)
     if digital_object_data['identifiers']
-      self.identifiers = digital_object_data['identifiers']
+      @identifiers = [] unless self.new_record? # We might have existing values if we're creating a new record with an existing Fedora object, so only clear existing data if this is an update to an existing Hyacinth record
+      @identifiers += digital_object_data['identifiers']
     end
     
     # Project (only one) -- Only allow setting this if this DigitalObject is a new record
@@ -115,13 +118,14 @@ class DigitalObject::Base
     
     # Publish Targets (multiple)
     if digital_object_data['publish_targets']
-      self.publish_targets = []
+      @publish_targets = [] unless self.new_record? # We might have existing values if we're creating a new record with an existing Fedora object, so only clear existing data if this is an update to an existing Hyacinth record
+      
       digital_object_data['publish_targets'].each do |publish_target_find_criteria|
         publish_target = PublishTarget.find_by(publish_target_find_criteria) # i.e. {string_key: 'target1'} or {pid: 'abc:123'}
         if publish_target.nil?
           raise Hyacinth::Exceptions::PublishTargetNotFoundError, "Could not find Publish Target: #{publish_target_find_criteria.inspect}"
         else
-          self.publish_targets.push(publish_target)
+          @publish_targets.push(publish_target)
         end
       end
     end
@@ -336,9 +340,7 @@ class DigitalObject::Base
   end
   
   def self.find_all_by_identifier(identifier)
-    
     # First attempt a solr lookup.  If records are found in solr, we don't need to do a Fedora lookup.
-    
     search_response = DigitalObject::Base.search(
       {
         'f' => {'identifiers_sim' => [identifier]},
@@ -458,7 +460,7 @@ class DigitalObject::Base
             (removed_parents + new_parents).each do |digital_obj_pid|
               parent_obj = DigitalObject::Base.find(digital_obj_pid)
               unless parent_obj.save
-                @errors.add(:parent_digital_objects, parent_obj.errors)
+                @errors.add(:parent_digital_objects, parent_obj.errors.full_messages.join(', '))
               end
             end
           else
@@ -472,7 +474,7 @@ class DigitalObject::Base
               removed_parent_obj = DigitalObject::Base.find(digital_obj_pid)
               removed_parent_obj.remove_ordered_child_digital_object_pid(self.pid)
               unless removed_parent_obj.save
-                @errors.add(:obsolete_parent_digital_object_pid, removed_parent_obj.errors)
+                @errors.add(:obsolete_parent_digital_object_pid, 'Removed parent object erorrs: ' + removed_parent_obj.errors.full_messages.join(', '))
               end
             end
 
@@ -480,7 +482,7 @@ class DigitalObject::Base
               new_parent_obj = DigitalObject::Base.find(digital_obj_pid)
               new_parent_obj.add_ordered_child_digital_object(self)
               unless new_parent_obj.save
-                @errors.add(:parent_digital_object_pid, new_parent_obj.errors)
+                @errors.add(:parent_digital_object_pid, 'Parent object erorrs: ' + new_parent_obj.errors.full_messages.join(', '))
                 return false
               end
             end
