@@ -95,6 +95,9 @@ class Hyacinth::Utils::CsvImportExportUtils
         # Project is required for new DigitalObjects
         import_job.errors.add(:invalid_csv, "Missing project for row: #{csv_row_number + 1}") if digital_object_data['project'].blank? && digital_object_data['pid'].blank?
 
+        # Make sure that referenced files actually exist
+        validate_import_file_import_path_if_present(digital_object_data, csv_row_number, import_job)
+
         # Collect list of projects present in spreadsheet so that we can ensure that the given user is allowed to create/update data in those projects
         project_search_criteria_referenced_in_spreadsheet << digital_object_data['project']
       end
@@ -106,6 +109,24 @@ class Hyacinth::Utils::CsvImportExportUtils
     project_search_criteria_referenced_in_spreadsheet.uniq!
 
     validate_project_permission_for_project_string_keys(user, project_search_criteria_referenced_in_spreadsheet, import_job)
+  end
+
+  def self.validate_import_file_import_path_if_present(digital_object_data, csv_row_number, import_job)
+    if digital_object_data['import_file'].present? && digital_object_data['import_file']['import_path'].present?
+
+      import_file_type = digital_object_data['import_file']['import_type']
+      import_file_path = digital_object_data['import_file']['import_path']
+
+      # Concatenate upload directory path with import_file_path if this file comes from the upload directory
+      if import_file_type == DigitalObject::Asset::IMPORT_TYPE_UPLOAD_DIRECTORY
+        import_file_path = File.join(HYACINTH['upload_directory'], import_file_path)
+      end
+
+      # Check to see if a file exists at import_file_path
+      unless File.file?(import_file_path)
+        import_job.errors.add(:file_not_found, "For CSV row #{csv_row_number}, could not find file at _import_file.import_path => " + import_file_path)
+      end
+    end
   end
 
   def self.validate_project_permission_for_project_string_keys(user, project_search_criteria_referenced_in_spreadsheet, import_job)

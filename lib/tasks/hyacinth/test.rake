@@ -26,7 +26,7 @@ namespace :hyacinth do
       test_pid_generator = PidGenerator.create!(namespace: 'test')
 
       # Create Test project
-      test_project = Project.create!(string_key: 'test', display_label: 'Test', pid_generator: test_pid_generator)
+      test_project = Project.create!(string_key: 'test', uri: 'id.library.columbia.edu/fake/test_project_uri', display_label: 'Test', pid_generator: test_pid_generator)
 
       # Create test DynamicFieldGroupCategory
       test_dynamic_field_group_category = DynamicFieldGroupCategory.create!(display_label: 'Test')
