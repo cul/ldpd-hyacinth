@@ -144,7 +144,7 @@ module DigitalObject::Fedora
     # Load Hyacinth struct data
     @ordered_child_digital_object_pids = get_hyacinth_struct_ds_data()
     
-    if HYACINTH['treat_fedora_resource_index_updates_as_immediate']
+    ###if HYACINTH['treat_fedora_resource_index_updates_as_immediate']
       # If and only if Fedora Resource Index updates are set to be immediate, we can rely on the index for
       # aggregating missing memberOf values and appending them to this list.  If Resource Index updates aren't
       # immediate, this is unsafe.  Resource Update flush settings must be configured in fedora.fcfg.
@@ -159,7 +159,7 @@ module DigitalObject::Fedora
       #  => [6, 7]
       # Maintains order of existing items, adds missing items, cleans up nonexistent items
       @ordered_child_digital_object_pids = (@ordered_child_digital_object_pids | risearch_members) & risearch_members
-    end
+    ###end
 
   end
 

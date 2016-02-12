@@ -408,14 +408,15 @@ class DigitalObject::Base
 
   def save
     if self.valid?
+      
+      creating_new_record = false
+      
       DigitalObjectRecord.transaction do
-        
         if self.new_record?
-          save_called_for_new_record = true
+          creating_new_record = true
           @fedora_object = self.get_new_fedora_object unless @fedora_object.present?
           @db_record.pid = @fedora_object.pid
         else
-          save_called_for_new_record = false
           # For existing records, we always lock on @db_record during Fedora reads/writes (and wrap in a transaction)
           @db_record.lock! # Within the established transaction, lock on this object's row.  Remember: "lock!" also reloads object data from the db, so perform all @db_record modifications AFTER this call.
         end
@@ -438,25 +439,36 @@ class DigitalObject::Base
         
         @db_record.save! # Save timestamps + updates to modifed_by, etc.
 
-        # Retry after Fedora timeouts / unreachable host
-        Retriable.retriable on: [RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH], tries: NUM_FEDORA_RETRY_ATTEMPTS, base_interval: DELAY_IN_SECONDS_BETWEEN_FEDORA_RETRY_ATTEMPTS do
-          @fedora_object.save(update_index: false)
+        begin
+          # Retry after Fedora timeouts / unreachable host
+          Retriable.retriable on: [RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH], tries: NUM_FEDORA_RETRY_ATTEMPTS, base_interval: DELAY_IN_SECONDS_BETWEEN_FEDORA_RETRY_ATTEMPTS do
+            @fedora_object.save(update_index: false)
+          end
+        rescue Rubydora::FedoraInvalidRequest,
+          RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH => e
+          # Rubydora::FedoraInvalidRequest is raised when we run into unexpected Fedora issues
+          @errors.add(:fedora_error, e.message)
+          raise ActiveRecord::Rollback # Force rollback (Note: This error won't be passed upward by the transaction.)
         end
-
+      end
+      
+      # If we saved this object successfully in DB and Fedora, perform additional logic below, including:
+      # - Updating the struct data of the parent objects (adding new children and removing old children)
+      unless @errors.present?
         if parent_digital_object_pids_changed?
-
+  
           removed_parents = parent_digital_object_pids_was - parent_digital_object_pids
           new_parents = parent_digital_object_pids - parent_digital_object_pids_was
-
+  
           # Parent changes MUST be saved after Fedora object changes because they rely on the state of the live Fedora Object.
           # Update all removed parents AND new parents so they have the latest member changes.
-
-          if HYACINTH['treat_fedora_resource_index_updates_as_immediate']
+  
+          if true ### HYACINTH['treat_fedora_resource_index_updates_as_immediate']
             # If Fedora's Resource Index is set to update IMMEDIATELY
             # after object modification, we can use the lines below,
             # simply re-saving each affected parent.  If not, this is unsafe to use.
             # Resource Update flush settings must be configured in fedora.fcfg.
-
+  
             (removed_parents + new_parents).each do |digital_obj_pid|
               parent_obj = DigitalObject::Base.find(digital_obj_pid)
               unless parent_obj.save
@@ -464,57 +476,50 @@ class DigitalObject::Base
               end
             end
           else
-
-            # If Fedora Resource Index changes aren't immediate, we canot simply re-save the parents.
-            # The Resource Index is unlikely to have been updated at this point (and sometimes takes 10
-            # seconds or longer to update).  We'll need to manually remove pid references from parent lists
-            # of ordered_child_digital_object_pids.
-
-            removed_parents.each do |digital_obj_pid|
-              removed_parent_obj = DigitalObject::Base.find(digital_obj_pid)
-              removed_parent_obj.remove_ordered_child_digital_object_pid(self.pid)
-              unless removed_parent_obj.save
-                @errors.add(:obsolete_parent_digital_object_pid, 'Removed parent object erorrs: ' + removed_parent_obj.errors.full_messages.join(', '))
-              end
-            end
-
-            new_parents.each do |digital_obj_pid|
-              new_parent_obj = DigitalObject::Base.find(digital_obj_pid)
-              new_parent_obj.add_ordered_child_digital_object(self)
-              unless new_parent_obj.save
-                @errors.add(:parent_digital_object_pid, 'Parent object erorrs: ' + new_parent_obj.errors.full_messages.join(', '))
-                return false
-              end
-            end
-
+  
+            ## If Fedora Resource Index changes aren't immediate, we canot simply re-save the parents.
+            ## The Resource Index is unlikely to have been updated at this point (and sometimes takes 10
+            ## seconds or longer to update).  We'll need to manually remove pid references from parent lists
+            ## of ordered_child_digital_object_pids.
+            #
+            #removed_parents.each do |digital_obj_pid|
+            #  removed_parent_obj = DigitalObject::Base.find(digital_obj_pid)
+            #  removed_parent_obj.remove_ordered_child_digital_object_pid(self.pid)
+            #  unless removed_parent_obj.save
+            #    @errors.add(:obsolete_parent_digital_object_pid, 'Removed parent object erorrs: ' + removed_parent_obj.errors.full_messages.join(', '))
+            #  end
+            #end
+            #
+            #new_parents.each do |digital_obj_pid|
+            #  new_parent_obj = DigitalObject::Base.find(digital_obj_pid)
+            #  new_parent_obj.add_ordered_child_digital_object(self)
+            #  unless new_parent_obj.save
+            #    @errors.add(:parent_digital_object_pid, 'Parent object errors: ' + new_parent_obj.errors.full_messages.join(', '))
+            #  end
+            #end
+            
           end
-
-          if @errors.present?
-            return false
-          end
-
+  
         end
-
-        @db_record.save! # Save timestamps + updates to modifed_by, etc.
-
-        self.update_index
         
-        # If we got here, then everything is good. Run after-save logic
+        unless @errors.present?
+          # Update the solr index
+          self.update_index
+          
+          # If we got here, then everything is good. Run after-save logic
+          run_after_create_logic() if creating_new_record
+          
+          return true
+        end
         
-        run_after_create_logic() if save_called_for_new_record
-        run_after_save_logic()
-        
-        return true
       end
+      
     end
+    
     return false
   end
   
   def run_post_validation_pre_save_logic
-    # This method is intended to be overridden by DigitalObject::Base child classes
-  end
-  
-  def run_after_save_logic
     # This method is intended to be overridden by DigitalObject::Base child classes
   end
   
