@@ -243,6 +243,7 @@ class DigitalObject::Base
   # Pass true for the purge param to completely eradicate this record.
   # Pass true for the force param to eradicate the record even if it doesn't pass
   # validation. This will delete a record without updating other records that reference it (i.e. child records).
+  # NOTE: This method does NOT delete files on the filesystem.
   def destroy(purge=false, force=false)
 
     @db_record.with_lock do
