@@ -180,8 +180,36 @@ module DigitalObject::XmlDatastreamRendering
     #   "delimiter" => ",",
     #   "pieces" => ["field_name1", "field_name2.value", "field_name3", ...]
     # }
+    # OR
+    # {
+    #   "delimiter" => ",",
+    #   "pieces" => [
+    #      {
+    #          "ternary": [
+    #              "location_shelf_location_box_number",
+    #              "Box no. {{location_shelf_location_box_number}}",
+    #              ""
+    #          ]
+    #      },
+    #      {
+    #          "ternary": [
+    #              "location_shelf_location_folder_number",
+    #              "Folder no. {{location_shelf_location_folder_number}}",
+    #              ""
+    #          ]
+    #      },
+    #      ...
+    #      ...
+    #   ]
+    # }
     delimiter = join_data['delimiter']
-    pieces = join_data['pieces'].map{|str| value_with_substitutions(str, df_data) }
+    pieces = join_data['pieces'].map{|piece|
+      if piece.is_a?(String)
+        value_with_substitutions(piece, df_data)
+      elsif piece.is_a?(Hash) && piece['ternary'].present?
+        value_with_substitutions(render_output_of_ternary(piece['ternary'], df_data), df_data)
+      end
+    }
     pieces.delete_if{|str| str.blank?} # Remove blank values
     return pieces.join(delimiter)
   end
