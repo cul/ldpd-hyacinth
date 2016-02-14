@@ -23,13 +23,15 @@ module DigitalObject::XmlDatastreamRendering
 
       if render_if_logic['present'].present?
         render_if_logic['present'].each do |field_or_field_group_to_check_for|
-          return unless value_for_field_name(field_or_field_group_to_check_for, df_data).present?
+          # Check for DynamicFieldGroup existence and DynamicField non-blank value
+          return unless df_data[field_or_field_group_to_check_for].is_a?(Array) || value_for_field_name(field_or_field_group_to_check_for, df_data).present?
         end
       end
 
       if render_if_logic['absent'].present?
         render_if_logic['absent'].each do |field_or_field_group_to_check_for|
-          return unless value_for_field_name(field_or_field_group_to_check_for, df_data).blank?
+          # Check for DynamicFieldGroup existence and DynamicField blank value
+          return unless df_data[field_or_field_group_to_check_for].nil? && value_for_field_name(field_or_field_group_to_check_for, df_data).blank?
         end
       end
 
@@ -168,7 +170,7 @@ module DigitalObject::XmlDatastreamRendering
     # - The first element is a variable to evaluate as true or false.
     # - The second is the value to use if the variable evaluates to true.
     # - The third is the value to use if the variable evaluates to false.
-    return value_for_field_name(ternary_arr[0], df_data) ? ternary_arr[1] : ternary_arr[2]
+    return value_for_field_name(ternary_arr[0], df_data).present? ? ternary_arr[1] : ternary_arr[2]
   end
   
   # Joins the given strings using the given delimiter, omitting blank values
