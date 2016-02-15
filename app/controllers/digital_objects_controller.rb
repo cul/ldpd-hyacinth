@@ -90,9 +90,12 @@ class DigitalObjectsController < ApplicationController
       @digital_object.updated_by = current_user
   
       test_mode = params['test'].to_s == 'true'
-      do_publish = !test_mode && params['publish'].to_s == 'true'
       
-      success = (test_mode ? @digital_object.valid? : @digital_object.save) && (do_publish ? @digital_object.publish : true)
+      if params.has_key?('publish')
+        @digital_object.publish_after_save = (params['publish'].to_s == 'true')
+      end
+      
+      success = test_mode ? @digital_object.valid? : @digital_object.save
     
     ensure
       # If we're dealing with a file upload (which isn't always the case), make sure to close the file when we're done
@@ -160,10 +163,13 @@ class DigitalObjectsController < ApplicationController
     @digital_object.updated_by = current_user
 
     test_mode = params['test'].to_s == 'true'
-    do_publish = !test_mode && params['publish'].to_s == 'true'
+    
+    if params.has_key?('publish')
+      @digital_object.publish_after_save = (params['publish'].to_s == 'true')
+    end
 
     respond_to do |format|
-      if (test_mode ? @digital_object.valid? : @digital_object.save) && (do_publish ? @digital_object.publish : true)
+      if test_mode ? @digital_object.valid? : @digital_object.save
         format.json {
           render json: {
             success: true,

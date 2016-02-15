@@ -41,10 +41,6 @@ class ProjectsController < ApplicationController
   def create
     @project = Project.new(project_params)
 
-    if params[:commit_to_fedora]
-      @project.set_commit_to_fedora_flag
-    end
-
     success = @project.save
 
     respond_to do |format|
@@ -61,10 +57,6 @@ class ProjectsController < ApplicationController
   # PATCH/PUT /projects/1
   # PATCH/PUT /projects/1.json
   def update
-
-    if params[:commit_to_fedora]
-      @project.set_commit_to_fedora_flag
-    end
 
     respond_to do |format|
       if @project.update(project_params)

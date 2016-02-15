@@ -14,7 +14,7 @@ class DigitalObject::Base
   # For ActiveModel::Dirty
   define_attribute_methods :parent_digital_object_pids, :obsolete_parent_digital_object_pids, :ordered_child_digital_object_pids
 
-  attr_accessor :project, :publish_targets, :identifiers, :created_by, :updated_by, :state, :dc_type, :ordered_child_digital_object_pids
+  attr_accessor :project, :publish_targets, :identifiers, :created_by, :updated_by, :state, :dc_type, :ordered_child_digital_object_pids, :publish_after_save
   attr_reader :errors, :fedora_object, :parent_digital_object_pids, :updated_at, :created_at
 
   VALID_DC_TYPES = [] # There are no valid dc types for DigitalObject::Base
@@ -34,9 +34,11 @@ class DigitalObject::Base
     @dynamic_field_data = {}
     @state = 'A'
     @errors = ActiveModel::Errors.new(self)
+    @publish_after_save = false
   end
   
   def init_from_digital_object_record_and_fedora_object(digital_object_record, fedora_obj)
+    @publish_after_save = false
     @db_record = digital_object_record
     @fedora_object = fedora_obj
     
@@ -54,9 +56,14 @@ class DigitalObject::Base
   
   # Updates the DigitalObject with the given digital_object_data
   def set_digital_object_data(digital_object_data, merge_dynamic_fields)
-    # If a user sets the merge field in the spreadsheet, then override the value of this method's passed merge_dynamic_fields param
+    # The merge_dynamic_fields setting determines whether or existing dynamic_field_data is merged or overwritten
     if digital_object_data['merge_dynamic_fields'] && ['true', 'false'].include?(digital_object_data['merge_dynamic_fields'].downcase)
       merge_dynamic_fields = (digital_object_data['merge_dynamic_fields'].downcase == 'true')
+    end
+    
+    # If a user sets the publish field, set the publish_after_save flag
+    if digital_object_data['publish'] && ['true', 'false'].include?(digital_object_data['publish'].downcase)
+      @publish_after_save = (digital_object_data['publish'].downcase == 'true')
     end
     
     # PID
@@ -510,7 +517,7 @@ class DigitalObject::Base
           # If we got here, then everything is good. Run after-save logic
           run_after_create_logic() if creating_new_record
           
-          return true
+          return @publish_after_save ? self.publish : true
         end
         
       end
@@ -580,19 +587,23 @@ class DigitalObject::Base
 
     return false if @errors.present?
       
-    # Tell external publish targets to reindex this object
+    # Tell all ACTIVE publish targets to publish this object
     self.publish_targets.each do |publish_target|
       if publish_target.publish_url.present?
-      
         api_key = publish_target.api_key
         json_response = JSON(RestClient.post publish_target.publish_url, {pid: self.pid, api_key: api_key})
         
         unless json_response['success'] && json_response['success'].to_s == 'true'
           @errors.add(:publish_target, 'Error encountered while publishing to ' + publish_target.display_label)
         end
-        
       end
     end
+    
+    #TODO: Tell all INACTIVE (but project-enabled) publish targets to un-publish this object
+    
+    
+    
+    
     return @errors.blank?
   end
 
