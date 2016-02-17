@@ -30,8 +30,7 @@ module Projects
 
       respond_to do |format|
         if @fieldset.save
-          raise edit_project_project_fieldset_path(@project, @fieldset)
-          format.html { redirect_to edit_project_project_fieldset_path(@project, @fieldset), notice: 'Fieldset was successfully created.' }
+          format.html { redirect_to project_project_fieldsets_path(@project), notice: 'Fieldset was successfully created.' }
         else
           format.html { render action: 'new' }
         end
@@ -73,7 +72,7 @@ module Projects
         @contextual_nav_options['nav_title']['url'] = projects_path
         @contextual_nav_options['nav_items'].push(label: 'New Fieldset', url: new_project_project_fieldset_path(project_id: @project.id))
       when 'new'
-        @contextual_nav_options['nav_title']['url'] = project_project_fieldsets_path(@fieldset.project)
+        @contextual_nav_options['nav_title']['url'] = project_project_fieldsets_path(@project)
       when 'edit', 'update'
         @contextual_nav_options['nav_title']['url'] = project_project_fieldsets_path(@fieldset.project)
         @contextual_nav_options['nav_items'].push(label: 'Delete This Fieldset',

@@ -26,6 +26,7 @@
   <thead>
     <tr>
       <th>Id</th>
+      <th>CSV Row</th>
       <th>Status</th>
       <th>Created at</th>
       <th>Updated at</th>
@@ -43,6 +44,7 @@
 	<% else %>
         <td><%= link_to digital_object_import.id, digital_object_import_path(digital_object_import) %></td>
 	<% end %>
+        <td><%= digital_object_import.csv_row_number %></td>
         <td><%= digital_object_import.status %></td>
         <td><%= digital_object_import.created_at.localtime %></td>
         <td><%= digital_object_import.updated_at.localtime %></td>
