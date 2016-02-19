@@ -33,30 +33,12 @@ class TermsController < ApplicationController
     unless @errors.present?
       
       type = term_prms.delete('type')
-      
-      new_term_opts = {}
-      new_term_opts[:vocabulary_string_key] = term_prms.delete('controlled_vocabulary_string_key')
-      new_term_opts[:value] = term_prms.delete('value')
-      new_term_opts[:authority] = term_prms.delete('authority')
-      
-      # Delete fields that are blank. This is okay because we're in the create method and aren't using blank fields to clear out existing fields.
-      term_prms.delete_if{|key, value| value.blank?}
-      
-      new_term_opts[:uri] = term_prms.delete('uri') if term_prms.has_key?('uri')
-      
-      if type == UriService::TermType::TEMPORARY
-        # If authority is set for a TEMPORARY term (which it shouldn't be), then unset it.  Otherwise we'll get an error.
-        new_term_opts.delete(:authority) if new_term_opts.has_key?(:authority)
-      else
-        # For non-TEMPORARY terms, assume treat all remaining (non-deleted) parameters as additional_fields.
-        # TEMPORARY terms do not have additional_fields.
-        new_term_opts[:additional_fields] = term_prms if term_prms.present?
-      end
+      term_opts = flat_term_data_to_term_opts(term_prms)
       
       begin
         @term = UriService.client.create_term(
           type,
-          new_term_opts
+          term_opts
         )
       rescue UriService::NonExistentVocabularyError, UriService::InvalidUriError, UriService::ExistingUriError, UriService::InvalidAdditionalFieldKeyError, UriService::InvalidOptsError => e
         @errors << e.message
@@ -83,11 +65,12 @@ class TermsController < ApplicationController
   # PATCH/PUT /terms/1.json
   def update
     @errors = []
-    term_prms = term_params
+    term_opts = flat_term_data_to_term_opts(term_params)
     
     begin
-      @term = UriService.client.update_term(@term['uri'],
-        { value: term_prms['value'], authority: term_prms['authority'], additional_fields: term_prms['additional_fields']}
+      @term = UriService.client.update_term(
+        @term['uri'],
+        term_opts
       )
     rescue UriService::NonExistentUriError, UriService::InvalidAdditionalFieldKeyError, UriService::CannotChangeTemporaryTerm => e
       @errors << e.message
@@ -177,5 +160,26 @@ class TermsController < ApplicationController
       @contextual_nav_options['nav_items'].push(label: 'Delete This Term', url: term_path(@term['internal_id']), options: {method: :delete, data: { confirm: 'Are you sure you want to delete this Term?' } }) if current_user.can_manage_controlled_vocabulary_terms?(@controlled_vocabulary)
     end
 
+  end
+  
+  def flat_term_data_to_term_opts(term_prms)
+    term_prms = term_prms.dup # Don't modify originally passed-in value
+    
+    term_opts = {}
+    
+    term_prms.delete('type') # Delete type if present
+    term_opts[:vocabulary_string_key] = term_prms.delete('controlled_vocabulary_string_key')
+    term_opts[:value] = term_prms.delete('value')
+    term_opts[:authority] = term_prms.delete('authority')
+    
+    # Delete fields that are blank. This is okay because we're in the create method and aren't using blank fields to clear out existing fields.
+    term_prms.delete_if{|key, value| value.blank?}
+    
+    term_opts[:uri] = term_prms.delete('uri') if term_prms.has_key?('uri')
+    
+    # Treat all remaining (non-deleted) parameters as additional_fields.
+    term_opts[:additional_fields] = term_prms if term_prms.present?
+    
+    term_opts
   end
 end

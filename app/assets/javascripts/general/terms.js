@@ -15,16 +15,10 @@ Hyacinth.Term.hideAndShowFields = function(){
     $addOrEditTermForm.find('.term-authority-field').show();
     $addOrEditTermForm.find('.term-uri-field').show();
     $addOrEditTermForm.find('.term-additional-field').show();
-  } else if (type == 'local') {
+  } else if (type == 'local' || type == 'temporary') {
     $addOrEditTermForm.find('.term-authority-field').show();
     $addOrEditTermForm.find('.term-uri-field').hide();
     $addOrEditTermForm.find('.term-uri-field').find('input').val(''); // clear value of uri input
     $addOrEditTermForm.find('.term-additional-field').show();
-  } else if (type == 'temporary') {
-    $addOrEditTermForm.find('.term-authority-field').hide();
-    $addOrEditTermForm.find('.term-uri-field').hide().val('');
-    $addOrEditTermForm.find('.term-uri-field').find('input').val(''); // clear value of uri input
-    $addOrEditTermForm.find('.term-additional-field').hide();
-    $addOrEditTermForm.find('.term-additional-field').find('input').val(''); // clear values of child inputs
   }
 };

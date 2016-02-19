@@ -10,6 +10,11 @@
   }
 
   .digital-object-editor-header {
+    
+    .digital-object-title {
+      word-wrap: break-word;
+    }
+    
     .form-group {
       margin-bottom:0px;
     }
@@ -142,6 +147,7 @@
   }
   .readonly-display-value {
     font-size:13px;
+    word-wrap: break-word;
   }
   
   .identifiers .input-group {

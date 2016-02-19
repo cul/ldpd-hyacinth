@@ -48,6 +48,7 @@
             <% }); %>
           </ul>
         </div>
+        <%= authorizedTerms[i]['type'] == 'temporary' ? ' <span class="label label-info">Temporary Term</span>' : '' %>
       </li>
     <% } %>
   <% } else { %>

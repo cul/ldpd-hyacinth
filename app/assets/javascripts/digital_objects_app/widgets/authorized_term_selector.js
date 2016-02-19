@@ -120,17 +120,11 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
         $addAuthorizedTermForm.find('.term-authority-field').show();
         $addAuthorizedTermForm.find('.term-uri-field').show();
         $addAuthorizedTermForm.find('.term-additional-field').show();
-    } else if (type == 'local') {
+    } else if (type == 'local' || type == 'temporary') {
         $addAuthorizedTermForm.find('.term-authority-field').show();
         $addAuthorizedTermForm.find('.term-uri-field').hide();
         $addAuthorizedTermForm.find('.term-uri-field').find('input').val(''); // clear value of uri input
         $addAuthorizedTermForm.find('.term-additional-field').show();
-    } else if (type == 'temporary') {
-        $addAuthorizedTermForm.find('.term-authority-field').hide();
-        $addAuthorizedTermForm.find('.term-uri-field').hide().val('');
-        $addAuthorizedTermForm.find('.term-uri-field').find('input').val(''); // clear value of uri input
-        $addAuthorizedTermForm.find('.term-additional-field').hide();
-        $addAuthorizedTermForm.find('.term-additional-field').find('input').val(''); // clear values of child inputs
     }
   });
   this.$containerElement.find('.add_authorized_term_form').find('.term-type-select').change();  //Manually trigger change event at load time
