@@ -141,7 +141,7 @@ class DigitalObject::Asset < DigitalObject::Base
     # Line below will create paths like "file:/this%23_and_%26_also_something%20great/here.txt"
     # We DO NOT want a double slash at the beginnings of these paths.
     # We need to manually escape ampersands (%26) and pound signs (%23) because these are not always handled by Addressable::URI.encode()
-    ds_location = Addressable::URI.encode('file:' + path_to_final_save_location.gsub('&','%26').gsub('#','%23'))
+    ds_location = Addressable::URI.encode('file:' + path_to_final_save_location).gsub('&','%26').gsub('#','%23')
     content_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, 'content', :controlGroup => 'E', :mimeType => DigitalObject::Asset.filename_to_mime_type(original_filename), :dsLabel => original_filename, :versionable => true)
     content_ds.dsLocation = ds_location
     @fedora_object.datastreams["DC"].dc_source = ds_location
