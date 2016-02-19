@@ -301,7 +301,7 @@ module DigitalObject::IndexAndSearch
 
     end
 
-    def get_previous_and_next_in_search(current_result_number, search_params)
+    def get_previous_and_next_in_search(current_result_number, search_params, user_for_permission_context = nil)
 
       previous_result_pid = nil
       next_result_pid = nil
@@ -314,7 +314,7 @@ module DigitalObject::IndexAndSearch
       search_params['start'] = start
       search_params['per_page'] = rows
 
-      search_results = DigitalObject::Base.search(search_params, false)
+      search_results = DigitalObject::Base.search(search_params, false, user_for_permission_context)
 
       if search_results['results'].length > 0
         if(current_result_number - 1 >= 0)

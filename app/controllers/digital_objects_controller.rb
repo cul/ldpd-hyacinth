@@ -228,7 +228,7 @@ class DigitalObjectsController < ApplicationController
       current_result_number = params['search_result_number'].to_i
       search_params = params['search']
 
-      previous_result_pid, next_result_pid, total_num_results = DigitalObject::Base.get_previous_and_next_in_search(current_result_number, search_params)
+      previous_result_pid, next_result_pid, total_num_results = DigitalObject::Base.get_previous_and_next_in_search(current_result_number, search_params, current_user)
 
       data_for_editor_response['previous_and_next_data'] = {}
       data_for_editor_response['previous_and_next_data']['previous_pid'] = previous_result_pid
