@@ -79,8 +79,21 @@ title = DynamicFieldGroup.create!(string_key: 'title', display_label: 'Title', d
   }.to_json
 )
 
-# Create collection, form, name and name_role controlled vocabularies if they don't already exist
-{'collection' => 'Collection', 'form' => 'Form', 'location' => 'Location', 'name' => 'Name', 'name_role' => 'Role'}.each do |string_key, display_label|
+# Create various controlled vocabularies if they don't already exist
+{
+  'collection' => 'Collection',
+  'form' => 'Form',
+  'genre' => 'Genre',
+  'language' => 'Language',
+  'location' => 'Location',
+  'name' => 'Name',
+    'name_role' => 'Name Role',
+  'subject_geographic' => 'Subject Geographic',
+  'subject_name' => 'Subject Name',
+  'subject_temporal' => 'Subject Temporal',
+  'subject_title' => 'Subject Title',
+  'subject_topic' => 'Subject Topic'
+  }.each do |string_key, display_label|
   if UriService.client.find_vocabulary(string_key).nil?
     @controlled_vocabulary = ControlledVocabulary.new
     @controlled_vocabulary.string_key = string_key
