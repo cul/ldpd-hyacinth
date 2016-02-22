@@ -31,6 +31,8 @@ module DigitalObject::UriServiceValues
 
           if uri.blank? && value.present?
             # If URI is blank and a value is present, then we'll assign this value to a temporary term, only considering the string value
+            # Note: If a temporary term with the same value already exists, that existing term will be returned by the create_term method
+            # and any new additional_fields will be added.
             temporary_term = UriService.client.create_term(UriService::TermType::TEMPORARY, {vocabulary_string_key: controlled_vocabulary_string_key, value: value, additional_fields: additional_fields})
             dynamic_field_group_value[controlled_term_df_string_key] = temporary_term # Update dynamic_field_data, which includes the temporary term uri
           else
