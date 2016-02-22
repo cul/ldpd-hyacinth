@@ -16,7 +16,7 @@
   <% is_temporary_term = ! @term.nil? && @term['type'] == UriService::TermType::TEMPORARY %>
   
   <% if is_temporary_term %>
-    <div class="alert alert-info">Note: Temporary terms cannot be changed. Delete unused temporary terms or create new ones.</div>
+    <div class="alert alert-info">Note: The "value" property for a temporary term cannot be changed. Delete unused temporary terms or create new ones.</div>
   <% end %>
 
   <div class="field">
