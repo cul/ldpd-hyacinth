@@ -36,16 +36,19 @@ module DigitalObject::UriServiceValues
             temporary_term = UriService.client.create_term(UriService::TermType::TEMPORARY, {vocabulary_string_key: controlled_vocabulary_string_key, value: value, authority: authority, additional_fields: additional_fields})
             dynamic_field_group_value[controlled_term_df_string_key] = temporary_term # Update dynamic_field_data, which includes the temporary term uri
           else
-            # URI is present, so we'll check whether it exists already.
-            # If it does, retrieve its controlled value and update dynamic_field_data to correct errors
-            # If it doesn't exist, register it as a new EXTERNAL term
-            term = UriService.client.find_term_by_uri(uri)
-            if term.nil?
-              new_external_term = UriService.client.create_term(UriService::TermType::EXTERNAL, {vocabulary_string_key: controlled_vocabulary_string_key, value: value, uri: uri, authority: authority, additional_fields: additional_fields})
-              dynamic_field_group_value[controlled_term_df_string_key] = new_external_term # Update dynamic_field_data
-            else
-              # Term exists. Assign term data to record.
-              dynamic_field_group_value[controlled_term_df_string_key] = term # Update dynamic_field_data
+            # Be prepared to retry the following code because there may be two parallel processes trying to register this URI at the same time
+            Retriable.retriable on: [UriService::ExistingUriError], tries: 2, base_interval: 0 do
+              # URI is present, so we'll check whether it exists already.
+              # If it does, retrieve its controlled value and update dynamic_field_data to correct errors
+              # If it doesn't exist, register it as a new EXTERNAL term
+              term = UriService.client.find_term_by_uri(uri)
+              if term.nil?
+                new_external_term = UriService.client.create_term(UriService::TermType::EXTERNAL, {vocabulary_string_key: controlled_vocabulary_string_key, value: value, uri: uri, authority: authority, additional_fields: additional_fields})
+                dynamic_field_group_value[controlled_term_df_string_key] = new_external_term # Update dynamic_field_data
+              else
+                # Term exists. Assign term data to record.
+                dynamic_field_group_value[controlled_term_df_string_key] = term # Update dynamic_field_data
+              end
             end
           end
         end
