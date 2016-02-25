@@ -1,5 +1,6 @@
 class DigitalObjectType < ActiveRecord::Base
 
+  has_many :enabled_dynamic_fields, :dependent => :destroy
   default_scope { order('sort_order') }
 
   def self.get_model_for_string_key(string_key)
