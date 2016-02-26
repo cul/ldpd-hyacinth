@@ -223,4 +223,94 @@ class Hyacinth::Utils::CsvImportExportUtils
     end
     false
   end
+
+  def self.build_header_string_for_dynamic_field_not_controlled_term_no_preload(arg_df)
+    current_df_or_dfg = arg_df
+    path_string = current_df_or_dfg.string_key
+    while current_df_or_dfg.parent_dynamic_field_group.present?
+      current_df_or_dfg = current_df_or_dfg.parent_dynamic_field_group
+      path_string = current_df_or_dfg.string_key + "-1:" + path_string
+    end
+    path_string
+  end
+
+  def self.build_header_string_for_dynamic_field_controlled_term_no_preload(arg_df)
+    current_df_or_dfg = arg_df
+    # path_string = current_df_or_dfg.string_key
+    path_string = ''
+    while current_df_or_dfg.parent_dynamic_field_group.present?
+      current_df_or_dfg = current_df_or_dfg.parent_dynamic_field_group
+      path_string = current_df_or_dfg.string_key + "-1:" + path_string
+    end
+    [path_string + arg_df.string_key + '.uri',
+     path_string + arg_df.string_key + '.authority',
+     path_string + arg_df.string_key + '.value']
+  end
+
+  def self.build_header_string_for_dynamic_field_not_controlled_term(arg_df, arg_hash_dfg)
+    current_df_or_dfg = arg_df
+    path_string = current_df_or_dfg.string_key
+    while current_df_or_dfg.parent_dynamic_field_group.present?
+      # while current_df_or_dfg.parent_dynamic_field_group_id
+      current_df_or_dfg = arg_hash_dfg[current_df_or_dfg.parent_dynamic_field_group_id]
+      path_string = current_df_or_dfg.string_key + "-1:" + path_string
+    end
+    path_string
+  end
+
+  def self.build_header_string_for_dynamic_field_controlled_term(arg_df, arg_hash_dfg)
+    current_df_or_dfg = arg_df
+    # path_string = current_df_or_dfg.string_key
+    path_string = ''
+    # while current_df_or_dfg.parent_dynamic_field_group_id
+    # while current_df_or_dfg.parent_dynamic_field_group.present?
+    while current_df_or_dfg.parent_dynamic_field_group_id
+      current_df_or_dfg = arg_hash_dfg[current_df_or_dfg.parent_dynamic_field_group_id]
+      path_string = current_df_or_dfg.string_key + "-1:" + path_string
+    end
+    [path_string + arg_df.string_key + '.uri',
+     path_string + arg_df.string_key + '.authority',
+     path_string + arg_df.string_key + '.value']
+  end
+
+  def self.generate_array_of_string_keys_for_enabled_dynamic_fields_no_preload(arg_project_id)
+    array_of_string_keys_for_enabled_dynamic_fields = []
+    enabled_dfs = EnabledDynamicField.includes(:dynamic_field).where(project_id: arg_project_id)
+    # inefficient way, but I'm trying it out.
+    enabled_dfs.each do |enabled_df|
+      # retrieve the enabled dynamic field
+      if enabled_df.dynamic_field.dynamic_field_type == DynamicField::Type::CONTROLLED_TERM
+        build_header_string_for_dynamic_field_controlled_term_no_preload(enabled_df.dynamic_field).each do |header_string|
+          array_of_string_keys_for_enabled_dynamic_fields << header_string
+        end
+      else
+        array_of_string_keys_for_enabled_dynamic_fields <<
+          build_header_string_for_dynamic_field_not_controlled_term_no_preload(enabled_df.dynamic_field)
+      end
+    end
+    array_of_string_keys_for_enabled_dynamic_fields
+  end
+
+  def self.generate_array_of_string_keys_for_enabled_dynamic_fields(arg_project_id)
+    enabled_dfs = EnabledDynamicField.includes(:dynamic_field).where(project_id: arg_project_id)
+    # enabled_dfs_array = Array[EnabledDynamicField.includes(:dynamic_field).where(project_id: arg_project_id)]
+    preload_string_keys_to_dynamic_field_groups_hash =
+      Hash[DynamicFieldGroup.includes(:parent_dynamic_field_group).all.map { |dfg| [dfg.id, dfg] }]
+    array_of_string_keys_for_enabled_dynamic_fields = []
+
+    enabled_dfs.each do |enabled_df|
+      # retrieve the enabled dynamic field
+      if enabled_df.dynamic_field.dynamic_field_type == DynamicField::Type::CONTROLLED_TERM
+        build_header_string_for_dynamic_field_controlled_term(enabled_df.dynamic_field,
+                                                              preload_string_keys_to_dynamic_field_groups_hash).each do |header_string|
+          array_of_string_keys_for_enabled_dynamic_fields << header_string
+        end
+      else
+        array_of_string_keys_for_enabled_dynamic_fields <<
+          build_header_string_for_dynamic_field_not_controlled_term(enabled_df.dynamic_field,
+                                                                    preload_string_keys_to_dynamic_field_groups_hash)
+      end
+    end
+    array_of_string_keys_for_enabled_dynamic_fields
+  end
 end
