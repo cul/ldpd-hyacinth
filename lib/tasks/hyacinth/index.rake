@@ -6,16 +6,46 @@ namespace :hyacinth do
 
     desc "Reindex asynchronously using Resque background jobs. Note: This task updates documents in Solr, but for performance reasons does NOT do a Solr commit after making changes."
     task :reindex_async => :environment do
-      total = DigitalObjectRecord.count
-      progressbar = ProgressBar.create(:title => "Queue Reindex Jobs", :starting_at => 0, :total => total, :format => '%a |%b>>%i| %p%% %c/%C %t')
+      # If a project is specified, reindex that project. Otherwise reindex all DigitalObjects.
       
-      DigitalObjectRecord.find_each(batch_size: 500, start: 0) do |digital_object_record|
-        Hyacinth::Queue.reindex_digital_object(digital_object_record.pid)
-        progressbar.increment
+      project_string_key = ENV['project_string_key']
+      project_pid = ENV['project_pid']
+      if project_string_key.present?
+        project = Project.find_by!(string_key: project_string_key)
+      elsif project_pid.present?
+        project = Project.find_by!(pid: project_pid)
+      else
+        project = nil
       end
       
-      progressbar.finish
+      if project.present?
+        search_params = {
+          'f' => {'project_pid_sim' => [project.pid]}
+        }
+        total = DigitalObject::Base.search(search_params.merge({'per_page' => 0}), false, nil)['total']
+        progressbar = ProgressBar.create(:title => "Queue Reindex Jobs (single project)", :starting_at => 0, :total => total, :format => '%a |%b>>%i| %p%% %c/%C %t')
+        DigitalObject::Base.search_in_batches(search_params, nil, 500) do |digital_object_data|
+          Hyacinth::Queue.reindex_digital_object(digital_object_data['pid'])
+          progressbar.increment
+        end
+        progressbar.finish
+      else
+        total = DigitalObjectRecord.count
+        progressbar = ProgressBar.create(:title => "Queue Reindex Jobs (all objects)", :starting_at => 0, :total => total, :format => '%a |%b>>%i| %p%% %c/%C %t')
+        DigitalObjectRecord.find_each(batch_size: 500, start: 0) do |digital_object_record|
+          Hyacinth::Queue.reindex_digital_object(digital_object_record.pid)
+          progressbar.increment
+        end
+        progressbar.finish
+      end
       
+      puts "Done!"
+    end
+    
+    desc "Triggers a solr commit.  This task comes in handy after the background jobs created by the reindex_async task have completed. As a reminder, reindex_async does not do a solr commit for each reindexed solr document."
+    task :do_solr_commit => :environment do
+      puts "Performing solr commit..."
+      Hyacinth::Utils::SolrUtils.solr.commit
       puts "Done!"
     end
 
