@@ -242,9 +242,17 @@ class Hyacinth::Utils::CsvImportExportUtils
       current_df_or_dfg = current_df_or_dfg.parent_dynamic_field_group
       path_string = current_df_or_dfg.string_key + "-1:" + path_string
     end
-    [path_string + arg_df.string_key + '.uri',
-     path_string + arg_df.string_key + '.authority',
-     path_string + arg_df.string_key + '.value']
+    df_controlled_term_headers = [
+      path_string + arg_df.string_key + '.uri',
+      path_string + arg_df.string_key + '.authority',
+      path_string + arg_df.string_key + '.value'
+    ]
+    if TERM_ADDITIONAL_FIELDS[arg_df.controlled_vocabulary_string_key].present?
+      TERM_ADDITIONAL_FIELDS[arg_df.controlled_vocabulary_string_key].each do |custom_field_key, custom_field_data|
+        df_controlled_term_headers << arg_df.string_key + '.' + custom_field_key
+      end
+    end
+    df_controlled_term_headers
   end
 
   def self.build_header_string_for_dynamic_field_not_controlled_term(arg_df, arg_hash_dfg)
@@ -268,9 +276,17 @@ class Hyacinth::Utils::CsvImportExportUtils
       current_df_or_dfg = arg_hash_dfg[current_df_or_dfg.parent_dynamic_field_group_id]
       path_string = current_df_or_dfg.string_key + "-1:" + path_string
     end
-    [path_string + arg_df.string_key + '.uri',
-     path_string + arg_df.string_key + '.authority',
-     path_string + arg_df.string_key + '.value']
+    df_controlled_term_headers = [
+      path_string + arg_df.string_key + '.uri',
+      path_string + arg_df.string_key + '.authority',
+      path_string + arg_df.string_key + '.value'
+    ]
+    if TERM_ADDITIONAL_FIELDS[arg_df.controlled_vocabulary_string_key].present?
+      TERM_ADDITIONAL_FIELDS[arg_df.controlled_vocabulary_string_key].each do |custom_field_key, custom_field_data|
+        df_controlled_term_headers << arg_df.string_key + '.' + custom_field_key
+      end
+    end
+    df_controlled_term_headers
   end
 
   def self.generate_array_of_string_keys_for_enabled_dynamic_fields_no_preload(arg_project_id)
