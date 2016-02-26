@@ -1,10 +1,6 @@
 module DigitalObject::IndexAndSearch
   extend ActiveSupport::Concern
 
-  LUCENE_SPECIAL_CHARACTERS_TO_ESCAPE_EXCLUDING_BACKSLASH = ['+', '-', '&&', '||', '!', '(', ')', '{', '}', '[', ']', '^', '"', '~', '*', '?', ':', '/']
-  RUBY_BACKSLASH_MATCH = '\\'
-  RUBY_BACKSLASH_ESCAPE = '\\\\\\'
-
   #################
   # Solr Indexing #
   #################
@@ -182,13 +178,7 @@ module DigitalObject::IndexAndSearch
       # Add filters for currently applied facet filters, making sure to escape values
       if user_search_params['f'].present?
         user_search_params['f'].each do |facet_field, values|
-          #match = ['+', '-', '&', '|', '!', '(', ')', '{', '}', '[', ']', '^', '~', '*', '?', ':', '"', ';', ' '];
-          #next_fq = facet_field + ': ("' + values.map{|value| match.each{|o| value.gsub!(o, '\\' + o)}; value }.join('" AND "') + '")'
-
-          # Wrap value in double quotes so we don't have to worry about other characters to escape (because they're in quotes)
-          # All we need to do is escape quotes and backslashes
-
-          next_fq = facet_field + ': ("' + values.map{|value| value.gsub('\\', '\\\\\\').gsub('"', '\\"') }.join('" AND "') + '")'
+          next_fq = facet_field + ': (' + values.map{|value| Hyacinth::Utils::SolrUtils.solr_escape(value) }.join(' AND ') + ')'
           solr_params['fq'] << next_fq
         end
       end
@@ -205,7 +195,7 @@ module DigitalObject::IndexAndSearch
 
               # Wrap value in double quotes so we don't have to worry about other characters to escape (because they're in quotes)
               # All we need to do is escape quotes and backslashes
-              safe_value = '"' + value.gsub('\\', '\\\\\\').gsub('"', '\\"') + '"'
+              safe_value = Hyacinth::Utils::SolrUtils.solr_escape(value.strip)
 
               if operator == 'present'
                 next_fq = filter_field + ':[* TO *]'
@@ -213,6 +203,8 @@ module DigitalObject::IndexAndSearch
                 next_fq = '-' + filter_field + ':["" TO *]'
               elsif operator == 'equals'
                 next_fq = filter_field + ': ' + safe_value
+              elsif operator == 'contains'
+                next_fq = filter_field + ': *' + safe_value + '*'
               else
                 raise 'Unexpected operator: ' + operator
               end
