@@ -44,6 +44,10 @@
   <div class="row">
     <div class="col-xs-12">
       <select class="form-control input-sm custom_filter_field" name="custom_filter_field">
+        <option value="">- Select A Field -</option>
+        <option disabled="disabled">- Core Fields -</option>
+        <option value="original_file_path_sim">Original File Path</options>
+        <option disabled="disabled">- Dynamic Fields -</option>
         <% $.each(searchResponse['single_field_searchable_fields'],function(dynamic_field_string_key, standalone_field_label){ %>
           <option value="<%= 'df_' + dynamic_field_string_key + '_sim' %>"><%= standalone_field_label.length > 0 ? standalone_field_label : dynamic_field_string_key %></option>
         <% }) %>

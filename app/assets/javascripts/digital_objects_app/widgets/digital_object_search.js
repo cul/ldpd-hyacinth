@@ -194,6 +194,11 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.init = function() {
       var field = $(this).find('[name="custom_filter_field"]').val();
       var operator = $(this).find('[name="custom_filter_operator"]').val();
       var value = $(this).find('[name="custom_filter_value"]').val();
+      
+      if (field == '') {
+        return;
+      }
+      
       if (operator == 'present' || operator == 'absent') {
         value = ''; //Value doesn't make sense to send if we choose the present or absent operators
       }
