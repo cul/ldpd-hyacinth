@@ -248,7 +248,7 @@ class Hyacinth::Utils::CsvImportExportUtils
       path_string + arg_df.string_key + '.value'
     ]
     if TERM_ADDITIONAL_FIELDS[arg_df.controlled_vocabulary_string_key].present?
-      TERM_ADDITIONAL_FIELDS[arg_df.controlled_vocabulary_string_key].each do |custom_field_key, custom_field_data|
+      TERM_ADDITIONAL_FIELDS[arg_df.controlled_vocabulary_string_key].each do |custom_field_key, _custom_field_data|
         df_controlled_term_headers << arg_df.string_key + '.' + custom_field_key
       end
     end
@@ -282,7 +282,7 @@ class Hyacinth::Utils::CsvImportExportUtils
       path_string + arg_df.string_key + '.value'
     ]
     if TERM_ADDITIONAL_FIELDS[arg_df.controlled_vocabulary_string_key].present?
-      TERM_ADDITIONAL_FIELDS[arg_df.controlled_vocabulary_string_key].each do |custom_field_key, custom_field_data|
+      TERM_ADDITIONAL_FIELDS[arg_df.controlled_vocabulary_string_key].each do |custom_field_key, _custom_field_data|
         df_controlled_term_headers << arg_df.string_key + '.' + custom_field_key
       end
     end
