@@ -1,6 +1,10 @@
 class ProjectsController < ApplicationController
   include Hyacinth::ProjectsBehavior
-  before_action :set_project, only: [:show, :edit, :update, :destroy, :enabled_dynamic_fields, :edit_enabled_dynamic_fields, :update_enabled_dynamic_fields, :edit_project_permissions, :update_project_permissions, :fieldsets, :edit_publish_targets, :update_publish_targets, :select_dynamic_fields_for_csv_export, :select_dynamic_fields_csv_header_for_import, :upload_import_csv_file, :process_import_csv_file]
+  before_action :set_project, only: [:show, :edit, :update, :destroy, :enabled_dynamic_fields, :edit_enabled_dynamic_fields,
+                                     :update_enabled_dynamic_fields, :edit_project_permissions, :update_project_permissions,
+                                     :fieldsets, :edit_publish_targets, :update_publish_targets,
+                                     :select_dynamic_fields_for_csv_export, :select_dynamic_fields_csv_header_for_import,
+                                     :upload_import_csv_file, :process_import_csv_file, :generate_csv_header_template]
   before_action :require_appropriate_permissions!
   before_action :set_contextual_nav_options
 
@@ -116,6 +120,17 @@ class ProjectsController < ApplicationController
     @enabled_dynamic_fields_ids = @project.get_ids_of_dynamic_fields_that_are_enabled
 
     @enabled_dynamic_fields_csv_header = ::DynamicField.find(@enabled_dynamic_fields_ids)
+
+  end
+
+  # GET /projects/:id/generate_csv_header_template(.:format)
+  def generate_csv_header_template
+
+    array_headers =  Hyacinth::Utils::CsvHeaderTemplate.array_dynamic_field_headers @project.id
+    csv_line = CSV::generate_line array_headers
+    csv_filename = "#{@project.string_key}_header_template-#{Time.now.strftime('%Y-%m-%d_%H%M%S')}.csv"
+    # following sends csv data to browser for download
+    send_data(csv_line, type: 'text/csv', filename: csv_filename)
 
   end
 
