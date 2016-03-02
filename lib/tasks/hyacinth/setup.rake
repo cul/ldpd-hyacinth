@@ -109,18 +109,20 @@ namespace :hyacinth do
       ['development', 'test'].each do |env_name|
         term_additional_fields_yml[env_name] = {
           'collection' => {
+            'clio_id' => {
+              'display_label' => 'CLIO ID'
+            }
+          },
+          'location' => {
             'code' => {
               'display_label' => 'Code'
             }
           },
-          'form' => {
-            'authority' => {
-              'display_label' => 'Authority'
-            },
-            'authority_uri' => {
-              'display_label' => 'Authority URI'
+          'name' => {
+            'name_type' => {
+              'display_label' => 'Name Type'
             }
-          },
+          }
         }
         
       end
