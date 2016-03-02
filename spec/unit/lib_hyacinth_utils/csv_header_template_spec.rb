@@ -12,7 +12,7 @@ RSpec.describe Hyacinth::Utils::CsvHeaderTemplate do
     ['csv_header_dfg_two-1:' + 'csv_header_dfg_one-1:' + 'csv_header_ct_df_three.uri',
      'csv_header_dfg_two-1:' + 'csv_header_dfg_one-1:' + 'csv_header_ct_df_three.authority',
      'csv_header_dfg_two-1:' + 'csv_header_dfg_one-1:' + 'csv_header_ct_df_three.value',
-     'csv_header_dfg_two-1:' + 'csv_header_dfg_one-1:' + 'csv_header_ct_df_three.code']
+     'csv_header_dfg_two-1:' + 'csv_header_dfg_one-1:' + 'csv_header_ct_df_three.clio_id']
   }
 
   let(:expected_array_headers_no_duplicates) {
@@ -26,7 +26,7 @@ RSpec.describe Hyacinth::Utils::CsvHeaderTemplate do
      "_import_file.original_file_path", "_parent_digital_objects-1.identifier", "_project.string_key",
      "csv_header_dfg_two-1:csv_header_df_four", 
      "csv_header_dfg_two-1:csv_header_dfg_one-1:csv_header_ct_df_three.authority",
-     "csv_header_dfg_two-1:csv_header_dfg_one-1:csv_header_ct_df_three.code",
+     "csv_header_dfg_two-1:csv_header_dfg_one-1:csv_header_ct_df_three.clio_id",
      "csv_header_dfg_two-1:csv_header_dfg_one-1:csv_header_ct_df_three.uri",
      "csv_header_dfg_two-1:csv_header_dfg_one-1:csv_header_ct_df_three.value",
      "csv_header_dfg_two-1:csv_header_dfg_one-1:csv_header_df_one",
