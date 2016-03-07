@@ -6,6 +6,7 @@
       <th>String Key</th>
       <th>PID</th>
       <th>PID Generator</th>
+      <th>Download Header Template</th>
     </tr>
   </thead>
 
@@ -16,6 +17,7 @@
         <td><%= project.string_key %></td>
         <td><%= project.pid %></td>
         <td><%= project.pid_generator.namespace %></td>
+	<td><%= link_to "Download", generate_csv_header_template_project_path(project), {role: "button", class: "btn btn-default"} %></td>
       </tr>
     <% end %>
   </tbody>
