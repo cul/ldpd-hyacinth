@@ -113,6 +113,11 @@ namespace :hyacinth do
               'display_label' => 'CLIO ID'
             }
           },
+          'location' => {
+            'code' => {
+              'display_label' => 'Code'
+            }
+          },
           'name' => {
             'name_type' => {
               'display_label' => 'Name Type'

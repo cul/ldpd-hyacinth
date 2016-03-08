@@ -100,6 +100,7 @@ Hyacinth::Application.routes.draw do
       get 'select_dynamic_fields_for_csv_export', action: 'select_dynamic_fields_for_csv_export', as: 'select_dynamic_fields_for_csv_export' # select_dynamic_fields_for_csv_export
       # TODO: Figure out what the intent of select_dynamic_fields_csv_header_for_import is
       get 'select_dynamic_fields_csv_header_for_import', action: 'select_dynamic_fields_csv_header_for_import', as: 'select_dynamic_fields_csv_header_for_import' # select_dynamic_fields_csv_header_for_import
+      get 'generate_csv_header_template', action: 'generate_csv_header_template', as: 'generate_csv_header_template'
     end
 
     collection do
