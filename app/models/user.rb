@@ -21,6 +21,11 @@ class User < ActiveRecord::Base
   def is_admin?
     return self.is_admin
   end
+  
+  def can_manage_all_controlled_vocabularies?
+    return true if self.is_admin?
+    return self.can_manage_all_controlled_vocabularies
+  end
 
   def is_project_admin_for_at_least_one_project?
     return true if self.is_admin?
@@ -81,6 +86,7 @@ class User < ActiveRecord::Base
   # use of that controlled vocabulary.
   def can_manage_controlled_vocabulary_terms?(controlled_vocabulary)
     return true if self.is_admin?
+    return true if self.can_manage_all_controlled_vocabularies?
 
     projects_for_which_user_can_create_or_edit = ProjectPermission.where(user: self).where('project_permissions.can_create = ? OR project_permissions.can_update = ?', true, true).pluck(:project_id)
 
@@ -97,6 +103,7 @@ class User < ActiveRecord::Base
 
   def can_edit_at_least_one_controlled_vocabulary?
     return true if self.is_admin?
+    return true if self.can_manage_all_controlled_vocabularies?
 
     projects_for_which_user_can_create_or_edit = ProjectPermission.where(user: self).where('project_permissions.can_create = ? OR project_permissions.can_update = ?', true, true).pluck(:project_id)
 

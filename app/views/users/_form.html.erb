@@ -68,7 +68,9 @@
     <% end %>
     <div class="field checkbox">
       <%= f.label(:is_admin, (f.check_box(:is_admin)).html_safe + 'Is Admin') %><br>
-      <%=  %>
+    </div>
+    <div class="field checkbox">
+      <%= f.label(:can_manage_all_controlled_vocabularies, (f.check_box(:can_manage_all_controlled_vocabularies)).html_safe + 'Can Manage All Controlled Vocabularies') %><br>
     </div>
   <% end %>
 

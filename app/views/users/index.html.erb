@@ -3,7 +3,8 @@
     <tr>
       <th>Name</th>
       <th>Email</th>
-      <th>Is admin</th>
+      <th>Is Admin</th>
+      <th>Can Manage Vocabularies</th>
     </tr>
   </thead>
 
@@ -13,6 +14,7 @@
         <td><%= link_to(user.first_name + ' ' + user.last_name, edit_user_path(user)) %></td>
         <td><%= user.email %></td>
         <td><%= user.is_admin ? 'true' : 'false' %></td>
+        <td><%= user.can_manage_all_controlled_vocabularies? ? 'true' : 'false' %></td>
       </tr>
     <% end %>
   </tbody>

@@ -15,5 +15,10 @@
   <%= @user.is_admin %>
 </p>
 
+<p>
+  <strong>Can Manage Controlled Vocabularies?</strong>
+  <%= @user.can_manage_all_controlled_vocabularies? %>
+</p>
+
 <%= link_to 'Edit', edit_user_path(@user) %> |
 <%= link_to 'Back', users_path %>

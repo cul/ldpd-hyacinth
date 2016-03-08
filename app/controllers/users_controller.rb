@@ -241,7 +241,7 @@ class UsersController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def user_params
-    params.require(:user).permit(:email, :first_name, :last_name, :password, :password_confirmation, :current_password, :is_admin)
+    params.require(:user).permit(:email, :first_name, :last_name, :password, :password_confirmation, :current_password, :is_admin, :can_manage_all_controlled_vocabularies)
   end
 
   def set_contextual_nav_options
