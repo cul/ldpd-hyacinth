@@ -53,6 +53,7 @@ class User < ActiveRecord::Base
     
     return {
       is_admin: self.is_admin?,
+      can_manage_all_controlled_vocabularies: self.can_manage_all_controlled_vocabularies?,
       projects: project_permissions
     }
   end
