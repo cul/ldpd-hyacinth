@@ -563,7 +563,4 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
       }.to raise_error('Dynamic field header names cannot be 0-indexed. Must be 1-indexed.')
     end
   end
-  
-  
-
 end

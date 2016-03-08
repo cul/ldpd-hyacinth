@@ -106,7 +106,8 @@ class ExportSearchResultsToCsvJob
       # TODO: Actually write out human-friendly column display labels.
       # For now, we're just redundantly writing out a second copy of the less
       # human-friendly machine-parsable hyacinth column headers.
-      final_csv << field_list
+
+      final_csv << Hyacinth::Utils::CsvFriendlyHeaders.hyacinth_headers_to_friendly_headers(field_list)
 
       # Write out column headers
       final_csv << field_list

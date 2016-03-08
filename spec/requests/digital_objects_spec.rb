@@ -178,7 +178,12 @@ RSpec.describe "DigitalObjects", :type => :request do
         })
       end
       
-      let(:sample_item_as_csv_export) { CSV.parse( fixture('sample_digital_object_data/sample_item_as_csv_export.csv').read ) }
+      let(:sample_item_as_csv_export) {
+        csv_data = CSV.parse( fixture('sample_digital_object_data/sample_item_as_csv_export.csv').read )
+        # Update fixture first-row headings so that we match the headers of the generated csv
+        csv_data[0] = Hyacinth::Utils::CsvFriendlyHeaders.hyacinth_headers_to_friendly_headers(csv_data[1])
+        csv_data
+      }
     
       let(:response_status) { response.status }
       let(:response_json) { JSON.parse(response.body) }
@@ -197,7 +202,7 @@ RSpec.describe "DigitalObjects", :type => :request do
           expect(response_status).to be(200)
           expect(response_json['success']).to eq(true)
           expect(export_id).to be_a(Fixnum)
-          # Text environment processes jobs immediately, so the export should be done and should have a status of "success"
+          # Test environment processes jobs immediately, so the export should be done and should have a status of "success"
           expect(csv_export.success?).to eq(true)
           expect(csv[1][0]).to eq('_pid')
           # The PID field is randomly generated, so we'll copy the pid from the result to the csv fixture that we're testing against
