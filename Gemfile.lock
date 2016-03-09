@@ -546,6 +546,7 @@ DEPENDENCIES
   poltergeist (>= 1.7)
   puma
   rails (~> 4.2.4)
+  rake (~> 10.0)
   random-word
   rdf-rdfxml!
   resque (~> 1.0)

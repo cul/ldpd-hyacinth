@@ -7,6 +7,9 @@ gem 'rails', '~> 4.2.4'
 gem 'sqlite3'
 gem 'mysql2', '0.3.18'
 
+# Lock rake due to rspec/rubocop v11 incompatibilities
+gem 'rake', '~> 10.0'
+
 # Use SCSS for stylesheets
 gem 'sass'
 gem 'sass-rails'
