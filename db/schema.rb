@@ -11,16 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160308172710) do
+ActiveRecord::Schema.define(version: 20160309172238) do
 
   create_table "controlled_vocabularies", force: :cascade do |t|
-    t.string   "string_key",             limit: 255
-    t.boolean  "only_managed_by_admins",             default: false
+    t.string   "string_key",                                       limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "require_controlled_vocabulary_manager_permission",             default: false, null: false
   end
-
-  add_index "controlled_vocabularies", ["only_managed_by_admins"], name: "index_controlled_vocabularies_on_only_managed_by_admins", using: :btree
 
   create_table "csv_exports", force: :cascade do |t|
     t.text     "search_params",               limit: 65535

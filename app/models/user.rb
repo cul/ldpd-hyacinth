@@ -95,7 +95,7 @@ class User < ActiveRecord::Base
       subset_of_projects_that_use_specific_controlled_vocabulary = EnabledDynamicField.joins(
         'INNER JOIN dynamic_fields ON dynamic_fields.id = enabled_dynamic_fields.dynamic_field_id ' +
         'INNER JOIN controlled_vocabularies ON controlled_vocabularies.string_key = dynamic_fields.controlled_vocabulary_string_key'
-      ).where(project_id: projects_for_which_user_can_create_or_edit, 'dynamic_fields.controlled_vocabulary_string_key' => controlled_vocabulary.string_key).where('controlled_vocabularies.only_managed_by_admins = false').pluck(:project_id)
+      ).where(project_id: projects_for_which_user_can_create_or_edit, 'dynamic_fields.controlled_vocabulary_string_key' => controlled_vocabulary.string_key).where('controlled_vocabularies.require_controlled_vocabulary_manager_permission = false').pluck(:project_id)
       return true if subset_of_projects_that_use_specific_controlled_vocabulary.present?
     end
 
@@ -112,7 +112,7 @@ class User < ActiveRecord::Base
       subset_of_user_editable_projects_that_use_controlled_vocabularies = EnabledDynamicField.joins(
         'INNER JOIN dynamic_fields ON dynamic_fields.id = enabled_dynamic_fields.dynamic_field_id ' +
         'INNER JOIN controlled_vocabularies ON controlled_vocabularies.string_key = dynamic_fields.controlled_vocabulary_string_key'
-      ).where(project_id: projects_for_which_user_can_create_or_edit).where('dynamic_fields.controlled_vocabulary_string_key IS NOT NULL AND controlled_vocabularies.only_managed_by_admins = false').pluck(:project_id)
+      ).where(project_id: projects_for_which_user_can_create_or_edit).where('dynamic_fields.controlled_vocabulary_string_key IS NOT NULL AND controlled_vocabularies.require_controlled_vocabulary_manager_permission = false').pluck(:project_id)
       return true if subset_of_user_editable_projects_that_use_controlled_vocabularies.present?
     end
 

@@ -21,7 +21,7 @@
   </div>
 
   <div class="field">
-    <%= f.label(:only_managed_by_admins, (f.check_box(:only_managed_by_admins)).html_safe + ' Only admins can manage Authorized Terms for this Controlled Vocabulary') %>
+    <%= f.label(:require_controlled_vocabulary_manager_permission, (f.check_box(:require_controlled_vocabulary_manager_permission)).html_safe + ' Require Controlled Vocabulary Manager Permission') %>
   </div>
 
   <div class="actions">

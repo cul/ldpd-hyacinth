@@ -131,7 +131,7 @@ class ControlledVocabulariesController < ApplicationController
 
   # Never trust parameters from the scary internet, only allow the white list through.
   def controlled_vocabulary_params
-    params.require(:controlled_vocabulary).permit(:string_key, :display_label, :only_managed_by_admins)
+    params.require(:controlled_vocabulary).permit(:string_key, :display_label, :require_controlled_vocabulary_manager_permission)
   end
 
   def set_contextual_nav_options
