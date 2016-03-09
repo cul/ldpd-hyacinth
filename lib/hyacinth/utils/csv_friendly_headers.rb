@@ -9,7 +9,10 @@ class Hyacinth::Utils::CsvFriendlyHeaders
     '_asset_data.file_size_in_bytes' => 'Asset Data > File Size In Bytes',
     '_asset_data.filesystem_location' => 'Asset Data > Filesystem Location',
     '_asset_data.original_file_path' => 'Asset Data > Original File Path',
-    '_asset_data.original_filename' => 'Asset Data > Original Filename'
+    '_asset_data.original_filename' => 'Asset Data > Original Filename',
+    '_import_file.import_path' => 'Import File > Import Path',
+    '_import_file.import_type' => 'Import File > Import Type',
+    '_import_file.original_file_path' => 'Import File > Import Original File Path'
   }
 
   TERM_CORE_SUBFIELD_LABEL_MAPPING = {

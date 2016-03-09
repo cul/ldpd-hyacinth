@@ -127,7 +127,7 @@ class ProjectsController < ApplicationController
   def generate_csv_header_template
 
     array_headers =  Hyacinth::Utils::CsvHeaderTemplate.array_dynamic_field_headers @project.id
-    csv_lines = CSV::generate_line array_headers
+    csv_lines = CSV::generate_line Hyacinth::Utils::CsvFriendlyHeaders.hyacinth_headers_to_friendly_headers(array_headers)
     csv_lines += CSV::generate_line array_headers
     csv_filename = "#{@project.string_key}_header_template-#{Time.now.strftime('%Y-%m-%d_%H%M%S')}.csv"
     # following sends csv data to browser for download
