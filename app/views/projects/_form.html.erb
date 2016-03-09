@@ -38,7 +38,8 @@
     <div class="col-md-6">
       <div class="field">
         <%= f.label :pid_generator_id, 'PID Generator' %>
-        <%= f.collection_select(:pid_generator_id, PidGenerator.all.sort_by { |pid_generator| pid_generator.namespace }, :id, :namespace, {}, {:class => 'form-control'}) %>
+        <% default_pid_generator = PidGenerator.find_by(namespace: HYACINTH['default_pid_generator_namespace']) %>
+        <%= f.collection_select(:pid_generator_id, PidGenerator.all.sort_by { |pid_generator| pid_generator.namespace }, :id, :namespace, { selected: default_pid_generator.present? ? default_pid_generator.id : nil }, {:class => 'form-control'}) %>
       </div>
     </div>
   </div>
