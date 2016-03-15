@@ -29,14 +29,14 @@ module DigitalObject::IndexAndSearch
       project_string_key_sim: self.project.string_key,
       project_pid_sim: self.project.pid,
       project_pid_ssm: self.project.pid,
-      publish_target_pids_sim: self.publish_targets.map{|publish_target|publish_target.pid},
-      publish_target_pids_ssm: self.publish_targets.map{|publish_target|publish_target.pid},
+      project_display_label_sim: self.project.display_label,
+      project_display_label_ssm: self.project.display_label,
+      publish_target_pid_sim: self.publish_targets.map{|publish_target|publish_target.pid},
+      publish_target_pid_ssm: self.publish_targets.map{|publish_target|publish_target.pid},
+      publish_target_display_label_sim: self.publish_targets.map{|publish_target|publish_target.display_label},
       flattened_dynamic_field_data_ssm: flattened_dynamic_field_data.to_json, # This is kept here for caching/performance purposes, flat display of any field without having to check with Fedora.
       digital_object_data_ss: self.to_json
     }
-
-    doc[:project_display_label_sim] = self.project.display_label
-    doc[:project_display_label_ssm] = self.project.display_label
 
     search_keyword_teim = []
     search_identifier_sim = []
@@ -155,7 +155,7 @@ module DigitalObject::IndexAndSearch
           # Set up default facet fields
           facet_fields = []
           # Manually add certain non-dynamic-field facets
-          facet_fields << ['digital_object_type_display_label_sim', 'project_display_label_sim', 'asset_dc_type_sim', 'has_child_digital_objects_bi']
+          facet_fields << ['digital_object_type_display_label_sim', 'project_display_label_sim', 'publish_target_display_label_sim', 'asset_dc_type_sim', 'has_child_digital_objects_bi']
           ::DynamicField.all.each {|dynamic_field|
             dynamic_field_string_keys_to_dynamic_fields[dynamic_field.string_key] = dynamic_field
             facet_fields << 'df_' + dynamic_field.string_key + '_sim' if dynamic_field.is_facet_field
@@ -246,6 +246,8 @@ module DigitalObject::IndexAndSearch
           # Special handling for special field facet display labels
           if solr_field_name == 'project_display_label_sim'
             display_label = 'Project'
+          elsif solr_field_name == 'publish_target_display_label_sim'
+            display_label = 'Publish Target'
           elsif solr_field_name == 'digital_object_type_display_label_sim'
             display_label = 'Digital Object Type'
           elsif solr_field_name == 'asset_dc_type_sim'
