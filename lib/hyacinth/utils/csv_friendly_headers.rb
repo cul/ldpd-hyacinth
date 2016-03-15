@@ -15,7 +15,7 @@ class Hyacinth::Utils::CsvFriendlyHeaders
     '_import_file.original_file_path' => 'Import File > Import Original File Path'
   }
 
-  TERM_CORE_SUBFIELD_LABEL_MAPPING = {
+  CONTROLLED_TERM_CORE_SUBFIELD_LABEL_MAPPING = {
     'authority' => 'Authority',
     'uri' => 'URI',
     'value' => 'Value'
@@ -90,8 +90,8 @@ class Hyacinth::Utils::CsvFriendlyHeaders
   end
 
   def self.term_subfield_to_display_label(term_subfield, controlled_vocabulary_string_key)
-    if TERM_CORE_SUBFIELD_LABEL_MAPPING.key?(term_subfield)
-      TERM_CORE_SUBFIELD_LABEL_MAPPING[term_subfield]
+    if CONTROLLED_TERM_CORE_SUBFIELD_LABEL_MAPPING.key?(term_subfield)
+      CONTROLLED_TERM_CORE_SUBFIELD_LABEL_MAPPING[term_subfield]
     elsif controlled_vocabulary_string_key.present? && TERM_ADDITIONAL_FIELDS[controlled_vocabulary_string_key].present? && TERM_ADDITIONAL_FIELDS[controlled_vocabulary_string_key][term_subfield].present? && TERM_ADDITIONAL_FIELDS[controlled_vocabulary_string_key][term_subfield]['display_label']
       TERM_ADDITIONAL_FIELDS[controlled_vocabulary_string_key][term_subfield]['display_label']
     else

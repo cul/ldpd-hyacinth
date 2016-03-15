@@ -193,7 +193,12 @@ class Hyacinth::Utils::CsvImportExportUtils
 
     string_keys_to_dynamic_fields.each do |dynamic_field_string_key, dynamic_field|
       regex_to_build = dynamic_field_string_key
-      regex_to_build += '\\..+' if dynamic_field.dynamic_field_type == DynamicField::Type::CONTROLLED_TERM
+
+      # If this is a controlled term field, get all core and custom controlled term subfields
+      if dynamic_field.dynamic_field_type == DynamicField::Type::CONTROLLED_TERM
+        custom_term_fields_for_this_vocabulary = TERM_ADDITIONAL_FIELDS[dynamic_field.controlled_vocabulary_string_key].present? ? TERM_ADDITIONAL_FIELDS[dynamic_field.controlled_vocabulary_string_key].keys : []
+        regex_to_build += '\\.(' + (ExportSearchResultsToCsvJob::CONTROLLED_TERM_CORE_SUBFIELDS_ALLOWED_ON_IMPORT + custom_term_fields_for_this_vocabulary).join('|') + ')'
+      end
 
       next_df_or_dfg = dynamic_field
       while next_df_or_dfg.parent_dynamic_field_group.present?

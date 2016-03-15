@@ -3,6 +3,7 @@ class ExportSearchResultsToCsvJob
 
   SUPPRESSED_ON_EXPORT = ['_dc_type', '_state', '_title', '_created', '_modified', '_created_by', '_modified_by', '_project.uri']
   INTERNAL_FIELD_REGEXES_ALLOWED_ON_IMPORT = ['_pid', '_merge_dynamic_fields', '_publish', '_digital_object_type.string_key', '_import_file.import_type', '_import_file.import_path', '_import_file.original_file_path', /^_parent_digital_objects-\d+\.(identifier|pid)$/, /^_identifiers-\d+$/, /^_project\.(string_key|pid)$/, /^_publish_targets-\d+\.(string_key|pid)$/, /^_parent_digital_objects-\d+\.(identifier|pid)$/]
+  CONTROLLED_TERM_CORE_SUBFIELDS_ALLOWED_ON_IMPORT = ['uri', 'value', 'authority', 'type']
 
   @queue = Hyacinth::Queue::DIGITAL_OBJECT_CSV_EXPORT
 
