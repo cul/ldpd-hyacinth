@@ -367,21 +367,21 @@ RSpec.describe DigitalObject::Base, :type => :model do
       expect(digital_object.value_for_field_name(arg,'')).to eq('Data unavailable')
     end
 
-    it "handles $digital_object.created_at" do
+    it "handles $created_at" do
       new_item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
       new_item.set_digital_object_data(sample_item_digital_object_data, false)
       new_item.save
-      arg = '$digital_object.created_at'
+      arg = '$created_at'
       date_today = Date.today
       expect(new_item.value_for_field_name(arg,'').strftime("%m/%d/%Y")).to eq(date_today.strftime("%m/%d/%Y"))
       new_item.destroy
     end
 
-    it "handles $digital_object.updated_at" do
+    it "handles $updated_at" do
       new_item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
       new_item.set_digital_object_data(sample_item_digital_object_data, false)
       new_item.save
-      arg = '$digital_object.updated_at'
+      arg = '$updated_at'
       date_today = Date.today
       expect(new_item.value_for_field_name(arg,'').strftime("%m/%d/%Y")).to eq(date_today.strftime("%m/%d/%Y"))
       new_item.destroy
