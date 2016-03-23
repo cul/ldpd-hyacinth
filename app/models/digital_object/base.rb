@@ -18,7 +18,19 @@ class DigitalObject::Base
   attr_reader :errors, :fedora_object, :parent_digital_object_pids, :updated_at, :created_at
 
   VALID_DC_TYPES = [] # There are no valid dc types for DigitalObject::Base
-  
+
+  def created_at
+
+    @db_record.created_at
+
+  end
+
+  def updated_at
+
+    @db_record.updated_at
+
+  end
+
   def require_subclass_override!; raise 'This method must be overridden by a subclass'; end
   
   def initialize

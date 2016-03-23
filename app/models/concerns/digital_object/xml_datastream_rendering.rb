@@ -148,6 +148,10 @@ module DigitalObject::XmlDatastreamRendering
         self.project.display_label
       elsif field_name == '$project.uri'
         self.project.uri.present? ? self.project.uri : ''
+      elsif field_name == '$digital_object.created_at'
+        created_at
+      elsif field_name == '$digital_object.updated_at'
+        updated_at
       else
         'Data unavailable'
       end
