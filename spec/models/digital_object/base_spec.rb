@@ -15,7 +15,29 @@ RSpec.describe DigitalObject::Base, :type => :model do
       expect(digital_object.dynamic_field_data).to eq({})
     end
   end
-  
+
+  describe "#created_at " do
+    it "returns a date" do
+      new_item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+      new_item.set_digital_object_data(sample_item_digital_object_data, false)
+      new_item.save
+      date_today = Date.today
+      expect(new_item.created_at.strftime("%m/%d/%Y")).to eq(date_today.strftime("%m/%d/%Y"))
+      new_item.destroy
+    end
+  end
+
+  describe "#updated_at " do
+    it "returns a date" do
+      new_item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+      new_item.set_digital_object_data(sample_item_digital_object_data, false)
+      new_item.save
+      date_today = Date.today
+      expect(new_item.updated_at.strftime("%m/%d/%Y")).to eq(date_today.strftime("%m/%d/%Y"))
+      new_item.destroy
+    end
+  end
+
   describe "#set_digital_object_data" do
     let(:sample_asset_digital_object_data) {
       dod = JSON.parse( fixture('sample_digital_object_data/new_asset.json').read )
@@ -335,6 +357,34 @@ RSpec.describe DigitalObject::Base, :type => :model do
       let(:model) { DigitalObject::FileSystem }
 
       it { is_expected.to be model }
+    end
+  end
+
+  describe "#value_for_field_name " do
+    it "handle unallowed special substitution" do
+      digital_object = DigitalObject::Item.new()
+      arg = '$i_am_an_unallowed_substitution_field'
+      expect(digital_object.value_for_field_name(arg,'')).to eq('Data unavailable')
+    end
+
+    it "handles $created_at" do
+      new_item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+      new_item.set_digital_object_data(sample_item_digital_object_data, false)
+      new_item.save
+      arg = '$created_at'
+      date_today = Date.today
+      expect(new_item.value_for_field_name(arg,'').strftime("%m/%d/%Y")).to eq(date_today.strftime("%m/%d/%Y"))
+      new_item.destroy
+    end
+
+    it "handles $updated_at" do
+      new_item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+      new_item.set_digital_object_data(sample_item_digital_object_data, false)
+      new_item.save
+      arg = '$updated_at'
+      date_today = Date.today
+      expect(new_item.value_for_field_name(arg,'').strftime("%m/%d/%Y")).to eq(date_today.strftime("%m/%d/%Y"))
+      new_item.destroy
     end
   end
 end
