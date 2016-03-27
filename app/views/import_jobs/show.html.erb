@@ -11,6 +11,16 @@
   <strong>Email:</strong>
   <%= @import_job.user.email %></h1>
 </p>
+<% if @import_job.path_to_csv_file.present? %>
+<p>
+  <strong>Download Original CSV File:</strong>
+  <%= link_to '<span class="glyphicon glyphicon-download"></span> Download'.html_safe, download_original_csv_import_job_path(@import_job) %>
+</p>
+<p>
+  <strong>Download CSV File Without Successful Rows:</strong>
+  <%= link_to '<span class="glyphicon glyphicon-download"></span> Download'.html_safe, download_csv_without_successful_rows_import_job_path(@import_job) %>
+</p>
+<% end %>
 <table class="table table-condensed table-bordered table-striped">
   <thead>
     <tr>

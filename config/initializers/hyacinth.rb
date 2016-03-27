@@ -21,3 +21,4 @@ Rails.backtrace_cleaner.remove_silencers! if Rails.env.development?
 FileUtils.mkdir_p(HYACINTH['upload_directory']) if HYACINTH['upload_directory']
 FileUtils.mkdir_p(HYACINTH['default_asset_home']) if HYACINTH['default_asset_home']
 FileUtils.mkdir_p(HYACINTH['csv_export_directory']) if HYACINTH['csv_export_directory']
+FileUtils.mkdir_p(HYACINTH['processed_csv_import_directory']) if HYACINTH['processed_csv_import_directory']

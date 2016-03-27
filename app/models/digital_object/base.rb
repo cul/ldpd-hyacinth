@@ -86,7 +86,7 @@ class DigitalObject::Base
           @fedora_object = ActiveFedora::Base.find(digital_object_data['pid'])
           init_from_digital_object_record_and_fedora_object(@db_record, @fedora_object)
         rescue ActiveFedora::ObjectNotFoundError
-          raise Hyacinth::Exceptions::AssociatedFedoraObjectNotFoundError, "Tried to set associated Fedora object for new DigitalObject, but could not find Fedora object with pid #{digital_object_data['pid']}"
+          raise Hyacinth::Exceptions::AssociatedFedoraObjectNotFoundError, "Tried to link existing Fedora object to new Hyacinth DigitalObject, but could not find Fedora object with pid #{digital_object_data['pid']}"
         end
       else
         if self.pid != digital_object_data['pid']

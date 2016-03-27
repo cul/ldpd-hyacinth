@@ -11,7 +11,5 @@ class CsvExport < ActiveRecord::Base
     if self.path_to_csv_file.present? && File.exists?(self.path_to_csv_file)
         FileUtils.rm(self.path_to_csv_file)
     end
-    
   end
-  
 end

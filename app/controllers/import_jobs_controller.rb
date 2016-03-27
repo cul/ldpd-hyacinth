@@ -1,5 +1,6 @@
 class ImportJobsController < ApplicationController
   
+  before_action :set_import_job, only: [:show, :download_original_csv, :download_csv_without_successful_rows]
   before_action :set_contextual_nav_options
 
   # GET /import_jobs
@@ -13,13 +14,10 @@ class ImportJobsController < ApplicationController
 
   # GET /import_jobs/1
   def show
-
-    @import_job = ImportJob.find(params[:id])
     @count_pending = @import_job.count_pending_digital_object_imports
     @count_success = @import_job.count_successful_digital_object_imports
     @count_failure = @import_job.count_failed_digital_object_imports
     @count_total = @count_pending + @count_success + @count_failure
-
   end
 
   def new
@@ -52,8 +50,42 @@ class ImportJobsController < ApplicationController
       end
     end
   end
+  
+  def download_original_csv
+    if @import_job.path_to_csv_file.present?
+      send_file @import_job.path_to_csv_file, filename: File.basename(@import_job.name)
+    else
+      render text: 'No CSV file available for this import job.'
+    end
+  end
+  
+  def download_csv_without_successful_rows
+    if @import_job.path_to_csv_file.present?
+      
+      # Get list of successfully imported rows for this import job
+      # We're using a Set rather than an array for fast lookup time
+      csv_rows_to_collect = @import_job.get_csv_row_numbers_for_all_non_successful_digital_object_imports.to_set
+      
+      csv_data_string = ''
+      csv_row_counter = 1
+      CSV.foreach(@import_job.path_to_csv_file) do |row|
+        if csv_row_counter == 1 || csv_row_counter == 2 || csv_rows_to_collect.include?(csv_row_counter)
+          csv_data_string += CSV::generate_line row
+        end
+        csv_row_counter += 1
+      end
+      
+      send_data(csv_data_string, type: 'text/csv', filename: File.basename(@import_job.name))
+    else
+      render text: 'No CSV file available for this import job.'
+    end
+  end
 
   private
+  
+  def set_import_job
+    @import_job = ImportJob.find(params[:id])
+  end
 
   def set_contextual_nav_options
 

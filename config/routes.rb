@@ -36,6 +36,10 @@ Hyacinth::Application.routes.draw do
 
   # add actions as needed, remove "only:" restriction if all actions needed
   resources :import_jobs, only: [:index, :new, :create, :show, :destroy] do
+    member do
+      get 'download_original_csv'
+      get 'download_csv_without_successful_rows'
+    end
     resources :digital_object_imports, only: [:index, :show]
   end
 
