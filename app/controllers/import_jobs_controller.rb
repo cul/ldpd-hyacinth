@@ -75,7 +75,7 @@ class ImportJobsController < ApplicationController
         csv_row_counter += 1
       end
       
-      send_data(csv_data_string, type: 'text/csv', filename: File.basename(@import_job.name))
+      send_data(csv_data_string, type: 'text/csv', filename: 'without-successful-rows-' + File.basename(@import_job.name))
     else
       render text: 'No CSV file available for this import job.'
     end

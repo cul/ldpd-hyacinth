@@ -150,12 +150,12 @@ class Hyacinth::Utils::CsvImportExportUtils
     # Assuming there were no validation errors, run through the CSV data again and do an import for real
     unless import_job.errors.any?
       import_job.save # Save the import job so that we generate a unique ID for the job
-      
+
       # Use the import job ID to generate the file path to the saved csv file
       path_to_csv_file = File.join(HYACINTH['processed_csv_import_directory'], "import-#{import_job.id}-#{Time.now.strftime('%Y%m%d_%H%M%S')}.csv")
       import_job.path_to_csv_file = path_to_csv_file
       import_job.save # Save the import_job again so that the path_to_csv_file is persisted to the database
-      
+
       # Save the csv file to the filesystem
       IO.write(path_to_csv_file, csv_data_string)
 
