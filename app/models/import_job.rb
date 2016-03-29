@@ -12,6 +12,16 @@ class ImportJob < ActiveRecord::Base
     return (DigitalObjectImport.where(import_job_id: self.id, status: [DigitalObjectImport.statuses[:pending], DigitalObjectImport.statuses[:failure]]).count == 0)
   end
 
+  def status_string
+    if count_pending_digital_object_imports.nonzero?
+      'Incomplete'
+    elsif count_failed_digital_object_imports.nonzero?
+      'Complete with Failures'
+    else
+      'Successfully Completed'
+    end
+  end
+
   def count_pending_digital_object_imports
     # fcd1, 10/19/15: work on the following, Fred -- does not currently work.
     # self.digital_object_imports.where(digital_object_imports.status == DigitalObjectImport::statuses[:pending]).count
