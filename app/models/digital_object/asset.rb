@@ -144,7 +144,7 @@ class DigitalObject::Asset < DigitalObject::Base
     ds_location = Addressable::URI.encode('file:' + path_to_final_save_location).gsub('&','%26').gsub('#','%23')
     content_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, 'content', :controlGroup => 'E', :mimeType => DigitalObject::Asset.filename_to_mime_type(original_filename), :dsLabel => original_filename, :versionable => true)
     content_ds.dsLocation = ds_location
-    @fedora_object.datastreams["DC"].dc_source = ds_location
+    @fedora_object.datastreams["DC"].dc_source = path_to_final_save_location
     content_ds.checksum = import_file_sha256_hexdigest
     content_ds.checksumType = 'SHA-256'
     @fedora_object.add_datastream(content_ds)
@@ -168,6 +168,12 @@ class DigitalObject::Asset < DigitalObject::Base
     if self.new_record? && self.pid.nil?
       if @import_file_import_path.blank?
         @errors.add(:import_file_import_path, 'New Assets must have @import_file_import_path set.')
+      else
+        # If file import path is present for this new Asset, make sure that there isn't already another Asset that is also pointing to the same file
+        pid = Hyacinth::Utils::FedoraUtils.find_object_pid_by_filesystem_path(@import_file_import_path)
+        if pid.present?
+          @errors.add(:import_file_import_path, 'Found existing Asset (' + pid + ') with file path: ' + @import_file_import_path)
+        end
       end
       
       if @import_file_import_type.blank?
@@ -268,8 +274,8 @@ class DigitalObject::Asset < DigitalObject::Base
   def set_digital_object_data(digital_object_data, merge_dynamic_fields)
     super(digital_object_data, merge_dynamic_fields)
     
-    # File upload (for assets only, and only if this object's current data validates successfully)
-    if digital_object_data['import_file'].present?
+    # File upload (for NEW assets only, and only if this object's current data validates successfully)
+    if self.new_record? && digital_object_data['import_file'].present?
       
       # Check for presentce of import file original file path (which is optional, but may be set by the user)
       @import_file_original_file_path = digital_object_data['import_file']['original_file_path']

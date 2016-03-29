@@ -1,5 +1,4 @@
 module Hyacinth::Utils::FedoraUtils
-  extend Logger::Behavior
 
   def self.import_fedora_object_as_hyacinth_item(fedora_object_pid, project_string_key, import_type, parent_digital_object_pid = nil)
     valid_import_types = ['item', 'recursive']
@@ -32,17 +31,18 @@ module Hyacinth::Utils::FedoraUtils
       type: 'tuples',
       format: 'json',
       limit: '',
-      stream: 'on'
+      stream: 'on',
+      flush: 'true'
     }
     search_response = Cul::Hydra::Fedora.repository.find_by_itql(immediate_member_query, ri_opts)
     search_response = JSON(search_response)
     num_results = search_response['results'].length
     if num_results == 1
       return true
-    elsif num_results == 1
+    elsif num_results == 0
       return false
     else
-      raise 'Unexpected response for risearch.  Resulted in ' + num_results.to_s + ' search results.'
+      raise 'Unexpected result count for risearch.  Search returned ' + num_results.to_s + ' results.'
     end
   end
 
@@ -60,5 +60,26 @@ module Hyacinth::Utils::FedoraUtils
     end
 
     namespace_fedora_object
+  end
+  
+  def self.find_object_pid_by_filesystem_path(full_filesystem_path)
+    query = "select $pid from <#ri> where $pid <http://purl.org/dc/elements/1.1/source> '#{full_filesystem_path}'"
+    ri_opts = {
+      type: 'tuples',
+      format: 'json',
+      limit: '',
+      stream: 'on',
+      flush: 'true'
+    }
+    search_response = Cul::Hydra::Fedora.repository.find_by_itql(query, ri_opts)
+    search_response = JSON(search_response)
+    num_results = search_response['results'].length
+    if num_results == 1
+      return search_response['results'][0]['pid'].gsub('info:fedora/', '')
+    elsif num_results == 0
+      return nil
+    else
+      raise 'Unexpected result count for risearch.  Search returned ' + num_results.to_s + ' results.'
+    end
   end
 end
