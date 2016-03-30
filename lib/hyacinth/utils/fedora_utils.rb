@@ -1,5 +1,4 @@
 module Hyacinth::Utils::FedoraUtils
-
   def self.import_fedora_object_as_hyacinth_item(fedora_object_pid, project_string_key, import_type, parent_digital_object_pid = nil)
     valid_import_types = ['item', 'recursive']
     unless valid_import_types.include?(import_type)
@@ -61,7 +60,7 @@ module Hyacinth::Utils::FedoraUtils
 
     namespace_fedora_object
   end
-  
+
   def self.find_object_pid_by_filesystem_path(full_filesystem_path)
     query = "select $pid from <#ri> where $pid <http://purl.org/dc/elements/1.1/source> '#{full_filesystem_path}'"
     ri_opts = {
