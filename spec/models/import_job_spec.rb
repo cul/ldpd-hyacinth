@@ -266,4 +266,66 @@ RSpec.describe ImportJob, :type => :model do
 
   end
 
+  context "#status_string:" do
+
+    it "all DigitalObjectImports are failures, status string is 'Complete with Failures'" do
+
+      @test_import_job.digital_object_imports.each do |digital_object_import|
+
+        digital_object_import.failure!
+        
+      end
+
+      expect(@test_import_job.status_string).to eq('Complete with Failures')
+
+    end
+
+    it "all DigitalObjectImports are pending, status string is 'Incomplete'" do
+
+      expect(@test_import_job.status_string).to eq('Incomplete')
+
+    end
+
+    it "all DigitalObjectImports are success, status string is 'Successfully Completed'" do
+
+      @test_import_job.digital_object_imports.each do |digital_object_import|
+
+        digital_object_import.success!
+        
+      end
+
+      expect(@test_import_job.status_string).to eq('Successfully Completed')
+
+    end
+
+    it "All DigitalObjectImports are success except for one pending, status string is 'Incomplete'" do
+
+      @test_import_job.digital_object_imports.each do |digital_object_import|
+
+        digital_object_import.success!
+        
+      end
+
+      @test_import_job.digital_object_imports.first.pending!
+
+      expect(@test_import_job.status_string).to eq('Incomplete')
+
+    end
+
+    it "All DigitalObjectImports are success except for one failure, status string is 'Complete with Failure'" do
+
+      @test_import_job.digital_object_imports.each do |digital_object_import|
+
+        digital_object_import.success!
+        
+      end
+
+      @test_import_job.digital_object_imports.second.failure!
+
+      expect(@test_import_job.status_string).to eq('Complete with Failures')
+
+    end
+
+  end
+
 end

@@ -12,7 +12,7 @@
     <% @import_jobs.each do |import_job| %>
       <tr>
         <td><%= link_to import_job.name, import_job_path(import_job) %></td>
-        <td><%= import_job.success? ? 'Successfully Completed' : 'Incomplete' %></td>
+        <td><%= import_job.status_string %></td>
         <td><%= import_job.created_at.localtime %></td>
         <td><%= import_job.user.email %></td>
       </tr>
