@@ -1,6 +1,6 @@
 class ImportJobsController < ApplicationController
   
-  before_action :set_import_job, only: [:show, :download_original_csv, :download_csv_without_successful_rows]
+  before_action :set_import_job, only: [:show, :download_original_csv, :download_csv_without_successful_rows, :destroy]
   before_action :set_contextual_nav_options
 
   # GET /import_jobs
@@ -50,7 +50,12 @@ class ImportJobsController < ApplicationController
       end
     end
   end
-  
+
+  def destroy
+    @import_job.destroy
+    redirect_to import_jobs_path
+  end
+
   def download_original_csv
     if @import_job.path_to_csv_file.present?
       send_file @import_job.path_to_csv_file, filename: File.basename(@import_job.name)
