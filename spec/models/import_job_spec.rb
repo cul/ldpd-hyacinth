@@ -131,6 +131,33 @@ RSpec.describe ImportJob, :type => :model do
 
   end
 
+  context "#complete?: " do
+
+    it "returns false for the newly created ImportJob containing 3 DigitalObjectImports in pending state" do
+      expect(@test_import_job.complete?).to eq(false)
+    end
+ 
+    it "returns true if all imports for the job were successful expect one (a failure)" do
+      @test_import_job.digital_object_imports.each do |digital_object_import|
+        digital_object_import.success!
+      end
+
+      # change the first on to a failure
+      @test_import_job.digital_object_imports.first.failure!
+
+      expect(@test_import_job.complete?).to eq(true)
+    end
+
+    it "returns true if all DigitalObjectimports belonging to it were successful" do
+
+      @test_import_job.digital_object_imports.each do |digital_object_import|
+        digital_object_import.success!
+      end
+
+      expect(@test_import_job.complete?).to eq(true)
+    end
+  end
+
   context "#return_pending_digital_object_imports" do
 
     it "one failure: returns the correct instance of DigitalObjectImport" do
