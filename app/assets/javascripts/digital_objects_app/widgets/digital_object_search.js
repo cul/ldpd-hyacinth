@@ -217,7 +217,6 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.init = function() {
         cache: false
       }).done(function(swapResponse){
         if (swapResponse['success']) {
-          console.log($thumbnailImg.attr('src').replace(/(.+\/images\/)([^\/]+)(\/.+)/, '$1' + swapResponse['ordered_child_digital_object_pids'][0] + '$3'));
           $thumbnailImg.attr('src', $thumbnailImg.attr('src').replace(/(.+\/images\/)([^\/]+)(\/.+)/, '$1' + swapResponse['ordered_child_digital_object_pids'][0] + '$3'));
           Hyacinth.addAlert('Images swapped.', 'info');
         } else {
@@ -323,8 +322,6 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.exportSearchResultsToCs
     cache: false
   }).done(function(exportResponse){
     Hyacinth.addAlert('Export has been queued as a background job. <a target="_blank" href="/csv_exports?highlight=' + exportResponse['csv_export_id'] + '">Click here</a> to monitor the job status.', 'success', 10000);
-    console.log(exportResponse);
-    
   }).fail(function(){
     alert(Hyacinth.unexpectedAjaxErrorMessage);
   });
@@ -392,7 +389,6 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.addFilterToCurrentSearc
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.removeFilterFromCurrentSearch = function(filterFieldName, filterOperator, filterValue) {
-  console.log([filterFieldName, filterOperator, filterValue]);
   var newParams = Hyacinth.ObjectHelpers.deepClone(Hyacinth.DigitalObjectsApp.params);
   if(typeof(newParams['search']['fq']) == 'undefined') {
     return;
