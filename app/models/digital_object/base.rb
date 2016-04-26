@@ -69,13 +69,13 @@ class DigitalObject::Base
   # Updates the DigitalObject with the given digital_object_data
   def set_digital_object_data(digital_object_data, merge_dynamic_fields)
     # The merge_dynamic_fields setting determines whether or existing dynamic_field_data is merged or overwritten
-    if digital_object_data['merge_dynamic_fields'] && ['true', 'false'].include?(digital_object_data['merge_dynamic_fields'].downcase)
-      merge_dynamic_fields = (digital_object_data['merge_dynamic_fields'].downcase == 'true')
+    if digital_object_data['merge_dynamic_fields'] && ['true', 'false'].include?(digital_object_data['merge_dynamic_fields'].to_s.downcase)
+      merge_dynamic_fields = (digital_object_data['merge_dynamic_fields'].to_s.downcase == 'true')
     end
     
     # If a user sets the publish field, set the publish_after_save flag
-    if digital_object_data['publish'] && ['true', 'false'].include?(digital_object_data['publish'].downcase)
-      @publish_after_save = (digital_object_data['publish'].downcase == 'true')
+    if digital_object_data['publish'] && ['true', 'false'].include?(digital_object_data['publish'].to_s.downcase)
+      @publish_after_save = (digital_object_data['publish'].to_s.downcase == 'true')
     end
     
     # PID
