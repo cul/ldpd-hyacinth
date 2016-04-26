@@ -115,6 +115,8 @@ class DigitalObjectsController < ApplicationController
           'size' => @digital_object.get_file_size_in_bytes,
           'errors' => @digital_object.errors.full_messages
         }
+      } : {}).merge(test_mode ? {
+        'test' => true
       } : {})
     else
       render json: {
@@ -174,7 +176,9 @@ class DigitalObjectsController < ApplicationController
           render json: {
             success: true,
             pid: @digital_object.pid
-          }
+          }.merge(test_mode ? {
+            'test' => true
+          } : {})
         }
       else
         format.json {
