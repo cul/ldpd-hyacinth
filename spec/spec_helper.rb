@@ -62,6 +62,7 @@ RSpec.configure do |config|
     #   - http://myronmars.to/n/dev-blog/2012/06/rspecs-new-expectation-syntax
     expectations.syntax = :expect
   end
+=end
 
   # rspec-mocks config goes here. You can use an alternate test double
   # library (such as bogus or mocha) by changing the `mock_with` option here.
@@ -75,7 +76,6 @@ RSpec.configure do |config|
     # a real object. This is generally recommended.
     mocks.verify_partial_doubles = true
   end
-=end
 
   # Custom Hyacinth spec helper methods
 
