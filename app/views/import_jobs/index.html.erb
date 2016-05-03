@@ -1,6 +1,7 @@
 <table class="table table-condensed table-bordered table-striped">
   <thead>
     <tr>
+      <th>Import Job ID</th>
       <th>Name</th>
       <th>Status</th>
       <th>Submitted at</th>
@@ -12,6 +13,7 @@
   <tbody>
     <% @import_jobs.each do |import_job| %>
       <tr>
+        <td><%= import_job.id %></td>
         <td><%= link_to import_job.name, import_job_path(import_job) %></td>
         <td><%= import_job.status_string %></td>
         <td><%= import_job.created_at.localtime %></td>
