@@ -37,8 +37,9 @@ describe DigitalObject::FileSystem, :type => :model do
     end
 
     it do
+      pending("Pending: further implementation required")
       allow(subject).to receive(:publish_descriptions) # .and_return(subject)
-      expect(subject).not_to receive(:publish_structure)
+      expect(subject).not_to receive(:publish_structures)
       subject.publish
     end
   end

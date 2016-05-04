@@ -90,13 +90,19 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def require_project_permission!(project, permission_type)
+  def require_project_permission!(project, permission_types, logic_operation = :and)
 
     # Always allow access if this user is an admin
     return if current_user.is_admin?
 
-    return if current_user.has_project_permission?(project, permission_type)
+    permission_types = Array(permission_types)
 
+    case logic_operation
+    when :and
+        return if check_project_permissions_and(project, permission_types)
+    when :or
+        return if check_project_permissions_or(project, permission_types)
+    end
     render_forbidden!
   end
 
@@ -107,4 +113,19 @@ class ApplicationController < ActionController::Base
     request.format.json?
   end
 
+  private
+
+  def check_project_permissions_and(project, permission_types)
+    permission_types.each do |permission|
+      return false unless current_user.has_project_permission?(project, permission)
+    end
+    true
+  end
+
+  def check_project_permissions_or(project, permission_types)
+    permission_types.each do |permission|
+      return true if current_user.has_project_permission?(project, permission)
+    end
+    false
+  end
 end
