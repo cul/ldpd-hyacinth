@@ -59,7 +59,6 @@ module DigitalObject::Validation
 
     # Exactly one project is required
     if self.project.present?
-      enabled_dynamic_fields = self.get_enabled_dynamic_fields
       flattened_dynamic_field_data_without_blank_fields = get_flattened_dynamic_field_data(true)
       #flattened_dynamic_field_data_with_blank_fields = get_flattened_dynamic_field_data()
   
@@ -87,7 +86,7 @@ module DigitalObject::Validation
     end
 
     # Note: No longer validating date field values because dates aren't always numeric/consistent (i.e. "uuuu" for undated values) and we need to support import for incorrectly formatted values
-    #date_fields = get_enabled_dynamic_fields.map{|enabled_dynamic_field| enabled_dynamic_field.dynamic_field}.select{|dynamic_field| dynamic_field.dynamic_field_type == DynamicField::Type::DATE}
+    #date_fields = enabled_dynamic_fields.map{|enabled_dynamic_field| enabled_dynamic_field.dynamic_field}.select{|dynamic_field| dynamic_field.dynamic_field_type == DynamicField::Type::DATE}
     #if date_fields.present?
     #  counter = 0
     #  date_fields.each {|date_field|

@@ -211,7 +211,7 @@ class DigitalObjectsController < ApplicationController
   def data_for_editor
     project = @digital_object.project
     fieldsets = Fieldset.where(project: project)
-    enabled_dynamic_fields = @digital_object.get_enabled_dynamic_fields
+    enabled_dynamic_fields = @digital_object.enabled_dynamic_fields
 
     dynamic_field_hierarchy = DynamicFieldGroupCategory.all # Get all DyanamicFieldGroupCategories (which recursively includes sub-dynamic_field_groups and dynamic_fields)
     dynamic_field_ids_to_enabled_dynamic_fields = Hash[enabled_dynamic_fields.map{|enabled_dynamic_field| [enabled_dynamic_field.dynamic_field_id, enabled_dynamic_field]}]

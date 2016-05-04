@@ -418,11 +418,11 @@ class DigitalObject::Base
     return @digital_object_type
   end
 
-  def get_enabled_dynamic_fields
+  def enabled_dynamic_fields
     if @project.blank?
       raise 'A project is required.'
     else
-      return @project.get_enabled_dynamic_fields(self.digital_object_type)
+      return @project.enabled_dynamic_fields_for_type(self.digital_object_type)
     end
   end
 

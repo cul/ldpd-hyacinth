@@ -117,7 +117,7 @@ class ProjectsController < ApplicationController
     # dynamic fields can be enabled for different digitial object types (item, asset, group) within a project
     # so a specific field may show up more than once in a query result which returns duplicates. We do not
     # want duplicates in our result set.
-    @enabled_dynamic_fields_ids = @project.get_ids_of_dynamic_fields_that_are_enabled
+    @enabled_dynamic_fields_ids = @project.enabled_dynamic_field_ids
 
     @enabled_dynamic_fields_csv_header = ::DynamicField.find(@enabled_dynamic_fields_ids)
 

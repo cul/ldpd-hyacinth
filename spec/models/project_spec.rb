@@ -55,7 +55,7 @@ RSpec.describe Project, type: :model do
 
   end
 
-  context 'Poject#get_ids_of_dynamic_fields_that_are_enabled ' do
+  context 'Project#enabled_dynamic_field_ids ' do
 
     it 'handles the simple case of just one enabled_dynamic_field' do
       
@@ -65,7 +65,7 @@ RSpec.describe Project, type: :model do
       # Then add one enabled_dynamic_field to @test_project
       @test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: @test_dynamic_field_1, digital_object_type: @dot_item)
       
-      expect(@test_project.get_ids_of_dynamic_fields_that_are_enabled).to contain_exactly(@test_dynamic_field_1.id)
+      expect(@test_project.enabled_dynamic_field_ids).to contain_exactly(@test_dynamic_field_1.id)
 
     end
 
@@ -78,7 +78,7 @@ RSpec.describe Project, type: :model do
       @test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: @test_dynamic_field_1, digital_object_type: @dot_item)
       @test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: @test_dynamic_field_2, digital_object_type: @dot_asset)
       
-      expect(@test_project.get_ids_of_dynamic_fields_that_are_enabled).to contain_exactly(@test_dynamic_field_1.id,@test_dynamic_field_2.id)
+      expect(@test_project.enabled_dynamic_field_ids).to contain_exactly(@test_dynamic_field_1.id,@test_dynamic_field_2.id)
 
     end
 
@@ -91,7 +91,7 @@ RSpec.describe Project, type: :model do
       @test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: @test_dynamic_field_1, digital_object_type: @dot_item)
       @test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: @test_dynamic_field_1, digital_object_type: @dot_asset)
       
-      expect(@test_project.get_ids_of_dynamic_fields_that_are_enabled).to contain_exactly(@test_dynamic_field_1.id)
+      expect(@test_project.enabled_dynamic_field_ids).to contain_exactly(@test_dynamic_field_1.id)
 
     end
 
