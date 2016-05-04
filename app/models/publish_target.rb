@@ -1,10 +1,9 @@
 
 class PublishTarget < ActiveRecord::Base
+  has_many :projects, through: :enabled_publish_targets
+  has_many :enabled_publish_targets, dependent: :destroy
 
-  has_many :projects, :through => :enabled_publish_targets
-  has_many :enabled_publish_targets, :dependent => :destroy
-  
-  attr_encrypted :api_key, :key => HYACINTH['publish_target_api_key_encryption_key'], mode: :per_attribute_iv_and_salt
+  attr_encrypted :api_key, key: HYACINTH['publish_target_api_key_encryption_key'], mode: :per_attribute_iv_and_salt
 
   before_create :create_associated_fedora_object!
   after_save :update_fedora_object!
@@ -16,8 +15,8 @@ class PublishTarget < ActiveRecord::Base
 
   # Returns the associated Fedora Object
   def fedora_object
-    if self.pid.present?
-      return @fedora_object ||= ActiveFedora::Base.find(self.pid)
+    if pid.present?
+      return @fedora_object ||= ActiveFedora::Base.find(pid)
     else
       return nil
     end
@@ -25,30 +24,29 @@ class PublishTarget < ActiveRecord::Base
 
   def create_associated_fedora_object!
     pid = PidGenerator.default_pid_generator.next_pid
-    concept = Concept.new(:pid => pid)
+    concept = Concept.new(pid: pid)
     @fedora_object = concept
     self.pid = @fedora_object.pid
   end
 
   def update_fedora_object!
-    self.fedora_object.datastreams["DC"].dc_identifier = [pid]
-    self.fedora_object.datastreams["DC"].dc_type = 'Publish Target'
-    self.fedora_object.datastreams["DC"].dc_title = self.display_label
-    self.fedora_object.label = self.display_label
-    self.fedora_object.save(update_index: false)
+    fedora_object.datastreams["DC"].dc_identifier = [pid]
+    fedora_object.datastreams["DC"].dc_type = 'Publish Target'
+    fedora_object.datastreams["DC"].dc_title = display_label
+    fedora_object.label = display_label
+    fedora_object.save(update_index: false)
   end
 
   def mark_fedora_object_as_deleted!
-    self.fedora_object.state = 'D'
-    self.fedora_object.save(update_index: false)
+    fedora_object.state = 'D'
+    fedora_object.save(update_index: false)
   end
 
-  def as_json(options={})
-    return {
-      pid: self.pid,
-      display_label: self.display_label,
-      string_key: self.string_key
+  def as_json(_options = {})
+    {
+      pid: pid,
+      display_label: display_label,
+      string_key: string_key
     }
   end
-
 end
