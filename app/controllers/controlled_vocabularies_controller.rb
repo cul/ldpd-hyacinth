@@ -125,7 +125,7 @@ class ControlledVocabulariesController < ApplicationController
     else
       @controlled_vocabulary = ControlledVocabulary.find_by(string_key: params[:id])
     end
-    
+
     raise ActionController::RoutingError.new('Controlled vocabulary not found') if @controlled_vocabulary.nil?
   end
 
@@ -135,12 +135,11 @@ class ControlledVocabulariesController < ApplicationController
   end
 
   def set_contextual_nav_options
-
     case params[:action]
     when 'index'
       @contextual_nav_options['nav_title']['label'] =  'Controlled Vocabularies'.html_safe
 
-      @contextual_nav_options['nav_items'].push(label: 'Add New Controlled Vocabulary', url: new_controlled_vocabulary_path) if current_user.is_admin?
+      @contextual_nav_options['nav_items'].push(label: 'Add New Controlled Vocabulary', url: new_controlled_vocabulary_path) if current_user.admin?
     when 'search'
       @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Controlled Vocabularies'.html_safe
       @contextual_nav_options['nav_title']['url'] = controlled_vocabularies_path
@@ -150,29 +149,25 @@ class ControlledVocabulariesController < ApplicationController
     when 'edit', 'update'
       @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Controlled Vocabularies'.html_safe
       @contextual_nav_options['nav_title']['url'] = controlled_vocabularies_path
-      
+
       @contextual_nav_options['nav_items'].push(label: 'Manage Terms', url: terms_controlled_vocabulary_path(@controlled_vocabulary))
-      @contextual_nav_options['nav_items'].push(label: 'Delete This Controlled Vocabulary', url: controlled_vocabulary_path(@controlled_vocabulary), options: {method: :delete, data: { confirm: 'Are you sure you want to delete this Controlled Vocabulary?' } }) if current_user.is_admin?
+      @contextual_nav_options['nav_items'].push(label: 'Delete This Controlled Vocabulary', url: controlled_vocabulary_path(@controlled_vocabulary), options: {method: :delete, data: { confirm: 'Are you sure you want to delete this Controlled Vocabulary?' } }) if current_user.admin?
     when 'terms'
       @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Controlled Vocabularies'.html_safe
       @contextual_nav_options['nav_title']['url'] = controlled_vocabularies_path
-      
+
       if current_user.can_manage_controlled_vocabulary_terms?(@controlled_vocabulary)
         @contextual_nav_options['nav_items'].push(label: 'New Term', url: new_term_path(controlled_vocabulary_string_key: @controlled_vocabulary.string_key))
       end
     end
-
   end
 
   def require_appropriate_permissions!
-
     case params[:action]
     when 'index', 'terms', 'term_additional_fields'
       # Do nothing
     else
       require_hyacinth_admin!
     end
-
   end
-
 end

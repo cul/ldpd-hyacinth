@@ -217,7 +217,7 @@ module DigitalObject::IndexAndSearch
       end
 
       if user_for_permission_context.present?
-        unless user_for_permission_context.is_admin?
+        unless user_for_permission_context.admin?
 
           user_allowed_projects = user_for_permission_context.projects
           if user_allowed_projects.length > 0

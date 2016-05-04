@@ -79,7 +79,7 @@ class ApplicationController < ActionController::Base
   end
 
   def require_hyacinth_admin!
-    unless current_user.is_admin?
+    unless current_user.admin?
       render_forbidden!
     end
   end
@@ -93,7 +93,7 @@ class ApplicationController < ActionController::Base
   def require_project_permission!(project, permission_types, logic_operation = :and)
 
     # Always allow access if this user is an admin
-    return if current_user.is_admin?
+    return if current_user.admin?
 
     permission_types = Array(permission_types)
 

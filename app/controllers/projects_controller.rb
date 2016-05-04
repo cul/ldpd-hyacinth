@@ -11,7 +11,7 @@ class ProjectsController < ApplicationController
   # GET /projects
   # GET /projects.json
   def index
-    if current_user.is_admin?
+    if current_user.admin?
       @projects = Project.all
     else
       projects_that_user_is_admin_of = current_user.project_permissions.where(:is_project_admin => true)
@@ -92,7 +92,7 @@ class ProjectsController < ApplicationController
   def where_current_user_can_create
     respond_to do |format|
       format.json {
-        if current_user.is_admin?
+        if current_user.admin?
           projects = Project.all
         else
           projects = Project.includes(:project_permissions).joins(:project_permissions).where('project_permissions.user_id' => current_user.id, 'project_permissions.can_create' => true)
@@ -148,9 +148,9 @@ class ProjectsController < ApplicationController
 
     case params[:action]
     when 'index'
-      @contextual_nav_options['nav_items'].push(label: 'Add New Project', url: new_project_path) if current_user.is_admin?
+      @contextual_nav_options['nav_items'].push(label: 'Add New Project', url: new_project_path) if current_user.admin?
     when 'edit', 'update'
-      @contextual_nav_options['nav_items'].push(label: 'Delete This Project', url: project_path(@project.id), options: {method: :delete, data: { confirm: 'Are you sure you want to delete this Project?' } }) if current_user.is_admin?
+      @contextual_nav_options['nav_items'].push(label: 'Delete This Project', url: project_path(@project.id), options: {method: :delete, data: { confirm: 'Are you sure you want to delete this Project?' } }) if current_user.admin?
     end
 
   end
@@ -161,7 +161,7 @@ class ProjectsController < ApplicationController
     when 'where_current_user_can_create'
         # Do nothing
     when 'index'
-      unless current_user.is_project_admin_for_at_least_one_project?
+      unless current_user.admin_for_at_least_one_project?
         require_hyacinth_admin!
       end
     when 'edit', 'update', 'destroy',

@@ -98,9 +98,9 @@ class PublishTargetsController < ApplicationController
 
     case params[:action]
     when 'index'
-      @contextual_nav_options['nav_items'].push(label: 'Add New Publish Target', url: new_publish_target_path) if current_user.is_admin?
+      @contextual_nav_options['nav_items'].push(label: 'Add New Publish Target', url: new_publish_target_path) if current_user.admin?
     when 'edit', 'update'
-      @contextual_nav_options['nav_items'].push(label: 'Delete This Publish Target', url: publish_target_path(@publish_target.id), options: {method: :delete, data: { confirm: 'Are you sure you want to delete this Publish Target?' } }) if current_user.is_admin?
+      @contextual_nav_options['nav_items'].push(label: 'Delete This Publish Target', url: publish_target_path(@publish_target.id), options: {method: :delete, data: { confirm: 'Are you sure you want to delete this Publish Target?' } }) if current_user.admin?
     end
 
   end
