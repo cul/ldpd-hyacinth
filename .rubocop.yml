@@ -14,7 +14,8 @@ AllCops:
     - 'vendor/**/*'
     - 'app/controllers/**/*'
     - 'app/helpers/**/*'
-    - 'app/models/**/*'
+    - 'app/models/concerns/**/*'
+    - 'app/models/digital_object/**/*'
     - 'app/views/**/*'
 
 Metrics/LineLength:
