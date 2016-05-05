@@ -1,6 +1,5 @@
 class DigitalObjectType < ActiveRecord::Base
-
-  has_many :enabled_dynamic_fields, :dependent => :destroy
+  has_many :enabled_dynamic_fields, dependent: :destroy
   default_scope { order('sort_order') }
 
   def self.get_model_for_string_key(string_key)
@@ -14,16 +13,15 @@ class DigitalObjectType < ActiveRecord::Base
     when 'asset'
       return DigitalObject::Asset
     else
-      raise Hyacinth::Exceptions::InvalidDigitalObjectTypeError, 'Invalid DigitalObjectType string key: ' + string_key.to_s
+      raise Hyacinth::Exceptions::InvalidDigitalObjectTypeError, "Invalid DigitalObjectType string key: #{string_key}"
     end
   end
 
-  def as_json(options={})
-    return {
-      id: self.id,
-      display_label: self.display_label,
-      string_key: self.string_key
+  def as_json(_options = {})
+    {
+      id: id,
+      display_label: display_label,
+      string_key: string_key
     }
   end
-
 end
