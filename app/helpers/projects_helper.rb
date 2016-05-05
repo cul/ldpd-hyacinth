@@ -44,7 +44,7 @@ module ProjectsHelper
       html_to_return += '<h4 class="dynamic_field_group_label"><span class="label label-info">' + CGI::escapeHTML(dynamic_field_or_dynamic_field_group.display_label) + '</span></h4>'
       html_to_return += '<div class="indent">'
 
-      dynamic_field_or_dynamic_field_group.get_child_dynamic_fields_and_dynamic_field_groups.each do |child_dynamic_field_or_dynamic_field_group|
+      dynamic_field_or_dynamic_field_group.child_dynamic_fields_and_dynamic_field_groups.each do |child_dynamic_field_or_dynamic_field_group|
         html_to_return += do_recursive_enabled_dynamic_field_render(project_form_builder, digital_object_type, child_dynamic_field_or_dynamic_field_group)
       end
       html_to_return += '</div>'

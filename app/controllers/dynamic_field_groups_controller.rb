@@ -20,7 +20,7 @@ class DynamicFieldGroupsController < ApplicationController
 
   # GET /dynamic_field_groups/1/edit
   def edit
-    @child_dynamic_fields_and_dynamic_field_groups = @dynamic_field_group.get_child_dynamic_fields_and_dynamic_field_groups
+    @child_dynamic_fields_and_dynamic_field_groups = @dynamic_field_group.child_dynamic_fields_and_dynamic_field_groups
   end
 
   # POST /dynamic_field_groups
@@ -62,7 +62,7 @@ class DynamicFieldGroupsController < ApplicationController
   # DELETE /dynamic_field_groups/1.json
   def destroy
 
-    if @dynamic_field_group.get_child_dynamic_fields_and_dynamic_field_groups.length > 0
+    if @dynamic_field_group.child_dynamic_fields_and_dynamic_field_groups.length > 0
       respond_to do |format|
         format.html { redirect_to edit_dynamic_field_group_path(@dynamic_field_group), alert: 'You must delete all child dynamic fields and dynamic field groups before you can delete this dynamic field group.' }
         format.json { render json: 'You must delete all child dynamic fields and dynamic field groups before you can delete this dynamic field group.', status: :unprocessable_entity }
@@ -86,7 +86,7 @@ class DynamicFieldGroupsController < ApplicationController
       direction = params[:direction]
       
       # Get children
-      @child_dynamic_fields_and_dynamic_field_groups = @dynamic_field_group.get_child_dynamic_fields_and_dynamic_field_groups
+      @child_dynamic_fields_and_dynamic_field_groups = @dynamic_field_group.child_dynamic_fields_and_dynamic_field_groups
       
       # Determine which children need to be swapped
       index_of_child_to_shift = @child_dynamic_fields_and_dynamic_field_groups.index { |child| child.string_key == dynamic_field_or_dynamic_field_group_string_key }
