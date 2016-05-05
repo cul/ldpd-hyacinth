@@ -1,11 +1,12 @@
 class Fieldset < ActiveRecord::Base
   belongs_to :project
-  has_and_belongs_to_many :enabled_dynamic_fields
+  has_many :enabled_dynamic_fields_fieldsets
+  has_many :enabled_dynamic_fields, through: :enabled_dynamic_fields_fieldsets
 
-  def as_json(options={})
-    return {
-      id: self.id,
-      display_label: self.display_label
+  def as_json(_options = {})
+    {
+      id: id,
+      display_label: display_label
     }
   end
 end
