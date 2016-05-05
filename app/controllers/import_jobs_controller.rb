@@ -69,7 +69,7 @@ class ImportJobsController < ApplicationController
       
       # Get list of successfully imported rows for this import job
       # We're using a Set rather than an array for fast lookup time
-      csv_rows_to_collect = @import_job.get_csv_row_numbers_for_all_non_successful_digital_object_imports.to_set
+      csv_rows_to_collect = @import_job.csv_row_numbers_for_all_non_successful_digital_object_imports.to_set
       
       csv_data_string = ''
       csv_row_counter = 1
