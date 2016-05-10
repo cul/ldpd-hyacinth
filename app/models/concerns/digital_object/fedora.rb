@@ -3,11 +3,17 @@ module DigitalObject::Fedora
   included do
     include Read
     include Write
+    include Detect
   end
 
   PROJECT_MEMBERSHIP_PREDICATE = :is_constituent_of
   HYACINTH_CORE_DATASTREAM_NAME = 'hyacinth_core'
   HYACINTH_STRUCT_DATASTREAM_NAME = 'hyacinth_struct'
+
+  # Get a new, unsaved, appropriately-configured instance of the right tyoe of Fedora object a DigitalObject subclass
+  def create_fedora_object
+    require_subclass_override!
+  end
 
   module Read
     ###############################
@@ -179,6 +185,101 @@ module DigitalObject::Fedora
         dsLabel: HYACINTH_STRUCT_DATASTREAM_NAME,
         versionable: false,
         blob: JSON.generate([]))
+    end
+
+    def save_datastreams
+      save_xml_datastreams
+      save_structure_datastream
+      true
+    end
+
+    def save_xml_datastreams
+      # Save all XmlDatastreams that have data
+
+      # TODO: Temporarily doing a manual hard-coded save of descMetadata for now.  Eventually handle all custom XmlDatastreams in a non-hard-coded way.
+      ds_name = 'descMetadata'
+      if @fedora_object.datastreams[ds_name].present?
+        ds = @fedora_object.datastreams[ds_name]
+      else
+        # Create datastream if it doesn't exist
+        ds = @fedora_object.create_datastream(
+          ActiveFedora::Datastream, ds_name,
+          controlGroup: 'M',
+          mimeType: 'text/xml',
+          dsLabel: ds_name,
+          versionable: true,
+          blob: ''
+        )
+        @fedora_object.add_datastream(ds)
+      end
+      ds.content = render_xml_datastream(XmlDatastream.find_by(string_key: ds_name))
+    end
+
+    def save_structure_datastream
+      # Save ordered child data to structMetadata datastream
+      struct_ds_name = 'structMetadata'
+      if ordered_child_digital_object_pids.present?
+
+        # TODO: Use Solr to get titles of child objects.  Fall back to "Item 1", "Item 2", etc. if a title is not found for some reason.
+
+        struct_ds = Cul::Hydra::Datastreams::StructMetadata.new(nil, 'structMetadata', label: 'Sequence', type: 'logical')
+        ordered_child_digital_object_pids.each_with_index do |pid, index|
+          struct_ds.create_div_node(nil, order: (index + 1), label: "Item #{index + 1}", contentids: pid)
+        end
+        @fedora_object.datastreams[struct_ds_name].ng_xml = struct_ds.ng_xml
+      else
+        # No child objects.  If struct datastream is present, perform cleanup by deleting it.
+        if @fedora_object.datastreams[struct_ds_name].present?
+          @fedora_object.datastreams[struct_ds_name].delete
+        end
+      end
+    end
+  end
+
+  module Detect
+    extend ActiveSupport::Concern
+
+    module ClassMethods
+      def detect_asset(obj, dc_types = [])
+        obj.is_a?(GenericResource) && (dc_types & DigitalObject::Asset.valid_dc_types).length > 0
+      end
+
+      def detect_file_system(obj, dc_types = [])
+        obj.is_a?(Collection) && (dc_types & DigitalObject::FileSystem.valid_dc_types).length > 0
+      end
+
+      def detect_group(obj, dc_types = [])
+        obj.is_a?(Collection) && (dc_types & DigitalObject::Group.valid_dc_types).length > 0
+      end
+
+      def detect_item(obj, dc_types = [])
+        obj.is_a?(ContentAggregator) && (dc_types & DigitalObject::Item.valid_dc_types).length > 0
+      end
+
+      # Returns the DigitalObject::Something class for the given Fedora object.
+      # Only handles types expected by Hyacinth
+      def get_class_for_fedora_object(fobj)
+        if fobj.datastreams['DC'] && fobj.datastreams['DC'].dc_type
+          obj_dc_type = fobj.datastreams['DC'].dc_type # returned dc_type is an array
+
+          # These methods defined in DigitalObject::Fedora::Detect
+          # Ultimately should be moved to the subclasses themselves.
+          type_map = {
+            DigitalObject::Group => method_as_proc(:detect_group),
+            DigitalObject::FileSystem => method_as_proc(:detect_file_system),
+            DigitalObject::Item => method_as_proc(:detect_item),
+            DigitalObject::Asset => method_as_proc(:detect_asset)
+          }
+          mapped_type = type_map.detect { |_candidate, detector| detector.call(fobj, obj_dc_type) }
+          return mapped_type.first if mapped_type
+        end
+
+        raise "Cannot determine Hyacinth type for fedora object #{fobj.pid} with class #{fobj.class} and dc_type: #{fobj.datastreams['DC'].dc_type}"
+      end
+
+      def method_as_proc(method_name)
+        proc { |*args| send method_name, *args }
+      end
     end
   end
 end

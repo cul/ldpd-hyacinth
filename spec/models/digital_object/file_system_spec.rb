@@ -6,7 +6,7 @@ describe DigitalObject::FileSystem, :type => :model do
     it { expect(subject.dc_type).to eql('FileSystem') }
   end
 
-  describe '#get_new_fedora_object' do
+  describe '#create_fedora_object' do
     let(:object) do
       object = described_class.new
       object.project = project
@@ -18,7 +18,7 @@ describe DigitalObject::FileSystem, :type => :model do
       allow(project).to receive(:next_pid).and_return(next_pid)
       project
     end
-    subject { object.get_new_fedora_object }
+    subject { object.create_fedora_object }
     it { is_expected.to be_a Collection }
     it { expect(subject.pid).to eql(next_pid) }
   end
