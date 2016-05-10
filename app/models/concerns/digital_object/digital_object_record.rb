@@ -23,5 +23,4 @@ module DigitalObject::DigitalObjectRecord
     @db_record.updated_by = @updated_by
     @db_record.updated_at = Time.now # Always setting this manually just in case there aren't any other changes to @db_record (becase otherwise the record's updated_at time wouldn't change automatically)
   end
-
 end
