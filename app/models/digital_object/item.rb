@@ -9,7 +9,7 @@ class DigitalObject::Item < DigitalObject::Base
   end
 
   # Called during save, after all validations have passed
-  def get_new_fedora_object
+  def create_fedora_object
     pid = self.next_pid
     content_aggregator = ContentAggregator.new(:pid => pid)
 
