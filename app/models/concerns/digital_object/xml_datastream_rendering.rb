@@ -106,15 +106,17 @@ module DigitalObject::XmlDatastreamRendering
         if value.has_key?('yield')
           # Yield to dynamic_field_group renderer logic
           dynamic_field_group_string_key = value['yield']
-
-          xml_translation_logic_for_dynamic_field_group_string_key = JSON(dynamic_field_group_string_keys_to_objects[dynamic_field_group_string_key].xml_translation)
-          unless df_data[dynamic_field_group_string_key].blank?
-            df_data[dynamic_field_group_string_key].each do |single_dynamic_field_group_data_value_for_string_key|
-              unless xml_translation_logic_for_dynamic_field_group_string_key.is_a?(Array)
-                xml_translation_logic_for_dynamic_field_group_string_key = [xml_translation_logic_for_dynamic_field_group_string_key]
-              end
-              xml_translation_logic_for_dynamic_field_group_string_key.each do |xml_translation_logic_rule|
-                render_xml_translation_with_data(ng_xml_document, new_element, xml_translation_logic_rule, single_dynamic_field_group_data_value_for_string_key, dynamic_field_group_string_keys_to_objects)
+          
+          if dynamic_field_group_string_keys_to_objects.has_key?(dynamic_field_group_string_key)
+            xml_translation_logic_for_dynamic_field_group_string_key = JSON(dynamic_field_group_string_keys_to_objects[dynamic_field_group_string_key].xml_translation)
+            unless df_data[dynamic_field_group_string_key].blank?
+              df_data[dynamic_field_group_string_key].each do |single_dynamic_field_group_data_value_for_string_key|
+                unless xml_translation_logic_for_dynamic_field_group_string_key.is_a?(Array)
+                  xml_translation_logic_for_dynamic_field_group_string_key = [xml_translation_logic_for_dynamic_field_group_string_key]
+                end
+                xml_translation_logic_for_dynamic_field_group_string_key.each do |xml_translation_logic_rule|
+                  render_xml_translation_with_data(ng_xml_document, new_element, xml_translation_logic_rule, single_dynamic_field_group_data_value_for_string_key, dynamic_field_group_string_keys_to_objects)
+                end
               end
             end
           end
