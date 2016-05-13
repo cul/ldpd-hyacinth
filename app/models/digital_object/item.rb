@@ -1,5 +1,4 @@
 class DigitalObject::Item < DigitalObject::Base
-
   VALID_DC_TYPES = ['InteractiveResource']
   DIGITAL_OBJECT_TYPE_STRING_KEY = 'item'
 
@@ -10,10 +9,6 @@ class DigitalObject::Item < DigitalObject::Base
 
   # Called during save, after all validations have passed
   def create_fedora_object
-    pid = self.next_pid
-    content_aggregator = ContentAggregator.new(:pid => pid)
-
-    return content_aggregator
+    ContentAggregator.new(pid: next_pid)
   end
-
 end
