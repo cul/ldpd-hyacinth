@@ -22,12 +22,12 @@ module Projects
         render action: 'edit'
       end
     end
-    
+
     private
 
-    def set_contextual_nav_options
-      @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Projects'.html_safe
-      @contextual_nav_options['nav_title']['url'] = projects_path
-    end
+      def set_contextual_nav_options
+        @contextual_nav_options['nav_title']['label'] = '&laquo; Back to Projects'.html_safe
+        @contextual_nav_options['nav_title']['url'] = projects_path
+      end
   end
 end
