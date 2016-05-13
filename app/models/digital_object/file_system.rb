@@ -9,11 +9,10 @@ class DigitalObject::FileSystem < DigitalObject::Base
 
   # Called during save, after all validations have passed
   def create_fedora_object
-    pid = self.next_pid
-    Collection.new(:pid => pid)
+    Collection.new(pid: next_pid)
   end
 
   def publish_structures
-    # TODO: deal with FileSystem structuring in Hyacinth 
+    # TODO: deal with FileSystem structuring in Hyacinth
   end
 end
