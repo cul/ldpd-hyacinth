@@ -57,46 +57,43 @@ class FieldsetsController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
-  def set_fieldset
-    @fieldset = Fieldset.find(params[:id])
-  end
-
-  def set_project
-    @project = Project.find(params[:project_id])
-  end
-
-  # Never trust parameters from the scary internet, only allow the white list through.
-  def fieldset_params
-    params.require(:fieldset).permit(:display_label, :project_id)
-  end
-
-  def set_contextual_nav_options
-
-    @contextual_nav_options['nav_title']['label'] = '&laquo; Back To Fieldsets'.html_safe
-
-    case params[:action]
-    when 'new'
-      @contextual_nav_options['nav_title']['url'] = project_project_fieldsets_path(@project)
-    when 'create'
-      @contextual_nav_options['nav_title']['url'] = project_project_fieldsets_path(params[:fieldset]['project_id'])
-    when 'index'
-      @contextual_nav_options['nav_title']['url'] = project_project_fieldsets_path(@project)
-      @contextual_nav_options['nav_items'].push(label: 'New Fieldset', url: new_project_project_fieldset_path(project_id: @project.id))
-    when 'edit', 'update', 'show'
-      @contextual_nav_options['nav_title']['url'] = project_project_fieldsets_path(@project, @fieldset.project)
-      @contextual_nav_options['nav_items'].push(label: 'Delete This Fieldset', url: project_project_fieldset_path(@fieldset), options: {method: :delete, data: { confirm: 'Are you sure you want to delete this Fieldset?' } })
-    end
-  end
-
-  def require_appropriate_project_permissions!
-
-    case params[:action]
-    when 'new', 'create', 'edit', 'update', 'delete'
-      require_project_permission!(@project, :project_admin)
-    else
-      require_hyacinth_admin!
+    # Use callbacks to share common setup or constraints between actions.
+    def set_fieldset
+      @fieldset = Fieldset.find(params[:id])
     end
 
-  end
+    def set_project
+      @project = Project.find(params[:project_id])
+    end
+
+    # Never trust parameters from the scary internet, only allow the white list through.
+    def fieldset_params
+      params.require(:fieldset).permit(:display_label, :project_id)
+    end
+
+    def set_contextual_nav_options
+      @contextual_nav_options['nav_title']['label'] = '&laquo; Back To Fieldsets'.html_safe
+
+      case params[:action]
+      when 'new'
+        @contextual_nav_options['nav_title']['url'] = project_project_fieldsets_path(@project)
+      when 'create'
+        @contextual_nav_options['nav_title']['url'] = project_project_fieldsets_path(params[:fieldset]['project_id'])
+      when 'index'
+        @contextual_nav_options['nav_title']['url'] = project_project_fieldsets_path(@project)
+        @contextual_nav_options['nav_items'].push(label: 'New Fieldset', url: new_project_project_fieldset_path(project_id: @project.id))
+      when 'edit', 'update', 'show'
+        @contextual_nav_options['nav_title']['url'] = project_project_fieldsets_path(@project, @fieldset.project)
+        @contextual_nav_options['nav_items'].push(label: 'Delete This Fieldset', url: project_project_fieldset_path(@fieldset), options: { method: :delete, data: { confirm: 'Are you sure you want to delete this Fieldset?' } })
+      end
+    end
+
+    def require_appropriate_project_permissions!
+      case params[:action]
+      when 'new', 'create', 'edit', 'update', 'delete'
+        require_project_permission!(@project, :project_admin)
+      else
+        require_hyacinth_admin!
+      end
+    end
 end
