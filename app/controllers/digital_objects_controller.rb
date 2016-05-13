@@ -109,8 +109,8 @@ class DigitalObjectsController < ApplicationController
         pid: @digital_object.pid
       }.merge(@digital_object.is_a?(DigitalObject::Asset) ? {
         'uploaded_file_confirmation' => {
-          'name' => @digital_object.get_original_filename,
-          'size' => @digital_object.get_file_size_in_bytes,
+          'name' => @digital_object.original_filename,
+          'size' => @digital_object.file_size_in_bytes,
           'errors' => @digital_object.errors.full_messages
         }
       } : {}).merge(test_mode ? {
@@ -306,7 +306,7 @@ class DigitalObjectsController < ApplicationController
 
   def download
     if @digital_object.is_a?(DigitalObject::Asset)
-      send_file @digital_object.get_filesystem_location, filename: @digital_object.get_original_filename
+      send_file @digital_object.filesystem_location, filename: @digital_object.original_filename
     else
       render text: @digital_object.digital_object_type.display_label.pluralize + ' do not have download URLs.  Try downloading an Asset instead.'
     end
