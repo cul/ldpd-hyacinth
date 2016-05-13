@@ -56,10 +56,9 @@ class PidGeneratorsController < ApplicationController
   # DELETE /pid_generators/1
   # DELETE /pid_generators/1.json
   def destroy
-
     projects_that_are_using_this_pid_generator = Project.where(pid_generator: @pid_generator)
     if projects_that_are_using_this_pid_generator.length > 0
-      flash[:alert] = 'Could not delete selected PID Generator because one or more projects are currently using it (' + projects_that_are_using_this_pid_generator.map{|project|project.string_key}.join(', ') + ').  Select a different PID Generator for these projects and then you will be able to delete this PID Generator.'
+      flash[:alert] = 'Could not delete selected PID Generator because one or more projects are currently using it (' + projects_that_are_using_this_pid_generator.map(&:string_key).join(', ') + ').  Select a different PID Generator for these projects and then you will be able to delete this PID Generator.'
     else
       @pid_generator.destroy
     end
@@ -72,30 +71,28 @@ class PidGeneratorsController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
-  def set_pid_generator
-    @pid_generator = PidGenerator.find(params[:id])
-  end
-
-  # Never trust parameters from the scary internet, only allow the white list through.
-  def pid_generator_params
-    params.require(:pid_generator).permit(:namespace)
-  end
-
-  def set_contextual_nav_options
-
-    @contextual_nav_options['nav_title']['label'] = 'PID Generators'
-    @contextual_nav_options['nav_title']['url'] = nil
-
-    case params[:action]
-    when 'index'
-      @contextual_nav_options['nav_items'].push(label: 'Add New PID Generator', url: new_pid_generator_path)
-    when 'edit', 'update'
-      @contextual_nav_options['nav_items'].push(label: 'Delete This PID Generator', url: pid_generator_path(@pid_generator.id), options: {method: :delete, data: { confirm: 'Are you sure you want to delete this PID Generator?' } })
-
-      @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to PID Generators'.html_safe
-      @contextual_nav_options['nav_title']['url'] = pid_generators_path
+    # Use callbacks to share common setup or constraints between actions.
+    def set_pid_generator
+      @pid_generator = PidGenerator.find(params[:id])
     end
 
-  end
+    # Never trust parameters from the scary internet, only allow the white list through.
+    def pid_generator_params
+      params.require(:pid_generator).permit(:namespace)
+    end
+
+    def set_contextual_nav_options
+      @contextual_nav_options['nav_title']['label'] = 'PID Generators'
+      @contextual_nav_options['nav_title']['url'] = nil
+
+      case params[:action]
+      when 'index'
+        @contextual_nav_options['nav_items'].push(label: 'Add New PID Generator', url: new_pid_generator_path)
+      when 'edit', 'update'
+        @contextual_nav_options['nav_items'].push(label: 'Delete This PID Generator', url: pid_generator_path(@pid_generator.id), options: { method: :delete, data: { confirm: 'Are you sure you want to delete this PID Generator?' } })
+
+        @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to PID Generators'.html_safe
+        @contextual_nav_options['nav_title']['url'] = pid_generators_path
+      end
+    end
 end
