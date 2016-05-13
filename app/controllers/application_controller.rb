@@ -31,7 +31,7 @@ class ApplicationController < ActionController::Base
         (params[:controller] == 'users' && params[:action] == 'do_wind_login') ||
         (params[:controller] == 'users' && params[:action] == 'do_cas_login') ||
         (params[:controller] == 'pages' && params[:action] == 'login_check') ||
-        (params[:controller] == 'pages' && params[:action] == 'get_csrf_token')
+        (params[:controller] == 'pages' && params[:action] == 'csrf_token')
        # Allow access
       else
         session["login_redirect_to"] = request.fullpath if ! json_request? && session["login_redirect_to"].blank?
