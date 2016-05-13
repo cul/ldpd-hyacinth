@@ -62,6 +62,7 @@ class XmlDatastreamsController < ApplicationController
   end
 
   private
+
     # Use callbacks to share common setup or constraints between actions.
     def set_xml_datastream
       @xml_datastream = XmlDatastream.find(params[:id])

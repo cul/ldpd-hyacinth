@@ -6,12 +6,10 @@ class DynamicFieldsController < ApplicationController
   # GET /dynamic_fields
   # GET /dynamic_fields.json
   def index
-    @dynamic_field_group_categories = DynamicFieldGroupCategory.all.order(:sort_order => :asc)
+    @dynamic_field_group_categories = DynamicFieldGroupCategory.all.order(sort_order: :asc)
     respond_to do |format|
       format.html {}
-      format.json {
-        render json: @dynamic_field_group_categories
-      }
+      format.json { render json: @dynamic_field_group_categories }
     end
   end
 
@@ -51,7 +49,6 @@ class DynamicFieldsController < ApplicationController
   # PATCH/PUT /dynamic_fields/1
   # PATCH/PUT /dynamic_fields/1.json
   def update
-
     @dynamic_field.updated_by = current_user
 
     respond_to do |format|
@@ -71,43 +68,38 @@ class DynamicFieldsController < ApplicationController
     @dynamic_field.destroy
 
     respond_to do |format|
-      format.html {
+      format.html do
         if @dynamic_field.parent_dynamic_field_group_id.present?
           redirect_location = edit_dynamic_field_group_path(@dynamic_field.parent_dynamic_field_group_id)
         else
           redirect_location = dynamic_fields_path
         end
         redirect_to redirect_location, notice: 'Dynamic Field was successfully deleted.'
-      }
+      end
       format.json { head :no_content }
     end
   end
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
-  def set_dynamic_field
-    @dynamic_field = DynamicField.find(params[:id])
-  end
-
-  # Never trust parameters from the scary internet, only allow the white list through.
-  def dynamic_field_params
-    params.require(:dynamic_field).permit(:string_key, :display_label, :parent_dynamic_field_group_id, :sort_order, :dynamic_field_type, :controlled_vocabulary_string_key, :additional_data_json, :required_for_group_save, :is_keyword_searchable, :is_facet_field, :standalone_field_label, :is_searchable_identifier_field, :is_searchable_title_field, :is_single_field_searchable, :created_by_id, :updated_by_id)
-  end
-
-  def set_contextual_nav_options
-
-    if params[:action] == 'index'
-      @contextual_nav_options['nav_title']['label'] =  'Dynamic Fields'.html_safe
-    else
-      @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Dynamic Fields'.html_safe
-      @contextual_nav_options['nav_title']['url'] = dynamic_fields_path
+    # Use callbacks to share common setup or constraints between actions.
+    def set_dynamic_field
+      @dynamic_field = DynamicField.find(params[:id])
     end
 
-
-    if params[:action] == 'index'
-      @contextual_nav_options['nav_items'].push(label: 'Add New Dynamic Field Group', url: new_dynamic_field_group_path)
+    # Never trust parameters from the scary internet, only allow the white list through.
+    def dynamic_field_params
+      params.require(:dynamic_field).permit(:string_key, :display_label, :parent_dynamic_field_group_id, :sort_order, :dynamic_field_type, :controlled_vocabulary_string_key, :additional_data_json, :required_for_group_save, :is_keyword_searchable, :is_facet_field, :standalone_field_label, :is_searchable_identifier_field, :is_searchable_title_field, :is_single_field_searchable, :created_by_id, :updated_by_id)
     end
 
-  end
+    def set_contextual_nav_options
+      if params[:action] == 'index'
+        @contextual_nav_options['nav_title']['label'] =  'Dynamic Fields'.html_safe
+      else
+        @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Dynamic Fields'.html_safe
+        @contextual_nav_options['nav_title']['url'] = dynamic_fields_path
+      end
+
+      @contextual_nav_options['nav_items'].push(label: 'Add New Dynamic Field Group', url: new_dynamic_field_group_path) if params[:action] == 'index'
+    end
 end
