@@ -68,7 +68,7 @@ Hyacinth::Application.routes.draw do
   end
 
   get '/login_check', to: 'pages#login_check'
-  get '/get_csrf_token', to: 'pages#get_csrf_token'
+  get '/get_csrf_token', to: 'pages#csrf_token'
   get '/home', to: 'pages#home', as: :home
   get '/system_information', to: 'pages#system_information', as: :system_information
 
