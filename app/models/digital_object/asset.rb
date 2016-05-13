@@ -302,4 +302,16 @@ class DigitalObject::Asset < DigitalObject::Base
 
     json
   end
+
+  # Returns: Hash of data confirming creation
+  def as_confirmation_json
+    json = super
+    json ['uploaded_file_confirmation'] =
+      {
+        'name' => original_filename,
+        'size' => file_size_in_bytes,
+        'errors' => errors.full_messages
+      }
+    json
+  end
 end

@@ -25,4 +25,9 @@ module DigitalObject::Serialization
       parent_digital_objects: parent_digital_object_pids.map { |the_pid| { pid: the_pid } }
     }
   end
+
+  # Returns: Hash of data confirming creation
+  def as_confirmation_json
+    { pid: pid }
+  end
 end
