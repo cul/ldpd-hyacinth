@@ -157,7 +157,7 @@ class Hyacinth::Utils::CsvImportExportUtils
       import_job.save # Save the import_job again so that the path_to_csv_file is persisted to the database
 
       # Save the csv file to the filesystem
-      IO.write(path_to_csv_file, csv_data_string)
+      IO.binwrite(path_to_csv_file, csv_data_string)
 
       Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(csv_data_string) do |digital_object_data, csv_row_number|
         digital_object_import = DigitalObjectImport.create!(
