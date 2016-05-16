@@ -12,7 +12,6 @@ AllCops:
     - 'script/**/*'
     - 'spec/**/*'
     - 'vendor/**/*'
-    - 'app/controllers/**/*'
     - 'app/helpers/**/*'
     - 'app/views/**/*'
 
