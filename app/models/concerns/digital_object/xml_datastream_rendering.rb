@@ -65,7 +65,7 @@ module DigitalObject::XmlDatastreamRendering
     yield_partitions = Array(xml_translation_logic['content']).map { |value| resolve_value_hash(value, df_data) }.partition { |value| value.key?('yield') }
     element_partitions = yield_partitions[1].partition { |value| value.key?('element') }
     values = elements[1]
-    yield_partitions[0].each do |value|
+    yield_partitions[0].select { |value| dynamic_field_group_string_keys_to_objects.key?(value['yield']) }.each do |value|
       # Yield to dynamic_field_group renderer logic
       dynamic_field_group_string_key = value['yield']
 
