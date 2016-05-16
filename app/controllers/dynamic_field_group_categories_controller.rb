@@ -62,6 +62,7 @@ class DynamicFieldGroupCategoriesController < ApplicationController
   end
 
   private
+
     # Use callbacks to share common setup or constraints between actions.
     def set_dynamic_field_group_category
       @dynamic_field_group_category = DynamicFieldGroupCategory.find(params[:id])

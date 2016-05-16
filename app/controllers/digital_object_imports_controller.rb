@@ -1,5 +1,4 @@
 class DigitalObjectImportsController < ApplicationController
-
   def index
     @import_job = ImportJob.find params[:import_job_id]
 
@@ -15,8 +14,7 @@ class DigitalObjectImportsController < ApplicationController
   end
 
   def show
-    @import_job = ImportJob.find params[:import_job_id] if params.has_key? :import_job_id
+    @import_job = ImportJob.find params[:import_job_id] if params.key? :import_job_id
     @digital_object_import = DigitalObjectImport.find(params[:id])
   end
-
 end

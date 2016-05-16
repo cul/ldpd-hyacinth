@@ -12,7 +12,7 @@ class CsvExportsController < ApplicationController
   # GET /csv_exports/1.json
   def show
   end
-  
+
   def download
     if @csv_export.success?
       send_file @csv_export.path_to_csv_file, filename: File.basename(@csv_export.path_to_csv_file)
@@ -72,21 +72,18 @@ class CsvExportsController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
-  def set_csv_export
-    @csv_export = CsvExport.find(params[:id])
-  end
+    # Use callbacks to share common setup or constraints between actions.
+    def set_csv_export
+      @csv_export = CsvExport.find(params[:id])
+    end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
-  def csv_export_params
-    params.require(:csv_export).permit(:search_params, :user_id, :path_to_csv_file, :status)
-  end
-  
-  def set_contextual_nav_options
+    # Never trust parameters from the scary internet, only allow the white list through.
+    def csv_export_params
+      params.require(:csv_export).permit(:search_params, :user_id, :path_to_csv_file, :status)
+    end
 
-    @contextual_nav_options['nav_title']['label'] = 'CSV Exports'
-    @contextual_nav_options['nav_title']['url'] = csv_exports_path
-
-  end
-  
+    def set_contextual_nav_options
+      @contextual_nav_options['nav_title']['label'] = 'CSV Exports'
+      @contextual_nav_options['nav_title']['url'] = csv_exports_path
+    end
 end
