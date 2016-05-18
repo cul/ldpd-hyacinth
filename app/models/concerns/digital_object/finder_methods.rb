@@ -38,7 +38,6 @@ module DigitalObject::FinderMethods
 
     def find_all_by_identifier(identifier)
       # First attempt a solr lookup.  If records are found in solr, we don't need to do a Fedora lookup.
-      # search_response = DigitalObject::Base.search({ 'f' => { 'identifiers_sim' => [identifier] }, 'fl' => 'pid', 'per_page' => 99_999 }, nil, {})
       search_response = DigitalObject::Base.search('f' => { 'identifiers_sim' => [identifier] }, 'fl' => 'pid', 'per_page' => 99_999)
 
       pids = []
