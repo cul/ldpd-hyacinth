@@ -244,7 +244,6 @@ class DigitalObject::Base
           'fl' => 'pid,title_ssm',
           'per_page' => 99_999
         },
-        false,
         user_for_access
       )
       if search_response['results'].present?

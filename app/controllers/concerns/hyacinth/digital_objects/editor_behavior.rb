@@ -35,7 +35,7 @@ module Hyacinth::DigitalObjects::EditorBehavior
       child_pids = digital_object.ordered_child_digital_object_pids
 
       pids_to_search_results = {}
-      search_response = DigitalObject::Base.search({ 'pids' => child_pids, 'per_page' => 99_999 }, false, current_user)
+      search_response = DigitalObject::Base.search({ 'pids' => child_pids, 'per_page' => 99_999 }, current_user)
       if search_response['results'].present?
         search_response['results'].each do |result|
           pids_to_search_results[result['pid']] = result

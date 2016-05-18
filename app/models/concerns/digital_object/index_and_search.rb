@@ -19,7 +19,7 @@ module DigitalObject::IndexAndSearch
       search_params['page'] = 1
 
       loop do
-        search_result_batch = search(search_params, false, user_for_permission_context)
+        search_result_batch = search(search_params, user_for_permission_context)
         if search_result_batch['results'].blank?
           break
         else
@@ -31,7 +31,7 @@ module DigitalObject::IndexAndSearch
       end
     end
 
-    def search(user_search_params = {}, facet_params = {}, user_for_permission_context = nil)
+    def search(user_search_params = {}, user_for_permission_context = nil, facet_params = {})
       per_page = user_search_params['per_page'].present? ? user_search_params['per_page'].to_i : 20
       page = user_search_params['page'].present? ? user_search_params['page'].to_i : 1
       # Allow specific result start values, but default to beginning of page
@@ -61,7 +61,7 @@ module DigitalObject::IndexAndSearch
       Rails.logger.info('Solr Params: ' + solr_response['responseHeader']['params'].inspect)
       Rails.logger.debug('Solr Response: ' + solr_response.inspect)
 
-      facet_data = FacetData.to_array(solr_response, dynamic_field_string_keys_to_dynamic_fields)
+      facet_data = FacetData.to_array(facet_params, solr_response, dynamic_field_string_keys_to_dynamic_fields)
 
       {
         'search_time_in_millis' => solr_response['responseHeader']['QTime'],
@@ -86,7 +86,7 @@ module DigitalObject::IndexAndSearch
       search_params['start'] = start
       search_params['per_page'] = rows
 
-      search_results = DigitalObject::Base.search(search_params, false, user_for_permission_context)
+      search_results = DigitalObject::Base.search(search_params, user_for_permission_context)
 
       if search_results['results'].length > 0
         if (current_result_number - 1) >= 0
