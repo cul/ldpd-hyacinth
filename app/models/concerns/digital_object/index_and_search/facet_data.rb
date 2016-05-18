@@ -7,8 +7,10 @@ module DigitalObject::IndexAndSearch::FacetData
     'has_child_digital_objects_bi' => 'Has Child Digital Objects?'
   }
 
-  def self.to_array(solr_response, dynamic_field_string_keys_to_dynamic_fields)
+  def self.to_array(facet_params, solr_response, dynamic_field_string_keys_to_dynamic_fields)
     # Convert facet data to nice, more useful form
+    facet_sort = facet_params.fetch('sort', 'index')
+    facet_limit = facet_params.fetch('per_page', 10).to_i
     facet_data = []
 
     if solr_response['facet_counts'].present? && solr_response['facet_counts']['facet_fields'].present?
