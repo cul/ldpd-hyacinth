@@ -101,14 +101,14 @@ class ApplicationController < ActionController::Base
 
     def check_project_permissions_and(project, permission_types)
       permission_types.each do |permission|
-        return false unless current_user.has_project_permission?(project, permission)
+        return false unless current_user.permitted_in_project?(project, permission)
       end
       true
     end
 
     def check_project_permissions_or(project, permission_types)
       permission_types.each do |permission|
-        return true if current_user.has_project_permission?(project, permission)
+        return true if current_user.permitted_in_project?(project, permission)
       end
       false
     end
