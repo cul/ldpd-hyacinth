@@ -27,7 +27,7 @@ module DigitalObject::IndexAndSearch::SolrParams
     def set_facet_params_for(facet_params, solr_params, dynamic_field_string_keys_to_dynamic_fields)
       # facet_params are for specifying how you want to RECEIVE facets.
       # This has nothing to do with using the facet feature to apply facet filters.
-      if facet_params.to_s == "false"
+      if facet_params.blank?
         solr_params['facet'] = false
       else
         if facet_params['field'].present?
