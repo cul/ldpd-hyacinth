@@ -14,6 +14,7 @@ AllCops:
     - 'vendor/**/*'
     - 'app/helpers/**/*'
     - 'app/views/**/*'
+    - 'app/models/concerns/digital_object/xml_datastream_rendering.rb'
 
 Metrics/LineLength:
   Enabled: false
