@@ -7,7 +7,7 @@ RSpec.describe ApplicationController, type: :controller do
 
   before(:example) do
     @current_user_mock = double(User)
-    allow(@current_user_mock).to receive(:is_admin?) {false}
+    allow(@current_user_mock).to receive(:admin?) {false}
     allow(@application_controller).to receive(:current_user) { @current_user_mock }
     allow(@application_controller).to receive(:render_forbidden!) { :render_forbidden_mock_called }
   end
@@ -79,7 +79,7 @@ RSpec.describe ApplicationController, type: :controller do
     end
 
     it("User: admin, so just return") do
-      allow(@current_user_mock).to receive(:is_admin?) {true}
+      allow(@current_user_mock).to receive(:admin?) {true}
       allow(@current_user_mock).to receive(:has_project_permission?).with("Test","Read") {false}
       allow(@current_user_mock).to receive(:has_project_permission?).with("Test","Write") {false}
       expect(@application_controller.require_project_permission!("Test",["Read","Write"],:and)).to eq(nil)

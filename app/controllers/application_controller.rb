@@ -76,7 +76,6 @@ class ApplicationController < ActionController::Base
   end
 
   def require_project_permission!(project, permission_types, logic_operation = :and)
-
     # Always allow access if this user is an admin
     return if current_user.admin?
 
@@ -84,9 +83,9 @@ class ApplicationController < ActionController::Base
 
     case logic_operation
     when :and
-        return if check_project_permissions_and(project, permission_types)
+      return if check_project_permissions_and(project, permission_types)
     when :or
-        return if check_project_permissions_or(project, permission_types)
+      return if check_project_permissions_or(project, permission_types)
     end
     render_forbidden!
   end
@@ -98,7 +97,7 @@ class ApplicationController < ActionController::Base
       request.format.json?
     end
 
-    private
+  private
 
     def check_project_permissions_and(project, permission_types)
       permission_types.each do |permission|
