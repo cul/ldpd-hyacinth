@@ -75,7 +75,8 @@ class Project < ActiveRecord::Base
     DigitalObjectType.all.find_each do |digital_object_type|
       # If enabled_dynamic_fields_for_type includes the title fields, make sure that they're set as *required*
       # If not, enable them and set them as required
-
+      enabled_dynamic_fields_for_type =
+        enabled_dynamic_fields.select { |enabled_dynamic_field| enabled_dynamic_field.digital_object_type == digital_object_type }
       ensure_enabled = {
         'title_non_sort_portion' => { 'required' => false },
         'title_sort_portion' => { 'required' => true }
@@ -84,9 +85,9 @@ class Project < ActiveRecord::Base
       found_enabled = []
 
       # Iterate over existing enabled_dynamic_field
-      enabled_dynamic_fields.includes(:dynamic_field).where(digital_object_type: digital_object_type).find_each do |enabled_df|
-        next unless must_be_enabled.include?(enabled_df.dynamic_field.string_key)
+      enabled_dynamic_fields_for_type.each do |enabled_df|
         must_be_enabled = ensure_enabled.keys if must_be_enabled.empty?
+        next unless must_be_enabled.include?(enabled_df.dynamic_field.string_key)
         found_enabled << enabled_df.dynamic_field.string_key
         if ensure_enabled[enabled_df.dynamic_field.string_key]['required'] && !enabled_df.required
           enabled_df.required = true
