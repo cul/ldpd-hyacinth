@@ -132,8 +132,8 @@ RSpec.describe "DigitalObjects", :type => :request do
           
           # Make sure that path to DigitalObject::Asset is internal, and stored within the hyacinth asset directory
           digital_object = DigitalObject::Base.find(response_json['pid'])
-          expect(digital_object.get_filesystem_location).to start_with(HYACINTH['default_asset_home'])
-          expect(digital_object.get_original_file_path).to eq(path_to_fixture_file)
+          expect(digital_object.filesystem_location).to start_with(HYACINTH['default_asset_home'])
+          expect(digital_object.original_file_path).to eq(path_to_fixture_file)
         end
         
         it "works via filesystem upload (upload type: external), referencing the target external file instead of copying the file to the Hyacinth internal data store" do
@@ -158,8 +158,8 @@ RSpec.describe "DigitalObjects", :type => :request do
           
           # Make sure that path to DigitalObject::Asset is external, and continues to exist in the external directory referenced during the upload
           digital_object = DigitalObject::Base.find(response_json['pid'])
-          expect(digital_object.get_filesystem_location).to eq(path_to_fixture_file)
-          expect(digital_object.get_original_file_path).to eq(path_to_fixture_file)
+          expect(digital_object.filesystem_location).to eq(path_to_fixture_file)
+          expect(digital_object.original_file_path).to eq(path_to_fixture_file)
         end
         
       end

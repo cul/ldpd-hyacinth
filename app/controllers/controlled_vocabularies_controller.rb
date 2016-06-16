@@ -8,11 +8,11 @@ class ControlledVocabulariesController < ApplicationController
   def index
     # Get all registered ControlledVocabularies
     @controlled_vocabularies = ControlledVocabulary.all.order(:string_key)
-    
+
     # Also get additional controlled vocabularies from UriService that haven't been registered
-    controlled_vocabulary_string_keys = @controlled_vocabularies.map{|vocabulary|vocabulary.string_key}
+    controlled_vocabulary_string_keys = @controlled_vocabularies.map(&:string_key)
     @additional_uri_service_controlled_vocabularies = UriService.client.list_vocabularies(1000) # Ridiculously high limit to show all
-    @additional_uri_service_controlled_vocabularies.delete_if{|uri_service_vocabulary| controlled_vocabulary_string_keys.include?(uri_service_vocabulary['string_key'])}
+    @additional_uri_service_controlled_vocabularies.delete_if { |uri_service_vocabulary| controlled_vocabulary_string_keys.include?(uri_service_vocabulary['string_key']) }
   end
 
   # GET /controlled_vocabularies/1
@@ -70,109 +70,103 @@ class ControlledVocabulariesController < ApplicationController
   end
 
   def terms
+    @page = params.fetch(:page, 1).to_i
 
-    if params[:page]
-      @page = params[:page].to_i
+    if request.format == 'text/html'
+      @per_page = params.fetch(:per_page, 20).to_i
     else
-      @page = 1
+      @per_page = params.fetch(:per_page, 5).to_i
     end
-    
-    if params[:per_page]
-      @per_page = params[:per_page].to_i
-      @per_page = 5 if @per_page < 5 # Show at least 5 terms per page
-    else
-      if request.format == 'text/html'
-        @per_page = 20
-      else
-        @per_page = 5
-      end
-    end
+    @per_page = 5 if @per_page < 5 # Show at least 5 terms per page
 
     if params[:q].blank?
-      @terms = UriService.client.list_terms(@controlled_vocabulary.string_key, @per_page+1, ((@page-1)*@per_page))
+      @terms = UriService.client.list_terms(@controlled_vocabulary.string_key, @per_page + 1, ((@page - 1) * @per_page))
     else
-      @terms = UriService.client.find_terms_by_query(@controlled_vocabulary.string_key, params[:q], @per_page+1, ((@page-1)*@per_page))
+      @terms = UriService.client.find_terms_by_query(@controlled_vocabulary.string_key, params[:q], @per_page + 1, ((@page - 1) * @per_page))
     end
 
     respond_to do |format|
-      format.html {
-        # Render normal html view
-      }
+      # Render normal html view
+      format.html
 
-      format.json {
+      format.json do
         render json: {
-          terms: @terms[0..(@per_page-1)],
+          terms: @terms[0..(@per_page - 1)],
           more_available: (@terms.length > @per_page),
           current_user_can_add_terms: current_user.can_manage_controlled_vocabulary_terms?(@controlled_vocabulary)
         }
-      }
+      end
     end
   end
-  
+
   def term_additional_fields
     respond_to do |format|
-      format.json {
-        render json: TERM_ADDITIONAL_FIELDS[@controlled_vocabulary.string_key] || {}
-      }
+      format.json { render json: TERM_ADDITIONAL_FIELDS.fetch(@controlled_vocabulary.string_key, {}) }
     end
   end
 
   private
-  # Use callbacks to share common setup or constraints between actions.
-  def set_controlled_vocabulary
-    if params[:id] =~ /[0-9]+/
-      @controlled_vocabulary = ControlledVocabulary.find(params[:id])
-    else
-      @controlled_vocabulary = ControlledVocabulary.find_by(string_key: params[:id])
+
+    # Use callbacks to share common setup or constraints between actions.
+    def set_controlled_vocabulary
+      if params[:id] =~ /[0-9]+/
+        @controlled_vocabulary = ControlledVocabulary.find(params[:id])
+      else
+        @controlled_vocabulary = ControlledVocabulary.find_by(string_key: params[:id])
+      end
+
+      raise ActionController::RoutingError, 'Controlled vocabulary not found' if @controlled_vocabulary.nil?
     end
-    
-    raise ActionController::RoutingError.new('Controlled vocabulary not found') if @controlled_vocabulary.nil?
-  end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
-  def controlled_vocabulary_params
-    params.require(:controlled_vocabulary).permit(:string_key, :display_label, :require_controlled_vocabulary_manager_permission)
-  end
+    # Never trust parameters from the scary internet, only allow the white list through.
+    def controlled_vocabulary_params
+      params.require(:controlled_vocabulary).permit(:string_key, :display_label, :require_controlled_vocabulary_manager_permission)
+    end
 
-  def set_contextual_nav_options
+    def set_contextual_nav_options
+      case params[:action]
+      when 'index'
+        @contextual_nav_options['nav_title']['label'] = 'Controlled Vocabularies'.html_safe
+      when 'search'
+        @contextual_nav_options['nav_title']['label'] = '&laquo; Back to Controlled Vocabularies'.html_safe
+        @contextual_nav_options['nav_title']['url'] = controlled_vocabularies_path
+      when 'new'
+        @contextual_nav_options['nav_title']['label'] = '&laquo; Back to Controlled Vocabularies'.html_safe
+        @contextual_nav_options['nav_title']['url'] = controlled_vocabularies_path
+      when 'edit', 'update'
+        @contextual_nav_options['nav_title']['label'] = '&laquo; Back to Controlled Vocabularies'.html_safe
+        @contextual_nav_options['nav_title']['url'] = controlled_vocabularies_path
 
-    case params[:action]
-    when 'index'
-      @contextual_nav_options['nav_title']['label'] =  'Controlled Vocabularies'.html_safe
+        @contextual_nav_options['nav_items'].push(label: 'Manage Terms', url: terms_controlled_vocabulary_path(@controlled_vocabulary))
+      when 'terms'
+        @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Controlled Vocabularies'.html_safe
+        @contextual_nav_options['nav_title']['url'] = controlled_vocabularies_path
+      end
+      set_admin_contextual_nav_options
+      set_manager_contextual_nav_options
+    end
 
-      @contextual_nav_options['nav_items'].push(label: 'Add New Controlled Vocabulary', url: new_controlled_vocabulary_path) if current_user.is_admin?
-    when 'search'
-      @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Controlled Vocabularies'.html_safe
-      @contextual_nav_options['nav_title']['url'] = controlled_vocabularies_path
-    when 'new'
-      @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Controlled Vocabularies'.html_safe
-      @contextual_nav_options['nav_title']['url'] = controlled_vocabularies_path
-    when 'edit', 'update'
-      @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Controlled Vocabularies'.html_safe
-      @contextual_nav_options['nav_title']['url'] = controlled_vocabularies_path
-      
-      @contextual_nav_options['nav_items'].push(label: 'Manage Terms', url: terms_controlled_vocabulary_path(@controlled_vocabulary))
-      @contextual_nav_options['nav_items'].push(label: 'Delete This Controlled Vocabulary', url: controlled_vocabulary_path(@controlled_vocabulary), options: {method: :delete, data: { confirm: 'Are you sure you want to delete this Controlled Vocabulary?' } }) if current_user.is_admin?
-    when 'terms'
-      @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Controlled Vocabularies'.html_safe
-      @contextual_nav_options['nav_title']['url'] = controlled_vocabularies_path
-      
-      if current_user.can_manage_controlled_vocabulary_terms?(@controlled_vocabulary)
-        @contextual_nav_options['nav_items'].push(label: 'New Term', url: new_term_path(controlled_vocabulary_string_key: @controlled_vocabulary.string_key))
+    def set_admin_contextual_nav_options
+      return unless current_user.admin?
+      case params[:action]
+      when 'index'
+        @contextual_nav_options['nav_items'].push(label: 'Add New Controlled Vocabulary', url: new_controlled_vocabulary_path)
+      when 'edit', 'update'
+        @contextual_nav_options['nav_items'].push(label: 'Delete This Controlled Vocabulary', url: controlled_vocabulary_path(@controlled_vocabulary), options: { method: :delete, data: { confirm: 'Are you sure you want to delete this Controlled Vocabulary?' } })
       end
     end
 
-  end
-
-  def require_appropriate_permissions!
-
-    case params[:action]
-    when 'index', 'terms', 'term_additional_fields'
-      # Do nothing
-    else
-      require_hyacinth_admin!
+    def set_manager_contextual_nav_options
+      return unless current_user.can_manage_controlled_vocabulary_terms?(@controlled_vocabulary)
+      @contextual_nav_options['nav_items'].push(label: 'New Term', url: new_term_path(controlled_vocabulary_string_key: @controlled_vocabulary.string_key)) if params[:action] == 'terms'
     end
 
-  end
-
+    def require_appropriate_permissions!
+      case params[:action]
+      when 'index', 'terms', 'term_additional_fields'
+        # Do nothing
+      else
+        require_hyacinth_admin!
+      end
+    end
 end

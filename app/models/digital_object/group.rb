@@ -1,5 +1,4 @@
 class DigitalObject::Group < DigitalObject::Base
-
   VALID_DC_TYPES = ['Collection']
   DIGITAL_OBJECT_TYPE_STRING_KEY = 'group'
 
@@ -9,11 +8,7 @@ class DigitalObject::Group < DigitalObject::Base
   end
 
   # Called during save, after all validations have passed
-  def get_new_fedora_object
-    pid = self.next_pid
-    bag_aggregator = Collection.new(:pid => pid)
-
-    return bag_aggregator
+  def create_fedora_object
+    Collection.new(pid: next_pid)
   end
-
 end

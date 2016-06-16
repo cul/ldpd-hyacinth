@@ -12,10 +12,9 @@ AllCops:
     - 'script/**/*'
     - 'spec/**/*'
     - 'vendor/**/*'
-    - 'app/controllers/**/*'
     - 'app/helpers/**/*'
-    - 'app/models/**/*'
     - 'app/views/**/*'
+    - 'app/models/concerns/digital_object/xml_datastream_rendering.rb'
 
 Metrics/LineLength:
   Enabled: false

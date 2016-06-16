@@ -1,5 +1,4 @@
 class PublishTargetsController < ApplicationController
-
   before_action :require_hyacinth_admin!
   before_action :set_publish_target, only: [:show, :edit, :update, :destroy]
   before_action :set_contextual_nav_options
@@ -45,17 +44,14 @@ class PublishTargetsController < ApplicationController
   # PATCH/PUT /publish_targets/1
   # PATCH/PUT /publish_targets/1.json
   def update
-
     respond_to do |format|
       if @publish_target.update(publish_target_params)
-        format.html {
+        format.html do
           redirect_to edit_publish_target_path(@publish_target), notice: 'Publish Target was successfully updated.'
-        }
+        end
         format.json { head :no_content }
       else
-        format.html {
-          render action: 'edit'
-        }
+        format.html { render action: 'edit' }
         format.json { render json: @publish_target.errors, status: :unprocessable_entity }
       end
     end
@@ -73,36 +69,29 @@ class PublishTargetsController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
-  def set_publish_target
-    @publish_target = PublishTarget.find(params[:id])
-  end
-
-  # Never trust parameters from the scary internet, only allow the white list through.
-  def publish_target_params
-    params.require(:publish_target).permit(
-      :id, :display_label, :string_key, :publish_url, :api_key
-    )
-  end
-
-  def set_contextual_nav_options
-
-    if params[:action] == 'index'
-      @contextual_nav_options['nav_title']['label'] =  'Publish Targets'.html_safe
-    else
-      @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Publish Targets'.html_safe
-      @contextual_nav_options['nav_title']['url'] = publish_targets_path
+    # Use callbacks to share common setup or constraints between actions.
+    def set_publish_target
+      @publish_target = PublishTarget.find(params[:id])
     end
 
-
-
-    case params[:action]
-    when 'index'
-      @contextual_nav_options['nav_items'].push(label: 'Add New Publish Target', url: new_publish_target_path) if current_user.is_admin?
-    when 'edit', 'update'
-      @contextual_nav_options['nav_items'].push(label: 'Delete This Publish Target', url: publish_target_path(@publish_target.id), options: {method: :delete, data: { confirm: 'Are you sure you want to delete this Publish Target?' } }) if current_user.is_admin?
+    # Never trust parameters from the scary internet, only allow the white list through.
+    def publish_target_params
+      params.require(:publish_target).permit(:id, :display_label, :string_key, :publish_url, :api_key)
     end
 
-  end
+    def set_contextual_nav_options
+      if params[:action] == 'index'
+        @contextual_nav_options['nav_title']['label'] =  'Publish Targets'.html_safe
+      else
+        @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Publish Targets'.html_safe
+        @contextual_nav_options['nav_title']['url'] = publish_targets_path
+      end
 
+      case params[:action]
+      when 'index'
+        @contextual_nav_options['nav_items'].push(label: 'Add New Publish Target', url: new_publish_target_path) if current_user.admin?
+      when 'edit', 'update'
+        @contextual_nav_options['nav_items'].push(label: 'Delete This Publish Target', url: publish_target_path(@publish_target.id), options: { method: :delete, data: { confirm: 'Are you sure you want to delete this Publish Target?' } }) if current_user.admin?
+      end
+    end
 end

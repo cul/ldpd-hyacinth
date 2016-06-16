@@ -64,13 +64,13 @@ class DigitalObjectTypesController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
-  def set_digital_object_type
-    @digital_object_type = DigitalObjectType.find(params[:id])
-  end
+    # Use callbacks to share common setup or constraints between actions.
+    def set_digital_object_type
+      @digital_object_type = DigitalObjectType.find(params[:id])
+    end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
-  def digital_object_type_params
-    params.require(:digital_object_type).permit(:string_key, :display_label, :sort_order)
-  end
+    # Never trust parameters from the scary internet, only allow the white list through.
+    def digital_object_type_params
+      params.require(:digital_object_type).permit(:string_key, :display_label, :sort_order)
+    end
 end

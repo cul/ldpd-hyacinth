@@ -20,8 +20,8 @@
     <% DynamicFieldGroupCategory.all.each do |dynamic_field_group_category| %>
       <%= "<h2>#{dynamic_field_group_category.display_label}</h2>".html_safe if dynamic_field_group_category.dynamic_field_groups.present? %>
       <% dynamic_field_group_category.dynamic_field_groups.each do |top_level_dynamic_field_group| %>
-        <%= "<h3>#{top_level_dynamic_field_group.display_label}</h3>".html_safe if top_level_dynamic_field_group.get_child_dynamic_fields_and_dynamic_field_groups.present? %>
-        <% top_level_dynamic_field_group.get_child_dynamic_fields_and_dynamic_field_groups.each do |dynamic_field_or_dynamic_field_group| %>
+        <%= "<h3>#{top_level_dynamic_field_group.display_label}</h3>".html_safe if top_level_dynamic_field_group.child_dynamic_fields_and_dynamic_field_groups.present? %>
+        <% top_level_dynamic_field_group.child_dynamic_fields_and_dynamic_field_groups.each do |dynamic_field_or_dynamic_field_group| %>
           <%= do_recursive_enabled_dynamic_field_render(f, @digital_object_type, dynamic_field_or_dynamic_field_group) %>
         <% end %>
       <% end %>

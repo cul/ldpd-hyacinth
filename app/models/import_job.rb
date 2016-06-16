@@ -1,5 +1,4 @@
 class ImportJob < ActiveRecord::Base
-
   after_destroy :delete_associated_file_if_exists
 
   # the name attribute will be the csv filename, and thus may not be unique
@@ -7,9 +6,8 @@ class ImportJob < ActiveRecord::Base
   has_many :digital_object_imports, dependent: :destroy
   belongs_to :user, required: true
 
-
   def success?
-    return (DigitalObjectImport.where(import_job_id: self.id, status: [DigitalObjectImport.statuses[:pending], DigitalObjectImport.statuses[:failure]]).count == 0)
+    digital_object_imports.where(status: [DigitalObjectImport.statuses[:pending], DigitalObjectImport.statuses[:failure]]).empty?
   end
 
   def complete?
@@ -26,70 +24,47 @@ class ImportJob < ActiveRecord::Base
     end
   end
 
-  def count_pending_digital_object_imports
-    # fcd1, 10/19/15: work on the following, Fred -- does not currently work.
-    # self.digital_object_imports.where(digital_object_imports.status == DigitalObjectImport::statuses[:pending]).count
+  def pending_digital_object_imports
+    digital_object_imports.where(status: DigitalObjectImport.statuses[:pending])
+  end
 
-    # fcd1, 10/20/15: may not be the most efficient, but it works
-    DigitalObjectImport.where(import_job_id: self.id, status: DigitalObjectImport::statuses[:pending]).count
+  def successful_digital_object_imports
+    digital_object_imports.where(status: DigitalObjectImport.statuses[:success])
+  end
+
+  def failed_digital_object_imports
+    digital_object_imports.where(status: DigitalObjectImport.statuses[:failure])
+  end
+
+  def count_pending_digital_object_imports
+    pending_digital_object_imports.count
   end
 
   def count_successful_digital_object_imports
-    # fcd1, 10/20/15: may not be the most efficient, but it works
-    DigitalObjectImport.where(import_job_id: self.id, status: DigitalObjectImport::statuses[:success]).count
+    successful_digital_object_imports.count
   end
 
   def count_failed_digital_object_imports
-    # fcd1, 10/20/15: may not be the most efficient, but it works
-    DigitalObjectImport.where(import_job_id: self.id, status: DigitalObjectImport::statuses[:failure]).count
+    failed_digital_object_imports.count
   end
 
   def return_pending_digital_object_imports
-    results = Array.new
-
-    # DigitalObjectImport.where(import_job: self).each do |import|
-    self.digital_object_imports.each do |import|
-
-      results << import if import.pending?
-
-    end
-
-    results
+    pending_digital_object_imports.to_a
   end
 
   def return_successful_digital_object_imports
-    results = Array.new
-
-    # DigitalObjectImport.where(import_job: self).each do |import|
-    self.digital_object_imports.each do |import|
-
-      results << import if import.success?
-
-    end
-
-    results
+    successful_digital_object_imports.to_a
   end
 
   def return_failed_digital_object_imports
-    results = Array.new
-
-    # DigitalObjectImport.where(import_job: self).each do |import|
-    self.digital_object_imports.each do |import|
-
-      results << import if import.failure?
-
-    end
-
-    results
+    failed_digital_object_imports.to_a
   end
-  
+
   def delete_associated_file_if_exists
-    if self.path_to_csv_file.present? && File.exists?(self.path_to_csv_file)
-        FileUtils.rm(self.path_to_csv_file)
-    end
+    FileUtils.rm(path_to_csv_file) if path_to_csv_file.present? && File.exist?(path_to_csv_file)
   end
-  
-  def get_csv_row_numbers_for_all_non_successful_digital_object_imports
-    return DigitalObjectImport.where(import_job_id: self.id).where.not(status: DigitalObjectImport.statuses[:success]).pluck(:csv_row_number)
+
+  def csv_row_numbers_for_all_non_successful_digital_object_imports
+    digital_object_imports.where.not(status: DigitalObjectImport.statuses[:success]).pluck(:csv_row_number)
   end
 end
