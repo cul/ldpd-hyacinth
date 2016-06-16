@@ -1,7 +1,7 @@
 require 'addressable/uri'
 
 class DigitalObject::Asset < DigitalObject::Base
-  include DigitalObject::Asset::Validations
+  include DigitalObject::Assets::Validations
 
   VALID_DC_TYPES = ['Unknown', 'Dataset', 'MovingImage', 'Software', 'Sound', 'StillImage', 'Text']
   DIGITAL_OBJECT_TYPE_STRING_KEY = 'asset'
