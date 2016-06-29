@@ -40,6 +40,7 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
     let(:expected_multiple_digital_objects) { JSON.parse( fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/multiple_digital_objects_example.json').read ) }
     
     let(:expected_new_item_csv_data) { fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/new_item_example.csv').read }
+    let(:expected_new_item_csv_data_with_single_header) { fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/new_item_example_with_single_header.csv').read }
     let(:expected_new_asset_csv_data) { fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/new_asset_example.csv').read }
     let(:expected_existing_item_csv_data) { fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/existing_item_update_example.csv').read }
     let(:expected_multiple_digital_objects_csv_data) { fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/multiple_digital_objects_example.csv').read }
@@ -52,6 +53,12 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
     
     it "converts properly for a new item" do
       Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(expected_new_item_csv_data) do |digital_object_data|
+        expect(digital_object_data).to eq(expected_new_item)
+      end
+    end
+    
+    it "converts properly for a new item csv when there is only one header row (i.e. no human-friendly header row)" do
+      Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(expected_new_item_csv_data_with_single_header) do |digital_object_data|
         expect(digital_object_data).to eq(expected_new_item)
       end
     end
