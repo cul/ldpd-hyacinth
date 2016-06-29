@@ -1,4 +1,4 @@
-module DigitalObject::Asset::Validations
+module DigitalObject::Assets::Validations
   extend ActiveSupport::Concern
 
   def validate
