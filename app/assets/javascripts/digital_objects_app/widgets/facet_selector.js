@@ -6,7 +6,7 @@ Hyacinth.DigitalObjectsApp.FacetSelector = function(containerElementId, facetFie
 
   this.currentPage = 1;
   this.facetPrefix = '';
-  this.sort = null;
+  this.sort = 'index'; // index sort by default
 
   this.init();
 };

@@ -123,6 +123,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.init = function() {
     type: 'POST',
     data: {
       search: Hyacinth.DigitalObjectsApp.params['search'],
+      facet: {defaults: true}, // Note: It doesn't actually matter what value is passed into the facets value object, as long as at least one key-value pair is present.
       include_single_field_searchable_field_list: true
     },
     cache: false
