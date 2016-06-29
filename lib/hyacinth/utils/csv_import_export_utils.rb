@@ -22,16 +22,16 @@ class Hyacinth::Utils::CsvImportExportUtils
 
     csv_row_number = -1
 
+    found_header_row = false
     CSV.parse(csv_data_string) do |row|
       csv_row_number += 1
 
-      # first line is human readable, so we ignore it
-      next if csv_row_number == 0
-
-      # second line is the real header line, so store it as such
-      if csv_row_number == 1
-        # Ignore blank headers
-        header.fields = row.map { |header_data| header_to_input_field(header_data) }
+      unless found_header_row
+        if row[0].start_with?('_')
+          # found header row
+          header.fields = row.map { |header_data| header_to_input_field(header_data) }
+          found_header_row = true
+        end
         next
       end
 
@@ -175,15 +175,22 @@ class Hyacinth::Utils::CsvImportExportUtils
 
   def self.validate_csv_headers(csv_data_string, import_job)
     # Generate list of all dynamic field path regular expressions
+    # And validate against those field paths
     dynamic_field_regexes_allowed_on_import = all_dynamic_field_regexes
 
-    # And validate against those field paths
     index_of_first_new_line_char = csv_data_string.index("\n")
     index_of_second_new_line_char = csv_data_string.index("\n", index_of_first_new_line_char + 1)
-    second_line_of_csv = csv_data_string[(index_of_first_new_line_char + 1)...(index_of_second_new_line_char)]
+
+    if csv_data_string.start_with?('_')
+      # First line is header line
+      header_line_of_csv = csv_data_string[0...index_of_first_new_line_char]
+    else
+      # Second line is header line
+      header_line_of_csv = csv_data_string[(index_of_first_new_line_char + 1)...(index_of_second_new_line_char)]
+    end
 
     # We're only using CSV.parse on the second row of data in the CSV file
-    CSV.parse(second_line_of_csv) do |row|
+    CSV.parse(header_line_of_csv) do |row|
       row.each do |header_string|
         next if header_string.nil? # Ignore blank headers
         next if valid_internal_field?(header_string)
