@@ -32,10 +32,10 @@ module DigitalObject::DynamicField
     register_new_uris_and_values_for_dynamic_field_data!(@dynamic_field_data)
 
     # 2) Correct associated URI fields (value, etc.), regardless of what user entered,
-    # by running remove_extra_uri_data_from_dynamic_field_data!() followed by
-    # add_extra_uri_data_to_dynamic_field_data!()
-    remove_extra_uri_data_from_dynamic_field_data!(@dynamic_field_data)
-    add_extra_uri_data_to_dynamic_field_data!(@dynamic_field_data)
+    # by running remove_extra_controlled_term_uri_data_from_dynamic_field_data!() followed by
+    # add_extra_controlled_term_uri_data_to_dynamic_field_data!()
+    remove_extra_controlled_term_uri_data_from_dynamic_field_data!(@dynamic_field_data)
+    add_extra_controlled_term_uri_data_to_dynamic_field_data!(@dynamic_field_data)
   end
 
   def remove_blank_fields_from_dynamic_field_data!(df_data = @dynamic_field_data)

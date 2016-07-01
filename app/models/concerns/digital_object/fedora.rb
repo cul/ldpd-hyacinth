@@ -61,7 +61,7 @@ module DigitalObject::Fedora
       # Load Hyacinth data
       hyacinth_data = fedora_hyacinth_ds_data
       @dynamic_field_data = hyacinth_data.fetch(DigitalObject::DynamicField::DATA_KEY, {})
-      add_extra_uri_data_to_dynamic_field_data!(@dynamic_field_data)
+      add_extra_controlled_term_uri_data_to_dynamic_field_data!(@dynamic_field_data)
 
       # Load Hyacinth struct data
       @ordered_child_digital_object_pids = fedora_hyacinth_struct_ds_data
@@ -156,7 +156,7 @@ module DigitalObject::Fedora
       # Set HYACINTH_CORE_DATASTREAM_NAME data
       copy_of_current_dynamic_field_data = Marshal.load(Marshal.dump(@dynamic_field_data)) # Making a copy so we don't modifiy the in-memory copy, then saving the modified copy to Fedora
       @fedora_object.datastreams[HYACINTH_CORE_DATASTREAM_NAME].content = JSON.generate(
-        DigitalObject::DynamicField::DATA_KEY => remove_extra_uri_data_from_dynamic_field_data!(copy_of_current_dynamic_field_data))
+        DigitalObject::DynamicField::DATA_KEY => remove_extra_controlled_term_uri_data_from_dynamic_field_data!(copy_of_current_dynamic_field_data))
       # Set HYACINTH_STRUCT_DATASTREAM_NAME data
       @fedora_object.datastreams[HYACINTH_STRUCT_DATASTREAM_NAME].content = JSON.generate(@ordered_child_digital_object_pids)
     end
