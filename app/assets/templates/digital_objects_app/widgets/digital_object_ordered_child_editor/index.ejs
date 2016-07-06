@@ -42,8 +42,14 @@
   
             <strong>PID:</strong> <a href="#<%= Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: childDigitalObject.getPid()}) %>"><%= childDigitalObject.getPid() %></a>
             <br />
-            <strong>Title: <%- childDigitalObject.getTitle() %></strong>
+            <strong>Title:</strong> <%- childDigitalObject.getTitle() %>
             <br />
+            <%
+              if(childDigitalObject['hyacinthType'][0] == 'asset') {
+                var originalFilename = childDigitalObject['digitalObjectData']['asset_data']['original_filename'];
+                %><strong>Original Filename:</strong> <%- originalFilename %><br /><%
+              }
+            %>
             <span class="label label-default"><%= childDigitalObject.getDigitalObjectTypeDisplayLabel() %></span>
         </div>
         <div class="col-xs-2">

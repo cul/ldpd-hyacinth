@@ -5,6 +5,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult = function(searchResultData
   this.pid = searchResultData['pid'];
   this.title = searchResultData['title_ssm'];
   this.flattenedDynamicFieldData = JSON.parse(searchResultData['flattened_dynamic_field_data_ssm'][0]);
+  this.digitalObjectData = JSON.parse(searchResultData['digital_object_data_ss']);
   this.projectDisplayLabel = searchResultData['project_display_label_ssm'];
   this.digitalObjectTypeDisplayLabel = searchResultData['digital_object_type_display_label_ssm'];
   this.parentDigitalObjectPids = searchResultData['parent_digital_object_pids_ssm'] || [];
