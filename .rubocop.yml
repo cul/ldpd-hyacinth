@@ -103,6 +103,7 @@ Rails/Output:
   Exclude:
     - 'lib/generators/**/*'
     - 'lib/hyacinth/utils/logger.rb'
+    - 'config/deploy.rb'
 
 Rails/Date:
   Enabled: false

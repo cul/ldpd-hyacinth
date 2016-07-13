@@ -11,12 +11,12 @@ set :rails_env, fetch(:deploy_name)
 # use the rvm wrapper
 set :rvm_ruby_version, fetch(:deploy_name)
 
-set :repo_url,  "git@github.com:cul/#{fetch(:repo_name)}.git"
+set :repo_url, "git@github.com:cul/#{fetch(:repo_name)}.git"
 
 set :remote_user, "#{fetch(:instance)}serv"
 # Default deploy_to directory is /var/www/:application
 # set :deploy_to, '/var/www/my_app_name'
-set :deploy_to,   "/opt/passenger/#{fetch(:instance)}/#{fetch(:deploy_name)}"
+set :deploy_to, "/opt/passenger/#{fetch(:instance)}/#{fetch(:deploy_name)}"
 
 # Default value for :scm is :git
 # set :scm, :git
@@ -29,7 +29,7 @@ set :deploy_to,   "/opt/passenger/#{fetch(:instance)}/#{fetch(:deploy_name)}"
 set :log_level, :info
 
 # Default value for linked_dirs is []
-set :linked_dirs, fetch(:linked_dirs, []).push('log','tmp/pids')
+set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids')
 
 # Default value for keep_releases is 5
 set :keep_releases, 3
@@ -52,8 +52,8 @@ namespace :deploy do
   desc "Report the environment"
   task :report do
     run_locally do
-      puts "cap called with stage = \"#{fetch(:stage,'none')}\""
-      puts "cap would deploy to = \"#{fetch(:deploy_to,'none')}\""
+      puts "cap called with stage = \"#{fetch(:stage, 'none')}\""
+      puts "cap would deploy to = \"#{fetch(:deploy_to, 'none')}\""
       puts "cap would install from #{fetch(:repo_url)}"
       puts "cap would install in Rails env #{fetch(:rails_env)}"
     end
@@ -61,8 +61,8 @@ namespace :deploy do
 
   desc "Add tag based on current version from VERSION file"
   task :auto_tag do
-    current_version = "v#{IO.read("VERSION").strip}/#{DateTime.now.strftime("%Y%m%d")}"
-                      
+    current_version = "v#{IO.read('VERSION').strip}/#{DateTime.now.strftime('%Y%m%d')}"
+
     ask(:tag, current_version)
     tag = fetch(:tag)
 
