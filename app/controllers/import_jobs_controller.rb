@@ -74,8 +74,16 @@ class ImportJobsController < ApplicationController
 
       csv_data_string = ''
       csv_row_counter = 1
+
+      found_header_row = false
       CSV.foreach(@import_job.path_to_csv_file) do |row|
-        if csv_row_counter == 1 || csv_row_counter == 2 || csv_rows_to_collect.include?(csv_row_counter)
+        unless found_header_row
+          csv_data_string += CSV.generate_line row
+          found_header_row = true if row[0].start_with?('_')
+          next
+        end
+
+        if csv_rows_to_collect.include?(csv_row_counter)
           csv_data_string += CSV.generate_line row
         end
         csv_row_counter += 1

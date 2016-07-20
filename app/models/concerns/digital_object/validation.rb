@@ -46,7 +46,7 @@ module DigitalObject::Validation
 
     # All DigitalObject must have a @fedora_object with a dc_type within its set of VALID_DC_TYPES
     unless self.class.valid_dc_types.include?(dc_type)
-      @errors.add(:dc_type, 'Must be one of: ' + self.class.valid_dc_types.join(', '))
+      @errors.add(:dc_type, "Is: #{dc_type}. Must be one of: #{self.class.valid_dc_types.join(', ')}")
     end
 
     # Exactly one project is required
