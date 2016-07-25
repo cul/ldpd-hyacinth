@@ -307,12 +307,12 @@ class DigitalObjectsController < ApplicationController
         project_find_criteria = @digital_object_data['project'] # i.e. {string_key: 'proj'} or {pid: 'abc:123'}
         associated_project = Project.find_by(project_find_criteria)
         publish_requirements << :create
-        require_project_permission!(associated_project, *publish_requirements)
+        require_project_permission!(associated_project, publish_requirements)
       when 'update', 'reorder_child_digital_objects', 'add_parent', 'remove_parents', 'rotate_image', 'swap_order_of_first_two_child_assets'
         require_project_permission!(@digital_object.project, :update)
         # Also require publish permission if params[:publish] is set to true (note: applies to the 'update' action)
         publish_requirements << :update
-        require_project_permission!(@digital_object.project, *publish_requirements)
+        require_project_permission!(@digital_object.project, publish_requirements)
       when 'destroy', 'undestroy'
         require_project_permission!(@digital_object.project, :delete)
       else
