@@ -97,3 +97,19 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.hasImage = function() {
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getImageUrl = function(type, size){
   return Hyacinth.DigitalObjectsApp.DigitalObject.Base.getImageUrl(this.getPid(), type, size);
 };
+
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getCreatedBy = function(){
+  return this.created_by;
+};
+
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getCreated = function(){
+  return new Date(this.created);
+};
+
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getModifiedBy = function(){
+  return this.modified_by;
+};
+
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getModified = function(){
+  return new Date(this.modified);
+};
