@@ -29,7 +29,7 @@
             <%= digitalObject.getPid() || '- Assigned After Save -' %>
           </div>
         </div>
-
+	
         <% var parentDigitalObjectPids = digitalObject.getParentDigitalObjectPids() %>
         <% if (parentDigitalObjectPids.length > 0) { %>
           <div class="form-group">
@@ -82,6 +82,52 @@
             </div>
           </div>
 
+          <div class="form-group">
+            <label class="col-sm-3">
+              <%= digitalObject.digital_object_type['display_label'] %> History:
+            </label>
+            <div class="col-sm-9">
+              <a href="#history" data-toggle="collapse">Creation / Modification Info</a>
+            </div>
+          </div>
+
+          <div id="history" class="collapse">
+            <div class="form-group">
+              <label class="col-sm-3">
+                Created By:
+              </label>
+              <div class="col-sm-9">
+                <%= digitalObject.getCreatedBy() || '- Assigned After Save -' %>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-3">
+                On:
+              </label>
+              <div class="col-sm-9">
+                <%= digitalObject.getCreated() || '- Assigned After Save -' %>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-3">
+                Last Modified By:
+              </label>
+              <div class="col-sm-9">
+                <%= digitalObject.getModifiedBy() || '- Assigned After Save -' %>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-3">
+                On:
+              </label>
+              <div class="col-sm-9">
+                <%= digitalObject.getModified() || '- Assigned After Save -' %>
+              </div>
+            </div>
+          </div>
 
           <% if ( digitalObject instanceof Hyacinth.DigitalObjectsApp.DigitalObject.Asset) { %>
 
