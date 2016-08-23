@@ -68,7 +68,7 @@ namespace :resque do
       "QUEUES" => queue_names.join(','),
       'RAILS_ENV' => Rails.env.to_s,
       'TERM_CHILD' => '1',
-      'INTERVAL' => '0.5' # The default interval is 5 (seconds), but we expect to send a lot of quick reindexing jobs to DLC, so we need a more frequent job polling frequency per worker
+      'INTERVAL' => '0.2' # The default interval is 5 (seconds), but we expect to send a lot of quick reindexing jobs to DLC, so we need a more frequent job polling frequency per worker
     }
 
     pids = []
