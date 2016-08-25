@@ -285,10 +285,6 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_children = 
     data: {},
     cache: false
   }).done(function(data_for_ordered_child_editor){
-    
-    data_for_ordered_child_editor['ordered_child_search_results'].push({'pid' : 'abc:123', 'not_in_hyacinth' : true});
-    data_for_ordered_child_editor['ordered_child_search_results'].push({'pid' : 'abc:456', 'not_in_hyacinth' : true});
-
     var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_ordered_child_editor['digital_object']);
     var tooManyToShow = data_for_ordered_child_editor['too_many_to_show'];
     var orderedChildDigitalObjects = [];
