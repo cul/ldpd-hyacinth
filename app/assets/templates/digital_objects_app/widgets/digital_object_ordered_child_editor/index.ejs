@@ -64,7 +64,7 @@
 
   <% if(Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) { %>
   <div class="actions">
-    <input type="submit" class="btn btn-primary pull-right editor-submit-button" value="Save" />
+    <input type="submit" class="btn btn-primary pull-right editor-submit-button" value="Save" <%= (childPidsForDigitalObjectsNotImportedIntoHyacinth.length == 0) ? '' : 'disabled="disabled"' %> />
     <div class="clearfix"></div>
   </div>
   <% } %>

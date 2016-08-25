@@ -4,6 +4,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectOrderedChildEditor = function(containerE
   this.digitalObject = options['digitalObject'];
   this.orderedChildDigitalObjects = options['orderedChildDigitalObjects'];
   this.tooManyToShow = options['tooManyToShow'];
+  this.childPidsForDigitalObjectsNotImportedIntoHyacinth = options['childPidsForDigitalObjectsNotImportedIntoHyacinth'];
 
   this.init();
 };
@@ -56,6 +57,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectOrderedChildEditor.prototype.init = func
     Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_ordered_child_editor/index.ejs', {
       digitalObject: this.digitalObject,
       orderedChildDigitalObjects: this.orderedChildDigitalObjects,
+      childPidsForDigitalObjectsNotImportedIntoHyacinth: this.childPidsForDigitalObjectsNotImportedIntoHyacinth,
       tooManyToShow: this.tooManyToShow
     })
   );
@@ -84,11 +86,17 @@ Hyacinth.DigitalObjectsApp.DigitalObjectOrderedChildEditor.prototype.init = func
 
   });
 
-  //Save button is only visible if a user has the right permissions
+  //Save button is only visible if a user has the right permissions AND if childPidsForDigitalObjectsNotImportedIntoHyacinth.length == 0
   if(this.$containerElement.find('.ordered-child-editor-form').length > 0) {
     this.$containerElement.find('.ordered-child-editor-form').on('submit', function(e){
   
       e.preventDefault();
+      
+      if(that.childPidsForDigitalObjectsNotImportedIntoHyacinth.length > 0) {
+        Hyacinth.addAlert('Additional child records must be imported before children can be reordered.', 'danger');
+        return;
+      }
+      
       var $submitButton = $(this).find('.editor-submit-button');
       $submitButton.attr('data-original-value', $submitButton.val()).val('Saving...');
       Hyacinth.addAlert('Saving...', 'info');
@@ -103,8 +111,13 @@ Hyacinth.DigitalObjectsApp.DigitalObjectOrderedChildEditor.prototype.init = func
         });
       }
       
-      var digitalObjectData = {ordered_child_digital_objects: orderedPids};
-      digitalObjectData['ordered_child_digital_objects'] = $.map(orderedPids, function(val){ return {pid: val} });
+      //if (that.childPidsForDigitalObjectsNotImportedIntoHyacinth.length > 0) {
+      //  _.each(that.childPidsForDigitalObjectsNotImportedIntoHyacinth, function(pid){
+      //    orderedPids.push(pid);
+      //  });
+      //}
+      
+      var digitalObjectData = {ordered_child_digital_objects: $.map(orderedPids, function(val){ return {pid: val}; })};
   
       $.ajax({
         url: '/digital_objects/' + that.digitalObject.getPid() + '.json',

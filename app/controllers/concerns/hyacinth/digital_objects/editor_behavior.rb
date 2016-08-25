@@ -43,7 +43,7 @@ module Hyacinth::DigitalObjects::EditorBehavior
       end
 
       child_pids.each do |pid|
-        ordered_child_search_results.push(pids_to_search_results[pid].present? ? pids_to_search_results[pid] : { 'pid' => pid })
+        ordered_child_search_results.push(pids_to_search_results[pid].present? ? pids_to_search_results[pid] : { 'pid' => pid, 'not_in_hyacinth' => true })
       end
     end
 

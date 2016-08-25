@@ -2,8 +2,17 @@
   //Passed params:
   //
   //digitalObject
+  //childPidsForDigitalObjectsNotImportedIntoHyacinth
 %>
 <% Hyacinth.ContextualNav.setNavTitle('&laquo; Back to Parent', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: Hyacinth.DigitalObjectsApp.params['pid']})); %>
 <% Hyacinth.ContextualNav.setNavItems([]); %>
+
+<% if(childPidsForDigitalObjectsNotImportedIntoHyacinth.length > 0) { %>
+<div class="alert alert-info">
+  <strong>This <%= digitalObject['digital_object_type']['display_label'] %> has additional children that have not been imported into Hyacinth:</strong> <%= childPidsForDigitalObjectsNotImportedIntoHyacinth.join(', ') %>
+  <br />
+  These records must be imported before children can be reordered.
+</div>
+<% } %>
 
 <div id="digital-object-ordered-child-editor"></div>
