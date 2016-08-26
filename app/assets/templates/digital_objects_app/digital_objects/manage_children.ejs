@@ -10,8 +10,6 @@
 <% if(childPidsForDigitalObjectsNotImportedIntoHyacinth.length > 0) { %>
 <div class="alert alert-info">
   <strong>This <%= digitalObject['digital_object_type']['display_label'] %> has additional children that have not been imported into Hyacinth:</strong> <%= childPidsForDigitalObjectsNotImportedIntoHyacinth.join(', ') %>
-  <br />
-  These records must be imported before children can be reordered.
 </div>
 <% } %>
 

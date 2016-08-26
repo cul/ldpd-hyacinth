@@ -92,10 +92,10 @@ Hyacinth.DigitalObjectsApp.DigitalObjectOrderedChildEditor.prototype.init = func
   
       e.preventDefault();
       
-      if(that.childPidsForDigitalObjectsNotImportedIntoHyacinth.length > 0) {
-        Hyacinth.addAlert('Additional child records must be imported before children can be reordered.', 'danger');
-        return;
-      }
+      //if(that.childPidsForDigitalObjectsNotImportedIntoHyacinth.length > 0) {
+      //  Hyacinth.addAlert('Additional child records must be imported before children can be reordered.', 'danger');
+      //  return;
+      //}
       
       var $submitButton = $(this).find('.editor-submit-button');
       $submitButton.attr('data-original-value', $submitButton.val()).val('Saving...');
