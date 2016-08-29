@@ -219,19 +219,23 @@ module DigitalObject::Fedora
       # Save ordered child data to structMetadata datastream
       struct_ds_name = 'structMetadata'
       if ordered_child_digital_object_pids.present?
-
-        # TODO: Use Solr to get titles of child objects.  Fall back to "Item 1", "Item 2", etc. if a title is not found for some reason.
-
+        # Use Solr to verify existence of child items in Hyacinth and get titles of child objects.
+        # Do lookup as admin user
+        # Fall back to "Item 1", "Item 2", etc. if a title is not found for some reason.
+        titles_for_pids = DigitalObject::Base.titles_for_pids(ordered_child_digital_object_pids + ['something:else'], User.find_by(is_admin: true))
         struct_ds = Cul::Hydra::Datastreams::StructMetadata.new(nil, 'structMetadata', label: 'Sequence', type: 'logical')
         ordered_child_digital_object_pids.each_with_index do |pid, index|
-          struct_ds.create_div_node(nil, order: (index + 1), label: "Item #{index + 1}", contentids: pid)
+          title = titles_for_pids[pid]
+          # If title is nil, that means that this object wasn't found in Hyacinth.
+          # Might be an unimported object that is only in Fedora. For now, don't
+          # include unimported objects the generated struct map.
+          next if title.nil?
+          struct_ds.create_div_node(nil, order: (index + 1), label: (title.blank? ? "Item #{index + 1}" : title), contentids: pid)
         end
         @fedora_object.datastreams[struct_ds_name].ng_xml = struct_ds.ng_xml
       else
         # No child objects.  If struct datastream is present, perform cleanup by deleting it.
-        if @fedora_object.datastreams[struct_ds_name].present?
-          @fedora_object.datastreams[struct_ds_name].delete
-        end
+        @fedora_object.datastreams[struct_ds_name].delete if @fedora_object.datastreams[struct_ds_name].present?
       end
     end
   end
