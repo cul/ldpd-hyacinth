@@ -11,13 +11,15 @@ class ProjectsController < ApplicationController
   # GET /projects
   # GET /projects.json
   def index
+    per_page = 30
+
     if current_user.admin?
-      @projects = Project.all
+      @projects = Project.all.order(:display_label).page(params[:page]).per(per_page)
     else
       projects_that_user_is_admin_of = current_user.project_permissions.where(is_project_admin: true)
 
       if projects_that_user_is_admin_of.length > 0
-        @projects = Project.where(id: projects_that_user_is_admin_of.map { |project_permission| project_permission.project.id })
+        @projects = Project.where(id: projects_that_user_is_admin_of.map { |project_permission| project_permission.project.id }).order(:display_label).page(params[:page]).per(per_page)
       else
         @projects = []
       end

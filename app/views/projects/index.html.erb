@@ -1,4 +1,7 @@
 <h1>Projects</h1>
+
+<div class="pagination-top"><%= paginate @projects, :window => 2 %></div>
+
 <table class="table table-condensed table-bordered table-striped">
   <thead>
     <tr>
@@ -22,3 +25,5 @@
     <% end %>
   </tbody>
 </table>
+
+<%= paginate @projects, :window => 2 %>

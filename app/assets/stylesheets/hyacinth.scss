@@ -58,6 +58,10 @@ h2 {
 .alignright {text-align:right !important;}
 .aligncenter {text-align:center !important;}
 
+.pagination-top .pagination {
+    margin-top:0;
+}
+
 .nav-title .navbar-brand:hover {
     color:$navbar-inverse-link-color;
     cursor:default;
