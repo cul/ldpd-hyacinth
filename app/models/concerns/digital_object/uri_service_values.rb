@@ -22,9 +22,9 @@ module DigitalObject::UriServiceValues
         next unless dynamic_field_group_value[controlled_term_df_string_key]['uri'].present? || dynamic_field_group_value[controlled_term_df_string_key]['value'].present?
 
         controlled_term_value = dynamic_field_group_value[controlled_term_df_string_key]
-        uri = controlled_term_value['uri'] || ''
-        value = controlled_term_value['value'] || ''
-        authority = controlled_term_value['authority'] || ''
+        uri = controlled_term_value.fetch('uri', '')
+        value = controlled_term_value.fetch('value', '')
+        authority = controlled_term_value.fetch('authority', '')
         additional_fields = controlled_term_value.reject { |key, _value| (key == 'uri') || (key == 'value') || (key == 'authority') }
         term = term_for(controlled_vocabulary_string_key, uri, value, authority, additional_fields)
         dynamic_field_group_value[controlled_term_df_string_key] = term
