@@ -298,7 +298,7 @@ class DigitalObjectsController < ApplicationController
     def require_appropriate_project_permissions!
       publish_requirements = publish_requirements_from_params
       case params[:action]
-      when 'index', 'search', 'upload_directory_listing', 'titles_for_pids'
+      when 'index', 'search', 'upload_directory_listing', 'titles_for_pids', 'search_results_to_csv'
         # Do nothing.  These actions are open to all logged-in users.
       when 'show', 'data_for_editor', 'mods', 'download', 'data_for_ordered_child_editor', 'media_view'
         require_project_permission!(@digital_object.project, :read)
