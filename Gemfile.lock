@@ -235,7 +235,7 @@ GEM
     kaminari (0.16.3)
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
-    libv8 (3.16.14.13)
+    libv8 (3.16.14.15)
     link_header (0.0.8)
     linkeddata (1.1.2)
       equivalent-xml (~> 0.4)
@@ -540,7 +540,7 @@ DEPENDENCIES
   jquery-rails
   jquery.fileupload-rails
   kaminari
-  libv8 (>= 3.16.14.13)
+  libv8 (>= 3.16.14.15)
   mime-types
   mysql2 (= 0.3.18)
   net-ssh (~> 2.9)
@@ -572,4 +572,4 @@ DEPENDENCIES
   web-console (~> 2.0)
 
 BUNDLED WITH
-   1.11.2
+   1.12.5

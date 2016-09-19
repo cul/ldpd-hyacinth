@@ -67,7 +67,7 @@ gem 'coffee-rails'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 gem 'therubyracer', '>= 0.12.2',  platforms: :ruby
-gem 'libv8', '>= 3.16.14.13' # Min version for Mac OS 10.11
+gem 'libv8', '>= 3.16.14.15' # Min version for Mac OS 10.11, XCode 8.0
 
 
 # Use jquery as the JavaScript library

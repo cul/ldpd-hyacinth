@@ -9,7 +9,8 @@ jdk: 'oraclejdk8'
 
 matrix:
   include:
-    - rvm: 2.2.3
+    - rvm: 2.2.4
+    - rvm: 2.3.0
 
 notifications:
   irc: "irc.freenode.org#ldpddev"
