@@ -18,9 +18,16 @@
         <td><%= import_job.status_string %></td>
         <td><%= import_job.created_at.localtime %></td>
         <td><%= import_job.user.email %></td>
-	<td><%= import_job.complete? ? 
-		link_to('Delete', import_job, method: :delete, data: { confirm: 'Are you sure?' }) :
-		'Job not complete' %></td>
+				<td>
+					<% if import_job.complete? %>
+						<%= link_to('Delete', import_job, method: :delete, data: { confirm: 'Are you sure?' }) %>
+					<% else %>
+						Job not complete
+						<% if current_user.is_admin? %>
+							<br /><%= link_to('Force Delete', import_job, method: :delete, data: { confirm: 'Are you sure?' }) %>
+						<% end %>
+					<% end %>
+				</td>
       </tr>
     <% end %>
   </tbody>
