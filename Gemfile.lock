@@ -273,7 +273,7 @@ GEM
     net-http-persistent (2.9.4)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
-    net-ssh (2.9.4)
+    net-ssh (3.2.0)
     netrc (0.10.3)
     noid (0.7.1)
     nokogiri (1.6.6.2)
@@ -520,7 +520,6 @@ DEPENDENCIES
   autoprefixer-rails
   bootstrap-multiselect-rails
   bootstrap-sass (~> 3.3)
-  cancancan (~> 1.12.0)
   capistrano (~> 3.5.0)
   capistrano-bundler (~> 1.1)
   capistrano-passenger (~> 0.1)
@@ -543,7 +542,6 @@ DEPENDENCIES
   libv8 (>= 3.16.14.15)
   mime-types
   mysql2 (= 0.3.18)
-  net-ssh (~> 2.9)
   noid (>= 0.7.1)
   nokogiri (~> 1.6.5)
   poltergeist (>= 1.7)
