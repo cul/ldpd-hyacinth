@@ -27,6 +27,21 @@
       </div>
     </div>
   </div>
+    
+  <div class="row">
+    <div class="col-md-6">
+      <div class="field">
+        <%= f.label :uri, 'Project URI' %>
+        <%= f.text_field :uri, {class: 'form-control'} %>
+      </div>
+    </div>
+      <div class="col-md-6">
+      <div class="field">
+        <%= f.label :short_label, 'Short Label' %>
+        <%= f.text_field :short_label, {class: 'form-control'} %>
+      </div>
+    </div>
+  </div>
 
   <div class="row">
     <div class="col-md-6">
@@ -40,15 +55,6 @@
         <%= f.label :pid_generator_id, 'PID Generator' %>
         <% default_pid_generator = PidGenerator.find_by(namespace: HYACINTH['default_pid_generator_namespace']) %>
         <%= f.collection_select(:pid_generator_id, PidGenerator.all.sort_by { |pid_generator| pid_generator.namespace }, :id, :namespace, { selected: default_pid_generator.present? ? default_pid_generator.id : nil }, {:class => 'form-control'}) %>
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md-12">
-      <div class="field">
-        <%= f.label :uri, 'Project URI' %>
-        <%= f.text_field :uri, {class: 'form-control'} %>
       </div>
     </div>
   </div>

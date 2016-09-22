@@ -13,9 +13,11 @@ class Project < ActiveRecord::Base
   belongs_to :pid_generator
 
   validates :display_label, :string_key, presence: true
+  validates :short_label, length: { maximum: 255 }, allow_blank: true
   validate :validate_custom_asset_directory
 
   before_create :create_associated_fedora_object!
+  before_save :fill_in_short_label_if_blank!
   after_save :update_fedora_object!, :ensure_that_title_fields_are_enabled_and_required
   after_destroy :mark_fedora_object_as_deleted!
 
@@ -112,11 +114,16 @@ class Project < ActiveRecord::Base
     EnabledDynamicField.includes(:digital_object_type).select(:digital_object_type_id).distinct.where(project: self).map(&:digital_object_type).sort_by(&:sort_order)
   end
 
+  def fill_in_short_label_if_blank!
+    self.short_label = display_label if short_label.blank?
+  end
+
   def as_json(_options = {})
     {
       pid: pid,
       uri: uri.present? ? uri : nil,
       display_label: display_label,
+      short_label: short_label,
       string_key: string_key
     }
   end

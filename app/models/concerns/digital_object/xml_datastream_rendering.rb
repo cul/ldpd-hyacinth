@@ -148,6 +148,8 @@ module DigitalObject::XmlDatastreamRendering
       # We only allow certain fields
       if field_name == '$project.display_label'
         self.project.display_label
+      elsif field_name == '$project.short_label'
+        self.project.short_label.present? ? self.project.short_label : self.project.display_label
       elsif field_name == '$project.uri'
         self.project.uri.present? ? self.project.uri : ''
       elsif field_name == '$created_at'

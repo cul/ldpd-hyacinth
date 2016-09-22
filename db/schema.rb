@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160325101222) do
+ActiveRecord::Schema.define(version: 20160921112351) do
 
   create_table "controlled_vocabularies", force: :cascade do |t|
     t.string   "string_key",                                       limit: 255
@@ -214,6 +214,7 @@ ActiveRecord::Schema.define(version: 20160325101222) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "uri",                                 limit: 65535
+    t.string   "short_label",                         limit: 255
   end
 
   add_index "projects", ["display_label"], name: "index_projects_on_display_label", unique: true, using: :btree
