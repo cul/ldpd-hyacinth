@@ -33,6 +33,7 @@ repository_cache.yml
 uri_service.yml
 term_additional_fields.yml
 resque.yml
+ezid.yml
 
 *_user_accounts.yml
 
