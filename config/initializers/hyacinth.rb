@@ -1,4 +1,5 @@
 HYACINTH = YAML.load_file("#{Rails.root}/config/hyacinth.yml")[Rails.env]
+EZID = HashWithIndifferentAccess.new(YAML.load_file("#{Rails.root}/config/ezid.yml")[Rails.env])
 
 Hyacinth::Utils::Logger.logger.tap do |logger|
   logger.info '---------------------------'
