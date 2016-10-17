@@ -45,7 +45,8 @@ set :linked_files, fetch(:linked_files, []).push(
   'config/secrets.yml',
   'config/solr.yml',
   'config/term_additional_fields.yml',
-  'config/uri_service.yml'
+  'config/uri_service.yml',
+  'config/ezid.yml'
 )
 
 namespace :deploy do
