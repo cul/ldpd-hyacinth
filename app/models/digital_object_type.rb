@@ -12,6 +12,8 @@ class DigitalObjectType < ActiveRecord::Base
       return DigitalObject::FileSystem
     when 'asset'
       return DigitalObject::Asset
+    when 'publish_target'
+      return DigitalObject::PublishTarget
     else
       raise Hyacinth::Exceptions::InvalidDigitalObjectTypeError, "Invalid DigitalObjectType string key: #{string_key}"
     end

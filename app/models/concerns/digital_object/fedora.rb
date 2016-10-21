@@ -90,7 +90,7 @@ module DigitalObject::Fedora
 
       # Get publish target relationships
       pids = @fedora_object.relationships(:publisher).map { |val| val.gsub('info:fedora/', '') }
-      @publish_targets = PublishTarget.where(pid: pids).to_a
+      @publish_targets = ::PublishTarget.where(pid: pids).to_a
       targets_match = pids.length == @publish_targets.length
       raise "Could not load all Publish Targets for DigitalObject #{pid}. " \
         "The following Fedora objects have not been imported into Hyacinth as Publish targets: " \
@@ -252,6 +252,10 @@ module DigitalObject::Fedora
         obj.is_a?(Collection) && (dc_types & DigitalObject::FileSystem.valid_dc_types).length > 0
       end
 
+      def detect_publish_target(obj, dc_types = [])
+        obj.is_a?(Concept) && (dc_types & DigitalObject::PublishTarget.valid_dc_types).length > 0
+      end
+
       def detect_group(obj, dc_types = [])
         obj.is_a?(Collection) && (dc_types & DigitalObject::Group.valid_dc_types).length > 0
       end
@@ -269,10 +273,11 @@ module DigitalObject::Fedora
           # These methods defined in DigitalObject::Fedora::Detect
           # Ultimately should be moved to the subclasses themselves.
           type_map = {
+            DigitalObject::Item => method_as_proc(:detect_item),
+            DigitalObject::Asset => method_as_proc(:detect_asset),
             DigitalObject::Group => method_as_proc(:detect_group),
             DigitalObject::FileSystem => method_as_proc(:detect_file_system),
-            DigitalObject::Item => method_as_proc(:detect_item),
-            DigitalObject::Asset => method_as_proc(:detect_asset)
+            DigitalObject::PublishTarget => method_as_proc(:detect_publish_target)
           }
           mapped_type = type_map.detect { |_candidate, detector| detector.call(fobj, obj_dc_type) }
           return mapped_type.first if mapped_type

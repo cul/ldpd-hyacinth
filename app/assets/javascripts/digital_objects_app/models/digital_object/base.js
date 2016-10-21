@@ -14,7 +14,8 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData =
     item: Hyacinth.DigitalObjectsApp.DigitalObject.Item,
     asset: Hyacinth.DigitalObjectsApp.DigitalObject.Asset,
     group:  Hyacinth.DigitalObjectsApp.DigitalObject.Group,
-    file_system:  Hyacinth.DigitalObjectsApp.DigitalObject.FileSystem
+    file_system:  Hyacinth.DigitalObjectsApp.DigitalObject.FileSystem,
+    publish_target:  Hyacinth.DigitalObjectsApp.DigitalObject.PublishTarget
   };
   return new digitalObjectTypeStringKeysToClasses[digital_object_data['digital_object_type']['string_key']](digital_object_data);
 };

@@ -352,9 +352,16 @@ RSpec.describe DigitalObject::Base, :type => :model do
       it { is_expected.to be model }
     end
 
-    context 'with a Collection' do
+    context 'with a FileSystem' do
       let(:cmodel) { Collection }
       let(:model) { DigitalObject::FileSystem }
+
+      it { is_expected.to be model }
+    end
+    
+    context 'with a PublishTarget' do
+      let(:cmodel) { Concept }
+      let(:model) { DigitalObject::PublishTarget }
 
       it { is_expected.to be model }
     end

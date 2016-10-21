@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160921112351) do
+ActiveRecord::Schema.define(version: 20161021161015) do
 
   create_table "controlled_vocabularies", force: :cascade do |t|
     t.string   "string_key",                                       limit: 255

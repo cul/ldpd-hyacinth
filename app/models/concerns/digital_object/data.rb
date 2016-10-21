@@ -39,7 +39,7 @@ module DigitalObject::Data
     return unless digital_object_data['publish_targets']
 
     digital_object_data['publish_targets'].each do |publish_target_find_criteria|
-      publish_target = PublishTarget.find_by(publish_target_find_criteria) # i.e. {string_key: 'target1'} or {pid: 'abc:123'}
+      publish_target = ::PublishTarget.find_by(publish_target_find_criteria) # i.e. {string_key: 'target1'} or {pid: 'abc:123'}
       if publish_target.nil?
         raise Hyacinth::Exceptions::PublishTargetNotFoundError, "Could not find Publish Target: #{publish_target_find_criteria.inspect}"
       else

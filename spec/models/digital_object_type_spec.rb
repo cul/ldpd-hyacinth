@@ -9,7 +9,7 @@ describe DigitalObjectType, :type => :model do
     end
   end
   describe '.get_model_for_string_key' do
-    ['Asset', 'FileSystem', 'Group', 'Item'].each do |name|
+    ['Asset', 'FileSystem', 'Group', 'Item', 'PublishTarget'].each do |name|
       it do
         expect(described_class.get_model_for_string_key(name.underscore)).to be DigitalObject.const_get(name)
       end
