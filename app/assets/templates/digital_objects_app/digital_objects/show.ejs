@@ -17,7 +17,15 @@
 var navItems = [];
 
 if (Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) {
-  if (digitalObject.digital_object_type.string_key == 'item') {
+  
+  if (digitalObject.digital_object_type.string_key == 'publish_target') {
+    navItems.push({label: 'Publish Target Fields', url: '#' + 
+                   Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects',
+                                                                 action: 'publish_target_fields',
+                                                                 pid: Hyacinth.DigitalObjectsApp.params['pid']})});
+  }
+  
+  if (digitalObject.digital_object_type.string_key == 'item' || digitalObject.digital_object_type.string_key == 'publish_target') {
     if (digitalObject.getOrderedChildDigitalObjectPids().length > 0) {
       navItems.push({label: 'Manage Child Assets', url: '#' + 
                      Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects',
@@ -41,6 +49,7 @@ if (Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.ge
                                                                  project_string_key: digitalObject.getProject()['string_key'],
                                                                  parent_digital_object_pid: Hyacinth.DigitalObjectsApp.params['pid']})});
   }
+  
   navItems.push({label: 'Manage Parents', url: '#' + 
                  Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects',
                                                                action: 'manage_parents',
