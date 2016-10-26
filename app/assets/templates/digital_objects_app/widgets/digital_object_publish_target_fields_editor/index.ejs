@@ -1,0 +1,63 @@
+<%
+  //Passed params:
+  //
+  //digitalObject
+%>
+<h1><%= digitalObject.digital_object_type['display_label'] %>: <%- digitalObject.getTitle() %></h1>
+<strong>Project</strong> <%= digitalObject.getProject()['display_label'] %>
+<br />
+<strong>PID:</strong> <%= digitalObject.getPid() %>
+<hr />
+
+<h2 class="manage-publish-target-fields-heading">Publish Target Fields</h2>
+
+<form class="publish-target-fields-editor-form">
+  
+  <div class="field">
+    <label>String Key</label>
+    <input type="text" name="string_key" value="<%- digitalObject.publish_target_data.string_key %>" class="form-control" />
+  </div>
+  
+  <div class="field">
+    <label>Publish URL (for content activation/publishing)</label>
+    <input type="text" name="publish_url" value="<%- digitalObject.publish_target_data.publish_url %>" class="form-control" />
+  </div>
+  
+  <div class="field">
+    <label>API Key</label>
+    <input type="text" name="api_key" value="<%- digitalObject.publish_target_data.api_key %>" class="form-control" />
+  </div>
+  
+  <div class="field">
+    <label>Representative Image PID</label>
+    <input type="text" name="representative_image_pid" value="<%- digitalObject.publish_target_data.representative_image_pid %>" class="form-control" />
+  </div>
+  
+  <div class="field">
+    <label>Short Description</label>
+    <textarea name="short_description" class="form-control"><%- digitalObject.publish_target_data.short_description %></textarea>
+  </div>
+  
+  <div class="field">
+    <label>Full Description</label>
+    <textarea name="full_description" class="form-control"><%- digitalObject.publish_target_data.full_description %></textarea>
+  </div>
+  
+  <div class="field">
+    <label>Project Facet</label>
+    <input type="text" name="project_facet_value" value="<%- digitalObject.publish_target_data.project_facet_value %>" class="form-control" />
+  </div>
+  
+  <div class="field">
+    <label>Site URL</label>
+    <input type="text" name="site_url" value="<%- digitalObject.publish_target_data.site_url %>" class="form-control" />
+  </div>
+  
+  <% if(Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) { %>
+  <div class="actions">
+    <input type="submit" class="btn btn-primary pull-right editor-submit-button" value="Save" />
+    <div class="clearfix"></div>
+  </div>
+  <% } %>
+
+</form>

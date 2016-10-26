@@ -59,7 +59,13 @@ module DigitalObject::Validation
     # Make sure that none of the identifiers conflict with the PID of another existing Fedora object
     @identifiers.each { |identifier| validate_identifier(identifier) }
 
+    run_custom_validations
+
     @errors.blank?
+  end
+
+  def run_custom_validations
+    # This method should be overwritten by subclasses of DigitalObject::Base if they have custom validations
   end
 
   def validate_title

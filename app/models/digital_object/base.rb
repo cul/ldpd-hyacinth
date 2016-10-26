@@ -54,14 +54,18 @@ class DigitalObject::Base
 
     # For existing records, we always lock on @db_record during Fedora reads/writes (and wrap in a transaction)
     @db_record.with_lock do # with_lock creates a transaction and locks on the called object's row
-      load_created_and_updated_data_from_db_record!
-      load_parent_digital_object_pid_relationships_from_fedora_object!
-      load_state_from_fedora_object!
-      load_dc_type_from_fedora_object!
-      load_dc_identifiers_from_fedora_object!
-      load_project_and_publisher_relationships_from_fedora_object!
-      load_fedora_hyacinth_ds_data_from_fedora_object!
+      load_data_from_sources
     end
+  end
+
+  def load_data_from_sources
+    load_created_and_updated_data_from_db_record!
+    load_parent_digital_object_pid_relationships_from_fedora_object!
+    load_state_from_fedora_object!
+    load_dc_type_from_fedora_object!
+    load_dc_identifiers_from_fedora_object!
+    load_project_and_publisher_relationships_from_fedora_object!
+    load_fedora_hyacinth_ds_data_from_fedora_object!
   end
 
   def reset_data_attributes_before_assignment(digital_object_data)

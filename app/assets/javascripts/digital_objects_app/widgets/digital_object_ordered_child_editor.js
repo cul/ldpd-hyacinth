@@ -127,10 +127,10 @@ Hyacinth.DigitalObjectsApp.DigitalObjectOrderedChildEditor.prototype.init = func
           digital_object_data_json : JSON.stringify(digitalObjectData),
         },
         cache: false
-      }).done(function(digitalObjectCreationResponse){
+      }).done(function(digitalObjectSaveResponse){
         $submitButton.val($submitButton.attr('data-original-value'));
   
-        if (digitalObjectCreationResponse['errors']) {
+        if (digitalObjectSaveResponse['errors']) {
           Hyacinth.addAlert('Errors encountered during save. Please try again.', 'danger');
         } else {
           Hyacinth.addAlert('Digital Object saved.', 'success');

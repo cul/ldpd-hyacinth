@@ -275,6 +275,40 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.show = function() 
 
 };
 
+//Publish Target Fields Action - Edit fields for a publish target
+Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.publish_target_fields = function() {
+
+  var that = this;
+
+  $.ajax({
+    url: '/digital_objects/data_for_editor.json',
+    type: 'POST',
+    data: {
+      pid: Hyacinth.DigitalObjectsApp.params['pid']
+    },
+    cache: false
+  }).done(function(data_for_editor){
+    
+    var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
+    
+    $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/publish_target_fields.ejs', {digitalObject: digitalObject}));
+    
+    var publishTargetFieldsEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectPublishTargetFieldsEditor('digital-object-publish-target-fields-editor', {
+      digitalObject: digitalObject
+    });
+    
+    //Event cleanup
+    that.dispose = function(){
+      publishTargetFieldsEditor.dispose();
+      publishTargetFieldsEditor = null;
+    };
+
+  }).fail(function(){
+    alert(Hyacinth.unexpectedAjaxErrorMessage);
+  });
+
+};
+
 //Manage Children Action - Manage the order of DigitalObject's child digital objects
 Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_children = function() {
 

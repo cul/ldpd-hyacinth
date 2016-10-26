@@ -149,14 +149,18 @@ module DigitalObject::Fedora
       set_fedora_object_relationship(:publisher, values)
     end
 
+    # Prepares a hash for serialization to the hyacinth ds upon Fedora write
+    def data_for_hyacinth_ds
+      # Using Marshal to make a copy so we don't modifiy the in-memory copy, then saving the modified copy to Fedora
+      { DigitalObject::DynamicField::DATA_KEY => remove_extra_controlled_term_uri_data_from_dynamic_field_data!(Marshal.load(Marshal.dump(@dynamic_field_data))) }
+    end
+
     def set_fedora_hyacinth_ds_data
       # Create required hyacinth datastreams if they don't exist
       create_required_hyacinth_datastreams_if_not_exist!
 
       # Set HYACINTH_CORE_DATASTREAM_NAME data
-      copy_of_current_dynamic_field_data = Marshal.load(Marshal.dump(@dynamic_field_data)) # Making a copy so we don't modifiy the in-memory copy, then saving the modified copy to Fedora
-      @fedora_object.datastreams[HYACINTH_CORE_DATASTREAM_NAME].content = JSON.generate(
-        DigitalObject::DynamicField::DATA_KEY => remove_extra_controlled_term_uri_data_from_dynamic_field_data!(copy_of_current_dynamic_field_data))
+      @fedora_object.datastreams[HYACINTH_CORE_DATASTREAM_NAME].content = JSON.generate(data_for_hyacinth_ds)
       # Set HYACINTH_STRUCT_DATASTREAM_NAME data
       @fedora_object.datastreams[HYACINTH_STRUCT_DATASTREAM_NAME].content = JSON.generate(@ordered_child_digital_object_pids)
     end

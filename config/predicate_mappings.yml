@@ -60,6 +60,8 @@
     :format: format
     :format_of: isFormatOf
     :publisher: publisher
+    :abstract: abstract
+    :description: description
   http://www.w3.org/2003/12/exif/ns#:
     :image_width: imageWidth
     :image_length: imageLength
