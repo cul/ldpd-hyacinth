@@ -40,7 +40,7 @@ module Hyacinth::DigitalObjects::ParentEditorBehavior
     # If child is Asset, then parent must be Item
     # If child is Item or Group, then parent must be Group
     if @digital_object.is_a?(DigitalObject::Asset)
-      errors << "Parent must be an Item, FileSystem or PublishTarget" unless parent_digital_object.is_a?(DigitalObject::Item) || parent_digital_object.is_a?(DigitalObject::FileSystem) || parent_digital_object.is_a?(DigitalObject::PublishTarget)
+      errors << "Parent must be an Item or FileSystem" unless parent_digital_object.is_a?(DigitalObject::Item) || parent_digital_object.is_a?(DigitalObject::FileSystem)
     elsif !parent_digital_object.is_a?(DigitalObject::Group)
       errors << "Parent must be a Group"
     end
