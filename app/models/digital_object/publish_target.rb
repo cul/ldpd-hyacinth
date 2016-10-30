@@ -4,7 +4,7 @@ class DigitalObject::PublishTarget < DigitalObject::Base
   DIGITAL_OBJECT_DATA_KEY = 'publish_target_data'
 
   PUBLISH_TARGET_DATA_FIELDS = ['string_key', 'publish_url', 'api_key', 'representative_image_pid', 'short_description', 'full_description', 'project_facet_value', 'site_url'].freeze
-  REQUIRED_PUBLISH_TARGET_DATA_FIELDS = ['string_key']
+  REQUIRED_PUBLISH_TARGET_DATA_FIELDS = ['string_key'].freeze
 
   def initialize
     super
@@ -45,6 +45,21 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     REQUIRED_PUBLISH_TARGET_DATA_FIELDS.each do |publish_target_data_field|
       @errors.add(:publish_target_data, "Missing required publish_target_data field: #{publish_target_data_field}") if @publish_target_data[publish_target_data_field].blank?
     end
+  end
+
+  def before_publish
+    # TODO: rewrite with ActiveRecord::Callbacks
+    super
+
+    # Serizlize publish data to Fedora
+    # string_key -> ???
+    # publish_url -> [Hyacinth Only, no need to serialize]
+    # api_key -> [Hyacinth Only, no need to serialize]
+    # representative_image_pid -> :foaf_thumbnail -> GenericResource PID
+    # short_description -> :abstract -> RELS-EXT
+    # full_description -> :description -> publishTargetDescription
+    # project_facet_value -> ???
+    # site_url -> ???
   end
 
   # JSON representation

@@ -14,6 +14,8 @@ class DigitalObject::Base
   NUM_FEDORA_RETRY_ATTEMPTS = 3
   DELAY_IN_SECONDS_BETWEEN_FEDORA_RETRY_ATTEMPTS = 5
   RETRY_OPTIONS = { on: [RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH], tries: NUM_FEDORA_RETRY_ATTEMPTS, base_interval: DELAY_IN_SECONDS_BETWEEN_FEDORA_RETRY_ATTEMPTS }
+  PUBLISH_ACTION_PUBLISH = 'publish'.freeze
+  PUBLISH_ACTION_UNPUBLISH = 'unpublish'.freeze
 
   # For ActiveModel::Dirty
   define_attribute_methods :parent_digital_object_pids, :obsolete_parent_digital_object_pids, :ordered_child_digital_object_pids
@@ -203,7 +205,14 @@ class DigitalObject::Base
     # This method is intended to be overridden by DigitalObject::Base child classes
   end
 
+  def before_publish
+    # TODO: rewrite with ActiveRecord::Callbacks
+    save_datastreams
+  end
+
   def publish
+    before_publish
+
     # Save withg retry after Fedora timeouts / unreachable host
     Retriable.retriable on: [RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH], tries: NUM_FEDORA_RETRY_ATTEMPTS, base_interval: DELAY_IN_SECONDS_BETWEEN_FEDORA_RETRY_ATTEMPTS do
       @fedora_object.save(update_index: false)
@@ -216,7 +225,7 @@ class DigitalObject::Base
       next unless publish_target.publish_url.present?
       api_key = publish_target.api_key
       begin
-        json_response = JSON(RestClient.post publish_target.publish_url, pid: pid, api_key: api_key)
+        json_response = JSON(RestClient.post publish_target.publish_url, pid: pid, api_key: api_key, publish_action: PUBLISH_ACTION_PUBLISH)
         unless json_response['success'] && json_response['success'].to_s == 'true'
           @errors.add(:publish_target, 'Error encountered while publishing to ' + publish_target.display_label)
         end

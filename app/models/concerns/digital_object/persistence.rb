@@ -7,26 +7,26 @@ module DigitalObject::Persistence
     creating_new_record = self.new_record?
 
     persist_to_stores
+
     # If we saved this object successfully in DB and Fedora, perform additional logic below, including:
     # - Updating the struct data of the parent objects (adding new children and removing old children)
-    return false if @errors.present?
-
-    persist_parent_changes if @errors.blank?
+    # - Updating the solr index
+    if @errors.present?
+      return false
+    else
+      persist_parent_changes
+    end
 
     return false if @errors.present?
 
     # Update the solr index
     update_index
 
-    # If we got here, then everything is good. Run after-save logic
+    # If we got here, then everything is good. Run after-create and before_publish logic
     run_after_create_logic if creating_new_record
-    after_save
-  end
+    publish if @publish_after_save
 
-  def after_save
-    # TODO: rewrite with ActiveRecord::Callbacks
-    return true unless @publish_after_save
-    (save_datastreams && publish)
+    @errors.blank?
   end
 
   def persist_to_stores
