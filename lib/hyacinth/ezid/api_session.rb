@@ -22,8 +22,8 @@ module Hyacinth::Ezid
                           reserved: 'reserved',
                           unavailable: 'unavailable' }
 
-    def initialize(username = EZID[:test_user],
-                   password = EZID[:test_password])
+    def initialize(username,
+                   password)
       @username = username
       @password = password
       @last_response_from_server = nil

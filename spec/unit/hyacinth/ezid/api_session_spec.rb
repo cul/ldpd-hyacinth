@@ -14,7 +14,8 @@ describe Hyacinth::Ezid::ApiSession do
   context "#make_anvl" do
     
     it "creates proper anvl" do
-      api_session = Hyacinth::Ezid::ApiSession.new
+      api_session = Hyacinth::Ezid::ApiSession.new(EZID[:test_user],
+                                                   EZID[:test_password])
       actual_anvl = api_session.send(:make_anvl, data)
       expect(actual_anvl).to eq(expected_anvl)
     end
