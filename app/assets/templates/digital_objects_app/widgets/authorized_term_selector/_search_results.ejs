@@ -48,7 +48,8 @@
             <% }); %>
           </ul>
         </div>
-        <%= authorizedTerms[i]['type'] == 'temporary' ? ' <span class="label label-info">Temporary Term</span>' : '' %>
+        <%= typeof(authorizedTerms[i]['authority']) == 'undefined' ? '' : ' <span class="label label-info">' + authorizedTerms[i]['authority'] + '</span>'%>
+        <%= authorizedTerms[i]['type'] == 'temporary' ? ' <span class="label label-danger">Temporary Term</span>' : '' %>
       </li>
     <% } %>
   <% } else { %>
