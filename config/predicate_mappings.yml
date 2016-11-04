@@ -79,3 +79,4 @@
     :rdf_type: type
   http://www.loc.gov/premis/rdf/v1#:
     :original_name: hasOriginalName
+    :has_restriction: hasRestriction

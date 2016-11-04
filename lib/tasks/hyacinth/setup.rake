@@ -184,18 +184,17 @@ namespace :hyacinth do
       ezid_yml = YAML.load_file(ezid_yml_file) || {}
       ['development', 'test'].each do |env_name|
         ezid_yml[env_name] = {
-	  'test_user' => 'apitest',
-	  'test_password' => 'apitest',
-	  'url' => 'https://ezid.cdlib.org',
-	  'shoulder' => {
-	    'ark' => '99999/fk4',
-	    'doi' => '10.5072/FK2'
-	  },
-	  'ezid_publisher' => 'Columbia University'
+          'test_user' => 'apitest',
+          'test_password' => 'apitest',
+          'url' => 'https://ezid.cdlib.org',
+          'shoulder' => {
+            'ark' => '99999/fk4',
+            'doi' => '10.5072/FK2'
+          },
+          'ezid_publisher' => 'Columbia University'
         }
       end
       File.open(ezid_yml_file, 'w') {|f| f.write ezid_yml.to_yaml }
-
     end
 
   end
