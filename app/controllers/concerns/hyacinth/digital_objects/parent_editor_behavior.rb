@@ -1,5 +1,6 @@
 module Hyacinth::DigitalObjects::ParentEditorBehavior
   def add_parent
+    params[:parent_pid].strip! # Remove leading and trailing spaces
     errors = validate_parent_pid(params[:parent_pid])
 
     if errors.blank?
