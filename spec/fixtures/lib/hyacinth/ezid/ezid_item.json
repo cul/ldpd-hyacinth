@@ -109,6 +109,46 @@
             {
 		"name_term" :
 		{
+		    "value" : "Christie, Agatha",
+		    "uri" : "http://id.loc.gov/authorities/names/n79038407",
+		    "name_type" : "personal"
+		}
+		,
+		"name_role" :
+		[
+		    {
+			"name_role_term" :
+			{
+			    "value" : "Moderator",
+			    "uri" : "http://id.loc.gov/vocabulary/relators/mod"
+			}
+		    }
+		]
+            }
+	    ,
+            {
+		"name_term" :
+		{
+		    "value" : "Burton, Tim",
+		    "uri" : "http://id.loc.gov/authorities/names/n91100415.html",
+		    "name_type" : "personal"
+		}
+		,
+		"name_role" :
+		[
+		    {
+			"name_role_term" :
+			{
+			    "value" : "Contributor",
+			    "uri" : "http://id.loc.gov/vocabulary/relators/ctb"
+			}
+		    }
+		]
+            }
+	    ,
+            {
+		"name_term" :
+		{
 		    "value" : "Lincoln, Abraham",
 		    "uri" : "http://id.loc.gov/authorities/names/n79006779",
 		    "name_type" : "personal"

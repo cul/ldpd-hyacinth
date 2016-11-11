@@ -21,9 +21,10 @@ module Hyacinth::Ezid
     # Following returns the title of an item. NOTE: if ever an item contains
     # multiple titles, it will only return the first one.
     def title
+      return unless @dfd.key? 'title'
       # concatenates the non sort portion with the sort portion
       non_sort_portion = @dfd['title'][0]['title_non_sort_portion'] if @dfd['title'][0].key? 'title_non_sort_portion'
-      sort_portion = @dfd['title'][0]['title_sort_portion']
+      sort_portion = @dfd['title'][0]['title_sort_portion'] if @dfd['title'][0].key? 'title_sort_portion'
       "#{non_sort_portion} #{sort_portion}"
     end
 
@@ -77,6 +78,7 @@ module Hyacinth::Ezid
     end
 
     def process_names
+      return unless @dfd.key? 'name'
       @dfd['name'].each do |name|
         name['name_role'].each do |role|
           role_value = role['name_role_term']['value'].downcase
@@ -91,6 +93,7 @@ module Hyacinth::Ezid
     end
 
     def process_subjects_topic
+      return unless @dfd.key? 'subject_topic'
       @dfd['subject_topic'].each do |topic|
         @subjects_topic << topic['subject_topic_term']['value']
       end
