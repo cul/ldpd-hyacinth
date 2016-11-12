@@ -3,7 +3,16 @@
 # of DigitalObject)
 module Hyacinth::Ezid
   class HyacinthMetadataRetrieval
+    # access filtered name and topic values
+    # @see #process_names
+    # @see #process_subjects_topic
+    # @return [Array<String>]
+    # @api public
     attr_reader :creators, :editors, :moderators, :contributors, :subjects_topic
+
+    # parse metadata from Hyacinth Digital Objects Data
+    # @param digital_object_data_arg [Hash]
+    # @api public
     def initialize(digital_object_data_arg)
       # dod is shorthand for digital_object_data
       @dod = digital_object_data_arg
@@ -18,65 +27,92 @@ module Hyacinth::Ezid
       process_subjects_topic
     end
 
-    # Following returns the title of an item. NOTE: if ever an item contains
-    # multiple titles, it will only return the first one.
+    # the title of an item
+    # @api public
+    # @return [String, nil]
+    # @note only returns the first title value
     def title
-      return unless @dfd.key? 'title'
+      return nil unless @dfd.key? 'title'
       # concatenates the non sort portion with the sort portion
       non_sort_portion = @dfd['title'][0]['title_non_sort_portion'] if @dfd['title'][0].key? 'title_non_sort_portion'
       sort_portion = @dfd['title'][0]['title_sort_portion'] if @dfd['title'][0].key? 'title_sort_portion'
       "#{non_sort_portion} #{sort_portion}"
     end
 
-    # Following returns the abstract of an item. NOTE: if ever an item contains
-    # multiple abstracts, it will only return the first one.
+    # the abstract of an item
+    # @api public
+    # @return [String, nil]
+    # @note only returns the first abstract value
     def abstract
       @dfd['abstract'][0]['abstract_value'] if @dfd.key? 'abstract'
     end
 
-    # Following returns the type of resource for an item.
+    # the type of resource for an item
+    # @api public
+    # @return [String, nil]
     def type_of_resource
       @dfd['type_of_resource'][0]['type_of_resource_value'] if @dfd.key? 'type_of_resource'
     end
 
-    # Following returns the starting year of the Date Issued field.
-    # Date is encoded using w3cdtf, so year is always present at start of date
+    # starting year of the w3cdtf-encoded Date Issued field (first 4 characters)
+    # @api public
+    # @return [String, nil]
     def date_issued_start_year
       @dfd['date_issued'][0]['date_issued_start_value'][0..3] if @dfd.key? 'date_issued'
     end
 
-    # Following returns the date of the created field. Timestamp is encoded using w3cdtf,
-    # so date in YYYY-MM-DD is always present at start of the timestamp string
+    # date of the w3cdtf-encoded created Timestamp field (first 10 characters)
+    # @api public
+    # @return [String]
     def date_created
       @dod['created'][0..9]
     end
 
-    # Following returns the date of the modified field. Timestamp is encoded using w3cdtf,
-    # so date in YYYY-MM-DD is always present at start of the timestamp string
+    # date of the w3cdtf-encoded modified Timestamp field (first 10 characters)
+    # @api public
+    # @return [String]
     def date_modified
       @dod['modified'][0..9]
     end
 
+    # ISSN of the parent publication
+    # @api public
+    # @return [String, nil]
     def parent_publication_issn
       @dfd['parent_publication'][0]['parent_publication_issn'] if @dfd.key? 'parent_publication'
     end
 
+    # ISBN of the parent publication
+    # @api public
+    # @return [String, nil]
     def parent_publication_isbn
       @dfd['parent_publication'][0]['parent_publication_isbn'] if @dfd.key? 'parent_publication'
     end
 
+    # DOI of the parent publication
+    # @api public
+    # @return [String, nil]
     def parent_publication_doi
       @dfd['parent_publication'][0]['parent_publication_doi'] if @dfd.key? 'parent_publication'
     end
 
+    # DOI identifier value
+    # @api public
+    # @return [String, nil]
     def doi_identifier
       @dfd['doi_identifier'][0]['doi_identifier_value'] if @dfd.key? 'doi_identifier'
     end
 
+    # handle indentifier value
+    # @api public
+    # @return [String, nil]
     def handle_net_identifier
       @dfd['cnri_handle_identifier'][0]['cnri_handle_identifier_value'] if @dfd.key? 'cnri_handle_identifier'
     end
 
+    # retrieve name terms by role from [@dfd]
+    # @api private
+    # @return [void]
     def process_names
       return unless @dfd.key? 'name'
       @dfd['name'].each do |name|
@@ -92,6 +128,9 @@ module Hyacinth::Ezid
       end
     end
 
+    # retrieve subject topics from [@dfd]
+    # @api private
+    # @return [void]
     def process_subjects_topic
       return unless @dfd.key? 'subject_topic'
       @dfd['subject_topic'].each do |topic|
