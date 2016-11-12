@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 require 'rails_helper'
 
-describe Hyacinth::Ezid::HyacinthMetadataRetrieval do
+describe Hyacinth::Ezid::HyacinthMetadata do
 
   let(:dod) {
     data = JSON.parse( fixture('lib/hyacinth/ezid/ezid_item.json').read )

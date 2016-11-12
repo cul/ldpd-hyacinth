@@ -2,7 +2,7 @@
 # from the dynamic_field_data hash (which is an instance variable
 # of DigitalObject)
 module Hyacinth::Ezid
-  class HyacinthMetadataRetrieval
+  class HyacinthMetadata
     # access filtered name and topic values
     # @see #process_names
     # @see #process_subjects_topic
