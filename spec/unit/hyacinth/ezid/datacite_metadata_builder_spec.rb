@@ -18,7 +18,7 @@ describe Hyacinth::Ezid::DataciteMetadataBuilder do
   context "#datacite_xml:" do
     
     it "datacite_xml" do
-      metadata_retrieval = Hyacinth::Ezid::HyacinthMetadataRetrieval.new dod
+      metadata_retrieval = Hyacinth::Ezid::HyacinthMetadata.new dod
       metadata_builder = Hyacinth::Ezid::DataciteMetadataBuilder.new metadata_retrieval
       actual_xml = metadata_builder.datacite_xml
       expect(EquivalentXml.equivalent?(@expected_xml, actual_xml)).to eq(true)
