@@ -179,6 +179,8 @@ namespace :hyacinth do
       File.open(resque_yml_file, 'w') {|f| f.write resque_yml.to_yaml }
 
       # ezid.yml
+      # use official EZID test credentials and test shoulder for test_user,
+      # test_password, and test_shoulder
       ezid_yml_file = File.join(Rails.root, 'config/ezid.yml')
       FileUtils.touch(ezid_yml_file) # Create if it doesn't exist
       ezid_yml = YAML.load_file(ezid_yml_file) || {}
@@ -187,7 +189,7 @@ namespace :hyacinth do
           'test_user' => 'apitest',
           'test_password' => 'apitest',
           'url' => 'https://ezid.cdlib.org',
-          'shoulder' => {
+          'test_shoulder' => {
             'ark' => '99999/fk4',
             'doi' => '10.5072/FK2'
           },
