@@ -549,7 +549,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_parents = f
         cache: false
       }).done(function(add_parent_response){
         $('#add-parent-button').prop('disabled', false);
-        if (add_parent_response['success'] == true) {
+        if (add_parent_response['success']) {
           Hyacinth.addAlert('Parent added.', 'success');
           Hyacinth.DigitalObjectsApp.reloadCurrentAction();
         } else {
@@ -579,7 +579,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_parents = f
         cache: false
       }).done(function(remove_parents_response){
         $('#remove-selected-parents-button').prop('disabled', false);
-        if (remove_parents_response['success'] == true) {
+        if (remove_parents_response['success']) {
           Hyacinth.addAlert('Selected parents have been removed.', 'success');
           Hyacinth.DigitalObjectsApp.reloadCurrentAction();
         } else {
