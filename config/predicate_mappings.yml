@@ -55,13 +55,16 @@
     :y_sampling: ySamplingFrequency
     :sampling_unit: samplingFrequencyUnit
   http://purl.org/dc/terms/:
+    :abstract: abstract
+    :alternative: alternative
     :contributor: contributor
+    :description: description
     :extent: extent
     :format: format
     :format_of: isFormatOf
     :publisher: publisher
-    :abstract: abstract
-    :description: description
+    :source: source
+    :title: title
   http://www.w3.org/2003/12/exif/ns#:
     :image_width: imageWidth
     :image_length: imageLength
@@ -79,4 +82,23 @@
     :rdf_type: type
   http://www.loc.gov/premis/rdf/v1#:
     :original_name: hasOriginalName
-    :has_restriction: hasRestriction
+    :restriction: hasRestriction
+  http://pcdm.org/models#:
+    :pcdm_has_file: hasFile
+    :pcdm_file_of: fileOf
+    :pcdm_has_member: hasMember
+    :pcdm_member_of: memberOf
+    :pcdm_has_related_file: hasRelatedFile
+    :pcdm_related_file_of: relatedFileOf
+    :pcdm_has_related_object: hasRelatedObject
+    :pcdm_related_object_of: relatedObjectOf
+  http://purl.org/ontology/bibo/:
+    :short_title: shortTitle
+  http://www.bbc.co.uk/ontologies/coreconcepts/:
+    :slug: slug
+  https://schema.org/:
+    :schema_image: image
+  http://www.openarchives.org/ore/terms/:
+    :lineage: lineage
+  http://www.w3.org/ns/ldp#:
+    :ldp_contains: contains
