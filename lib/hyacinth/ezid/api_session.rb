@@ -38,14 +38,16 @@ module Hyacinth::Ezid
       @last_response_from_server.parsed_body_hash
     end
 
-    def mint_identifier(identifier_type = :doi,
-                        identifier_status = Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:reserved],
-                        shoulder = EZID[:test_shoulder][:doi],
-                        metadata = {})
+    def mint_identifier(shoulder,
+                        identifier_status,
+                        target_url = nil,
+                        metadata = {},
+                        identifier_type = :doi)
       # we only handle doi identifiers.
       return nil unless identifier_type == :doi
       @identifier_type = identifier_type
       @shoulder = shoulder
+      metadata['_target'] = target_url unless target_url.nil?
       metadata['_status'] = identifier_status
       request_uri = "/shoulder/#{@shoulder}"
       uri = URI(EZID[:url] + request_uri)

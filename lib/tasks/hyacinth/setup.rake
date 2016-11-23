@@ -179,18 +179,32 @@ namespace :hyacinth do
       File.open(resque_yml_file, 'w') {|f| f.write resque_yml.to_yaml }
 
       # ezid.yml
+      #
+      # 'ezid_test_user', 'ezid_test_password', and 'ezid_test_shoulder'
+      # contain the official EZID test credentials and test shoulder
+      # 
+      # 'user', 'password', and 'shoulder' contain the actual
+      # credentials and shoulder. By default in development and
+      # test, these are set to the EZID test credentials and shoulder
+      #
       ezid_yml_file = File.join(Rails.root, 'config/ezid.yml')
       FileUtils.touch(ezid_yml_file) # Create if it doesn't exist
       ezid_yml = YAML.load_file(ezid_yml_file) || {}
       ['development', 'test'].each do |env_name|
         ezid_yml[env_name] = {
-          'test_user' => 'apitest',
-          'test_password' => 'apitest',
-          'url' => 'https://ezid.cdlib.org',
+          'user' => 'apitest',
+          'password' => 'apitest',
           'shoulder' => {
-            'ark' => '99999/fk4',
-            'doi' => '10.5072/FK2'
+            'ark' => 'ark:99999/fk4',
+            'doi' => 'doi:10.5072/FK2'
           },
+          'ezid_test_user' => 'apitest',
+          'ezid_test_password' => 'apitest',
+          'ezid_test_shoulder' => {
+            'ark' => 'ark:99999/fk4',
+            'doi' => 'doi:10.5072/FK2'
+          },
+          'url' => 'https://ezid.cdlib.org',
           'ezid_publisher' => 'Columbia University'
         }
       end
