@@ -4,7 +4,7 @@ module Hyacinth
       class Dynamic < Base
         def parse_path(dynamic_field_header_name)
           new_builder_path = dynamic_field_header_name.split(/[:-]/).map do |piece|
-            raise 'Dynamic field header names cannot be 0-indexed. Must be 1-indexed.' if piece == '0'
+            raise Hyacinth::Exceptions::InvalidCsvHeader, 'Dynamic field header names cannot be 0-indexed. Must be 1-indexed.' if piece == '0'
 
             piece.match(/^\d+$/) ? piece.to_i - 1 : piece # This line converts 'name-0:name_role-0:name_role_type' to ['name', 0, 'name_role', 0, 'name_role_type']
           end
