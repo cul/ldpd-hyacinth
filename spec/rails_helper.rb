@@ -85,8 +85,11 @@ RSpec.configure do |config|
   
   def destroy_all_hyacinth_records
     DigitalObjectRecord.all.each do |digital_object_record|
-      digital_object = DigitalObject::Base.find(digital_object_record.pid)
-      digital_object.destroy(true, true)
+      begin
+        digital_object = DigitalObject::Base.find(digital_object_record.pid)
+        digital_object.destroy(true, true)
+      rescue Hyacinth::Exceptions::AssociatedFedoraObjectNotFoundError
+      end
     end
   end
   

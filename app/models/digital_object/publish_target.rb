@@ -3,7 +3,7 @@ class DigitalObject::PublishTarget < DigitalObject::Base
   DIGITAL_OBJECT_TYPE_STRING_KEY = 'publish_target'
   DIGITAL_OBJECT_DATA_KEY = 'publish_target_data'
 
-  PUBLISH_TARGET_DATA_FIELDS = ['string_key', 'publish_url', 'api_key', 'representative_image_pid', 'short_description', 'full_description', 'project_facet_value', 'site_url'].freeze
+  PUBLISH_TARGET_DATA_FIELDS = ['string_key', 'publish_url', 'api_key', 'representative_image_pid', 'short_title', 'short_description', 'full_description', 'restricted', 'slug', 'site_url'].freeze
   REQUIRED_PUBLISH_TARGET_DATA_FIELDS = ['string_key'].freeze
 
   def initialize
@@ -52,6 +52,9 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     super
 
     # Serizlize publish data to Fedora
+
+    # ['string_key', 'publish_url', 'api_key', 'representative_image_pid', 'short_title', 'short_description', 'full_description', 'restricted', 'slug', 'site_url']
+
     # string_key -> ???
     # publish_url -> [Hyacinth Only, no need to serialize]
     # api_key -> [Hyacinth Only, no need to serialize]

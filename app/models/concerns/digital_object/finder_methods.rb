@@ -15,13 +15,17 @@ module DigitalObject::FinderMethods
       digital_object_record = ::DigitalObjectRecord.find_by(pid: pid)
 
       if digital_object_record.nil?
-        raise Hyacinth::Exceptions::DigitalObjectNotFoundError, "Couldn't find DigitalObject with pid #{pid}"
+        raise Hyacinth::Exceptions::DigitalObjectNotFoundError, "Couldn't find DigitalObjectRecord with pid #{pid}"
       end
 
       # Retry after Fedora timeouts / unreachable host
       fobj = nil
       Retriable.retriable DigitalObject::Base::RETRY_OPTIONS do
         fobj = ActiveFedora::Base.find(pid)
+      end
+
+      if fobj.nil?
+        raise Hyacinth::Exceptions::AssociatedFedoraObjectNotFoundError, "Couldn't find Fedora Object with pid #{pid}"
       end
 
       digital_object = DigitalObject::Base.get_class_for_fedora_object(fobj).new
