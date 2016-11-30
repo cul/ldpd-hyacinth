@@ -6,9 +6,7 @@ class Project < ActiveRecord::Base
   has_many :project_permissions, dependent: :destroy
   accepts_nested_attributes_for :project_permissions, allow_destroy: true, reject_if: proc { |attributes| attributes['id'].blank? && attributes['user_id'].blank? }
 
-  has_many :publish_targets, through: :enabled_publish_targets
-  has_many :enabled_publish_targets, dependent: :destroy
-  accepts_nested_attributes_for :enabled_publish_targets, allow_destroy: true
+  serialize :enabled_publish_target_pids, Array
 
   belongs_to :pid_generator
 
@@ -18,6 +16,7 @@ class Project < ActiveRecord::Base
 
   before_create :create_associated_fedora_object!
   before_save :fill_in_short_label_if_blank!
+  before_save :clear_blank_publish_target_values!
   after_save :update_fedora_object!, :ensure_that_title_fields_are_enabled_and_required
   after_destroy :mark_fedora_object_as_deleted!
 
@@ -116,6 +115,10 @@ class Project < ActiveRecord::Base
 
   def fill_in_short_label_if_blank!
     self.short_label = display_label if short_label.blank?
+  end
+  
+  def clear_blank_publish_target_values!
+    enabled_publish_target_pids.delete_if(&:blank?) unless enabled_publish_target_pids.nil?
   end
 
   def as_json(_options = {})

@@ -11,7 +11,7 @@ module Hyacinth::DigitalObjects::EditorBehavior
       dynamic_field_hierarchy: dynamic_field_hierarchy,
       fieldsets: fieldsets,
       dynamic_field_ids_to_enabled_dynamic_fields: dynamic_field_ids_to_enabled_dynamic_fields,
-      allowed_publish_targets: digital_object.allowed_publish_targets.map { |pub| { display_label: pub.display_label, pid: pub.pid } }
+      allowed_publish_targets: digital_object.allowed_publish_targets
     }
 
     if params['search_result_number'].present? && params['search'].present?

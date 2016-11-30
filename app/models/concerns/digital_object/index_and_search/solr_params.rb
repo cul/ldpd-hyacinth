@@ -69,7 +69,6 @@ module DigitalObject::IndexAndSearch::SolrParams
         facet_clause = values.map { |value| Hyacinth::Utils::SolrUtils.solr_escape(value) }.join(' AND ')
         solr_params['fq'] << "#{facet_field}:\"#{facet_clause}\""
       end
-
       # Also add currently applied filters, building fq values based on "operator" values and making sure to escape values
       user_search_params.fetch('fq', {}).each do |filter_field, values|
         # Note: API values may be interpreted as a hash instead of a value.  This is handled.

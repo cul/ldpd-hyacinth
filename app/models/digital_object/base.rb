@@ -244,7 +244,9 @@ class DigitalObject::Base
   end
 
   def allowed_publish_targets
-    project.publish_targets
+    pids = project.enabled_publish_target_pids
+    pub_target_titles = DigitalObject::Base.titles_for_pids(pids, nil)
+    pids.map { |pub_target_pid| { display_label: pub_target_titles[pub_target_pid], pid: pub_target_pid } }
   end
 
   def self.titles_for_pids(pids, user_for_access)

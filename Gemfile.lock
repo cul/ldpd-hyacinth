@@ -127,6 +127,10 @@ GEM
     charlock_holmes (0.7.3)
     childprocess (0.5.9)
       ffi (~> 1.0, >= 1.0.11)
+    chosen-rails (1.5.2)
+      coffee-rails (>= 3.2)
+      railties (>= 3.0)
+      sass-rails (>= 3.2)
     cliver (0.3.2)
     coderay (1.1.0)
     coffee-rails (4.1.0)
@@ -535,6 +539,7 @@ DEPENDENCIES
   capistrano-rvm (~> 0.1)
   capybara (>= 2.5)
   charlock_holmes
+  chosen-rails
   coderay
   coffee-rails
   cul_hydra (~> 1.4.1)

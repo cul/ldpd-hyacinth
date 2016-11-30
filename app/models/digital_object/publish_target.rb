@@ -64,6 +64,19 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     # project_facet_value -> ???
     # site_url -> ???
   end
+  
+  def self.all_pids
+    puts 'Getting all publish target pids:'
+    search_results = search(
+      {
+        'fl' => 'pid',
+        'fq' => {'hyacinth_type_sim' => [{'equals' => 'publish_target'}]}
+      },
+      nil,
+      {}
+    )
+    (search_results['results'].present? ? search_results['results'].map{ |result| result['pid'] } : [])
+  end
 
   # JSON representation
   def as_json(options = {})
