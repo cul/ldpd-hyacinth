@@ -83,11 +83,11 @@ RSpec.configure do |config|
     click_button 'Sign in'
   end
   
-  def destroy_all_hyacinth_records
+  def destroy_all_hyacinth_groups_items_and_assets
     DigitalObjectRecord.all.each do |digital_object_record|
       begin
         digital_object = DigitalObject::Base.find(digital_object_record.pid)
-        digital_object.destroy(true, true)
+        digital_object.destroy(true, true) if digital_object.is_a?(DigitalObject::Group) || digital_object.is_a?(DigitalObject::Item) || digital_object.is_a?(DigitalObject::Asset)
       rescue Hyacinth::Exceptions::AssociatedFedoraObjectNotFoundError
       end
     end

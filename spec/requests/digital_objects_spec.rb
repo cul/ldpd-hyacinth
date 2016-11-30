@@ -170,7 +170,7 @@ RSpec.describe "DigitalObjects", :type => :request do
     describe "/digital_objects/search_results_to_csv.json" do
     
       before :example do
-        destroy_all_hyacinth_records() # delete all current item records
+        destroy_all_hyacinth_groups_items_and_assets() # delete all current item records
         
         # create new item record
         post(digital_objects_path, {
@@ -195,7 +195,11 @@ RSpec.describe "DigitalObjects", :type => :request do
       let(:generated_pid) { csv[2][0] }
       context "search request method is GET" do
         before {
-          get search_results_to_csv_digital_objects_path, {format: 'json'}
+          get search_results_to_csv_digital_objects_path, {format: 'json',
+            search: {
+              'fq' => { 'hyacinth_type_sim' => [{ 'does_not_equal' => 'publish_target' }] }
+            }
+          }
         }
 
         it do
@@ -213,7 +217,11 @@ RSpec.describe "DigitalObjects", :type => :request do
 
       context "search request method is POST" do
         before {
-          post search_results_to_csv_digital_objects_path, {format: 'json'}
+          post search_results_to_csv_digital_objects_path, {format: 'json',
+            search: {
+              'fq' => { 'hyacinth_type_sim' => [{ 'does_not_equal' => 'publish_target' }] }
+            }
+          }
         }
 
         it do

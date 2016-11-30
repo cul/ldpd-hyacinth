@@ -14,13 +14,11 @@ class DigitalObject::Base
   NUM_FEDORA_RETRY_ATTEMPTS = 3
   DELAY_IN_SECONDS_BETWEEN_FEDORA_RETRY_ATTEMPTS = 5
   RETRY_OPTIONS = { on: [RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH], tries: NUM_FEDORA_RETRY_ATTEMPTS, base_interval: DELAY_IN_SECONDS_BETWEEN_FEDORA_RETRY_ATTEMPTS }
-  PUBLISH_ACTION_PUBLISH = 'publish'.freeze
-  PUBLISH_ACTION_UNPUBLISH = 'unpublish'.freeze
 
   # For ActiveModel::Dirty
   define_attribute_methods :parent_digital_object_pids, :obsolete_parent_digital_object_pids, :ordered_child_digital_object_pids
 
-  attr_accessor :project, :publish_targets, :identifiers, :created_by, :updated_by, :state, :dc_type, :ordered_child_digital_object_pids, :publish_after_save
+  attr_accessor :project, :publish_target_pids, :identifiers, :created_by, :updated_by, :state, :dc_type, :ordered_child_digital_object_pids, :publish_after_save
   attr_reader :errors, :fedora_object, :parent_digital_object_pids
 
   delegate :created_at, :new_record?, :updated_at, to: :@db_record
@@ -38,7 +36,7 @@ class DigitalObject::Base
     @db_record = ::DigitalObjectRecord.new
     @fedora_object = nil
     @project = nil
-    @publish_targets = []
+    @publish_target_pids = []
     @identifiers = []
     @parent_digital_object_pids = []
     @obsolete_parent_digital_object_pids = []
@@ -72,16 +70,12 @@ class DigitalObject::Base
 
   def reset_data_attributes_before_assignment(digital_object_data)
     @ordered_child_digital_object_pids = [] unless digital_object_data['ordered_child_digital_objects'].blank?
+    # Do not clear old values if this is a new record because we may be preserving values from Fedora upon import
     return if self.new_record?
-    # We might have existing values if we're creating a new record with an existing Fedora object,
-    # so only clear existing data if this is an update to an existing Hyacinth record
-    @parent_digital_object_pids = [] unless digital_object_data['parent_digital_objects'].blank?
-    # We might have existing values if we're creating a new record with an existing Fedora object,
-    # so only clear existing data if this is an update to an existing Hyacinth record
-    @identifiers = [] unless digital_object_data['identifiers'].blank?
-    # We might have existing values if we're creating a new record with an existing Fedora object,
-    # so only clear existing data if this is an update to an existing Hyacinth record
-    @publish_targets = [] unless digital_object_data['publish_targets'].blank?
+    # Only clear data before assignment if a value has been supplied
+    @parent_digital_object_pids = [] if digital_object_data.key?('parent_digital_objects')
+    @identifiers = [] if digital_object_data.key?('identifiers')
+    @publish_target_pids = [] if digital_object_data.key?('publish_targets')
   end
 
   # Updates the DigitalObject with the given digital_object_data
@@ -103,7 +97,7 @@ class DigitalObject::Base
     self.project = project_from_data(digital_object_data) if self.new_record?
 
     # Publish Targets (multiple)
-    publish_targets_from_data(digital_object_data) { |publish_target| @publish_targets.push(publish_target) }
+    publish_target_pids_from_data(digital_object_data) { |publish_target_pid| @publish_target_pids.push(publish_target_pid) }
 
     # Ordered child Digital Objects (PID or Identifier)
     ordered_child_digital_objects_from_data(digital_object_data) { |digital_object| add_ordered_child_digital_object(digital_object) }
@@ -220,21 +214,27 @@ class DigitalObject::Base
 
     return false if @errors.present?
 
+    # TODO: Tell all INACTIVE (but project-enabled) publish targets to un-publish this
+    # object BEFORE doing a publish (in case multiple publish targets have the same publish URL)
+
     # Tell all ACTIVE publish targets to publish this object
-    publish_targets.each do |publish_target|
-      next unless publish_target.publish_url.present?
-      api_key = publish_target.api_key
+    publish_target_pids.each do |publish_target_pid|
+      publish_target = DigitalObject::Base.find(publish_target_pid)
+
+      next unless publish_target.publish_target_field('publish_url').present?
       begin
-        json_response = JSON(RestClient.post publish_target.publish_url, pid: pid, api_key: api_key, publish_action: PUBLISH_ACTION_PUBLISH)
-        unless json_response['success'] && json_response['success'].to_s == 'true'
-          @errors.add(:publish_target, 'Error encountered while publishing to ' + publish_target.display_label)
+        response = RestClient.put(
+          publish_target.publish_url + '/' + pid,
+          {},
+          Authorization: "APIKEY #{publish_target.publish_target_field('api_key')}"
+        )
+        unless response.code == 200
+          @errors.add(:publish_target, 'Error encountered while publishing to ' + publish_target.get_title)
         end
       rescue RestClient::Unauthorized
         @errors.add(:publish_target, "Not authorized to publish to #{publish_target.display_label}. Check credentials.")
       end
     end
-
-    # TODO: Tell all INACTIVE (but project-enabled) publish targets to un-publish this object
 
     @errors.blank?
   end
@@ -244,9 +244,16 @@ class DigitalObject::Base
   end
 
   def allowed_publish_targets
-    pids = project.enabled_publish_target_pids
-    pub_target_titles = DigitalObject::Base.titles_for_pids(pids, nil)
-    pids.map { |pub_target_pid| { display_label: pub_target_titles[pub_target_pid], pid: pub_target_pid } }
+    DigitalObject::PublishTarget.basic_publish_target_data_from_solr(project.enabled_publish_target_pids)
+  end
+
+  def publish_target_data
+    DigitalObject::PublishTarget.basic_publish_target_data_from_solr(@publish_target_pids)
+  end
+
+  def publish_targets
+    return [] if @publish_target_pids.blank?
+    @publish_target_pids.map { |publish_target_pid| DigitalObject::Base.find(publish_target_pid) }
   end
 
   def self.titles_for_pids(pids, user_for_access)

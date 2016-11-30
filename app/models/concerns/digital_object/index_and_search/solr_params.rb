@@ -6,6 +6,7 @@ module DigitalObject::IndexAndSearch::SolrParams
       'present' => proc { |filter_field| filter_field + ':[* TO *]' },
       'absent' => proc { |filter_field| '-' + filter_field + ':["" TO *]' },
       'equals' => proc { |filter_field, safe_value| filter_field + ': ' + safe_value },
+      'does_not_equal' => proc { |filter_field, safe_value| '-' + filter_field + ': ' + safe_value },
       'contains' => proc { |filter_field, safe_value| filter_field + ': *' + safe_value + '*' }
     }
 

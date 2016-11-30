@@ -11,6 +11,6 @@ module Hyacinth::Exceptions
 
   class InvalidDigitalObjectTypeError < HyacinthError; end
   class MalformedControlledTermFieldValue < HyacinthError; end
-  
+
   class InvalidCsvHeader < HyacinthError; end
 end

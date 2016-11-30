@@ -116,7 +116,7 @@ class Project < ActiveRecord::Base
   def fill_in_short_label_if_blank!
     self.short_label = display_label if short_label.blank?
   end
-  
+
   def clear_blank_publish_target_values!
     enabled_publish_target_pids.delete_if(&:blank?) unless enabled_publish_target_pids.nil?
   end

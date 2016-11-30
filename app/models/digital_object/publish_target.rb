@@ -64,18 +64,64 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     # project_facet_value -> ???
     # site_url -> ???
   end
-  
+
+  def publish_target_field(field_name)
+    raise InvalidPublishTargetField, 'Invalid publish target field: ' + field_name unless PUBLISH_TARGET_DATA_FIELDS.include?(field_name)
+    @publish_target_data[field_name]
+  end
+
   def self.all_pids
-    puts 'Getting all publish target pids:'
     search_results = search(
       {
         'fl' => 'pid',
-        'fq' => {'hyacinth_type_sim' => [{'equals' => 'publish_target'}]}
+        'fq' => { 'hyacinth_type_sim' => [{ 'equals' => 'publish_target' }] }
       },
       nil,
       {}
     )
-    (search_results['results'].present? ? search_results['results'].map{ |result| result['pid'] } : [])
+    (search_results['results'].present? ? search_results['results'].map { |result| result['pid'] } : [])
+  end
+
+  def self.find_by_string_key(string_key)
+    search_results = search(
+      {
+        'fl' => 'pid',
+        'fq' => { 'publish_target_string_key_sim' => [{ 'equals' => string_key }] }
+      },
+      nil,
+      {}
+    )
+    (search_results['results'].present? ? DigitalObject::Base.find(search_results['results'].first['pid']) : nil)
+  end
+
+  # Returns a minimal set of publish target data (pid, string_key and title), generally used by Groups, Items or Assets
+  def self.basic_publish_target_data_from_solr(publish_target_pids)
+    return [] if publish_target_pids.blank?
+
+    search_results = search(
+      {
+        'fl' => 'pid, title_ssm, digital_object_data_ss',
+        'pids' => publish_target_pids
+      },
+      nil,
+      {}
+    )
+    return [] unless search_results['results'].present?
+
+    search_results['results'].map do |publish_target_solr_doc|
+      digital_object_data = JSON.parse(publish_target_solr_doc.fetch('digital_object_data_ss'))
+      {
+        pid: publish_target_solr_doc['pid'],
+        display_label: publish_target_solr_doc['title_ssm'].first,
+        string_key: digital_object_data.fetch('publish_target_data', {}).present? ? JSON.parse(publish_target_solr_doc['digital_object_data_ss'])['publish_target_data']['string_key'] : ''
+      }
+    end
+  end
+
+  def to_solr
+    doc = super
+    doc['publish_target_string_key_sim'] = @publish_target_data['string_key']
+    doc
   end
 
   # JSON representation

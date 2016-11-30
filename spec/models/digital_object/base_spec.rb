@@ -141,7 +141,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(group).to be_instance_of(DigitalObject::Group)
         expect(group.identifiers).to eq(sample_group_digital_object_data['identifiers'])
         expect(group.project.string_key).to eq('test')
-        expect(group.publish_targets.map{|publish_target| publish_target.string_key}.sort).to eq(['test_publish_target_1'])
+        expect(group.publish_targets.map{|publish_target| publish_target.publish_target_field('string_key')}.sort).to eq(['test_publish_target_1'])
         expect(group.dynamic_field_data).to eq(sample_group_digital_object_data['dynamic_field_data'])
         
         expect(group.created_by).to be_nil # Because we didn't set created_by
@@ -172,7 +172,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(new_group_with_parent_group.identifiers).to eq(second_sample_group_digital_object_data['identifiers'])
         expect(new_group_with_parent_group.parent_digital_object_pids).to eq([parent_group_pid])
         expect(new_group_with_parent_group.project.string_key).to eq('test')
-        expect(new_group_with_parent_group.publish_targets.map{|publish_target| publish_target.string_key}.sort).to eq(['test_publish_target_1'])
+        expect(new_group_with_parent_group.publish_targets.map{|publish_target| publish_target.publish_target_field('string_key')}.sort).to eq(['test_publish_target_1'])
         expect(new_group_with_parent_group.dynamic_field_data).to eq(second_sample_group_digital_object_data['dynamic_field_data'])
         
         expect(new_group_with_parent_group.created_by).to be_nil # Because we didn't set created_by
@@ -189,7 +189,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(item).to be_instance_of(DigitalObject::Item)
         expect(item.identifiers).to eq(sample_item_digital_object_data['identifiers'])
         expect(item.project.string_key).to eq('test')
-        expect(item.publish_targets.map{|publish_target| publish_target.string_key}.sort).to eq(['test_publish_target_1', 'test_publish_target_2'])
+        expect(item.publish_targets.map{|publish_target| publish_target.publish_target_field('string_key')}.sort).to eq(['test_publish_target_1', 'test_publish_target_2'])
         expect(item.dynamic_field_data).to eq(sample_item_digital_object_data['dynamic_field_data'])
         
         expect(item.created_by).to be_nil # Because we didn't set created_by
@@ -220,7 +220,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(new_item_with_parent_group.identifiers).to eq(sample_item_digital_object_data['identifiers'])
         expect(new_item_with_parent_group.parent_digital_object_pids).to eq([parent_group_pid])
         expect(new_item_with_parent_group.project.string_key).to eq('test')
-        expect(new_item_with_parent_group.publish_targets.map{|publish_target| publish_target.string_key}.sort).to eq(['test_publish_target_1', 'test_publish_target_2'])
+        expect(new_item_with_parent_group.publish_targets.map{|publish_target| publish_target.publish_target_field('string_key')}.sort).to eq(['test_publish_target_1', 'test_publish_target_2'])
         expect(new_item_with_parent_group.dynamic_field_data).to eq(sample_item_digital_object_data['dynamic_field_data'])
         
         expect(new_item_with_parent_group.created_by).to be_nil # Because we didn't set created_by
@@ -237,7 +237,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(asset).to be_instance_of(DigitalObject::Asset)
         expect(asset.identifiers).to eq(sample_asset_digital_object_data['identifiers'])
         expect(asset.project.string_key).to eq('test')
-        expect(asset.publish_targets.map{|publish_target| publish_target.string_key}.sort).to eq(['test_publish_target_2'])
+        expect(asset.publish_targets.map{|publish_target| publish_target.publish_target_field('string_key')}.sort).to eq(['test_publish_target_2'])
         expect(asset.dynamic_field_data).to eq(sample_asset_digital_object_data['dynamic_field_data'])
         
         expect(asset.created_by).to be_nil # Because we didn't set created_by
@@ -268,7 +268,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(new_asset_with_parent_item.identifiers).to eq(sample_asset_digital_object_data['identifiers'])
         expect(new_asset_with_parent_item.parent_digital_object_pids).to eq([parent_item_pid])
         expect(new_asset_with_parent_item.project.string_key).to eq('test')
-        expect(new_asset_with_parent_item.publish_targets.map{|publish_target| publish_target.string_key}.sort).to eq(['test_publish_target_2'])
+        expect(new_asset_with_parent_item.publish_targets.map{|publish_target| publish_target.publish_target_field('string_key')}.sort).to eq(['test_publish_target_2'])
         expect(new_asset_with_parent_item.dynamic_field_data).to eq(sample_asset_digital_object_data['dynamic_field_data'])
         
         expect(new_asset_with_parent_item.created_by).to be_nil # Because we didn't set created_by
@@ -292,7 +292,17 @@ RSpec.describe DigitalObject::Base, :type => :model do
         existing_parent_object = Collection.new(:pid => existing_parent_object_pid)
         existing_parent_object.save
         
-        publish_target = PublishTarget.first
+        first_publish_target_result = DigitalObject::Base.search(
+          {
+            'per_page' => 1,
+            'fl' => 'pid',
+            'fq' => { 'hyacinth_type_sim' => [{ 'equals' => 'publish_target' }] }
+          },
+          nil,
+          {}
+        )
+        
+        publish_target = DigitalObject::Base.find(first_publish_target_result['results'].first['pid'])
         publish_target_fedora_object = publish_target.fedora_object
         
         existing_object_pid = 'test:existingobject'
@@ -318,7 +328,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(item.fedora_object).to eq(content_aggregator)
         expect(item.fedora_object.datastreams['DC'].dc_identifier.include?(existing_object_identifier)).to be(true)
         expect(item.parent_digital_object_pids.include?(existing_parent_object_pid)).to be(true)
-        expect(item.publish_targets.include?(publish_target)).to be(true)
+        expect(item.publish_targets.map{ |pub_target| pub_target.pid }.include?(publish_target.pid)).to be(true)
     end
   end
 

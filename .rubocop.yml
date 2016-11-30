@@ -38,6 +38,8 @@ Metrics/ClassLength:
 
 Metrics/ModuleLength:
   Exclude: []
+  CountComments: false
+  Max: 110
 
 Style/BlockDelimiters:
   Exclude:

@@ -42,7 +42,8 @@ module DigitalObject::IndexAndSearch
       solr_params['rows'] = per_page
       solr_params['start'] = start_value
       solr_params['fq'] = []
-      solr_params['q'] = user_search_params['q'] if user_search_params['q'].present?
+      solr_params['q'] = user_search_params['q'].present? ? user_search_params['q'] : '*:*' # TODO: Don't know why default q of '*:*' is suddenly necessary, but wasn't before
+      solr_params['df'] = 'search_keyword_teim' # TODO: Don't know why this is suddenly necessary, but wasn't before
       solr_params['qf'] = user_search_params.fetch('search_field', 'search_keyword_teim')
       solr_params['sort'] = user_search_params.fetch('sort', 'sort_title_ssort asc')
       solr_params['fl'] = user_search_params['fl'] if user_search_params['fl'].present?

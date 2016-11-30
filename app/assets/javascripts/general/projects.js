@@ -9,7 +9,3 @@ $(document).ready(function(){
     });
   }
 });
-
-Hyacinth.Project.something = function(){
-  
-};
