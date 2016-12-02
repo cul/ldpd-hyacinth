@@ -91,8 +91,6 @@ Hyacinth::Application.routes.draw do
     mount Resque::Server.new, at: "/resque"
   end
 
-  resources :publish_targets
-
   resources :projects do
     resources :fieldsets, controller: 'projects/fieldsets', as: :project_fieldsets
 
