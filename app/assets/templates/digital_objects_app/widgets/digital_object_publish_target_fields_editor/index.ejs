@@ -15,7 +15,7 @@
   
   <div class="field">
     <label>String Key</label>
-    <input type="text" name="string_key" value="<%- digitalObject.publish_target_data.string_key %>" class="form-control" />
+    <input type="text" name="string_key" value="<%- digitalObject.publish_target_data.string_key %>" class="form-control" <%= (digitalObject.publish_target_data.string_key.length > 0) ? 'disabled="disabled"' : '' %> />
   </div>
   
   <div class="field">
@@ -34,6 +34,11 @@
   </div>
   
   <div class="field">
+    <label>Short Title</label>
+    <input type="text" name="short_title" value="<%- digitalObject.publish_target_data.short_title %>" class="form-control" />
+  </div>
+  
+  <div class="field">
     <label>Short Description</label>
     <textarea name="short_description" class="form-control"><%- digitalObject.publish_target_data.short_description %></textarea>
   </div>
@@ -44,13 +49,19 @@
   </div>
   
   <div class="field">
-    <label>Project Facet</label>
-    <input type="text" name="project_facet_value" value="<%- digitalObject.publish_target_data.project_facet_value %>" class="form-control" />
+    <label>Slug</label>
+    <input type="text" name="slug" value="<%- digitalObject.publish_target_data.slug %>" class="form-control" />
   </div>
   
   <div class="field">
     <label>Site URL</label>
     <input type="text" name="site_url" value="<%- digitalObject.publish_target_data.site_url %>" class="form-control" />
+  </div>
+  
+  <div class="field">
+    <label>
+      <input name="restricted" type="checkbox" <%= (digitalObject.publish_target_data.restricted > 0) ? 'checked="checked"' : '' %>> Restricted?
+    </label>
   </div>
   
   <% if(Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) { %>

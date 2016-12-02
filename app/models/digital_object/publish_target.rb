@@ -3,7 +3,7 @@ class DigitalObject::PublishTarget < DigitalObject::Base
   DIGITAL_OBJECT_TYPE_STRING_KEY = 'publish_target'
   DIGITAL_OBJECT_DATA_KEY = 'publish_target_data'
 
-  PUBLISH_TARGET_DATA_FIELDS = ['string_key', 'publish_url', 'api_key', 'representative_image_pid', 'short_description', 'full_description', 'project_facet_value', 'site_url'].freeze
+  PUBLISH_TARGET_DATA_FIELDS = ['string_key', 'publish_url', 'api_key', 'representative_image_pid', 'short_title', 'short_description', 'full_description', 'restricted', 'slug', 'site_url'].freeze
   REQUIRED_PUBLISH_TARGET_DATA_FIELDS = ['string_key'].freeze
 
   def initialize
@@ -52,6 +52,9 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     super
 
     # Serizlize publish data to Fedora
+
+    # ['string_key', 'publish_url', 'api_key', 'representative_image_pid', 'short_title', 'short_description', 'full_description', 'restricted', 'slug', 'site_url']
+
     # string_key -> ???
     # publish_url -> [Hyacinth Only, no need to serialize]
     # api_key -> [Hyacinth Only, no need to serialize]
@@ -60,6 +63,65 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     # full_description -> :description -> publishTargetDescription
     # project_facet_value -> ???
     # site_url -> ???
+  end
+
+  def publish_target_field(field_name)
+    raise InvalidPublishTargetField, 'Invalid publish target field: ' + field_name unless PUBLISH_TARGET_DATA_FIELDS.include?(field_name)
+    @publish_target_data[field_name]
+  end
+
+  def self.all_pids
+    search_results = search(
+      {
+        'fl' => 'pid',
+        'fq' => { 'hyacinth_type_sim' => [{ 'equals' => 'publish_target' }] }
+      },
+      nil,
+      {}
+    )
+    (search_results['results'].present? ? search_results['results'].map { |result| result['pid'] } : [])
+  end
+
+  def self.find_by_string_key(string_key)
+    search_results = search(
+      {
+        'fl' => 'pid',
+        'fq' => { 'publish_target_string_key_sim' => [{ 'equals' => string_key }] }
+      },
+      nil,
+      {}
+    )
+    (search_results['results'].present? ? DigitalObject::Base.find(search_results['results'].first['pid']) : nil)
+  end
+
+  # Returns a minimal set of publish target data (pid, string_key and title), generally used by Groups, Items or Assets
+  def self.basic_publish_target_data_from_solr(publish_target_pids)
+    return [] if publish_target_pids.blank?
+
+    search_results = search(
+      {
+        'fl' => 'pid, title_ssm, digital_object_data_ss',
+        'pids' => publish_target_pids
+      },
+      nil,
+      {}
+    )
+    return [] unless search_results['results'].present?
+
+    search_results['results'].map do |publish_target_solr_doc|
+      digital_object_data = JSON.parse(publish_target_solr_doc.fetch('digital_object_data_ss'))
+      {
+        pid: publish_target_solr_doc['pid'],
+        display_label: publish_target_solr_doc['title_ssm'].first,
+        string_key: digital_object_data.fetch('publish_target_data', {}).present? ? JSON.parse(publish_target_solr_doc['digital_object_data_ss'])['publish_target_data']['string_key'] : ''
+      }
+    end
+  end
+
+  def to_solr
+    doc = super
+    doc['publish_target_string_key_sim'] = @publish_target_data['string_key']
+    doc
   end
 
   # JSON representation

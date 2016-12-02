@@ -104,6 +104,8 @@ class Hyacinth::Utils::CsvImportExportUtils
     rescue CSV::MalformedCSVError
       # Handle invalid CSV
       import_job.errors.add(:invalid_csv, 'Invalid CSV File')
+    rescue Hyacinth::Exceptions::InvalidCsvHeader => e
+      import_job.errors.add(:invalid_csv_header, e.message)
     end
 
     project_search_criteria_referenced_in_spreadsheet.uniq!

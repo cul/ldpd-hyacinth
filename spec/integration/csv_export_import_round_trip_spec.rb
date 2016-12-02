@@ -4,7 +4,7 @@ describe "CSV Export-Import Round Trip" do
   
   before :example do
     # delete all current item records
-    destroy_all_hyacinth_records()
+    destroy_all_hyacinth_groups_items_and_assets()
   end
   
   describe "exporting objects to CSV and successfully reimporting them from the created CSV" do
@@ -91,7 +91,9 @@ describe "CSV Export-Import Round Trip" do
       # Create first CsvExport instance and process it immediately
       first_csv_export = CsvExport.create(
         user: User.find_by(is_admin: true), # Admin users have access to all records
-        search_params: JSON.generate({})
+        search_params: JSON.generate({
+          'fq' => { 'hyacinth_type_sim' => [{ 'does_not_equal' => 'publish_target' }] }
+        })
       )
       ExportSearchResultsToCsvJob.perform(first_csv_export.id)
       first_csv_export.reload # Reload the ActiveRecord object, getting the latest data in the DB (so we have the path to the csv file)
@@ -124,7 +126,9 @@ describe "CSV Export-Import Round Trip" do
       # Create second CsvExport instance and process it immediately
       second_csv_export = CsvExport.create(
         user: User.find_by(is_admin: true), # Admin users have access to all records
-        search_params: JSON.generate({})
+        search_params: JSON.generate({
+          'fq' => { 'hyacinth_type_sim' => [{ 'does_not_equal' => 'publish_target' }] }
+        })
       )
       ExportSearchResultsToCsvJob.perform(second_csv_export.id)
       second_csv_export.reload # Reload the ActiveRecord object, getting the latest data in the DB (so we have the path to the csv file)

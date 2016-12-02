@@ -55,6 +55,8 @@ namespace :resque do
       `#{syscmd}`
       store_pids([], :write)
     end
+    # Unregister old workers
+    Resque.workers.each {|w| w.unregister_worker}
   end
 
   # Start a worker with proper env vars and output redirection

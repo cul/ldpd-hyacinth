@@ -31,13 +31,23 @@ namespace :hyacinth do
     puts "[Warning] Exception creating rspec rake tasks.  This message can be ignored in environments that intentionally do not pull in the RSpec gem (i.e. production)."
     puts e
   end
-
-  desc "CI build"
-  task ci: 'hyacinth:rubocop' do
-    
+  
+  desc "CI build without rubocop"
+  task :ci_nocop do
     ENV['RAILS_ENV'] = 'test'
     Rails.env = ENV['RAILS_ENV']
-    
+    Rake::Task["hyacinth:ci_task"].invoke
+  end
+
+  desc "CI build with Rubocop validation"
+  task ci: ['hyacinth:rubocop'] do
+    ENV['RAILS_ENV'] = 'test'
+    Rails.env = ENV['RAILS_ENV']
+    Rake::Task["hyacinth:ci_task"].invoke
+  end
+
+  desc "CI build"
+  task ci_task: [:environment] do
     Jettywrapper.jetty_dir = File.join(Rails.root, 'jetty-test')
 
     unless File.exists?(Jettywrapper.jetty_dir)

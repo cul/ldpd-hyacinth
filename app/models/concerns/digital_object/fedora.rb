@@ -89,12 +89,7 @@ module DigitalObject::Fedora
       @project = project_pid.nil? ? nil : Project.find_by(pid: project_pid)
 
       # Get publish target relationships
-      pids = @fedora_object.relationships(:publisher).map { |val| val.gsub('info:fedora/', '') }
-      @publish_targets = ::PublishTarget.where(pid: pids).to_a
-      targets_match = pids.length == @publish_targets.length
-      raise "Could not load all Publish Targets for DigitalObject #{pid}. " \
-        "The following Fedora objects have not been imported into Hyacinth as Publish targets: " \
-        "#{(pids - @publish_targets.map(&:pid)).inspect}" unless targets_match
+      @publish_target_pids = @fedora_object.relationships(:publisher).to_a.map { |val| val.gsub('info:fedora/', '') }
     end
   end
 
@@ -144,8 +139,10 @@ module DigitalObject::Fedora
 
     def set_fedora_project_and_publisher_relationships
       set_fedora_object_relationship(PROJECT_MEMBERSHIP_PREDICATE, @project.fedora_object.internal_uri)
-
-      values = @publish_targets.map { |publish_target| publish_target.fedora_object.internal_uri }
+      # Retrieve publish targets before setting in order to verify that they exist
+      # TODO: Do this through solr rather than Fedora because it's faster
+      publish_targets = @publish_target_pids.map { |publish_target_pid| DigitalObject::Base.find(publish_target_pid) }
+      values = publish_targets.map { |publish_target| publish_target.fedora_object.internal_uri }
       set_fedora_object_relationship(:publisher, values)
     end
 

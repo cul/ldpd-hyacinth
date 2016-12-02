@@ -69,13 +69,49 @@ namespace :hyacinth do
       }
 
       # Create Test Publish Targets
-      publish_target_1 = PublishTarget.create!(display_label: 'Test Publish Target 1', string_key: 'test_publish_target_1', publish_url: 'http://localhost/fake1', api_key: 'abcdefg')
-      publish_target_2 = PublishTarget.create!(display_label: 'Test Publish Target 2', string_key: 'test_publish_target_2', publish_url: 'http://localhost/fake2', api_key: 'zyxwvut')
+      test_publish_target_1 = DigitalObject::PublishTarget.new
+      test_publish_target_1.set_digital_object_data(
+        {
+          'project' => { 'string_key' => 'publish_targets' },
+          'publish_target_data' => {
+            'string_key' => 'test_publish_target_1'
+          },
+          'dynamic_field_data' => {
+            'title' => [
+              'title_sort_portion' => 'Publish Target 1'
+            ]
+          }
+        },
+        false
+      )
+      test_publish_target_1.save
+      puts 'Created test_publish_target_1.  Time to look up:'
+      puts 'Lookup result: ' + DigitalObject::PublishTarget.find_by_string_key('test_publish_target_1').inspect
       
-      # Create EnabledPublishTarget for test project and new publish targets
-      EnabledPublishTarget.create!(project: test_project, publish_target: publish_target_1)
-      EnabledPublishTarget.create!(project: test_project, publish_target: publish_target_2)
+      test_publish_target_2 = DigitalObject::PublishTarget.new
+      test_publish_target_2.set_digital_object_data(
+        {
+          'project' => { 'string_key' => 'publish_targets' },
+          'publish_target_data' => {
+            'string_key' => 'test_publish_target_2'
+          },
+          'dynamic_field_data' => {
+            'title' => [
+              'title_sort_portion' => 'Publish Target 2'
+            ]
+          }
+        },
+        false
+      )
+      test_publish_target_2.save
+      puts 'Created test_publish_target_2.  Time to look up:'
+      puts 'Lookup result: ' + DigitalObject::PublishTarget.find_by_string_key('test_publish_target_2').inspect
       
+      puts "-- And for good measure, here's how many pub targets we have total: #{DigitalObject::PublishTarget.all_pids}"
+      
+      # Enable test_publish_target_1 for test_project
+      test_project.enabled_publish_target_pids = [test_publish_target_1.pid]
+      test_project.save
     end
 
   end

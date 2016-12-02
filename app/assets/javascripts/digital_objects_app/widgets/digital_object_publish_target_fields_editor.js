@@ -69,13 +69,14 @@ Hyacinth.DigitalObjectsApp.DigitalObjectPublishTargetFieldsEditor.prototype.init
       var publishTargetData = {};
      
       $(this).find('input[name],textarea[name]').each(function(){
-        publishTargetData[$(this).attr('name')] = $(this).val();
+        if($(this).attr('type') == 'checkbox') {
+          publishTargetData[$(this).attr('name')] = $(this).is(':checked');
+        } else {
+          publishTargetData[$(this).attr('name')] = $(this).val();
+        }
       });
       
       var digitalObjectData = {publish_target_data: publishTargetData};
-      
-      console.log('sending:');
-      console.log(digitalObjectData);
       
       $.ajax({
         url: '/digital_objects/' + that.digitalObject.getPid() + '.json',

@@ -31,11 +31,14 @@ module DigitalObject::IndexAndSearch::Index
       project_pid_ssm: project.pid,
       project_display_label_sim: project.display_label,
       project_display_label_ssm: project.display_label,
-      publish_target_pid_sim: publish_targets.map(&:pid),
-      publish_target_pid_ssm: publish_targets.map(&:pid),
-      publish_target_display_label_sim: publish_targets.map(&:display_label),
       digital_object_data_ss: to_json
     }
+
+    pub_target_data = publish_target_data
+    doc[:publish_target_pid_sim] = pub_target_data.map { |data| data['pid'] }
+    doc[:publish_target_pid_ssm] = pub_target_data.map { |data| data['pid'] }
+    doc[:publish_target_display_label_sim] = pub_target_data.map { |data| data['display_label'] }
+    doc[:publish_target_string_key_sim] = pub_target_data.map { |data| data['string_key'] }
 
     doc[:search_keyword_teim] = []
     doc[:search_identifier_sim] = []

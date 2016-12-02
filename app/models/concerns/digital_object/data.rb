@@ -35,15 +35,15 @@ module DigitalObject::Data
     end
   end
 
-  def publish_targets_from_data(digital_object_data)
-    return unless digital_object_data['publish_targets']
+  def publish_target_pids_from_data(digital_object_data)
+    return if digital_object_data['publish_targets'].nil?
 
     digital_object_data['publish_targets'].each do |publish_target_find_criteria|
-      publish_target = ::PublishTarget.find_by(publish_target_find_criteria) # i.e. {string_key: 'target1'} or {pid: 'abc:123'}
+      publish_target = publish_target_find_criteria.key?('pid') ? DigitalObject::Base.find_by_pid(publish_target_find_criteria['pid']) : DigitalObject::PublishTarget.find_by_string_key(publish_target_find_criteria['string_key']) # i.e. publish_target_find_criteria == {string_key: 'target1'} or {pid: 'abc:123'}
       if publish_target.nil?
         raise Hyacinth::Exceptions::PublishTargetNotFoundError, "Could not find Publish Target: #{publish_target_find_criteria.inspect}"
       else
-        yield publish_target if block_given?
+        yield publish_target.fedora_object.pid if block_given?
       end
     end
   end

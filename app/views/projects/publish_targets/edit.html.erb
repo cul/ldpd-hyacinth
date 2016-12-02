@@ -1,7 +1,6 @@
 <%= render partial: 'projects/edit_project_nav' %>
 
-<% enabled_publish_targets = @project.publish_targets %>
-<% non_enabled_publish_targets = enabled_publish_targets.blank? ? PublishTarget.all : PublishTarget.where.not({'id' => enabled_publish_targets.map{|enabled_publish_target|enabled_publish_target.id}}) %>
+<h2>Publish Targets Enabled For This Project</h2>
 
 <%= form_for(@project, url: project_publish_targets_path(@project), method: 'patch') do |f| %>
 
@@ -17,35 +16,11 @@
     </div>
   <% end %>
 
-  <table id="publish_target_add_form" class="table table-condensed table-bordered table-striped">
-      <thead>
-        <tr>
-          <th class="col-md-5">Name</th>
-          <th class="col-md-1">Remove?</th>
-        </tr>
-      </thead>
-      <tbody>
-        <%= f.fields_for :enabled_publish_targets, @project.enabled_publish_targets.sort_by{ |enabled_publish_target| enabled_publish_target.publish_target.display_label } do |enabled_publish_target_form| %>
-          <tr>
-            <td><%= enabled_publish_target_form.object.publish_target.display_label %></td>
-            <td><label><%= enabled_publish_target_form.check_box :_destroy %></label></td>
-          </tr>
-        <% end %>
-
-        <% if non_enabled_publish_targets.length > 0 %>
-          <%= f.fields_for :enabled_publish_targets, @project.enabled_publish_targets.build do |enabled_publish_target_form| %>
-            <tr id="add-new-publish-target-row">
-              <td><%= enabled_publish_target_form.collection_select(:publish_target_id, non_enabled_publish_targets, :id, :display_label, {:include_blank => '- Select a publish target -'}, {:class => 'form-control input-sm'}) %></td>
-              <td></td>
-            </tr>
-          <% end %>
-        <% else %>
-          <tr><td colspan="7"><strong>All publish targets have been added to this project.</strong></td></tr>
-        <% end %>
-
-      </tbody>
-  </table>
-
+  <% all_publish_target_pids = DigitalObject::PublishTarget.all_pids %>
+  <% enabled_publish_target_pids = @project.enabled_publish_target_pids %>
+  <% pids_to_display_labels = DigitalObject::Base.titles_for_pids(all_publish_target_pids, nil) %>
+  <%= f.select(:enabled_publish_target_pids, options_for_select(Hash[all_publish_target_pids.map{|pid| [pids_to_display_labels[pid], pid]}].sort_by{|label, pid| label}, enabled_publish_target_pids), {}, {:multiple => true, :class => "chosen-select", 'data-placeholder': 'Type or click to select a publish target...'}) %>
+  <br /><br />
   <div class="actions">
     <%= f.submit('Save', class: 'btn btn-primary') %>
   </div>

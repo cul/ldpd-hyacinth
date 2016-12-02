@@ -6,6 +6,7 @@ module DigitalObject::IndexAndSearch::SolrParams
       'present' => proc { |filter_field| filter_field + ':[* TO *]' },
       'absent' => proc { |filter_field| '-' + filter_field + ':["" TO *]' },
       'equals' => proc { |filter_field, safe_value| filter_field + ': ' + safe_value },
+      'does_not_equal' => proc { |filter_field, safe_value| '-' + filter_field + ': ' + safe_value },
       'contains' => proc { |filter_field, safe_value| filter_field + ': *' + safe_value + '*' }
     }
 
@@ -13,8 +14,8 @@ module DigitalObject::IndexAndSearch::SolrParams
       return unless user_for_permission_context.present? && !user_for_permission_context.admin?
       user_allowed_projects = user_for_permission_context.projects
       if user_allowed_projects.length > 0
-        project_clause = '"' + user_for_permission_context.projects.map(&:string_key).join('" OR "') + '"'
-        solr_params['fq'] << "project_string_key_sim:(#{project_clause})"
+        project_clause = user_for_permission_context.projects.map(&:string_key).join(' OR ')
+        solr_params['fq'] << "project_string_key_sim:\"#{project_clause}\""
       else
         # No projects. Return 0 rows from result set and return no facets.
         solr_params['rows'] = 0
@@ -66,10 +67,9 @@ module DigitalObject::IndexAndSearch::SolrParams
 
       # Add filters for currently applied facet filters, making sure to escape values
       user_search_params.fetch('f', {}).each do |facet_field, values|
-        facet_clause = '"' + values.map { |value| Hyacinth::Utils::SolrUtils.solr_escape(value) }.join('" AND "') + '"'
-        solr_params['fq'] << "#{facet_field}:(#{facet_clause})"
+        facet_clause = values.map { |value| Hyacinth::Utils::SolrUtils.solr_escape(value) }.join(' AND ')
+        solr_params['fq'] << "#{facet_field}:\"#{facet_clause}\""
       end
-
       # Also add currently applied filters, building fq values based on "operator" values and making sure to escape values
       user_search_params.fetch('fq', {}).each do |filter_field, values|
         # Note: API values may be interpreted as a hash instead of a value.  This is handled.

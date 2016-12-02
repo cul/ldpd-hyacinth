@@ -7,8 +7,10 @@ class CreateCoreObjects < ActiveRecord::Migration
     # into this migration instead.
     if DigitalObjectType.count == 0
       # Create default PidGenerator
+      puts 'Creating default PidGenerator...'
       PidGenerator.create!(namespace: HYACINTH['default_pid_generator_namespace'])
       
+      puts 'Creating default DigitalObjectTypes...'
       # Create DigitalObjectTypes
       DigitalObjectType.create!(string_key: 'item', display_label: 'Item', sort_order: 0)
       DigitalObjectType.create!(string_key: 'group', display_label: 'Group', sort_order: 1)
@@ -16,6 +18,7 @@ class CreateCoreObjects < ActiveRecord::Migration
       DigitalObjectType.create!(string_key: 'file_system', display_label: 'FileSystem', sort_order: 3)
       
       # Create default user accounts
+      puts 'Creating default user accounts...'
       YAML.load_file('config/default_user_accounts.yml').each {|service_user_entry, service_user_info|
         User.create!(
           :email => service_user_info['email'],
@@ -27,6 +30,7 @@ class CreateCoreObjects < ActiveRecord::Migration
         )
       }
       
+      puts 'Creating default XmlDatastream...'
       # Create XmlDatastreams
       XmlDatastream.create(string_key: 'descMetadata', display_label: 'descMetadata',
         xml_translation: {
@@ -53,6 +57,7 @@ class CreateCoreObjects < ActiveRecord::Migration
       )
       
       # Create DynamicFieldGroupCategories
+      puts 'Creating default DynamicFieldGroupCategories...'
       dfc_descriptive_metadata = DynamicFieldGroupCategory.create!(display_label: 'Descriptive Metadata')
       dfc_identifiers = DynamicFieldGroupCategory.create!(display_label: 'Identifiers')
       dfc_physical_information = DynamicFieldGroupCategory.create!(display_label: 'Physical Information')
@@ -66,6 +71,7 @@ class CreateCoreObjects < ActiveRecord::Migration
       dfc_other = DynamicFieldGroupCategory.create!(display_label: 'Other')
       dfc_asset_data = DynamicFieldGroupCategory.create!(display_label: 'Asset Data')
       
+      puts 'Creating default DynamicFieldGroups, DynamicFields and controlled vocabularies...'
       # Create core DynamicFieldGroups and DynamicFields
       title = DynamicFieldGroup.create!(string_key: 'title', display_label: 'Title', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
         dynamic_fields: [
@@ -177,6 +183,7 @@ class CreateCoreObjects < ActiveRecord::Migration
     end
     
     if DigitalObjectType.find_by(string_key: 'publish_target').nil?
+      puts 'Creating default publish targets...'
       DigitalObjectType.create!(string_key: 'publish_target', display_label: 'Publish Target', sort_order: 4)
       publish_targets_project = Project.create!(string_key: 'publish_targets', display_label: 'Publish Targets', pid_generator: PidGenerator.default_pid_generator)
       
