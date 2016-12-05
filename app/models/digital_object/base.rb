@@ -224,9 +224,9 @@ class DigitalObject::Base
       next unless publish_target.publish_target_field('publish_url').present?
       begin
         response = RestClient.put(
-          publish_target.publish_url + '/' + pid,
+          publish_target.publish_target_field('publish_url') + '/' + pid,
           {},
-          Authorization: "APIKEY #{publish_target.publish_target_field('api_key')}"
+          Authorization: "Token token=#{publish_target.publish_target_field('api_key')}"
         )
         unless response.code == 200
           @errors.add(:publish_target, 'Error encountered while publishing to ' + publish_target.get_title)
