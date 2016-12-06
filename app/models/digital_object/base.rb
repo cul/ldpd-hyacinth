@@ -232,7 +232,7 @@ class DigitalObject::Base
           @errors.add(:publish_target, 'Error encountered while publishing to ' + publish_target.get_title)
         end
       rescue RestClient::Unauthorized
-        @errors.add(:publish_target, "Not authorized to publish to #{publish_target.display_label}. Check credentials.")
+        @errors.add(:publish_target, "Not authorized to publish to #{publish_target.get_title}. Check credentials.")
       end
     end
 
