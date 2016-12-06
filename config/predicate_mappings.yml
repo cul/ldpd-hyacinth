@@ -94,6 +94,7 @@
     :pcdm_related_object_of: relatedObjectOf
   http://purl.org/ontology/bibo/:
     :short_title: shortTitle
+    :ezid_doi: doi
   http://www.bbc.co.uk/ontologies/coreconcepts/:
     :slug: slug
   https://schema.org/:
