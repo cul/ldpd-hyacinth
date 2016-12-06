@@ -52,17 +52,17 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     super
 
     # Serizlize publish data to Fedora
-
-    # ['string_key', 'publish_url', 'api_key', 'representative_image_pid', 'short_title', 'short_description', 'full_description', 'restricted', 'slug', 'site_url']
-
-    # string_key -> ???
-    # publish_url -> [Hyacinth Only, no need to serialize]
-    # api_key -> [Hyacinth Only, no need to serialize]
-    # representative_image_pid -> :foaf_thumbnail -> GenericResource PID
-    # short_description -> :abstract -> RELS-EXT
-    # full_description -> :description -> publishTargetDescription
-    # project_facet_value -> ???
-    # site_url -> ???
+    if publish_target_field('representative_image_pid').present?
+      @fedora_object.representative_image = 'info:fedora/' + publish_target_field('representative_image_pid')
+    else
+      @fedora_object.representative_image = nil
+    end
+    @fedora_object.short_title = publish_target_field('short_title')
+    @fedora_object.abstract = publish_target_field('short_description')
+    @fedora_object.description = publish_target_field('full_description')
+    @fedora_object.restriction = publish_target_field('restricted') ? 'Onsite' : nil
+    @fedora_object.slug = publish_target_field('slug')
+    @fedora_object.source = publish_target_field('site_url').present? ? publish_target_field('site_url') : nil
   end
 
   def publish_target_field(field_name)

@@ -142,7 +142,7 @@ GEM
     coffee-script-source (1.9.1)
     concurrent-ruby (1.0.2)
     connection_pool (2.2.0)
-    cul_hydra (1.4.1)
+    cul_hydra (1.4.5)
       active-fedora (~> 7.0)
       active-triples (~> 0.2.2)
       active_fedora_finders (>= 0.5.0)
@@ -542,7 +542,7 @@ DEPENDENCIES
   chosen-rails
   coderay
   coffee-rails
-  cul_hydra (~> 1.4.1)
+  cul_hydra (~> 1.4.5)
   devise (>= 3.4.1)
   equivalent-xml
   factory_girl_rails (>= 4.4.1)
