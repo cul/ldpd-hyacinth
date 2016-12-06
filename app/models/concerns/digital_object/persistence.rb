@@ -2,6 +2,8 @@ module DigitalObject::Persistence
   extend ActiveSupport::Concern
 
   def save
+    before_save
+
     return false unless self.valid?
 
     creating_new_record = self.new_record?
@@ -27,6 +29,11 @@ module DigitalObject::Persistence
     publish if @publish_after_save
 
     @errors.blank?
+  end
+
+  def before_save
+    # TODO: rewrite with ActiveRecord::Callbacks
+    # To be overridden by subclasses
   end
 
   def persist_to_stores

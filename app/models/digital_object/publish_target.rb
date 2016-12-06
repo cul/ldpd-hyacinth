@@ -47,6 +47,11 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     end
   end
 
+  def before_save
+    super
+    @publish_target_data['string_key'] = 'change-this-' + SecureRandom.uuid if @publish_target_data['string_key'].blank?
+  end
+
   def before_publish
     # TODO: rewrite with ActiveRecord::Callbacks
     super
