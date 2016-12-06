@@ -58,54 +58,65 @@ Hyacinth.DigitalObjectsApp.DigitalObjectPublishTargetFieldsEditor.prototype.init
   
   //Save button is only visible if a user has the right permissions
   if(this.$containerElement.find('.publish-target-fields-editor-form').length > 0) {
-    this.$containerElement.find('.publish-target-fields-editor-form').on('submit', function(e){
-      
+    
+    $editorForm = this.$containerElement.find('.publish-target-fields-editor-form');
+    
+    $editorForm.on('submit', function(e){
       e.preventDefault();
-      
-      var $submitButton = $(this).find('.editor-submit-button');
-      $submitButton.attr('data-original-value', $submitButton.val()).val('Saving...');
-      Hyacinth.addAlert('Saving...', 'info');
-      
-      var publishTargetData = {};
-     
-      $(this).find('input[name],textarea[name]').each(function(){
-        if($(this).attr('type') == 'checkbox') {
-          publishTargetData[$(this).attr('name')] = $(this).is(':checked');
-        } else {
-          publishTargetData[$(this).attr('name')] = $(this).val();
-        }
-      });
-      
-      var digitalObjectData = {publish_target_data: publishTargetData};
-      
-      $.ajax({
-        url: '/digital_objects/' + that.digitalObject.getPid() + '.json',
-        type: 'POST',
-        data: {
-          '_method': 'PUT', //For proper RESTful Rails requests
-          digital_object_data_json : JSON.stringify(digitalObjectData),
-        },
-        cache: false
-      }).done(function(digitalObjectSaveResponse){
-        $submitButton.val($submitButton.attr('data-original-value'));
+      that.submitEditorForm(false);
+    });
   
-        if (digitalObjectSaveResponse['errors']) {
-          var error_messages = [];
-          _.each(digitalObjectSaveResponse['errors'], function(error_message, error_key){
-            error_messages.push(error_message);
-          });
-          Hyacinth.addAlert('Errors encountered during save: <br />' + error_messages.join('<br />'), 'danger');
-        } else {
-          Hyacinth.addAlert('Digital Object saved.', 'success');
-        }
+    $editorForm.on('click', '.editor-submit-button', function(e){
+      e.preventDefault();
+      that.submitEditorForm(false);
+    });
   
-      }).fail(function(){
-        $submitButton.val($submitButton.attr('data-original-value'));
-        alert(Hyacinth.unexpectedAjaxErrorMessage);
-      });
-  
+    $editorForm.on('click', '.editor-submit-and-publish-button', function(e){
+      e.preventDefault();
+      that.submitEditorForm(true);
     });
   }
+};
+
+Hyacinth.DigitalObjectsApp.DigitalObjectPublishTargetFieldsEditor.prototype.submitEditorForm = function(publish) {
+  var $editorForm = this.$containerElement.find('.publish-target-fields-editor-form');
+  
+  Hyacinth.addAlert(publish ? 'Saving and publishing...' : 'Saving...', 'info');
+  var publishTargetData = {};
+ 
+  $editorForm.find('input[name],textarea[name]').each(function(){
+    if($(this).attr('type') == 'checkbox') {
+      publishTargetData[$(this).attr('name')] = $(this).is(':checked');
+    } else {
+      publishTargetData[$(this).attr('name')] = $(this).val();
+    }
+  });
+  
+  var digitalObjectData = {publish_target_data: publishTargetData};
+  
+  $.ajax({
+    url: '/digital_objects/' + this.digitalObject.getPid() + '.json',
+    type: 'POST',
+    data: {
+      '_method': 'PUT', //For proper RESTful Rails requests
+      digital_object_data_json : JSON.stringify(digitalObjectData),
+      publish: publish
+    },
+    cache: false
+  }).done(function(digitalObjectSaveResponse){
+    if (digitalObjectSaveResponse['errors']) {
+      var error_messages = [];
+      _.each(digitalObjectSaveResponse['errors'], function(error_message, error_key){
+        error_messages.push(error_message);
+      });
+      Hyacinth.addAlert('Errors encountered during save: <br />' + error_messages.join('<br />'), 'danger');
+    } else {
+      Hyacinth.addAlert(publish ? 'Digital Object saved and published.' : 'Digital Object saved.', 'info');
+    }
+
+  }).fail(function(){
+    alert(Hyacinth.unexpectedAjaxErrorMessage);
+  });
 };
 
 //Clean up event handlers
