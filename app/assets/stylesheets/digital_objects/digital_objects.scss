@@ -371,21 +371,20 @@
   }
 
   .ordered-child {
-      padding:1em;
-      margin-bottom:.5em;
+    background-color:rgba(255, 255, 255, .7);
+    padding:1em;
+    margin-bottom:.5em;
 
-      .thumbnail {
-        max-height: 100px;
-        width:auto;
-        margin-bottom:0;
-      }
-   }
+    .thumbnail {
+      max-height: 100px;
+      width:auto;
+      margin-bottom:0;
+    }
+  }
 
-   .actions {
-    margin-top:1.5em;
-   }
-
-
+  .actions {
+   margin-top:1.5em;
+  }
 }
 
 #digital-object-asset-upload {

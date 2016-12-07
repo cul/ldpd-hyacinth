@@ -34,10 +34,6 @@ gem 'faker'
 # For retrying code blocks that may return an error
 gem 'retriable', '~> 2.1'
 
-# jQuery extension gems
-gem 'jquery.fileupload-rails' # File uploads
-gem 'chosen-rails' # Multiselect box 
-
 # Encrypting certain attributes
 gem 'attr_encrypted', '>= 1.3.3'
 
@@ -64,9 +60,13 @@ gem 'coffee-rails'
 gem 'therubyracer', '>= 0.12.2',  platforms: :ruby
 gem 'libv8', '>= 3.16.14.15' # Min version for Mac OS 10.11, XCode 8.0
 
-
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
+
+# jQuery extension gems
+gem 'jquery-ui-rails'
+gem 'jquery.fileupload-rails' # File uploads
+gem 'chosen-rails' # Multiselect box
 
 # Also use underscore JavaScript library
 gem 'underscore-rails'

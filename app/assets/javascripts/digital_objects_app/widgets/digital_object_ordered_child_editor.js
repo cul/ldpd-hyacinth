@@ -143,6 +143,10 @@ Hyacinth.DigitalObjectsApp.DigitalObjectOrderedChildEditor.prototype.init = func
   
     });
   }
+  
+  //Make items in form sortable
+  this.$containerElement.find('.ordered-child-editor-form').find('.sortable').sortable({handle: '.handle'});
+  this.$containerElement.find('.ordered-child-editor-form').find('.sortable').disableSelection();
 
 };
 

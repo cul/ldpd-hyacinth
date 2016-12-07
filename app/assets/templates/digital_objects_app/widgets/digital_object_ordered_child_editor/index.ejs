@@ -24,50 +24,53 @@
 <% } else { %>
 
   <form class="ordered-child-editor-form">
-  <% orderedChildDigitalObjects.forEach(function(childDigitalObject){ %>
-    <div class="ordered-child shadow-box" data-pid="<%= childDigitalObject.getPid() %>">
-      <div class="row">
-  <% if(Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) { %>
-        <div class="col-xs-2">
-          <button class="btn btn-default btn-sm shift-child-up"><span class="glyphicon glyphicon-arrow-up"></span></button>
-          <br />
-          <button class="btn btn-default btn-sm shift-child-down"><span class="glyphicon glyphicon-arrow-down"></span></button>
+    <div class="sortable">
+      <% orderedChildDigitalObjects.forEach(function(childDigitalObject){ %>
+        <div class="ordered-child shadow-box" data-pid="<%= childDigitalObject.getPid() %>">
+          <div class="row">
+      <% if(Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) { %>
+            <div class="col-xs-2">
+              <button class="btn btn-default btn-sm shift-child-up"><span class="glyphicon glyphicon-arrow-up"></span></button>
+              <br />
+              <div class="btn btn-default btn-sm handle"><span class="glyphicon glyphicon-move"></span></div>
+              <br />
+              <button class="btn btn-default btn-sm shift-child-down"><span class="glyphicon glyphicon-arrow-down"></span></button>
+            </div>
+      <% } %>
+      <% if(Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) { %>
+            <div class="col-xs-8">
+      <% } else { %>
+            <div class="col-xs-10">
+      <% } %>
+      
+                <strong>PID:</strong> <a href="#<%= Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: childDigitalObject.getPid()}) %>"><%= childDigitalObject.getPid() %></a>
+                <br />
+                <strong>Title:</strong> <%- childDigitalObject.getTitle() %>
+                <br />
+                <%
+                  if(childDigitalObject['hyacinthType'][0] == 'asset') {
+                    var originalFilename = childDigitalObject['digitalObjectData']['asset_data']['original_filename'];
+                    %><strong>Original Filename:</strong> <%- originalFilename %><br /><%
+                  }
+                %>
+                <span class="label label-default"><%= childDigitalObject.getDigitalObjectTypeDisplayLabel() %></span>
+            </div>
+            <div class="col-xs-2">
+              <% if ( childDigitalObject.hasImage()) { %>
+                <img class="img-responsive thumbnail pull-right" src="<%= childDigitalObject.getImageUrl('scaled', 256) %>" title="<%= childDigitalObject.getPid() %>" />
+              <% } %>
+            </div>
+          </div>
         </div>
-  <% } %>
-  <% if(Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) { %>
-        <div class="col-xs-8">
-  <% } else { %>
-        <div class="col-xs-10">
-  <% } %>
-  
-            <strong>PID:</strong> <a href="#<%= Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: childDigitalObject.getPid()}) %>"><%= childDigitalObject.getPid() %></a>
-            <br />
-            <strong>Title:</strong> <%- childDigitalObject.getTitle() %>
-            <br />
-            <%
-              if(childDigitalObject['hyacinthType'][0] == 'asset') {
-                var originalFilename = childDigitalObject['digitalObjectData']['asset_data']['original_filename'];
-                %><strong>Original Filename:</strong> <%- originalFilename %><br /><%
-              }
-            %>
-            <span class="label label-default"><%= childDigitalObject.getDigitalObjectTypeDisplayLabel() %></span>
-        </div>
-        <div class="col-xs-2">
-          <% if ( childDigitalObject.hasImage()) { %>
-            <img class="img-responsive thumbnail pull-right" src="<%= childDigitalObject.getImageUrl('scaled', 256) %>" title="<%= childDigitalObject.getPid() %>" />
-          <% } %>
-        </div>
-      </div>
+      <% }); %>
+    </div><!-- .sortable -->
+
+    <% if(Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) { %>
+    <div class="actions">
+      <input type="submit" class="btn btn-primary pull-right editor-submit-button" value="Save" />
+      <div class="clearfix"></div>
     </div>
-  <% }); %>
-
-
-  <% if(Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) { %>
-  <div class="actions">
-    <input type="submit" class="btn btn-primary pull-right editor-submit-button" value="Save" />
-    <div class="clearfix"></div>
-  </div>
-  <% } %>
+    <% } %>
   
   </form>
 
