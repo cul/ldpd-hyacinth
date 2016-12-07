@@ -233,6 +233,8 @@ class DigitalObject::Base
         end
       rescue RestClient::Unauthorized
         @errors.add(:publish_target, "Not authorized to publish to #{publish_target.get_title}. Check credentials.")
+      rescue RestClient::NotFound
+        @errors.add(:publish_target, "404 Not Found received for Publish Target URL: #{publish_target.publish_target_field('publish_url')}")
       end
     end
 
