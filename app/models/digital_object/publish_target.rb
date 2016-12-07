@@ -79,7 +79,8 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     search_results = search(
       {
         'fl' => 'pid',
-        'fq' => { 'hyacinth_type_sim' => [{ 'equals' => 'publish_target' }] }
+        'fq' => { 'hyacinth_type_sim' => [{ 'equals' => 'publish_target' }] },
+        'per_page' => 99_999
       },
       nil,
       {}
