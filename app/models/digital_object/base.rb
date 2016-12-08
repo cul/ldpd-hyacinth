@@ -10,6 +10,7 @@ class DigitalObject::Base
   include DigitalObject::Persistence
   include DigitalObject::Serialization
   include DigitalObject::Data
+  include DigitalObject::Ezid
 
   NUM_FEDORA_RETRY_ATTEMPTS = 3
   DELAY_IN_SECONDS_BETWEEN_FEDORA_RETRY_ATTEMPTS = 5
@@ -18,7 +19,7 @@ class DigitalObject::Base
   # For ActiveModel::Dirty
   define_attribute_methods :parent_digital_object_pids, :obsolete_parent_digital_object_pids, :ordered_child_digital_object_pids
 
-  attr_accessor :project, :publish_target_pids, :identifiers, :created_by, :updated_by, :state, :dc_type, :ordered_child_digital_object_pids, :publish_after_save
+  attr_accessor :project, :publish_target_pids, :identifiers, :created_by, :updated_by, :state, :dc_type, :ordered_child_digital_object_pids, :publish_after_save, :ezid_doi
   attr_reader :errors, :fedora_object, :parent_digital_object_pids
 
   delegate :created_at, :new_record?, :updated_at, to: :@db_record
@@ -45,6 +46,7 @@ class DigitalObject::Base
     @state = 'A'
     @errors = ActiveModel::Errors.new(self)
     @publish_after_save = false
+    @ezid_doi = nil
   end
 
   def init_from_digital_object_record_and_fedora_object(digital_object_record, fedora_obj)
