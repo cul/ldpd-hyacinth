@@ -14,7 +14,7 @@ require 'hyacinth/ezid/doi'
 module Hyacinth::Ezid
   class ApiSession
     attr_accessor :naa, :username, :password
-    attr_reader :scheme, :last_response_from_server, :timeout
+    attr_reader :scheme, :last_response_from_server, :timed_out
 
     SCHEMES = { ark: 'ark:/', doi: 'doi:' }
 
@@ -27,7 +27,11 @@ module Hyacinth::Ezid
       @username = username
       @password = password
       @last_response_from_server = nil
-      @timeout = false
+      @timed_out = false
+    end
+
+    def timed_out?
+      timed_out
     end
 
     def get_identifier_metadata(identifier)
@@ -40,7 +44,7 @@ module Hyacinth::Ezid
         @last_response_from_server.parsed_body_hash
       rescue Net::ReadTimeout
         Hyacinth::Utils::Logger.logger.info('EZID API call to get identifier metadata timed-out')
-        @timeout = true
+        @timed_out = true
         nil
       end
     end
@@ -71,7 +75,7 @@ module Hyacinth::Ezid
         # END_CHUNK
       rescue Net::ReadTimeout
         Hyacinth::Utils::Logger.logger.info('EZID API call to mint identifier timed-out')
-        @timeout = true
+        @timed_out = true
         nil
       end
     end
@@ -96,7 +100,7 @@ module Hyacinth::Ezid
         end
       rescue Net::ReadTimeout
         Hyacinth::Utils::Logger.logger.info('EZID API call to modify identifier timed-out')
-        @timeout = true
+        @timed_out = true
         false
       end
     end
