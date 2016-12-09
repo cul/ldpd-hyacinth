@@ -210,37 +210,68 @@ class DigitalObject::Base
     before_publish
 
     # Save withg retry after Fedora timeouts / unreachable host
-    Retriable.retriable on: [RestClient::RequestTimeout, RestClient::Unauthorized, Errno::EHOSTUNREACH], tries: NUM_FEDORA_RETRY_ATTEMPTS, base_interval: DELAY_IN_SECONDS_BETWEEN_FEDORA_RETRY_ATTEMPTS do
+    Retriable.retriable DigitalObject::Base::RETRY_OPTIONS do
       @fedora_object.save(update_index: false)
     end
 
-    return false if @errors.present?
+    inactive_publish_target_pids = allowed_publish_targets.map { |pub_target_data| pub_target_data[:pid] } - publish_target_pids
+    active_publish_target_pids = publish_target_pids
 
-    # TODO: Tell all INACTIVE (but project-enabled) publish targets to un-publish this
-    # object BEFORE doing a publish (in case multiple publish targets have the same publish URL)
-
-    # Tell all ACTIVE publish targets to publish this object
-    publish_target_pids.each do |publish_target_pid|
+    # Make sure to unpublish from INACTIVE publish targets before doing publishing to active
+    # publish targets, just in case multiple publish targets have the same publish URL
+    (inactive_publish_target_pids + active_publish_target_pids).each do |publish_target_pid|
+      do_unpublish = inactive_publish_target_pids.include?(publish_target_pid)
       publish_target = DigitalObject::Base.find(publish_target_pid)
 
-      next unless publish_target.publish_target_field('publish_url').present?
       begin
-        response = RestClient.put(
-          publish_target.publish_target_field('publish_url') + '/' + pid,
-          {},
-          Authorization: "Token token=#{publish_target.publish_target_field('api_key')}"
-        )
-        unless response.code == 200
-          @errors.add(:publish_target, 'Error encountered while publishing to ' + publish_target.get_title)
-        end
+        send_request_to_publish_target_url(do_unpublish ? :unpublish : :publish, publish_target.publish_target_field('publish_url'), pid, publish_target.publish_target_field('api_key'))
       rescue RestClient::Unauthorized
-        @errors.add(:publish_target, "Not authorized to publish to #{publish_target.get_title}. Check credentials.")
+        @errors.add(:publish_target, "Not authorized to #{do_unpublish ? 'unpublish' : 'publish'} to #{publish_target.get_title}. Check credentials.")
       rescue RestClient::NotFound
         @errors.add(:publish_target, "404 Not Found received for Publish Target URL: #{publish_target.publish_target_field('publish_url')}")
       end
     end
 
     @errors.blank?
+  end
+
+  def send_request_to_publish_target_url(publish_action, publish_url_prefix, pid, api_key)
+    publish_url = publish_url_prefix + '/' + pid
+    if publish_action == :unpublish
+      response = RestClient.delete(
+        publish_url,
+        Authorization: "Token token=#{api_key}"
+      )
+      # unless @ezid_doi.blank?
+      #  # We need to change the state of this ezid to :unavailable
+      #  ezid_response = change_doi_status_to_unavailable
+      #  @errors.add(:ezid_response, "An error occurred while attempting to set this digital object's ezid status to 'unavailable'.")
+      # end
+    elsif publish_action == :publish
+      response = RestClient.put(
+        publish_url,
+        {},
+        Authorization: "Token token=#{api_key}"
+      )
+      # if response.code == 200 && response.headers[:location].present?
+      #   published_object_url = response.headers[:location]
+      #   if @ezid_doi.blank?
+      #     # If this record has no ezid, that means that we're publishing it for the first time.
+      #     # Mint ezid using
+      #     mint_and_store_doi(Hyacinth::Ezid::Doi::IDENTIFIER_STATUS, published_object_url)
+      #     # And now that we've stored the doi, save and re-publish this object
+      #     # TODO: In the future we'll be queueing a re-publish instead of calling save && publish below
+      #     save && publish
+      #   else
+      #     # This record already has an ezid.  Let's update the status of that ezid to :public.
+      #     ezid_api_session = Hyacinth::Ezid::ApiSession.new(EZID[:user], EZID[:password])
+      #     ezid_api_session.modify_identifier(@ezid_doi,
+      #                               _status: Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:public])
+      #   end
+      # end
+    end
+
+    @errors.add(:publish_target, "Error encountered while #{do_unpublish ? 'unpublishing' : 'publishing'} to #{publish_target.get_title}") if response.code != 200
   end
 
   def self.valid_dc_types

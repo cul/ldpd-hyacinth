@@ -34,7 +34,7 @@ class DigitalObject::PublishTarget < DigitalObject::Base
   def set_digital_object_data(digital_object_data, merge_dynamic_fields)
     super(digital_object_data, merge_dynamic_fields)
     return if digital_object_data['publish_target_data'].blank?
-    @publish_target_data = digital_object_data['publish_target_data']
+    @publish_target_data.merge!(digital_object_data['publish_target_data'])
   end
 
   def run_custom_validations

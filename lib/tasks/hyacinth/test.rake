@@ -85,8 +85,6 @@ namespace :hyacinth do
         false
       )
       test_publish_target_1.save
-      puts 'Created test_publish_target_1.  Time to look up:'
-      puts 'Lookup result: ' + DigitalObject::PublishTarget.find_by_string_key('test_publish_target_1').inspect
       
       test_publish_target_2 = DigitalObject::PublishTarget.new
       test_publish_target_2.set_digital_object_data(
@@ -104,10 +102,6 @@ namespace :hyacinth do
         false
       )
       test_publish_target_2.save
-      puts 'Created test_publish_target_2.  Time to look up:'
-      puts 'Lookup result: ' + DigitalObject::PublishTarget.find_by_string_key('test_publish_target_2').inspect
-      
-      puts "-- And for good measure, here's how many pub targets we have total: #{DigitalObject::PublishTarget.all_pids}"
       
       # Enable test_publish_target_1 for test_project
       test_project.enabled_publish_target_pids = [test_publish_target_1.pid]
