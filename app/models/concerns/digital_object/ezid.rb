@@ -43,7 +43,7 @@ module DigitalObject::Ezid
   # EZID DOI status to 'unavailable'
   # See http://ezid.cdlib.org/doc/apidoc.html#identifier-status
   # returns true if status change was successful
-  # if not, return false
+  # if not, returns false
   def change_doi_status_to_unavailable
     return false if @ezid_doi.nil?
     ezid_api_session = Hyacinth::Ezid::ApiSession.new(EZID[:user], EZID[:password])
@@ -51,5 +51,23 @@ module DigitalObject::Ezid
     # success, else it returns false
     ezid_api_session.modify_identifier(@ezid_doi,
                                        _status: Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:unavailable])
+  end
+
+  # Following method will make a request to the EZID server to update the metadata associated with
+  # the EZID DOI entry on the server. Uses the modify identifier API call
+  # returns true if metadata update was successful
+  # if not, returns false
+  def update_doi_metadata
+    return false if @ezid_doi.nil?
+    # get the metadata from hyacinth
+    hyacinth_metadata = Hyacinth::Ezid::HyacinthMetadata.new @digital_object_data
+    # prepare the metadata into an acceptable format for EZID
+    datacite_metadata = Hyacinth::Ezid::DataciteMetadataBuilder.new hyacinth_metadata
+    # setup EZID API info: credentials, url, etc.
+    ezid_api_session = Hyacinth::Ezid::ApiSession.new(EZID[:user], EZID[:password])
+    # ApiSession#modify_identifier returns true if the response from the EZID server indicated
+    # success, else it returns false
+    ezid_api_session.modify_identifier(@ezid_doi,
+                                       datacite: datacite_metadata.datacite_xml)
   end
 end
