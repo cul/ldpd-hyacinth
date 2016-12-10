@@ -68,6 +68,7 @@ module DigitalObject::Ezid
     # ApiSession#modify_identifier returns true if the response from the EZID server indicated
     # success, else it returns false
     ezid_api_session.modify_identifier(@ezid_doi,
-                                       datacite: datacite_metadata.datacite_xml)
+                                       datacite: datacite_metadata.datacite_xml,
+                                       _status: Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:public])
   end
 end
