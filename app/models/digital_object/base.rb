@@ -267,23 +267,26 @@ class DigitalObject::Base
       Authorization: "Token token=#{api_key}"
     )
     if response.code == 200 && response.headers[:location].present?
-      published_object_url = response.headers[:location]
-      if @ezid_doi.blank?
-        # If this record has no ezid, that means that we're publishing it for the first time.
-        # Mint ezid using
-        if mint_and_store_doi(Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:public], published_object_url)
-          # And now that we've stored the doi, save and re-publish this object
-          # TODO: In the future we'll be queueing a re-publish instead of calling save && publish below
-          save && publish
-        else
-          @errors.add(:ezid_response, "An error occurred while attempting to mint a new ezid doi for this object.")
-        end
-      else
-        # This record already has an ezid.  Let's update the status of that ezid to :public.
-        update_doi_metadata
-      end
+      do_ezid_publish(response.headers[:location])
     end
     response
+  end
+
+  def do_ezid_publish(published_object_url)
+    if @ezid_doi.blank?
+      # If this record has no ezid, that means that we're publishing it for the first time.
+      # Mint ezid using
+      if mint_and_store_doi(Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:public], published_object_url)
+        # And now that we've stored the doi, save and re-publish this object
+        # TODO: In the future we'll be queueing a re-publish instead of calling save && publish below
+        save && publish
+      else
+        @errors.add(:ezid_response, "An error occurred while attempting to mint a new ezid doi for this object.")
+      end
+    else
+      # This record already has an ezid.  Let's update the status of that ezid to :public.
+      update_doi_metadata
+    end
   end
 
   def self.valid_dc_types
