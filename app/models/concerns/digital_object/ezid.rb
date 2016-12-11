@@ -7,7 +7,7 @@ module DigitalObject::Ezid
   def mint_and_store_doi(identifier_status,
                          target_url = nil)
     # get the metadata from hyacinth
-    hyacinth_metadata = Hyacinth::Ezid::HyacinthMetadata.new @digital_object_data
+    hyacinth_metadata = Hyacinth::Ezid::HyacinthMetadata.new as_json
     # prepare the metadata into an acceptable format for EZID
     datacite_metadata = Hyacinth::Ezid::DataciteMetadataBuilder.new hyacinth_metadata
     # setup EZID API info: credentials, url, etc.
@@ -28,7 +28,7 @@ module DigitalObject::Ezid
       response = ezid_api_session.last_response_from_server
       Hyacinth::Utils::Logger.logger.info("#mint_and_store_doi: EZID API call to mint_identifier was unsuccessful.")
       Hyacinth::Utils::Logger.logger.info("#mint_and_store_doi: Response from EZID server follows:\n" \
-                                          "HTTP satus code: #{response.http_status_code}\n" \
+                                          "HTTP status code: #{response.http_status_code}\n" \
                                           "HTTP server message: #{response.http_server_message}\n" \
                                           "response body: #{response.body}") unless response.nil?
       return nil

@@ -9,8 +9,8 @@ module DigitalObject::Serialization
   def as_json(_options = {})
     {
       pid: pid,
-      created: @db_record.created_at,
-      modified: @db_record.updated_at,
+      created: @db_record.created_at.iso8601,
+      modified: @db_record.updated_at.iso8601,
       created_by: (@db_record.created_by.present? ? @db_record.created_by.full_name : nil),
       modified_by: (@db_record.updated_by.present? ? @db_record.updated_by.full_name : nil),
       identifiers: identifiers,

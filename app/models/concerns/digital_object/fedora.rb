@@ -91,6 +91,10 @@ module DigitalObject::Fedora
       # Get publish target relationships
       @publish_target_pids = @fedora_object.relationships(:publisher).to_a.map { |val| val.gsub('info:fedora/', '') }
     end
+
+    def load_ezid_from_fedora_object!
+      @ezid_doi = @fedora_object.relationships(:ezid_doi).first
+    end
   end
 
   module Write

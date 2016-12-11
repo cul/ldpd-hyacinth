@@ -66,6 +66,7 @@ class DigitalObject::Base
     load_state_from_fedora_object!
     load_dc_type_from_fedora_object!
     load_dc_identifiers_from_fedora_object!
+    load_ezid_from_fedora_object!
     load_project_and_publisher_relationships_from_fedora_object!
     load_fedora_hyacinth_ds_data_from_fedora_object!
   end
@@ -224,7 +225,7 @@ class DigitalObject::Base
       publish_target = DigitalObject::Base.find(publish_target_pid)
 
       begin
-        send_request_to_publish_target_url(do_unpublish ? :unpublish : :publish, publish_target.publish_target_field('publish_url'), pid, publish_target.publish_target_field('api_key'))
+        send_request_to_publish_target_url(do_unpublish ? :unpublish : :publish, publish_target, pid)
       rescue RestClient::Unauthorized
         @errors.add(:publish_target, "Not authorized to #{do_unpublish ? 'unpublish' : 'publish'} to #{publish_target.get_title}. Check credentials.")
       rescue RestClient::NotFound
@@ -235,43 +236,54 @@ class DigitalObject::Base
     @errors.blank?
   end
 
-  def send_request_to_publish_target_url(publish_action, publish_url_prefix, pid, api_key)
-    publish_url = publish_url_prefix + '/' + pid
+  def send_request_to_publish_target_url(publish_action, publish_target, pid)
+    api_key = publish_target.publish_target_field('api_key')
+    publish_url = publish_target.publish_target_field('publish_url') + '/' + pid
     if publish_action == :unpublish
-      response = RestClient.delete(
-        publish_url,
-        Authorization: "Token token=#{api_key}"
-      )
-      # unless @ezid_doi.blank?
-      #  # We need to change the state of this ezid to :unavailable
-      #  ezid_response = change_doi_status_to_unavailable
-      #  @errors.add(:ezid_response, "An error occurred while attempting to set this digital object's ezid status to 'unavailable'.")
-      # end
+      response = do_target_unpublish(publish_url, api_key)
     elsif publish_action == :publish
-      response = RestClient.put(
-        publish_url,
-        {},
-        Authorization: "Token token=#{api_key}"
-      )
-      # if response.code == 200 && response.headers[:location].present?
-      #   published_object_url = response.headers[:location]
-      #   if @ezid_doi.blank?
-      #     # If this record has no ezid, that means that we're publishing it for the first time.
-      #     # Mint ezid using
-      #     mint_and_store_doi(Hyacinth::Ezid::Doi::IDENTIFIER_STATUS, published_object_url)
-      #     # And now that we've stored the doi, save and re-publish this object
-      #     # TODO: In the future we'll be queueing a re-publish instead of calling save && publish below
-      #     save && publish
-      #   else
-      #     # This record already has an ezid.  Let's update the status of that ezid to :public.
-      #     ezid_api_session = Hyacinth::Ezid::ApiSession.new(EZID[:user], EZID[:password])
-      #     ezid_api_session.modify_identifier(@ezid_doi,
-      #                               _status: Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:public])
-      #   end
-      # end
+      response = do_target_publish(publish_url, api_key)
     end
-
     @errors.add(:publish_target, "Error encountered while #{do_unpublish ? 'unpublishing' : 'publishing'} to #{publish_target.get_title}") if response.code != 200
+  end
+
+  def do_target_unpublish(publish_url, api_key)
+    response = RestClient.delete(
+      publish_url,
+      Authorization: "Token token=#{api_key}"
+    )
+    unless @ezid_doi.blank?
+      # We need to change the state of this ezid to :unavailable
+      change_doi_status_to_unavailable
+      @errors.add(:ezid_response, "An error occurred while attempting to set this digital object's ezid status to 'unavailable'.")
+    end
+    response
+  end
+
+  def do_target_publish(publish_url, api_key)
+    response = RestClient.put(
+      publish_url,
+      {},
+      Authorization: "Token token=#{api_key}"
+    )
+    if response.code == 200 && response.headers[:location].present?
+      published_object_url = response.headers[:location]
+      if @ezid_doi.blank?
+        # If this record has no ezid, that means that we're publishing it for the first time.
+        # Mint ezid using
+        if mint_and_store_doi(Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:public], published_object_url)
+          # And now that we've stored the doi, save and re-publish this object
+          # TODO: In the future we'll be queueing a re-publish instead of calling save && publish below
+          save && publish
+        else
+          @errors.add(:ezid_response, "An error occurred while attempting to mint a new ezid doi for this object.")
+        end
+      else
+        # This record already has an ezid.  Let's update the status of that ezid to :public.
+        update_doi_metadata
+      end
+    end
+    response
   end
 
   def self.valid_dc_types
