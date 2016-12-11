@@ -1,0 +1,45 @@
+{
+  "identifiers" : ["item.001"],
+  "digital_object_type" : {
+    "string_key" : "item"
+  },
+  "created" : "2015-02-04T19:22:37.000Z",
+  "modified" : "2016-03-31T20:52:23.000Z",
+  "project" :
+  {
+    "string_key" : "test"
+  },
+  "publish_targets" : [
+    {
+      "string_key" : "test_publish_target_1"
+    }
+    ,
+    {
+      "string_key" : "test_publish_target_2"
+    }
+  ],
+  "dynamic_field_data" : {
+    "doi_identifier" : [
+      {
+        "doi_identifier_value" : "10.1371/journal.pone.0119638"
+      }
+    ],
+    "name" : [
+      {
+        "name_term" : {
+          "value" : "Salinger, J. D.",
+          "uri" : "http://id.loc.gov/authorities/names/n50016589",
+          "name_type" : "personal"
+        },
+        "name_role" : [
+          {
+            "name_role_term" : {
+              "value" : "Author",
+              "uri" : "http://id.loc.gov/vocabulary/relators/aut"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

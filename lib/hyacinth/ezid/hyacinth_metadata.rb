@@ -15,7 +15,7 @@ module Hyacinth::Ezid
     # @api public
     def initialize(digital_object_data_arg)
       # dod is shorthand for digital_object_data
-      @dod = HashWithIndifferentAccess.new(digital_object_data_arg)
+      @dod = HashWithIndifferentAccess.new(digital_object_data_arg).freeze
       # dfd is shorthand for dynamic_field_data
       @dfd = @dod['dynamic_field_data']
       @creators = []
@@ -25,6 +25,10 @@ module Hyacinth::Ezid
       @subjects_topic = []
       process_names
       process_subjects_topic
+    end
+
+    def source
+      @dod
     end
 
     # the title of an item

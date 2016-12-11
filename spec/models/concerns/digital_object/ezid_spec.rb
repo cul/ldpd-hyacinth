@@ -11,6 +11,7 @@ describe DigitalObject::Ezid do
   let(:digital_object) do
     test_do = test_class.new 
     data = JSON.parse( fixture('lib/hyacinth/ezid/ezid_item.json').read )
+    expect(data).to have_key('dynamic_field_data')
     data['identifiers'] = ['item.' + SecureRandom.uuid] # random identifer to avoid collisions
     test_do.instance_variable_set(:@digital_object_data, data)
     test_do.instance_variable_set(:@fedora_object,
