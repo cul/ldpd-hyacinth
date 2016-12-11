@@ -14,6 +14,7 @@ describe DigitalObject::Ezid do
     expect(data).to have_key('dynamic_field_data')
     data['identifiers'] = ['item.' + SecureRandom.uuid] # random identifer to avoid collisions
     test_do.instance_variable_set(:@digital_object_data, data)
+    allow(test_do).to receive(:as_json).and_return(data)
     test_do.instance_variable_set(:@fedora_object,
                               ContentAggregator.new(pid: 'test:existingobject'))
     test_do
