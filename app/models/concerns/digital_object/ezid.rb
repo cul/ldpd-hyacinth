@@ -60,7 +60,7 @@ module DigitalObject::Ezid
   def update_doi_metadata
     return false if @ezid_doi.nil?
     # get the metadata from hyacinth
-    hyacinth_metadata = Hyacinth::Ezid::HyacinthMetadata.new @digital_object_data
+    hyacinth_metadata = Hyacinth::Ezid::HyacinthMetadata.new as_json
     # prepare the metadata into an acceptable format for EZID
     datacite_metadata = Hyacinth::Ezid::DataciteMetadataBuilder.new hyacinth_metadata
     # setup EZID API info: credentials, url, etc.

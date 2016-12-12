@@ -82,7 +82,9 @@ module Hyacinth::Ezid
           end
         end
       else
-        raise "Cannot publish a datacite without a creator"
+        # required element, but not content
+        # see http://ezid.cdlib.org/doc/apidoc.html#profile-datacite
+        xml.creators { xml.creator { xml.creatorName '(Unavailable)' } }
       end
     end
 
