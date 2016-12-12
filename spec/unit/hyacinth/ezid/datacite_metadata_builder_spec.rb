@@ -47,7 +47,7 @@ describe Hyacinth::Ezid::DataciteMetadataBuilder do
         JSON.parse( fixture('lib/hyacinth/ezid/ezid_item_empty_dynamic_field_data.json').read )
       end
       it "fails to produce a valid XML serialization" do
-        expect { metadata_builder.datacite_xml }.to raise_error("Cannot publish a datacite without a DOI")
+        expect { metadata_builder.datacite_xml }.to raise_error("Cannot publish a datacite without a creator")
       end
     end
     context "minimal dynamic fields" do

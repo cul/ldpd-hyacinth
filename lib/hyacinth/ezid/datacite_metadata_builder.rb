@@ -11,11 +11,12 @@ module Hyacinth::Ezid
         xml.resource('xmlns' => 'http://datacite.org/schema/kernel-3',
                      'xmlns:xsi' => 'http://www.w3.org/2001/XMLSchema-instance',
                      'xsi:schemaLocation' => 'http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd') do
-          # required field
+          # required element, but not content
+          # see http://ezid.cdlib.org/doc/apidoc.html#profile-datacite
           if @hyacinth_metadata_retrieval.doi_identifier.present?
             xml.identifier('identifierType' => 'DOI') { xml.text @hyacinth_metadata_retrieval.doi_identifier }
           else
-            raise "Cannot publish a datacite without a DOI"
+            xml.identifier('identifierType' => 'DOI') { xml.text '10.0/00' }
           end
           add_title(xml)
           # required field
