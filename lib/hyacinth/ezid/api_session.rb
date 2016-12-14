@@ -42,7 +42,7 @@ module Hyacinth::Ezid
         response = call_api(uri, request)
         @last_response_from_server = Hyacinth::Ezid::ServerResponse.new response
         @last_response_from_server.parsed_body_hash
-      rescue Net::ReadTimeout
+      rescue Net::ReadTimeout, SocketError
         Hyacinth::Utils::Logger.logger.info('EZID API call to get identifier metadata timed-out')
         @timed_out = true
         nil
@@ -73,7 +73,7 @@ module Hyacinth::Ezid
                                 @last_response_from_server.ark,
                                 identifier_status) if @last_response_from_server.success?
         # END_CHUNK
-      rescue Net::ReadTimeout
+      rescue Net::ReadTimeout, SocketError
         Hyacinth::Utils::Logger.logger.info('EZID API call to mint identifier timed-out')
         @timed_out = true
         nil
@@ -98,7 +98,7 @@ module Hyacinth::Ezid
         else
           false
         end
-      rescue Net::ReadTimeout
+      rescue Net::ReadTimeout, SocketError
         Hyacinth::Utils::Logger.logger.info('EZID API call to modify identifier timed-out')
         @timed_out = true
         false

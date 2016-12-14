@@ -34,34 +34,55 @@ module DigitalObject::Validation
 
   def validate
     validate_title
-    # State must be among VALID_STATES
-    unless VALID_STATES.include?(state)
-      @errors.add(:state, 'Must be one of: ' + VALID_STATES.join(', '))
-    end
-
-    # State cannot be set to 'D' if this object has children
-    if state == 'D' && ordered_child_digital_object_pids.length > 0
-      errors.add(:destroy, 'Cannot set Digital Object as deleted because it has children.  Detach or delete all children first, then try deleting again.')
-    end
-
-    # All DigitalObject must have a @fedora_object with a dc_type within its set of VALID_DC_TYPES
-    unless self.class.valid_dc_types.include?(dc_type)
-      @errors.add(:dc_type, "Is: #{dc_type}. Must be one of: #{self.class.valid_dc_types.join(', ')}")
-    end
-
-    # Exactly one project is required
-    if project.present?
-      validate_required_fields(get_flattened_dynamic_field_data(true))
-    else
-      @errors.add(:project, 'Must have a project')
-    end
+    validate_state
+    validate_dc_type
+    validate_project_presence
 
     # Make sure that none of the identifiers conflict with the PID of another existing Fedora object
     @identifiers.each { |identifier| validate_identifier(identifier) }
 
+    # validate allowed publish targets
+    allowed_publish_target_pids = allowed_publish_targets.map { |pub_target_data| pub_target_data[:pid] }
+    active_publish_target_pids = publish_target_pids
+
+    # If any of the active publish targets aren't allowed by the project, notify the user
+    active_publish_target_pids.each do |active_publish_target_pid|
+      unless allowed_publish_target_pids.include?(active_publish_target_pid)
+        publish_target = DigitalObject::Base.find(active_publish_target_pid)
+        @errors.add(:publish_target, "Publish target #{publish_target.get_title} (#{publish_target.publish_target_field('string_key')} / #{publish_target.pid}) is not enabled for this project. You'll need to remove it or enable it.")
+      end
+    end
+
     run_custom_validations
 
     @errors.blank?
+  end
+
+  def validate_state
+    # State must be among VALID_STATES
+    unless VALID_STATES.include?(state)
+      errors.add(:state, 'Must be one of: ' + VALID_STATES.join(', '))
+    end
+
+    # State cannot be set to 'D' if this object has children
+    errors.add(
+      :destroy,
+      'Cannot set Digital Object as deleted because it has children.  Detach or delete all children first, then try deleting again.'
+    ) if state == 'D' && ordered_child_digital_object_pids.length > 0
+  end
+
+  def validate_dc_type
+    # All DigitalObject must have a @fedora_object with a dc_type within its set of VALID_DC_TYPES
+    errors.add(:dc_type, "Is: #{dc_type}. Must be one of: #{self.class.valid_dc_types.join(', ')}") unless self.class.valid_dc_types.include?(dc_type)
+  end
+
+  def validate_project_presence
+    # Exactly one project is required
+    if project.present?
+      validate_required_fields(get_flattened_dynamic_field_data(true))
+    else
+      errors.add(:project, 'Must have a project')
+    end
   end
 
   def run_custom_validations

@@ -16,18 +16,19 @@ RSpec.describe DigitalObject::Base, :type => :model do
     end
   end
 
-  describe "#created_at " do
+  describe "#created_at" do
     it "returns a date" do
       new_item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
       new_item.set_digital_object_data(sample_item_digital_object_data, false)
       new_item.save
+      puts 'errors? ' + new_item.errors.full_messages.inspect
       date_today = Date.today
       expect(new_item.created_at.strftime("%m/%d/%Y")).to eq(date_today.strftime("%m/%d/%Y"))
       new_item.destroy
     end
   end
 
-  describe "#updated_at " do
+  describe "#updated_at" do
     it "returns a date" do
       new_item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
       new_item.set_digital_object_data(sample_item_digital_object_data, false)

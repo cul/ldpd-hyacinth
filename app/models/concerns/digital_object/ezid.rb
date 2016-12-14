@@ -33,10 +33,10 @@ module DigitalObject::Ezid
                                           "response body: #{response.body}") unless response.nil?
       return nil
     end
-    @ezid_doi = ezid_doi_instance.identifier
+    @doi = ezid_doi_instance.identifier
     # store the EZID DOI identifier in RELS-EXT of fedora object
     @fedora_object.add_relationship(:ezid_doi, ezid_doi_instance.identifier)
-    @ezid_doi
+    @doi
   end
 
   # Following method will make a request to the EZID server to change the
@@ -45,11 +45,11 @@ module DigitalObject::Ezid
   # returns true if status change was successful
   # if not, returns false
   def change_doi_status_to_unavailable
-    return false if @ezid_doi.nil?
+    return false if @doi.nil?
     ezid_api_session = Hyacinth::Ezid::ApiSession.new(EZID[:user], EZID[:password])
     # ApiSession#modify_identifier returns true if the response from the EZID server indicated
     # success, else it returns false
-    ezid_api_session.modify_identifier(@ezid_doi,
+    ezid_api_session.modify_identifier(@doi,
                                        _status: Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:unavailable])
   end
 
@@ -58,7 +58,7 @@ module DigitalObject::Ezid
   # returns true if metadata update was successful
   # if not, returns false
   def update_doi_metadata
-    return false if @ezid_doi.nil?
+    return false if @doi.nil?
     # get the metadata from hyacinth
     hyacinth_metadata = Hyacinth::Ezid::HyacinthMetadata.new as_json
     # prepare the metadata into an acceptable format for EZID
@@ -67,7 +67,7 @@ module DigitalObject::Ezid
     ezid_api_session = Hyacinth::Ezid::ApiSession.new(EZID[:user], EZID[:password])
     # ApiSession#modify_identifier returns true if the response from the EZID server indicated
     # success, else it returns false
-    ezid_api_session.modify_identifier(@ezid_doi,
+    ezid_api_session.modify_identifier(@doi,
                                        datacite: datacite_metadata.datacite_xml,
                                        _status: Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:public])
   end

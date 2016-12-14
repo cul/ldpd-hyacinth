@@ -59,7 +59,7 @@ describe DigitalObject::Ezid do
       EZID[:user] = EZID[:ezid_test_user]
       EZID[:password] = EZID[:ezid_test_password]
       EZID[:shoulder][:doi] = EZID[:ezid_test_shoulder][:doi]
-      digital_object.instance_variable_set(:@ezid_doi,
+      digital_object.instance_variable_set(:@doi,
                                            Hyacinth::Ezid::Doi.new('doi:10.5072/FK2F47P06D',
                                                                    'ark:/b5072/fk2f47p06d') )
       actual_return_value = digital_object.change_doi_status_to_unavailable
@@ -74,7 +74,7 @@ describe DigitalObject::Ezid do
       EZID[:user] = EZID[:ezid_test_user]
       EZID[:password] = EZID[:ezid_test_password]
       EZID[:shoulder][:doi] = EZID[:ezid_test_shoulder][:doi]
-      digital_object.instance_variable_set(:@ezid_doi,
+      digital_object.instance_variable_set(:@doi,
                                            Hyacinth::Ezid::Doi.new('doi:10.5072/FK2F47P06D',
                                                                    'ark:/b5072/fk2f47p06d') )
       actual_return_value = digital_object.update_doi_metadata

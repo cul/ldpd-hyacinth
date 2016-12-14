@@ -19,7 +19,7 @@ class DigitalObject::Base
   # For ActiveModel::Dirty
   define_attribute_methods :parent_digital_object_pids, :obsolete_parent_digital_object_pids, :ordered_child_digital_object_pids
 
-  attr_accessor :project, :publish_target_pids, :identifiers, :created_by, :updated_by, :state, :dc_type, :ordered_child_digital_object_pids, :publish_after_save, :ezid_doi
+  attr_accessor :project, :publish_target_pids, :identifiers, :created_by, :updated_by, :state, :dc_type, :ordered_child_digital_object_pids, :publish_after_save, :doi
   attr_reader :errors, :fedora_object, :parent_digital_object_pids
 
   delegate :created_at, :new_record?, :updated_at, to: :@db_record
@@ -46,7 +46,7 @@ class DigitalObject::Base
     @state = 'A'
     @errors = ActiveModel::Errors.new(self)
     @publish_after_save = false
-    @ezid_doi = nil
+    @doi = nil
   end
 
   def init_from_digital_object_record_and_fedora_object(digital_object_record, fedora_obj)
@@ -214,8 +214,8 @@ class DigitalObject::Base
     Retriable.retriable DigitalObject::Base::RETRY_OPTIONS do
       @fedora_object.save(update_index: false)
     end
-
-    inactive_publish_target_pids = allowed_publish_targets.map { |pub_target_data| pub_target_data[:pid] } - publish_target_pids
+    allowed_publish_target_pids = allowed_publish_targets.map { |pub_target_data| pub_target_data[:pid] }
+    inactive_publish_target_pids = allowed_publish_target_pids - publish_target_pids
     active_publish_target_pids = publish_target_pids
 
     # Make sure to unpublish from INACTIVE publish targets before doing publishing to active
@@ -252,7 +252,7 @@ class DigitalObject::Base
       publish_url,
       Authorization: "Token token=#{api_key}"
     )
-    unless @ezid_doi.blank?
+    unless @doi.blank?
       # We need to change the state of this ezid to :unavailable
       change_doi_status_to_unavailable
       @errors.add(:ezid_response, "An error occurred while attempting to set this digital object's ezid status to 'unavailable'.")
@@ -273,7 +273,7 @@ class DigitalObject::Base
   end
 
   def do_ezid_publish(published_object_url)
-    if @ezid_doi.blank?
+    if @doi.blank?
       # If this record has no ezid, that means that we're publishing it for the first time.
       # Mint ezid using
       if mint_and_store_doi(Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:public], published_object_url)

@@ -93,7 +93,7 @@ module DigitalObject::Fedora
     end
 
     def load_ezid_from_fedora_object!
-      @ezid_doi = @fedora_object.relationships(:ezid_doi).first
+      @doi = @fedora_object.relationships(:ezid_doi).first
     end
   end
 
