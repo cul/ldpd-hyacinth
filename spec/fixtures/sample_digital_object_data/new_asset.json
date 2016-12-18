@@ -23,5 +23,8 @@
             "title_non_sort_portion":"The"
          }
       ]
+   },
+   "restrictions" : {
+      "restricted_size_image": true
    }
 }

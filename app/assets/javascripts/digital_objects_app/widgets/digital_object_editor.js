@@ -613,6 +613,12 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.submitEditorForm = func
     digitalObjectData['project'] = {string_key: this.digitalObject.project['string_key']};
     digitalObjectData['parent_digital_objects'] = $.map(this.digitalObject.getParentDigitalObjectPids(), function(val){ return {pid: val} });
   }
+  
+  //Handle restrictions
+  if($editorForm.find('.restricted-size-image-checkbox').length > 0) {
+    digitalObjectData['restrictions'] = digitalObjectData['restrictions'] || {};
+    digitalObjectData['restrictions']['restricted_size_image'] = $editorForm.find('.restricted-size-image-checkbox').is(':checked');
+  }
 
   var that = this;
 

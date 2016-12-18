@@ -71,6 +71,19 @@ class DigitalObject::Base
     load_fedora_hyacinth_ds_data_from_fedora_object!
   end
 
+  def save_data_to_fedora
+    set_created_and_updated_data_from_db_record
+    set_fedora_hyacinth_ds_data
+    set_fedora_project_and_publisher_relationships
+    set_fedora_object_state
+    set_fedora_object_dc_type
+    set_fedora_object_dc_identifiers
+    set_fedora_object_dc_title_and_label
+
+    set_fedora_parent_digital_object_pid_relationships if parent_digital_object_pids_changed?
+    set_fedora_obsolete_parent_digital_object_pid_relationships if obsolete_parent_digital_object_pids_changed?
+  end
+
   def reset_data_attributes_before_assignment(digital_object_data)
     @ordered_child_digital_object_pids = [] unless digital_object_data['ordered_child_digital_objects'].blank?
     # Do not clear old values if this is a new record because we may be preserving values from Fedora upon import

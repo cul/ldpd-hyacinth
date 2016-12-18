@@ -9,6 +9,9 @@ module DigitalObject::DynamicField
   end
 
   def update_dynamic_field_data(new_dynamic_field_data, merge)
+    # TODO: Field validation
+    # validate_dynamic_field_data_fields(new_dynamic_field_data)
+
     if merge
       # During a merge, new top level key-value pairs are added and existing top level keys have their values replace by new values
       @dynamic_field_data.merge!(new_dynamic_field_data)

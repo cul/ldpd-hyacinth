@@ -53,16 +53,7 @@ module DigitalObject::Persistence
 
       run_post_validation_pre_save_logic
 
-      set_created_and_updated_data_from_db_record
-      set_fedora_hyacinth_ds_data
-      set_fedora_project_and_publisher_relationships
-      set_fedora_object_state
-      set_fedora_object_dc_type
-      set_fedora_object_dc_identifiers
-      set_fedora_object_dc_title_and_label
-
-      set_fedora_parent_digital_object_pid_relationships if parent_digital_object_pids_changed?
-      set_fedora_obsolete_parent_digital_object_pid_relationships if obsolete_parent_digital_object_pids_changed?
+      save_data_to_fedora
 
       @db_record.save! # Save timestamps + updates to modifed_by, etc.
 
