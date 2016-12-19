@@ -81,4 +81,19 @@ describe DigitalObject::Ezid do
       expect(actual_return_value).to eq(true)
     end
   end
+
+  context "#update_doi_target_url:" do
+    it "updates the target url" do
+      # stub out method wrapping API call to EZID server, stub returns true (success)
+      allow_any_instance_of(Hyacinth::Ezid::ApiSession).to receive(:modify_identifier) { true }
+      EZID[:user] = EZID[:ezid_test_user]
+      EZID[:password] = EZID[:ezid_test_password]
+      EZID[:shoulder][:doi] = EZID[:ezid_test_shoulder][:doi]
+      digital_object.instance_variable_set(:@doi,
+                                           Hyacinth::Ezid::Doi.new('doi:10.5072/FK2F47P06D',
+                                                                   'ark:/b5072/fk2f47p06d') )
+      actual_return_value = digital_object.update_doi_target_url('http://www.columbia.edu')
+      expect(actual_return_value).to eq(true)
+    end
+  end
 end
