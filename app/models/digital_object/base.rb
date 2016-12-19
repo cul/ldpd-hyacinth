@@ -230,17 +230,28 @@ class DigitalObject::Base
     allowed_publish_target_pids = allowed_publish_targets.map { |pub_target_data| pub_target_data[:pid] }
     inactive_publish_target_pids = allowed_publish_target_pids - publish_target_pids
     active_publish_target_pids = publish_target_pids
+    primary_publish_target_pid = project.primary_publish_target_pid
 
-    # Make sure to unpublish from INACTIVE publish targets before doing publishing to active
-    # publish targets, just in case multiple publish targets have the same publish URL
-    (inactive_publish_target_pids + active_publish_target_pids).each do |publish_target_pid|
-      do_unpublish = inactive_publish_target_pids.include?(publish_target_pid)
+    # - Make sure to unpublish from INACTIVE publish targets before doing publishing to active
+    # publish targets, just in case multiple publish targets have the same publish URL.
+    # - Also, always publish to primary_publish_target_pid (if active) last so that
+    # if that publish mints a DOI and triggers a re-publish for all other targets, those
+    # other targets are able to index the already-minted DOI.
+    ordered_publish_target_pids = inactive_publish_target_pids + active_publish_target_pids
+    if ordered_publish_target_pids.include?(primary_publish_target_pid)
+      # Move primary_publish_target_pid to the end of the array so that it's processed last
+      ordered_publish_target_pids.delete(primary_publish_target_pid)
+      ordered_publish_target_pids << primary_publish_target_pid
+    end
+
+    ordered_publish_target_pids.each do |publish_target_pid|
+      publish_action = inactive_publish_target_pids.include?(publish_target_pid) ? :unpublish : :publish
       publish_target = DigitalObject::Base.find(publish_target_pid)
 
       begin
-        send_request_to_publish_target_url(do_unpublish ? :unpublish : :publish, publish_target, pid)
+        send_request_to_publish_target_url(publish_action, publish_target, pid, primary_publish_target_pid)
       rescue RestClient::Unauthorized
-        @errors.add(:publish_target, "Not authorized to #{do_unpublish ? 'unpublish' : 'publish'} to #{publish_target.get_title}. Check credentials.")
+        @errors.add(:publish_target, "Not authorized to #{publish_action} to #{publish_target.get_title}. Check credentials.")
       rescue RestClient::NotFound
         @errors.add(:publish_target, "404 Not Found received for Publish Target URL: #{publish_target.publish_target_field('publish_url')}")
       end
@@ -249,37 +260,38 @@ class DigitalObject::Base
     @errors.blank?
   end
 
-  def send_request_to_publish_target_url(publish_action, publish_target, pid)
+  def send_request_to_publish_target_url(publish_action, publish_target, pid, primary_publish_target_pid)
     api_key = publish_target.publish_target_field('api_key')
     publish_url = publish_target.publish_target_field('publish_url') + '/' + pid
+    do_ezid_update = publish_target.pid == primary_publish_target_pid
     if publish_action == :unpublish
-      response = do_target_unpublish(publish_url, api_key)
+      response = do_target_unpublish(publish_url, api_key, do_ezid_update)
     elsif publish_action == :publish
-      response = do_target_publish(publish_url, api_key)
+      response = do_target_publish(publish_url, api_key, do_ezid_update)
     end
     @errors.add(:publish_target, "Error encountered while #{do_unpublish ? 'unpublishing' : 'publishing'} to #{publish_target.get_title}") if response.code != 200
   end
 
-  def do_target_unpublish(publish_url, api_key)
+  def do_target_unpublish(publish_url, api_key, do_ezid_update)
     response = RestClient.delete(
       publish_url,
       Authorization: "Token token=#{api_key}"
     )
-    unless @doi.blank?
+    if do_ezid_update && !@doi.blank?
       # We need to change the state of this ezid to :unavailable
-      change_doi_status_to_unavailable
-      @errors.add(:ezid_response, "An error occurred while attempting to set this digital object's ezid status to 'unavailable'.")
+      success = change_doi_status_to_unavailable
+      @errors.add(:ezid_response, "An error occurred while attempting to set this digital object's ezid status to 'unavailable'.") unless success
     end
     response
   end
 
-  def do_target_publish(publish_url, api_key)
+  def do_target_publish(publish_url, api_key, do_ezid_update)
     response = RestClient.put(
       publish_url,
       {},
       Authorization: "Token token=#{api_key}"
     )
-    if response.code == 200 && response.headers[:location].present?
+    if do_ezid_update && response.code == 200 && response.headers[:location].present?
       do_ezid_publish(response.headers[:location])
     end
     response
@@ -288,17 +300,16 @@ class DigitalObject::Base
   def do_ezid_publish(published_object_url)
     if @doi.blank?
       # If this record has no ezid, that means that we're publishing it for the first time.
-      # Mint ezid using
+      # We'll mint a new doi.
       if mint_and_store_doi(Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:public], published_object_url)
         # And now that we've stored the doi, save and re-publish this object
-        # TODO: In the future we'll be queueing a re-publish instead of calling save && publish below
         save && publish
       else
         @errors.add(:ezid_response, "An error occurred while attempting to mint a new ezid doi for this object.")
       end
     else
-      # This record already has an ezid.  Let's update the status of that ezid to :public.
-      update_doi_metadata
+      # This record already has an ezid.  Let's update the status of that ezid to :public, and send the latest published_object_url in case it changed.
+      update_doi_metadata(published_object_url)
     end
   end
 

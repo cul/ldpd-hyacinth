@@ -49,8 +49,7 @@ module DigitalObject::Ezid
     ezid_api_session = Hyacinth::Ezid::ApiSession.new(EZID[:user], EZID[:password])
     # ApiSession#modify_identifier returns true if the response from the EZID server indicated
     # success, else it returns false
-    ezid_api_session.modify_identifier(@doi,
-                                       _status: Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:unavailable])
+    ezid_api_session.modify_identifier(@doi, _status: Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:unavailable])
   end
 
   # Following method will make a request to the EZID server to update the metadata associated with
