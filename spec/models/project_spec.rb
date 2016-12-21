@@ -147,6 +147,17 @@ RSpec.describe Project, type: :model do
       end
     end
     
+    context 'removes blank enabled_publish_target_pids on save' do
+      let(:sample_project_with_new_enabled_publish_target_pids) {
+        sample_project.enabled_publish_target_pids = ['', 'zz:top', '', 'ac:dc']
+        sample_project
+      }
+      it do
+        sample_project_with_new_enabled_publish_target_pids.save
+        expect(sample_project_with_new_enabled_publish_target_pids.enabled_publish_target_pids).to eq(['zz:top', 'ac:dc'])
+      end
+    end
+    
   end
 
 end
