@@ -50,6 +50,25 @@
     <% }); %>
   </div>
   
+  <% if (digitalObject.hasRestrictions()) { %>
+    <h2 class="editor-form-header">Restrictions</h2>
+    <div class="restrictions">
+        <% if (mode == 'edit') { %>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" class="restricted-size-image-checkbox" <%= digitalObject.isRestrictedSizeImage() ? 'checked="checked"' : '' %> /> Restricted Size Image
+            </label>
+          </div>
+        <% } else { %>
+          <% if(digitalObject.isRestrictedSizeImage()) { %>
+            &check; Restricted Size Image
+          <% } else { %>
+            None
+          <% } %>
+        <% } %>
+    </div>
+  <% } %>
+  
   <% if ( digitalObject.publish_targets.length > 0 || (mode == 'edit' && allowedPublishTargets.length > 0) ) { %>
     <h2 class="editor-form-header">Publish Targets</h2>
     <div class="publish-targets">
@@ -84,25 +103,6 @@
           <% } %>
         <% } %>
       <% }); %>
-    </div>
-  <% } %>
-  
-  <% if (digitalObject.hasRestrictions()) { %>
-    <h2 class="editor-form-header">Restrictions</h2>
-    <div class="restrictions">
-        <% if (mode == 'edit') { %>
-          <div class="checkbox">
-            <label>
-              <input type="checkbox" class="restricted-size-image-checkbox" <%= digitalObject.isRestrictedSizeImage() ? 'checked="checked"' : '' %> /> Restricted Size Image
-            </label>
-          </div>
-        <% } else { %>
-          <% if(digitalObject.isRestrictedSizeImage()) { %>
-            &check; Restricted Size Image
-          <% } else { %>
-            None
-          <% } %>
-        <% } %>
     </div>
   <% } %>
 
