@@ -30,6 +30,15 @@
           </div>
         </div>
 	
+        <div class="form-group">
+          <label class="col-sm-3">
+            DOI:
+          </label>
+          <div class="col-sm-9">
+            <%= digitalObject.getDoi() %>
+          </div>
+        </div>
+	
         <% var parentDigitalObjectPids = digitalObject.getParentDigitalObjectPids() %>
         <% if (parentDigitalObjectPids.length > 0) { %>
           <div class="form-group">
