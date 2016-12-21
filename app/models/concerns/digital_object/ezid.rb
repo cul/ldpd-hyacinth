@@ -20,14 +20,14 @@ module DigitalObject::Ezid
     # if above method returned nil, call to EZID API was unsuccessful. Return nil to indicate failure
     # if unsuccessful because of timeout, log faiilure and return nil
     if ezid_api_session.timed_out?
-      Hyacinth::Utils::Logger.logger.info("#mint_and_store_doi: EZID API call to mint_identifier timed-out.")
+      Hyacinth::Utils::Logger.logger.error("#mint_and_store_doi: EZID API call to mint_identifier timed-out.")
       return nil
     end
     # if got a response from EZID server indicating failure, log info and return nil
     if ezid_doi_instance.nil?
       response = ezid_api_session.last_response_from_server
-      Hyacinth::Utils::Logger.logger.info("#mint_and_store_doi: EZID API call to mint_identifier was unsuccessful.")
-      Hyacinth::Utils::Logger.logger.info("#mint_and_store_doi: Response from EZID server follows:\n" \
+      Hyacinth::Utils::Logger.logger.error("#mint_and_store_doi: EZID API call to mint_identifier was unsuccessful.")
+      Hyacinth::Utils::Logger.logger.error("#mint_and_store_doi: Response from EZID server follows:\n" \
                                           "HTTP status code: #{response.http_status_code}\n" \
                                           "HTTP server message: #{response.http_server_message}\n" \
                                           "response body: #{response.body}") unless response.nil?
