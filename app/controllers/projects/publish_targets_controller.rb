@@ -11,15 +11,6 @@ module Projects
     end
 
     # PATCH/PUT /projects/1/publish_targets
-    def update_publish_targets
-      if @project.update(project_params)
-        redirect_to edit_project_publish_targets_path(id: @project.id), notice: 'Your changes have been saved.'
-      else
-        render action: 'edit'
-      end
-    end
-
-    # PATCH/PUT /projects/1/publish_targets
     def update
       if @project.update(project_params)
         redirect_to edit_project_publish_targets_path(id: @project.id), notice: 'Your changes have been saved.'

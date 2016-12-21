@@ -17,6 +17,7 @@ class Project < ActiveRecord::Base
   before_create :create_associated_fedora_object!
   before_save :fill_in_short_label_if_blank!
   before_save :clear_blank_publish_target_values!
+  before_validation :set_valid_primary_publish_target_pid!
   after_save :update_fedora_object!, :ensure_that_title_fields_are_enabled_and_required
   after_destroy :mark_fedora_object_as_deleted!
 
@@ -115,6 +116,15 @@ class Project < ActiveRecord::Base
 
   def fill_in_short_label_if_blank!
     self.short_label = display_label if short_label.blank?
+  end
+
+  def set_valid_primary_publish_target_pid!
+    if enabled_publish_target_pids.blank?
+      self.primary_publish_target_pid = nil
+    elsif !enabled_publish_target_pids.include?(primary_publish_target_pid)
+      self.primary_publish_target_pid = enabled_publish_target_pids.first
+    end
+    true
   end
 
   def clear_blank_publish_target_values!

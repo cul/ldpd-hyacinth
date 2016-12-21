@@ -8,7 +8,32 @@ RSpec.describe DigitalObject::Base, :type => :model do
     dod
   }
   
-
+  let(:sample_asset_digital_object_data) {
+    dod = JSON.parse( fixture('sample_digital_object_data/new_asset.json').read )
+    dod['identifiers'] = ['asset.' + SecureRandom.uuid] # random identifer to avoid collisions
+    
+    file_path = File.join(fixture_path(), '/sample_upload_files/lincoln.jpg')
+    
+    # Manually override import_file settings in the dummy fixture
+    dod['import_file'] = {
+      'import_type' => DigitalObject::Asset::IMPORT_TYPE_INTERNAL,
+      'import_path' => file_path,
+      'original_file_path' => file_path
+    }
+    
+    dod
+  }
+  let(:sample_group_digital_object_data) {
+    dod = JSON.parse( fixture('sample_digital_object_data/new_group.json').read )
+    dod['identifiers'] = ['group.' + SecureRandom.uuid] # random identifer to avoid collisions
+    dod
+  }
+  let(:second_sample_group_digital_object_data) {
+    dod = JSON.parse( fixture('sample_digital_object_data/new_group.json').read )
+    dod['identifiers'] = ['group.' + SecureRandom.uuid] # random identifer to avoid collisions
+    dod
+  }
+  
   describe "#initialize" do
     it "has a default dynamic_field_data value of {}" do
       digital_object = DigitalObject::Item.new()
@@ -16,7 +41,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
     end
   end
 
-  describe "#created_at " do
+  describe "#created_at" do
     it "returns a date" do
       new_item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
       new_item.set_digital_object_data(sample_item_digital_object_data, false)
@@ -27,7 +52,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
     end
   end
 
-  describe "#updated_at " do
+  describe "#updated_at" do
     it "returns a date" do
       new_item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
       new_item.set_digital_object_data(sample_item_digital_object_data, false)
@@ -39,31 +64,6 @@ RSpec.describe DigitalObject::Base, :type => :model do
   end
 
   describe "#set_digital_object_data" do
-    let(:sample_asset_digital_object_data) {
-      dod = JSON.parse( fixture('sample_digital_object_data/new_asset.json').read )
-      dod['identifiers'] = ['asset.' + SecureRandom.uuid] # random identifer to avoid collisions
-      
-      file_path = File.join(fixture_path(), '/sample_upload_files/lincoln.jpg')
-      
-      # Manually override import_file settings in the dummy fixture
-      dod['import_file'] = {
-        'import_type' => DigitalObject::Asset::IMPORT_TYPE_INTERNAL,
-        'import_path' => file_path,
-        'original_file_path' => file_path
-      }
-      
-      dod
-    }
-    let(:sample_group_digital_object_data) {
-      dod = JSON.parse( fixture('sample_digital_object_data/new_group.json').read )
-      dod['identifiers'] = ['group.' + SecureRandom.uuid] # random identifer to avoid collisions
-      dod
-    }
-    let(:second_sample_group_digital_object_data) {
-      dod = JSON.parse( fixture('sample_digital_object_data/new_group.json').read )
-      dod['identifiers'] = ['group.' + SecureRandom.uuid] # random identifer to avoid collisions
-      dod
-    }
     
     describe "raises exceptions for invalid data" do
       it "raises an exception for an object that references a parent digital object identifier that doesn't exist" do
@@ -242,6 +242,8 @@ RSpec.describe DigitalObject::Base, :type => :model do
         
         expect(asset.created_by).to be_nil # Because we didn't set created_by
         expect(asset.updated_by).to be_nil # Because we didn't set modified_by
+        
+        expect(asset.restricted_size_image).to eq(true)
       end
       
       it "works for an Asset that references a parent Item" do
@@ -284,6 +286,26 @@ RSpec.describe DigitalObject::Base, :type => :model do
         item.set_digital_object_data(sample_item_digital_object_data, false)
         item.save
         expect(DigitalObject::Base.find(item.pid).pid).to eq(item.pid)
+    end
+    
+    context "for Assets, serizlizes the restricted_size_image property to Fedora" do
+      let (:asset) {
+        asset = DigitalObjectType.get_model_for_string_key(sample_asset_digital_object_data['digital_object_type']['string_key']).new()
+        asset.set_digital_object_data(sample_asset_digital_object_data, false)
+        asset
+      }
+      
+      it "by adding RELS-EXT restriction property with value SIZE_RESTRICTION_LITERAL_VALUE when restricted_size_image is true" do
+        asset.restricted_size_image = true
+        asset.save
+        expect(asset.fedora_object.relationships(:restriction)).to include(DigitalObject::Asset::SIZE_RESTRICTION_LITERAL_VALUE)
+      end
+      
+      it "by removing RELS-EXT restriction property with value SIZE_RESTRICTION_LITERAL_VALUE when restricted_size_image is false" do
+        asset.restricted_size_image = false
+        asset.save
+        expect(asset.fedora_object.relationships(:restriction)).not_to include(DigitalObject::Asset::SIZE_RESTRICTION_LITERAL_VALUE)
+      end
     end
   
     it "can create a new DigitalObject for an existing Fedora object that isn't being tracked by Hyacinth, and preserves identifiers, parents and publish targets from that Fedora object" do

@@ -114,3 +114,9 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getModifiedBy = function
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getModified = function(){
   return new Date(this.modified);
 };
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getDoi = function(){
+  return this.doi || 'Unavailable';
+};
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.hasRestrictions = function() {
+  return typeof(this.restrictions) !== 'undefined';
+};

@@ -9,6 +9,7 @@ class DigitalObject::Base
   include DigitalObject::FinderMethods
   include DigitalObject::Persistence
   include DigitalObject::Serialization
+  include DigitalObject::Publishing
   include DigitalObject::Data
   include DigitalObject::Ezid
 
@@ -19,7 +20,7 @@ class DigitalObject::Base
   # For ActiveModel::Dirty
   define_attribute_methods :parent_digital_object_pids, :obsolete_parent_digital_object_pids, :ordered_child_digital_object_pids
 
-  attr_accessor :project, :publish_target_pids, :identifiers, :created_by, :updated_by, :state, :dc_type, :ordered_child_digital_object_pids, :publish_after_save, :ezid_doi
+  attr_accessor :project, :publish_target_pids, :identifiers, :created_by, :updated_by, :state, :dc_type, :ordered_child_digital_object_pids, :publish_after_save, :doi
   attr_reader :errors, :fedora_object, :parent_digital_object_pids
 
   delegate :created_at, :new_record?, :updated_at, to: :@db_record
@@ -46,7 +47,7 @@ class DigitalObject::Base
     @state = 'A'
     @errors = ActiveModel::Errors.new(self)
     @publish_after_save = false
-    @ezid_doi = nil
+    @doi = nil
   end
 
   def init_from_digital_object_record_and_fedora_object(digital_object_record, fedora_obj)
@@ -66,8 +67,22 @@ class DigitalObject::Base
     load_state_from_fedora_object!
     load_dc_type_from_fedora_object!
     load_dc_identifiers_from_fedora_object!
+    load_ezid_from_fedora_object!
     load_project_and_publisher_relationships_from_fedora_object!
     load_fedora_hyacinth_ds_data_from_fedora_object!
+  end
+
+  def save_data_to_fedora
+    set_created_and_updated_data_from_db_record
+    set_fedora_hyacinth_ds_data
+    set_fedora_project_and_publisher_relationships
+    set_fedora_object_state
+    set_fedora_object_dc_type
+    set_fedora_object_dc_identifiers
+    set_fedora_object_dc_title_and_label
+
+    set_fedora_parent_digital_object_pid_relationships if parent_digital_object_pids_changed?
+    set_fedora_obsolete_parent_digital_object_pid_relationships if obsolete_parent_digital_object_pids_changed?
   end
 
   def reset_data_attributes_before_assignment(digital_object_data)
@@ -204,74 +219,6 @@ class DigitalObject::Base
   def before_publish
     # TODO: rewrite with ActiveRecord::Callbacks
     save_datastreams
-  end
-
-  def publish
-    before_publish
-
-    # Save withg retry after Fedora timeouts / unreachable host
-    Retriable.retriable DigitalObject::Base::RETRY_OPTIONS do
-      @fedora_object.save(update_index: false)
-    end
-
-    inactive_publish_target_pids = allowed_publish_targets.map { |pub_target_data| pub_target_data[:pid] } - publish_target_pids
-    active_publish_target_pids = publish_target_pids
-
-    # Make sure to unpublish from INACTIVE publish targets before doing publishing to active
-    # publish targets, just in case multiple publish targets have the same publish URL
-    (inactive_publish_target_pids + active_publish_target_pids).each do |publish_target_pid|
-      do_unpublish = inactive_publish_target_pids.include?(publish_target_pid)
-      publish_target = DigitalObject::Base.find(publish_target_pid)
-
-      begin
-        send_request_to_publish_target_url(do_unpublish ? :unpublish : :publish, publish_target.publish_target_field('publish_url'), pid, publish_target.publish_target_field('api_key'))
-      rescue RestClient::Unauthorized
-        @errors.add(:publish_target, "Not authorized to #{do_unpublish ? 'unpublish' : 'publish'} to #{publish_target.get_title}. Check credentials.")
-      rescue RestClient::NotFound
-        @errors.add(:publish_target, "404 Not Found received for Publish Target URL: #{publish_target.publish_target_field('publish_url')}")
-      end
-    end
-
-    @errors.blank?
-  end
-
-  def send_request_to_publish_target_url(publish_action, publish_url_prefix, pid, api_key)
-    publish_url = publish_url_prefix + '/' + pid
-    if publish_action == :unpublish
-      response = RestClient.delete(
-        publish_url,
-        Authorization: "Token token=#{api_key}"
-      )
-      # unless @ezid_doi.blank?
-      #  # We need to change the state of this ezid to :unavailable
-      #  ezid_response = change_doi_status_to_unavailable
-      #  @errors.add(:ezid_response, "An error occurred while attempting to set this digital object's ezid status to 'unavailable'.")
-      # end
-    elsif publish_action == :publish
-      response = RestClient.put(
-        publish_url,
-        {},
-        Authorization: "Token token=#{api_key}"
-      )
-      # if response.code == 200 && response.headers[:location].present?
-      #   published_object_url = response.headers[:location]
-      #   if @ezid_doi.blank?
-      #     # If this record has no ezid, that means that we're publishing it for the first time.
-      #     # Mint ezid using
-      #     mint_and_store_doi(Hyacinth::Ezid::Doi::IDENTIFIER_STATUS, published_object_url)
-      #     # And now that we've stored the doi, save and re-publish this object
-      #     # TODO: In the future we'll be queueing a re-publish instead of calling save && publish below
-      #     save && publish
-      #   else
-      #     # This record already has an ezid.  Let's update the status of that ezid to :public.
-      #     ezid_api_session = Hyacinth::Ezid::ApiSession.new(EZID[:user], EZID[:password])
-      #     ezid_api_session.modify_identifier(@ezid_doi,
-      #                               _status: Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:public])
-      #   end
-      # end
-    end
-
-    @errors.add(:publish_target, "Error encountered while #{do_unpublish ? 'unpublishing' : 'publishing'} to #{publish_target.get_title}") if response.code != 200
   end
 
   def self.valid_dc_types

@@ -124,6 +124,47 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     end
   end
 
+  def unpublish_digital_object(digital_object, do_ezid_update)
+    response = RestClient.delete(
+      publish_target_field('publish_url') + '/' + digital_object.pid,
+      Authorization: "Token token=#{publish_target_field('api_key')}"
+    )
+    if do_ezid_update && !digital_object.doi.blank?
+      # We need to change the state of this ezid to :unavailable
+      success = digital_object.change_doi_status_to_unavailable
+      digital_object.errors.add(:ezid_response, "An error occurred while attempting to set this digital object's ezid status to 'unavailable'.") unless success
+    end
+    response
+  end
+
+  def publish_digital_object(digital_object, do_ezid_update)
+    response = RestClient.put(
+      publish_target_field('publish_url') + '/' + digital_object.pid,
+      {},
+      Authorization: "Token token=#{publish_target_field('api_key')}"
+    )
+    if do_ezid_update && response.code == 200 && response.headers[:location].present?
+      do_ezid_publish(response.headers[:location])
+    end
+    response
+  end
+
+  def do_ezid_publish(published_object_url)
+    if @doi.blank?
+      # If this record has no ezid, that means that we're publishing it for the first time.
+      # We'll mint a new doi.
+      if mint_and_store_doi(Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:public], published_object_url)
+        # And now that we've stored the doi, save and re-publish this object
+        save && publish
+      else
+        @errors.add(:ezid_response, "An error occurred while attempting to mint a new ezid doi for this object.")
+      end
+    else
+      # This record already has an ezid.  Let's update the status of that ezid to :public, and send the latest published_object_url in case it changed.
+      update_doi_metadata(published_object_url)
+    end
+  end
+
   def to_solr
     doc = super
     doc['publish_target_string_key_sim'] = @publish_target_data['string_key']

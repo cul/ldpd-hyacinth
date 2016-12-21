@@ -134,7 +134,7 @@ describe Hyacinth::Ezid::HyacinthMetadata do
   context "#type_of_resource:" do
     it "type_of_resource" do
       local_metadata_retrieval = described_class.new dod
-      expected_type_of_resource = 'still image'
+      expected_type_of_resource = 'Image'
       actual_type_of_resource = local_metadata_retrieval.type_of_resource
       expect(actual_type_of_resource).to eq(expected_type_of_resource)
     end
@@ -143,7 +143,7 @@ describe Hyacinth::Ezid::HyacinthMetadata do
   context "#date_issued_start_year:" do
     it "date_issued_start_year" do
       local_metadata_retrieval = described_class.new dod
-      expected_date = '2015'
+      expected_date = '1951'
       actual_date = local_metadata_retrieval.date_issued_start_year
       expect(actual_date).to eq(expected_date)
     end

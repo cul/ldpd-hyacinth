@@ -14,12 +14,18 @@ class DigitalObject::Asset < DigitalObject::Base
   IMPORT_TYPE_UPLOAD_DIRECTORY = 'upload_directory'
   VALID_FILE_IMPORT_TYPES = [IMPORT_TYPE_INTERNAL, IMPORT_TYPE_EXTERNAL, IMPORT_TYPE_POST_DATA, IMPORT_TYPE_UPLOAD_DIRECTORY]
 
+  SIZE_RESTRICTION_LITERAL_VALUE = 'size restriction'
+
+  attr_accessor :restricted_size_image
+
   def initialize
     super
 
     @import_file_import_type = nil
     @import_file_import_path = nil
     @import_file_original_file_path = nil
+
+    @restricted_size_image = false
 
     # Default to 'Unknown' dc_type.  We expect other code to properly set this
     # once the asset file type is known, but this avoid a blank value for dc_type
@@ -232,18 +238,24 @@ class DigitalObject::Asset < DigitalObject::Base
   def set_digital_object_data(digital_object_data, merge_dynamic_fields)
     super(digital_object_data, merge_dynamic_fields)
 
-    # File upload (for NEW assets only, and only if this object's current data validates successfully)
-    return unless self.new_record? && digital_object_data['import_file'].present?
+    if digital_object_data.key?('restrictions') && digital_object_data['restrictions'].key?('restricted_size_image')
+      self.restricted_size_image = digital_object_data['restrictions']['restricted_size_image']
+    end
 
-    validate_import_file_data(digital_object_data['import_file'])
+    # File upload (for NEW assets only, and only if this object's current data validates successfully)
+    handle_new_file_upload(digital_object_data['import_file']) if self.new_record? && digital_object_data['import_file'].present?
+  end
+
+  def handle_new_file_upload(import_file_data)
+    validate_import_file_data(import_file_data)
     # Check for presentce of import file original file path (which is optional, but may be set by the user)
-    @import_file_original_file_path = digital_object_data['import_file']['original_file_path']
+    @import_file_original_file_path = import_file_data['original_file_path']
 
     # Determine import_file_import_type
-    @import_file_import_type = digital_object_data['import_file']['import_type']
+    @import_file_import_type = import_file_data['import_type']
 
     # Get import file path
-    @import_file_import_path = digital_object_data['import_file']['import_path']
+    @import_file_import_path = import_file_data['import_path']
 
     # Paths cannot contain "/.." or "../"
     raise 'File paths cannot contain: "..". Please specify a full path.' if @import_file_import_path.index('/..') || @import_file_import_path.index('../')
@@ -281,6 +293,29 @@ class DigitalObject::Asset < DigitalObject::Base
     return false
   end
 
+  def load_data_from_sources
+    super
+
+    # Get restriction status
+    self.restricted_size_image = fedora_object.relationships(:restriction).include?(SIZE_RESTRICTION_LITERAL_VALUE)
+  end
+
+  def save_data_to_fedora
+    super
+
+    if restricted_size_image
+      fedora_object.add_relationship(:restriction, SIZE_RESTRICTION_LITERAL_VALUE, true)
+    else
+      # Remove SIZE_RESTRICTION_LITERAL_VALUE, but preserve any other restrictions
+      current_restrictions = fedora_object.relationships(:restriction).to_a
+      fedora_object.clear_relationship(:restriction)
+      current_restrictions.delete(SIZE_RESTRICTION_LITERAL_VALUE)
+      current_restrictions.each do |restriction_liternal|
+        fedora_object.add_relationship(:restriction, restriction_liternal, true)
+      end
+    end
+  end
+
   def to_solr
     doc = super
     doc['original_filename_sim'] = original_filename
@@ -299,6 +334,9 @@ class DigitalObject::Asset < DigitalObject::Base
       original_filename: original_filename,
       original_file_path: original_file_path
     }
+
+    json['restrictions'] ||= {}
+    json['restrictions']['restricted_size_image'] = restricted_size_image
 
     json
   end

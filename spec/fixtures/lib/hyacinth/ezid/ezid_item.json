@@ -53,7 +53,7 @@
 	"type_of_resource" :
 	[
 	    {
-		"type_of_resource_value" : "still image"
+		"type_of_resource_value" : "Image"
 	    }
 	]
 	,
@@ -223,7 +223,7 @@
 	"date_issued" :
 	[
 	    {
-		"date_issued_start_value" : "2015-01-01"
+		"date_issued_start_value" : "1951-01-01"
 	    }
 	]
 	,

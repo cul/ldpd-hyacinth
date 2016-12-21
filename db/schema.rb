@@ -216,6 +216,7 @@ ActiveRecord::Schema.define(version: 20161130150016) do
     t.text     "uri"
     t.string   "short_label",                         limit: 255
     t.text     "enabled_publish_target_pids"
+    t.string   "primary_publish_target_pid"
   end
 
   add_index "projects", ["display_label"], name: "index_projects_on_display_label", unique: true

@@ -103,8 +103,8 @@ namespace :hyacinth do
       )
       test_publish_target_2.save
       
-      # Enable test_publish_target_1 for test_project
-      test_project.enabled_publish_target_pids = [test_publish_target_1.pid]
+      # Enable test_publish_target_1 and test_publish_target_2 for test_project
+      test_project.enabled_publish_target_pids = [test_publish_target_1.pid, test_publish_target_2.pid]
       test_project.save
     end
 

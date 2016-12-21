@@ -1,14 +1,16 @@
 <resource xmlns="http://datacite.org/schema/kernel-3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd">
   <identifier identifierType="DOI">10.1371/journal.pone.0119638</identifier>
-  <resourceType resourceTypeGeneral="still image"/>
+  <resourceType resourceTypeGeneral="Image"/>
   <publisher>Columbia University</publisher>
-  <publicationYear>2015</publicationYear>
-  <date dateType="Created">2015-02-04</date>
-  <date dateType="Updated">2016-03-31</date>
+  <publicationYear>1951</publicationYear>
+  <dates>
+    <date dateType="Created">2015-02-04</date>
+    <date dateType="Updated">2016-03-31</date>
+  </dates>
   <relatedIdentifiers>
-    <relatedIdentifier relatedIdentifierType="ISSN" relationType="isPartOf">1932-6203</relatedIdentifier>
-    <relatedIdentifier relatedIdentifierType="ISBN" relationType="isPartOf">0670734608</relatedIdentifier>
-    <relatedIdentifier relatedIdentifierType="DOI" relationType="isVariantFormOf">10.1371/journal.pone.0119638</relatedIdentifier>
+    <relatedIdentifier relatedIdentifierType="ISSN" relationType="IsPartOf">1932-6203</relatedIdentifier>
+    <relatedIdentifier relatedIdentifierType="ISBN" relationType="IsPartOf">0670734608</relatedIdentifier>
+    <relatedIdentifier relatedIdentifierType="DOI" relationType="IsVariantFormOf">10.1371/journal.pone.0119638</relatedIdentifier>
   </relatedIdentifiers>
   <creators>
     <creator>

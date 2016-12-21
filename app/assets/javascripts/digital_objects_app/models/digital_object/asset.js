@@ -46,6 +46,10 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getOriginalFilePath = f
   return this.assetData['original_file_path'];
 };
 
-Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.hasImage = function (){
+Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.hasImage = function(){
   return Hyacinth.repositoryCacheUrl && this.getDcType() == 'StillImage';
+};
+
+Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.isRestrictedSizeImage = function(){
+  return this.hasRestrictions() && this.restrictions.restricted_size_image;
 };
