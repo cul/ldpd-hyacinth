@@ -45,10 +45,10 @@ module DigitalObject::Publishing
       end
       success = response.code == 200
       @errors.add(:publish_target, "Error encountered while #{publish_action.to_s + 'ing'} to #{publish_target.get_title}") unless success
-    rescue RestClient::Unauthorized
-      @errors.add(:publish_target, "Not authorized to #{publish_action} to #{publish_target.get_title}. Check credentials.")
-    rescue RestClient::NotFound
-      @errors.add(:publish_target, "404 Not Found received for Publish Target URL: #{publish_target.publish_target_field('publish_url')}")
+    rescue Errno::ECONNREFUSED
+      @errors.add(:publish_target, "Connection to server refused for Publish Target URL: #{publish_target.publish_target_field('publish_url')}")
+    rescue RestClient::ExceptionWithResponse => e
+      @errors.add(:publish_target, "#{e.response.code} response received for Publish Target URL: #{publish_target.publish_target_field('publish_url')}")
     end
     success
   end
