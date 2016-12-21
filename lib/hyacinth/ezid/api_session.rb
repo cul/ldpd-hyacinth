@@ -43,7 +43,7 @@ module Hyacinth::Ezid
         @last_response_from_server = Hyacinth::Ezid::ServerResponse.new response
         @last_response_from_server.parsed_body_hash
       rescue Net::ReadTimeout, SocketError
-        Hyacinth::Utils::Logger.logger.info('EZID API call to get identifier metadata timed-out')
+        Hyacinth::Utils::Logger.logger.error('#get_identifier_metadata: EZID API call to get identifier metadata timed-out')
         @timed_out = true
         nil
       end
@@ -68,13 +68,19 @@ module Hyacinth::Ezid
         @last_response_from_server = Hyacinth::Ezid::ServerResponse.new response
         # following code chunk assumes we asked to mint a DOI identifier. Code will need to be changed
         # if ARK or URN identifiers support is added
+        Hyacinth::Utils::Logger.logger.error("#mint_identifier: Response from EZID server failed:\n" \
+                                             "identifier_status: #{identifier_status}\n" \
+                                             "identifier_type: #{identifier_type}\n" \
+                                             "target_url: #{target_url}\n" \
+                                             "url suffix (includes shoulder): #{request_uri}\n" \
+                                             "datacite metadata: #{metadata.inspect}") unless @last_response_from_server.success?
         # BEGIN_CHUNK
         Hyacinth::Ezid::Doi.new(@last_response_from_server.doi,
                                 @last_response_from_server.ark,
                                 identifier_status) if @last_response_from_server.success?
         # END_CHUNK
       rescue Net::ReadTimeout, SocketError
-        Hyacinth::Utils::Logger.logger.info('EZID API call to mint identifier timed-out')
+        Hyacinth::Utils::Logger.logger.error('#mint_identifier: EZID API call to mint identifier timed-out')
         @timed_out = true
         nil
       end
@@ -99,7 +105,7 @@ module Hyacinth::Ezid
           false
         end
       rescue Net::ReadTimeout, SocketError
-        Hyacinth::Utils::Logger.logger.info('EZID API call to modify identifier timed-out')
+        Hyacinth::Utils::Logger.logger.error('modify_identifier: EZID API call to modify identifier timed-out')
         @timed_out = true
         false
       end
