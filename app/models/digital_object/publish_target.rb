@@ -144,25 +144,9 @@ class DigitalObject::PublishTarget < DigitalObject::Base
       Authorization: "Token token=#{publish_target_field('api_key')}"
     )
     if do_ezid_update && response.code == 200 && response.headers[:location].present?
-      do_ezid_publish(response.headers[:location])
+      digital_object.do_ezid_publish(response.headers[:location])
     end
     response
-  end
-
-  def do_ezid_publish(published_object_url)
-    if @doi.blank?
-      # If this record has no ezid, that means that we're publishing it for the first time.
-      # We'll mint a new doi.
-      if mint_and_store_doi(Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:public], published_object_url)
-        # And now that we've stored the doi, save and re-publish this object
-        save && publish
-      else
-        @errors.add(:ezid_response, "An error occurred while attempting to mint a new ezid doi for this object.")
-      end
-    else
-      # This record already has an ezid.  Let's update the status of that ezid to :public, and send the latest published_object_url in case it changed.
-      update_doi_metadata(published_object_url)
-    end
   end
 
   def to_solr
