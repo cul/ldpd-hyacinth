@@ -46,8 +46,8 @@ describe Hyacinth::Ezid::DataciteMetadataBuilder do
       let(:dod) do
         JSON.parse( fixture('lib/hyacinth/ezid/ezid_item_empty_dynamic_field_data.json').read )
       end
-      it "produce a valid XML serialization with creator = '(Unavailable)' when creator isn't present" do
-        expect(metadata_builder.datacite_xml).to include('<creatorName>(Unavailable)</creatorName>')
+      it "produce a valid XML serialization with creator = '(:unav)' when creator isn't present" do
+        expect(metadata_builder.datacite_xml).to include('<creatorName>(:unav)</creatorName>')
       end
     end
     context "minimal dynamic fields" do

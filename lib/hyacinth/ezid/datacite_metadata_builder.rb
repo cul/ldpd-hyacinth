@@ -84,7 +84,7 @@ module Hyacinth::Ezid
       else
         # required element, but not content
         # see http://ezid.cdlib.org/doc/apidoc.html#profile-datacite
-        xml.creators { xml.creator { xml.creatorName '(Unavailable)' } }
+        xml.creators { xml.creator { xml.creatorName '(:unav)' } }
       end
     end
 
