@@ -35,7 +35,9 @@ module Hyacinth::Ezid
           add_subjects xml
           add_contributors xml
           if @hyacinth_metadata_retrieval.type_of_resource.present?
-            xml.resourceType('resourceTypeGeneral' => @hyacinth_metadata_retrieval.type_of_resource)
+            # fcd1, 21Dec16: datacite has a controlled vocabulary for resource type, which does not
+            # match our values. This is an optional element in the schema, so for now skip it.
+            # xml.resourceType('resourceTypeGeneral' => @hyacinth_metadata_retrieval.type_of_resource)
           end
           if @hyacinth_metadata_retrieval.abstract.present?
             xml.descriptions { xml.description('descriptionType' => 'Abstract') { xml.text @hyacinth_metadata_retrieval.abstract } }
