@@ -80,6 +80,7 @@ class DigitalObject::Base
     set_fedora_object_dc_type
     set_fedora_object_dc_identifiers
     set_fedora_object_dc_title_and_label
+    set_fedora_object_ezid_doi
 
     set_fedora_parent_digital_object_pid_relationships if parent_digital_object_pids_changed?
     set_fedora_obsolete_parent_digital_object_pid_relationships if obsolete_parent_digital_object_pids_changed?

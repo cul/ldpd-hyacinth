@@ -34,9 +34,6 @@ module DigitalObject::Ezid
       return nil
     end
     @doi = ezid_doi_instance.identifier
-    # store the EZID DOI identifier in RELS-EXT of fedora object
-    @fedora_object.add_relationship(:ezid_doi, ezid_doi_instance.identifier)
-    @doi
   end
 
   # Following method will make a request to the EZID server to change the
