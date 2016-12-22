@@ -34,6 +34,9 @@ module DigitalObject::Persistence
   def before_save
     # TODO: rewrite with ActiveRecord::Callbacks
     # To be overridden by subclasses
+
+    # TODO: call new method mint_reserved_doi() for this DigitalObject
+    Hyacinth::Utils::Logger.info('Would have minted a reserved DOI!') if @mint_reserved_doi_before_save
   end
 
   def persist_to_stores

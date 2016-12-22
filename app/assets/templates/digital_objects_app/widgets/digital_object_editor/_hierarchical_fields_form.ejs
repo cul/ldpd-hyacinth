@@ -56,7 +56,7 @@
         <% if (mode == 'edit') { %>
           <div class="checkbox">
             <label>
-              <input type="checkbox" class="restricted-size-image-checkbox" <%= digitalObject.isRestrictedSizeImage() ? 'checked="checked"' : '' %> /> Restricted Size Image
+              <input type="checkbox" id="restricted-size-image-checkbox" <%= digitalObject.isRestrictedSizeImage() ? 'checked="checked"' : '' %> /> Restricted Size Image
             </label>
           </div>
         <% } else { %>
@@ -106,9 +106,20 @@
     </div>
   <% } %>
 
+  <hr />
+
+  <% if (digitalObject.getDoi() == null) { %>
+    <div class="alignright">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" id="mint-reserved-doi-checkbox" /> Mint Reserved DOI
+        </label>
+      </div>
+    </div>
+  <% } %>
+  
   <% if (mode == 'edit') { %>
     <div class="alignright">
-      <hr />
       <p>
         <% if (Hyacinth.DigitalObjectsApp.params['action'] == 'new') { %>
           <a href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'index'}) %>" onclick="return confirm(Hyacinth.Text.unsavedChangesMessage);" class="btn btn-danger">Cancel</a>

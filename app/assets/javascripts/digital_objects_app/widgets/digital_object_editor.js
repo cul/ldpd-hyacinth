@@ -615,9 +615,15 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.submitEditorForm = func
   }
   
   //Handle restrictions
-  if($editorForm.find('.restricted-size-image-checkbox').length > 0) {
+  if($editorForm.find('#restricted-size-image-checkbox').length > 0) {
     digitalObjectData['restrictions'] = digitalObjectData['restrictions'] || {};
-    digitalObjectData['restrictions']['restricted_size_image'] = $editorForm.find('.restricted-size-image-checkbox').is(':checked');
+    digitalObjectData['restrictions']['restricted_size_image'] = $editorForm.find('#restricted-size-image-checkbox').is(':checked');
+  }
+  
+  //Handle restrictions
+  var mintReservedDoi = false;
+  if($editorForm.find('#mint-reserved-doi-checkbox').length > 0) {
+    mintReservedDoi = $editorForm.find('#mint-reserved-doi-checkbox').is(':checked');
   }
 
   var that = this;
@@ -628,7 +634,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.submitEditorForm = func
     data: {
       '_method': this.digitalObject.isNewRecord() ? 'POST' : 'PUT', //For proper RESTful Rails requests
       digital_object_data_json: JSON.stringify(digitalObjectData),
-      publish: publish
+      publish: publish,
+      mint_reserved_doi: mintReservedDoi
     },
     cache: false
   }).done(function(digitalObjectCreationResponse){

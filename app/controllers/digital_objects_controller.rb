@@ -84,6 +84,7 @@ class DigitalObjectsController < ApplicationController
     test_mode = params['test'].to_s == 'true'
 
     @digital_object.publish_after_save = (params['publish'].to_s == 'true')
+    @digital_object.mint_reserved_doi_before_save = (params['mint_reserved_doi'].to_s == 'true')
 
     if save_or_validate_digital_object
       render_json = { success: true }.merge!(@digital_object.as_confirmation_json)
@@ -137,6 +138,7 @@ class DigitalObjectsController < ApplicationController
     test_mode = params['test'].to_s == 'true'
 
     @digital_object.publish_after_save = (params['publish'].to_s == 'true')
+    @digital_object.mint_reserved_doi_before_save = (params['mint_reserved_doi'].to_s == 'true')
 
     if test_mode ? @digital_object.valid? : @digital_object.save
       render_json = { success: true, pid: @digital_object.pid }.merge(test_mode ? { 'test' => true } : {})

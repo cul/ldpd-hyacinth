@@ -20,7 +20,7 @@ class DigitalObject::Base
   # For ActiveModel::Dirty
   define_attribute_methods :parent_digital_object_pids, :obsolete_parent_digital_object_pids, :ordered_child_digital_object_pids
 
-  attr_accessor :project, :publish_target_pids, :identifiers, :created_by, :updated_by, :state, :dc_type, :ordered_child_digital_object_pids, :publish_after_save, :doi
+  attr_accessor :project, :publish_target_pids, :identifiers, :created_by, :updated_by, :state, :dc_type, :ordered_child_digital_object_pids, :publish_after_save, :mint_reserved_doi_before_save, :doi
   attr_reader :errors, :fedora_object, :parent_digital_object_pids
 
   delegate :created_at, :new_record?, :updated_at, to: :@db_record
