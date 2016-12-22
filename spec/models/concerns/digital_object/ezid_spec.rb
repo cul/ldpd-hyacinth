@@ -45,7 +45,7 @@ describe DigitalObject::Ezid do
       EZID[:user] = EZID[:ezid_test_user]
       EZID[:password] = EZID[:ezid_test_password]
       EZID[:shoulder][:doi] = EZID[:ezid_test_shoulder][:doi]
-      expect(Hyacinth::Utils::Logger.logger).to receive(:info).with("#mint_and_store_doi: EZID API call to mint_identifier was unsuccessful.")
+      expect(Hyacinth::Utils::Logger.logger).to receive(:error).with("#mint_and_store_doi: EZID API call to mint_identifier was unsuccessful.")
       actual_ezid_doi = digital_object.mint_and_store_doi(Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:reserved],
                                         'http://www.columbia.edu')
       expect(actual_ezid_doi).to eq(nil)
