@@ -111,6 +111,9 @@ class DigitalObject::Base
     # Identifiers (multiple)
     @identifiers += digital_object_data['identifiers'] if digital_object_data['identifiers']
 
+    # Allow setting of doi if doi hasn't already been set
+    @doi = digital_object_data['doi'] if @doi.blank? && digital_object_data['doi'].present?
+
     # Project (only one) -- Only allow setting this if this DigitalObject is a new record
     self.project = project_from_data(digital_object_data) if self.new_record?
 
