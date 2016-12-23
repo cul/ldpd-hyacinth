@@ -150,6 +150,11 @@ module DigitalObject::Fedora
       set_fedora_object_relationship(:publisher, values)
     end
 
+    def set_fedora_object_ezid_doi
+      # store the EZID DOI identifier in RELS-EXT of fedora object
+      set_fedora_object_relationship(:ezid_doi, doi)
+    end
+
     # Prepares a hash for serialization to the hyacinth ds upon Fedora write
     def data_for_hyacinth_ds
       # Using Marshal to make a copy so we don't modifiy the in-memory copy, then saving the modified copy to Fedora
