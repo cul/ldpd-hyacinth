@@ -6,17 +6,23 @@ module DigitalObject::Ezid
   # returns the EZID DOI identifier string, or nil if minting did not go through
   def mint_and_store_doi(identifier_status,
                          target_url = nil)
-    # get the metadata from hyacinth
-    hyacinth_metadata = Hyacinth::Ezid::HyacinthMetadata.new as_json
-    # prepare the metadata into an acceptable format for EZID
-    datacite_metadata = Hyacinth::Ezid::DataciteMetadataBuilder.new hyacinth_metadata
+    if identifier_status == Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:reserved]
+      # Reserved DOI are not required to have datacite metadata.
+      metadata = {}
+    else
+      # get the metadata from hyacinth
+      hyacinth_metadata = Hyacinth::Ezid::HyacinthMetadata.new as_json
+      # prepare the metadata into an acceptable format for EZID
+      datacite_metadata = Hyacinth::Ezid::DataciteMetadataBuilder.new hyacinth_metadata
+      metadata = { datacite: datacite_metadata.datacite_xml }
+    end
     # setup EZID API info: credentials, url, etc.
     ezid_api_session = Hyacinth::Ezid::ApiSession.new(EZID[:user], EZID[:password])
     # mint_identifier returns a Hyacinth::Ezid::Doi
     ezid_doi_instance = ezid_api_session.mint_identifier(EZID[:shoulder][:doi],
                                                          identifier_status,
                                                          target_url,
-                                                         datacite: datacite_metadata.datacite_xml)
+                                                         metadata)
     # if above method returned nil, call to EZID API was unsuccessful. Return nil to indicate failure
     # if unsuccessful because of timeout, log faiilure and return nil
     if ezid_api_session.timed_out?
