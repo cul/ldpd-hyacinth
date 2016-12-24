@@ -238,12 +238,21 @@ class DigitalObject::Asset < DigitalObject::Base
   def set_digital_object_data(digital_object_data, merge_dynamic_fields)
     super(digital_object_data, merge_dynamic_fields)
 
+    # If this Asset's title is blank after dynamic field data is applied,
+    # use the DEFAULT_ASSET_NAME. This allows validation to complete,
+    # and the title will be later inferred from the filename during the upload step.
+    handle_blank_asset_title
+
     if digital_object_data.key?('restrictions') && digital_object_data['restrictions'].key?('restricted_size_image')
       self.restricted_size_image = digital_object_data['restrictions']['restricted_size_image']
     end
 
     # File upload (for NEW assets only, and only if this object's current data validates successfully)
     handle_new_file_upload(digital_object_data['import_file']) if self.new_record? && digital_object_data['import_file'].present?
+  end
+
+  def handle_blank_asset_title
+    set_title('', DigitalObject::Asset::DEFAULT_ASSET_NAME) if get_title.blank?
   end
 
   def handle_new_file_upload(import_file_data)

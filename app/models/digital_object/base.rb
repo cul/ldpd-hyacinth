@@ -124,11 +124,6 @@ class DigitalObject::Base
     ordered_child_digital_objects_from_data(digital_object_data) { |digital_object| add_ordered_child_digital_object(digital_object) }
 
     set_dynamic_fields_from_data(digital_object_data, merge_dynamic_fields)
-
-    # If this is an Asset, and its title is blank after dynamic field data
-    # is applied, use the DEFAULT_ASSET_NAME. This allows validation to complete,
-    # and the title will be later inferred from the filename during the upload step.
-    set_title('', DigitalObject::Asset::DEFAULT_ASSET_NAME) if self.is_a?(DigitalObject::Asset) && get_title.blank?
   end
 
   # Returns the primary title
