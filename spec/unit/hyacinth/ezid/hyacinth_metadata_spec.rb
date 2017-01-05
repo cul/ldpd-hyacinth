@@ -14,6 +14,12 @@ describe Hyacinth::Ezid::HyacinthMetadata do
     data['identifiers'] = ['item.' + SecureRandom.uuid] # random identifer to avoid collisions
     data
   }
+  
+  let(:dod_names_without_roles) {
+    data = JSON.parse( fixture('lib/hyacinth/ezid/ezid_item_names_without_roles.json').read )
+    data['identifiers'] = ['item.' + SecureRandom.uuid] # random identifer to avoid collisions
+    data
+  }
 
   context "empty dynamic field data:" do
     it "title handles empty dynamic field data" do
@@ -244,6 +250,14 @@ describe Hyacinth::Ezid::HyacinthMetadata do
       local_metadata_retrieval = described_class.new dod
       expected_contributors = ['Burton, Tim']
       expect(local_metadata_retrieval.contributors).to eq(expected_contributors)
+    end
+    
+    context "names without roles" do
+      it "contributors set when name has no role" do
+        local_metadata_retrieval = described_class.new dod_names_without_roles
+        expected_contributors = ['Salinger, J. D.', 'Lincoln, Abraham']
+        expect(local_metadata_retrieval.contributors).to eq(expected_contributors)
+      end
     end
   end
 end
