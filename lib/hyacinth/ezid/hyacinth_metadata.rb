@@ -120,14 +120,27 @@ module Hyacinth::Ezid
     def process_names
       return unless @dfd.key? 'name'
       @dfd['name'].each do |name|
-        name['name_role'].each do |role|
-          role_value = role['name_role_term']['value'].downcase
-          case role_value
-          when 'author' then @creators << name['name_term']['value']
-          when 'editor' then @editors << name['name_term']['value']
-          when 'moderator' then @moderators << name['name_term']['value']
-          when 'contributor' then @contributors << name['name_term']['value']
-          end
+        process_name(name)
+      end
+    end
+
+    # adds given name to correct name-related instance variable (@creators, @editors, etc.)
+    # @api private
+    # @return [void]
+    def process_name(name)
+      # If name has no explicitly declared role, add name to @contributors
+      if name['name_role'].blank?
+        @contributors << name['name_term']['value']
+        return
+      end
+
+      name['name_role'].each do |role|
+        role_value = role['name_role_term']['value'].downcase
+        case role_value
+        when 'author' then @creators << name['name_term']['value']
+        when 'editor' then @editors << name['name_term']['value']
+        when 'moderator' then @moderators << name['name_term']['value']
+        when 'contributor' then @contributors << name['name_term']['value']
         end
       end
     end
