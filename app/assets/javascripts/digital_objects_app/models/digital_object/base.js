@@ -21,7 +21,10 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData =
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.getImageUrl = function(pid, type, size){
-  return Hyacinth.repositoryCacheUrl + '/images/' + pid + '/' + type + '/' + size + '.jpg';
+  if(type == 'scaled') { type = 'full'; }
+  if(type == 'square') { type = 'featured'; }
+  
+  return Hyacinth.repositoryCacheUrl + '/iiif/2/' + pid + '/' + type + '/!' + size + ',' + size + '/0/native.jpg';
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.showMediaViewModal = function(pid){

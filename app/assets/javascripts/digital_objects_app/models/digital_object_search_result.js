@@ -52,10 +52,14 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.hasImage = functi
 }
 
 Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.getImageUrl = function(type, size){
+  
+  if(type == 'scaled') { type = 'full'; }
+  if(type == 'square') { type = 'featured'; }
+  
   if(this.getHyacinthType() == 'asset') {
-    return Hyacinth.repositoryCacheUrl + '/images/' + this.getPid() + '/' + type + '/' + size + '.jpg';
+    return Hyacinth.repositoryCacheUrl + '/iiif/2/' + this.getPid() + '/' + type + '/!' + size + ',' + size + '/0/native.jpg';
   } else if (this.getHyacinthType() == 'item' && this.getOrderedChildDigitalObjectPids().length > 0) {
-    return Hyacinth.repositoryCacheUrl + '/images/' + this.getOrderedChildDigitalObjectPids()[0] + '/' + type + '/' + size + '.jpg';
+    return Hyacinth.repositoryCacheUrl + '/iiif/2/' + this.getOrderedChildDigitalObjectPids()[0] + '/' + type + '/!' + size + ',' + size + '/0/native.jpg';
   } else {
     return null;
   }
