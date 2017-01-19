@@ -35,6 +35,7 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     super(digital_object_data, merge_dynamic_fields)
     return if digital_object_data['publish_target_data'].blank?
     @publish_target_data.merge!(digital_object_data['publish_target_data'])
+    @publish_target_data['restricted'] = (@publish_target_data['restricted'].to_s.downcase == 'true')
   end
 
   def run_custom_validations
