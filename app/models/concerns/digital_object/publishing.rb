@@ -19,8 +19,9 @@ module DigitalObject::Publishing
     # if that publish mints a DOI and triggers a re-publish for all other targets, those
     # other targets are able to index the already-minted DOI.
     ordered_publish_target_pids = inactive_publish_target_pids + active_publish_target_pids
-    if ordered_publish_target_pids.include?(primary_publish_target_pid)
-      # Move primary_publish_target_pid to the end of the array so that it's processed last
+    if ordered_publish_target_pids.include?(primary_publish_target_pid) && active_publish_target_pids.include?(primary_publish_target_pid)
+      # Move primary_publish_target_pid to the end of the array so
+      # that it's processed last...but ONLY if it's active!
       ordered_publish_target_pids.delete(primary_publish_target_pid)
       ordered_publish_target_pids << primary_publish_target_pid
     end
