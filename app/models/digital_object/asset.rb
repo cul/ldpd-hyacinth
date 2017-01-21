@@ -297,7 +297,7 @@ class DigitalObject::Asset < DigitalObject::Base
 
     response = JSON(RestClient.post(REPOSITORY_CACHE_CONFIG['url'] + "/images/#{pid}/regenerate", {}, Authorization: credentials))
     response['success'].to_s == 'true'
-  rescue Errno::ECONNREFUSED, RestClient::InternalServerError, SocketError
+  rescue Errno::ECONNREFUSED, RestClient::InternalServerError, SocketError, RestClient::NotFound
     Hyacinth::Utils::Logger.logger.error("Tried to regenerate image derivatives for #{pid}, but could not connect to Repository Cache server at: #{REPOSITORY_CACHE_CONFIG['url']}")
     return false
   end
