@@ -14,8 +14,7 @@ module DigitalObject::IndexAndSearch::SolrParams
       return unless user_for_permission_context.present? && !user_for_permission_context.admin?
       user_allowed_projects = user_for_permission_context.projects
       if user_allowed_projects.length > 0
-        project_clause = user_for_permission_context.projects.map(&:string_key).join(' OR ')
-        solr_params['fq'] << "project_string_key_sim:\"#{project_clause}\""
+        solr_params['fq'] << 'project_string_key_sim:("' + user_for_permission_context.projects.map(&:string_key).join('" OR "') + '")'
       else
         # No projects. Return 0 rows from result set and return no facets.
         solr_params['rows'] = 0
