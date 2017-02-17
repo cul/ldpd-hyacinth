@@ -34,7 +34,7 @@ namespace :hyacinth do
       counter = 0
       members.each do |pid|
 
-        obj = ActiveFedora::Base.find(pid)
+        obj = Hyacinth::ActiveFedoraBaseWithCast.find(pid)
 
         old_content = obj.datastreams['descMetadata'].content
         ng_content = Nokogiri::XML(old_content){|config| config.default_xml.noblanks}

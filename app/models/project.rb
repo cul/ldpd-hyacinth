@@ -25,7 +25,7 @@ class Project < ActiveRecord::Base
   # Returns the associated Fedora Object
   def fedora_object
     if pid.present?
-      return @fedora_object ||= ActiveFedora::Base.find(pid)
+      return @fedora_object ||= Hyacinth::ActiveFedoraBaseWithCast.find(pid)
     else
       return nil
     end

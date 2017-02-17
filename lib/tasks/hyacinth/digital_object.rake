@@ -44,7 +44,7 @@ namespace :hyacinth do
 
         # Delete from Fedora
         begin
-          obj = ActiveFedora::Base.find(pid)
+          obj = Hyacinth::ActiveFedoraBaseWithCast.find(pid)
           obj.delete
           record_was_already_deleted = false
         rescue ActiveFedora::ObjectNotFoundError => e
