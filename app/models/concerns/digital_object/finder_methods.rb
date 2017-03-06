@@ -21,7 +21,7 @@ module DigitalObject::FinderMethods
       # Retry after Fedora timeouts / unreachable host
       fobj = nil
       Retriable.retriable DigitalObject::Base::RETRY_OPTIONS do
-        fobj = ActiveFedora::Base.find(pid)
+        fobj = Hyacinth::ActiveFedoraBaseWithCast.find(pid)
       end
 
       if fobj.nil?
