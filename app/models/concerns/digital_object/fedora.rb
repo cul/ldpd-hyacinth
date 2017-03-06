@@ -130,14 +130,14 @@ module DigitalObject::Fedora
     # Sets :cul_member_of  RELS-EXT attributes for parent fedora objects
     def set_fedora_parent_digital_object_pid_relationships
       # This method also ensures that we only save pids for Objects that actually exist.  Invalid pids will cause it to fail.
-      values = @parent_digital_object_pids.map { |object_pid| ActiveFedora::Base.find(object_pid).internal_uri }
+      values = @parent_digital_object_pids.map { |object_pid| Hyacinth::ActiveFedoraBaseWithCast.find(object_pid).internal_uri }
       set_fedora_object_relationship(:cul_member_of, values)
     end
 
     # Sets :cul_obsolete_from RELS-EXT attributes for parent fedora objects
     def set_fedora_obsolete_parent_digital_object_pid_relationships
       # This method also ensures that we only save pids for Objects that actually exist.  Invalid pids will cause it to fail.
-      values = @parent_digital_object_pids.map { |object_pid| ActiveFedora::Base.find(object_pid).internal_uri }
+      values = @parent_digital_object_pids.map { |object_pid| Hyacinth::ActiveFedoraBaseWithCast.find(object_pid).internal_uri }
       set_fedora_object_relationship(:cul_obsolete_from, values)
     end
 

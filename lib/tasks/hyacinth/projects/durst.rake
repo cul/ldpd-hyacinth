@@ -18,7 +18,7 @@ namespace :hyacinth do
           counter += 1
           
           begin
-            obj = ActiveFedora::Base.find(pid)
+            obj = Hyacinth::ActiveFedoraBaseWithCast.find(pid)
   
             # Add publish target, unless this is a BagAggregator
             unless obj.is_a?(BagAggregator)

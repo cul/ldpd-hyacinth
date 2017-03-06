@@ -6,7 +6,7 @@
   <fields>
 		
 	<!-- Main fields -->
-    <field name="uri" 						type="string" stored="true" indexed="true" multiValued="false" required="true"/>
+  <field name="uri" 						type="string" stored="true" indexed="true" multiValued="false" required="true"/>
 	<field name="value" 					type="string" stored="true" indexed="true" multiValued="false" required="true"/>
 	<field name="vocabulary_string_key" 	type="string" stored="true" indexed="true" multiValued="false" required="true"/>
 	<field name="authority"					type="string" stored="true" indexed="true" multiValued="false" required="false"/>
@@ -15,7 +15,7 @@
 	
 	<field name="additional_fields" 		type="string" stored="true" indexed="false" multiValued="false" required="true"/>
 		
-    <field name="timestamp" 				type="date" indexed="true" stored="true" default="NOW" multiValued="false"/>
+  <field name="timestamp" 				type="date" indexed="true" stored="true" default="NOW" multiValued="false"/>
 		
 		
 	<!-- Suggest fields -->
