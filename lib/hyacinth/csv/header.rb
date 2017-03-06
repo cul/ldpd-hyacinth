@@ -37,7 +37,7 @@ module Hyacinth
           return (cell_value.downcase == 'true')
         elsif @known_integer_field_string_keys.include?(dynamic_field_string_key_from_last_builder_path_element)
           # Convert field value to integer if it's an integer field
-          return cell_value.to_i
+          return cell_value.blank? ? nil : cell_value.to_i
         else
           # Otherwise just return the original string value
           return cell_value
