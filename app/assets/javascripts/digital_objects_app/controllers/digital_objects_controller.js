@@ -385,7 +385,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.upload_assets = fu
     
     var fileBrowserWidget = new Hyacinth.DigitalObjectsApp.FileBrowserWidget();
     fileBrowserWidget.setTitle('Upload Directory Browser');
-    fileBrowserWidget.setActionButtonLabel('Upload');
+    fileBrowserWidget.setActionButtonLabel('Import');
     fileBrowserWidget.onActionButtonClick = function(){
       
       Hyacinth.addAlert('Performing upload...', 'info');

@@ -1,7 +1,7 @@
 <%= render partial: 'projects/edit_project_nav' %>
 
 <% current_project_user_ids = @project.project_permissions.map{|project_permission| project_permission.user.id} %>
-<% users_that_have_not_been_added_to_this_project = current_project_user_ids.blank? ? User.all : User.where('id NOT IN(' + current_project_user_ids.join(',') + ')') %>
+<% users_that_have_not_been_added_to_this_project = current_project_user_ids.blank? ? User.all : User.where('id NOT IN(' + current_project_user_ids.join(',') + ')').order(first_name: :asc, last_name: :desc) %>
 
 <%= form_for(@project, url: project_permissions_path(@project), method: 'patch') do |f| %>
 
