@@ -309,7 +309,7 @@ class DigitalObject::Asset < DigitalObject::Base
     self.restricted_size_image = fedora_object.relationships(:restriction).include?(SIZE_RESTRICTION_LITERAL_VALUE)
   end
 
-  def save_data_to_fedora
+  def set_fedora_object_properties
     super
 
     if restricted_size_image

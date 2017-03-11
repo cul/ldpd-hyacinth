@@ -179,22 +179,12 @@ module DigitalObject::Fedora
 
     def create_hyacinth_core_datastream
       @fedora_object.create_datastream(
-        ActiveFedora::Datastream, HYACINTH_CORE_DATASTREAM_NAME,
-        controlGroup: 'M',
-        mimeType: 'application/json',
-        dsLabel: HYACINTH_CORE_DATASTREAM_NAME,
-        versionable: true,
-        blob: JSON.generate({}))
+        ActiveFedora::Datastream, HYACINTH_CORE_DATASTREAM_NAME, controlGroup: 'M', mimeType: 'application/json', dsLabel: HYACINTH_CORE_DATASTREAM_NAME, versionable: true, blob: JSON.generate({}))
     end
 
     def create_hyacinth_struct_datastream
       @fedora_object.create_datastream(
-        ActiveFedora::Datastream, HYACINTH_STRUCT_DATASTREAM_NAME,
-        controlGroup: 'M',
-        mimeType: 'application/json',
-        dsLabel: HYACINTH_STRUCT_DATASTREAM_NAME,
-        versionable: false,
-        blob: JSON.generate([]))
+        ActiveFedora::Datastream, HYACINTH_STRUCT_DATASTREAM_NAME, controlGroup: 'M', mimeType: 'application/json', dsLabel: HYACINTH_STRUCT_DATASTREAM_NAME, versionable: false, blob: JSON.generate([]))
     end
 
     def save_datastreams
@@ -232,21 +222,32 @@ module DigitalObject::Fedora
         # Use Solr to verify existence of child items in Hyacinth and get titles of child objects.
         # Do lookup as admin user
         # Fall back to "Item 1", "Item 2", etc. if a title is not found for some reason.
-        titles_for_pids = DigitalObject::Base.titles_for_pids(ordered_child_digital_object_pids + ['something:else'], User.find_by(is_admin: true))
+        titles_for_pids = DigitalObject::Base.titles_for_pids(ordered_child_digital_object_pids, User.find_by(is_admin: true))
         struct_ds = Cul::Hydra::Datastreams::StructMetadata.new(nil, 'structMetadata', label: 'Sequence', type: 'logical')
+        dup_title_counts = {} # Used to ensure that we don't create two structmap items with the same title
         ordered_child_digital_object_pids.each_with_index do |pid, index|
           title = titles_for_pids[pid]
+
           # If title is nil, that means that this object wasn't found in Hyacinth.
           # Might be an unimported object that is only in Fedora. For now, don't
           # include unimported objects the generated struct map.
           next if title.nil?
+
+          # If title appears more than once for other objects in this structmap, append "(2)", "(3)", etc. to the title
+          # We don't want duplicate titles to appear in the structmap
+          if dup_title_counts.key?(title)
+            dup_title_counts[title] = dup_title_counts[title] + 1 # Increment duplicate key counter
+            title = "#{title} (#{dup_title_counts[title]})"
+          else
+            dup_title_counts[title] = 1
+          end
           struct_ds.create_div_node(nil, order: (index + 1), label: (title.blank? ? "Item #{index + 1}" : title), contentids: pid)
         end
         @fedora_object.datastreams[struct_ds_name].ng_xml = struct_ds.ng_xml
-      else
-        # No child objects.  If struct datastream is present, perform cleanup by deleting it.
-        @fedora_object.datastreams[struct_ds_name].delete if @fedora_object.datastreams[struct_ds_name].present?
+        return
       end
+      # No child objects.  If struct datastream is present, perform cleanup by deleting it.
+      @fedora_object.datastreams[struct_ds_name].delete if @fedora_object.datastreams[struct_ds_name].present?
     end
   end
 

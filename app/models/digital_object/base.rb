@@ -72,7 +72,7 @@ class DigitalObject::Base
     load_fedora_hyacinth_ds_data_from_fedora_object!
   end
 
-  def save_data_to_fedora
+  def set_fedora_object_properties
     set_created_and_updated_data_from_db_record
     set_fedora_hyacinth_ds_data
     set_fedora_project_and_publisher_relationships
