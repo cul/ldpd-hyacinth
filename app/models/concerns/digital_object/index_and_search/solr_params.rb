@@ -50,6 +50,7 @@ module DigitalObject::IndexAndSearch::SolrParams
         facet_sort = facet_params.fetch('sort', 'index')
 
         solr_params['facet'] = true
+        solr_params['facet.mincount'] = 1
         solr_params['facet.field'] = facet_fields
         solr_params['facet.sort'] = facet_sort
         solr_params['facet.limit'] = facet_limit + 1

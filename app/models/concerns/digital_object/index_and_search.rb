@@ -43,6 +43,11 @@ module DigitalObject::IndexAndSearch
       solr_params['start'] = start_value
       solr_params['fq'] = []
       solr_params['q'] = user_search_params['q'].present? ? user_search_params['q'] : '*:*' # TODO: Don't know why default q of '*:*' is suddenly necessary, but wasn't before
+      solr_params['defType'] = 'edismax'
+      solr_params['q.alt'] = '*'
+      solr_params['mm'] = '2<-1 5<-2 6<90%'
+      solr_params['qs'] = '1'
+      solr_params['ps'] = '2'
       solr_params['df'] = 'search_keyword_teim' # TODO: Don't know why this is suddenly necessary, but wasn't before
       solr_params['qf'] = user_search_params.fetch('search_field', 'search_keyword_teim')
       solr_params['sort'] = user_search_params.fetch('sort', 'sort_title_ssort asc')
