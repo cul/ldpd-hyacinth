@@ -156,6 +156,9 @@ module DigitalObject::XmlDatastreamRendering
         created_at
       elsif field_name == '$updated_at'
         updated_at
+      elsif field_name == '$doi'
+        # slice off the "doi:" label
+        doi.present? ? doi.sub(/^doi:/, '') : ''
       else
         'Data unavailable'
       end
