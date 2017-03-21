@@ -158,7 +158,7 @@ module DigitalObject::XmlDatastreamRendering
         updated_at
       elsif field_name == '$doi'
         # slice off the "doi:" label
-        doi[4..-1] unless doi.nil?
+        doi.present? ? doi.sub(/^doi:/, '') : ''
       else
         'Data unavailable'
       end
