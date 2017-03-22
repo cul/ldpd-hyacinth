@@ -412,7 +412,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
       new_item.save
       arg = '$created_at'
       date_today = Date.today
-      expect(new_item.value_for_field_name(arg,'').strftime("%m/%d/%Y")).to eq(date_today.strftime("%m/%d/%Y"))
+      expect(new_item.value_for_field_name(arg,'')).to eq(new_item.created_at.iso8601)
       new_item.destroy
     end
 
@@ -422,7 +422,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
       new_item.save
       arg = '$updated_at'
       date_today = Date.today
-      expect(new_item.value_for_field_name(arg,'').strftime("%m/%d/%Y")).to eq(date_today.strftime("%m/%d/%Y"))
+      expect(new_item.value_for_field_name(arg,'')).to eq(new_item.updated_at.iso8601)
       new_item.destroy
     end
   end
