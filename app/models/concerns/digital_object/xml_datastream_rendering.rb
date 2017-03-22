@@ -153,9 +153,9 @@ module DigitalObject::XmlDatastreamRendering
       elsif field_name == '$project.uri'
         self.project.uri.present? ? self.project.uri : ''
       elsif field_name == '$created_at'
-        created_at
+        created_at.iso8601
       elsif field_name == '$updated_at'
-        updated_at
+        updated_at.iso8601
       elsif field_name == '$doi'
         # slice off the "doi:" label
         doi.present? ? doi.sub(/^doi:/, '') : ''
