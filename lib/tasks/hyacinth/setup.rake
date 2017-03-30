@@ -205,7 +205,15 @@ namespace :hyacinth do
             'doi' => 'doi:10.5072/FK2'
           },
           'url' => 'https://ezid.cdlib.org',
-          'ezid_publisher' => 'Columbia University'
+          'ezid_publisher' => 'Columbia University',
+	  'datacite' => {
+	    'genre_to_resource_type_mapping' => {
+              'http://vocab.getty.edu/aat/300048715' => {
+                'attribute_general' => 'Text',
+                'content' => 'Article'
+              }
+            }
+          }
         }
       end
       File.open(ezid_yml_file, 'w') {|f| f.write ezid_yml.to_yaml }

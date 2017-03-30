@@ -43,6 +43,13 @@ describe Hyacinth::Ezid::HyacinthMetadata do
       expect(actual_type_of_resource).to eq(expected_type_of_resource)
     end
 
+    it "genre_uri handles empty dynamic field data" do
+      local_metadata_retrieval = described_class.new dod_empty_dfd
+      expected_genre_uri = nil
+      actual_genre_uri = local_metadata_retrieval.genre_uri
+      expect(actual_genre_uri).to eq(expected_genre_uri)
+    end
+
     it "date_issued_start_year handles empty dynamic field data" do
       local_metadata_retrieval = described_class.new dod_empty_dfd
       expected_date = nil
@@ -143,6 +150,15 @@ describe Hyacinth::Ezid::HyacinthMetadata do
       expected_type_of_resource = 'Image'
       actual_type_of_resource = local_metadata_retrieval.type_of_resource
       expect(actual_type_of_resource).to eq(expected_type_of_resource)
+    end
+  end
+
+  context "#genre_uri:" do
+    it "genre_uri" do
+      local_metadata_retrieval = described_class.new dod
+      expected_genre_uri = 'http://vocab.getty.edu/aat/300048715'
+      actual_genre_uri = local_metadata_retrieval.genre_uri
+      expect(actual_genre_uri).to eq(expected_genre_uri)
     end
   end
 

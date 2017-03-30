@@ -200,12 +200,12 @@
 	    {
 		"genre_term":
 		{
-		    "uri": "http://vocab.getty.edu/aat/300048715",
-		    "value": "Articles",
+		    "uri": "http://example.com/foobar",
+		    "value": "Foobar",
 		    "type": "external",
-		    "authority": "aat",
+		    "authority": "foobar",
 		    "vocabulary_string_key": "genre",
-		    "internal_id": 196021
+		    "internal_id": 314159
 		}
 	    }
 	]

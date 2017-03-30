@@ -42,6 +42,31 @@ describe Hyacinth::Ezid::DataciteMetadataBuilder do
         expect(schema.validate(Nokogiri::XML(subject))).to be_empty
       end
     end
+    context "dynamic fields -- genre not mapped to datacite resource type" do
+      before do
+        # sanity check
+        expect(schema).to be_valid(expected_xml)
+      end
+      let(:dod) do
+        JSON.parse( fixture('lib/hyacinth/ezid/ezid_item_datacite_unmapped_genre.json').read )
+      end
+      let(:expected_xml) do
+        Nokogiri::XML(fixture('lib/hyacinth/ezid/datacite_unmapped_genre.xml').read)
+      end
+
+      subject { metadata_builder.datacite_xml }
+
+      it "produces the expected XML serialization" do
+        expect(subject).to be_equivalent_to(expected_xml)
+      end
+
+      it "produces a valid XML serialization" do
+        # using a more verbose form to get a list of errors
+        # but functionally equivalent to
+        #   expect(schema).to be_valid(Nokogiri::XML(subject))
+        expect(schema.validate(Nokogiri::XML(subject))).to be_empty
+      end
+    end
     context "empty dynamic fields" do
       let(:dod) do
         JSON.parse( fixture('lib/hyacinth/ezid/ezid_item_empty_dynamic_field_data.json').read )

@@ -34,11 +34,7 @@ module Hyacinth::Ezid
           add_creators xml
           add_subjects xml
           add_contributors xml
-          if @hyacinth_metadata_retrieval.type_of_resource.present?
-            # fcd1, 21Dec16: datacite has a controlled vocabulary for resource type, which does not
-            # match our values. This is an optional element in the schema, so for now skip it.
-            # xml.resourceType('resourceTypeGeneral' => @hyacinth_metadata_retrieval.type_of_resource)
-          end
+          add_resource_type xml if @hyacinth_metadata_retrieval.genre_uri
           if @hyacinth_metadata_retrieval.abstract.present?
             xml.descriptions { xml.description('descriptionType' => 'Abstract') { xml.text @hyacinth_metadata_retrieval.abstract } }
           end
@@ -56,6 +52,14 @@ module Hyacinth::Ezid
         title = @hyacinth_metadata_retrieval.source[:identifiers].first
       end
       xml.titles { xml.title title }
+    end
+
+    def add_resource_type(xml)
+      hyacinth_genre_uri = @hyacinth_metadata_retrieval.genre_uri
+      xml.resourceType('resourceTypeGeneral' =>
+                       "#{EZID[:datacite][:genre_to_resource_type_mapping][hyacinth_genre_uri][:attribute_general]}") do
+        xml.text "#{EZID[:datacite][:genre_to_resource_type_mapping][hyacinth_genre_uri][:content]}"
+      end if EZID[:datacite][:genre_to_resource_type_mapping].key? hyacinth_genre_uri
     end
 
     def add_related_identifiers(xml)

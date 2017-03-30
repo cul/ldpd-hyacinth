@@ -43,6 +43,14 @@ module Hyacinth::Ezid
       "#{non_sort_portion} #{sort_portion}"
     end
 
+    # the genre of an item
+    # @api public
+    # @return [String, nil]
+    # @note only returns the first genre value
+    def genre_uri
+      @dfd['genre'][0]['genre_term']['uri'] if @dfd.key?('genre') && @dfd['genre'][0].key?('genre_term')
+    end
+
     # the abstract of an item
     # @api public
     # @return [String, nil]
