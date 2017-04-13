@@ -114,12 +114,10 @@ gem 'active_fedora_relsint', '>= 0.4.1'
 gem 'addressable'
 
 # Use resque for background jobs
-#gem 'resque', '~> 2.0.0.pre.1', github: 'resque/resque'
-gem 'resque', '~> 1.0'
+gem 'resque', '~> 1.27'
 
 # For unique, opaque id generation
 gem 'noid', '>= 0.7.1'
-#gem 'noid', :git => 'git://github.com/cul/noid', :branch => 'fixed_sequences'
 
 # Testing!
 group :development, :test do
