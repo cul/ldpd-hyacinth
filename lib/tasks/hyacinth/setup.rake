@@ -74,7 +74,7 @@ namespace :hyacinth do
           'processed_csv_import_directory' => File.join(Rails.root, 'tmp/processed_csv_imports_' + env_name),
           'publish_target_api_key_encryption_key' => 'some_encryption_key',
           'treat_fedora_resource_index_updates_as_immediate' => false,
-          'queue_long_jobs' => (env_name == 'test') ? false : true,
+          'queue_long_jobs' => (env_name == 'development' || env_name == 'test') ? false : true,
           'time_zone' => 'America/New_York'
         }
       end
