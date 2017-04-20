@@ -141,7 +141,7 @@ GEM
       execjs
     coffee-script-source (1.9.1)
     concurrent-ruby (1.0.2)
-    connection_pool (2.2.0)
+    connection_pool (2.2.1)
     cul_hydra (1.4.7)
       active-fedora (~> 7.0)
       active-triples (~> 0.2.2)
@@ -444,7 +444,7 @@ GEM
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
-    sequel (4.32.0)
+    sequel (4.45.0)
     sinatra (1.4.8)
       rack (~> 1.5)
       rack-protection (~> 1.4)
