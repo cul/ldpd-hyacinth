@@ -1,11 +1,11 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 4.2.4'
+gem 'rails', '~> 4.2.8'
 
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
-gem 'mysql2', '0.3.18'
+gem 'mysql2', '0.4.5'
 
 # Lock rake due to rspec/rubocop v11 incompatibilities
 gem 'rake', '~> 10.0'
