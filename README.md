@@ -1,4 +1,4 @@
-#Hyacinth
+# Hyacinth
 
 Your friendly, neighborhood metadata editor.
 
@@ -10,7 +10,7 @@ Supported Browsers:
 
 ### Requirements
 Hyacinth has the following dependencies:
-- Ruby 1.9.3 or 2.x (tested with 1.9.3 and 2.1.3, though ruby 2.0+ is recommended because 1.9.3 has reached EOL)
+- Ruby 2.2 or later (tested with ruby 2.2 and 2.3)
 - Sqlite3 or MySQL (tested with MySQL 5.5)
 - Apache Solr (tested with 4.9)
 - Fedora 3.7 through 3.8.x (though 3.8.1 is recommended because of a concurrent writing issue with 3.7 through 3.8.0)
