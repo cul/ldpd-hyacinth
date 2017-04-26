@@ -2,7 +2,8 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector = function(containerElementId,
 
   this.$containerElement = $('#' + containerElementId);
   this.$controlledTermUriFieldElement = $($controlledTermUriFieldElement);
-  this.$controlledTermValueDisplayElement = this.$controlledTermUriFieldElement.closest('.controlled_term_field').find('.controlled_term_value_display')
+  this.$controlledTermValueDisplayElement = this.$controlledTermUriFieldElement.closest('.controlled_term_field').find('.controlled_term_value_display');
+  this.$controlledTermUriDisplayElement = this.$controlledTermUriFieldElement.closest('.controlled_term_field').find('.controlled_term_uri_display');
   this.$clearButtonElement = this.$controlledTermUriFieldElement.closest('.controlled_term_field').find('.controlled_term_clear_button');
 
   this.controlledVocabularyStringKey = this.$controlledTermUriFieldElement.attr('data-controlled-vocabulary-string-key');
@@ -65,6 +66,10 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
 
     that.$controlledTermUriFieldElement.val(uri);
     that.$controlledTermValueDisplayElement.html(value);
+    that.$controlledTermUriDisplayElement.html('URI: ' + uri);
+    if (document.getElementById("showuri").checked) {
+      that.$controlledTermUriDisplayElement.parent().removeClass('hidden');
+    }
     that.$clearButtonElement.removeClass('hidden');
     Hyacinth.hideMainModal();
   });
@@ -167,6 +172,7 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
         //Success!
         that.$controlledTermUriFieldElement.val(createTermResponse['uri']);
         that.$controlledTermValueDisplayElement.html(createTermResponse['value']);
+        that.$controlledTermUriDisplayElement.html(createTermResponse['uri']);
         Hyacinth.hideMainModal();
       }
     }).fail(function(){

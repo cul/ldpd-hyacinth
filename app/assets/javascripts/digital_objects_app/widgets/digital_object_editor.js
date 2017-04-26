@@ -37,6 +37,15 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.getEditorInstanceForElement = fun
  * Nice UI Stuff *
  *****************/
 
+Hyacinth.DigitalObjectsApp.DigitalObjectEditor.updateUriDisplay = function(argCheckBox) {
+  if (argCheckBox.checked) {
+    $(".controlled_term_uri_display").not(':empty').parent().removeClass('hidden');
+  }
+  else {
+    $(".controlled_term_uri_display").parent().addClass('hidden');
+  }
+};
+
 Hyacinth.DigitalObjectsApp.DigitalObjectEditor.nextGlobalTabIndex = function() {
   return Hyacinth.DigitalObjectsApp.DigitalObjectEditor.globalTabIndex++; // returns current value and then increments
 };
@@ -256,6 +265,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.populateFormElementsWithDynamicFi
         $input.val(value['uri']); //Set uri as hidden field value
         $controlledTermFieldWrapperElement = $input.closest('.controlled_term_field');
         $controlledTermFieldWrapperElement.find('.controlled_term_value_display').html(value['value']); //Set value as display value
+        $controlledTermFieldWrapperElement.find('.controlled_term_uri_display').html('URI: ' + value['uri']);
         $controlledTermFieldWrapperElement.find('.controlled_term_clear_button').removeClass('hidden'); //Show controlled_term_clear_button so that value can be cleared
       } else {
         $input.val(value);
@@ -296,6 +306,11 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
   );
 
   this.$containerElement.find('.editor-form').addClass(this.mode);
+
+  // Hide 'Display URIs' checkbox in show mode.
+  if (this.mode == 'show') {
+    $("#showuri").parent().parent().addClass('hidden');
+  }
 
   //Hide .copy-field checkboxes
   $('input.copy-field').hide();
@@ -419,8 +434,11 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
       e.preventDefault();
       var $controlledTermUriField = $(this).closest('.controlled_term_field').find('.controlled_term_uri_field');
       var $controlledTermValueDisplayElement = $(this).closest('.controlled_term_field').find('.controlled_term_value_display');
+      var $controlledTermUriDisplayElement = $(this).closest('.controlled_term_field').find('.controlled_term_uri_display');
       $controlledTermUriField.val('');
       $controlledTermValueDisplayElement.html('- Select a value -');
+      $controlledTermUriDisplayElement.empty();
+      $controlledTermUriDisplayElement.parent().addClass('hidden');
       $(this).addClass('hidden');
     });
   
