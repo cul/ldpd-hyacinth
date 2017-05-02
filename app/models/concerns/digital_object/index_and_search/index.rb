@@ -8,6 +8,8 @@ module DigitalObject::IndexAndSearch::Index
   def to_solr
     flattened_dynamic_field_data = get_flattened_dynamic_field_data(true)
 
+    object_as_json = to_json
+
     doc = {
       pid: pid,
       identifiers_sim: identifiers,
@@ -31,7 +33,8 @@ module DigitalObject::IndexAndSearch::Index
       project_pid_ssm: project.pid,
       project_display_label_sim: project.display_label,
       project_display_label_ssm: project.display_label,
-      digital_object_data_ss: to_json
+      digital_object_data_ss: object_as_json, # temporarily doing duplicate storage so we can convert string field to text field
+      digital_object_data_ts: object_as_json # temporarily doing duplicate storage so we can convert string field to text field
     }
 
     pub_target_data = publish_target_data
