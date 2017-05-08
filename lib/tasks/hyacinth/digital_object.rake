@@ -33,8 +33,8 @@ namespace :hyacinth do
           digital_object = DigitalObject::Base.find(pid)
           digital_object.destroy
           record_was_already_deleted = false
-        rescue Hyacinth::Exceptions::DigitalObjectNotFoundError, ActiveFedora::ObjectNotFoundError, TZInfo::InvalidTimezoneIdentifier => e
-          # If the record wasn't found, silently skip this step.  Fedora object must have already been deleted.
+        rescue Hyacinth::Exceptions::DigitalObjectNotFoundError, ActiveFedora::ObjectNotFoundError, TZInfo::InvalidTimezoneIdentifier, RSolr::Error::Http => e
+          # If the record wasn't found or if there was a solr indexing error, silently skip this step.
         rescue RestClient::Unauthorized => e
           fedora_rest_client_unauthorized_error_message = e.message
         end
