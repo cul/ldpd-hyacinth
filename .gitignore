@@ -29,7 +29,7 @@ fedora.yml
 hyacinth.yml
 secrets.yml
 solr.yml
-repository_cache.yml
+image_server.yml
 uri_service.yml
 term_additional_fields.yml
 resque.yml

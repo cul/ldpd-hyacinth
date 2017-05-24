@@ -152,18 +152,18 @@ namespace :hyacinth do
       end
       File.open(uri_service_yml_file, 'w') {|f| f.write uri_service_yml.to_yaml }
 
-      # repository_cache.yml
-      repository_cache_yml_file = File.join(Rails.root, 'config/repository_cache.yml')
-      FileUtils.touch(repository_cache_yml_file) # Create if it doesn't exist
-      repository_cache_yml = YAML.load_file(repository_cache_yml_file) || {}
+      # image_server.yml
+      image_server_yml_file = File.join(Rails.root, 'config/image_server.yml')
+      FileUtils.touch(image_server_yml_file) # Create if it doesn't exist
+      image_server_yml = YAML.load_file(image_server_yml_file) || {}
       ['development', 'test'].each do |env_name|
-        repository_cache_yml[env_name] = {
+        image_server_yml[env_name] = {
           'url' => 'http://localhost:3001',
           'username' => 'fake_user',
           'password' => 'fake_password',
         }
       end
-      File.open(repository_cache_yml_file, 'w') {|f| f.write repository_cache_yml.to_yaml }
+      File.open(image_server_yml_file, 'w') {|f| f.write image_server_yml.to_yaml }
 
       # resque.yml
       resque_yml_file = File.join(Rails.root, 'config/resque.yml')

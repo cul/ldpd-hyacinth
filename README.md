@@ -56,7 +56,7 @@ rails s -p 3000 # Start the application using rails server
 
 ### A Note About Image Thumbnails:
 
-Image thumbnail generation is currently unavailable because Hyacinth delegates that functionality to a separate, asynchronous image processing application called "Repository Cache," which is still under development (and not yet publicly available).  Core Hyacinth metadata editing features do not depend on Repository Cache, but you won't be able to see in-app thumnails without it.
+Hyacinth delegates image generation to a separate, asynchronous image processing application called "Derivativo," which can be found here: https://github.com/cul/ren-derivativo
 
 ### Sqlite and UriService/Rails:
 

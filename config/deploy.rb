@@ -40,7 +40,7 @@ set :linked_files, fetch(:linked_files, []).push(
   'config/database.yml',
   'config/fedora.yml',
   'config/hyacinth.yml',
-  'config/repository_cache.yml',
+  'config/image_server.yml',
   'config/resque.yml',
   'config/secrets.yml',
   'config/solr.yml',

@@ -293,12 +293,12 @@ class DigitalObject::Asset < DigitalObject::Base
   end
 
   def regenrate_image_derivatives!
-    credentials = ActionController::HttpAuthentication::Basic.encode_credentials(REPOSITORY_CACHE_CONFIG['username'], REPOSITORY_CACHE_CONFIG['password'])
+    credentials = ActionController::HttpAuthentication::Basic.encode_credentials(IMAGE_SERVER_CONFIG['username'], IMAGE_SERVER_CONFIG['password'])
 
-    response = JSON(RestClient.post(REPOSITORY_CACHE_CONFIG['url'] + "/images/#{pid}/regenerate", {}, Authorization: credentials))
+    response = JSON(RestClient.post(IMAGE_SERVER_CONFIG['url'] + "/images/#{pid}/regenerate", {}, Authorization: credentials))
     response['success'].to_s == 'true'
   rescue Errno::ECONNREFUSED, RestClient::InternalServerError, SocketError, RestClient::NotFound
-    Hyacinth::Utils::Logger.logger.error("Tried to regenerate image derivatives for #{pid}, but could not connect to Repository Cache server at: #{REPOSITORY_CACHE_CONFIG['url']}")
+    Hyacinth::Utils::Logger.logger.error("Tried to regenerate image derivatives for #{pid}, but could not connect to image server at: #{IMAGE_SERVER_CONFIG['url']}")
     return false
   end
 

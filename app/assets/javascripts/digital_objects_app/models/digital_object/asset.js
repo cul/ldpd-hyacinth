@@ -34,7 +34,7 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getFileSizeString = fun
 	  value = sizeInBytes/1000000000;
     unit = ' GB';
   }
-  
+
   return parseFloat(parseFloat(value).toFixed(2)) + ' ' + unit; // the outermost parseFloat call removes trailing ".00" if present, but leaves values like ".01"
 };
 
@@ -47,7 +47,7 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getOriginalFilePath = f
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.hasImage = function(){
-  return Hyacinth.repositoryCacheUrl && this.getDcType() == 'StillImage';
+  return Hyacinth.imageServerUrl && this.getDcType() == 'StillImage';
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.isRestrictedSizeImage = function(){
