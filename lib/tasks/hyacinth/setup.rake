@@ -1,10 +1,10 @@
 namespace :hyacinth do
-  
+
   namespace :setup do
-    
+
     task :solr_cores do
       env_name = ENV['RAILS_ENV'] || 'development'
-      
+
       ## Copy cores ##
       FileUtils.cp_r('spec/fixtures/solr_cores/hyacinth', File.join(Jettywrapper.jetty_dir, 'solr'))
       FileUtils.mv(File.join(Jettywrapper.jetty_dir, 'solr/hyacinth'), File.join(Jettywrapper.jetty_dir, 'solr/hyacinth_' + env_name))
@@ -14,7 +14,7 @@ namespace :hyacinth do
       FileUtils.mv(File.join(Jettywrapper.jetty_dir, 'solr/uri_service'), File.join(Jettywrapper.jetty_dir, 'solr/uri_service_' + env_name))
       ## Copy solr.xml template ##
       FileUtils.cp_r('spec/fixtures/solr.xml', File.join(Jettywrapper.jetty_dir, 'solr'))
-    
+
       # Update solr.xml configuration file so that it recognizes this code
       solr_xml_data = File.read(File.join(Jettywrapper.jetty_dir, 'solr/solr.xml'))
       solr_xml_data.gsub!('<!-- ADD CORES HERE -->',
@@ -102,7 +102,7 @@ namespace :hyacinth do
         }
       end
       File.open(solr_yml_file, 'w') {|f| f.write solr_yml.to_yaml }
-      
+
       # term_additional_fields.yml
       term_additional_fields_yml_file = File.join(Rails.root, 'config/term_additional_fields.yml')
       FileUtils.touch(term_additional_fields_yml_file) # Create if it doesn't exist
@@ -125,10 +125,10 @@ namespace :hyacinth do
             }
           }
         }
-        
+
       end
       File.open(term_additional_fields_yml_file, 'w') {|f| f.write term_additional_fields_yml.to_yaml }
-      
+
       # uri_service.yml
       uri_service_yml_file = File.join(Rails.root, 'config/uri_service.yml')
       FileUtils.touch(uri_service_yml_file) # Create if it doesn't exist
@@ -151,7 +151,7 @@ namespace :hyacinth do
         }
       end
       File.open(uri_service_yml_file, 'w') {|f| f.write uri_service_yml.to_yaml }
-      
+
       # repository_cache.yml
       repository_cache_yml_file = File.join(Rails.root, 'config/repository_cache.yml')
       FileUtils.touch(repository_cache_yml_file) # Create if it doesn't exist
@@ -164,13 +164,13 @@ namespace :hyacinth do
         }
       end
       File.open(repository_cache_yml_file, 'w') {|f| f.write repository_cache_yml.to_yaml }
-      
+
       # resque.yml
       resque_yml_file = File.join(Rails.root, 'config/resque.yml')
       FileUtils.touch(resque_yml_file) # Create if it doesn't exist
       resque_yml = YAML.load_file(resque_yml_file) || {}
       ['development', 'test'].each do |env_name|
-        resque_yml[env_name] = {          
+        resque_yml[env_name] = {
           'url' => 'localhost:6379',
           'namespace' => 'hyacinth_' + env_name,
           'workers' => 1
@@ -182,7 +182,7 @@ namespace :hyacinth do
       #
       # 'ezid_test_user', 'ezid_test_password', and 'ezid_test_shoulder'
       # contain the official EZID test credentials and test shoulder
-      # 
+      #
       # 'user', 'password', and 'shoulder' contain the actual
       # credentials and shoulder. By default in development and
       # test, these are set to the EZID test credentials and shoulder
@@ -206,8 +206,8 @@ namespace :hyacinth do
           },
           'url' => 'https://ezid.cdlib.org',
           'ezid_publisher' => 'Columbia University',
-	  'datacite' => {
-	    'genre_to_resource_type_mapping' => {
+	        'datacite' => {
+	          'genre_to_resource_type_mapping' => {
               'http://vocab.getty.edu/aat/300048715' => {
                 'attribute_general' => 'Text',
                 'content' => 'Article'
