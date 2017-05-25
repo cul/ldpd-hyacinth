@@ -48,11 +48,11 @@ class DigitalObject::Asset < DigitalObject::Base
 
   def run_after_create_logic
     # For new Hyacinth records, perform post processing on the asset file (image derivative generation, fulltext extraction, etc.)
-    regenrate_image_derivatives! if self.dc_type == 'StillImage'
+    regenerate_image_derivatives! if self.dc_type == 'StillImage'
   end
 
   def run_after_save_logic
-    self.regenrate_image_server_cached_properties! if self.dc_type == 'StillImage'
+    self.regenerate_image_server_cached_properties! if self.dc_type == 'StillImage'
   end
 
   def convert_upload_import_to_internal!
@@ -296,7 +296,7 @@ class DigitalObject::Asset < DigitalObject::Base
     detected_mime_types.present? ? MIME::Types.of(filename).first.content_type : 'application/octet-stream' # generic catch-all for unknown content types
   end
 
-  def regenrate_image_derivatives!
+  def regenerate_image_derivatives!
     credentials = ActionController::HttpAuthentication::Token.encode_credentials(IMAGE_SERVER_CONFIG['remote_request_api_key'])
     resource_url = IMAGE_SERVER_CONFIG['url'] + "/resources/#{pid}"
     # Destroy old derivatives
@@ -309,7 +309,7 @@ class DigitalObject::Asset < DigitalObject::Base
     false
   end
 
-  def regenrate_image_server_cached_properties!
+  def regenerate_image_server_cached_properties!
     credentials = ActionController::HttpAuthentication::Token.encode_credentials(IMAGE_SERVER_CONFIG['remote_request_api_key'])
     response = JSON(RestClient.delete(IMAGE_SERVER_CONFIG['url'] + "/resources/#{pid}/destroy_cachable_properties", Authorization: credentials))
     response['success'].to_s == 'true'
