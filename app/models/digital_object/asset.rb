@@ -51,6 +51,10 @@ class DigitalObject::Asset < DigitalObject::Base
     regenrate_image_derivatives! if self.dc_type == 'StillImage'
   end
 
+  def run_after_save_logic
+    self.regenrate_image_server_cached_properties! if self.dc_type == 'StillImage'
+  end
+
   def convert_upload_import_to_internal!
     return unless @import_file_import_type == IMPORT_TYPE_UPLOAD_DIRECTORY
     # If this is an upload directory import, we'll adjust the import file path
@@ -293,9 +297,21 @@ class DigitalObject::Asset < DigitalObject::Base
   end
 
   def regenrate_image_derivatives!
-    credentials = ActionController::HttpAuthentication::Basic.encode_credentials(IMAGE_SERVER_CONFIG['username'], IMAGE_SERVER_CONFIG['password'])
+    credentials = ActionController::HttpAuthentication::Token.encode_credentials(IMAGE_SERVER_CONFIG['remote_request_api_key'])
+    resource_url = IMAGE_SERVER_CONFIG['url'] + "/resources/#{pid}"
+    # Destroy old derivatives
+    destroy_response = JSON(RestClient.delete(resource_url, Authorization: credentials))
+    # Queue creation of new derivatives
+    queue_response = JSON(RestClient.put(resource_url, {}, Authorization: credentials))
+    destroy_response['success'].to_s == 'true' && queue_response['success'].to_s == 'true'
+  rescue Errno::ECONNREFUSED, RestClient::InternalServerError, SocketError, RestClient::NotFound
+    Hyacinth::Utils::Logger.logger.error("Tried to regenerate image derivatives for #{pid}, but could not connect to image server at: #{IMAGE_SERVER_CONFIG['url']}")
+    false
+  end
 
-    response = JSON(RestClient.post(IMAGE_SERVER_CONFIG['url'] + "/images/#{pid}/regenerate", {}, Authorization: credentials))
+  def regenrate_image_server_cached_properties!
+    credentials = ActionController::HttpAuthentication::Token.encode_credentials(IMAGE_SERVER_CONFIG['remote_request_api_key'])
+    response = JSON(RestClient.delete(IMAGE_SERVER_CONFIG['url'] + "/resources/#{pid}/destroy_cachable_properties", Authorization: credentials))
     response['success'].to_s == 'true'
   rescue Errno::ECONNREFUSED, RestClient::InternalServerError, SocketError, RestClient::NotFound
     Hyacinth::Utils::Logger.logger.error("Tried to regenerate image derivatives for #{pid}, but could not connect to image server at: #{IMAGE_SERVER_CONFIG['url']}")

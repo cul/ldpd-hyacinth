@@ -26,6 +26,8 @@ module DigitalObject::Persistence
 
     # If we got here, then everything is good. Run after-create and before_publish logic
     run_after_create_logic if creating_new_record
+    run_after_save_logic
+
     publish if @publish_after_save
 
     @errors.blank?

@@ -215,6 +215,11 @@ class DigitalObject::Base
     # This method is intended to be overridden by DigitalObject::Base child classes
   end
 
+  def run_after_save_logic
+    # TODO: rewrite with ActiveRecord::Callbacks
+    # This method is intended to be overridden by DigitalObject::Base child classes
+  end
+
   def before_publish
     # TODO: rewrite with ActiveRecord::Callbacks
     save_datastreams
