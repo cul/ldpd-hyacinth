@@ -24,7 +24,7 @@ module DigitalObject::IndexAndSearch
           break
         else
           search_result_batch['results'].each do |solr_doc|
-            yield JSON.parse(solr_doc['digital_object_data_ss'])
+            yield JSON.parse(solr_doc['digital_object_data_ts'])
           end
           search_params['page'] += 1
         end

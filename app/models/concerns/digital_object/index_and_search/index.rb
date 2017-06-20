@@ -33,8 +33,7 @@ module DigitalObject::IndexAndSearch::Index
       project_pid_ssm: project.pid,
       project_display_label_sim: project.display_label,
       project_display_label_ssm: project.display_label,
-      digital_object_data_ss: object_as_json, # temporarily doing duplicate storage so we can convert string field to text field
-      digital_object_data_ts: object_as_json # temporarily doing duplicate storage so we can convert string field to text field
+      digital_object_data_ts: object_as_json
     }
 
     pub_target_data = publish_target_data
