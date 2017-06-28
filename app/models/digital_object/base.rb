@@ -55,9 +55,12 @@ class DigitalObject::Base
     @db_record = digital_object_record
     @fedora_object = fedora_obj
 
-    # For existing records, we always lock on @db_record during Fedora reads/writes (and wrap in a transaction)
-    @db_record.with_lock do # with_lock creates a transaction and locks on the called object's row
-      load_data_from_sources
+    # We need to wrap the lock in a retry because concurrent background jobs on the same record can cause exceptions like 'Mysql2::Error: Lock wait timeout exceeded'
+    Retriable.retriable(on: [Mysql2::Error], tries: 3, base_interval: 30) do
+      # For existing records, we always lock on @db_record during Fedora reads/writes (and wrap in a transaction)
+      @db_record.with_lock do # with_lock creates a transaction and locks on the called object's row
+        load_data_from_sources
+      end
     end
   end
 
