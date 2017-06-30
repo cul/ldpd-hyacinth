@@ -67,9 +67,11 @@ module DigitalObject::Data
   def digital_object_for_identifier(criteria, exception_class = Hyacinth::Exceptions::DigitalObjectNotFoundError)
     digital_object_results = DigitalObject::Base.find_all_by_identifier(criteria)
 
-    raise exception_class, "Could not find DigitalObject with find criteria: #{criteria.inspect}" if digital_object_results.length == 0
-    raise "While linking object to parent objects, expected one DigitalObject, but found #{digital_object_results.length} DigitalObjects" \
-          "with identifier: #{child_digital_object_find_criteria['identifier']}.  You'll need to use a pid instead." if digital_object_results.length > 1
+    if digital_object_results.length == 0
+      raise exception_class, "Could not find DigitalObject with find criteria: #{criteria.inspect}"
+    elsif digital_object_results.length > 1
+      raise "Expected to find one DigitalObject, but found #{digital_object_results.length} DigitalObjects with find criteria: #{criteria.inspect}. Try referencing a pid instead of an identifier."
+    end
     digital_object_results.first
   end
 
