@@ -37,7 +37,7 @@ module DigitalObject::Persistence
     # TODO: rewrite with ActiveRecord::Callbacks
     # To be overridden by subclasses
 
-    mint_and_store_doi(Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:reserved]) if @mint_reserved_doi_before_save
+    mint_and_store_doi(Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:reserved]) if @mint_reserved_doi_before_save || @publish_after_save
   end
 
   def persist_to_stores

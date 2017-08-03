@@ -46,28 +46,12 @@ module DigitalObject::Publishing
         response = publish_target.publish_digital_object(self, do_ezid_update)
       end
       success = response.code == 200
-      @errors.add(:publish_target, "Error encountered while #{publish_action.to_s + 'ing'} to #{publish_target.get_title}") unless success
+      @errors.add(:publish_target, "Error encountered while #{publish_action}ing to #{publish_target.get_title}") unless success
     rescue Errno::ECONNREFUSED
       @errors.add(:publish_target, "Connection to server refused for Publish Target URL: #{publish_target.publish_target_field('publish_url')}")
     rescue RestClient::ExceptionWithResponse => e
       @errors.add(:publish_target, "#{e.response.code} response received for Publish Target URL: #{publish_target.publish_target_field('publish_url')}")
     end
     success
-  end
-
-  def do_ezid_publish(published_object_url)
-    if @doi.blank?
-      # If this record has no ezid, that means that we're publishing it for the first time.
-      # We'll mint a new doi.
-      if mint_and_store_doi(Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:public], published_object_url)
-        # And now that we've stored the doi, save and re-publish this object
-        save && publish
-      else
-        @errors.add(:ezid_response, "An error occurred while attempting to mint a new ezid doi for this object.")
-      end
-    else
-      # This record already has an ezid.  Let's update the status of that ezid to :public, and send the latest published_object_url in case it changed.
-      update_doi_metadata(published_object_url)
-    end
   end
 end
