@@ -42,7 +42,7 @@ module DigitalObject::Validation
     @identifiers.each { |identifier| validate_identifier(identifier) }
 
     # validate allowed publish targets
-    allowed_publish_target_pids = allowed_publish_targets.map { |pub_target_data| pub_target_data[:pid] }
+    allowed_publish_target_pids = allowed_publish_targets.map { |pub_target_data| pub_target_data['pid'] }
     active_publish_target_pids = publish_target_pids
 
     # If any of the active publish targets aren't allowed by the project, notify the user

@@ -118,9 +118,9 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     search_results['results'].map do |publish_target_solr_doc|
       digital_object_data = JSON.parse(publish_target_solr_doc.fetch('digital_object_data_ts'))
       {
-        pid: publish_target_solr_doc['pid'],
-        display_label: publish_target_solr_doc['title_ssm'].first,
-        string_key: digital_object_data.fetch('publish_target_data', {}).present? ? JSON.parse(publish_target_solr_doc['digital_object_data_ts'])['publish_target_data']['string_key'] : ''
+        'pid' => publish_target_solr_doc['pid'],
+        'display_label' => publish_target_solr_doc['title_ssm'].first,
+        'string_key' => digital_object_data.fetch('publish_target_data', {}).present? ? JSON.parse(publish_target_solr_doc['digital_object_data_ts'])['publish_target_data']['string_key'] : ''
       }
     end
   end
