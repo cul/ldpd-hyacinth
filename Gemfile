@@ -121,6 +121,7 @@ gem 'noid', '>= 0.7.1'
 
 # Testing!
 group :development, :test do
+  gem 'byebug'
   gem 'rspec-rails', '~> 3.3'
   gem 'capybara', '>= 2.5'
   gem 'poltergeist', '>= 1.7' # For headless-browser JavaScript testing
@@ -141,7 +142,7 @@ group :development do
   # The `deploy:restart` hook for passenger applications is now in a separate gem
   # Just add it to your Gemfile and require it in your Capfile.
   gem 'capistrano-passenger', '~> 0.1', require: false
-  
+
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 2.0'
 end
