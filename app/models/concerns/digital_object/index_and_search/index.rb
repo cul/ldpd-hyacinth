@@ -39,8 +39,8 @@ module DigitalObject::IndexAndSearch::Index
     pub_target_data = publish_target_data
     doc[:enabled_publish_target_pid_sim] = pub_target_data.map { |data| data['pid'] }
     doc[:enabled_publish_target_pid_ssm] = pub_target_data.map { |data| data['pid'] }
-    doc[:enabled_publish_target_display_label_sim] = pub_target_data.map { |data| data['display_label'] }
     doc[:enabled_publish_target_string_key_sim] = pub_target_data.map { |data| data['string_key'] }
+    doc[:enabled_publish_target_display_label_sim] = (pub_target_data.blank?) ? '[None]' : pub_target_data.map { |data| data['display_label'] }
 
     doc[:search_keyword_teim] = []
     doc[:search_identifier_sim] = []
