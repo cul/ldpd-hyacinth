@@ -1,7 +1,7 @@
 module DigitalObject::IndexAndSearch::FacetData
   FACET_DISPLAY_LABELS = {
     'project_display_label_sim' => 'Project',
-    'publish_target_display_label_sim' => 'Publish Target',
+    'enabled_publish_target_display_label_sim' => 'Publish Target',
     'digital_object_type_display_label_sim' => 'Digital Object Type',
     'asset_dc_type_sim' => 'Asset Type',
     'has_child_digital_objects_bi' => 'Has Child Digital Objects?'
