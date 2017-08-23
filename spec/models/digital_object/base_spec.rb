@@ -277,7 +277,6 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(new_asset_with_parent_item.updated_by).to be_nil # Because we didn't set modified_by
       end
     end
-
   end
 
   describe "#save" do
@@ -286,6 +285,35 @@ RSpec.describe DigitalObject::Base, :type => :model do
         item.set_digital_object_data(sample_item_digital_object_data, false)
         item.save
         expect(DigitalObject::Base.find(item.pid).pid).to eq(item.pid)
+    end
+
+    context "when saving item, updates solr index" do
+      let(:item) do
+        item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+        item.set_digital_object_data(sample_item_digital_object_data, false)
+        item.save
+        item
+      end
+
+      subject {
+        Hyacinth::Utils::SolrUtils.solr.get('select', :params => { q: "pid:\"#{item.pid}\""})["response"]["docs"].first
+      }
+
+      it "returns a document with valid fields" do
+        expect(subject).to include(
+          "title_ssm" => ["The Catcher in the Rye"],
+          "number_of_ordered_child_digital_object_pids_ssm" => ["0"],
+          "hyacinth_type_ssm" => ["item"],
+          "state_ssm" => ["A"],
+          "digital_object_type_display_label_ssm" => ["Item"],
+          "project_display_label_ssm" => ["Test"],
+          "dc_type_ssm" => ["InteractiveResource"],
+        )
+      end
+
+      it "returns a document with two enabled publish targets" do
+        expect(subject["enabled_publish_target_pid_ssm"].count).to eql 2
+      end
     end
 
     context "for Assets, serizlizes the restricted_size_image property to Fedora" do
@@ -430,7 +458,6 @@ RSpec.describe DigitalObject::Base, :type => :model do
       new_item.set_digital_object_data(sample_item_digital_object_data, false)
       new_item.save
       arg = '$created_at'
-      date_today = Date.today
       expect(new_item.value_for_field_name(arg,'')).to eq(new_item.created_at.iso8601)
       new_item.destroy
     end
@@ -440,7 +467,6 @@ RSpec.describe DigitalObject::Base, :type => :model do
       new_item.set_digital_object_data(sample_item_digital_object_data, false)
       new_item.save
       arg = '$updated_at'
-      date_today = Date.today
       expect(new_item.value_for_field_name(arg,'')).to eq(new_item.updated_at.iso8601)
       new_item.destroy
     end

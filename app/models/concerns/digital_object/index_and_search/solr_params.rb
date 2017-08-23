@@ -38,7 +38,7 @@ module DigitalObject::IndexAndSearch::SolrParams
           # Set up default facet fields
           facet_fields = []
           # Manually add certain non-dynamic-field facets
-          facet_fields += ['digital_object_type_display_label_sim', 'project_display_label_sim', 'publish_target_display_label_sim', 'asset_dc_type_sim', 'has_child_digital_objects_bi']
+          facet_fields += ['digital_object_type_display_label_sim', 'project_display_label_sim', 'enabled_publish_target_display_label_sim', 'asset_dc_type_sim', 'has_child_digital_objects_bi']
           ::DynamicField.find_each do |dynamic_field|
             dynamic_field_string_keys_to_dynamic_fields[dynamic_field.string_key] = dynamic_field
             facet_fields << 'df_' + dynamic_field.string_key + '_sim' if dynamic_field.is_facet_field

@@ -52,3 +52,5 @@ config/subs.yml
 
 # Ignore elo2112-specific
 reference-files/*
+
+.byebug_history

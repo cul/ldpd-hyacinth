@@ -7,7 +7,7 @@ namespace :hyacinth do
     desc "Reindex asynchronously using Resque background jobs. Note: This task updates documents in Solr, but for performance reasons does NOT do a Solr commit after making changes."
     task :reindex_async => :environment do
       # If a project is specified, reindex that project. Otherwise reindex all DigitalObjects.
-      
+
       project_string_key = ENV['project_string_key']
       project_pid = ENV['project_pid']
       if project_string_key.present?
@@ -17,12 +17,12 @@ namespace :hyacinth do
       else
         project = nil
       end
-      
+
       if project.present?
         search_params = {
           'f' => {'project_pid_sim' => [project.pid]}
         }
-        total = DigitalObject::Base.search(search_params.merge({'per_page' => 0}), false, nil)['total']
+        total = DigitalObject::Base.search(search_params.merge({'per_page' => 0}), nil, {})['total']
         progressbar = ProgressBar.create(:title => "Queue Reindex Jobs (single project)", :starting_at => 0, :total => total, :format => '%a |%b>>%i| %p%% %c/%C %t')
         DigitalObject::Base.search_in_batches(search_params, nil, 500) do |digital_object_data|
           Hyacinth::Queue.reindex_digital_object(digital_object_data['pid'])
@@ -38,10 +38,10 @@ namespace :hyacinth do
         end
         progressbar.finish
       end
-      
+
       puts "Done!"
     end
-    
+
     desc "Triggers a solr commit.  This task comes in handy after the background jobs created by the reindex_async task have completed. As a reminder, reindex_async does not do a solr commit for each reindexed solr document."
     task :do_solr_commit => :environment do
       puts "Performing solr commit..."
