@@ -380,6 +380,25 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(item.parent_digital_object_pids.include?(existing_parent_object_pid)).to be(true)
         expect(item.publish_targets.map{ |pub_target| pub_target.pid }.include?(publish_target.pid)).to be(true)
     end
+
+    context "when publishing after saving" do
+      let(:item) {
+        item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+        item.set_digital_object_data(sample_item_digital_object_data, false)
+        item.publish_after_save = true
+        item
+      }
+
+      it "mints id before saving" do
+        expect(item).to receive(:mint_and_store_doi).with("reserved")
+        item.save
+      end
+
+      it "calls publish method" do
+        expect(item).to receive(:publish)
+        item.save
+      end
+    end
   end
 
   describe '.get_class_for_fedora_object' do
@@ -439,7 +458,6 @@ RSpec.describe DigitalObject::Base, :type => :model do
       new_item.set_digital_object_data(sample_item_digital_object_data, false)
       new_item.save
       arg = '$created_at'
-      date_today = Date.today
       expect(new_item.value_for_field_name(arg,'')).to eq(new_item.created_at.iso8601)
       new_item.destroy
     end
@@ -449,7 +467,6 @@ RSpec.describe DigitalObject::Base, :type => :model do
       new_item.set_digital_object_data(sample_item_digital_object_data, false)
       new_item.save
       arg = '$updated_at'
-      date_today = Date.today
       expect(new_item.value_for_field_name(arg,'')).to eq(new_item.updated_at.iso8601)
       new_item.destroy
     end

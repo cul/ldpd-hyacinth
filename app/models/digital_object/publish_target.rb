@@ -145,7 +145,11 @@ class DigitalObject::PublishTarget < DigitalObject::Base
       Authorization: "Token token=#{publish_target_field('api_key')}"
     )
     if do_ezid_update && response.code == 200 && response.headers[:location].present?
-      digital_object.do_ezid_publish(response.headers[:location])
+      # By this point, all records should have an ezid. Let's update the status of
+      # that ezid to :public, and send the latest published_object_url in case it changed.
+      unless update_doi_metadata(response.headers[:location])
+        @errors.add(:ezid_response, "An error occurred while attempting to updated the ezid doi for this object.")
+      end
     end
     response
   end
