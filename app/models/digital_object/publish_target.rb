@@ -147,7 +147,7 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     if do_ezid_update && response.code == 200 && response.headers[:location].present?
       # By this point, all records should have an ezid. Let's update the status of
       # that ezid to :public, and send the latest published_object_url in case it changed.
-      unless update_doi_metadata(response.headers[:location])
+      unless digital_object.update_doi_metadata(response.headers[:location])
         @errors.add(:ezid_response, "An error occurred while attempting to updated the ezid doi for this object.")
       end
     end
