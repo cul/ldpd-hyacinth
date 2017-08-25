@@ -4,8 +4,10 @@ module DigitalObject::Ezid
   # all minted EZID DOIs, so it is not passed via an argument but read straight from the EZID hash (populated
   # via ezid.yml).
   # returns the EZID DOI identifier string, or nil if minting did not go through
-  def mint_and_store_doi(identifier_status,
-                         target_url = nil)
+  def mint_and_store_doi(identifier_status, target_url = nil)
+    ## Skip if item already has a DOI
+    return nil if @doi.present?
+
     if identifier_status == Hyacinth::Ezid::Doi::IDENTIFIER_STATUS[:reserved]
       # Reserved DOI are not required to have datacite metadata.
       metadata = {}
