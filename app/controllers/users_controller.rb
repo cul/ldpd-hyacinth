@@ -75,6 +75,16 @@ class UsersController < ApplicationController
     @users = User.all
   end
 
+  # GET /users/email_list
+  # GET /email_list.csv
+  def email_list
+    email_addresses = User.all.map(&:email)
+    respond_to do |format|
+      format.json { render json: email_addresses }
+      format.html { render text: email_addresses.join(',') }
+    end
+  end
+
   def current_user_data
     respond_to do |format|
       format.json do

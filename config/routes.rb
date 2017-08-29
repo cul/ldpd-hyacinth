@@ -78,6 +78,7 @@ Hyacinth::Application.routes.draw do
   resources :users do
     collection do
       get 'current_user_data'
+      get 'email_list'
     end
   end
 
