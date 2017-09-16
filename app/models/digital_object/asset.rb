@@ -248,7 +248,8 @@ class DigitalObject::Asset < DigitalObject::Base
     handle_blank_asset_title
 
     if digital_object_data.key?('restrictions') && digital_object_data['restrictions'].key?('restricted_size_image')
-      self.restricted_size_image = digital_object_data['restrictions']['restricted_size_image']
+      # To be extra careful about accidentally making restricting content public, only unrestrict when given explicit value of false
+      self.restricted_size_image = (digital_object_data['restrictions']['restricted_size_image'].to_s.downcase == 'false') ? false : true
     end
 
     # File upload (for NEW assets only, and only if this object's current data validates successfully)
