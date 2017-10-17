@@ -75,7 +75,8 @@ namespace :hyacinth do
           'publish_target_api_key_encryption_key' => 'some_encryption_key',
           'treat_fedora_resource_index_updates_as_immediate' => false,
           'queue_long_jobs' => (env_name == 'development' || env_name == 'test') ? false : true,
-          'time_zone' => 'America/New_York'
+          'time_zone' => 'America/New_York',
+          'solr_commit_after_each_csv_import_row' => true
         }
       end
       File.open(hyacinth_yml_file, 'w') {|f| f.write hyacinth_yml.to_yaml }
