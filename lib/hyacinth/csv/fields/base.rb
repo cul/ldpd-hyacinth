@@ -5,7 +5,7 @@ module Hyacinth
         attr_accessor :builder_path
         def initialize(builder_path)
           if builder_path.is_a? String
-            raise Hyacinth::Exceptions::InvalidCsvHeader, 'Spaces are not allowed in CSV headers ("' + builder_path + '")' unless builder_path.index(' ').nil?
+            raise Hyacinth::Exceptions::InvalidCsvHeader, 'Whitespace is not allowed in CSV headers ("' + builder_path + '")' unless builder_path.index(/\s/).nil?
           end
           builder_path = parse_path(builder_path) unless builder_path.is_a? Array
           self.builder_path = builder_path.freeze
