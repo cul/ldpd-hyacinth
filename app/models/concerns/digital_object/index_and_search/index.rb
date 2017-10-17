@@ -14,7 +14,8 @@ module DigitalObject::IndexAndSearch::Index
       pid: pid,
       identifiers_sim: identifiers,
       title_ssm: get_title(placeholder_if_blank: true),
-      sort_title_ssort: get_sort_title,
+      sort_title_si: get_sort_title, # For sorting by all characters
+      sort_title_ssort: get_sort_title, # For sorting by alpha-only characters. Maybe remove this.
       parent_digital_object_pids_ssm: parent_digital_object_pids,
       parent_digital_object_pids_sim: parent_digital_object_pids,
       ordered_child_digital_object_pids_ssm: ordered_child_digital_object_pids,

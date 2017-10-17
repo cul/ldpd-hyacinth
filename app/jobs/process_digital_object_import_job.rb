@@ -25,7 +25,7 @@ class ProcessDigitalObjectImportJob
   end
 
   def self.handle_success_or_failure(status, digital_object, digital_object_import)
-    if status == :success && digital_object.save
+    if status == :success && digital_object.save(HYACINTH['solr_commit_after_each_csv_import_row'])
       digital_object_import.success!
     else # if status == :failure
       digital_object_import.digital_object_errors += digital_object.errors.full_messages if digital_object.present?

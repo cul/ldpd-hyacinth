@@ -1,7 +1,7 @@
 module DigitalObject::Persistence
   extend ActiveSupport::Concern
 
-  def save
+  def save(manual_commit_to_solr = true)
     before_save
 
     return false unless self.valid?
@@ -22,7 +22,7 @@ module DigitalObject::Persistence
     return false if @errors.present?
 
     # Update the solr index
-    update_index
+    update_index(manual_commit_to_solr)
 
     # If we got here, then everything is good. Run after-create and before_publish logic
     run_after_create_logic if creating_new_record

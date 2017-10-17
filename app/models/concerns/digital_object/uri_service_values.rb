@@ -44,7 +44,7 @@ module DigitalObject::UriServiceValues
       )
     else
       # Be prepared to retry the following code because there may be two parallel processes trying to register this URI at the same time
-      Retriable.retriable on: [UriService::ExistingUriError], tries: 2, base_interval: 0 do
+      Retriable.retriable on: [UriService::ExistingUriError], tries: 2, base_interval: 1 do
         # URI is present, so we'll check whether it exists already.
         # If it does, retrieve its controlled value and update dynamic_field_data to correct errors
         # If it doesn't exist, register it as a new EXTERNAL term
