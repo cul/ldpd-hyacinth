@@ -50,7 +50,7 @@ module DigitalObject::IndexAndSearch
       solr_params['ps'] = '2'
       solr_params['df'] = 'search_keyword_teim' # TODO: Don't know why this is suddenly necessary, but wasn't before
       solr_params['qf'] = user_search_params.fetch('search_field', 'search_keyword_teim')
-      solr_params['sort'] = user_search_params.fetch('sort', 'sort_title_ssort asc')
+      solr_params['sort'] = user_search_params.fetch('sort', 'sort_title_si asc')
       solr_params['fl'] = user_search_params['fl'] if user_search_params['fl'].present?
 
       dynamic_field_string_keys_to_dynamic_fields = {}
