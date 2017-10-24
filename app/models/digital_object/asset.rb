@@ -16,8 +16,9 @@ class DigitalObject::Asset < DigitalObject::Base
   VALID_FILE_IMPORT_TYPES = [IMPORT_TYPE_INTERNAL, IMPORT_TYPE_EXTERNAL, IMPORT_TYPE_POST_DATA, IMPORT_TYPE_UPLOAD_DIRECTORY]
 
   SIZE_RESTRICTION_LITERAL_VALUE = 'size restriction'
+  ONSITE_RESTRICTION_LITERAL_VALUE = 'onsite restriction'
 
-  attr_accessor :restricted_size_image
+  attr_accessor :restricted_size_image, :restricted_onsite
 
   def initialize
     super
@@ -27,6 +28,8 @@ class DigitalObject::Asset < DigitalObject::Base
     @import_file_original_file_path = nil
 
     @restricted_size_image = false
+    @restricted_onsite = false
+    @need_to_regenerate_derivatives = false
 
     # Default to 'Unknown' dc_type.  We expect other code to properly set this
     # once the asset file type is known, but this avoid a blank value for dc_type
@@ -48,12 +51,16 @@ class DigitalObject::Asset < DigitalObject::Base
   end
 
   def run_after_create_logic
-    # For new Hyacinth records, perform post processing on the asset file (image derivative generation, fulltext extraction, etc.)
-    regenerate_image_derivatives! if self.dc_type == 'StillImage'
+    # For new Hyacinth assets, queue derivative generation (image derivatives, audio derivatives, video derivatives, fulltext extraction, etc.)
+    regenerate_derivatives!
   end
 
   def run_after_save_logic
-    self.regenerate_image_server_cached_properties! if self.dc_type == 'StillImage'
+    if @need_to_regenerate_derivatives
+      regenerate_derivatives!
+    else
+      regenerate_image_server_cached_properties!
+    end
   end
 
   def convert_upload_import_to_internal!
@@ -139,13 +146,36 @@ class DigitalObject::Asset < DigitalObject::Base
     # and the title will be later inferred from the filename during the upload step.
     handle_blank_asset_title
 
-    if digital_object_data.key?('restrictions') && digital_object_data['restrictions'].key?('restricted_size_image')
-      # To be extra careful about accidentally making restricting content public, only unrestrict when given explicit value of false
-      self.restricted_size_image = (digital_object_data['restrictions']['restricted_size_image'].to_s.downcase == 'false') ? false : true
-    end
+    # If the restriction property value has changed, regenerate derivatives for this asset
+    @need_to_regenerate_derivatives = onsite_restriction_value_changed?(digital_object_data)
+
+    handle_restriction_properties(digital_object_data)
 
     # File upload (for NEW assets only, and only if this object's current data validates successfully)
     handle_new_file_upload(digital_object_data['import_file']) if self.new_record? && digital_object_data['import_file'].present?
+  end
+
+  def onsite_restriction_value_changed?(digital_object_data)
+    # Return true if the existing restriction value doesn't match the new onsite restriction value
+    new_value = onsite_restriction_value_from_digital_object_data(digital_object_data)
+    return false if new_value.nil? # Value wasn't set, so report no change
+    restricted_onsite != new_value
+  end
+
+  def onsite_restriction_value_from_digital_object_data(digital_object_data)
+    return nil unless digital_object_data.key?('restrictions') && digital_object_data['restrictions'].key?('restricted_onsite')
+    # We currently default to not having an onsite restriction, so only apply an onsite restriction when given explicit value of true
+    digital_object_data['restrictions']['restricted_onsite'].to_s.downcase == 'true'
+  end
+
+  def handle_restriction_properties(digital_object_data)
+    return unless digital_object_data.key?('restrictions')
+    if digital_object_data['restrictions'].key?('restricted_size_image')
+      # To be extra careful about accidentally making restricted size content public, only unrestrict when given explicit value of false
+      self.restricted_size_image = (digital_object_data['restrictions']['restricted_size_image'].to_s.downcase == 'false') ? false : true
+    end
+
+    self.restricted_onsite = onsite_restriction_value_from_digital_object_data(digital_object_data)
   end
 
   def handle_blank_asset_title
@@ -189,7 +219,7 @@ class DigitalObject::Asset < DigitalObject::Base
     detected_mime_types.present? ? MIME::Types.of(filename).first.content_type : 'application/octet-stream' # generic catch-all for unknown content types
   end
 
-  def regenerate_image_derivatives!
+  def regenerate_derivatives!
     credentials = ActionController::HttpAuthentication::Token.encode_credentials(IMAGE_SERVER_CONFIG['remote_request_api_key'])
     resource_url = IMAGE_SERVER_CONFIG['url'] + "/resources/#{pid}"
     # Destroy old derivatives
@@ -216,6 +246,7 @@ class DigitalObject::Asset < DigitalObject::Base
 
     # Get restriction status
     self.restricted_size_image = fedora_object.relationships(:restriction).include?(SIZE_RESTRICTION_LITERAL_VALUE)
+    self.restricted_onsite = fedora_object.relationships(:restriction).include?(ONSITE_RESTRICTION_LITERAL_VALUE)
   end
 
   def set_fedora_object_properties
@@ -228,6 +259,18 @@ class DigitalObject::Asset < DigitalObject::Base
       current_restrictions = fedora_object.relationships(:restriction).to_a
       fedora_object.clear_relationship(:restriction)
       current_restrictions.delete(SIZE_RESTRICTION_LITERAL_VALUE)
+      current_restrictions.each do |restriction_liternal|
+        fedora_object.add_relationship(:restriction, restriction_liternal, true)
+      end
+    end
+
+    if restricted_onsite
+      fedora_object.add_relationship(:restriction, ONSITE_RESTRICTION_LITERAL_VALUE, true)
+    else
+      # Remove SIZE_RESTRICTION_LITERAL_VALUE, but preserve any other restrictions
+      current_restrictions = fedora_object.relationships(:restriction).to_a
+      fedora_object.clear_relationship(:restriction)
+      current_restrictions.delete(ONSITE_RESTRICTION_LITERAL_VALUE)
       current_restrictions.each do |restriction_liternal|
         fedora_object.add_relationship(:restriction, restriction_liternal, true)
       end
@@ -257,7 +300,7 @@ class DigitalObject::Asset < DigitalObject::Base
 
     json['restrictions'] ||= {}
     json['restrictions']['restricted_size_image'] = restricted_size_image
-
+    json['restrictions']['restricted_onsite'] = restricted_onsite
     json
   end
 

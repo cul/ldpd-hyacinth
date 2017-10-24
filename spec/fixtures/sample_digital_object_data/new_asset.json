@@ -25,6 +25,7 @@
       ]
    },
    "restrictions" : {
-      "restricted_size_image": true
+      "restricted_size_image": true,
+      "restricted_onsite": true
    }
 }

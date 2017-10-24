@@ -69,3 +69,7 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.hasImage = function(){
 Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.isRestrictedSizeImage = function(){
   return this.hasRestrictions() && this.restrictions.restricted_size_image;
 };
+
+Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.isRestrictedOnsite = function(){
+  return this.hasRestrictions() && this.restrictions.restricted_onsite;
+};

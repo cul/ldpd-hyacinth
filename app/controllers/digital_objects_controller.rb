@@ -236,7 +236,7 @@ class DigitalObjectsController < ApplicationController
     if @digital_object.is_a?(DigitalObject::Asset) && @digital_object.dc_type == 'StillImage'
       rotate_by = params[:rotate_by].to_i
       @digital_object.fedora_object.orientation -= rotate_by
-      if @digital_object.save && @digital_object.regenerate_image_derivatives!
+      if @digital_object.save && @digital_object.regenerate_derivatives!
         render json: { success: true }
       else
         render json: { errors: ['An error occurred during image regeneration.'] }

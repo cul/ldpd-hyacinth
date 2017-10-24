@@ -244,6 +244,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(asset.updated_by).to be_nil # Because we didn't set modified_by
 
         expect(asset.restricted_size_image).to eq(true)
+        expect(asset.restricted_onsite).to eq(true)
       end
 
       it "works for an Asset that references a parent Item" do
@@ -333,6 +334,26 @@ RSpec.describe DigitalObject::Base, :type => :model do
         asset.restricted_size_image = false
         asset.save
         expect(asset.fedora_object.relationships(:restriction)).not_to include(DigitalObject::Asset::SIZE_RESTRICTION_LITERAL_VALUE)
+      end
+    end
+
+    context "for Assets, serizlizes the restricted_onsite property to Fedora" do
+      let (:asset) {
+        asset = DigitalObjectType.get_model_for_string_key(sample_asset_digital_object_data['digital_object_type']['string_key']).new()
+        asset.set_digital_object_data(sample_asset_digital_object_data, false)
+        asset
+      }
+
+      it "by adding RELS-EXT restriction property with value ONSITE_RESTRICTION_LITERAL_VALUE when restricted_size_image is true" do
+        asset.restricted_onsite = true
+        asset.save
+        expect(asset.fedora_object.relationships(:restriction)).to include(DigitalObject::Asset::ONSITE_RESTRICTION_LITERAL_VALUE)
+      end
+
+      it "by removing RELS-EXT restriction property with value ONSITE_RESTRICTION_LITERAL_VALUE when restricted_size_image is false" do
+        asset.restricted_onsite = false
+        asset.save
+        expect(asset.fedora_object.relationships(:restriction)).not_to include(DigitalObject::Asset::ONSITE_RESTRICTION_LITERAL_VALUE)
       end
     end
 
