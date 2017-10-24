@@ -10,6 +10,10 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getFilesystemLocation =
   return this.assetData['filesystem_location'];
 };
 
+Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getAccessCopyLocation = function(){
+  return this.assetData['access_copy_location'];
+};
+
 Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getFileChecksum = function(){
   return this.assetData['checksum'];
 };
@@ -18,8 +22,20 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getFileSizeInBytes = fu
   return this.assetData['file_size_in_bytes'];
 };
 
+Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getAccessCopyFileSizeInBytes = function(){
+  return this.assetData['access_copy_file_size_in_bytes'];
+};
+
 Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getFileSizeString = function() {
-  var sizeInBytes = parseInt(this.assetData['file_size_in_bytes']);
+  return this.bytesToSizeString(this.assetData['file_size_in_bytes']);
+};
+
+Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getAccessCopyFileSizeString = function() {
+  return this.bytesToSizeString(this.assetData['access_copy_file_size_in_bytes']);
+};
+
+Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.bytesToSizeString = function(bytes) {
+  var sizeInBytes = parseInt(bytes);
   var value = sizeInBytes;
   var unit = 'B';
 	if(sizeInBytes < 1000) {

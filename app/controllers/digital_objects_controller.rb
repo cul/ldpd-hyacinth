@@ -4,8 +4,9 @@ class DigitalObjectsController < ApplicationController
   include Hyacinth::DigitalObjects::EditorBehavior
   include Hyacinth::DigitalObjects::ParentEditorBehavior
   include Hyacinth::DigitalObjects::UploadsEditorBehavior
+  include Hyacinth::DigitalObjects::Downloads
 
-  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor, :download, :add_parent, :remove_parents, :mods, :media_view, :rotate_image, :swap_order_of_first_two_child_assets]
+  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor, :download, :download_access_copy, :add_parent, :remove_parents, :mods, :media_view, :rotate_image, :swap_order_of_first_two_child_assets]
   before_action :set_digital_object_for_data_for_editor_action, only: [:data_for_editor]
   before_action :set_contextual_nav_options
   before_action :set_var_digital_object_data_or_render_error, only: [:create, :update]
@@ -209,19 +210,6 @@ class DigitalObjectsController < ApplicationController
 
     respond_to do |format|
       format.xml { render text: xml_output, content_type: 'text/xml' }
-    end
-  end
-
-  def download
-    if @digital_object.is_a?(DigitalObject::Asset)
-      if @digital_object.fedora_object.datastreams['content'].controlGroup == 'M'
-        send_data @digital_object.fedora_object.datastreams['content'].content,
-                  filename: @digital_object.fedora_object.datastreams['content'].dsLabel
-      else
-        send_file @digital_object.filesystem_location, filename: @digital_object.original_filename
-      end
-    else
-      render text: @digital_object.digital_object_type.display_label.pluralize + ' do not have download URLs.  Try downloading an Asset instead.'
     end
   end
 
