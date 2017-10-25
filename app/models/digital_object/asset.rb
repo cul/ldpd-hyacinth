@@ -228,7 +228,7 @@ class DigitalObject::Asset < DigitalObject::Base
     queue_response = JSON(RestClient.put(resource_url, {}, Authorization: credentials))
     destroy_response['success'].to_s == 'true' && queue_response['success'].to_s == 'true'
   rescue Errno::ECONNREFUSED, RestClient::InternalServerError, SocketError, RestClient::NotFound
-    Hyacinth::Utils::Logger.logger.error("Tried to regenerate image derivatives for #{pid}, but could not connect to image server at: #{IMAGE_SERVER_CONFIG['url']}")
+    Hyacinth::Utils::Logger.logger.error("Tried to regenerate derivatives for #{pid}, but could not connect to image server at: #{IMAGE_SERVER_CONFIG['url']}")
     false
   end
 
@@ -237,7 +237,7 @@ class DigitalObject::Asset < DigitalObject::Base
     response = JSON(RestClient.delete(IMAGE_SERVER_CONFIG['url'] + "/resources/#{pid}/destroy_cachable_properties", Authorization: credentials))
     response['success'].to_s == 'true'
   rescue Errno::ECONNREFUSED, RestClient::InternalServerError, SocketError, RestClient::NotFound
-    Hyacinth::Utils::Logger.logger.error("Tried to regenerate image derivatives for #{pid}, but could not connect to image server at: #{IMAGE_SERVER_CONFIG['url']}")
+    Hyacinth::Utils::Logger.logger.error("Tried to regenerate cached image properties for #{pid}, but could not connect to image server at: #{IMAGE_SERVER_CONFIG['url']}")
     return false
   end
 
