@@ -205,6 +205,7 @@ class DigitalObject::Asset < DigitalObject::Base
       /^video/ => 'MovingImage',
       /^audio/ => 'Sound',
       /^text/ => 'Text',
+      /^application\/(pdf|msword)/ => 'Text',
       /excel|spreadsheet|xls|application\/sql/ => 'Dataset',
       /^application/ => 'Software'
     }
