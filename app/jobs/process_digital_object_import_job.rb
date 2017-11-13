@@ -49,12 +49,10 @@ class ProcessDigitalObjectImportJob
     digital_object_import.requeue_count += 1
     digital_object_import.save!
     if digital_object_import.requeue_count <= MAX_REQUEUES
-      # If this is the final re-queue attempt AND there are fewer than (RESQUE_CONFIG['workers']*2) pending records left in this import job,
-      # then the queue is very short and we want to avoid having this object fail to import because its parent is still being processed in parallel.
-      # So we add a 5 second delay before re-queueing.
-      if digital_object_import.requeue_count == MAX_REQUEUES && digital_object_import.import_job.count_pending_digital_object_imports < (RESQUE_CONFIG['workers'] * 2)
-        sleep 5
-      end
+      # If this is the final re-queue attempt, we want to avoid having this object fail to import because its parent is
+      # still being processed in parallel, so we'll add a 10 second delay before re-queueing.
+      # This problem arises when a user is doing a small-batch CSV import jobs.
+      sleep 10 if digital_object_import.requeue_count == MAX_REQUEUES
       # Re-queue the import
       Hyacinth::Queue.process_digital_object_import(digital_object_import.id)
       :requeued
