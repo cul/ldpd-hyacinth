@@ -114,7 +114,10 @@ gem 'active_fedora_relsint', '>= 0.4.1'
 gem 'addressable'
 
 # Use resque for background jobs
-gem 'resque', '~> 1.27'
+# We're pinning resque to 1.26.x because 1.27 does an eager load operation
+# that doesn't work properly with the Blacklight gem dependency and raises:
+# ActiveSupport::Concern::MultipleIncludedBlocks: Cannot define multiple 'included' blocks for a Concern
+gem 'resque', '~> 1.26.0'
 
 # For unique, opaque id generation
 gem 'noid', '>= 0.7.1'
