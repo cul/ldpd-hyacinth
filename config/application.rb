@@ -33,5 +33,7 @@ module Hyacinth
     # Custom asset paths
     config.assets.paths << Rails.root.join("templates") # EJS Templates
     Sprockets.register_engine '.ejs', Tilt::PlainTemplate
+    # Rack middleware insertion to override Multipart upload buffer size
+    config.middleware.insert_before "Rack::Runtime", "MultipartBufferSizeOverride"
   end
 end
