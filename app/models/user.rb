@@ -80,6 +80,7 @@ class User < ActiveRecord::Base
   def can_manage_controlled_vocabulary_terms?(controlled_vocabulary)
     return true if admin?
     return true if can_manage_all_controlled_vocabularies?
+    return false if controlled_vocabulary.blank?
 
     projects_for_which_user_can_create_or_edit = ProjectPermission.where(user: self).where('project_permissions.can_create = ? OR project_permissions.can_update = ?', true, true).pluck(:project_id)
 
