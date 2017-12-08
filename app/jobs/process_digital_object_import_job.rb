@@ -12,7 +12,7 @@ class ProcessDigitalObjectImportJob
     user = digital_object_import.import_job.user
     digital_object_data = JSON.parse(digital_object_import.digital_object_data)
 
-    if is_existing_object(digital_object_data)
+    if existing_object?(digital_object_data)
       # We're updating data for an existing object
       digital_object = existing_object_for_update(digital_object_data, user, digital_object_import)
     else
@@ -31,18 +31,18 @@ class ProcessDigitalObjectImportJob
     end
 
     if result == :parent_not_found
-       # The referenced parent object(s) still cannot be found, even after a
-       # wait and retry, so we'll mark this as a failure.
-       digital_object_import.digital_object_errors << "Failed because referenced parent object could not be found."
-       digital_object_import.failure!
-       digital_object_import.save!
-       return
+      # The referenced parent object(s) still cannot be found, even after a
+      # wait and retry, so we'll mark this as a failure.
+      digital_object_import.digital_object_errors << "Failed because referenced parent object could not be found."
+      digital_object_import.failure!
+      digital_object_import.save!
+      return
     else
       handle_success_or_failure(result, digital_object, digital_object_import)
     end
   end
 
-  def self.is_existing_object(digital_object_data)
+  def self.existing_object?(digital_object_data)
     digital_object_data['pid'].present? && DigitalObject::Base.exists?(digital_object_data['pid'])
   end
 
@@ -121,20 +121,11 @@ class ProcessDigitalObjectImportJob
       end
 
       # If there are no prerequisite object failures, check for
-      # prerequisite objects that are pending
+      # prerequisite objects that are pending. If we find pending
+      # prerequisites, handle those first.
       if num_pending_prerequisites > 0
-        if HYACINTH['queue_long_jobs']
-          # If prerequisite are still pending, then re-queue this import
-          digital_object_import.digital_object_errors = [] # clear earlier errors if we're re-queueing
-          digital_object_import.save!
-          Hyacinth::Queue.process_digital_object_import(digital_object_import.id)
-          return false
-        else
-          digital_object_import.digital_object_errors << "Failed because prerequisite rows haven't been processed and queue_long_jobs option is false, which means that spreadsheet rows are processed synchronously. Make sure that your CSV rows are in the order that you want them to be imported."
-          digital_object_import.failure!
-          digital_object_import.save!
-          return false
-        end
+        handle_remaining_prerequisite_case(digital_object_import)
+        return false
       end
 
       return true
@@ -143,4 +134,16 @@ class ProcessDigitalObjectImportJob
     true
   end
 
+  def handle_remaining_prerequisite_case(digital_object_import)
+    if HYACINTH['queue_long_jobs']
+      # If prerequisite are still pending, then re-queue this import
+      digital_object_import.digital_object_errors = [] # clear earlier errors if we're re-queueing
+      digital_object_import.save!
+      Hyacinth::Queue.process_digital_object_import(digital_object_import.id)
+    else
+      digital_object_import.digital_object_errors << "Failed because prerequisite rows haven't been processed and queue_long_jobs option is false, which means that spreadsheet rows are processed synchronously. Make sure that your CSV rows are in the order that you want them to be imported."
+      digital_object_import.failure!
+      digital_object_import.save!
+    end
+  end
 end

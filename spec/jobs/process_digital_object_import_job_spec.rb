@@ -4,15 +4,15 @@ RSpec.describe ProcessDigitalObjectImportJob, :type => :job do
 
   let (:klass) { ProcessDigitalObjectImportJob }
 
-  describe ".is_existing_object" do
+  describe ".existing_object?" do
     it "returns true if digital object data contains a pid field for an existing object" do
       existing_pid = 'it:exists'
       nonexisting_pid = 'it:doesnoteist'
       allow(DigitalObject::Base).to receive(:'exists?').with(existing_pid).and_return(true)
       allow(DigitalObject::Base).to receive(:'exists?').with(nonexisting_pid).and_return(false)
-      expect(klass.is_existing_object({'pid' => existing_pid})).to eq(true)
-      expect(klass.is_existing_object({'pid' => nonexisting_pid})).to eq(false)
-      expect(klass.is_existing_object({})).to eq(false)
+      expect(klass.existing_object?({'pid' => existing_pid})).to eq(true)
+      expect(klass.existing_object?({'pid' => nonexisting_pid})).to eq(false)
+      expect(klass.existing_object?({})).to eq(false)
     end
   end
 
