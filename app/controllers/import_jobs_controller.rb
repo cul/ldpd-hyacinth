@@ -4,10 +4,13 @@ class ImportJobsController < ApplicationController
 
   # GET /import_jobs
   def index
+    page = params[:page]
+    per_page = 20
+
     if current_user.admin?
-      @import_jobs = ImportJob.all.order(id: :desc) # TODO: Add pagination feature using: .page(page).per(per_page)
+      @import_jobs = ImportJob.all.order(id: :desc).page(page).per(per_page)
     else
-      @import_jobs = ImportJob.where(user: current_user).order(id: :desc) # TODO: Add pagination feature using: .page(page).per(per_page)
+      @import_jobs = ImportJob.where(user: current_user).order(id: :desc).page(page).per(per_page)
     end
   end
 
