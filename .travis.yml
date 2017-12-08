@@ -3,13 +3,11 @@ cache: bundler
 sudo: false
 
 rvm:
-  - 2.3.0
+  - 2.4.2
+  - 2.3.4
+  - 2.2.6
   
 jdk: 'oraclejdk8'
-
-matrix:
-  include:
-    - rvm: 2.2.4
 
 notifications:
   irc: "irc.freenode.org#ldpddev"
