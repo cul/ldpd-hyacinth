@@ -1,7 +1,10 @@
 require: rubocop-rspec
 
+inherit_gem:
+  rubocop-rails:
+    - config/rails.yml
+
 AllCops:
-  RunRailsCops: true
   DisplayCopNames: true
   Include:
     - '**/Rakefile'
@@ -15,6 +18,18 @@ AllCops:
     - 'app/helpers/**/*'
     - 'app/views/**/*'
     - 'app/models/concerns/digital_object/xml_datastream_rendering.rb'
+    - 'lib/tasks/**/*'
+
+Layout/BlockEndNewline:
+  Exclude:
+    - 'spec/**/*'
+
+Layout/IndentationConsistency:
+  EnforcedStyle: rails
+
+Layout/MultilineBlockLayout:
+  Exclude:
+    - 'spec/**/*'
 
 Metrics/LineLength:
   Enabled: false
@@ -41,20 +56,12 @@ Metrics/ModuleLength:
   CountComments: false
   Max: 110
 
+Naming/PredicateName:
+  Exclude: []
+
 Style/BlockDelimiters:
   Exclude:
     - 'spec/**/*'
-
-Style/BlockEndNewline:
-  Exclude:
-    - 'spec/**/*'
-
-Style/MultilineBlockLayout:
-  Exclude:
-    - 'spec/**/*'
-
-Style/IndentationConsistency:
-  EnforcedStyle: rails
 
 Style/CollectionMethods:
   PreferredMethods:
@@ -83,9 +90,6 @@ Style/HashSyntax:
   Exclude: []
 
 Style/LineEndConcatenation:
-  Exclude: []
-
-Style/PredicateName:
   Exclude: []
 
 Style/GlobalVars:
@@ -123,6 +127,9 @@ RSpec/ExampleWording:
     - only
 
 RSpec/FilePath:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
   Enabled: false
 
 RSpec/InstanceVariable:
