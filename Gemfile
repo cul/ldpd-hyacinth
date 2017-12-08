@@ -57,11 +57,11 @@ gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-gem 'therubyracer', '>= 0.12.2',  platforms: :ruby
-gem 'libv8', '>= 3.16.14.15' # Min version for Mac OS 10.11, XCode 8.0
+gem 'therubyracer', '>= 0.12.3',  platforms: :ruby
+gem 'libv8', '>= 3.16.14.19' # Min version for Mac OS 10.11, XCode 9.0, Ruby 2.4
 
 # Use jquery as the JavaScript library
-gem 'jquery-rails'
+gem 'jquery-rails', '>= 4.0.4'
 
 # jQuery extension gems
 gem 'jquery-ui-rails'
@@ -92,7 +92,7 @@ end
 gem 'kaminari'
 
 # For building and parsing XML
-gem 'nokogiri', '~> 1.6.5'
+gem 'nokogiri', '~> 1.8.1'
 gem 'equivalent-xml'
 
 # For authentication
@@ -103,7 +103,7 @@ gem 'cul_hydra', '~> 1.4.7'
 #gem 'cul_hydra', :path => '../cul_hydra'
 gem 'jettywrapper', '>= 1.5.1'
 # Temporarily use specific commit because new version of gem hasn't been released yet.  Latest is 1.1.3.
-gem 'rdf-rdfxml', :github => 'ruby-rdf/rdf-rdfxml', :ref => '78c13fe5dbcecaf1f56abe9535d00f16c670a764'
+gem 'rdf-rdfxml', git: 'https://github.com/ruby-rdf/rdf-rdfxml', ref: '78c13fe5dbcecaf1f56abe9535d00f16c670a764'
 gem 'uri_service', '0.5.3'
 #gem 'uri_service', :path => '../uri_service'
 
@@ -119,6 +119,9 @@ gem 'resque', '~> 1.27'
 # For unique, opaque id generation
 gem 'noid', '>= 0.7.1'
 
+# Ensure that rubyzip is >= 1.2.1 because of a security issue in earlier version
+gem 'rubyzip', '>= 1.2.1'
+
 # Testing!
 group :development, :test do
   gem 'byebug'
@@ -126,8 +129,9 @@ group :development, :test do
   gem 'capybara', '>= 2.5'
   gem 'poltergeist', '>= 1.7' # For headless-browser JavaScript testing
   gem 'factory_girl_rails', '>= 4.4.1'
-  gem 'rubocop', require: false
-  gem 'rubocop-rspec', require: false
+  gem 'rubocop', '~> 0.51.0', require: false
+  gem 'rubocop-rspec', '>= 1.20.1', require: false
+  gem 'rubocop-rails', '>= 1.1.0',  require: false
 end
 
 # Development!
