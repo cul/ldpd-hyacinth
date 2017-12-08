@@ -61,7 +61,7 @@ gem 'therubyracer', '>= 0.12.2',  platforms: :ruby
 gem 'libv8', '>= 3.16.14.15' # Min version for Mac OS 10.11, XCode 8.0
 
 # Use jquery as the JavaScript library
-gem 'jquery-rails'
+gem 'jquery-rails', '>= 4.0.4'
 
 # jQuery extension gems
 gem 'jquery-ui-rails'
@@ -122,6 +122,9 @@ gem 'resque', '~> 1.26.0'
 # For unique, opaque id generation
 gem 'noid', '>= 0.7.1'
 
+# Ensure that rubyzip is >= 1.2.1 because of a security issue in earlier version
+gem 'rubyzip', '>= 1.2.1'
+
 # Testing!
 group :development, :test do
   gem 'byebug'
@@ -129,7 +132,7 @@ group :development, :test do
   gem 'capybara', '>= 2.5'
   gem 'poltergeist', '>= 1.7' # For headless-browser JavaScript testing
   gem 'factory_girl_rails', '>= 4.4.1'
-  gem 'rubocop', require: false
+  gem 'rubocop', '~> 0.49.0', require: false
   gem 'rubocop-rspec', require: false
 end
 
