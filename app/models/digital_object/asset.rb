@@ -210,7 +210,7 @@ class DigitalObject::Asset < DigitalObject::Base
       /^application/ => 'Software'
     }
 
-    possible_dc_type = mimes_to_dc.detect { |pattern, _type_val| mime_type =~ pattern }
+    possible_dc_type = mimes_to_dc.find { |pattern, _type_val| mime_type =~ pattern }
 
     possible_dc_type ? possible_dc_type.last : 'Unknown'
   end
@@ -226,7 +226,7 @@ class DigitalObject::Asset < DigitalObject::Base
     # Destroy old derivatives
     destroy_response = JSON(RestClient.delete(resource_url, Authorization: credentials))
     # Queue creation of new derivatives
-    queue_response = JSON(RestClient.put(resource_url, {}, Authorization: credentials))
+    queue_response = JSON(RestClient.put(resource_url, {}, { Authorization: credentials }))
     destroy_response['success'].to_s == 'true' && queue_response['success'].to_s == 'true'
   rescue Errno::ECONNREFUSED, RestClient::InternalServerError, SocketError, RestClient::NotFound
     Hyacinth::Utils::Logger.logger.error("Tried to regenerate derivatives for #{pid}, but could not connect to image server at: #{IMAGE_SERVER_CONFIG['url']}")

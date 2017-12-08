@@ -104,7 +104,7 @@ class ImportJobsController < ApplicationController
 
     def set_contextual_nav_options
       if params[:action] == 'index'
-        @contextual_nav_options['nav_title']['label'] =  'Import Jobs'.html_safe
+        @contextual_nav_options['nav_title']['label'] = 'Import Jobs'.html_safe
         @contextual_nav_options['nav_items'].push(label: 'New Import Job', url: new_import_job_path)
       else
         @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Import Jobs'.html_safe

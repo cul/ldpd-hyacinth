@@ -290,7 +290,7 @@ module DigitalObject::Fedora
             DigitalObject::FileSystem => method_as_proc(:detect_file_system),
             DigitalObject::PublishTarget => method_as_proc(:detect_publish_target)
           }
-          mapped_type = type_map.detect { |_candidate, detector| detector.call(fobj, obj_dc_type) }
+          mapped_type = type_map.find { |_candidate, detector| detector.call(fobj, obj_dc_type) }
           return mapped_type.first if mapped_type
         end
 
