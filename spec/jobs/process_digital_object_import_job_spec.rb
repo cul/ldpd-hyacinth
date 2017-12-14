@@ -16,6 +16,17 @@ RSpec.describe ProcessDigitalObjectImportJob, :type => :job do
     end
   end
 
+  describe ".exception_with_backtrace_as_error_message" do
+    let(:error_message) { 'This is the error message' }
+    it "formats as expected" do
+      begin
+        raise Exception, error_message
+      rescue Exception => e
+        expect(klass.exception_with_backtrace_as_error_message(e)).to eq(e.message + "\n<span class=\"backtrace\">Backtrace:\n\t#{e.backtrace.join("\n\t")}</span>")
+      end
+    end
+  end
+
   describe ".assign_data" do
     let(:digital_object) { DigitalObject::Item.new }
     let(:digital_object_data) { {} }
@@ -298,14 +309,14 @@ RSpec.describe ProcessDigitalObjectImportJob, :type => :job do
         context "when receiving :parent_not_found from first internal call to .assign_data" do
           it "sleep when :parent_not_found is returned the first time, and then internally call handle_success_or_failure when :success is returned after the second .assign_data call (to simulate scenario when parent object was in the middle of concurrent processing, perhaps coming from a different csv import job)" do
             allow(klass).to receive(:assign_data).and_return(:parent_not_found, :success).twice
-            expect(klass).to receive(:sleep)
+            expect(klass).to receive(:sleep).once
             expect(klass).to receive(:handle_success_or_failure)
             klass.perform(digital_object_import_id)
           end
-          it "sleep when :parent_not_found is returned the first time, and then again on second try of .assign_data, and sets failure status and an error message on the digital_object_import" do
-            allow(klass).to receive(:assign_data).and_return(:parent_not_found).twice
+          it "sleep when :parent_not_found is returned the first time, and then sleep two more times after :parent_not_found is returned again and again for .assign_data, and sets failure status and an error message on the digital_object_import" do
+            allow(klass).to receive(:assign_data).and_return(:parent_not_found).exactly(4).times
             allow_any_instance_of(DigitalObjectImport).to receive(:save!).and_return(true)
-            expect(klass).to receive(:sleep)
+            expect(klass).to receive(:sleep).exactly(3).times
             klass.perform(digital_object_import_id)
             expect(digital_object_import.status).to eq('failure')
             expect(digital_object_import.digital_object_errors.length).to eq(1)

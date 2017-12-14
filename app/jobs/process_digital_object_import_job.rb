@@ -21,11 +21,12 @@ class ProcessDigitalObjectImportJob
 
     result = assign_data(digital_object, digital_object_data, digital_object_import)
 
-    if result == :parent_not_found
-      # If the parent wasn't found, wait 30 seconds in case the parent is
-      # currently being processed, or if solr hasn't auto-committed yet,
-      # and then try one more time.
-      sleep 30
+    3.times do
+      break if result != :parent_not_found
+
+      # If the parent wasn't found, wait 30 seconds (three times, with 10 second pauses)
+      # in case the parent is currently being processed, or if solr hasn't auto-committed yet.
+      sleep 10
       digital_object_import.digital_object_errors = [] # clear errors from last attempt
       result = assign_data(digital_object, digital_object_data, digital_object_import)
     end
@@ -53,8 +54,12 @@ class ProcessDigitalObjectImportJob
     digital_object_import.digital_object_errors << e.message
     :parent_not_found
   rescue Exception => e
-    digital_object_import.digital_object_errors << e.message + '<span class="backtrace">' + "Backtrace:\n\t#{e.backtrace.join("\n\t")}" + '</span>'
+    digital_object_import.digital_object_errors << exception_with_backtrace_as_error_message(e)
     :failure
+  end
+
+  def self.exception_with_backtrace_as_error_message(e)
+    e.message + "\n<span class=\"backtrace\">Backtrace:\n\t#{e.backtrace.join("\n\t")}</span>"
   end
 
   def self.existing_object_for_update(digital_object_data, user)
