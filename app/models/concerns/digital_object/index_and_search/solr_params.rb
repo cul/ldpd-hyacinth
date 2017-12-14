@@ -7,7 +7,8 @@ module DigitalObject::IndexAndSearch::SolrParams
       'absent' => proc { |filter_field| '-' + filter_field + ':["" TO *]' },
       'equals' => proc { |filter_field, safe_value| filter_field + ': ' + safe_value },
       'does_not_equal' => proc { |filter_field, safe_value| '-' + filter_field + ': ' + safe_value },
-      'contains' => proc { |filter_field, safe_value| filter_field + ': *' + safe_value + '*' }
+      'contains' => proc { |filter_field, safe_value| filter_field + ': *' + safe_value + '*' },
+      'starts_with' => proc { |filter_field, safe_value| filter_field + ': ' + safe_value + '*' }
     }
 
     def set_project_permission_filters_for(user_for_permission_context, solr_params)
