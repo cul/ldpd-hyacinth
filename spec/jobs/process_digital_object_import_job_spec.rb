@@ -296,14 +296,14 @@ RSpec.describe ProcessDigitalObjectImportJob, :type => :job do
           end
         end
         context "when receiving :parent_not_found from first internal call to .assign_data" do
-          it "sleep when :parent_not_found is returned the first time, and then internally call handle_success_or_failure when :success is returned after the second .assign_data call (to simulate scenario when parent was in the middle of processing, perhaps coming from a different csv import job" do
-            allow(klass).to receive(:assign_data).and_return(:parent_not_found, :success)
+          it "sleep when :parent_not_found is returned the first time, and then internally call handle_success_or_failure when :success is returned after the second .assign_data call (to simulate scenario when parent object was in the middle of concurrent processing, perhaps coming from a different csv import job)" do
+            allow(klass).to receive(:assign_data).and_return(:parent_not_found, :success).twice
             expect(klass).to receive(:sleep)
             expect(klass).to receive(:handle_success_or_failure)
             klass.perform(digital_object_import_id)
           end
-          it "sleep when :parent_not_found is returned the first time, and then upon receiving :parent_not_found after sleeping and trying .assign_data again, setting failure status and an error message on the digital_object_import" do
-            allow(klass).to receive(:assign_data).and_return(:parent_not_found)
+          it "sleep when :parent_not_found is returned the first time, and then again on second try of .assign_data, and sets failure status and an error message on the digital_object_import" do
+            allow(klass).to receive(:assign_data).and_return(:parent_not_found).twice
             allow_any_instance_of(DigitalObjectImport).to receive(:save!).and_return(true)
             expect(klass).to receive(:sleep)
             klass.perform(digital_object_import_id)
