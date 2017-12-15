@@ -24,6 +24,9 @@ class Hyacinth::Utils::CsvImportExportUtils
 
     found_header_row = false
     CSV.parse(csv_data_string) do |row|
+      # Strip all leading and trailing whitespace from each cell
+      row = row.map { |cell_value| cell_value.is_a?(String) ? cell_value.strip : cell_value }
+
       csv_row_number += 1
 
       unless found_header_row
@@ -161,11 +164,16 @@ class Hyacinth::Utils::CsvImportExportUtils
       # Save the csv file to the filesystem
       IO.binwrite(path_to_csv_file, csv_data_string)
 
+      prerequisite_row_map = Hyacinth::Utils::CsvImportExportUtils.prerequisite_row_map_for_csv_data(csv_data_string)
+
       Hyacinth::Utils::CsvImportExportUtils.csv_to_digital_object_data(csv_data_string) do |digital_object_data, csv_row_number|
+        prerequisite_csv_row_numbers = prerequisite_row_map[csv_row_number].present? ? prerequisite_row_map[csv_row_number].map { |row_number| row_number + 1 } : [] # CSV row numbers are 1-indexed
+
         digital_object_import = DigitalObjectImport.create!(
           import_job: import_job,
           digital_object_data: JSON.generate(digital_object_data),
-          csv_row_number: csv_row_number + 1
+          csv_row_number: csv_row_number + 1, # CSV row numbers are 1-indexed
+          prerequisite_csv_row_numbers: prerequisite_csv_row_numbers
         )
 
         # Queue up digital_object_import for procssing
@@ -173,6 +181,117 @@ class Hyacinth::Utils::CsvImportExportUtils
       end
     end
     import_job
+  end
+
+  # Takes a csv data string and returns a map that, for each row, lists
+  # prerequisite rows
+  def self.prerequisite_row_map_for_csv_data(csv_data_string)
+    index_of_parent_headers = []
+    index_of_pid_header = nil
+
+    row_number_for_header_row = 0
+
+    # Get index of parent headers if present
+    CSV.parse(csv_data_string) do |row|
+      unless row[0].start_with?('_')
+        # Go to second row if first row doesn't contain headers
+        row_number_for_header_row += 1
+        next
+      end
+      row.each_with_index do |header, index|
+        index_of_parent_headers << index if header =~ /^_parent_digital_objects-\d+\.(identifier|pid)$/
+        index_of_pid_header = index if header == '_pid'
+      end
+      break
+    end
+
+    return {} if index_of_parent_headers.blank?
+
+    identifiers_to_row_numbers = identifiers_to_row_numbers_for_csv_data(csv_data_string)
+
+    # Return if no identifiers were found in the csv data, since that means that processing order doesn't matter
+    return {} if identifiers_to_row_numbers.blank?
+
+    prerequisite_rows_based_on_headers(csv_data_string, row_number_for_header_row, index_of_parent_headers, identifiers_to_row_numbers)
+  end
+
+  def self.prerequisite_rows_based_on_headers(csv_data_string, row_number_for_header_row, index_of_parent_headers, identifiers_to_row_numbers)
+    prerequisite_row_map = {}
+    if index_of_parent_headers.length > 0
+
+      prerequisite_rows_to_dependent_rows = {}
+      row_counter = -1
+      CSV.parse(csv_data_string) do |row|
+        row_counter += 1
+        next if row_counter <= row_number_for_header_row
+
+        ### Note: We can't guarantee that a row with a pid is in Hyacinth already.
+        # It could be an indication that we want to import an object that's in Fedora,
+        # but not Hyacinth.
+
+        index_of_parent_headers.each do |index|
+          parent_identifier = row[index]
+          next unless identifiers_to_row_numbers.key?(parent_identifier)
+          parent_row_number = identifiers_to_row_numbers[parent_identifier]
+          prerequisite_row_map[row_counter] ||= []
+
+          # If THIS row's prerequisite row has other rows that are dependent on it,
+          # then THIS row's prerequisite should be the HIGHEST one of those rows.
+          if prerequisite_rows_to_dependent_rows.key?(parent_row_number)
+            max_value = prerequisite_rows_to_dependent_rows[parent_row_number].max
+            prerequisite_row_map[row_counter] << max_value unless prerequisite_row_map[row_counter].include?(max_value)
+          else
+            # THIS row's prerequisite row has no other rows that are dependent on it,
+            # so we'll make THIS row directly dependent on it.
+            prerequisite_row_map[row_counter] << parent_row_number
+          end
+
+          # Keep track of the set of all rows that depend on this prerequisite parent row
+          prerequisite_rows_to_dependent_rows[parent_row_number] ||= []
+          prerequisite_rows_to_dependent_rows[parent_row_number] << row_counter
+        end
+      end
+    end
+    prerequisite_row_map
+  end
+
+  def self.identifiers_to_row_numbers_for_csv_data(csv_data_string)
+    identifiers_to_row_numbers = {}
+    indexes_of_identifier_headers = []
+
+    row_number_for_header_row = 0
+
+    CSV.parse(csv_data_string) do |row|
+      unless row[0].start_with?('_')
+        # Go to second row if first row doesn't contain headers
+        row_number_for_header_row += 1
+        next
+      end
+      indexes_of_identifier_headers = indexes_of_identifier_headers_for_row(row)
+      break
+    end
+
+    return {} if indexes_of_identifier_headers.blank?
+
+    row_counter = -1
+    CSV.parse(csv_data_string) do |row|
+      row_counter += 1
+      next if row_counter <= row_number_for_header_row
+      indexes_of_identifier_headers.each do |index|
+        val = row[index]
+        identifiers_to_row_numbers[row[index]] = row_counter unless val.blank?
+      end
+    end
+
+    identifiers_to_row_numbers
+  end
+
+  def self.indexes_of_identifier_headers_for_row(row)
+    indexes_of_identifier_headers = []
+    row.each_with_index do |header, index|
+      indexes_of_identifier_headers << index if header =~ /^_identifiers-\d+$/ || header == '_pid'
+    end
+    indexes_of_identifier_headers
   end
 
   def self.validate_csv_headers(csv_data_string, import_job)

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161130150016) do
+ActiveRecord::Schema.define(version: 20171110194020) do
 
   create_table "controlled_vocabularies", force: :cascade do |t|
     t.string   "string_key"
@@ -37,15 +37,17 @@ ActiveRecord::Schema.define(version: 20161130150016) do
 
   create_table "digital_object_imports", force: :cascade do |t|
     t.text     "digital_object_data"
-    t.integer  "status",                default: 0, null: false
+    t.integer  "status",                       default: 0, null: false
     t.text     "digital_object_errors"
-    t.integer  "import_job_id",                     null: false
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
-    t.integer  "requeue_count",         default: 0, null: false
+    t.integer  "import_job_id",                            null: false
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
+    t.integer  "requeue_count",                default: 0, null: false
     t.integer  "csv_row_number"
+    t.text     "prerequisite_csv_row_numbers"
   end
 
+  add_index "digital_object_imports", ["csv_row_number"], name: "index_digital_object_imports_on_csv_row_number"
   add_index "digital_object_imports", ["import_job_id"], name: "index_digital_object_imports_on_import_job_id"
   add_index "digital_object_imports", ["status"], name: "index_digital_object_imports_on_status"
 

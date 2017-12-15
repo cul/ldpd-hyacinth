@@ -142,7 +142,7 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     response = RestClient.put(
       publish_target_field('publish_url') + '/' + digital_object.pid,
       {},
-      Authorization: "Token token=#{publish_target_field('api_key')}"
+      { Authorization: "Token token=#{publish_target_field('api_key')}" }
     )
     if do_ezid_update && response.code == 200 && response.headers[:location].present?
       # By this point, all records should have an ezid. Let's update the status of

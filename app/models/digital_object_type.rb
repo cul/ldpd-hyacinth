@@ -5,15 +5,15 @@ class DigitalObjectType < ActiveRecord::Base
   def self.get_model_for_string_key(string_key)
     case string_key
     when 'item'
-      return DigitalObject::Item
+      DigitalObject::Item
     when 'group'
-      return DigitalObject::Group
+      DigitalObject::Group
     when 'file_system'
-      return DigitalObject::FileSystem
+      DigitalObject::FileSystem
     when 'asset'
-      return DigitalObject::Asset
+      DigitalObject::Asset
     when 'publish_target'
-      return DigitalObject::PublishTarget
+      DigitalObject::PublishTarget
     else
       raise Hyacinth::Exceptions::InvalidDigitalObjectTypeError, "Invalid DigitalObjectType string key: #{string_key}"
     end

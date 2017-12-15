@@ -65,6 +65,6 @@ class ImportJob < ActiveRecord::Base
   end
 
   def csv_row_numbers_for_all_non_successful_digital_object_imports
-    digital_object_imports.where.not(status: DigitalObjectImport.statuses[:success]).pluck(:csv_row_number)
+    digital_object_imports.where.not(status: DigitalObjectImport.statuses[:success]).order(csv_row_number: :asc).pluck(:csv_row_number)
   end
 end

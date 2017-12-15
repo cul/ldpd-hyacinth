@@ -97,7 +97,7 @@ module Hyacinth::Ezid
     def add_contributors(xml)
       return unless [:editors, :moderators, :contributors]
                     .map { |accessor| @hyacinth_metadata_retrieval.send(accessor) }
-                    .detect { |set| !set.empty? }
+                    .find { |set| !set.empty? }
       xml.contributors do
         @hyacinth_metadata_retrieval.editors.each do |name|
           xml.contributor('contributorType' => 'Editor') { xml.contributorName name }

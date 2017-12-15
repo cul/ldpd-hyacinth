@@ -57,7 +57,7 @@ module Hyacinth::Csv::Flatten
 
     def pointers_for_uri(hash, omit_blank_values, prefix = [])
       return nil if omit_blank_values && hash.blank?
-      hash.collect do |key, value|
+      hash.map do |key, value|
         pointer_for_value("#{prefix[-1]}.#{key}", value, omit_blank_values, prefix[0...-1])
       end.compact
     end
