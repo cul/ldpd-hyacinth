@@ -16,6 +16,10 @@
   <%= @digital_object_import.csv_row_number %>
 </p>
 <p>
+  <strong>Prerequisite Row Numbers:</strong>
+  <%= @digital_object_import.prerequisite_csv_row_numbers.present? ? @digital_object_import.prerequisite_csv_row_numbers.join(', ') : 'None' %>
+</p>
+<p>
   <strong>Status:</strong>
   <%= @digital_object_import.status %>
 </p>
