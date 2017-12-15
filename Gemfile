@@ -118,6 +118,9 @@ gem 'addressable'
 # that doesn't work properly with the Blacklight gem dependency and raises:
 # ActiveSupport::Concern::MultipleIncludedBlocks: Cannot define multiple 'included' blocks for a Concern
 gem 'resque', '~> 1.26.0'
+# Need to lock to earlier version of redis gem because resque is calling
+# Redis.connect, and this method no longer exists in redis gem >= 4.0
+gem 'redis', '< 4' # Need to lock to earlier version of redis gem because resque is calling Redis.connect, and this method no longer exists in redis gem >= 4.0
 
 # For unique, opaque id generation
 gem 'noid', '>= 0.7.1'
