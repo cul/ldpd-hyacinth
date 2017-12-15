@@ -141,7 +141,7 @@ class Hyacinth::Utils::CsvImportExportUtils
         import_job.errors.add(:project, 'not found with search criteria: ' + project_search_criteria.inspect)
       elsif user.present? && (!user.permitted_in_project?(project, :create) || !user.permitted_in_project?(project, :update))
         # User must have create and update permissions for a project in order to do CSV imports
-        import_job.errors.add(:project_permission_denied, 'for import into project with string key: ' + project_string_key)
+        import_job.errors.add(:project_permission_denied, 'for import into project with string key: ' + project.string_key)
       end
     end
   end

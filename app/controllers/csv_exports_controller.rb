@@ -5,7 +5,14 @@ class CsvExportsController < ApplicationController
   # GET /csv_exports
   # GET /csv_exports.json
   def index
-    @csv_exports = CsvExport.all.order(id: :desc)
+    page = params[:page]
+    per_page = 20
+
+    if current_user.admin?
+      @csv_exports = CsvExport.all.order(id: :desc).page(page).per(per_page)
+    else
+      @csv_exports = CsvExport.where(user: current_user).order(id: :desc).page(page).per(per_page)
+    end
   end
 
   # GET /csv_exports/1
