@@ -375,7 +375,7 @@ GEM
       rdf (~> 1.99)
     rdoc (4.2.0)
       json (~> 1.4)
-    redis (4.0.1)
+    redis (3.3.5)
     redis-namespace (1.6.0)
       redis (>= 3.0.4)
     ref (2.0.0)
@@ -570,6 +570,7 @@ DEPENDENCIES
   rake (~> 10.0)
   random-word
   rdf-rdfxml!
+  redis (< 4)
   resque (~> 1.26.0)
   retriable (~> 2.1)
   rspec-rails (~> 3.3)
