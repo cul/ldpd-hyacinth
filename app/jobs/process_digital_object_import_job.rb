@@ -1,9 +1,12 @@
 class ProcessDigitalObjectImportJob
-  @queue = Hyacinth::Queue::DIGITAL_OBJECT_IMPORT
+  @queue = Hyacinth::Queue::DIGITAL_OBJECT_IMPORT_LOW
+  UNEXPECTED_PROCESSING_ERROR_RETRY_DELAY = 60
+  FIND_DIGITAL_OBJECT_IMPORT_RETRY_DELAY = 10
 
   def self.perform(digital_object_import_id)
     # Retrieve DigitalObjectImport instance from table
-    digital_object_import = DigitalObjectImport.find(digital_object_import_id)
+    # If we encounter an error (e.g. Mysql2::Error), wait and try again.
+    digital_object_import = find_digital_object_import_with_retry(digital_object_import_id)
 
     # If prerequisite check fails, return immediately.
     # Re-queueing or mark-as-failure logic is handled by the prerequisite_row_check method.
@@ -12,12 +15,7 @@ class ProcessDigitalObjectImportJob
     user = digital_object_import.import_job.user
     digital_object_data = JSON.parse(digital_object_import.digital_object_data)
 
-    if existing_object?(digital_object_data)
-      # We're updating data for an existing object
-      digital_object = existing_object_for_update(digital_object_data, user)
-    else
-      digital_object = new_object(digital_object_data['digital_object_type']['string_key'], user, digital_object_import)
-    end
+    digital_object = find_or_create_digital_object(digital_object_data, user, digital_object_import)
 
     result = assign_data(digital_object, digital_object_data, digital_object_import)
 
@@ -41,6 +39,47 @@ class ProcessDigitalObjectImportJob
     else
       handle_success_or_failure(result, digital_object, digital_object_import, HYACINTH['solr_commit_after_each_csv_import_row'])
     end
+  rescue StandardError => e
+    handle_unexpected_processing_error(digital_object_import_id, e)
+  end
+
+  def self.find_or_create_digital_object(digital_object_data, user, digital_object_import)
+    if existing_object?(digital_object_data)
+      # We're updating data for an existing object
+      digital_object = existing_object_for_update(digital_object_data, user)
+    else
+      digital_object = new_object(digital_object_data['digital_object_type']['string_key'], user, digital_object_import)
+    end
+  end
+
+  # Note that for this method, we pass the digital_object_import_id instead of a
+  # digital_object_import instance because when it's called, we can't guarantee
+  # that we were able to successfully obtain a digital_object_import instance.
+  # We try multiple times, within this method, to obtain an instance.
+  def self.handle_unexpected_processing_error(digital_object_import_id, e, queue_long_jobs = HYACINTH['queue_long_jobs'])
+    # In the case of some unexpected, otherwise unhandled error, mark this job
+    # as a failure so that it doesn't get stuck as pending forever, causing
+    # other jobs that depend on it to be requeued forever.
+
+    # Log error for debugging purposes
+    Hyacinth::Utils::Logger.logger.error("#{self.class.name}: Encountered unexpected error while processing DigitalObjectImport with id #{digital_object_import_id}: ##{e.message}")
+
+    # It is very important that we mark this job as a failure, and we want to
+    # try multuple times, with long sleep delays, in case the unexpected error
+    # is due to temporary unavailability of the database.
+    Retriable.retriable(tries: 3, base_interval: UNEXPECTED_PROCESSING_ERROR_RETRY_DELAY) do
+      digital_object_import = find_digital_object_import_with_retry(digital_object_import_id)
+      digital_object_import.digital_object_errors << exception_with_backtrace_as_error_message(e)
+      digital_object_import.status = :failure
+      digital_object_import.save!
+    end
+  end
+
+  def self.find_digital_object_import_with_retry(digital_object_import_id)
+    # Retry in case database is briefly unavailable
+    Retriable.retriable(tries: 3, base_interval: FIND_DIGITAL_OBJECT_IMPORT_RETRY_DELAY) do
+      return DigitalObjectImport.find(digital_object_import_id)
+    end
   end
 
   def self.existing_object?(digital_object_data)
@@ -53,7 +92,7 @@ class ProcessDigitalObjectImportJob
   rescue Hyacinth::Exceptions::ParentDigitalObjectNotFoundError => e
     digital_object_import.digital_object_errors << e.message
     :parent_not_found
-  rescue Exception => e
+  rescue StandardError => e
     digital_object_import.digital_object_errors << exception_with_backtrace_as_error_message(e)
     :failure
   end
@@ -121,6 +160,7 @@ class ProcessDigitalObjectImportJob
       end
 
       if num_failed_prerequisites > 0
+        digital_object_import.status = :failure
         digital_object_import.save!
         return false
       end

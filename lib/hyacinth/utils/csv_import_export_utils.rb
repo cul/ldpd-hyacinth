@@ -1,6 +1,7 @@
 class Hyacinth::Utils::CsvImportExportUtils
   PATH_INVALID = 'Invalid path.  Attempted to access string key at array index.'
   PATH_MISSING = 'Path not found.  To create path, pass a value true to the create_missing_path method parameter.'
+  NOT_IN_SPREADSHEET_PREFIX = 'not-in-spreadsheet:'
 
   ##############################
   # CSV to Digital Object Data #
@@ -215,10 +216,20 @@ class Hyacinth::Utils::CsvImportExportUtils
     prerequisite_rows_based_on_headers(csv_data_string, row_number_for_header_row, index_of_parent_headers, identifiers_to_row_numbers)
   end
 
+  def self.parent_row_number_or_placeholder_value(parent_identifier, identifiers_to_row_numbers)
+    value = identifiers_to_row_numbers[parent_identifier]
+    # If parent_identifier was present, but parent_row_number is nil, that
+    # means that this row references a parent that's not in the spreadsheet,
+    # so we'll need to use a placeholder value for the parent row, just
+    # for the purposes of seeing the dependency chain.
+    value = NOT_IN_SPREADSHEET_PREFIX + parent_identifier if value.nil?
+    value
+  end
+
   def self.prerequisite_rows_based_on_headers(csv_data_string, row_number_for_header_row, index_of_parent_headers, identifiers_to_row_numbers)
     prerequisite_row_map = {}
-    if index_of_parent_headers.length > 0
 
+    if index_of_parent_headers.length > 0
       prerequisite_rows_to_dependent_rows = {}
       row_counter = -1
       CSV.parse(csv_data_string) do |row|
@@ -231,8 +242,9 @@ class Hyacinth::Utils::CsvImportExportUtils
 
         index_of_parent_headers.each do |index|
           parent_identifier = row[index]
-          next unless identifiers_to_row_numbers.key?(parent_identifier)
-          parent_row_number = identifiers_to_row_numbers[parent_identifier]
+          next unless parent_identifier.present?
+          parent_row_number = parent_row_number_or_placeholder_value(parent_identifier, identifiers_to_row_numbers)
+
           prerequisite_row_map[row_counter] ||= []
 
           # If THIS row's prerequisite row has other rows that are dependent on it,
@@ -252,6 +264,19 @@ class Hyacinth::Utils::CsvImportExportUtils
         end
       end
     end
+
+    remove_not_in_spreadsheet_prefix_values_from_prerequisite_row_map(prerequisite_row_map)
+
+    prerequisite_row_map
+  end
+
+  # Removes values from prerequisite_row_map that start with
+  # NOT_IN_SPREADSHEET_PREFIX, since this was just a placeholder used to
+  # seed the dependency chain. And then remove any key-value pairs that have
+  # empty array values after the cleanup.
+  def self.remove_not_in_spreadsheet_prefix_values_from_prerequisite_row_map(prerequisite_row_map)
+    prerequisite_row_map.each { |key, val| val.delete_if { |element| element.is_a?(String) && element.starts_with?(NOT_IN_SPREADSHEET_PREFIX) } }
+    prerequisite_row_map.delete_if { |key, val| val.blank? }
     prerequisite_row_map
   end
 

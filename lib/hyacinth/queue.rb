@@ -1,9 +1,10 @@
 module Hyacinth::Queue
-  DIGITAL_OBJECT_IMPORT = :digital_object_import
+  DIGITAL_OBJECT_IMPORT_HIGH = :digital_object_import_high
+  DIGITAL_OBJECT_IMPORT_LOW = :digital_object_import_low
   DIGITAL_OBJECT_CSV_EXPORT = :digital_object_csv_export
   DIGITAL_OBJECT_REINDEX = :digital_object_reindex
 
-  QUEUES_IN_DESCENDING_PRIORITY_ORDER = [DIGITAL_OBJECT_CSV_EXPORT, DIGITAL_OBJECT_IMPORT, DIGITAL_OBJECT_REINDEX]
+  QUEUES_IN_DESCENDING_PRIORITY_ORDER = [DIGITAL_OBJECT_CSV_EXPORT, DIGITAL_OBJECT_IMPORT_HIGH, DIGITAL_OBJECT_IMPORT_LOW, DIGITAL_OBJECT_REINDEX]
 
   def self.process_digital_object_import(digital_object_import_id)
     if HYACINTH['queue_long_jobs']

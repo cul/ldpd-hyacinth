@@ -1,8 +1,37 @@
 require 'rails_helper'
 
 RSpec.describe ProcessDigitalObjectImportJob, :type => :job do
+  before(:example) {
+    stub_const("ProcessDigitalObjectImportJob::UNEXPECTED_PROCESSING_ERROR_RETRY_DELAY", 0) # Make tests run more quickly
+    stub_const("ProcessDigitalObjectImportJob::FIND_DIGITAL_OBJECT_IMPORT_RETRY_DELAY", 0) # Make tests run more quickly
+  }
 
   let (:klass) { ProcessDigitalObjectImportJob }
+  let(:user) {
+    User.new(
+      :email => 'abc@example.com',
+      :password => 'password',
+      :password_confirmation => 'password',
+      :first_name => 'Abraham',
+      :last_name => 'Lincoln',
+      :is_admin => 'false'
+    )
+  }
+  let(:digital_object_data) {
+    {
+      'digital_object_type' => {
+        'string_key' => 'item'
+      },
+      'dynamic_field_data' => {
+        'title' => [
+          {
+            'title_non_sort_portion' => 'The',
+            'title_sort_portion' => 'Princess Bride'
+          }
+        ]
+      }
+    }
+  }
 
   describe ".existing_object?" do
     it "returns true if digital object data contains a pid field for an existing object" do
@@ -16,12 +45,78 @@ RSpec.describe ProcessDigitalObjectImportJob, :type => :job do
     end
   end
 
+  describe ".find_digital_object_import_with_retry" do
+    context "finds and returns a DigitalObjectImport when no error is raised by internal call to DigitalObjectImport.find" do
+      let(:digital_object_import_id) {
+        allow(DigitalObjectImport).to receive(:find).with(12345).and_return(digital_object_import)
+        12345
+      }
+      let(:digital_object_import) {
+        DigitalObjectImport.new
+      }
+      it do
+        expect(klass.find_digital_object_import_with_retry(digital_object_import_id)).to eq(digital_object_import)
+      end
+    end
+    context "retries multiple times when an error is raised by internal call to DigitalObjectImport.find" do
+      let(:digital_object_import_id) {
+        allow(DigitalObjectImport).to receive(:find).and_raise(StandardError)
+        12345
+      }
+      it do
+        expect(DigitalObjectImport).to receive(:find).exactly(3).times
+        expect{klass.find_digital_object_import_with_retry(digital_object_import_id)}.to raise_error(StandardError)
+      end
+    end
+  end
+
+  describe ".find_or_create_digital_object" do
+    let(:digital_object_import) {
+      DigitalObjectImport.new
+    }
+    it "internally calls .existing_object_for_update when .existing_object? returns true" do
+      allow(klass).to receive(:existing_object?).and_return(true)
+      expect(klass).to receive(:existing_object_for_update)
+      klass.find_or_create_digital_object(digital_object_data, user, digital_object_import)
+    end
+    it "internally calls .new_object when .existing_object? returns false" do
+      allow(klass).to receive(:existing_object?).and_return(false)
+      expect(klass).to receive(:new_object)
+      klass.find_or_create_digital_object(digital_object_data, user, digital_object_import)
+    end
+  end
+
+  describe ".handle_unexpected_processing_error" do
+    let(:digital_object_import_id) { 12345 }
+    let(:digital_object_import) {
+      DigitalObjectImport.new
+    }
+    let(:e) {
+      begin
+        raise StandardError, 'Some error message'
+      rescue => err
+        err
+      end
+    }
+    it "marks the DigitalObjectImport with given id as failure, and stores the exception object's message in the DigitalObjectImport's digital_object_errors" do
+      allow(klass).to receive(:find_digital_object_import_with_retry).and_return(digital_object_import)
+      expect(digital_object_import).to receive(:save!).once
+      klass.handle_unexpected_processing_error(digital_object_import_id, e, false)
+      expect(digital_object_import.digital_object_errors).to eq([klass.exception_with_backtrace_as_error_message(e)])
+    end
+    it "when encountering an error retrieving or saving the DigitalObjectImport, retries retrieval/saving code three times, and then raises the error encountered on the final retry" do
+      allow(klass).to receive(:find_digital_object_import_with_retry).and_raise(StandardError)
+      expect(klass).to receive(:find_digital_object_import_with_retry).exactly(3).times
+      expect{klass.handle_unexpected_processing_error(digital_object_import_id, e, false)}.to raise_error(StandardError)
+    end
+  end
+
   describe ".exception_with_backtrace_as_error_message" do
     let(:error_message) { 'This is the error message' }
     it "formats as expected" do
       begin
-        raise Exception, error_message
-      rescue Exception => e
+        raise StandardError, error_message
+      rescue StandardError => e
         expect(klass.exception_with_backtrace_as_error_message(e)).to eq(e.message + "\n<span class=\"backtrace\">Backtrace:\n\t#{e.backtrace.join("\n\t")}</span>")
       end
     end
@@ -29,7 +124,6 @@ RSpec.describe ProcessDigitalObjectImportJob, :type => :job do
 
   describe ".assign_data" do
     let(:digital_object) { DigitalObject::Item.new }
-    let(:digital_object_data) { {} }
     let(:digital_object_import) { DigitalObjectImport.new }
 
     it "returns :success when everything works as expected and doesn't set any errors on passed DigitalObjectImport arg" do
@@ -44,8 +138,8 @@ RSpec.describe ProcessDigitalObjectImportJob, :type => :job do
       expect(digital_object_import.digital_object_errors).to be_present
     end
 
-    it "returns :failure and sets digital_object_errors on passed DigitalObjectImport arg when DigitalObject::Base#set_digital_object_data raises any Exception other than Hyacinth::Exceptions::ParentDigitalObjectNotFoundError" do
-      [Exception, Hyacinth::Exceptions::NotFoundError, Hyacinth::Exceptions::MalformedControlledTermFieldValue, UriService::Error].each do |exception_class|
+    it "returns :failure and sets digital_object_errors on passed DigitalObjectImport arg when DigitalObject::Base#set_digital_object_data raises any StandardError other than Hyacinth::Exceptions::ParentDigitalObjectNotFoundError" do
+      [StandardError, Hyacinth::Exceptions::NotFoundError, Hyacinth::Exceptions::MalformedControlledTermFieldValue, UriService::Error].each do |exception_class|
         allow_any_instance_of(DigitalObject::Item).to receive(:set_digital_object_data).and_raise(exception_class)
         expect(klass.assign_data(digital_object, digital_object_data, digital_object_import)).to eq(:failure)
         expect(digital_object_import.digital_object_errors).to be_present
@@ -56,16 +150,6 @@ RSpec.describe ProcessDigitalObjectImportJob, :type => :job do
   describe ".existing_object_for_update" do
     let(:pid) { 'abc:123' }
     let(:digital_object_data) { {'pid' => pid} }
-    let(:user) {
-      User.new(
-        :email => 'abc@example.com',
-        :password => 'password',
-        :password_confirmation => 'password',
-        :first_name => 'Abraham',
-        :last_name => 'Lincoln',
-        :is_admin => 'false'
-      )
-    }
 
     it "returns an existing object with given user assigned to updated_by field" do
       allow(DigitalObject::Base).to receive(:find).with(pid).and_return(DigitalObject::Item.new)
@@ -76,16 +160,6 @@ RSpec.describe ProcessDigitalObjectImportJob, :type => :job do
   end
 
   describe ".new_object" do
-    let(:user) {
-      User.new(
-        :email => 'abc@example.com',
-        :password => 'password',
-        :password_confirmation => 'password',
-        :first_name => 'Abraham',
-        :last_name => 'Lincoln',
-        :is_admin => 'false'
-      )
-    }
     let(:digital_object_import) {
       DigitalObjectImport.new
     }
@@ -217,7 +291,7 @@ RSpec.describe ProcessDigitalObjectImportJob, :type => :job do
         expect(klass.prerequisite_row_check(digital_object_import, queue_long_jobs)).to eq(false)
       end
     end
-    context "returns false if any of this digital_object_import's prerequisite rows have failed, and also adds an error to this digital_object_import that describes the failure" do
+    context "returns false if any of this digital_object_import's prerequisite rows have failed, and also adds an error to this digital_object_import that describes the failure, and marks the digital_object_import as a failure" do
       let(:digital_object_import) { digital_object_import_2 }
       let(:prerequisite_digital_object_imports) {
         digital_object_import_1.status = :failure # Mark dependent job as a failure
@@ -227,6 +301,7 @@ RSpec.describe ProcessDigitalObjectImportJob, :type => :job do
         allow(DigitalObjectImport).to receive(:where).and_return(prerequisite_digital_object_imports)
         allow_any_instance_of(DigitalObjectImport).to receive(:save!).and_return(true)
         expect(klass.prerequisite_row_check(digital_object_import, queue_long_jobs)).to eq(false)
+        expect(digital_object_import.status).to eq('failure')
         expect(digital_object_import.digital_object_errors.length).to eq(1)
         expect(digital_object_import.digital_object_errors[0]).to eq("Failed because prerequisite row 1 failed to import properly")
       end
@@ -238,16 +313,6 @@ RSpec.describe ProcessDigitalObjectImportJob, :type => :job do
       allow(DigitalObjectImport).to receive(:find).with(12345).and_return(digital_object_import)
       12345
     }
-    let(:user) {
-      User.new(
-        :email => 'abc@example.com',
-        :password => 'password',
-        :password_confirmation => 'password',
-        :first_name => 'Abraham',
-        :last_name => 'Lincoln',
-        :is_admin => 'false'
-      )
-    }
     let(:import_job) {
       import_job = ImportJob.new
       import_job.user = user
@@ -256,22 +321,14 @@ RSpec.describe ProcessDigitalObjectImportJob, :type => :job do
     let(:digital_object_import) {
       digital_object_import = DigitalObjectImport.new
       digital_object_import.import_job = import_job
-      digital_object_import.digital_object_data = {
-        'digital_object_type' => {
-          'string_key' => 'item'
-        },
-        'dynamic_field_data' => {
-          'title' => [
-            {
-              'title_non_sort_portion' => 'The',
-              'title_sort_portion' => 'Princess Bride'
-            }
-          ]
-        }
-      }.to_json
+      digital_object_import.digital_object_data = digital_object_data.to_json
       digital_object_import
     }
-
+    it "calls .handle_unexpected_processing_error when an unexpected error occurs" do
+      expect(klass).to receive(:handle_unexpected_processing_error)
+      allow(klass).to receive(:find_digital_object_import_with_retry).and_raise(StandardError)
+      klass.perform(digital_object_import_id)
+    end
     it "returns early when .prerequisite_row_check fails" do
       allow(klass).to receive(:prerequisite_row_check).and_return(false)
       expect(klass).not_to receive(:existing_object?)
@@ -281,18 +338,6 @@ RSpec.describe ProcessDigitalObjectImportJob, :type => :job do
       before {
         allow(klass).to receive(:prerequisite_row_check).and_return(true)
       }
-      it "internally calls .existing_object_for_update when .existing_object? returns true" do
-        allow(klass).to receive(:existing_object?).and_return(true)
-        allow(klass).to receive(:handle_success_or_failure)
-        expect(klass).to receive(:existing_object_for_update)
-        klass.perform(digital_object_import_id)
-      end
-      it "internally calls .new_object when .existing_object? returns false" do
-        allow(klass).to receive(:existing_object?).and_return(false)
-        allow(klass).to receive(:handle_success_or_failure)
-        expect(klass).to receive(:new_object)
-        klass.perform(digital_object_import_id)
-      end
       context "internally creates new digital object or retrieves existing digital object" do
         context "internally calls handle_success_or_failure if the result returned by .assign_data is not :parent_not_found" do
           it ":success" do
