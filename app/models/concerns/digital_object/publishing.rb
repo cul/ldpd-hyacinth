@@ -27,6 +27,11 @@ module DigitalObject::Publishing
     @errors.blank?
   end
 
+  def unpublish_all
+    @publish_target_pids = []
+    publish
+  end
+
   def execute_publish_action_for_target(publish_action, publish_target, do_ezid_update)
     return true if publish_target.publish_target_field('publish_url').blank? # Not all publish targets have publish URLs. Skip and return true if that's true for this pub target.
     success = false
