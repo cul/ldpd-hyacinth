@@ -16,9 +16,6 @@
 /log/resque*
 /tmp
 
-# Ignore local Guardfile customation file
-config/local_guardfile_customizations.yml
-
 # Ignore editor files
 *~
 \#*\#
@@ -47,10 +44,6 @@ config/subs.yml
 # Ignore OS-specific
 .DS_Store
 
-# Ignore application project files
-*.komodoproject
-
-# Ignore elo2112-specific
-reference-files/*
-
 .byebug_history
+.ruby-version
+.ruby-gemset
