@@ -54,3 +54,5 @@ config/subs.yml
 reference-files/*
 
 .byebug_history
+.ruby-version
+.ruby-gemset
