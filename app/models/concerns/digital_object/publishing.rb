@@ -6,7 +6,7 @@ module DigitalObject::Publishing
 
     # Save withg retry after Fedora timeouts / unreachable host
     Retriable.retriable DigitalObject::Base::RETRY_OPTIONS do
-      @fedora_object.save(update_index: false)
+      fedora_object.save(update_index: false)
     end
     allowed_publish_target_pids = allowed_publish_targets.map { |pub_target_data| pub_target_data['pid'] }
     inactive_publish_target_pids = allowed_publish_target_pids - publish_target_pids
