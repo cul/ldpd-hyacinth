@@ -150,7 +150,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.edit = function() 
     //For deleting DigitalObjects
     $('.delete-digital-object-button').on('click', function(e){
       e.preventDefault();
-      var confirmResponse = confirm('Are you sure you want to delete this Digital Object?');
+      var confirmResponse = confirm('Are you sure you want to delete this Digital Object and unpublish it from all publish targets?');
       if (confirmResponse) {
         //After successful deletion, return to index page
         $.ajax({
@@ -288,15 +288,15 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.publish_target_fie
     },
     cache: false
   }).done(function(data_for_editor){
-    
+
     var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
-    
+
     $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/publish_target_fields.ejs', {digitalObject: digitalObject}));
-    
+
     var publishTargetFieldsEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectPublishTargetFieldsEditor('digital-object-publish-target-fields-editor', {
       digitalObject: digitalObject
     });
-    
+
     //Event cleanup
     that.dispose = function(){
       publishTargetFieldsEditor.dispose();
@@ -319,7 +319,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_children = 
     data: {},
     cache: false
   }).done(function(data_for_ordered_child_editor){
-    
+
     var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_ordered_child_editor['digital_object']);
     var tooManyToShow = data_for_ordered_child_editor['too_many_to_show'];
     var orderedChildDigitalObjects = [];
@@ -368,7 +368,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.upload_assets = fu
     var parentDigitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
 
     $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/upload_assets.ejs', {parentDigitalObject: parentDigitalObject}));
-    
+
     digital_object_data_for_new_asset = {
       project: {
         pid: parentDigitalObject.project['pid']
@@ -382,22 +382,22 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.upload_assets = fu
         string_key: 'asset'
       }
     }
-    
+
     var fileBrowserWidget = new Hyacinth.DigitalObjectsApp.FileBrowserWidget();
     fileBrowserWidget.setTitle('Upload Directory Browser');
     fileBrowserWidget.setActionButtonLabel('Import');
     fileBrowserWidget.onActionButtonClick = function(){
-      
+
       Hyacinth.addAlert('Performing upload...', 'info');
-      
+
       digital_object_data_for_new_asset['import_file'] = {
         import_type : "upload_directory",
         import_path : fileBrowserWidget.getPathFieldValue()
       }
-      
+
       var filename = fileBrowserWidget.getPathFieldValue().replace(/^.*[\\\/]/, '');
       that.addUploadPlaceholder(filename);
-      
+
       $.ajax({
         url: '/digital_objects.json',
         type: 'POST',
@@ -410,17 +410,17 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.upload_assets = fu
       }).fail(function(){
         alert(Hyacinth.unexpectedAjaxErrorMessage);
       });
-      
+
     };
     $('#filesystem_upload').append(fileBrowserWidget.$el);
-    
+
     var $uploadForm = $('.digital-object-asset-upload-form');
 
     digital_object_data_for_new_asset['import_file'] = {
       import_type : "post_data",
       import_path : fileBrowserWidget.getPathFieldValue()
     }
-    
+
     $uploadForm.fileupload({
         dataType: 'json',
         url: '/digital_objects.json',
@@ -468,12 +468,12 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.upload_assets = fu
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.addUploadPlaceholder = function(filename) {
-  
+
   var $uploadedFilesTableBody = $('.uploaded-files-table tbody');
   if ($uploadedFilesTableBody.find('.placeholder').length > 0) {
     $uploadedFilesTableBody.find('.placeholder').remove();
   }
-  
+
   $(
     '<tr data-file-placeholder-for="' + _.escape(filename) + '">' +
       '<td>' + filename + '</td>' +
@@ -481,17 +481,17 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.addUploadPlacehold
       '<td class="aligncenter">Pending...</td>' +
     '</tr>'
   ).appendTo($uploadedFilesTableBody);
-  
+
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.handleUploadResponse = function(response_data) {
 
   var $uploadedFilesTableBody = $('.uploaded-files-table tbody');
-  
+
   var name = response_data['uploaded_file_confirmation']['name'];
   var size = response_data['uploaded_file_confirmation']['size'];
   var errors = response_data['uploaded_file_confirmation']['errors'];
-    
+
   if (errors.length > 0) {
     Hyacinth.addAlert(errors[0], 'danger');
   } else {
@@ -507,7 +507,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.handleUploadRespon
       fileSizeDisplayValue = parseInt(fileSize) + ' B';
     }
     var date = new Date();
-    
+
     $uploadedFilesTableBody.find('tr[data-file-placeholder-for="' + _.escape(name) + '"]').html(
       '<td>' + name + '</td>' +
       '<td class="aligncenter">' + fileSizeDisplayValue + '</td>' +
@@ -518,7 +518,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.handleUploadRespon
 
     Hyacinth.addAlert('File upload complete: ' + name, 'info');
   }
-  
+
 }
 
 //Add Parent Action - Add a parent Digital Object to this Digital Object
@@ -561,7 +561,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_parents = f
       });
       return false;
     });
-    
+
     $('#remove-parent-form').on('submit', function(e){
       var parentsToRemove = [];
       $('#remove-parent-form').find('[name="parent_pid"]:checked').each(function(){
@@ -591,7 +591,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_parents = f
       });
       return false;
     });
-    
+
     //Event cleanup
     that.dispose = function(){
       $('#add-parent-form').off('submit');
