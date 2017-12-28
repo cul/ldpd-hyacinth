@@ -108,6 +108,9 @@ module DigitalObject::Persistence
       self.state = 'D'
 
       if valid? || force
+        # Unpublish items from active publish targets.
+        unpublish_all
+
         if purge
           # We're going to delete everything associated with this record
 
