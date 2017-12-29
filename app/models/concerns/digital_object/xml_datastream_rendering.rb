@@ -47,7 +47,7 @@ module DigitalObject::XmlDatastreamRendering
     # Create new element
     element_name = xml_translation_logic['element'] || []
 
-    new_element = @ng_xml_doc.create_element(element_name)
+    new_element = ng_xml_document.create_element(element_name)
 
     # Add attributes (including namespace definitions) to this element
     attrs = xml_translation_logic['attrs'] || []
