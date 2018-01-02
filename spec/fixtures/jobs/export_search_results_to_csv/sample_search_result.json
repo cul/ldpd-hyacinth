@@ -1,0 +1,201 @@
+{
+   "pid":"cul:bg79cnp5k9",
+   "created":"2015-02-02T17:57:55Z",
+   "modified":"2016-07-28T00:46:25Z",
+   "created_by":"Durst Service Account",
+   "modified_by":"Durst Service Account",
+   "identifiers":[
+      "cul:bg79cnp5k9"
+   ],
+   "title":"Petition no. 2 : CP 19302 : zoning map 10b",
+   "state":"A",
+   "dc_type":"InteractiveResource",
+   "project":{
+      "pid":"cul:7h44j0zpcs",
+      "uri":null,
+      "display_label":"Seymour B. Durst Old York Library",
+      "short_label":"Seymour B. Durst Old York Library",
+      "string_key":"durst"
+   },
+   "publish_targets":[
+      {
+         "pid":"cul:sqv9s4mwg3",
+         "display_label":"Seymour B. Durst Old York Library",
+         "string_key":"durst"
+      }
+   ],
+   "digital_object_type":{
+      "string_key":"item",
+      "display_label":"Item"
+   },
+   "dynamic_field_data":{
+      "dims_identifier":[
+         {
+            "dims_identifier_value":"DIM017630"
+         }
+      ],
+      "clio_identifier":[
+         {
+            "clio_identifier_value":"10651853",
+            "clio_identifier_type":"print"
+         },
+         {
+            "clio_identifier_omit_from_mods":true,
+            "clio_identifier_value":"11259246",
+            "clio_identifier_type":"electronic"
+         }
+      ],
+      "collection":[
+         {
+            "collection_term":{
+               "uri":"http://id.library.columbia.edu/term/79de0ce6-55d5-4665-925a-11adfa425bf7",
+               "value":"Seymour B. Durst Old York Library Collection",
+               "type":"local",
+               "vocabulary_string_key":"collection",
+               "internal_id":53
+            }
+         }
+      ],
+      "record_content_source":[
+         {
+            "record_content_source_value":"NNC"
+         }
+      ],
+      "publisher":[
+         {
+            "publisher_value":"[publisher not identified]"
+         }
+      ],
+      "marc_005_last_modified":[
+         {
+            "marc_005_last_modified_value":"20140213115906.0"
+         }
+      ],
+      "title":[
+         {
+            "title_sort_portion":"Petition no. 2 : CP 19302 : zoning map 10b"
+         }
+      ],
+      "subject_hierarchical_geographic":[
+         {
+            "subject_hierarchical_geographic_state_text_value":"NY",
+            "subject_hierarchical_geographic_city_text_value":"New York",
+            "subject_hierarchical_geographic_borough_text_value":"Queens",
+            "subject_hierarchical_geographic_neighborhood_text_value":"Flushing"
+         }
+      ],
+      "extent":[
+         {
+            "extent_value":"7 unnumbered leaves : maps ; 36 cm"
+         }
+      ],
+      "subject_durst":[
+         {
+            "subject_durst_code":"PLNG",
+            "subject_durst_value":"Planning (Zoning)"
+         }
+      ],
+      "type_of_resource":[
+         {
+            "type_of_resource_value":"text"
+         }
+      ],
+      "note":[
+         {
+            "note_value":"Caption title"
+         }
+      ],
+      "subject_topic":[
+         {
+            "subject_topic_term":{
+               "uri":"temp:af65ef928e7f47549681169304971043fe0696b81d367be70205247e840c85b9",
+               "value":"Zoning--New York (State)--New York.",
+               "type":"temporary",
+               "vocabulary_string_key":"subject_topic",
+               "internal_id":66618
+            }
+         },
+         {
+            "subject_topic_term":{
+               "uri":"temp:63d4eabb72a3f3eb7c261f6979d3077e2aa87604aef822cefa43ae0aba8a82d9",
+               "value":"City planning--New York (State)--New York.",
+               "type":"temporary",
+               "vocabulary_string_key":"subject_topic",
+               "internal_id":66453
+            }
+         }
+      ],
+      "subject_geographic":[
+         {
+            "subject_geographic_term":{
+               "uri":"temp:df625688bc0fb25716f104fab2f837c6ec5cba6a1b6e06bd7a10d5d29efa5963",
+               "value":"Flushing (New York, N.Y.)--Buildings, structures, etc.",
+               "type":"temporary",
+               "vocabulary_string_key":"subject_geographic",
+               "internal_id":206362
+            }
+         }
+      ],
+      "form":[
+         {
+            "form_term":{
+               "uri":"http://id.loc.gov/vocabulary/graphicMaterials/tgm001221",
+               "value":"books",
+               "type":"external",
+               "authority":"aat",
+               "vocabulary_string_key":"form",
+               "internal_id":3
+            }
+         }
+      ],
+      "date_other_textual":[
+         {
+            "date_other_textual_value":"[1968?]"
+         }
+      ],
+      "place_of_origin":[
+         {
+            "place_of_origin_value":"[New York?]"
+         }
+      ],
+      "date_issued":[
+         {
+            "date_issued_start_value":"1968",
+            "date_issued_key_date":true
+         }
+      ],
+      "abstract":[
+         {
+            "abstract_value":"Report from the Operations Planning Division on the petition to change the area in Flushing, Queens bounded by Barclay Avenue, Union Stree, Sanford Avenue, and Kissena Boulevard from R7-1 to C4-2"
+         }
+      ],
+      "url":[
+         {
+            "url_value":"http://www.columbia.edu/cgi-bin/cul/resolve?clio11259246"
+         }
+      ],
+      "durst_additional_coordinates":[
+         {
+            "durst_additional_coordinates_value":"40.7673820,-73.8325910"
+         }
+      ],
+      "durst_additional_subject_geographic":[
+         {
+            "durst_additional_subject_geographic_term":{
+               "uri":"temp:acc0f5194999d8d4a9b5508d3161dca14ef46fc63e8888766f5daef9ba432df9",
+               "value":"Flushing (New York, N.Y.)",
+               "type":"temporary",
+               "vocabulary_string_key":"subject_geographic",
+               "internal_id":198787
+            }
+         }
+      ]
+   },
+   "ordered_child_digital_objects":[
+
+   ],
+   "parent_digital_objects":[
+
+   ],
+   "doi":null
+}
