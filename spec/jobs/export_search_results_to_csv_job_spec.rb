@@ -59,22 +59,35 @@ describe ExportSearchResultsToCsvJob, :type => :unit do
   end
 
   describe '.perform' do
-    let(:export_id) { 'export-id' }
-    let(:export) do
-      export = CsvExport.new(user: user, search_params: '{}', id: export_id)
-      allow(export).to receive(:path_to_csv_file=)
-      export
-    end
+    context 'with sample json document search result' do
+      let(:export_id) { 'export-id' }
+      let(:export) do
+        export = CsvExport.new(user: user, search_params: search_params, id: export_id)
+        export
+      end
+      let(:sample_json_document) {
+        JSON.parse( fixture('jobs/export_search_results_to_csv/sample_search_result.json').read )
+      }
+      let(:expected_csv) {
+        CSV.parse( fixture('jobs/export_search_results_to_csv/expected_search_result_as_csv_export.csv').read )
+      }
+      before do
+        expect(export).to receive(:success!)
+        expect(export).to receive(:save)
+      end
+      it do
+        allow(CsvExport).to receive(:find).with(export_id).and_return(export)
+        allow(DigitalObject::Base).to receive(:search_in_batches).and_yield(sample_json_document)
+        expect(export).to receive(:path_to_csv_file).and_call_original
+        described_class.perform(export_id)
+        expect(export.number_of_records_processed).to eq(1)
+        actual_csv = CSV.read(export.path_to_csv_file)
 
-    before do
-      allow(CsvExport).to receive(:find).with(export_id).and_return(export)
-      HYACINTH['csv_export_directory'] ||= Dir.tmpdir
-    end
-
-    it do
-      expect(export).to receive(:success!)
-      expect(export).to receive(:save)
-      described_class.perform(export_id)
+        # hyacinth header row
+        expect(actual_csv[1]).to eq(expected_csv[1])
+        # data values for single record
+        expect(actual_csv[2]).to eq(expected_csv[2])
+      end
     end
   end
 end
