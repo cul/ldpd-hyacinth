@@ -106,7 +106,7 @@ module DigitalObject::XmlDatastreamRendering
         if value.has_key?('yield')
           # Yield to dynamic_field_group renderer logic
           dynamic_field_group_string_key = value['yield']
-          
+
           if dynamic_field_group_string_keys_to_objects.has_key?(dynamic_field_group_string_key)
             xml_translation_logic_for_dynamic_field_group_string_key = JSON(dynamic_field_group_string_keys_to_objects[dynamic_field_group_string_key].xml_translation)
             unless df_data[dynamic_field_group_string_key].blank?
@@ -135,13 +135,14 @@ module DigitalObject::XmlDatastreamRendering
     parent_element.add_child(new_element)
   end
 
+  # Captures everything between the {{}} and replaces it with the value provided in the df_data map.
+  # Converts value found to string, incase we're working with a numeric or boolean value.
   def value_with_substitutions(value, df_data)
     value.gsub(/(\{\{(?:(?!\}\}).)+\}\})/) do |sub|
-      the_value = value_for_field_name(sub[2, sub.length-4], df_data)
-      the_value.to_s # Need to cast to string just in case we're working with a numeric or boolean value
+      value_for_field_name(sub[2, sub.length-4], df_data).to_s
     end
   end
-  
+
   def value_for_field_name(field_name, df_data)
     if field_name.start_with?('$')
       # Then this is a special substitution that we handle differently.
@@ -183,7 +184,7 @@ module DigitalObject::XmlDatastreamRendering
     # - The third is the value to use if the variable evaluates to false.
     return value_for_field_name(ternary_arr[0], df_data).present? ? ternary_arr[1] : ternary_arr[2]
   end
-  
+
   # Joins the given strings using the given delimiter, omitting blank values
   def render_output_of_join(join_data, df_data)
     # join_data is of the format:

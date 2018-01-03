@@ -7,6 +7,9 @@ describe DigitalObject::XmlDatastreamRendering do
   end
 
   let(:digital_object) { test_class.new }
+  let(:dynamic_field_data) {
+    JSON.parse(fixture('models/concerns/digital_object/test_dynamic_field_data.json').read)
+  }
 
   describe '#render_xml_translation_with_data' do
     let(:doc) { Nokogiri::XML::Document.new }
@@ -82,9 +85,7 @@ describe DigitalObject::XmlDatastreamRendering do
       ]'
     end
 
-    let(:dynamic_field_data) {
-      JSON.parse(fixture('models/concerns/digital_object/test_dynamic_field_data.json').read)
-    }
+
 
     context 'when nesting elements' do
       let(:expected_mods) do
@@ -259,6 +260,22 @@ describe DigitalObject::XmlDatastreamRendering do
         digital_object.render_xml_translation_with_data(doc, doc, base_xml_translation, dynamic_field_data, xml_translation_map)
         expect(doc).to be_equivalent_to expected_mods
       end
+    end
+  end
+
+  describe '#value_with_substitutions' do
+    let(:name_df_data) { dynamic_field_data["name"][0] }
+    
+    it "looks up value when its the only thing in the string" do
+      expect(digital_object.value_with_substitutions("{{name_term.value}}", name_df_data)).to eql "Salinger, J. D."
+    end
+
+    it "looks up correct value when there are multiple references" do
+      expect(digital_object.value_with_substitutions("{{name_term.value}}{{name_term.uni}}", name_df_data)).to eql "Salinger, J. D.jds1329"
+    end
+
+    it "looks up corrext value when reference is surrounded by characters" do
+      expect(digital_object.value_with_substitutions("Author name is {{name_term.value}}.", name_df_data)).to eql "Author name is Salinger, J. D.."
     end
   end
 end
