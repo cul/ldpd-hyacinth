@@ -177,12 +177,14 @@ module DigitalObject::XmlDatastreamRendering
     end
   end
 
+
+  # This method mimics a ternary operation, but using a three-element array. The
+  # array is evaluated as follows:
+  # - The first element is a variable to evaluate as true or false.
+  # - The second is the value to use if the variable evaluates to true.
+  # - The third is the value to use if the variable evaluates to false.
   def render_output_of_ternary(ternary_arr, df_data)
-    # The value of a ternary key is a three-element array.
-    # - The first element is a variable to evaluate as true or false.
-    # - The second is the value to use if the variable evaluates to true.
-    # - The third is the value to use if the variable evaluates to false.
-    return value_for_field_name(ternary_arr[0], df_data).present? ? ternary_arr[1] : ternary_arr[2]
+    value_for_field_name(ternary_arr[0], df_data).present? ? ternary_arr[1] : ternary_arr[2]
   end
 
   # Joins the given strings using the given delimiter, omitting blank values

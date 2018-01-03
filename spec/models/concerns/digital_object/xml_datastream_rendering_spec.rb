@@ -309,4 +309,23 @@ describe DigitalObject::XmlDatastreamRendering do
       expect(digital_object.value_for_field_name("name_term.last_name", name_df_data)).to eql ""
     end
   end
+
+  describe "#render_output_of_ternary" do
+    let(:name_df_data) { dynamic_field_data["name"][0] }
+
+    it 'returns "true" value if field present' do
+      arr = ["name_term.value", "True", "False"]
+      expect(digital_object.render_output_of_ternary(arr, name_df_data)).to eql "True"
+    end
+
+    it 'returns "false" value if field present' do
+      arr = ["name_term.first_name", "True", "False"]
+      expect(digital_object.render_output_of_ternary(arr, name_df_data)).to eql "False"
+    end
+
+    it "renders field value if field present" do
+      arr = ["name_term.value", "name_term.value", "False"]
+      expect(digital_object.render_output_of_ternary(arr, name_df_data)).to eql "name_term.value"
+    end
+  end
 end
