@@ -2,8 +2,10 @@ require 'rails_helper'
 
 describe DigitalObject::XmlDatastreamRendering do
   let(:test_class) do
-    _c = Class.new
-    _c.send :include, DigitalObject::XmlDatastreamRendering
+    Class.new do
+      include DigitalObject::XmlDatastreamRendering
+      attr_reader :project
+    end
   end
 
   let(:digital_object) { test_class.new }
@@ -265,17 +267,46 @@ describe DigitalObject::XmlDatastreamRendering do
 
   describe '#value_with_substitutions' do
     let(:name_df_data) { dynamic_field_data["name"][0] }
-    
-    it "looks up value when its the only thing in the string" do
+
+    it "replaces value when its the only thing in the string" do
       expect(digital_object.value_with_substitutions("{{name_term.value}}", name_df_data)).to eql "Salinger, J. D."
     end
 
-    it "looks up correct value when there are multiple references" do
+    it "replaces correct value when there are multiple references" do
       expect(digital_object.value_with_substitutions("{{name_term.value}}{{name_term.uni}}", name_df_data)).to eql "Salinger, J. D.jds1329"
     end
 
-    it "looks up corrext value when reference is surrounded by characters" do
+    it "replaces corrext value when reference is surrounded by characters" do
       expect(digital_object.value_with_substitutions("Author name is {{name_term.value}}.", name_df_data)).to eql "Author name is Salinger, J. D.."
+    end
+  end
+
+  describe "#value_for_field_name" do
+    let(:name_df_data) { dynamic_field_data["name"][0] }
+    let(:title_df_data) { dynamic_field_data["title"][0] }
+
+    before do
+      allow(digital_object).to receive(:project).and_return(double(display_label: "Test Project"))
+    end
+
+    it "looks up value when it starts with a $" do
+      expect(digital_object.value_for_field_name("$project.display_label", name_df_data)).to eql "Test Project"
+    end
+
+    it "returns data unavailable when referenced value doesn't have a matching variable" do
+      expect(digital_object.value_for_field_name("$project.expiration_date", name_df_data)).to eql "Data unavailable"
+    end
+
+    it "returns correct value when fields are nested" do
+      expect(digital_object.value_for_field_name("name_term.uni", name_df_data)).to eql "jds1329"
+    end
+
+    it "returns correct value when not nested" do
+      expect(digital_object.value_for_field_name("title_sort_portion", title_df_data)).to eql "Catcher in the Rye"
+    end
+
+    it "returns empty string if field does not exist" do
+      expect(digital_object.value_for_field_name("name_term.last_name", name_df_data)).to eql ""
     end
   end
 end
