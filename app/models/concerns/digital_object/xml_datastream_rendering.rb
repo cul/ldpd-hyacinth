@@ -61,8 +61,8 @@ module DigitalObject::XmlDatastreamRendering
           # The output of a ternary evaluation gets placed in a {'val' => 'some value'}, so the normal 'val' evaluation code still runs.
           if attr_val['ternary'].present?
             attr_val['val'] = render_output_of_ternary(attr_val['ternary'], df_data)
-          elsif value['join'].present?
-            attr_val['val'] = render_output_of_join(attr_val['ternary'], df_data)
+          elsif attr_val['join'].present?
+            attr_val['val'] = render_output_of_join(attr_val['join'], df_data)
           end
         end
 
