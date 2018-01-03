@@ -37,7 +37,7 @@ module DigitalObject::XmlDatastreamRendering
 
       if render_if_logic['equal'].present?
         render_if_logic['equal'].each_pair do |field_string_key, value_to_compare_to|
-          value = value_for_field_name(field_or_field_group_to_check_for, df_data)
+          value = value_for_field_name(field_string_key, df_data)
           return unless value.present? && value == value_to_compare_to
         end
       end
