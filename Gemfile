@@ -93,7 +93,6 @@ gem 'kaminari'
 
 # For building and parsing XML
 gem 'nokogiri', '~> 1.8.1'
-gem 'equivalent-xml'
 
 # For authentication
 gem 'devise', '>= 3.4.1'
@@ -138,6 +137,7 @@ group :development, :test do
   gem 'rubocop', '~> 0.51.0', require: false
   gem 'rubocop-rspec', '>= 1.20.1', require: false
   gem 'rubocop-rails', '>= 1.1.0',  require: false
+  gem 'equivalent-xml'
 end
 
 # Development!

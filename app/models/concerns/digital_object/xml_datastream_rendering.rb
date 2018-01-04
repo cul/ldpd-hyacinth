@@ -37,7 +37,7 @@ module DigitalObject::XmlDatastreamRendering
 
       if render_if_logic['equal'].present?
         render_if_logic['equal'].each_pair do |field_string_key, value_to_compare_to|
-          value = value_for_field_name(field_or_field_group_to_check_for, df_data)
+          value = value_for_field_name(field_string_key, df_data)
           return unless value.present? && value == value_to_compare_to
         end
       end
@@ -47,7 +47,7 @@ module DigitalObject::XmlDatastreamRendering
     # Create new element
     element_name = xml_translation_logic['element'] || []
 
-    new_element = @ng_xml_doc.create_element(element_name)
+    new_element = ng_xml_document.create_element(element_name)
 
     # Add attributes (including namespace definitions) to this element
     attrs = xml_translation_logic['attrs'] || []
@@ -61,8 +61,8 @@ module DigitalObject::XmlDatastreamRendering
           # The output of a ternary evaluation gets placed in a {'val' => 'some value'}, so the normal 'val' evaluation code still runs.
           if attr_val['ternary'].present?
             attr_val['val'] = render_output_of_ternary(attr_val['ternary'], df_data)
-          elsif value['join'].present?
-            attr_val['val'] = render_output_of_join(attr_val['ternary'], df_data)
+          elsif attr_val['join'].present?
+            attr_val['val'] = render_output_of_join(attr_val['join'], df_data)
           end
         end
 
@@ -106,7 +106,7 @@ module DigitalObject::XmlDatastreamRendering
         if value.has_key?('yield')
           # Yield to dynamic_field_group renderer logic
           dynamic_field_group_string_key = value['yield']
-          
+
           if dynamic_field_group_string_keys_to_objects.has_key?(dynamic_field_group_string_key)
             xml_translation_logic_for_dynamic_field_group_string_key = JSON(dynamic_field_group_string_keys_to_objects[dynamic_field_group_string_key].xml_translation)
             unless df_data[dynamic_field_group_string_key].blank?
@@ -135,13 +135,14 @@ module DigitalObject::XmlDatastreamRendering
     parent_element.add_child(new_element)
   end
 
+  # Captures everything between the {{}} and replaces it with the value provided in the df_data map.
+  # Converts value found to string, incase we're working with a numeric or boolean value.
   def value_with_substitutions(value, df_data)
     value.gsub(/(\{\{(?:(?!\}\}).)+\}\})/) do |sub|
-      the_value = value_for_field_name(sub[2, sub.length-4], df_data)
-      the_value.to_s # Need to cast to string just in case we're working with a numeric or boolean value
+      value_for_field_name(sub[2, sub.length-4], df_data).to_s
     end
   end
-  
+
   def value_for_field_name(field_name, df_data)
     if field_name.start_with?('$')
       # Then this is a special substitution that we handle differently.
@@ -176,20 +177,22 @@ module DigitalObject::XmlDatastreamRendering
     end
   end
 
+
+  # This method mimics a ternary operation, but using a three-element array. The
+  # array is evaluated as follows:
+  # - The first element is a variable to evaluate as true or false.
+  # - The second is the value to use if the variable evaluates to true.
+  # - The third is the value to use if the variable evaluates to false.
   def render_output_of_ternary(ternary_arr, df_data)
-    # The value of a ternary key is a three-element array.
-    # - The first element is a variable to evaluate as true or false.
-    # - The second is the value to use if the variable evaluates to true.
-    # - The third is the value to use if the variable evaluates to false.
-    return value_for_field_name(ternary_arr[0], df_data).present? ? ternary_arr[1] : ternary_arr[2]
+    value_for_field_name(ternary_arr[0], df_data).present? ? ternary_arr[1] : ternary_arr[2]
   end
-  
+
   # Joins the given strings using the given delimiter, omitting blank values
   def render_output_of_join(join_data, df_data)
     # join_data is of the format:
     # {
     #   "delimiter" => ",",
-    #   "pieces" => ["field_name1", "field_name2.value", "field_name3", ...]
+    #   "pieces" => ["{{field_name1}}", "{{field_name2.value}}", "{{field_name3}}", ...]
     # }
     # OR
     # {
@@ -214,15 +217,14 @@ module DigitalObject::XmlDatastreamRendering
     #   ]
     # }
     delimiter = join_data['delimiter']
-    pieces = join_data['pieces'].map{|piece|
+    pieces = join_data['pieces'].map do |piece|
       if piece.is_a?(String)
         value_with_substitutions(piece, df_data)
       elsif piece.is_a?(Hash) && piece['ternary'].present?
         value_with_substitutions(render_output_of_ternary(piece['ternary'], df_data), df_data)
       end
-    }
-    pieces.delete_if{|str| str.blank?} # Remove blank values
-    return pieces.join(delimiter)
+    end
+    pieces.delete_if(&:blank?).join(delimiter)
   end
 
   def recursively_remove_blank_xml_elements!(ng_xml_doc)
