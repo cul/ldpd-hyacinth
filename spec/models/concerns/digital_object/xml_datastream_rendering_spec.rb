@@ -112,7 +112,6 @@ describe DigitalObject::XmlDatastreamRendering do
       end
 
       it 'generates correct xml' do
-        # doc = Nokogiri::XML::Document.new
         digital_object.render_xml_translation_with_data(doc, doc, base_xml_translation, dynamic_field_data, xml_translation_map)
         expect(doc).to be_equivalent_to expected_mods
       end
@@ -314,17 +313,17 @@ describe DigitalObject::XmlDatastreamRendering do
     let(:name_df_data) { dynamic_field_data["name"][0] }
 
     it 'returns "true" value if field present' do
-      arr = ["name_term.value", "True", "False"]
-      expect(digital_object.render_output_of_ternary(arr, name_df_data)).to eql "True"
+      arr = ["name_term.value", "Yes", "No"]
+      expect(digital_object.render_output_of_ternary(arr, name_df_data)).to eql "Yes"
     end
 
     it 'returns "false" value if field present' do
-      arr = ["name_term.first_name", "True", "False"]
-      expect(digital_object.render_output_of_ternary(arr, name_df_data)).to eql "False"
+      arr = ["name_term.first_name", "Yes", "No"]
+      expect(digital_object.render_output_of_ternary(arr, name_df_data)).to eql "No"
     end
 
     it "renders field value if field present" do
-      arr = ["name_term.value", "name_term.value", "False"]
+      arr = ["name_term.value", "name_term.value", "No"]
       expect(digital_object.render_output_of_ternary(arr, name_df_data)).to eql "name_term.value"
     end
   end
