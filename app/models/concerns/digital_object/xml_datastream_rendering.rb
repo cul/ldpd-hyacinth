@@ -192,7 +192,7 @@ module DigitalObject::XmlDatastreamRendering
     # join_data is of the format:
     # {
     #   "delimiter" => ",",
-    #   "pieces" => ["field_name1", "field_name2.value", "field_name3", ...]
+    #   "pieces" => ["{{field_name1}}", "{{field_name2.value}}", "{{field_name3}}", ...]
     # }
     # OR
     # {
@@ -217,15 +217,14 @@ module DigitalObject::XmlDatastreamRendering
     #   ]
     # }
     delimiter = join_data['delimiter']
-    pieces = join_data['pieces'].map{|piece|
+    pieces = join_data['pieces'].map do |piece|
       if piece.is_a?(String)
         value_with_substitutions(piece, df_data)
       elsif piece.is_a?(Hash) && piece['ternary'].present?
         value_with_substitutions(render_output_of_ternary(piece['ternary'], df_data), df_data)
       end
-    }
-    pieces.delete_if{|str| str.blank?} # Remove blank values
-    return pieces.join(delimiter)
+    end
+    pieces.delete_if(&:blank?).join(delimiter)
   end
 
   def recursively_remove_blank_xml_elements!(ng_xml_doc)

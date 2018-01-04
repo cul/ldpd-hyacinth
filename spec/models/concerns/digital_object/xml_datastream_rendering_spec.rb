@@ -328,4 +328,36 @@ describe DigitalObject::XmlDatastreamRendering do
       expect(digital_object.render_output_of_ternary(arr, name_df_data)).to eql "name_term.value"
     end
   end
+
+  describe "#render_output_of_join" do
+    let(:name_df_data) { dynamic_field_data["name"][0] }
+
+    it "joins pieces with delimiter" do
+      join_template = {
+        "delimiter" => ", ",
+        "pieces" => ["{{name_term.value}}", "{{name_term.uni}}", "{{name_term.uri}}"]
+      }
+      expect(digital_object.render_output_of_join(join_template, name_df_data)).to eql "Salinger, J. D., jds1329, http://id.loc.gov/authorities/names/n50016589"
+    end
+
+    it "joins ternary pieces with delimiter" do
+      join_template = {
+        "delimiter" => ":",
+        "pieces" => [
+          { "ternary" => ["name_term.value", "{{name_term.value}}", ""] },
+          { "ternary" => ["name_term.lastname", "{{name_term.lastname}}", "doe"] },
+          "{{name_term.uni}}"
+        ]
+      }
+      expect(digital_object.render_output_of_join(join_template, name_df_data)).to eql "Salinger, J. D.:doe:jds1329"
+    end
+
+    it "removes blank values" do
+      join_template = {
+        "delimiter" => ", ",
+        "pieces" => ['', '', '{{name_term.value}}']
+      }
+      expect(digital_object.render_output_of_join(join_template, name_df_data)).to eql "Salinger, J. D."
+    end
+  end
 end
