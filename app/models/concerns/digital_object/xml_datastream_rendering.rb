@@ -2,7 +2,6 @@ module DigitalObject::XmlDatastreamRendering
   extend ActiveSupport::Concern
 
   def render_xml_datastream(xml_datastream)
-
     base_translation_logic = JSON(xml_datastream.xml_translation)
 
     @ng_xml_doc = Nokogiri::XML::Document.new
@@ -16,55 +15,20 @@ module DigitalObject::XmlDatastreamRendering
   end
 
   def render_xml_translation_with_data(ng_xml_document, parent_element, xml_translation_logic, df_data, dynamic_field_group_string_keys_to_objects)
-
-    # First, check for presence of "render_if" key, which will determine whether we should return immediately.
-    if xml_translation_logic['render_if'].present?
-      render_if_logic = xml_translation_logic['render_if']
-
-      if render_if_logic['present'].present?
-        render_if_logic['present'].each do |field_or_field_group_to_check_for|
-          # Check for DynamicFieldGroup existence and DynamicField non-blank value
-          return unless df_data[field_or_field_group_to_check_for].is_a?(Array) || value_for_field_name(field_or_field_group_to_check_for, df_data).present?
-        end
-      end
-
-      if render_if_logic['absent'].present?
-        render_if_logic['absent'].each do |field_or_field_group_to_check_for|
-          # Check for DynamicFieldGroup existence and DynamicField blank value
-          return unless df_data[field_or_field_group_to_check_for].nil? && value_for_field_name(field_or_field_group_to_check_for, df_data).blank?
-        end
-      end
-
-      if render_if_logic['equal'].present?
-        render_if_logic['equal'].each_pair do |field_string_key, value_to_compare_to|
-          value = value_for_field_name(field_string_key, df_data)
-          return unless value.present? && value == value_to_compare_to
-        end
-      end
-
-    end
+    # Return if element shouldn't be rended based on render_if arguments.
+    return unless render?(xml_translation_logic.fetch('render_if', nil), df_data)
 
     # Create new element
     element_name = xml_translation_logic['element'] || []
-
     new_element = ng_xml_document.create_element(element_name)
 
     # Add attributes (including namespace definitions) to this element
     attrs = xml_translation_logic['attrs'] || []
     if attrs.present?
       attrs.each do |attr_key, attr_val|
-
-        # Allow for string value as a shortcut for {'val' => 'some string'}
-        if attr_val.is_a?(String)
-          attr_val = {'val' => attr_val}
-        else
-          # The output of a ternary evaluation gets placed in a {'val' => 'some value'}, so the normal 'val' evaluation code still runs.
-          if attr_val['ternary'].present?
-            attr_val['val'] = render_output_of_ternary(attr_val['ternary'], df_data)
-          elsif attr_val['join'].present?
-            attr_val['val'] = render_output_of_join(attr_val['join'], df_data)
-          end
-        end
+        attr_val = {
+          'val' => generate_field_val(attr_val, df_data)
+        }
 
         if attr_val['val'].present?
           trimmed_val = attr_val['val'].strip
@@ -76,7 +40,6 @@ module DigitalObject::XmlDatastreamRendering
             new_element.set_attribute(attr_key, processed_val) unless processed_val.blank?
           end
         end
-
       end
     end
 
@@ -84,24 +47,11 @@ module DigitalObject::XmlDatastreamRendering
     content = xml_translation_logic['content']
 
     # Allow for string value as a shortcut for [{'val' => 'some string'}]
-    if content.is_a?(String)
-      content = [{'val' => content}]
-    end
+    content = [{'val' => content}] if content.is_a?(String)
 
     if content.present?
       content.each do |value|
-
-        # Array elements that are strings will be treated like val objects: {'val' => 'some string'}
-        if value.is_a?(String)
-          value = {'val' => value}
-        else
-          # The output of a ternary evaluation gets placed in a {'val' => 'some value'}, so the normal 'val' evaluation code still runs.
-          if value['ternary'].present?
-            value['val'] = render_output_of_ternary(value['ternary'], df_data)
-          elsif value['join'].present?
-            value['val'] = render_output_of_join(value['join'], df_data)
-          end
-        end
+        value['val'] = generate_field_val(value, df_data)
 
         if value.has_key?('yield')
           # Yield to dynamic_field_group renderer logic
@@ -111,10 +61,7 @@ module DigitalObject::XmlDatastreamRendering
             xml_translation_logic_for_dynamic_field_group_string_key = JSON(dynamic_field_group_string_keys_to_objects[dynamic_field_group_string_key].xml_translation)
             unless df_data[dynamic_field_group_string_key].blank?
               df_data[dynamic_field_group_string_key].each do |single_dynamic_field_group_data_value_for_string_key|
-                unless xml_translation_logic_for_dynamic_field_group_string_key.is_a?(Array)
-                  xml_translation_logic_for_dynamic_field_group_string_key = [xml_translation_logic_for_dynamic_field_group_string_key]
-                end
-                xml_translation_logic_for_dynamic_field_group_string_key.each do |xml_translation_logic_rule|
+                Array.wrap(xml_translation_logic_for_dynamic_field_group_string_key).each do |xml_translation_logic_rule|
                   render_xml_translation_with_data(ng_xml_document, new_element, xml_translation_logic_rule, single_dynamic_field_group_data_value_for_string_key, dynamic_field_group_string_keys_to_objects)
                 end
               end
@@ -125,14 +72,55 @@ module DigitalObject::XmlDatastreamRendering
           render_xml_translation_with_data(ng_xml_document, new_element, value, df_data, dynamic_field_group_string_keys_to_objects)
         elsif value.has_key?('val')
           # Render string value in next text node, performing DynamicField value substitution for variables
-          #Example: "My favorite food is {{food}}!"
+          # Example: "My favorite food is {{food}}!"
           processed_val = value_with_substitutions(value['val'], df_data)
-          new_element.add_child( Nokogiri::XML::Text.new(processed_val, ng_xml_document) )
+          new_element.add_child(Nokogiri::XML::Text.new(processed_val, ng_xml_document))
         end
       end
     end
 
     parent_element.add_child(new_element)
+  end
+
+  def generate_field_val(value, df_data)
+    # Array elements that are strings will be treated like val objects: {'val' => 'some string'}
+    return value if value.is_a?(String)
+
+    # The output of a ternary evaluation gets placed in a {'val' => 'some value'}, so the normal 'val' evaluation code still runs.
+    if value['ternary'].present?
+      render_output_of_ternary(value['ternary'], df_data)
+    elsif value['join'].present?
+      render_output_of_join(value['join'], df_data)
+    elsif value['val'].present?
+      value['val']
+    end
+  end
+
+  def render?(render_if, df_data)
+    return true if render_if.nil?
+
+    # Check for DynamicFieldGroup existence and DynamicField non-blank value
+    if render_if['present'].present?
+      render_if['present'].each do |field_or_field_group|
+        return false if !df_data[field_or_field_group].is_a?(Array) && value_for_field_name(field_or_field_group, df_data).blank?
+      end
+    end
+
+    # Check for DynamicFieldGroup existence and DynamicField blank value
+    if render_if['absent'].present?
+      render_if['absent'].each do |field_or_field_group|
+        return false if df_data[field_or_field_group].present? || value_for_field_name(field_or_field_group, df_data).present?
+      end
+    end
+
+    if render_if['equal'].present?
+      render_if['equal'].each do |field_string_key, value_to_compare_to|
+        value = value_for_field_name(field_string_key, df_data)
+        return false if value.blank? || value != value_to_compare_to
+      end
+    end
+
+    true
   end
 
   # Captures everything between the {{}} and replaces it with the value provided in the df_data map.
@@ -249,5 +237,4 @@ module DigitalObject::XmlDatastreamRendering
       end
     end
   end
-
 end
