@@ -359,4 +359,64 @@ describe DigitalObject::XmlDatastreamRendering do
       expect(digital_object.render_output_of_join(join_template, name_df_data)).to eql "Salinger, J. D."
     end
   end
+
+  describe "#render?" do
+    let(:name_df_data) { dynamic_field_data["name"][0] }
+    let(:title_df_data) { dynamic_field_data["title"][0] }
+
+    context 'when checking for multiple conditions' do
+      let(:render_if) do
+        {
+          "present" => ["name_term.value", "name_term.uri"],
+          "absent" => ["name_term.uni"]
+        }
+      end
+
+      it 'return false when one is false' do
+        expect(digital_object.render?(render_if, name_df_data)).to be false
+      end
+
+      it 'returns true when they are all true' do
+        name_df_data = dynamic_field_data["name"][1]
+        expect(digital_object.render?(render_if, name_df_data)).to be true
+      end
+    end
+
+    context 'when checking for fields that are present' do
+      it 'returns true if all fields are present' do
+        render_if = { "present" => ["title_sort_portion", "title_non_sort_portion"] }
+        expect(digital_object.render?(render_if, title_df_data)).to be true
+      end
+
+      it "returns false if one field is missing" do
+        render_if = { "present" => ["title_fake_field", "title_non_sort_portion"] }
+        expect(digital_object.render?(render_if, title_df_data)).to be false
+      end
+    end
+
+    context "when checking for fields that are absent" do
+      it "returns true if all fields are absent" do
+        render_if = { "absent" => ["title_fake_field", "title_fake_field_two"] }
+        expect(digital_object.render?(render_if, title_df_data)).to be true
+      end
+
+      it "returns false if one field is present" do
+        render_if = { "absent" => ["title_fake_field", "title_non_sort_portion"] }
+        expect(digital_object.render?(render_if, title_df_data)).to be false
+      end
+    end
+
+    context "when checking for fields that are equal" do
+      it "returns true if all fields eql given value" do
+        render_if = { "equal" => { "name_term.uni" => "jds1329", "name_term.value" => "Salinger, J. D." } }
+        expect(digital_object.render?(render_if, name_df_data)).to be true
+      end
+
+      it "returns false if one field does not eql the given value" do
+        name_df_data = dynamic_field_data["name"][1]
+        render_if = { "equal" => { "name_term.uni" => "jds1329", "name_term.value" => "Lincoln, Abraham" } }
+        expect(digital_object.render?(render_if, name_df_data)).to be false
+      end
+    end
+  end
 end
