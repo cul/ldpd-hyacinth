@@ -466,30 +466,4 @@ RSpec.describe DigitalObject::Base, :type => :model do
       it { is_expected.to be model }
     end
   end
-
-  describe "#value_for_field_name " do
-    it "handle unallowed special substitution" do
-      digital_object = DigitalObject::Item.new()
-      arg = '$i_am_an_unallowed_substitution_field'
-      expect(digital_object.value_for_field_name(arg,'')).to eq('Data unavailable')
-    end
-
-    it "handles $created_at" do
-      new_item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
-      new_item.set_digital_object_data(sample_item_digital_object_data, false)
-      new_item.save
-      arg = '$created_at'
-      expect(new_item.value_for_field_name(arg,'')).to eq(new_item.created_at.iso8601)
-      new_item.destroy
-    end
-
-    it "handles $updated_at" do
-      new_item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
-      new_item.set_digital_object_data(sample_item_digital_object_data, false)
-      new_item.save
-      arg = '$updated_at'
-      expect(new_item.value_for_field_name(arg,'')).to eq(new_item.updated_at.iso8601)
-      new_item.destroy
-    end
-  end
 end
