@@ -2,6 +2,7 @@ require 'rails_helper'
 
 describe Hyacinth::XMLGenerator::Element do
   let(:internal_fields) { { 'project.display_label' => 'Test Project' } }
+  let(:xml_translation) { Hash.new }
   let(:generator) { Hyacinth::XMLGenerator.new(nil, nil, nil, internal_fields) }
 
   let(:dynamic_field_data) do
@@ -9,7 +10,64 @@ describe Hyacinth::XMLGenerator::Element do
   end
 
   let(:df_data) { dynamic_field_data["name"][0] }
-  let(:element) { described_class.new(generator, nil, nil, df_data) }
+  let(:element) { described_class.new(generator, nil, xml_translation, df_data) }
+
+  describe '#add_attributes' do
+    let(:new_element) { Nokogiri::XML::Document.new.create_element('mods:name') }
+
+    before { element.add_attributes(new_element) }
+
+    context 'when attributes listed in translation' do
+      let(:xml_translation) do
+        {
+          "attrs" => {
+            "type" => "personal",
+            "valueUNI" => "{{name_term.uni}}",
+            "authority" => { "val" => "fast" },
+            "xmlns:mods" => "http://www.loc.gov/mods/v3"
+          }
+        }
+      end
+
+      it 'adds all attributes element' do
+        expect(new_element.attribute("type").value).to eql "personal"
+        expect(new_element.attribute("valueUNI").value).to eql "jds1329"
+        expect(new_element.attribute("authority").value).to eql "fast"
+      end
+
+      it 'adds namespace' do
+        expect(new_element.namespaces['xmlns:mods']).to eql 'http://www.loc.gov/mods/v3'
+      end
+    end
+
+    context 'when attributes not listed' do
+      it 'does not add any attributes' do
+        expect(new_element.attributes).to be_empty
+      end
+    end
+  end
+
+  describe '#generate_field_val' do
+    it 'returns string' do
+      expect(element.generate_field_val("foobar")).to eql 'foobar'
+    end
+
+    it 'returns val' do
+      expect(element.generate_field_val({"val" => "foobar"})).to eql 'foobar'
+    end
+
+    it 'returns calculated ternary result' do
+      value = { "ternary" => ["name_term.value", "name_term.value", ""] }
+      expect(element).to receive(:render_output_of_ternary).with(value["ternary"])
+      element.generate_field_val(value)
+    end
+
+    it 'returns joined string' do
+      value = { "join" => { "delimiter" => ",", "pieces" => ["{{name_term.value}}"] } }
+      expect(element).to receive(:render_output_of_join).with(value["join"])
+      element.generate_field_val(value)
+    end
+  end
 
   describe '#value_with_substitutions' do
     it "replaces value when its the only thing in the string" do
