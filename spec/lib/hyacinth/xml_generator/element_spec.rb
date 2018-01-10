@@ -2,7 +2,7 @@ require 'rails_helper'
 
 describe Hyacinth::XMLGenerator::Element do
   let(:internal_fields) { { 'project.display_label' => 'Test Project' } }
-  let(:xml_translation) { Hash.new }
+  let(:xml_translation) { {} }
   let(:generator) { Hyacinth::XMLGenerator.new(nil, nil, nil, internal_fields) }
 
   let(:dynamic_field_data) do
@@ -13,13 +13,16 @@ describe Hyacinth::XMLGenerator::Element do
   let(:element) { described_class.new(generator, nil, xml_translation, df_data) }
 
   describe '#add_attributes' do
-    let(:new_element) { Nokogiri::XML::Document.new.create_element('mods:name') }
-
-    before { element.add_attributes(new_element) }
+    before do
+      allow(generator).to receive(:document).and_return(Nokogiri::XML::Document.new)
+      element.create_ng_element
+      element.add_attributes
+    end
 
     context 'when attributes listed in translation' do
       let(:xml_translation) do
         {
+          'element' => 'mods:name',
           "attrs" => {
             "type" => "personal",
             "valueUNI" => "{{name_term.uni}}",
@@ -30,19 +33,36 @@ describe Hyacinth::XMLGenerator::Element do
       end
 
       it 'adds all attributes element' do
-        expect(new_element.attribute("type").value).to eql "personal"
-        expect(new_element.attribute("valueUNI").value).to eql "jds1329"
-        expect(new_element.attribute("authority").value).to eql "fast"
+        expect(element.ng_element.attribute("type").value).to eql "personal"
+        expect(element.ng_element.attribute("valueUNI").value).to eql "jds1329"
+        expect(element.ng_element.attribute("authority").value).to eql "fast"
       end
 
       it 'adds namespace' do
-        expect(new_element.namespaces['xmlns:mods']).to eql 'http://www.loc.gov/mods/v3'
+        expect(element.ng_element.namespaces['xmlns:mods']).to eql 'http://www.loc.gov/mods/v3'
       end
     end
 
     context 'when attributes not listed' do
+      let(:xml_translation) { { 'element' => 'mods:name' } }
+
       it 'does not add any attributes' do
-        expect(new_element.attributes).to be_empty
+        expect(element.ng_element.attributes).to be_empty
+      end
+    end
+
+    context "when attribute values blank" do
+      let(:xml_translation) do
+        {
+          'element' => 'mods:name',
+          'attrs' => {
+            'type' => ' '
+          }
+        }
+      end
+
+      it 'does not add any attributes' do
+        expect(element.ng_element.attributes).to be_empty
       end
     end
   end

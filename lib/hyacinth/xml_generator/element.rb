@@ -1,6 +1,7 @@
 module Hyacinth
   class XMLGenerator::Element
-    attr_reader :generator, :parent_element, :xml_translation, :df_data, :dynamic_fields_groups_map
+    attr_reader :generator, :parent_element, :xml_translation, :df_data,
+                :dynamic_fields_groups_map, :ng_element
 
     def initialize(generator, parent_element, xml_translation, df_data)
       @generator = generator
@@ -14,12 +15,8 @@ module Hyacinth
       # Return if element shouldn't be rended based on render_if arguments.
       return unless render?(xml_translation.fetch('render_if', nil))
 
-      # Create new element
-      element_name = xml_translation['element'] || []
-      new_element = generator.document.create_element(element_name)
-
-      # Add attributes (including namespace definitions) to this element
-      add_attributes(new_element)
+      create_ng_element # Create new element
+      add_attributes
 
       # Add child content
       content = xml_translation['content']
@@ -39,40 +36,46 @@ module Hyacinth
 
               df_data[yield_to_string_key].each do |single_dynamic_field_group_data_value_for_string_key|
                 Array.wrap(yield_to_xml_translation).each do |xml_translation_logic_rule|
-                  self.class.new(generator, new_element, xml_translation_logic_rule, single_dynamic_field_group_data_value_for_string_key).generate
+                  self.class.new(generator, ng_element, xml_translation_logic_rule, single_dynamic_field_group_data_value_for_string_key).generate
                 end
               end
             end
           elsif value.has_key?('element') # Create new child element
-            self.class.new(generator, new_element, value, df_data).generate
+            self.class.new(generator, ng_element, value, df_data).generate
           elsif value.has_key?('val') # Render string value in next text node, performing DynamicField value substitution for variables
             processed_val = value_with_substitutions(value['val'])
-            new_element.add_child(Nokogiri::XML::Text.new(processed_val, generator.document))
+            ng_element.add_child(Nokogiri::XML::Text.new(processed_val, generator.document))
           end
         end
       end
 
-      parent_element.add_child(new_element)
+      parent_element.add_child(ng_element)
     end
 
-    def add_attributes(new_element)
-      attrs = xml_translation['attrs'] || []
-      if attrs.present?
-        attrs.each do |attr_key, attr_val|
-          attr_val = {
-            'val' => generate_field_val(attr_val)
-          }
+    # Creates Nokogiri element object
+    def create_ng_element
+      element_name = xml_translation.fetch('element', nil)
+      raise ArgumentError, "element key cannot be blank" if element_name.blank?
+      @ng_element = generator.document.create_element(element_name)
+    end
 
-          if attr_val['val'].present?
-            trimmed_val = attr_val['val'].strip
-            if attr_key.start_with?('xmlns')
-              # Do not treat xmlns attribute additions like other attribute additions.  Add namespace definition instead.
-              new_element.add_namespace_definition(attr_key.gsub(/^xmlns:/, ''), trimmed_val) unless trimmed_val.blank?
-            else
-              processed_val = value_with_substitutions(trimmed_val)
-              new_element.set_attribute(attr_key, processed_val) unless processed_val.blank?
-            end
-          end
+    # Add attributes (including namespace definitions) to this element
+    def add_attributes
+      attrs = xml_translation.fetch('attrs', nil)
+      return if attrs.blank?
+
+      attrs.each do |attr_key, attr_val|
+        val = generate_field_val(attr_val)
+        val.strip! if val.respond_to?(:strip!)
+
+        next if val.blank?
+
+        if attr_key.start_with?('xmlns')
+          # Do not treat xmlns attribute additions like other attribute additions.  Add namespace definition instead.
+          ng_element.add_namespace_definition(attr_key.gsub(/^xmlns:/, ''), val)
+        else
+          processed_val = value_with_substitutions(val)
+          ng_element.set_attribute(attr_key, processed_val) unless processed_val.blank?
         end
       end
     end
