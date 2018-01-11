@@ -65,6 +65,8 @@ module Hyacinth
       return if attrs.blank?
 
       attrs.each do |attr_key, attr_val|
+        next if attr_val.is_a?(Hash) && !render?(attr_val.fetch('render_if', nil))
+
         val = generate_field_val(attr_val)
         val.strip! if val.respond_to?(:strip!)
 

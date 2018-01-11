@@ -19,6 +19,57 @@ describe Hyacinth::XMLGenerator::Element do
       element.add_attributes
     end
 
+    context 'when attribute contains a render_if statement' do
+      context 'when render_if false' do
+        let(:xml_translation) do
+          {
+            'element' => 'mods:name',
+            "attrs" => {
+              "type" => "personal",
+              "valueUNI" => "{{name_term.uni}}",
+              "authority" => {
+                "render_if" => {
+                  "equal" => {
+                    "name_term.authority" => "ISNI"
+                  }
+                },
+                "val" => "fast"
+              }
+            }
+          }
+        end
+
+        it "does not add attributes" do
+          expect(element.ng_element.attribute("type").value).to eql "personal"
+          expect(element.ng_element.attribute("valueUNI").value).to eql "jds1329"
+        end
+      end
+
+      context 'when render_if true' do
+        let(:xml_translation) do
+          {
+            'element' => 'mods:name',
+            "attrs" => {
+              "type" => "personal",
+              "valueUNI" => "{{name_term.uni}}",
+              "authority" => {
+                "render_if" => {
+                  "present" => ["name_term.uni"],
+                },
+                "val" => "fast"
+              },
+            }
+          }
+        end
+
+        it "adds attributes if render_if is true" do
+          expect(element.ng_element.attribute("type").value).to eql "personal"
+          expect(element.ng_element.attribute("valueUNI").value).to eql "jds1329"
+          expect(element.ng_element.attribute("authority").value).to eql "fast"
+        end
+      end
+    end
+
     context 'when attributes listed in translation' do
       let(:xml_translation) do
         {
