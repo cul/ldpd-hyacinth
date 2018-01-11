@@ -111,10 +111,23 @@ module Hyacinth
         end
       end
 
+      # Comparizon value given in xml_translation cannot be blank when using
+      # equals/not_equals conditionals. Instead absent/present conditionals
+      # should be used. Additionally, blank field values are never stored.
+
       if render_if['equal'].present?
         render_if['equal'].each do |field_string_key, value_to_compare_to|
+          raise ArgumentError, 'comparizon value cannot be blank' if value_to_compare_to.blank?
           value = value_for_field_name(field_string_key)
           return false if value.blank? || value != value_to_compare_to
+        end
+      end
+
+      if render_if['not_equal'].present?
+        render_if['not_equal'].each do |field_string_key, value_to_compare_to|
+          raise ArgumentError, 'comparizon value cannot be blank' if value_to_compare_to.blank?
+          value = value_for_field_name(field_string_key)
+          return false if value == value_to_compare_to
         end
       end
 

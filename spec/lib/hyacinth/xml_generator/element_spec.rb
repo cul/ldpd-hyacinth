@@ -227,6 +227,11 @@ describe Hyacinth::XMLGenerator::Element do
     end
 
     context "when checking for fields that are equal" do
+      it 'raises error when doing comparizon with blank value' do
+        render_if = { "equal" => { "name_term.uni" => ""} }
+        expect{ element.render?(render_if) }.to raise_error ArgumentError
+      end
+
       it "returns true if all fields eql given value" do
         render_if = { "equal" => { "name_term.uni" => "jds1329", "name_term.value" => "Salinger, J. D." } }
         expect(element.render?(render_if)).to be true
@@ -239,6 +244,23 @@ describe Hyacinth::XMLGenerator::Element do
           render_if = { "equal" => { "name_term.uni" => "jds1329", "name_term.value" => "Lincoln, Abraham" } }
           expect(element.render?(render_if)).to be false
         end
+      end
+    end
+
+    context "when checking for fields that are not_equal" do
+      it 'raises error when doing comparizon with blank value' do
+        render_if = { "not_equal" => { "name_term.uni" => ""} }
+        expect{ element.render?(render_if) }.to raise_error ArgumentError
+      end
+
+      it "returns false when field equals value given" do
+        render_if = { "not_equal" => { "name_term.uni" => "jds1329"} }
+        expect(element.render?(render_if)).to be false
+      end
+
+      it "returns true when field does not equal value given" do
+        render_if = { "not_equal" => { "name_term.uni" => "jds132"} }
+        expect(element.render?(render_if)).to be true
       end
     end
   end
