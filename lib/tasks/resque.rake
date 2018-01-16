@@ -64,10 +64,10 @@ namespace :resque do
         sleep 1
         num_workers_working = Resque.workers.select { |w| w.working? }.length
         puts "#{num_workers_working} workers still working..."
-        break if num_workers_working == 0
+        break if num_workers_working.zero?
       end
       puts "\n"
-      if Resque.workers.select { |w| w.working? }.length > 0
+      if Resque.workers.select(&:working?).length > 0
         puts "Workers are still running, but wait time of #{MAX_WAIT_TIME_TO_KILL_WORKERS} has been exceeded. Sending QUIT signal anyway."
       else
         puts 'Workers are no longer processing any jobs. Sending QUIT signal.'
