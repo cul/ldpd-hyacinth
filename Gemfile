@@ -127,7 +127,7 @@ gem 'noid', '>= 0.7.1'
 # Ensure that rubyzip is >= 1.2.1 because of a security issue in earlier version
 gem 'rubyzip', '>= 1.2.1'
 
-# Testing!
+# Development and testing!
 group :development, :test do
   gem 'byebug'
   gem 'rspec-rails', '~> 3.3'
@@ -152,6 +152,8 @@ group :development do
   # The `deploy:restart` hook for passenger applications is now in a separate gem
   # Just add it to your Gemfile and require it in your Capfile.
   gem 'capistrano-passenger', '~> 0.1', require: false
+  # Use net-ssh >= 4.2 to prevent warnings with Ruby 2.4
+  gem 'net-ssh', '>= 4.2'
 
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 2.0'
