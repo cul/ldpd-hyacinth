@@ -20,7 +20,7 @@ class DigitalObject::Base
   # For ActiveModel::Dirty
   define_attribute_methods :parent_digital_object_pids, :obsolete_parent_digital_object_pids, :ordered_child_digital_object_pids
 
-  attr_accessor :project, :publish_target_pids, :identifiers, :created_by, :updated_by, :state, :dc_type, :ordered_child_digital_object_pids, :publish_after_save, :mint_reserved_doi_before_save, :doi
+  attr_accessor :project, :publish_target_pids, :identifiers, :created_by, :updated_by, :first_published_at, :state, :dc_type, :ordered_child_digital_object_pids, :publish_after_save, :mint_reserved_doi_before_save, :doi
   attr_reader :errors, :fedora_object, :parent_digital_object_pids
 
   delegate :created_at, :new_record?, :updated_at, to: :@db_record
@@ -65,7 +65,7 @@ class DigitalObject::Base
   end
 
   def load_data_from_sources
-    load_created_and_updated_data_from_db_record!
+    load_data_from_db_record!
     load_parent_digital_object_pid_relationships_from_fedora_object!
     load_state_from_fedora_object!
     load_dc_type_from_fedora_object!
@@ -77,6 +77,7 @@ class DigitalObject::Base
 
   def set_fedora_object_properties
     set_created_and_updated_data_from_db_record
+    set_first_published_at
     set_fedora_hyacinth_ds_data
     set_fedora_project_and_publisher_relationships
     set_fedora_object_state
@@ -116,6 +117,9 @@ class DigitalObject::Base
 
     # Allow setting of doi if doi hasn't already been set
     @doi = digital_object_data['doi'] if @doi.blank? && digital_object_data['doi'].present?
+
+    # Allow setting of first_published_at if the field isn't blank
+    @first_published_at = digital_object_data['first_published'] if digital_object_data['first_published'].present?
 
     # Project (only one) -- Only allow setting this if this DigitalObject is a new record
     self.project = project_from_data(digital_object_data) if self.new_record?

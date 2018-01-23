@@ -50,4 +50,8 @@ module DigitalObject::Publishing
     end
     success
   end
+
+  def publishing_to_primary_publish_target?
+    @publish_after_save && publish_target_pids.include?(project.primary_publish_target_pid)
+  end
 end

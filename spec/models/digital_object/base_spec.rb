@@ -358,7 +358,6 @@ RSpec.describe DigitalObject::Base, :type => :model do
     end
 
     it "can create a new DigitalObject for an existing Fedora object that isn't being tracked by Hyacinth, and preserves identifiers, parents and publish targets from that Fedora object" do
-
         existing_parent_object_pid = 'test:existing_parent_object'
         existing_parent_object = Collection.new(:pid => existing_parent_object_pid)
         existing_parent_object.save
@@ -418,6 +417,12 @@ RSpec.describe DigitalObject::Base, :type => :model do
       it "calls publish method" do
         expect(item).to receive(:publish)
         item.save
+      end
+
+      it "sets first_published_at date" do
+        item.save
+        expect(item.first_published_at).to be_within(10.seconds).of(Time.current)
+        expect(item.instance_variable_get(:@db_record).first_published_at).to be_within(10.seconds).of(Time.current)
       end
     end
   end

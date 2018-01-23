@@ -9,8 +9,9 @@ module DigitalObject::Serialization
   def as_json(_options = {})
     {
       pid: pid,
-      created: @db_record.created_at.present? ? @db_record.created_at.iso8601 : nil,
-      modified: @db_record.updated_at.present? ? @db_record.updated_at.iso8601 : nil,
+      created: format_date(@db_record.created_at),
+      modified: format_date(@db_record.updated_at),
+      first_published: format_date(@db_record.first_published_at),
       created_by: (@db_record.created_by.present? ? @db_record.created_by.full_name : nil),
       modified_by: (@db_record.updated_by.present? ? @db_record.updated_by.full_name : nil),
       identifiers: identifiers,
@@ -31,4 +32,9 @@ module DigitalObject::Serialization
   def as_confirmation_json
     { pid: pid }
   end
+
+  private
+    def format_date(date)
+      date.present? ? date.iso8601 : nil
+    end
 end
