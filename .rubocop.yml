@@ -17,7 +17,6 @@ AllCops:
     - 'vendor/**/*'
     - 'app/helpers/**/*'
     - 'app/views/**/*'
-    - 'app/models/concerns/digital_object/xml_datastream_rendering.rb'
     - 'lib/tasks/**/*'
 
 Layout/BlockEndNewline:
@@ -38,10 +37,12 @@ Metrics/AbcSize:
   Enabled: false
 
 Metrics/CyclomaticComplexity:
-  Exclude: []
+  Exclude:
+    - 'lib/hyacinth/xml_generator/element.rb'
 
 Metrics/PerceivedComplexity:
-  Exclude: []
+  Exclude:
+    - 'lib/hyacinth/xml_generator/element.rb'
 
 Metrics/MethodLength:
   Enabled: false
