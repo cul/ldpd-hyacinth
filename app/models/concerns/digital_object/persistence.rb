@@ -57,7 +57,7 @@ module DigitalObject::Persistence
 
       run_post_validation_pre_save_logic
 
-      set_fedora_object_properties
+      set_data_to_sources
 
       @db_record.save! # Save timestamps + updates to modifed_by, etc.
 

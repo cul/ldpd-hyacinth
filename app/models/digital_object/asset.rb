@@ -250,7 +250,7 @@ class DigitalObject::Asset < DigitalObject::Base
     self.restricted_onsite = fedora_object.relationships(:restriction).include?(ONSITE_RESTRICTION_LITERAL_VALUE)
   end
 
-  def set_fedora_object_properties
+  def set_data_to_sources
     super
 
     if restricted_size_image
