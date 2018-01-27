@@ -96,7 +96,7 @@
               <%= digitalObject.digital_object_type['display_label'] %> History:
             </label>
             <div class="col-sm-9">
-              <a href="#history" data-toggle="collapse">Creation / Modification Info</a>
+              <a href="#history" data-toggle="collapse">Record Info</a>
             </div>
           </div>
 
@@ -134,6 +134,15 @@
               </label>
               <div class="col-sm-9">
                 <%= digitalObject.getModified() || '- Assigned After Save -' %>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-3">
+                First Published At:
+              </label>
+              <div class="col-sm-9">
+                <%= digitalObject.getFirstPublished() || '- Assigned After Publish to Primary Publish Target -' %>
               </div>
             </div>
           </div>

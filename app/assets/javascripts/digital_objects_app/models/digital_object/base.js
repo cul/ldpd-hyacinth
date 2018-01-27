@@ -117,6 +117,11 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getModifiedBy = function
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getModified = function(){
   return new Date(this.modified);
 };
+
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getFirstPublished = function(){
+  return (this.first_published ? new Date(this.first_published) : null);
+};
+
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getDoi = function(){
   return this.doi || null;
 };

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171110194020) do
+ActiveRecord::Schema.define(version: 20180122214510) do
 
   create_table "controlled_vocabularies", force: :cascade do |t|
     t.string   "string_key"
@@ -57,6 +57,7 @@ ActiveRecord::Schema.define(version: 20171110194020) do
     t.integer  "updated_by_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "first_published_at"
   end
 
   add_index "digital_object_records", ["pid"], name: "index_digital_object_records_on_pid", unique: true
