@@ -95,7 +95,12 @@ class DigitalObject::Base
     # Do not clear old values if this is a new record because we may be preserving values from Fedora upon import
     return if self.new_record?
     # Only clear data before assignment if a value has been supplied
-    @parent_digital_object_pids = [] if digital_object_data.key?('parent_digital_objects')
+    if digital_object_data.key?('parent_digital_objects')
+      @parent_digital_object_pids.map { |pid| DigitalObject::Base.find_by_pid(pid) }
+                                 .each { |digital_object| remove_parent_digital_object(digital_object) }
+      @parent_digital_object_pids = []
+    end
+
     @identifiers = [] if digital_object_data.key?('identifiers')
     @publish_target_pids = [] if digital_object_data.key?('publish_targets')
   end
