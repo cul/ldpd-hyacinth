@@ -22,7 +22,8 @@ module Hyacinth
       content = xml_translation['content']
 
       # Allow for string value as a shortcut for [{'val' => 'some string'}]
-      content = [{ 'val' => content }] if content.is_a?(String)
+      # Allow for array of strings as a shortcut for [{'val' => 'some string'}, {'val' => 'some other string'}]
+      content = Array.wrap(content).map { |c| c.is_a?(Hash) ? c : { 'val' => c } }
 
       if content.present?
         content.each do |value|

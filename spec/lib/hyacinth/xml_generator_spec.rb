@@ -79,29 +79,30 @@ describe Hyacinth::XMLGenerator do
     Hyacinth::XMLGenerator.new(dynamic_field_data, base_xml_translation, xml_translation_map)
   end
 
+  let(:expected_mods) do
+    '<?xml version="1.0"?>
+    <mods:mods>
+      <mods:name ID="jds1329" valueURI="http://id.loc.gov/authorities/names/n50016589">
+        <mods:namePart>Salinger, J. D.</mods:namePart>
+        <mods:role>
+          <mods:roleTerm type="text" valueURI="http://id.loc.gov/roles/123">Author</mods:roleTerm>
+        </mods:role>
+      </mods:name>
+      <mods:name valueURI="http://id.loc.gov/authorities/names/n79006779">
+        <mods:namePart>Lincoln, Abraham</mods:namePart>
+        <mods:role>
+          <mods:roleTerm type="text" valueURI="http://id.loc.gov/roles/456">Illustrator</mods:roleTerm>
+        </mods:role>
+        <mods:role>
+          <mods:roleTerm type="text" valueURI="http://id.loc.gov/roles/789">Editor</mods:roleTerm>
+        </mods:role>
+     </mods:name>
+    </mods:mods>'
+  end
+
+
   describe '#generate' do
     context 'when nesting elements' do
-      let(:expected_mods) do
-        '<?xml version="1.0"?>
-        <mods:mods>
-          <mods:name ID="jds1329" valueURI="http://id.loc.gov/authorities/names/n50016589">
-            <mods:namePart>Salinger, J. D.</mods:namePart>
-            <mods:role>
-              <mods:roleTerm type="text" valueURI="http://id.loc.gov/roles/123">Author</mods:roleTerm>
-            </mods:role>
-          </mods:name>
-          <mods:name valueURI="http://id.loc.gov/authorities/names/n79006779">
-            <mods:namePart>Lincoln, Abraham</mods:namePart>
-            <mods:role>
-              <mods:roleTerm type="text" valueURI="http://id.loc.gov/roles/456">Illustrator</mods:roleTerm>
-            </mods:role>
-            <mods:role>
-              <mods:roleTerm type="text" valueURI="http://id.loc.gov/roles/789">Editor</mods:roleTerm>
-            </mods:role>
-         </mods:name>
-        </mods:mods>'
-      end
-
       it 'generates correct xml' do
         expect(xml_generator.generate).to be_equivalent_to expected_mods
       end
@@ -243,6 +244,36 @@ describe Hyacinth::XMLGenerator do
             <mods:namePart>Lincoln, Abraham</mods:namePart>
          </mods:name>
         </mods:mods>'
+      end
+
+      it 'generates corrext xml' do
+        expect(xml_generator.generate).to be_equivalent_to expected_mods
+      end
+    end
+
+    context "when content contains an array of strings" do
+      let(:role_translation_logic) do
+        '[
+          {
+            "render_if": {
+              "present": [
+                  "name_role_term.value"
+              ]
+            },
+            "element": "mods:role",
+            "content": [
+              {
+                "element": "mods:roleTerm",
+                "attrs": {
+                    "type": "text",
+                    "valueURI": "{{name_role_term.uri}}",
+                    "authority": "{{name_role_term.authority}}"
+                },
+                "content": ["{{name_role_term.value}}"]
+              }
+            ]
+          }
+        ]'
       end
 
       it 'generates corrext xml' do
