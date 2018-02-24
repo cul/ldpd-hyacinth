@@ -280,6 +280,20 @@ RSpec.describe ProcessDigitalObjectImportJob, :type => :job do
         expect(klass.prerequisite_row_check(digital_object_import, queue_long_jobs)).to eq(true)
       end
     end
+
+    context "returns false if this digital_object_import's own csv_row_number is among its prerequisite_csv_row_numbers" do
+      let(:digital_object_import) {
+        digital_object_import_2.csv_row_number = 100
+        digital_object_import_2.prerequisite_csv_row_numbers = [99, 100]
+        digital_object_import_2
+      }
+      it do
+        allow_any_instance_of(DigitalObjectImport).to receive(:save!).and_return(true)
+        expect(klass.prerequisite_row_check(digital_object_import, queue_long_jobs)).to eq(false)
+        expect(digital_object_import.digital_object_errors).to include('A CSV row cannot have itself as a prerequisite row. (Did you accidentally try to make this object its own parent?)')
+      end
+    end
+
     context "returns false if any of this digital_object_import's prerequisite rows are pending, and calls method handle_remaining_prerequisite_case with expected arguments" do
       let(:digital_object_import) { digital_object_import_2 }
       let(:prerequisite_digital_object_imports) {
