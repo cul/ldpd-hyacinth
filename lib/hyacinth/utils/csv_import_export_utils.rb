@@ -9,7 +9,7 @@ class Hyacinth::Utils::CsvImportExportUtils
 
   def self.csv_to_digital_object_data(csv_data_string)
     ## Check whether this csv file contains non-ASCII character. If it does, it needs to be UTF-8 for us to handle those characters properly.
-    # found_non_ascii_characters = contents.index(Regexp.new('[^\x00-\x7F]')).is_a?(Fixnum)
+    # found_non_ascii_characters = contents.index(Regexp.new('[^\x00-\x7F]')).is_a?(Integer)
 
     # Convert CSV data to UTF-8 if it isn't already UTF-8
     detection = CharlockHolmes::EncodingDetector.detect(csv_data_string)
@@ -147,8 +147,8 @@ class Hyacinth::Utils::CsvImportExportUtils
     end
   end
 
-  def self.create_import_job_from_csv_data(csv_data_string, import_filename, user)
-    import_job = ImportJob.new(name: import_filename, user: user)
+  def self.create_import_job_from_csv_data(csv_data_string, import_filename, user, priority = :low)
+    import_job = ImportJob.new(name: import_filename, user: user, priority: priority)
 
     # First, run through the CSV and do some quick validations
     validate_import_job_csv_data(csv_data_string, user, import_job)
@@ -178,7 +178,7 @@ class Hyacinth::Utils::CsvImportExportUtils
         )
 
         # Queue up digital_object_import for procssing
-        Hyacinth::Queue.process_digital_object_import(digital_object_import.id)
+        Hyacinth::Queue.process_digital_object_import(digital_object_import.id, import_job.priority.to_sym)
       end
     end
     import_job

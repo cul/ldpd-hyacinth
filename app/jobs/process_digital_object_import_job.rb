@@ -184,7 +184,7 @@ class ProcessDigitalObjectImportJob
       # If prerequisite are still pending, then re-queue this import
       digital_object_import.digital_object_errors = [] # clear earlier errors if we're re-queueing
       digital_object_import.save!
-      Hyacinth::Queue.process_digital_object_import(digital_object_import.id)
+      Hyacinth::Queue.process_digital_object_import(digital_object_import.id, digital_object_import.import_job.priority.to_sym)
     else
       digital_object_import.digital_object_errors << "Failed because prerequisite rows haven't been processed and queue_long_jobs option is false, which means that spreadsheet rows are processed synchronously. Make sure that your CSV rows are in the order that you want them to be imported."
       digital_object_import.status = :failure

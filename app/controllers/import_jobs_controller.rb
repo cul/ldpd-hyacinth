@@ -28,11 +28,16 @@ class ImportJobsController < ApplicationController
   def import_job_for_params(params)
     if params[:import_file]
       import_file = params[:import_file]
-      if params[:submit] == 'validate'
+      priority = params.fetch(:priority, 'low')
+      priority_as_queue_name = 'DIGITAL_OBJECT_IMPORT_' + priority.upcase
+      if priority.blank? || ! Hyacinth::Queue.const_defined?(priority_as_queue_name)
+        import_job = ImportJob.new
+        import_job.errors.add(:priority, "#{priority} is not a valid priority.")
+      elsif params[:submit] == 'validate'
         import_job = ImportJob.new
         Hyacinth::Utils::CsvImportExportUtils.validate_import_job_csv_data(import_file.read, current_user, import_job)
       else
-        import_job = Hyacinth::Utils::CsvImportExportUtils.create_import_job_from_csv_data(import_file.read, import_file.original_filename, current_user)
+        import_job = Hyacinth::Utils::CsvImportExportUtils.create_import_job_from_csv_data(import_file.read, import_file.original_filename, current_user, priority.to_sym)
       end
     else
       import_job = ImportJob.new

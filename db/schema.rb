@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180122214510) do
+ActiveRecord::Schema.define(version: 20180205120041) do
 
   create_table "controlled_vocabularies", force: :cascade do |t|
     t.string   "string_key"
@@ -172,11 +172,12 @@ ActiveRecord::Schema.define(version: 20180122214510) do
   add_index "fieldsets", ["project_id"], name: "index_fieldsets_on_project_id"
 
   create_table "import_jobs", force: :cascade do |t|
-    t.string   "name",             null: false
-    t.integer  "user_id",          null: false
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.string   "name",                         null: false
+    t.integer  "user_id",                      null: false
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
     t.text     "path_to_csv_file"
+    t.integer  "priority",         default: 0, null: false
   end
 
   add_index "import_jobs", ["user_id"], name: "index_import_jobs_on_user_id"
