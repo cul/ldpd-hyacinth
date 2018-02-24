@@ -129,8 +129,9 @@ class ProcessDigitalObjectImportJob
     end
   end
 
-  # Returns true if prerequisite rows have been processed successfully
+  # Returns true if prerequisite rows have been processed successfully.
   # Returns false if prerequisite rows are still pending, or if they failed.
+  # Returns false if digital_object_import's prerequisite rows include the digital_object_import's csv_row_number.
   # If prerequisite rows are pending, then this digital_object_import will be requeued.
   # If prerequisite rows failed, then this digital_object_import will also fail with
   # a prerequisite-related error message.
@@ -139,10 +140,20 @@ class ProcessDigitalObjectImportJob
     # with that prerequisite_csv_row_numbers has been completed.  If it hasn't,
     # we'll re-queue this job.
     if digital_object_import.prerequisite_csv_row_numbers.present?
+      prerequisite_csv_row_numbers = digital_object_import.prerequisite_csv_row_numbers
+      # If prerequisite_row_numbers include THIS digital object import's csv_row number,
+      # then mark this jobs as a failure and return a circular dependency error
+      if prerequisite_csv_row_numbers.include?(digital_object_import.csv_row_number)
+        digital_object_import.digital_object_errors << 'A CSV row cannot have itself as a prerequisite row. (Did you accidentally try to make this object its own parent?)'
+        digital_object_import.status = :failure
+        digital_object_import.save!
+        return false
+      end
+
       # Find the other jobs
       prerequisite_digital_object_imports = DigitalObjectImport.where(
         import_job: digital_object_import.import_job,
-        csv_row_number: digital_object_import.prerequisite_csv_row_numbers,
+        csv_row_number: prerequisite_csv_row_numbers,
       )
 
       # If any of the prerequisite jobs have failed, mark this job as a failure
