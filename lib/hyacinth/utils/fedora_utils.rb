@@ -62,7 +62,7 @@ module Hyacinth::Utils::FedoraUtils
   end
 
   def self.find_object_pid_by_filesystem_path(full_filesystem_path)
-    query = "select $pid from <#ri> where $pid <http://purl.org/dc/elements/1.1/source> '#{full_filesystem_path}'"
+    query = "select $pid from <#ri> where $pid <http://purl.org/dc/elements/1.1/source> '#{full_filesystem_path.gsub(%q('), %q(\\\'))}'"
     ri_opts = {
       type: 'tuples',
       format: 'json',
