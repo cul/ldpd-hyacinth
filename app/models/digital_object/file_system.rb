@@ -12,7 +12,11 @@ class DigitalObject::FileSystem < DigitalObject::Base
     Collection.new(pid: next_pid)
   end
 
-  def publish_structures
-    # TODO: deal with FileSystem structuring in Hyacinth
+  def save_xml_datastreams
+    # FileSystem publishing shouldn't modify Fedora object for now
+  end
+
+  def save_structure_datastream
+    # FileSystem publishing shouldn't modify Fedora object for now
   end
 end

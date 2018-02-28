@@ -74,10 +74,10 @@ class Hyacinth::Utils::CsvFriendlyHeaders
 
     transformed_builder_path = []
     builder_path.each_with_index do |element, index|
-      if element.is_a?(Fixnum)
+      if element.is_a?(Integer)
         # Add one to the number because builder paths are zero-indexed and headers are one-indexed
         transformed_builder_path << element + 1
-      elsif index == builder_path.length - 1 && !builder_path[index - 1].is_a?(Fixnum)
+      elsif index == builder_path.length - 1 && !builder_path[index - 1].is_a?(Integer)
         # This is a URI field property, so we need to know which uri field we're working with so that we can get the correct controlled_vocabulary_string_key
         uri_field_name = builder_path[index - 1]
         controlled_vocabulary_string_key = controlled_vocabulary_field_string_keys_to_controlled_vocabulary_string_keys[uri_field_name]

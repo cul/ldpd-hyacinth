@@ -37,7 +37,7 @@ module Hyacinth
 
             if pointer[element].nil?
               # We need to create this part of the path
-              if builder_path[i + 1].is_a?(Fixnum)
+              if builder_path[i + 1].is_a?(Integer)
                 pointer[element] = []
               else
                 pointer[element] = {}
@@ -56,7 +56,7 @@ module Hyacinth
               raise Hyacinth::Exceptions::BuilderPathNotFoundError, Hyacinth::Utils::CsvImportExportUtils::PATH_INVALID
             end
 
-            # Element will be either a Fixnum (for array access) or a String (for hash access)
+            # Element will be either an Integer (for array access) or a String (for hash access)
             if pointer[element]
               pointer = pointer[element]
             else

@@ -1,6 +1,8 @@
 class ImportJob < ActiveRecord::Base
   after_destroy :delete_associated_file_if_exists
 
+  enum priority: [ :low, :medium, :high ]
+
   # the name attribute will be the csv filename, and thus may not be unique
   validates :name, presence: true
   has_many :digital_object_imports, dependent: :destroy

@@ -19,7 +19,7 @@ module Hyacinth
         def to_header
           parts = []
           builder_path.each do |segment|
-            if segment.is_a? Fixnum
+            if segment.is_a? Integer
               parts[-1] = "#{parts[-1]}-#{segment + 1}"
             else
               parts << segment.to_s
