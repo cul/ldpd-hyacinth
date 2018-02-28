@@ -178,7 +178,7 @@ class Hyacinth::Utils::CsvImportExportUtils
         )
 
         # Queue up digital_object_import for procssing
-        Hyacinth::Queue.process_digital_object_import(digital_object_import.id, import_job.priority.to_sym)
+        Hyacinth::Queue.process_digital_object_import(digital_object_import)
       end
     end
     import_job

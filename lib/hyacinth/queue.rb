@@ -7,7 +7,10 @@ module Hyacinth::Queue
 
   QUEUES_IN_DESCENDING_PRIORITY_ORDER = [DIGITAL_OBJECT_CSV_EXPORT, DIGITAL_OBJECT_IMPORT_HIGH, DIGITAL_OBJECT_IMPORT_MEDIUM, DIGITAL_OBJECT_IMPORT_LOW, DIGITAL_OBJECT_REINDEX]
 
-  def self.process_digital_object_import(digital_object_import_id, priority)
+  def self.process_digital_object_import(digital_object_import)
+    digital_object_import_id = digital_object_import.id
+    priority = digital_object_import.import_job.priority.to_sym
+
     if HYACINTH['queue_long_jobs']
       case priority
       when :low

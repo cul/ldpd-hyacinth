@@ -223,17 +223,14 @@ RSpec.describe ProcessDigitalObjectImportJob, :type => :job do
       import_job.priority = :medium
       import_job
     }
-    let(:digital_object_import_id) {
-      12345
-    }
     let(:digital_object_import) {
-      DigitalObjectImport.new(id: digital_object_import_id, import_job: import_job)
+      DigitalObjectImport.new(id: 12345, import_job: import_job)
     }
     context "clears errors on the digital_object_import and requeues on correct queue when queue_long_jobs arg is set to true" do
       let(:queue_long_jobs) { true }
       it do
         allow_any_instance_of(DigitalObjectImport).to receive(:save!).and_return(true)
-        expect(Hyacinth::Queue).to receive(:process_digital_object_import).with(digital_object_import_id, :medium)
+        expect(Hyacinth::Queue).to receive(:process_digital_object_import).with(digital_object_import)
         digital_object_import.digital_object_errors << 'An error'
         klass.handle_remaining_prerequisite_case(digital_object_import, queue_long_jobs)
         expect(digital_object_import.digital_object_errors).to be_blank
