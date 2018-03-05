@@ -108,6 +108,9 @@ Style/ClassVars:
 Style/SignalException:
   Enabled: false
 
+Style/UnneededPercentQ:
+  Enabled: false
+
 Rails/Output:
   Exclude:
     - 'lib/generators/**/*'
