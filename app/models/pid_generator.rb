@@ -39,35 +39,36 @@ class PidGenerator < ActiveRecord::Base
   def next_pid
     newly_minted_pid = nil
 
+    current_pid_generator_sequence = nil
+
     PidGenerator.transaction do
-      # We always lock on @db_record (and wrap in a transaction)
-      lock! # Within the established transaction, lock on this object's row.  Remember: "lock!" also reloads object data from the db, so perform all modifications AFTER this call.
-
-      begin
-        pid_minter = Noid::Minter.new(template: namespace + ':' + template)
-      rescue
-        raise 'PID Generator ' + namespace + ' has run out of unique ids.  Please use a different PID Generator for future Digital Objects.'
-      end
-
-      pid_minter.seed(seed.to_i, sequence)
-      newly_minted_pid = pid_minter.mint
-
-      increment!(:sequence) # Immediately increment sequence so this PID will never be available again for another record.
-      save
+      # Put a read lock on the row to prevent reading by other processes
+      self.lock! # Note: lock also reloads this record from the latest DB data
+      # Get the current sequence value
+      current_pid_generator_sequence = self.sequence
+      # Increment the sequence so this number will never be used for generating another PID
+      increment(:sequence)
+      save!
     end
 
-    # Do not continue with the lock when checking with Fedora.  No need to block threads during the check.
-    if newly_minted_pid.nil?
-      raise 'Unexpected error during PID generation.  Value of pid is nil.'
-    else
-      # Verify that this PID has not been used before
-      if ActiveFedora::Base.exists?(newly_minted_pid)
-        # If Fedora is available, check to see if an object in Fedora already exists with this PID
-        Hyacinth::Utils::Logger.logger.info 'PID ' + newly_minted_pid + ' already exists in Fedora.  Generating new PID.'
+    begin
+      pid_minter = Noid::Minter.new(template: namespace + ':' + template)
+    rescue
+      raise 'PID Generator ' + namespace + ' has run out of unique ids.  Please use a different PID Generator for future Digital Objects.'
+    end
 
-        # Generate a new pid
-        newly_minted_pid = next_pid
-      end
+    # Use existing seed to generate a new pid
+    pid_minter.seed(seed.to_i, current_pid_generator_sequence)
+    newly_minted_pid = pid_minter.mint
+
+    raise 'Unexpected error during PID generation.  Value of pid is nil.' if newly_minted_pid.nil?
+
+    if ActiveFedora::Base.exists?(newly_minted_pid)
+      # Check to see if an object in Fedora already exists with this PID
+      Hyacinth::Utils::Logger.logger.info 'PID ' + newly_minted_pid + ' already exists in Fedora. Generating new PID.'
+
+      # Generate a new pid
+      newly_minted_pid = next_pid
     end
 
     newly_minted_pid
