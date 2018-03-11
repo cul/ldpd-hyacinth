@@ -30,6 +30,7 @@ image_server.yml
 uri_service.yml
 term_additional_fields.yml
 resque.yml
+redis.yml
 ezid.yml
 
 *_user_accounts.yml
