@@ -57,7 +57,7 @@ module Hyacinth::DigitalObjects::ParentEditorBehavior
       begin
         params[:parent_pids].each do |pid|
           parent_digital_object = DigitalObject::Base.find(pid)
-          @digital_object.remove_parent_digital_object(parent_digital_object)
+          @digital_object.remove_parent_digital_object_by_pid(parent_digital_object.pid)
         end
 
         @digital_object.save if self.saveable?(errors)

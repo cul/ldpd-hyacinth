@@ -132,7 +132,7 @@ module DigitalObject::Persistence
             # If present, convert this DigitalObject's parent membership relationships to obsolete parent relationships (for future auditing/troubleshooting purposes)
             @parent_digital_object_pids.each do |parent_digital_object_pid|
               obj = DigitalObject::Base.find(parent_digital_object_pid)
-              remove_parent_digital_object(obj)
+              remove_parent_digital_object_by_pid(obj.pid)
             end
           end
 

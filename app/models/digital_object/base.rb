@@ -91,13 +91,13 @@ class DigitalObject::Base
   end
 
   def reset_data_attributes_before_assignment(digital_object_data)
-    @ordered_child_digital_object_pids = [] unless digital_object_data['ordered_child_digital_objects'].blank?
     # Do not clear old values if this is a new record because we may be preserving values from Fedora upon import
     return if self.new_record?
+
+    @ordered_child_digital_object_pids = [] unless digital_object_data['ordered_child_digital_objects'].blank?
     # Only clear data before assignment if a value has been supplied
     if digital_object_data.key?('parent_digital_objects')
-      @parent_digital_object_pids.map { |pid| DigitalObject::Base.find_by_pid(pid) }
-                                 .each { |digital_object| remove_parent_digital_object(digital_object) }
+      @parent_digital_object_pids.map { |pid| remove_parent_digital_object_by_pid(pid) }
       @parent_digital_object_pids = []
     end
 
@@ -182,8 +182,7 @@ class DigitalObject::Base
     @obsolete_parent_digital_object_pids.delete(new_parent_digital_object_pid)
   end
 
-  def remove_parent_digital_object(parent)
-    parent_pid = parent.pid
+  def remove_parent_digital_object_by_pid(parent_pid)
     return unless @parent_digital_object_pids.include?(parent_pid)
 
     parent_digital_object_pids_will_change!
