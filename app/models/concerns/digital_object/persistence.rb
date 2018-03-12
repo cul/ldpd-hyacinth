@@ -90,7 +90,14 @@ module DigitalObject::Persistence
     # Resource Update flush settings must be configured in fedora.fcfg.
 
     (removed_parents + new_parents).each do |digital_obj_pid|
-      parent_obj = DigitalObject::Base.find(digital_obj_pid)
+      parent_obj = DigitalObject::Base.find_by_pid(digital_obj_pid)
+
+      # Note: At this time, it's possible that the parent object exists in Fedora,
+      # but not Hyacinth. We'll skip saving these objects because Hyacinth doesn't
+      # manage them. Since we only ever add parent pids to objects after verifying
+      # that they exist in either Hyacinth OR Fedora, this skipping action is safe.
+      next if parent_obj.nil?
+
       unless parent_obj.save
         @errors.add(:parent_digital_objects, parent_obj.errors.full_messages.join(', '))
       end
