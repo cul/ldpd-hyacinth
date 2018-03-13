@@ -63,12 +63,12 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     else
       @fedora_object.representative_image = nil
     end
-    @fedora_object.short_title = publish_target_field('short_title')
-    @fedora_object.abstract = publish_target_field('short_description')
-    @fedora_object.description = publish_target_field('full_description')
+    @fedora_object.short_title = publish_target_field('short_title').strip
+    @fedora_object.abstract = publish_target_field('short_description').strip
+    @fedora_object.description = publish_target_field('full_description').strip
     @fedora_object.restriction = publish_target_field('restricted') ? 'Onsite' : nil
-    @fedora_object.slug = publish_target_field('slug')
-    @fedora_object.source = publish_target_field('site_url').present? ? publish_target_field('site_url') : nil
+    @fedora_object.slug = publish_target_field('slug').strip
+    @fedora_object.source = publish_target_field('site_url').present? ? publish_target_field('site_url').strip : nil
   end
 
   def publish_target_field(field_name)
