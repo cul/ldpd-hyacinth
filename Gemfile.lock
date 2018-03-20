@@ -309,8 +309,8 @@ GEM
     powerpack (0.1.1)
     puma (2.11.1)
       rack (>= 1.1, < 2.0)
-    rack (1.6.5)
-    rack-protection (1.5.3)
+    rack (1.6.9)
+    rack-protection (1.5.5)
       rack
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -568,6 +568,7 @@ DEPENDENCIES
   nokogiri (~> 1.8.1)
   poltergeist (>= 1.7)
   puma
+  rack-protection (>= 1.5.5)
   rails (~> 4.2.8)
   rake (~> 10.0)
   random-word

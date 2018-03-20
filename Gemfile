@@ -128,6 +128,9 @@ gem 'noid', '>= 0.7.1'
 # Ensure that rubyzip is >= 1.2.1 because of a security issue in earlier version
 gem 'rubyzip', '>= 1.2.1'
 
+# Ensure that rack-protection is >= 1.5.5 because of a security issue in earlier version
+gem 'rack-protection', '>= 1.5.5'
+
 # Development and testing!
 group :development, :test do
   gem 'byebug'
