@@ -41,6 +41,7 @@ set :linked_files, fetch(:linked_files, []).push(
   'config/fedora.yml',
   'config/hyacinth.yml',
   'config/image_server.yml',
+  'config/redis.yml',
   'config/resque.yml',
   'config/secrets.yml',
   'config/solr.yml',
