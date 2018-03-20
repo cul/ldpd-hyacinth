@@ -41,14 +41,12 @@ class PidGenerator < ActiveRecord::Base
 
     current_pid_generator_sequence = nil
 
-    PidGenerator.transaction do
-      # Put a read lock on the row to prevent reading by other processes
-      self.lock! # Note: lock also reloads this record from the latest DB data
+    # Put a read lock on the row, and reload the pid_generator row from the db
+    with_lock do
       # Get the current sequence value
       current_pid_generator_sequence = self.sequence
       # Increment the sequence so this number will never be used for generating another PID
-      increment(:sequence)
-      save!
+      increment!(:sequence)
     end
 
     begin

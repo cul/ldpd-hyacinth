@@ -41,9 +41,10 @@ module DigitalObject::Persistence
   end
 
   def persist_to_stores
+    @fedora_object ||= create_fedora_object if self.new_record? # do this outside of transaction because it also requires its own transaction
+
     DigitalObjectRecord.transaction do
       if self.new_record?
-        @fedora_object ||= create_fedora_object
         @db_record.pid = @fedora_object.pid
       else
         # Within the established transaction, lock on this object's row.

@@ -166,14 +166,25 @@ namespace :hyacinth do
       end
       File.open(image_server_yml_file, 'w') {|f| f.write image_server_yml.to_yaml }
 
+      # redis.yml
+      redis_yml_file = File.join(Rails.root, 'config/redis.yml')
+      FileUtils.touch(redis_yml_file) # Create if it doesn't exist
+      redis_yml = YAML.load_file(redis_yml_file) || {}
+      ['development', 'test'].each do |env_name|
+        redis_yml[env_name] = {
+          'host' => 'localhost',
+          'port' => 6379,
+          'namespace' => 'hyacinth_local_' + env_name
+        }
+      end
+      File.open(redis_yml_file, 'w') {|f| f.write redis_yml.to_yaml }
+
       # resque.yml
       resque_yml_file = File.join(Rails.root, 'config/resque.yml')
       FileUtils.touch(resque_yml_file) # Create if it doesn't exist
       resque_yml = YAML.load_file(resque_yml_file) || {}
       ['development', 'test'].each do |env_name|
         resque_yml[env_name] = {
-          'url' => 'localhost:6379',
-          'namespace' => 'hyacinth_' + env_name,
           'workers' => 1
         }
       end
