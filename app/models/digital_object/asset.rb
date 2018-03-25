@@ -84,13 +84,10 @@ class DigitalObject::Asset < DigitalObject::Base
   end
 
   def checksum
+    return nil unless @fedora_object.present? && @fedora_object.datastreams['content'].present?
     content_ds = @fedora_object.datastreams['content']
-    return nil unless content_ds.present?
-
-    value = ''
-    value += content_ds.checksumType + ':' if content_ds.checksumType
-    value += content_ds.checksum if content_ds.checksum
-    value
+    return nil unless @fedora_object.rels_int.relationships(content_ds, :has_message_digest).length > 0
+    @fedora_object.rels_int.relationships(content_ds, :has_message_digest).first.object.value[4..-1] # chop off leading 'urn:' string
   end
 
   def first_relationship_object_for_datastream(ds, rel)

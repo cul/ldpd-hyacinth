@@ -41,9 +41,10 @@ module DigitalObject::Assets::FileImport
     content_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, 'content', controlGroup: 'E', mimeType: DigitalObject::Asset.filename_to_mime_type(original_filename), dsLabel: original_filename, versionable: true)
     content_ds.dsLocation = ds_location
     @fedora_object.datastreams["DC"].dc_source = path_to_final_save_location
-    content_ds.checksum = import_file_sha256_hexdigest
-    content_ds.checksumType = 'SHA-256'
     @fedora_object.add_datastream(content_ds)
+
+    # Add checksum property to content datastream using :has_message_digest predicate
+    @fedora_object.rels_int.add_relationship(content_ds, :has_message_digest, "urn:sha256:#{import_file_sha256_hexdigest}")
 
     # Add size property to content datastream using :extent predicate
     @fedora_object.rels_int.add_relationship(content_ds, :extent, import_file_size.to_s, true) # last param *true* means that this is a literal value rather than a relationship

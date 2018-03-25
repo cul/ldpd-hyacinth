@@ -1,15 +1,15 @@
 # The default namespace maps to the default namespace for generating rels_ext from solr
 :default_namespace: info:fedora/fedora-system:def/relations-external#
 
-# namespace mappings--- 
+# namespace mappings---
 # you can add specific mappings for your institution by providing the following:
 #   namespace_uri:
 #     :relationship_symbol: relationship_identifier
-# 
+#
 # For example, if you have the following element in your rels_ext:
-#  
+#
 #  <oai:itemID>oai:example.edu:changeme:500</oai:itemID>
-# 
+#
 # With the last two lines of this file uncommented, the relationships hash of your object will include:
 #   :oai_item_id => ["info:fedora/oai:example.edu:changeme:500"]
 #
@@ -21,7 +21,7 @@
     :cul_obsolete_from: obsoleteFrom
   http://creativecommons.org/ns#:
     :cc_license: license
-  info:fedora/fedora-system:def/relations-external#: 
+  info:fedora/fedora-system:def/relations-external#:
     :conforms_to: conformsTo
     :has_annotation: hasAnnotation
     :has_collection_member: hasCollectionMember
@@ -83,6 +83,7 @@
   http://www.loc.gov/premis/rdf/v1#:
     :original_name: hasOriginalName
     :restriction: hasRestriction
+    :has_message_digest: hasMessageDigest
   http://pcdm.org/models#:
     :pcdm_has_file: hasFile
     :pcdm_file_of: fileOf
