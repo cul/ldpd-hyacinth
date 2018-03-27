@@ -140,6 +140,7 @@ GEM
     coffee-script-source (1.9.1)
     concurrent-ruby (1.0.5)
     connection_pool (2.2.1)
+    crass (1.0.3)
     cul_hydra (1.4.7)
       active-fedora (~> 7.0)
       active-triples (~> 0.2.2)
@@ -264,7 +265,8 @@ GEM
       sparql (>= 1.1.2)
       sparql-client (>= 1.1.1)
     logger (1.2.8)
-    loofah (2.0.3)
+    loofah (2.2.2)
+      crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
     mail (2.6.4)
       mime-types (>= 1.16, < 4)
@@ -561,6 +563,7 @@ DEPENDENCIES
   jquery.fileupload-rails
   kaminari
   libv8 (>= 3.16.14.19)
+  loofah (>= 2.2.1)
   mime-types
   mysql2 (= 0.4.5)
   net-ssh (>= 4.2)
