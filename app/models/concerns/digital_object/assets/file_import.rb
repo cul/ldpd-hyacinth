@@ -38,7 +38,7 @@ module DigitalObject::Assets::FileImport
     # We DO NOT want a double slash at the beginnings of these paths.
     # We need to manually escape ampersands (%26) and pound signs (%23) because these are not always handled by Addressable::URI.encode()
     ds_location = Addressable::URI.encode('file:' + path_to_final_save_location).gsub('&', '%26').gsub('#', '%23')
-    content_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, 'content', controlGroup: 'E', mimeType: DigitalObject::Asset.filename_to_mime_type(original_filename), dsLabel: original_filename, versionable: true)
+    content_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, 'content', controlGroup: 'E', mimeType: BestType.mime_type.for_file_name(original_filename), dsLabel: original_filename, versionable: true)
     content_ds.dsLocation = ds_location
     @fedora_object.datastreams["DC"].dc_source = path_to_final_save_location
     @fedora_object.add_datastream(content_ds)

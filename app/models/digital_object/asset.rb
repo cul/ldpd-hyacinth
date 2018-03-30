@@ -4,7 +4,8 @@ class DigitalObject::Asset < DigitalObject::Base
   include DigitalObject::Assets::Validations
   include DigitalObject::Assets::FileImport
 
-  VALID_DC_TYPES = ['Unknown', 'Dataset', 'MovingImage', 'Software', 'Sound', 'StillImage', 'Text']
+  UNKNOWN_DC_TYPE = 'Unknown'
+  VALID_DC_TYPES = [UNKNOWN_DC_TYPE, 'Dataset', 'MovingImage', 'Software', 'Sound', 'StillImage', 'Text']
   DIGITAL_OBJECT_TYPE_STRING_KEY = 'asset'
 
   DEFAULT_ASSET_NAME = 'Asset' # For when a title is not supplied and we're not doing with a filesystem upload
@@ -34,7 +35,7 @@ class DigitalObject::Asset < DigitalObject::Base
     # Default to 'Unknown' dc_type.  We expect other code to properly set this
     # once the asset file type is known, but this avoid a blank value for dc_type
     # and helps to identify errors when a dc_type has been improperly set.
-    self.dc_type ||= VALID_DC_TYPES.first
+    self.dc_type ||= UNKNOWN_DC_TYPE
   end
 
   # Called during save, after all validations have passed
@@ -47,7 +48,7 @@ class DigitalObject::Asset < DigitalObject::Base
     # For new DigitalObjects, we want to import a file as part of our save operation (assuming that this new object doesn't already have an associated Fedora object with a 'content' datastream)
     do_file_import if self.new_record? && @fedora_object.present? && @fedora_object.datastreams['content'].blank?
 
-    self.dc_type = dc_type_for_filename(original_filename) if self.dc_type == 'Unknown' # Attempt to correct dc_type for 'Unknown' dc_type DigitalObjects
+    self.dc_type = BestType.dc_type.for_file_name(original_filename) if self.dc_type == 'Unknown' # Attempt to correct dc_type for 'Unknown' dc_type DigitalObjects
   end
 
   def run_after_create_logic
@@ -123,7 +124,7 @@ class DigitalObject::Asset < DigitalObject::Base
     @fedora_object.add_relationship(:original_name, original_file_path, true)
 
     @fedora_object.datastreams['content'].dsLabel = original_filename
-    @fedora_object.datastreams['content'].mimeType = DigitalObject::Asset.filename_to_mime_type(original_filename)
+    @fedora_object.datastreams['content'].mimeType = BestType.mime_type.for_file_name(original_filename)
   end
 
   def original_file_path
@@ -192,29 +193,6 @@ class DigitalObject::Asset < DigitalObject::Base
 
     # Paths cannot contain "/.." or "../"
     raise 'File paths cannot contain: "..". Please specify a full path.' if @import_file_import_path.index('/..') || @import_file_import_path.index('../')
-  end
-
-  def dc_type_for_filename(filename)
-    mime_type = DigitalObject::Asset.filename_to_mime_type(filename)
-
-    mimes_to_dc = {
-      /^image/ => 'StillImage',
-      /^video/ => 'MovingImage',
-      /^audio/ => 'Sound',
-      /^text/ => 'Text',
-      /^application\/(pdf|msword)/ => 'Text',
-      /excel|spreadsheet|xls|application\/sql/ => 'Dataset',
-      /^application/ => 'Software'
-    }
-
-    possible_dc_type = mimes_to_dc.find { |pattern, _type_val| mime_type =~ pattern }
-
-    possible_dc_type ? possible_dc_type.last : 'Unknown'
-  end
-
-  def self.filename_to_mime_type(filename)
-    detected_mime_types = MIME::Types.of(filename)
-    detected_mime_types.present? ? MIME::Types.of(filename).first.content_type : 'application/octet-stream' # generic catch-all for unknown content types
   end
 
   def regenerate_derivatives!
