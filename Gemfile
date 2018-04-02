@@ -107,7 +107,7 @@ gem 'uri_service', '0.5.3'
 #gem 'uri_service', path: '../uri_service'
 gem 'solrizer', '>= 3.4.1'
 
-gem 'best_type', '0.0.2'
+gem 'best_type', '0.0.3'
 
 # Specify min version for active_fedora_relsint because of a needed fix
 gem 'active_fedora_relsint', '>= 0.4.1'
