@@ -6,6 +6,10 @@ class Hyacinth::Utils::SolrUtils
   end
 
   def self.solr_escape(str)
-    UriService.solr_escape(str)
+    if RSolr.respond_to?(:solr_escape)
+      RSolr.solr_escape(str).gsub(' ', '\ ') # Newer method
+    else
+      RSolr.escape(str) # Fall back to older method
+    end
   end
 end
