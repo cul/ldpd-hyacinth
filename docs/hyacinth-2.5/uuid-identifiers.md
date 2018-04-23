@@ -1,6 +1,6 @@
 # UUID Identifiers
 
-Hyacinth switched to using UUID (v4) identifiers in version 2.5, previously using Fedora 3 PIDs (e.g. abc:123).
+Hyacinth switched to using UUID (v4) internal identifiers in version 2.5, previously using Fedora 3 PIDs (e.g. abc:123).
 
 ## Why?
 
