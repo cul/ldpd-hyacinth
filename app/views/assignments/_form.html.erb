@@ -1,0 +1,33 @@
+<%= form_for(@assignment) do |f| %>
+  <div class="field">
+    Digital Object Record: <%= link_to(@assignment.digital_object_record.pid, digital_object_path(@assignment.digital_object_record)) %>
+    <%= f.hidden_field(:digital_object_record_id) %><br/>
+  </div>
+  <% if @assignment.assigner == current_user -%>
+    <div class="field">
+      <%= f.label :assignee %><br/>
+      <%= text_field(:assignment, :assignee_email, value: (@assignment.assignee ? @assignment.assignee.email : current_user.email)) %>
+    </div>
+  <% else -%>
+    <div class="field">Assigner: <%= @assignment.assigner %></div>
+    <div class="field">Assignee: <%= @assignment.assignee %></div>
+  <% end %>
+  <% if @assignment.persisted? -%>
+    <div class="field">
+      <%= f.label :task %><br/>
+      <%= @assignment.task %>
+    </div>
+  <% else -%>
+    <div class="field">
+      <%= f.label :task %><br/>
+      <%= f.select(:task, options_for_select(Assignment.tasks)) %>
+    </div>
+  <% end -%>
+  <div class="field">
+    <%= f.label :status %><br/>
+    <%= f.select(:status, options_for_select(Assignment.statuses)) %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

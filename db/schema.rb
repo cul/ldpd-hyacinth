@@ -11,7 +11,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180205120041) do
+ActiveRecord::Schema.define(version: 20180517175521) do
+
+  create_table "assignments", force: :cascade do |t|
+    t.string  "digital_object_record_id", limit: 4, null: false
+    t.string  "project_id",               limit: 4, null: false
+    t.integer "assigner_id",              limit: 4, null: false
+    t.integer "assignee_id",              limit: 4, null: false
+    t.integer "status"
+    t.integer "task"
+  end
+
+  add_index "assignments", ["assignee_id"], name: "index_assignments_on_assignee_id"
+  add_index "assignments", ["assigner_id"], name: "index_assignments_on_assigner_id"
+  add_index "assignments", ["digital_object_record_id", "task"], name: "index_assignments_on_digital_object_record_id_and_task", unique: true
+  add_index "assignments", ["project_id"], name: "index_assignments_on_project_id"
 
   create_table "controlled_vocabularies", force: :cascade do |t|
     t.string   "string_key"

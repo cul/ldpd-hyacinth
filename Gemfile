@@ -72,7 +72,7 @@ gem 'chosen-rails' # Multiselect box
 gem 'underscore-rails'
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
-#gem 'turbolinks'
+# gem 'turbolinks'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 1.2'
@@ -99,12 +99,12 @@ gem 'devise', '>= 3.4.1'
 
 # CUL Fedora Dependencies and Content Models
 gem 'cul_hydra', '~> 1.4.7'
-#gem 'cul_hydra', path: '../cul_hydra'
+# gem 'cul_hydra', path: '../cul_hydra'
 gem 'jettywrapper', '>= 1.5.1'
 # Temporarily use specific commit because new version of gem hasn't been released yet.  Latest is 1.1.3.
 gem 'rdf-rdfxml', git: 'https://github.com/ruby-rdf/rdf-rdfxml', ref: '78c13fe5dbcecaf1f56abe9535d00f16c670a764'
 gem 'uri_service', '0.5.5'
-#gem 'uri_service', path: '../uri_service'
+# gem 'uri_service', path: '../uri_service'
 gem 'solrizer', '>= 3.4.1'
 
 gem 'best_type', '0.0.3'
@@ -167,5 +167,5 @@ end
 
 # Alternate development webserver
 gem 'puma', group: :development
-#gem 'thin', group: :development
-#gem 'unicorn', group: :development
+# gem 'thin', group: :development
+# gem 'unicorn', group: :development

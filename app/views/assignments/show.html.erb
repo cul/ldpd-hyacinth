@@ -1,0 +1,27 @@
+<p>
+  <strong>Assigner:</strong>
+  <%= @assignment.assigner.email %>
+</p>
+
+<p>
+  <strong>Assignee:</strong>
+  <%= @assignment.assignee.email %>
+</p>
+
+<p>
+  <strong>Item:</strong>
+  <%= digital_object_path(@assignment.digital_object_record.pid) %>
+</p>
+
+<p>
+  <strong>Task:</strong>
+  <%= @assignment.task %>
+</p>
+
+<p>
+  <strong>Status:</strong>
+  <%= @assignment.status %>
+</p>
+
+<%= link_to 'Edit', edit_assignment_path(@assignment) %> |
+<%= link_to 'Back', assignments_path %>
