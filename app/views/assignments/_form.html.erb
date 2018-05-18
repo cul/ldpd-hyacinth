@@ -1,6 +1,6 @@
 <%= form_for(@assignment) do |f| %>
   <div class="field">
-    Digital Object Record: <%= link_to(@assignment.digital_object_record.pid, digital_object_path(@assignment.digital_object_record)) %>
+    Digital Object Record: <%= link_to(@assignment.digital_object_record.pid, digital_object_app_path(@assignment.digital_object_record.pid)) %>
     <%= f.hidden_field(:digital_object_record_id) %><br/>
   </div>
   <% if @assignment.assigner == current_user -%>
