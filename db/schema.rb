@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180517175521) do
+ActiveRecord::Schema.define(version: 20180523182439) do
 
   create_table "assignments", force: :cascade do |t|
     t.string  "digital_object_record_id", limit: 4, null: false
@@ -20,6 +20,8 @@ ActiveRecord::Schema.define(version: 20180517175521) do
     t.integer "assignee_id",              limit: 4, null: false
     t.integer "status"
     t.integer "task"
+    t.text    "original"
+    t.text    "proposed"
   end
 
   add_index "assignments", ["assignee_id"], name: "index_assignments_on_assignee_id"
