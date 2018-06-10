@@ -18,8 +18,16 @@ raise 'Error: Please set a value for publish_target_api_key_encryption_key in yo
 # For EXTREME debugging with full stack traces.  Woo!
 Rails.backtrace_cleaner.remove_silencers! if Rails.env.development?
 
-# Create upload_directory, default_asset_home directory and csv_export_directory if they don't exist
-FileUtils.mkdir_p(HYACINTH['upload_directory']) if HYACINTH['upload_directory']
-FileUtils.mkdir_p(HYACINTH['default_asset_home']) if HYACINTH['default_asset_home']
-FileUtils.mkdir_p(HYACINTH['csv_export_directory']) if HYACINTH['csv_export_directory']
-FileUtils.mkdir_p(HYACINTH['processed_csv_import_directory']) if HYACINTH['processed_csv_import_directory']
+[
+  'data_directory',
+  'upload_directory',
+  'default_asset_home',
+  'csv_export_directory',
+  'processed_csv_import_directory'
+].each do |required_config_key|
+  if HYACINTH[required_config_key].present?
+    FileUtils.mkdir_p(HYACINTH[required_config_key])
+  else
+    raise "Missing required Hyacinth config key: #{required_config_key}"
+  end
+end

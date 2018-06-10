@@ -9,6 +9,8 @@ module DigitalObject::Serialization
   def as_json(_options = {})
     {
       pid: pid,
+      data_file_path: @db_record.data_file_path,
+      uuid: @db_record.uuid,
       created: format_date(@db_record.created_at),
       modified: format_date(@db_record.updated_at),
       first_published: format_date(@db_record.first_published_at),
@@ -25,6 +27,14 @@ module DigitalObject::Serialization
       ordered_child_digital_objects: ordered_child_digital_object_pids.map { |the_pid| { pid: the_pid } },
       parent_digital_objects: parent_digital_object_pids.map { |the_pid| { pid: the_pid } },
       doi: doi
+    }
+  end
+
+  def as_hyacinth_3_json(_options = {})
+    # TODO: Add other fields once Hyacinth 3 data file format is finalized
+    {
+      uuid: @db_record.uuid,
+      data_file_path: @db_record.data_file_path,
     }
   end
 

@@ -1,3 +1,4 @@
+require 'fileutils'
 module DigitalObject::Persistence
   extend ActiveSupport::Concern
 
@@ -53,6 +54,11 @@ module DigitalObject::Persistence
         @db_record.lock!
       end
 
+      if @db_record.uuid.blank?
+        @db_record.uuid = SecureRandom.uuid
+        @db_record.data_file_path = Hyacinth::Utils::PathUtils.data_file_path_for_uuid(@db_record.uuid)
+      end
+
       # Add pid to identifiers if not present
       @identifiers << pid unless @identifiers.include?(pid)
 
@@ -73,6 +79,10 @@ module DigitalObject::Persistence
         @errors.add(:fedora_error, e.message)
         raise ActiveRecord::Rollback # Force rollback (Note: This error won't be passed upward by the transaction.)
       end
+
+      # Write to data file
+      FileUtils.mkdir_p(File.dirname(@db_record.data_file_path))
+      IO.write(@db_record.data_file_path, self.as_hyacinth_3_json.to_json)
     end
   end
 

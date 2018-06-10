@@ -74,9 +74,12 @@ ActiveRecord::Schema.define(version: 20180523182439) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "first_published_at"
+    t.string   "uuid"
+    t.string   "data_file_path"
   end
 
   add_index "digital_object_records", ["pid"], name: "index_digital_object_records_on_pid", unique: true
+  add_index "digital_object_records", ["uuid"], name: "index_digital_object_records_on_uuid", unique: true
 
   create_table "digital_object_types", force: :cascade do |t|
     t.string   "string_key"
