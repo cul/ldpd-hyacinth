@@ -1,12 +1,26 @@
 <%= form_for(@assignment) do |f| %>
+
+<% if @assignment.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@assignment.errors.count, "error") %> prohibited this assignment from being saved:</h2>
+
+    <ul>
+    <% @assignment.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+<% end %>
+
   <div class="field">
-    Digital Object Record: <%= link_to(@assignment.digital_object_record.pid, digital_object_app_path(@assignment.digital_object_record.pid)) %>
-    <%= f.hidden_field(:digital_object_record_id) %><br/>
+    <%= f.label :digital_object_pid, 'Digital Object' %><br/>
+    <%= link_to(@assignment.digital_object_pid, digital_object_app_path(@assignment.digital_object_pid)) %>
+    <%= f.hidden_field(:digital_object_pid) %><br/>
   </div>
   <% if @assignment.assigner == current_user -%>
     <div class="field">
       <%= f.label :assignee %><br/>
-      <%= text_field(:assignment, :assignee_email, value: (@assignment.assignee ? @assignment.assignee.email : current_user.email)) %>
+      <%= f.collection_select(:assignee_id, User.all, :id, :full_name, {:include_blank => '- Select a user -'}, {:class => 'form-control input-sm'}) %>
     </div>
   <% else -%>
     <div class="field">Assigner: <%= @assignment.assigner %></div>
@@ -20,14 +34,19 @@
   <% else -%>
     <div class="field">
       <%= f.label :task %><br/>
-      <%= f.select(:task, options_for_select(Assignment.tasks)) %>
+      <%= f.select(:task, options_for_select(Assignment.tasks), {}, {:class => 'form-control input-sm'}) %>
     </div>
   <% end -%>
+  <% if @assignment.new_record? %>
+    <%= f.hidden_field :status, value: Assignment.statuses['assigned'] %>
+  <% else %>
   <div class="field">
     <%= f.label :status %><br/>
-    <%= f.select(:status, options_for_select(Assignment.statuses)) %>
+      <%= f.select(:status, options_for_select(Assignment.statuses.keys, @assignment.status), {}, {:class => 'form-control input-sm'}) %>
+    <% end %>
   </div>
   <div class="actions">
-    <%= f.submit %>
+    <%= f.submit(class: 'btn btn-primary') %>
+    <%= link_to 'Cancel', assignments_path, class: 'btn btn-danger' %>
   </div>
 <% end %>

@@ -1,51 +1,39 @@
-<table class="table table-condensed table-bordered table-striped">
-  <thead>
-    <tr>
-      <th>Assignment ID</th>
-      <th>Item UUID</th>
-      <th>Assigner</th>
-      <th>Assignee</th>
-      <th>Task</th>
-      <th>Status</th>
-      <th>Edit</th>
-      <th>Delete?</th>
-    </tr>
-  </thead>
+<% {'assignments' => @assignments, 'assignations' => @assignations}.each do |type, results| %>
+  <h2><%= type == 'assignments' ? "My Tasks" : "Tasks I've Assigned" %></h2>
 
-  <tbody>
-    <% if @assignments.blank? && @assignations.blank? %>
-      <tr><td colspan="8">There are currently no assignments.</td></tr>
-    <% else %>
-      <% if @assignments.present? %>
-        <tr><th colspan="8">My Tasks</th></tr>
-        <% @assignments.each do |assignment| %>
+  <table class="table table-condensed table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Assignment ID</th>
+        <th>Digital Object</th>
+        <th>Assigner</th>
+        <th>Assignee</th>
+        <th>Task</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% if results.blank? %>
+        <tr><td colspan="7">None</td></tr>
+      <% else %>
+        <% results.each do |assignment| %>
           <tr>
             <td><%= assignment.id %></td>
-            <td><%= assignment.digital_object_record.pid %></td>
+            <td><%= assignment.digital_object_pid %></td>
             <td><%= assignment.assigner.full_name %></td>
             <td><%= assignment.assignee.full_name %></td>
             <td><%= assignment.task %></td>
             <td><%= assignment.status %></td>
-            <td><%= link_to('Edit', edit_assignment_path(assignment)) %></td>
-            <td><%= (assignment.assigner == current_user) ? link_to('Delete', assignment, method: :delete, data: { confirm: 'Are you sure?' }) : '' %></td>
+            <td>
+              <%= link_to('View', assignment_path(assignment), class: 'btn btn-default btn-xs') %>
+              <%= link_to('Edit', edit_assignment_path(assignment), class: 'btn btn-default btn-xs') %>
+              <%= assignment.assigner == current_user ? link_to('Delete', assignment, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-default btn-xs') : '' %>
+            </td>
           </tr>
         <% end %>
-      <% end -%>
-      <% if @assignations.present? %>
-        <tr><th colspan="8">Tasks I've Assigned</th></tr>
-        <% @assignations.each do |assignment| %>
-          <tr>
-            <td><%= assignment.id %></td>
-            <td><%= assignment.digital_object_record.pid %></td>
-            <td><%= assignment.assigner.full_name %></td>
-            <td><%= assignment.assignee.full_name %></td>
-            <td><%= assignment.task %></td>
-            <td><%= assignment.status %></td>
-            <td><%= link_to('Edit', edit_assignment_path(assignment)) %></td>
-            <td><%= (assignment.assigner == current_user) ? link_to('Delete', assignment, method: :delete, data: { confirm: 'Are you sure?' }) : '' %></td>
-          </tr>
-        <% end %>
-      <% end -%>
-    <% end %>
-  </tbody>
-</table>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

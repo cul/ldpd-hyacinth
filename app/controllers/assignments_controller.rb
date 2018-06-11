@@ -1,4 +1,7 @@
 class AssignmentsController < ApplicationController
+  before_action :set_assignment, only: [:show, :edit, :update, :destroy, :create_changeset]
+  before_action :set_contextual_nav_options
+
   # GET /assignments
   def index
     @assignments = Assignment.where(assignee: current_user)
@@ -7,37 +10,31 @@ class AssignmentsController < ApplicationController
 
   # GET /assignments/new
   def new
-    @digital_object_record = DigitalObjectRecord.find_by(pid: params[:assignment][:digital_object_record_id])
-    @assignment = Assignment.new(assignment_params.merge(assigner: current_user, digital_object_record: @digital_object_record))
+    @assignment = Assignment.new(assignment_params.merge(assigner: current_user))
   end
 
   # POST /assignments
   def create
-    puts params.inspect
-    puts assignment_params.inspect
-    # use an id-based find is this is a numeric id, otherwise use the pid
-    dor_key = assignment_params[:digital_object_record_id].to_s =~ /^\d+$/ ? :id : :pid
-    @digital_object_record = DigitalObjectRecord.find_by(dor_key => assignment_params[:digital_object_record_id])
-    digital_object = DigitalObject::Base.find(@digital_object_record.pid)
     @assignment = Assignment.new(assignment_params)
-    @assignment.assigner = current_user
-    # use raw params since assignee_email is not the foreign key
-    @assignment.assignee = User.find_by(email: params[:assignment][:assignee_email])
-    @assignment.digital_object_record = @digital_object_record
+    digital_object = DigitalObject::Base.find(@assignment.digital_object_pid)
     @assignment.project = digital_object.project
-    require_appropriate_project_permissions!
+    @assignment.assigner ||= current_user
     @assignment.status = 'unassigned' unless @assignment.assignee.present?
+
+    require_appropriate_project_permissions!
+
+    begin
+      successful_save = @assignment.save
+    rescue ActiveRecord::RecordNotUnique
+      @assignment.errors.add(:task, "Task can only be assigned once for an object.")
+    end
+
     respond_to do |format|
-      begin
-        if @assignment.save
-          format.html { redirect_to @assignment, locals: { notice: 'Assignment was successfully created.' } }
-          format.json { render action: 'show', status: :created, location: @assignment }
-        else
-          format.html { render action: 'new', locals: { notice: "Could not save assignment." } }
-          format.json { render json: @assignment.errors, status: :unprocessable_entity }
-        end
-      rescue ActiveRecord::RecordNotUnique
-        format.html { render action: 'new', locals: { notice: "Task can only be assigned once for an object." } }
+      if successful_save
+        format.html { redirect_to @assignment, locals: { notice: 'Assignment was successfully created.' } }
+        format.json { render action: 'show', status: :created, location: @assignment }
+      else
+        format.html { render action: 'new', locals: { notice: "Could not save assignment." } }
         format.json { render json: @assignment.errors, status: :unprocessable_entity }
       end
     end
@@ -45,17 +42,14 @@ class AssignmentsController < ApplicationController
 
   # GET /assignments/$id
   def show
-    @assignment = Assignment.find(params['id'])
   end
 
   # GET /assignments/$id/edit
   def edit
-    @assignment = Assignment.find(params['id'])
   end
 
   # DELETE /assignments/$id
   def destroy
-    @assignment = Assignment.find(params['id'])
     require_appropriate_project_permissions!
     respond_to do |format|
       if @assignment.destroy
@@ -71,19 +65,13 @@ class AssignmentsController < ApplicationController
   # PUT /assignments/$id
   # PATCH /assignments/$id
   def update
-    @assignment = Assignment.find(params['id'])
-    unless params['status'] == 'in_progress' && @assignment.assignee == current_user
-      require_appropriate_project_permissions!
-    end
-    @assignment.status = params[:assignment][:status].to_i
+    require_appropriate_project_permissions!
     @assignment.status = :unassigned if @assignment.assignee.blank?
+
     respond_to do |format|
-      if (argument_error = status_update_error)
-        format.html { render action: 'edit', locals: { notice: argument_error } }
-        format.json { render json: { status: argument_error }, status: :unprocessable_entity }
-      elsif @assignment.save
-        format.html { redirect_to @assignment, locals: { notice: 'Assignment was successfully created.' } }
-        format.json { render action: 'show', status: :created, location: @assignment }
+      if disallow_invaid_status_transitions(@assignment, assignment_params[:status]) && @assignment.update(assignment_params)
+        format.html { render action: 'show', locals: { notice: 'Assignment was successfully updated.' } }
+        format.json { render action: 'show', status: :ok, location: @assignment }
       else
         format.html { render action: 'edit', locals: { notice: "Could not save assignment." } }
         format.json { render json: @assignment.errors, status: :unprocessable_entity }
@@ -95,21 +83,59 @@ class AssignmentsController < ApplicationController
   def commit
   end
 
-  # whitelist attribute params for an assignment
-  def assignment_params
-    params.require(:assignment).permit(:task, :status, :project, :digital_object_record_id)
-      .transform_values { |x| x =~ /\d+/ ? x.to_i : x }
+  def disallow_invaid_status_transitions(assignment, new_status)
+    if (steps = (Assignment.statuses[assignment.status] - Assignment.statuses[new_status]).abs) > 1
+      assignment.errors.add(:status, "Workflow status can only change incrementally (#{@assignment.status} to #{new_status} is #{steps} steps)")
+      return false
+    end
+    true
   end
 
-  def status_update_error
-    steps = (Assignment.statuses[@assignment.status] - assignment_params[:status]).abs
-    if  steps > 1
-      status_label = Assignment.statuses.find { |k, v| v == assignment_params[:status] }.first
-      "Workflow status can only change incrementally (#{@assignment.status} to #{status_label} is #{steps} steps)"
-    end
+  def create_changeset
+    create_sample_changeset
+  end
+
+  # TODO: This is just a sample action for demo-ing changesets
+  def create_sample_changeset
+    sample_data = {
+      "dynamic_field_data" => {
+        "title" => [
+          {
+            "title_sort_portion" => "175 Great Neck Rd."
+          }
+        ],
+        "note" => [
+          {
+            "note_type" => "Date note",
+            "note_value" => "Date range inferred from dates in the New York Real Estate Brochure Collection."
+          },
+          {
+            "note_type" => "provenance",
+            "note_value" => "Donated by Yale Robbins, Henry Robbins, & David Magier."
+          }
+        ]
+      }
+    }
+    @assignment.original = JSON.pretty_generate(sample_data)
+    sample_data['dynamic_field_data']['title'][0]['title_sort_portion'] = "175 Giraffe Neck Rd."
+    sample_data['dynamic_field_data']['note'][0]['note_value'] = "Date range inferred from dates in the Bronx Zoo Brochure Collection."
+    @assignment.proposed = JSON.pretty_generate(sample_data)
+    @assignment.save
+    redirect_to @assignment && return
   end
 
   private
+
+    # whitelist attribute params for an assignment
+    def assignment_params
+      params.require(:assignment).permit(:task, :status, :project, :digital_object_pid, :assignee_id)
+        .transform_values { |x| x =~ /^\d+$/ ? x.to_i : x }
+    end
+
+    def set_assignment
+      @assignment = Assignment.find(params[:id])
+    end
+
     def require_appropriate_project_permissions!
       case params[:action]
       when 'new', 'create', 'delete'
@@ -122,6 +148,20 @@ class AssignmentsController < ApplicationController
         require_workflow_permission!(@assignment, params[:status].to_sym)
       else
         require_hyacinth_admin!
+      end
+    end
+
+    def set_contextual_nav_options
+      if params[:action] == 'index'
+        @contextual_nav_options['nav_title']['label'] =  'Assignments'.html_safe
+      else
+        @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Assignments'.html_safe
+        @contextual_nav_options['nav_title']['url'] = assignments_path
+      end
+
+      case params[:action]
+      when 'show', 'update'
+        @contextual_nav_options['nav_items'].push(label: 'Edit', url: edit_assignment_path(@assignment))
       end
     end
 end

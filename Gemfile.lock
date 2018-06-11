@@ -174,6 +174,7 @@ GEM
       thread_safe (~> 0.1)
       warden (~> 1.2.3)
     diff-lcs (1.2.5)
+    diffy (3.2.1)
     domain_name (0.5.20161021)
       unf (>= 0.0.5, < 1.0.0)
     ebnf (0.3.9)
@@ -556,6 +557,7 @@ DEPENDENCIES
   coffee-rails
   cul_hydra (~> 1.4.7)
   devise (>= 3.4.1)
+  diffy (~> 3.1)
   equivalent-xml
   factory_girl_rails (>= 4.4.1)
   faker

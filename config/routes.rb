@@ -114,6 +114,9 @@ Hyacinth::Application.routes.draw do
 
   resources :assignments do
     post 'commit', action: 'commit'
+    member do
+      patch 'changeset', action: 'create_changeset'
+    end
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

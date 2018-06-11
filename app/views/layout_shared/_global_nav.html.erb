@@ -40,6 +40,7 @@
           <% if user_signed_in? %>
             <a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= current_user.first_name %> <%= current_user.last_name %> <b class="caret"></b></a>
             <ul class="dropdown-menu">
+              <li><%= link_to 'Assignments', assignments_path %></li>
               <% if current_user.admin? %>
                 <li><%= link_to 'System Information', system_information_path %></li>
               <% end %>

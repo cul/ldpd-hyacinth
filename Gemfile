@@ -24,6 +24,9 @@ gem 'bootstrap-multiselect-rails'
 # Pretty printing
 gem 'coderay'
 
+# For diff display
+gem 'diffy', '~> 3.1'
+
 # Progress bar for rake tasks
 gem 'ruby-progressbar'
 

@@ -1,27 +1,77 @@
-<p>
-  <strong>Assigner:</strong>
-  <%= @assignment.assigner.email %>
-</p>
+<h1>Assignment <%= @assignment.id %> <span class="label label-info pull-right"><%= @assignment.status %></span></h1>
 
-<p>
-  <strong>Assignee:</strong>
-  <%= @assignment.assignee.email %>
-</p>
+<div class="show-assignment">
+  <div class="row">
+    <div class="col-sm-8">
+      <div class="well">
+        <h2>Task Details</h2>
+        <p>
+          <strong>Digital Object:</strong>
+          <%= link_to(@assignment.digital_object_pid, digital_object_app_path(@assignment.digital_object_pid)) %>
+        </p>
+        <p>
+          <strong>Task:</strong>
+          <%= @assignment.task %>
+        </p>
+      </div>
 
-<p>
-  <strong>Item:</strong>
-  <%= digital_object_path(@assignment.digital_object_record.pid) %>
-</p>
+      <% if @assignment.proposed.present? %>
+        <h2>Changes</h2>
+        <pre class="diff-view">
+          <%= Diffy::Diff.new(@assignment.original, @assignment.proposed).to_s(:html).html_safe %>
+        </pre>
+      <% end %>
 
-<p>
-  <strong>Task:</strong>
-  <%= @assignment.task %>
-</p>
+    </div>
+    <div class="col-sm-4">
+      <% allowed_status_change_options = @assignment.allowed_status_change_options_for_user(current_user) %>
+      <% if allowed_status_change_options.present? %>
+        <div class="well">
+          <h2>Change Status</h2>
+          <%= form_for(@assignment) do |f| %>
+            <% statuses = Assignment.statuses.select{|status, _status_number| allowed_status_change_options.include?(status)} %>
+            <% if statuses.present? %>
+              <div >
+                <% statuses.each do |status, status_number| %>
+                <button type="submit" name="<%= f.object_name %>[status]" value="<%= status %>" class="btn btn-default">
+                  <% if status < @assignment.status %>
+                    <span class="glyphicon glyphicon-circle-arrow-left"></span>
+                  <% end %>
+                  <%= status %>
+                  <% if status > @assignment.status %>
+                    <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                  <% end %>
+                </button>
+                <% end %>
+              </div>
+            <% else %>
+              n/a
+            <% end %>
+          <% end %>
+        </div>
+      <% end %>
+      <div class="well">
+        For demo purposes only:
+        <br />
+        <%= link_to 'Create Sample Changeset', changeset_assignment_path(@assignment), method: :patch %>
+      </div>
+      <div class="well">
+        <h2>People</h2>
+        <p>
+          <strong>Assigner:</strong> <%= @assignment.assigner.full_name %>
+        </p>
+        <p>
+          <strong>Assignee:</strong> <%= @assignment.assignee.full_name %>
+        </p>
+        <h2>Dates</h2>
+        <p>
+          <strong>Created:</strong> <%= @assignment.created_at %>
+        </p>
+        <p>
+          <strong>Updated:</strong> <%= @assignment.updated_at %>
+        </p>
+      </div>
+    </div>
+  </div>
 
-<p>
-  <strong>Status:</strong>
-  <%= @assignment.status %>
-</p>
-
-<%= link_to 'Edit', edit_assignment_path(@assignment) %> |
-<%= link_to 'Back', assignments_path %>
+</div>
