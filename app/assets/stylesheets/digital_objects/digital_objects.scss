@@ -3,18 +3,18 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 #digital-object-editor {
-  
+
   hr {
     margin-top:10px;
     margin-bottom:10px;
   }
 
   .digital-object-editor-header {
-    
+
     .digital-object-title {
       word-wrap: break-word;
     }
-    
+
     .form-group {
       margin-bottom:0px;
     }
@@ -39,7 +39,7 @@
       }
     }
   }
-  
+
   .dynamic_field_group .dynamic_field_group {
     margin: 0 .4em;
   }
@@ -62,20 +62,20 @@
     }
 
   }
-  
+
   .editor-form {
     .dynamic_field_group .field-label {
       font-size:13px;
     }
   }
-  
+
   .editor-form.edit {
     .dynamic_field_group .field-label {
       position:relative;
       top:6px;
     }
   }
-  
+
   .dynamic_field_group_display_label {
     border:1px solid #ddd;
     padding:.25em;
@@ -83,31 +83,31 @@
     font-size:13px;
     background:#eee;
   }
-  
+
   .dynamic_field_group_display_label:hover {
     background:#d2d2d2;
     border-color:#bbb;
   }
-  
+
   .dynamic_field_group_content {
     padding:5px 2px;
     border:solid #eee;
     border-width:0px 2px 2px 2px;
   }
-  
+
   .dynamic_field {
     padding:0 .25em;
   }
-  
+
   .editor-form.show {
     .dynamic_field {
       padding-top:1px;
       padding-bottom:1px;
     }
   }
-  
+
   .dynamic_field_group {
-  
+
     input[type="text"].form-control,
     .controlled-term-pill-box {
       height:26px;
@@ -120,12 +120,12 @@
     .controlled-term-pill-box {
       padding:1px;
     }
-    
+
     .controlled-term-pill-box button {
       padding-top:2px;
       padding-bottom:0px;
     }
-    
+
     .controlled-term-pill-box .controlled_term_clear_button {
       height:17px;
       font-size:11px;
@@ -135,32 +135,32 @@
     .controlled-term-pill-box .controlled_term_uri_display {
       font-size:12px;
     }
-    
+
   }
-  
+
   .field-management-buttons {
     float:right;
     margin-top:-1px;
-    
+
     .btn {
       height:19px;
       padding:1px 3px;
       font-size:11px;
     }
-    
+
   }
   .readonly-display-value {
     font-size:13px;
     word-wrap: break-word;
   }
-  
+
   .identifiers .input-group {
     margin-bottom:2px;
-    
+
     .btn.btn-xs {
       padding:2px 5px;
     }
-    
+
     input[type="text"].form-control {
       height:24px;
       padding:2px 4px;
@@ -392,55 +392,51 @@
 }
 
 #digital-object-asset-upload {
-  
+
   .upload-files-table {
     word-break: break-word;
   }
-  
-  .digital-object-asset-upload-form {
-    
-    .browser-upload {
-      margin-top:1em;
+}
+
+.hyacinth-editor-upload-container {
+
+  .browser-upload {
+    margin-top:1em;
+  }
+
+  .upload-drop-zone {
+
+    position:relative;
+    overflow:hidden;
+    font-size:1.5em;
+    padding:2em;
+    border:2px dashed #ccc;
+    color:#ccc;
+    margin-bottom:1em;
+
+    .asset-upload-file-input {
+      position: absolute;
+      top: 0;
+      right: 0;
+      margin: 0;
+      opacity: 0;
+      -ms-filter: 'alpha(opacity=0)';
+      font-size: 200px;
+      direction: ltr;
+      cursor: pointer;
     }
-  
-    .upload-drop-zone {
-  
+
+  }
+
+  .fileinput-button {
       position:relative;
       overflow:hidden;
-      font-size:1.5em;
-      padding:2em;
-      border:2px dashed #ccc;
-      color:#ccc;
-      margin-bottom:1em;
-  
-      .asset-upload-file-input {
-        position: absolute;
-        top: 0;
-        right: 0;
-        margin: 0;
-        opacity: 0;
-        -ms-filter: 'alpha(opacity=0)';
-        font-size: 200px;
-        direction: ltr;
-        cursor: pointer;
-      }
-  
     }
-  
-    .fileinput-button {
-        position:relative;
-        overflow:hidden;
-      }
-  
-    .extended-progress-info {
-      margin-bottom:1em;
-    }
-  
+
+  .extended-progress-info {
+    margin-bottom:1em;
   }
-  
-  .uploaded-files {
-    
-  }
+
 }
 
 #digital-object-media-view {

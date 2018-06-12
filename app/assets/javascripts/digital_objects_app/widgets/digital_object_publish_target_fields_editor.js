@@ -12,25 +12,12 @@ Hyacinth.DigitalObjectsApp.DigitalObjectPublishTargetFieldsEditor = function(con
  *******************************
  *******************************/
 
-Hyacinth.DigitalObjectsApp.DigitalObjectPublishTargetFieldsEditor.PUBLISH_TARGET_FIELDS_ELEMENT_CLASS = 'digital-object-ordered-child-editor';
-Hyacinth.DigitalObjectsApp.DigitalObjectPublishTargetFieldsEditor.PUBLISH_TARGET_FIELDS_DATA_KEY = 'publish_target_fields';
+Hyacinth.DigitalObjectsApp.DigitalObjectPublishTargetFieldsEditor.PUBLISH_TARGET_FIELDS_ELEMENT_CLASS = 'digital-object-publish-target-fields-child-editor';
+Hyacinth.DigitalObjectsApp.DigitalObjectPublishTargetFieldsEditor.PUBLISH_TARGET_FIELDS_DATA_KEY = 'publish_target_fields_editor';
 
 Hyacinth.DigitalObjectsApp.DigitalObjectPublishTargetFieldsEditor.getEditorInstanceForElement = function(element) {
   return $(element).closest('.' + Hyacinth.DigitalObjectsApp.DigitalObjectPublishTargetFieldsEditor.PUBLISH_TARGET_FIELDS_ELEMENT_CLASS).data(Hyacinth.DigitalObjectsApp.DigitalObjectPublishTargetFieldsEditor.PUBLISH_TARGET_FIELDS_DATA_KEY);
 };
-
-/**********************
- * Data Serialization *
- **********************/
-//Todo
-
-/******************
- * Form Rendering *
- ******************/
-//Todo
-
-// Add/Remove/Reorder methods
-//Todo
 
 /**********************************
  **********************************
@@ -55,22 +42,22 @@ Hyacinth.DigitalObjectsApp.DigitalObjectPublishTargetFieldsEditor.prototype.init
       digitalObject: this.digitalObject
     })
   );
-  
-  //Save button is only visible if a user has the right permissions
+
+  //Save button is only rendered in main template if a user has the right permissions
   if(this.$containerElement.find('.publish-target-fields-editor-form').length > 0) {
-    
+
     $editorForm = this.$containerElement.find('.publish-target-fields-editor-form');
-    
+
     $editorForm.on('submit', function(e){
       e.preventDefault();
       that.submitEditorForm(false);
     });
-  
+
     $editorForm.on('click', '.editor-submit-button', function(e){
       e.preventDefault();
       that.submitEditorForm(false);
     });
-  
+
     $editorForm.on('click', '.editor-submit-and-publish-button', function(e){
       e.preventDefault();
       that.submitEditorForm(true);
@@ -80,10 +67,10 @@ Hyacinth.DigitalObjectsApp.DigitalObjectPublishTargetFieldsEditor.prototype.init
 
 Hyacinth.DigitalObjectsApp.DigitalObjectPublishTargetFieldsEditor.prototype.submitEditorForm = function(publish) {
   var $editorForm = this.$containerElement.find('.publish-target-fields-editor-form');
-  
+
   Hyacinth.addAlert(publish ? 'Saving and publishing...' : 'Saving...', 'info');
   var publishTargetData = {};
- 
+
   $editorForm.find('input[name],textarea[name]').each(function(){
     if($(this).attr('type') == 'checkbox') {
       publishTargetData[$(this).attr('name')] = $(this).is(':checked');
@@ -91,9 +78,9 @@ Hyacinth.DigitalObjectsApp.DigitalObjectPublishTargetFieldsEditor.prototype.subm
       publishTargetData[$(this).attr('name')] = $(this).val();
     }
   });
-  
+
   var digitalObjectData = {publish_target_data: publishTargetData};
-  
+
   $.ajax({
     url: '/digital_objects/' + this.digitalObject.getPid() + '.json',
     type: 'POST',
