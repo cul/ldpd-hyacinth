@@ -56,7 +56,6 @@ module DigitalObject::Persistence
 
       if @db_record.uuid.blank?
         @db_record.uuid = SecureRandom.uuid
-        @db_record.data_file_path = Hyacinth::Utils::PathUtils.data_file_path_for_uuid(@db_record.uuid)
       end
 
       # Add pid to identifiers if not present

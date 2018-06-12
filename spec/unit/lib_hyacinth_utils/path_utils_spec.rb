@@ -14,7 +14,7 @@ RSpec.describe Hyacinth::Utils::PathUtils do
 
     context ".data_file_path_for_uuid" do
       it "returns the expected path" do
-        expect(described_class.data_file_path_for_uuid(uuid)).to eq(File.join(HYACINTH['data_directory'], uuid_pair_tree.join('/'), uuid + '.json'))
+        expect(described_class.data_file_path_for_uuid(uuid)).to eq(File.join(HYACINTH['digital_object_data_directory'], uuid_pair_tree.join('/'), uuid, uuid + '.json'))
       end
     end
 

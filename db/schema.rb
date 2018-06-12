@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180523182439) do
+ActiveRecord::Schema.define(version: 20180612150614) do
 
   create_table "assignments", force: :cascade do |t|
     t.string   "digital_object_pid", null: false
@@ -77,7 +77,6 @@ ActiveRecord::Schema.define(version: 20180523182439) do
     t.datetime "updated_at"
     t.datetime "first_published_at"
     t.string   "uuid"
-    t.string   "data_file_path"
   end
 
   add_index "digital_object_records", ["pid"], name: "index_digital_object_records_on_pid", unique: true

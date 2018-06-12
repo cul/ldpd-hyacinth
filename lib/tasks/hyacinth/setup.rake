@@ -68,7 +68,7 @@ namespace :hyacinth do
         hyacinth_yml[env_name] = {
           'solr_url' => 'http://localhost:' + (env_name == 'test' ? default_test_port : default_development_port).to_s + '/solr/' + 'hyacinth_' + env_name,
           'default_pid_generator_namespace' => 'cul',
-          'data_directory' => File.join(Rails.root, 'tmp/data_' + env_name),
+          'digital_object_data_directory' => File.join(Rails.root, 'tmp/data_' + env_name),
           'default_asset_home' => File.join(Rails.root, 'tmp/asset_home_' + env_name),
           'upload_directory' => File.join(Rails.root, 'tmp/upload_' + env_name),
           'csv_export_directory' => File.join(Rails.root, 'tmp/csv_exports_' + env_name),

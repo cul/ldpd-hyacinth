@@ -19,7 +19,7 @@ raise 'Error: Please set a value for publish_target_api_key_encryption_key in yo
 Rails.backtrace_cleaner.remove_silencers! if Rails.env.development?
 
 [
-  'data_directory',
+  'digital_object_data_directory',
   'upload_directory',
   'default_asset_home',
   'csv_export_directory',
