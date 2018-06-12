@@ -15,7 +15,7 @@ class Assignment < ActiveRecord::Base
     options
   end
 
-  def allowed_status_change_options_for_assignee
+  def allowed_status_change_options_for_assignee(user)
     options = Set.new
 
     case self.status
@@ -31,12 +31,14 @@ class Assignment < ActiveRecord::Base
     options
   end
 
-  def allowed_status_change_options_for_assigneer
+  def allowed_status_change_options_for_assigner(user)
     options = Set.new
 
     case self.status
     when 'ready'
-      options << 'accept'
+      options << 'in_review'
+    when 'in_review'
+      options << 'accepted'
     end
 
     options

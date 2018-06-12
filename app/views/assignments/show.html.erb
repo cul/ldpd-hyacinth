@@ -1,4 +1,4 @@
-<h1>Assignment <%= @assignment.id %> <span class="label label-info pull-right"><%= @assignment.status %></span></h1>
+<h1>Assignment <%= @assignment.id %></h1>
 
 <div class="show-assignment">
   <div class="row">
@@ -27,18 +27,18 @@
       <% allowed_status_change_options = @assignment.allowed_status_change_options_for_user(current_user) %>
       <% if allowed_status_change_options.present? %>
         <div class="well">
-          <h2>Change Status</h2>
+          <h2>Status: <%= @assignment.status %></h2>
           <%= form_for(@assignment) do |f| %>
             <% statuses = Assignment.statuses.select{|status, _status_number| allowed_status_change_options.include?(status)} %>
             <% if statuses.present? %>
               <div >
                 <% statuses.each do |status, status_number| %>
                 <button type="submit" name="<%= f.object_name %>[status]" value="<%= status %>" class="btn btn-default">
-                  <% if status < @assignment.status %>
+                  <% if Assignment.statuses[status] < Assignment.statuses[@assignment.status] %>
                     <span class="glyphicon glyphicon-circle-arrow-left"></span>
                   <% end %>
                   <%= status %>
-                  <% if status > @assignment.status %>
+                  <% if Assignment.statuses[status] > Assignment.statuses[@assignment.status] %>
                     <span class="glyphicon glyphicon-circle-arrow-right"></span>
                   <% end %>
                 </button>
