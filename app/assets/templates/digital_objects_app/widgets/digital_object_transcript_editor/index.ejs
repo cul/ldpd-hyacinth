@@ -16,15 +16,15 @@
   <!-- Nav tabs -->
   <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" class="active"><a href="#textarea_editor" aria-controls="textarea_editor" role="tab" data-toggle="tab">Edit Transcript</a></li>
-    <li role="presentation"><a href="#browser_upload" aria-controls="browser_upload" role="tab" data-toggle="tab">Upload File</a></li>
+    <li role="presentation"><a href="#browser_upload" aria-controls="browser_upload" role="tab" data-toggle="tab">Upload Replacement Transcript</a></li>
   </ul>
 
-  <form class="transcript-upload-form">
+  <form class="transcript-editor-form">
 
   <!-- Tab panes -->
   <div class="tab-content">
     <div role="tabpanel" class="tab-pane active" id="textarea_editor">
-      <textarea rows="10" class="form-control"></textarea>
+      <textarea rows="10" class="transcript-textarea form-control"></textarea>
       <br />
       <div class="actions">
         <input type="submit" class="btn btn-primary pull-right editor-submit-button" value="Save" />
@@ -42,7 +42,7 @@
                 <small>The new file will replace your existing transcript.</small>
                 <br />
                 <small>Max size: 1GB</small>
-                <input class="asset-upload-file-input" type="file" name="file">
+                <input class="upload-file-input" type="file" name="file">
               </div>
 
               <div class="progress">

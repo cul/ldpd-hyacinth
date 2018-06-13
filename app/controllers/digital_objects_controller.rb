@@ -5,8 +5,9 @@ class DigitalObjectsController < ApplicationController
   include Hyacinth::DigitalObjects::ParentEditorBehavior
   include Hyacinth::DigitalObjects::UploadsEditorBehavior
   include Hyacinth::DigitalObjects::Downloads
+  include Hyacinth::DigitalObjects::Transcript
 
-  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor, :download, :download_access_copy, :add_parent, :remove_parents, :mods, :media_view, :rotate_image, :swap_order_of_first_two_child_assets]
+  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor, :download, :download_access_copy, :download_transcript, :update_transcript, :add_parent, :remove_parents, :mods, :media_view, :rotate_image, :swap_order_of_first_two_child_assets]
   before_action :set_digital_object_for_data_for_editor_action, only: [:data_for_editor]
   before_action :set_contextual_nav_options
   before_action :set_var_digital_object_data_or_render_error, only: [:create, :update]

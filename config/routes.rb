@@ -58,6 +58,8 @@ Hyacinth::Application.routes.draw do
       get 'data_for_ordered_child_editor'
       get 'download'
       get 'download_access_copy'
+      get 'transcript', action: 'download_transcript'
+      put 'transcript', action: 'update_transcript'
       get 'media_view'
       get 'mods'
       put 'undelete', action: 'undestroy'

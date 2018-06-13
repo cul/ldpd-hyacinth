@@ -288,20 +288,29 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_transcript 
     cache: false
   }).done(function(data_for_editor){
 
-    var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
+    $.ajax({
+      url: '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '/transcript',
+      type: 'GET',
+      cache: false
+    }).done(function(transcriptText){
+      var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
 
-    $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/manage_transcript.ejs', {digitalObject: digitalObject}));
+      $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/manage_transcript.ejs', {digitalObject: digitalObject}));
 
-    var transcriptEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor('digital-object-transcript-editor', {
-      digitalObject: digitalObject
+      var transcriptEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor('digital-object-transcript-editor', {
+        digitalObject: digitalObject,
+        transcriptText: transcriptText
+      });
+
+      //Event cleanup
+      that.dispose = function(){
+        transcriptEditor.dispose();
+        transcriptEditor = null;
+      };
+
+    }).fail(function(){
+      alert(Hyacinth.unexpectedAjaxErrorMessage);
     });
-
-    //Event cleanup
-    that.dispose = function(){
-      transcriptEditor.dispose();
-      transcriptEditor = null;
-    };
-
   }).fail(function(){
     alert(Hyacinth.unexpectedAjaxErrorMessage);
   });

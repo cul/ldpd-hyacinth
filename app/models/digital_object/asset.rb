@@ -9,6 +9,7 @@ class DigitalObject::Asset < DigitalObject::Base
   DIGITAL_OBJECT_TYPE_STRING_KEY = 'asset'
 
   DEFAULT_ASSET_NAME = 'Asset' # For when a title is not supplied and we're not doing with a filesystem upload
+  TRANSCRIPT_LOCATION_KEY = 'transcript_location'
 
   IMPORT_TYPE_INTERNAL = 'internal'
   IMPORT_TYPE_EXTERNAL = 'external'
@@ -19,7 +20,7 @@ class DigitalObject::Asset < DigitalObject::Base
   SIZE_RESTRICTION_LITERAL_VALUE = 'size restriction'
   ONSITE_RESTRICTION_LITERAL_VALUE = 'onsite restriction'
 
-  attr_accessor :restricted_size_image, :restricted_onsite
+  attr_accessor :restricted_size_image, :restricted_onsite, :transcript_location
 
   def initialize
     super
@@ -223,6 +224,20 @@ class DigitalObject::Asset < DigitalObject::Base
     # Get restriction status
     self.restricted_size_image = fedora_object.relationships(:restriction).include?(SIZE_RESTRICTION_LITERAL_VALUE)
     self.restricted_onsite = fedora_object.relationships(:restriction).include?(ONSITE_RESTRICTION_LITERAL_VALUE)
+  end
+
+  # Overriding base behavior to also retrieve transcript location
+  def load_fedora_hyacinth_ds_data_from_fedora_object!
+    super
+    hyacinth_data = fedora_hyacinth_ds_data
+    self.transcript_location = hyacinth_data.fetch(TRANSCRIPT_LOCATION_KEY, nil)
+  end
+
+  # Overriding base behavior to also include transcript location
+  def data_for_hyacinth_ds
+    data = super
+    data[TRANSCRIPT_LOCATION_KEY] = self.transcript_location
+    data
   end
 
   def set_data_to_sources

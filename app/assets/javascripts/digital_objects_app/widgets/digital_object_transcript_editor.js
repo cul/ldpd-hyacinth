@@ -2,8 +2,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor = function(containerEle
 
   this.$containerElement = $('#' + containerElementId);
   this.digitalObject = options['digitalObject'];
-
   this.init();
+  this.$containerElement.find('.transcript-textarea').val(options['transcriptText']);
 };
 
 /*******************************
@@ -47,33 +47,87 @@ Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor.prototype.init = functi
     })
   );
 
-  //Save button is only rendered in main template if a user has the right permissions
-  if(this.$containerElement.find('.transcript-upload-form').length > 0) {
+  // set up file upload widget
+  var $uploadForm = $('.transcript-editor-form');
+  $uploadForm.fileupload({
+      dataType: 'text',
+      url: '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '/transcript',
+      type: 'POST',
+      formData: {
+        '_method': 'PUT' //For proper RESTful Rails requests
+      },
+      add: function (e, data) {
+          $uploadForm.find('.progress .progress-bar').css('width', 0 + '%');
+          setTimeout(function() {
+            //that.addUploadPlaceholder(data['files'][0]['name']);
+            data.submit();
+          }, 1000);
+      },
+      progressall: function (e, data) {
+        var progress = parseInt(data.loaded / data.total * 100, 10);
+        $uploadForm.find('.progress .progress-bar').css('width', progress + '%');
 
-    $editorForm = this.$containerElement.find('.publish-target-fields-editor-form');
+        var bitrate = data.bitrate;
+        var bitrateDisplayValue = null;
+        if (bitrate > 1000000000) {
+          bitrateDisplayValue = parseInt(data.bitrate/1000000000) + ' Gbit/s';
+        } else if (bitrate > 1000000) {
+          bitrateDisplayValue = parseInt(data.bitrate/1000000) + ' Mbit/s';
+        } else {
+          bitrateDisplayValue = parseInt(data.bitrate/1000) + ' kbit/s';
+        }
+
+        $uploadForm.find('.extended-progress-info').html('Upload rate: ' + bitrateDisplayValue);
+      },
+      done: function (e, data) {
+        Hyacinth.addAlert('Transcript upload complete (TODO: Display possible errors.).', 'info');
+        //that.handleUploadResponse(data['result']);
+      }
+  });
+  //assign $uploadForm to this.uploadForm so that we can dispose of it later in the dispose function
+  this.uploadForm = $uploadForm;
+
+  //transcript-editor-form is only rendered in main template if a user has the right permissions
+  if(this.$containerElement.find('.transcript-editor-form').length > 0) {
+
+    $editorForm = this.$containerElement.find('.transcript-editor-form');
 
     $editorForm.on('submit', function(e){
       e.preventDefault();
-      that.submitEditorForm(false);
+      that.submitEditorForm();
     });
 
     $editorForm.on('click', '.editor-submit-button', function(e){
       e.preventDefault();
-      that.submitEditorForm(false);
+      that.submitEditorForm();
     });
 
-    $editorForm.on('click', '.editor-submit-and-publish-button', function(e){
-      e.preventDefault();
-      that.submitEditorForm(true);
-    });
   }
 };
 
-Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor.prototype.submitEditorForm = function(publish) {
-
+Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor.prototype.submitEditorForm = function() {
+  $.ajax({
+    url: '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '/transcript',
+    type: 'POST',
+    data: {
+      '_method': 'PUT', //For proper RESTful Rails requests
+      'transcript_text': this.$containerElement.find('.transcript-textarea').val()
+    },
+    cache: false
+  }).done(function(transcriptPutResponse){
+    if (transcriptPutResponse['success']) {
+      Hyacinth.addAlert('Transcript updated.', 'info');
+      Hyacinth.DigitalObjectsApp.reloadCurrentAction();
+    } else {
+      alert(Hyacinth.unexpectedAjaxErrorMessage);
+    }
+  }).fail(function(){
+    alert(Hyacinth.unexpectedAjaxErrorMessage);
+  });
 };
 
 //Clean up event handlers
 Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor.prototype.dispose = function() {
   this.$containerElement.removeData(Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor.TRANSCRIPT_EDITOR_DATA_KEY) // Break this (circular) reference.  This is important!
+  this.uploadForm.fileupload('destroy');
 };
