@@ -15,6 +15,10 @@ class Hyacinth::Utils::PathUtils
   end
 
   def self.data_file_path_for_uuid(uuid)
-    File.join(HYACINTH['digital_object_data_directory'], uuid_pairtree(uuid), uuid, uuid + '.json')
+    File.join(data_directory_path_for_uuid(uuid), uuid + '.json')
+  end
+
+  def self.data_directory_path_for_uuid(uuid)
+    File.join(HYACINTH['digital_object_data_directory'], uuid_pairtree(uuid), uuid)
   end
 end

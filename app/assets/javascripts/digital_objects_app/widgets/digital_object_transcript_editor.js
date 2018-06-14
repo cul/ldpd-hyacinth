@@ -50,7 +50,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor.prototype.init = functi
   // set up file upload widget
   var $uploadForm = $('.transcript-editor-form');
   $uploadForm.fileupload({
-      dataType: 'text',
+      dataType: 'json',
       url: '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '/transcript',
       type: 'POST',
       formData: {
@@ -77,11 +77,20 @@ Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor.prototype.init = functi
           bitrateDisplayValue = parseInt(data.bitrate/1000) + ' kbit/s';
         }
 
-        $uploadForm.find('.extended-progress-info').html('Upload rate: ' + bitrateDisplayValue);
+        if(progress < 100) {
+          $uploadForm.find('.extended-progress-info').html('Upload rate: ' + bitrateDisplayValue);
+        } else {
+          $uploadForm.find('.extended-progress-info').html('Finishing...');
+        }
       },
       done: function (e, data) {
-        Hyacinth.addAlert('Transcript upload complete (TODO: Display possible errors.).', 'info');
-        //that.handleUploadResponse(data['result']);
+        var result = data['result'];
+        if(result['success']) {
+          Hyacinth.DigitalObjectsApp.reloadCurrentAction();
+          Hyacinth.addAlert('Transcript upload completed successfully.', 'info');
+        } else {
+          $uploadForm.find('.extended-progress-info').html('Upload failed:<br />' + result['errors'].join('<br />'));
+        }
       }
   });
   //assign $uploadForm to this.uploadForm so that we can dispose of it later in the dispose function
@@ -117,7 +126,6 @@ Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor.prototype.submitEditorF
   }).done(function(transcriptPutResponse){
     if (transcriptPutResponse['success']) {
       Hyacinth.addAlert('Transcript updated.', 'info');
-      Hyacinth.DigitalObjectsApp.reloadCurrentAction();
     } else {
       alert(Hyacinth.unexpectedAjaxErrorMessage);
     }
