@@ -296,7 +296,7 @@ class DigitalObjectsController < ApplicationController
       case params[:action]
       when 'index', 'search', 'upload_directory_listing', 'titles_for_pids', 'search_results_to_csv'
         # Do nothing.  These actions are open to all logged-in users.
-      when 'show', 'data_for_editor', 'mods', 'download', 'data_for_ordered_child_editor', 'media_view'
+      when 'show', 'data_for_editor', 'mods', 'download', 'data_for_ordered_child_editor', 'media_view', 'download_transcript'
         require_project_permission!(@digital_object.project, :read)
       when 'create'
         # Access logic inside action method
@@ -304,7 +304,7 @@ class DigitalObjectsController < ApplicationController
         associated_project = Project.find_by(project_find_criteria)
         publish_requirements << :create
         require_project_permission!(associated_project, publish_requirements)
-      when 'update', 'reorder_child_digital_objects', 'add_parent', 'remove_parents', 'rotate_image', 'swap_order_of_first_two_child_assets'
+      when 'update', 'reorder_child_digital_objects', 'add_parent', 'remove_parents', 'rotate_image', 'swap_order_of_first_two_child_assets', 'update_transcript'
         require_project_permission!(@digital_object.project, :update)
         # Also require publish permission if params[:publish] is set to true (note: applies to the 'update' action)
         publish_requirements << :update

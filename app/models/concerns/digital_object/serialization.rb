@@ -26,7 +26,8 @@ module DigitalObject::Serialization
       dynamic_field_data: @dynamic_field_data,
       ordered_child_digital_objects: ordered_child_digital_object_pids.map { |the_pid| { pid: the_pid } },
       parent_digital_objects: parent_digital_object_pids.map { |the_pid| { pid: the_pid } },
-      doi: doi
+      doi: doi,
+      assignments: Assignment.where(digital_object_pid: pid)
     }
   end
 

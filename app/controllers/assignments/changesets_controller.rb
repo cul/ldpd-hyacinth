@@ -1,39 +1,34 @@
 class Assignments::ChangesetsController < ApplicationController
-  def assignment
-    @assignment ||= Assignment.find(params[:id])
-  end
+  #before_action :set_assignment, only: [:update]
 
-  def create
-    create_sample_changeset
-  end
+  # PUT /assignments/1/changeset
+  def update
+    digital_object = DigitalObject::Base.find(@assignment.digital_object_pid)
+    render_unauthorized! unless assignee_for_type?(digital_object, params[:type])
 
-  # TODO: This is just a sample action for demo-ing changesets
-  def create_sample_changeset
-    sample_data = {
-      "dynamic_field_data" => {
-        "title" => [
-          {
-            "title_sort_portion" => "175 Great Neck Rd."
+    case params[:type]
+    # TODO: Add 'describe', 'annotate', and 'sequence' types to case statement
+    when 'transcribe'
+      errors = []
+      if params[:file].present?
+        if (errors = validate_transcript_upload_file(params[:file])).present?
+          render json: {
+            success: false,
+            errors: errors
           }
-        ],
-        "note" => [
-          {
-            "note_type" => "Date note",
-            "note_value" => "Date range inferred from dates in the New York Real Estate Brochure Collection."
-          },
-          {
-            "note_type" => "provenance",
-            "note_value" => "Donated by Yale Robbins, Henry Robbins, & David Magier."
-          }
-        ]
-      }
+          return
+        end
+        create_or_update_transcribe_changeset(@assignment, digital_object, params[:file].tempfile.read)
+      elsif
+        create_or_update_transcribe_changeset(@assignment, digital_object, params[:transcript_text])
+      end
+    end
+    @assignment.save
+
+    render json: {
+      success: @assignment.errors.blank?,
+      errors: @assignment.errors
     }
-    assignment.original = JSON.pretty_generate(sample_data)
-    sample_data['dynamic_field_data']['title'][0]['title_sort_portion'] = "175 Giraffe Neck Rd."
-    sample_data['dynamic_field_data']['note'][0]['note_value'] = "Date range inferred from dates in the Bronx Zoo Brochure Collection."
-    assignment.proposed = JSON.pretty_generate(sample_data)
-    assignment.save
-    redirect_to assignment && return
   end
 
   def show
@@ -44,4 +39,15 @@ class Assignments::ChangesetsController < ApplicationController
 
   def destroy
   end
+
+  private
+
+    def set_assignment
+      @assignment = Assignment.find(params[:id])
+    end
+
+    def create_or_update_transcribe_changeset(assignment, digital_object, new_content)
+      assignment.original = digital_object.transcription if assignment.original.nil?
+      assignment.proposed = new_content
+    end
 end

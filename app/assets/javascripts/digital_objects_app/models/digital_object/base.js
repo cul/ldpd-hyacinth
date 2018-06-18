@@ -128,3 +128,6 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getDoi = function(){
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.hasRestrictions = function() {
   return typeof(this.restrictions) !== 'undefined';
 };
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getAssignments = function() {
+  return this.assignments;
+};

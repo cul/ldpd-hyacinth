@@ -3,37 +3,36 @@ module Hyacinth::DigitalObjects::Transcript
 
   def download_transcript
     if @digital_object.is_a?(DigitalObject::Asset)
-      if File.exist?(@digital_object.transcript_location)
-        send_file @digital_object.transcript_location, filename: 'transcript.txt'
-      else
-        send_data '', filename: 'transcript.txt'
-      end
+      send_data @digital_object.transcript, filename: 'transcript.txt'
     else
       render text: @digital_object.digital_object_type.display_label.pluralize + ' do not have a transcript.  Try downloading an Asset transcript instead.', status: 404
     end
   end
 
   def update_transcript
-    errors = []
     if @digital_object.is_a?(DigitalObject::Asset)
-      # Copy transcript file to final transcript location.
-      # Lock on digital object so that two processes do not write at
-      # the same time.
-      @digital_object.db_record.with_lock do
-        if params[:file].present?
-          errors += validate_transcript_upload_file(params[:file])
-          FileUtils.cp(params[:file].tempfile.path, @digital_object.transcript_location) if errors.blank?
-        elsif params[:transcript_text]
-          IO.write(@digital_object.transcript_location, params[:transcript_text])
+      errors = []
+      if params[:file].present?
+        if (errors = validate_transcript_upload_file(params[:file])).present?
+          render json: {
+            success: false,
+            errors: errors
+          }
+          return
         end
+        @digital_object.transcript = params[:file].tempfile.read
+      elsif
+        @digital_object.transcript = params[:transcript_text]
       end
+
+      @digital_object.save
     else
-      errors << 'Cannot upload a transcript for an ' + @digital_object.digital_object_type.display_label
+      @digital_object.errors.add(:transcript, 'Cannot upload a transcript for an ' + @digital_object.digital_object_type.display_label)
     end
 
     render json: {
-      success: errors.blank?,
-      errors: errors
+      success: @digital_object.errors.blank?,
+      errors: @digital_object.errors
     }
   end
 

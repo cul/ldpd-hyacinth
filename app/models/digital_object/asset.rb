@@ -3,6 +3,7 @@ require 'addressable/uri'
 class DigitalObject::Asset < DigitalObject::Base
   include DigitalObject::Assets::Validations
   include DigitalObject::Assets::FileImport
+  include DigitalObject::Assets::Transcript
 
   UNKNOWN_DC_TYPE = 'Unknown'
   VALID_DC_TYPES = [UNKNOWN_DC_TYPE, 'Dataset', 'MovingImage', 'Software', 'Sound', 'StillImage', 'Text']
@@ -195,11 +196,6 @@ class DigitalObject::Asset < DigitalObject::Base
     raise 'File paths cannot contain: "..". Please specify a full path.' if @import_file_import_path.index('/..') || @import_file_import_path.index('../')
   end
 
-  def transcript_location
-    raise 'Missing UUID for ' + self.pid if self.uuid.nil? # TODO: Get rid of this once all objects have UUIDs
-    File.join(Hyacinth::Utils::PathUtils.data_directory_path_for_uuid(self.uuid), 'transcript.txt')
-  end
-
   def regenerate_derivatives!
     credentials = ActionController::HttpAuthentication::Token.encode_credentials(IMAGE_SERVER_CONFIG['remote_request_api_key'])
     resource_url = IMAGE_SERVER_CONFIG['url'] + "/resources/#{pid}"
@@ -255,6 +251,9 @@ class DigitalObject::Asset < DigitalObject::Base
       current_restrictions.each do |restriction_liternal|
         fedora_object.add_relationship(:restriction, restriction_liternal, true)
       end
+    end
+    if transcript_changed?
+      IO.write(self.transcript_location, self.transcript)
     end
   end
 

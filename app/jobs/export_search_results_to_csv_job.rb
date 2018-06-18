@@ -61,9 +61,9 @@ class ExportSearchResultsToCsvJob
     DigitalObject::Base.search_in_batches(search_params, user, 50) do |digital_object_data|
       ### Handle core fields
 
-      # identifiers, except for the pid which is its own column
+      # identifiers, except for the pid or uuid which are shown in their own columns (note: uuid isn't currently shown in CSV, but will be at some point)
       digital_object_data.fetch('identifiers', []).reject! do |identifier|
-        identifier == digital_object_data['pid']
+        identifier == digital_object_data['pid'] || identifier == digital_object_data['uuid']
       end
       digital_object_data.fetch('identifiers', []).size.times do |index|
         map["_identifiers-#{index + 1}"] ||= map.length

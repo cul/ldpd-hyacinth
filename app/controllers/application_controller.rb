@@ -75,6 +75,12 @@ class ApplicationController < ActionController::Base
     render_forbidden! unless current_user.can_manage_controlled_vocabulary_terms?(controlled_vocabulary)
   end
 
+  def assignee_for_type?(digital_object, assignment_task_type)
+    # since assignment_task_type is an enum, we want to accept and handle either the string or numeric versions
+    assignment_task_type = Assignment.tasks[assignment_task_type] if assignment_task_type.is_a?(String)
+    Assignment.exists?(assignee: current_user, digital_object_pid: digital_object.pid, task: assignment_task_type)
+  end
+
   def require_project_permission!(project, permission_types, logic_operation = :and)
     # Always allow access if this user is an admin
     return if current_user.admin?

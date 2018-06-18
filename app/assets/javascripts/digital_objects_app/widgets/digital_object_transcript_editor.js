@@ -2,6 +2,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor = function(containerEle
 
   this.$containerElement = $('#' + containerElementId);
   this.digitalObject = options['digitalObject'];
+  this.mode = options['mode'];
+  this.assignment = options['assignment'];
   this.init();
   this.$containerElement.find('.transcript-textarea').val(options['transcriptText']);
 };
@@ -36,14 +38,11 @@ Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor.prototype.init = functi
   this.$containerElement.addClass(Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor.TRANSCRIPT_EDITOR_ELEMENT_CLASS); //Add class to container element
   this.$containerElement.data(Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor.TRANSCRIPT_EDITOR_DATA_KEY, this); //Assign this editor object as data to the container element so that we can access it later
 
-  //Determine mode based on current user permission
-  var mode = Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(this.digitalObject.getProject()['pid'], 'can_update') ? 'edit' : 'view';
-
   //Setup form html
   this.$containerElement.html(
     Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_transcript_editor/index.ejs', {
       digitalObject: this.digitalObject,
-      mode: mode
+      mode: that.mode
     })
   );
 
@@ -51,7 +50,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor.prototype.init = functi
   var $uploadForm = $('.transcript-editor-form');
   $uploadForm.fileupload({
       dataType: 'json',
-      url: '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '/transcript',
+      url: this.assignment ? '/assignments/' + this.assignment['id'] + '/changeset' : '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '/transcript',
       type: 'POST',
       formData: {
         '_method': 'PUT' //For proper RESTful Rails requests
@@ -116,7 +115,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor.prototype.init = functi
 
 Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor.prototype.submitEditorForm = function() {
   $.ajax({
-    url: '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '/transcript',
+    url: this.assignment ? '/assignments/' + this.assignment['id'] + '/changeset' : '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '/transcript',
     type: 'POST',
     data: {
       '_method': 'PUT', //For proper RESTful Rails requests

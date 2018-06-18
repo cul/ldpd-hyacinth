@@ -297,9 +297,16 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_transcript 
 
       $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/manage_transcript.ejs', {digitalObject: digitalObject}));
 
+      var mode = Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update') ? 'edit' : 'view';
+      // If regular permissions don't grant edit permission, check if an assignment grants edit permission
+      var assignment = Hyacinth.DigitalObjectsApp.currentUser.hasAssignmentPermission(digitalObject, Hyacinth.AssignmentTaskTypes.transcribe);
+      mode = assignment ? 'edit' : mode;
+
       var transcriptEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor('digital-object-transcript-editor', {
         digitalObject: digitalObject,
-        transcriptText: transcriptText
+        transcriptText: transcriptText,
+        mode: mode,
+        assignment: assignment
       });
 
       //Event cleanup
