@@ -1,5 +1,4 @@
 module Hyacinth::DigitalObjects::Transcript
-  MAX_ALLOWED_TRANSCRIPT_UPLOAD_SIZE = 10_000_000
 
   def download_transcript
     if @digital_object.is_a?(DigitalObject::Asset)
@@ -11,20 +10,16 @@ module Hyacinth::DigitalObjects::Transcript
 
   def update_transcript
     if @digital_object.is_a?(DigitalObject::Asset)
-      errors = []
-      if params[:file].present?
-        if (errors = validate_transcript_upload_file(params[:file])).present?
-          render json: {
-            success: false,
-            errors: errors
-          }
-          return
-        end
-        @digital_object.transcript = params[:file].tempfile.read
-      elsif
-        @digital_object.transcript = params[:transcript_text]
+      form_object = Hyacinth::FormObjects::TranscriptUpdateFormObject.new(params)
+      if form_object.errors.present?
+        render json: {
+          success: false,
+          errors: form_object.error_messages_without_error_keys
+        }
+        return
       end
 
+      @digital_object.transcript = form_object.transcript_content
       @digital_object.save
     else
       @digital_object.errors.add(:transcript, 'Cannot upload a transcript for an ' + @digital_object.digital_object_type.display_label)
@@ -36,14 +31,5 @@ module Hyacinth::DigitalObjects::Transcript
     }
   end
 
-  # validates the given upload file param
-  # @return an array of string errors if validation fails
-  def validate_transcript_upload_file(file_param)
-    errors = []
-    upload_file_size = file_param.tempfile.size
-    upload_file_mime_type = BestType.mime_type.for_file_name(file_param.original_filename)
-    errors << "Transcript file too large. Must be smaller than #{MAX_ALLOWED_TRANSCRIPT_UPLOAD_SIZE / 1_000_000} MB." if upload_file_size > MAX_ALLOWED_TRANSCRIPT_UPLOAD_SIZE # 10MB
-    errors << "Only plain text files are allowed (detected MIME type #{upload_file_mime_type})." unless upload_file_mime_type == 'text/plain'
-    errors
-  end
+
 end

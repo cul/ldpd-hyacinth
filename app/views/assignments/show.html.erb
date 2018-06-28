@@ -25,9 +25,9 @@
     </div>
     <div class="col-sm-4">
       <% allowed_status_change_options = @assignment.allowed_status_change_options_for_user(current_user) %>
-      <% if allowed_status_change_options.present? %>
-        <div class="well">
-          <h2>Status: <%= @assignment.status %></h2>
+      <div class="well">
+        <h2>Status: <%= @assignment.status %></h2>
+        <% if allowed_status_change_options.present? %>
           <%= form_for(@assignment) do |f| %>
             <% statuses = Assignment.statuses.select{|status, _status_number| allowed_status_change_options.include?(status)} %>
             <% if statuses.present? %>
@@ -48,13 +48,15 @@
               n/a
             <% end %>
           <% end %>
+        <% end %>
+      </div>
+      <% if @assignment.assigner == current_user %>
+        <div class="well aligncenter">
+          <%= link_to 'Approve Changes', commit_assignment_path(@assignment), method: :put, class: 'btn btn-primary' %>
+          <br /><br />
+          <%= link_to 'Reject Changes', reject_assignment_path(@assignment), method: :put, class: 'btn btn-danger' %>
         </div>
       <% end %>
-      <div class="well">
-        For demo purposes only:
-        <br />
-        <%= link_to 'Create Sample Changeset', changeset_path(@assignment), method: :patch %>
-      </div>
       <div class="well">
         <h2>People</h2>
         <p>

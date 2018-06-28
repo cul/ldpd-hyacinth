@@ -17,15 +17,10 @@
     <%= link_to(@assignment.digital_object_pid, digital_object_app_path(@assignment.digital_object_pid)) %>
     <%= f.hidden_field(:digital_object_pid) %><br/>
   </div>
-  <% if @assignment.assigner == current_user -%>
-    <div class="field">
-      <%= f.label :assignee %><br/>
-      <%= f.collection_select(:assignee_id, User.all, :id, :full_name, {:include_blank => '- Select a user -'}, {:class => 'form-control input-sm'}) %>
-    </div>
-  <% else -%>
-    <div class="field">Assigner: <%= @assignment.assigner %></div>
-    <div class="field">Assignee: <%= @assignment.assignee %></div>
-  <% end %>
+  <div class="field">
+    <%= f.label :assignee %><br/>
+    <%= f.collection_select(:assignee_id, User.all, :id, :full_name, {:include_blank => '- Select a user -'}, {:class => 'form-control input-sm'}) %>
+  </div>
   <% if @assignment.persisted? -%>
     <div class="field">
       <%= f.label :task %><br/>

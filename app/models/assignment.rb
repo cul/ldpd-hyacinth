@@ -43,4 +43,20 @@ class Assignment < ActiveRecord::Base
 
     options
   end
+
+  def as_json(_options = {})
+    {
+      id: id,
+      task: task,
+      status: status,
+      digital_object_pid: digital_object_pid,
+      project_id: project_id,
+      assigner_id: assigner.id,
+      assigner_name: assigner.full_name,
+      assignee_id: assignee.id,
+      assignee_name: assignee.full_name,
+      original: original,
+      proposed: proposed
+    }
+  end
 end

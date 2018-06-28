@@ -117,8 +117,13 @@ Hyacinth::Application.routes.draw do
   resources :assignments do
     post 'commit', action: 'commit'
     member do
+      put 'commit'
+      put 'reject'
+
       scope module: "assignments" do
-        resource 'changeset', only: [:update]
+        resource 'changeset', only: [:update] do
+          get 'proposed'
+        end
       end
     end
   end

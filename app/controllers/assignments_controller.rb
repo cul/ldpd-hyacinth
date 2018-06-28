@@ -1,5 +1,7 @@
 class AssignmentsController < ApplicationController
   before_action :set_assignment, only: [:show, :edit, :update, :destroy]
+  before_action :set_assignment_from_create_params, only: [:create]
+  before_action :require_appropriate_project_permissions!
   before_action :set_contextual_nav_options
 
   # GET /assignments
@@ -15,14 +17,6 @@ class AssignmentsController < ApplicationController
 
   # POST /assignments
   def create
-    @assignment = Assignment.new(assignment_params)
-    digital_object = DigitalObject::Base.find(@assignment.digital_object_pid)
-    @assignment.project = digital_object.project
-    @assignment.assigner ||= current_user
-    @assignment.status = 'unassigned' unless @assignment.assignee.present?
-
-    require_appropriate_project_permissions!
-
     begin
       successful_save = @assignment.save
     rescue ActiveRecord::RecordNotUnique
@@ -40,17 +34,16 @@ class AssignmentsController < ApplicationController
     end
   end
 
-  # GET /assignments/$id
+  # GET /assignments/:id
   def show
   end
 
-  # GET /assignments/$id/edit
+  # GET /assignments/:id/edit
   def edit
   end
 
-  # DELETE /assignments/$id
+  # DELETE /assignments/:id
   def destroy
-    require_appropriate_project_permissions!
     respond_to do |format|
       if @assignment.destroy
         format.html { redirect_to assignments_path, notice: 'Assignment was successfully deleted.' }
@@ -62,10 +55,9 @@ class AssignmentsController < ApplicationController
     end
   end
 
-  # PUT /assignments/$id
-  # PATCH /assignments/$id
+  # PUT /assignments/:id
+  # PATCH /assignments/:id
   def update
-    require_appropriate_project_permissions!
     @assignment.status = :unassigned if @assignment.assignee.blank?
 
     respond_to do |format|
@@ -79,13 +71,17 @@ class AssignmentsController < ApplicationController
     end
   end
 
-  # POST /assignments/$id/commit
+  # POST /assignments/:id/commit
   def commit
+  end
+
+  # POST /assignments/:id/reject
+  def reject
   end
 
   def disallow_invaid_status_transitions(assignment, new_status)
     if (steps = (Assignment.statuses[assignment.status] - Assignment.statuses[new_status]).abs) > 1
-      assignment.errors.add(:status, "Workflow status can only change incrementally (#{@assignment.status} to #{new_status} is #{steps} steps)")
+      assignment.errors.add(:status, "Workflow status can only change incrementally (#{@assignment.status} to #{new_status} is a jump of #{steps} workflow steps)")
       return false
     end
     true
@@ -103,18 +99,36 @@ class AssignmentsController < ApplicationController
       @assignment = Assignment.find(params[:id])
     end
 
+    def set_assignment_from_create_params
+      @assignment = Assignment.new(assignment_params)
+      digital_object = DigitalObject::Base.find(@assignment.digital_object_pid)
+      @assignment.project = digital_object.project
+      @assignment.assigner ||= current_user
+      @assignment.status = 'unassigned' unless @assignment.assignee.present?
+
+      # original and proposed fields should both be set upon assignment creation
+      case @assignment.task
+      # TODO: Add 'describe', 'annotate', and 'sequence' types to case statement
+      when 'transcribe'
+        # store current state of transcript in *original* field
+        @assignment.original = digital_object.transcript || ''
+        # also store current state of transcript in *proposed* field as starting point for editing
+        @assignment.proposed = @assignment.original
+      end
+    end
+
     def require_appropriate_project_permissions!
       case params[:action]
-      when 'new', 'create', 'delete'
+      when 'new', 'create'
         require_project_permission!(@assignment.project, :project_admin)
-      when 'new', 'create', 'edit', 'update', 'delete'
+      when 'update'
         unless @assignment.assignee == current_user
           require_project_permission!(@assignment.project, :project_admin)
         end
-      when 'update'
-        require_workflow_permission!(@assignment, params[:status].to_sym)
-      else
-        require_hyacinth_admin!
+      when 'edit', 'destroy'
+        unless @assignment.assigner == current_user
+          require_project_permission!(@assignment.project, :project_admin)
+        end
       end
     end
 
@@ -128,7 +142,10 @@ class AssignmentsController < ApplicationController
 
       case params[:action]
       when 'show', 'update'
-        @contextual_nav_options['nav_items'].push(label: 'Edit', url: edit_assignment_path(@assignment))
+        if @assignment.assigner == current_user
+          @contextual_nav_options['nav_items'].push(label: 'Edit', url: edit_assignment_path(@assignment))
+          @contextual_nav_options['nav_items'].push(label: 'Delete', url: assignment_path(@assignment.id), options: { method: :delete, data: { confirm: 'Are you sure you want to delete this Assignment?' } })
+        end
       end
     end
 end

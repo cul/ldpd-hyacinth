@@ -4,13 +4,12 @@
   <table class="table table-condensed table-bordered table-striped">
     <thead>
       <tr>
-        <th>Assignment ID</th>
+        <th>Assignment</th>
         <th>Digital Object</th>
         <th>Assigner</th>
         <th>Assignee</th>
         <th>Task</th>
         <th>Status</th>
-        <th>Actions</th>
       </tr>
     </thead>
 
@@ -20,17 +19,12 @@
       <% else %>
         <% results.each do |assignment| %>
           <tr>
-            <td><%= assignment.id %></td>
+            <td><%= link_to("ASSIGNMENT-#{assignment.id}", assignment_path(assignment)) %></td>
             <td><%= assignment.digital_object_pid %></td>
             <td><%= assignment.assigner.full_name %></td>
             <td><%= assignment.assignee.full_name %></td>
             <td><%= assignment.task %></td>
             <td><%= assignment.status %></td>
-            <td>
-              <%= link_to('View', assignment_path(assignment), class: 'btn btn-default btn-xs') %>
-              <%= link_to('Edit', edit_assignment_path(assignment), class: 'btn btn-default btn-xs') %>
-              <%= assignment.assigner == current_user ? link_to('Delete', assignment, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-default btn-xs') : '' %>
-            </td>
           </tr>
         <% end %>
       <% end %>

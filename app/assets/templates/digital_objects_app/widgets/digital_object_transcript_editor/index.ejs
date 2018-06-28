@@ -3,12 +3,15 @@
   //
   //digitalObject
   //mode (view or edit)
+  //assignment
 %>
 
+<% if (assignment) { %>
+  <div class="alert alert-info">Transcript work for this Digital Object is currently assigned to <%= assignment['assignee_name'] %> and can only be edited by <%= assignment['assignee_name'] %>. Pending version is displayed below.</div>
+<% } %>
+
 <% if (mode == 'view') { %>
-  <div>
-    Transcript goes here
-  </div>
+  <pre class="transcript-readonly-container"></pre>
 <% } else if (mode == 'edit') { %>
 
 <div role="tabpanel">

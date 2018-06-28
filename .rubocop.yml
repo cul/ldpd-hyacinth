@@ -23,6 +23,12 @@ Layout/BlockEndNewline:
   Exclude:
     - 'spec/**/*'
 
+Layout/EmptyLinesAroundModuleBody:
+  Enabled: false
+
+Layout/EmptyLinesAroundClassBody:
+  Enabled: false
+
 Layout/IndentationConsistency:
   EnforcedStyle: rails
 

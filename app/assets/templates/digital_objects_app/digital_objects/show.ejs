@@ -18,13 +18,12 @@ var navItems = [];
 var hasUpdatePermission = Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update');
 var hasTranscribePermission = Hyacinth.DigitalObjectsApp.currentUser.hasAssignmentPermission(digitalObject, Hyacinth.AssignmentTaskTypes.transcribe);
 
-if(hasUpdatePermission || hasTranscribePermission) {
-  if (digitalObject.digital_object_type.string_key == 'asset') {
-    navItems.push({label: 'Manage Transcript', url: '#' +
-                   Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects',
-                                                                 action: 'manage_transcript',
-                                                                 pid: Hyacinth.DigitalObjectsApp.params['pid']})});
-  }
+
+if (digitalObject.digital_object_type.string_key == 'asset') {
+  navItems.push({label: 'Manage Transcript', url: '#' +
+                 Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects',
+                                                               action: 'manage_transcript',
+                                                               pid: Hyacinth.DigitalObjectsApp.params['pid']})});
 }
 
 if (hasUpdatePermission) {

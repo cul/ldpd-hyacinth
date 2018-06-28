@@ -288,19 +288,27 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_transcript 
     cache: false
   }).done(function(data_for_editor){
 
+    var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
+    var assignment = digitalObject.hasAssignment(Hyacinth.AssignmentTaskTypes.transcribe);
+    var mode = 'view'; //default
+
+    if(assignment) {
+      // If this transcript is assigned to the current user, then the current user can edit it.
+      if(assignment['assignee_id'] == Hyacinth.DigitalObjectsApp.currentUser.id) {
+        mode = 'edit';
+      }
+    } else if(Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) {
+      // If this assignment is not assigned to anyone, then anyone with edit permission can edit it.
+      mode = 'edit';
+    }
+
     $.ajax({
-      url: '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '/transcript',
+      url: assignment ? '/assignments/' + assignment['id'] + '/changeset/proposed' : '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '/transcript',
       type: 'GET',
       cache: false
     }).done(function(transcriptText){
-      var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
 
       $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/manage_transcript.ejs', {digitalObject: digitalObject}));
-
-      var mode = Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update') ? 'edit' : 'view';
-      // If regular permissions don't grant edit permission, check if an assignment grants edit permission
-      var assignment = Hyacinth.DigitalObjectsApp.currentUser.hasAssignmentPermission(digitalObject, Hyacinth.AssignmentTaskTypes.transcribe);
-      mode = assignment ? 'edit' : mode;
 
       var transcriptEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor('digital-object-transcript-editor', {
         digitalObject: digitalObject,

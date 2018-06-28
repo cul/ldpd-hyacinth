@@ -5,7 +5,11 @@ Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor = function(containerEle
   this.mode = options['mode'];
   this.assignment = options['assignment'];
   this.init();
-  this.$containerElement.find('.transcript-textarea').val(options['transcriptText']);
+  if(this.mode == 'edit') {
+    this.$containerElement.find('.transcript-textarea').val(options['transcriptText']);
+  } else {
+    this.$containerElement.find('.transcript-readonly-container').html(options['transcriptText'].length > 0 ? options['transcriptText'] : 'No transcript available.');
+  }
 };
 
 /*******************************
@@ -42,7 +46,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor.prototype.init = functi
   this.$containerElement.html(
     Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_transcript_editor/index.ejs', {
       digitalObject: this.digitalObject,
-      mode: that.mode
+      mode: that.mode,
+      assignment: this.assignment
     })
   );
 
