@@ -94,6 +94,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor.prototype.init = functi
           Hyacinth.addAlert('Transcript upload completed successfully.', 'info');
         } else {
           $uploadForm.find('.extended-progress-info').html('Upload failed:<br />' + result['errors'].join('<br />'));
+          Hyacinth.addAlert('Transcript upload failed.', 'danger');
         }
       }
   });

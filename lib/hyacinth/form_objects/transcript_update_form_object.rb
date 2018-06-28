@@ -2,39 +2,39 @@ module Hyacinth
   module FormObjects
     class TranscriptUpdateFormObject < Hyacinth::FormObjects::FormObject
 
+      validate :validate_presence_of_file_or_transcript_text
+      validate :validate_file, if: -> { file.present? }
+
+      attr_accessor :file, :transcript_text
+
       MAX_ALLOWED_TRANSCRIPT_UPLOAD_SIZE = 10_000_000
 
-      attr_reader :transcript_content
+      def test
+        raise 'ran this'
+      end
 
-      def initialize(params)
-        super()
-        @transcript_content = nil
-
-        if params[:file].present?
-          error_messages = validate_transcript_upload_file(params[:file])
-          if error_messages.present?
-            error_messages.each do |message|
-              errors.add(:file, message)
-            end
-          else
-            @transcript_content = params[:file].tempfile.read
-          end
-        elsif params[:transcript_text].present?
-          @transcript_content = params[:transcript_text]
+      def transcript_content
+        if file.present?
+          file.tempfile.read
         else
-          errors.add(:params, 'Missing transcript content params. Expected transcript data in either :file or :transcript_text params.')
+          transcript_text
         end
       end
 
-      # validates the given upload file param
-      # @return an array of string errors if validation fails
-      def validate_transcript_upload_file(file_param)
-        error_messages = []
-        upload_file_size = file_param.tempfile.size
-        upload_file_mime_type = BestType.mime_type.for_file_name(file_param.original_filename)
-        error_messages << "Transcript file too large. Must be smaller than #{MAX_ALLOWED_TRANSCRIPT_UPLOAD_SIZE / 1_000_000} MB." if upload_file_size > MAX_ALLOWED_TRANSCRIPT_UPLOAD_SIZE # 10MB
-        error_messages << "Only plain text files are allowed (detected MIME type #{upload_file_mime_type})." unless upload_file_mime_type == 'text/plain'
-        error_messages
+      def validate_presence_of_file_or_transcript_text
+        if file.blank? && transcript_text.blank?
+          errors.add(:base, 'Missing transcript content. Expected transcript data in either :file or :transcript_text params.')
+        end
+      end
+
+      def validate_file
+        # validate file size
+        size = file.tempfile.size
+        errors.add(:base, "Transcript file too large. Must be smaller than #{MAX_ALLOWED_TRANSCRIPT_UPLOAD_SIZE / 1_000_000} MB.") if size > MAX_ALLOWED_TRANSCRIPT_UPLOAD_SIZE # 10MB
+
+        # validate mime type
+        mime_type = BestType.mime_type.for_file_name(file.original_filename)
+        errors.add(:base, "Only plain text files are allowed (detected MIME type #{mime_type}).") unless mime_type == 'text/plain'
       end
 
     end
