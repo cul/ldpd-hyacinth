@@ -1,8 +1,13 @@
 class Assignments::ChangesetsController < ApplicationController
-  before_action :set_assignment, only: [:update, :proposed]
+  before_action :set_assignment, only: [:update, :proposed, :edit, :update]
+  before_action :set_contextual_nav_options
 
   def proposed
     render text: @assignment.proposed.present? ? @assignment.proposed : ''
+  end
+
+  # GET /assignments/1/changeset/edit
+  def edit
   end
 
   # PUT /assignments/1/changeset
@@ -46,5 +51,13 @@ class Assignments::ChangesetsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def transcript_params
       params.permit(:file, :transcript_text)
+    end
+
+    def set_contextual_nav_options
+      case params[:action]
+      when 'edit', 'update'
+        @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Assignment'.html_safe
+        @contextual_nav_options['nav_title']['url'] = assignment_path(@assignment)
+      end
     end
 end

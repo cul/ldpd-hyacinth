@@ -80,6 +80,7 @@ class AssignmentsController < ApplicationController
   end
 
   def disallow_invaid_status_transitions(assignment, new_status)
+    return true if assignment.assigner == current_user # assigner can use assignment edit screen to change assignment to any state
     if (steps = (Assignment.statuses[assignment.status] - Assignment.statuses[new_status]).abs) > 1
       assignment.errors.add(:status, "Workflow status can only change incrementally (#{@assignment.status} to #{new_status} is a jump of #{steps} workflow steps)")
       return false
@@ -145,6 +146,8 @@ class AssignmentsController < ApplicationController
         if @assignment.assigner == current_user
           @contextual_nav_options['nav_items'].push(label: 'Edit', url: edit_assignment_path(@assignment))
           @contextual_nav_options['nav_items'].push(label: 'Delete', url: assignment_path(@assignment.id), options: { method: :delete, data: { confirm: 'Are you sure you want to delete this Assignment?' } })
+        elsif @assignment.assignee == current_user
+          @contextual_nav_options['nav_items'].push(label: 'Work On Assignment &raquo;'.html_safe, url: edit_changeset_path(@assignment))
         end
       end
     end

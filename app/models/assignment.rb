@@ -3,7 +3,7 @@ class Assignment < ActiveRecord::Base
   belongs_to :project
   belongs_to :assignee, class_name: 'User'
   enum task: { annotate: 0, describe: 1, sequence: 2, transcribe: 3 }
-  enum status: { unassigned: 0, assigned: 1, in_progress: 2, ready: 3, in_review: 4, accepted: 5 }
+  enum status: { unassigned: 0, assigned: 1, in_progress: 2, ready_for_review: 3, in_review: 4, accepted: 5 }
 
   validates :assignee_id, presence: true
 
@@ -11,7 +11,6 @@ class Assignment < ActiveRecord::Base
   def allowed_status_change_options_for_user(user)
     options = Set.new
     options.merge(allowed_status_change_options_for_assignee(user)) if self.assignee == user
-    options.merge(allowed_status_change_options_for_assigner(user)) if self.assigner == user
     options
   end
 
@@ -23,22 +22,7 @@ class Assignment < ActiveRecord::Base
       options << 'in_progress'
     when 'in_progress'
       options << 'assigned'
-      options << 'ready'
-    when 'ready'
-      options << 'in_progress'
-    end
-
-    options
-  end
-
-  def allowed_status_change_options_for_assigner(user)
-    options = Set.new
-
-    case self.status
-    when 'ready'
-      options << 'in_review'
-    when 'in_review'
-      options << 'accepted'
+      options << 'ready_for_review'
     end
 
     options

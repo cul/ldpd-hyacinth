@@ -4,6 +4,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor = function(containerEle
   this.digitalObject = options['digitalObject'];
   this.mode = options['mode'];
   this.assignment = options['assignment'];
+  this.isAssignedToCurrentUser = options['isAssignedToCurrentUser'];
   this.init();
   if(this.mode == 'edit') {
     this.$containerElement.find('.transcript-textarea').val(options['transcriptText']);
@@ -90,7 +91,15 @@ Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor.prototype.init = functi
       done: function (e, data) {
         var result = data['result'];
         if(result['success']) {
-          Hyacinth.DigitalObjectsApp.reloadCurrentAction();
+          if(that.assignment) {
+            console.log('yes assignment');
+            // running in standalone context
+            window.location.reload(false);
+          } else {
+            console.log('no assignment');
+            // running in js app context
+            Hyacinth.DigitalObjectsApp.reloadCurrentAction();
+          }
           Hyacinth.addAlert('Transcript upload completed successfully.', 'info');
         } else {
           $uploadForm.find('.extended-progress-info').html('Upload failed:<br />' + result['errors'].join('<br />'));

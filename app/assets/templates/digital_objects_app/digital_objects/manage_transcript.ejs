@@ -3,8 +3,6 @@
   //
   //digitalObject
 %>
-<% Hyacinth.ContextualNav.setNavTitle('&laquo; Back', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: Hyacinth.DigitalObjectsApp.params['pid']})); %>
-<% Hyacinth.ContextualNav.setNavItems([]); %>
 
 <h1>Transcript for <%= digitalObject.digital_object_type['display_label'] %>: <%- digitalObject.getTitle() %></h1>
 <strong>Project:</strong> <%= digitalObject.getProject()['display_label'] %>

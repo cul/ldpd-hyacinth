@@ -25,15 +25,15 @@
     </div>
     <div class="col-sm-4">
       <% allowed_status_change_options = @assignment.allowed_status_change_options_for_user(current_user) %>
-      <div class="well">
-        <h2>Status: <%= @assignment.status %></h2>
-        <% if allowed_status_change_options.present? %>
-          <%= form_for(@assignment) do |f| %>
-            <% statuses = Assignment.statuses.select{|status, _status_number| allowed_status_change_options.include?(status)} %>
-            <% if statuses.present? %>
-              <div >
-                <% statuses.each do |status, status_number| %>
-                <button type="submit" name="<%= f.object_name %>[status]" value="<%= status %>" class="btn btn-default">
+      <div class="label label-info" style="font-size: 2em; display:block; margin-bottom: 20px;"><%= @assignment.status %></div>
+      <div class="clearfix"></div>
+      <% if allowed_status_change_options.present? %>
+        <%= form_for(@assignment) do |f| %>
+          <% statuses = Assignment.statuses.select{|status, _status_number| allowed_status_change_options.include?(status)} %>
+          <% if statuses.present? %>
+            <div class="aligncenter">
+              <% statuses.each do |status, status_number| %>
+                <button type="submit" name="<%= f.object_name %>[status]" value="<%= status %>" class="btn btn-default btn-block">
                   <% if Assignment.statuses[status] < Assignment.statuses[@assignment.status] %>
                     <span class="glyphicon glyphicon-circle-arrow-left"></span>
                   <% end %>
@@ -42,22 +42,23 @@
                     <span class="glyphicon glyphicon-circle-arrow-right"></span>
                   <% end %>
                 </button>
-                <% end %>
-              </div>
-            <% else %>
-              n/a
-            <% end %>
+              <% end %>
+            </div>
+          <% else %>
+            n/a
           <% end %>
         <% end %>
-      </div>
-      <% if @assignment.assigner == current_user %>
-        <div class="well aligncenter">
-          <%= link_to 'Approve Changes', commit_assignment_path(@assignment), method: :put, class: 'btn btn-primary' %>
-          <br /><br />
-          <%= link_to 'Reject Changes', reject_assignment_path(@assignment), method: :put, class: 'btn btn-danger' %>
-        </div>
       <% end %>
-      <div class="well">
+      <% if @assignment.assigner == current_user %>
+        <% if ['ready_for_review', 'in_review'].include?(@assignment.status) %>
+          <div>
+            <%= link_to 'Review Changes', commit_assignment_path(@assignment), method: :put, class: 'btn btn-default btn-block' %>
+            <%= link_to 'Commit Changes', commit_assignment_path(@assignment), method: :put, class: 'btn btn-primary btn-block' %>
+            <%= link_to 'Reject Changes', reject_assignment_path(@assignment), method: :put, class: 'btn btn-danger btn-block' %>
+          </div>
+        <% end %>
+      <% end %>
+      <div class="well" style="margin-top:20px;">
         <h2>People</h2>
         <p>
           <strong>Assigner:</strong> <%= @assignment.assigner.full_name %>

@@ -4,13 +4,14 @@
   //digitalObject
   //mode (view or edit)
   //assignment
+  //isAssignedToCurrentUser
 %>
 
-<% if (assignment) { %>
-  <div class="alert alert-info">Transcript work for this Digital Object is currently assigned to <%= assignment['assignee_name'] %> and can only be edited by <%= assignment['assignee_name'] %>. Pending version is displayed below.</div>
-<% } %>
-
 <% if (mode == 'view') { %>
+  <% if (assignment) { %>
+    <div class="alert alert-info">Transcript editing is locked because this Digital Object's transcript is currently assigned to <%= assignment['assignee_name'] %>.</div>
+  <% } %>
+
   <pre class="transcript-readonly-container"></pre>
 <% } else if (mode == 'edit') { %>
 

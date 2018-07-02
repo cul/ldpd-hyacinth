@@ -292,29 +292,27 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_transcript 
     var assignment = digitalObject.hasAssignment(Hyacinth.AssignmentTaskTypes.transcribe);
     var mode = 'view'; //default
 
-    if(assignment) {
-      // If this transcript is assigned to the current user, then the current user can edit it.
-      if(assignment['assignee_id'] == Hyacinth.DigitalObjectsApp.currentUser.id) {
-        mode = 'edit';
-      }
-    } else if(Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) {
+    if(!assignment && Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) {
       // If this assignment is not assigned to anyone, then anyone with edit permission can edit it.
       mode = 'edit';
     }
 
     $.ajax({
-      url: assignment ? '/assignments/' + assignment['id'] + '/changeset/proposed' : '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '/transcript',
+      url: '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '/transcript',
       type: 'GET',
       cache: false
     }).done(function(transcriptText){
 
+      Hyacinth.ContextualNav.setNavTitle('&laquo; Back', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: digitalObject.pid}));
+      Hyacinth.ContextualNav.setNavItems([]);
       $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/manage_transcript.ejs', {digitalObject: digitalObject}));
 
       var transcriptEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor('digital-object-transcript-editor', {
         digitalObject: digitalObject,
         transcriptText: transcriptText,
         mode: mode,
-        assignment: assignment
+        assignment: assignment,
+        isAssignedToCurrentUser: false
       });
 
       //Event cleanup

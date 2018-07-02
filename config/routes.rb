@@ -123,6 +123,7 @@ Hyacinth::Application.routes.draw do
       scope module: "assignments" do
         resource 'changeset', only: [:update] do
           get 'proposed'
+          get 'edit'
         end
       end
     end
