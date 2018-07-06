@@ -58,6 +58,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.prototype.init = functi
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.prototype.createSynchronizerWidget = function(){
+  var that = this;
+
   // Don't show the A/V controls, errorBar, or Tag button
 	$("#video").hide();
 	$("#audio").hide();
@@ -98,12 +100,17 @@ Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.prototype.createSynchro
 		success += '<div class="col-md-6"><i class="fa fa-times-circle-o close"></i><p class="success-bar"><strong>Upload Successful</strong><br />The Wowza URL ' + url + " was successfully ingested.</div>";
 		$("#messagesBar").append(success);
 	};
+  var mediaUrlDownload = '/digital_objects/' + this.digitalObject.getPid() + '/download_access_copy';
+  var mediaUrlWowza = "https://ldpd-wowza-test1.svc.cul.columbia.edu:8443/vod/mp4:CARN27_v_1_READY_TO_EXPORT.mp4/playlist.m3u8";
+  var mediaUrl = mediaUrlWowza;
+  console.log(mediaUrl);
+
 	var info = {
-		media: "https://ldpd-wowza-test1.svc.cul.columbia.edu:8443/vod/mp4:CARN27_v_1_READY_TO_EXPORT.mp4/playlist.m3u8",
+		media: mediaUrl,
 		index: "/synchronizer-module/assets/OHMS-Sample-003.metadata.vtt",
 		transcript: "/synchronizer-module/assets/OHMS-Sample-003.captions.vtt"
 	};
-	OHSynchronizer.Import.uploadURLFile(info.media);
+	OHSynchronizer.Import.mediaFromUrl(info.media);
 	var previewOnly = true;
 	var widget = new OHSynchronizer.Index('input-index', previewOnly);
 	var xhr = new XMLHttpRequest();
@@ -113,6 +120,11 @@ Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.prototype.createSynchro
 		var blob = new Blob([xhr.response], {type: 'text/vtt'});
 		var reader = widget.fileReader(blob, 'vtt');
 		if (reader) reader.readAsText(blob);
+    that.$containerElement.find('video, audio').each(function (index, element) {
+      if ($(element).data('able-player') !== undefined) {
+        new AblePlayer($(this),$(element));
+      }
+    });
 	};
 	xhr.send();
 };

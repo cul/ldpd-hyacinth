@@ -41,13 +41,13 @@
 							<p>Click browse to select an applicable audio or video file from your local file system, or enter a URL.</p>
 							<p>
 								<label class="btn btn-primary">
-							    <input id="media-file-upload" type="file" onchange="OHSynchronizer.Import.uploadFile('#media-file-upload')">
+							    <input id="media-file-upload" type="file" onchange="OHSynchronizer.Import.mediaFromFile.apply(null, OHSynchronizer.Import.uploadedFile('#media-file-upload'));">
 							    Browse Locally
 								</label>
 							</p>
 							<p>&nbsp;</p>
 							<p><input id="media-url-upload" type="text" placeholder="Enter a URL here" value="https://ldpd-wowza-test1.svc.cul.columbia.edu:8443/vod/mp4:CARN27_v_1_READY_TO_EXPORT.mp4/playlist.m3u8">
-								<button id="media-url-submit" class="btn btn-primary" onclick="OHSynchronizer.Import.uploadURLFile($('#media-url-upload').attr('value'));">Submit</button>
+								<button id="media-url-submit" class="btn btn-primary" onclick="OHSynchronizer.Import.mediaFromUrl($('#media-url-upload').attr('value'));">Submit</button>
 							</p>
 						</div>
 
@@ -94,7 +94,7 @@
 							</select>
 							&nbsp;
 							<label class="btn btn-primary">
-								<input id="input-text" type="file" onchange="OHSynchronizer.Import.uploadFile('#input-text')">
+								<input id="input-text" type="file" onchange="OHSynchronizer.Import.workFromFile.apply(null, OHSynchronizer.Import.uploadedFile('#input-text'));">
 								Browse
 							</label>
 						</p>

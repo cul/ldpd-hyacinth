@@ -45,7 +45,7 @@
 		index: "./assets/OHMS-Sample-003.metadata.vtt",
 		transcript: "./assets/OHMS-Sample-003.captions.vtt"
 	};
-	OHSynchronizer.Import.uploadURLFile(info.media);
+	OHSynchronizer.Import.mediaFromUrl(info.media);
 	var previewOnly = false;
 	var widget = new OHSynchronizer.Index('input-index', previewOnly);
 	var xhr = new XMLHttpRequest();
@@ -53,8 +53,7 @@
 	xhr.responseType = 'blob';
 	xhr.onload = function(e) {
 		var blob = new Blob([xhr.response], {type: 'text/vtt'});
-		var reader = widget.fileReader(blob, 'vtt');
-		if (reader) reader.readAsText(blob);
+		widget.renderText(blob, 'vtt');
 	};
 	xhr.send();
 }(jQuery));

@@ -19,11 +19,6 @@ body {
   border-radius: 0px;
 }
 
-#working-area {
-  margin-top: 25px;
-  margin-bottom: 25px;
-}
-
 /* To allow the media to scroll down the entire page */
 @media screen and (min-width: 1000px) {
   #left-sidebar {
