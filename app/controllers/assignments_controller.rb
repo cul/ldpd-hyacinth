@@ -1,6 +1,6 @@
 class AssignmentsController < ApplicationController
-  before_action :set_assignment, only: [:show, :edit, :update, :destroy]
-  before_action :set_assignment_from_create_params, only: [:create]
+  before_action :set_assignment, only: [:show, :edit, :update, :destroy, :commit, :reject, :review]
+  before_action :set_assignment_and_digital_object_from_new_or_create_params, only: [:new, :create]
   before_action :require_appropriate_project_permissions!
   before_action :set_contextual_nav_options
 
@@ -12,15 +12,27 @@ class AssignmentsController < ApplicationController
 
   # GET /assignments/new
   def new
-    @assignment = Assignment.new(assignment_params.merge(assigner: current_user))
   end
 
   # POST /assignments
   def create
+    @assignment.status = 'unassigned' if @assignment.assignee.blank?
+
+    # original and proposed fields should both be set upon assignment creation
+    case @assignment.task
+    # TODO: Add 'describe', 'annotate', and 'sequence' types to case statement
+    when 'transcribe'
+      # store current state of transcript in *original* field
+      @assignment.original = @digital_object.transcript || ''
+      # also store current state of transcript in *proposed* field as starting point for editing
+      @assignment.proposed = @assignment.original
+    end
+
     begin
+      # Don't allow existence of more than one assignment with the same type and pid
       successful_save = @assignment.save
     rescue ActiveRecord::RecordNotUnique
-      @assignment.errors.add(:task, "Task can only be assigned once for an object.")
+      @assignment.errors.add(:task, "can only be assigned once for an object.")
     end
 
     respond_to do |format|
@@ -58,11 +70,11 @@ class AssignmentsController < ApplicationController
   # PUT /assignments/:id
   # PATCH /assignments/:id
   def update
-    @assignment.status = :unassigned if @assignment.assignee.blank?
+    @assignment.status = 'unassigned' if @assignment.assignee.blank?
 
     respond_to do |format|
       if disallow_invaid_status_transitions(@assignment, assignment_params[:status]) && @assignment.update(assignment_params)
-        format.html { render action: 'show', locals: { notice: 'Assignment was successfully updated.' } }
+        format.html { redirect_to action: 'show', notice: 'Assignment was successfully updated.' }
         format.json { render action: 'show', status: :ok, location: @assignment }
       else
         format.html { render action: 'edit', locals: { notice: "Could not save assignment." } }
@@ -73,10 +85,31 @@ class AssignmentsController < ApplicationController
 
   # POST /assignments/:id/commit
   def commit
+    # TODO: Add 'describe', 'annotate', and 'sequence' types to case statement
+    case @assignment.task
+    when 'transcribe'
+      # TODO
+    end
+
+    Assignment.transaction do
+      @assignment.status = 'accepted'
+      ArchivedAssignment.from_assignment(@assignment).save!
+      @assignment.destroy!
+      redirect_to archived_assignment_path("ASSIGNMENT-#{@assignment.id}")
+      return
+    end
+
+    raise "didn't run this"
   end
 
-  # POST /assignments/:id/reject
+  # GET /assignments/:id/reject
   def reject
+  end
+
+  # PUT /assignments/:id/review
+  def review
+    @assignment.update(status: 'in_review')
+    redirect_to changeset_path(@assignment)
   end
 
   def disallow_invaid_status_transitions(assignment, new_status)
@@ -92,7 +125,7 @@ class AssignmentsController < ApplicationController
 
     # whitelist attribute params for an assignment
     def assignment_params
-      params.require(:assignment).permit(:task, :status, :project, :digital_object_pid, :assignee_id)
+      params.require(:assignment).permit(:task, :status, :project, :note, :digital_object_pid, :assignee_id)
         .transform_values { |x| x =~ /^\d+$/ ? x.to_i : x }
     end
 
@@ -100,22 +133,11 @@ class AssignmentsController < ApplicationController
       @assignment = Assignment.find(params[:id])
     end
 
-    def set_assignment_from_create_params
+    def set_assignment_and_digital_object_from_new_or_create_params
       @assignment = Assignment.new(assignment_params)
-      digital_object = DigitalObject::Base.find(@assignment.digital_object_pid)
-      @assignment.project = digital_object.project
+      @digital_object = DigitalObject::Base.find(@assignment.digital_object_pid)
+      @assignment.project = @digital_object.project
       @assignment.assigner ||= current_user
-      @assignment.status = 'unassigned' unless @assignment.assignee.present?
-
-      # original and proposed fields should both be set upon assignment creation
-      case @assignment.task
-      # TODO: Add 'describe', 'annotate', and 'sequence' types to case statement
-      when 'transcribe'
-        # store current state of transcript in *original* field
-        @assignment.original = digital_object.transcript || ''
-        # also store current state of transcript in *proposed* field as starting point for editing
-        @assignment.proposed = @assignment.original
-      end
     end
 
     def require_appropriate_project_permissions!
@@ -149,6 +171,9 @@ class AssignmentsController < ApplicationController
         elsif @assignment.assignee == current_user
           @contextual_nav_options['nav_items'].push(label: 'Work On Assignment &raquo;'.html_safe, url: edit_changeset_path(@assignment))
         end
+      when 'reject'
+        @contextual_nav_options['nav_title']['label'] =  '&laquo; Cancel'.html_safe
+        @contextual_nav_options['nav_title']['url'] = assignment_path(@assignment)
       end
     end
 end

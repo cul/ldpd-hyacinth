@@ -1,5 +1,5 @@
 class Assignments::ChangesetsController < ApplicationController
-  before_action :set_assignment, only: [:update, :proposed, :edit, :update]
+  before_action :set_assignment, only: [:update, :proposed, :edit, :update, :show]
   before_action :set_contextual_nav_options
 
   def proposed
@@ -8,6 +8,11 @@ class Assignments::ChangesetsController < ApplicationController
 
   # GET /assignments/1/changeset/edit
   def edit
+    @assignment.update(status: 'in_progress') if @assignment.status == 'assigned'
+  end
+
+  # GET /assignments/1/changeset
+  def show
   end
 
   # PUT /assignments/1/changeset
@@ -55,7 +60,7 @@ class Assignments::ChangesetsController < ApplicationController
 
     def set_contextual_nav_options
       case params[:action]
-      when 'edit', 'update'
+      when 'edit', 'update', 'show'
         @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Assignment'.html_safe
         @contextual_nav_options['nav_title']['url'] = assignment_path(@assignment)
       end

@@ -311,8 +311,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_transcript 
         digitalObject: digitalObject,
         transcriptText: transcriptText,
         mode: mode,
-        assignment: assignment,
-        isAssignedToCurrentUser: false
+        assignment: assignment
       });
 
       //Event cleanup

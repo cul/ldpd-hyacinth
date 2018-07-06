@@ -118,16 +118,18 @@ Hyacinth::Application.routes.draw do
     post 'commit', action: 'commit'
     member do
       put 'commit'
-      put 'reject'
+      get 'reject'
+      put 'review'
 
       scope module: "assignments" do
-        resource 'changeset', only: [:update] do
+        resource 'changeset', only: [:update, :edit, :show] do
           get 'proposed'
-          get 'edit'
         end
       end
     end
   end
+
+  resources :archived_assignments, only: [:index, :show, :destroy]
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

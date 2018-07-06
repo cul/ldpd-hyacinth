@@ -1,0 +1,38 @@
+<h1>Reject ASSIGNMENT-<%= @assignment.id %></h1>
+
+<%= form_for(@assignment) do |f| %>
+
+  <% if @assignment.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@assignment.errors.count, "error") %> prohibited this assignment from being saved:</h2>
+
+      <ul>
+      <% @assignment.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :digital_object_pid, 'Digital Object' %><br/>
+    <%= link_to(@assignment.digital_object_pid, digital_object_app_path(@assignment.digital_object_pid)) %>
+  </div>
+
+  <div class="field">
+    <%= f.label :task, 'Task' %><br/>
+    <%= @assignment.task %>
+  </div>
+
+  <div class="field">
+    <%= f.label :note %><br/>
+    <%= f.text_area(:note, {class: 'form-control input-sm', rows: 5}) %>
+  </div>
+
+  <div class="actions">
+    <%= f.hidden_field(:status, value: 'assigned') %>
+
+    <%= f.submit('Reject', class: 'btn btn-primary') %>
+    <%= link_to 'Cancel', assignment_path(@assignment), class: 'btn btn-danger' %>
+  </div>
+<% end %>

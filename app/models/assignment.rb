@@ -1,11 +1,11 @@
 class Assignment < ActiveRecord::Base
-  belongs_to :assigner, class_name: 'User'
-  belongs_to :project
-  belongs_to :assignee, class_name: 'User'
-  enum task: { annotate: 0, describe: 1, sequence: 2, transcribe: 3 }
-  enum status: { unassigned: 0, assigned: 1, in_progress: 2, ready_for_review: 3, in_review: 4, accepted: 5 }
+  include Assignments::Enums
 
-  validates :assignee_id, presence: true
+  belongs_to :project
+  belongs_to :assigner, class_name: 'User'
+  belongs_to :assignee, class_name: 'User'
+
+  validates :assignee, presence: true
 
   # @return a set of valid actions for the given user, based on that user's privileges
   def allowed_status_change_options_for_user(user)

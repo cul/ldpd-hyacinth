@@ -4,7 +4,6 @@ Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor = function(containerEle
   this.digitalObject = options['digitalObject'];
   this.mode = options['mode'];
   this.assignment = options['assignment'];
-  this.isAssignedToCurrentUser = options['isAssignedToCurrentUser'];
   this.init();
   if(this.mode == 'edit') {
     this.$containerElement.find('.transcript-textarea').val(options['transcriptText']);

@@ -1,21 +1,19 @@
-.show-assignment {
-  pre.diff-view {
-    background: transparent;
-    white-space: normal;
-    ul {
-      list-style: none;
-      padding: 0;
-      li {
-        white-space: pre;
-      }
+pre.diff-view {
+  background: transparent;
+  white-space: normal;
+  ul {
+    list-style: none;
+    padding: 0;
+    li {
+      white-space: pre;
     }
-    del {
-      text-decoration: none;
-      background-color: #ff8888;
-    }
-    ins {
-      text-decoration: none;
-      background-color: #88ff88;
-    }
+  }
+  del {
+    text-decoration: none;
+    background-color: #ff8888;
+  }
+  ins {
+    text-decoration: none;
+    background-color: #88ff88;
   }
 }

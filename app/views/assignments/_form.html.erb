@@ -37,8 +37,12 @@
   <% else %>
   <div class="field">
     <%= f.label :status %><br/>
-      <%= f.select(:status, options_for_select(Assignment.statuses.keys, @assignment.status), {}, {:class => 'form-control input-sm'}) %>
+      <%= f.select(:status, options_for_select((Assignment.statuses.keys - ['accepted']), @assignment.status), {}, {:class => 'form-control input-sm'}) %>
     <% end %>
+  </div>
+  <div class="field">
+    <%= f.label :note %><br/>
+    <%= f.text_area(:note, {class: 'form-control input-sm', rows: 5}) %>
   </div>
   <div class="actions">
     <%= f.submit(class: 'btn btn-primary') %>

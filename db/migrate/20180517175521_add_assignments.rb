@@ -6,7 +6,7 @@ class AddAssignments < ActiveRecord::Migration
       t.references :assigner, null: false
       t.references :assignee, null: false
       t.integer :status
-      t.integer :task
+      t.integer :task, null: false
       t.timestamps
 
       t.index [:digital_object_pid, :task], unique: true

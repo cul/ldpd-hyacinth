@@ -1,0 +1,25 @@
+<h1>Archived ASSIGNMENT-<%= @archived_assignment.original_assignment_id %></h1>
+
+<div class="show-archived-assignment">
+  <h2>Primary Details</h2>
+  <p>
+    <strong>Digital Object:</strong>
+    <%= link_to(@archived_assignment.digital_object_pid, digital_object_app_path(@archived_assignment.digital_object_pid)) %>
+  </p>
+  <p>
+    <strong>Project:</strong>
+    <%= @archived_assignment.project.display_label %>
+  </p>
+  <p>
+    <strong>Task:</strong>
+    <%= @archived_assignment.task %>
+  </p>
+  <h2>Additional Details</h2>
+  <p>
+    <%= simple_format(@archived_assignment.summary) %>
+  </p>
+  <h2>Changes</h2>
+  <pre class="diff-view">
+    <%= Diffy::Diff.new(@archived_assignment.original, @archived_assignment.proposed).to_s(:html).html_safe %>
+  </pre>
+</div>

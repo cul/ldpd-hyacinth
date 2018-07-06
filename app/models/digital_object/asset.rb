@@ -261,6 +261,7 @@ class DigitalObject::Asset < DigitalObject::Base
     doc = super
     doc['original_filename_sim'] = original_filename
     doc['original_file_path_sim'] = original_file_path
+    doc['access_copy_location_sim'] = access_copy_location
     doc
   end
 

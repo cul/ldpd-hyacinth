@@ -1,0 +1,23 @@
+<table class="table table-condensed table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>Assignment</th>
+      <th>Digital Object</th>
+      <th>Task</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% if @archived_assignments.blank? %>
+      <tr><td colspan="7">None</td></tr>
+    <% else %>
+      <% @archived_assignments.each do |archived_assignment| %>
+        <tr>
+          <td><%= link_to("ASSIGNMENT-#{archived_assignment.original_assignment_id}", archived_assignment_path("ASSIGNMENT-#{archived_assignment.original_assignment_id}")) %></td>
+          <td><%= archived_assignment.digital_object_pid %></td>
+          <td><%= archived_assignment.task %></td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>
