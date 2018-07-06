@@ -275,7 +275,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.show = function() 
 
 };
 
-//Publish Target Fields Action - Edit fields for a publish target
+//Manage Transcript Action - show or edit a transcript for an asset
 Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_transcript = function() {
   var that = this;
 
@@ -323,6 +323,49 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_transcript 
     }).fail(function(){
       alert(Hyacinth.unexpectedAjaxErrorMessage);
     });
+  }).fail(function(){
+    alert(Hyacinth.unexpectedAjaxErrorMessage);
+  });
+};
+
+//Annotate action - Manage annotation for an object (synchronize, rotate, select representative image, etc.)
+Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_annotation = function() {
+  var that = this;
+
+  $.ajax({
+    url: '/digital_objects/data_for_editor.json',
+    type: 'POST',
+    data: {
+      pid: Hyacinth.DigitalObjectsApp.params['pid']
+    },
+    cache: false
+  }).done(function(data_for_editor){
+
+    var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
+    var assignment = digitalObject.hasAssignment(Hyacinth.AssignmentTaskTypes.annotate);
+    var mode = 'view'; //default
+
+    if(!assignment && Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) {
+      // If this assignment is not assigned to anyone, then anyone with edit permission can edit it.
+      mode = 'edit';
+    }
+
+    Hyacinth.ContextualNav.setNavTitle('&laquo; Back', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: digitalObject.pid}));
+    Hyacinth.ContextualNav.setNavItems([]);
+
+    $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/manage_annotation.ejs', {digitalObject: digitalObject}));
+    var annotationEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor('digital-object-annotation-editor', {
+      digitalObject: digitalObject,
+      mode: mode,
+      assignment: assignment
+    });
+
+    //Event cleanup
+    that.dispose = function(){
+      annotationEditor.dispose();
+      annotationEditor = null;
+    };
+
   }).fail(function(){
     alert(Hyacinth.unexpectedAjaxErrorMessage);
   });

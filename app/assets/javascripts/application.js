@@ -18,7 +18,6 @@
 //= require underscore
 //= require bootstrap-sprockets
 //### require turbolinks
-//= require bootstrap-multiselect
 //= require openseadragon
 // We want hyacinth.js to be loaded before all other Hyacinth JS files
 //= require './general/hyacinth.js'

@@ -18,8 +18,9 @@ gem 'sass-rails'
 gem 'bootstrap-sass', '~> 3.3'
 gem 'autoprefixer-rails' # Recommended by bootstrap-sass
 
-# Gem for nice multi-select widget
-gem 'bootstrap-multiselect-rails'
+# OHSynchronizer Dependencies
+gem 'font-awesome-rails', '~> 4.7.0'
+#gem 'jquery-ui-rails' # Maybe needed?
 
 # Pretty printing
 gem 'coderay'

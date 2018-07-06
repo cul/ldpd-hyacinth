@@ -3,6 +3,10 @@
 
 <%= stylesheet_link_tag "/bootstrap-multiselect-0.9.2/css/bootstrap-multiselect" %>
 
+<!-- OHSynchronizer -->
+<%= stylesheet_link_tag "/synchronizer-module/css/ableplayer.min.css" %>
+<%= stylesheet_link_tag "/synchronizer-module/css/style.css" %>
+
 <% unless Rails.env.test? %>
   <% # Don't want feature tests to time out if these external resources are unavailable (or taking too long to load) %>
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -19,5 +23,11 @@
 <%= javascript_include_tag "/bootstrap-multiselect-0.9.2/js/bootstrap-multiselect" %>
 <%= javascript_include_tag "/ace-1.1.8-min-noconflict/ace.js" %>
 <%= javascript_include_tag "/ace-1.1.8-min-noconflict/ext-beautify.js" %>
+
+<!-- OHSynchronizer -->
+<%= javascript_include_tag "/synchronizer-module/js/ableplayer.min.js" %>
+<%= javascript_include_tag "/synchronizer-module/js/hls.min.js" %>
+<%= javascript_include_tag "/synchronizer-module/js/ohsynchronizer.js" %>
+<%= javascript_include_tag "/synchronizer-module/js/script.js" %>
 
 <%= csrf_meta_tags %>

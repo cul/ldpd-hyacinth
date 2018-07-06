@@ -1,0 +1,220 @@
+/* Columbia University Library
+   Project: Synchronizer Module
+   File: style.css
+	 Description: Stylesheet with specific styling outside of Bootstrap
+   Author: Ashley Pressley
+   Date: 04/30/2018
+   Version: 0.5.0
+*/
+
+html,
+body {
+  font-family: sans-serif;
+  height: 100%;
+}
+
+/* Containers */
+.navbar {
+  margin-bottom: 0px;
+  border-radius: 0px;
+}
+
+#working-area {
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
+
+/* To allow the media to scroll down the entire page */
+@media screen and (min-width: 1000px) {
+  #left-sidebar {
+    position: fixed;
+    width: 500px;
+  }
+
+  #right-sidebar {
+    margin-left: 505px;
+  }
+}
+
+#media-playback {
+  position: -webkit-sticky;
+  /* position: sticky; */
+  top: 0;
+}
+
+.upload-box {
+  padding: 15px;
+  margin-bottom: 10px;
+  background-color: #efefef;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+#metadata,
+#index,
+#transcript {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+#transcript {
+  max-height:80vh;
+  overflow:auto;
+}
+/*  */
+
+/* Transcript Syncing */
+.transcript-word:hover,
+.transcript-clicked,
+.transcript-timestamp:hover {
+  background-color: #00f;
+  color: #fff;
+}
+
+#sync-controls {
+	z-index: 5;
+	position: absolute;
+	/*width: 350px;*/
+	right: 20px;
+  top: 5px;
+	/* background: #000; */
+}
+
+#sync-minute,
+#sync-time {
+  background-color: #fff;
+  font-weight: bold;
+  font-size: 1em;
+}
+#sync-time {
+  background-color: transparent;
+}
+
+#sync-posneg {
+  display: flex;
+  flex-direction: column;
+}
+
+#sync-roll {
+	padding: 5px;
+	width: 35px;
+	text-align: center;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #555;
+	background-color: #fff;
+	background-image: none;
+	height: 34px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+	-webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+	-o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+	transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+
+#sync-minute:hover,
+#sync-time:hover,
+#sync-posneg:hover,
+#sync-roll:hover {
+  cursor: auto;
+}
+
+/*  */
+
+/* Segment Tagging */
+label i {
+  color: #f00;
+}
+
+#tag-segment-btn {
+  position: absolute;
+  top: 5px;
+  right: 20px;
+	/*margin-top: -40px;*/
+	/*margin-bottom: 10px;*/
+}
+
+.indexAccordion {
+  clear: both;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+#text-tabs {
+}
+/*  */
+
+/* Preview */
+.preview-minute {
+  font-weight: bold;
+}
+
+.preview-minute:hover {
+  color: #00f;
+}
+
+/*  */
+
+/* Error and Success Bars */
+#messagesBar {
+  margin-top: 10px;
+}
+
+#messagesBar i {
+	padding: 10px;
+}
+
+.success-bar {
+  padding: 15px;
+  background-color: #75f492;
+  border-radius: 6px;
+}
+
+.error-bar {
+  padding: 15px;
+  background-color: #efefef;
+  color: #f00;
+  font-size: 1.5em;
+  font-weight: bold;
+  border-radius: 6px;
+}
+/*  */
+
+/* Ableplayer */
+/*To fix their status bar text getting cut-off*/
+.able-status-bar {
+  height: 2.5em;
+}
+/*  */
+
+/* Export options */
+.dropdown-item {
+	display: block;
+	width: 100%;
+	padding: .25rem 1.5rem;
+	clear: both;
+	font-weight: 400;
+	color: #212529;
+	text-align: inherit;
+	white-space: nowrap;
+	background: 0 0;
+	border: 0;
+}
+
+a.dropdown-item:hover {
+  background-color: #efefef;
+  text-decoration: none;
+}
+/*  */
+
+/* Helper classes */
+.clearfix {
+}
+.clearfix::after {
+    content: "";
+    clear: both;
+    display: table;
+}

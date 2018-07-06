@@ -18,14 +18,6 @@ var navItems = [];
 var hasUpdatePermission = Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update');
 var hasTranscribePermission = Hyacinth.DigitalObjectsApp.currentUser.hasAssignmentPermission(digitalObject, Hyacinth.AssignmentTaskTypes.transcribe);
 
-
-if (digitalObject.digital_object_type.string_key == 'asset') {
-  navItems.push({label: 'Manage Transcript', url: '#' +
-                 Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects',
-                                                               action: 'manage_transcript',
-                                                               pid: Hyacinth.DigitalObjectsApp.params['pid']})});
-}
-
 if (hasUpdatePermission) {
 
   if (digitalObject.digital_object_type.string_key == 'publish_target') {
@@ -58,6 +50,20 @@ if (hasUpdatePermission) {
                                                                  action: 'new_setup',
                                                                  project_string_key: digitalObject.getProject()['string_key'],
                                                                  parent_digital_object_pid: Hyacinth.DigitalObjectsApp.params['pid']})});
+  }
+
+  if (digitalObject.digital_object_type.string_key == 'asset' && (digitalObject.getDcType() == 'MovingImage' || digitalObject.getDcType() == 'Sound')) {
+    navItems.push({label: 'Manage Annotation', url: '#' +
+                   Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects',
+                                                                 action: 'manage_annotation',
+                                                                 pid: Hyacinth.DigitalObjectsApp.params['pid']})});
+  }
+
+  if (digitalObject.digital_object_type.string_key == 'asset') {
+    navItems.push({label: 'Manage Transcript', url: '#' +
+                   Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects',
+                                                                 action: 'manage_transcript',
+                                                                 pid: Hyacinth.DigitalObjectsApp.params['pid']})});
   }
 
   navItems.push({label: 'Manage Parents', url: '#' +
