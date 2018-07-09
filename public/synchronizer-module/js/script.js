@@ -34,17 +34,11 @@
 		if(!$(this).val()) { $(this).val('0'); }
 	});
 
-	// Update the Tag Segment timestamp when the modal opens from Add Segment
-	$('.tag-add-segment').click(function () {
-		$(".tag-controls").show();
-		OHSynchronizer.playerControls.updateTimestamp();
-	});
-
 	// If the dropdown list is changed, change the active tab to the selected dropdown item
 	$("#file-type, #input-text").click(function() {
 		var selected = "#tabs-" + $("#file-type").val();
 		$('#text-tabs a[href="' + selected + '"]').trigger('click');
-		$('.preview-button').bind('click', function() {
+		$('.preview-button').on('click', function() {
 			OHSynchronizer.Export.previewWork($("#file-type").val());
 		});
 	});

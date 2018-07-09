@@ -41,13 +41,13 @@
 							<p>Click browse to select an applicable audio or video file from your local file system, or enter a URL.</p>
 							<p>
 								<label class="btn btn-primary">
-							    <input id="media-file-upload" type="file" onchange="OHSynchronizer.Import.mediaFromFile.apply(null, OHSynchronizer.Import.uploadedFile('#media-file-upload'));">
+							    <input id="media-file-upload" type="file" onchange="new OHSynchronizer({player:{fileId: '#media-file-upload'}});">
 							    Browse Locally
 								</label>
 							</p>
 							<p>&nbsp;</p>
 							<p><input id="media-url-upload" type="text" placeholder="Enter a URL here" value="https://ldpd-wowza-test1.svc.cul.columbia.edu:8443/vod/mp4:CARN27_v_1_READY_TO_EXPORT.mp4/playlist.m3u8">
-								<button id="media-url-submit" class="btn btn-primary" onclick="OHSynchronizer.Import.mediaFromUrl($('#media-url-upload').attr('value'));">Submit</button>
+								<button id="media-url-submit" class="btn btn-primary" onclick="new OHSynchronizer({player: {url: $('#media-url-upload').val()}});">Submit</button>
 							</p>
 						</div>
 
@@ -62,7 +62,7 @@
 
 					<div id="finish-area" class="">
 						<!-- Whether you're previewing or exporting a transcript or an index is determined by which tab is active. -->
-						<div class="btn-group" role="group">
+						<div class="btn-group session-controls" role="group">
 							<button id="clear" type="button" class="btn btn-secondary" onclick="OHSynchronizer.clearBoxes()">Cancel Session</button>
 							<button id="preview" type="button" class="btn btn-secondary preview-button">Preview</button>
 							<button id="preview-close" type="button" class="btn btn-secondary hidden" onclick="OHSynchronizer.Export.previewClose()">Close Preview</button>
@@ -94,7 +94,7 @@
 							</select>
 							&nbsp;
 							<label class="btn btn-primary">
-								<input id="input-text" type="file" onchange="OHSynchronizer.Import.workFromFile.apply(null, OHSynchronizer.Import.uploadedFile('#input-text'));">
+								<input id="input-text" type="file" onchange="var config = {}; config[$('#file-type').val()] = {id: 'input-' + $('#file-type').val(), fileId: '#input-text'}; new OHSynchronizer(config);">
 								Browse
 							</label>
 						</p>
@@ -226,7 +226,7 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
 		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js"></script>
+		<script src="./js/js.cookie.2.2.0.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 		<script src="./js/ableplayer.min.js"></script>
 		<script src="./js/hls.min.js"></script> <!-- Must be loaded locally because CDN provider is broken -->
