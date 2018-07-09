@@ -100,33 +100,36 @@ Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.prototype.createSynchro
 		success += '<div class="col-md-6"><i class="fa fa-times-circle-o close"></i><p class="success-bar"><strong>Upload Successful</strong><br />The Wowza URL ' + url + " was successfully ingested.</div>";
 		$("#messagesBar").append(success);
 	};
-  var mediaUrlDownload = '/digital_objects/' + this.digitalObject.getPid() + '/download_access_copy';
-  var mediaUrlWowza = "https://ldpd-wowza-test1.svc.cul.columbia.edu:8443/vod/mp4:CARN27_v_1_READY_TO_EXPORT.mp4/playlist.m3u8";
-  var mediaUrl = mediaUrlWowza;
-  console.log(mediaUrl);
 
-	var info = {
-		media: mediaUrl,
-		index: "/synchronizer-module/assets/OHMS-Sample-003.metadata.vtt",
-		transcript: "/synchronizer-module/assets/OHMS-Sample-003.captions.vtt"
-	};
-	OHSynchronizer.Import.mediaFromUrl(info.media);
-	var previewOnly = true;
-	var widget = new OHSynchronizer.Index('input-index', previewOnly);
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET', info.index, true);
-	xhr.responseType = 'blob';
-	xhr.onload = function(e) {
-		var blob = new Blob([xhr.response], {type: 'text/vtt'});
-		var reader = widget.fileReader(blob, 'vtt');
-		if (reader) reader.readAsText(blob);
-    that.$containerElement.find('video, audio').each(function (index, element) {
-      if ($(element).data('able-player') !== undefined) {
-        new AblePlayer($(this),$(element));
-      }
-    });
-	};
-	xhr.send();
+  var widgetOptions = {
+    player: {
+      type: 'video',
+  		url: '/digital_objects/' + this.digitalObject.getPid() + '/download_access_copy'
+    },
+    index: {
+      id: 'input-index',
+      url: '/synchronizer-module/assets/OHMS-Sample-003.metadata.vtt'
+    },
+    options: {
+      previewOnly: false
+    }
+  };
+
+	var widget = new OHSynchronizer(widgetOptions);
+	if (widgetOptions.options.previewOnly) {
+		widget.hideFinishingControls();
+	} else {
+		$('.preview-button').on('click', function() {
+			widget.transcript.preview();
+		});
+	}
+
+  // Manually initialize the widget's player because it normally relies on jQuery's document ready
+  that.$containerElement.find('video, audio').each(function (index, element) {
+    if ($(element).data('able-player') !== undefined) {
+      new AblePlayer($(this),$(element));
+    }
+  });
 };
 
 //Clean up event handlers

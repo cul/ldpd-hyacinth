@@ -18,6 +18,7 @@ AllCops:
     - 'app/helpers/**/*'
     - 'app/views/**/*'
     - 'lib/tasks/**/*'
+    - 'app/controllers/concerns/hyacinth/digital_objects/downloads.rb'
 
 Layout/BlockEndNewline:
   Exclude:
