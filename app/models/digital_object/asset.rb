@@ -4,6 +4,8 @@ class DigitalObject::Asset < DigitalObject::Base
   include DigitalObject::Assets::Validations
   include DigitalObject::Assets::FileImport
   include DigitalObject::Assets::Transcript
+  include DigitalObject::Assets::IndexDocument
+  include DigitalObject::Assets::Captions
 
   UNKNOWN_DC_TYPE = 'Unknown'
   VALID_DC_TYPES = [UNKNOWN_DC_TYPE, 'Dataset', 'MovingImage', 'Software', 'Sound', 'StillImage', 'Text']
@@ -252,8 +254,26 @@ class DigitalObject::Asset < DigitalObject::Base
         fedora_object.add_relationship(:restriction, restriction_liternal, true)
       end
     end
+    write_update_transcript_file_if_changed!
+    write_update_index_document_file_if_changed!
+    write_update_captions_file_if_changed!
+  end
+
+  def write_update_transcript_file_if_changed!
     if transcript_changed?
       IO.write(self.transcript_location, self.transcript)
+    end
+  end
+
+  def write_update_index_document_file_if_changed!
+    if index_document_changed?
+      IO.write(self.index_document_location, self.index_document)
+    end
+  end
+
+  def write_update_captions_file_if_changed!
+    if captions_changed?
+      IO.write(self.captions_location, self.captions)
     end
   end
 

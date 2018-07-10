@@ -45,7 +45,9 @@ Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.prototype.init = functi
         assignment: this.assignment
       })
     );
-    this.synchronizerWidget = this.createSynchronizerWidget();
+
+    this.createSynchronizerWidget();
+
   } else {
     this.$containerElement.html(
       Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_annotation_editor/unsupported_object_type.ejs', {
@@ -57,9 +59,19 @@ Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.prototype.init = functi
   }
 };
 
+Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.prototype.dispose = function() {
+  if(this.synchronizerWidget) {
+    this.synchronizerWidget.dispose();
+    this.synchronizerWidget = null;
+  }
+}
+
 Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.prototype.createSynchronizerWidget = function(){
+
   var that = this;
 
+  // TODO: Move code below into synchronizer widget?
+  //////////////////////////////////////////////
   // Don't show the A/V controls, errorBar, or Tag button
 	$("#video").hide();
 	$("#audio").hide();
@@ -100,6 +112,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.prototype.createSynchro
 		success += '<div class="col-md-6"><i class="fa fa-times-circle-o close"></i><p class="success-bar"><strong>Upload Successful</strong><br />The Wowza URL ' + url + " was successfully ingested.</div>";
 		$("#messagesBar").append(success);
 	};
+  //////////////////////////////////////////////
 
   var widgetOptions = {
     player: {
@@ -108,31 +121,63 @@ Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.prototype.createSynchro
     },
     index: {
       id: 'input-index',
-      url: '/synchronizer-module/assets/OHMS-Sample-003.metadata.vtt'
+      url: this.assignment ? '/assignments/' + this.assignment['id'] + '/changeset' : '/digital_objects/' + this.digitalObject.getPid() + '/index_document',
     },
     options: {
       previewOnly: false
     }
   };
 
-	var widget = new OHSynchronizer(widgetOptions);
+	this.synchronizerWidget = new OHSynchronizer(widgetOptions);
+  OHSynchronizer.errorHandler = function(e) {
+    Hyacinth.addAlert(e, 'danger');
+  }
+
+  this.$containerElement.find('.save-index-document-button').on('click', $.proxy(this.saveIndexDocument, this));
+
+  // TODO: Move code below into synchronizer widget?
+  //////////////////////////////////////////////
 	if (widgetOptions.options.previewOnly) {
-		widget.hideFinishingControls();
+		this.synchronizerWidget.hideFinishingControls();
 	} else {
 		$('.preview-button').on('click', function() {
-			widget.transcript.preview();
+			this.synchronizerWidget.transcript.preview();
 		});
 	}
 
   // Manually initialize the widget's player because it normally relies on jQuery's document ready
-  that.$containerElement.find('video, audio').each(function (index, element) {
+  this.$containerElement.find('video, audio').filter('[data-able-player]').each(function (index, element) {
     if ($(element).data('able-player') !== undefined) {
       new AblePlayer($(this),$(element));
     }
+  });
+  //////////////////////////////////////////////
+};
+
+Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.prototype.saveIndexDocument = function() {
+  $.ajax({
+    url: this.assignment ? '/assignments/' + this.assignment['id'] + '/changeset' : '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '/index_document',
+    type: 'POST',
+    data: {
+      '_method': 'PUT', //For proper RESTful Rails requests
+      'index_document_text': this.synchronizerWidget.index.exportVTT()
+    },
+    cache: false
+  }).done(function(transcriptPutResponse){
+    if (transcriptPutResponse['success']) {
+      Hyacinth.addAlert('Index document updated.', 'info');
+    } else {
+      alert(Hyacinth.unexpectedAjaxErrorMessage);
+    }
+  }).fail(function(){
+    alert(Hyacinth.unexpectedAjaxErrorMessage);
   });
 };
 
 //Clean up event handlers
 Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.prototype.dispose = function() {
   this.$containerElement.removeData(Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.ANNOTATION_EDITOR_DATA_KEY) // Break this (circular) reference.  This is important!
+  if(this.$containerElement.find('.save-index-document-button').length > 0) {
+    this.$containerElement.find('.save-index-document-button').off('click');
+  }
 };

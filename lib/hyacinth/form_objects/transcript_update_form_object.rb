@@ -9,10 +9,6 @@ module Hyacinth
 
       MAX_ALLOWED_TRANSCRIPT_UPLOAD_SIZE = 10_000_000
 
-      def test
-        raise 'ran this'
-      end
-
       def transcript_content
         if file.present?
           file.tempfile.read

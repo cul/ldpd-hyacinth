@@ -760,7 +760,7 @@ OHSynchronizer.Transcript.prototype.preview = function() {
 		}
 		textWorker.postMessage(content);
 	}
-	this.initPreviewControls();	
+	this.initPreviewControls();
 }
 
 OHSynchronizer.Transcript.prototype.initPreviewControls = function() {
@@ -875,7 +875,7 @@ OHSynchronizer.Index.segmentHtml = function(segment) {
 	var panel = '<div id="' + segment.startTime + '" class="segment-panel">';
 	panel += '<h3>' + segment.startTime + '-<span class="tag-title">' + segment.title + '</span></h3>';
 	panel += '<div>';
-	panel += '<div class="col-md-2 pull-right"><button class="btn btn-xs btn-secondary tag-edit">Edit</button> ';
+	panel += '<div class="pull-right"><button class="btn btn-xs btn-secondary tag-edit">Edit</button> ';
 	panel += '<button class="btn btn-xs btn-primary tag-delete">Delete</button></div>';
 	panel += '<p>Synopsis: <span class="tag-segment-synopsis">' + segment.description + "</span></p>";
 	panel += '<p>Keywords: <span class="tag-keywords">' + segment.keywords + "</span></p>";

@@ -1,43 +1,24 @@
-<div id="working-area" class="col-md-12">
-	<div id="left-sidebar" class="container">
+<div id="working-area" class="row" style="position:relative;">
+	<div id="left-sidebar" class="col-md-6">
 		<div id="media-playback" class="">
 			<div id="ytplayer"></div>
-			<div id="video"><video id="video-player" data-able-player preload="auto" autoplay></video></div>
-			<div id="audio"><audio id="audio-player" data-able-player preload="auto" autoplay></audio></div>
+			<div id="video"><video id="video-player" data-able-player preload="auto"></video></div>
+			<div id="audio"><audio id="audio-player" data-able-player preload="auto"></audio></div>
 		</div><!-- /#media-playback -->
 
 		<div id="interview-metadata"></div><!-- /#interview-metadata -->
-
-		<div><p>&nbsp;</p></div>
-
-		<div id="finish-area" class="">
-			<!-- Whether you're previewing or exporting a transcript or an index is determined by which tab is active. -->
-			<div class="btn-group" role="group">
-				<button id="clear" type="button" class="btn btn-secondary" onclick="OHSynchronizer.clearBoxes()">Cancel Session</button>
-				<button id="preview" type="button" class="btn btn-secondary preview-button">Preview</button>
-				<button id="preview-close" type="button" class="btn btn-secondary hidden" onclick="OHSynchronizer.Export.previewClose()">Close Preview</button>
-				<div class="btn-group" role="group">
-			    <button id="export" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-			      Export
-			    </button>
-			    <div class="dropdown-menu" aria-labelledby="btnGroupExport">
-			      <a id="downloadVTT" class="dropdown-item synch-download-button"  data-format="vtt">Download VTT</a>
-			      <!-- <a id="downloadAnno" class="dropdown-item" onclick="exportFile('anno')">Download WebAnno</a>
-			      <a id="downloadXML" class="dropdown-item" onclick="exportFile('xml')">Download XML</a> -->
-			    </div>
-			  </div>
-			</div>
-		</div><!-- /#finish-area -->
 	</div><!-- /#left-sidebar -->
 
-	<div id="right-sidebar">
-		<div id="text-tabs" class="">
+	<div id="right-sidebar" class="col-md-6 pull-right">
+		<div id="text-tabs">
 			<div id="tabs-index">
 				<div id="input-index">
 					<h2>Index Document</h2>
-					<button type="button" class="btn btn-primary pull-right tag-add-segment" data-toggle="modal" data-target=".index-tag" data-backdrop="static" data-keyboard="false">Add Segment</button>
-
-					<div class="indexAccordion"></div>
+					<button type="button" class="btn btn-primary tag-add-segment" data-toggle="modal" data-target=".index-tag" data-backdrop="static" data-keyboard="false">Add Segment</button>
+					<button id="preview" type="button" class="btn btn-default preview-button">Preview</button>
+					<button id="preview-close" type="button" class="btn btn-default hidden" onclick="OHSynchronizer.Export.previewClose()">Close Preview</button>
+					<button id="save" type="button" class="btn btn-primary save-index-document-button pull-right">Save</button>
+					<div class="indexAccordion" style="margin-top:1em;"></div>
 				</div>
 			</div><!-- /#tabs-index -->
 			<div class="clearfix"></div>
@@ -72,12 +53,12 @@
 				<!-- player Controls -->
 				<div id="tag-controls" class="form-group row btn-group tag-controls" role="group">
 					<div class="col-md-1">&nbsp;</div>
-					<button id="control-beginning" type="button" class="btn btn-secondary tag-control-beginning"><i class="fa fa-fast-backward" title="Jump to Beginning of Segment"></i></button>
-					<button id="control-backward" type="button" class="btn btn-secondary tag-control-backward"><i class="fa fa-arrow-left" title="Jump Back 15 Seconds"></i></button>
-					<button id="control-play" type="button" class="btn btn-secondary tag-control-play"><i class="fa fa-play" title="Play"></i></button>
-					<button id="control-stop" type="button" class="btn btn-secondary tag-control-stop"><i class="fa fa-stop" title="Stop"></i></button>
-					<button id="control-forward" type="button" class="btn btn-secondary tag-control-forward"><i class="fa fa-arrow-right" title="Jump Forward 15 Seconds"></i></button>
-					<button id="control-update-time" type="button" class="btn btn-secondary tag-control-update">Update Time</button>
+					<button id="control-beginning" type="button" class="btn btn-default tag-control-beginning"><i class="fa fa-fast-backward" title="Jump to Beginning of Segment"></i></button>
+					<button id="control-backward" type="button" class="btn btn-default tag-control-backward"><i class="fa fa-arrow-left" title="Jump Back 15 Seconds"></i></button>
+					<button id="control-play" type="button" class="btn btn-default tag-control-play"><i class="fa fa-play" title="Play"></i></button>
+					<button id="control-stop" type="button" class="btn btn-default tag-control-stop"><i class="fa fa-stop" title="Stop"></i></button>
+					<button id="control-forward" type="button" class="btn btn-default tag-control-forward"><i class="fa fa-arrow-right" title="Jump Forward 15 Seconds"></i></button>
+					<button id="control-update-time" type="button" class="btn btn-default tag-control-update">Update Time</button>
 				</div>
 				<div class="form-group row">
 					<label for="tag-segment-title" class="col-md-3 col-form-label"><i class="fa fa-asterisk"></i>Segment Title</label>
@@ -112,7 +93,7 @@
 				<div class="form-group row">
 					<div class="col-md-1">&nbsp;</div>
 					<button type="button" class="btn btn-primary index-tag-save">Accept</button>
-					<button type="button" class="btn btn-secondary index-tag-cancel">Cancel</button>
+					<button type="button" class="btn btn-default index-tag-cancel">Cancel</button>
 				</div>
 			</form>
 		</div>
