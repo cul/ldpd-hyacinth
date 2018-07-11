@@ -22,7 +22,7 @@
         </div>
       <% end %>
 
-      <% if @assignment.proposed.present? %>
+      <% if @assignment.original != @assignment.proposed %>
         <h2>Changes</h2>
         <pre class="diff-view">
           <%= Diffy::Diff.new(@assignment.original, @assignment.proposed).to_s(:html).html_safe %>

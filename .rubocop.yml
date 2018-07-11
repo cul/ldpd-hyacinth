@@ -19,6 +19,8 @@ AllCops:
     - 'app/views/**/*'
     - 'lib/tasks/**/*'
     - 'app/controllers/concerns/hyacinth/digital_objects/downloads.rb'
+    - 'app/controllers/assignments_controller.rb'
+    - 'app/controllers/assignments/changesets_controller.rb'
 
 Layout/BlockEndNewline:
   Exclude:

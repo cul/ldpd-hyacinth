@@ -752,15 +752,15 @@ OHSynchronizer.Transcript.prototype.preview = function() {
 	$("#preview-close").removeClass('hidden');
 
 	var content = OHSynchronizer.Export.transcriptVTT().split(/\r?\n|\r/);
-
+	var transcript = this;
 	if (window.Worker) {
 		var textWorker = new Worker(OHSynchronizer.webWorkers + "/transcript-preview.js");
 		textWorker.onmessage = function(e) {
 			$("#transcript-preview").html(e.data);
+			transcript.initPreviewControls();
 		}
 		textWorker.postMessage(content);
 	}
-	this.initPreviewControls();
 }
 
 OHSynchronizer.Transcript.prototype.initPreviewControls = function() {

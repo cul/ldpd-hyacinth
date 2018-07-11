@@ -3,12 +3,21 @@ class Assignments::ChangesetsController < ApplicationController
   before_action :set_contextual_nav_options
 
   def proposed
-    render text: @assignment.proposed.present? ? @assignment.proposed : ''
+    render text: @assignment.proposed.present? ? @assignment.proposed : @assignment.original
   end
 
   # GET /assignments/1/changeset/edit
   def edit
     @assignment.update(status: 'in_progress') if @assignment.status == 'assigned'
+
+    case @assignment.task
+    when 'transcribe'
+      render 'assignments/changesets/edit/transcript'
+    when 'annotate'
+      render 'assignments/changesets/edit/index_document'
+    else
+      render 'Unsupported task type.'
+    end
   end
 
   # GET /assignments/1/changeset
@@ -34,6 +43,15 @@ class Assignments::ChangesetsController < ApplicationController
         }
         return
       end
+    when 'annotate'
+      if index_document_params[:index_document_text]
+        if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
+          create_or_update_annotate_changeset(@assignment, digital_object, index_document_params[:index_document_text])
+          @assignment.save
+        else
+          raise 'Not implemented yet'
+        end
+      end
     end
 
     render json: {
@@ -53,9 +71,22 @@ class Assignments::ChangesetsController < ApplicationController
       assignment.proposed = new_content
     end
 
+    def create_or_update_annotate_changeset(assignment, digital_object, new_content)
+      if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
+        assignment.original = digital_object.index_document if assignment.original.nil?
+      else
+        raise 'Not implemented yet'
+      end
+      assignment.proposed = new_content
+    end
+
     # Never trust parameters from the scary internet, only allow the white list through.
     def transcript_params
       params.permit(:file, :transcript_text)
+    end
+
+    def index_document_params
+      params.permit(:file, :index_document_text)
     end
 
     def set_contextual_nav_options

@@ -26,6 +26,15 @@ class AssignmentsController < ApplicationController
       @assignment.original = @digital_object.transcript || ''
       # also store current state of transcript in *proposed* field as starting point for editing
       @assignment.proposed = @assignment.original
+    when 'annotate'
+      # store current state of transcript in *original* field
+      if ['MovingImage', 'Sound'].include?(@digital_object.dc_type)
+        @assignment.original = @digital_object.index_document
+      else
+        raise 'Not implemented yet'
+      end
+      # also store current state of transcript in *proposed* field as starting point for editing
+      @assignment.proposed = @assignment.original
     end
 
     begin
@@ -85,10 +94,19 @@ class AssignmentsController < ApplicationController
 
   # POST /assignments/:id/commit
   def commit
+    digital_object = DigitalObject::Base.find(@assignment.digital_object_pid)
+
     # TODO: Add 'describe', 'annotate', and 'sequence' types to case statement
     case @assignment.task
     when 'transcribe'
-      # TODO
+      digital_object.transcription = @assignment.proposed
+    when 'annotate'
+      # TODO: Probably change index_document to annotation
+      if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
+        digital_object.index_document = @assignment.proposed
+      else
+        raise 'Not implemented yet'
+      end
     end
 
     Assignment.transaction do
@@ -98,8 +116,6 @@ class AssignmentsController < ApplicationController
       redirect_to archived_assignment_path("ASSIGNMENT-#{@assignment.id}")
       return
     end
-
-    raise "didn't run this"
   end
 
   # GET /assignments/:id/reject
@@ -148,7 +164,7 @@ class AssignmentsController < ApplicationController
         unless @assignment.assignee == current_user
           require_project_permission!(@assignment.project, :project_admin)
         end
-      when 'edit', 'destroy'
+      when 'edit', 'destroy', 'commit'
         unless @assignment.assigner == current_user
           require_project_permission!(@assignment.project, :project_admin)
         end

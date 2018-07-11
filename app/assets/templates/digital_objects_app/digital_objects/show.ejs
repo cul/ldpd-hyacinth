@@ -70,6 +70,9 @@ if (hasUpdatePermission) {
                  Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects',
                                                                action: 'manage_parents',
                                                                pid: Hyacinth.DigitalObjectsApp.params['pid']})});
+
+  navItems.push({label: 'Assign This', url: '/assignments/new?assignment[digital_object_pid]=' + Hyacinth.DigitalObjectsApp.params['pid']});
+
   navItems.push({label: 'Edit', url: '#' +
                  Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects',
                                                                action: 'edit',

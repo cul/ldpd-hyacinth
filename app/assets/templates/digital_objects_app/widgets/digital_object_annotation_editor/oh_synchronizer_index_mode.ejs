@@ -1,3 +1,15 @@
+<%
+  //Passed params:
+  //
+  //digitalObject
+  //mode
+  //assignment
+%>
+
+<% if (mode == 'view' && assignment) { %>
+	<div class="alert alert-info">Index document editing is locked because this Digital Object's transcript is currently assigned to <%= assignment['assignee_name'] %>.</div>
+<% } %>
+
 <div id="working-area" class="row" style="position:relative;">
 	<div id="left-sidebar" class="col-md-6">
 		<div id="media-playback" class="">

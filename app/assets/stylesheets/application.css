@@ -11,6 +11,7 @@
  *= require_self
  *= require jquery-ui
  *= require chosen
+ *= require font-awesome
  *= require ./hyacinth
  *= require_tree .
  */
