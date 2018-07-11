@@ -41,9 +41,9 @@ class ArchivedAssignmentsController < ApplicationController
 
     def set_contextual_nav_options
       if params[:action] == 'index'
-        @contextual_nav_options['nav_title']['label'] =  'Archived Assignments'.html_safe
+        @contextual_nav_options['nav_title']['label'] =  'Historical Assignments'.html_safe
       else
-        @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Archived Assignments'.html_safe
+        @contextual_nav_options['nav_title']['label'] =  '&laquo; Back to Historical Assignments'.html_safe
         @contextual_nav_options['nav_title']['url'] = archived_assignments_path
       end
 
