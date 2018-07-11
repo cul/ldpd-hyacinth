@@ -254,6 +254,9 @@ class DigitalObject::Asset < DigitalObject::Base
         fedora_object.add_relationship(:restriction, restriction_liternal, true)
       end
     end
+
+    # ensure that uuid directory exists
+    FileUtils.mkdir_p(Hyacinth::Utils::PathUtils.data_directory_path_for_uuid(self.uuid))
     write_update_transcript_file_if_changed!
     write_update_index_document_file_if_changed!
     write_update_captions_file_if_changed!
