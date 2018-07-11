@@ -99,7 +99,7 @@ class AssignmentsController < ApplicationController
     # TODO: Add 'describe', 'annotate', and 'sequence' types to case statement
     case @assignment.task
     when 'transcribe'
-      digital_object.transcription = @assignment.proposed
+      digital_object.transcript = @assignment.proposed
     when 'annotate'
       # TODO: Probably change index_document to annotation
       if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
@@ -110,6 +110,7 @@ class AssignmentsController < ApplicationController
     end
 
     Assignment.transaction do
+      digital_object.save
       @assignment.status = 'accepted'
       ArchivedAssignment.from_assignment(@assignment).save!
       @assignment.destroy!
@@ -184,7 +185,7 @@ class AssignmentsController < ApplicationController
         if @assignment.assigner == current_user
           @contextual_nav_options['nav_items'].push(label: 'Edit', url: edit_assignment_path(@assignment))
           @contextual_nav_options['nav_items'].push(label: 'Delete', url: assignment_path(@assignment.id), options: { method: :delete, data: { confirm: 'Are you sure you want to delete this Assignment?' } })
-        elsif @assignment.assignee == current_user
+        elsif @assignment.assignee == current_user && ['assigned', 'in_progress'].include?(@assignment.status)
           @contextual_nav_options['nav_items'].push(label: 'Work On Assignment &raquo;'.html_safe, url: edit_changeset_path(@assignment))
         end
       when 'reject'

@@ -1,3 +1,4 @@
+
 Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor = function(containerElementId, options) {
 
   this.$containerElement = $('#' + containerElementId);
@@ -140,7 +141,9 @@ Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor.prototype.submitEditorF
     if (transcriptPutResponse['success']) {
       Hyacinth.addAlert('Transcript updated.', 'info');
     } else {
-      alert(Hyacinth.unexpectedAjaxErrorMessage);
+      transcriptPutResponse['errors'].forEach(function(error_message){
+        Hyacinth.addAlert(error_message, 'danger');
+      });
     }
   }).fail(function(){
     alert(Hyacinth.unexpectedAjaxErrorMessage);

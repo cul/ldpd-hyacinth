@@ -42,6 +42,7 @@
             <ul class="dropdown-menu">
               <li><%= link_to 'Assignments', assignments_path %></li>
               <% if current_user.admin? %>
+                <li><%= link_to 'Historical Assignments', archived_assignments_path %></li>
                 <li><%= link_to 'System Information', system_information_path %></li>
               <% end %>
               <li><%= link_to('Sign Out', destroy_user_session_path, {method: :delete}) %></li>

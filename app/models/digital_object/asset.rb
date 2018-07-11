@@ -267,7 +267,6 @@ class DigitalObject::Asset < DigitalObject::Base
 
   def write_update_index_document_file_if_changed!
     if index_document_changed?
-      raise 'write!!!'
       IO.write(self.index_document_location, self.index_document)
     end
   end

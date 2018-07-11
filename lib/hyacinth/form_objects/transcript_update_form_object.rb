@@ -18,7 +18,7 @@ module Hyacinth
       end
 
       def validate_presence_of_file_or_transcript_text
-        if file.blank? && transcript_text.blank?
+        if file.nil? && transcript_text.nil?
           errors.add(:base, 'Missing transcript content. Expected transcript data in either :file or :transcript_text params.')
         end
       end

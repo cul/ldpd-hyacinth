@@ -1,0 +1,10 @@
+<%=
+case @assignment.task
+when 'transcribe'
+  render partial: 'assignments/changesets/widgets/transcript'
+when 'annotate'
+  render partial: 'assignments/changesets/widgets/index_document'
+else
+  render 'Unsupported task type.'
+end
+%>

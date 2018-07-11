@@ -9,15 +9,6 @@ class Assignments::ChangesetsController < ApplicationController
   # GET /assignments/1/changeset/edit
   def edit
     @assignment.update(status: 'in_progress') if @assignment.status == 'assigned'
-
-    case @assignment.task
-    when 'transcribe'
-      render 'assignments/changesets/edit/transcript'
-    when 'annotate'
-      render 'assignments/changesets/edit/index_document'
-    else
-      render 'Unsupported task type.'
-    end
   end
 
   # GET /assignments/1/changeset

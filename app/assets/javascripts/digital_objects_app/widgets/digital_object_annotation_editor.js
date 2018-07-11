@@ -71,7 +71,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.prototype.createSynchro
     },
     index: {
       id: 'input-index',
-      url: this.assignment ? '/assignments/' + this.assignment['id'] + '/changeset/proposed' : '/digital_objects/' + this.digitalObject.getPid() + '/index_document',
+      // TODO: Don't use Hyacinth.DigitalObjectsApp.currentUser as an indication of whether we're in the js app or not. There's a better way. Temp solution here.
+      url: this.assignment && (!Hyacinth.DigitalObjectsApp.currentUser) ? '/assignments/' + this.assignment['id'] + '/changeset/proposed' : '/digital_objects/' + this.digitalObject.getPid() + '/index_document',
     },
     options: {
       previewOnly: this.mode == 'view'
