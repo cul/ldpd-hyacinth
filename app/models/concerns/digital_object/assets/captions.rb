@@ -18,7 +18,7 @@ module DigitalObject::Assets::Captions
         "Title: Title may be changed or corrected.\n" \
         "Date: Date might be changed or corrected.\n" \
         "Identifier: #{self.uuid}\n" \
-        "\n"
+        "\n#{default_caption}"
       end
     end
   end
@@ -30,5 +30,12 @@ module DigitalObject::Assets::Captions
 
   def captions_changed?
     instance_variable_defined?('@captions_changed') && @captions_changed
+  end
+
+  # return the plain text transcript as a single VTT caption
+  def default_caption
+    if self.transcript.present?
+      "00:00:00.000 --> 00:01:00.000\n#{self.transcript}"
+    end
   end
 end

@@ -15,6 +15,8 @@ class Assignments::ChangesetsController < ApplicationController
       render 'assignments/changesets/edit/transcript'
     when 'annotate'
       render 'assignments/changesets/edit/index_document'
+    when 'synchronize'
+      render 'assignments/changesets/edit/captions'
     else
       render 'Unsupported task type.'
     end
@@ -52,6 +54,15 @@ class Assignments::ChangesetsController < ApplicationController
           raise 'Not implemented yet'
         end
       end
+    when 'synchronize'
+      if index_document_params[:captions_text]
+        if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
+          create_or_update_synchronize_changeset(@assignment, digital_object, index_document_params[:captions_text])
+          @assignment.save
+        else
+          raise 'Not implemented yet'
+        end
+      end
     end
 
     render json: {
@@ -74,6 +85,15 @@ class Assignments::ChangesetsController < ApplicationController
     def create_or_update_annotate_changeset(assignment, digital_object, new_content)
       if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
         assignment.original = digital_object.index_document if assignment.original.nil?
+      else
+        raise 'Not implemented yet'
+      end
+      assignment.proposed = new_content
+    end
+
+    def create_or_update_synchronize_changeset(assignment, digital_object, new_content)
+      if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
+        assignment.original = digital_object.captions if assignment.original.nil?
       else
         raise 'Not implemented yet'
       end
