@@ -1,0 +1,49 @@
+<%
+  //Passed params:
+  //
+  //digitalObject
+  //mode
+  //assignment
+%>
+
+<% if (mode == 'view' && assignment) { %>
+	<div class="alert alert-info">Index document editing is locked because this Digital Object's transcript is currently assigned to <%= assignment['assignee_name'] %>.</div>
+<% } %>
+
+<div id="working-area" class="row" style="position:relative;">
+	<div id="left-sidebar" class="col-md-6">
+		<div id="media-playback" class="">
+			<div id="ytplayer"></div>
+			<div id="video"><video id="video-player" data-able-player preload="auto"></video></div>
+			<div id="audio"><audio id="audio-player" data-able-player preload="auto"></audio></div>
+		</div><!-- /#media-playback -->
+
+		<div id="interview-metadata"></div><!-- /#interview-metadata -->
+	</div><!-- /#left-sidebar -->
+
+	<div id="right-sidebar" class="col-md-6 pull-right">
+		<div id="text-tabs">
+			<div id="tabs-transcript">
+				<div id="input-transcript">
+					<h2>Transcript</h2>
+					<div id="sync-controls" class="form-group row btn-group" role="group">
+						<span id="sync-back" class="btn btn-info" type="button" title='jump to previous minute' onclick="OHSynchronizer.Transcript.syncControl('back',OHSynchronizer.playerControls)"><i class="fa fa-backward"></i></span>
+						<div id="sync-minute" class="btn btn-secondary" title='minute to be synchronized' type="button">0</div>
+						<span id="sync-forward" class="btn btn-info" type="button" title='jump to next minute' onclick="OHSynchronizer.Transcript.syncControl('forward',OHSynchronizer.playerControls)"><i class="fa fa-forward"></i></span>
+						<span id="sync-play" class="btn btn-outline-info" type="button" title='start/stop loop' onclick="OHSynchronizer.Transcript.syncControl('loop',OHSynchronizer.playerControls)"><i class="fa fa-retweet"></i></span>
+						<input id="sync-roll" class="btn btn-secondary" type="text" maxlength="3" size="3" value="10" name="sync-roll">
+						<div id="sync-time" class="btn btn-secondary" type="button">00:00:00</div>
+					</div>
+					<div id="transcript" class="col-md-12" ></div>
+					<div id="transcript-preview" class="col-md-12" ></div>
+				</div>
+			<div class="clearfix"></div>
+		</div><!-- /#text-tabs -->
+	</div><!-- /#right-sidebar -->
+</div><!-- /#working-area -->
+
+<!-- Audio files for transcript syncing markers -->
+<div id="transcript-chimes" class="hidden">
+	<audio class="loop-boundary-chime" src="/synchronizer-module/includes/startBeep.mp3" autostart="false"></audio>
+	<audio class="loop-mid-chime" src="/synchronizer-module/includes/midBeep.mp3" autostart="false"></audio>
+</div>

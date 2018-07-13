@@ -43,6 +43,15 @@ class Assignments::ChangesetsController < ApplicationController
           raise 'Not implemented yet'
         end
       end
+    when 'synchronize'
+      if index_document_params[:captions_text]
+        if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
+          create_or_update_synchronize_changeset(@assignment, digital_object, captions_params[:captions_text])
+          @assignment.save
+        else
+          raise 'Not implemented yet'
+        end
+      end
     end
 
     render json: {
@@ -71,13 +80,26 @@ class Assignments::ChangesetsController < ApplicationController
       assignment.proposed = new_content
     end
 
+    def create_or_update_synchronize_changeset(assignment, digital_object, new_content)
+      if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
+        assignment.original = digital_object.captions if assignment.original.nil?
+      else
+        raise 'Not implemented yet'
+      end
+      assignment.proposed = new_content
+    end
+
     # Never trust parameters from the scary internet, only allow the white list through.
     def transcript_params
       params.permit(:file, :transcript_text)
     end
 
     def index_document_params
-      params.permit(:file, :index_document_text)
+      params.permit(:index_document_text)
+    end
+
+    def captions_params
+      params.permit(:captions_params)
     end
 
     def set_contextual_nav_options
