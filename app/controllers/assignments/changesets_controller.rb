@@ -9,17 +9,6 @@ class Assignments::ChangesetsController < ApplicationController
   # GET /assignments/1/changeset/edit
   def edit
     @assignment.update(status: 'in_progress') if @assignment.status == 'assigned'
-
-    case @assignment.task
-    when 'transcribe'
-      render 'assignments/changesets/edit/transcript'
-    when 'annotate'
-      render 'assignments/changesets/edit/index_document'
-    when 'synchronize'
-      render 'assignments/changesets/edit/captions'
-    else
-      render 'Unsupported task type.'
-    end
   end
 
   # GET /assignments/1/changeset
@@ -57,7 +46,7 @@ class Assignments::ChangesetsController < ApplicationController
     when 'synchronize'
       if index_document_params[:captions_text]
         if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
-          create_or_update_synchronize_changeset(@assignment, digital_object, index_document_params[:captions_text])
+          create_or_update_synchronize_changeset(@assignment, digital_object, captions_params[:captions_text])
           @assignment.save
         else
           raise 'Not implemented yet'
@@ -106,7 +95,11 @@ class Assignments::ChangesetsController < ApplicationController
     end
 
     def index_document_params
-      params.permit(:file, :index_document_text)
+      params.permit(:index_document_text)
+    end
+
+    def captions_params
+      params.permit(:captions_params)
     end
 
     def set_contextual_nav_options
