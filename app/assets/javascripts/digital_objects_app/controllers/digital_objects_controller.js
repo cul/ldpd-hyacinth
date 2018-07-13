@@ -371,6 +371,49 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_annotation 
   });
 };
 
+//Annotate action - Manage annotation for an object (synchronize, rotate, select representative image, etc.)
+Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_captions = function() {
+  var that = this;
+
+  $.ajax({
+    url: '/digital_objects/data_for_editor.json',
+    type: 'POST',
+    data: {
+      pid: Hyacinth.DigitalObjectsApp.params['pid']
+    },
+    cache: false
+  }).done(function(data_for_editor){
+
+    var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
+    var assignment = digitalObject.hasAssignment(Hyacinth.AssignmentTaskTypes.synchronize);
+    var mode = 'view'; //default
+
+    if(!assignment && Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) {
+      // If this assignment is not assigned to anyone, then anyone with edit permission can edit it.
+      mode = 'edit';
+    }
+
+    Hyacinth.ContextualNav.setNavTitle('&laquo; Back', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: digitalObject.pid}));
+    Hyacinth.ContextualNav.setNavItems([]);
+
+    $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/manage_captions.ejs', {digitalObject: digitalObject}));
+    var captionsEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor('digital-object-captions-editor', {
+      digitalObject: digitalObject,
+      mode: mode,
+      assignment: assignment
+    });
+
+    //Event cleanup
+    that.dispose = function(){
+      captionsEditor.dispose();
+      captionsEditor = null;
+    };
+
+  }).fail(function(){
+    alert(Hyacinth.unexpectedAjaxErrorMessage);
+  });
+};
+
 //Publish Target Fields Action - Edit fields for a publish target
 Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.publish_target_fields = function() {
 

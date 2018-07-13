@@ -18,18 +18,23 @@ var navItems = [];
 var hasUpdatePermission = Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update');
 var hasTranscribePermission = Hyacinth.DigitalObjectsApp.currentUser.hasAssignmentPermission(digitalObject, Hyacinth.AssignmentTaskTypes.transcribe);
 
-if (digitalObject.digital_object_type.string_key == 'asset' && (digitalObject.getDcType() == 'MovingImage' || digitalObject.getDcType() == 'Sound')) {
-  navItems.push({label: 'Manage Annotation', url: '#' +
-                 Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects',
-                                                               action: 'manage_annotation',
-                                                               pid: Hyacinth.DigitalObjectsApp.params['pid']})});
-}
-
 if (digitalObject.digital_object_type.string_key == 'asset') {
-  navItems.push({label: 'Manage Transcript', url: '#' +
+  navItems.push({label: '<span class="glyphicon glyphicon-edit"></span> Transcript', url: '#' +
                  Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects',
                                                                action: 'manage_transcript',
                                                                pid: Hyacinth.DigitalObjectsApp.params['pid']})});
+}
+
+if (digitalObject.digital_object_type.string_key == 'asset' && (digitalObject.getDcType() == 'MovingImage' || digitalObject.getDcType() == 'Sound')) {
+  navItems.push({label: '<span class="glyphicon glyphicon-edit"></span> Annotation', url: '#' +
+                 Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects',
+                                                               action: 'manage_annotation',
+                                                               pid: Hyacinth.DigitalObjectsApp.params['pid']})});
+
+  navItems.push({label: '<span class="glyphicon glyphicon-edit"></span> Captions', url: '#' +
+                Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects',
+                                                              action: 'manage_captions',
+                                                              pid: Hyacinth.DigitalObjectsApp.params['pid']})});
 }
 
 if (hasUpdatePermission) {
@@ -66,7 +71,7 @@ if (hasUpdatePermission) {
                                                                  parent_digital_object_pid: Hyacinth.DigitalObjectsApp.params['pid']})});
   }
 
-  navItems.push({label: 'Manage Parents', url: '#' +
+  navItems.push({label: '<span class="glyphicon glyphicon-edit"></span> Parents', url: '#' +
                  Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects',
                                                                action: 'manage_parents',
                                                                pid: Hyacinth.DigitalObjectsApp.params['pid']})});

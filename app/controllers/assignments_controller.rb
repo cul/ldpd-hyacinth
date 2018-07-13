@@ -35,6 +35,15 @@ class AssignmentsController < ApplicationController
       end
       # also store current state of transcript in *proposed* field as starting point for editing
       @assignment.proposed = @assignment.original
+    when 'synchronize'
+      # store current state of transcript in *original* field
+      if ['MovingImage', 'Sound'].include?(@digital_object.dc_type)
+        @assignment.original = @digital_object.captions
+      else
+        raise 'Not implemented yet'
+      end
+      # also store current state of transcript in *proposed* field as starting point for editing
+      @assignment.proposed = @assignment.original
     end
 
     begin
@@ -106,6 +115,12 @@ class AssignmentsController < ApplicationController
         digital_object.index_document = @assignment.proposed
       else
         raise 'Not implemented yet'
+      end
+    when 'synchronize'
+      if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
+        digital_object.captions = @assignment.proposed
+      else
+        raise "Cannot commit captions for non-audiovisual resource (pid: #{digital_object.pid}, dc_type: #{digital_object.dc_type})"
       end
     end
 

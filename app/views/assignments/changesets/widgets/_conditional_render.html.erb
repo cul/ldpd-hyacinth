@@ -4,7 +4,9 @@ when 'transcribe'
   render partial: 'assignments/changesets/widgets/transcript'
 when 'annotate'
   render partial: 'assignments/changesets/widgets/index_document'
+when 'synchronize'
+  render partial: 'assignments/changesets/widgets/captions'
 else
-  render 'Unsupported task type.'
+  render text: 'Unsupported task type.'
 end
 %>

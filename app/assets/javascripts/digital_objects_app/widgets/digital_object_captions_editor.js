@@ -71,7 +71,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.prototype.createSynchroni
     },
     transcript: {
       id: 'input-transcript',
-      url: this.assignment ? '/assignments/' + this.assignment['id'] + '/changeset/proposed' : '/digital_objects/' + this.digitalObject.getPid() + '/captions',
+      // TODO: Don't use Hyacinth.DigitalObjectsApp.currentUser as an indication of whether we're in the js app or not. There's a better way. Temp solution here.
+      url: this.assignment && (!Hyacinth.DigitalObjectsApp.currentUser) ? '/assignments/' + this.assignment['id'] + '/changeset/proposed' : '/digital_objects/' + this.digitalObject.getPid() + '/captions',
     },
     options: {
       previewOnly: this.mode == 'view'
@@ -83,13 +84,14 @@ Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.prototype.createSynchroni
     Hyacinth.addAlert(e, 'danger');
   }
 
-  this.$containerElement.find('.save-transcript-button').on('click', $.proxy(this.saveIndexDocument, this));
+  this.$containerElement.find('.save-captions-button').on('click', $.proxy(this.saveCaptions, this));
 
   // TODO: Move code below into synchronizer widget?
   //////////////////////////////////////////////
 	if (widgetOptions.options.previewOnly) {
 		this.$containerElement.find('.preview-button').hide();
-    this.$containerElement.find('.save-transcript-button').hide();
+    this.$containerElement.find('#sync-controls').hide();
+    this.$containerElement.find('.save-captions-button').hide();
 
 	} else {
 		$('.preview-button').on('click', function() {
@@ -106,7 +108,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.prototype.createSynchroni
   //////////////////////////////////////////////
 };
 
-Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.prototype.saveIndexDocument = function() {
+Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.prototype.saveCaptions = function() {
   $.ajax({
     url: this.assignment ? '/assignments/' + this.assignment['id'] + '/changeset' : '/digital_objects/' + this.digitalObject.getPid() + '/captions',
     type: 'POST',

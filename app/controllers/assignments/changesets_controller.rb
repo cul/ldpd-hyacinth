@@ -44,7 +44,7 @@ class Assignments::ChangesetsController < ApplicationController
         end
       end
     when 'synchronize'
-      if index_document_params[:captions_text]
+      if captions_params[:captions_text]
         if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
           create_or_update_synchronize_changeset(@assignment, digital_object, captions_params[:captions_text])
           @assignment.save
@@ -99,7 +99,7 @@ class Assignments::ChangesetsController < ApplicationController
     end
 
     def captions_params
-      params.permit(:captions_params)
+      params.permit(:captions_text)
     end
 
     def set_contextual_nav_options
