@@ -80,6 +80,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.prototype.createSynchro
   };
 
 	this.synchronizerWidget = new OHSynchronizer(widgetOptions);
+  OHSynchronizer.playerControls.bindNavControls(); //bind modal forward/back/etc. nav controls. TODO: Move this to widget js instead of Hyacinth js
   OHSynchronizer.errorHandler = function(e) {
     Hyacinth.addAlert(e, 'danger');
   }
