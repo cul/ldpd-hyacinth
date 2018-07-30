@@ -4,8 +4,12 @@
   //digitalObject
   //mode
   //fieldsets
+  //assignment
 %>
 <div class="digital-object-editor-header">
+  <% if(assignment && mode == 'show') { %>
+    <div class="alert alert-info">Description editing is locked because this Digital Object's transcript is currently assigned to <%= assignment['assignee_name'] %>.</div>
+  <% } %>
   <h1 class="digital-object-title"><%= digitalObject.digital_object_type['display_label'] %>: <%- digitalObject.getTitle() %></h1>
   <div class="row">
     <div class="col-md-8">

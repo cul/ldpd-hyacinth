@@ -6,6 +6,8 @@
   //dynamicFieldIdsToEnabledDynamicFields
   //digitalObject
   //allowedPublishTargets
+  //disallowNonDescriptionFieldEditing
+  //showPublishButton
 %>
 <form class="editor-form">
   <div class="btn-group dropup form-navigation-dropup">
@@ -36,7 +38,7 @@
   <div class="identifiers">
     <% var identifiers = digitalObject.identifiers.length < 1 ? digitalObject.identifiers.concat([""]) : digitalObject.identifiers; %>
     <% identifiers.forEach(function(identifier){ %>
-      <% if (mode == 'edit') { %>
+      <% if (mode == 'edit' && !disallowNonDescriptionFieldEditing) { %>
         <div class="identifier input-group">
           <input type="text" name="identifier" value="<%- identifier %>" class="form-control input-sm tabable">
           <span class="input-group-btn">
@@ -50,7 +52,7 @@
     <% }); %>
   </div>
 
-  <% if (digitalObject.hasRestrictions()) { %>
+  <% if (digitalObject.hasRestrictions() && !disallowNonDescriptionFieldEditing) { %>
     <h2 class="editor-form-header">Restrictions</h2>
     <div class="restrictions">
         <% if (mode == 'edit') { %>
@@ -87,7 +89,7 @@
     </div>
   <% } %>
 
-  <% if ( digitalObject.publish_targets.length > 0 || (mode == 'edit' && allowedPublishTargets.length > 0) ) { %>
+  <% if ( digitalObject.publish_targets.length > 0 || (mode == 'edit' && !disallowNonDescriptionFieldEditing && allowedPublishTargets.length > 0) ) { %>
     <h2 class="editor-form-header">Publish Targets</h2>
     <div class="publish-targets">
 
@@ -107,7 +109,7 @@
       %>
 
       <% uniqueSortedActiveAndAllowedPublishTargets.forEach(function(publishTarget){ %>
-        <% if (mode == 'edit') { %>
+        <% if (mode == 'edit' && showPublishButton) { %>
           <div class="checkbox">
             <label>
               <input type="checkbox" class="publish-target-checkbox" value="<%= publishTarget['pid'] %>" <%= activePublishTargetPids.indexOf(publishTarget['pid']) > -1 ? 'checked="checked"' : '' %> /> <%= publishTarget['display_label'] %>
@@ -126,7 +128,7 @@
 
   <hr />
 
-  <% if (mode == 'edit' && digitalObject.getDoi() == null) { %>
+  <% if (mode == 'edit' && !disallowNonDescriptionFieldEditing && digitalObject.getDoi() == null) { %>
     <div class="alignright">
       <div class="checkbox">
         <label>
@@ -139,16 +141,16 @@
   <% if (mode == 'edit') { %>
     <div class="alignright">
       <p>
-        <% if (Hyacinth.DigitalObjectsApp.params['action'] == 'new') { %>
-          <a href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'index'}) %>" onclick="return confirm(Hyacinth.Text.unsavedChangesMessage);" class="btn btn-danger">Cancel</a>
+        <% if (digitalObject.getPid()) { %>
+          <a href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: digitalObject.getPid()}) %>" onclick="return confirm(Hyacinth.Text.unsavedChangesMessage);" class="btn btn-danger">Cancel</a>
         <% } else { %>
-          <a href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: Hyacinth.DigitalObjectsApp.params['pid']}) %>" onclick="return confirm(Hyacinth.Text.unsavedChangesMessage);" class="btn btn-danger">Cancel</a>
+          <a href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'index'}) %>" onclick="return confirm(Hyacinth.Text.unsavedChangesMessage);" class="btn btn-danger">Cancel</a>
         <% } %>
         <input type="submit" class="btn btn-primary editor-submit-button" value="Save" />
         <div class="clearfix"></div>
       </p>
       <p>
-      <% if(Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_publish')) { %>
+      <% if(showPublishButton) { %>
       <input type="submit" class="btn btn-primary editor-submit-and-publish-button" value="Save And Publish" />
       <% } %>
       <div class="clearfix"></div>

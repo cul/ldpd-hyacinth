@@ -1,0 +1,48 @@
+<div id="widget-template-container"></div>
+
+<script>
+
+  var digitalObjectPid = '<%= @assignment.digital_object_pid %>';
+  var currentUserId = <%= current_user.id %>;
+
+  $.ajax({
+    url: '/digital_objects/data_for_editor.json',
+    data: {
+      pid: digitalObjectPid
+    },
+    cache: false
+  }).done(function(data_for_editor){
+
+    var originalDigitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
+    var assignment = originalDigitalObject.hasAssignment(Hyacinth.AssignmentTaskTypes.describe);
+
+    $.ajax({
+      url: '/assignments/' + assignment['id'] + '/changeset/proposed',
+      type: 'GET',
+      cache: false
+    }).done(function(proposedDynamicFieldData){
+      var proposedDigitalObjectData = data_for_editor['digital_object'];
+      proposedDigitalObjectData['dynamic_field_data'] = JSON.parse(proposedDynamicFieldData); //replace current object dfd with proposed version
+      var proposedDigitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(proposedDigitalObjectData);
+
+      $('#widget-template-container').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/edit.ejs', {digitalObject: proposedDigitalObject}));
+
+      var digitalObjectEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectEditor('digital-object-editor', {
+        mode: currentUserId == assignment['assignee_id'] ? 'edit' : 'show',
+        digitalObject: proposedDigitalObject,
+        fieldsets: data_for_editor['fieldsets'],
+        dynamicFieldHierarchy: data_for_editor['dynamic_field_hierarchy'],
+        dynamicFieldIdsToEnabledDynamicFields: data_for_editor['dynamic_field_ids_to_enabled_dynamic_fields'],
+        allowedPublishTargets: data_for_editor['allowed_publish_targets'],
+        assignment: assignment,
+        disallowNonDescriptionFieldEditing: true,
+        showPublishButton: false // we don't allow publishing from the assignment editing screen
+      });
+
+    });
+  }).fail(function(){
+    alert(Hyacinth.unexpectedAjaxErrorMessage);
+  });
+
+
+</script>

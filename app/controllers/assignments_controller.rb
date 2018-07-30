@@ -44,6 +44,11 @@ class AssignmentsController < ApplicationController
       end
       # also store current state of transcript in *proposed* field as starting point for editing
       @assignment.proposed = @assignment.original
+    when 'describe'
+      # store json version of current dynamic_field_data in *original* field
+      @assignment.original = @digital_object.dynamic_field_data.to_json
+      # also store json version of current dynamic_field_data in *proposed* field as starting point for editing
+      @assignment.proposed = @assignment.original
     end
 
     begin
@@ -122,6 +127,8 @@ class AssignmentsController < ApplicationController
       else
         raise "Cannot commit captions for non-audiovisual resource (pid: #{digital_object.pid}, dc_type: #{digital_object.dc_type})"
       end
+    when 'describe'
+      digital_object.set_digital_object_data({'dynamic_field_data' => JSON.parse(@assignment.proposed)}, true)
     end
 
     Assignment.transaction do

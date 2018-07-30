@@ -108,7 +108,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.new = function() {
       fieldsets: data_for_editor['fieldsets'],
       dynamicFieldHierarchy: data_for_editor['dynamic_field_hierarchy'],
       dynamicFieldIdsToEnabledDynamicFields: data_for_editor['dynamic_field_ids_to_enabled_dynamic_fields'],
-      allowedPublishTargets: data_for_editor['allowed_publish_targets']
+      allowedPublishTargets: data_for_editor['allowed_publish_targets'],
+      showPublishButton: Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_publish')
     });
 
     //Event cleanup
@@ -135,16 +136,38 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.edit = function() 
   }).done(function(data_for_editor){
 
     var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
+    var assignment = digitalObject.hasAssignment(Hyacinth.AssignmentTaskTypes.describe);
+    var mode = 'show'; //default
+    if(!assignment && Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) {
+      // If this assignment is not assigned to anyone, then anyone with edit permission can edit it.
+      mode = 'edit';
+    }
+
+    Hyacinth.ContextualNav.setNavTitle('&laquo; Leave Editing Mode', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: digitalObject.getPid()}), true);
+    var navItems = [];
+    if (digitalObject.getState() == 'A' && Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_delete')) {
+      navItems.push(
+        {
+          label: 'Delete',
+          url: '#',
+          class: 'delete-digital-object-button',
+          'data-pid': digitalObject.getPid()
+        }
+      );
+    }
+    Hyacinth.ContextualNav.setNavItems(navItems);
 
     $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/edit.ejs', {digitalObject: digitalObject}));
 
     var digitalObjectEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectEditor('digital-object-editor', {
-      mode: 'edit',
+      mode: mode,
       digitalObject: digitalObject,
       fieldsets: data_for_editor['fieldsets'],
       dynamicFieldHierarchy: data_for_editor['dynamic_field_hierarchy'],
       dynamicFieldIdsToEnabledDynamicFields: data_for_editor['dynamic_field_ids_to_enabled_dynamic_fields'],
-      allowedPublishTargets: data_for_editor['allowed_publish_targets']
+      allowedPublishTargets: data_for_editor['allowed_publish_targets'],
+      assignment: assignment,
+      showPublishButton: Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_publish')
     });
 
     //For deleting DigitalObjects
@@ -235,8 +258,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.show = function() 
     },
     cache: false
   }).done(function(data_for_editor){
-
     var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
+    var assignment = digitalObject.hasAssignment(Hyacinth.AssignmentTaskTypes.describe);
 
     var dataForTemplate = {
       digitalObject: digitalObject
@@ -260,7 +283,9 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.show = function() 
       fieldsets: data_for_editor['fieldsets'],
       dynamicFieldHierarchy: data_for_editor['dynamic_field_hierarchy'],
       dynamicFieldIdsToEnabledDynamicFields: data_for_editor['dynamic_field_ids_to_enabled_dynamic_fields'],
-      allowedPublishTargets: data_for_editor['allowed_publish_targets']
+      allowedPublishTargets: data_for_editor['allowed_publish_targets'],
+      assignment: assignment,
+      showPublishButton: Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_publish')
     });
 
     //Event cleanup
@@ -305,6 +330,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_transcript 
 
       Hyacinth.ContextualNav.setNavTitle('&laquo; Back', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: digitalObject.pid}));
       Hyacinth.ContextualNav.setNavItems([]);
+
       $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/manage_transcript.ejs', {digitalObject: digitalObject}));
 
       var transcriptEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor('digital-object-transcript-editor', {

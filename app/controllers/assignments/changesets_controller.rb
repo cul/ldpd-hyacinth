@@ -52,6 +52,20 @@ class Assignments::ChangesetsController < ApplicationController
           raise 'Not implemented yet'
         end
       end
+    when 'describe'
+      if description_params[:digital_object_data_json]
+        # in order to run cleanup on submitted dynamic field data, we'll run it through the normal digital object data update method
+        # TODO: In next version of Hyacinth, separate out the cleanup code so that we don't need to rely on a digital object instance
+        original_dynamic_field_data = digital_object.dynamic_field_data
+        proposed_dynamic_field_data = {
+          'dynamic_field_data' => JSON.parse(description_params[:digital_object_data_json])['dynamic_field_data']
+        }
+        digital_object.set_dynamic_fields_from_data(proposed_dynamic_field_data, true)
+        create_or_update_describe_changeset(@assignment, digital_object, digital_object.dynamic_field_data.to_json)
+        # restore original dynamic_field_data just in case the digital object is ever saved in a later iteration of this method
+        digital_object.dynamic_field_data = original_dynamic_field_data
+        @assignment.save
+      end
     end
 
     render json: {
@@ -89,6 +103,12 @@ class Assignments::ChangesetsController < ApplicationController
       assignment.proposed = new_content
     end
 
+    def create_or_update_describe_changeset(assignment, digital_object, new_content)
+      assignment.original = digital_object.dynamic_field_data.to_json if assignment.original.nil?
+      assignment.proposed = new_content
+    end
+
+
     # Never trust parameters from the scary internet, only allow the white list through.
     def transcript_params
       params.permit(:file, :transcript_text)
@@ -100,6 +120,10 @@ class Assignments::ChangesetsController < ApplicationController
 
     def captions_params
       params.permit(:captions_text)
+    end
+
+    def description_params
+      params.permit(:digital_object_data_json)
     end
 
     def set_contextual_nav_options
