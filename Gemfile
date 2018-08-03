@@ -102,7 +102,7 @@ gem 'nokogiri', '~> 1.8.1'
 gem 'devise', '>= 3.4.1'
 
 # CUL Fedora Dependencies and Content Models
-gem 'cul_hydra', '~> 1.4.18'
+gem 'cul_hydra', '~> 1.5.0'
 gem 'rubydora', git: 'https://github.com/elohanlon/rubydora', branch: 'datastream_dissemination_with_headers'
 # gem 'cul_hydra', path: '../cul_hydra'
 gem 'jettywrapper', '>= 1.5.1'
