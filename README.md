@@ -10,7 +10,7 @@ Supported Browsers:
 
 ### Requirements
 Hyacinth has the following dependencies:
-- Ruby 2.2 or later (tested with ruby 2.2 and 2.3)
+- Ruby 2.4 (tested with ruby 2.4.2)
 - Sqlite3 or MySQL (tested with MySQL 5.5)
 - Apache Solr (tested with 4.9)
 - Fedora 3.7 through 3.8.x (though 3.8.1 is recommended because of a concurrent writing issue with 3.7 through 3.8.0)

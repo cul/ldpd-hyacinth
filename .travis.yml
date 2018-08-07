@@ -4,9 +4,7 @@ sudo: false
 
 rvm:
   - 2.4.2
-  - 2.3.4
-  - 2.2.6
-  
+
 jdk: 'oraclejdk8'
 
 notifications:
@@ -18,5 +16,5 @@ env:
 
 before_script:
   - bundle exec rake hyacinth:setup:config_files
-  
+
 script: bundle exec rake hyacinth:ci
