@@ -20,7 +20,7 @@ class AssignmentsController < ApplicationController
 
     # original and proposed fields should both be set upon assignment creation
     case @assignment.task
-    # TODO: Add 'describe', 'annotate', and 'sequence' types to case statement
+    # TODO: Add 'sequence' type to case statement
     when 'transcribe'
       # store current state of transcript in *original* field
       @assignment.original = @digital_object.transcript || ''
@@ -110,7 +110,7 @@ class AssignmentsController < ApplicationController
   def commit
     digital_object = DigitalObject::Base.find(@assignment.digital_object_pid)
 
-    # TODO: Add 'describe', 'annotate', and 'sequence' types to case statement
+    # TODO: Add 'sequence' type to case statement
     case @assignment.task
     when 'transcribe'
       digital_object.transcript = @assignment.proposed
