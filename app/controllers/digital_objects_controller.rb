@@ -97,7 +97,7 @@ class DigitalObjectsController < ApplicationController
 
     if save_or_validate_digital_object
       render_json = { success: true }.merge!(@digital_object.as_confirmation_json)
-      render_json.merge!('test' => true) if test_mode
+      render_json['test'] = true if test_mode
     else
       render_json = { errors: @digital_object.errors }
     end

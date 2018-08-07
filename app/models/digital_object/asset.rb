@@ -217,7 +217,7 @@ class DigitalObject::Asset < DigitalObject::Base
     response['success'].to_s == 'true'
   rescue Errno::ECONNREFUSED, RestClient::InternalServerError, SocketError, RestClient::NotFound
     Hyacinth::Utils::Logger.logger.error("Tried to regenerate cached image properties for #{pid}, but could not connect to image server at: #{IMAGE_SERVER_CONFIG['url']}")
-    return false
+    false
   end
 
   def load_data_from_sources

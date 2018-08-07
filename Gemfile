@@ -20,7 +20,6 @@ gem 'autoprefixer-rails' # Recommended by bootstrap-sass
 
 # OHSynchronizer Dependencies
 gem 'font-awesome-rails', '~> 4.7.0'
-#gem 'jquery-ui-rails' # Maybe needed?
 
 # Pretty printing
 gem 'coderay'
@@ -148,7 +147,7 @@ group :development, :test do
   gem 'factory_girl_rails', '>= 4.4.1'
   gem 'rubocop', '~> 0.58.2', require: false
   gem 'rubocop-rspec', '>= 1.20.1', require: false
-  gem 'rubocop-rails_config', require: false
+  gem 'rubocop-rails_config', '>= 0.2.2', require: false
   gem 'equivalent-xml'
 end
 

@@ -4,11 +4,13 @@ inherit_gem:
   rubocop-rails_config:
     - config/rails.yml
 
+Rails:
+  Enabled: true
+
 AllCops:
+  TargetRubyVersion: 2.4.2
+  TargetRailsVersion: 4.10
   DisplayCopNames: true
-  Include:
-    - '**/Rakefile'
-    - '**/config.ru'
   Exclude:
     - 'bin/**/*'
     - 'db/**/*'

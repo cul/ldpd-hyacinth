@@ -37,7 +37,7 @@ module DigitalObject::FinderMethods
     def find_by_pid(pid)
       find(pid)
     rescue Hyacinth::Exceptions::DigitalObjectNotFoundError
-      return nil
+      nil
     end
 
     def find_all_by_identifier(identifier)
