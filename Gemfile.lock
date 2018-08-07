@@ -614,7 +614,8 @@ DEPENDENCIES
   poltergeist (>= 1.7)
   puma
   rack-protection (>= 1.5.5)
-  rails (~> 4.2.8)
+  rails (~> 4.2.10)
+  rails-html-sanitizer (>= 1.0.4)
   rake (~> 10.0)
   random-word
   rdf-rdfxml!
