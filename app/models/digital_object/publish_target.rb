@@ -1,7 +1,7 @@
 class DigitalObject::PublishTarget < DigitalObject::Base
   VALID_DC_TYPES = ['Publish Target']
   DIGITAL_OBJECT_TYPE_STRING_KEY = 'publish_target'
-  DIGITAL_OBJECT_DATA_KEY = 'publish_target_data'
+  PUBLISH_TARGET_DATA_KEY = 'publish_target_data'
 
   PUBLISH_TARGET_DATA_FIELDS = ['string_key', 'publish_url', 'api_key', 'representative_image_pid', 'short_title', 'short_description', 'full_description', 'restricted', 'slug', 'site_url'].freeze
   REQUIRED_PUBLISH_TARGET_DATA_FIELDS = ['string_key'].freeze
@@ -21,13 +21,13 @@ class DigitalObject::PublishTarget < DigitalObject::Base
   def load_fedora_hyacinth_ds_data_from_fedora_object!
     super
     hyacinth_data = fedora_hyacinth_ds_data
-    @publish_target_data = hyacinth_data.fetch(DIGITAL_OBJECT_DATA_KEY, {})
+    @publish_target_data = hyacinth_data.fetch(PUBLISH_TARGET_DATA_KEY, {})
   end
 
   # Overriding base behavior to also include publish_target_data
   def data_for_hyacinth_ds
     data = super
-    data[DIGITAL_OBJECT_DATA_KEY] = Marshal.load(Marshal.dump(@publish_target_data))
+    data[PUBLISH_TARGET_DATA_KEY] = Marshal.load(Marshal.dump(@publish_target_data))
     data
   end
 

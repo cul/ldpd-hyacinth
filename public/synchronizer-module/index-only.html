@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<meta name="description" content="Columbia University Library: Synchronizer Module">
+		<meta name="keywords" content="HTML,CSS,JavaScript">
+		<meta name="author" content="Ashley Pressley">
+
+		<title>Columbia University Library: Synchronizer Module</title>
+
+		<!-- Theming -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" rel="stylesheet" type="text/css">
+		<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+		<link href="./css/ableplayer.min.css" rel="stylesheet" type="text/css"/>
+		<link href="./css/style.css" rel="stylesheet" type="text/css">
+		<link rel="icon" type="image/icon" href="fav.ico">
+	</head>
+
+	<body>
+	<nav class="navbar navbar-inverse">
+		<div class="container">
+			<div class="navbar-header"><span class="navbar-brand">Synchronizer Module</span></div>
+		</div>
+	</nav>
+
+    <div id="main" class="">
+      <!-- <h1>Synchronizer Module</h1> -->
+
+			<!-- For errors and success -->
+			<div id="messagesBar" class="col-md-12"></div>
+
+			<div id="working-area" class="col-md-12">
+				<div id="left-sidebar" class="container">
+					<div id="media-playback" class="">
+						<div id="ytplayer"></div>
+						<div id="video"><video id="video-player" data-able-player preload="auto" autoplay></video></div>
+						<div id="audio"><audio id="audio-player" data-able-player preload="auto" autoplay></audio></div>
+					</div><!-- /#media-playback -->
+
+					<div id="interview-metadata"></div><!-- /#interview-metadata -->
+
+					<div><p>&nbsp;</p></div>
+
+					<div id="finish-area" class="">
+						<!-- Whether you're previewing or exporting a transcript or an index is determined by which tab is active. -->
+						<div class="btn-group session-controls" role="group">
+							<button id="clear" type="button" class="btn btn-secondary" onclick="OHSynchronizer.clearBoxes()">Cancel Session</button>
+							<button id="preview" type="button" class="btn btn-secondary preview-button">Preview</button>
+							<button id="preview-close" type="button" class="btn btn-secondary hidden" onclick="OHSynchronizer.Export.previewClose()">Close Preview</button>
+							<div class="btn-group" role="group">
+						    <button id="export" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						      Export
+						    </button>
+						    <div class="dropdown-menu" aria-labelledby="btnGroupExport">
+						      <a id="downloadVTT" class="dropdown-item synch-download-button"  data-format="vtt">Download VTT</a>
+						      <!-- <a id="downloadAnno" class="dropdown-item" onclick="exportFile('anno')">Download WebAnno</a>
+						      <a id="downloadXML" class="dropdown-item" onclick="exportFile('xml')">Download XML</a> -->
+						    </div>
+						  </div>
+						</div>
+					</div><!-- /#finish-area -->
+				</div><!-- /#left-sidebar -->
+
+				<div id="right-sidebar">
+					<div id="text-tabs" class="">
+						<div id="tabs-index">
+							<div id="input-index">
+								<h2>Index Document</h2>
+								<button type="button" class="btn btn-primary pull-right tag-add-segment" data-toggle="modal" data-target=".index-tag" data-backdrop="static" data-keyboard="false">Add Segment</button>
+
+								<div class="indexAccordion"></div>
+							</div>
+						</div><!-- /#tabs-index -->
+						<div class="clearfix"></div>
+					</div><!-- /#text-tabs -->
+				</div><!-- /#right-sidebar -->
+			</div><!-- /#working-area -->
+
+    </div><!-- /#main -->
+
+		<!-- Modal popup for Index Tagging -->
+		<div id="index-tag" class="modal fade index-tag" tabindex="-1" role="dialog" aria-labelledby="indexTag" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content col-md-11">
+					<h2>Tag Segment</h2>
+					<form>
+						<div class="form-group row">
+							<label for="tag-interview-title" class="col-md-3 col-form-label">Interview Title</label>
+							<div class="col-md-9">
+								<input id="tag-interview-title" class="form-control" type="text" readonly>
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="tag-timestamp" class="col-md-3 col-form-label">Timestamp</label>
+							<div class="col-md-9">
+								<input id="tag-timestamp" class="form-control" type="text" readonly>
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="tag-playhead" class="col-md-3 col-form-label">Current Playhead</label>
+							<div class="col-md-9">
+								<input id="tag-playhead" class="form-control" type="text" readonly>
+							</div>
+						</div>
+						<!-- player Controls -->
+						<div id="tag-controls" class="form-group row btn-group tag-controls" role="group">
+							<div class="col-md-1">&nbsp;</div>
+							<button id="control-beginning" type="button" class="btn btn-secondary tag-control-beginning"><i class="fa fa-fast-backward" title="Jump to Beginning of Segment"></i></button>
+							<button id="control-backward" type="button" class="btn btn-secondary tag-control-backward"><i class="fa fa-arrow-left" title="Jump Back 15 Seconds"></i></button>
+							<button id="control-play" type="button" class="btn btn-secondary tag-control-play"><i class="fa fa-play" title="Play"></i></button>
+							<button id="control-stop" type="button" class="btn btn-secondary tag-control-stop"><i class="fa fa-stop" title="Stop"></i></button>
+							<button id="control-forward" type="button" class="btn btn-secondary tag-control-forward"><i class="fa fa-arrow-right" title="Jump Forward 15 Seconds"></i></button>
+							<button id="control-update-time" type="button" class="btn btn-secondary tag-control-update">Update Time</button>
+						</div>
+						<div class="form-group row">
+							<label for="tag-segment-title" class="col-md-3 col-form-label"><i class="fa fa-asterisk"></i>Segment Title</label>
+							<div class="col-md-9">
+								<input id="tag-segment-title" class="form-control" type="text">
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="tag-segment-synopsis" class="col-md-3 col-form-label">Description / Synopsis</label>
+							<div class="col-md-9">
+								<textarea id="tag-segment-synopsis" class="form-control" rows="4"></textarea>
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="tag-keywords" class="col-md-3 col-form-label">Keywords</label>
+							<div class="col-md-9">
+								<textarea id="tag-keywords" class="form-control" rows="3"></textarea>
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="tag-subjects" class="col-md-3 col-form-label">Subjects</label>
+							<div class="col-md-9">
+								<textarea id="tag-subjects" class="form-control" rows="3"></textarea>
+							</div>
+						</div>
+						<div class="form-group row">
+							<label for="tag-partial-transcript" class="col-md-3 col-form-label">Partial Transcript</label>
+							<div class="col-md-9">
+								<textarea id="tag-partial-transcript" class="form-control" rows="4"></textarea>
+							</div>
+						</div>
+						<div class="form-group row">
+							<div class="col-md-1">&nbsp;</div>
+							<button type="button" class="btn btn-primary index-tag-save">Accept</button>
+							<button type="button" class="btn btn-secondary index-tag-cancel">Cancel</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div><!-- /#index-tag -->
+
+		<!-- Audio files for transcript syncing markers -->
+		<div id="transcript-chimes" class="hidden">
+			<audio class="loop-boundary-chime" src="./includes/startBeep.mp3" autostart="false"></audio>
+			<audio class="loop-mid-chime" src="./includes/midBeep.mp3" autostart="false"></audio>
+		</div>
+
+		<!-- Scripts Loading -->
+		<!--[if lt IE 9]>
+    	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+		<script src="./js/js.cookie.2.2.0.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<script src="./js/ableplayer.min.js"></script>
+		<script src="./js/hls.min.js"></script> <!-- Must be loaded locally because CDN provider is broken -->
+		<script src="./js/ohsynchronizer.js"></script>
+		<script src="./js/index-only.js"></script>
+	</body>
+
+</html>

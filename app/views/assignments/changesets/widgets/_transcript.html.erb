@@ -1,0 +1,40 @@
+<div id="widget-template-container"></div>
+
+<script>
+
+  var digitalObjectPid = '<%= @assignment.digital_object_pid %>';
+  var currentUserId = <%= current_user.id %>;
+
+  $.ajax({
+    url: '/digital_objects/data_for_editor.json',
+    type: 'POST',
+    data: {
+      pid: digitalObjectPid
+    },
+    cache: false
+  }).done(function(data_for_editor){
+
+    var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
+    var assignment = digitalObject.hasAssignment(Hyacinth.AssignmentTaskTypes.transcribe);
+
+    $.ajax({
+      url: '/assignments/' + assignment['id'] + '/changeset/proposed',
+      type: 'GET',
+      cache: false
+    }).done(function(transcriptText){
+
+      $('#widget-template-container').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/manage_transcript.ejs', {digitalObject: digitalObject}));
+
+      var transcriptEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor('digital-object-transcript-editor', {
+        digitalObject: digitalObject,
+        transcriptText: transcriptText,
+        mode: currentUserId == assignment['assignee_id'] ? 'edit' : 'view',
+        assignment: assignment
+      });
+    }).fail(function(){
+      alert(Hyacinth.unexpectedAjaxErrorMessage);
+    });
+  }).fail(function(){
+    alert(Hyacinth.unexpectedAjaxErrorMessage);
+  });
+</script>

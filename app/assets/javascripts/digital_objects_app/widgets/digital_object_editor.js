@@ -9,6 +9,9 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor = function(containerElementId, op
   this.allowedPublishTargets = options['allowedPublishTargets'] || [];
   this.globalTabIndex = 0;
   this.currentAuthorizedTermSelector = null;
+  this.disallowNonDescriptionFieldEditing = options['disallowNonDescriptionFieldEditing'] || false;
+  this.showPublishButton = options['showPublishButton'] || false;
+  this.assignment = options['assignment'];
 
   //Make sure that a valid mode has been specified
   if (['edit', 'show'].indexOf(this.mode) == -1) {
@@ -234,7 +237,6 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.addIdentifier = function(identifi
 Hyacinth.DigitalObjectsApp.DigitalObjectEditor.populateFormElementsWithDynamicFieldData = function(dynamicFieldDataForThisLevel, containerForThisLevel, mode){
 
   var $containerForThisLevel = $(containerForThisLevel);
-
   $.each(dynamicFieldDataForThisLevel, function(stringKey, value){
     var $elementsWithStringKey = $containerForThisLevel.children('.dynamic_field_group_content').children('.dynamic_field_group, .dynamic_field').filter('[data-string-key="' + stringKey + '"]');
 
@@ -287,7 +289,6 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.populateFormElementsWithDynamicFi
  *******************/
 
 Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
-
   var that = this;
 
   this.$containerElement.addClass(Hyacinth.DigitalObjectsApp.DigitalObjectEditor.EDITOR_ELEMENT_CLASS); //Add class to container element
@@ -295,13 +296,15 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function() {
 
   //Setup form html
   this.$containerElement.html(
-    Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_editor/_header.ejs', {digitalObject: this.digitalObject, mode: this.mode, fieldsets: this.fieldsets}) +
+    Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_editor/_header.ejs', {digitalObject: this.digitalObject, mode: this.mode, fieldsets: this.fieldsets, assignment: this.assignment}) +
     Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_editor/_hierarchical_fields_form.ejs', {
       dynamicFieldHierarchy: this.dynamicFieldHierarchy,
       mode: this.mode,
       dynamicFieldIdsToEnabledDynamicFields: this.dynamicFieldIdsToEnabledDynamicFields,
       digitalObject: this.digitalObject,
-      allowedPublishTargets: this.allowedPublishTargets
+      allowedPublishTargets: this.allowedPublishTargets,
+      disallowNonDescriptionFieldEditing: this.disallowNonDescriptionFieldEditing,
+      showPublishButton: this.showPublishButton
     })
   );
 
@@ -599,7 +602,6 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.populateValuesForContro
 
 
 Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.submitEditorForm = function(publish) {
-
   var $editorForm = this.$containerElement.find('.editor-form');
 
   Hyacinth.addAlert('Saving...', 'info');
@@ -650,20 +652,29 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.submitEditorForm = func
   }
 
   var that = this;
+  var data = {
+    '_method': this.digitalObject.isNewRecord() ? 'POST' : 'PUT', //For proper RESTful Rails requests
+  };
+  if(this.assignment) {
+    var saveUrl = '/assignments/' + this.assignment['id'] + '/changeset';
+    data['digital_object_data_json'] = JSON.stringify({
+      dynamic_field_data : digitalObjectData['dynamic_field_data'] // only include dynamic field data
+    });
+  } else {
+    var saveUrl = this.digitalObject.isNewRecord() ? ('/digital_objects.json') : ('/digital_objects/' + this.digitalObject.getPid() + '.json');
+    data['publish'] = publish;
+    data['mint_reserved_doi'] = mintReservedDoi;
+    data['digital_object_data_json'] = JSON.stringify(digitalObjectData);
+  }
 
   $.ajax({
-    url: this.digitalObject.isNewRecord() ? ('/digital_objects.json') : ('/digital_objects/' + this.digitalObject.getPid() + '.json'),
+    url: saveUrl,
     type: 'POST',
-    data: {
-      '_method': this.digitalObject.isNewRecord() ? 'POST' : 'PUT', //For proper RESTful Rails requests
-      digital_object_data_json: JSON.stringify(digitalObjectData),
-      publish: publish,
-      mint_reserved_doi: mintReservedDoi
-    },
+    data: data,
     cache: false
   }).done(function(digitalObjectCreationResponse){
 
-    if (digitalObjectCreationResponse['errors']) {
+    if (digitalObjectCreationResponse['errors'] && digitalObjectCreationResponse['errors'].length > 0) {
       Hyacinth.addAlert('Errors encountered during save. Please review your fields and try again.', 'danger');
       $.each(digitalObjectCreationResponse['errors'], function(error_key, error_message){
         var errorWithPossibleNumberIndicator = error_key.split('.');

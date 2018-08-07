@@ -1,0 +1,67 @@
+<%
+  //Passed params:
+  //
+  //digitalObject
+  //mode (view or edit)
+  //assignment
+%>
+
+<% if (mode == 'view') { %>
+  <% if (assignment) { %>
+    <div class="alert alert-info">Transcript editing is locked because this Digital Object's transcript is currently assigned to <%= assignment['assignee_name'] %>.</div>
+  <% } %>
+
+  <pre class="transcript-readonly-container"></pre>
+<% } else if (mode == 'edit') { %>
+
+<div role="tabpanel">
+
+  <!-- Nav tabs -->
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#textarea_editor" aria-controls="textarea_editor" role="tab" data-toggle="tab">Edit Transcript</a></li>
+    <li role="presentation"><a href="#browser_upload" aria-controls="browser_upload" role="tab" data-toggle="tab">Upload Replacement Transcript</a></li>
+  </ul>
+
+  <form class="transcript-editor-form">
+
+  <!-- Tab panes -->
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="textarea_editor">
+      <textarea rows="10" class="transcript-textarea form-control"></textarea>
+      <br />
+      <div class="actions">
+        <input type="submit" class="btn btn-primary pull-right editor-submit-button" value="Save" />
+        <div class="clearfix"></div>
+      </div>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="browser_upload">
+
+          <div class="hyacinth-editor-upload-container">
+            <div class="browser-upload">
+
+              <div class="upload-drop-zone aligncenter">
+                Click here or drag and drop to upload a new plain text transcript file.
+                <br />
+                <small>The new file will replace your existing transcript.</small>
+                <br />
+                <small>Max size: 10MB</small>
+                <input class="upload-file-input" type="file" name="file">
+              </div>
+
+              <div class="progress">
+                <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
+                  <span class="sr-only">0% Complete</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="extended-progress-info">&nbsp;</div>
+          </div>
+
+    </div>
+  </div>
+</form>
+
+</div>
+
+<% } %>

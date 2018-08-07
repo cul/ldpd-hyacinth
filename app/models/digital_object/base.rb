@@ -21,9 +21,9 @@ class DigitalObject::Base
   define_attribute_methods :parent_digital_object_pids, :obsolete_parent_digital_object_pids, :ordered_child_digital_object_pids
 
   attr_accessor :project, :publish_target_pids, :identifiers, :created_by, :updated_by, :first_published_at, :state, :dc_type, :ordered_child_digital_object_pids, :publish_after_save, :mint_reserved_doi_before_save, :doi
-  attr_reader :errors, :fedora_object, :parent_digital_object_pids
+  attr_reader :errors, :fedora_object, :parent_digital_object_pids, :db_record
 
-  delegate :created_at, :new_record?, :updated_at, to: :@db_record
+  delegate :created_at, :new_record?, :updated_at, :uuid, :data_file_path, to: :@db_record
   delegate :pid, to: :@fedora_object, allow_nil: true
   delegate :next_pid, to: :project
 

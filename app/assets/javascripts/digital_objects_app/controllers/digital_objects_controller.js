@@ -108,7 +108,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.new = function() {
       fieldsets: data_for_editor['fieldsets'],
       dynamicFieldHierarchy: data_for_editor['dynamic_field_hierarchy'],
       dynamicFieldIdsToEnabledDynamicFields: data_for_editor['dynamic_field_ids_to_enabled_dynamic_fields'],
-      allowedPublishTargets: data_for_editor['allowed_publish_targets']
+      allowedPublishTargets: data_for_editor['allowed_publish_targets'],
+      showPublishButton: Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_publish')
     });
 
     //Event cleanup
@@ -135,16 +136,38 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.edit = function() 
   }).done(function(data_for_editor){
 
     var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
+    var assignment = digitalObject.hasAssignment(Hyacinth.AssignmentTaskTypes.describe);
+    var mode = 'show'; //default
+    if(!assignment && Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) {
+      // If this assignment is not assigned to anyone, then anyone with edit permission can edit it.
+      mode = 'edit';
+    }
+
+    Hyacinth.ContextualNav.setNavTitle('&laquo; Leave Editing Mode', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: digitalObject.getPid()}), true);
+    var navItems = [];
+    if (digitalObject.getState() == 'A' && Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_delete')) {
+      navItems.push(
+        {
+          label: 'Delete',
+          url: '#',
+          class: 'delete-digital-object-button',
+          'data-pid': digitalObject.getPid()
+        }
+      );
+    }
+    Hyacinth.ContextualNav.setNavItems(navItems);
 
     $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/edit.ejs', {digitalObject: digitalObject}));
 
     var digitalObjectEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectEditor('digital-object-editor', {
-      mode: 'edit',
+      mode: mode,
       digitalObject: digitalObject,
       fieldsets: data_for_editor['fieldsets'],
       dynamicFieldHierarchy: data_for_editor['dynamic_field_hierarchy'],
       dynamicFieldIdsToEnabledDynamicFields: data_for_editor['dynamic_field_ids_to_enabled_dynamic_fields'],
-      allowedPublishTargets: data_for_editor['allowed_publish_targets']
+      allowedPublishTargets: data_for_editor['allowed_publish_targets'],
+      assignment: assignment,
+      showPublishButton: Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_publish')
     });
 
     //For deleting DigitalObjects
@@ -235,8 +258,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.show = function() 
     },
     cache: false
   }).done(function(data_for_editor){
-
     var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
+    var assignment = digitalObject.hasAssignment(Hyacinth.AssignmentTaskTypes.describe);
 
     var dataForTemplate = {
       digitalObject: digitalObject
@@ -260,7 +283,9 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.show = function() 
       fieldsets: data_for_editor['fieldsets'],
       dynamicFieldHierarchy: data_for_editor['dynamic_field_hierarchy'],
       dynamicFieldIdsToEnabledDynamicFields: data_for_editor['dynamic_field_ids_to_enabled_dynamic_fields'],
-      allowedPublishTargets: data_for_editor['allowed_publish_targets']
+      allowedPublishTargets: data_for_editor['allowed_publish_targets'],
+      assignment: assignment,
+      showPublishButton: Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_publish')
     });
 
     //Event cleanup
@@ -273,6 +298,146 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.show = function() 
     alert(Hyacinth.unexpectedAjaxErrorMessage);
   });
 
+};
+
+//Manage Transcript Action - show or edit a transcript for an asset
+Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_transcript = function() {
+  var that = this;
+
+  $.ajax({
+    url: '/digital_objects/data_for_editor.json',
+    type: 'POST',
+    data: {
+      pid: Hyacinth.DigitalObjectsApp.params['pid']
+    },
+    cache: false
+  }).done(function(data_for_editor){
+
+    var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
+    var assignment = digitalObject.hasAssignment(Hyacinth.AssignmentTaskTypes.transcribe);
+    var mode = 'view'; //default
+
+    if(!assignment && Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) {
+      // If this assignment is not assigned to anyone, then anyone with edit permission can edit it.
+      mode = 'edit';
+    }
+
+    $.ajax({
+      url: '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '/transcript',
+      type: 'GET',
+      cache: false
+    }).done(function(transcriptText){
+
+      Hyacinth.ContextualNav.setNavTitle('&laquo; Back', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: digitalObject.pid}));
+      Hyacinth.ContextualNav.setNavItems([]);
+
+      $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/manage_transcript.ejs', {digitalObject: digitalObject}));
+
+      var transcriptEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectTranscriptEditor('digital-object-transcript-editor', {
+        digitalObject: digitalObject,
+        transcriptText: transcriptText,
+        mode: mode,
+        assignment: assignment
+      });
+
+      //Event cleanup
+      that.dispose = function(){
+        transcriptEditor.dispose();
+        transcriptEditor = null;
+      };
+
+    }).fail(function(){
+      alert(Hyacinth.unexpectedAjaxErrorMessage);
+    });
+  }).fail(function(){
+    alert(Hyacinth.unexpectedAjaxErrorMessage);
+  });
+};
+
+//Annotate action - Manage annotation for an object (synchronize, rotate, select representative image, etc.)
+Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_annotation = function() {
+  var that = this;
+
+  $.ajax({
+    url: '/digital_objects/data_for_editor.json',
+    type: 'POST',
+    data: {
+      pid: Hyacinth.DigitalObjectsApp.params['pid']
+    },
+    cache: false
+  }).done(function(data_for_editor){
+
+    var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
+    var assignment = digitalObject.hasAssignment(Hyacinth.AssignmentTaskTypes.annotate);
+    var mode = 'view'; //default
+
+    if(!assignment && Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) {
+      // If this assignment is not assigned to anyone, then anyone with edit permission can edit it.
+      mode = 'edit';
+    }
+
+    Hyacinth.ContextualNav.setNavTitle('&laquo; Back', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: digitalObject.pid}));
+    Hyacinth.ContextualNav.setNavItems([]);
+
+    $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/manage_annotation.ejs', {digitalObject: digitalObject}));
+    var annotationEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor('digital-object-annotation-editor', {
+      digitalObject: digitalObject,
+      mode: mode,
+      assignment: assignment
+    });
+
+    //Event cleanup
+    that.dispose = function(){
+      annotationEditor.dispose();
+      annotationEditor = null;
+    };
+
+  }).fail(function(){
+    alert(Hyacinth.unexpectedAjaxErrorMessage);
+  });
+};
+
+//Annotate action - Manage annotation for an object (synchronize, rotate, select representative image, etc.)
+Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_captions = function() {
+  var that = this;
+
+  $.ajax({
+    url: '/digital_objects/data_for_editor.json',
+    type: 'POST',
+    data: {
+      pid: Hyacinth.DigitalObjectsApp.params['pid']
+    },
+    cache: false
+  }).done(function(data_for_editor){
+
+    var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
+    var assignment = digitalObject.hasAssignment(Hyacinth.AssignmentTaskTypes.synchronize);
+    var mode = 'view'; //default
+
+    if(!assignment && Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) {
+      // If this assignment is not assigned to anyone, then anyone with edit permission can edit it.
+      mode = 'edit';
+    }
+
+    Hyacinth.ContextualNav.setNavTitle('&laquo; Back', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: digitalObject.pid}));
+    Hyacinth.ContextualNav.setNavItems([]);
+
+    $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/manage_captions.ejs', {digitalObject: digitalObject}));
+    var captionsEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor('digital-object-captions-editor', {
+      digitalObject: digitalObject,
+      mode: mode,
+      assignment: assignment
+    });
+
+    //Event cleanup
+    that.dispose = function(){
+      captionsEditor.dispose();
+      captionsEditor = null;
+    };
+
+  }).fail(function(){
+    alert(Hyacinth.unexpectedAjaxErrorMessage);
+  });
 };
 
 //Publish Target Fields Action - Edit fields for a publish target

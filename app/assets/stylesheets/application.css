@@ -10,8 +10,8 @@
  *
  *= require_self
  *= require jquery-ui
- *= require bootstrap-multiselect
  *= require chosen
+ *= require font-awesome
  *= require ./hyacinth
  *= require_tree .
  */

@@ -1,0 +1,51 @@
+<%= form_for(@assignment) do |f| %>
+
+<% if @assignment.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@assignment.errors.count, "error") %> prohibited this assignment from being saved:</h2>
+
+    <ul>
+    <% @assignment.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+<% end %>
+
+  <div class="field">
+    <%= f.label :digital_object_pid, 'Digital Object' %><br/>
+    <%= link_to(@assignment.digital_object_pid, digital_object_app_path(@assignment.digital_object_pid)) %>
+    <%= f.hidden_field(:digital_object_pid) %><br/>
+  </div>
+  <div class="field">
+    <%= f.label :assignee %><br/>
+    <%= f.collection_select(:assignee_id, User.all, :id, :full_name, {:include_blank => '- Select a user -'}, {:class => 'form-control input-sm'}) %>
+  </div>
+  <% if @assignment.persisted? -%>
+    <div class="field">
+      <%= f.label :task %><br/>
+      <%= @assignment.task %>
+    </div>
+  <% else -%>
+    <div class="field">
+      <%= f.label :task %><br/>
+      <%= f.select(:task, options_for_select(Assignment.tasks), {}, {:class => 'form-control input-sm'}) %>
+    </div>
+  <% end -%>
+  <% if @assignment.new_record? %>
+    <%= f.hidden_field :status, value: Assignment.statuses['assigned'] %>
+  <% else %>
+  <div class="field">
+    <%= f.label :status %><br/>
+      <%= f.select(:status, options_for_select((Assignment.statuses.keys - ['accepted']), @assignment.status), {}, {:class => 'form-control input-sm'}) %>
+    <% end %>
+  </div>
+  <div class="field">
+    <%= f.label :note %><br/>
+    <%= f.text_area(:note, {class: 'form-control input-sm', rows: 5}) %>
+  </div>
+  <div class="actions">
+    <%= f.submit(class: 'btn btn-primary') %>
+    <%= link_to 'Cancel', assignments_path, class: 'btn btn-danger' %>
+  </div>
+<% end %>

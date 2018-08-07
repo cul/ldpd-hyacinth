@@ -1,14 +1,16 @@
 require: rubocop-rspec
 
 inherit_gem:
-  rubocop-rails:
+  rubocop-rails_config:
     - config/rails.yml
 
+Rails:
+  Enabled: true
+
 AllCops:
+  TargetRubyVersion: 2.4.2
+  TargetRailsVersion: 4.10
   DisplayCopNames: true
-  Include:
-    - '**/Rakefile'
-    - '**/config.ru'
   Exclude:
     - 'bin/**/*'
     - 'db/**/*'
@@ -18,10 +20,19 @@ AllCops:
     - 'app/helpers/**/*'
     - 'app/views/**/*'
     - 'lib/tasks/**/*'
+    - 'app/controllers/concerns/hyacinth/digital_objects/downloads.rb'
+    - 'app/controllers/assignments_controller.rb'
+    - 'app/controllers/assignments/changesets_controller.rb'
 
 Layout/BlockEndNewline:
   Exclude:
     - 'spec/**/*'
+
+Layout/EmptyLinesAroundModuleBody:
+  Enabled: false
+
+Layout/EmptyLinesAroundClassBody:
+  Enabled: false
 
 Layout/IndentationConsistency:
   EnforcedStyle: rails

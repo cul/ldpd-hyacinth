@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 4.2.8'
+gem 'rails', '~> 4.2.10'
 
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
@@ -18,11 +18,14 @@ gem 'sass-rails'
 gem 'bootstrap-sass', '~> 3.3'
 gem 'autoprefixer-rails' # Recommended by bootstrap-sass
 
-# Gem for nice multi-select widget
-gem 'bootstrap-multiselect-rails'
+# OHSynchronizer Dependencies
+gem 'font-awesome-rails', '~> 4.7.0'
 
 # Pretty printing
 gem 'coderay'
+
+# For diff display
+gem 'diffy', '~> 3.1'
 
 # Progress bar for rake tasks
 gem 'ruby-progressbar'
@@ -72,7 +75,7 @@ gem 'chosen-rails' # Multiselect box
 gem 'underscore-rails'
 
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
-#gem 'turbolinks'
+# gem 'turbolinks'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder', '~> 1.2'
@@ -98,14 +101,16 @@ gem 'nokogiri', '~> 1.8.1'
 gem 'devise', '>= 3.4.1'
 
 # CUL Fedora Dependencies and Content Models
-gem 'cul_hydra', '~> 1.4.7'
-#gem 'cul_hydra', path: '../cul_hydra'
+gem 'cul_hydra', '~> 1.5.0'
+gem 'rubydora', git: 'https://github.com/elohanlon/rubydora', branch: 'datastream_dissemination_with_headers'
+# gem 'cul_hydra', path: '../cul_hydra'
 gem 'jettywrapper', '>= 1.5.1'
 # Temporarily use specific commit because new version of gem hasn't been released yet.  Latest is 1.1.3.
 gem 'rdf-rdfxml', git: 'https://github.com/ruby-rdf/rdf-rdfxml', ref: '78c13fe5dbcecaf1f56abe9535d00f16c670a764'
 gem 'uri_service', '0.5.5'
-#gem 'uri_service', path: '../uri_service'
+# gem 'uri_service', path: '../uri_service'
 gem 'solrizer', '>= 3.4.1'
+
 
 gem 'best_type', '0.0.3'
 
@@ -131,6 +136,7 @@ gem 'noid', '>= 0.7.1'
 gem 'rubyzip', '>= 1.2.1'
 gem 'rack-protection', '>= 1.5.5'
 gem 'loofah', '>= 2.2.1'
+gem 'rails-html-sanitizer', '>= 1.0.4'
 
 # Development and testing!
 group :development, :test do
@@ -139,9 +145,9 @@ group :development, :test do
   gem 'capybara', '>= 2.5'
   gem 'poltergeist', '>= 1.7' # For headless-browser JavaScript testing
   gem 'factory_girl_rails', '>= 4.4.1'
-  gem 'rubocop', '~> 0.51.0', require: false
+  gem 'rubocop', '~> 0.58.2', require: false
   gem 'rubocop-rspec', '>= 1.20.1', require: false
-  gem 'rubocop-rails', '>= 1.1.0',  require: false
+  gem 'rubocop-rails_config', '>= 0.2.2', require: false
   gem 'equivalent-xml'
 end
 
@@ -167,5 +173,5 @@ end
 
 # Alternate development webserver
 gem 'puma', group: :development
-#gem 'thin', group: :development
-#gem 'unicorn', group: :development
+# gem 'thin', group: :development
+# gem 'unicorn', group: :development

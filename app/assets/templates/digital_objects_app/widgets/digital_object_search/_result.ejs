@@ -62,6 +62,7 @@
   <div class="footer-label">
     <span class="label label-default"><%- searchResult.getDigitalObjectTypeDisplayLabel() %></span>
     <span class="label label-primary"><%- searchResult.getProjectDisplayLabel() %></span>
+    <span class="label"><a href="/assignments/new?assignment[digital_object_pid]=<%= searchResult.getPid() %>">Assign this</a></span>
   </div>
 
 </div>

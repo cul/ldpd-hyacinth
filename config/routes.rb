@@ -58,6 +58,12 @@ Hyacinth::Application.routes.draw do
       get 'data_for_ordered_child_editor'
       get 'download'
       get 'download_access_copy'
+      get 'transcript', action: 'download_transcript'
+      put 'transcript', action: 'update_transcript'
+      get 'index_document', action: 'download_index_document'
+      put 'index_document', action: 'update_index_document'
+      get 'captions', action: 'download_captions'
+      put 'captions', action: 'update_captions'
       get 'media_view'
       get 'mods'
       put 'undelete', action: 'undestroy'
@@ -111,6 +117,23 @@ Hyacinth::Application.routes.draw do
       get 'where_current_user_can_create', action: 'where_current_user_can_create'
     end
   end
+
+  resources :assignments do
+    post 'commit', action: 'commit'
+    member do
+      put 'commit'
+      get 'reject'
+      put 'review'
+
+      scope module: "assignments" do
+        resource 'changeset', only: [:update, :edit, :show] do
+          get 'proposed'
+        end
+      end
+    end
+  end
+
+  resources :archived_assignments, only: [:index, :show, :destroy]
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

@@ -1,0 +1,119 @@
+<%
+  //Passed params:
+  //
+  //digitalObject
+  //mode
+  //assignment
+%>
+
+<% if (mode == 'view' && assignment) { %>
+	<div class="alert alert-info">Index document editing is locked because this Digital Object's transcript is currently assigned to <%= assignment['assignee_name'] %>.</div>
+<% } %>
+
+<div id="working-area" class="row" style="position:relative;">
+	<div id="left-sidebar" class="col-md-6">
+		<div id="media-playback" class="">
+			<div id="ytplayer"></div>
+			<div id="video"><video id="video-player" data-able-player preload="auto"></video></div>
+			<div id="audio"><audio id="audio-player" data-able-player preload="auto"></audio></div>
+		</div><!-- /#media-playback -->
+
+		<div id="interview-metadata"></div><!-- /#interview-metadata -->
+	</div><!-- /#left-sidebar -->
+
+	<div id="right-sidebar" class="col-md-6 pull-right">
+		<div id="text-tabs">
+			<div id="tabs-index">
+				<div id="input-index">
+					<h2>Index Document</h2>
+					<button type="button" class="btn btn-primary tag-add-segment" data-toggle="modal" data-target=".index-tag" data-backdrop="static" data-keyboard="false">Add Segment</button>
+					<button id="preview" type="button" class="btn btn-default preview-button">Preview</button>
+					<button id="preview-close" type="button" class="btn btn-default hidden" onclick="OHSynchronizer.Export.previewClose()">Close Preview</button>
+					<button id="save" type="button" class="btn btn-primary save-index-document-button pull-right">Save</button>
+					<div class="indexAccordion" style="margin-top:1em;"></div>
+				</div>
+			</div><!-- /#tabs-index -->
+			<div class="clearfix"></div>
+		</div><!-- /#text-tabs -->
+	</div><!-- /#right-sidebar -->
+</div><!-- /#working-area -->
+
+<!-- Modal popup for Index Tagging -->
+<div id="index-tag" class="modal fade index-tag" tabindex="-1" role="dialog" aria-labelledby="indexTag" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content col-md-11">
+			<h2>Tag Segment</h2>
+			<form>
+				<div class="form-group row">
+					<label for="tag-interview-title" class="col-md-3 col-form-label">Interview Title</label>
+					<div class="col-md-9">
+						<input id="tag-interview-title" class="form-control" type="text" readonly>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="tag-timestamp" class="col-md-3 col-form-label">Timestamp</label>
+					<div class="col-md-9">
+						<input id="tag-timestamp" class="form-control" type="text" readonly>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="tag-playhead" class="col-md-3 col-form-label">Current Playhead</label>
+					<div class="col-md-9">
+						<input id="tag-playhead" class="form-control" type="text" readonly>
+					</div>
+				</div>
+				<!-- player Controls -->
+				<div id="tag-controls" class="form-group row btn-group tag-controls" role="group">
+					<div class="col-md-1">&nbsp;</div>
+					<button id="control-beginning" type="button" class="btn btn-default tag-control-beginning"><i class="fa fa-fast-backward" title="Jump to Beginning of Segment"></i></button>
+					<button id="control-backward" type="button" class="btn btn-default tag-control-backward"><i class="fa fa-arrow-left" title="Jump Back 15 Seconds"></i></button>
+					<button id="control-play" type="button" class="btn btn-default tag-control-play"><i class="fa fa-play" title="Play"></i></button>
+					<button id="control-stop" type="button" class="btn btn-default tag-control-stop"><i class="fa fa-stop" title="Stop"></i></button>
+					<button id="control-forward" type="button" class="btn btn-default tag-control-forward"><i class="fa fa-arrow-right" title="Jump Forward 15 Seconds"></i></button>
+					<button id="control-update-time" type="button" class="btn btn-default tag-control-update">Update Time</button>
+				</div>
+				<div class="form-group row">
+					<label for="tag-segment-title" class="col-md-3 col-form-label"><i class="fa fa-asterisk"></i>Segment Title</label>
+					<div class="col-md-9">
+						<input id="tag-segment-title" class="form-control" type="text">
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="tag-segment-synopsis" class="col-md-3 col-form-label">Description / Synopsis</label>
+					<div class="col-md-9">
+						<textarea id="tag-segment-synopsis" class="form-control" rows="4"></textarea>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="tag-keywords" class="col-md-3 col-form-label">Keywords</label>
+					<div class="col-md-9">
+						<textarea id="tag-keywords" class="form-control" rows="3"></textarea>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="tag-subjects" class="col-md-3 col-form-label">Subjects</label>
+					<div class="col-md-9">
+						<textarea id="tag-subjects" class="form-control" rows="3"></textarea>
+					</div>
+				</div>
+				<div class="form-group row">
+					<label for="tag-partial-transcript" class="col-md-3 col-form-label">Partial Transcript</label>
+					<div class="col-md-9">
+						<textarea id="tag-partial-transcript" class="form-control" rows="4"></textarea>
+					</div>
+				</div>
+				<div class="form-group row">
+					<div class="col-md-1">&nbsp;</div>
+					<button type="button" class="btn btn-primary index-tag-save">Accept</button>
+					<button type="button" class="btn btn-default index-tag-cancel">Cancel</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div><!-- /#index-tag -->
+
+<!-- Audio files for transcript syncing markers -->
+<div id="transcript-chimes" class="hidden">
+	<audio class="loop-boundary-chime" src="/synchronizer-module/includes/startBeep.mp3" autostart="false"></audio>
+	<audio class="loop-mid-chime" src="/synchronizer-module/includes/midBeep.mp3" autostart="false"></audio>
+</div>

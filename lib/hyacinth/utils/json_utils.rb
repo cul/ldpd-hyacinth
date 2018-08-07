@@ -1,8 +1,8 @@
 class Hyacinth::Utils::JsonUtils
   def self.valid_json?(json_string)
     JSON.parse(json_string)
-    return true
+    true
   rescue
-    return false
+    false
   end
 end

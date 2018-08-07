@@ -76,7 +76,6 @@ class UsersController < ApplicationController
   end
 
   # GET /users/email_list
-  # GET /email_list.csv
   def email_list
     email_addresses = User.all.map(&:email)
     respond_to do |format|

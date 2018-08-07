@@ -3,6 +3,9 @@ require 'addressable/uri'
 class DigitalObject::Asset < DigitalObject::Base
   include DigitalObject::Assets::Validations
   include DigitalObject::Assets::FileImport
+  include DigitalObject::Assets::Transcript
+  include DigitalObject::Assets::IndexDocument
+  include DigitalObject::Assets::Captions
 
   UNKNOWN_DC_TYPE = 'Unknown'
   VALID_DC_TYPES = [UNKNOWN_DC_TYPE, 'Dataset', 'MovingImage', 'Software', 'Sound', 'StillImage', 'Text']
@@ -214,7 +217,7 @@ class DigitalObject::Asset < DigitalObject::Base
     response['success'].to_s == 'true'
   rescue Errno::ECONNREFUSED, RestClient::InternalServerError, SocketError, RestClient::NotFound
     Hyacinth::Utils::Logger.logger.error("Tried to regenerate cached image properties for #{pid}, but could not connect to image server at: #{IMAGE_SERVER_CONFIG['url']}")
-    return false
+    false
   end
 
   def load_data_from_sources
@@ -251,12 +254,37 @@ class DigitalObject::Asset < DigitalObject::Base
         fedora_object.add_relationship(:restriction, restriction_liternal, true)
       end
     end
+
+    # ensure that uuid directory exists
+    FileUtils.mkdir_p(Hyacinth::Utils::PathUtils.data_directory_path_for_uuid(self.uuid))
+    write_update_transcript_file_if_changed!
+    write_update_index_document_file_if_changed!
+    write_update_captions_file_if_changed!
+  end
+
+  def write_update_transcript_file_if_changed!
+    if transcript_changed?
+      IO.write(self.transcript_location, self.transcript)
+    end
+  end
+
+  def write_update_index_document_file_if_changed!
+    if index_document_changed?
+      IO.write(self.index_document_location, self.index_document)
+    end
+  end
+
+  def write_update_captions_file_if_changed!
+    if captions_changed?
+      IO.write(self.captions_location, self.captions)
+    end
   end
 
   def to_solr
     doc = super
     doc['original_filename_sim'] = original_filename
     doc['original_file_path_sim'] = original_file_path
+    doc['access_copy_location_sim'] = access_copy_location
     doc
   end
 

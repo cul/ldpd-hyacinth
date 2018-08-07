@@ -10,7 +10,7 @@ Hyacinth.DigitalObjectsApp.mostRecentSearchResult = null;
 
 /* Used to start the app and set things up */
 Hyacinth.DigitalObjectsApp.init = function() {
-  
+
   //Handle unauthorized responses with a global ajax handler for the 401 status code
   $.ajaxSetup({
       statusCode: {
@@ -25,7 +25,7 @@ Hyacinth.DigitalObjectsApp.init = function() {
     Hyacinth.eraseCookie('hash_at_login');
     window.location.hash = hashValue;
   }
-  
+
   //Get user permissions and run callback function to set up rest of the app
   Hyacinth.DigitalObjectsApp.setupCurrentUser(function(){
     //Setup hash change listener
@@ -36,12 +36,14 @@ Hyacinth.DigitalObjectsApp.init = function() {
 }
 
 Hyacinth.DigitalObjectsApp.setupCurrentUser = function(callback) {
-  
+
   $.ajax({
     url: '/users/current_user_data.json',
     cache: false
   }).done(function(current_user_data){
     Hyacinth.DigitalObjectsApp.currentUser = current_user_data;
+
+    // add function for checking project permission
     Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission = function(project_pid, permission_type){
       if (this.is_admin) {
         return true;
@@ -52,6 +54,16 @@ Hyacinth.DigitalObjectsApp.setupCurrentUser = function(callback) {
       }
       return false;
     };
+
+    // returns an assignment object if the user has an assignment permission for the given type, or returns null if not
+    Hyacinth.DigitalObjectsApp.currentUser.hasAssignmentPermission = function(digitalObject, permissionType){
+      var that = this;
+      var assignment = _.find(digitalObject.getAssignments(), function(assignment){
+        return (assignment['assignee_id'] == that.id && assignment['task'] == permissionType);
+      }) || null;
+      return assignment;
+    };
+
     callback();
   }).fail(function(reponse){
     alert(Hyacinth.unexpectedAjaxErrorMessage);

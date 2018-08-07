@@ -66,4 +66,8 @@ module DigitalObjectsHelper
     (params[:search_params_string].blank? ? '' : hidden_field_tag(:search_params_string, params[:search_params_string])) +
       (params[:search_result_counter].blank? ? '' : hidden_field_tag(:search_result_counter, params[:search_result_counter]))
   end
+
+  def digital_object_app_path(pid)
+    digital_objects_path anchor: "{\"controller\":\"digital_objects\",\"action\":\"show\",\"pid\":\"#{pid}\"}"
+  end
 end

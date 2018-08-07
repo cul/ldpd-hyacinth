@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<meta name="description" content="Columbia University Library: Synchronizer Module">
+		<meta name="keywords" content="HTML,CSS,JavaScript">
+		<meta name="author" content="Ashley Pressley">
+
+		<title>Columbia University Library: Synchronizer Module</title>
+
+		<!-- Theming -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css" rel="stylesheet" type="text/css">
+		<link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+		<link href="./css/ableplayer.min.css" rel="stylesheet" type="text/css"/>
+		<link href="./css/style.css" rel="stylesheet" type="text/css">
+		<link rel="icon" type="image/icon" href="fav.ico">
+	</head>
+
+	<body>
+	<nav class="navbar navbar-inverse">
+		<div class="container">
+			<div class="navbar-header"><span class="navbar-brand">Synchronizer Module</span></div>
+		</div>
+	</nav>
+
+    <div id="main" class="">
+      <!-- <h1>Synchronizer Module</h1> -->
+
+			<!-- For errors and success -->
+			<div id="messagesBar" class="col-md-12"></div>
+
+			<div id="working-area" class="col-md-12">
+				<div id="left-sidebar" class="container">
+					<div id="media-playback" class="">
+						<div id="media-upload" class="col-md-12 upload-box">
+							<i class="fa fa-times-circle-o close"></i>
+							<p>Click browse to select an applicable audio or video file from your local file system, or enter a URL.</p>
+							<p>
+								<label class="btn btn-primary">
+							    <input id="media-file-upload" type="file" onchange="new OHSynchronizer({player:{fileId: '#media-file-upload'}});">
+							    Browse Locally
+								</label>
+							</p>
+							<p>&nbsp;</p>
+							<p><input id="media-url-upload" type="text" placeholder="Enter a URL here" value="https://ldpd-wowza-test1.svc.cul.columbia.edu:8443/vod/mp4:CARN27_v_1_READY_TO_EXPORT.mp4/playlist.m3u8">
+								<button id="media-url-submit" class="btn btn-primary" onclick="new OHSynchronizer({player: {url: $('#media-url-upload').val()}});">Submit</button>
+							</p>
+						</div>
+
+						<div id="ytplayer"></div>
+						<div id="video"><video id="video-player" data-able-player preload="auto" autoplay></video></div>
+						<div id="audio"><audio id="audio-player" data-able-player preload="auto" autoplay></audio></div>
+					</div><!-- /#media-playback -->
+
+					<div id="interview-metadata"></div><!-- /#interview-metadata -->
+
+					<div><p>&nbsp;</p></div>
+
+					<div id="finish-area" class="">
+						<!-- Whether you're previewing or exporting a transcript or an index is determined by which tab is active. -->
+						<div class="btn-group session-controls" role="group">
+							<button id="clear" type="button" class="btn btn-secondary" onclick="OHSynchronizer.clearBoxes()">Cancel Session</button>
+							<button id="preview" type="button" class="btn btn-secondary preview-button">Preview</button>
+							<button id="preview-close" type="button" class="btn btn-secondary hidden" onclick="OHSynchronizer.Export.previewClose()">Close Preview</button>
+							<div class="btn-group" role="group">
+						    <button id="export" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						      Export
+						    </button>
+						    <div class="dropdown-menu" aria-labelledby="btnGroupExport">
+						      <a id="downloadVTT" class="dropdown-item synch-download-button"  data-format="vtt">Download VTT</a>
+						      <!-- <a id="downloadAnno" class="dropdown-item" onclick="exportFile('anno')">Download WebAnno</a>
+						      <a id="downloadXML" class="dropdown-item" onclick="exportFile('xml')">Download XML</a> -->
+						    </div>
+						  </div>
+						</div>
+					</div><!-- /#finish-area -->
+				</div><!-- /#left-sidebar -->
+
+				<div id="right-sidebar">
+					<div id="input-transcript">
+						<h2>Transcript</h2>
+						<div id="sync-controls" class="form-group row btn-group" role="group">
+							<span id="sync-back" class="btn btn-info" type="button" title='jump to previous minute' onclick="OHSynchronizer.Transcript.syncControl('back',OHSynchronizer.playerControls)"><i class="fa fa-backward"></i></span>
+							<div id="sync-minute" class="btn btn-secondary" title='minute to be synchronized' type="button">0</div>
+							<span id="sync-forward" class="btn btn-info" type="button" title='jump to next minute' onclick="OHSynchronizer.Transcript.syncControl('forward',OHSynchronizer.playerControls)"><i class="fa fa-forward"></i></span>
+							<span id="sync-play" class="btn btn-outline-info" type="button" title='start/stop loop' onclick="OHSynchronizer.Transcript.syncControl('loop',OHSynchronizer.playerControls)"><i class="fa fa-retweet"></i></span>
+							<input id="sync-roll" class="btn btn-secondary" type="text" maxlength="3" size="3" value="10" name="sync-roll">
+							<div id="sync-time" class="btn btn-secondary" type="button">00:00:00</div>
+						</div>
+						<div id="transcript" class="col-md-12" ></div>
+						<div id="transcript-preview" class="col-md-12" ></div>
+					</div>
+					</div><!-- /#text-tabs -->
+				</div><!-- /#right-sidebar -->
+			</div><!-- /#working-area -->
+
+    </div><!-- /#main -->
+		<!-- Audio files for transcript syncing markers -->
+		<div id="transcript-chimes" class="hidden">
+			<audio class="loop-boundary-chime" src="./includes/startBeep.mp3" autostart="false"></audio>
+			<audio class="loop-mid-chime" src="./includes/midBeep.mp3" autostart="false"></audio>
+		</div>
+
+		<!-- Scripts Loading -->
+		<!--[if lt IE 9]>
+    	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+		<script src="./js/js.cookie.2.2.0.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<script src="./js/ableplayer.min.js"></script>
+		<script src="./js/hls.min.js"></script> <!-- Must be loaded locally because CDN provider is broken -->
+		<script src="./js/ohsynchronizer.js"></script>
+		<script src="./js/synch-only.js"></script>
+	</body>
+
+</html>

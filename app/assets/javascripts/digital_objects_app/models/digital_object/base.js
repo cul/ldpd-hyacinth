@@ -128,3 +128,12 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getDoi = function(){
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.hasRestrictions = function() {
   return typeof(this.restrictions) !== 'undefined';
 };
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getAssignments = function() {
+  return this.assignments;
+};
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.hasAssignment = function(permissionType){
+  var assignment = _.find(this.getAssignments(), function(assignment){
+    return (assignment['task'] == permissionType);
+  }) || null;
+  return assignment;
+};

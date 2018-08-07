@@ -1,3 +1,4 @@
+require 'fileutils'
 module DigitalObject::Persistence
   extend ActiveSupport::Concern
 
@@ -53,8 +54,11 @@ module DigitalObject::Persistence
         @db_record.lock!
       end
 
-      # Add pid to identifiers if not present
-      @identifiers << pid unless @identifiers.include?(pid)
+      if @db_record.uuid.blank?
+        @db_record.uuid = SecureRandom.uuid
+      end
+
+      add_pid_and_uuid_identifiers
 
       run_post_validation_pre_save_logic
 
@@ -73,7 +77,19 @@ module DigitalObject::Persistence
         @errors.add(:fedora_error, e.message)
         raise ActiveRecord::Rollback # Force rollback (Note: This error won't be passed upward by the transaction.)
       end
+
+      # Write to data file
+      FileUtils.mkdir_p(File.dirname(@db_record.data_file_path))
+      IO.write(@db_record.data_file_path, self.as_hyacinth_3_json.to_json)
     end
+  end
+
+  def add_pid_and_uuid_identifiers
+    # Add pid to identifiers if not present
+    @identifiers << @db_record.pid unless @identifiers.include?(@db_record.pid)
+
+    # Add uuid to identifiers if not present
+    @identifiers << @db_record.uuid unless @identifiers.include?(@db_record.uuid)
   end
 
   def persist_parent_changes

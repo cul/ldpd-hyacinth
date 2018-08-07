@@ -1,0 +1,33 @@
+<% {'assignments' => @assignments, 'assignations' => @assignations}.each do |type, results| %>
+  <h2><%= type == 'assignments' ? "My Tasks" : "Tasks I've Assigned" %></h2>
+
+  <table class="table table-condensed table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>Assignment</th>
+        <th>Digital Object</th>
+        <th>Assigner</th>
+        <th>Assignee</th>
+        <th>Task</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <% if results.blank? %>
+        <tr><td colspan="7">None</td></tr>
+      <% else %>
+        <% results.each do |assignment| %>
+          <tr>
+            <td><%= link_to("ASSIGNMENT-#{assignment.id}", assignment_path(assignment)) %></td>
+            <td><%= assignment.digital_object_pid %></td>
+            <td><%= assignment.assigner.full_name %></td>
+            <td><%= assignment.assignee.full_name %></td>
+            <td><%= assignment.task %></td>
+            <td><%= assignment.status %></td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

@@ -1,7 +1,7 @@
 class ExportSearchResultsToCsvJob
   include Hyacinth::Csv::Flatten
 
-  SUPPRESSED_ON_EXPORT = ['_dc_type', '_state', '_title', '_created', '_modified', '_created_by', '_modified_by', '_project.uri', '_project.short_label']
+  SUPPRESSED_ON_EXPORT = ['_uuid', '_data_file_path', '_dc_type', '_state', '_title', '_created', '_modified', '_created_by', '_modified_by', '_project.uri', '_project.short_label']
   INTERNAL_FIELD_REGEXES_ALLOWED_ON_IMPORT = [
     '_pid', '_doi', '_merge_dynamic_fields', '_publish', '_first_published', '_digital_object_type.string_key', '_import_file.import_type', '_import_file.import_path', '_import_file.original_file_path', '_restrictions.restricted_size_image', '_restrictions.restricted_onsite',
     /^_publish_target_data\.(string_key|publish_url|api_key|representative_image_pid|short_title|short_description|full_description|restricted|slug|site_url)$/,
@@ -61,9 +61,9 @@ class ExportSearchResultsToCsvJob
     DigitalObject::Base.search_in_batches(search_params, user, 50) do |digital_object_data|
       ### Handle core fields
 
-      # identifiers, except for the pid which is its own column
+      # identifiers, except for the pid or uuid which are shown in their own columns (note: uuid isn't currently shown in CSV, but will be at some point)
       digital_object_data.fetch('identifiers', []).reject! do |identifier|
-        identifier == digital_object_data['pid']
+        identifier == digital_object_data['pid'] || identifier == digital_object_data['uuid']
       end
       digital_object_data.fetch('identifiers', []).size.times do |index|
         map["_identifiers-#{index + 1}"] ||= map.length

@@ -61,7 +61,7 @@ class User < ActiveRecord::Base
 
     valid_permission_types = [:create, :read, :update, :delete, :publish, :project_admin]
     raise 'Permission type must be a symbol (' + permission_type.to_s + ')' unless permission_type.is_a?(Symbol)
-    raise 'Invalid Permission type: ' + permission_type unless valid_permission_types.include?(permission_type)
+    raise "Invalid Permission type: #{permission_type}" unless valid_permission_types.include?(permission_type)
 
     possible_project_permission = ProjectPermission.find_by(user: self, project: project)
 
