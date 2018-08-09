@@ -7,7 +7,7 @@ module Hyacinth::DigitalObjects::UploadsEditorBehavior
 
     # For safety, don't allow file paths with ".." in them.
     # If we encounter this, change the entire directoryPath to an empty string.
-    if directory_path.index("..").match?(/\.\./)
+    if directory_path.index("..") =~ /\.\./
       directory_path = ""
       errors << "Paths are not allowed to contain \"..\""
     end

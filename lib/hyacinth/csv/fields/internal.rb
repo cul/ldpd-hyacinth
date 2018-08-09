@@ -8,7 +8,7 @@ module Hyacinth
           # Converts '_publish_target-2.string_key' to ['_publish_target', 2, 'string_key']
           new_builder_path = internal_field_header_name.split(/[\.-]/).map do |piece|
             raise Hyacinth::Exceptions::InvalidCsvHeader, 'Internal field header names cannot be 0-indexed. Must be 1-indexed.' if piece == '0'
-            piece.match?(/^\d+$/) ? piece.to_i - 1 : piece # This line converts ['_publish_target', '2', 'string_key'] to ['_publish_target', 1, 'string_key']
+            piece =~ /^\d+$/ ? piece.to_i - 1 : piece # This line converts ['_publish_target', '2', 'string_key'] to ['_publish_target', 1, 'string_key']
           end
 
           # Remove underscore from first builder path element name

@@ -73,6 +73,9 @@ Metrics/ModuleLength:
 Naming/PredicateName:
   Exclude: []
 
+Performance/RegexpMatch:
+  Enabled: false
+
 Style/BlockDelimiters:
   Exclude:
     - 'spec/**/*'

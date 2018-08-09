@@ -109,7 +109,7 @@ class ControlledVocabulariesController < ApplicationController
 
     # Use callbacks to share common setup or constraints between actions.
     def set_controlled_vocabulary
-      if params[:id].match?(/[0-9]+/)
+      if params[:id] =~ /[0-9]+/
         @controlled_vocabulary = ControlledVocabulary.find(params[:id])
       else
         @controlled_vocabulary = ControlledVocabulary.find_by(string_key: params[:id])
