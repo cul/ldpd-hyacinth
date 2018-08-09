@@ -1,6 +1,8 @@
 class DynamicFieldGroup < ActiveRecord::Base
   include DynamicFieldAndDynamicFieldGroup::SharedValidations
 
+  default_scope { order(sort_order: :asc) }
+
   has_many :dynamic_fields, class_name: 'DynamicField', foreign_key: 'parent_dynamic_field_group_id'
 
   belongs_to :dynamic_field_group_category
