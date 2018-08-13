@@ -79,6 +79,13 @@ module DigitalObject::Assets::Validations
 
     validate_full_file_path(actual_path_to_validate)
 
+    # Also validate presence of access file
+    if import_file_data['access_copy_import_path'].present?
+      access_copy_import_path = import_file_data['access_copy_import_path']
+      validate_full_file_path(access_copy_import_path)
+      raise "Invalid UTF-8 characters found in access copy file path.  Unable to upload." if access_copy_import_path != Hyacinth::Utils::StringUtils.clean_utf8_string(access_copy_import_path)
+    end
+
     # Check for invalid characters in import path.  Reject if non-utf8.
     # If we get weird characters (like "\xC2"), Ruby will die a horrible death.  Let's keep Ruby alive.
     raise "Invalid UTF-8 characters found in file path.  Unable to upload." if import_file_import_path != Hyacinth::Utils::StringUtils.clean_utf8_string(import_file_import_path)

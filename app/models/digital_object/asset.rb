@@ -30,6 +30,7 @@ class DigitalObject::Asset < DigitalObject::Base
     @import_file_import_type = nil
     @import_file_import_path = nil
     @import_file_original_file_path = nil
+    @access_copy_import_path = nil
 
     @restricted_size_image = false
     @restricted_onsite = false
@@ -50,6 +51,7 @@ class DigitalObject::Asset < DigitalObject::Base
     super
     # For new DigitalObjects, we want to import a file as part of our save operation (assuming that this new object doesn't already have an associated Fedora object with a 'content' datastream)
     do_file_import if self.new_record? && @fedora_object.present? && @fedora_object.datastreams['content'].blank?
+    do_access_copy_import if @access_copy_import_path.present? && self.access_copy_location.blank?
 
     self.dc_type = BestType.dc_type.for_file_name(original_filename) if self.dc_type == 'Unknown' # Attempt to correct dc_type for 'Unknown' dc_type DigitalObjects
   end
@@ -154,6 +156,9 @@ class DigitalObject::Asset < DigitalObject::Base
 
     # File upload (for NEW assets only, and only if this object's current data validates successfully)
     handle_new_file_upload(digital_object_data['import_file']) if self.new_record? && digital_object_data['import_file'].present?
+
+    # Access copy upload (only if an object doesn't already have an access copy)
+    handle_access_copy_upload(digital_object_data['import_file']) if digital_object_data.fetch('import_file', {})['access_copy_import_path'].present?
   end
 
   def onsite_restriction_value_changed?(digital_object_data)
@@ -196,6 +201,14 @@ class DigitalObject::Asset < DigitalObject::Base
 
     # Paths cannot contain "/.." or "../"
     raise 'File paths cannot contain: "..". Please specify a full path.' if @import_file_import_path.index('/..') || @import_file_import_path.index('../')
+  end
+
+  def handle_access_copy_upload(import_file_data)
+    if import_file_data['access_copy_import_path'].present?
+      # Get access copy import path
+      @access_copy_import_path = import_file_data['access_copy_import_path']
+      raise 'File paths cannot contain: "..". Please specify a full path.' if @access_copy_import_path.index('/..') || @access_copy_import_path.index('../')
+    end
   end
 
   def regenerate_derivatives!
