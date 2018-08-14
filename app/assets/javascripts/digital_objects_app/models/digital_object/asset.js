@@ -14,6 +14,10 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getAccessCopyLocation =
   return this.assetData['access_copy_location'];
 };
 
+Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getServiceCopyLocation = function(){
+  return this.assetData['service_copy_location'];
+};
+
 Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getFileChecksum = function(){
   return this.assetData['checksum'];
 };
@@ -26,12 +30,20 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getAccessCopyFileSizeIn
   return this.assetData['access_copy_file_size_in_bytes'];
 };
 
+Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getServiceCopyFileSizeInBytes = function(){
+  return this.assetData['service_copy_file_size_in_bytes'];
+};
+
 Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getFileSizeString = function() {
-  return this.bytesToSizeString(this.assetData['file_size_in_bytes']);
+  return this.bytesToSizeString(this.getFileSizeInBytes());
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getAccessCopyFileSizeString = function() {
-  return this.bytesToSizeString(this.assetData['access_copy_file_size_in_bytes']);
+  return this.bytesToSizeString(this.getAccessCopyFileSizeInBytes());
+};
+
+Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getServiceCopyFileSizeString = function() {
+  return this.bytesToSizeString(this.getServiceCopyFileSizeInBytes());
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.bytesToSizeString = function(bytes) {

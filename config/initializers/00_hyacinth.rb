@@ -22,6 +22,7 @@ Rails.backtrace_cleaner.remove_silencers! if Rails.env.development?
   'digital_object_data_directory',
   'upload_directory',
   'default_asset_home',
+  'default_service_copy_home',
   'csv_export_directory',
   'processed_csv_import_directory',
   'access_copy_directory',

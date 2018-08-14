@@ -9,7 +9,7 @@ class DigitalObjectsController < ApplicationController
   include Hyacinth::DigitalObjects::IndexDocument
   include Hyacinth::DigitalObjects::Captions
 
-  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor, :download, :download_access_copy,
+  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor, :download, :download_access_copy, :download_service_copy,
     :add_parent, :remove_parents, :mods, :media_view, :rotate_image, :swap_order_of_first_two_child_assets,
     :download_transcript, :update_transcript,
     :download_index_document, :update_index_document,
@@ -303,7 +303,7 @@ class DigitalObjectsController < ApplicationController
       case params[:action]
       when 'index', 'search', 'upload_directory_listing', 'titles_for_pids', 'search_results_to_csv'
         # Do nothing.  These actions are open to all logged-in users.
-      when 'show', 'data_for_editor', 'mods', 'download', 'data_for_ordered_child_editor', 'media_view', 'download_transcript', 'download_index_document', 'download_captions', 'download_access_copy', 'download'
+      when 'show', 'data_for_editor', 'mods', 'download', 'data_for_ordered_child_editor', 'media_view', 'download_transcript', 'download_index_document', 'download_captions', 'download_access_copy', 'download_service_copy', 'download'
         require_project_permission!(@digital_object.project, :read)
       when 'create'
         # Access logic inside action method

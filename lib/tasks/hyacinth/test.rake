@@ -1,21 +1,49 @@
 namespace :hyacinth do
 
   namespace :test do
-    
-    task :clear_default_asset_home_test_project_content => :environment do
-      
+
+    task :clear_default_asset_home_content => :environment do
+
       unless Rails.env == 'test'
         puts 'This task is only meant for the test environment.'
         next
       end
-      
-      default_asset_home_test_project_directory = File.join(HYACINTH['default_asset_home'], 'test')
-      
-      puts "Deleting test environment default asset home content: #{default_asset_home_test_project_directory}..."
-      FileUtils.rm_rf(default_asset_home_test_project_directory)
+
+      default_asset_home_directory = File.join(HYACINTH['default_asset_home'])
+
+      puts "Deleting test environment default asset home content: #{default_asset_home_directory}..."
+      FileUtils.rm_rf(default_asset_home_directory)
       puts "Test environment default asset home content has been deleted."
     end
-    
+
+    task :clear_default_service_copy_home_content => :environment do
+
+      unless Rails.env == 'test'
+        puts 'This task is only meant for the test environment.'
+        next
+      end
+
+      default_service_copy_home_directory = File.join(HYACINTH['default_service_copy_home'])
+
+      puts "Deleting test environment default asset home content: #{default_service_copy_home_directory}..."
+      FileUtils.rm_rf(default_service_copy_home_directory)
+      puts "Test environment default service copy home content has been deleted."
+    end
+
+    task :clear_access_copy_content => :environment do
+
+      unless Rails.env == 'test'
+        puts 'This task is only meant for the test environment.'
+        next
+      end
+
+      access_copy_directory = File.join(HYACINTH['access_copy_directory'])
+
+      puts "Deleting test environment access copy content: #{access_copy_directory}..."
+      FileUtils.rm_rf(access_copy_directory)
+      puts "Test environment access copy content has been deleted."
+    end
+
     task :setup_test_project => :environment do
       # Load certain records that we'll be referencing
       dot_item = DigitalObjectType.find_by(string_key: 'item')
@@ -85,7 +113,7 @@ namespace :hyacinth do
         false
       )
       test_publish_target_1.save
-      
+
       test_publish_target_2 = DigitalObject::PublishTarget.new
       test_publish_target_2.set_digital_object_data(
         {
@@ -102,7 +130,7 @@ namespace :hyacinth do
         false
       )
       test_publish_target_2.save
-      
+
       # Enable test_publish_target_1 and test_publish_target_2 for test_project
       test_project.enabled_publish_target_pids = [test_publish_target_1.pid, test_publish_target_2.pid]
       test_project.save

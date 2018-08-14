@@ -79,11 +79,18 @@ module DigitalObject::Assets::Validations
 
     validate_full_file_path(actual_path_to_validate)
 
-    # Also validate presence of access file
+    # Also validate presence of access file, if given
     if import_file_data['access_copy_import_path'].present?
       access_copy_import_path = import_file_data['access_copy_import_path']
       validate_full_file_path(access_copy_import_path)
       raise "Invalid UTF-8 characters found in access copy file path.  Unable to upload." if access_copy_import_path != Hyacinth::Utils::StringUtils.clean_utf8_string(access_copy_import_path)
+    end
+
+    # Also validate presence of service file, if given
+    if import_file_data['service_copy_import_path'].present?
+      service_copy_import_path = import_file_data['service_copy_import_path']
+      validate_full_file_path(service_copy_import_path)
+      raise "Invalid UTF-8 characters found in service copy file path.  Unable to upload." if service_copy_import_path != Hyacinth::Utils::StringUtils.clean_utf8_string(service_copy_import_path)
     end
 
     # Check for invalid characters in import path.  Reject if non-utf8.

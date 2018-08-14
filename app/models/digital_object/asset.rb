@@ -31,6 +31,8 @@ class DigitalObject::Asset < DigitalObject::Base
     @import_file_import_path = nil
     @import_file_original_file_path = nil
     @access_copy_import_path = nil
+    @service_copy_import_type = nil
+    @service_copy_import_path = nil
 
     @restricted_size_image = false
     @restricted_onsite = false
@@ -52,6 +54,7 @@ class DigitalObject::Asset < DigitalObject::Base
     # For new DigitalObjects, we want to import a file as part of our save operation (assuming that this new object doesn't already have an associated Fedora object with a 'content' datastream)
     do_file_import if self.new_record? && @fedora_object.present? && @fedora_object.datastreams['content'].blank?
     do_access_copy_import if @access_copy_import_path.present? && self.access_copy_location.blank?
+    do_service_copy_import if @service_copy_import_path.present? && self.service_copy_location.blank?
 
     self.dc_type = BestType.dc_type.for_file_name(original_filename) if self.dc_type == 'Unknown' # Attempt to correct dc_type for 'Unknown' dc_type DigitalObjects
   end
@@ -89,6 +92,12 @@ class DigitalObject::Asset < DigitalObject::Base
     Addressable::URI.unencode(access_ds.dsLocation).gsub(/^file:/, '')
   end
 
+  def service_copy_location
+    service_ds = @fedora_object.datastreams['service']
+    return nil unless service_ds.present?
+    Addressable::URI.unencode(service_ds.dsLocation).gsub(/^file:/, '')
+  end
+
   def checksum
     return nil unless @fedora_object.present? && @fedora_object.datastreams['content'].present?
     content_ds = @fedora_object.datastreams['content']
@@ -112,6 +121,11 @@ class DigitalObject::Asset < DigitalObject::Base
   def access_copy_file_size_in_bytes
     access_ds = @fedora_object.datastreams['access']
     first_relationship_object_for_datastream(access_ds, :extent)
+  end
+
+  def service_copy_file_size_in_bytes
+    service_ds = @fedora_object.datastreams['service']
+    first_relationship_object_for_datastream(service_ds, :extent)
   end
 
   def original_filename
@@ -159,6 +173,9 @@ class DigitalObject::Asset < DigitalObject::Base
 
     # Access copy upload (only if an object doesn't already have an access copy)
     handle_access_copy_upload(digital_object_data['import_file']) if digital_object_data.fetch('import_file', {})['access_copy_import_path'].present?
+
+    # Service copy upload (only if an object doesn't already have an service copy)
+    handle_service_copy_upload(digital_object_data['import_file']) if digital_object_data.fetch('import_file', {})['service_copy_import_path'].present?
   end
 
   def onsite_restriction_value_changed?(digital_object_data)
@@ -208,6 +225,16 @@ class DigitalObject::Asset < DigitalObject::Base
       # Get access copy import path
       @access_copy_import_path = import_file_data['access_copy_import_path']
       raise 'File paths cannot contain: "..". Please specify a full path.' if @access_copy_import_path.index('/..') || @access_copy_import_path.index('../')
+    end
+  end
+
+  def handle_service_copy_upload(import_file_data)
+    if import_file_data['service_copy_import_path'].present?
+      # Get service copy import path
+      @service_copy_import_path = import_file_data['service_copy_import_path']
+      @service_copy_import_type = import_file_data['service_copy_import_type']
+      raise 'File paths cannot contain: "..". Please specify a full path.' if @service_copy_import_path.index('/..') || @service_copy_import_path.index('../')
+      raise "Must specify import type (#{VALID_FILE_IMPORT_TYPES.join(', ')}) for service copy." unless VALID_FILE_IMPORT_TYPES.include?(@service_copy_import_type)
     end
   end
 
@@ -298,6 +325,7 @@ class DigitalObject::Asset < DigitalObject::Base
     doc['original_filename_sim'] = original_filename
     doc['original_file_path_sim'] = original_file_path
     doc['access_copy_location_sim'] = access_copy_location
+    doc['service_copy_location_sim'] = service_copy_location
     doc
   end
 
@@ -312,7 +340,9 @@ class DigitalObject::Asset < DigitalObject::Base
       original_filename: original_filename,
       original_file_path: original_file_path,
       access_copy_location: access_copy_location,
-      access_copy_file_size_in_bytes: access_copy_file_size_in_bytes
+      access_copy_file_size_in_bytes: access_copy_file_size_in_bytes,
+      service_copy_location: service_copy_location,
+      service_copy_file_size_in_bytes: service_copy_file_size_in_bytes
     }
 
     json['restrictions'] ||= {}

@@ -189,6 +189,27 @@
             </div>
             <div class="form-group">
               <label class="col-sm-3">
+                Download Service Copy:
+              </label>
+              <div class="col-sm-9">
+                <% if(digitalObject.getServiceCopyLocation() == null) { %>
+                  N/A
+                <% } else { %>
+                  <a href="<%= Hyacinth.getLocationOrigin() + '/digital_objects/' + digitalObject.getPid() + '/download_service_copy' %>" target="_blank"><span class="glyphicon glyphicon-download"></span> Download</a>
+                  (<%= digitalObject.getServiceCopyFileSizeString() %>) [<%= digitalObject.getServiceCopyFileSizeInBytes() %> bytes]
+                  <% } %>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3">
+                Service Copy Location:
+              </label>
+              <div class="col-sm-9">
+                <%= digitalObject.getServiceCopyLocation() == null ? 'N/A' : digitalObject.getServiceCopyLocation() %>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3">
                 Download Access Copy:
               </label>
               <div class="col-sm-9">

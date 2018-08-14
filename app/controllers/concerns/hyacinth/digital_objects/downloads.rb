@@ -12,6 +12,21 @@ module Hyacinth::DigitalObjects::Downloads
     end
   end
 
+  def download_service_copy
+    if @digital_object.is_a?(DigitalObject::Asset)
+      if @digital_object.fedora_object.datastreams['service'].controlGroup == 'M'
+        send_data @digital_object.fedora_object.datastreams['service'].content,
+                  filename: @digital_object.fedora_object.datastreams['service'].dsLabel
+      else
+        send_file @digital_object.service_copy_location, filename: @digital_object.fedora_object.datastreams['service'].dsLabel
+      end
+    else
+      render text: @digital_object.digital_object_type.display_label.pluralize + ' do not have download URLs.  Try downloading an Asset service copy instead.'
+    end
+  end
+
+  # download_access_copy offers the ability to stream files using range requests
+  # because access copies are sometimes played in a video player
   def download_access_copy
     if @digital_object.is_a?(DigitalObject::Asset)
       # Support range requests for progressive download

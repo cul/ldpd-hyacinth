@@ -70,6 +70,7 @@ namespace :hyacinth do
           'default_pid_generator_namespace' => 'cul',
           'digital_object_data_directory' => File.join(Rails.root, 'tmp/data_' + env_name),
           'default_asset_home' => File.join(Rails.root, 'tmp/asset_home_' + env_name),
+          'default_service_copy_home' => File.join(Rails.root, 'tmp/service_copy_home_' + env_name),
           'access_copy_directory' => File.join(Rails.root, 'tmp/access_' + env_name),
           'upload_directory' => File.join(Rails.root, 'tmp/upload_' + env_name),
           'csv_export_directory' => File.join(Rails.root, 'tmp/csv_exports_' + env_name),

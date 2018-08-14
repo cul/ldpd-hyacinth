@@ -23,6 +23,8 @@ AllCops:
     - 'app/controllers/concerns/hyacinth/digital_objects/downloads.rb'
     - 'app/controllers/assignments_controller.rb'
     - 'app/controllers/assignments/changesets_controller.rb'
+    - 'app/models/digital_object/asset.rb'
+    - 'app/models/concerns/digital_object/assets/validations.rb'
 
 Layout/BlockEndNewline:
   Exclude:

@@ -31,7 +31,7 @@ namespace :hyacinth do
     puts "[Warning] Exception creating rspec rake tasks.  This message can be ignored in environments that intentionally do not pull in the RSpec gem (i.e. production)."
     puts e
   end
-  
+
   desc "CI build without rubocop"
   task :ci_nocop do
     ENV['RAILS_ENV'] = 'test'
@@ -55,15 +55,17 @@ namespace :hyacinth do
       puts 'No test jetty found.  Will download / unzip a copy now.'
       puts "\n"
     end
-    
+
     Rake::Task["jetty:clean"].invoke
     Rake::Task["hyacinth:setup:solr_cores"].invoke
-    
+
     jetty_params = Jettywrapper.load_config.merge({jetty_home: Jettywrapper.jetty_dir})
     error = Jettywrapper.wrap(jetty_params) do
       Rake::Task["hyacinth:fedora:reload_cmodels"].invoke
       Rake::Task["uri_service:db:drop_tables_and_clear_solr"].invoke
-      Rake::Task["hyacinth:test:clear_default_asset_home_test_project_content"].invoke
+      Rake::Task["hyacinth:test:clear_default_asset_home_content"].invoke
+      Rake::Task["hyacinth:test:clear_default_service_copy_home_content"].invoke
+      Rake::Task["hyacinth:test:clear_access_copy_content"].invoke
       Rake::Task["uri_service:db:setup"].invoke
       Rake::Task["db:drop"].invoke
       Rake::Task["db:create"].invoke
