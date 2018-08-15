@@ -36,7 +36,6 @@ class DigitalObject::Asset < DigitalObject::Base
 
     @restricted_size_image = false
     @restricted_onsite = false
-    @need_to_regenerate_derivatives = false
 
     # Default to 'Unknown' dc_type.  We expect other code to properly set this
     # once the asset file type is known, but this avoid a blank value for dc_type
@@ -61,15 +60,11 @@ class DigitalObject::Asset < DigitalObject::Base
 
   def run_after_create_logic
     # For new Hyacinth assets, queue derivative generation (image derivatives, audio derivatives, video derivatives, fulltext extraction, etc.)
-    regenerate_derivatives!
+    generate_derivatives
   end
 
   def run_after_save_logic
-    if @need_to_regenerate_derivatives
-      regenerate_derivatives!
-    else
-      regenerate_image_server_cached_properties!
-    end
+    regenerate_image_server_cached_properties!
   end
 
   def convert_upload_import_to_internal!
@@ -163,9 +158,6 @@ class DigitalObject::Asset < DigitalObject::Base
     # and the title will be later inferred from the filename during the upload step.
     handle_blank_asset_title
 
-    # If the restriction property value has changed, regenerate derivatives for this asset
-    @need_to_regenerate_derivatives = onsite_restriction_value_changed?(digital_object_data)
-
     handle_restriction_properties(digital_object_data)
 
     # File upload (for NEW assets only, and only if this object's current data validates successfully)
@@ -238,11 +230,15 @@ class DigitalObject::Asset < DigitalObject::Base
     end
   end
 
-  def regenerate_derivatives!
+  def destroy_and_regenerate_derivatives!
+    generate_derivatives(true)
+  end
+
+  def generate_derivatives(delete_existing_derivatives = false)
     credentials = ActionController::HttpAuthentication::Token.encode_credentials(IMAGE_SERVER_CONFIG['remote_request_api_key'])
     resource_url = IMAGE_SERVER_CONFIG['url'] + "/resources/#{pid}"
-    # Destroy old derivatives
-    destroy_response = JSON(RestClient.delete(resource_url, Authorization: credentials))
+    # Destroy old derivatives if requested
+    destroy_response = JSON(RestClient.delete(resource_url, Authorization: credentials)) if delete_existing_derivatives
     # Queue creation of new derivatives
     queue_response = JSON(RestClient.put(resource_url, {}, { Authorization: credentials }))
     destroy_response['success'].to_s == 'true' && queue_response['success'].to_s == 'true'
