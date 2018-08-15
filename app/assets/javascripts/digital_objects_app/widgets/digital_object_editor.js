@@ -264,6 +264,11 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.populateFormElementsWithDynamicFi
       if ($input.is(':checkbox') && value == true) {
         $input.prop('checked', true); //We don't set a checkbox value with .val().  We want to set the checked property.
       } else if($input.hasClass('controlled_term_uri_field')) {
+        if(value == null) {
+          alert('Error: Encountered null URI value for ' + stringKey + '. This was probably caused by the deletion of a controlled term that is referenced by this record.');
+          $('.editor-form').hide();
+          return;
+        }
         $input.val(value['uri']); //Set uri as hidden field value
         $controlledTermFieldWrapperElement = $input.closest('.controlled_term_field');
         $controlledTermFieldWrapperElement.find('.controlled_term_value_display').html(value['value']); //Set value as display value
