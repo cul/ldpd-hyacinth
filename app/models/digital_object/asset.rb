@@ -241,7 +241,7 @@ class DigitalObject::Asset < DigitalObject::Base
     destroy_response = JSON(RestClient.delete(resource_url, Authorization: credentials)) if delete_existing_derivatives
     # Queue creation of new derivatives
     queue_response = JSON(RestClient.put(resource_url, {}, { Authorization: credentials }))
-    destroy_response['success'].to_s == 'true' && queue_response['success'].to_s == 'true'
+    queue_response['success'].to_s == 'true' && (!delete_existing_derivatives || destroy_response['success'].to_s == 'true')
   rescue Errno::ECONNREFUSED, RestClient::InternalServerError, SocketError, RestClient::NotFound
     Hyacinth::Utils::Logger.logger.error("Tried to regenerate derivatives for #{pid}, but could not connect to image server at: #{IMAGE_SERVER_CONFIG['url']}")
     false
