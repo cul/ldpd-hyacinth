@@ -207,7 +207,8 @@ class AssignmentsController < ApplicationController
         if @assignment.assigner == current_user
           @contextual_nav_options['nav_items'].push(label: 'Edit', url: edit_assignment_path(@assignment))
           @contextual_nav_options['nav_items'].push(label: 'Delete', url: assignment_path(@assignment.id), options: { method: :delete, data: { confirm: 'Are you sure you want to delete this Assignment?' } })
-        elsif @assignment.assignee == current_user && ['assigned', 'in_progress'].include?(@assignment.status)
+        end
+        if @assignment.assignee == current_user && ['assigned', 'in_progress'].include?(@assignment.status)
           @contextual_nav_options['nav_items'].push(label: 'Work On Assignment &raquo;'.html_safe, url: edit_changeset_path(@assignment))
         end
       when 'reject'
