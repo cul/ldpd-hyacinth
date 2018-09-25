@@ -155,49 +155,42 @@ OHSynchronizer.Import.uploadedFile = function (sender) {
 
 // Here we accept URL-based files
 // This function is no longer utilized for non-AV files
-OHSynchronizer.Import.mediaFromUrl = function(url, options = {type: 'video'}) {
-	// Continue onward, grab the URL value
+OHSynchronizer.Import.mediaFromUrl = function(url, options = {}) {
+	if(typeof options.type == 'undefined') { options.type = 'video'; } // default to video if type was not specified
+
+	// Handle various types of URLs (e.g. HLS, progressive download, YouTube)
 	var id = '';
+	var lowerCaseUrl = url.toLowerCase();
 
-	// Get file extension from url
-	var urlArr = url.toLowerCase().split('.');
-	var ext = urlArr[urlArr.length - 1];
-
-	// Find https protocol
-	var https = false;
-	if (url.toLowerCase().indexOf("https") > -1) https = true;
-	var relative = /^((\.{1,2}\/)|(\/[^\/])|(^[^\.\/]))/.test(url);
-
-	// Find YouTube information, if present
-	if (url.toLowerCase().indexOf("youtube") > -1) {
-		// Full YouTube URL
-		var urlArr2 = url.split('=');
-		id = urlArr2[urlArr2.length - 1];
-	}
-	else if (url.toLowerCase().indexOf("youtu.be") > -1) {
-		// Short YouTube URL
-		var urlArr2 = url.split('/');
-		id = urlArr2[urlArr2.length - 1];
+	// Browsers won't load https resources if the surrounding page is http,
+	// so we'll throw an error.
+	if(location.protocol == 'https:' && lowerCaseUrl.indexOf('http://') > -1) {
+		OHSynchronizer.errorHandler(new Error("Due to browser security measures, you cannot load an http video resource from an https web page."));
+		return;
 	}
 
-	if (ext == "m3u8") {
+	// Determine what type of URL we're working with
+	var lowerCaseUrl = url.toLowerCase();
+	if(lowerCaseUrl.indexOf('playlist.m3u8') > -1) {
 		OHSynchronizer.Import.renderHLS(url);
 		OHSynchronizer.playerControls = new OHSynchronizer.AblePlayer();
-	}
-	// HTTP is only allowed for Wowza URLs
-	else if (!https && !relative) {
-		var error = new Error("This field only accepts HTTPS or relative URLs.");
-		OHSynchronizer.errorHandler(error);
-	}
-	else if (id !== '') OHSynchronizer.Import.loadYouTube(id);
-	else {
-		// We only allow URL uploads of media files, not any text files
+	} else if(lowerCaseUrl.indexOf('manifest.mpd') > -1) {
+		OHSynchronizer.errorHandler(new Error("MPEG-Dash is not currently supported. Use HLS for streaming sources."));
+	} else if(lowerCaseUrl.indexOf('youtube') > -1) {
+		// Full YouTube URL
+		var urlArr2 = url.split('=');
+		OHSynchronizer.Import.loadYouTube(urlArr2[urlArr2.length - 1]);
+	} else if(lowerCaseUrl.indexOf('youtu.be') > -1) {
+		// Short YouTube URL
+		var urlArr2 = url.split('/');
+		OHSynchronizer.Import.loadYouTube(urlArr2[urlArr2.length - 1]);
+ 	} else {
+		// Fall back to progressive download http/https
 		if (options.type == 'video' || options.type == 'audio') {
 			OHSynchronizer.Import.renderMediaURL(url, options);
 			OHSynchronizer.playerControls = new OHSynchronizer.AblePlayer();
 		} else {
-			var error = new Error("This field only accepts audio and video file URLs.");
-			OHSynchronizer.errorHandler(error);
+			OHSynchronizer.errorHandler(new Error("This field only accepts audio and video file URLs."));
 		}
 	}
 }

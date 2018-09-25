@@ -316,6 +316,25 @@ class DigitalObject::Asset < DigitalObject::Base
     end
   end
 
+  def player_url(client_ip = nil)
+    # if no media_streaming config is present for wowza, always default to progressive download for the player URL
+    return '/digital_objects/' + self.pid + '/download_access_copy' unless HYACINTH.fetch('media_streaming', {})['wowza'].present?
+
+    # use the media streaming config. only wowza is currently supported as a streaming source.
+    raise 'Unsupported media_streaming config: ' + HYACINTH['media_streaming'].inspect unless HYACINTH['media_streaming']['wowza'].present?
+
+    wowza_config = HYACINTH['media_streaming']['wowza']
+    Wowza::SecureToken::Params.new({
+      stream: wowza_config['application'] + '/_definst_/mp4:' + access_copy_location.gsub(/^\//, ''),
+      secret: wowza_config['shared_secret'],
+      client_ip: client_ip,
+      starttime: Time.now.to_i,
+      endtime: Time.now.to_i + wowza_config['token_lifetime'].to_i,
+      prefix: wowza_config['token_prefix']
+    }).to_url_with_token_hash(wowza_config['host'], wowza_config['ssl_port'], 'hls-ssl')
+
+  end
+
   def to_solr
     doc = super
     doc['original_filename_sim'] = original_filename

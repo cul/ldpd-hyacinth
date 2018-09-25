@@ -14,6 +14,10 @@ module Hyacinth::DigitalObjects::EditorBehavior
       allowed_publish_targets: digital_object.allowed_publish_targets
     }
 
+    if digital_object.is_a?(DigitalObject::Asset)
+      data_for_editor_response['player_url'] = digital_object.player_url(request.remote_ip)
+    end
+
     if params['search_result_number'].present? && params['search'].present?
       current_result_number = params['search_result_number'].to_i
       search_params = params['search']

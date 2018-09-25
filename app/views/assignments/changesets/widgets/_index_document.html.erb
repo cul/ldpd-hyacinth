@@ -21,7 +21,8 @@
     var annotationEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor('digital-object-annotation-editor', {
       digitalObject: digitalObject,
       mode: currentUserId == assignment['assignee_id'] ? 'edit' : 'view',
-      assignment: assignment
+      assignment: assignment,
+      playerUrl: data_for_editor['player_url']
     });
 
   }).fail(function(){

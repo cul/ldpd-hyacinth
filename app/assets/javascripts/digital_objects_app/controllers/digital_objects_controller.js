@@ -383,7 +383,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_annotation 
     var annotationEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor('digital-object-annotation-editor', {
       digitalObject: digitalObject,
       mode: mode,
-      assignment: assignment
+      assignment: assignment,
+      playerUrl: data_for_editor['player_url']
     });
 
     //Event cleanup
@@ -426,7 +427,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_captions = 
     var captionsEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor('digital-object-captions-editor', {
       digitalObject: digitalObject,
       mode: mode,
-      assignment: assignment
+      assignment: assignment,
+      playerUrl: data_for_editor['player_url']
     });
 
     //Event cleanup

@@ -4,6 +4,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor = function(containerEle
   this.digitalObject = options['digitalObject'];
   this.mode = options['mode'];
   this.assignment = options['assignment'];
+  this.playerUrl = options['playerUrl'];
   this.init();
 };
 
@@ -67,7 +68,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.prototype.createSynchro
   var widgetOptions = {
     player: {
       type: 'video',
-  		url: '/digital_objects/' + this.digitalObject.getPid() + '/download_access_copy'
+  		url: this.playerUrl
     },
     index: {
       id: 'input-index',
