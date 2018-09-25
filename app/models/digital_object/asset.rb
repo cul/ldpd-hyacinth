@@ -327,7 +327,7 @@ class DigitalObject::Asset < DigitalObject::Base
 
     wowza_config = HYACINTH['media_streaming']['wowza']
     Wowza::SecureToken::Params.new({
-      stream: wowza_config['application'] + '/_definst_/mp4:' + access_copy_location.gsub(/^\//, ''),
+      stream: wowza_config['application'] + '/_definst_/' + (access_copy_location.index('.mp3') ? 'mp3:' : 'mp4:') + access_copy_location.gsub(/^\//, ''),
       secret: wowza_config['shared_secret'],
       client_ip: client_ip,
       starttime: Time.now.to_i,
