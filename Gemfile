@@ -111,6 +111,8 @@ gem 'uri_service', '0.5.5'
 # gem 'uri_service', path: '../uri_service'
 gem 'solrizer', '>= 3.4.1'
 
+# Use wowza token gem for generating tokens
+gem 'wowza-secure_token', '0.0.1'
 
 gem 'best_type', '0.0.3'
 
