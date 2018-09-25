@@ -317,6 +317,8 @@ class DigitalObject::Asset < DigitalObject::Base
   end
 
   def player_url(client_ip = nil)
+    return nil if access_copy_location.blank?
+
     # if no media_streaming config is present for wowza, always default to progressive download for the player URL
     return '/digital_objects/' + self.pid + '/download_access_copy' unless HYACINTH.fetch('media_streaming', {})['wowza'].present?
 
