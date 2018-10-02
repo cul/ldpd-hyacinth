@@ -24,6 +24,16 @@ module Hyacinth::DigitalObjects::Captions
     }
   end
 
+  def delete_captions
+    @digital_object.clear_captions_and_reimport_transcript
+    @digital_object.save
+
+    render json: {
+      success: @digital_object.errors.blank?,
+      errors: @digital_object.errors.full_messages
+    }
+  end
+
   private
 
     # Never trust parameters from the scary internet, only allow the white list through.

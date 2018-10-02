@@ -13,7 +13,7 @@ class DigitalObjectsController < ApplicationController
     :add_parent, :remove_parents, :mods, :media_view, :rotate_image, :swap_order_of_first_two_child_assets,
     :download_transcript, :update_transcript,
     :download_index_document, :update_index_document,
-    :download_captions, :update_captions
+    :download_captions, :update_captions, :delete_captions
   ]
   before_action :set_digital_object_for_data_for_editor_action, only: [:data_for_editor]
   before_action :set_contextual_nav_options
@@ -311,7 +311,7 @@ class DigitalObjectsController < ApplicationController
         associated_project = Project.find_by(project_find_criteria)
         publish_requirements << :create
         require_project_permission!(associated_project, publish_requirements)
-      when 'update', 'reorder_child_digital_objects', 'add_parent', 'remove_parents', 'rotate_image', 'swap_order_of_first_two_child_assets', 'update_transcript', 'update_index_document', 'update_captions'
+      when 'update', 'reorder_child_digital_objects', 'add_parent', 'remove_parents', 'rotate_image', 'swap_order_of_first_two_child_assets', 'update_transcript', 'update_index_document', 'update_captions', 'delete_captions'
         require_project_permission!(@digital_object.project, :update)
         # Also require publish permission if params[:publish] is set to true (note: applies to the 'update' action)
         publish_requirements << :update

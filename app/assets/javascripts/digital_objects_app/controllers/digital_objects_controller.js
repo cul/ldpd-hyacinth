@@ -422,6 +422,39 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_captions = 
 
     Hyacinth.ContextualNav.setNavTitle('&laquo; Back', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: digitalObject.pid}));
     Hyacinth.ContextualNav.setNavItems([]);
+    Hyacinth.ContextualNav.setNavItems([
+      {
+        label: 'Clear Captions and Reimport Transcript',
+        url: '#',
+        id: 'clear_captions'
+      }
+    ]);
+
+    $('#clear_captions').on('click', function(e){
+      e.preventDefault();
+
+      var confirmResponse = confirm('Are you sure you want to clear your captions and start over from the latest version of your plain text transcript?');
+      if (confirmResponse) {
+        //After successful deletion, refresh the page
+        $.ajax({
+          url: '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '/clear_captions_and_reimport_transcript.json',
+          type: 'POST',
+          data: {
+            '_method': 'DELETE' //For proper RESTful Rails requests
+          },
+          cache: false
+        }).done(function(clearResponse){
+          if (clearResponse['success']) {
+            Hyacinth.addAlert('Captions cleared.', 'info');
+            Hyacinth.DigitalObjectsApp.reloadCurrentAction();
+          } else {
+            alert(Hyacinth.unexpectedAjaxErrorMessage);
+          }
+        }).fail(function(){
+          alert(Hyacinth.unexpectedAjaxErrorMessage);
+        });
+      }
+    });
 
     $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/manage_captions.ejs', {digitalObject: digitalObject}));
     var captionsEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor('digital-object-captions-editor', {
@@ -435,6 +468,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_captions = 
     that.dispose = function(){
       captionsEditor.dispose();
       captionsEditor = null;
+      $('#clear_captions').off('click');
     };
 
   }).fail(function(){

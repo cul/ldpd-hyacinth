@@ -65,6 +65,7 @@ Hyacinth::Application.routes.draw do
       put 'index_document', action: 'update_index_document'
       get 'captions', action: 'download_captions'
       put 'captions', action: 'update_captions'
+      delete 'clear_captions_and_reimport_transcript', action: 'delete_captions'
       get 'media_view'
       get 'mods'
       put 'undelete', action: 'undestroy'
