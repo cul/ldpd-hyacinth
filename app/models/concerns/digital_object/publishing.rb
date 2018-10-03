@@ -4,7 +4,7 @@ module DigitalObject::Publishing
   def publish
     before_publish
 
-    # Save withg retry after Fedora timeouts / unreachable host
+    # Save with retry after Fedora timeouts / unreachable host
     Retriable.retriable DigitalObject::Base::RETRY_OPTIONS do
       fedora_object.save(update_index: false)
     end

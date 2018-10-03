@@ -111,12 +111,17 @@ Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.prototype.createSynchroni
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.prototype.saveCaptions = function() {
+  var vttExport = this.synchronizerWidget.transcript.exportVTT();
+  if(vttExport === false) {
+    Hyacinth.addAlert('An error occurred during VTT export.', 'danger');
+    return;
+  }
   $.ajax({
     url: this.assignment ? '/assignments/' + this.assignment['id'] + '/changeset' : '/digital_objects/' + this.digitalObject.getPid() + '/captions',
     type: 'POST',
     data: {
       '_method': 'PUT', //For proper RESTful Rails requests
-      'captions_text': this.synchronizerWidget.transcript.exportVTT()
+      'captions_text': vttExport
     },
     cache: false
   }).done(function(transcriptPutResponse){

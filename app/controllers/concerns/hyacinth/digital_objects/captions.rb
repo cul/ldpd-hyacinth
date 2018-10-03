@@ -24,7 +24,7 @@ module Hyacinth::DigitalObjects::Captions
     }
   end
 
-  def delete_captions
+  def clear_captions_and_reimport_transcript
     @digital_object.clear_captions_and_reimport_transcript
     @digital_object.save
 

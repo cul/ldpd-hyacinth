@@ -28,7 +28,7 @@ module DigitalObject::Assets::Captions
     instance_variable_defined?('@captions_changed') && @captions_changed
   end
 
-  # return the plain text transcript as a single VTT caption
+  # return the plain text transcript as a VTT caption document
   def default_captions_vtt
     # Default starter VTT content. Title, date, and identifier are required by the Synchronizer Widget
     "WEBVTT\n" \

@@ -78,6 +78,10 @@ module DigitalObject::Assets::FileImport
     Addressable::URI.encode('file:' + path).gsub('&', '%26').gsub('#', '%23')
   end
 
+  def self.ds_location_to_filesystem_path(ds_location)
+    Addressable::URI.unencode(ds_location).gsub(/^file:/, '')
+  end
+
   def do_service_copy_import
     service_filename = File.basename(@service_copy_import_path)
 

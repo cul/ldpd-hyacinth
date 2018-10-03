@@ -9,6 +9,8 @@ module DigitalObject::Fedora
   PROJECT_MEMBERSHIP_PREDICATE = :is_constituent_of
   HYACINTH_CORE_DATASTREAM_NAME = 'hyacinth_core'
   HYACINTH_STRUCT_DATASTREAM_NAME = 'hyacinth_struct'
+  CAPTIONS_DATASTREAM_NAME = 'captions'
+  CHAPTERS_DATASTREAM_NAME = 'chapters'
 
   # Get a new, unsaved, appropriately-configured instance of the right tyoe of Fedora object a DigitalObject subclass
   def create_fedora_object
@@ -190,6 +192,8 @@ module DigitalObject::Fedora
     def save_datastreams
       save_xml_datastreams
       save_structure_datastream
+      save_captions_datastream
+      save_chapters_datastream
       true
     end
 
@@ -249,6 +253,58 @@ module DigitalObject::Fedora
       # No child objects.  If struct datastream is present, perform cleanup by deleting it.
       @fedora_object.datastreams[struct_ds_name].delete if @fedora_object.datastreams[struct_ds_name].present?
     end
+
+    def save_captions_datastream
+      return unless File.exists?(captions_location)
+      captions_ds = @fedora_object.datastreams[CAPTIONS_DATASTREAM_NAME]
+
+      if captions_ds.blank?
+        captions_ds = @fedora_object.create_datastream(
+          ActiveFedora::Datastream,
+          CAPTIONS_DATASTREAM_NAME,
+          controlGroup: 'M',
+          mimeType: 'text/vtt',
+          dsLabel: CAPTIONS_DATASTREAM_NAME,
+          versionable: false,
+          checksumType: 'MD5',
+          blob: ''
+        )
+        @fedora_object.add_datastream(captions_ds)
+      end
+      # Only update content if it has changed
+      new_content = IO.read(captions_location)
+      new_content_checksum = Digest::MD5.hexdigest(new_content)
+      if new_content_checksum != captions_ds.checksum
+        captions_ds.content = new_content
+      end
+    end
+
+    def save_chapters_datastream
+      return unless File.exists?(index_document_location)
+      chapters_ds = @fedora_object.datastreams[CHAPTERS_DATASTREAM_NAME]
+
+      if chapters_ds.blank?
+        chapters_ds = @fedora_object.create_datastream(
+          ActiveFedora::Datastream,
+          CHAPTERS_DATASTREAM_NAME,
+          controlGroup: 'M',
+          mimeType: 'text/vtt',
+          dsLabel: CHAPTERS_DATASTREAM_NAME,
+          versionable: false,
+          checksumType: 'MD5',
+          blob: ''
+        )
+        @fedora_object.add_datastream(chapters_ds)
+      end
+
+      # Only update content if it has changed
+      new_content = IO.read(index_document_location)
+      new_content_checksum = Digest::MD5.hexdigest(new_content)
+      if new_content_checksum != chapters_ds.checksum
+        chapters_ds.content = new_content
+      end
+    end
+
   end
 
   module Detect
