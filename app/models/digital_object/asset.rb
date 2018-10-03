@@ -256,6 +256,13 @@ class DigitalObject::Asset < DigitalObject::Base
     false
   end
 
+  def save_datastreams
+    super
+    save_captions_datastream
+    save_chapters_datastream
+    true
+  end
+
   def load_data_from_sources
     super
 

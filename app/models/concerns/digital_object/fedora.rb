@@ -192,8 +192,6 @@ module DigitalObject::Fedora
     def save_datastreams
       save_xml_datastreams
       save_structure_datastream
-      save_captions_datastream
-      save_chapters_datastream
       true
     end
 

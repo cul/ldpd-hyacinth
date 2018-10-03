@@ -68,7 +68,8 @@ Metrics/ClassLength:
   Max: 275
 
 Metrics/ModuleLength:
-  Exclude: []
+  Exclude:
+    - 'app/models/concerns/digital_object/fedora.rb'
   CountComments: false
   Max: 110
 
