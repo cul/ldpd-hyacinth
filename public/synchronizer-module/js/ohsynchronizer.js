@@ -118,8 +118,9 @@ OHSynchronizer.twoDigits = function(value, frac) {
 
 OHSynchronizer.secondsAsTimestamp = function(time, frac = 3) {
 	var minutes = Math.floor(time / 60);
-	var hours = Math.floor(minutes / 60);
 	var seconds = (time - minutes * 60).toFixed(3);
+	var hours = Math.floor(minutes / 60);
+	if (hours > 0) minutes = minutes - 60 * hours;
 	return OHSynchronizer.twoDigits(hours, 0) + ":" + OHSynchronizer.twoDigits(minutes, 0) + ":" + OHSynchronizer.twoDigits(seconds, frac);
 }
 
