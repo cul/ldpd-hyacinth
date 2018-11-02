@@ -46,10 +46,11 @@ RSpec.describe DigitalObject::Asset, :type => :model do
       seed.force_encoding(Encoding::ASCII_8BIT)
       codepoints.inject(seed) { |m,c| m << c }
     end
+    let(:utf8_target) { "Q: This is Myron".encode(Encoding::UTF_8) }
     subject { DigitalObject::Asset.new.encoded_string(utf8_source) }
     # it is UTF8
     it { expect(subject.encoding).to eql(Encoding::UTF_8) }
     # it removes the BOM
-    it { expect(subject.codepoints).to eql("Q: This is Myron".codepoints) }
+    it { expect(subject.codepoints).to eql(utf8_target.codepoints) }
   end
 end
