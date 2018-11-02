@@ -38,4 +38,18 @@ RSpec.describe DigitalObject::Asset, :type => :model do
     end
   end
 
+  context "uploads of unicode file data with BOM" do
+    # <BOM>Q: This is Myron
+    let(:utf8_source) do
+      codepoints = [239,187,191,81,58,32,84,104,105,115,32,105,115,32,77,121,114,111,110]
+      seed = ""
+      seed.force_encoding(Encoding::ASCII_8BIT)
+      codepoints.inject(seed) { |m,c| m << c }
+    end
+    subject { DigitalObject::Asset.new.encoded_string(utf8_source) }
+    # it is UTF8
+    it { expect(subject.encoding).to eql(Encoding::UTF_8) }
+    # it removes the BOM
+    it { expect(subject.codepoints).to eql("Q: This is Myron".codepoints) }
+  end
 end

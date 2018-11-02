@@ -12,7 +12,7 @@ module DigitalObject::Assets::Transcript
 
   def transcript=(content)
     @transcript_changed = true
-    @transcript = content
+    @transcript = encoded_string(content)
   end
 
   def transcript_changed?
