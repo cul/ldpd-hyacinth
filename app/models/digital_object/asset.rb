@@ -396,7 +396,7 @@ class DigitalObject::Asset < DigitalObject::Base
   BOM_UTF_16BE = ints_as_binstring([254,255])
   BOM_UTF_16LE = ints_as_binstring([255,254])
   BOM_UTF_32BE = ints_as_binstring([0,0,254,255])
-  BOM_UTF_32LE = ints_as_binstring([0,0,255,254])
+  BOM_UTF_32LE = ints_as_binstring([255,254,0,0])
 
 
   def encoded_string(source, target_encoding = Encoding::UTF_8)
@@ -422,7 +422,8 @@ class DigitalObject::Asset < DigitalObject::Base
       source = source.byteslice(BOM_UTF_32LE.length..-1)
     else
       detection = CharlockHolmes::EncodingDetector.detect(source)
-      source_encoding = Encoding.find(detection[:encoding])
+      source_encoding = detection[:encoding] ?
+        Encoding.find(detection[:encoding]) : Encoding::ASCII_8BIT
     end
     if source.encoding == target_encoding
       # just the trim, thanks

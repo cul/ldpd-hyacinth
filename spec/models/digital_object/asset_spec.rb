@@ -38,19 +38,39 @@ RSpec.describe DigitalObject::Asset, :type => :model do
     end
   end
 
-  context "uploads of unicode file data with BOM" do
-    # <BOM>Q: This is Myron
+  context "uploads of file data" do
     let(:utf8_source) do
-      codepoints = [239,187,191,81,58,32,84,104,105,115,32,105,115,32,77,121,114,111,110]
+      codepoints = [81,58,32,84,104,105,115,32,105,115,32,77,121,114,195,182,110]
       seed = ""
       seed.force_encoding(Encoding::ASCII_8BIT)
       codepoints.inject(seed) { |m,c| m << c }
     end
-    let(:utf8_target) { "Q: This is Myron".encode(Encoding::UTF_8) }
-    subject { DigitalObject::Asset.new.encoded_string(utf8_source) }
-    # it is UTF8
-    it { expect(subject.encoding).to eql(Encoding::UTF_8) }
-    # it removes the BOM
-    it { expect(subject.codepoints).to eql(utf8_target.codepoints) }
+    let(:utf8_target) { "Q: This is Myrön".encode(Encoding::UTF_8) }
+    shared_examples "strips BOM and returns UTF8" do
+      subject { DigitalObject::Asset.new.encoded_string(input_source) }
+      # it is UTF8
+      it { expect(subject.encoding).to eql(Encoding::UTF_8) }
+      # it removes the BOM
+      it { expect(subject.codepoints).to eql(utf8_target.codepoints) }
+    end
+    context "in utf8 with BOM" do
+      let(:prefix) { DigitalObject::Asset::BOM_UTF_8 }
+      # <BOM>Q: This is Myrön
+      let(:input_source) { prefix + utf8_source }
+      include_examples "strips BOM and returns UTF8"
+    end
+    context "in utf8 without BOM" do
+      let(:input_source) { utf8_source }
+      include_examples "strips BOM and returns UTF8"
+    end
+    context "in utf16-BE with BOM" do
+      let(:prefix) { DigitalObject::Asset::BOM_UTF_16BE }
+      let(:input_source) { prefix + utf8_target.encode(Encoding::UTF_16BE).b }
+      include_examples "strips BOM and returns UTF8"
+    end
+    context "in ISO-8859-1" do
+      let(:input_source) { utf8_target.encode(Encoding::ISO_8859_1).b }
+      include_examples "strips BOM and returns UTF8"
+    end
   end
 end
