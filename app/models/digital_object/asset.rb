@@ -6,6 +6,7 @@ class DigitalObject::Asset < DigitalObject::Base
   include DigitalObject::Assets::Transcript
   include DigitalObject::Assets::IndexDocument
   include DigitalObject::Assets::Captions
+  include Hyacinth::Utils::StringUtils
 
   UNKNOWN_DC_TYPE = 'Unknown'
   VALID_DC_TYPES = [UNKNOWN_DC_TYPE, 'Dataset', 'MovingImage', 'Software', 'Sound', 'StillImage', 'Text']

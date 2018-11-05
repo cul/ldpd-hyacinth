@@ -15,7 +15,7 @@ module DigitalObject::Assets::Captions
 
   def captions=(content)
     @captions_changed = true
-    @captions = content
+    @captions = encoded_string(content)
   end
 
   # clears out any custom captions and reimports the current version of the
