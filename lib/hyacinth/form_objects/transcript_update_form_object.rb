@@ -1,7 +1,7 @@
 module Hyacinth
   module FormObjects
     class TranscriptUpdateFormObject < Hyacinth::FormObjects::FormObject
-
+      include Hyacinth::Utils::StringUtils
       validate :validate_presence_of_file_or_transcript_text
       validate :validate_file, if: -> { file.present? }
 
@@ -11,9 +11,9 @@ module Hyacinth
 
       def transcript_content
         if file.present?
-          file.tempfile.read
+          encoded_string(file.tempfile.read)
         else
-          transcript_text
+          encoded_string(transcript_text)
         end
       end
 
@@ -32,7 +32,6 @@ module Hyacinth
         mime_type = BestType.mime_type.for_file_name(file.original_filename)
         errors.add(:base, "Only plain text files are allowed (detected MIME type #{mime_type}).") unless mime_type == 'text/plain'
       end
-
     end
   end
 end

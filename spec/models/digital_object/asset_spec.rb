@@ -39,36 +39,26 @@ RSpec.describe DigitalObject::Asset, :type => :model do
   end
 
   context "uploads of file data" do
-    let(:utf8_source) do
-      codepoints = [81,58,32,84,104,105,115,32,105,115,32,77,121,114,195,182,110]
-      seed = ""
-      seed.force_encoding(Encoding::ASCII_8BIT)
-      codepoints.inject(seed) { |m,c| m << c }
-    end
-    let(:utf8_target) { "Q: This is Myrön".encode(Encoding::UTF_8) }
-    shared_examples "strips BOM and returns UTF8" do
-      subject { DigitalObject::Asset.new.encoded_string(input_source) }
-      # it is UTF8
-      it { expect(subject.encoding).to eql(Encoding::UTF_8) }
-      # it removes the BOM
-      it { expect(subject.codepoints).to eql(utf8_target.codepoints) }
-    end
     context "in utf8 with BOM" do
+      include_context 'utf bom example source'
       let(:prefix) { DigitalObject::Asset::BOM_UTF_8 }
       # <BOM>Q: This is Myrön
       let(:input_source) { prefix + utf8_source }
       include_examples "strips BOM and returns UTF8"
     end
     context "in utf8 without BOM" do
+      include_context 'utf bom example source'
       let(:input_source) { utf8_source }
       include_examples "strips BOM and returns UTF8"
     end
     context "in utf16-BE with BOM" do
+      include_context 'utf bom example source'
       let(:prefix) { DigitalObject::Asset::BOM_UTF_16BE }
       let(:input_source) { prefix + utf8_target.encode(Encoding::UTF_16BE).b }
       include_examples "strips BOM and returns UTF8"
     end
     context "in ISO-8859-1" do
+      include_context 'utf bom example source'
       let(:input_source) { utf8_target.encode(Encoding::ISO_8859_1).b }
       include_examples "strips BOM and returns UTF8"
     end
