@@ -1187,27 +1187,29 @@ OHSynchronizer.Export.transcriptVTT = function() {
 
 		// This will help us find the rest of the minutes, as they are marked appropriately
 		while (/([0-9]:00})+/.test(content)) {
-			var newMin = '';
-			var currMin = '';
+			var currMin = 0;
+			var currHour = 0;
+			var newMin = 0;
+			var newHour = 0;
 
 			minute = content.substring(content.indexOf("{") + 1, content.indexOf("}"));
 			minute = minute.substring(0, minute.indexOf(':'));
-			currMin = (parseInt(minute) < 10) ? '0' + minute : minute;
-			newMin = (parseInt(currMin) + 1);
-			newMin = (parseInt(newMin) < 10) ? '0' + newMin : newMin;
+			currMin = parseInt(minute);
+			newMin = currMin + 1;
 
-			if (parseInt(currMin) < 60) {
-				content = content.replace('<span class="transcript-timestamp">{' + minute + ':00} ', '\n\n00:' + currMin + ':00.000 --> 00:' + newMin + ':00.000\n');
-			}
-			else {
-				var hour = '';
-				hour = (parseInt(newMin) % 60);
-				currMin -= (parseInt(hour) * 60);
-				newMin = (parseInt(currMin) + 1);
+			currHour = parseInt(minute / 60);
+			currMin -= (currHour * 60);
+			newHour = parseInt(newMin / 60);
+			newMin -= (newHour * 60);
 
-				hour = (parseInt(hour) < 10) ? '0' + hour : hour;
-				content = content.replace('<span class="transcript-timestamp">{' + minute + ':00} <span class="transcript-word transcript-clicked">', '\n\n' + hour + ':' + currMin + ':00.000 --> ' + hour + ':' + newMin + ':00.000\n');
-			}
+			content = content.replace(
+				'<span class="transcript-timestamp">{' + minute + ':00} ',
+				'\n\n' +
+				(currHour < 10 ? '0' + currHour : currHour) + ':' + (currMin < 10 ? '0' + currMin : currMin) + ':00.000' +
+				' --> ' +
+				(newHour < 10 ? '0' + newHour : newHour) + ':' + (newMin < 10 ? '0' + newMin : newMin) + ':00.000' +
+				'\n'
+			);
 		}
 
 		return content;
