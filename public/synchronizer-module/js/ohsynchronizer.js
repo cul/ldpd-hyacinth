@@ -1284,12 +1284,19 @@ OHSynchronizer.Export.previewWork = function(type) {
 		// We need to parse the VTT-ified transcript data so that it is "previewable"
 		var text = content.split(/\r?\n|\r/);
 		var first = false;
+		var timestampRegex = /^(\d{2}):(\d{2}):\d{2}\..+/;
 
 		for (var i = 0; i < text.length; i++) {
 			if (/(([0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}\s-->\s[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}))+/.test(text[i])) {
-			if (!first) first = true;
-			var timestamp = text[i][3] !== "0" ? (text[i][3] + text[i][4]) : text[i][4];
-			if (timestamp !== "0") { $('#transcript-preview')[0].innerHTML += '<span class="preview-minute">[' + timestamp + ':00]&nbsp;</span>'; }
+				if (!first) first = true;
+				//var timestamp = text[i][3] !== "0" ? (text[i][3] + text[i][4]) : text[i][4];
+				var timestamp = timestampRegex.exec(text[i]);
+	      var timestampHour = timestamp[1];
+	      var timestampMinute = timestamp[2];
+	      var minute = parseInt(timestampHour) * 60 + parseInt(timestampMinute);
+				if (minute !== 0) {
+					$('#transcript-preview')[0].innerHTML += '<span class="preview-minute">[' + minute + ':00]&nbsp;</span>';
+				}
 				continue;
 			}
 			else if (first) {
