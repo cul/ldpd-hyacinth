@@ -7,6 +7,9 @@ ruby '2.5.3'
 gem 'rails', '~> 5.2.1'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
+# Enable mysql as the database for Active Record
+gem 'mysql2', '~> 0.5'
+
 # Use Puma as the app server
 gem 'puma', '~> 3.11'
 # Use SCSS for stylesheets
@@ -34,9 +37,23 @@ gem 'jbuilder', '~> 2.5'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
 
+# Devise for authentication
+gem 'devise', '~> 4.5'
+
+# Bootstrap 3 and jQuery (TODO: Remove these when we switch fully to the new React UI)
+gem 'bootstrap-sass', '~> 3.3'
+gem 'autoprefixer-rails' # Recommended by bootstrap-sass
+gem 'jquery-rails', '~> 4.3' # Required by bootstrap
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  # rspec for testing
+  gem 'rspec-rails', '~> 3.8'
+  # rubocop for code analysis/formatting
+  gem 'rubocop', '~> 0.60.0', require: false
+  gem 'rubocop-rails_config'
+  gem 'rubocop-rspec'
 end
 
 group :development do

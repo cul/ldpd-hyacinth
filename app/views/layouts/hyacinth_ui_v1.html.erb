@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hyacinth</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="<%= image_path('favicon.png') %>" type="image/png" />
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <% # stylesheet_pack_tag is available as long as javascript_pack_tag includes at least one css file %>
+    <%= stylesheet_pack_tag 'hyacinth_ui_v1' %>
+  </head>
+  <body class="hyacinth-ui-v1">
+    <%= yield %>
+    <%= javascript_pack_tag 'hyacinth_ui_v1' %>
+  </body>
+</html>

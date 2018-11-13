@@ -1,0 +1,14 @@
+$navbar-height: 40px;
+$navbar-inverse-bg: #222324;
+$navbar-inverse-border: #4a4a4a;
+$navbar-inverse-link-color: darken(white,30%);
+
+$font-size-base: 14px;
+$font-size-h1: floor(($font-size-base * 2.1));
+$font-size-h2: floor(($font-size-base * 1.7));
+$font-size-h3: ceil(($font-size-base * 1.5));
+$font-size-h4: ceil(($font-size-base * 1.2));
+$font-size-h5: $font-size-base;
+$font-size-h6: ceil(($font-size-base * 0.85));
+
+$font-size-small: ceil(($font-size-base * 0.85))

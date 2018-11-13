@@ -1,0 +1,93 @@
+/* Styles for the login layout */
+
+body.login {
+  // Cloud BG Image: Free for personal and commercial use, no attribution required.
+  // https://www.pexels.com/photo/background-beautiful-clouds-cloudscape-552789/
+  background: image-url('login/cloud-bg.jpg') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+
+  #login-alert-container {
+    .alert-info {
+      background: rgba(255, 255, 255, .25);
+      color:#fff;
+      border-color: rgba(64, 64, 144, .4);;
+    }
+    .alert-danger {
+      background: rgba(255, 255, 255, .25);
+      border-color: rgba(144, 64, 64, .4);
+    }
+  }
+
+  .white-text-with-shadow {
+    color: #fff;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, .5);
+  }
+
+  .text-between-login-buttons {
+    display:inline-block;
+    margin-bottom:.25em;
+  }
+
+  #login-wrapper {
+    /* Absolutely position the welcome box in the center of the window */
+    position:    absolute;
+    left:        50%;
+    top:         50%;
+    width:       500px;
+    height:      400px;
+    padding:     10px;
+    margin-left: -250px;
+    margin-top:  -205px;
+
+    @media (max-width: 768px) {
+      width:       300px;
+      margin-left: -150px;
+    }
+
+    text-align:center;
+    font-size: 16px;
+
+    #login-box {
+      margin-top: 0.5em;
+      label {
+        font-size:1.2em;
+        font-weight: normal;
+        margin:0.5em 0;
+      }
+    }
+
+    .hyacinth-logo-image {
+      width:100px;
+      height:auto;
+      border: 4px solid rgba(39, 36,	98, .7);
+      background-color: #fff;
+      border-radius:20px;
+    }
+
+    .btn {
+      border: 1px solid #fff;
+      color: #fff;
+      font-size: 16px;
+      background: transparent;
+    }
+
+    .btn:hover {
+      color: #000;
+      background: #fff;
+      text-shadow: none;
+    }
+  }
+
+  #welcome-footer {
+    position: absolute;
+    bottom: 0;
+    padding-bottom: .5em;
+    font-size: 16px;
+    width:100%;
+    text-align: center;
+  }
+
+}

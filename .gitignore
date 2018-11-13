@@ -39,3 +39,5 @@ yarn-debug.log*
 
 # Ignore config files with sensitive data
 database.yml
+hyacinth.yml
+resque.yml

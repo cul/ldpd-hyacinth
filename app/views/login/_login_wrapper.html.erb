@@ -1,0 +1,12 @@
+<div class="container">
+
+  <div id="login-wrapper">
+    <img class="hyacinth-logo-image" src="<%= asset_path('hyacinth-logo.png') %>" />
+    <br />
+    <%= render partial: inner_partial %>
+  </div>
+</div>
+
+<div id="welcome-footer" class="white-text-with-shadow">
+  Version <%= File.read(File.join(Rails.root, '/VERSION')).strip %>
+</div>

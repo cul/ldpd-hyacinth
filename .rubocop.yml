@@ -1,0 +1,34 @@
+require: rubocop-rspec
+
+inherit_gem:
+  rubocop-rails_config:
+    - config/rails.yml
+
+Rails:
+  Enabled: true
+
+AllCops:
+  TargetRubyVersion: 2.5.3
+  TargetRailsVersion: 5.2.1
+  DisplayCopNames: true
+  Exclude:
+    - 'bin/**/*'
+    - 'db/**/*'
+    - 'app/javascript/**/*'
+    - 'node_modules/**/*'
+    - 'vendor/**/*'
+
+Layout/EmptyLinesAroundModuleBody:
+  Enabled: false
+
+Layout/EmptyLinesAroundClassBody:
+  Enabled: false
+
+Layout/IndentationConsistency:
+  EnforcedStyle: rails
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/StringLiterals:
+  Enabled: false

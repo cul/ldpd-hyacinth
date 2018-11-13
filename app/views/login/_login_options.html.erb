@@ -1,0 +1,12 @@
+<h1 class="white-text-with-shadow">Welcome To Hyacinth</h1>
+<p class="white-text-with-shadow">
+  Hyacinth is a Digital Object management and publication system.
+  <br />
+  It's really cool.
+</p>
+<hr />
+<div id="sign-in-options" class="white-text-with-shadow">
+  <%= link_to('Sign In With Your Columbia UNI', user_do_cas_login_path, id: 'cas_sign_in_button', class: 'btn btn-default btn-block') %>
+  <span class="text-between-login-buttons white-text-with-shadow">or</span>
+  <%= link_to('Sign In With An Email Account', new_user_session_path, id: 'email_sign_in_button', class: 'btn btn-default btn-block') %>
+</div>
