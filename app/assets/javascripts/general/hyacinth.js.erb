@@ -212,6 +212,10 @@ Hyacinth.showMainModal = function(title, bodyContent, footerContent) {
   $('#main-modal .modal-body').html(bodyContent);
   $('#main-modal .modal-footer').html(footerContent);
   $('#main-modal').modal('show');
+  $('#main-modal').unbind('hidden.bs.modal').bind('hidden.bs.modal', function(){
+    // clear modal content from dom to stop playing video or audio content
+    $('#main-modal .modal-body').empty();
+  });
 };
 
 Hyacinth.hideMainModal = function() {
