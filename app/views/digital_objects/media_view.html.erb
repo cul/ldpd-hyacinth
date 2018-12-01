@@ -44,7 +44,13 @@
   <div id="zoom-content" style="width: 800px; height: 600px;">
     <div class="loading-message">Loading...</div>
   </div>
-
+<% elsif ['Sound','MovingImage'].include? @digital_object.dc_type %>
+  <div id="media-content" style="width: 800px; height: 600px;">
+    <video id="video-player" data-able-player preload="auto">
+      <% media_url = @digital_object.player_url(request.remote_ip) %>
+      <source src="<%= media_url %>" />
+    </video>
+  </div>
 <% else %>
   Not currently handling Assets of type: <%= @digital_object.dc_type %>
 <% end %>

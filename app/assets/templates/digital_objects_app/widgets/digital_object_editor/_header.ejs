@@ -276,6 +276,8 @@
                   </ul>
                 </div>
               <% } %>
+            <% } else if (['Sound','MovingImage'].includes(digitalObject.getDcType())) { %>
+              <a href="#" class="btn btn-block btn-primary btn-xs" onclick="Hyacinth.DigitalObjectsApp.DigitalObject.Base.showMediaViewModal('<%= digitalObject.getPid() %>'); return false;">View Media</a>
             <% } %>
           </div>
         </div>
