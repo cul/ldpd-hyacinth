@@ -50,6 +50,16 @@
       <% media_url = @digital_object.player_url(request.remote_ip) %>
       <source src="<%= media_url %>" />
     </video>
+    <script>
+       var video = $('#video-player')[0];
+       var mediaUrl = $('#video-player source')[0].src;
+       var match = new URL(mediaUrl).pathname.match(/.m3u8$/i);
+       if (new URL(mediaUrl).pathname.match(/.m3u8$/i)) {
+         var hls = new Hls();
+         hls.loadSource(mediaUrl);
+         hls.attachMedia(video);
+       }
+    </script>
   </div>
 <% else %>
   Not currently handling Assets of type: <%= @digital_object.dc_type %>
