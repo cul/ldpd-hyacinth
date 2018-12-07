@@ -678,8 +678,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.submitEditorForm = func
     data: data,
     cache: false
   }).done(function(digitalObjectCreationResponse){
-
-    if (digitalObjectCreationResponse['errors'] && digitalObjectCreationResponse['errors'].length > 0) {
+    if (digitalObjectCreationResponse['errors'] && Object.keys(digitalObjectCreationResponse['errors']).length > 0) {
       Hyacinth.addAlert('Errors encountered during save. Please review your fields and try again.', 'danger');
       $.each(digitalObjectCreationResponse['errors'], function(error_key, error_message){
         var errorWithPossibleNumberIndicator = error_key.split('.');

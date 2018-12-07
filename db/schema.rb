@@ -11,16 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180705141810) do
+ActiveRecord::Schema.define(version: 20181105234509) do
 
   create_table "archived_assignments", force: :cascade do |t|
-    t.integer "original_assignment_id", null: false
-    t.string  "digital_object_pid",     null: false
-    t.integer "project_id",             null: false
-    t.integer "task",                   null: false
+    t.integer "original_assignment_id",                  null: false
+    t.string  "digital_object_pid",                      null: false
+    t.integer "project_id",                              null: false
+    t.integer "task",                                    null: false
     t.text    "summary"
-    t.text    "original"
-    t.text    "proposed"
+    t.text    "original",               limit: 16777215
+    t.text    "proposed",               limit: 16777215
   end
 
   add_index "archived_assignments", ["digital_object_pid"], name: "index_archived_assignments_on_digital_object_pid"
@@ -28,16 +28,16 @@ ActiveRecord::Schema.define(version: 20180705141810) do
   add_index "archived_assignments", ["task"], name: "index_archived_assignments_on_task"
 
   create_table "assignments", force: :cascade do |t|
-    t.string   "digital_object_pid", null: false
-    t.integer  "project_id",         null: false
-    t.integer  "assigner_id",        null: false
-    t.integer  "assignee_id",        null: false
+    t.string   "digital_object_pid",                  null: false
+    t.integer  "project_id",                          null: false
+    t.integer  "assigner_id",                         null: false
+    t.integer  "assignee_id",                         null: false
     t.integer  "status"
-    t.integer  "task",               null: false
+    t.integer  "task",                                null: false
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "original"
-    t.text     "proposed"
+    t.text     "original",           limit: 16777215
+    t.text     "proposed",           limit: 16777215
     t.text     "note"
   end
 

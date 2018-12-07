@@ -409,6 +409,27 @@ RSpec.describe DigitalObject::Base, :type => :model do
         item
       }
 
+      context "when HYACINTH['publish_enabled'] equals false" do
+        let(:original_publish_enabled_value) { HYACINTH['publish_enabled'] }
+        before {
+          original_publish_enabled_value # invoke let variable to set it
+          HYACINTH['publish_enabled'] = false
+        }
+        after {
+          HYACINTH['publish_enabled'] = original_publish_enabled_value
+        }
+        it "does not save or publish and adds an error" do
+          item.publish_after_save = true
+          # verify that save methods and publish methods aren't called
+          expect(item).not_to receive(:before_save)
+          expect(item).not_to receive(:persist_to_stores)
+          expect(item).not_to receive(:publish)
+          expect(item.save).to eq(false)
+          # expect an error
+          expect(item.errors[:publish]).to be_present
+        end
+      end
+
       it "mints id before saving" do
         expect(item).to receive(:mint_and_store_doi).with("reserved")
         item.save

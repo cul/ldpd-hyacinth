@@ -3,11 +3,16 @@ module DigitalObject::Persistence
   extend ActiveSupport::Concern
 
   def save(manual_commit_to_solr = true)
+    if @publish_after_save && ! HYACINTH['publish_enabled']
+      @errors.add(:publish, 'Digital Objects cannot be published right now because Hyacinth publishing has been disabled by an administrator. You can still save though.')
+      return false
+    end
+
     before_save
 
     return false unless self.valid?
 
-    creating_new_record = self.new_record?
+    creating_new_record = self.new_record? # save creation info because after persist_to_stores is called, new_record? will return false
 
     persist_to_stores
 
