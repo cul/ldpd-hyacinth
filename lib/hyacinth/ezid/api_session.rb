@@ -16,8 +16,6 @@ module Hyacinth::Ezid
     attr_accessor :naa, :username, :password
     attr_reader :scheme, :last_response_from_server, :timed_out
 
-    SCHEMES = { ark: 'ark:/', doi: 'doi:' }
-
     IDENTIFIER_STATUS = { public: 'public',
                           reserved: 'reserved',
                           unavailable: 'unavailable' }
@@ -76,7 +74,6 @@ module Hyacinth::Ezid
                                              "datacite metadata: #{metadata.inspect}") unless @last_response_from_server.success?
         # BEGIN_CHUNK
         Hyacinth::Ezid::Doi.new(@last_response_from_server.doi,
-                                @last_response_from_server.ark,
                                 identifier_status) if @last_response_from_server.success?
         # END_CHUNK
       rescue Net::ReadTimeout, SocketError
