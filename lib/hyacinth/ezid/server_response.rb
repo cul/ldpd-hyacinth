@@ -20,11 +20,6 @@ module Hyacinth::Ezid
       match[0]
     end
 
-    def ark
-      match = @response.body.match(/ark\S+/)
-      match[0]
-    end
-
     def http_status_code
       @response.code
     end

@@ -8,7 +8,7 @@ module Hyacinth::Ezid
                           reserved: 'reserved',
                           unavailable: 'unavailable' }
     attr_reader :identifier, :metadata
-    def initialize(doi_identifier, shadow_ark, status = IDENTIFIER_STATUS[:reserved], datacite_metadata = {})
+    def initialize(doi_identifier, status = IDENTIFIER_STATUS[:reserved], datacite_metadata = {})
       @identifier = doi_identifier
       @datacite_metadata = datacite_metadata
 
@@ -19,7 +19,6 @@ module Hyacinth::Ezid
       # beginning with underscores
       # BEGIN
       @status = status
-      @shadowedby = shadow_ark
       # END
       # above instance variables represent the Internal Metadata as
       # specified by the EZID API, Version 2 (http://ezid.cdlib.org/doc/apidoc.html)
