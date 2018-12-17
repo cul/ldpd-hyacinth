@@ -94,7 +94,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.prototype.createSynchroni
 		this.$containerElement.find('.preview-button').hide();
     this.$containerElement.find('#sync-controls').hide();
     this.$containerElement.find('.save-captions-button').hide();
-
+    this.$containerElement.find('#sync-roll').val('0'); // no sync time offset when in captions preview mode
 	} else {
 		$('.preview-button').on('click', function() {
 			this.synchronizerWidget.transcript.preview();
