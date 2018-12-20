@@ -90,6 +90,34 @@ namespace :hyacinth do
 
     end
 
+    task :reindex_by_pid => :environment do
+      if ENV['PIDS'].present?
+        pids = ENV['PIDS'].split(',')
+      else
+        puts 'Error: Please supply a value for PIDS (one or more comma-separated Hyacinth PIDs)'
+        next
+      end
+
+      total = pids.length
+      puts "Reindexing #{total} Digital #{total == 1 ? 'Object' : 'Objects'}..."
+      progressbar = ProgressBar.create(:title => "Reindex", :starting_at => 0, :total => total, :format => '%a |%b>>%i| %p%% %c/%C %t')
+
+      pids.each do |pid|
+        begin
+          DigitalObject::Base.find(pid).update_index(false) # Passing false here so that we don't do one solr commit per update
+        rescue RestClient::Unauthorized, Rubydora::RubydoraError => e
+          Rails.logger.error('Error: Skipping ' + digital_object_record.pid + "\nException: #{e.class}, Message: #{e.message}")
+        end
+        progressbar.increment
+      end
+
+      Hyacinth::Utils::SolrUtils.solr.commit # Only commit at the end
+      progressbar.finish
+
+      puts "Done!"
+
+    end
+
     task :delete_from_index => :environment do
       if ENV['PIDS'].present?
         pids = ENV['PIDS'].split(',')
