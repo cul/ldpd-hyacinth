@@ -6,8 +6,8 @@ module DigitalObject::Serialization
   ######################
 
   # JSON representation
-  def as_json(_options = {})
-    {
+  def as_json(options = {})
+    json = {
       pid: pid,
       data_file_path: @db_record.data_file_path,
       uuid: @db_record.uuid,
@@ -26,9 +26,10 @@ module DigitalObject::Serialization
       dynamic_field_data: @dynamic_field_data,
       ordered_child_digital_objects: ordered_child_digital_object_pids.map { |the_pid| { pid: the_pid } },
       parent_digital_objects: parent_digital_object_pids.map { |the_pid| { pid: the_pid } },
-      doi: doi,
-      assignments: Assignment.where(digital_object_pid: pid)
+      doi: doi
     }
+    json[:assignments] = Assignment.where(digital_object_pid: pid) unless options[:assignments] === false
+    json
   end
 
   def as_hyacinth_3_json(_options = {})

@@ -8,7 +8,7 @@ module DigitalObject::IndexAndSearch::Index
   def to_solr
     flattened_dynamic_field_data = get_flattened_dynamic_field_data(true)
 
-    object_as_json = to_json
+    object_as_json = to_json(assignments: false)
 
     doc = {
       pid: pid,
