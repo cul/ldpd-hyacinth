@@ -765,16 +765,16 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
       end
     end
 
-    context "retuns the expected dependency map when only Assets are present in the CSV data, and they all reference the same parent, but that parent row isn't in the CSV data" do
+    context "retuns the expected dependency map when only Assets are present in the CSV data, and the assets don't have identifiers or pids, and several Assets reference the same parent, but referneced parents aren't in the CSV data" do
       let(:csv_data) {
         CSV.generate do |csv|
-          csv << ['_pid',     '_identifiers-1', '_parent_digital_objects-1.identifier', 'title-1:sort_portion']
-          csv << ['',         'asset_1',        'item_1',                               'Asset 1'             ]
-          csv << ['',         'asset_2',        'item_1',                               'Asset 2'             ]
-          csv << ['',         'asset_3',        'item_1',                               'Asset 3'             ]
-          csv << ['',         'asset_5',        'item_2',                               'Asset 4'             ]
-          csv << ['',         'asset_4',        'item_2',                               'Asset 5'             ]
-          csv << ['',         'asset_6',        'item_2',                               'Asset 6'             ]
+          csv << ['_parent_digital_objects-1.identifier', 'title-1:sort_portion']
+          csv << ['item_1',                               'Asset 1'             ]
+          csv << ['item_1',                               'Asset 2'             ]
+          csv << ['item_1',                               'Asset 3'             ]
+          csv << ['item_2',                               'Asset 4'             ]
+          csv << ['item_2',                               'Asset 5'             ]
+          csv << ['item_2',                               'Asset 6'             ]
         end
       }
       it do

@@ -210,9 +210,6 @@ class Hyacinth::Utils::CsvImportExportUtils
 
     identifiers_to_row_numbers = identifiers_to_row_numbers_for_csv_data(csv_data_string)
 
-    # Return if no identifiers were found in the csv data, since that means that processing order doesn't matter
-    return {} if identifiers_to_row_numbers.blank?
-
     prerequisite_rows_based_on_headers(csv_data_string, row_number_for_header_row, index_of_parent_headers, identifiers_to_row_numbers)
   end
 
