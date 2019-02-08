@@ -107,8 +107,7 @@ class DigitalObject::Base
 
   # Updates the DigitalObject with the given digital_object_data
   def set_digital_object_data(digital_object_data, merge_dynamic_fields)
-    # If a user sets the publish field to "true", set the publish_after_save flag
-    @publish_after_save = digital_object_data['publish'] =~ /true/i
+    publish_after_save_from_data(digital_object_data)
 
     create_or_validate_pid_from_data(pid, digital_object_data)
 
@@ -204,6 +203,11 @@ class DigitalObject::Base
     @ordered_child_digital_object_pids << new_child.pid
   end
 
+  def publish_after_save_from_data(digital_object_data)
+    # If a user sets the publish field to "true", set the publish_after_save flag
+    @publish_after_save = digital_object_data['publish'].to_s.match?(/true/i) if digital_object_data.key?('publish')
+  end
+
   # Getters
 
   def digital_object_type
@@ -251,6 +255,10 @@ class DigitalObject::Base
   def publish_targets
     return [] if @publish_target_pids.blank?
     @publish_target_pids.map { |publish_target_pid| DigitalObject::Base.find(publish_target_pid) }
+  end
+
+  def self.title_for_pid(pid, user_for_access)
+    titles_for_pids([pid], user_for_access).values.first
   end
 
   def self.titles_for_pids(pids, user_for_access)

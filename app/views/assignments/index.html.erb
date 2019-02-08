@@ -5,7 +5,8 @@
     <thead>
       <tr>
         <th>Assignment</th>
-        <th>Digital Object</th>
+        <th>Digital Object Title</th>
+        <th>PID</th>
         <th>Assigner</th>
         <th>Assignee</th>
         <th>Task</th>
@@ -17,10 +18,14 @@
       <% if results.blank? %>
         <tr><td colspan="7">None</td></tr>
       <% else %>
+        <% titles_for_pids = DigitalObject::Base.titles_for_pids(results.map{|assignment| assignment.digital_object_pid}, current_user) %>
         <% results.each do |assignment| %>
+          <% pid = assignment.digital_object_pid %>
+          <% title = titles_for_pids[pid] %>
           <tr>
             <td><%= link_to("ASSIGNMENT-#{assignment.id}", assignment_path(assignment)) %></td>
-            <td><%= assignment.digital_object_pid %></td>
+            <td><%= "#{title.present? ? title : ''}" %></td>
+            <td><%= pid %></td>
             <td><%= assignment.assigner.full_name %></td>
             <td><%= assignment.assignee.full_name %></td>
             <td><%= assignment.task %></td>

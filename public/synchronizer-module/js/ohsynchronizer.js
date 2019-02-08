@@ -745,6 +745,9 @@ OHSynchronizer.Transcript.prototype.preview = function() {
 	$(".preview-button").addClass('hidden');
 	$("#preview-close").removeClass('hidden');
 
+	// set sync-roll to 0 in preview mode, but save old value
+	$("#sync-roll").attr('data-saved-value', $("#sync-roll").val()).val(0);
+
 	var content = OHSynchronizer.Export.transcriptVTT().split(/\r?\n|\r/);
 	var transcript = this;
 	if (window.Worker) {
@@ -1378,6 +1381,11 @@ OHSynchronizer.Export.previewClose = function() {
 	$("#export").removeClass('hidden');
 	$(".preview-button").removeClass('hidden');
 	$("#preview-close").addClass('hidden');
+
+	// restore sync-roll to old value (if set), since it may have set to 0 when we entered preview mode
+	if ($("#sync-roll[data-saved-value]").length > 0) {
+		$("#sync-roll").val($("#sync-roll").attr('data-saved-value'));
+	}
 }
 
 // Here we use prepared data for export to a downloadable file

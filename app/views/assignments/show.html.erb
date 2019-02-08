@@ -1,4 +1,4 @@
-<h1>Assignment <%= @assignment.id %></h1>
+<h1>Assignment <%= @assignment.id %><%= @title_for_digital_object.present? ? ': ' + @title_for_digital_object : '' %></h1>
 
 <div class="show-assignment">
   <div class="row">

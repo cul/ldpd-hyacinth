@@ -92,8 +92,8 @@ class DigitalObjectsController < ApplicationController
 
     test_mode = params['test'].to_s == 'true'
 
-    @digital_object.publish_after_save = (params['publish'].to_s == 'true')
-    @digital_object.mint_reserved_doi_before_save = (params['mint_reserved_doi'].to_s == 'true')
+    handle_publish_param(@digital_object, params)
+    handle_mint_reserved_doi_param(@digital_object, params)
 
     if save_or_validate_digital_object
       render_json = { success: true }.merge!(@digital_object.as_confirmation_json)
@@ -146,8 +146,8 @@ class DigitalObjectsController < ApplicationController
 
     test_mode = params['test'].to_s == 'true'
 
-    @digital_object.publish_after_save = (params['publish'].to_s == 'true')
-    @digital_object.mint_reserved_doi_before_save = (params['mint_reserved_doi'].to_s == 'true')
+    handle_publish_param(@digital_object, params)
+    handle_mint_reserved_doi_param(@digital_object, params)
 
     if test_mode ? @digital_object.valid? : @digital_object.save
       render_json = { success: true, pid: @digital_object.pid }.merge(test_mode ? { 'test' => true } : {})
@@ -329,5 +329,13 @@ class DigitalObjectsController < ApplicationController
       return if digital_object_data_json.nil?
       raise 'Invalid JSON given for digital_object_data_json' unless Hyacinth::Utils::JsonUtils.valid_json?(digital_object_data_json)
       JSON.parse(digital_object_data_json)
+    end
+
+    def handle_publish_param(digital_object, prms)
+      digital_object.publish_after_save = (prms['publish'].to_s == 'true') if prms.key?('publish')
+    end
+
+    def handle_mint_reserved_doi_param(digital_object, prms)
+      digital_object.mint_reserved_doi_before_save = (prms['mint_reserved_doi'].to_s == 'true') if prms.key?('mint_reserved_doi')
     end
 end

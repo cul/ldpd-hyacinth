@@ -71,6 +71,7 @@ class AssignmentsController < ApplicationController
 
   # GET /assignments/:id
   def show
+    @title_for_digital_object = DigitalObject::Base.title_for_pid(@assignment.digital_object_pid, current_user)
   end
 
   # GET /assignments/:id/edit
