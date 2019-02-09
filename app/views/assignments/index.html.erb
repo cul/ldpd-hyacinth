@@ -5,31 +5,44 @@
     <thead>
       <tr>
         <th>Assignment</th>
-        <th>Digital Object Title</th>
-        <th>PID</th>
+        <th>Digital Object</th>
+        <th>Parent Digital Objects</th>
         <th>Assigner</th>
         <th>Assignee</th>
         <th>Task</th>
         <th>Status</th>
+        <th>Note</th>
       </tr>
     </thead>
 
     <tbody>
       <% if results.blank? %>
-        <tr><td colspan="7">None</td></tr>
+        <tr><td colspan="8">None</td></tr>
       <% else %>
-        <% titles_for_pids = DigitalObject::Base.titles_for_pids(results.map{|assignment| assignment.digital_object_pid}, current_user) %>
         <% results.each do |assignment| %>
           <% pid = assignment.digital_object_pid %>
-          <% title = titles_for_pids[pid] %>
+          <% parent_pids = @pids_to_parent_pids[pid] || [] %>
           <tr>
-            <td><%= link_to("ASSIGNMENT-#{assignment.id}", assignment_path(assignment)) %></td>
-            <td><%= "#{title.present? ? title : ''}" %></td>
-            <td><%= pid %></td>
+            <td><strong class="nowrap"><%= link_to("ASSIGNMENT-#{assignment.id}", assignment_path(assignment)) %></strong></td>
+            <td><%= link_to(@pids_to_titles[pid] || '[Title Unavailable]', digital_object_app_path(pid)) %></td>
+            <td>
+              <% parent_pids.each do |parent_pid| %>
+                <%= link_to(@pids_to_titles[parent_pid] || '[Title Unavailable]', digital_object_app_path(parent_pid)) %><br />
+              <% end %>
+            </td>
             <td><%= assignment.assigner.full_name %></td>
             <td><%= assignment.assignee.full_name %></td>
             <td><%= assignment.task %></td>
             <td><%= assignment.status %></td>
+            <td class="assignment-note"><% if assignment.note.present? %>
+              <% if assignment.note.length > 100 %>
+                <span class="assignment-note-short"><%= assignment.note[0...100] %>...</span>
+                <span class="assignment-note-full" style="display:none;"><%= assignment.note %></span>
+                <button type="button" class="btn-xs btn-link assignment-note-toggle" data-alt-toggle-text="Show Less">Show More</button>
+              <% else %>
+                <%= assignment.note %>
+              <% end %>
+            <% end %></td>
           </tr>
         <% end %>
       <% end %>

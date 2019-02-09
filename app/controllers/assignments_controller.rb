@@ -8,6 +8,12 @@ class AssignmentsController < ApplicationController
   def index
     @assignments = Assignment.where(assignee: current_user)
     @assignations = Assignment.where(assigner: current_user)
+
+    assignment_pids = (@assignments + @assignations).map{ |assignment| assignment.digital_object_pid }
+    @pids_to_parent_pids = DigitalObject::Base.parent_pids_for_pids(assignment_pids, current_user)
+    @pids_to_titles = DigitalObject::Base.titles_for_pids(
+      assignment_pids + @pids_to_parent_pids.values.flatten.uniq.compact,
+      current_user)
   end
 
   # GET /assignments/new
@@ -72,6 +78,7 @@ class AssignmentsController < ApplicationController
   # GET /assignments/:id
   def show
     @title_for_digital_object = DigitalObject::Base.title_for_pid(@assignment.digital_object_pid, current_user)
+    @titles_for_parent_digital_objects = DigitalObject::Base.titles_for_pids(DigitalObject::Base.parent_pids_for_pid(@assignment.digital_object_pid, current_user), current_user)
   end
 
   # GET /assignments/:id/edit

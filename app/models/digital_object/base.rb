@@ -282,4 +282,31 @@ class DigitalObject::Base
 
     pids_to_titles
   end
+
+
+  def self.parent_pids_for_pid(pid, user_for_access)
+    parent_pids_for_pids([pid], user_for_access).values.first
+  end
+
+  def self.parent_pids_for_pids(pids, user_for_access)
+    pids_to_parent_pids = {}
+
+    if pids.present?
+      search_response = DigitalObject::Base.search(
+        {
+          'pids' => pids,
+          'fl' => 'pid,parent_digital_object_pids_sim',
+          'per_page' => 99_999
+        },
+        user_for_access
+      )
+      if search_response['results'].present?
+        search_response['results'].each do |result|
+          pids_to_parent_pids[result['pid']] = result['parent_digital_object_pids_sim']
+        end
+      end
+    end
+
+    pids_to_parent_pids
+  end
 end

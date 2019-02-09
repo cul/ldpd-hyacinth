@@ -10,6 +10,12 @@
           <%= link_to(@assignment.digital_object_pid, digital_object_app_path(@assignment.digital_object_pid)) %>
         </p>
         <p>
+          <strong>Parent Digital Objects:</strong>
+          <% links = @titles_for_parent_digital_objects.map do |pid, title| %>
+            <% link_to(title, digital_object_app_path(pid)) %>
+          <% end %>
+          <%= links.join(', ').html_safe %>
+        <p>
           <strong>Task:</strong>
           <%= @assignment.task %>
         </p>
