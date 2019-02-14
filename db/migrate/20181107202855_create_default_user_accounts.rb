@@ -1,4 +1,4 @@
-class CreateDefaultUserAccounts < ActiveRecord::Migration[5.1]
+class CreateDefaultUserAccounts < ActiveRecord::Migration[5.2]
   def change
     default_user_accounts = [
       {

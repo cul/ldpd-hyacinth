@@ -10,10 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_07_202855) do
+ActiveRecord::Schema.define(version: 2018_12_27_140629) do
 
-  create_table "users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "database_entry_locks", force: :cascade do |t|
+    t.string "lock_key", null: false
+    t.datetime "created_at", null: false
+    t.datetime "expires_at", null: false
+    t.index ["lock_key"], name: "index_database_entry_locks_on_lock_key", unique: true
+  end
+
+  create_table "digital_object_records", force: :cascade do |t|
+    t.string "uid", null: false
+    t.string "metadata_location_uri"
+    t.string "optimistic_lock_token"
+    t.index ["uid"], name: "index_digital_object_records_on_uid", unique: true
+  end
+
+  create_table "groups", force: :cascade do |t|
+    t.string "string_key"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "users", force: :cascade do |t|
     t.string "first_name"
+    t.string "middle_name"
     t.string "last_name"
     t.boolean "is_active", default: true, null: false
     t.boolean "is_admin", default: false, null: false

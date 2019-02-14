@@ -1,0 +1,2 @@
+class DigitalObjectsController < ApplicationController
+end

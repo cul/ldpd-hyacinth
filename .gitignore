@@ -37,6 +37,9 @@ yarn-debug.log*
 
 ### Begin Hyacinth Ignores ###
 
+# simplecov coverage report
+/coverage
+
 # Ignore config files with sensitive data
 database.yml
 hyacinth.yml

@@ -18,13 +18,13 @@ module Hyacinth
           # If ticket is NOT set, this means that the user hasn't gotten to the uni/password login page yet.  Let's send them there.
           # After they log in, they'll be redirected to this page and they'll continue with the authentication.
 
-          redirect_to(cas_login_uri + '?service=' + URI.escape(request.protocol + request.host_with_port + '/users/do_cas_login'))
+          redirect_to(cas_login_uri + '?service=' + URI.encode_www_form_component(request.protocol + request.host_with_port + '/users/do_cas_login'))
         else
           # Login: Part 2
           # If ticket is set, we'll use that ticket for login part 2.
 
           # We'll validate the ticket against the cas server
-          full_validate_uri = cas_validate_uri + '?service=' + URI.escape(request.protocol + request.host_with_port + '/users/do_cas_login') + '&ticket=' + params['ticket']
+          full_validate_uri = cas_validate_uri + '?service=' + URI.encode_www_form_component(request.protocol + request.host_with_port + '/users/do_cas_login') + '&ticket=' + params['ticket']
 
           uri = URI.parse(full_validate_uri)
           http = Net::HTTP.new(uri.host, uri.port)
@@ -45,9 +45,6 @@ module Hyacinth
         end
 
         def identify_uni_user(user_uni, cas_logout_uri)
-
-          raise 'uni: ' + user_uni
-
           if user_uni.present?
             possible_user = User.where(email: (user_uni + '@columbia.edu')).first
 
@@ -61,7 +58,7 @@ module Hyacinth
               flash[:notice] = 'The UNI ' + user_uni + ' is not authorized to log into Hyacinth (no account exists with email ' + user_uni + '@columbia.edu).  If you believe that you should have access, please contact an application administrator.'
 
               # Log this user out
-              redirect_to(cas_logout_uri + '?service=' + URI.escape(root_url))
+              redirect_to(cas_logout_uri + '?service=' + URI.encode_www_form_component(root_url))
             end
           else
             render inline: 'CAS Authentication failed, Please try again later.'

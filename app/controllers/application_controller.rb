@@ -5,28 +5,28 @@ class ApplicationController < ActionController::Base
 
   private
 
-  def require_authenticated_user!
-    return if user_signed_in? || params[:controller] == 'devise/sessions'
-    exempt_resources = {
-      'users' => ['do_cas_login']
-    }
+    def require_authenticated_user!
+      return if user_signed_in? || params[:controller] == 'devise/sessions'
+      exempt_resources = {
+        'users' => ['do_cas_login']
+      }
 
-    # Allow access to exempt requests
-    return if exempt_resources.fetch(params[:controller], []).include?(params[:action])
+      # Allow access to exempt requests
+      return if exempt_resources.fetch(params[:controller], []).include?(params[:action])
 
-    respond_to do |format|
-      format.html { render 'pages/unauthorized', status: :unauthorized, layout: 'login' }
-      format.all { render json: { error: 'Unauthorized' }, status: :unauthorized }
+      respond_to do |format|
+        format.html { render 'pages/unauthorized', status: :unauthorized, layout: 'login' }
+        format.all { render json: { error: 'Unauthorized' }, status: :unauthorized }
+      end
     end
-  end
 
-  # choose 'login' layout whenever we're using a devise controller
-  def layout_by_resource
-    if devise_controller?
-      "login"
-    else
-      "application"
+    # choose 'login' layout whenever we're using a devise controller
+    def layout_by_resource
+      if devise_controller?
+        "login"
+      else
+        "application"
+      end
     end
-  end
 
 end

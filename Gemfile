@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.5.3'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2.1'
+gem 'rails', '~> 5.2.2'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
 # Enable mysql as the database for Active Record
@@ -40,7 +40,7 @@ gem 'bootsnap', '>= 1.1.0', require: false
 # Devise for authentication
 gem 'devise', '~> 4.5'
 
-# Bootstrap 3 and jQuery (TODO: Remove these when we switch fully to the new React UI)
+# Bootstrap 3 and jQuery (TODO: Remove these when we switch fully to the new React UI, which pulls in its own css/js via node)
 gem 'bootstrap-sass', '~> 3.3'
 gem 'autoprefixer-rails' # Recommended by bootstrap-sass
 gem 'jquery-rails', '~> 4.3' # Required by bootstrap
@@ -54,6 +54,7 @@ group :development, :test do
   gem 'rubocop', '~> 0.60.0', require: false
   gem 'rubocop-rails_config'
   gem 'rubocop-rspec'
+  gem 'solr_wrapper', '~> 2.0'
 end
 
 group :development do
@@ -68,6 +69,8 @@ group :test do
   gem 'selenium-webdriver'
   # Easy installation and use of chromedriver to run system tests with Chrome
   gem 'chromedriver-helper'
+  # Check test coverage
+  gem 'simplecov', require: false
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
