@@ -30,15 +30,18 @@ RSpec.describe Hyacinth::Adapters::AdapterManagerBehavior do
         config_option_2: 'def'
       }
     end
+    let(:expected_registered_adapters) do
+      { adapter_type => adapter_class }
+    end
     it "can register, then find, then create an instance for a registered adapter" do
       sample_module.register(adapter_type, adapter_class)
       expect(sample_module.find(adapter_type)).to eq(adapter_class)
       expect(sample_module.create(adapter_config)).to be_a(adapter_class)
-      expect(sample_module.registered_adapters).to eq({adapter_type => adapter_class})
+      expect(sample_module.registered_adapters).to eq(expected_registered_adapters)
     end
 
     it "raises an error if the adapter_config's type has not been registered" do
-      expect{ sample_module.create(adapter_config) }.to raise_error(Hyacinth::Exceptions::AdapterNotFoundError)
+      expect { sample_module.create(adapter_config) }.to raise_error(Hyacinth::Exceptions::AdapterNotFoundError)
     end
   end
 end

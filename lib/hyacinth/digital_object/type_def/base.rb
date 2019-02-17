@@ -2,23 +2,20 @@ module Hyacinth
   module DigitalObject
     module TypeDef
       class Base
-        attr_reader :allowed_class_types, :allowed_values
-
-        def initialize(allowed_class_types)
-          raise NotImplementedError, "Cannot instantiate #{self.class}. Instantiate a subclass instead." if self.class == Hyacinth::DigitalObject::TypeDef::Base
-          @allowed_class_types = (allowed_class_types.is_a?(Array) ? allowed_class_types : [allowed_class_types]).freeze
+        def initialize
+          raise NotImplementedError,
+            "Cannot instantiate #{self.class}. Instantiate a subclass instead." if self.class == Base
           @default_value_proc = -> { nil }
           @public_writer = false
-          @allowed_values = []
         end
 
         # digital object data serialization and deserialization
 
-        def attribute_to_digital_object_data(value)
+        def to_json_var(value)
           raise NotImplementedError # this implementation must be overridden by subclasses
         end
 
-        def digital_object_data_to_attribute(value)
+        def from_json_var(value)
           raise NotImplementedError # this implementation must be overridden by subclasses
         end
 
@@ -26,11 +23,6 @@ module Hyacinth
 
         def public_writer
           @public_writer = true
-          self # always return self to allow for chained calls
-        end
-
-        def allow(values)
-          @allowed_values = values
           self # always return self to allow for chained calls
         end
 

@@ -1,10 +1,7 @@
 module Hyacinth
   module DigitalObject
     module TypeDef
-      class String < Hyacinth::DigitalObject::TypeDef::Base
-        def initialize
-          super(::String)
-        end
+      class String < Hyacinth::DigitalObject::TypeDef::JsonSerializableBase
       end
     end
   end

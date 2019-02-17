@@ -82,5 +82,4 @@ RSpec.describe Hyacinth::DigitalObject::Types do
       expect(types_instance_with_registered_types.class_to_key(String)).to eq(nil)
     end
   end
-
 end

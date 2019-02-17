@@ -45,14 +45,19 @@ RSpec.describe DigitalObject::Base, type: :model do
       expect(subclass_instance.updated_at).to be >= subclass_instance.created_at
       expect(subclass_instance.published_at).to eq(nil)
       expect(subclass_instance.first_published_at).to eq(nil)
-      expect(subclass_instance.admin_set).to eq(nil)
+      expect(subclass_instance.persisted_to_preservation_at).to eq(nil)
+      expect(subclass_instance.first_persisted_to_preservation_at).to eq(nil)
+      expect(subclass_instance.group).to eq(nil)
       expect(subclass_instance.projects).to eq([])
-      expect(subclass_instance.descriptive_data).to eq({})
-      expect(subclass_instance.publication_data).to eq({})
+      expect(subclass_instance.publish_targets).to eq([])
+      expect(subclass_instance.parent_uids).to eq(Set.new)
+      expect(subclass_instance.structured_child_uids).to eq({})
+      expect(subclass_instance.dynamic_field_data).to eq({})
+      expect(subclass_instance.preservation_persistence_data).to eq({})
     end
 
     it "has the expected resources based on what is defined in the class" do
-      expect(subclass_instance.resources.keys.sort).to eq([:test_resource1, :test_resource2])
+      expect(subclass_instance.resource_attributes.keys.sort).to eq([:test_resource1, :test_resource2])
     end
 
     context "#new_record?" do
@@ -68,7 +73,7 @@ RSpec.describe DigitalObject::Base, type: :model do
         expect(
           digital_object_data.keys.sort
         ).to eq(
-          subclass_instance.attributes.keys.push('resources').map { |key| key.to_s }.sort
+          subclass_instance.metadata_attributes.keys.push('resources').map { |key| key.to_s }.sort
         )
       end
 
@@ -77,7 +82,7 @@ RSpec.describe DigitalObject::Base, type: :model do
         expect(
           digital_object_data['resources'].keys.sort
         ).to eq(
-          subclass_instance.resources.keys.map { |key| key.to_s }.sort
+          subclass_instance.resource_attributes.keys.map { |key| key.to_s }.sort
         )
       end
     end

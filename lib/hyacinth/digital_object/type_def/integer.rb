@@ -1,10 +1,7 @@
 module Hyacinth
   module DigitalObject
     module TypeDef
-      class Integer < Hyacinth::DigitalObject::TypeDef::Base
-        def initialize
-          super(::Integer)
-        end
+      class Integer < Hyacinth::DigitalObject::TypeDef::JsonSerializableBase
       end
     end
   end

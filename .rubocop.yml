@@ -27,6 +27,9 @@ Layout/EmptyLinesAroundClassBody:
 Layout/IndentationConsistency:
   EnforcedStyle: rails
 
+Style/BracesAroundHashParameters:
+  EnforcedStyle: context_dependent
+
 Style/FrozenStringLiteralComment:
   Enabled: false
 

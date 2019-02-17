@@ -15,8 +15,8 @@ module DigitalObjectConcerns
       def set_publish_targets(digital_object_data)
         return unless digital_object_data.key?('publish_targets')
         raise Hyacinth::Exceptions::MissingPublishFlag, 'Cannot modify publish targets unless publish flag is present.' unless digital_object_data['publish'].to_s == 'true'
-        current_publish_target_string_keys = self.publish_targets.map{ |publish_target| publish_target.string_key }
-        new_publish_target_string_keys = digital_object_data['publish_targets'].map{ |dod_publish_target| dod_publish_target['string_key'] }
+        current_publish_target_string_keys = self.publish_targets.map { |publish_target| publish_target.string_key }
+        new_publish_target_string_keys = digital_object_data['publish_targets'].map { |dod_publish_target| dod_publish_target['string_key'] }
         # Add new publish targets
         (new_publish_target_string_keys - current_publish_target_string_keys).each do |string_key_for_publish_target_to_add|
           add_publish_target(string_key_for_publish_target_to_add)
@@ -25,7 +25,7 @@ module DigitalObjectConcerns
         (current_publish_target_string_keys - new_publish_target_string_keys).each do |string_key_for_publish_target_to_remove|
           remove_publish_target(
             # Re-use existing instance of PublishTarget because it's more efficient than passing a string to remove_publish_target
-            self.publish_targets.find{ |publish_target| publish_target.string_key == string_key_for_publish_target_to_remove }
+            self.publish_targets.find { |publish_target| publish_target.string_key == string_key_for_publish_target_to_remove }
           )
         end
       end

@@ -2,16 +2,12 @@ module Hyacinth
   module DigitalObject
     module TypeDef
       class DateTime < Hyacinth::DigitalObject::TypeDef::Base
-        def initialize
-          super(::DateTime)
-        end
-
-        def attribute_to_digital_object_data(value)
+        def to_json_var(value)
           return nil if value.nil?
           value.iso8601
         end
 
-        def digital_object_data_to_attribute(value)
+        def from_json_var(value)
           return nil if value.nil?
           ::DateTime.parse(value)
         end

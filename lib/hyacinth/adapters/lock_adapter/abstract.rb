@@ -3,7 +3,6 @@ module Hyacinth
     module LockAdapter
       class Abstract
         def initialize(adapter_config = {})
-          adapter_config.symbolize_keys!
         end
 
         # Establishes a lock on the key and yields to a block that runs within the established lock.

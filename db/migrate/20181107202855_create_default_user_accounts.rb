@@ -5,15 +5,13 @@ class CreateDefaultUserAccounts < ActiveRecord::Migration[5.2]
         email: 'hyacinth-admin@library.columbia.edu',
         password: 'iamtheadmin',
         first_name: 'Admin',
-        last_name: 'User',
-        is_admin: true
+        last_name: 'User'
       },
       {
         email: 'hyacinth-test@library.columbia.edu',
         password: 'iamthetest',
         first_name: 'Test',
-        last_name: 'User',
-        is_admin: false
+        last_name: 'User'
       }
     ]
 
@@ -24,8 +22,7 @@ class CreateDefaultUserAccounts < ActiveRecord::Migration[5.2]
         :password => account_info[:password],
         :password_confirmation => account_info[:password],
         :first_name => account_info[:first_name],
-        :last_name => account_info[:last_name],
-        :is_admin => account_info[:is_admin]
+        :last_name => account_info[:last_name]
       )
     end
   end

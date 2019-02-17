@@ -60,11 +60,9 @@ module Hyacinth
           already_locked_ids = []
 
           keys.each do |key|
-            begin
-              lock_objects[key] = lock(key)
-            rescue Hyacinth::Exceptions::UnableToObtainLockError
-              already_locked_ids << key
-            end
+            lock_objects[key] = lock(key)
+          rescue Hyacinth::Exceptions::UnableToObtainLockError
+            already_locked_ids << key
           end
 
           if already_locked_ids.present?

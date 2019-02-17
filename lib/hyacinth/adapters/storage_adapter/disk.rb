@@ -22,7 +22,7 @@ module Hyacinth
         end
 
         def exists?(location_uri)
-          File.exists?(location_uri_to_file_path(location_uri))
+          File.exist?(location_uri_to_file_path(location_uri))
         end
 
         def read_impl(location_uri)

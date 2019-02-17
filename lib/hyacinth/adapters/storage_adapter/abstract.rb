@@ -3,7 +3,6 @@ module Hyacinth
     module StorageAdapter
       class Abstract
         def initialize(adapter_config = {})
-          adapter_config.symbolize_keys!
         end
 
         # @param location_uri [String]

@@ -37,8 +37,6 @@ ActiveRecord::Schema.define(version: 2018_12_27_140629) do
     t.string "middle_name"
     t.string "last_name"
     t.boolean "is_active", default: true, null: false
-    t.boolean "is_admin", default: false, null: false
-    t.boolean "is_vocabulary_manager", default: false, null: false
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"

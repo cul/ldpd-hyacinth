@@ -10,7 +10,7 @@ module DigitalObject
     metadata_attribute :uid, Hyacinth::DigitalObject::TypeDef::String.new
     metadata_attribute :doi, Hyacinth::DigitalObject::TypeDef::String.new
     metadata_attribute :digital_object_type, Hyacinth::DigitalObject::TypeDef::String.new
-    metadata_attribute :state, Hyacinth::DigitalObject::TypeDef::String.new.allow(['active', 'withdrawn']).default(-> { 'active' })
+    metadata_attribute :state, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { 'active' })
     # Modification Info Attributes
     metadata_attribute :created_by, Hyacinth::DigitalObject::TypeDef::User.new
     metadata_attribute :updated_by, Hyacinth::DigitalObject::TypeDef::User.new
@@ -22,7 +22,7 @@ module DigitalObject
     metadata_attribute :persisted_to_preservation_at, Hyacinth::DigitalObject::TypeDef::DateTime.new
     metadata_attribute :first_persisted_to_preservation_at, Hyacinth::DigitalObject::TypeDef::DateTime.new
     # Complex Attributes
-    metadata_attribute :owner, Hyacinth::DigitalObject::TypeDef::Group.new
+    metadata_attribute :group, Hyacinth::DigitalObject::TypeDef::Group.new
     metadata_attribute :projects, Hyacinth::DigitalObject::TypeDef::Projects.new.default(-> { Array.new })
     metadata_attribute :publish_targets, Hyacinth::DigitalObject::TypeDef::PublishTargets.new.default(-> { Array.new })
     metadata_attribute :parent_uids, Hyacinth::DigitalObject::TypeDef::JsonSerializableSet.new.default(-> { Set.new })
@@ -46,12 +46,12 @@ module DigitalObject
       {}.tap do |digital_object_data|
         # serialize metadata_attributes
         self.metadata_attributes.map do |metadata_attribute_name, type_def|
-          digital_object_data[metadata_attribute_name.to_s] = type_def.attribute_to_digital_object_data(self.send(metadata_attribute_name))
+          digital_object_data[metadata_attribute_name.to_s] = type_def.to_json_var(self.send(metadata_attribute_name))
         end
         # serialize resource_attributes
         self.resource_attributes.map do |resource_attribute_name, resource|
           digital_object_data['resources'] ||= {}
-          digital_object_data['resources'][resource_name.to_s] = resource.as_json
+          digital_object_data['resources'][resource_attribute_name.to_s] = resource.as_json
         end
       end
     end
@@ -109,7 +109,7 @@ module DigitalObject
             # parents greatly increases our chances of being able to propagate our parent-child changes as intended.
             # TODO: See how this performs in real-world scenarios. I'd prefer not to re-save all parents here and
             # then again later in this method, though an early failure here does save us a lot of trouble.
-            added_or_removed_parent_uids.each {|digital_object_uid| DigitalObject::Base.find(digital_object_uid).save }
+            added_or_removed_parent_uids.each { |digital_object_uid| DigitalObject::Base.find(digital_object_uid).save }
 
             # Handle new imports
             # TODO: make sure to renew the lock in case checksum generation or file copying take a long time
@@ -232,32 +232,30 @@ module DigitalObject
     end
 
     def self.find(uid)
-      # Note to future coders: We don't want to do a lock when finding. That
-      # would mess up other code that assumes no locking during find operations.
+      # Important note: We don't want to do a lock when finding. That would
+      # mess up other code that assumes no locking during find operations.
       # The optimistic_lock_token exists so that we don't need to lock on find
       # operations. We can find any time we want, but when we save we'll be
       # notified if another person saved and made our object instance stale.
-      begin
-        digital_object_record = DigitalObjectRecord.find_by(uid: uid)
-        digital_object_data = JSON.parse(Hyacinth.config.metadata_storage.read(digital_object_record.metadata_location_uri))
-        digital_object = Hyacinth.config.digital_object_types.key_to_class(digital_object_data['digital_object_type'])
-        # set metadata_attributes
-        digital_object.metadata_attributes.map do |metadata_attribute_name, type_def|
-          digital_object.send(metadata_attribute_name + '=', type_def.attribute_from_digital_object_data(digital_object_data[metadata_attribute_name.to_s]))
-        end
-        # build resource objects
-        digital_object.resources.map do |resource_name, resource|
-          digital_object.send(resource_name + '=', Hyacinth::DigitalObject::Resource.from_json(digital_object_data['resources'][resource_name]))
-        end
-        # set digital_object_record
-        digital_object.instance_variable_set('@digital_object_record', digital_object_record)
-        # set optimistic_lock_token
-        digital_object.instance_variable_set('@optimistic_lock_token', digital_object_record.optimistic_lock_token)
-        # return built object
-        digital_object
-      rescue ActiveRecord::RecordNotFound
-        raise Hyacinth::Exceptions::DigitalObjectNotFoundError, "Could not find DigtalObject with uid #{uid}"
+      digital_object_record = DigitalObjectRecord.find_by(uid: uid)
+      digital_object_data = JSON.parse(Hyacinth.config.metadata_storage.read(digital_object_record.metadata_location_uri))
+      digital_object = Hyacinth.config.digital_object_types.key_to_class(digital_object_data['digital_object_type'])
+      # set metadata_attributes
+      digital_object.metadata_attributes.map do |metadata_attribute_name, type_def|
+        digital_object.send(metadata_attribute_name + '=', type_def.attribute_from_digital_object_data(digital_object_data[metadata_attribute_name.to_s]))
       end
+      # build resource objects
+      digital_object.resources.map do |resource_name, resource|
+        digital_object.send(resource_name + '=', Hyacinth::DigitalObject::Resource.from_json(digital_object_data['resources'][resource_name]))
+      end
+      # set digital_object_record
+      digital_object.instance_variable_set('@digital_object_record', digital_object_record)
+      # set optimistic_lock_token
+      digital_object.instance_variable_set('@optimistic_lock_token', digital_object_record.optimistic_lock_token)
+      # return built object
+      digital_object
+    rescue ActiveRecord::RecordNotFound
+      raise Hyacinth::Exceptions::DigitalObjectNotFoundError, "Could not find DigtalObject with uid #{uid}"
     end
 
     # A powerful method that can set many of this object's properties in one go, based on the given digital_object_data hash.

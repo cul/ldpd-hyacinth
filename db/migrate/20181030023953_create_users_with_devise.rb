@@ -7,8 +7,6 @@ class CreateUsersWithDevise < ActiveRecord::Migration[5.2]
       t.string :middle_name
       t.string :last_name
       t.boolean :is_active, null: false, default: true
-      t.boolean :is_admin, null: false, default: false
-      t.boolean :is_vocabulary_manager, null: false, default: false
 
       ## Database authenticatable
       t.string :email,              null: false, default: ""

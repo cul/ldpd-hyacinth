@@ -1,8 +1,9 @@
 module Hyacinth
   module Adapters
     module SearchAdapter
-      class Abstract
+      class Solr < Abstract
         def initialize(adapter_config = {})
+          super(adapter_config)
         end
       end
     end

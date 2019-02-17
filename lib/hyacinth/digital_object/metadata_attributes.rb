@@ -36,9 +36,6 @@ module Hyacinth
           # writer only accepts allowed types (or nil)
           writer_method_name = "#{metadata_attribute_name}="
           define_method(writer_method_name) do |value|
-            unless value.nil? || allowed_class_types.include?(value.class)
-              raise "Value must be of type #{allowed_class_types.map { |klass| klass.name }.join(' or ')}, but #{value.inspect} is of type #{value.class.name}"
-            end
             instance_variable_set("@#{metadata_attribute_name}", value)
           end
 

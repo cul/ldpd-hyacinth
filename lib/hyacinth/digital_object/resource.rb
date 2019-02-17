@@ -21,7 +21,7 @@ module Hyacinth
 
         resource.with_import_file do |input_file|
           Hyacinth.config.storage_adapter.write(location_uri) do |output_file|
-
+            # TODO: Do import
           end
         end
       end

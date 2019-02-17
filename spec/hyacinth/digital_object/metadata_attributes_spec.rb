@@ -6,6 +6,7 @@ RSpec.describe Hyacinth::DigitalObject::MetadataAttributes do
       include Hyacinth::DigitalObject::MetadataAttributes
       metadata_attribute :string_field, Hyacinth::DigitalObject::TypeDef::String.new
       metadata_attribute :string_field_with_default_value, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { 'default value' })
+      metadata_attribute :string_field_with_public_writer, Hyacinth::DigitalObject::TypeDef::String.new.public_writer
     end
   end
 
@@ -29,18 +30,14 @@ RSpec.describe Hyacinth::DigitalObject::MetadataAttributes do
     end
 
     it "can set a default value for the created getter method with #new.default()" do
-      expect(instance).to respond_to(:string_field)
-      expect(instance.string_field).to eq('default value')
+      expect(instance).to respond_to(:string_field_with_default_value)
+      expect(instance.string_field_with_default_value).to eq('default value')
     end
 
     it "creates a public setter method with #new.public_writer" do
-      expect(instance).to respond_to(:'string_field_with_public_setter=')
-      instance.string_field_with_default_value = 'new value'
-      expect(instance.string_field).to eq('new value')
+      expect(instance).to respond_to(:'string_field_with_public_writer=')
+      instance.string_field_with_public_writer = 'new value'
+      expect(instance.string_field_with_public_writer).to eq('new value')
     end
   end
-
-
-
-
 end
