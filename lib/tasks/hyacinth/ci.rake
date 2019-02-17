@@ -28,6 +28,8 @@ namespace :hyacinth do
       Rails.env = ENV['RAILS_ENV']
 
       solr_unpack_dir = Rails.root.join('tmp/solr')
+      solr_download_dir = Rails.root.join('tmp/solr-download')
+
       if File.exist?(solr_unpack_dir)
         # Delete old solr if it exists because we want a fresh solr instance
         puts "Deleting old test solr instance at #{solr_unpack_dir}...\n"
@@ -35,7 +37,7 @@ namespace :hyacinth do
       end
 
       puts "Unzipping and starting new solr instance...\n"
-      SolrWrapper.wrap(version: '6.3.0', port: 8984, instance_dir: solr_unpack_dir) do |solr_wrapper_instance|
+      SolrWrapper.wrap(version: '6.3.0', port: 8984, instance_dir: solr_unpack_dir, download_dir: solr_download_dir) do |solr_wrapper_instance|
         # Create collection
         solr_wrapper_instance.with_collection(name: 'hyacinth-solr', dir: Rails.root.join('spec/fixtures/solr_cores/hyacinth-solr-6-3/conf')) do |collection_name|
           Rake::Task['db:environment:set'].invoke

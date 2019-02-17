@@ -6,4 +6,4 @@ require_relative 'config/application'
 Rails.application.load_tasks
 
 task(:default).clear
-task default: ['uri_service:ci']
+task default: ['hyacinth:ci']

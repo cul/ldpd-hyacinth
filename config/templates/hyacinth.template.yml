@@ -1,0 +1,31 @@
+development:
+  metadata_storage:
+    storage_adapters:
+      - type: disk
+        default_path: <%= Rails.root.join('tmp', 'development', 'metadata') %>
+  resource_storage:
+    storage_adapters:
+      - type: disk
+        default_path: <%= Rails.root.join('tmp', 'development', 'resources') %>
+  lock_adapter:
+    type: database_entry_lock
+    lock_timeout: <%= 1.minute %>
+  search_adapter:
+    type: solr
+    url: http://localhost:8983/hyacinth_development
+
+test:
+  metadata_storage:
+    adapters:
+      - type: disk
+        default_path: <%= Rails.root.join('tmp', 'test', 'metadata') %>
+  resource_storage:
+    adapters:
+      - type: disk
+        default_path: <%= Rails.root.join('tmp', 'test', 'resources') %>
+  lock_adapter:
+    type: database_entry_lock
+    lock_timeout: <%= 30.seconds %>
+  search_adapter:
+    type: solr
+    url: http://localhost:9983/hyacinth_test

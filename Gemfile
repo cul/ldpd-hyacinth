@@ -1,8 +1,6 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.5.3'
-
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.2'
 # Use sqlite3 as the database for Active Record
@@ -31,14 +29,14 @@ gem 'jbuilder', '~> 2.5'
 # Use ActiveStorage variant
 # gem 'mini_magick', '~> 4.8'
 
-# Use Capistrano for deployment
-# gem 'capistrano-rails', group: :development
-
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
 
 # Devise for authentication
 gem 'devise', '~> 4.5'
+
+# Text coloring
+gem 'rainbow', '~> 3.0'
 
 # Bootstrap 3 and jQuery (TODO: Remove these when we switch fully to the new React UI, which pulls in its own css/js via node)
 gem 'bootstrap-sass', '~> 3.3'
@@ -51,7 +49,7 @@ group :development, :test do
   # rspec for testing
   gem 'rspec-rails', '~> 3.8'
   # rubocop for code analysis/formatting
-  gem 'rubocop', '~> 0.60.0', require: false
+  gem 'rubocop', '~> 0.64.0', require: false
   gem 'rubocop-rails_config'
   gem 'rubocop-rspec'
   gem 'solr_wrapper', '~> 2.0'
