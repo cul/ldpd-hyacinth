@@ -1,4 +1,5 @@
 module Hyacinth::DigitalObjects::Downloads
+  include ActionController::Live
   def download
     if @digital_object.is_a?(DigitalObject::Asset)
       if @digital_object.fedora_object.datastreams['content'].controlGroup == 'M'
