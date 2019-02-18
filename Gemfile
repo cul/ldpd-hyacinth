@@ -9,7 +9,7 @@ gem 'sqlite3', '~> 1.3.13'
 gem 'mysql2', '~> 0.5'
 
 # Use Puma as the app server
-gem 'puma', '~> 3.11'
+gem 'puma', '~> 3.12'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -33,7 +33,7 @@ gem 'jbuilder', '~> 2.5'
 gem 'bootsnap', '>= 1.1.0', require: false
 
 # Devise for authentication
-gem 'devise', '~> 4.5'
+gem 'devise', '~> 4.6'
 
 # Text coloring
 gem 'rainbow', '~> 3.0'
