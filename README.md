@@ -22,10 +22,12 @@ Your friendly neighborhood digital object management system.
 ```
 git clone https://github.com/cul/ldpd-hyacinth.git # Clone the repo
 cd ldpd-hyacinth # Switch to the application directory
+git checkout 3.x # Check out the branch for v3. If this has been merged to master this is no longer necessary.
+# Note: Make sure rvm has selected the correct ruby version. You may need to move out of the directory and back into it force rvm to use the ruby version specified in .ruby_version.
 bundle install # Install gem dependencies
 yarn install # this assumes you have node and yarn installed (tested with Node 8 and Node 10)
-bundle exec rake db:migrate # Run database migrations
 bundle exec rake hyacinth:setup:config_files # Set up hyacinth config files like hyacinth.yml and database.yml
+bundle exec rake db:migrate # Run database migrations
 rails s -p 3000 # Start the application using rails server
 ```
 And for faster React app recompiling during development, run this in a separate terminal window:
