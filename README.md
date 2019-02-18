@@ -23,8 +23,9 @@ Your friendly neighborhood digital object management system.
 git clone https://github.com/cul/ldpd-hyacinth.git # Clone the repo
 cd ldpd-hyacinth # Switch to the application directory
 bundle install # Install gem dependencies
+yarn install # this assumes you have node and yarn installed (tested with Node 8 and Node 10)
 bundle exec rake db:migrate # Run database migrations
-# TODO: Add other necessary steps as development continues
+bundle exec rake hyacinth:setup:config_files # Set up hyacinth config files like hyacinth.yml and database.yml
 rails s -p 3000 # Start the application using rails server
 ```
 And for faster React app recompiling during development, run this in a separate terminal window:
