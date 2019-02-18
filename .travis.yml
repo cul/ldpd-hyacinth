@@ -23,13 +23,6 @@ jdk: 'oraclejdk8'
 addons:
   chrome: stable
 
-before_install:
-  # Put current rvm ruby version in the .ruby-version file so the app
-  # will run under any ruby version specified in the build matrix
-  - rvm current > .ruby-version
-  # Also put current rvm ruby version in the Gemfile
-  - version=$(rvm current | sed "s/ruby-//") && sed "s/^ruby '.*/ruby '$version'/" Gemfile
-
 before_script:
   # Set up hyacinth config files like hyacinth.yml and database.yml
   - bundle exec rake hyacinth:setup:config_files
