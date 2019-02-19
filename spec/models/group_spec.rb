@@ -23,8 +23,16 @@ RSpec.describe Group, type: :model do
     end
 
     it 'requires a string_key' do
-      pending
-      expect(Group.new(string_key: '')).to be false
+      expect(Group.new(string_key: nil).save).to be false
+    end
+
+    it 'require string_key to be unique' do
+      Group.create(string_key: 'administrators')
+      expect(Group.new(string_key: 'administrators').save).to be false
+    end
+
+    it 'requires a string_key with alphanumeric characters and underscores (does not start with number)' do
+      expect(Group.new(string_key: '1test').save).to be false
     end
   end
 
