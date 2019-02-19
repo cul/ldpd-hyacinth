@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_18_184651) do
+ActiveRecord::Schema.define(version: 2019_02_18_212949) do
 
   create_table "database_entry_locks", force: :cascade do |t|
     t.string "lock_key", null: false
@@ -27,9 +27,10 @@ ActiveRecord::Schema.define(version: 2019_02_18_184651) do
   end
 
   create_table "groups", force: :cascade do |t|
-    t.string "string_key"
+    t.string "string_key", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["string_key"], name: "index_groups_on_string_key", unique: true
   end
 
   create_table "groups_users", id: false, force: :cascade do |t|
