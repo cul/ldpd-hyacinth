@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   get 'ui/v1/*path', to: 'ui#v1'
 
   namespace :api do
-    namespace :v1 do
+    namespace :v1, defaults: { format: :json } do
       resources :digital_objects, except: :index do
         collection do
           # allow GET or POST for search action requests
@@ -18,11 +18,12 @@ Rails.application.routes.draw do
           post 'search'
         end
       end
-      # resources :users do
-      #   collection do
-      #     get 'current'
-      #   end
-      # end
+
+      resources :users, except: [:new, :edit, :delete] do
+        # collection do
+        #   get 'current'
+        # end
+      end
     end
   end
 end
