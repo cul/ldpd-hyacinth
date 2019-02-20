@@ -20,7 +20,7 @@ Your friendly neighborhood digital object management system.
 ## First-Time Setup (for developers)
 
 ```
-git clone https://github.com/cul/ldpd-hyacinth.git # Clone the repo
+git clone git@github.com:cul/ldpd-hyacinth.git # Clone the repo
 cd ldpd-hyacinth # Switch to the application directory
 git checkout 3.x # Check out the branch for v3. If this has been merged to master this is no longer necessary.
 # Note: Make sure rvm has selected the correct ruby version. You may need to move out of the directory and back into it force rvm to use the ruby version specified in .ruby_version.
