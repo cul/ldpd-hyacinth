@@ -19,11 +19,13 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :users, except: [:new, :edit, :delete] do
+      resources :users, param: :uid, except: [:new, :edit, :delete] do
         # collection do
         #   get 'current'
         # end
       end
+
+      resources :groups, param: :string_key, except: [:new, :edit]
     end
   end
 end

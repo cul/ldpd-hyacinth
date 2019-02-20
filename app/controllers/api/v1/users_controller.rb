@@ -13,7 +13,7 @@ module Api
 
       # GET /users/:uid
       def show
-        user = User.find(uid: params[:uid])
+        user = User.find_by(uid: params[:uid])
         if user
           render json: user, status: 200
         else
@@ -34,9 +34,9 @@ module Api
 
       # PATCH /users/:uid
       def update
-        user = User.assign_attributes(uid: params[:uid])
+        user = User.find_by(uid: params[:uid])
 
-        if user.save
+        if user.assign_attributes(user_params)
           render json: user, status: 200
         else
           render json: errors(user.errors.full_messages), status: 500
