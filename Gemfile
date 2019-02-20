@@ -69,6 +69,7 @@ group :test do
   gem 'chromedriver-helper'
   # Check test coverage
   gem 'simplecov', require: false
+  gem 'factory_bot_rails'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
