@@ -1,21 +1,21 @@
 module Api
   module V1
     class UsersController < ApplicationApiController
-      # TODO: Need to check that current user is allowed to make the request change.
+      # TODO: Need to check that current user is allowed to make the requested changes.
 
       before_action :ensure_json_request
 
       # GET /users
       def index
-        @users = User.all
-        render json: @users, status: 200
+        users = User.all
+        render json: users, status: 200
       end
 
       # GET /users/:uid
       def show
-        @user = User.find(uid: params[:uid])
-        if @user
-          render json: @user, status: 200
+        user = User.find(uid: params[:uid])
+        if user
+          render json: user, status: 200
         else
           render json: errors('Not Found'), status: 404
         end
@@ -23,23 +23,23 @@ module Api
 
       # POST /users
       def create
-        @user = User.new(user_params)
+        user = User.new(user_params)
 
-        if @user.save
-          render json: @user, status: 201
+        if user.save
+          render json: user, status: 201
         else
-          render json: errors(@user.errors.full_messages), status: 500
+          render json: errors(user.errors.full_messages), status: 500
         end
       end
 
       # PATCH /users/:uid
       def update
-        @user = User.assign_attributes(uid: params[:uid])
+        user = User.assign_attributes(uid: params[:uid])
 
-        if @user.save
-          render json: @user, status: 200
+        if user.save
+          render json: user, status: 200
         else
-          render json: errors(@user.errors.full_messages), status: 500
+          render json: errors(user.errors.full_messages), status: 500
         end
       end
 

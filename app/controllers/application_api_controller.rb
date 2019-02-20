@@ -1,6 +1,6 @@
 class ApplicationApiController < ActionController::API
 
-    private
+  private
 
     # Returns 406 status if format requested is not json. This method can be
     # used as a before_action callback for any controllers that only respond
