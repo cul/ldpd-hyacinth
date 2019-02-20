@@ -16,7 +16,7 @@ class User < ApplicationRecord
     first_name + ' ' + (middle_name || '') + ' ' + last_name
   end
 
-    def as_json(_options = {})
+  def as_json(_options = {})
     {
       uid: uid,
       email: email,
