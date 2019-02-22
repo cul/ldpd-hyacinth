@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_02_19_214427) do
+ActiveRecord::Schema.define(version: 2019_02_21_175737) do
 
   create_table "database_entry_locks", force: :cascade do |t|
     t.string "lock_key", null: false
@@ -38,6 +38,16 @@ ActiveRecord::Schema.define(version: 2019_02_19_214427) do
     t.integer "user_id", null: false
     t.index ["group_id", "user_id"], name: "index_groups_users_on_group_id_and_user_id"
     t.index ["user_id", "group_id"], name: "index_groups_users_on_user_id_and_group_id"
+  end
+
+  create_table "permissions", force: :cascade do |t|
+    t.integer "group_id"
+    t.string "action", null: false
+    t.string "subject"
+    t.string "subject_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["group_id"], name: "index_permissions_on_group_id"
   end
 
   create_table "users", force: :cascade do |t|
