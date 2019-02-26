@@ -32,7 +32,8 @@ gem 'jbuilder', '~> 2.5'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
 
-# Devise for authentication
+# Devise for authentication, cancancan for authorization
+gem 'cancancan', '~> 2.0'
 gem 'devise', '~> 4.6'
 
 # Text coloring
