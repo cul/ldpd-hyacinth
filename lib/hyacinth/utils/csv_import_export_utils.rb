@@ -322,15 +322,13 @@ class Hyacinth::Utils::CsvImportExportUtils
     dynamic_field_regexes_allowed_on_import = all_dynamic_field_regexes
 
     index_of_first_new_line_char = csv_data_string.index("\n")
+    if index_of_first_new_line_char.nil?
+      import_job.errors.add(:invalid_csv, 'There appears to be a problem with the encoding of your CSV. No new line characters were detected.')
+      return
+    end
     index_of_second_new_line_char = csv_data_string.index("\n", index_of_first_new_line_char + 1)
 
-    if csv_data_string.start_with?('_')
-      # First line is header line
-      header_line_of_csv = csv_data_string[0...index_of_first_new_line_char]
-    else
-      # Second line is header line
-      header_line_of_csv = csv_data_string[(index_of_first_new_line_char + 1)...(index_of_second_new_line_char)]
-    end
+    header_line_of_csv = get_header_line_of_csv(csv_data_string, index_of_first_new_line_char, index_of_second_new_line_char)
 
     # We're only using CSV.parse on the second row of data in the CSV file
     CSV.parse(header_line_of_csv) do |row|
@@ -341,6 +339,16 @@ class Hyacinth::Utils::CsvImportExportUtils
         next if /^_asset_data\..+/.match(header_string) # Ignore _asset_data headers upon import. They often appear in CSV exports (with helpful read-only info about assets) and are ignored during import.
         import_job.errors.add(:invalid_csv_header, header_string)
       end
+    end
+  end
+
+  def self.get_header_line_of_csv(csv_data_string, index_of_first_new_line_char, index_of_second_new_line_char)
+    if csv_data_string.start_with?('_')
+      # First line is header line
+      csv_data_string[0...index_of_first_new_line_char]
+    else
+      # Second line is header line
+      csv_data_string[(index_of_first_new_line_char + 1)...(index_of_second_new_line_char)]
     end
   end
 

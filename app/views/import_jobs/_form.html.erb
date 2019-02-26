@@ -1,5 +1,5 @@
 <h1>CSV Import</h1>
-
+<div class="alert alert-info">Important Note: Please avoid using Microsoft Excel for CSV editing, imports, or exports. Excel doesn't handle UTF-8 properly.</div>
 <%= form_tag({:action => :create}, multipart: true) do %>
   <%= file_field_tag :import_file %>
   <br />
