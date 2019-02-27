@@ -47,8 +47,7 @@ gem 'jquery-rails', '~> 4.3' # Required by bootstrap
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
-  # rspec for testing
-  gem 'rspec-rails', '~> 3.8'
+
   # rubocop for code analysis/formatting
   gem 'rubocop', '~> 0.64.0', require: false
   gem 'rubocop-rails_config'
@@ -63,6 +62,7 @@ group :development do
 end
 
 group :test do
+  gem 'rspec-rails', '~> 3.8'
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '>= 2.15'
   gem 'selenium-webdriver'
