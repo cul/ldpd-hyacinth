@@ -4,6 +4,10 @@ class Group < ApplicationRecord
 
   validates :string_key, presence: true, uniqueness: true, string_key: true
 
+  def admin?
+    is_admin
+  end
+
   def as_json(_options = {})
     {
       string_key: string_key
