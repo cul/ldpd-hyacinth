@@ -1,5 +1,41 @@
 namespace :hyacinth do
   namespace :setup do
+    desc "Set up default Hyacinth users and groups"
+    task default_users_and_groups: :environment do
+      default_user_accounts = [
+        {
+          email: 'hyacinth-admin@library.columbia.edu',
+          password: 'iamtheadmin',
+          first_name: 'Admin',
+          last_name: 'User'
+        },
+        {
+          email: 'hyacinth-test@library.columbia.edu',
+          password: 'iamthetest',
+          first_name: 'Test',
+          last_name: 'User'
+        }
+      ]
+
+      default_user_accounts.each do |account_info|
+        user_email = account_info[:email]
+        if User.exists?(email: account_info[:email])
+          puts Rainbow("Skipping creation of user #{user_email} because user already exists.").blue.bright
+        else
+          User.create!(
+            email: account_info[:email],
+            password: account_info[:password],
+            password_confirmation: account_info[:password],
+            first_name: account_info[:first_name],
+            last_name: account_info[:last_name]
+          )
+          puts Rainbow("Created user: #{user_email}").green
+        end
+      end
+
+      # TODO: Create admin group and add admin user to this group.
+    end
+
     desc "Set up hyacinth config files"
     task :config_files do
       config_template_dir = Rails.root.join('config/templates')

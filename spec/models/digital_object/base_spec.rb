@@ -1,90 +1,89 @@
 require 'rails_helper'
+require 'shared_contexts/digital_object/example_shared_subclass'
 
 RSpec.describe DigitalObject::Base, type: :model do
-  # we create a subclass instance for testing because this class is
-  # designed to be abstract and cannot be instantiated
-  let(:instance) { described_class.new }
-  let(:subclass) do
-    Class.new(described_class) do
-      resource_attribute :test_resource1
-      resource_attribute :test_resource2
-    end
-  end
-  let(:subclass_instance) { subclass.new }
-
   it "cannot be instantiated" do
     expect { described_class.new }.to raise_error(NotImplementedError)
   end
 
-  it "can be subclassed" do
-    expect(subclass).to be_a(Class)
+  context "subclass instance" do
+    include_context 'sample digital_object_subclass and digital_object_subclass_instance'
+
+    it "can be subclassed" do
+      expect(digital_object_subclass).to be_a(Class)
+    end
+
+    context "a new subclass instance" do
+      it "can be instantiated" do
+        expect { digital_object_subclass.new }.not_to raise_error
+      end
+
+      it "has the expected defaults for all attributes" do
+        allow_any_instance_of(Hyacinth::DigitalObject::Types).to receive(:class_to_key).with(digital_object_subclass).and_return('digital_object_subclass')
+        datetime = DateTime.now
+        allow(DateTime).to receive(:now).and_return(datetime) # Return
+
+        expect(digital_object_subclass_instance.metadata_attributes.reduce({}) do |hsh, (attribute_name, _attribute)|
+          hsh[attribute_name] = digital_object_subclass_instance.send(attribute_name)
+          hsh
+        end).to eq(
+          {
+            uid: nil,
+            doi: nil,
+            digital_object_type: 'digital_object_subclass',
+            state: 'active',
+            created_by: nil,
+            updated_by: nil,
+            last_published_by: nil,
+            created_at: datetime,
+            updated_at: datetime,
+            published_at: nil,
+            first_published_at: nil,
+            persisted_to_preservation_at: nil,
+            first_persisted_to_preservation_at: nil,
+            group: nil,
+            projects: [],
+            publish_targets: [],
+            parent_uids: Set.new,
+            structured_child_uids: {},
+            dynamic_field_data: {},
+            preservation_persistence_data: {},
+            custom_field: 'custom default value'
+          }
+        )
+      end
+
+      it "has the expected resources based on what is defined in the class" do
+        expect(digital_object_subclass_instance.resource_attributes.keys.sort).to eq([:test_resource1, :test_resource2])
+      end
+
+      context "#new_record?" do
+        it "returns true for a newly created instance" do
+          expect(digital_object_subclass_instance.new_record?).to eq(true)
+        end
+
+        it "returns false for a persisted instance" do
+          skip
+        end
+      end
+
+      context "#digital_object_record" do
+        it "returns the underlying digital_object_record" do
+          expect(digital_object_subclass_instance.digital_object_record).to be_a(DigitalObjectRecord)
+        end
+      end
+
+      context "#optimistic_lock_token and #optimistic_lock_token=" do
+        let(:token) { SecureRandom.uuid }
+        it "can be set" do
+          digital_object_subclass_instance.optimistic_lock_token = token
+          expect(digital_object_subclass_instance.optimistic_lock_token).to eq(token)
+        end
+      end
+    end
   end
 
-  context "subclass instance" do
-    it "can be instantiated" do
-      expect { subclass.new }.not_to raise_error
-    end
-
-    it "has the expected defaults for all attributes" do
-      allow_any_instance_of(Hyacinth::DigitalObject::Types).to receive(:class_to_key).with(subclass).and_return('test_subclass')
-
-      expect(subclass_instance.uid).to eq(nil)
-      expect(subclass_instance.doi).to eq(nil)
-      expect(subclass_instance.digital_object_type).to eq('test_subclass')
-      expect(subclass_instance.state).to eq('active')
-      expect(subclass_instance.created_by).to eq(nil)
-      expect(subclass_instance.updated_by).to eq(nil)
-      expect(subclass_instance.last_published_by).to eq(nil)
-      expect(subclass_instance.created_at).to be_a(DateTime)
-      expect(DateTime.now.to_time - subclass_instance.created_at.to_time).to be < 1
-      # expecting less than a second of difference
-      expect(subclass_instance.updated_at).to be_a(DateTime)
-      # expecting less than a second of difference
-      expect(DateTime.now.to_time - subclass_instance.updated_at.to_time).to be < 1
-      # updated_at time should never be earlier than created_at time
-      expect(subclass_instance.updated_at).to be >= subclass_instance.created_at
-      expect(subclass_instance.published_at).to eq(nil)
-      expect(subclass_instance.first_published_at).to eq(nil)
-      expect(subclass_instance.persisted_to_preservation_at).to eq(nil)
-      expect(subclass_instance.first_persisted_to_preservation_at).to eq(nil)
-      expect(subclass_instance.group).to eq(nil)
-      expect(subclass_instance.projects).to eq([])
-      expect(subclass_instance.publish_targets).to eq([])
-      expect(subclass_instance.parent_uids).to eq(Set.new)
-      expect(subclass_instance.structured_child_uids).to eq({})
-      expect(subclass_instance.dynamic_field_data).to eq({})
-      expect(subclass_instance.preservation_persistence_data).to eq({})
-    end
-
-    it "has the expected resources based on what is defined in the class" do
-      expect(subclass_instance.resource_attributes.keys.sort).to eq([:test_resource1, :test_resource2])
-    end
-
-    context "#new_record?" do
-      it "returns true for a newly created instance" do
-        expect(subclass_instance.new_record?).to eq(true)
-      end
-    end
-
-    context "#to_digital_object_data" do
-      let (:digital_object_data) { subclass_instance.to_digital_object_data }
-      it "returns a Hash with keys for all defined attributes, and all resources under a 'resources' key" do
-        expect(digital_object_data).to be_a(Hash)
-        expect(
-          digital_object_data.keys.sort
-        ).to eq(
-          subclass_instance.metadata_attributes.keys.push('resources').map { |key| key.to_s }.sort
-        )
-      end
-
-      it "returns the expected custom resource keys, nested under a top 'resources' key" do
-        expect(digital_object_data).to be_a(Hash)
-        expect(
-          digital_object_data['resources'].keys.sort
-        ).to eq(
-          subclass_instance.resource_attributes.keys.map { |key| key.to_s }.sort
-        )
-      end
-    end
+  context "shared examples for included modules" do
+    include_examples 'DigitalObjectConcerns::DigitalObjectData::Serializer'
   end
 end

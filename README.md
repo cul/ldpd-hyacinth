@@ -28,6 +28,7 @@ bundle install # Install gem dependencies
 yarn install # this assumes you have node and yarn installed (tested with Node 8 and Node 10)
 bundle exec rake hyacinth:setup:config_files # Set up hyacinth config files like hyacinth.yml and database.yml
 bundle exec rake db:migrate # Run database migrations
+bundle exec rake hyacinth:setup:default_users_and_groups # Set up default Hyacinth users and groups
 rails s -p 3000 # Start the application using rails server
 ```
 And for faster React app recompiling during development, run this in a separate terminal window:
