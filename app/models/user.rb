@@ -27,6 +27,29 @@ class User < ApplicationRecord
     }
   end
 
+  def admin?
+    groups.any?(&:admin?)
+  end
+
+  # Return system wide permissions/roles that a user is assigned
+  #
+  # @return [Array<String>] system wide roles assigned
+  def system_wide_permissions
+    Permission
+      .where(group_id: group_ids, subject: nil, subject_id: nil)
+      .map(&:action)
+  end
+
+  # Return project actions allowed for this user for all the projects given.
+  #
+  # @param Array|String project_id
+  def available_project_actions(project_ids)
+    project_ids = Array.wrap(project_ids)
+    Permission
+      .where(group_id: group_ids, subject: Project.to_s, subject_id: project_ids)
+      .map(&:action)
+  end
+
   private
 
     def set_uid
