@@ -44,6 +44,12 @@ namespace :hyacinth do
           last_name: account[:last_name]
         )
       end
+
+      Group.create!(
+        string_key: 'administrators',
+        is_admin: true,
+        users: [User.find_by(email: 'hyacinth-admin@library.columbia.edu')]
+      )
     end
   end
 end
