@@ -63,6 +63,7 @@ end
 
 group :test do
   gem 'rspec-rails', '~> 3.8'
+  gem 'rspec-its'
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '>= 2.15'
   gem 'selenium-webdriver'
@@ -71,6 +72,7 @@ group :test do
   # Check test coverage
   gem 'simplecov', require: false
   gem 'factory_bot_rails'
+  gem 'json_spec'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
