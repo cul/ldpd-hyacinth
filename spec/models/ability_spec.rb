@@ -92,5 +92,6 @@ RSpec.describe Ability, type: :model do
     it { is_expected.to be_able_to(:read, Group) }
     it { is_expected.to be_able_to(:read, user) }
     it { is_expected.to be_able_to(:edit, user) }
+    it { is_expected.to be_able_to(:update, user) }
   end
 end

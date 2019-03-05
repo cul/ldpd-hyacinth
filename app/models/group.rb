@@ -4,6 +4,8 @@ class Group < ApplicationRecord
 
   validates :string_key, presence: true, uniqueness: true, string_key: true
 
+  # TODO: Add timestamps to model
+
   def admin?
     is_admin
   end

@@ -10,7 +10,7 @@ class Ability
       elsif user.admin?
         true
       elsif subject_class == User
-        if subject && subject.id == user.id && [:edit, :read, :show].include?(action)
+        if subject && subject.id == user.id && [:edit, :update, :read, :show].include?(action)
           true
         else
           user.system_wide_permissions.include?(Permission::MANAGE_USERS)

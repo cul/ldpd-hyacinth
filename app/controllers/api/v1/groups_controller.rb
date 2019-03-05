@@ -3,10 +3,8 @@ module Api
     class GroupsController < ApplicationApiController
       before_action :ensure_json_request
 
-      # TODO: Need to check that current user is allowed to make the requested changes.
-
       # TODO: override this, to include :permissions in sql query
-      load_resource find_by: :string_key, id_param: :string_key
+      load_and_authorize_resource find_by: :string_key, id_param: :string_key
 
       # GET /groups
       def index
@@ -35,10 +33,11 @@ module Api
       # PATCH /groups/:string_key
       def update
         errors = []
-        # TODO: Update :is_admin property if current_user is an administrator.
-        # if can?(:manage, :all) && update_params.key?(:is_admin)
-        #   @group.is_admin = params[:is_admin] unless params[:is_admin].blank?
-        # end
+
+        # Update :is_admin property if current_user is an administrator.
+        if can?(:manage, :all) && update_params.key?(:is_admin)
+          @group.is_admin = params[:is_admin] if params.key?(:is_admin)
+        end
 
         users = update_params.fetch(:user_ids, []).map do |uid|
           if user = User.find_by(uid: uid)

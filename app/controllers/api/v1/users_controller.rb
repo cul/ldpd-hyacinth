@@ -3,11 +3,7 @@ module Api
     class UsersController < ApplicationApiController
       before_action :ensure_json_request
 
-      # TODO: Need to check that current user is allowed to make the requested changes.
-
-      load_resource find_by: :uid, id_param: :uid
-
-      before_action :ensure_json_request
+      load_and_authorize_resource find_by: :uid, id_param: :uid
 
       # GET /users
       def index
@@ -54,7 +50,10 @@ module Api
         end
 
         def user_params
-          params.permit(:first_name, :last_name, :email, :current_password, :password, :password_confirmation, :is_active)
+          valid_params = [:first_name, :last_name, :email, :current_password, :password, :password_confirmation]
+          valid_params << :is_active if can? :manage, @user
+
+          params.permit(*valid_params)
         end
     end
   end
