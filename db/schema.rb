@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_12_27_140629) do
+ActiveRecord::Schema.define(version: 2019_02_26_161307) do
 
   create_table "database_entry_locks", force: :cascade do |t|
     t.string "lock_key", null: false
@@ -27,9 +27,28 @@ ActiveRecord::Schema.define(version: 2018_12_27_140629) do
   end
 
   create_table "groups", force: :cascade do |t|
-    t.string "string_key"
+    t.string "string_key", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_admin", default: false
+    t.index ["string_key"], name: "index_groups_on_string_key", unique: true
+  end
+
+  create_table "groups_users", id: false, force: :cascade do |t|
+    t.integer "group_id", null: false
+    t.integer "user_id", null: false
+    t.index ["group_id", "user_id"], name: "index_groups_users_on_group_id_and_user_id"
+    t.index ["user_id", "group_id"], name: "index_groups_users_on_user_id_and_group_id"
+  end
+
+  create_table "permissions", force: :cascade do |t|
+    t.integer "group_id"
+    t.string "action", null: false
+    t.string "subject"
+    t.string "subject_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["group_id"], name: "index_permissions_on_group_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -49,8 +68,10 @@ ActiveRecord::Schema.define(version: 2018_12_27_140629) do
     t.string "last_sign_in_ip"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "uid", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["uid"], name: "index_users_on_uid", unique: true
   end
 
 end

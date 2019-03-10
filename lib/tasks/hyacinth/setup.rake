@@ -17,5 +17,39 @@ namespace :hyacinth do
         end
       end
     end
+
+    desc 'Set up default accounts'
+    task default_accounts: :environment  do
+      default_user_accounts = [
+        {
+          email: 'hyacinth-admin@library.columbia.edu',
+          password: 'iamtheadmin',
+          first_name: 'Admin',
+          last_name: 'User'
+        },
+        {
+          email: 'hyacinth-test@library.columbia.edu',
+          password: 'iamthetest',
+          first_name: 'Test',
+          last_name: 'User'
+        }
+      ]
+
+      default_user_accounts.each do |account|
+        User.create!(
+          email: account[:email],
+          password: account[:password],
+          password_confirmation: account[:password],
+          first_name: account[:first_name],
+          last_name: account[:last_name]
+        )
+      end
+
+      Group.create!(
+        string_key: 'administrators',
+        is_admin: true,
+        users: [User.find_by(email: 'hyacinth-admin@library.columbia.edu')]
+      )
+    end
   end
 end

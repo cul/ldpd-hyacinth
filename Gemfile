@@ -32,7 +32,8 @@ gem 'jbuilder', '~> 2.5'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.1.0', require: false
 
-# Devise for authentication
+# Devise for authentication, cancancan for authorization
+gem 'cancancan', '~> 2.0'
 gem 'devise', '~> 4.6'
 
 # Text coloring
@@ -46,8 +47,7 @@ gem 'jquery-rails', '~> 4.3' # Required by bootstrap
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
-  # rspec for testing
-  gem 'rspec-rails', '~> 3.8'
+
   # rubocop for code analysis/formatting
   gem 'rubocop', '~> 0.64.0', require: false
   gem 'rubocop-rails_config'
@@ -62,6 +62,8 @@ group :development do
 end
 
 group :test do
+  gem 'rspec-rails', '~> 3.8'
+  gem 'rspec-its'
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '>= 2.15'
   gem 'selenium-webdriver'
@@ -69,6 +71,8 @@ group :test do
   gem 'chromedriver-helper'
   # Check test coverage
   gem 'simplecov', require: false
+  gem 'factory_bot_rails'
+  gem 'json_spec'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
