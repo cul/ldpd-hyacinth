@@ -2,12 +2,12 @@ module Hyacinth
   module DigitalObject
     module TypeDef
       class DateTime < Hyacinth::DigitalObject::TypeDef::Base
-        def to_json_var(value)
+        def to_serialized_form(value)
           return nil if value.nil?
           value.iso8601
         end
 
-        def from_json_var(value)
+        def from_serialized_form(value)
           return nil if value.nil?
           ::DateTime.parse(value)
         end

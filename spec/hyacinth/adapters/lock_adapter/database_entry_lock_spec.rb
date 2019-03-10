@@ -5,6 +5,17 @@ RSpec.describe Hyacinth::Adapters::LockAdapter::DatabaseEntryLock do
   let(:adapter) { described_class.new(lock_timeout: 5.minutes) }
   it_behaves_like "a lock adapter"
 
+  context "creation and deletion" do
+    let(:key) { 'some_key' }
+    let(:lock_timeout) { 1.minute }
+    let(:expires_at) { DateTime.current + lock_timeout }
+    it "works" do
+      # TODO: Delete this test
+      database_entry_lock = DatabaseEntryLock.create!(lock_key: key, expires_at: expires_at)
+      expect(database_entry_lock.new_record?).to eq(false)
+    end
+  end
+
   context "#with_lock" do
     let(:key) { 'some_key' }
     it "yields the expected value" do
@@ -17,8 +28,8 @@ RSpec.describe Hyacinth::Adapters::LockAdapter::DatabaseEntryLock do
     let(:key2) { 'some_key2' }
     let(:key3) { 'some_key3' }
     it "yields the expected value" do
-      expect { |b| adapter.with_multilock(key1, key2, key3, &b) }.to yield_with_args(Hash)
-      adapter.with_multilock(key1, key2, key3) do |lock_objects|
+      expect { |b| adapter.with_multilock([key1, key2, key3], &b) }.to yield_with_args(Hash)
+      adapter.with_multilock([key1, key2, key3]) do |lock_objects|
         expect(lock_objects.size).to be(3)
 
         expect(lock_objects.key?(key1)).to be(true)

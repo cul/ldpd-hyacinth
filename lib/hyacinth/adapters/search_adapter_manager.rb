@@ -1,6 +1,6 @@
 module Hyacinth
   module Adapters
-    module SearchAdapter
+    module SearchAdapterManager
       include Hyacinth::Adapters::AdapterManagerBehavior
     end
   end

@@ -1,5 +1,5 @@
 module DigitalObjectConcerns
-  module DigitalObjectDataSetters
+  module DigitalObjectData::Setters
     module ParentUids
       extend ActiveSupport::Concern
       # TODO: Test these methods via shared_example (https://stackoverflow.com/questions/16525222/how-to-test-a-concern-in-rails)

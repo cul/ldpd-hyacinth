@@ -37,15 +37,21 @@ module Hyacinth
         # Attempts to establish a lock on the given key and then yields to a block. The lock is are automatically unlocked when the block is completed.
         # :yields: lock_object [Hyacinth::Adapters::LockAdapter::DatabaseEntryLock::LockObject] Which has an #extend_lock method that can be called to the lock by the application-wide lock timeout.
         def with_lock(key)
-          with_multilock(key) do |lock_objects|
+          with_multilock(Array.wrap(key)) do |lock_objects|
             yield lock_objects[key]
           end
         end
 
         # Attempts to establish locks on the given keys and then yields to a block. All locks are automatically unlocked when the block is completed.
+        # @param keys An array of keys to lock on.
         # :yields: lock_objects [Hash] A hash that maps lock keys to lock objects (Hyacinth::Adapters::LockAdapter::DatabaseEntryLock::LockObject).
         #                              Each lock object has an #extend_lock method that can be called to extend that lock by the application-wide lock timeout.
-        def with_multilock(*keys)
+        def with_multilock(keys)
+          # We're going to remove nil values from the passed in keys, since we can't lock on nil.
+          # Cast the passed-in object to an array so we can handle a Set.
+          # Make a copy of the keys array so we don't modify the passed-in object.
+          keys = keys.nil? ? [] : keys.to_a.dup.compact
+
           # If no keys have been passed in, just yield and return.
           # This simplifies things for any calling code that wants to pass in a
           # variable number of dependent lock-needing resources when there's a

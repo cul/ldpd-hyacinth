@@ -62,4 +62,22 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  # Include helpers
+  config.include JsonSpec::Helpers
+  config.include AuthenticatedRequests, type: :request
+
+  # config.before :suite do
+  #   module DigitalObject
+  #     class TestSubclass < DigitalObject::Base
+  #       metadata_attribute :custom_field1, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { 'custom default value 1' })
+  #       metadata_attribute :custom_field2, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { 'custom default value 2' })
+  #       resource_attribute :test_resource1
+  #       resource_attribute :test_resource2
+  #     end
+  #   end
+  #
+  #   # Add ability to resolve digital object type to class
+  #   Hyacinth.config.digital_object_types.register('test_subclass', DigitalObject::TestSubclass)
+  # end
 end

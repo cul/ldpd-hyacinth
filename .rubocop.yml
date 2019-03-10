@@ -28,7 +28,7 @@ Layout/IndentationConsistency:
   EnforcedStyle: rails
 
 Style/BracesAroundHashParameters:
-  EnforcedStyle: context_dependent
+  Enabled: false
 
 Style/FrozenStringLiteralComment:
   Enabled: false

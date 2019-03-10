@@ -2,6 +2,10 @@ FactoryBot.define do
   factory :group do
     string_key { 'developers' }
 
+    trait :lincoln_historical_society do
+      string_key { 'lincoln_historical_society' }
+    end
+
     trait :administrators do
       string_key { 'administrators' }
       is_admin { true }

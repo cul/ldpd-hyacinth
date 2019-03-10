@@ -1,6 +1,6 @@
 module Hyacinth
   module Adapters
-    module LockAdapter
+    module LockAdapterManager
       include Hyacinth::Adapters::AdapterManagerBehavior
     end
   end
