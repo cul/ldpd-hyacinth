@@ -6,7 +6,7 @@ RSpec.describe Hyacinth::Adapters::StorageAdapter::Disk do
   let(:sample_full_file_path) { File.join(default_path, 'file.txt') }
   let(:expected_adapter_uri_prefix) { 'disk://' }
   let(:sample_location_uri) { expected_adapter_uri_prefix + sample_full_file_path }
-  let(:adapter) { described_class.new }
+  let(:adapter) { described_class.new(default_path: default_path) }
 
   # Clear default_path after each test is done so we don't
   # leave extra files or directories lying around.

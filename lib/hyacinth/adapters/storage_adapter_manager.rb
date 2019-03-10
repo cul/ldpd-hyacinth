@@ -1,6 +1,6 @@
 module Hyacinth
   module Adapters
-    module StorageAdapter
+    module StorageAdapterManager
       include Hyacinth::Adapters::AdapterManagerBehavior
     end
   end

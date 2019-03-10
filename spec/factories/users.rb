@@ -1,5 +1,6 @@
 FactoryBot.define do
   factory :user do
+    uid { nil }
     first_name { 'Jane' }
     last_name  { 'Doe' }
     email { 'jane-doe@example.com' }
@@ -7,7 +8,16 @@ FactoryBot.define do
     password { 'terriblepassword' }
     password_confirmation { 'terriblepassword' }
 
+    trait :basic do
+      email { 'basic@example.com' }
+      first_name { 'Basic' }
+      last_name { 'User' }
+    end
+
     trait :administrator do
+      email { 'admin-user@example.com' }
+      first_name { 'Admin' }
+      last_name { 'User' }
       after(:create) do |user|
         create(:group, :administrators, users: [user])
       end

@@ -1,17 +1,9 @@
 module DigitalObjectConcerns
-  module DigitalObjectDataSetters
+  module DigitalObjectData::Setters
     module PublishTargets
       extend ActiveSupport::Concern
       # TODO: Test these methods via shared_example (https://stackoverflow.com/questions/16525222/how-to-test-a-concern-in-rails)
 
-      # included do
-      #   @added_publish_targets = Set.new
-      #   @removed_publish_targets = Set.new
-      #
-      #   attr_reader :added_publish_targets
-      #   attr_reader :removed_publish_targets
-      # end
-      #
       def set_publish_targets(digital_object_data)
         return unless digital_object_data.key?('publish_targets')
         raise Hyacinth::Exceptions::MissingPublishFlag, 'Cannot modify publish targets unless publish flag is present.' unless digital_object_data['publish'].to_s == 'true'

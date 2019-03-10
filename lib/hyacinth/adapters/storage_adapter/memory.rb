@@ -36,6 +36,10 @@ module Hyacinth
         def write_impl(location_uri, content)
           @cache[location_uri] = content
         end
+
+        def delete(location_uri)
+          @cache.delete(location_uri)
+        end
       end
     end
   end

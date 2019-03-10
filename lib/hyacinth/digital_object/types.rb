@@ -4,14 +4,21 @@ module Hyacinth
 
       attr_reader :keys
 
-      def initialize
-        @keys_to_classes = {}
-        @classes_to_keys = {}
-        @keys = []
+      def initialize(initial_keys_to_classes = {})
+        @keys_to_classes = initial_keys_to_classes
+        refresh_caches!
       end
 
       def register(key, klass)
+        raise Hyacinth::Exceptions::DuplicateTypeError, "The key #{key} has already been registered. "\
+          'Unregister the existing key and call register again if you wish to '\
+          'replace it with a new mapping.' if @keys_to_classes.key?(key)
         @keys_to_classes[key] = klass
+        refresh_caches!
+      end
+
+      def unregister(key)
+        @keys_to_classes.delete(key)
         refresh_caches!
       end
 

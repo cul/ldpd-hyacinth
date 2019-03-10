@@ -3,10 +3,16 @@ module Hyacinth
     class HyacinthError < StandardError; end
 
     class NotFound < HyacinthError; end
+    class NotSaved < HyacinthError; end
+    class UnableToObtainLockError < HyacinthError; end
 
-    class DigitalObjectNotFoundError < HyacinthError; end
+    class MissingRequiredOpt < HyacinthError; end
+
+    class UnsupportedType < HyacinthError; end
 
     class AdapterNotFoundError < StandardError; end
     class UnhandledStorageLocationError < StandardError; end
+
+    class DuplicateTypeError < StandardError; end
   end
 end
