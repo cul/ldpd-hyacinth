@@ -46,13 +46,11 @@ gem 'jquery-rails', '~> 4.3' # Required by bootstrap
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'solr_wrapper', '~> 2.0'
   # rspec for testing
   gem 'rspec-rails', '~> 3.8'
-  # rubocop for code analysis/formatting
-  gem 'rubocop', '~> 0.64.0', require: false
-  gem 'rubocop-rails_config'
-  gem 'rubocop-rspec'
-  gem 'solr_wrapper', '~> 2.0'
+  # FactoryBot for factories
+  gem 'factory_bot_rails', '~> 5.0'
 end
 
 group :development do
@@ -67,6 +65,11 @@ group :test do
   gem 'selenium-webdriver'
   # Easy installation and use of chromedriver to run system tests with Chrome
   gem 'chromedriver-helper'
+  # rubocop for code analysis/formatting
+  gem 'rubocop', '~> 0.64.0', require: false
+  gem 'rubocop-rails_config'
+  gem 'rubocop-rspec'
+  gem 'json_spec'
   # Check test coverage
   gem 'simplecov', require: false
 end

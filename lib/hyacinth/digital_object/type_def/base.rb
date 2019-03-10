@@ -11,11 +11,11 @@ module Hyacinth
 
         # digital object data serialization and deserialization
 
-        def to_json_var(value)
+        def to_serialized_form(value)
           raise NotImplementedError # this implementation must be overridden by subclasses
         end
 
-        def from_json_var(value)
+        def from_serialized_form(value)
           raise NotImplementedError # this implementation must be overridden by subclasses
         end
 

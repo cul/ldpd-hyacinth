@@ -14,8 +14,15 @@ RSpec.describe Hyacinth::DigitalObject::Types do
   end
 
   context '.new / initialize' do
-    it 'create a new instance with no registered types' do
+    it 'create a new instance with no registered types when no args are given' do
       expect(described_class.new.keys).to be_empty
+    end
+
+    it 'create a new instance with initially registered types when a hash argument is given' do
+      expect(described_class.new(
+        item_type_key => item_type_class,
+        asset_type_key => asset_type_class
+      ).keys).to eq([item_type_key, asset_type_key])
     end
   end
 
@@ -24,6 +31,21 @@ RSpec.describe Hyacinth::DigitalObject::Types do
       types.register(item_type_key, item_type_class)
       types.register(asset_type_key, asset_type_class)
       expect(types.keys.sort).to eq([item_type_key, asset_type_key].sort)
+    end
+
+    it 'raises an error if the given type key has already been registered' do
+      types.register(item_type_key, item_type_class)
+      expect { types.register(item_type_key, item_type_class) }.to raise_error(Hyacinth::Exceptions::DuplicateTypeError)
+    end
+  end
+
+  context '#unregister' do
+    it 'unregisters the given type' do
+      types.register(item_type_key, item_type_class)
+      types.register(asset_type_key, asset_type_class)
+      expect(types.keys.sort).to eq([item_type_key, asset_type_key].sort)
+      types.unregister(item_type_key)
+      expect(types.keys.sort).to eq([asset_type_key].sort)
     end
   end
 
