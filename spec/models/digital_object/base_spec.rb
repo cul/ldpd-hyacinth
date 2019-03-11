@@ -9,9 +9,8 @@ RSpec.describe DigitalObject::Base, type: :model do
 end
 
 RSpec.describe DigitalObject::TestSubclass, type: :model do
-  let(:unsaved_digital_object) { FactoryBot.build(:digital_object_test_subclass) }
-  let(:unsaved_digital_object_with_complex_data) { FactoryBot.build(:digital_object_test_subclass_with_complex_data) }
-  let(:unsaved_digital_object_with_simple_data) { FactoryBot.build(:digital_object_test_subclass_with_simple_data) }
+  let(:digital_object) { FactoryBot.build(:digital_object_test_subclass) }
+  let(:digital_object_with_sample_data) { FactoryBot.build(:digital_object_test_subclass, :with_sample_data) }
 
   context "a new subclass instance" do
     it "can be instantiated" do
@@ -21,13 +20,13 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
 
   context "metadata_resources fields" do
     it "has the expected resources defined" do
-      expect(unsaved_digital_object.resource_attributes.keys.sort).to eq([:test_resource1, :test_resource2])
+      expect(digital_object.resource_attributes.keys.sort).to eq([:test_resource1, :test_resource2])
     end
   end
 
   context "metadata_attributes fields" do
     it "has the expected custom fields defined" do
-      expect(unsaved_digital_object.metadata_attributes.keys.sort).to eq([
+      expect(digital_object.metadata_attributes.keys.sort).to eq([
         :created_at,
         :created_by,
         :custom_field1,
@@ -52,15 +51,15 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
     end
 
     it "responds to a setter method for a field marked defined with public_writer, but doesn't respond to a setter method for a field not marked with public_writer" do
-      expect(unsaved_digital_object).to respond_to('custom_field2=')
-      expect(unsaved_digital_object).not_to respond_to('custom_field1=')
+      expect(digital_object).to respond_to('custom_field2=')
+      expect(digital_object).not_to respond_to('custom_field1=')
     end
 
     it "return the expected default values for a new, unsaved object" do
       freeze_time do
         frozen_datetime = DateTime.now
-        expect(unsaved_digital_object.metadata_attributes.reduce({}) do |hsh, (attribute_name, _attribute)|
-          hsh[attribute_name] = unsaved_digital_object.send(attribute_name)
+        expect(digital_object.metadata_attributes.reduce({}) do |hsh, (attribute_name, _attribute)|
+          hsh[attribute_name] = digital_object.send(attribute_name)
           hsh
         end).to eq(
           {
@@ -90,45 +89,39 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
     end
 
     it "returns expected values for a few previously-set fields" do
-      expect(unsaved_digital_object_with_complex_data.doi).to eq('10.fake/ABCDEFG')
-      expect(unsaved_digital_object_with_complex_data.parent_uids).to eq(Set['parent-111', 'parent-222'])
-      expect(unsaved_digital_object_with_complex_data.structured_children).to eq({
-        'type' => 'sequence',
-        'structure' => ['child-111', 'child-222', 'child-333']
-      })
-      expect(unsaved_digital_object_with_complex_data.dynamic_field_data).to eq({
+      expect(digital_object_with_sample_data.dynamic_field_data).to eq({
         'title' => {
           'non_sort_portion' => 'The',
           'sort_portion' => 'Tall Man and His Hat'
         }
       })
-      expect(unsaved_digital_object_with_complex_data.custom_field1).to eq('excellent value 1')
-      expect(unsaved_digital_object_with_complex_data.custom_field2).to eq('excellent value 2')
+      expect(digital_object_with_sample_data.custom_field1).to eq('excellent value 1')
+      expect(digital_object_with_sample_data.custom_field2).to eq('excellent value 2')
     end
   end
 
   context "#new_record?" do
-    it "returns true for a newly created unsaved_digital_object" do
-      expect(unsaved_digital_object_with_simple_data.new_record?).to eq(true)
+    it "returns true for a saved record" do
+      expect(digital_object_with_sample_data.new_record?).to eq(true)
     end
 
     it "returns false for a persisted instance" do
-      unsaved_digital_object_with_simple_data.save
-      expect(unsaved_digital_object_with_simple_data.new_record?).to eq(false)
+      digital_object_with_sample_data.save
+      expect(digital_object_with_sample_data.new_record?).to eq(false)
     end
   end
 
   context "#digital_object_record" do
     it "returns the underlying digital_object_record" do
-      expect(unsaved_digital_object.digital_object_record).to be_a(DigitalObjectRecord)
+      expect(digital_object_with_sample_data.digital_object_record).to be_a(DigitalObjectRecord)
     end
   end
 
   context "#optimistic_lock_token and #optimistic_lock_token=" do
     let(:token) { SecureRandom.uuid }
     it "can be set and retrieved" do
-      unsaved_digital_object.optimistic_lock_token = token
-      expect(unsaved_digital_object.optimistic_lock_token).to eq(token)
+      digital_object_with_sample_data.optimistic_lock_token = token
+      expect(digital_object_with_sample_data.optimistic_lock_token).to eq(token)
     end
   end
 end
