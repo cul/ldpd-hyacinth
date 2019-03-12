@@ -13,10 +13,12 @@ RSpec.describe 'Group Requests', type: :request do
 
         it 'returns all groups' do
           expect(response.body).to be_json_eql(%(
-            [
-              { "string_key": "group_managers" },
-              { "string_key": "developers" }
-            ]
+            {
+              "groups": [
+                { "string_key": "group_managers" },
+                { "string_key": "developers" }
+              ]
+            }
           ))
         end
 
@@ -43,7 +45,7 @@ RSpec.describe 'Group Requests', type: :request do
 
         it 'returns correct response' do
           expect(response.body).to be_json_eql(%(
-            { "string_key": "developers" }
+            { "group": { "string_key": "developers" } }
           ))
         end
       end
@@ -67,7 +69,7 @@ RSpec.describe 'Group Requests', type: :request do
   describe 'POST /api/v1/groups' do
     include_examples 'requires user to have correct permissions' do
       let(:request) do
-        post '/api/v1/groups', params: { string_key: 'content_managers' }
+        post '/api/v1/groups', params: { group: { string_key: 'content_managers' } }
       end
     end
 
@@ -76,7 +78,7 @@ RSpec.describe 'Group Requests', type: :request do
 
       context 'when creating a new group' do
         before do
-          post '/api/v1/groups', params: { string_key: 'content_managers' }
+          post '/api/v1/groups', params: { group: { string_key: 'content_managers' } }
         end
 
         it 'returns 201' do
@@ -85,14 +87,14 @@ RSpec.describe 'Group Requests', type: :request do
 
         it 'returns correct response' do
           expect(response.body).to be_json_eql(%({
-            "string_key": "content_managers"
+            "group": { "string_key": "content_managers" }
           }))
         end
       end
 
       context 'when creating requires string_key' do
         before do
-          post '/api/v1/groups', params: {}
+          post '/api/v1/groups', params: { group: { not_string_key: 'value' } }
         end
 
         it 'returns 422' do
@@ -112,7 +114,7 @@ RSpec.describe 'Group Requests', type: :request do
 
       context 'when creating with invalid string_key' do
         before do
-          post '/api/v1/groups', params: { string_key: 'ContentManagers' }
+          post '/api/v1/groups', params: { group: { string_key: 'ContentManagers' } }
         end
 
         it 'returns 422' do
@@ -137,7 +139,7 @@ RSpec.describe 'Group Requests', type: :request do
 
     include_examples 'requires user to have correct permissions' do
       let(:request) do
-        patch "/api/v1/groups/#{group.string_key}", params: {}
+        patch "/api/v1/groups/#{group.string_key}", params: { group: {} }
       end
     end
 
@@ -146,7 +148,7 @@ RSpec.describe 'Group Requests', type: :request do
 
       context 'when updating is_admin' do
         before do
-          patch "/api/v1/groups/#{group.string_key}", params: { is_admin: true }
+          patch "/api/v1/groups/#{group.string_key}", params: { group: { is_admin: true } }
         end
 
         it 'updates records' do
@@ -167,7 +169,7 @@ RSpec.describe 'Group Requests', type: :request do
 
       context 'when updating with invalid user_ids' do
         before do
-          patch "/api/v1/groups/#{group.string_key}", params: { user_ids: ['123-134-194-938-938'] }
+          patch "/api/v1/groups/#{group.string_key}", params: { group: { user_ids: ['123-134-194-938-938'] } }
         end
 
         it 'does not update group' do
@@ -192,7 +194,7 @@ RSpec.describe 'Group Requests', type: :request do
 
       context 'when updating with valid user_ids' do
         before do
-          patch "/api/v1/groups/#{group.string_key}", params: { user_ids: [user.uid] }
+          patch "/api/v1/groups/#{group.string_key}", params: { group: { user_ids: [user.uid] } }
         end
 
         it 'returns 200' do
@@ -207,7 +209,7 @@ RSpec.describe 'Group Requests', type: :request do
 
       context 'when updating with invalid permissions' do
         before do
-          patch "/api/v1/groups/#{group.string_key}", params: { permissions: ['manage_everything'] }
+          patch "/api/v1/groups/#{group.string_key}", params: { group: { permissions: ['manage_everything'] } }
         end
 
         it 'returns error' do
@@ -231,7 +233,7 @@ RSpec.describe 'Group Requests', type: :request do
       context 'when updating with valid permissions' do
         before do
           patch "/api/v1/groups/#{group.string_key}", params: {
-            permissions: [Permission::MANAGE_ALL_DIGITAL_OBJECTS]
+            group: { permissions: [Permission::MANAGE_ALL_DIGITAL_OBJECTS] }
           }
         end
 
@@ -247,7 +249,7 @@ RSpec.describe 'Group Requests', type: :request do
 
       context 'when attempting to update string_key' do
         before do
-          patch "/api/v1/groups/#{group.string_key}", params: { string_key: 'administrators' }
+          patch "/api/v1/groups/#{group.string_key}", params: { group: { string_key: 'administrators' } }
         end
 
         it 'does not update record' do
@@ -266,12 +268,14 @@ RSpec.describe 'Group Requests', type: :request do
           group.users << user
 
           patch "/api/v1/groups/#{group.string_key}", params: {
-            permissions: [
-              Permission::MANAGE_GROUPS,
-              Permission::MANAGE_GROUPS,
-              Permission::MANAGE_ALL_DIGITAL_OBJECTS
-            ],
-            user_ids: [user.uid, user2.uid]
+            group: {
+              permissions: [
+                Permission::MANAGE_GROUPS,
+                Permission::MANAGE_GROUPS,
+                Permission::MANAGE_ALL_DIGITAL_OBJECTS
+              ],
+              user_ids: [user.uid, user2.uid]
+            }
           }
         end
 
@@ -298,7 +302,7 @@ RSpec.describe 'Group Requests', type: :request do
 
       context 'when updating is_admin' do
         before do
-          patch "/api/v1/groups/#{group.string_key}", params: { is_admin: true }
+          patch "/api/v1/groups/#{group.string_key}", params: { group: { is_admin: true } }
         end
 
         it 'does not update record' do
