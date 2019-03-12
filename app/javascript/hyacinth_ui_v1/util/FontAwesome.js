@@ -6,9 +6,15 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 // Import and add icons to library
 import {
   faBell,
-  faEdit
+  faEdit,
+  faPlus,
+  faAngleDoubleDown,
+  faAngleDoubleUp
 } from '@fortawesome/free-solid-svg-icons';
 library.add(
   faBell,
-  faEdit
+  faEdit,
+  faPlus,
+  faAngleDoubleDown,
+  faAngleDoubleUp
 );

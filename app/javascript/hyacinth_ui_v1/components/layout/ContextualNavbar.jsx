@@ -1,31 +1,39 @@
 import React from 'react'
 import { Link } from "react-router-dom";
+import { Nav, Navbar, Button } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap";
 
 export default class ContextualNavbar extends React.Component {
 
-  constructor(props) {
-    super(props);
-  }
-
-  renderLefthandLabel() {
-    //if a link has been provided, lefthand label should be a link
-    if(this.props.lefthandLabelLink) {
-      return (<Link to={this.props.lefthandLabelLink} className="navbar-brand">{this.props.lefthandLabel}</Link>);
-    } else {
-      return (<span className="navbar-brand">{this.props.lefthandLabel}</span>);
-    }
-  }
-
   render() {
-    return(
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark" style={{margin:'1em 0'}}>
-        {this.renderLefthandLabel()}
-        <ul className="navbar-nav ml-auto">
-          <li className="nav-item">
-            {this.props.children}
-          </li>
-        </ul>
-      </nav>
+    let title = null;
+
+    if (this.props.title) {
+      title = <Navbar.Brand style={{"fontSize": "1.6rem"}}>{this.props.title}</Navbar.Brand>
+    }
+
+    let rightHandLinks = []
+
+    if (this.props.rightHandLinks) {
+      rightHandLinks = this.props.rightHandLinks.map((obj, i) => {
+        return (
+          <Nav.Item as="li" key={i}>
+            <LinkContainer to={obj.link}>
+              <Nav.Link>{obj.label}</Nav.Link>
+            </LinkContainer>
+          </Nav.Item>
+        )
+      })
+    }
+
+    return (
+      <Navbar bg="light" expand="lg" className="pl-0" style={{margin:'1em 0'}}>
+        {title}
+        <Nav className="ml-auto">
+         {this.props.children}
+         {rightHandLinks}
+        </Nav>
+      </Navbar>
     )
   }
 }
