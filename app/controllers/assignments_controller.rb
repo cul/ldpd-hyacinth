@@ -192,7 +192,7 @@ class AssignmentsController < ApplicationController
       when 'new', 'create'
         require_project_permission!(@assignment.project, :project_admin)
       when 'update'
-        unless @assignment.assignee == current_user
+        unless @assignment.assignee == current_user || @assignment.assigner == current_user
           require_project_permission!(@assignment.project, :project_admin)
         end
       when 'edit', 'destroy', 'commit'
