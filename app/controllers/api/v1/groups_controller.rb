@@ -9,13 +9,13 @@ module Api
       # GET /groups
       def index
         groups = Group.all
-        render json: groups, status: :ok
+        render json: { groups: groups }, status: :ok
       end
 
       # GET /groups/:string_key
       def show
         if @group
-          render json: @group, status: :ok
+          render json: { group: @group }, status: :ok
         else
           render json: errors('Not Found'), status: :not_found
         end
@@ -24,7 +24,7 @@ module Api
       # POST /groups/:string_key
       def create
         if @group.save
-          render json: @group, status: :created
+          render json: { group: @group }, status: :created
         else
           render json: errors(@group.errors.full_messages), status: :unprocessable_entity
         end
@@ -36,7 +36,7 @@ module Api
 
         # Update :is_admin property if current_user is an administrator.
         if can?(:manage, :all) && update_params.key?(:is_admin)
-          @group.is_admin = params[:is_admin] if params.key?(:is_admin)
+          @group.is_admin = update_params[:is_admin] if update_params.key?(:is_admin)
         end
 
         users = update_params.fetch(:user_ids, []).map do |uid|
@@ -64,7 +64,7 @@ module Api
           @group.users = users
 
           if @group.save
-            render json: @group, status: :ok
+            render json: { group: @group }, status: :ok
           else
             render json: errors(@group.errors.full_messages), status: :unprocessable_entity
           end
@@ -87,11 +87,11 @@ module Api
       private
 
         def create_params
-          params.permit(:string_key)
+          params.require(:group).permit(:string_key)
         end
 
         def update_params
-          params.permit(:is_admin, permissions: [], user_ids: [])
+          params.require(:group).permit(:is_admin, permissions: [], user_ids: [])
         end
     end
   end

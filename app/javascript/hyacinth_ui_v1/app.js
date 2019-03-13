@@ -3,6 +3,10 @@ import { Route, Link, Redirect, Switch } from "react-router-dom";
 import TopNavbar from 'hyacinth_ui_v1/components/layout/TopNavbar'
 import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch'
 import DigitalObjects from 'hyacinth_ui_v1/components/digital_objects/DigitalObjects'
+import Groups from 'hyacinth_ui_v1/components/groups/Groups'
+import Users from 'hyacinth_ui_v1/components/users/Users'
+
+
 
 const APPLICATION_BASE_PATH = '/ui/v1';
 
@@ -20,6 +24,8 @@ export default class App extends React.Component {
           <Switch>
             <Route exact path="/" component={Index} />
             <Route path="/digital-objects" component={DigitalObjects} />
+            <Route path="/groups" component={Groups} />
+            <Route path="/users" component={Users} />
             { /* When none of the above match, <NoMatch> will be rendered */ }
             <Route component={NoMatch} />
           </Switch>
