@@ -13,7 +13,7 @@ export default class DigitalObjectSearch extends React.Component {
       <div>
         <ContextualNavbar
           title="Digital Objects"
-          rightHandLinks={[{label: 'New Digital Object', link: '//digital-objects/new'}]} />
+          rightHandLinks={[{label: 'New Digital Object', link: '/digital-objects/new'}]} />
           
         <Link to="/digital-objects/1" className="nav-link" href="#">Object 1</Link>
         <Link to="/digital-objects/2" className="nav-link" href="#">Object 2</Link>
