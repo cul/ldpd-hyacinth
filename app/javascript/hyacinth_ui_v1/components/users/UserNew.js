@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Row, Col, Form, Button } from 'react-bootstrap';
 
 import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar'
+import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
 
 export default class UserNew extends React.Component {
 
@@ -28,6 +29,32 @@ export default class UserNew extends React.Component {
     this.setState({ password: newPassword, passwordConfirmation: newPassword});
   }
 
+  onSubmitHandler = (event) => {
+    event.preventDefault()
+
+    let data = {
+      user: {
+        first_name: this.state.firstName,
+        last_name: this.state.lastName,
+        email: this.state.email,
+        password: this.state.password,
+        password_confirmation: this.state.passwordConfirmation
+      }
+    }
+
+    hyacinthApi.post('/users', data)
+      .then(res => {
+        console.log('User created')
+        // redirect to edit screen for that user
+        console.log(res)
+        this.props.history.push('/users/' + res.data.user.uid + '/edit');
+
+      })
+      .catch(error => {
+        console.log(error)
+      });
+  }
+
   onChangeHandler = (event) => {
     this.setState({ [event.target.name]: event.target.value })
   }
@@ -39,7 +66,7 @@ export default class UserNew extends React.Component {
           title="Create New User"
           rightHandLinks={[{link: '/users', label: 'Cancel'}]} />
 
-        <Form>
+        <Form onSubmit={this.onSubmitHandler}>
           <Form.Row>
             <Form.Group as={Col} sm={6}>
               <Form.Label>First Name</Form.Label>
@@ -97,7 +124,7 @@ export default class UserNew extends React.Component {
             </Form.Group>
           </Form.Row>
 
-          <Button variant="primary" type="submit">Create</Button>
+          <Button variant="primary" type="submit" onClick={this.onSubmitHandler}>Create</Button>
         </Form>
       </div>
     )

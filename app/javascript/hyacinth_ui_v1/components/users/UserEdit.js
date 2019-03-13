@@ -12,6 +12,7 @@ export default class UserEdit extends React.Component {
     changePasswordOpen: false,
     user: {
       uid: '',
+      isActive: '',
       firstName: '',
       lastName: '',
       email: '',
@@ -30,16 +31,31 @@ export default class UserEdit extends React.Component {
     })
   }
 
+  onDeactivateHandler = (event) => {
+    event.preventDefault();
+
+    hyacinthApi.patch('/users/' + this.props.match.params.uid, { user: { is_active: false } })
+      .then(res => {
+        console.log('Deactivated User')
+      })
+      .catch(error => {
+        console.log(error);
+        console.log(error.response);
+      })
+  }
+
   onSubmitHandler = (event) => {
     event.preventDefault();
 
     let data = {
-      first_name: this.state.user.firstName,
-      last_name: this.state.user.lastName,
-      email: this.state.user.email,
-      current_password: this.state.user.currentPassword,
-      password: this.state.user.password,
-      password_confirmation: this.state.user.passwordConfirmation
+      user: {
+        first_name: this.state.user.firstName,
+        last_name: this.state.user.lastName,
+        email: this.state.user.email,
+        current_password: this.state.user.currentPassword,
+        password: this.state.user.password,
+        password_confirmation: this.state.user.passwordConfirmation
+      }
     }
 
     hyacinthApi.patch("/users/" + this.props.match.params.uid, data)
@@ -47,22 +63,25 @@ export default class UserEdit extends React.Component {
         console.log('Saved Changes')
       })
       .catch(error => {
-        console.log(error)
+        console.log(error);
+        console.log(error.response.data);
       });
   }
 
   componentDidMount = () => {
     hyacinthApi.get("/users/" + this.props.match.params.uid)
       .then(res => {
+        let user = res.data.user
         this.setState({
           user: {
             ...this.state.user,
-            uid: res.data.uid,
-            firstName: res.data.first_name,
-            lastName: res.data.last_name,
-            email: res.data.email
+            uid: user.uid,
+            isActive: user.id_active,
+            firstName: user.first_name,
+            lastName: user.last_name,
+            email: user.email
           }
-        })
+        });
       })
      .catch(error => {
        console.log(error)
@@ -77,16 +96,12 @@ export default class UserEdit extends React.Component {
           rightHandLinks={[{link: '/users', label: 'Cancel'}]} />
 
         <Form onSubmit={this.onSubmitHandler}>
-          {/* Add UUID field as ready only */}
-            <Form.Group as={Row}>
-              <Form.Label column sm={2}>UID</Form.Label>
-              <Col sm={10}>
-                <Form.Control
-                  plaintext
-                  readOnly
-                  value={this.state.user.uid} />
-                </Col>
-            </Form.Group>
+          <Form.Group as={Row}>
+            <Form.Label column sm={2}>UID</Form.Label>
+            <Col sm={10}>
+              <Form.Control plaintext readOnly value={this.state.user.uid} />
+            </Col>
+          </Form.Group>
 
           <Form.Row>
             <Form.Group as={Col}>
@@ -122,6 +137,18 @@ export default class UserEdit extends React.Component {
             </Form.Group>
           </Form.Row>
 
+          <Form.Group as={Row}>
+            <Form.Label column sm={2}>Is Active?</Form.Label>
+
+            <Col sm={3}>
+              <Form.Control plaintext readOnly value={this.state.user.isActive ? 'true' : 'false'} />
+            </Col>
+
+            <Col sm={3}>
+              <Button variant="outline-danger" type="submit" onClick={this.onDeactivateHandler}>Deactivate</Button>
+            </Col>
+          </Form.Group>
+
           <Form.Row>
             <Col>
               <Button
@@ -135,12 +162,14 @@ export default class UserEdit extends React.Component {
             </Col>
           </Form.Row>
 
+
+
           <Collapse in={this.state.changePasswordOpen}>
             <div id="collapse-form">
               <Form.Group as={Row}>
                 <Form.Label column sm={{ span: 4, offset: 1 }}>Current Password</Form.Label>
                 <Col sm={6}>
-                  <Form.Control type="text" name="password" value={this.state.currentPassword} onChange={this.onChangeHandler} />
+                  <Form.Control type="text" name="currentPassword" value={this.state.currentPassword} onChange={this.onChangeHandler} />
                 </Col>
               </Form.Group>
 
@@ -166,10 +195,7 @@ export default class UserEdit extends React.Component {
           </Collapse>
 
           <Form.Row>
-            <Col sm={2} className="d-flex justify-content-start">
-              <Button variant="danger" className="m-1" type="submit">Delete</Button>
-            </Col>
-            <Col sm={{span: 2, offset: 6}} className="d-flex justify-content-end">
+            <Col sm={10}>
               <Button variant="primary" className="m-1" type="submit" onClick={this.onSubmitHandler}>Save</Button>
             </Col>
           </Form.Row>
