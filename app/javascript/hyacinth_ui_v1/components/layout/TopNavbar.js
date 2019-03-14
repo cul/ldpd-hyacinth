@@ -41,7 +41,7 @@ export default class TopNavbar extends React.Component {
 
             <NavItemDropdown label="Admin">
               <Link to="/dynamic-fields" className="dropdown-item">Dynamic Fields</Link>
-              <Link to="/ownership-groups" className="dropdown-item">Ownership Groups</Link>
+              <Link to="/groups" className="dropdown-item">Groups</Link>
               <Link to="/role-permissions" className="dropdown-item">Role Permissions</Link>
               <Link to="/users" className="dropdown-item">Users</Link>
             </NavItemDropdown>

@@ -8,13 +8,13 @@ module Api
       # GET /users
       def index
         users = User.all.order(:last_name)
-        render json: users, status: :ok
+        render json: { users: users }, status: :ok
       end
 
       # GET /users/:uid
       def show
         if @user
-          render json: @user, status: :ok
+          render json: { user: @user }, status: :ok
         else
           render json: errors('Not Found'), status: :not_found
         end
@@ -23,7 +23,7 @@ module Api
       # POST /users
       def create
         if @user.save
-          render json: @user, status: :created
+          render json: { user: @user }, status: :created
         else
           render json: errors(@user.errors.full_messages), status: :unprocessable_entity
         end
@@ -37,7 +37,7 @@ module Api
                     @user.update_without_password(user_params)
 
         if success
-          render json: @user, status: 200
+          render json: { user: @user }, status: 200
         else
           render json: errors(@user.errors.full_messages), status: :unprocessable_entity
         end
@@ -53,7 +53,7 @@ module Api
           valid_params = [:first_name, :last_name, :email, :current_password, :password, :password_confirmation]
           valid_params << :is_active if can? :manage, @user
 
-          params.permit(*valid_params)
+          params.require(:user).permit(*valid_params)
         end
     end
   end

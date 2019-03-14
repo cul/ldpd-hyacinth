@@ -16,8 +16,8 @@ RSpec.describe 'User Requests', type: :request do
         end
 
         it 'returns all users' do
-          expect(response.body).to be_json_eql(%(
-            [
+          expect(response.body).to be_json_eql(%({
+            "users" : [
               {
                 "email": "jane-doe@example.com",
                 "first_name": "Jane",
@@ -33,7 +33,7 @@ RSpec.describe 'User Requests', type: :request do
                 "groups": ["user_managers"]
               }
             ]
-          )).excluding(:uid)
+          })).excluding(:uid)
         end
 
         it 'returns 200' do
@@ -63,15 +63,15 @@ RSpec.describe 'User Requests', type: :request do
         end
 
         it 'returns correct response' do
-          expect(response.body).to be_json_eql(%(
-            {
+          expect(response.body).to be_json_eql(%({
+            "user": {
               "email": "jane-doe@example.com",
               "first_name": "Jane",
               "last_name": "Doe",
               "is_active": true,
               "groups": []
             }
-          )).excluding(:uid)
+          })).excluding(:uid)
         end
       end
 
@@ -95,8 +95,10 @@ RSpec.describe 'User Requests', type: :request do
     include_examples 'requires user to have correct permissions' do
       let(:request) do
         post '/api/v1/users', params: {
-          first_name: 'Jane', last_name: 'Doe', email: 'jane.doe@example.com',
-          password: 'bestpasswordever', password_confirmation: 'bestpasswordever'
+          user: {
+            first_name: 'Jane', last_name: 'Doe', email: 'jane.doe@example.com',
+            password: 'bestpasswordever', password_confirmation: 'bestpasswordever'
+          }
         }
       end
     end
@@ -109,8 +111,10 @@ RSpec.describe 'User Requests', type: :request do
 
         before do
           post '/api/v1/users', params: {
-            first_name: 'Jane', last_name: 'Doe', email: email,
-            password: 'bestpasswordever', password_confirmation: 'bestpasswordever'
+            user: {
+              first_name: 'Jane', last_name: 'Doe', email: email,
+              password: 'bestpasswordever', password_confirmation: 'bestpasswordever'
+            }
           }
         end
 
@@ -130,8 +134,10 @@ RSpec.describe 'User Requests', type: :request do
       context 'when creating a new user requires email' do
         before do
           post '/api/v1/users', params: {
-            first_name: 'Jane', last_name: 'Doe',
-            password: 'bestpasswordever', password_confirmation: 'bestpasswordever'
+            user: {
+              first_name: 'Jane', last_name: 'Doe',
+              password: 'bestpasswordever', password_confirmation: 'bestpasswordever'
+            }
           }
         end
 
@@ -149,8 +155,10 @@ RSpec.describe 'User Requests', type: :request do
       context 'when creating a new user requires password' do
         before do
           post '/api/v1/users', params: {
-            first_name: 'Jane', last_name: 'Doe', email: 'jane.doe@example.com',
-            password_confirmation: 'new_password'
+            user: {
+              first_name: 'Jane', last_name: 'Doe', email: 'jane.doe@example.com',
+              password_confirmation: 'new_password'
+            }
           }
         end
 
@@ -173,8 +181,10 @@ RSpec.describe 'User Requests', type: :request do
       context 'when creating a new user requires password_confirmation' do
         before do
           post '/api/v1/users', params: {
-            first_name: 'Jane', last_name: 'Doe', email: 'jane.doe@example.com',
-            password: 'new_password'
+            user: {
+              first_name: 'Jane', last_name: 'Doe', email: 'jane.doe@example.com',
+              password: 'new_password'
+            }
           }
         end
 
@@ -200,7 +210,7 @@ RSpec.describe 'User Requests', type: :request do
 
     include_examples 'requires user to have correct permissions' do
       let(:request) do
-        patch "/api/v1/users/#{user.uid}", params: { first_name: 'John' }
+        patch "/api/v1/users/#{user.uid}", params: { user: { first_name: 'John' } }
       end
     end
 
@@ -208,8 +218,10 @@ RSpec.describe 'User Requests', type: :request do
       before do
         login_as user, scope: :user
         patch "/api/v1/users/#{user.uid}", params: {
-          first_name: 'John', last_name: 'Doe',
-          email: 'john.doe@example.com', is_active: false
+          user: {
+            first_name: 'John', last_name: 'Doe',
+            email: 'john.doe@example.com', is_active: false
+          }
         }
         user.reload
       end
@@ -236,7 +248,7 @@ RSpec.describe 'User Requests', type: :request do
 
       context 'when updating first name' do
         before do
-          patch "/api/v1/users/#{user.uid}", params: { first_name: 'John' }
+          patch "/api/v1/users/#{user.uid}", params: { user: { first_name: 'John' } }
         end
 
         it 'returns 200' do
@@ -251,7 +263,7 @@ RSpec.describe 'User Requests', type: :request do
 
       context 'when updating last name' do
         before do
-          patch "/api/v1/users/#{user.uid}", params: { last_name: 'Smith' }
+          patch "/api/v1/users/#{user.uid}", params: { user: { last_name: 'Smith' } }
         end
 
         it 'returns 200' do
@@ -266,7 +278,7 @@ RSpec.describe 'User Requests', type: :request do
 
       context 'when updating email' do
         before do
-          patch "/api/v1/users/#{user.uid}", params: { email: 'jane.doe@library.columbia.edu' }
+          patch "/api/v1/users/#{user.uid}", params: { user: { email: 'jane.doe@library.columbia.edu' } }
         end
 
         it 'returns 200' do
@@ -282,8 +294,10 @@ RSpec.describe 'User Requests', type: :request do
       context 'when updating password' do
         before do
           patch "/api/v1/users/#{user.uid}", params: {
-            current_password: 'terriblepassword',
-            password: 'newpassword', password_confirmation: 'newpassword'
+            user: {
+              current_password: 'terriblepassword',
+              password: 'newpassword', password_confirmation: 'newpassword'
+            }
           }
         end
 
@@ -300,7 +314,9 @@ RSpec.describe 'User Requests', type: :request do
       context 'when updating password without password confirmation' do
         before do
           patch "/api/v1/users/#{user.uid}", params: {
-            current_password: 'terriblepassword', password: 'newpassword'
+            user: {
+              current_password: 'terriblepassword', password: 'newpassword'
+            }
           }
         end
 
@@ -316,7 +332,7 @@ RSpec.describe 'User Requests', type: :request do
 
       context 'when updating :is_active' do
         before do
-          patch "/api/v1/users/#{user.uid}", params: { is_active: false }
+          patch "/api/v1/users/#{user.uid}", params: { user: { is_active: false } }
         end
 
         it 'updates record' do
@@ -333,7 +349,7 @@ RSpec.describe 'User Requests', type: :request do
         let(:uid) { user.uid }
 
         before do
-          patch "/api/v1/users/#{uid}", params: { uid: 'new-uuid' }
+          patch "/api/v1/users/#{uid}", params: { user: { uid: 'new-uuid' } }
         end
 
         it 'does not update record' do
