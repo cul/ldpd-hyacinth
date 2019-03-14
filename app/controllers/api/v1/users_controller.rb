@@ -46,7 +46,7 @@ module Api
       private
 
         def changing_password?
-          [:current_password, :password, :password_confirmation].any? { |k| user_params.include?(k) }
+          [:current_password, :password, :password_confirmation].any? { |k| user_params.include?(k) && user_params[k].present? }
         end
 
         def user_params

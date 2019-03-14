@@ -6,6 +6,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar'
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api'
 
+const SYSTEM_WIDE_PERMISSIONS = [
+  { label: 'Administrator', key: 'isAdmin'},
+  { label: 'Manage Vocabularies', key: 'manageVocabularies'},
+  { label: 'Manage Users', key: 'manageUsers'},
+  { label: 'Manage Groups', key: 'manageGroups'}
+]
+
 export default class GroupEdit extends React.Component {
 
   state = {
@@ -13,13 +20,14 @@ export default class GroupEdit extends React.Component {
       stringKey: '',
       isAdmin: false,
       userUids: [],
-      permissions: {
-        administrator: false,
-        manageVocabularies: false,
-        manageUsers: false,
-        manageGroups: false
-      }
+      manageVocabularies: false,
+      manageUsers: false,
+      manageGroups: false
     }
+  }
+
+  removeUserHandler = (event) => {
+
   }
 
   addUserHandler = (event) => {
@@ -37,6 +45,48 @@ export default class GroupEdit extends React.Component {
     console.log("addUserHandler")
   }
 
+  onChangeHandler = (event) => {
+    const target = event.target
+    const value = target.type === 'checkbox' ? target.checked : target.value;
+
+    this.setState({
+      group: {
+        ...this.state.group,
+        [target.name]: value
+      }
+    })
+    console.log(this.state)
+  }
+
+  onSumbitHandler = (event) => {
+    let data = {
+      group: {
+        is_admin: this.state.isAdmin,
+        permissions: []
+      }
+    }
+
+    if (this.state.group.manageVocabularies) {
+      data.group.permissions.concat('manage_vocabularies')
+    }
+
+    if (this.state.group.manageUsers) {
+      data.group.permissions.concat('manage_users')
+    }
+
+    if (this.state.group.manageGroups) {
+      data.group.permissions.concat('manage_vocabularies')
+    }
+
+    hyacinthApi.patch("/groups/" + this.state.stringKey, data)
+      .then(res => {
+        console.log('updated group')
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }
+
   componentDidMount = (event) => {
     hyacinthApi.get("/groups/" + this.props.match.params.string_key)
       .then( res => {
@@ -44,7 +94,7 @@ export default class GroupEdit extends React.Component {
         this.setState({
           group: {
             ...this.state.group,
-            stringKey: res.data.string_key
+            stringKey: res.data.group.string_key
           }
         })
       })
@@ -61,15 +111,15 @@ export default class GroupEdit extends React.Component {
 
         <Form>
           <Form.Group as={Row}>
-            <Form.Label column sm={2}>String Key</Form.Label>
-            <Col sm={10}>
+            <Form.Label column sm={3}>String Key</Form.Label>
+            <Col sm={9}>
               <Form.Control type="text" type="text" defaultValue={this.state.group.stringKey} plaintext readOnly />
             </Col>
           </Form.Group>
 
           <Form.Group as={Row}>
-            <Form.Label column sm={2}>Users</Form.Label>
-            <Col sm={10}>
+            <Form.Label column sm={3}>Users</Form.Label>
+            <Col sm={9}>
               <ul className="list-unstyled">
 
                 <li>User 1 <button type="button" className="btn btn-outline-danger btn-sm">Remove</button></li>
@@ -79,11 +129,17 @@ export default class GroupEdit extends React.Component {
           </Form.Group>
 
           <Form.Group as={Row}>
-            <Form.Label column sm={2}>System Wide Permissions</Form.Label>
-            <Col sm={10}>
-              <ul id="user-list" className="list-unstyled">
-                <li>Permission 1</li>
-              </ul>
+            <Form.Label column sm={3}>System Wide Permissions</Form.Label>
+            <Col sm={9}>
+              {SYSTEM_WIDE_PERMISSIONS.map(permission => (
+                <Form.Check
+                  type="checkbox"
+                  id={permission.key}
+                  name={permission.key}
+                  label={permission.label}
+                  checked={this.state.group[permission.key]}
+                  onChange={this.onChangeHandler}/>
+              ))}
             </Col>
           </Form.Group>
 

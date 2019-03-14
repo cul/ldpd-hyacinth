@@ -13,7 +13,7 @@ export default class Users extends React.Component {
   componentDidMount() {
     hyacinthApi.get('/users/')
       .then(res => {
-        this.setState({ users: res.data })
+        this.setState({ users: res.data.users })
       }); // TODO: catch error
   }
 
@@ -22,9 +22,10 @@ export default class Users extends React.Component {
     let rows = this.state.users.map(user => {
       return (
         <tr key={user.uid}>
-          <td><Link to={"/users/" + user.uid + "/edit"} className="nav-link" href="#">{user.first_name}</Link></td>
-          <td>{user.first_name}</td>
+          <td><Link to={"/users/" + user.uid + "/edit"} className="nav-link" href="#">{user.first_name + ' ' + user.last_name}</Link></td>
+          <td>{user.email}</td>
           <td>{user.groups}</td>
+          <td>{(user.is_active) ? 'true' : 'false'}</td>
         </tr>
       )
     })
@@ -41,6 +42,7 @@ export default class Users extends React.Component {
               <th>Name</th>
               <th>Email</th>
               <th>Groups</th>
+              <th>Active?</th>
             </tr>
           </thead>
           <tbody>
