@@ -2,6 +2,7 @@ module DigitalObjectConcerns::DigitalObjectData::Setters
   include DigitalObjectConcerns::DigitalObjectData::Setters::General
   include DigitalObjectConcerns::DigitalObjectData::Setters::PublishTargets
   include DigitalObjectConcerns::DigitalObjectData::Setters::ParentUids
+  include DigitalObjectConcerns::DigitalObjectData::Setters::StructuredChildren
 
   # A powerful method that can set many of this object's properties in one go, based on the given digital_object_data hash.
   # This method will raise errors if it is given invalid data (e.g. references to projects or publish targets that don't exist),

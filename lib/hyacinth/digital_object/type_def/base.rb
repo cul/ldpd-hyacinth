@@ -7,6 +7,7 @@ module Hyacinth
             "Cannot instantiate #{self.class}. Instantiate a subclass instead." if self.class == Base
           @default_value_proc = -> { nil }
           @public_writer = false
+          @freeze_on_deserialize = false
         end
 
         # digital object data serialization and deserialization
@@ -32,6 +33,11 @@ module Hyacinth
           self # always return self to allow for chained calls
         end
 
+        def freeze_on_deserialize
+          @freeze_on_deserialize = true
+          self # always return self to allow for chained calls
+        end
+
         ### Getters
 
         def default_value
@@ -40,6 +46,10 @@ module Hyacinth
 
         def public_writer?
           @public_writer
+        end
+
+        def freeze_on_deserialize?
+          @freeze_on_deserialize
         end
       end
     end

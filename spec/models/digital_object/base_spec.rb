@@ -50,6 +50,11 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
        ])
     end
 
+    it "has the expected frozen fields" do
+      expect(digital_object.parent_uids).to be_frozen
+      expect(digital_object.publish_entries).to be_frozen
+    end
+
     it "responds to a setter method for a field marked defined with public_writer, but doesn't respond to a setter method for a field not marked with public_writer" do
       expect(digital_object).to respond_to('custom_field2=')
       expect(digital_object).not_to respond_to('custom_field1=')
@@ -117,10 +122,12 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
     end
   end
 
-  context "#optimistic_lock_token and #optimistic_lock_token=" do
+  context "#optimistic_lock_token" do
     let(:token) { SecureRandom.uuid }
-    it "can be set and retrieved" do
-      digital_object_with_sample_data.optimistic_lock_token = token
+    before {
+      digital_object_with_sample_data.digital_object_record.optimistic_lock_token = token
+    }
+    it "can be retrieved" do
       expect(digital_object_with_sample_data.optimistic_lock_token).to eq(token)
     end
   end

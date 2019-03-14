@@ -14,7 +14,7 @@ module Hyacinth
         end
 
         def from_serialized_form(json_var)
-          return nil if value.nil?
+          return nil if json_var.nil?
           User.find_by(uid: json_var['uid'])
         end
       end

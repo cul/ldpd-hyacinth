@@ -27,29 +27,32 @@ RSpec.describe DigitalObjectConcerns::SaveBehavior do
     end
 
     context "with added parents" do
-      [:mock_parent_object1, :mock_parent_object2].each do |var|
-        let(var) {
-          double(DigitalObject::TestSubclass)
-        }
-      end
-      let(:uid) { 'uid-123' }
-      before {
-        allow(DigitalObject::Base).to receive(:find).with('parent-111').and_return(mock_parent_object1)
-        allow(DigitalObject::Base).to receive(:find).with('parent-222').and_return(mock_parent_object2)
-        allow(Hyacinth.config.search_adapter).to receive(:index)
-        allow_any_instance_of(digital_object_with_sample_data.class).to receive(:mint_uid).and_return(uid)
-        digital_object_with_sample_data.instance_variable_set('@parent_uids', Set['parent-111', 'parent-222'])
-      }
+      let(:parent1) { FactoryBot.create(:digital_object_test_subclass, :with_sample_data) }
+      let(:parent2) { FactoryBot.create(:digital_object_test_subclass, :with_sample_data) }
+
       it "triggers modification for an object's newly-added parent objects" do
-        expect(mock_parent_object1).to receive(:append_child_digital_object_uid).with(uid)
-        expect(mock_parent_object1).to receive(:deep_copy_of_structured_children)
-        expect(mock_parent_object1).to receive(:save)
-        expect(mock_parent_object2).to receive(:append_child_digital_object_uid).with(uid)
-        expect(mock_parent_object2).to receive(:deep_copy_of_structured_children)
-        expect(mock_parent_object2).to receive(:save)
+        # Add children
+        digital_object_with_sample_data.add_parent_uid(parent1.uid)
+        digital_object_with_sample_data.add_parent_uid(parent2.uid)
 
         expect(digital_object_with_sample_data.save).to be(true)
         expect(digital_object_with_sample_data.errors).to be_empty
+        expect(digital_object_with_sample_data.parent_uids).to eq(Set[parent1.uid, parent2.uid])
+
+        # Retrieve latest copies of parents and verify that their structured children have been updated
+        expect(DigitalObject::Base.find(parent1.uid).structured_children['structure']).to eq([digital_object_with_sample_data.uid])
+        expect(DigitalObject::Base.find(parent1.uid).structured_children['structure']).to eq([digital_object_with_sample_data.uid])
+
+        # Remove one child
+        digital_object_with_sample_data.remove_parent_uid(parent2.uid)
+        digital_object_with_sample_data.save
+        expect(digital_object_with_sample_data.save).to be(true)
+        expect(digital_object_with_sample_data.errors).to be_empty
+        expect(digital_object_with_sample_data.parent_uids).to eq(Set[parent1.uid])
+
+        # Retrieve latest copies of parents and verify that their structured children have been updated
+        expect(DigitalObject::Base.find(parent1.uid).structured_children['structure']).to eq([digital_object_with_sample_data.uid])
+        expect(DigitalObject::Base.find(parent2.uid).structured_children['structure']).to eq([])
       end
     end
   end

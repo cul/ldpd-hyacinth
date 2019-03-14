@@ -8,7 +8,9 @@ module DigitalObjectConcerns::Serializer
       # serialize resource_attributes
       self.resource_attributes.map do |resource_attribute_name, resource|
         digital_object_data['resources'] ||= {}
-        digital_object_data['resources'][resource_attribute_name.to_s] = resource.as_json
+        unless resource.nil?
+          digital_object_data['resources'][resource_attribute_name.to_s] = resource.as_json
+        end
       end
     end
   end

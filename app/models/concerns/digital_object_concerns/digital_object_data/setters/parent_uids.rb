@@ -6,39 +6,58 @@ module DigitalObjectConcerns
 
       def set_parent_uids(digital_object_data)
         return unless digital_object_data.key?('parent_digital_objects')
-        digital_object_data['parent_digital_objects']
 
-        self.parent_digital_object_uids = digital_object_data['parent_digital_objects'].map do |dod_parent_digital_object|
+        new_set_of_uids = Set.new
+        new_set_of_identifiers = Set.new
+
+        # Get uids and identifiers
+        digital_object_data['parent_digital_objects'].each do |dod_parent_digital_object|
           if dod_parent_digital_object['uid'].present?
-            parent_uid = dod_parent_digital_object['uid']
-            # Ensure that an object exists with the given uid
-            unless DigitalObject::Base.exists?(parent_uid)
-              raise Hyacinth::Exceptions::NotFound, "Could not find parent digital object with uid: #{parent_uid}"
-            end
+            new_set_of_uids << dod_parent_digital_object['uid']
           elsif dod_parent_digital_object['identifier'].present?
-            # Resolve identifier to uid
-            uids = Hyacinth.config.search_adapter.identifier_to_uids(dod_parent_digital_object['identifier'])
-            if uids.blank?
-            elsif uids > 1
-              raise Hyacinth::Exceptions::NotFound, "Ambiguous parent linkage. Found more than one UID for identifier #{dod_parent_digital_object['identifier']}. UIDS: #{uids.join(', ')}"
-            else
-              uids.first
-            end
+            new_set_of_identifiers << dod_parent_digital_object['identifier']
           else
             raise Hyacinth::Exceptions::NotFound, "Could not find parent digital object using find criteria: #{dod_parent_digital_object.inspect}"
           end
         end
-      end
 
-      def add_parent_uid(parent_uid)
-        unless DigitalObject::Base.exists?(parent_uid)
-          raise Hyacinth::Exceptions::NotFound, "Could not find parent digital object with uid: #{parent_uid}"
+        # Resolve any identifiers to uids and add them to new_set_of_uids
+        new_set_of_identifiers.each do |identifier|
+          uids = Hyacinth.config.search_adapter.identifier_to_uids(dod_parent_digital_object['identifier'], retry_with_delay: 5.seconds)
+          if uids.blank?
+            raise Hyacinth::Exceptions::NotFound, "Could not find parent digital object using identifier: #{dod_parent_digital_object['identifier']}"
+          elsif uids > 1
+            raise Hyacinth::Exceptions::NotFound, "Ambiguous parent linkage. Found more than one UID for identifier #{dod_parent_digital_object['identifier']}. UIDS: #{uids.join(', ')}"
+          else
+            new_set_of_uids << uids.first
+          end
         end
-        self.parent_uids << parent_uid
+
+        # Add new UIDs that don't already exist in set of parents
+        (new_set_of_uids - self.parent_uids).each do |uid|
+          # For speed, we're not validating parent uids during add here because
+          # we're assuming that real uids were supplied and identifiers were
+          # properly resolved to valid uids.  That's okay though, since if
+          # someone supplied an incorrect uid then an eventual save operation
+          # on this object will fail.
+          add_parent_uid(uid, false)
+        end
+
+        # Remove omitted UIDs that currently exist in set of parents
+        uids_to_remove.each do |uid|
+          remove_parent_uid(uid)
+        end
       end
 
-      def remove_parent_uid(parent_uid)
-        self.parent_uids.delete(parent_uid)
+      def add_parent_uid(uid, validate_existence_of_uid = true)
+        if validate_existence_of_uid && !DigitalObject::Base.exists?(uid)
+          raise Hyacinth::Exceptions::NotFound, "Could not find parent digital object with uid: #{uid}"
+        end
+        @parent_uids_to_add << uid
+      end
+
+      def remove_parent_uid(uid)
+        @parent_uids_to_remove << uid
       end
 
     end

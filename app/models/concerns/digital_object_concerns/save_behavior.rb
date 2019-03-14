@@ -1,6 +1,12 @@
 module DigitalObjectConcerns::SaveBehavior
   extend ActiveSupport::Concern
 
+  # This method is like the other #save method, but it raises an error if the save fails.
+  def save!(opts = {})
+    raise Hyacinth::Exceptions::NotSaved, 'DigitalObject could not be saved. Check digital_object#errors for details.' unless (result = save(opts))
+    result
+  end
+
   # Saves this object, persisting all data to permanent storage and reindexing for search.
   # This method will also perform a publish if this object's @publish flag is set to true. TODO: Actually make publishing work.
   # @param opts [Hash] A hash of options. Options include:
@@ -12,6 +18,12 @@ module DigitalObjectConcerns::SaveBehavior
   #                             existing uids in the structured_children object, but adding/removing uids can lead to parent-child
   #                             out-of-sync issues if we're not explicit about when we allow adding/removing.
   def save(opts = {})
+    if self.new_record?
+      self.uid = self.mint_uid # generate a new uid for this object
+      self.digital_object_record.uid = self.uid # assign that uid to this object's digital_object_record
+      self.digital_object_record.metadata_location_uri = Hyacinth.config.metadata_storage.generate_new_location_uri(self.digital_object_record.uid)
+    end
+
     # run validations
     return false unless self.valid?
 
@@ -19,24 +31,18 @@ module DigitalObjectConcerns::SaveBehavior
     # we'll keep track of these changes in the hash below so we can revert if necessary.
     digital_objects_to_child_states_for_modified_parent_objects = {}
 
+    # If this object has already been saved, we'll be loading the persisted version for comparison and potential reversion in case of failure
+    persisted_version_of_digital_object = nil
+
     begin
       # Always lock during save unless opts[:lock] explicitly tells us not to.
       # Note: In the line below, self.uid will be nil for new objects and this lock line will simply yield without locking on anything, which is fine.
       Hyacinth.config.lock_adapter.with_lock(opts.fetch(:lock, true) ? self.uid : nil) do |lock_object|
-        if new_record?
-          # In the case of a non-persisted object, any current parent_uids are considered new ones.
-          added_parent_uids = self.parent_uids
-
-          # In the case of a non-persisted object, no parents would have been removed
-          removed_parent_uids = []
-
-          self.digital_object_record.uid = self.mint_uid # generate a new uid for this object
-          self.digital_object_record.metadata_location_uri = Hyacinth.config.metadata_storage.generate_new_location_uri(digital_object_record.uid)
-        else
+        if self.persisted?
           # If this is an existing record, grab a copy of the currently-persisted
           # version in case we need to revert anything, and so we can check the
           # optimistic_lock_token
-          persisted_version_of_digital_object = self.find(self.uid)
+          persisted_version_of_digital_object = DigitalObject::Base.find(self.uid)
 
           # If the persisted version has a different optimistic_lock_token than
           # this instance, raise an error because we're out of sync and don't want
@@ -54,44 +60,15 @@ module DigitalObjectConcerns::SaveBehavior
             persisted_version_of_digital_object.flat_child_uid_set
           )
 
-          # We can determine whether any parent digital objects were added or
-          # removed by comparing this object to its persisted version.
-          added_parent_uids = self.parent_uids - persisted_version_of_digital_object.parent_uids
-          removed_parent_uids = persisted_version_of_digital_object.parent_uids - self.parent_uids
+          # TODO: Probably delete commented out code below in favor of @parent_uids_to_add and @parent_uids_to_remove
+          # # We can determine whether any parent digital objects were added or
+          # # removed by comparing this object to its persisted version.
+          # added_parent_uids = self.parent_uids - persisted_version_of_digital_object.parent_uids
+          # removed_parent_uids = persisted_version_of_digital_object.parent_uids - self.parent_uids
         end
 
         # Establish a lock on any added or removed parent objects (because we'll be modifying their structured child lists)
-        Hyacinth.config.lock_adapter.with_multilock(added_parent_uids + removed_parent_uids) do |parent_lock_objects|
-          ######################################################################
-          # TODO: Delete all of the commented out code in this section below if it's no longer needed.
-          #
-          # # Retrieve added or removed parent objects, since they'll need to have their children updated.
-          # uids_to_added_parent_objects = added_parent_uids.map do |uid|
-          #   obj = DigitalObject::Base.find(added_parent_uid)
-          #   [uid, obj]
-          # end.to_h
-          # uids_to_removed_parent_objects = removed_parent_uids.map do |uid|
-          #   obj = DigitalObject::Base.find(added_parent_uid)
-          #   [uid, obj]
-          # end.to_h
-          #
-          # # Note: The variable below should be assigned all in one go or not at all,
-          # # since if it's non-nil then it will be used in later code as the basis for
-          # # restoring child state to potentially )
-          # child_uid_states_for_added_and_removed_parents = (uids_to_added_parent_objects + uids_to_removed_parent_objects).each do |uid, digital_object|
-          #   [digital_object, digital_object.structured_children]
-          # end.to_h
-
-          # # Perform a test save operation on all added or removed parent objects in case any of them are
-          # # in a weird state and are un-saveable. If we can't save the parent objects, then adding or removing
-          # # parents to this child will lead to an inconsistent state. Performing a test save on the added/removed
-          # # parents greatly increases our chances of being able to propagate our parent-child changes as intended.
-          # # TODO: See how this performs in real-world scenarios. I'd prefer not to re-save all parents here and
-          # # then again later in this method, though an early failure here does save us a lot of trouble.
-          # added_or_removed_parent_uids.each { |digital_object_uid| DigitalObject::Base.find(digital_object_uid).save }
-          #
-          ######################################################################
-
+        Hyacinth.config.lock_adapter.with_multilock(@parent_uids_to_add + @parent_uids_to_remove) do |parent_lock_objects|
           # Handle new imports
           # TODO: make sure to renew the lock in case checksum generation or file copying take a long time
           self.resource_attributes.map do |resource_name, resource|
@@ -103,22 +80,15 @@ module DigitalObjectConcerns::SaveBehavior
           # we'll revert the optimistic_lock_token update if this is an existing
           # DigitalObject.
           DigitalObjectRecord.transaction do
-            # update the optimistic lock token as part of the save
-            self.digital_object_record.optimistic_lock_token = self.mint_optimistic_lock_token
-            self.digital_object_record.save
-
             # Save metadata
             # Note: This step must be done after file imports because imports affect metadata.
             Hyacinth.config.metadata_storage.write(self.digital_object_record.metadata_location_uri, JSON.generate(self.to_serialized_form))
 
-            # If everything went well and we made it to this point, assign self.uid
-            self.uid = self.digital_object_record.uid
-
             # Modify child lists for any added parents
-            added_parent_uids.each do |added_parent_uid|
-              dobj = DigitalObject::Base.find(added_parent_uid)
+            @parent_uids_to_add.each do |parent_uid|
+              dobj = DigitalObject::Base.find(parent_uid)
               children_snapshot = dobj.deep_copy_of_structured_children # take snapshot of state
-              dobj.append_child_digital_object_uid(self.uid)
+              dobj.append_child_uid(self.uid)
               if dobj.save(lock: false, allow_structured_child_addition_or_removal: true)
                 # If save was successful, store children snapshot in case we need to revert
                 digital_objects_to_child_states_for_modified_parent_objects[dobj] = children_snapshot
@@ -126,32 +96,43 @@ module DigitalObjectConcerns::SaveBehavior
             end
 
             # Modify child lists for any removed parents
-            removed_parent_uids.each do |removed_parent_uid|
-              dobj = DigitalObject::Base.find(removed_parent_uid)
+            @parent_uids_to_remove.each do |parent_uid|
+              dobj = DigitalObject::Base.find(parent_uid)
               children_snapshot = dobj.deep_copy_of_structured_children # take snapshot of state
-              dobj.remove_child_digital_object_uid(self.uid)
+              dobj.remove_child_uid(self.uid)
               if dobj.save(lock: false, allow_structured_child_addition_or_removal: true)
                 # If save was successful, store children snapshot in case we need to revert
                 digital_objects_to_child_states_for_modified_parent_objects[dobj] = children_snapshot
               end
             end
 
-            # Index this object for search
-            Hyacinth.config.search_adapter.index(self)
+            # After successful updating of parents for additions and removal, update this object's parent_uids.
+            # Remember that self.parent_uids is an immutable (i.e. frozen) set, so we'll be replacing it with
+            # a new Set representing the new state.
+            self.parent_uids = (self.parent_uids - @parent_uids_to_remove + @parent_uids_to_add).freeze
 
             # If all earlier steps were successful and we made it here, clean up import data.
             # We do this at the end so that if any earlier processes fail,
             # we still have the import data and can undo file imports of type :copy.
             # Also, this clearing step is simple and extremely unlikely to fail for any reason.
-            self.resource_attributes.map do |resource_name, resource|
-              resource.clear_import_data
-            end
+            clear_resource_import_data
+
+            # Clear temporary values from add/remove variables
+            @parent_uids_to_add = Set.new
+            @parent_uids_to_remove = Set.new
+
+            # Index this object for search
+            Hyacinth.config.search_adapter.index(self)
+
+            # Finally, update the optimistic lock token as part of the save, and save the digital_object_record
+            self.digital_object_record.optimistic_lock_token = self.mint_optimistic_lock_token
+            self.digital_object_record.save
           end
         end
       end
-      return true
+      true
     rescue Exception => e
-      if new_record?
+      if self.new_record?
         ### For new record ###
 
         # Clear newly-minted UID (we'll mint a new one during the next save)
@@ -159,11 +140,11 @@ module DigitalObjectConcerns::SaveBehavior
         self.digital_object_record.uid = nil
 
         # Delete the metadata written to storage if it was written
-        if digital_object_record.metadata_location_uri
+        if self.digital_object_record.metadata_location_uri
           Hyacinth.config.metadata_storage.delete(
-            digital_object_record.metadata_location_uri
+            self.digital_object_record.metadata_location_uri
           ) if Hyacinth.config.metadata_storage.exists?(
-            digital_object_record.metadata_location_uri
+            self.digital_object_record.metadata_location_uri
           )
         end
       else
@@ -207,7 +188,7 @@ module DigitalObjectConcerns::SaveBehavior
         # Re-raise any other unhandled error
         raise e
       end
-      return false
+      false
     end
   end
 
@@ -253,5 +234,11 @@ module DigitalObjectConcerns::SaveBehavior
 
   def mint_optimistic_lock_token
     SecureRandom.uuid
+  end
+
+  def clear_resource_import_data
+    self.resource_attributes.map do |resource_name, resource|
+      resource.clear_import_data
+    end
   end
 end

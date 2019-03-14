@@ -12,8 +12,6 @@ FactoryBot.define do
   Hyacinth.config.digital_object_types.register('test_subclass', DigitalObject::TestSubclass)
 
   factory :digital_object_test_subclass, class: DigitalObject::TestSubclass do
-    to_create { |instance| instance.save }
-
     trait :with_sample_data do
       initialize_with do
         instance = new

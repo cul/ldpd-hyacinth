@@ -71,12 +71,12 @@ module Hyacinth
         # TODO: Implement this
       end
 
-      def self.from_json(json)
-        self.new.tap do |resource|
-          ['location', 'checksum'].each do |attribute|
-            resource[attribute] = json[attribute]
-          end
-        end
+      def self.from_serialized_form(json_var)
+        self.new(json_var)
+      end
+
+      def to_serialized_form
+        as_json
       end
 
       def as_json

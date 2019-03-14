@@ -2,6 +2,7 @@ module DigitalObject
   # DigitalObject::Base class is an abstract class that should not
   # be instantiated. Instead, it should be subclassed (Item, Asset, etc).
   class Base
+    include ActiveModel::Validations
     include Hyacinth::DigitalObject::MetadataAttributes
     include Hyacinth::DigitalObject::ResourceAttributes
     include DigitalObjectConcerns::DigitalObjectData::Setters
@@ -31,14 +32,16 @@ module DigitalObject
     # Preservation System Linkage
     metadata_attribute :preservation_target_uris, Hyacinth::DigitalObject::TypeDef::JsonSerializableSet.new.default(-> { Set.new })
     # Parent-Child Structural Data
-    metadata_attribute :parent_uids, Hyacinth::DigitalObject::TypeDef::JsonSerializableSet.new.default(-> { Set.new })
+    metadata_attribute :parent_uids, Hyacinth::DigitalObject::TypeDef::JsonSerializableSet.new.default(-> { Set.new.freeze }).freeze_on_deserialize # Frozen Set so this can only be modified by modification methods.
     metadata_attribute :structured_children, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { { 'type' => 'sequence', 'structure' => [] } })
     # Publish Data
-    metadata_attribute :publish_entries, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Hash.new })
+    metadata_attribute :publish_entries, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Hash.new.freeze }).freeze_on_deserialize # Frozen Set so this can only be modified by modification methods.
 
-    attr_reader :digital_object_record, :errors
-    attr_accessor :optimistic_lock_token
-    delegate :new_record?, :persisted?, to: :digital_object_record
+    attr_reader :digital_object_record, :publish_to, :unpublish_from
+    attr_accessor :parent_uids_to_add, :parent_uids_to_remove
+    private :parent_uids_to_add, :parent_uids_to_add=, :parent_uids_to_remove, :parent_uids_to_remove=
+
+    delegate :new_record?, :persisted?, :optimistic_lock_token, to: :digital_object_record
 
     # Creates a new DigitalObject with default values for all fields
     def initialize
@@ -46,9 +49,10 @@ module DigitalObject
       self.digital_object_type = Hyacinth.config.digital_object_types.class_to_key(self.class)
       @digital_object_record = DigitalObjectRecord.new
       @optimistic_lock_token = nil
-      @publish_to = [] # TODO: Remove if not used
-      @unpublish_from = [] # TODO: Remove if not used
-      @errors = ActiveModel::Errors.new(self)
+      @parent_uids_to_add = Set.new
+      @parent_uids_to_remove = Set.new
+      @publish_to = []
+      @unpublish_from = []
     end
   end
 end
