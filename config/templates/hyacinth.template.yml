@@ -19,6 +19,9 @@ development:
         url: http://localhost:8080/fedora
         user: fedoraAdmin
         password: fedoraAdmin
+  uri_sevice:
+    url: 'https://example.com'
+    api_key: 'notasecret'
 
 test:
   metadata_storage:
@@ -41,3 +44,6 @@ test:
         url: http://localhost:9080/fedora
         user: fedoraAdmin
         password: fedoraAdmin
+  uri_sevice:
+    url: 'https://example.com'
+    api_key: 'notasecret'
