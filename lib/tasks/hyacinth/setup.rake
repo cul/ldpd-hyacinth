@@ -36,11 +36,26 @@ namespace :hyacinth do
         end
       end
 
-      Group.create!(
-        string_key: 'administrators',
-        is_admin: true,
-        users: [User.find_by(email: 'hyacinth-admin@library.columbia.edu')]
-      )
+      default_groups = [
+        {
+          string_key: 'administrators',
+          is_admin: true,
+          users: [User.find_by(email: 'hyacinth-admin@library.columbia.edu')]
+        }
+      ]
+
+      default_groups.each do |group_info|
+        if Group.exists?(string_key: group_info[:string_key])
+          puts Rainbow("Skipping creation of group #{group_info[:string_key]} because user already exists.").blue.bright
+        else
+          Group.create!(
+            string_key: group_info[:string_key],
+            is_admin: group_info[:is_admin],
+            users: group_info[:users]
+          )
+          puts Rainbow("Created group: #{group_info[:string_key]}").green
+        end
+      end
     end
 
     desc "Set up hyacinth config files"
