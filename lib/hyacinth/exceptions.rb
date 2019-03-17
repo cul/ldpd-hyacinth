@@ -11,7 +11,7 @@ module Hyacinth
     class UnsupportedType < HyacinthError; end
 
     class AdapterNotFoundError < StandardError; end
-    class UnhandledStorageLocationError < StandardError; end
+    class UnhandledLocationError < StandardError; end
 
     class DuplicateTypeError < StandardError; end
   end

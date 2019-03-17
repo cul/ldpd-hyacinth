@@ -1,6 +1,6 @@
 module Hyacinth
   module Adapters
-    module StorageAdapter
+    module PreservationAdapter
       class Abstract
         def initialize(adapter_config = {})
         end
@@ -11,38 +11,28 @@ module Hyacinth
           location_uri.start_with?(uri_prefix)
         end
 
-        # Generates a new storage location for the given identifier, ensuring that nothing currently exists at that location.
+        # Generates a new persistence location for the given identifier, ensuring that nothing currently exists at that location.
         # @return [String] a location uri
         def generate_new_location_uri(identifier)
           raise NotImplementedError
         end
 
+        # Returns true if an object exists in a persistence system at the given location_uri
         def exists?(location_uri)
           raise NotImplementedError
         end
 
-        # @return [string] the expected prefix for a location_uri associated with this adapter ('disk://', 'memory://', etc.)
+        # @return [string] the expected prefix for a location_uri associated with this adapter ('fedora3://', 'fedora4://', etc.)
         def uri_prefix
           raise NotImplementedError
         end
 
-        def read(location_uri)
+        def persist(location_uri, digital_object)
           raise Hyacinth::Exceptions::UnhandledLocationError, "Unhandled location_uri for #{self.class.name}: #{location_uri}" unless handles?(location_uri)
-          read_impl(location_uri)
+          persist_impl(location_uri, digital_object)
         end
 
-        def read_impl
-          raise NotImplementedError
-        end
-
-        # @param location_uri [String] location to write to
-        # @param content [bytes] content to write
-        def write(location_uri, content)
-          raise Hyacinth::Exceptions::UnhandledLocationError, "Unhandled location_uri for #{self.class.name}: #{location_uri}" unless handles?(location_uri)
-          write_impl(location_uri, content)
-        end
-
-        def write_impl
+        def persist_impl
           raise NotImplementedError
         end
       end

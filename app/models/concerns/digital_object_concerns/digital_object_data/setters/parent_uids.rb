@@ -35,11 +35,6 @@ module DigitalObjectConcerns
 
         # Add new UIDs that don't already exist in set of parents
         (new_set_of_uids - self.parent_uids).each do |uid|
-          # For speed, we're not validating parent uids during add here because
-          # we're assuming that real uids were supplied and identifiers were
-          # properly resolved to valid uids.  That's okay though, since if
-          # someone supplied an incorrect uid then an eventual save operation
-          # on this object will fail.
           add_parent_uid(uid, false)
         end
 
@@ -50,9 +45,6 @@ module DigitalObjectConcerns
       end
 
       def add_parent_uid(uid, validate_existence_of_uid = true)
-        if validate_existence_of_uid && !DigitalObject::Base.exists?(uid)
-          raise Hyacinth::Exceptions::NotFound, "Could not find parent digital object with uid: #{uid}"
-        end
         @parent_uids_to_add << uid
       end
 

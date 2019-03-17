@@ -24,7 +24,6 @@ module DigitalObjectConcerns::SaveBehavior
       self.digital_object_record.metadata_location_uri = Hyacinth.config.metadata_storage.generate_new_location_uri(self.digital_object_record.uid)
     end
 
-    # run validations
     return false unless self.valid?
 
     # If we modify the child lists for any removed or added parent objects,
@@ -75,13 +74,26 @@ module DigitalObjectConcerns::SaveBehavior
             resource.process_import_if_present(self.uid, resource_name)
           end
 
+          if self.publish_to.present?
+            # If this object has any publish_to values during save, that indicates
+            # that we're publishing.
+
+            # Publishing means we want to mint a reserved DOI if we don't have one already.
+            # TODO: Make the line below functional
+            mint_reserved_doi_if_doi_blank
+
+            # Publishing also means we want to preserve this record, so we'll make sure that
+            # preservation target URIs have already been minted for all preservation targets.
+            generate_missing_preservation_target_uris
+          end
+
           # We're starting a transaction here so that we can revert the creation
           # of a new DigitalObjectRecord if this is a new DigitalObject, or so that
           # we'll revert the optimistic_lock_token update if this is an existing
           # DigitalObject.
           DigitalObjectRecord.transaction do
             # Save metadata
-            # Note: This step must be done after file imports because imports affect metadata.
+            # Note: This step must be done after file import and potential DOI minting because imports affect metadata.
             Hyacinth.config.metadata_storage.write(self.digital_object_record.metadata_location_uri, JSON.generate(self.to_serialized_form))
 
             # Modify child lists for any added parents
@@ -239,6 +251,21 @@ module DigitalObjectConcerns::SaveBehavior
   def clear_resource_import_data
     self.resource_attributes.map do |resource_name, resource|
       resource.clear_import_data
+    end
+  end
+
+  def mint_reserved_doi_if_doi_blank
+    # TODO: Make this work
+    self.doi = Hyacinth::DoiService.mint_reserved_doi if self.doi.blank?
+  end
+
+  # Generates preservation target URIs for all system-wide preservation targets.
+  def generate_missing_preservation_target_uris
+    Hyacinth.config.preservation_persistence.preservation_adapters.each do |adapter|
+      uri = digital_object.preservation_target_uris.find { |preservation_target_uri| adapter.handles?(preservation_target_uri) }
+      if uri.nil?
+        self.preservation_target_uris << adapter.generate_new_location_uri
+      end
     end
   end
 end
