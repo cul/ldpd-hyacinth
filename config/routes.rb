@@ -31,6 +31,8 @@ Rails.application.routes.draw do
         resources :custom_fields, param: :field_key, except: [:new, :edit, :show, :index], module: 'vocabularies'
         resources :terms, param: :uri, except: [:new, :edit], module: 'vocabularies'
       end
+
+      resources :projects, param: :string_key, except: [:new, :edit]
     end
   end
 end
