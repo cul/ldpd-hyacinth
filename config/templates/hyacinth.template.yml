@@ -13,6 +13,12 @@ development:
   search_adapter:
     type: solr
     url: http://localhost:8983/hyacinth_development
+  preservation_persistence:
+    adapters:
+      - type: fedora3
+        url: http://localhost:8080/fedora
+        user: fedoraAdmin
+        password: fedoraAdmin
 
 test:
   metadata_storage:
@@ -29,3 +35,9 @@ test:
   search_adapter:
     type: solr
     url: http://localhost:9983/hyacinth_test
+  preservation_persistence:
+    adapters:
+      - type: fedora3
+        url: http://localhost:9080/fedora
+        user: fedoraAdmin
+        password: fedoraAdmin

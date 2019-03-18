@@ -25,11 +25,11 @@ RSpec.describe Hyacinth::Adapters::StorageAdapter::Memory do
     context "reject unhandled URIs" do
       let(:unhandled_location_uri) { 'unhandled:///a/b/c/d/e' }
       it "rejects for read" do
-        expect { adapter.read(unhandled_location_uri) }.to raise_error(Hyacinth::Exceptions::UnhandledStorageLocationError)
+        expect { adapter.read(unhandled_location_uri) }.to raise_error(Hyacinth::Exceptions::UnhandledLocationError)
       end
 
       it "rejects for write" do
-        expect { adapter.write(unhandled_location_uri, content) }.to raise_error(Hyacinth::Exceptions::UnhandledStorageLocationError)
+        expect { adapter.write(unhandled_location_uri, content) }.to raise_error(Hyacinth::Exceptions::UnhandledLocationError)
       end
     end
   end

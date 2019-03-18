@@ -27,6 +27,19 @@ Layout/EmptyLinesAroundClassBody:
 Layout/IndentationConsistency:
   EnforcedStyle: rails
 
+Metrics/CyclomaticComplexity:
+  Enabled: true
+  Max: 7
+  Exclude:
+    - 'app/controllers/api/v1/groups_controller.rb'
+
+Metrics/PerceivedComplexity:
+  Enabled: true
+  Max: 8
+  Exclude:
+    - 'app/controllers/api/v1/groups_controller.rb'
+    - 'app/controllers/concerns/hyacinth/users/cas_authentication_behavior.rb'
+
 Style/BracesAroundHashParameters:
   Enabled: false
 

@@ -1,6 +1,7 @@
 module Api
   module V1
     class DigitalObjectsController < ApplicationApiController
+      before_action :ensure_json_request
       before_action :set_digital_object, only: [:show, :edit, :update, :destroy]
 
       # GET /digital_objects/search
@@ -32,6 +33,9 @@ module Api
       # POST /digital_objects
       # POST /digital_objects.json
       def create
+        digital_object_data = JSON.parse(create_or_update_params['digital_object_data_json'])
+        digital_object = DigitalObject::Base.class_for_type(digital_object_data['digital_object_type']).new
+        digital_object
         @digital_object = DigitalObject.new(digital_object_params)
         if @digital_object.save
           render :show, status: :created, location: @digital_object
@@ -58,14 +62,17 @@ module Api
       end
 
       private
-        # Use callbacks to share common setup or constraints between actions.
         def set_digital_object
-          @digital_object = DigitalObject.find(params[:id])
+          @digital_object = DigitalObject::Base.find(params[:uid])
         end
 
         # Never trust parameters from the scary internet, only allow the white list through.
         def new_params
           params.permit(:digital_object_type)
+        end
+
+        def create_or_update_params
+          params.require(:digital_object).permit(:digital_object_data_json)
         end
     end
   end

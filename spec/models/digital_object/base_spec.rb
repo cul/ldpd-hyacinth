@@ -37,6 +37,7 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
         :first_persisted_to_preservation_at,
         :first_published_at,
         :group,
+        :identifiers,
         :parent_uids,
         :persisted_to_preservation_at,
         :preservation_target_uris,
@@ -80,6 +81,7 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
             persisted_to_preservation_at: nil,
             first_persisted_to_preservation_at: nil,
             group: nil,
+            identifiers: Set.new,
             projects: Set.new,
             publish_entries: {},
             parent_uids: Set.new,
@@ -95,10 +97,10 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
 
     it "returns expected values for a few previously-set fields" do
       expect(digital_object_with_sample_data.dynamic_field_data).to eq({
-        'title' => {
+        'title' => [{
           'non_sort_portion' => 'The',
           'sort_portion' => 'Tall Man and His Hat'
-        }
+        }]
       })
       expect(digital_object_with_sample_data.custom_field1).to eq('excellent value 1')
       expect(digital_object_with_sample_data.custom_field2).to eq('excellent value 2')
@@ -122,12 +124,10 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
     end
   end
 
-  context "#optimistic_lock_token" do
+  context "#optimistic_lock_token= and #optimistic_lock_token" do
     let(:token) { SecureRandom.uuid }
-    before {
-      digital_object_with_sample_data.digital_object_record.optimistic_lock_token = token
-    }
-    it "can be retrieved" do
+    it "can be set and retrieved" do
+      digital_object_with_sample_data.optimistic_lock_token = token
       expect(digital_object_with_sample_data.optimistic_lock_token).to eq(token)
     end
   end

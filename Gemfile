@@ -49,7 +49,7 @@ group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 
   # rubocop for code analysis/formatting
-  gem 'rubocop', '~> 0.64.0', require: false
+  gem 'rubocop', '~> 0.65.0', require: false
   gem 'rubocop-rails_config'
   gem 'rubocop-rspec'
   gem 'solr_wrapper', '~> 2.0'

@@ -16,10 +16,10 @@ FactoryBot.define do
       initialize_with do
         instance = new
         instance.instance_variable_set('@dynamic_field_data', {
-          'title' => {
+          'title' => [{
             'non_sort_portion' => 'The',
             'sort_portion' => 'Tall Man and His Hat'
-          }
+          }]
         })
         instance.instance_variable_set('@custom_field1', 'excellent value 1')
         instance.instance_variable_set('@custom_field2', 'excellent value 2')
