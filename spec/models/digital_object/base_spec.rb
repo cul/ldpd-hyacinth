@@ -97,10 +97,10 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
 
     it "returns expected values for a few previously-set fields" do
       expect(digital_object_with_sample_data.dynamic_field_data).to eq({
-        'title' => {
+        'title' => [{
           'non_sort_portion' => 'The',
           'sort_portion' => 'Tall Man and His Hat'
-        }
+        }]
       })
       expect(digital_object_with_sample_data.custom_field1).to eq('excellent value 1')
       expect(digital_object_with_sample_data.custom_field2).to eq('excellent value 2')

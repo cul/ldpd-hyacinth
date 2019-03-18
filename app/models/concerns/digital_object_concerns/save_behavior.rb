@@ -51,6 +51,8 @@ module DigitalObjectConcerns
         Hyacinth.config.lock_adapter.with_multilock(@parent_uids_to_add + @parent_uids_to_remove) do |parent_lock_objects|
           handle_resource_imports
 
+          update_timestamps
+
           # Save metadata
           # Note: This step must be done after file import and potential DOI minting because imports affect metadata.
           Hyacinth.config.metadata_storage.write(self.digital_object_record.metadata_location_uri, JSON.generate(self.to_serialized_form))
@@ -249,6 +251,12 @@ module DigitalObjectConcerns
 
     def metadata_exists?
       self.digital_object_record.metadata_location_uri.present? && Hyacinth.config.metadata_storage.exists?(self.digital_object_record.metadata_location_uri)
+    end
+
+    def update_timestamps
+      current_datetime = DateTime.now
+      self.created_at = current_datetime if self.created_at.blank?
+      self.updated_at = current_datetime
     end
   end
 end

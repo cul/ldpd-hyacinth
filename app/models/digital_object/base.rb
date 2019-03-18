@@ -3,7 +3,6 @@ module DigitalObject
   # be instantiated. Instead, it should be subclassed (Item, Asset, etc).
   class Base
     extend ActiveModel::Callbacks
-    define_model_callbacks :validation, :save
 
     include ActiveModel::Validations
     include Hyacinth::DigitalObject::MetadataAttributes
@@ -15,6 +14,11 @@ module DigitalObject
     include DigitalObjectConcerns::PublishBehavior
     include DigitalObjectConcerns::Serializer
     include DigitalObjectConcerns::FindBehavior
+
+    # Set up callbacks
+    define_model_callbacks :validation, :save
+    before_validation :trim_whitespace_for_dynamic_field_data!, :remove_blank_fields_from_dynamic_field_data!
+    # TODO: Add these before_validations ---> :register_new_uris_and_values_for_dynamic_field_data!, normalize_controlled_term_fields!
 
     # Simple attributes
     metadata_attribute :uid, Hyacinth::DigitalObject::TypeDef::String.new

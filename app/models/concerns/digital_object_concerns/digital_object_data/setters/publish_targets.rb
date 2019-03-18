@@ -18,8 +18,10 @@ module DigitalObjectConcerns
         # Raise error if pub_to and unpub_from have any overlapping values
         raise ArgumentError, 'Cannot include the same publish target in publish_to and unpublish_from' if (pub_to & unpub_from).length > 0
 
-        self.publish_to = pub_to
-        self.unpublish_from = unpub_from
+        self.publish_to.clear
+        self.publish_to.push(*pub_to)
+        self.unpublish_from.clear
+        self.unpublish_from.push(*unpub_from)
       end
 
       def publish_to_or_unpublish_from_values_present?(digital_object_data)
