@@ -264,6 +264,8 @@ GEM
     uglifier (4.1.20)
       execjs (>= 0.3.0, < 3)
     unicode-display_width (1.4.1)
+    uri_service-client (0.1.0)
+      faraday (~> 0.15.4)
     warden (1.2.8)
       rack (>= 2.0.6)
     web-console (3.7.0)
@@ -314,6 +316,7 @@ DEPENDENCIES
   sqlite3 (~> 1.3.13)
   tzinfo-data
   uglifier (>= 1.3.0)
+  uri_service-client
   web-console (>= 3.3.0)
   webpacker
 

@@ -24,4 +24,12 @@ class ApplicationApiController < ActionController::API
     def errors(errors)
       { errors: Array.wrap(errors).map { |e| { title: e } } }
     end
+
+    def require_vocabulary_manager
+      if current_user && current_user.system_wide_permissions.include?(Permission::MANAGE_VOCABULARIES)
+        true
+      else
+        raise CanCan::AccessDenied
+      end
+    end
 end
