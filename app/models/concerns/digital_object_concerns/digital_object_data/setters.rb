@@ -20,9 +20,9 @@ module DigitalObjectConcerns::DigitalObjectData::Setters
     set_dynamic_field_data(new_digital_object_data, merge_dynamic_fields)
     set_parent_uids(new_digital_object_data)
     set_publish_targets(new_digital_object_data)
-    #set_state(new_digital_object_data)
-    #set_admin_set(new_digital_object_data)
-    #set_projects(new_digital_object_data)
-    #set_resources(new_digital_object_data)
+    # set_state(new_digital_object_data)
+    # set_group(new_digital_object_data)
+    # set_projects(new_digital_object_data)
+    # set_resources(new_digital_object_data)
   end
 end

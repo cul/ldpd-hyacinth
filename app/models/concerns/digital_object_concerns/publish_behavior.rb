@@ -13,7 +13,7 @@ module DigitalObjectConcerns::PublishBehavior
     # Minimize the number of SQL queries by retrieving all referenced publish targets in one operation
     string_keys_to_publish_targets = PublishTarget.where(
       string_key: (self.publish_to + self.unpublish_from)
-    ).map{ |publish_target| [publish_target.string_key, publish_target] }.to_h
+    ).map { |publish_target| [publish_target.string_key, publish_target] }.to_h
 
     # Do deep copy of current (frozen) publish_entries
     new_publish_entries = self.publish_entries.dup
@@ -51,8 +51,7 @@ module DigitalObjectConcerns::PublishBehavior
       end
     end
 
-    # Since our publish entries changed as a result of the publish, we need to
-    # re-save this digital object.
+    # Since our publish entries changed as a result of the publish, we need to re-save this digital object.
     self.save
 
     # AFTER the save (because save clears out errors), add any publish or
@@ -64,7 +63,6 @@ module DigitalObjectConcerns::PublishBehavior
       self.errors.add(:unpublish, publish_error)
     end
 
-    # Return true if there are errors. Otherwise return false.
     self.errors.blank?
   end
 

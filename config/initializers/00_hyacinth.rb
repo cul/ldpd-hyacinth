@@ -35,7 +35,7 @@ Rails.application.config.to_prepare do
           ),
           Hyacinth::Storage::MetadataStorage.new(HYACINTH[:metadata_storage]),
           Hyacinth::Storage::ResourceStorage.new(HYACINTH[:resource_storage]),
-          Hyacinth::Adapters::PreservationPersistence.new(HYACINTH[:preservation_persistence]),
+          Hyacinth::Preservation::PreservationPersistence.new(HYACINTH[:preservation_persistence]),
           Hyacinth::Adapters::SearchAdapterManager.create(HYACINTH[:search_adapter]),
           Hyacinth::Adapters::LockAdapterManager.create(HYACINTH[:lock_adapter]),
         )

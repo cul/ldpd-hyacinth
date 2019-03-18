@@ -10,17 +10,9 @@ class Ability
       elsif user.admin?
         true
       elsif subject_class == User
-        if subject && subject.id == user.id && [:edit, :update, :read, :show].include?(action)
-          true
-        else
-          user.system_wide_permissions.include?(Permission::MANAGE_USERS)
-        end
+        evaluate_user_subject_ability(user, action, subject_class, subject)
       elsif subject_class == Group
-        if [:index, :show, :read].include?(action)
-          true
-        else
-          user.system_wide_permissions.include?(Permission::MANAGE_GROUPS)
-        end
+        evaluate_group_subject_ability(user, action, subject_class, subject)
       elsif subject_class == 'Vocabulary' # This is going to be a problem because it's not a real class
         user.system_wide_permissions.include?(Permission::MANAGE_VOCABULARIES)
       end
@@ -41,5 +33,21 @@ class Ability
     # elsif subject_class == Project # TODO: NEED TO ADD TESTS
     #   user.available_project_actions(subject.id).include?('manage')
     # end
+  end
+
+  def evaluate_user_subject_ability(user, action, subject_class, subject)
+    if subject && subject.id == user.id && [:edit, :update, :read, :show].include?(action)
+      true
+    else
+      user.system_wide_permissions.include?(Permission::MANAGE_USERS)
+    end
+  end
+
+  def evaluate_group_subject_ability(user, action, subject_class, subject)
+    if [:index, :show, :read].include?(action)
+      true
+    else
+      user.system_wide_permissions.include?(Permission::MANAGE_GROUPS)
+    end
   end
 end

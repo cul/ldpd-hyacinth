@@ -8,7 +8,7 @@ module DigitalObject
     include DigitalObjectConcerns::DigitalObjectData::Setters
     include DigitalObjectConcerns::Validations
     include DigitalObjectConcerns::SaveBehavior
-    include DigitalObjectConcerns::PreserveBehavior
+    include DigitalObjectConcerns::PreservationBehavior
     include DigitalObjectConcerns::PublishBehavior
     include DigitalObjectConcerns::Serializer
     include DigitalObjectConcerns::FindBehavior
@@ -40,8 +40,8 @@ module DigitalObject
     metadata_attribute :publish_entries, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Hash.new.freeze }).freeze_on_deserialize # Frozen Set so this can only be modified by modification methods.
 
     attr_reader :digital_object_record, :publish_to, :unpublish_from
-    #attr_accessor :parent_uids_to_add, :parent_uids_to_remove
-    #private :parent_uids_to_add, :parent_uids_to_add=, :parent_uids_to_remove, :parent_uids_to_remove=
+    # attr_accessor :parent_uids_to_add, :parent_uids_to_remove
+    # private :parent_uids_to_add, :parent_uids_to_add=, :parent_uids_to_remove, :parent_uids_to_remove=
 
     delegate :new_record?, :persisted?, :optimistic_lock_token, :optimistic_lock_token=, to: :digital_object_record
 
