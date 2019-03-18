@@ -19,8 +19,21 @@ module DigitalObjectConcerns
     #                             existing uids in the structured_children object, but adding/removing uids can lead to parent-child
     #                             out-of-sync issues if we're not explicit about when we allow adding/removing.
     def save(opts = {})
-      return false unless self.valid?
+      run_callbacks :validation do
+        self.valid?
+      end
 
+      return false if self.errors.present?
+
+      run_callbacks :save do
+        save_impl(opts)
+      end
+
+      self.errors.empty?
+    end
+
+    # Implementation for the #save method.  See #save for usage details and opts info.
+    def save_impl(opts = {})
       # If we modify the child lists for any removed or added parent objects,
       # we'll keep track of these changes in the hash below so we can revert if necessary.
       digital_objects_to_child_states_for_modified_parent_objects = {}

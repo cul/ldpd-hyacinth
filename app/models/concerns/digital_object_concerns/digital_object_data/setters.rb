@@ -1,7 +1,13 @@
 module DigitalObjectConcerns::DigitalObjectData::Setters
-  include DigitalObjectConcerns::DigitalObjectData::Setters::General
-  include DigitalObjectConcerns::DigitalObjectData::Setters::PublishTargets
+  include DigitalObjectConcerns::DigitalObjectData::Setters::DynamicFieldData
+  include DigitalObjectConcerns::DigitalObjectData::Setters::Group
+  include DigitalObjectConcerns::DigitalObjectData::Setters::Identifiers
+  include DigitalObjectConcerns::DigitalObjectData::Setters::OptimisticLockToken
   include DigitalObjectConcerns::DigitalObjectData::Setters::ParentUids
+  include DigitalObjectConcerns::DigitalObjectData::Setters::Projects
+  include DigitalObjectConcerns::DigitalObjectData::Setters::PublishTargets
+  include DigitalObjectConcerns::DigitalObjectData::Setters::Resources
+  include DigitalObjectConcerns::DigitalObjectData::Setters::State
   include DigitalObjectConcerns::DigitalObjectData::Setters::StructuredChildren
 
   # A powerful method that can set many of this object's properties in one go, based on the given digital_object_data hash.
@@ -16,13 +22,14 @@ module DigitalObjectConcerns::DigitalObjectData::Setters
     # TODO: Make sure to include an optimistic_lock_token in the Hyacinth UI editor save submissions
     # so that users will know to refresh the page and redo changes if another user or process made changes
     # while they had the editing screen open.
-    set_optimistic_lock_token(new_digital_object_data)
     set_dynamic_field_data(new_digital_object_data, merge_dynamic_fields)
+    set_group(new_digital_object_data)
+    set_identifiers(new_digital_object_data)
+    set_optimistic_lock_token(new_digital_object_data)
     set_parent_uids(new_digital_object_data)
     set_publish_targets(new_digital_object_data)
-    # set_state(new_digital_object_data)
-    # set_group(new_digital_object_data)
-    # set_projects(new_digital_object_data)
-    # set_resources(new_digital_object_data)
+    set_resources(new_digital_object_data)
+    set_state(new_digital_object_data)
+    set_projects(new_digital_object_data)
   end
 end
