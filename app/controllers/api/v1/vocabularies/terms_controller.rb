@@ -6,7 +6,6 @@ module Api
         before_action :user_signed_in?, only: [:index, :show, :create]
         before_action :require_vocabulary_manager, only: [:update, :destroy]
 
-
         # GET /vocabularies/:vocabulary_string_key/terms
         def index
           response = URIService.connection.search_terms(vocabulary, params[:term])

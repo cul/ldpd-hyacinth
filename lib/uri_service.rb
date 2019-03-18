@@ -7,9 +7,22 @@ module URIService
   end
 
   def self.new_connection
-    config = Rails.application.config_for(:hyacinth)['uri_service']
+    config = HYACINTH[:uri_service]
+
+    raise Hyacinth::Exceptions::MissingRequiredOpt, 'URI Service credentials not provided' if config.nil?
+
     UriService::Client.connection(
-      url: config['url'], api_key: config['api_key']
+      url: config[:url], api_key: config[:api_key]
     )
+  end
+
+  def self.config
+    config = Hyacinth[:uri_service]
+
+    if config.blank? && config[:url].blank? && config[:api_key]
+      raise Hyacinth::Exceptions::MissingRequiredOpt, 'URI Service credentials not provided or incomplete'
+    end
+
+    config
   end
 end
