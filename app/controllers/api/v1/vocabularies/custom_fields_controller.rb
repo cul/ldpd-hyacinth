@@ -2,20 +2,17 @@ module Api
   module V1
     module Vocabularies
       class CustomFieldsController < ApplicationApiController
-        before_action :ensure_json_request, :require_vocabulary_manager
+        before_action :ensure_json_request, :require_vocabulary_manager!
 
         # GET /vocabularies/:vocabulary_string_key/custom_fields
         def create
-          response = URIService.connection.create_custom_field(vocabulary, params[:custom_field])
+          response = URIService.connection.create_custom_field(vocabulary, request_data)
           render json: { custom_field: response.data }, status: response.status
         end
 
         # GET /vocabularies/:vocabulary_string_key/custom_fields/:field_key
         def update
-          data = params[:custom_field]
-          data[:field_key] = params[:field_key]
-
-          response = URIService.connection.update_custom_field(vocabulary, data)
+          response = URIService.connection.update_custom_field(vocabulary, request_data)
           render json: { custom_field: response.data }, status: response.status
         end
 
@@ -29,6 +26,13 @@ module Api
 
           def vocabulary
             params[:vocabulary_string_key]
+          end
+
+          def request_data
+            params[:custom_field].to_unsafe_h.tap do |hash|
+              hash[:field_key] = params[:field_key] if params.key?(:field_key)
+              hash
+            end
           end
       end
     end
