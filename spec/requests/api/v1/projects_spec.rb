@@ -94,7 +94,7 @@ RSpec.describe 'Projects Requests', type: :request do
       end
     end
 
-    context 'when creating requires string_key' do
+    context 'when create request is missing string_key' do
       before do
         post '/api/v1/projects', params: {
           project: { display_label: 'Best Project', project_url: 'https://best_project.com' }
