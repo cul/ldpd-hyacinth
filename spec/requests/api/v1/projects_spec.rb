@@ -188,7 +188,7 @@ RSpec.describe 'Projects Requests', type: :request do
       end
     end
 
-    context 'when deleting a project that does not exists' do
+    context 'when deleting a project that does not exist' do
       before { delete '/api/v1/projects/not-valid' }
 
       it 'returns errors' do
