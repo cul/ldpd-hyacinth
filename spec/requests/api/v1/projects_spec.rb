@@ -114,7 +114,7 @@ RSpec.describe 'Projects Requests', type: :request do
       end
     end
 
-    context 'when creating requires display_label' do
+    context 'when create request is missing display_label' do
       before do
         post '/api/v1/projects', params: {
           project: { string_key: 'best_project', project_url: 'https://best_project.com' }
