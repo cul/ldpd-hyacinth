@@ -7,12 +7,12 @@ module Api
 
         # GET /projects/:string_key/publish_targets
         def index
-          render json: { publish_targets: @project.publish_targets }, status: 200
+          render json: { publish_targets: @project.publish_targets }, status: :ok
         end
 
         # GET /projects/:string_key/publish_targets/:string_key
         def show
-          render json: { publish_target: @publish_target }, status: 200
+          render json: { publish_target: @publish_target }, status: :ok
         end
 
         # POST /projects/:string_key/publish_targets
