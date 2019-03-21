@@ -32,7 +32,9 @@ Rails.application.routes.draw do
         resources :terms, param: :uri, except: [:new, :edit], module: 'vocabularies'
       end
 
-      resources :projects, param: :string_key, except: [:new, :edit]
+      resources :projects, param: :string_key, except: [:new, :edit] do
+        resources :publish_targets, param: :string_key, except: [:new, :edit], module: 'projects'
+      end
     end
   end
 end
