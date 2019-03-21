@@ -16,6 +16,7 @@ RSpec.describe DigitalObjectConcerns::SaveBehavior do
   context "#save" do
     it "runs as expected, returning true when a valid object is saved successfully, and doesn't have any errors in the #errors array" do
       success = digital_object_with_sample_data.save
+      puts digital_object_with_sample_data.errors.full_messages.inspect
       expect(digital_object_with_sample_data.errors.empty?).to eq(true)
       expect(success).to eq(true)
     end

@@ -2,7 +2,7 @@ module Hyacinth
   module DigitalObject
     module TypeDef
       class PublishTargets < Hyacinth::DigitalObject::TypeDef::Base
-        def to_serialized_form(publish_targets)
+        def to_serialized_form_impl(publish_targets)
           return nil if publish_targets.nil?
           [].tap do |arr|
             publish_targets.each do |publish_target|
@@ -13,7 +13,7 @@ module Hyacinth
           end
         end
 
-        def from_serialized_form(json_array)
+        def from_serialized_form_impl(json_array)
           return nil if json_array.nil?
           raise ArgumentError, "Expected array, but got: #{json_array.class}" unless json_array.is_a?(Array)
           Set.new.tap do |set|

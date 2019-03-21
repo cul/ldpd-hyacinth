@@ -2,15 +2,21 @@ module DigitalObjectConcerns
   module SaveBehavior
     extend ActiveSupport::Concern
 
+    include DigitalObjectConcerns::SaveBehavior::WithinSaveLockValidations
+    include DigitalObjectConcerns::SaveBehavior::MetadataStorage
+    include DigitalObjectConcerns::SaveBehavior::Minters
+    include DigitalObjectConcerns::SaveBehavior::ResourceImports
+
     # This method is like the other #save method, but it raises an error if the save fails.
     def save!(opts = {})
-      raise Hyacinth::Exceptions::NotSaved, 'DigitalObject could not be saved. Check digital_object#errors for details.' unless (result = save(opts))
-      result
+      raise Hyacinth::Exceptions::NotSaved, "DigitalObject could not be saved. Errors: #{self.errors.full_messages}" unless save(opts)
+      true
     end
 
     # Saves this object, persisting all data to permanent storage and reindexing for search.
     # This method will also perform a publish if this object's @publish flag is set to true. TODO: Actually make publishing work.
     # @param opts [Hash] A hash of options. Options include:
+    #             :user [boolean] User who is performing the save operation.
     #             :lock [boolean] Whether or not to lock on this object during saving.
     #                             You generally want this to be true, unless you're establishing a lock on this object
     #                             outside of the save call for another reason. Defaults to true.
@@ -32,179 +38,282 @@ module DigitalObjectConcerns
       self.errors.empty?
     end
 
-    # Implementation for the #save method.  See #save for usage details and opts info.
     def save_impl(opts = {})
-      # If we modify the child lists for any removed or added parent objects,
-      # we'll keep track of these changes in the hash below so we can revert if necessary.
-      digital_objects_to_child_states_for_modified_parent_objects = {}
-
-      # If this object has already been saved, we'll be loading the persisted version for comparison and potential reversion in case of failure
-      persisted_version_of_digital_object = get_persisted_copy
+      current_datetime = DateTime.current
 
       # Always lock during save unless opts[:lock] explicitly tells us not to.
-      # Note: In the line below, self.uid will be nil for new objects and this lock line will simply yield without locking on anything, which is fine.
+      # In the line below, self.uid will be nil for new objects and this lock
+      # line will simply yield without locking on anything, which is fine.
       Hyacinth.config.lock_adapter.with_lock(opts.fetch(:lock, true) ? self.uid : nil) do |lock_object|
-        generate_uid_and_metadata_location_uri_if_new_record
-        reject_invalid_conditions_if_persisted_record(persisted_version_of_digital_object, opts[:allow_structured_child_addition_or_removal])
-
         # Establish a lock on any added or removed parent objects because we'll be modifying their structured child lists.
         Hyacinth.config.lock_adapter.with_multilock(@parent_uids_to_add + @parent_uids_to_remove) do |parent_lock_objects|
-          handle_resource_imports
 
-          update_timestamps
+          # Run certain validations that must happen within the save lock
+          run_save_lock_validations(opts[:allow_structured_child_addition_or_removal])
+          return false if self.errors.present?
 
-          # Save metadata
-          # Note: This step must be done after file import and potential DOI minting because imports affect metadata.
-          Hyacinth.config.metadata_storage.write(self.digital_object_record.metadata_location_uri, JSON.generate(self.to_serialized_form))
+          before_save_copy = self.deep_copy
 
-          # Modify child lists for any added parents
-          @parent_uids_to_add.each do |parent_uid|
-            dobj = DigitalObject::Base.find(parent_uid)
-            children_snapshot = dobj.deep_copy_of_structured_children # take snapshot of state
-            dobj.append_child_uid(self.uid)
-            if dobj.save(lock: false, allow_structured_child_addition_or_removal: true)
-              # If save was successful, store children snapshot in case we need to revert
-              digital_objects_to_child_states_for_modified_parent_objects[dobj] = children_snapshot
+          # Step 1 (process_metadata_and_assets / handle_metadata_and_asset_change_failure): Create or update object metadata, and handle resource imports.
+          begin
+            self.generate_uid_and_metadata_location_uri_if_new_record
+            self.handle_resource_imports
+            self.update_created_and_updated_timestamps(current_datetime)
+            # Do DigitalObjectRecord changes as last step in order to properly set new_record/persisted (and within a transaction)
+
+            DigitalObjectRecord.transaction do
+              self.digital_object_record.optimistic_lock_token = self.mint_optimistic_lock_token
+              raise Hyacinth::Exceptions::Rollback unless self.digital_object_record.save
+            end
+          rescue StandardError => e
+            # Revert any successful imports of type :copy (i.e. by deleting the copies)
+            self.resource_attributes.map do |resource_name, resource|
+              resource.undo_last_successful_import_if_copy
+            end
+
+            if self.new_record? && self.metadata_exists?
+              # Need to delete any written metadata since creation of this new record failed.
+              Hyacinth.config.metadata_storage.delete(self.digital_object_record.metadata_location_uri)
+            end
+
+            # Revert object
+            self.deep_copy_instance_variables_from(before_save_copy)
+
+            if e.is_a?(Hyacinth::Exceptions::Rollback)
+              # This exception was only intended to trigger a rollback.
+              # The errors object should contain information about what went wrong.
+              return false
+            else
+              # Unhandled exception.
+              raise e
             end
           end
 
-          # Modify child lists for any removed parents
-          @parent_uids_to_remove.each do |parent_uid|
-            dobj = DigitalObject::Base.find(parent_uid)
-            children_snapshot = dobj.deep_copy_of_structured_children # take snapshot of state
-            dobj.remove_child_uid(self.uid)
-            if dobj.save(lock: false, allow_structured_child_addition_or_removal: true)
-              # If save was successful, store children snapshot in case we need to revert
-              digital_objects_to_child_states_for_modified_parent_objects[dobj] = children_snapshot
-            end
-          end
+          # At this point, always write object to metadata store, just in case
+          # any unhandled error arises. This is especially important for new
+          # object creation, since we don't want to half-create a new object
+          # and leave things in an inconsistent state.
+          self.write_to_metadata_storage
 
-          # After successful updating of parents for additions and removal, update this object's parent_uids.
-          # Remember that self.parent_uids is an immutable/frozen set without a public
-          # writer  because only the save method is supposed to update it, so we'll be
-          # replacing it with a new Set representing the new parent uid state.
-          self.parent_uids = (self.parent_uids - @parent_uids_to_remove + @parent_uids_to_add).freeze
-
-          # If all earlier steps were successful and we made it here, clean up import data.
-          # We do this at the end so that if any earlier processes fail,
-          # we still have the import data and could undo file imports of type :copy.
-          # Also, this clearing step is simple and extremely unlikely to fail for any reason.
+          # After successful write to metadata storage,
+          # clear resource import data because we're done
+          # processing imports.
           clear_resource_import_data
 
-          # Clear temporary values from add/remove variables
-          @parent_uids_to_add = Set.new
-          @parent_uids_to_remove = Set.new
 
-          # As the final step, update the optimistic lock token as part of the save, and save the digital_object_record
-          self.digital_object_record.optimistic_lock_token = self.mint_optimistic_lock_token
-          self.digital_object_record.save
+          # Step 2 (process_parent_changes / handle_parent_change_failure): Handle newly added or removed parent objects
+          if self.parents_changed?
+            before_parent_addition_copy = self.deep_copy
+            begin
+              successful_parent_additions = Set.new
+              successful_parent_removals = Set.new
+              failed_parent_additions = Set.new
+              failed_parent_removals = Set.new
+
+              @parent_uids_to_add.each do |parent_uid|
+                dobj = DigitalObject::Base.find(parent_uid)
+                dobj.append_child_uid(self.uid)
+                if dobj.save(lock: false, allow_structured_child_addition_or_removal: true)
+                  successful_parent_additions << parent_uid
+                else
+                  failed_parent_additions << parent_uid
+                  Rails.logger.error("Failed to add #{self.uid} to parent #{dobj.uid} because of the following parent object errors: #{dobj.errors.full_messages.join(", ")}")
+                end
+              end
+
+              # Modify child lists for any removed parents
+              @parent_uids_to_remove.each do |parent_uid|
+                dobj = DigitalObject::Base.find(parent_uid)
+                dobj.remove_child_uid(self.uid)
+                if dobj.save(lock: false, allow_structured_child_addition_or_removal: true)
+                  successful_parent_removals << parent_uid
+                else
+                  failed_parent_removals << parent_uid
+                  Rails.logger.error("Failed to remove #{self.uid} from parent #{dobj.uid} because of the following parent object errors: #{dobj.errors.full_messages.join(", ")}")
+                end
+              end
+
+              raise Hyacinth::Exceptions::Rollback if failed_parent_additions.present? || failed_parent_removals.present?
+            rescue StandardError => e
+              # Revert this object's properties
+              self.deep_copy_instance_variables_from(before_parent_addition_copy)
+              # Set parent_uids to the set of successfully changed parents.
+              self.parent_uids = (self.parent_uids - successful_parent_removals + successful_parent_additions).freeze
+              # Write changes to metadata storage
+              self.write_to_metadata_storage
+
+              self.errors.add(:add_parents, "Failed to add the following parents: #{failed_parent_additions.join(", ")}. See error log for more details.") if failed_parent_additions.present?
+              self.errors.add(:remove_parents, "Failed to remove the following parents: #{failed_parent_removals.join(", ")}. See error log for more details.") if failed_parent_removals.present?
+
+              if e.is_a?(Hyacinth::Exceptions::Rollback)
+                # This exception was only intended to trigger a rollback.
+                # The errors object should contain information about what went wrong.
+                return false
+              else
+                # Unhandled exception.
+                raise e
+              end
+            end
+          end
+
+          # Step 3 (handle_preservation / handle_preservation_failure): Persist to preservation
+          if should_preserve?
+            before_preserve_copy = self.deep_copy
+            begin
+              mint_reserved_doi_if_doi_blank
+              self.preserved_at = current_datetime
+              if self.first_preserved_at.blank?
+                self.first_preserved_at = current_datetime
+              end
+              if should_publish? && self.first_published_at.blank?
+                self.first_published_at = current_datetime
+              end
+              # Set publish entries to intended targets, assuming successful
+              # publish in the next step. (We'll correct these values if publish fails.)
+              # Our publish system requires that publish targets are stored in preservation data
+              # before publish, since our external systems reindex from preservation storage data.
+              self.publish_entries = self.publish_entries.dup.tap do |new_publish_entries|
+                self.unpublish_from.each do |publish_target_string_key|
+                  new_publish_entries.delete(publish_target_string_key)
+                end
+                self.publish_to.each do |publish_target_string_key|
+                  Hyacinth::PublishEntry.new(published_at: current_datetime, published_by: opts[:user])
+                end
+                new_publish_entries.freeze
+              end
+              raise Hyacinth::Exceptions::Rollback unless Hyacinth.config.preservation_persistence.preserve(self)
+            rescue StandardError => e
+              # Revert this object's properties
+              self.deep_copy_instance_variables_from(before_preserve_copy)
+
+              # Write changes to metadata storage
+              self.write_to_metadata_storage
+
+              self.errors.add(:preservation, "A preservation error occurred. See error log for more details.")
+
+              # Attempt to re-preserve the previous state.
+              Hyacinth.config.preservation_persistence.preserve(self)
+
+              if e.is_a?(Hyacinth::Exceptions::Rollback)
+                # This exception was only intended to trigger a rollback.
+                # The errors object should contain information about what went wrong.
+                return false
+              else
+                # Unhandled exception.
+                raise e
+              end
+            end
+          end
+
+          # Step 4 (handle_publish / handle_publish_failure): Persist to preservation
+          if should_publish?
+            before_publish_copy = self.deep_copy
+            begin
+              successful_publish_string_keys = []
+              successful_unpublish_string_keys = []
+              failed_publish_string_keys = []
+              failed_unpublish_string_keys = []
+
+              # For efficiency, use one query to get all publish targets that
+              # we'll need in one query.
+              publish_target_string_keys_to_publish_targets = PublishTarget.where(
+                string_key: (self.publish_to + self.unpublish_from + self.publish_entries.keys).uniq
+              ).map do |publish_target|
+                [publish_target.string_key, publish_target]
+              end.to_h
+
+              # Look at the set of current publish target entries (which have
+              # already been added to include)
+              highest_priority_publish_entry_string_key = select_highest_priority_publish_entry(self.publish_entries, publish_target_string_keys_to_publish_targets)
+
+              # Attempt to publish and unpublish
+              self.publish_to.each do |publish_target_string_key|
+                if publish_target_string_keys_to_publish_targets[publish_target_string_key].publish(self, publish_target_string_key == highest_priority_publish_entry_string_key)
+                  successful_publish_string_keys << publish_target_string_key
+                else
+                  failed_publish_string_keys << publish_target_string_key
+                  Rails.logger.error("Failed to publish #{self.uid} to #{publish_target_string_key} because of the following errors: #{errors.join(", ")}")
+                end
+              end
+
+              self.unpublish_from.each do |publish_target_string_key|
+                if publish_target_string_keys_to_publish_targets[publish_target_string_key].unpublish(self)
+                  successful_unpublish_string_keys << publish_target_string_key
+                else
+                  failed_unpublish_string_keys << publish_target_string_key
+                  Rails.logger.error("Failed to unpublish #{self.uid} to #{publish_target_string_key} because of the following errors: #{errors.join(", ")}")
+                end
+              end
+
+              raise Hyacinth::Exceptions::Rollback if failed_publish_string_keys.present? || failed_unpublish_string_keys.present?
+            rescue StandardError => e
+              # Revert this object's properties
+              self.deep_copy_instance_variables_from(before_publish_copy)
+
+              # Revert first_published_at and publish_entries to the before_preserve_copy
+              # (because we added publish data during the preserve step).
+              self.deep_copy_metadata_attributes_from(before_preserve_copy, :first_published_at, :publish_entries)
+
+              # Set publish_entries to the set of successfully changed publish entries.
+              self.publish_entries = self.publish_entries.dup.tap do |new_publish_entries|
+                successful_unpublish_string_keys.each do |publish_target_string_key|
+                  new_publish_entries.delete(publish_target_string_key)
+                end
+                successful_publish_string_keys.each do |publish_target_string_key|
+                  Hyacinth::PublishEntry.new(published_at: current_datetime, published_by: opts[:user])
+                end
+                new_publish_entries.freeze
+              end
+
+              # If we actually did successfully publish to at least one publish
+              # target, set first_published_at if not set (it might have been
+              # unset as part of the reversion if this was a first-time publish).
+              if successful_publish_string_keys.present? && self.first_published_at.blank?
+                self.first_published_at = current_datetime
+              end
+
+              # Write changes to metadata storage
+              self.write_to_metadata_storage
+
+              # Attempt to re-preserve reverted version
+              Hyacinth.config.preservation_persistence.preserve(self)
+
+              self.errors.add(:add_parents, "Failed to publish to the following targets: #{failed_publish_string_keys.join(", ")}. See errors log for details.") if failed_publish_string_keys.present?
+              self.errors.add(:add_parents, "Failed to unpublish from the following targets: #{failed_unpublish_string_keys.join(", ")}. See errors log for details.") if failed_unpublish_string_keys.present?
+
+              # Attempt to re-publish to the successfully-published-to publish
+              # targets so they reindex with the just-correcred preservation data.
+              self.publish_to.each do |publish_target_string_key|
+                publish_target_string_keys_to_publish_targets[publish_target_string_key].publish(self, publish_target_string_key == highest_priority_publish_entry_string_key)
+              end
+
+              if e.is_a?(Hyacinth::Exceptions::Rollback)
+                # This exception was only intended to trigger a rollback.
+                # The errors object should contain information about what went wrong.
+                return false
+              else
+                # Unhandled exception.
+                raise e
+              end
+            end
+          end
+
+          # If we made it here, everything worked! Time to write to metadata storage.
+          self.write_to_metadata_storage
+          # And reset various variables
+          self.publish_to.clear
+          self.unpublish_from.clear
+          @parent_uids_to_add.clear
+          @parent_uids_to_remove.clear
         end
       end
-      true
-    rescue Exception => e
-      revert_failed_save(e, persisted_version_of_digital_object, digital_objects_to_child_states_for_modified_parent_objects)
-      false
+      # Return true if errors are blank, otherwise return false.
+      self.errors.blank?
     end
 
-    def revert_failed_save(exception_that_caused_reversion, persisted_version_of_digital_object, digital_objects_to_child_states_for_modified_parent_objects)
-      if self.new_record?
-        # Clear newly-minted UID because we'll mint a new one during the next save
-        self.uid = nil
-        self.digital_object_record.uid = nil
-
-        # Delete metadata if we made it to that step and metadata was written to storage
-        Hyacinth.config.metadata_storage.delete(self.digital_object_record.metadata_location_uri) if self.metadata_exists?
-      else
-        # Revert persisted metadata to the previous version
-        Hyacinth.config.metadata_storage.write(
-          self.digital_object_record.metadata_location_uri,
-          JSON.generate(persisted_version_of_digital_object.to_serialized_form)
-        )
-      end
-
-      # Delete any successful imports of type :copy (i.e. revert the copy operation)
-      self.resource_attributes.map do |resource_name, resource|
-        resource.undo_last_successful_import_if_copy
-      end
-
-      # Revert parent object relationship changes
-      digital_objects_to_child_states_for_modified_parent_objects.each do |dobj, structured_children_state|
-        dobj.structured_children = structured_children_state
-        begin
-          dobj.save(lock: false, allow_structured_child_addition_or_removal: true)
-        rescue StandardError => error_during_reversion
-          # If any parent saves fail, we still want to make sure that we revert the other
-          # parent's child states, but we'll record the error message in this object's errors.
-          errors.add(:parents, "#{error_during_reversion.class}: #{error_during_reversion.message}")
-          next
-        end
-      end
-
-      # Add useful error messages for the client
-      if exception_that_caused_reversion.is_a?(ActiveRecord::RecordNotUnique)
-        errors.add(:uid, "Saving failed becasue a duplicate UID was generated #{self.uid}")
-      elsif exception_that_caused_reversion.is_a?(Hyacinth::Exceptions::UnableToObtainLockError)
-        errors.add(:lock_error, e.message)
-      else
-        # Re-raise any other unhandled error
-        raise exception_that_caused_reversion
-      end
-    end
-
-    # Converts a DigitalObject's structured_children data and turns it into a flat list of child pids
-    def flat_child_uid_set
-      set = Set.new
-      return set if self.structured_children.blank?
-      return set if self.structured_children['structure'].blank?
-
-      unless self.structured_children['type'] == 'sequence'
-        raise Hyacinth::Exceptions::UnsupportedType, "At the moment, #flat_child_uid_set only supports structures of type 'sequence'. Received unexpected type: #{self.structured_children['type'].inspect}"
-      end
-
-      set.merge(structured_children['structure'])
-      set
-    end
-
-    def reject_unallowed_structured_child_addition_or_removal!(allow_structured_child_addition_or_removal, previous_state_flat_child_uid_set)
-      # if changes are allowed, simply return
-      return if allow_structured_child_addition_or_removal
-
-      # If changes aren't allowed, we need to compare the unique list of pids
-      # from the previous state to the current state.
-      if self.flat_child_uid_set != previous_state_flat_child_uid_set
-        raise UnallowedStructuredChildUidsModificationError, 'Could not modify structured children. Children may have been modified by another process. Current attempt could potentially lead to an out-of-sync parent-child situation.'
-      end
-    end
-
-    def reject_invalid_optimistic_lock_token!(expected_optimistic_lock_token)
-      if self.optimistic_lock_token != expected_optimistic_lock_token
-        raise Hyacinth::DigitalObject::StaleObjectError,
-          "DigitalObject #{self.uid} has been updated by another process. Please reload and apply your changes again."
-      end
-    end
-
-    def deep_copy_of_structured_children
-      Marshal.load(Marshal.dump(self.structured_children))
-    end
-
-    def mint_uid
-      # TODO: Make final decision about whether or not we want UUIDs to be our UIDs
-      SecureRandom.uuid
-    end
-
-    def mint_optimistic_lock_token
-      SecureRandom.uuid
-    end
-
-    def clear_resource_import_data
-      self.resource_attributes.map do |resource_name, resource|
-        resource.clear_import_data
-      end
-    end
-
-    def mint_reserved_doi_if_doi_blank
-      # TODO: Make this work
-      self.doi = Hyacinth::DoiService.mint_reserved_doi if self.doi.blank?
+    def update_created_and_updated_timestamps
+      self.updated_at = datetime
+      self.created_at = datetime if self.created_at.blank?
     end
 
     def generate_uid_and_metadata_location_uri_if_new_record
@@ -215,48 +324,45 @@ module DigitalObjectConcerns
       end
     end
 
-    # Loads a copy of persisted copy of this object, or nil if this object is new and no persisted version exists.
-    # @return [DigitalObject::Base subclass] A persisted copy of this object, or nil.
-    def get_persisted_copy
-      self.persisted? ? DigitalObject::Base.find(self.uid) : nil
-    end
-
-    def reject_invalid_conditions_if_persisted_record(persisted_version_of_digital_object, allow_structured_child_addition_or_removal)
-      if self.persisted?
-        # If the persisted version has a different optimistic_lock_token than
-        # this instance, raise an error because we're out of sync and don't want
-        # to overwrite recent changes made by another process.
-        reject_invalid_optimistic_lock_token!(persisted_version_of_digital_object.optimistic_lock_token)
-
-        # In order to keep bidirectional parent-child references from getting out of sync,
-        # we only allow addition or removal of uids in structured_children when explicitly
-        # granted (via the allow_structured_child_addition_or_removal opt). Rearrangement
-        # (without new uid addition or removal) is always fine, and does not require the
-        # explicit opt. The method below raises an exception if the previous set of
-        # structured children does not contain the same objects as the current set.
-        reject_unallowed_structured_child_addition_or_removal!(
-          allow_structured_child_addition_or_removal,
-          persisted_version_of_digital_object.flat_child_uid_set
-        )
-      end
-    end
-
-    def handle_resource_imports
-      # Handle new imports
+    def clear_resource_import_data
       self.resource_attributes.map do |resource_name, resource|
-        # TODO: make sure to renew the lock in case checksum generation or file copying take a long time
-        resource.process_import_if_present(self.uid, resource_name)
+        resource.clear_import_data
       end
     end
 
-    def metadata_exists?
-      self.digital_object_record.metadata_location_uri.present? && Hyacinth.config.metadata_storage.exists?(self.digital_object_record.metadata_location_uri)
+    def mint_reserved_doi_if_doi_blank
+      # TODO: Write code for DOI service so that this actually works
+      self.doi = Hyacinth::DoiService.mint_reserved_doi if self.doi.blank?
     end
 
-    def update_timestamps
-      current_datetime = DateTime.now
-      self.created_at = current_datetime if self.created_at.blank?
-      self.updated_at = current_datetime
+    def should_preserve?
+      # Always preserve if @preserve has been set to true.  Also preserve whenever
+      # we're doing a publish_to operation.  If @preserve is false and we're only
+      # unpublishing, there's no need to preserve.
+      @preserve || self.publish_to.present?
+    end
+
+    def should_publish?
+      self.publish_to.present? || self.unpublish_from.present?
+    end
+
+    def parents_changed?
+      @parent_uids_to_add.present? || @parent_uids_to_remove.present?
+    end
+
+    # Returns the string key of the publish target with the highest doi priority,
+    # ignoring any publish targets that have an is_valid_doi_location value of false.
+    # @param pub_entries [Hash] A Hash of publish target string keys to publish entries.
+    # @param publish_target_string_keys_to_publish_targets [Hash] A Hash of publish target string keys to PublishTarget instances
+    # @return [String] The string_key of the highest priority publish entry,
+    # or nil if none of the publish targets meet the requirements necessary to
+    # be considered for prioritization.
+    def select_highest_priority_publish_entry(pub_entries, publish_target_string_keys_to_publish_targets)
+      pub_entries.keys.select do |publish_target_string_key|
+        publish_target_string_keys_to_publish_targets[publish_target_string_key].is_valid_doi_location
+      end.max_by do |publish_target_string_key|
+        publish_target_string_keys_to_publish_targets[publish_target_string_key].doi_priority
+      end
     end
   end
 end

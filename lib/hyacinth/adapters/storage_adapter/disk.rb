@@ -7,11 +7,8 @@ module Hyacinth
           super(adapter_config)
 
           REQUIRED_CONFIG_OPTS.each do |required_opt|
-            if adapter_config[required_opt].present?
-              self.instance_variable_set("@#{required_opt}", adapter_config[required_opt])
-            else
-              raise Hyacinth::Exceptions::MissingRequiredOpt, "Missing required opt: #{required_opt}"
-            end
+            raise Hyacinth::Exceptions::MissingRequiredOpt, "Missing required opt: #{required_opt}" unless adapter_config[required_opt].present?
+            self.instance_variable_set("@#{required_opt}", adapter_config[required_opt])
           end
         end
 

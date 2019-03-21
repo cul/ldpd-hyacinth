@@ -2,7 +2,7 @@ module Hyacinth
   module DigitalObject
     module TypeDef
       class User < Hyacinth::DigitalObject::TypeDef::Base
-        def to_serialized_form(user)
+        def to_serialized_form_impl(user)
           return nil if user.nil?
           {
             'uid' => user.uid,
@@ -13,7 +13,7 @@ module Hyacinth
           }
         end
 
-        def from_serialized_form(json_var)
+        def from_serialized_form_impl(json_var)
           return nil if json_var.nil?
           User.find_by(uid: json_var['uid'])
         end

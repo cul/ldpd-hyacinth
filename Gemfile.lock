@@ -52,6 +52,9 @@ GEM
       execjs
     bcrypt (3.1.12)
     bindex (0.5.0)
+    bixby (2.0.0.pre.beta1)
+      rubocop (= 0.63.1)
+      rubocop-rspec (= 1.31.0)
     bootsnap (1.4.1)
       msgpack (~> 1.0)
     bootstrap-sass (3.4.1)
@@ -135,10 +138,9 @@ GEM
       mini_portile2 (~> 2.4.0)
     orm_adapter (0.5.0)
     parallel (1.14.0)
-    parser (2.6.0.0)
+    parser (2.6.2.0)
       ast (~> 2.4.0)
     powerpack (0.1.2)
-    psych (3.1.0)
     public_suffix (3.0.3)
     puma (3.12.0)
     rack (2.0.6)
@@ -204,19 +206,15 @@ GEM
       rspec-mocks (~> 3.8.0)
       rspec-support (~> 3.8.0)
     rspec-support (3.8.0)
-    rubocop (0.65.0)
+    rubocop (0.63.1)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
       parser (>= 2.5, != 2.5.1.1)
       powerpack (~> 0.1)
-      psych (>= 3.1.0)
       rainbow (>= 2.2.2, < 4.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (~> 1.4.0)
-    rubocop-rails_config (0.4.3)
-      railties (>= 3.0)
-      rubocop (~> 0.58)
-    rubocop-rspec (1.32.0)
+    rubocop-rspec (1.31.0)
       rubocop (>= 0.60.0)
     ruby-progressbar (1.10.0)
     ruby_dep (1.5.0)
@@ -288,6 +286,7 @@ PLATFORMS
 
 DEPENDENCIES
   autoprefixer-rails
+  bixby (= 2.0.0.pre.beta1)
   bootsnap (>= 1.1.0)
   bootstrap-sass (~> 3.3)
   byebug
@@ -306,9 +305,6 @@ DEPENDENCIES
   rainbow (~> 3.0)
   rspec-its
   rspec-rails (~> 3.8)
-  rubocop (~> 0.65.0)
-  rubocop-rails_config
-  rubocop-rspec
   sass-rails (~> 5.0)
   selenium-webdriver
   simplecov

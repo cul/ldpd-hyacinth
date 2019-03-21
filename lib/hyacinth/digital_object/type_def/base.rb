@@ -13,10 +13,19 @@ module Hyacinth
         # digital object data serialization and deserialization
 
         def to_serialized_form(value)
+          to_serialized_form_impl(value)
+        end
+
+        def to_serialized_form_impl(value)
           raise NotImplementedError # this implementation must be overridden by subclasses
         end
 
-        def from_serialized_form(value)
+        def from_serialized_form(json_var)
+          value = from_serialized_form_impl(json_var)
+          value.freeze if self.freeze_on_deserialize?
+        end
+
+        def from_serialized_form_impl
           raise NotImplementedError # this implementation must be overridden by subclasses
         end
 

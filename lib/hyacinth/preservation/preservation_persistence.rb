@@ -9,7 +9,7 @@ module Hyacinth
 
       # Iterates through all @adapters and persists the given digital_object to each one.
       # @return success, errors [boolean, array]
-      def persist(digital_object)
+      def preserve(digital_object)
         preservation_persistence_errors = []
         digital_object.preservation_target_uris.each do |preservation_target_uri|
           adapter = @preservation_adapters.find { |preservation_adapter| adapter.handles?(preservation_target_uri) }

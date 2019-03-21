@@ -12,8 +12,9 @@ module DigitalObject
     include DigitalObjectConcerns::SaveBehavior
     include DigitalObjectConcerns::PreservationBehavior
     include DigitalObjectConcerns::PublishBehavior
-    include DigitalObjectConcerns::Serializer
+    include DigitalObjectConcerns::Serialization
     include DigitalObjectConcerns::FindBehavior
+    include DigitalObjectConcerns::CopyBehavior
 
     # Set up callbacks
     define_model_callbacks :validation, :save
@@ -28,11 +29,11 @@ module DigitalObject
     # Modification Info
     metadata_attribute :created_by, Hyacinth::DigitalObject::TypeDef::User.new.public_writer
     metadata_attribute :updated_by, Hyacinth::DigitalObject::TypeDef::User.new.public_writer
-    metadata_attribute :created_at, Hyacinth::DigitalObject::TypeDef::DateTime.new.default(-> { DateTime.now })
-    metadata_attribute :updated_at, Hyacinth::DigitalObject::TypeDef::DateTime.new.default(-> { DateTime.now })
+    metadata_attribute :created_at, Hyacinth::DigitalObject::TypeDef::DateTime.new.default(-> { DateTime.current })
+    metadata_attribute :updated_at, Hyacinth::DigitalObject::TypeDef::DateTime.new.default(-> { DateTime.current })
     metadata_attribute :first_published_at, Hyacinth::DigitalObject::TypeDef::DateTime.new
-    metadata_attribute :persisted_to_preservation_at, Hyacinth::DigitalObject::TypeDef::DateTime.new
-    metadata_attribute :first_persisted_to_preservation_at, Hyacinth::DigitalObject::TypeDef::DateTime.new
+    metadata_attribute :preserved_at, Hyacinth::DigitalObject::TypeDef::DateTime.new
+    metadata_attribute :first_preserved_at, Hyacinth::DigitalObject::TypeDef::DateTime.new
     # Identifiers
     metadata_attribute :identifiers, Hyacinth::DigitalObject::TypeDef::JsonSerializableSet.new.default(-> { Set.new })
     # Dynamic Fields
@@ -63,6 +64,8 @@ module DigitalObject
       @parent_uids_to_remove = Set.new
       @publish_to = []
       @unpublish_from = []
+      @preserve = false
+      @mint_doi = false
     end
   end
 end
