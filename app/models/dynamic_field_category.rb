@@ -1,0 +1,25 @@
+class DynamicFieldCategory < ActiveRecord::Base
+  # has_many :dynamic_field_groups
+
+  before_save :set_sort_order_if_blank
+
+  validates :display_label, presence: true, uniqueness: true
+
+  def as_json(_options = {})
+    {
+      type: self.class.name,
+      display_label: display_label,
+      sort_order: sort_order,
+      dynamic_field_groups: dynamic_field_groups
+    }
+  end
+
+  private
+
+    def set_sort_order_if_blank
+      return unless sort_order.blank?
+
+      temp = DynamicFieldCategory.order(sort_order: :desc).pluck(:sort_order)
+      self.sort_order = temp.blank? ? 0 : temp.first + 1
+    end
+end

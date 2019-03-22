@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_19_163208) do
+ActiveRecord::Schema.define(version: 2019_03_21_184727) do
 
   create_table "database_entry_locks", force: :cascade do |t|
     t.string "lock_key", null: false
@@ -24,6 +24,14 @@ ActiveRecord::Schema.define(version: 2019_03_19_163208) do
     t.string "metadata_location_uri"
     t.string "optimistic_lock_token"
     t.index ["uid"], name: "index_digital_object_records_on_uid", unique: true
+  end
+
+  create_table "dynamic_field_categories", force: :cascade do |t|
+    t.string "display_label", null: false
+    t.integer "sort_order", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["display_label"], name: "index_dynamic_field_categories_on_display_label", unique: true
   end
 
   create_table "groups", force: :cascade do |t|
