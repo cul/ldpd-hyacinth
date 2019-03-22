@@ -10,6 +10,12 @@ module DigitalObjectConcerns
           resource.process_import_if_present(self.uid, resource_name)
         end
       end
+
+      def clear_resource_import_data
+        self.resource_attributes.map do |resource_name, resource|
+          resource.clear_import_data
+        end
+      end
     end
   end
 end

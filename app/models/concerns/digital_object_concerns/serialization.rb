@@ -18,16 +18,7 @@ module DigitalObjectConcerns
       end
     end
 
-
     module ClassMethods
-      # # Creates a new DigitalObject from an existing DigitalObject instance, including metadata_attributes and resources.
-      # # Deliberately DOES NOT duplicate the state of plain instance variables (like @publish_to or @mint_doi).
-      # # This is effectively like persisting an object and then running find on that object, except that the entire
-      # # operation runs in memory and nothing is persisted.
-      # def from_instance(digital_object)
-      #   DigitalObject.from_serialized_formdigital_object_record, digital_object.to_serialized_form)
-      # end
-
       def from_serialized_form(digital_object_record, json_var)
         digital_object = Hyacinth.config.digital_object_types.key_to_class(json_var['digital_object_type']).new
         # set metadata_attributes

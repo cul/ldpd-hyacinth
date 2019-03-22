@@ -2,7 +2,7 @@ module DigitalObjectConcerns
   module SaveBehavior
     extend ActiveSupport::Concern
 
-    include DigitalObjectConcerns::SaveBehavior::WithinSaveLockValidations
+    include DigitalObjectConcerns::SaveBehavior::SaveLockValidations
     include DigitalObjectConcerns::SaveBehavior::MetadataStorage
     include DigitalObjectConcerns::SaveBehavior::Minters
     include DigitalObjectConcerns::SaveBehavior::ResourceImports
@@ -58,9 +58,10 @@ module DigitalObjectConcerns
           begin
             self.generate_uid_and_metadata_location_uri_if_new_record
             self.handle_resource_imports
-            self.update_created_and_updated_timestamps(current_datetime)
-            # Do DigitalObjectRecord changes as last step in order to properly set new_record/persisted (and within a transaction)
+            self.updated_at = current_datetime
+            self.created_at = current_datetime if self.created_at.blank?
 
+            # Do DigitalObjectRecord changes as last step in order to properly set new_record/persisted (and within a transaction)
             DigitalObjectRecord.transaction do
               self.digital_object_record.optimistic_lock_token = self.mint_optimistic_lock_token
               raise Hyacinth::Exceptions::Rollback unless self.digital_object_record.save
@@ -133,7 +134,13 @@ module DigitalObjectConcerns
                 end
               end
 
-              raise Hyacinth::Exceptions::Rollback if failed_parent_additions.present? || failed_parent_removals.present?
+              if failed_parent_additions.present? || failed_parent_removals.present?
+                raise Hyacinth::Exceptions::Rollback
+              else
+                # All parent change operations succeeded, so we can reset @parent_uids_to_add and @parent_uids_to_remove.
+                @parent_uids_to_add.clear
+                @parent_uids_to_remove.clear
+              end
             rescue StandardError => e
               # Revert this object's properties
               self.deep_copy_instance_variables_from(before_parent_addition_copy)
@@ -245,7 +252,13 @@ module DigitalObjectConcerns
                 end
               end
 
-              raise Hyacinth::Exceptions::Rollback if failed_publish_string_keys.present? || failed_unpublish_string_keys.present?
+              if failed_publish_string_keys.present? || failed_unpublish_string_keys.present?
+                raise Hyacinth::Exceptions::Rollback
+              else
+                # All publish and unupublish operations succeeded, so we can reset publish_to and publish_from.
+                self.publish_to.clear
+                self.unpublish_from.clear
+              end
             rescue StandardError => e
               # Revert this object's properties
               self.deep_copy_instance_variables_from(before_publish_copy)
@@ -298,60 +311,23 @@ module DigitalObjectConcerns
             end
           end
 
-          # If we made it here, everything worked! Time to write to metadata storage.
+          # If we made it here, everything worked! Time to write to metadata storage again.
           self.write_to_metadata_storage
-          # And reset various variables
-          self.publish_to.clear
-          self.unpublish_from.clear
-          @parent_uids_to_add.clear
-          @parent_uids_to_remove.clear
         end
       end
-      # Return true if errors are blank, otherwise return false.
-      self.errors.blank?
-    end
 
-    def update_created_and_updated_timestamps
-      self.updated_at = datetime
-      self.created_at = datetime if self.created_at.blank?
-    end
-
-    def generate_uid_and_metadata_location_uri_if_new_record
-      if self.new_record?
-        self.uid = self.mint_uid # generate a new uid for this object
-        self.digital_object_record.uid = self.uid # assign that uid to this object's digital_object_record
-        self.digital_object_record.metadata_location_uri = Hyacinth.config.metadata_storage.generate_new_location_uri(self.digital_object_record.uid)
+      # Assuming we got here, there shouldn't be any errors on the object.
+      # Raise an error if there are though, since that would indicate a
+      # problem in our code.
+      if self.errors.present?
+        raise Hyacinth::Exceptions::UnexpectedErrors, "Save proccess appeared to succeed, but found errors on digital object: #{self.errors.full_messages}"
       end
+
+      true
     end
 
-    def clear_resource_import_data
-      self.resource_attributes.map do |resource_name, resource|
-        resource.clear_import_data
-      end
-    end
-
-    def mint_reserved_doi_if_doi_blank
-      # TODO: Write code for DOI service so that this actually works
-      self.doi = Hyacinth::DoiService.mint_reserved_doi if self.doi.blank?
-    end
-
-    def should_preserve?
-      # Always preserve if @preserve has been set to true.  Also preserve whenever
-      # we're doing a publish_to operation.  If @preserve is false and we're only
-      # unpublishing, there's no need to preserve.
-      @preserve || self.publish_to.present?
-    end
-
-    def should_publish?
-      self.publish_to.present? || self.unpublish_from.present?
-    end
-
-    def parents_changed?
-      @parent_uids_to_add.present? || @parent_uids_to_remove.present?
-    end
-
-    # Returns the string key of the publish target with the highest doi priority,
-    # ignoring any publish targets that have an is_valid_doi_location value of false.
+    # Given a publish entries Hash, returns the string key of the publish target with the highest
+    # doi priority, ignoring any publish targets that have an is_valid_doi_location value of false.
     # @param pub_entries [Hash] A Hash of publish target string keys to publish entries.
     # @param publish_target_string_keys_to_publish_targets [Hash] A Hash of publish target string keys to PublishTarget instances
     # @return [String] The string_key of the highest priority publish entry,

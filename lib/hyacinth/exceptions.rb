@@ -7,6 +7,7 @@ module Hyacinth
     class UnableToObtainLockError < HyacinthError; end
 
     class Rollback < HyacinthError; end
+    class UnexpectedErrors < HyacinthError; end
 
     class MissingRequiredOpt < HyacinthError; end
 
