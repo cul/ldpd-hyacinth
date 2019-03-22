@@ -196,10 +196,10 @@ module DigitalObjectConcerns
               # Our publish system requires that publish targets are stored in preservation data
               # before publish, since our external systems reindex from preservation storage data.
               self.publish_entries = self.publish_entries.dup.tap do |new_publish_entries|
-                self.unpublish_from.each do |publish_target_string_key|
+                @unpublish_from.each do |publish_target_string_key|
                   new_publish_entries.delete(publish_target_string_key)
                 end
-                self.publish_to.each do |publish_target_string_key|
+                @publish_to.each do |publish_target_string_key|
                   Hyacinth::PublishEntry.new(published_at: current_datetime, published_by: opts[:user])
                 end
                 new_publish_entries.freeze
@@ -240,7 +240,7 @@ module DigitalObjectConcerns
               # For efficiency, use one query to get all publish targets that
               # we'll need in one query.
               publish_target_string_keys_to_publish_targets = PublishTarget.where(
-                string_key: (self.publish_to + self.unpublish_from + self.publish_entries.keys).uniq
+                string_key: (@publish_to + @unpublish_from + self.publish_entries.keys).uniq
               ).map do |publish_target|
                 [publish_target.string_key, publish_target]
               end.to_h
@@ -250,7 +250,7 @@ module DigitalObjectConcerns
               highest_priority_publish_entry_string_key = select_highest_priority_publish_entry(self.publish_entries, publish_target_string_keys_to_publish_targets)
 
               # Attempt to publish and unpublish
-              self.publish_to.each do |publish_target_string_key|
+              @publish_to.each do |publish_target_string_key|
                 if publish_target_string_keys_to_publish_targets[publish_target_string_key].publish(self, publish_target_string_key == highest_priority_publish_entry_string_key)
                   successful_publish_string_keys << publish_target_string_key
                 else
@@ -259,7 +259,7 @@ module DigitalObjectConcerns
                 end
               end
 
-              self.unpublish_from.each do |publish_target_string_key|
+              @unpublish_from.each do |publish_target_string_key|
                 if publish_target_string_keys_to_publish_targets[publish_target_string_key].unpublish(self)
                   successful_unpublish_string_keys << publish_target_string_key
                 else
@@ -271,9 +271,9 @@ module DigitalObjectConcerns
               if failed_publish_string_keys.present? || failed_unpublish_string_keys.present?
                 raise Hyacinth::Exceptions::Rollback
               else
-                # All publish and unupublish operations succeeded, so we can reset publish_to and publish_from.
-                self.publish_to.clear
-                self.unpublish_from.clear
+                # All publish and unupublish operations succeeded, so we can reset @publish_to and @unpublish_from.
+                @publish_to.clear
+                @unpublish_from.clear
               end
             rescue StandardError => e
               # Revert this object's properties
@@ -312,7 +312,7 @@ module DigitalObjectConcerns
 
               # Attempt to re-publish to the successfully-published-to publish
               # targets so they reindex with the just-correcred preservation data.
-              self.publish_to.each do |publish_target_string_key|
+              @publish_to.each do |publish_target_string_key|
                 publish_target_string_keys_to_publish_targets[publish_target_string_key].publish(self, publish_target_string_key == highest_priority_publish_entry_string_key)
               end
 

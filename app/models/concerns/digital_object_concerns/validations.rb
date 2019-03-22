@@ -12,7 +12,8 @@ module DigitalObjectConcerns::Validations
 
     # Validate that none of this object's possible publish targets have the same doi_priority (regardless of which targets it's actually published to)
     # Validate that all current publish_entries are real PublishTargets
-    # Validate that all publish_to and unpublish_from destinations are real PublishTargets
+    # Validate that no publish targets appears in both @publish_to and @unpublish_from
+    # Validate that all Wpublish_to and @unpublish_from destinations are real PublishTargets
 
     # Validate that all @parent_uids_to_add and @parent_uids_to_remove are existing objects
   end

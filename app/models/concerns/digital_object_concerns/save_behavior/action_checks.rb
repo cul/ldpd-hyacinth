@@ -9,11 +9,11 @@ module DigitalObjectConcerns
         # Always preserve if @preserve has been set to true.  Also preserve whenever
         # we're doing a publish_to operation.  If @preserve is false and we're only
         # unpublishing, there's no need to preserve.
-        @preserve || self.publish_to.present?
+        @preserve || @publish_to.present?
       end
 
       def should_publish?
-        self.publish_to.present? || self.unpublish_from.present?
+        @publish_to.present? || @unpublish_from.present?
       end
 
       def parents_changed?
