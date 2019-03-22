@@ -6,6 +6,7 @@ module DigitalObjectConcerns
     include DigitalObjectConcerns::SaveBehavior::MetadataStorage
     include DigitalObjectConcerns::SaveBehavior::Minters
     include DigitalObjectConcerns::SaveBehavior::ResourceImports
+    include DigitalObjectConcerns::SaveBehavior::ActionChecks
 
     # This method is like the other #save method, but it raises an error if the save fails.
     def save!(opts = {})
@@ -31,11 +32,16 @@ module DigitalObjectConcerns
 
       return false if self.errors.present?
 
+      save_result = false
       run_callbacks :save do
-        save_impl(opts)
+        save_result = save_impl(opts)
       end
 
-      self.errors.empty?
+      if !save_result && self.errors.blank?
+        raise Hyacinth::Exceptions::MissingErrors, "Save proccess failed, but no errors were found on digital object."
+      end
+
+      save_result
     end
 
     def save_impl(opts = {})
@@ -63,7 +69,7 @@ module DigitalObjectConcerns
             # Do DigitalObjectRecord changes as last step in order to properly set new_record/persisted (and within a transaction)
             DigitalObjectRecord.transaction do
               self.digital_object_record.optimistic_lock_token = self.mint_optimistic_lock_token
-              raise Hyacinth::Exceptions::Rollback unless self.digital_object_record.save
+              digital_object_record.save!
             end
           rescue StandardError => e
             # Revert any successful imports of type :copy (i.e. by deleting the copies)
@@ -135,7 +141,8 @@ module DigitalObjectConcerns
               if failed_parent_additions.present? || failed_parent_removals.present?
                 raise Hyacinth::Exceptions::Rollback
               else
-                # All parent change operations succeeded, so we can reset @parent_uids_to_add and @parent_uids_to_remove.
+                # All parent change operations succeeded, so we can add @parent_uids_to_add and @parent_uids_to_remove and then clear them.
+                self.parent_uids = (self.parent_uids - @parent_uids_to_remove + @parent_uids_to_add).freeze
                 @parent_uids_to_add.clear
                 @parent_uids_to_remove.clear
               end
@@ -147,8 +154,19 @@ module DigitalObjectConcerns
               # Write changes to metadata storage
               self.write_to_metadata_storage
 
-              self.errors.add(:add_parents, "Failed to add the following parents: #{failed_parent_additions.join(", ")}. See error log for more details.") if failed_parent_additions.present?
-              self.errors.add(:remove_parents, "Failed to remove the following parents: #{failed_parent_removals.join(", ")}. See error log for more details.") if failed_parent_removals.present?
+              if failed_parent_additions.present?
+                self.errors.add(
+                  :add_parents,
+                  "Failed to add the following parents: #{failed_parent_additions.to_a.join(", ")}. See error log for more details."
+                )
+              end
+
+              if failed_parent_removals.present?
+                self.errors.add(
+                  :remove_parents,
+                  "Failed to remove the following parents: #{failed_parent_removals.to_a.join(", ")}. See error log for more details."
+                )
+              end
 
               if e.is_a?(Hyacinth::Exceptions::Rollback)
                 # This exception was only intended to trigger a rollback.

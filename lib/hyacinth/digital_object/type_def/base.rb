@@ -23,6 +23,7 @@ module Hyacinth
         def from_serialized_form(json_var)
           value = from_serialized_form_impl(json_var)
           value.freeze if self.freeze_on_deserialize?
+          value
         end
 
         def from_serialized_form_impl

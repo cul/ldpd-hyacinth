@@ -30,13 +30,15 @@ module DigitalObjectConcerns
         self.errors.blank?
       end
 
+      # Checks to see if the optimistic_lock_token for this object is the same as the expected token.
+      # @return [Boolean] true if the expected token is present
       def validate_optimistic_lock_token(expected_optimistic_lock_token)
-        return true if self.optimistic_lock_token != expected_optimistic_lock_token
+        return true if self.optimistic_lock_token == expected_optimistic_lock_token
         self.errors.add(:stale_data, "This digital object has been updated by another process and your data is stale. Please reload and apply your changes again.")
         false
       end
 
-      def validate_structured_child_addition_or_removal!(allow_structured_child_addition_or_removal, previous_state_flat_child_uid_set)
+      def validate_structured_child_addition_or_removal(allow_structured_child_addition_or_removal, previous_state_flat_child_uid_set)
         # If changes are allowed, return true regardless of whether changes were made.
         return true if allow_structured_child_addition_or_removal
 

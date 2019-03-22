@@ -8,6 +8,7 @@ module Hyacinth
 
     class Rollback < HyacinthError; end
     class UnexpectedErrors < HyacinthError; end
+    class MissingErrors < HyacinthError; end
 
     class MissingRequiredOpt < HyacinthError; end
 

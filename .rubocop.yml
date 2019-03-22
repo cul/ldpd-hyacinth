@@ -42,6 +42,9 @@ Metrics/PerceivedComplexity:
 RSpec/ExampleLength:
   Enabled: false
 
+RSpec/MessageSpies:
+  Enabled: false
+
 Style/BracesAroundHashParameters:
   Enabled: false
 
@@ -58,3 +61,8 @@ Style/RedundantSelf:
 
 Bundler/OrderedGems:
   Enabled: false
+
+Metrics/MethodLength:
+  Enabled: true
+  Exclude:
+    - 'app/models/concerns/digital_object_concerns/save_behavior.rb'

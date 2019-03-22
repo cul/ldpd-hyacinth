@@ -18,7 +18,7 @@ module DigitalObjectConcerns
       end
 
       def generate_uid_and_metadata_location_uri_if_new_record
-        return if self.new_record?
+        return unless self.new_record?
         self.uid = self.mint_uid # generate a new uid for this object
         self.digital_object_record.uid = self.uid # assign that uid to this object's digital_object_record
         self.digital_object_record.metadata_location_uri = Hyacinth.config.metadata_storage.generate_new_location_uri(self.digital_object_record.uid)

@@ -40,8 +40,8 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
           :group,
           :identifiers,
           :parent_uids,
-          :preserved_at,
           :preservation_target_uris,
+          :preserved_at,
           :projects,
           :publish_entries,
           :state,
@@ -49,7 +49,7 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
           :uid,
           :updated_at,
           :updated_by
-        ]
+        ].sort
       )
     end
 
@@ -114,8 +114,8 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
       expect(digital_object_with_sample_data.new_record?).to eq(true)
     end
 
-    it "returns false for a persisted instance" do
-      digital_object_with_sample_data.save
+    it "returns false for a successfully saved instance" do
+      expect(digital_object_with_sample_data.save).to eq(true)
       expect(digital_object_with_sample_data.new_record?).to eq(false)
     end
   end
