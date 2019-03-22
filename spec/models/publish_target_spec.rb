@@ -1,5 +1,66 @@
 require 'rails_helper'
 
 RSpec.describe PublishTarget, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  describe '#new' do
+    context 'when all parameters correct' do
+      subject { FactoryBot.create(:publish_target) }
+
+      its(:string_key) { is_expected.to eql 'great_project_website' }
+      its(:display_label) { is_expected.to eql 'Great Project Website' }
+      its(:publish_url) { is_expected.to eql 'https://www.example.com/publish' }
+      its(:api_key) { is_expected.to eql 'bestapikey' }
+    end
+
+    context 'when string_key missing' do
+      subject { FactoryBot.build(:publish_target, string_key: nil) }
+
+      it 'does not save object' do
+        expect(subject.save).to be false
+      end
+
+      it 'returns correct error' do
+        subject.save
+        expect(subject.errors.full_messages).to include 'String key can\'t be blank'
+      end
+    end
+
+    context 'when display_label missing' do
+      subject { FactoryBot.build(:publish_target, display_label: nil) }
+
+      it 'does not save object' do
+        expect(subject.save).to be false
+      end
+
+      it 'returns correct error' do
+        subject.save
+        expect(subject.errors.full_messages).to include 'Display label can\'t be blank'
+      end
+    end
+
+    context 'when publish_url missing' do
+      subject { FactoryBot.build(:publish_target, publish_url: nil) }
+
+      it 'does not save object' do
+        expect(subject.save).to be false
+      end
+
+      it 'returns correct error' do
+        subject.save
+        expect(subject.errors.full_messages).to include 'Publish url can\'t be blank'
+      end
+    end
+
+    context 'when api_key missing' do
+      subject { FactoryBot.build(:publish_target, api_key: nil) }
+
+      it 'does not save object' do
+        expect(subject.save).to be false
+      end
+
+      it 'returns correct error' do
+        subject.save
+        expect(subject.errors.full_messages).to include 'Api key can\'t be blank'
+      end
+    end
+  end
 end
