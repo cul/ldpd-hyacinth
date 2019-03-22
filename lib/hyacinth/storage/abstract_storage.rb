@@ -3,7 +3,9 @@ module Hyacinth
     class AbstractStorage
       def initialize(config)
         raise 'Missing config option: adapters' if config[:adapters].blank?
-        @storage_adapters = config[:adapters].map { |adapter_config| Hyacinth::Adapters::StorageAdapterManager.create(adapter_config) }
+        @storage_adapters = config[:adapters].map do |adapter_config|
+          Hyacinth::Adapters::StorageAdapterManager.create(adapter_config)
+        end
       end
 
       # The primary storage adapter is always the first storage adapter in the storage adapters list

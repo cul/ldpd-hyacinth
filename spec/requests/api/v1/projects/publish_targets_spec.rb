@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'Publish Target requests' do
+RSpec.describe 'Publish Target requests', type: :request do
   let(:project) { FactoryBot.create(:project) }
 
   describe 'GET /api/v1/projects/:string_key/publish_targets' do

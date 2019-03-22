@@ -2,7 +2,8 @@ module Hyacinth
   module Adapters
     module AdapterManagerBehavior
       extend ActiveSupport::Concern
-      class_methods do
+
+      module ClassMethods
         def registered_adapters
           @registered_adapters ||= {}
         end

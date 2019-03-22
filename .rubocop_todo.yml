@@ -107,6 +107,7 @@ Lint/ParenthesesAsGroupedExpression:
 Lint/UnusedBlockArgument:
   Exclude:
     - 'app/models/concerns/digital_object_concerns/digital_object_data/setters/parent_uids.rb'
+    - 'app/models/concerns/digital_object_concerns/save_behavior/resource_imports.rb'
     - 'app/models/concerns/digital_object_concerns/save_behavior.rb'
     - 'app/models/concerns/digital_object_concerns/serialization.rb'
     - 'lib/hyacinth/digital_object/resource.rb'

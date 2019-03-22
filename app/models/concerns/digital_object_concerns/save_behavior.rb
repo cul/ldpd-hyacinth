@@ -47,7 +47,6 @@ module DigitalObjectConcerns
       Hyacinth.config.lock_adapter.with_lock(opts.fetch(:lock, true) ? self.uid : nil) do |lock_object|
         # Establish a lock on any added or removed parent objects because we'll be modifying their structured child lists.
         Hyacinth.config.lock_adapter.with_multilock(@parent_uids_to_add + @parent_uids_to_remove) do |parent_lock_objects|
-
           # Run certain validations that must happen within the save lock
           run_save_lock_validations(opts[:allow_structured_child_addition_or_removal])
           return false if self.errors.present?
@@ -100,7 +99,6 @@ module DigitalObjectConcerns
           # clear resource import data because we're done
           # processing imports.
           clear_resource_import_data
-
 
           # Step 2 (process_parent_changes / handle_parent_change_failure): Handle newly added or removed parent objects
           if self.parents_changed?

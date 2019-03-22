@@ -27,11 +27,11 @@ module DigitalObjectConcerns
           )
         end
 
-        return self.errors.blank?
+        self.errors.blank?
       end
 
       def validate_optimistic_lock_token(expected_optimistic_lock_token)
-        return true if self.optimistic_lock_token != persisted_version_of_digital_object.optimistic_lock_token
+        return true if self.optimistic_lock_token != expected_optimistic_lock_token
         self.errors.add(:stale_data, "This digital object has been updated by another process and your data is stale. Please reload and apply your changes again.")
         false
       end
@@ -43,7 +43,12 @@ module DigitalObjectConcerns
         # If changes aren't allowed, see if any children were added or removed.
         return true if self.flat_child_uid_set == previous_state_flat_child_uid_set
 
-        self.errors.add(:structured_children, 'Not allowed to add or remove structured children in this context. Children may have been modified by another process. Current attempt would have potentially led to an out-of-sync parent-child situation.')
+        self.errors.add(
+          :structured_children,
+          'Not allowed to add or remove structured children in this context. '\
+          'Children may have been modified by another process. '\
+          'Current attempt would have potentially led to an out-of-sync parent-child situation.'
+        )
         false
       end
 

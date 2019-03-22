@@ -10,8 +10,6 @@ module DigitalObject
     include DigitalObjectConcerns::DigitalObjectData::Setters
     include DigitalObjectConcerns::Validations
     include DigitalObjectConcerns::SaveBehavior
-    include DigitalObjectConcerns::PreservationBehavior
-    include DigitalObjectConcerns::PublishBehavior
     include DigitalObjectConcerns::Serialization
     include DigitalObjectConcerns::FindBehavior
     include DigitalObjectConcerns::CopyBehavior
