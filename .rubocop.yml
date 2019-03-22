@@ -56,13 +56,3 @@ Style/StringLiterals:
 
 Style/RedundantSelf:
   Enabled: false
-
-# Unset these overrides later (when we have time to address them)
-
-Bundler/OrderedGems:
-  Enabled: false
-
-Metrics/MethodLength:
-  Enabled: true
-  Exclude:
-    - 'app/models/concerns/digital_object_concerns/save_behavior.rb'

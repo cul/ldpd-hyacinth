@@ -6,6 +6,9 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
+Bundler/OrderedGems:
+  Enabled: false
+
 # Offense count: 4
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, IndentationWidth.
@@ -159,7 +162,10 @@ Metrics/LineLength:
 # Offense count: 7
 # Configuration parameters: CountComments, ExcludedMethods.
 Metrics/MethodLength:
+  Enabled: true
   Max: 181
+  Exclude:
+    - 'app/models/concerns/digital_object_concerns/save_behavior.rb'
 
 # Offense count: 1
 # Configuration parameters: CountComments.
