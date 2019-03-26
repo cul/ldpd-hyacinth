@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_21_184727) do
+ActiveRecord::Schema.define(version: 2019_03_25_175848) do
 
   create_table "database_entry_locks", force: :cascade do |t|
     t.string "lock_key", null: false
@@ -32,6 +32,47 @@ ActiveRecord::Schema.define(version: 2019_03_21_184727) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["display_label"], name: "index_dynamic_field_categories_on_display_label", unique: true
+  end
+
+  create_table "dynamic_field_groups", force: :cascade do |t|
+    t.string "string_key", null: false
+    t.string "display_label", null: false
+    t.boolean "is_repeatable", default: false, null: false
+    t.text "xml_translation"
+    t.integer "sort_order", null: false
+    t.string "parent_type"
+    t.integer "parent_id"
+    t.integer "created_by_id"
+    t.integer "updated_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["parent_type", "parent_id"], name: "index_dynamic_field_groups_on_parent_type_and_parent_id"
+    t.index ["string_key", "parent_type", "parent_id"], name: "index_dynamic_field_groups_on_string_key_and_parent", unique: true
+    t.index ["string_key"], name: "index_dynamic_field_groups_on_string_key", unique: true
+  end
+
+  create_table "dynamic_fields", force: :cascade do |t|
+    t.string "string_key", null: false
+    t.string "display_label", null: false
+    t.string "field_type", default: "string", null: false
+    t.integer "sort_order", null: false
+    t.boolean "is_facetable", default: false, null: false
+    t.string "filter_label"
+    t.string "controlled_vocabulary"
+    t.text "select_options"
+    t.text "additional_data_json"
+    t.boolean "is_keyword_searchable", default: false, null: false
+    t.boolean "is_title_searchable", default: false, null: false
+    t.boolean "is_identifier_searchable", default: false, null: false
+    t.integer "dynamic_field_group_id"
+    t.integer "created_by_id"
+    t.integer "updated_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["controlled_vocabulary"], name: "index_dynamic_fields_on_controlled_vocabulary"
+    t.index ["dynamic_field_group_id"], name: "index_dynamic_fields_on_dynamic_field_group_id"
+    t.index ["string_key", "dynamic_field_group_id"], name: "index_dynamic_fields_on_string_key_and_dynamic_field_group_id", unique: true
+    t.index ["string_key"], name: "index_dynamic_fields_on_string_key"
   end
 
   create_table "groups", force: :cascade do |t|
