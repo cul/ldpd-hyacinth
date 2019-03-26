@@ -38,22 +38,21 @@ class DynamicField < ActiveRecord::Base
   validates :additional_data_json, :select_options, valid_json: true
 
   def as_json(_options = {})
-    hash = {
+    {
       type: self.class.name,
       id: id,
       string_key: string_key,
       display_label: display_label,
       sort_order: sort_order,
       field_type: field_type,
-      required_for_group_save: required_for_group_save,
-      select_options: select_options
+      is_facetable: is_facetable,
+      filter_label: filter_label,
+      select_options: select_options,
+      is_keyword_searchable: is_keyword_searchable,
+      is_title_searchable: is_title_searchable,
+      is_identifier_searchable: is_identifier_searchable,
+      controlled_vocabulary: controlled_vocabulary ? { string_key: controlled_vocabulary, display_label: nil } : {}
     }
-
-    if field_type == Type::CONTROLLED_TERM
-      hash[:controlled_vocabulary] = { string_key: controlled_vocabulary, display_label: nil}
-    end
-
-    hash
   end
 
   def additional_data
