@@ -21,8 +21,9 @@ class DynamicFieldGroup < ActiveRecord::Base
   validates :parent_type,   presence: true, inclusion: { in: PARENT_TYPES }
   validates :xml_translation, valid_json: true
 
+  # Order children first by sort_order and then by string_key to break up ties.
   def ordered_children
-    children.sort_by(&:sort_order) # TODO: Needs to sort by sort_order and then alphabetically by string_key
+    children.sort_by { |c| [c.sort_order, c.string_key] }
   end
 
   def children

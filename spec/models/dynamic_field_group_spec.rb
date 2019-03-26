@@ -318,4 +318,22 @@ RSpec.describe DynamicFieldGroup, type: :model do
       expect(dynamic_field_group.children).to include child_field
     end
   end
+
+  describe '#ordered_children' do
+    let(:dynamic_field_group) { FactoryBot.create(:dynamic_field_group) }
+    let(:child_group) { FactoryBot.create(:dynamic_field_group, :child, parent: dynamic_field_group) }
+    let(:child_field_1) { FactoryBot.create(:dynamic_field, string_key: 'type', dynamic_field_group: dynamic_field_group) }
+    let(:child_field_2) { FactoryBot.create(:dynamic_field, dynamic_field_group: dynamic_field_group) }
+
+    before do
+      child_field_2
+      child_field_1
+      child_group
+      dynamic_field_group.reload
+    end
+
+    it 'returns all children in correct order' do
+      expect(dynamic_field_group.ordered_children).to match [child_group, child_field_2, child_field_1]
+    end
+  end
 end
