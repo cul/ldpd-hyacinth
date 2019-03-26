@@ -1,7 +1,7 @@
 class DynamicFieldCategory < ActiveRecord::Base
-  # has_many :dynamic_field_groups
+  include DynamicFieldStructure::Sortable
 
-  before_save :set_sort_order_if_blank
+  has_many :dynamic_field_groups, as: :parent
 
   validates :display_label, presence: true, uniqueness: true
 
@@ -14,12 +14,11 @@ class DynamicFieldCategory < ActiveRecord::Base
     }
   end
 
-  private
+  def children
+    dynamic_field_groups
+  end
 
-    def set_sort_order_if_blank
-      return unless sort_order.blank?
-
-      temp = DynamicFieldCategory.order(sort_order: :desc).pluck(:sort_order)
-      self.sort_order = temp.blank? ? 0 : temp.first + 1
-    end
+  def siblings
+    DynamicFieldCategory.all
+  end
 end
