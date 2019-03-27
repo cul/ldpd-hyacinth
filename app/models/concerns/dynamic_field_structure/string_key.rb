@@ -2,7 +2,8 @@ module DynamicFieldStructure
   module StringKey
     extend ActiveSupport::Concern
 
-    RESERVED_STRING_KEYS = ['uri', 'value']
+    # TODO: This restriction can be removed in the near future, as it is probably not necessary.
+    RESERVED_STRING_KEYS = ['uri', 'pref_label']
 
     included do
       validates :string_key, presence: true,  string_key: true, exclusion: { in: RESERVED_STRING_KEYS }
