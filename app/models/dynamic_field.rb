@@ -12,15 +12,7 @@ class DynamicField < ActiveRecord::Base
     CONTROLLED_TERM = 'controlled_term'
   end
 
-  TYPES_TO_LABELS = {
-    DynamicField::Type::STRING => 'String',
-    DynamicField::Type::TEXTAREA => 'Textarea',
-    DynamicField::Type::INTEGER => 'Integer',
-    DynamicField::Type::BOOLEAN => 'Boolean',
-    DynamicField::Type::SELECT => 'Select',
-    DynamicField::Type::DATE => 'Date',
-    DynamicField::Type::CONTROLLED_TERM => 'Controlled Term'
-  }
+  TYPES = [Type::STRING, Type::TEXTAREA, Type::INTEGER, Type::BOOLEAN, Type::SELECT, Type::DATE, Type::CONTROLLED_TERM]
 
   # has_many :enabled_dynamic_fields, dependent: :destroy
 
@@ -31,7 +23,7 @@ class DynamicField < ActiveRecord::Base
   before_save :set_default_for_additional_data
 
   validates :display_label,         presence: true
-  validates :field_type,            presence: true, inclusion: { in: TYPES_TO_LABELS.keys }
+  validates :field_type,            presence: true, inclusion: { in: TYPES }
   validates :controlled_vocabulary, presence: true, if: Proc.new { |d| d.field_type == Type::CONTROLLED_TERM }
   validates :select_options,        presence: true, if: Proc.new { |d| d.field_type == Type::SELECT }
 
