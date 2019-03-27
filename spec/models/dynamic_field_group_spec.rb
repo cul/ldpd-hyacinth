@@ -181,7 +181,7 @@ RSpec.describe DynamicFieldGroup, type: :model do
 
         it 'returns correct error' do
           dynamic_field_group.save
-          expect(dynamic_field_group.errors.full_messages).to include 'String key has already been taken'
+          expect(dynamic_field_group.errors.full_messages).to include 'String key is already in use by a sibling field or field group'
         end
       end
 
@@ -200,7 +200,7 @@ RSpec.describe DynamicFieldGroup, type: :model do
 
         it 'returns correct error' do
           dynamic_field_group.save
-          expect(dynamic_field_group.errors.full_messages).to include 'String key has already been taken'
+          expect(dynamic_field_group.errors.full_messages).to include 'String key is already in use by a sibling field or field group'
         end
       end
     end
