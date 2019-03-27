@@ -19,7 +19,9 @@ class DynamicFieldGroup < ActiveRecord::Base
   validates :display_label, presence: true
   validates :parent_id,     presence: true, numericality: { only_integer: true }
   validates :parent_type,   presence: true, inclusion: { in: PARENT_TYPES }
+  validate  :non_circular_relationship
   validates :xml_translation, valid_json: true
+  # TODO: Add validation that checks xml_translation against a json schema definition, for example.
 
   # Order children first by sort_order and then by string_key to break up ties.
   def ordered_children
@@ -47,6 +49,10 @@ class DynamicFieldGroup < ActiveRecord::Base
   end
 
   private
+
+    def non_circular_relationship
+      errors.add(:parent, 'cannot be self') if (parent_type == self.class.name) && (parent_id == id)
+    end
 
     def set_default_xml_translation
       self.xml_translation = [].to_json if xml_translation.blank?

@@ -248,6 +248,23 @@ RSpec.describe DynamicFieldGroup, type: :model do
       end
     end
 
+    context 'when setting itself as parent' do
+      let(:parent) { FactoryBot.create(:dynamic_field_category) }
+
+      before do
+        dynamic_field_group.parent = dynamic_field_group
+      end
+
+      it 'does not save' do
+        expect(dynamic_field_group.save).to be false
+      end
+
+      it 'returns correct error' do
+        dynamic_field_group.save
+        expect(dynamic_field_group.errors.full_messages).to include 'Parent cannot be self'
+      end
+    end
+
     context 'when setting parent to invalid parent type' do
       let(:parent) { FactoryBot.create(:user, email: 'random_user@example.com') }
 
