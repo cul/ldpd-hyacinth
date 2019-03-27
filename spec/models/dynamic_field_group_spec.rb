@@ -251,7 +251,7 @@ RSpec.describe DynamicFieldGroup, type: :model do
     context 'when setting parent to invalid parent type' do
       let(:parent) { FactoryBot.create(:user, email: 'random_user@example.com') }
 
-      it 'does save' do
+      it 'does not save' do
         expect(dynamic_field_group.save).to be false
       end
 
