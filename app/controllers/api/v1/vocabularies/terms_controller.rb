@@ -17,7 +17,6 @@ module Api
 
         # GET /vocabularies/:vocabulary_string_key/terms/:uri
         def show
-          byebug
           response = URIService.connection.term(vocabulary, params[:uri])
           render json: { term: response.data }, status: response.status
         end

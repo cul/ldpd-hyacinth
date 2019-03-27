@@ -25,7 +25,7 @@ RSpec.describe 'Vocabularies Request', type: :request do
       end
 
       it 'makes correct request to external service with parameters' do
-        expect(connection).to receive(:vocabularies).with(page: 2) { response }
+        expect(connection).to receive(:vocabularies).with('page': '2') { response }
         get '/api/v1/vocabularies', params: { page: 2 }
       end
     end
