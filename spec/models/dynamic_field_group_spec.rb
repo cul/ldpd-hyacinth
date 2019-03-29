@@ -187,7 +187,7 @@ RSpec.describe DynamicFieldGroup, type: :model do
 
       context 'and the sibiling is a dynamic_field_group' do
         let(:parent) { FactoryBot.create(:dynamic_field_category) }
-        let(:dynamic_field_group) { FactoryBot.build(:dynamic_field_group, parent: parent) }
+        let(:dynamic_field_group) { FactoryBot.build(:dynamic_field_group, string_key: 'name', parent: parent) }
 
         before do
           FactoryBot.create(:dynamic_field_group, string_key: 'name', parent: parent)
@@ -286,15 +286,17 @@ RSpec.describe DynamicFieldGroup, type: :model do
 
     it 'can add a dynamic field' do
       dynamic_field_group.dynamic_fields << dynamic_field_1
-      dynamic_field_1.save
+      dynamic_field_group.save!
+      dynamic_field_group.reload
+
       expect(dynamic_field_group.dynamic_fields).to match_array [dynamic_field_1]
     end
 
     it 'can add multiple dynamic fields' do
       dynamic_field_group.dynamic_fields << dynamic_field_1
       dynamic_field_group.dynamic_fields << dynamic_field_2
-      dynamic_field_1.save
-      dynamic_field_2.save
+      dynamic_field_group.save
+      dynamic_field_group.reload
       expect(dynamic_field_group.dynamic_fields).to match_array [dynamic_field_1, dynamic_field_2]
     end
   end
