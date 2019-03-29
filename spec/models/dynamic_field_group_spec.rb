@@ -64,7 +64,7 @@ RSpec.describe DynamicFieldGroup, type: :model do
 
       it 'returns correct error' do
         dynamic_field_group.save
-        expect(dynamic_field_group.errors.full_messages).to include 'Parent must exist'
+        expect(dynamic_field_group.errors.full_messages).to include 'Parent is required'
       end
     end
 
@@ -135,7 +135,7 @@ RSpec.describe DynamicFieldGroup, type: :model do
 
       it 'returns correct error' do
         dynamic_field_group.save
-        expect(dynamic_field_group.errors.full_messages).to include 'Created by must exist'
+        expect(dynamic_field_group.errors.full_messages).to include 'Created by is required'
       end
     end
 
@@ -148,7 +148,7 @@ RSpec.describe DynamicFieldGroup, type: :model do
 
       it 'returns correct error' do
         dynamic_field_group.save
-        expect(dynamic_field_group.errors.full_messages).to include 'Updated by must exist'
+        expect(dynamic_field_group.errors.full_messages).to include 'Updated by is required'
       end
     end
 
@@ -274,7 +274,7 @@ RSpec.describe DynamicFieldGroup, type: :model do
 
       it 'returns correct error' do
         dynamic_field_group.save
-        expect(dynamic_field_group.errors.full_messages).to include 'Parent type is not included in the list'
+        expect(dynamic_field_group.errors.full_messages).to include 'Parent type is not among the list of allowed values'
       end
     end
   end

@@ -56,7 +56,7 @@ RSpec.describe DynamicField, type: :model do
 
       it 'returns correct error' do
         dynamic_field.save
-        expect(dynamic_field.errors.full_messages).to include 'Field type is not included in the list'
+        expect(dynamic_field.errors.full_messages).to include 'Field type is not among the list of allowed values'
       end
     end
 
@@ -69,7 +69,7 @@ RSpec.describe DynamicField, type: :model do
 
       it 'returns correct error' do
         dynamic_field.save
-        expect(dynamic_field.errors.full_messages).to include 'Dynamic field group must exist'
+        expect(dynamic_field.errors.full_messages).to include 'Dynamic field group is required'
       end
     end
 
@@ -82,7 +82,7 @@ RSpec.describe DynamicField, type: :model do
 
       it 'returns correct error' do
         dynamic_field.save
-        expect(dynamic_field.errors.full_messages).to include 'Created by must exist'
+        expect(dynamic_field.errors.full_messages).to include 'Created by is required'
       end
     end
 
@@ -95,7 +95,7 @@ RSpec.describe DynamicField, type: :model do
 
       it 'returns correct error' do
         dynamic_field.save
-        expect(dynamic_field.errors.full_messages).to include 'Updated by must exist'
+        expect(dynamic_field.errors.full_messages).to include 'Updated by is required'
       end
     end
 
