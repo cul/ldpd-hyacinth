@@ -26,5 +26,13 @@ FactoryBot.define do
         create(:permission, action: Permission::MANAGE_GROUPS, group: group)
       end
     end
+
+    trait :vocabulary_managers do
+      string_key { 'vocabulary_managers' }
+
+      after(:create) do |group|
+        create(:permission, action: Permission::MANAGE_VOCABULARIES, group: group)
+      end
+    end
   end
 end
