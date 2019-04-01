@@ -33,11 +33,12 @@ class DynamicFieldGroup < ActiveRecord::Base
   end
 
   def siblings
-    parent.respond_to?(:children) ? parent.children : []
+    parent.respond_to?(:children) ? parent.children.reject { |c| c.eql?(self) } : []
   end
 
   def as_json(_options = {})
     {
+      id: id,
       type: self.class.name,
       string_key: string_key,
       display_label: display_label,

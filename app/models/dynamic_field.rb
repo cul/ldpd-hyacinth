@@ -52,7 +52,7 @@ class DynamicField < ActiveRecord::Base
   end
 
   def siblings
-    dynamic_field_group.respond_to?(:children) ? dynamic_field_group.children : []
+    dynamic_field_group.respond_to?(:children) ? dynamic_field_group.children.reject { |c| c.eql?(self) } : []
   end
 
   private

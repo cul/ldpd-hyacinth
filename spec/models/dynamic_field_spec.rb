@@ -183,4 +183,13 @@ RSpec.describe DynamicField, type: :model do
       end
     end
   end
+
+  describe '#siblings' do
+    subject { FactoryBot.create(:dynamic_field) }
+
+    it 'should not include current object' do
+      subject.reload
+      expect(subject.siblings).to match_array []
+    end
+  end
 end

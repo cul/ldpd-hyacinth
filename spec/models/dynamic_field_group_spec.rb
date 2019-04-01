@@ -355,4 +355,13 @@ RSpec.describe DynamicFieldGroup, type: :model do
       expect(dynamic_field_group.ordered_children).to match [child_group, child_field_2, child_field_1]
     end
   end
+
+  describe '#siblings' do
+    subject { FactoryBot.create(:dynamic_field_group) }
+
+    it 'should not include current object' do
+      subject.reload
+      expect(subject.siblings).to match_array []
+    end
+  end
 end
