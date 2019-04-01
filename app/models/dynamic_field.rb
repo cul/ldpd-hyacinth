@@ -14,7 +14,7 @@ class DynamicField < ActiveRecord::Base
 
   TYPES = [Type::STRING, Type::TEXTAREA, Type::INTEGER, Type::BOOLEAN, Type::SELECT, Type::DATE, Type::CONTROLLED_TERM].freeze
 
-  # has_many :enabled_dynamic_fields, dependent: :destroy
+  has_many :enabled_dynamic_fields, dependent: :destroy
 
   belongs_to :dynamic_field_group
   belongs_to :created_by, class_name: 'User'
