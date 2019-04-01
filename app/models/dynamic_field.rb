@@ -3,16 +3,16 @@ class DynamicField < ActiveRecord::Base
   include DynamicFieldStructure::StringKey
 
   module Type
-    STRING = 'string'
-    TEXTAREA = 'textarea'
-    INTEGER = 'integer'
-    BOOLEAN = 'boolean'
-    SELECT = 'select'
-    DATE = 'date'
-    CONTROLLED_TERM = 'controlled_term'
+    STRING = 'string'.freeze
+    TEXTAREA = 'textarea'.freeze
+    INTEGER = 'integer'.freeze
+    BOOLEAN = 'boolean'.freeze
+    SELECT = 'select'.freeze
+    DATE = 'date'.freeze
+    CONTROLLED_TERM = 'controlled_term'.freeze
   end
 
-  TYPES = [Type::STRING, Type::TEXTAREA, Type::INTEGER, Type::BOOLEAN, Type::SELECT, Type::DATE, Type::CONTROLLED_TERM]
+  TYPES = [Type::STRING, Type::TEXTAREA, Type::INTEGER, Type::BOOLEAN, Type::SELECT, Type::DATE, Type::CONTROLLED_TERM].freeze
 
   # has_many :enabled_dynamic_fields, dependent: :destroy
 
@@ -24,8 +24,8 @@ class DynamicField < ActiveRecord::Base
 
   validates :display_label,         presence: true
   validates :field_type,            presence: true, inclusion: { in: TYPES }
-  validates :controlled_vocabulary, presence: true, if: Proc.new { |d| d.field_type == Type::CONTROLLED_TERM }
-  validates :select_options,        presence: true, if: Proc.new { |d| d.field_type == Type::SELECT }
+  validates :controlled_vocabulary, presence: true, if: proc { |d| d.field_type == Type::CONTROLLED_TERM }
+  validates :select_options,        presence: true, if: proc { |d| d.field_type == Type::SELECT }
 
   validates :additional_data_json, :select_options, valid_json: true
 

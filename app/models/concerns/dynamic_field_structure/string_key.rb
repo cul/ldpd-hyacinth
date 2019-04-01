@@ -3,7 +3,7 @@ module DynamicFieldStructure
     extend ActiveSupport::Concern
 
     # TODO: This restriction can be removed in the near future, as it is probably not necessary.
-    RESERVED_STRING_KEYS = ['uri', 'pref_label']
+    RESERVED_STRING_KEYS = ['uri', 'pref_label'].freeze
 
     included do
       validates :string_key, presence: true,  string_key: true, exclusion: { in: RESERVED_STRING_KEYS }

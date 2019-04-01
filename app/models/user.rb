@@ -6,7 +6,7 @@ class User < ApplicationRecord
 
   validates :email, :first_name, :last_name, presence: true
   validates :password, :password_confirmation, presence: true, on: :create
-  validates :password_confirmation, presence: true, if: Proc.new { |a| a.password.present? }, on: :update
+  validates :password_confirmation, presence: true, if: proc { |a| a.password.present? }, on: :update
 
   has_and_belongs_to_many :groups
 
