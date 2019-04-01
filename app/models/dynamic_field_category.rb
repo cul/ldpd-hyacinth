@@ -7,6 +7,7 @@ class DynamicFieldCategory < ActiveRecord::Base
 
   def as_json(_options = {})
     {
+      id: id,
       type: self.class.name,
       display_label: display_label,
       sort_order: sort_order,
@@ -19,6 +20,6 @@ class DynamicFieldCategory < ActiveRecord::Base
   end
 
   def siblings
-    DynamicFieldCategory.all
+    DynamicFieldCategory.where.not(id: id)
   end
 end
