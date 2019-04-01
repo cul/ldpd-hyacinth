@@ -35,6 +35,10 @@ Rails.application.routes.draw do
       resources :projects, param: :string_key, except: [:new, :edit] do
         resources :publish_targets, param: :string_key, except: [:new, :edit], module: 'projects'
       end
+
+      resources :dynamic_field_categories, except: [:new, :edit]
+      resources :dynamic_field_groups,     except: [:new, :edit, :index]
+      resources :dynamic_fields,           except: [:new, :edit, :index]
     end
   end
 end
