@@ -19,24 +19,13 @@ module Api
         render json: @digital_object
       end
 
-      # GET /digital_objects/new
-      def new
-        @digital_object = DigitalObject::Base.class_for_type(new_params[:digital_object_type]).new
-        render json: @digital_object
-      end
-
-      # GET /digital_objects/1/edit
-      def edit
-        render json: @digital_object
-      end
-
       # POST /digital_objects
       # POST /digital_objects.json
       def create
         digital_object_data = JSON.parse(create_or_update_params['digital_object_data_json'])
-        digital_object = DigitalObject::Base.class_for_type(digital_object_data['digital_object_type']).new
-        digital_object
-        @digital_object = DigitalObject.new(digital_object_params)
+        @digital_object = DigitalObject::Base.class_for_type(digital_object_data['digital_object_type']).new
+        @digital_object.set_digital_object_data(digital_object_data)
+
         if @digital_object.save
           render :show, status: :created, location: @digital_object
         else
@@ -54,6 +43,32 @@ module Api
         end
       end
 
+      def preserve
+        @digital_object = DigitalObject::Base.find(publish_params[:uid])
+        if @digital_object.preserve
+          render :show, status: :created, location: @digital_object
+        else
+          render json: @digital_object.errors, status: :unprocessable_entity
+        end
+      end
+
+      # Publish the The publish action also preserves.
+      def publish
+        @digital_object = DigitalObject::Base.find(publish_params[:uid])
+
+        # TODO: One day, if publish targets don't need to be saved in the
+        # preservation system, we may want the publish method to accept
+        # params like publish_to, unpublish_from, and republish. For now,
+        # we assume that pending_publish_to and pending_publish_from have
+        # been set by the save method.
+
+        if @digital_object.preserve && @digital_object.publish
+          render :show, status: :ok, location: @digital_object
+        else
+          render json: @digital_object.errors, status: :unprocessable_entity
+        end
+      end
+
       # DELETE /digital_objects/1
       # DELETE /digital_objects/1.json
       def destroy
@@ -64,11 +79,6 @@ module Api
       private
         def set_digital_object
           @digital_object = DigitalObject::Base.find(params[:uid])
-        end
-
-        # Never trust parameters from the scary internet, only allow the white list through.
-        def new_params
-          params.permit(:digital_object_type)
         end
 
         def create_or_update_params

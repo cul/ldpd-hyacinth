@@ -8,6 +8,8 @@ module Hyacinth
 
         def index(digital_object)
           # TODO: Index this object into solr
+
+          # TODO: index presence or absence of field values, even if the field itself isn't indexed for search
         end
 
         def search(search_params)

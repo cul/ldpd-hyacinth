@@ -11,9 +11,15 @@ class PublishTarget < ApplicationRecord
   # @param point_doi_to_this_publish_target [boolean] A flag that determines whether
   #        the published digital object's doi should point to a location associated
   #        with this PublishTarget.
+  # @return [success, errors] [boolean, Array<String>] success will be true if
+  #         the publish was successful, or false otherwise. errors is an array
+  #         that will contain error messages if the publish failed.
   def publish(digital_object, point_doi_to_this_publish_target)
   end
 
+  # @return [success, errors] [boolean, Array<String>] success will be true if
+  #         the unpublish was successful, or false otherwise. errors is an array
+  #         that will contain error messages if the unpublish failed.
   def unpublish(digital_object)
   end
 

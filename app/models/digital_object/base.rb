@@ -14,12 +14,15 @@ module DigitalObject
     include DigitalObjectConcerns::FindBehavior
     include DigitalObjectConcerns::CopyBehavior
 
+    SERIALIZATION_VERSION = '1'.freeze # Increment this if the serialized data format changes so that we can upgrade to the new format.
+
     # Set up callbacks
     define_model_callbacks :validation, :save
     before_validation :trim_whitespace_for_dynamic_field_data!, :remove_blank_fields_from_dynamic_field_data!
     # TODO: Add these before_validations ---> :register_new_uris_and_values_for_dynamic_field_data!, normalize_controlled_term_fields!
 
     # Simple attributes
+    metadata_attribute :serialization_version, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { SERIALIZATION_VERSION })
     metadata_attribute :uid, Hyacinth::DigitalObject::TypeDef::String.new
     metadata_attribute :doi, Hyacinth::DigitalObject::TypeDef::String.new
     metadata_attribute :digital_object_type, Hyacinth::DigitalObject::TypeDef::String.new
@@ -45,6 +48,8 @@ module DigitalObject
     metadata_attribute :parent_uids, Hyacinth::DigitalObject::TypeDef::JsonSerializableSet.new.default(-> { Set.new.freeze }).freeze_on_deserialize # Frozen Set so this can only be modified by modification methods.
     metadata_attribute :structured_children, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { { 'type' => 'sequence', 'structure' => [] } })
     # Publish Data
+    metadata_attribute :pending_publish_to, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Array.new })
+    metadata_attribute :pending_unpublish_from, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Array.new })
     metadata_attribute :publish_entries, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Hash.new.freeze }).freeze_on_deserialize # Frozen Set so this can only be modified by modification methods.
 
     attr_reader :digital_object_record

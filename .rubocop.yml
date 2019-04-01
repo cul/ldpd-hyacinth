@@ -51,6 +51,9 @@ Style/BracesAroundHashParameters:
 Style/FrozenStringLiteralComment:
   Enabled: false
 
+Style/MultilineBlockChain:
+  Enabled: false
+
 Style/StringLiterals:
   Enabled: false
 

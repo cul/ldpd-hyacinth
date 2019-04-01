@@ -1,2 +1,0 @@
-class DigitalObjectsController < ApplicationController
-end

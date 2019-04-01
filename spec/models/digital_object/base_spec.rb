@@ -40,10 +40,13 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
           :group,
           :identifiers,
           :parent_uids,
+          :pending_publish_to,
+          :pending_unpublish_from,
           :preservation_target_uris,
           :preserved_at,
           :projects,
           :publish_entries,
+          :serialization_version,
           :state,
           :structured_children,
           :uid,
@@ -71,6 +74,7 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
           hsh
         end).to eq(
           {
+            serialization_version: DigitalObject::Base::SERIALIZATION_VERSION,
             uid: nil,
             doi: nil,
             digital_object_type: 'test_subclass',
@@ -87,6 +91,8 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
             projects: Set.new,
             publish_entries: {},
             parent_uids: Set.new,
+            pending_publish_to: [],
+            pending_unpublish_from: [],
             structured_children: { 'type' => 'sequence', 'structure' => [] },
             dynamic_field_data: {},
             preservation_target_uris: Set.new,

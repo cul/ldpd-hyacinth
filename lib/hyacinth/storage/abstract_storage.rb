@@ -14,11 +14,15 @@ module Hyacinth
       end
 
       def read(location)
-        storage_adapter_for_location(location).read(location)
+        Hyacinth.config.lock_adapter.with_lock(location) do
+          storage_adapter_for_location(location).read(location)
+        end
       end
 
       def write(location, content)
-        storage_adapter_for_location(location).write(location, content)
+        Hyacinth.config.lock_adapter.with_lock(location) do
+          storage_adapter_for_location(location).write(location, content)
+        end
       end
 
       def exists?(location)
@@ -26,7 +30,9 @@ module Hyacinth
       end
 
       def delete(location)
-        storage_adapter_for_location(location).delete(location)
+        Hyacinth.config.lock_adapter.with_lock(location) do
+          storage_adapter_for_location(location).delete(location)
+        end
       end
 
       # Returns the first compatible storage adapter for the given location, or nil if no compatible storage adapter is found.

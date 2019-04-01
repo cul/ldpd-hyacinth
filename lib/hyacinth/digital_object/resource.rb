@@ -34,7 +34,11 @@ module Hyacinth
         end
       end
 
-      def process_import_if_present(object_uid, resource_name)
+      # @param lock_object [LockObject] A lock object can be optionally passed in
+      # so that an external lock can be extended while the resource import occurs.
+      # Imports can take a long time, so an externally-established lock may
+      # expire if not renewed within a resource import.
+      def process_import_if_present(object_uid, resource_name, lock_object)
         return unless has_valid_import?
 
         # Regardless of import type, we need to calculate a checksum for this file.
@@ -47,7 +51,7 @@ module Hyacinth
         # verification job in the background and only send an alert if that checksum
         # match fails. For now though, we'll keep things simple by just
         # calculating/verifying checksums during import.
-        self.checksum = checksum_for_file(resource.import_location)
+        self.checksum = checksum_for_file(resource.import_location, lock_object)
         # TODO: Finish checksum code
 
 
@@ -67,8 +71,15 @@ module Hyacinth
         end
       end
 
-      def checksum_for_file(file_import_location)
+      # @param lock_object [LockObject] A lock object can be optionally passed in
+      # so that an external lock can be extended while the resource import occurs.
+      # Imports can take a long time, so an externally-established lock may
+      # expire if not renewed within a resource import.
+      def checksum_for_file(file_import_location, lock_object)
         # TODO: Implement this
+
+        # Extend the lock during the checksumming process so that it doesn't expire
+        # lock_object.extend_lock # extend lock in case publish is slow
       end
 
       def self.from_serialized_form(json_var)

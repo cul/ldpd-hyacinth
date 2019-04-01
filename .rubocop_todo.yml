@@ -164,8 +164,6 @@ Metrics/LineLength:
 Metrics/MethodLength:
   Enabled: true
   Max: 181
-  Exclude:
-    - 'app/models/concerns/digital_object_concerns/save_behavior.rb'
 
 # Offense count: 1
 # Configuration parameters: CountComments.
