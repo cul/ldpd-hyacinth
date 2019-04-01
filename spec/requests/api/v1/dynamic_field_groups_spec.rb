@@ -206,7 +206,7 @@ RSpec.describe 'Dynamic Field Groups Requests', type: :request do
         end
       end
 
-      context 'when deleting a dynamic_field_group that does not exists' do
+      context 'when deleting a dynamic_field_group that does not exist' do
         before { delete '/api/v1/dynamic_field_groups/123' }
 
         it 'returns errors' do
