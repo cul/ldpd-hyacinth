@@ -3,7 +3,7 @@ FactoryBot.define do
     string_key      { 'name' }
     display_label   { 'Name' }
     is_repeatable   { true }
-    xml_translation { }
+    xml_translation { nil }
     sort_order      { 3 }
 
     created_by      { User.first || create(:user) }
