@@ -1,11 +1,13 @@
 module DigitalObjectConcerns
   module DigitalObjectData
     module Setters
+      include DigitalObjectConcerns::DigitalObjectData::Setters::Doi
       include DigitalObjectConcerns::DigitalObjectData::Setters::DynamicFieldData
       include DigitalObjectConcerns::DigitalObjectData::Setters::Group
       include DigitalObjectConcerns::DigitalObjectData::Setters::Identifiers
       include DigitalObjectConcerns::DigitalObjectData::Setters::OptimisticLockToken
       include DigitalObjectConcerns::DigitalObjectData::Setters::ParentUids
+      include DigitalObjectConcerns::DigitalObjectData::Setters::Preserve
       include DigitalObjectConcerns::DigitalObjectData::Setters::Projects
       include DigitalObjectConcerns::DigitalObjectData::Setters::PublishTargets
       include DigitalObjectConcerns::DigitalObjectData::Setters::Resources
@@ -25,10 +27,14 @@ module DigitalObjectConcerns
         # so that users will know to refresh the page and redo changes if another user or process made changes
         # while they had the editing screen open.
         set_dynamic_field_data(new_digital_object_data, merge_dynamic_fields)
+
+        set_doi(new_digital_object_data)
         set_group(new_digital_object_data)
         set_identifiers(new_digital_object_data)
+        set_mint_doi(new_digital_object_data)
         set_optimistic_lock_token(new_digital_object_data)
         set_parent_uids(new_digital_object_data)
+        set_preserve(new_digital_object_data)
         set_publish_targets(new_digital_object_data)
         set_resources(new_digital_object_data)
         set_state(new_digital_object_data)

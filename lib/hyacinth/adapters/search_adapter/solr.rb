@@ -8,6 +8,8 @@ module Hyacinth
 
         def index(digital_object)
           # TODO: Index this object into solr
+
+          # TODO: index presence or absence of field values, even if the field itself isn't indexed for search
         end
 
         def search(search_params)
@@ -19,7 +21,7 @@ module Hyacinth
         # @param opts
         #        opts[:retry_with_delay] If no results are found, search again after the specified delay (in seconds).
         def identifier_to_uids(identifier, opts)
-          2.times {
+          2.times do
             # TODO: Search
 
             if opts[:retry_with_delay].present?
@@ -27,7 +29,7 @@ module Hyacinth
             else
               break
             end
-          }
+          end
         end
 
         # Deletes all records from the search index

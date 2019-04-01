@@ -17,13 +17,16 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters do
   context "#set_digital_object_data" do
     it "calls the expected sub-methods and changes some data" do
       expect(digital_object_with_sample_data).to receive(:set_dynamic_field_data).with(digital_object_data, true).and_call_original
+      expect(digital_object_with_sample_data).to receive(:set_doi).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:set_group).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:set_identifiers).with(digital_object_data).and_call_original
+      expect(digital_object_with_sample_data).to receive(:set_mint_doi).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:set_optimistic_lock_token).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:set_parent_uids).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:set_publish_targets).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:set_resources).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:set_state).with(digital_object_data).and_call_original
+      expect(digital_object_with_sample_data).to receive(:set_preserve).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:set_projects).with(digital_object_data).and_call_original
 
       digital_object_with_sample_data.set_digital_object_data(digital_object_data, true)

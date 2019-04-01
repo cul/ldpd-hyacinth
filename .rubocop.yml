@@ -1,11 +1,7 @@
-require: rubocop-rspec
-
 inherit_gem:
-  rubocop-rails_config:
-    - config/rails.yml
+  bixby: bixby_default.yml
 
-Rails:
-  Enabled: true
+inherit_from: .rubocop_todo.yml
 
 AllCops:
   TargetRubyVersion: 2.5.3
@@ -17,6 +13,7 @@ AllCops:
     - 'app/javascript/**/*'
     - 'node_modules/**/*'
     - 'vendor/**/*'
+    - 'lib/tasks/hyacinth/**/*'
 
 Layout/EmptyLinesAroundModuleBody:
   Enabled: false
@@ -32,6 +29,7 @@ Metrics/CyclomaticComplexity:
   Max: 7
   Exclude:
     - 'app/controllers/api/v1/groups_controller.rb'
+    - 'app/models/concerns/digital_object_concerns/save_behavior.rb'
 
 Metrics/PerceivedComplexity:
   Enabled: true
@@ -39,6 +37,13 @@ Metrics/PerceivedComplexity:
   Exclude:
     - 'app/controllers/api/v1/groups_controller.rb'
     - 'app/controllers/concerns/hyacinth/users/cas_authentication_behavior.rb'
+    - 'app/models/concerns/digital_object_concerns/save_behavior.rb'
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/MessageSpies:
+  Enabled: false
 
 Style/BracesAroundHashParameters:
   Enabled: false
@@ -46,5 +51,11 @@ Style/BracesAroundHashParameters:
 Style/FrozenStringLiteralComment:
   Enabled: false
 
+Style/MultilineBlockChain:
+  Enabled: false
+
 Style/StringLiterals:
+  Enabled: false
+
+Style/RedundantSelf:
   Enabled: false

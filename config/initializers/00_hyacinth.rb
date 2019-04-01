@@ -27,7 +27,7 @@ Rails.application.config.to_prepare do
           :preservation_persistence,
           :search_adapter,
           :lock_adapter
-        ) { }.new(
+        ) {}.new(
           Hyacinth::DigitalObject::Types.new(
             'item' => ::DigitalObject::Item,
             'asset' => ::DigitalObject::Asset,

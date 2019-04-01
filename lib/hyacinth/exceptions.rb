@@ -6,6 +6,10 @@ module Hyacinth
     class NotSaved < HyacinthError; end
     class UnableToObtainLockError < HyacinthError; end
 
+    class Rollback < HyacinthError; end
+    class UnexpectedErrors < HyacinthError; end
+    class MissingErrors < HyacinthError; end
+
     class MissingRequiredOpt < HyacinthError; end
 
     class UnsupportedType < HyacinthError; end

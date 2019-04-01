@@ -26,29 +26,34 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
 
   context "metadata_attributes fields" do
     it "has the expected custom fields defined" do
-      expect(digital_object.metadata_attributes.keys.sort).to eq([
-        :created_at,
-        :created_by,
-        :custom_field1,
-        :custom_field2,
-        :digital_object_type,
-        :doi,
-        :dynamic_field_data,
-        :first_persisted_to_preservation_at,
-        :first_published_at,
-        :group,
-        :identifiers,
-        :parent_uids,
-        :persisted_to_preservation_at,
-        :preservation_target_uris,
-        :projects,
-        :publish_entries,
-        :state,
-        :structured_children,
-        :uid,
-        :updated_at,
-        :updated_by
-       ])
+      expect(digital_object.metadata_attributes.keys.sort).to eq(
+        [
+          :created_at,
+          :created_by,
+          :custom_field1,
+          :custom_field2,
+          :digital_object_type,
+          :doi,
+          :dynamic_field_data,
+          :first_preserved_at,
+          :first_published_at,
+          :group,
+          :identifiers,
+          :parent_uids,
+          :pending_publish_to,
+          :pending_unpublish_from,
+          :preservation_target_uris,
+          :preserved_at,
+          :projects,
+          :publish_entries,
+          :serialization_version,
+          :state,
+          :structured_children,
+          :uid,
+          :updated_at,
+          :updated_by
+        ].sort
+      )
     end
 
     it "has the expected frozen fields" do
@@ -63,12 +68,13 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
 
     it "return the expected default values for a new, unsaved object" do
       freeze_time do
-        frozen_datetime = DateTime.now
+        frozen_datetime = DateTime.current
         expect(digital_object.metadata_attributes.reduce({}) do |hsh, (attribute_name, _attribute)|
           hsh[attribute_name] = digital_object.send(attribute_name)
           hsh
         end).to eq(
           {
+            serialization_version: DigitalObject::Base::SERIALIZATION_VERSION,
             uid: nil,
             doi: nil,
             digital_object_type: 'test_subclass',
@@ -78,13 +84,15 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
             created_at: frozen_datetime,
             updated_at: frozen_datetime,
             first_published_at: nil,
-            persisted_to_preservation_at: nil,
-            first_persisted_to_preservation_at: nil,
+            preserved_at: nil,
+            first_preserved_at: nil,
             group: nil,
             identifiers: Set.new,
             projects: Set.new,
             publish_entries: {},
             parent_uids: Set.new,
+            pending_publish_to: [],
+            pending_unpublish_from: [],
             structured_children: { 'type' => 'sequence', 'structure' => [] },
             dynamic_field_data: {},
             preservation_target_uris: Set.new,
@@ -112,8 +120,8 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
       expect(digital_object_with_sample_data.new_record?).to eq(true)
     end
 
-    it "returns false for a persisted instance" do
-      digital_object_with_sample_data.save
+    it "returns false for a successfully saved instance" do
+      expect(digital_object_with_sample_data.save).to eq(true)
       expect(digital_object_with_sample_data.new_record?).to eq(false)
     end
   end

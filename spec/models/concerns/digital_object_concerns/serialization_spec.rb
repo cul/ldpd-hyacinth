@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe DigitalObjectConcerns::Serializer do
+RSpec.describe DigitalObjectConcerns::Serialization do
   let(:digital_object_with_sample_data) { FactoryBot.build(:digital_object_test_subclass, :with_sample_data) }
 
   before {
