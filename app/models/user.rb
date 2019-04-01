@@ -51,10 +51,13 @@ class User < ApplicationRecord
       .map(&:action)
   end
 
-
   def update_without_password(params, *options)
     params.delete(:current_password)
     super(params)
+  end
+
+  def vocabulary_manager?
+    system_wide_permissions.include?(Permission::MANAGE_VOCABULARIES) || admin?
   end
 
   private

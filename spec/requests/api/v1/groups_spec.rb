@@ -125,7 +125,7 @@ RSpec.describe 'Group Requests', type: :request do
           expect(response.body).to be_json_eql(%(
             {
               "errors": [
-                { "title": "String key only allows lowercase alphanumeric characters and underscores and must start with a lowercase letter" }
+                { "title": "String key values must start with a letter, can only have up to 240 characters and can only contain lower case letters, numbers and underscores" }
               ]
             }
           ))
