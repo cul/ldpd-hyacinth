@@ -11,12 +11,13 @@ class EnabledDynamicField < ApplicationRecord
 
   def as_json(_options = {})
     {
+      id: id,
       dynamic_field_id: dynamic_field_id,
       default_value: default_value,
       hidden: hidden,
       locked: locked,
       required: required,
-      owner_only: ownner_only,
+      owner_only: owner_only,
       # fieldset_ids: fieldset_ids
     }
   end
