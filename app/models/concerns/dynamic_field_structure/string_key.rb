@@ -6,7 +6,7 @@ module DynamicFieldStructure
     RESERVED_STRING_KEYS = ['uri', 'pref_label'].freeze
 
     included do
-      validates :string_key, presence: true,  string_key: true, exclusion: { in: RESERVED_STRING_KEYS }
+      validates :string_key, presence: true, string_key: true, exclusion: { in: RESERVED_STRING_KEYS }
       validate :unique_string_key
     end
 

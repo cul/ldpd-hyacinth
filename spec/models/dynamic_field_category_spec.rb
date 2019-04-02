@@ -65,11 +65,11 @@ RSpec.describe DynamicFieldCategory, type: 'model' do
   end
 
   describe '#siblings' do
-    subject { FactoryBot.create(:dynamic_field_category) }
+    subject(:dynamic_field_category) { FactoryBot.create(:dynamic_field_category) }
 
-    it 'should not include current object' do
-      subject.reload
-      expect(subject.siblings).to match_array []
+    it 'do not include current object' do
+      dynamic_field_category.reload
+      expect(dynamic_field_category.siblings).to match_array []
     end
   end
 end

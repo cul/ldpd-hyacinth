@@ -357,11 +357,11 @@ RSpec.describe DynamicFieldGroup, type: :model do
   end
 
   describe '#siblings' do
-    subject { FactoryBot.create(:dynamic_field_group) }
+    subject(:dynamic_field_group) { FactoryBot.create(:dynamic_field_group) }
 
-    it 'should not include current object' do
-      subject.reload
-      expect(subject.siblings).to match_array []
+    it 'does not include current object' do
+      dynamic_field_group.reload
+      expect(dynamic_field_group.siblings).to match_array []
     end
   end
 end

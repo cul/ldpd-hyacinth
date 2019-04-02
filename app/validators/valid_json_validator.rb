@@ -3,8 +3,13 @@ class ValidJsonValidator < ActiveModel::EachValidator
 
   def validate_each(record, attribute, value)
     return if value.nil?
-    unless Hyacinth::Utils::Json.valid_json?(value)
-      record.errors[attribute] << (options[:message] || MESSAGE)
-    end
+
+    record.errors[attribute] << (options[:message] || MESSAGE) unless valid_json?(value)
   end
+
+  private
+
+    def valid_json?(value)
+      Hyacinth::Utils::Json.valid_json?(value)
+    end
 end

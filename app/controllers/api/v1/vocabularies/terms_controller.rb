@@ -9,7 +9,7 @@ module Api
         # GET /vocabularies/:vocabulary_string_key/terms
         def index
           search_parameters = params.to_unsafe_h
-                                .except(:action, :controller, :format, :vocabulary_string_key)
+                                    .except(:action, :controller, :format, :vocabulary_string_key)
 
           response = URIService.connection.search_terms(vocabulary, search_parameters)
           render json: response.data, status: response.status
@@ -48,7 +48,6 @@ module Api
           def request_data
             params[:term].to_unsafe_h.tap do |hash|
               hash[:uri] = params[:uri] if params.key?(:uri)
-              hash
             end
           end
 

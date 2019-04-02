@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Terms Requests', type: :request do
-  let(:connection) { double 'connection' }
+  let(:connection) { instance_double 'UriService::Client::Connection' }
 
   before do
     allow(URIService).to receive(:connection).and_return(connection)
@@ -9,7 +9,7 @@ RSpec.describe 'Terms Requests', type: :request do
 
   describe 'GET /api/v1/vocabularies/:string_key/terms' do
     context 'when logged in user has appropriate permissions' do
-      let(:response) { double(data: {}, status: 200) }
+      let(:response) { instance_double('UriService::Client::Response', data: {}, status: 200) }
 
       before { sign_in_user }
 
@@ -27,7 +27,7 @@ RSpec.describe 'Terms Requests', type: :request do
 
   describe 'GET /api/v1/vocabularies/:string_key/terms/:uri' do
     context 'when logged in user has appropriate permissions' do
-      let(:response) { double(data: {}, status: 200) }
+      let(:response) { instance_double('UriService::Client::Response', data: {}, status: 200) }
 
       before { sign_in_user }
 
@@ -40,7 +40,7 @@ RSpec.describe 'Terms Requests', type: :request do
 
   describe 'POST /api/v1/vocabularies/:string_key/terms' do
     context 'when logged in user has appropriate permissions' do
-      let(:response) { double(data: {}, status: 201) }
+      let(:response) { instance_double('UriService::Client::Response', data: {}, status: 201) }
 
       before { sign_in_user }
 
@@ -63,7 +63,7 @@ RSpec.describe 'Terms Requests', type: :request do
     end
 
     context 'when logged in user has appropriate permissions' do
-      let(:response) { double(data: {}, status: 200) }
+      let(:response) { instance_double('UriService::Client::Response', data: {}, status: 200) }
 
       before { sign_in_user as: :vocabulary_manager }
 
@@ -72,7 +72,7 @@ RSpec.describe 'Terms Requests', type: :request do
           pref_label: 'ALOHOMORA', uri: 'https://pottermore.com/spells/alohomora'
         }) { response }
         patch '/api/v1/vocabularies/spells/terms/https%3A%2F%2Fpottermore.com%2Fspells%2Falohomora',
-          params: { term: { pref_label: 'ALOHOMORA' } }
+              params: { term: { pref_label: 'ALOHOMORA' } }
       end
     end
   end
@@ -85,7 +85,7 @@ RSpec.describe 'Terms Requests', type: :request do
     end
 
     context 'when logged in user has appropriate permissions' do
-      let(:response) { double(data: {}, status: 204) }
+      let(:response) { instance_double('UriService::Client::Response', data: {}, status: 204) }
 
       before { sign_in_user as: :vocabulary_manager }
 

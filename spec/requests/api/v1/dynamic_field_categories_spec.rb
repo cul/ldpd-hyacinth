@@ -62,7 +62,7 @@ RSpec.describe 'Dynamic Field Categories Requests', type: :request do
           get "/api/v1/dynamic_field_categories/#{dynamic_field_category.id}"
         end
 
-        it 'it returns 200' do
+        it 'returns 200' do
           expect(response.status).to be 200
         end
 

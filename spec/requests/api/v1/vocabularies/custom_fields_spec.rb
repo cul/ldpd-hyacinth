@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Custom Fields Requests', type: :request do
-  let(:connection) { double('connection') }
+  let(:connection) { instance_double('UriService::Client::Connection') }
 
   before do
     allow(URIService).to receive(:connection).and_return(connection)
@@ -15,7 +15,7 @@ RSpec.describe 'Custom Fields Requests', type: :request do
     end
 
     context 'when logged in user has appropriate permissions' do
-      let(:response) { double(data: {}, status: 201) }
+      let(:response) { instance_double('UriService::Client::Response', data: {}, status: 201) }
 
       before { sign_in_user as: :vocabulary_manager }
 
@@ -36,7 +36,7 @@ RSpec.describe 'Custom Fields Requests', type: :request do
     end
 
     context 'when logged in user has appropriate permissions' do
-      let(:response) { double(data: {}, status: 200) }
+      let(:response) { instance_double('UriService::Client::Response', data: {}, status: 200) }
 
       before { sign_in_user as: :vocabulary_manager }
 
@@ -57,7 +57,7 @@ RSpec.describe 'Custom Fields Requests', type: :request do
     end
 
     context 'when logged in user has appropriate permissions' do
-      let(:response) { double(data: {}, status: 200) }
+      let(:response) { instance_double('UriService::Client::Response', data: {}, status: 200) }
 
       before { sign_in_user as: :vocabulary_manager }
 

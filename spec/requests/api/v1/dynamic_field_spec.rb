@@ -16,7 +16,7 @@ RSpec.describe 'Dynamic Fields Requests', type: :request do
           get "/api/v1/dynamic_fields/#{dynamic_field.id}"
         end
 
-        it 'it returns 200' do
+        it 'returns 200' do
           expect(response.status).to be 200
         end
 
@@ -77,7 +77,8 @@ RSpec.describe 'Dynamic Fields Requests', type: :request do
 
       context 'when creating a new dynamic field' do
         before do
-          post '/api/v1/dynamic_fields', params: { dynamic_field: {
+          post '/api/v1/dynamic_fields', params: {
+            dynamic_field: {
               string_key: 'term', display_label: 'Term', field_type: 'controlled_term', controlled_vocabulary: 'names',
               sort_order: 6, dynamic_field_group_id: parent.id, is_facetable: true
             }
@@ -115,7 +116,8 @@ RSpec.describe 'Dynamic Fields Requests', type: :request do
 
       context 'when creating without a display_label' do
         before do
-          post '/api/v1/dynamic_fields', params: { dynamic_field: {
+          post '/api/v1/dynamic_fields', params: {
+            dynamic_field: {
               display_label: 'Term', field_type: 'controlled_term', controlled_vocabulary: 'names',
               sort_order: 6, dynamic_field_group_id: parent.id, is_facetable: true
             }

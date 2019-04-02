@@ -40,7 +40,6 @@ module Api
         def request_data
           params[:vocabulary].to_unsafe_h.tap do |hash|
             hash[:string_key] = params[:string_key] if params.key?(:string_key)
-            hash
           end
         end
     end
