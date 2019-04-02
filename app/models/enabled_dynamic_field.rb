@@ -17,7 +17,7 @@ class EnabledDynamicField < ApplicationRecord
       hidden: hidden,
       locked: locked,
       required: required,
-      owner_only: owner_only,
+      owner_only: owner_only
       # fieldset_ids: fieldset_ids
     }
   end

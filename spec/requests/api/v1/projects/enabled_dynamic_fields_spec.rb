@@ -6,7 +6,9 @@ RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
   describe 'GET /api/v1/projects/:string_key/enabled_dynamic_fields/:digital_object_type' do
     before do
       enabled_dynamic_field = FactoryBot.create(:enabled_dynamic_field, project: project)
-      new_dynamic_field  = FactoryBot.create(:dynamic_field, string_key: 'name',
+      new_dynamic_field = FactoryBot.create(
+        :dynamic_field,
+        string_key: 'name',
         dynamic_field_group: enabled_dynamic_field.dynamic_field.dynamic_field_group
       )
       FactoryBot.create(:enabled_dynamic_field, project: project, dynamic_field: new_dynamic_field)
@@ -89,7 +91,9 @@ RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
 
     context 'when updating multiple enabled_dynamic_fields' do
       let(:new_dynamic_field) do
-        FactoryBot.create(:dynamic_field, string_key: 'name',
+        FactoryBot.create(
+          :dynamic_field,
+          string_key: 'name',
           dynamic_field_group: enabled_dynamic_field.dynamic_field.dynamic_field_group
         )
       end

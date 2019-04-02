@@ -8,6 +8,6 @@ FactoryBot.define do
     locked              { false }
     hidden              { false }
     owner_only          { false }
-    default_value       { }
+    default_value       {}
   end
 end

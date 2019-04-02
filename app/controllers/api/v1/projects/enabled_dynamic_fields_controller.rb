@@ -24,6 +24,7 @@ module Api
         end
 
         private
+
           def enabled_dynamic_fields(reload: false)
             @project.reload if reload
             @project.enabled_dynamic_fields.where(digital_object_type: params[:digital_object_type])
