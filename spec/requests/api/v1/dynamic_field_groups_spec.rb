@@ -16,7 +16,7 @@ RSpec.describe 'Dynamic Field Groups Requests', type: :request do
           get "/api/v1/dynamic_field_groups/#{dynamic_field_group.id}"
         end
 
-        it 'it returns 200' do
+        it 'returns 200' do
           expect(response.status).to be 200
         end
 
@@ -68,8 +68,8 @@ RSpec.describe 'Dynamic Field Groups Requests', type: :request do
 
       context 'when creating a new dynamic field group' do
         before do
-          post '/api/v1/dynamic_field_groups', params: { dynamic_field_group:
-            {
+          post '/api/v1/dynamic_field_groups', params: {
+            dynamic_field_group: {
               string_key: 'location', display_label: 'Location', sort_order: '8',
               is_repeatable: true, parent_type: parent.class.to_s, parent_id: parent.id
             }
@@ -104,8 +104,8 @@ RSpec.describe 'Dynamic Field Groups Requests', type: :request do
 
       context 'when creating without a string_key' do
         before do
-          post '/api/v1/dynamic_field_groups', params: { dynamic_field_group:
-            {
+          post '/api/v1/dynamic_field_groups', params: {
+            dynamic_field_group: {
               display_label: 'Location', sort_order: '8',
               is_repeatable: true, parent_type: parent.class.to_s, parent_id: parent.id
             }

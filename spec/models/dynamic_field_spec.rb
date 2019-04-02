@@ -12,7 +12,7 @@ RSpec.describe DynamicField, type: :model do
       its(:field_type) { is_expected.to eql DynamicField::Type::CONTROLLED_TERM }
       its(:sort_order) { is_expected.to be 7 }
       its(:filter_label) { is_expected.to eql 'Name' }
-      its(:is_facetable) { is_expected.to eql true }
+      its(:is_facetable) { is_expected.to be true }
       its(:controlled_vocabulary) { is_expected.to eql 'name_role' }
       its(:select_options) { is_expected.to be_nil }
       its(:is_keyword_searchable) { is_expected.to be false }
@@ -185,11 +185,11 @@ RSpec.describe DynamicField, type: :model do
   end
 
   describe '#siblings' do
-    subject { FactoryBot.create(:dynamic_field) }
+    subject(:dynamic_field) { FactoryBot.create(:dynamic_field) }
 
-    it 'should not include current object' do
-      subject.reload
-      expect(subject.siblings).to match_array []
+    it 'does not include current object' do
+      dynamic_field.reload
+      expect(dynamic_field.siblings).to match_array []
     end
   end
 end

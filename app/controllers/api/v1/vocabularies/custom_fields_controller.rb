@@ -31,7 +31,6 @@ module Api
           def request_data
             params[:custom_field].to_unsafe_h.tap do |hash|
               hash[:field_key] = params[:field_key] if params.key?(:field_key)
-              hash
             end
           end
       end
