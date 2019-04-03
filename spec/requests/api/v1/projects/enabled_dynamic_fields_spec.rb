@@ -118,12 +118,14 @@ RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
 
       it 'update first dynamic field' do
         enabled_dynamic_field.reload
+        expect(enabled_dynamic_field.required).to be true
         expect(enabled_dynamic_field.owner_only).to be true
       end
 
       it 'updates second dynamic field' do
         enabled_dynamic_field_2.reload
         expect(enabled_dynamic_field_2.required).to be false
+        expect(enabled_dynamic_field_2.owner_only).to be false
       end
     end
   end
