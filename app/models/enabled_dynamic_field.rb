@@ -5,7 +5,7 @@ class EnabledDynamicField < ApplicationRecord
   belongs_to :dynamic_field
 
   validates :project, :dynamic_field, :digital_object_type, presence: true
-  validates :digital_object_type, inclusion: { in: ['item', 'asset', 'site'] }
+  validates :digital_object_type, inclusion: { in: Hyacinth.config.digital_object_types.keys }
   validates :dynamic_field, uniqueness: { scope: [:project, :digital_object_type] }
 
   def as_json(_options = {})
