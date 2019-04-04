@@ -39,6 +39,9 @@ Metrics/PerceivedComplexity:
     - 'app/controllers/concerns/hyacinth/users/cas_authentication_behavior.rb'
     - 'app/models/concerns/digital_object_concerns/save_behavior.rb'
 
+Rails/HasAndBelongsToMany:
+  Enabled: false
+
 RSpec/ExampleLength:
   Enabled: false
 
