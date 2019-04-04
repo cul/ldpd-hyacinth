@@ -33,7 +33,7 @@ module Api
           def update_params
             params.permit(
               enabled_dynamic_fields: [
-                :id, :dynamic_field_id, :required, :locked, :hidden, :owner_only, :default_value
+                :id, :dynamic_field_id, :required, :locked, :hidden, :owner_only, :default_value, field_set_ids: []
               ]
             )
           end

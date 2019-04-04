@@ -128,5 +128,24 @@ RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
         expect(enabled_dynamic_field_2.owner_only).to be false
       end
     end
+
+    context 'when adding field_set' do
+      let(:field_set) { FactoryBot.create(:field_set, project: project) }
+
+      before do
+        patch "/api/v1/projects/#{project.string_key}/enabled_dynamic_fields/item", params: {
+          enabled_dynamic_fields: [{ id: enabled_dynamic_field.id, field_set_ids: [field_set.id] }]
+        }
+      end
+
+      it 'returns 200' do
+        expect(response.status).to be 200
+      end
+
+      it 'correctly updates record' do
+        enabled_dynamic_field.reload
+        expect(enabled_dynamic_field.field_sets).to match_array [field_set]
+      end
+    end
   end
 end
