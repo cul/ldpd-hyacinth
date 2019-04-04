@@ -11,7 +11,7 @@ RSpec.describe 'Publish Target requests', type: :request do
         get "/api/v1/projects/#{project.string_key}/publish_targets"
       end
 
-      it 'returns all projects' do
+      it 'returns all publish targets' do
         expect(response.body).to be_json_eql(%(
           {
             "publish_targets": [
@@ -172,7 +172,7 @@ RSpec.describe 'Publish Target requests', type: :request do
   describe 'DELETE /api/v1/projects/:string_key/publish_targets/:string_key' do
     let(:string_key) { 'great_project_publish_target' }
 
-    context 'when deleting a project that exists' do
+    context 'when deleting a publish target that exists' do
       before do
         FactoryBot.create(:publish_target, project: project, string_key: string_key)
         delete "/api/v1/projects/#{project.string_key}/publish_targets/#{string_key}"
@@ -187,7 +187,7 @@ RSpec.describe 'Publish Target requests', type: :request do
       end
     end
 
-    context 'when deleting a project that dooes not exist' do
+    context 'when deleting a publish target that dooes not exist' do
       before do
         delete "/api/v1/projects/#{project.string_key}/publish_targets/not-valid"
       end
