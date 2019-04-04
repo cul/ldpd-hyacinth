@@ -1,6 +1,5 @@
 class EnabledDynamicField < ApplicationRecord
-  # has_many :enabled_dynamic_fields_fieldsets
-  # has_many :fieldsets, through: :enabled_dynamic_fields_fieldsets
+  has_and_belongs_to_many :field_sets
 
   belongs_to :project
   belongs_to :dynamic_field
