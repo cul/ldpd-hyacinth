@@ -1,5 +1,5 @@
 class Project < ApplicationRecord
-  has_many :publish_targets
+  has_many :publish_targets,        dependent: :destroy
   has_many :enabled_dynamic_fields, dependent: :destroy
   has_many :field_sets,             dependent: :destroy
 
