@@ -8,7 +8,14 @@ RSpec.describe FieldExportProfile, type: :model do
       it { is_expected.to be_a FieldExportProfile }
 
       its(:name) { is_expected.to eql 'descMetadata' }
-      its(:translation_logic) { is_expected.not_to be_empty }
+      its(:translation_logic) do
+        is_expected.to be_json_eql %({
+          "element": "mods:mods",
+          "content": [
+            { "yield": "title" }
+          ]
+        })
+      end
     end
 
     context 'when missing name' do

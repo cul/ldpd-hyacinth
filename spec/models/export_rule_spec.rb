@@ -9,6 +9,17 @@ RSpec.describe ExportRule, type: :model do
 
       its(:dynamic_field_group)  { is_expected.to be_a DynamicFieldGroup }
       its(:field_export_profile) { is_expected.to be_a FieldExportProfile }
+      its(:translation_logic) do
+        is_expected.to be_json_eql %(
+          [
+            {
+              "render_if": { "present": ["role"] },
+              "element": "mods:name",
+              "content": "{{role}}"
+            }
+          ]
+        )
+      end
     end
 
     context 'when missing dynamic_field_group' do
@@ -41,7 +52,7 @@ RSpec.describe ExportRule, type: :model do
       let(:export_rule) { FactoryBot.create(:export_rule, translation_logic: nil) }
 
       it 'adds empty translation_logic' do
-        expect(export_rule.translation_logic).to eql "[\n\n]"
+        expect(export_rule.translation_logic).to be_json_eql "[]"
       end
     end
 
