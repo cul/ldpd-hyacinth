@@ -8,6 +8,7 @@ class DynamicFieldGroup < ActiveRecord::Base
 
   has_many :dynamic_fields
   has_many :export_rules, dependent: :destroy
+  accepts_nested_attributes_for :export_rules
 
   has_many :dynamic_field_groups, as: :parent
   belongs_to :parent, polymorphic: true # DynamicFieldGroup or DynamicFieldCategory

@@ -15,6 +15,8 @@ module Api
         @dynamic_field_group.created_by = current_user
         @dynamic_field_group.updated_by = current_user
 
+        @dynamic_field_group.export_rules_attributes = export_rules_attributes
+
         if @dynamic_field_group.save
           render json: { dynamic_field_group: @dynamic_field_group }, status: :created
         else
@@ -25,6 +27,8 @@ module Api
       # PATCH /dynamic_field_groups/:id
       def update
         @dynamic_field_group.updated_by = current_user
+
+        @dynamic_field_group.export_rules_attributes = export_rules_attributes
 
         if @dynamic_field_group.update(update_params)
           render json: { dynamic_field_group: @dynamic_field_group }, status: :ok
@@ -46,14 +50,22 @@ module Api
 
         def create_params
           params.require(:dynamic_field_group).permit(
-            :string_key, :display_label, :sort_order, :is_repeatable, :xml_translation, :parent_type, :parent_id
+            :string_key, :display_label, :sort_order, :is_repeatable, :parent_type, :parent_id
           )
         end
 
         def update_params
           params.require(:dynamic_field_group).permit(
-            :display_label, :is_repeatable, :xml_translation, :sort_order, :parent_type, :parent_id
+            :display_label, :is_repeatable, :sort_order, :parent_type, :parent_id
           )
+        end
+
+        def export_rules_attributes
+          export_rules_params ? export_rules_params.fetch(:export_rules, []) : []
+        end
+
+        def export_rules_params
+          params.require(:dynamic_field_group).permit(export_rules: [:id, :translation_logic, :field_export_profile_id])
         end
     end
   end
