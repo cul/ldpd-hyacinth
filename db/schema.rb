@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_04_201812) do
+ActiveRecord::Schema.define(version: 2019_04_08_195208) do
 
   create_table "database_entry_locks", force: :cascade do |t|
     t.string "lock_key", null: false
@@ -105,6 +105,7 @@ ActiveRecord::Schema.define(version: 2019_04_04_201812) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["dynamic_field_group_id"], name: "index_export_rules_on_dynamic_field_group_id"
+    t.index ["field_export_profile_id", "dynamic_field_group_id"], name: "index_export_rules_on_export_profile_and_dynamic_field_group", unique: true
     t.index ["field_export_profile_id"], name: "index_export_rules_on_field_export_profile_id"
   end
 

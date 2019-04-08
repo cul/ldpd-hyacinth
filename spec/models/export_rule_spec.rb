@@ -68,6 +68,26 @@ RSpec.describe ExportRule, type: :model do
         expect(export_rule.errors.full_messages).to include 'Translation logic does not validate as JSON'
       end
     end
+
+    context 'when creating duplicate export rule' do
+      let(:export_rule_1) { FactoryBot.create(:export_rule) }
+      let(:export_rule_2) do
+        FactoryBot.build(
+          :export_rule,
+          dynamic_field_group: export_rule_1.dynamic_field_group,
+          field_export_profile: export_rule_1.field_export_profile
+        )
+      end
+
+      it 'does not save' do
+        expect(export_rule_2.save).to be false
+      end
+
+      it 'returns correct error' do
+        export_rule_2.save
+        expect(export_rule_2.errors.full_messages).to include 'Dynamic field group has already been taken'
+      end
+    end
   end
 
   describe '#dynamic_field_group' do
