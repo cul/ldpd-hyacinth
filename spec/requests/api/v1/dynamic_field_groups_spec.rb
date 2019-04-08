@@ -30,7 +30,7 @@ RSpec.describe 'Dynamic Field Groups Requests', type: :request do
                 "sort_order": 3,
                 "string_key": "name",
                 "type": "DynamicFieldGroup",
-                "xml_translation": "[\\n\\n]"
+                "export_rules": []
               }
             }
           ))
@@ -90,7 +90,7 @@ RSpec.describe 'Dynamic Field Groups Requests', type: :request do
                 "sort_order": 8,
                 "string_key": "location",
                 "type": "DynamicFieldGroup",
-                "xml_translation": "[\\n\\n]"
+                "export_rules": []
               }
             }
           ))
