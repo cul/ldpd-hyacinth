@@ -6,7 +6,9 @@ class ExportRule < ApplicationRecord
 
   before_validation :set_default_translation_logic
 
-  validates :dynamic_field_group_id, uniqueness: { scope: :field_export_profile_id }
+  validates :dynamic_field_group_id, uniqueness: {
+    scope: :field_export_profile_id, message: ->(object, _) { "Dynamic field group already has an export rule for #{object.field_export_profile.name}" }
+  }
 
   # TODO: Add validation that checks xml_translation against a json schema definition, for example.
 

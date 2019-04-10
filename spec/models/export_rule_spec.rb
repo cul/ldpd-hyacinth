@@ -85,7 +85,7 @@ RSpec.describe ExportRule, type: :model do
 
       it 'returns correct error' do
         export_rule_2.save
-        expect(export_rule_2.errors.full_messages).to include 'Dynamic field group has already been taken'
+        expect(export_rule_2.errors.full_messages).to include 'Dynamic field group Dynamic field group already has an export rule for descMetadata'
       end
     end
   end
