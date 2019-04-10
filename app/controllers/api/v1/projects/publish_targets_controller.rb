@@ -4,8 +4,9 @@ module Api
       class PublishTargetsController < ApplicationApiController
         before_action :ensure_json_request
 
-        load_resource :project, find_by: :string_key, id_param: :project_string_key
-        load_resource :publish_target, find_by: :string_key, id_param: :string_key, through: :project
+        load_and_authorize_resource :project, find_by: :string_key, id_param: :project_string_key
+        load_and_authorize_resource :publish_target, find_by: :string_key, id_param: :string_key, through: :project
+        skip_authorize_resource :publish_target, only: :index
 
         # GET /projects/:string_key/publish_targets
         def index

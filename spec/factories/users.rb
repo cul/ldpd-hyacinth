@@ -40,5 +40,11 @@ FactoryBot.define do
         create(:group, :vocabulary_managers, users: [user])
       end
     end
+
+    trait :read_all do
+      after(:create) do |user|
+        create(:group, :read_all, users: [user])
+      end
+    end
   end
 end
