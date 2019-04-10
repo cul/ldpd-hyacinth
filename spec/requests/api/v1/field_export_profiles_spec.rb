@@ -17,7 +17,7 @@ RSpec.describe 'Field Export Profiles Requests', type: :request do
       context 'when there are multiple results' do
         before { get '/api/v1/field_export_profiles' }
 
-        it 'returns all projects' do
+        it 'returns all field export profiles' do
           expect(response.body).to be_json_eql(%(
             {
               "field_export_profiles": [
