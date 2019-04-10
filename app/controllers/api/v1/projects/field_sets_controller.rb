@@ -17,7 +17,7 @@ module Api
           render json: { field_set: @field_set }, status: :ok
         end
 
-        # POST /projects/:string_key/fieldsets
+        # POST /projects/:string_key/field_sets
         def create
           if @field_set.save
             render json: { field_set: @field_set }, status: :created
