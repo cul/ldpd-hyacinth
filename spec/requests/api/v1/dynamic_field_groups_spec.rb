@@ -1,9 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Dynamic Field Groups Requests', type: :request do
-  let(:field_export_profile) { FactoryBot.create(:field_export_profile) }
-
-  before { field_export_profile }
+  let!(:field_export_profile) { FactoryBot.create(:field_export_profile) }
 
   describe 'GET /api/v1/dynamic_field_groups/:id' do
     let(:dynamic_field_group) { FactoryBot.create(:dynamic_field_group) }
@@ -135,17 +133,13 @@ RSpec.describe 'Dynamic Field Groups Requests', type: :request do
   end
 
   describe 'PATCH /api/v1/dynamic_field_groups/:id' do
-    let(:dynamic_field_group) { FactoryBot.create(:dynamic_field_group) }
-    let(:export_rule) do
+    let!(:dynamic_field_group) { FactoryBot.create(:dynamic_field_group) }
+    let!(:export_rule) do
       FactoryBot.create(
         :export_rule,
         dynamic_field_group: dynamic_field_group,
         field_export_profile: field_export_profile
       )
-    end
-
-    before do
-      dynamic_field_group.export_rules << export_rule
     end
 
     include_examples 'requires user to have correct permissions' do
