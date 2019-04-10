@@ -12,7 +12,7 @@ module Api
           render json: { field_sets: @project.field_sets }, status: :ok
         end
 
-        # GET /projects/:string_key/fieldsets/:id
+        # GET /projects/:string_key/field_sets/:id
         def show
           render json: { field_set: @field_set }, status: :ok
         end
