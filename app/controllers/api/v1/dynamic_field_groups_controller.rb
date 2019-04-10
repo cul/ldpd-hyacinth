@@ -15,7 +15,7 @@ module Api
         @dynamic_field_group.created_by = current_user
         @dynamic_field_group.updated_by = current_user
 
-        @dynamic_field_group.export_rules_attributes = export_rules_attributes
+        @dynamic_field_group.export_rules_attributes = export_rules_params
 
         if @dynamic_field_group.save
           render json: { dynamic_field_group: @dynamic_field_group }, status: :created
@@ -28,7 +28,7 @@ module Api
       def update
         @dynamic_field_group.updated_by = current_user
 
-        @dynamic_field_group.export_rules_attributes = export_rules_attributes
+        @dynamic_field_group.export_rules_attributes = export_rules_params
 
         if @dynamic_field_group.update(update_params)
           render json: { dynamic_field_group: @dynamic_field_group }, status: :ok
@@ -60,12 +60,9 @@ module Api
           )
         end
 
-        def export_rules_attributes
-          export_rules_params ? export_rules_params.fetch(:export_rules, []) : []
-        end
-
         def export_rules_params
-          params.require(:dynamic_field_group).permit(export_rules: [:id, :translation_logic, :field_export_profile_id])
+          values = params.require(:dynamic_field_group).permit(export_rules: [:id, :translation_logic, :field_export_profile_id])
+          values ? values.fetch(:export_rules, []) : []
         end
     end
   end
