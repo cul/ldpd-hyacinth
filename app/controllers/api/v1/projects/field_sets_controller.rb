@@ -35,7 +35,7 @@ module Api
           end
         end
 
-        # DELETE /projects/:string_key/fieldsets/:id
+        # DELETE /projects/:string_key/field_sets/:id
         def destroy
           if @field_set.destroy
             head :no_content
