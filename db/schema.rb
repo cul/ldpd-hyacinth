@@ -11,7 +11,6 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 2019_04_25_202549) do
-
   create_table "database_entry_locks", force: :cascade do |t|
     t.string "lock_key", null: false
     t.datetime "created_at", null: false
@@ -134,6 +133,16 @@ ActiveRecord::Schema.define(version: 2019_04_25_202549) do
     t.index ["user_id"], name: "index_permissions_on_user_id"
   end
 
+  create_table "pid_generators", force: :cascade do |t|
+    t.string "namespace"
+    t.string "template"
+    t.string "seed"
+    t.integer "sequence", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["namespace"], name: "index_pid_generators_on_namespace", unique: true
+  end
+
   create_table "projects", force: :cascade do |t|
     t.string "string_key", null: false
     t.string "display_label", null: false
@@ -178,5 +187,4 @@ ActiveRecord::Schema.define(version: 2019_04_25_202549) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["uid"], name: "index_users_on_uid", unique: true
   end
-
 end

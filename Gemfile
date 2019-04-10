@@ -40,8 +40,13 @@ gem 'devise', '~> 4.6'
 gem 'rainbow', '~> 3.0'
 
 gem 'uri_service-client'
+
+# Fedora 3 related gems
 gem 'rubydora'
 gem 'rest-client'
+# For unique, opaque id generation
+gem 'noid', '>= 0.7.1'
+
 # Bootstrap 3 and jQuery (TODO: Remove these when we switch fully to the new React UI, which pulls in its own css/js via node)
 gem 'bootstrap-sass', '~> 3.3'
 gem 'autoprefixer-rails' # Recommended by bootstrap-sass
