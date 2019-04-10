@@ -34,5 +34,13 @@ FactoryBot.define do
         create(:permission, action: Permission::MANAGE_VOCABULARIES, group: group)
       end
     end
+
+    trait :read_all do
+      string_key { 'read_all' }
+
+      after(:create) do |group|
+        create(:permission, action: Permission::READ_ALL_DIGITAL_OBJECTS, group: group)
+      end
+    end
   end
 end

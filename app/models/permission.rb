@@ -5,12 +5,12 @@ class Permission < ApplicationRecord
   MANAGE_ALL_DIGITAL_OBJECTS = 'manage_all_digital_objects'
   READ_ALL_DIGITAL_OBJECTS = 'read_all_digital_objects'
 
-  VALID_SYSTEM_WIDE_PERMISSIONS = [
+  SYSTEM_WIDE_PERMISSIONS = [
     MANAGE_VOCABULARIES, MANAGE_USERS, MANAGE_GROUPS,
     MANAGE_ALL_DIGITAL_OBJECTS, READ_ALL_DIGITAL_OBJECTS
   ]
 
-  VALID_PROJECT_ACTIONS = [
+  PROJECT_ACTIONS = [
     :read_objects, :create_objects, :update_objects, :delete_objects,
     :publish_objects, :manage
   ]

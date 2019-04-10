@@ -47,8 +47,9 @@ class User < ApplicationRecord
   def available_project_actions(project_ids)
     project_ids = Array.wrap(project_ids)
     Permission
-      .where(group_id: group_ids, subject: Project.to_s, subject_id: project_ids)
+      .where(group_id: group_ids, subject: Project.to_s, subject_id: project_ids, action: Permission::PROJECT_ACTIONS)
       .map(&:action)
+      .map(&:to_sym)
   end
 
   def update_without_password(params, *options)
