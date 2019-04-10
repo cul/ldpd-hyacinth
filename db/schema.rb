@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_25_175848) do
+ActiveRecord::Schema.define(version: 2019_04_03_164437) do
 
   create_table "database_entry_locks", force: :cascade do |t|
     t.string "lock_key", null: false
@@ -73,6 +73,37 @@ ActiveRecord::Schema.define(version: 2019_03_25_175848) do
     t.index ["dynamic_field_group_id"], name: "index_dynamic_fields_on_dynamic_field_group_id"
     t.index ["string_key", "dynamic_field_group_id"], name: "index_dynamic_fields_on_string_key_and_dynamic_field_group_id", unique: true
     t.index ["string_key"], name: "index_dynamic_fields_on_string_key"
+  end
+
+  create_table "enabled_dynamic_fields", force: :cascade do |t|
+    t.integer "project_id", null: false
+    t.integer "dynamic_field_id", null: false
+    t.string "digital_object_type", null: false
+    t.boolean "required", default: false, null: false
+    t.boolean "locked", default: false, null: false
+    t.boolean "hidden", default: false, null: false
+    t.boolean "owner_only", default: false, null: false
+    t.text "default_value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["digital_object_type", "project_id", "dynamic_field_id"], name: "index_enabled_dynamic_fields_unique", unique: true
+    t.index ["digital_object_type", "project_id"], name: "index_enabled_dynamic_fields_on_project_and_type"
+    t.index ["dynamic_field_id"], name: "index_enabled_dynamic_fields_on_dynamic_field_id"
+    t.index ["project_id"], name: "index_enabled_dynamic_fields_on_project_id"
+  end
+
+  create_table "enabled_dynamic_fields_field_sets", id: false, force: :cascade do |t|
+    t.integer "enabled_dynamic_field_id", null: false
+    t.integer "field_set_id", null: false
+    t.index ["field_set_id"], name: "index_enabled_dynamic_fields_field_sets_on_field_set_id"
+  end
+
+  create_table "field_sets", force: :cascade do |t|
+    t.string "display_label", null: false
+    t.integer "project_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project_id"], name: "index_field_sets_on_project_id"
   end
 
   create_table "groups", force: :cascade do |t|
