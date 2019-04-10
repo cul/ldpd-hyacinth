@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_03_164437) do
+ActiveRecord::Schema.define(version: 2019_04_08_195208) do
 
   create_table "database_entry_locks", force: :cascade do |t|
     t.string "lock_key", null: false
@@ -96,6 +96,24 @@ ActiveRecord::Schema.define(version: 2019_04_03_164437) do
     t.integer "enabled_dynamic_field_id", null: false
     t.integer "field_set_id", null: false
     t.index ["field_set_id"], name: "index_enabled_dynamic_fields_field_sets_on_field_set_id"
+  end
+
+  create_table "export_rules", force: :cascade do |t|
+    t.integer "dynamic_field_group_id"
+    t.integer "field_export_profile_id"
+    t.text "translation_logic", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["dynamic_field_group_id"], name: "index_export_rules_on_dynamic_field_group_id"
+    t.index ["field_export_profile_id", "dynamic_field_group_id"], name: "index_export_rules_on_export_profile_and_dynamic_field_group", unique: true
+    t.index ["field_export_profile_id"], name: "index_export_rules_on_field_export_profile_id"
+  end
+
+  create_table "field_export_profiles", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "translation_logic", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "field_sets", force: :cascade do |t|

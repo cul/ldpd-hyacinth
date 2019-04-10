@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe 'Dynamic Field Groups Requests', type: :request do
+  let!(:field_export_profile) { FactoryBot.create(:field_export_profile) }
+
   describe 'GET /api/v1/dynamic_field_groups/:id' do
     let(:dynamic_field_group) { FactoryBot.create(:dynamic_field_group) }
 
@@ -30,7 +32,7 @@ RSpec.describe 'Dynamic Field Groups Requests', type: :request do
                 "sort_order": 3,
                 "string_key": "name",
                 "type": "DynamicFieldGroup",
-                "xml_translation": "[\\n\\n]"
+                "export_rules": []
               }
             }
           ))
@@ -71,7 +73,8 @@ RSpec.describe 'Dynamic Field Groups Requests', type: :request do
           post '/api/v1/dynamic_field_groups', params: {
             dynamic_field_group: {
               string_key: 'location', display_label: 'Location', sort_order: '8',
-              is_repeatable: true, parent_type: parent.class.to_s, parent_id: parent.id
+              is_repeatable: true, parent_type: parent.class.to_s, parent_id: parent.id,
+              export_rules: [{ field_export_profile_id: field_export_profile.id }]
             }
           }
         end
@@ -90,7 +93,7 @@ RSpec.describe 'Dynamic Field Groups Requests', type: :request do
                 "sort_order": 8,
                 "string_key": "location",
                 "type": "DynamicFieldGroup",
-                "xml_translation": "[\\n\\n]"
+                "export_rules": [ { "translation_logic": "[\\n\\n]", "field_export_profile": "#{field_export_profile.name}" }]
               }
             }
           ))
@@ -130,7 +133,14 @@ RSpec.describe 'Dynamic Field Groups Requests', type: :request do
   end
 
   describe 'PATCH /api/v1/dynamic_field_groups/:id' do
-    let(:dynamic_field_group) { FactoryBot.create(:dynamic_field_group) }
+    let!(:dynamic_field_group) { FactoryBot.create(:dynamic_field_group) }
+    let!(:export_rule) do
+      FactoryBot.create(
+        :export_rule,
+        dynamic_field_group: dynamic_field_group,
+        field_export_profile: field_export_profile
+      )
+    end
 
     include_examples 'requires user to have correct permissions' do
       let(:request) do
@@ -154,6 +164,11 @@ RSpec.describe 'Dynamic Field Groups Requests', type: :request do
           dynamic_field_group.reload
           expect(dynamic_field_group.display_label).to eql 'New Location'
         end
+
+        it 'does not update export_rules' do
+          dynamic_field_group.reload
+          expect(dynamic_field_group.export_rules).to match_array [export_rule]
+        end
       end
 
       context 'when updating to incorrect parent type' do
@@ -173,6 +188,23 @@ RSpec.describe 'Dynamic Field Groups Requests', type: :request do
               ]
             }
           ))
+        end
+      end
+
+      context 'when updating export_rules' do
+        before do
+          patch "/api/v1/dynamic_field_groups/#{dynamic_field_group.id}", params: {
+            dynamic_field_group: { export_rules: [{ id: export_rule.id, translation_logic: "[{}, {}]" }] }
+          }
+        end
+
+        it 'returns 200' do
+          expect(response.status).to be 200
+        end
+
+        it 'updates export_rule' do
+          export_rule.reload
+          expect(export_rule.translation_logic).to be_json_eql "[{}, {}]"
         end
       end
     end

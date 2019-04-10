@@ -29,7 +29,7 @@ Rails.application.routes.draw do
 
       resources :vocabularies, param: :string_key, except: [:new, :edit] do
         resources :custom_fields, param: :field_key, except: [:new, :edit, :show, :index], module: 'vocabularies'
-        resources :terms, param: :uri, except: [:new, :edit], constraints: { uri: /.*/ }, module: 'vocabularies'
+        resources :terms,         param: :uri,       except: [:new, :edit],                module: 'vocabularies', constraints: { uri: /.*/ }
       end
 
       resources :projects, param: :string_key, except: [:new, :edit] do
@@ -43,6 +43,8 @@ Rails.application.routes.draw do
       resources :dynamic_field_categories, except: [:new, :edit]
       resources :dynamic_field_groups,     except: [:new, :edit, :index]
       resources :dynamic_fields,           except: [:new, :edit, :index]
+
+      resources :field_export_profiles,    except: [:new, :edit]
     end
   end
 end

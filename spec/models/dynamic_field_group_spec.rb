@@ -68,16 +68,6 @@ RSpec.describe DynamicFieldGroup, type: :model do
       end
     end
 
-    context 'when xml_translation is missing' do
-      let(:dynamic_field_group) { FactoryBot.build(:dynamic_field_group) }
-
-      before { dynamic_field_group.save }
-
-      it 'adds empty xml_translation' do
-        expect(dynamic_field_group.xml_translation).to eql "[\n\n]"
-      end
-    end
-
     context 'when sort order is missing' do
       let(:dynamic_field_group) { FactoryBot.create(:dynamic_field_group, parent: parent, sort_order: nil) }
 
@@ -149,19 +139,6 @@ RSpec.describe DynamicFieldGroup, type: :model do
       it 'returns correct error' do
         dynamic_field_group.save
         expect(dynamic_field_group.errors.full_messages).to include 'Updated by is required'
-      end
-    end
-
-    context 'when xml_translation is invalid' do
-      let(:dynamic_field_group) { FactoryBot.build(:dynamic_field_group, xml_translation: 'randomstring') }
-
-      it 'does not save' do
-        expect(dynamic_field_group.save).to be false
-      end
-
-      it 'returns correct error' do
-        dynamic_field_group.save
-        expect(dynamic_field_group.errors.full_messages).to include 'Xml translation does not validate as JSON'
       end
     end
 
