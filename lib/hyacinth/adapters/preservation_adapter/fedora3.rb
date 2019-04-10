@@ -3,6 +3,7 @@ module Hyacinth
     module PreservationAdapter
       class Fedora3 < Abstract
         REQUIRED_CONFIG_OPTS = [:url, :user, :password].freeze
+        delegate :client, to: :connection
         def initialize(adapter_config = {})
           super(adapter_config)
 
@@ -28,7 +29,12 @@ module Hyacinth
         # Checks to see whether anything currently exists at the given location.
         # @return [boolean] true if something exists, false if nothing exists
         def exists?(location_uri)
-          # TODO: (this is pseudocode) rubydora.exists?(location_uri_to_fedora3_pid(location_uri))
+          r = client[connection.api.object_url(location_uri_to_fedora3_pid(location_uri), format: 'xml')].head
+          # without disabling redirection, we should not get 3xx here
+          (200..299).cover? r.code
+        rescue RestClient::ExceptionWithResponse => e
+          return false if e.response.code.eql? 404
+          raise e
         end
 
         def persist_impl(location_uri, digital_object)
@@ -36,7 +42,12 @@ module Hyacinth
         end
 
         def location_uri_to_fedora3_pid(location_uri)
-          location_uri.gsub(/^#{uri_prefix}/, '')
+          location_uri[(uri_prefix.length - 1)..-1]
+        end
+
+        # @return [Rubydora::Repository] Fedora connection configured from adapter attributes
+        def connection
+          @connection ||= Rubydora.connect url: @url, user: @user, password: @password
         end
       end
     end
