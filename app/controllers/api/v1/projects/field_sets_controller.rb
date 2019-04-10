@@ -26,7 +26,7 @@ module Api
           end
         end
 
-        # PATCH /projects/:string_key/fieldsets/:id
+        # PATCH /projects/:string_key/field_sets/:id
         def update
           if @field_set.update(field_set_params)
             render json: { fieldset: @field_set }, status: :ok
