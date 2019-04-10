@@ -7,7 +7,7 @@ module Api
         load_resource :project, find_by: :string_key, id_param: :project_string_key
         load_resource :field_set, through: :project
 
-        # GET /projects/:string_key/fieldsets
+        # GET /projects/:string_key/field_sets
         def index
           render json: { field_sets: @project.field_sets }, status: :ok
         end
