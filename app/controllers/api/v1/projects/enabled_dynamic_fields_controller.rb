@@ -2,7 +2,10 @@ module Api
   module V1
     module Projects
       class EnabledDynamicFieldsController < ApplicationApiController
+        before_action :ensure_json_request
+
         load_resource :project, find_by: :string_key, id_param: :project_string_key
+        before_action :authorize_project
 
         # GET /projects/:string_key/enabled_dynamic_fields/:digital_object_type
         def show
@@ -36,6 +39,11 @@ module Api
                 :id, :dynamic_field_id, :required, :locked, :hidden, :owner_only, :default_value, field_set_ids: []
               ]
             )
+          end
+
+          # Need to authorize resource by action, by default only checks that user can read parent.
+          def authorize_project
+            authorize! action_name.to_sym, @project
           end
       end
     end
