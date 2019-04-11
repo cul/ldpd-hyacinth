@@ -10,7 +10,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
   let(:resource) { instance_double("RestClient::Resource") }
   let(:subresource) { instance_double("RestClient::Resource") }
   let(:object_pid) { "test:1" }
-  let(:location_uri) { "fedora://" + object_pid }
+  let(:location_uri) { "fedora3://" + object_pid }
   let(:pid_generator) { instance_double(PidGenerator) }
   let(:adapter_args) { { url: 'foo', password: 'foo', user: 'foo', pid_generator: pid_generator } }
   let(:adapter) do
@@ -27,6 +27,11 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
   before do
     allow(connection).to receive(:client).and_return(resource)
     allow(request).to receive(:redirection_history).and_return []
+  end
+
+  describe "#location_uri_to_fedora3_pid" do
+    subject { adapter.location_uri_to_fedora3_pid(location_uri) }
+    it { is_expected.to eql(object_pid) }
   end
 
   describe "#exists?" do
@@ -100,6 +105,43 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
     end
     it "returns the first new location URI" do
       is_expected.to eql("fedora3://test:3")
+    end
+  end
+  describe "#persist_impl" do
+    let(:rubydora_object) { Rubydora::DigitalObject.new(object_pid, connection) }
+    let(:hyacinth_object) { DigitalObject::Item.new }
+    let(:profile_xml) { file_fixture("fedora3/new-object.xml").read }
+    let(:datastreams_xml) { file_fixture("fedora3/new-datastreams.xml").read }
+    before do
+      expect(connection).to receive(:find_or_initialize).with(object_pid).and_return(rubydora_object)
+      expect(connection).to receive(:object_profile).with(object_pid, nil).and_return(profile_xml)
+      expect(connection).to receive(:datastreams).with(pid: object_pid, profiles: "true").and_return(datastreams_xml)
+      expect(connection).to receive(:datastream_profile).with(object_pid, dsid, nil, nil).and_return({})
+      expect(rubydora_object).to receive(:save).and_return(nil)
+    end
+    context "core data" do
+      let(:dsid) { described_class::HYACINTH_CORE_DATASTREAM_NAME }
+      it "persists core data to Fedora3" do
+        adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
+        actual_json = JSON.parse(rubydora_object.datastreams[dsid].content)
+        expect(actual_json).to have_key("uid")
+      end
+    end
+    context "field exports" do
+      let(:dsid) { 'descMetadata' }
+      before do
+        FactoryBot.create(:export_rule)
+        expect(connection).to receive(:datastream_profile).with(object_pid, described_class::HYACINTH_CORE_DATASTREAM_NAME, nil, nil).and_return({})
+      end
+      it "persists templated field exports to datastreams" do
+        hyacinth_object.dynamic_field_data['name'] = [{ 'role' => "Farmer" }]
+        adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
+        actual_xml = rubydora_object.datastreams["descMetadata"].content
+        actual_xml.sub!(/^<\?.+\?>/, '') # remove PI
+        actual_xml.gsub!('mods:', '') # remove ns
+        actual_xml.gsub!(/\s/, '') # remove whitespace
+        expect(actual_xml).to eql("<mods><name>Farmer</name></mods>")
+      end
     end
   end
 end

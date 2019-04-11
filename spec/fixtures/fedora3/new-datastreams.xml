@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objectDatastreams xmlns="http://www.fedora.info/definitions/1/0/access/" xmlns:apim="http://www.fedora.info/definitions/1/0/management/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.fedora.info/definitions/1/0/access/ http://localhost/fedora//schema/listDatastreams.xsd" pid="test:1" baseURL="http://localhost/fedora/">
+<datastreamProfile pid="test:1" dsID="DC">
+	<apim:dsLabel>Dublin Core Record for this object</apim:dsLabel>
+	<apim:dsVersionID>DC.11</apim:dsVersionID>
+	<apim:dsCreateDate>2019-03-29T16:56:31.420Z</apim:dsCreateDate>
+	<apim:dsState>A</apim:dsState>
+	<apim:dsMIME>text/xml</apim:dsMIME>
+	<apim:dsFormatURI>http://www.openarchives.org/OAI/2.0/oai_dc/</apim:dsFormatURI>
+	<apim:dsControlGroup>X</apim:dsControlGroup>
+	<apim:dsSize>586</apim:dsSize>
+	<apim:dsVersionable>true</apim:dsVersionable>
+	<apim:dsInfoType/>
+	<apim:dsLocation>test:1+DC+DC.18</apim:dsLocation>
+	<apim:dsLocationType/>
+	<apim:dsChecksumType>DISABLED</apim:dsChecksumType>
+	<apim:dsChecksum>none</apim:dsChecksum>
+</datastreamProfile>
+<datastreamProfile pid="test:1" dsID="RELS-EXT">
+	<apim:dsLabel>Fedora Object-to-Object Relationship Metadata</apim:dsLabel>
+	<apim:dsVersionID>RELS-EXT.18</apim:dsVersionID>
+	<apim:dsCreateDate>2019-03-29T16:56:31.348Z</apim:dsCreateDate>
+	<apim:dsState>A</apim:dsState>
+	<apim:dsMIME>application/rdf+xml</apim:dsMIME>
+	<apim:dsFormatURI/>
+	<apim:dsControlGroup>X</apim:dsControlGroup>
+	<apim:dsSize>896</apim:dsSize>
+	<apim:dsVersionable>true</apim:dsVersionable>
+	<apim:dsInfoType/>
+	<apim:dsLocation>test:1+RELS-EXT+RELS-EXT.18</apim:dsLocation>
+	<apim:dsLocationType/>
+	<apim:dsChecksumType>DISABLED</apim:dsChecksumType>
+	<apim:dsChecksum>none</apim:dsChecksum>
+</datastreamProfile>
+</objectDatastreams>

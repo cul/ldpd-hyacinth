@@ -6,7 +6,7 @@ describe Hyacinth::XMLGenerator do
   end
 
   let(:name_translation_logic) do
-    '[
+    JSON('[
       {
         "render_if": {
           "present": ["name_term.value"]
@@ -31,11 +31,11 @@ describe Hyacinth::XMLGenerator do
           }
         ]
       }
-    ]'
+    ]')
   end
 
   let(:role_translation_logic) do
-    '[
+    JSON('[
       {
         "render_if": {
           "present": [
@@ -55,7 +55,7 @@ describe Hyacinth::XMLGenerator do
           }
         ]
       }
-    ]'
+    ]')
   end
 
   let(:xml_translation_map) do
@@ -109,7 +109,7 @@ describe Hyacinth::XMLGenerator do
 
     context 'when render_if has multiple conditions' do
       let(:role_translation_logic) do # Should only render role for authors
-        '[
+        JSON('[
           {
             "render_if": {
               "present": [
@@ -132,7 +132,7 @@ describe Hyacinth::XMLGenerator do
               }
             ]
           }
-        ]'
+        ]')
       end
 
       let(:expected_mods) do
@@ -157,7 +157,7 @@ describe Hyacinth::XMLGenerator do
 
     context 'when two fields are joined' do
       let(:name_translation_logic) do
-        '[
+        JSON('[
           {
             "render_if": {
               "present": ["name_term.value"]
@@ -184,7 +184,7 @@ describe Hyacinth::XMLGenerator do
               }
             ]
           }
-        ]'
+        ]')
       end
 
       let(:expected_mods) do
@@ -206,7 +206,7 @@ describe Hyacinth::XMLGenerator do
 
     context "when joining in attribute values" do
       let(:name_translation_logic) do
-        '[
+        JSON('[
           {
             "render_if": {
               "present": ["name_term.value"]
@@ -230,7 +230,7 @@ describe Hyacinth::XMLGenerator do
               }
             ]
           }
-        ]'
+        ]')
       end
 
       let(:expected_mods) do
@@ -252,7 +252,7 @@ describe Hyacinth::XMLGenerator do
 
     context "when content contains an array of strings" do
       let(:role_translation_logic) do
-        '[
+        JSON('[
           {
             "render_if": {
               "present": [
@@ -272,7 +272,7 @@ describe Hyacinth::XMLGenerator do
               }
             ]
           }
-        ]'
+        ]')
       end
 
       it 'generates corrext xml' do

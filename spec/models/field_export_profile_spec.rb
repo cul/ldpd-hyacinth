@@ -12,7 +12,7 @@ RSpec.describe FieldExportProfile, type: :model do
         is_expected.to be_json_eql %({
           "element": "mods:mods",
           "content": [
-            { "yield": "title" }
+            { "yield": "name" }
           ]
         })
       end
