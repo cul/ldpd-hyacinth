@@ -7,19 +7,7 @@ class Ability
     if user.admin?
       can :manage, :all
     else
-      # Calculate Permissions
-      project_permissions = {}
-      system_permissions = []
-      user.permissions.each do |p|
-        if p.subject.blank? && p.subject_id.blank?
-          system_permissions << p.action unless system_permissions.include?(p.action)
-        elsif p.subject == Project.to_s && Permission::PROJECT_ACTIONS.include?(p.action)
-          id = p.subject_id.to_i
-
-          project_permissions[id] = []        unless project_permissions.key?(id)
-          project_permissions[id] << p.action unless project_permissions[id].include?(p.action)
-        end
-      end
+      system_permissions, project_permissions = calculate_permissions(user)
 
       # Permissions all users get
       can [:show, :update], User, id: user.id
@@ -28,16 +16,7 @@ class Ability
       # can :index, Project, everyone should be able to see a list of projects they have access to
 
       # System Wide Permissions
-      can :manage, User  if system_permissions.include?(Permission::MANAGE_USERS)
-      can :manage, Group if system_permissions.include?(Permission::MANAGE_GROUPS)
-
-      if system_permissions.include?(Permission::MANAGE_VOCABULARIES)
-        can :manage, :vocabulary
-        can :manage, :term
-        can :manage, :custom_field
-      end
-
-      can :show, [Project, PublishTarget, FieldSet] if system_permissions.include?(Permission::READ_ALL_DIGITAL_OBJECTS) || system_permissions.include?(Permission::MANAGE_ALL_DIGITAL_OBJECTS)
+      assign_system_wide_permissions(system_permissions)
 
       # Project Based Permissions
       project_permissions.each do |project_id, actions|
@@ -53,6 +32,41 @@ class Ability
 
       # Digital Object Permissions
     end
+  end
+
+  def assign_system_wide_permissions(system_permissions)
+    system_permissions.each do |role|
+      case role
+      when Permission::MANAGE_USERS
+        can :manage, User
+      when Permission::MANAGE_GROUPS
+        can :manage, Group
+      when Permission::MANAGE_VOCABULARIES
+        can :manage, :vocabulary
+        can :manage, :term
+        can :manage, :custom_field
+      when Permission::READ_ALL_DIGITAL_OBJECTS, Permission::MANAGE_ALL_DIGITAL_OBJECTS
+        can :show, [Project, PublishTarget, FieldSet]
+      end
+    end
+  end
+
+  def calculate_permissions(user)
+    project_permissions = {}
+    system_permissions = []
+
+    user.permissions.each do |p|
+      if p.subject.blank? && p.subject_id.blank?
+        system_permissions << p.action
+      elsif p.subject == Project.to_s && Permission::PROJECT_ACTIONS.include?(p.action)
+        id = p.subject_id.to_i
+
+        project_permissions[id] = []        unless project_permissions.key?(id)
+        project_permissions[id] << p.action unless project_permissions[id].include?(p.action)
+      end
+    end
+
+    [system_permissions.uniq, project_permissions]
   end
 
   # TODO: This logic needs to be added above once we have a proper Project model.

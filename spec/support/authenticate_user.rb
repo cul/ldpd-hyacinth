@@ -14,7 +14,7 @@ module AuthenticateUser
   def sign_in_project_contributor(to:, project:)
     group = Group.create!(
       string_key: "#{to}_#{project.string_key}",
-      permissions: [Permission.create(action: to, subject: Project.to_s, subject_id: project.id )]
+      permissions: [Permission.create(action: to, subject: Project.to_s, subject_id: project.id)]
     )
 
     user = FactoryBot.create(

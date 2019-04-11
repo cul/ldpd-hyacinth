@@ -118,7 +118,7 @@ RSpec.describe Ability, type: :model do
       Group.create!(
         string_key: 'read_project_a',
         permissions: [
-          Permission.create(action: :read_objects, subject: Project.to_s, subject_id: project.id )
+          Permission.create(action: :read_objects, subject: Project.to_s, subject_id: project.id)
         ]
       )
     end
