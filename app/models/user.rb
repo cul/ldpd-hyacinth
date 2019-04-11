@@ -36,33 +36,9 @@ class User < ApplicationRecord
     Permission.where(group_id: group_ids)
   end
 
-  # Return system wide permissions/roles that a user is assigned
-  #
-  # @return [Array<String>] system wide roles assigned
-  def system_wide_permissions
-    Permission
-      .where(group_id: group_ids, subject: nil, subject_id: nil)
-      .map(&:action)
-  end
-  #
-  # # Return project actions allowed for this user for all the projects given.
-  # #
-  # # @param Array|String project_id
-  # def available_project_actions(project_ids)
-  #   project_ids = Array.wrap(project_ids)
-  #   Permission
-  #     .where(group_id: group_ids, subject: Project.to_s, subject_id: project_ids, action: Permission::PROJECT_ACTIONS)
-  #     .map(&:action)
-  #     .map(&:to_sym)
-  # end
-
   def update_without_password(params, *options)
     params.delete(:current_password)
     super(params)
-  end
-
-  def vocabulary_manager?
-    system_wide_permissions.include?(Permission::MANAGE_VOCABULARIES) || admin?
   end
 
   private
