@@ -11,9 +11,9 @@ module Hyacinth
           location_uri.start_with?(uri_prefix)
         end
 
-        # Generates a new persistence location for the given identifier, ensuring that nothing currently exists at that location.
+        # Generates a new persistence identifier, ensuring that no object exists for the new URI.
         # @return [String] a location uri
-        def generate_new_location_uri(identifier)
+        def generate_new_location_uri
           raise NotImplementedError
         end
 
