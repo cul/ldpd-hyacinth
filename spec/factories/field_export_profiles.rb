@@ -6,7 +6,7 @@ FactoryBot.define do
         "element": "mods:mods",
         "content": [
           {
-            "yield": "title"
+            "yield": "name"
           }
         ]
       }'

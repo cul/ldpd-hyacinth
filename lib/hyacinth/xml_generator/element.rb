@@ -39,16 +39,15 @@ module Hyacinth
       # Allow for array of strings as a shortcut for [{'val' => 'some string'}, {'val' => 'some other string'}]
       Array.wrap(content).map { |c| c.is_a?(Hash) ? c : { 'val' => c } }.each do |value|
         value['val'] = generate_field_val(value, df_data)
-
         if value.key?('yield') # Yield to dynamic_field_group renderer logic
           yield_to_string_key = value['yield']
 
           if dynamic_fields_groups_map.key?(yield_to_string_key) && df_data[yield_to_string_key].present?
-            yield_to_xml_translation = JSON(dynamic_fields_groups_map[yield_to_string_key])
-
-            df_data[yield_to_string_key].each do |single_dynamic_field_group_data_value_for_string_key|
-              Array.wrap(yield_to_xml_translation).each do |xml_translation_logic_rule|
-                self.class.new(generator).generate(xml_translation_logic_rule, single_dynamic_field_group_data_value_for_string_key, ng_element)
+            Array.wrap(dynamic_fields_groups_map[yield_to_string_key]).each do |translation_logic_rules|
+              df_data[yield_to_string_key].each do |single_dynamic_field_group_data_value_for_string_key|
+                Array.wrap(translation_logic_rules).each do |translation_logic_rule|
+                  self.class.new(generator).generate(translation_logic_rule, single_dynamic_field_group_data_value_for_string_key, ng_element)
+                end
               end
             end
           end

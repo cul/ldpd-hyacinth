@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objectProfile  xmlns="http://www.fedora.info/definitions/1/0/access/"  xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.fedora.info/definitions/1/0/access/ http://www.fedora.info/definitions/1/0/objectProfile.xsd" pid="cul:4j0zpc87ps" >
+	<objLabel>The Carnegie Corporation Meeting Social Cohesion at Lambardi</objLabel>
+	<objOwnerId>fedoraAdmin</objOwnerId>
+	<objModels>
+		<model>info:fedora/ldpd:ContentAggregator</model>
+		<model>info:fedora/fedora-system:FedoraObject-3.0</model>
+	</objModels>
+	<objCreateDate>2018-03-22T21:53:24.338Z</objCreateDate>
+	<objLastModDate>2019-03-29T16:56:31.648Z</objLastModDate>
+	<objDissIndexViewURL>https://repository.cul.columbia.edu:8443/fedora/objects/cul%3A4j0zpc87ps/methods/fedora-system%3A3/viewMethodIndex</objDissIndexViewURL>
+	<objItemIndexViewURL>https://repository.cul.columbia.edu:8443/fedora/objects/cul%3A4j0zpc87ps/methods/fedora-system%3A3/viewItemIndex</objItemIndexViewURL>
+	<objState>A</objState>
+</objectProfile>
