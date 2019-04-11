@@ -20,8 +20,8 @@ RSpec.describe Ability, type: :model do
     it { is_expected.to be_able_to(:manage, :all) }
     it { is_expected.to be_able_to(:manage, Group) }
     it { is_expected.to be_able_to(:manage, DigitalObject) }
-    it { is_expected.to be_able_to(:edit, Project) }
-    it { is_expected.to be_able_to(:edit, PublishTarget) }
+    it { is_expected.to be_able_to(:update, Project) }
+    it { is_expected.to be_able_to(:update, PublishTarget) }
   end
 
   describe 'when user is part of group manager group' do
@@ -37,7 +37,7 @@ RSpec.describe Ability, type: :model do
 
     it { is_expected.not_to be_able_to(:manage, :all) }
     it { is_expected.to be_able_to(:show, Group) }
-    it { is_expected.to be_able_to(:edit, Group) }
+    it { is_expected.to be_able_to(:update, Group) }
     it { is_expected.to be_able_to(:manage, Group) }
   end
 
@@ -54,7 +54,7 @@ RSpec.describe Ability, type: :model do
 
     it { is_expected.not_to be_able_to(:manage, :all) }
     it { is_expected.to be_able_to(:manage, User) }
-    it { is_expected.to be_able_to(:edit, User) }
+    it { is_expected.to be_able_to(:index, User) }
     it { is_expected.to be_able_to(:show, User) }
     it { is_expected.to be_able_to(:update, User) }
   end
@@ -75,11 +75,10 @@ RSpec.describe Ability, type: :model do
 
     it { is_expected.not_to be_able_to(:manage, :all) }
     it { is_expected.to be_able_to(:manage, User) }
-    it { is_expected.to be_able_to(:edit, User) }
     it { is_expected.to be_able_to(:show, User) }
     it { is_expected.to be_able_to(:update, User) }
     it { is_expected.to be_able_to(:show, Group) }
-    it { is_expected.to be_able_to(:edit, Group) }
+    it { is_expected.to be_able_to(:update, Group) }
     it { is_expected.to be_able_to(:manage, Group) }
   end
 
@@ -90,10 +89,10 @@ RSpec.describe Ability, type: :model do
 
     it { is_expected.to be_able_to(:index, Group) }
     it { is_expected.to be_able_to(:show, Group) }
-    it { is_expected.to be_able_to(:read, Group) }
-    it { is_expected.to be_able_to(:read, user) }
-    it { is_expected.to be_able_to(:edit, user) }
+    it { is_expected.to be_able_to(:show, user) }
     it { is_expected.to be_able_to(:update, user) }
+
+    it { is_expected.not_to be_able_to(:index, User) }
   end
 
   describe 'when user has the ability to read all digital objects' do
@@ -109,7 +108,7 @@ RSpec.describe Ability, type: :model do
 
     subject { described_class.new(user) }
 
-    it { is_expected.to be_able_to(:read, PublishTarget) }
+    it { is_expected.to be_able_to(:show, PublishTarget) }
     it { is_expected.to be_able_to(:show, FactoryBot.create(:publish_target)) }
   end
 
@@ -127,10 +126,11 @@ RSpec.describe Ability, type: :model do
 
     subject { described_class.new(user) }
 
-    it { is_expected.to be_able_to(:read, FactoryBot.create(:publish_target, project: project)) }
+    it { is_expected.to be_able_to(:show, FactoryBot.create(:publish_target, project: project)) }
     it { is_expected.to be_able_to(:show, project) }
+    it { is_expected.to be_able_to(:show, FactoryBot.create(:field_set, project: project)) }
 
+    it { is_expected.not_to be_able_to(:update, FactoryBot.create(:field_set, project: project)) }
     it { is_expected.not_to be_able_to(:update, FactoryBot.create(:publish_target, project: project)) }
-    it { is_expected.not_to be_able_to(:read, PublishTarget) }
   end
 end

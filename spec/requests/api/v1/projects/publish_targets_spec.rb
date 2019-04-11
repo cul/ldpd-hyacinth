@@ -9,7 +9,7 @@ RSpec.describe 'Publish Target requests', type: :request do
     end
 
     context 'when logged in user has correct permissions' do
-      before { sign_in_user as: :read_all }
+      before { sign_in_project_contributor to: :read_objects, project: project }
 
       describe 'when there are multiple results' do
         before do
@@ -58,7 +58,7 @@ RSpec.describe 'Publish Target requests', type: :request do
     end
 
     context 'when logged in user has correct permissions' do
-      before { sign_in_user as: :read_all }
+      before { sign_in_project_contributor to: :read_objects, project: project }
 
       context 'when string_key is valid' do
         before do
