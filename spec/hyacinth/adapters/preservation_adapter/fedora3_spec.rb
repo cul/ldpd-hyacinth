@@ -11,7 +11,8 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
   let(:subresource) { instance_double("RestClient::Resource") }
   let(:object_pid) { "test:1" }
   let(:location_uri) { "fedora://" + object_pid }
-  let(:adapter_args) { { url: 'foo', password: 'foo', user: 'foo' } }
+  let(:pid_generator) { instance_double(PidGenerator) }
+  let(:adapter_args) { { url: 'foo', password: 'foo', user: 'foo', pid_generator: pid_generator } }
   let(:adapter) do
     a = described_class.new(adapter_args)
     a.instance_variable_set("@connection", connection)
@@ -89,6 +90,16 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       it "passes along the error" do
         expect { adapter.exists?(location_uri) }.to raise_exception(RestClient::RequestFailed)
       end
+    end
+  end
+  describe "#generate_new_location_uri" do
+    subject { adapter.generate_new_location_uri }
+    before do
+      allow(pid_generator).to receive(:next_pid).and_return(*([1, 2, 3].map { |x| "test:#{x}" }))
+      allow(adapter).to receive(:exists?).and_return(true, true, false)
+    end
+    it "returns the first new location URI" do
+      is_expected.to eql("fedora3://test:3")
     end
   end
 end

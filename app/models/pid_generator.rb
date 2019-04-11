@@ -28,6 +28,9 @@ class PidGenerator < ActiveRecord::Base
     Noid::Minter.new(template: namespace + ':' + template).template.max
   end
 
+  # return the next pid in the sequence
+  # DOES NOT validate that the PID doesn't exist
+  # validation is the responsibility of the PersistenceAdapter client
   def next_pid
     current_pid_generator_sequence = nil
 
@@ -52,21 +55,15 @@ class PidGenerator < ActiveRecord::Base
 
     raise 'Unexpected error during PID generation.  Value of pid is nil.' if newly_minted_pid.nil?
 
-    if ActiveFedora::Base.exists?(newly_minted_pid)
-      # Check to see if an object in Fedora already exists with this PID
-      Hyacinth::Utils::Logger.logger.info 'PID ' + newly_minted_pid + ' already exists in Fedora. Generating new PID.'
-
-      # Generate a new pid
-      newly_minted_pid = next_pid
-    end
-
     newly_minted_pid
   end
 
   def set_template_if_blank_and_get_seed
     self.template = DEFAULT_TEMPLATE if template.blank?
     minter = Noid::Minter.new(template: namespace + ':' + template)
-    self.seed = minter.seed.seed # Doing .seed.seed because the first .seed call actually returns a Random object instance
+    # Doing .seed.seed because the first .seed call actually returns a Random object instance
+    # explicitly using Random.new_seed because the default first argument of that value was removed
+    self.seed = minter.seed(Random.new_seed).seed
   end
 
   def validate_sample_mint
