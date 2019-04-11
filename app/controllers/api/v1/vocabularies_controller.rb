@@ -1,7 +1,8 @@
 module Api
   module V1
     class VocabulariesController < ApplicationApiController
-      before_action :ensure_json_request, :require_vocabulary_manager!
+      before_action :ensure_json_request
+      authorize_resource class: false
 
       # GET /vocabularies
       def index

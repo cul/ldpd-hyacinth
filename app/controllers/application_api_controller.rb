@@ -24,12 +24,4 @@ class ApplicationApiController < ActionController::API
     def errors(errors)
       { errors: Array.wrap(errors).map { |e| { title: e } } }
     end
-
-    def require_vocabulary_manager!
-      if user_signed_in? && current_user.vocabulary_manager?
-        true
-      else
-        raise CanCan::AccessDenied
-      end
-    end
 end
