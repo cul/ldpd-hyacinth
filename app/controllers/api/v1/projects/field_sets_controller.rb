@@ -4,8 +4,9 @@ module Api
       class FieldSetsController < ApplicationApiController
         before_action :ensure_json_request
 
-        load_resource :project, find_by: :string_key, id_param: :project_string_key
-        load_resource :field_set, through: :project
+        load_and_authorize_resource :project, find_by: :string_key, id_param: :project_string_key
+        load_and_authorize_resource :field_set, through: :project
+        skip_authorize_resource :field_set, only: :index
 
         # GET /projects/:string_key/field_sets
         def index
