@@ -11,8 +11,8 @@ class Permission < ApplicationRecord
   ]
 
   PROJECT_ACTIONS = [
-    :read_objects, :create_objects, :update_objects, :delete_objects,
-    :publish_objects, :manage
+    'read_objects', 'create_objects', 'update_objects', 'delete_objects',
+    'publish_objects', 'manage'
   ]
 
   belongs_to :group
