@@ -24,15 +24,20 @@ class Ability
       # Permissions all users get
       can [:show, :update], User, id: user.id
       can [:index, :show], Group
+      can [:index, :show, :create], :term
       # can :index, Project, everyone should be able to see a list of projects they have access to
 
       # System Wide Permissions
       can :manage, User  if system_permissions.include?(Permission::MANAGE_USERS)
       can :manage, Group if system_permissions.include?(Permission::MANAGE_GROUPS)
 
-      if system_permissions.include?(Permission::READ_ALL_DIGITAL_OBJECTS) || system_permissions.include?(Permission::MANAGE_ALL_DIGITAL_OBJECTS)
-        can :show, [Project, PublishTarget, FieldSet]
+      if system_permissions.include?(Permission::MANAGE_VOCABULARIES)
+        can :manage, :vocabulary
+        can :manage, :term
+        can :manage, :custom_field
       end
+
+      can :show, [Project, PublishTarget, FieldSet] if system_permissions.include?(Permission::READ_ALL_DIGITAL_OBJECTS) || system_permissions.include?(Permission::MANAGE_ALL_DIGITAL_OBJECTS)
 
       # Project Based Permissions
       project_permissions.each do |project_id, actions|

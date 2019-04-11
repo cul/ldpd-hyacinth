@@ -2,7 +2,8 @@ module Api
   module V1
     module Vocabularies
       class CustomFieldsController < ApplicationApiController
-        before_action :ensure_json_request, :require_vocabulary_manager!
+        before_action :ensure_json_request
+        authorize_resource class: false
 
         # GET /vocabularies/:vocabulary_string_key/custom_fields
         def create
