@@ -16,4 +16,8 @@ class Permission < ApplicationRecord
   ]
 
   belongs_to :group
+
+  def self.valid_system_wide_permission?(perm)
+    Permission::SYSTEM_WIDE_PERMISSIONS.include?(perm)
+  end
 end
