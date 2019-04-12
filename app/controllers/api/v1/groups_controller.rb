@@ -49,11 +49,11 @@ module Api
         end
 
         new_permissions = update_params.fetch(:permissions, []).map do |perm|
-          if !Permission::SYSTEM_WIDE_PERMISSIONS.include?(perm)
+          if Permission.valid_system_wide_permission?(perm)
+            Permission.new(action: perm)
+          else
             errors << "Permission #{perm} is not valid."
             nil
-          else
-            Permission.new(action: perm)
           end
         end
 
