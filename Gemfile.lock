@@ -326,6 +326,7 @@ DEPENDENCIES
   capybara (>= 2.15)
   chromedriver-helper
   devise (~> 4.6)
+  equivalent-xml
   factory_bot_rails
   jbuilder (~> 2.5)
   jquery-rails (~> 4.3)

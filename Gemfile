@@ -58,6 +58,7 @@ group :development, :test do
   # bixby (i.e. rubocop presets) for code analysis/formatting
   gem 'bixby', '2.0.0.pre.beta1'
   gem 'solr_wrapper', '~> 2.0'
+  gem 'equivalent-xml'
 end
 
 group :development do
