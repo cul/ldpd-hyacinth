@@ -129,6 +129,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
     end
     context "field exports" do
       let(:dsid) { 'descMetadata' }
+      let(:digital_object_title) { "Assigned Label" }
       before do
         FactoryBot.create(:export_rule)
         expect(connection).to receive(:datastream_profile).with(object_pid, described_class::HYACINTH_CORE_DATASTREAM_NAME, nil, nil).and_return({})
@@ -141,6 +142,11 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
         actual_xml.gsub!('mods:', '') # remove ns
         actual_xml.gsub!(/\s/, '') # remove whitespace
         expect(actual_xml).to eql("<mods><name>Farmer</name></mods>")
+      end
+      it "makes a core property assignment" do
+        hyacinth_object.dynamic_field_data['title'] = [{ 'title_sort_portion' => digital_object_title }]
+        adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
+        expect(rubydora_object.label).to eql(digital_object_title)
       end
     end
   end

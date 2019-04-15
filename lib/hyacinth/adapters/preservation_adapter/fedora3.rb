@@ -5,7 +5,11 @@ module Hyacinth
         REQUIRED_CONFIG_OPTS = [:url, :user, :password].freeze
         OPTIONAL_CONFIG_OPTS = [:pid_generator].freeze
         HYACINTH_CORE_DATASTREAM_NAME = 'hyacinth_data'.freeze
+
         delegate :client, to: :connection
+
+        include AssignmentContext::Client
+
         def initialize(adapter_config = {})
           super(adapter_config)
 
@@ -73,6 +77,9 @@ module Hyacinth
               fedora_object.datastreams[profile.name].content = xml_doc
             end
           end
+
+          assign(Fedora3::CoreProperties).from(digital_object).to(fedora_object)
+
           fedora_object.save
         end
 
