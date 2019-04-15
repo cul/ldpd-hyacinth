@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from "react-router-dom";
 import { Row, Col, Form, Button } from 'react-bootstrap';
+import produce from "immer";
 
 import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar'
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
@@ -26,7 +27,7 @@ export default class UserNew extends React.Component {
 
   generatePasswordHandler = () => {
     const newPassword = this.getRandomPassword(14);
-    this.setState({ password: newPassword, passwordConfirmation: newPassword});
+    this.setState(produce(draft => { draft.password = newPassword, draft.passwordConfirmation = newPassword }));
   }
 
   onSubmitHandler = (event) => {
@@ -56,7 +57,8 @@ export default class UserNew extends React.Component {
   }
 
   onChangeHandler = (event) => {
-    this.setState({ [event.target.name]: event.target.value })
+    let target = event.target
+    this.setState(produce(draft => { draft[target.name] = target.value }))
   }
 
   render() {

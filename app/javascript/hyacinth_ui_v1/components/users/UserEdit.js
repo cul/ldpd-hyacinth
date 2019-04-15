@@ -1,7 +1,8 @@
 import React from 'react'
 import { Link } from "react-router-dom";
 import { Row, Col, Form, Button, Collapse } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import producer from "immer";
 
 import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar'
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
@@ -22,13 +23,20 @@ export default class UserEdit extends React.Component {
     }
   }
 
+  // onChangeHandler = (event) => {
+  //   this.setState({
+  //     user: {
+  //       ...this.state.user,
+  //       [event.target.name]: event.target.value
+  //     }
+  //   })
+  // }
+
+
   onChangeHandler = (event) => {
-    this.setState({
-      user: {
-        ...this.state.user,
-        [event.target.name]: event.target.value
-      }
-    })
+    let target = event.target;
+
+    this.setState(produce(draft => { draft[target.name] = target.value }))
   }
 
   onDeactivateHandler = (event) => {

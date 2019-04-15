@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from "react-router-dom";
 import { Form, Button } from 'react-bootstrap';
+import producer from "immer";
 
 import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar'
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
@@ -23,10 +24,8 @@ export default class GroupNew extends React.Component {
   }
 
   onChangeHandler = (event) => {
-    this.setState({ group: {
-      ...this.state.group,
-      [event.target.name]: event.target.value}
-    })
+    let target = event.target;
+    this.setState(producer(draft => { draft.group[target.name] = target.value }))
   }
 
   render() {

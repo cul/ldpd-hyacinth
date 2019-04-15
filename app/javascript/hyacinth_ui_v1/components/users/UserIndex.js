@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from "react-router-dom";
 import { Table } from "react-bootstrap";
+import producer from "immer";
 
 import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar';
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
@@ -13,7 +14,7 @@ export default class Users extends React.Component {
   componentDidMount() {
     hyacinthApi.get('/users/')
       .then(res => {
-        this.setState({ users: res.data.users })
+        this.setState(producer(draft => { draft.users = res.data.users }))
       }); // TODO: catch error
   }
 
