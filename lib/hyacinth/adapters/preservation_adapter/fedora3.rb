@@ -60,7 +60,7 @@ module Hyacinth
         def persist_impl(location_uri, digital_object)
           # get the Rubydora object
           fedora_object = connection.find_or_initialize(location_uri_to_fedora3_pid(location_uri))
-          ensure_json_datastream(fedora_object, HYACINTH_CORE_DATASTREAM_NAME)
+          ensure_json_datastream(fedora_object, HYACINTH_CORE_DATASTREAM_NAME, versionable: true)
           # persist the digital object json
           fedora_object.datastreams[HYACINTH_CORE_DATASTREAM_NAME].content =
             JSON.generate(digital_object.to_serialized_form)
@@ -69,39 +69,36 @@ module Hyacinth
           FieldExportProfile.all.each do |profile|
             xml_doc = digital_object.render_field_export(profile)
             unless xml_doc.blank?
-              ensure_xml_datastream(fedora_object, profile.name)
+              ensure_datastream(fedora_object, profile.name, mimeType: 'text/xml')
               fedora_object.datastreams[profile.name].content = xml_doc
             end
           end
           fedora_object.save
         end
 
-        def ensure_json_datastream(fedora_object, dsid)
+        def ensure_json_datastream(fedora_object, dsid, props = {})
           if fedora_object.datastreams[dsid].new?
-            create_json_datastream(fedora_object, dsid,
-                                   versionable: true, blob: JSON.generate({}))
+            default_props = { blob: JSON.generate({}) }
+            create_json_datastream(fedora_object, dsid, default_props.merge(props))
           end
         end
 
         def create_json_datastream(fedora_object, dsid, props = {})
-          default_props = {
-            controlGroup: 'M', mimeType: 'application/json', dsLabel: dsid
-          }
-          ds = fedora_object.datastreams[dsid]
-          props = default_props.merge(props)
-          ds.content = props.delete(:blob) if props[:blob]
-          default_props.merge(props).each do |prop, value|
-            ds.send "#{prop}=".to_sym, value
-          end
+          create_datastream(fedora_object, dsid, props.merge(mimeType: 'application/json'))
         end
 
-        def ensure_xml_datastream(fedora_object, dsid)
-          create_xml_datastream(fedora_object, dsid, versionable: true) if fedora_object.datastreams[dsid].new?
+        def ensure_datastream(fedora_object, dsid, props = {})
+          default_props = { versionable: true }
+          create_datastream(fedora_object, dsid, default_props.merge(props)) if fedora_object.datastreams[dsid].new?
         end
 
         def create_xml_datastream(fedora_object, dsid, props = {})
+          create_datastream(fedora_object, dsid, props.merge(mimeType: 'text/xml'))
+        end
+
+        def create_datastream(fedora_object, dsid, props = {})
           default_props = {
-            controlGroup: 'M', mimeType: 'text/xml', dsLabel: dsid
+            controlGroup: 'M', dsLabel: dsid
           }
           ds = fedora_object.datastreams[dsid]
           props = default_props.merge(props)
