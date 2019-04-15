@@ -65,17 +65,9 @@ module Hyacinth
           fedora_object.datastreams[HYACINTH_CORE_DATASTREAM_NAME].content =
             JSON.generate(digital_object.to_serialized_form)
           # TODO: add rel as appropriate
-          # TODO: serialize the other datastreams
-          internal_fields = {}
+          # serialize the other datastreams
           FieldExportProfile.all.each do |profile|
-            export_rules = profile.export_rules.group_by(&:dynamic_field_group)
-            dynamic_field_groups_map = export_rules.map do |dfg, rules|
-              [dfg.string_key, rules.map(&:translation_logic).map { |src| JSON.parse(src) }]
-            end.to_h
-            translation_logic = JSON.parse(profile.translation_logic)
-            generator = Hyacinth::XMLGenerator.new(digital_object.dynamic_field_data, translation_logic,
-                                                   dynamic_field_groups_map, internal_fields)
-            xml_doc = generator.generate.to_xml
+            xml_doc = digital_object.render_field_export(profile)
             unless xml_doc.blank?
               ensure_xml_datastream(fedora_object, profile.name)
               fedora_object.datastreams[profile.name].content = xml_doc
