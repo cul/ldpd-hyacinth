@@ -15,6 +15,7 @@ module DigitalObject
     include DigitalObjectConcerns::CopyBehavior
     include DigitalObjectConcerns::PublishBehavior
     include DigitalObjectConcerns::DestroyBehavior
+    include DigitalObjectConcerns::ExportFieldsBehavior
 
     SERIALIZATION_VERSION = '1'.freeze # Increment this if the serialized data format changes so that we can upgrade to the new format.
 
