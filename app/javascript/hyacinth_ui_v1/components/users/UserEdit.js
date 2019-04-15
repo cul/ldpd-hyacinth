@@ -23,28 +23,19 @@ export default class UserEdit extends React.Component {
     }
   }
 
-  // onChangeHandler = (event) => {
-  //   this.setState({
-  //     user: {
-  //       ...this.state.user,
-  //       [event.target.name]: event.target.value
-  //     }
-  //   })
-  // }
-
-
   onChangeHandler = (event) => {
     let target = event.target;
-
-    this.setState(produce(draft => { draft[target.name] = target.value }))
+    this.setState(producer(draft => { draft.user[target.name] = target.value }))
   }
 
-  onDeactivateHandler = (event) => {
+  onFlipActivationHandler = (event) => {
     event.preventDefault();
 
-    hyacinthApi.patch('/users/' + this.props.match.params.uid, { user: { is_active: false } })
+    hyacinthApi.patch('/users/' + this.props.match.params.uid, { user: { is_active: !this.state.user.isActive } })
       .then(res => {
-        console.log('Deactivated User')
+        // update activated status
+        console.log('Changed user activation')
+        this.setState(producer(draft => { draft.user.isActive = res.data.user.is_active } ))
       })
       .catch(error => {
         console.log(error);
@@ -80,16 +71,13 @@ export default class UserEdit extends React.Component {
     hyacinthApi.get("/users/" + this.props.match.params.uid)
       .then(res => {
         let user = res.data.user
-        this.setState({
-          user: {
-            ...this.state.user,
-            uid: user.uid,
-            isActive: user.id_active,
-            firstName: user.first_name,
-            lastName: user.last_name,
-            email: user.email
-          }
-        });
+        this.setState(producer(draft => {
+          draft.user.uid = user.uid
+          draft.user.isActive = user.is_active
+          draft.user.firstName = user.first_name
+          draft.user.lastName = user.last_name
+          draft.user.email = user.email
+        }))
       })
      .catch(error => {
        console.log(error)
@@ -140,7 +128,7 @@ export default class UserEdit extends React.Component {
                 value={this.state.user.email}
                 onChange={this.onChangeHandler} />
               <Form.Text className="text-muted">
-                For Columbia sign-in, please use columbia email: uni@columbia.edu
+                For Columbia sign-in, please use Columbia email: uni@columbia.edu
               </Form.Text>
             </Form.Group>
           </Form.Row>
@@ -149,11 +137,11 @@ export default class UserEdit extends React.Component {
             <Form.Label column sm={2}>Is Active?</Form.Label>
 
             <Col sm={3}>
-              <Form.Control plaintext readOnly value={this.state.user.isActive ? 'true' : 'false'} />
+              <Form.Control plaintext readOnly value={this.state.user.isActive ? 'Yes' : 'No'} />
             </Col>
 
             <Col sm={3}>
-              <Button variant="outline-danger" type="submit" onClick={this.onDeactivateHandler}>Deactivate</Button>
+              <Button variant="outline-danger" type="submit" onClick={this.onFlipActivationHandler}>{(this.state.user.isActive) ? 'Deactivate' : 'Activate'}</Button>
             </Col>
           </Form.Group>
 
