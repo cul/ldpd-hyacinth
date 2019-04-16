@@ -11,6 +11,10 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3::AssignmentContext do
 
   let(:test_property_class) do
     Class.new do
+      def self.export(src)
+        new(src)
+      end
+
       def initialize(src)
         @src = src
       end
