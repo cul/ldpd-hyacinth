@@ -8,6 +8,7 @@ module Hyacinth
 
         delegate :client, to: :connection
 
+        include DatastreamMethods
         include AssignmentContext::Client
 
         def initialize(adapter_config = {})
@@ -71,48 +72,15 @@ module Hyacinth
           # TODO: add rel as appropriate
           # serialize the other datastreams
           FieldExportProfile.all.each do |profile|
-            xml_doc = digital_object.render_field_export(profile)
-            unless xml_doc.blank?
-              ensure_datastream(fedora_object, profile.name, mimeType: 'text/xml')
-              fedora_object.datastreams[profile.name].content = xml_doc
-            end
+            assign(content_for(profile)).from(digital_object).to(fedora_object)
           end
 
           assign(Fedora3::CoreProperties).from(digital_object).to(fedora_object)
+          assign(Fedora3::DCProperties).from(digital_object).to(fedora_object)
+          assign(Fedora3::RelsExtProperties).from(digital_object).to(fedora_object)
+          assign(Fedora3::RelsIntProperties).from(digital_object).to(fedora_object)
 
           fedora_object.save
-        end
-
-        def ensure_json_datastream(fedora_object, dsid, props = {})
-          if fedora_object.datastreams[dsid].new?
-            default_props = { blob: JSON.generate({}) }
-            create_json_datastream(fedora_object, dsid, default_props.merge(props))
-          end
-        end
-
-        def create_json_datastream(fedora_object, dsid, props = {})
-          create_datastream(fedora_object, dsid, props.merge(mimeType: 'application/json'))
-        end
-
-        def ensure_datastream(fedora_object, dsid, props = {})
-          default_props = { versionable: true }
-          create_datastream(fedora_object, dsid, default_props.merge(props)) if fedora_object.datastreams[dsid].new?
-        end
-
-        def create_xml_datastream(fedora_object, dsid, props = {})
-          create_datastream(fedora_object, dsid, props.merge(mimeType: 'text/xml'))
-        end
-
-        def create_datastream(fedora_object, dsid, props = {})
-          default_props = {
-            controlGroup: 'M', dsLabel: dsid
-          }
-          ds = fedora_object.datastreams[dsid]
-          props = default_props.merge(props)
-          ds.content = props.delete(:blob) if props[:blob]
-          default_props.merge(props).each do |prop, value|
-            ds.send "#{prop}=".to_sym, value
-          end
         end
       end
     end
