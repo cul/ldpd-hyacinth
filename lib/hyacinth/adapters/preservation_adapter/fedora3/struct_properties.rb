@@ -1,7 +1,7 @@
 module Hyacinth
   module Adapters
     module PreservationAdapter
-      class Fedora3::DCProperties
+      class Fedora3::StructProperties
         include Fedora3::TitleHelpers
         include Fedora3::DatastreamMethods
 

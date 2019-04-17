@@ -7,7 +7,7 @@ module Hyacinth
             Fedora3::AssignmentContext.new(klass)
           end
 
-          def content_for(export_profile)
+          def datastream_for(export_profile)
             Fedora3::AssignmentContext::DatastreamExportContextFactory.new(export_profile)
           end
         end
@@ -21,7 +21,7 @@ module Hyacinth
         end
 
         def from(hyacinth_obj)
-          @property_class.export(hyacinth_obj)
+          @property_class.from(hyacinth_obj)
         end
 
         class DatastreamExportContext
@@ -45,7 +45,7 @@ module Hyacinth
             @export_profile = export_profile
           end
 
-          def export(hyacinth_obj)
+          def from(hyacinth_obj)
             Fedora3::AssignmentContext::DatastreamExportContext.new(@export_profile, hyacinth_obj)
           end
 
@@ -61,7 +61,7 @@ module Hyacinth
           end
 
           def from(hyacinth_obj)
-            @property_class.export(hyacinth_obj).to(@fedora_obj)
+            @property_class.from(hyacinth_obj).to(@fedora_obj)
           end
         end
       end

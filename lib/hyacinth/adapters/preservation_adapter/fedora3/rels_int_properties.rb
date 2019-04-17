@@ -2,7 +2,7 @@ module Hyacinth
   module Adapters
     module PreservationAdapter
       class Fedora3::RelsIntProperties
-        def self.export(hyacinth_obj)
+        def self.from(hyacinth_obj)
           new(hyacinth_obj)
         end
 

@@ -1,19 +1,7 @@
 module Hyacinth
   module Adapters
     module PreservationAdapter
-      class Fedora3::CoreProperties
-        def self.export(hyacinth_obj)
-          new(hyacinth_obj)
-        end
-
-        def initialize(hyacinth_obj)
-          @hyacinth_obj = hyacinth_obj
-        end
-
-        def to(fedora_obj)
-          fedora_obj.label = get_title(@hyacinth_obj.dynamic_field_data)
-        end
-
+      module Fedora3::TitleHelpers
         def get_title(dynamic_field_data, opts = {})
           title = dynamic_field_data['title']&.first && dynamic_field_data['title'].first['title_non_sort_portion'].present?
           title ||= ''
