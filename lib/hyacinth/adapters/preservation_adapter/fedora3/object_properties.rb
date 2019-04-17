@@ -1,9 +1,8 @@
 module Hyacinth
   module Adapters
     module PreservationAdapter
-      class Fedora3::DCProperties
+      class Fedora3::ObjectProperties
         include Fedora3::TitleHelpers
-        include Fedora3::DatastreamMethods
 
         def self.from(hyacinth_obj)
           new(hyacinth_obj)
@@ -14,7 +13,7 @@ module Hyacinth
         end
 
         def to(fedora_obj)
-          # TODO
+          fedora_obj.label = get_title(@hyacinth_obj.dynamic_field_data)
         end
       end
     end

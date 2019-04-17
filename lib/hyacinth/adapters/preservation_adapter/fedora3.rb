@@ -11,6 +11,10 @@ module Hyacinth
         include DatastreamMethods
         include AssignmentContext::Client
 
+        def self.uri_prefix
+          @uri_prefix ||= "fedora3://".freeze
+        end
+
         def initialize(adapter_config = {})
           super(adapter_config)
 
@@ -27,7 +31,7 @@ module Hyacinth
         end
 
         def uri_prefix
-          "fedora3://"
+          Fedora3.uri_prefix
         end
 
         # Generates a new persistence identifier, ensuring that no object exists for the new URI.
@@ -69,16 +73,18 @@ module Hyacinth
           # persist the digital object json
           fedora_object.datastreams[HYACINTH_CORE_DATASTREAM_NAME].content =
             JSON.generate(digital_object.to_serialized_form)
-          # TODO: add rel as appropriate
           # serialize the other datastreams
           FieldExportProfile.all.each do |profile|
-            assign(content_for(profile)).from(digital_object).to(fedora_object)
+            assign(datastream_for(profile)).from(digital_object).to(fedora_object)
           end
 
-          assign(Fedora3::CoreProperties).from(digital_object).to(fedora_object)
+          assign(Fedora3::ObjectProperties).from(digital_object).to(fedora_object)
           assign(Fedora3::DCProperties).from(digital_object).to(fedora_object)
+          # TODO: add rel as appropriate
           assign(Fedora3::RelsExtProperties).from(digital_object).to(fedora_object)
           assign(Fedora3::RelsIntProperties).from(digital_object).to(fedora_object)
+          # TODO: export structMetadata
+          assign(Fedora3::StructProperties).from(digital_object).to(fedora_object)
 
           fedora_object.save
         end
