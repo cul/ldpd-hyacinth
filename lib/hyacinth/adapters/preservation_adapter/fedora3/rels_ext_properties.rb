@@ -2,12 +2,25 @@ module Hyacinth
   module Adapters
     module PreservationAdapter
       class Fedora3::RelsExtProperties
-        HAS_RDF_TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type".freeze
-        IS_PART_OF = "http://purl.org/dc/terms/isPartOf".freeze
-        HAS_PROJECT = "http://dbpedia.org/ontology/project".freeze
-        HAS_PUBLISHER = "http://purl.org/dc/terms/publisher".freeze
-        HAS_DOI = "http://purl.org/ontology/bibo/doi".freeze
-        HAS_MODEL = "info:fedora/fedora-system:def/model#hasModel".freeze
+        module URIS
+          HAS_RDF_TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type".freeze
+          IS_PART_OF = "http://purl.org/dc/terms/isPartOf".freeze
+          HAS_PROJECT = "http://dbpedia.org/ontology/project".freeze
+          HAS_PUBLISHER = "http://purl.org/dc/terms/publisher".freeze
+          HAS_DOI = "http://purl.org/ontology/bibo/doi".freeze
+          HAS_MODEL = "info:fedora/fedora-system:def/model#hasModel".freeze
+          # asset annotation properties
+          IMAGE_WIDTH = "http://www.w3.org/2003/12/exif/ns#imageWidth".freeze
+          IMAGE_LENGTH = "http://www.w3.org/2003/12/exif/ns#imageLength".freeze
+          IMAGE_X_RES = "http://www.w3.org/2003/12/exif/ns#xResolution".freeze
+          IMAGE_Y_RES = "http://www.w3.org/2003/12/exif/ns#yResolution".freeze
+          IMAGE_RES_UNIT = "http://www.w3.org/2003/12/exif/ns#resolutionUnit".freeze
+          IMAGE_ORIENTATION = "http://www.w3.org/2003/12/exif/ns#orientation".freeze
+          FEATURED_REGION = "http://iiif.io/api/image/2#regionFeatured".freeze
+          ORIGINAL_FILENAME = "http://www.loc.gov/premis/rdf/v1#hasOriginalName".freeze
+        end
+
+        include Fedora3::PidHelpers
 
         def self.from(hyacinth_obj)
           new(hyacinth_obj)
@@ -20,34 +33,38 @@ module Hyacinth
         def to(fedora_obj)
           # add child->parent URIs
           prospective_values = parent_uris_for(@hyacinth_obj)
-          delta = delta_for(fedora_obj, IS_PART_OF, prospective_values)
-          apply_delta(fedora_obj, IS_PART_OF, delta)
+          delta = delta_for(fedora_obj, URIS::IS_PART_OF, prospective_values)
+          apply_delta(fedora_obj, URIS::IS_PART_OF, delta)
           # add constituent->project string keys
           prospective_values = project_string_keys_for(@hyacinth_obj)
-          delta = delta_for(fedora_obj, HAS_PROJECT, prospective_values)
-          apply_delta(fedora_obj, HAS_PROJECT, delta, isLiteral: true)
+          delta = delta_for(fedora_obj, URIS::HAS_PROJECT, prospective_values)
+          apply_delta(fedora_obj, URIS::HAS_PROJECT, delta, isLiteral: true)
           # add object->publisher string keys
           prospective_values = publisher_string_keys_for(@hyacinth_obj)
-          delta = delta_for(fedora_obj, HAS_PUBLISHER, prospective_values)
-          apply_delta(fedora_obj, HAS_PUBLISHER, delta, isLiteral: true)
+          delta = delta_for(fedora_obj, URIS::HAS_PUBLISHER, prospective_values)
+          apply_delta(fedora_obj, URIS::HAS_PUBLISHER, delta, isLiteral: true)
           # add DOI URIs
           prospective_values = dois_for(@hyacinth_obj)
-          delta = delta_for(fedora_obj, HAS_DOI, prospective_values)
-          apply_delta(fedora_obj, HAS_DOI, delta)
+          delta = delta_for(fedora_obj, URIS::HAS_DOI, prospective_values)
+          apply_delta(fedora_obj, URIS::HAS_DOI, delta)
           # add content model URIs
           prospective_values = models_for(@hyacinth_obj)
-          delta = delta_for(fedora_obj, HAS_MODEL, prospective_values)
-          apply_delta(fedora_obj, HAS_MODEL, delta)
+          delta = delta_for(fedora_obj, URIS::HAS_MODEL, prospective_values)
+          apply_delta(fedora_obj, URIS::HAS_MODEL, delta)
           # add rdf type URIs
           prospective_values = rdf_types_for(@hyacinth_obj)
-          delta = delta_for(fedora_obj, HAS_RDF_TYPE, prospective_values)
-          apply_delta(fedora_obj, HAS_RDF_TYPE, delta)
+          delta = delta_for(fedora_obj, URIS::HAS_RDF_TYPE, prospective_values)
+          apply_delta(fedora_obj, URIS::HAS_RDF_TYPE, delta)
+          return unless @hyacinth_obj.is_a? ::DigitalObject::Asset
+          # Asset-only properties
+          prospective_values = [@hyacinth_obj.content.original_filename].compact
+          delta = delta(fedora_obj, URIS::ORIGINAL_FILENAME, prospective_values)
+          apply_delta(fedora_obj, URIS::ORIGINAL_FILENAME, delta)
         end
 
         def parent_uris_for(hyacinth_obj)
-          hyacinth_obj.parent_uids.map { |uid| DigitalObject.find(uid) }.compact.map do |parent|
-            fcr3_uris = parent.preservation_target_uris.select { |x| x.start_with? Fedora3.uri_prefix }
-            fcr3_uris.map { |fcr3_uri| "info:fedora/#{fcr3_uri[Fedora3.uri_prefix.length..-1]}" }
+          hyacinth_obj.parent_uids.map { |uid| ::DigitalObject.find(uid) }.compact.map do |parent|
+            digital_object_pids(parent)
           end.flatten.compact
         end
 
