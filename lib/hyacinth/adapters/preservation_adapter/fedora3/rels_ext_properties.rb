@@ -63,7 +63,7 @@ module Hyacinth
         end
 
         def parent_uris_for(hyacinth_obj)
-          hyacinth_obj.parent_uids.map { |uid| ::DigitalObject.find(uid) }.compact.map do |parent|
+          hyacinth_obj.parent_uids.map { |uid| ::DigitalObject::Base.find(uid) }.compact.map do |parent|
             digital_object_pids(parent)
           end.flatten.compact
         end

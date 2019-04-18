@@ -118,27 +118,29 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       expect(connection).to receive(:find_or_initialize).with(object_pid).and_return(rubydora_object)
       expect(connection).to receive(:object_profile).with(object_pid, nil).and_return(profile_xml)
       expect(connection).to receive(:datastreams).with(pid: object_pid, profiles: "true").and_return(datastreams_xml)
-      expect(connection).to receive(:datastream_profile).with(object_pid, dsid, nil, nil).and_return({})
+      dsids.each do |dsid|
+        expect(connection).to receive(:datastream_profile).with(object_pid, dsid, nil, nil).and_return({})
+      end
       expect(rubydora_object).to receive(:save).and_return(nil)
       allow(rubydora_object).to receive(:relationship).and_return([]) # all new values!
     end
     context "core data" do
-      let(:dsid) { described_class::HYACINTH_CORE_DATASTREAM_NAME }
+      let(:dsids) { [described_class::HYACINTH_CORE_DATASTREAM_NAME, 'structMetadata'] }
 
       # test rels-ext elsewhere
       before { allow(connection).to receive(:add_relationship) }
 
       it "persists core data to Fedora3" do
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
-        actual_json = JSON.parse(rubydora_object.datastreams[dsid].content)
+        actual_json = JSON.parse(rubydora_object.datastreams[described_class::HYACINTH_CORE_DATASTREAM_NAME].content)
         expect(actual_json).to have_key("uid")
       end
     end
     context "field exports" do
-      let(:dsid) { 'descMetadata' }
+      let(:dsids) { ['descMetadata', 'structMetadata'] }
       let(:digital_object_title) { "Assigned Label" }
       before do
-        FactoryBot.create(:export_rule)
+        FactoryBot.create(:export_rule) # creates descMetadata
         expect(connection).to receive(:datastream_profile).with(object_pid, described_class::HYACINTH_CORE_DATASTREAM_NAME, nil, nil).and_return({})
         # test rels-ext elsewhere
         allow(connection).to receive(:add_relationship)
@@ -165,7 +167,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       end
     end
     context "basic rels-ext properties" do
-      let(:dsid) { 'descMetadata' }
+      let(:dsids) { ['structMetadata'] }
       let(:digital_object_title) { "Assigned Label" }
       let(:model_property) do
         {
@@ -182,7 +184,6 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
         }
       end
       before do
-        FactoryBot.create(:export_rule)
         expect(connection).to receive(:datastream_profile).with(object_pid, described_class::HYACINTH_CORE_DATASTREAM_NAME, nil, nil).and_return({})
         expect(connection).to receive(:add_relationship).with(model_property)
         expect(connection).to receive(:add_relationship).with(rdftype_property)
@@ -193,9 +194,8 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
     end
     context "DC properties" do
       # do not need to fetch profiles for DC and RELS-EXT
-      let(:dsid) { 'descMetadata' }
+      let(:dsids) { ['structMetadata'] }
       before do
-        FactoryBot.create(:export_rule)
         expect(connection).to receive(:datastream_profile).with(object_pid, described_class::HYACINTH_CORE_DATASTREAM_NAME, nil, nil).and_return({})
         allow(connection).to receive(:add_relationship) # tested elsewhere
       end
@@ -206,6 +206,33 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
         expect(rubydora_object.datastreams['DC'].changed?).to be(true)
         expect(rubydora_object.datastreams['DC'].content).to include("<dc:identifier>keep</dc:identifier>")
         expect(rubydora_object.datastreams['DC'].content).not_to include("<dc:identifier>remove</dc:identifier>")
+      end
+    end
+    context "Struct properties" do
+      # do not need to fetch profiles for DC and RELS-EXT
+      let(:dsids) { ['structMetadata'] }
+      let(:child_object_title) { "Assigned Label" }
+      let(:child_uid) { 'asdf' }
+      let(:child_hyacinth_object) do
+        obj = DigitalObject::Item.new
+        obj.dynamic_field_data['title'] = [{ 'title_sort_portion' => child_object_title }]
+        obj.instance_variable_set(:@uid, child_uid)
+        obj
+      end
+
+      before do
+        hyacinth_object.structured_children['structure'] << child_uid
+        expect(connection).to receive(:datastream_profile).with(object_pid, described_class::HYACINTH_CORE_DATASTREAM_NAME, nil, nil).and_return({})
+        allow(connection).to receive(:add_relationship) # tested elsewhere
+        expect(::DigitalObject::Base).to receive(:find).with(child_uid).and_return(child_hyacinth_object)
+      end
+
+      it "persists model properties" do
+        hyacinth_object.identifiers << 'keep'
+        adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
+        # because .save is stubbed, the datastream should still be dirty
+        expect(rubydora_object.datastreams['structMetadata'].changed?).to be(true)
+        expect(rubydora_object.datastreams['structMetadata'].content).to include("<mets:div LABEL=\"#{child_object_title}\" ORDER=\"1\" CONTENTIDS=\"#{child_uid}\"/>")
       end
     end
   end
