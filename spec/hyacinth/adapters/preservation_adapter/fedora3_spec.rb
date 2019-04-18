@@ -183,12 +183,22 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
           pid: object_pid
         }
       end
+      let(:restriction_property) do
+        {
+          predicate: "http://www.loc.gov/premis/rdf/v1#hasRestriction",
+          object: "onsite restriction",
+          pid: object_pid,
+          isLiteral: true
+        }
+      end
       before do
         expect(connection).to receive(:datastream_profile).with(object_pid, described_class::HYACINTH_CORE_DATASTREAM_NAME, nil, nil).and_return({})
         expect(connection).to receive(:add_relationship).with(model_property)
         expect(connection).to receive(:add_relationship).with(rdftype_property)
+        expect(connection).to receive(:add_relationship).with(restriction_property)
       end
       it "persists model properties" do
+        hyacinth_object.dynamic_field_data['restrictions'] = { 'restricted_onsite' => true }
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
       end
     end
