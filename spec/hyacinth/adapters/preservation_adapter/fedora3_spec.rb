@@ -23,10 +23,12 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
     allow(a).to receive(:args).and_return({})
     a
   end
+  let(:dc_xml_src) { file_fixture("fedora3/update-dc.xml").read }
 
   before do
     allow(connection).to receive(:client).and_return(resource)
     allow(request).to receive(:redirection_history).and_return []
+    allow(connection).to receive(:datastream_dissemination).with(dsid: 'DC', pid: object_pid).and_return(dc_xml_src)
   end
 
   describe "#location_uri_to_fedora3_pid" do
@@ -181,6 +183,23 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       end
       it "persists model properties" do
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
+      end
+    end
+    context "DC properties" do
+      # do not need to fetch profiles for DC and RELS-EXT
+      let(:dsid) { 'descMetadata' }
+      before do
+        FactoryBot.create(:export_rule)
+        expect(connection).to receive(:datastream_profile).with(object_pid, described_class::HYACINTH_CORE_DATASTREAM_NAME, nil, nil).and_return({})
+        allow(connection).to receive(:add_relationship) # tested elsewhere
+      end
+      it "persists model properties" do
+        hyacinth_object.identifiers << 'keep'
+        adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
+        # because .save is stubbed, the datastream should still be dirty
+        expect(rubydora_object.datastreams['DC'].changed?).to be(true)
+        expect(rubydora_object.datastreams['DC'].content).to include("<dc:identifier>keep</dc:identifier>")
+        expect(rubydora_object.datastreams['DC'].content).not_to include("<dc:identifier>remove</dc:identifier>")
       end
     end
   end

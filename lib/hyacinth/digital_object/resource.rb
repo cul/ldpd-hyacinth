@@ -2,7 +2,7 @@ module Hyacinth
   module DigitalObject
     class Resource
       attr_accessor :import_location, :import_method, :import_checksum,
-                    :location, :checksum
+                    :location, :checksum, :original_filename
 
       attr_reader :import_succeeded
 
