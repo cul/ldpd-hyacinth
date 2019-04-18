@@ -152,10 +152,16 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
         actual_xml.gsub!(/\s/, '') # remove whitespace
         expect(actual_xml).to eql("<mods><name>Farmer</name></mods>")
       end
-      it "makes a core property assignment" do
+      it "makes a core object property assignments" do
         hyacinth_object.dynamic_field_data['title'] = [{ 'title_sort_portion' => digital_object_title }]
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
         expect(rubydora_object.label).to eql(digital_object_title)
+        expect(rubydora_object.state).to eql('A')
+      end
+      it "assigns a state property to inactive if withdrawn" do
+        hyacinth_object.state = Hyacinth::DigitalObject::State::WITHDRAWN
+        adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
+        expect(rubydora_object.state).to eql('I')
       end
     end
     context "basic rels-ext properties" do
