@@ -245,5 +245,39 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
         expect(rubydora_object.datastreams['structMetadata'].content).to include("<mets:div LABEL=\"#{child_object_title}\" ORDER=\"1\" CONTENTIDS=\"#{child_uid}\"/>")
       end
     end
+    context "RelsInt properties for resources" do
+      let(:dsids) { ['structMetadata'] }
+      let(:hyacinth_object) { DigitalObject::Asset.new }
+      let(:resource_args) { { original_filename: '/old/path/to/file.doc', location: '/path/to/file.doc', checksum: 'asdf', file_size: 'asdf' } }
+      let(:extent_property) do
+        {
+          predicate: described_class::RelsIntProperties::URIS::EXTENT,
+          object: "asdf",
+          pid: object_pid,
+          subject: "info:fedora/#{object_pid}/master",
+          isLiteral: true
+        }
+      end
+      let(:checksum_property) do
+        {
+          predicate: described_class::RelsIntProperties::URIS::HAS_MESSAGE_DIGEST,
+          object: "urn:asdf",
+          pid: object_pid,
+          subject: "info:fedora/#{object_pid}/master",
+          isLiteral: true
+        }
+      end
+      before do
+        expect(connection).to receive(:datastream_profile).with(object_pid, described_class::HYACINTH_CORE_DATASTREAM_NAME, nil, nil).and_return({})
+        allow(connection).to receive(:add_relationship)
+        allow(connection).to receive(:find_by_sparql_relationship).and_return([]) # fresh properties!
+        expect(connection).to receive(:add_relationship).with(extent_property)
+        expect(connection).to receive(:add_relationship).with(checksum_property)
+        hyacinth_object.master.send(:initialize, resource_args)
+      end
+      it "persists model properties" do
+        adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
+      end
+    end
   end
 end

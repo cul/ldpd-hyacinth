@@ -36,7 +36,7 @@ module Hyacinth
             # set the type
             properties[:type] = [hyacinth_obj.asset_type].compact
             # set the source
-            filename = hyacinth_obj.content.original_filename || hyacinth_obj.content.location
+            filename = hyacinth_obj.master.original_filename || hyacinth_obj.master.location
             properties[:source] = [filename].compact
             # set the format (MIME)
             properties[:format] = [BestType.mime_type.for_file_name(filename)].compact
