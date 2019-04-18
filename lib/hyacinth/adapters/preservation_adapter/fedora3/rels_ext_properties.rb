@@ -3,22 +3,32 @@ module Hyacinth
     module PreservationAdapter
       class Fedora3::RelsExtProperties
         module URIS
-          HAS_RDF_TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type".freeze
-          IS_PART_OF = "http://purl.org/dc/terms/isPartOf".freeze
-          HAS_PROJECT = "http://dbpedia.org/ontology/project".freeze
-          HAS_PUBLISHER = "http://purl.org/dc/terms/publisher".freeze
           HAS_DOI = "http://purl.org/ontology/bibo/doi".freeze
           HAS_MODEL = "info:fedora/fedora-system:def/model#hasModel".freeze
+          HAS_PROJECT = "http://dbpedia.org/ontology/project".freeze
+          HAS_PUBLISHER = "http://purl.org/dc/terms/publisher".freeze
+          HAS_RDF_TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type".freeze
+          HAS_RESTRICTION = "http://www.loc.gov/premis/rdf/v1#hasRestriction".freeze
+          IS_PART_OF = "http://purl.org/dc/terms/isPartOf".freeze
           # asset annotation properties
-          IMAGE_WIDTH = "http://www.w3.org/2003/12/exif/ns#imageWidth".freeze
+          FEATURED_REGION = "http://iiif.io/api/image/2#regionFeatured".freeze
           IMAGE_LENGTH = "http://www.w3.org/2003/12/exif/ns#imageLength".freeze
+          IMAGE_ORIENTATION = "http://www.w3.org/2003/12/exif/ns#orientation".freeze
+          IMAGE_RES_UNIT = "http://www.w3.org/2003/12/exif/ns#resolutionUnit".freeze
+          IMAGE_WIDTH = "http://www.w3.org/2003/12/exif/ns#imageWidth".freeze
           IMAGE_X_RES = "http://www.w3.org/2003/12/exif/ns#xResolution".freeze
           IMAGE_Y_RES = "http://www.w3.org/2003/12/exif/ns#yResolution".freeze
-          IMAGE_RES_UNIT = "http://www.w3.org/2003/12/exif/ns#resolutionUnit".freeze
-          IMAGE_ORIENTATION = "http://www.w3.org/2003/12/exif/ns#orientation".freeze
-          FEATURED_REGION = "http://iiif.io/api/image/2#regionFeatured".freeze
           ORIGINAL_FILENAME = "http://www.loc.gov/premis/rdf/v1#hasOriginalName".freeze
         end
+
+        ONSITE_RESTRICTION_LITERAL_VALUE = "onsite restriction".freeze
+        SIZE_RESTRICTION_LITERAL_VALUE = "size restriction".freeze
+        TYPE_INFORMATION = {
+          'asset' => { rdf_type: 'http://purl.oclc.org/NET/CUL/Resource', cmodel: 'info:fedora/ldpd:GenericResource' },
+          'group' => { rdf_type: 'http://purl.oclc.org/NET/CUL/Aggregator', cmodel: 'info:fedora/pcdm:Collection' },
+          'item' => { rdf_type: 'http://purl.oclc.org/NET/CUL/Aggregator', cmodel: 'info:fedora/ldpd:ContentAggregator' },
+          'site' => { rdf_type: 'http://purl.oclc.org/NET/CUL/Aggregator', cmodel: 'info:fedora/ldpd:Concept' }
+        }.freeze
 
         include Fedora3::PidHelpers
 
@@ -55,6 +65,11 @@ module Hyacinth
           prospective_values = rdf_types_for(@hyacinth_obj)
           delta = delta_for(fedora_obj, URIS::HAS_RDF_TYPE, prospective_values)
           apply_delta(fedora_obj, URIS::HAS_RDF_TYPE, delta)
+          # add restriction flags
+          prospective_values = restrictions_for(@hyacinth_obj)
+          delta = delta_for(fedora_obj, URIS::HAS_RESTRICTION, prospective_values)
+          apply_delta(fedora_obj, URIS::HAS_RESTRICTION, delta, isLiteral: true)
+
           return unless @hyacinth_obj.is_a? ::DigitalObject::Asset
           # Asset-only properties
           prospective_values = [@hyacinth_obj.content.original_filename].compact
@@ -82,33 +97,27 @@ module Hyacinth
         end
 
         def models_for(hyacinth_obj)
-          models = []
-          case hyacinth_obj.digital_object_type.downcase
-          when 'asset'
-            models << "info:fedora/ldpd:GenericResource"
-          when 'group'
-            models << "info:fedora/pcdm:Collection"
-          when 'item'
-            models << "info:fedora/ldpd:ContentAggregator"
-          when 'site'
-            models << "info:fedora/pcdm:Concept"
-          end
-          models
+          type_infos_for(hyacinth_obj, :cmodel)
         end
 
         def rdf_types_for(hyacinth_obj)
-          types = []
-          case hyacinth_obj.digital_object_type.downcase
-          when 'asset'
-            types << "http://purl.oclc.org/NET/CUL/Resource"
-          when 'group'
-            types << "http://purl.oclc.org/NET/CUL/Aggregator"
-          when 'item'
-            types << "http://purl.oclc.org/NET/CUL/Aggregator"
-          when 'site'
-            types << "http://purl.oclc.org/NET/CUL/Aggregator"
-          end
-          types
+          type_infos_for(hyacinth_obj, :rdf_type)
+        end
+
+        def type_infos_for(hyacinth_obj, type_key)
+          infos = []
+          return infos unless (type_info = TYPE_INFORMATION[hyacinth_obj.digital_object_type.downcase])
+          infos << type_info[type_key]
+          infos
+        end
+
+        def restrictions_for(hyacinth_obj)
+          restrictions = []
+          digital_object_data = hyacinth_obj.dynamic_field_data
+          return restrictions unless digital_object_data.key?('restrictions')
+          restrictions << ONSITE_RESTRICTION_LITERAL_VALUE if digital_object_data['restrictions'].key?('restricted_onsite')
+          restrictions << SIZE_RESTRICTION_LITERAL_VALUE if digital_object_data['restrictions']['restricted_size_image']&.casecmp('false')&.zero?
+          restrictions
         end
 
         def delta_for(fedora_obj, predicate, prospective_values)
