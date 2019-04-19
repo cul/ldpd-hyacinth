@@ -9,10 +9,11 @@ module DigitalObjectConcerns
           json_var[metadata_attribute_name.to_s] = type_def.to_serialized_form(self.send(metadata_attribute_name))
         end
         # serialize resource_attributes
-        self.resource_attributes.each do |resource_attribute_name, resource|
+        self.resource_attributes.each do |resource_attribute_name|
           json_var['resources'] ||= {}
-          unless resource.nil?
-            json_var['resources'][resource_attribute_name.to_s] = resource.as_json
+          resource = resources[resource_attribute_name]&.to_serialized_form
+          unless resource.blank?
+            json_var['resources'][resource_attribute_name.to_s] = resource
           end
         end
       end
@@ -28,11 +29,13 @@ module DigitalObjectConcerns
             type_def.from_serialized_form(json_var[metadata_attribute_name.to_s]))
         end
         # build resource objects
-        digital_object.resource_attributes.map do |resource_name, resource|
-          if json_var['resources']&.key?(resource_name)
-            digital_object.send("#{resource_name}=", Hyacinth::DigitalObject::Resource.from_serialized_form(json_var['resources'][resource_name]))
+        digital_object.resource_attributes.map do |resource_name|
+          resource_name = resource_name.to_s
+          if json_var['resources']&.key?(resource_name.to_s)
+            digital_object.resources[resource_name] = Hyacinth::DigitalObject::Resource.from_serialized_form(json_var['resources'][resource_name])
           end
         end
+
         # set digital_object_record
         digital_object.instance_variable_set('@digital_object_record', digital_object_record)
         # return built object

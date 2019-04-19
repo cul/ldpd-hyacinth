@@ -23,9 +23,14 @@ describe Hyacinth::DigitalObject::ResourceAttributes do
     end
   end
 
-  context ".resource_attribute" do
-    it "adds a public getter method and private setter method" do
-      expect(instance).to respond_to(resource_name)
+  context ".resources" do
+    it "adds a public getter method" do
+      expect(instance).to respond_to(:resources)
+    end
+
+    it "accesses individual resources indifferently by key" do
+      expect(instance.resources[:example]).to be_a Hyacinth::DigitalObject::Resource
+      expect(instance.resources['example']).to be instance.resources[:example]
     end
   end
 end

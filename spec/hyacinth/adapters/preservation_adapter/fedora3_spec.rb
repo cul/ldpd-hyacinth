@@ -273,7 +273,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
         allow(connection).to receive(:find_by_sparql_relationship).and_return([]) # fresh properties!
         expect(connection).to receive(:add_relationship).with(extent_property)
         expect(connection).to receive(:add_relationship).with(checksum_property)
-        hyacinth_object.master.send(:initialize, resource_args)
+        hyacinth_object.resources['master'].send(:initialize, resource_args)
       end
       it "persists model properties" do
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)

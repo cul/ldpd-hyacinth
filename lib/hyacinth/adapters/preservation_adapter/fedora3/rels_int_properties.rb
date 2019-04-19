@@ -20,7 +20,7 @@ module Hyacinth
         def to(fedora_obj)
           return unless @hyacinth_obj.is_a? ::DigitalObject::Asset
           ['master', 'service', 'access'].each do |dsid|
-            resource = @hyacinth_obj.send dsid.to_sym
+            resource = @hyacinth_obj.resources[dsid]
             apply_delta(fedora_obj, dsid, delta_for(resource, fedora_obj, dsid))
           end
         end
