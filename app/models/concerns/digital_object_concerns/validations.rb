@@ -16,5 +16,7 @@ module DigitalObjectConcerns::Validations
     # Validate that all Wpublish_to and @unpublish_from destinations are real PublishTargets
 
     # Validate that all @parent_uids_to_add and @parent_uids_to_remove are existing objects
+
+    # Validate that all preservation_target_uris have unique protocols
   end
 end

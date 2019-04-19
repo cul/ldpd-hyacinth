@@ -1,5 +1,5 @@
 module DigitalObjectConcerns
-  module SaveBehavior
+  module PublishBehavior
     extend ActiveSupport::Concern
 
     # Publishes this object to the publish targets in pending_publish_entries

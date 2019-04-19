@@ -28,8 +28,8 @@ module DigitalObject
     metadata_attribute :digital_object_type, Hyacinth::DigitalObject::TypeDef::String.new
     metadata_attribute :state, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { 'active' }).public_writer
     # Modification Info
-    metadata_attribute :created_by, Hyacinth::DigitalObject::TypeDef::User.new.public_writer
-    metadata_attribute :updated_by, Hyacinth::DigitalObject::TypeDef::User.new.public_writer
+    metadata_attribute :created_by, Hyacinth::DigitalObject::TypeDef::User.new
+    metadata_attribute :updated_by, Hyacinth::DigitalObject::TypeDef::User.new
     metadata_attribute :created_at, Hyacinth::DigitalObject::TypeDef::DateTime.new.default(-> { DateTime.current })
     metadata_attribute :updated_at, Hyacinth::DigitalObject::TypeDef::DateTime.new.default(-> { DateTime.current })
     metadata_attribute :first_published_at, Hyacinth::DigitalObject::TypeDef::DateTime.new
@@ -40,7 +40,7 @@ module DigitalObject
     # Dynamic Fields
     metadata_attribute :dynamic_field_data, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Hash.new })
     # Administrative Relationsip Objects
-    metadata_attribute :group, Hyacinth::DigitalObject::TypeDef::Group.new
+    metadata_attribute :group, Hyacinth::DigitalObject::TypeDef::Group.new.public_writer
     metadata_attribute :projects, Hyacinth::DigitalObject::TypeDef::Projects.new.default(-> { Set.new })
     # Preservation System Linkage
     metadata_attribute :preservation_target_uris, Hyacinth::DigitalObject::TypeDef::JsonSerializableSet.new.default(-> { Set.new })

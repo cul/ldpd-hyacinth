@@ -1,5 +1,5 @@
 module DigitalObjectConcerns
-  module SaveBehavior
+  module PreserveBehavior
     extend ActiveSupport::Concern
 
     # Preserves this object to all environment-enabled preservation targets.

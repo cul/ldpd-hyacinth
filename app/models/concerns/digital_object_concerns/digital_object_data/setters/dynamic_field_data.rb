@@ -17,12 +17,13 @@ module DigitalObjectConcerns
           end
         end
 
-        # Normalizes controlled term fields by removing existing non-uri properties
-        # and retrieving and re-adding non-uri properties from the term datastore (i.e. URI Service).
-        def normalize_controlled_term_fields(df_data)
-          remove_extra_controlled_term_uri_data_from_dynamic_field_data!(df_data)
-          add_extra_controlled_term_uri_data_to_dynamic_field_data!(df_data)
-        end
+        # TODO: Implement this method and its sub-methods
+        # # Normalizes controlled term fields by removing existing non-uri properties
+        # # and retrieving and re-adding non-uri properties from the term datastore (i.e. URI Service).
+        # def normalize_controlled_term_fields(df_data)
+        #   remove_extra_controlled_term_uri_data_from_dynamic_field_data!(df_data)
+        #   add_extra_controlled_term_uri_data_to_dynamic_field_data!(df_data)
+        # end
 
         # Recursively removes blank fields from the given dynamic field data.
         # @param df_data [Hash or Array or Object] Dynamic field data
