@@ -33,7 +33,6 @@ export default class UserEdit extends React.Component {
 
     hyacinthApi.patch('/users/' + this.props.match.params.uid, { user: { is_active: !this.state.user.isActive } })
       .then(res => {
-        // update activated status
         console.log('Changed user activation')
         this.setState(producer(draft => { draft.user.isActive = res.data.user.is_active } ))
       })
@@ -91,7 +90,7 @@ export default class UserEdit extends React.Component {
           title={"Editing User: " + this.state.user.firstName + " " + this.state.user.lastName}
           rightHandLinks={[{link: '/users', label: 'Cancel'}]} />
 
-        <Form onSubmit={this.onSubmitHandler}>
+        <Form as={Col} onSubmit={this.onSubmitHandler}>
           <Form.Group as={Row}>
             <Form.Label column sm={2}>UID</Form.Label>
             <Col sm={10}>

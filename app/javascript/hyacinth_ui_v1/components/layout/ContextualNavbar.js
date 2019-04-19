@@ -27,7 +27,7 @@ export default class ContextualNavbar extends React.Component {
     }
 
     return (
-      <Navbar bg="light" expand="lg" className="pl-0" style={{margin:'1em 0'}}>
+      <Navbar bg="light" expand="lg" className="my-3" >
         {title}
         <Nav className="ml-auto">
          {this.props.children}
