@@ -11,14 +11,14 @@ module DigitalObjectConcerns
         # Handle new imports
         self.resource_attributes.each do |resource_name|
           # TODO: make sure to renew the lock in case checksum generation or file copying take a long time
-          resource = send(resource_name)
+          resource = resources[resource_name]
           resource.process_import_if_present(self.uid, resource_name, lock_object)
         end
       end
 
       def clear_resource_import_data
         self.resource_attributes.each do |resource_name|
-          resource = send(resource_name)
+          resource = resources[resource_name]
           resource.clear_import_data
         end
       end
