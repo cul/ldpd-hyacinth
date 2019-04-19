@@ -23,7 +23,7 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters do
       expect(digital_object_with_sample_data).to receive(:set_mint_doi).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:set_optimistic_lock_token).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:set_parent_uids).with(digital_object_data).and_call_original
-      expect(digital_object_with_sample_data).to receive(:set_publish_targets).with(digital_object_data).and_call_original
+      expect(digital_object_with_sample_data).to receive(:set_pending_publish_entries).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:set_resources).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:set_state).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:set_preserve).with(digital_object_data).and_call_original

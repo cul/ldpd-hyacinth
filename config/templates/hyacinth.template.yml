@@ -1,10 +1,10 @@
 development:
   metadata_storage:
-    storage_adapters:
+    adapters:
       - type: disk
         default_path: <%= Rails.root.join('tmp', 'development', 'metadata') %>
   resource_storage:
-    storage_adapters:
+    adapters:
       - type: disk
         default_path: <%= Rails.root.join('tmp', 'development', 'resources') %>
   lock_adapter:

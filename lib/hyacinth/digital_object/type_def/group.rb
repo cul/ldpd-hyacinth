@@ -11,7 +11,7 @@ module Hyacinth
 
         def from_serialized_form_impl(json_var)
           return nil if json_var.nil?
-          Group.find_by(string_key: json_var['string_key'])
+          ::Group.find_by(string_key: json_var['string_key'])
         end
       end
     end

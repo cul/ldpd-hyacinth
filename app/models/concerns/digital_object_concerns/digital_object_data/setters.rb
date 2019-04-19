@@ -9,7 +9,7 @@ module DigitalObjectConcerns
       include DigitalObjectConcerns::DigitalObjectData::Setters::ParentUids
       include DigitalObjectConcerns::DigitalObjectData::Setters::Preserve
       include DigitalObjectConcerns::DigitalObjectData::Setters::Projects
-      include DigitalObjectConcerns::DigitalObjectData::Setters::PublishTargets
+      include DigitalObjectConcerns::DigitalObjectData::Setters::PendingPublishEntries
       include DigitalObjectConcerns::DigitalObjectData::Setters::Resources
       include DigitalObjectConcerns::DigitalObjectData::Setters::State
       include DigitalObjectConcerns::DigitalObjectData::Setters::StructuredChildren
@@ -26,8 +26,8 @@ module DigitalObjectConcerns
         # TODO: Make sure to include an optimistic_lock_token in the Hyacinth UI editor save submissions
         # so that users will know to refresh the page and redo changes if another user or process made changes
         # while they had the editing screen open.
-        set_dynamic_field_data(new_digital_object_data, merge_dynamic_fields)
 
+        set_dynamic_field_data(new_digital_object_data, merge_dynamic_fields)
         set_doi(new_digital_object_data)
         set_group(new_digital_object_data)
         set_identifiers(new_digital_object_data)
@@ -35,7 +35,7 @@ module DigitalObjectConcerns
         set_optimistic_lock_token(new_digital_object_data)
         set_parent_uids(new_digital_object_data)
         set_preserve(new_digital_object_data)
-        set_publish_targets(new_digital_object_data)
+        set_pending_publish_entries(new_digital_object_data)
         set_resources(new_digital_object_data)
         set_state(new_digital_object_data)
         set_projects(new_digital_object_data)

@@ -31,6 +31,9 @@ Metrics/CyclomaticComplexity:
     - 'app/controllers/api/v1/groups_controller.rb'
     - 'app/models/concerns/digital_object_concerns/save_behavior.rb'
 
+Metrics/ModuleLength:
+  Max: 150
+
 Metrics/PerceivedComplexity:
   Enabled: true
   Max: 8
@@ -38,6 +41,10 @@ Metrics/PerceivedComplexity:
     - 'app/controllers/api/v1/groups_controller.rb'
     - 'app/controllers/concerns/hyacinth/users/cas_authentication_behavior.rb'
     - 'app/models/concerns/digital_object_concerns/save_behavior.rb'
+
+Naming/AccessorMethodName:
+  Exclude:
+    - 'app/models/concerns/digital_object_concerns/digital_object_data/setters/**/*'
 
 Rails/HasAndBelongsToMany:
   Enabled: false

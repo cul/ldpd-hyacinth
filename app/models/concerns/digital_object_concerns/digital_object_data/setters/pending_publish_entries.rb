@@ -1,9 +1,9 @@
 module DigitalObjectConcerns
   module DigitalObjectData::Setters
-    module PublishTargets
+    module PendingPublishEntries
       extend ActiveSupport::Concern
 
-      def set_publish_targets(digital_object_data)
+      def set_pending_publish_entries(digital_object_data)
         pub_to = []
         unpub_from = []
 
@@ -18,7 +18,7 @@ module DigitalObjectConcerns
         end
 
         # Raise error if pub_to and unpub_from have any overlapping values
-        raise ArgumentError, 'Cannot include the same publish target in publish_to and unpublish_from' if (pub_to & unpub_from).length > 0
+        raise ArgumentError, 'Cannot include the same publish target in publish_to and unpublish_from' if (pub_to & unpub_from).length.positive?
 
         pub_to.freeze
         unpub_from.freeze

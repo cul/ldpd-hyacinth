@@ -2,16 +2,14 @@ module DigitalObjectConcerns
   module SaveBehavior
     extend ActiveSupport::Concern
 
-    include DigitalObjectConcerns::SaveBehavior::SaveLockValidations
-    include DigitalObjectConcerns::SaveBehavior::MetadataStorage
     include DigitalObjectConcerns::SaveBehavior::Minters
     include DigitalObjectConcerns::SaveBehavior::ResourceImports
-    include DigitalObjectConcerns::SaveBehavior::ActionChecks
+    include DigitalObjectConcerns::SaveBehavior::SaveLockValidations
 
     # This method is like the other #save method, but it raises an error if the save fails.
     def save!(opts = {})
-      raise Hyacinth::Exceptions::NotSaved, "DigitalObject could not be saved. Errors: #{self.errors.full_messages}" unless save(opts)
-      true
+      return true if save(opts)
+      raise Hyacinth::Exceptions::NotSaved, "DigitalObject could not be saved. Errors: #{self.errors.full_messages}"
     end
 
     # Saves this object, persisting all data to permanent storage and reindexing for search.
@@ -52,7 +50,7 @@ module DigitalObjectConcerns
         before_save_copy = self.deep_copy
 
         begin
-          self.generate_uid_and_metadata_location_uri_if_new_record
+          self.mint_uid_and_metadata_location_uri_if_new_record
           self.update_modification_info(current_datetime, opts[:user])
           self.handle_asset_imports(lock_object) do
             self.handle_parent_changes do
@@ -172,6 +170,10 @@ module DigitalObjectConcerns
 
     def copy_publish_entries
       Marshal.load(Marshal.dump(self.publish_entries))
+    end
+
+    def parents_changed?
+      @parent_uids_to_add.present? || @parent_uids_to_remove.present?
     end
 
   end

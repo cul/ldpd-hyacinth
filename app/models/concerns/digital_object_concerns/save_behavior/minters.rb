@@ -17,7 +17,7 @@ module DigitalObjectConcerns
         self.doi = Hyacinth::DoiService.mint_reserved_doi if self.doi.blank?
       end
 
-      def generate_uid_and_metadata_location_uri_if_new_record
+      def mint_uid_and_metadata_location_uri_if_new_record
         return unless self.new_record?
         self.uid = self.mint_uid # generate a new uid for this object
         self.digital_object_record.uid = self.uid # assign that uid to this object's digital_object_record
