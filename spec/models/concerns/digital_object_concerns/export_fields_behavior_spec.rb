@@ -4,10 +4,12 @@ RSpec.describe DigitalObjectConcerns::ExportFieldsBehavior do
   let(:digital_object_with_sample_data) { FactoryBot.build(:digital_object_test_subclass, :with_sample_data) }
   let(:uid_value) { 'unique-id-123' }
   before do
-    allow(digital_object_with_sample_data).to receive(:metadata_attributes).and_return({
-      'uid' => Hyacinth::DigitalObject::TypeDef::String.new,
-      'group' => Hyacinth::DigitalObject::TypeDef::Group.new
-    })
+    allow(digital_object_with_sample_data).to receive(:metadata_attributes).and_return(
+      {
+        'uid' => Hyacinth::DigitalObject::TypeDef::String.new,
+        'group' => Hyacinth::DigitalObject::TypeDef::Group.new
+      }
+    )
     allow(digital_object_with_sample_data).to receive(:uid).and_return(uid_value)
   end
 
