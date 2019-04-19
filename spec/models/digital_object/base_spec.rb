@@ -20,7 +20,7 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
 
   context "metadata_resources fields" do
     it "has the expected resources defined" do
-      expect(digital_object.resource_attributes.keys.sort).to eq([:test_resource1, :test_resource2])
+      expect(digital_object.resource_attributes.to_a.sort).to eq([:test_resource1, :test_resource2])
     end
   end
 
