@@ -51,6 +51,8 @@ GEM
     autoprefixer-rails (9.4.10.2)
       execjs
     bcrypt (3.1.12)
+    best_type (0.0.4)
+      mime-types (~> 3.0)
     bindex (0.5.0)
     bixby (2.0.0.pre.beta1)
       rubocop (= 0.63.1)
@@ -318,6 +320,7 @@ PLATFORMS
 
 DEPENDENCIES
   autoprefixer-rails
+  best_type (= 0.0.4)
   bixby (= 2.0.0.pre.beta1)
   bootsnap (>= 1.1.0)
   bootstrap-sass (~> 3.3)

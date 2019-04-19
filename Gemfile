@@ -41,6 +41,8 @@ gem 'rainbow', '~> 3.0'
 
 gem 'uri_service-client'
 
+gem 'best_type', '0.0.4'
+
 # Fedora 3 related gems
 gem 'rubydora'
 gem 'rest-client'
