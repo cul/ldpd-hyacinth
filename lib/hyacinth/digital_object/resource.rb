@@ -2,7 +2,7 @@ module Hyacinth
   module DigitalObject
     class Resource
       attr_accessor :import_location, :import_method, :import_checksum,
-                    :location, :checksum, :original_filename
+                    :location, :checksum, :original_filename, :file_size
 
       attr_reader :import_succeeded
 
@@ -94,7 +94,9 @@ module Hyacinth
         return {} unless location
         {
           'location' => location,
-          'checksum' => checksum
+          'checksum' => checksum,
+          'original_filename' => original_filename,
+          'file_size' => file_size
         }
       end
     end
