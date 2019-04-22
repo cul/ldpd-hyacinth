@@ -2,76 +2,10 @@ import React from 'react'
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Constants from 'hyacinth_ui_v1/Constants'
-import NavItemDropdown from 'hyacinth_ui_v1/components/layout/NavItemDropdown'
+import { Navbar, Nav, NavDropdown } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap";
 
 export default class TopNavbar extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      show: this.props.show
-    };
-
-    // bind functions that should always run in the context of this instance
-    this.toggle = this.toggle.bind(this);
-    this.signOut = this.signOut.bind(this);
-  }
-
-  render() {
-    return(
-      <nav id="top-navbar" className="navbar navbar-expand-md navbar-dark bg-dark">
-        <a className="navbar-brand" href="/">Hyacinth</a>
-        <button onClick={this.toggle} className="navbar-toggler" type="button">
-          <span className="navbar-toggler-icon"></span>
-        </button>
-
-        <div className={'collapse navbar-collapse ' + (this.state.show ? 'show' : '')}>
-          <ul className="navbar-nav mr-auto">
-            <li className="nav-item">
-              <Link to="/digital-objects" className="nav-link">Digital Objects</Link>
-            </li>
-
-            <NavItemDropdown label="Manage">
-              <Link to="/assignments" className="dropdown-item">Assignments</Link>
-              <Link to="/controlled-vocabularies" className="dropdown-item">Controlled Vocabularies</Link>
-              <Link to="/export-jobs" className="dropdown-item">Export Jobs</Link>
-              <Link to="/import-jobs" className="dropdown-item">Import Jobs</Link>
-              <Link to="/projects" className="dropdown-item">Projects</Link>
-            </NavItemDropdown>
-
-            <NavItemDropdown label="Admin">
-              <Link to="/dynamic-fields" className="dropdown-item">Dynamic Fields</Link>
-              <Link to="/groups" className="dropdown-item">Groups</Link>
-              <Link to="/role-permissions" className="dropdown-item">Role Permissions</Link>
-              <Link to="/users" className="dropdown-item">Users</Link>
-            </NavItemDropdown>
-          </ul>
-
-          <ul className="navbar-nav">
-            <NavItemDropdown label={<span>0 <FontAwesomeIcon icon="bell" /></span>} dropdownDirection="right">
-              <Link to="/notifications/1" className="dropdown-item">Notification 1</Link>
-              <Link to="/notifications/2" className="dropdown-item">Notification 2</Link>
-            </NavItemDropdown>
-
-            <NavItemDropdown label="Username" dropdownDirection="right">
-              <Link to="/dashboard" className="dropdown-item">Dashboard</Link>
-              <Link to="/settings" className="dropdown-item">Settings</Link>
-              <div className="dropdown-divider"></div>
-              <a onClick={this.signOut} href="#" className="dropdown-item">Sign Out</a>
-            </NavItemDropdown>
-          </ul>
-        </div>
-      </nav>
-    );
-  }
-
-  toggle(e) {
-    e.preventDefault(); // prevent hashchange when visibility is toggled
-    this.setState((state, props) => {
-      return {show: !state.show};
-    });
-  }
-
   signOut(e) {
     e.preventDefault(); // prevent hashchange when sign out link is clicked
     console.log('called sign out function!');
@@ -111,5 +45,81 @@ export default class TopNavbar extends React.Component {
         alert('An unexpected error occurred during sign out.');
       }
     });
+  }
+
+  render() {
+    return(
+      <Navbar collapseOnSelect id="top-navbar" variant="dark" bg="dark" expand="md">
+        <Navbar.Brand href="/">Hyacinth</Navbar.Brand>
+
+        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+
+        <Navbar.Collapse id="responsive-navbar-nav">
+          <Nav className="mr-auto">
+            <LinkContainer to={'/digital-objects'}>
+              <Nav.Link>Digital Objects</Nav.Link>
+            </LinkContainer>
+
+            <NavDropdown title="Manage">
+              <LinkContainer to='/projects'>
+                <NavDropdown.Item>Projects</NavDropdown.Item>
+              </LinkContainer>
+
+              <LinkContainer to='/controlled-vocabularies'>
+                <NavDropdown.Item>Controlled Vocabularies</NavDropdown.Item>
+              </LinkContainer>
+
+              <LinkContainer to='/assignments'>
+                <NavDropdown.Item>Assignments</NavDropdown.Item>
+              </LinkContainer>
+
+              <NavDropdown.Divider />
+
+              <LinkContainer to='/export-jobs'>
+                <NavDropdown.Item>Export Jobs</NavDropdown.Item>
+              </LinkContainer>
+
+              <LinkContainer to='/import-jobs'>
+                <NavDropdown.Item>Import Jobs</NavDropdown.Item>
+              </LinkContainer>
+            </NavDropdown>
+
+            <NavDropdown title="Admin">
+              <LinkContainer to='/users'>
+                <NavDropdown.Item>Users</NavDropdown.Item>
+              </LinkContainer>
+
+              <NavDropdown.Divider />
+
+              <LinkContainer to='/dynamic-fields'>
+                <NavDropdown.Item>Dynamic Fields</NavDropdown.Item>
+              </LinkContainer>
+
+              <LinkContainer to='/field_export_profiles'>
+                <NavDropdown.Item>Field Export Profiles</NavDropdown.Item>
+              </LinkContainer>
+
+              <NavDropdown.Divider />
+
+              <LinkContainer to='/system_information'>
+                <NavDropdown.Item>System Information</NavDropdown.Item>
+              </LinkContainer>
+            </NavDropdown>
+          </Nav>
+
+          <Nav>
+            <NavDropdown alignRight title="Username">
+              <LinkContainer to='/profile'>
+                <NavDropdown.Item>Profile</NavDropdown.Item>
+              </LinkContainer>
+
+              <NavDropdown.Divider />
+
+              <NavDropdown.Item onClick={this.signOut}>Sign Out</NavDropdown.Item>
+            </NavDropdown>
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
+    );
   }
 }
