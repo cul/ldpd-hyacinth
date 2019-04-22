@@ -1,0 +1,10 @@
+development:
+  :user: fedoraAdmin
+  :password: fedoraAdmin
+  :url: http://localhost:8983/fedora
+  :time_zone: America/New_York
+test:
+  :user: fedoraAdmin
+  :password: fedoraAdmin
+  :url: http://localhost:8983/fedora-test
+  :time_zone: America/New_York
