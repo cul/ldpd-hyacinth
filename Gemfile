@@ -61,6 +61,7 @@ group :development, :test do
   gem 'bixby', '2.0.0.pre.beta1'
   gem 'solr_wrapper', '~> 2.0'
   gem 'equivalent-xml'
+  gem 'jettywrapper', '>=1.4.0', git: 'https://github.com/samvera-deprecated/jettywrapper.git', branch: 'master'
 end
 
 group :development do

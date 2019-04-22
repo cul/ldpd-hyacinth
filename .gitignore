@@ -44,3 +44,10 @@ yarn-debug.log*
 database.yml
 hyacinth.yml
 resque.yml
+solr.yml
+fedora.yml
+jetty.yml
+
+# ignore any wrapped jetty installs
+jetty
+jetty-test
