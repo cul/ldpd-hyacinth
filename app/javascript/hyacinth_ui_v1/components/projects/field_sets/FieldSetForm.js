@@ -61,10 +61,10 @@ class FieldSetForm extends React.Component {
     let deleteButton = "";
 
     if (this.props.match.params.id) {
-      deleteButton = <Button variant="danger" type="button" onClick={this.onDeleteHandler}>Delete</Button>
+      deleteButton = <Button variant="outline-danger" type="button" onClick={this.onDeleteHandler}>Delete</Button>
     }
 
-    return(
+    return (
       <div>
         <Form onSubmit={this.onSubmitHandler}>
           <Form.Group as={Row}>
@@ -78,20 +78,15 @@ class FieldSetForm extends React.Component {
             </Col>
           </Form.Group>
 
-          <Form.Row className="justify-content-between">
+          <Form.Row>
+            <Col sm={'auto'} className="mr-auto">{deleteButton}</Col>
 
-            <Col sm={1}>{deleteButton}</Col>
+            <Col sm={'auto'}>
+              <CancelButton to={'/projects/' + this.props.match.params.string_key + '/field_sets'} />
+            </Col>
 
-            <Col sm={2}>
-              <Row className="justify-content-end">
-                <Col sm={6}>
-                  <CancelButton to={'/projects/' + this.props.match.params.string_key + '/field_sets'} />
-                </Col>
-                <Col sm={6}>
-                  <Button variant="primary" type="submit" onClick={this.onSubmitHandler}>{this.props.submitButtonName}</Button>
-                </Col>
-
-              </Row>
+            <Col sm={'auto'}>
+              <Button variant="primary" type="submit" onClick={this.onSubmitHandler}>{this.props.submitButtonName}</Button>
             </Col>
           </Form.Row>
         </Form>

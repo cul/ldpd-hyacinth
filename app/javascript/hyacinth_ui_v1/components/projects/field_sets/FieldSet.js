@@ -1,7 +1,6 @@
 import React from 'react'
 import { Link, Route, Switch } from "react-router-dom";
 
-import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar'
 import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch'
 import FieldSetIndex from 'hyacinth_ui_v1/components/projects/field_sets/FieldSetIndex'
 import FieldSetNew from 'hyacinth_ui_v1/components/projects/field_sets/FieldSetNew'

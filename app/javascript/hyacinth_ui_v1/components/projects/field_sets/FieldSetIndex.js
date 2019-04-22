@@ -5,7 +5,6 @@ import producer from "immer";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { LinkContainer } from "react-router-bootstrap";
 
-import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar';
 import ProjectSubHeading from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading'
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
 

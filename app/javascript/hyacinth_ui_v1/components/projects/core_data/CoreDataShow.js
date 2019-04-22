@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LinkContainer } from "react-router-bootstrap";
 import producer from "immer";
 
-import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar'
+import ProjectSubHeading from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading'
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
 
 export default class CoreDataShow extends React.Component {
@@ -36,6 +36,8 @@ export default class CoreDataShow extends React.Component {
   render() {
     return(
       <>
+        <ProjectSubHeading>Core Data</ProjectSubHeading>
+
         <Row as="dl">
           <Col as="dt" sm={2}>String Key</Col>
           <Col as="dd" sm={10}>{this.state.project.stringKey}</Col>
@@ -44,13 +46,12 @@ export default class CoreDataShow extends React.Component {
           <Col as="dd" sm={10}>{this.state.project.displayLabel}</Col>
 
           <Col as="dt" sm={2}>Project URL</Col>
-          <Col as="dd" sm={10}>{this.state.project.project_url}</Col>
-        </Row>
+          <Col as="dd" sm={10}>{this.state.project.projectUrl}</Col>
 
-        <Row>
-          <Col sm={12}>
-            <LinkContainer to={this.props.match.url + '/edit'}>
-              <Button variant="link">Edit</Button>
+          <Col as="dt" sm={2}></Col>
+          <Col as="dd" sm={10}>
+            <LinkContainer to={"/projects/" + this.props.match.params.string_key + '/core_data/edit'}>
+              <Button className="pl-0 ml-0" variant="link">Edit</Button>
             </LinkContainer>
           </Col>
         </Row>

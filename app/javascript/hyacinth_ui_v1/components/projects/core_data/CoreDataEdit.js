@@ -4,6 +4,8 @@ import { Row, Col, Form, Button, Collapse } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import producer from "immer";
 
+import ProjectSubHeading from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading'
+import CancelButton from 'hyacinth_ui_v1/components/layout/CancelButton';
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
 
 export default class CoreDataEdit extends React.Component {
@@ -32,12 +34,24 @@ export default class CoreDataEdit extends React.Component {
 
     hyacinthApi.patch("/projects/" + this.props.match.params.string_key, data)
       .then(res => {
-        console.log('Saved Changes')
+        this.props.history.push("/projects/" + this.props.match.params.string_key + "/core_data");
       })
       .catch(error => {
         console.log(error);
         console.log(error.response.data);
       });
+  }
+
+  onDeleteHandler = (event) => {
+    event.preventDefault()
+
+    hyacinthApi.delete("/projects/" + this.props.match.params.string_key)
+      .then(res => {
+        this.props.history.push('/projects/');
+      })
+      .catch(error => {
+        console.log(error)
+    });
   }
 
   componentDidMount = () => {
@@ -57,43 +71,54 @@ export default class CoreDataEdit extends React.Component {
 
   render() {
     return(
-      <Form as={Col} onSubmit={this.onSubmitHandler}>
-        <Form.Group as={Row}>
-          <Form.Label column sm={2}>String Key</Form.Label>
-          <Col sm={10}>
-            <Form.Control plaintext readOnly value={this.state.project.stringKey} />
-          </Col>
-        </Form.Group>
+      <>
+        <ProjectSubHeading>Editing Core Data</ProjectSubHeading>
 
-        <Form.Group as={Row}>
-          <Form.Label column sm={2}>Display Label</Form.Label>
-          <Col sm={10}>
-            <Form.Control
-              type="text"
-              name="displayLabel"
-              value={this.state.project.displayLabel}
-              onChange={this.onChangeHandler}/>
-          </Col>
-        </Form.Group>
+        <Form as={Col} onSubmit={this.onSubmitHandler}>
+          <Form.Group as={Row}>
+            <Form.Label column sm={2}>String Key</Form.Label>
+            <Col sm={10}>
+              <Form.Control plaintext readOnly value={this.state.project.stringKey} />
+            </Col>
+          </Form.Group>
 
-        <Form.Group as={Row}>
-          <Form.Label column sm={2}>Project URL</Form.Label>
-          <Col sm={10}>
-            <Form.Control
-              type="text"
-              name="projectUrl"
-              value={this.state.project.projectUrl}
-              onChange={this.onChangeHandler} />
-          </Col>
-        </Form.Group>
+          <Form.Group as={Row}>
+            <Form.Label column sm={2}>Display Label</Form.Label>
+            <Col sm={10}>
+              <Form.Control
+                type="text"
+                name="displayLabel"
+                value={this.state.project.displayLabel}
+                onChange={this.onChangeHandler}/>
+            </Col>
+          </Form.Group>
 
+          <Form.Group as={Row}>
+            <Form.Label column sm={2}>Project URL</Form.Label>
+            <Col sm={10}>
+              <Form.Control
+                type="text"
+                name="projectUrl"
+                value={this.state.project.projectUrl}
+                onChange={this.onChangeHandler} />
+            </Col>
+          </Form.Group>
 
-        <Form.Row>
-          <Col sm={12}>
-            <Button variant="primary" className="m-1" type="submit" onClick={this.onSubmitHandler}>Save</Button>
-          </Col>
-        </Form.Row>
-      </Form>
+          <Form.Row>
+            <Col sm={'auto'} className="mr-auto">
+              <Button variant="outline-danger" type="submit" onClick={this.onDeleteHandler}>Delete Project</Button>
+            </Col>
+
+            <Col sm={'auto'} className="ml-auto">
+              <CancelButton to={'/projects/' + this.props.match.params.string_key + '/core_data' } />
+            </Col>
+
+            <Col sm={'auto'}>
+              <Button variant="primary" type="submit" onClick={this.onSubmitHandler}>Save</Button>
+            </Col>
+          </Form.Row>
+        </Form>
+      </>
     )
   }
 }

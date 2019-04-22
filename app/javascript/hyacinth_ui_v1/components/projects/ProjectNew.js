@@ -32,7 +32,7 @@ export default class ProjectNew extends React.Component {
         console.log('Project created')
         // redirect to edit screen for that user
         console.log(res)
-        this.props.history.push('/projects/' + res.data.project.string_key + '/edit');
+        this.props.history.push('/projects/' + res.data.project.string_key + '/core_data/edit');
       })
       .catch(error => {
         console.log(error)
