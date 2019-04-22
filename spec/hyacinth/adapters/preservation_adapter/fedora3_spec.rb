@@ -264,7 +264,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
           object: "urn:asdf",
           pid: object_pid,
           subject: "info:fedora/#{object_pid}/master",
-          isLiteral: true
+          isLiteral: false
         }
       end
       before do
