@@ -153,24 +153,6 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
       let(:dsids) { ['structMetadata'] }
       let(:hyacinth_object) { DigitalObject::Asset.new }
       let(:resource_args) { { original_filename: '/old/path/to/file.doc', location: '/path/to/file.doc', checksum: 'asdf', file_size: 'asdf' } }
-      let(:extent_property) do
-        {
-          predicate: described_class::RelsIntProperties::URIS::EXTENT,
-          object: "asdf",
-          pid: object_pid,
-          subject: "info:fedora/#{object_pid}/master",
-          isLiteral: true
-        }
-      end
-      let(:checksum_property) do
-        {
-          predicate: described_class::RelsIntProperties::URIS::HAS_MESSAGE_DIGEST,
-          object: "urn:asdf",
-          pid: object_pid,
-          subject: "info:fedora/#{object_pid}/master",
-          isLiteral: true
-        }
-      end
       before do
         hyacinth_object.resources['master'].send(:initialize, resource_args)
       end
@@ -183,7 +165,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
         css_node = ng_xml.at_css("RDF > Description[about=\"info:fedora/test:1/master\"] > extent")
         expect(css_node.text).to eql('asdf')
         css_node = ng_xml.at_css("RDF > Description[about=\"info:fedora/test:1/master\"] > hasMessageDigest")
-        expect(css_node.text).to eql('urn:asdf')
+        expect(css_node['resource']).to eql('urn:asdf')
       end
     end
   end

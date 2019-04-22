@@ -57,11 +57,13 @@ module Hyacinth
           repository = fedora_obj.repository
           subject = "info:fedora/#{fedora_obj.pid}/#{dsid}"
           delta.fetch(:-, {}).each do |predicate, values|
-            rel_opts = { pid: fedora_obj.pid, subject: subject, predicate: predicate, isLiteral: true }
+            is_literal = !predicate.to_s.eql?(URIS::HAS_MESSAGE_DIGEST.to_s)
+            rel_opts = { pid: fedora_obj.pid, subject: subject, predicate: predicate, isLiteral: is_literal }
             values.each { |value| repository.purge_relationship(rel_opts.merge(object: value)) }
           end
           delta.fetch(:+, {}).each do |predicate, values|
-            rel_opts = { pid: fedora_obj.pid, subject: subject, predicate: predicate, isLiteral: true }
+            is_literal = !predicate.to_s.eql?(URIS::HAS_MESSAGE_DIGEST.to_s)
+            rel_opts = { pid: fedora_obj.pid, subject: subject, predicate: predicate, isLiteral: is_literal }
             values.each { |value| repository.add_relationship(rel_opts.merge(object: value)) }
           end
         end
