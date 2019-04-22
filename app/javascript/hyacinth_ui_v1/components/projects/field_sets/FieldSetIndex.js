@@ -1,9 +1,12 @@
 import React from 'react';
 import { Link } from "react-router-dom";
-import { Table } from "react-bootstrap";
+import { Table, Button } from "react-bootstrap";
 import producer from "immer";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { LinkContainer } from "react-router-bootstrap";
 
 import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar';
+import ProjectSubHeading from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading'
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
 
 export default class FieldSetIndex extends React.Component {
@@ -19,29 +22,35 @@ export default class FieldSetIndex extends React.Component {
   }
 
   render() {
-    let rows = this.state.fieldSets.map(field_set => {
-      return (
-        <tr key={field_set.id}>
-          <td><Link to={"/projects/" + this.props.match.params.string_key + "/field_sets/" + field_set.id} className="nav-link" href="#">{field_set.display_label}</Link></td>
-          <td></td>
-        </tr>
-      )
-    })
+    let rows = <tr><td colSpan="2">No fieldsets have been defined</td></tr>
+
+    if (this.state.fieldSets.length > 0) {
+      rows = this.state.fieldSets.map(field_set => {
+        return (
+          <tr key={field_set.id}>
+            <td><Link to={"/projects/" + this.props.match.params.string_key + "/field_sets/" + field_set.id + "/edit"} className="nav-link" href="#">{field_set.display_label}</Link></td>
+          </tr>
+        )
+      })
+    }
 
     return(
-      <div>
-        <Table striped>
-          <thead>
-            <tr>
-              <th>Field Set Name</th>
-              <th></th>
-            </tr>
-          </thead>
+      <>
+        <ProjectSubHeading>Field Sets</ProjectSubHeading>
+
+        <Table hover>
           <tbody>
             {rows}
+            <tr>
+              <td className="text-center">
+                <LinkContainer to={this.props.match.url + '/new'}>
+                  <Button size="sm" variant="link"><FontAwesomeIcon icon="plus" /> Add New Field Set</Button>
+                </LinkContainer>
+              </td>
+            </tr>
           </tbody>
         </Table>
-      </div>
+      </>
     )
   }
 }

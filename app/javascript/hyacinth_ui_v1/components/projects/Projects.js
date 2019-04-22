@@ -26,14 +26,16 @@ export default class Projects extends React.Component {
                 <ProjectTab to={props.match.url + "/enabled_dynamic_fields/asset"} name="Asset Fields"/>
                 <ProjectTab to={props.match.url + "/enabled_dynamic_fields/site"} name="Site Fields"/>
                 <ProjectTab to={props.match.url + '/permissions'} name="Permissions"/>
-                <ProjectTab to={props.match.url + '/publish_targets'} name="Publish targets"/>
+                <ProjectTab to={props.match.url + '/publish_targets'} name="Publish Targets"/>
                 <ProjectTab to={props.match.url + "/field_sets"} name="Field Sets"/>
               </ProjectTabs>
 
-              <Switch>
-                <Route path="/projects/:string_key/core_data" component={CoreData} />
-                <Route path="/projects/:string_key/field_sets" component={FieldSet} />
-              </Switch>
+              <div className="m-3">
+                <Switch>
+                  <Route path="/projects/:string_key/core_data" component={CoreData} />
+                  <Route path="/projects/:string_key/field_sets" component={FieldSet} />
+                </Switch>
+              </div>
             </ProjectLayout>
           }/>
 

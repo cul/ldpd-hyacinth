@@ -36,7 +36,7 @@ export default class ProjectIndex extends React.Component {
           title="Projects"
           rightHandLinks={[{link: '/projects/new', label: 'New Project'}]} />
 
-        <Table striped>
+        <Table hover>
           <thead>
             <tr>
               <th>Display Label</th>
