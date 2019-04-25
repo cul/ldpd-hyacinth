@@ -7,8 +7,9 @@ import producer from "immer";
 
 import ProjectSubHeading from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading'
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
+import withErrorHandler from 'hyacinth_ui_v1/hoc/withErrorHandler/withErrorHandler'
 
-export default class CoreDataShow extends React.Component {
+class CoreDataShow extends React.Component {
 
   state = {
     project: {
@@ -27,10 +28,7 @@ export default class CoreDataShow extends React.Component {
           draft.project.displayLabel = project.display_label
           draft.project.projectUrl = project.project_url
         }))
-      })
-     .catch(error => {
-       console.log(error)
-     });
+      });
   }
 
   render() {
@@ -59,3 +57,5 @@ export default class CoreDataShow extends React.Component {
     )
   }
 }
+
+export default withErrorHandler(CoreDataShow, hyacinthApi)

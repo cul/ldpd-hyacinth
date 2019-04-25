@@ -29,6 +29,7 @@ export default class App extends React.Component {
             <Route path="/users" component={Users} />
             <Route path="/projects" component={Projects} />
             { /* When none of the above match, <NoMatch> will be rendered */ }
+            <Route path="/404" component={NoMatch} />
             <Route component={NoMatch} />
           </Switch>
         </Container>

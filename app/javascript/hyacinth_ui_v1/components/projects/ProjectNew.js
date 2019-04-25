@@ -4,9 +4,10 @@ import { Row, Col, Form, Button } from 'react-bootstrap';
 import produce from "immer";
 
 import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar'
-import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
+import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api'
+import withErrorHandler from 'hyacinth_ui_v1/hoc/withErrorHandler/withErrorHandler'
 
-export default class ProjectNew extends React.Component {
+class ProjectNew extends React.Component {
 
   state = {
     project: {
@@ -29,14 +30,10 @@ export default class ProjectNew extends React.Component {
 
     hyacinthApi.post('/projects', data)
       .then(res => {
-        console.log('Project created')
-        // redirect to edit screen for that user
-        console.log(res)
+        // console.log('Project created')
+        // console.log(res)
         this.props.history.push('/projects/' + res.data.project.string_key + '/core_data/edit');
       })
-      .catch(error => {
-        console.log(error)
-      });
   }
 
   onChangeHandler = (event) => {
@@ -89,3 +86,5 @@ export default class ProjectNew extends React.Component {
     )
   }
 }
+
+export default withErrorHandler(ProjectNew, hyacinthApi);

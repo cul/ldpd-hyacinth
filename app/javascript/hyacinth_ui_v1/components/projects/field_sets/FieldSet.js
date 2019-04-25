@@ -6,7 +6,6 @@ import FieldSetIndex from 'hyacinth_ui_v1/components/projects/field_sets/FieldSe
 import FieldSetNew from 'hyacinth_ui_v1/components/projects/field_sets/FieldSetNew'
 import FieldSetEdit from 'hyacinth_ui_v1/components/projects/field_sets/FieldSetEdit'
 
-
 export default class FieldSet extends React.Component {
   render() {
     return (

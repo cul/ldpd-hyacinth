@@ -6,8 +6,9 @@ import produce from "immer";
 import ProjectSubHeading from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading'
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
 import FieldSetForm from './FieldSetForm'
+import withErrorHandler from 'hyacinth_ui_v1/hoc/withErrorHandler/withErrorHandler';
 
-export default class FieldSetNew extends React.Component {
+class FieldSetNew extends React.Component {
 
   createFieldSet = (data) => {
     hyacinthApi.post('/projects/'+ this.props.match.params.string_key + '/field_sets', data)
@@ -31,3 +32,5 @@ export default class FieldSetNew extends React.Component {
     )
   }
 }
+
+export default withErrorHandler(FieldSetNew, hyacinthApi)

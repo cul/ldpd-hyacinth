@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link, Route, Switch } from "react-router-dom";
+import { Link, Route, Switch, Redirect } from "react-router-dom";
 
 import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch'
 import ProjectIndex from 'hyacinth_ui_v1/components/projects/ProjectIndex'
@@ -34,6 +34,8 @@ export default class Projects extends React.Component {
                 <Switch>
                   <Route path="/projects/:string_key/core_data" component={CoreData} />
                   <Route path="/projects/:string_key/field_sets" component={FieldSet} />
+                  <Redirect exact from="/projects/:string_key" to="/projects/:string_key/core_data" />
+                  <Route component={NoMatch} />
                 </Switch>
               </div>
             </ProjectLayout>

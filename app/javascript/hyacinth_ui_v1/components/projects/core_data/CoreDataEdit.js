@@ -7,8 +7,9 @@ import producer from "immer";
 import ProjectSubHeading from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading'
 import CancelButton from 'hyacinth_ui_v1/components/layout/CancelButton';
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
+import withErrorHandler from 'hyacinth_ui_v1/hoc/withErrorHandler/withErrorHandler'
 
-export default class CoreDataEdit extends React.Component {
+class CoreDataEdit extends React.Component {
   state = {
     project: {
       stringKey: '',
@@ -35,10 +36,6 @@ export default class CoreDataEdit extends React.Component {
     hyacinthApi.patch("/projects/" + this.props.match.params.string_key, data)
       .then(res => {
         this.props.history.push("/projects/" + this.props.match.params.string_key + "/core_data");
-      })
-      .catch(error => {
-        console.log(error);
-        console.log(error.response.data);
       });
   }
 
@@ -122,3 +119,5 @@ export default class CoreDataEdit extends React.Component {
     )
   }
 }
+
+export default withErrorHandler(CoreDataEdit, hyacinthApi);
