@@ -23,14 +23,16 @@ RSpec.describe 'User Requests', type: :request do
                 "first_name": "Jane",
                 "last_name": "Doe",
                 "is_active": true,
-                "groups": []
+                "is_admin": false,
+                "system_wide_permissions": []
               },
               {
                 "email": "logged-in-user@exaple.com",
                 "first_name": "Signed In",
                 "last_name": "User",
                 "is_active": true,
-                "groups": ["user_managers"]
+                "is_admin": false,
+                "system_wide_permissions": ["manage_users"]
               }
             ]
           })).excluding(:uid)
@@ -69,7 +71,8 @@ RSpec.describe 'User Requests', type: :request do
               "first_name": "Jane",
               "last_name": "Doe",
               "is_active": true,
-              "groups": []
+              "is_admin": false,
+              "system_wide_permissions": []
             }
           })).excluding(:uid)
         end
@@ -113,7 +116,8 @@ RSpec.describe 'User Requests', type: :request do
           post '/api/v1/users', params: {
             user: {
               first_name: 'Jane', last_name: 'Doe', email: email,
-              password: 'bestpasswordever', password_confirmation: 'bestpasswordever'
+              password: 'bestpasswordever', password_confirmation: 'bestpasswordever',
+              permissions: [Permission::MANAGE_USERS, Permission::MANAGE_VOCABULARIES]
             }
           }
         end
@@ -128,6 +132,10 @@ RSpec.describe 'User Requests', type: :request do
 
         it 'sets password' do
           expect(subject.valid_password?('bestpasswordever')).to be true
+        end
+
+        it 'creates permisisons' do
+          expect(subject.permissions.map(&:action)).to match_array [Permission::MANAGE_USERS, Permission::MANAGE_VOCABULARIES]
         end
       end
 
@@ -243,7 +251,26 @@ RSpec.describe 'User Requests', type: :request do
       end
     end
 
-    context 'when logged in user has appropriate permissions' do
+    context 'when logged in user is administrator' do
+      before { sign_in_user as: :administrator }
+
+      context 'when updating is_admin' do
+        before do
+          patch "/api/v1/users/#{user.uid}", params: { user: { is_admin: true } }
+        end
+
+        it 'returns 200' do
+          expect(response.status).to be 200
+        end
+
+        it 'updates record' do
+          user.reload
+          expect(user.is_admin).to be true
+        end
+      end
+    end
+
+    context 'when logged in user is user manager' do
       before { sign_in_user as: :user_manager }
 
       context 'when updating first name' do
@@ -342,6 +369,73 @@ RSpec.describe 'User Requests', type: :request do
 
         it 'returns 200' do
           expect(response.status).to be 200
+        end
+      end
+
+      context 'when updating :is_admin' do
+        before do
+          patch "/api/v1/users/#{user.uid}", params: { user: { is_admin: true } }
+        end
+
+        it 'does not update record' do
+          user.reload
+          expect(user.is_admin).to be false
+        end
+      end
+
+      context 'when changing permissions' do
+        before do
+          Permission.create(user: user, action: Permission::MANAGE_USERS)
+          user.reload
+        end
+
+        subject(:actions) do
+          user.reload
+          user.permissions.map(&:action)
+        end
+
+        context 'with blank permission' do
+          before do
+            patch "/api/v1/users/#{user.uid}", params: { user: { permissions: [] } }
+          end
+
+          it 'permissions aren\'t updated' do
+            expect(actions).to match_array [Permission::MANAGE_USERS]
+          end
+        end
+
+        context 'by removing and adding permission' do
+          before do
+            patch "/api/v1/users/#{user.uid}", params: { user: { permissions: [Permission::READ_ALL_DIGITAL_OBJECTS] } }
+          end
+
+          it 'updates permissions correctly' do
+            expect(actions).to match_array [Permission::READ_ALL_DIGITAL_OBJECTS]
+          end
+        end
+
+        context 'by adding permission' do
+          before do
+            patch "/api/v1/users/#{user.uid}", params: { user: { permissions: [Permission::MANAGE_USERS, Permission::READ_ALL_DIGITAL_OBJECTS] } }
+          end
+
+          it 'updates permission correctly' do
+            expect(actions).to match_array [Permission::MANAGE_USERS, Permission::READ_ALL_DIGITAL_OBJECTS]
+          end
+        end
+
+        context 'when updating with invalid permissions' do
+          before do
+            patch "/api/v1/users/#{user.uid}", params: { user: { permissions: ['not_valid'] } }
+          end
+
+          it 'returns 422' do
+            expect(response.status).to be 422
+          end
+
+          it 'does not update permissions' do
+            expect(actions).to match_array [Permission::MANAGE_USERS]
+          end
         end
       end
 

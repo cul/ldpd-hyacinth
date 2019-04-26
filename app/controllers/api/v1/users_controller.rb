@@ -22,6 +22,10 @@ module Api
 
       # POST /users
       def create
+        if (permissions_attributes = calculate_permissions_attributes).present?
+          @user.permissions_attributes = permissions_attributes
+        end
+
         if @user.save
           render json: { user: @user }, status: :created
         else
@@ -31,10 +35,16 @@ module Api
 
       # PATCH /users/:uid
       def update
+        new_user_params = user_params.to_h
+
+        if (permissions_attributes = calculate_permissions_attributes).present?
+          new_user_params[:permissions_attributes] = permissions_attributes
+        end
+
         # Update password if one of the password fields is present in request.
         success = changing_password? ?
-                    @user.update_with_password(user_params) :
-                    @user.update_without_password(user_params)
+                    @user.update_with_password(new_user_params) :
+                    @user.update_without_password(new_user_params)
 
         if success
           render json: { user: @user }, status: 200
@@ -51,9 +61,36 @@ module Api
 
         def user_params
           valid_params = [:first_name, :last_name, :email, :current_password, :password, :password_confirmation]
+
           valid_params << :is_active if can? :manage, @user
+          valid_params << :is_admin  if can? :manage, :all
 
           params.require(:user).permit(*valid_params)
+        end
+
+        def permission_params
+          values = can?(:manage, @user) ? params.require(:user).permit(permissions: []).to_h : {}
+          values ? values.fetch('permissions', []) : []
+        end
+
+        def calculate_permissions_attributes
+          new_permissions = permission_params.uniq
+          permission_attributes = []
+
+          if new_permissions.present?
+            permission_attributes = @user.permissions.where(subject: nil, subject_id: nil).map do |perm|
+              if new_permissions.include?(perm.action)
+                new_permissions.delete(perm.action)
+                { id: perm.id, action: perm.action }
+              else
+                { id: perm.id, _destroy: true }
+              end
+            end
+
+            permission_attributes.concat new_permissions.map { |new_perm| { action: new_perm } }
+          end
+
+          permission_attributes
         end
     end
   end

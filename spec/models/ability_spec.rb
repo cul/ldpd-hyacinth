@@ -7,48 +7,28 @@ RSpec.describe Ability, type: :model do
 
     subject { described_class.new(user) }
 
-    it { is_expected.not_to be_able_to(:manage, Group) }
-    it { is_expected.not_to be_able_to(:show, Group) }
+    it { is_expected.not_to be_able_to(:manage, User) }
+    it { is_expected.not_to be_able_to(:show, User) }
   end
 
-  describe 'when user is part of administrator group' do
-    let(:group) { Group.create(string_key: 'administrator', is_admin: true) }
-    let(:user) { FactoryBot.create(:user, groups: [group]) }
+  describe 'when user is administrator' do
+    let(:user) { FactoryBot.create(:user, is_admin: true) }
 
     subject { described_class.new(user) }
 
     it { is_expected.to be_able_to(:manage, :all) }
-    it { is_expected.to be_able_to(:manage, Group) }
+    it { is_expected.to be_able_to(:manage, :vocabulary) }
     it { is_expected.to be_able_to(:manage, DigitalObject) }
     it { is_expected.to be_able_to(:update, Project) }
     it { is_expected.to be_able_to(:update, PublishTarget) }
   end
 
-  describe 'when user is part of group manager group' do
-    let(:group) do
-      Group.create!(
-        string_key: 'group_managers',
-        permissions: [Permission.create(action: Permission::MANAGE_GROUPS)]
+  describe 'when user is user manager' do
+    let(:user) do
+      FactoryBot.create(
+        :user, permissions: [Permission.create(action: Permission::MANAGE_USERS)]
       )
     end
-    let(:user) { FactoryBot.create(:user, groups: [group]) }
-
-    subject { described_class.new(user) }
-
-    it { is_expected.not_to be_able_to(:manage, :all) }
-    it { is_expected.to be_able_to(:show, Group) }
-    it { is_expected.to be_able_to(:update, Group) }
-    it { is_expected.to be_able_to(:manage, Group) }
-  end
-
-  describe 'when user is part of user manager group' do
-    let(:group) do
-      Group.create!(
-        string_key: 'user_managers',
-        permissions: [Permission.create(action: Permission::MANAGE_USERS)]
-      )
-    end
-    let(:user) { FactoryBot.create(:user, groups: [group]) }
 
     subject { described_class.new(user) }
 
@@ -60,16 +40,14 @@ RSpec.describe Ability, type: :model do
   end
 
   describe 'when user has multiple system wide permissions' do
-    let(:group) do
-      Group.create!(
-        string_key: 'user_and_group_managers',
-        permissions: [
+    let(:user) do
+      FactoryBot.create(
+        :user, permissions: [
           Permission.create(action: Permission::MANAGE_USERS),
-          Permission.create(action: Permission::MANAGE_GROUPS)
+          Permission.create(action: Permission::MANAGE_VOCABULARIES)
         ]
       )
     end
-    let(:user) { FactoryBot.create(:user, groups: [group]) }
 
     subject { described_class.new(user) }
 
@@ -77,9 +55,9 @@ RSpec.describe Ability, type: :model do
     it { is_expected.to be_able_to(:manage, User) }
     it { is_expected.to be_able_to(:show, User) }
     it { is_expected.to be_able_to(:update, User) }
-    it { is_expected.to be_able_to(:show, Group) }
-    it { is_expected.to be_able_to(:update, Group) }
-    it { is_expected.to be_able_to(:manage, Group) }
+    it { is_expected.to be_able_to(:show, :vocabulary) }
+    it { is_expected.to be_able_to(:update, :vocabulary) }
+    it { is_expected.to be_able_to(:manage, :vocabulary) }
   end
 
   describe 'when user is logged in' do
@@ -87,8 +65,6 @@ RSpec.describe Ability, type: :model do
 
     subject { described_class.new(user) }
 
-    it { is_expected.to be_able_to(:index, Group) }
-    it { is_expected.to be_able_to(:show, Group) }
     it { is_expected.to be_able_to(:show, user) }
     it { is_expected.to be_able_to(:update, user) }
 
@@ -96,15 +72,13 @@ RSpec.describe Ability, type: :model do
   end
 
   describe 'when user has the ability to read all digital objects' do
-    let(:group) do
-      Group.create!(
-        string_key: 'read_all_digital_objects',
-        permissions: [
+    let(:user) do
+      FactoryBot.create(
+        :user, permissions: [
           Permission.create(action: Permission::READ_ALL_DIGITAL_OBJECTS)
         ]
       )
     end
-    let(:user) { FactoryBot.create(:user, groups: [group]) }
 
     subject { described_class.new(user) }
 
@@ -114,15 +88,13 @@ RSpec.describe Ability, type: :model do
 
   describe 'when a user has the ability to read_objects for a project' do
     let(:project) { FactoryBot.create(:project) }
-    let(:group) do
-      Group.create!(
-        string_key: 'read_project_a',
-        permissions: [
+    let(:user) do
+      FactoryBot.create(
+        :user, permissions: [
           Permission.create(action: :read_objects, subject: Project.to_s, subject_id: project.id)
         ]
       )
     end
-    let(:user) { FactoryBot.create(:user, groups: [group]) }
 
     subject { described_class.new(user) }
 

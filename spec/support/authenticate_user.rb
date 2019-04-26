@@ -12,13 +12,12 @@ module AuthenticateUser
   end
 
   def sign_in_project_contributor(to:, project:)
-    group = Group.create!(
-      string_key: "#{to}_#{project.string_key}",
-      permissions: [Permission.create(action: to, subject: Project.to_s, subject_id: project.id)]
+    permission = Permission.new(
+      action: to, subject: Project.to_s, subject_id: project.id
     )
 
     user = FactoryBot.create(
-      :user, first_name: 'Signed In', last_name: 'User', email: 'logged-in-user@exaple.com', groups: [group]
+      :user, first_name: 'Signed In', last_name: 'User', email: 'logged-in-user@exaple.com', permissions: [permission]
     )
 
     login_as user, scope: :user

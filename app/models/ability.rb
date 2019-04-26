@@ -11,7 +11,6 @@ class Ability
 
       # Permissions all users get
       can [:show, :update], User, id: user.id
-      can [:index, :show], Group
       can [:index, :show, :create], :term
       # can :index, Project, everyone should be able to see a list of projects they have access to
 
@@ -39,8 +38,6 @@ class Ability
       case role
       when Permission::MANAGE_USERS
         can :manage, User
-      when Permission::MANAGE_GROUPS
-        can :manage, Group
       when Permission::MANAGE_VOCABULARIES
         can :manage, :vocabulary
         can :manage, :term

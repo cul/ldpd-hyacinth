@@ -28,7 +28,6 @@ Metrics/CyclomaticComplexity:
   Enabled: true
   Max: 7
   Exclude:
-    - 'app/controllers/api/v1/groups_controller.rb'
     - 'app/models/concerns/digital_object_concerns/save_behavior.rb'
 
 Metrics/ModuleLength:
@@ -38,7 +37,6 @@ Metrics/PerceivedComplexity:
   Enabled: true
   Max: 8
   Exclude:
-    - 'app/controllers/api/v1/groups_controller.rb'
     - 'app/controllers/concerns/hyacinth/users/cas_authentication_behavior.rb'
     - 'app/models/concerns/digital_object_concerns/save_behavior.rb'
 
