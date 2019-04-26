@@ -18,32 +18,24 @@ FactoryBot.define do
       email { 'admin-user@example.com' }
       first_name { 'Admin' }
       last_name { 'User' }
-      after(:create) do |user|
-        create(:group, :administrators, users: [user])
-      end
+      is_admin { true }
     end
 
     trait :user_manager do
       after(:create) do |user|
-        create(:group, :user_managers, users: [user])
-      end
-    end
-
-    trait :group_manager do
-      after(:create) do |user|
-        create(:group, :group_managers, users: [user])
+        create(:permission, action: Permission::MANAGE_USERS, user: user)
       end
     end
 
     trait :vocabulary_manager do
       after(:create) do |user|
-        create(:group, :vocabulary_managers, users: [user])
+        create(:permission, action: Permission::MANAGE_VOCABULARIES, user: user)
       end
     end
 
     trait :read_all do
       after(:create) do |user|
-        create(:group, :read_all, users: [user])
+        create(:permission, action: Permission::READ_ALL_DIGITAL_OBJECTS, user: user)
       end
     end
   end

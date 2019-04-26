@@ -8,7 +8,8 @@ class User < ApplicationRecord
   validates :password, :password_confirmation, presence: true, on: :create
   validates :password_confirmation, presence: true, if: proc { |a| a.password.present? }, on: :update
 
-  has_and_belongs_to_many :groups
+  has_many :permissions
+  accepts_nested_attributes_for :permissions, allow_destroy: true
 
   before_validation :set_uid, on: :create
   validate :uid_unchanged
@@ -24,16 +25,17 @@ class User < ApplicationRecord
       first_name: first_name,
       last_name: last_name,
       is_active: is_active,
-      groups: groups.map(&:string_key)
+      is_admin: is_admin,
+      system_wide_permissions: system_wide_permissions.map(&:action)
     }
   end
 
   def admin?
-    groups.any?(&:admin?)
+    is_admin
   end
 
-  def permissions
-    Permission.where(group_id: group_ids)
+  def system_wide_permissions
+    permissions.where(subject: nil, subject_id: nil)
   end
 
   def update_without_password(params, *options)
