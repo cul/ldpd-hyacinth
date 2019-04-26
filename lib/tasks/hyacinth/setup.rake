@@ -1,21 +1,23 @@
 namespace :hyacinth do
   namespace :setup do
-    desc "Set up default Hyacinth users and groups"
-    task default_users_and_groups: :environment do
+    desc "Set up default Hyacinth users"
+    task default_users: :environment do
       default_user_accounts = [
         {
           email: 'hyacinth-admin@library.columbia.edu',
           password: 'iamtheadmin',
           first_name: 'Admin',
           last_name: 'User',
-          uid: SecureRandom.uuid
+          uid: SecureRandom.uuid,
+          is_admin: true
         },
         {
           email: 'hyacinth-test@library.columbia.edu',
           password: 'iamthetest',
           first_name: 'Test',
           last_name: 'User',
-          uid: SecureRandom.uuid
+          uid: SecureRandom.uuid,
+          is_admin: true
         }
       ]
 
@@ -33,27 +35,6 @@ namespace :hyacinth do
             last_name: account_info[:last_name]
           )
           puts Rainbow("Created user: #{user_email}").green
-        end
-      end
-
-      default_groups = [
-        {
-          string_key: 'administrators',
-          is_admin: true,
-          users: [User.find_by(email: 'hyacinth-admin@library.columbia.edu')]
-        }
-      ]
-
-      default_groups.each do |group_info|
-        if Group.exists?(string_key: group_info[:string_key])
-          puts Rainbow("Skipping creation of group #{group_info[:string_key]} because user already exists.").blue.bright
-        else
-          Group.create!(
-            string_key: group_info[:string_key],
-            is_admin: group_info[:is_admin],
-            users: group_info[:users]
-          )
-          puts Rainbow("Created group: #{group_info[:string_key]}").green
         end
       end
     end
