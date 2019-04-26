@@ -40,7 +40,6 @@ module DigitalObject
     # Dynamic Fields
     metadata_attribute :dynamic_field_data, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Hash.new })
     # Administrative Relationsip Objects
-    metadata_attribute :group, Hyacinth::DigitalObject::TypeDef::Group.new.public_writer
     metadata_attribute :projects, Hyacinth::DigitalObject::TypeDef::Projects.new.default(-> { Set.new })
     # Preservation System Linkage
     metadata_attribute :preservation_target_uris, Hyacinth::DigitalObject::TypeDef::JsonSerializableSet.new.default(-> { Set.new })

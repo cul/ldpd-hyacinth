@@ -1,16 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe DigitalObjectConcerns::Serialization do
-  let(:group) { FactoryBot.build(:group) }
-  let(:digital_object_with_sample_data) { FactoryBot.build(:digital_object_test_subclass, :with_sample_data, group: group) }
+  let(:digital_object_with_sample_data) { FactoryBot.build(:digital_object_test_subclass, :with_sample_data) }
   let(:serialized_form) do
     {
       'serialization_version' => DigitalObject::Base::SERIALIZATION_VERSION,
       'digital_object_type' => 'test_subclass',
       'uid' => 'unique-id-123',
-      'group' => {
-        'string_key' => digital_object_with_sample_data.group.string_key
-      },
       'resources' => {
         'resource1' => {
           'location' => 'disk:///path/to/file1',
@@ -29,11 +25,9 @@ RSpec.describe DigitalObjectConcerns::Serialization do
       allow(digital_object_with_sample_data).to receive(:metadata_attributes).and_return({
         'serialization_version' => Hyacinth::DigitalObject::TypeDef::String.new,
         'digital_object_type' => Hyacinth::DigitalObject::TypeDef::String.new,
-        'uid' => Hyacinth::DigitalObject::TypeDef::String.new,
-        'group' => Hyacinth::DigitalObject::TypeDef::Group.new
+        'uid' => Hyacinth::DigitalObject::TypeDef::String.new
       })
       allow(digital_object_with_sample_data).to receive(:uid).and_return('unique-id-123')
-      allow(digital_object_with_sample_data).to receive(:group).and_return(FactoryBot.build(:group))
       allow(digital_object_with_sample_data).to receive(:serialization_version).and_return(DigitalObject::Base::SERIALIZATION_VERSION)
       allow(digital_object_with_sample_data).to receive(:digital_object_type).and_return('test_subclass')
 
