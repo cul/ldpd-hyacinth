@@ -3,7 +3,6 @@ module DigitalObjectConcerns
     module Setters
       include DigitalObjectConcerns::DigitalObjectData::Setters::Doi
       include DigitalObjectConcerns::DigitalObjectData::Setters::DynamicFieldData
-      include DigitalObjectConcerns::DigitalObjectData::Setters::Group
       include DigitalObjectConcerns::DigitalObjectData::Setters::Identifiers
       include DigitalObjectConcerns::DigitalObjectData::Setters::OptimisticLockToken
       include DigitalObjectConcerns::DigitalObjectData::Setters::ParentUids
@@ -29,7 +28,6 @@ module DigitalObjectConcerns
 
         set_dynamic_field_data(new_digital_object_data, merge_dynamic_fields)
         set_doi(new_digital_object_data)
-        set_group(new_digital_object_data)
         set_identifiers(new_digital_object_data)
         set_mint_doi(new_digital_object_data)
         set_optimistic_lock_token(new_digital_object_data)
