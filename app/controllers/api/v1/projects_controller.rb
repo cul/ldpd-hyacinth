@@ -8,7 +8,7 @@ module Api
       # GET /projects
       def index
         # TODO: restrict to only the projects a user has permissions to see
-        # project_ids = Permission.where(group_id: current_user.group_ids, subject: Project.to_s).map(&:subject_id)
+        # project_ids = Permission.where(user_id: current_user.id, subject: Project.to_s).map(&:subject_id)
         # projects = Project.where(id: project_ids) # all projects you have access to
 
         projects = Project.all
