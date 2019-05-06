@@ -1225,7 +1225,7 @@ OHSynchronizer.Export.indexSegmentData = function(widget) {
 	// We'll break up the text by segments
 	var segments = $(widget.indexDiv).find('.segment-panel').map(function(index, div){
 		// ignore the duplicate preview segments
-		if ($(div).parents('#previewAccordion').length) return null;
+		if ($(div).closest('#previewAccordion').length) return null;
 		return {
 			startTime: $(div).attr('id'),
 			title: $(div).find(".tag-title").text(),
