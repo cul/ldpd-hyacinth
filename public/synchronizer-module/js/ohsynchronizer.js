@@ -1221,11 +1221,11 @@ OHSynchronizer.Export.transcriptVTT = function() {
 
 // Here we prepare index data for VTT files with jquery
 OHSynchronizer.Export.indexSegmentData = function(widget) {
-	var metadata = $('#interview-metadata')[0].innerHTML.replace(/<br>/g, '\n');
-	var content = (metadata != '') ? 'WEBVTT\n\nNOTE\n' + metadata + '\n\n' : 'WEBVTT\n\n';
 	var endProxy = {startTime : OHSynchronizer.secondsAsTimestamp(OHSynchronizer.playerControls.duration())};
 	// We'll break up the text by segments
 	var segments = $(widget.indexDiv).find('.segment-panel').map(function(index, div){
+		// ignore the duplicate preview segments
+		if ($(div).parents('#previewAccordion').length) return null;
 		return {
 			startTime: $(div).attr('id'),
 			title: $(div).find(".tag-title").text(),
