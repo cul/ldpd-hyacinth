@@ -32,7 +32,8 @@ namespace :hyacinth do
             password: account_info[:password],
             password_confirmation: account_info[:password],
             first_name: account_info[:first_name],
-            last_name: account_info[:last_name]
+            last_name: account_info[:last_name],
+            is_admin: account_info[:is_admin]
           )
           puts Rainbow("Created user: #{user_email}").green
         end
