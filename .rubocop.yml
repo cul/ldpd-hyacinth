@@ -67,3 +67,7 @@ Style/StringLiterals:
 
 Style/RedundantSelf:
   Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
