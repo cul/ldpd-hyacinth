@@ -66,6 +66,15 @@ class Ability
     [system_permissions.uniq, project_permissions]
   end
 
+  def to_list
+    rules.map do |rule|
+      object = { actions: rule.actions, subject: rule.subjects.map { |s| s.is_a?(Symbol) ? s : s.name } }
+      object[:conditions] = rule.conditions unless rule.conditions.blank?
+      object[:inverted] = true unless rule.base_behavior
+      object
+    end
+  end
+
   # TODO: This logic needs to be added above once we have a proper Project model.
   # if subject_class == DigitalObject # TODO: NEED TO ADD TESTS
   #   if user.system_wide_permissions.include?(PERMISSION::MANAGE_ALL_DIGITAL_OBJECTS)
