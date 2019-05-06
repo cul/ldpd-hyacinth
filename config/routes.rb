@@ -20,9 +20,9 @@ Rails.application.routes.draw do
       end
 
       resources :users, param: :uid, except: [:new, :edit, :delete] do
-        # collection do
-        #   get 'current'
-        # end
+        collection do
+          get :authenticated
+        end
       end
 
       resources :vocabularies, param: :string_key, except: [:new, :edit] do

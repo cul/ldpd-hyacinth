@@ -3,7 +3,19 @@ module Api
     class UsersController < ApplicationApiController
       before_action :ensure_json_request
 
-      load_and_authorize_resource find_by: :uid, id_param: :uid
+      load_and_authorize_resource find_by: :uid, id_param: :uid, except: :authenticated
+
+      # GET /users/authenticated
+      def authenticated
+        user = {
+          first_name: current_user.first_name,
+          last_name: current_user.last_name,
+          uid: current_user.uid,
+          rules: Ability.new(current_user).to_list
+        }
+
+        render json: user, status: :ok
+      end
 
       # GET /users
       def index
