@@ -1,6 +1,7 @@
 import React from 'react'
 import { Route, Link, Redirect, Switch } from "react-router-dom";
 import { Container } from 'react-bootstrap';
+import producer from "immer";
 
 import TopNavbar from 'hyacinth_ui_v1/components/layout/TopNavbar'
 import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch'
@@ -8,6 +9,10 @@ import DigitalObjects from 'hyacinth_ui_v1/components/digital_objects/DigitalObj
 import Groups from 'hyacinth_ui_v1/components/groups/Groups'
 import Users from 'hyacinth_ui_v1/components/users/Users'
 import Projects from 'hyacinth_ui_v1/components/projects/Projects'
+import { AbilityContext } from 'hyacinth_ui_v1/util/ability_context'
+import ability from 'hyacinth_ui_v1/util/ability'
+import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
+
 
 const APPLICATION_BASE_PATH = '/ui/v1';
 
@@ -17,10 +22,33 @@ const Index = () => <div>
 </div>;
 
 export default class App extends React.Component {
+  state = {
+    user: {
+      firstName: '',
+      lastName: '',
+      uid: ''
+    }
+  }
+
+  componentDidMount() {
+    hyacinthApi.get('/users/authenticated')
+      .then(res => {
+        let user = res.data
+
+        ability.update(user.rules)
+
+        this.setState(producer(draft => {
+          draft.user.firstName = user.first_name
+          draft.user.lastName = user.last_name
+          draft.user.uid = user.uid
+        }))
+      })
+  }
+
   render() {
     return(
-      <>
-        <TopNavbar />
+      <AbilityContext.Provider value={ability}>
+        <TopNavbar user={this.state.user} />
         <Container id="main">
           <Switch>
             <Route exact path="/" component={Index} />
@@ -33,7 +61,7 @@ export default class App extends React.Component {
             <Route component={NoMatch} />
           </Switch>
         </Container>
-      </>
+      </AbilityContext.Provider>
     )
   }
 
