@@ -702,6 +702,18 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
+"@casl/ability@^3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@casl/ability/-/ability-3.0.2.tgz#787e581382836c2da998b9a61ecd334c548b049f"
+  integrity sha512-XBs+ESP9nzeuER1gOVrag/iOXlBXjKd9I80qzzFBC0i4Olsnw4WiDadMoSbulfMNtw6jti640DBN9bPvg9mq9g==
+  dependencies:
+    sift "^7.0.1"
+
+"@casl/react@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@casl/react/-/react-1.0.3.tgz#272d57e65400ff61c5916adc67bd79164393d7aa"
+  integrity sha512-UG8IM3z1AjtvQaXPnH73PLluraNhJ/hXK42J/PtzUK9jmehay3pw9Xxi5Rtprfgg5r7gealBDig8YAEgpFKU1A==
+
 "@csstools/convert-colors@^1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@csstools/convert-colors/-/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
@@ -5971,6 +5983,11 @@ shebang-command@^1.2.0:
 shebang-regex@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/shebang-regex/-/shebang-regex-1.0.0.tgz#da42f49740c0b42db2ca9728571cb190c98efea3"
+
+sift@^7.0.1:
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/sift/-/sift-7.0.1.tgz#47d62c50b159d316f1372f8b53f9c10cd21a4b08"
+  integrity sha512-oqD7PMJ+uO6jV9EQCl0LrRw1OwsiPsiFQR5AR30heR+4Dl7jBBbDLnNvWiak20tzZlSE1H7RB30SX/1j/YYT7g==
 
 signal-exit@^3.0.0:
   version "3.0.2"
