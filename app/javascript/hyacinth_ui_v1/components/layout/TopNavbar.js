@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Constants from 'hyacinth_ui_v1/Constants'
 import { Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
+import { Can } from 'hyacinth_ui_v1/util/ability_context';
 
 export default class TopNavbar extends React.Component {
   signOut(e) {
@@ -48,7 +49,7 @@ export default class TopNavbar extends React.Component {
   }
 
   render() {
-    return(
+    return (
       <Navbar collapseOnSelect id="top-navbar" variant="dark" bg="dark" expand="md">
         <Navbar.Brand href="/">Hyacinth</Navbar.Brand>
 
@@ -65,9 +66,11 @@ export default class TopNavbar extends React.Component {
                 <NavDropdown.Item>Projects</NavDropdown.Item>
               </LinkContainer>
 
-              <LinkContainer to='/controlled-vocabularies'>
-                <NavDropdown.Item>Controlled Vocabularies</NavDropdown.Item>
-              </LinkContainer>
+              <Can I="manage" a="Vocabulary">
+                <LinkContainer to='/controlled-vocabularies'>
+                  <NavDropdown.Item>Controlled Vocabularies</NavDropdown.Item>
+                </LinkContainer>
+              </Can>
 
               <LinkContainer to='/assignments'>
                 <NavDropdown.Item>Assignments</NavDropdown.Item>
@@ -84,32 +87,36 @@ export default class TopNavbar extends React.Component {
               </LinkContainer>
             </NavDropdown>
 
-            <NavDropdown title="Admin">
-              <LinkContainer to='/users'>
-                <NavDropdown.Item>Users</NavDropdown.Item>
-              </LinkContainer>
+            <Can I="manage" a="User">
+              <NavDropdown title="Admin">
+                <LinkContainer to='/users'>
+                  <NavDropdown.Item>Users</NavDropdown.Item>
+                </LinkContainer>
 
-              <NavDropdown.Divider />
+                <Can I="manage" a="all">
+                  <NavDropdown.Divider />
 
-              <LinkContainer to='/dynamic-fields'>
-                <NavDropdown.Item>Dynamic Fields</NavDropdown.Item>
-              </LinkContainer>
+                  <LinkContainer to='/dynamic-fields'>
+                    <NavDropdown.Item>Dynamic Fields</NavDropdown.Item>
+                  </LinkContainer>
 
-              <LinkContainer to='/field_export_profiles'>
-                <NavDropdown.Item>Field Export Profiles</NavDropdown.Item>
-              </LinkContainer>
+                  <LinkContainer to='/field_export_profiles'>
+                    <NavDropdown.Item>Field Export Profiles</NavDropdown.Item>
+                  </LinkContainer>
 
-              <NavDropdown.Divider />
+                  <NavDropdown.Divider />
 
-              <LinkContainer to='/system_information'>
-                <NavDropdown.Item>System Information</NavDropdown.Item>
-              </LinkContainer>
-            </NavDropdown>
+                  <LinkContainer to='/system_information'>
+                    <NavDropdown.Item>System Information</NavDropdown.Item>
+                  </LinkContainer>
+                </Can>
+              </NavDropdown>
+            </Can>
           </Nav>
 
           <Nav>
-            <NavDropdown alignRight title="Username">
-              <LinkContainer to='/profile'>
+            <NavDropdown alignRight title={this.props.user.firstName + ' ' + this.props.user.lastName}>
+              <LinkContainer to={'/users/' + this.props.user.uid + '/edit'}>
                 <NavDropdown.Item>Profile</NavDropdown.Item>
               </LinkContainer>
 

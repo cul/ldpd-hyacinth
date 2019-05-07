@@ -5,6 +5,7 @@ import producer from "immer";
 
 import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar';
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
+import { Can } from 'hyacinth_ui_v1/util/ability_context';
 
 export default class ProjectIndex extends React.Component {
   state = {
@@ -19,22 +20,31 @@ export default class ProjectIndex extends React.Component {
   }
 
   render() {
+    let rows = ''
 
-    let rows = this.state.projects.map(project => {
-      return (
-        <tr key={project.id}>
-          <td><Link to={"/projects/" + project.string_key + "/core_data"} href="#">{project.display_label}</Link></td>
-          <td>{project.string_key}</td>
-          <td></td>
-        </tr>
-      )
-    })
+    if (this.state.projects) {
+      rows = this.state.projects.map(project => {
+        return (
+          <tr key={project.id}>
+            <td><Link to={"/projects/" + project.string_key + "/core_data"} href="#">{project.display_label}</Link></td>
+            <td>{project.string_key}</td>
+            <td></td>
+          </tr>
+        )
+      })
+    }
 
-    return(
-      <div>
-        <ContextualNavbar
-          title="Projects"
-          rightHandLinks={[{link: '/projects/new', label: 'New Project'}]} />
+    return (
+      <>
+        <Can I="create" a="Project" passThrough>
+          {
+            can => (
+              <ContextualNavbar
+                title="Projects"
+                rightHandLinks={can ? [{link: '/projects/new', label: 'New Project'}] : []} />
+            )
+          }
+        </Can>
 
         <Table hover>
           <thead>
@@ -48,7 +58,7 @@ export default class ProjectIndex extends React.Component {
             {rows}
           </tbody>
         </Table>
-      </div>
+      </>
     )
   }
 }
