@@ -23,7 +23,7 @@ export default class ProjectIndex extends React.Component {
     let rows = this.state.projects.map(project => {
       return (
         <tr key={project.id}>
-          <td><Link to={"/projects/" + project.string_key + "/core_data"} className="nav-link" href="#">{project.display_label}</Link></td>
+          <td><Link to={"/projects/" + project.string_key + "/core_data"} href="#">{project.display_label}</Link></td>
           <td>{project.string_key}</td>
           <td></td>
         </tr>
