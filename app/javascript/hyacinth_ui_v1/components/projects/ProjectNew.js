@@ -6,7 +6,6 @@ import produce from "immer";
 import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar'
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api'
 import withErrorHandler from 'hyacinth_ui_v1/hoc/withErrorHandler/withErrorHandler'
-import { Can } from 'hyacinth_ui_v1/util/ability_context';
 
 class ProjectNew extends React.Component {
 
@@ -44,7 +43,7 @@ class ProjectNew extends React.Component {
 
   render() {
     return(
-      <Can I="create" a="Project">
+      <>
         <ContextualNavbar
           title="Create New Project"
           rightHandLinks={[{link: '/projects', label: 'Cancel'}]} />
@@ -83,7 +82,7 @@ class ProjectNew extends React.Component {
 
           <Button variant="primary" type="submit" onClick={this.onSubmitHandler}>Create</Button>
         </Form>
-      </Can>
+      </>
     )
   }
 }
