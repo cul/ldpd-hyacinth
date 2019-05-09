@@ -3,7 +3,7 @@ module Api
     class ProjectsController < ApplicationApiController
       before_action :ensure_json_request
 
-      load_resource find_by: :string_key, id_param: :string_key
+      load_and_authorize_resource find_by: :string_key, id_param: :string_key
 
       # GET /projects
       def index
