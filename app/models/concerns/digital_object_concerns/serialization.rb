@@ -29,7 +29,7 @@ module DigitalObjectConcerns
         end
         # build resource objects
         digital_object.resource_attributes.map do |resource_name, resource|
-          if json_var['resources'].key?(resource_name)
+          if json_var['resources']&.key?(resource_name)
             digital_object.send("#{resource_name}=", Hyacinth::DigitalObject::Resource.from_serialized_form(json_var['resources'][resource_name]))
           end
         end

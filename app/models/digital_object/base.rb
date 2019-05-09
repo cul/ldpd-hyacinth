@@ -67,5 +67,9 @@ module DigitalObject
       @preserve = false
       @mint_doi = false
     end
+
+    def project_ids
+      projects.each.map(&:id)
+    end
   end
 end
