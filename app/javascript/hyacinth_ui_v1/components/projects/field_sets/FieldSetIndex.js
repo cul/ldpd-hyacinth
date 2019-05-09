@@ -28,7 +28,7 @@ export default class FieldSetIndex extends React.Component {
       rows = this.state.fieldSets.map(fieldSet => (
         <tr key={fieldSet.id}>
           <td>
-            <Can I="edit" of={{ modelName: 'FieldSet', projectStringKey: this.props.match.params.string_key }} passThrough>
+            <Can I="edit" of={{ modelName: 'FieldSet', project: { stringKey: this.props.match.params.string_key } }} passThrough>
               {
                   can => (
                     can

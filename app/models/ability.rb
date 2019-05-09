@@ -24,18 +24,18 @@ class Ability
         can [:index, :show], Project, string_key: project_string_key
 
         can :show, PublishTarget, project_id: project_id
-        can :show, PublishTarget, project_string_key: project_string_key
+        can :show, PublishTarget, project: { string_key: project_string_key }
 
         can :show, FieldSet, project_id: project_id
-        can :show, FieldSet, project_string_key: project_string_key
+        can :show, FieldSet, project: { string_key: project_string_key }
 
-        if actions.include?('manage')
-          can :update, Project, id: project_id
-          can :update, Project, project_string_key: project_string_key
+        next unless actions.include?('manage')
 
-          can [:show, :create, :update, :destroy], FieldSet, project_id: project_id
-          can [:show, :create, :update, :destroy], FieldSet, project_string_key: project_string_key
-        end
+        can :update, Project, id: project_id
+        can :update, Project, string_key: project_string_key
+
+        can [:show, :create, :update, :destroy], FieldSet, project_id: project_id
+        can [:show, :create, :update, :destroy], FieldSet, project: { string_key: project_string_key }
       end
 
       # Digital Object Permissions
