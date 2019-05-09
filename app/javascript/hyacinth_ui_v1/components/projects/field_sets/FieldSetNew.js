@@ -1,5 +1,4 @@
 import React from 'react';
-import produce from 'immer';
 
 import ProjectSubHeading from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
@@ -10,13 +9,7 @@ class FieldSetNew extends React.Component {
   createFieldSet = (data) => {
     hyacinthApi.post(`/projects/${this.props.match.params.string_key}/field_sets`, data)
       .then((res) => {
-        console.log('Field Set created');
-        // redirect to edit screen for that user
-        console.log(res);
         this.props.history.push(`/projects/${this.props.match.params.string_key}/field_sets/${res.data.field_set.id}/edit`);
-      })
-      .catch((error) => {
-        console.log(error);
       });
   }
 

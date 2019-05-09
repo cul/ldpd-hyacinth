@@ -1,5 +1,4 @@
 import React from 'react';
-import produce from 'immer';
 
 import ProjectSubHeading from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';

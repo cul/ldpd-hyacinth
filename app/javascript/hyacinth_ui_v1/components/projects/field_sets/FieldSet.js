@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, Route, Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
 
 import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch';
 import FieldSetIndex from './FieldSetIndex';

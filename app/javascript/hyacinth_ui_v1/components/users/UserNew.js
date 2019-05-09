@@ -2,8 +2,8 @@ import React from 'react';
 import { Col, Form, Button } from 'react-bootstrap';
 import produce from 'immer';
 
-import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar';
-import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
+import ContextualNavbar from '../layout/ContextualNavbar';
+import hyacinthApi from '../../util/hyacinth_api';
 
 export default class UserNew extends React.Component {
   state = {

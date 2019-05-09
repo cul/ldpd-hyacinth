@@ -1,15 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import {
-  Row, Col, Form, Button, Collapse,
-} from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Row, Col, Button } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import producer from 'immer';
 
-import ProjectSubHeading from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
-import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
-import withErrorHandler from 'hyacinth_ui_v1/hoc/withErrorHandler/withErrorHandler';
+import ProjectSubHeading from '../../../hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
+import hyacinthApi from '../../../util/hyacinth_api';
+import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 
 class CoreDataShow extends React.Component {
   state = {

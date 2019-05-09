@@ -23,12 +23,14 @@ class PublishTargetForm extends React.Component {
     if (this.props.match.params.publish_target_string_key) {
       hyacinthApi.get(this.props.match.url.replace('edit', ''))
         .then((res) => {
-          this.setState(produce((draft) => {
+          const { display_label, string_key, publish_url, api_key } = res.data.publish_target
+
+          this.setState(produce(draft => {
             draft.formType = 'edit';
-            draft.publishTarget.displayLabel = res.data.publish_target.display_label;
-            draft.publishTarget.stringKey = res.data.publish_target.string_key;
-            draft.publishTarget.publishUrl = res.data.publish_target.publish_url;
-            draft.publishTarget.apiKey = res.data.publish_target.api_key;
+            draft.publishTarget.displayLabel = display_label;
+            draft.publishTarget.stringKey = string_key;
+            draft.publishTarget.publishUrl = publish_url;
+            draft.publishTarget.apiKey = api_key;
           }));
         })
         .catch((error) => {

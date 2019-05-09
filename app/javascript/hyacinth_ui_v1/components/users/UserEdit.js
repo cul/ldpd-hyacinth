@@ -5,8 +5,8 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import producer from 'immer';
 
-import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar';
-import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
+import ContextualNavbar from '../layout/ContextualNavbar';
+import hyacinthApi from '../../util/hyacinth_api';
 
 export default class UserEdit extends React.Component {
   state = {
