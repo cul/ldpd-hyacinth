@@ -4,6 +4,7 @@ RSpec.describe 'Projects Requests', type: :request do
   describe 'GET /api/v1/projects' do
     describe 'when there are multiple results' do
       before do
+        sign_in_user as: :administrator
         FactoryBot.create(:project)
         FactoryBot.create(:project, :legend_of_lincoln)
         get '/api/v1/projects'

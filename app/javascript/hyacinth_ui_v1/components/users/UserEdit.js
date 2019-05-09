@@ -1,13 +1,14 @@
-import React from 'react'
-import { Link } from "react-router-dom";
-import { Row, Col, Form, Button, Collapse } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import React from 'react';
+import {
+  Row, Col, Form, Button, Collapse,
+} from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import producer from 'immer';
 
-import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar'
-import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
+import ContextualNavbar from '../layout/ContextualNavbar';
+import hyacinthApi from '../../util/hyacinth_api';
 
 export default class UserEdit extends React.Component {
-
   state = {
     changePasswordOpen: false,
     user: {
@@ -18,84 +19,75 @@ export default class UserEdit extends React.Component {
       email: '',
       currentPassword: '',
       password: '',
-      passwordConfirmation: ''
-    }
+      passwordConfirmation: '',
+    },
   }
 
   onChangeHandler = (event) => {
-    this.setState({
-      user: {
-        ...this.state.user,
-        [event.target.name]: event.target.value
-      }
-    })
+    const { target } = event;
+    this.setState(producer((draft) => { draft.user[target.name] = target.value; }));
   }
 
-  onDeactivateHandler = (event) => {
+  onFlipActivationHandler = (event) => {
     event.preventDefault();
 
-    hyacinthApi.patch('/users/' + this.props.match.params.uid, { user: { is_active: false } })
-      .then(res => {
-        console.log('Deactivated User')
-      })
-      .catch(error => {
-        console.log(error);
-        console.log(error.response);
-      })
+    hyacinthApi.patch(`/users/${this.props.match.params.uid}`, { user: { is_active: !this.state.user.isActive } })
+      .then((res) => {
+        console.log('Changed user activation');
+        this.setState(producer((draft) => { draft.user.isActive = res.data.user.is_active; }));
+      });
   }
 
   onSubmitHandler = (event) => {
     event.preventDefault();
 
-    let data = {
+    const data = {
       user: {
         first_name: this.state.user.firstName,
         last_name: this.state.user.lastName,
         email: this.state.user.email,
         current_password: this.state.user.currentPassword,
         password: this.state.user.password,
-        password_confirmation: this.state.user.passwordConfirmation
-      }
-    }
+        password_confirmation: this.state.user.passwordConfirmation,
+      },
+    };
 
-    hyacinthApi.patch("/users/" + this.props.match.params.uid, data)
-      .then(res => {
-        console.log('Saved Changes')
+    hyacinthApi.patch(`/users/${this.props.match.params.uid}`, data)
+      .then((res) => {
+        console.log('Saved Changes');
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
         console.log(error.response.data);
       });
   }
 
   componentDidMount = () => {
-    hyacinthApi.get("/users/" + this.props.match.params.uid)
-      .then(res => {
-        let user = res.data.user
-        this.setState({
-          user: {
-            ...this.state.user,
-            uid: user.uid,
-            isActive: user.id_active,
-            firstName: user.first_name,
-            lastName: user.last_name,
-            email: user.email
-          }
-        });
+    hyacinthApi.get(`/users/${this.props.match.params.uid}`)
+      .then((res) => {
+        const { user } = res.data;
+        this.setState(producer((draft) => {
+          draft.user.uid = user.uid;
+          draft.user.isActive = user.is_active;
+          draft.user.firstName = user.first_name;
+          draft.user.lastName = user.last_name;
+          draft.user.email = user.email;
+        }));
       })
-     .catch(error => {
-       console.log(error)
-     });
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   render() {
-    return(
-      <div>
+    return (
+      <>
         <ContextualNavbar
-          title={"Editing User: " + this.state.user.firstName + " " + this.state.user.lastName}
-          rightHandLinks={[{link: '/users', label: 'Cancel'}]} />
+          title={`Editing User: ${this.state.user.firstName} ${this.state.user.lastName}`}
+          rightHandLinks={[{ link: '/users', label: 'Cancel' }]}
+        />
 
-        <Form onSubmit={this.onSubmitHandler}>
+        <Form as={Col} onSubmit={this.onSubmitHandler}>
           <Form.Group as={Row}>
             <Form.Label column sm={2}>UID</Form.Label>
             <Col sm={10}>
@@ -110,7 +102,8 @@ export default class UserEdit extends React.Component {
                 type="text"
                 name="firstName"
                 value={this.state.user.firstName}
-                onChange={this.onChangeHandler}/>
+                onChange={this.onChangeHandler}
+              />
             </Form.Group>
 
             <Form.Group as={Col}>
@@ -119,7 +112,8 @@ export default class UserEdit extends React.Component {
                 type="text"
                 name="lastName"
                 value={this.state.user.lastName}
-                onChange={this.onChangeHandler} />
+                onChange={this.onChangeHandler}
+              />
             </Form.Group>
           </Form.Row>
 
@@ -130,9 +124,10 @@ export default class UserEdit extends React.Component {
                 type="email"
                 name="email"
                 value={this.state.user.email}
-                onChange={this.onChangeHandler} />
+                onChange={this.onChangeHandler}
+              />
               <Form.Text className="text-muted">
-                For Columbia sign-in, please use columbia email: uni@columbia.edu
+                For Columbia sign-in, please use Columbia email: uni@columbia.edu
               </Form.Text>
             </Form.Group>
           </Form.Row>
@@ -141,11 +136,11 @@ export default class UserEdit extends React.Component {
             <Form.Label column sm={2}>Is Active?</Form.Label>
 
             <Col sm={3}>
-              <Form.Control plaintext readOnly value={this.state.user.isActive ? 'true' : 'false'} />
+              <Form.Control plaintext readOnly value={this.state.user.isActive ? 'Yes' : 'No'} />
             </Col>
 
             <Col sm={3}>
-              <Button variant="outline-danger" type="submit" onClick={this.onDeactivateHandler}>Deactivate</Button>
+              <Button variant="outline-danger" type="submit" onClick={this.onFlipActivationHandler}>{(this.state.user.isActive) ? 'Deactivate' : 'Activate'}</Button>
             </Col>
           </Form.Group>
 
@@ -156,13 +151,14 @@ export default class UserEdit extends React.Component {
                 className="pl-0"
                 onClick={() => this.setState({ changePasswordOpen: !this.state.changePasswordOpen })}
                 aria-controls="collapse-form"
-                aria-expanded={this.state.changePasswordOpen} >
-                Change Password <FontAwesomeIcon icon={this.state.changePasswordOpen ? "angle-double-up" : "angle-double-down"} />
+                aria-expanded={this.state.changePasswordOpen}
+              >
+                Change Password
+                {' '}
+                <FontAwesomeIcon icon={this.state.changePasswordOpen ? 'angle-double-up' : 'angle-double-down'} />
               </Button>
             </Col>
           </Form.Row>
-
-
 
           <Collapse in={this.state.changePasswordOpen}>
             <div id="collapse-form">
@@ -200,7 +196,7 @@ export default class UserEdit extends React.Component {
             </Col>
           </Form.Row>
         </Form>
-      </div>
-    )
+      </>
+    );
   }
 }

@@ -1,18 +1,17 @@
-import React from 'react'
-import { Link } from "react-router-dom";
-import { Row, Col, Form, Button } from 'react-bootstrap';
+import React from 'react';
+import { Col, Form, Button } from 'react-bootstrap';
+import produce from 'immer';
 
-import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar'
-import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
+import ContextualNavbar from '../layout/ContextualNavbar';
+import hyacinthApi from '../../util/hyacinth_api';
 
 export default class UserNew extends React.Component {
-
   state = {
     firstName: '',
     lastName: '',
     email: '',
     password: '',
-    passwordConfirmation: ''
+    passwordConfirmation: '',
   }
 
   // From: http://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
@@ -22,49 +21,47 @@ export default class UserNew extends React.Component {
     for (let i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
 
     return result;
-  };
+  }
 
   generatePasswordHandler = () => {
     const newPassword = this.getRandomPassword(14);
-    this.setState({ password: newPassword, passwordConfirmation: newPassword});
+    this.setState(produce((draft) => { draft.password = newPassword, draft.passwordConfirmation = newPassword; }));
   }
 
   onSubmitHandler = (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
-    let data = {
+    const data = {
       user: {
         first_name: this.state.firstName,
         last_name: this.state.lastName,
         email: this.state.email,
         password: this.state.password,
-        password_confirmation: this.state.passwordConfirmation
-      }
-    }
+        password_confirmation: this.state.passwordConfirmation,
+      },
+    };
 
     hyacinthApi.post('/users', data)
-      .then(res => {
-        console.log('User created')
-        // redirect to edit screen for that user
-        console.log(res)
-        this.props.history.push('/users/' + res.data.user.uid + '/edit');
-
+      .then((res) => {
+        this.props.history.push(`/users/${res.data.user.uid}/edit`);
       })
-      .catch(error => {
-        console.log(error)
+      .catch((error) => {
+        console.log(error);
       });
   }
 
   onChangeHandler = (event) => {
-    this.setState({ [event.target.name]: event.target.value })
+    const { target } = event;
+    this.setState(produce((draft) => { draft[target.name] = target.value; }));
   }
 
   render() {
-    return(
+    return (
       <div>
         <ContextualNavbar
           title="Create New User"
-          rightHandLinks={[{link: '/users', label: 'Cancel'}]} />
+          rightHandLinks={[{ link: '/users', label: 'Cancel' }]}
+        />
 
         <Form onSubmit={this.onSubmitHandler}>
           <Form.Row>
@@ -74,7 +71,8 @@ export default class UserNew extends React.Component {
                 type="text"
                 name="firstName"
                 value={this.state.firstName}
-                onChange={this.onChangeHandler}/>
+                onChange={this.onChangeHandler}
+              />
             </Form.Group>
 
             <Form.Group as={Col} sm={6}>
@@ -83,7 +81,8 @@ export default class UserNew extends React.Component {
                 type="text"
                 name="lastName"
                 value={this.state.lastName}
-                onChange={this.onChangeHandler} />
+                onChange={this.onChangeHandler}
+              />
             </Form.Group>
           </Form.Row>
 
@@ -94,7 +93,8 @@ export default class UserNew extends React.Component {
                 type="email"
                 name="email"
                 value={this.state.email}
-                onChange={this.onChangeHandler} />
+                onChange={this.onChangeHandler}
+              />
               <Form.Text className="text-muted">
                 For Columbia sign-in, please use columbia email: uni@columbia.edu
               </Form.Text>
@@ -113,7 +113,8 @@ export default class UserNew extends React.Component {
                 type="text"
                 name="passwordConfirmation"
                 value={this.state.passwordConfirmation}
-                onChange={this.onChangeHandler} />
+                onChange={this.onChangeHandler}
+              />
             </Form.Group>
           </Form.Row>
 
@@ -127,6 +128,6 @@ export default class UserNew extends React.Component {
           <Button variant="primary" type="submit" onClick={this.onSubmitHandler}>Create</Button>
         </Form>
       </div>
-    )
+    );
   }
 }

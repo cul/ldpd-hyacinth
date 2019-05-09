@@ -12,21 +12,30 @@ class Ability
       # Permissions all users get
       can [:show, :update], User, id: user.id
       can [:index, :show, :create], :term
-      # can :index, Project, everyone should be able to see a list of projects they have access to
 
       # System Wide Permissions
       assign_system_wide_permissions(system_permissions)
 
       # Project Based Permissions
       project_permissions.each do |project_id, actions|
-        can :show, Project, id: project_id
-        can :show, PublishTarget, project_id: project_id
-        can :show, FieldSet, project_id: project_id
+        project_string_key = Project.find(project_id).string_key
 
-        if actions.include?('manage')
-          can :update, Project, id: project_id
-          can [:show, :create, :update, :destroy], FieldSet, project_id: project_id
-        end
+        can [:index, :show], Project, id: project_id
+        can [:index, :show], Project, string_key: project_string_key
+
+        can :show, PublishTarget, project_id: project_id
+        can :show, PublishTarget, project: { string_key: project_string_key }
+
+        can :show, FieldSet, project_id: project_id
+        can :show, FieldSet, project: { string_key: project_string_key }
+
+        next unless actions.include?('manage')
+
+        can :update, Project, id: project_id
+        can :update, Project, string_key: project_string_key
+
+        can [:show, :create, :update, :destroy], FieldSet, project_id: project_id
+        can [:show, :create, :update, :destroy], FieldSet, project: { string_key: project_string_key }
       end
 
       # Digital Object Permissions
@@ -69,7 +78,7 @@ class Ability
   def to_list
     rules.map do |rule|
       object = { actions: rule.actions, subject: rule.subjects.map { |s| s.is_a?(Symbol) ? s : s.name } }
-      object[:conditions] = rule.conditions unless rule.conditions.blank?
+      object[:conditions] = rule.conditions.transform_keys { |k| k.to_s.camelize(:lower) } unless rule.conditions.blank?
       object[:inverted] = true unless rule.base_behavior
       object
     end
