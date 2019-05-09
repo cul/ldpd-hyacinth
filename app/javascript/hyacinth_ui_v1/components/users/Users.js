@@ -1,11 +1,10 @@
-import React from 'react'
-import { Link, Route, Switch } from "react-router-dom";
+import React from 'react';
+import { Route, Switch } from 'react-router-dom';
 
-import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar'
-import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch'
-import UserIndex from 'hyacinth_ui_v1/components/users/UserIndex'
-import UserNew from 'hyacinth_ui_v1/components/users/UserNew'
-import UserEdit from 'hyacinth_ui_v1/components/users/UserEdit'
+import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch';
+import UserIndex from './UserIndex';
+import UserNew from './UserNew';
+import UserEdit from './UserEdit';
 
 export default class Users extends React.Component {
   render() {

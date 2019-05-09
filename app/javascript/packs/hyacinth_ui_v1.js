@@ -1,16 +1,16 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import { BrowserRouter as Router } from "react-router-dom";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 
-import Constants from 'hyacinth_ui_v1/Constants'
+import Constants from 'hyacinth_ui_v1/Constants';
 
 // app js entry point
-import App from 'hyacinth_ui_v1/app'
+import App from 'hyacinth_ui_v1/app';
 // app css entry point
-import 'hyacinth_ui_v1/stylesheets/hyacinth_ui_v1'
+import 'hyacinth_ui_v1/stylesheets/hyacinth_ui_v1';
 
 // add app-wide support for FontAwesome
-import 'hyacinth_ui_v1/util/FontAwesome'
+import 'hyacinth_ui_v1/util/FontAwesome';
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
@@ -18,5 +18,5 @@ document.addEventListener('DOMContentLoaded', () => {
       <App />
     </Router>,
     document.getElementById('hyacinth-ui-v1-app'),
-  )
+  );
 });

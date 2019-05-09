@@ -1,18 +1,13 @@
-import React from 'react'
-import { Link, Route, Switch } from "react-router-dom";
-import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar'
-import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch'
-import DigitalObjectSearch from 'hyacinth_ui_v1/components/digital_objects/DigitalObjectSearch'
-import DigitalObjectNew from 'hyacinth_ui_v1/components/digital_objects/DigitalObjectNew'
-import DigitalObjectEdit from 'hyacinth_ui_v1/components/digital_objects/DigitalObjectEdit'
-import DigitalObjectShow from 'hyacinth_ui_v1/components/digital_objects/DigitalObjectShow'
+import React from 'react';
+import { Link, Route, Switch } from 'react-router-dom';
+import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar';
+import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch';
+import DigitalObjectSearch from 'hyacinth_ui_v1/components/digital_objects/DigitalObjectSearch';
+import DigitalObjectNew from 'hyacinth_ui_v1/components/digital_objects/DigitalObjectNew';
+import DigitalObjectEdit from 'hyacinth_ui_v1/components/digital_objects/DigitalObjectEdit';
+import DigitalObjectShow from 'hyacinth_ui_v1/components/digital_objects/DigitalObjectShow';
 
 export default class DigitalObjects extends React.Component {
-
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return(
       <div>

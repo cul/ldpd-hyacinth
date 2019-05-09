@@ -1,13 +1,12 @@
-import React from 'react'
-import { Link } from "react-router-dom";
-import { Row, Col, Form, Button, Collapse } from 'react-bootstrap';
+import React from 'react';
+import { Row, Col, Form, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import producer from "immer";
+import producer from 'immer';
 
-import ProjectSubHeading from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading'
+import ProjectSubHeading from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
 import CancelButton from 'hyacinth_ui_v1/components/layout/CancelButton';
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
-import withErrorHandler from 'hyacinth_ui_v1/hoc/withErrorHandler/withErrorHandler'
+import withErrorHandler from 'hyacinth_ui_v1/hoc/withErrorHandler/withErrorHandler';
 
 class CoreDataEdit extends React.Component {
   state = {

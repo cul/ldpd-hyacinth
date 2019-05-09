@@ -1,15 +1,15 @@
-import React from 'react'
-import { Link, Route, Switch, Redirect } from "react-router-dom";
+import React from 'react';
+import { Route, Switch, Redirect } from 'react-router-dom';
 
-import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch'
-import ProjectIndex from 'hyacinth_ui_v1/components/projects/ProjectIndex'
-import ProjectNew from 'hyacinth_ui_v1/components/projects/ProjectNew'
-import CoreData from 'hyacinth_ui_v1/components/projects/core_data/CoreData'
-import FieldSet from 'hyacinth_ui_v1/components/projects/field_sets/FieldSet'
-import PublishTarget from 'hyacinth_ui_v1/components/projects/publish_targets/PublishTarget'
-import ProjectLayout from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectLayout'
-import ProjectTabs from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectTabs/ProjectTabs'
-import ProjectTab from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectTabs/ProjectTab/ProjectTab'
+import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch';
+import ProjectIndex from './ProjectIndex';
+import ProjectNew from './ProjectNew';
+import CoreData from './core_data/CoreData';
+import FieldSet from './field_sets/FieldSet';
+import PublishTarget from './publish_targets/PublishTarget';
+import ProjectLayout from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectLayout';
+import ProjectTabs from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectTabs/ProjectTabs';
+import ProjectTab from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectTabs/ProjectTab/ProjectTab';
 import ability from 'hyacinth_ui_v1/util/ability';
 
 export default class Projects extends React.Component {
@@ -23,13 +23,13 @@ export default class Projects extends React.Component {
         <Route path="/projects/:string_key" render={props =>
           <ProjectLayout stringKey={props.match.params.string_key}>
             <ProjectTabs>
-              <ProjectTab to={props.match.url + '/core_data'} name="Core Data"/>
-              <ProjectTab to={props.match.url + "/enabled_dynamic_fields/item"} name="Item Fields"/>
-              <ProjectTab to={props.match.url + "/enabled_dynamic_fields/asset"} name="Asset Fields"/>
-              <ProjectTab to={props.match.url + "/enabled_dynamic_fields/site"} name="Site Fields"/>
-              <ProjectTab to={props.match.url + '/permissions'} name="Permissions"/>
-              <ProjectTab to={props.match.url + '/publish_targets'} name="Publish Targets"/>
-              <ProjectTab to={props.match.url + "/field_sets"} name="Field Sets"/>
+              <ProjectTab to={`${props.match.url}/core_data`} name="Core Data"/>
+              <ProjectTab to={`${props.match.url}/enabled_dynamic_fields/item`} name="Item Fields"/>
+              <ProjectTab to={`${props.match.url}/enabled_dynamic_fields/asset`} name="Asset Fields"/>
+              <ProjectTab to={`${props.match.url}/enabled_dynamic_fields/site`} name="Site Fields"/>
+              <ProjectTab to={`${props.match.url}/permissions`} name="Permissions"/>
+              <ProjectTab to={`${props.match.url}/publish_targets`} name="Publish Targets"/>
+              <ProjectTab to={`${props.match.url}/field_sets`} name="Field Sets"/>
             </ProjectTabs>
 
             <div className="m-3">

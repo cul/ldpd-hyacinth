@@ -1,8 +1,7 @@
 import React from 'react'
-import { Link } from "react-router-dom";
 import { Row, Col, Form, Button } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
-import produce from "immer";
+import produce from 'immer';
 
 import CancelButton from 'hyacinth_ui_v1/components/layout/CancelButton';
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
@@ -10,7 +9,7 @@ import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
 class FieldSetForm extends React.Component {
   state = {
     fieldSet: {
-      displayLabel: ""
+      displayLabel: '',
     }
   }
 
@@ -45,7 +44,7 @@ class FieldSetForm extends React.Component {
 
     hyacinthApi.delete(this.props.match.url.replace('edit', ''))
       .then(res => {
-        this.props.history.push('/projects/' + this.props.match.params.string_key + '/field_sets');
+        this.props.history.push(`/projects/${this.props.match.params.string_key}/field_sets`);
       })
       .catch(error => {
         console.log(error)
@@ -58,7 +57,7 @@ class FieldSetForm extends React.Component {
   }
 
   render() {
-    let deleteButton = "";
+    let deleteButton = '';
 
     if (this.props.match.params.id) {
       deleteButton = <Button variant="outline-danger" type="button" onClick={this.onDeleteHandler}>Delete</Button>
@@ -74,7 +73,8 @@ class FieldSetForm extends React.Component {
                 type="text"
                 name="displayLabel"
                 value={this.state.fieldSet.displayLabel}
-                onChange={this.onChangeHandler} />
+                onChange={this.onChangeHandler}
+              />
             </Col>
           </Form.Group>
 
@@ -82,7 +82,7 @@ class FieldSetForm extends React.Component {
             <Col sm={'auto'} className="mr-auto">{deleteButton}</Col>
 
             <Col sm={'auto'}>
-              <CancelButton to={'/projects/' + this.props.match.params.string_key + '/field_sets'} />
+              <CancelButton to={`/projects/${this.props.match.params.string_key}/field_sets`} />
             </Col>
 
             <Col sm={'auto'}>

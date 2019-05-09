@@ -1,10 +1,10 @@
-import React from 'react'
-import { Link, Route, Switch } from "react-router-dom";
+import React from 'react';
+import { Link, Route, Switch } from 'react-router-dom';
 
-import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch'
-import FieldSetIndex from 'hyacinth_ui_v1/components/projects/field_sets/FieldSetIndex'
-import FieldSetNew from 'hyacinth_ui_v1/components/projects/field_sets/FieldSetNew'
-import FieldSetEdit from 'hyacinth_ui_v1/components/projects/field_sets/FieldSetEdit'
+import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch';
+import FieldSetIndex from './FieldSetIndex';
+import FieldSetNew from './FieldSetNew';
+import FieldSetEdit from './FieldSetEdit';
 
 export default class FieldSet extends React.Component {
   render() {

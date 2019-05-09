@@ -1,3 +1,3 @@
-import { Ability } from '@casl/ability'
+import { Ability } from '@casl/ability';
 
-export default new Ability([])
+export default new Ability([]);

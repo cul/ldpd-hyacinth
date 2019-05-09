@@ -1,20 +1,20 @@
 import React from 'react';
-import { Link } from "react-router-dom";
-import { Table, Button } from "react-bootstrap";
-import producer from "immer";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { LinkContainer } from "react-router-bootstrap";
+import { Link } from 'react-router-dom';
+import { Table, Button } from 'react-bootstrap';
+import producer from 'immer';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { LinkContainer } from 'react-router-bootstrap';
 
-import ProjectSubHeading from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading'
+import ProjectSubHeading from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
 
 export default class FieldSetIndex extends React.Component {
   state = {
-    publishTargets: []
+    publishTargets: [],
   }
 
   componentDidMount() {
-    hyacinthApi.get('/projects/' + this.props.match.params.string_key + '/publish_targets')
+    hyacinthApi.get(`/projects/${this.props.match.params.string_key}/publish_targets`)
       .then(res => {
         this.setState(producer(draft => { draft.publishTargets = res.data.publish_targets }))
       });

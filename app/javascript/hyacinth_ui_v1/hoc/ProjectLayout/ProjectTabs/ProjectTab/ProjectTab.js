@@ -1,10 +1,9 @@
-import React from 'react'
-import { Nav } from "react-bootstrap";
-import { LinkContainer } from "react-router-bootstrap";
-import { Route } from "react-router-dom";
+import React from 'react';
+import { Nav } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
+import { Route } from 'react-router-dom';
 
 export default class ProjectTab extends React.Component {
-
   render() {
     return (
        <Route
@@ -18,9 +17,9 @@ export default class ProjectTab extends React.Component {
                  </Nav.Link>
                </LinkContainer>
              </Nav.Item>
-           )
+           );
          }}
        />
-    )
+    );
   }
 }

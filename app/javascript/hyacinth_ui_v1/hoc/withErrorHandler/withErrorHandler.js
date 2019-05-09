@@ -1,33 +1,31 @@
 import React, { Component } from 'react';
-import { Alert } from "react-bootstrap";
+import { Alert } from 'react-bootstrap';
 
 const withErrorHandler = (WrappedComponent, axios) => {
   return class extends Component {
     state = {
-      errors: null
+      errors: null,
     }
 
-    componentWillMount () {
+    componentWillMount() {
       this.reqInterceptor = axios.interceptors.request.use(req => {
         this.setState({ errors: null });
         return req;
       });
 
       this.resInterceptor = axios.interceptors.response.use(res => res, error => {
-
-        console.log(error.resop)
         if (error.response.status === 404) {
-          this.props.history.push('/404')
+          this.props.history.push('/404');
         } else {
           this.setState({
-            errors: error.response.data.errors
+            errors: error.response.data.errors,
           });
         }
         return Promise.reject(error);
       });
     }
 
-    componentWillUnmount () {
+    componentWillUnmount() {
       axios.interceptors.request.eject(this.reqInterceptor);
       axios.interceptors.response.eject(this.resInterceptor);
     }
@@ -36,8 +34,8 @@ const withErrorHandler = (WrappedComponent, axios) => {
       this.setState({ error: null });
     }
 
-    render () {
-      let errorMessages = ""
+    render() {
+      let errorMessages = '';
 
       if (this.state.errors) {
         errorMessages = (
@@ -47,17 +45,17 @@ const withErrorHandler = (WrappedComponent, axios) => {
               {this.state.errors.map((error, index) => (<li key={index}>{error.title}</li>))}
             </ul>
           </Alert>
-        )
+        );
       }
 
       return (
         <>
           {errorMessages}
-          <WrappedComponent {...this.props}/>
+          <WrappedComponent {...this.props} />
         </>
       );
     }
-  }
-}
+  };
+};
 
 export default withErrorHandler;

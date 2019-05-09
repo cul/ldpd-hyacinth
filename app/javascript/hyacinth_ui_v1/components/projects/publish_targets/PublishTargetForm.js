@@ -1,8 +1,7 @@
-import React from 'react'
-import { Link } from "react-router-dom";
+import React from 'react';
 import { Row, Col, Form, Button } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
-import produce from "immer";
+import produce from 'immer';
 
 import CancelButton from 'hyacinth_ui_v1/components/layout/CancelButton';
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
@@ -11,10 +10,10 @@ class PublishTargetForm extends React.Component {
   state = {
     formType: '',
     publishTarget: {
-      displayLabel: "",
-      stringKey: "",
-      publishUrl: "",
-      apiKey: ""
+      displayLabel: '',
+      stringKey: '',
+      publishUrl: '',
+      apiKey: '',
     }
   }
 

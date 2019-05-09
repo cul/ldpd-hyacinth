@@ -1,15 +1,12 @@
-import React from 'react'
-import { Link } from "react-router-dom";
-import { Row, Col, Form, Button } from 'react-bootstrap';
-import produce from "immer";
+import React from 'react';
+import produce from 'immer';
 
-import ProjectSubHeading from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading'
+import ProjectSubHeading from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
-import FieldSetForm from './FieldSetForm'
+import FieldSetForm from './FieldSetForm';
 import withErrorHandler from 'hyacinth_ui_v1/hoc/withErrorHandler/withErrorHandler';
 
 class FieldSetNew extends React.Component {
-
   createFieldSet = (data) => {
     hyacinthApi.post('/projects/'+ this.props.match.params.string_key + '/field_sets', data)
       .then(res => {

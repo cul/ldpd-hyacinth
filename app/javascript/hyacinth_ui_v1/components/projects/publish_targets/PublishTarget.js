@@ -1,10 +1,10 @@
-import React from 'react'
-import { Link, Route, Switch } from "react-router-dom";
+import React from 'react';
+import { Route, Switch } from 'react-router-dom';
 
-import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch'
-import PublishTargetIndex from 'hyacinth_ui_v1/components/projects/publish_targets/PublishTargetIndex'
-import PublishTargetNew from 'hyacinth_ui_v1/components/projects/publish_targets/PublishTargetNew'
-import PublishTargetEdit from 'hyacinth_ui_v1/components/projects/publish_targets/PublishTargetEdit'
+import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch';
+import PublishTargetIndex from './PublishTargetIndex';
+import PublishTargetNew from './PublishTargetNew';
+import PublishTargetEdit from './PublishTargetEdit';
 
 export default class PublishTarget extends React.Component {
   render() {

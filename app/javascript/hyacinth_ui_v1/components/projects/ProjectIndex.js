@@ -1,7 +1,7 @@
 import React from 'react';
-import { Link } from "react-router-dom";
-import { Table } from "react-bootstrap";
-import producer from "immer";
+import { Link } from 'react-router-dom';
+import { Table } from 'react-bootstrap';
+import producer from 'immer';
 
 import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar';
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';

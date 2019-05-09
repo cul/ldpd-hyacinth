@@ -1,9 +1,8 @@
-import React from 'react'
-import { Button } from "react-bootstrap";
+import React from 'react';
+import { Button } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 
 class CancelButton extends React.Component {
-
   onCancelHandler = (event) => {
     this.props.history.push(this.props.to);
   }
@@ -15,4 +14,4 @@ class CancelButton extends React.Component {
   }
 }
 
-export default withRouter(CancelButton)
+export default withRouter(CancelButton);

@@ -1,18 +1,16 @@
-import React from 'react'
-import { Link } from "react-router-dom";
-import { Row, Col, Form, Button } from 'react-bootstrap';
-import produce from "immer";
+import React from 'react';
+import produce from 'immer';
 
-import ProjectSubHeading from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading'
+import ProjectSubHeading from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
-import PublishTargetForm from './PublishTargetForm'
+import PublishTargetForm from './PublishTargetForm';
 import withErrorHandler from 'hyacinth_ui_v1/hoc/withErrorHandler/withErrorHandler';
 
 class PublishTargetEdit extends React.Component {
   updatePublishTarget = (data) => {
     hyacinthApi.patch(this.props.match.url.replace('edit', ''), data)
       .then(res => {
-        this.props.history.push('/projects/'+ this.props.match.params.string_key + '/publish_targets/');
+        this.props.history.push(`/projects/${this.props.match.params.string_key}/publish_targets/`);
       });
   }
 

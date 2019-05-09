@@ -1,19 +1,17 @@
-import React from 'react'
-import { Link } from "react-router-dom";
-import { Row, Col, Form, Button } from 'react-bootstrap';
-import produce from "immer";
+import React from 'react';
+import { Col, Form, Button } from 'react-bootstrap';
+import produce from 'immer';
 
-import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar'
+import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar';
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
 
 export default class UserNew extends React.Component {
-
   state = {
     firstName: '',
     lastName: '',
     email: '',
     password: '',
-    passwordConfirmation: ''
+    passwordConfirmation: '',
   }
 
   // From: http://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
@@ -33,23 +31,19 @@ export default class UserNew extends React.Component {
   onSubmitHandler = (event) => {
     event.preventDefault()
 
-    let data = {
+    const data = {
       user: {
         first_name: this.state.firstName,
         last_name: this.state.lastName,
         email: this.state.email,
         password: this.state.password,
-        password_confirmation: this.state.passwordConfirmation
+        password_confirmation: this.state.passwordConfirmation,
       }
     }
 
     hyacinthApi.post('/users', data)
       .then(res => {
-        console.log('User created')
-        // redirect to edit screen for that user
-        console.log(res)
         this.props.history.push('/users/' + res.data.user.uid + '/edit');
-
       })
       .catch(error => {
         console.log(error)
@@ -66,7 +60,7 @@ export default class UserNew extends React.Component {
       <div>
         <ContextualNavbar
           title="Create New User"
-          rightHandLinks={[{link: '/users', label: 'Cancel'}]} />
+          rightHandLinks={[{ link: '/users', label: 'Cancel' }]} />
 
         <Form onSubmit={this.onSubmitHandler}>
           <Form.Row>
@@ -76,7 +70,7 @@ export default class UserNew extends React.Component {
                 type="text"
                 name="firstName"
                 value={this.state.firstName}
-                onChange={this.onChangeHandler}/>
+                onChange={this.onChangeHandler} />
             </Form.Group>
 
             <Form.Group as={Col} sm={6}>
@@ -85,7 +79,8 @@ export default class UserNew extends React.Component {
                 type="text"
                 name="lastName"
                 value={this.state.lastName}
-                onChange={this.onChangeHandler} />
+                onChange={this.onChangeHandler}
+              />
             </Form.Group>
           </Form.Row>
 
@@ -96,7 +91,8 @@ export default class UserNew extends React.Component {
                 type="email"
                 name="email"
                 value={this.state.email}
-                onChange={this.onChangeHandler} />
+                onChange={this.onChangeHandler}
+              />
               <Form.Text className="text-muted">
                 For Columbia sign-in, please use columbia email: uni@columbia.edu
               </Form.Text>
@@ -115,7 +111,8 @@ export default class UserNew extends React.Component {
                 type="text"
                 name="passwordConfirmation"
                 value={this.state.passwordConfirmation}
-                onChange={this.onChangeHandler} />
+                onChange={this.onChangeHandler}
+              />
             </Form.Group>
           </Form.Row>
 

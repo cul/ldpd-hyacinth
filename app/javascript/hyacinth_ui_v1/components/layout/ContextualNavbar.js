@@ -1,10 +1,8 @@
-import React from 'react'
-import { Link } from "react-router-dom";
-import { Nav, Navbar, Button } from "react-bootstrap";
-import { LinkContainer } from "react-router-bootstrap";
+import React from 'react';
+import { Nav, Navbar } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
 
 export default class ContextualNavbar extends React.Component {
-
   render() {
     let title = null;
 

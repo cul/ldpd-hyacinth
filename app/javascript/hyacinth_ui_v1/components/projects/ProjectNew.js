@@ -1,19 +1,17 @@
-import React from 'react'
-import { Link } from "react-router-dom";
-import { Row, Col, Form, Button } from 'react-bootstrap';
-import produce from "immer";
+import React from 'react';
+import { Col, Form, Button } from 'react-bootstrap';
+import produce from 'immer';
 
-import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar'
-import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api'
-import withErrorHandler from 'hyacinth_ui_v1/hoc/withErrorHandler/withErrorHandler'
+import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar';
+import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
+import withErrorHandler from 'hyacinth_ui_v1/hoc/withErrorHandler/withErrorHandler';
 
 class ProjectNew extends React.Component {
-
   state = {
     project: {
       stringKey: '',
       displayLabel: '',
-      projectUrl: ''
+      projectUrl: '',
     }
   }
 
@@ -30,10 +28,8 @@ class ProjectNew extends React.Component {
 
     hyacinthApi.post('/projects', data)
       .then(res => {
-        // console.log('Project created')
-        // console.log(res)
-        this.props.history.push('/projects/' + res.data.project.string_key + '/core_data/edit');
-      })
+        this.props.history.push(`/projects/${res.data.project.string_key}/core_data/edit`);
+      });
   }
 
   onChangeHandler = (event) => {
@@ -46,7 +42,8 @@ class ProjectNew extends React.Component {
       <>
         <ContextualNavbar
           title="Create New Project"
-          rightHandLinks={[{link: '/projects', label: 'Cancel'}]} />
+          rightHandLinks={[{ link: '/projects', label: 'Cancel' }]}
+        />
 
         <Form onSubmit={this.onSubmitHandler}>
           <Form.Row>
@@ -56,7 +53,8 @@ class ProjectNew extends React.Component {
                 type="text"
                 name="stringKey"
                 value={this.state.project.stringKey}
-                onChange={this.onChangeHandler}/>
+                onChange={this.onChangeHandler}
+              />
             </Form.Group>
 
             <Form.Group as={Col} sm={6}>
@@ -65,7 +63,8 @@ class ProjectNew extends React.Component {
                 type="text"
                 name="displayLabel"
                 value={this.state.displayLabel}
-                onChange={this.onChangeHandler} />
+                onChange={this.onChangeHandler}
+              />
             </Form.Group>
           </Form.Row>
 
@@ -76,7 +75,8 @@ class ProjectNew extends React.Component {
                 type="text"
                 name="projectUrl"
                 value={this.state.projectUrl}
-                onChange={this.onChangeHandler} />
+                onChange={this.onChangeHandler}
+              />
             </Form.Group>
           </Form.Row>
 

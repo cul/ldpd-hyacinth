@@ -1,9 +1,8 @@
-import React from 'react'
-import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import Constants from 'hyacinth_ui_v1/Constants'
-import { Navbar, Nav, NavDropdown } from "react-bootstrap";
-import { LinkContainer } from "react-router-bootstrap";
+import React from 'react';
+
+import Constants from 'hyacinth_ui_v1/Constants';
+import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
 import { Can } from 'hyacinth_ui_v1/util/ability_context';
 
 export default class TopNavbar extends React.Component {

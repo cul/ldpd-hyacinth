@@ -1,9 +1,9 @@
-import React from 'react'
-import { Route, Switch } from "react-router-dom";
+import React from 'react';
+import { Route, Switch } from 'react-router-dom';
 
-import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch'
-import CoreDataShow from 'hyacinth_ui_v1/components/projects/core_data/CoreDataShow'
-import CoreDataEdit from 'hyacinth_ui_v1/components/projects/core_data/CoreDataEdit'
+import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch';
+import CoreDataShow from './CoreDataShow';
+import CoreDataEdit from './CoreDataEdit';
 
 export default class CoreData extends React.Component {
   render() {
