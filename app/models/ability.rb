@@ -29,16 +29,10 @@ class Ability
         can :show, FieldSet, project_id: project_id
         can :show, FieldSet, project: { string_key: project_string_key }
 
-        next unless actions.include?('manage')
-
-        can :update, Project, id: project_id
-        can :update, Project, string_key: project_string_key
-
-        can [:show, :create, :update, :destroy], FieldSet, project_id: project_id
-        can [:show, :create, :update, :destroy], FieldSet, project: { string_key: project_string_key }
+        actions.each do |action|
+          send action.to_sym, project_id, project_string_key
+        end
       end
-
-      # Digital Object Permissions
     end
   end
 
@@ -81,6 +75,60 @@ class Ability
       object[:conditions] = rule.conditions.transform_keys { |k| k.to_s.camelize(:lower) } unless rule.conditions.blank?
       object[:inverted] = true unless rule.base_behavior
       object
+    end
+  end
+
+  def manage(project_id, project_string_key)
+    can :update, Project, id: project_id
+    can :update, Project, string_key: project_string_key
+
+    can [:show, :create, :update, :destroy], FieldSet, project_id: project_id
+    can [:show, :create, :update, :destroy], FieldSet, project: { string_key: project_string_key }
+  end
+
+  def read_objects(project_id, project_string_key)
+    # assign for digital objects in the project
+    can :read_objects, Project, { id: project_id }
+    can :read_objects, Project, { string_key: project_string_key }
+    # and in the context of a specific object where applicable
+    can :show, DigitalObject::Base do |digital_object|
+      digital_object.projects.detect { |p| p.id.eql?(project_id) }
+    end
+  end
+
+  def create_objects(project_id, project_string_key)
+    # assign for digital objects in the project
+    can :create_objects, Project, { id: project_id }
+    can :create_objects, Project, { string_key: project_string_key }
+  end
+
+  def update_objects(project_id, project_string_key)
+    # assign for digital objects in the project
+    can :update_objects, Project, { id: project_id }
+    can :update_objects, Project, { string_key: project_string_key }
+    # and in the context of a specific object where applicable
+    can [:edit, :update], DigitalObject::Base do |digital_object|
+      digital_object.projects.detect { |p| p.id.eql?(project_id) || p.string_key.eql?(project_string_key) }
+    end
+  end
+
+  def delete_objects(project_id, project_string_key)
+    # assign for digital objects in the project
+    can :delete_objects, Project, { id: project_id }
+    can :delete_objects, Project, { string_key: project_string_key }
+    # and in the context of a specific object where applicable
+    can :destroy, DigitalObject::Base do |digital_object|
+      digital_object.projects.detect { |p| p.id.eql?(project_id) || p.string_key.eql?(project_string_key) }
+    end
+  end
+
+  def publish_objects(project_id, project_string_key)
+    # assign for digital objects in the project
+    can :publish_objects, Project, { id: project_id }
+    can :publish_objects, Project, { string_key: project_string_key }
+    # and in the context of a specific object where applicable
+    can [:publish, :preserve], DigitalObject::Base do |digital_object|
+      digital_object.projects.detect { |p| p.id.eql?(project_id) || p.string_key.eql?(project_string_key) }
     end
   end
 

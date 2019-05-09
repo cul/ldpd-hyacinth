@@ -23,7 +23,20 @@ FactoryBot.define do
         })
         instance.instance_variable_set('@custom_field1', 'excellent value 1')
         instance.instance_variable_set('@custom_field2', 'excellent value 2')
+        instance.instance_variable_set('@uid', Random.rand.to_s)
         instance
+      end
+    end
+
+    trait :with_lincoln_project do
+      after(:build) do |digital_object|
+        digital_object.projects << create(:project, :legend_of_lincoln)
+      end
+    end
+
+    trait :with_minken_project do
+      after(:build) do |digital_object|
+        digital_object.projects << create(:project, :myth_of_minken)
       end
     end
   end

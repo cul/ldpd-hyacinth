@@ -14,7 +14,7 @@ class ApplicationApiController < ActionController::API
     # used as a before_action callback for any controllers that only respond
     # to json.
     def ensure_json_request
-      return if request.format == :json
+      return if request.format.blank? || request.format == :json
       head :not_acceptable
     end
 

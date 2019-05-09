@@ -9,5 +9,11 @@ FactoryBot.define do
       display_label { 'Legend of Lincoln' }
       project_url   { 'https://example.com/legend_of_lincoln' }
     end
+
+    trait :myth_of_minken do
+      string_key { 'myth_of_minken' }
+      display_label { 'Myth of Minken' }
+      project_url   { 'https://example.com/myth_of_minken' }
+    end
   end
 end

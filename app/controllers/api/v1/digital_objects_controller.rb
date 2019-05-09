@@ -2,7 +2,8 @@ module Api
   module V1
     class DigitalObjectsController < ApplicationApiController
       before_action :ensure_json_request
-      before_action :set_digital_object, only: [:show, :edit, :update, :destroy]
+      before_action :load_resource, only: [:show, :edit, :update, :destroy, :preserve, :publish]
+      authorize_resource :digital_object, only: [:show, :edit, :update, :destroy, :preserve, :publish]
 
       # GET /digital_objects/search
       # GET /digital_objects/search.json
@@ -22,12 +23,16 @@ module Api
       # POST /digital_objects
       # POST /digital_objects.json
       def create
-        digital_object_data = JSON.parse(create_or_update_params['digital_object_data_json'])
-        @digital_object = DigitalObject::Base.class_for_type(digital_object_data['digital_object_type']).new
-        @digital_object.set_digital_object_data(digital_object_data)
-
-        if @digital_object.save
-          render :show, status: :created, location: @digital_object
+        digital_object_data = create_or_update_params
+        digital_object_record = DigitalObjectRecord.create
+        @digital_object = DigitalObject::Base.from_serialized_form(digital_object_record, digital_object_data)
+        @digital_object.projects.each do |project|
+          authorize! :create_objects, project
+        end
+        @digital_object.state ||= Hyacinth::DigitalObject::State::ACTIVE
+        # digital_object_record.save first because it will assign necessary digital_object_record attributes
+        if @digital_object.save && (digital_object_record.persisted? || digital_object_record.save)
+          show
         else
           render json: @digital_object.errors, status: :unprocessable_entity
         end
@@ -36,15 +41,16 @@ module Api
       # PATCH/PUT /digital_objects/1
       # PATCH/PUT /digital_objects/1.json
       def update
-        if @digital_object.update(digital_object_params)
-          render :show, status: :ok, location: @digital_object
+        digital_object_data = create_or_update_params
+        @digital_object.set_digital_object_data(digital_object_data, true)
+        if @digital_object.save
+          show
         else
           render json: @digital_object.errors, status: :unprocessable_entity
         end
       end
 
       def preserve
-        @digital_object = DigitalObject::Base.find(publish_params[:uid])
         if @digital_object.preserve
           render :show, status: :created, location: @digital_object
         else
@@ -54,8 +60,6 @@ module Api
 
       # Publish the The publish action also preserves.
       def publish
-        @digital_object = DigitalObject::Base.find(publish_params[:uid])
-
         # TODO: One day, if publish targets don't need to be saved in the
         # preservation system, we may want the publish method to accept
         # params like publish_to, unpublish_from, and republish. For now,
@@ -71,18 +75,20 @@ module Api
 
       # DELETE /digital_objects/1
       # DELETE /digital_objects/1.json
+      # Unimplemented
       def destroy
         @digital_object.destroy
         head :no_content
       end
 
-      private
-        def set_digital_object
-          @digital_object = DigitalObject::Base.find(params[:uid])
-        end
+      def load_resource
+        @digital_object ||= DigitalObject::Base.find(params[:id])
+      end
 
+      private
         def create_or_update_params
-          params.require(:digital_object).permit(:digital_object_data_json)
+          # TODO: decide how we want to validate dynamic field data parameters
+          params[:digital_object][:digital_object_data_json]&.permit!.to_h
         end
     end
   end
