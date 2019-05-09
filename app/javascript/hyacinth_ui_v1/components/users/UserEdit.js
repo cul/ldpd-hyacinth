@@ -1,5 +1,7 @@
 import React from 'react';
-import { Row, Col, Form, Button, Collapse } from 'react-bootstrap';
+import {
+  Row, Col, Form, Button, Collapse,
+} from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import producer from 'immer';
 
@@ -18,21 +20,21 @@ export default class UserEdit extends React.Component {
       currentPassword: '',
       password: '',
       passwordConfirmation: '',
-    }
+    },
   }
 
   onChangeHandler = (event) => {
-    const target = event.target;
-    this.setState(producer(draft => { draft.user[target.name] = target.value }))
+    const { target } = event;
+    this.setState(producer((draft) => { draft.user[target.name] = target.value; }));
   }
 
   onFlipActivationHandler = (event) => {
     event.preventDefault();
 
-    hyacinthApi.patch('/users/' + this.props.match.params.uid, { user: { is_active: !this.state.user.isActive } })
-      .then(res => {
-        console.log('Changed user activation')
-        this.setState(producer(draft => { draft.user.isActive = res.data.user.is_active }))
+    hyacinthApi.patch(`/users/${this.props.match.params.uid}`, { user: { is_active: !this.state.user.isActive } })
+      .then((res) => {
+        console.log('Changed user activation');
+        this.setState(producer((draft) => { draft.user.isActive = res.data.user.is_active; }));
       });
   }
 
@@ -47,14 +49,14 @@ export default class UserEdit extends React.Component {
         current_password: this.state.user.currentPassword,
         password: this.state.user.password,
         password_confirmation: this.state.user.passwordConfirmation,
-      }
-    }
+      },
+    };
 
     hyacinthApi.patch(`/users/${this.props.match.params.uid}`, data)
-      .then(res => {
-        console.log('Saved Changes')
+      .then((res) => {
+        console.log('Saved Changes');
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
         console.log(error.response.data);
       });
@@ -62,27 +64,27 @@ export default class UserEdit extends React.Component {
 
   componentDidMount = () => {
     hyacinthApi.get(`/users/${this.props.match.params.uid}`)
-      .then(res => {
-        const user = res.data.user
-        this.setState(producer(draft => {
-          draft.user.uid = user.uid
-          draft.user.isActive = user.is_active
-          draft.user.firstName = user.first_name
-          draft.user.lastName = user.last_name
-          draft.user.email = user.email
-        }))
+      .then((res) => {
+        const { user } = res.data;
+        this.setState(producer((draft) => {
+          draft.user.uid = user.uid;
+          draft.user.isActive = user.is_active;
+          draft.user.firstName = user.first_name;
+          draft.user.lastName = user.last_name;
+          draft.user.email = user.email;
+        }));
       })
-     .catch(error => {
-       console.log(error)
-     });
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   render() {
-    return(
+    return (
       <>
         <ContextualNavbar
           title={`Editing User: ${this.state.user.firstName} ${this.state.user.lastName}`}
-          rightHandLinks={[{link: '/users', label: 'Cancel'}]}
+          rightHandLinks={[{ link: '/users', label: 'Cancel' }]}
         />
 
         <Form as={Col} onSubmit={this.onSubmitHandler}>
@@ -149,8 +151,11 @@ export default class UserEdit extends React.Component {
                 className="pl-0"
                 onClick={() => this.setState({ changePasswordOpen: !this.state.changePasswordOpen })}
                 aria-controls="collapse-form"
-                aria-expanded={this.state.changePasswordOpen} >
-                Change Password <FontAwesomeIcon icon={this.state.changePasswordOpen ? "angle-double-up" : "angle-double-down"} />
+                aria-expanded={this.state.changePasswordOpen}
+              >
+                Change Password
+                {' '}
+                <FontAwesomeIcon icon={this.state.changePasswordOpen ? 'angle-double-up' : 'angle-double-down'} />
               </Button>
             </Col>
           </Form.Row>

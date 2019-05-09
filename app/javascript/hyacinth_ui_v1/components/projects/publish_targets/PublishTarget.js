@@ -19,6 +19,6 @@ export default class PublishTarget extends React.Component {
           <Route component={NoMatch} />
         </Switch>
       </div>
-    )
+    );
   }
 }

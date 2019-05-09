@@ -1,16 +1,15 @@
-import React from 'react'
-import { Link, Route, Switch } from "react-router-dom";
+import React from 'react';
+import { Link, Route, Switch } from 'react-router-dom';
 
-import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar'
-import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch'
-import GroupIndex from 'hyacinth_ui_v1/components/groups/GroupIndex'
-import GroupNew from 'hyacinth_ui_v1/components/groups/GroupNew'
-import GroupEdit from 'hyacinth_ui_v1/components/groups/GroupEdit'
+import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar';
+import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch';
+import GroupIndex from 'hyacinth_ui_v1/components/groups/GroupIndex';
+import GroupNew from 'hyacinth_ui_v1/components/groups/GroupNew';
+import GroupEdit from 'hyacinth_ui_v1/components/groups/GroupEdit';
 
 export default class Groups extends React.Component {
-
   render() {
-    return(
+    return (
       <div>
         <Switch>
           <Route exact path="/groups" component={GroupIndex} />
@@ -20,6 +19,6 @@ export default class Groups extends React.Component {
           <Route component={NoMatch} />
         </Switch>
       </div>
-    )
+    );
   }
 }

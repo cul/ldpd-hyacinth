@@ -10,7 +10,7 @@ class CancelButton extends React.Component {
   render() {
     return (
       <Button variant="danger" type="button" onClick={this.onCancelHandler}>Cancel</Button>
-    )
+    );
   }
 }
 

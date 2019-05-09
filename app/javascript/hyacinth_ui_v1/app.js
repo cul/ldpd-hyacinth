@@ -15,37 +15,39 @@ import hyacinthApi from './util/hyacinth_api';
 
 const APPLICATION_BASE_PATH = '/ui/v1';
 
-const Index = () => <div>
-  { /* TODO: If not logged in, redirect to login screen */ }
-  <Redirect to="/digital-objects" />
-</div>;
+const Index = () => (
+  <div>
+    { /* TODO: If not logged in, redirect to login screen */ }
+    <Redirect to="/digital-objects" />
+  </div>
+);
 
 export default class App extends React.Component {
   state = {
     user: {
       firstName: '',
       lastName: '',
-      uid: ''
-    }
+      uid: '',
+    },
   }
 
   componentDidMount() {
     hyacinthApi.get('/users/authenticated')
-      .then(res => {
-        const user = res.data
+      .then((res) => {
+        const user = res.data;
 
-        ability.update(user.rules)
+        ability.update(user.rules);
 
-        this.setState(producer(draft => {
-          draft.user.firstName = user.first_name
-          draft.user.lastName = user.last_name
-          draft.user.uid = user.uid
-        }))
-      })
+        this.setState(producer((draft) => {
+          draft.user.firstName = user.first_name;
+          draft.user.lastName = user.last_name;
+          draft.user.uid = user.uid;
+        }));
+      });
   }
 
   render() {
-    return(
+    return (
       <AbilityContext.Provider value={ability}>
         <TopNavbar user={this.state.user} />
         <Container id="main">
@@ -61,6 +63,6 @@ export default class App extends React.Component {
           </Switch>
         </Container>
       </AbilityContext.Provider>
-    )
+    );
   }
 }

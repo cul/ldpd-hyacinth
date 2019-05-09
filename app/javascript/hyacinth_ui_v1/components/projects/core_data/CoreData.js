@@ -12,6 +12,6 @@ export default class CoreData extends React.Component {
         <Route exact path={`${this.props.match.path}`} component={CoreDataShow} />
         <Route path={`${this.props.match.path}/edit`} component={CoreDataEdit} />
       </Switch>
-    )
+    );
   }
 }

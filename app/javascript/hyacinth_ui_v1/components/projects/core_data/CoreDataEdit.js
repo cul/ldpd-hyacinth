@@ -1,5 +1,7 @@
 import React from 'react';
-import { Row, Col, Form, Button } from 'react-bootstrap';
+import {
+  Row, Col, Form, Button,
+} from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import producer from 'immer';
 
@@ -13,60 +15,60 @@ class CoreDataEdit extends React.Component {
     project: {
       stringKey: '',
       displayLabel: '',
-      projectUrl: ''
-    }
+      projectUrl: '',
+    },
   }
 
   onChangeHandler = (event) => {
-    let target = event.target;
-    this.setState(producer(draft => { draft.project[target.name] = target.value }))
+    const { target } = event;
+    this.setState(producer((draft) => { draft.project[target.name] = target.value; }));
   }
 
   onSubmitHandler = (event) => {
     event.preventDefault();
 
-    let data = {
+    const data = {
       project: {
         display_label: this.state.project.displayLabel,
-        project_url: this.state.project.projectUrl
-      }
-    }
+        project_url: this.state.project.projectUrl,
+      },
+    };
 
-    hyacinthApi.patch("/projects/" + this.props.match.params.string_key, data)
-      .then(res => {
-        this.props.history.push("/projects/" + this.props.match.params.string_key + "/core_data");
+    hyacinthApi.patch(`/projects/${this.props.match.params.string_key}`, data)
+      .then((res) => {
+        this.props.history.push(`/projects/${this.props.match.params.string_key}/core_data`);
       });
   }
 
   onDeleteHandler = (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
-    hyacinthApi.delete("/projects/" + this.props.match.params.string_key)
-      .then(res => {
+    hyacinthApi.delete(`/projects/${this.props.match.params.string_key}`)
+      .then((res) => {
         this.props.history.push('/projects/');
       })
-      .catch(error => {
-        console.log(error)
-    });
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   componentDidMount = () => {
-    hyacinthApi.get("/projects/" + this.props.match.params.string_key)
-      .then(res => {
-        let project = res.data.project
-        this.setState(producer(draft => {
-          draft.project.stringKey = project.string_key
-          draft.project.displayLabel = project.display_label
-          draft.project.projectUrl = project.project_url
-        }))
+    hyacinthApi.get(`/projects/${this.props.match.params.string_key}`)
+      .then((res) => {
+        const { project } = res.data;
+        this.setState(producer((draft) => {
+          draft.project.stringKey = project.string_key;
+          draft.project.displayLabel = project.display_label;
+          draft.project.projectUrl = project.project_url;
+        }));
       })
-     .catch(error => {
-       console.log(error)
-     });
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   render() {
-    return(
+    return (
       <>
         <ProjectSubHeading>Editing Core Data</ProjectSubHeading>
 
@@ -85,7 +87,8 @@ class CoreDataEdit extends React.Component {
                 type="text"
                 name="displayLabel"
                 value={this.state.project.displayLabel}
-                onChange={this.onChangeHandler}/>
+                onChange={this.onChangeHandler}
+              />
             </Col>
           </Form.Group>
 
@@ -96,26 +99,27 @@ class CoreDataEdit extends React.Component {
                 type="text"
                 name="projectUrl"
                 value={this.state.project.projectUrl}
-                onChange={this.onChangeHandler} />
+                onChange={this.onChangeHandler}
+              />
             </Col>
           </Form.Group>
 
           <Form.Row>
-            <Col sm={'auto'} className="mr-auto">
+            <Col sm="auto" className="mr-auto">
               <Button variant="outline-danger" type="submit" onClick={this.onDeleteHandler}>Delete Project</Button>
             </Col>
 
-            <Col sm={'auto'} className="ml-auto">
-              <CancelButton to={'/projects/' + this.props.match.params.string_key + '/core_data' } />
+            <Col sm="auto" className="ml-auto">
+              <CancelButton to={`/projects/${this.props.match.params.string_key}/core_data`} />
             </Col>
 
-            <Col sm={'auto'}>
+            <Col sm="auto">
               <Button variant="primary" type="submit" onClick={this.onSubmitHandler}>Save</Button>
             </Col>
           </Form.Row>
         </Form>
       </>
-    )
+    );
   }
 }
 

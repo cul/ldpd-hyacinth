@@ -15,28 +15,26 @@ export default class FieldSetIndex extends React.Component {
 
   componentDidMount() {
     hyacinthApi.get(`/projects/${this.props.match.params.string_key}/publish_targets`)
-      .then(res => {
-        this.setState(producer(draft => { draft.publishTargets = res.data.publish_targets }))
+      .then((res) => {
+        this.setState(producer((draft) => { draft.publishTargets = res.data.publish_targets; }));
       });
   }
 
   render() {
-    let rows = <tr><td colSpan="4">No publish targets have been defined</td></tr>
+    let rows = <tr><td colSpan="4">No publish targets have been defined</td></tr>;
 
     if (this.state.publishTargets.length > 0) {
-      rows = this.state.publishTargets.map(publish_target => {
-        return (
-          <tr key={publish_target.string_key}>
-            <td><Link to={"/projects/" + this.props.match.params.string_key + "/publish_targets/" + publish_target.string_key + "/edit"} href="#">{publish_target.display_label}</Link></td>
-            <td>{publish_target.string_key}</td>
-            <td>{publish_target.publish_url}</td>
-            <td>{publish_target.api_key}</td>
-          </tr>
-        )
-      })
+      rows = this.state.publishTargets.map(publish_target => (
+        <tr key={publish_target.string_key}>
+          <td><Link to={`/projects/${this.props.match.params.string_key}/publish_targets/${publish_target.string_key}/edit`} href="#">{publish_target.display_label}</Link></td>
+          <td>{publish_target.string_key}</td>
+          <td>{publish_target.publish_url}</td>
+          <td>{publish_target.api_key}</td>
+        </tr>
+      ));
     }
 
-    return(
+    return (
       <>
         <ProjectSubHeading>Publish Targets</ProjectSubHeading>
 
@@ -53,14 +51,18 @@ export default class FieldSetIndex extends React.Component {
             {rows}
             <tr>
               <td className="text-center" colSpan="4">
-                <LinkContainer to={this.props.match.url + '/new'}>
-                  <Button size="sm" variant="link"><FontAwesomeIcon icon="plus" /> Add New Publish Target</Button>
+                <LinkContainer to={`${this.props.match.url}/new`}>
+                  <Button size="sm" variant="link">
+                    <FontAwesomeIcon icon="plus" />
+                    {' '}
+Add New Publish Target
+                  </Button>
                 </LinkContainer>
               </td>
             </tr>
           </tbody>
         </Table>
       </>
-    )
+    );
   }
 }

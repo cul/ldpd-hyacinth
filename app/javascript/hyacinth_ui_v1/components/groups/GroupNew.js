@@ -1,39 +1,39 @@
-import React from 'react'
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
-import producer from "immer";
+import producer from 'immer';
 
-import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar'
+import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar';
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
 
 export default class GroupNew extends React.Component {
-
   state = {
     group: {
-      stringKey: ''
-    }
+      stringKey: '',
+    },
   }
 
   submitHandler = (event) => {
-    const data = { string_key: this.state.group.stringKey }
+    const data = { string_key: this.state.group.stringKey };
 
     hyacinthApi.post('/groups', data)
-      .then(res => {
-        console.log('Created New Group')
+      .then((res) => {
+        console.log('Created New Group');
       });
   }
 
   onChangeHandler = (event) => {
-    let target = event.target;
-    this.setState(producer(draft => { draft.group[target.name] = target.value }))
+    const { target } = event;
+    this.setState(producer((draft) => { draft.group[target.name] = target.value; }));
   }
 
   render() {
-    return(
+    return (
       <div>
         <ContextualNavbar
           title="Create New Group"
-          rightHandLinks={[{link: '/groups', label: 'Cancel'}]} />
+          rightHandLinks={[{ link: '/groups', label: 'Cancel' }]}
+        />
 
         <p>Enter a unique string key for this group.</p>
         <Form onSubmit={this.submitHandler}>
@@ -43,7 +43,8 @@ export default class GroupNew extends React.Component {
               type="text"
               value={this.state.stringKey}
               name="stringKey"
-              onChange={this.onChangeHandler}/>
+              onChange={this.onChangeHandler}
+            />
             <Form.Text className="text-muted">
               String keys must start with a lowercase letter and can only contain dashes and lowercase alphanumeric characters.
             </Form.Text>
@@ -52,9 +53,12 @@ export default class GroupNew extends React.Component {
           <Button
             variant="primary"
             type="submit"
-            onClick={this.submitHandler}>Create</Button>
+            onClick={this.submitHandler}
+          >
+Create
+          </Button>
         </Form>
       </div>
-    )
+    );
   }
 }

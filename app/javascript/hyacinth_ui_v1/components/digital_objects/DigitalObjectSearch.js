@@ -4,16 +4,17 @@ import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar'
 
 export default class DigitalObjectSearch extends React.Component {
   render() {
-    return(
+    return (
       <div>
         <ContextualNavbar
           title="Digital Objects"
-          rightHandLinks={[{label: 'New Digital Object', link: '/digital-objects/new'}]} />
+          rightHandLinks={[{ label: 'New Digital Object', link: '/digital-objects/new' }]}
+        />
 
         <Link to="/digital-objects/1" className="nav-link" href="#">Object 1</Link>
         <Link to="/digital-objects/2" className="nav-link" href="#">Object 2</Link>
       </div>
-    )
+    );
   }
   /*
   componentDidMount() {

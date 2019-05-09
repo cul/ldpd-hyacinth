@@ -12,33 +12,33 @@ class ProjectNew extends React.Component {
       stringKey: '',
       displayLabel: '',
       projectUrl: '',
-    }
+    },
   }
 
   onSubmitHandler = (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
-    let data = {
+    const data = {
       project: {
         string_key: this.state.project.stringKey,
         display_label: this.state.project.displayLabel,
         project_url: this.state.project.projectUrl,
-      }
-    }
+      },
+    };
 
     hyacinthApi.post('/projects', data)
-      .then(res => {
+      .then((res) => {
         this.props.history.push(`/projects/${res.data.project.string_key}/core_data/edit`);
       });
   }
 
   onChangeHandler = (event) => {
-    let target = event.target
-    this.setState(produce(draft => { draft.project[target.name] = target.value }))
+    const { target } = event;
+    this.setState(produce((draft) => { draft.project[target.name] = target.value; }));
   }
 
   render() {
-    return(
+    return (
       <>
         <ContextualNavbar
           title="Create New Project"
@@ -83,7 +83,7 @@ class ProjectNew extends React.Component {
           <Button variant="primary" type="submit" onClick={this.onSubmitHandler}>Create</Button>
         </Form>
       </>
-    )
+    );
   }
 }
 

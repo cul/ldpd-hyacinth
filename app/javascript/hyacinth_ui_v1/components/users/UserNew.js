@@ -21,15 +21,15 @@ export default class UserNew extends React.Component {
     for (let i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
 
     return result;
-  };
+  }
 
   generatePasswordHandler = () => {
     const newPassword = this.getRandomPassword(14);
-    this.setState(produce(draft => { draft.password = newPassword, draft.passwordConfirmation = newPassword }));
+    this.setState(produce((draft) => { draft.password = newPassword, draft.passwordConfirmation = newPassword; }));
   }
 
   onSubmitHandler = (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
     const data = {
       user: {
@@ -38,29 +38,30 @@ export default class UserNew extends React.Component {
         email: this.state.email,
         password: this.state.password,
         password_confirmation: this.state.passwordConfirmation,
-      }
-    }
+      },
+    };
 
     hyacinthApi.post('/users', data)
-      .then(res => {
-        this.props.history.push('/users/' + res.data.user.uid + '/edit');
+      .then((res) => {
+        this.props.history.push(`/users/${res.data.user.uid}/edit`);
       })
-      .catch(error => {
-        console.log(error)
+      .catch((error) => {
+        console.log(error);
       });
   }
 
   onChangeHandler = (event) => {
-    let target = event.target
-    this.setState(produce(draft => { draft[target.name] = target.value }))
+    const { target } = event;
+    this.setState(produce((draft) => { draft[target.name] = target.value; }));
   }
 
   render() {
-    return(
+    return (
       <div>
         <ContextualNavbar
           title="Create New User"
-          rightHandLinks={[{ link: '/users', label: 'Cancel' }]} />
+          rightHandLinks={[{ link: '/users', label: 'Cancel' }]}
+        />
 
         <Form onSubmit={this.onSubmitHandler}>
           <Form.Row>
@@ -70,7 +71,8 @@ export default class UserNew extends React.Component {
                 type="text"
                 name="firstName"
                 value={this.state.firstName}
-                onChange={this.onChangeHandler} />
+                onChange={this.onChangeHandler}
+              />
             </Form.Group>
 
             <Form.Group as={Col} sm={6}>
@@ -126,6 +128,6 @@ export default class UserNew extends React.Component {
           <Button variant="primary" type="submit" onClick={this.onSubmitHandler}>Create</Button>
         </Form>
       </div>
-    )
+    );
   }
 }

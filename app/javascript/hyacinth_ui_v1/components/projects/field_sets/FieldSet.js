@@ -20,6 +20,6 @@ export default class FieldSet extends React.Component {
           <Route component={NoMatch} />
         </Switch>
       </div>
-    )
+    );
   }
 }

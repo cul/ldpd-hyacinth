@@ -13,8 +13,8 @@ class ProjectLayout extends Component {
 
   componentDidMount = () => {
     hyacinthApi.get(`/projects/${this.props.stringKey}`)
-      .then(res => {
-        this.setState(producer(draft => {
+      .then((res) => {
+        this.setState(producer((draft) => {
           draft.project.displayLabel = res.data.project.display_label;
         }));
       });
@@ -26,7 +26,8 @@ class ProjectLayout extends Component {
       <>
         <ContextualNavbar
           title={`Project | ${this.state.project.displayLabel}`}
-          rightHandLinks={[{ link: '/projects', label: 'Back to All Projects' }]} />
+          rightHandLinks={[{ link: '/projects', label: 'Back to All Projects' }]}
+        />
 
         {this.props.children}
       </>

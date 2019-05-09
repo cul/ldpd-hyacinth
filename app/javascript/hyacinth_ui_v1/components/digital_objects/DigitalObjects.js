@@ -9,7 +9,7 @@ import DigitalObjectShow from 'hyacinth_ui_v1/components/digital_objects/Digital
 
 export default class DigitalObjects extends React.Component {
   render() {
-    return(
+    return (
       <div>
         <Switch>
           <Route exact path="/digital-objects" component={DigitalObjectSearch} />
@@ -20,6 +20,6 @@ export default class DigitalObjects extends React.Component {
           <Route component={NoMatch} />
         </Switch>
       </div>
-    )
+    );
   }
 }

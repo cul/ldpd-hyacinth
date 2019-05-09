@@ -8,7 +8,7 @@ import UserEdit from './UserEdit';
 
 export default class Users extends React.Component {
   render() {
-    return(
+    return (
       <div>
         <Switch>
           <Route exact path="/users" component={UserIndex} />
@@ -18,6 +18,6 @@ export default class Users extends React.Component {
           <Route component={NoMatch} />
         </Switch>
       </div>
-    )
+    );
   }
 }

@@ -9,29 +9,27 @@ import { Can } from 'hyacinth_ui_v1/util/ability_context';
 
 export default class ProjectIndex extends React.Component {
   state = {
-    projects: []
+    projects: [],
   }
 
   componentDidMount() {
     hyacinthApi.get('/projects/')
-      .then(res => {
-        this.setState(producer(draft => { draft.projects = res.data.projects }))
+      .then((res) => {
+        this.setState(producer((draft) => { draft.projects = res.data.projects; }));
       }); // TODO: catch error
   }
 
   render() {
-    let rows = ''
+    let rows = '';
 
     if (this.state.projects) {
-      rows = this.state.projects.map(project => {
-        return (
-          <tr key={project.id}>
-            <td><Link to={"/projects/" + project.string_key + "/core_data"} href="#">{project.display_label}</Link></td>
-            <td>{project.string_key}</td>
-            <td></td>
-          </tr>
-        )
-      })
+      rows = this.state.projects.map(project => (
+        <tr key={project.id}>
+          <td><Link to={`/projects/${project.string_key}/core_data`} href="#">{project.display_label}</Link></td>
+          <td>{project.string_key}</td>
+          <td />
+        </tr>
+      ));
     }
 
     return (
@@ -41,7 +39,8 @@ export default class ProjectIndex extends React.Component {
             can => (
               <ContextualNavbar
                 title="Projects"
-                rightHandLinks={can ? [{link: '/projects/new', label: 'New Project'}] : []} />
+                rightHandLinks={can ? [{ link: '/projects/new', label: 'New Project' }] : []}
+              />
             )
           }
         </Can>
@@ -59,6 +58,6 @@ export default class ProjectIndex extends React.Component {
           </tbody>
         </Table>
       </>
-    )
+    );
   }
 }

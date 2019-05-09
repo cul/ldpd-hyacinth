@@ -13,24 +13,22 @@ export default class Users extends React.Component {
 
   componentDidMount() {
     hyacinthApi.get('/users/')
-      .then(res => {
-        this.setState(producer(draft => { draft.users = res.data.users }))
+      .then((res) => {
+        this.setState(producer((draft) => { draft.users = res.data.users; }));
       });
   }
 
   render() {
-    const rows = this.state.users.map(user => {
-      return (
-        <tr key={user.uid}>
-          <td><Link to={`/users/${user.uid}/edit`} className="nav-link" href="#">{`${user.first_name} ${user.last_name}`}</Link></td>
-          <td>{user.email}</td>
-          <td>{user.groups}</td>
-          <td>{(user.is_active) ? 'true' : 'false'}</td>
-        </tr>
-      )
-    })
+    const rows = this.state.users.map(user => (
+      <tr key={user.uid}>
+        <td><Link to={`/users/${user.uid}/edit`} className="nav-link" href="#">{`${user.first_name} ${user.last_name}`}</Link></td>
+        <td>{user.email}</td>
+        <td>{user.groups}</td>
+        <td>{(user.is_active) ? 'true' : 'false'}</td>
+      </tr>
+    ));
 
-    return(
+    return (
       <div>
         <ContextualNavbar
           title="Users"

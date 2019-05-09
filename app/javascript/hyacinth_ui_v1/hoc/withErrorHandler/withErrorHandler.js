@@ -1,19 +1,18 @@
 import React, { Component } from 'react';
 import { Alert } from 'react-bootstrap';
 
-const withErrorHandler = (WrappedComponent, axios) => {
-  return class extends Component {
+const withErrorHandler = (WrappedComponent, axios) => class extends Component {
     state = {
       errors: null,
     }
 
     componentWillMount() {
-      this.reqInterceptor = axios.interceptors.request.use(req => {
+      this.reqInterceptor = axios.interceptors.request.use((req) => {
         this.setState({ errors: null });
         return req;
       });
 
-      this.resInterceptor = axios.interceptors.response.use(res => res, error => {
+      this.resInterceptor = axios.interceptors.response.use(res => res, (error) => {
         if (error.response.status === 404) {
           this.props.history.push('/404');
         } else {
@@ -55,7 +54,6 @@ const withErrorHandler = (WrappedComponent, axios) => {
         </>
       );
     }
-  };
 };
 
 export default withErrorHandler;

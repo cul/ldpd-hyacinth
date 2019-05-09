@@ -11,40 +11,38 @@ import { Can } from 'hyacinth_ui_v1/util/ability_context';
 
 export default class FieldSetIndex extends React.Component {
   state = {
-    fieldSets: []
+    fieldSets: [],
   }
 
   componentDidMount() {
-    hyacinthApi.get('/projects/' + this.props.match.params.string_key + '/field_sets')
-      .then(res => {
-        this.setState(producer(draft => { draft.fieldSets = res.data.field_sets }))
+    hyacinthApi.get(`/projects/${this.props.match.params.string_key}/field_sets`)
+      .then((res) => {
+        this.setState(producer((draft) => { draft.fieldSets = res.data.field_sets; }));
       }); // TODO: catch error
   }
 
   render() {
-    let rows = <tr><td colSpan="2">No fieldsets have been defined</td></tr>
+    let rows = <tr><td colSpan="2">No fieldsets have been defined</td></tr>;
 
     if (this.state.fieldSets.length > 0) {
-      rows = this.state.fieldSets.map(fieldSet => {
-        return (
-          <tr key={fieldSet.id}>
-            <td>
-              <Can I="edit" of={{ modelName: "FieldSet", projectStringKey: this.props.match.params.string_key}} passThrough>
-                {
+      rows = this.state.fieldSets.map(fieldSet => (
+        <tr key={fieldSet.id}>
+          <td>
+            <Can I="edit" of={{ modelName: 'FieldSet', projectStringKey: this.props.match.params.string_key }} passThrough>
+              {
                   can => (
-                    can ?
-                      <Link to={'/projects/' + this.props.match.params.string_key + '/field_sets/' + fieldSet.id + "/edit"} href="#">{fieldSet.display_label}</Link> :
-                      fieldSet.display_label
+                    can
+                      ? <Link to={`/projects/${this.props.match.params.string_key}/field_sets/${fieldSet.id}/edit`} href="#">{fieldSet.display_label}</Link>
+                      : fieldSet.display_label
                   )
                 }
-              </Can>
-            </td>
-          </tr>
-        )
-      })
+            </Can>
+          </td>
+        </tr>
+      ));
     }
 
-    return(
+    return (
       <>
         <ProjectSubHeading>Field Sets</ProjectSubHeading>
 
@@ -53,14 +51,18 @@ export default class FieldSetIndex extends React.Component {
             {rows}
             <tr>
               <td className="text-center">
-                <LinkContainer to={this.props.match.url + '/new'}>
-                  <Button size="sm" variant="link"><FontAwesomeIcon icon="plus" /> Add New Field Set</Button>
+                <LinkContainer to={`${this.props.match.url}/new`}>
+                  <Button size="sm" variant="link">
+                    <FontAwesomeIcon icon="plus" />
+                    {' '}
+Add New Field Set
+                  </Button>
                 </LinkContainer>
               </td>
             </tr>
           </tbody>
         </Table>
       </>
-    )
+    );
   }
 }

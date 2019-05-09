@@ -29,16 +29,15 @@ export default class TopNavbar extends React.Component {
     // document.body.appendChild(formElement);
     // formElement.submit();
 
-    let postData = {};
-    postData[document.querySelector("meta[name='csrf-param']").getAttribute("content")] =
-      document.querySelector("meta[name='csrf-token']").getAttribute("content");
+    const postData = {};
+    postData[document.querySelector("meta[name='csrf-param']").getAttribute('content')] = document.querySelector("meta[name='csrf-token']").getAttribute('content');
 
     fetch(Constants.SIGN_OUT_PATH, {
       method: 'delete',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(postData)
-    }).then(function(response) {
-      if(response.status) {
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(postData),
+    }).then((response) => {
+      if (response.status) {
         location.href = '/';
       } else {
         console.log(response);
@@ -56,56 +55,56 @@ export default class TopNavbar extends React.Component {
 
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto">
-            <LinkContainer to={'/digital-objects'}>
+            <LinkContainer to="/digital-objects">
               <Nav.Link>Digital Objects</Nav.Link>
             </LinkContainer>
 
             <NavDropdown title="Manage">
-              <LinkContainer to='/projects'>
+              <LinkContainer to="/projects">
                 <NavDropdown.Item>Projects</NavDropdown.Item>
               </LinkContainer>
 
               <Can I="manage" a="Vocabulary">
-                <LinkContainer to='/controlled-vocabularies'>
+                <LinkContainer to="/controlled-vocabularies">
                   <NavDropdown.Item>Controlled Vocabularies</NavDropdown.Item>
                 </LinkContainer>
               </Can>
 
-              <LinkContainer to='/assignments'>
+              <LinkContainer to="/assignments">
                 <NavDropdown.Item>Assignments</NavDropdown.Item>
               </LinkContainer>
 
               <NavDropdown.Divider />
 
-              <LinkContainer to='/export-jobs'>
+              <LinkContainer to="/export-jobs">
                 <NavDropdown.Item>Export Jobs</NavDropdown.Item>
               </LinkContainer>
 
-              <LinkContainer to='/import-jobs'>
+              <LinkContainer to="/import-jobs">
                 <NavDropdown.Item>Import Jobs</NavDropdown.Item>
               </LinkContainer>
             </NavDropdown>
 
             <Can I="manage" a="User">
               <NavDropdown title="Admin">
-                <LinkContainer to='/users'>
+                <LinkContainer to="/users">
                   <NavDropdown.Item>Users</NavDropdown.Item>
                 </LinkContainer>
 
                 <Can I="manage" a="all">
                   <NavDropdown.Divider />
 
-                  <LinkContainer to='/dynamic-fields'>
+                  <LinkContainer to="/dynamic-fields">
                     <NavDropdown.Item>Dynamic Fields</NavDropdown.Item>
                   </LinkContainer>
 
-                  <LinkContainer to='/field_export_profiles'>
+                  <LinkContainer to="/field_export_profiles">
                     <NavDropdown.Item>Field Export Profiles</NavDropdown.Item>
                   </LinkContainer>
 
                   <NavDropdown.Divider />
 
-                  <LinkContainer to='/system_information'>
+                  <LinkContainer to="/system_information">
                     <NavDropdown.Item>System Information</NavDropdown.Item>
                   </LinkContainer>
                 </Can>
@@ -114,8 +113,8 @@ export default class TopNavbar extends React.Component {
           </Nav>
 
           <Nav>
-            <NavDropdown alignRight title={this.props.user.firstName + ' ' + this.props.user.lastName}>
-              <LinkContainer to={'/users/' + this.props.user.uid + '/edit'}>
+            <NavDropdown alignRight title={`${this.props.user.firstName} ${this.props.user.lastName}`}>
+              <LinkContainer to={`/users/${this.props.user.uid}/edit`}>
                 <NavDropdown.Item>Profile</NavDropdown.Item>
               </LinkContainer>
 
