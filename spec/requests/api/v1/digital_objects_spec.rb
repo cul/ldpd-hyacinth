@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Digital Objects API endpoint", type: :request do
   let(:authorized_object) { FactoryBot.create(:digital_object_test_subclass, :with_sample_data, :with_lincoln_project) }
-  let(:authorized_project) { authorized_object.projects.to_a[0] }
+  let(:authorized_project) { authorized_object.projects.first }
 
   describe 'GET /api/v1/digital_objects/:id' do
     include_examples 'requires user to have correct permissions' do
@@ -27,6 +27,7 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
   end
 
   describe 'PATCH /api/v1/digital_objects/:id' do
+    # these properties vary from the existing object properties from the factory
     let(:properties) do
       {
         digital_object: {
