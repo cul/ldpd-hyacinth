@@ -11,6 +11,7 @@ class Ability
 
       # Permissions all users get
       can [:show, :update], User, id: user.id
+      can [:show, :update], User, uid: user.uid
       can [:index, :show, :create], :term
 
       # System Wide Permissions
