@@ -2,9 +2,9 @@ import React from 'react';
 import { Col, Form, Button } from 'react-bootstrap';
 import produce from 'immer';
 
-import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar';
-import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
-import withErrorHandler from 'hyacinth_ui_v1/hoc/withErrorHandler/withErrorHandler';
+import ContextualNavbar from '../layout/ContextualNavbar';
+import hyacinthApi from '../../util/hyacinth_api';
+import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
 class ProjectNew extends React.Component {
   state = {
@@ -20,15 +20,15 @@ class ProjectNew extends React.Component {
 
     const data = {
       project: {
-        string_key: this.state.project.stringKey,
-        display_label: this.state.project.displayLabel,
-        project_url: this.state.project.projectUrl,
+        stringKey: this.state.project.stringKey,
+        displayLabel: this.state.project.displayLabel,
+        projectUrl: this.state.project.projectUrl,
       },
     };
 
     hyacinthApi.post('/projects', data)
       .then((res) => {
-        this.props.history.push(`/projects/${res.data.project.string_key}/core_data/edit`);
+        this.props.history.push(`/projects/${res.data.project.stringKey}/core_data/edit`);
       });
   }
 

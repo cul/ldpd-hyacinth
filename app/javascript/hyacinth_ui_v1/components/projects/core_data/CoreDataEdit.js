@@ -33,16 +33,16 @@ class CoreDataEdit extends React.Component {
       },
     };
 
-    hyacinthApi.patch(`/projects/${this.props.match.params.string_key}`, data)
+    hyacinthApi.patch(`/projects/${this.props.match.params.stringKey}`, data)
       .then((res) => {
-        this.props.history.push(`/projects/${this.props.match.params.string_key}/core_data`);
+        this.props.history.push(`/projects/${this.props.match.params.stringKey}/core_data`);
       });
   }
 
   onDeleteHandler = (event) => {
     event.preventDefault();
 
-    hyacinthApi.delete(`/projects/${this.props.match.params.string_key}`)
+    hyacinthApi.delete(`/projects/${this.props.match.params.stringKey}`)
       .then((res) => {
         this.props.history.push('/projects/');
       })
@@ -52,13 +52,14 @@ class CoreDataEdit extends React.Component {
   }
 
   componentDidMount = () => {
-    hyacinthApi.get(`/projects/${this.props.match.params.string_key}`)
+    hyacinthApi.get(`/projects/${this.props.match.params.stringKey}`)
       .then((res) => {
-        const { project } = res.data;
+        const { stringKey, displayLabel, projectUrl } = res.data.project;
+
         this.setState(producer((draft) => {
-          draft.project.stringKey = project.string_key;
-          draft.project.displayLabel = project.display_label;
-          draft.project.projectUrl = project.project_url;
+          draft.project.stringKey = stringKey;
+          draft.project.displayLabel = displayLabel;
+          draft.project.projectUrl = projectUrl;
         }));
       })
       .catch((error) => {
@@ -109,7 +110,7 @@ class CoreDataEdit extends React.Component {
             </Col>
 
             <Col sm="auto" className="ml-auto">
-              <CancelButton to={`/projects/${this.props.match.params.string_key}/core_data`} />
+              <CancelButton to={`/projects/${this.props.match.params.stringKey}/core_data`} />
             </Col>
 
             <Col sm="auto">

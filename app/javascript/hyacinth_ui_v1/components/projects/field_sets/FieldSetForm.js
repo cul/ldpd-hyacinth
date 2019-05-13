@@ -5,8 +5,8 @@ import {
 import { withRouter } from 'react-router-dom';
 import produce from 'immer';
 
-import CancelButton from 'hyacinth_ui_v1/components/layout/CancelButton';
-import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
+import CancelButton from '../../layout/CancelButton';
+import hyacinthApi from '../../../util/hyacinth_api';
 
 class FieldSetForm extends React.Component {
   state = {
@@ -16,11 +16,15 @@ class FieldSetForm extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.match.params.id) {
-      hyacinthApi.get(this.props.match.url.replace('edit', ''))
+    const { projectStringKey, id } = this.props.match.params
+
+    if (id) {
+      hyacinthApi.get(`/projects/${projectStringKey}/field_sets/${id}`)
         .then((res) => {
+          const { fieldSet } = res.data
+
           this.setState(produce((draft) => {
-            draft.fieldSet.displayLabel = res.data.field_set.display_label;
+            draft.fieldSet = fieldSet;
           }));
         })
         .catch((error) => {
@@ -32,24 +36,17 @@ class FieldSetForm extends React.Component {
   onSubmitHandler = (event) => {
     event.preventDefault();
 
-    const data = {
-      field_set: {
-        display_label: this.state.fieldSet.displayLabel,
-      },
-    };
-
-    this.props.submitFormAction(data);
+    this.props.submitFormAction(this.state.fieldSet);
   }
 
   onDeleteHandler = (event) => {
     event.preventDefault();
 
-    hyacinthApi.delete(this.props.match.url.replace('edit', ''))
+    const { projectStringKey, id } = this.props.match.params
+
+    hyacinthApi.delete(`/projects/${projectStringKey}/field_sets/${id}`)
       .then((res) => {
-        this.props.history.push(`/projects/${this.props.match.params.string_key}/field_sets`);
-      })
-      .catch((error) => {
-        console.log(error);
+        this.props.history.push(`/projects/${projectStringKey}/field_sets`);
       });
   }
 
@@ -84,7 +81,7 @@ class FieldSetForm extends React.Component {
             <Col sm="auto" className="mr-auto">{deleteButton}</Col>
 
             <Col sm="auto">
-              <CancelButton to={`/projects/${this.props.match.params.string_key}/field_sets`} />
+              <CancelButton to={`/projects/${this.props.match.params.projectStringKey}/field_sets`} />
             </Col>
 
             <Col sm="auto">

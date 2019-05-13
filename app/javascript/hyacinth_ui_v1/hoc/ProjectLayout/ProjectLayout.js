@@ -15,7 +15,7 @@ class ProjectLayout extends Component {
     hyacinthApi.get(`/projects/${this.props.stringKey}`)
       .then((res) => {
         this.setState(producer((draft) => {
-          draft.project.displayLabel = res.data.project.display_label;
+          draft.project.displayLabel = res.data.project.displayLabel;
         }));
       });
   }

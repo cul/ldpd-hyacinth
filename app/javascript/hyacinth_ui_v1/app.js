@@ -38,8 +38,8 @@ export default class App extends React.Component {
         ability.update(user.rules);
 
         this.setState(producer((draft) => {
-          draft.user.firstName = user.first_name;
-          draft.user.lastName = user.last_name;
+          draft.user.firstName = user.firstName;
+          draft.user.lastName = user.lastName;
           draft.user.uid = user.uid;
         }));
       });

@@ -6,9 +6,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import producer from 'immer';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
+import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import hyacinthApi from '../../util/hyacinth_api';
 
-export default class UserEdit extends React.Component {
+class UserEdit extends React.Component {
   state = {
     changePasswordOpen: false,
     user: {
@@ -23,9 +24,8 @@ export default class UserEdit extends React.Component {
     },
   }
 
-  onChangeHandler = (event) => {
-    const { target } = event;
-    this.setState(producer((draft) => { draft.user[target.name] = target.value; }));
+  onChangeHandler = ({ target: { name, value } }) => {
+    this.setState(producer((draft) => { draft.user[name] = value; }));
   }
 
   onFlipActivationHandler = (event) => {
@@ -33,13 +33,14 @@ export default class UserEdit extends React.Component {
 
     hyacinthApi.patch(`/users/${this.props.match.params.uid}`, { user: { is_active: !this.state.user.isActive } })
       .then((res) => {
-        console.log('Changed user activation');
         this.setState(producer((draft) => { draft.user.isActive = res.data.user.is_active; }));
       });
   }
 
   onSubmitHandler = (event) => {
     event.preventDefault();
+
+    const { params: { uid } } = this.props.match
 
     const data = {
       user: {
@@ -52,7 +53,7 @@ export default class UserEdit extends React.Component {
       },
     };
 
-    hyacinthApi.patch(`/users/${this.props.match.params.uid}`, data)
+    hyacinthApi.patch(`/users/${uid}`, data)
       .then((res) => {
         console.log('Saved Changes');
       })
@@ -68,9 +69,9 @@ export default class UserEdit extends React.Component {
         const { user } = res.data;
         this.setState(producer((draft) => {
           draft.user.uid = user.uid;
-          draft.user.isActive = user.is_active;
-          draft.user.firstName = user.first_name;
-          draft.user.lastName = user.last_name;
+          draft.user.isActive = user.isActive;
+          draft.user.firstName = user.firstName;
+          draft.user.lastName = user.lastName;
           draft.user.email = user.email;
         }));
       })
@@ -200,3 +201,5 @@ export default class UserEdit extends React.Component {
     );
   }
 }
+
+export default withErrorHandler(UserEdit, hyacinthApi)

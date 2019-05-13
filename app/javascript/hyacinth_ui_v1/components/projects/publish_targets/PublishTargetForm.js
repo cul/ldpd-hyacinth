@@ -20,17 +20,16 @@ class PublishTargetForm extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.match.params.publish_target_string_key) {
-      hyacinthApi.get(this.props.match.url.replace('edit', ''))
+    const { projectStringKey, stringKey } = this.props.match.params
+
+    if (stringKey) {
+      hyacinthApi.get(`/projects/${projectStringKey}/publish_targets/${stringKey}`)
         .then((res) => {
-          const { display_label, string_key, publish_url, api_key } = res.data.publish_target
+          const { publishTarget } = res.data
 
           this.setState(produce(draft => {
             draft.formType = 'edit';
-            draft.publishTarget.displayLabel = display_label;
-            draft.publishTarget.stringKey = string_key;
-            draft.publishTarget.publishUrl = publish_url;
-            draft.publishTarget.apiKey = api_key;
+            draft.publishTarget = publishTarget;
           }));
         })
         .catch((error) => {
@@ -47,15 +46,15 @@ class PublishTargetForm extends React.Component {
     event.preventDefault();
 
     const data = {
-      publish_target: {
-        display_label: this.state.publishTarget.displayLabel,
-        publish_url: this.state.publishTarget.publishUrl,
-        api_key: this.state.publishTarget.apiKey,
+      publishTarget: {
+        displayLabel: this.state.publishTarget.displayLabel,
+        publishUrl: this.state.publishTarget.publishUrl,
+        apiKey: this.state.publishTarget.apiKey,
       },
     };
 
     if (this.state.formType == 'new') {
-      data.publish_target.string_key = this.state.publishTarget.stringKey;
+      data.publishTarget.stringKey = this.state.publishTarget.stringKey;
     }
 
     this.props.submitFormAction(data);
@@ -64,9 +63,11 @@ class PublishTargetForm extends React.Component {
   onDeleteHandler = (event) => {
     event.preventDefault();
 
-    hyacinthApi.delete(this.props.match.url.replace('edit', ''))
+    const { projectStringKey, stringKey } = this.props.match.params
+
+    hyacinthApi.delete(`/projects/${projectStringKey}/publish_targets/${stringKey}`)
       .then((res) => {
-        this.props.history.push(`/projects/${this.props.match.params.string_key}/publish_targets`);
+        this.props.history.push(`/projects/${projectStringKey}/publish_targets`);
       });
   }
 
@@ -146,7 +147,7 @@ class PublishTargetForm extends React.Component {
             <Col sm="auto" className="mr-auto">{deleteButton}</Col>
 
             <Col sm="auto">
-              <CancelButton to={`/projects/${this.props.match.params.string_key}/publish_targets`} />
+              <CancelButton to={`/projects/${this.props.match.params.stringKey}/publish_targets`} />
             </Col>
 
             <Col sm="auto">

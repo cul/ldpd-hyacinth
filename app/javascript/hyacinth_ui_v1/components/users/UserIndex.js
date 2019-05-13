@@ -21,10 +21,9 @@ export default class Users extends React.Component {
   render() {
     const rows = this.state.users.map(user => (
       <tr key={user.uid}>
-        <td><Link to={`/users/${user.uid}/edit`} href="#">{`${user.first_name} ${user.last_name}`}</Link></td>
+        <td><Link to={`/users/${user.uid}/edit`} href="#">{`${user.firstName} ${user.lastName}`}</Link></td>
         <td>{user.email}</td>
-        <td>{user.groups}</td>
-        <td>{(user.is_active) ? 'true' : 'false'}</td>
+        <td>{(user.isActive) ? 'true' : 'false'}</td>
       </tr>
     ));
 
@@ -40,7 +39,6 @@ export default class Users extends React.Component {
             <tr>
               <th>Name</th>
               <th>Email</th>
-              <th>Groups</th>
               <th>Active?</th>
             </tr>
           </thead>

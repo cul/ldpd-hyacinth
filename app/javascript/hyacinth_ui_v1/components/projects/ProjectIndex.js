@@ -25,8 +25,8 @@ export default class ProjectIndex extends React.Component {
     if (this.state.projects) {
       rows = this.state.projects.map(project => (
         <tr key={project.id}>
-          <td><Link to={`/projects/${project.string_key}/core_data`} href="#">{project.display_label}</Link></td>
-          <td>{project.string_key}</td>
+          <td><Link to={`/projects/${project.stringKey}/core_data`} href="#">{project.displayLabel}</Link></td>
+          <td>{project.stringKey}</td>
           <td />
         </tr>
       ));

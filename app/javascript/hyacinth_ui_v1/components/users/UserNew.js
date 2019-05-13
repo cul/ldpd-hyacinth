@@ -4,8 +4,9 @@ import produce from 'immer';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
 import hyacinthApi from '../../util/hyacinth_api';
+import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
-export default class UserNew extends React.Component {
+class UserNew extends React.Component {
   state = {
     firstName: '',
     lastName: '',
@@ -33,11 +34,11 @@ export default class UserNew extends React.Component {
 
     const data = {
       user: {
-        first_name: this.state.firstName,
-        last_name: this.state.lastName,
+        firstName: this.state.firstName,
+        lastName: this.state.lastName,
         email: this.state.email,
         password: this.state.password,
-        password_confirmation: this.state.passwordConfirmation,
+        passwordConfirmation: this.state.passwordConfirmation,
       },
     };
 
@@ -131,3 +132,5 @@ export default class UserNew extends React.Component {
     );
   }
 }
+
+export default withErrorHandler(UserNew, hyacinthApi);

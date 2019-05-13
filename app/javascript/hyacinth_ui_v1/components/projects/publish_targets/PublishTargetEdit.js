@@ -10,7 +10,7 @@ class PublishTargetEdit extends React.Component {
   updatePublishTarget = (data) => {
     hyacinthApi.patch(this.props.match.url.replace('edit', ''), data)
       .then((res) => {
-        this.props.history.push(`/projects/${this.props.match.params.string_key}/publish_targets/`);
+        this.props.history.push(`/projects/${this.props.match.params.projectStringKey}/publish_targets`);
       });
   }
 

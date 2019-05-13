@@ -6,6 +6,7 @@ import producer from 'immer';
 import ProjectSubHeading from '../../../hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
 import hyacinthApi from '../../../util/hyacinth_api';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
+import { Can } from '../../../util/ability_context';
 
 class CoreDataShow extends React.Component {
   state = {
@@ -17,18 +18,20 @@ class CoreDataShow extends React.Component {
   }
 
   componentDidMount = () => {
-    hyacinthApi.get(`/projects/${this.props.match.params.string_key}`)
+    hyacinthApi.get(`/projects/${this.props.match.params.stringKey}`)
       .then((res) => {
-        const { project } = res.data;
+        const { stringKey, displayLabel, projectUrl } = res.data.project;
         this.setState(producer((draft) => {
-          draft.project.stringKey = project.string_key;
-          draft.project.displayLabel = project.display_label;
-          draft.project.projectUrl = project.project_url;
+          draft.project.stringKey = stringKey;
+          draft.project.displayLabel = displayLabel;
+          draft.project.projectUrl = projectUrl;
         }));
       });
   }
 
   render() {
+    const { params: { stringKey } } = this.props.match
+
     return (
       <>
         <ProjectSubHeading>Core Data</ProjectSubHeading>
@@ -43,12 +46,15 @@ class CoreDataShow extends React.Component {
           <Col as="dt" sm={2}>Project URL</Col>
           <Col as="dd" sm={10}>{this.state.project.projectUrl}</Col>
 
-          <Col as="dt" sm={2} />
-          <Col as="dd" sm={10}>
-            <LinkContainer to={`/projects/${this.props.match.params.string_key}/core_data/edit`}>
-              <Button className="pl-0 ml-0" variant="link">Edit</Button>
-            </LinkContainer>
-          </Col>
+
+          <Can I="edit" of={{ modelName: 'Project', stringKey: stringKey }}>
+            <Col as="dt" sm={2} />
+            <Col as="dd" sm={10}>
+              <LinkContainer to={`/projects/${stringKey}/core_data/edit`}>
+                <Button className="pl-0 ml-0" variant="link">Edit</Button>
+              </LinkContainer>
+            </Col>
+          </Can>
         </Row>
       </>
     );
