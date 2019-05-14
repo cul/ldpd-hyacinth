@@ -32,7 +32,7 @@ export default class FieldSetIndex extends React.Component {
       rows = this.state.fieldSets.map(fieldSet => (
         <tr key={fieldSet.id}>
           <td>
-            <Can I="edit" of={{ modelName: 'FieldSet', project: { stringKey: projectStringKey } }} passThrough>
+            <Can I="edit" of={{ subjectType: 'FieldSet', project: { stringKey: projectStringKey } }} passThrough>
               {
                   can => (
                     can
@@ -53,8 +53,8 @@ export default class FieldSetIndex extends React.Component {
         <Table hover>
           <tbody>
             {rows}
-            
-            <Can I="FieldSet" of={{ modelName: 'FieldSet', project: { stringKey: this.props.match.params.projectStringKey } }} >
+
+            <Can I="FieldSet" of={{ subjectType: 'FieldSet', project: { stringKey: this.props.match.params.projectStringKey } }} >
               <tr>
                 <td className="text-center">
                   <LinkContainer to={`/projects/${projectStringKey}/field_sets/new`}>

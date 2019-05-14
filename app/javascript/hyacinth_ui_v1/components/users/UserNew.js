@@ -58,7 +58,7 @@ class UserNew extends React.Component {
 
   render() {
     return (
-      <div>
+      <>
         <ContextualNavbar
           title="Create New User"
           rightHandLinks={[{ link: '/users', label: 'Cancel' }]}
@@ -128,7 +128,7 @@ class UserNew extends React.Component {
 
           <Button variant="primary" type="submit" onClick={this.onSubmitHandler}>Create</Button>
         </Form>
-      </div>
+      </>
     );
   }
 }

@@ -6,7 +6,7 @@ import producer from 'immer';
 import ContextualNavbar from '../layout/ContextualNavbar';
 import hyacinthApi from '../../util/hyacinth_api';
 
-export default class Users extends React.Component {
+class UserIndex extends React.Component {
   state = {
     users: [],
   }
@@ -28,7 +28,7 @@ export default class Users extends React.Component {
     ));
 
     return (
-      <div>
+      <>
         <ContextualNavbar
           title="Users"
           rightHandLinks={[{ link: '/users/new', label: 'New User' }]}
@@ -46,7 +46,9 @@ export default class Users extends React.Component {
             {rows}
           </tbody>
         </Table>
-      </div>
+      </>
     );
   }
 }
+
+export default UserIndex;

@@ -11,6 +11,8 @@ import ProjectNew from './ProjectNew';
 import CoreData from './core_data/CoreData';
 import FieldSet from './field_sets/FieldSet';
 import PublishTarget from './publish_targets/PublishTarget';
+import { Can } from '../../util/ability_context';
+import ProtectedRoute from '../ProtectedRoute';
 
 export default class Projects extends React.Component {
   render() {
@@ -18,7 +20,11 @@ export default class Projects extends React.Component {
       <Switch>
         <Route exact path="/projects" component={ProjectIndex} />
 
-        <Route path="/projects/new" component={ability.can('create', 'Project') ? ProjectNew : NoMatch} />
+        <ProtectedRoute
+          requiredAbility={(params) => ({ action: 'create', subjectType: 'Project' })}
+          path="/projects/new"
+          component={ProjectNew}
+        />
 
         <Route
           path="/projects/:stringKey"

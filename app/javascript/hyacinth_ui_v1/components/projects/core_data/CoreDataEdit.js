@@ -8,6 +8,7 @@ import ProjectSubHeading from '../../../hoc/ProjectLayout/ProjectSubHeading/Proj
 import CancelButton from '../../layout/CancelButton';
 import hyacinthApi from '../../../util/hyacinth_api';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
+import { Can } from '../../../util/ability_context';
 
 class CoreDataEdit extends React.Component {
   state = {
@@ -106,7 +107,9 @@ class CoreDataEdit extends React.Component {
 
           <Form.Row>
             <Col sm="auto" className="mr-auto">
-              <Button variant="outline-danger" type="submit" onClick={this.onDeleteHandler}>Delete Project</Button>
+              <Can I="delete" a="Project">
+                <Button variant="outline-danger" type="submit" onClick={this.onDeleteHandler}>Delete Project</Button>
+              </Can>
             </Col>
 
             <Col sm="auto" className="ml-auto">

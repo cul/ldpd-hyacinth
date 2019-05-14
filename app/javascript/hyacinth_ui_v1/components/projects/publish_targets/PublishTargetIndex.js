@@ -22,12 +22,25 @@ export default class FieldSetIndex extends React.Component {
   }
 
   render() {
+    const { params: { projectStringKey } } = this.props.match
+
     let rows = <tr><td colSpan="4">No publish targets have been defined</td></tr>;
 
     if (this.state.publishTargets.length > 0) {
       rows = this.state.publishTargets.map(publishTarget => (
         <tr key={publishTarget.stringKey}>
-          <td><Link to={`/projects/${this.props.match.params.projectStringKey}/publish_targets/${publishTarget.stringKey}/edit`} href="#">{publishTarget.displayLabel}</Link></td>
+
+          <td>
+            <Can I="edit" of={{ subjectType: 'PublishTarget', project: { stringKey: projectStringKey } }} passThrough>
+              {
+                  can => (
+                    can
+                      ? <Link to={`/projects/${projectStringKey}/publish_targets/${publishTarget.stringKey}/edit`} href="#">{publishTarget.displayLabel}</Link>
+                      : publishTarget.displayLabel
+                  )
+                }
+            </Can>
+          </td>
           <td>{publishTarget.stringKey}</td>
           <td>{publishTarget.publishUrl}</td>
           <td>{publishTarget.apiKey}</td>
@@ -50,10 +63,10 @@ export default class FieldSetIndex extends React.Component {
           </thead>
           <tbody>
             {rows}
-            <Can I="PublishTarget" of={{ modelName: 'FieldSet', project: { stringKey: this.props.match.params.projectStringKey } }} >
+            <Can I="PublishTarget" of={{ subjectType: 'FieldSet', project: { stringKey: projectStringKey } }} >
               <tr>
                 <td className="text-center" colSpan="4">
-                  <LinkContainer to={`/projects/${this.props.match.params.projectStringKey}/publish_targets/new`}>
+                  <LinkContainer to={`/projects/${projectStringKey}/publish_targets/new`}>
                     <Button size="sm" variant="link">
                       <FontAwesomeIcon icon="plus" />
                       {' '}

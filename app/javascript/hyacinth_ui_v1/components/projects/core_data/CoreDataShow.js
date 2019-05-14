@@ -47,7 +47,7 @@ class CoreDataShow extends React.Component {
           <Col as="dd" sm={10}>{this.state.project.projectUrl}</Col>
 
 
-          <Can I="edit" of={{ modelName: 'Project', stringKey: stringKey }}>
+          <Can I="edit" of={{ subjectType: 'Project', stringKey: stringKey }}>
             <Col as="dt" sm={2} />
             <Col as="dd" sm={10}>
               <LinkContainer to={`/projects/${stringKey}/core_data/edit`}>

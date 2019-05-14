@@ -1,10 +1,11 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import NoMatch from '../../layout/NoMatch';
+import PageNotFound from '../../layout/PageNotFound';
 import FieldSetIndex from './FieldSetIndex';
 import FieldSetNew from './FieldSetNew';
 import FieldSetEdit from './FieldSetEdit';
+import ProtectedRoute from '../../ProtectedRoute';
 
 export default class FieldSet extends React.Component {
   render() {
@@ -12,11 +13,21 @@ export default class FieldSet extends React.Component {
       <div>
         <Switch>
           <Route exact path="/projects/:projectStringKey/field_sets" component={FieldSetIndex} />
-          <Route path="/projects/:projectStringKey/field_sets/new" component={FieldSetNew} />
-          <Route path="/projects/:projectStringKey/field_sets/:id/edit" component={FieldSetEdit} />
+
+          <ProtectedRoute
+            path="/projects/:projectStringKey/field_sets/new"
+            component={FieldSetNew}
+            requiredAbility={(params) => ({ action: "create", subject: "FieldSet", project: { stringKey: params.projectStringKey }})}
+          />
+
+          <ProtectedRoute
+            path="/projects/:projectStringKey/field_sets/:id/edit"
+            component={FieldSetEdit}
+            requiredAbility={(params) => ({ action: "update", subject: "FieldSet", project: { stringKey: params.projectStringKey }})}
+          />
 
           { /* When none of the above match, <NoMatch> will be rendered */ }
-          <Route component={NoMatch} />
+          <Route component={PageNotFound} />
         </Switch>
       </div>
     );
