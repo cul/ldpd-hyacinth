@@ -43,7 +43,11 @@ module Api
       def update
         digital_object_data = create_or_update_params
         @digital_object.set_digital_object_data(digital_object_data, true)
-        if @digital_object.save
+
+        update_result = @digital_object.save
+        update_result &&= publish if params[:publish].to_s.eql?('true')
+
+        if update_result
           show
         else
           render json: @digital_object.errors, status: :unprocessable_entity
@@ -52,32 +56,42 @@ module Api
 
       def preserve
         if @digital_object.preserve
-          render :show, status: :created, location: @digital_object
+          show
         else
           render json: @digital_object.errors, status: :unprocessable_entity
         end
       end
 
-      # Publish the The publish action also preserves.
+      # Publish the object. The publish action also preserves.
       def publish
         # TODO: One day, if publish targets don't need to be saved in the
         # preservation system, we may want the publish method to accept
         # params like publish_to, unpublish_from, and republish. For now,
         # we assume that pending_publish_to and pending_publish_from have
-        # been set by the save method.
-
-        if @digital_object.preserve && @digital_object.publish
-          render :show, status: :ok, location: @digital_object
+        # been set by the save method, or we are republishing all the existing targets.
+        is_preserved = preserved? || @digital_object.preserve
+        republish = (action_name.to_sym == :publish)
+        @digital_object.set_pending_publish_entries('republish' => true) if republish
+        if is_preserved && @digital_object.publish
+          show if republish
+          true
         else
-          render json: @digital_object.errors, status: :unprocessable_entity
+          render json: @digital_object.errors, status: :unprocessable_entity if republish
+          false
         end
       end
 
       # DELETE /digital_objects/1
       # DELETE /digital_objects/1.json
-      # Unimplemented
       def destroy
+        @digital_object.projects.each do |project|
+          authorize! :delete_objects, project
+        end
+        # TODO: un-preserve or tombstone
+        # TODO: unindex
         @digital_object.destroy
+        # unpublish
+        @digital_object.publish
         head :no_content
       end
 
@@ -89,6 +103,11 @@ module Api
         def create_or_update_params
           # TODO: decide how we want to validate dynamic field data parameters
           params[:digital_object][:digital_object_data_json]&.permit!.to_h
+        end
+
+        def preserved?
+          return false unless @digital_object.preserved_at.present?
+          @digital_object.preserved_at > @digital_object.updated_at
         end
     end
   end

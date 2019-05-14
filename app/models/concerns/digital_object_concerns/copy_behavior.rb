@@ -7,7 +7,7 @@ module DigitalObjectConcerns
     # @param metadata_attributes_to_copy [Array]  Names of the metadata attribute fields to copy.
     def deep_copy_metadata_attributes_from(digital_object, metadata_attribute_names)
       if (fields_not_found = metadata_attribute_names - self.metadata_attributes.keys).present?
-        raise ArgumentError, "metadata_attributes not found: #{fields_not_found.join(", ")}"
+        raise ArgumentError, "metadata_attributes not found: #{fields_not_found.join(', ')}"
       end
 
       metadata_attribute_names.each do |metadata_attribute_name|

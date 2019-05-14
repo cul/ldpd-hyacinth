@@ -99,7 +99,6 @@ Lint/NestedMethodDefinition:
 Lint/UnusedBlockArgument:
   Exclude:
     - 'app/models/concerns/digital_object_concerns/digital_object_data/setters/parent_uids.rb'
-    - 'app/models/concerns/digital_object_concerns/save_behavior.rb'
     - 'app/models/concerns/digital_object_concerns/save_behavior/resource_imports.rb'
     - 'app/models/concerns/digital_object_concerns/serialization.rb'
     - 'lib/hyacinth/digital_object/resource.rb'
@@ -333,9 +332,7 @@ Style/PercentLiteralDelimiters:
 # Configuration parameters: EnforcedStyle.
 # SupportedStyles: single_quotes, double_quotes
 Style/StringLiteralsInInterpolation:
-  Exclude:
-    - 'app/models/concerns/digital_object_concerns/copy_behavior.rb'
-    - 'app/models/concerns/digital_object_concerns/save_behavior.rb'
+  Exclude: []
 
 # Offense count: 1
 # Cop supports --auto-correct.
