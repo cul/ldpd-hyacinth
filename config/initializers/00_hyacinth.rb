@@ -14,6 +14,9 @@ Hyacinth::Adapters::SearchAdapterManager.register(:solr, Hyacinth::Adapters::Sea
 # Register supported Lock Adapters
 Hyacinth::Adapters::LockAdapterManager.register(:database_entry_lock, Hyacinth::Adapters::LockAdapter::DatabaseEntryLock)
 
+# Register supported Publication Adapters
+Hyacinth::Adapters::PublicationAdapterManager.register(:hyacinth2, Hyacinth::Adapters::PublicationAdapter::Hyacinth2)
+
 Rails.application.config.to_prepare do
   # Set up Hyaicnth config object on Hyacinth module
 
@@ -26,7 +29,8 @@ Rails.application.config.to_prepare do
           :resource_storage,
           :preservation_persistence,
           :search_adapter,
-          :lock_adapter
+          :lock_adapter,
+          :publication_adapter
         ) {}.new(
           Hyacinth::DigitalObject::Types.new(
             'item' => ::DigitalObject::Item,
@@ -38,6 +42,7 @@ Rails.application.config.to_prepare do
           Hyacinth::Preservation::PreservationPersistence.new(HYACINTH[:preservation_persistence]),
           Hyacinth::Adapters::SearchAdapterManager.create(HYACINTH[:search_adapter]),
           Hyacinth::Adapters::LockAdapterManager.create(HYACINTH[:lock_adapter]),
+          Hyacinth::Adapters::PublicationAdapterManager.create(HYACINTH[:publication_adapter]),
         )
       end
     end

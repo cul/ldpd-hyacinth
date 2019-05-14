@@ -110,7 +110,7 @@ module DigitalObjectConcerns
       yield
       self.clear_resource_import_data
     rescue StandardError => e
-      self.resource_attributes.map do |resource_name, resource|
+      self.resource_attributes.map do |_resource_name, resource|
         resource.undo_last_successful_import_if_copy
       end
 
@@ -124,7 +124,7 @@ module DigitalObjectConcerns
       end
 
       # Establish a lock on any added or removed parent objects because we'll be modifying their structured child lists.
-      Hyacinth.config.lock_adapter.with_multilock(@parent_uids_to_add + @parent_uids_to_remove) do |parent_lock_objects|
+      Hyacinth.config.lock_adapter.with_multilock(@parent_uids_to_add + @parent_uids_to_remove) do |_parent_lock_objects|
         previous_states_for_updated_parents = []
 
         @parent_uids_to_add.each do |parent_uid|
@@ -134,7 +134,7 @@ module DigitalObjectConcerns
           if dobj.save(lock: false, allow_structured_child_addition_or_removal: true)
             previous_states_for_updated_parents << parent_before_save_copy
           else
-            Rails.logger.error("Failed to add #{self.uid} to parent #{dobj.uid} because of the following parent object errors: #{dobj.errors.full_messages.join(", ")}")
+            Rails.logger.error("Failed to add #{self.uid} to parent #{dobj.uid} because of the following parent object errors: #{dobj.errors.full_messages.join(', ')}")
             self.errors.add(:parent_uids, "Failed to add #{self.uid} to parent #{dobj.uid}. See error log for more details.")
             raise Hyacinth::Exceptions::Rollback
           end
@@ -148,7 +148,7 @@ module DigitalObjectConcerns
           if dobj.save(lock: false, allow_structured_child_addition_or_removal: true)
             previous_states_for_updated_parents << parent_before_save_copy
           else
-            Rails.logger.error("Failed to remove #{self.uid} from parent #{dobj.uid} because of the following parent object errors: #{dobj.errors.full_messages.join(", ")}")
+            Rails.logger.error("Failed to remove #{self.uid} from parent #{dobj.uid} because of the following parent object errors: #{dobj.errors.full_messages.join(', ')}")
             self.errors.add(:parent_uids, "Failed to remove #{self.uid} from parent #{dobj.uid}. See error log for more details.")
             raise Hyacinth::Exceptions::Rollback
           end
@@ -168,13 +168,8 @@ module DigitalObjectConcerns
       end
     end
 
-    def copy_publish_entries
-      Marshal.load(Marshal.dump(self.publish_entries))
-    end
-
     def parents_changed?
       @parent_uids_to_add.present? || @parent_uids_to_remove.present?
     end
-
   end
 end

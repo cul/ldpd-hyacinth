@@ -16,8 +16,11 @@ Rails.application.routes.draw do
           # so we don't run into param length limits
           get 'search'
           post 'search'
+          # allow API clients to publish without making other changes
+          post ':id/publish' => 'digital_objects#publish', as: :publish
         end
       end
+      # match 'digital_objects/:id/publish', to: "digital_objects#publish", via: :post
 
       resources :users, param: :uid, except: [:new, :edit, :delete] do
         collection do

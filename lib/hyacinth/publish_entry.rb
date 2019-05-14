@@ -1,5 +1,5 @@
 module Hyacinth
-  module PublishEntry
+  class PublishEntry
     attr_accessor :published_at, :published_by
 
     def initialize(attributes = {})

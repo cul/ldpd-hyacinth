@@ -30,7 +30,14 @@ FactoryBot.define do
 
     trait :with_lincoln_project do
       after(:build) do |digital_object|
-        digital_object.projects << create(:project, :legend_of_lincoln)
+        right_now = Time.current
+        digital_object.projects << create(:project, :legend_of_lincoln, :with_publish_target)
+        entries = digital_object.projects.map do |proj|
+          proj.publish_targets.map(&:string_key)
+        end.to_a.flatten.uniq.map do |sk|
+          [sk, Hyacinth::PublishEntry.new(published_at: right_now, published_by: 'admin')]
+        end.to_h
+        digital_object.send :publish_entries=, entries.freeze
       end
     end
 

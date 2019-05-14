@@ -42,7 +42,17 @@ module Hyacinth
           write_impl(location_uri, content)
         end
 
-        def write_impl
+        def write_impl(*args)
+          raise NotImplementedError
+        end
+
+        # @param location_uri [String] location to delete from
+        def delete(location_uri)
+          raise Hyacinth::Exceptions::UnhandledLocationError, "Unhandled location_uri for #{self.class.name}: #{location_uri}" unless handles?(location_uri)
+          delete_impl(location_uri)
+        end
+
+        def delete_impl(*args)
           raise NotImplementedError
         end
       end

@@ -13,11 +13,13 @@ module DigitalObject
     include DigitalObjectConcerns::Serialization
     include DigitalObjectConcerns::FindBehavior
     include DigitalObjectConcerns::CopyBehavior
+    include DigitalObjectConcerns::PublishBehavior
+    include DigitalObjectConcerns::DestroyBehavior
 
     SERIALIZATION_VERSION = '1'.freeze # Increment this if the serialized data format changes so that we can upgrade to the new format.
 
     # Set up callbacks
-    define_model_callbacks :validation, :save
+    define_model_callbacks :validation, :save, :destroy
     before_validation :trim_whitespace_for_dynamic_field_data!, :remove_blank_fields_from_dynamic_field_data!
     # TODO: Add these before_validations ---> :register_new_uris_and_values_for_dynamic_field_data!, normalize_controlled_term_fields!
 
@@ -70,6 +72,11 @@ module DigitalObject
 
     def project_ids
       projects.each.map(&:id)
+    end
+
+    def preserve
+      # TODO: remove after preservation actions work
+      true
     end
   end
 end

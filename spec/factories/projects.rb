@@ -15,5 +15,16 @@ FactoryBot.define do
       display_label { 'Myth of Minken' }
       project_url   { 'https://example.com/myth_of_minken' }
     end
+    trait :with_publish_target do
+      after(:build) do |project|
+        atts = {
+          project: project,
+          string_key: project.string_key + "_website",
+          display_label: project.display_label + " Website",
+          publish_url: project.project_url + "/publish"
+        }
+        create(:legend_of_lincoln_publish_target, atts)
+      end
+    end
   end
 end

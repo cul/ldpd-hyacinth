@@ -45,6 +45,12 @@ module Hyacinth
           IO.binwrite(file_path, content)
         end
 
+        def delete_impl(location_uri)
+          file_path = location_uri_to_file_path(location_uri)
+          FileUtils.rm(file_path) if File.exist?(file_path)
+          FileUtils.rmdir(File.dirname(file_path)) if Dir.empty?(File.dirname(file_path))
+        end
+
         def location_uri_to_file_path(location_uri)
           location_uri.gsub(/^#{uri_prefix}/, '')
         end

@@ -4,6 +4,10 @@ class ApplicationApiController < ActionController::API
     render json: errors('Not Found'), status: :not_found
   end
 
+  rescue_from Hyacinth::Exceptions::NotFound do
+    render json: errors('Not Found'), status: :not_found
+  end
+
   rescue_from CanCan::AccessDenied do
     render json: errors('Forbidden'), status: :forbidden
   end

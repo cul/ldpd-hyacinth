@@ -37,7 +37,7 @@ module Hyacinth
           @cache[location_uri] = content
         end
 
-        def delete(location_uri)
+        def delete_impl(location_uri)
           @cache.delete(location_uri)
         end
       end

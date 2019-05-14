@@ -2,6 +2,7 @@ module Hyacinth
   module Exceptions
     class HyacinthError < StandardError; end
 
+    class NotDestroyed < HyacinthError; end
     class NotFound < HyacinthError; end
     class NotSaved < HyacinthError; end
     class UnableToObtainLockError < HyacinthError; end
