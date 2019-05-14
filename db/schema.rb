@@ -11,6 +11,7 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 2019_04_25_202549) do
+
   create_table "database_entry_locks", force: :cascade do |t|
     t.string "lock_key", null: false
     t.datetime "created_at", null: false
@@ -187,4 +188,5 @@ ActiveRecord::Schema.define(version: 2019_04_25_202549) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["uid"], name: "index_users_on_uid", unique: true
   end
+
 end

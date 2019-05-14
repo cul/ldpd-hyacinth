@@ -90,7 +90,7 @@ module Hyacinth
         as_json
       end
 
-      def as_json
+      def as_json(_options = {})
         return {} unless location
         {
           'location' => location,
