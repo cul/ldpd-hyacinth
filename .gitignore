@@ -44,10 +44,13 @@ yarn-debug.log*
 database.yml
 hyacinth.yml
 resque.yml
-solr.yml
+secrets.yml
 fedora.yml
 jetty.yml
 
 # ignore any wrapped jetty installs
 jetty
 jetty-test
+
+# old friends, long forgotten
+.DS_Store
