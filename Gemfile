@@ -45,7 +45,6 @@ gem 'best_type', '0.0.4'
 
 # Fedora 3 related gems
 gem 'rubydora'
-gem 'rest-client'
 # For unique, opaque id generation
 gem 'noid', '>= 0.7.1'
 
