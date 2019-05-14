@@ -2,7 +2,7 @@ module DigitalObjectConcerns
   module ExportFieldsBehavior
     extend ActiveSupport::Concern
 
-    # Exports dynamic afield data from the digital_object to string data per
+    # Exports dynamic field data from the digital_object to string data per
     # the export profile.
     # @param export_profile [FieldExportProfile] The export profile of the serialization rules.
     def render_field_export(export_profile)
