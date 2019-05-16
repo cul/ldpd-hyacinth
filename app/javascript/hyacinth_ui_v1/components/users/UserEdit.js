@@ -8,6 +8,7 @@ import producer from 'immer';
 import ContextualNavbar from '../layout/ContextualNavbar';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import hyacinthApi from '../../util/hyacinth_api';
+import ability from '../../util/ability';
 
 class UserEdit extends React.Component {
   state = {
@@ -81,11 +82,17 @@ class UserEdit extends React.Component {
   }
 
   render() {
+    let rightHandLinks = [];
+
+    if (ability.can('index', 'Users')) {
+      rightHandLinks = [{ link: '/users', label: 'Cancel' }]
+    }
+
     return (
       <>
         <ContextualNavbar
           title={`Editing User: ${this.state.user.firstName} ${this.state.user.lastName}`}
-          rightHandLinks={[{ link: '/users', label: 'Cancel' }]}
+          rightHandLinks={rightHandLinks}
         />
 
         <Form as={Col} onSubmit={this.onSubmitHandler}>
