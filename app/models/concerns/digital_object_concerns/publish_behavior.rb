@@ -39,7 +39,8 @@ module DigitalObjectConcerns
 
         # Handle unpublish operations
         self.pending_unpublish_from.dup.each do |publish_target_string_key|
-          unpublish_result, errors = publication_adapter.unpublish(potential_targets[publish_target_string_key], self)
+          update_doi_url = highest_priority_publish_entry_string_key == publish_target_string_key
+          unpublish_result, errors = publication_adapter.unpublish(potential_targets[publish_target_string_key], self, update_doi_url)
           if unpublish_result
             # Remove unpublish_from and publish entry
             current_publish_entries.delete(publish_target_string_key)

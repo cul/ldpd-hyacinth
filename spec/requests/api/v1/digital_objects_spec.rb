@@ -140,7 +140,7 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
       end
 
       it 'returns 204' do
-        allow(publication_adapter).to receive(:unpublish).with(authorized_publish_target, digital_object_matcher).and_return([true, []])
+        allow(publication_adapter).to receive(:unpublish).with(authorized_publish_target, digital_object_matcher, boolean).and_return([true, []])
         allow(search_adapter).to receive(:remove).with(digital_object_matcher).and_return([true, []])
         delete "/api/v1/digital_objects/#{authorized_object.uid}"
         expect(response.status).to be 204
@@ -148,12 +148,12 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
         expect(response.status).to be 404
       end
       it 'unpublishes the object on delete' do
-        expect(publication_adapter).to receive(:unpublish).with(authorized_publish_target, digital_object_matcher).and_return([true, []])
+        expect(publication_adapter).to receive(:unpublish).with(authorized_publish_target, digital_object_matcher, boolean).and_return([true, []])
         expect(search_adapter).to receive(:remove).with(digital_object_matcher).and_return([true, []])
         delete "/api/v1/digital_objects/#{authorized_object.uid}"
       end
       it "return blank response entity" do
-        allow(publication_adapter).to receive(:unpublish).with(authorized_publish_target, digital_object_matcher).and_return([true, []])
+        allow(publication_adapter).to receive(:unpublish).with(authorized_publish_target, digital_object_matcher, boolean).and_return([true, []])
         allow(search_adapter).to receive(:remove).with(digital_object_matcher).and_return([true, []])
         delete "/api/v1/digital_objects/#{authorized_object.uid}"
         expect(response.body).to be_blank
@@ -177,16 +177,16 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
       end
 
       it 'returns 200' do
-        allow(publication_adapter).to receive(:publish).with(authorized_publish_target, digital_object_matcher, anything).and_return([true, []])
+        allow(publication_adapter).to receive(:publish).with(authorized_publish_target, digital_object_matcher, boolean).and_return([true, []])
         post "/api/v1/digital_objects/#{authorized_object.uid}/publish"
         expect(response.status).to be 200
       end
       it 'publishes the object on post' do
-        expect(publication_adapter).to receive(:publish).with(authorized_publish_target, digital_object_matcher, anything).and_return([true, []])
+        expect(publication_adapter).to receive(:publish).with(authorized_publish_target, digital_object_matcher, boolean).and_return([true, []])
         post "/api/v1/digital_objects/#{authorized_object.uid}/publish"
       end
       it "return json entity" do
-        allow(publication_adapter).to receive(:publish).with(authorized_publish_target, digital_object_matcher, anything).and_return([true, []])
+        allow(publication_adapter).to receive(:publish).with(authorized_publish_target, digital_object_matcher, boolean).and_return([true, []])
         post "/api/v1/digital_objects/#{authorized_object.uid}/publish"
         new_object = JSON.parse(response.body)
         expect(new_object['projects'].first).to include('string_key' => authorized_project.string_key)
