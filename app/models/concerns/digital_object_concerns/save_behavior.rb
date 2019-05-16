@@ -63,6 +63,7 @@ module DigitalObjectConcerns
               self.write_to_metadata_storage
             end
           end
+          Hyacinth.config.search_adapter.index(self) if opts[:update_index] == true
         rescue StandardError => e
           # Save a copy of the metadata_location_uri in case this was a new record,
           # since we'll need to delete the metadata

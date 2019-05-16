@@ -12,6 +12,10 @@ module Hyacinth
           # TODO: index presence or absence of field values, even if the field itself isn't indexed for search
         end
 
+        def remove(digital_object)
+          # TODO: Remove this object from solr
+        end
+
         def search(search_params)
           # TODO: Return search results
         end
