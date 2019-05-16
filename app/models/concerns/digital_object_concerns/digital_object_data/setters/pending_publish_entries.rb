@@ -8,7 +8,7 @@ module DigitalObjectConcerns
         unpub_from = []
 
         if digital_object_data['republish'].to_s == 'true'
-          pub_to = self.publish_entries.map { |string_key, _date| string_key }
+          pub_to = self.publish_entries.keys
           raise ArgumentError, 'Cannot supply republish flag AND supply publish_to/unpublish_from directives.)' if publish_to_or_unpublish_from_values_present?(digital_object_data)
         elsif publish_to_or_unpublish_from_values_present?(digital_object_data)
           pub_to = digital_object_data['publish_to']
