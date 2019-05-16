@@ -31,7 +31,7 @@ module Api
         end
         @digital_object.state ||= Hyacinth::DigitalObject::State::ACTIVE
         # digital_object_record.save first because it will assign necessary digital_object_record attributes
-        if @digital_object.save && (digital_object_record.persisted? || digital_object_record.save)
+        if @digital_object.save(update_index: true) && (digital_object_record.persisted? || digital_object_record.save)
           show
         else
           render json: @digital_object.errors, status: :unprocessable_entity
@@ -44,7 +44,7 @@ module Api
         digital_object_data = create_or_update_params
         @digital_object.set_digital_object_data(digital_object_data, true)
 
-        update_result = @digital_object.save
+        update_result = @digital_object.save(update_index: true)
         update_result &&= publish if params[:publish].to_s.eql?('true')
 
         if update_result
@@ -88,8 +88,8 @@ module Api
           authorize! :delete_objects, project
         end
         # TODO: un-preserve or tombstone
-        # TODO: unindex
-        @digital_object.destroy
+        # TODO: unindex and remove param?
+        @digital_object.destroy(update_index: true)
         # unpublish
         @digital_object.publish
         head :no_content

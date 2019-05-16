@@ -9,6 +9,10 @@ module Hyacinth
           raise NotImplementedError
         end
 
+        def remove(digital_object)
+          raise NotImplementedError
+        end
+
         def search(search_params)
           raise NotImplementedError
         end
