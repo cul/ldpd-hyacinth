@@ -24,7 +24,7 @@ module Hyacinth
           resp = connection.put(digital_object_pid)
           location = resp.headers['Location']
           update_doi(digital_object, location) if point_doi_to_this_publish_target && location
-          true
+          [true]
         rescue StandardError => e
           [false, e.message]
         end
@@ -32,13 +32,14 @@ module Hyacinth
         # @return [success, errors] [boolean, Array<String>] success will be true if
         #         the unpublish was successful, or false otherwise. errors is an array
         #         that will contain error messages if the unpublish failed.
-        def unpublish(publish_target, digital_object)
+        def unpublish(publish_target, digital_object, point_doi_to_this_publish_target)
           digital_object_pid = digital_object_pids(digital_object).first
           return [false, "Never preserved to Fedora3"] unless digital_object_pid
           connection = Faraday.new(publish_target.publish_url)
           connection.token_auth(publish_target.api_key)
           connection.delete(digital_object_pid)
-          true
+          tombstone_doi(digital_object) if point_doi_to_this_publish_target
+          [true]
         rescue StandardError => e
           [false, e.message]
         end

@@ -21,13 +21,19 @@ module Hyacinth
         # @return [success, errors] [boolean, Array<String>] success will be true if
         #         the unpublish was successful, or false otherwise. errors is an array
         #         that will contain error messages if the unpublish failed.
-        def unpublish(_publish_target, _digital_object)
+        def unpublish(_publish_target, _digital_object, _point_doi_to_this_publish_target)
           raise NotImplementedError
         end
 
         # Update the DOI's published metadata
         # TODO: Move this into an adapter/service?
         def update_doi(_digital_object, _location)
+          raise NotImplementedError
+        end
+
+        # Update the DOI's published metadata
+        # TODO: Move this into an adapter/service?
+        def tombstone_doi(_digital_object)
           raise NotImplementedError
         end
       end
