@@ -13,7 +13,8 @@ module DigitalObjectConcerns
       end
 
       def mint_reserved_doi_if_doi_blank
-        # TODO: Write code for DOI service so that this actually works
+        return if self.doi.present?
+        self.instance_variable_set :@doi, Hyacinth.config.external_identifier_adapter.mint
       end
 
       def mint_uid_and_metadata_location_uri_if_new_record

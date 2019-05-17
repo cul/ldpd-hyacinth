@@ -52,6 +52,7 @@ module DigitalObjectConcerns
         begin
           self.mint_uid_and_metadata_location_uri_if_new_record
           self.update_modification_info(current_datetime, opts[:user])
+          self.mint_reserved_doi_if_doi_blank
           self.handle_asset_imports(lock_object) do
             self.handle_parent_changes do
               # Modify DigitalObjectRecord last, since creating it switches new_record? to false,

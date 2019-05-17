@@ -1,5 +1,7 @@
 # Load config from hyacinth.yml
 HYACINTH = Rails.application.config_for(:hyacinth).deep_symbolize_keys
+# TODO: move into adapter config
+DATACITE = Rails.application.config_for(:datacite).deep_symbolize_keys
 
 # Register supported Storage Adapters
 Hyacinth::Adapters::StorageAdapterManager.register(:disk, Hyacinth::Adapters::StorageAdapter::Disk)
@@ -17,6 +19,10 @@ Hyacinth::Adapters::LockAdapterManager.register(:database_entry_lock, Hyacinth::
 # Register supported Publication Adapters
 Hyacinth::Adapters::PublicationAdapterManager.register(:hyacinth2, Hyacinth::Adapters::PublicationAdapter::Hyacinth2)
 
+# Register supported External ID Adapters
+Hyacinth::Adapters::ExternalIdentifierAdapterManager.register(:datacite, Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite)
+Hyacinth::Adapters::ExternalIdentifierAdapterManager.register(:memory, Hyacinth::Adapters::ExternalIdentifierAdapter::Memory)
+
 Rails.application.config.to_prepare do
   # Set up Hyaicnth config object on Hyacinth module
 
@@ -30,7 +36,8 @@ Rails.application.config.to_prepare do
           :preservation_persistence,
           :search_adapter,
           :lock_adapter,
-          :publication_adapter
+          :publication_adapter,
+          :external_identifier_adapter
         ) {}.new(
           Hyacinth::DigitalObject::Types.new(
             'item' => ::DigitalObject::Item,
@@ -43,6 +50,7 @@ Rails.application.config.to_prepare do
           Hyacinth::Adapters::SearchAdapterManager.create(HYACINTH[:search_adapter]),
           Hyacinth::Adapters::LockAdapterManager.create(HYACINTH[:lock_adapter]),
           Hyacinth::Adapters::PublicationAdapterManager.create(HYACINTH[:publication_adapter]),
+          Hyacinth::Adapters::ExternalIdentifierAdapterManager.create(HYACINTH[:external_identifier_adapter])
         )
       end
     end
