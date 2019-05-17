@@ -21,6 +21,8 @@ development:
         password: fedoraAdmin
   publication_adapter:
     type: hyacinth2
+  external_identifier_adapter:
+    type: memory
   uri_service:
     url: 'https://example.com'
     api_key: 'notasecret'
@@ -48,6 +50,8 @@ test:
         password: fedoraAdmin
   publication_adapter:
     type: hyacinth2
+  external_identifier_adapter:
+    type: memory
   uri_service:
     url: 'https://example.com'
     api_key: 'notasecret'

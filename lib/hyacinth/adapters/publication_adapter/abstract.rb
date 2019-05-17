@@ -26,15 +26,15 @@ module Hyacinth
         end
 
         # Update the DOI's published metadata
-        # TODO: Move this into an adapter/service?
-        def update_doi(_digital_object, _location)
-          raise NotImplementedError
+        # TODO: Remove this in favor of adapter/service?
+        def update_doi(digital_object, location)
+          Hyacinth.config.external_identifier_adapter.updat(digital_object.doi, digital_object, location)
         end
 
-        # Update the DOI's published metadata
-        # TODO: Move this into an adapter/service?
-        def tombstone_doi(_digital_object)
-          raise NotImplementedError
+        # Mark the DOI as inactive
+        # TODO: Remove this in favor of adapter/service?
+        def tombstone_doi(digital_object)
+          Hyacinth.config.external_identifier_adapter.tombstone(digital_object.doi)
         end
       end
     end

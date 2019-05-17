@@ -1,0 +1,28 @@
+default: &default
+  user: apitest
+  password: apitest
+  shoulder:
+    ark: 'ark:99999/fk4'
+    doi: 'doi:10.5072/FK2'
+  ezid_test_user: apitest
+  ezid_test_password: apitest
+  ezid_test_shoulder:
+    ark: 'ark:99999/fk4'
+    doi: 'doi:10.5072/FK2'
+  url: 'https://ezid.cdlib.org'
+  ezid_publisher: 'Columbia University'
+  datacite:
+    genre_to_resource_type_mapping:
+      'http://vocab.getty.edu/aat/300048715':
+        attribute_general: Text
+        content: Article
+development:
+  <<: *default
+  database: db/development.sqlite3
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  <<: *default
+  database: db/test.sqlite3
