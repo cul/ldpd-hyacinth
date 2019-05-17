@@ -35,7 +35,7 @@ FactoryBot.define do
         entries = digital_object.projects.map do |proj|
           proj.publish_targets.map(&:string_key)
         end.to_a.flatten.uniq.map do |sk|
-          [sk, Hyacinth::PublishEntry.new(published_at: right_now, published_by: 'admin')]
+          [sk, Hyacinth::PublishEntry.new(published_at: right_now, published_by: create(:user, :administrator, uid: "test-uid-#{Random.rand}"))]
         end.to_h
         digital_object.send :publish_entries=, entries.freeze
       end

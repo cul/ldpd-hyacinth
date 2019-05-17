@@ -184,6 +184,15 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
       it 'publishes the object on post' do
         expect(publication_adapter).to receive(:publish).with(authorized_publish_target, digital_object_matcher, boolean).and_return([true, []])
         post "/api/v1/digital_objects/#{authorized_object.uid}/publish"
+        new_object = JSON.parse(response.body)
+        expect(new_object).to have_key('publish_entries')
+        publish_entry = new_object['publish_entries'][authorized_publish_target.string_key]
+        expect(publish_entry['published_at']).to be_present
+        get "/api/v1/digital_objects/#{authorized_object.uid}"
+        old_object = JSON.parse(response.body)
+        expect(old_object).to have_key('publish_entries')
+        publish_entry = old_object['publish_entries'][authorized_publish_target.string_key]
+        expect(publish_entry['published_at']).to be_present
       end
       it "return json entity" do
         allow(publication_adapter).to receive(:publish).with(authorized_publish_target, digital_object_matcher, boolean).and_return([true, []])

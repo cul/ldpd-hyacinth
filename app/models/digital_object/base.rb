@@ -49,9 +49,9 @@ module DigitalObject
     metadata_attribute :parent_uids, Hyacinth::DigitalObject::TypeDef::JsonSerializableSet.new.default(-> { Set.new.freeze }).freeze_on_deserialize # Frozen Set so this can only be modified by modification methods.
     metadata_attribute :structured_children, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { { 'type' => 'sequence', 'structure' => [] } })
     # Publish Data
-    metadata_attribute :pending_publish_to, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Array.new })
-    metadata_attribute :pending_unpublish_from, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Array.new })
-    metadata_attribute :publish_entries, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Hash.new.freeze }).freeze_on_deserialize # Frozen Set so this can only be modified by modification methods.
+    metadata_attribute :pending_publish_to, Hyacinth::DigitalObject::TypeDef::JsonSerializableArray.new.default(-> { Array.new })
+    metadata_attribute :pending_unpublish_from, Hyacinth::DigitalObject::TypeDef::JsonSerializableArray.new.default(-> { Array.new })
+    metadata_attribute :publish_entries, Hyacinth::DigitalObject::TypeDef::PublishEntries.new.default(-> { Hash.new.freeze }).freeze_on_deserialize # Frozen Set so this can only be modified by modification methods.
 
     attr_reader :digital_object_record
 

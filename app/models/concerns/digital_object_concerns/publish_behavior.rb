@@ -11,8 +11,8 @@ module DigitalObjectConcerns
       Hyacinth.config.lock_adapter.with_lock(self.uid) do |lock_object|
         current_publish_entries = publish_entries.dup
         before_publish_copy = self.deep_copy
-        current_datetime = DateTime.current
-
+        # use one DateTime to avoid multiple clock checks
+        opts = opts.merge(current_datetime: DateTime.current)
         # For efficiency, use one query to get all publish targets that
         # we'll need in one query.
         potential_targets = PotentialPublishTargets.new(self)
@@ -20,40 +20,23 @@ module DigitalObjectConcerns
         # this object will be published to. This will be used as the doi target.
         highest_priority_publish_entry_string_key = potential_targets.highest_priority_publish_entry(self.publish_entries)
 
-        publication_adapter = Hyacinth.config.publication_adapter
-
         # Handle publish operations
         self.pending_publish_to.dup.each do |publish_target_string_key|
-          update_doi_url = highest_priority_publish_entry_string_key == publish_target_string_key
-          publish_result, errors = publication_adapter.publish(potential_targets[publish_target_string_key], self, update_doi_url)
-          if publish_result
-            # Remove publish_to and add publish entry
-            current_publish_entries[publish_target_string_key] =
-              Hyacinth::PublishEntry.new(published_at: current_datetime, published_by: opts[:user])
-          else
-            self.errors.add(:publish_to, "Failed to publish to #{publish_target_string_key}. See error log for details.")
-            Rails.logger.error("Failed to publish #{self.uid} to #{publish_target_string_key} due to the following errors: #{errors.join(', ')}")
-          end
+          opts[:update_doi_url] = (highest_priority_publish_entry_string_key == publish_target_string_key)
+          publish_to(potential_targets[publish_target_string_key], current_publish_entries, opts)
           lock_object.extend_lock # extend lock in case publish is slow
         end
 
         # Handle unpublish operations
         self.pending_unpublish_from.dup.each do |publish_target_string_key|
-          update_doi_url = highest_priority_publish_entry_string_key == publish_target_string_key
-          unpublish_result, errors = publication_adapter.unpublish(potential_targets[publish_target_string_key], self, update_doi_url)
-          if unpublish_result
-            # Remove unpublish_from and publish entry
-            current_publish_entries.delete(publish_target_string_key)
-          else
-            self.errors.add(:unpublish_from, "Failed to unpublish from #{publish_target_string_key}. See error log for details.")
-            Rails.logger.error("Failed to unpublish #{self.uid} from #{publish_target_string_key} due to the following errors: #{errors.join(', ')}")
-          end
-          lock_object.extend_lock # extend lock in case publish is slow
+          opts[:update_doi_url] = (highest_priority_publish_entry_string_key == publish_target_string_key)
+          unpublish_from(potential_targets[publish_target_string_key], current_publish_entries, opts)
+          lock_object.extend_lock # extend lock in case unpublish is slow
         end
         # Reset pending entries after successful un/publish.
         self.set_pending_publish_entries({})
-        # TODO: Persist the publish entries
         self.publish_entries = current_publish_entries.freeze unless current_publish_entries.blank?
+        self.write_to_metadata_storage
       rescue StandardError => e
         # We can't easily revert publish operations because:
         # 1. Often, we still want to publish to one publish
@@ -80,6 +63,31 @@ module DigitalObjectConcerns
       end
 
       self.errors.blank?
+    end
+
+    def publish_to(publish_target, current_publish_entries, opts = {})
+      publication_adapter = Hyacinth.config.publication_adapter
+      publish_result, errors = publication_adapter.publish(publish_target, self, opts[:update_doi_url])
+      if publish_result
+        # Remove publish_to and add publish entry
+        current_publish_entries[publish_target.string_key] =
+          Hyacinth::PublishEntry.new(published_at: (opts[:current_datetime] || DateTime.current), published_by: opts[:user])
+      else
+        self.errors.add(:publish_to, "Failed to publish to #{publish_target.string_key}. See error log for details.")
+        Rails.logger.error("Failed to publish #{self.uid} to #{publish_target.string_key} due to the following errors: #{errors.join(', ')}")
+      end
+    end
+
+    def unpublish_from(publish_target, current_publish_entries, opts = {})
+      publication_adapter = Hyacinth.config.publication_adapter
+      unpublish_result, errors = publication_adapter.unpublish(publish_target, self, opts[:update_doi_url])
+      if unpublish_result
+        # Remove unpublish_from and publish entry
+        current_publish_entries.delete(publish_target.string_key)
+      else
+        self.errors.add(:unpublish_from, "Failed to unpublish from #{publish_target.string_key}. See error log for details.")
+        Rails.logger.error("Failed to unpublish #{self.uid} from #{publish_target.string_key} due to the following errors: #{errors.join(', ')}")
+      end
     end
 
     # Given a publish entries Hash, returns the string key of the publish target with the highest
