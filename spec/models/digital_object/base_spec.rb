@@ -137,4 +137,16 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
       expect(digital_object_with_sample_data.optimistic_lock_token).to eq(token)
     end
   end
+  context "validates digital_object_type" do
+    it "is valid on construction" do
+      expect(digital_object).to be_valid
+    end
+
+    it "invalidates unregistered values" do
+      digital_object.instance_variable_set :@digital_object_type, digital_object.digital_object_type.reverse
+      expect(digital_object).not_to be_valid
+      digital_object.instance_variable_set :@digital_object_type, digital_object.digital_object_type.reverse
+      expect(digital_object).to be_valid
+    end
+  end
 end
