@@ -113,9 +113,15 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
         }
       end
 
-      it "persists model properties" do
-        hyacinth_object.dynamic_field_data['restrictions'] = { 'restricted_onsite' => true }
+      it "persists content model and RDF type properties" do
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
+        actual_xml = rubydora_object.datastreams["RELS-EXT"].content.body
+        actual_xml.sub!(/^<\?.+\?>/, '') # remove XML declaration
+        actual_xml.gsub!(/ns\d:/, '') # remove ns
+        actual_xml.gsub!(/xmlns=\"[^\"]*\"/, '') # remove ns
+        actual_xml.gsub!(/\s+/, ' ') # collapse whitespace
+        expect(actual_xml).to include("<hasModel rdf:resource=\"info:fedora/ldpd:ContentAggregator\">")
+        expect(actual_xml).to include("<rdf:type rdf:resource=\"http://purl.oclc.org/NET/CUL/Aggregator\">")
       end
     end
     context "DC properties" do
@@ -145,7 +151,6 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
       end
 
       it "persists model properties" do
-        hyacinth_object.identifiers << 'keep'
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
         # because .save is stubbed, the datastream should still be dirty
         expect(rubydora_object.datastreams['structMetadata'].content).to include("<mets:div LABEL=\"#{child_object_title}\" ORDER=\"1\" CONTENTIDS=\"#{child_uid}\"/>")
