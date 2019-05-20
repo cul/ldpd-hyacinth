@@ -31,7 +31,7 @@ module DigitalObject
     metadata_attribute :uid, Hyacinth::DigitalObject::TypeDef::String.new
     metadata_attribute :doi, Hyacinth::DigitalObject::TypeDef::String.new
     # constrain type to the keys for registered type classes
-    metadata_attribute :digital_object_type, Hyacinth::DigitalObject::TypeDef::String.new.constrained_to(Hyacinth.config.digital_object_types)
+    metadata_attribute :digital_object_type, Hyacinth::DigitalObject::TypeDef::String.new
     metadata_attribute :state, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { 'active' }).public_writer
     # Modification Info
     metadata_attribute :created_by, Hyacinth::DigitalObject::TypeDef::User.new

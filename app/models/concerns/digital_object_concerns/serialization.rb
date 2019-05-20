@@ -17,9 +17,9 @@ module DigitalObjectConcerns
           end
         end
         # serialize restriction_attributes
-        self.restriction_attributes.each do |restriction_attribute_name|
+        self.restriction_attributes.each do |restriction_attribute_name, type_def|
           json_var['restrictions'] ||= {}
-          value = resources[restriction_attribute_name]&.to_serialized_form
+          value = type_def.to_serialized_form(restrictions[restriction_attribute_name])
           unless value.blank?
             json_var['restrictions'][restriction_attribute_name.to_s] = value
           end
@@ -47,7 +47,8 @@ module DigitalObjectConcerns
         digital_object.restriction_attributes.map do |restriction_name|
           restriction_name = restriction_name.to_s
           if json_var['restrictions']&.key?(restriction_name)
-            digital_object.restrictions[restriction_name] = Hyacinth::DigitalObject::TypeDef::Boolean.new.from_serialized_form(json_var['restrictions'][restriction_name])
+            type_def = digital_object.restriction_attributes[restriction_name]
+            digital_object.restrictions[restriction_name] = type_def.from_serialized_form(json_var['restrictions'][restriction_name])
           end
         end
 
