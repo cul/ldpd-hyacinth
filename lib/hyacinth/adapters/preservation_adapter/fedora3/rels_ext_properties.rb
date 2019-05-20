@@ -114,8 +114,8 @@ module Hyacinth
         def restrictions_for(hyacinth_obj)
           restrictions = []
           restriction_data = hyacinth_obj.restrictions
-          restrictions << ONSITE_RESTRICTION_LITERAL_VALUE if restriction_data['restricted_onsite'].to_s.casecmp('true')&.zero?
-          restrictions << SIZE_RESTRICTION_LITERAL_VALUE if restriction_data['restricted_size_image'].to_s.casecmp('true')&.zero?
+          restrictions << ONSITE_RESTRICTION_LITERAL_VALUE if restriction_data['restricted_onsite'] == true
+          restrictions << SIZE_RESTRICTION_LITERAL_VALUE if restriction_data['restricted_size_image'] == true
           restrictions
         end
 

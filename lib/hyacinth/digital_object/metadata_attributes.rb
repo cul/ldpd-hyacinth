@@ -36,7 +36,6 @@ module Hyacinth
           # writer only accepts allowed types (or nil)
           writer_method_name = "#{metadata_attribute_name}="
           define_method(writer_method_name) do |value|
-            raise ArgumentError, "#{value} is not allowed for #{metadata_attribute_name}" if type_def.constrained? && !type_def.valid_value?(value)
             instance_variable_set("@#{metadata_attribute_name}", value)
           end
 
