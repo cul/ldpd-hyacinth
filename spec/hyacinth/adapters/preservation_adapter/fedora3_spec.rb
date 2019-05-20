@@ -149,7 +149,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
         hyacinth_object.dynamic_field_data['name'] = [{ 'role' => "Farmer" }]
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
         actual_xml = rubydora_object.datastreams["descMetadata"].content
-        actual_xml.sub!(/^<\?.+\?>/, '') # remove PI
+        actual_xml.sub!(/^<\?.+\?>/, '') # remove XML declaration
         actual_xml.gsub!('mods:', '') # remove ns
         actual_xml.gsub!(/\s/, '') # remove whitespace
         expect(actual_xml).to eql("<mods><name>Farmer</name></mods>")

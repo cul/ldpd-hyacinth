@@ -68,15 +68,17 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
         hyacinth_object.dynamic_field_data['name'] = [{ 'role' => "Farmer" }]
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
         actual_xml = rubydora_object.datastreams["descMetadata"].content
-        actual_xml.sub!(/^<\?.+\?>/, '') # remove PI
+        actual_xml.sub!(/^<\?.+\?>/, '') # remove XML declaration
         actual_xml.gsub!('mods:', '') # remove ns
         actual_xml.gsub!(/\s/, '') # remove whitespace
         expect(actual_xml).to eql("<mods><name>Farmer</name></mods>")
       end
-      it "makes a core object property assignments" do
+      it "makes core object property assignments" do
+        # object label is pulled from title data
         hyacinth_object.dynamic_field_data['title'] = [{ 'title_sort_portion' => digital_object_title }]
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
         expect(rubydora_object.label).to eql(digital_object_title)
+        # state should be assigned automatically
         expect(rubydora_object.state).to eql('A')
       end
       it "assigns a state property to inactive if withdrawn" do
