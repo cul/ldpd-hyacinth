@@ -2,8 +2,7 @@ module Hyacinth
   class XMLGenerator::Element
     attr_reader :generator, :field_values
     delegate :generate_field_val, :value_with_substitutions, :value_for_field_name,
-             :generate_field_val, :render_output_of_ternary, :render_output_of_join,
-             to: :field_values
+             :render_output_of_ternary, :render_output_of_join, to: :field_values
     def initialize(generator)
       @generator = generator
       @field_values = XMLGenerator::FieldValues.new(generator)
