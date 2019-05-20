@@ -238,7 +238,6 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       end
 
       it "persists model properties" do
-        hyacinth_object.identifiers << 'keep'
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
         # because .save is stubbed, the datastream should still be dirty
         expect(rubydora_object.datastreams['structMetadata'].changed?).to be(true)
