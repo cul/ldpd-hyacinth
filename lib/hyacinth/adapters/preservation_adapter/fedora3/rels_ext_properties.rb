@@ -113,10 +113,9 @@ module Hyacinth
 
         def restrictions_for(hyacinth_obj)
           restrictions = []
-          dynamic_field_data = hyacinth_obj.dynamic_field_data
-          return restrictions unless dynamic_field_data.key?('restrictions')
-          restrictions << ONSITE_RESTRICTION_LITERAL_VALUE if dynamic_field_data['restrictions'].key?('restricted_onsite')
-          restrictions << SIZE_RESTRICTION_LITERAL_VALUE if dynamic_field_data['restrictions']['restricted_size_image']&.casecmp('false')&.zero?
+          restriction_data = hyacinth_obj.restrictions
+          restrictions << ONSITE_RESTRICTION_LITERAL_VALUE if restriction_data['restricted_onsite'].to_s.casecmp('true')&.zero?
+          restrictions << SIZE_RESTRICTION_LITERAL_VALUE if restriction_data['restricted_size_image'].to_s.casecmp('true')&.zero?
           restrictions
         end
 

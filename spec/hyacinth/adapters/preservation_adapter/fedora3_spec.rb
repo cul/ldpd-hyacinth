@@ -198,7 +198,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
         expect(connection).to receive(:add_relationship).with(restriction_property)
       end
       it "persists model properties" do
-        hyacinth_object.dynamic_field_data['restrictions'] = { 'restricted_onsite' => true }
+        hyacinth_object.restrictions['restricted_onsite'] = true
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
       end
     end

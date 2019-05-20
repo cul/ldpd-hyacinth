@@ -71,7 +71,7 @@ module Hyacinth
 
         def valid_value?(value)
           return true unless @constrained
-          return @constrained_values.include?(value)
+          @constrained_values.include?(value)
         end
 
         def freeze_on_deserialize?

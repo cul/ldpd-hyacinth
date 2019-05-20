@@ -22,7 +22,7 @@ module Hyacinth
             preservation_persistence_errors << "Could not find a preservation adapter for: #{preservation_target_uri}"
           end
         end
-        [errors.blank?, errors]
+        [preservation_persistence_errors.blank?, preservation_persistence_errors]
       end
     end
   end

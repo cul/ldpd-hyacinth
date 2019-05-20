@@ -53,7 +53,7 @@ RSpec.describe Hyacinth::DigitalObject::MetadataAttributes do
     end
 
     it "raises an error when an enumerated type does not include a value" do
-      expect { instance.string_field_with_enumeration = invalid_value}.to raise_error(ArgumentError)
+      expect { instance.string_field_with_enumeration = invalid_value }.to raise_error(ArgumentError)
     end
   end
 end

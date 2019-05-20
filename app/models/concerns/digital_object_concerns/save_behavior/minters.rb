@@ -14,7 +14,6 @@ module DigitalObjectConcerns
 
       def mint_reserved_doi_if_doi_blank
         # TODO: Write code for DOI service so that this actually works
-        self.doi = Hyacinth::DoiService.mint_reserved_doi if self.doi.blank?
       end
 
       def mint_uid_and_metadata_location_uri_if_new_record

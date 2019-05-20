@@ -8,6 +8,9 @@ module DigitalObject
 
     metadata_attribute :asset_type, Hyacinth::DigitalObject::TypeDef::String.new.public_writer
 
+    restriction_attribute :restricted_onsite, Hyacinth::DigitalObject::TypeDef::Boolean.new
+    restriction_attribute :restricted_size_image, Hyacinth::DigitalObject::TypeDef::Boolean.new
+
     def initialize
       super
     end
