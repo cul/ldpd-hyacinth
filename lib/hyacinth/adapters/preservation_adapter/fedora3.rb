@@ -80,10 +80,8 @@ module Hyacinth
 
           assign(Fedora3::ObjectProperties).from(digital_object).to(fedora_object)
           assign(Fedora3::DCProperties).from(digital_object).to(fedora_object)
-          # TODO: add rel as appropriate
           assign(Fedora3::RelsExtProperties).from(digital_object).to(fedora_object)
           assign(Fedora3::RelsIntProperties).from(digital_object).to(fedora_object)
-          # TODO: export structMetadata
           assign(Fedora3::StructProperties).from(digital_object).to(fedora_object)
 
           fedora_object.save
