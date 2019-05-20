@@ -17,7 +17,7 @@ module Hyacinth
         #         the publish was successful, or false otherwise. errors is an array
         #         that will contain error messages if the publish failed.
         def publish(publish_target, digital_object, point_doi_to_this_publish_target)
-          digital_object_pid = digital_object_pids(digital_object).first
+          digital_object_pid = digital_object_fedora_uris(digital_object).first
           return [false, "Never preserved to Fedora3"] unless digital_object_pid
           connection = Faraday.new(publish_target.publish_url)
           connection.token_auth(publish_target.api_key)
@@ -33,7 +33,7 @@ module Hyacinth
         #         the unpublish was successful, or false otherwise. errors is an array
         #         that will contain error messages if the unpublish failed.
         def unpublish(publish_target, digital_object, point_doi_to_this_publish_target)
-          digital_object_pid = digital_object_pids(digital_object).first
+          digital_object_pid = digital_object_fedora_uris(digital_object).first
           return [false, "Never preserved to Fedora3"] unless digital_object_pid
           connection = Faraday.new(publish_target.publish_url)
           connection.token_auth(publish_target.api_key)
@@ -48,7 +48,7 @@ module Hyacinth
           # TODO: DRY out the FCR3 URI detection with pres adapter
           uri_prefix = "fedora3://"
           fcr3_uris = hyacinth_obj.preservation_target_uris.select { |x| x.start_with? uri_prefix }
-          fcr3_uris.map { |fcr3_uri| "info:fedora/#{fcr3_uri[uri_prefix.length..-1]}" }
+          fcr3_uris.map { |fcr3_uri| fcr3_uri[uri_prefix.length..-1] }
         end
       end
     end
