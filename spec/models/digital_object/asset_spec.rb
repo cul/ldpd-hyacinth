@@ -18,4 +18,15 @@ RSpec.describe DigitalObject::Asset, type: :model do
       expect(failed).to be Hyacinth::DigitalObject::AssetType::VALID_TYPES.first
     end
   end
+  describe "restriction validations" do
+    before { asset.asset_type = Hyacinth::DigitalObject::AssetType::VALID_TYPES.first }
+    it "validates boolean values for restrictions" do
+      asset.restrictions['restricted_onsite'] = true
+      expect(asset.valid?).to be true
+    end
+    it "invalidates non-boolean values for restrictions" do
+      asset.restrictions['restricted_onsite'] = 'true'
+      expect(asset.valid?).to be false
+    end
+  end
 end
