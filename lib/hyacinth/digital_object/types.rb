@@ -27,6 +27,10 @@ module Hyacinth
         @keys = @keys_to_classes.keys
       end
 
+      def include?(key)
+        @keys_to_classes.key? key
+      end
+
       def clear!
         @keys_to_classes = {}
         refresh_caches!

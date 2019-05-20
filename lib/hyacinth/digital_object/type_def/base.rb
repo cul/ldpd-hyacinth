@@ -37,6 +37,13 @@ module Hyacinth
           self # always return self to allow for chained calls
         end
 
+        # Constraint is checked by call to include?, so a values hash is verifying by key presence
+        def constrained_to(values = [])
+          @constrained = true
+          @constrained_values = values
+          self # always return self to allow for chained calls
+        end
+
         def default(default_value_proc)
           raise ArgumentError, 'Invalid default value. Must provide a Proc.' unless default_value_proc.is_a?(Proc)
           @default_value_proc = default_value_proc
@@ -56,6 +63,15 @@ module Hyacinth
 
         def public_writer?
           @public_writer
+        end
+
+        def constrained?
+          @constrained
+        end
+
+        def valid_value?(value)
+          return true unless @constrained
+          return @constrained_values.include?(value)
         end
 
         def freeze_on_deserialize?
