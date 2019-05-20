@@ -32,7 +32,7 @@ module Hyacinth
           properties[:identifier] = hyacinth_obj.identifiers&.to_a || []
           # add the pid as an identifier
           properties[:identifier].concat Array.wrap(digital_object_fedora_uris(hyacinth_obj))
-          if is_asset_type?(hyacinth_obj)
+          if asset_type?(hyacinth_obj)
             # set the type
             properties[:type] = [hyacinth_obj.asset_type].compact
             # set the source
@@ -75,7 +75,8 @@ module Hyacinth
         end
 
         private
-          def is_asset_type?(hyacinth_obj)
+
+          def asset_type?(hyacinth_obj)
             hyacinth_obj.respond_to? :asset_type
           end
       end

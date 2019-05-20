@@ -7,6 +7,7 @@ module DigitalObject
     include ActiveModel::Validations
     include Hyacinth::DigitalObject::MetadataAttributes
     include Hyacinth::DigitalObject::ResourceAttributes
+    include Hyacinth::DigitalObject::Restrictions
     include DigitalObjectConcerns::DigitalObjectData::Setters
     include DigitalObjectConcerns::Validations
     include DigitalObjectConcerns::SaveBehavior
@@ -16,6 +17,7 @@ module DigitalObject
     include DigitalObjectConcerns::PublishBehavior
     include DigitalObjectConcerns::DestroyBehavior
     include DigitalObjectConcerns::ExportFieldsBehavior
+    include DigitalObjectConcerns::PreserveBehavior
 
     SERIALIZATION_VERSION = '1'.freeze # Increment this if the serialized data format changes so that we can upgrade to the new format.
 
@@ -74,11 +76,6 @@ module DigitalObject
 
     def project_ids
       projects.each.map(&:id)
-    end
-
-    def preserve
-      # TODO: remove after preservation actions work
-      true
     end
   end
 end
