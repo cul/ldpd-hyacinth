@@ -1,4 +1,4 @@
-class DigitalObjectConcerns::Validations::RestrictionsValidator < ActiveModel::Validator
+class RestrictionsValidator < ActiveModel::Validator
   def validate(digital_object)
     digital_object.restriction_attributes.each do |restriction_name, type_def|
       value = digital_object.restrictions[restriction_name]
