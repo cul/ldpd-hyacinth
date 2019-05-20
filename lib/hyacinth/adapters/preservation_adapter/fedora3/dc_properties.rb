@@ -41,7 +41,7 @@ module Hyacinth
             # set the format (MIME)
             properties[:format] = [BestType.mime_type.for_file_name(filename)].compact
           end
-          normal_properties(properties)
+          normalized_properties(properties)
         end
 
         def parse_dc_xml(fedora_obj)
@@ -50,10 +50,10 @@ module Hyacinth
           ng_xml.remove_namespaces!
           dc = ng_xml.at_css("dc")
           dc.elements.each { |ele| properties[ele.name.to_sym] << ele.text.strip }
-          normal_properties(properties)
+          normalized_properties(properties)
         end
 
-        def normal_properties(properties = {})
+        def normalized_properties(properties = {})
           properties.map do |k, v|
             v = Array.wrap(v)
             v.uniq!
