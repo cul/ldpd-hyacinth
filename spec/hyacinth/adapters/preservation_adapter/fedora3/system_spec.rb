@@ -165,7 +165,6 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
       end
       it "persists model properties" do
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
-        # obj = Rubydora::DigitalObject.new(object_pid, Rubydora.repository)
         rels_int = rubydora_object.datastreams['RELS-INT'].content
         ng_xml = Nokogiri::XML(rels_int)
         ng_xml.remove_namespaces!
