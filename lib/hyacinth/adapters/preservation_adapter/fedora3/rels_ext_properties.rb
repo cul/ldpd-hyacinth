@@ -79,7 +79,7 @@ module Hyacinth
 
         def parent_uris_for(hyacinth_obj)
           hyacinth_obj.parent_uids.map { |uid| ::DigitalObject::Base.find(uid) }.compact.map do |parent|
-            digital_object_pids(parent)
+            digital_object_fedora_uris(parent)
           end.flatten.compact
         end
 
@@ -106,17 +106,17 @@ module Hyacinth
 
         def type_infos_for(hyacinth_obj, type_key)
           infos = []
-          return infos unless (type_info = TYPE_INFORMATION[hyacinth_obj.digital_object_type.downcase])
+          return infos unless (type_info = TYPE_INFORMATION[hyacinth_obj.digital_object_type])
           infos << type_info[type_key]
           infos
         end
 
         def restrictions_for(hyacinth_obj)
           restrictions = []
-          digital_object_data = hyacinth_obj.dynamic_field_data
-          return restrictions unless digital_object_data.key?('restrictions')
-          restrictions << ONSITE_RESTRICTION_LITERAL_VALUE if digital_object_data['restrictions'].key?('restricted_onsite')
-          restrictions << SIZE_RESTRICTION_LITERAL_VALUE if digital_object_data['restrictions']['restricted_size_image']&.casecmp('false')&.zero?
+          dynamic_field_data = hyacinth_obj.dynamic_field_data
+          return restrictions unless dynamic_field_data.key?('restrictions')
+          restrictions << ONSITE_RESTRICTION_LITERAL_VALUE if dynamic_field_data['restrictions'].key?('restricted_onsite')
+          restrictions << SIZE_RESTRICTION_LITERAL_VALUE if dynamic_field_data['restrictions']['restricted_size_image']&.casecmp('false')&.zero?
           restrictions
         end
 
