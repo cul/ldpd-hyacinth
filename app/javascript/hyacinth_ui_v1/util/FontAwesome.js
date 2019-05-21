@@ -6,16 +6,23 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 // Import and add icons to library
 import {
   faBell,
-  faEdit,
   faPlus,
+  faPen,
   faAngleDoubleDown,
   faAngleDoubleUp,
 } from '@fortawesome/free-solid-svg-icons';
 
+import {
+  faCaretSquareUp,
+  faCaretSquareDown,
+} from '@fortawesome/free-regular-svg-icons';
+
 library.add(
   faBell,
-  faEdit,
   faPlus,
+  faPen,
+  faCaretSquareUp,
+  faCaretSquareDown,
   faAngleDoubleDown,
   faAngleDoubleUp,
 );
