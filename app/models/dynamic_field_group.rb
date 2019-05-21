@@ -43,7 +43,9 @@ class DynamicFieldGroup < ActiveRecord::Base
       sort_order: sort_order,
       is_repeatable: is_repeatable,
       children: ordered_children,
-      export_rules: export_rules
+      export_rules: export_rules,
+      parent_type: parent_type,
+      parent_id: parent_id
     }
   end
 
