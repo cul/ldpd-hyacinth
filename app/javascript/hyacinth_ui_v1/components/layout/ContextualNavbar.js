@@ -23,7 +23,7 @@ export default class ContextualNavbar extends React.Component {
     }
 
     return (
-      <Navbar bg="light" expand="lg" className="my-3">
+      <Navbar bg="light" expand="lg" className="my-3 rounded contextual-navbar">
         {title}
         <Nav className="ml-auto">
           {this.props.children}
