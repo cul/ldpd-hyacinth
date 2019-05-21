@@ -7,7 +7,7 @@ module Api
 
       #  GET /dynamic_field_categories
       def index
-        @dynamic_field_categories = DynamicFieldCategory.all
+        @dynamic_field_categories = DynamicFieldCategory.order(:sort_order)
         render json: { dynamic_field_categories: @dynamic_field_categories }, status: :ok
       end
 
