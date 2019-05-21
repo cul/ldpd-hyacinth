@@ -7,6 +7,9 @@ import TopNavbar from 'hyacinth_ui_v1/components/layout/TopNavbar';
 import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch';
 import DigitalObjects from 'hyacinth_ui_v1/components/digital_objects/DigitalObjects';
 import Users from 'hyacinth_ui_v1/components/users/Users';
+import DynamicFields from 'hyacinth_ui_v1/components/dynamic_fields/DynamicFields';
+import DynamicFieldGroups from 'hyacinth_ui_v1/components/dynamic_field_groups/DynamicFieldGroups';
+import DynamicFieldCategories from 'hyacinth_ui_v1/components/dynamic_field_categories/DynamicFieldCategories';
 import Projects from 'hyacinth_ui_v1/components/projects/Projects';
 import { AbilityContext } from './util/ability_context';
 import ability from './util/ability';
@@ -55,6 +58,9 @@ export default class App extends React.Component {
             <Route path="/digital-objects" component={DigitalObjects} />
             <Route path="/users" component={Users} />
             <Route path="/projects" component={Projects} />
+            <Route path="/dynamic_fields" component={DynamicFields} />
+            <Route path="/dynamic_field_groups" component={DynamicFieldGroups} />
+            <Route path="/dynamic_field_categories" component={DynamicFieldCategories} />
             { /* When none of the above match, <NoMatch> will be rendered */ }
             <Route path="/404" component={NoMatch} />
             <Route component={NoMatch} />

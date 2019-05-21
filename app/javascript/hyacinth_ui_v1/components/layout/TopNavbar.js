@@ -94,7 +94,7 @@ export default class TopNavbar extends React.Component {
                 <Can I="manage" a="all">
                   <NavDropdown.Divider />
 
-                  <LinkContainer to="/dynamic-fields">
+                  <LinkContainer to="/dynamic_fields">
                     <NavDropdown.Item>Dynamic Fields</NavDropdown.Item>
                   </LinkContainer>
 
