@@ -14,6 +14,7 @@
     "axios": "^0.18.0",
     "bootstrap": "4.x",
     "immer": "^2.1.5",
+    "lodash": "^4.17.11",
     "prop-types": "^15.6.2",
     "query-string": "^6.5.0",
     "react": "^16.8.1",
