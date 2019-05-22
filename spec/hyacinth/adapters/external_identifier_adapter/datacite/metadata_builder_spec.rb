@@ -6,7 +6,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::MetadataBuilde
 
   let(:metadata_retrieval) { Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata.new dod }
 
-  let(:schema_source) { file_fixture('datacite/xsd/kernel-3.xsd') }
+  let(:schema_source) { file_fixture('files/datacite/xsd/kernel-3.xsd') }
   let(:schema) do
     Nokogiri::XML::Schema(open(schema_source.realpath))
   end
@@ -26,10 +26,10 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::MetadataBuilde
         expect(schema).to be_valid(expected_xml)
       end
       let(:dod) do
-        JSON.parse(file_fixture('datacite/ezid_item.json').read)
+        JSON.parse(file_fixture('files/datacite/ezid_item.json').read)
       end
       let(:expected_xml) do
-        Nokogiri::XML(file_fixture('datacite/datacite.xml').read)
+        Nokogiri::XML(file_fixture('files/datacite/datacite.xml').read)
       end
 
       it "produces the expected XML serialization" do
@@ -49,10 +49,10 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::MetadataBuilde
         expect(schema).to be_valid(expected_xml)
       end
       let(:dod) do
-        JSON.parse(file_fixture('datacite/ezid_item_datacite_unmapped_genre.json').read)
+        JSON.parse(file_fixture('files/datacite/ezid_item_datacite_unmapped_genre.json').read)
       end
       let(:expected_xml) do
-        Nokogiri::XML(file_fixture('datacite/datacite_unmapped_genre.xml').read)
+        Nokogiri::XML(file_fixture('files/datacite/datacite_unmapped_genre.xml').read)
       end
 
       it "produces the expected XML serialization" do
@@ -68,7 +68,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::MetadataBuilde
     end
     context "empty dynamic fields" do
       let(:dod) do
-        JSON.parse(file_fixture('datacite/ezid_item_empty_dynamic_field_data.json').read)
+        JSON.parse(file_fixture('files/datacite/ezid_item_empty_dynamic_field_data.json').read)
       end
 
       it "produce a valid XML serialization with creator = '(:unav)' when creator isn't present" do
@@ -82,10 +82,10 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::MetadataBuilde
       end
 
       let(:dod) do
-        JSON.parse(file_fixture('datacite/ezid_item_minimal_dynamic_field_data.json').read)
+        JSON.parse(file_fixture('files/datacite/ezid_item_minimal_dynamic_field_data.json').read)
       end
       let(:expected_xml) do
-        xml = file_fixture('datacite/datacite_minimal.xml').read
+        xml = file_fixture('files/datacite/datacite_minimal.xml').read
         Nokogiri::XML(xml.gsub('item.001', unique_id))
       end
 

@@ -3,8 +3,8 @@
   "digital_object_type" : {
     "string_key" : "item"
   },
-  "created" : "2015-02-04T19:22:37.000Z",
-  "modified" : "2016-03-31T20:52:23.000Z",
+  "created_at" : "2015-02-04T19:22:37.000Z",
+  "updated_at" : "2016-03-31T20:52:23.000Z",
   "project" :
   {
     "string_key" : "test"

@@ -12,6 +12,7 @@ FactoryBot.define do
       display_label { 'Legend of Lincoln Website' }
       publish_url { 'https://www.example.com/publish' }
       api_key { '12345' }
+      is_allowed_doi_target { true }
     end
   end
 end

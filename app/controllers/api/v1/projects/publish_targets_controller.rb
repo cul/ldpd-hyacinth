@@ -48,11 +48,11 @@ module Api
         private
 
           def create_params
-            params.require(:publish_target).permit(:string_key, :display_label, :publish_url, :api_key)
+            params.require(:publish_target).permit(:string_key, :display_label, :publish_url, :api_key, :doi_priority, :is_allowed_doi_target)
           end
 
           def update_params
-            params.require(:publish_target).permit(:display_label, :publish_url, :api_key)
+            params.require(:publish_target).permit(:display_label, :publish_url, :api_key, :doi_priority, :is_allowed_doi_target)
           end
       end
     end

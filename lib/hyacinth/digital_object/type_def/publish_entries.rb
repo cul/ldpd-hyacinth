@@ -8,7 +8,8 @@ module Hyacinth
             publish_entries.each do |publish_target_string_key, publish_entry|
               hsh[publish_target_string_key] = {
                 'published_at' => Hyacinth::DigitalObject::TypeDef::DateTime.new.to_serialized_form(publish_entry.published_at),
-                'published_by' => Hyacinth::DigitalObject::TypeDef::User.new.to_serialized_form(publish_entry.published_by)
+                'published_by' => Hyacinth::DigitalObject::TypeDef::User.new.to_serialized_form(publish_entry.published_by),
+                'cited_at' => Hyacinth::DigitalObject::TypeDef::URI::HTTP.new.to_serialized_form(publish_entry.cited_at)
               }
             end
           end
@@ -21,7 +22,8 @@ module Hyacinth
             json_object.each do |publish_target_string_key, publish_entry_json_object|
               hsh[publish_target_string_key] = Hyacinth::PublishEntry.new(
                 published_at: Hyacinth::DigitalObject::TypeDef::DateTime.new.from_serialized_form(publish_entry_json_object['published_at']),
-                published_by: Hyacinth::DigitalObject::TypeDef::User.new.from_serialized_form(publish_entry_json_object['published_by'])
+                published_by: Hyacinth::DigitalObject::TypeDef::User.new.from_serialized_form(publish_entry_json_object['published_by']),
+                cited_at: Hyacinth::DigitalObject::TypeDef::URI::HTTP.new.from_serialized_form(publish_entry_json_object['cited_at'])
               )
             end
           end

@@ -3,19 +3,19 @@ require 'rails_helper'
 
 describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata do
   let(:dod) do
-    data = JSON.parse(file_fixture('datacite/ezid_item.json').read)
+    data = JSON.parse(file_fixture('files/datacite/ezid_item.json').read)
     data['identifiers'] = ['item.' + SecureRandom.uuid] # random identifer to avoid collisions
     data
   end
 
   let(:dod_empty_dfd) do
-    data = JSON.parse(file_fixture('datacite/ezid_item_empty_dynamic_field_data.json').read)
+    data = JSON.parse(file_fixture('files/datacite/ezid_item_empty_dynamic_field_data.json').read)
     data['identifiers'] = ['item.' + SecureRandom.uuid] # random identifer to avoid collisions
     data
   end
 
   let(:dod_names_without_roles) do
-    data = JSON.parse(file_fixture('datacite/ezid_item_names_without_roles.json').read)
+    data = JSON.parse(file_fixture('files/datacite/ezid_item_names_without_roles.json').read)
     data['identifiers'] = ['item.' + SecureRandom.uuid] # random identifer to avoid collisions
     data
   end
@@ -77,11 +77,11 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata do
       expect(actual_doi).to eq(expected_doi)
     end
 
-    it "doi_identifier handles empty dynamic field data" do
+    it "doi handles empty dynamic field data" do
       local_metadata_retrieval = described_class.new dod_empty_dfd
-      expected_doi_identifier = nil
-      actual_doi_identifier = local_metadata_retrieval.doi_identifier
-      expect(actual_doi_identifier).to eq(expected_doi_identifier)
+      expected_doi = nil
+      actual_doi = local_metadata_retrieval.doi
+      expect(actual_doi).to eq(expected_doi)
     end
 
     it "handle_net_identifier handles empty dynamic field data" do
@@ -94,7 +94,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata do
     it "subjects_topic handles empty dynamic field data" do
       local_metadata_retrieval = described_class.new dod_empty_dfd
       expected_subjects_topic = []
-      actual_subjects_topic = local_metadata_retrieval.subjects_topic
+      actual_subjects_topic = local_metadata_retrieval.subject_topics
       expect(actual_subjects_topic).to eq(expected_subjects_topic)
     end
 
@@ -197,11 +197,11 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata do
     end
   end
 
-  context "#doi_identifier" do
-    let(:expected) { '10.1371/journal.pone.0119638' }
-    it "doi_identifier" do
+  context "#doi" do
+    let(:expected) { '10.1371/article.pone.0119638' }
+    it "doi" do
       local_metadata_retrieval = described_class.new dod
-      actual = local_metadata_retrieval.doi_identifier
+      actual = local_metadata_retrieval.doi
       expect(actual).to eq(expected)
     end
   end
@@ -215,13 +215,13 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata do
     end
   end
 
-  context "#subject_topic:" do
+  context "#subject_topics:" do
     let(:expected) do
       ['Educational attainment', 'Parental influences', 'Mother and child--Psychological aspects']
     end
-    it "subject_topic" do
+    it "subject_topics" do
       local_metadata_retrieval = described_class.new dod
-      actual = local_metadata_retrieval.subjects_topic
+      actual = local_metadata_retrieval.subject_topics
       expect(actual).to eq(expected)
     end
   end

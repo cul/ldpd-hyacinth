@@ -27,14 +27,18 @@ RSpec.describe 'Publish Target requests', type: :request do
                   "display_label": "Great Project Website",
                   "project": "great_project",
                   "publish_url": "https://www.example.com/publish",
-                  "string_key": "great_project_website"
+                  "string_key": "great_project_website",
+                  "doi_priority": 0,
+                  "is_allowed_doi_target": false
                 },
                 {
                   "api_key": "bestapikey",
                   "display_label": "Great Project Website",
                   "project": "great_project",
                   "publish_url": "https://www.example.com/publish",
-                  "string_key": "second_publish_target"
+                  "string_key": "second_publish_target",
+                  "doi_priority": 0,
+                  "is_allowed_doi_target": false
                 }
               ]
             }
@@ -76,7 +80,9 @@ RSpec.describe 'Publish Target requests', type: :request do
               "display_label": "Great Project Website",
               "project": "great_project",
               "publish_url": "https://www.example.com/publish",
-              "string_key": "great_project_website"
+              "string_key": "great_project_website",
+              "doi_priority": 0,
+              "is_allowed_doi_target": false
             }
           }))
         end
@@ -115,7 +121,9 @@ RSpec.describe 'Publish Target requests', type: :request do
               display_label: 'Best Project Website',
               string_key: 'best_project_website',
               publish_url: 'https://bestproject/publish',
-              api_key: 'bestprojectapikey'
+              api_key: 'bestprojectapikey',
+              is_allowed_doi_target: true,
+              doi_priority: 4
             }
           }
         end
@@ -131,7 +139,9 @@ RSpec.describe 'Publish Target requests', type: :request do
               "display_label": "Best Project Website",
               "string_key": "best_project_website",
               "publish_url": "https://bestproject/publish",
-              "api_key": "bestprojectapikey"
+              "api_key": "bestprojectapikey",
+              "doi_priority": 4,
+              "is_allowed_doi_target": true
             }
           }))
         end

@@ -13,35 +13,32 @@ module Hyacinth
         # @param point_doi_to_this_publish_target [boolean] A flag that determines whether
         #        the published digital object's doi should point to a location associated
         #        with this PublishTarget.
-        # @return [success, errors] [boolean, Array<String>] success will be true if
-        #         the publish was successful, or false otherwise. errors is an array
-        #         that will contain error messages if the publish failed.
-        def publish(publish_target, digital_object, point_doi_to_this_publish_target)
+        # @return [success, msg] [boolean, Array<String>] success will be true and message will be a
+        #         URL location the publish was successful. success will be false and message an error
+        #         message if the publish failed.
+        def publish_impl(publish_target, digital_object)
           digital_object_pid = digital_object_fedora_uris(digital_object).first
           return [false, "Never preserved to Fedora3"] unless digital_object_pid
           connection = Faraday.new(publish_target.publish_url)
           connection.token_auth(publish_target.api_key)
           resp = connection.put(digital_object_pid)
-          location = resp.headers['Location']
-          update_doi(digital_object, location) if point_doi_to_this_publish_target && location
-          [true]
+          [true, [resp.headers['Location']]]
         rescue StandardError => e
-          [false, e.message]
+          [false, [e.message]]
         end
 
         # @return [success, errors] [boolean, Array<String>] success will be true if
         #         the unpublish was successful, or false otherwise. errors is an array
         #         that will contain error messages if the unpublish failed.
-        def unpublish(publish_target, digital_object, point_doi_to_this_publish_target)
+        def unpublish_impl(publish_target, digital_object)
           digital_object_pid = digital_object_fedora_uris(digital_object).first
           return [false, "Never preserved to Fedora3"] unless digital_object_pid
           connection = Faraday.new(publish_target.publish_url)
           connection.token_auth(publish_target.api_key)
           connection.delete(digital_object_pid)
-          tombstone_doi(digital_object) if point_doi_to_this_publish_target
           [true]
         rescue StandardError => e
-          [false, e.message]
+          [false, [e.message]]
         end
 
         def digital_object_pids(hyacinth_obj)
