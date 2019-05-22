@@ -1,8 +1,8 @@
 # Following module contains functionality to create the XML
 # containing the metadata, using the datacite metadata scheme
 class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::MetadataBuilder
-  def initialize(hyacinth_metadata_retrieval_arg)
-    @hyacinth_metadata_retrieval = hyacinth_metadata_retrieval_arg
+  def initialize(hyacinth_metadata)
+    @hyacinth_metadata = hyacinth_metadata
   end
 
   def datacite_xml
@@ -12,8 +12,8 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::MetadataBuilder
                    'xsi:schemaLocation' => 'http://datacite.org/schema/kernel-3 http://schema.datacite.org/meta/kernel-3/metadata.xsd') do
         # required element, but not content
         # see http://ezid.cdlib.org/doc/apidoc.html#profile-datacite
-        if @hyacinth_metadata_retrieval.doi_identifier.present?
-          xml.identifier('identifierType' => 'DOI') { xml.text @hyacinth_metadata_retrieval.doi_identifier }
+        if @hyacinth_metadata.doi.present?
+          xml.identifier('identifierType' => 'DOI') { xml.text @hyacinth_metadata.doi }
         else
           xml.identifier('identifierType' => 'DOI') { xml.text '10.0/00' }
         end
@@ -21,22 +21,22 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::MetadataBuilder
         # required field
         xml.publisher DATACITE[:ezid_publisher]
         # required field
-        if @hyacinth_metadata_retrieval.date_issued_start_year.present?
-          xml.publicationYear @hyacinth_metadata_retrieval.date_issued_start_year
+        if @hyacinth_metadata.date_issued_start_year || @hyacinth_metadata.first_published_at.present?
+          xml.publicationYear @hyacinth_metadata.date_issued_start_year || @hyacinth_metadata.first_published_at.year
         else
-          xml.publicationYear @hyacinth_metadata_retrieval.source[:created][0..3]
+          xml.publicationYear @hyacinth_metadata.created_at.year
         end
         xml.dates do
-          xml.date('dateType' => 'Created') { xml.text @hyacinth_metadata_retrieval.date_created }
-          xml.date('dateType' => 'Updated') { xml.text @hyacinth_metadata_retrieval.date_modified }
+          xml.date('dateType' => 'Created') { xml.text @hyacinth_metadata.created_at.strftime('%Y-%m-%d') }
+          xml.date('dateType' => 'Updated') { xml.text @hyacinth_metadata.updated_at.strftime('%Y-%m-%d') }
         end
         add_creators xml
         add_subjects xml
         add_contributors xml
-        add_resource_type xml if @hyacinth_metadata_retrieval.genre_uri
-        if @hyacinth_metadata_retrieval.abstract.present?
+        add_resource_type xml
+        if @hyacinth_metadata.abstract.present?
           xml.descriptions do
-            xml.description('descriptionType' => 'Abstract') { xml.text @hyacinth_metadata_retrieval.abstract }
+            xml.description('descriptionType' => 'Abstract') { xml.text @hyacinth_metadata.abstract }
           end
         end
         add_related_identifiers xml
@@ -47,13 +47,13 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::MetadataBuilder
 
   # required field
   def add_title(xml)
-    title = @hyacinth_metadata_retrieval.title
-    title = @hyacinth_metadata_retrieval.source[:identifiers].first unless title.present?
+    title = @hyacinth_metadata.title
+    title = @hyacinth_metadata.identifiers.first unless title.present?
     xml.titles { xml.title title }
   end
 
   def add_resource_type(xml)
-    hyacinth_genre = DATACITE[:datacite][:genre_to_resource_type_mapping][@hyacinth_metadata_retrieval.genre_uri.to_sym]
+    hyacinth_genre = DATACITE[:datacite][:genre_to_resource_type_mapping][@hyacinth_metadata.genre_uri&.to_sym]
     return unless hyacinth_genre
     xml.resourceType('resourceTypeGeneral' => hyacinth_genre[:attribute_general].to_s) do
       xml.text hyacinth_genre[:content].to_s
@@ -61,29 +61,30 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::MetadataBuilder
   end
 
   def add_related_identifiers(xml)
-    return if @hyacinth_metadata_retrieval.parent_publication_issn.blank?
+    parent_publication_ids = @hyacinth_metadata.parent_publication_identifiers
+    return if parent_publication_ids.blank?
     xml.relatedIdentifiers do
-      xml.relatedIdentifier('relatedIdentifierType' => 'ISSN',
-                            'relationType' => 'IsPartOf') { xml.text @hyacinth_metadata_retrieval.parent_publication_issn }
-      xml.relatedIdentifier('relatedIdentifierType' => 'ISBN',
-                            'relationType' => 'IsPartOf') { xml.text @hyacinth_metadata_retrieval.parent_publication_isbn }
-      xml.relatedIdentifier('relatedIdentifierType' => 'DOI',
-                            'relationType' => 'IsVariantFormOf') { xml.text @hyacinth_metadata_retrieval.parent_publication_doi }
+      parent_publication_ids.each do |type, value|
+        relation_type = type.eql?('DOI') ? 'IsVariantFormOf' : 'IsPartOf'
+        xml.relatedIdentifier('relatedIdentifierType' => type, 'relationType' => relation_type) { xml.text value }
+      end
     end
   end
 
   def add_subjects(xml)
-    return if @hyacinth_metadata_retrieval.subjects_topic.empty?
+    subject_topics = @hyacinth_metadata.subject_topics
+    return if subject_topics.blank?
     xml.subjects do
-      @hyacinth_metadata_retrieval.subjects_topic.each { |topic| xml.subject topic }
+      subject_topics.each { |topic| xml.subject topic }
     end
   end
 
   # required field
   def add_creators(xml)
-    if @hyacinth_metadata_retrieval.creators.present?
+    creators = creator_values(@hyacinth_metadata)
+    if creators.present?
       xml.creators do
-        @hyacinth_metadata_retrieval.creators.each do |name|
+        creators.each do |name|
           xml.creator { xml.creatorName name }
         end
       end
@@ -94,19 +95,23 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::MetadataBuilder
     end
   end
 
+  def creator_values(hyacinth_metadata)
+    # TODO: return creators from dynamic field data
+    hyacinth_metadata.creators
+  end
+
   def add_contributors(xml)
-    return unless [:editors, :moderators, :contributors]
-                  .map { |accessor| @hyacinth_metadata_retrieval.send(accessor) }
-                  .find { |set| !set.empty? }
+    contributors = @hyacinth_metadata.contributor_values(@hyacinth_metadata.dynamic_field_data, [:editor, :moderator, :contributor])
+    contributors.reject! { |_contributor, types| types.blank? || types.eql?([:creator]) }
+    return if contributors.blank?
+
     xml.contributors do
-      @hyacinth_metadata_retrieval.editors.each do |name|
-        xml.contributor('contributorType' => 'Editor') { xml.contributorName name }
-      end
-      @hyacinth_metadata_retrieval.moderators.each do |name|
-        xml.contributor('contributorType' => 'Other') { xml.contributorName name }
-      end
-      @hyacinth_metadata_retrieval.contributors.each do |name|
-        xml.contributor('contributorType' => 'Other') { xml.contributorName name }
+      contributors.each do |name, types|
+        if types.include?(:editor)
+          xml.contributor('contributorType' => 'Editor') { xml.contributorName name }
+        else
+          xml.contributor('contributorType' => 'Other') { xml.contributorName name }
+        end
       end
     end
   end

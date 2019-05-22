@@ -67,14 +67,19 @@ module DigitalObjectConcerns
 
     def publish_to(publish_target, current_publish_entries, opts = {})
       publication_adapter = Hyacinth.config.publication_adapter
-      publish_result, errors = publication_adapter.publish(publish_target, self, opts[:update_doi_url])
+      publish_result, messages = publication_adapter.publish(publish_target, self, opts[:update_doi_url])
       if publish_result
         # Remove publish_to and add publish entry
-        current_publish_entries[publish_target.string_key] =
-          Hyacinth::PublishEntry.new(published_at: (opts[:current_datetime] || DateTime.current), published_by: opts[:user])
+        publish_entry = {
+          published_at: (opts[:current_datetime] || DateTime.current),
+          published_by: opts[:user]
+        }
+        # if result was true, messages array should be the published url
+        publish_entry[:cited_at] = messages.first if opts[:update_doi_url]
+        current_publish_entries[publish_target.string_key] = Hyacinth::PublishEntry.new(publish_entry)
       else
         self.errors.add(:publish_to, "Failed to publish to #{publish_target.string_key}. See error log for details.")
-        Rails.logger.error("Failed to publish #{self.uid} to #{publish_target.string_key} due to the following errors: #{errors.join(', ')}")
+        Rails.logger.error("Failed to publish #{self.uid} to #{publish_target.string_key} due to the following errors: #{messages.join(', ')}")
       end
     end
 

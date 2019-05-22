@@ -62,6 +62,7 @@ module DigitalObjectConcerns
 
               # If everything worked, write to metadata storage
               self.write_to_metadata_storage
+              Hyacinth.config.external_identifier_adapter.update(self.doi, self, nil)
             end
           end
           Hyacinth.config.search_adapter.index(self) if opts[:update_index] == true

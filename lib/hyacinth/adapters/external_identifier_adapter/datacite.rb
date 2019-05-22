@@ -44,7 +44,7 @@ module Hyacinth
             log(:error, "#mint_and_store_doi: Response from EZID server follows:\n#{http_error_message(response)}")
             return nil
           end
-          ezid_doi_instance.identifier
+          ezid_doi_instance.identifier.sub(/^doi\:/, '')
         end
 
         # Returns true if an identifier exists in the external management system
@@ -68,7 +68,7 @@ module Hyacinth
           # ApiSession#modify_identifier returns true if the response from the EZID server indicated
           # success, else it returns false
           opts = { datacite: datacite_metadata.datacite_xml, _status: IDENTIFIER_STATUS[:public] }
-          opts[:_target] = target_url unless target_url.blank?
+          opts[:_target] = location_uri unless location_uri.blank?
           api_session.modify_identifier(id, opts)
         end
 

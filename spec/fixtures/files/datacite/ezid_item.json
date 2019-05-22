@@ -4,11 +4,10 @@
     "digital_object_type" :
     {
 	"string_key" : "item"
-    }
+    },
+    "created_at" : "2015-02-04T19:22:37.000Z"
     ,
-    "created" : "2015-02-04T19:22:37.000Z"
-    ,
-    "modified" : "2016-03-31T20:52:23.000Z"
+    "updated_at" : "2016-03-31T20:52:23.000Z"
     ,
     "project" :
     {
@@ -26,6 +25,8 @@
 	}
     ]
     ,
+	"doi" : "10.1371/article.pone.0119638",
+
     "dynamic_field_data" :
     {
 	"title" :
@@ -34,13 +35,6 @@
 		"title_sort_portion" : "Catcher in the Rye",
 		"title_non_sort_portion" : "The"
             }
-	]
-	,
-	"doi_identifier" :
-	[
-	    {
-		"doi_identifier_value" : "10.1371/journal.pone.0119638"
-	    }
 	]
 	,
 	"cnri_handle_identifier" :

@@ -1,32 +1,38 @@
 # Following module contains functionality to retrieve metadata
 # from the dynamic_field_data hash from DigitalObject::Base
 class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
-  # access filtered name and topic values
-  # @see #process_names
-  # @see #process_subjects_topic
-  # @return [Array<String>]
-  # @api public
-  attr_reader :creators, :editors, :moderators, :contributors, :subjects_topic
-
+  attr_reader :source, :dynamic_field_data
   # parse metadata from Hyacinth Digital Objects Data
   # @param digital_object_data_arg [Hash]
   # @api public
   def initialize(digital_object_data_arg)
     # dod is shorthand for digital_object_data
-    @dod = HashWithIndifferentAccess.new(digital_object_data_arg).freeze
+    @source = HashWithIndifferentAccess.new(digital_object_data_arg).freeze
     # dfd is shorthand for dynamic_field_data
-    @dfd = @dod['dynamic_field_data']
-    @creators = []
-    @editors = []
-    @moderators = []
-    @contributors = []
-    @subjects_topic = []
-    process_names
-    process_subjects_topic
+    @dynamic_field_data = @source['dynamic_field_data'].dup.freeze
   end
 
-  def source
-    @dod
+  # DOI identifier value
+  # @api public
+  # @return [String, nil]
+  def doi
+    @source['doi']
+  end
+
+  def created_at
+    deserialize_datetime(@source['created_at'])
+  end
+
+  def updated_at
+    deserialize_datetime(@source['updated_at'])
+  end
+
+  def first_published_at
+    deserialize_datetime(@source['first_published_at'])
+  end
+
+  def identifiers
+    @source['identifiers'] || []
   end
 
   # the title of an item
@@ -34,10 +40,10 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
   # @return [String, nil]
   # @note only returns the first title value
   def title
-    return nil unless @dfd.key? 'title'
+    return nil unless @dynamic_field_data.key? 'title'
     # concatenates the non sort portion with the sort portion
-    non_sort_portion = @dfd['title'][0]['title_non_sort_portion'] if @dfd['title'][0].key? 'title_non_sort_portion'
-    sort_portion = @dfd['title'][0]['title_sort_portion'] if @dfd['title'][0].key? 'title_sort_portion'
+    non_sort_portion = @dynamic_field_data['title'][0]['title_non_sort_portion'] if @dynamic_field_data['title'][0].key? 'title_non_sort_portion'
+    sort_portion = @dynamic_field_data['title'][0]['title_sort_portion'] if @dynamic_field_data['title'][0].key? 'title_sort_portion'
     "#{non_sort_portion} #{sort_portion}"
   end
 
@@ -46,7 +52,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
   # @return [String, nil]
   # @note only returns the first genre value
   def genre_uri
-    @dfd['genre'][0]['genre_term']['uri'] if @dfd.key?('genre') && @dfd['genre'][0].key?('genre_term')
+    @dynamic_field_data['genre'][0]['genre_term']['uri'] if @dynamic_field_data.key?('genre') && @dynamic_field_data['genre'][0].key?('genre_term')
   end
 
   # the abstract of an item
@@ -54,110 +60,122 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
   # @return [String, nil]
   # @note only returns the first abstract value
   def abstract
-    @dfd['abstract'][0]['abstract_value'] if @dfd.key? 'abstract'
+    @dynamic_field_data['abstract'][0]['abstract_value'] if @dynamic_field_data.key? 'abstract'
   end
 
   # the type of resource for an item
   # @api public
   # @return [String, nil]
   def type_of_resource
-    @dfd['type_of_resource'][0]['type_of_resource_value'] if @dfd.key? 'type_of_resource'
+    @dynamic_field_data['type_of_resource'][0]['type_of_resource_value'] if @dynamic_field_data.key? 'type_of_resource'
   end
 
   # starting year of the w3cdtf-encoded Date Issued field (first 4 characters)
   # @api public
   # @return [String, nil]
   def date_issued_start_year
-    @dfd['date_issued'][0]['date_issued_start_value'][0..3] if @dfd.key? 'date_issued'
+    @dynamic_field_data['date_issued'][0]['date_issued_start_value'][0..3] if @dynamic_field_data.key? 'date_issued'
   end
 
   # date of the w3cdtf-encoded created Timestamp field (first 10 characters)
   # @api public
   # @return [String]
   def date_created
-    @dod['created'][0..9]
+    created_at.strftime('%Y-%m-%d')
   end
 
   # date of the w3cdtf-encoded modified Timestamp field (first 10 characters)
   # @api public
   # @return [String]
   def date_modified
-    @dod['modified'][0..9]
+    updated_at.strftime('%Y-%m-%d')
+  end
+
+  # @return Hash<String> identifier type mapped to identifier value of parent publication IDs
+  def parent_publication_identifiers
+    {
+      'ISSN' => parent_publication_issn,
+      'ISBN' => parent_publication_isbn,
+      'DOI' => parent_publication_doi
+    }.compact
   end
 
   # ISSN of the parent publication
   # @api public
   # @return [String, nil]
   def parent_publication_issn
-    @dfd['parent_publication'][0]['parent_publication_issn'] if @dfd.key? 'parent_publication'
+    @dynamic_field_data['parent_publication'][0]['parent_publication_issn'] if @dynamic_field_data.key? 'parent_publication'
   end
 
   # ISBN of the parent publication
   # @api public
   # @return [String, nil]
   def parent_publication_isbn
-    @dfd['parent_publication'][0]['parent_publication_isbn'] if @dfd.key? 'parent_publication'
+    @dynamic_field_data['parent_publication'][0]['parent_publication_isbn'] if @dynamic_field_data.key? 'parent_publication'
   end
 
   # DOI of the parent publication
   # @api public
   # @return [String, nil]
   def parent_publication_doi
-    @dfd['parent_publication'][0]['parent_publication_doi'] if @dfd.key? 'parent_publication'
-  end
-
-  # DOI identifier value
-  # @api public
-  # @return [String, nil]
-  def doi_identifier
-    @dfd['doi_identifier'][0]['doi_identifier_value'] if @dfd.key? 'doi_identifier'
+    @dynamic_field_data['parent_publication'][0]['parent_publication_doi'] if @dynamic_field_data.key? 'parent_publication'
   end
 
   # handle indentifier value
   # @api public
   # @return [String, nil]
   def handle_net_identifier
-    @dfd['cnri_handle_identifier'][0]['cnri_handle_identifier_value'] if @dfd.key? 'cnri_handle_identifier'
+    @dynamic_field_data['cnri_handle_identifier'][0]['cnri_handle_identifier_value'] if @dynamic_field_data.key? 'cnri_handle_identifier'
   end
 
-  # retrieve name terms by role from [@dfd]
+  # retrieve subject topics from [@dynamic_field_data]
   # @api private
   # @return [void]
-  def process_names
-    return unless @dfd.key? 'name'
-    @dfd['name'].each do |name|
+  def subject_topics
+    @dynamic_field_data.fetch('subject_topic', []).map do |topic|
+      topic['subject_topic_term']['value']
+    end
+  end
+
+  # retrieve name terms by role from [@dynamic_field_data]
+  # @param Array<Symbol> filter_types optional types to filter to
+  # @return Hash of contributor names to array of types
+  def contributor_values(dynamic_field_data, filter_types = [])
+    dynamic_field_data.fetch('name', []).map do |name|
       process_name(name)
-    end
+    end.select { |key_value_pair| filter_types.blank? || (filter_types & key_value_pair[1]).present? }.to_h
   end
 
-  # adds given name to correct name-related instance variable (@creators, @editors, etc.)
-  # @api private
-  # @return [void]
-  def process_name(name)
-    # If name has no explicitly declared role, add name to @contributors
-    if name['name_role'].blank?
-      @contributors << name['name_term']['value']
-      return
-    end
+  def creators
+    contributor_values(@dynamic_field_data, [:author]).keys
+  end
 
-    name['name_role'].each do |role|
-      role_value = role['name_role_term']['value'].downcase
-      case role_value
-      when 'author' then @creators << name['name_term']['value']
-      when 'editor' then @editors << name['name_term']['value']
-      when 'moderator' then @moderators << name['name_term']['value']
-      when 'contributor' then @contributors << name['name_term']['value']
+  def editors
+    contributor_values(@dynamic_field_data, [:editor]).keys
+  end
+
+  def moderators
+    contributor_values(@dynamic_field_data, [:moderator]).keys
+  end
+
+  def contributors
+    contributor_values(@dynamic_field_data, [:contributor]).keys
+  end
+
+  private
+
+    CONTRIBUTOR_ROLES = ['author', 'editor', 'moderator', 'contributor'].freeze
+
+    def process_name(name_hash)
+      return [name_hash['name_term']['value'], [:contributor]] if name_hash['name_role'].blank?
+
+      roles = CONTRIBUTOR_ROLES & name_hash['name_role'].map do |role|
+        role['name_role_term']['value'].downcase
       end
+      [name_hash['name_term']['value'], roles.map(&:to_sym)]
     end
-  end
 
-  # retrieve subject topics from [@dfd]
-  # @api private
-  # @return [void]
-  def process_subjects_topic
-    return unless @dfd.key? 'subject_topic'
-    @dfd['subject_topic'].each do |topic|
-      @subjects_topic << topic['subject_topic_term']['value']
+    def deserialize_datetime(value)
+      Hyacinth::DigitalObject::TypeDef::DateTime.new.from_serialized_form_impl(value)
     end
-  end
 end

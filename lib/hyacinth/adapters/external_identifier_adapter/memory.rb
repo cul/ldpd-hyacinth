@@ -2,6 +2,8 @@ module Hyacinth
   module Adapters
     module ExternalIdentifierAdapter
       class Memory < Abstract
+        attr_reader :identifiers
+
         def initialize(adapter_config = {})
           super(adapter_config)
           @identifiers = {}
@@ -9,8 +11,8 @@ module Hyacinth
 
         # @param id [String]
         # @return [Boolean] true if this adapter can handle this type of identifier
-        def handles?(id)
-          id =~ /^\d+$/
+        def handles?(_id)
+          true
         end
 
         # Generates a new persistent id, ensuring that nothing currently uses that identifier.
@@ -33,7 +35,7 @@ module Hyacinth
         def update_impl(id, digital_object, location_uri)
           return false unless handles?(id)
           @identifiers[id] = { uid: digital_object.uid, status: :active }
-          update_doi_target_url(doi, location_uri)
+          update_doi_target_url(id, location_uri)
           true
         end
 
