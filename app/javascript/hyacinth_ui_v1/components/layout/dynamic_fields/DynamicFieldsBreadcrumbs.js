@@ -7,7 +7,7 @@ import hyacinthApi from '../../../util/hyacinth_api';
 
 class DynamicFieldsBreadcrumbs extends React.Component {
   state = {
-    dynamicFieldGraph: []
+    dynamicFieldGraph: [],
   }
 
   componentDidMount() {
@@ -18,15 +18,17 @@ class DynamicFieldsBreadcrumbs extends React.Component {
   }
 
   findPath(dynamicFieldHierarchy, seekId, seekType) {
-    const { id, type, displayLabel, children } = dynamicFieldHierarchy;
+    const {
+      id, type, displayLabel, children,
+    } = dynamicFieldHierarchy;
 
-    if (id === seekId && type == seekType){
-      return [{ id: id, type: type, displayLabel: displayLabel }]
-    } else if (children && children.length !== 0) {
-      for (let child of children) {
-        let foundPath = this.findPath(child, seekId, seekType)
+    if (id === seekId && type == seekType) {
+      return [{ id, type, displayLabel }];
+    } if (children && children.length !== 0) {
+      for (const child of children) {
+        const foundPath = this.findPath(child, seekId, seekType);
         if (foundPath !== null) {
-          return [{ id: id, type: type, displayLabel: displayLabel  }].concat(foundPath)
+          return [{ id, type, displayLabel }].concat(foundPath);
         }
       }
     }
@@ -42,10 +44,10 @@ class DynamicFieldsBreadcrumbs extends React.Component {
     console.log(this.props);
 
     let path = [];
-    for (let category of this.state.dynamicFieldGraph) {
-      let foundPath = this.findPath(category, id, type)
-      console.log(foundPath)
-      if (foundPath != null){
+    for (const category of this.state.dynamicFieldGraph) {
+      const foundPath = this.findPath(category, id, type);
+      console.log(foundPath);
+      if (foundPath != null) {
         path = foundPath;
         break;
       }
@@ -54,13 +56,13 @@ class DynamicFieldsBreadcrumbs extends React.Component {
     console.log(path);
 
     const crumbs = path.map((segment, index) => (
-      <LinkContainer to={segment.type === 'DynamicFieldCategory' ? '/dynamic_fields': `/dynamic_field_groups/${segment.id}/edit`}>
-        <Breadcrumb.Item active={!last && index === path.length-1}>{segment.displayLabel}</Breadcrumb.Item>
+      <LinkContainer to={segment.type === 'DynamicFieldCategory' ? '/dynamic_fields' : `/dynamic_field_groups/${segment.id}/edit`}>
+        <Breadcrumb.Item active={!last && index === path.length - 1}>{segment.displayLabel}</Breadcrumb.Item>
       </LinkContainer>
     ));
 
     return (
-      <Breadcrumb style={{backgroundColor: '#f3f7fb'}}>
+      <Breadcrumb style={{ backgroundColor: '#f3f7fb' }}>
         {crumbs}
         {
           last && (
@@ -68,7 +70,7 @@ class DynamicFieldsBreadcrumbs extends React.Component {
           )
         }
       </Breadcrumb>
-    )
+    );
   }
 }
 

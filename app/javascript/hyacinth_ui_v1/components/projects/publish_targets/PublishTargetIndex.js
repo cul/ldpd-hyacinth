@@ -22,7 +22,7 @@ export default class FieldSetIndex extends React.Component {
   }
 
   render() {
-    const { params: { projectStringKey } } = this.props.match
+    const { params: { projectStringKey } } = this.props.match;
 
     let rows = <tr><td colSpan="4">No publish targets have been defined</td></tr>;
 
@@ -63,7 +63,7 @@ export default class FieldSetIndex extends React.Component {
           </thead>
           <tbody>
             {rows}
-            <Can I="PublishTarget" of={{ subjectType: 'FieldSet', project: { stringKey: projectStringKey } }} >
+            <Can I="PublishTarget" of={{ subjectType: 'FieldSet', project: { stringKey: projectStringKey } }}>
               <tr>
                 <td className="text-center" colSpan="4">
                   <LinkContainer to={`/projects/${projectStringKey}/publish_targets/new`}>

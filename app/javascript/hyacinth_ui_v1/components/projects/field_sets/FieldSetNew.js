@@ -7,7 +7,7 @@ import FieldSetForm from './FieldSetForm';
 
 class FieldSetNew extends React.Component {
   createFieldSet = (data) => {
-    const { projectStringKey } = this.props.match.params
+    const { projectStringKey } = this.props.match.params;
 
     hyacinthApi.post(`/projects/${projectStringKey}/field_sets`, data)
       .then((res) => {

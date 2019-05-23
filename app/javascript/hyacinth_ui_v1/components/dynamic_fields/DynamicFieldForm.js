@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Row, Col, Form, Button, Breadcrumb, Card
+  Row, Col, Form, Button, Breadcrumb, Card,
 } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import produce from 'immer';
@@ -17,7 +17,7 @@ import DynamicFieldsAndGroupsTable from '../layout/dynamic_fields/DynamicFieldsA
 
 const fieldTypes = [
   'string', 'textarea', 'integer', 'boolean', 'select', 'date', 'controlled_term',
-]
+];
 
 class DynamicFieldForm extends React.Component {
   state = {
@@ -35,8 +35,8 @@ class DynamicFieldForm extends React.Component {
       isKeywordSearchable: false,
       isTitleSearchable: false,
       isIdentifierSearchable: false,
-      dynamicFieldGroupId: ''
-    }
+      dynamicFieldGroupId: '',
+    },
   }
 
   componentDidMount() {
@@ -66,10 +66,9 @@ class DynamicFieldForm extends React.Component {
         const { vocabularies } = res.data;
 
         this.setState(produce((draft) => {
-          draft.vocabularies = vocabularies.map((v) => ({ stringKey: v.stringKey, label: v.label }))
-        }))
-      })
-
+          draft.vocabularies = vocabularies.map(v => ({ stringKey: v.stringKey, label: v.label }));
+        }));
+      });
   }
 
   onSubmitHandler = (event) => {
@@ -77,11 +76,11 @@ class DynamicFieldForm extends React.Component {
 
     const { formType, dynamicField: { id }, dynamicField } = this.state;
 
-    switch(formType) {
+    switch (formType) {
       case 'new':
         hyacinthApi.post('/dynamic_fields', dynamicField)
           .then((res) => {
-            const { dynamicField: { id } } = res.data
+            const { dynamicField: { id } } = res.data;
 
             this.props.history.push(`/dynamic_fields/${id}/edit`);
           });
@@ -89,7 +88,7 @@ class DynamicFieldForm extends React.Component {
       case 'edit':
         hyacinthApi.patch(`/dynamic_fields/${id}`, dynamicField)
           .then((res) => {
-            const { dynamicField: { id } } = res.data
+            const { dynamicField: { id } } = res.data;
 
             this.props.history.push(`/dynamic_fields/${id}/edit`);
           });
@@ -109,7 +108,11 @@ class DynamicFieldForm extends React.Component {
   }
 
   onChangeHandler = (event) => {
-    const { target: { type, name, value, checked } } = event;
+    const {
+      target: {
+        type, name, value, checked,
+      },
+    } = event;
 
     this.setState(produce((draft) => {
       draft.dynamicField[name] = type === 'checkbox' ? checked : value;
@@ -131,7 +134,7 @@ class DynamicFieldForm extends React.Component {
         controlledVocabulary,
         isKeywordSearchable,
         isTitleSearchable,
-        isIdentifierSearchable
+        isIdentifierSearchable,
       },
     } = this.state;
 
@@ -281,7 +284,7 @@ class DynamicFieldForm extends React.Component {
           </Col>
         </Form.Row>
       </Form>
-    )
+    );
   }
 }
 

@@ -17,14 +17,14 @@ export default class PublishTarget extends React.Component {
           <ProtectedRoute
             path="/projects/:projectStringKey/publish_targets/new"
             component={PublishTargetNew}
-            requiredAbility={(params) => ({ action: "create", subject: "PublishTarget", project: { stringKey: params.projectStringKey }})}
+            requiredAbility={params => ({ action: 'create', subject: 'PublishTarget', project: { stringKey: params.projectStringKey } })}
           />
 
           <ProtectedRoute
             exact
             path="/projects/:projectStringKey/publish_targets/:stringKey/edit"
             component={PublishTargetEdit}
-            requiredAbility={(params) => ({ action: "update", subject: "PublishTarget", project: { stringKey: params.projectStringKey }})}
+            requiredAbility={params => ({ action: 'update', subject: 'PublishTarget', project: { stringKey: params.projectStringKey } })}
           />
 
           { /* When none of the above match, <NoMatch> will be rendered */ }

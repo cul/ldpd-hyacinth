@@ -21,13 +21,13 @@ export default class DynamicFields extends React.Component {
         <ProtectedRoute
           path="/dynamic_fields/new"
           component={DynamicFieldNew}
-          requiredAbility={ { action: 'create', subject: 'DynamicField' } }
+          requiredAbility={{ action: 'create', subject: 'DynamicField' }}
         />
 
         <ProtectedRoute
           path="/dynamic_fields/:id/edit"
           component={DynamicFieldEdit}
-          requiredAbility={ (params) => ({ action: 'update', subject: 'DynamicField', id: params.id }) }
+          requiredAbility={params => ({ action: 'update', subject: 'DynamicField', id: params.id })}
         />
 
         { /* When none of the above match, <NoMatch> will be rendered */ }

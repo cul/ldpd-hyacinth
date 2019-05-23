@@ -10,7 +10,7 @@ import DynamicFieldsAndGroupsTable from '../layout/dynamic_fields/DynamicFieldsA
 
 export default class DynamicFieldIndex extends React.Component {
   state = {
-    dynamicFieldHierarchy: []
+    dynamicFieldHierarchy: [],
   }
 
   componentDidMount() {
@@ -22,14 +22,16 @@ export default class DynamicFieldIndex extends React.Component {
 
   renderCategories() {
     return (
-      this.state.dynamicFieldHierarchy.map(dynamicFieldCategory => {
+      this.state.dynamicFieldHierarchy.map((dynamicFieldCategory) => {
         const { id, displayLabel, children } = dynamicFieldCategory;
 
         return (
           <Card className="mb-3" key={id} id={displayLabel.replace(' ', '-')}>
             <Card.Header as="h5">
 
-              {displayLabel} <Link to={`/dynamic_field_categories/${id}/edit`}><FontAwesomeIcon icon="pen" /></Link>
+              {displayLabel}
+              {' '}
+              <Link to={`/dynamic_field_categories/${id}/edit`}><FontAwesomeIcon icon="pen" /></Link>
               <span className="badge badge-secondary float-right">Category</span>
             </Card.Header>
             <Card.Body>
@@ -37,14 +39,16 @@ export default class DynamicFieldIndex extends React.Component {
 
               <Card.Text className="text-center">
                 <Link to={`/dynamic_field_groups/new?parentType=DynamicFieldCategory&parentId=${id}`} href="#">
-                  <FontAwesomeIcon icon="plus" />   New Dynamic Field Group
+                  <FontAwesomeIcon icon="plus" />
+                  {' '}
+New Dynamic Field Group
                 </Link>
               </Card.Text>
             </Card.Body>
           </Card>
-        )}
-      )
-    )
+        );
+      })
+    );
   }
 
   render() {
@@ -57,6 +61,6 @@ export default class DynamicFieldIndex extends React.Component {
 
         {this.renderCategories()}
       </>
-    )
+    );
   }
 }

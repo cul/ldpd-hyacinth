@@ -21,7 +21,7 @@ export default class Projects extends React.Component {
         <Route exact path="/projects" component={ProjectIndex} />
 
         <ProtectedRoute
-          requiredAbility={(params) => ({ action: 'create', subjectType: 'Project' })}
+          requiredAbility={params => ({ action: 'create', subjectType: 'Project' })}
           path="/projects/new"
           component={ProjectNew}
         />

@@ -9,7 +9,7 @@ import DynamicFieldsBreadcrumbs from '../layout/dynamic_fields/DynamicFieldsBrea
 
 class DynamicFieldGroupNew extends React.Component {
   render() {
-    const { match: { params: { id }} } = this.props;
+    const { match: { params: { id } } } = this.props;
 
     return (
       <>
@@ -19,10 +19,10 @@ class DynamicFieldGroupNew extends React.Component {
         />
 
         <DynamicFieldsBreadcrumbs
-          for={{ id: id, type: 'DynamicField' }}
+          for={{ id, type: 'DynamicField' }}
         />
 
-        <DynamicFieldForm formType="edit" id={id} key={id}/>
+        <DynamicFieldForm formType="edit" id={id} key={id} />
       </>
     );
   }

@@ -17,13 +17,13 @@ export default class FieldSet extends React.Component {
           <ProtectedRoute
             path="/projects/:projectStringKey/field_sets/new"
             component={FieldSetNew}
-            requiredAbility={(params) => ({ action: "create", subject: "FieldSet", project: { stringKey: params.projectStringKey }})}
+            requiredAbility={params => ({ action: 'create', subject: 'FieldSet', project: { stringKey: params.projectStringKey } })}
           />
 
           <ProtectedRoute
             path="/projects/:projectStringKey/field_sets/:id/edit"
             component={FieldSetEdit}
-            requiredAbility={(params) => ({ action: "update", subject: "FieldSet", project: { stringKey: params.projectStringKey }})}
+            requiredAbility={params => ({ action: 'update', subject: 'FieldSet', project: { stringKey: params.projectStringKey } })}
           />
 
           { /* When none of the above match, <NoMatch> will be rendered */ }

@@ -20,14 +20,14 @@ class PublishTargetForm extends React.Component {
   }
 
   componentDidMount() {
-    const { projectStringKey, stringKey } = this.props.match.params
+    const { projectStringKey, stringKey } = this.props.match.params;
 
     if (stringKey) {
       hyacinthApi.get(`/projects/${projectStringKey}/publish_targets/${stringKey}`)
         .then((res) => {
-          const { publishTarget } = res.data
+          const { publishTarget } = res.data;
 
-          this.setState(produce(draft => {
+          this.setState(produce((draft) => {
             draft.formType = 'edit';
             draft.publishTarget = publishTarget;
           }));
@@ -63,7 +63,7 @@ class PublishTargetForm extends React.Component {
   onDeleteHandler = (event) => {
     event.preventDefault();
 
-    const { projectStringKey, stringKey } = this.props.match.params
+    const { projectStringKey, stringKey } = this.props.match.params;
 
     hyacinthApi.delete(`/projects/${projectStringKey}/publish_targets/${stringKey}`)
       .then((res) => {

@@ -15,7 +15,7 @@ export default class CoreData extends React.Component {
         <ProtectedRoute
           path={`${this.props.match.path}/edit`}
           component={CoreDataEdit}
-          requiredAbility={(params) => ({ action: "update", subject: "Project", stringKey: params.stringKey })}
+          requiredAbility={params => ({ action: 'update', subject: 'Project', stringKey: params.stringKey })}
         />
 
         <Route component={NoMatch} />

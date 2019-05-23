@@ -25,7 +25,7 @@ class DynamicFieldGroupNew extends React.Component {
 
         <DynamicFieldGroupForm
           formType="new"
-          defaultValues={{parentType: parentType, parentId: parentId}}
+          defaultValues={{ parentType, parentId }}
         />
       </>
     );

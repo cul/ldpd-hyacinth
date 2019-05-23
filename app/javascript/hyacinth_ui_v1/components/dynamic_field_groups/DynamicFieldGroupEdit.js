@@ -1,5 +1,7 @@
 import React from 'react';
-import { Row, Col, Button, Card } from 'react-bootstrap';
+import {
+  Row, Col, Button, Card,
+} from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import produce from 'immer';
 
@@ -20,10 +22,13 @@ class DynamicFieldGroupEdit extends React.Component {
         />
 
         <DynamicFieldsBreadcrumbs
-          for={{ id: id, type: 'DynamicFieldGroup' }}
+          for={{ id, type: 'DynamicFieldGroup' }}
         />
 
-        <DynamicFieldGroupForm key={id} id={id} formType="edit"
+        <DynamicFieldGroupForm
+          key={id}
+          id={id}
+          formType="edit"
         />
       </>
     );

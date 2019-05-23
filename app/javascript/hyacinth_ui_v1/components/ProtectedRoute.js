@@ -12,16 +12,16 @@ class ProtectedRoute extends React.Component {
       ...rest
     } = this.props;
 
-    const { computedMatch: { params } } = this.props
+    const { computedMatch: { params } } = this.props;
 
     let {
       action,
       subject: subjectType,
       ...subject
-    } = (typeof(requiredAbility) === 'function') ? requiredAbility(params) : requiredAbility;
+    } = (typeof (requiredAbility) === 'function') ? requiredAbility(params) : requiredAbility;
 
     if (subjectType) {
-      subject = { subjectType: subjectType, ...subject }
+      subject = { subjectType, ...subject };
     }
 
     console.log(subject);

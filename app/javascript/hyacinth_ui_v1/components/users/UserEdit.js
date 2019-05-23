@@ -41,7 +41,7 @@ class UserEdit extends React.Component {
   onSubmitHandler = (event) => {
     event.preventDefault();
 
-    const { params: { uid } } = this.props.match
+    const { params: { uid } } = this.props.match;
 
     const data = {
       user: {
@@ -85,7 +85,7 @@ class UserEdit extends React.Component {
     let rightHandLinks = [];
 
     if (ability.can('index', 'Users')) {
-      rightHandLinks = [{ link: '/users', label: 'Cancel' }]
+      rightHandLinks = [{ link: '/users', label: 'Cancel' }];
     }
 
     return (
@@ -209,4 +209,4 @@ class UserEdit extends React.Component {
   }
 }
 
-export default withErrorHandler(UserEdit, hyacinthApi)
+export default withErrorHandler(UserEdit, hyacinthApi);

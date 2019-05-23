@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Row, Col, Form, Button, Breadcrumb
+  Row, Col, Form, Button, Breadcrumb,
 } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import produce from 'immer';
@@ -42,13 +42,13 @@ class DynamicFieldCategoryForm extends React.Component {
   onSubmitHandler = (event) => {
     event.preventDefault();
 
-    const { formType, dynamicFieldCategory: { id }, dynamicFieldCategory } = this.state
+    const { formType, dynamicFieldCategory: { id }, dynamicFieldCategory } = this.state;
 
-    switch(formType) {
+    switch (formType) {
       case 'new':
         hyacinthApi.post('/dynamic_field_categories', dynamicFieldCategory)
           .then((res) => {
-            const { dynamicFieldCategory: { id } } = res.data
+            const { dynamicFieldCategory: { id } } = res.data;
 
             this.props.history.push(`/dynamic_field_categories/${id}/edit`);
           });
@@ -109,7 +109,7 @@ class DynamicFieldCategoryForm extends React.Component {
 
         <Form.Row>
           <Col sm="auto" className="mr-auto">
-            <DeleteButton formType={formType} onClick={this.onDeleteHandler}/>
+            <DeleteButton formType={formType} onClick={this.onDeleteHandler} />
           </Col>
 
           <Col sm="auto">
@@ -117,11 +117,11 @@ class DynamicFieldCategoryForm extends React.Component {
           </Col>
 
           <Col sm="auto">
-            <SubmitButton formType={formType} onClick={this.onSubmitHandler}/>
+            <SubmitButton formType={formType} onClick={this.onSubmitHandler} />
           </Col>
         </Form.Row>
       </Form>
-    )
+    );
   }
 }
 

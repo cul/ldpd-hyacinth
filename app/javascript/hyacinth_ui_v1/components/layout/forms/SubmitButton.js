@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 
 class SubmitButton extends React.Component {
   render() {
-    const { formType, ...rest } = this.props
+    const { formType, ...rest } = this.props;
     return (
       <Button variant="primary" type="submit" {...rest}>
         {formType === 'new' ? 'Create' : 'Update'}

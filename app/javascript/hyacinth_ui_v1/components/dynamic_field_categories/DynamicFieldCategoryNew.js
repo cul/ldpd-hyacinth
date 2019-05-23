@@ -12,7 +12,7 @@ class DynamicFieldCategoryNew extends React.Component {
           rightHandLinks={[{ link: '/dynamic_fields', label: 'Back to Dynamic Fields' }]}
         />
 
-        <DynamicFieldCategoryForm formType="new"  />
+        <DynamicFieldCategoryForm formType="new" />
       </>
     );
   }

@@ -2,14 +2,15 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Table, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { snakeCase, lowerFirst, words, last } from 'lodash';
+import {
+  snakeCase, lowerFirst, words, last,
+} from 'lodash';
 
 import hyacinthApi from '../../../util/hyacinth_api';
 
 export default class DynamicFieldsAndGroupsTable extends React.Component {
-
   updateSortOrder(type, id, sortOrder) {
-    let data = { [lowerFirst(type)]: { sortOrder: sortOrder } };
+    const data = { [lowerFirst(type)]: { sortOrder } };
 
     hyacinthApi.patch(`/${snakeCase(type)}s/${id}`, data)
       .then((res) => {
@@ -30,12 +31,12 @@ export default class DynamicFieldsAndGroupsTable extends React.Component {
           <tbody>
             {
               rows.map((fieldOrGroup, index) => {
-                const sortUp = (index === 0) ? null : Math.max(0, rows[index-1].sortOrder - 1);
-                const sortDown = (index === rows.length - 1) ? null : rows[index+1].sortOrder + 1;
+                const sortUp = (index === 0) ? null : Math.max(0, rows[index - 1].sortOrder - 1);
+                const sortDown = (index === rows.length - 1) ? null : rows[index + 1].sortOrder + 1;
 
                 const { displayLabel, id, type } = fieldOrGroup;
 
-                return(
+                return (
                   <tr key={`${type}_${id}`}>
                     <td>{displayLabel}</td>
                     <td><span className="badge badge-secondary">{last(words(type))}</span></td>
@@ -45,7 +46,7 @@ export default class DynamicFieldsAndGroupsTable extends React.Component {
                       </Button>
                       {' '}
                       <Button className="p-0" variant="link" onClick={() => this.updateSortOrder(type, id, sortDown)} disabled={sortDown === null}>
-                        <FontAwesomeIcon icon={['far', 'caret-square-down']} size="lg"/>
+                        <FontAwesomeIcon icon={['far', 'caret-square-down']} size="lg" />
                       </Button>
                     </td>
                     <td>
@@ -54,12 +55,12 @@ export default class DynamicFieldsAndGroupsTable extends React.Component {
                       </Link>
                     </td>
                   </tr>
-                )
+                );
               })
             }
           </tbody>
         </Table>
-      )
+      );
     }
     return (body);
   }

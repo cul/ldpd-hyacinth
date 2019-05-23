@@ -15,19 +15,19 @@ export default class Users extends React.Component {
           exact
           path="/users"
           component={UserIndex}
-          requiredAbility={ { action: 'index', subject: 'User' } }
+          requiredAbility={{ action: 'index', subject: 'User' }}
         />
 
         <ProtectedRoute
           path="/users/new"
           component={UserNew}
-          requiredAbility={ { action: 'create', subject: 'User' } }
+          requiredAbility={{ action: 'create', subject: 'User' }}
         />
 
         <ProtectedRoute
           path="/users/:uid/edit"
           component={UserEdit}
-          requiredAbility={ (params) => ({ action: 'update', subject: 'User', uid: params.uid }) }
+          requiredAbility={params => ({ action: 'update', subject: 'User', uid: params.uid })}
         />
 
         { /* When none of the above match, <NoMatch> will be rendered */ }

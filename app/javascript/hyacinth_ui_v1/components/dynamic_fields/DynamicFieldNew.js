@@ -11,7 +11,7 @@ class DynamicFieldGroupNew extends React.Component {
   createDynamicFieldGroup = (data) => {
     hyacinthApi.post('/dynamic_fields', data)
       .then((res) => {
-        const { dynamicField: { id } } = res.data
+        const { dynamicField: { id } } = res.data;
 
         this.props.history.push(`/dynamic_fields/${id}/edit`);
       });
@@ -35,7 +35,7 @@ class DynamicFieldGroupNew extends React.Component {
 
         <DynamicFieldForm
           formType="new"
-          defaultValues={{ dynamicFieldGroupId: dynamicFieldGroupId }}
+          defaultValues={{ dynamicFieldGroupId }}
         />
       </>
     );

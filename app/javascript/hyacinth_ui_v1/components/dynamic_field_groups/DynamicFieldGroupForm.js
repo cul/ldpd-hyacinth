@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Row, Col, Form, Button, Breadcrumb, Card
+  Row, Col, Form, Button, Breadcrumb, Card,
 } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -24,13 +24,13 @@ class DynamicFieldGroupForm extends React.Component {
       sortOrder: '',
       isRepeatable: false,
       parentType: '',
-      parentId: ''
+      parentId: '',
     },
     children: [],
   }
 
   componentDidMount() {
-    const { id, formType, defaultValues } = this.props
+    const { id, formType, defaultValues } = this.props;
 
     if (formType === 'edit' && id) {
       hyacinthApi.get(`/dynamic_field_groups/${id}`)
@@ -38,17 +38,17 @@ class DynamicFieldGroupForm extends React.Component {
           const { dynamicFieldGroup, dynamicFieldGroup: { parentType } } = res.data;
 
           if (parentType === 'DynamicFieldCategory') {
-            this.loadCategories()
+            this.loadCategories();
           }
 
           this.setState(produce((draft) => {
             draft.formType = formType;
             draft.dynamicFieldGroup = dynamicFieldGroup; // except children
-            draft.children = dynamicFieldGroup.children
+            draft.children = dynamicFieldGroup.children;
           }));
         });
     } else if (formType === 'new') {
-      const { parentType, parentId } = defaultValues
+      const { parentType, parentId } = defaultValues;
 
       if (parentType === 'DynamicFieldCategory') {
         this.loadCategories();
@@ -58,7 +58,6 @@ class DynamicFieldGroupForm extends React.Component {
         draft.formType = formType;
         draft.dynamicFieldGroup.parentType = parentType || 'DynamicFieldCategory';
         draft.dynamicFieldGroup.parentId = parentId;
-
       }));
     }
   }
@@ -77,11 +76,11 @@ class DynamicFieldGroupForm extends React.Component {
 
     const { formType, dynamicFieldGroup: { id }, dynamicFieldGroup } = this.state;
 
-    switch(formType) {
+    switch (formType) {
       case 'new':
         hyacinthApi.post('/dynamic_field_groups', dynamicFieldGroup)
           .then((res) => {
-            const { dynamicFieldGroup: { id } } = res.data
+            const { dynamicFieldGroup: { id } } = res.data;
 
             this.props.history.push(`/dynamic_field_groups/${id}/edit`);
           });
@@ -107,7 +106,11 @@ class DynamicFieldGroupForm extends React.Component {
   }
 
   onChangeHandler = (event) => {
-    const { target: { type, name, value, checked } } = event;
+    const {
+      target: {
+        type, name, value, checked,
+      },
+    } = event;
 
     this.setState(produce((draft) => {
       draft.dynamicFieldGroup[name] = type === 'checkbox' ? checked : value;
@@ -117,8 +120,10 @@ class DynamicFieldGroupForm extends React.Component {
   render() {
     const {
       formType,
-      dynamicFieldGroup: { stringKey, displayLabel, sortOrder, isRepeatable, parentType, parentId },
-      dynamicFieldCategories
+      dynamicFieldGroup: {
+        stringKey, displayLabel, sortOrder, isRepeatable, parentType, parentId,
+      },
+      dynamicFieldCategories,
     } = this.state;
 
     let categoriesDropdown = '';
@@ -137,7 +142,7 @@ class DynamicFieldGroupForm extends React.Component {
             </Form.Control>
           </Col>
         </Form.Group>
-      )
+      );
     }
 
     return (
@@ -205,7 +210,7 @@ class DynamicFieldGroupForm extends React.Component {
               </Col>
 
               <Col sm="auto">
-                <SubmitButton onClick={this.onSubmitHandler} formType={formType}/>
+                <SubmitButton onClick={this.onSubmitHandler} formType={formType} />
               </Col>
             </Form.Row>
           </Form>
@@ -233,7 +238,7 @@ class DynamicFieldGroupForm extends React.Component {
           </Card>
         </Col>
       </Row>
-    )
+    );
   }
 }
 

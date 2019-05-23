@@ -16,12 +16,12 @@ class FieldSetForm extends React.Component {
   }
 
   componentDidMount() {
-    const { projectStringKey, id } = this.props.match.params
+    const { projectStringKey, id } = this.props.match.params;
 
     if (id) {
       hyacinthApi.get(`/projects/${projectStringKey}/field_sets/${id}`)
         .then((res) => {
-          const { fieldSet } = res.data
+          const { fieldSet } = res.data;
 
           this.setState(produce((draft) => {
             draft.fieldSet = fieldSet;
@@ -42,7 +42,7 @@ class FieldSetForm extends React.Component {
   onDeleteHandler = (event) => {
     event.preventDefault();
 
-    const { projectStringKey, id } = this.props.match.params
+    const { projectStringKey, id } = this.props.match.params;
 
     hyacinthApi.delete(`/projects/${projectStringKey}/field_sets/${id}`)
       .then((res) => {
