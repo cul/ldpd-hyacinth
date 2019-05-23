@@ -5,7 +5,7 @@ import {
 import { withRouter } from 'react-router-dom';
 import produce from 'immer';
 
-import CancelButton from '../../layout/CancelButton';
+import CancelButton from '../../layout/forms/CancelButton';
 import hyacinthApi from '../../../util/hyacinth_api';
 
 class FieldSetForm extends React.Component {

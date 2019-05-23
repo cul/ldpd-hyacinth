@@ -7,9 +7,12 @@ import { LinkContainer } from 'react-router-bootstrap';
 import produce from 'immer';
 import queryString from 'query-string';
 
-import CancelButton from '../layout/CancelButton';
+import CancelButton from '../layout/forms/CancelButton';
+import SubmitButton from '../layout/forms/SubmitButton';
+import DeleteButton from '../layout/forms/DeleteButton';
 import hyacinthApi from '../../util/hyacinth_api';
 import DynamicFieldsAndGroupsTable from '../layout/dynamic_fields/DynamicFieldsAndGroupsTable';
+import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
 class DynamicFieldGroupForm extends React.Component {
   state = {
@@ -27,9 +30,9 @@ class DynamicFieldGroupForm extends React.Component {
   }
 
   componentDidMount() {
-    const { match: { params: { id } }, location: { search } } = this.props
+    const { id, formType, defaultValues } = this.props
 
-    if (id) {
+    if (formType === 'edit' && id) {
       hyacinthApi.get(`/dynamic_field_groups/${id}`)
         .then((res) => {
           const { dynamicFieldGroup, dynamicFieldGroup: { parentType } } = res.data;
@@ -39,20 +42,20 @@ class DynamicFieldGroupForm extends React.Component {
           }
 
           this.setState(produce((draft) => {
-            draft.formType = 'edit';
+            draft.formType = formType;
             draft.dynamicFieldGroup = dynamicFieldGroup; // except children
             draft.children = dynamicFieldGroup.children
           }));
         });
-    } else if (search) {
-      const { parentType, parentId } = queryString.parse(search);
+    } else if (formType === 'new') {
+      const { parentType, parentId } = defaultValues
 
       if (parentType === 'DynamicFieldCategory') {
         this.loadCategories();
       }
 
       this.setState(produce((draft) => {
-        draft.formType = 'new';
+        draft.formType = formType;
         draft.dynamicFieldGroup.parentType = parentType || 'DynamicFieldCategory';
         draft.dynamicFieldGroup.parentId = parentId;
 
@@ -72,13 +75,30 @@ class DynamicFieldGroupForm extends React.Component {
   onSubmitHandler = (event) => {
     event.preventDefault();
 
-    this.props.submitFormAction(this.state.dynamicFieldGroup);
+    const { formType, dynamicFieldGroup: { id }, dynamicFieldGroup } = this.state;
+
+    switch(formType) {
+      case 'new':
+        hyacinthApi.post('/dynamic_field_groups', dynamicFieldGroup)
+          .then((res) => {
+            const { dynamicFieldGroup: { id } } = res.data
+
+            this.props.history.push(`/dynamic_field_groups/${id}/edit`);
+          });
+        break;
+      case 'edit':
+        hyacinthApi.patch(`/dynamic_field_groups/${id}`, dynamicFieldGroup)
+          .then((res) => {
+            this.props.history.push(`/dynamic_field_groups/${id}/edit`);
+          });
+        break;
+    }
   }
 
   onDeleteHandler = (event) => {
     event.preventDefault();
 
-    const { id } = this.props.match.params;
+    const { id } = this.props;
 
     hyacinthApi.delete(`/dynamic_field_groups/${id}`)
       .then((res) => {
@@ -101,17 +121,12 @@ class DynamicFieldGroupForm extends React.Component {
       dynamicFieldCategories
     } = this.state;
 
-    let deleteButton = '';
-    if (this.props.match.params.id) {
-      deleteButton = <Button variant="outline-danger" type="button" onClick={this.onDeleteHandler}>Delete</Button>;
-    }
-
     let categoriesDropdown = '';
     if (parentType === 'DynamicFieldCategory') {
       categoriesDropdown = (
         <Form.Group as={Row}>
-          <Form.Label column sm={12} lg={3}>Dynamic Field Category</Form.Label>
-          <Col sm={12} lg={9}>
+          <Form.Label column sm={12} xl={3}>Dynamic Field Category</Form.Label>
+          <Col sm={12} xl={9}>
             <Form.Control
               as="select"
               name="parentId"
@@ -126,103 +141,100 @@ class DynamicFieldGroupForm extends React.Component {
     }
 
     return (
-      <>
-        <Breadcrumb>
-          <LinkContainer to="/dynamic_fields">
-            <Breadcrumb.Item>Dynamic Fields</Breadcrumb.Item>
-          </LinkContainer>
-          <Breadcrumb.Item>
-             something
-          </Breadcrumb.Item>
-          <Breadcrumb.Item active>{formType === 'new' ? 'New Dynamic Field Group' : displayLabel}</Breadcrumb.Item>
-        </Breadcrumb>
+      <Row>
+        <Col sm={7}>
+          <Form onSubmit={this.onSubmitHandler}>
+            <Form.Group as={Row}>
+              <Form.Label column sm={12} xl={3}>String Key</Form.Label>
+              <Col sm={12} xl={9}>
+                <Form.Control
+                  type="text"
+                  name="stringKey"
+                  value={stringKey}
+                  onChange={this.onChangeHandler}
+                  disabled={formType === 'edit'}
+                />
+              </Col>
+            </Form.Group>
 
-        <Row>
-          <Col sm={6}>
-            <Form onSubmit={this.onSubmitHandler}>
-              <Form.Group as={Row}>
-                <Form.Label column sm={12} xl={3}>String Key</Form.Label>
-                <Col sm={12} xl={9}>
-                  <Form.Control
-                    type="text"
-                    name="stringKey"
-                    value={stringKey}
-                    onChange={this.onChangeHandler}
-                  />
-                </Col>
-              </Form.Group>
+            <Form.Group as={Row}>
+              <Form.Label column sm={12} xl={3}>Display Label</Form.Label>
+              <Col sm={12} xl={9}>
+                <Form.Control
+                  type="text"
+                  name="displayLabel"
+                  value={displayLabel}
+                  onChange={this.onChangeHandler}
+                />
+              </Col>
+            </Form.Group>
 
-              <Form.Group as={Row}>
-                <Form.Label column sm={12} xl={3}>Display Label</Form.Label>
-                <Col sm={12} xl={9}>
-                  <Form.Control
-                    type="text"
-                    name="displayLabel"
-                    value={displayLabel}
-                    onChange={this.onChangeHandler}
-                  />
-                </Col>
-              </Form.Group>
+            <Form.Group as={Row}>
+              <Form.Label column sm={12} xl={3}>Sort Order</Form.Label>
+              <Col sm={12} xl={9}>
+                <Form.Control
+                  type="number"
+                  name="sortOrder"
+                  value={sortOrder}
+                  onChange={this.onChangeHandler}
+                />
+              </Col>
+            </Form.Group>
 
-              <Form.Group as={Row}>
-                <Form.Label column sm={12} xl={3}>Sort Order</Form.Label>
-                <Col sm={12} xl={9}>
-                  <Form.Control
-                    type="number"
-                    name="sortOrder"
-                    value={sortOrder}
-                    onChange={this.onChangeHandler}
-                  />
-                </Col>
-              </Form.Group>
+            {categoriesDropdown}
 
-              {categoriesDropdown}
+            <Form.Group as={Row}>
+              <Form.Label column sm={12} xl={3}>Is Repeatable?</Form.Label>
+              <Col sm={12} xl={9}>
+                <Form.Check
+                  name="isRepeatable"
+                  aria-label="is repeatable option"
+                  checked={isRepeatable}
+                  onChange={this.onChangeHandler}
+                />
+              </Col>
+            </Form.Group>
 
-              <Form.Group as={Row}>
-                <Form.Label column sm={12} xl={3}>Is Repeatable?</Form.Label>
-                <Col sm={12} xl={9}>
-                  <Form.Check
-                    name="isRepeatable"
-                    aria-label="is repeatable option"
-                    checked={isRepeatable}
-                    onChange={this.onChangeHandler}
-                  />
-                </Col>
-              </Form.Group>
+            <Form.Row>
+              <Col sm="auto" className="mr-auto">
+                <DeleteButton onClick={this.onDeleteHandler} formType={formType} />
+              </Col>
 
-              <Form.Row>
-                <Col sm="auto" className="mr-auto">{deleteButton}</Col>
+              <Col sm="auto">
+                <CancelButton to="/dynamic_fields" />
+              </Col>
 
-                <Col sm="auto">
-                  <CancelButton to="/dynamic_fields" />
-                </Col>
+              <Col sm="auto">
+                <SubmitButton onClick={this.onSubmitHandler} formType={formType}/>
+              </Col>
+            </Form.Row>
+          </Form>
+        </Col>
+        <Col sm={5}>
+          <Card>
+            <Card.Header>Child Fields and Field Groups</Card.Header>
+            <Card.Body>
+              <DynamicFieldsAndGroupsTable rows={this.state.children} />
 
-                <Col sm="auto">
-                  <Button variant="primary" type="submit" onClick={this.onSubmitHandler}>{this.props.submitButtonName}</Button>
-                </Col>
-              </Form.Row>
-            </Form>
-          </Col>
-          <Col sm={6}>
-            <Card>
-              <Card.Header>Child Fields and Field Groups</Card.Header>
-              <Card.Body>
-                <DynamicFieldsAndGroupsTable rows={this.state.children} />
+              {
+                formType === 'edit' && (
+                  <>
+                    <LinkContainer to={`/dynamic_fields/new?dynamicFieldGroupId=${this.props.id}`}>
+                      <Button variant="primary">New Child Field</Button>
+                    </LinkContainer>
 
-                <LinkContainer to={`/dynamic_fields/new?dynamic_field_group_id=${this.state.dynamicFieldGroup.id}`}>
-                  <Button variant="primary">New Child Field</Button>
-                </LinkContainer>
-
-                <LinkContainer to={`/dynamic_field_groups/new?parentId=${this.state.dynamicFieldGroup.id}&parentType=DynamicFieldGroup`}>
-                  <Button variant="primary">New Child Field Group</Button>
-                </LinkContainer>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </>
+                    <LinkContainer to={`/dynamic_field_groups/new?parentId=${this.props.id}&parentType=DynamicFieldGroup`}>
+                      <Button variant="primary">New Child Field Group</Button>
+                    </LinkContainer>
+                  </>
+                )
+              }
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
     )
   }
 }
 
-export default withRouter(DynamicFieldGroupForm);
+export default withRouter(withErrorHandler(DynamicFieldGroupForm, hyacinthApi));

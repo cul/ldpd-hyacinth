@@ -1,22 +1,17 @@
 import React from 'react';
+import { Row, Col, Button, Card } from 'react-bootstrap';
+import { LinkContainer } from 'react-router-bootstrap';
+import produce from 'immer';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
 import hyacinthApi from '../../util/hyacinth_api';
-import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import DynamicFieldGroupForm from './DynamicFieldGroupForm';
+import DynamicFieldsBreadcrumbs from '../layout/dynamic_fields/DynamicFieldsBreadcrumbs';
 
 class DynamicFieldGroupEdit extends React.Component {
-  updateDynamicFieldGroup = (data) => {
-    const { params: { id } } = this.props.match;
-
-    hyacinthApi.patch(`/dynamic_field_groups/${id}`, data)
-      .then((res) => {
-        this.props.history.push(`/dynamic_field_groups/${id}/edit`);
-      });
-  }
-
   render() {
-    console.log("in dynamic field group edit")
+    const { match: { params: { id } } } = this.props;
+
     return (
       <>
         <ContextualNavbar
@@ -24,14 +19,15 @@ class DynamicFieldGroupEdit extends React.Component {
           rightHandLinks={[{ link: '/dynamic_fields', label: 'Back to Dynamic Fields' }]}
         />
 
-        <DynamicFieldGroupForm
-          key={this.props.match.params.id}
-          submitFormAction={this.updateDynamicFieldGroup}
-          submitButtonName="Update"
+        <DynamicFieldsBreadcrumbs
+          for={{ id: id, type: 'DynamicFieldGroup' }}
+        />
+
+        <DynamicFieldGroupForm key={id} id={id} formType="edit"
         />
       </>
     );
   }
 }
 
-export default withErrorHandler(DynamicFieldGroupEdit, hyacinthApi);
+export default DynamicFieldGroupEdit;

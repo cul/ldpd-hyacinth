@@ -5,11 +5,15 @@ import {
 import { withRouter } from 'react-router-dom';
 import produce from 'immer';
 
-import CancelButton from '../layout/CancelButton';
+import SubmitButton from '../layout/forms/SubmitButton';
+import DeleteButton from '../layout/forms/DeleteButton';
+import CancelButton from '../layout/forms/CancelButton';
 import hyacinthApi from '../../util/hyacinth_api';
+import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
 class DynamicFieldCategoryForm extends React.Component {
   state = {
+    formType: '',
     dynamicFieldCategory: {
       displayLabel: '',
       sortOrder: '',
@@ -17,7 +21,7 @@ class DynamicFieldCategoryForm extends React.Component {
   }
 
   componentDidMount() {
-    const { id } = this.props.match.params;
+    const { formType, id } = this.props;
 
     if (id) {
       hyacinthApi.get(`/dynamic_field_categories/${id}`)
@@ -29,18 +33,39 @@ class DynamicFieldCategoryForm extends React.Component {
           }));
         });
     }
+
+    this.setState(produce((draft) => {
+      draft.formType = formType;
+    }));
   }
 
   onSubmitHandler = (event) => {
     event.preventDefault();
 
-    this.props.submitFormAction(this.state.dynamicFieldCategory);
+    const { formType, dynamicFieldCategory: { id }, dynamicFieldCategory } = this.state
+
+    switch(formType) {
+      case 'new':
+        hyacinthApi.post('/dynamic_field_categories', dynamicFieldCategory)
+          .then((res) => {
+            const { dynamicFieldCategory: { id } } = res.data
+
+            this.props.history.push(`/dynamic_field_categories/${id}/edit`);
+          });
+        break;
+      case 'edit':
+        hyacinthApi.patch(`/dynamic_field_categories/${id}`, dynamicFieldCategory)
+          .then(() => {
+            push('/dynamic_fields');
+          });
+        break;
+    }
   }
 
   onDeleteHandler = (event) => {
     event.preventDefault();
 
-    const { id } = this.props.match.params;
+    const { dynamicFieldCategory: { id } } = this.state;
 
     hyacinthApi.delete(`/dynamic_field_categories/${id}`)
       .then((res) => {
@@ -54,13 +79,7 @@ class DynamicFieldCategoryForm extends React.Component {
   }
 
   render() {
-    let deleteButton = '';
-
-    if (this.props.match.params.id) {
-      deleteButton = <Button variant="outline-danger" type="button" onClick={this.onDeleteHandler}>Delete</Button>;
-    }
-
-    const { dynamicFieldCategory: { displayLabel, sortOrder } } = this.state;
+    const { formType, dynamicFieldCategory: { displayLabel, sortOrder } } = this.state;
 
     return (
       <Form onSubmit={this.onSubmitHandler}>
@@ -89,14 +108,16 @@ class DynamicFieldCategoryForm extends React.Component {
         </Form.Group>
 
         <Form.Row>
-          <Col sm="auto" className="mr-auto">{deleteButton}</Col>
+          <Col sm="auto" className="mr-auto">
+            <DeleteButton formType={formType} onClick={this.onDeleteHandler}/>
+          </Col>
 
           <Col sm="auto">
             <CancelButton to="/dynamic_fields" />
           </Col>
 
           <Col sm="auto">
-            <Button variant="primary" type="submit" onClick={this.onSubmitHandler}>{this.props.submitButtonName}</Button>
+            <SubmitButton formType={formType} onClick={this.onSubmitHandler}/>
           </Col>
         </Form.Row>
       </Form>
@@ -104,4 +125,4 @@ class DynamicFieldCategoryForm extends React.Component {
   }
 }
 
-export default withRouter(DynamicFieldCategoryForm);
+export default withRouter(withErrorHandler(DynamicFieldCategoryForm, hyacinthApi));

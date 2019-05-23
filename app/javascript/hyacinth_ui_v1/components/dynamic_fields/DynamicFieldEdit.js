@@ -3,30 +3,26 @@ import queryString from 'query-string';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
 import hyacinthApi from '../../util/hyacinth_api';
-import DynamicFieldGroupForm from './DynamicFieldGroupForm';
+import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
+import DynamicFieldForm from './DynamicFieldForm';
 import DynamicFieldsBreadcrumbs from '../layout/dynamic_fields/DynamicFieldsBreadcrumbs';
 
 class DynamicFieldGroupNew extends React.Component {
   render() {
-    const { location: { search } } = this.props;
-    const { parentType, parentId } = queryString.parse(search);
+    const { match: { params: { id }} } = this.props;
 
     return (
       <>
         <ContextualNavbar
-          title="Create Dynamic Field Group"
+          title="Create Dynamic Field"
           rightHandLinks={[{ link: '/dynamic_fields', label: 'Back to Dynamic Fields' }]}
         />
 
         <DynamicFieldsBreadcrumbs
-          for={{ id: parentId, type: parentType }}
-          last="New Dynamic Field Group"
+          for={{ id: id, type: 'DynamicField' }}
         />
 
-        <DynamicFieldGroupForm
-          formType="new"
-          defaultValues={{parentType: parentType, parentId: parentId}}
-        />
+        <DynamicFieldForm formType="edit" id={id} key={id}/>
       </>
     );
   }

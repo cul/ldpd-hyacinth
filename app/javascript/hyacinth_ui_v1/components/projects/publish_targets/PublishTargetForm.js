@@ -5,7 +5,7 @@ import {
 import { withRouter } from 'react-router-dom';
 import produce from 'immer';
 
-import CancelButton from 'hyacinth_ui_v1/components/layout/CancelButton';
+import CancelButton from 'hyacinth_ui_v1/components/layout/forms/CancelButton';
 import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
 
 class PublishTargetForm extends React.Component {

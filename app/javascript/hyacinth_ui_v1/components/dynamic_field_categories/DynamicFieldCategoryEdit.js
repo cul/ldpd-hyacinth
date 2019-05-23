@@ -1,21 +1,12 @@
 import React from 'react';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
-import hyacinthApi from '../../util/hyacinth_api';
-import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import DynamicFieldCategoryForm from './DynamicFieldCategoryForm';
 
 class DynamicFieldCategoryEdit extends React.Component {
-  updateDynamicFieldCategory = (data) => {
-    const { match: { params: { id } }, history: { push } } = this.props;
-
-    hyacinthApi.patch(`/dynamic_field_categories/${id}`, data)
-      .then(() => {
-        push('/dynamic_fields');
-      });
-  }
-
   render() {
+    const { match: { params: { id } } } = this.props;
+
     return (
       <>
         <ContextualNavbar
@@ -23,10 +14,10 @@ class DynamicFieldCategoryEdit extends React.Component {
           rightHandLinks={[{ link: '/dynamic_fields', label: 'Back to Dynamic Fields' }]}
         />
 
-        <DynamicFieldCategoryForm submitFormAction={this.updateDynamicFieldCategory} submitButtonName="Update" />
+        <DynamicFieldCategoryForm key={id} id={id} formType="edit" />
       </>
     );
   }
 }
 
-export default withErrorHandler(DynamicFieldCategoryEdit, hyacinthApi);
+export default DynamicFieldCategoryEdit;

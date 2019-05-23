@@ -5,7 +5,7 @@ import {
 import producer from 'immer';
 
 import ProjectSubHeading from '../../../hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
-import CancelButton from '../../layout/CancelButton';
+import CancelButton from '../../layout/forms/CancelButton';
 import hyacinthApi from '../../../util/hyacinth_api';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import { Can } from '../../../util/ability_context';

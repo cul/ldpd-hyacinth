@@ -2,17 +2,16 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Table, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { snakeCase, lowerFirst, words, last } from 'lodash';
 
 import hyacinthApi from '../../../util/hyacinth_api';
 
 export default class DynamicFieldsAndGroupsTable extends React.Component {
 
   updateSortOrder(type, id, sortOrder) {
-    // type = type.split(/(?=[A-Z])/).join('_').toLowerCase();
+    let data = { [lowerFirst(type)]: { sortOrder: sortOrder } };
 
-    let data = { dynamicFieldGroup: { sortOrder: sortOrder } };
-
-    hyacinthApi.patch(`/dynamic_field_groups/${id}`, data)
+    hyacinthApi.patch(`/${snakeCase(type)}s/${id}`, data)
       .then((res) => {
         this.props.history.push('/dynamic_fields');
       });
@@ -34,14 +33,12 @@ export default class DynamicFieldsAndGroupsTable extends React.Component {
                 const sortUp = (index === 0) ? null : Math.max(0, rows[index-1].sortOrder - 1);
                 const sortDown = (index === rows.length - 1) ? null : rows[index+1].sortOrder + 1;
 
-                console.log('sortUp: ' + sortUp + '  sortDown: ' + sortDown);
-
                 const { displayLabel, id, type } = fieldOrGroup;
 
                 return(
                   <tr key={`${type}_${id}`}>
                     <td>{displayLabel}</td>
-                    <td><span className="badge badge-secondary">Group</span></td>
+                    <td><span className="badge badge-secondary">{last(words(type))}</span></td>
                     <td>
                       <Button className="p-0" variant="link" onClick={() => this.updateSortOrder(type, id, sortUp)} disabled={sortUp === null}>
                         <FontAwesomeIcon icon={['far', 'caret-square-up']} size="lg" />
@@ -52,7 +49,7 @@ export default class DynamicFieldsAndGroupsTable extends React.Component {
                       </Button>
                     </td>
                     <td>
-                      <Link to={`/dynamic_field_groups/${id}/edit`} href="#">
+                      <Link to={`/${snakeCase(type)}s/${id}/edit`} href="#">
                         <FontAwesomeIcon icon="pen" />
                       </Link>
                     </td>

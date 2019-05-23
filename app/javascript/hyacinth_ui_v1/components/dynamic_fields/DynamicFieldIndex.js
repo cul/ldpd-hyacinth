@@ -23,16 +23,17 @@ export default class DynamicFieldIndex extends React.Component {
   renderCategories() {
     return (
       this.state.dynamicFieldHierarchy.map(dynamicFieldCategory => {
-        const { id, displayLabel, dynamicFieldGroups } = dynamicFieldCategory;
+        const { id, displayLabel, children } = dynamicFieldCategory;
 
         return (
-          <Card className="mb-3" key={id}>
+          <Card className="mb-3" key={id} id={displayLabel.replace(' ', '-')}>
             <Card.Header as="h5">
+
               {displayLabel} <Link to={`/dynamic_field_categories/${id}/edit`}><FontAwesomeIcon icon="pen" /></Link>
               <span className="badge badge-secondary float-right">Category</span>
             </Card.Header>
             <Card.Body>
-              <DynamicFieldsAndGroupsTable rows={dynamicFieldGroups} />
+              <DynamicFieldsAndGroupsTable rows={children} />
 
               <Card.Text className="text-center">
                 <Link to={`/dynamic_field_groups/new?parentType=DynamicFieldCategory&parentId=${id}`} href="#">
