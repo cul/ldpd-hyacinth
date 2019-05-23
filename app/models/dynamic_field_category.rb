@@ -11,7 +11,7 @@ class DynamicFieldCategory < ActiveRecord::Base
       type: self.class.name,
       display_label: display_label,
       sort_order: sort_order,
-      dynamic_field_groups: dynamic_field_groups
+      children: dynamic_field_groups
     }
   end
 
