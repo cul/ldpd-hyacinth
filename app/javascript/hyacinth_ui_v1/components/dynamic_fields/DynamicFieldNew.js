@@ -2,21 +2,10 @@ import React from 'react';
 import queryString from 'query-string';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
-import hyacinthApi from '../../util/hyacinth_api';
-import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import DynamicFieldForm from './DynamicFieldForm';
 import DynamicFieldsBreadcrumbs from '../layout/dynamic_fields/DynamicFieldsBreadcrumbs';
 
-class DynamicFieldGroupNew extends React.Component {
-  createDynamicFieldGroup = (data) => {
-    hyacinthApi.post('/dynamic_fields', data)
-      .then((res) => {
-        const { dynamicField: { id } } = res.data;
-
-        this.props.history.push(`/dynamic_fields/${id}/edit`);
-      });
-  }
-
+class DynamicFieldGroupNew extends React.PureComponent {
   render() {
     const { location: { search } } = this.props;
     const { dynamicFieldGroupId } = queryString.parse(search);
@@ -39,4 +28,4 @@ class DynamicFieldGroupNew extends React.Component {
   }
 }
 
-export default withErrorHandler(DynamicFieldGroupNew, hyacinthApi);
+export default DynamicFieldGroupNew;

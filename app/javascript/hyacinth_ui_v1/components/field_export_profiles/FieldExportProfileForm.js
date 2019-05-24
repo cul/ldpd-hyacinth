@@ -9,12 +9,12 @@ import CancelButton from '../layout/forms/CancelButton';
 import hyacinthApi from '../../util/hyacinth_api';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
-class DynamicFieldCategoryForm extends React.Component {
+class FieldExportProfileForm extends React.Component {
   state = {
     formType: '',
-    dynamicFieldCategory: {
-      displayLabel: '',
-      sortOrder: '',
+    fieldExportProfile: {
+      name: '',
+      translationLogic: '{}',
     },
   }
 
@@ -22,12 +22,12 @@ class DynamicFieldCategoryForm extends React.Component {
     const { formType, id } = this.props;
 
     if (id) {
-      hyacinthApi.get(`/dynamic_field_categories/${id}`)
+      hyacinthApi.get(`/field_export_profiles/${id}`)
         .then((res) => {
-          const { dynamicFieldCategory } = res.data;
+          const { fieldExportProfile } = res.data;
 
           this.setState(produce((draft) => {
-            draft.dynamicFieldCategory = dynamicFieldCategory;
+            draft.fieldExportProfile = fieldExportProfile;
           }));
         });
     }
@@ -40,20 +40,20 @@ class DynamicFieldCategoryForm extends React.Component {
   onSubmitHandler = (event) => {
     event.preventDefault();
 
-    const { formType, dynamicFieldCategory: { id }, dynamicFieldCategory } = this.state;
+    const { formType, fieldExportProfile: { id }, fieldExportProfile } = this.state;
     const { history: { push } } = this.props;
 
     switch (formType) {
       case 'new':
-        hyacinthApi.post('/dynamic_field_categories', dynamicFieldCategory)
+        hyacinthApi.post('/field_export_profiles', { fieldExportProfile })
           .then((res) => {
-            const { dynamicFieldCategory: { id: newId } } = res.data;
+            const { fieldExportProfile: { id: newId } } = res.data;
 
-            push(`/dynamic_field_categories/${newId}/edit`);
+            push(`/field_export_profiles/${newId}/edit`);
           });
         break;
       case 'edit':
-        hyacinthApi.patch(`/dynamic_field_categories/${id}`, dynamicFieldCategory)
+        hyacinthApi.patch(`/field_export_profiles/${id}`, { fieldExportProfile })
           .then(() => push('/dynamic_fields'));
         break;
       default:
@@ -64,43 +64,43 @@ class DynamicFieldCategoryForm extends React.Component {
   onDeleteHandler = (event) => {
     event.preventDefault();
 
-    const { dynamicFieldCategory: { id } } = this.state;
+    const { fieldExportProfile: { id } } = this.state;
 
-    hyacinthApi.delete(`/dynamic_field_categories/${id}`)
+    hyacinthApi.delete(`/field_export_profiles/${id}`)
       .then(() => {
-        this.props.history.push('/dynamic_fields');
+        this.props.history.push('/field_export_profiles');
       });
   }
 
   onChangeHandler = (event) => {
     const { target: { name, value } } = event;
-    this.setState(produce((draft) => { draft.dynamicFieldCategory[name] = value; }));
+    this.setState(produce((draft) => { draft.fieldExportProfile[name] = value; }));
   }
 
   render() {
-    const { formType, dynamicFieldCategory: { displayLabel, sortOrder } } = this.state;
+    const { formType, fieldExportProfile: { name, translationLogic } } = this.state;
 
     return (
       <Form onSubmit={this.onSubmitHandler}>
         <Form.Group as={Row}>
-          <Form.Label column sm={2}>Display Label</Form.Label>
+          <Form.Label column sm={2}>Name</Form.Label>
           <Col sm={10}>
             <Form.Control
               type="text"
-              name="displayLabel"
-              value={displayLabel}
+              name="name"
+              value={name}
               onChange={this.onChangeHandler}
             />
           </Col>
         </Form.Group>
 
         <Form.Group as={Row}>
-          <Form.Label column sm={2}>Sort Order</Form.Label>
+          <Form.Label column sm={2}>Translation Logic</Form.Label>
           <Col sm={10}>
             <Form.Control
-              type="number"
-              name="sortOrder"
-              value={sortOrder}
+              type="text"
+              name="translationLogic"
+              value={translationLogic}
               onChange={this.onChangeHandler}
             />
           </Col>
@@ -112,7 +112,7 @@ class DynamicFieldCategoryForm extends React.Component {
           </Col>
 
           <Col sm="auto">
-            <CancelButton to="/dynamic_fields" />
+            <CancelButton to="/field_export_profiles" />
           </Col>
 
           <Col sm="auto">
@@ -124,4 +124,4 @@ class DynamicFieldCategoryForm extends React.Component {
   }
 }
 
-export default withRouter(withErrorHandler(DynamicFieldCategoryForm, hyacinthApi));
+export default withRouter(withErrorHandler(FieldExportProfileForm, hyacinthApi));

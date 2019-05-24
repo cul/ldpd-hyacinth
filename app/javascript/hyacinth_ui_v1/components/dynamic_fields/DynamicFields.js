@@ -7,7 +7,7 @@ import DynamicFieldNew from './DynamicFieldNew';
 import DynamicFieldEdit from './DynamicFieldEdit';
 import ProtectedRoute from '../ProtectedRoute';
 
-export default class DynamicFields extends React.Component {
+export default class DynamicFields extends React.PureComponent {
   render() {
     return (
       <Switch>
