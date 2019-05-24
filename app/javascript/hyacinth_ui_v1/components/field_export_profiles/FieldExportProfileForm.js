@@ -2,6 +2,10 @@ import React from 'react';
 import { Row, Col, Form } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import produce from 'immer';
+import brace from 'brace';
+import AceEditor from 'react-ace';
+import 'brace/mode/json';
+import 'brace/theme/textmate';
 
 import SubmitButton from '../layout/forms/SubmitButton';
 import DeleteButton from '../layout/forms/DeleteButton';
@@ -54,7 +58,7 @@ class FieldExportProfileForm extends React.Component {
         break;
       case 'edit':
         hyacinthApi.patch(`/field_export_profiles/${id}`, { fieldExportProfile })
-          .then(() => push('/dynamic_fields'));
+          .then(() => push('/field_export_profiles'));
         break;
       default:
         break;
@@ -77,6 +81,12 @@ class FieldExportProfileForm extends React.Component {
     this.setState(produce((draft) => { draft.fieldExportProfile[name] = value; }));
   }
 
+  onTranslationLogicChange = (value) => {
+    this.setState(produce((draft) => {
+      draft.fieldExportProfile.translationLogic = value;
+    }));
+  }
+
   render() {
     const { formType, fieldExportProfile: { name, translationLogic } } = this.state;
 
@@ -97,11 +107,15 @@ class FieldExportProfileForm extends React.Component {
         <Form.Group as={Row}>
           <Form.Label column sm={2}>Translation Logic</Form.Label>
           <Col sm={10}>
-            <Form.Control
-              type="text"
-              name="translationLogic"
+            <AceEditor
+              mode="json"
+              theme="textmate"
+              width="inherit"
+              onChange={this.onTranslationLogicChange}
               value={translationLogic}
-              onChange={this.onChangeHandler}
+              name="translationLogic"
+              editorProps={{ $blockScrolling: true }}
+              tabSize={2}
             />
           </Col>
         </Form.Group>
