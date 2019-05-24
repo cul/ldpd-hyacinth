@@ -3,7 +3,7 @@ import React from 'react';
 import ContextualNavbar from '../layout/ContextualNavbar';
 import DynamicFieldCategoryForm from './DynamicFieldCategoryForm';
 
-class DynamicFieldCategoryNew extends React.Component {
+class DynamicFieldCategoryNew extends React.PureComponent {
   render() {
     return (
       <>

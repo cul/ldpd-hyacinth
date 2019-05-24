@@ -13,7 +13,9 @@ class DynamicFieldsBreadcrumbs extends React.Component {
   componentDidMount() {
     hyacinthApi.get('/dynamic_field_categories')
       .then((res) => {
-        this.setState(produce((draft) => { draft.dynamicFieldGraph = res.data.dynamicFieldCategories; }));
+        this.setState(produce((draft) => {
+          draft.dynamicFieldGraph = res.data.dynamicFieldCategories;
+        }));
       });
   }
 
@@ -22,7 +24,7 @@ class DynamicFieldsBreadcrumbs extends React.Component {
       id, type, displayLabel, children,
     } = dynamicFieldHierarchy;
 
-    if (id === seekId && type == seekType) {
+    if (id === seekId && type === seekType) {
       return [{ id, type, displayLabel }];
     } if (children && children.length !== 0) {
       for (const child of children) {
@@ -37,27 +39,26 @@ class DynamicFieldsBreadcrumbs extends React.Component {
   }
 
   render() {
-    let { for: { id, type }, last } = this.props;
+    const { for: { id: stringId, type }, last } = this.props;
 
-    id = parseInt(id);
-
-    console.log(this.props);
+    let id = parseInt(stringId);
 
     let path = [];
     for (const category of this.state.dynamicFieldGraph) {
       const foundPath = this.findPath(category, id, type);
-      console.log(foundPath);
       if (foundPath != null) {
         path = foundPath;
         break;
       }
     }
 
-    console.log(path);
-
     const crumbs = path.map((segment, index) => (
-      <LinkContainer to={segment.type === 'DynamicFieldCategory' ? '/dynamic_fields' : `/dynamic_field_groups/${segment.id}/edit`}>
-        <Breadcrumb.Item active={!last && index === path.length - 1}>{segment.displayLabel}</Breadcrumb.Item>
+      <LinkContainer
+        to={segment.type === 'DynamicFieldCategory' ? '/dynamic_fields' : `/dynamic_field_groups/${segment.id}/edit`}
+      >
+        <Breadcrumb.Item active={!last && index === path.length - 1}>
+          {segment.displayLabel}
+        </Breadcrumb.Item>
       </LinkContainer>
     ));
 

@@ -6,7 +6,7 @@ import DynamicFieldGroupNew from './DynamicFieldGroupNew';
 import DynamicFieldGroupEdit from './DynamicFieldGroupEdit';
 import ProtectedRoute from '../ProtectedRoute';
 
-export default class DynamicFieldGroups extends React.Component {
+export default class DynamicFieldGroups extends React.PureComponent {
   render() {
     return (
       <Switch>
@@ -23,7 +23,7 @@ export default class DynamicFieldGroups extends React.Component {
           requiredAbility={params => ({ action: 'update', subject: 'DynamicFieldGroup', id: params.id })}
         />
 
-        { /* When none of the above match, <NoMatch> will be rendered */ }
+        { /* When none of the above match, <PageNotFound> will be rendered */ }
         <Route component={PageNotFound} />
       </Switch>
     );

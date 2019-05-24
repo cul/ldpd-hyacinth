@@ -8,7 +8,7 @@ export default class DigitalObjectShow extends React.Component {
     return (
       <div>
         <ContextualNavbar lefthandLabel="&laquo; Back to Digital Objects" lefthandLabelLink="/digital-objects">
-          <Link to="/digital-objects/:uuid/edit" className="nav-link" href="#">Edit</Link>
+          <Link to="/digital-objects/:uuid/edit" className="nav-link">Edit</Link>
         </ContextualNavbar>
       </div>
     );

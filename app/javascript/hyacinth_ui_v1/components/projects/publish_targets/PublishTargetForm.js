@@ -1,16 +1,20 @@
 import React from 'react';
 import {
-  Row, Col, Form, Button,
+  Row, Col, Form
 } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import produce from 'immer';
 
-import CancelButton from 'hyacinth_ui_v1/components/layout/forms/CancelButton';
-import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
+import SubmitButton from '../../layout/forms/SubmitButton';
+import DeleteButton from '../../layout/forms/DeleteButton';
+import CancelButton from '../../layout/forms/CancelButton';
+import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
+import hyacinthApi from '../../../util/hyacinth_api';
 
 class PublishTargetForm extends React.Component {
   state = {
-    formType: '',
+    formType: 'new',
+    projectStringKey: '',
     publishTarget: {
       displayLabel: '',
       stringKey: '',
@@ -20,7 +24,7 @@ class PublishTargetForm extends React.Component {
   }
 
   componentDidMount() {
-    const { projectStringKey, stringKey } = this.props.match.params;
+    const { formType, projectStringKey, stringKey } = this.props;
 
     if (stringKey) {
       hyacinthApi.get(`/projects/${projectStringKey}/publish_targets/${stringKey}`)
@@ -28,74 +32,60 @@ class PublishTargetForm extends React.Component {
           const { publishTarget } = res.data;
 
           this.setState(produce((draft) => {
-            draft.formType = 'edit';
             draft.publishTarget = publishTarget;
           }));
-        })
-        .catch((error) => {
-          console.log(error);
         });
-    } else {
-      this.setState(produce((draft) => {
-        draft.formType = 'new';
-      }));
     }
+
+    this.setState(produce((draft) => {
+      draft.formType = formType;
+      draft.projectStringKey = projectStringKey;
+    }));
   }
 
   onSubmitHandler = (event) => {
     event.preventDefault();
 
-    const data = {
-      publishTarget: {
-        displayLabel: this.state.publishTarget.displayLabel,
-        publishUrl: this.state.publishTarget.publishUrl,
-        apiKey: this.state.publishTarget.apiKey,
-      },
-    };
+    const { formType, projectStringKey, publishTarget, publishTarget: { stringKey } } = this.state;
 
-    if (this.state.formType == 'new') {
-      data.publishTarget.stringKey = this.state.publishTarget.stringKey;
+    switch (formType) {
+      case 'new':
+        hyacinthApi.post(`/projects/${projectStringKey}/publish_targets`, publishTarget)
+          .then((res) => {
+            const { publishTarget: { stringKey } } = res.data;
+
+            this.props.history.push(`/projects/${projectStringKey}/publish_targets/${stringKey}/edit`);
+          });
+        break;
+      case 'edit':
+        hyacinthApi.patch(`/projects/${projectStringKey}/publish_targets/${stringKey}`, publishTarget)
+          .then(() => {
+            this.props.history.push(`/projects/${projectStringKey}/publish_targets`);
+          });
+        break;
     }
-
-    this.props.submitFormAction(data);
   }
 
   onDeleteHandler = (event) => {
     event.preventDefault();
 
-    const { projectStringKey, stringKey } = this.props.match.params;
+    const { match: { params: { projectStringKey, stringKey } }, history: { push } } = this.props;
 
     hyacinthApi.delete(`/projects/${projectStringKey}/publish_targets/${stringKey}`)
-      .then((res) => {
-        this.props.history.push(`/projects/${projectStringKey}/publish_targets`);
-      });
+      .then(() => push(`/projects/${projectStringKey}/publish_targets`) );
   }
 
   onChangeHandler = (event) => {
-    const { target } = event;
-    this.setState(produce((draft) => { draft.publishTarget[target.name] = target.value; }));
+    const { target: { name, value } } = event;
+    this.setState(produce((draft) => { draft.publishTarget[name] = value; }));
   }
 
   render() {
-    let deleteButton = '';
-
-    if (this.state.formType == 'edit') {
-      deleteButton = <Button variant="outline-danger" type="button" onClick={this.onDeleteHandler}>Delete</Button>;
-    }
-
-    let stringKey = '';
-    if (this.state.formType == 'new') {
-      stringKey = (
-        <Form.Control
-          type="text"
-          name="stringKey"
-          value={this.state.publishTarget.stringKey}
-          onChange={this.onChangeHandler}
-        />
-      );
-    } else {
-      stringKey = <Form.Control plaintext readOnly value={this.state.publishTarget.stringKey} />;
-    }
+    const {
+      formType,
+      projectStringKey,
+      publishTarget: { stringKey, displayLabel, publishUrl, apiKey },
+    } = this.state;
 
     return (
       <div>
@@ -103,7 +93,13 @@ class PublishTargetForm extends React.Component {
           <Form.Group as={Row}>
             <Form.Label column sm={2}>String Key</Form.Label>
             <Col sm={10}>
-              {stringKey}
+              <Form.Control
+                type="text"
+                name="stringKey"
+                value={stringKey}
+                onChange={this.onChangeHandler}
+                disabled={formType === 'edit'}
+              />
             </Col>
           </Form.Group>
 
@@ -113,7 +109,7 @@ class PublishTargetForm extends React.Component {
               <Form.Control
                 type="text"
                 name="displayLabel"
-                value={this.state.publishTarget.displayLabel}
+                value={displayLabel}
                 onChange={this.onChangeHandler}
               />
             </Col>
@@ -125,7 +121,7 @@ class PublishTargetForm extends React.Component {
               <Form.Control
                 type="text"
                 name="publishUrl"
-                value={this.state.publishTarget.publishUrl}
+                value={publishUrl}
                 onChange={this.onChangeHandler}
               />
             </Col>
@@ -137,21 +133,23 @@ class PublishTargetForm extends React.Component {
               <Form.Control
                 type="text"
                 name="apiKey"
-                value={this.state.publishTarget.apiKey}
+                value={apiKey}
                 onChange={this.onChangeHandler}
               />
             </Col>
           </Form.Group>
 
           <Form.Row>
-            <Col sm="auto" className="mr-auto">{deleteButton}</Col>
-
-            <Col sm="auto">
-              <CancelButton to={`/projects/${this.props.match.params.stringKey}/publish_targets`} />
+            <Col sm="auto" className="mr-auto">
+              <DeleteButton formType={formType} onClick={this.onDeleteHandler} />
             </Col>
 
             <Col sm="auto">
-              <Button variant="primary" type="submit" onClick={this.onSubmitHandler}>{this.props.submitButtonName}</Button>
+              <CancelButton to={`/projects/${projectStringKey}/publish_targets`} />
+            </Col>
+
+            <Col sm="auto">
+              <SubmitButton formType={formType} onClick={this.onSubmitHandler} />
             </Col>
           </Form.Row>
         </Form>
@@ -160,4 +158,4 @@ class PublishTargetForm extends React.Component {
   }
 }
 
-export default withRouter(PublishTargetForm);
+export default withRouter(withErrorHandler(PublishTargetForm, hyacinthApi));

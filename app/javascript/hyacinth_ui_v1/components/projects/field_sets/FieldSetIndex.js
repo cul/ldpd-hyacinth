@@ -15,21 +15,22 @@ export default class FieldSetIndex extends React.Component {
   }
 
   componentDidMount() {
-    const { projectStringKey } = this.props.match.params;
+    const { match: { params: { projectStringKey } } } = this.props;
 
     hyacinthApi.get(`/projects/${projectStringKey}/field_sets`)
       .then((res) => {
         this.setState(producer((draft) => { draft.fieldSets = res.data.fieldSets; }));
-      }); // TODO: catch error
+      });
   }
 
   render() {
     let rows = <tr><td colSpan="2">No fieldsets have been defined</td></tr>;
 
-    const { projectStringKey } = this.props.match.params;
+    const { match: { params: { projectStringKey } } } = this.props;
+    const { fieldSets } = this.state;
 
-    if (this.state.fieldSets.length > 0) {
-      rows = this.state.fieldSets.map(fieldSet => (
+    if (fieldSets.length > 0) {
+      rows = fieldSets.map(fieldSet => (
         <tr key={fieldSet.id}>
           <td>
             <Can I="edit" of={{ subjectType: 'FieldSet', project: { stringKey: projectStringKey } }} passThrough>
@@ -54,7 +55,7 @@ export default class FieldSetIndex extends React.Component {
           <tbody>
             {rows}
 
-            <Can I="FieldSet" of={{ subjectType: 'FieldSet', project: { stringKey: this.props.match.params.projectStringKey } }}>
+            <Can I="FieldSet" of={{ subjectType: 'FieldSet', project: { stringKey: projectStringKey } }}>
               <tr>
                 <td className="text-center">
                   <LinkContainer to={`/projects/${projectStringKey}/field_sets/new`}>

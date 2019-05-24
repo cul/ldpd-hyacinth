@@ -3,14 +3,14 @@ import { Route, Redirect, Switch } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import producer from 'immer';
 
-import TopNavbar from 'hyacinth_ui_v1/components/layout/TopNavbar';
-import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch';
-import DigitalObjects from 'hyacinth_ui_v1/components/digital_objects/DigitalObjects';
-import Users from 'hyacinth_ui_v1/components/users/Users';
-import DynamicFields from 'hyacinth_ui_v1/components/dynamic_fields/DynamicFields';
-import DynamicFieldGroups from 'hyacinth_ui_v1/components/dynamic_field_groups/DynamicFieldGroups';
-import DynamicFieldCategories from 'hyacinth_ui_v1/components/dynamic_field_categories/DynamicFieldCategories';
-import Projects from 'hyacinth_ui_v1/components/projects/Projects';
+import TopNavbar from './components/layout/TopNavbar';
+import PageNotFound from './components/layout/PageNotFound';
+import DigitalObjects from './components/digital_objects/DigitalObjects';
+import Users from './components/users/Users';
+import DynamicFields from './components/dynamic_fields/DynamicFields';
+import DynamicFieldGroups from './components/dynamic_field_groups/DynamicFieldGroups';
+import DynamicFieldCategories from './components/dynamic_field_categories/DynamicFieldCategories';
+import Projects from './components/projects/Projects';
 import { AbilityContext } from './util/ability_context';
 import ability from './util/ability';
 import hyacinthApi from './util/hyacinth_api';
@@ -61,9 +61,9 @@ export default class App extends React.Component {
             <Route path="/dynamic_fields" component={DynamicFields} />
             <Route path="/dynamic_field_groups" component={DynamicFieldGroups} />
             <Route path="/dynamic_field_categories" component={DynamicFieldCategories} />
-            { /* When none of the above match, <NoMatch> will be rendered */ }
-            <Route path="/404" component={NoMatch} />
-            <Route component={NoMatch} />
+            { /* When none of the above match, <PageNotFound> will be rendered */ }
+            <Route path="/404" component={PageNotFound} />
+            <Route component={PageNotFound} />
           </Switch>
         </Container>
       </AbilityContext.Provider>

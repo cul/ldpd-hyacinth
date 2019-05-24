@@ -23,7 +23,7 @@ export default class DynamicFieldCategories extends React.PureComponent {
           requiredAbility={params => ({ action: 'update', subject: 'DynamicFieldCategory', id: params.id })}
         />
 
-        { /* When none of the above match, <NoMatch> will be rendered */ }
+        { /* When none of the above match, <PageNotFound> will be rendered */ }
         <Route component={PageNotFound} />
       </Switch>
     );

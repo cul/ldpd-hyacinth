@@ -18,17 +18,13 @@ class ProjectNew extends React.Component {
   onSubmitHandler = (event) => {
     event.preventDefault();
 
-    const data = {
-      project: {
-        stringKey: this.state.project.stringKey,
-        displayLabel: this.state.project.displayLabel,
-        projectUrl: this.state.project.projectUrl,
-      },
-    };
+    const { project } = this.state;
 
-    hyacinthApi.post('/projects', data)
+    hyacinthApi.post('/projects', project)
       .then((res) => {
-        this.props.history.push(`/projects/${res.data.project.stringKey}/core_data/edit`);
+        const { project: { stringKey } } = res.data;
+
+        this.props.history.push(`/projects/${stringKey}/core_data/edit`);
       });
   }
 
@@ -38,6 +34,8 @@ class ProjectNew extends React.Component {
   }
 
   render() {
+    const { project: { stringKey, displayLabel, projectUrl } } = this.state;
+
     return (
       <>
         <ContextualNavbar
@@ -52,7 +50,7 @@ class ProjectNew extends React.Component {
               <Form.Control
                 type="text"
                 name="stringKey"
-                value={this.state.project.stringKey}
+                value={stringKey}
                 onChange={this.onChangeHandler}
               />
             </Form.Group>
@@ -62,7 +60,7 @@ class ProjectNew extends React.Component {
               <Form.Control
                 type="text"
                 name="displayLabel"
-                value={this.state.displayLabel}
+                value={displayLabel}
                 onChange={this.onChangeHandler}
               />
             </Form.Group>
@@ -74,7 +72,7 @@ class ProjectNew extends React.Component {
               <Form.Control
                 type="text"
                 name="projectUrl"
-                value={this.state.projectUrl}
+                value={projectUrl}
                 onChange={this.onChangeHandler}
               />
             </Form.Group>

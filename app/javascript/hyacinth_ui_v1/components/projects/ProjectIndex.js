@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import { Table } from 'react-bootstrap';
 import producer from 'immer';
 
-import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar';
-import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
-import { Can } from 'hyacinth_ui_v1/util/ability_context';
+import ContextualNavbar from '../layout/ContextualNavbar';
+import hyacinthApi from '../../util/hyacinth_api';
+import { Can } from '../../util/ability_context';
 
 export default class ProjectIndex extends React.Component {
   state = {
@@ -16,21 +16,11 @@ export default class ProjectIndex extends React.Component {
     hyacinthApi.get('/projects/')
       .then((res) => {
         this.setState(producer((draft) => { draft.projects = res.data.projects; }));
-      }); // TODO: catch error
+      });
   }
 
   render() {
-    let rows = '';
-
-    if (this.state.projects) {
-      rows = this.state.projects.map(project => (
-        <tr key={project.id}>
-          <td><Link to={`/projects/${project.stringKey}/core_data`} href="#">{project.displayLabel}</Link></td>
-          <td>{project.stringKey}</td>
-          <td />
-        </tr>
-      ));
-    }
+    const { projects } = this.state;
 
     return (
       <>
@@ -54,7 +44,17 @@ export default class ProjectIndex extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {rows}
+            {
+              projects && (
+                projects.map(project => (
+                  <tr key={project.id}>
+                    <td><Link to={`/projects/${project.stringKey}/core_data`}>{project.displayLabel}</Link></td>
+                    <td>{project.stringKey}</td>
+                    <td />
+                  </tr>
+                ))
+              )
+            }
           </tbody>
         </Table>
       </>

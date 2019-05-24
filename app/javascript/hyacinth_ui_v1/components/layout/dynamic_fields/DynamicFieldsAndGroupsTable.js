@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { Table, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -8,14 +9,13 @@ import {
 
 import hyacinthApi from '../../../util/hyacinth_api';
 
-export default class DynamicFieldsAndGroupsTable extends React.Component {
+class DynamicFieldsAndGroupsTable extends React.Component {
   updateSortOrder(type, id, sortOrder) {
     const data = { [lowerFirst(type)]: { sortOrder } };
+    const { history: { push } } = this.props;
 
     hyacinthApi.patch(`/${snakeCase(type)}s/${id}`, data)
-      .then((res) => {
-        this.props.history.push('/dynamic_fields');
-      });
+      .then(() => push('/dynamic_fields'));
   }
 
   render() {
@@ -50,7 +50,7 @@ export default class DynamicFieldsAndGroupsTable extends React.Component {
                       </Button>
                     </td>
                     <td>
-                      <Link to={`/${snakeCase(type)}s/${id}/edit`} href="#">
+                      <Link to={`/${snakeCase(type)}s/${id}/edit`}>
                         <FontAwesomeIcon icon="pen" />
                       </Link>
                     </td>
@@ -65,3 +65,20 @@ export default class DynamicFieldsAndGroupsTable extends React.Component {
     return (body);
   }
 }
+
+DynamicFieldsAndGroupsTable.defaultProps = {
+  rows: [],
+};
+
+DynamicFieldsAndGroupsTable.propTypes = {
+  rows: PropTypes.arrayOf(
+    PropTypes.shape({
+      displayLabel: PropTypes.string.isRequired,
+      id: PropTypes.number.isRequired,
+      type: PropTypes.string.isRequired,
+      sortOrder: PropTypes.number.isRequired,
+    }),
+  ),
+};
+
+export default DynamicFieldsAndGroupsTable;

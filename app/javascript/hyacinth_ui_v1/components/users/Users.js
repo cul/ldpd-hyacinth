@@ -7,7 +7,7 @@ import UserNew from './UserNew';
 import UserEdit from './UserEdit';
 import ProtectedRoute from '../ProtectedRoute';
 
-export default class Users extends React.Component {
+export default class Users extends React.PureComponent {
   render() {
     return (
       <Switch>
@@ -30,7 +30,7 @@ export default class Users extends React.Component {
           requiredAbility={params => ({ action: 'update', subject: 'User', uid: params.uid })}
         />
 
-        { /* When none of the above match, <NoMatch> will be rendered */ }
+        { /* When none of the above match, <PageNotFound> will be rendered */ }
         <Route component={PageNotFound} />
       </Switch>
     );

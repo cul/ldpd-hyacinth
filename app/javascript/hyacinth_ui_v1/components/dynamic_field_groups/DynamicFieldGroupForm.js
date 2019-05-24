@@ -1,11 +1,10 @@
 import React from 'react';
 import {
-  Row, Col, Form, Button, Breadcrumb, Card,
+  Row, Col, Form, Button, Card,
 } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 import produce from 'immer';
-import queryString from 'query-string';
 
 import CancelButton from '../layout/forms/CancelButton';
 import SubmitButton from '../layout/forms/SubmitButton';
@@ -62,19 +61,11 @@ class DynamicFieldGroupForm extends React.Component {
     }
   }
 
-  loadCategories() {
-    hyacinthApi.get('/dynamic_field_categories')
-      .then((res) => {
-        this.setState(produce((draft) => {
-          draft.dynamicFieldCategories = res.data.dynamicFieldCategories.map(category => ({ id: category.id, displayLabel: category.displayLabel }));
-        }));
-      });
-  }
-
   onSubmitHandler = (event) => {
     event.preventDefault();
 
     const { formType, dynamicFieldGroup: { id }, dynamicFieldGroup } = this.state;
+    const { history: { push } } = this.props;
 
     switch (formType) {
       case 'new':
@@ -82,14 +73,12 @@ class DynamicFieldGroupForm extends React.Component {
           .then((res) => {
             const { dynamicFieldGroup: { id } } = res.data;
 
-            this.props.history.push(`/dynamic_field_groups/${id}/edit`);
+            push(`/dynamic_field_groups/${id}/edit`);
           });
         break;
       case 'edit':
         hyacinthApi.patch(`/dynamic_field_groups/${id}`, dynamicFieldGroup)
-          .then((res) => {
-            this.props.history.push(`/dynamic_field_groups/${id}/edit`);
-          });
+          .then(() => push(`/dynamic_field_groups/${id}/edit`));
         break;
     }
   }
@@ -97,12 +86,10 @@ class DynamicFieldGroupForm extends React.Component {
   onDeleteHandler = (event) => {
     event.preventDefault();
 
-    const { id } = this.props;
+    const { id, history: { push } } = this.props;
 
     hyacinthApi.delete(`/dynamic_field_groups/${id}`)
-      .then((res) => {
-        this.props.history.push('/dynamic_fields');
-      });
+      .then(() => push('/dynamic_fields'));
   }
 
   onChangeHandler = (event) => {
@@ -115,6 +102,17 @@ class DynamicFieldGroupForm extends React.Component {
     this.setState(produce((draft) => {
       draft.dynamicFieldGroup[name] = type === 'checkbox' ? checked : value;
     }));
+  }
+
+  loadCategories() {
+    hyacinthApi.get('/dynamic_field_categories')
+      .then((res) => {
+        this.setState(produce((draft) => {
+          draft.dynamicFieldCategories = res.data.dynamicFieldCategories.map(category => (
+            { id: category.id, displayLabel: category.displayLabel }
+          ));
+        }));
+      });
   }
 
   render() {
@@ -138,7 +136,11 @@ class DynamicFieldGroupForm extends React.Component {
               value={parentId}
               onChange={this.onChangeHandler}
             >
-              {dynamicFieldCategories.map(c => (<option key={c.id} value={c.id}>{c.displayLabel}</option>)) }
+              {
+                dynamicFieldCategories.map(c => (
+                  <option key={c.id} value={c.id}>{c.displayLabel}</option>
+                ))
+              }
             </Form.Control>
           </Col>
         </Form.Group>

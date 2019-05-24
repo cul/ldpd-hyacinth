@@ -7,7 +7,7 @@ import FieldSetNew from './FieldSetNew';
 import FieldSetEdit from './FieldSetEdit';
 import ProtectedRoute from '../../ProtectedRoute';
 
-export default class FieldSet extends React.Component {
+export default class FieldSet extends React.PureComponent {
   render() {
     return (
       <div>
@@ -17,7 +17,9 @@ export default class FieldSet extends React.Component {
           <ProtectedRoute
             path="/projects/:projectStringKey/field_sets/new"
             component={FieldSetNew}
-            requiredAbility={params => ({ action: 'create', subject: 'FieldSet', project: { stringKey: params.projectStringKey } })}
+            requiredAbility={params => (
+              { action: 'create', subject: 'FieldSet', project: { stringKey: params.projectStringKey } }
+            )}
           />
 
           <ProtectedRoute
@@ -26,7 +28,7 @@ export default class FieldSet extends React.Component {
             requiredAbility={params => ({ action: 'update', subject: 'FieldSet', project: { stringKey: params.projectStringKey } })}
           />
 
-          { /* When none of the above match, <NoMatch> will be rendered */ }
+          { /* When none of the above match, <PageNotFound> will be rendered */ }
           <Route component={PageNotFound} />
         </Switch>
       </div>

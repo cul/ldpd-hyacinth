@@ -3,7 +3,7 @@ import React from 'react';
 import ContextualNavbar from '../layout/ContextualNavbar';
 import DynamicFieldCategoryForm from './DynamicFieldCategoryForm';
 
-class DynamicFieldCategoryEdit extends React.Component {
+class DynamicFieldCategoryEdit extends React.PureComponent {
   render() {
     const { match: { params: { id } } } = this.props;
 

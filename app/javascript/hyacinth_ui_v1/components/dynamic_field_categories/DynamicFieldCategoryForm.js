@@ -1,7 +1,5 @@
 import React from 'react';
-import {
-  Row, Col, Form, Button, Breadcrumb,
-} from 'react-bootstrap';
+import { Row, Col, Form } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import produce from 'immer';
 
@@ -39,25 +37,26 @@ class DynamicFieldCategoryForm extends React.Component {
     }));
   }
 
-  onSubmitHandler = (event) => {
+  onSubmitHandler(event) {
     event.preventDefault();
 
     const { formType, dynamicFieldCategory: { id }, dynamicFieldCategory } = this.state;
+    const { history: { push } } = this.props;
 
     switch (formType) {
       case 'new':
         hyacinthApi.post('/dynamic_field_categories', dynamicFieldCategory)
           .then((res) => {
-            const { dynamicFieldCategory: { id } } = res.data;
+            const { dynamicFieldCategory: { id: newId } } = res.data;
 
-            this.props.history.push(`/dynamic_field_categories/${id}/edit`);
+            push(`/dynamic_field_categories/${newId}/edit`);
           });
         break;
       case 'edit':
         hyacinthApi.patch(`/dynamic_field_categories/${id}`, dynamicFieldCategory)
-          .then(() => {
-            push('/dynamic_fields');
-          });
+          .then(() => push('/dynamic_fields'));
+        break;
+      default:
         break;
     }
   }
@@ -68,7 +67,7 @@ class DynamicFieldCategoryForm extends React.Component {
     const { dynamicFieldCategory: { id } } = this.state;
 
     hyacinthApi.delete(`/dynamic_field_categories/${id}`)
-      .then((res) => {
+      .then(() => {
         this.props.history.push('/dynamic_fields');
       });
   }

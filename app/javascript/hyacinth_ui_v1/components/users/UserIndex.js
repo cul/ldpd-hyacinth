@@ -19,13 +19,7 @@ class UserIndex extends React.Component {
   }
 
   render() {
-    const rows = this.state.users.map(user => (
-      <tr key={user.uid}>
-        <td><Link to={`/users/${user.uid}/edit`} href="#">{`${user.firstName} ${user.lastName}`}</Link></td>
-        <td>{user.email}</td>
-        <td>{(user.isActive) ? 'true' : 'false'}</td>
-      </tr>
-    ));
+    const { users } = this.state;
 
     return (
       <>
@@ -43,7 +37,15 @@ class UserIndex extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {rows}
+            {
+              users.map(user => (
+                <tr key={user.uid}>
+                  <td><Link to={`/users/${user.uid}/edit`}>{`${user.firstName} ${user.lastName}`}</Link></td>
+                  <td>{user.email}</td>
+                  <td>{(user.isActive) ? 'true' : 'false'}</td>
+                </tr>
+              ))
+            }
           </tbody>
         </Table>
       </>

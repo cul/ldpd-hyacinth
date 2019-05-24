@@ -33,10 +33,7 @@ class DynamicFieldGroupNew extends React.Component {
           last="New Dynamic Field"
         />
 
-        <DynamicFieldForm
-          formType="new"
-          defaultValues={{ dynamicFieldGroupId }}
-        />
+        <DynamicFieldForm formType="new" defaultValues={{ dynamicFieldGroupId }} />
       </>
     );
   }

@@ -2,11 +2,10 @@ import React from 'react';
 import queryString from 'query-string';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
-import hyacinthApi from '../../util/hyacinth_api';
 import DynamicFieldGroupForm from './DynamicFieldGroupForm';
 import DynamicFieldsBreadcrumbs from '../layout/dynamic_fields/DynamicFieldsBreadcrumbs';
 
-class DynamicFieldGroupNew extends React.Component {
+class DynamicFieldGroupNew extends React.PureComponent {
   render() {
     const { location: { search } } = this.props;
     const { parentType, parentId } = queryString.parse(search);

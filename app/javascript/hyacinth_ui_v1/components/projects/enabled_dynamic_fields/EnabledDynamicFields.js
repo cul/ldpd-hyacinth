@@ -13,7 +13,7 @@ export default class EnabledDynamicFields extends React.Component {
           <Route exact path="/projects/:projectStringKey/enabled_dynamic_fields/:digitalObjectType" component={EnabledDynamicFieldShow} />
           <Route path="/projects/:projectStringKey/enabled_dynamic_fields/:digitalObjectType/edit" component={EnabledDynamicFieldEdit} />
 
-          { /* When none of the above match, <NoMatch> will be rendered */ }
+          { /* When none of the above match, <PageNotFound> will be rendered */ }
           <Route component={PageNotFound} />
         </Switch>
       </div>

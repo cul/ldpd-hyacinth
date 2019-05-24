@@ -30,7 +30,7 @@ export default class DynamicFields extends React.Component {
           requiredAbility={params => ({ action: 'update', subject: 'DynamicField', id: params.id })}
         />
 
-        { /* When none of the above match, <NoMatch> will be rendered */ }
+        { /* When none of the above match, <PageNotFound> will be rendered */ }
         <Route component={PageNotFound} />
       </Switch>
     );

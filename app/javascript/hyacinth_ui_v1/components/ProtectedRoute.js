@@ -4,7 +4,7 @@ import { Route } from 'react-router-dom';
 import ability from '../util/ability';
 import PageNotFound from './layout/PageNotFound';
 
-class ProtectedRoute extends React.Component {
+class ProtectedRoute extends React.PureComponent {
   render() {
     const {
       component: Component,
@@ -23,8 +23,6 @@ class ProtectedRoute extends React.Component {
     if (subjectType) {
       subject = { subjectType, ...subject };
     }
-
-    console.log(subject);
 
     const can = ability.can(action, subject);
 

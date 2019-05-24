@@ -1,13 +1,10 @@
 import React from 'react';
-import queryString from 'query-string';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
-import hyacinthApi from '../../util/hyacinth_api';
-import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import DynamicFieldForm from './DynamicFieldForm';
 import DynamicFieldsBreadcrumbs from '../layout/dynamic_fields/DynamicFieldsBreadcrumbs';
 
-class DynamicFieldGroupNew extends React.Component {
+class DynamicFieldGroupNew extends React.PureComponent {
   render() {
     const { match: { params: { id } } } = this.props;
 
@@ -18,9 +15,7 @@ class DynamicFieldGroupNew extends React.Component {
           rightHandLinks={[{ link: '/dynamic_fields', label: 'Back to Dynamic Fields' }]}
         />
 
-        <DynamicFieldsBreadcrumbs
-          for={{ id, type: 'DynamicField' }}
-        />
+        <DynamicFieldsBreadcrumbs for={{ id, type: 'DynamicField' }} />
 
         <DynamicFieldForm formType="edit" id={id} key={id} />
       </>

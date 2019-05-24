@@ -1,9 +1,9 @@
 import React from 'react';
-
-import Constants from 'hyacinth_ui_v1/Constants';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import { Can } from 'hyacinth_ui_v1/util/ability_context';
+
+import Constants from '../../Constants';
+import { Can } from '../../util/ability_context';
 
 export default class TopNavbar extends React.Component {
   signOut(e) {
@@ -65,7 +65,7 @@ export default class TopNavbar extends React.Component {
               </LinkContainer>
 
               <Can I="manage" a="Vocabulary">
-                <LinkContainer to="/controlled-vocabularies">
+                <LinkContainer to="/controlled_vocabularies">
                   <NavDropdown.Item>Controlled Vocabularies</NavDropdown.Item>
                 </LinkContainer>
               </Can>

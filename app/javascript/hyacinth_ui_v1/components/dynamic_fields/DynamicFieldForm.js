@@ -1,10 +1,6 @@
 import React from 'react';
-import {
-  Row, Col, Form, Button, Breadcrumb, Card,
-} from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
+import { Row, Col, Form } from 'react-bootstrap';
 import produce from 'immer';
-import queryString from 'query-string';
 import { startCase } from 'lodash';
 import { withRouter } from 'react-router-dom';
 
@@ -13,7 +9,6 @@ import DeleteButton from '../layout/forms/DeleteButton';
 import SubmitButton from '../layout/forms/SubmitButton';
 import hyacinthApi from '../../util/hyacinth_api';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
-import DynamicFieldsAndGroupsTable from '../layout/dynamic_fields/DynamicFieldsAndGroupsTable';
 
 const fieldTypes = [
   'string', 'textarea', 'integer', 'boolean', 'select', 'date', 'controlled_term',
@@ -75,23 +70,22 @@ class DynamicFieldForm extends React.Component {
     event.preventDefault();
 
     const { formType, dynamicField: { id }, dynamicField } = this.state;
+    const { history: { push } } = this.props;
 
     switch (formType) {
       case 'new':
         hyacinthApi.post('/dynamic_fields', dynamicField)
           .then((res) => {
-            const { dynamicField: { id } } = res.data;
+            const { dynamicField: { id: newId } } = res.data;
 
-            this.props.history.push(`/dynamic_fields/${id}/edit`);
+            push(`/dynamic_fields/${newId}/edit`);
           });
         break;
       case 'edit':
         hyacinthApi.patch(`/dynamic_fields/${id}`, dynamicField)
-          .then((res) => {
-            const { dynamicField: { id } } = res.data;
-
-            this.props.history.push(`/dynamic_fields/${id}/edit`);
-          });
+          .then(() => push(`/dynamic_fields/${id}/edit`));
+        break;
+      default:
         break;
     }
   }
@@ -99,10 +93,10 @@ class DynamicFieldForm extends React.Component {
   onDeleteHandler = (event) => {
     event.preventDefault();
 
-    const { id } = this.props;
+    const { dynamicField: { id } } = this.state;
 
     hyacinthApi.delete(`/dynamic_fields/${id}`)
-      .then((res) => {
+      .then(() => {
         this.props.history.push('/dynamic_fields');
       });
   }
@@ -201,9 +195,13 @@ class DynamicFieldForm extends React.Component {
               name="controlledVocabulary"
               value={controlledVocabulary}
               onChange={this.onChangeHandler}
-              disabled={fieldType != 'controlled_term'}
+              disabled={fieldType !== 'controlled_term'}
             >
-              {vocabularies.map(v => (<option key={v.stringKey} value={v.stringKey}>{v.label}</option>)) }
+              {
+                vocabularies.map(v => (
+                  <option key={v.stringKey} value={v.stringKey}>{v.label}</option>
+                ))
+              }
             </Form.Control>
           </Col>
         </Form.Group>
@@ -216,7 +214,7 @@ class DynamicFieldForm extends React.Component {
               name="selectOptions"
               value={selectOptions}
               onChange={this.onChangeHandler}
-              disabled={fieldType != 'select'}
+              disabled={fieldType !== 'select'}
             />
           </Col>
         </Form.Group>

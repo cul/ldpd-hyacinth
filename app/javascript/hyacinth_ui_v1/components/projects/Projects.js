@@ -1,27 +1,25 @@
 import React from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 
-import NoMatch from '../layout/NoMatch';
+import PageNotFound from '../layout/PageNotFound';
 import ProjectLayout from '../../hoc/ProjectLayout/ProjectLayout';
 import ProjectTabs from '../../hoc/ProjectLayout/ProjectTabs/ProjectTabs';
 import ProjectTab from '../../hoc/ProjectLayout/ProjectTabs/ProjectTab/ProjectTab';
-import ability from '../../util/ability';
 import ProjectIndex from './ProjectIndex';
 import ProjectNew from './ProjectNew';
 import CoreData from './core_data/CoreData';
 import FieldSet from './field_sets/FieldSet';
 import PublishTarget from './publish_targets/PublishTarget';
-import { Can } from '../../util/ability_context';
 import ProtectedRoute from '../ProtectedRoute';
 
-export default class Projects extends React.Component {
+export default class Projects extends React.PureComponent {
   render() {
     return (
       <Switch>
         <Route exact path="/projects" component={ProjectIndex} />
 
         <ProtectedRoute
-          requiredAbility={params => ({ action: 'create', subjectType: 'Project' })}
+          requiredAbility={{ action: 'create', subjectType: 'Project' }}
           path="/projects/new"
           component={ProjectNew}
         />
@@ -46,15 +44,15 @@ export default class Projects extends React.Component {
                   <Route path="/projects/:stringKey/field_sets" component={FieldSet} />
                   <Route path="/projects/:stringKey/publish_targets" component={PublishTarget} />
                   <Redirect exact from="/projects/:stringKey" to="/projects/:stringKey/core_data" />
-                  <Route component={NoMatch} />
+                  <Route component={PageNotFound} />
                 </Switch>
               </div>
             </ProjectLayout>
           )}
         />
 
-        { /* When none of the above match, <NoMatch> will be rendered */ }
-        <Route component={NoMatch} />
+        { /* When none of the above match, <PageNotFound> will be rendered */ }
+        <Route component={PageNotFound} />
       </Switch>
     );
   }

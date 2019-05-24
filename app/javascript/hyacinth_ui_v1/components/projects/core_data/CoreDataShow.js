@@ -17,20 +17,21 @@ class CoreDataShow extends React.Component {
     },
   }
 
-  componentDidMount = () => {
-    hyacinthApi.get(`/projects/${this.props.match.params.stringKey}`)
+  componentDidMount() {
+    const { match: { params: { stringKey } } } = this.props;
+
+    hyacinthApi.get(`/projects/${stringKey}`)
       .then((res) => {
-        const { stringKey, displayLabel, projectUrl } = res.data.project;
+        const { project } = res.data;
+
         this.setState(producer((draft) => {
-          draft.project.stringKey = stringKey;
-          draft.project.displayLabel = displayLabel;
-          draft.project.projectUrl = projectUrl;
+          draft.project = project;
         }));
       });
   }
 
   render() {
-    const { params: { stringKey } } = this.props.match;
+    const { project: { stringKey, displayLabel, projectUrl } } = this.state;
 
     return (
       <>
@@ -38,13 +39,13 @@ class CoreDataShow extends React.Component {
 
         <Row as="dl">
           <Col as="dt" sm={2}>String Key</Col>
-          <Col as="dd" sm={10}>{this.state.project.stringKey}</Col>
+          <Col as="dd" sm={10}>{stringKey}</Col>
 
           <Col as="dt" sm={2}>Display Label</Col>
-          <Col as="dd" sm={10}>{this.state.project.displayLabel}</Col>
+          <Col as="dd" sm={10}>{displayLabel}</Col>
 
           <Col as="dt" sm={2}>Project URL</Col>
-          <Col as="dd" sm={10}>{this.state.project.projectUrl}</Col>
+          <Col as="dd" sm={10}>{projectUrl}</Col>
 
 
           <Can I="edit" of={{ subjectType: 'Project', stringKey }}>

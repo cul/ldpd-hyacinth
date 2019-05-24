@@ -1,13 +1,13 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import PageNotFound from 'hyacinth_ui_v1/components/layout/PageNotFound';
+import PageNotFound from '../../layout/PageNotFound';
 import PublishTargetIndex from './PublishTargetIndex';
 import PublishTargetNew from './PublishTargetNew';
 import PublishTargetEdit from './PublishTargetEdit';
 import ProtectedRoute from '../../ProtectedRoute';
 
-export default class PublishTarget extends React.Component {
+export default class PublishTarget extends React.PureComponent {
   render() {
     return (
       <div>
@@ -27,7 +27,7 @@ export default class PublishTarget extends React.Component {
             requiredAbility={params => ({ action: 'update', subject: 'PublishTarget', project: { stringKey: params.projectStringKey } })}
           />
 
-          { /* When none of the above match, <NoMatch> will be rendered */ }
+          { /* When none of the above match, <PageNotFound> will be rendered */ }
           <Route component={PageNotFound} />
         </Switch>
       </div>
