@@ -1,15 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Row, Col, Form } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import produce from 'immer';
-import brace from 'brace';
-import AceEditor from 'react-ace';
-import 'brace/mode/json';
-import 'brace/theme/textmate';
 
 import SubmitButton from '../layout/forms/SubmitButton';
 import DeleteButton from '../layout/forms/DeleteButton';
 import CancelButton from '../layout/forms/CancelButton';
+import JSONInput from '../layout/forms/JSONInput';
 import hyacinthApi from '../../util/hyacinth_api';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
@@ -107,15 +105,10 @@ class FieldExportProfileForm extends React.Component {
         <Form.Group as={Row}>
           <Form.Label column sm={2}>Translation Logic</Form.Label>
           <Col sm={10}>
-            <AceEditor
-              mode="json"
-              theme="textmate"
-              width="inherit"
+            <JSONInput
               onChange={this.onTranslationLogicChange}
               value={translationLogic}
               name="translationLogic"
-              editorProps={{ $blockScrolling: true }}
-              tabSize={2}
             />
           </Col>
         </Form.Group>
@@ -137,5 +130,14 @@ class FieldExportProfileForm extends React.Component {
     );
   }
 }
+
+FieldExportProfileForm.defaultProps = {
+  id: null,
+};
+
+FieldExportProfileForm.propTypes = {
+  formType: PropTypes.oneOf(['new', 'edit']).isRequired,
+  id: PropTypes.string,
+};
 
 export default withRouter(withErrorHandler(FieldExportProfileForm, hyacinthApi));
