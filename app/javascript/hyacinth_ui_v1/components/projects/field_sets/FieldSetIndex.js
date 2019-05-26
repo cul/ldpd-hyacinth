@@ -37,7 +37,7 @@ export default class FieldSetIndex extends React.Component {
               {
                   can => (
                     can
-                      ? <Link to={`/projects/${projectStringKey}/field_sets/${fieldSet.id}/edit`} href="#">{fieldSet.displayLabel}</Link>
+                      ? <Link to={`/projects/${projectStringKey}/field_sets/${fieldSet.id}/edit`}>{fieldSet.displayLabel}</Link>
                       : fieldSet.displayLabel
                   )
                 }

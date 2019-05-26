@@ -1,11 +1,6 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-
-const propTypes = {
-  formType: PropTypes.oneOf(['edit', 'new']).isRequired,
-  onClick: PropTypes.func.isRequired,
-};
+import { Button } from 'react-bootstrap';
 
 class DeleteButton extends React.Component {
   render() {
@@ -18,6 +13,14 @@ class DeleteButton extends React.Component {
   }
 }
 
-DeleteButton.propTypes = propTypes;
+DeleteButton.defaultProps = {
+  formType: '',
+};
+
+
+DeleteButton.propTypes = {
+  formType: PropTypes.oneOf(['edit', 'new']),
+  onClick: PropTypes.func.isRequired,
+};
 
 export default DeleteButton;

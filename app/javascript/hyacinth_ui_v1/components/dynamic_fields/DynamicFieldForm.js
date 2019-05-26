@@ -94,11 +94,10 @@ class DynamicFieldForm extends React.Component {
     event.preventDefault();
 
     const { dynamicField: { id } } = this.state;
+    const { history: { push } } = this.props;
 
     hyacinthApi.delete(`/dynamic_fields/${id}`)
-      .then(() => {
-        this.props.history.push('/dynamic_fields');
-      });
+      .then(() => push('/dynamic_fields'));
   }
 
   onChangeHandler = (event) => {

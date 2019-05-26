@@ -5,7 +5,7 @@ import FieldSetForm from './FieldSetForm';
 
 class FieldSetEdit extends React.PureComponent {
   render() {
-    const { match: { params: { projectStringKey, id } } }= this.props;
+    const { match: { params: { projectStringKey, id } } } = this.props;
 
     return (
       <>

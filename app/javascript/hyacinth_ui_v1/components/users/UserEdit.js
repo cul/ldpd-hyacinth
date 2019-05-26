@@ -49,7 +49,9 @@ class UserEdit extends React.Component {
   onFlipActivationHandler = (event) => {
     event.preventDefault();
 
-    hyacinthApi.patch(`/users/${this.props.match.params.uid}`, { user: { is_active: !this.state.user.isActive } })
+    const { user: { uid, isActive } } = this.state;
+
+    hyacinthApi.patch(`/users/${uid}`, { user: { is_active: !isActive } })
       .then((res) => {
         this.setState(producer((draft) => { draft.user.isActive = res.data.user.is_active; }));
       });
@@ -58,15 +60,11 @@ class UserEdit extends React.Component {
   onSubmitHandler = (event) => {
     event.preventDefault();
 
-    const { match: { params: { uid } } } = this.props;
-    const { user } = this.state;
+    const { user, user: { uid } } = this.state;
+    const { history: { push } } = this.props;
 
-    hyacinthApi.patch(`/users/${uid}`, { user: user })
-      .then((res) => {
-        const { user: { uid } } = res.data;
-
-        this.props.history.push(`/users/${uid}/edit`);
-      });
+    hyacinthApi.patch(`/users/${uid}`, { user })
+      .then(() => push(`/users/${uid}/edit`));
   }
 
   render() {

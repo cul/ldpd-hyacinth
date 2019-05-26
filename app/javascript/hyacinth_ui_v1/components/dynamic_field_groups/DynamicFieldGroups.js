@@ -20,7 +20,9 @@ export default class DynamicFieldGroups extends React.PureComponent {
         <ProtectedRoute
           path="/dynamic_field_groups/:id/edit"
           component={DynamicFieldGroupEdit}
-          requiredAbility={params => ({ action: 'update', subject: 'DynamicFieldGroup', id: params.id })}
+          requiredAbility={params => (
+            { action: 'update', subject: 'DynamicFieldGroup', id: params.id }
+          )}
         />
 
         { /* When none of the above match, <PageNotFound> will be rendered */ }

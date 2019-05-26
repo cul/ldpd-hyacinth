@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Row, Col, Form } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import produce from 'immer';
@@ -41,20 +42,26 @@ class FieldSetForm extends React.Component {
   onSubmitHandler = (event) => {
     event.preventDefault();
 
-    const { projectStringKey, formType, fieldSet, fieldSet: { id } } = this.state;
+    const {
+      projectStringKey,
+      formType,
+      fieldSet,
+      fieldSet: { id },
+    } = this.state;
+    const { history: { push } } = this.props;
 
     switch (formType) {
       case 'new':
         hyacinthApi.post(`/projects/${projectStringKey}/field_sets`, fieldSet)
           .then((res) => {
-            this.props.history.push(`/projects/${projectStringKey}/field_sets/${res.data.fieldSet.id}/edit`);
+            push(`/projects/${projectStringKey}/field_sets/${res.data.fieldSet.id}/edit`);
           });
         break;
       case 'edit':
         hyacinthApi.patch(`/projects/${projectStringKey}/field_sets/${id}`, fieldSet)
-          .then((res) => {
-            this.props.history.push(`/projects/${projectStringKey}/field_sets/`);
-          });
+          .then(() => push(`/projects/${projectStringKey}/field_sets/`));
+        break;
+      default:
         break;
     }
   }
@@ -63,11 +70,10 @@ class FieldSetForm extends React.Component {
     event.preventDefault();
 
     const { projectStringKey, fieldSet: { id } } = this.state;
+    const { history: { push } } = this.props;
 
     hyacinthApi.delete(`/projects/${projectStringKey}/field_sets/${id}`)
-      .then((res) => {
-        this.props.history.push(`/projects/${projectStringKey}/field_sets`);
-      });
+      .then(() => push(`/projects/${projectStringKey}/field_sets`));
   }
 
   onChangeHandler = (event) => {
@@ -111,5 +117,15 @@ class FieldSetForm extends React.Component {
     );
   }
 }
+
+FieldSetForm.defaultProps = {
+  id: null,
+};
+
+FieldSetForm.propTypes = {
+  formType: PropTypes.oneOf(['new', 'edit']).isRequired,
+  projectStringKey: PropTypes.string.isRequired,
+  id: PropTypes.string,
+};
 
 export default withRouter(withErrorHandler(FieldSetForm, hyacinthApi));

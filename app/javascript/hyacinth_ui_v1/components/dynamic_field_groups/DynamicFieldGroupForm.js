@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Row, Col, Form, Button, Card,
 } from 'react-bootstrap';
@@ -71,14 +72,16 @@ class DynamicFieldGroupForm extends React.Component {
       case 'new':
         hyacinthApi.post('/dynamic_field_groups', dynamicFieldGroup)
           .then((res) => {
-            const { dynamicFieldGroup: { id } } = res.data;
+            const { dynamicFieldGroup: { id: newId } } = res.data;
 
-            push(`/dynamic_field_groups/${id}/edit`);
+            push(`/dynamic_field_groups/${newId}/edit`);
           });
         break;
       case 'edit':
         hyacinthApi.patch(`/dynamic_field_groups/${id}`, dynamicFieldGroup)
           .then(() => push(`/dynamic_field_groups/${id}/edit`));
+        break;
+      default:
         break;
     }
   }
@@ -119,9 +122,10 @@ class DynamicFieldGroupForm extends React.Component {
     const {
       formType,
       dynamicFieldGroup: {
-        stringKey, displayLabel, sortOrder, isRepeatable, parentType, parentId,
+        id, stringKey, displayLabel, sortOrder, isRepeatable, parentType, parentId,
       },
       dynamicFieldCategories,
+      children,
     } = this.state;
 
     let categoriesDropdown = '';
@@ -221,16 +225,16 @@ class DynamicFieldGroupForm extends React.Component {
           <Card>
             <Card.Header>Child Fields and Field Groups</Card.Header>
             <Card.Body>
-              <DynamicFieldsAndGroupsTable rows={this.state.children} />
+              <DynamicFieldsAndGroupsTable rows={children} />
 
               {
                 formType === 'edit' && (
                   <>
-                    <LinkContainer to={`/dynamic_fields/new?dynamicFieldGroupId=${this.props.id}`}>
+                    <LinkContainer to={`/dynamic_fields/new?dynamicFieldGroupId=${id}`}>
                       <Button variant="primary">New Child Field</Button>
                     </LinkContainer>
 
-                    <LinkContainer to={`/dynamic_field_groups/new?parentId=${this.props.id}&parentType=DynamicFieldGroup`}>
+                    <LinkContainer to={`/dynamic_field_groups/new?parentId=${id}&parentType=DynamicFieldGroup`}>
                       <Button variant="primary">New Child Field Group</Button>
                     </LinkContainer>
                   </>
@@ -243,5 +247,14 @@ class DynamicFieldGroupForm extends React.Component {
     );
   }
 }
+
+DynamicFieldGroupForm.defaultProps = {
+  id: null,
+};
+
+DynamicFieldGroupForm.propTypes = {
+  formType: PropTypes.oneOf(['new', 'edit']).isRequired,
+  id: PropTypes.string,
+};
 
 export default withRouter(withErrorHandler(DynamicFieldGroupForm, hyacinthApi));
