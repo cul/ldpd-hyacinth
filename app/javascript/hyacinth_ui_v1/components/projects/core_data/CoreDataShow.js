@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row, Col, Button } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import producer from 'immer';
+import produce from 'immer';
 
 import ProjectSubHeading from '../../../hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
 import hyacinthApi from '../../../util/hyacinth_api';
@@ -24,7 +24,7 @@ class CoreDataShow extends React.Component {
       .then((res) => {
         const { project } = res.data;
 
-        this.setState(producer((draft) => {
+        this.setState(produce((draft) => {
           draft.project = project;
         }));
       });

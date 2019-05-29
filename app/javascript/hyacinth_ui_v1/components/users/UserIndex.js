@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Table } from 'react-bootstrap';
-import producer from 'immer';
+import produce from 'immer';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
 import hyacinthApi from '../../util/hyacinth_api';
@@ -14,7 +14,7 @@ class UserIndex extends React.Component {
   componentDidMount() {
     hyacinthApi.get('/users/')
       .then((res) => {
-        this.setState(producer((draft) => { draft.users = res.data.users; }));
+        this.setState(produce((draft) => { draft.users = res.data.users; }));
       });
   }
 

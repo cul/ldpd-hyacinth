@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Table } from 'react-bootstrap';
-import producer from 'immer';
+import produce from 'immer';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
 import hyacinthApi from '../../util/hyacinth_api';
@@ -14,7 +14,7 @@ export default class FieldExportProfileIndex extends React.Component {
   componentDidMount() {
     hyacinthApi.get('/field_export_profiles')
       .then((res) => {
-        this.setState(producer((draft) => { draft.fieldExportProfiles = res.data.fieldExportProfiles; }));
+        this.setState(produce((draft) => { draft.fieldExportProfiles = res.data.fieldExportProfiles; }));
       });
   }
 

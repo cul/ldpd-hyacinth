@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Table } from 'react-bootstrap';
-import producer from 'immer';
+import produce from 'immer';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
 import hyacinthApi from '../../util/hyacinth_api';
@@ -15,7 +15,7 @@ export default class ProjectIndex extends React.Component {
   componentDidMount() {
     hyacinthApi.get('/projects/')
       .then((res) => {
-        this.setState(producer((draft) => { draft.projects = res.data.projects; }));
+        this.setState(produce((draft) => { draft.projects = res.data.projects; }));
       });
   }
 

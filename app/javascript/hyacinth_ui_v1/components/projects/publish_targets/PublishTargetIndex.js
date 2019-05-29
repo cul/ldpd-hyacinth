@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Table, Button } from 'react-bootstrap';
-import producer from 'immer';
+import produce from 'immer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LinkContainer } from 'react-router-bootstrap';
 
@@ -17,7 +17,7 @@ export default class FieldSetIndex extends React.Component {
   componentDidMount() {
     hyacinthApi.get(`/projects/${this.props.match.params.projectStringKey}/publish_targets`)
       .then((res) => {
-        this.setState(producer((draft) => { draft.publishTargets = res.data.publishTargets; }));
+        this.setState(produce((draft) => { draft.publishTargets = res.data.publishTargets; }));
       });
   }
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
-import producer from 'immer';
+import produce from 'immer';
 
 import TopNavbar from './components/layout/TopNavbar';
 import PageNotFound from './components/layout/PageNotFound';
@@ -41,7 +41,7 @@ export default class App extends React.Component {
 
         ability.update(user.rules);
 
-        this.setState(producer((draft) => {
+        this.setState(produce((draft) => {
           draft.user.firstName = user.firstName;
           draft.user.lastName = user.lastName;
           draft.user.uid = user.uid;

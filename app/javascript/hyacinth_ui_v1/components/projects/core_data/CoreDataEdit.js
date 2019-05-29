@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Row, Col, Form, Button,
 } from 'react-bootstrap';
-import producer from 'immer';
+import produce from 'immer';
 
 import ProjectSubHeading from '../../../hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
 import CancelButton from '../../layout/forms/CancelButton';
@@ -22,7 +22,7 @@ class CoreDataEdit extends React.Component {
 
   onChangeHandler = (event) => {
     const { target: { name, value } } = event;
-    this.setState(producer((draft) => { draft.project[name] = value; }));
+    this.setState(produce((draft) => { draft.project[name] = value; }));
   }
 
   onSubmitHandler = (event) => {
@@ -51,7 +51,7 @@ class CoreDataEdit extends React.Component {
       .then((res) => {
         const { project } = res.data;
 
-        this.setState(producer((draft) => {
+        this.setState(produce((draft) => {
           draft.project = project;
         }));
       });

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import producer from 'immer';
+import produce from 'immer';
 
 import ContextualNavbar from '../../components/layout/ContextualNavbar';
 import hyacinthApi from '../../util/hyacinth_api';
@@ -17,7 +17,7 @@ class ProjectLayout extends Component {
 
     hyacinthApi.get(`/projects/${stringKey}`)
       .then((res) => {
-        this.setState(producer((draft) => {
+        this.setState(produce((draft) => {
           draft.project.displayLabel = res.data.project.displayLabel;
         }));
       });

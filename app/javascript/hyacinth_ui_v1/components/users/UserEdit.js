@@ -3,7 +3,7 @@ import {
   Row, Col, Form, Button, Collapse,
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import producer from 'immer';
+import produce from 'immer';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
@@ -33,7 +33,7 @@ class UserEdit extends React.Component {
       .then((res) => {
         const { user } = res.data;
 
-        this.setState(producer((draft) => {
+        this.setState(produce((draft) => {
           draft.user = user;
           draft.user.currentPassword = '';
           draft.user.password = '';
@@ -43,7 +43,7 @@ class UserEdit extends React.Component {
   }
 
   onChangeHandler = ({ target: { name, value } }) => {
-    this.setState(producer((draft) => { draft.user[name] = value; }));
+    this.setState(produce((draft) => { draft.user[name] = value; }));
   }
 
   onFlipActivationHandler = (event) => {
@@ -53,7 +53,7 @@ class UserEdit extends React.Component {
 
     hyacinthApi.patch(`/users/${uid}`, { user: { is_active: !isActive } })
       .then((res) => {
-        this.setState(producer((draft) => { draft.user.isActive = res.data.user.is_active; }));
+        this.setState(produce((draft) => { draft.user.isActive = res.data.user.is_active; }));
       });
   }
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card } from 'react-bootstrap';
-import producer from 'immer';
+import produce from 'immer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
@@ -16,7 +16,7 @@ export default class DynamicFieldIndex extends React.Component {
   componentDidMount() {
     hyacinthApi.get('/dynamic_field_categories')
       .then((res) => {
-        this.setState(producer((draft) => {
+        this.setState(produce((draft) => {
           draft.dynamicFieldGraphs = res.data.dynamicFieldCategories;
         }));
       });

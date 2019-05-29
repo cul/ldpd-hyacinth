@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Table, Button } from 'react-bootstrap';
-import producer from 'immer';
+import produce from 'immer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LinkContainer } from 'react-router-bootstrap';
 
@@ -19,7 +19,7 @@ export default class FieldSetIndex extends React.Component {
 
     hyacinthApi.get(`/projects/${projectStringKey}/field_sets`)
       .then((res) => {
-        this.setState(producer((draft) => { draft.fieldSets = res.data.fieldSets; }));
+        this.setState(produce((draft) => { draft.fieldSets = res.data.fieldSets; }));
       });
   }
 
