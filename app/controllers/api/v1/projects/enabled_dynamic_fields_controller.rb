@@ -14,9 +14,13 @@ module Api
 
         # PATCH /projects/:string_key/enabled_dynamic_fields/:digital_object_type
         def update
-          update_params[:enabled_dynamic_fields].each { |h| h[:digital_object_type] = params[:digital_object_type] }
+          enabled_dynamic_fields = update_params.to_h['enabled_dynamic_fields']
+          enabled_dynamic_fields.each do |h|
+            h['digital_object_type'] = params[:digital_object_type]
+          end
+
           updated_enabled_dynamic_fields = {
-            enabled_dynamic_fields_attributes: update_params[:enabled_dynamic_fields]
+            enabled_dynamic_fields_attributes: enabled_dynamic_fields
           }
 
           if @project.update(updated_enabled_dynamic_fields)
@@ -36,7 +40,7 @@ module Api
           def update_params
             params.permit(
               enabled_dynamic_fields: [
-                :id, :dynamic_field_id, :required, :locked, :hidden, :owner_only, :default_value, field_set_ids: []
+                :id, :dynamic_field_id, :required, :locked, :hidden, :owner_only, :default_value, :_destroy, field_set_ids: []
               ]
             )
           end

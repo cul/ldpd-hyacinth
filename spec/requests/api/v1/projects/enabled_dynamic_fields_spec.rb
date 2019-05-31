@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
   let(:project) { FactoryBot.create(:project) }
+  let!(:request_url) { "/api/v1/projects/#{project.string_key}/enabled_dynamic_fields/item" }
 
   describe 'GET /api/v1/projects/:string_key/enabled_dynamic_fields/:digital_object_type' do
     before do
@@ -15,18 +16,14 @@ RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
     end
 
     include_examples 'requires user to have correct permissions' do
-      let(:request) do
-        get "/api/v1/projects/#{project.string_key}/enabled_dynamic_fields/item"
-      end
+      let(:request) { get request_url }
     end
 
     context 'when logged in user has correct permissions' do
       before { sign_in_project_contributor to: :read_objects, project: project }
 
       context 'when querying for all item enabled dynamic fields' do
-        before do
-          get "/api/v1/projects/#{project.string_key}/enabled_dynamic_fields/item"
-        end
+        before { get request_url }
 
         it 'returns 200' do
           expect(response.status).to be 200
@@ -42,7 +39,8 @@ RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
                   "hidden": false,
                   "locked": false,
                   "owner_only": false,
-                  "required": true
+                  "required": true,
+                  "field_sets": []
                 },
                 {
                   "default_value": null,
@@ -50,7 +48,8 @@ RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
                   "hidden": false,
                   "locked": false,
                   "owner_only": false,
-                  "required": true
+                  "required": true,
+                  "field_sets": []
                 }
               ]
             }
@@ -65,7 +64,7 @@ RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
 
     include_examples 'requires user to have correct permissions' do
       let(:request) do
-        patch "/api/v1/projects/#{project.string_key}/enabled_dynamic_fields/item", params: { enabled_dynamic_fields: [] }
+        patch request_url, params: { enabled_dynamic_fields: [] }
       end
     end
 
@@ -74,7 +73,7 @@ RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
 
       before do
         sign_in_project_contributor to: :read_objects, project: project
-        patch "/api/v1/projects/#{project.string_key}/enabled_dynamic_fields/item", params: { enabled_dynamic_fields: [] }
+        patch request_url, params: { enabled_dynamic_fields: [] }
       end
     end
 
@@ -83,7 +82,7 @@ RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
 
       context 'when updating an enabled dynamic field' do
         before do
-          patch "/api/v1/projects/#{project.string_key}/enabled_dynamic_fields/item", params: {
+          patch request_url, params: {
             enabled_dynamic_fields: [{ id: enabled_dynamic_field.id, locked: true, owner_only: true }]
           }
         end
@@ -102,7 +101,7 @@ RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
 
       context 'when trying to change digital_object_type' do
         before do
-          patch "/api/v1/projects/#{project.string_key}/enabled_dynamic_fields/item", params: {
+          patch request_url, params: {
             enabled_dynamic_fields: [{ id: enabled_dynamic_field.id, digital_object_type: 'asset' }]
           }
         end
@@ -117,6 +116,80 @@ RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
         end
       end
 
+      context 'when adding an enabled dynamic field' do
+        let!(:dynamic_field_2) do
+          FactoryBot.create(
+            :dynamic_field,
+            string_key: 'other_value',
+            dynamic_field_group: enabled_dynamic_field.dynamic_field.dynamic_field_group
+          )
+        end
+
+        before do
+          patch request_url, as: :json, params: {
+            enabled_dynamic_fields: [
+              { id: enabled_dynamic_field.id, locked: true, owner_only: true },
+              { dynamic_field_id: dynamic_field_2.id, required: true }
+            ]
+          }
+        end
+
+        it 'returns 200' do
+          expect(response.status).to be 200
+        end
+
+        it 'correctly updates record' do
+          enabled_dynamic_field.reload
+          expect(enabled_dynamic_field.locked).to be true
+          expect(enabled_dynamic_field.owner_only).to be true
+          expect(enabled_dynamic_field.digital_object_type).to eq 'item'
+        end
+
+        it 'creates a new record' do
+          project.reload
+          new_enabled_dynamic_field = project.enabled_dynamic_fields.find_by(dynamic_field_id: dynamic_field_2.id)
+          expect(new_enabled_dynamic_field).not_to be nil
+          expect(new_enabled_dynamic_field.required).to be true
+        end
+      end
+
+      context 'when adding an enabled field and missing required attributes' do
+        before do
+          patch request_url, as: :json, params: {
+            enabled_dynamic_fields: [
+              { id: enabled_dynamic_field.id },
+              { required: true }
+            ]
+          }
+        end
+
+        it 'returns 422' do
+          expect(response.status).to be 422
+        end
+
+        it 'does not create a new record' do
+          project.reload
+          expect(project.enabled_dynamic_fields.count).to be 1
+        end
+      end
+
+      context 'when deleting an enabled field' do
+        before do
+          patch request_url, as: :json, params: {
+            enabled_dynamic_fields: [{ id: enabled_dynamic_field.id, _destroy: true }]
+          }
+        end
+
+        it 'returns 200' do
+          expect(response.status).to be 200
+        end
+
+        it 'deletes enabled dynamic field record' do
+          project.reload
+          expect(project.enabled_dynamic_fields.count).to be 0
+        end
+      end
+
       context 'when updating multiple enabled_dynamic_fields' do
         let(:new_dynamic_field) do
           FactoryBot.create(
@@ -126,13 +199,12 @@ RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
           )
         end
 
-        let(:enabled_dynamic_field_2) do
+        let!(:enabled_dynamic_field_2) do
           FactoryBot.create(:enabled_dynamic_field, project: project, dynamic_field: new_dynamic_field)
         end
 
         before do
-          enabled_dynamic_field_2
-          patch "/api/v1/projects/#{project.string_key}/enabled_dynamic_fields/item", params: {
+          patch request_url, params: {
             enabled_dynamic_fields: [
               { id: enabled_dynamic_field.id, owner_only: true },
               { id: enabled_dynamic_field_2.id, required: false }
@@ -161,7 +233,7 @@ RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
         let(:field_set) { FactoryBot.create(:field_set, project: project) }
 
         before do
-          patch "/api/v1/projects/#{project.string_key}/enabled_dynamic_fields/item", params: {
+          patch request_url, params: {
             enabled_dynamic_fields: [{ id: enabled_dynamic_field.id, field_set_ids: [field_set.id] }]
           }
         end
