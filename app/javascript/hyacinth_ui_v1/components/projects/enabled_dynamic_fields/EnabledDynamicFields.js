@@ -2,16 +2,29 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 import PageNotFound from '../../layout/PageNotFound';
-// import EnabledDynamicFieldShow from './EnabledDynamicFieldShow';
-// import EnabledDynamicFieldEdit from './EnabledDynamicFieldEdit';
+import ProtectedRoute from '../../ProtectedRoute';
 
-export default class EnabledDynamicFields extends React.Component {
+import EnabledDynamicFieldEdit from './EnabledDynamicFieldEdit';
+import EnabledDynamicFieldShow from './EnabledDynamicFieldShow';
+
+export default class EnabledDynamicFields extends React.PureComponent {
   render() {
     return (
       <div>
         <Switch>
-          <Route exact path="/projects/:projectStringKey/enabled_dynamic_fields/:digitalObjectType" component={EnabledDynamicFieldShow} />
-          <Route path="/projects/:projectStringKey/enabled_dynamic_fields/:digitalObjectType/edit" component={EnabledDynamicFieldEdit} />
+          <Route
+            exact
+            path="/projects/:projectStringKey/enabled_dynamic_fields/:digitalObjectType"
+            component={EnabledDynamicFieldShow}
+          />
+
+          <ProtectedRoute
+            path="/projects/:projectStringKey/enabled_dynamic_fields/:digitalObjectType/edit"
+            component={EnabledDynamicFieldEdit}
+            requiredAbility={params => (
+              { action: 'manage', subject: 'Project', project: { stringKey: params.projectStringKey } }
+            )}
+          />
 
           { /* When none of the above match, <PageNotFound> will be rendered */ }
           <Route component={PageNotFound} />

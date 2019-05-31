@@ -10,6 +10,7 @@ import ProjectNew from './ProjectNew';
 import CoreData from './core_data/CoreData';
 import FieldSet from './field_sets/FieldSet';
 import PublishTarget from './publish_targets/PublishTarget';
+import EnabledDynamicFields from './enabled_dynamic_fields/EnabledDynamicFields';
 import ProtectedRoute from '../ProtectedRoute';
 
 export default class Projects extends React.PureComponent {
@@ -43,6 +44,7 @@ export default class Projects extends React.PureComponent {
                   <Route path="/projects/:stringKey/core_data" component={CoreData} />
                   <Route path="/projects/:stringKey/field_sets" component={FieldSet} />
                   <Route path="/projects/:stringKey/publish_targets" component={PublishTarget} />
+                  <Route path="/projects/:stringKey/enabled_dynamic_fields" component={EnabledDynamicFields} />
                   <Redirect exact from="/projects/:stringKey" to="/projects/:stringKey/core_data" />
                   <Route component={PageNotFound} />
                 </Switch>
