@@ -42,7 +42,8 @@ RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
                   "hidden": false,
                   "locked": false,
                   "owner_only": false,
-                  "required": true
+                  "required": true,
+                  "field_sets": []
                 },
                 {
                   "default_value": null,
@@ -50,7 +51,8 @@ RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
                   "hidden": false,
                   "locked": false,
                   "owner_only": false,
-                  "required": true
+                  "required": true,
+                  "field_sets": []
                 }
               ]
             }
@@ -114,6 +116,63 @@ RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
         it 'does not change digital_object_type' do
           enabled_dynamic_field.reload
           expect(enabled_dynamic_field.digital_object_type).to eq 'item'
+        end
+      end
+
+      context 'when adding an enabled dynamic field' do
+        let!(:dynamic_field_2) do
+          FactoryBot.create(
+            :dynamic_field,
+            string_key: 'other_value',
+            dynamic_field_group: enabled_dynamic_field.dynamic_field.dynamic_field_group
+          )
+        end
+
+        before do
+          patch "/api/v1/projects/#{project.string_key}/enabled_dynamic_fields/item", as: :json, params: {
+            enabled_dynamic_fields: [
+              { id: enabled_dynamic_field.id, locked: true, owner_only: true },
+              { dynamic_field_id: dynamic_field_2.id, required: true }
+            ]
+          }
+        end
+
+        it 'returns 200' do
+          expect(response.status).to be 200
+        end
+
+        it 'correctly updates record' do
+          enabled_dynamic_field.reload
+          expect(enabled_dynamic_field.locked).to be true
+          expect(enabled_dynamic_field.owner_only).to be true
+          expect(enabled_dynamic_field.digital_object_type).to eq 'item'
+        end
+
+        it 'creates a new record' do
+          project.reload
+          new_enabled_dynamic_field = project.enabled_dynamic_fields.find_by(dynamic_field_id: dynamic_field_2.id)
+          expect(new_enabled_dynamic_field).not_to be nil
+          expect(new_enabled_dynamic_field.required).to be true
+        end
+      end
+
+      context 'when adding an enabled field and missing required attributes' do
+        before do
+          patch "/api/v1/projects/#{project.string_key}/enabled_dynamic_fields/item", as: :json, params: {
+            enabled_dynamic_fields: [
+              { id: enabled_dynamic_field.id },
+              { required: true }
+            ]
+          }
+        end
+
+        it 'returns 422' do
+          expect(response.status).to be 422
+        end
+
+        it 'does not create a new record' do
+          project.reload
+          expect(project.enabled_dynamic_fields.count).to be 1
         end
       end
 

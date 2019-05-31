@@ -1,8 +1,8 @@
 class EnabledDynamicField < ApplicationRecord
   has_and_belongs_to_many :field_sets
 
-  belongs_to :project
-  belongs_to :dynamic_field
+  belongs_to :project, inverse_of: :enabled_dynamic_fields
+  belongs_to :dynamic_field, inverse_of: :enabled_dynamic_fields
 
   validates :project, :dynamic_field, :digital_object_type, presence: true
   validates :digital_object_type, inclusion: { in: Hyacinth.config.digital_object_types.keys }
@@ -16,8 +16,8 @@ class EnabledDynamicField < ApplicationRecord
       hidden: hidden,
       locked: locked,
       required: required,
-      owner_only: owner_only
-      # fieldset_ids: fieldset_ids
+      owner_only: owner_only,
+      field_sets: field_sets
     }
   end
 end
