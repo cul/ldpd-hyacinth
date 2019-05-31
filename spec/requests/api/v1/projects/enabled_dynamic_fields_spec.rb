@@ -176,6 +176,25 @@ RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
         end
       end
 
+      context 'when deleting an enabled field' do
+        before do
+          patch "/api/v1/projects/#{project.string_key}/enabled_dynamic_fields/item", as: :json, params: {
+            enabled_dynamic_fields: [
+              { id: enabled_dynamic_field.id, _destroy: true },
+            ]
+          }
+        end
+
+        it 'returns 200' do
+          expect(response.status).to be 200
+        end
+
+        it 'deletes enabled dynamic field record' do
+          project.reload
+          expect(project.enabled_dynamic_fields.count).to be 0
+        end
+      end
+
       context 'when updating multiple enabled_dynamic_fields' do
         let(:new_dynamic_field) do
           FactoryBot.create(
