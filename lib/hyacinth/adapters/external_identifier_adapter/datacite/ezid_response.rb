@@ -33,10 +33,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::EzidResponse
 
   def parse_body
     parsed_body_hash = {}
-    # First, split by '\n' to get individual lines
     parsed_body = @response.body.split("\n")
-    # Then split each line in 2 along ':'. NOTE: using #map!
-    # parsed_body.map! {|line| line.split(':', 2)}
     parsed_body.each do |line|
       key_value_pair = line.split(':', 2)
       parsed_body_hash[key_value_pair.first] = key_value_pair.second
