@@ -13,6 +13,7 @@ class Ability
       can [:show, :update], User, id: user.id
       can [:show, :update], User, uid: user.uid
       can [:index, :show, :create], :term
+      can [:index], DynamicFieldCategory # Need to allow this so we can render EnabledDynamicField pages.
 
       # System Wide Permissions
       assign_system_wide_permissions(system_permissions)
