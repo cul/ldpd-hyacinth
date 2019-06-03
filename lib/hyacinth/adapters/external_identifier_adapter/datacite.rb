@@ -18,8 +18,6 @@ module Hyacinth
         # Generates a new persistent id, ensuring that nothing currently uses that identifier.
         # @return [String] a new id
         def mint
-          # setup EZID API info: credentials, url, etc.
-          api_session = Datacite::EzidSession.new(DATACITE[:user], DATACITE[:password])
           # metadata is blank when minting
           # TODO: allow existing object data to be pushed on mint
           metadata = {}
@@ -63,8 +61,6 @@ module Hyacinth
           hyacinth_metadata = Datacite::Metadata.new digital_object.as_json
           # prepare the metadata into an acceptable format for EZID
           datacite_metadata = Datacite::MetadataBuilder.new hyacinth_metadata
-          # setup EZID API info: credentials, url, etc.
-          api_session = Datacite::EzidSession.new(DATACITE[:user], DATACITE[:password])
           # ApiSession#modify_identifier returns true if the response from the EZID server indicated
           # success, else it returns false
           opts = { datacite: datacite_metadata.datacite_xml, _status: IDENTIFIER_STATUS[:public] }
@@ -81,8 +77,6 @@ module Hyacinth
         def update_doi_target_url(doi, target_url)
           return false if doi.nil?
           return false if target_url.nil?
-          # setup EZID API info: credentials, url, etc.
-          api_session = Datacite::EzidSession.new(DATACITE[:user], DATACITE[:password])
           # ApiSession#modify_identifier returns true if the response from the EZID server indicated
           # success, else it returns false
           api_session.modify_identifier(doi, _target: target_url, _status: IDENTIFIER_STATUS[:public])
@@ -90,13 +84,17 @@ module Hyacinth
 
         def tombstone_impl(id)
           return false if id.nil?
-          api_session = Datacite::EzidSession.new(DATACITE[:user], DATACITE[:password])
           # ApiSession#modify_identifier returns true if the response from the EZID server indicated
           # success, else it returns false
           api_session.modify_identifier(id, _status: IDENTIFIER_STATUS[:unavailable])
         end
 
         private
+
+          # setup EZID API info: credentials, url, etc.
+          def api_session
+            Thread.current[:datacite_ezid_api_session] ||= Datacite::EzidSession.new(DATACITE[:user], DATACITE[:password])
+          end
 
           def http_error_message(response)
             return "" if response.nil?
