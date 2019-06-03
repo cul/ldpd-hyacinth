@@ -80,6 +80,7 @@ namespace :hyacinth do
       print 'Stopping solr...'
     end
     puts 'stopped.'
+    raise rspec_system_exit_failure_exception if rspec_system_exit_failure_exception
   end
 
   task :fedora_wrapper, [:task_stack] => [:environment] do |task, args|
