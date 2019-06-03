@@ -17,7 +17,7 @@ class PublishTarget < ApplicationRecord
   end
 
   def from_json(json, include_root = include_root_in_json)
-    hash = ActiveSupport::JSON.decode(json)
+    hash = JSON.parse(json)
     project_string_key = include_root ? hash.values.first.delete('project') : hash.delete('project')
     super(hash.to_json, include_root)
     self.project = Project.find_by(string_key: project_string_key) if project_string_key
