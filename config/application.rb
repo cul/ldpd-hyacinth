@@ -20,6 +20,6 @@ module Hyacinth
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
 
-    config.middleware.use OliveBranch::Middleware, inflection: 'camel'
+    config.middleware.use OliveBranch::Middleware
   end
 end
