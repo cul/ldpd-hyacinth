@@ -19,6 +19,10 @@ module Hyacinth
         # @return [String] a new id
         def mint
           new_id = Random.rand.to_s
+          loop do
+            break unless @identifiers.key?(new_id)
+            new_id = Random.rand.to_s
+          end
           @identifiers[new_id] = {}
           new_id
         end
