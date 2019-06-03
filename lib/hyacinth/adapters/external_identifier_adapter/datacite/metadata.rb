@@ -42,9 +42,9 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
   def title
     return nil unless @dynamic_field_data.key? 'title'
     # concatenates the non sort portion with the sort portion
-    non_sort_portion = @dynamic_field_data['title'][0]['title_non_sort_portion'] if @dynamic_field_data['title'][0].key? 'title_non_sort_portion'
-    sort_portion = @dynamic_field_data['title'][0]['title_sort_portion'] if @dynamic_field_data['title'][0].key? 'title_sort_portion'
-    "#{non_sort_portion} #{sort_portion}"
+    non_sort_portion = @dynamic_field_data.dig('title', 0, 'title_non_sort_portion')
+    sort_portion = @dynamic_field_data.dig('title', 0, 'title_sort_portion')
+    [non_sort_portion, sort_portion].compact.join(' ')
   end
 
   # the genre of an item
@@ -52,7 +52,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
   # @return [String, nil]
   # @note only returns the first genre value
   def genre_uri
-    @dynamic_field_data['genre'][0]['genre_term']['uri'] if @dynamic_field_data.key?('genre') && @dynamic_field_data['genre'][0].key?('genre_term')
+    @dynamic_field_data.dig('genre', 0, 'genre_term', 'uri')
   end
 
   # the abstract of an item
@@ -60,21 +60,22 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
   # @return [String, nil]
   # @note only returns the first abstract value
   def abstract
-    @dynamic_field_data['abstract'][0]['abstract_value'] if @dynamic_field_data.key? 'abstract'
+    @dynamic_field_data.dig('abstract', 0, 'abstract_value')
   end
 
   # the type of resource for an item
   # @api public
   # @return [String, nil]
   def type_of_resource
-    @dynamic_field_data['type_of_resource'][0]['type_of_resource_value'] if @dynamic_field_data.key? 'type_of_resource'
+    @dynamic_field_data.dig('type_of_resource', 0, 'type_of_resource_value')
   end
 
   # starting year of the w3cdtf-encoded Date Issued field (first 4 characters)
   # @api public
   # @return [String, nil]
   def date_issued_start_year
-    @dynamic_field_data['date_issued'][0]['date_issued_start_value'][0..3] if @dynamic_field_data.key? 'date_issued'
+    local_value = @dynamic_field_data.dig('date_issued', 0, 'date_issued_start_value')
+    local_value[0..3] if local_value
   end
 
   # date of the w3cdtf-encoded created Timestamp field (first 10 characters)
@@ -104,28 +105,28 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
   # @api public
   # @return [String, nil]
   def parent_publication_issn
-    @dynamic_field_data['parent_publication'][0]['parent_publication_issn'] if @dynamic_field_data.key? 'parent_publication'
+    @dynamic_field_data.dig('parent_publication', 0, 'parent_publication_issn')
   end
 
   # ISBN of the parent publication
   # @api public
   # @return [String, nil]
   def parent_publication_isbn
-    @dynamic_field_data['parent_publication'][0]['parent_publication_isbn'] if @dynamic_field_data.key? 'parent_publication'
+    @dynamic_field_data.dig('parent_publication', 0, 'parent_publication_isbn')
   end
 
   # DOI of the parent publication
   # @api public
   # @return [String, nil]
   def parent_publication_doi
-    @dynamic_field_data['parent_publication'][0]['parent_publication_doi'] if @dynamic_field_data.key? 'parent_publication'
+    @dynamic_field_data.dig('parent_publication', 0, 'parent_publication_doi')
   end
 
   # handle indentifier value
   # @api public
   # @return [String, nil]
   def handle_net_identifier
-    @dynamic_field_data['cnri_handle_identifier'][0]['cnri_handle_identifier_value'] if @dynamic_field_data.key? 'cnri_handle_identifier'
+    @dynamic_field_data.dig('cnri_handle_identifier', 0, 'cnri_handle_identifier_value')
   end
 
   # retrieve subject topics from [@dynamic_field_data]
