@@ -26,6 +26,7 @@ RSpec.describe 'Dynamic Field Groups Requests', type: :request do
           expect(response.body).to be_json_eql(%(
             {
               "dynamic_field_group": {
+                "parent_type": "DynamicFieldCategory",
                 "children": [],
                 "display_label": "Name",
                 "is_repeatable": true,
@@ -35,7 +36,7 @@ RSpec.describe 'Dynamic Field Groups Requests', type: :request do
                 "export_rules": []
               }
             }
-          ))
+          )).excluding('parent_id')
         end
       end
 
@@ -87,6 +88,7 @@ RSpec.describe 'Dynamic Field Groups Requests', type: :request do
           expect(response.body).to be_json_eql(%(
             {
               "dynamic_field_group": {
+                "parent_type": "DynamicFieldCategory",
                 "children": [],
                 "display_label": "Location",
                 "is_repeatable": true,
@@ -96,7 +98,7 @@ RSpec.describe 'Dynamic Field Groups Requests', type: :request do
                 "export_rules": [ { "translation_logic": "[\\n\\n]", "field_export_profile": "#{field_export_profile.name}" }]
               }
             }
-          ))
+          )).excluding('parent_id')
         end
 
         it 'adds child to parent' do
