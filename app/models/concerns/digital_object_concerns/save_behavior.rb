@@ -52,6 +52,7 @@ module DigitalObjectConcerns
         begin
           self.mint_uid_and_metadata_location_uri_if_new_record
           self.update_modification_info(current_datetime, opts[:user])
+          # TODO: #114 how should the minted DOI be treated in the event of a failed save (rescued below)
           self.mint_reserved_doi_if_doi_blank
           self.handle_asset_imports(lock_object) do
             self.handle_parent_changes do
