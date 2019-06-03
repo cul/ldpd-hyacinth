@@ -1,18 +1,21 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Nav } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Route } from 'react-router-dom';
 
-export default class ProjectTab extends React.Component {
+class ProjectTab extends React.PureComponent {
   render() {
+    const { name, ...rest } = this.props;
+
     return (
       <Route
-        {...this.props}
-        children={({ location, match }) => (
-          <Nav.Item key={this.props.name}>
-            <LinkContainer activeClassName="active" {...this.props}>
-              <Nav.Link eventKey={this.props.name}>
-                {this.props.name}
+        {...rest}
+        children={() => (
+          <Nav.Item key={name}>
+            <LinkContainer activeClassName="active" {...rest}>
+              <Nav.Link eventKey={name}>
+                {name}
               </Nav.Link>
             </LinkContainer>
           </Nav.Item>
@@ -21,3 +24,9 @@ export default class ProjectTab extends React.Component {
     );
   }
 }
+
+ProjectTab.propTypes = {
+  name: PropTypes.string.isRequired,
+};
+
+export default ProjectTab;

@@ -1,13 +1,17 @@
 import React from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
-import producer from 'immer';
+import produce from 'immer';
 
-import TopNavbar from 'hyacinth_ui_v1/components/layout/TopNavbar';
-import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch';
-import DigitalObjects from 'hyacinth_ui_v1/components/digital_objects/DigitalObjects';
-import Users from 'hyacinth_ui_v1/components/users/Users';
-import Projects from 'hyacinth_ui_v1/components/projects/Projects';
+import TopNavbar from './components/layout/TopNavbar';
+import PageNotFound from './components/layout/PageNotFound';
+import DigitalObjects from './components/digital_objects/DigitalObjects';
+import Users from './components/users/Users';
+import DynamicFields from './components/dynamic_fields/DynamicFields';
+import DynamicFieldGroups from './components/dynamic_field_groups/DynamicFieldGroups';
+import DynamicFieldCategories from './components/dynamic_field_categories/DynamicFieldCategories';
+import FieldExportProfiles from './components/field_export_profiles/FieldExportProfiles';
+import Projects from './components/projects/Projects';
 import { AbilityContext } from './util/ability_context';
 import ability from './util/ability';
 import hyacinthApi from './util/hyacinth_api';
@@ -37,9 +41,9 @@ export default class App extends React.Component {
 
         ability.update(user.rules);
 
-        this.setState(producer((draft) => {
-          draft.user.firstName = user.first_name;
-          draft.user.lastName = user.last_name;
+        this.setState(produce((draft) => {
+          draft.user.firstName = user.firstName;
+          draft.user.lastName = user.lastName;
           draft.user.uid = user.uid;
         }));
       });
@@ -55,9 +59,13 @@ export default class App extends React.Component {
             <Route path="/digital-objects" component={DigitalObjects} />
             <Route path="/users" component={Users} />
             <Route path="/projects" component={Projects} />
-            { /* When none of the above match, <NoMatch> will be rendered */ }
-            <Route path="/404" component={NoMatch} />
-            <Route component={NoMatch} />
+            <Route path="/dynamic_fields" component={DynamicFields} />
+            <Route path="/dynamic_field_groups" component={DynamicFieldGroups} />
+            <Route path="/dynamic_field_categories" component={DynamicFieldCategories} />
+            <Route path="/field_export_profiles" component={FieldExportProfiles} />
+            { /* When none of the above match, <PageNotFound> will be rendered */ }
+            <Route path="/404" component={PageNotFound} />
+            <Route component={PageNotFound} />
           </Switch>
         </Container>
       </AbilityContext.Provider>

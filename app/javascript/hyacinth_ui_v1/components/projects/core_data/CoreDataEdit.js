@@ -2,12 +2,14 @@ import React from 'react';
 import {
   Row, Col, Form, Button,
 } from 'react-bootstrap';
-import producer from 'immer';
+import produce from 'immer';
 
 import ProjectSubHeading from '../../../hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
-import CancelButton from '../../layout/CancelButton';
+import CancelButton from '../../layout/forms/CancelButton';
+import SubmitButton from '../../layout/forms/SubmitButton';
 import hyacinthApi from '../../../util/hyacinth_api';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
+import { Can } from '../../../util/ability_context';
 
 class CoreDataEdit extends React.Component {
   state = {
@@ -19,54 +21,44 @@ class CoreDataEdit extends React.Component {
   }
 
   onChangeHandler = (event) => {
-    const { target } = event;
-    this.setState(producer((draft) => { draft.project[target.name] = target.value; }));
+    const { target: { name, value } } = event;
+    this.setState(produce((draft) => { draft.project[name] = value; }));
   }
 
   onSubmitHandler = (event) => {
     event.preventDefault();
 
-    const data = {
-      project: {
-        display_label: this.state.project.displayLabel,
-        project_url: this.state.project.projectUrl,
-      },
-    };
+    const { project: { stringKey, displayLabel, projectUrl } } = this.state
+    const data = { project: { displayLabel, projectUrl }, };
 
-    hyacinthApi.patch(`/projects/${this.props.match.params.string_key}`, data)
+    hyacinthApi.patch(`/projects/${stringKey}`, data)
       .then((res) => {
-        this.props.history.push(`/projects/${this.props.match.params.string_key}/core_data`);
+        this.props.history.push(`/projects/${stringKey}/core_data`);
       });
   }
 
   onDeleteHandler = (event) => {
     event.preventDefault();
 
-    hyacinthApi.delete(`/projects/${this.props.match.params.string_key}`)
+    hyacinthApi.delete(`/projects/${this.props.match.params.stringKey}`)
       .then((res) => {
         this.props.history.push('/projects/');
-      })
-      .catch((error) => {
-        console.log(error);
       });
   }
 
   componentDidMount = () => {
-    hyacinthApi.get(`/projects/${this.props.match.params.string_key}`)
+    hyacinthApi.get(`/projects/${this.props.match.params.stringKey}`)
       .then((res) => {
         const { project } = res.data;
-        this.setState(producer((draft) => {
-          draft.project.stringKey = project.string_key;
-          draft.project.displayLabel = project.display_label;
-          draft.project.projectUrl = project.project_url;
+
+        this.setState(produce((draft) => {
+          draft.project = project;
         }));
-      })
-      .catch((error) => {
-        console.log(error);
       });
   }
 
   render() {
+    const { project: { stringKey, displayLabel, projectUrl } } = this.state;
     return (
       <>
         <ProjectSubHeading>Editing Core Data</ProjectSubHeading>
@@ -75,7 +67,7 @@ class CoreDataEdit extends React.Component {
           <Form.Group as={Row}>
             <Form.Label column sm={2}>String Key</Form.Label>
             <Col sm={10}>
-              <Form.Control plaintext readOnly value={this.state.project.stringKey} />
+              <Form.Control plaintext readOnly value={stringKey} />
             </Col>
           </Form.Group>
 
@@ -85,7 +77,7 @@ class CoreDataEdit extends React.Component {
               <Form.Control
                 type="text"
                 name="displayLabel"
-                value={this.state.project.displayLabel}
+                value={displayLabel}
                 onChange={this.onChangeHandler}
               />
             </Col>
@@ -97,7 +89,7 @@ class CoreDataEdit extends React.Component {
               <Form.Control
                 type="text"
                 name="projectUrl"
-                value={this.state.project.projectUrl}
+                value={projectUrl}
                 onChange={this.onChangeHandler}
               />
             </Col>
@@ -105,15 +97,17 @@ class CoreDataEdit extends React.Component {
 
           <Form.Row>
             <Col sm="auto" className="mr-auto">
-              <Button variant="outline-danger" type="submit" onClick={this.onDeleteHandler}>Delete Project</Button>
+              <Can I="delete" a="Project">
+                <Button variant="outline-danger" type="submit" onClick={this.onDeleteHandler}>Delete Project</Button>
+              </Can>
             </Col>
 
             <Col sm="auto" className="ml-auto">
-              <CancelButton to={`/projects/${this.props.match.params.string_key}/core_data`} />
+              <CancelButton to={`/projects/${stringKey}/core_data`} />
             </Col>
 
             <Col sm="auto">
-              <Button variant="primary" type="submit" onClick={this.onSubmitHandler}>Save</Button>
+              <SubmitButton formType="edit" onClick={this.onSubmitHandler} />
             </Col>
           </Form.Row>
         </Form>

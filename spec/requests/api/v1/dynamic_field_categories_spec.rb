@@ -7,12 +7,8 @@ RSpec.describe 'Dynamic Field Categories Requests', type: :request do
       FactoryBot.create(:dynamic_field_category, display_label: 'Location')
     end
 
-    include_examples 'requires user to have correct permissions' do
-      let(:request) { get '/api/v1/dynamic_field_categories' }
-    end
-
-    context 'when logged in user is an administrator' do
-      before { sign_in_user as: :administrator }
+    context 'when logged in user' do
+      before { sign_in_user }
 
       context 'when there are multiple results' do
         before do
@@ -25,13 +21,13 @@ RSpec.describe 'Dynamic Field Categories Requests', type: :request do
                "dynamic_field_categories": [
                  {
                    "display_label": "Descriptive Metadata",
-                   "dynamic_field_groups": [],
+                   "children": [],
                    "sort_order": 3,
                    "type": "DynamicFieldCategory"
                  },
                  {
                    "display_label": "Location",
-                   "dynamic_field_groups": [],
+                   "children": [],
                    "sort_order": 3,
                    "type": "DynamicFieldCategory"
                  }
@@ -71,7 +67,7 @@ RSpec.describe 'Dynamic Field Categories Requests', type: :request do
             {
               "dynamic_field_category": {
                 "display_label": "Descriptive Metadata",
-                "dynamic_field_groups": [
+                "children": [
 
                 ],
                 "sort_order": 3,
@@ -124,7 +120,7 @@ RSpec.describe 'Dynamic Field Categories Requests', type: :request do
             {
               "dynamic_field_category": {
                 "display_label": "Location",
-                "dynamic_field_groups": [],
+                "children": [],
                 "sort_order": 8,
                 "type": "DynamicFieldCategory"
               }

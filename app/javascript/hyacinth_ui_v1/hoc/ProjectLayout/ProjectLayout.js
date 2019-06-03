@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import producer from 'immer';
+import PropTypes from 'prop-types';
+import produce from 'immer';
 
-import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar';
-import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
+import ContextualNavbar from '../../components/layout/ContextualNavbar';
+import hyacinthApi from '../../util/hyacinth_api';
 
 class ProjectLayout extends Component {
   state = {
@@ -12,27 +13,38 @@ class ProjectLayout extends Component {
   }
 
   componentDidMount = () => {
-    hyacinthApi.get(`/projects/${this.props.stringKey}`)
+    const { stringKey } = this.props;
+
+    hyacinthApi.get(`/projects/${stringKey}`)
       .then((res) => {
-        this.setState(producer((draft) => {
-          draft.project.displayLabel = res.data.project.display_label;
+        this.setState(produce((draft) => {
+          draft.project.displayLabel = res.data.project.displayLabel;
         }));
       });
   }
 
 
   render() {
+    const { project: { displayLabel } } = this.state;
+    const { children } = this.props;
+
     return (
       <>
         <ContextualNavbar
-          title={`Project | ${this.state.project.displayLabel}`}
+          title={`Project | ${displayLabel}`}
           rightHandLinks={[{ link: '/projects', label: 'Back to All Projects' }]}
         />
 
-        {this.props.children}
+        {children}
       </>
     );
   }
 }
+
+
+ProjectLayout.propTypes = {
+  stringKey: PropTypes.string.isRequired,
+  children: PropTypes.node.isRequired,
+};
 
 export default ProjectLayout;

@@ -1,26 +1,30 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import ProjectSubHeading from '../../../hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
 import hyacinthApi from '../../../util/hyacinth_api';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import PublishTargetForm from './PublishTargetForm';
 
-class PublishTargetNew extends React.Component {
-  createPublishTarget = (data) => {
-    hyacinthApi.post(`/projects/${this.props.match.params.string_key}/publish_targets`, data)
-      .then((res) => {
-        this.props.history.push(`/projects/${this.props.match.params.string_key}/publish_targets/${res.data.publish_target.string_key}/edit`);
-      });
-  }
-
+class PublishTargetNew extends React.PureComponent {
   render() {
+    const { match: { params: { projectStringKey, stringKey } } } = this.props;
     return (
       <>
         <ProjectSubHeading>Create New Publish Target</ProjectSubHeading>
-        <PublishTargetForm submitFormAction={this.createPublishTarget} submitButtonName="Create" />
+        <PublishTargetForm formType="new" projectStringKey={projectStringKey} stringKey={stringKey} />
       </>
     );
   }
 }
 
-export default withErrorHandler(PublishTargetNew, hyacinthApi);
+PublishTargetNew.propTypes = {
+  history: PropTypes.object.isRequired,
+  match: PropTypes.shape({
+    params: PropTypes.shape({
+      projectStringKey: PropTypes.string,
+    }).isRequired,
+  }).isRequired,
+};
+
+export default PublishTargetNew;

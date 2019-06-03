@@ -2,9 +2,9 @@ import React from 'react';
 import { Col, Form, Button } from 'react-bootstrap';
 import produce from 'immer';
 
-import ContextualNavbar from 'hyacinth_ui_v1/components/layout/ContextualNavbar';
-import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
-import withErrorHandler from 'hyacinth_ui_v1/hoc/withErrorHandler/withErrorHandler';
+import ContextualNavbar from '../layout/ContextualNavbar';
+import hyacinthApi from '../../util/hyacinth_api';
+import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
 class ProjectNew extends React.Component {
   state = {
@@ -18,17 +18,13 @@ class ProjectNew extends React.Component {
   onSubmitHandler = (event) => {
     event.preventDefault();
 
-    const data = {
-      project: {
-        string_key: this.state.project.stringKey,
-        display_label: this.state.project.displayLabel,
-        project_url: this.state.project.projectUrl,
-      },
-    };
+    const { project } = this.state;
 
-    hyacinthApi.post('/projects', data)
+    hyacinthApi.post('/projects', project)
       .then((res) => {
-        this.props.history.push(`/projects/${res.data.project.string_key}/core_data/edit`);
+        const { project: { stringKey } } = res.data;
+
+        this.props.history.push(`/projects/${stringKey}/core_data/edit`);
       });
   }
 
@@ -38,6 +34,8 @@ class ProjectNew extends React.Component {
   }
 
   render() {
+    const { project: { stringKey, displayLabel, projectUrl } } = this.state;
+
     return (
       <>
         <ContextualNavbar
@@ -52,7 +50,7 @@ class ProjectNew extends React.Component {
               <Form.Control
                 type="text"
                 name="stringKey"
-                value={this.state.project.stringKey}
+                value={stringKey}
                 onChange={this.onChangeHandler}
               />
             </Form.Group>
@@ -62,7 +60,7 @@ class ProjectNew extends React.Component {
               <Form.Control
                 type="text"
                 name="displayLabel"
-                value={this.state.displayLabel}
+                value={displayLabel}
                 onChange={this.onChangeHandler}
               />
             </Form.Group>
@@ -74,7 +72,7 @@ class ProjectNew extends React.Component {
               <Form.Control
                 type="text"
                 name="projectUrl"
-                value={this.state.projectUrl}
+                value={projectUrl}
                 onChange={this.onChangeHandler}
               />
             </Form.Group>

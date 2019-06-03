@@ -6,7 +6,7 @@ class DynamicFieldGroup < ActiveRecord::Base
 
   default_scope { order(sort_order: :asc) }
 
-  has_many :dynamic_fields
+  has_many :dynamic_fields, dependent: :destroy
   has_many :export_rules, dependent: :destroy
   accepts_nested_attributes_for :export_rules
 
@@ -43,7 +43,9 @@ class DynamicFieldGroup < ActiveRecord::Base
       sort_order: sort_order,
       is_repeatable: is_repeatable,
       children: ordered_children,
-      export_rules: export_rules
+      export_rules: export_rules,
+      parent_type: parent_type,
+      parent_id: parent_id
     }
   end
 

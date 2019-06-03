@@ -1,10 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 
 class CancelButton extends React.Component {
-  onCancelHandler = (event) => {
-    this.props.history.push(this.props.to);
+  onCancelHandler = () => {
+    const { to, history: { push } } = this.props;
+
+    push(to);
   }
 
   render() {
@@ -13,5 +16,9 @@ class CancelButton extends React.Component {
     );
   }
 }
+
+CancelButton.propTypes = {
+  to: PropTypes.string.isRequired,
+};
 
 export default withRouter(CancelButton);

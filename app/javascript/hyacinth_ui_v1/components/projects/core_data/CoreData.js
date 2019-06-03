@@ -1,18 +1,27 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import NoMatch from '../../layout/NoMatch';
+import PageNotFound from '../../layout/PageNotFound';
 import CoreDataShow from './CoreDataShow';
 import CoreDataEdit from './CoreDataEdit';
+import ProtectedRoute from '../../ProtectedRoute';
 
-export default class CoreData extends React.Component {
+export default class CoreData extends React.PureComponent {
   render() {
+    const { match: { path } } = this.props;
     return (
       <Switch>
-        <Route exact path={`${this.props.match.path}`} component={CoreDataShow} />
-        <Route path={`${this.props.match.path}/edit`} component={CoreDataEdit} />
-        
-        <Route component={NoMatch} />
+        <Route exact path={`${path}`} component={CoreDataShow} />
+
+        <ProtectedRoute
+          path={`${path}/edit`}
+          component={CoreDataEdit}
+          requiredAbility={params => (
+            { action: 'update', subject: 'Project', stringKey: params.stringKey }
+          )}
+        />
+
+        <Route component={PageNotFound} />
       </Switch>
     );
   }

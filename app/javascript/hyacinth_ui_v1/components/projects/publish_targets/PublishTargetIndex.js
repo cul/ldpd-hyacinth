@@ -1,12 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Table, Button } from 'react-bootstrap';
-import producer from 'immer';
+import produce from 'immer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LinkContainer } from 'react-router-bootstrap';
 
-import ProjectSubHeading from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
-import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
+import ProjectSubHeading from '../../../hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
+import hyacinthApi from '../../../util/hyacinth_api';
+import { Can } from '../../../util/ability_context';
 
 export default class FieldSetIndex extends React.Component {
   state = {
@@ -14,22 +15,35 @@ export default class FieldSetIndex extends React.Component {
   }
 
   componentDidMount() {
-    hyacinthApi.get(`/projects/${this.props.match.params.string_key}/publish_targets`)
+    hyacinthApi.get(`/projects/${this.props.match.params.projectStringKey}/publish_targets`)
       .then((res) => {
-        this.setState(producer((draft) => { draft.publishTargets = res.data.publish_targets; }));
+        this.setState(produce((draft) => { draft.publishTargets = res.data.publishTargets; }));
       });
   }
 
   render() {
+    const { params: { projectStringKey } } = this.props.match;
+
     let rows = <tr><td colSpan="4">No publish targets have been defined</td></tr>;
 
     if (this.state.publishTargets.length > 0) {
-      rows = this.state.publishTargets.map(publish_target => (
-        <tr key={publish_target.string_key}>
-          <td><Link to={`/projects/${this.props.match.params.string_key}/publish_targets/${publish_target.string_key}/edit`} href="#">{publish_target.display_label}</Link></td>
-          <td>{publish_target.string_key}</td>
-          <td>{publish_target.publish_url}</td>
-          <td>{publish_target.api_key}</td>
+      rows = this.state.publishTargets.map(publishTarget => (
+        <tr key={publishTarget.stringKey}>
+
+          <td>
+            <Can I="edit" of={{ subjectType: 'PublishTarget', project: { stringKey: projectStringKey } }} passThrough>
+              {
+                  can => (
+                    can
+                      ? <Link to={`/projects/${projectStringKey}/publish_targets/${publishTarget.stringKey}/edit`}>{publishTarget.displayLabel}</Link>
+                      : publishTarget.displayLabel
+                  )
+                }
+            </Can>
+          </td>
+          <td>{publishTarget.stringKey}</td>
+          <td>{publishTarget.publishUrl}</td>
+          <td>{publishTarget.apiKey}</td>
         </tr>
       ));
     }
@@ -49,17 +63,19 @@ export default class FieldSetIndex extends React.Component {
           </thead>
           <tbody>
             {rows}
-            <tr>
-              <td className="text-center" colSpan="4">
-                <LinkContainer to={`${this.props.match.url}/new`}>
-                  <Button size="sm" variant="link">
-                    <FontAwesomeIcon icon="plus" />
-                    {' '}
-Add New Publish Target
-                  </Button>
-                </LinkContainer>
-              </td>
-            </tr>
+            <Can I="PublishTarget" of={{ subjectType: 'FieldSet', project: { stringKey: projectStringKey } }}>
+              <tr>
+                <td className="text-center" colSpan="4">
+                  <LinkContainer to={`/projects/${projectStringKey}/publish_targets/new`}>
+                    <Button size="sm" variant="link">
+                      <FontAwesomeIcon icon="plus" />
+                      {' '}
+  Add New Publish Target
+                    </Button>
+                  </LinkContainer>
+                </td>
+              </tr>
+            </Can>
           </tbody>
         </Table>
       </>

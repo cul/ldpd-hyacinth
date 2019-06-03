@@ -1,7 +1,8 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Nav } from 'react-bootstrap';
 
-export default class ProjectTabs extends React.Component {
+class ProjectTabs extends React.PureComponent {
   render() {
     const { children } = this.props;
 
@@ -12,3 +13,9 @@ export default class ProjectTabs extends React.Component {
     );
   }
 }
+
+ProjectTabs.propTypes = {
+  children: PropTypes.arrayOf(PropTypes.element).isRequired,
+};
+
+export default ProjectTabs;

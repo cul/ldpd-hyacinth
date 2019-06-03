@@ -1,27 +1,19 @@
 import React from 'react';
-import produce from 'immer';
 
-import ProjectSubHeading from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
-import hyacinthApi from 'hyacinth_ui_v1/util/hyacinth_api';
-import withErrorHandler from 'hyacinth_ui_v1/hoc/withErrorHandler/withErrorHandler';
+import ProjectSubHeading from '../../../hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
 import PublishTargetForm from './PublishTargetForm';
 
-class PublishTargetEdit extends React.Component {
-  updatePublishTarget = (data) => {
-    hyacinthApi.patch(this.props.match.url.replace('edit', ''), data)
-      .then((res) => {
-        this.props.history.push(`/projects/${this.props.match.params.string_key}/publish_targets/`);
-      });
-  }
-
+class PublishTargetEdit extends React.PureComponent {
   render() {
+    const { match: { params: { projectStringKey, stringKey } } } = this.props;
+
     return (
       <>
         <ProjectSubHeading>Edit Publish Target</ProjectSubHeading>
-        <PublishTargetForm submitFormAction={this.updatePublishTarget} submitButtonName="Update" />
+        <PublishTargetForm formType="edit" projectStringKey={projectStringKey} stringKey={stringKey} />
       </>
     );
   }
 }
 
-export default withErrorHandler(PublishTargetEdit, hyacinthApi);
+export default PublishTargetEdit;

@@ -1,23 +1,35 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch';
+import PageNotFound from '../../layout/PageNotFound';
 import FieldSetIndex from './FieldSetIndex';
 import FieldSetNew from './FieldSetNew';
 import FieldSetEdit from './FieldSetEdit';
+import ProtectedRoute from '../../ProtectedRoute';
 
-export default class FieldSet extends React.Component {
+export default class FieldSet extends React.PureComponent {
   render() {
     return (
       <div>
         <Switch>
-          <Route exact path={`${this.props.match.path}`} component={FieldSetIndex} />
-          <Route path={`${this.props.match.path}/new`} component={FieldSetNew} />
-          {/* <Route exact path="/projects/:string_key" component={ProjectShow} /> */}
-          <Route path={`${this.props.match.path}/:id/edit`} component={FieldSetEdit} />
+          <Route exact path="/projects/:projectStringKey/field_sets" component={FieldSetIndex} />
 
-          { /* When none of the above match, <NoMatch> will be rendered */ }
-          <Route component={NoMatch} />
+          <ProtectedRoute
+            path="/projects/:projectStringKey/field_sets/new"
+            component={FieldSetNew}
+            requiredAbility={params => (
+              { action: 'create', subject: 'FieldSet', project: { stringKey: params.projectStringKey } }
+            )}
+          />
+
+          <ProtectedRoute
+            path="/projects/:projectStringKey/field_sets/:id/edit"
+            component={FieldSetEdit}
+            requiredAbility={params => ({ action: 'update', subject: 'FieldSet', project: { stringKey: params.projectStringKey } })}
+          />
+
+          { /* When none of the above match, <PageNotFound> will be rendered */ }
+          <Route component={PageNotFound} />
         </Switch>
       </div>
     );

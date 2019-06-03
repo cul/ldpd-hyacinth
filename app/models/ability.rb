@@ -11,7 +11,9 @@ class Ability
 
       # Permissions all users get
       can [:show, :update], User, id: user.id
+      can [:show, :update], User, uid: user.uid
       can [:index, :show, :create], :term
+      can [:index], DynamicFieldCategory # Need to allow this so we can render EnabledDynamicField pages.
 
       # System Wide Permissions
       assign_system_wide_permissions(system_permissions)
@@ -72,7 +74,7 @@ class Ability
   def to_list
     rules.map do |rule|
       object = { actions: rule.actions, subject: rule.subjects.map { |s| s.is_a?(Symbol) ? s : s.name } }
-      object[:conditions] = rule.conditions.transform_keys { |k| k.to_s.camelize(:lower) } unless rule.conditions.blank?
+      object[:conditions] = rule.conditions unless rule.conditions.blank?
       object[:inverted] = true unless rule.base_behavior
       object
     end

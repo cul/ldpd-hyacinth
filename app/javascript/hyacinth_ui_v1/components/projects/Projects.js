@@ -1,29 +1,34 @@
 import React from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 
-import NoMatch from 'hyacinth_ui_v1/components/layout/NoMatch';
-import ProjectLayout from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectLayout';
-import ProjectTabs from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectTabs/ProjectTabs';
-import ProjectTab from 'hyacinth_ui_v1/hoc/ProjectLayout/ProjectTabs/ProjectTab/ProjectTab';
-import ability from 'hyacinth_ui_v1/util/ability';
+import PageNotFound from '../layout/PageNotFound';
+import ProjectLayout from '../../hoc/ProjectLayout/ProjectLayout';
+import ProjectTabs from '../../hoc/ProjectLayout/ProjectTabs/ProjectTabs';
+import ProjectTab from '../../hoc/ProjectLayout/ProjectTabs/ProjectTab/ProjectTab';
 import ProjectIndex from './ProjectIndex';
 import ProjectNew from './ProjectNew';
 import CoreData from './core_data/CoreData';
 import FieldSet from './field_sets/FieldSet';
 import PublishTarget from './publish_targets/PublishTarget';
+import EnabledDynamicFields from './enabled_dynamic_fields/EnabledDynamicFields';
+import ProtectedRoute from '../ProtectedRoute';
 
-export default class Projects extends React.Component {
+export default class Projects extends React.PureComponent {
   render() {
     return (
       <Switch>
         <Route exact path="/projects" component={ProjectIndex} />
 
-        <Route path="/projects/new" component={ability.can('create', 'Project') ? ProjectNew : NoMatch} />
+        <ProtectedRoute
+          requiredAbility={{ action: 'create', subjectType: 'Project' }}
+          path="/projects/new"
+          component={ProjectNew}
+        />
 
         <Route
-          path="/projects/:string_key"
+          path="/projects/:stringKey"
           render={props => (
-            <ProjectLayout stringKey={props.match.params.string_key}>
+            <ProjectLayout stringKey={props.match.params.stringKey}>
               <ProjectTabs>
                 <ProjectTab to={`${props.match.url}/core_data`} name="Core Data" />
                 <ProjectTab to={`${props.match.url}/enabled_dynamic_fields/item`} name="Item Fields" />
@@ -36,19 +41,20 @@ export default class Projects extends React.Component {
 
               <div className="m-3">
                 <Switch>
-                  <Route path="/projects/:string_key/core_data" component={CoreData} />
-                  <Route path="/projects/:string_key/field_sets" component={FieldSet} />
-                  <Route path="/projects/:string_key/publish_targets" component={PublishTarget} />
-                  <Redirect exact from="/projects/:string_key" to="/projects/:string_key/core_data" />
-                  <Route component={NoMatch} />
+                  <Route path="/projects/:stringKey/core_data" component={CoreData} />
+                  <Route path="/projects/:stringKey/field_sets" component={FieldSet} />
+                  <Route path="/projects/:stringKey/publish_targets" component={PublishTarget} />
+                  <Route path="/projects/:stringKey/enabled_dynamic_fields" component={EnabledDynamicFields} />
+                  <Redirect exact from="/projects/:stringKey" to="/projects/:stringKey/core_data" />
+                  <Route component={PageNotFound} />
                 </Switch>
               </div>
             </ProjectLayout>
           )}
         />
 
-        { /* When none of the above match, <NoMatch> will be rendered */ }
-        <Route component={NoMatch} />
+        { /* When none of the above match, <PageNotFound> will be rendered */ }
+        <Route component={PageNotFound} />
       </Switch>
     );
   }
