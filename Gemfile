@@ -28,6 +28,7 @@ gem 'webpacker'
 gem 'bootstrap-sass', '~> 3.3'
 gem 'autoprefixer-rails' # Recommended by bootstrap-sass
 gem 'jquery-rails', '~> 4.3' # Required by bootstrap
+gem 'sassc', '2.1.0.pre2'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
@@ -38,6 +39,12 @@ group :development, :test do
 end
 
 group :development do
+  gem 'capistrano', '~> 3.11', require: false
+  gem 'capistrano-cul', require: false
+  gem 'capistrano-passenger', '~> 0.1', require: false
+  gem 'capistrano-rails', '~> 1.4', require: false
+  gem 'capistrano-rvm', '~> 0.1', require: false
+
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
   gem 'web-console', '>= 3.3.0'
   gem 'listen', '>= 3.0.5', '< 3.2'
