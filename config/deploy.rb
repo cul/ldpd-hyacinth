@@ -9,6 +9,7 @@ set :deploy_name do
 end
 
 set :rails_env, fetch(:deploy_name)
+set :rvm_ruby_version, fetch(:deploy_name)
 
 set :repo_url, 'git@github.com:cul/ldpd-hyacinth.git'
 
