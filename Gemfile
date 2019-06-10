@@ -24,12 +24,6 @@ gem 'uglifier', '>= 1.3.0'
 gem 'uri_service-client'
 gem 'webpacker'
 
-# Bootstrap 3 and jQuery (TODO: Remove these when we switch fully to the new React UI, which pulls in its own css/js via node)
-gem 'bootstrap-sass', '~> 3.3'
-gem 'autoprefixer-rails' # Recommended by bootstrap-sass
-gem 'jquery-rails', '~> 4.3' # Required by bootstrap
-gem 'sassc', '2.1.0.pre2'
-
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'bixby', '2.0.0.pre.beta1' # bixby (i.e. rubocop presets)
