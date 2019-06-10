@@ -7,7 +7,8 @@ export default class DigitalObjectEdit extends React.Component {
   render() {
     return (
       <div>
-        <ContextualNavbar lefthandLabel="&laquo; Leave Editing Mode" lefthandLabelLink="/digital-objects/:uuid">
+        <ContextualNavbar
+          lefthandLabel="&laquo; Leave Editing Mode" lefthandLabelLink="/digital-objects/:uuid">
           <Link to="/digital-objects/:uuid/delete" className="nav-link" href="#">Delete</Link>
         </ContextualNavbar>
         Edit!

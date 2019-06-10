@@ -6,6 +6,7 @@ import DigitalObjectSearch from './DigitalObjectSearch';
 import DigitalObjectNew from './DigitalObjectNew';
 import DigitalObjectEdit from './DigitalObjectEdit';
 import DigitalObjectShow from './DigitalObjectShow';
+import Rights from './rights/Rights';
 
 export default class DigitalObjects extends React.PureComponent {
   render() {
@@ -15,7 +16,9 @@ export default class DigitalObjects extends React.PureComponent {
           <Route exact path="/digital-objects" component={DigitalObjectSearch} />
           <Route path="/digital-objects/new" component={DigitalObjectNew} />
           <Route path="/digital-objects/:uuid/edit" component={DigitalObjectEdit} />
+          <Route path="/digital-objects/:uuid/rights" component={Rights} />
           <Route path="/digital-objects/:uuid" component={DigitalObjectShow} />
+
           { /* When none of the above match, <PageNotFound> will be rendered */ }
           <Route component={PageNotFound} />
         </Switch>
