@@ -104,3 +104,5 @@
     :lineage: lineage
   http://www.w3.org/ns/ldp#:
     :ldp_contains: contains
+  http://iiif.io/api/image/2#:
+    :region_featured: regionFeatured
