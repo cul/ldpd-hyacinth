@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<Policy xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        PolicyId="policy:89dcca6c-87b3-46d5-a1fd-1264ae7488c2"
+        RuleCombiningAlgId="urn:oasis:names:tc:xacml:3.0:rule-combining-algorithm:deny-unless-permit"> 
+  <Target>
+    <AnyOf>
+      <AllOf>
+        <Match MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">GET</AttributeValue>
+          <AttributeDesignator MustBePresent="false" Category="urn:oasis:names:tc:xacml:3.0:attribute-category:action"
+                               AttributeId="urn:oasis:names:tc:xacml:1.0:action:action-id" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+        </Match>
+      </AllOf>
+    </AnyOf>
+  </Target>
+  <Rule RuleId="1" Effect="Permit">
+    <Description>Specified Group/UNI Access</Description> 
+    <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
+      <AttributeDesignator Category="urn:oasis:names:tc:xacml:1.0:subject-category:access-subject" AttributeId="http://www.ja-sig.org/products/cas/affiliation" DataType="http://www.w3.org/2001/XMLSchema#string"
+        MustBePresent="false"/>
+      <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
+        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">LIB_role-ext-UnivSemArchives</AttributeValue>
+      </Apply>
+    </Condition>
+  </Rule>
+</Policy>

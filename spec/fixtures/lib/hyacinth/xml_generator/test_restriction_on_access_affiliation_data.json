@@ -1,0 +1,12 @@
+{
+  "restriction_on_access" : [
+    {
+      "restriction_on_access_value" : "Specified Group/UNI Access",
+      "restriction_on_access_affiliation" : [
+        {
+          "restriction_on_access_affiliation_value" : "LIB_role-ext-UnivSemArchives"
+        }
+      ]
+    }
+  ]
+}
