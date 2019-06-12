@@ -5,7 +5,7 @@ set :instance, 'ldpd'
 set :application, 'hyacinth'
 set :deploy_name do
   stage = fetch(:stage)
-  (stage.match(/^hyacinth_3/)) ? stage : "#{fetch(:application)}_#{stage}"
+  stage.match?(/^hyacinth_3/) ? stage : "#{fetch(:application)}_#{stage}"
 end
 
 set :rails_env, fetch(:deploy_name)
@@ -33,7 +33,7 @@ set :deploy_to,   "/opt/passenger/#{fetch(:instance)}/#{fetch(:deploy_name)}"
 
 # Default value for :linked_files is []
 append :linked_files, 'config/database.yml', 'config/hyacinth.yml', 'config/fedora.yml',
-  'config/datacite.yml', 'config/master.key'
+       'config/datacite.yml', 'config/master.key'
 
 # Default value for linked_dirs is []
 append :linked_dirs, 'log', 'tmp/pids', 'node_modules', 'public/packs'
