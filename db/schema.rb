@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181105234509) do
+ActiveRecord::Schema.define(version: 20190612145152) do
 
   create_table "archived_assignments", force: :cascade do |t|
     t.integer "original_assignment_id",                  null: false

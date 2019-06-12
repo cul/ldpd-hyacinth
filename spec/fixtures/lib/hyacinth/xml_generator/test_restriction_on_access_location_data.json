@@ -1,0 +1,21 @@
+{
+  "restriction_on_access" : [
+    {
+      "restriction_on_access_value" : "On-site Access",
+      "restriction_on_access_location" : [
+        {
+          "restriction_on_access_location_term" : {
+            "uri" : "http://id.library.columbia.edu/term/45487bbd-97ef-44b4-9468-dda47594bc60",
+            "value" : "Reading Room, Rare Book & Manuscript Library, Columbia University"
+          }
+        },
+        {
+          "restriction_on_access_location_term" : {
+            "uri" : "http://id.library.columbia.edu/term/a274309e-79c3-4341-8a72-983a4a8290ea",
+            "value" : "Reading Room, Avery Architectural & Fine Arts Library, Columbia University"
+          }
+        }
+      ]
+    }
+  ]
+}

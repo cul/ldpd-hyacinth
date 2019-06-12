@@ -32,15 +32,7 @@ module Hyacinth
           if value.has_key?('yield') # Yield to dynamic_field_group renderer logic
             yield_to_string_key = value['yield']
 
-            if dynamic_fields_groups_map.has_key?(yield_to_string_key) && df_data[yield_to_string_key].present?
-              yield_to_xml_translation = JSON(dynamic_fields_groups_map[yield_to_string_key])
-
-              df_data[yield_to_string_key].each do |single_dynamic_field_group_data_value_for_string_key|
-                Array.wrap(yield_to_xml_translation).each do |xml_translation_logic_rule|
-                  self.class.new(generator, ng_element, xml_translation_logic_rule, single_dynamic_field_group_data_value_for_string_key).generate
-                end
-              end
-            end
+            yield_to_template(value['yield'])
           elsif value.has_key?('element') # Create new child element
             self.class.new(generator, ng_element, value, df_data).generate
           elsif value.has_key?('val') # Render string value in next text node, performing DynamicField value substitution for variables
@@ -51,6 +43,21 @@ module Hyacinth
       end
 
       parent_element.add_child(ng_element)
+    end
+
+    def yield_to_template(yield_to_string_key)
+      if dynamic_fields_groups_map.has_key?(yield_to_string_key) && df_data[yield_to_string_key].present?
+        yield_to_xml_translation = JSON(dynamic_fields_groups_map[yield_to_string_key])
+
+        df_data[yield_to_string_key].each_with_index do |single_dynamic_field_group_data_value_for_string_key, ix|
+          old_index = generator.internal_fields['value_index']
+          generator.internal_fields['value_index'] = (ix + 1).to_s
+          Array.wrap(yield_to_xml_translation).each do |xml_translation_logic_rule|
+            self.class.new(generator, ng_element, xml_translation_logic_rule, single_dynamic_field_group_data_value_for_string_key).generate
+          end
+          generator.internal_fields['value_index'] = old_index
+        end
+      end
     end
 
     # Creates Nokogiri element object
