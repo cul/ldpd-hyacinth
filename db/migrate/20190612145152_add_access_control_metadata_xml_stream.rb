@@ -4,6 +4,7 @@ class AddAccessControlMetadataXmlStream < ActiveRecord::Migration
       # Create XmlDatastreams
       XmlDatastream.create(string_key: 'accessControlMetadata', display_label: 'accessControlMetadata',
         xml_translation: {
+      "render_if" => { "present" => "restriction_on_access" },
       "element" => "xacml:Policy",
       "attrs" => {
         "xmlns:xacml" => "urn:oasis:names:tc:xacml:3.0:core:schema:wd-17",
