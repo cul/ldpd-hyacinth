@@ -32,15 +32,16 @@ set :deploy_to,   "/opt/passenger/#{fetch(:instance)}/#{fetch(:deploy_name)}"
 # set :pty, true
 
 # Default value for :linked_files is []
-append :linked_files, 'config/database.yml', 'config/hyacinth.yml', 'config/fedora.yml', 'config/datacite.yml'
+append :linked_files, 'config/database.yml', 'config/hyacinth.yml', 'config/fedora.yml',
+  'config/datacite.yml', 'config/master.key'
 
 # Default value for linked_dirs is []
-append :linked_dirs, 'log', 'tmp/pids'
+append :linked_dirs, 'log', 'tmp/pids', 'node_modules', 'public/packs'
 
 set :passenger_restart_with_touch, true
 
 # Default value for default_env is {}
-# set :default_env, { path: "/opt/ruby/bin:$PATH" }
+set :default_env, { NODE_ENV: 'production' }
 
 # Default value for local_user is ENV['USER']
 # set :local_user, -> { `git config user.name`.chomp }
