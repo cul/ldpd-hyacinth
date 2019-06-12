@@ -50,7 +50,16 @@ Then navigate to http://localhost:3000 in your browser and sign in using the "Em
 rails s -p 3000 # Start the application using rails server
 ```
 
-Running The Continuous Integration Test Suite (for developers):
+## Testing
+Our testing suite runs Rubocop, starts up Fedora and Solr, and then runs all of our ruby tests. Travis CI will automatically run the test suite for every commit and pull request.
+
+To run the continuous integration test suite locally on your machine run:
 ```
 bundle exec rake hyacinth:ci
+```
+
+## Deployment
+We use Capistrano for deployment. To deploy to our temporary dev instance run:
+```
+cap hyacinth_3_dev deploy
 ```
