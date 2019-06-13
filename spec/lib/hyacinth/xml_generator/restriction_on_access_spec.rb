@@ -148,12 +148,7 @@ describe Hyacinth::XMLGenerator do
       "attrs" : {
         "xmlns:xacml" : "urn:oasis:names:tc:xacml:3.0:core:schema:wd-17",
         "xmlns:xsi" : "http://www.w3.org/2001/XMLSchema-instance",
-        "PolicyId" : {
-          "join" : {
-            "delimiter" : ":",
-            "pieces" : ["policy", "{{$uuid}}"]
-          }
-        },
+        "PolicyId" : "policy:{{$uuid}}",
         "RuleCombiningAlgId" : "urn:oasis:names:tc:xacml:3.0:rule-combining-algorithm:deny-unless-permit"
       },
       "content" : [
