@@ -37,8 +37,6 @@ class PidGenerator < ActiveRecord::Base
   end
 
   def next_pid
-    newly_minted_pid = nil
-
     current_pid_generator_sequence = nil
 
     # Put a read lock on the row, and reload the pid_generator row from the db

@@ -46,9 +46,9 @@ class ProcessDigitalObjectImportJob
   def self.find_or_create_digital_object(digital_object_data, user, digital_object_import)
     if existing_object?(digital_object_data)
       # We're updating data for an existing object
-      digital_object = existing_object_for_update(digital_object_data, user)
+      existing_object_for_update(digital_object_data, user)
     else
-      digital_object = new_object(digital_object_data['digital_object_type']['string_key'], user, digital_object_import)
+      new_object(digital_object_data['digital_object_type']['string_key'], user, digital_object_import)
     end
   end
 

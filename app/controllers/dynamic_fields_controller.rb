@@ -8,7 +8,7 @@ class DynamicFieldsController < ApplicationController
   def index
     @dynamic_field_group_categories = DynamicFieldGroupCategory.all.order(sort_order: :asc)
     respond_to do |format|
-      format.html {}
+      format.html { }
       format.json { render json: @dynamic_field_group_categories }
     end
   end

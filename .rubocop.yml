@@ -43,6 +43,12 @@ Layout/MultilineBlockLayout:
   Exclude:
     - 'spec/**/*'
 
+Lint/UriEscapeUnescape:
+  Enabled: false
+
+Lint/DeprecatedClassMethods:
+  Enabled: false
+
 Metrics/LineLength:
   Enabled: false
 

@@ -33,7 +33,7 @@ module DigitalObject::DigitalObjectRecord
     elsif @first_published_at.is_a?(String)
       begin
         @first_published_at = Time.iso8601(@first_published_at)
-      rescue ArgumentError => e
+      rescue ArgumentError
         @errors.add(:first_published_at, 'first_published_at date invalid. Date must be in valid ISO8601 format.')
       end
     end
