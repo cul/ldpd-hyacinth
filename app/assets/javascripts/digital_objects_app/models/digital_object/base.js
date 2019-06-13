@@ -47,6 +47,10 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getModsXmlViewUrl = func
   return Hyacinth.getLocationOrigin() + '/digital_objects/' + this.getPid() + '/mods.xml';
 };
 
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getXacmlXmlViewUrl = function() {
+  return Hyacinth.getLocationOrigin() + '/digital_objects/' + this.getPid() + '/xacml.xml';
+};
+
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getParentDigitalObjectPids = function() {
   return $.map(this.parent_digital_objects, function(parent_digital_object){ return parent_digital_object['pid']; });
 };

@@ -92,6 +92,9 @@
             <div class="col-sm-9">
               <a href="<%= digitalObject.getJsonViewUrl() %>" target="_blank">JSON</a>,
               <a href="<%= digitalObject.getModsXmlViewUrl() %>" target="_blank">MODS XML</a>
+              <% if ( digitalObject instanceof Hyacinth.DigitalObjectsApp.DigitalObject.Asset) { %>
+                <a href="<%= digitalObject.getXacmlXmlViewUrl() %>" target="_blank">XACML XML</a>
+              <% } %>
             </div>
           </div>
 

@@ -221,6 +221,14 @@ class DigitalObjectsController < ApplicationController
     end
   end
 
+  def xacml
+    xml_output = @digital_object.render_xml_datastream(XmlDatastream.find_by(string_key: 'accessControlMetadata'))
+
+    respond_to do |format|
+      format.xml { render text: xml_output, content_type: 'text/xml' }
+    end
+  end
+
   # A view for image zooming, video players, audio players, etc.
   def media_view
     raise 'This view is only available for assets.' unless @digital_object.is_a?(DigitalObject::Asset)

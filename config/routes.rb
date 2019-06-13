@@ -68,6 +68,7 @@ Hyacinth::Application.routes.draw do
       delete 'clear_captions_and_reimport_transcript', action: 'clear_captions_and_reimport_transcript'
       get 'media_view'
       get 'mods'
+      get 'xacml'
       put 'undelete', action: 'undestroy'
       put 'add_parent', action: 'add_parent'
       put 'remove_parents', action: 'remove_parents'
