@@ -30,8 +30,6 @@ module Hyacinth
           value['val'] = generate_field_val(value)
 
           if value.has_key?('yield') # Yield to dynamic_field_group renderer logic
-            yield_to_string_key = value['yield']
-
             yield_to_template(value['yield'])
           elsif value.has_key?('element') # Create new child element
             self.class.new(generator, ng_element, value, df_data).generate
