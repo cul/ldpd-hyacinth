@@ -10,7 +10,7 @@ class DigitalObjectsController < ApplicationController
   include Hyacinth::DigitalObjects::Captions
 
   before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor, :download, :download_access_copy, :download_service_copy,
-    :add_parent, :remove_parents, :mods, :media_view, :rotate_image, :swap_order_of_first_two_child_assets,
+    :add_parent, :remove_parents, :mods, :xacml, :media_view, :rotate_image, :swap_order_of_first_two_child_assets,
     :download_transcript, :update_transcript,
     :download_index_document, :update_index_document,
     :download_captions, :update_captions, :clear_captions_and_reimport_transcript
