@@ -43,6 +43,9 @@ Layout/MultilineBlockLayout:
   Exclude:
     - 'spec/**/*'
 
+Layout/SpaceInsideBlockBraces:
+  EnforcedStyleForEmptyBraces: space
+
 Lint/UriEscapeUnescape:
   Enabled: false
 
