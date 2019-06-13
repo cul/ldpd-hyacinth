@@ -199,9 +199,17 @@ module DigitalObject::Fedora
       # Save all XmlDatastreams that have data
 
       # TODO: Temporarily doing a manual hard-coded save of descMetadata for now.  Eventually handle all custom XmlDatastreams in a non-hard-coded way.
-      ds_name = 'descMetadata'
+      save_xml_datastream('descMetadata', true)
+      # TODO: Temporarily doing a manual hard-coded save of accessControlMetadata, too.
+      save_xml_datastream('accessControlMetadata', false)
+    end
+
+    def save_xml_datastream(ds_name, versionable = true)
+      content = render_xml_datastream(XmlDatastream.find_by(string_key: ds_name))
+      return unless content.present?
       if @fedora_object.datastreams[ds_name].present?
         ds = @fedora_object.datastreams[ds_name]
+        return if ds.content.eql? content
       else
         # Create datastream if it doesn't exist
         ds = @fedora_object.create_datastream(
@@ -209,12 +217,12 @@ module DigitalObject::Fedora
           controlGroup: 'M',
           mimeType: 'text/xml',
           dsLabel: ds_name,
-          versionable: true,
+          versionable: versionable,
           blob: ''
         )
         @fedora_object.add_datastream(ds)
       end
-      ds.content = render_xml_datastream(XmlDatastream.find_by(string_key: ds_name))
+      ds.content = content
     end
 
     def save_structure_datastream
