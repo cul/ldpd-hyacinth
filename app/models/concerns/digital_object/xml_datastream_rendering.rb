@@ -21,7 +21,8 @@ module DigitalObject::XmlDatastreamRendering
         'created_at'            => created_at.iso8601,
         'updated_at'            => updated_at.iso8601,
         'first_published_at'    => first_published_at ? first_published_at.iso8601 : '',
-        'doi'                   => doi.present? ? doi.sub(/^doi:/, '') : ''
+        'doi'                   => doi.present? ? doi.sub(/^doi:/, '') : '',
+        'uuid'                  => uuid.present? ? uuid : ''
       }
     end
 end
