@@ -156,7 +156,7 @@ class ItemRightsEdit extends React.Component {
         <ContextualNavbar
           title="Editing Item Rights"
           rightHandLinks={[
-            { link: '/digital-objects/1', label: 'Cancel' },
+            { link: '/digital_objects/1', label: 'Cancel' },
           ]}
         />
 

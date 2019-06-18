@@ -25,7 +25,6 @@ class SelectInputGroup extends React.PureComponent {
             value={value}
             onChange={this.onChangeHandler}
             size="sm"
-            placeholder="choose one"
           >
             <option>Choose One...</option>
             {

@@ -1,24 +1,39 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import produce from 'immer';
 
 import ItemShow from './item/ItemShow';
+import { digitalObject } from '../../util/hyacinth_api';
 
 export default class DigitalObjectShow extends React.Component {
+  state = {
+    digitalObjectData: {},
+  };
+
   componentDidMount() {
-    // TODO: load data for digital object
-    console.log(`Component mounted. uuid: ${this.props.match.params.uuid}`);
-    // fetchDigitalObject()
-  }
+    const { match: { params: { id } } } = this.props;
 
-  fetchDigitalObject() {
-
+    digitalObject.get(id)
+      .then((res) => {
+        this.setState(produce((draft) => {
+          draft.digitalObjectData = res.data.digitalObject;
+        }));
+      });
   }
 
   render() {
-    return (
-      <ItemShow />
-    );
+    const { digitalObjectData, digitalObjectData: { digitalObjectType, uid } } = this.state;
+
+    let template = <></>;
+
+    switch (digitalObjectType) {
+      case 'item':
+        template = <ItemShow data={digitalObjectData} />;
+        break;
+      default:
+        break;
+    }
+
+    return (template);
   }
-
-
 }

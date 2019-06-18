@@ -6,8 +6,13 @@ body {}
   margin-bottom: 1em;
 }
 
-nav.contextual-navbar {
+nav.contextual-navbar, .task-nav {
   background-color: #cfdbe67a !important;
+}
+
+.task-nav {
+  background-color: #e9ecef !important;
+
 }
 
 .text-orange {

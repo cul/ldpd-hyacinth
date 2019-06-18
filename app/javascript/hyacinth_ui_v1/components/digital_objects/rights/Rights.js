@@ -10,8 +10,8 @@ export default class Rights extends React.PureComponent {
     return (
       <div>
         <Switch>
-          <Route exact path="/digital-objects/:uuid/rights" component={RightsShow} />
-          <Route path="/digital-objects/:uuid/rights/edit" component={RightsEdit} />
+          <Route exact path="/digital_objects/:uuid/rights" component={RightsShow} />
+          <Route path="/digital_objects/:uuid/rights/edit" component={RightsEdit} />
 
           { /* When none of the above match, <PageNotFound> will be rendered */ }
           <Route component={PageNotFound} />
