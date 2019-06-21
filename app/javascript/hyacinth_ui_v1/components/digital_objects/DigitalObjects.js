@@ -9,7 +9,7 @@ import DigitalObjectEdit from './DigitalObjectEdit';
 import DigitalObjectShow from './DigitalObjectShow';
 import DigitalObjectChildren from './DigitalObjectChildren';
 
-import ParentDigitalObjectForm from './ParentDigitalObjectForm';
+import AggregatorNew from './new/AggregatorNew';
 
 import Rights from './rights/Rights';
 
@@ -32,7 +32,7 @@ export default class DigitalObjects extends React.PureComponent {
 
               if (project && digitalObjectType !== 'asset') {
                 return (
-                  <ParentDigitalObjectForm
+                  <AggregatorNew
                     digitalObjectType={digitalObjectType}
                     project={project}
                   />

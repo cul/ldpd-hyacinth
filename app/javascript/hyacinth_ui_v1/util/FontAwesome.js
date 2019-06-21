@@ -8,6 +8,7 @@ import {
   faBell,
   faPlus,
   faPen,
+  faTimes,
   faAngleDoubleDown,
   faAngleDoubleUp,
 } from '@fortawesome/free-solid-svg-icons';
@@ -21,6 +22,7 @@ library.add(
   faBell,
   faPlus,
   faPen,
+  faTimes,
   faCaretSquareUp,
   faCaretSquareDown,
   faAngleDoubleDown,

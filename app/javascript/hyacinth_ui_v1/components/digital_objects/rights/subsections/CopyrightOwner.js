@@ -1,9 +1,10 @@
 import React from 'react';
-import { Card, Button } from 'react-bootstrap';
+import { Form, Col, Row, Card, Button } from 'react-bootstrap';
 
 import TextInputGroup from '../form_inputs/TextInputGroup';
 import TextAreaInputGroup from '../form_inputs/TextAreaInputGroup';
 import DateInputGroup from '../form_inputs/DateInputGroup';
+import ControlledVocabularySelect from '../../form/ControlledVocabularySelect';
 
 export default class CopyrightOwner extends React.PureComponent {
   render() {
@@ -20,12 +21,23 @@ export default class CopyrightOwner extends React.PureComponent {
           </span>
         </Card.Header>
         <Card.Body>
-          <TextInputGroup
+          <Form.Group as={Row} className="mb-1">
+            <Form.Label column sm={4} className="text-right">Name</Form.Label>
+            <Col sm={8} style={{ alignSelf: 'center' }}>
+              <ControlledVocabularySelect
+                vocabulary="name"
+                value={value.name}
+                onChange={v => onChange('name', v)}
+              />
+            </Col>
+          </Form.Group>
+
+          {/* <TextInputGroup
             label="Name"
             inputName="name"
             value={value.name}
             onChange={onChange}
-          />
+          /> */}
 
           <TextInputGroup
             label="Heirs"

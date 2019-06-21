@@ -31,3 +31,11 @@ export const digitalObject = {
   get: id => instance.get(`/digital_objects/${id}`),
   create: data => instance.post('/digital_objects', data),
 };
+
+export const vocabulary = stringKey => ({
+  get: () => instance.get(`/vocabularies/${stringKey}`),
+  terms: () => ({
+    search: query => instance.get(`/vocabularies/${stringKey}/terms?${query}`),
+    all: () => instance.get(`/vocabularies/${stringKey}/terms`),
+  }),
+});

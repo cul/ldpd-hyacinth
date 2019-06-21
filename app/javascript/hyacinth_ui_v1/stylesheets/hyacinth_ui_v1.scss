@@ -1,4 +1,8 @@
-@import '~bootstrap/dist/css/bootstrap';
+$font-size-base: .95rem;
+
+$form-group-margin-bottom: 1rem !default;
+
+@import '~bootstrap/scss/bootstrap.scss';
 
 body {}
 
@@ -6,15 +10,35 @@ body {}
   margin-bottom: 1em;
 }
 
-nav.contextual-navbar, .task-nav {
+nav.contextual-navbar {
   background-color: #cfdbe67a !important;
 }
 
 .task-nav {
-  background-color: #e9ecef !important;
-
+  border: 1px solid #c2c4c7 !important
 }
 
 .text-orange {
   color: #c78203;
+}
+
+.dropdown-header {
+  padding: 0rem .5rem;
+}
+
+.form-group.row {
+  margin-bottom: .5rem
+}
+
+// Reducing padding for Cards.
+// .card {
+//   margin-bottom: 1rem;
+// }
+.card-header {
+  font-weight: 500;
+  padding: 0.25rem .5rem;
+}
+
+.card-body {
+  padding: .75rem;
 }

@@ -43,7 +43,7 @@ class ItemRightsEdit extends React.Component {
         enabled: false,
         copyrightOwners: [
           {
-            name: '',
+            name: {},
             heirs: '',
             contactInformation: '',
           },

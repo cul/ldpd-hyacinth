@@ -27,8 +27,8 @@ class DigitalObjectChildren extends React.Component {
     return (
       <>
         <ContextualNavbar
-          title="Item: Really Long Title Goes Here When I Figure Out How Dynamic Fields Work"
-          rightHandLinks={[{ link: `/digital_objects/${uid}`, label: '<< Back to Item' }]}
+          title="Item | Really Long Title Goes Here When I Figure Out How Dynamic Fields Work"
+          rightHandLinks={[{ link: `/digital_objects/${uid}`, label: '<< Back to Digital Object' }]}
         />
 
         <h3>Child Digital Objects</h3>

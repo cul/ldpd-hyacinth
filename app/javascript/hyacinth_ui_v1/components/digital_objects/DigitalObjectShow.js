@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import produce from 'immer';
 
-import ItemShow from './item/ItemShow';
+import ItemShow from './show/ItemShow';
 import { digitalObject } from '../../util/hyacinth_api';
 
 export default class DigitalObjectShow extends React.Component {

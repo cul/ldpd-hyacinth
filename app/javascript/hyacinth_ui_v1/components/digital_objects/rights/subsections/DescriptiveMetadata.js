@@ -1,10 +1,11 @@
 import React from 'react';
-import { Card, Collapse } from 'react-bootstrap';
+import { Form, Col, Row, Card, Collapse } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 
 import ReadOnlyInputGroup from '../form_inputs/ReadOnlyInputGroup';
 import BooleanInputGroup from '../form_inputs/BooleanInputGroup';
 import SelectInputGroup from '../form_inputs/SelectInputGroup';
+import ControlledVocabularySelect from '../../form/ControlledVocabularySelect';
 
 const typeOfContent = [
   { label: 'Compilation', value: 'compilation' },
@@ -52,7 +53,7 @@ class DescriptiveMetadata extends React.PureComponent {
           {
             dynamicFieldData.name.filter(n => n.nameRole.map(r => r.nameRoleTerm.value).includes('Creator')).map((n, i) => (
               <Card className="my-3">
-                <Card.Header className="p-2">{`Creator ${i + 1}`}</Card.Header>
+                <Card.Header>{`Creator ${i + 1}`}</Card.Header>
                 <Card.Body>
                   <ReadOnlyInputGroup label="Name" value={n.nameTerm.value} />
                   <ReadOnlyInputGroup label="Role(s)" value={n.nameRole.map(r => r.nameRoleTerm.value).join(', ')} />
@@ -75,6 +76,17 @@ class DescriptiveMetadata extends React.PureComponent {
             ))
           }
 
+          <Form.Group as={Row} className="mb-1">
+            <Form.Label column sm={4} className="text-right">Country of Origin</Form.Label>
+            <Col sm={8} style={{ alignSelf: 'center' }}>
+              <ControlledVocabularySelect
+                vocabulary="geonames"
+                value={value.countryOfOrigin}
+                onChange={v => onChange('countryOfOrigin', v)}
+              />
+            </Col>
+          </Form.Group>
+
           {
             dynamicFieldData.publisher.map(t => (
               <ReadOnlyInputGroup label="Publisher Name" value={t.publisherValue} />
@@ -84,7 +96,7 @@ class DescriptiveMetadata extends React.PureComponent {
           {
             dynamicFieldData.dateCreated.map((d, i) => (
               <Card className="my-3">
-                <Card.Header className="p-2">{`Date of Creation ${i + 1}`}</Card.Header>
+                <Card.Header>{`Date of Creation ${i + 1}`}</Card.Header>
                 <Card.Body>
                   <ReadOnlyInputGroup label="Start Date" value={d.dateCreatedStartValue} />
                   <ReadOnlyInputGroup label="End Date" value={d.dateCreatedEndValue} />

@@ -17,7 +17,7 @@ class TextAreaInputGroup extends React.PureComponent {
     } = this.props;
 
     return (
-      <Form.Group as={Row} className="mb-1">
+      <Form.Group as={Row}>
         <Form.Label column sm={4} className="text-right">{label}</Form.Label>
         <Col sm={8} style={{ alignSelf: 'center' }}>
           <Form.Control

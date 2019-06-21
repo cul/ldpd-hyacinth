@@ -45,8 +45,7 @@ export default class DynamicFieldIndex extends React.Component {
                   to={`/dynamic_field_groups/new?parentType=DynamicFieldCategory&parentId=${id}`}
                 >
                   <FontAwesomeIcon icon="plus" />
-                  {' '}
-New Dynamic Field Group
+                  {' New Dynamic Field Group'}
                 </Link>
               </Card.Text>
             </Card.Body>

@@ -5,44 +5,31 @@ import {
   Row, Col, Form, Card,
 } from 'react-bootstrap';
 
-import ContextualNavbar from '../layout/ContextualNavbar';
 import hyacinthApi, {
-  enabledDynamicFields, dynamicFieldCategories, digitalObject,
+  enabledDynamicFields, dynamicFieldCategories,
 } from '../../util/hyacinth_api';
-import SubmitButton from '../layout/forms/SubmitButton';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
 class ParentDigitalObjectForm extends React.PureComponent {
   state = {
-    dynamicFields: [],
-    digitalObject: {
-      digitalObjectDataJson: {
-        serializationVersion: '1',
-        projects: [{
-          stringKey: '',
-        }],
-        digitalObjectType: '',
-        dynamicFieldData: {},
-      },
-    },
+    dynamicFields: []
   }
 
   componentDidMount = () => {
-    const { project, digitalObjectType } = this.props;
+    const { projects, digitalObjectType } = this.props;
 
-    this.setState(produce((draft) => {
-      draft.digitalObject.digitalObjectDataJson.projects[0].stringKey = project;
-      draft.digitalObject.digitalObjectDataJson.digitalObjectType = digitalObjectType;
-    }));
+    // this.setState(produce((draft) => {
+    //   draft.digitalObject.digitalObjectDataJson.projects[0].stringKey = project;
+    //   draft.digitalObject.digitalObjectDataJson.digitalObjectType = digitalObjectType;
+    // }));
 
-    // Get Project Display Label
 
     // Grab all the fields that are enabled for this digital object type within this project.
     // get enabled fields for this project/type combination
     // get all dynamic fields
     // remove any fields in the group of dynamic fields that arent enabled
     axios.all([
-      enabledDynamicFields.all(project, digitalObjectType),
+      enabledDynamicFields.all(projects[0].stringKey, digitalObjectType),
       dynamicFieldCategories.all(),
     ]).then(axios.spread((enabledFields, dynamicFieldGraph) => {
       const enabledFieldIds = enabledFields.data.enabledDynamicFields.map(f => f.dynamicFieldId);
@@ -55,19 +42,7 @@ class ParentDigitalObjectForm extends React.PureComponent {
       this.setState(produce((draft) => {
         draft.dynamicFields = dynamicFields;
       }));
-
-      console.log(dynamicFields);
     }));
-  }
-
-  onSubmitHandler = (event) => {
-    event.preventDefault();
-
-    const { digitalObject: data } = this.state;
-    // const { history: { push } } = this.props;
-
-    digitalObject.create(data)
-      .then(res => console.log(res.data)); //push(`/digital_objects/${res.data.id}/edit`)
   }
 
   keepEnabledFields(enabledFieldIds, children) {
@@ -84,7 +59,6 @@ class ParentDigitalObjectForm extends React.PureComponent {
     }).filter(c => c !== null);
   }
 
-
   renderCategory(category) {
     const { displayLabel, children } = category;
     return (
@@ -100,8 +74,8 @@ class ParentDigitalObjectForm extends React.PureComponent {
 
     return (
       <Card className="my-2">
-        <Card.Header className="py-1 px-2">{displayLabel}</Card.Header>
-        <Card.Body className="p-2">
+        <Card.Header>{displayLabel}</Card.Header>
+        <Card.Body>
           {
             children.map((c) => {
               switch (c.type) {
@@ -121,6 +95,7 @@ class ParentDigitalObjectForm extends React.PureComponent {
 
   renderField(field) {
     const { displayLabel } = field;
+
     return (
       <Form.Group as={Row}>
         <Form.Label column sm={2}>{displayLabel}</Form.Label>
@@ -138,30 +113,10 @@ class ParentDigitalObjectForm extends React.PureComponent {
   }
 
   render() {
-    const { project, digitalObjectType } = this.props;
     const { dynamicFields } = this.state;
 
     return (
-      <>
-        <ContextualNavbar
-          title={`New ${digitalObjectType}`}
-          rightHandLinks={[{ link: '/digital_objects', label: 'Back to Digital Objects' }]}
-        />
-
-        <p>Project: {project}</p>
-        <p>UID/PID: - Assigned After Save -</p>
-        <p>DOI: Unavailable</p>
-
-        <Form>
-          { dynamicFields.map(category => this.renderCategory(category)) }
-          <Row>
-            <Col sm="auto" className="ml-auto">
-              <SubmitButton onClick={this.onSubmitHandler} formType="new" />
-            </Col>
-          </Row>
-        </Form>
-
-      </>
+      dynamicFields.map(category => this.renderCategory(category))
     );
   }
 }
