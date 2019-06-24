@@ -7,11 +7,13 @@ import ControlledVocabularyMenu from './ControlledVocabularyMenu';
 
 class ControlledVocabularySelect extends React.PureComponent {
   render() {
-    const { value, vocabulary, onChange } = this.props;
+    const {
+      name, value, vocabulary, onChange,
+    } = this.props;
 
     return (
       <Col sm={8} style={{ alignSelf: 'center' }}>
-        <Dropdown>
+        <Dropdown name={name}>
           <Dropdown.Toggle drop="down" size="sm" variant="outline-secondary">
             { (value && value.prefLabel) ? value.prefLabel : 'Select one...' }
           </Dropdown.Toggle>
@@ -40,6 +42,10 @@ class ControlledVocabularySelect extends React.PureComponent {
   }
 }
 
+ControlledVocabularySelect.defaultProps = {
+  name: '',
+};
+
 ControlledVocabularySelect.propTypes = {
   vocabulary: PropTypes.string.isRequired,
   value: PropTypes.shape({
@@ -48,6 +54,6 @@ ControlledVocabularySelect.propTypes = {
   }).isRequired,
   onChange: PropTypes.func.isRequired,
   name: PropTypes.string,
-}
+};
 
 export default ControlledVocabularySelect;

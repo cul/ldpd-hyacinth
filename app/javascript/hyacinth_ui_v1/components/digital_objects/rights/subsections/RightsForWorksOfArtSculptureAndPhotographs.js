@@ -7,6 +7,7 @@ import InputGroup from '../../form/InputGroup';
 import BooleanRadioButtons from '../../form/inputs/BooleanRadioButtons';
 import SelectInput from '../../form/inputs/SelectInput';
 import TextAreaInput from '../../form/inputs/TextAreaInput';
+import YesNoSelect from '../../form/inputs/YesNoSelect';
 
 const publicityRights = [
   'Written Release',
@@ -72,7 +73,7 @@ export default class RightsForWorksOfArtSculptureAndPhotographs extends React.Pu
 
               <InputGroup>
                 <Label>Are trademarks prominently visible?</Label>
-                <BooleanRadioButtons
+                <YesNoSelect
                   value={value.trademarksProminentlyVisible}
                   onChange={v => this.onChange('trademarksProminentlyVisible', v)}
                 />
@@ -80,7 +81,7 @@ export default class RightsForWorksOfArtSculptureAndPhotographs extends React.Pu
 
               <InputGroup>
                 <Label>Is material sensitive in nature?</Label>
-                <BooleanRadioButtons
+                <YesNoSelect
                   value={value.sensitiveInNature}
                   onChange={v => this.onChange('sensitiveInNature', v)}
                 />
@@ -88,7 +89,7 @@ export default class RightsForWorksOfArtSculptureAndPhotographs extends React.Pu
 
               <InputGroup>
                 <Label>Are there privacy concerns?</Label>
-                <BooleanRadioButtons
+                <YesNoSelect
                   value={value.privacyConcerns}
                   onChange={v => this.onChange('privacyConcerns', v)}
                 />
@@ -96,7 +97,7 @@ export default class RightsForWorksOfArtSculptureAndPhotographs extends React.Pu
 
               <InputGroup>
                 <Label>Are children materially identifiable in work?</Label>
-                <BooleanRadioButtons
+                <YesNoSelect
                   value={value.childrenMateriallyIdentifiableInWork}
                   onChange={v => this.onChange('childrenMateriallyIdentifiableInWork', v)}
                 />
@@ -104,7 +105,7 @@ export default class RightsForWorksOfArtSculptureAndPhotographs extends React.Pu
 
               <InputGroup>
                 <Label>Are there VARA (Visual Artists Rights Act of 1990) rights concerns?</Label>
-                <BooleanRadioButtons
+                <YesNoSelect
                   value={value.varaRightsConcerns}
                   onChange={v => this.onChange('varaRightsConcerns', v)}
                 />

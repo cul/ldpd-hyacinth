@@ -86,7 +86,7 @@ class ContractualLimitationsRestrictionsAndPermissions extends React.PureCompone
                 <Col sm={{ offset: 1 }}>
                   {
                     checkboxLimitations.map(entry => (
-                      <InputGroup>
+                      <InputGroup key={entry.value}>
                         <Checkbox
                           value={value[entry.value]}
                           label={entry.label}

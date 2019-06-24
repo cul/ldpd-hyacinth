@@ -28,6 +28,10 @@ class DateInput extends React.PureComponent {
   }
 }
 
+DateInput.defaultProps = {
+  inputName: '',
+};
+
 DateInput.propTypes = {
   inputName: PropTypes.string,
   onChange: PropTypes.func.isRequired,

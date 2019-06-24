@@ -10,15 +10,15 @@ class AssetRightsEdit extends React.Component {
   state = {
     rights: {
       accessCondition: {
-        accessCondition: '', // This eventually needs to be multivalued
+        accessCondition: '', // This eventually needs to be multivalued.
         embargoReleaseDate: '',
         note: '',
       },
       copyrightStatusOverride: {
         copyrightStatement: '',
         copyrightNote: [''],
-        copyrightRegistered: false,
-        copyrightRenewed: false,
+        copyrightRegistered: '',
+        copyrightRenewed: '',
         copyrightDateOfRenewal: '',
         copyrightExpirationDate: '',
         culCopyrightAssessmentDate: '',

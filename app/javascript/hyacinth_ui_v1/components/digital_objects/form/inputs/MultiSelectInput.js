@@ -5,7 +5,7 @@ import Select from 'react-select';
 
 class MultiSelectInput extends React.PureComponent {
   onChangeHandler = (newValues, actionType) => {
-    const { inputName, values, onChange } = this.props;
+    const { values, onChange } = this.props;
     switch (actionType.action) {
       case 'select-option':
         onChange(newValues);
@@ -19,9 +19,7 @@ class MultiSelectInput extends React.PureComponent {
   }
 
   render() {
-    const {
-      inputName, values, options,
-    } = this.props;
+    const { inputName, values, options } = this.props;
 
     return (
       <Col sm={8} style={{ alignSelf: 'center' }}>
@@ -43,8 +41,12 @@ class MultiSelectInput extends React.PureComponent {
   }
 }
 
+MultiSelectInput.defaultProps = {
+  inputName: '',
+};
+
 MultiSelectInput.propTypes = {
-  inputName: PropTypes.string.isRequired,
+  inputName: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   values: PropTypes.arrayOf(PropTypes.string).isRequired,
   options: PropTypes.arrayOf(
