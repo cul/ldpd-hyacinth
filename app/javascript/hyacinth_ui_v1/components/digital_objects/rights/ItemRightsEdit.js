@@ -6,8 +6,9 @@ import { Col, Form, Collapse } from 'react-bootstrap';
 import ContextualNavbar from '../../layout/ContextualNavbar';
 import SubmitButton from '../../layout/forms/SubmitButton';
 import CancelButton from '../../layout/forms/CancelButton';
-
-import BooleanInputGroup from './form_inputs/BooleanInputGroup';
+import Label from '../form/Label';
+import InputGroup from '../form/InputGroup';
+import BooleanRadioButtons from '../form/inputs/BooleanRadioButtons';
 
 import DescriptiveMetadata from './subsections/DescriptiveMetadata';
 import CopyrightStatus from './subsections/CopyrightStatus';
@@ -24,8 +25,8 @@ class ItemRightsEdit extends React.Component {
       descriptiveMetadata: {
         typeOfContent: '',
         countryOfOrigin: '',
-        filmDistributedToPublic: false,
-        filmDistributedCommercially: false,
+        filmDistributedToPublic: '',
+        filmDistributedCommercially: '',
       },
       copyrightStatus: {
         copyrightStatement: '',
@@ -69,7 +70,6 @@ class ItemRightsEdit extends React.Component {
       },
       contractualLimitationsRestrictionsAndPermissions: {
         enabled: false,
-        onsiteResearch: [],
         reproductionAndDistributionProhibitedUntil: '',
         photoGraphicOrFilmCredit: '',
         excerptLimitedTo: '',
@@ -104,34 +104,14 @@ class ItemRightsEdit extends React.Component {
     },
   }
 
-  onChangeHandler(subsection, fieldName, value) {
+  onChange(subsection, value) {
     this.setState(produce((draft) => {
-      draft.rights[subsection][fieldName] = value;
-    }));
-  }
-
-  onCopyrightOwnerChange = (index, fieldName, value) => {
-    this.setState(produce((draft) => {
-      draft.rights.copyrightOwnership.copyrightOwners[parseInt(index)][fieldName] = value;
+      draft.rights[subsection] = value;
     }));
   }
 
   onSubmitHandler() {
     // To be implemented.
-  }
-
-  addCopyrightOwner = () => {
-    this.setState(produce((draft) => {
-      draft.rights.copyrightOwnership.copyrightOwners.push(
-        { name: '', heirs: '', contactInformation: '' }
-      );
-    }));
-  }
-
-  removeCopyrightOwner = (index) => {
-    this.setState(produce((draft) => {
-      draft.rights.copyrightOwnership.copyrightOwners.splice(index, 1);
-    }));
   }
 
   render() {
@@ -164,59 +144,57 @@ class ItemRightsEdit extends React.Component {
           <DescriptiveMetadata
             dynamicFieldData={dynamicFieldData}
             value={descriptiveMetadata}
-            onChange={(fieldName, value) => this.onChangeHandler('descriptiveMetadata', fieldName, value)}
+            onChange={v => this.onChange('descriptiveMetadata', v)}
           />
 
           <CopyrightStatus
             value={copyrightStatus}
-            onChange={(fieldName, value) => this.onChangeHandler('copyrightStatus', fieldName, value)}
+            onChange={v => this.onChange('copyrightStatus', v)}
           />
 
-          <BooleanInputGroup
-            label="Is there additional copyright or permissions information to record?"
-            inputName="enabled"
-            value={additionalRightsToRecord.enabled}
-            onChange={(fieldName, value) => this.onChangeHandler('additionalRightsToRecord', fieldName, value)}
-          />
+          <InputGroup>
+            <Label>Is there additional copyright or permissions information to record?</Label>
+            <BooleanRadioButtons
+              value={additionalRightsToRecord.enabled}
+              onChange={v => this.onChange('additionalRightsToRecord', { enabled: v })}
+            />
+          </InputGroup>
 
           <Collapse in={additionalRightsToRecord.enabled}>
             <div>
               <CopyrightOwnership
                 value={copyrightOwnership}
-                addCopyrightOwner={this.addCopyrightOwner}
-                removeCopyrightOwner={this.removeCopyrightOwner}
-                onCopyrightOwnerChange={this.onCopyrightOwnerChange}
-                onChange={(fieldName, value) => this.onChangeHandler('copyrightOwnership', fieldName, value)}
+                onChange={v => this.onChange('copyrightOwnership', v)}
               />
 
               <ColumbiaUniversityIsCopyrightHolder
                 value={columbiaUniversityIsCopyrightHolder}
-                onChange={(fieldName, value) => this.onChangeHandler('columbiaUniversityIsCopyrightHolder', fieldName, value)}
+                onChange={v => this.onChange('columbiaUniversityIsCopyrightHolder', v)}
               />
 
               <LicensedToColumbiaUniversity
                 value={licensedToColumbiaUniversity}
-                onChange={(fieldName, value) => this.onChangeHandler('licensedToColumbiaUniversity', fieldName, value)}
+                onChange={v => this.onChange('licensedToColumbiaUniversity', v)}
               />
 
               <ContractualLimitationsRestrictionsAndPermissions
                 audioVisualContent={descriptiveMetadata.typeOfContent === 'motionPicture'}
                 value={contractualLimitationsRestrictionsAndPermissions}
-                onChange={(fieldName, value) => this.onChangeHandler('contractualLimitationsRestrictionsAndPermissions', fieldName, value)}
+                onChange={v => this.onChange('contractualLimitationsRestrictionsAndPermissions', v)}
               />
 
               {
                 descriptiveMetadata.typeOfContent === 'pictoralGraphicAndScuptural' && (
                   <RightsForWorksOfArtSculptureAndPhotographs
                     value={rightsForWorksOfArtSculptureAndPhotographs}
-                    onChange={(fieldName, value) => this.onChangeHandler('rightsForWorksOfArtSculptureAndPhotographs', fieldName, value)}
+                    onChange={v => this.onChange('rightsForWorksOfArtSculptureAndPhotographs', v)}
                   />
                 )
               }
 
               <UnderlyingRights
                 value={underlyingRights}
-                onChange={(fieldName, value) => this.onChangeHandler('underlyingRights', fieldName, value)}
+                onChange={v => this.onChange('underlyingRights', v)}
               />
             </div>
           </Collapse>

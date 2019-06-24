@@ -1,9 +1,12 @@
 import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
+import produce from 'immer';
 
-import BooleanInputGroup from '../form_inputs/BooleanInputGroup';
-import TextAreaInputGroup from '../form_inputs/TextAreaInputGroup';
-import SelectInputGroup from '../form_inputs/SelectInputGroup';
+import Label from '../../form/Label';
+import InputGroup from '../../form/InputGroup';
+import BooleanRadioButtons from '../../form/inputs/BooleanRadioButtons';
+import SelectInput from '../../form/inputs/SelectInput';
+import TextAreaInput from '../../form/inputs/TextAreaInput';
 
 const publicityRights = [
   'Written Release',
@@ -14,8 +17,18 @@ const publicityRights = [
 ];
 
 export default class RightsForWorksOfArtSculptureAndPhotographs extends React.PureComponent {
-  render() {
+  onChange(fieldName, fieldVal) {
     const { value, onChange } = this.props;
+
+    const nextValue = produce(value, (draft) => {
+      draft[fieldName] = fieldVal;
+    });
+
+    onChange(nextValue);
+  }
+
+  render() {
+    const { value } = this.props;
 
     return (
       <Card className="mb-3">
@@ -24,73 +37,85 @@ export default class RightsForWorksOfArtSculptureAndPhotographs extends React.Pu
             Other Rights Considerations for Works of Art, Sculpture, or Photographs
           </Card.Title>
 
-          <BooleanInputGroup
-            label="Are there other rights considerations for works of art, sculptures or photographs?"
-            inputName="enabled"
-            value={value.enabled}
-            onChange={onChange}
-          />
+          <InputGroup>
+            <Label>
+              Are there other rights considerations for works of art, sculptures or photographs?
+            </Label>
+            <BooleanRadioButtons
+              value={value.enabled}
+              onChange={v => this.onChange('enabled', v)}
+            />
+          </InputGroup>
+
           <Collapse in={value.enabled}>
             <div>
-              <BooleanInputGroup
-                label="Are publicity rights present?"
-                inputName="publicityRightsPresentEnabled"
-                value={value.publicityRightsPresentEnabled}
-                onChange={onChange}
-              />
+              <InputGroup>
+                <Label>Are publicity rights present?</Label>
+                <BooleanRadioButtons
+                  value={value.publicityRightsPresentEnabled}
+                  onChange={v => this.onChange('publicityRightsPresentEnabled', v)}
+                />
+              </InputGroup>
+
               <Collapse in={value.publicityRightsPresentEnabled}>
                 <div>
-                  <SelectInputGroup
-                    label=""
-                    value={value.publicityRightsPresent}
-                    options={publicityRights.map(r => ({ label: r, value: r }))}
-                    inputName="publicityRightsPresent"
-                    onChange={onChange}
-                  />
+                  <InputGroup>
+                    <Label />
+                    <SelectInput
+                      value={value.publicityRightsPresent}
+                      options={publicityRights.map(r => ({ label: r, value: r }))}
+                      onChange={v => this.onChange('publicityRightsPresent', v)}
+                    />
+                  </InputGroup>
                 </div>
               </Collapse>
 
-              <BooleanInputGroup
-                label="Are trademarks prominently visible?"
-                inputName="trademarksProminentlyVisible"
-                value={value.trademarksProminentlyVisible}
-                onChange={onChange}
-              />
+              <InputGroup>
+                <Label>Are trademarks prominently visible?</Label>
+                <BooleanRadioButtons
+                  value={value.trademarksProminentlyVisible}
+                  onChange={v => this.onChange('trademarksProminentlyVisible', v)}
+                />
+              </InputGroup>
 
-              <BooleanInputGroup
-                label="Is material sensitive in nature?"
-                inputName="sensitiveInNature"
-                value={value.sensitiveInNature}
-                onChange={onChange}
-              />
+              <InputGroup>
+                <Label>Is material sensitive in nature?</Label>
+                <BooleanRadioButtons
+                  value={value.sensitiveInNature}
+                  onChange={v => this.onChange('sensitiveInNature', v)}
+                />
+              </InputGroup>
 
-              <BooleanInputGroup
-                label="Are there privacy concerns?"
-                inputName="privacyConcerns"
-                value={value.privacyConcerns}
-                onChange={onChange}
-              />
+              <InputGroup>
+                <Label>Are there privacy concerns?</Label>
+                <BooleanRadioButtons
+                  value={value.privacyConcerns}
+                  onChange={v => this.onChange('privacyConcerns', v)}
+                />
+              </InputGroup>
 
-              <BooleanInputGroup
-                label="Are children materially identifiable in work?"
-                inputName="childrenMateriallyIdentifiableInWork"
-                value={value.childrenMateriallyIdentifiableInWork}
-                onChange={onChange}
-              />
+              <InputGroup>
+                <Label>Are children materially identifiable in work?</Label>
+                <BooleanRadioButtons
+                  value={value.childrenMateriallyIdentifiableInWork}
+                  onChange={v => this.onChange('childrenMateriallyIdentifiableInWork', v)}
+                />
+              </InputGroup>
 
-              <BooleanInputGroup
-                label="Are there VARA (Visual Artists Rights Act of 1990) rights concerns?"
-                inputName="varaRightsConcerns"
-                value={value.varaRightsConcerns}
-                onChange={onChange}
-              />
+              <InputGroup>
+                <Label>Are there VARA (Visual Artists Rights Act of 1990) rights concerns?</Label>
+                <BooleanRadioButtons
+                  value={value.varaRightsConcerns}
+                  onChange={v => this.onChange('varaRightsConcerns', v)}
+                />
+              </InputGroup>
 
-              <TextAreaInputGroup
-                label="If legal restrictions apply or require additional explanation, describe in a note"
-                inputName="note"
-                value={value.note}
-                onChange={onChange}
-              />
+              <InputGroup>
+                <Label>
+                  If legal restrictions apply or require additional explanation, describe in a note
+                </Label>
+                <TextAreaInput value={value.note} onChange={v => this.onChange('note', v)} />
+              </InputGroup>
             </div>
           </Collapse>
         </Card.Body>

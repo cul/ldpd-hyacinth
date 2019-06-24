@@ -1,13 +1,26 @@
 import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
+import produce from 'immer';
 
-import BooleanInputGroup from '../form_inputs/BooleanInputGroup';
-import DateInputGroup from '../form_inputs/DateInputGroup';
-import TextInputGroup from '../form_inputs/TextInputGroup';
+import InputGroup from '../../form/InputGroup';
+import Label from '../../form/Label';
+import DateInput from '../../form/inputs/DateInput';
+import TextInput from '../../form/inputs/TextInput';
+import BooleanRadioButtons from '../../form/inputs/BooleanRadioButtons';
 
 class ColumbiaUniversityIsCopyrightHolder extends React.PureComponent {
-  render() {
+  onChange(fieldName, fieldVal) {
     const { value, onChange } = this.props;
+
+    const nextValue = produce(value, (draft) => {
+      draft[fieldName] = fieldVal;
+    });
+
+    onChange(nextValue);
+  }
+
+  render() {
+    const { value } = this.props;
 
     return (
       <Card className="mb-3">
@@ -16,74 +29,74 @@ class ColumbiaUniversityIsCopyrightHolder extends React.PureComponent {
              Columbia University Is Copyright Holder
           </Card.Title>
 
-          <BooleanInputGroup
-            label="Was copyright transferred to Columbia University from a Third Party?"
-            inputName="enabled"
-            value={value.enabled}
-            onChange={onChange}
-          />
+          <InputGroup>
+            <Label>Was copyright transferred to Columbia University from a Third Party?</Label>
+            <BooleanRadioButtons value={value.enabled} onChange={v => this.onChange('enabled', v)} />
+          </InputGroup>
 
           <Collapse in={value.enabled}>
             <div>
-              <DateInputGroup
-                label="Date of Transfer"
-                value={value.dateOfTransfer}
-                inputName="dateOfTransfer"
-                onChange={onChange}
-              />
+              <InputGroup>
+                <Label>Date of Transfer</Label>
+                <DateInput value={value.dateOfTransfer} onChange={v => this.onChange('dateOfTransfer', v)} />
+              </InputGroup>
 
-              <DateInputGroup
-                label="Date of Expiration of Columbia Copyright (if known)"
-                value={value.dateOfExpiration}
-                inputName="dateOfExpiration"
-                onChange={onChange}
-              />
+              <InputGroup>
+                <Label>Date of Expiration of Columbia Copyright (if known)</Label>
+                <DateInput value={value.dateOfExpiration} onChange={v => this.onChange('dateOfExpiration', v)} />
+              </InputGroup>
 
-              <BooleanInputGroup
-                label="Transfer Document to Columbia University Exists"
-                inputName="transferDocumentionEnabled"
-                value={value.transferDocumentionEnabled}
-                onChange={onChange}
-              />
+              <InputGroup>
+                <Label>Transfer Document to Columbia University Exists</Label>
+                <BooleanRadioButtons
+                  value={value.transferDocumentionEnabled}
+                  onChange={v => this.onChange('transferDocumentionEnabled', v)}
+                />
+              </InputGroup>
 
               <Collapse in={value.transferDocumentionEnabled}>
                 <div>
-                  <TextInputGroup
-                    label="Transfer Documentation"
-                    value={value.transferDocumentation}
-                    inputName="transferDocumentation"
-                    onChange={onChange}
-                  />
+                  <InputGroup>
+                    <Label>Transfer Documentation</Label>
+                    <TextInput
+                      value={value.transferDocumentation}
+                      onChange={v => this.onChange('transferDocumentation', v)}
+                    />
+                  </InputGroup>
                 </div>
               </Collapse>
 
               <Collapse in={!value.transferDocumentionEnabled}>
                 <div>
-                  <BooleanInputGroup
-                    label="Does Other Evidence of Transfer Exist?"
-                    inputName="otherTransferEvidenceEnabled"
-                    value={value.otherTransferEvidenceEnabled}
-                    onChange={onChange}
-                  />
+                  <InputGroup>
+                    <Label>Does Other Evidence of Transfer Exist?</Label>
+                    <BooleanRadioButtons
+                      value={value.otherTransferEvidenceEnabled}
+                      onChange={v => this.onChange('otherTransferEvidenceEnabled', v)}
+                    />
+                  </InputGroup>
+
                   <Collapse in={value.otherTransferEvidenceEnabled}>
                     <div>
-                      <TextInputGroup
-                        label="Evidence of Transfer Documentation"
-                        value={value.otherTransferEvidence}
-                        inputName="otherTransferEvidence"
-                        onChange={onChange}
-                      />
+                      <InputGroup>
+                        <Label>Evidence of Transfer Documentation</Label>
+                        <TextInput
+                          value={value.otherTransferEvidence}
+                          onChange={v => this.onChange('otherTransferEvidence', v)}
+                        />
+                      </InputGroup>
                     </div>
                   </Collapse>
                 </div>
               </Collapse>
 
-              <TextInputGroup
-                label="Transfer Documentation Note"
-                value={value.transferDocumentationNote}
-                inputName="transferDocumentationNote"
-                onChange={onChange}
-              />
+              <InputGroup>
+                <Label>Transfer Documentation Note</Label>
+                <TextInput
+                  value={value.transferDocumentationNote}
+                  onChange={v => this.onChange('transferDocumentationNote', v)}
+                />
+              </InputGroup>
             </div>
           </Collapse>
         </Card.Body>

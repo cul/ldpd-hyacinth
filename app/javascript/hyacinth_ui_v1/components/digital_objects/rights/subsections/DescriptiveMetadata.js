@@ -1,11 +1,14 @@
 import React from 'react';
-import { Form, Col, Row, Card, Collapse } from 'react-bootstrap';
+import { Card, Collapse } from 'react-bootstrap';
 import PropTypes from 'prop-types';
+import produce from 'immer';
 
-import ReadOnlyInputGroup from '../form_inputs/ReadOnlyInputGroup';
-import BooleanInputGroup from '../form_inputs/BooleanInputGroup';
-import SelectInputGroup from '../form_inputs/SelectInputGroup';
-import ControlledVocabularySelect from '../../form/ControlledVocabularySelect';
+import ReadOnlyInput from '../../form/inputs/ReadOnlyInput';
+import ControlledVocabularySelect from '../../form/inputs/ControlledVocabularySelect';
+import YesNoSelect from '../../form/inputs/YesNoSelect';
+import SelectInput from '../../form/inputs/SelectInput';
+import Label from '../../form/Label';
+import InputGroup from '../../form/InputGroup';
 
 const typeOfContent = [
   { label: 'Compilation', value: 'compilation' },
@@ -20,8 +23,18 @@ const typeOfContent = [
 ];
 
 class DescriptiveMetadata extends React.PureComponent {
+  onChange(fieldName, fieldVal) {
+    const { value, onChange } = this.props;
+
+    const nextValue = produce(value, (draft) => {
+      draft[fieldName] = fieldVal;
+    });
+
+    onChange(nextValue);
+  }
+
   render() {
-    const { value, dynamicFieldData, onChange } = this.props;
+    const { value, dynamicFieldData } = this.props;
 
     return (
       <Card className="mb-3">
@@ -30,35 +43,57 @@ class DescriptiveMetadata extends React.PureComponent {
             Descriptive Metadata
           </Card.Title>
 
-          <SelectInputGroup
-            label="Type of Content Subject to Copyright"
-            value={value.typeOfContent}
-            options={typeOfContent}
-            inputName="typeOfContent"
-            onChange={onChange}
-          />
+          <InputGroup>
+            <Label>Type of Content Subject to Copyright</Label>
+            <SelectInput
+              value={value.typeOfContent}
+              options={typeOfContent}
+              onChange={v => this.onChange('typeOfContent', v)}
+            />
+          </InputGroup>
 
           {
             dynamicFieldData.genre.map(t => (
-              <ReadOnlyInputGroup label="Specific Genre of Work" value={t.genreTerm.value} />
+              <InputGroup>
+                <Label>Specific Genre of Work</Label>
+                <ReadOnlyInput value={t.genreTerm.value} />
+              </InputGroup>
             ))
           }
 
           {
             dynamicFieldData.form.map(t => (
-              <ReadOnlyInputGroup label="Form" value={t.formTerm.value} />
+              <InputGroup>
+                <Label>Form</Label>
+                <ReadOnlyInput value={t.formTerm.value} />
+              </InputGroup>
             ))
           }
 
           {
-            dynamicFieldData.name.filter(n => n.nameRole.map(r => r.nameRoleTerm.value).includes('Creator')).map((n, i) => (
+            dynamicFieldData.name.map((n, i) => (
               <Card className="my-3">
                 <Card.Header>{`Creator ${i + 1}`}</Card.Header>
                 <Card.Body>
-                  <ReadOnlyInputGroup label="Name" value={n.nameTerm.value} />
-                  <ReadOnlyInputGroup label="Role(s)" value={n.nameRole.map(r => r.nameRoleTerm.value).join(', ')} />
-                  <ReadOnlyInputGroup label="Date of Birth" value="" />
-                  <ReadOnlyInputGroup label="Date of Death" value="" />
+                  <InputGroup>
+                    <Label>Name</Label>
+                    <ReadOnlyInput value={n.nameTerm.value} />
+                  </InputGroup>
+
+                  <InputGroup>
+                    <Label>Role(s)</Label>
+                    <ReadOnlyInput value={n.nameRole.map(r => r.nameRoleTerm.value).join(', ')} />
+                  </InputGroup>
+
+                  <InputGroup>
+                    <Label>Date of Birth</Label>
+                    <ReadOnlyInput value="" />
+                  </InputGroup>
+
+                  <InputGroup>
+                    <Label>Date of Death</Label>
+                    <ReadOnlyInput value="" />
+                  </InputGroup>
                 </Card.Body>
               </Card>
             ))
@@ -66,30 +101,37 @@ class DescriptiveMetadata extends React.PureComponent {
 
           {
             dynamicFieldData.title.map(t => (
-              <ReadOnlyInputGroup label="Title" value={t.titleSortPortion} />
+              <InputGroup>
+                <Label>Title</Label>
+                <ReadOnlyInput value={t.titleSortPortion} />
+              </InputGroup>
             ))
           }
 
           {
             dynamicFieldData.alternativeTitle.map(t => (
-              <ReadOnlyInputGroup label="Alternate Title" value={t.alternativeTitleValue} />
+              <InputGroup>
+                <Label>Alternate Title</Label>
+                <ReadOnlyInput value={t.alternativeTitleValue} />
+              </InputGroup>
             ))
           }
 
-          <Form.Group as={Row} className="mb-1">
-            <Form.Label column sm={4} className="text-right">Country of Origin</Form.Label>
-            <Col sm={8} style={{ alignSelf: 'center' }}>
-              <ControlledVocabularySelect
-                vocabulary="geonames"
-                value={value.countryOfOrigin}
-                onChange={v => onChange('countryOfOrigin', v)}
-              />
-            </Col>
-          </Form.Group>
+          <InputGroup>
+            <Label>Country of Origin</Label>
+            <ControlledVocabularySelect
+              vocabulary="geonames"
+              value={value.countryOfOrigin}
+              onChange={v => this.onChange('countryOfOrigin', v)}
+            />
+          </InputGroup>
 
           {
             dynamicFieldData.publisher.map(t => (
-              <ReadOnlyInputGroup label="Publisher Name" value={t.publisherValue} />
+              <InputGroup>
+                <Label>Publisher Name</Label>
+                <ReadOnlyInput value={t.publisherValue} />
+              </InputGroup>
             ))
           }
 
@@ -98,10 +140,25 @@ class DescriptiveMetadata extends React.PureComponent {
               <Card className="my-3">
                 <Card.Header>{`Date of Creation ${i + 1}`}</Card.Header>
                 <Card.Body>
-                  <ReadOnlyInputGroup label="Start Date" value={d.dateCreatedStartValue} />
-                  <ReadOnlyInputGroup label="End Date" value={d.dateCreatedEndValue} />
-                  <ReadOnlyInputGroup label="Type" value={d.dateCreatedType} />
-                  <ReadOnlyInputGroup label="Key Date" value={d.dateCreatedKeyDate} />
+                  <InputGroup>
+                    <Label>Start Date</Label>
+                    <ReadOnlyInput value={d.dateCreatedStartValue} />
+                  </InputGroup>
+
+                  <InputGroup>
+                    <Label>End Date</Label>
+                    <ReadOnlyInput value={d.dateCreatedEndValue} />
+                  </InputGroup>
+
+                  <InputGroup>
+                    <Label>Type</Label>
+                    <ReadOnlyInput value={d.dateCreatedType} />
+                  </InputGroup>
+
+                  <InputGroup>
+                    <Label>Key Date</Label>
+                    <ReadOnlyInput value={d.dateCreatedKeyDate} />
+                  </InputGroup>
                 </Card.Body>
               </Card>
             ))
@@ -109,28 +166,32 @@ class DescriptiveMetadata extends React.PureComponent {
 
           {
             dynamicFieldData.dateCreatedTextual.map(t => (
-              <ReadOnlyInputGroup label="Descriptive Date" value={t.dateCreatedTextualValue} />
+              <InputGroup>
+                <Label>Descriptive Date</Label>
+                <ReadOnlyInput value={t.dateCreatedTextualValue} />
+              </InputGroup>
             ))
           }
 
           <Collapse in={value.typeOfContent === 'motionPicture'}>
             <div>
-              <BooleanInputGroup
-                label="Film distributed to public?"
-                inputName="filmDistributedToPublic"
-                value={value.filmDistributedToPublic}
-                onChange={onChange}
-              />
+              <InputGroup>
+                <Label>Film distributed to public?</Label>
+                <YesNoSelect
+                  value={value.filmDistributedToPublic}
+                  onChange={v => this.onChange('filmDistributedToPublic', v)}
+                />
+              </InputGroup>
 
-              <BooleanInputGroup
-                label="Film distributed commercially?"
-                inputName="filmDistributedCommercially"
-                value={value.filmDistributedCommercially}
-                onChange={onChange}
-              />
+              <InputGroup>
+                <Label>Film distributed commercially?</Label>
+                <YesNoSelect
+                  value={value.filmDistributedCommercially}
+                  onChange={v => this.onChange('filmDistributedCommercially', v)}
+                />
+              </InputGroup>
             </div>
           </Collapse>
-
         </Card.Body>
       </Card>
     );

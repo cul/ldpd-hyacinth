@@ -30,6 +30,12 @@ nav.contextual-navbar {
   margin-bottom: .5rem
 }
 
+@media (min-width: 576px) {
+  .digital-object-form-label {
+    text-align: right
+  }
+}
+
 // Reducing padding for Cards.
 // .card {
 //   margin-bottom: 1rem;

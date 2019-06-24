@@ -1,12 +1,16 @@
 import React from 'react';
-import { Form, Row, Col, Card, Collapse } from 'react-bootstrap';
+import {
+  Form, Row, Col, Card, Collapse,
+} from 'react-bootstrap';
+import produce from 'immer';
 
-import MultiSelectInputGroup from '../form_inputs/MultiSelectInputGroup';
-import BooleanInputGroup from '../form_inputs/BooleanInputGroup';
-import TextAreaInputGroup from '../form_inputs/TextAreaInputGroup';
-import TextInputGroup from '../form_inputs/TextInputGroup';
-import DateInputGroup from '../form_inputs/DateInputGroup';
-import CheckboxInputGroup from '../form_inputs/CheckboxInputGroup';
+import Label from '../../form/Label';
+import InputGroup from '../../form/InputGroup';
+import BooleanRadioButtons from '../../form/inputs/BooleanRadioButtons';
+import TextInput from '../../form/inputs/TextInput';
+import DateInput from '../../form/inputs/DateInput';
+import MultiSelectInput from '../../form/inputs/MultiSelectInput';
+import Checkbox from '../../form/inputs/Checkbox';
 
 const permissionsGrantedAsPartOfTheUseLicense = [
   'Reproduction',
@@ -37,6 +41,16 @@ const limitationsOnAccess = [
 ];
 
 class ContractualLimitationsRestrictionsAndPermissions extends React.PureComponent {
+  onChange(fieldName, fieldVal) {
+    const { value, onChange } = this.props;
+
+    const nextValue = produce(value, (draft) => {
+      draft[fieldName] = fieldVal;
+    });
+
+    onChange(nextValue);
+  }
+
   render() {
     const { audioVisualContent, value, onChange } = this.props;
 
@@ -51,86 +65,96 @@ class ContractualLimitationsRestrictionsAndPermissions extends React.PureCompone
             Contractual Limitations, Restrictions, and Permissions
           </Card.Title>
 
-          <BooleanInputGroup
-            label="Are Contractual restrictions included as part of the Copyright Transfer or Use License?"
-            inputName="enabled"
-            value={value.enabled}
-            onChange={onChange}
-          />
+          <InputGroup>
+            <Label>
+              Are Contractual restrictions included as part of the Copyright Transfer or Use License?
+            </Label>
+            <BooleanRadioButtons
+              value={value.enabled}
+              onChange={v => this.onChange('enabled', v)}
+            />
+          </InputGroup>
 
           <Collapse in={value.enabled}>
             <div>
               <Row>
-                <Form.Label column>Indicate as many of the following types of limitations on access as are applicable:</Form.Label>
-
+                <Form.Label column>
+                  Indicate as many of the following types of limitations on access as are applicable:
+                </Form.Label>
               </Row>
               <Row>
-                <Col sm={{offset: 1}}>
+                <Col sm={{ offset: 1 }}>
                   {
-                    checkboxLimitations.map(({ value, label }) => (
-                      <CheckboxInputGroup
-                        value={value}
-                        label={label}
-                        inputName={value}
-                        onChange={onChange}
-                      />
+                    checkboxLimitations.map(entry => (
+                      <InputGroup>
+                        <Checkbox
+                          value={value[entry.value]}
+                          label={entry.label}
+                          inputName={entry.value}
+                          onChange={newVal => this.onChange(entry.value, newVal)}
+                        />
+                      </InputGroup>
                     ))
                   }
 
-                  <DateInputGroup
-                    label="Reproduction and Distribution Prohibited Until Date"
-                    inputName="reproductionAndDistributionProhibitedUntil"
-                    value={value.reproductionAndDistributionProhibitedUntil}
-                    onChange={onChange}
-                  />
+                  <InputGroup>
+                    <Label>Reproduction and Distribution Prohibited Until Date</Label>
+                    <DateInput
+                      value={value.reproductionAndDistributionProhibitedUntil}
+                      onChange={v => this.onChange('reproductionAndDistributionProhibitedUntil', v)}
+                    />
+                  </InputGroup>
 
-                  <TextInputGroup
-                    label="Photographic or film credit required [photo credit entered here]"
-                    inputName="photoGraphicOrFilmCredit"
-                    value={value.photoGraphicOrFilmCredit}
-                    onChange={onChange}
-                  />
+                  <InputGroup>
+                    <Label>Photographic or film credit required [photo credit entered here]</Label>
+                    <TextInput
+                      value={value.photoGraphicOrFilmCredit}
+                      onChange={v => this.onChange('photoGraphicOrFilmCredit', v)}
+                    />
+                  </InputGroup>
 
-                  <TextInputGroup
-                    label="Excerpts limited to [X] minutes"
-                    inputName="excerptLimitedTo"
-                    value={value.excerptLimitedTo}
-                    onChange={onChange}
-                  />
+                  <InputGroup>
+                    <Label>Excerpts limited to [X] minutes</Label>
+                    <TextInput
+                      value={value.excerptLimitedTo}
+                      onChange={v => this.onChange('excerptLimitedTo', v)}
+                    />
+                  </InputGroup>
 
-                  <TextInputGroup
-                    label="Other"
-                    inputName="other"
-                    value={value.other}
-                    onChange={onChange}
-                  />
+                  <InputGroup>
+                    <Label>Other</Label>
+                    <TextInput
+                      value={value.other}
+                      onChange={v => this.onChange('other', v)}
+                    />
+                  </InputGroup>
                 </Col>
               </Row>
 
-              <BooleanInputGroup
-                label="Are permissions granted as part of the Use License?"
-                inputName="permissionsGrantedAsPartOfTheUseLicenseEnabled"
-                value={value.permissionsGrantedAsPartOfTheUseLicenseEnabled}
-                onChange={onChange}
-              />
+              <InputGroup>
+                <Label>Are permissions granted as part of the Use License?</Label>
+                <BooleanRadioButtons
+                  value={value.permissionsGrantedAsPartOfTheUseLicenseEnabled}
+                  onChange={v => this.onChange('permissionsGrantedAsPartOfTheUseLicenseEnabled', v)}
+                />
+              </InputGroup>
 
               <Collapse in={value.permissionsGrantedAsPartOfTheUseLicenseEnabled}>
                 <div>
-                  <MultiSelectInputGroup
-                    label=""
-                    inputName="permissionsGrantedAsPartOfTheUseLicense"
-                    values={value.permissionsGrantedAsPartOfTheUseLicense}
-                    onChange={onChange}
-                    options={
-                      permissionsGrantedAsPartOfTheUseLicense.map(i => ({ value: i, label: i }))
-                    }
-                  />
+                  <InputGroup>
+                    <Label />
+                    <MultiSelectInput
+                      values={value.permissionsGrantedAsPartOfTheUseLicense}
+                      onChange={v => this.onChange('permissionsGrantedAsPartOfTheUseLicense', v)}
+                      options={
+                        permissionsGrantedAsPartOfTheUseLicense.map(i => ({ value: i, label: i }))
+                      }
+                    />
+                  </InputGroup>
                 </div>
               </Collapse>
             </div>
           </Collapse>
-
-
         </Card.Body>
       </Card>
     );

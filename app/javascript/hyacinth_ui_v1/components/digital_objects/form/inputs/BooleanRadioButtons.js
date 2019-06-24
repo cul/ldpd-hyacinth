@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Form } from 'react-bootstrap';
+import { Col, Form } from 'react-bootstrap';
 
 class BooleanRadioButtons extends React.Component {
   onRadioButtonChange = (event) => {
@@ -10,16 +10,16 @@ class BooleanRadioButtons extends React.Component {
       },
     } = event;
 
-    const { name, onChange } = this.props;
+    const { onChange } = this.props;
 
-    onChange(name, checked && value === 'yes');
+    onChange(checked && value === 'yes');
   }
 
   render() {
     const { value } = this.props;
 
     return (
-      <>
+      <Col sm={8} style={{ alignSelf: 'center' }}>
         <Form.Check
           inline
           type="radio"
@@ -37,13 +37,13 @@ class BooleanRadioButtons extends React.Component {
           checked={!value && value !== null}
           onChange={this.onRadioButtonChange}
         />
-      </>
+      </Col>
     );
   }
 }
 
 BooleanRadioButtons.propTypes = {
-  name: PropTypes.string.isRequired,
+  name: PropTypes.string,
   value: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
 };

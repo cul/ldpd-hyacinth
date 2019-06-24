@@ -1,60 +1,87 @@
 import React from 'react';
 import { Card } from 'react-bootstrap';
+import produce from 'immer';
 
-import BooleanInputGroup from '../form_inputs/BooleanInputGroup';
-import DateInputGroup from '../form_inputs/DateInputGroup';
-import ReadOnlyInputGroup from '../form_inputs/ReadOnlyInputGroup';
+import Label from '../../form/Label';
+import InputGroup from '../../form/InputGroup';
+import BooleanRadioButton from '../../form/inputs/BooleanRadioButtons';
+import DateInput from '../../form/inputs/DateInput';
+import ReadOnlyInput from '../../form/inputs/ReadOnlyInput';
+import YesNoSelect from '../../form/inputs/YesNoSelect';
 
 class CopyrightStatus extends React.PureComponent {
-  render() {
+  onChange(fieldName, fieldVal) {
     const { value, onChange } = this.props;
+
+    const nextValue = produce(value, (draft) => {
+      draft[fieldName] = fieldVal;
+    });
+
+    onChange(nextValue);
+  }
+
+  render() {
+    const { value } = this.props;
 
     return (
       <Card className="mb-3">
         <Card.Body>
           <Card.Title>Copyright Status</Card.Title>
 
-          <ReadOnlyInputGroup label="Copyright Statement" value={value.copyrightStatement} />
+          <InputGroup>
+            <Label>Copyright Statement</Label>
+            <ReadOnlyInput value={value.copyrightStatement} />
+          </InputGroup>
 
           {
             value.copyrightNote
-              .map(t => <ReadOnlyInputGroup label="Copyright Note" value={t} />)
+              .map(t => (
+                <InputGroup>
+                  <Label>Copyright Note</Label>
+                  <ReadOnlyInput value={t} />
+                </InputGroup>
+              ))
           }
 
-          <BooleanInputGroup
-            label="Copyright Registered?"
-            inputName="copyrightRegistered"
-            value={value.copyrightRegistered}
-            onChange={onChange}
-          />
+          <InputGroup>
+            <Label>Copyright Registered?</Label>
+            <YesNoSelect
+              value={value.copyrightRegistered}
+              onChange={v => this.onChange('copyrightRegistered', v)}
+            />
+          </InputGroup>
 
-          <BooleanInputGroup
-            label="Copyright Renewed?"
-            inputName="copyrightRenewed"
-            value={value.copyrightRenewed}
-            onChange={onChange}
-          />
+          <InputGroup>
+            <Label>Copyright Renewed?</Label>
+            <YesNoSelect
+              value={value.copyrightRenewed}
+              onChange={v => this.onChange('copyrightRenewed', v)}
+            />
+          </InputGroup>
 
-          <DateInputGroup
-            label="If Renewed, Date of Renewal"
-            inputName="copyrightDateOfRenewal"
-            value={value.copyrightDateOfRenewal}
-            onChange={onChange}
-          />
+          <InputGroup>
+            <Label>If Renewed, Date of Renewal</Label>
+            <DateInput
+              value={value.copyrightDateOfRenewal}
+              onChange={v => this.onChange('copyrightDateOfRenewal', v)}
+            />
+          </InputGroup>
 
-          <DateInputGroup
-            label="Copyright Expiration Date"
-            inputName="copyrightExpirationDate"
-            value={value.copyrightExpirationDate}
-            onChange={onChange}
-          />
+          <InputGroup>
+            <Label>Copyright Expiration Date</Label>
+            <DateInput
+              value={value.copyrightExpirationDate}
+              onChange={v => this.onChange('copyrightExpirationDate', v)}
+            />
+          </InputGroup>
 
-          <DateInputGroup
-            label="CUL Copyright Assessment Date"
-            inputName="culCopyrightAssessmentDate"
-            value={value.culCopyrightAssessmentDate}
-            onChange={onChange}
-          />
+          <InputGroup>
+            <Label>CUL Copyright Assessment Date</Label>
+            <DateInput
+              value={value.culCopyrightAssessmentDate}
+              onChange={v => this.onChange('culCopyrightAssessmentDate', v)}
+            />
+          </InputGroup>
         </Card.Body>
       </Card>
     );

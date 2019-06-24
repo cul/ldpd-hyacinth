@@ -1,11 +1,14 @@
 import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
+import produce from 'immer';
 
-import BooleanInputGroup from '../form_inputs/BooleanInputGroup';
-import TextAreaInputGroup from '../form_inputs/TextAreaInputGroup';
-import TextInputGroup from '../form_inputs/TextInputGroup';
-import SelectInputGroup from '../form_inputs/SelectInputGroup';
-import MultiSelectInputGroup from '../form_inputs/MultiSelectInputGroup';
+import Label from '../../form/Label';
+import InputGroup from '../../form/InputGroup';
+import BooleanRadioButton from '../../form/inputs/BooleanRadioButtons';
+import SelectInput from '../../form/inputs/SelectInput';
+import TextAreaInput from '../../form/inputs/TextAreaInput';
+import TextInput from '../../form/inputs/TextInput';
+import MultiSelectInput from '../../form/inputs/MultiSelectInput';
 
 const talentRights = [
   'SAG AFTRA',
@@ -36,8 +39,18 @@ const otherUnderlyingRights = [
 ];
 
 class UnderlyingRights extends React.PureComponent {
-  render() {
+  onChange(fieldName, fieldVal) {
     const { value, onChange } = this.props;
+
+    const nextValue = produce(value, (draft) => {
+      draft[fieldName] = fieldVal;
+    });
+
+    onChange(nextValue);
+  }
+
+  render() {
+    const { value } = this.props;
 
     return (
       <Card className="mb-3">
@@ -46,101 +59,111 @@ class UnderlyingRights extends React.PureComponent {
             Underlying Rights
           </Card.Title>
 
-          <BooleanInputGroup
-            label="Does the work have underlying rights that are known and for which information is available?"
-            inputName="enabled"
-            value={value.enabled}
-            onChange={onChange}
-          />
+          <InputGroup>
+            <Label>
+              Does the work have underlying rights that are known
+              and for which information is available?
+            </Label>
+            <BooleanRadioButton
+              inputName="enabled"
+              value={value.enabled}
+              onChange={v => this.onChange('enabled', v)}
+            />
+          </InputGroup>
+
 
           <Collapse in={value.enabled}>
             <div>
-              <BooleanInputGroup
-                label="Do we know specific underlying rights?"
-                inputName="doWeKnowSpecificUnderlyingRightsEnabled"
-                value={value.doWeKnowSpecificUnderlyingRightsEnabled}
-                onChange={onChange}
-              />
+              <InputGroup>
+                <Label>Do we know specific underlying rights?</Label>
+                <BooleanRadioButton
+                  value={value.doWeKnowSpecificUnderlyingRightsEnabled}
+                  onChange={v => this.onChange('doWeKnowSpecificUnderlyingRightsEnabled', v)}
+                />
+              </InputGroup>
 
               <Collapse in={value.doWeKnowSpecificUnderlyingRightsEnabled}>
                 <div>
-                  <BooleanInputGroup
-                    label="Are there music rights?"
-                    inputName="musicRightsEnabled"
-                    value={value.musicRightsEnabled}
-                    onChange={onChange}
-                  />
+                  <InputGroup>
+                    <Label>Are there music rights?</Label>
+                    <BooleanRadioButton
+                      value={value.musicRightsEnabled}
+                      onChange={v => this.onChange('musicRightsEnabled', v)}
+                    />
+                  </InputGroup>
 
                   <Collapse in={value.musicRightsEnabled}>
                     <div>
-                      <BooleanInputGroup
-                        label="Music licensed to Columbia?"
-                        inputName="musicLicensedToColumbiaEnabled"
-                        value={value.musicLicensedToColumbiaEnabled}
-                        onChange={onChange}
-                      />
+                      <InputGroup>
+                        <Label>Music licensed to Columbia?</Label>
+                        <BooleanRadioButton
+                          value={value.musicLicensedToColumbiaEnabled}
+                          onChange={v => this.onChange('musicLicensedToColumbiaEnabled', v)}
+                        />
+                      </InputGroup>
 
                       <Collapse in={value.musicLicensedToColumbiaEnabled}>
                         <div>
-                          <SelectInputGroup
-                            label=""
-                            inputName="columbiaMusicLicense"
-                            value={value.columbiaMusicLicense}
-                            onChange={onChange}
-                            options={columbiaMusicLicense.map(i => ({ value: i, label: i }))}
-                          />
+                          <InputGroup>
+                            <Label />
+                            <SelectInput
+                              value={value.columbiaMusicLicense}
+                              onChange={v => this.onChange('columbiaMusicLicense', v)}
+                              options={columbiaMusicLicense.map(i => ({ value: i, label: i }))}
+                            />
+                          </InputGroup>
                         </div>
                       </Collapse>
 
-                      <TextInputGroup
-                        label="Composition [music publisher]"
-                        inputName="composition"
-                        value={value.composition}
-                        onChange={onChange}
-                      />
+                      <InputGroup>
+                        <Label>Composition [music publisher]</Label>
+                        <TextInput
+                          value={value.composition}
+                          onChange={v => this.onChange('composition', v)}
+                        />
+                      </InputGroup>
 
-                      <TextInputGroup
-                        label="Recording [record label]"
-                        inputName="recording"
-                        value={value.recording}
-                        onChange={onChange}
-                      />
+                      <InputGroup>
+                        <Label>Recording [record label]</Label>
+                        <TextInput
+                          value={value.recording}
+                          onChange={v => this.onChange('recording', v)}
+                        />
+                      </InputGroup>
                     </div>
                   </Collapse>
 
-                  <SelectInputGroup
-                    label="If film/video produced commercially, talent rights"
-                    inputName="talentRights"
-                    value={value.talentRights}
-                    onChange={onChange}
-                    options={talentRights.map(i => ({ value: i, label: i }))}
-                  />
+                  <InputGroup>
+                    <Label>If film/video produced commercially, talent rights</Label>
+                    <SelectInput
+                      value={value.talentRights}
+                      onChange={v => this.onChange('talentRights', v)}
+                      options={talentRights.map(i => ({ value: i, label: i }))}
+                    />
+                  </InputGroup>
 
-                  <MultiSelectInputGroup
-                    label="Other Underlying Rights"
-                    inputName="otherUnderlyingRights"
-                    values={value.otherUnderlyingRights}
-                    onChange={onChange}
-                    options={otherUnderlyingRights.map(i => ({ value: i, label: i }))}
-                  />
+                  <InputGroup>
+                    <Label>Other Underlying Rights</Label>
+                    <MultiSelectInput
+                      values={value.otherUnderlyingRights}
+                      onChange={v => this.onChange('otherUnderlyingRights', v)}
+                      options={otherUnderlyingRights.map(i => ({ value: i, label: i }))}
+                    />
+                  </InputGroup>
 
-                  <TextInputGroup
-                    label="Other"
-                    inputName="other"
-                    value={value.other}
-                    onChange={onChange}
-                  />
+                  <InputGroup>
+                    <Label>Other</Label>
+                    <TextInput value={value.other} onChange={v => this.onChange('other', v)} />
+                  </InputGroup>
                 </div>
               </Collapse>
 
               <Collapse in={!value.doWeKnowSpecificUnderlyingRightsEnabled}>
                 <div>
-                  <TextAreaInputGroup
-                    label="Describe in a Note"
-                    inputName="note"
-                    value={value.note}
-                    onChange={onChange}
-                  />
+                  <InputGroup>
+                    <Label>Describe in a Note</Label>
+                    <TextAreaInput value={value.note} onChange={v => this.onChange('note', v)} />
+                  </InputGroup>
                 </div>
               </Collapse>
             </div>

@@ -1,14 +1,26 @@
 import React from 'react';
-import { Form, Col, Row, Card, Button } from 'react-bootstrap';
+import { Card, Button } from 'react-bootstrap';
+import produce from 'immer';
 
-import TextInputGroup from '../form_inputs/TextInputGroup';
-import TextAreaInputGroup from '../form_inputs/TextAreaInputGroup';
-import DateInputGroup from '../form_inputs/DateInputGroup';
-import ControlledVocabularySelect from '../../form/ControlledVocabularySelect';
+import InputGroup from '../../form/InputGroup';
+import Label from '../../form/Label';
+import TextAreaInput from '../../form/inputs/TextAreaInput';
+import ControlledVocabularySelect from '../../form/inputs/ControlledVocabularySelect';
+import TextInput from '../../form/inputs/TextInput';
 
 export default class CopyrightOwner extends React.PureComponent {
+  onFieldChange(fieldName, fieldVal) {
+    const { value, onChange } = this.props;
+
+    const nextValue = produce(value, (draft) => {
+      draft[fieldName] = fieldVal;
+    });
+
+    onChange(nextValue);
+  }
+
   render() {
-    const { value, index, onChange, onRemove } = this.props;
+    const { value, index, onRemove } = this.props;
 
     return (
       <Card className="mb-3">
@@ -20,38 +32,29 @@ export default class CopyrightOwner extends React.PureComponent {
             </Button>
           </span>
         </Card.Header>
+
         <Card.Body>
-          <Form.Group as={Row} className="mb-1">
-            <Form.Label column sm={4} className="text-right">Name</Form.Label>
-            <Col sm={8} style={{ alignSelf: 'center' }}>
-              <ControlledVocabularySelect
-                vocabulary="name"
-                value={value.name}
-                onChange={v => onChange('name', v)}
-              />
-            </Col>
-          </Form.Group>
+          <InputGroup>
+            <Label>Name</Label>
+            <ControlledVocabularySelect
+              vocabulary="name"
+              value={value.name}
+              onChange={v => this.onFieldChange('name', v)}
+            />
+          </InputGroup>
 
-          {/* <TextInputGroup
-            label="Name"
-            inputName="name"
-            value={value.name}
-            onChange={onChange}
-          /> */}
+          <InputGroup>
+            <Label>Heirs</Label>
+            <TextInput value={value.heirs} onChange={v => this.onFieldChange('heirs', v)} />
+          </InputGroup>
 
-          <TextInputGroup
-            label="Heirs"
-            inputName="heirs"
-            value={value.heirs}
-            onChange={onChange}
-          />
-
-          <TextAreaInputGroup
-            label="Contact information for Copyright Owner or Heirs"
-            inputName="contactInformation"
-            value={value.contactInformation}
-            onChange={onChange}
-          />
+          <InputGroup>
+            <Label>Contact information for Copyright Owner or Heirs</Label>
+            <TextAreaInput
+              value={value.contactInformation}
+              onChange={v => this.onFieldChange('contactInformation', v)}
+            />
+          </InputGroup>
         </Card.Body>
       </Card>
     );

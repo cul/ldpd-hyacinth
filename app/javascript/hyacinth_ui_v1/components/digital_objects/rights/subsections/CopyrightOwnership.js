@@ -3,27 +3,58 @@ import {
   Row, Col, Card, Button, Collapse,
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import produce from 'immer';
 
 import CopyrightOwner from './CopyrightOwner';
-import BooleanInputGroup from '../form_inputs/BooleanInputGroup';
+import InputGroup from '../../form/InputGroup';
+import Label from '../../form/Label';
+import BooleanRadioButtons from '../../form/inputs/BooleanRadioButtons';
 
 export default class CopyrightOwnership extends React.Component {
-  onChangeHandler = (event) => {
-    const {
-      target: {
-        type, name, value, checked,
-      },
-    } = event;
+  onFieldChange(fieldName, fieldVal) {
+    const { value, onChange } = this.props;
 
-    const { onChange } = this.props;
+    const nextValue = produce(value, (draft) => {
+      draft[fieldName] = fieldVal;
+    });
 
-    onChange(name, type === 'radio' ? checked : value);
+    onChange(nextValue);
+  }
+
+  onCopyrightOwnerChange(index, fieldVal) {
+    const { value, onChange } = this.props;
+
+    const nextValue = produce(value, (draft) => {
+      draft.copyrightOwners[index] = fieldVal;
+    });
+
+    onChange(nextValue);
+  }
+
+  addCopyrightOwner = () => {
+    const { value, onChange } = this.props;
+
+    const nextValue = produce(value, (draft) => {
+      draft.copyrightOwners.push(
+        { name: '', heirs: '', contactInformation: '' }
+      );
+    });
+
+    onChange(nextValue);
+  }
+
+  removeCopyrightOwner = (index) => {
+    const { value, onChange } = this.props;
+
+    const nextValue = produce(value, (draft) => {
+      draft.copyrightOwners.splice(index, 1);
+    });
+
+    onChange(nextValue);
   }
 
   render() {
-    const {
-      value, onChange, onCopyrightOwnerChange, addCopyrightOwner, removeCopyrightOwner
-    } = this.props;
+    const { value } = this.props;
 
     return (
       <Card className="mb-3">
@@ -32,12 +63,10 @@ export default class CopyrightOwnership extends React.Component {
             Copyright Ownership
           </Card.Title>
 
-          <BooleanInputGroup
-            label="Is copyright holder different from creator?"
-            inputName="enabled"
-            value={value.enabled}
-            onChange={onChange}
-          />
+          <InputGroup>
+            <Label>Is copyright holder different from creator?</Label>
+            <BooleanRadioButtons value={value.enabled} onChange={v => this.onFieldChange('enabled', v)} />
+          </InputGroup>
 
           <Collapse in={value.enabled}>
             <div>
@@ -47,14 +76,14 @@ export default class CopyrightOwnership extends React.Component {
                     index={index}
                     key={index}
                     value={copyrightOwner}
-                    onChange={(fieldName, v) => onCopyrightOwnerChange(index, fieldName, v)}
-                    onRemove={() => removeCopyrightOwner(index)}
+                    onChange={v => this.onCopyrightOwnerChange(index, v)}
+                    onRemove={() => this.removeCopyrightOwner(index)}
                   />
                 ))
               }
               <Row>
                 <Col className="text-center">
-                  <Button variant="success" size="sm" onClick={addCopyrightOwner}>
+                  <Button variant="success" size="sm" onClick={this.addCopyrightOwner}>
                     <FontAwesomeIcon icon="plus" />
                     Add Copyright Owner
                   </Button>

@@ -9,6 +9,7 @@ import hyacinthApi, {
   enabledDynamicFields, dynamicFieldCategories,
 } from '../../util/hyacinth_api';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
+import Label from './form/Label';
 
 class ParentDigitalObjectForm extends React.PureComponent {
   state = {
@@ -98,7 +99,7 @@ class ParentDigitalObjectForm extends React.PureComponent {
 
     return (
       <Form.Group as={Row}>
-        <Form.Label column sm={2}>{displayLabel}</Form.Label>
+        <Label sm={2}>{displayLabel}</Label>
         <Col sm={10}>
           <Form.Control
             size="sm"

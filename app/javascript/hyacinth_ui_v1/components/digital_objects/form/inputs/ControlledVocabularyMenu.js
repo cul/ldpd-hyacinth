@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Dropdown, Form, Badge } from 'react-bootstrap';
+import {
+  Button, Dropdown, Form, Badge,
+} from 'react-bootstrap';
 import produce from 'immer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { vocabulary } from '../../../util/hyacinth_api';
+import { vocabulary } from '../../../../util/hyacinth_api';
 
-const perPage = '2';
+const perPage = '10';
 
 class ControlledVocabularyMenu extends React.Component {
   state = {
