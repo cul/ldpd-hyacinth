@@ -7,6 +7,7 @@ import RightsShow from './RightsShow';
 
 import ItemRightsEdit from './ItemRightsEdit';
 import AssetRightsEdit from './AssetRightsEdit';
+import { dynamicFieldData1 } from '../mock/dynamicFieldData';
 
 export default class Rights extends React.PureComponent {
   render() {
@@ -19,7 +20,7 @@ export default class Rights extends React.PureComponent {
             path="/digital_objects/test1/rights/edit"
             render={() => (
               <ItemRightsEdit
-                dynamicFieldData={{}}
+                dynamicFieldData={dynamicFieldData1}
               />
             )}
           />
