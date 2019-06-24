@@ -5,11 +5,37 @@ import PageNotFound from '../../layout/PageNotFound';
 import RightsEdit from './RightsEdit';
 import RightsShow from './RightsShow';
 
+import ItemRightsEdit from './ItemRightsEdit';
+import AssetRightsEdit from './AssetRightsEdit';
+
 export default class Rights extends React.PureComponent {
   render() {
     return (
       <div>
         <Switch>
+          {/* Mockups for Rights Module */}
+          <Route
+            exact
+            path="/digital_objects/test1/rights/edit"
+            render={() => (
+              <ItemRightsEdit
+                dynamicFieldData={{}}
+              />
+            )}
+          />
+
+          <Route
+            exact
+            path="/digital_objects/asset1/rights/edit"
+            render={() => (
+              <AssetRightsEdit
+                dynamicFieldData={{}}
+              />
+            )}
+          />
+
+          {/*  End of Rights Module Mockupds */}
+
           <Route exact path="/digital_objects/:uuid/rights" component={RightsShow} />
           <Route path="/digital_objects/:uuid/rights/edit" component={RightsEdit} />
 

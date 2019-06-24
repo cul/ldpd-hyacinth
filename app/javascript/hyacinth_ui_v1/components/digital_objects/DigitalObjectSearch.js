@@ -28,9 +28,19 @@ export default class DigitalObjectSearch extends React.Component {
           rightHandLinks={[{ label: 'New Digital Object', link: '/digital_objects/new' }]}
         />
 
+        <h4>Rights Module Mockups</h4>
+
+        {
+          ['asset1', 'test1'].map(id => (
+            <Link to={`/digital_objects/${id}/rights/edit`} key={id} className="nav-link">{id}</Link>
+          ))
+        }
+
+        <hr />
+
         {
           digitalObjects.map(d => (
-            <Link to={`/digital_objects/${d.uid}`} className="nav-link">{d.uid}</Link>
+            <Link to={`/digital_objects/${d.uid}`} key={d.uid} className="nav-link">{d.uid}</Link>
           ))
         }
       </>

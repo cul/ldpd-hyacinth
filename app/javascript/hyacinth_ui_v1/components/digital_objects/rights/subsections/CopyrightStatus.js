@@ -21,12 +21,12 @@ class CopyrightStatus extends React.PureComponent {
   }
 
   render() {
-    const { value } = this.props;
+    const { title, value } = this.props;
 
     return (
       <Card className="mb-3">
         <Card.Body>
-          <Card.Title>Copyright Status</Card.Title>
+          <Card.Title>{title || 'Copyright Status'}</Card.Title>
 
           <InputGroup>
             <Label>Copyright Statement</Label>
