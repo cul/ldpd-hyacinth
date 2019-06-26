@@ -14,31 +14,9 @@ export default class Rights extends React.PureComponent {
     return (
       <div>
         <Switch>
-          {/* Mockups for Rights Module */}
-          <Route
-            exact
-            path="/digital_objects/test1/rights/edit"
-            render={() => (
-              <ItemRightsEdit
-                dynamicFieldData={dynamicFieldData1}
-              />
-            )}
-          />
 
-          <Route
-            exact
-            path="/digital_objects/asset1/rights/edit"
-            render={() => (
-              <AssetRightsEdit
-                dynamicFieldData={{}}
-              />
-            )}
-          />
-
-          {/*  End of Rights Module Mockupds */}
-
-          <Route exact path="/digital_objects/:uuid/rights" component={RightsShow} />
-          <Route path="/digital_objects/:uuid/rights/edit" component={RightsEdit} />
+          <Route exact path="/digital_objects/:id/rights" component={RightsShow} />
+          <Route path="/digital_objects/:id/rights/edit" component={RightsEdit} />
 
           { /* When none of the above match, <PageNotFound> will be rendered */ }
           <Route component={PageNotFound} />

@@ -133,13 +133,6 @@ class ItemRightsEdit extends React.Component {
 
     return (
       <>
-        <ContextualNavbar
-          title="Editing Item Rights"
-          rightHandLinks={[
-            { link: '/digital_objects', label: 'Cancel' },
-          ]}
-        />
-
         <Form className="mb-3">
           <DescriptiveMetadata
             dynamicFieldData={dynamicFieldData}

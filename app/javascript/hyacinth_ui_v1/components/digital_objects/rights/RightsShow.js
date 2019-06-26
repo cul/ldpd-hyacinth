@@ -9,7 +9,7 @@ export default class RightsShow extends React.Component {
       <ContextualNavbar
         title="Item Rights"
         rightHandLinks={[
-          { link: '/digital_objects/1/rights/edit', label: 'Edit' },
+          { link: `/digital_objects/${this.props.match.params.id}/rights/edit`, label: 'Edit' },
         ]}
       />
     )

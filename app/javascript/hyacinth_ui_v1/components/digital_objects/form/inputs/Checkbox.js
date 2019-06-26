@@ -33,10 +33,11 @@ class Checkbox extends React.PureComponent {
 
 Checkbox.defaultProps = {
   inputName: '',
+  label: '',
 };
 
 Checkbox.propTypes = {
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   inputName: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   value: PropTypes.bool.isRequired,

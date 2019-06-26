@@ -7,7 +7,7 @@ import {
 import ContextualNavbar from '../../layout/ContextualNavbar';
 import hyacinthApi, { digitalObject } from '../../../util/hyacinth_api';
 import SubmitButton from '../../layout/forms/SubmitButton';
-import DynamicFieldDataForm from '../DynamicFieldDataForm';
+import MetadataForm from '../metadata/MetadataForm';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import DigitalObjectSummary from '../DigitalObjectSummary';
 
@@ -65,7 +65,7 @@ class AggregatorNew extends React.PureComponent {
         <p>DOI: Unavailable</p> */}
 
         <Form>
-          <DynamicFieldDataForm
+          <MetadataForm
             projects={[{ stringKey: project }]}
             digitalObjectType={digitalObjectType}
             dynamicFieldData={{}}

@@ -26,7 +26,7 @@ class DigitalObjectSummary extends React.Component {
 
     return (
       <>
-        <dl className="row">
+        <dl className="row mb-0">
           <dt className="col-sm-3">Project(s)</dt>
           <dd className="col-sm-9">
             { projects && projects.map(p => <span>{p.displayLabel}</span>) }
@@ -41,7 +41,7 @@ class DigitalObjectSummary extends React.Component {
         {
           uid && (
             <>
-              <dl className="row">
+              <dl className="row mb-0">
                 <dt className="col-sm-3">Child Objects</dt>
                 <dd className="col-sm-9"></dd>
 
@@ -59,23 +59,23 @@ class DigitalObjectSummary extends React.Component {
                 aria-controls="collapse-more-details"
                 aria-expanded={moreDetailsOpen}
               >
-                More Details
+                {moreDetailsOpen ? 'Less Details' : 'More Details'}
                 {' '}
                 <FontAwesomeIcon icon={moreDetailsOpen ? 'angle-double-up' : 'angle-double-down'} />
               </Button>
 
               <Collapse in={moreDetailsOpen}>
-                <dl className="row">
+                <dl className="row mb-0">
                   <dt className="col-sm-3">Created By</dt>
-                  <dd className="col-sm-9">{createdBy}</dd>
+                  <dd className="col-sm-9">{createdBy || '-- Assigned After Save --'}</dd>
                   <dt className="col-sm-3">Created On</dt>
-                  <dd className="col-sm-9">{createdAt}</dd>
+                  <dd className="col-sm-9">{createdAt || '-- Assigned After Save --'}</dd>
                   <dt className="col-sm-3">Last Modified By</dt>
-                  <dd className="col-sm-9">{updatedBy}</dd>
+                  <dd className="col-sm-9">{updatedBy || '-- Assigned After Save --'}</dd>
                   <dt className="col-sm-3">Last Modified On</dt>
-                  <dd className="col-sm-9">{updatedAt}</dd>
+                  <dd className="col-sm-9">{updatedAt || '-- Assigned After Save --'}</dd>
                   <dt className="col-sm-3">First Published At</dt>
-                  <dd className="col-sm-9">{firstPublishedAt}</dd>
+                  <dd className="col-sm-9">{firstPublishedAt || '-- Assigned After Publish --'}</dd>
                 </dl>
               </Collapse>
             </>
