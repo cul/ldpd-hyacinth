@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import produce from 'immer';
 import { Col, Form, Collapse } from 'react-bootstrap';
 
-import ContextualNavbar from '../../layout/ContextualNavbar';
 import SubmitButton from '../../layout/forms/SubmitButton';
 import CancelButton from '../../layout/forms/CancelButton';
 import Label from '../form/Label';
@@ -129,11 +128,11 @@ class ItemRightsEdit extends React.Component {
       },
     } = this.state;
 
-    const { dynamicFieldData } = this.props;
+    const { dynamicFieldData, id } = this.props;
 
     return (
       <>
-        <Form className="mb-3">
+        <Form className="mb-3" key={id}>
           <DescriptiveMetadata
             dynamicFieldData={dynamicFieldData}
             value={descriptiveMetadata}

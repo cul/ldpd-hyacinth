@@ -31,8 +31,13 @@ export default class DigitalObjectSearch extends React.Component {
         <h4>Rights Module Mockups</h4>
 
         {
-          ['asset1', 'test1'].map(id => (
-            <Link to={`/digital_objects/${id}/rights/edit`} key={id} className="nav-link">{id}</Link>
+          [
+            { id: 'asset1', title: 'Example Asset' },
+            { id: 'cul_q83bk3jc9s', title: 'Oral history interview with Alan Pifer and Eli Evans 1970' },
+            { id: 'cul_vdncjsxn7t', title: 'Photograph of Andrew Carnegie at His Desk' },
+            { id: 'cul_bnzs7h45zq', title: 'ABC News - Brian Ross Investigates: The Blueberry Children, Carnegie Fellows 2009' }
+          ].map(link => (
+            <Link to={`/digital_objects/${link.id}/rights/edit`} key={link.id} className="nav-link">{link.title}</Link>
           ))
         }
 

@@ -9,7 +9,7 @@ import DigitalObject from './DigitalObject';
 import ItemRightsEdit from './rights/ItemRightsEdit';
 import AssetRightsEdit from './rights/AssetRightsEdit';
 import AggregatorNew from './new/AggregatorNew';
-import { dynamicFieldData1 } from './mock/dynamicFieldData';
+import { cul_q83bk3jc9s, cul_vdncjsxn7t, cul_bnzs7h45zq } from './mock/dynamicFieldData';
 import Rights from './rights/Rights';
 
 export default class DigitalObjects extends React.PureComponent {
@@ -20,10 +20,36 @@ export default class DigitalObjects extends React.PureComponent {
           {/* Mockups for Rights Module */}
           <Route
             exact
-            path="/digital_objects/test1/rights/edit"
+            path="/digital_objects/cul_q83bk3jc9s/rights/edit"
             render={() => (
               <ItemRightsEdit
-                dynamicFieldData={dynamicFieldData1}
+                id="cul:q83bk3jc9s"
+                key="cul:q83bk3jc9s"
+                dynamicFieldData={cul_q83bk3jc9s}
+              />
+            )}
+          />
+
+          <Route
+            exact
+            path="/digital_objects/cul_vdncjsxn7t/rights/edit"
+            render={() => (
+              <ItemRightsEdit
+                id="cul:vdncjsxn7t"
+                key="cul:vdncjsxn7t"
+                dynamicFieldData={cul_vdncjsxn7t}
+              />
+            )}
+          />
+
+          <Route
+            exact
+            path="/digital_objects/cul_bnzs7h45zq/rights/edit"
+            render={() => (
+              <ItemRightsEdit
+                id="cul:bnzs7h45zq"
+                key="cul:bnzs7h45zq"
+                dynamicFieldData={cul_bnzs7h45zq}
               />
             )}
           />

@@ -5,10 +5,6 @@ import PageNotFound from '../../layout/PageNotFound';
 import RightsEdit from './RightsEdit';
 import RightsShow from './RightsShow';
 
-import ItemRightsEdit from './ItemRightsEdit';
-import AssetRightsEdit from './AssetRightsEdit';
-import { dynamicFieldData1 } from '../mock/dynamicFieldData';
-
 export default class Rights extends React.PureComponent {
   render() {
     return (
