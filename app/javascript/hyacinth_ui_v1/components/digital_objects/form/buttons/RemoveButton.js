@@ -22,6 +22,6 @@ class RemoveButton extends React.PureComponent {
 
 RemoveButton.propTypes = {
   onClick: PropTypes.func.isRequired,
-}
+};
 
 export default RemoveButton;

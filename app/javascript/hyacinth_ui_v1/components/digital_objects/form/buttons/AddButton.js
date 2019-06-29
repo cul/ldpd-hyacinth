@@ -22,6 +22,6 @@ class AddButton extends React.PureComponent {
 
 AddButton.propTypes = {
   onClick: PropTypes.func.isRequired,
-}
+};
 
 export default AddButton;

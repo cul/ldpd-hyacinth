@@ -12,7 +12,7 @@ import Rights from './rights/Rights';
 import DigitalObjectChildren from './DigitalObjectChildren';
 import PageNotFound from '../layout/PageNotFound';
 
-export default class DigitalObjectShow extends React.Component {
+export default class DigitalObject extends React.Component {
   state = {
     digitalObjectData: null,
   };
