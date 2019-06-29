@@ -29,14 +29,7 @@ export default class DigitalObjectShow extends React.Component {
   }
 
   render() {
-    const {
-      digitalObjectData: data,
-      // digitalObjectData: {
-      //   uid,
-      //   projects,
-      //   digitalObjectType,
-      // },
-    } = this.state;
+    const { digitalObjectData: data } = this.state;
 
     const { match: { url } } = this.props;
 
@@ -45,7 +38,7 @@ export default class DigitalObjectShow extends React.Component {
         { data && (
           <div className="digital-object-interface">
             <ContextualNavbar
-              title="Item | Really Long Title Goes Here When I Figure Out How Dynamic Fields Work"
+              title={`Item | ${(data) ? data.dynamicFieldData.title[0].titleSortPortion : ''}`}
             />
 
             <DigitalObjectSummary data={data} />
@@ -53,25 +46,43 @@ export default class DigitalObjectShow extends React.Component {
             <Tabs>
               <Tab to={`${url}/metadata`} name="Metadata" />
               <Tab to={`${url}/rights`} name="Rights" />
-              <Tab to={`${url}/children`} name="Manage Child Assets" />
-              <Tab to={`${url}/parents`} name="Parents" />
+
+              {
+                (data.digitalObjectType === 'item') && (
+                  <Tab to={`${url}/children`} name="Manage Child Assets" />
+                )
+              }
+
+              {
+                (data.digitalObjectType === 'asset') && (
+                  <Tab to={`${url}/parents`} name="Parents" />
+                )
+              }
+
               <Tab to={`${url}/assignment`} name="Assign This" />
+              <Tab to={`${url}/preserve_publish`} name="Preserve/Publish" />
             </Tabs>
 
             <div className="m-3">
               <Switch>
                 <Route
                   path="/digital_objects/:id/metadata"
-                  render={props => (
-                    <MetadataForm data={data} projects={data.projects} digitalObjectType={data.digitalObjectType} />
+                  render={() => (
+                    <MetadataForm
+                      data={data}
+                      projects={data.projects}
+                      digitalObjectType={data.digitalObjectType}
+                    />
                   )}
                 />
-                <Route path="/digital_objects/:id/rights" component={Rights} />
+
+                <Route
+                  path="/digital_objects/:id/rights"
+                  render={() => <Rights data={data} />}
+                />
                 <Route
                   path="/digital_objects/:id/children"
-                  render={props => (
-                    <DigitalObjectChildren data={data} />
-                  )}
+                  render={() => <DigitalObjectChildren data={data} /> }
                 />
                 {/* <Route path="/digital_objects/:id/enabled_dynamic_fields" component={EnabledDynamicFields} /> */}
                 <Redirect exact from="/digital_objects/:id" to="/digital_objects/:id/metadata" />

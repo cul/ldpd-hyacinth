@@ -9,8 +9,12 @@ import {
   faPlus,
   faPen,
   faTimes,
+  faCaretUp,
+  faCaretDown,
   faAngleDoubleDown,
   faAngleDoubleUp,
+  faInfoCircle,
+  faExternalLinkSquareAlt,
 } from '@fortawesome/free-solid-svg-icons';
 
 import {
@@ -23,8 +27,12 @@ library.add(
   faPlus,
   faPen,
   faTimes,
+  faCaretUp,
+  faCaretDown,
   faCaretSquareUp,
   faCaretSquareDown,
   faAngleDoubleDown,
   faAngleDoubleUp,
+  faInfoCircle,
+  faExternalLinkSquareAlt,
 );

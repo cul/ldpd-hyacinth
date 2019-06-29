@@ -16,9 +16,10 @@ export default class RightsEdit extends React.Component {
     // end
 
     // Pass in dynamic field data (might need all of the digital object data) to ItemRightsEdit or AssetRightsEdit.
+    const { data } = this.props;
 
     return (
-      <ItemRightsEdit dynamicFieldData={{}}/>
+      <ItemRightsEdit data={data}/>
     )
   }
 }

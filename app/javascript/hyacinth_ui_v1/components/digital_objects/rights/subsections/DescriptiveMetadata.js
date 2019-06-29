@@ -56,7 +56,7 @@ class DescriptiveMetadata extends React.PureComponent {
             (dynamicFieldData.genre || [{}]).map((t, i) => (
               <InputGroup key={i}>
                 <Label>Specific Genre of Work</Label>
-                <ReadOnlyInput value={t.genreTerm ? t.genreTerm.value : ''} />
+                <ReadOnlyInput value={t.genreTerm ? t.genreTerm.prefLabel : ''} />
               </InputGroup>
             ))
           }
@@ -65,7 +65,7 @@ class DescriptiveMetadata extends React.PureComponent {
             (dynamicFieldData.form || [{}]).map((t, i) => (
               <InputGroup key={i}>
                 <Label>Form</Label>
-                <ReadOnlyInput value={t.formTerm ? t.formTerm.value : ''} />
+                <ReadOnlyInput value={t.formTerm ? t.formTerm.prefLabel : ''} />
               </InputGroup>
             ))
           }
@@ -77,12 +77,12 @@ class DescriptiveMetadata extends React.PureComponent {
                 <Card.Body>
                   <InputGroup>
                     <Label>Name</Label>
-                    <ReadOnlyInput value={n.nameTerm ? n.nameTerm.value : ''} />
+                    <ReadOnlyInput value={n.nameTerm ? n.nameTerm.prefLabel : ''} />
                   </InputGroup>
 
                   <InputGroup>
                     <Label>Role(s)</Label>
-                    <ReadOnlyInput value={n.nameRole ? n.nameRole.map(r => r.nameRoleTerm.value).join(', ') : ''} />
+                    <ReadOnlyInput value={n.nameRole ? n.nameRole.map(r => r.nameRoleTerm.prefLabel).join(', ') : ''} />
                   </InputGroup>
 
                   <InputGroup>

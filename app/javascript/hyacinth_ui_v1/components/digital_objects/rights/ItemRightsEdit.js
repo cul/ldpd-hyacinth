@@ -68,6 +68,18 @@ class ItemRightsEdit extends React.Component {
         licenseDocumentationLocation: '',
       },
       contractualLimitationsRestrictionsAndPermissions: {
+        a: false,
+        b: false,
+        c: false,
+        d: false,
+        e: false,
+        avA: false,
+        avB: false,
+        avC: false,
+        avD: false,
+        avE: false,
+        avF: false,
+        avG: false,
         enabled: false,
         reproductionAndDistributionProhibitedUntil: '',
         photoGraphicOrFilmCredit: '',
@@ -128,13 +140,13 @@ class ItemRightsEdit extends React.Component {
       },
     } = this.state;
 
-    const { dynamicFieldData, id } = this.props;
+    const { data, id } = this.props;
 
     return (
       <>
         <Form className="mb-3" key={id}>
           <DescriptiveMetadata
-            dynamicFieldData={dynamicFieldData}
+            dynamicFieldData={data ? data.dynamicFieldData : {}}
             value={descriptiveMetadata}
             onChange={v => this.onChange('descriptiveMetadata', v)}
           />
@@ -210,7 +222,7 @@ ItemRightsEdit.propTypes = {
   // dynamicFieldData: PropTypes.shape({
   //   title: PropTypes.shape({ titleSortPortion: PropTypes.string }),
   // }),
-  dynamicFieldData: PropTypes.any,
+  data: PropTypes.any,
 };
 
 export default ItemRightsEdit;

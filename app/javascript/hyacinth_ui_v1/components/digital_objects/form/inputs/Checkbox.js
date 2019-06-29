@@ -20,7 +20,7 @@ class Checkbox extends React.PureComponent {
         <Form.Check
           className="py-1"
           type="checkbox"
-          value={value}
+          checked={value}
           id={inputName}
           name={inputName}
           label={label}

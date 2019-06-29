@@ -1,16 +1,17 @@
 import React from 'react';
 import produce from 'immer';
 import axios from 'axios';
-import { merge } from 'lodash';
+import { merge, camelCase } from 'lodash';
 import { Form, Col } from 'react-bootstrap';
 
 import hyacinthApi, {
-  enabledDynamicFields, dynamicFieldCategories,
+  enabledDynamicFields, dynamicFieldCategories, digitalObject,
 } from '../../../util/hyacinth_api';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import SubmitButton from '../../layout/forms/SubmitButton';
 import CancelButton from '../../layout/forms/CancelButton';
 import FieldGroupArray from './FieldGroupArray';
+
 
 const defaultFieldValue = {
   string: '',
@@ -24,13 +25,14 @@ const defaultFieldValue = {
 
 class MetadataForm extends React.PureComponent {
   state = {
+    uid: '',
     dynamicFields: [],
     dynamicFieldData: {},
+    defaultFieldData: {},
   }
 
   componentDidMount = () => {
-    const { data: { dynamicFieldData}, projects, digitalObjectType } = this.props;
-
+    const { data: { uid, dynamicFieldData }, projects, digitalObjectType } = this.props;
     // this.setState(produce((draft) => {
     //   draft.digitalObject.digitalObjectDataJson.projects[0].stringKey = project;
     //   draft.digitalObject.digitalObjectDataJson.digitalObjectType = digitalObjectType;
@@ -56,8 +58,10 @@ class MetadataForm extends React.PureComponent {
       });
 
       this.setState(produce((draft) => {
+        draft.uid = uid;
         draft.dynamicFields = dynamicFields;
-        draft.dynamicFieldData = merge(dynamicFieldData, emptyData);
+        draft.defaultFieldData = emptyData;
+        draft.dynamicFieldData = merge({}, emptyData, dynamicFieldData);
       }));
     }));
   }
@@ -68,14 +72,24 @@ class MetadataForm extends React.PureComponent {
     }));
   }
 
+  onSubmitHandler = () => {
+    const { dynamicFieldData, uid } = this.state;
+    digitalObject.update(
+      uid,
+      { digitalObject: { digitalObjectDataJson: { dynamicFieldData } } }
+    ).then((res) => {
+      console.log(res.data);
+    });
+  }
+
   emptyDynamicFieldData(dynamicFields, newObject) {
     dynamicFields.forEach((i) => {
       switch (i.type) {
         case 'DynamicFieldGroup':
-          newObject[i.stringKey] = [this.emptyDynamicFieldData(i.children, {})];
+          newObject[camelCase(i.stringKey)] = [this.emptyDynamicFieldData(i.children, {})];
           break;
         case 'DynamicField':
-          newObject[i.stringKey] = defaultFieldValue[i.fieldType];
+          newObject[camelCase(i.stringKey)] = defaultFieldValue[i.fieldType];
           break;
         default:
           break;
@@ -101,21 +115,23 @@ class MetadataForm extends React.PureComponent {
 
   renderCategory(category) {
     const { displayLabel, children } = category;
-    const { dynamicFieldData } = this.state;
+    const { dynamicFieldData, defaultFieldData } = this.state;
 
     return (
-      <>
+      <div key={displayLabel}>
         <h4 className="text-orange text-center">{displayLabel}</h4>
         {
           children.map(c => (
             <FieldGroupArray
+              key={`array_${c.stringKey}`}
               dynamicFieldGroup={c}
-              value={dynamicFieldData[c.stringKey]}
-              onChange={v => this.onChange(c.stringKey, v)}
+              value={dynamicFieldData[camelCase(c.stringKey)]}
+              defaultValue={defaultFieldData[camelCase(c.stringKey)][0]}
+              onChange={v => this.onChange(camelCase(c.stringKey), v)}
             />
           ))
         }
-      </>
+      </div>
     );
   }
 

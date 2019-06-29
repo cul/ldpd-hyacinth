@@ -29,7 +29,7 @@ class DigitalObjectSummary extends React.Component {
         <dl className="row mb-0">
           <dt className="col-sm-3">Project(s)</dt>
           <dd className="col-sm-9">
-            { projects && projects.map(p => <span>{p.displayLabel}</span>) }
+            { projects && projects.map(p => <span key={p.stringKey}>{p.displayLabel}</span>) }
           </dd>
 
           <dt className="col-sm-3">UID</dt>

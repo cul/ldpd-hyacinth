@@ -30,6 +30,7 @@ export const digitalObject = {
   search: () => instance.get('/digital_objects/search'),
   get: id => instance.get(`/digital_objects/${id}`),
   create: data => instance.post('/digital_objects', data),
+  update: (id, data) => instance.patch(`/digital_objects/${id}`, data),
 };
 
 export const vocabulary = stringKey => ({
