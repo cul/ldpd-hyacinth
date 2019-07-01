@@ -2,12 +2,11 @@ import React from 'react';
 import { Card } from 'react-bootstrap';
 import produce from 'immer';
 
-import Label from '../../form/Label';
-import InputGroup from '../../form/InputGroup';
-import BooleanRadioButton from '../../form/inputs/BooleanRadioButtons';
-import DateInput from '../../form/inputs/DateInput';
-import ReadOnlyInput from '../../form/inputs/ReadOnlyInput';
-import YesNoSelect from '../../form/inputs/YesNoSelect';
+import Label from '../../../ui/forms/Label';
+import InputGroup from '../../../ui/forms/InputGroup';
+import DateInput from '../../../ui/forms/inputs/DateInput';
+import ReadOnlyInput from '../../../ui/forms/inputs/ReadOnlyInput';
+import YesNoSelect from '../../../ui/forms/inputs/YesNoSelect';
 
 class CopyrightStatus extends React.PureComponent {
   onChange(fieldName, fieldVal) {
@@ -29,7 +28,7 @@ class CopyrightStatus extends React.PureComponent {
           <Card.Title>{title || 'Copyright Status'}</Card.Title>
 
           <InputGroup>
-            <Label>Copyright Statement</Label>
+            <Label sm={4} align="right">Copyright Statement</Label>
             <ReadOnlyInput value={value.copyrightStatement} />
           </InputGroup>
 
@@ -37,14 +36,14 @@ class CopyrightStatus extends React.PureComponent {
             value.copyrightNote
               .map((t, i) => (
                 <InputGroup key={i}>
-                  <Label>Copyright Note</Label>
+                  <Label sm={4} align="right">Copyright Note</Label>
                   <ReadOnlyInput value={t} />
                 </InputGroup>
               ))
           }
 
           <InputGroup>
-            <Label>Copyright Registered?</Label>
+            <Label sm={4} align="right">Copyright Registered?</Label>
             <YesNoSelect
               value={value.copyrightRegistered}
               onChange={v => this.onChange('copyrightRegistered', v)}
@@ -52,7 +51,7 @@ class CopyrightStatus extends React.PureComponent {
           </InputGroup>
 
           <InputGroup>
-            <Label>Copyright Renewed?</Label>
+            <Label sm={4} align="right">Copyright Renewed?</Label>
             <YesNoSelect
               value={value.copyrightRenewed}
               onChange={v => this.onChange('copyrightRenewed', v)}
@@ -60,7 +59,7 @@ class CopyrightStatus extends React.PureComponent {
           </InputGroup>
 
           <InputGroup>
-            <Label>If Renewed, Date of Renewal</Label>
+            <Label sm={4} align="right">If Renewed, Date of Renewal</Label>
             <DateInput
               value={value.copyrightDateOfRenewal}
               onChange={v => this.onChange('copyrightDateOfRenewal', v)}
@@ -68,7 +67,7 @@ class CopyrightStatus extends React.PureComponent {
           </InputGroup>
 
           <InputGroup>
-            <Label>Copyright Expiration Date</Label>
+            <Label sm={4} align="right">Copyright Expiration Date</Label>
             <DateInput
               value={value.copyrightExpirationDate}
               onChange={v => this.onChange('copyrightExpirationDate', v)}
@@ -76,7 +75,7 @@ class CopyrightStatus extends React.PureComponent {
           </InputGroup>
 
           <InputGroup>
-            <Label>CUL Copyright Assessment Date</Label>
+            <Label sm={4} align="right">CUL Copyright Assessment Date</Label>
             <DateInput
               value={value.culCopyrightAssessmentDate}
               onChange={v => this.onChange('culCopyrightAssessmentDate', v)}

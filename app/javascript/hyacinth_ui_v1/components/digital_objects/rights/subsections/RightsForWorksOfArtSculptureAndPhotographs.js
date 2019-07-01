@@ -2,12 +2,12 @@ import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
 import produce from 'immer';
 
-import Label from '../../form/Label';
-import InputGroup from '../../form/InputGroup';
-import BooleanRadioButtons from '../../form/inputs/BooleanRadioButtons';
-import SelectInput from '../../form/inputs/SelectInput';
-import TextAreaInput from '../../form/inputs/TextAreaInput';
-import YesNoSelect from '../../form/inputs/YesNoSelect';
+import Label from '../../../ui/forms/Label';
+import InputGroup from '../../../ui/forms/InputGroup';
+import BooleanRadioButtons from '../../../ui/forms/inputs/BooleanRadioButtons';
+import SelectInput from '../../../ui/forms/inputs/SelectInput';
+import TextAreaInput from '../../../ui/forms/inputs/TextAreaInput';
+import YesNoSelect from '../../../ui/forms/inputs/YesNoSelect';
 
 const publicityRights = [
   'Written Release',
@@ -39,7 +39,7 @@ export default class RightsForWorksOfArtSculptureAndPhotographs extends React.Pu
           </Card.Title>
 
           <InputGroup>
-            <Label>
+            <Label sm={4} align="right">
               Are there other rights considerations for works of art, sculptures or photographs?
             </Label>
             <BooleanRadioButtons
@@ -51,7 +51,7 @@ export default class RightsForWorksOfArtSculptureAndPhotographs extends React.Pu
           <Collapse in={value.enabled}>
             <div>
               <InputGroup>
-                <Label>Are publicity rights present?</Label>
+                <Label sm={4} align="right">Are publicity rights present?</Label>
                 <BooleanRadioButtons
                   value={value.publicityRightsPresentEnabled}
                   onChange={v => this.onChange('publicityRightsPresentEnabled', v)}
@@ -61,7 +61,7 @@ export default class RightsForWorksOfArtSculptureAndPhotographs extends React.Pu
               <Collapse in={value.publicityRightsPresentEnabled}>
                 <div>
                   <InputGroup>
-                    <Label />
+                    <Label sm={4}/>
                     <SelectInput
                       value={value.publicityRightsPresent}
                       options={publicityRights.map(r => ({ label: r, value: r }))}
@@ -72,7 +72,7 @@ export default class RightsForWorksOfArtSculptureAndPhotographs extends React.Pu
               </Collapse>
 
               <InputGroup>
-                <Label>Are trademarks prominently visible?</Label>
+                <Label sm={4} align="right">Are trademarks prominently visible?</Label>
                 <YesNoSelect
                   value={value.trademarksProminentlyVisible}
                   onChange={v => this.onChange('trademarksProminentlyVisible', v)}
@@ -80,7 +80,7 @@ export default class RightsForWorksOfArtSculptureAndPhotographs extends React.Pu
               </InputGroup>
 
               <InputGroup>
-                <Label>Is material sensitive in nature?</Label>
+                <Label sm={4} align="right">Is material sensitive in nature?</Label>
                 <YesNoSelect
                   value={value.sensitiveInNature}
                   onChange={v => this.onChange('sensitiveInNature', v)}
@@ -88,7 +88,7 @@ export default class RightsForWorksOfArtSculptureAndPhotographs extends React.Pu
               </InputGroup>
 
               <InputGroup>
-                <Label>Are there privacy concerns?</Label>
+                <Label sm={4} align="right">Are there privacy concerns?</Label>
                 <YesNoSelect
                   value={value.privacyConcerns}
                   onChange={v => this.onChange('privacyConcerns', v)}
@@ -96,7 +96,7 @@ export default class RightsForWorksOfArtSculptureAndPhotographs extends React.Pu
               </InputGroup>
 
               <InputGroup>
-                <Label>Are children materially identifiable in work?</Label>
+                <Label sm={4} align="right">Are children materially identifiable in work?</Label>
                 <YesNoSelect
                   value={value.childrenMateriallyIdentifiableInWork}
                   onChange={v => this.onChange('childrenMateriallyIdentifiableInWork', v)}
@@ -104,7 +104,7 @@ export default class RightsForWorksOfArtSculptureAndPhotographs extends React.Pu
               </InputGroup>
 
               <InputGroup>
-                <Label>Are there VARA (Visual Artists Rights Act of 1990) rights concerns?</Label>
+                <Label sm={4} align="right">Are there VARA (Visual Artists Rights Act of 1990) rights concerns?</Label>
                 <YesNoSelect
                   value={value.varaRightsConcerns}
                   onChange={v => this.onChange('varaRightsConcerns', v)}
@@ -112,7 +112,7 @@ export default class RightsForWorksOfArtSculptureAndPhotographs extends React.Pu
               </InputGroup>
 
               <InputGroup>
-                <Label>
+                <Label sm={4} align="right">
                   If legal restrictions apply or require additional explanation, describe in a note
                 </Label>
                 <TextAreaInput value={value.note} onChange={v => this.onChange('note', v)} />

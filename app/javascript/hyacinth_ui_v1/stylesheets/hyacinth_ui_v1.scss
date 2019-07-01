@@ -31,13 +31,20 @@ nav.contextual-navbar {
 }
 
 @media (min-width: 576px) {
-  .digital-object-form-label {
+  .float-right-form-label {
     text-align: right
   }
 }
 
 .digital-object-interface {
   font-size: .9rem
+
+}
+
+.digital-object-interface {
+  .form-control {
+    @extend .form-control-sm;
+  }
 }
 
 // Reducing padding for Cards.

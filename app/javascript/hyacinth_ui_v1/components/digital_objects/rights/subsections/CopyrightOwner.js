@@ -2,11 +2,11 @@ import React from 'react';
 import { Card, Button } from 'react-bootstrap';
 import produce from 'immer';
 
-import InputGroup from '../../form/InputGroup';
-import Label from '../../form/Label';
-import TextAreaInput from '../../form/inputs/TextAreaInput';
-import ControlledVocabularySelect from '../../form/inputs/ControlledVocabularySelect';
-import TextInput from '../../form/inputs/TextInput';
+import InputGroup from '../../../ui/forms/InputGroup';
+import Label from '../../../ui/forms/Label';
+import TextAreaInput from '../../../ui/forms/inputs/TextAreaInput';
+import ControlledVocabularySelect from '../../../ui/forms/inputs/ControlledVocabularySelect';
+import TextInput from '../../../ui/forms/inputs/TextInput';
 
 export default class CopyrightOwner extends React.PureComponent {
   onFieldChange(fieldName, fieldVal) {
@@ -35,7 +35,7 @@ export default class CopyrightOwner extends React.PureComponent {
 
         <Card.Body>
           <InputGroup>
-            <Label>Name</Label>
+            <Label sm={4} align="right">Name</Label>
             <ControlledVocabularySelect
               vocabulary="name"
               value={value.name}
@@ -44,12 +44,12 @@ export default class CopyrightOwner extends React.PureComponent {
           </InputGroup>
 
           <InputGroup>
-            <Label>Heirs</Label>
+            <Label sm={4} align="right">Heirs</Label>
             <TextInput value={value.heirs} onChange={v => this.onFieldChange('heirs', v)} />
           </InputGroup>
 
           <InputGroup>
-            <Label>Contact information for Copyright Owner or Heirs</Label>
+            <Label sm={4} align="right">Contact information for Copyright Owner or Heirs</Label>
             <TextAreaInput
               value={value.contactInformation}
               onChange={v => this.onFieldChange('contactInformation', v)}

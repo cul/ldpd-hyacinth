@@ -2,13 +2,13 @@ import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
 import produce from 'immer';
 
-import Label from '../../form/Label';
-import InputGroup from '../../form/InputGroup';
-import BooleanRadioButton from '../../form/inputs/BooleanRadioButtons';
-import SelectInput from '../../form/inputs/SelectInput';
-import TextAreaInput from '../../form/inputs/TextAreaInput';
-import TextInput from '../../form/inputs/TextInput';
-import MultiSelectInput from '../../form/inputs/MultiSelectInput';
+import Label from '../../../ui/forms/Label';
+import InputGroup from '../../../ui/forms/InputGroup';
+import BooleanRadioButton from '../../../ui/forms/inputs/BooleanRadioButtons';
+import SelectInput from '../../../ui/forms/inputs/SelectInput';
+import TextAreaInput from '../../../ui/forms/inputs/TextAreaInput';
+import TextInput from '../../../ui/forms/inputs/TextInput';
+import MultiSelectInput from '../../../ui/forms/inputs/MultiSelectInput';
 
 const talentRights = [
   'SAG AFTRA',
@@ -60,7 +60,7 @@ class UnderlyingRights extends React.PureComponent {
           </Card.Title>
 
           <InputGroup>
-            <Label>
+            <Label sm={4} align="right">
               Does the work have underlying rights that are known
               and for which information is available?
             </Label>
@@ -75,7 +75,7 @@ class UnderlyingRights extends React.PureComponent {
           <Collapse in={value.enabled}>
             <div>
               <InputGroup>
-                <Label>Do we know specific underlying rights?</Label>
+                <Label sm={4} align="right">Do we know specific underlying rights?</Label>
                 <BooleanRadioButton
                   value={value.doWeKnowSpecificUnderlyingRightsEnabled}
                   onChange={v => this.onChange('doWeKnowSpecificUnderlyingRightsEnabled', v)}
@@ -85,7 +85,7 @@ class UnderlyingRights extends React.PureComponent {
               <Collapse in={value.doWeKnowSpecificUnderlyingRightsEnabled}>
                 <div>
                   <InputGroup>
-                    <Label>Are there music rights?</Label>
+                    <Label sm={4} align="right">Are there music rights?</Label>
                     <BooleanRadioButton
                       value={value.musicRightsEnabled}
                       onChange={v => this.onChange('musicRightsEnabled', v)}
@@ -95,7 +95,7 @@ class UnderlyingRights extends React.PureComponent {
                   <Collapse in={value.musicRightsEnabled}>
                     <div>
                       <InputGroup>
-                        <Label>Music licensed to Columbia?</Label>
+                        <Label sm={4} align="right">Music licensed to Columbia?</Label>
                         <BooleanRadioButton
                           value={value.musicLicensedToColumbiaEnabled}
                           onChange={v => this.onChange('musicLicensedToColumbiaEnabled', v)}
@@ -105,7 +105,7 @@ class UnderlyingRights extends React.PureComponent {
                       <Collapse in={value.musicLicensedToColumbiaEnabled}>
                         <div>
                           <InputGroup>
-                            <Label />
+                            <Label sm={4}/>
                             <SelectInput
                               value={value.columbiaMusicLicense}
                               onChange={v => this.onChange('columbiaMusicLicense', v)}
@@ -116,7 +116,7 @@ class UnderlyingRights extends React.PureComponent {
                       </Collapse>
 
                       <InputGroup>
-                        <Label>Composition [music publisher]</Label>
+                        <Label sm={4} align="right">Composition [music publisher]</Label>
                         <TextInput
                           value={value.composition}
                           onChange={v => this.onChange('composition', v)}
@@ -124,7 +124,7 @@ class UnderlyingRights extends React.PureComponent {
                       </InputGroup>
 
                       <InputGroup>
-                        <Label>Recording [record label]</Label>
+                        <Label sm={4} align="right">Recording [record label]</Label>
                         <TextInput
                           value={value.recording}
                           onChange={v => this.onChange('recording', v)}
@@ -134,7 +134,7 @@ class UnderlyingRights extends React.PureComponent {
                   </Collapse>
 
                   <InputGroup>
-                    <Label>If film/video produced commercially, talent rights</Label>
+                    <Label sm={4} align="right">If film/video produced commercially, talent rights</Label>
                     <SelectInput
                       value={value.talentRights}
                       onChange={v => this.onChange('talentRights', v)}
@@ -143,7 +143,7 @@ class UnderlyingRights extends React.PureComponent {
                   </InputGroup>
 
                   <InputGroup>
-                    <Label>Other Underlying Rights</Label>
+                    <Label sm={4} align="right">Other Underlying Rights</Label>
                     <MultiSelectInput
                       values={value.otherUnderlyingRights}
                       onChange={v => this.onChange('otherUnderlyingRights', v)}
@@ -152,7 +152,7 @@ class UnderlyingRights extends React.PureComponent {
                   </InputGroup>
 
                   <InputGroup>
-                    <Label>Other</Label>
+                    <Label sm={4} align="right">Other</Label>
                     <TextInput value={value.other} onChange={v => this.onChange('other', v)} />
                   </InputGroup>
                 </div>
@@ -161,7 +161,7 @@ class UnderlyingRights extends React.PureComponent {
               <Collapse in={!value.doWeKnowSpecificUnderlyingRightsEnabled}>
                 <div>
                   <InputGroup>
-                    <Label>Describe in a Note</Label>
+                    <Label sm={4} align="right">Describe in a Note</Label>
                     <TextAreaInput value={value.note} onChange={v => this.onChange('note', v)} />
                   </InputGroup>
                 </div>

@@ -5,9 +5,9 @@ import { Col, Form, Collapse } from 'react-bootstrap';
 
 import SubmitButton from '../../layout/forms/SubmitButton';
 import CancelButton from '../../layout/forms/CancelButton';
-import Label from '../form/Label';
-import InputGroup from '../form/InputGroup';
-import BooleanRadioButtons from '../form/inputs/BooleanRadioButtons';
+import Label from '../../ui/forms/Label';
+import InputGroup from '../../ui/forms/InputGroup';
+import BooleanRadioButtons from '../../ui/forms/inputs/BooleanRadioButtons';
 
 import DescriptiveMetadata from './subsections/DescriptiveMetadata';
 import CopyrightStatus from './subsections/CopyrightStatus';
@@ -157,7 +157,7 @@ class ItemRightsEdit extends React.Component {
           />
 
           <InputGroup>
-            <Label>Is there additional copyright or permissions information to record?</Label>
+            <Label sm={4} align="right">Is there additional copyright or permissions information to record?</Label>
             <BooleanRadioButtons
               value={additionalRightsToRecord.enabled}
               onChange={v => this.onChange('additionalRightsToRecord', { enabled: v })}

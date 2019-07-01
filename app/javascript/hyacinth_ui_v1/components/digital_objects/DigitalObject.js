@@ -3,8 +3,8 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import produce from 'immer';
 
 import { digitalObject } from '../../util/hyacinth_api';
-import Tab from '../layout/tabs/Tab';
-import Tabs from '../layout/tabs/Tabs';
+import Tab from '../ui/tabs/Tab';
+import Tabs from '../ui/tabs/Tabs';
 import ContextualNavbar from '../layout/ContextualNavbar';
 import DigitalObjectSummary from './DigitalObjectSummary';
 import MetadataForm from './metadata/MetadataForm';

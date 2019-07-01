@@ -4,13 +4,13 @@ import {
 } from 'react-bootstrap';
 import produce from 'immer';
 
-import Label from '../../form/Label';
-import InputGroup from '../../form/InputGroup';
-import BooleanRadioButtons from '../../form/inputs/BooleanRadioButtons';
-import TextInput from '../../form/inputs/TextInput';
-import DateInput from '../../form/inputs/DateInput';
-import MultiSelectInput from '../../form/inputs/MultiSelectInput';
-import Checkbox from '../../form/inputs/Checkbox';
+import Label from '../../../ui/forms/Label';
+import InputGroup from '../../../ui/forms/InputGroup';
+import BooleanRadioButtons from '../../../ui/forms/inputs/BooleanRadioButtons';
+import TextInput from '../../../ui/forms/inputs/TextInput';
+import DateInput from '../../../ui/forms/inputs/DateInput';
+import MultiSelectInput from '../../../ui/forms/inputs/MultiSelectInput';
+import Checkbox from '../../../ui/forms/inputs/Checkbox';
 
 const permissionsGrantedAsPartOfTheUseLicense = [
   'Reproduction',
@@ -66,7 +66,7 @@ class ContractualLimitationsRestrictionsAndPermissions extends React.PureCompone
           </Card.Title>
 
           <InputGroup>
-            <Label>
+            <Label sm={4} align="right">
               Are Contractual restrictions included as part of the Copyright Transfer or Use License?
             </Label>
             <BooleanRadioButtons
@@ -98,7 +98,7 @@ class ContractualLimitationsRestrictionsAndPermissions extends React.PureCompone
                   }
 
                   <InputGroup>
-                    <Label>Reproduction and Distribution Prohibited Until Date</Label>
+                    <Label sm={4} align="right">Reproduction and Distribution Prohibited Until Date</Label>
                     <DateInput
                       value={value.reproductionAndDistributionProhibitedUntil}
                       onChange={v => this.onChange('reproductionAndDistributionProhibitedUntil', v)}
@@ -106,7 +106,7 @@ class ContractualLimitationsRestrictionsAndPermissions extends React.PureCompone
                   </InputGroup>
 
                   <InputGroup>
-                    <Label>Photographic or film credit required [photo credit entered here]</Label>
+                    <Label sm={4} align="right">Photographic or film credit required [photo credit entered here]</Label>
                     <TextInput
                       value={value.photoGraphicOrFilmCredit}
                       onChange={v => this.onChange('photoGraphicOrFilmCredit', v)}
@@ -114,7 +114,7 @@ class ContractualLimitationsRestrictionsAndPermissions extends React.PureCompone
                   </InputGroup>
 
                   <InputGroup>
-                    <Label>Excerpts limited to [X] minutes</Label>
+                    <Label sm={4} align="right">Excerpts limited to [X] minutes</Label>
                     <TextInput
                       value={value.excerptLimitedTo}
                       onChange={v => this.onChange('excerptLimitedTo', v)}
@@ -122,7 +122,7 @@ class ContractualLimitationsRestrictionsAndPermissions extends React.PureCompone
                   </InputGroup>
 
                   <InputGroup>
-                    <Label>Other</Label>
+                    <Label sm={4} align="right">Other</Label>
                     <TextInput
                       value={value.other}
                       onChange={v => this.onChange('other', v)}
@@ -132,7 +132,7 @@ class ContractualLimitationsRestrictionsAndPermissions extends React.PureCompone
               </Row>
 
               <InputGroup>
-                <Label>Are permissions granted as part of the Use License?</Label>
+                <Label sm={4} align="right">Are permissions granted as part of the Use License?</Label>
                 <BooleanRadioButtons
                   value={value.permissionsGrantedAsPartOfTheUseLicenseEnabled}
                   onChange={v => this.onChange('permissionsGrantedAsPartOfTheUseLicenseEnabled', v)}
@@ -142,7 +142,7 @@ class ContractualLimitationsRestrictionsAndPermissions extends React.PureCompone
               <Collapse in={value.permissionsGrantedAsPartOfTheUseLicenseEnabled}>
                 <div>
                   <InputGroup>
-                    <Label />
+                    <Label sm={4}/>
                     <MultiSelectInput
                       values={value.permissionsGrantedAsPartOfTheUseLicense}
                       onChange={v => this.onChange('permissionsGrantedAsPartOfTheUseLicense', v)}

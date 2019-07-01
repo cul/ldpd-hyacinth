@@ -13,6 +13,10 @@ class YesNoSelect extends React.PureComponent {
   }
 }
 
+YesNoSelect.defaultProps = {
+  inputName: '',
+};
+
 YesNoSelect.propTypes = {
   inputName: PropTypes.string,
   onChange: PropTypes.func.isRequired,

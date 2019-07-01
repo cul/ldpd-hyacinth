@@ -6,10 +6,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Field from './Field';
 import FieldGroupArray from './FieldGroupArray';
-import AddButton from '../form/buttons/AddButton';
-import RemoveButton from '../form/buttons/RemoveButton';
-import UpArrowButton from '../form/buttons/UpArrowButton';
-import DownArrowButton from '../form/buttons/DownArrowButton';
+import AddButton from '../../ui/buttons/AddButton';
+import RemoveButton from '../../ui/buttons/RemoveButton';
+import UpArrowButton from '../../ui/buttons/UpArrowButton';
+import DownArrowButton from '../../ui/buttons/DownArrowButton';
 
 
 class FieldGroup extends React.Component {
