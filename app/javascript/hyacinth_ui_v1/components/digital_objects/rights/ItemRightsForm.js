@@ -18,7 +18,7 @@ import ContractualLimitationsRestrictionsAndPermissions from './subsections/Cont
 import RightsForWorksOfArtSculptureAndPhotographs from './subsections/RightsForWorksOfArtSculptureAndPhotographs';
 import UnderlyingRights from './subsections/UnderlyingRights';
 
-class ItemRightsEdit extends React.Component {
+class ItemRightsForm extends React.Component {
   state = {
     rights: {
       descriptiveMetadata: {
@@ -218,11 +218,11 @@ class ItemRightsEdit extends React.Component {
   }
 }
 
-ItemRightsEdit.propTypes = {
+ItemRightsForm.propTypes = {
   // dynamicFieldData: PropTypes.shape({
   //   title: PropTypes.shape({ titleSortPortion: PropTypes.string }),
   // }),
   data: PropTypes.any,
 };
 
-export default ItemRightsEdit;
+export default ItemRightsForm;

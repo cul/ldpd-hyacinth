@@ -24,6 +24,7 @@ export default class DigitalObject extends React.Component {
     digitalObject.get(id)
       .then((res) => {
         this.setState(produce((draft) => {
+          console.log('reloaded digital object data');
           draft.digitalObjectData = res.data.digitalObject;
         }));
       });
@@ -36,56 +37,57 @@ export default class DigitalObject extends React.Component {
 
     return (
       <>
-        { data && (
-          <div className="digital-object-interface">
-            <ContextualNavbar
-              title={`Item | ${(data) ? data.dynamicFieldData.title[0].titleSortPortion : ''}`}
-            />
+        {
+          data && (
+            <div className="digital-object-interface">
+              <ContextualNavbar
+                title={`Item | ${(data) ? data.dynamicFieldData.title[0].titleSortPortion : ''}`}
+              />
 
-            <DigitalObjectSummary data={data} />
+              <DigitalObjectSummary data={data} />
 
-            <Tabs>
-              <Tab to={`${url}/metadata`} name="Metadata" />
-              <Tab to={`${url}/rights`} name="Rights" />
+              <Tabs>
+                <Tab to={`${url}/metadata`} name="Metadata" />
+                <Tab to={`${url}/rights`} name="Rights" />
 
-              {
-                (data.digitalObjectType === 'item') && (
-                  <Tab to={`${url}/children`} name="Manage Child Assets" />
-                )
-              }
+                {
+                  (data.digitalObjectType === 'item') && (
+                    <Tab to={`${url}/children`} name="Manage Child Assets" />
+                  )
+                }
 
-              {
-                (data.digitalObjectType === 'asset') && (
-                  <Tab to={`${url}/parents`} name="Parents" />
-                )
-              }
+                {
+                  (data.digitalObjectType === 'asset') && (
+                    <Tab to={`${url}/parents`} name="Parents" />
+                  )
+                }
 
-              <Tab to={`${url}/assignment`} name="Assign This" />
-              <Tab to={`${url}/preserve_publish`} name="Preserve/Publish" />
-            </Tabs>
+                <Tab to={`${url}/assignment`} name="Assign This" />
+                <Tab to={`${url}/preserve_publish`} name="Preserve/Publish" />
+              </Tabs>
 
-            <TabBody>
-              <Switch>
-                <Route
-                  path="/digital_objects/:id/metadata"
-                  render={() => <MetadataForm data={data} formType="edit"/> }
-                />
+              <TabBody>
+                <Switch>
+                  <Route
+                    path="/digital_objects/:id/metadata"
+                    render={() => <MetadataForm data={data} formType="edit" />}
+                  />
 
-                <Route
-                  path="/digital_objects/:id/rights"
-                  render={() => <Rights data={data} />}
-                />
-                <Route
-                  path="/digital_objects/:id/children"
-                  render={() => <DigitalObjectChildren data={data} /> }
-                />
-                {/* <Route path="/digital_objects/:id/enabled_dynamic_fields" component={EnabledDynamicFields} /> */}
-                <Redirect exact from="/digital_objects/:id" to="/digital_objects/:id/metadata" />
-                <Route component={PageNotFound} />
-              </Switch>
-            </TabBody>
-          </div>
-        )}
+                  <Route
+                    path="/digital_objects/:id/rights"
+                    render={() => <Rights data={data} />}
+                  />
+                  <Route
+                    path="/digital_objects/:id/children"
+                    render={() => <DigitalObjectChildren data={data} />}
+                  />
+                  <Redirect exact from="/digital_objects/:id" to="/digital_objects/:id/metadata" />
+                  <Route component={PageNotFound} />
+                </Switch>
+              </TabBody>
+            </div>
+          )
+        }
       </>
     );
   }

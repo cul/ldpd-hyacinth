@@ -6,7 +6,7 @@ import PageNotFound from '../layout/PageNotFound';
 import DigitalObjectSearch from './DigitalObjectSearch';
 import DigitalObjectNew from './DigitalObjectNew';
 import DigitalObject from './DigitalObject';
-import ItemRightsEdit from './rights/ItemRightsEdit';
+import ItemRightsForm from './rights/ItemRightsForm';
 import AssetRightsEdit from './rights/AssetRightsEdit';
 import AggregatorNew from './new/AggregatorNew';
 import { cul_q83bk3jc9s, cul_vdncjsxn7t, cul_bnzs7h45zq } from './mock/dynamicFieldData';
@@ -22,7 +22,7 @@ export default class DigitalObjects extends React.PureComponent {
             exact
             path="/digital_objects/cul_q83bk3jc9s/rights/edit"
             render={() => (
-              <ItemRightsEdit
+              <ItemRightsForm
                 id="cul:q83bk3jc9s"
                 key="cul:q83bk3jc9s"
                 dynamicFieldData={cul_q83bk3jc9s}
@@ -34,7 +34,7 @@ export default class DigitalObjects extends React.PureComponent {
             exact
             path="/digital_objects/cul_vdncjsxn7t/rights/edit"
             render={() => (
-              <ItemRightsEdit
+              <ItemRightsForm
                 id="cul:vdncjsxn7t"
                 key="cul:vdncjsxn7t"
                 dynamicFieldData={cul_vdncjsxn7t}
@@ -46,7 +46,7 @@ export default class DigitalObjects extends React.PureComponent {
             exact
             path="/digital_objects/cul_bnzs7h45zq/rights/edit"
             render={() => (
-              <ItemRightsEdit
+              <ItemRightsForm
                 id="cul:bnzs7h45zq"
                 key="cul:bnzs7h45zq"
                 dynamicFieldData={cul_bnzs7h45zq}

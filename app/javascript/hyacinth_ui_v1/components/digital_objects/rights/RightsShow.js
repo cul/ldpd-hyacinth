@@ -1,17 +1,20 @@
 import React from 'react';
 
-import ContextualNavbar from '../../layout/ContextualNavbar';
+import TabHeading from '../../ui/tabs/TabHeading';
+import EditButton from '../../ui/buttons/EditButton';
 
-export default class RightsShow extends React.Component {
+export default class RightsShow extends React.PureComponent {
 
-  render(){
-    return(
-      <ContextualNavbar
-        title="Item Rights"
-        rightHandLinks={[
-          { link: `/digital_objects/${this.props.match.params.id}/rights/edit`, label: 'Edit' },
-        ]}
-      />
-    )
+  render() {
+    return (
+      <TabHeading>
+        Rights
+        <EditButton
+          className="float-right"
+          size="lg"
+          link={`/digital_objects/${this.props.match.params.id}/rights/edit`}
+        />
+      </TabHeading>
+    );
   }
 }

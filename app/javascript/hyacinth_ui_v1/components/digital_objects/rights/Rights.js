@@ -2,24 +2,31 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 import PageNotFound from '../../layout/PageNotFound';
-import RightsEdit from './RightsEdit';
 import RightsShow from './RightsShow';
+import ItemRightsForm from './ItemRightsForm';
 
 export default class Rights extends React.PureComponent {
   render() {
-    const { data } = this.props;
+    const { data, data: { digitalObjectType } } = this.props;
 
     return (
-      <div>
-        <Switch>
+      <Switch>
+        <Route exact path="/digital_objects/:id/rights" component={RightsShow} />
+        <Route
+          path="/digital_objects/:id/rights/edit"
+          render={() => {
+            switch (digitalObjectType) {
+              case 'item':
+                return <ItemRightsForm data={data} />;
+              default:
+                return '';
+            }
+          }}
+        />
 
-          <Route exact path="/digital_objects/:id/rights" component={RightsShow} />
-          <Route path="/digital_objects/:id/rights/edit" render={props => <RightsEdit data={data} />} />
-
-          { /* When none of the above match, <PageNotFound> will be rendered */ }
-          <Route component={PageNotFound} />
-        </Switch>
-      </div>
+        { /* When none of the above match, <PageNotFound> will be rendered */ }
+        <Route component={PageNotFound} />
+      </Switch>
     );
   }
 }
