@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ProjectSubHeading from '../../../hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
+import TabHeading from '../../ui/tabs/TabHeading';
 import FieldSetForm from './FieldSetForm';
 
 class FieldSetNew extends React.PureComponent {
@@ -9,7 +9,7 @@ class FieldSetNew extends React.PureComponent {
 
     return (
       <>
-        <ProjectSubHeading>Create New Field Set</ProjectSubHeading>
+        <TabHeading>Create New Field Set</TabHeading>
         <FieldSetForm formType="new" projectStringKey={projectStringKey} />
       </>
     );

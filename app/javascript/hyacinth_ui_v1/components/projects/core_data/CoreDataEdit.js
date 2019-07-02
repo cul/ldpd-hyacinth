@@ -4,7 +4,7 @@ import {
 } from 'react-bootstrap';
 import produce from 'immer';
 
-import ProjectSubHeading from '../../../hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
+import TabHeading from '../../ui/tabs/TabHeading';
 import CancelButton from '../../layout/forms/CancelButton';
 import SubmitButton from '../../layout/forms/SubmitButton';
 import hyacinthApi from '../../../util/hyacinth_api';
@@ -61,7 +61,7 @@ class CoreDataEdit extends React.Component {
     const { project: { stringKey, displayLabel, projectUrl } } = this.state;
     return (
       <>
-        <ProjectSubHeading>Editing Core Data</ProjectSubHeading>
+        <TabHeading>Editing Core Data</TabHeading>
 
         <Form as={Col} onSubmit={this.onSubmitHandler}>
           <Form.Group as={Row}>

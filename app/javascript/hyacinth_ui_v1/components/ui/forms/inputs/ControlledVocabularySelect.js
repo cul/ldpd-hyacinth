@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Col, Button, Dropdown } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Col, Dropdown } from 'react-bootstrap';
 
 import ControlledVocabularyMenu from './ControlledVocabularyMenu';
+import RemoveButton from '../../buttons/RemoveButton';
 
 class ControlledVocabularySelect extends React.PureComponent {
   render() {
@@ -20,14 +20,7 @@ class ControlledVocabularySelect extends React.PureComponent {
 
           {
             value && value.prefLabel && (
-              <Button
-                variant="danger"
-                size="sm"
-                style={{ padding: '0.05rem 0.35rem', marginLeft: '.25rem' }}
-                onClick={() => onChange({})}
-              >
-                <FontAwesomeIcon icon="times" />
-              </Button>
+              <RemoveButton onClick={() => onChange({})} />
             )
           }
 

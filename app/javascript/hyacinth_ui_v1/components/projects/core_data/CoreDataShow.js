@@ -3,7 +3,7 @@ import { Row, Col, Button } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import produce from 'immer';
 
-import ProjectSubHeading from '../../../hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
+import TabHeading from '../../ui/tabs/TabHeading';
 import hyacinthApi from '../../../util/hyacinth_api';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import { Can } from '../../../util/ability_context';
@@ -35,7 +35,7 @@ class CoreDataShow extends React.Component {
 
     return (
       <>
-        <ProjectSubHeading>Core Data</ProjectSubHeading>
+        <TabHeading>Core Data</TabHeading>
 
         <Row as="dl">
           <Col as="dt" sm={2}>String Key</Col>

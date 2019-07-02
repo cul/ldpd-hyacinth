@@ -5,7 +5,7 @@ import produce from 'immer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LinkContainer } from 'react-router-bootstrap';
 
-import ProjectSubHeading from '../../../hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
+import TabHeading from '../../ui/tabs/TabHeading';
 import hyacinthApi from '../../../util/hyacinth_api';
 import { Can } from '../../../util/ability_context';
 
@@ -50,7 +50,7 @@ export default class FieldSetIndex extends React.Component {
 
     return (
       <>
-        <ProjectSubHeading>Publish Targets</ProjectSubHeading>
+        <TabHeading>Publish Targets</TabHeading>
 
         <Table hover>
           <thead>

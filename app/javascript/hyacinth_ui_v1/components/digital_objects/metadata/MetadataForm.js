@@ -3,6 +3,7 @@ import produce from 'immer';
 import axios from 'axios';
 import { merge, camelCase } from 'lodash';
 import { Form, Col } from 'react-bootstrap';
+import { withRouter } from 'react-router-dom';
 
 import hyacinthApi, {
   enabledDynamicFields, dynamicFieldCategories, digitalObject,
@@ -11,7 +12,6 @@ import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import SubmitButton from '../../layout/forms/SubmitButton';
 import CancelButton from '../../layout/forms/CancelButton';
 import FieldGroupArray from './FieldGroupArray';
-
 
 const defaultFieldValue = {
   string: '',
@@ -25,6 +25,7 @@ const defaultFieldValue = {
 
 class MetadataForm extends React.PureComponent {
   state = {
+    formType: 'edit',
     uid: '',
     dynamicFields: [],
     dynamicFieldData: {},
@@ -32,7 +33,7 @@ class MetadataForm extends React.PureComponent {
   }
 
   componentDidMount = () => {
-    const { data: { uid, dynamicFieldData }, projects, digitalObjectType } = this.props;
+    const { data: { uid, dynamicFieldData, projects, digitalObjectType }, formType } = this.props;
     // this.setState(produce((draft) => {
     //   draft.digitalObject.digitalObjectDataJson.projects[0].stringKey = project;
     //   draft.digitalObject.digitalObjectDataJson.digitalObjectType = digitalObjectType;
@@ -59,6 +60,7 @@ class MetadataForm extends React.PureComponent {
 
       this.setState(produce((draft) => {
         draft.uid = uid;
+        draft.formType = formType;
         draft.dynamicFields = dynamicFields;
         draft.defaultFieldData = emptyData;
         draft.dynamicFieldData = merge({}, emptyData, dynamicFieldData);
@@ -73,13 +75,23 @@ class MetadataForm extends React.PureComponent {
   }
 
   onSubmitHandler = () => {
-    const { dynamicFieldData, uid } = this.state;
-    digitalObject.update(
-      uid,
-      { digitalObject: { digitalObjectDataJson: { dynamicFieldData } } }
-    ).then((res) => {
-      console.log(res.data);
-    });
+    const { dynamicFieldData, uid, formType } = this.state;
+    const { history: { push } } = this.props;
+
+    if (formType === 'edit') {
+      digitalObject.update(
+        uid,
+        { digitalObject: { digitalObjectDataJson: { dynamicFieldData } } },
+      ).then(res => push(`/digital_objects/${res.data.digitalObject.uid}`));
+    } else if (formType === 'new') {
+      const { data } = this.props;
+
+      digitalObject.create({
+        digitalObject: {
+          digitalObjectDataJson: { ...data, dynamicFieldData },
+        },
+      }).then(res => push(`/digital_objects/${res.data.digitalObject.uid}`));
+    }
   }
 
   emptyDynamicFieldData(dynamicFields, newObject) {
@@ -136,7 +148,7 @@ class MetadataForm extends React.PureComponent {
   }
 
   render() {
-    const { dynamicFields } = this.state;
+    const { dynamicFields, formType } = this.state;
 
     return (
       <>
@@ -148,7 +160,7 @@ class MetadataForm extends React.PureComponent {
           </Col>
 
           <Col sm="auto" className="ml-auto">
-            <SubmitButton formType="edit" onClick={this.onSubmitHandler} />
+            <SubmitButton formType={formType} onClick={this.onSubmitHandler} />
           </Col>
         </Form.Row>
       </>
@@ -156,4 +168,4 @@ class MetadataForm extends React.PureComponent {
   }
 }
 
-export default withErrorHandler(MetadataForm, hyacinthApi);
+export default withErrorHandler(withRouter(MetadataForm), hyacinthApi);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { startCase } from 'lodash';
 
-import ProjectSubHeading from '../../../hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
+import TabHeading from '../../ui/tabs/TabHeading';
 import EnabledDynamicFieldForm from './EnabledDynamicFieldForm';
 
 export default class EnabledDynamicFieldsEdit extends React.PureComponent {
@@ -10,7 +10,7 @@ export default class EnabledDynamicFieldsEdit extends React.PureComponent {
 
     return (
       <>
-        <ProjectSubHeading>{`Edit Enabled Dynamic Fields for ${startCase(digitalObjectType)}`}</ProjectSubHeading>
+        <TabHeading>{`Edit Enabled Dynamic Fields for ${startCase(digitalObjectType)}`}</TabHeading>
         <EnabledDynamicFieldForm
           formType="edit"
           projectStringKey={projectStringKey}

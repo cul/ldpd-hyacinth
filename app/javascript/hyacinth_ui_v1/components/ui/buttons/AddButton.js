@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class AddButton extends React.PureComponent {
   render() {
-    const { onClick } = this.props;
+    const { onClick, children, ...rest } = this.props;
 
     return (
       <Button
@@ -13,8 +13,10 @@ class AddButton extends React.PureComponent {
         size="sm"
         style={{ padding: '0.05rem 0.35rem', marginLeft: '.25rem' }}
         onClick={onClick}
+        {...rest}
       >
         <FontAwesomeIcon icon="plus" />
+        {children}
       </Button>
     );
   }

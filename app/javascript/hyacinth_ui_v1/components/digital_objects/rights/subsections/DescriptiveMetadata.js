@@ -46,6 +46,7 @@ class DescriptiveMetadata extends React.PureComponent {
           <InputGroup>
             <Label sm={4} align="right">Type of Content Subject to Copyright</Label>
             <SelectInput
+              sm={8}
               value={value.typeOfContent}
               options={typeOfContent}
               onChange={v => this.onChange('typeOfContent', v)}

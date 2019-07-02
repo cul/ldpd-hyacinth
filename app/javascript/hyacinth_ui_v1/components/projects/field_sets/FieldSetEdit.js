@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ProjectSubHeading from '../../../hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
+import TabHeading from '../../ui/tabs/TabHeading';
 import FieldSetForm from './FieldSetForm';
 
 class FieldSetEdit extends React.PureComponent {
@@ -9,7 +9,7 @@ class FieldSetEdit extends React.PureComponent {
 
     return (
       <>
-        <ProjectSubHeading>Edit Field Set</ProjectSubHeading>
+        <TabHeading>Edit Field Set</TabHeading>
         <FieldSetForm formType="edit" projectStringKey={projectStringKey} id={id} key={id} />
       </>
     );

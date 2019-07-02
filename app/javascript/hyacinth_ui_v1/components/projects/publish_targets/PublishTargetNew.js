@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import ProjectSubHeading from '../../../hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
+import TabHeading from '../../ui/tabs/TabHeading';
 import hyacinthApi from '../../../util/hyacinth_api';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import PublishTargetForm from './PublishTargetForm';
@@ -11,7 +11,7 @@ class PublishTargetNew extends React.PureComponent {
     const { match: { params: { projectStringKey, stringKey } } } = this.props;
     return (
       <>
-        <ProjectSubHeading>Create New Publish Target</ProjectSubHeading>
+        <TabHeading>Create New Publish Target</TabHeading>
         <PublishTargetForm formType="new" projectStringKey={projectStringKey} stringKey={stringKey} />
       </>
     );

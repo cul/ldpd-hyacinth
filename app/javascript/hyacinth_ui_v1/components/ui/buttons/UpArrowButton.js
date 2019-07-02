@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class UpArrowButton extends React.PureComponent {
   render() {
-    const { onClick } = this.props;
+    const { onClick, ...rest } = this.props;
 
     return (
       <Button
@@ -13,6 +13,7 @@ class UpArrowButton extends React.PureComponent {
         size="sm"
         style={{ padding: '0.05rem 0.35rem', marginLeft: '.25rem' }}
         onClick={onClick}
+        {...rest}
       >
         <FontAwesomeIcon icon="caret-up" size="lg" />
       </Button>

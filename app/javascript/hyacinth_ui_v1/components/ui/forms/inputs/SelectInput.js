@@ -16,13 +16,12 @@ class SelectInput extends React.PureComponent {
     } = this.props;
 
     return (
-      <Col sm={8} style={{ alignSelf: 'center' }} {...rest}>
+      <Col sm={10} style={{ alignSelf: 'center' }} {...rest}>
         <Form.Control
           as="select"
           name={inputName}
           value={value}
           onChange={this.onChangeHandler}
-          size="sm"
         >
           <option value="">Select one...</option>
           {

@@ -5,6 +5,7 @@ import produce from 'immer';
 import { digitalObject } from '../../util/hyacinth_api';
 import Tab from '../ui/tabs/Tab';
 import Tabs from '../ui/tabs/Tabs';
+import TabBody from '../ui/tabs/TabBody';
 import ContextualNavbar from '../layout/ContextualNavbar';
 import DigitalObjectSummary from './DigitalObjectSummary';
 import MetadataForm from './metadata/MetadataForm';
@@ -63,17 +64,11 @@ export default class DigitalObject extends React.Component {
               <Tab to={`${url}/preserve_publish`} name="Preserve/Publish" />
             </Tabs>
 
-            <div className="m-3">
+            <TabBody>
               <Switch>
                 <Route
                   path="/digital_objects/:id/metadata"
-                  render={() => (
-                    <MetadataForm
-                      data={data}
-                      projects={data.projects}
-                      digitalObjectType={data.digitalObjectType}
-                    />
-                  )}
+                  render={() => <MetadataForm data={data} formType="edit"/> }
                 />
 
                 <Route
@@ -88,7 +83,7 @@ export default class DigitalObject extends React.Component {
                 <Redirect exact from="/digital_objects/:id" to="/digital_objects/:id/metadata" />
                 <Route component={PageNotFound} />
               </Switch>
-            </div>
+            </TabBody>
           </div>
         )}
       </>

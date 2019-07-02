@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { startCase } from 'lodash';
 
-import ProjectSubHeading from '../../../hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
+import TabHeading from '../../ui/tabs/TabHeading';
 import EnabledDynamicFieldForm from './EnabledDynamicFieldForm';
 import { Can } from '../../../util/ability_context';
 
@@ -13,7 +13,7 @@ export default class EnabledDynamicFieldShow extends React.PureComponent {
 
     return (
       <>
-        <ProjectSubHeading>
+        <TabHeading>
           {`Enabled Dynamic Fields for ${startCase(digitalObjectType)}`}
           {'  '}
           <Can I="manage" of={{ subjectType: 'Project', projectStringKey }}>
@@ -21,7 +21,7 @@ export default class EnabledDynamicFieldShow extends React.PureComponent {
               <FontAwesomeIcon icon="pen" />
             </Link>
           </Can>
-        </ProjectSubHeading>
+        </TabHeading>
 
         <EnabledDynamicFieldForm
           formType="show"

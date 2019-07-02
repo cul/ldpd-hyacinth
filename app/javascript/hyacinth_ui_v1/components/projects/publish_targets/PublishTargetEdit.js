@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ProjectSubHeading from '../../../hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
+import TabHeading from '../../ui/tabs/TabHeading';
 import PublishTargetForm from './PublishTargetForm';
 
 class PublishTargetEdit extends React.PureComponent {
@@ -9,7 +9,7 @@ class PublishTargetEdit extends React.PureComponent {
 
     return (
       <>
-        <ProjectSubHeading>Edit Publish Target</ProjectSubHeading>
+        <TabHeading>Edit Publish Target</TabHeading>
         <PublishTargetForm formType="edit" projectStringKey={projectStringKey} stringKey={stringKey} />
       </>
     );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Button } from 'react-bootstrap';
+import { Card } from 'react-bootstrap';
 import produce from 'immer';
 
 import InputGroup from '../../../ui/forms/InputGroup';
@@ -7,6 +7,8 @@ import Label from '../../../ui/forms/Label';
 import TextAreaInput from '../../../ui/forms/inputs/TextAreaInput';
 import ControlledVocabularySelect from '../../../ui/forms/inputs/ControlledVocabularySelect';
 import TextInput from '../../../ui/forms/inputs/TextInput';
+import RemoveButton from '../../../ui/buttons/RemoveButton';
+import AddButton from '../../../ui/buttons/AddButton';
 
 export default class CopyrightOwner extends React.PureComponent {
   onFieldChange(fieldName, fieldVal) {
@@ -20,16 +22,18 @@ export default class CopyrightOwner extends React.PureComponent {
   }
 
   render() {
-    const { value, index, onRemove } = this.props;
+    const {
+      value, index, onRemove, onAdd
+    } = this.props;
 
     return (
       <Card className="mb-3">
         <Card.Header>
           {`Copyright Owner ${index + 1}`}
+
           <span className="float-right">
-            <Button variant="danger" size="sm" onClick={onRemove}>
-              Remove
-            </Button>
+            <RemoveButton onClick={onRemove} />
+            <AddButton onClick={onAdd} />
           </span>
         </Card.Header>
 

@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-  Row, Col, Card, Button, Collapse,
-} from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Card, Collapse } from 'react-bootstrap';
 import produce from 'immer';
 
 import CopyrightOwner from './CopyrightOwner';
@@ -31,13 +28,11 @@ export default class CopyrightOwnership extends React.Component {
     onChange(nextValue);
   }
 
-  addCopyrightOwner = () => {
+  addCopyrightOwner = (index) => {
     const { value, onChange } = this.props;
 
     const nextValue = produce(value, (draft) => {
-      draft.copyrightOwners.push(
-        { name: '', heirs: '', contactInformation: '' }
-      );
+      draft.copyrightOwners.splice(index + 1, 0, { name: {}, heirs: '', contactInformation: '' })
     });
 
     onChange(nextValue);
@@ -78,17 +73,10 @@ export default class CopyrightOwnership extends React.Component {
                     value={copyrightOwner}
                     onChange={v => this.onCopyrightOwnerChange(index, v)}
                     onRemove={() => this.removeCopyrightOwner(index)}
+                    onAdd={() => this.addCopyrightOwner(index)}
                   />
                 ))
               }
-              <Row>
-                <Col className="text-center">
-                  <Button variant="success" size="sm" onClick={this.addCopyrightOwner}>
-                    <FontAwesomeIcon icon="plus" />
-                    Add Copyright Owner
-                  </Button>
-                </Col>
-              </Row>
             </div>
           </Collapse>
         </Card.Body>

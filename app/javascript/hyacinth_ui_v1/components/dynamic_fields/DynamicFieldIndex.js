@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ContextualNavbar from '../layout/ContextualNavbar';
 import hyacinthApi from '../../util/hyacinth_api';
 import DynamicFieldsAndGroupsTable from '../layout/dynamic_fields/DynamicFieldsAndGroupsTable';
+import EditButton from '../ui/buttons/EditButton';
 
 export default class DynamicFieldIndex extends React.Component {
   state = {
@@ -14,6 +15,10 @@ export default class DynamicFieldIndex extends React.Component {
   }
 
   componentDidMount() {
+    this.getDynamicFieldCategories();
+  }
+
+  getDynamicFieldCategories = () => {
     hyacinthApi.get('/dynamic_field_categories')
       .then((res) => {
         this.setState(produce((draft) => {
@@ -31,14 +36,16 @@ export default class DynamicFieldIndex extends React.Component {
 
         return (
           <Card className="mb-3" key={id} id={displayLabel.replace(' ', '-')}>
-            <Card.Header as="h5">
+            <Card.Header as="h5" className="text-center">
+              <span className="badge badge-secondary float-left">Category</span>
               {displayLabel}
-              {' '}
-              <Link to={`/dynamic_field_categories/${id}/edit`}><FontAwesomeIcon icon="pen" /></Link>
-              <span className="badge badge-secondary float-right">Category</span>
+              <EditButton className="float-right" link={`/dynamic_field_categories/${id}/edit`} />
             </Card.Header>
             <Card.Body>
-              <DynamicFieldsAndGroupsTable rows={children} />
+              <DynamicFieldsAndGroupsTable
+                rows={children}
+                onChange={this.getDynamicFieldCategories}
+              />
 
               <Card.Text className="text-center">
                 <Link

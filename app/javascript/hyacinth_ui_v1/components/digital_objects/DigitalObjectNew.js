@@ -1,14 +1,14 @@
 import React from 'react';
 import produce from 'immer';
-import {
-  Row, Col, Form, Button, Collapse,
-} from 'react-bootstrap';
+import { Col, Form, Collapse } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
-
 
 import ContextualNavbar from '../layout/ContextualNavbar';
 import SubmitButton from '../layout/forms/SubmitButton';
-import SelectInput from '../layout/forms/SelectInput';
+import SelectInput from '../ui/forms/inputs/SelectInput';
+import Label from '../ui/forms/Label';
+import InputGroup from '../ui/forms/InputGroup';
+
 import hyacinthApi from '../../util/hyacinth_api';
 import ability from '../../util/ability';
 
@@ -92,32 +92,30 @@ class DigitalObjectNew extends React.Component {
           rightHandLinks={[{ link: '/digital_objects', label: 'Back to Digital Objects' }]}
         />
 
-        <Form>
-          <Form.Group as={Row} className="mb-1">
-            <Form.Label column sm={3}>Project</Form.Label>
-            <Col sm={9} style={{ alignSelf: 'center' }}>
-              <SelectInput
-                name="project"
-                value={projects[0].stringKey}
-                onChange={this.onProjectChangeHandler}
-                options={projectOptions}
-              />
-            </Col>
-          </Form.Group>
+        <Form className="m-3">
+          <InputGroup>
+            <Label sm={3}>Project</Label>
+            <SelectInput
+              sm={9}
+              name="project"
+              value={projects[0].stringKey}
+              onChange={v => this.onProjectChangeHandler('project', v)}
+              options={projectOptions}
+            />
+          </InputGroup>
 
           <Collapse in={projects[0].stringKey !== ''}>
             <div>
-              <Form.Group as={Row} className="mb-1">
-                <Form.Label column sm={3}>Digital Object Type</Form.Label>
-                <Col sm={9} style={{ alignSelf: 'center' }}>
-                  <SelectInput
-                    name="digitalObjectType"
-                    value={digitalObjectType}
-                    onChange={this.onDigitalObjectTypeChangeHandler}
-                    options={digitalObjectTypeOptions}
-                  />
-                </Col>
-              </Form.Group>
+              <InputGroup>
+                <Label sm={3}>Digital Object Type</Label>
+                <SelectInput
+                  sm={9}
+                  inputName="digitalObjectType"
+                  value={digitalObjectType}
+                  onChange={v => this.onDigitalObjectTypeChangeHandler('digitalObjectType', v)}
+                  options={digitalObjectTypeOptions}
+                />
+              </InputGroup>
 
               <Collapse in={digitalObjectType !== ''}>
                 <div>
