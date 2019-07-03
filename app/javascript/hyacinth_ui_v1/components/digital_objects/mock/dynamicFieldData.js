@@ -163,12 +163,12 @@ export const cul_vdncjsxn7t = {
       nameRole: [
         {
           nameRoleTerm: {
-            uri: 'http://id.loc.gov/vocabulary/relators/aut',
-            prefLabel: 'Author',
+            uri: 'http://id.loc.gov/vocabulary/relators/pht',
+            prefLabel: 'Photographer',
             type: 'external',
             authority: 'marcrelator',
             vocabularyStringKey: 'name_role',
-            internalId: 968,
+            internalId: 195434,
           },
         },
       ],
@@ -210,7 +210,7 @@ export const cul_bnzs7h45zq = {
         type: 'external',
         authority: 'aat',
         vocabularyStringKey: 'form',
-        internalDd: 37,
+        internalId: 37,
       },
     },
   ],
@@ -244,18 +244,6 @@ export const cul_bnzs7h45zq = {
   ],
   name: [
     {
-      nameRole: [
-        {
-          nameRoleTerm: {
-            uri: 'http://id.loc.gov/vocabulary/relators/pro',
-            prefLabel: 'Producer',
-            type: 'external',
-            authority: 'marcrelator',
-            vocabularyStringKey: 'name_role',
-            internalId: 195473,
-          },
-        },
-      ],
       nameTerm: {
         uri: 'http://id.loc.gov/authorities/names/n78060458',
         prefLabel: 'ABC News',
@@ -265,21 +253,20 @@ export const cul_bnzs7h45zq = {
         internalId: 930033,
         nameType: 'corporate',
       },
-      nameUsagePrimary: true,
-    },
-    {
       nameRole: [
         {
           nameRoleTerm: {
-            uri: 'http://id.loc.gov/vocabulary/relators/hst',
-            prefLabel: 'Host',
+            uri: 'http://id.loc.gov/vocabulary/relators/brd',
+            prefLabel: 'Broadcaster',
             type: 'external',
             authority: 'marcrelator',
             vocabularyStringKey: 'name_role',
-            internalId: 981744,
+            internalId: 982082,
           },
         },
       ],
+    },
+    {
       nameTerm: {
         uri: 'http://id.loc.gov/authorities/names/no2009162748',
         prefLabel: 'Ross, Brian, 1948-',
@@ -289,6 +276,18 @@ export const cul_bnzs7h45zq = {
         internalId: 981859,
         nameType: 'personal',
       },
+      nameRole: [
+        {
+          nameRoleTerm: {
+            uri: 'http://id.loc.gov/vocabulary/relators/spk',
+            prefLabel: 'Speaker',
+            type: 'external',
+            authority: 'marcrelator',
+            vocabularyStringKey: 'name_role',
+            internalId: 195469,
+          },
+        },
+      ],
     },
   ],
 };
