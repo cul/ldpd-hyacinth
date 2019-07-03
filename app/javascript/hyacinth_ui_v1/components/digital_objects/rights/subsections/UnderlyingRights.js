@@ -136,6 +136,7 @@ class UnderlyingRights extends React.PureComponent {
                   <InputGroup>
                     <Label sm={4} align="right">If film/video produced commercially, talent rights</Label>
                     <SelectInput
+                      sm={8}
                       value={value.talentRights}
                       onChange={v => this.onChange('talentRights', v)}
                       options={talentRights.map(i => ({ value: i, label: i }))}

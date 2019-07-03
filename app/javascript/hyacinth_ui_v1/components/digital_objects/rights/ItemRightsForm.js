@@ -144,7 +144,7 @@ class ItemRightsForm extends React.Component {
 
     return (
       <>
-        <Form className="mb-3" key={id}>
+        <Form className="mb-3" key={id} className="digital-object-interface">
           <DescriptiveMetadata
             dynamicFieldData={data ? data.dynamicFieldData : {}}
             value={descriptiveMetadata}

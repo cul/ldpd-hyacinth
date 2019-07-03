@@ -19,7 +19,7 @@ export const cul_q83bk3jc9s = {
     {
       formTerm: {
         uri: 'http://id.loc.gov/authorities/genreForms/gf2011026431',
-        value: 'oral histories',
+        prefLabel: 'oral histories',
         type: 'external',
         authority: 'lcgft',
         vocabularyStringKey: 'form',
@@ -31,7 +31,7 @@ export const cul_q83bk3jc9s = {
     {
       genreTerm: {
         uri: 'http://id.loc.gov/authorities/genreForms/gf2014026115',
-        value: 'Interviews',
+        prefLabel: 'Interviews',
         type: 'external',
         authority: 'lcfgt',
         vocabularyStringKey: 'genre',
@@ -43,7 +43,7 @@ export const cul_q83bk3jc9s = {
     {
       nameTerm: {
         uri: 'temp:85ce695552b0a1e0594db04ed0b0e7f08e401cb9c775a781e4b8b8b66c4a4f4b',
-        value: 'Pifer, Alan J.',
+        prefLabel: 'Pifer, Alan J.',
         type: 'temporary',
         vocabularyStringKey: 'name',
         internalId: 1062510,
@@ -53,7 +53,7 @@ export const cul_q83bk3jc9s = {
         {
           nameRoleTerm: {
             uri: 'temp:926e00e7eadbadb2ddf250aab3cabbb78b3b26db2be957200a0ea8a180ab29ee',
-            value: 'interviewee',
+            prefLabel: 'interviewee',
             type: 'temporary',
             vocabularyStringKey: 'name_role',
             internalId: 999282,
@@ -65,7 +65,7 @@ export const cul_q83bk3jc9s = {
     {
       nameTerm: {
         uri: 'temp:ebe50ac65f97fa68fab972c06263ad5012bb79fd2a9521b8fd25aaff68d22c92',
-        value: 'Kline, Mary-Jo',
+        prefLabel: 'Kline, Mary-Jo',
         type: 'temporary',
         vocabularyStringKey: 'name',
         internalId: 67714,
@@ -75,7 +75,7 @@ export const cul_q83bk3jc9s = {
         {
           nameRoleTerm: {
             uri: 'temp:1cb8be55366a9101bdeff167f146eab9b5a1011e37e3ac11de38e0cf4d97a8ca',
-            value: 'interviewer',
+            prefLabel: 'interviewer',
             type: 'temporary',
             vocabularyStringKey: 'name_role',
             internalId: 999283,
@@ -86,7 +86,7 @@ export const cul_q83bk3jc9s = {
     {
       nameTerm: {
         uri: 'temp:0a480927dea0082f07f12f2e6aa8de1bf6569feca7d37f3f8fdb29e239896b16',
-        value: 'Evans, Eli',
+        prefLabel: 'Evans, Eli',
         type: 'temporary',
         vocabularyStringKey: 'name',
         internalId: 1063091,
@@ -96,7 +96,7 @@ export const cul_q83bk3jc9s = {
         {
           nameRoleTerm: {
             uri: 'temp:926e00e7eadbadb2ddf250aab3cabbb78b3b26db2be957200a0ea8a180ab29ee',
-            value: 'interviewee',
+            prefLabel: 'interviewee',
             type: 'temporary',
             vocabularyStringKey: 'name_role',
             internalId: 999282,
@@ -150,7 +150,7 @@ export const cul_vdncjsxn7t = {
     {
       formTerm: {
         uri: 'http://vocab.getty.edu/aat/300046300',
-        value: 'photographs',
+        prefLabel: 'photographs',
         type: 'external',
         authority: 'aat',
         vocabularyStringKey: 'form',
@@ -164,7 +164,7 @@ export const cul_vdncjsxn7t = {
         {
           nameRoleTerm: {
             uri: 'http://id.loc.gov/vocabulary/relators/aut',
-            value: 'Author',
+            prefLabel: 'Author',
             type: 'external',
             authority: 'marcrelator',
             vocabularyStringKey: 'name_role',
@@ -174,7 +174,7 @@ export const cul_vdncjsxn7t = {
       ],
       nameTerm: {
         uri: 'http://id.loc.gov/authorities/names/no2009046107',
-        value: 'Marceau, Theodore C., 1859-1922',
+        prefLabel: 'Marceau, Theodore C., 1859-1922',
         type: 'external',
         authority: 'naf',
         vocabularyStringKey: 'name',
@@ -206,7 +206,7 @@ export const cul_bnzs7h45zq = {
     {
       formTerm: {
         uri: 'http://vocab.getty.edu/aat/300028682',
-        value: 'video recordings',
+        prefLabel: 'video recordings',
         type: 'external',
         authority: 'aat',
         vocabularyStringKey: 'form',
@@ -234,7 +234,7 @@ export const cul_bnzs7h45zq = {
     {
       genreTerm: {
         uri: 'http://id.loc.gov/authorities/genreForms/gf2011026667',
-        value: 'Television news programs',
+        prefLabel: 'Television news programs',
         type: 'external',
         authority: 'lcgft',
         vocabularyStringKey: 'genre',
@@ -248,7 +248,7 @@ export const cul_bnzs7h45zq = {
         {
           nameRoleTerm: {
             uri: 'http://id.loc.gov/vocabulary/relators/pro',
-            value: 'Producer',
+            prefLabel: 'Producer',
             type: 'external',
             authority: 'marcrelator',
             vocabularyStringKey: 'name_role',
@@ -258,7 +258,7 @@ export const cul_bnzs7h45zq = {
       ],
       nameTerm: {
         uri: 'http://id.loc.gov/authorities/names/n78060458',
-        value: 'ABC News',
+        prefLabel: 'ABC News',
         type: 'external',
         authority: 'naf',
         vocabularyStringKey: 'name',
@@ -272,7 +272,7 @@ export const cul_bnzs7h45zq = {
         {
           nameRoleTerm: {
             uri: 'http://id.loc.gov/vocabulary/relators/hst',
-            value: 'Host',
+            prefLabel: 'Host',
             type: 'external',
             authority: 'marcrelator',
             vocabularyStringKey: 'name_role',
@@ -282,7 +282,7 @@ export const cul_bnzs7h45zq = {
       ],
       nameTerm: {
         uri: 'http://id.loc.gov/authorities/names/no2009162748',
-        value: 'Ross, Brian, 1948-',
+        prefLabel: 'Ross, Brian, 1948-',
         type: 'external',
         authority: 'naf',
         vocabularyStringKey: 'name',

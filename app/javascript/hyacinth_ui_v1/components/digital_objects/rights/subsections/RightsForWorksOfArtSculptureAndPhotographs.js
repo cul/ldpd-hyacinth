@@ -63,6 +63,7 @@ export default class RightsForWorksOfArtSculptureAndPhotographs extends React.Pu
                   <InputGroup>
                     <Label sm={4}/>
                     <SelectInput
+                      sm={8}
                       value={value.publicityRightsPresent}
                       options={publicityRights.map(r => ({ label: r, value: r }))}
                       onChange={v => this.onChange('publicityRightsPresent', v)}

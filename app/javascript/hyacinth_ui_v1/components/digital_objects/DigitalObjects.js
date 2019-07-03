@@ -25,7 +25,7 @@ export default class DigitalObjects extends React.PureComponent {
               <ItemRightsForm
                 id="cul:q83bk3jc9s"
                 key="cul:q83bk3jc9s"
-                dynamicFieldData={cul_q83bk3jc9s}
+                data={{ dynamicFieldData: cul_q83bk3jc9s }}
               />
             )}
           />
@@ -37,7 +37,7 @@ export default class DigitalObjects extends React.PureComponent {
               <ItemRightsForm
                 id="cul:vdncjsxn7t"
                 key="cul:vdncjsxn7t"
-                dynamicFieldData={cul_vdncjsxn7t}
+                data={{ dynamicFieldData: cul_vdncjsxn7t }}
               />
             )}
           />
@@ -49,7 +49,7 @@ export default class DigitalObjects extends React.PureComponent {
               <ItemRightsForm
                 id="cul:bnzs7h45zq"
                 key="cul:bnzs7h45zq"
-                dynamicFieldData={cul_bnzs7h45zq}
+                data={{ dynamicFieldData: cul_bnzs7h45zq }}
               />
             )}
           />
