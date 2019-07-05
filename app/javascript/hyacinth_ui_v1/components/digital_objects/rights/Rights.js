@@ -7,17 +7,15 @@ import ItemRightsForm from './ItemRightsForm';
 
 export default class Rights extends React.PureComponent {
   render() {
-    const { data, data: { digitalObjectType } } = this.props;
-
     return (
       <Switch>
         <Route exact path="/digital_objects/:id/rights" component={RightsShow} />
         <Route
           path="/digital_objects/:id/rights/edit"
           render={() => {
-            switch (digitalObjectType) {
+            switch ('item') {
               case 'item':
-                return <ItemRightsForm data={data} />;
+                return <ItemRightsForm />;
               default:
                 return '';
             }

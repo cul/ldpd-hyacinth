@@ -45,6 +45,10 @@ nav.contextual-navbar {
   .form-control {
     @extend .form-control-sm;
   }
+
+  .form-group {
+    margin-bottom: .25rem;
+  }
 }
 
 // Reducing padding for Cards.
@@ -57,5 +61,5 @@ nav.contextual-navbar {
 }
 
 .card-body {
-  padding: .75rem;
+  padding: .5rem;
 }

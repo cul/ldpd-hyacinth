@@ -11,7 +11,9 @@ import hyacinthApi, {
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import SubmitButton from '../../layout/forms/SubmitButton';
 import CancelButton from '../../layout/forms/CancelButton';
+import TabHeading from '../../ui/tabs/TabHeading';
 import FieldGroupArray from './FieldGroupArray';
+import digitalObjectInterface from '../digitalObjectInterface';
 
 const defaultFieldValue = {
   string: '',
@@ -131,7 +133,7 @@ class MetadataForm extends React.PureComponent {
 
     return (
       <div key={displayLabel}>
-        <h4 className="text-orange text-center">{displayLabel}</h4>
+        <h4 className="text-orange">{displayLabel}</h4>
         {
           children.map(c => (
             <FieldGroupArray
@@ -152,6 +154,14 @@ class MetadataForm extends React.PureComponent {
 
     return (
       <>
+        <TabHeading>
+          Metadata
+          {/* <EditButton
+            className="float-right"
+            size="lg"
+            link={`/digital_objects/${id}/metadata/edit`}
+          /> */}
+        </TabHeading>
         { dynamicFields.map(category => this.renderCategory(category)) }
 
         <Form.Row>
@@ -168,4 +178,4 @@ class MetadataForm extends React.PureComponent {
   }
 }
 
-export default withErrorHandler(withRouter(MetadataForm), hyacinthApi);
+export default digitalObjectInterface(MetadataForm);

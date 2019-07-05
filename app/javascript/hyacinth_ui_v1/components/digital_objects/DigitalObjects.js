@@ -1,16 +1,18 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import queryString from 'query-string';
 
 import PageNotFound from '../layout/PageNotFound';
 import DigitalObjectSearch from './DigitalObjectSearch';
 import DigitalObjectNew from './DigitalObjectNew';
-import DigitalObject from './DigitalObject';
 import ItemRightsForm from './rights/ItemRightsForm';
 import AssetRightsEdit from './rights/AssetRightsEdit';
 import AggregatorNew from './new/AggregatorNew';
 import { cul_q83bk3jc9s, cul_vdncjsxn7t, cul_bnzs7h45zq } from './mock/dynamicFieldData';
 import Rights from './rights/Rights';
+import Metadata from './metadata/Metadata';
+import Children from './children/Children';
+import PreservePublish from './preserve_publish/PreservePublish';
 
 export default class DigitalObjects extends React.PureComponent {
   render() {
@@ -91,7 +93,12 @@ export default class DigitalObjects extends React.PureComponent {
             }}
           />
 
-          <Route path="/digital_objects/:id" component={DigitalObject} />
+          <Route path="/digital_objects/:id/metadata" component={Metadata} />
+          <Route path="/digital_objects/:id/rights" component={Rights} />
+          <Route path="/digital_objects/:id/children" component={Children} />
+          <Route path="/digital_objects/:id/preserve_publish" component={PreservePublish} />
+
+          <Redirect exact from="/digital_objects/:id" to="/digital_objects/:id/metadata" />
 
           { /* When none of the above match, <PageNotFound> will be rendered */ }
           <Route component={PageNotFound} />

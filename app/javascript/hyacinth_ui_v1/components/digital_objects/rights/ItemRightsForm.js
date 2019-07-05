@@ -8,6 +8,9 @@ import CancelButton from '../../layout/forms/CancelButton';
 import Label from '../../ui/forms/Label';
 import InputGroup from '../../ui/forms/InputGroup';
 import BooleanRadioButtons from '../../ui/forms/inputs/BooleanRadioButtons';
+import { digitalObject } from '../../../util/hyacinth_api';
+import digitalObjectInterface from '../digitalObjectInterface';
+import TabHeading from '../../ui/tabs/TabHeading';
 
 import DescriptiveMetadata from './subsections/DescriptiveMetadata';
 import CopyrightStatus from './subsections/CopyrightStatus';
@@ -115,6 +118,19 @@ class ItemRightsForm extends React.Component {
     },
   }
 
+
+  // componentDidMount() {
+  //   const { match: { params: { id } } } = this.props;
+  //
+  //   digitalObject.get(id)
+  //     .then((res) => {
+  //       this.setState(produce((draft) => {
+  //         console.log('reloaded digital object data');
+  //         draft.data = res.data.digitalObject;
+  //       }));
+  //     });
+  // }
+
   onChange(subsection, value) {
     this.setState(produce((draft) => {
       draft.rights[subsection] = value;
@@ -140,11 +156,20 @@ class ItemRightsForm extends React.Component {
       },
     } = this.state;
 
-    const { data, id } = this.props;
+    const { id } = this.state;
+    const { data } = this.props;
 
     return (
       <>
-        <Form className="mb-3" key={id} className="digital-object-interface">
+        <TabHeading>
+          Rights
+          {/* <EditButton
+            className="float-right"
+            size="lg"
+            link={`/digital_objects/${id}/rights/edit`}
+          /> */}
+        </TabHeading>
+        <Form key={id} className="digital-object-interface">
           <DescriptiveMetadata
             dynamicFieldData={data ? data.dynamicFieldData : {}}
             value={descriptiveMetadata}
@@ -225,4 +250,4 @@ ItemRightsForm.propTypes = {
   data: PropTypes.any,
 };
 
-export default ItemRightsForm;
+export default digitalObjectInterface(ItemRightsForm);

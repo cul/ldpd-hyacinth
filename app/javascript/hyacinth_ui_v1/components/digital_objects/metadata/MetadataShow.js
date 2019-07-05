@@ -4,18 +4,18 @@ import digitalObjectInterface from '../digitalObjectInterface';
 import EditButton from '../../ui/buttons/EditButton';
 import TabHeading from '../../ui/tabs/TabHeading';
 
-class RightsShow extends React.PureComponent {
+class MetadataShow extends React.PureComponent {
   render() {
     const { match: { params: { id } } } = this.props;
 
     return (
       <>
         <TabHeading>
-          Rights
+          Metadata
           <EditButton
             className="float-right"
             size="lg"
-            link={`/digital_objects/${id}/rights/edit`}
+            link={`/digital_objects/${id}/metadata/edit`}
           />
         </TabHeading>
       </>
@@ -24,4 +24,4 @@ class RightsShow extends React.PureComponent {
 }
 
 
-export default digitalObjectInterface(RightsShow);
+export default digitalObjectInterface(MetadataShow);
