@@ -150,7 +150,7 @@ class MetadataForm extends React.PureComponent {
   }
 
   render() {
-    const { dynamicFields, formType } = this.state;
+    const { dynamicFields, formType, uid } = this.state;
 
     return (
       <>
@@ -166,7 +166,7 @@ class MetadataForm extends React.PureComponent {
 
         <Form.Row>
           <Col sm="auto">
-            <CancelButton to="/digital_object/:id/rights" />
+            <CancelButton to={`/digital_objects/${uid}/metadata`} />
           </Col>
 
           <Col sm="auto" className="ml-auto">
