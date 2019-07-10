@@ -112,6 +112,8 @@ module Hyacinth::Ezid
     # @api public
     # @return [String, nil]
     def doi_identifier
+      return @dod['doi'] if @dod['doi']
+      # legacy behavior if top level field is absent
       @dfd['doi_identifier'][0]['doi_identifier_value'] if @dfd.key? 'doi_identifier'
     end
 

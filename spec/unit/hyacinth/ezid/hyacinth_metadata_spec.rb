@@ -199,11 +199,13 @@ describe Hyacinth::Ezid::HyacinthMetadata do
   end
 
   context "#doi_identifier" do
+    let(:doi) { '10.1371/journal.pone.0119638' }
     it "doi_identifier" do
-      local_metadata_retrieval = described_class.new dod
-      expected_doi_identifier = '10.1371/journal.pone.0119638'
+      obj = DigitalObject::Item.new
+      obj.doi = doi
+      local_metadata_retrieval = described_class.new obj.as_json
       actual_doi_identifier = local_metadata_retrieval.doi_identifier
-      expect(actual_doi_identifier).to eq(expected_doi_identifier)
+      expect(actual_doi_identifier).to eq(doi)
     end
   end
 

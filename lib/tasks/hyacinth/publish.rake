@@ -122,7 +122,24 @@ namespace :hyacinth do
       puts "\nDone!"
 
     end
-
+    task dois: :environment do
+      unless ENV['dois'] && File.exist?(ENV['dois'])
+        puts "dois param must be a file that exists: #{ENV['dois'] ? ENV['dois'] : 'nil'}"
+      else
+        csv = CSV.open(ENV['dois'], 'rb', headers: true)
+        csv.each do |row|
+          pid = row['_pid']
+          target = row['_doi_target']
+          unless pid && target
+            puts "must have _pid and _doi_target; skipping : #{row.headers} #{row}"
+          else
+            obj = DigitalObject::Base.find(pid)
+            result = (ENV['include_metadata'] != 'TRUE') ? obj.update_doi_target_url(target) : obj.update_doi_metadata(target)
+            puts result ? "SUCCESS: #{pid} #{obj.doi} to <#{target}>" : "FAILURE: #{pid} #{obj.doi} to <#{target}>"
+          end
+        end
+      end
+    end
   end
 
 end
