@@ -11,6 +11,7 @@ import DynamicFields from './components/dynamic_fields/DynamicFields';
 import DynamicFieldGroups from './components/dynamic_field_groups/DynamicFieldGroups';
 import DynamicFieldCategories from './components/dynamic_field_categories/DynamicFieldCategories';
 import FieldExportProfiles from './components/field_export_profiles/FieldExportProfiles';
+import ControlledVocabularies from './components/controlled_vocabularies/ControlledVocabularies';
 import Projects from './components/projects/Projects';
 import { AbilityContext } from './util/ability_context';
 import ability from './util/ability';
@@ -63,6 +64,7 @@ export default class App extends React.Component {
             <Route path="/dynamic_field_groups" component={DynamicFieldGroups} />
             <Route path="/dynamic_field_categories" component={DynamicFieldCategories} />
             <Route path="/field_export_profiles" component={FieldExportProfiles} />
+            <Route path="/controlled_vocabularies" component={ControlledVocabularies} />
             { /* When none of the above match, <PageNotFound> will be rendered */ }
             <Route path="/404" component={PageNotFound} />
             <Route component={PageNotFound} />

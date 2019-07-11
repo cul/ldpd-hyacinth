@@ -33,6 +33,11 @@ export const digitalObject = {
   update: (id, data) => instance.patch(`/digital_objects/${id}`, data),
 };
 
+
+export const vocabularies = {
+  all: () => instance.get('/vocabularies'),
+};
+
 export const vocabulary = stringKey => ({
   get: () => instance.get(`/vocabularies/${stringKey}`),
   terms: () => ({
