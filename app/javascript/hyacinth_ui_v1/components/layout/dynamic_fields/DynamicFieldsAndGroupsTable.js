@@ -4,7 +4,7 @@ import { Table } from 'react-bootstrap';
 import {
   snakeCase, lowerFirst, words, last,
 } from 'lodash';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 
 import hyacinthApi from '../../../util/hyacinth_api';
 import EditButton from '../../ui/buttons/EditButton';
@@ -40,9 +40,13 @@ class DynamicFieldsAndGroupsTable extends React.PureComponent {
 
                 return (
                   <tr key={`${type}_${id}`}>
-                    <td><span className="badge badge-secondary">{last(words(type))}</span></td>
-                    <td>{displayLabel}</td>
-                    <td>
+                    <td className="text-center"><span className="badge badge-secondary">{last(words(type))}</span></td>
+                    <td className="text-center">
+                      <Link to={`/${snakeCase(type)}s/${id}/edit`}>
+                        {displayLabel}
+                      </Link>
+                    </td>
+                    <td className="text-center">
                       <UpArrowButton
                         variant="outline-secondary"
                         onClick={() => this.updateSortOrder(type, id, sortUp)}
@@ -53,9 +57,6 @@ class DynamicFieldsAndGroupsTable extends React.PureComponent {
                         onClick={() => this.updateSortOrder(type, id, sortDown)}
                         disabled={sortDown === null}
                       />
-                    </td>
-                    <td>
-                      <EditButton link={`/${snakeCase(type)}s/${id}/edit`} />
                     </td>
                   </tr>
                 );

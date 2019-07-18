@@ -48,7 +48,7 @@ export default class TopNavbar extends React.Component {
 
   render() {
     return (
-      <Navbar collapseOnSelect id="top-navbar" variant="dark" bg="dark" expand="md">
+      <Navbar collapseOnSelect id="top-navbar" variant="dark" bg="primary" expand="md">
         <Navbar.Brand href="/">Hyacinth</Navbar.Brand>
 
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />

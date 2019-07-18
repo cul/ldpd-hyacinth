@@ -8,16 +8,14 @@ class ControlledVocabularyEdit extends React.PureComponent {
     const { match: { params: { stringKey } } } = this.props;
 
     return (
-      <>
+      <div className="m-3">
         <ContextualNavbar
-          title="Update Controlled Vocabulary"
-          rightHandLinks={[{ link: '/controlled_vocabularies', label: 'Back to All Controlled Vocabularies' }]}
+          // title={`Controlled Vocabulary | ${vocabulary.label}`}
+          rightHandLinks={[{ link: '/controlled_vocabularies', label: 'Back to Controlled Vocabulary' }]}
         />
 
-        <div className="m-3">
-          <ControlledVocabularyForm formType="edit" stringKey={stringKey} key={stringKey} />
-        </div>
-      </>
+        <ControlledVocabularyForm formType="edit" stringKey={stringKey} key={stringKey} />
+      </div>
     );
   }
 }

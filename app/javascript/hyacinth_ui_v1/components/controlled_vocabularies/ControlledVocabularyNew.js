@@ -3,7 +3,7 @@ import React from 'react';
 import ContextualNavbar from '../layout/ContextualNavbar';
 import ControlledVocabularyForm from './ControlledVocabularyForm';
 
-class DynamicFieldGroupNew extends React.PureComponent {
+class ControlledVocabularyNew extends React.PureComponent {
   render() {
     return (
       <>
@@ -18,4 +18,4 @@ class DynamicFieldGroupNew extends React.PureComponent {
   }
 }
 
-export default DynamicFieldGroupNew;
+export default ControlledVocabularyNew;

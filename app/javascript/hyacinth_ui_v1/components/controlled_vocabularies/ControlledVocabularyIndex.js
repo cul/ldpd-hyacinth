@@ -27,11 +27,11 @@ export default class ControlledVocabularyIndex extends React.Component {
           title="Controlled Vocabularies"
           rightHandLinks={[{ link: '/controlled_vocabularies/new', label: 'New Controlled Vocabulary' }]}
         />
-        <p>Need to add pagination</p>
         <Table hover>
           <thead>
             <tr>
               <th>Label</th>
+              <th>String Key</th>
             </tr>
           </thead>
           <tbody>
@@ -39,14 +39,21 @@ export default class ControlledVocabularyIndex extends React.Component {
               controlledVocabularies && (
                 controlledVocabularies.map(controlledVocabulary => (
                   <tr key={controlledVocabulary.stringKey}>
-                    <td><Link to={`/controlled_vocabularies/${controlledVocabulary.stringKey}/edit`}>{controlledVocabulary.label}</Link></td>
-                    <td>Manage Terms</td>
+                    <td>
+                      <Link to={`/controlled_vocabularies/${controlledVocabulary.stringKey}`}>
+                        {controlledVocabulary.label}
+                      </Link>
+                    </td>
+                    <td>
+                      {controlledVocabulary.stringKey}
+                    </td>
                   </tr>
                 ))
               )
             }
           </tbody>
         </Table>
+        <p>Need to add pagination</p>
       </>
     );
   }
