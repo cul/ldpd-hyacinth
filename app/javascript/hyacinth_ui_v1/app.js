@@ -21,7 +21,7 @@ const APPLICATION_BASE_PATH = '/ui/v1';
 const Index = () => (
   <div>
     { /* TODO: If not logged in, redirect to login screen */ }
-    <Redirect to="/digital-objects" />
+    <Redirect to="/digital_objects" />
   </div>
 );
 
@@ -56,7 +56,7 @@ export default class App extends React.Component {
         <Container id="main">
           <Switch>
             <Route exact path="/" component={Index} />
-            <Route path="/digital-objects" component={DigitalObjects} />
+            <Route path="/digital_objects" component={DigitalObjects} />
             <Route path="/users" component={Users} />
             <Route path="/projects" component={Projects} />
             <Route path="/dynamic_fields" component={DynamicFields} />

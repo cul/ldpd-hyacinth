@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-class ProjectSubHeading extends React.PureComponent {
+class TabHeading extends React.PureComponent {
   render() {
     const { children } = this.props;
 
@@ -11,8 +11,8 @@ class ProjectSubHeading extends React.PureComponent {
   }
 }
 
-ProjectSubHeading.propTypes = {
+TabHeading.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-export default ProjectSubHeading;
+export default TabHeading;

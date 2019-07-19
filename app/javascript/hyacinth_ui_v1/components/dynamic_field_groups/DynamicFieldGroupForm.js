@@ -230,12 +230,12 @@ class DynamicFieldGroupForm extends React.Component {
               {
                 formType === 'edit' && (
                   <>
-                    <LinkContainer to={`/dynamic_fields/new?dynamicFieldGroupId=${id}`}>
-                      <Button variant="primary">New Child Field</Button>
+                    <LinkContainer className="m-1" to={`/dynamic_fields/new?dynamicFieldGroupId=${id}`}>
+                      <Button variant="secondary">New Child Field</Button>
                     </LinkContainer>
 
-                    <LinkContainer to={`/dynamic_field_groups/new?parentId=${id}&parentType=DynamicFieldGroup`}>
-                      <Button variant="primary">New Child Field Group</Button>
+                    <LinkContainer className="m-1" to={`/dynamic_field_groups/new?parentId=${id}&parentType=DynamicFieldGroup`}>
+                      <Button variant="secondary">New Child Field Group</Button>
                     </LinkContainer>
                   </>
                 )

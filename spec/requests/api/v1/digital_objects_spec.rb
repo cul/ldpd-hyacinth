@@ -40,7 +40,7 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
         expect(response.status).to be 200
       end
       it "return a single Digital Object with the expected fields" do
-        expect(JSON.parse(response.body)).to include('uid' => authorized_object.uid)
+        expect(JSON.parse(response.body)['digital_object']).to include('uid' => authorized_object.uid)
       end
     end
   end
@@ -50,13 +50,11 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
     let(:properties) do
       {
         digital_object: {
-          digital_object_data_json: {
-            'dynamic_field_data' => {
-              'title' => [{
-                'non_sort_portion' => 'The',
-                'sort_portion' => 'Short Man and His Scarf'
-              }]
-            }
+          dynamic_field_data: {
+            title: [{
+              non_sort_portion: 'The',
+              sort_portion: 'Short Man and His Scarf'
+            }]
           }
         }
       }
@@ -79,7 +77,9 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
         expect(response.status).to be 200
       end
       it "return a single Digital Object with the expected fields" do
-        expect(JSON.parse(response.body)).to include(properties[:digital_object][:digital_object_data_json])
+        expect(
+          JSON.parse(response.body)['digital_object']['dynamic_field_data'].to_json
+        ).to be_json_eql(properties[:digital_object][:dynamic_field_data].to_json)
       end
     end
   end
@@ -88,20 +88,18 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
     let(:properties) do
       {
         digital_object: {
-          digital_object_data_json: {
-            'digital_object_type' => authorized_object.digital_object_type,
-            'serialization_version' => DigitalObject::Base::SERIALIZATION_VERSION,
-            'projects' => [
-              {
-                'string_key' => authorized_project.string_key
-              }
-            ],
-            'dynamic_field_data' => {
-              'title' => [{
-                'non_sort_portion' => 'The',
-                'sort_portion' => 'Short Man and His Scarf'
-              }]
+          digital_object_type: authorized_object.digital_object_type,
+          serialization_version: DigitalObject::Base::SERIALIZATION_VERSION,
+          projects: [
+            {
+              string_key: authorized_project.string_key
             }
+          ],
+          dynamic_field_data: {
+            title: [{
+              non_sort_portion: 'The',
+              sort_portion: 'Short Man and His Scarf'
+            }]
           }
         }
       }
@@ -124,8 +122,10 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
         expect(response.status).to be 200
       end
       it "return a single Digital Object with the expected fields" do
-        new_object = JSON.parse(response.body)
-        expect(new_object['dynamic_field_data']).to include(properties[:digital_object][:digital_object_data_json]['dynamic_field_data'])
+        new_object = JSON.parse(response.body)['digital_object']
+        expect(
+          new_object['dynamic_field_data'].to_json
+        ).to be_json_eql(properties[:digital_object][:dynamic_field_data].to_json)
         expect(new_object['projects'].first).to include('string_key' => authorized_project.string_key)
       end
     end
@@ -194,13 +194,13 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
       it 'publishes the object on post' do
         expect(publication_adapter).to receive(:publish_impl).with(authorized_publish_target, digital_object_matcher).and_return([true, [published_location]])
         post "/api/v1/digital_objects/#{authorized_object.uid}/publish"
-        new_object = JSON.parse(response.body)
+        new_object = JSON.parse(response.body)['digital_object']
         expect(new_object).to have_key('publish_entries')
         publish_entry = new_object['publish_entries'][authorized_publish_target.string_key]
         expect(publish_entry['published_at']).to be_present
         expect(publish_entry['cited_at']).to eql(published_location)
         get "/api/v1/digital_objects/#{authorized_object.uid}"
-        old_object = JSON.parse(response.body)
+        old_object = JSON.parse(response.body)['digital_object']
         expect(old_object).to have_key('publish_entries')
         publish_entry = old_object['publish_entries'][authorized_publish_target.string_key]
         expect(publish_entry['published_at']).to be_present
@@ -215,7 +215,7 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
       it "return json entity" do
         expect(publication_adapter).to receive(:publish_impl).with(authorized_publish_target, digital_object_matcher).and_return([true, [published_location]])
         post "/api/v1/digital_objects/#{authorized_object.uid}/publish"
-        new_object = JSON.parse(response.body)
+        new_object = JSON.parse(response.body)['digital_object']
         expect(new_object['projects'].first).to include('string_key' => authorized_project.string_key)
       end
     end

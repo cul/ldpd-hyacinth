@@ -1,11 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { startCase } from 'lodash';
 
-import ProjectSubHeading from '../../../hoc/ProjectLayout/ProjectSubHeading/ProjectSubHeading';
+import TabHeading from '../../ui/tabs/TabHeading';
 import EnabledDynamicFieldForm from './EnabledDynamicFieldForm';
 import { Can } from '../../../util/ability_context';
+import EditButton from '../../ui/buttons/EditButton';
 
 export default class EnabledDynamicFieldShow extends React.PureComponent {
   render() {
@@ -13,15 +12,16 @@ export default class EnabledDynamicFieldShow extends React.PureComponent {
 
     return (
       <>
-        <ProjectSubHeading>
+        <TabHeading>
           {`Enabled Dynamic Fields for ${startCase(digitalObjectType)}`}
-          {'  '}
           <Can I="manage" of={{ subjectType: 'Project', projectStringKey }}>
-            <Link to={`/projects/${projectStringKey}/enabled_dynamic_fields/${digitalObjectType}/edit`}>
-              <FontAwesomeIcon icon="pen" />
-            </Link>
+            <EditButton
+              className="float-right"
+              size="lg"
+              link={`/projects/${projectStringKey}/enabled_dynamic_fields/${digitalObjectType}/edit`}
+            />
           </Can>
-        </ProjectSubHeading>
+        </TabHeading>
 
         <EnabledDynamicFieldForm
           formType="show"

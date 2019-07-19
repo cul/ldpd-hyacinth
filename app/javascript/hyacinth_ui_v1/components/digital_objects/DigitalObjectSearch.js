@@ -1,50 +1,54 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import produce from 'immer';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
+import { digitalObject } from '../../util/hyacinth_api';
 
 export default class DigitalObjectSearch extends React.Component {
+  state = {
+    digitalObjects: [],
+  }
+
+  componentDidMount() {
+    digitalObject.search()
+      .then((res) => {
+        this.setState(produce((draft) => {
+          draft.digitalObjects = res.data.digitalObjects;
+        }));
+      });
+  }
+
   render() {
+    const { digitalObjects } = this.state;
     return (
-      <div>
+      <>
         <ContextualNavbar
           title="Digital Objects"
-          rightHandLinks={[{ label: 'New Digital Object', link: '/digital-objects/new' }]}
+          rightHandLinks={[{ label: 'New Digital Object', link: '/digital_objects/new' }]}
         />
 
-        <Link to="/digital-objects/1" className="nav-link" href="#">Object 1</Link>
-        <Link to="/digital-objects/2" className="nav-link" href="#">Object 2</Link>
-      </div>
+        <h4>Rights Module Mockups</h4>
+
+        {
+          [
+            { id: 'asset1', title: 'Example Asset' },
+            { id: 'cul_q83bk3jc9s', title: 'Oral history interview with Alan Pifer and Eli Evans 1970' },
+            { id: 'cul_vdncjsxn7t', title: 'Photograph of Andrew Carnegie at His Desk' },
+            { id: 'cul_bnzs7h45zq', title: 'ABC News - Brian Ross Investigates: The Blueberry Children, Carnegie Fellows 2009' }
+          ].map(link => (
+            <Link to={`/digital_objects/${link.id}/rights/edit`} key={link.id} className="nav-link">{link.title}</Link>
+          ))
+        }
+
+        <hr />
+
+        {
+          digitalObjects.map(d => (
+            <Link to={`/digital_objects/${d.uid}`} key={d.uid} className="nav-link">{d.uid}</Link>
+          ))
+        }
+      </>
     );
   }
-  /*
-  componentDidMount() {
-    this.fetchSearchResults();
-  }
-
-  fetchSearchResults(nextProps) {
-    fetch("/api/v1/digital_objects/search.json", {
-      credentials: 'same-origin',
-      method: 'POST',
-      body: JSON.stringify(this.state.searchParams),
-    }).then(
-      res => res.json()
-    ).then(
-      (response) => {
-        this.setState(
-          Object.assign({}, nextProps, {
-            loading: false,
-            searchResults: response.results
-          })
-        );
-      },
-      // Note: it's important to handle errors here
-      // instead of a catch() block so that we don't swallow
-      // exceptions from actual bugs in components.
-      (error) => {
-        console.log(error);
-      }
-    )
-  }
-  */
 }

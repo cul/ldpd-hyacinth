@@ -8,16 +8,16 @@ module Api
       # GET /digital_objects/search
       # GET /digital_objects/search.json
       def search
-        @digital_objects = DigitalObject.all
+        @digital_objects = DigitalObjectRecord.all
         render json: {
-          results: @digital_objects
+          digital_objects: @digital_objects
         }
       end
 
       # GET /digital_objects/1
       # GET /digital_objects/1.json
       def show
-        render json: @digital_object
+        render json: { digital_object: @digital_object }
       end
 
       # POST /digital_objects
@@ -102,7 +102,7 @@ module Api
       private
         def create_or_update_params
           # TODO: decide how we want to validate dynamic field data parameters
-          params[:digital_object][:digital_object_data_json]&.permit!.to_h
+          params[:digital_object]&.permit!.to_h
         end
 
         def preserved?

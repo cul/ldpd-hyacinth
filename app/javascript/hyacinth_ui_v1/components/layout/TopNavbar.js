@@ -55,7 +55,7 @@ export default class TopNavbar extends React.Component {
 
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="mr-auto">
-            <LinkContainer to="/digital-objects">
+            <LinkContainer to="/digital_objects">
               <Nav.Link>Digital Objects</Nav.Link>
             </LinkContainer>
 
