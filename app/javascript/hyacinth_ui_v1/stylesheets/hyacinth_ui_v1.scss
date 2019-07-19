@@ -1,21 +1,16 @@
-$font-size-base: .95rem;
+// $font-size-base: .95rem;
 
 $form-group-margin-bottom: 1rem !default;
 
+@import "~bootswatch/dist/flatly/variables";
 @import '~bootstrap/scss/bootstrap.scss';
+@import "~bootswatch/dist/flatly/bootswatch";
+
 
 body {}
 
 #top-navbar {
   margin-bottom: 1em;
-}
-
-nav.contextual-navbar {
-  background-color: #cfdbe67a !important;
-}
-
-.task-nav {
-  border: 1px solid #c2c4c7 !important
 }
 
 .text-orange {
@@ -38,12 +33,20 @@ nav.contextual-navbar {
 
 .digital-object-interface {
   font-size: .9rem
-
 }
 
 .digital-object-interface {
   .form-control {
     @extend .form-control-sm;
+  }
+
+  .form-group {
+    margin-bottom: .25rem;
+  }
+
+  .card {
+    margin-bottom: .5rem;
+    margin-top: .5rem;
   }
 }
 
@@ -57,5 +60,5 @@ nav.contextual-navbar {
 }
 
 .card-body {
-  padding: .75rem;
+  padding: .5rem;
 }

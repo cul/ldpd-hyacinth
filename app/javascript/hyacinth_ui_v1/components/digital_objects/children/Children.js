@@ -1,7 +1,10 @@
 import React from 'react';
 import produce from 'immer';
 
-class DigitalObjectChildren extends React.Component {
+import digitalObjectInterface from '../digitalObjectInterface';
+import TabHeading from '../../ui/tabs/TabHeading';
+
+class Children extends React.Component {
   // state = {
   //   digitalObject: {},
   // }
@@ -23,6 +26,7 @@ class DigitalObjectChildren extends React.Component {
 
     return (
       <>
+        <TabHeading>Manage Child Assets</TabHeading>
         <p>Child Digital Objects</p>
         <p># Total</p>
 
@@ -32,4 +36,4 @@ class DigitalObjectChildren extends React.Component {
   }
 }
 
-export default DigitalObjectChildren;
+export default digitalObjectInterface(Children);

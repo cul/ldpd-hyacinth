@@ -15,7 +15,7 @@ module Api
       # GET /vocabularies/:string_key
       def show
         response = URIService.connection.vocabulary(params[:string_key])
-        render json: response.data, status: response.status
+        render json: { vocabulary: response.data }, status: response.status
       end
 
       # POST /vocabualaries

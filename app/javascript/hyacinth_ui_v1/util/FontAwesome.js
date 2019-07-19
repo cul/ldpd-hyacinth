@@ -5,12 +5,11 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 
 // Import and add icons to library
 import {
-  faBell,
   faPlus,
   faPen,
-  faEdit,
-  faPenSquare,
+  faSearch,
   faTimes,
+  faMinus,
   faCaretUp,
   faCaretDown,
   faAngleDoubleDown,
@@ -19,22 +18,14 @@ import {
   faExternalLinkSquareAlt,
 } from '@fortawesome/free-solid-svg-icons';
 
-import {
-  faCaretSquareUp,
-  faCaretSquareDown,
-} from '@fortawesome/free-regular-svg-icons';
-
 library.add(
-  faBell,
   faPlus,
   faPen,
-  faPenSquare,
-  faEdit,
+  faSearch,
   faTimes,
+  faMinus,
   faCaretUp,
   faCaretDown,
-  faCaretSquareUp,
-  faCaretSquareDown,
   faAngleDoubleDown,
   faAngleDoubleUp,
   faInfoCircle,

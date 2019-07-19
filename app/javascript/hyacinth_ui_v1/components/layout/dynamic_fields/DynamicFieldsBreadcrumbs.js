@@ -63,7 +63,7 @@ class DynamicFieldsBreadcrumbs extends React.Component {
     ));
 
     return (
-      <Breadcrumb style={{ backgroundColor: '#f3f7fb' }}>
+      <Breadcrumb>
         {crumbs}
         {
           last && (

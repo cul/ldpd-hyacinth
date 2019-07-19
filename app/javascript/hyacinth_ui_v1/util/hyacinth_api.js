@@ -33,10 +33,25 @@ export const digitalObject = {
   update: (id, data) => instance.patch(`/digital_objects/${id}`, data),
 };
 
+
+export const vocabularies = {
+  all: () => instance.get('/vocabularies'),
+  get: stringKey => instance.get(`/vocabularies/${stringKey}`),
+};
+
 export const vocabulary = stringKey => ({
   get: () => instance.get(`/vocabularies/${stringKey}`),
   terms: () => ({
     search: query => instance.get(`/vocabularies/${stringKey}/terms?${query}`),
     all: () => instance.get(`/vocabularies/${stringKey}/terms`),
+    get: uri => instance.get(`/vocabularies/${stringKey}/terms/${uri}`),
   }),
 });
+
+export const terms = {
+  search: (vocabStringKey, query) => instance.get(`/vocabularies/${vocabStringKey}/terms?${query}`),
+  all: vocabStringKey => instance.get(`/vocabularies/${vocabStringKey}/terms`),
+  get: (vocabStringKey, uri) => instance.get(`/vocabularies/${vocabStringKey}/terms/${uri}`),
+  update: (vocabStringKey, uri, data) => instance.patch(`/vocabularies/${vocabStringKey}/terms/${uri}`, data),
+  create: (vocabStringKey, data) => instance.post(`/vocabularies/${vocabStringKey}/terms`, data),
+};

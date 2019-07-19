@@ -11,16 +11,19 @@ class TextInput extends React.PureComponent {
   }
 
   render() {
-    const { inputName, value } = this.props;
+    const {
+      onChange, inputName, value, placeholder, ...rest
+    } = this.props;
 
     return (
-      <Col sm={8} style={{ alignSelf: 'center' }}>
+      <Col sm={8} style={{ alignSelf: 'center' }} {...rest}>
         <Form.Control
           type="text"
           name={inputName}
           value={value}
           onChange={this.onChangeHandler}
           size="sm"
+          placeholder={placeholder}
         />
       </Col>
     );
