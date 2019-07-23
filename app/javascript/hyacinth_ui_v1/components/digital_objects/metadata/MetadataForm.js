@@ -9,11 +9,10 @@ import hyacinthApi, {
   enabledDynamicFields, dynamicFieldCategories, digitalObject,
 } from '../../../util/hyacinth_api';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
-import SubmitButton from '../../layout/forms/SubmitButton';
-import CancelButton from '../../layout/forms/CancelButton';
 import TabHeading from '../../ui/tabs/TabHeading';
 import FieldGroupArray from './FieldGroupArray';
 import digitalObjectInterface from '../digitalObjectInterface';
+import FormButtons from '../../ui/forms/FormButtons';
 
 const defaultFieldValue = {
   string: '',
@@ -81,14 +80,16 @@ class MetadataForm extends React.PureComponent {
     const { history: { push } } = this.props;
 
     if (formType === 'edit') {
-      digitalObject.update(
+      return digitalObject.update(
         uid,
         { digitalObject: { digitalObjectDataJson: { dynamicFieldData } } },
       ).then(res => push(`/digital_objects/${res.data.digitalObject.uid}`));
-    } else if (formType === 'new') {
+    }
+
+    if (formType === 'new') {
       const { data } = this.props;
 
-      digitalObject.create({
+      return digitalObject.create({
         digitalObject: {
           digitalObjectDataJson: { ...data, dynamicFieldData },
         },
@@ -164,15 +165,11 @@ class MetadataForm extends React.PureComponent {
         </TabHeading>
         { dynamicFields.map(category => this.renderCategory(category)) }
 
-        <Form.Row>
-          <Col sm="auto">
-            <CancelButton to={`/digital_objects/${uid}/metadata`} />
-          </Col>
-
-          <Col sm="auto" className="ml-auto">
-            <SubmitButton formType={formType} onClick={this.onSubmitHandler} />
-          </Col>
-        </Form.Row>
+        <FormButtons
+          formType="edit"
+          cancelTo={`/digital_objects/${uid}/metadata`}
+          onSave={this.onSubmitHandler}
+        />
       </>
     );
   }
