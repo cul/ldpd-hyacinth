@@ -11,25 +11,14 @@ class SubmitButton extends React.Component {
   onClick = (e) => {
     e.preventDefault();
 
-    this.setState({ isSaving: true })
+    this.setState({ isSaving: true });
+    const { saveData } = this.props;
+
+    saveData()
+      .then(() => this.setState({ success: true }))
+      .catch(() => this.setState({ success: false }))
+      .then(() => setTimeout(() => this.setState({ isSaving: false, success: null }), 1000));
   }
-
-  saveData = () => {
-    const { isSaving } = this.state;
-
-    if (isSaving) {
-      const { saveData } = this.props;
-
-      saveData()
-        .then(() => this.setState({ success: true }))
-        .catch(() => this.setState({ success: false }))
-        .then(() => setTimeout(() => this.setState({ isSaving: false, success: null }), 1000));
-    }
-  }
-
-  componentDidMount = () => this.saveData()
-
-  componentDidUpdate = () => this.saveData()
 
   render() {
     const { formType, saveData, ...rest } = this.props;
