@@ -16,7 +16,7 @@ class ExportRule < ApplicationRecord
     {
       id: id,
       translation_logic: translation_logic,
-      field_export_profile: field_export_profile.name
+      field_export_profile_id: field_export_profile.id
     }
   end
 
