@@ -225,7 +225,7 @@ class DynamicFieldGroupForm extends React.Component {
                           const { name } = fieldExportProfiles.find(p => p.id === rule.fieldExportProfileId);
 
                           return (
-                            <Tab eventKey={name} title={name}>
+                            <Tab eventKey={name} title={name} key={name}>
                               <JSONInput
                                 sm={12}
                                 name={`${name}_input`}

@@ -29,7 +29,7 @@ class NumberInput extends React.PureComponent {
 NumberInput.propTypes = {
   inputName: PropTypes.string,
   onChange: PropTypes.func.isRequired,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.number.isRequired,
 };
 
 export default NumberInput;

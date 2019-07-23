@@ -32,7 +32,7 @@ class JSONInput extends React.PureComponent {
 }
 
 JSONInput.propTypes = {
-  inputName: PropTypes.string.isRequired,
+  inputName: PropTypes.string,
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
 };
