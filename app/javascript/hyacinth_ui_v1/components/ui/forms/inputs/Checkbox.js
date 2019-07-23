@@ -12,11 +12,11 @@ class Checkbox extends React.PureComponent {
 
   render() {
     const {
-      label, inputName, value,
+      label, inputName, value, onChange, ...rest
     } = this.props;
 
     return (
-      <Col sm={8} style={{ alignSelf: 'center' }}>
+      <Col sm={8} style={{ alignSelf: 'center' }} {...rest}>
         <Form.Check
           className="py-1"
           type="checkbox"

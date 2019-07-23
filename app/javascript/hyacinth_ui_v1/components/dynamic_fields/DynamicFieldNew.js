@@ -5,7 +5,7 @@ import ContextualNavbar from '../layout/ContextualNavbar';
 import DynamicFieldForm from './DynamicFieldForm';
 import DynamicFieldsBreadcrumbs from '../layout/dynamic_fields/DynamicFieldsBreadcrumbs';
 
-class DynamicFieldGroupNew extends React.PureComponent {
+class DynamicFieldNew extends React.PureComponent {
   render() {
     const { location: { search } } = this.props;
     const { dynamicFieldGroupId } = queryString.parse(search);
@@ -28,4 +28,4 @@ class DynamicFieldGroupNew extends React.PureComponent {
   }
 }
 
-export default DynamicFieldGroupNew;
+export default DynamicFieldNew;

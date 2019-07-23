@@ -5,6 +5,7 @@ import { withRouter } from 'react-router-dom';
 class SubmitButton extends React.Component {
   state = {
     isSaving: false,
+    success: null,
   }
 
   onClick = (e) => {
@@ -18,9 +19,11 @@ class SubmitButton extends React.Component {
 
     if (isSaving) {
       const { saveData } = this.props;
-      saveData().finally(() => {
-        setTimeout(() => this.setState({ isSaving: false }), 500)
-      });
+
+      saveData()
+        .then(() => this.setState({ success: true }))
+        .catch(() => this.setState({ success: false }))
+        .then(() => setTimeout(() => this.setState({ isSaving: false, success: null }), 1000));
     }
   }
 
@@ -30,11 +33,22 @@ class SubmitButton extends React.Component {
 
   render() {
     const { formType, saveData, ...rest } = this.props;
-    const { isSaving } = this.state;
+    const { isSaving, success } = this.state;
+
+    let savingText = 'Saving...';
+    let variant = 'info';
+
+    if (success) {
+      savingText = 'Saved!';
+      variant = 'success';
+    } else if (success === false) {
+      savingText = 'Could Not Save!';
+      variant = 'warning';
+    }
 
     return (
-      <Button variant="info" type="submit" onClick={this.onClick} disabled={isSaving} {...rest}>
-        {isSaving ? 'Saving...' : formType === 'new' ? 'Create' : 'Update'}
+      <Button variant={variant} type="submit" onClick={this.onClick} disabled={isSaving} {...rest}>
+        {isSaving ? savingText : formType === 'new' ? 'Create' : 'Update'}
       </Button>
     );
   }

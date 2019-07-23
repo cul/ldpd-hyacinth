@@ -4,14 +4,14 @@ import ContextualNavbar from '../layout/ContextualNavbar';
 import DynamicFieldForm from './DynamicFieldForm';
 import DynamicFieldsBreadcrumbs from '../layout/dynamic_fields/DynamicFieldsBreadcrumbs';
 
-class DynamicFieldGroupNew extends React.PureComponent {
+class DynamicFieldEdit extends React.PureComponent {
   render() {
     const { match: { params: { id } } } = this.props;
 
     return (
       <>
         <ContextualNavbar
-          title="Create Dynamic Field"
+          title="Update Dynamic Field"
           rightHandLinks={[{ link: '/dynamic_fields', label: 'Back to Dynamic Fields' }]}
         />
 
@@ -23,4 +23,4 @@ class DynamicFieldGroupNew extends React.PureComponent {
   }
 }
 
-export default DynamicFieldGroupNew;
+export default DynamicFieldEdit;

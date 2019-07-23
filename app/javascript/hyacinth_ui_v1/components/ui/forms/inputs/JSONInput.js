@@ -9,7 +9,7 @@ import 'brace/theme/textmate';
 class JSONInput extends React.PureComponent {
   render() {
     const {
-      inputName, onChange, value, ...rest
+      inputName, onChange, value, height, placeholder, ...rest
     } = this.props;
 
     return (
@@ -23,6 +23,8 @@ class JSONInput extends React.PureComponent {
           onChange={onChange}
           value={value}
           name={inputName}
+          height={height}
+          placeholder={placeholder}
         />
       </Col>
     );
