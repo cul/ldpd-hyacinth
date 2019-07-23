@@ -11,16 +11,15 @@ class NumberInput extends React.PureComponent {
   }
 
   render() {
-    const { inputName, value } = this.props;
+    const { inputName, value, onChange, ...rest } = this.props;
 
     return (
-      <Col sm={8} style={{ alignSelf: 'center' }}>
+      <Col sm={10} style={{ alignSelf: 'center' }} {...rest}>
         <Form.Control
           type="number"
           name={inputName}
           value={value}
           onChange={this.onChangeHandler}
-          size="sm"
         />
       </Col>
     );
