@@ -143,6 +143,17 @@ class DynamicFieldGroupForm extends React.Component {
       });
   }
 
+  updateChildren = () => {
+    const { dynamicFieldGroup: { id } } = this.state;
+
+    hyacinthApi.get(`/dynamic_field_groups/${id}`)
+      .then((res) => {
+        this.setState(produce((draft) => {
+          draft.children = res.data.dynamicFieldGroup.children;
+        }));
+      });
+  }
+
   render() {
     const {
       formType,
@@ -254,7 +265,7 @@ class DynamicFieldGroupForm extends React.Component {
           <Card>
             <Card.Header>Child Fields and Field Groups</Card.Header>
             <Card.Body>
-              <DynamicFieldsAndGroupsTable rows={children} />
+              <DynamicFieldsAndGroupsTable rows={children} onChange={this.updateChildren}/>
 
               {
                 formType === 'edit' && (
