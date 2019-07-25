@@ -74,6 +74,7 @@ export default class LicenseToColumbiaUniversity extends React.PureComponent {
               <InputGroup>
                 <Label sm={4} align="right">License Documentation Location</Label>
                 <TextInput
+                  sm={8}
                   value={value.licenseDocumentationLocation}
                   onChange={v => this.onChange('licenseDocumentationLocation', v)}
                 />

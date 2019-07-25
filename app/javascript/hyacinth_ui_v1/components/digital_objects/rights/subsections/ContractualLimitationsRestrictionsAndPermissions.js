@@ -108,6 +108,7 @@ class ContractualLimitationsRestrictionsAndPermissions extends React.PureCompone
                   <InputGroup>
                     <Label sm={4} align="right">Photographic or film credit required [photo credit entered here]</Label>
                     <TextInput
+                      sm={8}
                       value={value.photoGraphicOrFilmCredit}
                       onChange={v => this.onChange('photoGraphicOrFilmCredit', v)}
                     />
@@ -116,6 +117,7 @@ class ContractualLimitationsRestrictionsAndPermissions extends React.PureCompone
                   <InputGroup>
                     <Label sm={4} align="right">Excerpts limited to [X] minutes</Label>
                     <TextInput
+                      sm={8}
                       value={value.excerptLimitedTo}
                       onChange={v => this.onChange('excerptLimitedTo', v)}
                     />
@@ -124,6 +126,7 @@ class ContractualLimitationsRestrictionsAndPermissions extends React.PureCompone
                   <InputGroup>
                     <Label sm={4} align="right">Other</Label>
                     <TextInput
+                      sm={8}
                       value={value.other}
                       onChange={v => this.onChange('other', v)}
                     />

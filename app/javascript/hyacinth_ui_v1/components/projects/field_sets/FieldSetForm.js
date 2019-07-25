@@ -4,9 +4,7 @@ import { Row, Col, Form } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import produce from 'immer';
 
-import CancelButton from '../../layout/forms/CancelButton';
-import DeleteButton from '../../layout/forms/DeleteButton';
-import SubmitButton from '../../layout/forms/SubmitButton';
+import FormButtons from '../../ui/forms/FormButtons';
 import hyacinthApi from '../../../util/hyacinth_api';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 
@@ -39,9 +37,7 @@ class FieldSetForm extends React.Component {
     }));
   }
 
-  onSubmitHandler = (event) => {
-    event.preventDefault();
-
+  onSubmitHandler = () => {
     const {
       projectStringKey,
       formType,
@@ -52,17 +48,15 @@ class FieldSetForm extends React.Component {
 
     switch (formType) {
       case 'new':
-        hyacinthApi.post(`/projects/${projectStringKey}/field_sets`, fieldSet)
+        return hyacinthApi.post(`/projects/${projectStringKey}/field_sets`, fieldSet)
           .then((res) => {
             push(`/projects/${projectStringKey}/field_sets/${res.data.fieldSet.id}/edit`);
           });
-        break;
       case 'edit':
-        hyacinthApi.patch(`/projects/${projectStringKey}/field_sets/${id}`, fieldSet)
+        return hyacinthApi.patch(`/projects/${projectStringKey}/field_sets/${id}`, fieldSet)
           .then(() => push(`/projects/${projectStringKey}/field_sets/`));
-        break;
       default:
-        break;
+        return null;
     }
   }
 
@@ -99,19 +93,12 @@ class FieldSetForm extends React.Component {
             </Col>
           </Form.Group>
 
-          <Form.Row>
-            <Col sm="auto" className="mr-auto">
-              <DeleteButton formType={formType} onClick={this.onDeleteHandler} />
-            </Col>
-
-            <Col sm="auto">
-              <CancelButton to={`/projects/${projectStringKey}/field_sets`} />
-            </Col>
-
-            <Col sm="auto">
-              <SubmitButton formType={formType} onClick={this.onSubmitHandler} />
-            </Col>
-          </Form.Row>
+          <FormButtons
+            formType={formType}
+            cancelTo={`/projects/${projectStringKey}/field_sets`}
+            onDelete={this.onDeleteHandler}
+            onSave={this.onSubmitHandler}
+          />
         </Form>
       </div>
     );
