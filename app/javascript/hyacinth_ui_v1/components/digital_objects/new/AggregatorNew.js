@@ -1,23 +1,24 @@
 import React from 'react';
 import produce from 'immer';
 import { capitalize } from 'lodash';
+import { withRouter } from 'react-router-dom';
 
 import ContextualNavbar from '../../layout/ContextualNavbar';
-import hyacinthApi, { digitalObject, projects } from '../../../util/hyacinth_api';
+import { projects } from '../../../util/hyacinth_api';
 import MetadataForm from '../metadata/MetadataForm';
-import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import DigitalObjectSummary from '../DigitalObjectSummary';
 
 class AggregatorNew extends React.PureComponent {
   state = {
     loaded: false,
-    digitalObjectDataJson: {
+    data: {
       serializationVersion: '1',
       projects: [{
         stringKey: '',
       }],
       digitalObjectType: '',
       dynamicFieldData: {},
+      identifiers: [],
     },
   }
 
@@ -28,25 +29,15 @@ class AggregatorNew extends React.PureComponent {
     projects.get(project).then((res) => {
       const { project: { stringKey, displayLabel } } = res.data;
       this.setState(produce((draft) => {
-        draft.digitalObjectDataJson.digitalObjectType = digitalObjectType;
-        draft.digitalObjectDataJson.projects[0] = { stringKey, displayLabel };
+        draft.data.digitalObjectType = digitalObjectType;
+        draft.data.projects[0] = { stringKey, displayLabel };
         draft.loaded = true;
       }));
     });
   }
 
-  onSubmitHandler = (event) => {
-    event.preventDefault();
-
-    const { digitalObjectDataJson: data } = this.state;
-    const { history: { push } } = this.props;
-
-    digitalObject.create(data)
-      .then(res => push(`/digital_objects/${res.data.id}/edit`));
-  }
-
   render() {
-    const { digitalObjectDataJson: data, loaded } = this.state;
+    const { data, loaded } = this.state;
 
     return (
       <>
@@ -68,4 +59,4 @@ class AggregatorNew extends React.PureComponent {
   }
 }
 
-export default withErrorHandler(AggregatorNew, hyacinthApi);
+export default withRouter(AggregatorNew);

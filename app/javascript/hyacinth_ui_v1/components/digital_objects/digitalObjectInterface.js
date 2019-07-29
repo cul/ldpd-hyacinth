@@ -20,7 +20,6 @@ const digitalObjectInterface = WrappedComponent => class extends React.Component
     digitalObject.get(id)
       .then((res) => {
         this.setState(produce((draft) => {
-          console.log('reloaded digital object data');
           draft.digitalObjectData = res.data.digitalObject;
         }));
       });

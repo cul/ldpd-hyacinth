@@ -2,7 +2,7 @@ import React from 'react';
 import produce from 'immer';
 import axios from 'axios';
 import { merge, camelCase } from 'lodash';
-import { Form, Col, Fade } from 'react-bootstrap';
+import { Fade } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 
 import hyacinthApi, {
@@ -11,7 +11,6 @@ import hyacinthApi, {
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import TabHeading from '../../ui/tabs/TabHeading';
 import FieldGroupArray from './FieldGroupArray';
-import digitalObjectInterface from '../digitalObjectInterface';
 import FormButtons from '../../ui/forms/FormButtons';
 import InputGroup from '../../ui/forms/InputGroup';
 import TextInputWithAddAndRemove from '../../ui/forms/inputs/TextInputWithAddAndRemove';
@@ -34,7 +33,7 @@ class MetadataForm extends React.PureComponent {
     dynamicFieldData: {},
     defaultFieldData: {},
     identifiers: [],
-    loading: true,
+    loaded: false,
   }
 
   componentDidMount = () => {
@@ -75,7 +74,7 @@ class MetadataForm extends React.PureComponent {
         draft.defaultFieldData = emptyData;
         draft.dynamicFieldData = merge({}, emptyData, dynamicFieldData);
         draft.identifiers = identifiers;
-        draft.loading = false
+        draft.loaded = true;
       }));
     }));
   }
@@ -107,7 +106,7 @@ class MetadataForm extends React.PureComponent {
       const { data } = this.props;
 
       return digitalObject.create({
-        digitalObject: { dynamicFieldData, identifiers, ...data },
+        digitalObject: { ...data, dynamicFieldData, identifiers },
       }).then(res => push(`/digital_objects/${res.data.digitalObject.uid}`));
     }
   }
@@ -167,7 +166,7 @@ class MetadataForm extends React.PureComponent {
 
   render() {
     const {
-      loading, dynamicFields, identifiers, formType, uid,
+      loaded, dynamicFields, identifiers, formType, uid,
     } = this.state;
 
     return (
@@ -181,7 +180,7 @@ class MetadataForm extends React.PureComponent {
           /> */}
         </TabHeading>
 
-        <Fade in={!loading}>
+        <Fade in={loaded}>
           <div>
             { dynamicFields.map(category => this.renderCategory(category)) }
 
@@ -206,4 +205,4 @@ class MetadataForm extends React.PureComponent {
   }
 }
 
-export default digitalObjectInterface(MetadataForm);
+export default withRouter(withErrorHandler(MetadataForm, hyacinthApi));
