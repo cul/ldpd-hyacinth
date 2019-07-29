@@ -87,7 +87,7 @@ class MetadataShow extends React.PureComponent {
   }
 
   render() {
-    const { match: { params: { id } }, data: { dynamicFieldData } } = this.props;
+    const { match: { params: { id } }, data: { dynamicFieldData, identifiers } } = this.props;
     const { dynamicFields } = this.state;
 
     return (
@@ -102,6 +102,10 @@ class MetadataShow extends React.PureComponent {
         </TabHeading>
 
         { dynamicFields.map(category => this.renderCategory(category, dynamicFieldData)) }
+        <h4 className="text-orange">Identifiers</h4>
+        <ul className="list-unstyled">
+          { identifiers.map(i => <li>{i}</li>)}
+        </ul>
       </>
     );
   }

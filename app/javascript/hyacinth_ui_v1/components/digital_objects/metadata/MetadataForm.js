@@ -2,7 +2,7 @@ import React from 'react';
 import produce from 'immer';
 import axios from 'axios';
 import { merge, camelCase } from 'lodash';
-import { Form, Col } from 'react-bootstrap';
+import { Form, Col, Fade } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 
 import hyacinthApi, {
@@ -13,6 +13,8 @@ import TabHeading from '../../ui/tabs/TabHeading';
 import FieldGroupArray from './FieldGroupArray';
 import digitalObjectInterface from '../digitalObjectInterface';
 import FormButtons from '../../ui/forms/FormButtons';
+import InputGroup from '../../ui/forms/InputGroup';
+import TextInputWithAddAndRemove from '../../ui/forms/inputs/TextInputWithAddAndRemove';
 
 const defaultFieldValue = {
   string: '',
@@ -31,10 +33,17 @@ class MetadataForm extends React.PureComponent {
     dynamicFields: [],
     dynamicFieldData: {},
     defaultFieldData: {},
+    identifiers: [],
+    loading: true,
   }
 
   componentDidMount = () => {
-    const { data: { uid, dynamicFieldData, projects, digitalObjectType }, formType } = this.props;
+    const {
+      data: {
+        uid, dynamicFieldData, projects, digitalObjectType, identifiers
+      },
+      formType,
+    } = this.props;
     // this.setState(produce((draft) => {
     //   draft.digitalObject.digitalObjectDataJson.projects[0].stringKey = project;
     //   draft.digitalObject.digitalObjectDataJson.digitalObjectType = digitalObjectType;
@@ -65,6 +74,8 @@ class MetadataForm extends React.PureComponent {
         draft.dynamicFields = dynamicFields;
         draft.defaultFieldData = emptyData;
         draft.dynamicFieldData = merge({}, emptyData, dynamicFieldData);
+        draft.identifiers = identifiers;
+        draft.loading = false
       }));
     }));
   }
@@ -75,14 +86,20 @@ class MetadataForm extends React.PureComponent {
     }));
   }
 
+  onIdentifierChange(value) {
+    this.setState(produce((draft) => {
+      draft.identifiers = value;
+    }));
+  }
+
   onSubmitHandler = () => {
-    const { dynamicFieldData, uid, formType } = this.state;
+    const { dynamicFieldData, identifiers, uid, formType } = this.state;
     const { history: { push } } = this.props;
 
     if (formType === 'edit') {
       return digitalObject.update(
         uid,
-        { digitalObject: { digitalObjectDataJson: { dynamicFieldData } } },
+        { digitalObject: { dynamicFieldData, identifiers } },
       ).then(res => push(`/digital_objects/${res.data.digitalObject.uid}`));
     }
 
@@ -90,9 +107,7 @@ class MetadataForm extends React.PureComponent {
       const { data } = this.props;
 
       return digitalObject.create({
-        digitalObject: {
-          digitalObjectDataJson: { ...data, dynamicFieldData },
-        },
+        digitalObject: { dynamicFieldData, identifiers, ...data },
       }).then(res => push(`/digital_objects/${res.data.digitalObject.uid}`));
     }
   }
@@ -151,7 +166,9 @@ class MetadataForm extends React.PureComponent {
   }
 
   render() {
-    const { dynamicFields, formType, uid } = this.state;
+    const {
+      loading, dynamicFields, identifiers, formType, uid,
+    } = this.state;
 
     return (
       <>
@@ -163,13 +180,27 @@ class MetadataForm extends React.PureComponent {
             link={`/digital_objects/${id}/metadata/edit`}
           /> */}
         </TabHeading>
-        { dynamicFields.map(category => this.renderCategory(category)) }
 
-        <FormButtons
-          formType="edit"
-          cancelTo={`/digital_objects/${uid}/metadata`}
-          onSave={this.onSubmitHandler}
-        />
+        <Fade in={!loading}>
+          <div>
+            { dynamicFields.map(category => this.renderCategory(category)) }
+
+            <h4 className="text-orange">Identifiers</h4>
+            <InputGroup>
+              <TextInputWithAddAndRemove
+                sm={12}
+                values={identifiers}
+                onChange={v => this.onIdentifierChange(v)}
+              />
+            </InputGroup>
+
+            <FormButtons
+              formType={formType}
+              cancelTo={`/digital_objects/${uid}/metadata`}
+              onSave={this.onSubmitHandler}
+            />
+          </div>
+        </Fade>
       </>
     );
   }
