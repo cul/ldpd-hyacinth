@@ -51,7 +51,7 @@ export default class ControlledVocabularyShow extends React.Component {
               <div className="m-1">
                 <h3>Vocabulary</h3>
 
-                <Row as="dl" >
+                <Row as="dl">
                   <Col as="dt" sm={2}>String Key</Col>
                   <Col as="dd" sm={10}>{vocabulary.stringKey}</Col>
 

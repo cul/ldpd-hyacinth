@@ -42,6 +42,7 @@ const digitalObjectInterface = WrappedComponent => class extends React.Component
               <DigitalObjectSummary data={data} />
 
               <Tabs>
+                <Tab to={`/digital_objects/${id}/system_data`} name="System Data" />
                 <Tab to={`/digital_objects/${id}/metadata`} name="Metadata" />
                 <Tab to={`/digital_objects/${id}/rights`} name="Rights" />
 
