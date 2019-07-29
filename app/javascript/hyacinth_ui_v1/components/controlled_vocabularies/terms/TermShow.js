@@ -53,7 +53,7 @@ export default class TermShow extends React.Component {
             <Col as="dd" sm={10}>{term.prefLabel}</Col>
 
             <Col as="dt" sm={2}>Alternative Labels</Col>
-            <Col as="dd" sm={10}>{term.altLabel.join() || '-- None --'}</Col>
+            <Col as="dd" sm={10}>{term.altLabels.join() || '-- None --'}</Col>
 
             <Col as="dt" sm={2}>Term Type</Col>
             <Col as="dd" sm={10}>{term.termType}</Col>

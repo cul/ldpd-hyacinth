@@ -28,7 +28,7 @@ class TermForm extends React.Component {
       authority: '',
       termType: '',
       prefLabel: '',
-      altLabel: [''],
+      altLabels: [''],
     },
   }
 
@@ -89,7 +89,7 @@ class TermForm extends React.Component {
       formType,
       term,
       term: {
-        prefLabel, uri, authority, altLabel, termType,
+        prefLabel, uri, authority, altLabels, termType,
       },
     } = this.state;
 
@@ -123,17 +123,21 @@ class TermForm extends React.Component {
 
         <InputGroup>
           <Label>Pref Label</Label>
-          <TextInput value={prefLabel} onChange={v => this.onChangeHandler('prefLabel', v)} />
-        </InputGroup>
-
-        <InputGroup>
-          <Label>Alternative Label</Label>
           {
             termType === 'temporary'
-              ? <ReadOnlyInput value={altLabel} />
-              : <TextInputWithAddAndRemove values={altLabel} onChange={v => this.onChangeHandler('altLabel', v)} />
+              ? <PlainText value={prefLabel} />
+              : <TextInput value={prefLabel} onChange={v => this.onChangeHandler('prefLabel', v)} />
           }
         </InputGroup>
+
+        {
+          termType !== 'temporary' && (
+            <InputGroup>
+              <Label>Alternative Labels</Label>
+              <TextInputWithAddAndRemove values={altLabels} onChange={v => this.onChangeHandler('altLabels', v)} />
+            </InputGroup>
+          )
+        }
 
         <InputGroup>
           <Label>Authority</Label>
@@ -163,7 +167,7 @@ class TermForm extends React.Component {
                 <Label>{label}</Label>
                 { field }
               </InputGroup>
-            )
+            );
           })
         }
 

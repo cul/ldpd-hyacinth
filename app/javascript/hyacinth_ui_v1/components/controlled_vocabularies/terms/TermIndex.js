@@ -13,7 +13,7 @@ import SearchButton from '../../ui/buttons/SearchButton';
 import PaginationBar from '../../ui/PaginationBar';
 
 const perPage = '10';
-const defaultFilters = ['authority', 'uri', 'pref_label', 'alt_label', 'term_type'];
+const defaultFilters = ['authority', 'uri', 'pref_label', 'alt_labels', 'term_type'];
 
 class TermIndex extends React.Component {
   state = {
