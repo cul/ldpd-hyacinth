@@ -8,13 +8,13 @@ module Api
         # GET /vocabularies/:vocabulary_string_key/custom_fields
         def create
           response = URIService.connection.create_custom_field(vocabulary, request_data)
-          render json: { custom_field: response.data }, status: response.status
+          render json: response.data, status: response.status
         end
 
         # GET /vocabularies/:vocabulary_string_key/custom_fields/:field_key
         def update
           response = URIService.connection.update_custom_field(vocabulary, request_data)
-          render json: { custom_field: response.data }, status: response.status
+          render json: response.data, status: response.status
         end
 
         # GET /vocabularies/:vocabulary_string_key/custom_fields/field_key

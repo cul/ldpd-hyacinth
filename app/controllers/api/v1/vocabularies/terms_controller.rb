@@ -17,19 +17,19 @@ module Api
         # GET /vocabularies/:vocabulary_string_key/terms/:uri
         def show
           response = URIService.connection.term(vocabulary, params[:uri])
-          render json: { term: response.data }, status: response.status
+          render json: response.data, status: response.status
         end
 
         # POST /vocabularies/:vocabulary_string_key/terms
         def create
           response = URIService.connection.create_term(vocabulary, request_data)
-          render json: { term: response.data }, status: response.status
+          render json: response.data, status: response.status
         end
 
         # PATCH /vocabularies/:vocabulary_string_key/terms/:uri
         def update
           response = URIService.connection.update_term(vocabulary, request_data)
-          render json: { term: response.data }, status: response.status
+          render json: response.data, status: response.status
         end
 
         # DELETE /vocabularies/:vocabulary_string_key/terms/:uri
