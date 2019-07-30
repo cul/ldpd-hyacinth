@@ -36,7 +36,7 @@ export const digitalObject = {
 
 
 export const vocabularies = {
-  all: () => instance.get('/vocabularies'),
+  all: query => instance.get(query ? `/vocabularies?${query}` : '/vocabularies'),
   get: stringKey => instance.get(`/vocabularies/${stringKey}`),
 };
 
