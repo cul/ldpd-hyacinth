@@ -29,7 +29,7 @@ class CopyrightStatus extends React.PureComponent {
 
           <InputGroup>
             <Label sm={4} align="right">Copyright Statement</Label>
-            <ReadOnlyInput value={value.copyrightStatement} />
+            <ReadOnlyInput sm={8} value={value.copyrightStatement} />
           </InputGroup>
 
           {
@@ -37,7 +37,7 @@ class CopyrightStatus extends React.PureComponent {
               .map((t, i) => (
                 <InputGroup key={i}>
                   <Label sm={4} align="right">Copyright Note</Label>
-                  <ReadOnlyInput value={t} />
+                  <ReadOnlyInput sm={8} value={t} />
                 </InputGroup>
               ))
           }
