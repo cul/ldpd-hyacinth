@@ -35,7 +35,7 @@ body {}
   font-size: .9rem
 }
 
-.digital-object-interface {
+.digital-object-interface, {
   .form-control {
     @extend .form-control-sm;
   }
@@ -50,6 +50,12 @@ body {}
   }
 }
 
+
+.term-search-form {
+  .form-control {
+    @extend .form-control-sm;
+  }
+}
 // Reducing padding for Cards.
 // .card {
 //   margin-bottom: 1rem;

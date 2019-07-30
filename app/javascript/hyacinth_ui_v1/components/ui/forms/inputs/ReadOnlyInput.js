@@ -7,11 +7,10 @@ class ReadOnlyInput extends React.PureComponent {
     const { value } = this.props;
 
     return (
-      <Col sm={8} style={{ alignSelf: 'center' }}>
+      <Col sm={10} style={{ alignSelf: 'center' }}>
         <Form.Control
           type="text"
           value={value}
-          size="sm"
           readOnly
           disabled
         />

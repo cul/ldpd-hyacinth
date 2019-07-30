@@ -1,19 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Col, Form } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import produce from 'immer';
 
-import SubmitButton from '../layout/forms/SubmitButton';
-import DeleteButton from '../layout/forms/DeleteButton';
-import CancelButton from '../layout/forms/CancelButton';
 import hyacinthApi, { vocabulary } from '../../util/hyacinth_api';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import InputGroup from '../ui/forms/InputGroup';
 import Label from '../ui/forms/Label';
 import TextInput from '../ui/forms/inputs/TextInput';
-import ReadOnlyInput from '../ui/forms/inputs/ReadOnlyInput';
-
+import PlainText from '../ui/forms/inputs/PlainText';
+import FormButtons from '../ui/forms/FormButtons';
 
 class ControlledVocabularyForm extends React.Component {
   state = {
@@ -21,6 +18,7 @@ class ControlledVocabularyForm extends React.Component {
     controlledVocabulary: {
       stringKey: '',
       label: '',
+      customFields: {},
     },
   }
 
@@ -41,27 +39,22 @@ class ControlledVocabularyForm extends React.Component {
     }));
   }
 
-  onSubmitHandler = (event) => {
-    event.preventDefault();
-
+  onSubmitHandler = () => {
     const { formType, controlledVocabulary: { stringKey }, controlledVocabulary } = this.state;
     const { history: { push } } = this.props;
 
     switch (formType) {
       case 'new':
-        hyacinthApi.post('/vocabularies', { vocabulary: controlledVocabulary })
+        return hyacinthApi.post('/vocabularies', { vocabulary: controlledVocabulary })
           .then((res) => {
             const { vocabulary: { stringKey: newStringKey } } = res.data;
 
             push(`/controlled_vocabularies/${newStringKey}/edit`);
           });
-        break;
       case 'edit':
-        hyacinthApi.patch(`/vocabularies/${stringKey}`, { vocabulary: controlledVocabulary })
-          .then(() => push('/controlled_vocabularies'));
-        break;
+        return hyacinthApi.patch(`/vocabularies/${stringKey}`, { vocabulary: controlledVocabulary });
       default:
-        break;
+        return null;
     }
   }
 
@@ -89,7 +82,7 @@ class ControlledVocabularyForm extends React.Component {
           {
             formType === 'new'
               ? <TextInput value={stringKey} onChange={v => this.onChangeHandler('stringKey', v)} />
-              : <ReadOnlyInput value={stringKey} />
+              : <PlainText value={stringKey} />
           }
         </InputGroup>
 
@@ -101,20 +94,14 @@ class ControlledVocabularyForm extends React.Component {
           />
         </InputGroup>
 
-        <Form.Row>
-          <Col sm="auto" className="mr-auto">
-            <DeleteButton formType={formType} onClick={this.onDeleteHandler} />
-          </Col>
-
-          <Col sm="auto">
-            <CancelButton to="/controlled_vocabularies" />
-          </Col>
-
-          <Col sm="auto">
-            <SubmitButton formType={formType} onClick={this.onSubmitHandler} />
-          </Col>
-        </Form.Row>
+        <FormButtons
+          formType={formType}
+          cancelTo={`/controlled_vocabularies/${stringKey}`}
+          onDelete={this.onDeleteHandler}
+          onSave={this.onSubmitHandler}
+        />
       </Form>
+
     );
   }
 }
