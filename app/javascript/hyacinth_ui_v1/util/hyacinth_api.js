@@ -55,4 +55,5 @@ export const terms = {
   get: (vocabStringKey, uri) => instance.get(`/vocabularies/${vocabStringKey}/terms/${uri}`),
   update: (vocabStringKey, uri, data) => instance.patch(`/vocabularies/${vocabStringKey}/terms/${uri}`, data),
   create: (vocabStringKey, data) => instance.post(`/vocabularies/${vocabStringKey}/terms`, data),
+  delete: (vocabStringKey, uri) => instance.delete(`/vocabularies/${vocabStringKey}/terms/${uri}`),
 };
