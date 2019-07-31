@@ -5,7 +5,7 @@ import digitalObjectInterface from '../digitalObjectInterface';
 class MetadataEdit extends React.PureComponent {
   render() {
     return (
-      <MetadataForm formType="edit" />
+      <MetadataForm formType="edit" {...this.props} />
     );
   }
 }
