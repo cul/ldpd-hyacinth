@@ -11,9 +11,10 @@ import hyacinthApi, { vocabulary } from '../../../util/hyacinth_api';
 import TextInput from '../../ui/forms/inputs/TextInput';
 import SearchButton from '../../ui/buttons/SearchButton';
 import PaginationBar from '../../ui/PaginationBar';
+import SelectInput from '../../ui/forms/inputs/SelectInput';
 
 const perPage = '10';
-const defaultFilters = ['authority', 'uri', 'pref_label', 'alt_label', 'term_type'];
+const defaultFilters = ['authority', 'uri', 'pref_label', 'alt_labels', 'term_type'];
 
 class TermIndex extends React.Component {
   state = {
@@ -80,48 +81,54 @@ class TermIndex extends React.Component {
 
     return (
       <>
-        <Form onSubmit={this.onSearchHandler}>
+        <Form className="term-search-form" onSubmit={this.onSearchHandler}>
           <Row className="mb-3">
             <TextInput
-              sm={6}
+              sm={8}
               value={search}
               onChange={v => this.onChange('search', v)}
               placeholder="Search for terms..."
             />
-
+            <SearchButton onClick={this.onSearchHandler} />
+          </Row>
+          <Row>
             {
               filters.map(filter => (
-                <Col sm="auto" style={{ alignSelf: 'center' }}>
-                  <InputGroup>
-                    <DropdownButton
-                      as={InputGroup.Prepend}
-                      variant="outline-secondary"
-                      title={filter.label}
-                      id="input-group-dropdown-1"
-                      size="sm"
-                    >
-                      {
-                        defaultFilters.map(f => (
-                          <Dropdown.Item>{f.replace('_', ' ')}</Dropdown.Item>
-                        ))
-                      }
-                    </DropdownButton>
-                    <FormControl aria-describedby="basic-addon1" size="sm" />
-                  </InputGroup>
+                <Col sm={8} style={{ alignSelf: 'center' }}>
+                  <Row>
+                    <SelectInput
+                      sm={4}
+                      className="pr-1"
+                      value={filter[0]}
+                      options={defaultFilters.map(f => ({ value: f, label: f}))}
+                    />
+                    <TextInput
+                      sm={8}
+                      className="pl-1"
+                      value={filter[1]}
+                    />
+                  </Row>
                 </Col>
               ))
             }
-
-            <Col style={{ alignSelf: 'center' }}>
-              <SearchButton onClick={this.onSearchHandler} />
-
+            <Col sm={2}>
               <Button variant="outline-secondary" size="sm" onClick={this.addFilter}>
                 <FontAwesomeIcon icon="plus" />
                 {' Add Filter'}
               </Button>
             </Col>
           </Row>
+
+            {/* <Col sm={3} style={{ alignSelf: 'center' }}>
+              <SearchButton onClick={this.onSearchHandler} />
+
+              <Button variant="outline-secondary" size="sm" onClick={this.addFilter}>
+                <FontAwesomeIcon icon="plus" />
+                {' Add Filter'}
+              </Button>
+            </Col> */}
         </Form>
+
         <Table hover>
           <thead>
             <tr>

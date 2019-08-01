@@ -35,7 +35,7 @@ class PreservePublish extends React.Component {
 
         <Button>Preserve</Button>
 
-        <hr/>
+        <hr />
 
         {
           publishTargets && (

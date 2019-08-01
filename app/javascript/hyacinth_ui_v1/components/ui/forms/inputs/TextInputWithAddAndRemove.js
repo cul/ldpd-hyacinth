@@ -55,7 +55,6 @@ class TextInputWithAddAndRemove extends React.PureComponent {
                     name={inputName}
                     value={v}
                     onChange={e => this.onChangeHandler(i, e)}
-                    size="sm"
                     placeholder={placeholder}
                   />
                   <InputGroup.Append>

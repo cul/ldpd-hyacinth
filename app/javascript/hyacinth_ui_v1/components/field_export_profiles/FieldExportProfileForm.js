@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Row, Col, Form } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import produce from 'immer';
 
-import SubmitButton from '../layout/forms/SubmitButton';
-import DeleteButton from '../layout/forms/DeleteButton';
-import CancelButton from '../layout/forms/CancelButton';
-import JSONInput from '../layout/forms/JSONInput';
+import FormButtons from '../ui/forms/FormButtons';
+import JSONInput from '../ui/forms/inputs/JSONInput';
+import TextInput from '../ui/forms/inputs/TextInput';
+import InputGroup from '../ui/forms/InputGroup';
+import Label from '../ui/forms/Label';
 import hyacinthApi from '../../util/hyacinth_api';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
@@ -39,27 +40,27 @@ class FieldExportProfileForm extends React.Component {
     }));
   }
 
-  onSubmitHandler = (event) => {
-    event.preventDefault();
-
+  onSave = () => {
     const { formType, fieldExportProfile: { id }, fieldExportProfile } = this.state;
     const { history: { push } } = this.props;
 
     switch (formType) {
       case 'new':
-        hyacinthApi.post('/field_export_profiles', { fieldExportProfile })
+        return hyacinthApi.post('/field_export_profiles', { fieldExportProfile })
           .then((res) => {
             const { fieldExportProfile: { id: newId } } = res.data;
 
             push(`/field_export_profiles/${newId}/edit`);
           });
-        break;
       case 'edit':
-        hyacinthApi.patch(`/field_export_profiles/${id}`, { fieldExportProfile })
-          .then(() => push('/field_export_profiles'));
-        break;
+        return hyacinthApi.patch(`/field_export_profiles/${id}`, { fieldExportProfile })
+          .then((res) => {
+            this.setState(produce((draft) => {
+              draft.fieldExportProfile = res.data.fieldExportProfile;
+            }));
+          });
       default:
-        break;
+        return null;
     }
   }
 
@@ -74,14 +75,9 @@ class FieldExportProfileForm extends React.Component {
       });
   }
 
-  onChangeHandler = (event) => {
-    const { target: { name, value } } = event;
-    this.setState(produce((draft) => { draft.fieldExportProfile[name] = value; }));
-  }
-
-  onTranslationLogicChange = (value) => {
+  onChangeHandler(name, value) {
     this.setState(produce((draft) => {
-      draft.fieldExportProfile.translationLogic = value;
+      draft.fieldExportProfile[name] = value;
     }));
   }
 
@@ -90,42 +86,29 @@ class FieldExportProfileForm extends React.Component {
 
     return (
       <Form onSubmit={this.onSubmitHandler}>
-        <Form.Group as={Row}>
-          <Form.Label column sm={2}>Name</Form.Label>
-          <Col sm={10}>
-            <Form.Control
-              type="text"
-              name="name"
-              value={name}
-              onChange={this.onChangeHandler}
-            />
-          </Col>
-        </Form.Group>
+        <InputGroup>
+          <Label>Name</Label>
+          <TextInput
+            value={name}
+            onChange={v => this.onChangeHandler('name', v)}
+          />
+        </InputGroup>
 
-        <Form.Group as={Row}>
-          <Form.Label column sm={2}>Translation Logic</Form.Label>
-          <Col sm={10}>
-            <JSONInput
-              onChange={this.onTranslationLogicChange}
-              value={translationLogic}
-              name="translationLogic"
-            />
-          </Col>
-        </Form.Group>
+        <InputGroup>
+          <Label>Translation Logic</Label>
+          <JSONInput
+            onChange={v => this.onChangeHandler('translationLogic', v)}
+            value={translationLogic}
+            inputName="translationLogic"
+          />
+        </InputGroup>
 
-        <Form.Row>
-          <Col sm="auto" className="mr-auto">
-            <DeleteButton formType={formType} onClick={this.onDeleteHandler} />
-          </Col>
-
-          <Col sm="auto">
-            <CancelButton to="/field_export_profiles" />
-          </Col>
-
-          <Col sm="auto">
-            <SubmitButton formType={formType} onClick={this.onSubmitHandler} />
-          </Col>
-        </Form.Row>
+        <FormButtons
+          formType={formType}
+          cancelTo="/field_export_profiles"
+          onDelete={this.onDeleteHandler}
+          onSave={this.onSave}
+        />
       </Form>
     );
   }

@@ -15,19 +15,19 @@ module Api
       # GET /vocabularies/:string_key
       def show
         response = URIService.connection.vocabulary(params[:string_key])
-        render json: { vocabulary: response.data }, status: response.status
+        render json: response.data, status: response.status
       end
 
       # POST /vocabualaries
       def create
         response = URIService.connection.create_vocabulary(request_data)
-        render json: { vocabulary: response.data }, status: response.status
+        render json: response.data, status: response.status
       end
 
       # PATCH /vocabularies/:string_key
       def update
         response = URIService.connection.update_vocabulary(request_data)
-        render json: { vocabulary: response.data }, status: response.status
+        render json: response.data, status: response.status
       end
 
       # DELETE /vocabularies/:string_key

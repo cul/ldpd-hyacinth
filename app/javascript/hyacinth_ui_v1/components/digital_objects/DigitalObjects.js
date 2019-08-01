@@ -13,6 +13,7 @@ import Rights from './rights/Rights';
 import Metadata from './metadata/Metadata';
 import Children from './children/Children';
 import PreservePublish from './preserve_publish/PreservePublish';
+import SystemData from './system_data/SystemData';
 
 export default class DigitalObjects extends React.PureComponent {
   render() {
@@ -93,6 +94,7 @@ export default class DigitalObjects extends React.PureComponent {
             }}
           />
 
+          <Route path="/digital_objects/:id/system_data" component={SystemData} />
           <Route path="/digital_objects/:id/metadata" component={Metadata} />
           <Route path="/digital_objects/:id/rights" component={Rights} />
           <Route path="/digital_objects/:id/children" component={Children} />

@@ -12,7 +12,6 @@ class PaginationBar extends React.PureComponent {
     const totalPages = Math.max(1, Math.ceil(Number(totalItems) / Number(perPage)));
     const pageNumbers = [];
 
-
     for (let i = 2; i > 0; i--) {
       const newPage = page - i;
       if (newPage > 0) pageNumbers.push(newPage);
@@ -24,9 +23,6 @@ class PaginationBar extends React.PureComponent {
       const newPage = page + i;
       if (newPage <= totalPages) pageNumbers.push(newPage);
     }
-
-    console.log(page);
-    console.log(pageNumbers);
 
     return (
       <Pagination className="justify-content-center">

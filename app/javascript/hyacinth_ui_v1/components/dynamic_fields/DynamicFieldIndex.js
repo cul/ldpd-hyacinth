@@ -36,8 +36,8 @@ export default class DynamicFieldIndex extends React.Component {
 
         return (
           <Card className="mb-3" key={id} id={displayLabel.replace(' ', '-')}>
-            <Card.Header as="h5" className="text-center">
-              <span className="badge badge-secondary float-left">Category</span>
+            <Card.Header as="h5" className="text-center p-2">
+              <span className="badge badge-primary float-left">Category</span>
               {displayLabel}
               <EditButton className="float-right" link={`/dynamic_field_categories/${id}/edit`} />
             </Card.Header>

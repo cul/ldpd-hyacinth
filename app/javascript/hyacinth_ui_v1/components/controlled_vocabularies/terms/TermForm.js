@@ -1,12 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Col, Form } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import produce from 'immer';
 
-import SubmitButton from '../../layout/forms/SubmitButton';
-import DeleteButton from '../../layout/forms/DeleteButton';
-import CancelButton from '../../layout/forms/CancelButton';
 import hyacinthApi, { terms } from '../../../util/hyacinth_api';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import InputGroup from '../../ui/forms/InputGroup';
@@ -17,6 +14,7 @@ import SelectInput from '../../ui/forms/inputs/SelectInput';
 import NumberInput from '../../ui/forms/inputs/NumberInput';
 import ReadOnlyInput from '../../ui/forms/inputs/ReadOnlyInput';
 import PlainText from '../../ui/forms/inputs/PlainText';
+import FormButtons from '../../ui/forms/FormButtons';
 
 const types = ['external', 'local', 'temporary'];
 
@@ -28,7 +26,7 @@ class TermForm extends React.Component {
       authority: '',
       termType: '',
       prefLabel: '',
-      altLabel: [''],
+      altLabels: [],
     },
   }
 
@@ -47,49 +45,48 @@ class TermForm extends React.Component {
   }
 
   onSubmitHandler = (event) => {
-    event.preventDefault();
 
     const { formType, term: { uri }, term } = this.state;
     const { history: { push }, vocabulary: { stringKey } } = this.props;
 
     switch (formType) {
       case 'new':
-        terms.create(stringKey, { term })
+        return terms.create(stringKey, { term })
           .then((res) => {
             const { term: { uri: newURI } } = res.data;
 
             push(`/controlled_vocabularies/${stringKey}/terms/${encodeURIComponent(newURI)}/edit`);
           });
-        break;
       case 'edit':
-        terms.update(stringKey, encodeURIComponent(uri), { term })
-          .then(() => push(`/controlled_vocabularies/${stringKey}`));
-        break;
+        return terms.update(stringKey, encodeURIComponent(uri), { term });
       default:
-        break;
+        return null;
     }
   }
 
-  // onDeleteHandler = (event) => {
-  //   event.preventDefault();
-  //
-  //   const { term: { uri } } = this.state;
-  //   const { history: { push } } = this.props;
-  //
-  //   hyacinthApi.delete(`/controlled_vocabularies/${stringKey}`)
-  //     .then(() => push('/controlled_vocabularies'));
-  // }
+  onDeleteHandler = (event) => {
+    event.preventDefault();
+
+    const {
+      match: { params: { stringKey, uri } },
+      history: { push }
+    } = this.props;
+
+    terms.delete(stringKey, uri)
+      .then(() => push(`/controlled_vocabularies/${stringKey}`));
+  }
 
   onChangeHandler = (name, value) => {
     this.setState(produce((draft) => { draft.term[name] = value; }));
   }
 
   render() {
+    const { match: { params: { stringKey } } } = this.props;
     const {
       formType,
       term,
       term: {
-        prefLabel, uri, authority, altLabel, termType,
+        prefLabel, uri, authority, altLabels, termType,
       },
     } = this.state;
 
@@ -123,17 +120,21 @@ class TermForm extends React.Component {
 
         <InputGroup>
           <Label>Pref Label</Label>
-          <TextInput value={prefLabel} onChange={v => this.onChangeHandler('prefLabel', v)} />
-        </InputGroup>
-
-        <InputGroup>
-          <Label>Alternative Label</Label>
           {
-            termType === 'temporary'
-              ? <ReadOnlyInput value={altLabel} />
-              : <TextInputWithAddAndRemove values={altLabel} onChange={v => this.onChangeHandler('altLabel', v)} />
+            termType === 'temporary' && formType !== 'new'
+              ? <PlainText value={prefLabel} />
+              : <TextInput value={prefLabel} onChange={v => this.onChangeHandler('prefLabel', v)} />
           }
         </InputGroup>
+
+        {
+          termType !== 'temporary' && (
+            <InputGroup>
+              <Label>Alternative Labels</Label>
+              <TextInputWithAddAndRemove values={altLabels} onChange={v => this.onChangeHandler('altLabels', v)} />
+            </InputGroup>
+          )
+        }
 
         <InputGroup>
           <Label>Authority</Label>
@@ -163,23 +164,16 @@ class TermForm extends React.Component {
                 <Label>{label}</Label>
                 { field }
               </InputGroup>
-            )
+            );
           })
         }
 
-        <Form.Row>
-          <Col sm="auto" className="mr-auto">
-            <DeleteButton formType={formType} onClick={this.onDeleteHandler} />
-          </Col>
-
-          <Col sm="auto">
-            <CancelButton to="/controlled_vocabularies" />
-          </Col>
-
-          <Col sm="auto">
-            <SubmitButton formType={formType} onClick={this.onSubmitHandler} />
-          </Col>
-        </Form.Row>
+        <FormButtons
+          formType={formType}
+          cancelTo={`/controlled_vocabularies/${stringKey}`}
+          onSave={this.onSubmitHandler}
+          onDelete={this.onDeleteHandler}
+        />
       </Form>
     );
   }

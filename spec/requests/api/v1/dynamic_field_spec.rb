@@ -24,10 +24,7 @@ RSpec.describe 'Dynamic Fields Requests', type: :request do
           expect(response.body).to be_json_eql(%(
             {
               "dynamic_field": {
-                "controlled_vocabulary": {
-                  "display_label": null,
-                  "string_key": "name_role"
-                },
+                "controlled_vocabulary": "name_role",
                 "display_label": "Value",
                 "field_type": "controlled_term",
                 "filter_label": "Name",
@@ -93,10 +90,7 @@ RSpec.describe 'Dynamic Fields Requests', type: :request do
           expect(response.body).to be_json_eql(%(
             {
               "dynamic_field": {
-                "controlled_vocabulary": {
-                  "display_label": null,
-                  "string_key": "names"
-                },
+                "controlled_vocabulary": "names",
                 "display_label": "Term",
                 "field_type": "controlled_term",
                 "filter_label": null,

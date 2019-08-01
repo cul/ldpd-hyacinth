@@ -4,14 +4,13 @@ import { Col, Form } from 'react-bootstrap';
 
 class ReadOnlyInput extends React.PureComponent {
   render() {
-    const { value } = this.props;
+    const { value, ...rest } = this.props;
 
     return (
-      <Col sm={8} style={{ alignSelf: 'center' }}>
+      <Col sm={10} style={{ alignSelf: 'center' }} {...rest}>
         <Form.Control
           type="text"
           value={value}
-          size="sm"
           readOnly
           disabled
         />

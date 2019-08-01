@@ -4,22 +4,38 @@ import { Table } from 'react-bootstrap';
 import produce from 'immer';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
-import hyacinthApi from '../../util/hyacinth_api';
+import { vocabularies } from '../../util/hyacinth_api';
+import PaginationBar from '../ui/PaginationBar';
+
+const perPage = 20;
 
 export default class ControlledVocabularyIndex extends React.Component {
   state = {
     controlledVocabularies: [],
+    totalRecords: '',
+    page: 1,
   }
 
   componentDidMount() {
-    hyacinthApi.get('/vocabularies')
-      .then((res) => {
-        this.setState(produce((draft) => { draft.controlledVocabularies = res.data.vocabularies; }));
-      });
+    this.vocabulariesFetch(1);
+  }
+
+  onPageNumberClick = (page) => {
+    this.vocabulariesFetch(page);
+  }
+
+  vocabulariesFetch = (page) => {
+    vocabularies.all(`page=${page}&per_page=${perPage}`).then((res) => {
+      this.setState(produce((draft) => {
+        draft.controlledVocabularies = res.data.vocabularies;
+        draft.totalRecords = res.data.totalRecords;
+        draft.page = res.data.page;
+      }));
+    });
   }
 
   render() {
-    const { controlledVocabularies } = this.state;
+    const { controlledVocabularies, totalRecords, page } = this.state;
 
     return (
       <>
@@ -27,6 +43,7 @@ export default class ControlledVocabularyIndex extends React.Component {
           title="Controlled Vocabularies"
           rightHandLinks={[{ link: '/controlled_vocabularies/new', label: 'New Controlled Vocabulary' }]}
         />
+
         <Table hover>
           <thead>
             <tr>
@@ -53,7 +70,13 @@ export default class ControlledVocabularyIndex extends React.Component {
             }
           </tbody>
         </Table>
-        <p>Need to add pagination</p>
+
+        <PaginationBar
+          currentPage={page}
+          perPage={perPage}
+          totalItems={totalRecords}
+          onPageNumberClick={this.onPageNumberClick}
+        />
       </>
     );
   }

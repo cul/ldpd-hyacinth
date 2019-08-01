@@ -57,7 +57,7 @@ class DescriptiveMetadata extends React.PureComponent {
             (dynamicFieldData.genre || [{}]).map((t, i) => (
               <InputGroup key={i}>
                 <Label sm={4} align="right">Specific Genre of Work</Label>
-                <ReadOnlyInput value={t.genreTerm ? t.genreTerm.prefLabel : ''} />
+                <ReadOnlyInput sm={8} value={t.genreTerm ? t.genreTerm.prefLabel : ''} />
               </InputGroup>
             ))
           }
@@ -66,7 +66,7 @@ class DescriptiveMetadata extends React.PureComponent {
             (dynamicFieldData.form || [{}]).map((t, i) => (
               <InputGroup key={i}>
                 <Label sm={4} align="right">Form</Label>
-                <ReadOnlyInput value={t.formTerm ? t.formTerm.prefLabel : ''} />
+                <ReadOnlyInput sm={8} value={t.formTerm ? t.formTerm.prefLabel : ''} />
               </InputGroup>
             ))
           }
@@ -78,22 +78,22 @@ class DescriptiveMetadata extends React.PureComponent {
                 <Card.Body>
                   <InputGroup>
                     <Label sm={4} align="right">Name</Label>
-                    <ReadOnlyInput value={n.nameTerm ? n.nameTerm.prefLabel : ''} />
+                    <ReadOnlyInput sm={8} value={n.nameTerm ? n.nameTerm.prefLabel : ''} />
                   </InputGroup>
 
                   <InputGroup>
                     <Label sm={4} align="right">Role(s)</Label>
-                    <ReadOnlyInput value={n.nameRole ? n.nameRole.map(r => r.nameRoleTerm.prefLabel).join(', ') : ''} />
+                    <ReadOnlyInput sm={8} value={n.nameRole ? n.nameRole.map(r => r.nameRoleTerm.prefLabel).join(', ') : ''} />
                   </InputGroup>
 
                   <InputGroup>
                     <Label sm={4} align="right">Date of Birth</Label>
-                    <ReadOnlyInput value="" />
+                    <ReadOnlyInput sm={8} value="" />
                   </InputGroup>
 
                   <InputGroup>
                     <Label sm={4} align="right">Date of Death</Label>
-                    <ReadOnlyInput value="" />
+                    <ReadOnlyInput sm={8} value="" />
                   </InputGroup>
                 </Card.Body>
               </Card>
@@ -104,7 +104,7 @@ class DescriptiveMetadata extends React.PureComponent {
             (dynamicFieldData.title || [{}]).map((t, i) => (
               <InputGroup key={i}>
                 <Label sm={4} align="right">Title</Label>
-                <ReadOnlyInput value={t.titleSortPortion} />
+                <ReadOnlyInput sm={8} value={t.titleSortPortion} />
               </InputGroup>
             ))
           }
@@ -113,7 +113,7 @@ class DescriptiveMetadata extends React.PureComponent {
             (dynamicFieldData.alternativeTitle || [{}]).map((t, i) => (
               <InputGroup key={i}>
                 <Label sm={4} align="right">Alternate Title</Label>
-                <ReadOnlyInput value={t.alternativeTitleValue} />
+                <ReadOnlyInput sm={8} value={t.alternativeTitleValue} />
               </InputGroup>
             ))
           }
@@ -131,7 +131,7 @@ class DescriptiveMetadata extends React.PureComponent {
             (dynamicFieldData.publisher || [{}]).map((t, i) => (
               <InputGroup key={i}>
                 <Label sm={4} align="right">Publisher Name</Label>
-                <ReadOnlyInput value={t.publisherValue} />
+                <ReadOnlyInput sm={8} value={t.publisherValue} />
               </InputGroup>
             ))
           }
@@ -143,22 +143,22 @@ class DescriptiveMetadata extends React.PureComponent {
                 <Card.Body>
                   <InputGroup>
                     <Label sm={4} align="right">Start Date</Label>
-                    <ReadOnlyInput value={d.dateCreatedStartValue} />
+                    <ReadOnlyInput sm={8} value={d.dateCreatedStartValue} />
                   </InputGroup>
 
                   <InputGroup>
                     <Label sm={4} align="right">End Date</Label>
-                    <ReadOnlyInput value={d.dateCreatedEndValue} />
+                    <ReadOnlyInput sm={8} value={d.dateCreatedEndValue} />
                   </InputGroup>
 
                   <InputGroup>
                     <Label sm={4} align="right">Type</Label>
-                    <ReadOnlyInput value={d.dateCreatedType} />
+                    <ReadOnlyInput sm={8} value={d.dateCreatedType} />
                   </InputGroup>
 
                   <InputGroup>
                     <Label sm={4} align="right">Key Date</Label>
-                    <ReadOnlyInput value={d.dateCreatedKeyDate} />
+                    <ReadOnlyInput sm={8} value={d.dateCreatedKeyDate} />
                   </InputGroup>
                 </Card.Body>
               </Card>
@@ -169,7 +169,7 @@ class DescriptiveMetadata extends React.PureComponent {
             (dynamicFieldData.dateCreatedTextual || [{}]).map((t, i) => (
               <InputGroup key={i}>
                 <Label sm={4} align="right">Descriptive Date</Label>
-                <ReadOnlyInput value={t.dateCreatedTextualValue} />
+                <ReadOnlyInput sm={8} value={t.dateCreatedTextualValue} />
               </InputGroup>
             ))
           }

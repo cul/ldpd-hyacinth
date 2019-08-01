@@ -10,9 +10,11 @@ import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import hyacinthApi from '../../util/hyacinth_api';
 import ability from '../../util/ability';
 import SubmitButton from '../layout/forms/SubmitButton';
+import SystemWidePermissionsForm from './SystemWidePermissionsForm'
 
 class UserEdit extends React.Component {
   state = {
+    loaded: false,
     changePasswordOpen: false,
     user: {
       uid: '',
@@ -38,6 +40,7 @@ class UserEdit extends React.Component {
           draft.user.currentPassword = '';
           draft.user.password = '';
           draft.user.passwordConfirmation = '';
+          draft.loaded = true;
         }));
       });
   }
@@ -75,7 +78,9 @@ class UserEdit extends React.Component {
     }
 
     const {
+      loaded,
       changePasswordOpen,
+      user,
       user: {
         uid, firstName, lastName, email, isActive,
         password, currentPassword, passwordConfirmation,
@@ -188,6 +193,12 @@ class UserEdit extends React.Component {
             </Col>
           </Form.Row>
         </Form>
+
+        <hr />
+        { loaded && <SystemWidePermissionsForm user={user} /> }
+
+        <hr />
+        <h5>Project Permissions</h5>
       </>
     );
   }

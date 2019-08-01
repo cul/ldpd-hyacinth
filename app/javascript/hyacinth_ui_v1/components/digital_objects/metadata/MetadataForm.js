@@ -2,18 +2,18 @@ import React from 'react';
 import produce from 'immer';
 import axios from 'axios';
 import { merge, camelCase } from 'lodash';
-import { Form, Col } from 'react-bootstrap';
+import { Fade } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 
 import hyacinthApi, {
   enabledDynamicFields, dynamicFieldCategories, digitalObject,
 } from '../../../util/hyacinth_api';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
-import SubmitButton from '../../layout/forms/SubmitButton';
-import CancelButton from '../../layout/forms/CancelButton';
 import TabHeading from '../../ui/tabs/TabHeading';
 import FieldGroupArray from './FieldGroupArray';
-import digitalObjectInterface from '../digitalObjectInterface';
+import FormButtons from '../../ui/forms/FormButtons';
+import InputGroup from '../../ui/forms/InputGroup';
+import TextInputWithAddAndRemove from '../../ui/forms/inputs/TextInputWithAddAndRemove';
 
 const defaultFieldValue = {
   string: '',
@@ -32,10 +32,17 @@ class MetadataForm extends React.PureComponent {
     dynamicFields: [],
     dynamicFieldData: {},
     defaultFieldData: {},
+    identifiers: [],
+    loaded: false,
   }
 
   componentDidMount = () => {
-    const { data: { uid, dynamicFieldData, projects, digitalObjectType }, formType } = this.props;
+    const {
+      data: {
+        uid, dynamicFieldData, projects, digitalObjectType, identifiers
+      },
+      formType,
+    } = this.props;
     // this.setState(produce((draft) => {
     //   draft.digitalObject.digitalObjectDataJson.projects[0].stringKey = project;
     //   draft.digitalObject.digitalObjectDataJson.digitalObjectType = digitalObjectType;
@@ -66,6 +73,8 @@ class MetadataForm extends React.PureComponent {
         draft.dynamicFields = dynamicFields;
         draft.defaultFieldData = emptyData;
         draft.dynamicFieldData = merge({}, emptyData, dynamicFieldData);
+        draft.identifiers = identifiers;
+        draft.loaded = true;
       }));
     }));
   }
@@ -76,22 +85,28 @@ class MetadataForm extends React.PureComponent {
     }));
   }
 
+  onIdentifierChange(value) {
+    this.setState(produce((draft) => {
+      draft.identifiers = value;
+    }));
+  }
+
   onSubmitHandler = () => {
-    const { dynamicFieldData, uid, formType } = this.state;
+    const { dynamicFieldData, identifiers, uid, formType } = this.state;
     const { history: { push } } = this.props;
 
     if (formType === 'edit') {
-      digitalObject.update(
+      return digitalObject.update(
         uid,
-        { digitalObject: { digitalObjectDataJson: { dynamicFieldData } } },
+        { digitalObject: { dynamicFieldData, identifiers } },
       ).then(res => push(`/digital_objects/${res.data.digitalObject.uid}`));
-    } else if (formType === 'new') {
+    }
+
+    if (formType === 'new') {
       const { data } = this.props;
 
-      digitalObject.create({
-        digitalObject: {
-          digitalObjectDataJson: { ...data, dynamicFieldData },
-        },
+      return digitalObject.create({
+        digitalObject: { ...data, dynamicFieldData, identifiers },
       }).then(res => push(`/digital_objects/${res.data.digitalObject.uid}`));
     }
   }
@@ -150,7 +165,9 @@ class MetadataForm extends React.PureComponent {
   }
 
   render() {
-    const { dynamicFields, formType, uid } = this.state;
+    const {
+      loaded, dynamicFields, identifiers, formType, uid,
+    } = this.state;
 
     return (
       <>
@@ -162,20 +179,30 @@ class MetadataForm extends React.PureComponent {
             link={`/digital_objects/${id}/metadata/edit`}
           /> */}
         </TabHeading>
-        { dynamicFields.map(category => this.renderCategory(category)) }
 
-        <Form.Row>
-          <Col sm="auto">
-            <CancelButton to={`/digital_objects/${uid}/metadata`} />
-          </Col>
+        <Fade in={loaded}>
+          <div>
+            { dynamicFields.map(category => this.renderCategory(category)) }
 
-          <Col sm="auto" className="ml-auto">
-            <SubmitButton formType={formType} onClick={this.onSubmitHandler} />
-          </Col>
-        </Form.Row>
+            <h4 className="text-orange">Identifiers</h4>
+            <InputGroup>
+              <TextInputWithAddAndRemove
+                sm={12}
+                values={identifiers}
+                onChange={v => this.onIdentifierChange(v)}
+              />
+            </InputGroup>
+
+            <FormButtons
+              formType={formType}
+              cancelTo={`/digital_objects/${uid}/metadata`}
+              onSave={this.onSubmitHandler}
+            />
+          </div>
+        </Fade>
       </>
     );
   }
 }
 
-export default digitalObjectInterface(MetadataForm);
+export default withRouter(withErrorHandler(MetadataForm, hyacinthApi));

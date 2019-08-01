@@ -31,11 +31,12 @@ export const digitalObject = {
   get: id => instance.get(`/digital_objects/${id}`),
   create: data => instance.post('/digital_objects', data),
   update: (id, data) => instance.patch(`/digital_objects/${id}`, data),
+  delete: id => instance.delete(`/digital_objects/${id}`),
 };
 
 
 export const vocabularies = {
-  all: () => instance.get('/vocabularies'),
+  all: query => instance.get(query ? `/vocabularies?${query}` : '/vocabularies'),
   get: stringKey => instance.get(`/vocabularies/${stringKey}`),
 };
 
@@ -54,4 +55,5 @@ export const terms = {
   get: (vocabStringKey, uri) => instance.get(`/vocabularies/${vocabStringKey}/terms/${uri}`),
   update: (vocabStringKey, uri, data) => instance.patch(`/vocabularies/${vocabStringKey}/terms/${uri}`, data),
   create: (vocabStringKey, data) => instance.post(`/vocabularies/${vocabStringKey}/terms`, data),
+  delete: (vocabStringKey, uri) => instance.delete(`/vocabularies/${vocabStringKey}/terms/${uri}`),
 };
