@@ -1,0 +1,16 @@
+default: &default
+  version: 6.3.0
+  download_dir: <%= Rails.root.join('tmp', 'solr-download') %>
+
+development:
+  <<: *default
+  port: 8983
+  instance_dir: <%= Rails.root.join('tmp', 'solr-development') %>
+  collection:
+    Dir
+    name
+
+test:
+  <<: *default
+  port: 9983
+  instance_dir: <%= Rails.root.join('tmp', 'solr-test') %>

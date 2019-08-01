@@ -1,16 +1,16 @@
 # Note: startup_wait is a timeout (in seconds), not block/sleep
 
-default:
+default: &default
   startup_wait: 120
-  jetty_port: 8983
-  java_version: ">= 1.7"
+  java_version: ">= 1.8"
   java_opts:
     - "-XX:MaxPermSize=128m"
     - "-Xmx256m"
+
+development:
+  <<: *default
+  jetty_port: 8080
+
 test:
-  startup_wait: 120
-  jetty_port: 8983
-  java_version: ">= 1.7"
-  java_opts:
-    - "-XX:MaxPermSize=128m"
-    - "-Xmx256m"
+  <<: *default
+  jetty_port: 9090

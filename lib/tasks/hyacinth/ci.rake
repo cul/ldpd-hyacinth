@@ -1,6 +1,5 @@
 FEDORA_JETTY_ZIP_BASENAME = 'hyacinth-fedora-3.8.1-no-solr'.freeze
 
-
 namespace :hyacinth do
   require 'rspec/core/rake_task'
   RSpec::Core::RakeTask.new(:rspec) do |spec|
@@ -19,10 +18,10 @@ namespace :hyacinth do
   end
 
   desc 'CI build without rubocop'
-  task ci_nocop: [:environment, 'hyacinth:ci_specs']
+  task ci_nocop: ['hyacinth:setup:config_files', :environment, 'hyacinth:ci_specs']
 
   desc 'CI build with Rubocop validation'
-  task ci: [:environment, 'hyacinth:rubocop', 'hyacinth:ci_specs']
+  task ci: ['hyacinth:setup:config_files', :environment, 'hyacinth:rubocop', 'hyacinth:ci_specs']
 
   require 'solr_wrapper/rake_task'
   desc 'CI build just running specs'
@@ -32,8 +31,8 @@ namespace :hyacinth do
     rspec_system_exit_failure_exception = nil
 
     task_stack = ['hyacinth:rspec']
-    task_stack.unshift('hyacinth:solr_wrapper') if includes.include?('solr')
-    task_stack.unshift('hyacinth:fedora_wrapper') if includes.include?('fedora')
+    task_stack.prepend('hyacinth:solr_wrapper') if includes.include?('solr')
+    task_stack.prepend('hyacinth:fedora_wrapper') if includes.include?('fedora')
     duration = Benchmark.realtime do
       ENV['RAILS_ENV'] = 'test'
       Rails.env = ENV['RAILS_ENV']
@@ -58,17 +57,16 @@ namespace :hyacinth do
   task :solr_wrapper, [:task_stack] => [:environment] do |task, args|
     rspec_system_exit_failure_exception = nil
     task_stack = args[:task_stack]
-    solr_unpack_dir = Rails.root.join('tmp', 'solr')
-    solr_download_dir = Rails.root.join('tmp', 'solr-download')
+    solr_wrapper_config = Rails.application.config_for(:solr_wrapper).symbolize_keys
 
-    if File.exist?(solr_unpack_dir)
+    if File.exist?(solr_wrapper_config[:instance_dir])
       # Delete old solr if it exists because we want a fresh solr instance
-      puts "Deleting old test solr instance at #{solr_unpack_dir}...\n"
-      FileUtils.rm_rf(solr_unpack_dir)
+      puts "Deleting old test solr instance at #{solr_wrapper_config[:instance_dir]}...\n"
+      FileUtils.rm_rf(solr_wrapper_config[:instance_dir])
     end
 
     puts "Unzipping and starting new solr instance...\n"
-    SolrWrapper.wrap(version: '6.3.0', port: 8984, instance_dir: solr_unpack_dir, download_dir: solr_download_dir) do |solr_wrapper_instance|
+    SolrWrapper.wrap(solr_wrapper_config) do |solr_wrapper_instance|
       # Create collection
       solr_wrapper_instance.with_collection(name: 'hyacinth-solr', dir: Rails.root.join('spec', 'fixtures', 'solr_cores', 'hyacinth-solr-6-3', 'conf')) do
         begin
