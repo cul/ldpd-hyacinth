@@ -48,7 +48,7 @@ class Ability
         can :manage, :term
         can :manage, :custom_field
       when Permission::READ_ALL_DIGITAL_OBJECTS, Permission::MANAGE_ALL_DIGITAL_OBJECTS
-        can :show, [Project, PublishTarget, FieldSet]
+        can [:show, :index], [Project, PublishTarget, FieldSet]
       end
     end
   end
