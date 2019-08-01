@@ -5,19 +5,10 @@ import { Row, Col, Button } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import PageNotFound from '../layout/PageNotFound';
-import Tab from '../ui/tabs/Tab';
-import Tabs from '../ui/tabs/Tabs';
-import TabBody from '../ui/tabs/TabBody';
-// import CoreData from './core_data/CoreData';
-// import FieldSet from './field_sets/FieldSet';
-// import PublishTarget from './publish_targets/PublishTarget';
-// import EnabledDynamicFields from './enabled_dynamic_fields/EnabledDynamicFields';
 import hyacinthApi, { vocabulary } from '../../util/hyacinth_api';
-import ControlledVocabularyForm from './ControlledVocabularyForm';
-import Terms from './terms/Terms';
 import ContextualNavbar from '../layout/ContextualNavbar';
 import TermIndex from './terms/TermIndex';
+import EditButton from '../ui/buttons/EditButton';
 
 export default class ControlledVocabularyShow extends React.Component {
   state = {
@@ -48,10 +39,10 @@ export default class ControlledVocabularyShow extends React.Component {
                 title={`Controlled Vocabulary | ${vocabulary.label}`}
                 rightHandLinks={[{ link: '/controlled_vocabularies', label: 'Back to All Controlled Vocabularies' }]}
               />
-              <div className="m-1">
-                <h3>Vocabulary</h3>
+              <div className="m-2">
+                <h3>Vocabulary<EditButton className="ml-2" link={`/controlled_vocabularies/${vocabulary.stringKey}/edit`}/></h3>
 
-                <Row as="dl" >
+                <Row as="dl">
                   <Col as="dt" sm={2}>String Key</Col>
                   <Col as="dd" sm={10}>{vocabulary.stringKey}</Col>
 

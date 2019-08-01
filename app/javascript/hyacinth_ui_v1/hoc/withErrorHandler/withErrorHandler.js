@@ -13,12 +13,12 @@ const withErrorHandler = (WrappedComponent, axios) => class extends Component {
     });
 
     this.resInterceptor = axios.interceptors.response.use(res => res, (error) => {
-      const { response: { status, data: { errors } } } = error;
+      const { response: { status, data } } = error;
 
       if (status === 404) {
         this.props.history.push('/404');
       } else {
-        this.setState({ errors });
+        this.setState({ errors: data.errors || 'Unexpected Error. Please ask administrator to check logs.' });
       }
       return Promise.reject(error);
     });

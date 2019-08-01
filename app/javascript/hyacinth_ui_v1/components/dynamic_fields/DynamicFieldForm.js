@@ -1,14 +1,19 @@
 import React from 'react';
-import { Row, Col, Form } from 'react-bootstrap';
+import { Row, Form, Collapse } from 'react-bootstrap';
 import produce from 'immer';
 import { startCase } from 'lodash';
 import { withRouter } from 'react-router-dom';
 
-import CancelButton from '../layout/forms/CancelButton';
-import DeleteButton from '../layout/forms/DeleteButton';
-import SubmitButton from '../layout/forms/SubmitButton';
 import hyacinthApi from '../../util/hyacinth_api';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
+import InputGroup from '../ui/forms/InputGroup';
+import Label from '../ui/forms/Label';
+import FormButtons from '../ui/forms/FormButtons';
+import TextInput from '../ui/forms/inputs/TextInput';
+import NumberInput from '../ui/forms/inputs/NumberInput';
+import JSONInput from '../ui/forms/inputs/JSONInput';
+import SelectInput from '../ui/forms/inputs/SelectInput';
+import Checkbox from '../ui/forms/inputs/Checkbox';
 
 const fieldTypes = [
   'string', 'textarea', 'integer', 'boolean', 'select', 'date', 'controlled_term',
@@ -26,7 +31,7 @@ class DynamicFieldForm extends React.Component {
       isFacetable: false,
       filterLabel: '',
       controlledVocabulary: '',
-      selectOptions: '{}',
+      selectOptions: '',
       isKeywordSearchable: false,
       isTitleSearchable: false,
       isIdentifierSearchable: false,
@@ -61,32 +66,27 @@ class DynamicFieldForm extends React.Component {
         const { vocabularies } = res.data;
 
         this.setState(produce((draft) => {
-          draft.vocabularies = vocabularies.map(v => ({ stringKey: v.stringKey, label: v.label }));
+          draft.vocabularies = vocabularies.map(v => ({ value: v.stringKey, label: v.label }));
         }));
       });
   }
 
-  onSubmitHandler = (event) => {
-    event.preventDefault();
-
+  onSave = () => {
     const { formType, dynamicField: { id }, dynamicField } = this.state;
     const { history: { push } } = this.props;
 
     switch (formType) {
       case 'new':
-        hyacinthApi.post('/dynamic_fields', dynamicField)
+        return hyacinthApi.post('/dynamic_fields', dynamicField)
           .then((res) => {
             const { dynamicField: { id: newId } } = res.data;
 
             push(`/dynamic_fields/${newId}/edit`);
           });
-        break;
       case 'edit':
-        hyacinthApi.patch(`/dynamic_fields/${id}`, dynamicField)
-          .then(() => push(`/dynamic_fields/${id}/edit`));
-        break;
+        return hyacinthApi.patch(`/dynamic_fields/${id}`, dynamicField);
       default:
-        break;
+        return null;
     }
   }
 
@@ -100,15 +100,9 @@ class DynamicFieldForm extends React.Component {
       .then(() => push('/dynamic_fields'));
   }
 
-  onChangeHandler = (event) => {
-    const {
-      target: {
-        type, name, value, checked,
-      },
-    } = event;
-
+  onChange(name, value) {
     this.setState(produce((draft) => {
-      draft.dynamicField[name] = type === 'checkbox' ? checked : value;
+      draft.dynamicField[name] = value;
     }));
   }
 
@@ -133,153 +127,108 @@ class DynamicFieldForm extends React.Component {
 
     return (
       <Form onSubmit={this.onSubmitHandler}>
-        <Form.Group as={Row}>
-          <Form.Label column sm={12} xl={3}>String Key</Form.Label>
-          <Col sm={12} xl={9}>
-            <Form.Control
-              type="text"
-              name="stringKey"
-              value={stringKey}
-              onChange={this.onChangeHandler}
-              disabled={formType === 'edit'}
-            />
-          </Col>
-        </Form.Group>
+        <InputGroup>
+          <Label>String Key</Label>
+          <TextInput
+            value={stringKey}
+            onChange={v => this.onChange('stringKey', v)}
+            disabled={formType === 'edit'}
+          />
+        </InputGroup>
 
-        <Form.Group as={Row}>
-          <Form.Label column sm={12} xl={3}>Display Label</Form.Label>
-          <Col sm={12} xl={9}>
-            <Form.Control
-              type="text"
-              name="displayLabel"
-              value={displayLabel}
-              onChange={this.onChangeHandler}
-            />
-          </Col>
-        </Form.Group>
+        <InputGroup>
+          <Label>Display Label</Label>
+          <TextInput value={displayLabel} onChange={v => this.onChange('displayLabel', v)} />
+        </InputGroup>
 
-        <Form.Group as={Row}>
-          <Form.Label column sm={12} xl={3}>Sort Order</Form.Label>
-          <Col sm={12} xl={9}>
-            <Form.Control
-              type="number"
-              name="sortOrder"
-              value={sortOrder}
-              onChange={this.onChangeHandler}
-            />
-          </Col>
-        </Form.Group>
+        <InputGroup>
+          <Label>Sort Order</Label>
+          <NumberInput value={sortOrder} onChange={v => this.onChange('sortOrder', v)} />
+        </InputGroup>
 
         <h4>Field Configuration</h4>
 
-        <Form.Group as={Row}>
-          <Form.Label column sm={12} xl={3}>Field Type</Form.Label>
-          <Col sm={12} xl={9}>
-            <Form.Control
-              as="select"
-              name="fieldType"
-              value={fieldType}
-              onChange={this.onChangeHandler}
-            >
-              {fieldTypes.map(t => (<option key={t} value={t}>{startCase(t)}</option>)) }
-            </Form.Control>
-          </Col>
-        </Form.Group>
+        <InputGroup as={Row}>
+          <Label>Field Type</Label>
+          <SelectInput
+            value={fieldType}
+            options={fieldTypes.map(t => ({ value: t, label: startCase(t) }))}
+            onChange={v => this.onChange('fieldType', v)}
+          />
+        </InputGroup>
 
-        <Form.Group as={Row}>
-          <Form.Label column sm={12} xl={3}>Controlled Vocabulary</Form.Label>
-          <Col sm={12} xl={9}>
-            <Form.Control
-              as="select"
-              name="controlledVocabulary"
-              value={controlledVocabulary}
-              onChange={this.onChangeHandler}
-              disabled={fieldType !== 'controlled_term'}
-            >
-              {
-                vocabularies.map(v => (
-                  <option key={v.stringKey} value={v.stringKey}>{v.label}</option>
-                ))
-              }
-            </Form.Control>
-          </Col>
-        </Form.Group>
+        <Collapse in={fieldType === 'controlled_term'}>
+          <div>
+            <InputGroup>
+              <Label>Controlled Vocabulary</Label>
+              <SelectInput
+                value={controlledVocabulary}
+                options={vocabularies}
+                onChange={v => this.onChange('controlledVocabulary', v)}
+              />
+            </InputGroup>
+          </div>
+        </Collapse>
 
-        <Form.Group as={Row}>
-          <Form.Label column sm={12} xl={3}>Select Options</Form.Label>
-          <Col sm={12} xl={9}>
-            <Form.Control
-              type="text"
-              name="selectOptions"
-              value={selectOptions}
-              onChange={this.onChangeHandler}
-              disabled={fieldType !== 'select'}
-            />
-          </Col>
-        </Form.Group>
+        <Collapse in={fieldType === 'select'}>
+          <div>
+            <InputGroup>
+              <Label>Select Options</Label>
+              <JSONInput
+                value={selectOptions}
+                onChange={v => this.onChange('selectOptions', v)}
+                height="100px"
+                placeholder={'[{ "option": "label" }]'}
+              />
+            </InputGroup>
+          </div>
+        </Collapse>
 
         <h4>Searching/Facets</h4>
-        <Form.Group as={Row}>
-          <Form.Label column sm={12} xl={3}>Filter Label</Form.Label>
-          <Col sm={12} xl={9}>
-            <Form.Control
-              type="text"
-              name="filterLabel"
-              value={filterLabel}
-              onChange={this.onChangeHandler}
-            />
-          </Col>
-        </Form.Group>
+        <InputGroup>
+          <Label>Filter Label</Label>
+          <TextInput value={filterLabel} onChange={v => this.onChange('filterLabel', v)} />
+        </InputGroup>
 
-        <Form.Group as={Row}>
-          <Form.Label column sm={12} xl={3}>Is Facetable?</Form.Label>
-          <Col sm={12} xl={9}>
-            <Form.Check
-              name="isFacetable"
-              aria-label="is facetable option"
-              checked={isFacetable}
-              onChange={this.onChangeHandler}
-            />
-          </Col>
-        </Form.Group>
+        <InputGroup>
+          <Label>Is Facetable?</Label>
+          <Checkbox
+            value={isFacetable}
+            onChange={v => this.onChange('isFacetable', v)}
+          />
+        </InputGroup>
 
-        <Form.Group as={Row}>
-          <Form.Label column sm={12} xl={3}>Include in:</Form.Label>
-          <Col sm={12} xl={9}>
-            <Form.Check
-              name="isKeywordSearchable"
-              label="keyword search"
-              checked={isKeywordSearchable}
-              onChange={this.onChangeHandler}
-            />
-            <Form.Check
-              name="isTitleSearchable"
-              label="title search"
-              checked={isTitleSearchable}
-              onChange={this.onChangeHandler}
-            />
-            <Form.Check
-              name="isIdentifierSearchable"
-              label="identifier search"
-              checked={isIdentifierSearchable}
-              onChange={this.onChangeHandler}
-            />
-          </Col>
-        </Form.Group>
+        <InputGroup>
+          <Label>Include in:</Label>
+          <Checkbox
+            sm={3}
+            lg={2}
+            value={isKeywordSearchable}
+            onChange={v => this.onChange('isKeywordSearchable', v)}
+            label="keyword search"
+          />
+          <Checkbox
+            sm={3}
+            lg={2}
+            value={isTitleSearchable}
+            onChange={v => this.onChange('isTitleSearchable', v)}
+            label="title search"
+          />
+          <Checkbox
+            sm={3}
+            lg={2}
+            value={isIdentifierSearchable}
+            onChange={v => this.onChange('isIdentifierSearchable', v)}
+            label="identifier search"
+          />
+        </InputGroup>
 
-        <Form.Row>
-          <Col sm="auto" className="mr-auto">
-            <DeleteButton formType={formType} onClick={this.onDeleteHandler} />
-          </Col>
-
-          <Col sm="auto">
-            <CancelButton to="/dynamic_fields" />
-          </Col>
-
-          <Col sm="auto">
-            <SubmitButton onClick={this.onSubmitHandler} formType={formType} />
-          </Col>
-        </Form.Row>
+        <FormButtons
+          formType={formType}
+          cancelTo="/dynamic_fields"
+          onDelete={this.onDeleteHandler}
+          onSave={this.onSave}
+        />
       </Form>
     );
   }

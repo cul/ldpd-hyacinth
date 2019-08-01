@@ -1,13 +1,15 @@
 import React from 'react';
-import { Row, Col, Form } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import produce from 'immer';
 
-import SubmitButton from '../layout/forms/SubmitButton';
-import DeleteButton from '../layout/forms/DeleteButton';
-import CancelButton from '../layout/forms/CancelButton';
 import hyacinthApi from '../../util/hyacinth_api';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
+import FormButtons from '../ui/forms/FormButtons';
+import InputGroup from '../ui/forms/InputGroup';
+import Label from '../ui/forms/Label';
+import NumberInput from '../ui/forms/inputs/NumberInput';
+import TextInput from '../ui/forms/inputs/TextInput';
 
 class DynamicFieldCategoryForm extends React.Component {
   state = {
@@ -37,27 +39,22 @@ class DynamicFieldCategoryForm extends React.Component {
     }));
   }
 
-  onSubmitHandler = (event) => {
-    event.preventDefault();
-
+  onSubmitHandler = () => {
     const { formType, dynamicFieldCategory: { id }, dynamicFieldCategory } = this.state;
     const { history: { push } } = this.props;
 
     switch (formType) {
       case 'new':
-        hyacinthApi.post('/dynamic_field_categories', dynamicFieldCategory)
+        return hyacinthApi.post('/dynamic_field_categories', dynamicFieldCategory)
           .then((res) => {
             const { dynamicFieldCategory: { id: newId } } = res.data;
 
             push(`/dynamic_field_categories/${newId}/edit`);
           });
-        break;
       case 'edit':
-        hyacinthApi.patch(`/dynamic_field_categories/${id}`, dynamicFieldCategory)
-          .then(() => push('/dynamic_fields'));
-        break;
+        return hyacinthApi.patch(`/dynamic_field_categories/${id}`, dynamicFieldCategory);
       default:
-        break;
+        return null;
     }
   }
 
@@ -72,9 +69,10 @@ class DynamicFieldCategoryForm extends React.Component {
       });
   }
 
-  onChangeHandler = (event) => {
-    const { target: { name, value } } = event;
-    this.setState(produce((draft) => { draft.dynamicFieldCategory[name] = value; }));
+  onChange(name, value) {
+    this.setState(produce((draft) => {
+      draft.dynamicFieldCategory[name] = value;
+    }));
   }
 
   render() {
@@ -82,43 +80,28 @@ class DynamicFieldCategoryForm extends React.Component {
 
     return (
       <Form onSubmit={this.onSubmitHandler}>
-        <Form.Group as={Row}>
-          <Form.Label column sm={2}>Display Label</Form.Label>
-          <Col sm={10}>
-            <Form.Control
-              type="text"
-              name="displayLabel"
-              value={displayLabel}
-              onChange={this.onChangeHandler}
-            />
-          </Col>
-        </Form.Group>
+        <InputGroup>
+          <Label>Display Label</Label>
+          <TextInput
+            value={displayLabel}
+            onChange={v => this.onChange('displayLabel', v)}
+          />
+        </InputGroup>
 
-        <Form.Group as={Row}>
-          <Form.Label column sm={2}>Sort Order</Form.Label>
-          <Col sm={10}>
-            <Form.Control
-              type="number"
-              name="sortOrder"
-              value={sortOrder}
-              onChange={this.onChangeHandler}
-            />
-          </Col>
-        </Form.Group>
+        <InputGroup>
+          <Label>Sort Order</Label>
+          <NumberInput
+            value={sortOrder}
+            onChange={v => this.onChange('sortOrder', v)}
+          />
+        </InputGroup>
 
-        <Form.Row>
-          <Col sm="auto" className="mr-auto">
-            <DeleteButton formType={formType} onClick={this.onDeleteHandler} />
-          </Col>
-
-          <Col sm="auto">
-            <CancelButton to="/dynamic_fields" />
-          </Col>
-
-          <Col sm="auto">
-            <SubmitButton formType={formType} onClick={this.onSubmitHandler} />
-          </Col>
-        </Form.Row>
+        <FormButtons
+          formType={formType}
+          cancelTo="/dynamic_fields"
+          onDelete={this.onDeleteHandler}
+          onSave={this.onSubmitHandler}
+        />
       </Form>
     );
   }

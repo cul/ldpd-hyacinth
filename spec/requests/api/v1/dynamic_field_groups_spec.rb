@@ -95,7 +95,7 @@ RSpec.describe 'Dynamic Field Groups Requests', type: :request do
                 "sort_order": 8,
                 "string_key": "location",
                 "type": "DynamicFieldGroup",
-                "export_rules": [ { "translation_logic": "[\\n\\n]", "field_export_profile": "#{field_export_profile.name}" }]
+                "export_rules": [ { "translation_logic": "[\\n\\n]", "field_export_profile_id": #{field_export_profile.id} }]
               }
             }
           )).excluding('parent_id')

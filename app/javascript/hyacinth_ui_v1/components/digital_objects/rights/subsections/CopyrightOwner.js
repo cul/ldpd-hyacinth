@@ -49,7 +49,7 @@ export default class CopyrightOwner extends React.PureComponent {
 
           <InputGroup>
             <Label sm={4} align="right">Heirs</Label>
-            <TextInput value={value.heirs} onChange={v => this.onFieldChange('heirs', v)} />
+            <TextInput sm={8} value={value.heirs} onChange={v => this.onFieldChange('heirs', v)} />
           </InputGroup>
 
           <InputGroup>

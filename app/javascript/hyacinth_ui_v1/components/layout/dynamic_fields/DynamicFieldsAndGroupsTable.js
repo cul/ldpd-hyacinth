@@ -7,7 +7,6 @@ import {
 import { withRouter, Link } from 'react-router-dom';
 
 import hyacinthApi from '../../../util/hyacinth_api';
-import EditButton from '../../ui/buttons/EditButton';
 import UpArrowButton from '../../ui/buttons/UpArrowButton';
 import DownArrowButton from '../../ui/buttons/DownArrowButton';
 
@@ -40,7 +39,7 @@ class DynamicFieldsAndGroupsTable extends React.PureComponent {
 
                 return (
                   <tr key={`${type}_${id}`}>
-                    <td className="text-center"><span className="badge badge-secondary">{last(words(type))}</span></td>
+                    <td className="text-center"><span className="badge badge-primary" style={{ fontSize: '80%' }}>{last(words(type))}</span></td>
                     <td className="text-center">
                       <Link to={`/${snakeCase(type)}s/${id}/edit`}>
                         {displayLabel}

@@ -18,7 +18,7 @@ env:
     - NODE_VERSION=8
     - NODE_VERSION=10
 
-jdk: 'oraclejdk8'
+jdk: 'openjdk8'
 
 addons:
   chrome: stable

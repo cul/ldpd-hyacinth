@@ -12,20 +12,16 @@ class Checkbox extends React.PureComponent {
 
   render() {
     const {
-      label, inputName, value,
+      label, inputName, helpText, value, onChange, ...rest
     } = this.props;
 
     return (
-      <Col sm={8} style={{ alignSelf: 'center' }}>
-        <Form.Check
-          className="py-1"
-          type="checkbox"
-          checked={value}
-          id={inputName}
-          name={inputName}
-          label={label}
-          onChange={this.onChangeHandler}
-        />
+      <Col sm={8} {...rest}>
+        <Form.Check type="checkbox" id={inputName}>
+          <Form.Check.Input type="checkbox" onChange={this.onChangeHandler} name={inputName} checked={value} />
+          <Form.Check.Label>{label}</Form.Check.Label>
+          { helpText && <p className="text-muted">{helpText}</p> }
+        </Form.Check>
       </Col>
     );
   }
@@ -34,6 +30,7 @@ class Checkbox extends React.PureComponent {
 Checkbox.defaultProps = {
   inputName: '',
   label: '',
+  helpText: null,
 };
 
 Checkbox.propTypes = {
@@ -41,6 +38,7 @@ Checkbox.propTypes = {
   inputName: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   value: PropTypes.bool.isRequired,
+  helpText: PropTypes.string,
 };
 
 export default Checkbox;

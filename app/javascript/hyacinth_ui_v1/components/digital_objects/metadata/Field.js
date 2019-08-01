@@ -25,7 +25,7 @@ class Field extends React.PureComponent {
       case 'controlled_term':
         field = (
           <ControlledVocabularySelect
-            vocabulary={dynamicField.controlledVocabulary.stringKey}
+            vocabulary={dynamicField.controlledVocabulary}
             {...sharedProps}
           />
         );

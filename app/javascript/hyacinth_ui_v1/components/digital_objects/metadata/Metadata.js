@@ -3,17 +3,14 @@ import { Route, Switch } from 'react-router-dom';
 
 import PageNotFound from '../../layout/PageNotFound';
 import MetadataShow from './MetadataShow';
-import MetadataForm from './MetadataForm';
+import MetadataEdit from './MetadataEdit';
 
 class Metadata extends React.PureComponent {
   render() {
     return (
       <Switch>
         <Route exact path="/digital_objects/:id/metadata" component={MetadataShow} />
-        <Route
-          path="/digital_objects/:id/metadata/edit"
-          render={() => <MetadataForm formType="edit" />}
-        />
+        <Route path="/digital_objects/:id/metadata/edit" component={MetadataEdit} />
 
         { /* When none of the above match, <PageNotFound> will be rendered */ }
         <Route component={PageNotFound} />

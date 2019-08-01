@@ -118,6 +118,7 @@ class UnderlyingRights extends React.PureComponent {
                       <InputGroup>
                         <Label sm={4} align="right">Composition [music publisher]</Label>
                         <TextInput
+                          sm={8}
                           value={value.composition}
                           onChange={v => this.onChange('composition', v)}
                         />
@@ -126,6 +127,7 @@ class UnderlyingRights extends React.PureComponent {
                       <InputGroup>
                         <Label sm={4} align="right">Recording [record label]</Label>
                         <TextInput
+                          sm={8}
                           value={value.recording}
                           onChange={v => this.onChange('recording', v)}
                         />
@@ -154,7 +156,7 @@ class UnderlyingRights extends React.PureComponent {
 
                   <InputGroup>
                     <Label sm={4} align="right">Other</Label>
-                    <TextInput value={value.other} onChange={v => this.onChange('other', v)} />
+                    <TextInput sm={8} value={value.other} onChange={v => this.onChange('other', v)} />
                   </InputGroup>
                 </div>
               </Collapse>

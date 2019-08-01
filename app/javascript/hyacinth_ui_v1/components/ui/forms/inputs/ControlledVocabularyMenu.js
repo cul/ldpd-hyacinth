@@ -6,7 +6,7 @@ import {
 import produce from 'immer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { vocabulary } from '../../../../util/hyacinth_api';
+import { vocabularies, terms } from '../../../../util/hyacinth_api';
 
 const perPage = '10';
 
@@ -25,9 +25,9 @@ class ControlledVocabularyMenu extends React.Component {
   }
 
   componentDidMount() {
-    const { vocabulary: stringKey } = this.props;
+    const { vocabulary } = this.props;
 
-    vocabulary(stringKey).terms().search(`page=1&per_page=${perPage}`).then((res) => {
+    terms.search(vocabulary, `page=1&per_page=${perPage}`).then((res) => {
       this.setState(produce((draft) => {
         draft.options = res.data.terms;
         draft.lastPage = 1;
@@ -36,9 +36,9 @@ class ControlledVocabularyMenu extends React.Component {
       }));
     });
 
-    vocabulary(stringKey).get().then((res) => {
+    vocabularies.get(vocabulary).then((res) => {
       this.setState(produce((draft) => {
-        draft.vocabulary = res.data;
+        draft.vocabulary = res.data.vocabulary;
       }));
     });
   }
@@ -61,7 +61,7 @@ class ControlledVocabularyMenu extends React.Component {
 
     const q = (value.length < 3) ? '' : value;
 
-    vocabulary(stringKey).terms().search(`page=1&per_page=${perPage}&q=${q}`)
+    terms.search(stringKey, `page=1&per_page=${perPage}&q=${q}`)
       .then((res) => {
         this.setState(produce((draft) => {
           draft.options = res.data.terms;
@@ -87,12 +87,12 @@ class ControlledVocabularyMenu extends React.Component {
 
   onMoreHandler = () => {
     const { lastPage, search } = this.state;
-    const { vocabulary: stringKey } = this.props;
+    const { vocabulary } = this.props;
 
     let queryString = `page=${lastPage + 1}&per_page=${perPage}`;
     if (search && search.length >= 3) queryString = queryString.concat(`&q=${search}`)
 
-    vocabulary(stringKey).terms().search(queryString).then((res) => {
+    terms.search(vocabulary, queryString).then((res) => {
       this.setState(produce((draft) => {
         draft.options = draft.options.concat(res.data.terms);
         draft.lastPage = lastPage + 1;
@@ -184,7 +184,7 @@ class ControlledVocabularyMenu extends React.Component {
               </ul>
               {
                 totalResults > options.length
-                  && <Button variant="link" onClick={this.onMoreHandler}>More...</Button>
+                  && <Button variant="link" onClick={this.onMoreHandler} className="float-right py-0">More...</Button>
               }
             </>
           )

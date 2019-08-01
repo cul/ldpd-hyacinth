@@ -43,7 +43,7 @@ class DynamicField < ActiveRecord::Base
       is_keyword_searchable: is_keyword_searchable,
       is_title_searchable: is_title_searchable,
       is_identifier_searchable: is_identifier_searchable,
-      controlled_vocabulary: controlled_vocabulary ? { string_key: controlled_vocabulary, display_label: nil } : {}
+      controlled_vocabulary: controlled_vocabulary
     }
   end
 

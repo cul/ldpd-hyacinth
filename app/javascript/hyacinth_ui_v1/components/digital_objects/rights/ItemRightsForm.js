@@ -1,16 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import produce from 'immer';
-import { Col, Form, Collapse } from 'react-bootstrap';
+import { Form, Collapse } from 'react-bootstrap';
 
-import SubmitButton from '../../layout/forms/SubmitButton';
-import CancelButton from '../../layout/forms/CancelButton';
 import Label from '../../ui/forms/Label';
 import InputGroup from '../../ui/forms/InputGroup';
 import BooleanRadioButtons from '../../ui/forms/inputs/BooleanRadioButtons';
 import { digitalObject } from '../../../util/hyacinth_api';
 import digitalObjectInterface from '../digitalObjectInterface';
 import TabHeading from '../../ui/tabs/TabHeading';
+import FormButtons from '../../ui/forms/FormButtons';
 
 import DescriptiveMetadata from './subsections/DescriptiveMetadata';
 import CopyrightStatus from './subsections/CopyrightStatus';
@@ -228,15 +227,11 @@ class ItemRightsForm extends React.Component {
             </div>
           </Collapse>
 
-          <Form.Row>
-            <Col sm="auto">
-              <CancelButton to="/digital_object/:id/rights" />
-            </Col>
-
-            <Col sm="auto" className="ml-auto">
-              <SubmitButton formType="edit" onClick={this.onSubmitHandler} />
-            </Col>
-          </Form.Row>
+          <FormButtons
+            formType="edit"
+            // cancelTo={"/digital_object/:id/rights"}
+            onSave={this.onSubmitHandler}
+          />
         </Form>
       </>
     );

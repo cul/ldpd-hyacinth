@@ -59,6 +59,7 @@ class ColumbiaUniversityIsCopyrightHolder extends React.PureComponent {
                   <InputGroup>
                     <Label sm={4} align="right">Transfer Documentation</Label>
                     <TextInput
+                      sm={8}
                       value={value.transferDocumentation}
                       onChange={v => this.onChange('transferDocumentation', v)}
                     />
@@ -81,6 +82,7 @@ class ColumbiaUniversityIsCopyrightHolder extends React.PureComponent {
                       <InputGroup>
                         <Label sm={4} align="right">Evidence of Transfer Documentation</Label>
                         <TextInput
+                          sm={8}
                           value={value.otherTransferEvidence}
                           onChange={v => this.onChange('otherTransferEvidence', v)}
                         />
@@ -93,6 +95,7 @@ class ColumbiaUniversityIsCopyrightHolder extends React.PureComponent {
               <InputGroup>
                 <Label sm={4} align="right">Transfer Documentation Note</Label>
                 <TextInput
+                  sm={8}
                   value={value.transferDocumentationNote}
                   onChange={v => this.onChange('transferDocumentationNote', v)}
                 />

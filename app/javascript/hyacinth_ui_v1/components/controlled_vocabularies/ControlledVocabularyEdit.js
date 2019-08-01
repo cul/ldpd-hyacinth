@@ -10,7 +10,7 @@ class ControlledVocabularyEdit extends React.PureComponent {
     return (
       <div className="m-3">
         <ContextualNavbar
-          // title={`Controlled Vocabulary | ${vocabulary.label}`}
+          title="Update Controlled Vocabulary"
           rightHandLinks={[{ link: '/controlled_vocabularies', label: 'Back to Controlled Vocabulary' }]}
         />
 
