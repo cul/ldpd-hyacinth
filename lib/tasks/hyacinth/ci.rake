@@ -84,11 +84,14 @@ namespace :hyacinth do
   task :fedora_wrapper, [:task_stack] => [:environment] do |task, args|
     rspec_system_exit_failure_exception = nil
     task_stack = args[:task_stack]
+
+    Jettywrapper.jetty_dir = File.join(Rails.root, 'tmp', 'jetty-test')
+
     puts "Starting fedora wrapper...\n"
     require 'jettywrapper'
     Jettywrapper.url = "https://github.com/cul/hydra-jetty/archive/#{FEDORA_JETTY_ZIP_BASENAME}.zip"
     Rake::Task['jetty:clean'].invoke
-    rspec_system_exit_failure_exception = Jettywrapper.wrap(Rails.application.config_for(:jetty).symbolize_keys) do
+    rspec_system_exit_failure_exception = Jettywrapper.wrap(Rails.application.config_for(:jetty).symbolize_keys.merge({jetty_home: Jettywrapper.jetty_dir})) do
       print "Starting fedora\n...#{Rails.application.config_for(:jetty)}\n"
       Rake::Task[task_stack.shift].invoke(task_stack)
       print 'Stopping fedora...'
