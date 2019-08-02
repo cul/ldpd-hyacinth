@@ -1,5 +1,3 @@
-FEDORA_JETTY_ZIP_BASENAME = 'hyacinth-fedora-3.8.1-no-solr'.freeze
-
 namespace :hyacinth do
   require 'rspec/core/rake_task'
   RSpec::Core::RakeTask.new(:rspec) do |spec|
@@ -68,7 +66,7 @@ namespace :hyacinth do
     puts "Unzipping and starting new solr instance...\n"
     SolrWrapper.wrap(solr_wrapper_config) do |solr_wrapper_instance|
       # Create collection
-      solr_wrapper_instance.with_collection(name: 'hyacinth-solr', dir: Rails.root.join('spec', 'fixtures', 'solr_cores', 'hyacinth-solr-6-3', 'conf')) do
+      solr_wrapper_instance.with_collection(solr_wrapper_config[:collection]) do
         begin
           Rake::Task[task_stack.shift].invoke(task_stack)
         rescue SystemExit => e
@@ -88,8 +86,6 @@ namespace :hyacinth do
     Jettywrapper.jetty_dir = File.join(Rails.root, 'tmp', 'jetty-test')
 
     puts "Starting fedora wrapper...\n"
-    require 'jettywrapper'
-    Jettywrapper.url = "https://github.com/cul/hydra-jetty/archive/#{FEDORA_JETTY_ZIP_BASENAME}.zip"
     Rake::Task['jetty:clean'].invoke
     rspec_system_exit_failure_exception = Jettywrapper.wrap(Rails.application.config_for(:jetty).symbolize_keys.merge({jetty_home: Jettywrapper.jetty_dir})) do
       print "Starting fedora\n...#{Rails.application.config_for(:jetty)}\n"

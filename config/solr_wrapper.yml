@@ -1,16 +1,21 @@
 default: &default
   version: 6.3.0
   download_dir: <%= Rails.root.join('tmp', 'solr-download') %>
+  verbose: false
+  managed: true
 
 development:
   <<: *default
   port: 8983
   instance_dir: <%= Rails.root.join('tmp', 'solr-development') %>
   collection:
-    Dir
-    name
+    name: 'hyacinth-development'
+    dir: <%= Rails.root.join('spec', 'fixtures', 'solr_cores', 'hyacinth-solr-6-3', 'conf') %>
 
 test:
   <<: *default
   port: 9983
   instance_dir: <%= Rails.root.join('tmp', 'solr-test') %>
+  collection:
+    name: 'hyacinth-test'
+    dir: <%= Rails.root.join('spec', 'fixtures', 'solr_cores', 'hyacinth-solr-6-3', 'conf') %>
