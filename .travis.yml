@@ -29,8 +29,6 @@ before_install:
   - gem install bundler
 
 before_script:
-  # Set up hyacinth config files like hyacinth.yml and database.yml
-  - bundle exec rake hyacinth:setup:config_files
   - nvm install $NODE_VERSION
   - nvm use $NODE_VERSION
   - npm install -g yarn

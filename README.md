@@ -29,6 +29,8 @@ yarn install # this assumes you have node and yarn installed (tested with Node 8
 bundle exec rake hyacinth:setup:config_files # Set up hyacinth config files like hyacinth.yml and database.yml
 bundle exec rake db:migrate # Run database migrations
 bundle exec rake hyacinth:setup:default_users # Set up default Hyacinth users
+bundle exec rake solr:start # Start a local solr server in the background
+bundle exec rake jetty:start # Start a local jetty server for Fedora 3 in the background
 rails s -p 3000 # Start the application using rails server
 ```
 And for faster React app recompiling during development, run this in a separate terminal window:
@@ -44,9 +46,18 @@ Then navigate to http://localhost:3000 in your browser and sign in using the "Em
 **Email:** hyacinth-admin@library.columbia.edu<br/>
 **Password:** iamtheadmin
 
-## To start Hyacinth up again after the first time setup, all you need to do is run:
+### And when you're done developing for the day, run:
 
 ```
+bundle exec rake solr:stop # Stop local solr
+bundle exec rake jetty:stop # Stop local jetty / Fedora 3
+```
+
+## To run Hyacinth locally again after the first time setup, all you need to do is run:
+
+```
+bundle exec rake solr:start # Start a local solr server in the background
+bundle exec rake jetty:start # Start a local jetty server for Fedora 3 in the background
 rails s -p 3000 # Start the application using rails server
 ```
 

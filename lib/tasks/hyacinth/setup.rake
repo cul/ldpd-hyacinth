@@ -49,8 +49,7 @@ namespace :hyacinth do
         src_path = File.join(config_template_dir, entry)
         dst_path = File.join(config_dir, entry.gsub('.template', ''))
         if File.exist?(dst_path)
-          puts Rainbow("Existing file found at: #{dst_path}").blue.bright + "\n" +
-            Rainbow("  Skipping copy. Delete file and re-run this task if you want to replace it.").yellow
+          puts Rainbow("File already exists (skipping): #{dst_path}").blue.bright + "\n"
         else
           FileUtils.cp(src_path, dst_path)
           puts Rainbow("Created file at: #{dst_path}").green
