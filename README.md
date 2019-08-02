@@ -61,6 +61,13 @@ bundle exec rake jetty:start # Start a local jetty server for Fedora 3 in the ba
 rails s -p 3000 # Start the application using rails server
 ```
 
+### And if you want to wipe our your local solr core and Fedora 3 instance, run:
+
+```
+bundle exec rake solr:clean # Wipe out and regenerate solr
+bundle exec rake jetty:clean # Wipe out and regenerate jetty / Fedora 3
+```
+
 ## Testing
 Our testing suite runs Rubocop, starts up Fedora and Solr, and then runs all of our ruby tests. Travis CI will automatically run the test suite for every commit and pull request.
 
