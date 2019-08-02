@@ -34,7 +34,7 @@ module Api
         if @digital_object.save(update_index: true) && (digital_object_record.persisted? || digital_object_record.save)
           show
         else
-          render json: @digital_object.errors, status: :unprocessable_entity
+          render json: @digital_object.errors, status: :bad_request
         end
       end
 
@@ -50,7 +50,7 @@ module Api
         if update_result
           show
         else
-          render json: @digital_object.errors, status: :unprocessable_entity
+          render json: @digital_object.errors, status: :bad_request
         end
       end
 
@@ -58,7 +58,7 @@ module Api
         if @digital_object.preserve
           show
         else
-          render json: @digital_object.errors, status: :unprocessable_entity
+          render json: @digital_object.errors, status: :bad_request
         end
       end
 
@@ -76,7 +76,7 @@ module Api
           show if republish
           true
         else
-          render json: @digital_object.errors, status: :unprocessable_entity if republish
+          render json: @digital_object.errors, status: :bad_request if republish
           false
         end
       end

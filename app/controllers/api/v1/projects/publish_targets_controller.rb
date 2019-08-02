@@ -23,7 +23,7 @@ module Api
           if @publish_target.save
             render json: { publish_target: @publish_target }, status: :created
           else
-            render json: errors(@publish_target.errors.full_messages), status: :unprocessable_entity
+            render json: errors(@publish_target.errors.full_messages), status: :bad_request
           end
         end
 
@@ -32,7 +32,7 @@ module Api
           if @publish_target.update(update_params)
             render json: { publish_target: @publish_target }, status: :ok
           else
-            render json: errors(@publish_target.errors.full_messages), status: :unprocessable_entity
+            render json: errors(@publish_target.errors.full_messages), status: :bad_request
           end
         end
 
@@ -41,7 +41,7 @@ module Api
           if @publish_target.destroy
             head :no_content
           else
-            render json: errors('Deleting was unsuccessful.'), status: :unprocessable_entity
+            render json: errors('Deleting was unsuccessful.'), status: :bad_request
           end
         end
 

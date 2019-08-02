@@ -21,7 +21,7 @@ module Api
         if @field_export_profile.save
           render json: { field_export_profile: @field_export_profile }, status: :created
         else
-          render json: errors(@field_export_profile.errors.full_messages), status: :unprocessable_entity
+          render json: errors(@field_export_profile.errors.full_messages), status: :bad_request
         end
       end
 
@@ -30,7 +30,7 @@ module Api
         if @field_export_profile.update(field_export_profile_params)
           render json: { field_export_profile: @field_export_profile }, status: :ok
         else
-          render json: errors(@field_export_profile.errors.full_messages), status: :unprocessable_entity
+          render json: errors(@field_export_profile.errors.full_messages), status: :bad_request
         end
       end
 
@@ -39,7 +39,7 @@ module Api
         if @field_export_profile.destroy
           head :no_content
         else
-          render json: errors('Deleting was unsuccessful.'), status: :unprocessable_entity
+          render json: errors('Deleting was unsuccessful.'), status: :bad_request
         end
       end
 

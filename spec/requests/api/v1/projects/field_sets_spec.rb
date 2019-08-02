@@ -115,8 +115,8 @@ RSpec.describe 'Field Sets Requests', type: :request do
           }
         end
 
-        it 'returns 422' do
-          expect(response.status).to be 422
+        it 'returns 400' do
+          expect(response.status).to be 400
         end
 
         it 'returns error' do
@@ -164,8 +164,8 @@ RSpec.describe 'Field Sets Requests', type: :request do
                 params: { field_set: { display_label: nil } }
         end
 
-        it 'returns 422' do
-          expect(response.status).to be 422
+        it 'returns 400' do
+          expect(response.status).to be 400
         end
 
         it 'returns error' do

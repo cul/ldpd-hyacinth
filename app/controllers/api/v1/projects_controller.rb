@@ -24,7 +24,7 @@ module Api
         if @project.save
           render json: { project: @project }, status: :created
         else
-          render json: errors(@project.errors.full_messages), status: :unprocessable_entity
+          render json: errors(@project.errors.full_messages), status: :bad_request
         end
       end
 
@@ -33,7 +33,7 @@ module Api
         if @project.update(update_params)
           render json: { project: @project }, status: :ok
         else
-          render json: errors(@project.errors.full_messages), status: :unprocessable_entity
+          render json: errors(@project.errors.full_messages), status: :bad_request
         end
       end
 
@@ -44,7 +44,7 @@ module Api
         elsif @project.destroy
           head :no_content
         else
-          render json: errors('Deleting was unsuccessful.'), status: :unprocessable_entity
+          render json: errors('Deleting was unsuccessful.'), status: :bad_request
         end
       end
 

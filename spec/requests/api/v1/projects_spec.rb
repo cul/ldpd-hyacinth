@@ -152,8 +152,8 @@ RSpec.describe 'Projects Requests', type: :request do
           }
         end
 
-        it 'returns 422' do
-          expect(response.status).to be 422
+        it 'returns 400' do
+          expect(response.status).to be 400
         end
 
         it 'returns error' do
@@ -172,8 +172,8 @@ RSpec.describe 'Projects Requests', type: :request do
           }
         end
 
-        it 'returns 422' do
-          expect(response.status).to be 422
+        it 'returns 400' do
+          expect(response.status).to be 400
         end
 
         it 'returns error' do

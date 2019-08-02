@@ -118,8 +118,8 @@ RSpec.describe 'Dynamic Fields Requests', type: :request do
           }
         end
 
-        it 'returns 422' do
-          expect(response.status).to be 422
+        it 'returns 400' do
+          expect(response.status).to be 400
         end
 
         it 'returns errors' do
@@ -167,8 +167,8 @@ RSpec.describe 'Dynamic Fields Requests', type: :request do
           patch "/api/v1/dynamic_fields/#{dynamic_field.id}", params: { dynamic_field: { field_type: 'not-valid' } }
         end
 
-        it 'returns 422' do
-          expect(response.status).to be 422
+        it 'returns 400' do
+          expect(response.status).to be 400
         end
 
         it 'returms errors' do

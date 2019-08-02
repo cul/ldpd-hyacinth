@@ -155,8 +155,8 @@ RSpec.describe 'User Requests', type: :request do
           ))
         end
 
-        it 'returns 422' do
-          expect(response.status).to be 422
+        it 'returns 400' do
+          expect(response.status).to be 400
         end
       end
 
@@ -181,8 +181,8 @@ RSpec.describe 'User Requests', type: :request do
           ))
         end
 
-        it 'returns 422' do
-          expect(response.status).to be 422
+        it 'returns 400' do
+          expect(response.status).to be 400
         end
       end
 
@@ -206,8 +206,8 @@ RSpec.describe 'User Requests', type: :request do
           ))
         end
 
-        it 'returns 422' do
-          expect(response.status).to be 422
+        it 'returns 400' do
+          expect(response.status).to be 400
         end
       end
     end
@@ -352,8 +352,8 @@ RSpec.describe 'User Requests', type: :request do
           expect(user.valid_password?('newpassword')).to be false
         end
 
-        it 'returns 422' do
-          expect(response.status).to be 422
+        it 'returns 400' do
+          expect(response.status).to be 400
         end
       end
 
@@ -429,8 +429,8 @@ RSpec.describe 'User Requests', type: :request do
             patch "/api/v1/users/#{user.uid}", params: { user: { permissions: ['not_valid'] } }
           end
 
-          it 'returns 422' do
-            expect(response.status).to be 422
+          it 'returns 400' do
+            expect(response.status).to be 400
           end
 
           it 'does not update permissions' do
