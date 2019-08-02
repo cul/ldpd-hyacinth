@@ -28,7 +28,7 @@ RSpec.describe 'Publish Target requests', type: :request do
                   "project": "great_project",
                   "publish_url": "https://www.example.com/publish",
                   "string_key": "great_project_website",
-                  "doi_priority": 0,
+                  "doi_priority": 100,
                   "is_allowed_doi_target": false
                 },
                 {
@@ -37,7 +37,7 @@ RSpec.describe 'Publish Target requests', type: :request do
                   "project": "great_project",
                   "publish_url": "https://www.example.com/publish",
                   "string_key": "second_publish_target",
-                  "doi_priority": 0,
+                  "doi_priority": 100,
                   "is_allowed_doi_target": false
                 }
               ]
@@ -81,7 +81,7 @@ RSpec.describe 'Publish Target requests', type: :request do
               "project": "great_project",
               "publish_url": "https://www.example.com/publish",
               "string_key": "great_project_website",
-              "doi_priority": 0,
+              "doi_priority": 100,
               "is_allowed_doi_target": false
             }
           }))

@@ -3,6 +3,9 @@ class PublishTarget < ApplicationRecord
 
   validates :string_key, presence: true, uniqueness: true, string_key: true
   validates :display_label, :publish_url, :api_key, presence: true
+  validates :doi_priority, numericality: {
+    only_integer: true, allow_nil: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 100
+  }
 
   def as_json(_options = {})
     {

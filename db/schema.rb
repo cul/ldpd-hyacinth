@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_05_30_154456) do
+ActiveRecord::Schema.define(version: 2019_08_02_190243) do
 
   create_table "database_entry_locks", force: :cascade do |t|
     t.string "lock_key", null: false
@@ -163,7 +163,7 @@ ActiveRecord::Schema.define(version: 2019_05_30_154456) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "is_allowed_doi_target", default: false, null: false
-    t.integer "doi_priority", default: 0, null: false
+    t.integer "doi_priority", default: 100, null: false
     t.index ["project_id"], name: "index_publish_targets_on_project_id"
   end
 
