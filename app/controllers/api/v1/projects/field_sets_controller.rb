@@ -23,7 +23,7 @@ module Api
           if @field_set.save
             render json: { field_set: @field_set }, status: :created
           else
-            render json: errors(@field_set.errors.full_messages), status: :unprocessable_entity
+            render json: errors(@field_set.errors.full_messages), status: :bad_request
           end
         end
 
@@ -32,7 +32,7 @@ module Api
           if @field_set.update(field_set_params)
             render json: { fieldset: @field_set }, status: :ok
           else
-            render json: errors(@field_set.errors.full_messages), status: :unprocessable_entity
+            render json: errors(@field_set.errors.full_messages), status: :bad_request
           end
         end
 
@@ -41,7 +41,7 @@ module Api
           if @field_set.destroy
             head :no_content
           else
-            render json: errors('Deleting was unsuccessful.'), status: :unprocessable_entity
+            render json: errors('Deleting was unsuccessful.'), status: :bad_request
           end
         end
 

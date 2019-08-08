@@ -21,7 +21,7 @@ module Api
         if @dynamic_field_category.save
           render json: { dynamic_field_category: @dynamic_field_category }, status: :created
         else
-          render json: errors(@dynamic_field_category.errors.full_messages), status: :unprocessable_entity
+          render json: errors(@dynamic_field_category.errors.full_messages), status: :bad_request
         end
       end
 
@@ -30,7 +30,7 @@ module Api
         if @dynamic_field_category.update(dynamic_field_category_params)
           render json: { dynamic_field_category: @dynamic_field_category }, status: :ok
         else
-          render json: errors(@dynamic_field_category.errors.full_messages), status: :unprocessable_entity
+          render json: errors(@dynamic_field_category.errors.full_messages), status: :bad_request
         end
       end
 
@@ -39,7 +39,7 @@ module Api
         if @dynamic_field_category.destroy
           head :no_content
         else
-          render json: errors('Deleting was unsuccessful.'), status: :unprocessable_entity
+          render json: errors('Deleting was unsuccessful.'), status: :bad_request
         end
       end
 

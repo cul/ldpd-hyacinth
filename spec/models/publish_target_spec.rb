@@ -10,7 +10,7 @@ RSpec.describe PublishTarget, type: :model do
       its(:publish_url) { is_expected.to eql 'https://www.example.com/publish' }
       its(:api_key) { is_expected.to eql 'bestapikey' }
       its(:is_allowed_doi_target) { is_expected.to be false }
-      its(:doi_priority) { is_expected.to be 0 }
+      its(:doi_priority) { is_expected.to be 100 }
       its(:project) { is_expected.to eql Project.find_by(string_key: 'great_project') }
     end
 
@@ -63,6 +63,19 @@ RSpec.describe PublishTarget, type: :model do
       it 'returns correct error' do
         publish_target.save
         expect(publish_target.errors.full_messages).to include 'Api key can\'t be blank'
+      end
+    end
+
+    context 'when doi_priority is not between 1 and 100' do
+      subject(:publish_target) { FactoryBot.build(:publish_target, doi_priority: 101) }
+
+      it 'does not save object' do
+        expect(publish_target.save).to be false
+      end
+
+      it 'returns correct error' do
+        publish_target.save
+        expect(publish_target.errors.full_messages).to include 'Doi priority must be less than or equal to 100'
       end
     end
 

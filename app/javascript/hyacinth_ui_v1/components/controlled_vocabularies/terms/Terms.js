@@ -25,14 +25,14 @@ export default class Terms extends React.PureComponent {
           exact
           path="/controlled_vocabularies/:stringKey/terms/new"
           component={TermNew}
-          requiredAbility={{ action: 'create', subject: 'ControlledVocabulary' }}
+          requiredAbility={{ action: 'create', subject: 'Term' }}
         />
 
         <ProtectedRoute
           path="/controlled_vocabularies/:stringKey/terms/:uri/edit"
           component={TermEdit}
           requiredAbility={params => (
-            { action: 'update', subject: 'ControlledVocabulary', id: params.id }
+            { action: 'update', subject: 'Term', id: params.id }
           )}
         />
 

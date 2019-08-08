@@ -5,5 +5,7 @@ export default new Ability([], {
     if (subject && subject.subjectType) {
       return subject.subjectType;
     }
+
+    return subject;
   },
 });

@@ -134,8 +134,8 @@ RSpec.describe 'Dynamic Field Categories Requests', type: :request do
           post '/api/v1/dynamic_field_categories', params: { dynamic_field_category: { sort_order: '8' } }
         end
 
-        it 'returns 422' do
-          expect(response.status).to be 422
+        it 'returns 400' do
+          expect(response.status).to be 400
         end
 
         it 'returns errors' do

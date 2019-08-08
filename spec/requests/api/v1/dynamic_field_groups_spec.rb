@@ -117,8 +117,8 @@ RSpec.describe 'Dynamic Field Groups Requests', type: :request do
           }
         end
 
-        it 'returns 422' do
-          expect(response.status).to be 422
+        it 'returns 400' do
+          expect(response.status).to be 400
         end
 
         it 'returns errors' do
@@ -178,8 +178,8 @@ RSpec.describe 'Dynamic Field Groups Requests', type: :request do
           patch "/api/v1/dynamic_field_groups/#{dynamic_field_group.id}", params: { dynamic_field_group: { parent_type: 'User' } }
         end
 
-        it 'returns 422' do
-          expect(response.status).to be 422
+        it 'returns 400' do
+          expect(response.status).to be 400
         end
 
         it 'returms errors' do

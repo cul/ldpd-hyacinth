@@ -51,9 +51,11 @@ export default class App extends React.Component {
   }
 
   render() {
+    const { user } = this.state;
+
     return (
       <AbilityContext.Provider value={ability}>
-        <TopNavbar user={this.state.user} />
+        <TopNavbar user={user} />
         <Container id="main">
           <Switch>
             <Route exact path="/" component={Index} />

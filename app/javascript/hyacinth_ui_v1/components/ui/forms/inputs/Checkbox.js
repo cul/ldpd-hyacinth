@@ -16,7 +16,7 @@ class Checkbox extends React.PureComponent {
     } = this.props;
 
     return (
-      <Col sm={8} {...rest}>
+      <Col sm={8} style={{ alignSelf: 'center' }} {...rest}>
         <Form.Check type="checkbox" id={inputName}>
           <Form.Check.Input type="checkbox" onChange={this.onChangeHandler} name={inputName} checked={value} />
           <Form.Check.Label>{label}</Form.Check.Label>

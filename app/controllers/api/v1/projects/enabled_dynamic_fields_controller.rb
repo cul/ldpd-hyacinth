@@ -26,7 +26,7 @@ module Api
           if @project.update(updated_enabled_dynamic_fields)
             render json: { enabled_dynamic_fields: enabled_dynamic_fields(reload: true) }, status: :ok
           else
-            render json: errors(@project.errors.full_messages), status: :unprocessable_entity
+            render json: errors(@project.errors.full_messages), status: :bad_request
           end
         end
 

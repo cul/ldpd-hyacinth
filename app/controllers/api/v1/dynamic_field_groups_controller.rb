@@ -20,7 +20,7 @@ module Api
         if @dynamic_field_group.save
           render json: { dynamic_field_group: @dynamic_field_group }, status: :created
         else
-          render json: errors(@dynamic_field_group.errors.full_messages), status: :unprocessable_entity
+          render json: errors(@dynamic_field_group.errors.full_messages), status: :bad_request
         end
       end
 
@@ -33,7 +33,7 @@ module Api
         if @dynamic_field_group.update(update_params)
           render json: { dynamic_field_group: @dynamic_field_group }, status: :ok
         else
-          render json: errors(@dynamic_field_group.errors.full_messages), status: :unprocessable_entity
+          render json: errors(@dynamic_field_group.errors.full_messages), status: :bad_request
         end
       end
 
@@ -42,7 +42,7 @@ module Api
         if @dynamic_field_group.destroy
           head :no_content
         else
-          render json: errors('Deleting was unsuccessful.'), status: :unprocessable_entity
+          render json: errors('Deleting was unsuccessful.'), status: :bad_request
         end
       end
 

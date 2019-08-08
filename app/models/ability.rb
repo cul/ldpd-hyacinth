@@ -48,7 +48,7 @@ class Ability
         can :manage, :term
         can :manage, :custom_field
       when Permission::READ_ALL_DIGITAL_OBJECTS, Permission::MANAGE_ALL_DIGITAL_OBJECTS
-        can :show, [Project, PublishTarget, FieldSet]
+        can [:show, :index], [Project, PublishTarget, FieldSet]
       end
     end
   end
@@ -73,7 +73,17 @@ class Ability
 
   def to_list
     rules.map do |rule|
-      object = { actions: rule.actions, subject: rule.subjects.map { |s| s.is_a?(Symbol) ? s : s.name } }
+      object = { actions: rule.actions }
+      object[:subject] = rule.subjects.map do |s|
+        if s == :all
+          s
+        elsif s.is_a?(Symbol)
+          s.to_s.camelcase
+        else
+          s.name
+        end
+      end
+
       object[:conditions] = rule.conditions unless rule.conditions.blank?
       object[:inverted] = true unless rule.base_behavior
       object
@@ -133,18 +143,4 @@ class Ability
       digital_object.projects.detect { |p| p.id.eql?(project_id) || p.string_key.eql?(project_string_key) }
     end
   end
-
-  # TODO: This logic needs to be added above once we have a proper Project model.
-  # if subject_class == DigitalObject # TODO: NEED TO ADD TESTS
-  #   if user.system_wide_permissions.include?(PERMISSION::MANAGE_ALL_DIGITAL_OBJECTS)
-  #     true
-  #   elsif action == :read && user.system_wide_permissions.include?(PERMISSION::READ_ALL_DIGITAL_OBJECTS)
-  #     true
-  #   else
-  #     project_ids = subject.projects(&:id)
-  #     project_actions = user.available_project_actions(project_ids)
-  #
-  #     project_actions.include?('manage') || project_actions.include?("#{action}_objects")
-  #   end
-  # end
 end
