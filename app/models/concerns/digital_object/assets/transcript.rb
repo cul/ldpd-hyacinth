@@ -7,7 +7,15 @@ module DigitalObject::Assets::Transcript
   end
 
   def transcript
-    @transcript ||= File.exist?(self.transcript_location) ? IO.read(self.transcript_location) : ''
+    @transcript ||= begin
+      if File.exist?(self.transcript_location)
+        IO.read(self.transcript_location)
+      elsif self.pid.present?
+        Hyacinth::Utils::FedoraUtils.datastream_content(self.pid, DigitalObject::Fedora::TRANSCRIPT_DATASTREAM_NAME)
+      else
+        ''
+      end
+    end
   end
 
   def transcript=(content)

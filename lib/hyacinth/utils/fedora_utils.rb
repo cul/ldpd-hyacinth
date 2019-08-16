@@ -81,4 +81,9 @@ module Hyacinth::Utils::FedoraUtils
       raise 'Unexpected result count for risearch.  Search returned ' + num_results.to_s + ' results.'
     end
   end
+  def self.datastream_content(fedora_object_pid, dsid)
+    fedora_object = ActiveFedora::Base.find(fedora_object_pid)
+    fedora_object.datastreams[dsid].content
+  rescue ActiveFedora::ObjectNotFoundError
+  end
 end
