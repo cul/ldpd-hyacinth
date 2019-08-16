@@ -11,6 +11,7 @@ module DigitalObject::Fedora
   HYACINTH_STRUCT_DATASTREAM_NAME = 'hyacinth_struct'
   CAPTIONS_DATASTREAM_NAME = 'captions'
   CHAPTERS_DATASTREAM_NAME = 'chapters'
+  TRANSCRIPT_DATASTREAM_NAME = 'fulltext'
 
   # Get a new, unsaved, appropriately-configured instance of the right tyoe of Fedora object a DigitalObject subclass
   def create_fedora_object
@@ -311,6 +312,32 @@ module DigitalObject::Fedora
       end
     end
 
+
+    def save_transcript_datastream
+      return unless File.exists?(transcript_location)
+
+      if @fedora_object.datastreams.has_key?(TRANSCRIPT_DATASTREAM_NAME)
+        transcript_ds = @fedora_object.datastreams[TRANSCRIPT_DATASTREAM_NAME]
+      else
+        transcript_ds = @fedora_object.create_datastream(
+          ActiveFedora::Datastream,
+          TRANSCRIPT_DATASTREAM_NAME,
+          controlGroup: 'M',
+          mimeType: 'text/plain',
+          dsLabel: 'text.txt',
+          versionable: false,
+          checksumType: 'MD5',
+          blob: ''
+        )
+        @fedora_object.add_datastream(transcript_ds)
+      end
+      # Only update content if it has changed
+      new_content = IO.read(transcript_location)
+      new_content_checksum = Digest::MD5.hexdigest(new_content)
+      if new_content_checksum != captions_ds.checksum
+        captions_ds.content = new_content
+      end
+    end
   end
 
   module Detect

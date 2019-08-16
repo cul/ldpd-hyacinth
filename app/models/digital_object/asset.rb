@@ -261,6 +261,7 @@ class DigitalObject::Asset < DigitalObject::Base
     super
     save_captions_datastream
     save_chapters_datastream
+    save_transcript_datastream
     true
   end
 
