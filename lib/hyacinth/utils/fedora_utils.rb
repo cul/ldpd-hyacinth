@@ -83,7 +83,7 @@ module Hyacinth::Utils::FedoraUtils
   end
   def self.datastream_content(fedora_object_pid, dsid)
     fedora_object = ActiveFedora::Base.find(fedora_object_pid)
-    fedora_object.datastreams[dsid].content
+    fedora_object.datastreams[dsid].content if fedora_object.datastreams[dsid]
   rescue ActiveFedora::ObjectNotFoundError
   end
 end

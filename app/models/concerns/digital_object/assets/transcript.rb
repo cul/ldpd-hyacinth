@@ -11,7 +11,7 @@ module DigitalObject::Assets::Transcript
       if File.exist?(self.transcript_location)
         IO.read(self.transcript_location)
       elsif self.pid.present?
-        Hyacinth::Utils::FedoraUtils.datastream_content(self.pid, DigitalObject::Fedora::TRANSCRIPT_DATASTREAM_NAME)
+        Hyacinth::Utils::FedoraUtils.datastream_content(self.pid, DigitalObject::Fedora::TRANSCRIPT_DATASTREAM_NAME) || ''
       else
         ''
       end
