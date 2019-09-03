@@ -20,7 +20,7 @@ development:
         user: fedoraAdmin
         password: fedoraAdmin
   publication_adapter:
-    type: hyacinth2
+    type: development
   external_identifier_adapter:
     type: memory
   uri_service:
