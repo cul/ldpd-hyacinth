@@ -314,7 +314,7 @@ module DigitalObject::Fedora
 
 
     def save_transcript_datastream
-      return unless File.exists?(transcript_location)
+      return unless File.exist?(transcript_location) && !File.zero?(transcript_location)
 
       if @fedora_object.datastreams.has_key?(TRANSCRIPT_DATASTREAM_NAME)
         transcript_ds = @fedora_object.datastreams[TRANSCRIPT_DATASTREAM_NAME]
