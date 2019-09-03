@@ -24,14 +24,14 @@ module Api
       # POST /digital_objects.json
       def create
         digital_object_data = create_or_update_params
-        digital_object_record = DigitalObjectRecord.create
-        @digital_object = DigitalObject::Base.from_serialized_form(digital_object_record, digital_object_data)
+        @digital_object = Hyacinth.config.digital_object_types.key_to_class(digital_object_data['digital_object_type']).new
+        @digital_object.set_digital_object_data(digital_object_data, true)
+
         @digital_object.projects.each do |project|
           authorize! :create_objects, project
         end
-        @digital_object.state ||= Hyacinth::DigitalObject::State::ACTIVE
-        # digital_object_record.save first because it will assign necessary digital_object_record attributes
-        if @digital_object.save(update_index: true) && (digital_object_record.persisted? || digital_object_record.save)
+
+        if @digital_object.save(update_index: true)
           show
         else
           render json: @digital_object.errors, status: :unprocessable_entity
