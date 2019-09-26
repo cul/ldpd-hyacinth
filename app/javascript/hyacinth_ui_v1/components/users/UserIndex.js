@@ -39,7 +39,7 @@ function UserIndex() {
         <tbody>
           {
             data && data.users.map(user => (
-              <tr key={user.uid}>
+              <tr key={user.id}>
                 <td><Link to={`/users/${user.id}/edit`}>{`${user.firstName} ${user.lastName}`}</Link></td>
                 <td>{user.email}</td>
                 <td>{(user.isActive) ? 'true' : 'false'}</td>
