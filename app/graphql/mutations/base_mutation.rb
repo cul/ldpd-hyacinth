@@ -6,4 +6,8 @@ class Mutations::BaseMutation < GraphQL::Schema::RelayClassicMutation
   field_class Types::BaseField
   # This is used for generating the `input: { ... }` object type
   input_object_class Types::BaseInputObject
+
+  def ability
+    context[:ability]
+  end
 end

@@ -9,22 +9,21 @@ class Mutations::CreateUser < Mutations::BaseMutation
 
   field :user, Types::UserType, null: true
 
-  def resolve(first_name:, last_name:, email:, password:, password_confirmation:, is_active: false, is_admin: false)
-    context[:ability].authorize! :create, User
+  def resolve(**attributes)
+    ability.authorize! :create, User
 
     user = User.new(
-      first_name: first_name,
-      last_name: last_name,
-      email: email,
-      password: password,
-      password_confirmation: password_confirmation
+      first_name: attributes[:first_name],
+      last_name: attributes[:last_name],
+      email: attributes[:email],
+      password: attributes[:password],
+      password_confirmation: attributes[:password_confirmation]
     )
 
-    user.is_active = is_active if context[:ability].can?(:manage, user)
-    user.is_admin = is_admin if context[:ability].can?(:manage, :all)
+    user.is_active = is_active if attributes.key?(:is_active) && ability.can?(:manage, user)
+    user.is_admin =  is_admin  if attributes.key?(:is_admin)  && ability.can?(:manage, :all)
 
     if user.save!
-      # Successful creation, return the created object with no errors
       {
         user: user
       }

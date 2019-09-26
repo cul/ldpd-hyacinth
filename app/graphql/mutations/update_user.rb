@@ -12,17 +12,17 @@ class Mutations::UpdateUser < Mutations::BaseMutation
 
   field :user, Types::UserType, null: true
 
-  def resolve(id:, is_active: nil, is_admin: nil, permissions: nil, **attributes)
+  def resolve(id:, **attributes)
     user = User.find_by!(uid: id)
 
-    context[:ability].authorize! :update, user
+    ability.authorize! :update, user
 
-    attributes[:is_admin] = is_admin if context[:ability].can?(:manage, :all)
+    permissions = attributes.delete(:permissions) # does this return nil if it doesnt exist?
 
-    if context[:ability].can?(:manage, user)
-      attributes[:is_active] = is_active
-      attributes[:permissions_attributes] = calculate_permissions_attributes(user, permissions) unless permissions.nil?
-    end
+    attributes.delete(:is_admin)  unless ability.can?(:manage, :all)
+    attributes.delete(:is_active) unless ability.can?(:manage, user)
+
+    attributes[:permissions_attributes] = permissions_attributes(user, permissions) if ability.can?(:manage, user) && !permissions.nil?
 
     # Update password if attempting to do so otherwise ignore
     success = changing_password?(attributes) ? user.update_with_password(attributes) : user.update_without_password(attributes)
@@ -43,7 +43,7 @@ class Mutations::UpdateUser < Mutations::BaseMutation
       [:current_password, :password, :password_confirmation].any? { |k| attributes.include?(k) && attributes[k].present? }
     end
 
-    def calculate_permissions_attributes(user, permissions)
+    def permissions_attributes(user, permissions)
       return nil if permissions.nil?
 
       new_permissions = permissions.uniq
