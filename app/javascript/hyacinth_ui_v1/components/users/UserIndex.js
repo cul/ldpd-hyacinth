@@ -1,56 +1,55 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Table } from 'react-bootstrap';
-import produce from 'immer';
+import { useQuery } from '@apollo/react-hooks';
+import { gql } from 'apollo-boost';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
-import hyacinthApi from '../../util/hyacinth_api';
 
-class UserIndex extends React.Component {
-  state = {
-    users: [],
+const USERS = gql`
+  query {
+    users {
+      id
+      firstName
+      lastName
+      email
+      isActive
+    }
   }
+`;
 
-  componentDidMount() {
-    hyacinthApi.get('/users/')
-      .then((res) => {
-        this.setState(produce((draft) => { draft.users = res.data.users; }));
-      });
-  }
+function UserIndex() {
+  const { loading, error, data } = useQuery(USERS);
 
-  render() {
-    const { users } = this.state;
+  return (
+    <>
+      <ContextualNavbar
+        title="Users"
+        rightHandLinks={[{ link: '/users/new', label: 'New User' }]}
+      />
 
-    return (
-      <>
-        <ContextualNavbar
-          title="Users"
-          rightHandLinks={[{ link: '/users/new', label: 'New User' }]}
-        />
-
-        <Table striped>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Active?</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              users.map(user => (
-                <tr key={user.uid}>
-                  <td><Link to={`/users/${user.uid}/edit`}>{`${user.firstName} ${user.lastName}`}</Link></td>
-                  <td>{user.email}</td>
-                  <td>{(user.isActive) ? 'true' : 'false'}</td>
-                </tr>
-              ))
-            }
-          </tbody>
-        </Table>
-      </>
-    );
-  }
+      <Table striped>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Active?</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            data && data.users.map(user => (
+              <tr key={user.uid}>
+                <td><Link to={`/users/${user.id}/edit`}>{`${user.firstName} ${user.lastName}`}</Link></td>
+                <td>{user.email}</td>
+                <td>{(user.isActive) ? 'true' : 'false'}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </Table>
+    </>
+  );
 }
 
 export default UserIndex;

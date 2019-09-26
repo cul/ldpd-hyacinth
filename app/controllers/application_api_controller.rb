@@ -1,5 +1,4 @@
 class ApplicationApiController < ActionController::API
-
   rescue_from ActiveRecord::RecordNotFound, Hyacinth::Exceptions::NotFound do
     render json: errors('Not Found'), status: :not_found
   end
