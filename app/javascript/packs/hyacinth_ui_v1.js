@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks';
 
@@ -22,11 +22,11 @@ const client = new ApolloClient({
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
-    <Router basename={Constants.APPLICATION_BASE_PATH}>
+    <BrowserRouter basename={Constants.APPLICATION_BASE_PATH}>
       <ApolloProvider client={client}>
         <App />
       </ApolloProvider>
-    </Router>,
+    </BrowserRouter>,
     document.getElementById('hyacinth-ui-v1-app'),
   );
 });
