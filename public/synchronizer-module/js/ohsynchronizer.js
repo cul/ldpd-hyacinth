@@ -1167,56 +1167,62 @@ OHSynchronizer.Index.closeButtons = function() {
 /** Export Functions **/
 OHSynchronizer.Export = function() {};
 
+OHSynchronizer.Export.findNextMinuteMarker = function(content) {
+  var indexOfNextMarkerOpeningCurlyBrace = content.search(/\{\d+:\d+\}/);
+  var indexOfNextMarketClosingCurlyBrace = indexOfNextMarkerOpeningCurlyBrace + content.substring(indexOfNextMarkerOpeningCurlyBrace).indexOf('}');
+  return content.substring(indexOfNextMarkerOpeningCurlyBrace + 1, indexOfNextMarketClosingCurlyBrace);
+}
+
 // Here we prepare transcript data for VTT files
 OHSynchronizer.Export.transcriptVTT = function() {
-	var minute = '';
-	var metadata = $('#interview-metadata')[0].innerHTML.replace(/<br>/g, '\n');
-	var content = $('#transcript')[0].innerHTML;
+  var minute = '';
+  var metadata = $('#interview-metadata')[0].innerHTML.replace(/<br>/g, '\n');
+  var content = $('#transcript')[0].innerHTML;
 
-	// Need to find the first minute marker, because the first chunk of transcript is 0 to that minute
-	minute = content.substring(content.indexOf("{") + 1, content.indexOf("}"));
-	minute = minute.substring(0, minute.indexOf(':'));
-	minute = (parseInt(minute) < 10) ? '0' + minute : minute;
+  // Need to find the first minute marker, because the first chunk of transcript is 0 to that minute
+  minute = OHSynchronizer.Export.findNextMinuteMarker(content);
+  minute = minute.substring(0, minute.indexOf(':'));
+  minute = (parseInt(minute) < 10) ? '0' + minute : minute;
 
-	if (minute == '') {
-		OHSynchronizer.errorHandler(new Error("You must add at least one sync marker in order to prepare a transcript."));
-		return false;
-	}
-	else {
-		// Replace our temporary content with the real data for the export
-		content = (metadata != '') ? 'WEBVTT\n\nNOTE\n' + metadata + '\n\n' : 'WEBVTT\n\n';
-		content += '\n00:00:00.000 --> 00:' + minute + ':00.000\n';
-		content += $('#transcript')[0].innerHTML.replace(/<\/span>/g, '').replace(/<span class="transcript-word">/g, '').replace(/&nbsp;/g, ' ').replace(/<span class="transcript-word transcript-clicked">/g, '');
+  if (minute == '') {
+    OHSynchronizer.errorHandler(new Error("You must add at least one sync marker in order to prepare a transcript."));
+    return false;
+  }
+  else {
+    // Replace our temporary content with the real data for the export
+    content = (metadata != '') ? 'WEBVTT\n\nNOTE\n' + metadata + '\n\n' : 'WEBVTT\n\n';
+    content += '\n00:00:00.000 --> 00:' + minute + ':00.000\n';
+    content += $('#transcript')[0].innerHTML.replace(/<\/span>/g, '').replace(/<span class="transcript-word">/g, '').replace(/&nbsp;/g, ' ').replace(/<span class="transcript-word transcript-clicked">/g, '');
 
-		// This will help us find the rest of the minutes, as they are marked appropriately
-		while (/([0-9]:00})+/.test(content)) {
-			var currMin = 0;
-			var currHour = 0;
-			var newMin = 0;
-			var newHour = 0;
+    // This will help us find the rest of the minutes, as they are marked appropriately
+    while (/([0-9]:00})+/.test(content)) {
+      var currMin = 0;
+      var currHour = 0;
+      var newMin = 0;
+      var newHour = 0;
 
-			minute = content.substring(content.indexOf("{") + 1, content.indexOf("}"));
-			minute = minute.substring(0, minute.indexOf(':'));
-			currMin = parseInt(minute);
-			newMin = currMin + 1;
+      minute = OHSynchronizer.Export.findNextMinuteMarker(content);
+      minute = minute.substring(0, minute.indexOf(':'));
 
-			currHour = parseInt(minute / 60);
-			currMin -= (currHour * 60);
-			newHour = parseInt(newMin / 60);
-			newMin -= (newHour * 60);
+      currMin = parseInt(minute);
+      newMin = currMin + 1;
 
-			content = content.replace(
-				'<span class="transcript-timestamp">{' + minute + ':00} ',
-				'\n\n' +
-				(currHour < 10 ? '0' + currHour : currHour) + ':' + (currMin < 10 ? '0' + currMin : currMin) + ':00.000' +
-				' --> ' +
-				(newHour < 10 ? '0' + newHour : newHour) + ':' + (newMin < 10 ? '0' + newMin : newMin) + ':00.000' +
-				'\n'
-			);
-		}
+      currHour = parseInt(minute / 60);
+      currMin -= (currHour * 60);
+      newHour = parseInt(newMin / 60);
+      newMin -= (newHour * 60);
 
-		return content;
-	}
+      content = content.replace(
+        '<span class="transcript-timestamp">{' + minute + ':00} ',
+        '\n\n' +
+        (currHour < 10 ? '0' + currHour : currHour) + ':' + (currMin < 10 ? '0' + currMin : currMin) + ':00.000' +
+        ' --> ' +
+        (newHour < 10 ? '0' + newHour : newHour) + ':' + (newMin < 10 ? '0' + newMin : newMin) + ':00.000' +
+        '\n'
+      );
+    }
+    return content;
+  }
 }
 
 // Here we prepare index data for VTT files with jquery
@@ -1225,14 +1231,14 @@ OHSynchronizer.Export.indexSegmentData = function(widget) {
 	// We'll break up the text by segments
 	var segments = $(widget.indexDiv).find('.segment-panel').map(function(index, div){
 		// ignore the duplicate preview segments
-		if ($(div).closest('#previewAccordion').length) return null;
+		if ($(div).parents('#previewAccordion').length) return null;
 		return {
 			startTime: $(div).attr('id'),
 			title: $(div).find(".tag-title").text(),
 			keywords: $(div).find(".tag-keywords").text(),
 			subjects: $(div).find(".tag-subjects").text(),
 			description: $(div).find(".tag-segment-synopsis").text(),
-			partialTranscript: $(div).find(".tag-partial-transcript").text(),
+			partialTranscript: $(div).find(".tag-partial-transcript").text()
 		}
 	});
 	segments.map(function(index, segment) {
