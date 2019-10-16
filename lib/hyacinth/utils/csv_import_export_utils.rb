@@ -103,7 +103,7 @@ class Hyacinth::Utils::CsvImportExportUtils
         validate_import_file_import_path_if_present(digital_object_data, csv_row_number, import_job)
 
         # Collect list of projects present in spreadsheet so that we can ensure that the given user is allowed to create/update data in those projects
-        project_search_criteria_referenced_in_spreadsheet << digital_object_data['project']
+        project_search_criteria_referenced_in_spreadsheet << digital_object_data['project'] if digital_object_data['project'].present?
       end
     rescue CSV::MalformedCSVError
       # Handle invalid CSV
