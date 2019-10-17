@@ -1,118 +1,109 @@
-import React from 'react';
-import produce from 'immer';
+import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
+import { gql } from 'apollo-boost';
+import { useMutation } from '@apollo/react-hooks';
 
 import Checkbox from '../ui/forms/inputs/Checkbox';
 import InputGroup from '../ui/forms/InputGroup';
 import FormButtons from '../ui/forms/FormButtons';
-import hyacinthApi from '../../util/hyacinth_api';
-import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
+import GraphQLErrors from '../ui/GraphQLErrors';
 import { Can } from '../../util/ability_context';
 
-class SystemWidePermissionsForm extends React.Component {
-  state = {
-    user: {
-      uid: '',
-      isAdmin: false,
-      systemWidePermissions: [],
-    },
-  }
-
-  componentDidMount = () => {
-    const { user: { uid, isAdmin, systemWidePermissions } } = this.props;
-
-    this.setState(produce((draft) => {
-      draft.user.uid = uid;
-      draft.user.isAdmin = isAdmin;
-      draft.user.systemWidePermissions = systemWidePermissions;
-    }));
-  }
-
-  onSubmitHandler = () => {
-    const { user: { uid, isAdmin, systemWidePermissions } } = this.state;
-
-    const data = { user: { isAdmin, permissions: systemWidePermissions } };
-    return hyacinthApi.patch(`/users/${uid}`, data);
-  }
-
-  onIsAdminChange = (v) => {
-    this.setState(produce((draft) => {
-      draft.user.isAdmin = v;
-      if (v) draft.user.systemWidePermissions = [];
-    }));
-  }
-
-  onChangeSystemWidePermissions = (permission, v) => {
-    const { user: { systemWidePermissions } } = this.state;
-
-    if (v && !systemWidePermissions.includes(permission)) {
-      this.setState(produce((draft) => {
-        draft.user.isAdmin = false;
-        draft.user.systemWidePermissions.push(permission);
-      }));
-    } else if (!v) {
-      this.setState(produce((draft) => {
-        draft.user.isAdmin = false;
-        draft.user.systemWidePermissions = systemWidePermissions.filter(p => p !== permission);
-      }));
+const UPDATE_USER = gql`
+  mutation UpdateUser($input: UpdateUserInput!){
+    updateUser(input: $input){
+      user {
+        id
+      }
     }
   }
+`;
 
-  render() {
-    const { user: { isAdmin, systemWidePermissions } } = this.state;
+function SystemWidePermissionsForm(props) {
+  const { id, isAdmin: initialIsAdmin, systemWidePermissions: initialSystemWidePermissions } = props;
 
-    return (
-      <Form>
-        <h5>System Wide Permissions</h5>
-        <InputGroup>
-          <Can I="manage" a="all">
-            <Checkbox
-              sm={12}
-              value={isAdmin}
-              label="Administrator"
-              onChange={v => this.onIsAdminChange(v)}
-              helpText="has ability to perform all actions"
-            />
-          </Can>
+  const [isAdmin, setIsAdmin] = useState(initialIsAdmin);
+  const [manageVocabularies, setManageVocabularies] = useState(initialSystemWidePermissions.includes('manage_vocabularies'));
+  const [manageUsers, setManageUsers] = useState(initialSystemWidePermissions.includes('manage_users'))
+  const [readAllDigitalObjects, setReadAllDigitalObjects] = useState(initialSystemWidePermissions.includes('read_all_digital_objects'))
+  const [manageAllDigitalObjects, setManageAllDigitalObjects] = useState(initialSystemWidePermissions.includes('manage_all_digital_objects'))
+
+  const [updateUser, { error }] = useMutation(UPDATE_USER);
+
+  const onSave = () => {
+    const permissions = [];
+
+    if (manageUsers) permissions.push('manage_users');
+    if (manageVocabularies) permissions.push('manage_vocabularies');
+    if (readAllDigitalObjects) permissions.push('read_all_digital_objects');
+    if (manageAllDigitalObjects) permissions.push('manage_all_digital_objects');
+
+    return updateUser({
+      variables: {
+        input: {
+          id,
+          isAdmin,
+          permissions,
+        },
+      },
+    }).then((res) => {
+      // history.push(`/users/${res.data.updateUser.user.id}/edit`);
+    });
+  };
+
+  return (
+    <Form>
+      <h5>System Wide Permissions</h5>
+
+      <GraphQLErrors errors={error} />
+
+      <InputGroup>
+        <Can I="manage" a="all">
           <Checkbox
             sm={12}
-            md={6}
-            value={systemWidePermissions.includes('manage_vocabularies')}
-            label="Manage Vocabularies"
-            onChange={v => this.onChangeSystemWidePermissions('manage_vocabularies', v)}
-            helpText="has ability to create/edit/delete vocabularies, and create/edit/delete terms"
+            value={isAdmin}
+            label="Administrator"
+            onChange={v => setIsAdmin(v)}
+            helpText="has ability to perform all actions"
           />
-          <Checkbox
-            md={6}
-            sm={12}
-            value={systemWidePermissions.includes('manage_users')}
-            label="Manage Users"
-            onChange={v => this.onChangeSystemWidePermissions('manage_users', v)}
-            helpText="has ability to add new users, deactivate users, and add all system-wide permissions except administrator"
-          />
-          <Checkbox
-            md={6}
-            sm={12}
-            value={systemWidePermissions.includes('read_all_digital_objects')}
-            label="Read All Digital Objects"
-            onChange={v => this.onChangeSystemWidePermissions('read_all_digital_objects', v)}
-            helpText="has ability to view all projects and all digital objects"
-          />
-          <Checkbox
-            md={6}
-            sn={12}
-            value={systemWidePermissions.includes('manage_all_digital_objects')}
-            onChange={v => this.onChangeSystemWidePermissions('manage_all_digital_objects', v)}
-            label="Manage All Digital Objects"
-            helpText="has ability to read/create/edit/delete all digital objects and view all projects"
-          />
-        </InputGroup>
-        <FormButtons
-          onSave={this.onSubmitHandler}
+        </Can>
+        <Checkbox
+          sm={12}
+          md={6}
+          value={manageVocabularies}
+          label="Manage Vocabularies"
+          onChange={v => setManageVocabularies(v)}
+          helpText="has ability to create/edit/delete vocabularies, and create/edit/delete terms"
         />
-      </Form>
-    );
-  }
+        <Checkbox
+          md={6}
+          sm={12}
+          value={manageUsers}
+          label="Manage Users"
+          onChange={v => setManageUsers(v)}
+          helpText="has ability to add new users, deactivate users, and add all system-wide permissions except administrator"
+        />
+        <Checkbox
+          md={6}
+          sm={12}
+          value={readAllDigitalObjects}
+          label="Read All Digital Objects"
+          onChange={v => setReadAllDigitalObjects(v)}
+          helpText="has ability to view all projects and all digital objects"
+        />
+        <Checkbox
+          md={6}
+          sn={12}
+          value={manageAllDigitalObjects}
+          onChange={v => setManageAllDigitalObjects(v)}
+          label="Manage All Digital Objects"
+          helpText="has ability to read/create/edit/delete all digital objects and view all projects"
+        />
+      </InputGroup>
+
+      <FormButtons onSave={onSave} />
+    </Form>
+  );
 }
 
-export default withErrorHandler(SystemWidePermissionsForm, hyacinthApi);
+export default SystemWidePermissionsForm;

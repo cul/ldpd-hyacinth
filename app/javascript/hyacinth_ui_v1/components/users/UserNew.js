@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Col, Form, Button } from 'react-bootstrap';
 import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
+import { useHistory } from 'react-router-dom';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
+import GraphQLErrors from '../ui/GraphQLErrors';
 
 const CREATE_USER = gql`
   mutation CreateUser($input: CreateUserInput!) {
@@ -15,16 +17,15 @@ const CREATE_USER = gql`
   }
 `;
 
-function UserNew(props) {
+function UserNew() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
 
-  const [createUser, { data }] = useMutation(CREATE_USER);
-
-  // Display something if errors
+  const [createUser, { error }] = useMutation(CREATE_USER);
+  const history = useHistory();
 
   // From: http://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
   const getRandomPassword = (length) => {
@@ -57,7 +58,7 @@ function UserNew(props) {
         },
       },
     }).then((res) => {
-      props.history.push(`/users/${res.data.createUser.user.id}/edit`);
+      history.push(`/users/${res.data.createUser.user.id}/edit`);
     });
   };
 
@@ -67,6 +68,8 @@ function UserNew(props) {
         title="Create New User"
         rightHandLinks={[{ link: '/users', label: 'Cancel' }]}
       />
+
+      <GraphQLErrors errors={error}/>
 
       <Form onSubmit={e => handleSubmit(e)}>
         <Form.Row>

@@ -5,11 +5,13 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { gql } from 'apollo-boost';
 import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useParams, useHistory } from 'react-router-dom';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
 import ability from '../../util/ability';
 import SubmitButton from '../layout/forms/SubmitButton';
-import SystemWidePermissionsForm from './SystemWidePermissionsForm'
+import SystemWidePermissionsForm from './SystemWidePermissionsForm';
+import GraphQLErrors from '../ui/GraphQLErrors';
 
 // class UserEdit extends React.Component {
 //   state = {
@@ -96,6 +98,8 @@ const GET_USER = gql`
       lastName
       email
       isActive
+      isAdmin
+      permissions
     }
   }
 `;
@@ -110,8 +114,9 @@ const UPDATE_USER = gql`
   }
 `;
 
-function UserEdit(props) {
-  const { match: { params: { uid: id } } } = props;
+function UserEdit() {
+  const { uid: id } = useParams();
+  const history = useHistory();
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -139,16 +144,13 @@ function UserEdit(props) {
     },
   );
 
-  const [updateUser] = useMutation(UPDATE_USER);
+  const [updateUser, { error: mutationErrors }] = useMutation(UPDATE_USER);
 
   let rightHandLinks = [];
 
   if (ability.can('index', 'Users')) {
     rightHandLinks = [{ link: '/users', label: 'Back to All Users' }];
   }
-
-  // return loading message if loading
-  // return errors message if error
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
@@ -165,11 +167,12 @@ function UserEdit(props) {
         },
       },
     }).then((res) => {
-      props.history.push(`/users/${res.data.updateUser.user.id}/edit`);
+      history.push(`/users/${res.data.updateUser.user.id}/edit`);
     });
   };
 
-  if (!data) return (<></>);
+  if (loading) return (<></>);
+  if (error) return (<GraphQLErrors errors={error} />);
 
   return (
     <>
@@ -177,6 +180,8 @@ function UserEdit(props) {
         title={`Editing User: ${firstName} ${lastName}`}
         rightHandLinks={rightHandLinks}
       />
+
+      <GraphQLErrors errors={mutationErrors} />
 
       <Form as={Col} onSubmit={onSubmitHandler}>
         <Form.Group as={Row}>
@@ -279,15 +284,17 @@ function UserEdit(props) {
       </Form>
 
       <hr />
-      {/* { loaded && <SystemWidePermissionsForm user={user} /> } */}
+
+      <SystemWidePermissionsForm
+        id={data.user.id}
+        isAdmin={data.user.isAdmin}
+        systemWidePermissions={data.user.permissions}
+      />
 
       <hr />
       <h5>Project Permissions</h5>
     </>
   );
 }
-
-
-
 
 export default UserEdit;
