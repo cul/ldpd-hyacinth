@@ -33,7 +33,7 @@ class Mutations::UpdateUser < Mutations::BaseMutation
         user: user
       }
     else
-      raise GraphQL::ExecutionError.new(user.errors.full_messages.join("\n"))
+      raise GraphQL::ExecutionError.new(user.errors.full_messages.join('; '))
     end
   end
 
