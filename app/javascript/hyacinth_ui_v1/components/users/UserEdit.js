@@ -9,11 +9,12 @@ import { useParams, useHistory } from 'react-router-dom';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
 import ability from '../../util/ability';
-import SystemWidePermissionsForm from './SystemWidePermissionsForm';
 import GraphQLErrors from '../ui/GraphQLErrors';
 import InputGroup from '../ui/forms/InputGroup';
 import Label from '../ui/forms/Label';
 import FormButtons from '../ui/forms/FormButtons';
+import { Can } from '../../util/ability_context';
+import Checkbox from '../ui/forms/inputs/Checkbox';
 
 import BooleanRadioButtons from '../ui/forms/inputs/BooleanRadioButtons';
 
@@ -53,20 +54,30 @@ function UserEdit() {
   const [currentPassword, setCurrentPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [manageVocabularies, setManageVocabularies] = useState(false);
+  const [manageUsers, setManageUsers] = useState(false);
+  const [readAllDigitalObjects, setReadAllDigitalObjects] = useState(false);
+  const [manageAllDigitalObjects, setManageAllDigitalObjects] = useState(false);
 
-  const { loading, error, data } = useQuery(
+  const { loading, error } = useQuery(
     GET_USER,
     {
       variables: { id },
       onCompleted: (userData) => {
         const {
-          user: { firstName, lastName, email, isActive },
+          user: { firstName, lastName, email, isActive, isAdmin, permissions },
         } = userData;
 
         setFirstName(firstName);
         setLastName(lastName);
         setEmail(email);
         setIsActive(isActive);
+        setIsAdmin(isAdmin);
+        setManageVocabularies(permissions.includes('manage_vocabularies'));
+        setManageUsers(permissions.includes('manage_users'));
+        setReadAllDigitalObjects(permissions.includes('read_all_digital_objects'));
+        setManageAllDigitalObjects(permissions.includes('manage_all_digital_objects'));
       },
     },
   );
@@ -80,6 +91,13 @@ function UserEdit() {
   }
 
   const onSave = () => {
+    const permissions = [];
+
+    if (manageUsers) permissions.push('manage_users');
+    if (manageVocabularies) permissions.push('manage_vocabularies');
+    if (readAllDigitalObjects) permissions.push('read_all_digital_objects');
+    if (manageAllDigitalObjects) permissions.push('manage_all_digital_objects');
+
     return updateUser({
       variables: {
         input: {
@@ -88,9 +106,11 @@ function UserEdit() {
           lastName,
           email,
           isActive,
+          isAdmin,
           currentPassword,
           password,
           passwordConfirmation,
+          permissions,
         },
       },
     }).then((res) => {
@@ -205,25 +225,60 @@ function UserEdit() {
           </div>
         </Collapse>
 
+        {
+          isActive && (
+            <>
+              <h5>System Wide Permissions</h5>
+
+              <InputGroup>
+                <Can I="manage" a="all">
+                  <Checkbox
+                    sm={12}
+                    value={isAdmin}
+                    label="Administrator"
+                    onChange={v => setIsAdmin(v)}
+                    helpText="has ability to perform all actions"
+                  />
+                </Can>
+                <Checkbox
+                  sm={12}
+                  md={6}
+                  value={manageVocabularies}
+                  label="Manage Vocabularies"
+                  onChange={v => setManageVocabularies(v)}
+                  helpText="has ability to create/edit/delete vocabularies, and create/edit/delete terms"
+                />
+                <Checkbox
+                  md={6}
+                  sm={12}
+                  value={manageUsers}
+                  label="Manage Users"
+                  onChange={v => setManageUsers(v)}
+                  helpText="has ability to add new users, deactivate users, and add all system-wide permissions except administrator"
+                />
+                <Checkbox
+                  md={6}
+                  sm={12}
+                  value={readAllDigitalObjects}
+                  label="Read All Digital Objects"
+                  onChange={v => setReadAllDigitalObjects(v)}
+                  helpText="has ability to view all projects and all digital objects"
+                />
+                <Checkbox
+                  md={6}
+                  sn={12}
+                  value={manageAllDigitalObjects}
+                  onChange={v => setManageAllDigitalObjects(v)}
+                  label="Manage All Digital Objects"
+                  helpText="has ability to read/create/edit/delete all digital objects and view all projects"
+                />
+              </InputGroup>
+            </>
+          )
+        }
+
         <FormButtons onSave={onSave} />
       </Form>
-
-      {
-        isActive && (
-          <>
-            <hr />
-
-            <SystemWidePermissionsForm
-              id={data.user.id}
-              isAdmin={data.user.isAdmin}
-              systemWidePermissions={data.user.permissions}
-            />
-
-            <hr />
-            <h5>Project Permissions</h5>
-          </>
-        )
-      }
     </>
   );
 }

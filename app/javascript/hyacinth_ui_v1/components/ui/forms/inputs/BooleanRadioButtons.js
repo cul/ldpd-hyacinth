@@ -16,7 +16,7 @@ class BooleanRadioButtons extends React.Component {
   }
 
   render() {
-    const { value, ...rest } = this.props;
+    const { value, onChange, ...rest } = this.props;
 
     return (
       <Col sm={8} style={{ alignSelf: 'center' }} {...rest}>
