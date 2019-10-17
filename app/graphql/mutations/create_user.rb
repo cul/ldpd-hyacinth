@@ -21,10 +21,6 @@ class Mutations::CreateUser < Mutations::BaseMutation
       password_confirmation: attributes[:password_confirmation]
     )
 
-    if user.save!
-      {
-        user: user
-      }
-    end
+    { user: user } if user.save!
   end
 end

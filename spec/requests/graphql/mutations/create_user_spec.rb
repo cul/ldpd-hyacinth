@@ -22,6 +22,7 @@ RSpec.describe Mutations::CreateUser, type: :request do
           }
         GQL
       end
+
       let(:request) { graphql query: query }
     end
 
@@ -29,6 +30,8 @@ RSpec.describe Mutations::CreateUser, type: :request do
       before { sign_in_user as: :user_manager }
 
       context 'when creating a new user' do
+        subject(:user) { User.find_by(email: email) }
+
         let(:email) { 'jane.doe@example.com' }
         let(:query) do
           <<~GQL
@@ -54,8 +57,6 @@ RSpec.describe Mutations::CreateUser, type: :request do
 
         before { graphql query: query }
 
-        subject { User.find_by(email: email) }
-
         its(:first_name) { is_expected.to eql 'Jane' }
         its(:last_name)  { is_expected.to eql 'Doe' }
         its(:email)      { is_expected.to eql 'jane.doe@example.com' }
@@ -63,11 +64,11 @@ RSpec.describe Mutations::CreateUser, type: :request do
         its(:uid)        { is_expected.not_to be_blank }
 
         it 'sets password' do
-          expect(subject.valid_password?('bestpasswordever')).to be true
+          expect(user.valid_password?('bestpasswordever')).to be true
         end
 
         # it 'creates permisisons' do
-        #   expect(subject.permissions.map(&:action)).to match_array [Permission::MANAGE_USERS, Permission::MANAGE_VOCABULARIES]
+        #   expect(user.permissions.map(&:action)).to match_array [Permission::MANAGE_USERS, Permission::MANAGE_VOCABULARIES]
         # end
       end
 

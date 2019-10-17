@@ -17,7 +17,7 @@ class Mutations::UpdateUser < Mutations::BaseMutation
 
     ability.authorize! :update, user
 
-    permissions = attributes.delete(:permissions) # does this return nil if it doesnt exist?
+    permissions = attributes.delete(:permissions)
 
     attributes.delete(:is_admin) unless ability.can?(:manage, :all)
 
@@ -29,14 +29,10 @@ class Mutations::UpdateUser < Mutations::BaseMutation
     # Update password if attempting to do so otherwise ignore
     success = changing_password?(attributes) ? user.update_with_password(attributes) : user.update_without_password(attributes)
 
-    if success
-      # Successful creation, return the created object with no errors
-      {
-        user: user
-      }
-    else
-      raise GraphQL::ExecutionError.new(user.errors.full_messages.join('; '))
-    end
+    raise(GraphQL::ExecutionError, user.errors.full_messages.join('; ')) unless success
+
+    # Successful creation, return the created object with no errors
+    { user: user }
   end
 
   private

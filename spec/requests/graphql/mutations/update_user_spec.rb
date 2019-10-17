@@ -6,20 +6,20 @@ RSpec.describe Mutations::UpdateUser, type: :request do
 
     include_examples 'requires user to have correct permissions for graphql request' do
       let(:query) do
-          <<~GQL
-            mutation {
-              updateUser(
-                input: {
-                  id: "#{user.uid}"
-                  firstName: "John"
-                }
-              ) {
-                user {
-                  id
-                }
+        <<~GQL
+          mutation {
+            updateUser(
+              input: {
+                id: "#{user.uid}"
+                firstName: "John"
+              }
+            ) {
+              user {
+                id
               }
             }
-          GQL
+          }
+        GQL
       end
       let(:request) { graphql query: query }
     end
@@ -98,14 +98,14 @@ RSpec.describe Mutations::UpdateUser, type: :request do
       end
 
       context 'when changing permissions' do
-        before do
-          Permission.create(user: user, action: Permission::MANAGE_USERS)
-          user.reload
-        end
-
         subject(:actions) do
           user.reload
           user.permissions.map(&:action)
+        end
+
+        before do
+          Permission.create(user: user, action: Permission::MANAGE_USERS)
+          user.reload
         end
 
         context 'with missing permission key' do

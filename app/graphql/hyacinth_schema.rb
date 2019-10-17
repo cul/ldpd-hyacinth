@@ -7,7 +7,7 @@ class HyacinthSchema < GraphQL::Schema
   end
 
   rescue_from ActiveRecord::RecordInvalid do |exception|
-    raise GraphQL::ExecutionError.new(exception.record.errors.full_messages.join('; '))
+    raise GraphQL::ExecutionError, exception.record.errors.full_messages.join('; ')
   end
 
   rescue_from(CanCan::AccessDenied) do |err, _obj, _args, _ctx, _field|
