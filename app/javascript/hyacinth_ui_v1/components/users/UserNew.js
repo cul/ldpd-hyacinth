@@ -69,7 +69,7 @@ function UserNew() {
         rightHandLinks={[{ link: '/users', label: 'Cancel' }]}
       />
 
-      <GraphQLErrors errors={error}/>
+      <GraphQLErrors errors={error} />
 
       <Form onSubmit={e => handleSubmit(e)}>
         <Form.Row>

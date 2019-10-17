@@ -9,86 +9,13 @@ import { useParams, useHistory } from 'react-router-dom';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
 import ability from '../../util/ability';
-import SubmitButton from '../layout/forms/SubmitButton';
 import SystemWidePermissionsForm from './SystemWidePermissionsForm';
 import GraphQLErrors from '../ui/GraphQLErrors';
+import InputGroup from '../ui/forms/InputGroup';
+import Label from '../ui/forms/Label';
+import FormButtons from '../ui/forms/FormButtons';
 
-// class UserEdit extends React.Component {
-//   state = {
-//     loaded: false,
-//     changePasswordOpen: false,
-//     user: {
-//       uid: '',
-//       isActive: '',
-//       firstName: '',
-//       lastName: '',
-//       email: '',
-//       currentPassword: '',
-//       password: '',
-//       passwordConfirmation: '',
-//     },
-//   }
-//
-//   componentDidMount = () => {
-//     const { match: { params: { uid } } } = this.props;
-//
-//     hyacinthApi.get(`/users/${uid}`)
-//       .then((res) => {
-//         const { user } = res.data;
-//
-//         this.setState(produce((draft) => {
-//           draft.user = user;
-//           draft.user.currentPassword = '';
-//           draft.user.password = '';
-//           draft.user.passwordConfirmation = '';
-//           draft.loaded = true;
-//         }));
-//       });
-//   }
-//
-//   onChangeHandler = ({ target: { name, value } }) => {
-//     this.setState(produce((draft) => { draft.user[name] = value; }));
-//   }
-//
-//   onFlipActivationHandler = (event) => {
-//     event.preventDefault();
-//
-//     const { user: { uid, isActive } } = this.state;
-//
-//     hyacinthApi.patch(`/users/${uid}`, { user: { is_active: !isActive } })
-//       .then((res) => {
-//         this.setState(produce((draft) => { draft.user.isActive = res.data.user.is_active; }));
-//       });
-//   }
-//
-//   onSubmitHandler = (event) => {
-//     event.preventDefault();
-//
-//     const { user, user: { uid } } = this.state;
-//     const { history: { push } } = this.props;
-//
-//     hyacinthApi.patch(`/users/${uid}`, { user })
-//       .then(() => push(`/users/${uid}/edit`));
-//   }
-//
-//   render() {
-//     let rightHandLinks = [];
-//
-//     if (ability.can('index', 'Users')) {
-//       rightHandLinks = [{ link: '/users', label: 'Back to All Users' }];
-//     }
-//
-//     const {
-//       loaded,
-//       changePasswordOpen,
-//       user,
-//       user: {
-//         uid, firstName, lastName, email, isActive,
-//         password, currentPassword, passwordConfirmation,
-//       },
-//     } = this.state;
-//
-//     return (
+import BooleanRadioButtons from '../ui/forms/inputs/BooleanRadioButtons';
 
 const GET_USER = gql`
   query User($id: ID!){
@@ -152,15 +79,15 @@ function UserEdit() {
     rightHandLinks = [{ link: '/users', label: 'Back to All Users' }];
   }
 
-  const onSubmitHandler = (e) => {
-    e.preventDefault();
-    updateUser({
+  const onSave = () => {
+    return updateUser({
       variables: {
         input: {
           id,
           firstName,
           lastName,
           email,
+          isActive,
           currentPassword,
           password,
           passwordConfirmation,
@@ -183,7 +110,7 @@ function UserEdit() {
 
       <GraphQLErrors errors={mutationErrors} />
 
-      <Form as={Col} onSubmit={onSubmitHandler}>
+      <Form as={Col}>
         <Form.Group as={Row}>
           <Form.Label column sm={2}>UID</Form.Label>
           <Col sm={10}>
@@ -218,17 +145,19 @@ function UserEdit() {
           </Form.Group>
         </Form.Row>
 
-        {/* <Form.Group as={Row}>
-          <Form.Label column sm={2}>Is Active?</Form.Label>
-
-          <Col sm={3}>
-            <Form.Control plaintext readOnly value={isActive ? 'Yes' : 'No'} />
+        <InputGroup>
+          <Label sm={2}>Is Active?</Label>
+          <BooleanRadioButtons
+            sm={4}
+            value={isActive}
+            onChange={v => setIsActive(v)}
+          />
+          <Col sm={6}>
+            <Form.Text className="text-muted">
+              Deactivated users are not allowed to login to the system.
+            </Form.Text>
           </Col>
-
-          <Col sm={3}>
-            <Button variant="outline-danger" type="submit" onClick={this.onFlipActivationHandler}>{(isActive) ? 'Deactivate' : 'Activate'}</Button>
-          </Col>
-        </Form.Group> */}
+        </InputGroup>
 
         <Form.Row>
           <Col>
@@ -276,23 +205,25 @@ function UserEdit() {
           </div>
         </Collapse>
 
-        <Form.Row>
-          <Col sm="auto" className="ml-auto">
-            <SubmitButton formType="edit" onClick={onSubmitHandler} />
-          </Col>
-        </Form.Row>
+        <FormButtons onSave={onSave} />
       </Form>
 
-      <hr />
+      {
+        isActive && (
+          <>
+            <hr />
 
-      <SystemWidePermissionsForm
-        id={data.user.id}
-        isAdmin={data.user.isAdmin}
-        systemWidePermissions={data.user.permissions}
-      />
+            <SystemWidePermissionsForm
+              id={data.user.id}
+              isAdmin={data.user.isAdmin}
+              systemWidePermissions={data.user.permissions}
+            />
 
-      <hr />
-      <h5>Project Permissions</h5>
+            <hr />
+            <h5>Project Permissions</h5>
+          </>
+        )
+      }
     </>
   );
 }
