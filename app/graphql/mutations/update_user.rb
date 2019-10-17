@@ -19,10 +19,12 @@ class Mutations::UpdateUser < Mutations::BaseMutation
 
     permissions = attributes.delete(:permissions) # does this return nil if it doesnt exist?
 
-    attributes.delete(:is_admin)  unless ability.can?(:manage, :all)
-    attributes.delete(:is_active) unless ability.can?(:manage, user)
+    attributes.delete(:is_admin) unless ability.can?(:manage, :all)
 
-    attributes[:permissions_attributes] = permissions_attributes(user, permissions) if ability.can?(:manage, user) && !permissions.nil?
+    attributes[:permissions_attributes] = permissions_attributes(user, permissions) if ability.can?(:manage, :all) && !permissions.nil?
+
+    # user_managers can only update is_active if the use is a non-admin
+    attributes.delete(:is_active) unless ability.can?(:manage, user.admin? ? :all : user)
 
     # Update password if attempting to do so otherwise ignore
     success = changing_password?(attributes) ? user.update_with_password(attributes) : user.update_without_password(attributes)

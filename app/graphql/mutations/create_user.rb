@@ -4,10 +4,11 @@ class Mutations::CreateUser < Mutations::BaseMutation
   argument :email, String, required: true
   argument :password, String, required: true
   argument :password_confirmation, String, required: true
-  argument :is_active, Boolean, required: false
-  argument :is_admin, Boolean, required: false
 
   field :user, Types::UserType, null: true
+
+  # We don't support all user parameters at this point at creation time. We might want to rethink this in the future.
+  # In order to support the rest of the parameters we need a pattern to follow when sharing code between mutations.
 
   def resolve(**attributes)
     ability.authorize! :create, User
@@ -19,9 +20,6 @@ class Mutations::CreateUser < Mutations::BaseMutation
       password: attributes[:password],
       password_confirmation: attributes[:password_confirmation]
     )
-
-    user.is_active = is_active if attributes.key?(:is_active) && ability.can?(:manage, user)
-    user.is_admin =  is_admin  if attributes.key?(:is_admin)  && ability.can?(:manage, :all)
 
     if user.save!
       {
