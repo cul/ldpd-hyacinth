@@ -1,24 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Col, Form, Button } from 'react-bootstrap';
-import produce from 'immer';
+import { gql } from 'apollo-boost';
+import { useMutation } from '@apollo/react-hooks';
+import { useHistory } from 'react-router-dom';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
-import hyacinthApi from '../../util/hyacinth_api';
-import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
+import GraphQLErrors from '../ui/GraphQLErrors';
 
-class UserNew extends React.Component {
-  state = {
-    user: {
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: '',
-      passwordConfirmation: '',
-    },
+const CREATE_USER = gql`
+  mutation CreateUser($input: CreateUserInput!) {
+    createUser(input: $input) {
+      user {
+        id
+      }
+    }
   }
+`;
+
+function UserNew() {
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
+
+  const [createUser, { error }] = useMutation(CREATE_USER);
+  const history = useHistory();
 
   // From: http://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
-  getRandomPassword(length) {
+  const getRandomPassword = (length) => {
     const chars = '01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     let result = '';
     for (let i = length; i > 0; --i) {
@@ -26,120 +36,113 @@ class UserNew extends React.Component {
     }
 
     return result;
-  }
+  };
 
-  generatePasswordHandler = () => {
-    const newPassword = this.getRandomPassword(14);
-    this.setState(produce((draft) => {
-      draft.user.password = newPassword;
-      draft.user.passwordConfirmation = newPassword;
-    }));
-  }
+  const generatePasswordHandler = () => {
+    const newPassword = getRandomPassword(14);
 
-  onSubmitHandler = (event) => {
-    event.preventDefault();
+    setPassword(newPassword);
+    setPasswordConfirmation(newPassword);
+  };
 
-    const { user } = this.state;
-
-    hyacinthApi.post('/users', { user })
-      .then((res) => {
-        const { user: { uid } } = res.data;
-
-        this.props.history.push(`/users/${uid}/edit`);
-      });
-  }
-
-  onChangeHandler = (event) => {
-    const { target } = event;
-    this.setState(produce((draft) => { draft.user[target.name] = target.value; }));
-  }
-
-  render() {
-    const {
-      user: {
-        firstName, lastName, email, password, passwordConfirmation,
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    createUser({
+      variables: {
+        input: {
+          firstName,
+          lastName,
+          email,
+          password,
+          passwordConfirmation,
+        },
       },
-    } = this.state;
+    }).then((res) => {
+      history.push(`/users/${res.data.createUser.user.id}/edit`);
+    });
+  };
 
-    return (
-      <>
-        <ContextualNavbar
-          title="Create New User"
-          rightHandLinks={[{ link: '/users', label: 'Cancel' }]}
-        />
+  return (
+    <>
+      <ContextualNavbar
+        title="Create New User"
+        rightHandLinks={[{ link: '/users', label: 'Cancel' }]}
+      />
 
-        <Form onSubmit={this.onSubmitHandler}>
-          <Form.Row>
-            <Form.Group as={Col} sm={6}>
-              <Form.Label>First Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="firstName"
-                value={firstName}
-                onChange={this.onChangeHandler}
-              />
-            </Form.Group>
+      <GraphQLErrors errors={error} />
 
-            <Form.Group as={Col} sm={6}>
-              <Form.Label>Last Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="lastName"
-                value={lastName}
-                onChange={this.onChangeHandler}
-              />
-            </Form.Group>
-          </Form.Row>
+      <Form onSubmit={e => handleSubmit(e)}>
+        <Form.Row>
+          <Form.Group as={Col} sm={6}>
+            <Form.Label>First Name</Form.Label>
+            <Form.Control
+              type="text"
+              name="firstName"
+              value={firstName}
+              onChange={e => setFirstName(e.target.value)}
+            />
+          </Form.Group>
 
-          <Form.Row>
-            <Form.Group as={Col}>
-              <Form.Label>Email</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                value={email}
-                onChange={this.onChangeHandler}
-              />
-              <Form.Text className="text-muted">
-                For Columbia sign-in, please use columbia email: uni@columbia.edu
-              </Form.Text>
-            </Form.Group>
-          </Form.Row>
+          <Form.Group as={Col} sm={6}>
+            <Form.Label>Last Name</Form.Label>
+            <Form.Control
+              type="text"
+              name="lastName"
+              value={lastName}
+              onChange={e => setLastName(e.target.value)}
+            />
+          </Form.Group>
+        </Form.Row>
 
-          <Form.Row>
-            <Form.Group as={Col} sm={6}>
-              <Form.Label>Password</Form.Label>
-              <Form.Control type="text" name="password" value={password} onChange={this.onChangeHandler} />
-            </Form.Group>
+        <Form.Row>
+          <Form.Group as={Col}>
+            <Form.Label>Email</Form.Label>
+            <Form.Control
+              type="email"
+              name="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+            />
+            <Form.Text className="text-muted">
+              For Columbia sign-in, please use columbia email: uni@columbia.edu
+            </Form.Text>
+          </Form.Group>
+        </Form.Row>
 
-            <Form.Group as={Col} sm={6}>
-              <Form.Label>Password Confirmation</Form.Label>
-              <Form.Control
-                type="text"
-                name="passwordConfirmation"
-                value={passwordConfirmation}
-                onChange={this.onChangeHandler}
-              />
-            </Form.Group>
-          </Form.Row>
+        <Form.Row>
+          <Form.Group as={Col} sm={6}>
+            <Form.Label>Password</Form.Label>
+            <Form.Control type="text" name="password" value={password} onChange={e => setPassword(e.target.value)} />
+          </Form.Group>
 
-          <Form.Row>
-            <Form.Group as={Col} sm={{ span: 6, offset: 6 }}>
-              <Button
-                variant="outline-dark"
-                onClick={this.generatePasswordHandler}
-              >
-                Generate Random Password
-              </Button>
-              <Form.Text>Must generate password for Columbia sign-ins.</Form.Text>
-            </Form.Group>
-          </Form.Row>
+          <Form.Group as={Col} sm={6}>
+            <Form.Label>Password Confirmation</Form.Label>
+            <Form.Control
+              type="text"
+              name="passwordConfirmation"
+              value={passwordConfirmation}
+              onChange={e => setPasswordConfirmation(e.target.value)}
+            />
+          </Form.Group>
+        </Form.Row>
 
-          <Button variant="primary" type="submit" onClick={this.onSubmitHandler}>Create</Button>
-        </Form>
-      </>
-    );
-  }
+        <Form.Row>
+          <Form.Group as={Col} sm={{ span: 6, offset: 6 }}>
+            <Button
+              variant="outline-dark"
+              onClick={generatePasswordHandler}
+            >
+              Generate Random Password
+            </Button>
+            <Form.Text>Must generate password for Columbia sign-ins.</Form.Text>
+          </Form.Group>
+        </Form.Row>
+
+        <Button variant="primary" type="submit">Create</Button>
+      </Form>
+    </>
+  );
 }
 
-export default withErrorHandler(UserNew, hyacinthApi);
+
+export default UserNew;

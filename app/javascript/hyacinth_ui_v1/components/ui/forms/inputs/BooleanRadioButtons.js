@@ -16,10 +16,10 @@ class BooleanRadioButtons extends React.Component {
   }
 
   render() {
-    const { value } = this.props;
+    const { value, onChange, ...rest } = this.props;
 
     return (
-      <Col sm={8} style={{ alignSelf: 'center' }}>
+      <Col sm={8} style={{ alignSelf: 'center' }} {...rest}>
         <Form.Check
           inline
           type="radio"

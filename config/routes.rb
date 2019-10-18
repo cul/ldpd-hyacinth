@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  mount GraphiQL::Rails::Engine, at: '/graphiql', graphql_path: '/graphql' if Rails.env.development?
+
+  post "/graphql", to: "graphql#execute"
+
   get '/users/do_cas_login', to: 'users#do_cas_login', as: :user_do_cas_login
   devise_for :users
 

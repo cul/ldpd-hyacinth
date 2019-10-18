@@ -139,6 +139,12 @@ GEM
     ffi (1.11.1)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
+    graphiql-rails (1.7.0)
+      railties
+      sprockets-rails
+    graphql (1.9.12)
+    graphql-errors (0.3.0)
+      graphql (>= 1.6.0, < 2)
     hooks (0.4.1)
       uber (~> 0.0.14)
     http-cookie (1.0.3)
@@ -371,6 +377,9 @@ DEPENDENCIES
   devise (~> 4.6)
   equivalent-xml
   factory_bot_rails
+  graphiql-rails
+  graphql
+  graphql-errors
   jbuilder (~> 2.5)
   jettywrapper (>= 1.4.0)!
   json_spec

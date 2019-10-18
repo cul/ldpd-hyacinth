@@ -23,3 +23,18 @@ shared_examples 'does not have access' do
     ))
   end
 end
+
+shared_examples 'requires user to have correct permissions for graphql request' do
+  context 'when logged in user does not have appropriate permissions' do
+    before do
+      sign_in_user
+      request
+    end
+
+    it 'returns error' do
+      expect(response.body).to be_json_eql(%(
+        "You are not authorized to access this page."
+      )).at_path('errors/0/message')
+    end
+  end
+end
