@@ -26,8 +26,7 @@ class Mutations::UpdateUser < Mutations::BaseMutation
     # user_managers can only update is_active if the use is a non-admin
     attributes.delete(:is_active) unless ability.can?(:manage, user.admin? ? :all : user)
 
-    # Update password if attempting to do so otherwise ignore
-    success = changing_password?(attributes) ? user.update_with_password(attributes) : user.update_without_password(attributes)
+    success = update(user, attributes)
 
     raise(GraphQL::ExecutionError, user.errors.full_messages.join('; ')) unless success
 
@@ -36,6 +35,11 @@ class Mutations::UpdateUser < Mutations::BaseMutation
   end
 
   private
+
+    # Update password if attempting to do so otherwise ignore
+    def update(user, attributes)
+      changing_password?(attributes) ? user.update_with_password(attributes) : user.update_without_password(attributes)
+    end
 
     def changing_password?(attributes)
       [:current_password, :password, :password_confirmation].any? { |k| attributes.include?(k) && attributes[k].present? }
