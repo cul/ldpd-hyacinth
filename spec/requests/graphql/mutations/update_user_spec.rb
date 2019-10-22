@@ -21,7 +21,7 @@ RSpec.describe Mutations::UpdateUser, type: :request do
           }
         GQL
       end
-      let(:request) { graphql query: query }
+      let(:request) { graphql query }
     end
 
     context 'when logged in user is not an administrator or user manager' do
@@ -47,7 +47,7 @@ RSpec.describe Mutations::UpdateUser, type: :request do
 
       before do
         login_as user, scope: :user
-        graphql query: query
+        graphql query
         user.reload
       end
 
@@ -89,7 +89,7 @@ RSpec.describe Mutations::UpdateUser, type: :request do
           GQL
         end
 
-        before { graphql query: query }
+        before { graphql query }
 
         it 'updates record' do
           user.reload
@@ -125,7 +125,7 @@ RSpec.describe Mutations::UpdateUser, type: :request do
             GQL
           end
 
-          before { graphql query: query }
+          before { graphql query }
 
           it 'permissions aren\'t updated' do
             expect(actions).to match_array [Permission::MANAGE_USERS]
@@ -150,7 +150,7 @@ RSpec.describe Mutations::UpdateUser, type: :request do
             GQL
           end
 
-          before { graphql query: query }
+          before { graphql query }
 
           it 'removes all permissions' do
             expect(actions).to match_array []
@@ -175,7 +175,7 @@ RSpec.describe Mutations::UpdateUser, type: :request do
             GQL
           end
 
-          before { graphql query: query }
+          before { graphql query }
 
           it 'updates permissions correctly' do
             expect(actions).to match_array [Permission::READ_ALL_DIGITAL_OBJECTS]
@@ -200,7 +200,7 @@ RSpec.describe Mutations::UpdateUser, type: :request do
             GQL
           end
 
-          before { graphql query: query }
+          before { graphql query }
 
           it 'updates permission correctly' do
             expect(actions).to match_array [Permission::MANAGE_USERS, Permission::READ_ALL_DIGITAL_OBJECTS]
@@ -225,7 +225,7 @@ RSpec.describe Mutations::UpdateUser, type: :request do
             GQL
           end
 
-          before { graphql query: query }
+          before { graphql query }
 
           it 'does not update permissions' do
             expect(actions).to match_array [Permission::MANAGE_USERS]
@@ -258,7 +258,7 @@ RSpec.describe Mutations::UpdateUser, type: :request do
         end
 
         before do
-          graphql query: query
+          graphql query
           user.reload
         end
 
@@ -295,7 +295,7 @@ RSpec.describe Mutations::UpdateUser, type: :request do
           GQL
         end
 
-        before { graphql query: query }
+        before { graphql query }
 
         it 'update record' do
           user.reload
@@ -322,7 +322,7 @@ RSpec.describe Mutations::UpdateUser, type: :request do
           GQL
         end
 
-        before { graphql query: query }
+        before { graphql query }
 
         it 'does not update record' do
           user.reload
@@ -348,7 +348,7 @@ RSpec.describe Mutations::UpdateUser, type: :request do
           GQL
         end
 
-        before { graphql query: query }
+        before { graphql query }
 
         it 'updates record' do
           user.reload
@@ -398,7 +398,7 @@ RSpec.describe Mutations::UpdateUser, type: :request do
           GQL
         end
 
-        before { graphql query: query }
+        before { graphql query }
 
         it 'does not update record' do
           user.reload

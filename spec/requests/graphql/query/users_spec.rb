@@ -17,7 +17,7 @@ RSpec.describe 'Retrieve Users', type: :request do
   end
 
   include_examples 'requires user to have correct permissions for graphql request' do
-    let(:request) { graphql query: query }
+    let(:request) { graphql(query) }
   end
 
   context 'when logged in user has appropriate permissions' do
@@ -26,7 +26,7 @@ RSpec.describe 'Retrieve Users', type: :request do
     context 'when there are multiple results' do
       before do
         FactoryBot.create(:user)
-        graphql query: query
+        graphql(query)
       end
 
       it 'returns all users' do

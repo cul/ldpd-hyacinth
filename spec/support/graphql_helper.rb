@@ -1,5 +1,5 @@
 module GraphQLHelper
-  def graphql(query:)
+  def graphql(query)
     post '/graphql', params: { query: query }
   end
 end

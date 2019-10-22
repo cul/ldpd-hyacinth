@@ -23,7 +23,7 @@ RSpec.describe Mutations::CreateUser, type: :request do
         GQL
       end
 
-      let(:request) { graphql query: query }
+      let(:request) { graphql query }
     end
 
     context 'when logged in user has appropriate permissions' do
@@ -55,7 +55,7 @@ RSpec.describe Mutations::CreateUser, type: :request do
 
         # permissions: [#{Permission::MANAGE_USERS}, #{Permission::MANAGE_VOCABULARIES}]
 
-        before { graphql query: query }
+        before { graphql query }
 
         its(:first_name) { is_expected.to eql 'Jane' }
         its(:last_name)  { is_expected.to eql 'Doe' }
@@ -92,7 +92,7 @@ RSpec.describe Mutations::CreateUser, type: :request do
           GQL
         end
 
-        before { graphql query: query }
+        before { graphql query }
 
         it 'returns error' do
           expect(response.body).to be_json_eql(%(
@@ -121,7 +121,7 @@ RSpec.describe Mutations::CreateUser, type: :request do
           GQL
         end
 
-        before { graphql query: query }
+        before { graphql query }
 
         it 'returns error' do
           expect(response.body).to be_json_eql(%(
@@ -150,7 +150,7 @@ RSpec.describe Mutations::CreateUser, type: :request do
           GQL
         end
 
-        before { graphql query: query }
+        before { graphql query }
 
         it 'returns error' do
           expect(response.body).to be_json_eql(%(
