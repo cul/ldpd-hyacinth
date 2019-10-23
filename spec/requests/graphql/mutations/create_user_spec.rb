@@ -3,27 +3,21 @@ require 'rails_helper'
 RSpec.describe Mutations::CreateUser, type: :request do
   describe '.resolve' do
     include_examples 'requires user to have correct permissions for graphql request' do
-      let(:query) do
-        <<~GQL
-          mutation {
-            createUser(
-              input: {
-                firstName: "Jane"
-                lastName: "Doe"
-                email: "jane.doe@example.com"
-                password: "bestpasswordever"
-                passwordConfirmation: "bestpasswordever"
-              }
-            ) {
-              user {
-                id
-              }
+      let(:variables) do
+        <<~VAR
+          {
+            "input": {
+              "firstName": "Jane",
+              "lastName": "Doe",
+              "email": "jane.doe@example.com",
+              "password": "bestpasswordever",
+              "passwordConfirmation": "bestpasswordever"
             }
           }
-        GQL
+        VAR
       end
 
-      let(:request) { graphql query }
+      let(:request) { graphql query, variables }
     end
 
     context 'when logged in user has appropriate permissions' do
@@ -33,29 +27,23 @@ RSpec.describe Mutations::CreateUser, type: :request do
         subject(:user) { User.find_by(email: email) }
 
         let(:email) { 'jane.doe@example.com' }
-        let(:query) do
-          <<~GQL
-            mutation {
-              createUser(
-                input: {
-                  firstName: "Jane"
-                  lastName: "Doe"
-                  email: "#{email}"
-                  password: "bestpasswordever"
-                  passwordConfirmation: "bestpasswordever"
-                }
-              ) {
-                user {
-                  id
-                }
+        let(:variables) do
+          <<~VAR
+            {
+              "input": {
+                "firstName": "Jane",
+                "lastName": "Doe",
+                "email": "#{email}",
+                "password": "bestpasswordever",
+                "passwordConfirmation": "bestpasswordever"
               }
             }
-          GQL
+          VAR
         end
 
         # permissions: [#{Permission::MANAGE_USERS}, #{Permission::MANAGE_VOCABULARIES}]
 
-        before { graphql query }
+        before { graphql query, variables }
 
         its(:first_name) { is_expected.to eql 'Jane' }
         its(:last_name)  { is_expected.to eql 'Doe' }
@@ -73,91 +61,85 @@ RSpec.describe Mutations::CreateUser, type: :request do
       end
 
       context 'when creating a new user requires email' do
-        let(:query) do
-          <<~GQL
-            mutation {
-              createUser(
-                input: {
-                  firstName: "Jane"
-                  lastName: "Doe"
-                  password: "bestpasswordever"
-                  passwordConfirmation: "bestpasswordever"
-                }
-              ) {
-                user {
-                  id
-                }
+        let(:variables) do
+          <<~VAR
+            {
+              "input": {
+                "firstName": "Jane",
+                "lastName": "Doe",
+                "password": "bestpasswordever",
+                "passwordConfirmation": "bestpasswordever"
               }
             }
-          GQL
+          VAR
         end
 
-        before { graphql query }
+        before { graphql query, variables }
 
         it 'returns error' do
           expect(response.body).to be_json_eql(%(
-            "Argument 'email' on InputObject 'CreateUserInput' is required. Expected type String!"
+            "Variable input of type CreateUserInput! was provided invalid value for email (Expected value to not be null)"
           )).at_path('errors/0/message')
         end
       end
 
       context 'when creating a new user requires password' do
-        let(:query) do
-          <<~GQL
-            mutation {
-              createUser(
-                input: {
-                  firstName: "Jane"
-                  lastName: "Doe"
-                  email: "jane.doe@example.com"
-                  passwordConfirmation: "bestpasswordever"
-                }
-              ) {
-                user {
-                  id
-                }
+        let(:variables) do
+          <<~VAR
+            {
+              "input": {
+                "firstName": "Jane",
+                "lastName": "Doe",
+                "email": "jane.doe@example.com",
+                "passwordConfirmation": "bestpasswordever"
               }
             }
-          GQL
+          VAR
         end
 
-        before { graphql query }
+        before { graphql query, variables }
 
         it 'returns error' do
           expect(response.body).to be_json_eql(%(
-            "Argument 'password' on InputObject 'CreateUserInput' is required. Expected type String!"
+            "Variable input of type CreateUserInput! was provided invalid value for password (Expected value to not be null)"
           )).at_path('errors/0/message')
         end
       end
 
       context 'when creating a new user requires password_confirmation' do
-        let(:query) do
-          <<~GQL
-            mutation {
-              createUser(
-                input: {
-                  firstName: "Jane"
-                  lastName: "Doe"
-                  email: "jane.doe@example.com"
-                  password: "bestpasswordever"
-                }
-              ) {
-                user {
-                  id
-                }
+        let(:variables) do
+          <<~VAR
+            {
+              "input": {
+                "firstName": "Jane",
+                "lastName": "Doe",
+                "email": "jane.doe@example.com",
+                "password": "bestpasswordever"
               }
             }
-          GQL
+          VAR
         end
 
-        before { graphql query }
+        before { graphql query, variables }
 
         it 'returns error' do
           expect(response.body).to be_json_eql(%(
-            "Argument 'passwordConfirmation' on InputObject 'CreateUserInput' is required. Expected type String!"
+            "Variable input of type CreateUserInput! was provided invalid value for passwordConfirmation (Expected value to not be null)"
           )).at_path('errors/0/message')
         end
       end
+    end
+
+    def query
+      <<~GQL
+        mutation ($input: CreateUserInput!) {
+          createUser(input: $input) {
+            user {
+              id
+            }
+          }
+        }
+      GQL
     end
   end
 end
