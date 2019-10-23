@@ -48,9 +48,9 @@ function App() {
     AUTHENTICATED_USER,
     {
       onCompleted: (userData) => {
-        const { authenticatedUser: { rules }, authenticatedUser } = userData;
+        const { authenticatedUser: { rules, ...rest } } = userData;
         ability.update(rules);
-        setUser(authenticatedUser);
+        setUser({ ...rest });
       },
     },
   );
