@@ -6,5 +6,7 @@ module Types
     field :create_project, mutation: Mutations::CreateProject
     field :update_project, mutation: Mutations::UpdateProject
     field :delete_project, mutation: Mutations::DeleteProject
+
+    field :create_publish_target, mutation: Mutations::CreatePublishTarget
   end
 end
