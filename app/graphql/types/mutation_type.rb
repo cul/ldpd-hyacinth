@@ -9,6 +9,6 @@ module Types
 
     field :create_publish_target, mutation: Mutations::CreatePublishTarget
     field :update_publish_target, mutation: Mutations::UpdatePublishTarget
-
+    field :delete_publish_target, mutation: Mutations::DeletePublishTarget
   end
 end

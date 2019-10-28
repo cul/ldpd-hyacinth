@@ -27,7 +27,7 @@ RSpec.describe Mutations::UpdatePublishTarget, type: :request do
       end
 
       before { graphql query, variables }
-      
+
       it 'correctly updates record' do
         publish_target.reload
         expect(publish_target.display_label).to eql 'Bestest Project'
