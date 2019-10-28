@@ -8,5 +8,7 @@ module Types
     field :delete_project, mutation: Mutations::DeleteProject
 
     field :create_publish_target, mutation: Mutations::CreatePublishTarget
+    field :update_publish_target, mutation: Mutations::UpdatePublishTarget
+
   end
 end
