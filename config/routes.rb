@@ -26,12 +26,6 @@ Rails.application.routes.draw do
       end
       # match 'digital_objects/:id/publish', to: "digital_objects#publish", via: :post
 
-      resources :users, param: :uid, except: [:new, :edit, :delete] do
-        collection do
-          get :authenticated
-        end
-      end
-
       resources :vocabularies, param: :string_key, except: [:new, :edit] do
         resources :custom_fields, param: :field_key, except: [:new, :edit, :show, :index], module: 'vocabularies'
         resources :terms,         param: :uri,       except: [:new, :edit],                module: 'vocabularies', constraints: { uri: /.*/ }
