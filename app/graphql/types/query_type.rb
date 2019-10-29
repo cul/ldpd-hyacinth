@@ -26,28 +26,32 @@ module Types
 
     def project(string_key:)
       project = Project.find_by!(string_key: string_key)
-      context[:ability].authorize!(:show, project)
+      ability.authorize!(:read, project)
       project
     end
 
     def projects
-      context[:ability].authorize!(:index, Project)
-      Project.accessible_by(context[:ability])
+      ability.authorize!(:read, Project)
+      Project.accessible_by(ability)
     end
 
     def user(id:)
       user = User.find_by!(uid: id)
-      context[:ability].authorize!(:show, user)
+      ability.authorize!(:read, user)
       user
     end
 
     def users
-      context[:ability].authorize!(:index, User)
-      User.all.order(:last_name)
+      ability.authorize!(:index, User)
+      User.accessible_by(ability).order(:last_name)
     end
 
     def authenticated_user
       context[:current_user]
+    end
+
+    def ability
+      context[:ability]
     end
   end
 end

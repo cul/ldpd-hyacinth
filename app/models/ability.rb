@@ -15,8 +15,8 @@ class Ability
       system_permissions, project_permissions = calculate_permissions(user)
 
       # Permissions all users get
-      can [:show, :update], User, id: user.id
-      can [:show, :update], User, uid: user.uid
+      can [:read, :update], User, id: user.id
+      can [:read, :update], User, uid: user.uid
       can [:index, :show, :create], :term
       can [:index], DynamicFieldCategory # Need to allow this so we can render EnabledDynamicField pages.
 
