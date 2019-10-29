@@ -22,8 +22,8 @@ class Ability
       project_permissions.each do |project_id, actions|
         project_string_key = Project.find(project_id).string_key
 
-        can [:index, :show], Project, id: project_id
-        can [:index, :show], Project, string_key: project_string_key
+        can [:index, :read], Project, id: project_id
+        can [:index, :read], Project, string_key: project_string_key
 
         can :show, PublishTarget, project_id: project_id
         can :show, PublishTarget, project: { string_key: project_string_key }

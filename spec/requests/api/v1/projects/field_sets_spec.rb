@@ -83,7 +83,7 @@ RSpec.describe 'Field Sets Requests', type: :request do
   describe 'POST /api/v1/projects/:string_key/field_sets' do
     include_examples 'requires user to have correct permissions' do
       let(:request) do
-        post "/api/v1/projects/#{project.string_key}/publish_targets", params: { field_set: { display_label: 'Monograph Part' } }
+        post "/api/v1/projects/#{project.string_key}/field_sets", params: { field_set: { display_label: 'Monograph Part' } }
       end
     end
 

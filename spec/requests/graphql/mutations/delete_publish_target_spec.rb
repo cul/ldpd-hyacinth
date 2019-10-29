@@ -25,7 +25,7 @@ RSpec.describe Mutations::DeletePublishTarget, type: :request do
 
     context 'when deleting a publish_target that dooes not exist' do
       let(:variables) { { input: { projectStringKey: project.string_key, stringKey: 'not-valid' } } }
-      
+
       before { graphql query, variables }
 
       it 'returns errors' do
