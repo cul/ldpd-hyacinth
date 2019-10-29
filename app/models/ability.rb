@@ -4,6 +4,11 @@ class Ability
   def initialize(user)
     return if user.nil?
 
+    # Going forward we should only be using the following actions for CRUD operations: :read, :create,
+    # :update, and :destroy. We shouldn't be using :show, :index, :new, or :edit when defining
+    # actions or checking abilities. These aliases were made for RESTful actions and since we are
+    # moving away from that, we should stop using them. Eventually, we should remove these aliases.
+
     if user.admin?
       can :manage, :all
     else
