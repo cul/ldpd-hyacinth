@@ -114,7 +114,7 @@ export default class TopNavbar extends React.Component {
 
           <Nav>
             <NavDropdown alignRight title={`${this.props.user.firstName} ${this.props.user.lastName}`}>
-              <LinkContainer to={`/users/${this.props.user.uid}/edit`}>
+              <LinkContainer to={`/users/${this.props.user.id}/edit`}>
                 <NavDropdown.Item>Profile</NavDropdown.Item>
               </LinkContainer>
 
