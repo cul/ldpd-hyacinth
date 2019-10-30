@@ -13,5 +13,6 @@ module Types
 
     field :create_field_set, mutation: Mutations::FieldSet::CreateFieldSet
     field :update_field_set, mutation: Mutations::FieldSet::UpdateFieldSet
+    field :delete_field_set, mutation: Mutations::FieldSet::DeleteFieldSet
   end
 end
