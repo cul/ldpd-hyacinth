@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Mutations::CreatePublishTarget, type: :request do
+RSpec.describe Mutations::FieldSet::CreateFieldSet, type: :request do
   let(:project) { FactoryBot.create(:project) }
 
   include_examples 'requires user to have correct permissions for graphql request' do

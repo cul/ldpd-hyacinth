@@ -1,4 +1,4 @@
-class Mutations::CreateFieldSet < Mutations::BaseMutation
+class Mutations::FieldSet::CreateFieldSet < Mutations::BaseMutation
   argument :project_string_key, ID, required: true
   argument :display_label, String, required: true
 

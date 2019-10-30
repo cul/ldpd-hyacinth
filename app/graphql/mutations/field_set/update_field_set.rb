@@ -1,4 +1,4 @@
-class Mutations::UpdateFieldSet < Mutations::BaseMutation
+class Mutations::FieldSet::UpdateFieldSet < Mutations::BaseMutation
   argument :project_string_key, ID, required: true
   argument :id, ID, required: true
   argument :display_label, String, required: false

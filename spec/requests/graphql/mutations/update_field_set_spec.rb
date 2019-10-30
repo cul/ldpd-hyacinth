@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Mutations::UpdateFieldSet, type: :request do
+RSpec.describe Mutations::FieldSet::UpdateFieldSet, type: :request do
   let(:project) { FactoryBot.create(:project) }
   let(:field_set) { FactoryBot.create(:field_set, project: project) }
 
