@@ -12,5 +12,6 @@ module Types
     field :delete_publish_target, mutation: Mutations::DeletePublishTarget
 
     field :create_field_set, mutation: Mutations::CreateFieldSet
+    field :update_field_set, mutation: Mutations::UpdateFieldSet
   end
 end
