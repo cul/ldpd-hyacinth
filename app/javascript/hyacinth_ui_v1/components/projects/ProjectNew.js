@@ -1,88 +1,93 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Col, Form, Button } from 'react-bootstrap';
-import produce from 'immer';
+import { gql } from 'apollo-boost';
+import { useMutation } from '@apollo/react-hooks';
+import { useHistory } from 'react-router-dom';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
-import hyacinthApi from '../../util/hyacinth_api';
-import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
+import GraphQLErrors from '../ui/GraphQLErrors';
 
-class ProjectNew extends React.Component {
-  state = {
-    project: {
-      stringKey: '',
-      displayLabel: '',
-      projectUrl: '',
-    },
+const CREATE_PROJECT = gql`
+  mutation CreateProject($input: CreateProjectInput!) {
+    createProject(input: $input) {
+      project {
+        stringKey
+      }
+    }
   }
+`;
 
-  onSubmitHandler = (event) => {
-    event.preventDefault();
+function ProjectNew() {
+  const [stringKey, setStringKey] = useState('');
+  const [displayLabel, setDisplayLabel] = useState('');
+  const [projectUrl, setProjectUrl] = useState('');
 
-    const { project } = this.state;
+  const [createProject, { error }] = useMutation(CREATE_PROJECT);
+  const history = useHistory();
 
-    hyacinthApi.post('/projects', project)
-      .then((res) => {
-        const { project: { stringKey } } = res.data;
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    createProject({
+      variables: {
+        input: {
+          stringKey,
+          displayLabel,
+          projectUrl,
+        },
+      },
+    }).then((res) => {
+      history.push(`/projects/${res.data.createProject.project.stringKey}/core_data/edit`);
+    });
+  };
 
-        this.props.history.push(`/projects/${stringKey}/core_data/edit`);
-      });
-  }
+  return (
+    <>
+      <ContextualNavbar
+        title="Create New Project"
+        rightHandLinks={[{ link: '/projects', label: 'Cancel' }]}
+      />
 
-  onChangeHandler = (event) => {
-    const { target } = event;
-    this.setState(produce((draft) => { draft.project[target.name] = target.value; }));
-  }
+      <GraphQLErrors errors={error} />
 
-  render() {
-    const { project: { stringKey, displayLabel, projectUrl } } = this.state;
+      <Form onSubmit={handleSubmit}>
+        <Form.Row>
+          <Form.Group as={Col} sm={6}>
+            <Form.Label>String Key</Form.Label>
+            <Form.Control
+              type="text"
+              name="stringKey"
+              value={stringKey}
+              onChange={e => setStringKey(e.target.value)}
+            />
+          </Form.Group>
 
-    return (
-      <>
-        <ContextualNavbar
-          title="Create New Project"
-          rightHandLinks={[{ link: '/projects', label: 'Cancel' }]}
-        />
+          <Form.Group as={Col} sm={6}>
+            <Form.Label>Display Label</Form.Label>
+            <Form.Control
+              type="text"
+              name="displayLabel"
+              value={displayLabel}
+              onChange={e => setDisplayLabel(e.target.value)}
+            />
+          </Form.Group>
+        </Form.Row>
 
-        <Form onSubmit={this.onSubmitHandler}>
-          <Form.Row>
-            <Form.Group as={Col} sm={6}>
-              <Form.Label>String Key</Form.Label>
-              <Form.Control
-                type="text"
-                name="stringKey"
-                value={stringKey}
-                onChange={this.onChangeHandler}
-              />
-            </Form.Group>
+        <Form.Row>
+          <Form.Group as={Col}>
+            <Form.Label>Project URL</Form.Label>
+            <Form.Control
+              type="text"
+              name="projectUrl"
+              value={projectUrl}
+              onChange={e => setProjectUrl(e.target.value)}
+            />
+          </Form.Group>
+        </Form.Row>
 
-            <Form.Group as={Col} sm={6}>
-              <Form.Label>Display Label</Form.Label>
-              <Form.Control
-                type="text"
-                name="displayLabel"
-                value={displayLabel}
-                onChange={this.onChangeHandler}
-              />
-            </Form.Group>
-          </Form.Row>
-
-          <Form.Row>
-            <Form.Group as={Col}>
-              <Form.Label>Project URL</Form.Label>
-              <Form.Control
-                type="text"
-                name="projectUrl"
-                value={projectUrl}
-                onChange={this.onChangeHandler}
-              />
-            </Form.Group>
-          </Form.Row>
-
-          <Button variant="primary" type="submit" onClick={this.onSubmitHandler}>Create</Button>
-        </Form>
-      </>
-    );
-  }
+        <Button variant="primary" type="submit" onClick={handleSubmit}>Create</Button>
+      </Form>
+    </>
+  );
 }
 
-export default withErrorHandler(ProjectNew, hyacinthApi);
+export default ProjectNew;
