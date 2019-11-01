@@ -28,12 +28,13 @@ class AccessCondition extends React.PureComponent {
 
           <InputGroup>
             <Label sm={4} align="right">Access Condition</Label>
-            <ReadOnlyInput value={value.accessCondition} />
+            <ReadOnlyInput sm={8} value={value.accessCondition} />
           </InputGroup>
 
           <InputGroup>
             <Label sm={4} align="right">Closed/Embargo Release Date:</Label>
             <ReadOnlyInput
+              sm={8}
               value={value.embargoReleaseDate}
             />
           </InputGroup>
@@ -41,6 +42,7 @@ class AccessCondition extends React.PureComponent {
           <InputGroup>
             <Label sm={4} align="right">Access Note</Label>
             <TextAreaInput
+              sm={8}
               value={value.note}
               onChange={v => this.onChange('note', v)}
             />
