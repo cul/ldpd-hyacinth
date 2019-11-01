@@ -31,7 +31,7 @@ class DynamicFieldForm extends React.Component {
       isFacetable: false,
       filterLabel: '',
       controlledVocabulary: '',
-      selectOptions: '',
+      selectOptions: '{}',
       isKeywordSearchable: false,
       isTitleSearchable: false,
       isIdentifierSearchable: false,
