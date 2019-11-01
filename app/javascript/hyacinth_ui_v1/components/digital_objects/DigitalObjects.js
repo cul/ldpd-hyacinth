@@ -21,41 +21,6 @@ export default class DigitalObjects extends React.PureComponent {
       <div>
         <Switch>
           {/* Mockups for Rights Module */}
-          <Route
-            exact
-            path="/digital_objects/cul_q83bk3jc9s/rights/edit"
-            render={() => (
-              <ItemRightsForm
-                id="cul:q83bk3jc9s"
-                key="cul:q83bk3jc9s"
-                data={{ dynamicFieldData: cul_q83bk3jc9s }}
-              />
-            )}
-          />
-
-          <Route
-            exact
-            path="/digital_objects/cul_vdncjsxn7t/rights/edit"
-            render={() => (
-              <ItemRightsForm
-                id="cul:vdncjsxn7t"
-                key="cul:vdncjsxn7t"
-                data={{ dynamicFieldData: cul_vdncjsxn7t }}
-              />
-            )}
-          />
-
-          <Route
-            exact
-            path="/digital_objects/cul_bnzs7h45zq/rights/edit"
-            render={() => (
-              <ItemRightsForm
-                id="cul:bnzs7h45zq"
-                key="cul:bnzs7h45zq"
-                data={{ dynamicFieldData: cul_bnzs7h45zq }}
-              />
-            )}
-          />
 
           <Route
             exact
