@@ -107,6 +107,7 @@ class UnderlyingRights extends React.PureComponent {
                           <InputGroup>
                             <Label sm={4}/>
                             <SelectInput
+                              sm={8}
                               value={value.columbiaMusicLicense}
                               onChange={v => this.onChange('columbiaMusicLicense', v)}
                               options={columbiaMusicLicense.map(i => ({ value: i, label: i }))}
