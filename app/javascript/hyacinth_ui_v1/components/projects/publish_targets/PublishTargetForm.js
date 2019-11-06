@@ -1,162 +1,112 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Form, Collapse } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
-import produce from 'immer';
+import { useMutation } from '@apollo/react-hooks';
+import { useHistory } from 'react-router-dom';
 
-import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
-import hyacinthApi from '../../../util/hyacinth_api';
 import InputGroup from '../../ui/forms/InputGroup';
 import Label from '../../ui/forms/Label';
 import FormButtons from '../../ui/forms/FormButtons';
 import NumberInput from '../../ui/forms/inputs/NumberInput';
 import TextInput from '../../ui/forms/inputs/TextInput';
 import Checkbox from '../../ui/forms/inputs/Checkbox';
+import {
+  createPublishTargetMutation,
+  updatePublishTargetMutation,
+  deletePublishTargetMutation,
+} from '../../../graphql/publishTargets';
+import GraphQLErrors from '../../ui/GraphQLErrors';
 
-class PublishTargetForm extends React.Component {
-  state = {
-    formType: 'new',
-    projectStringKey: '',
-    publishTarget: {
-      displayLabel: '',
-      stringKey: '',
-      publishUrl: '',
-      apiKey: '',
-      isAllowedDoiTarget: false,
-      doiPriority: 100,
-    },
-  }
+function PublishTargetForm({ projectStringKey, publishTarget, formType }) {
+  const [stringKey, setStringKey] = useState(publishTarget ? publishTarget.stringKey : '');
+  const [displayLabel, setDisplayLabel] = useState(publishTarget ? publishTarget.displayLabel : '');
+  const [publishUrl, setPublishUrl] = useState(publishTarget ? publishTarget.publishUrl : '');
+  const [apiKey, setApiKey] = useState(publishTarget ? publishTarget.apiKey : '');
+  const [isAllowedDoiTarget, setIsAllowedDoiTarget] = useState(publishTarget ? publishTarget.isAllowedDoiTarget : false);
+  const [doiPriority, setDoiPriority] = useState(publishTarget ? publishTarget.doiPriority : 100);
 
-  componentDidMount() {
-    const { formType, projectStringKey, stringKey } = this.props;
+  const [createPublishTarget, { error: createError }] = useMutation(createPublishTargetMutation);
+  const [updatePublishTarget, { error: updateError }] = useMutation(updatePublishTargetMutation);
+  const [deletePublishTarget, { error: deleteError }] = useMutation(deletePublishTargetMutation);
 
-    if (stringKey) {
-      hyacinthApi.get(`/projects/${projectStringKey}/publish_targets/${stringKey}`)
-        .then((res) => {
-          const { publishTarget } = res.data;
+  const history = useHistory();
 
-          this.setState(produce((draft) => {
-            draft.publishTarget = publishTarget;
-          }));
-        });
-    }
-
-    this.setState(produce((draft) => {
-      draft.formType = formType;
-      draft.projectStringKey = projectStringKey;
-    }));
-  }
-
-  onSubmitHandler = () => {
-    const { formType, projectStringKey, publishTarget } = this.state;
+  const onSaveHandler = () => {
+    const variables = {
+      input: {
+        projectStringKey, stringKey, displayLabel, publishUrl, apiKey, isAllowedDoiTarget, doiPriority,
+      },
+    };
 
     switch (formType) {
       case 'new':
-        return hyacinthApi.post(`/projects/${projectStringKey}/publish_targets`, publishTarget)
-          .then((res) => {
-            const { publishTarget: { stringKey } } = res.data;
-
-            this.props.history.push(`/projects/${projectStringKey}/publish_targets/${stringKey}/edit`);
-          });
+        return createPublishTarget({ variables }).then((res) => {
+          history.push(`/projects/${projectStringKey}/publish_targets/${res.data.createPublishTarget.publishTarget.stringKey}/edit`);
+        });
       case 'edit':
-        return hyacinthApi.patch(`/projects/${projectStringKey}/publish_targets/${publishTarget.stringKey}`, publishTarget);
+        return updatePublishTarget({ variables }).then(() => {
+          history.push(`/projects/${projectStringKey}/publish_targets`);
+        });
       default:
         return null;
     }
-  }
+  };
 
-  onDeleteHandler = (event) => {
-    event.preventDefault();
+  const onDeleteHandler = (e) => {
+    e.preventDefault();
 
-    const {
-      match: { params: { projectStringKey, stringKey } },
-      history: { push }
-    } = this.props;
+    const variables = { input: { projectStringKey, stringKey: publishTarget.stringKey } };
 
-    hyacinthApi.delete(`/projects/${projectStringKey}/publish_targets/${stringKey}`)
-      .then(() => push(`/projects/${projectStringKey}/publish_targets`));
-  }
+    deletePublishTarget({ variables }).then(() => {
+      history.push(`/projects/${projectStringKey}/publish_targets`);
+    });
+  };
 
-  onChangeHandler = (name, value) => {
-    this.setState(produce((draft) => {
-      draft.publishTarget[name] = value;
-    }));
-  }
+  return (
+    <Form onSubmit={onSaveHandler}>
+      <GraphQLErrors errors={createError || updateError || deleteError} />
 
-  render() {
-    const {
-      formType,
-      projectStringKey,
-      publishTarget: {
-        stringKey, displayLabel, publishUrl, apiKey, doiPriority, isAllowedDoiTarget,
-      },
-    } = this.state;
+      <InputGroup>
+        <Label>String Key</Label>
+        <TextInput value={stringKey} onChange={v => setStringKey(v)} disabled={formType === 'edit'} />
+      </InputGroup>
 
-    return (
-      <div>
-        <Form onSubmit={this.onSubmitHandler}>
+      <InputGroup>
+        <Label>Display Label</Label>
+        <TextInput value={displayLabel} onChange={v => setDisplayLabel(v)} />
+      </InputGroup>
+
+      <InputGroup>
+        <Label>Publish URL</Label>
+        <TextInput value={publishUrl} onChange={v => setPublishUrl(v)} />
+      </InputGroup>
+
+      <InputGroup>
+        <Label>API Key</Label>
+        <TextInput value={apiKey} onChange={v => setApiKey(v)} />
+      </InputGroup>
+
+      <InputGroup>
+        <Label>Allowed to be set as DOI target?</Label>
+        <Checkbox value={isAllowedDoiTarget} onChange={v => setIsAllowedDoiTarget(v)} />
+      </InputGroup>
+
+      <Collapse in={isAllowedDoiTarget}>
+        <div>
           <InputGroup>
-            <Label>String Key</Label>
-            <TextInput
-              value={stringKey}
-              onChange={v => this.onChangeHandler('stringKey', v)}
-              disabled={formType === 'edit'}
-            />
+            <Label>DOI Priority</Label>
+            <NumberInput value={doiPriority} onChange={v => setDoiPriority(v)} />
           </InputGroup>
+        </div>
+      </Collapse>
 
-          <InputGroup>
-            <Label>Display Label</Label>
-            <TextInput
-              value={displayLabel}
-              onChange={v => this.onChangeHandler('displayLabel', v)}
-            />
-          </InputGroup>
-
-          <InputGroup>
-            <Label>Publish URL</Label>
-            <TextInput
-              value={publishUrl}
-              onChange={v => this.onChangeHandler('publishUrl', v)}
-            />
-          </InputGroup>
-
-          <InputGroup>
-            <Label>API Key</Label>
-            <TextInput
-              value={apiKey}
-              onChange={v => this.onChangeHandler('apiKey', v)}
-            />
-          </InputGroup>
-
-          <InputGroup>
-            <Label>Allowed to be set as DOI target?</Label>
-            <Checkbox
-              value={isAllowedDoiTarget}
-              onChange={v => this.onChangeHandler('isAllowedDoiTarget', v)}
-            />
-          </InputGroup>
-
-          <Collapse in={isAllowedDoiTarget}>
-            <div>
-              <InputGroup>
-                <Label>DOI Priority</Label>
-                <NumberInput
-                  value={doiPriority}
-                  onChange={v => this.onChangeHandler('doiPriority', v)}
-                />
-              </InputGroup>
-            </div>
-          </Collapse>
-
-          <FormButtons
-            formType={formType}
-            cancelTo={`/projects/${projectStringKey}/publish_targets`}
-            onSave={this.onSubmitHandler}
-            onDelete={this.onDeleteHandler}
-          />
-        </Form>
-      </div>
-    );
-  }
+      <FormButtons
+        formType={formType}
+        cancelTo={`/projects/${projectStringKey}/publish_targets`}
+        onSave={onSaveHandler}
+        onDelete={onDeleteHandler}
+      />
+    </Form>
+  );
 }
 
-export default withRouter(withErrorHandler(PublishTargetForm, hyacinthApi));
+export default PublishTargetForm;

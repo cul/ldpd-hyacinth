@@ -1,64 +1,47 @@
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
-import produce from 'immer';
+import { useQuery } from '@apollo/react-hooks';
+import { useParams } from 'react-router-dom';
 
 import TabHeading from '../../ui/tabs/TabHeading';
-import hyacinthApi from '../../../util/hyacinth_api';
-import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import { Can } from '../../../util/ability_context';
 import EditButton from '../../ui/buttons/EditButton';
+import { getProjectQuery } from '../../../graphql/projects';
+import ProjectInterface from '../ProjectInterface';
+import GraphQLErrors from '../../ui/GraphQLErrors';
 
-class CoreDataShow extends React.Component {
-  state = {
-    project: {
-      stringKey: '',
-      displayLabel: '',
-      projectUrl: '',
-    },
-  }
+function CoreDataShow() {
+  const { stringKey } = useParams();
+  const { loading, error, data } = useQuery(getProjectQuery, { variables: { stringKey } });
 
-  componentDidMount() {
-    const { match: { params: { stringKey } } } = this.props;
+  if (loading) return (<></>);
+  if (error) return (<GraphQLErrors errors={error} />);
 
-    hyacinthApi.get(`/projects/${stringKey}`)
-      .then((res) => {
-        const { project } = res.data;
+  return (
+    <ProjectInterface project={data.project}>
+      <TabHeading>
+        Core Data
+        <Can I="edit" of={{ subjectType: 'Project', stringKey: data.project.stringKey }}>
+          <EditButton
+            className="float-right"
+            size="lg"
+            link={`/projects/${data.project.stringKey}/core_data/edit`}
+          />
+        </Can>
+      </TabHeading>
 
-        this.setState(produce((draft) => {
-          draft.project = project;
-        }));
-      });
-  }
+      <Row as="dl">
+        <Col as="dt" sm={2}>String Key</Col>
+        <Col as="dd" sm={10}>{data.project.stringKey}</Col>
 
-  render() {
-    const { project: { stringKey, displayLabel, projectUrl } } = this.state;
+        <Col as="dt" sm={2}>Display Label</Col>
+        <Col as="dd" sm={10}>{data.project.displayLabel}</Col>
 
-    return (
-      <>
-        <TabHeading>
-          Core Data
-          <Can I="edit" of={{ subjectType: 'Project', stringKey }}>
-            <EditButton
-              className="float-right"
-              size="lg"
-              link={`/projects/${stringKey}/core_data/edit`}
-            />
-          </Can>
-        </TabHeading>
-
-        <Row as="dl">
-          <Col as="dt" sm={2}>String Key</Col>
-          <Col as="dd" sm={10}>{stringKey}</Col>
-
-          <Col as="dt" sm={2}>Display Label</Col>
-          <Col as="dd" sm={10}>{displayLabel}</Col>
-
-          <Col as="dt" sm={2}>Project URL</Col>
-          <Col as="dd" sm={10}>{projectUrl}</Col>
-        </Row>
-      </>
-    );
-  }
+        <Col as="dt" sm={2}>Project URL</Col>
+        <Col as="dd" sm={10}>{data.project.projectUrl}</Col>
+      </Row>
+    </ProjectInterface>
+  );
 }
 
-export default withErrorHandler(CoreDataShow, hyacinthApi);
+export default CoreDataShow;

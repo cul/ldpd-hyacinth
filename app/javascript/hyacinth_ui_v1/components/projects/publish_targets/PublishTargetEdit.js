@@ -1,19 +1,47 @@
 import React from 'react';
+import { gql } from 'apollo-boost';
+import { useQuery } from '@apollo/react-hooks';
+import { useParams } from 'react-router-dom';
 
+import GraphQLErrors from '../../ui/GraphQLErrors';
 import TabHeading from '../../ui/tabs/TabHeading';
 import PublishTargetForm from './PublishTargetForm';
+import ProjectInterface from '../ProjectInterface';
 
-class PublishTargetEdit extends React.PureComponent {
-  render() {
-    const { match: { params: { projectStringKey, stringKey } } } = this.props;
-
-    return (
-      <>
-        <TabHeading>Edit Publish Target</TabHeading>
-        <PublishTargetForm formType="edit" projectStringKey={projectStringKey} stringKey={stringKey} />
-      </>
-    );
+const getPublishTarget = gql`
+  query FieldSet($projectStringKey: ID!, $stringKey: ID!) {
+    project(stringKey: $projectStringKey) {
+      stringKey
+      displayLabel
+      publishTarget(stringKey: $stringKey) {
+        stringKey
+        displayLabel
+        publishUrl
+        apiKey
+        doiPriority
+        isAllowedDoiTarget
+      }
+    }
   }
+`;
+
+function PublishTargetEdit() {
+  const { projectStringKey, stringKey } = useParams();
+
+  const { loading, error, data } = useQuery(
+    getPublishTarget,
+    { variables: { projectStringKey, stringKey } },
+  );
+
+  if (loading) return (<></>);
+  if (error) return (<GraphQLErrors errors={error} />);
+
+  return (
+    <ProjectInterface project={data.project}>
+      <TabHeading>Edit Publish Target</TabHeading>
+      <PublishTargetForm formType="edit" projectStringKey={projectStringKey} publishTarget={data.project.publishTarget} stringKey={data.project.publishTarget.stringKey} />
+    </ProjectInterface>
+  );
 }
 
 export default PublishTargetEdit;
