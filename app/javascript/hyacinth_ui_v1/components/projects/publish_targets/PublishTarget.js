@@ -10,27 +10,25 @@ import ProtectedRoute from '../../ProtectedRoute';
 export default class PublishTarget extends React.PureComponent {
   render() {
     return (
-      <div>
-        <Switch>
-          <Route exact path="/projects/:projectStringKey/publish_targets" component={PublishTargetIndex} />
+      <Switch>
+        <Route exact path="/projects/:projectStringKey/publish_targets" component={PublishTargetIndex} />
 
-          <ProtectedRoute
-            path="/projects/:projectStringKey/publish_targets/new"
-            component={PublishTargetNew}
-            requiredAbility={params => ({ action: 'create', subject: 'PublishTarget', project: { stringKey: params.projectStringKey } })}
-          />
+        <ProtectedRoute
+          path="/projects/:projectStringKey/publish_targets/new"
+          component={PublishTargetNew}
+          requiredAbility={params => ({ action: 'create', subject: 'PublishTarget', project: { stringKey: params.projectStringKey } })}
+        />
 
-          <ProtectedRoute
-            exact
-            path="/projects/:projectStringKey/publish_targets/:stringKey/edit"
-            component={PublishTargetEdit}
-            requiredAbility={params => ({ action: 'update', subject: 'PublishTarget', project: { stringKey: params.projectStringKey } })}
-          />
+        <ProtectedRoute
+          exact
+          path="/projects/:projectStringKey/publish_targets/:stringKey/edit"
+          component={PublishTargetEdit}
+          requiredAbility={params => ({ action: 'update', subject: 'PublishTarget', project: { stringKey: params.projectStringKey } })}
+        />
 
-          { /* When none of the above match, <PageNotFound> will be rendered */ }
-          <Route component={PageNotFound} />
-        </Switch>
-      </div>
+        { /* When none of the above match, <PageNotFound> will be rendered */ }
+        <Route component={PageNotFound} />
+      </Switch>
     );
   }
 }

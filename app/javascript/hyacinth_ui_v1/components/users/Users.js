@@ -15,7 +15,7 @@ export default class Users extends React.PureComponent {
           exact
           path="/users"
           component={UserIndex}
-          requiredAbility={{ action: 'index', subject: 'User' }}
+          requiredAbility={{ action: 'manage', subject: 'User' }}
         />
 
         <ProtectedRoute

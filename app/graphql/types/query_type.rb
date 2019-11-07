@@ -16,19 +16,42 @@ module Types
       argument :id, ID, required: true
     end
 
+    field :project, ProjectType, null: true do
+      argument :string_key, ID, required: true
+    end
+
+    field :projects, [ProjectType], null: true do
+      description "List of all projects"
+    end
+
+    def project(string_key:)
+      project = Project.find_by!(string_key: string_key)
+      ability.authorize!(:read, project)
+      project
+    end
+
+    def projects
+      ability.authorize!(:read, Project)
+      Project.accessible_by(ability)
+    end
+
     def user(id:)
       user = User.find_by!(uid: id)
-      context[:ability].authorize!(:show, user)
+      ability.authorize!(:read, user)
       user
     end
 
     def users
-      context[:ability].authorize!(:index, User)
-      User.all.order(:last_name)
+      ability.authorize!(:index, User)
+      User.accessible_by(ability).order(:last_name)
     end
 
     def authenticated_user
       context[:current_user]
+    end
+
+    def ability
+      context[:ability]
     end
   end
 end

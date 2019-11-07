@@ -1,118 +1,118 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, Form } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
-import produce from 'immer';
+import { gql } from 'apollo-boost';
+import { useMutation } from '@apollo/react-hooks';
+import { useHistory } from 'react-router-dom';
 
 import FormButtons from '../../ui/forms/FormButtons';
-import hyacinthApi from '../../../util/hyacinth_api';
-import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
+import GraphQLErrors from '../../ui/GraphQLErrors';
 
-class FieldSetForm extends React.Component {
-  state = {
-    formType: 'new',
-    projectStringKey: '',
-    fieldSet: {
-      displayLabel: '',
-    },
-  }
-
-  componentDidMount() {
-    const { projectStringKey, id, formType } = this.props;
-
-    if (id) {
-      hyacinthApi.get(`/projects/${projectStringKey}/field_sets/${id}`)
-        .then((res) => {
-          const { fieldSet } = res.data;
-
-          this.setState(produce((draft) => {
-            draft.fieldSet = fieldSet;
-          }));
-        });
+const CREATE_FIELD_SET = gql`
+  mutation CreateFieldSet($input: CreateFieldSetInput!) {
+    createFieldSet(input: $input) {
+      fieldSet {
+        id
+        displayLabel
+      }
     }
-
-    this.setState(produce((draft) => {
-      draft.formType = formType;
-      draft.projectStringKey = projectStringKey;
-    }));
   }
+`;
 
-  onSubmitHandler = () => {
-    const {
-      projectStringKey,
-      formType,
-      fieldSet,
-      fieldSet: { id },
-    } = this.state;
-    const { history: { push } } = this.props;
+const UPDATE_FIELD_SET = gql`
+  mutation UpdateFieldSet($input: UpdateFieldSetInput!) {
+    updateFieldSet(input: $input) {
+      fieldSet {
+        id
+        displayLabel
+      }
+    }
+  }
+`;
+
+const DELETE_FIELD_SET = gql`
+  mutation DeleteFieldSet($input: DeleteFieldSetInput!) {
+    deleteFieldSet(input: $input) {
+      fieldSet {
+        id
+      }
+    }
+  }
+`;
+
+function FieldSetForm({ projectStringKey, fieldSet, formType }) {
+  const [displayLabel, setDisplayLabel] = useState(fieldSet ? fieldSet.displayLabel : '');
+  const [createFieldSet, { error: createError }] = useMutation(CREATE_FIELD_SET);
+  const [updateFieldSet, { error: updateError }] = useMutation(UPDATE_FIELD_SET);
+  const [deleteFieldSet, { error: deleteError }] = useMutation(DELETE_FIELD_SET);
+
+  const history = useHistory();
+
+  const onSaveHandler = () => {
+    const variables = { input: { projectStringKey, displayLabel } };
 
     switch (formType) {
       case 'new':
-        return hyacinthApi.post(`/projects/${projectStringKey}/field_sets`, fieldSet)
-          .then((res) => {
-            push(`/projects/${projectStringKey}/field_sets/${res.data.fieldSet.id}/edit`);
-          });
+        return createFieldSet({ variables }).then((res) => {
+          history.push(`/projects/${projectStringKey}/field_sets/${res.data.createFieldSet.fieldSet.id}/edit`);
+        });
       case 'edit':
-        return hyacinthApi.patch(`/projects/${projectStringKey}/field_sets/${id}`, fieldSet)
-          .then(() => push(`/projects/${projectStringKey}/field_sets/`));
+        variables.input.id = fieldSet.id;
+        return updateFieldSet({ variables }).then(() => {
+          history.push(`/projects/${projectStringKey}/field_sets/`);
+        });
       default:
         return null;
     }
-  }
+  };
 
-  onDeleteHandler = (event) => {
+  const onDeleteHandler = (event) => {
     event.preventDefault();
 
-    const { projectStringKey, fieldSet: { id } } = this.state;
-    const { history: { push } } = this.props;
+    deleteFieldSet({
+      variables: {
+        input: { projectStringKey, id: fieldSet.id },
+      },
+    }).then(() => history.push(`/projects/${projectStringKey}/field_sets`));
+  };
 
-    hyacinthApi.delete(`/projects/${projectStringKey}/field_sets/${id}`)
-      .then(() => push(`/projects/${projectStringKey}/field_sets`));
-  }
+  return (
+    <Form onSubmit={onSaveHandler}>
+      <GraphQLErrors errors={createError || updateError || deleteError} />
 
-  onChangeHandler = (event) => {
-    const { target: { name, value } } = event;
-    this.setState(produce((draft) => { draft.fieldSet[name] = value; }));
-  }
-
-  render() {
-    const { formType, projectStringKey, fieldSet: { displayLabel } } = this.state;
-
-    return (
-      <div>
-        <Form onSubmit={this.onSubmitHandler}>
-          <Form.Group as={Row}>
-            <Form.Label column sm={2}>Display Label</Form.Label>
-            <Col sm={10}>
-              <Form.Control
-                type="text"
-                name="displayLabel"
-                value={displayLabel}
-                onChange={this.onChangeHandler}
-              />
-            </Col>
-          </Form.Group>
-
-          <FormButtons
-            formType={formType}
-            cancelTo={`/projects/${projectStringKey}/field_sets`}
-            onDelete={this.onDeleteHandler}
-            onSave={this.onSubmitHandler}
+      <Form.Group as={Row}>
+        <Form.Label column sm={2}>Display Label</Form.Label>
+        <Col sm={10}>
+          <Form.Control
+            type="text"
+            name="displayLabel"
+            value={displayLabel}
+            onChange={e => setDisplayLabel(e.target.value)}
           />
-        </Form>
-      </div>
-    );
-  }
+        </Col>
+      </Form.Group>
+
+      <FormButtons
+        formType={formType}
+        cancelTo={`/projects/${projectStringKey}/field_sets`}
+        onDelete={onDeleteHandler}
+        onSave={onSaveHandler}
+      />
+    </Form>
+  );
 }
 
 FieldSetForm.defaultProps = {
-  id: null,
+  fieldSet: null,
 };
 
 FieldSetForm.propTypes = {
   formType: PropTypes.oneOf(['new', 'edit']).isRequired,
   projectStringKey: PropTypes.string.isRequired,
-  id: PropTypes.string,
+  fieldSet: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    displayLabel: PropTypes.string.isRequired,
+  }),
 };
 
-export default withRouter(withErrorHandler(FieldSetForm, hyacinthApi));
+export default FieldSetForm;

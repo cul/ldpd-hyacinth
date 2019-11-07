@@ -1,19 +1,30 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
+import { useQuery } from '@apollo/react-hooks';
 
 import TabHeading from '../../ui/tabs/TabHeading';
 import FieldSetForm from './FieldSetForm';
+import { getProject } from '../../../util/graphql';
+import ProjectInterface from '../ProjectInterface';
+import GraphQLErrors from '../../ui/GraphQLErrors';
 
-class FieldSetNew extends React.PureComponent {
-  render() {
-    const { match: { params: { projectStringKey } } } = this.props;
+function FieldSetNew() {
+  const { projectStringKey } = useParams();
 
-    return (
-      <>
-        <TabHeading>Create New Field Set</TabHeading>
-        <FieldSetForm formType="new" projectStringKey={projectStringKey} />
-      </>
-    );
-  }
+  const { loading, error, data } = useQuery(
+    getProject,
+    { variables: { stringKey: projectStringKey } },
+  );
+
+  if (loading) return (<></>);
+  if (error) return (<GraphQLErrors errors={error} />);
+
+  return (
+    <ProjectInterface project={data.project}>
+      <TabHeading>Create New Field Set</TabHeading>
+      <FieldSetForm formType="new" projectStringKey={projectStringKey} />
+    </ProjectInterface>
+  );
 }
 
 export default FieldSetNew;

@@ -5,50 +5,36 @@ RSpec.describe Mutations::UpdateUser, type: :request do
     let(:user) { FactoryBot.create(:user) }
 
     include_examples 'requires user to have correct permissions for graphql request' do
-      let(:query) do
-        <<~GQL
-          mutation {
-            updateUser(
-              input: {
-                id: "#{user.uid}"
-                firstName: "John"
-              }
-            ) {
-              user {
-                id
-              }
-            }
-          }
-        GQL
+      let(:variables) do
+        { input: { id: user.uid, firstName: "John" } }
       end
-      let(:request) { graphql query: query }
+
+      let(:request) { graphql query, variables }
     end
 
     context 'when logged in user is not an administrator or user manager' do
-      let(:query) do
-        <<~GQL
-          mutation {
-            updateUser(
-              input: {
-                id: "#{user.uid}"
-                firstName: "John"
-                lastName: "Doe"
-                email: "john.doe@example.com"
-                isActive: false
-              }
-            ) {
-              user {
-                id
-              }
-            }
+      let(:variables) do
+        {
+          input: {
+            id: user.uid,
+            firstName: "John",
+            lastName: "Doe",
+            email: "john.doe@example.com",
+            isActive: false
           }
-        GQL
+        }
       end
 
       before do
         login_as user, scope: :user
-        graphql query: query
+        graphql query, variables
         user.reload
+      end
+
+      it 'was a successful request' do
+        expect(response.body).to be_json_eql(%(
+          { "id": "#{user.uid}" }
+        )).at_path('data/updateUser/user')
       end
 
       it 'cannot update is_active for its own record' do
@@ -72,24 +58,11 @@ RSpec.describe Mutations::UpdateUser, type: :request do
       before { sign_in_user as: :administrator }
 
       context 'when updating is_admin' do
-        let(:query) do
-          <<~GQL
-            mutation {
-              updateUser(
-                input: {
-                  id: "#{user.uid}"
-                  isAdmin: true
-                }
-              ) {
-                user {
-                  id
-                }
-              }
-            }
-          GQL
+        let(:variables) do
+          { input: { id: user.uid, isAdmin: true } }
         end
 
-        before { graphql query: query }
+        before { graphql query, variables }
 
         it 'updates record' do
           user.reload
@@ -109,23 +82,17 @@ RSpec.describe Mutations::UpdateUser, type: :request do
         end
 
         context 'with missing permission key' do
-          let(:query) do
-            <<~GQL
-              mutation {
-                updateUser(
-                  input: {
-                    id: "#{user.uid}"
-                  }
-                ) {
-                  user {
-                    id
-                  }
-                }
-              }
-            GQL
+          let(:variables) do
+            { input: { id: user.uid } }
           end
 
-          before { graphql query: query }
+          before { graphql query, variables }
+
+          it 'was a successful request' do
+            expect(response.body).to be_json_eql(%(
+              { "id": "#{user.uid}" }
+            )).at_path('data/updateUser/user')
+          end
 
           it 'permissions aren\'t updated' do
             expect(actions).to match_array [Permission::MANAGE_USERS]
@@ -133,24 +100,11 @@ RSpec.describe Mutations::UpdateUser, type: :request do
         end
 
         context 'with empty permissions array' do
-          let(:query) do
-            <<~GQL
-              mutation {
-                updateUser(
-                  input: {
-                    id: "#{user.uid}"
-                    permissions: []
-                  }
-                ) {
-                  user {
-                    id
-                  }
-                }
-              }
-            GQL
+          let(:variables) do
+            { input: { id: user.uid, permissions: [] } }
           end
 
-          before { graphql query: query }
+          before { graphql query, variables }
 
           it 'removes all permissions' do
             expect(actions).to match_array []
@@ -158,24 +112,16 @@ RSpec.describe Mutations::UpdateUser, type: :request do
         end
 
         context 'by removing and adding permission' do
-          let(:query) do
-            <<~GQL
-              mutation {
-                updateUser(
-                  input: {
-                    id: "#{user.uid}"
-                    permissions: ["#{Permission::READ_ALL_DIGITAL_OBJECTS}"]
-                  }
-                ) {
-                  user {
-                    id
-                  }
-                }
+          let(:variables) do
+            {
+              input: {
+                id: user.uid,
+                permissions: [Permission::READ_ALL_DIGITAL_OBJECTS]
               }
-            GQL
+            }
           end
 
-          before { graphql query: query }
+          before { graphql query, variables }
 
           it 'updates permissions correctly' do
             expect(actions).to match_array [Permission::READ_ALL_DIGITAL_OBJECTS]
@@ -183,24 +129,16 @@ RSpec.describe Mutations::UpdateUser, type: :request do
         end
 
         context 'by adding permission' do
-          let(:query) do
-            <<~GQL
-              mutation {
-                updateUser(
-                  input: {
-                    id: "#{user.uid}"
-                    permissions: ["#{Permission::MANAGE_USERS}", "#{Permission::READ_ALL_DIGITAL_OBJECTS}"]
-                  }
-                ) {
-                  user {
-                    id
-                  }
-                }
+          let(:variables) do
+            {
+              input: {
+                id: user.uid,
+                permissions: [Permission::MANAGE_USERS, Permission::READ_ALL_DIGITAL_OBJECTS]
               }
-            GQL
+            }
           end
 
-          before { graphql query: query }
+          before { graphql query, variables }
 
           it 'updates permission correctly' do
             expect(actions).to match_array [Permission::MANAGE_USERS, Permission::READ_ALL_DIGITAL_OBJECTS]
@@ -208,24 +146,22 @@ RSpec.describe Mutations::UpdateUser, type: :request do
         end
 
         context 'when updating with invalid permissions' do
-          let(:query) do
-            <<~GQL
-              mutation {
-                updateUser(
-                  input: {
-                    id: "#{user.uid}"
-                    permissions: ["not_valid"]
-                  }
-                ) {
-                  user {
-                    id
-                  }
-                }
+          let(:variables) do
+            {
+              input: {
+                id: user.uid,
+                permissions: ["not_valid"]
               }
-            GQL
+            }
           end
 
-          before { graphql query: query }
+          before { graphql query, variables }
+
+          it 'returns error' do
+            expect(response.body).to be_json_eql(%(
+              "Permissions action is invalid"
+            )).at_path('errors/0/message')
+          end
 
           it 'does not update permissions' do
             expect(actions).to match_array [Permission::MANAGE_USERS]
@@ -238,27 +174,19 @@ RSpec.describe Mutations::UpdateUser, type: :request do
       before { sign_in_user as: :user_manager }
 
       context 'when updating attributes' do
-        let(:query) do
-          <<~GQL
-            mutation {
-              updateUser(
-                input: {
-                  id: "#{user.uid}"
-                  firstName: "John"
-                  lastName: "Smith"
-                  email: "jane.doe@library.columbia.edu"
-                }
-              ) {
-                user {
-                  id
-                }
-              }
+        let(:variables) do
+          {
+            input: {
+              id: user.uid,
+              firstName: "John",
+              lastName: "Smith",
+              email: "jane.doe@library.columbia.edu"
             }
-          GQL
+          }
         end
 
         before do
-          graphql query: query
+          graphql query, variables
           user.reload
         end
 
@@ -276,26 +204,18 @@ RSpec.describe Mutations::UpdateUser, type: :request do
       end
 
       context 'when updating password' do
-        let(:query) do
-          <<~GQL
-            mutation {
-              updateUser(
-                input: {
-                  id: "#{user.uid}"
-                  currentPassword: "terriblepassword"
-                  password: "newpassword"
-                  passwordConfirmation: "newpassword"
-                }
-              ) {
-                user {
-                  id
-                }
-              }
+        let(:variables) do
+          {
+            input: {
+              id: user.uid,
+              currentPassword: "terriblepassword",
+              password: "newpassword",
+              passwordConfirmation: "newpassword"
             }
-          GQL
+          }
         end
 
-        before { graphql query: query }
+        before { graphql query, variables }
 
         it 'update record' do
           user.reload
@@ -304,25 +224,17 @@ RSpec.describe Mutations::UpdateUser, type: :request do
       end
 
       context 'when updating password without password confirmation' do
-        let(:query) do
-          <<~GQL
-            mutation {
-              updateUser(
-                input: {
-                  id: "#{user.uid}"
-                  current_password: "terriblepassword"
-                  password: "newpassword"
-                }
-              ) {
-                user {
-                  id
-                }
-              }
-            }
-          GQL
+        let(:variables) do
+          { input: { id: user.uid, currentPassword: "terriblepassword", password: "newPassword" } }
         end
 
-        before { graphql query: query }
+        before { graphql query, variables }
+
+        it 'returns error' do
+          expect(response.body).to be_json_eql(%(
+            "Password confirmation can't be blank"
+          )).at_path('errors/0/message')
+        end
 
         it 'does not update record' do
           user.reload
@@ -331,24 +243,11 @@ RSpec.describe Mutations::UpdateUser, type: :request do
       end
 
       context 'when updating :is_active' do
-        let(:query) do
-          <<~GQL
-            mutation {
-              updateUser(
-                input: {
-                  id: "#{user.uid}"
-                  isActive: false
-                }
-              ) {
-                user {
-                  id
-                }
-              }
-            }
-          GQL
+        let(:variables) do
+          { input: { id: user.uid, isActive: false } }
         end
 
-        before { graphql query: query }
+        before { graphql query, variables }
 
         it 'updates record' do
           user.reload
@@ -357,21 +256,16 @@ RSpec.describe Mutations::UpdateUser, type: :request do
       end
 
       context 'when updating :permissions' do
-        let(:query) do
-          <<~GQL
-            mutation {
-              updateUser(
-                input: {
-                  id: "#{user.uid}"
-                  permissions: ["#{Permission::MANAGE_USERS}"]
-                }
-              ) {
-                user {
-                  id
-                }
-              }
-            }
-          GQL
+        let(:variables) do
+          { input: { id: user.uid, permissions: [Permission::MANAGE_USERS] } }
+        end
+
+        before { graphql query, variables }
+
+        it 'was a successful request' do
+          expect(response.body).to be_json_eql(%(
+            { "id": "#{user.uid}" }
+          )).at_path('data/updateUser/user')
         end
 
         it 'does not update record' do
@@ -381,30 +275,35 @@ RSpec.describe Mutations::UpdateUser, type: :request do
       end
 
       context 'when updating :is_admin' do
-        let(:query) do
-          <<~GQL
-            mutation {
-              updateUser(
-                input: {
-                  id: "#{user.uid}"
-                  isAdmin: true
-                }
-              ) {
-                user {
-                  id
-                }
-              }
-            }
-          GQL
+        let(:variables) do
+          { input: { id: user.uid, isAdmin: true } }
         end
 
-        before { graphql query: query }
+        before { graphql query, variables }
+
+        it 'was a successful request' do
+          expect(response.body).to be_json_eql(%(
+            { "id": "#{user.uid}" }
+          )).at_path('data/updateUser/user')
+        end
 
         it 'does not update record' do
           user.reload
           expect(user.is_admin).to be false
         end
       end
+    end
+
+    def query
+      <<~GQL
+        mutation ($input: UpdateUserInput!) {
+          updateUser(input: $input) {
+            user {
+              id
+            }
+          }
+        }
+      GQL
     end
   end
 end

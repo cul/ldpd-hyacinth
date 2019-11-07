@@ -4,14 +4,19 @@ class Ability
   def initialize(user)
     return if user.nil?
 
+    # Going forward we should only be using the following actions for CRUD operations: :read, :create,
+    # :update, and :destroy. We shouldn't be using :show, :index, :new, or :edit when defining
+    # actions or checking abilities. These aliases were made for RESTful actions and since we are
+    # moving away from that, we should stop using them. Eventually, we should remove these aliases.
+
     if user.admin?
       can :manage, :all
     else
       system_permissions, project_permissions = calculate_permissions(user)
 
       # Permissions all users get
-      can [:show, :update], User, id: user.id
-      can [:show, :update], User, uid: user.uid
+      can [:read, :update], User, id: user.id
+      can [:read, :update], User, uid: user.uid
       can [:index, :show, :create], :term
       can [:index], DynamicFieldCategory # Need to allow this so we can render EnabledDynamicField pages.
 
@@ -22,8 +27,8 @@ class Ability
       project_permissions.each do |project_id, actions|
         project_string_key = Project.find(project_id).string_key
 
-        can [:index, :show], Project, id: project_id
-        can [:index, :show], Project, string_key: project_string_key
+        can [:index, :read], Project, id: project_id
+        can [:index, :read], Project, string_key: project_string_key
 
         can :show, PublishTarget, project_id: project_id
         can :show, PublishTarget, project: { string_key: project_string_key }

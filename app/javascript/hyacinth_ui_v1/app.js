@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
-import produce from 'immer';
+import { gql } from 'apollo-boost';
+import { useQuery } from '@apollo/react-hooks';
 
 import TopNavbar from './components/layout/TopNavbar';
 import PageNotFound from './components/layout/PageNotFound';
@@ -15,9 +16,7 @@ import ControlledVocabularies from './components/controlled_vocabularies/Control
 import Projects from './components/projects/Projects';
 import { AbilityContext } from './util/ability_context';
 import ability from './util/ability';
-import hyacinthApi from './util/hyacinth_api';
-
-const APPLICATION_BASE_PATH = '/ui/v1';
+import GraphQLErrors from './components/ui/GraphQLErrors';
 
 const Index = () => (
   <div>
@@ -26,53 +25,60 @@ const Index = () => (
   </div>
 );
 
-export default class App extends React.Component {
-  state = {
-    user: {
-      firstName: '',
-      lastName: '',
-      uid: '',
+const AUTHENTICATED_USER = gql`
+  query AuthenticatedUser {
+    authenticatedUser {
+      id
+      firstName
+      lastName
+      rules {
+        actions
+        subject
+        conditions
+        inverted
+      }
+    }
+  }
+`;
+
+function App() {
+  const [user, setUser] = useState({});
+
+  const { loading, error } = useQuery(
+    AUTHENTICATED_USER,
+    {
+      onCompleted: (userData) => {
+        const { authenticatedUser: { rules, ...rest } } = userData;
+        ability.update(rules);
+        setUser({ ...rest });
+      },
     },
-  }
+  );
 
-  componentDidMount() {
-    hyacinthApi.get('/users/authenticated')
-      .then((res) => {
-        const user = res.data;
+  if (loading) return (<></>);
+  if (error) return (<GraphQLErrors errors={error} />);
 
-        ability.update(user.rules);
-
-        this.setState(produce((draft) => {
-          draft.user.firstName = user.firstName;
-          draft.user.lastName = user.lastName;
-          draft.user.uid = user.uid;
-        }));
-      });
-  }
-
-  render() {
-    const { user } = this.state;
-
-    return (
-      <AbilityContext.Provider value={ability}>
-        <TopNavbar user={user} />
-        <Container id="main">
-          <Switch>
-            <Route exact path="/" component={Index} />
-            <Route path="/digital_objects" component={DigitalObjects} />
-            <Route path="/users" component={Users} />
-            <Route path="/projects" component={Projects} />
-            <Route path="/dynamic_fields" component={DynamicFields} />
-            <Route path="/dynamic_field_groups" component={DynamicFieldGroups} />
-            <Route path="/dynamic_field_categories" component={DynamicFieldCategories} />
-            <Route path="/field_export_profiles" component={FieldExportProfiles} />
-            <Route path="/controlled_vocabularies" component={ControlledVocabularies} />
-            { /* When none of the above match, <PageNotFound> will be rendered */ }
-            <Route path="/404" component={PageNotFound} />
-            <Route component={PageNotFound} />
-          </Switch>
-        </Container>
-      </AbilityContext.Provider>
-    );
-  }
+  return (
+    <AbilityContext.Provider value={ability}>
+      <TopNavbar user={user} />
+      <Container id="main">
+        <Switch>
+          <Route exact path="/" component={Index} />
+          <Route path="/digital_objects" component={DigitalObjects} />
+          <Route path="/users" component={Users} />
+          <Route path="/projects" component={Projects} />
+          <Route path="/dynamic_fields" component={DynamicFields} />
+          <Route path="/dynamic_field_groups" component={DynamicFieldGroups} />
+          <Route path="/dynamic_field_categories" component={DynamicFieldCategories} />
+          <Route path="/field_export_profiles" component={FieldExportProfiles} />
+          <Route path="/controlled_vocabularies" component={ControlledVocabularies} />
+          { /* When none of the above match, <PageNotFound> will be rendered */ }
+          <Route path="/404" component={PageNotFound} />
+          <Route component={PageNotFound} />
+        </Switch>
+      </Container>
+    </AbilityContext.Provider>
+  );
 }
+
+export default App;

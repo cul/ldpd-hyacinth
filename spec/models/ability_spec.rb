@@ -34,8 +34,7 @@ RSpec.describe Ability, type: :model do
 
     it { is_expected.not_to be_able_to(:manage, :all) }
     it { is_expected.to be_able_to(:manage, User) }
-    it { is_expected.to be_able_to(:index, User) }
-    it { is_expected.to be_able_to(:show, User) }
+    it { is_expected.to be_able_to(:read, User) }
     it { is_expected.to be_able_to(:update, User) }
   end
 
@@ -53,7 +52,7 @@ RSpec.describe Ability, type: :model do
 
     it { is_expected.not_to be_able_to(:manage, :all) }
     it { is_expected.to be_able_to(:manage, User) }
-    it { is_expected.to be_able_to(:show, User) }
+    it { is_expected.to be_able_to(:read, User) }
     it { is_expected.to be_able_to(:update, User) }
     it { is_expected.to be_able_to(:show, :vocabulary) }
     it { is_expected.to be_able_to(:update, :vocabulary) }
@@ -65,10 +64,10 @@ RSpec.describe Ability, type: :model do
 
     subject { described_class.new(user) }
 
-    it { is_expected.to be_able_to(:show, user) }
+    it { is_expected.to be_able_to(:read, user) }
     it { is_expected.to be_able_to(:update, user) }
 
-    it { is_expected.not_to be_able_to(:index, User) }
+    it { is_expected.not_to be_able_to(:manage, User) }
   end
 
   describe 'when user has the ability to read all digital objects' do
