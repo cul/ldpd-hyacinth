@@ -38,6 +38,14 @@ module Types
       description 'Information about available project permission actions.'
     end
 
+    field :vocabulary, VocabularyType, null: true do
+      argument :string_key, ID, required: true
+    end
+
+    field :vocabularies, [VocabularyType], null: true do
+      description "List of all vocabularies"
+    end
+
     def digital_objects
       # This is a temporary implementation, this should actually querying solr
       # and considering object read permissions.
@@ -48,6 +56,19 @@ module Types
       digital_object = ::DigitalObject::Base.find(id)
       ability.authorize!(:read, digital_object)
       digital_object
+
+    def vocabulary(string_key:)
+      ability.authorize!(:read, :vocabulary)
+      response = URIService.connection.vocabulary(string_key)
+      raise(GraphQL::ExecutionError, response.data['errors'].map { |e| e['title'] }.join('; ')) if response.errors?
+      response.data['vocabulary']
+    end
+
+    def vocabularies
+      ability.authorize!(:read, :vocabulary)
+      response = URIService.connection.vocabularies
+      raise(GraphQL::ExecutionError, response.data['errors'].map { |e| e['title'] }.join('; ')) if response.errors?
+      response.data['vocabularies']
     end
 
     def project(string_key:)
