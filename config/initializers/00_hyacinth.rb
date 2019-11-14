@@ -18,6 +18,7 @@ Hyacinth::Adapters::LockAdapterManager.register(:database_entry_lock, Hyacinth::
 
 # Register supported Publication Adapters
 Hyacinth::Adapters::PublicationAdapterManager.register(:hyacinth2, Hyacinth::Adapters::PublicationAdapter::Hyacinth2)
+Hyacinth::Adapters::PublicationAdapterManager.register(:development, Hyacinth::Adapters::PublicationAdapter::Development)
 
 # Register supported External ID Adapters
 Hyacinth::Adapters::ExternalIdentifierAdapterManager.register(:datacite, Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite)

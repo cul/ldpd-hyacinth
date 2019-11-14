@@ -16,15 +16,13 @@ Rails.application.routes.draw do
     namespace :v1, defaults: { format: :json } do
       resources :digital_objects, except: :index do
         collection do
-          # allow GET or POST for search action requests
-          # so we don't run into param length limits
+          # allow GET or POST for search action requests so we don't run into param length limits
           get 'search'
           post 'search'
-          # allow API clients to publish without making other changes
           post ':id/publish' => 'digital_objects#publish', as: :publish
+          post ':id/preserve' => 'digital_objects#preserve', as: :preserve
         end
       end
-      # match 'digital_objects/:id/publish', to: "digital_objects#publish", via: :post
 
       resources :vocabularies, param: :string_key, except: [:new, :edit] do
         resources :custom_fields, param: :field_key, except: [:new, :edit, :show, :index], module: 'vocabularies'
