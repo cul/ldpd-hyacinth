@@ -4,6 +4,6 @@ module Types
 
     field :field_key, ID, null: false
     field :label, String, null: false
-    field :data_type, String , null: false # Enum string, integer, boolean
+    field :data_type, String, null: false # Enum string, integer, boolean
   end
 end

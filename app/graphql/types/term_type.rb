@@ -11,7 +11,6 @@ module Types
     field :custom_fields, [CustomFieldType], null: true, resolver_method: :custom_fields
 
     def custom_fields
-
       object.except('uuid', 'uri', 'pref_label', 'alt_labels', 'authority', 'term_type', 'custom_fields')
             .map { |k, v| { field: k, value: v } }
     end

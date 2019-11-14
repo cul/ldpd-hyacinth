@@ -10,7 +10,7 @@ module Types
     end
 
     field :users, [UserType], null: true do
-      description "List of all users"
+      description 'List of all users'
     end
 
     field :user, UserType, null: true do
@@ -44,6 +44,8 @@ module Types
 
     field :vocabularies, [VocabularyType], null: true do
       description "List of all vocabularies"
+      argument :limit, Integer, required: true
+      argument :offset, Integer, required: false
     end
 
     def digital_objects
@@ -64,9 +66,9 @@ module Types
       response.data['vocabulary']
     end
 
-    def vocabularies
+    def vocabularies(limit:, offset: 0)
       ability.authorize!(:read, :vocabulary)
-      response = URIService.connection.vocabularies
+      response = URIService.connection.vocabularies(limit: limit, offset: offset)
       raise(GraphQL::ExecutionError, response.data['errors'].map { |e| e['title'] }.join('; ')) if response.errors?
       response.data['vocabularies']
     end
@@ -103,10 +105,6 @@ module Types
 
     def authenticated_user
       context[:current_user]
-    end
-
-    def ability
-      context[:ability]
     end
   end
 end
