@@ -1,7 +1,9 @@
 module Types
-  class DigitalObject::AssetType < Types::BaseObject
-    implements Types::DigitalObjectInterface
+  module DigitalObject
+    class AssetType < Types::BaseObject
+      implements Types::DigitalObjectInterface
 
-    # ... additional fields
+      # ... additional fields
+    end
   end
 end

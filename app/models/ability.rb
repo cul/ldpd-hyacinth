@@ -108,7 +108,7 @@ class Ability
     can :read_objects, Project, { id: project_id }
     can :read_objects, Project, { string_key: project_string_key }
     # and in the context of a specific object where applicable
-    can :show, DigitalObject::Base do |digital_object|
+    can :read, DigitalObject::Base do |digital_object|
       digital_object.projects.detect { |p| p.id.eql?(project_id) }
     end
   end
