@@ -77,5 +77,9 @@ module DigitalObject
     def project_ids
       projects.each.map(&:id)
     end
+
+    def parents
+      parent_uids.map { |i| DigitalObject::Base.find(i) }
+    end
   end
 end

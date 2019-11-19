@@ -149,4 +149,17 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
       expect(digital_object).to be_valid
     end
   end
+
+  context '#parents' do
+    let(:parent) { FactoryBot.create(:item) }
+
+    before do
+      digital_object_with_sample_data.add_parent_uid(parent.uid)
+      digital_object_with_sample_data.save
+    end
+
+    it 'returns list of parents' do
+      expect(digital_object_with_sample_data.parents.map(&:uid)).to match_array [parent.uid]
+    end
+  end
 end

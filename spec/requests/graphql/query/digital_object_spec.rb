@@ -36,7 +36,7 @@ RSpec.describe 'Retrieving Field Set', type: :request do
           "identifiers": [
           ],
           "optimisticLockToken": "#{authorized_object.optimistic_lock_token}",
-          "parentUids": [],
+          "parents": [],
           "preservedAt": null,
           "projects": [
             {
@@ -86,7 +86,9 @@ RSpec.describe 'Retrieving Field Set', type: :request do
           firstPublishedAt
           firstPreservedAt
           preservedAt
-          parentUids
+          parents {
+            id
+          }
           publishEntries {
             citedAt
             publishedAt

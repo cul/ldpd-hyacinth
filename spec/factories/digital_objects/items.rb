@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :item, class: DigitalObject::Item do
     initialize_with do
       instance = new
-      instance.instance_variable_set('@uid', 'item-123-456')
+      instance.instance_variable_set('@uid', Random.rand.to_s)
       instance.instance_variable_set(
         '@dynamic_field_data',
         {
