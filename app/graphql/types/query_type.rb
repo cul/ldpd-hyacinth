@@ -84,6 +84,14 @@ module Types
         type: digital_object.structured_children['type'],
         structure: digital_object.structured_children['structure'].map! { |cid| ::DigitalObject::Base.find(cid) }
       }
+
+    field :dynamic_field_categories, [DynamicFieldCategoryType], null: true do
+      description "List of all dynamic field categories"
+    end
+
+    def dynamic_field_categories
+      ability.authorize!(:read, DynamicFieldCategory)
+      DynamicFieldCategory.order(:sort_order)
     end
 
     def project(string_key:)
