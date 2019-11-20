@@ -45,7 +45,7 @@ RSpec.describe 'Retrieving Field Set', type: :request do
               "stringKey": "great_project"
             }
           ],
-          "publishEntries": null,
+          "publishEntries": [],
           "serializationVersion": "1",
           "state": "active",
           "updatedAt": "#{authorized_object.updated_at}",

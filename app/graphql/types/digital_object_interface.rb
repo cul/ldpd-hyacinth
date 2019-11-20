@@ -8,8 +8,8 @@ module Types
     field :id, ID, null: false, method: :uid
     field :serialization_version, String, null: false
     field :doi, String, null: true
-    field :state, String, null: false # should be an enum
-    field :digital_object_type, String, null: false # needs to be enum type
+    field :state, String, null: false # can be an enum
+    field :digital_object_type, String, null: false # can be an enum type
     field :projects, [ProjectType], null: false
     field :identifiers, [String], null: true
     field :dynamic_field_data, GraphQL::Types::JSON, null: false
@@ -22,8 +22,12 @@ module Types
     field :preserved_at, GraphQL::Types::ISO8601DateTime, null: true
     field :parents, [DigitalObjectInterface], null: true
     field :structured_children, DigitalObject::StructuredChildrenType, null: true
-    field :publish_entries, PublishEntryType, null: true
+    field :publish_entries, [DigitalObject::PublishEntryType], null: true
     field :optimistic_lock_token, String, null: false
+
+    def publsh_entries
+      object.publish_entries.map { |k, h| { publish_target_string_key: k }.merge(h) }
+    end
 
     definition_methods do
       def resolve_type(object, _context)
