@@ -21,7 +21,7 @@ function CoreDataShow() {
     <ProjectInterface project={data.project}>
       <TabHeading>
         Core Data
-        <Can I="edit" of={{ subjectType: 'Project', stringKey: data.project.stringKey }}>
+        <Can I="update" of={{ subjectType: 'Project', stringKey: data.project.stringKey }}>
           <EditButton
             className="float-right"
             size="lg"

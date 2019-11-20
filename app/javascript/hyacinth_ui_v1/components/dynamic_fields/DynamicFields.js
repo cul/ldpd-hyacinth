@@ -15,7 +15,7 @@ export default class DynamicFields extends React.PureComponent {
           exact
           path="/dynamic_fields"
           component={DynamicFieldIndex}
-          requiredAbility={{ action: 'index', subject: 'DynamicField' }}
+          requiredAbility={{ action: 'read', subject: 'DynamicField' }}
         />
 
         <ProtectedRoute

@@ -15,7 +15,7 @@ export default class FieldExportProfiles extends React.PureComponent {
           exact
           path="/field_export_profiles"
           component={FieldExportProfileIndex}
-          requiredAbility={{ action: 'index', subject: 'FieldExportProfile' }}
+          requiredAbility={{ action: 'read', subject: 'FieldExportProfile' }}
         />
         <ProtectedRoute
           exact

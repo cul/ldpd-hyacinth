@@ -18,7 +18,7 @@ export default class ControlledVocabularies extends React.PureComponent {
           exact
           path="/controlled_vocabularies"
           component={ControlledVocabularyIndex}
-          requiredAbility={{ action: 'index', subject: 'Vocabulary' }}
+          requiredAbility={{ action: 'read', subject: 'Vocabulary' }}
         />
 
         <ProtectedRoute
