@@ -168,6 +168,23 @@ ActiveRecord::Schema.define(version: 2019_12_03_201354) do
     t.index ["project_id"], name: "index_publish_targets_on_project_id"
   end
 
+  create_table "terms", force: :cascade do |t|
+    t.integer "vocabulary_id", null: false
+    t.string "pref_label", null: false
+    t.text "alt_labels"
+    t.string "uri", null: false
+    t.string "uri_hash", null: false
+    t.string "authority"
+    t.string "term_type", null: false
+    t.text "custom_fields"
+    t.string "uid", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["uid"], name: "index_terms_on_uid", unique: true
+    t.index ["uri_hash", "vocabulary_id"], name: "index_terms_on_uri_hash_and_vocabulary_id", unique: true
+    t.index ["vocabulary_id"], name: "index_terms_on_vocabulary_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "first_name"
     t.string "middle_name"
@@ -190,6 +207,16 @@ ActiveRecord::Schema.define(version: 2019_12_03_201354) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["uid"], name: "index_users_on_uid", unique: true
+  end
+
+  create_table "vocabularies", force: :cascade do |t|
+    t.string "label", null: false
+    t.string "string_key", null: false
+    t.text "custom_fields"
+    t.boolean "locked", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["string_key"], name: "index_vocabularies_on_string_key", unique: true
   end
 
 end
