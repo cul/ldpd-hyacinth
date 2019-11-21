@@ -7,7 +7,7 @@ class Ability
     # Going forward we should only be using the following actions for CRUD operations: :read, :create,
     # :update, and :destroy. We shouldn't be using :show, :index, :new, or :edit when defining
     # actions or checking abilities. These aliases were made for RESTful actions and since we are
-    # moving away from that, we should stop using them. Eventually, we should remove these aliases.
+    # moving away from that we no longer need to use them.
 
     if user.admin?
       can :manage, :all
@@ -17,8 +17,8 @@ class Ability
       # Permissions all users get
       can [:read, :update], User, id: user.id
       can [:read, :update], User, uid: user.uid
-      can [:index, :show, :create], :term
-      can [:index], DynamicFieldCategory # Need to allow this so we can render EnabledDynamicField pages.
+      can [:read, :create], :term
+      can :read, DynamicFieldCategory # Need to allow this so we can render EnabledDynamicField pages.
 
       # System Wide Permissions
       assign_system_wide_permissions(system_permissions)
@@ -27,14 +27,14 @@ class Ability
       project_permissions.each do |project_id, actions|
         project_string_key = Project.find(project_id).string_key
 
-        can [:index, :read], Project, id: project_id
-        can [:index, :read], Project, string_key: project_string_key
+        can :read, Project, id: project_id
+        can :read, Project, string_key: project_string_key
 
-        can :show, PublishTarget, project_id: project_id
-        can :show, PublishTarget, project: { string_key: project_string_key }
+        can :read, PublishTarget, project_id: project_id
+        can :read, PublishTarget, project: { string_key: project_string_key }
 
-        can :show, FieldSet, project_id: project_id
-        can :show, FieldSet, project: { string_key: project_string_key }
+        can :read, FieldSet, project_id: project_id
+        can :read, FieldSet, project: { string_key: project_string_key }
 
         actions.each do |action|
           send action.to_sym, project_id, project_string_key
@@ -53,7 +53,7 @@ class Ability
         can :manage, :term
         can :manage, :custom_field
       when Permission::READ_ALL_DIGITAL_OBJECTS, Permission::MANAGE_ALL_DIGITAL_OBJECTS
-        can [:show, :index], [Project, PublishTarget, FieldSet]
+        can :read, [Project, PublishTarget, FieldSet]
       end
     end
   end
@@ -99,8 +99,8 @@ class Ability
     can :update, Project, id: project_id
     can :update, Project, string_key: project_string_key
 
-    can [:show, :create, :update, :destroy], FieldSet, project_id: project_id
-    can [:show, :create, :update, :destroy], FieldSet, project: { string_key: project_string_key }
+    can [:read, :create, :update, :destroy], FieldSet, project_id: project_id
+    can [:read, :create, :update, :destroy], FieldSet, project: { string_key: project_string_key }
   end
 
   def read_objects(project_id, project_string_key)
@@ -108,7 +108,7 @@ class Ability
     can :read_objects, Project, { id: project_id }
     can :read_objects, Project, { string_key: project_string_key }
     # and in the context of a specific object where applicable
-    can :show, DigitalObject::Base do |digital_object|
+    can :read, DigitalObject::Base do |digital_object|
       digital_object.projects.detect { |p| p.id.eql?(project_id) }
     end
   end
@@ -124,7 +124,7 @@ class Ability
     can :update_objects, Project, { id: project_id }
     can :update_objects, Project, { string_key: project_string_key }
     # and in the context of a specific object where applicable
-    can [:edit, :update], DigitalObject::Base do |digital_object|
+    can :update, DigitalObject::Base do |digital_object|
       digital_object.projects.detect { |p| p.id.eql?(project_id) || p.string_key.eql?(project_string_key) }
     end
   end

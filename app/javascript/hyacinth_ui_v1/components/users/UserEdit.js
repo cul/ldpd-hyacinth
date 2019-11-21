@@ -86,7 +86,7 @@ function UserEdit() {
 
   let rightHandLinks = [];
 
-  if (ability.can('index', 'Users')) {
+  if (ability.can('read', 'Users')) {
     rightHandLinks = [{ link: '/users', label: 'Back to All Users' }];
   }
 

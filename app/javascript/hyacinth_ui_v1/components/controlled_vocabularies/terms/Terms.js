@@ -18,7 +18,7 @@ export default class Terms extends React.PureComponent {
           exact
           path="/controlled_vocabularies/:stringKey/terms"
           component={TermIndex}
-          requiredAbility={{ action: 'index', subject: 'ControlledVocabulary' }}
+          requiredAbility={{ action: 'read', subject: 'ControlledVocabulary' }}
         /> */}
 
         <ProtectedRoute

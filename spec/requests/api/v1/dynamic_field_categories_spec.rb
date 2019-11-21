@@ -46,52 +46,46 @@ RSpec.describe 'Dynamic Field Categories Requests', type: :request do
   describe 'GET /api/v1/dynamic_field_categories/:id' do
     let(:dynamic_field_category) { FactoryBot.create(:dynamic_field_category) }
 
-    include_examples 'requires user to have correct permissions' do
-      let(:request) { get "/api/v1/dynamic_field_categories/#{dynamic_field_category.id}" }
-    end
+    before { sign_in_user }
 
-    context 'when logged in user is an administrator' do
-      before { sign_in_user as: :administrator }
-
-      context 'when id is valid' do
-        before do
-          get "/api/v1/dynamic_field_categories/#{dynamic_field_category.id}"
-        end
-
-        it 'returns 200' do
-          expect(response.status).to be 200
-        end
-
-        it 'returns correct response' do
-          expect(response.body).to be_json_eql(%(
-            {
-              "dynamic_field_category": {
-                "display_label": "Descriptive Metadata",
-                "children": [
-
-                ],
-                "sort_order": 3,
-                "type": "DynamicFieldCategory"
-              }
-            }
-          ))
-        end
+    context 'when id is valid' do
+      before do
+        get "/api/v1/dynamic_field_categories/#{dynamic_field_category.id}"
       end
 
-      context 'when id is invalid' do
-        before do
-          get '/api/v1/dynamic_field_categories/1234'
-        end
+      it 'returns 200' do
+        expect(response.status).to be 200
+      end
 
-        it 'returns 404' do
-          expect(response.status).to be 404
-        end
+      it 'returns correct response' do
+        expect(response.body).to be_json_eql(%(
+          {
+            "dynamic_field_category": {
+              "display_label": "Descriptive Metadata",
+              "children": [
 
-        it 'returns correct response' do
-          expect(response.body).to be_json_eql(%(
-            { "errors": [{ "title": "Not Found" }] }
-          ))
-        end
+              ],
+              "sort_order": 3,
+              "type": "DynamicFieldCategory"
+            }
+          }
+        ))
+      end
+    end
+
+    context 'when id is invalid' do
+      before do
+        get '/api/v1/dynamic_field_categories/1234'
+      end
+
+      it 'returns 404' do
+        expect(response.status).to be 404
+      end
+
+      it 'returns correct response' do
+        expect(response.body).to be_json_eql(%(
+          { "errors": [{ "title": "Not Found" }] }
+        ))
       end
     end
   end
