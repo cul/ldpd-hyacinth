@@ -16,7 +16,8 @@ namespace :solr do
     end
   end
 
-  # After hook that runs after existing solr:start task.
+  # After hook that runs after existing solr:start task from solr_wrapper.
+  # For more information: https://coderwall.com/p/qhdhgw/adding-a-post-execution-hook-to-the-rails-db-migrate-task
   task :start do
     Rake::Task['solr:after_start'].invoke
   end
