@@ -79,7 +79,7 @@ module DigitalObject
     end
 
     def parents
-      parent_uids.map { |i| DigitalObject::Base.find(i) }
+      @parents ||= parent_uids.map { |i| DigitalObject::Base.find(i) }
     end
   end
 end
