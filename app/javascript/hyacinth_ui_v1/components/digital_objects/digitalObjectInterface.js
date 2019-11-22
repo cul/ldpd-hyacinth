@@ -1,6 +1,7 @@
 import React from 'react';
 import produce from 'immer';
 import { withRouter } from 'react-router-dom';
+import { has } from 'lodash';
 
 import { digitalObject } from '../../util/hyacinth_api';
 import Tab from '../ui/tabs/Tab';
@@ -29,13 +30,19 @@ const digitalObjectInterface = WrappedComponent => class extends React.Component
     const { digitalObjectData: data } = this.state;
     const { match: { params: { id } } } = this.props;
 
+    let title = id;
+
+    if (has(data, 'dynamicFieldData.title[0].titleSortPortion')) {
+      title = data.dynamicFieldData.title[0].titleSortPortion;
+    }
+
     return (
       <>
         {
           data && (
             <div className="digital-object-interface">
               <ContextualNavbar
-                title={`Item | ${data.dynamicFieldData.title[0].titleSortPortion}`}
+                title={`Item | ${title}`}
               />
 
               <DigitalObjectSummary data={data} />
