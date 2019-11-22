@@ -1,11 +1,25 @@
-# FactoryBot.define do
-#   factory :digital_object_item, class: DigitalObject::Item do
-#     initialize_with do
-#       instance = new
-#       instance.uid = 'abc-123'
-#       # TODO: Add other setup steps for this item factory
-#
-#       instance
-#     end
-#   end
-# end
+FactoryBot.define do
+  factory :item, class: DigitalObject::Item do
+    initialize_with do
+      instance = new
+      instance.instance_variable_set(
+        '@dynamic_field_data',
+        {
+          'title' => [
+            {
+              'non_sort_portion' => 'The',
+              'sort_portion' => 'Best Item Ever'
+            }
+          ]
+        }
+      )
+      instance
+    end
+
+    trait :with_project do
+      after(:build) do |digital_object|
+        digital_object.projects << create(:project)
+      end
+    end
+  end
+end

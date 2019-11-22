@@ -31,7 +31,7 @@ module Api
           authorize! :create_objects, project
         end
 
-        if @digital_object.save(update_index: true)
+        if @digital_object.save(update_index: true, user: current_user)
           show
         else
           render json: @digital_object.errors, status: :bad_request
@@ -44,7 +44,7 @@ module Api
         digital_object_data = create_or_update_params
         @digital_object.set_digital_object_data(digital_object_data, true)
 
-        update_result = @digital_object.save(update_index: true)
+        update_result = @digital_object.save(update_index: true, user: current_user)
         update_result &&= publish if params[:publish].to_s.eql?('true')
 
         if update_result

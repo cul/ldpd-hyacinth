@@ -24,6 +24,25 @@ module Types
       description "List of all projects"
     end
 
+    field :digital_objects, [DigitalObjectInterface], null: true do
+      description "List and searches all digital objects"
+    end
+
+    field :digital_object, DigitalObjectInterface, null: true do
+      argument :id, ID, required: true
+    end
+
+    def digital_objects
+      # This is a temporary implementation, this should actually querying the solr instance.
+      DigitalObjectRecord.all
+    end
+
+    def digital_object(id:)
+      digital_object = ::DigitalObject::Base.find(id)
+      ability.authorize!(:read, digital_object)
+      digital_object
+    end
+
     def project(string_key:)
       project = Project.find_by!(string_key: string_key)
       ability.authorize!(:read, project)
