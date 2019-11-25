@@ -48,8 +48,6 @@ namespace :hyacinth do
         next
       end
       df_category = DynamicFieldCategory.find_by(display_label: "Descriptive Metadata")
-      df_group = DynamicFieldGroup.find_by(display_label: "Title")
-
       if df_category
         puts Rainbow("dynamic field category 'Descriptive Metadata' already exists (skipping).").blue.bright
       else
@@ -57,6 +55,7 @@ namespace :hyacinth do
         puts Rainbow("Created dynamic field category 'Descriptive Metadata'").green
       end
 
+      df_group = DynamicFieldGroup.find_by(display_label: "Title")
       if df_group
         puts Rainbow("dynamic field group 'Title' already exists (skipping).").blue.bright
       else
