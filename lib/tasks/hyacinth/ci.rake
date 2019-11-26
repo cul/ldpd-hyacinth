@@ -85,7 +85,7 @@ namespace :hyacinth do
     rspec_system_exit_failure_exception = nil
     task_stack = args[:task_stack]
 
-    Jettywrapper.jetty_dir = File.join(Rails.root, 'tmp', 'jetty-test')
+    Jettywrapper.jetty_dir = Rails.root.join('tmp', 'jetty-test').to_s
 
     puts "Starting fedora wrapper...\n"
     Rake::Task['jetty:clean'].invoke
