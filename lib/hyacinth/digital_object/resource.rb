@@ -56,7 +56,6 @@ module Hyacinth
         self.checksum = checksum_for_file(resource.import_location, lock_object)
         # TODO: Finish checksum code
 
-
         if import_method == :track
           # When tracking files, there's no need to write the file.
           resource.location = resource.import_location

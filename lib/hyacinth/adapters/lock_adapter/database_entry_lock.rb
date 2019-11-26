@@ -117,7 +117,6 @@ module Hyacinth
             @locked = false
           end
         end
-
       end
     end
   end

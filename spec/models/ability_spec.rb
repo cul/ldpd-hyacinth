@@ -34,7 +34,6 @@ RSpec.describe Ability, type: :model do
       )
     end
 
-
     it { is_expected.not_to be_able_to(:manage, :all) }
     it { is_expected.to be_able_to(:manage, User) }
     it { is_expected.to be_able_to(:read, User) }
