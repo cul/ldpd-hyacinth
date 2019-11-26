@@ -2,7 +2,6 @@
 
 module DigitalObjectConcerns
   module SaveBehavior
-
     # Validations that are meant to be run within the context of
     # an object lock during a save operation.
     module SaveLockValidations
@@ -55,7 +54,6 @@ module DigitalObjectConcerns
         )
         false
       end
-
     end
   end
 end

@@ -4,7 +4,6 @@ module DigitalObjectConcerns::FindBehavior
   extend ActiveSupport::Concern
 
   module ClassMethods
-
     # Check whether an object with the given uid exists
     # @param uid [String] uid to search for
     def exists?(uid)

@@ -67,7 +67,6 @@ module Hyacinth
           end
         end
       end
-
     end
   end
 end

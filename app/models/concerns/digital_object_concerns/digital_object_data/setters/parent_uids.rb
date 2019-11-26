@@ -53,7 +53,6 @@ module DigitalObjectConcerns
       def remove_parent_uid(uid)
         @parent_uids_to_remove << uid
       end
-
     end
   end
 end

@@ -3,7 +3,6 @@
 module Hyacinth
   module DigitalObject
     module MetadataAttributes
-
       def self.included(base)
         base.extend ClassMethods
       end
