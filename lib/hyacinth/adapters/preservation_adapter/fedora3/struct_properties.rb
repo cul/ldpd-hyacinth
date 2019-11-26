@@ -48,10 +48,10 @@ module Hyacinth
 
         def to_struct_xml(proposed_list)
           xml = "#{XML_PREFIX}\n"
-          proposed_list.each do |child|
-            xml << "<mets:div LABEL=\"#{child[:label]}\" ORDER=\"#{child[:order]}\" CONTENTIDS=\"#{child[:uid]}\"/>\n"
+          proposed_list.each do |child| #TODO +=
+            xml += "<mets:div LABEL=\"#{child[:label]}\" ORDER=\"#{child[:order]}\" CONTENTIDS=\"#{child[:uid]}\"/>\n"
           end
-          xml << XML_SUFFIX
+          xml += XML_SUFFIX
         end
       end
     end

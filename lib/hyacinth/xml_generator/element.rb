@@ -67,7 +67,7 @@ module Hyacinth
         next unless render?(attr_val['render_if'], df_data)
 
         val = generate_field_val(attr_val, df_data)
-        val.strip! if val.respond_to?(:strip!)
+        val = val.strip if val.respond_to?(:strip)
 
         next if val.blank?
 

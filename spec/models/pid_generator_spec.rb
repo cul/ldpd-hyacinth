@@ -17,7 +17,7 @@ describe PidGenerator do
   describe "#max_pids" do
     subject { generator.max_pids }
     let(:edigits) { 3 }
-    let(:test_template) { edigits.times.inject(".r") { |m| m << "e" } }
+    let(:test_template) { edigits.times.inject(".r") { |m| m + "e" } }
     it { is_expected.to eql(29**edigits) }
   end
   describe "#next_pid" do
