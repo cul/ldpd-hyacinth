@@ -1,74 +1,8 @@
 inherit_gem:
-  bixby: bixby_default.yml
+  rubocul: rubocul_default.yml
 
-inherit_from: .rubocop_todo.yml
+# inherit_from: .rubocop_todo.yml
 
 AllCops:
   TargetRubyVersion: 2.5.3
   TargetRailsVersion: 5.2.1
-  DisplayCopNames: true
-  Exclude:
-    - 'bin/**/*'
-    - 'db/**/*'
-    - 'app/javascript/**/*'
-    - 'node_modules/**/*'
-    - 'vendor/**/*'
-    - 'lib/tasks/hyacinth/**/*'
-    - 'tmp/**/*'
-
-Layout/EmptyLinesAroundModuleBody:
-  Enabled: false
-
-Layout/EmptyLinesAroundClassBody:
-  Enabled: false
-
-Layout/IndentationConsistency:
-  EnforcedStyle: rails
-
-Metrics/CyclomaticComplexity:
-  Enabled: true
-  Max: 7
-  Exclude:
-    - 'app/models/concerns/digital_object_concerns/save_behavior.rb'
-
-Metrics/ModuleLength:
-  Max: 150
-
-Metrics/PerceivedComplexity:
-  Enabled: true
-  Max: 8
-  Exclude:
-    - 'app/controllers/concerns/hyacinth/users/cas_authentication_behavior.rb'
-    - 'app/models/concerns/digital_object_concerns/save_behavior.rb'
-
-Naming/AccessorMethodName:
-  Exclude:
-    - 'app/models/concerns/digital_object_concerns/digital_object_data/setters/**/*'
-
-Rails/HasAndBelongsToMany:
-  Enabled: false
-
-RSpec/ExampleLength:
-  Enabled: false
-
-RSpec/MessageSpies:
-  Enabled: false
-
-Style/BracesAroundHashParameters:
-  Enabled: false
-
-Style/FrozenStringLiteralComment:
-  Enabled: false
-
-Style/MultilineBlockChain:
-  Enabled: false
-
-Style/StringLiterals:
-  Enabled: false
-
-Style/RedundantSelf:
-  Enabled: false
-
-Metrics/BlockLength:
-  Exclude:
-    - 'spec/**/*'
