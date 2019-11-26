@@ -1,7 +1,7 @@
 GIT
   remote: https://github.com/cul/rubocul
-  revision: 6484daa5aa31ecc6c4a693990ef6e5b1e7c6adf9
-  branch: cgalarza-merge-exclude-array
+  revision: 3748917c1310acab11f2c9deafe9f01c5965462f
+  branch: master
   specs:
     rubocul (0.0.1)
       bixby (= 2.0.0.pre.beta1)

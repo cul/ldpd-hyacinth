@@ -30,7 +30,7 @@ gem 'webpacker'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
-  gem 'rubocul', git: 'https://github.com/cul/rubocul', branch: 'cgalarza-merge-exclude-array'
+  gem 'rubocul', git: 'https://github.com/cul/rubocul', branch: 'master'
   gem 'equivalent-xml'
   gem 'jettywrapper', '>=1.4.0', git: 'https://github.com/samvera-deprecated/jettywrapper.git', branch: 'master'
   gem 'solr_wrapper', '~> 2.0'
