@@ -4,9 +4,9 @@ module Hyacinth
   module Adapters
     module PreservationAdapter
       class Fedora3::StructProperties
-        DSID = 'structMetadata'.freeze
-        XML_PREFIX = '<mets:structMap xmlns:mets="http://www.loc.gov/METS/" LABEL="Sequence" TYPE="logical">'.freeze
-        XML_SUFFIX = '</mets:structMap>'.freeze
+        DSID = 'structMetadata'
+        XML_PREFIX = '<mets:structMap xmlns:mets="http://www.loc.gov/METS/" LABEL="Sequence" TYPE="logical">'
+        XML_SUFFIX = '</mets:structMap>'
 
         include Fedora3::TitleHelpers
         include Fedora3::DatastreamMethods

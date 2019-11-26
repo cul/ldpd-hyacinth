@@ -5,8 +5,8 @@ module Hyacinth
     module PreservationAdapter
       class Fedora3::RelsIntProperties
         module URIS
-          EXTENT = "http://purl.org/dc/terms/extent".freeze
-          HAS_MESSAGE_DIGEST = "http://www.loc.gov/premis/rdf/v1#hasMessageDigest".freeze
+          EXTENT = "http://purl.org/dc/terms/extent"
+          HAS_MESSAGE_DIGEST = "http://www.loc.gov/premis/rdf/v1#hasMessageDigest"
         end
 
         include Fedora3::PidHelpers

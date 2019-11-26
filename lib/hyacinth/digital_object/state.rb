@@ -3,8 +3,8 @@
 module Hyacinth
   module DigitalObject
     module State
-      ACTIVE = 'active'.freeze
-      WITHDRAWN = 'withdrawn'.freeze
+      ACTIVE = 'active'
+      WITHDRAWN = 'withdrawn'
 
       VALID_STATES = [ACTIVE, WITHDRAWN].freeze
     end

@@ -4,19 +4,19 @@ module Hyacinth
   module DigitalObject
     module AssetType
       # https://github.com/duraspace/pcdm/blob/master/pcdm-ext/file-format-types.rdf
-      AUDIO = "Audio".freeze
-      EMAIL = "Email".freeze
-      HTML = "HTML".freeze
-      IMAGE = "Image".freeze
-      PAGE_DESCRIPTION = "PageDescription".freeze
-      PRESENTATION = "Presentation".freeze
-      SOFTWARE = "Software".freeze
-      SPREADSHEET = "Spreadsheet".freeze
-      STRUCTURED_TEXT = "StructuredText".freeze
-      TEXT = "Text".freeze
-      UNKNOWN = "Unknown".freeze
-      UNSTRUCTURED_TEXT = "UnstructuredText".freeze
-      VIDEO = "Video".freeze
+      AUDIO = "Audio"
+      EMAIL = "Email"
+      HTML = "HTML"
+      IMAGE = "Image"
+      PAGE_DESCRIPTION = "PageDescription"
+      PRESENTATION = "Presentation"
+      SOFTWARE = "Software"
+      SPREADSHEET = "Spreadsheet"
+      STRUCTURED_TEXT = "StructuredText"
+      TEXT = "Text"
+      UNKNOWN = "Unknown"
+      UNSTRUCTURED_TEXT = "UnstructuredText"
+      VIDEO = "Video"
 
       VALID_TYPES = [
         AUDIO, EMAIL, HTML, IMAGE, PAGE_DESCRIPTION, PRESENTATION, SOFTWARE,

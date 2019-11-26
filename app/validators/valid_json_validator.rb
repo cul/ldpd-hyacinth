@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ValidJsonValidator < ActiveModel::EachValidator
-  MESSAGE = 'does not validate as JSON'.freeze
+  MESSAGE = 'does not validate as JSON'
 
   def validate_each(record, attribute, value)
     return if value.nil?

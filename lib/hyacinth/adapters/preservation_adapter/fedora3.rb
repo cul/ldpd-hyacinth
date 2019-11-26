@@ -6,7 +6,7 @@ module Hyacinth
       class Fedora3 < Abstract
         REQUIRED_CONFIG_OPTS = [:url, :user, :password].freeze
         OPTIONAL_CONFIG_OPTS = [:pid_generator].freeze
-        HYACINTH_CORE_DATASTREAM_NAME = 'hyacinth_data'.freeze
+        HYACINTH_CORE_DATASTREAM_NAME = 'hyacinth_data'
 
         delegate :client, to: :connection
 
@@ -14,7 +14,7 @@ module Hyacinth
         include AssignmentContext::Client
 
         def self.uri_prefix
-          @uri_prefix ||= "fedora3://".freeze
+          @uri_prefix ||= "fedora3://"
         end
 
         def initialize(adapter_config = {})
