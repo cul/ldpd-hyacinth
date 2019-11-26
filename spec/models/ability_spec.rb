@@ -5,18 +5,18 @@ require 'cancan/matchers'
 
 RSpec.describe Ability, type: :model do
   describe 'when user is nil' do
-    let(:user) { nil }
-
     subject { described_class.new(user) }
+
+    let(:user) { nil }
 
     it { is_expected.not_to be_able_to(:manage, User) }
     it { is_expected.not_to be_able_to(:show, User) }
   end
 
   describe 'when user is administrator' do
-    let(:user) { FactoryBot.create(:user, is_admin: true) }
-
     subject { described_class.new(user) }
+
+    let(:user) { FactoryBot.create(:user, is_admin: true) }
 
     it { is_expected.to be_able_to(:manage, :all) }
     it { is_expected.to be_able_to(:manage, :vocabulary) }
@@ -26,13 +26,14 @@ RSpec.describe Ability, type: :model do
   end
 
   describe 'when user is user manager' do
+    subject { described_class.new(user) }
+
     let(:user) do
       FactoryBot.create(
         :user, permissions: [Permission.create(action: Permission::MANAGE_USERS)]
       )
     end
 
-    subject { described_class.new(user) }
 
     it { is_expected.not_to be_able_to(:manage, :all) }
     it { is_expected.to be_able_to(:manage, User) }
@@ -41,6 +42,8 @@ RSpec.describe Ability, type: :model do
   end
 
   describe 'when user has multiple system wide permissions' do
+    subject { described_class.new(user) }
+
     let(:user) do
       FactoryBot.create(
         :user, permissions: [
@@ -49,8 +52,6 @@ RSpec.describe Ability, type: :model do
         ]
       )
     end
-
-    subject { described_class.new(user) }
 
     it { is_expected.not_to be_able_to(:manage, :all) }
     it { is_expected.to be_able_to(:manage, User) }
@@ -62,9 +63,9 @@ RSpec.describe Ability, type: :model do
   end
 
   describe 'when user is logged in' do
-    let(:user) { FactoryBot.create(:user) }
-
     subject { described_class.new(user) }
+
+    let(:user) { FactoryBot.create(:user) }
 
     it { is_expected.to be_able_to(:read, user) }
     it { is_expected.to be_able_to(:update, user) }
@@ -73,6 +74,8 @@ RSpec.describe Ability, type: :model do
   end
 
   describe 'when user has the ability to read all digital objects' do
+    subject { described_class.new(user) }
+
     let(:user) do
       FactoryBot.create(
         :user, permissions: [
@@ -81,13 +84,13 @@ RSpec.describe Ability, type: :model do
       )
     end
 
-    subject { described_class.new(user) }
-
     it { is_expected.to be_able_to(:show, PublishTarget) }
     it { is_expected.to be_able_to(:show, FactoryBot.create(:publish_target)) }
   end
 
   describe 'when a user has the ability to read_objects for a project' do
+    subject { described_class.new(user) }
+
     let(:project) { FactoryBot.create(:project) }
     let(:user) do
       FactoryBot.create(
@@ -96,8 +99,6 @@ RSpec.describe Ability, type: :model do
         ]
       )
     end
-
-    subject { described_class.new(user) }
 
     it { is_expected.to be_able_to(:show, FactoryBot.create(:publish_target, project: project)) }
     it { is_expected.to be_able_to(:show, project) }
@@ -108,6 +109,8 @@ RSpec.describe Ability, type: :model do
   end
 
   describe 'for digital object permissions' do
+    subject { described_class.new(user) }
+
     let(:authorized_object) { FactoryBot.build(:digital_object_test_subclass, :with_sample_data, :with_lincoln_project) }
     let(:unauthorized_object) { FactoryBot.build(:digital_object_test_subclass, :with_sample_data, :with_minken_project) }
     let(:mixed_object) do
@@ -119,7 +122,6 @@ RSpec.describe Ability, type: :model do
     let(:authorized_project) { authorized_object.projects.to_a[0] }
     let(:unauthorized_project) { unauthorized_object.projects.to_a[0] }
 
-    subject { described_class.new(user) }
     context 'when a user has the ability to update_objects for a project' do
       let(:user) do
         FactoryBot.create(
