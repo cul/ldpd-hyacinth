@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AuthenticatedRequests
   # Generates custom http request methods that end in `_with_auth`. These methods
   # add authentication to each request.

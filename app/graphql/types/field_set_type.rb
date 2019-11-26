@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class FieldSetType < Types::BaseObject
     description 'A field set'

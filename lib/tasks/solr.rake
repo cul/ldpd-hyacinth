@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Set up solr_wrapper so that it creates the hyacinth-development core if it
 # doesn't already exist.
 

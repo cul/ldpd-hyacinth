@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module HyacinthTestCleanup
   def clear_search_index
     if Rails.env.test?

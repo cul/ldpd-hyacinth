@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Mutations::UpdatePublishTarget < Mutations::BaseMutation
   argument :project_string_key, ID, required: true
   argument :string_key, ID, required: true

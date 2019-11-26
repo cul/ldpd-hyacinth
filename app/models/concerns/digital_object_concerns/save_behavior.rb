@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DigitalObjectConcerns
   module SaveBehavior
     extend ActiveSupport::Concern

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Following module contains functionality to retrieve metadata
 # from the dynamic_field_data hash from DigitalObject::Base
 class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata

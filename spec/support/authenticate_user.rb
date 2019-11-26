@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module AuthenticateUser
   def sign_in_user(as: [])
     user = FactoryBot.create(

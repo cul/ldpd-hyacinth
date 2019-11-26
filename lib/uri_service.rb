@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module URIService
   thread_mattr_accessor :active_connection
 

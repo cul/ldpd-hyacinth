@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 # Logs in user with no permissions and checks that the user does not have
 # access to the given request.

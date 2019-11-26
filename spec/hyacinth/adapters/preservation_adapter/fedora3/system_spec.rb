@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do

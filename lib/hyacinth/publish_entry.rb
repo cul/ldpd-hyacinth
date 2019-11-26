@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Hyacinth
   class PublishEntry
     attr_accessor :published_at, :published_by, :cited_at

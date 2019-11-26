@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :hyacinth do
   namespace :setup do
     desc "Set up default Hyacinth users"

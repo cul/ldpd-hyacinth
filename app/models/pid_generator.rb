@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PidGenerator < ActiveRecord::Base
   has_many :projects
   before_validation :set_template_if_blank_and_get_seed, on: :create

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DigitalObject
   class Asset < DigitalObject::Base
     include DigitalObjectConcerns::Assets::Validations

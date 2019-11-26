@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ExportRule < ApplicationRecord
   include FieldExport::TranslationLogic
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :hyacinth do
   require 'rspec/core/rake_task'
   RSpec::Core::RakeTask.new(:rspec) do |spec|

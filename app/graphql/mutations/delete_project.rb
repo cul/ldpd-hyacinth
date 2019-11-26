@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Mutations::DeleteProject < Mutations::BaseMutation
   argument :string_key, ID, required: true
 

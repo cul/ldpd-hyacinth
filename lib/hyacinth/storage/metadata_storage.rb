@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Hyacinth
   module Storage
     class MetadataStorage < AbstractStorage

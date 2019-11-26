@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # TODO: Delete if not used
 module Hyacinth
   module DigitalObject

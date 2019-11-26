@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DigitalObject
   # DigitalObject::Base class is an abstract class that should not
   # be instantiated. Instead, it should be subclassed (Item, Asset, etc).

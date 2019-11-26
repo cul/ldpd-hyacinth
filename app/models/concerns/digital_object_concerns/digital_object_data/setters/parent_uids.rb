@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DigitalObjectConcerns
   module DigitalObjectData::Setters
     module ParentUids

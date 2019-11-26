@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   module DigitalObject
     class TestSubclass < DigitalObject::Base

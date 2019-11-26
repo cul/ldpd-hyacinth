@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ValidJsonValidator < ActiveModel::EachValidator
   MESSAGE = 'does not validate as JSON'.freeze
 

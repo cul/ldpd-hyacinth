@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :field_export_profile do
     name { 'descMetadata' }

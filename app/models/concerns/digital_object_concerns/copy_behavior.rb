@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DigitalObjectConcerns
   module CopyBehavior
     extend ActiveSupport::Concern

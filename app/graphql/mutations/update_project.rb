@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Mutations::UpdateProject < Mutations::BaseMutation
   argument :string_key, ID, required: true
   argument :display_label, String, required: false

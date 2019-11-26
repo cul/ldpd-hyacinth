@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DynamicFieldStructure
   module StringKey
     extend ActiveSupport::Concern
