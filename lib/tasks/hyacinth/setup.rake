@@ -40,7 +40,7 @@ namespace :hyacinth do
       end
     end
 
-    desc "Add minimal required dynamic fields for digital object creation"
+    desc "Add Descriptive Metadata category and Title dynamic fields"
     task seed_dynamic_field_entries: :environment do
       user = User.find_by(email: default_user_accounts[0][:email]);
       if !user
@@ -79,6 +79,10 @@ namespace :hyacinth do
           field_type: 'string',
           created_by: user,
           updated_by: user,
+          filter_label: '',
+          controlled_vocabulary: '',
+          select_options: '{}',
+          additional_data_json: '{}'          
         },
         {
           display_label: 'Non-Sort Portion',
@@ -87,6 +91,10 @@ namespace :hyacinth do
           field_type: 'string',
           created_by: user,
           updated_by: user,
+          filter_label: '',
+          controlled_vocabulary: '',
+          select_options: '{}',
+          additional_data_json: '{}'          
         }
       ]
 
@@ -100,7 +108,11 @@ namespace :hyacinth do
             dynamic_field_group: field[:dynamic_field_group],
             field_type: field[:field_type],
             created_by: field[:created_by],
-            updated_by: field[:updated_by]
+            updated_by: field[:updated_by],
+            filter_label: field[:filter_label],
+            controlled_vocabulary: field[:controlled_vocabulary],
+            select_options: field[:select_options],
+            additional_data_json: field[:additional_data_json]          
           )
           puts Rainbow("Created dynamic field #{field[:display_label]}").green
         end
