@@ -10,12 +10,14 @@ FactoryBot.define do
       string_key { 'legend_of_lincoln' }
       display_label { 'Legend of Lincoln' }
       project_url   { 'https://example.com/legend_of_lincoln' }
+      is_primary { true }
     end
 
     trait :myth_of_minken do
       string_key { 'myth_of_minken' }
       display_label { 'Myth of Minken' }
       project_url   { 'https://example.com/myth_of_minken' }
+      is_primary { false }
     end
 
     trait :with_publish_target do

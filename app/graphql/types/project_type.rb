@@ -18,6 +18,8 @@ module Types
       argument :id, ID, required: true
     end
 
+    field :is_primary, Boolean, null: false
+
     def field_set(id:)
       field_set = FieldSet.find_by!(id: id, project: object)
       context[:ability].authorize!(:show, field_set)
