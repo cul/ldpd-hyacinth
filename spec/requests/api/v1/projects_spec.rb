@@ -23,11 +23,13 @@ RSpec.describe 'Projects Requests', type: :request do
               "projects": [
                 {
                   "display_label": "Great Project",
+                  "is_primary": false,
                   "project_url": "https://example.com/great_project",
                   "string_key": "great_project"
                 },
                 {
                   "display_label": "Legend of Lincoln",
+                  "is_primary": true,
                   "project_url": "https://example.com/legend_of_lincoln",
                   "string_key": "legend_of_lincoln"
                 }
@@ -56,6 +58,7 @@ RSpec.describe 'Projects Requests', type: :request do
             "projects": [
               {
                 "display_label": "Great Project",
+                "is_primary": false,
                 "project_url": "https://example.com/great_project",
                 "string_key": "great_project"
               }
@@ -92,6 +95,7 @@ RSpec.describe 'Projects Requests', type: :request do
           expect(response.body).to be_json_eql(%({
             "project": {
               "display_label": "Great Project",
+              "is_primary": false,
               "project_url": "https://example.com/great_project",
               "string_key": "great_project"
             }
@@ -128,7 +132,7 @@ RSpec.describe 'Projects Requests', type: :request do
       context 'when creating a new project' do
         before do
           post '/api/v1/projects', params: {
-            project: { string_key: 'best_project', display_label: 'Best Project', project_url: 'https://best_project.com' }
+            project: { string_key: 'best_project', display_label: 'Best Project', is_primary: true, project_url: 'https://best_project.com' }
           }
         end
 
@@ -140,6 +144,7 @@ RSpec.describe 'Projects Requests', type: :request do
           expect(response.body).to be_json_eql(%({
             "project": {
               "display_label": "Best Project",
+              "is_primary": false,
               "project_url": "https://best_project.com",
               "string_key": "best_project"
             }

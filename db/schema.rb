@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_02_190243) do
+ActiveRecord::Schema.define(version: 2019_12_03_201354) do
 
   create_table "database_entry_locks", force: :cascade do |t|
     t.string "lock_key", null: false
@@ -150,6 +150,7 @@ ActiveRecord::Schema.define(version: 2019_08_02_190243) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "project_url"
+    t.boolean "is_primary", default: false
     t.index ["display_label"], name: "index_projects_on_display_label", unique: true
     t.index ["string_key"], name: "index_projects_on_string_key", unique: true
   end
