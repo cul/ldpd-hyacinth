@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'timeout'
 
 module Hyacinth
@@ -115,7 +117,6 @@ module Hyacinth
             @locked = false
           end
         end
-
       end
     end
   end

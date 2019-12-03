@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Hyacinth
   module DigitalObject
     class Resource
@@ -53,7 +55,6 @@ module Hyacinth
         # calculating/verifying checksums during import.
         self.checksum = checksum_for_file(resource.import_location, lock_object)
         # TODO: Finish checksum code
-
 
         if import_method == :track
           # When tracking files, there's no need to write the file.

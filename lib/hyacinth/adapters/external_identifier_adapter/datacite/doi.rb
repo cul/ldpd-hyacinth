@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # DESGIN NOTE: Currently, the only required EZID indentifiers are DOIs. ARKs are not currently used
 # Therefore, only the current class is implemented. However, if ARKs or URNs are implemented
 # at a later date, the common functionality can be moved to parent class, and this class and

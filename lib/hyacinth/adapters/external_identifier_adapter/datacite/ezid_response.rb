@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::EzidResponse
   attr_reader :response, :parsed_body_hash
 

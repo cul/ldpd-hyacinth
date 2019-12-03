@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Project < ApplicationRecord
   has_many :publish_targets,        dependent: :destroy
   has_many :enabled_dynamic_fields, dependent: :destroy, inverse_of: :project

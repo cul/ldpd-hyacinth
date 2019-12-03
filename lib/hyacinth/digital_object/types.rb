@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 module Hyacinth
   module DigitalObject
     class Types
-
       attr_reader :keys
 
       def initialize(initial_keys_to_classes = {})

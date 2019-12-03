@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module FieldExport
   module TranslationLogic
     extend ActiveSupport::Concern

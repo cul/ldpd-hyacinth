@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DigitalObjectTypeValidator < ActiveModel::Validator
   def validate(digital_object)
     return if Hyacinth.config.digital_object_types.include?(digital_object.digital_object_type)

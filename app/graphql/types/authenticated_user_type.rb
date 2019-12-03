@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class AuthenticatedUserType < Types::BaseObject
     description 'A user with rules'

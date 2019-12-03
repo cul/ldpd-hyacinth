@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class EnabledDynamicField < ApplicationRecord
   has_and_belongs_to_many :field_sets
 

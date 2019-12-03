@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Following module contains functionality to create the XML
 # containing the metadata, using the datacite metadata scheme
 class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::MetadataBuilder

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :item, class: DigitalObject::Item do
     initialize_with do

@@ -1,28 +1,30 @@
+# frozen_string_literal: true
+
 module Hyacinth
   module Adapters
     module PreservationAdapter
       class Fedora3::RelsExtProperties
         module URIS
-          HAS_DOI = "http://purl.org/ontology/bibo/doi".freeze
-          HAS_MODEL = "info:fedora/fedora-system:def/model#hasModel".freeze
-          HAS_PROJECT = "http://dbpedia.org/ontology/project".freeze
-          HAS_PUBLISHER = "http://purl.org/dc/terms/publisher".freeze
-          HAS_RDF_TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type".freeze
-          HAS_RESTRICTION = "http://www.loc.gov/premis/rdf/v1#hasRestriction".freeze
-          IS_PART_OF = "http://purl.org/dc/terms/isPartOf".freeze
+          HAS_DOI = "http://purl.org/ontology/bibo/doi"
+          HAS_MODEL = "info:fedora/fedora-system:def/model#hasModel"
+          HAS_PROJECT = "http://dbpedia.org/ontology/project"
+          HAS_PUBLISHER = "http://purl.org/dc/terms/publisher"
+          HAS_RDF_TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+          HAS_RESTRICTION = "http://www.loc.gov/premis/rdf/v1#hasRestriction"
+          IS_PART_OF = "http://purl.org/dc/terms/isPartOf"
           # asset annotation properties
-          FEATURED_REGION = "http://iiif.io/api/image/2#regionFeatured".freeze
-          IMAGE_LENGTH = "http://www.w3.org/2003/12/exif/ns#imageLength".freeze
-          IMAGE_ORIENTATION = "http://www.w3.org/2003/12/exif/ns#orientation".freeze
-          IMAGE_RES_UNIT = "http://www.w3.org/2003/12/exif/ns#resolutionUnit".freeze
-          IMAGE_WIDTH = "http://www.w3.org/2003/12/exif/ns#imageWidth".freeze
-          IMAGE_X_RES = "http://www.w3.org/2003/12/exif/ns#xResolution".freeze
-          IMAGE_Y_RES = "http://www.w3.org/2003/12/exif/ns#yResolution".freeze
-          ORIGINAL_FILENAME = "http://www.loc.gov/premis/rdf/v1#hasOriginalName".freeze
+          FEATURED_REGION = "http://iiif.io/api/image/2#regionFeatured"
+          IMAGE_LENGTH = "http://www.w3.org/2003/12/exif/ns#imageLength"
+          IMAGE_ORIENTATION = "http://www.w3.org/2003/12/exif/ns#orientation"
+          IMAGE_RES_UNIT = "http://www.w3.org/2003/12/exif/ns#resolutionUnit"
+          IMAGE_WIDTH = "http://www.w3.org/2003/12/exif/ns#imageWidth"
+          IMAGE_X_RES = "http://www.w3.org/2003/12/exif/ns#xResolution"
+          IMAGE_Y_RES = "http://www.w3.org/2003/12/exif/ns#yResolution"
+          ORIGINAL_FILENAME = "http://www.loc.gov/premis/rdf/v1#hasOriginalName"
         end
 
-        ONSITE_RESTRICTION_LITERAL_VALUE = "onsite restriction".freeze
-        SIZE_RESTRICTION_LITERAL_VALUE = "size restriction".freeze
+        ONSITE_RESTRICTION_LITERAL_VALUE = "onsite restriction"
+        SIZE_RESTRICTION_LITERAL_VALUE = "size restriction"
         TYPE_INFORMATION = {
           'asset' => { rdf_type: 'http://purl.oclc.org/NET/CUL/Resource', cmodel: 'info:fedora/ldpd:GenericResource' },
           'group' => { rdf_type: 'http://purl.oclc.org/NET/CUL/Aggregator', cmodel: 'info:fedora/pcdm:Collection' },

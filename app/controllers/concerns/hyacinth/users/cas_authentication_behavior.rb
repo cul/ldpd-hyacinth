@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Hyacinth
   module Users
     module CasAuthenticationBehavior
@@ -65,7 +67,6 @@ module Hyacinth
           end
         end
       end
-
     end
   end
 end

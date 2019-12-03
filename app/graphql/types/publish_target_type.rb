@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class PublishTargetType < Types::BaseObject
     description 'A publish target'

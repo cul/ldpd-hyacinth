@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :publish_target do
     string_key { 'great_project_website' }

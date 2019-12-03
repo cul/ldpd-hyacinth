@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 require 'shared_examples/storage_adapter/shared_examples'
 

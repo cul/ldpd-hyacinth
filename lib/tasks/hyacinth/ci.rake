@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 namespace :hyacinth do
   require 'rspec/core/rake_task'
   RSpec::Core::RakeTask.new(:rspec) do |spec|
     # INCLUDE_HYACINTH_SPECS is expected to be set (or not) by a wrapping task
     excepts = ['fedora', 'solr'] - ENV['INCLUDE_HYACINTH_SPECS'].to_s.split(',')
 
-    spec.rspec_opts = excepts.map {| except| "--tag ~@#{except}" }
+    spec.rspec_opts = excepts.map { |except| "--tag ~@#{except}" }
     spec.rspec_opts << '--backtrace' if ENV['CI']
   end
 
@@ -83,11 +85,11 @@ namespace :hyacinth do
     rspec_system_exit_failure_exception = nil
     task_stack = args[:task_stack]
 
-    Jettywrapper.jetty_dir = File.join(Rails.root, 'tmp', 'jetty-test')
+    Jettywrapper.jetty_dir = Rails.root.join('tmp', 'jetty-test').to_s
 
     puts "Starting fedora wrapper...\n"
     Rake::Task['jetty:clean'].invoke
-    rspec_system_exit_failure_exception = Jettywrapper.wrap(Rails.application.config_for(:jetty).symbolize_keys.merge({jetty_home: Jettywrapper.jetty_dir})) do
+    rspec_system_exit_failure_exception = Jettywrapper.wrap(Rails.application.config_for(:jetty).symbolize_keys.merge({ jetty_home: Jettywrapper.jetty_dir })) do
       print "Starting fedora\n...#{Rails.application.config_for(:jetty)}\n"
       Rake::Task[task_stack.shift].invoke(task_stack)
       print 'Stopping fedora...'

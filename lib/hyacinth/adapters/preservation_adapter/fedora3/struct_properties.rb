@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 module Hyacinth
   module Adapters
     module PreservationAdapter
       class Fedora3::StructProperties
-        DSID = 'structMetadata'.freeze
-        XML_PREFIX = '<mets:structMap xmlns:mets="http://www.loc.gov/METS/" LABEL="Sequence" TYPE="logical">'.freeze
-        XML_SUFFIX = '</mets:structMap>'.freeze
+        DSID = 'structMetadata'
+        XML_PREFIX = '<mets:structMap xmlns:mets="http://www.loc.gov/METS/" LABEL="Sequence" TYPE="logical">'
+        XML_SUFFIX = '</mets:structMap>'
 
         include Fedora3::TitleHelpers
         include Fedora3::DatastreamMethods
@@ -47,9 +49,9 @@ module Hyacinth
         def to_struct_xml(proposed_list)
           xml = "#{XML_PREFIX}\n"
           proposed_list.each do |child|
-            xml << "<mets:div LABEL=\"#{child[:label]}\" ORDER=\"#{child[:order]}\" CONTENTIDS=\"#{child[:uid]}\"/>\n"
+            xml += "<mets:div LABEL=\"#{child[:label]}\" ORDER=\"#{child[:order]}\" CONTENTIDS=\"#{child[:uid]}\"/>\n"
           end
-          xml << XML_SUFFIX
+          xml += XML_SUFFIX
         end
       end
     end

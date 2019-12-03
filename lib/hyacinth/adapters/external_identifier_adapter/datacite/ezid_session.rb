@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # ba2213, 05/17/2019: Ported from Hyacinth 2 codebase
 # fcd1, 08/30/16: Original code was copied verbatim from
 # hypatia-new, and then modified. Modifications should be

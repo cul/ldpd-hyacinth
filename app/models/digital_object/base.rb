@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DigitalObject
   # DigitalObject::Base class is an abstract class that should not
   # be instantiated. Instead, it should be subclassed (Item, Asset, etc).
@@ -19,7 +21,7 @@ module DigitalObject
     include DigitalObjectConcerns::ExportFieldsBehavior
     include DigitalObjectConcerns::PreserveBehavior
 
-    SERIALIZATION_VERSION = '1'.freeze # Increment this if the serialized data format changes so that we can upgrade to the new format.
+    SERIALIZATION_VERSION = '1' # Increment this if the serialized data format changes so that we can upgrade to the new format.
 
     # Set up callbacks
     define_model_callbacks :validation, :save, :destroy

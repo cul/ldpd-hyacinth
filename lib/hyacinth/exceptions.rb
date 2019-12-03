@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Hyacinth
   module Exceptions
     class HyacinthError < StandardError; end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Hyacinth
   class XMLGenerator
     attr_reader :dynamic_fields_groups_map, :internal_fields, :document

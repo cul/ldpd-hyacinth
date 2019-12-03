@@ -1,15 +1,17 @@
+# frozen_string_literal: true
+
 class DynamicField < ActiveRecord::Base
   include DynamicFieldStructure::Sortable
   include DynamicFieldStructure::StringKey
 
   module Type
-    STRING = 'string'.freeze
-    TEXTAREA = 'textarea'.freeze
-    INTEGER = 'integer'.freeze
-    BOOLEAN = 'boolean'.freeze
-    SELECT = 'select'.freeze
-    DATE = 'date'.freeze
-    CONTROLLED_TERM = 'controlled_term'.freeze
+    STRING = 'string'
+    TEXTAREA = 'textarea'
+    INTEGER = 'integer'
+    BOOLEAN = 'boolean'
+    SELECT = 'select'
+    DATE = 'date'
+    CONTROLLED_TERM = 'controlled_term'
   end
 
   TYPES = [Type::STRING, Type::TEXTAREA, Type::INTEGER, Type::BOOLEAN, Type::SELECT, Type::DATE, Type::CONTROLLED_TERM].freeze

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :dynamic_field_group do
     string_key      { 'name' }

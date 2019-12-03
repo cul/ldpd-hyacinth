@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :hyacinth do
   namespace :setup do
     desc "Set up default Hyacinth users"
@@ -42,7 +44,7 @@ namespace :hyacinth do
 
     desc "Set up hyacinth config files"
     task :config_files do
-      config_template_dir = Rails.root.join('config/templates')
+      config_template_dir = Rails.root.join('config', 'templates')
       config_dir = Rails.root.join('config')
       Dir.foreach(config_template_dir) do |entry|
         next unless entry.end_with?('.yml')

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Mutations::BaseMutation < GraphQL::Schema::RelayClassicMutation
   # Add your custom classes if you have them:
   # This is used for generating payload types

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PublishTarget < ApplicationRecord
   belongs_to :project
 

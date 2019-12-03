@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Permission < ApplicationRecord
   MANAGE_VOCABULARIES = 'manage_vocabularies'
   MANAGE_USERS = 'manage_users'

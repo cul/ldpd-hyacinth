@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata do

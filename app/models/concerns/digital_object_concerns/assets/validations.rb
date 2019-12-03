@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DigitalObjectConcerns::Assets::Validations
   extend ActiveSupport::Concern
 

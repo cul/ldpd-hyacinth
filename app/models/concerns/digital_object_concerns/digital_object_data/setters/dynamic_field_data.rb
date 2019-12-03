@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DigitalObjectConcerns
   module DigitalObjectData
     module Setters
@@ -55,13 +57,13 @@ module DigitalObjectConcerns
         # @param df_data [Hash, Array, or String] Dynamic field data
         def trim_whitespace_for_dynamic_field_data!(df_data = self.dynamic_field_data)
           # Step 1: Recursively handle values on lower levels
-          df_data.each do |_key, value|
+          df_data.each do |key, value|
             if value.is_a?(Array)
               value.each { |element| trim_whitespace_for_dynamic_field_data!(element) }
             elsif value.is_a?(Hash)
               trim_whitespace_for_dynamic_field_data!(value)
             elsif value.is_a?(String)
-              value.strip!
+              df_data[key] = value.strip
             end
           end
         end

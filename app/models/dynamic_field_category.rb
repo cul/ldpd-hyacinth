@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class DynamicFieldCategory < ActiveRecord::Base
   include DynamicFieldStructure::Sortable
 

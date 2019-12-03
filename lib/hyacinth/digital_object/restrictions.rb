@@ -1,7 +1,8 @@
+# frozen_string_literal: true
+
 module Hyacinth
   module DigitalObject
     module Restrictions
-
       def self.included(base)
         base.extend ClassMethods
       end

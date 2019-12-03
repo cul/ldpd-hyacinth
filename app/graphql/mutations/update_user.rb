@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Mutations::UpdateUser < Mutations::BaseMutation
   argument :id, ID, required: true
   argument :first_name, String, required: false

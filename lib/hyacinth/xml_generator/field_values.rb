@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Hyacinth
   class XMLGenerator::FieldValues
     attr_reader :generator

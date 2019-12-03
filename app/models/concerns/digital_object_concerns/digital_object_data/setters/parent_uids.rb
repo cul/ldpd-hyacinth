@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DigitalObjectConcerns
   module DigitalObjectData::Setters
     module ParentUids
@@ -51,7 +53,6 @@ module DigitalObjectConcerns
       def remove_parent_uid(uid)
         @parent_uids_to_remove << uid
       end
-
     end
   end
 end

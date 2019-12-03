@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module DigitalObjectConcerns
   module Serialization
     extend ActiveSupport::Concern
@@ -33,8 +35,10 @@ module DigitalObjectConcerns
         digital_object = Hyacinth.config.digital_object_types.key_to_class(json_var['digital_object_type']).new
         # set metadata_attributes
         digital_object.metadata_attributes.map do |metadata_attribute_name, type_def|
-          digital_object.send("#{metadata_attribute_name}=",
-            type_def.from_serialized_form(json_var[metadata_attribute_name.to_s]))
+          digital_object.send(
+            "#{metadata_attribute_name}=",
+            type_def.from_serialized_form(json_var[metadata_attribute_name.to_s])
+          )
         end
         # build resource objects
         digital_object.resource_attributes.map do |resource_name|

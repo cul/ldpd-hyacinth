@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class HyacinthSchema < GraphQL::Schema
   use GraphQL::Execution::Errors
 
