@@ -18,6 +18,7 @@ function CoreDataEdit() {
   const history = useHistory();
 
   const [displayLabel, setDisplayLabel] = useState('');
+  const [isPrimary, setIsPrimary] = useState(false);
   const [projectUrl, setProjectUrl] = useState('');
 
   // Retrieve data and set data
@@ -30,6 +31,7 @@ function CoreDataEdit() {
 
         setDisplayLabel(project.displayLabel);
         setProjectUrl(project.projectUrl);
+        setIsPrimary(project.isPrimary);
       },
     },
   );
@@ -94,6 +96,18 @@ function CoreDataEdit() {
               name="projectUrl"
               value={projectUrl}
               onChange={e => setProjectUrl(e.target.value)}
+            />
+          </Col>
+        </Form.Group>
+
+        <Form.Group as={Row}>
+          <Form.Label column sm={2}>Is Primary</Form.Label>
+          <Col sm={10}>
+            <Form.Control
+              type="checkbox"
+              name="isPrimary"
+              checked={isPrimary}
+              disabled
             />
           </Col>
         </Form.Group>
