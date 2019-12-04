@@ -5,6 +5,7 @@ export const getProjectQuery = gql`
     project(stringKey: $stringKey) {
       stringKey
       displayLabel
+      isPrimary
       projectUrl
     }
   }

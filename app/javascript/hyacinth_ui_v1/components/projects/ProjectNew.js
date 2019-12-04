@@ -21,6 +21,7 @@ function ProjectNew() {
   const [stringKey, setStringKey] = useState('');
   const [displayLabel, setDisplayLabel] = useState('');
   const [projectUrl, setProjectUrl] = useState('');
+  const [isPrimary, setIsPrimary] = useState(false);
 
   const [createProject, { error }] = useMutation(CREATE_PROJECT);
   const history = useHistory();
@@ -33,6 +34,7 @@ function ProjectNew() {
           stringKey,
           displayLabel,
           projectUrl,
+          isPrimary
         },
       },
     }).then((res) => {
@@ -80,6 +82,18 @@ function ProjectNew() {
               name="projectUrl"
               value={projectUrl}
               onChange={e => setProjectUrl(e.target.value)}
+            />
+          </Form.Group>
+        </Form.Row>
+
+        <Form.Row>
+          <Form.Group as={Col}>
+            <Form.Label>Is Primary?</Form.Label>
+            <Form.Control
+              type="checkbox"
+              name="isPrimary"
+              value={isPrimary}
+              onChange={e => setIsPrimary(e.target.checked)}
             />
           </Form.Group>
         </Form.Row>

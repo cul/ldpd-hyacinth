@@ -37,6 +37,9 @@ function CoreDataShow() {
         <Col as="dt" sm={2}>Display Label</Col>
         <Col as="dd" sm={10}>{data.project.displayLabel}</Col>
 
+        <Col as="dt" sm={2}>Is Primary</Col>
+        <Col as="dd" sm={10}>{data.project.isPrimary.toString()}</Col>
+
         <Col as="dt" sm={2}>Project URL</Col>
         <Col as="dd" sm={10}>{data.project.projectUrl}</Col>
       </Row>
