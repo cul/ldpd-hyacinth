@@ -119,23 +119,46 @@ module Hyacinth
         end
       end
 
-      # Comparizon value given in xml_translation cannot be blank when using
-      # equals/not_equals conditionals. Instead absent/present conditionals
-      # should be used. Additionally, blank field values are never stored.
+      # Comparison value given in xml_translation cannot be blank when using
+      # equals/not_equals/equals_any_of/equals_none_of conditionals. Instead
+      # absent/present conditionals should be used. Additionally, blank field
+      # values are never stored.
 
       if render_if['equal'].present?
         render_if['equal'].each do |field_string_key, value_to_compare_to|
-          raise ArgumentError, 'comparizon value cannot be blank' if value_to_compare_to.blank?
+          raise ArgumentError, 'comparison value cannot be blank' if value_to_compare_to.blank?
           value = value_for_field_name(field_string_key)
-          return false if value.blank? || value != value_to_compare_to
+          return false if value.blank?
+          return value == value_to_compare_to
         end
       end
 
       if render_if['not_equal'].present?
         render_if['not_equal'].each do |field_string_key, value_to_compare_to|
-          raise ArgumentError, 'comparizon value cannot be blank' if value_to_compare_to.blank?
+          raise ArgumentError, 'comparison value cannot be blank' if value_to_compare_to.blank?
           value = value_for_field_name(field_string_key)
-          return false if value == value_to_compare_to
+          return value != value_to_compare_to
+        end
+      end
+
+      if render_if['equals_any_of'].present?
+        render_if['equals_any_of'].each do |field_string_key, array_values_to_compare_to|
+          if !array_values_to_compare_to.is_a?(Array) || array_values_to_compare_to.blank?
+            raise ArgumentError, 'comparison value must be a non-empty array'
+          end
+          value = value_for_field_name(field_string_key)
+          return false if value.blank?
+          return array_values_to_compare_to.include?(value)
+        end
+      end
+
+      if render_if['equals_none_of'].present?
+        render_if['equals_none_of'].each do |field_string_key, array_values_to_compare_to|
+          if !array_values_to_compare_to.is_a?(Array) || array_values_to_compare_to.blank?
+            raise ArgumentError, 'comparison value must be a non-empty array'
+          end
+          value = value_for_field_name(field_string_key)
+          return !array_values_to_compare_to.include?(value)
         end
       end
 
