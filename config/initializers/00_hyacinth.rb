@@ -40,7 +40,8 @@ Rails.application.config.to_prepare do
           :search_adapter,
           :lock_adapter,
           :publication_adapter,
-          :external_identifier_adapter
+          :external_identifier_adapter,
+          :term_search_adapter
         ) {}.new(
           Hyacinth::DigitalObject::Types.new(
             'item' => ::DigitalObject::Item,
@@ -53,7 +54,8 @@ Rails.application.config.to_prepare do
           Hyacinth::Adapters::SearchAdapterManager.create(HYACINTH[:search_adapter]),
           Hyacinth::Adapters::LockAdapterManager.create(HYACINTH[:lock_adapter]),
           Hyacinth::Adapters::PublicationAdapterManager.create(HYACINTH[:publication_adapter]),
-          Hyacinth::Adapters::ExternalIdentifierAdapterManager.create(HYACINTH[:external_identifier_adapter])
+          Hyacinth::Adapters::ExternalIdentifierAdapterManager.create(HYACINTH[:external_identifier_adapter]),
+          Hyacinth::Adapters::TermSearchAdapter::Solr.new(HYACINTH[:term_search_adapter])
         )
       end
     end

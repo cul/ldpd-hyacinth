@@ -254,6 +254,9 @@ GEM
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
     retriable (3.1.2)
+    rsolr (2.2.1)
+      builder (>= 2.1.2)
+      faraday (>= 0.9.0)
     rspec (3.8.0)
       rspec-core (~> 3.8.0)
       rspec-expectations (~> 3.8.0)
@@ -397,6 +400,7 @@ DEPENDENCIES
   puma (~> 3.12)
   rails (~> 5.2.2)
   rainbow (~> 3.0)
+  rsolr
   rspec-its
   rspec-rails (~> 3.8)
   rubocul!
