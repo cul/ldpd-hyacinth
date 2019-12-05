@@ -150,7 +150,7 @@ ActiveRecord::Schema.define(version: 2019_12_03_201354) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "project_url"
-    t.boolean "is_primary", default: false
+    t.boolean "is_primary", default: false, null: false
     t.index ["display_label"], name: "index_projects_on_display_label", unique: true
     t.index ["string_key"], name: "index_projects_on_string_key", unique: true
   end
