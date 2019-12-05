@@ -23,7 +23,6 @@ namespace :hyacinth do
   desc 'CI build with Rubocop validation'
   task ci: ['hyacinth:setup:config_files', :environment, 'hyacinth:rubocop', 'hyacinth:ci_specs']
 
-  require 'solr_wrapper/rake_task'
   desc 'CI build just running specs'
   task ci_specs: :environment do
     includes = ['fedora', 'solr'] - ENV['EXCEPT'].to_s.split(',')
@@ -57,7 +56,7 @@ namespace :hyacinth do
   task :solr_wrapper, [:task_stack] => [:environment] do |task, args|
     rspec_system_exit_failure_exception = nil
     task_stack = args[:task_stack]
-    solr_wrapper_config = Rails.application.config_for(:solr_wrapper).symbolize_keys
+    solr_wrapper_config = Rails.application.config_for(:solr_wrapper).deep_symbolize_keys
 
     if File.exist?(solr_wrapper_config[:instance_dir])
       # Delete old solr if it exists because we want a fresh solr instance
@@ -67,14 +66,17 @@ namespace :hyacinth do
 
     puts "Unzipping and starting new solr instance...\n"
     SolrWrapper.wrap(solr_wrapper_config) do |solr_wrapper_instance|
-      # Create collection
-      solr_wrapper_instance.with_collection(solr_wrapper_config[:collection]) do
-        begin
-          Rake::Task[task_stack.shift].invoke(task_stack)
-        rescue SystemExit => e
-          rspec_system_exit_failure_exception = e
-        end
+      # Create collections
+      solr_wrapper_config[:collection].each do |c|
+        solr_wrapper_instance.create(c)
       end
+
+      begin
+        Rake::Task[task_stack.shift].invoke(task_stack)
+      rescue SystemExit => e
+        rspec_system_exit_failure_exception = e
+      end
+
       print 'Stopping solr...'
     end
     puts 'stopped.'

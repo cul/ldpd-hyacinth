@@ -1,4 +1,5 @@
 development:
+  local_uri_prefix: localhost:3000 # prefix to use when minting local URIs
   metadata_storage:
     adapters:
       - type: disk
@@ -23,11 +24,13 @@ development:
     type: development
   external_identifier_adapter:
     type: memory
-  uri_service:
-    url: 'https://example.com'
-    api_key: 'notasecret'
+  term_search_adapater:
+    type: solr
+    url: http://localhost:8983/solr/terms_development
+    commit_after_change: true
 
 test:
+  local_uri_prefix: https://example.com
   metadata_storage:
     adapters:
       - type: disk
@@ -52,6 +55,7 @@ test:
     type: hyacinth2
   external_identifier_adapter:
     type: memory
-  uri_service:
-    url: 'https://example.com'
-    api_key: 'notasecret'
+  term_search_adapter:
+    type: solr
+    url: http://localhost:9983/solr/terms_development
+    commit_after_change: true
