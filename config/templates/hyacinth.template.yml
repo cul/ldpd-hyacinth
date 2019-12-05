@@ -26,7 +26,7 @@ development:
     type: memory
   term_search_adapater:
     type: solr
-    url: http://localhost:8983/solr/terms_development
+    url: http://localhost:8983/solr/terms-development
     commit_after_change: true
 
 test:
@@ -57,5 +57,5 @@ test:
     type: memory
   term_search_adapter:
     type: solr
-    url: http://localhost:9983/solr/terms_development
+    url: http://localhost:9983/solr/terms-test
     commit_after_change: true
