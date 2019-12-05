@@ -9,4 +9,5 @@ class Project < ApplicationRecord
 
   validates :string_key, presence: true, uniqueness: true, string_key: true
   validates :display_label, presence: true, uniqueness: true
+  validates :is_primary, inclusion: { in: [true, false] }
 end
