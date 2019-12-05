@@ -55,7 +55,7 @@ namespace :hyacinth do
         puts Rainbow("Created dynamic field category 'Descriptive Metadata'").green
       end
 
-      df_group = DynamicFieldGroup.find_by(display_label: "Title")
+      df_group = DynamicFieldGroup.find_by(string_key: "title")
       if df_group
         puts Rainbow("dynamic field group 'Title' already exists (skipping).").blue.bright
       else
@@ -98,23 +98,12 @@ namespace :hyacinth do
         }
       ]
 
-      default_dynamic_fields.each do |field|
-        if DynamicField.exists?(string_key: field[:string_key])
-          puts Rainbow("dynamic field #{field[:display_label]} already exists (skipping).").blue.bright
+      default_dynamic_fields.each do |fields|
+        if DynamicField.exists?(string_key: fields[:string_key])
+          puts Rainbow("dynamic field #{fields[:display_label]} already exists (skipping).").blue.bright
         else
-          DynamicField.create!(
-            display_label: field[:display_label],
-            string_key: field[:string_key],
-            dynamic_field_group: field[:dynamic_field_group],
-            field_type: field[:field_type],
-            created_by: field[:created_by],
-            updated_by: field[:updated_by],
-            filter_label: field[:filter_label],
-            controlled_vocabulary: field[:controlled_vocabulary],
-            select_options: field[:select_options],
-            additional_data_json: field[:additional_data_json]          
-          )
-          puts Rainbow("Created dynamic field #{field[:display_label]}").green
+          DynamicField.create!(fields)
+          puts Rainbow("Created dynamic field #{fields[:display_label]}").green
         end
       end
     end
