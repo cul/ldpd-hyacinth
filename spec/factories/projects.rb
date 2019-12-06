@@ -5,7 +5,7 @@ FactoryBot.define do
     string_key    { 'great_project' }
     display_label { 'Great Project' }
     project_url   { 'https://example.com/great_project' }
-    is_primary { false }
+    is_primary { true }
 
     trait :legend_of_lincoln do
       string_key { 'legend_of_lincoln' }

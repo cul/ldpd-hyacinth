@@ -20,7 +20,7 @@ FactoryBot.define do
 
     trait :with_project do
       after(:build) do |digital_object|
-        digital_object.projects << create(:project)
+        digital_object.primary_project = create(:project)
       end
     end
   end

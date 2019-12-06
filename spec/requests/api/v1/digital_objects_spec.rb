@@ -92,11 +92,9 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
         digital_object: {
           digital_object_type: authorized_object.digital_object_type,
           serialization_version: DigitalObject::Base::SERIALIZATION_VERSION,
-          projects: [
-            {
-              string_key: authorized_project.string_key
-            }
-          ],
+          primary_project: {
+            string_key: authorized_project.string_key
+          },
           dynamic_field_data: {
             title: [{
               non_sort_portion: 'The',
@@ -128,7 +126,7 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
         expect(
           new_object['dynamic_field_data'].to_json
         ).to be_json_eql(properties[:digital_object][:dynamic_field_data].to_json)
-        expect(new_object['projects'].first).to include('string_key' => authorized_project.string_key)
+        expect(new_object['primary_project']).to include('string_key' => authorized_project.string_key)
       end
     end
   end
@@ -218,7 +216,7 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
         expect(publication_adapter).to receive(:publish_impl).with(authorized_publish_target, digital_object_matcher).and_return([true, [published_location]])
         post "/api/v1/digital_objects/#{authorized_object.uid}/publish"
         new_object = JSON.parse(response.body)['digital_object']
-        expect(new_object['projects'].first).to include('string_key' => authorized_project.string_key)
+        expect(new_object['primary_project']).to include('string_key' => authorized_project.string_key)
       end
     end
   end
