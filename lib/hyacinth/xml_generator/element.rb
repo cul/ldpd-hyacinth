@@ -98,8 +98,9 @@ module Hyacinth
       end
 
       # Comparison value given in xml_translation cannot be blank when using
-      # equals/not_equals conditionals. Instead absent/present conditionals
-      # should be used. Additionally, blank field values are never stored.
+      # equals/not_equals equals_any_of/equals_none_of conditionals. Instead
+      # absent/present conditionals should be used. Additionally, blank field
+      # values are never stored.
 
       conditions['equal']&.each do |field_string_key, value_to_compare_to|
         validate_present value_to_compare_to, "comparison value"
@@ -109,6 +110,16 @@ module Hyacinth
       conditions['not_equal']&.each do |field_string_key, value_to_compare_to|
         validate_present value_to_compare_to, "comparison value"
         return false if value_for_field_name(field_string_key, df_data) == value_to_compare_to
+      end
+
+      conditions['equals_any_of']&.each do |field_string_key, array_values_to_compare_to|
+        validate_present array_values_to_compare_to, "comparison values"
+        return false unless array_values_to_compare_to.include?(value_for_field_name(field_string_key, df_data))
+      end
+
+      conditions['equals_none_of']&.each do |field_string_key, array_values_to_compare_to|
+        validate_present array_values_to_compare_to, "comparison values"
+        return false if array_values_to_compare_to.include?(value_for_field_name(field_string_key, df_data))
       end
 
       true

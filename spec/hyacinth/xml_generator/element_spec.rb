@@ -171,7 +171,7 @@ describe Hyacinth::XMLGenerator::Element do
     end
 
     context "when checking for fields that are equal" do
-      it 'raises error when doing comparizon with blank value' do
+      it 'raises error when doing comparison with blank value' do
         render_if = { "equal" => { "name_term.uni" => "" } }
         expect { element.render?(render_if, df_data) }.to raise_error ArgumentError
       end
@@ -192,7 +192,7 @@ describe Hyacinth::XMLGenerator::Element do
     end
 
     context "when checking for fields that are not_equal" do
-      it 'raises error when doing comparizon with blank value' do
+      it 'raises error when doing comparison with blank value' do
         render_if = { "not_equal" => { "name_term.uni" => "" } }
         expect { element.render?(render_if, df_data) }.to raise_error ArgumentError
       end
@@ -204,6 +204,54 @@ describe Hyacinth::XMLGenerator::Element do
 
       it "returns true when field does not equal value given" do
         render_if = { "not_equal" => { "name_term.uni" => "jds132" } }
+        expect(element.render?(render_if, df_data)).to be true
+      end
+    end
+
+    context "when checking for fields that are equals_any_of" do
+      it 'raises error when doing comparison with a non-array value' do
+        render_if = { "equals_any_of" => { "name_term.uni" => "" } }
+        expect { element.render?(render_if, df_data) }.to raise_error ArgumentError
+      end
+
+      it 'raises error when doing comparison with an empty array value' do
+        render_if = { "equals_any_of" => { "name_term.uni" => [] } }
+        expect { element.render?(render_if, df_data) }.to raise_error ArgumentError
+      end
+
+      it "returns true when field equals any of the given array values" do
+        render_if = { "equals_any_of" => { "name_term.uni" => ["zzz", "jds1329"], "name_term.value" => ["Salinger, J. D.", "zzz"] } }
+        expect(element.render?(render_if, df_data)).to be true
+      end
+
+      context 'when one field does not eql any of the given array values for that field' do
+        let(:df_data) { dynamic_field_data["name"][1] }
+
+        it "returns false" do
+          render_if = { "equals_any_of" => { "name_term.uni" => ["jds1329"], "name_term.value" => ["zzz"] } }
+          expect(element.render?(render_if, df_data)).to be false
+        end
+      end
+    end
+
+    context "when checking for fields that are equals_none_of" do
+      it 'raises error when doing comparison with a non-array value' do
+        render_if = { "equals_none_of" => { "name_term.uni" => "" } }
+        expect { element.render?(render_if, df_data) }.to raise_error ArgumentError
+      end
+
+      it 'raises error when doing comparison with an empty array value' do
+        render_if = { "equals_none_of" => { "name_term.uni" => [] } }
+        expect { element.render?(render_if, df_data) }.to raise_error ArgumentError
+      end
+
+      it "returns false when field equals any of the array values given" do
+        render_if = { "equals_none_of" => { "name_term.uni" => ["zzz", "jds1329"] } }
+        expect(element.render?(render_if, df_data)).to be false
+      end
+
+      it "returns true when field equals none of array values given" do
+        render_if = { "equals_none_of" => { "name_term.uni" => ["aaa", "bbb"] } }
         expect(element.render?(render_if, df_data)).to be true
       end
     end
