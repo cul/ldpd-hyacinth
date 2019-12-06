@@ -53,7 +53,7 @@ module Api
       private
 
         def create_params
-          params.require(:project).permit(:string_key, :display_label, :project_url)
+          params.require(:project).permit(:string_key, :display_label, :is_primary, :project_url)
         end
 
         def update_params

@@ -48,7 +48,8 @@ module DigitalObject
     # Dynamic Fields
     metadata_attribute :dynamic_field_data, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Hash.new })
     # Administrative Relationsip Objects
-    metadata_attribute :projects, Hyacinth::DigitalObject::TypeDef::Projects.new.default(-> { Set.new })
+    metadata_attribute :primary_project, Hyacinth::DigitalObject::TypeDef::Project.new.public_writer
+    metadata_attribute :other_projects, Hyacinth::DigitalObject::TypeDef::Projects.new.default(-> { Set.new })
     # Preservation System Linkage
     metadata_attribute :preservation_target_uris, Hyacinth::DigitalObject::TypeDef::JsonSerializableSet.new.default(-> { Set.new })
     # Parent-Child Structural Data
@@ -74,6 +75,10 @@ module DigitalObject
       @unpublish_from = []
       @preserve = false
       @mint_doi = false
+    end
+
+    def projects
+      ([primary_project] + other_projects.to_a).compact.freeze
     end
 
     def project_ids

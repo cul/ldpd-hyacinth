@@ -114,12 +114,12 @@ RSpec.describe Ability, type: :model do
     let(:unauthorized_object) { FactoryBot.build(:digital_object_test_subclass, :with_sample_data, :with_minken_project) }
     let(:mixed_object) do
       obj = FactoryBot.build(:digital_object_test_subclass, :with_sample_data)
-      obj.projects.merge authorized_object.projects
-      obj.projects.merge unauthorized_object.projects
+      obj.primary_project = authorized_object.primary_project
+      obj.other_projects << unauthorized_object.primary_project
       obj
     end
-    let(:authorized_project) { authorized_object.projects.to_a[0] }
-    let(:unauthorized_project) { unauthorized_object.projects.to_a[0] }
+    let(:authorized_project) { authorized_object.primary_project }
+    let(:unauthorized_project) { unauthorized_object.primary_project }
 
     context 'when a user has the ability to update_objects for a project' do
       let(:user) do

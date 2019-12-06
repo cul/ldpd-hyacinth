@@ -23,7 +23,7 @@ RSpec.describe 'Projects Requests', type: :request do
               "projects": [
                 {
                   "display_label": "Great Project",
-                  "is_primary": false,
+                  "is_primary": true,
                   "project_url": "https://example.com/great_project",
                   "string_key": "great_project"
                 },
@@ -58,7 +58,7 @@ RSpec.describe 'Projects Requests', type: :request do
             "projects": [
               {
                 "display_label": "Great Project",
-                "is_primary": false,
+                "is_primary": true,
                 "project_url": "https://example.com/great_project",
                 "string_key": "great_project"
               }
@@ -95,7 +95,7 @@ RSpec.describe 'Projects Requests', type: :request do
           expect(response.body).to be_json_eql(%({
             "project": {
               "display_label": "Great Project",
-              "is_primary": false,
+              "is_primary": true,
               "project_url": "https://example.com/great_project",
               "string_key": "great_project"
             }
@@ -144,7 +144,7 @@ RSpec.describe 'Projects Requests', type: :request do
           expect(response.body).to be_json_eql(%({
             "project": {
               "display_label": "Best Project",
-              "is_primary": false,
+              "is_primary": true,
               "project_url": "https://best_project.com",
               "string_key": "best_project"
             }
