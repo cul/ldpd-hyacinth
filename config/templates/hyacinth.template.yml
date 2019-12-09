@@ -24,7 +24,7 @@ development:
     type: development
   external_identifier_adapter:
     type: memory
-  term_search_adapater:
+  term_search_adapter:
     type: solr
     url: http://localhost:8983/solr/terms-development
     commit_after_change: true
