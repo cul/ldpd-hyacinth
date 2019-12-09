@@ -25,7 +25,7 @@ module DigitalObjectConcerns
 
         # Resolve any identifiers to uids and add them to new_set_of_uids
         new_set_of_identifiers.each do |identifier|
-          uids = Hyacinth.config.search_adapter.identifier_to_uids(dod_parent_digital_object['identifier'], retry_with_delay: 5.seconds)
+          uids = Hyacinth::Config.digital_object_search_adapter.identifier_to_uids(dod_parent_digital_object['identifier'], retry_with_delay: 5.seconds)
           if uids.blank?
             raise Hyacinth::Exceptions::NotFound, "Could not find parent digital object using identifier: #{dod_parent_digital_object['identifier']}"
           elsif uids > 1

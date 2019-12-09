@@ -75,8 +75,8 @@ Lint/UnusedMethodArgument:
     - 'app/models/user.rb'
     - 'lib/hyacinth/adapters/lock_adapter/abstract.rb'
     - 'lib/hyacinth/adapters/preservation_adapter/abstract.rb'
-    - 'lib/hyacinth/adapters/search_adapter/abstract.rb'
-    - 'lib/hyacinth/adapters/search_adapter/solr.rb'
+    - 'lib/hyacinth/adapters/digital_object_search_adapter/abstract.rb'
+    - 'lib/hyacinth/adapters/digital_object_search_adapter/solr.rb'
     - 'lib/hyacinth/adapters/storage_adapter/abstract.rb'
     - 'lib/hyacinth/digital_object/resource.rb'
     - 'lib/hyacinth/digital_object/type_def/base.rb'
@@ -392,7 +392,7 @@ Style/EmptyMethod:
   Exclude:
     - 'lib/hyacinth/adapters/lock_adapter/abstract.rb'
     - 'lib/hyacinth/adapters/preservation_adapter/abstract.rb'
-    - 'lib/hyacinth/adapters/search_adapter/abstract.rb'
+    - 'lib/hyacinth/adapters/digital_object_search_adapter/abstract.rb'
     - 'lib/hyacinth/adapters/storage_adapter/abstract.rb'
     - 'spec/hyacinth/adapters/adapter_manager_behavior_spec.rb'
 
@@ -404,7 +404,7 @@ Style/GuardClause:
     - 'app/models/user.rb'
     - 'lib/hyacinth/adapters/lock_adapter/database_entry_lock.rb'
     - 'lib/hyacinth/adapters/preservation_adapter/fedora3.rb'
-    - 'lib/hyacinth/adapters/search_adapter/solr.rb'
+    - 'lib/hyacinth/adapters/digital_object_search_adapter/solr.rb'
     - 'lib/hyacinth/digital_object/resource.rb'
     - 'spec/support/hyacinth_test_cleanup.rb'
 

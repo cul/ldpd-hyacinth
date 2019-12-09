@@ -142,9 +142,9 @@ class Term < ApplicationRecord
 
     def update_solr # If this is unsuccessful the solr core will be out of sync
       if destroyed?
-        Hyacinth.config.term_search_adapter.delete(uid)
+        Hyacinth::Config.term_search_adapter.delete(uid)
       elsif persisted?
-        Hyacinth.config.term_search_adapter.add(to_solr)
+        Hyacinth::Config.term_search_adapter.add(to_solr)
       end
     end
 end

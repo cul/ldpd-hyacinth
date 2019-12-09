@@ -1,0 +1,49 @@
+# frozen_string_literal: true
+
+module Hyacinth
+  # Provides app-wide configuration information for Hyacinth and caches
+  # information in non-dev environments.
+  module Config
+    module_function
+
+    def digital_object_types
+      @digital_object_types ||= Hyacinth::DigitalObject::Types.new(
+        'item' => ::DigitalObject::Item,
+        'asset' => ::DigitalObject::Asset,
+        'site' => ::DigitalObject::Site
+      )
+    end
+
+    def self.metadata_storage
+      @metadata_storage ||= Hyacinth::Storage::MetadataStorage.new(HYACINTH[:metadata_storage])
+    end
+
+    def self.resource_storage
+      @resource_storage ||= Hyacinth::Storage::ResourceStorage.new(HYACINTH[:resource_storage])
+    end
+
+    def self.preservation_persistence
+      @preservation_persistence ||= Hyacinth::Preservation::PreservationPersistence.new(HYACINTH[:preservation_persistence])
+    end
+
+    def self.digital_object_search_adapter
+      @digital_object_search_adapter ||= Hyacinth::Adapters.create_from_config(HYACINTH[:digital_object_search_adapter])
+    end
+
+    def self.lock_adapter
+      @lock_adapter ||= Hyacinth::Adapters.create_from_config(HYACINTH[:lock_adapter])
+    end
+
+    def self.publication_adapter
+      @publication_adapter ||= Hyacinth::Adapters.create_from_config(HYACINTH[:publication_adapter])
+    end
+
+    def self.external_identifier_adapter
+      @external_identifier_adapter ||= Hyacinth::Adapters.create_from_config(HYACINTH[:external_identifier_adapter])
+    end
+
+    def self.term_search_adapter
+      @term_search_adapter ||= Hyacinth::Adapters.create_from_config(HYACINTH[:term_search_adapter])
+    end
+  end
+end

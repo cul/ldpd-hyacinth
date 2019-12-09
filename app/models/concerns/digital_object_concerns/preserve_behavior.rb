@@ -6,13 +6,13 @@ module DigitalObjectConcerns
 
     # Preserves this object to all environment-enabled preservation targets.
     def preserve
-      Hyacinth.config.lock_adapter.with_lock(self.uid) do
+      Hyacinth::Config.lock_adapter.with_lock(self.uid) do
         current_datetime = DateTime.current
         before_preserve_copy = self.deep_copy
         begin
           self.mint_reserved_doi_if_doi_blank
           update_preservation_timestamps(current_datetime)
-          preservation_result, errors = Hyacinth.config.preservation_persistence.preserve(self)
+          preservation_result, errors = Hyacinth::Config.preservation_persistence.preserve(self)
           unless preservation_result
             self.errors.add(:preservation, "An error occured during preservation. See error log for details.")
             Rails.logger.error("Failed to preserve #{self.uid} due to the following errors: #{errors.join(', ')}")

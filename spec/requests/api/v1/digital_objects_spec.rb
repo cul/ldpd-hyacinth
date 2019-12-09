@@ -7,22 +7,14 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
   let(:authorized_project) { authorized_object.projects.first }
   let(:authorized_publish_target) { authorized_project.publish_targets.first }
   let(:digital_object_matcher) { having_attributes(digital_object_record: authorized_object.digital_object_record) }
-  # Stub adapters to limit tests to API
-  let!(:configured_publication_adapter) { Hyacinth.config.publication_adapter }
-  let!(:configured_search_adapter) { Hyacinth.config.search_adapter }
-  let!(:configured_external_identifier_adapter) { Hyacinth.config.external_identifier_adapter }
   let(:publication_adapter) { Hyacinth::Adapters::PublicationAdapter::Abstract.new }
-  let(:search_adapter) { instance_double(Hyacinth::Adapters::SearchAdapter::Abstract) }
+  let(:digital_object_search_adapter) { instance_double(Hyacinth::Adapters::DigitalObjectSearchAdapter::Abstract) }
   let!(:external_identifier_adapter) { Hyacinth::Adapters::ExternalIdentifierAdapter::Memory.new }
   before do
-    Hyacinth.config.publication_adapter = publication_adapter
-    Hyacinth.config.search_adapter = search_adapter
-    Hyacinth.config.external_identifier_adapter = external_identifier_adapter
-  end
-  after do
-    Hyacinth.config.publication_adapter = configured_publication_adapter
-    Hyacinth.config.search_adapter = configured_search_adapter
-    Hyacinth.config.external_identifier_adapter = configured_external_identifier_adapter
+    # Stub adapters to limit tests to API
+    allow(Hyacinth::Config).to receive(:publication_adapter).and_return(publication_adapter)
+    allow(Hyacinth::Config).to receive(:digital_object_search_adapter).and_return(digital_object_search_adapter)
+    allow(Hyacinth::Config).to receive(:external_identifier_adapter).and_return(external_identifier_adapter)
   end
 
   describe 'GET /api/v1/digital_objects/:id' do
@@ -71,7 +63,7 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
     context "logged in" do
       before do
         sign_in_project_contributor to: :update_objects, project: authorized_project
-        allow(search_adapter).to receive(:index).with(digital_object_matcher).and_return([true, []])
+        allow(digital_object_search_adapter).to receive(:index).with(digital_object_matcher).and_return([true, []])
         patch "/api/v1/digital_objects/#{authorized_object.uid}", params: properties
       end
 
@@ -114,7 +106,7 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
     context "logged in" do
       before do
         sign_in_project_contributor to: :create_objects, project: authorized_project
-        allow(search_adapter).to receive(:index).with(instance_of(DigitalObject::TestSubclass)).and_return([true, []])
+        allow(digital_object_search_adapter).to receive(:index).with(instance_of(DigitalObject::TestSubclass)).and_return([true, []])
         post "/api/v1/digital_objects", params: properties
       end
 
@@ -147,7 +139,7 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
 
       it 'returns 204' do
         allow(publication_adapter).to receive(:unpublish_impl).with(authorized_publish_target, digital_object_matcher).and_return([true, []])
-        allow(search_adapter).to receive(:remove).with(digital_object_matcher).and_return([true, []])
+        allow(digital_object_search_adapter).to receive(:remove).with(digital_object_matcher).and_return([true, []])
         delete "/api/v1/digital_objects/#{authorized_object.uid}"
         expect(response.status).to be 204
         get "/api/v1/digital_objects/#{authorized_object.uid}"
@@ -155,12 +147,12 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
       end
       it 'unpublishes the object on delete' do
         expect(publication_adapter).to receive(:unpublish_impl).with(authorized_publish_target, digital_object_matcher).and_return([true, []])
-        expect(search_adapter).to receive(:remove).with(digital_object_matcher).and_return([true, []])
+        expect(digital_object_search_adapter).to receive(:remove).with(digital_object_matcher).and_return([true, []])
         delete "/api/v1/digital_objects/#{authorized_object.uid}"
       end
       it "return blank response entity" do
         allow(publication_adapter).to receive(:unpublish_impl).with(authorized_publish_target, digital_object_matcher).and_return([true, []])
-        allow(search_adapter).to receive(:remove).with(digital_object_matcher).and_return([true, []])
+        allow(digital_object_search_adapter).to receive(:remove).with(digital_object_matcher).and_return([true, []])
         delete "/api/v1/digital_objects/#{authorized_object.uid}"
         expect(response.body).to be_blank
       end
@@ -176,8 +168,8 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
 
     context "logged in" do
       before do
-        Hyacinth.config.publication_adapter = publication_adapter
-        Hyacinth.config.search_adapter = search_adapter
+        allow(Hyacinth::Config).to receive(:publication_adapter).and_return(publication_adapter)
+        allow(Hyacinth::Config).to receive(:digital_object_search_adapter).and_return(digital_object_search_adapter)
         sign_in_project_contributor to: [:publish_objects, :read_objects], project: authorized_project
         allow(publication_adapter).to receive(:publish).and_call_original
         allow(publication_adapter).to receive(:update_doi).and_call_original

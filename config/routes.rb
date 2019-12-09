@@ -36,7 +36,7 @@ Rails.application.routes.draw do
         resources :field_sets,                          except: [:new, :edit], module: 'projects'
         resources :enabled_dynamic_fields,
                   only: [:show, :update], module: 'projects',
-                  param: :digital_object_type, constraints: { digital_object_type: /(#{Hyacinth.config.digital_object_types.keys.join('|')})/ }
+                  param: :digital_object_type, constraints: { digital_object_type: /(#{Hyacinth::Config.digital_object_types.keys.join('|')})/ }
       end
 
       resources :dynamic_field_categories, except: [:new, :edit]

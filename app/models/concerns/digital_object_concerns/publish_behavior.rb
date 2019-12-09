@@ -10,7 +10,7 @@ module DigitalObjectConcerns
     #             :user [User] User who is performing the publish operation.
     def publish(opts = {})
       current_publish_entries = {}
-      Hyacinth.config.lock_adapter.with_lock(self.uid) do |lock_object|
+      Hyacinth::Config.lock_adapter.with_lock(self.uid) do |lock_object|
         current_publish_entries = publish_entries.dup
         before_publish_copy = self.deep_copy
         # use one DateTime to avoid multiple clock checks
@@ -68,7 +68,7 @@ module DigitalObjectConcerns
     end
 
     def publish_to(publish_target, current_publish_entries, opts = {})
-      publication_adapter = Hyacinth.config.publication_adapter
+      publication_adapter = Hyacinth::Config.publication_adapter
       publish_result, messages = publication_adapter.publish(publish_target, self, opts[:update_doi_url])
       if publish_result
         # Remove publish_to and add publish entry
@@ -86,7 +86,7 @@ module DigitalObjectConcerns
     end
 
     def unpublish_from(publish_target, current_publish_entries, opts = {})
-      publication_adapter = Hyacinth.config.publication_adapter
+      publication_adapter = Hyacinth::Config.publication_adapter
       unpublish_result, errors = publication_adapter.unpublish(publish_target, self, opts[:update_doi_url])
       if unpublish_result
         # Remove unpublish_from and publish entry

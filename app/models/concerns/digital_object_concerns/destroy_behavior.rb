@@ -30,7 +30,7 @@ module DigitalObjectConcerns
       # Always lock during delete unless opts[:lock] explicitly tells us not to.
       # In the line below, self.uid will be nil for new objects and this lock
       # line will simply yield without locking on anything, which is fine.
-      Hyacinth.config.lock_adapter.with_lock(opts.fetch(:lock, true) ? self.uid : nil) do |_lock_object|
+      Hyacinth::Config.lock_adapter.with_lock(opts.fetch(:lock, true) ? self.uid : nil) do |_lock_object|
         @parent_uids_to_remove.merge(parent_uids)
         @parent_uids_to_add.clear
         self.handle_parent_changes do
@@ -49,12 +49,12 @@ module DigitalObjectConcerns
         end
       end
 
-      Hyacinth.config.search_adapter.remove(self) if opts[:update_index] == true
+      Hyacinth::Config.digital_object_search_adapter.remove(self) if opts[:update_index] == true
       self.errors.blank?
     end
 
     def remove_from_metadata_storage
-      Hyacinth.config.metadata_storage.delete(self.digital_object_record.metadata_location_uri)
+      Hyacinth::Config.metadata_storage.delete(self.digital_object_record.metadata_location_uri)
     end
   end
 end

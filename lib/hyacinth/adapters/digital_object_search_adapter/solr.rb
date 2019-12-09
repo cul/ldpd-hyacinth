@@ -2,7 +2,7 @@
 
 module Hyacinth
   module Adapters
-    module SearchAdapter
+    module DigitalObjectSearchAdapter
       class Solr < Abstract
         def initialize(adapter_config = {})
           super(adapter_config)
