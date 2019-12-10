@@ -62,9 +62,9 @@ module Hyacinth
         else
           # Non-tracking import operations require a file copy
           resource.with_import_file do |input_file|
-            save_location = Hyacinth.config.resource_storage.generate_new_location_uri(uid, resource_name)
+            save_location = Hyacinth::Config.resource_storage.generate_new_location_uri(uid, resource_name)
 
-            Hyacinth.config.resource_storage.write(save_location) do |output_file|
+            Hyacinth::Config.resource_storage.write(save_location) do |output_file|
               # TODO: Do import
             end
             @import_succeeded = true

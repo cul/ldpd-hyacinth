@@ -45,7 +45,7 @@ module DigitalObjectConcerns
       # Always lock during save unless opts[:lock] explicitly tells us not to.
       # In the line below, self.uid will be nil for new objects and this lock
       # line will simply yield without locking on anything, which is fine.
-      Hyacinth.config.lock_adapter.with_lock(opts.fetch(:lock, true) ? self.uid : nil) do |lock_object|
+      Hyacinth::Config.lock_adapter.with_lock(opts.fetch(:lock, true) ? self.uid : nil) do |lock_object|
         # Run certain validations that must happen within the save lock
         run_save_lock_validations(opts[:allow_structured_child_addition_or_removal])
         return false if self.errors.present?
@@ -65,10 +65,10 @@ module DigitalObjectConcerns
 
               # If everything worked, write to metadata storage
               self.write_to_metadata_storage
-              Hyacinth.config.external_identifier_adapter.update(self.doi, self, nil)
+              Hyacinth::Config.external_identifier_adapter.update(self.doi, self, nil)
             end
           end
-          Hyacinth.config.search_adapter.index(self) if opts[:update_index] == true
+          Hyacinth::Config.digital_object_search_adapter.index(self) if opts[:update_index] == true
         rescue StandardError => e
           # Save a copy of the metadata_location_uri in case this was a new record,
           # since we'll need to delete the metadata
@@ -81,7 +81,7 @@ module DigitalObjectConcerns
 
           if new_record?
             # Delete any written data because we're reverting this entire record.
-            Hyacinth.config.metadata_storage.delete(metadata_location_uri_backup)
+            Hyacinth::Config.metadata_storage.delete(metadata_location_uri_backup)
           else
             # Re-write reverted data to metadata storage
             self.write_to_metadata_storage
@@ -97,7 +97,7 @@ module DigitalObjectConcerns
     end
 
     def write_to_metadata_storage
-      Hyacinth.config.metadata_storage.write(self.digital_object_record.metadata_location_uri, JSON.generate(self.to_serialized_form))
+      Hyacinth::Config.metadata_storage.write(self.digital_object_record.metadata_location_uri, JSON.generate(self.to_serialized_form))
     end
 
     def update_modification_info(current_datetime, user = nil)
@@ -130,7 +130,7 @@ module DigitalObjectConcerns
       end
 
       # Establish a lock on any added or removed parent objects because we'll be modifying their structured child lists.
-      Hyacinth.config.lock_adapter.with_multilock(@parent_uids_to_add + @parent_uids_to_remove) do |_parent_lock_objects|
+      Hyacinth::Config.lock_adapter.with_multilock(@parent_uids_to_add + @parent_uids_to_remove) do |_parent_lock_objects|
         previous_states_for_updated_parents = []
 
         @parent_uids_to_add.each do |parent_uid|

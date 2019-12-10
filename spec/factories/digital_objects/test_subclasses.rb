@@ -11,7 +11,7 @@ FactoryBot.define do
   end
 
   # Add ability to resolve digital object type to class
-  Hyacinth.config.digital_object_types.register('test_subclass', DigitalObject::TestSubclass)
+  Hyacinth::Config.digital_object_types.register('test_subclass', DigitalObject::TestSubclass)
 
   factory :digital_object_test_subclass, class: DigitalObject::TestSubclass do
     trait :with_sample_data do

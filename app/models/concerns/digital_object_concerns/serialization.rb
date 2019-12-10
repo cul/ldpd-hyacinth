@@ -32,7 +32,7 @@ module DigitalObjectConcerns
     module ClassMethods
       def from_serialized_form(digital_object_record, json_var)
         reject_unhandled_serialization_version!(json_var['serialization_version'])
-        digital_object = Hyacinth.config.digital_object_types.key_to_class(json_var['digital_object_type']).new
+        digital_object = Hyacinth::Config.digital_object_types.key_to_class(json_var['digital_object_type']).new
         # set metadata_attributes
         digital_object.metadata_attributes.map do |metadata_attribute_name, type_def|
           digital_object.send(

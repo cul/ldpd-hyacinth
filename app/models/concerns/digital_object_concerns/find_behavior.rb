@@ -18,7 +18,7 @@ module DigitalObjectConcerns::FindBehavior
       # notified if another person saved and made our object instance stale.
       digital_object_record = DigitalObjectRecord.find_by(uid: uid)
       raise Hyacinth::Exceptions::NotFound, "Could not find DigtalObject with uid: #{uid}" if digital_object_record.nil?
-      json_var = JSON.parse(Hyacinth.config.metadata_storage.read(digital_object_record.metadata_location_uri))
+      json_var = JSON.parse(Hyacinth::Config.metadata_storage.read(digital_object_record.metadata_location_uri))
       from_serialized_form(digital_object_record, json_var)
     end
   end

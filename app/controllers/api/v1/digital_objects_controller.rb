@@ -26,7 +26,7 @@ module Api
       # POST /digital_objects.json
       def create
         digital_object_data = create_or_update_params
-        @digital_object = Hyacinth.config.digital_object_types.key_to_class(digital_object_data['digital_object_type']).new
+        @digital_object = Hyacinth::Config.digital_object_types.key_to_class(digital_object_data['digital_object_type']).new
         @digital_object.set_digital_object_data(digital_object_data, true)
 
         @digital_object.projects.each do |project|

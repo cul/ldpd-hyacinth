@@ -6,7 +6,7 @@ module Hyacinth
       attr_reader :preservation_adapters
       def initialize(config)
         raise 'Missing config option: adapters' if config[:adapters].blank?
-        @preservation_adapters = config[:adapters].map { |adapter_config| Hyacinth::Adapters::PreservationAdapterManager.create(adapter_config) }
+        @preservation_adapters = config[:adapters].map { |adapter_config| Hyacinth::Adapters.create_from_config('Hyacinth::Adapters::PreservationAdapter', adapter_config) }
       end
 
       # Iterates through all @adapters and persists the given digital_object to each one.

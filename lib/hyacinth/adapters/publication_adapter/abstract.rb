@@ -55,13 +55,13 @@ module Hyacinth
         # Update the DOI's published metadata
         # TODO: Remove this in favor of adapter/service?
         def update_doi(digital_object, location)
-          Hyacinth.config.external_identifier_adapter.update(digital_object.doi, digital_object, location)
+          Hyacinth::Config.external_identifier_adapter.update(digital_object.doi, digital_object, location)
         end
 
         # Mark the DOI as inactive
         # TODO: Remove this in favor of adapter/service?
         def tombstone_doi(digital_object)
-          Hyacinth.config.external_identifier_adapter.tombstone(digital_object.doi)
+          Hyacinth::Config.external_identifier_adapter.tombstone(digital_object.doi)
         end
       end
     end

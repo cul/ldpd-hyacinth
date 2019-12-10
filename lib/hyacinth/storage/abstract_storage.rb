@@ -6,7 +6,7 @@ module Hyacinth
       def initialize(config)
         raise 'Missing config option: adapters' if config[:adapters].blank?
         @storage_adapters = config[:adapters].map do |adapter_config|
-          Hyacinth::Adapters::StorageAdapterManager.create(adapter_config)
+          Hyacinth::Adapters.create_from_config('Hyacinth::Adapters::StorageAdapter', adapter_config)
         end
       end
 
@@ -16,13 +16,13 @@ module Hyacinth
       end
 
       def read(location)
-        Hyacinth.config.lock_adapter.with_lock(location) do
+        Hyacinth::Config.lock_adapter.with_lock(location) do
           storage_adapter_for_location(location).read(location)
         end
       end
 
       def write(location, content)
-        Hyacinth.config.lock_adapter.with_lock(location) do
+        Hyacinth::Config.lock_adapter.with_lock(location) do
           storage_adapter_for_location(location).write(location, content)
         end
       end
@@ -32,7 +32,7 @@ module Hyacinth
       end
 
       def delete(location)
-        Hyacinth.config.lock_adapter.with_lock(location) do
+        Hyacinth::Config.lock_adapter.with_lock(location) do
           storage_adapter_for_location(location).delete(location)
         end
       end

@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe Term, type: :model do
-  let(:term_solr_doc) { Hyacinth.config.term_search_adapter.find(term.vocabulary.string_key, term.uri) }
+RSpec.describe Term, type: :model, solr: true do
+  let(:term_solr_doc) { Hyacinth::Config.term_search_adapter.find(term.vocabulary.string_key, term.uri) }
 
   describe 'when creating a external term' do
     let(:term) { FactoryBot.create(:external_term) }
@@ -327,7 +327,7 @@ RSpec.describe Term, type: :model do
     it 'deletes solr document' do
       expect(term_solr_doc).not_to be nil
       term.destroy
-      expect(Hyacinth.config.term_search_adapter.find(term.vocabulary.string_key, term.uri)).to be nil
+      expect(Hyacinth::Config.term_search_adapter.find(term.vocabulary.string_key, term.uri)).to be nil
     end
   end
 end

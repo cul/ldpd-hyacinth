@@ -67,7 +67,7 @@ module DigitalObject
     # Creates a new DigitalObject with default values for all fields
     def initialize
       raise NotImplementedError, 'Cannot instantiate DigitalObject::Base. Instantiate a subclass instead.' if self.class == DigitalObject::Base
-      self.digital_object_type = Hyacinth.config.digital_object_types.class_to_key(self.class)
+      self.digital_object_type = Hyacinth::Config.digital_object_types.class_to_key(self.class)
       @digital_object_record = DigitalObjectRecord.new
       @parent_uids_to_add = Set.new
       @parent_uids_to_remove = Set.new

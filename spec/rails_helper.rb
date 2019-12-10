@@ -71,7 +71,7 @@ RSpec.configure do |config|
   config.include AuthenticatedRequests, type: :request
   config.include HyacinthTestCleanup
 
-  config.before :each do
-    clear_search_index
+  config.before(:each, solr: true) do
+    solr_cleanup
   end
 end
