@@ -27,23 +27,23 @@ module Hyacinth
     end
 
     def self.digital_object_search_adapter
-      @digital_object_search_adapter ||= Hyacinth::Adapters.create_from_config(HYACINTH[:digital_object_search_adapter])
+      @digital_object_search_adapter ||= Hyacinth::Adapters.create_from_config('Hyacinth::Adapters::DigitalObjectSearchAdapter', HYACINTH[:digital_object_search_adapter])
     end
 
     def self.lock_adapter
-      @lock_adapter ||= Hyacinth::Adapters.create_from_config(HYACINTH[:lock_adapter])
+      @lock_adapter ||= Hyacinth::Adapters.create_from_config('Hyacinth::Adapters::LockAdapter', HYACINTH[:lock_adapter])
     end
 
     def self.publication_adapter
-      @publication_adapter ||= Hyacinth::Adapters.create_from_config(HYACINTH[:publication_adapter])
+      @publication_adapter ||= Hyacinth::Adapters.create_from_config('Hyacinth::Adapters::PublicationAdapter', HYACINTH[:publication_adapter])
     end
 
     def self.external_identifier_adapter
-      @external_identifier_adapter ||= Hyacinth::Adapters.create_from_config(HYACINTH[:external_identifier_adapter])
+      @external_identifier_adapter ||= Hyacinth::Adapters.create_from_config('Hyacinth::Adapters::ExternalIdentifierAdapter', HYACINTH[:external_identifier_adapter])
     end
 
     def self.term_search_adapter
-      @term_search_adapter ||= Hyacinth::Adapters.create_from_config(HYACINTH[:term_search_adapter])
+      @term_search_adapter ||= Hyacinth::Adapters.create_from_config('Hyacinth::Adapters::TermSearchAdapter', HYACINTH[:term_search_adapter])
     end
   end
 end

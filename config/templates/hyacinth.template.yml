@@ -2,30 +2,30 @@ development:
   local_uri_prefix: localhost:3000 # prefix to use when minting local URIs
   metadata_storage:
     adapters:
-      - type: Hyacinth::Adapters::StorageAdapter::Disk
+      - type: Disk
         default_path: <%= Rails.root.join('tmp', 'development', 'metadata') %>
   resource_storage:
     adapters:
-      - type: Hyacinth::Adapters::StorageAdapter::Disk
+      - type: Disk
         default_path: <%= Rails.root.join('tmp', 'development', 'resources') %>
   lock_adapter:
-    type: Hyacinth::Adapters::LockAdapter::DatabaseEntryLock
+    type: DatabaseEntryLock
     lock_timeout: <%= 1.minute %>
   digital_object_search_adapter:
-    type: Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr
+    type: Solr
     url: http://localhost:8983/hyacinth_development
   preservation_persistence:
     adapters:
-      - type: Hyacinth::Adapters::PreservationAdapter::Fedora3
+      - type: Fedora3
         url: http://localhost:8080/fedora
         user: fedoraAdmin
         password: fedoraAdmin
   publication_adapter:
-    type: Hyacinth::Adapters::PublicationAdapter::Development
+    type: Development
   external_identifier_adapter:
-    type: Hyacinth::Adapters::ExternalIdentifierAdapter::Memory
+    type: Memory
   term_search_adapater:
-    type: Hyacinth::Adapters::TermSearchAdapter::Solr
+    type: Solr
     url: http://localhost:8983/solr/terms-development
     commit_after_change: true
 
@@ -33,29 +33,29 @@ test:
   local_uri_prefix: https://example.com
   metadata_storage:
     adapters:
-      - type: Hyacinth::Adapters::StorageAdapter::Disk
+      - type: Disk
         default_path: <%= Rails.root.join('tmp', 'test', 'metadata') %>
   resource_storage:
     adapters:
-      - type: Hyacinth::Adapters::StorageAdapter::Disk
+      - type: Disk
         default_path: <%= Rails.root.join('tmp', 'test', 'resources') %>
   lock_adapter:
-    type: Hyacinth::Adapters::LockAdapter::DatabaseEntryLock
+    type: DatabaseEntryLock
     lock_timeout: <%= 30.seconds %>
   digital_object_search_adapter:
-    type: Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr
+    type: Solr
     url: http://localhost:9983/hyacinth_test
   preservation_persistence:
     adapters:
-      - type: Hyacinth::Adapters::PreservationAdapter::Fedora3
+      - type: Fedora3
         url: http://localhost:9080/fedora
         user: fedoraAdmin
         password: fedoraAdmin
   publication_adapter:
-    type: Hyacinth::Adapters::PublicationAdapter::Hyacinth2
+    type: Hyacinth2
   external_identifier_adapter:
-    type: Hyacinth::Adapters::ExternalIdentifierAdapter::Memory
+    type: Memory
   term_search_adapter:
-    type: Hyacinth::Adapters::TermSearchAdapter::Solr
+    type: Solr
     url: http://localhost:9983/solr/terms-test
     commit_after_change: true

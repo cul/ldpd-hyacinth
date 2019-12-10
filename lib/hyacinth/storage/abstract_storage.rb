@@ -6,7 +6,7 @@ module Hyacinth
       def initialize(config)
         raise 'Missing config option: adapters' if config[:adapters].blank?
         @storage_adapters = config[:adapters].map do |adapter_config|
-          Hyacinth::Adapters.create_from_config(adapter_config)
+          Hyacinth::Adapters.create_from_config('Hyacinth::Adapters::StorageAdapter', adapter_config)
         end
       end
 
