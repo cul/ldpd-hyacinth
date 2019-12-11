@@ -9,7 +9,7 @@ import SelectInput from '../ui/forms/inputs/SelectInput';
 import Label from '../ui/forms/Label';
 import InputGroup from '../ui/forms/InputGroup';
 
-import hyacinthApi from '../../util/hyacinth_api';
+import hyacinthApi, { projects } from '../../util/hyacinth_api';
 import ability from '../../util/ability';
 
 const allParentDigitalObjectTypes = [
@@ -35,7 +35,7 @@ class DigitalObjectNew extends React.Component {
 
   componentDidMount() {
     // Get all projects that a user has 'create_objects' privileges for.
-    hyacinthApi.get('/projects/')
+    projects.search('can_create=true')
       .then((res) => {
         this.setState(produce((draft) => {
           draft.projectOptions = res.data.projects.filter(({ stringKey }) => (

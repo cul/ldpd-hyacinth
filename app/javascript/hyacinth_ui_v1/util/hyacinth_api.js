@@ -13,6 +13,7 @@ export const dynamicFieldCategories = {
 };
 
 export const projects = {
+  search: query => instance.get(`/projects?${query}`),
   all: () => instance.get('/projects'),
   get: stringKey => instance.get(`/projects/${stringKey}`),
   create: '',
