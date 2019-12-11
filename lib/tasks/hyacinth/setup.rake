@@ -42,11 +42,12 @@ namespace :hyacinth do
 
     desc "Add Descriptive Metadata category and Title dynamic fields"
     task seed_dynamic_field_entries: :environment do
-      user = User.find_by(email: default_user_accounts[0][:email]);
-      if !user
+      user = User.find_by(email: default_user_accounts[0][:email])
+      unless user
         puts Rainbow("seed_dynamic_field_entries requires default Admin user. Run default_users task first").red.bright
         next
       end
+
       df_category = DynamicFieldCategory.find_by(display_label: "Descriptive Metadata")
       if df_category
         puts Rainbow("dynamic field category 'Descriptive Metadata' already exists (skipping).").blue.bright
@@ -65,11 +66,10 @@ namespace :hyacinth do
           display_label: 'Title',
           created_by: user,
           updated_by: user,
-          parent_type: "DynamicFieldCategory",
+          parent_type: "DynamicFieldCategory"
         )
         puts Rainbow("Created dynamic field group 'Title'").green
       end
-
 
       default_dynamic_fields = [
         {
@@ -82,7 +82,7 @@ namespace :hyacinth do
           filter_label: '',
           controlled_vocabulary: '',
           select_options: '{}',
-          additional_data_json: '{}'          
+          additional_data_json: '{}'
         },
         {
           display_label: 'Non-Sort Portion',
@@ -94,7 +94,7 @@ namespace :hyacinth do
           filter_label: '',
           controlled_vocabulary: '',
           select_options: '{}',
-          additional_data_json: '{}'          
+          additional_data_json: '{}'
         }
       ]
 
@@ -107,7 +107,6 @@ namespace :hyacinth do
         end
       end
     end
-
   end
 
   def default_user_accounts
