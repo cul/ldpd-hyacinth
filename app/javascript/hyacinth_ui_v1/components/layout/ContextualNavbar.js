@@ -8,8 +8,8 @@ class ContextualNavbar extends React.PureComponent {
     const { title, rightHandLinks, children } = this.props;
 
     return (
-      <Navbar variant="dark" bg="dark" expand="lg" className="py-2 px-3 my-2 rounded contextual-navbar">
-        { title && <Navbar.Brand style={{ fontSize: '1.4rem' }}>{title}</Navbar.Brand> }
+      <Navbar variant="dark" bg="dark" expand="lg" className="px-3 py-0 mt-2 mb-3 rounded contextual-navbar">
+        { title && <Navbar.Brand>{title}</Navbar.Brand> }
         <Nav className="ml-auto">
           {children}
           {
