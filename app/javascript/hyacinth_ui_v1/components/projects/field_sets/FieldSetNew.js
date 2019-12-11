@@ -4,7 +4,7 @@ import { useQuery } from '@apollo/react-hooks';
 
 import TabHeading from '../../ui/tabs/TabHeading';
 import FieldSetForm from './FieldSetForm';
-import { getProject } from '../../../util/graphql';
+import { getProjectQuery } from '../../../graphql/projects';
 import ProjectInterface from '../ProjectInterface';
 import GraphQLErrors from '../../ui/GraphQLErrors';
 
@@ -12,7 +12,7 @@ function FieldSetNew() {
   const { projectStringKey } = useParams();
 
   const { loading, error, data } = useQuery(
-    getProject,
+    getProjectQuery,
     { variables: { stringKey: projectStringKey } },
   );
 

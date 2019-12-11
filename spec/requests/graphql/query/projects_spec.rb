@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Retrieving Projects', type: :request do
   include_examples 'requires user to have correct permissions for graphql request' do
-    let(:request) { graphql query }
+    let(:request) { graphql projects_query }
   end
 
   context 'when logged in user is an admin shows all projects' do
@@ -13,7 +13,7 @@ RSpec.describe 'Retrieving Projects', type: :request do
         sign_in_user as: :administrator
         FactoryBot.create(:project)
         FactoryBot.create(:project, :legend_of_lincoln)
-        graphql query
+        graphql projects_query
       end
 
       it 'returns all projects' do
@@ -22,11 +22,13 @@ RSpec.describe 'Retrieving Projects', type: :request do
             "projects": [
               {
                 "displayLabel": "Great Project",
+                "isPrimary": true,
                 "projectUrl": "https://example.com/great_project",
                 "stringKey": "great_project"
               },
               {
                 "displayLabel": "Legend of Lincoln",
+                "isPrimary": true,
                 "projectUrl": "https://example.com/legend_of_lincoln",
                 "stringKey": "legend_of_lincoln"
               }
@@ -42,7 +44,7 @@ RSpec.describe 'Retrieving Projects', type: :request do
       project = FactoryBot.create(:project)
       FactoryBot.create(:project, :legend_of_lincoln)
       sign_in_project_contributor to: :read_objects, project: project
-      graphql query
+      graphql projects_query
     end
 
     it 'returns 1 project' do
@@ -51,6 +53,7 @@ RSpec.describe 'Retrieving Projects', type: :request do
           "projects": [
             {
               "displayLabel": "Great Project",
+              "isPrimary": true,
               "projectUrl": "https://example.com/great_project",
               "stringKey": "great_project"
             }
@@ -58,17 +61,5 @@ RSpec.describe 'Retrieving Projects', type: :request do
         }
       )).at_path('data')
     end
-  end
-
-  def query
-    <<~GQL
-      query {
-        projects {
-          stringKey
-          displayLabel
-          projectUrl
-        }
-      }
-    GQL
   end
 end

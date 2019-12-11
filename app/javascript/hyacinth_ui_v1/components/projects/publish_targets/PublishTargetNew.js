@@ -5,13 +5,13 @@ import { useQuery } from '@apollo/react-hooks';
 import TabHeading from '../../ui/tabs/TabHeading';
 import PublishTargetForm from './PublishTargetForm';
 import ProjectInterface from '../ProjectInterface';
-import { getProject } from '../../../util/graphql';
+import { getProjectQuery } from '../../../graphql/projects';
 import GraphQLErrors from '../../ui/GraphQLErrors';
 
 function PublishTargetNew() {
   const { projectStringKey } = useParams();
   const { loading, error, data } = useQuery(
-    getProject,
+    getProjectQuery,
     { variables: { stringKey: projectStringKey } },
   );
 
