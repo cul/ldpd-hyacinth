@@ -75,8 +75,9 @@ class SystemData extends React.Component {
           <Col as="dd" lg={10} sm={8}>{firstPublishedAt || '-- Assigned After Publish --'}</Col>
         </Row>
         <hr />
-        <h4>Project</h4>
-        <Form>
+        <h4>Primary Project</h4>
+        <p>TODO</p>
+        {/* <Form>
           {
             projects.length > 0 && (
               <SelectInput
@@ -86,9 +87,9 @@ class SystemData extends React.Component {
               />
             )
           }
-        </Form>
+        </Form> */}
         <hr />
-        <h4>Aggregator Projects</h4>
+        <h4>Other Projects</h4>
         <p>TODO</p>
         <hr />
         <h4>Delete Dightal Object?</h4>
