@@ -10,7 +10,9 @@ module Api
       # GET /digital_objects/search
       # GET /digital_objects/search.json
       def search
-        @digital_objects = DigitalObjectRecord.all
+        @digital_objects = DigitalObjectRecord.all.map do |dor|
+          DigitalObject::Base.find(dor.uid).as_json(except: ['digital_object_record'])
+        end
         render json: {
           digital_objects: @digital_objects
         }
@@ -102,7 +104,7 @@ module Api
       end
 
       private
-      
+
         def create_or_update_params
           # TODO: decide how we want to validate dynamic field data parameters
           params[:digital_object]&.permit!.to_h
