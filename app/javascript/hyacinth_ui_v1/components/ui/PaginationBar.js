@@ -5,11 +5,11 @@ import { Pagination } from 'react-bootstrap';
 class PaginationBar extends React.PureComponent {
   render() {
     const {
-      currentPage, totalItems, perPage, onPageNumberClick,
+      totalItems, onPageNumberClick, limit, offset
     } = this.props;
 
-    const page = Number(currentPage);
-    const totalPages = Math.max(1, Math.ceil(Number(totalItems) / Number(perPage)));
+    const page = (Number(offset) / Number(limit)) + 1;
+    const totalPages = Math.max(1, Math.ceil(Number(totalItems) / Number(limit)));
     const pageNumbers = [];
 
     for (let i = 2; i > 0; i--) {
@@ -67,9 +67,9 @@ class PaginationBar extends React.PureComponent {
 }
 
 PaginationBar.propTypes = {
-  currentPage: PropTypes.number.isRequired,
+  offset: PropTypes.number.isRequired,
   totalItems: PropTypes.number.isRequired,
-  perPage: PropTypes.number.isRequired,
+  limit: PropTypes.number.isRequired,
   onPageNumberClick: PropTypes.func.isRequired,
 };
 

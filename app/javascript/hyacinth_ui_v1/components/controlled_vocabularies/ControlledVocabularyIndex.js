@@ -7,13 +7,13 @@ import ContextualNavbar from '../layout/ContextualNavbar';
 import { vocabularies } from '../../util/hyacinth_api';
 import PaginationBar from '../ui/PaginationBar';
 
-const perPage = 20;
+const limit = 20;
 
 export default class ControlledVocabularyIndex extends React.Component {
   state = {
     controlledVocabularies: [],
     totalRecords: '',
-    page: 1,
+    offset: 0,
   }
 
   componentDidMount() {
@@ -25,17 +25,17 @@ export default class ControlledVocabularyIndex extends React.Component {
   }
 
   vocabulariesFetch = (page) => {
-    vocabularies.all(`page=${page}&per_page=${perPage}`).then((res) => {
+    vocabularies.all(`offset=${limit * (page - 1)}&limit=${limit}`).then((res) => {
       this.setState(produce((draft) => {
         draft.controlledVocabularies = res.data.vocabularies;
         draft.totalRecords = res.data.totalRecords;
-        draft.page = res.data.page;
+        draft.offset = res.data.offset;
       }));
     });
   }
 
   render() {
-    const { controlledVocabularies, totalRecords, page } = this.state;
+    const { controlledVocabularies, totalRecords, offset } = this.state;
 
     return (
       <>
@@ -72,8 +72,8 @@ export default class ControlledVocabularyIndex extends React.Component {
         </Table>
 
         <PaginationBar
-          currentPage={page}
-          perPage={perPage}
+          offset={offset}
+          limit={limit}
           totalItems={totalRecords}
           onPageNumberClick={this.onPageNumberClick}
         />

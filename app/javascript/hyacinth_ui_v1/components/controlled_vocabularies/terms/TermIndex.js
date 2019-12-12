@@ -13,12 +13,12 @@ import SearchButton from '../../ui/buttons/SearchButton';
 import PaginationBar from '../../ui/PaginationBar';
 import SelectInput from '../../ui/forms/inputs/SelectInput';
 
-const perPage = '10';
+const limit = 10;
 const defaultFilters = ['authority', 'uri', 'pref_label', 'alt_labels', 'term_type'];
 
 class TermIndex extends React.Component {
   state = {
-    page: '1',
+    offset: 0,
     search: '',
     filters: [],
     terms: [],
@@ -27,9 +27,9 @@ class TermIndex extends React.Component {
 
   componentDidMount() {
     const { match: { params: { stringKey } } } = this.props;
-    const { page, search } = this.state;
+    const { offset, search } = this.state;
 
-    this.termSearch(page, search);
+    this.termSearch(offset, search);
   }
 
   onChange = (name, value) => {
@@ -53,16 +53,17 @@ class TermIndex extends React.Component {
 
     // TODO: Do not search if search term is under three characters AND there are no filters.
 
-    this.termSearch(1, search);
+    this.termSearch(0, search);
   }
 
-  termSearch = (page, search) => {
+  termSearch = (offset, search) => {
     const { match: { params: { stringKey } } } = this.props;
 
-    vocabulary(stringKey).terms().search(`per_page=${perPage}&page=${page}&q=${search}`)
+    vocabulary(stringKey).terms().search(`limit=${limit}&offset=${offset}&q=${search}`)
       .then((res) => {
+        console.log(res)
         this.setState(produce((draft) => {
-          draft.page = page;
+          draft.offset = offset;
           draft.search = search;
           draft.terms = res.data.terms;
           draft.totalRecords = res.data.totalRecords;
@@ -72,12 +73,12 @@ class TermIndex extends React.Component {
 
   onPageNumberClick = (newPage) => {
     const { search } = this.state;
-    this.termSearch(newPage, search)
+    this.termSearch(limit * (newPage - 1), search)
   }
 
   render() {
     const { match: { params: { stringKey } } } = this.props;
-    const { terms, search, filters, page, totalRecords } = this.state;
+    const { terms, search, filters, offset, totalRecords } = this.state;
 
     return (
       <>
@@ -100,7 +101,7 @@ class TermIndex extends React.Component {
                       sm={4}
                       className="pr-1"
                       value={filter[0]}
-                      options={defaultFilters.map(f => ({ value: f, label: f}))}
+                      options={defaultFilters.map(f => ({ value: f, label: f }))}
                     />
                     <TextInput
                       sm={8}
@@ -155,8 +156,8 @@ class TermIndex extends React.Component {
         </Table>
 
         <PaginationBar
-          perPage={perPage}
-          currentPage={page}
+          limit={limit}
+          offset={offset}
           totalItems={totalRecords}
           onPageNumberClick={this.onPageNumberClick}
         />
