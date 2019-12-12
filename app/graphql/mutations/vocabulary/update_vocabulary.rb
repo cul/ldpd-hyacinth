@@ -1,17 +1,19 @@
+# frozen_string_literal: true
+
 class Mutations::Vocabulary::UpdateVocabulary < Mutations::BaseMutation
   argument :string_key, ID, required: true
-  argument :label, String, required: true
+  argument :label, String, required: false
   argument :locked, Boolean, required: false
 
   field :vocabulary, Types::VocabularyType, null: true
 
-  def resolve(**attributes)
-    ability.authorize! :update, :vocabulary
+  def resolve(string_key:, **attributes)
+    vocabulary = Vocabulary.find_by!(string_key: string_key)
 
-    response = URIService.connection.update_vocabulary(attributes)
+    ability.authorize! :update, vocabulary
 
-    raise(GraphQL::ExecutionError, response.data['errors'].map { |e| e['title'] }.join('; ')) if response.errors?
+    vocabulary.update!(**attributes)
 
-    { vocabulary: response.data.vocabulary }
+    { vocabulary: vocabulary }
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class FilterAttributes < Types::BaseInputObject
     description 'A field/value pair that can be used to filter results'

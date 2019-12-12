@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class CustomFieldDefinitionType < Types::BaseObject
     description 'A custom field definition'

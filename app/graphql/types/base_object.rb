@@ -2,8 +2,8 @@
 
 module Types
   class BaseObject < GraphQL::Schema::Object
-
     private
+
       def ability
         context[:ability]
       end

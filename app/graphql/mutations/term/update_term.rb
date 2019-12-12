@@ -1,22 +1,30 @@
-class Mutations::Term::UpdateTerm < Mutations::BaseMutation
+# frozen_string_literal: true
+
+class Mutations::Term::UpdateTerm < Mutations::Term::BaseMutation
   argument :vocabulary_string_key, ID, required: true
   argument :uri, String, required: true
   argument :pref_label, String, required: false
-  argument :alt_label, [String], required: false
+  argument :alt_labels, [String], required: false
   argument :authority, String, required: false
-  argument :term_type, Types::TermCategory, required: false # enum local, temporary, external
-
-# custom fields have to go somewhere in there
+  argument :custom_fields, [Types::CustomFieldAttributes], required: false
 
   field :term, Types::TermType, null: true
 
-  def resolve(vocabulary_string_key:, **attributes)
-    ability.authorize! :create, :term
+  def resolve(vocabulary_string_key:, uri:, custom_fields: [], **attributes)
+    vocabulary = find_vocabulary!(vocabulary_string_key)
+    term = Term.find_by!(vocabulary: vocabulary, uri: uri)
 
-    response = URIService.connection.update_term(vocabulary_string_key, attributes)
+    ability.authorize! :update, term
 
-    raise(GraphQL::ExecutionError, response.data['errors'].map { |e| e['title'] }.join('; ')) if response.errors?
+    term.assign_attributes(**attributes) # updates, but doesn't save.
 
-    { term: response.data.term }
+    custom_fields.each do |f, v|
+      next unless vocabulary.custom_fields.keys.include?(f)
+      term.set_custom_field(f, v)
+    end
+
+    term.save!
+
+    { term: term }
   end
 end

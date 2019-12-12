@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class VocabularyType < Types::BaseObject
     description 'A vocabulary'
@@ -23,26 +25,40 @@ module Types
     end
 
     def term(uri:)
-      ability.authorize!(:read, :term)
-      response = URIService.connection.term(object['string_key'], uri)
-      raise(GraphQL::ExecutionError, response.data['errors'].map { |e| e['title'] }.join('; ')) if response.errors?
-      response.data['term']
+      term = Hyacinth::Config.term_search_adapter.find(object.string_key, uri)
+
+      raise GraphQL::ExecutionError, 'Couldn\'t find Term' if term.nil?
+
+      ability.authorize!(:read, Term, uid: term['uid'])
+
+      term
     end
 
     def terms(limit:, offset: 0, query: nil, filters: [])
-      ability.authorize!(:read, :term)
-      search_parameters = {
-        q: query,
-        limit: limit,
-        offset: offset,
-      }
+      ability.authorize!(:read, Term)
 
-      # Need to convert the field name to snake_case because field names maybe provided in camelcase.
-      filters.each { |h| search_parameters[h[:field].underscore] = h[:value] }
+      # search_parameters = {
+      #   q: query,
+      #   limit: limit,
+      #   offset: offset
+      # }
 
-      response = URIService.connection.search_terms(object['string_key'], search_parameters)
-      raise(GraphQL::ExecutionError, response.data['errors'].map { |e| e['title'] }.join('; ')) if response.errors?
-      response.data['terms']
+      search_results = Hyacinth::Config.term_search_adapter.search do |params|
+        params.q     query
+        params.start offset
+        params.rows  limit
+
+        filters.each do |filter|
+          # Need to convert the field name to snake_case because field names maybe provided in camelcase.
+          params.fq(filter[:field].underscore, filter[:value])
+          # params[h[:field].underscore] = h[:value]
+        end
+      end
+
+      # response = URIService.connection.search_terms(object['string_key'], search_parameters)
+      # raise(GraphQL::ExecutionError, response.data['errors'].map { |e| e['title'] }.join('; ')) if response.errors?
+      # response.data['terms']
+      search_results.docs
     end
   end
 end

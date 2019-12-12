@@ -58,19 +58,17 @@ module Types
       digital_object = ::DigitalObject::Base.find(id)
       ability.authorize!(:read, digital_object)
       digital_object
+    end
 
     def vocabulary(string_key:)
-      ability.authorize!(:read, :vocabulary)
-      response = URIService.connection.vocabulary(string_key)
-      raise(GraphQL::ExecutionError, response.data['errors'].map { |e| e['title'] }.join('; ')) if response.errors?
-      response.data['vocabulary']
+      vocabulary = Vocabulary.find_by!(string_key: string_key)
+      ability.authorize!(:read, vocabulary)
+      vocabulary
     end
 
     def vocabularies(limit:, offset: 0)
-      ability.authorize!(:read, :vocabulary)
-      response = URIService.connection.vocabularies(limit: limit, offset: offset)
-      raise(GraphQL::ExecutionError, response.data['errors'].map { |e| e['title'] }.join('; ')) if response.errors?
-      response.data['vocabularies']
+      ability.authorize!(:read, Vocabulary)
+      Vocabulary.accessible_by(ability).order(:label).offset(offset).limit(limit)
     end
 
     def project(string_key:)
