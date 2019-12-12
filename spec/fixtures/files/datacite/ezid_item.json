@@ -63,7 +63,7 @@
             {
 		"name_term" :
 		{
-		    "value" : "Salinger, J. D.",
+		    "pref_label" : "Salinger, J. D.",
 		    "uri" : "http://id.loc.gov/authorities/names/n50016589",
 		    "name_type" : "personal"
 		}
@@ -73,7 +73,7 @@
 		    {
 			"name_role_term" :
 			{
-			    "value" : "Author",
+			    "pref_label" : "Author",
 			    "uri" : "http://id.loc.gov/vocabulary/relators/aut"
 			}
 		    }
@@ -83,7 +83,7 @@
             {
 		"name_term" :
 		{
-		    "value" : "Picasso González, Juan",
+		    "pref_label" : "Picasso González, Juan",
 		    "uri" : "http://id.loc.gov/authorities/names/n2003054176.html",
 		    "name_type" : "personal"
 		}
@@ -93,7 +93,7 @@
 		    {
 			"name_role_term" :
 			{
-			    "value" : "Illustrator",
+			    "pref_label" : "Illustrator",
 			    "uri" : "http://id.loc.gov/vocabulary/relators/ill"
 			}
 		    }
@@ -103,7 +103,7 @@
             {
 		"name_term" :
 		{
-		    "value" : "Christie, Agatha",
+		    "pref_label" : "Christie, Agatha",
 		    "uri" : "http://id.loc.gov/authorities/names/n79038407",
 		    "name_type" : "personal"
 		}
@@ -113,7 +113,7 @@
 		    {
 			"name_role_term" :
 			{
-			    "value" : "Moderator",
+			    "pref_label" : "Moderator",
 			    "uri" : "http://id.loc.gov/vocabulary/relators/mod"
 			}
 		    }
@@ -123,7 +123,7 @@
             {
 		"name_term" :
 		{
-		    "value" : "Burton, Tim",
+		    "pref_label" : "Burton, Tim",
 		    "uri" : "http://id.loc.gov/authorities/names/n91100415.html",
 		    "name_type" : "personal"
 		}
@@ -133,7 +133,7 @@
 		    {
 			"name_role_term" :
 			{
-			    "value" : "Contributor",
+			    "pref_label" : "Contributor",
 			    "uri" : "http://id.loc.gov/vocabulary/relators/ctb"
 			}
 		    }
@@ -143,7 +143,7 @@
             {
 		"name_term" :
 		{
-		    "value" : "Lincoln, Abraham",
+		    "pref_label" : "Lincoln, Abraham",
 		    "uri" : "http://id.loc.gov/authorities/names/n79006779",
 		    "name_type" : "personal"
 		}
@@ -153,7 +153,7 @@
 		    {
 			"name_role_term" :
 			{
-			    "value" : "author",
+			    "pref_label" : "author",
 			    "uri" : "http://id.loc.gov/vocabulary/relators/aut"
 			}
 		    }
@@ -161,7 +161,7 @@
 		    {
 			"name_role_term" :
 			{
-			    "value" : "Editor",
+			    "pref_label" : "Editor",
 			    "uri" : "http://id.loc.gov/vocabulary/relators/edt"
 			}
 		    }
@@ -169,10 +169,10 @@
             }
 	    ,
 	    {
-		"name_term" : 
+		"name_term" :
 		{
 		    "uri" : "temp:ea1cc077df24fbc74a96019811e6546692848b85a63cf6189c3d45b7bbdeaf17",
-		    "value" : "Columbia University. English and Comparative Literature",
+		    "pref_label" : "Columbia University. English and Comparative Literature",
 		    "name_type" : "corporate"
 		}
 		,
@@ -182,7 +182,7 @@
 			"name_role_term":
 			{
 			    "uri": "http://id.loc.gov/vocabulary/relators/org",
-			    "value": "Originator"
+			    "pref_label": "Originator"
 			}
 		    }
 		]
@@ -195,7 +195,7 @@
 		"genre_term":
 		{
 		    "uri": "http://vocab.getty.edu/aat/300048715",
-		    "value": "Articles",
+		    "pref_label": "Articles",
 		    "type": "external",
 		    "authority": "aat",
 		    "vocabulary_string_key": "genre",
@@ -210,7 +210,7 @@
 		"subject_topic_term" :
 		{
 		    "uri" : "http://id.worldcat.org/fast/872451",
-		    "value" : "Computer science",
+		    "pref_label" : "Computer science",
 		    "type" : "external",
 		    "vocabulary_string_key" : "subject_topic",
 		    "internal_id" : 195965
@@ -221,7 +221,7 @@
 		"subject_topic_term" :
 		{
 		    "uri" : "http://experimental.worldcat.org/fast/873333",
-		    "value" : "Concertos (Flute)",
+		    "pref_label" : "Concertos (Flute)",
 		    "type" : "external",
 		    "vocabulary_string_key" : "subject_topic",
 		    "internal_id" : 195966
@@ -254,7 +254,7 @@
 		"subject_topic_term" :
 		{
 		    "uri" : "http://id.worldcat.org/fast/1737284",
-		    "value" : "Educational attainment",
+		    "pref_label" : "Educational attainment",
 		    "type" : "external",
 		    "vocabulary_string_key" : "subject_topic",
 		    "internal_id" : 195775
@@ -264,7 +264,7 @@
 		"subject_topic_term" :
 		{
 		    "uri" : "http://id.worldcat.org/fast/1053367",
-		    "value" : "Parental influences",
+		    "pref_label" : "Parental influences",
 		    "type" : "external",
 		    "vocabulary_string_key" : "subject_topic",
 		    "internal_id" : 195776
@@ -275,7 +275,7 @@
 		"subject_topic_term":
 		{
 		    "uri" : "http://id.worldcat.org/fast/1026881",
-		    "value" : "Mother and child--Psychological aspects",
+		    "pref_label" : "Mother and child--Psychological aspects",
 		    "type" : "external",
 		    "vocabulary_string_key" : "subject_topic",
 		    "internal_id" : 195777

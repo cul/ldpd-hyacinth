@@ -136,7 +136,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
   # @return [void]
   def subject_topics
     @dynamic_field_data.fetch('subject_topic', []).map do |topic|
-      topic['subject_topic_term']['value']
+      topic['subject_topic_term']['pref_label']
     end
   end
 
@@ -170,12 +170,12 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
     CONTRIBUTOR_ROLES = ['author', 'editor', 'moderator', 'contributor'].freeze
 
     def process_name(name_hash)
-      return [name_hash['name_term']['value'], [:contributor]] if name_hash['name_role'].blank?
+      return [name_hash['name_term']['pref_label'], [:contributor]] if name_hash['name_role'].blank?
 
       roles = CONTRIBUTOR_ROLES & name_hash['name_role'].map do |role|
-        role['name_role_term']['value'].downcase
+        role['name_role_term']['pref_label'].downcase
       end
-      [name_hash['name_term']['value'], roles.map(&:to_sym)]
+      [name_hash['name_term']['pref_label'], roles.map(&:to_sym)]
     end
 
     def deserialize_datetime(value)
