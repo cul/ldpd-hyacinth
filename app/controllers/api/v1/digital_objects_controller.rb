@@ -29,9 +29,7 @@ module Api
         @digital_object = Hyacinth::Config.digital_object_types.key_to_class(digital_object_data['digital_object_type']).new
         @digital_object.set_digital_object_data(digital_object_data, true)
 
-        @digital_object.projects.each do |project|
-          authorize! :create_objects, project
-        end
+        authorize! :create_objects, @digital_object.primary_project
 
         if @digital_object.save(update_index: true, user: current_user)
           show
@@ -102,7 +100,7 @@ module Api
       end
 
       private
-      
+
         def create_or_update_params
           # TODO: decide how we want to validate dynamic field data parameters
           params[:digital_object]&.permit!.to_h
