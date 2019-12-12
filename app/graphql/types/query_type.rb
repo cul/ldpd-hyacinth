@@ -94,6 +94,16 @@ module Types
       DynamicFieldCategory.order(:sort_order)
     end
 
+    field :dynamic_field_category, [DynamicFieldCategoryType], null: true do
+      argument :id, ID, required: true
+    end
+
+    def dynamic_field_category(id:)
+      dynamic_field_category = DynamicFieldCategory.find(id)
+      ability.authorize!(:read, dynamic_field_category)
+      dynamic_field_category
+    end
+
     def project(string_key:)
       project = Project.find_by!(string_key: string_key)
       ability.authorize!(:read, project)
