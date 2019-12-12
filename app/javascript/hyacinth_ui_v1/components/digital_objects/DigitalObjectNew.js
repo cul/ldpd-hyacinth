@@ -25,9 +25,9 @@ class DigitalObjectNew extends React.Component {
     ],
     digitalObject: {
       digitalObjectDataJson: {
-        projects: [{
+        primaryProject: {
           stringKey: '',
-        }],
+        },
         digitalObjectType: '',
       },
     },
@@ -46,9 +46,9 @@ class DigitalObjectNew extends React.Component {
       .catch(e => console.log(e));
   }
 
-  onProjectChangeHandler = (name, value) => {
+  onProjectChangeHandler = (value) => {
     this.setState(produce((draft) => {
-      draft.digitalObject.digitalObjectDataJson.projects[0].stringKey = value;
+      draft.digitalObject.digitalObjectDataJson.primaryProject.stringKey = value;
     }));
 
     // TODO
@@ -68,13 +68,13 @@ class DigitalObjectNew extends React.Component {
 
     const {
       digitalObject: {
-        digitalObjectDataJson: { digitalObjectType, projects },
+        digitalObjectDataJson: { digitalObjectType, primaryProject },
       },
     } = this.state;
 
     const { history: { push } } = this.props;
 
-    push(`/digital_objects/new?project=${projects[0].stringKey}&digitalObjectType=${digitalObjectType}`);
+    push(`/digital_objects/new?primaryProject=${primaryProject.stringKey}&digitalObjectType=${digitalObjectType}`);
   }
 
   render() {
@@ -82,7 +82,7 @@ class DigitalObjectNew extends React.Component {
       projectOptions,
       digitalObjectTypeOptions,
       digitalObject: {
-        digitalObjectDataJson: { digitalObjectType, projects },
+        digitalObjectDataJson: { digitalObjectType, primaryProject },
       },
     } = this.state;
     return (
@@ -94,17 +94,17 @@ class DigitalObjectNew extends React.Component {
 
         <Form className="m-3">
           <InputGroup>
-            <Label sm={3}>Project</Label>
+            <Label sm={3}>Primary Project</Label>
             <SelectInput
               sm={9}
-              name="project"
-              value={projects[0].stringKey}
-              onChange={v => this.onProjectChangeHandler('project', v)}
+              name="primary_project"
+              value={primaryProject.stringKey}
+              onChange={v => this.onProjectChangeHandler(v)}
               options={projectOptions}
             />
           </InputGroup>
 
-          <Collapse in={projects[0].stringKey !== ''}>
+          <Collapse in={primaryProject.stringKey !== ''}>
             <div>
               <InputGroup>
                 <Label sm={3}>Digital Object Type</Label>
