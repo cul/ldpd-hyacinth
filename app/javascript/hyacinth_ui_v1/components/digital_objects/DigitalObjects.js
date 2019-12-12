@@ -40,17 +40,17 @@ export default class DigitalObjects extends React.PureComponent {
             path="/digital_objects/new"
             render={(props) => {
               const { location: { search } } = props;
-              const { project, parent, digitalObjectType } = queryString.parse(search);
+              const { primaryProject, parent, digitalObjectType } = queryString.parse(search);
 
               if (parent && digitalObjectType === 'asset') {
                 return <></>;
               }
 
-              if (project && digitalObjectType !== 'asset') {
+              if (primaryProject && digitalObjectType !== 'asset') {
                 return (
                   <AggregatorNew
                     digitalObjectType={digitalObjectType}
-                    project={project}
+                    primaryProject={primaryProject}
                   />
                 );
               }

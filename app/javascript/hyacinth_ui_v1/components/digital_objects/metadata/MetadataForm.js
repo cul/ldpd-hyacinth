@@ -39,7 +39,7 @@ class MetadataForm extends React.PureComponent {
   componentDidMount = () => {
     const {
       data: {
-        uid, dynamicFieldData, projects, digitalObjectType, identifiers
+        uid, dynamicFieldData, primaryProject, digitalObjectType, identifiers
       },
       formType,
     } = this.props;
@@ -52,7 +52,7 @@ class MetadataForm extends React.PureComponent {
     // type within this project. Remove any fields in the group of dynamic fields that aren't
     // enabled for this object's projects.
     axios.all([
-      enabledDynamicFields.all(projects[0].stringKey, digitalObjectType),
+      enabledDynamicFields.all(primaryProject.stringKey, digitalObjectType),
       dynamicFieldCategories.all(),
     ]).then(axios.spread((enabledFields, dynamicFieldGraph) => {
       const enabledFieldIds = enabledFields.data.enabledDynamicFields.map(f => f.dynamicFieldId);

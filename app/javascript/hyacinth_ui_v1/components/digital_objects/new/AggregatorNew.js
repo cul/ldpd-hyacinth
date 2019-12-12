@@ -13,9 +13,9 @@ class AggregatorNew extends React.PureComponent {
     loaded: false,
     data: {
       serializationVersion: '1',
-      projects: [{
+      primaryProject: {
         stringKey: '',
-      }],
+      },
       digitalObjectType: '',
       dynamicFieldData: {},
       identifiers: [],
@@ -23,14 +23,14 @@ class AggregatorNew extends React.PureComponent {
   }
 
   componentDidMount = () => {
-    const { project, digitalObjectType } = this.props;
+    const { primaryProject, digitalObjectType } = this.props;
 
     // Get Project Display Label and adding props to state
-    projects.get(project).then((res) => {
+    projects.get(primaryProject).then((res) => {
       const { project: { stringKey, displayLabel } } = res.data;
       this.setState(produce((draft) => {
         draft.data.digitalObjectType = digitalObjectType;
-        draft.data.projects[0] = { stringKey, displayLabel };
+        draft.data.primaryProject = { stringKey, displayLabel };
         draft.loaded = true;
       }));
     });
