@@ -47,7 +47,7 @@ class TextInputWithAddAndRemove extends React.PureComponent {
       <Col sm={10} style={{ alignSelf: 'center' }} {...rest}>
         {
           (values.length === 0 ? [''] : values).map((v, i) => (
-            <Form.Group as={Row}>
+            <Form.Group as={Row} key={i}>
               <Col sm={12}>
                 <InputGroup>
                   <Form.Control

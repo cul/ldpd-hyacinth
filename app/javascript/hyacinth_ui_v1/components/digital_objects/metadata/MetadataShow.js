@@ -25,11 +25,11 @@ class MetadataShow extends React.PureComponent {
       });
   }
 
-  renderField(dynamicField, data) {
+  renderField(dynamicField, data, elementKey) {
     const { displayLabel, fieldType } = dynamicField;
 
     return (
-      <InputGroup>
+      <InputGroup key={elementKey}>
         <Label align="right">{displayLabel}</Label>
         <PlainText value={fieldType === 'controlled_term' ? data.prefLabel : data } />
       </InputGroup>
@@ -50,12 +50,12 @@ class MetadataShow extends React.PureComponent {
           </Card.Header>
           <Card.Body>
             {
-              children.map((c) => {
+              children.map((c, i) => {
                 if (d[camelCase(c.stringKey)]) {
                   if (c.type === 'DynamicFieldGroup') {
                     return this.renderGroup(c, d[camelCase(c.stringKey)]);
                   } if (c.type === 'DynamicField') {
-                    return this.renderField(c, d[camelCase(c.stringKey)]);
+                    return this.renderField(c, d[camelCase(c.stringKey)], `${c.stringKey}_${i + 1}`);
                   }
                 }
                 return '';

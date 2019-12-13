@@ -19,8 +19,12 @@ class ReadOnlyInput extends React.PureComponent {
   }
 }
 
+ReadOnlyInput.defaultProps = {
+  value: '',
+};
+
 ReadOnlyInput.propTypes = {
-  value: PropTypes.string.isRequired,
+  value: PropTypes.string,
 };
 
 export default ReadOnlyInput;

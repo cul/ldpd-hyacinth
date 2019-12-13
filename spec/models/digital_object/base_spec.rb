@@ -97,6 +97,7 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
             pending_unpublish_from: [],
             structured_children: { 'type' => 'sequence', 'structure' => [] },
             dynamic_field_data: {},
+            rights_data: {},
             preservation_target_uris: Set.new,
             custom_field1: 'custom default value 1',
             custom_field2: 'custom default value 2'

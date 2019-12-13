@@ -16,7 +16,9 @@ class BooleanRadioButtons extends React.Component {
   }
 
   render() {
-    const { value, onChange, ...rest } = this.props;
+    const {
+      inputName, value, onChange, ...rest
+    } = this.props;
 
     return (
       <Col sm={8} style={{ alignSelf: 'center' }} {...rest}>
@@ -24,6 +26,7 @@ class BooleanRadioButtons extends React.Component {
           inline
           type="radio"
           label="Yes"
+          name={inputName}
           value="yes"
           checked={value}
           onChange={this.onRadioButtonChange}
@@ -32,6 +35,7 @@ class BooleanRadioButtons extends React.Component {
         <Form.Check
           inline
           type="radio"
+          name={inputName}
           value="no"
           label="No"
           checked={!value && value !== null}
@@ -43,9 +47,13 @@ class BooleanRadioButtons extends React.Component {
 }
 
 BooleanRadioButtons.propTypes = {
-  name: PropTypes.string,
+  inputName: PropTypes.string,
   value: PropTypes.bool.isRequired,
   onChange: PropTypes.func.isRequired,
+};
+
+BooleanRadioButtons.defaultProps = {
+  inputName: '',
 };
 
 export default BooleanRadioButtons;

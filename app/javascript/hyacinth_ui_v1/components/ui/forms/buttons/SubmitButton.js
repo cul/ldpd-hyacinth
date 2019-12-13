@@ -21,7 +21,7 @@ class SubmitButton extends React.Component {
   }
 
   render() {
-    const { formType, saveData, ...rest } = this.props;
+    const { formType, saveData, staticContext, ...rest } = this.props;
     const { isSaving, success } = this.state;
 
     let savingText = 'Saving...';
