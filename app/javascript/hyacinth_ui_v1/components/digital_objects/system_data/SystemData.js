@@ -3,11 +3,9 @@ import { Form, Row, Col } from 'react-bootstrap';
 import produce from 'immer';
 
 import digitalObjectInterface from '../digitalObjectInterface';
-import { digitalObject } from '../../../util/hyacinth_api';
 import SelectInput from '../../ui/forms/inputs/SelectInput';
 import DeleteButton from '../../ui/forms/buttons/DeleteButton';
-import hyacinthApi, { projects } from '../../../util/hyacinth_api';
-import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
+import hyacinthApi, { projects, digitalObject } from '../../../util/hyacinth_api';
 
 class SystemData extends React.Component {
   state = {
@@ -15,17 +13,17 @@ class SystemData extends React.Component {
     all_projects: [],
   }
 
-  componentDidMount = () => {
-    const { data: { projects: p } } = this.props;
-
-    projects.all()
-      .then((res) => {
-        this.setState(produce((draft) => {
-          draft.all_projects = res.data.projects;
-          draft.projects = p;
-        }));
-      });
-  }
+  // componentDidMount = () => {
+  //   const { data: { projects: p } } = this.props;
+  //
+  //   projects.all()
+  //     .then((res) => {
+  //       this.setState(produce((draft) => {
+  //         draft.all_projects = res.data.projects;
+  //         draft.projects = p;
+  //       }));
+  //     });
+  // }
 
   onDelete = (e) => {
     e.preventDefault();
@@ -60,13 +58,13 @@ class SystemData extends React.Component {
       <>
         <Row as="dl">
           <Col as="dt" lg={2} sm={4}>Created By</Col>
-          <Col as="dd" lg={10} sm={8}>{createdBy || '-- Assigned After Save --'}</Col>
+          <Col as="dd" lg={10} sm={8}>{createdBy.uid || '-- Assigned After Save --'}</Col>
 
           <Col as="dt" lg={2} sm={4}>Created On</Col>
           <Col as="dd" lg={10} sm={8}>{createdAt || '-- Assigned After Save --'}</Col>
 
           <Col as="dt" lg={2} sm={4}>Last Modified By</Col>
-          <Col as="dd" lg={10} sm={8}>{updatedBy || '-- Assigned After Save --'}</Col>
+          <Col as="dd" lg={10} sm={8}>{updatedBy.uid || '-- Assigned After Save --'}</Col>
 
           <Col as="dt" lg={2} sm={4}>Last Modified On</Col>
           <Col as="dd" lg={10} sm={8}>{updatedAt || '-- Assigned After Save --'}</Col>
@@ -92,7 +90,7 @@ class SystemData extends React.Component {
         <h4>Other Projects</h4>
         <p>TODO</p>
         <hr />
-        <h4>Delete Dightal Object?</h4>
+        <h4>Delete Digital Object?</h4>
         <p>TODO: Description about what deleting does to a digital object.</p>
         <DeleteButton formType="edit" onClick={this.onDelete} />
       </>
@@ -101,4 +99,4 @@ class SystemData extends React.Component {
 }
 
 
-export default digitalObjectInterface(withErrorHandler(SystemData, hyacinthApi));
+export default digitalObjectInterface(SystemData);
