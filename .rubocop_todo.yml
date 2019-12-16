@@ -201,6 +201,7 @@ Naming/AccessorMethodName:
     - 'app/models/concerns/digital_object_concerns/digital_object_data/setters/projects.rb'
     - 'app/models/concerns/digital_object_concerns/digital_object_data/setters/resources.rb'
     - 'app/models/concerns/digital_object_concerns/digital_object_data/setters/state.rb'
+    - 'app/models/concerns/digital_object_concerns/digital_object_data/setters/rights.rb'
 
 # Offense count: 1
 # Configuration parameters: NamePrefix, NamePrefixBlacklist, NameWhitelist, MethodDefinitionMacros.

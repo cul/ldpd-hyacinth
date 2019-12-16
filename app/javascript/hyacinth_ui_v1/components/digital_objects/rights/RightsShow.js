@@ -6,8 +6,10 @@ import TabHeading from '../../ui/tabs/TabHeading';
 
 class RightsShow extends React.PureComponent {
   render() {
-    const { match: { params: { id } } } = this.props;
-
+    const {
+      match: { params: { id } },
+      data: { rights }
+    } = this.props;
     return (
       <>
         <TabHeading>
@@ -17,11 +19,15 @@ class RightsShow extends React.PureComponent {
             size="lg"
             link={`/digital_objects/${id}/rights/edit`}
           />
+          <div className="card">
+            <div className="card-body">
+              <code>{ JSON.stringify(rights) }</code>
+            </div>
+          </div>
         </TabHeading>
       </>
     );
   }
 }
-
 
 export default digitalObjectInterface(RightsShow);

@@ -21,111 +21,26 @@ import RightsForWorksOfArtSculptureAndPhotographs from './subsections/RightsForW
 import UnderlyingRights from './subsections/UnderlyingRights';
 
 class ItemRightsForm extends React.Component {
-  state = {
-    rights: {
-      descriptiveMetadata: {
-        typeOfContent: '',
-        countryOfOrigin: {},
-        filmDistributedToPublic: '',
-        filmDistributedCommercially: '',
-      },
-      copyrightStatus: {
-        copyrightStatement: '',
-        copyrightNote: [''],
-        copyrightRegistered: '',
-        copyrightRenewed: '',
-        copyrightDateOfRenewal: '',
-        copyrightExpirationDate: '',
-        culCopyrightAssessmentDate: '',
-      },
-      additionalRightsToRecord: {
-        enabled: false,
-      },
-      copyrightOwnership: {
-        enabled: false,
-        copyrightOwners: [
-          {
-            name: {},
-            heirs: '',
-            contactInformation: '',
-          },
-        ],
-      },
-      columbiaUniversityIsCopyrightHolder: {
-        enabled: false,
-        dateOfTransfer: '',
-        dateOfExpiration: '',
-        transferDocumentionEnabled: false,
-        transferDocumentation: '',
-        otherTransferEvidenceEnabled: false,
-        otherTransferEvidence: '',
-        transferDocumentationNote: '',
-      },
-      licensedToColumbiaUniversity: {
-        enabled: false,
-        dateOfLicense: '',
-        terminationDateOfLicense: '',
-        credits: '',
-        acknowledgements: '',
-        licenseDocumentationLocation: '',
-      },
-      contractualLimitationsRestrictionsAndPermissions: {
-        a: false,
-        b: false,
-        c: false,
-        d: false,
-        e: false,
-        avA: false,
-        avB: false,
-        avC: false,
-        avD: false,
-        avE: false,
-        avF: false,
-        avG: false,
-        enabled: false,
-        reproductionAndDistributionProhibitedUntil: '',
-        photoGraphicOrFilmCredit: '',
-        excerptLimitedTo: '',
-        other: '',
-        permissionsGrantedAsPartOfTheUseLicenseEnabled: false,
-        permissionsGrantedAsPartOfTheUseLicense: [],
-      },
-      rightsForWorksOfArtSculptureAndPhotographs: {
-        enabled: false,
-        publicityRightsPresentEnabled: false,
-        publicityRightsPresent: '',
-        trademarksProminentlyVisible: '',
-        sensitiveInNature: '',
-        privacyConcerns: '',
-        childrenMateriallyIdentifiableInWork: '',
-        varaRightsConcerns: '',
-        note: '',
-      },
-      underlyingRights: {
-        enabled: false,
-        doWeKnowSpecificUnderlyingRightsEnabled: false,
-        note: '',
-        musicRightsEnabled: false,
-        talentRights: '',
-        musicLicensedToColumbiaEnabled: false,
-        columbiaMusicLicense: '',
-        composition: '',
-        recording: '',
-        otherUnderlyingRights: [],
-        other: '',
-      },
-    },
+  constructor(props) {
+    super(props);
+    const { rights } = props.data;
+    this.state = {
+      rights: Object.entries(rights).length ? rights : this.defaultRights(),
+    };
   }
 
-
-  // componentDidMount() {
-  //   const { match: { params: { id } } } = this.props;
-  //
-  //   digitalObject.get(id)
+  // componentDidMount() {,
+  //   // On mount, we want to retrieve the latest version of the rights data
+  //   // because this rights form saves and reloads separately from any other
+  //   // form in the tabbed digital object interface.
+  //   digitalObject.get(this.props.uid)
   //     .then((res) => {
   //       this.setState(produce((draft) => {
-  //         console.log('reloaded digital object data');
-  //         draft.data = res.data.digitalObject;
+  //         const { rights } = res.data.digitalObject;
+  //
+  //         // Rights property may be null if this object hasn't been assigned,
+  //         // rights yet (TODO: confirm that this is true), so we'll want
+  //         draft.rights = rights || this.defaultRights();
   //       }));
   //     });
   // }
@@ -136,9 +51,110 @@ class ItemRightsForm extends React.Component {
     }));
   }
 
-  onSubmitHandler() {
-    // To be implemented.
+  onSubmitHandler = () => {
+    const { data: { uid } } = this.props;
+    const { history: { push } } = this.props;
+    const { rights } = this.state;
+
+    return digitalObject.update(
+      uid,
+      { digitalObject: { rights } },
+    ).then(res => push(`/digital_objects/${res.data.digitalObject.uid}/rights`));
   }
+
+  defaultRights = () => ({
+    descriptiveMetadata: {
+      typeOfContent: '',
+      countryOfOrigin: {},
+      filmDistributedToPublic: '',
+      filmDistributedCommercially: '',
+    },
+    copyrightStatus: {
+      copyrightStatement: '',
+      copyrightNote: [''],
+      copyrightRegistered: '',
+      copyrightRenewed: '',
+      copyrightDateOfRenewal: '',
+      copyrightExpirationDate: '',
+      culCopyrightAssessmentDate: '',
+    },
+    additionalRightsToRecord: {
+      enabled: false,
+    },
+    copyrightOwnership: {
+      enabled: false,
+      copyrightOwners: [
+        {
+          name: {},
+          heirs: '',
+          contactInformation: '',
+        },
+      ],
+    },
+    columbiaUniversityIsCopyrightHolder: {
+      enabled: false,
+      dateOfTransfer: '',
+      dateOfExpiration: '',
+      transferDocumentionEnabled: false,
+      transferDocumentation: '',
+      otherTransferEvidenceEnabled: false,
+      otherTransferEvidence: '',
+      transferDocumentationNote: '',
+    },
+    licensedToColumbiaUniversity: {
+      enabled: false,
+      dateOfLicense: '',
+      terminationDateOfLicense: '',
+      credits: '',
+      acknowledgements: '',
+      licenseDocumentationLocation: '',
+    },
+    contractualLimitationsRestrictionsAndPermissions: {
+      a: false,
+      b: false,
+      c: false,
+      d: false,
+      e: false,
+      avA: false,
+      avB: false,
+      avC: false,
+      avD: false,
+      avE: false,
+      avF: false,
+      avG: false,
+      enabled: false,
+      reproductionAndDistributionProhibitedUntil: '',
+      photoGraphicOrFilmCredit: '',
+      excerptLimitedTo: '',
+      other: '',
+      permissionsGrantedAsPartOfTheUseLicenseEnabled: false,
+      permissionsGrantedAsPartOfTheUseLicense: [],
+    },
+    rightsForWorksOfArtSculptureAndPhotographs: {
+      enabled: false,
+      publicityRightsPresentEnabled: false,
+      publicityRightsPresent: '',
+      trademarksProminentlyVisible: '',
+      sensitiveInNature: '',
+      privacyConcerns: '',
+      childrenMateriallyIdentifiableInWork: '',
+      varaRightsConcerns: '',
+      note: '',
+    },
+    underlyingRights: {
+      enabled: false,
+      doWeKnowSpecificUnderlyingRightsEnabled: false,
+      note: '',
+      musicRightsEnabled: false,
+      talentRights: '',
+      musicLicensedToColumbiaEnabled: false,
+      columbiaMusicLicense: '',
+      composition: '',
+      recording: '',
+      otherUnderlyingRights: [],
+      other: '',
+    },
+  });
 
   render() {
     const {
@@ -155,7 +171,7 @@ class ItemRightsForm extends React.Component {
       },
     } = this.state;
 
-    const { id } = this.state;
+    const { data: { uid } } = this.props;
     const { data } = this.props;
 
     return (
@@ -165,10 +181,10 @@ class ItemRightsForm extends React.Component {
           {/* <EditButton
             className="float-right"
             size="lg"
-            link={`/digital_objects/${id}/rights/edit`}
+            link={`/digital_objects/${uid}/rights/edit`}
           /> */}
         </TabHeading>
-        <Form key={id} className="digital-object-interface">
+        <Form key={uid} className="digital-object-interface">
           <DescriptiveMetadata
             dynamicFieldData={data ? data.dynamicFieldData : {}}
             value={descriptiveMetadata}
@@ -229,7 +245,7 @@ class ItemRightsForm extends React.Component {
 
           <FormButtons
             formType="edit"
-            // cancelTo={"/digital_object/:id/rights"}
+            cancelTo={`/digital_objects/${uid}/rights`}
             onSave={this.onSubmitHandler}
           />
         </Form>
@@ -237,12 +253,5 @@ class ItemRightsForm extends React.Component {
     );
   }
 }
-
-ItemRightsForm.propTypes = {
-  // dynamicFieldData: PropTypes.shape({
-  //   title: PropTypes.shape({ titleSortPortion: PropTypes.string }),
-  // }),
-  data: PropTypes.any,
-};
 
 export default digitalObjectInterface(ItemRightsForm);
