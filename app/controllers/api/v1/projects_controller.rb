@@ -9,7 +9,7 @@ module Api
 
       # GET /projects
       def index
-        scope_for_digital_object_creation if params[:can_create]
+        scope_to_search if params[:project]
         render json: { projects: @projects }, status: :ok
       end
 
@@ -53,6 +53,10 @@ module Api
 
       private
 
+        def index_params
+          params.require(:project).permit(:is_primary)
+        end
+
         def create_params
           params.require(:project).permit(:string_key, :display_label, :is_primary, :project_url)
         end
@@ -61,8 +65,8 @@ module Api
           params.require(:project).permit(:display_label, :project_url)
         end
 
-        def scope_for_digital_object_creation
-          @projects = @projects.where(is_primary: true)
+        def scope_to_search
+          @projects = @projects.where(index_params)
         end
     end
   end

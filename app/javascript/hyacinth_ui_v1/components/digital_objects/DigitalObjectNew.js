@@ -34,8 +34,8 @@ class DigitalObjectNew extends React.Component {
   }
 
   componentDidMount() {
-    // Get all projects that a user has 'create_objects' privileges for.
-    projects.search('can_create=true')
+    // Get all primary projects
+    projects.search('project[is_primary]=true')
       .then((res) => {
         this.setState(produce((draft) => {
           draft.projectOptions = res.data.projects.filter(({ stringKey }) => (
