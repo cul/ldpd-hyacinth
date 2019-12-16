@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Types
   class DynamicFieldCategoryType < Types::BaseObject
     description 'A dynamic field category'

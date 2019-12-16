@@ -94,7 +94,7 @@ module Types
       DynamicFieldCategory.order(:sort_order)
     end
 
-    field :dynamic_field_category, [DynamicFieldCategoryType], null: true do
+    field :dynamic_field_category, DynamicFieldCategoryType, null: true do
       argument :id, ID, required: true
     end
 
@@ -102,6 +102,26 @@ module Types
       dynamic_field_category = DynamicFieldCategory.find(id)
       ability.authorize!(:read, dynamic_field_category)
       dynamic_field_category
+    end
+
+    field :dynamic_field_group, DynamicFieldGroupType, null: true do
+      argument :id, ID, required: true
+    end
+
+    def dynamic_field_group(id:)
+      dynamic_field_group = DynamicFieldGroup.find(id)
+      ability.authorize!(:read, dynamic_field_group)
+      dynamic_field_group
+    end
+
+    field :dynamic_field, DynamicFieldType, null: true do
+      argument :id, ID, required: true
+    end
+
+    def dynamic_field(id:)
+      dynamic_field = DynamicField.find(id)
+      ability.authorize!(:read, dynamic_field)
+      dynamic_field
     end
 
     def project(string_key:)
