@@ -9,6 +9,7 @@ module Api
 
       # GET /projects
       def index
+        scope_to_search if params[:project]
         render json: { projects: @projects }, status: :ok
       end
 
@@ -52,12 +53,20 @@ module Api
 
       private
 
+        def index_params
+          params.require(:project).permit(:is_primary)
+        end
+
         def create_params
           params.require(:project).permit(:string_key, :display_label, :is_primary, :project_url)
         end
 
         def update_params
           params.require(:project).permit(:display_label, :project_url)
+        end
+
+        def scope_to_search
+          @projects = @projects.where(index_params)
         end
     end
   end

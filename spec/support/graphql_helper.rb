@@ -7,4 +7,30 @@ module GraphQLHelper
 
     post '/graphql', params: params
   end
+
+  def projects_query
+    <<~GQL
+      query {
+        projects {
+          stringKey
+          displayLabel
+          projectUrl
+          isPrimary
+        }
+      }
+    GQL
+  end
+
+  def project_query(string_key)
+    <<~GQL
+      query {
+        project(stringKey: "#{string_key}") {
+          stringKey
+          displayLabel
+          projectUrl
+          isPrimary
+        }
+      }
+    GQL
+  end
 end
