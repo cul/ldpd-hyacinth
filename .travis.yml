@@ -25,7 +25,7 @@ addons:
 
 before_install:
   - "echo 'gem: --no-document' > ~/.gemrc"
-  - gem update --system
+  - gem update --system 3.0.6
   - gem install bundler
 
 before_script:
