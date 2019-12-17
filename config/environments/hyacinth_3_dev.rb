@@ -2,4 +2,6 @@
 
 require Rails.root.join('config', 'environments', 'deployed.rb')
 
-config.log_level = :debug
+Rails.application.configure do
+  config.log_level = :debug
+end
