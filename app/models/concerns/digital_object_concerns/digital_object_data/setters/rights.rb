@@ -10,6 +10,7 @@ module DigitalObjectConcerns
         # TODO: We need to add some kind of validation here, or potentially
         # store the rights config info on the server side and then pass it
         # to the client side when rendering the rights editing form.
+        # See: HYACINTH-429
         self.rights = digital_object_data['rights']
       end
     end
