@@ -184,5 +184,17 @@ RSpec.describe Ability, type: :model do
       it { is_expected.to be_able_to(:create_objects, authorized_project) }
       it { is_expected.not_to be_able_to(:create_objects, unauthorized_project) }
     end
+    context 'when a user has the ability to assess_rights for a project' do
+      let(:user) do
+        FactoryBot.create(
+          :user, permissions: [
+            Permission.create(action: :assess_rights, subject: Project.to_s, subject_id: authorized_project.id)
+          ]
+        )
+      end
+
+      it { is_expected.to be_able_to(:assess_rights, authorized_project) }
+      it { is_expected.not_to be_able_to(:assess_rights, unauthorized_project) }
+    end
   end
 end

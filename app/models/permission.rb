@@ -13,7 +13,7 @@ class Permission < ApplicationRecord
 
   PROJECT_ACTIONS = [
     'read_objects', 'create_objects', 'update_objects', 'delete_objects',
-    'publish_objects', 'manage'
+    'publish_objects', 'manage', 'assess_rights'
   ]
 
   validate :valid_permission_combination
