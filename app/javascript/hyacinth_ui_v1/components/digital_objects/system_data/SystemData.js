@@ -58,13 +58,13 @@ class SystemData extends React.Component {
       <>
         <Row as="dl">
           <Col as="dt" lg={2} sm={4}>Created By</Col>
-          <Col as="dd" lg={10} sm={8}>{createdBy.uid || '-- Assigned After Save --'}</Col>
+          <Col as="dd" lg={10} sm={8}>{createdBy ? createdBy.uid : '-- Not Assigned --'}</Col>
 
           <Col as="dt" lg={2} sm={4}>Created On</Col>
           <Col as="dd" lg={10} sm={8}>{createdAt || '-- Assigned After Save --'}</Col>
 
           <Col as="dt" lg={2} sm={4}>Last Modified By</Col>
-          <Col as="dd" lg={10} sm={8}>{updatedBy.uid || '-- Assigned After Save --'}</Col>
+          <Col as="dd" lg={10} sm={8}>{updatedBy ? updatedBy.uid : '-- Not Assigned --'}</Col>
 
           <Col as="dt" lg={2} sm={4}>Last Modified On</Col>
           <Col as="dd" lg={10} sm={8}>{updatedAt || '-- Assigned After Save --'}</Col>
