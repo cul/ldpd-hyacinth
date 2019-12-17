@@ -53,15 +53,17 @@ const digitalObjectInterface = WrappedComponent => class extends React.Component
                 <Tab to={`/digital_objects/${id}/rights`} name="Rights" />
 
                 {
-                  (data.digitalObjectType === 'item') && (
+                  (data.digitalObjectType === 'item') ? (
                     <Tab to={`/digital_objects/${id}/children`} name="Manage Child Assets" />
                   )
+                    : <></>
                 }
 
                 {
-                  (data.digitalObjectType === 'asset') && (
+                  (data.digitalObjectType === 'asset') ? (
                     <Tab to={`/digital_objects/${id}/parents`} name="Parents" />
                   )
+                    : <></>
                 }
 
                 <Tab to={`/digital_objects/${id}/assignment`} name="Assign This" />

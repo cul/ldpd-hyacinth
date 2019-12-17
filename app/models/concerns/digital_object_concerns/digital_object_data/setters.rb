@@ -12,6 +12,7 @@ module DigitalObjectConcerns
       include DigitalObjectConcerns::DigitalObjectData::Setters::Projects
       include DigitalObjectConcerns::DigitalObjectData::Setters::PendingPublishEntries
       include DigitalObjectConcerns::DigitalObjectData::Setters::Resources
+      include DigitalObjectConcerns::DigitalObjectData::Setters::Rights
       include DigitalObjectConcerns::DigitalObjectData::Setters::State
       include DigitalObjectConcerns::DigitalObjectData::Setters::StructuredChildren
 
@@ -39,6 +40,7 @@ module DigitalObjectConcerns
         set_resources(new_digital_object_data)
         set_state(new_digital_object_data)
         set_projects(new_digital_object_data)
+        set_rights(new_digital_object_data)
       end
     end
   end

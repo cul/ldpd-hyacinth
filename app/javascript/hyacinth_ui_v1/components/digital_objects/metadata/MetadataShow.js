@@ -29,7 +29,7 @@ class MetadataShow extends React.PureComponent {
     const { displayLabel, fieldType } = dynamicField;
 
     return (
-      <InputGroup>
+      <InputGroup key={dynamicField.stringKey}>
         <Label align="right">{displayLabel}</Label>
         <PlainText value={fieldType === 'controlled_term' ? data.prefLabel : data } />
       </InputGroup>
@@ -50,7 +50,7 @@ class MetadataShow extends React.PureComponent {
           </Card.Header>
           <Card.Body>
             {
-              children.map((c) => {
+              children.map((c, i) => {
                 if (d[camelCase(c.stringKey)]) {
                   if (c.type === 'DynamicFieldGroup') {
                     return this.renderGroup(c, d[camelCase(c.stringKey)]);

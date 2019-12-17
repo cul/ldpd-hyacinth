@@ -29,6 +29,7 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters do
       expect(digital_object_with_sample_data).to receive(:set_state).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:set_preserve).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:set_projects).with(digital_object_data).and_call_original
+      expect(digital_object_with_sample_data).to receive(:set_rights).with(digital_object_data).and_call_original
 
       digital_object_with_sample_data.set_digital_object_data(digital_object_data, true)
 
