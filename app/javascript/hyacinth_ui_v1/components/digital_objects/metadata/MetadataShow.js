@@ -25,11 +25,11 @@ class MetadataShow extends React.PureComponent {
       });
   }
 
-  renderField(dynamicField, data, elementKey) {
+  renderField(dynamicField, data) {
     const { displayLabel, fieldType } = dynamicField;
 
     return (
-      <InputGroup key={elementKey}>
+      <InputGroup key={dynamicField.stringKey}>
         <Label align="right">{displayLabel}</Label>
         <PlainText value={fieldType === 'controlled_term' ? data.prefLabel : data } />
       </InputGroup>
@@ -55,7 +55,7 @@ class MetadataShow extends React.PureComponent {
                   if (c.type === 'DynamicFieldGroup') {
                     return this.renderGroup(c, d[camelCase(c.stringKey)]);
                   } if (c.type === 'DynamicField') {
-                    return this.renderField(c, d[camelCase(c.stringKey)], `${c.stringKey}_${i + 1}`);
+                    return this.renderField(c, d[camelCase(c.stringKey)]);
                   }
                 }
                 return '';

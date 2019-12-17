@@ -21,6 +21,8 @@ class SubmitButton extends React.Component {
   }
 
   render() {
+    // Note: Extracting staticContext here won't be necessary when we
+    // switch to functional components + hooks
     const { formType, saveData, staticContext, ...rest } = this.props;
     const { isSaving, success } = this.state;
 

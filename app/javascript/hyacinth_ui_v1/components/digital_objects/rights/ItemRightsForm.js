@@ -52,8 +52,7 @@ class ItemRightsForm extends React.Component {
   }
 
   onSubmitHandler = () => {
-    const { data: { uid } } = this.props;
-    const { history: { push } } = this.props;
+    const { history: { push }, data: { uid } } = this.props;
     const { rights } = this.state;
 
     return digitalObject.update(
