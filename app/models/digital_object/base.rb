@@ -48,7 +48,7 @@ module DigitalObject
     # Dynamic Fields
     metadata_attribute :dynamic_field_data, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Hash.new })
     # Rights Information
-    metadata_attribute :rights, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Hash.new })
+    metadata_attribute :rights, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Hash.new }).public_writer
     # Administrative Relationsip Objects
     metadata_attribute :primary_project, Hyacinth::DigitalObject::TypeDef::Project.new.public_writer
     metadata_attribute :other_projects, Hyacinth::DigitalObject::TypeDef::Projects.new.default(-> { Set.new })

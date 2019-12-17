@@ -55,7 +55,7 @@ class ItemRightsForm extends React.Component {
     const { history: { push }, data: { uid } } = this.props;
     const { rights } = this.state;
 
-    return digitalObject.update(
+    return digitalObject.rights.update(
       uid,
       { digitalObject: { rights } },
     ).then(res => push(`/digital_objects/${res.data.digitalObject.uid}/rights`));

@@ -156,7 +156,7 @@ class Ability
     can :assess_rights, Project, { id: project_id }
     can :assess_rights, Project, { string_key: project_string_key }
     # and in the context of a specific object where applicable
-    can :assess_rights, DigitalObject::Base do |digital_object|
+    can :update_rights, DigitalObject::Base do |digital_object|
       digital_object.projects.detect { |p| p.id.eql?(project_id) || p.string_key.eql?(project_string_key) }
     end
   end

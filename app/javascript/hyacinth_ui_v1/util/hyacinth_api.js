@@ -33,6 +33,10 @@ export const digitalObject = {
   create: data => instance.post('/digital_objects', data),
   update: (id, data) => instance.patch(`/digital_objects/${id}`, data),
   delete: id => instance.delete(`/digital_objects/${id}`),
+  rights: {
+    get: id => instance.get(`/digital_objects/${id}/rights`),
+    update: (id, data) => instance.patch(`/digital_objects/${id}/rights`, data),
+  }
 };
 
 
