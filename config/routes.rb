@@ -24,6 +24,9 @@ Rails.application.routes.draw do
           post ':id/publish' => 'digital_objects#publish', as: :publish
           post ':id/preserve' => 'digital_objects#preserve', as: :preserve
         end
+        member do
+          resource :rights, controller: 'digital_objects/rights', only: [:show, :edit, :update]
+        end
       end
 
       resources :vocabularies, param: :string_key, except: [:new, :edit] do

@@ -105,7 +105,7 @@ module Api
 
         def create_or_update_params
           # TODO: decide how we want to validate dynamic field data parameters
-          params[:digital_object]&.permit!.to_h
+          params.require(:digital_object).except(:rights)&.permit!.to_h
         end
 
         def preserved?
