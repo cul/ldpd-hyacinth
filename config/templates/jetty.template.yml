@@ -6,6 +6,7 @@ default: &default
   java_opts:
     - "-XX:MaxPermSize=128m"
     - "-Xmx256m"
+    - "-Djetty.host=127.0.0.1"
 
 development:
   <<: *default

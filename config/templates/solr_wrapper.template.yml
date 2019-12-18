@@ -3,6 +3,8 @@ default: &default
   download_dir: <%= Rails.root.join('tmp', 'solr-download') %>
   verbose: false
   managed: true
+  solr_options:
+    "a" : "-Djetty.host=127.0.0.1"
 
 development:
   <<: *default

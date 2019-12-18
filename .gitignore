@@ -47,6 +47,7 @@ hyacinth.yml
 resque.yml
 secrets.yml
 fedora.yml
+solr_wrapper.yml
 jetty.yml
 
 # ignore any wrapped jetty installs
