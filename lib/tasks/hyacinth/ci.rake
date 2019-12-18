@@ -67,10 +67,14 @@ namespace :hyacinth do
     puts "Unzipping and starting new solr instance...\n"
     SolrWrapper.wrap(solr_wrapper_config) do |solr_wrapper_instance|
       # Create collections
+      # create is stricter about solr options being in [c,d,n,p,shards,replicationFactor]
+      original_solr_options = solr_wrapper_instance.config.static_config.options[:solr_options].dup
+      allowed_create_options = [:c, :d, :n, :p, :shards, :replicationFactor]
+      solr_wrapper_instance.config.static_config.options[:solr_options]&.delete_if { |k, v| !allowed_create_options.include?(k) }
       solr_wrapper_config[:collection].each do |c|
         solr_wrapper_instance.create(c)
       end
-
+      solr_wrapper_instance.config.static_config.options[:solr_options] = original_solr_options
       begin
         Rake::Task[task_stack.shift].invoke(task_stack)
       rescue SystemExit => e
