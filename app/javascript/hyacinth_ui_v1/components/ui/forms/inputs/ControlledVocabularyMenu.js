@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { vocabularies, terms } from '../../../../util/hyacinth_api';
 
-const perPage = '10';
+const limit = '10';
 
 class ControlledVocabularyMenu extends React.Component {
   state = {
@@ -19,7 +19,7 @@ class ControlledVocabularyMenu extends React.Component {
     },
     options: [],
     search: '',
-    lastPage: 0,
+    offset: 0,
     totalResults: 0,
     infoExpandedFor: '',
   }
@@ -27,10 +27,10 @@ class ControlledVocabularyMenu extends React.Component {
   componentDidMount() {
     const { vocabulary } = this.props;
 
-    terms.search(vocabulary, `page=1&per_page=${perPage}`).then((res) => {
+    terms.search(vocabulary, `offset=0&limit=${limit}`).then((res) => {
       this.setState(produce((draft) => {
         draft.options = res.data.terms;
-        draft.lastPage = 1;
+        draft.offset = 0;
         draft.totalResults = res.data.totalRecords;
         draft.loading = false;
       }));
@@ -61,11 +61,11 @@ class ControlledVocabularyMenu extends React.Component {
 
     const q = (value.length < 3) ? '' : value;
 
-    terms.search(stringKey, `page=1&per_page=${perPage}&q=${q}`)
+    terms.search(stringKey, `offset=0&limit=${limit}&q=${q}`)
       .then((res) => {
         this.setState(produce((draft) => {
           draft.options = res.data.terms;
-          draft.lastPage = 1;
+          draft.offset = 0;
           draft.totalResults = res.data.totalRecords;
         }));
       });
@@ -86,22 +86,23 @@ class ControlledVocabularyMenu extends React.Component {
   }
 
   onMoreHandler = () => {
-    const { lastPage, search } = this.state;
+    const { offset, search } = this.state;
     const { vocabulary } = this.props;
 
-    let queryString = `page=${lastPage + 1}&per_page=${perPage}`;
+    let queryString = `offset=${offset + limit}&limit=${limit}`;
     if (search && search.length >= 3) queryString = queryString.concat(`&q=${search}`)
 
     terms.search(vocabulary, queryString).then((res) => {
       this.setState(produce((draft) => {
         draft.options = draft.options.concat(res.data.terms);
-        draft.lastPage = lastPage + 1;
+        draft.offset = offset + limit;
       }));
     });
   }
 
   render() {
     const {
+      innerRef,
       className,
       'aria-labelledby': labeledBy,
     } = this.props;
@@ -111,7 +112,7 @@ class ControlledVocabularyMenu extends React.Component {
     } = this.state;
 
     return (
-      <div style={{ minWidth: '25rem' }} className={className} aria-labelledby={labeledBy}>
+      <div ref={innerRef} style={{ minWidth: '25rem' }} className={className} aria-labelledby={labeledBy}>
         { loading && <div className="m-3"><Spinner animation="border" variant="warning" /></div>}
         {
           !loading && (
@@ -194,4 +195,5 @@ class ControlledVocabularyMenu extends React.Component {
   }
 }
 
-export default ControlledVocabularyMenu
+// Forwarding ref will be less verbose when we move over to functional components.
+export default React.forwardRef((props, ref) => <ControlledVocabularyMenu innerRef={ref} {...props} />)
