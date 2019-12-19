@@ -3,8 +3,8 @@
 FactoryBot.define do
   module DigitalObject
     class TestSubclass < DigitalObject::Base
-      metadata_attribute :custom_field1, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { 'custom default value 1' })
-      metadata_attribute :custom_field2, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { 'custom default value 2' }).public_writer
+      metadata_attribute :custom_field1, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { 'custom default value 1' }).private_writer
+      metadata_attribute :custom_field2, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { 'custom default value 2' })
       resource_attribute :test_resource1
       resource_attribute :test_resource2
     end
