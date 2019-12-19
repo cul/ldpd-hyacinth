@@ -34,7 +34,7 @@ Rails.application.routes.draw do
         resources :terms,         param: :uri,       except: [:new, :edit],                module: 'vocabularies', constraints: { uri: /.*/ }
       end
 
-      resources :projects, param: :string_key, except: [:new, :edit] do
+      resources :projects, param: :string_key, only: [:show] do
         resources :publish_targets, param: :string_key, except: [:new, :edit], module: 'projects'
         resources :field_sets,                          except: [:new, :edit], module: 'projects'
         resources :enabled_dynamic_fields,
