@@ -1,24 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
-class CancelButton extends React.Component {
-  onCancelHandler = () => {
-    const { to, history: { push } } = this.props;
+function CancelButton({ to }) {
+  const history = useHistory();
 
-    push(to);
-  }
-
-  render() {
-    return (
-      <Button variant="danger" type="button" onClick={this.onCancelHandler}>Cancel</Button>
-    );
-  }
+  return (
+    <Button variant="danger" type="button" onClick={() => history.push(to)}>Cancel</Button>
+  );
 }
 
 CancelButton.propTypes = {
   to: PropTypes.string.isRequired,
 };
 
-export default withRouter(CancelButton);
+export default CancelButton;
