@@ -8,7 +8,7 @@ import SubmitButton from '../layout/forms/SubmitButton';
 import SelectInput from '../ui/forms/inputs/SelectInput';
 import Label from '../ui/forms/Label';
 import InputGroup from '../ui/forms/InputGroup';
-
+import SelectPrimaryProject from 'primary_project/SelectPrimaryProject'
 import hyacinthApi, { projects } from '../../util/hyacinth_api';
 import ability from '../../util/ability';
 
@@ -31,19 +31,6 @@ class DigitalObjectNew extends React.Component {
         digitalObjectType: '',
       },
     },
-  }
-
-  componentDidMount() {
-    // Get all primary projects
-    projects.search('project[is_primary]=true')
-      .then((res) => {
-        this.setState(produce((draft) => {
-          draft.projectOptions = res.data.projects.filter(({ stringKey }) => (
-            ability.can('create_objects', { subjectType: 'Project', stringKey })
-          )).map(p => ({ value: p.stringKey, label: p.displayLabel }));
-        }));
-      })
-      .catch(e => console.log(e));
   }
 
   onProjectChangeHandler = (value) => {
@@ -79,7 +66,6 @@ class DigitalObjectNew extends React.Component {
 
   render() {
     const {
-      projectOptions,
       digitalObjectTypeOptions,
       digitalObject: {
         digitalObjectDataJson: { digitalObjectType, primaryProject },
@@ -93,16 +79,7 @@ class DigitalObjectNew extends React.Component {
         />
 
         <Form className="m-3">
-          <InputGroup>
-            <Label sm={3}>Primary Project</Label>
-            <SelectInput
-              sm={9}
-              name="primary_project"
-              value={primaryProject.stringKey}
-              onChange={v => this.onProjectChangeHandler(v)}
-              options={projectOptions}
-            />
-          </InputGroup>
+          <SelectPrimaryProject primaryProject={primaryProject} changeHandler={this.onProjectChangeHandler} />
 
           <Collapse in={primaryProject.stringKey !== ''}>
             <div>

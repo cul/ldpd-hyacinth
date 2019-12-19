@@ -11,6 +11,17 @@ export const getProjectQuery = gql`
   }
 `;
 
+export const createProjectMutation = gql`
+  mutation CreateProject($input: CreateProjectInput!) {
+    createProject(input: $input) {
+      project {
+        stringKey
+        isPrimary
+      }
+    }
+  }
+`;
+
 export const updateProjectMutation = gql`
   mutation UpdateProject($input: UpdateProjectInput!) {
     updateProject(input: $input) {
@@ -27,6 +38,17 @@ export const deleteProjectMutation = gql`
       project {
         stringKey
       }
+    }
+  }
+`;
+
+export const getProjectsQuery = gql`
+  query {
+    projects {
+      stringKey
+      displayLabel
+      isPrimary
+      projectUrl
     }
   }
 `;

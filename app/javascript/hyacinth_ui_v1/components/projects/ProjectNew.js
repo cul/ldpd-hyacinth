@@ -1,21 +1,11 @@
 import React, { useState } from 'react';
 import { Col, Form, Button } from 'react-bootstrap';
-import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
+import { createProjectMutation } from '../../graphql/projects';
 import GraphQLErrors from '../ui/GraphQLErrors';
-
-const CREATE_PROJECT = gql`
-  mutation CreateProject($input: CreateProjectInput!) {
-    createProject(input: $input) {
-      project {
-        stringKey
-      }
-    }
-  }
-`;
 
 function ProjectNew() {
   const [stringKey, setStringKey] = useState('');
@@ -23,7 +13,7 @@ function ProjectNew() {
   const [projectUrl, setProjectUrl] = useState('');
   const [isPrimary, setIsPrimary] = useState(false);
 
-  const [createProject, { error }] = useMutation(CREATE_PROJECT);
+  const [createProject, { error }] = useMutation(createProjectMutation);
   const history = useHistory();
 
   const handleSubmit = (e) => {
@@ -34,7 +24,7 @@ function ProjectNew() {
           stringKey,
           displayLabel,
           projectUrl,
-          isPrimary
+          isPrimary,
         },
       },
     }).then((res) => {
