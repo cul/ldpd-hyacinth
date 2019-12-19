@@ -3,7 +3,6 @@ import {
   Row, Col, Form, Button, Collapse,
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { gql } from 'apollo-boost';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { useParams, useHistory } from 'react-router-dom';
 
@@ -14,33 +13,10 @@ import InputGroup from '../ui/forms/InputGroup';
 import Label from '../ui/forms/Label';
 import FormButtons from '../ui/forms/FormButtons';
 import { Can } from '../../util/ability_context';
+import { GetUserQuery, UpdateUserMutation } from '../../graphql/users';
 import Checkbox from '../ui/forms/inputs/Checkbox';
 
 import BooleanRadioButtons from '../ui/forms/inputs/BooleanRadioButtons';
-
-const GET_USER = gql`
-  query User($id: ID!){
-    user(id: $id) {
-      id
-      firstName
-      lastName
-      email
-      isActive
-      isAdmin
-      permissions
-    }
-  }
-`;
-
-const UPDATE_USER = gql`
-  mutation UpdateUser($input: UpdateUserInput!){
-    updateUser(input: $input){
-      user {
-        id
-      }
-    }
-  }
-`;
 
 function UserEdit() {
   const { uid: id } = useParams();
@@ -61,28 +37,28 @@ function UserEdit() {
   const [manageAllDigitalObjects, setManageAllDigitalObjects] = useState(false);
 
   const { loading, error } = useQuery(
-    GET_USER,
+    GetUserQuery,
     {
       variables: { id },
       onCompleted: (userData) => {
         const {
-          user: { firstName, lastName, email, isActive, isAdmin, permissions },
+          user,
         } = userData;
 
-        setFirstName(firstName);
-        setLastName(lastName);
+        setFirstName(user.firstName);
+        setLastName(user.lastName);
         setEmail(email);
-        setIsActive(isActive);
-        setIsAdmin(isAdmin);
-        setManageVocabularies(permissions.includes('manage_vocabularies'));
-        setManageUsers(permissions.includes('manage_users'));
-        setReadAllDigitalObjects(permissions.includes('read_all_digital_objects'));
-        setManageAllDigitalObjects(permissions.includes('manage_all_digital_objects'));
+        setIsActive(user.isActive);
+        setIsAdmin(user.isAdmin);
+        setManageVocabularies(user.permissions.includes('manage_vocabularies'));
+        setManageUsers(user.permissions.includes('manage_users'));
+        setReadAllDigitalObjects(user.permissions.includes('read_all_digital_objects'));
+        setManageAllDigitalObjects(user.permissions.includes('manage_all_digital_objects'));
       },
     },
   );
 
-  const [updateUser, { error: mutationErrors }] = useMutation(UPDATE_USER);
+  const [updateUser, { error: mutationErrors }] = useMutation(UpdateUserMutation);
 
   let rightHandLinks = [];
 
