@@ -10,8 +10,6 @@ module Types
     field :full_name, String, null: false
     field :is_active, Boolean, null: true
     field :is_admin, Boolean, null: true
-    field :password, String, null: true
-    field :password_confirmation, String, null: true
     field :permissions, [String], null: true
 
     def permissions
