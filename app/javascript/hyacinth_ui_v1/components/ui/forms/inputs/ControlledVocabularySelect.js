@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Col, Dropdown } from 'react-bootstrap';
 
-import ControlledVocabularyMenu from './ControlledVocabularyMenu';
+import ControlledVocabularyMenu from './controlled_vocabulary/ControlledVocabularyMenu';
 import RemoveButton from '../../buttons/RemoveButton';
 
 class ControlledVocabularySelect extends React.PureComponent {
@@ -13,8 +13,8 @@ class ControlledVocabularySelect extends React.PureComponent {
 
     return (
       <Col sm={8} style={{ alignSelf: 'center' }}>
-        <Dropdown name={name}>
-          <Dropdown.Toggle drop="down" size="sm" variant="outline-secondary">
+        <Dropdown name={name} drop="right">
+          <Dropdown.Toggle size="sm" variant="outline-secondary">
             { (value && value.prefLabel) ? value.prefLabel : 'Select one...' }
           </Dropdown.Toggle>
 
