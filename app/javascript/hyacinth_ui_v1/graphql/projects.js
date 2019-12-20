@@ -30,3 +30,28 @@ export const deleteProjectMutation = gql`
     }
   }
 `;
+
+export const getProjectPermissionsQuery = gql`
+  query ProjectPermissions($stringKey: String!){
+    projectPermissionsForProject(stringKey: $stringKey) {
+      user {
+        id,
+        firstName,
+        lastName
+      },
+      project {
+        stringKey
+        displayLabel
+      },
+      permissions
+    }
+  }
+`;
+
+export const updateProjectPermissionsMutation = gql`
+  mutation UpdateProjectPermissions($input: UpdateProjectPermissionsInput!) {
+    updateProject(input: $input) {
+      errors
+    }
+  }
+`;
