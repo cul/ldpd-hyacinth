@@ -15,8 +15,6 @@ module Types
     field :is_title_searchable, Boolean, null: false
     field :is_identifier_searchable, Boolean, null: false
     field :controlled_vocabulary, String, null: true
-    #field :children, [DynamicFieldGroupChildType], null: true
     field :dynamic_field_group, DynamicFieldGroupType, null: true
   end
 end
-

@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-
 module Types
   class DynamicFieldGroupChildType < Types::BaseUnion
     description "objects that can be children of a dynamic field group"
