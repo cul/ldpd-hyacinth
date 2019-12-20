@@ -34,6 +34,10 @@ module Types
       argument :id, ID, required: true
     end
 
+    field :project_permissions_for_project, [ProjectPermissionsType], null: true do
+      argument :string_key, String, required: true
+    end
+
     def digital_objects
       # This is a temporary implementation, this should actually querying the solr instance.
       DigitalObjectRecord.all
@@ -65,6 +69,23 @@ module Types
     def users
       ability.authorize!(:index, User)
       User.accessible_by(ability).order(:last_name)
+    end
+
+    def project_permissions_for_project(string_key:)
+      # Note: In the future, we'll likely have a project_permissions_for_user method as well.
+      project = Project.find_by!(string_key: string_key)
+      ability.authorize!(:update, project)
+      user_permissions = {}
+      permissions = Permission.where(subject: 'Project', subject_id: project.id)
+      permissions.each do |permission|
+        user_permissions[permission.user_id] ||= {
+          user: permission.user,
+          project: project
+        }
+        user_permissions[permission.user_id]['permissions'] ||= []
+        user_permissions[permission.user_id]['permissions'] << permission.action
+      end
+      user_permissions.values
     end
 
     def authenticated_user
