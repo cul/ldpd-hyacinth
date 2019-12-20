@@ -4,6 +4,7 @@ import {
   Button, Dropdown, Form, Badge, Collapse,
 } from 'react-bootstrap';
 
+import ControlledVocabularyOption from './ControlledVocabularyOption';
 import { terms } from '../../../../../util/hyacinth_api';
 
 const limit = '10';
@@ -23,10 +24,8 @@ function ControlledVocabularyOptions({ vocabulary, onChange }) {
     });
   }, []);
 
-  const onSelectHandler = (event) => {
-    const { uri } = event.target.dataset;
-
-    const term = options.find(o => o.uri === uri); // Find matching term in options.
+  const onSelectHandler = (uri) => {
+    const term = options.find(o => o.uri === uri);
 
     onChange(term);
   };
@@ -77,50 +76,13 @@ function ControlledVocabularyOptions({ vocabulary, onChange }) {
 
       <ul className="list-unstyled">
         {
-          options.map(o => (
-            <div className="px-3 py-1" key={o.uuid}>
-              <Button variant="link" onClick={() => onCollapseHandler(o.uuid)} className="p-0">
-                <FontAwesomeIcon icon="info-circle" />
-              </Button>
-
-              <Dropdown.Item
-                className="px-1 mx-1"
-                onClick={onSelectHandler}
-                key={o.uri}
-                data-uri={o.uri}
-                style={{ display: 'inline' }}
-              >
-                {`${o.prefLabel} `}
-              </Dropdown.Item>
-
-              {
-                o.termType === 'temporary'
-                  ? <Badge variant="danger">Temporary Term</Badge>
-                  : <a className="badge badge-primary" href={o.uri} target="_blank" rel="noopener noreferrer">{o.authority}</a>
-              }
-              <Collapse in={infoExpandedFor === o.uuid}>
-                <div>
-                  <ul className="list-unstyled px-4" style={{ fontSize: '.8rem' }}>
-                    <li>
-                      <strong>URI:</strong> {o.uri}
-                      <a className="px-1" href={o.uri} target="_blank" rel="noopener noreferrer">
-                        <FontAwesomeIcon icon="external-link-square-alt" />
-                      </a>
-                    </li>
-                    <li>
-                      <strong>Type:</strong> {o.termType}
-                    </li>
-                    {
-                      o.termType !== 'temporary' && (
-                        <li>
-                          <strong>Authority:</strong> {o.authority}
-                        </li>
-                      )
-                    }
-                  </ul>
-                </div>
-              </Collapse>
-            </div>
+          options.map(term => (
+            <ControlledVocabularyOption
+              term={term}
+              onSelect={() => onSelectHandler(term.uri)}
+              onCollapseToggle={() => onCollapseHandler(term.uuid)}
+              expanded={infoExpandedFor === term.uuid}
+            />
           ))
         }
       </ul>

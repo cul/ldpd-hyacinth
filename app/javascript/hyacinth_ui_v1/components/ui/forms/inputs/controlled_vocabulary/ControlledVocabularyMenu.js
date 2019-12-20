@@ -14,6 +14,7 @@ const ControlledVocabularyMenu = React.forwardRef((props, ref) => {
     style,
     'aria-labelledby': labeledBy,
     vocabulary: vocabularyStringKey,
+    close,
   } = props;
 
   const [loading, setLoading] = useState(true);
@@ -47,11 +48,11 @@ const ControlledVocabularyMenu = React.forwardRef((props, ref) => {
             </Dropdown.Header>
             <Dropdown.Divider />
 
-
             <DropdownBody
               vocabulary={vocabulary}
               onChange={onChange}
               displayNewTerm={setDisplayNewTerm}
+              close={close}
             />
           </>
         )
