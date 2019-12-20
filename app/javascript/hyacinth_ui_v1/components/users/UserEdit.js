@@ -13,25 +13,12 @@ import InputGroup from '../ui/forms/InputGroup';
 import Label from '../ui/forms/Label';
 import FormButtons from '../ui/forms/FormButtons';
 import { Can } from '../../util/ability_context';
-import { GetAuthenticatedUserQuery, GetUserQuery, UpdateUserMutation } from '../../graphql/users';
+import { GetUserQuery, UpdateUserMutation } from '../../graphql/users';
 import Checkbox from '../ui/forms/inputs/Checkbox';
 
 import BooleanRadioButtons from '../ui/forms/inputs/BooleanRadioButtons';
 
 function UserEdit() {
-  const [authenticatedUser, setAuthenticatedUser] = useState({});
-
-  let gqlResponse = useQuery(
-    GetAuthenticatedUserQuery,
-    {
-      onCompleted: (userData) => {
-        const { authenticatedUser: { rules, ...rest } } = userData;
-        ability.update(rules);
-        setAuthenticatedUser({ ...rest });
-      },
-    },
-  );
-
   const { uid: id } = useParams();
   const history = useHistory();
 
@@ -48,18 +35,16 @@ function UserEdit() {
   const [manageUsers, setManageUsers] = useState(false);
   const [readAllDigitalObjects, setReadAllDigitalObjects] = useState(false);
   const [manageAllDigitalObjects, setManageAllDigitalObjects] = useState(false);
-  const [canActivate, setCanActivate] = useState(false);
 
-  const canActivateUser = (subject, subjectAbility, object) => {
-    let activatable = subject.isAdmin;
+  const canActivateUser = () => {
+    let activatable = ability.can('manage', 'all');
     if (!activatable) {
-      activatable = (subjectAbility.can('manage', 'User') && !object.isAdmin);
+      activatable = (ability.can('manage', 'User') && !isAdmin);
     }
-    if (subject.id === object.id) activatable = false;
     return activatable;
   };
 
-  gqlResponse = useQuery(
+  const gqlResponse = useQuery(
     GetUserQuery,
     {
       variables: { id },
@@ -73,7 +58,6 @@ function UserEdit() {
         setManageUsers(userData.user.permissions.includes('manage_users'));
         setReadAllDigitalObjects(userData.user.permissions.includes('read_all_digital_objects'));
         setManageAllDigitalObjects(userData.user.permissions.includes('manage_all_digital_objects'));
-        setCanActivate(canActivateUser(authenticatedUser, ability, userData.user));
       },
     },
   );
@@ -107,7 +91,7 @@ function UserEdit() {
     if (ability.can('manage', 'User')) {
       if (!isAdmin) userData.input.isActive = isActive;
     }
-    if (authenticatedUser.isAdmin) {
+    if (ability.can('manage', 'all')) {
       userData.input.permissions = permissions;
       userData.input.isAdmin = isAdmin;
       userData.input.isActive = isActive;
@@ -170,7 +154,7 @@ function UserEdit() {
           <BooleanRadioButtons
             sm={4}
             value={isActive}
-            disabled={(!canActivate)}
+            disabled={(!canActivateUser())}
             onChange={v => setIsActive(v)}
           />
           <Col sm={6}>
@@ -237,7 +221,6 @@ function UserEdit() {
                     sm={12}
                     value={isAdmin}
                     label="Administrator"
-                    disabled={!authenticatedUser.isAdmin}
                     onChange={v => setIsAdmin(v)}
                     helpText="has ability to perform all actions"
                   />
@@ -247,7 +230,7 @@ function UserEdit() {
                   md={6}
                   value={manageVocabularies}
                   label="Manage Vocabularies"
-                  disabled={!authenticatedUser.isAdmin}
+                  disabled={!ability.can('manage', 'all')}
                   onChange={v => setManageVocabularies(v)}
                   helpText="has ability to create/edit/delete vocabularies, and create/edit/delete terms"
                 />
@@ -256,7 +239,7 @@ function UserEdit() {
                   sm={12}
                   value={manageUsers}
                   label="Manage Users"
-                  disabled={!authenticatedUser.isAdmin}
+                  disabled={!ability.can('manage', 'all')}
                   onChange={v => setManageUsers(v)}
                   helpText="has ability to add new users, deactivate users, and add all system-wide permissions except administrator"
                 />
@@ -265,7 +248,7 @@ function UserEdit() {
                   sm={12}
                   value={readAllDigitalObjects}
                   label="Read All Digital Objects"
-                  disabled={!authenticatedUser.isAdmin}
+                  disabled={!ability.can('manage', 'all')}
                   onChange={v => setReadAllDigitalObjects(v)}
                   helpText="has ability to view all projects and all digital objects"
                 />
@@ -273,7 +256,7 @@ function UserEdit() {
                   md={6}
                   sn={12}
                   value={manageAllDigitalObjects}
-                  disabled={!authenticatedUser.isAdmin}
+                  disabled={!ability.can('manage', 'all')}
                   onChange={v => setManageAllDigitalObjects(v)}
                   label="Manage All Digital Objects"
                   helpText="has ability to read/create/edit/delete all digital objects and view all projects"
