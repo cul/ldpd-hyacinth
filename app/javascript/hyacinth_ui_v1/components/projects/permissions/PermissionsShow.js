@@ -8,7 +8,7 @@ import EditButton from '../../ui/buttons/EditButton';
 import { getProjectQuery } from '../../../graphql/projects';
 import ProjectInterface from '../ProjectInterface';
 import GraphQLErrors from '../../ui/GraphQLErrors';
-import ProjectPermissionsEditor from './ProjectPermissionsEditor';
+import PermissionsEditor from './PermissionsEditor';
 
 function PermissionsShow() {
   const { stringKey } = useParams();
@@ -30,7 +30,7 @@ function PermissionsShow() {
         </Can>
       </TabHeading>
 
-      <ProjectPermissionsEditor project={data.project} readonly />
+      <PermissionsEditor projectStringKey={data.project.stringKey} readonly />
     </ProjectInterface>
   );
 }

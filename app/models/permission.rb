@@ -11,9 +11,10 @@ class Permission < ApplicationRecord
     MANAGE_ALL_DIGITAL_OBJECTS, READ_ALL_DIGITAL_OBJECTS
   ]
 
+  # Note: The order of actions in this array determines display order in the UI.
   PROJECT_ACTIONS = [
     'read_objects', 'create_objects', 'update_objects', 'delete_objects',
-    'publish_objects', 'manage', 'assess_rights'
+    'publish_objects', 'assess_rights', 'manage'
   ]
 
   validate :valid_permission_combination

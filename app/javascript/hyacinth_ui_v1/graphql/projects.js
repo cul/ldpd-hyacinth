@@ -31,13 +31,19 @@ export const deleteProjectMutation = gql`
   }
 `;
 
+export const getProjectPermissionActionsQuery = gql`
+  query ProjectPermissionActions {
+    projectPermissionActions
+  }
+`;
+
+// TODO: Eventually request users ordered by name
 export const getProjectPermissionsQuery = gql`
   query ProjectPermissions($stringKey: String!){
     projectPermissionsForProject(stringKey: $stringKey) {
       user {
         id,
-        firstName,
-        lastName
+        fullName
       },
       project {
         stringKey

@@ -38,6 +38,10 @@ module Types
       argument :string_key, String, required: true
     end
 
+    field :project_permission_actions, [String], null: true do
+      description 'List of all Project Permission actions'
+    end
+
     def digital_objects
       # This is a temporary implementation, this should actually querying the solr instance.
       DigitalObjectRecord.all
@@ -69,6 +73,10 @@ module Types
     def users
       ability.authorize!(:index, User)
       User.accessible_by(ability).order(:last_name)
+    end
+
+    def project_permission_actions
+      Permission::PROJECT_ACTIONS
     end
 
     def project_permissions_for_project(string_key:)

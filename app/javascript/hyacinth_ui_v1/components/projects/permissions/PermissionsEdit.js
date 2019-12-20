@@ -6,7 +6,7 @@ import TabHeading from '../../ui/tabs/TabHeading';
 import ProjectInterface from '../ProjectInterface';
 import { getProjectQuery } from '../../../graphql/projects';
 import GraphQLErrors from '../../ui/GraphQLErrors';
-import ProjectPermissionsEditor from './ProjectPermissionsEditor';
+import PermissionsEditor from './PermissionsEditor';
 
 function PermissionsEdit() {
   const { stringKey } = useParams();
@@ -21,7 +21,7 @@ function PermissionsEdit() {
         Permissions
       </TabHeading>
 
-      <ProjectPermissionsEditor project={data.project} />
+      <PermissionsEditor projectStringKey={data.project.stringKey} />
     </ProjectInterface>
   );
 }
