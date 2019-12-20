@@ -45,3 +45,20 @@ export const UpdateUserMutation = gql`
     }
   }
 `;
+
+export const GetAuthenticatedUserQuery = gql`
+  query AuthenticatedUser {
+    authenticatedUser {
+      id
+      firstName
+      lastName
+      isAdmin
+      rules {
+        actions
+        subject
+        conditions
+        inverted
+      }
+    }
+  }
+`;
