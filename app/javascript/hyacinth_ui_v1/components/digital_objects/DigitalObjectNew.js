@@ -8,7 +8,7 @@ import SubmitButton from '../layout/forms/SubmitButton';
 import SelectInput from '../ui/forms/inputs/SelectInput';
 import Label from '../ui/forms/Label';
 import InputGroup from '../ui/forms/InputGroup';
-import SelectPrimaryProject from 'primary_project/SelectPrimaryProject'
+import SelectPrimaryProject from './primary_project/SelectPrimaryProject'
 import hyacinthApi, { projects } from '../../util/hyacinth_api';
 import ability from '../../util/ability';
 
