@@ -9,6 +9,8 @@ module Types
     field :update_project, mutation: Mutations::UpdateProject
     field :delete_project, mutation: Mutations::DeleteProject
 
+    field :update_project_permissions, mutation: Mutations::UpdateProjectPermissions
+
     field :create_publish_target, mutation: Mutations::CreatePublishTarget
     field :update_publish_target, mutation: Mutations::UpdatePublishTarget
     field :delete_publish_target, mutation: Mutations::DeletePublishTarget
