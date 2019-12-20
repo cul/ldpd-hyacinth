@@ -45,9 +45,8 @@ class TermForm extends React.Component {
   }
 
   onSubmitHandler = (event) => {
-
     const { formType, term: { uri }, term } = this.state;
-    const { history: { push }, vocabulary: { stringKey } } = this.props;
+    const { history: { push }, vocabulary: { stringKey }, submitAction } = this.props;
 
     switch (formType) {
       case 'new':
@@ -55,7 +54,11 @@ class TermForm extends React.Component {
           .then((res) => {
             const { term: { uri: newURI } } = res.data;
 
-            push(`/controlled_vocabularies/${stringKey}/terms/${encodeURIComponent(newURI)}/edit`);
+            if (submitAction) {
+              submitAction(res.data.term);
+            } else {
+              push(`/controlled_vocabularies/${stringKey}/terms/${encodeURIComponent(newURI)}/edit`);
+            }
           });
       case 'edit':
         return terms.update(stringKey, encodeURIComponent(uri), { term });
@@ -81,7 +84,7 @@ class TermForm extends React.Component {
   }
 
   render() {
-    const { match: { params: { stringKey } } } = this.props;
+    const { match: { params: { stringKey } }, cancelAction, small } = this.props;
     const {
       formType,
       term,
@@ -91,54 +94,56 @@ class TermForm extends React.Component {
     } = this.state;
 
     const { vocabulary } = this.props;
+    const labelColWidth = small ? 4 : 2;
+    const inputColWidth = small ? 8 : 10;
 
     return (
       <Form onSubmit={this.onSubmitHandler}>
         <InputGroup>
-          <Label>Term Type</Label>
+          <Label sm={labelColWidth}>Term Type</Label>
           {
             formType === 'new'
-              ? <SelectInput value={termType} onChange={v => this.onChangeHandler('termType', v)} options={types.map(t => ({ label: t, value: t }))} />
-              : <PlainText value={termType} />
+              ? <SelectInput sm={inputColWidth} value={termType} onChange={v => this.onChangeHandler('termType', v)} options={types.map(t => ({ label: t, value: t }))} />
+              : <PlainText sm={inputColWidth} value={termType} />
           }
         </InputGroup>
 
         <InputGroup>
-          <Label>URI</Label>
+          <Label sm={labelColWidth}>URI</Label>
           {
             (() => {
               if (formType === 'edit') {
                 return <PlainText value={uri} />;
               } else if (termType === 'external' || termType === '') {
-                return <TextInput value={uri} onChange={v => this.onChangeHandler('uri', v)} />;
+                return <TextInput sm={inputColWidth} value={uri} onChange={v => this.onChangeHandler('uri', v)} />;
               } else {
-                return <ReadOnlyInput value={uri} />;
+                return <ReadOnlyInput sm={inputColWidth} value={uri} />;
               }
             })()
           }
         </InputGroup>
 
         <InputGroup>
-          <Label>Pref Label</Label>
+          <Label sm={labelColWidth}>Pref Label</Label>
           {
             termType === 'temporary' && formType !== 'new'
-              ? <PlainText value={prefLabel} />
-              : <TextInput value={prefLabel} onChange={v => this.onChangeHandler('prefLabel', v)} />
+              ? <PlainText sm={inputColWidth} value={prefLabel} />
+              : <TextInput sm={inputColWidth} value={prefLabel} onChange={v => this.onChangeHandler('prefLabel', v)} />
           }
         </InputGroup>
 
         {
           termType !== 'temporary' && (
             <InputGroup>
-              <Label>Alternative Labels</Label>
-              <TextInputWithAddAndRemove values={altLabels} onChange={v => this.onChangeHandler('altLabels', v)} />
+              <Label sm={labelColWidth}>Alternative Labels</Label>
+              <TextInputWithAddAndRemove sm={inputColWidth} values={altLabels} onChange={v => this.onChangeHandler('altLabels', v)} />
             </InputGroup>
           )
         }
 
         <InputGroup>
-          <Label>Authority</Label>
-          <TextInput value={authority} onChange={v => this.onChangeHandler('authority', v)} />
+          <Label sm={labelColWidth}>Authority</Label>
+          <TextInput sm={inputColWidth} value={authority} onChange={v => this.onChangeHandler('authority', v)} />
         </InputGroup>
 
         {
@@ -149,10 +154,10 @@ class TermForm extends React.Component {
 
             switch (dataType) {
               case 'string':
-                field = <TextInput value={term[k]} onChange={v => this.onChangeHandler(k, v)} />;
+                field = <TextInput sm={inputColWidth} value={term[k]} onChange={v => this.onChangeHandler(k, v)} />;
                 break;
               case 'integer':
-                field = <NumberInput value={term[k]} onChange={v => this.onChangeHandler(k, v)} />;
+                field = <NumberInput sm={inputColWidth} value={term[k]} onChange={v => this.onChangeHandler(k, v)} />;
                 break;
               default:
                 field = '';
@@ -161,7 +166,7 @@ class TermForm extends React.Component {
 
             return (
               <InputGroup>
-                <Label>{label}</Label>
+                <Label sm={labelColWidth}>{label}</Label>
                 { field }
               </InputGroup>
             );
@@ -171,6 +176,7 @@ class TermForm extends React.Component {
         <FormButtons
           formType={formType}
           cancelTo={`/controlled_vocabularies/${stringKey}`}
+          cancelAction={cancelAction}
           onSave={this.onSubmitHandler}
           onDelete={this.onDeleteHandler}
         />

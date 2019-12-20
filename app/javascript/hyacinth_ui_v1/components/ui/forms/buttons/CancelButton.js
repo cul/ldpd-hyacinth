@@ -3,16 +3,25 @@ import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 
-function CancelButton({ to }) {
+function CancelButton({ to, action }) {
   const history = useHistory();
 
+  const redirect = () => history.push(to);
+
   return (
-    <Button variant="danger" type="button" onClick={() => history.push(to)}>Cancel</Button>
+    <Button
+      variant="danger"
+      type="button"
+      onClick={action || redirect}
+    >
+      Cancel
+    </Button>
   );
 }
 
 CancelButton.propTypes = {
-  to: PropTypes.string.isRequired,
+  to: PropTypes.string,
+  action: PropTypes.func,
 };
 
 export default CancelButton;
