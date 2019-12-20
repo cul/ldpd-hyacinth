@@ -17,7 +17,7 @@ class BooleanRadioButtons extends React.Component {
 
   render() {
     const {
-      inputName, value, onChange, ...rest
+      inputName, value, disabled, onChange, ...rest
     } = this.props;
 
     return (
@@ -29,6 +29,7 @@ class BooleanRadioButtons extends React.Component {
           name={inputName}
           value="yes"
           checked={value}
+          disabled={disabled}
           onChange={this.onRadioButtonChange}
         />
 
@@ -39,6 +40,7 @@ class BooleanRadioButtons extends React.Component {
           value="no"
           label="No"
           checked={!value && value !== null}
+          disabled={disabled}
           onChange={this.onRadioButtonChange}
         />
       </Col>
@@ -49,11 +51,13 @@ class BooleanRadioButtons extends React.Component {
 BooleanRadioButtons.propTypes = {
   inputName: PropTypes.string,
   value: PropTypes.bool.isRequired,
+  disabled: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
 };
 
 BooleanRadioButtons.defaultProps = {
   inputName: '',
+  disabled: false,
 };
 
 export default BooleanRadioButtons;
