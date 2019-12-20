@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import produce from 'immer';
 import { Col, Form, Collapse } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
@@ -8,17 +9,11 @@ import SubmitButton from '../layout/forms/SubmitButton';
 import SelectInput from '../ui/forms/inputs/SelectInput';
 import Label from '../ui/forms/Label';
 import InputGroup from '../ui/forms/InputGroup';
-import SelectPrimaryProject from './primary_project/SelectPrimaryProject'
-import hyacinthApi, { projects } from '../../util/hyacinth_api';
-import ability from '../../util/ability';
+import SelectPrimaryProject from './primary_project/SelectPrimaryProject';
 
-const allParentDigitalObjectTypes = [
-  'item', 'site',
-]
 
 class DigitalObjectNew extends React.Component {
   state = {
-    projectOptions: [],
     digitalObjectTypeOptions: [
       { label: 'Item', value: 'item' },
       { label: 'Site', value: 'site' },
@@ -79,7 +74,10 @@ class DigitalObjectNew extends React.Component {
         />
 
         <Form className="m-3">
-          <SelectPrimaryProject primaryProject={primaryProject} changeHandler={this.onProjectChangeHandler} />
+          <SelectPrimaryProject
+            primaryProject={primaryProject}
+            changeHandler={this.onProjectChangeHandler}
+          />
 
           <Collapse in={primaryProject.stringKey !== ''}>
             <div>
@@ -110,5 +108,9 @@ class DigitalObjectNew extends React.Component {
     );
   }
 }
+
+DigitalObjectNew.propTypes = {
+  history: PropTypes.object.isRequired,
+};
 
 export default withRouter(DigitalObjectNew);
