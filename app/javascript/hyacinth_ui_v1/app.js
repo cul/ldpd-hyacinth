@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Route, Redirect, Switch } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
-import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
 
 import TopNavbar from './components/layout/TopNavbar';
@@ -16,6 +15,7 @@ import ControlledVocabularies from './components/controlled_vocabularies/Control
 import Projects from './components/projects/Projects';
 import { AbilityContext } from './util/ability_context';
 import ability from './util/ability';
+import { GetAuthenticatedUserQuery } from './graphql/users';
 import GraphQLErrors from './components/ui/GraphQLErrors';
 
 const Index = () => (
@@ -25,27 +25,11 @@ const Index = () => (
   </div>
 );
 
-const AUTHENTICATED_USER = gql`
-  query AuthenticatedUser {
-    authenticatedUser {
-      id
-      firstName
-      lastName
-      rules {
-        actions
-        subject
-        conditions
-        inverted
-      }
-    }
-  }
-`;
-
 function App() {
   const [user, setUser] = useState({});
 
   const { loading, error } = useQuery(
-    AUTHENTICATED_USER,
+    GetAuthenticatedUserQuery,
     {
       onCompleted: (userData) => {
         const { authenticatedUser: { rules, ...rest } } = userData;
