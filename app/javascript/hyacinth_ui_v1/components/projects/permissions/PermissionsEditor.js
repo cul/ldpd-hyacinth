@@ -4,18 +4,22 @@ import { useQuery } from '@apollo/react-hooks';
 import { Button, Form, Table } from 'react-bootstrap';
 import produce from 'immer';
 import Select from 'react-select'
+import { remove as arrRemove } from 'lodash/array'
 
 import GraphQLErrors from '../../ui/GraphQLErrors';
 import { getProjectPermissionsQuery, getProjectPermissionActionsQuery } from '../../../graphql/projects';
 import { getUsersQuery } from '../../../graphql/users';
+import CancelButton from '../../layout/forms/CancelButton';
 
 function PermissionsEditor(props) {
-  let currentSelectUserSelection = null;
+  window.arrRemove = arrRemove;
+  const READ_PERMISSION_ACTION = 'read_objects';
   const { readOnly } = props;
 
   const { projectStringKey } = props;
   const [permissionsChanged, setPermissionsChanged] = useState(false);
   const [projectPermissions, setProjectPermissions] = useState([]);
+  const [currentAddUserSelection, setCurrentAddUserSelection] = useState(null);
 
   const { loading: actionsLoading, error: actionsError, data: actionsData } = useQuery(
     getProjectPermissionActionsQuery, { variables: { stringKey: projectStringKey } },
@@ -59,7 +63,7 @@ function PermissionsEditor(props) {
     return actionsData.projectPermissionActions.map(action => (
       <td key={action}>
         <Form.Check
-          disabled={readOnly}
+          disabled={readOnly || action === READ_PERMISSION_ACTION}
           type="checkbox"
           checked={projectPermission.permissions.includes(action)}
           onChange={(e) => {
@@ -69,6 +73,18 @@ function PermissionsEditor(props) {
         />
       </td>
     ));
+  };
+
+  const removeUser = (userId) => {
+    setPermissionsChanged(true);
+
+    setProjectPermissions(
+      produce(projectPermissions, (draft) => {
+        arrRemove(draft, (projectPermission) => {
+          return projectPermission.user.id === userId;
+        });
+      }),
+    );
   };
 
   const renderProjectPermissions = () => {
@@ -82,7 +98,7 @@ function PermissionsEditor(props) {
 
         { !readOnly && (
           <td key="remove" className="text-center">
-            <Button size="sm" variant="danger">Remove</Button>
+            <Button size="sm" variant="danger" onClick={() => { removeUser(projectPermission.user.id); }}>Remove</Button>
           </td>
         ) }
       </tr>
@@ -90,19 +106,22 @@ function PermissionsEditor(props) {
   };
 
   const addSelectedUser = () => {
-    if (currentSelectUserSelection == null) return;
+    if (currentAddUserSelection == null) return;
+    setPermissionsChanged(true);
 
     setProjectPermissions(
       produce(projectPermissions, (draft) => {
         draft.push({
-          user: currentSelectUserSelection,
+          user: { id: currentAddUserSelection.value, fullName: currentAddUserSelection.label },
           project: {
             stringKey: projectStringKey,
           },
-          permissions: ['read_objects'],
+          permissions: [READ_PERMISSION_ACTION],
         });
       }),
     );
+
+    setCurrentAddUserSelection(null); // this will clear out the current select item
   };
 
   const renderUserAdd = () => {
@@ -112,8 +131,9 @@ function PermissionsEditor(props) {
       <tr key="user-add">
         <td colSpan={actionsData.projectPermissionActions.length + 1}>
           <Select
+            value={currentAddUserSelection}
             options={nonAddedUsers.map(user => ({ value: user.id, label: user.fullName }))}
-            onChange={(val) => {currentSelectUserSelection = { id: val.value, fullName: val.label }; }}
+            onChange={(val) => { setCurrentAddUserSelection(val); }}
           />
         </td>
         <td className="text-center align-middle">
@@ -140,6 +160,15 @@ function PermissionsEditor(props) {
           { !readOnly && renderUserAdd() }
         </tbody>
       </Table>
+      {
+        !readOnly && (
+          <div className="text-right">
+            <CancelButton to={`/projects/${projectStringKey}/permissions`} />
+            &nbsp;
+            <Button variant="primary" disabled={!permissionsChanged} onClick={() => { removeUser(projectPermission.user.id); }}>{permissionsChanged ? 'Save' : 'Saved'}</Button>
+          </div>
+        )
+      }
     </>
   );
 }
