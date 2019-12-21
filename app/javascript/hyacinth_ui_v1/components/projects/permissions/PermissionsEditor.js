@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
-import { Table, Form } from 'react-bootstrap';
+import { Button, Form, Table } from 'react-bootstrap';
 import produce from 'immer';
+import Select from 'react-select'
 
 import GraphQLErrors from '../../ui/GraphQLErrors';
 import { getProjectPermissionsQuery, getProjectPermissionActionsQuery } from '../../../graphql/projects';
+import { getUsersQuery } from '../../../graphql/users';
 
 function PermissionsEditor(props) {
+  let currentSelectUserSelection = null;
+  const { readOnly } = props;
+
   const { projectStringKey } = props;
   const [permissionsChanged, setPermissionsChanged] = useState(false);
   const [projectPermissions, setProjectPermissions] = useState([]);
 
   const { loading: actionsLoading, error: actionsError, data: actionsData } = useQuery(
     getProjectPermissionActionsQuery, { variables: { stringKey: projectStringKey } },
+  );
+  const { loading: usersLoading, error: usersError, data: usersData } = useQuery(
+    getUsersQuery,
   );
   const { loading: permissionsLoading, error: permissionsError } = useQuery(
     getProjectPermissionsQuery, {
@@ -24,9 +32,9 @@ function PermissionsEditor(props) {
     },
   );
 
-  if (actionsLoading || permissionsLoading) return (<></>);
-  if (actionsError || permissionsError) {
-    return (<GraphQLErrors errors={actionsError || permissionsError} />);
+  if (actionsLoading || permissionsLoading || usersLoading) return (<></>);
+  if (actionsError || permissionsError || usersError) {
+    return (<GraphQLErrors errors={actionsError || permissionsError || usersError} />);
   }
 
   const actionToDisplayLabel = (action) => {
@@ -47,14 +55,15 @@ function PermissionsEditor(props) {
     );
   };
 
-  const renderProjectPermission = (projectPermission, actions) => {
-    return actions.map(action => (
+  const renderProjectPermission = (projectPermission) => {
+    return actionsData.projectPermissionActions.map(action => (
       <td key={action}>
         <Form.Check
-          disabled={props.readonly}
+          disabled={readOnly}
           type="checkbox"
           checked={projectPermission.permissions.includes(action)}
           onChange={(e) => {
+            if (readOnly) return;
             updatePermissionsData(projectPermission.user.id, action, e.target.checked);
           }}
         />
@@ -62,15 +71,56 @@ function PermissionsEditor(props) {
     ));
   };
 
-  const renderProjectPermissions = (projectPerms, actions) => {
-    return projectPerms.map(projectPermission => (
-      <tr key={projectPermission.user}>
+  const renderProjectPermissions = () => {
+    return projectPermissions.map(projectPermission => (
+      <tr key={projectPermission.user.id}>
         <td key="name">
           {projectPermission.user.fullName}
         </td>
-        {renderProjectPermission(projectPermission, actions)}
+
+        {renderProjectPermission(projectPermission)}
+
+        { !readOnly && (
+          <td key="remove" className="text-center">
+            <Button size="sm" variant="danger">Remove</Button>
+          </td>
+        ) }
       </tr>
     ));
+  };
+
+  const addSelectedUser = () => {
+    if (currentSelectUserSelection == null) return;
+
+    setProjectPermissions(
+      produce(projectPermissions, (draft) => {
+        draft.push({
+          user: currentSelectUserSelection,
+          project: {
+            stringKey: projectStringKey,
+          },
+          permissions: ['read_objects'],
+        });
+      }),
+    );
+  };
+
+  const renderUserAdd = () => {
+    const addedUserIds = projectPermissions.map(permission => permission.user.id);
+    const nonAddedUsers = usersData.users.filter(user => !addedUserIds.includes(user.id));
+    return (
+      <tr key="user-add">
+        <td colSpan={actionsData.projectPermissionActions.length + 1}>
+          <Select
+            options={nonAddedUsers.map(user => ({ value: user.id, label: user.fullName }))}
+            onChange={(val) => {currentSelectUserSelection = { id: val.value, fullName: val.label }; }}
+          />
+        </td>
+        <td className="text-center align-middle">
+          <Button size="sm" variant="primary" onClick={addSelectedUser}>Add</Button>
+        </td>
+      </tr>
+    );
   };
 
   return (
@@ -79,11 +129,15 @@ function PermissionsEditor(props) {
         <thead>
           <tr>
             <th key="name">Name</th>
-            { actionsData.projectPermissionActions.map(action => (<th key={action}>{actionToDisplayLabel(action)}</th>)) }
+            {actionsData.projectPermissionActions.map(
+              action => (<th key={action}>{actionToDisplayLabel(action)}</th>)
+            )}
+            { !readOnly && (<th key="remove" className="text-center">Actions</th>) }
           </tr>
         </thead>
         <tbody>
-          {renderProjectPermissions(projectPermissions, actionsData.projectPermissionActions)}
+          {renderProjectPermissions()}
+          { !readOnly && renderUserAdd() }
         </tbody>
       </Table>
     </>
@@ -91,12 +145,12 @@ function PermissionsEditor(props) {
 }
 
 PermissionsEditor.propTypes = {
-  readonly: PropTypes.bool,
+  readOnly: PropTypes.bool,
   projectStringKey: PropTypes.string.isRequired,
 };
 
 PermissionsEditor.defaultProps = {
-  readonly: false,
+  readOnly: false,
 };
 
 export default PermissionsEditor;

@@ -30,7 +30,7 @@ function PermissionsShow() {
         </Can>
       </TabHeading>
 
-      <PermissionsEditor projectStringKey={data.project.stringKey} readonly />
+      <PermissionsEditor projectStringKey={data.project.stringKey} readOnly />
     </ProjectInterface>
   );
 }
