@@ -13,7 +13,7 @@ import InputGroup from '../ui/forms/InputGroup';
 import Label from '../ui/forms/Label';
 import FormButtons from '../ui/forms/FormButtons';
 import { Can } from '../../util/ability_context';
-import { GetUserQuery, UpdateUserMutation } from '../../graphql/users';
+import { getUserQuery, updateUserMutation } from '../../graphql/users';
 import Checkbox from '../ui/forms/inputs/Checkbox';
 
 import BooleanRadioButtons from '../ui/forms/inputs/BooleanRadioButtons';
@@ -45,7 +45,7 @@ function UserEdit() {
   };
 
   const gqlResponse = useQuery(
-    GetUserQuery,
+    getUserQuery,
     {
       variables: { id },
       onCompleted: (userData) => {
@@ -62,7 +62,7 @@ function UserEdit() {
     },
   );
 
-  const [updateUser, { error: mutationErrors }] = useMutation(UpdateUserMutation);
+  const [updateUser, { error: mutationErrors }] = useMutation(updateUserMutation);
 
   let rightHandLinks = [];
 

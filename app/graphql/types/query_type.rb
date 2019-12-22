@@ -79,7 +79,7 @@ module Types
       {
         actions: Permission::PROJECT_ACTIONS,
         read_objects_action: Permission::PROJECT_ACTION_READ_OBJECTS,
-        manage_action: Permission::PROJECT_ACTION_MANAGE,
+        manage_action: Permission::PROJECT_ACTION_MANAGE
       }
     end
 

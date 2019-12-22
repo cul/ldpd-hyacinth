@@ -15,7 +15,7 @@ import ControlledVocabularies from './components/controlled_vocabularies/Control
 import Projects from './components/projects/Projects';
 import { AbilityContext } from './util/ability_context';
 import ability from './util/ability';
-import { GetAuthenticatedUserQuery } from './graphql/users';
+import { getAuthenticatedUserQuery } from './graphql/users';
 import GraphQLErrors from './components/ui/GraphQLErrors';
 
 const Index = () => (
@@ -29,7 +29,7 @@ function App() {
   const [user, setUser] = useState({});
 
   const { loading, error } = useQuery(
-    GetAuthenticatedUserQuery,
+    getAuthenticatedUserQuery,
     {
       onCompleted: (userData) => {
         const { authenticatedUser: { rules, ...rest } } = userData;
