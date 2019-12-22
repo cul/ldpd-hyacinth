@@ -12,7 +12,6 @@ import { getUsersQuery } from '../../../graphql/users';
 import CancelButton from '../../layout/forms/CancelButton';
 
 function PermissionsEditor(props) {
-  const READ_PERMISSION_ACTION = 'read_objects';
   const { readOnly } = props;
 
   const { projectStringKey } = props;
@@ -49,15 +48,27 @@ function PermissionsEditor(props) {
 
   const updatePermissionsData = (userId, action, enabled) => {
     setPermissionsChanged(true);
+
+    const { projectPermissionActions: { actions, manageAction } } = actionsData;
+
     setProjectPermissions(
       produce(projectPermissions, (draft) => {
         const { permissions } = draft.find(
           projectPermission => projectPermission.user.id === userId,
         );
         if (enabled) {
-          permissions.push(action); // add
+          if (action === manageAction) {
+            // disable any current actions
+            permissions.splice(0, permissions.length);
+            // enable all actions
+            permissions.push(...actions);
+          } else {
+            // enable single action
+            permissions.push(action);
+          }
         } else {
-          permissions.splice(permissions.indexOf(action), 1); // remove
+          // disable single action
+          permissions.splice(permissions.indexOf(action), 1);
         }
       }),
     );
@@ -80,8 +91,8 @@ function PermissionsEditor(props) {
   };
 
   const renderProjectPermission = (projectPermission) => {
-    const { projectPermissionActions } = actionsData;
-    return projectPermissionActions.map(action => (
+    const { projectPermissionActions: { actions, readObjectsAction } } = actionsData;
+    return actions.map(action => (
       <td key={action}>
         { /* eslint-disable jsx-a11y/label-has-associated-control, jsx-a11y/label-has-for */ }
         { /* Note 1: ESLint is getting confused by label + react-bootstrap element. */ }
@@ -90,7 +101,7 @@ function PermissionsEditor(props) {
           <Form.Check
             id={`checkbox-${projectPermission.user.id}-${action}`}
             label="&nbsp;"
-            disabled={readOnly || action === READ_PERMISSION_ACTION}
+            disabled={readOnly || action === readObjectsAction}
             type="checkbox"
             checked={projectPermission.permissions.includes(action)}
             onChange={(e) => {
@@ -126,6 +137,7 @@ function PermissionsEditor(props) {
     if (currentAddUserSelection == null) return;
     setPermissionsChanged(true);
 
+    const { projectPermissionActions: { readObjectsAction } } = actionsData;
     const userId = currentAddUserSelection.value;
     const user = usersData.users.find((u) => { return u.id === userId; });
 
@@ -136,7 +148,7 @@ function PermissionsEditor(props) {
           project: {
             stringKey: projectStringKey,
           },
-          permissions: [READ_PERMISSION_ACTION],
+          permissions: [readObjectsAction],
         });
       }),
     );
@@ -159,7 +171,7 @@ function PermissionsEditor(props) {
     const nonAddedUsers = usersData.users.filter(user => !addedUserIds.includes(user.id));
     return (
       <tr key="user-add">
-        <td colSpan={actionsData.projectPermissionActions.length + 1}>
+        <td colSpan={actionsData.projectPermissionActions.actions.length + 1}>
           <Select
             placeholder="Add a user..."
             value={currentAddUserSelection}
@@ -207,7 +219,7 @@ function PermissionsEditor(props) {
         <thead>
           <tr>
             <th key="name">Name</th>
-            {actionsData.projectPermissionActions.map(
+            {actionsData.projectPermissionActions.actions.map(
               action => (<th key={action}>{actionToDisplayLabel(action)}</th>)
             )}
             { !readOnly && (<th key="remove" className="text-center">Actions</th>) }

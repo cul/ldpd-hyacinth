@@ -38,8 +38,8 @@ module Types
       argument :string_key, String, required: true
     end
 
-    field :project_permission_actions, [String], null: true do
-      description 'List of all Project Permission actions'
+    field :project_permission_actions, ProjectPermissionActionsType, null: true do
+      description 'Information about available project permission actions.'
     end
 
     def digital_objects
@@ -76,7 +76,11 @@ module Types
     end
 
     def project_permission_actions
-      Permission::PROJECT_ACTIONS
+      {
+        actions: Permission::PROJECT_ACTIONS,
+        read_objects_action: Permission::PROJECT_ACTION_READ_OBJECTS,
+        manage_action: Permission::PROJECT_ACTION_MANAGE,
+      }
     end
 
     def project_permissions_for_project(string_key:)

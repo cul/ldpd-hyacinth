@@ -33,7 +33,11 @@ export const deleteProjectMutation = gql`
 
 export const getProjectPermissionActionsQuery = gql`
   query ProjectPermissionActions {
-    projectPermissionActions
+    projectPermissionActions {
+      actions,
+      readObjectsAction,
+      manageAction
+    }
   }
 `;
 
