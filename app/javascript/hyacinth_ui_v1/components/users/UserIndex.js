@@ -2,24 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Table } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
-import { gql } from 'apollo-boost';
 
+import { GetUsersQuery } from '../../graphql/users';
 import ContextualNavbar from '../layout/ContextualNavbar';
 
-const USERS = gql`
-  query {
-    users {
-      id
-      firstName
-      lastName
-      email
-      isActive
-    }
-  }
-`;
-
 function UserIndex() {
-  const { loading, error, data } = useQuery(USERS);
+  const { loading, error, data } = useQuery(GetUsersQuery);
 
   return (
     <>

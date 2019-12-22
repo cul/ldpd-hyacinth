@@ -40,23 +40,6 @@ export default class DigitalObjectSearch extends React.Component {
           title="Digital Objects"
           rightHandLinks={[{ label: 'New Digital Object', link: '/digital_objects/new' }]}
         />
-
-        <h4>Rights Module Mockups</h4>
-
-        {
-          [
-            { id: 'asset1', title: 'Example Asset' },
-            { id: 'cul_q83bk3jc9s', title: 'Oral history interview with Alan Pifer and Eli Evans 1970' },
-            { id: 'cul_vdncjsxn7t', title: 'Photograph of Andrew Carnegie at His Desk' },
-            { id: 'cul_bnzs7h45zq', title: 'ABC News - Brian Ross Investigates: The Blueberry Children, Carnegie Fellows 2009' }
-          ].map(link => (
-            <Link to={`/digital_objects/${link.id}/rights/edit`} key={link.id} className="nav-link">{link.title}</Link>
-          ))
-        }
-
-        <hr />
-
-        <h4>Digital Objects</h4>
         <div className="digital-object-search-results">
           { digitalObjects.length === 0 ? 'No Digital Objects found.'
             : digitalObjects.map((d, i) => (

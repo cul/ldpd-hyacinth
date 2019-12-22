@@ -2,24 +2,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Table } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
-import { gql } from 'apollo-boost';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
 import { Can } from '../../util/ability_context';
+import { getProjectsQuery } from '../../graphql/projects';
 import GraphQLErrors from '../ui/GraphQLErrors';
 
-const PROJECTS = gql`
-  query {
-    projects {
-      stringKey
-      displayLabel
-      projectUrl
-    }
-  }
-`;
-
 function ProjectIndex() {
-  const { loading, error, data } = useQuery(PROJECTS);
+  const { loading, error, data } = useQuery(getProjectsQuery);
 
   if (loading) return (<></>);
   if (error) return (<GraphQLErrors errors={error} />);

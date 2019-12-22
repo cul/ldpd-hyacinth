@@ -7,23 +7,23 @@ import ProjectNew from './ProjectNew';
 import Project from './Project';
 import ProtectedRoute from '../ProtectedRoute';
 
-export default class Projects extends React.PureComponent {
-  render() {
-    return (
-      <Switch>
-        <Route exact path="/projects" component={ProjectIndex} />
+function Projects() {
+  return (
+    <Switch>
+      <Route exact path="/projects" component={ProjectIndex} />
 
-        <ProtectedRoute
-          requiredAbility={{ action: 'create', subjectType: 'Project' }}
-          path="/projects/new"
-          component={ProjectNew}
-        />
+      <ProtectedRoute
+        requiredAbility={{ action: 'create', subjectType: 'Project' }}
+        path="/projects/new"
+        component={ProjectNew}
+      />
 
-        <Route path="/projects/:stringKey" component={Project} />
+      <Route path="/projects/:stringKey" component={Project} />
 
-        { /* When none of the above match, <PageNotFound> will be rendered */ }
-        <Route component={PageNotFound} />
-      </Switch>
-    );
-  }
+      { /* When none of the above match, <PageNotFound> will be rendered */ }
+      <Route component={PageNotFound} />
+    </Switch>
+  );
 }
+
+export default Projects;

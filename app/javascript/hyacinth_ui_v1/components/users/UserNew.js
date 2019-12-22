@@ -6,16 +6,7 @@ import { useHistory } from 'react-router-dom';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
 import GraphQLErrors from '../ui/GraphQLErrors';
-
-const CREATE_USER = gql`
-  mutation CreateUser($input: CreateUserInput!) {
-    createUser(input: $input) {
-      user {
-        id
-      }
-    }
-  }
-`;
+import { CreateUserMutation } from '../../graphql/users';
 
 function UserNew() {
   const [firstName, setFirstName] = useState('');
@@ -24,17 +15,16 @@ function UserNew() {
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
 
-  const [createUser, { error }] = useMutation(CREATE_USER);
+  const [createUser, { error }] = useMutation(CreateUserMutation);
   const history = useHistory();
 
   // From: http://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript
   const getRandomPassword = (length) => {
     const chars = '01234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     let result = '';
-    for (let i = length; i > 0; --i) {
+    for (let i = length; i > 0; i -= 1) {
       result += chars[Math.round(Math.random() * (chars.length - 1))];
     }
-
     return result;
   };
 

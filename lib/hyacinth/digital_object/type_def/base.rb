@@ -8,7 +8,7 @@ module Hyacinth
           raise NotImplementedError,
             "Cannot instantiate #{self.class}. Instantiate a subclass instead." if self.class == Base
           @default_value_proc = -> { nil }
-          @public_writer = false
+          @private_writer = false
           @freeze_on_deserialize = false
         end
 
@@ -32,10 +32,10 @@ module Hyacinth
           raise NotImplementedError # this implementation must be overridden by subclasses
         end
 
-        ### Setters, meant to be chained. e.g. Hyacinth::TypeDef.new(String, nil).public_writer.optional
+        ### Setters, meant to be chained. e.g. Hyacinth::TypeDef.new(String, nil).private_writer.optional
 
-        def public_writer
-          @public_writer = true
+        def private_writer
+          @private_writer = true
           self # always return self to allow for chained calls
         end
 
@@ -62,8 +62,12 @@ module Hyacinth
           @default_value_proc.call
         end
 
+        def private_writer?
+          @private_writer
+        end
+
         def public_writer?
-          @public_writer
+          !private_writer?
         end
 
         def valid?(value)

@@ -10,10 +10,10 @@ RSpec.describe Hyacinth::DigitalObject::MetadataAttributes do
   let(:klass) do
     Class.new do
       include Hyacinth::DigitalObject::MetadataAttributes
-      metadata_attribute :string_field, Hyacinth::DigitalObject::TypeDef::String.new
-      metadata_attribute :string_field_with_default_value, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { 'default value' })
-      metadata_attribute :string_field_with_public_writer, Hyacinth::DigitalObject::TypeDef::String.new.public_writer
-      metadata_attribute :string_field_with_validation, Hyacinth::DigitalObject::TypeDef::String.new.public_writer.validation(proc { |v| v.eql?('GOOD') })
+      metadata_attribute :string_field, Hyacinth::DigitalObject::TypeDef::String.new.private_writer
+      metadata_attribute :string_field_with_default_value, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { 'default value' }).private_writer
+      metadata_attribute :string_field_with_public_writer, Hyacinth::DigitalObject::TypeDef::String.new
+      metadata_attribute :string_field_with_validation, Hyacinth::DigitalObject::TypeDef::String.new.validation(proc { |v| v.eql?('GOOD') })
     end
   end
 
@@ -32,8 +32,11 @@ RSpec.describe Hyacinth::DigitalObject::MetadataAttributes do
   end
 
   context ".metadata_attribute" do
-    it "adds a public getter method and private setter method with #new" do
+    it "adds a public getter method and setter method with #new" do
       expect(instance).to respond_to(:string_field)
+      expect(instance).to respond_to(:'string_field_with_public_writer=')
+      instance.string_field_with_public_writer = 'new value'
+      expect(instance.string_field_with_public_writer).to eq('new value')
     end
 
     it "can set a default value for the created getter method with #new.default()" do
@@ -41,10 +44,9 @@ RSpec.describe Hyacinth::DigitalObject::MetadataAttributes do
       expect(instance.string_field_with_default_value).to eq('default value')
     end
 
-    it "creates a public setter method with #new.public_writer" do
-      expect(instance).to respond_to(:'string_field_with_public_writer=')
-      instance.string_field_with_public_writer = 'new value'
-      expect(instance.string_field_with_public_writer).to eq('new value')
+    it "creates a private setter method with #new.private_writer" do
+      expect(instance).not_to respond_to(:string_field_with_default_value=)
+      expect(instance.private_methods).to include(:string_field_with_default_value=)
     end
 
     it "validates good value with validation procs" do

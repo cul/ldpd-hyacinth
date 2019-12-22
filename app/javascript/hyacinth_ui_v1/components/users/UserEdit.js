@@ -3,7 +3,6 @@ import {
   Row, Col, Form, Button, Collapse,
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { gql } from 'apollo-boost';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { useParams, useHistory } from 'react-router-dom';
 
@@ -14,33 +13,10 @@ import InputGroup from '../ui/forms/InputGroup';
 import Label from '../ui/forms/Label';
 import FormButtons from '../ui/forms/FormButtons';
 import { Can } from '../../util/ability_context';
+import { GetUserQuery, UpdateUserMutation } from '../../graphql/users';
 import Checkbox from '../ui/forms/inputs/Checkbox';
 
 import BooleanRadioButtons from '../ui/forms/inputs/BooleanRadioButtons';
-
-const GET_USER = gql`
-  query User($id: ID!){
-    user(id: $id) {
-      id
-      firstName
-      lastName
-      email
-      isActive
-      isAdmin
-      permissions
-    }
-  }
-`;
-
-const UPDATE_USER = gql`
-  mutation UpdateUser($input: UpdateUserInput!){
-    updateUser(input: $input){
-      user {
-        id
-      }
-    }
-  }
-`;
 
 function UserEdit() {
   const { uid: id } = useParams();
@@ -60,33 +36,37 @@ function UserEdit() {
   const [readAllDigitalObjects, setReadAllDigitalObjects] = useState(false);
   const [manageAllDigitalObjects, setManageAllDigitalObjects] = useState(false);
 
-  const { loading, error } = useQuery(
-    GET_USER,
+  const canActivateUser = () => {
+    let activatable = ability.can('manage', 'all');
+    if (!activatable) {
+      activatable = (ability.can('manage', 'User') && !isAdmin);
+    }
+    return activatable;
+  };
+
+  const gqlResponse = useQuery(
+    GetUserQuery,
     {
       variables: { id },
       onCompleted: (userData) => {
-        const {
-          user: { firstName, lastName, email, isActive, isAdmin, permissions },
-        } = userData;
-
-        setFirstName(firstName);
-        setLastName(lastName);
-        setEmail(email);
-        setIsActive(isActive);
-        setIsAdmin(isAdmin);
-        setManageVocabularies(permissions.includes('manage_vocabularies'));
-        setManageUsers(permissions.includes('manage_users'));
-        setReadAllDigitalObjects(permissions.includes('read_all_digital_objects'));
-        setManageAllDigitalObjects(permissions.includes('manage_all_digital_objects'));
+        setFirstName(userData.user.firstName);
+        setLastName(userData.user.lastName);
+        setEmail(userData.user.email);
+        setIsActive(userData.user.isActive);
+        setIsAdmin(userData.user.isAdmin);
+        setManageVocabularies(userData.user.permissions.includes('manage_vocabularies'));
+        setManageUsers(userData.user.permissions.includes('manage_users'));
+        setReadAllDigitalObjects(userData.user.permissions.includes('read_all_digital_objects'));
+        setManageAllDigitalObjects(userData.user.permissions.includes('manage_all_digital_objects'));
       },
     },
   );
 
-  const [updateUser, { error: mutationErrors }] = useMutation(UPDATE_USER);
+  const [updateUser, { error: mutationErrors }] = useMutation(UpdateUserMutation);
 
   let rightHandLinks = [];
 
-  if (ability.can('read', 'Users')) {
+  if (ability.can('read', 'User')) {
     rightHandLinks = [{ link: '/users', label: 'Back to All Users' }];
   }
 
@@ -97,29 +77,33 @@ function UserEdit() {
     if (manageVocabularies) permissions.push('manage_vocabularies');
     if (readAllDigitalObjects) permissions.push('read_all_digital_objects');
     if (manageAllDigitalObjects) permissions.push('manage_all_digital_objects');
-
-    return updateUser({
-      variables: {
-        input: {
-          id,
-          firstName,
-          lastName,
-          email,
-          isActive,
-          isAdmin,
-          currentPassword,
-          password,
-          passwordConfirmation,
-          permissions,
-        },
+    const userData = {
+      input: {
+        id,
+        firstName,
+        lastName,
+        email,
+        currentPassword,
+        password,
+        passwordConfirmation,
       },
+    };
+    if (ability.can('manage', 'User')) {
+      if (!isAdmin) userData.input.isActive = isActive;
+    }
+    if (ability.can('manage', 'all')) {
+      userData.input.permissions = permissions;
+      userData.input.isAdmin = isAdmin;
+      userData.input.isActive = isActive;
+    }
+    return updateUser({
+      variables: userData,
     }).then((res) => {
       history.push(`/users/${res.data.updateUser.user.id}/edit`);
     });
   };
-
-  if (loading) return (<></>);
-  if (error) return (<GraphQLErrors errors={error} />);
+  if (gqlResponse.loading) return (<></>);
+  if (gqlResponse.error) return (<GraphQLErrors errors={gqlResponse.error} />);
 
   return (
     <>
@@ -170,6 +154,7 @@ function UserEdit() {
           <BooleanRadioButtons
             sm={4}
             value={isActive}
+            disabled={(!canActivateUser())}
             onChange={v => setIsActive(v)}
           />
           <Col sm={6}>
@@ -245,6 +230,7 @@ function UserEdit() {
                   md={6}
                   value={manageVocabularies}
                   label="Manage Vocabularies"
+                  disabled={!ability.can('manage', 'all')}
                   onChange={v => setManageVocabularies(v)}
                   helpText="has ability to create/edit/delete vocabularies, and create/edit/delete terms"
                 />
@@ -253,6 +239,7 @@ function UserEdit() {
                   sm={12}
                   value={manageUsers}
                   label="Manage Users"
+                  disabled={!ability.can('manage', 'all')}
                   onChange={v => setManageUsers(v)}
                   helpText="has ability to add new users, deactivate users, and add all system-wide permissions except administrator"
                 />
@@ -261,6 +248,7 @@ function UserEdit() {
                   sm={12}
                   value={readAllDigitalObjects}
                   label="Read All Digital Objects"
+                  disabled={!ability.can('manage', 'all')}
                   onChange={v => setReadAllDigitalObjects(v)}
                   helpText="has ability to view all projects and all digital objects"
                 />
@@ -268,6 +256,7 @@ function UserEdit() {
                   md={6}
                   sn={12}
                   value={manageAllDigitalObjects}
+                  disabled={!ability.can('manage', 'all')}
                   onChange={v => setManageAllDigitalObjects(v)}
                   label="Manage All Digital Objects"
                   helpText="has ability to read/create/edit/delete all digital objects and view all projects"
