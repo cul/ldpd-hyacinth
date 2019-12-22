@@ -56,7 +56,7 @@ export const getProjectPermissionsQuery = gql`
 
 export const updateProjectPermissionsMutation = gql`
   mutation UpdateProjectPermissions($input: UpdateProjectPermissionsInput!) {
-    updateProject(input: $input) {
+    updateProjectPermissions(input: $input) {
       errors
     }
   }

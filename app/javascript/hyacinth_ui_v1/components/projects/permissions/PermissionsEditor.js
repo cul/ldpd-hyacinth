@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Button, Form, Table } from 'react-bootstrap';
 import produce from 'immer';
-import Select from 'react-select'
-import { remove as arrRemove } from 'lodash/array'
+import Select from 'react-select';
+import { remove as arrRemove } from 'lodash/array';
 
 import GraphQLErrors from '../../ui/GraphQLErrors';
-import { getProjectPermissionsQuery, getProjectPermissionActionsQuery } from '../../../graphql/projects';
+import { getProjectPermissionActionsQuery, getProjectPermissionsQuery, updateProjectPermissionsMutation } from '../../../graphql/projects';
 import { getUsersQuery } from '../../../graphql/users';
 import CancelButton from '../../layout/forms/CancelButton';
 
 function PermissionsEditor(props) {
-  window.arrRemove = arrRemove;
   const READ_PERMISSION_ACTION = 'read_objects';
   const { readOnly } = props;
 
   const { projectStringKey } = props;
   const [permissionsChanged, setPermissionsChanged] = useState(false);
+  const [removedUserIds, setRemovedUserIds] = useState(new Set());
   const [projectPermissions, setProjectPermissions] = useState([]);
   const [currentAddUserSelection, setCurrentAddUserSelection] = useState(null);
 
@@ -36,9 +36,11 @@ function PermissionsEditor(props) {
     },
   );
 
+  const [updateProjectPermissions, { error: updateProjectPermissionsError }] = useMutation(updateProjectPermissionsMutation);
+
   if (actionsLoading || permissionsLoading || usersLoading) return (<></>);
   if (actionsError || permissionsError || usersError) {
-    return (<GraphQLErrors errors={actionsError || permissionsError || usersError} />);
+    return (<GraphQLErrors errors={actionsError || permissionsError || usersError || updateProjectPermissionsError} />);
   }
 
   const actionToDisplayLabel = (action) => {
@@ -49,7 +51,9 @@ function PermissionsEditor(props) {
     setPermissionsChanged(true);
     setProjectPermissions(
       produce(projectPermissions, (draft) => {
-        const { permissions } = draft.find(projectPermission => projectPermission.user.id === userId);
+        const { permissions } = draft.find(
+          projectPermission => projectPermission.user.id === userId,
+        );
         if (enabled) {
           permissions.push(action); // add
         } else {
@@ -59,25 +63,8 @@ function PermissionsEditor(props) {
     );
   };
 
-  const renderProjectPermission = (projectPermission) => {
-    return actionsData.projectPermissionActions.map(action => (
-      <td key={action}>
-        <Form.Check
-          disabled={readOnly || action === READ_PERMISSION_ACTION}
-          type="checkbox"
-          checked={projectPermission.permissions.includes(action)}
-          onChange={(e) => {
-            if (readOnly) return;
-            updatePermissionsData(projectPermission.user.id, action, e.target.checked);
-          }}
-        />
-      </td>
-    ));
-  };
-
   const removeUser = (userId) => {
     setPermissionsChanged(true);
-
     setProjectPermissions(
       produce(projectPermissions, (draft) => {
         arrRemove(draft, (projectPermission) => {
@@ -85,6 +72,36 @@ function PermissionsEditor(props) {
         });
       }),
     );
+    setRemovedUserIds(
+      produce(removedUserIds, (draft) => {
+        draft.add(userId);
+      }),
+    );
+  };
+
+  const renderProjectPermission = (projectPermission) => {
+    const { projectPermissionActions } = actionsData;
+    return projectPermissionActions.map(action => (
+      <td key={action}>
+        { /* eslint-disable jsx-a11y/label-has-associated-control, jsx-a11y/label-has-for */ }
+        { /* Note 1: ESLint is getting confused by label + react-bootstrap element. */ }
+        { /* Note 2: Using a label for a wider clickable area. */ }
+        <label id={`label-${projectPermission.user.id}-${action}`} htmlFor={`checkbox-${projectPermission.user.id}-${action}`} className="w-100">
+          <Form.Check
+            id={`checkbox-${projectPermission.user.id}-${action}`}
+            label="&nbsp;"
+            disabled={readOnly || action === READ_PERMISSION_ACTION}
+            type="checkbox"
+            checked={projectPermission.permissions.includes(action)}
+            onChange={(e) => {
+              if (readOnly) return;
+              updatePermissionsData(projectPermission.user.id, action, e.target.checked);
+            }}
+          />
+        </label>
+        { /* eslint-enable jsx-a11y/label-has-associated-control, jsx-a11y/label-has-for */ }
+      </td>
+    ));
   };
 
   const renderProjectPermissions = () => {
@@ -98,7 +115,7 @@ function PermissionsEditor(props) {
 
         { !readOnly && (
           <td key="remove" className="text-center">
-            <Button size="sm" variant="danger" onClick={() => { removeUser(projectPermission.user.id); }}>Remove</Button>
+            <Button size="sm" variant="danger" onClick={() => { removeUser(projectPermission.user.id); }}>-</Button>
           </td>
         ) }
       </tr>
@@ -109,10 +126,13 @@ function PermissionsEditor(props) {
     if (currentAddUserSelection == null) return;
     setPermissionsChanged(true);
 
+    const userId = currentAddUserSelection.value;
+    const user = usersData.users.find((u) => { return u.id === userId; });
+
     setProjectPermissions(
       produce(projectPermissions, (draft) => {
         draft.push({
-          user: { id: currentAddUserSelection.value, fullName: currentAddUserSelection.label },
+          user,
           project: {
             stringKey: projectStringKey,
           },
@@ -120,6 +140,16 @@ function PermissionsEditor(props) {
         });
       }),
     );
+
+    // If the added user was previously among the set of removedUserIds,
+    // then remove the added user's id from removedUserIds.
+    if (removedUserIds.has(userId)) {
+      setRemovedUserIds(
+        produce(removedUserIds, (draft) => {
+          draft.delete(userId);
+        }),
+      );
+    }
 
     setCurrentAddUserSelection(null); // this will clear out the current select item
   };
@@ -131,20 +161,48 @@ function PermissionsEditor(props) {
       <tr key="user-add">
         <td colSpan={actionsData.projectPermissionActions.length + 1}>
           <Select
+            placeholder="Add a user..."
             value={currentAddUserSelection}
             options={nonAddedUsers.map(user => ({ value: user.id, label: user.fullName }))}
             onChange={(val) => { setCurrentAddUserSelection(val); }}
           />
         </td>
         <td className="text-center align-middle">
-          <Button size="sm" variant="primary" onClick={addSelectedUser}>Add</Button>
+          <Button size="sm" variant="primary" onClick={addSelectedUser}>+</Button>
         </td>
       </tr>
     );
   };
 
+  const onSubmitHandler = (e) => {
+    e.preventDefault();
+    const variables = {
+      input: {
+        projectPermissions: projectPermissions.map((projectPermission) => {
+          return {
+            projectStringKey: projectPermission.project.stringKey,
+            userId: projectPermission.user.id,
+            permissions: projectPermission.permissions,
+          };
+        }).concat(
+          // We're also going to send projectPermission elements with an
+          // empty permissions array for user removal.
+          [...removedUserIds].map((userId) => {
+            return {
+              projectStringKey,
+              userId,
+              permissions: [],
+            };
+          }),
+        ),
+      },
+    };
+
+    updateProjectPermissions({ variables }).then(() => setPermissionsChanged(false));
+  };
+
   return (
-    <>
+    <form onSubmit={onSubmitHandler}>
       <Table striped bordered hover size="sm">
         <thead>
           <tr>
@@ -165,11 +223,11 @@ function PermissionsEditor(props) {
           <div className="text-right">
             <CancelButton to={`/projects/${projectStringKey}/permissions`} />
             &nbsp;
-            <Button variant="primary" disabled={!permissionsChanged} onClick={() => { removeUser(projectPermission.user.id); }}>{permissionsChanged ? 'Save' : 'Saved'}</Button>
+            <Button variant="primary" onClick={onSubmitHandler} disabled={!permissionsChanged}>{permissionsChanged ? 'Save' : 'Saved'}</Button>
           </div>
         )
       }
-    </>
+    </form>
   );
 }
 
