@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 import { getProjectsQuery } from '../../../graphql/projects';
 import SelectInput from '../../ui/forms/inputs/SelectInput';
@@ -7,7 +8,7 @@ import InputGroup from '../../ui/forms/InputGroup';
 import GraphQLErrors from '../../ui/GraphQLErrors';
 import ability from '../../../util/ability';
 
-function SelectPrimaryProject(primaryProject, changeHandler) {
+function SelectPrimaryProject({ primaryProject, changeHandler }) {
   const { loading, error, data } = useQuery(getProjectsQuery, { isPrimary: true });
 
   if (loading) return (<></>);
@@ -28,5 +29,10 @@ function SelectPrimaryProject(primaryProject, changeHandler) {
     </InputGroup>
   );
 }
+
+SelectPrimaryProject.propTypes = {
+  primaryProject: PropTypes.object.isRequired,
+  changeHandler: PropTypes.func.isRequired,
+};
 
 export default SelectPrimaryProject;
