@@ -4026,10 +4026,10 @@ ignore@^4.0.6:
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-4.0.6.tgz#750e3db5862087b4737ebac8207ffd1ef27b25fc"
   integrity sha512-cyFDKrqc/YdcWFniJhzI42+AzS+gNwmUzOSFcRCQYwySuBBBy/KjuxWLZ/FHEH6Moq1NizMOBWyTcv8O4OZIMg==
 
-immer@^2.1.5:
-  version "2.1.5"
-  resolved "https://registry.yarnpkg.com/immer/-/immer-2.1.5.tgz#0389947455c5a2c7a47f1e6f415c9d1a62a1ebed"
-  integrity sha512-xyjQyTBYIeiz6jd02Hg12jV+9QISwF1crLcwTlzHpWH4e0ryNWj1kacpTwimK3bJV5NKKXw458G2vpqoB/inFA==
+immer@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/immer/-/immer-5.1.0.tgz#38d9eba40dbb0389b7ae7b8b99e4661df0cf89e3"
+  integrity sha512-t6gyFtTcokCuI0tX9KQZJQAkIjSqo/nTeJnwojfty69EzrorZbywwhZ8qNNlF+faajHeRnhOvM2F40KHLFCghQ==
 
 import-cwd@^2.0.0:
   version "2.1.0"
