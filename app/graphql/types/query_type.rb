@@ -79,6 +79,7 @@ module Types
       ability.authorize!(:read, Project)
       {
         actions: Permission::PROJECT_ACTIONS,
+        actions_disallowed_for_aggregator_projects: Permission::PROJECT_ACTIONS_DISALLOWED_FOR_AGGREGATOR_PROJECTS,
         read_objects_action: Permission::PROJECT_ACTION_READ_OBJECTS,
         manage_action: Permission::PROJECT_ACTION_MANAGE
       }

@@ -27,6 +27,9 @@ RSpec.describe 'Retrieve project permission actions', type: :request do
             "assess_rights",
             "manage"
           ],
+          "actionsDisallowedForAggregatorProjects": [
+            "create_objects"
+          ],
           "readObjectsAction": "read_objects",
           "manageAction": "manage"
         }
@@ -39,6 +42,7 @@ RSpec.describe 'Retrieve project permission actions', type: :request do
       query {
         projectPermissionActions {
           actions,
+          actionsDisallowedForAggregatorProjects,
           readObjectsAction,
           manageAction
         }

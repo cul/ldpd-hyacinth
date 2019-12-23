@@ -97,7 +97,7 @@ function PermissionsEditor(props) {
   };
 
   const renderProjectPermission = (projectPermission) => {
-    const { projectPermissionActions: { actions, readObjectsAction } } = actionsData;
+    const { projectPermissionActions: { actions, readObjectsAction, actionsDisallowedForAggregatorProjects } } = actionsData;
     return actions.map(action => (
       <td key={action}>
         { /* eslint-disable jsx-a11y/label-has-associated-control, jsx-a11y/label-has-for */ }
@@ -107,7 +107,7 @@ function PermissionsEditor(props) {
           <Form.Check
             id={`checkbox-${projectPermission.user.id}-${action}`}
             label="&nbsp;"
-            disabled={readOnly || action === readObjectsAction}
+            disabled={readOnly || action === readObjectsAction || (!projectPermission.project.isPrimary && actionsDisallowedForAggregatorProjects.includes(action))}
             type="checkbox"
             checked={projectPermission.permissions.includes(action)}
             onChange={(e) => {

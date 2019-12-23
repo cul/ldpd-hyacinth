@@ -57,6 +57,7 @@ export const getProjectPermissionActionsQuery = gql`
   query ProjectPermissionActions {
     projectPermissionActions {
       actions,
+      actionsDisallowedForAggregatorProjects,
       readObjectsAction,
       manageAction
     }
@@ -74,6 +75,7 @@ export const getProjectPermissionsQuery = gql`
       project {
         stringKey
         displayLabel
+        isPrimary
       },
       permissions
     }
