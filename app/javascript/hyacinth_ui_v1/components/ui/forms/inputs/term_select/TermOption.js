@@ -1,15 +1,17 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   Button, Dropdown, Badge, Collapse,
 } from 'react-bootstrap';
 
-// ControlledVocabularyItem? mimics Dropdown.Item?
-function ControlledVocabularyOption(props) {
-  const { term, expanded, onSelect, onCollapseToggle } = props;
+function TermOption(props) {
+  const {
+    term, expanded, onSelect, onCollapseToggle,
+  } = props;
 
   return (
-    <div className="px-3 py-1" key={term.uuid}>
+    <div className="px-3 py-1">
       <Button variant="link" onClick={onCollapseToggle} className="p-0">
         <FontAwesomeIcon icon="info-circle" />
       </Button>
@@ -33,7 +35,8 @@ function ControlledVocabularyOption(props) {
         <div>
           <ul className="list-unstyled px-4" style={{ fontSize: '.8rem' }}>
             <li>
-              <strong>URI:</strong> {term.uri}
+              <strong>URI:</strong>
+              {term.uri}
               <a className="px-1" href={term.uri} target="_blank" rel="noopener noreferrer">
                 <FontAwesomeIcon icon="external-link-square-alt" />
               </a>
@@ -55,4 +58,14 @@ function ControlledVocabularyOption(props) {
   );
 }
 
-export default ControlledVocabularyOption;
+TermOption.propTypes = {
+  term: PropTypes.shape({
+    prefLabel: PropTypes.string,
+    uri: PropTypes.string,
+  }).isRequired,
+  onSelect: PropTypes.func.isRequired,
+  expanded: PropTypes.bool.isRequired,
+  onCollapseToggle: PropTypes.func.isRequired,
+};
+
+export default TermOption;

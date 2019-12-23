@@ -185,13 +185,11 @@ class TermForm extends React.Component {
   }
 }
 
-TermForm.defaultProps = {
-  stringKey: null,
-};
-
 TermForm.propTypes = {
   formType: PropTypes.oneOf(['new', 'edit']).isRequired,
-  stringKey: PropTypes.string,
+  vocabulary: PropTypes.shape({
+    stringKey: PropTypes.string,
+  }).isRequired,
 };
 
 export default withRouter(withErrorHandler(TermForm, hyacinthApi));

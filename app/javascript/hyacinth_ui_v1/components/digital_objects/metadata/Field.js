@@ -5,7 +5,7 @@ import InputGroup from '../../ui/forms/InputGroup';
 import TextInput from '../../ui/forms/inputs/TextInput';
 import TextAreaInput from '../../ui/forms/inputs/TextAreaInput';
 import SelectInput from '../../ui/forms/inputs/SelectInput';
-import ControlledVocabularySelect from '../../ui/forms/inputs/ControlledVocabularySelect';
+import TermSelect from '../../ui/forms/inputs/TermSelect';
 import DateInput from '../../ui/forms/inputs/DateInput';
 import NumberInput from '../../ui/forms/inputs/NumberInput';
 import Checkbox from '../../ui/forms/inputs/Checkbox';
@@ -24,7 +24,7 @@ class Field extends React.PureComponent {
         break;
       case 'controlled_term':
         field = (
-          <ControlledVocabularySelect
+          <TermSelect
             vocabulary={dynamicField.controlledVocabulary}
             {...sharedProps}
           />

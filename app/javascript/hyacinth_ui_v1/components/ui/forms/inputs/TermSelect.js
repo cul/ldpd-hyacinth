@@ -2,10 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Col, Dropdown } from 'react-bootstrap';
 
-import ControlledVocabularyMenu from './controlled_vocabulary/ControlledVocabularyMenu';
+import TermMenu from './term_select/TermMenu';
 import RemoveButton from '../../buttons/RemoveButton';
 
-class ControlledVocabularySelect extends React.PureComponent {
+class TermSelect extends React.PureComponent {
   render() {
     const {
       name, value, vocabulary, onChange,
@@ -25,7 +25,7 @@ class ControlledVocabularySelect extends React.PureComponent {
           }
 
           <Dropdown.Menu
-            as={ControlledVocabularyMenu}
+            as={TermMenu}
             vocabulary={vocabulary}
             onChange={onChange}
           />
@@ -35,11 +35,11 @@ class ControlledVocabularySelect extends React.PureComponent {
   }
 }
 
-ControlledVocabularySelect.defaultProps = {
+TermSelect.defaultProps = {
   name: '',
 };
 
-ControlledVocabularySelect.propTypes = {
+TermSelect.propTypes = {
   vocabulary: PropTypes.string.isRequired,
   value: PropTypes.shape({
     prefLabel: PropTypes.string,
@@ -49,4 +49,4 @@ ControlledVocabularySelect.propTypes = {
   name: PropTypes.string,
 };
 
-export default ControlledVocabularySelect;
+export default TermSelect;

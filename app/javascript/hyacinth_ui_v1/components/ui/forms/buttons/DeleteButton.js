@@ -21,13 +21,8 @@ class DeleteButton extends React.Component {
   }
 }
 
-DeleteButton.defaultProps = {
-  formType: '',
-};
-
-
 DeleteButton.propTypes = {
-  formType: PropTypes.oneOf(['edit', 'new']),
+  formType: PropTypes.oneOf(['edit', 'new']).isRequired,
   onClick: PropTypes.func.isRequired,
 };
 
