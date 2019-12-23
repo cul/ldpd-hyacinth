@@ -1,17 +1,18 @@
 # frozen_string_literal: true
 
 class Mutations::UpdateProjectPermissions < Mutations::BaseMutation
-  argument :project_permissions, [Types::ProjectPermissionsAttributes], required: true
+  argument :project_permissions_update, [Types::ProjectPermissionsUpdateAttributes], required: true
 
-  field :errors, [String], null: false
+  field :project_permissions, [Types::ProjectPermissionsType], null: false
+  #field :errors, [String], null: false
 
-  def resolve(project_permissions:)
+  def resolve(project_permissions_update:)
     projects = {}
     users = {}
 
     # This should be an all or nothing update
     ActiveRecord::Base.transaction do
-      project_permissions.each do |project_permission|
+      project_permissions_update.each do |project_permission|
         project_string_key = project_permission.project_string_key
         user_id = project_permission.user_id
         permission_actions = project_permission.permissions
@@ -27,7 +28,18 @@ class Mutations::UpdateProjectPermissions < Mutations::BaseMutation
       end
     end
 
-    { errors: [] }
+    # If we got here, there weren't any errors and we can return all of the
+    # successfully updated project permissions data.
+    {
+      project_permissions: project_permissions_update.each do |data|
+        {
+          user: users[data.user_id],
+          project: projects[data.project_string_key],
+          permissions: data['permissions']
+        }
+      end
+    }
+    #{ errors: [] }
   end
 
   def apply_new_permission_actions(project, user, permission_actions)

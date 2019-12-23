@@ -64,20 +64,24 @@ export const getProjectPermissionActionsQuery = gql`
   }
 `;
 
+const projectPermissionsFields = `
+  user {
+    id,
+    fullName,
+    sortName
+  },
+  project {
+    stringKey
+    displayLabel
+    isPrimary
+  },
+  permissions
+`;
+
 export const getProjectPermissionsQuery = gql`
   query ProjectPermissions($stringKey: String!){
     projectPermissionsForProject(stringKey: $stringKey) {
-      user {
-        id,
-        fullName,
-        sortName
-      },
-      project {
-        stringKey
-        displayLabel
-        isPrimary
-      },
-      permissions
+      ${projectPermissionsFields}
     }
   }
 `;
@@ -85,7 +89,9 @@ export const getProjectPermissionsQuery = gql`
 export const updateProjectPermissionsMutation = gql`
   mutation UpdateProjectPermissions($input: UpdateProjectPermissionsInput!) {
     updateProjectPermissions(input: $input) {
-      errors
+      projectPermissions {
+        ${projectPermissionsFields}
+      }
     }
   }
 `;

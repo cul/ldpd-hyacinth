@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Types
-  class ProjectPermissionsAttributes < Types::BaseInputObject
+  class ProjectPermissionsUpdateAttributes < Types::BaseInputObject
     description 'An array of permission String values for a project + user combination.'
 
     argument :project_string_key, String, "String key for project", required: true

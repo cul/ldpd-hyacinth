@@ -102,7 +102,7 @@ function PermissionsEditor(props) {
       <td key={action}>
         { /* eslint-disable jsx-a11y/label-has-associated-control, jsx-a11y/label-has-for */ }
         { /* Note 1: ESLint is getting confused by label + react-bootstrap element. */ }
-        { /* Note 2: Using a label for a wider clickable area. */ }
+        { /* Note 2: We're Using a label for a wider clickable checkbox area. */ }
         <label id={`label-${projectPermission.user.id}-${action}`} htmlFor={`checkbox-${projectPermission.user.id}-${action}`} className="w-100">
           <Form.Check
             id={`checkbox-${projectPermission.user.id}-${action}`}
@@ -194,7 +194,7 @@ function PermissionsEditor(props) {
     e.preventDefault();
     const variables = {
       input: {
-        projectPermissions: projectPermissions.map((projectPermission) => {
+        projectPermissionsUpdate: projectPermissions.map((projectPermission) => {
           return {
             projectStringKey: projectPermission.project.stringKey,
             userId: projectPermission.user.id,
