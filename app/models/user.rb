@@ -17,7 +17,7 @@ class User < ApplicationRecord
   validate :uid_unchanged
 
   def full_name
-    first_name + ' ' + (middle_name || '') + ' ' + last_name
+    first_name + ' ' + (middle_name ? middle_name + ' ' : '') + last_name
   end
 
   def as_json(_options = {})

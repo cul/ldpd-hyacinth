@@ -76,6 +76,7 @@ module Types
     end
 
     def project_permission_actions
+      ability.authorize!(:read, Project)
       {
         actions: Permission::PROJECT_ACTIONS,
         read_objects_action: Permission::PROJECT_ACTION_READ_OBJECTS,
