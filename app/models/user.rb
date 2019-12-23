@@ -14,10 +14,11 @@ class User < ApplicationRecord
   accepts_nested_attributes_for :permissions, allow_destroy: true
 
   before_validation :set_uid, on: :create
+  before_save :set_sort_name
   validate :uid_unchanged
 
   def full_name
-    first_name + ' ' + (middle_name ? middle_name + ' ' : '') + last_name
+    [first_name, middle_name, last_name].compact.join(' ')
   end
 
   def as_json(_options = {})
@@ -59,5 +60,9 @@ class User < ApplicationRecord
     def uid_unchanged
       return unless persisted? # skip if object is new or is deleted
       errors.add(:uid, 'Change of uid not allowed!') if uid_changed?
+    end
+
+    def set_sort_name
+      self.sort_name = [last_name + ',', first_name, middle_name].compact.join(' ')
     end
 end

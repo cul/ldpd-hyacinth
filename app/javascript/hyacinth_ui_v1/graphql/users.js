@@ -7,6 +7,7 @@ export const getUsersQuery = gql`
       firstName
       lastName
       fullName
+      sortName
       email
       isActive
     }

@@ -4,7 +4,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 import { Button, Form, Table } from 'react-bootstrap';
 import produce from 'immer';
 import Select from 'react-select';
-import { remove as arrRemove } from 'lodash/array';
+import { remove as arrRemove, sortBy as collectionSortBy } from 'lodash';
 
 import GraphQLErrors from '../../ui/GraphQLErrors';
 import { getProjectPermissionActionsQuery, getProjectPermissionsQuery, updateProjectPermissionsMutation } from '../../../graphql/projects';
@@ -13,24 +13,30 @@ import CancelButton from '../../layout/forms/CancelButton';
 
 function PermissionsEditor(props) {
   const { readOnly } = props;
-
   const { projectStringKey } = props;
   const [permissionsChanged, setPermissionsChanged] = useState(false);
   const [removedUserIds, setRemovedUserIds] = useState(new Set());
+  const [allUsers, setAllUsers] = useState([]);
   const [projectPermissions, setProjectPermissions] = useState([]);
   const [currentAddUserSelection, setCurrentAddUserSelection] = useState(null);
 
   const { loading: actionsLoading, error: actionsError, data: actionsData } = useQuery(
     getProjectPermissionActionsQuery, { variables: { stringKey: projectStringKey } },
   );
-  const { loading: usersLoading, error: usersError, data: usersData } = useQuery(
-    getUsersQuery,
+  const { loading: usersLoading, error: usersError } = useQuery(
+    getUsersQuery, {
+      onCompleted: (data) => {
+        setAllUsers(data.users);
+      },
+    },
   );
   const { loading: permissionsLoading, error: permissionsError } = useQuery(
     getProjectPermissionsQuery, {
       variables: { stringKey: projectStringKey },
       onCompleted: (data) => {
-        setProjectPermissions(data.projectPermissionsForProject);
+        setProjectPermissions(
+          collectionSortBy(data.projectPermissionsForProject, [perm => perm.user.sortName])
+        );
       },
     },
   );
@@ -139,19 +145,17 @@ function PermissionsEditor(props) {
 
     const { projectPermissionActions: { readObjectsAction } } = actionsData;
     const userId = currentAddUserSelection.value;
-    const user = usersData.users.find((u) => { return u.id === userId; });
+    const user = allUsers.find(u => u.id === userId);
 
-    setProjectPermissions(
-      produce(projectPermissions, (draft) => {
-        draft.push({
-          user,
-          project: {
-            stringKey: projectStringKey,
-          },
-          permissions: [readObjectsAction],
-        });
-      }),
-    );
+    setProjectPermissions(produce(projectPermissions, (draft) => {
+      draft.push({
+        user,
+        project: {
+          stringKey: projectStringKey,
+        },
+        permissions: [readObjectsAction],
+      });
+    }));
 
     // If the added user was previously among the set of removedUserIds,
     // then remove the added user's id from removedUserIds.
@@ -168,7 +172,7 @@ function PermissionsEditor(props) {
 
   const renderUserAdd = () => {
     const addedUserIds = projectPermissions.map(permission => permission.user.id);
-    const nonAddedUsers = usersData.users.filter(user => !addedUserIds.includes(user.id));
+    const nonAddedUsers = allUsers.filter(user => !addedUserIds.includes(user.id));
     return (
       <tr key="user-add">
         <td colSpan={actionsData.projectPermissionActions.actions.length + 1}>

@@ -72,7 +72,7 @@ module Types
 
     def users
       ability.authorize!(:index, User)
-      User.accessible_by(ability).order(:last_name)
+      User.accessible_by(ability).order(:sort_name)
     end
 
     def project_permission_actions

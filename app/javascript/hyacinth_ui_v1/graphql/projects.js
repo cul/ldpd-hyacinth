@@ -63,13 +63,13 @@ export const getProjectPermissionActionsQuery = gql`
   }
 `;
 
-// TODO: Eventually request users ordered by name
 export const getProjectPermissionsQuery = gql`
   query ProjectPermissions($stringKey: String!){
     projectPermissionsForProject(stringKey: $stringKey) {
       user {
         id,
-        fullName
+        fullName,
+        sortName
       },
       project {
         stringKey
