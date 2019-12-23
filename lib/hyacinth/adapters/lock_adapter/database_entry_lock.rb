@@ -26,6 +26,7 @@ module Hyacinth
           else
             # If the lock has expired, delete this lock entry and create a new one, then yield later in this method.
             begin
+              database_entry_lock.destroy
               database_entry_lock = ::DatabaseEntryLock.create!(lock_key: key, expires_at: DateTime.current + @lock_timeout.seconds)
             rescue ActiveRecord::RecordNotUnique
               # It's very unlikely that this rescue block will run, but if another process somehow sneaks in a row creation
@@ -75,7 +76,7 @@ module Hyacinth
 
           if already_locked_ids.present?
             # unlock any locks we just established
-            lock_objects[key].each do |_key, lock_object|
+            lock_objects.each do |_key, lock_object|
               lock_object.unlock
             end
             # and then raise an exception
