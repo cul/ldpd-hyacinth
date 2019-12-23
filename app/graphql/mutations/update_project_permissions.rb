@@ -35,7 +35,10 @@ class Mutations::UpdateProjectPermissions < Mutations::BaseMutation
     # TODO: In Rails 6, change operation below Permission.delete_by(...)
     Permission.where(user: user, subject: 'Project', subject_id: project.id).delete_all
 
-    # And then create all of the appropriate new permissions
+    # And then create all of the appropriate new permissions:
+
+    # If the manage permission has been provided, enable all possible project actions.
+    permission_actions = Permission::PROJECT_ACTIONS if permission_actions.include?(Permission::PROJECT_ACTION_MANAGE)
     permission_actions.each do |permission_action|
       Permission.create!(user: user, subject: 'Project', subject_id: project.id, action: permission_action)
     end

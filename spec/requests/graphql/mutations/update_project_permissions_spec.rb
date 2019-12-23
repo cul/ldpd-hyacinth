@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Mutations::UpdateProjectPermissions, type: :request do
   let(:project) { FactoryBot.create(:project) }
   let(:user) { FactoryBot.create(:user) }
-  let(:permission_actions) { [Permission::PROJECT_ACTION_MANAGE, Permission::PROJECT_ACTION_READ_OBJECTS] }
+  let(:permission_actions) { ['read_objects', 'create_objects'] }
   let(:variables) do
     {
       input: {
@@ -33,9 +33,20 @@ RSpec.describe Mutations::UpdateProjectPermissions, type: :request do
       before { graphql query, variables }
 
       it 'creates the expected permissions' do
-        permission_actions.each do |action|
-          expect(Permission.find_by(user: user, subject: 'Project', subject_id: project.id, action: action)).to be_present
-        end
+        expect(Permission.where(
+          user: user, subject: 'Project', subject_id: project.id
+        ).pluck(:action).sort).to eq(permission_actions.sort)
+      end
+    end
+
+    context 'when the "manage" action is provided' do
+      before { graphql query, variables }
+
+      let(:permission_actions) { ['manage'] }
+      it 'sets the manage permission AND all other project action types' do
+        expect(Permission.where(
+          user: user, subject: 'Project', subject_id: project.id, action: Permission::PROJECT_ACTIONS
+        ).pluck(:action).sort).to eq(Permission::PROJECT_ACTIONS.sort)
       end
     end
 
