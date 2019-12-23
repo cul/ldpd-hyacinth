@@ -42,10 +42,10 @@ class FieldGroup extends React.Component {
           {
             isRepeatable && (
               <>
-                <span className="float-right"><AddButton onClick={addHandler} /></span>
-                <span className="float-right"><UpArrowButton onClick={() => moveHandler('up')} /></span>
-                <span className="float-right"><DownArrowButton onClick={() => moveHandler('down')} /></span>
-                <span className="float-right"><RemoveButton onClick={removeHandler} /></span>
+                <span className="float-right"><AddButton className="field-group-header-button" onClick={addHandler} /></span>
+                <span className="float-right"><UpArrowButton className="field-group-header-button" onClick={() => moveHandler('up')} /></span>
+                <span className="float-right"><DownArrowButton className="field-group-header-button" onClick={() => moveHandler('down')} /></span>
+                <span className="float-right"><RemoveButton className="field-group-header-button" onClick={removeHandler} /></span>
               </>
             )
           }

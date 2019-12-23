@@ -5,13 +5,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class UpArrowButton extends React.PureComponent {
   render() {
-    const { onClick, ...rest } = this.props;
+    const { className, onClick, ...rest } = this.props;
 
     return (
       <Button
         variant="secondary"
         size="sm"
-        style={{ padding: '0.05rem 0.35rem', marginLeft: '.25rem' }}
+        className={className}
         onClick={onClick}
         {...rest}
       >
@@ -23,6 +23,11 @@ class UpArrowButton extends React.PureComponent {
 
 UpArrowButton.propTypes = {
   onClick: PropTypes.func.isRequired,
+  className: PropTypes.string,
+};
+
+UpArrowButton.defaultProps = {
+  className: '',
 };
 
 export default UpArrowButton;

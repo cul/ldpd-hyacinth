@@ -5,15 +5,21 @@ import { Button, Form, Table } from 'react-bootstrap';
 import produce from 'immer';
 import Select from 'react-select';
 import { remove as arrRemove, sortBy as collectionSortBy } from 'lodash';
+import { useHistory } from 'react-router-dom';
 
 import GraphQLErrors from '../../ui/GraphQLErrors';
-import { getProjectPermissionActionsQuery, getProjectPermissionsQuery, updateProjectPermissionsMutation } from '../../../graphql/projects';
+import {
+  getProjectPermissionActionsQuery, getProjectPermissionsQuery, updateProjectPermissionsMutation,
+} from '../../../graphql/projects';
 import { getUsersQuery } from '../../../graphql/users';
-import CancelButton from '../../layout/forms/CancelButton';
+import AddButton from '../../ui/buttons/AddButton';
+import RemoveButton from '../../ui/buttons/RemoveButton';
+import CancelButton from '../../ui/forms/buttons/CancelButton';
 
 function PermissionsEditor(props) {
   const { readOnly } = props;
   const { projectStringKey } = props;
+  const history = useHistory();
   const [permissionsChanged, setPermissionsChanged] = useState(false);
   const [removedUserIds, setRemovedUserIds] = useState(new Set());
   const [allUsers, setAllUsers] = useState([]);
@@ -41,11 +47,17 @@ function PermissionsEditor(props) {
     },
   );
 
-  const [updateProjectPermissions, { error: updateProjectPermissionsError }] = useMutation(updateProjectPermissionsMutation);
+  const [updateProjectPermissions, { error: updateProjectPermissionsError }] = useMutation(
+    updateProjectPermissionsMutation,
+  );
 
   if (actionsLoading || permissionsLoading || usersLoading) return (<></>);
   if (actionsError || permissionsError || usersError) {
-    return (<GraphQLErrors errors={actionsError || permissionsError || usersError || updateProjectPermissionsError} />);
+    return (
+      <GraphQLErrors errors={
+        actionsError || permissionsError || usersError || updateProjectPermissionsError
+      } />
+    );
   }
 
   const actionToDisplayLabel = (action) => {
@@ -55,26 +67,34 @@ function PermissionsEditor(props) {
   const updatePermissionsData = (userId, action, enabled) => {
     setPermissionsChanged(true);
 
-    const { projectPermissionActions: { actions, manageAction } } = actionsData;
+    const { projectPermissionActions: {
+      actions: allActions, manageAction, actionsDisallowedForAggregatorProjects },
+    } = actionsData;
 
     setProjectPermissions(
       produce(projectPermissions, (draft) => {
-        const { permissions } = draft.find(
+        const { actions: currentActionsForUser, project } = draft.find(
           projectPermission => projectPermission.user.id === userId,
         );
         if (enabled) {
           if (action === manageAction) {
             // disable any current actions
-            permissions.splice(0, permissions.length);
-            // enable all actions
-            permissions.push(...actions);
+            currentActionsForUser.splice(0, currentActionsForUser.length);
+            // enable all allowed actions
+            if (project.isPrimary) {
+              currentActionsForUser.push(...allActions);
+            } else {
+              currentActionsForUser.push(...allActions.filter(
+                act => !actionsDisallowedForAggregatorProjects.includes(act)
+              ));
+            }
           } else {
             // enable single action
-            permissions.push(action);
+            currentActionsForUser.push(action);
           }
         } else {
           // disable single action
-          permissions.splice(permissions.indexOf(action), 1);
+          currentActionsForUser.splice(currentActionsForUser.indexOf(action), 1);
         }
       }),
     );
@@ -97,28 +117,44 @@ function PermissionsEditor(props) {
   };
 
   const renderProjectPermission = (projectPermission) => {
-    const { projectPermissionActions: { actions, readObjectsAction, actionsDisallowedForAggregatorProjects } } = actionsData;
-    return actions.map(action => (
-      <td key={action}>
-        { /* eslint-disable jsx-a11y/label-has-associated-control, jsx-a11y/label-has-for */ }
-        { /* Note 1: ESLint is getting confused by label + react-bootstrap element. */ }
-        { /* Note 2: We're Using a label for a wider clickable checkbox area. */ }
-        <label id={`label-${projectPermission.user.id}-${action}`} htmlFor={`checkbox-${projectPermission.user.id}-${action}`} className="w-100">
-          <Form.Check
-            id={`checkbox-${projectPermission.user.id}-${action}`}
-            label="&nbsp;"
-            disabled={readOnly || action === readObjectsAction || (!projectPermission.project.isPrimary && actionsDisallowedForAggregatorProjects.includes(action))}
-            type="checkbox"
-            checked={projectPermission.permissions.includes(action)}
-            onChange={(e) => {
-              if (readOnly) return;
-              updatePermissionsData(projectPermission.user.id, action, e.target.checked);
-            }}
-          />
-        </label>
-        { /* eslint-enable jsx-a11y/label-has-associated-control, jsx-a11y/label-has-for */ }
-      </td>
-    ));
+    const {
+      projectPermissionActions: {
+        actions, readObjectsAction, actionsDisallowedForAggregatorProjects,
+      },
+    } = actionsData;
+
+    return actions.map((action) => {
+      const disabledCheckbox = readOnly || action === readObjectsAction || (
+        !projectPermission.project.isPrimary
+        && actionsDisallowedForAggregatorProjects.includes(action)
+      );
+
+      return (
+        <td key={action}>
+          { /* eslint-disable jsx-a11y/label-has-associated-control, jsx-a11y/label-has-for */ }
+          { /* Note 1: ESLint is getting confused by label + react-bootstrap element. */ }
+          { /* Note 2: We're Using a label for a wider clickable checkbox area. */ }
+          <label
+            id={`label-${projectPermission.user.id}-${action}`}
+            htmlFor={`checkbox-${projectPermission.user.id}-${action}`}
+            className="w-100"
+            >
+            <Form.Check
+              id={`checkbox-${projectPermission.user.id}-${action}`}
+              label="&nbsp;"
+              disabled={disabledCheckbox}
+              type="checkbox"
+              checked={projectPermission.actions.includes(action)}
+              onChange={(e) => {
+                if (readOnly) return;
+                updatePermissionsData(projectPermission.user.id, action, e.target.checked);
+              }}
+            />
+          </label>
+          { /* eslint-enable jsx-a11y/label-has-associated-control, jsx-a11y/label-has-for */ }
+        </td>
+      );
+    });
   };
 
   const renderProjectPermissions = () => {
@@ -132,7 +168,7 @@ function PermissionsEditor(props) {
 
         { !readOnly && (
           <td key="remove" className="text-center">
-            <Button size="sm" variant="danger" onClick={() => { removeUser(projectPermission.user.id); }}>-</Button>
+            <RemoveButton onClick={() => {removeUser(projectPermission.user.id); }} />
           </td>
         ) }
       </tr>
@@ -153,7 +189,7 @@ function PermissionsEditor(props) {
         project: {
           stringKey: projectStringKey,
         },
-        permissions: [readObjectsAction],
+        actions: [readObjectsAction],
       });
     }));
 
@@ -184,7 +220,7 @@ function PermissionsEditor(props) {
           />
         </td>
         <td className="text-center align-middle">
-          <Button size="sm" variant="primary" onClick={addSelectedUser}>+</Button>
+          <AddButton onClick={addSelectedUser} />
         </td>
       </tr>
     );
@@ -198,7 +234,7 @@ function PermissionsEditor(props) {
           return {
             projectStringKey: projectPermission.project.stringKey,
             userId: projectPermission.user.id,
-            permissions: projectPermission.permissions,
+            actions: projectPermission.actions,
           };
         }).concat(
           // We're also going to send projectPermission elements with an
@@ -207,14 +243,17 @@ function PermissionsEditor(props) {
             return {
               projectStringKey,
               userId,
-              permissions: [],
+              actions: [],
             };
           }),
         ),
       },
     };
 
-    updateProjectPermissions({ variables }).then(() => setPermissionsChanged(false));
+    updateProjectPermissions({ variables }).then(() => {
+      setPermissionsChanged(false);
+      history.push(`/projects/${projectStringKey}/permissions/`);
+    });
   };
 
   return (
@@ -239,7 +278,9 @@ function PermissionsEditor(props) {
           <div className="text-right">
             <CancelButton to={`/projects/${projectStringKey}/permissions`} />
             &nbsp;
-            <Button variant="primary" onClick={onSubmitHandler} disabled={!permissionsChanged}>{permissionsChanged ? 'Save' : 'Saved'}</Button>
+            <Button variant="primary" onClick={onSubmitHandler} disabled={!permissionsChanged}>
+              {permissionsChanged ? 'Save' : 'Saved'}
+            </Button>
           </div>
         )
       }

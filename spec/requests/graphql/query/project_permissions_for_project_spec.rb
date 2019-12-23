@@ -21,7 +21,7 @@ RSpec.describe 'Retrieve project permissions for project', type: :request do
       expect(response.body).to be_json_eql(%({
         "projectPermissionsForProject": [
           {
-            "permissions": [
+            "actions": [
               "manage"
             ],
             "project": {
@@ -49,7 +49,7 @@ RSpec.describe 'Retrieve project permissions for project', type: :request do
             stringKey
             displayLabel
           },
-          permissions
+          actions
         }
       }
     GQL

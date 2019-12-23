@@ -4,7 +4,6 @@ class Mutations::UpdateProjectPermissions < Mutations::BaseMutation
   argument :project_permissions_update, [Types::ProjectPermissionsUpdateAttributes], required: true
 
   field :project_permissions, [Types::ProjectPermissionsType], null: false
-  #field :errors, [String], null: false
 
   def resolve(project_permissions_update:)
     projects = {}
@@ -15,7 +14,7 @@ class Mutations::UpdateProjectPermissions < Mutations::BaseMutation
       project_permissions_update.each do |project_permission|
         project_string_key = project_permission.project_string_key
         user_id = project_permission.user_id
-        permission_actions = project_permission.permissions
+        permission_actions = project_permission.actions
 
         # Cache projects and users for future lookups
         project = projects[project_string_key] ||= Project.find_by!(string_key: project_string_key)
@@ -30,16 +29,19 @@ class Mutations::UpdateProjectPermissions < Mutations::BaseMutation
 
     # If we got here, there weren't any errors and we can return all of the
     # successfully updated project permissions data.
+    project_permissions_response(project_permissions_update, users, projects)
+  end
+
+  def project_permissions_response(project_permissions_update, users, projects)
     {
-      project_permissions: project_permissions_update.each do |data|
+      project_permissions: project_permissions_update.map do |data|
         {
           user: users[data.user_id],
           project: projects[data.project_string_key],
-          permissions: data['permissions']
+          actions: data['actions']
         }
       end
     }
-    #{ errors: [] }
   end
 
   def apply_new_permission_actions(project, user, permission_actions)
@@ -49,8 +51,11 @@ class Mutations::UpdateProjectPermissions < Mutations::BaseMutation
 
     # And then create all of the appropriate new permissions:
 
-    # If the manage permission has been provided, enable all possible project actions.
-    permission_actions = Permission::PROJECT_ACTIONS if permission_actions.include?(Permission::PROJECT_ACTION_MANAGE)
+    # If the manage permission has been provided, enable all applicable project actions.
+    if permission_actions.include?(Permission::PROJECT_ACTION_MANAGE)
+      permission_actions = project.is_primary ? Permission::PROJECT_ACTIONS : Permission::PROJECT_ACTIONS - Permission::PROJECT_ACTIONS_DISALLOWED_FOR_AGGREGATOR_PROJECTS
+    end
+
     permission_actions.each do |permission_action|
       Permission.create!(user: user, subject: 'Project', subject_id: project.id, action: permission_action)
     end

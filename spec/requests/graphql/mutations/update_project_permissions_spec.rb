@@ -9,11 +9,11 @@ RSpec.describe Mutations::UpdateProjectPermissions, type: :request do
   let(:variables) do
     {
       input: {
-        projectPermissions: [
+        projectPermissionsUpdate: [
           {
             projectStringKey: project.string_key,
             userId: user.uid,
-            permissions: permission_actions
+            actions: permission_actions
           }
         ]
       }
@@ -29,7 +29,7 @@ RSpec.describe Mutations::UpdateProjectPermissions, type: :request do
       sign_in_project_contributor to: :manage, project: project
     end
 
-    context 'when updating record' do
+    context 'when updating permissions' do
       before { graphql query, variables }
 
       it 'creates the expected permissions' do
@@ -40,9 +40,9 @@ RSpec.describe Mutations::UpdateProjectPermissions, type: :request do
     end
 
     context 'when the "manage" action is provided' do
+      let(:permission_actions) { ['manage'] }
       before { graphql query, variables }
 
-      let(:permission_actions) { ['manage'] }
       it 'sets the manage permission AND all other project action types' do
         expect(Permission.where(
           user: user, subject: 'Project', subject_id: project.id, action: Permission::PROJECT_ACTIONS
@@ -54,11 +54,11 @@ RSpec.describe Mutations::UpdateProjectPermissions, type: :request do
       let(:variables) do
         {
           input: {
-            projectPermissions: [
+            projectPermissionsUpdate: [
               {
                 projectStringKey: project.string_key,
                 userId: user.uid,
-                permissions: ['bananas']
+                actions: ['bananas']
               }
             ]
           }
@@ -79,7 +79,19 @@ RSpec.describe Mutations::UpdateProjectPermissions, type: :request do
     <<~GQL
       mutation UpdateProjectPermissions($input: UpdateProjectPermissionsInput!) {
         updateProjectPermissions(input: $input) {
-          errors
+          projectPermissions {
+            user {
+              id,
+              fullName,
+              sortName
+            },
+            project {
+              stringKey
+              displayLabel
+              isPrimary
+            },
+            actions
+          }
         }
       }
     GQL

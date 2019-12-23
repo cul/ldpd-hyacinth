@@ -75,7 +75,7 @@ const projectPermissionsFields = `
     displayLabel
     isPrimary
   },
-  permissions
+  actions
 `;
 
 export const getProjectPermissionsQuery = gql`

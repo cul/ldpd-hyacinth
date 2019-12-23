@@ -43,7 +43,7 @@ RSpec.describe Permission, type: :model do
 
         it 'saves object' do
           expect(permission.save).to be false
-          expect(permission.errors.full_messages).to include 'Action is not allowed for an aggregator project'
+          expect(permission.errors.full_messages).to include 'Action create_objects is not allowed for an aggregator project'
         end
       end
     end

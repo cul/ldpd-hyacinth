@@ -96,8 +96,8 @@ module Types
           user: permission.user,
           project: project
         }
-        user_permissions[permission.user_id]['permissions'] ||= []
-        user_permissions[permission.user_id]['permissions'] << permission.action
+        user_permissions[permission.user_id]['actions'] ||= []
+        user_permissions[permission.user_id]['actions'] << permission.action
       end
       user_permissions.values
     end

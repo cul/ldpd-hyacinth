@@ -27,7 +27,7 @@ class SubmitButton extends React.Component {
     const { isSaving, success } = this.state;
 
     let savingText = 'Saving...';
-    let variant = 'info';
+    let variant = 'primary';
 
     if (success) {
       savingText = 'Saved!';

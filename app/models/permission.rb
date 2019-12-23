@@ -14,11 +14,22 @@ class Permission < ApplicationRecord
   PROJECT_ACTION_READ_OBJECTS = 'read_objects'
   PROJECT_ACTION_MANAGE = 'manage'
   PROJECT_ACTION_CREATE_OBJECTS = 'create_objects'
-  PROJECT_ACTIONS_DISALLOWED_FOR_AGGREGATOR_PROJECTS = [PROJECT_ACTION_CREATE_OBJECTS]
+  PROJECT_ACTION_DELETE_OBJECTS = 'delete_objects'
+  PROJECT_ACTION_UPDATE_OBJECTS = 'update_objects'
+  PROJECT_ACTION_ASSESS_RIGHTS = 'assess_rights'
+  PROJECT_ACTION_PUBLISH_OBJECTS = 'publish_objects'
+
   # Note: The order of actions in this array determines display order in the UI.
   PROJECT_ACTIONS = [
-    PROJECT_ACTION_READ_OBJECTS, PROJECT_ACTION_CREATE_OBJECTS, 'update_objects', 'delete_objects',
-    'publish_objects', 'assess_rights', PROJECT_ACTION_MANAGE
+    PROJECT_ACTION_READ_OBJECTS, PROJECT_ACTION_CREATE_OBJECTS, PROJECT_ACTION_UPDATE_OBJECTS,
+    PROJECT_ACTION_DELETE_OBJECTS, PROJECT_ACTION_PUBLISH_OBJECTS, PROJECT_ACTION_ASSESS_RIGHTS,
+    PROJECT_ACTION_MANAGE
+  ]
+
+  PROJECT_ACTIONS_DISALLOWED_FOR_AGGREGATOR_PROJECTS = [
+    PROJECT_ACTION_CREATE_OBJECTS,
+    PROJECT_ACTION_DELETE_OBJECTS,
+    PROJECT_ACTION_ASSESS_RIGHTS
   ]
 
   validate :valid_permission_combination
@@ -51,7 +62,7 @@ class Permission < ApplicationRecord
       elsif !Permission.valid_project_action?(action)
         errors.add(:action, 'is invalid')
       elsif PROJECT_ACTIONS_DISALLOWED_FOR_AGGREGATOR_PROJECTS.include?(action)
-        errors.add(:action, 'is not allowed for an aggregator project') unless Project.find(subject_id).is_primary
+        errors.add(:action, "#{action} is not allowed for an aggregator project") unless Project.find(subject_id).is_primary
       end
     end
 end
