@@ -5,14 +5,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class AddButton extends React.PureComponent {
   render() {
-    const { className, onClick, children, ...rest } = this.props;
+    const { children, ...rest } = this.props;
 
     return (
       <Button
         variant="success"
         size="sm"
-        className={className}
-        onClick={onClick}
         {...rest}
       >
         <FontAwesomeIcon icon="plus" size="sm" />

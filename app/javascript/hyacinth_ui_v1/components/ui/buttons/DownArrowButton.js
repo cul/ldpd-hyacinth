@@ -5,15 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class DownArrowButton extends React.PureComponent {
   render() {
-    const { className, onClick, ...rest } = this.props;
-
     return (
       <Button
         variant="secondary"
         size="sm"
-        className={className}
-        onClick={onClick}
-        {...rest}
+        {...this.props}
       >
         <FontAwesomeIcon icon="caret-down" size="lg" />
       </Button>

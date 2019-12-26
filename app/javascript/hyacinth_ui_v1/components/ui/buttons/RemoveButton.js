@@ -5,14 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class RemoveButton extends React.PureComponent {
   render() {
-    const { className, onClick } = this.props;
-
     return (
       <Button
         variant="danger"
         size="sm"
-        className={className}
-        onClick={onClick}
+        {...this.props}
       >
         <FontAwesomeIcon icon="times" size="sm" />
       </Button>
