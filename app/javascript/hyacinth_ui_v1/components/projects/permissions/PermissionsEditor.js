@@ -104,9 +104,7 @@ function PermissionsEditor(props) {
     setPermissionsChanged(true);
     setProjectPermissions(
       produce(projectPermissions, (draft) => {
-        arrRemove(draft, (projectPermission) => {
-          return projectPermission.user.id === userId;
-        });
+        arrRemove(draft, projectPermission => projectPermission.user.id === userId);
       }),
     );
     setRemovedUserIds(
@@ -216,7 +214,7 @@ function PermissionsEditor(props) {
             placeholder="Add a user..."
             value={currentAddUserSelection}
             options={nonAddedUsers.map(user => ({ value: user.id, label: user.fullName }))}
-            onChange={(val) => { setCurrentAddUserSelection(val); }}
+            onChange={val => setCurrentAddUserSelection(val)}
           />
         </td>
         <td className="text-center align-middle">

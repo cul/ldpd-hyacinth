@@ -33,4 +33,21 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe "#set_sort_name" do
+    context "with no middle name" do
+      it "sets the expected value" do
+        expect(user).to receive(:'sort_name=').with('Doe, Jane')
+        user.send(:set_sort_name)
+      end
+    end
+
+    context "with middle name" do
+      let(:user) { FactoryBot.build(:user, middle_name: 'Aloysius') }
+      it "sets the expected value" do
+        expect(user).to receive(:'sort_name=').with('Doe, Jane Aloysius')
+        user.send(:set_sort_name)
+      end
+    end
+  end
 end
