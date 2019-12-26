@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  Button, Dropdown, Form, Badge, Collapse,
-} from 'react-bootstrap';
+import PropTypes from 'prop-types';
+import { Button, Form } from 'react-bootstrap';
 
-import ControlledVocabularyOption from './ControlledVocabularyOption';
+import TermOption from './TermOption';
 import { terms } from '../../../../../util/hyacinth_api';
 
 const limit = '10';
 
-function ControlledVocabularyOptions({ vocabulary, onChange }) {
+function TermOptions({ vocabulary, onChange }) {
   const [options, setOptions] = useState([]);
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
@@ -17,7 +15,7 @@ function ControlledVocabularyOptions({ vocabulary, onChange }) {
   const [infoExpandedFor, setInfoExpandedFor] = useState('');
 
   useEffect(() => {
-    terms.search(vocabulary.stringKey, `offset=0&limit=${limit}`).then((res) => {
+    terms.search(vocabulary, `offset=0&limit=${limit}`).then((res) => {
       setOptions(res.data.terms);
       setOffset(0);
       setTotalResults(res.data.totalRecords);
@@ -37,7 +35,7 @@ function ControlledVocabularyOptions({ vocabulary, onChange }) {
 
     const q = (value.length < 3) ? '' : value;
 
-    terms.search(vocabulary.stringKey, `offset=0&limit=${limit}&q=${q}`)
+    terms.search(vocabulary, `offset=0&limit=${limit}&q=${q}`)
       .then((res) => {
         setOptions(res.data.terms);
         setOffset(0);
@@ -57,7 +55,7 @@ function ControlledVocabularyOptions({ vocabulary, onChange }) {
     let queryString = `offset=${offset + limit}&limit=${limit}`;
     if (search && search.length >= 3) queryString = queryString.concat(`&q=${search}`);
 
-    terms.search(vocabulary.stringKey, queryString).then((res) => {
+    terms.search(vocabulary, queryString).then((res) => {
       setOffset(offset + limit);
       setOptions(oldOptions => [...oldOptions, ...res.data.terms]);
     });
@@ -77,7 +75,8 @@ function ControlledVocabularyOptions({ vocabulary, onChange }) {
       <ul className="list-unstyled">
         {
           options.map(term => (
-            <ControlledVocabularyOption
+            <TermOption
+              key={term.uuid}
               term={term}
               onSelect={() => onSelectHandler(term.uri)}
               onCollapseToggle={() => onCollapseHandler(term.uuid)}
@@ -95,4 +94,9 @@ function ControlledVocabularyOptions({ vocabulary, onChange }) {
   );
 }
 
-export default ControlledVocabularyOptions;
+TermOptions.propTypes = {
+  vocabulary: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+};
+
+export default TermOptions;

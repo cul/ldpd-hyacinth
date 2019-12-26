@@ -5,7 +5,7 @@ import produce from 'immer';
 import InputGroup from '../../../ui/forms/InputGroup';
 import Label from '../../../ui/forms/Label';
 import TextAreaInput from '../../../ui/forms/inputs/TextAreaInput';
-import ControlledVocabularySelect from '../../../ui/forms/inputs/ControlledVocabularySelect';
+import TermSelect from '../../../ui/forms/inputs/TermSelect';
 import TextInput from '../../../ui/forms/inputs/TextInput';
 import RemoveButton from '../../../ui/buttons/RemoveButton';
 import AddButton from '../../../ui/buttons/AddButton';
@@ -40,7 +40,7 @@ export default class CopyrightOwner extends React.PureComponent {
         <Card.Body>
           <InputGroup>
             <Label sm={4} align="right">Name</Label>
-            <ControlledVocabularySelect
+            <TermSelect
               vocabulary="name"
               value={value.name}
               onChange={v => this.onFieldChange('name', v)}

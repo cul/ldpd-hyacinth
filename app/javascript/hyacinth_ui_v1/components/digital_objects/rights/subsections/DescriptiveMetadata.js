@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import produce from 'immer';
 
 import ReadOnlyInput from '../../../ui/forms/inputs/ReadOnlyInput';
-import ControlledVocabularySelect from '../../../ui/forms/inputs/ControlledVocabularySelect';
+import TermSelect from '../../../ui/forms/inputs/TermSelect';
 import YesNoSelect from '../../../ui/forms/inputs/YesNoSelect';
 import SelectInput from '../../../ui/forms/inputs/SelectInput';
 import Label from '../../../ui/forms/Label';
@@ -120,7 +120,7 @@ class DescriptiveMetadata extends React.PureComponent {
 
           <InputGroup>
             <Label sm={4} align="right">Country of Origin</Label>
-            <ControlledVocabularySelect
+            <TermSelect
               vocabulary="geonames"
               value={value.countryOfOrigin}
               onChange={v => this.onChange('countryOfOrigin', v)}
