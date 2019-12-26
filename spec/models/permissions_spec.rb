@@ -38,12 +38,13 @@ RSpec.describe Permission, type: :model do
         end
       end
 
-      context 'when creating a disallowed permission for an aggregator project' do
-        let(:permission) { Permission.new(user: user, action: 'create_objects', subject: 'Project', subject_id: aggregator_project.id) }
-
-        it 'saves object' do
-          expect(permission.save).to be false
-          expect(permission.errors.full_messages).to include 'Action create_objects is not allowed for an aggregator project'
+      context 'when creating disallowed permissions for an aggregator project' do
+        it "results in an error" do
+          Permission::PROJECT_ACTIONS_DISALLOWED_FOR_AGGREGATOR_PROJECTS.each do |disallowed_action|
+            permission = Permission.new(user: user, action: disallowed_action, subject: 'Project', subject_id: aggregator_project.id)
+            expect(permission.save).to be false
+            expect(permission.errors.full_messages).to include "Action #{disallowed_action} is not allowed for an aggregator project"
+          end
         end
       end
     end
