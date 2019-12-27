@@ -69,7 +69,7 @@ RSpec.describe Mutations::UpdateProjectPermissions, type: :request do
 
       it 'returns error' do
         expect(response.body).to be_json_eql(%(
-          "Action is invalid"
+          "Action bananas is not allowed for a primary project"
         )).at_path('errors/0/message')
       end
     end

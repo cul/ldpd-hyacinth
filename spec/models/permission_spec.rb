@@ -38,13 +38,55 @@ RSpec.describe Permission, type: :model do
         end
       end
 
-      context 'when creating disallowed permissions for an aggregator project' do
+      context 'when creating invalid permissions for a primary project' do
+        let(:invalid_action) { 'mahna mahna' }
+
+        it "results in an error" do
+          permission = Permission.new(user: user, action: invalid_action, subject: 'Project', subject_id: primary_project.id)
+          expect(permission.save).to be false
+          expect(permission.errors.full_messages).to include "Action #{invalid_action} is not allowed for a primary project"
+        end
+      end
+
+      context 'when creating invalid permissions for an aggregator project' do
         it "results in an error" do
           Permission::PROJECT_ACTIONS_DISALLOWED_FOR_AGGREGATOR_PROJECTS.each do |disallowed_action|
             permission = Permission.new(user: user, action: disallowed_action, subject: 'Project', subject_id: aggregator_project.id)
             expect(permission.save).to be false
             expect(permission.errors.full_messages).to include "Action #{disallowed_action} is not allowed for an aggregator project"
           end
+        end
+      end
+    end
+  end
+
+  context ".valid_project_action?" do
+    context "for a primary project" do
+      let(:is_primary_project) { true }
+
+      it "returns true for valid actions" do
+        Permission::PROJECT_ACTIONS.each do |action|
+          expect(described_class.valid_project_action?(is_primary_project, action)).to eq(true)
+        end
+      end
+
+      it "returns false for invalid actions" do
+        expect(described_class.valid_project_action?(is_primary_project, 'mahna mahna')).to eq(false)
+      end
+    end
+
+    context "for an aggregator project" do
+      let(:is_primary_project) { false }
+
+      it "returns true for valid actions" do
+        Permission::AGGREGATOR_PROJECT_ACTIONS.each do |action|
+          expect(described_class.valid_project_action?(is_primary_project, action)).to eq(true)
+        end
+      end
+
+      it "returns false for invalid actions" do
+        Permission::PROJECT_ACTIONS_DISALLOWED_FOR_AGGREGATOR_PROJECTS.each do |action|
+          expect(described_class.valid_project_action?(is_primary_project, action)).to eq(false)
         end
       end
     end
