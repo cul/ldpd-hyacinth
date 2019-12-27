@@ -3,6 +3,8 @@
 class HyacinthSchema < GraphQL::Schema
   use GraphQL::Execution::Errors
 
+  max_depth 10
+
   rescue_from(ActiveRecord::RecordNotFound) do |err, _obj, _args, _ctx, _field|
     # Raise a graphql-friendly error with a custom message or we could just send back nil
     raise GraphQL::ExecutionError, err.message.to_s
