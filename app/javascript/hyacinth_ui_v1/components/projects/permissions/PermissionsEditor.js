@@ -100,11 +100,8 @@ function PermissionsEditor(props) {
         arrRemove(draft, projectPermission => projectPermission.user.id === userId);
       }),
     );
-    setRemovedUserIds(
-      produce(removedUserIds, (draft) => {
-        draft.add(userId);
-      }),
-    );
+
+    setRemovedUserIds(new Set([...removedUserIds, userId]));
   };
 
   const renderProjectPermission = (projectPermission) => {
@@ -221,6 +218,7 @@ function PermissionsEditor(props) {
 
   const onSubmitHandler = (e) => {
     e.preventDefault();
+
     const variables = {
       input: {
         projectPermissionsUpdate: projectPermissions.map((projectPermission) => {
