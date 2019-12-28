@@ -34,16 +34,13 @@ module Types
       argument :id, ID, required: true
     end
 
-    field :project_permissions_for_project, [ProjectPermissionsType], null: true do
-      argument :string_key, String, required: true
-    end
-
-    field :project_permission_actions, ProjectPermissionActionsType, null: true do
+    field :permission_actions, PermissionActionsType, null: true do
       description 'Information about available project permission actions.'
     end
 
     def digital_objects
-      # This is a temporary implementation, this should actually querying the solr instance.
+      # This is a temporary implementation, this should actually querying solr
+      # and considering object read permissions.
       DigitalObjectRecord.all
     end
 
@@ -75,28 +72,12 @@ module Types
       User.accessible_by(ability).order(:sort_name)
     end
 
-    def project_permission_actions
-      ability.authorize!(:read, Project)
+    def permission_actions
       {
-        actions: Permission::PROJECT_ACTIONS,
-        actions_disallowed_for_aggregator_projects: Permission::PROJECT_ACTIONS_DISALLOWED_FOR_AGGREGATOR_PROJECTS,
-        read_objects_action: Permission::PROJECT_ACTION_READ_OBJECTS,
-        manage_action: Permission::PROJECT_ACTION_MANAGE
+        project_actions: Permission::PROJECT_ACTIONS,
+        primary_project_actions: Permission::PRIMARY_PROJECT_ACTIONS,
+        aggregator_project_actions: Permission::AGGREGATOR_PROJECT_ACTIONS
       }
-    end
-
-    def project_permissions_for_project(string_key:)
-      # Note: In the future, we'll likely have a project_permissions_for_user method as well.
-      project = Project.find_by!(string_key: string_key)
-      ability.authorize!(:update, project)
-
-      Permission.where(subject: 'Project', subject_id: project.id).group_by(&:user_id).map do |_user_id, grouped_permissions|
-        {
-          user: grouped_permissions.first.user,
-          project: project,
-          actions: grouped_permissions.map(&:action)
-        }
-      end
     end
 
     def authenticated_user

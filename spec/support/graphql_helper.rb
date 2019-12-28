@@ -29,6 +29,17 @@ module GraphQLHelper
           displayLabel
           projectUrl
           isPrimary
+          projectPermissions {
+            user {
+              id,
+              fullName
+            },
+            project {
+              stringKey
+              displayLabel
+            },
+            actions
+          }
         }
       }
     GQL

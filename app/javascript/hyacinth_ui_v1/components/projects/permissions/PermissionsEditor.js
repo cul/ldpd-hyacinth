@@ -9,12 +9,15 @@ import { useHistory } from 'react-router-dom';
 
 import GraphQLErrors from '../../ui/GraphQLErrors';
 import {
-  getProjectPermissionActionsQuery, getProjectPermissionsQuery, updateProjectPermissionsMutation,
+  getProjectWithPermissionsQuery, updateProjectPermissionsMutation,
 } from '../../../graphql/projects';
 import { getUsersQuery } from '../../../graphql/users';
 import AddButton from '../../ui/buttons/AddButton';
 import RemoveButton from '../../ui/buttons/RemoveButton';
 import CancelButton from '../../ui/forms/buttons/CancelButton';
+import {
+  ProjectAction, ProjectActions, PrimaryProjectActions, AggregatorProjectActions
+} from '../../../util/permission_actions';
 
 function PermissionsEditor(props) {
   const { readOnly } = props;
@@ -22,26 +25,21 @@ function PermissionsEditor(props) {
   const history = useHistory();
   const [permissionsChanged, setPermissionsChanged] = useState(false);
   const [removedUserIds, setRemovedUserIds] = useState(new Set());
-  const [allUsers, setAllUsers] = useState([]);
   const [projectPermissions, setProjectPermissions] = useState([]);
   const [currentAddUserSelection, setCurrentAddUserSelection] = useState(null);
 
-  const { loading: actionsLoading, error: actionsError, data: actionsData } = useQuery(
-    getProjectPermissionActionsQuery, { variables: { stringKey: projectStringKey } },
-  );
-  const { loading: usersLoading, error: usersError } = useQuery(
-    getUsersQuery, {
-      onCompleted: (data) => {
-        setAllUsers(data.users);
-      },
-    },
-  );
-  const { loading: permissionsLoading, error: permissionsError } = useQuery(
-    getProjectPermissionsQuery, {
+  const { loading: usersLoading, error: usersError, data: userData } = useQuery(getUsersQuery);
+
+  const {
+    loading: projectWithPermissionsLoading,
+    error: projectWithPermissionsError,
+    data: projectWithPermissionsData,
+  } = useQuery(
+    getProjectWithPermissionsQuery, {
       variables: { stringKey: projectStringKey },
       onCompleted: (data) => {
         setProjectPermissions(
-          collectionSortBy(data.projectPermissionsForProject, [perm => perm.user.sortName])
+          collectionSortBy(data.project.projectPermissions, [perm => perm.user.sortName])
         );
       },
     },
@@ -51,14 +49,17 @@ function PermissionsEditor(props) {
     updateProjectPermissionsMutation,
   );
 
-  if (actionsLoading || permissionsLoading || usersLoading) return (<></>);
-  if (actionsError || permissionsError || usersError) {
+  if (projectWithPermissionsLoading || usersLoading) return (<></>);
+  if (projectWithPermissionsError || usersError) {
     return (
       <GraphQLErrors errors={
-        actionsError || permissionsError || usersError || updateProjectPermissionsError
+        projectWithPermissionsError || usersError || updateProjectPermissionsError
       } />
     );
   }
+
+  const allUsers = userData.users;
+  const { project } = projectWithPermissionsData;
 
   const actionToDisplayLabel = (action) => {
     return action.split('_').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
@@ -67,27 +68,19 @@ function PermissionsEditor(props) {
   const updatePermissionsData = (userId, action, enabled) => {
     setPermissionsChanged(true);
 
-    const { projectPermissionActions: {
-      actions: allActions, manageAction, actionsDisallowedForAggregatorProjects },
-    } = actionsData;
-
     setProjectPermissions(
       produce(projectPermissions, (draft) => {
         const { actions: currentActionsForUser, project } = draft.find(
           projectPermission => projectPermission.user.id === userId,
         );
         if (enabled) {
-          if (action === manageAction) {
+          if (action === ProjectAction.manage) {
             // disable any current actions
             currentActionsForUser.splice(0, currentActionsForUser.length);
             // enable all allowed actions
-            if (project.isPrimary) {
-              currentActionsForUser.push(...allActions);
-            } else {
-              currentActionsForUser.push(...allActions.filter(
-                act => !actionsDisallowedForAggregatorProjects.includes(act)
-              ));
-            }
+            currentActionsForUser.push(
+              ...(project.isPrimary ? PrimaryProjectActions : AggregatorProjectActions),
+            );
           } else {
             // enable single action
             currentActionsForUser.push(action);
@@ -115,17 +108,14 @@ function PermissionsEditor(props) {
   };
 
   const renderProjectPermission = (projectPermission) => {
-    const {
-      projectPermissionActions: {
-        actions, readObjectsAction, actionsDisallowedForAggregatorProjects,
-      },
-    } = actionsData;
+    return ProjectActions.map((action) => {
+      // Show empty cell if this is an unavailable field for an aggregator project
 
-    return actions.map((action) => {
-      const disabledCheckbox = readOnly || action === readObjectsAction || (
-        !projectPermission.project.isPrimary
-        && actionsDisallowedForAggregatorProjects.includes(action)
-      );
+      if (!projectPermission.project.isPrimary && !AggregatorProjectActions.includes(action)) {
+        return <td key={action} />;
+      }
+
+      const disabledCheckbox = readOnly || action === ProjectAction.read_objects;
 
       return (
         <td key={action}>
@@ -136,7 +126,7 @@ function PermissionsEditor(props) {
             id={`label-${projectPermission.user.id}-${action}`}
             htmlFor={`checkbox-${projectPermission.user.id}-${action}`}
             className="w-100"
-            >
+          >
             <Form.Check
               id={`checkbox-${projectPermission.user.id}-${action}`}
               label="&nbsp;"
@@ -156,6 +146,15 @@ function PermissionsEditor(props) {
   };
 
   const renderProjectPermissions = () => {
+
+    if(readOnly && projectPermissions.length === 0) {
+      return (
+        <tr key="empty">
+          <td className="text-center p-3" colSpan={ProjectActions.length + 1}>No users have been added to this project.</td>
+        </tr>
+      );
+    }
+
     return projectPermissions.map(projectPermission => (
       <tr key={projectPermission.user.id}>
         <td key="name">
@@ -177,17 +176,13 @@ function PermissionsEditor(props) {
     if (currentAddUserSelection == null) return;
     setPermissionsChanged(true);
 
-    const { projectPermissionActions: { readObjectsAction } } = actionsData;
     const userId = currentAddUserSelection.value;
     const user = allUsers.find(u => u.id === userId);
-
     setProjectPermissions(produce(projectPermissions, (draft) => {
       draft.push({
         user,
-        project: {
-          stringKey: projectStringKey,
-        },
-        actions: [readObjectsAction],
+        project,
+        actions: [ProjectAction.read_objects],
       });
     }));
 
@@ -209,7 +204,7 @@ function PermissionsEditor(props) {
     const nonAddedUsers = allUsers.filter(user => !addedUserIds.includes(user.id));
     return (
       <tr key="user-add">
-        <td colSpan={actionsData.projectPermissionActions.actions.length + 1}>
+        <td colSpan={ProjectActions.length + 1}>
           <Select
             placeholder="Add a user..."
             value={currentAddUserSelection}
@@ -239,7 +234,7 @@ function PermissionsEditor(props) {
           // empty permissions array for user removal.
           [...removedUserIds].map((userId) => {
             return {
-              projectStringKey,
+              projectStringKey: project.stringKey,
               userId,
               actions: [],
             };
@@ -250,7 +245,7 @@ function PermissionsEditor(props) {
 
     updateProjectPermissions({ variables }).then(() => {
       setPermissionsChanged(false);
-      history.push(`/projects/${projectStringKey}/permissions/`);
+      history.push(`/projects/${project.stringKey}/permissions/`);
     });
   };
 
@@ -260,7 +255,7 @@ function PermissionsEditor(props) {
         <thead>
           <tr>
             <th key="name">Name</th>
-            {actionsData.projectPermissionActions.actions.map(
+            {ProjectActions.map(
               action => (<th key={action}>{actionToDisplayLabel(action)}</th>)
             )}
             { !readOnly && (<th key="remove" className="text-center">Actions</th>) }
@@ -274,7 +269,7 @@ function PermissionsEditor(props) {
       {
         !readOnly && (
           <div className="text-right">
-            <CancelButton to={`/projects/${projectStringKey}/permissions`} />
+            <CancelButton to={`/projects/${project.stringKey}/permissions`} />
             &nbsp;
             <Button variant="primary" onClick={onSubmitHandler} disabled={!permissionsChanged}>
               {permissionsChanged ? 'Save' : 'Saved'}

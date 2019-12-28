@@ -15,7 +15,9 @@ import ControlledVocabularies from './components/controlled_vocabularies/Control
 import Projects from './components/projects/Projects';
 import { AbilityContext } from './util/ability_context';
 import ability from './util/ability';
+import { setupPermissionActions } from './util/permission_actions';
 import { getAuthenticatedUserQuery } from './graphql/users';
+import { getPermissionActionsQuery } from './graphql/permissionActions';
 import GraphQLErrors from './components/ui/GraphQLErrors';
 
 const Index = () => (
@@ -28,7 +30,7 @@ const Index = () => (
 function App() {
   const [user, setUser] = useState({});
 
-  const { loading, error } = useQuery(
+  const { loading: userLoading, error: userError } = useQuery(
     getAuthenticatedUserQuery,
     {
       onCompleted: (userData) => {
@@ -39,8 +41,20 @@ function App() {
     },
   );
 
-  if (loading) return (<></>);
-  if (error) return (<GraphQLErrors errors={error} />);
+  const { loading: permissionActionsLoading, error: permissionActionsError } = useQuery(
+    getPermissionActionsQuery,
+    {
+      onCompleted: (permissionActionData) => {
+        const {
+          permissionActions: { projectActions, primaryProjectActions, aggregatorProjectActions }
+        } = permissionActionData;
+        setupPermissionActions(projectActions, primaryProjectActions, aggregatorProjectActions);
+      },
+    },
+  );
+
+  if (userLoading || permissionActionsLoading) return (<></>);
+  if (userError || permissionActionsError) return (<GraphQLErrors errors={userError || permissionActionsError} />);
 
   return (
     <AbilityContext.Provider value={ability}>

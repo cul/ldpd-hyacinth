@@ -267,6 +267,7 @@ RSpec/ExampleLength:
     - 'spec/requests/graphql/query/digital_object_spec.rb'
     - 'spec/requests/graphql/query/field_set_spec.rb'
     - 'spec/requests/graphql/query/field_sets_spec.rb'
+    - 'spec/requests/graphql/query/permission_actions_spec.rb'
     - 'spec/requests/graphql/query/project_permission_actions_spec.rb'
     - 'spec/requests/graphql/query/project_permissions_for_project_spec.rb'
     - 'spec/requests/graphql/query/project_spec.rb'

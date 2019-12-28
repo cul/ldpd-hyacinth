@@ -53,17 +53,6 @@ export const getProjectsQuery = gql`
   }
 `;
 
-export const getProjectPermissionActionsQuery = gql`
-  query ProjectPermissionActions {
-    projectPermissionActions {
-      actions,
-      actionsDisallowedForAggregatorProjects,
-      readObjectsAction,
-      manageAction
-    }
-  }
-`;
-
 const projectPermissionsFields = `
   user {
     id,
@@ -78,10 +67,14 @@ const projectPermissionsFields = `
   actions
 `;
 
-export const getProjectPermissionsQuery = gql`
-  query ProjectPermissions($stringKey: String!){
-    projectPermissionsForProject(stringKey: $stringKey) {
-      ${projectPermissionsFields}
+export const getProjectWithPermissionsQuery = gql`
+  query ProjectWithPermissions($stringKey: ID!){
+    project(stringKey: $stringKey) {
+      stringKey
+      isPrimary
+      projectPermissions {
+        ${projectPermissionsFields}
+      }
     }
   }
 `;
