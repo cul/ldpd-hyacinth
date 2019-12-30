@@ -5,14 +5,14 @@ import { useParams } from 'react-router-dom';
 import TabHeading from '../../ui/tabs/TabHeading';
 import { Can } from '../../../util/ability_context';
 import EditButton from '../../ui/buttons/EditButton';
-import { getProjectQuery } from '../../../graphql/projects';
+import { getProjectWithPermissionsQuery } from '../../../graphql/projects';
 import ProjectInterface from '../ProjectInterface';
 import GraphQLErrors from '../../ui/GraphQLErrors';
 import PermissionsEditor from './PermissionsEditor';
 
 function PermissionsShow() {
   const { stringKey } = useParams();
-  const { loading, error, data } = useQuery(getProjectQuery, { variables: { stringKey } });
+  const { loading, error, data } = useQuery(getProjectWithPermissionsQuery, { variables: { stringKey } });
 
   if (loading) return (<></>);
   if (error) return (<GraphQLErrors errors={error} />);
@@ -30,7 +30,7 @@ function PermissionsShow() {
         </Can>
       </TabHeading>
 
-      <PermissionsEditor projectStringKey={data.project.stringKey} readOnly />
+      <PermissionsEditor project={data.project} readOnly />
     </ProjectInterface>
   );
 }

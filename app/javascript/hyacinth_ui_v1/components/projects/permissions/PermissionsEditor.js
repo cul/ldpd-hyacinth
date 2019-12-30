@@ -8,9 +8,7 @@ import { remove as arrRemove, sortBy as collectionSortBy } from 'lodash';
 import { useHistory } from 'react-router-dom';
 
 import GraphQLErrors from '../../ui/GraphQLErrors';
-import {
-  getProjectWithPermissionsQuery, updateProjectPermissionsMutation,
-} from '../../../graphql/projects';
+import { updateProjectPermissionsMutation } from '../../../graphql/projects';
 import { getUsersQuery } from '../../../graphql/users';
 import AddButton from '../../ui/buttons/AddButton';
 import RemoveButton from '../../ui/buttons/RemoveButton';
@@ -21,45 +19,29 @@ import {
 
 function PermissionsEditor(props) {
   const { readOnly } = props;
-  const { projectStringKey } = props;
+  const { project } = props;
   const history = useHistory();
   const [permissionsChanged, setPermissionsChanged] = useState(false);
   const [removedUserIds, setRemovedUserIds] = useState(new Set());
-  const [projectPermissions, setProjectPermissions] = useState([]);
+  const [projectPermissions, setProjectPermissions] = useState(
+    collectionSortBy(project.projectPermissions, [perm => perm.user.sortName])
+  );
   const [currentAddUserSelection, setCurrentAddUserSelection] = useState(null);
 
   const { loading: usersLoading, error: usersError, data: userData } = useQuery(getUsersQuery);
-
-  const {
-    loading: projectWithPermissionsLoading,
-    error: projectWithPermissionsError,
-    data: projectWithPermissionsData,
-  } = useQuery(
-    getProjectWithPermissionsQuery, {
-      variables: { stringKey: projectStringKey },
-      onCompleted: (data) => {
-        setProjectPermissions(
-          collectionSortBy(data.project.projectPermissions, [perm => perm.user.sortName])
-        );
-      },
-    },
-  );
 
   const [updateProjectPermissions, { error: updateProjectPermissionsError }] = useMutation(
     updateProjectPermissionsMutation,
   );
 
-  if (projectWithPermissionsLoading || usersLoading) return (<></>);
-  if (projectWithPermissionsError || usersError) {
+  if (usersLoading) return (<></>);
+  if (usersError) {
     return (
-      <GraphQLErrors errors={
-        projectWithPermissionsError || usersError || updateProjectPermissionsError
-      } />
+      <GraphQLErrors errors={ usersError || updateProjectPermissionsError } />
     );
   }
 
   const allUsers = userData.users;
-  const { project } = projectWithPermissionsData;
 
   const actionToDisplayLabel = (action) => {
     return action.split('_').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
@@ -223,7 +205,7 @@ function PermissionsEditor(props) {
       input: {
         projectPermissionsUpdate: projectPermissions.map((projectPermission) => {
           return {
-            projectStringKey: projectPermission.project.stringKey,
+            projectStringKey: project.stringKey,
             userId: projectPermission.user.id,
             actions: projectPermission.actions,
           };
@@ -281,7 +263,7 @@ function PermissionsEditor(props) {
 
 PermissionsEditor.propTypes = {
   readOnly: PropTypes.bool,
-  projectStringKey: PropTypes.string.isRequired,
+  project: PropTypes.object.isRequired,
 };
 
 PermissionsEditor.defaultProps = {

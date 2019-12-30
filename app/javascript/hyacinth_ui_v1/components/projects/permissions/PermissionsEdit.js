@@ -4,13 +4,13 @@ import { useParams } from 'react-router-dom';
 
 import TabHeading from '../../ui/tabs/TabHeading';
 import ProjectInterface from '../ProjectInterface';
-import { getProjectQuery } from '../../../graphql/projects';
+import { getProjectWithPermissionsQuery } from '../../../graphql/projects';
 import GraphQLErrors from '../../ui/GraphQLErrors';
 import PermissionsEditor from './PermissionsEditor';
 
 function PermissionsEdit() {
   const { stringKey } = useParams();
-  const { loading, error, data } = useQuery(getProjectQuery, { variables: { stringKey } });
+  const { loading, error, data } = useQuery(getProjectWithPermissionsQuery, { variables: { stringKey } });
 
   if (loading) return (<></>);
   if (error) return (<GraphQLErrors errors={error} />);
@@ -21,7 +21,7 @@ function PermissionsEdit() {
         Permissions
       </TabHeading>
 
-      <PermissionsEditor projectStringKey={data.project.stringKey} />
+      <PermissionsEditor project={data.project} />
     </ProjectInterface>
   );
 }
