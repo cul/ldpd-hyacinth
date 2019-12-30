@@ -1,7 +1,16 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
-  mount GraphiQL::Rails::Engine, at: '/graphiql', graphql_path: '/graphql' if Rails.env.development?
+  # Constraint for restricting certain routes to only admins, or to the development environment
+  dev_or_admin_constraints = lambda do |request|
+    return true if Rails.env.development?
+    current_user = request.env['warden'].user
+    current_user&.is_admin?
+  end
+
+  constraints dev_or_admin_constraints do
+    mount GraphiQL::Rails::Engine, at: '/graphiql', graphql_path: '/graphql'
+  end
 
   post "/graphql", to: "graphql#execute"
 
