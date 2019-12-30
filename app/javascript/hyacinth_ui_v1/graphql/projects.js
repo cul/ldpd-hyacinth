@@ -52,3 +52,39 @@ export const getProjectsQuery = gql`
     }
   }
 `;
+
+const projectPermissionsFields = `
+  user {
+    id,
+    fullName,
+    sortName
+  },
+  project {
+    stringKey
+    displayLabel
+    isPrimary
+  },
+  actions
+`;
+
+export const getProjectWithPermissionsQuery = gql`
+  query ProjectWithPermissions($stringKey: ID!){
+    project(stringKey: $stringKey) {
+      stringKey
+      isPrimary
+      projectPermissions {
+        ${projectPermissionsFields}
+      }
+    }
+  }
+`;
+
+export const updateProjectPermissionsMutation = gql`
+  mutation UpdateProjectPermissions($input: UpdateProjectPermissionsInput!) {
+    updateProjectPermissions(input: $input) {
+      projectPermissions {
+        ${projectPermissionsFields}
+      }
+    }
+  }
+`;

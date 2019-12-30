@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
 import GraphQLErrors from '../ui/GraphQLErrors';
-import { CreateUserMutation } from '../../graphql/users';
+import { createUserMutation } from '../../graphql/users';
 
 function UserNew() {
   const [firstName, setFirstName] = useState('');
@@ -15,7 +15,7 @@ function UserNew() {
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
 
-  const [createUser, { error }] = useMutation(CreateUserMutation);
+  const [createUser, { error }] = useMutation(createUserMutation);
   const history = useHistory();
 
   // From: http://stackoverflow.com/questions/10726909/random-alpha-numeric-string-in-javascript

@@ -98,6 +98,9 @@ class Ability
   end
 
   def manage(project_id, project_string_key)
+    # Allow project managers to read all users so they can assign users to projects
+    can :read, User
+
     can :update, Project, id: project_id
     can :update, Project, string_key: project_string_key
 

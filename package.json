@@ -18,7 +18,7 @@
     "bootswatch": "^4.3.1",
     "brace": "^0.11.1",
     "graphql": "^14.5.8",
-    "immer": "^2.1.5",
+    "immer": "^5.1.0",
     "lodash": "^4.17.13",
     "prop-types": "^15.6.2",
     "query-string": "^6.5.0",
@@ -28,7 +28,7 @@
     "react-dom": "^16.8.1",
     "react-router-bootstrap": "^0.25.0",
     "react-router-dom": "5.x",
-    "react-select": "^3.0.3",
+    "react-select": "^3.0.8",
     "webpack": "^4.0.0"
   },
   "devDependencies": {

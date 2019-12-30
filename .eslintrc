@@ -7,7 +7,7 @@
     "node": true
   },
   "rules": {
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-    'no-param-reassign': ['error', { ignorePropertyModificationsFor: ["draft"] } ]
+    "no-param-reassign": ["error", { "ignorePropertyModificationsFor" : ["draft"] } ],
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }]
   }
 }

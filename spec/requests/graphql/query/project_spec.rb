@@ -12,6 +12,9 @@ RSpec.describe 'Retrieving Project', type: :request do
   context 'when logged in user has appropriate permissions' do
     before do
       sign_in_project_contributor to: :read_objects, project: project
+      user = FactoryBot.create(:user)
+      Permission.create(user: user, subject: 'Project', subject_id: project.id, action: 'read_objects')
+      Permission.create(user: user, subject: 'Project', subject_id: project.id, action: 'create_objects')
     end
 
     context 'when string_key is valid' do
@@ -23,7 +26,34 @@ RSpec.describe 'Retrieving Project', type: :request do
             "displayLabel": "Great Project",
             "isPrimary": true,
             "projectUrl": "https://example.com/great_project",
-            "stringKey": "great_project"
+            "stringKey": "great_project",
+            "projectPermissions": [
+              {
+                "actions": [
+                  "read_objects"
+                ],
+                "project": {
+                  "displayLabel": "Great Project",
+                  "stringKey": "great_project"
+                },
+                "user": {
+                  "fullName": "Signed In User"
+                }
+              },
+              {
+                "actions": [
+                  "read_objects",
+                  "create_objects"
+                ],
+                "project": {
+                  "displayLabel": "Great Project",
+                  "stringKey": "great_project"
+                },
+                "user": {
+                  "fullName": "Jane Doe"
+                }
+              }
+            ]
           }
         })).at_path('data')
       end

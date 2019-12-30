@@ -20,21 +20,30 @@ module Types
 
     field :is_primary, Boolean, null: false
 
+    field :project_permissions, [ProjectPermissionsType], null: true
+
     def field_set(id:)
       field_set = FieldSet.find_by!(id: id, project: object)
+      # TODO: Change :show below to :read
       context[:ability].authorize!(:show, field_set)
       field_set
     end
 
-    # might need this to enforce permissions
-    # don't need to enforce permissions because if a user can see the project they can see all the field sets and publish targets
-    # def publish_targets
-    # end
-
     def publish_target(string_key:)
       publish_target = PublishTarget.find_by!(string_key: string_key, project: object)
+      # TODO: Change :show below to :read
       context[:ability].authorize!(:show, publish_target)
       publish_target
+    end
+
+    def project_permissions
+      Permission.where(subject: 'Project', subject_id: object).group_by(&:user_id).map do |_user_id, grouped_permissions|
+        {
+          user: grouped_permissions.first.user,
+          project: object,
+          actions: grouped_permissions.map(&:action)
+        }
+      end
     end
   end
 end

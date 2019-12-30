@@ -34,8 +34,13 @@ module Types
       argument :id, ID, required: true
     end
 
+    field :permission_actions, PermissionActionsType, null: true do
+      description 'Information about available project permission actions.'
+    end
+
     def digital_objects
-      # This is a temporary implementation, this should actually querying the solr instance.
+      # This is a temporary implementation, this should actually querying solr
+      # and considering object read permissions.
       DigitalObjectRecord.all
     end
 
@@ -64,7 +69,15 @@ module Types
 
     def users
       ability.authorize!(:index, User)
-      User.accessible_by(ability).order(:last_name)
+      User.accessible_by(ability).order(:sort_name)
+    end
+
+    def permission_actions
+      {
+        project_actions: Permission::PROJECT_ACTIONS,
+        primary_project_actions: Permission::PRIMARY_PROJECT_ACTIONS,
+        aggregator_project_actions: Permission::AGGREGATOR_PROJECT_ACTIONS
+      }
     end
 
     def authenticated_user

@@ -8,7 +8,7 @@ class SubmitButton extends React.PureComponent {
     // switch to functional components + hooks
     const { formType, staticContext, ...rest } = this.props;
     return (
-      <Button variant="info" type="submit" {...rest}>
+      <Button variant="primary" type="submit" {...rest}>
         {formType === 'new' ? 'Create' : 'Update'}
       </Button>
     );

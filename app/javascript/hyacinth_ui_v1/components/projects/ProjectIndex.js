@@ -32,6 +32,7 @@ function ProjectIndex() {
           <tr>
             <th>Display Label</th>
             <th>String Key</th>
+            <th>Primary?</th>
             <th>Download Template Header</th>
           </tr>
         </thead>
@@ -42,6 +43,7 @@ function ProjectIndex() {
                 <tr key={project.stringKey}>
                   <td><Link to={`/projects/${project.stringKey}/core_data`}>{project.displayLabel}</Link></td>
                   <td>{project.stringKey}</td>
+                  <td>{project.isPrimary ? 'true' : ''}</td>
                   <td />
                 </tr>
               ))

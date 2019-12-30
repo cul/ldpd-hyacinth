@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 import { Table } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 
-import { GetUsersQuery } from '../../graphql/users';
+import { getUsersQuery } from '../../graphql/users';
 import ContextualNavbar from '../layout/ContextualNavbar';
 
 function UserIndex() {
-  const { loading, error, data } = useQuery(GetUsersQuery);
+  const { loading, error, data } = useQuery(getUsersQuery);
 
   return (
     <>
