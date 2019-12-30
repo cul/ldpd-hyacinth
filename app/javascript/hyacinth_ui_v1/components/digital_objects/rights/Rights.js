@@ -24,6 +24,21 @@ export default class Rights extends React.PureComponent {
           }}
         />
 
+        { /* TODO: Change above route to:
+        <ProtectedRoute
+          path="/digital_objects/:id/rights/edit"
+          render={() => {
+            switch ('item') {
+              case 'item':
+                return <ItemRightsForm />;
+              default:
+                return '';
+            }
+          }}
+          requiredAbility={{ action: 'assess_rights', subject: 'Project', subject_id: project.stringKey }}
+        />
+        */ }
+
         { /* When none of the above match, <PageNotFound> will be rendered */ }
         <Route component={PageNotFound} />
       </Switch>

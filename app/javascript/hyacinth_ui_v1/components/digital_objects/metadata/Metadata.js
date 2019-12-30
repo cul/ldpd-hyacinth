@@ -11,6 +11,13 @@ class Metadata extends React.PureComponent {
       <Switch>
         <Route exact path="/digital_objects/:id/metadata" component={MetadataShow} />
         <Route path="/digital_objects/:id/metadata/edit" component={MetadataEdit} />
+        { /* TODO: Change above route to:
+          <ProtectedRoute
+          path="/digital_objects/:id/metadata/edit"
+          component={MetadataEdit}
+          requiredAbility={{ action: 'update_objects', subject: 'Project', subject_id: project.stringKey }}
+          />
+        */ }
 
         { /* When none of the above match, <PageNotFound> will be rendered */ }
         <Route component={PageNotFound} />
