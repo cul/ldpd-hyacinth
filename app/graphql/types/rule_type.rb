@@ -11,7 +11,7 @@ module Types
 
     # Keys in the conditions need to be in camelCase.
     def conditions
-      object[:conditions].deep_transform_keys { |k| k.to_s.camelize(:lower)  }
+      object[:conditions].deep_transform_keys { |k| k.to_s.camelize(:lower) }
     end
   end
 end
