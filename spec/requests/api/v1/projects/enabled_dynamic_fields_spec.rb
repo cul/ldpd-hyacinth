@@ -41,6 +41,7 @@ RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
                   "hidden": false,
                   "locked": false,
                   "owner_only": false,
+                  "open_to_all_projects": false,
                   "required": true,
                   "field_sets": []
                 },
@@ -50,6 +51,7 @@ RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
                   "hidden": false,
                   "locked": false,
                   "owner_only": false,
+                  "open_to_all_projects": false,
                   "required": true,
                   "field_sets": []
                 }
