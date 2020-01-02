@@ -17,7 +17,6 @@ gem 'best_type', '0.0.4'
 gem 'bootsnap', '>= 1.1.0', require: false # Reduces boot times through caching; required in config/boot.rb
 gem 'cancancan', '~> 2.0'
 gem 'devise', '~> 4.6'
-gem 'graphiql-rails'
 gem 'graphql'
 gem 'graphql-errors'
 gem 'jbuilder', '~> 2.5' # Do we need this?
@@ -44,6 +43,8 @@ group :development do
   gem 'capistrano-passenger', '~> 0.1', require: false
   gem 'capistrano-rails', '~> 1.4', require: false
   gem 'capistrano-rvm', '~> 0.1', require: false
+
+  gem 'graphiql-rails'
 
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
   gem 'listen', '>= 3.0.5', '< 3.2'

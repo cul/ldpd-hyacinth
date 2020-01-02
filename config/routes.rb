@@ -8,8 +8,11 @@ Rails.application.routes.draw do
     current_user&.is_admin?
   end
 
-  constraints dev_or_admin_constraints do
-    mount GraphiQL::Rails::Engine, at: '/graphiql', graphql_path: '/graphql'
+  # For now, we can only use GraphiQL in the development environmnent (due to a js compilation issue in prod).
+  if Rails.env.development?
+    constraints dev_or_admin_constraints do
+      mount GraphiQL::Rails::Engine, at: '/graphiql', graphql_path: '/graphql'
+    end
   end
 
   post "/graphql", to: "graphql#execute"
