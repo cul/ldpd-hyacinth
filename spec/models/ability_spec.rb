@@ -4,6 +4,15 @@ require 'rails_helper'
 require 'cancan/matchers'
 
 RSpec.describe Ability, type: :model do
+  let(:base_rules) do
+    [
+      { actions: [:read, :update], conditions: { id: 1 }, subject: ["User"], inverted: false },
+      { actions: [:read, :update], conditions: { uid: user.uid }, subject: ["User"], inverted: false },
+      { actions: [:read, :create], conditions: {}, subject: ["Term"], inverted: false },
+      { actions: [:read], conditions: {}, subject: ["DynamicFieldCategory"], inverted: false }
+    ]
+  end
+
   describe 'when user is nil' do
     subject { described_class.new(user) }
 
@@ -14,7 +23,7 @@ RSpec.describe Ability, type: :model do
   end
 
   describe 'when user is administrator' do
-    subject { described_class.new(user) }
+    subject(:ability) { described_class.new(user) }
 
     let(:user) { FactoryBot.create(:user, is_admin: true) }
 
@@ -23,10 +32,14 @@ RSpec.describe Ability, type: :model do
     it { is_expected.to be_able_to(:manage, DigitalObject) }
     it { is_expected.to be_able_to(:update, Project) }
     it { is_expected.to be_able_to(:update, PublishTarget) }
+
+    it 'serializes correctly' do
+      expect(ability.to_list).to match([{ actions: [:manage], conditions: {}, subject: [:all], inverted: false }])
+    end
   end
 
   describe 'when user is user manager' do
-    subject { described_class.new(user) }
+    subject(:ability) { described_class.new(user) }
 
     let(:user) do
       FactoryBot.create(
@@ -38,10 +51,16 @@ RSpec.describe Ability, type: :model do
     it { is_expected.to be_able_to(:manage, User) }
     it { is_expected.to be_able_to(:read, User) }
     it { is_expected.to be_able_to(:update, User) }
+
+    it 'serializes correctly' do
+      expect(ability.to_list).to match_array(
+        base_rules.concat([{ actions: [:manage], conditions: {}, subject: ['User'], inverted: false }])
+      )
+    end
   end
 
   describe 'when user has multiple system wide permissions' do
-    subject { described_class.new(user) }
+    subject(:ability) { described_class.new(user) }
 
     let(:user) do
       FactoryBot.create(
@@ -52,6 +71,15 @@ RSpec.describe Ability, type: :model do
       )
     end
 
+    let(:additional_rules) do
+      [
+        { actions: [:manage], conditions: {}, subject: ["User"], inverted: false },
+        { actions: [:manage], conditions: {}, subject: ["Vocabulary"], inverted: false },
+        { actions: [:manage], conditions: {}, subject: ["Term"], inverted: false },
+        { actions: [:manage], conditions: {}, subject: ["CustomField"], inverted: false }
+      ]
+    end
+
     it { is_expected.not_to be_able_to(:manage, :all) }
     it { is_expected.to be_able_to(:manage, User) }
     it { is_expected.to be_able_to(:read, User) }
@@ -59,10 +87,16 @@ RSpec.describe Ability, type: :model do
     it { is_expected.to be_able_to(:show, :vocabulary) }
     it { is_expected.to be_able_to(:update, :vocabulary) }
     it { is_expected.to be_able_to(:manage, :vocabulary) }
+
+    it 'serializes correctly' do
+      expect(ability.to_list).to match_array(
+        base_rules.concat(additional_rules)
+      )
+    end
   end
 
   describe 'when user is logged in' do
-    subject { described_class.new(user) }
+    subject(:ability) { described_class.new(user) }
 
     let(:user) { FactoryBot.create(:user) }
 
@@ -70,6 +104,10 @@ RSpec.describe Ability, type: :model do
     it { is_expected.to be_able_to(:update, user) }
 
     it { is_expected.not_to be_able_to(:manage, User) }
+
+    it 'serializes correctly' do
+      expect(ability.to_list).to match(base_rules)
+    end
   end
 
   describe 'when user has the ability to read all digital objects' do
@@ -88,7 +126,7 @@ RSpec.describe Ability, type: :model do
   end
 
   describe 'when a user has the ability to read_objects for a project' do
-    subject { described_class.new(user) }
+    subject(:ability) { described_class.new(user) }
 
     let(:project) { FactoryBot.create(:project) }
     let(:user) do
@@ -99,12 +137,31 @@ RSpec.describe Ability, type: :model do
       )
     end
 
+    let(:additional_rules) do
+      [
+        { actions: [:read], conditions: { id: project.id }, subject: ["Project"], inverted: false },
+        { actions: [:read], conditions: { string_key: project.string_key }, subject: ["Project"], inverted: false },
+        { actions: [:read], conditions: { project_id: project.id }, subject: ["PublishTarget"], inverted: false },
+        { actions: [:read], conditions: { project: { string_key: project.string_key } }, subject: ["PublishTarget"], inverted: false },
+        { actions: [:read], conditions: { project_id: project.id }, subject: ["FieldSet"], inverted: false },
+        { actions: [:read], conditions: { project: { string_key: project.string_key } }, subject: ["FieldSet"], inverted: false },
+        { actions: [:read_objects], conditions: { id: 1 }, subject: ["Project"], inverted: false },
+        { actions: [:read_objects], conditions: { string_key: project.string_key }, subject: ["Project"], inverted: false }
+      ]
+    end
+
     it { is_expected.to be_able_to(:show, FactoryBot.create(:publish_target, project: project)) }
     it { is_expected.to be_able_to(:show, project) }
     it { is_expected.to be_able_to(:show, FactoryBot.create(:field_set, project: project)) }
 
     it { is_expected.not_to be_able_to(:update, FactoryBot.create(:field_set, project: project)) }
     it { is_expected.not_to be_able_to(:update, FactoryBot.create(:publish_target, project: project)) }
+
+    it 'serializes correctly' do
+      expect(ability.to_list).to match_array(
+        base_rules.concat(additional_rules)
+      )
+    end
   end
 
   describe 'for digital object permissions' do

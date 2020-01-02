@@ -79,7 +79,9 @@ class Ability
   end
 
   def to_list
-    rules.map do |rule|
+    # Skipping rules that only contain a block.
+    rules.select { |r| !r.only_block? }.map do |rule|
+      rule.only_block?
       object = { actions: rule.actions }
       object[:subject] = rule.subjects.map do |s|
         if s == :all
@@ -91,8 +93,8 @@ class Ability
         end
       end
 
-      object[:conditions] = rule.conditions unless rule.conditions.blank?
-      object[:inverted] = true unless rule.base_behavior
+      object[:conditions] = rule.conditions
+      object[:inverted] = !rule.base_behavior
       object
     end
   end
