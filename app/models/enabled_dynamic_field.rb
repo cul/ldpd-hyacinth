@@ -9,6 +9,7 @@ class EnabledDynamicField < ApplicationRecord
   validates :project, :dynamic_field, :digital_object_type, presence: true
   validates :digital_object_type, inclusion: { in: Hyacinth::Config.digital_object_types.keys }
   validates :dynamic_field, uniqueness: { scope: [:project, :digital_object_type] }
+  validates_with EnabledDynamicField::OpenToAllProjectsValidator
 
   def as_json(_options = {})
     {
@@ -19,6 +20,7 @@ class EnabledDynamicField < ApplicationRecord
       locked: locked,
       required: required,
       owner_only: owner_only,
+      open_to_all_projects: open_to_all_projects,
       field_sets: field_sets
     }
   end
