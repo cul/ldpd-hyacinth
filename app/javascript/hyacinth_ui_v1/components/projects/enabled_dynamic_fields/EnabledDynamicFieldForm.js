@@ -193,7 +193,7 @@ class EnabledDynamicFieldEdit extends React.Component {
             <Col md={2}>
               <Badge variant="info">{field.displayLabel}</Badge>
             </Col>
-            <Col xs={6} md={2}>
+            <Col xs={4} md={2}>
               <Form.Check
                 id={`enabled_${field.id}`}
                 type="checkbox"
@@ -206,10 +206,28 @@ class EnabledDynamicFieldEdit extends React.Component {
                 disabled={disabled}
               />
             </Col>
-            <Col xs={6} md={2}>
+            <Col xs={4} md={2}>
               {
                 currentField.enabled && (
                   <Form.Check
+                    id={`openToAllProjects_${field.id}`}
+                    type="checkbox"
+                    checked={currentField.openToAllProjects}
+                    label="Open to All Projects"
+                    name="openToAllProjects"
+                    className="align-middle"
+                    onChange={onChange}
+                    inline
+                    disabled={disabled}
+                  />
+                )
+              }
+            </Col>
+            <Col xs={4} md={2}>
+              {
+                currentField.enabled && (
+                  <Form.Check
+                    id={`required_${field.id}`}
                     type="checkbox"
                     checked={currentField.required}
                     label="Required"
