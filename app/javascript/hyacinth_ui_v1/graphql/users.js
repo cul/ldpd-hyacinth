@@ -64,3 +64,11 @@ export const getAuthenticatedUserQuery = gql`
     }
   }
 `;
+
+export const impersonateUserMutation = gql`
+  mutation ImpersonateUser($input: ImpersonateUserInput!){
+    impersonateUser(input: $input){
+      success
+    }
+  }
+`;

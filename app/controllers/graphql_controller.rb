@@ -10,7 +10,8 @@ class GraphqlController < ApplicationController
     context = {
       # Query context goes here, for example:
       current_user: current_user,
-      ability: current_ability
+      ability: current_ability,
+      sign_in_lambda: ->(user) { sign_in(:user, user) }
     }
     result = HyacinthSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
     render json: result

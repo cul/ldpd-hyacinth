@@ -13,7 +13,7 @@ import InputGroup from '../ui/forms/InputGroup';
 import Label from '../ui/forms/Label';
 import FormButtons from '../ui/forms/FormButtons';
 import { Can } from '../../util/ability_context';
-import { getUserQuery, updateUserMutation } from '../../graphql/users';
+import { getUserQuery, updateUserMutation, impersonateUserMutation } from '../../graphql/users';
 import Checkbox from '../ui/forms/inputs/Checkbox';
 
 import BooleanRadioButtons from '../ui/forms/inputs/BooleanRadioButtons';
@@ -62,7 +62,9 @@ function UserEdit() {
     },
   );
 
-  const [updateUser, { error: mutationErrors }] = useMutation(updateUserMutation);
+  const [updateUser, { error: updateUserErrors }] = useMutation(updateUserMutation);
+
+  const [impersonateUser, { error: impersonateUserErrors }] = useMutation(impersonateUserMutation);
 
   let rightHandLinks = [];
 
@@ -105,6 +107,14 @@ function UserEdit() {
   if (gqlResponse.loading) return (<></>);
   if (gqlResponse.error) return (<GraphQLErrors errors={gqlResponse.error} />);
 
+  const performUserImpersonation = (userId) => {
+    impersonateUser({
+      variables: { input: { id: userId } },
+    }).then(() => {
+      window.location.reload();
+    });
+  };
+
   return (
     <>
       <ContextualNavbar
@@ -112,7 +122,7 @@ function UserEdit() {
         rightHandLinks={rightHandLinks}
       />
 
-      <GraphQLErrors errors={mutationErrors} />
+      <GraphQLErrors errors={updateUserErrors || impersonateUserErrors} />
 
       <Form as={Col}>
         <Form.Group as={Row}>
@@ -265,9 +275,23 @@ function UserEdit() {
             </>
           )
         }
-
         <FormButtons onSave={onSave} />
       </Form>
+      <hr />
+      {
+          isActive && ability.can('manage', 'all') && (
+            <>
+              <h5>Impersonate This User</h5>
+              <Button
+                className="mb-3"
+                variant="warning"
+                onClick={() => performUserImpersonation(id)}
+              >
+                Impersonate
+              </Button>
+            </>
+          )
+        }
     </>
   );
 }
