@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
   Row, Col, Form, Badge, Card,
 } from 'react-bootstrap';
@@ -6,8 +7,7 @@ import produce from 'immer';
 import { withRouter } from 'react-router-dom';
 import axios from 'axios';
 import Select from 'react-select';
-
-import SubmitButton from '../../layout/forms/SubmitButton';
+import FormButtons from '../../ui/forms/FormButtons';
 import hyacinthApi from '../../../util/hyacinth_api';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 
@@ -20,7 +20,7 @@ class EnabledDynamicFieldEdit extends React.Component {
   }
 
   componentDidMount() {
-    axios.all([this.getDynamicFieldGraph(), this.getEnabledDynamicFields()])
+    axios.all([EnabledDynamicFieldEdit.getDynamicFieldGraph(), this.getEnabledDynamicFields()])
       .then(axios.spread((graph, enabledDynamicFields) => {
         const allFieldsHash = {};
 
@@ -102,11 +102,9 @@ class EnabledDynamicFieldEdit extends React.Component {
     }
   }
 
-  onSubmitHandler = (event) => {
-    event.preventDefault();
-
+  onSubmitHandler = () => {
     const { enabledDynamicFields } = this.state;
-    const { projectStringKey, digitalObjectType } = this.props;
+    const { projectStringKey, digitalObjectType, history } = this.props;
 
     const enabledDynamicFieldsArray = [];
 
@@ -126,8 +124,8 @@ class EnabledDynamicFieldEdit extends React.Component {
     });
 
     const path = `/projects/${projectStringKey}/enabled_dynamic_fields/${digitalObjectType}`;
-    hyacinthApi.patch(path, { enabledDynamicFields: enabledDynamicFieldsArray })
-      .then(() => this.props.history.push(`${path}/edit`));
+    return hyacinthApi.patch(path, { enabledDynamicFields: enabledDynamicFieldsArray })
+      .then(() => history.push(`${path}/edit`));
   }
 
   getAllFields(group, hash) {
@@ -145,7 +143,7 @@ class EnabledDynamicFieldEdit extends React.Component {
     });
   }
 
-  getDynamicFieldGraph() {
+  static getDynamicFieldGraph() {
     return hyacinthApi.get('/dynamic_field_categories');
   }
 
@@ -291,10 +289,15 @@ class EnabledDynamicFieldEdit extends React.Component {
   }
 
   render() {
-    const { dynamicFieldGraphs, disabled } = this.state;
+    const {
+      dynamicFieldGraphs, disabled,
+    } = this.state;
+    const {
+      projectStringKey, digitalObjectType,
+    } = this.props;
 
     return (
-      <Form onSubmit={this.onSubmitHandler}>
+      <Form>
         {
           dynamicFieldGraphs.map(category => (
             <div key={`category_${category.id}`}>
@@ -305,16 +308,22 @@ class EnabledDynamicFieldEdit extends React.Component {
         }
         {
           !disabled && (
-            <Row>
-              <Col sm="auto" className="ml-auto">
-                <SubmitButton onClick={this.onSubmitHandler} formType="edit" />
-              </Col>
-            </Row>
+            <FormButtons
+              formType="edit"
+              cancelTo={`/projects/${projectStringKey}/enabled_dynamic_fields/${digitalObjectType}`}
+              onSave={this.onSubmitHandler}
+            />
           )
         }
       </Form>
     );
   }
 }
+
+EnabledDynamicFieldEdit.propTypes = {
+  formType: PropTypes.string.isRequired,
+  projectStringKey: PropTypes.string.isRequired,
+  digitalObjectType: PropTypes.string.isRequired,
+};
 
 export default withRouter(withErrorHandler(EnabledDynamicFieldEdit, hyacinthApi));
