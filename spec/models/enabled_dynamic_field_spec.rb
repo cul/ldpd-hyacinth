@@ -76,5 +76,19 @@ RSpec.describe EnabledDynamicField, type: :model do
         expect(enabled_dynamic_field_2.errors.full_messages).to include 'Dynamic field has already been taken'
       end
     end
+
+    context 'when non-primary project attempts to disable sharing' do
+      let(:project) { FactoryBot.create(:project, is_primary: false) }
+      let(:enabled_dynamic_field) { FactoryBot.build(:enabled_dynamic_field, project: project, shareable: false) }
+
+      it 'does not save' do
+        expect(enabled_dynamic_field.save).to be false
+      end
+
+      it 'returns correct error' do
+        enabled_dynamic_field.save
+        expect(enabled_dynamic_field.errors.messages[:shareable]).to include EnabledDynamicField::ShareableValidator::ERROR_MESSAGE
+      end
+    end
   end
 end

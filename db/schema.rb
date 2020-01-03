@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_02_155446) do
+ActiveRecord::Schema.define(version: 2020_01_03_161110) do
 
   create_table "database_entry_locks", force: :cascade do |t|
     t.string "lock_key", null: false
@@ -86,7 +86,7 @@ ActiveRecord::Schema.define(version: 2020_01_02_155446) do
     t.text "default_value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "open_to_all_projects", default: false, null: false
+    t.boolean "shareable", default: false, null: false
     t.index ["digital_object_type", "project_id", "dynamic_field_id"], name: "index_enabled_dynamic_fields_unique", unique: true
     t.index ["digital_object_type", "project_id"], name: "index_enabled_dynamic_fields_on_project_and_type"
     t.index ["dynamic_field_id"], name: "index_enabled_dynamic_fields_on_dynamic_field_id"
