@@ -208,11 +208,11 @@ class EnabledDynamicFieldEdit extends React.Component {
               {
                 currentField.enabled && (
                   <Form.Check
-                    id={`openToAllProjects_${field.id}`}
+                    id={`shareable_${field.id}`}
                     type="checkbox"
-                    checked={currentField.openToAllProjects}
-                    label="Open to All Projects"
-                    name="openToAllProjects"
+                    checked={currentField.shareable}
+                    label="Shareable by Other Projects"
+                    name="shareable"
                     className="align-middle"
                     onChange={onChange}
                     inline

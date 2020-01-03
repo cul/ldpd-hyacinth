@@ -5,12 +5,12 @@ FactoryBot.define do
     association :project
     association :dynamic_field
 
-    digital_object_type   { 'item' }
-    required              { true }
-    locked                { false }
-    hidden                { false }
-    owner_only            { false }
-    open_to_all_projects  { false }
-    default_value         {}
+    digital_object_type { 'item' }
+    required            { true }
+    locked              { false }
+    hidden              { false }
+    owner_only          { false }
+    shareable           { false }
+    default_value       {}
   end
 end
