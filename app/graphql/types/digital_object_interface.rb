@@ -27,7 +27,7 @@ module Types
     field :publish_entries, [DigitalObject::PublishEntryType], null: true
     field :optimistic_lock_token, String, null: false
 
-    def publsh_entries
+    def publish_entries
       object.publish_entries.map { |k, h| { publish_target_string_key: k }.merge(h) }
     end
 
