@@ -1,47 +1,35 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, useRouteMatch } from 'react-router-dom';
 
 import PageNotFound from '../../layout/PageNotFound';
 import RightsShow from './RightsShow';
 import ItemRightsForm from './ItemRightsForm';
+import DigitalObjectProtectedRoute from '../../DigitalObjectProtectedRoute';
 
-export default class Rights extends React.PureComponent {
-  render() {
-    const { match: { params: { id } } } = this.props;
+function Rights(props) {
+  const { path } = useRouteMatch();
+  const { minimalDigitalObject } = props;
 
-    return (
-      <Switch>
-        <Route exact path="/digital_objects/:id/rights" component={RightsShow} />
-        <Route
-          path="/digital_objects/:id/rights/edit"
-          render={() => {
-            switch ('item') {
-              case 'item':
-                return <ItemRightsForm />;
-              default:
-                return '';
-            }
-          }}
-        />
+  return (
+    <Switch>
+      <Route exact path={path} component={RightsShow} />
+      <DigitalObjectProtectedRoute
+        path={`${path}/edit`}
+        render={() => {
+          switch (minimalDigitalObject.digitalObjectType) {
+            case 'item':
+              return <ItemRightsForm />;
+            default:
+              return `Rights edit view is not supported for digital object type: ${minimalDigitalObject.digitalObjectType}`;
+          }
+        }}
+        requiredAbility={{ action: 'assess_rights', primaryProject: minimalDigitalObject.primaryProject, otherProjects: minimalDigitalObject.otherProjects }}
+      />
 
-        { /* TODO: Change above route to:
-        <ProtectedRoute
-          path="/digital_objects/:id/rights/edit"
-          render={() => {
-            switch ('item') {
-              case 'item':
-                return <ItemRightsForm />;
-              default:
-                return '';
-            }
-          }}
-          requiredAbility={{ action: 'assess_rights', subject: 'Project', subject_id: project.stringKey }}
-        />
-        */ }
-
-        { /* When none of the above match, <PageNotFound> will be rendered */ }
-        <Route component={PageNotFound} />
-      </Switch>
-    );
-  }
+      { /* When none of the above match, <PageNotFound> will be rendered */ }
+      <Route component={PageNotFound} />
+    </Switch>
+  );
 }
+
+export default Rights;

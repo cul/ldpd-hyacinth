@@ -8,6 +8,7 @@ export const getMinimalDigitalObjectQuery = gql`
   query MinimalDigitalObject($id: ID!){
     digitalObject(id: $id) {
       id,
+      digitalObjectType,
       primaryProject {
         ${minimalDigitalObjctProjectFields}
       },
