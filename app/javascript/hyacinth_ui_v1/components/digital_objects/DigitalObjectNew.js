@@ -1,9 +1,5 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import produce from 'immer';
-import { useQuery } from '@apollo/react-hooks';
 import { Col, Form, Collapse } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
 import { capitalize } from 'lodash';
 
 import ContextualNavbar from '../layout/ContextualNavbar';
