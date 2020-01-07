@@ -22,6 +22,8 @@ module Types
 
     field :project_permissions, [ProjectPermissionsType], null: true
 
+    field :enabled_digital_object_types, [String], null: false
+
     def field_set(id:)
       field_set = FieldSet.find_by!(id: id, project: object)
       # TODO: Change :show below to :read
@@ -44,6 +46,12 @@ module Types
           actions: grouped_permissions.map(&:action)
         }
       end
+    end
+
+    def enabled_digital_object_types
+      distinct_types = EnabledDynamicField.where(project: object).distinct('digital_object_type').pluck('digital_object_type')
+      # Ensure that values are always returned in alphabetical order
+      distinct_types.sort!
     end
   end
 end

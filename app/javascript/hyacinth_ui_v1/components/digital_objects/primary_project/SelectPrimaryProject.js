@@ -13,25 +13,34 @@ function SelectPrimaryProject({ primaryProject, changeHandler }) {
 
   if (loading) return (<></>);
   if (error) return (<GraphQLErrors errors={error} />);
-  const projectOptions = data.projects.filter(({ stringKey }) => (
+  const allowedCreateProjects = data.projects.filter(({ stringKey }) => (
     ability.can('create_objects', { subjectType: 'Project', stringKey })
-  )).map(p => ({ value: p.stringKey, label: p.displayLabel }));
+  ));
+  const selectOptions = allowedCreateProjects.map(
+    p => ({ value: p.stringKey, label: p.displayLabel }),
+  );
+
+  const projectForStringKey = (key) => {
+    const retVal = allowedCreateProjects.find(({ stringKey }) => { return stringKey === key; });
+    return retVal;
+  };
+
   return (
     <InputGroup>
       <Label sm={3}>Primary Project</Label>
       <SelectInput
         sm={9}
         name="primary_project"
-        value={primaryProject.stringKey}
-        onChange={v => changeHandler(v)}
-        options={projectOptions}
+        value={primaryProject ? primaryProject.stringKey : ''}
+        onChange={v => changeHandler(projectForStringKey(v))}
+        options={selectOptions}
       />
     </InputGroup>
   );
 }
 
 SelectPrimaryProject.propTypes = {
-  primaryProject: PropTypes.object.isRequired,
+  primaryProject: PropTypes.object,
   changeHandler: PropTypes.func.isRequired,
 };
 

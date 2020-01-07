@@ -48,7 +48,8 @@ export const getProjectsQuery = gql`
       stringKey
       displayLabel
       isPrimary
-      projectUrl
+      projectUrl,
+      enabledDigitalObjectTypes
     }
   }
 `;
