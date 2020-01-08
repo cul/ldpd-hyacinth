@@ -5,7 +5,7 @@ module Api
     module Vocabularies
       class TermsController < ApplicationApiController
         before_action :ensure_json_request
-        authorize_resource class: false
+        authorize_resource
 
         # GET /vocabularies/:vocabulary_string_key/terms
         def index
