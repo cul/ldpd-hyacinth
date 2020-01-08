@@ -19,6 +19,19 @@ class HyacinthSchema < GraphQL::Schema
     raise GraphQL::ExecutionError, err.message.to_s
   end
 
+  rescue_from RSolr::Error::ConnectionRefused do |exception|
+    Rails.logger.error exception.message
+
+    raise GraphQL::ExecutionError, 'Unexpected Error'
+  end
+
+  rescue_from RSolr::Error::Http do |exception|
+    Rails.logger.error exception.message
+    Rails.logger.error exception.backtrace.join("\n")
+
+    raise GraphQL::ExecutionError, 'Unexpected Error'
+  end
+
   mutation(Types::MutationType)
   query(Types::QueryType)
 end

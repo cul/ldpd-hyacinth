@@ -13,7 +13,7 @@ module Types
     field :custom_fields, [CustomFieldType], null: true, resolver_method: :custom_fields
 
     def alt_labels
-      object.is_a?(Term) ? object.alt_labels : object.fetch(:alt_labels, [])
+      object.is_a?(Term) ? object.alt_labels : object.fetch('alt_labels', [])
     end
 
     # Need to support both a Hash or an ActiveRecord object

@@ -42,10 +42,8 @@ module Types
       argument :string_key, ID, required: true
     end
 
-    field :vocabularies, [VocabularyType], null: true do
+    field :vocabularies, VocabularyType.results_type, null: true, extensions: [Types::Extensions::Paginate] do
       description "List of all vocabularies"
-      argument :limit, Integer, required: true
-      argument :offset, Integer, required: false
     end
 
     def digital_objects
@@ -66,9 +64,9 @@ module Types
       vocabulary
     end
 
-    def vocabularies(limit:, offset: 0)
+    def vocabularies(_arguments)
       ability.authorize!(:read, Vocabulary)
-      Vocabulary.accessible_by(ability).order(:label).offset(offset).limit(limit)
+      Vocabulary.accessible_by(ability).order(:label)
     end
 
     def project(string_key:)

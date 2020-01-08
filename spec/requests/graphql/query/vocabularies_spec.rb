@@ -13,29 +13,29 @@ RSpec.describe 'Query for vocabularies', type: :request do
 
     context 'when requesting all vocabularies' do
       let(:expected_response) do
-        %({
-          "vocabularies": [
+        %(
+          [
             { "stringKey": "mythical_creatures", "label": "Mythical Creatures", "locked": false, "customFieldDefinitions": [] },
             { "stringKey": "names", "label": "Names", "locked": false, "customFieldDefinitions": [] }
           ]
-        })
+        )
       end
 
       before { graphql query }
 
       it 'returns expected response' do
-        expect(response.body).to be_json_eql(expected_response).at_path('data')
+        expect(response.body).to be_json_eql(expected_response).at_path('data/vocabularies/nodes')
       end
     end
 
     context 'when reducing limit' do
       let(:expected_response) do
-        %({
-            "vocabularies": [
-              { "stringKey": "animals", "label": "Animals", "locked": false, "customFieldDefinitions": [] },
-              { "stringKey": "mythical_creatures", "label": "Mythical Creatures", "locked": false, "customFieldDefinitions": [] }
-            ]
-        })
+        %(
+          [
+            { "stringKey": "animals", "label": "Animals", "locked": false, "customFieldDefinitions": [] },
+            { "stringKey": "mythical_creatures", "label": "Mythical Creatures", "locked": false, "customFieldDefinitions": [] }
+          ]
+        )
       end
 
       before do
@@ -44,7 +44,7 @@ RSpec.describe 'Query for vocabularies', type: :request do
       end
 
       it 'returns expected response' do
-        expect(response.body).to be_json_eql(expected_response).at_path('data')
+        expect(response.body).to be_json_eql(expected_response).at_path('data/vocabularies/nodes')
       end
     end
 
@@ -60,13 +60,15 @@ RSpec.describe 'Query for vocabularies', type: :request do
     <<~GQL
       query {
         vocabularies(limit: #{limit}) {
-          stringKey
-          label
-          locked
-          customFieldDefinitions {
-            fieldKey
+          nodes {
+            stringKey
             label
-            dataType
+            locked
+            customFieldDefinitions {
+              fieldKey
+              label
+              dataType
+            }
           }
         }
       }

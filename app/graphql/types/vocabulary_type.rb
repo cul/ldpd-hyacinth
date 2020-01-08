@@ -9,19 +9,14 @@ module Types
     field :locked, Boolean, null: false
     field :custom_field_definitions, [CustomFieldDefinitionType], null: true, resolver_method: :custom_field_definitions
 
-    field :terms, [TermType], null: true do
-      argument :limit, Integer, required: true
-      argument :offset, Integer, required: false
-      argument :query, String, required: false
-      argument :filters, [FilterAttributes], required: false
-    end
+    field :terms, TermType.results_type, null: true, extensions: [Types::Extensions::SolrSearch]
 
     field :term, TermType, null: true do
       argument :uri, ID, required: true
     end
 
     def custom_field_definitions
-      object['custom_fields'].map { |k, h| { field_key: k }.merge(h) }
+      object.custom_fields.map { |k, h| { field_key: k }.merge(h) }
     end
 
     def term(uri:)
@@ -37,28 +32,34 @@ module Types
     def terms(limit:, offset: 0, query: nil, filters: [])
       ability.authorize!(:read, Term)
 
-      # search_parameters = {
-      #   q: query,
-      #   limit: limit,
-      #   offset: offset
-      # }
+      custom_fields = object.custom_fields
+      valid_filters = [
+        'uri', 'pref_label', 'alt_labels', 'authority', 'term_type'
+      ]
 
-      search_results = Hyacinth::Config.term_search_adapter.search do |params|
+      all_valid_filters = custom_fields.keys + valid_filters
+
+      Hyacinth::Config.term_search_adapter.search do |params|
         params.q     query
         params.start offset
         params.rows  limit
+        params.fq('vocabulary', object.string_key)
 
         filters.each do |filter|
           # Need to convert the field name to snake_case because field names maybe provided in camelcase.
-          params.fq(filter[:field].underscore, filter[:value])
-          # params[h[:field].underscore] = h[:value]
+          field = filter[:field].underscore
+
+          # Raise error if filter is not valid
+          raise GraphQL::ExecutionError, "#{filter[:field]} is an invalid filter" unless all_valid_filters.include?(field)
+
+          # Need to add a suffix to the filter if its a custom field.
+          if (custom_field = custom_fields[field])
+            field = "#{field}#{Solr::Utils.suffix(custom_field[:data_type])}"
+          end
+
+          params.fq(field, filter[:value])
         end
       end
-
-      # response = URIService.connection.search_terms(object['string_key'], search_parameters)
-      # raise(GraphQL::ExecutionError, response.data['errors'].map { |e| e['title'] }.join('; ')) if response.errors?
-      # response.data['terms']
-      search_results.docs
     end
   end
 end
