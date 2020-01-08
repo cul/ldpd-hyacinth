@@ -46,6 +46,11 @@ class User < ApplicationRecord
     super(params)
   end
 
+  # Overriding devise method to prevent the log in of users that are inactive.
+  def active_for_authentication?
+    super && is_active
+  end
+
   private
 
     def set_uid
