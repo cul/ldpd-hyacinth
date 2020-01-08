@@ -9,6 +9,7 @@ RSpec.describe Ability, type: :model do
       { actions: [:read, :update], conditions: { id: 1 }, subject: ["User"], inverted: false },
       { actions: [:read, :update], conditions: { uid: user.uid }, subject: ["User"], inverted: false },
       { actions: [:read, :create], conditions: {}, subject: ["Term"], inverted: false },
+      { actions: [:read], conditions: {}, subject: ["Vocabulary"], inverted: false },
       { actions: [:read], conditions: {}, subject: ["DynamicFieldCategory"], inverted: false }
     ]
   end

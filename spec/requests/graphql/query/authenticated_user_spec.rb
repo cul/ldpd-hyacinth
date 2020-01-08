@@ -38,6 +38,12 @@ RSpec.describe 'Query for Authenticated User', type: :request do
             "actions": ["read"],
             "conditions": {},
             "inverted": false,
+            "subject": ["Vocabulary"]
+          },
+          {
+            "actions": ["read"],
+            "conditions": {},
+            "inverted": false,
             "subject": ["DynamicFieldCategory"]
           }
         ]
@@ -80,6 +86,12 @@ RSpec.describe 'Query for Authenticated User', type: :request do
             "conditions": {},
             "inverted": false,
             "subject": ["Term"]
+          },
+          {
+            "actions": ["read"],
+            "conditions": {},
+            "inverted": false,
+            "subject": ["Vocabulary"]
           },
           {
             "actions": ["read"],
