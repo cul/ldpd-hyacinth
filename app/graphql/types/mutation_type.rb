@@ -17,6 +17,10 @@ module Types
     field :update_publish_target, mutation: Mutations::UpdatePublishTarget
     field :delete_publish_target, mutation: Mutations::DeletePublishTarget
 
+    field :create_dynamic_field_category, mutation: Mutations::CreateDynamicFieldCategory
+    field :update_dynamic_field_category, mutation: Mutations::UpdateDynamicFieldCategory
+    field :delete_dynamic_field_category, mutation: Mutations::DeleteDynamicFieldCategory
+
     field :create_field_set, mutation: Mutations::FieldSet::CreateFieldSet
     field :update_field_set, mutation: Mutations::FieldSet::UpdateFieldSet
     field :delete_field_set, mutation: Mutations::FieldSet::DeleteFieldSet
