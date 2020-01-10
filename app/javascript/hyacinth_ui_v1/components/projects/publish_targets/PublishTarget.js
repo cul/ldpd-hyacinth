@@ -11,7 +11,12 @@ export default class PublishTarget extends React.PureComponent {
   render() {
     return (
       <Switch>
-        <Route exact path="/projects/:projectStringKey/publish_targets" component={PublishTargetIndex} />
+        <ProtectedRoute
+          exact
+          path="/projects/:projectStringKey/publish_targets"
+          component={PublishTargetIndex}
+          requiredAbility={params => ({ action: 'read', subject: 'PublishTarget', project: { stringKey: params.projectStringKey } })}
+        />
 
         <ProtectedRoute
           path="/projects/:projectStringKey/publish_targets/new"

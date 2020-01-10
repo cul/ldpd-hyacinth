@@ -11,7 +11,14 @@ export default class Permissions extends React.PureComponent {
     const { match: { path } } = this.props;
     return (
       <Switch>
-        <Route exact path={`${path}`} component={PermissionsShow} />
+        <ProtectedRoute
+          exact
+          path={`${path}`}
+          component={PermissionsShow}
+          requiredAbility={params => (
+            { action: 'read', subject: 'Project', stringKey: params.stringKey }
+          )}
+        />
 
         <ProtectedRoute
           path={`${path}/edit`}

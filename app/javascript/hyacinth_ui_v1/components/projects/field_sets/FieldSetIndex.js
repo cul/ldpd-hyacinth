@@ -41,7 +41,7 @@ function FieldSetIndex() {
     rows = data.project.fieldSets.map(fieldSet => (
       <tr key={fieldSet.id}>
         <td>
-          <Can I="edit" of={{ subjectType: 'FieldSet', project: { stringKey: projectStringKey } }} passThrough>
+          <Can I="update" of={{ subjectType: 'FieldSet', project: { stringKey: projectStringKey } }} passThrough>
             {
                 can => (
                   can
@@ -62,7 +62,7 @@ function FieldSetIndex() {
         <tbody>
           {rows}
 
-          <Can I="FieldSet" of={{ subjectType: 'FieldSet', project: { stringKey: projectStringKey } }}>
+          <Can I="create" of={{ subjectType: 'FieldSet', project: { stringKey: projectStringKey } }}>
             <tr>
               <td className="text-center">
                 <LinkContainer to={`/projects/${projectStringKey}/field_sets/new`}>

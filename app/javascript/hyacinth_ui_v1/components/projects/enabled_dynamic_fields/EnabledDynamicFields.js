@@ -12,17 +12,20 @@ export default class EnabledDynamicFields extends React.PureComponent {
     return (
       <div>
         <Switch>
-          <Route
+          <ProtectedRoute
             exact
             path="/projects/:projectStringKey/enabled_dynamic_fields/:digitalObjectType"
             component={EnabledDynamicFieldShow}
+            requiredAbility={params => (
+              { action: 'read', subject: 'Project', stringKey: params.projectStringKey }
+            )}
           />
 
           <ProtectedRoute
             path="/projects/:projectStringKey/enabled_dynamic_fields/:digitalObjectType/edit"
             component={EnabledDynamicFieldEdit}
             requiredAbility={params => (
-              { action: 'manage', subject: 'Project', project: { stringKey: params.projectStringKey } }
+              { action: 'update', subject: 'Project', stringKey: params.projectStringKey }
             )}
           />
 

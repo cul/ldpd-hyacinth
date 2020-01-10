@@ -11,7 +11,14 @@ export default class CoreData extends React.PureComponent {
     const { match: { path } } = this.props;
     return (
       <Switch>
-        <Route exact path={`${path}`} component={CoreDataShow} />
+        <ProtectedRoute
+          exact
+          path={`${path}`}
+          component={CoreDataShow}
+          requiredAbility={params => (
+            { action: 'read', subject: 'Project', stringKey: params.stringKey }
+          )}
+        />
 
         <ProtectedRoute
           path={`${path}/edit`}
