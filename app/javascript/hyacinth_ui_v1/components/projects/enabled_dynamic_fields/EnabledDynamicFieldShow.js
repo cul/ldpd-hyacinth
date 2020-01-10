@@ -34,7 +34,7 @@ export default class EnabledDynamicFieldShow extends React.Component {
       <ProjectInterface project={this.state.project} key={digitalObjectType}>
         <TabHeading>
           {`Enabled Dynamic Fields for ${startCase(digitalObjectType)}`}
-          <Can I="manage" of={{ subjectType: 'Project', projectStringKey }}>
+          <Can I="update" of={{ subjectType: 'Project', stringKey: projectStringKey }}>
             <EditButton
               className="float-right"
               size="lg"

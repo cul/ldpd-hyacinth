@@ -12,7 +12,14 @@ export default class FieldSet extends React.PureComponent {
     return (
       <div>
         <Switch>
-          <Route exact path="/projects/:projectStringKey/field_sets" component={FieldSetIndex} />
+          <ProtectedRoute
+            exact
+            path="/projects/:projectStringKey/field_sets"
+            component={FieldSetIndex}
+            requiredAbility={params => (
+              { action: 'read', subject: 'FieldSet', project: { stringKey: params.projectStringKey } }
+            )}
+          />
 
           <ProtectedRoute
             path="/projects/:projectStringKey/field_sets/new"

@@ -55,7 +55,7 @@ function PublishTargetIndex() {
               data.project.publishTargets.map(publishTarget => (
                 <tr key={publishTarget.stringKey}>
                   <td>
-                    <Can I="edit" of={{ subjectType: 'PublishTarget', project: { stringKey: projectStringKey } }} passThrough>
+                    <Can I="update" of={{ subjectType: 'PublishTarget', project: { stringKey: projectStringKey } }} passThrough>
                       {
                           can => (
                             can
@@ -67,12 +67,11 @@ function PublishTargetIndex() {
                   </td>
                   <td>{publishTarget.stringKey}</td>
                   <td>{publishTarget.publishUrl}</td>
-                  <td>{publishTarget.apiKey}</td>
                 </tr>
               ))
             )
           }
-          <Can I="PublishTarget" of={{ subjectType: 'FieldSet', project: { stringKey: projectStringKey } }}>
+          <Can I="create" of={{ subjectType: 'PublishTarget', project: { stringKey: projectStringKey } }}>
             <tr>
               <td className="text-center" colSpan="4">
                 <LinkContainer to={`/projects/${projectStringKey}/publish_targets/new`}>
