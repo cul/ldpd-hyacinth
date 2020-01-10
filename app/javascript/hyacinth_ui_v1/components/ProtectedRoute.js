@@ -30,7 +30,7 @@ class ProtectedRoute extends React.PureComponent {
       <Route
         {...rest}
         render={
-          props => (can ? <Component {...props} /> : <PageNotFound />)
+          props => (can ? <Component {...props} /> : <PageNotFound {...props} />)
         }
       />
     );
