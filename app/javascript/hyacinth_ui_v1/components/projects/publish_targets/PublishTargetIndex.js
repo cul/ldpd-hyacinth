@@ -47,7 +47,6 @@ function PublishTargetIndex() {
             <th>Display Label</th>
             <th>String Key</th>
             <th>Publish URL</th>
-            <th>API Key</th>
           </tr>
         </thead>
         <tbody>
