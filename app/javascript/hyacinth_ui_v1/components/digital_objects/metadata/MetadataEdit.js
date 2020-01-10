@@ -1,14 +1,20 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import MetadataForm from './MetadataForm';
-import digitalObjectInterface from '../digitalObjectInterface';
+import DigitalObjectInterface from '../NewDigitalObjectInterface';
 
-class MetadataEdit extends React.PureComponent {
-  render() {
-    return (
-      <MetadataForm formType="edit" {...this.props} />
-    );
-  }
+function MetadataEdit(props) {
+  const { digitalObject } = props;
+
+  return (
+    <DigitalObjectInterface digitalObject={digitalObject}>
+      <MetadataForm formType="edit" digitalObject={digitalObject} />
+    </DigitalObjectInterface>
+  );
 }
 
+export default MetadataEdit;
 
-export default digitalObjectInterface(MetadataEdit);
+MetadataEdit.propTypes = {
+  digitalObject: PropTypes.objectOf(PropTypes.any).isRequired,
+};

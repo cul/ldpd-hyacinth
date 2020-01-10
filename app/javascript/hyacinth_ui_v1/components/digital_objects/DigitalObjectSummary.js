@@ -1,48 +1,60 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-class DigitalObjectSummary extends React.PureComponent {
-  render() {
-    const {
-      data: {
-        projects,
-        pid,
-        uid,
-        doi,
+function DigitalObjectSummary(props) {
+
+  const { digitalObject } = props;
+  const { id, doi, primaryProject, otherProjects, numberOfChildren } = digitalObject;
+
+  return (
+    <div className="m-3">
+      <dl className="row mb-0">
+        <dt className="col-sm-3">Primary Project</dt>
+        <dd className="col-sm-9">
+          <strong>{primaryProject.displayLabel}</strong>
+        </dd>
+        <dt className="col-sm-3">Other Projects</dt>
+        <dd className="col-sm-9">
+          { otherProjects.length === 0 ?
+            '- None -'
+            : otherProjects.map((p, i) => {
+              return (
+                <span key={p.stringKey}>
+                  {p.displayLabel}
+                  { i + 1 < otherProjects.length ? ', ' : '' }
+                </span>
+              );
+            })
+          }
+        </dd>
+
+        <dt className="col-sm-3">UID</dt>
+        <dd className="col-sm-9">{id || '- Assigned After Save -'}</dd>
+
+        <dt className="col-sm-3">DOI</dt>
+        <dd className="col-sm-9">{doi || '- Assigned After Publish -'}</dd>
+      </dl>
+      {
+        id && (
+          <>
+            <dl className="row mb-0">
+              <dt className="col-sm-3">Child Objects</dt>
+              <dd className="col-sm-9">{numberOfChildren}</dd>
+
+              <dt className="col-sm-3">View As</dt>
+              <dd className="col-sm-9">
+                <a href={`/api/v1/digital_objects/${id}.json`} target="_blank" rel="noopener noreferrer">JSON</a>
+              </dd>
+            </dl>
+          </>
+        )
       }
-    } = this.props;
-
-    return (
-      <div className="m-3">
-        <dl className="row mb-0">
-          <dt className="col-sm-3">Project(s)</dt>
-          <dd className="col-sm-9">
-            { projects && projects.map(p => <span key={p.stringKey}>{p.displayLabel}</span>) }
-          </dd>
-
-          <dt className="col-sm-3">UID</dt>
-          <dd className="col-sm-9">{uid || '- Assigned After Save -'}</dd>
-
-          <dt className="col-sm-3">DOI</dt>
-          <dd className="col-sm-9">{doi || '- Assigned After Publish -'}</dd>
-        </dl>
-        {
-          uid && (
-            <>
-              <dl className="row mb-0">
-                <dt className="col-sm-3">Child Objects</dt>
-                <dd className="col-sm-9">-- None --</dd>
-
-                <dt className="col-sm-3">View As</dt>
-                <dd className="col-sm-9">
-                  <a href={`/api/v1/digital_objects/${uid}.json`} target="_blank" rel="noopener noreferrer">JSON</a>
-                </dd>
-              </dl>
-            </>
-          )
-        }
-      </div>
-    );
-  }
+    </div>
+  );
 }
 
 export default DigitalObjectSummary;
+
+DigitalObjectSummary.propTypes = {
+  digitalObject: PropTypes.object.isRequired,
+};

@@ -43,7 +43,7 @@ class Field extends React.PureComponent {
         field = <NumberInput {...sharedProps} />;
         break;
       case 'boolean':
-        field = <Checkbox checked{...sharedProps} />;
+        field = <Checkbox checked {...sharedProps} />;
         break;
       default:
         break;

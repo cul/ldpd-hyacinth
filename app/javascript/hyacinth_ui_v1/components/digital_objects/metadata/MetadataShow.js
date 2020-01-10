@@ -1,9 +1,8 @@
-import React from 'react';
-import produce from 'immer';
-import { camelCase } from 'lodash';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { Card } from 'react-bootstrap';
 
-import digitalObjectInterface from '../digitalObjectInterface';
+import DigitalObjectInterface from '../NewDigitalObjectInterface';
 import EditButton from '../../ui/buttons/EditButton';
 import TabHeading from '../../ui/tabs/TabHeading';
 import { dynamicFieldCategories } from '../../../util/hyacinth_api';
@@ -11,21 +10,21 @@ import InputGroup from '../../ui/forms/InputGroup';
 import Label from '../../ui/forms/Label';
 import PlainText from '../../ui/forms/inputs/PlainText';
 
-class MetadataShow extends React.PureComponent {
-  state = {
-    dynamicFields: [],
-  }
+function MetadataShow(props) {
+  const [dynamicFieldHierarchy, setDynamicFieldHierarchy] = useState(null);
+  const { digitalObject } = props;
+  const { id, identifiers, dynamicFieldData } = digitalObject;
 
-  componentDidMount() {
-    dynamicFieldCategories.all()
-      .then((res) => {
-        this.setState(produce((draft) => {
-          draft.dynamicFields = res.data.dynamicFieldCategories;
-        }));
-      });
-  }
+  // TODO: Replace effect below with GraphQL when we have a GraphQL DynamicFieldCategories API
+  useEffect(() => {
+    dynamicFieldCategories.all().then((res) => {
+      setDynamicFieldHierarchy(res.data.dynamicFieldCategories);
+    });
+  }, []);
 
-  renderField(dynamicField, data) {
+  if (!dynamicFieldHierarchy) return (<></>);
+
+  const renderField = (dynamicField, data) => {
     const { displayLabel, fieldType } = dynamicField;
 
     return (
@@ -34,9 +33,9 @@ class MetadataShow extends React.PureComponent {
         <PlainText value={fieldType === 'controlled_term' ? data.prefLabel : data } />
       </InputGroup>
     );
-  }
+  };
 
-  renderGroup(dynamicGroup, data) {
+  const renderGroup = (dynamicGroup, data) => {
     const {
       stringKey, displayLabel, isRepeatable, children,
     } = dynamicGroup;
@@ -50,12 +49,12 @@ class MetadataShow extends React.PureComponent {
           </Card.Header>
           <Card.Body>
             {
-              children.map((c, i) => {
-                if (d[camelCase(c.stringKey)]) {
+              children.map((c) => {
+                if (d[c.stringKey]) {
                   if (c.type === 'DynamicFieldGroup') {
-                    return this.renderGroup(c, d[camelCase(c.stringKey)]);
+                    return renderGroup(c, d[c.stringKey]);
                   } if (c.type === 'DynamicField') {
-                    return this.renderField(c, d[camelCase(c.stringKey)]);
+                    return renderField(c, d[c.stringKey]);
                   }
                 }
                 return '';
@@ -65,12 +64,12 @@ class MetadataShow extends React.PureComponent {
         </Card>
       ))
     );
-  }
+  };
 
-  renderCategory(dynamicCategory, data) {
+  const renderCategory = (dynamicCategory, data) => {
     const { displayLabel, children } = dynamicCategory;
 
-    const filteredChildren = children.filter(c => data[camelCase(c.stringKey)]);
+    const filteredChildren = children.filter(c => data[c.stringKey]);
 
     return (
       filteredChildren.length
@@ -78,37 +77,36 @@ class MetadataShow extends React.PureComponent {
           <div key={displayLabel}>
             <h4 className="text-orange">{displayLabel}</h4>
             {
-              filteredChildren.map(c => this.renderGroup(c, data[camelCase(c.stringKey)]))
+              filteredChildren.map(c => renderGroup(c, data[c.stringKey]))
             }
           </div>
         )
         : ''
     );
-  }
+  };
 
-  render() {
-    const { match: { params: { id } }, data: { dynamicFieldData, identifiers } } = this.props;
-    const { dynamicFields } = this.state;
+  return (
+    <DigitalObjectInterface digitalObject={digitalObject}>
+      <TabHeading>
+        Metadata
+        <EditButton
+          className="float-right"
+          size="lg"
+          link={`/digital_objects/${id}/metadata/edit`}
+        />
+      </TabHeading>
 
-    return (
-      <>
-        <TabHeading>
-          Metadata
-          <EditButton
-            className="float-right"
-            size="lg"
-            link={`/digital_objects/${id}/metadata/edit`}
-          />
-        </TabHeading>
-
-        { dynamicFields.map(category => this.renderCategory(category, dynamicFieldData)) }
-        <h4 className="text-orange">Identifiers</h4>
-        <ul className="list-unstyled">
-          { identifiers.map(i => <li>{i}</li>)}
-        </ul>
-      </>
-    );
-  }
+      { dynamicFieldHierarchy.map(category => renderCategory(category, dynamicFieldData)) }
+      <h4 className="text-orange">Identifiers</h4>
+      <ul className="list-unstyled">
+        { identifiers.length ? identifiers.map(i => <li>{i}</li>) : '- None -'}
+      </ul>
+    </DigitalObjectInterface>
+  );
 }
 
-export default digitalObjectInterface(MetadataShow);
+export default MetadataShow;
+
+MetadataShow.propTypes = {
+  digitalObject: PropTypes.object.isRequired,
+};

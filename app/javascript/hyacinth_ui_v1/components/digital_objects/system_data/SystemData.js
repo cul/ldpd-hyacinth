@@ -1,102 +1,73 @@
 import React from 'react';
-import { Form, Row, Col } from 'react-bootstrap';
-import produce from 'immer';
+import { Row, Col } from 'react-bootstrap';
+import { useHistory } from 'react-router-dom';
+import { useQuery } from '@apollo/react-hooks';
+import PropTypes from 'prop-types';
 
-import digitalObjectInterface from '../digitalObjectInterface';
-import SelectInput from '../../ui/forms/inputs/SelectInput';
+import GraphQLErrors from '../../ui/GraphQLErrors';
+import DigitalObjectInterface from '../NewDigitalObjectInterface';
 import DeleteButton from '../../ui/forms/buttons/DeleteButton';
-import hyacinthApi, { projects, digitalObject } from '../../../util/hyacinth_api';
+import { getSystemDataDigitalObjectQuery } from '../../../graphql/digitalObjects';
 
-class SystemData extends React.Component {
-  state = {
-    projects: [],
-    all_projects: [],
-  }
+function SystemData(props) {
+  const { id } = props;
+  const history = useHistory();
 
-  // componentDidMount = () => {
-  //   const { data: { projects: p } } = this.props;
-  //
-  //   projects.all()
-  //     .then((res) => {
-  //       this.setState(produce((draft) => {
-  //         draft.all_projects = res.data.projects;
-  //         draft.projects = p;
-  //       }));
-  //     });
-  // }
+  const {
+    loading: digitalObjectLoading,
+    error: digitalObjectError,
+    data: digitalObjectData,
+  } = useQuery(getSystemDataDigitalObjectQuery, {
+    variables: { id },
+  });
 
-  onDelete = (e) => {
+  if (digitalObjectLoading) return (<></>);
+  if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
+  const { digitalObject } = digitalObjectData;
+
+  const onDelete = (e) => {
     e.preventDefault();
+    digitalObject.delete(id).then(() => history.push('/digital_objects'));
+  };
 
-    const { data: { uid }, history: { push } } = this.props;
+  const {
+    createdBy, createdAt, updatedBy, updatedAt, firstPublishedAt,
+    primaryProject, otherProjects,
+  } = digitalObject;
 
-    digitalObject.delete(uid).then(() => push('/digital_objects'));
-  }
+  return (
+    <DigitalObjectInterface digitalObject={digitalObject}>
+      <Row as="dl">
+        <Col as="dt" lg={2} sm={4}>Created By</Col>
+        <Col as="dd" lg={10} sm={8}>{createdBy ? createdBy.fullName : '-- Not Assigned --'}</Col>
 
-  onProjectChange = (v) => {
-    const { data: { uid } } = this.props;
+        <Col as="dt" lg={2} sm={4}>Created On</Col>
+        <Col as="dd" lg={10} sm={8}>{createdAt || '-- Assigned After Save --'}</Col>
 
-    // digitalObject.update(uid, { digitalObject: { projects: { stringKey: v } } })
-  }
+        <Col as="dt" lg={2} sm={4}>Last Modified By</Col>
+        <Col as="dd" lg={10} sm={8}>{updatedBy ? updatedBy.fullName : '-- Not Assigned --'}</Col>
 
-  render() {
-    const {
-      data: {
-        pid,
-        uid,
-        doi,
-        createdBy,
-        updatedBy,
-        createdAt,
-        updatedAt,
-        firstPublishedAt
-      }
-    } = this.props;
-    const { projects, all_projects } = this.state;
+        <Col as="dt" lg={2} sm={4}>Last Modified On</Col>
+        <Col as="dd" lg={10} sm={8}>{updatedAt || '-- Assigned After Save --'}</Col>
 
-    return (
-      <>
-        <Row as="dl">
-          <Col as="dt" lg={2} sm={4}>Created By</Col>
-          <Col as="dd" lg={10} sm={8}>{createdBy ? createdBy.uid : '-- Not Assigned --'}</Col>
-
-          <Col as="dt" lg={2} sm={4}>Created On</Col>
-          <Col as="dd" lg={10} sm={8}>{createdAt || '-- Assigned After Save --'}</Col>
-
-          <Col as="dt" lg={2} sm={4}>Last Modified By</Col>
-          <Col as="dd" lg={10} sm={8}>{updatedBy ? updatedBy.uid : '-- Not Assigned --'}</Col>
-
-          <Col as="dt" lg={2} sm={4}>Last Modified On</Col>
-          <Col as="dd" lg={10} sm={8}>{updatedAt || '-- Assigned After Save --'}</Col>
-
-          <Col as="dt" lg={2} sm={4}>First Published At</Col>
-          <Col as="dd" lg={10} sm={8}>{firstPublishedAt || '-- Assigned After Publish --'}</Col>
-        </Row>
-        <hr />
-        <h4>Primary Project</h4>
-        <p>TODO</p>
-        {/* <Form>
-          {
-            projects.length > 0 && (
-              <SelectInput
-                value={projects[0].stringKey}
-                options={all_projects.map(p => ({ value: p.stringKey, label: p.displayLabel }))}
-                onChange={this.onProjectChange}
-              />
-            )
-          }
-        </Form> */}
-        <hr />
-        <h4>Other Projects</h4>
-        <p>TODO</p>
-        <hr />
-        <h4>Delete Digital Object?</h4>
-        <p>TODO: Description about what deleting does to a digital object.</p>
-        <DeleteButton formType="edit" onClick={this.onDelete} />
-      </>
-    );
-  }
+        <Col as="dt" lg={2} sm={4}>First Published At</Col>
+        <Col as="dd" lg={10} sm={8}>{firstPublishedAt || '-- Assigned After Publish --'}</Col>
+      </Row>
+      <hr />
+      <h4>Primary Project</h4>
+      <p>{primaryProject.displayLabel}</p>
+      <h4>Other Projects</h4>
+      <p>{otherProjects.length ? otherProjects.map(p => p.displayLabel).join(', ') : 'None'}</p>
+      <hr />
+      <h4>Delete Digital Object</h4>
+      <DeleteButton formType="edit" onClick={onDelete} />
+    </DigitalObjectInterface>
+  );
 }
 
 
-export default digitalObjectInterface(SystemData);
+export default SystemData;
+
+SystemData.propTypes = {
+  id: PropTypes.string.isRequired,
+};

@@ -1,4 +1,6 @@
 import React from 'react';
+import { capitalize } from 'lodash';
+import PropTypes from 'prop-types';
 
 import Tab from '../ui/tabs/Tab';
 import Tabs from '../ui/tabs/Tabs';
@@ -7,16 +9,16 @@ import ContextualNavbar from '../layout/ContextualNavbar';
 import DigitalObjectSummary from './DigitalObjectSummary';
 
 function DigitalObjectInterface(props) {
-  const { minimalDigitalObject, children } = props;
-  const { id, digitalObjectType } = minimalDigitalObject;
+  const { digitalObject, children } = props;
+  const { id, title, digitalObjectType } = digitalObject;
 
   return (
     <div className="digital-object-interface">
       <ContextualNavbar
-        title={`${capitalize(digitalObjectType)} | ${title}`}
+        title={`${capitalize(digitalObjectType)}: ${title}`}
       />
 
-      <DigitalObjectSummary data={minimalDigitalObject} />
+      <DigitalObjectSummary digitalObject={digitalObject} />
 
       <Tabs>
         <Tab to={`/digital_objects/${id}/system_data`} name="System Data" />
@@ -49,3 +51,8 @@ function DigitalObjectInterface(props) {
 }
 
 export default DigitalObjectInterface;
+
+DigitalObjectInterface.propTypes = {
+  digitalObject: PropTypes.object.isRequired,
+  children: PropTypes.node.isRequired,
+};

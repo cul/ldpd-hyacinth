@@ -9,8 +9,8 @@ FactoryBot.define do
         {
           'title' => [
             {
-              'non_sort_portion' => 'The',
-              'sort_portion' => 'Best Item Ever'
+              'title_non_sort_portion' => 'The',
+              'title_sort_portion' => 'Best Item Ever'
             }
           ]
         }
@@ -18,9 +18,22 @@ FactoryBot.define do
       instance
     end
 
-    trait :with_project do
+    trait :with_primary_project do
       after(:build) do |digital_object|
         digital_object.primary_project = create(:project)
+      end
+    end
+
+    trait :with_other_projects do
+      after(:build) do |digital_object|
+        ['a', 'b'].each do |val|
+          digital_object.other_projects << create(:project,
+            is_primary: false,
+            string_key: "other_project_#{val}",
+            display_label: "Other Project #{val.upcase}",
+            project_url: "https://example.com/other_project_#{val}"
+          )
+        end
       end
     end
   end

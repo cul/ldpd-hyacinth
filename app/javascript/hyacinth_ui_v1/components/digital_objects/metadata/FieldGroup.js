@@ -1,7 +1,6 @@
 import React from 'react';
 import { Card } from 'react-bootstrap';
 import produce from 'immer';
-import { camelCase } from 'lodash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Field from './Field';
@@ -42,10 +41,10 @@ class FieldGroup extends React.Component {
           {
             isRepeatable && (
               <>
-                <span className="float-right"><AddButton className="field-group-header-button" onClick={addHandler} /></span>
-                <span className="float-right"><UpArrowButton className="field-group-header-button" onClick={() => moveHandler('up')} /></span>
-                <span className="float-right"><DownArrowButton className="field-group-header-button" onClick={() => moveHandler('down')} /></span>
-                <span className="float-right"><RemoveButton className="field-group-header-button" onClick={removeHandler} /></span>
+                <span className="float-right"><AddButton tabIndex="-1" className="field-group-header-button" onClick={addHandler} /></span>
+                <span className="float-right"><UpArrowButton tabIndex="-1" className="field-group-header-button" onClick={() => moveHandler('up')} /></span>
+                <span className="float-right"><DownArrowButton tabIndex="-1" className="field-group-header-button" onClick={() => moveHandler('down')} /></span>
+                <span className="float-right"><RemoveButton tabIndex="-1" className="field-group-header-button" onClick={removeHandler} /></span>
               </>
             )
           }
@@ -59,19 +58,19 @@ class FieldGroup extends React.Component {
                   return (
                     <FieldGroupArray
                       key={c.stringKey}
-                      value={value[camelCase(c.stringKey)]}
-                      defaultValue={defaultValue[camelCase(c.stringKey)][0]}
+                      value={value[c.stringKey]}
+                      defaultValue={defaultValue[c.stringKey][0]}
                       dynamicFieldGroup={c}
-                      onChange={v => this.onChange(camelCase(c.stringKey), v)}
+                      onChange={v => this.onChange(c.stringKey, v)}
                     />
                   );
                 case 'DynamicField':
                   return (
                     <Field
                       key={c.stringKey}
-                      value={value[camelCase(c.stringKey)]}
+                      value={value[c.stringKey]}
                       dynamicField={c}
-                      onChange={v => this.onChange(camelCase(c.stringKey), v)}
+                      onChange={v => this.onChange(c.stringKey, v)}
                     />
                   );
                 default:

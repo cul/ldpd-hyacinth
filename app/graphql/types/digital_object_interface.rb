@@ -5,6 +5,10 @@ module Types
     include Types::BaseInterface
     description 'A digital object'
 
+    TITLE_DYNAMIC_FIELD_GROUP_NAME = 'title'
+    TITLE_SORT_PORTION_DYNAMIC_FIELD_NAME = 'title_sort_portion'
+    TITLE_NON_SORT_PORTION_DYNAMIC_FIELD_NAME = 'title_non_sort_portion'
+
     orphan_types Types::DigitalObject::ItemType, Types::DigitalObject::AssetType, Types::DigitalObject::SiteType
 
     field :id, ID, null: false, method: :uid
@@ -28,8 +32,28 @@ module Types
     field :publish_entries, [DigitalObject::PublishEntryType], null: true
     field :optimistic_lock_token, String, null: false
 
+    field :title, String, null: false
+    field :number_of_children, Integer, null: false
+
     def publish_entries
       object.publish_entries.map { |k, h| { publish_target_string_key: k }.merge(h) }
+    end
+
+    def title
+      val = '[No Title]'
+
+      title_field_group = object.dynamic_field_data[TITLE_DYNAMIC_FIELD_GROUP_NAME]
+      if (title_field_group.present? && (title_field = title_field_group[0]).present?)
+        val = title_field[TITLE_SORT_PORTION_DYNAMIC_FIELD_NAME]
+        non_sort_portion = title_field[TITLE_NON_SORT_PORTION_DYNAMIC_FIELD_NAME]
+        val = "#{non_sort_portion} #{val}" if non_sort_portion
+      end
+
+      val
+    end
+
+    def number_of_children
+      object.structured_children['structure'].length
     end
 
     definition_methods do

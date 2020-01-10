@@ -49,8 +49,8 @@ class AggregatorNew extends React.PureComponent {
         {
           loaded && (
             <>
-              <DigitalObjectSummary data={data} />
-              <MetadataForm formType="new" data={data} />
+              <DigitalObjectSummary digitalObject={data} />
+              <MetadataForm formType="new" digitalObject={data} />
             </>
           )
         }

@@ -13,7 +13,7 @@ import SystemData from './system_data/SystemData';
 import GraphQLErrors from '../ui/GraphQLErrors';
 import DigitalObjectProtectedRoute from '../DigitalObjectProtectedRoute';
 
-import { getMinimalDigitalObjectQuery } from '../../graphql/digitalObjects';
+import { getMinimalDigitalObjectWithProjectsQuery } from '../../graphql/digitalObjects';
 
 function DigitalObject() {
   const { id } = useParams();
@@ -23,7 +23,7 @@ function DigitalObject() {
     loading: minimalDigitalObjectLoading,
     error: minimalDigitalObjectError,
     data: minimalDigitalObjectData,
-  } = useQuery(getMinimalDigitalObjectQuery, {
+  } = useQuery(getMinimalDigitalObjectWithProjectsQuery, {
     variables: { id },
   });
 
@@ -47,7 +47,7 @@ function DigitalObject() {
               <DigitalObjectProtectedRoute
                 key={routePath}
                 path={routePath}
-                render={() => <Component minimalDigitalObject={minimalDigitalObject} />}
+                render={() => <Component id={minimalDigitalObject.id} />}
                 requiredAbility={{ action: 'read_objects', primaryProject: minimalDigitalObject.primaryProject, otherProjects: minimalDigitalObject.otherProjects }}
               />
             );
