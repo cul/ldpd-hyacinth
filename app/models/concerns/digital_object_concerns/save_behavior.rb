@@ -117,7 +117,7 @@ module DigitalObjectConcerns
       self.clear_resource_import_data
     rescue StandardError => e
       self.resource_attributes.map do |_resource_name, resource|
-        resource.undo_last_successful_import_if_copy
+        resource&.undo_last_successful_import_if_copy
       end
 
       raise e # pass along the exception

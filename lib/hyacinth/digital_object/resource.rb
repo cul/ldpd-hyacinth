@@ -4,7 +4,7 @@ module Hyacinth
   module DigitalObject
     class Resource
       attr_accessor :import_location, :import_method, :import_checksum,
-                    :location, :checksum, :original_filename, :file_size
+                    :location, :checksum, :original_filename, :media_type, :file_size
 
       attr_reader :import_succeeded
 
@@ -18,6 +18,10 @@ module Hyacinth
 
       def has_valid_import?
         import_location.present? && import_method.present?
+      end
+
+      def with_import_file(&block)
+        open(import_location, &block)
       end
 
       # Clears the fields related to an import. This method is generally called
@@ -53,20 +57,21 @@ module Hyacinth
         # verification job in the background and only send an alert if that checksum
         # match fails. For now though, we'll keep things simple by just
         # calculating/verifying checksums during import.
-        self.checksum = checksum_for_file(resource.import_location, lock_object)
+        self.checksum = checksum_for_file(self.import_location, lock_object)
         # TODO: Finish checksum code
 
         if import_method == :track
           # When tracking files, there's no need to write the file.
-          resource.location = resource.import_location
+          self.location = self.import_location
         else
           # Non-tracking import operations require a file copy
-          resource.with_import_file do |input_file|
-            save_location = Hyacinth::Config.resource_storage.generate_new_location_uri(uid, resource_name)
+          self.with_import_file do |input_file|
+            save_location = Hyacinth::Config.resource_storage.generate_new_location_uri(object_uid, resource_name)
 
-            Hyacinth::Config.resource_storage.write(save_location) do |output_file|
-              # TODO: Do import
+            Hyacinth::Config.resource_storage.with_writeable(save_location) do |output_blob|
+              IO.copy_stream(input_file, output_blob)
             end
+            self.location = save_location
             @import_succeeded = true
           end
         end
@@ -97,6 +102,7 @@ module Hyacinth
           'location' => location,
           'checksum' => checksum,
           'original_filename' => original_filename,
+          'media_type' => media_type,
           'file_size' => file_size
         }
       end
