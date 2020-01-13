@@ -121,8 +121,36 @@ RSpec.describe Ability, type: :model do
       )
     end
 
-    it { is_expected.to be_able_to(:show, PublishTarget) }
-    it { is_expected.to be_able_to(:show, FactoryBot.create(:publish_target)) }
+    it { is_expected.to be_able_to(:read, Project) }
+    it { is_expected.to be_able_to(:read, PublishTarget) }
+    it { is_expected.to be_able_to(:read, FieldSet) }
+    it { is_expected.not_to be_able_to(:update, Project) }
+    it { is_expected.to be_able_to(:read, FactoryBot.create(:publish_target)) }
+    it { is_expected.to be_able_to(:read, DigitalObject::Base) }
+    it { is_expected.not_to be_able_to(:update, DigitalObject::Base) }
+  end
+
+  describe 'when user has the ability to manage all digital objects' do
+    subject { described_class.new(user) }
+
+    let(:user) do
+      FactoryBot.create(
+        :user, permissions: [
+          Permission.create(action: Permission::MANAGE_ALL_DIGITAL_OBJECTS)
+        ]
+      )
+    end
+
+    it { is_expected.to be_able_to(:read, Project) }
+    it { is_expected.to be_able_to(:read, PublishTarget) }
+    it { is_expected.to be_able_to(:read, FieldSet) }
+    it { is_expected.not_to be_able_to(:update, Project) }
+    it { is_expected.to be_able_to(:publish_objects, Project) }
+    it { is_expected.to be_able_to(:access_rights, Project) }
+    it { is_expected.to be_able_to(:read, DigitalObject::Base) }
+    it { is_expected.to be_able_to(:update, DigitalObject::Base) }
+    it { is_expected.to be_able_to(:destroy, DigitalObject::Base) }
+    it { is_expected.to be_able_to(:create, DigitalObject::Base) }
   end
 
   describe 'when a user has the ability to read_objects for a project' do
