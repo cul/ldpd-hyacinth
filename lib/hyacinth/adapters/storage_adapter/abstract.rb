@@ -48,6 +48,15 @@ module Hyacinth
           raise NotImplementedError
         end
 
+        def with_writeable(location_uri, &block)
+          raise Hyacinth::Exceptions::UnhandledLocationError, "Unhandled location_uri for #{self.class.name}: #{location_uri}" unless handles?(location_uri)
+          writeable_impl(location_uri, &block)
+        end
+
+        def writeable_impl(*args)
+          raise NotImplementedError
+        end
+
         # @param location_uri [String] location to delete from
         def delete(location_uri)
           raise Hyacinth::Exceptions::UnhandledLocationError, "Unhandled location_uri for #{self.class.name}: #{location_uri}" unless handles?(location_uri)

@@ -27,6 +27,12 @@ module Hyacinth
         end
       end
 
+      def with_writeable(location, &block)
+        Hyacinth::Config.lock_adapter.with_lock(location) do
+          storage_adapter_for_location(location).with_writeable(location, &block)
+        end
+      end
+
       def exists?(location)
         storage_adapter_for_location(location).exists?(location)
       end

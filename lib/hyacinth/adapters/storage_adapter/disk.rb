@@ -47,6 +47,12 @@ module Hyacinth
           IO.binwrite(file_path, content)
         end
 
+        def writeable_impl(location_uri, &block)
+          file_path = location_uri_to_file_path(location_uri)
+          FileUtils.mkdir_p(File.dirname(file_path))
+          open(file_path, 'wb') { |blob| block.yield(blob) }
+        end
+
         def delete_impl(location_uri)
           file_path = location_uri_to_file_path(location_uri)
           FileUtils.rm(file_path) if File.exist?(file_path)
