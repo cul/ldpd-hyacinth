@@ -40,14 +40,14 @@ function DigitalObject() {
             { routePath: `${path}/metadata`, Component: Metadata },
             { routePath: `${path}/rights`, Component: Rights },
             { routePath: `${path}/children`, Component: Children },
-            { routePath: `${path}/preserve_publish`, Component: PreservePublish }
+            { routePath: `${path}/preserve_publish`, Component: PreservePublish },
           ].map((entry) => {
             const { routePath, Component } = entry;
             return (
               <DigitalObjectProtectedRoute
                 key={routePath}
                 path={routePath}
-                render={() => <Component id={minimalDigitalObject.id} />}
+                render={() => <Component key={{}} id={minimalDigitalObject.id} />}
                 requiredAbility={{ action: 'read_objects', primaryProject: minimalDigitalObject.primaryProject, otherProjects: minimalDigitalObject.otherProjects }}
               />
             );

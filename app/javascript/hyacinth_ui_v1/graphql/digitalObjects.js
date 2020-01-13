@@ -35,7 +35,7 @@ const digitalObjectInterfaceFields = `
 `;
 
 export const getSystemDataDigitalObjectQuery = gql`
-  query MinimalDigitalObject($id: ID!){
+  query SystemDataDigitalObject($id: ID!){
     digitalObject(id: $id) {
       ${digitalObjectInterfaceFields},
       createdBy { fullName },
@@ -48,11 +48,21 @@ export const getSystemDataDigitalObjectQuery = gql`
 `;
 
 export const getMetadataDigitalObjectQuery = gql`
-  query MinimalDigitalObject($id: ID!){
+  query MetadataDigitalObject($id: ID!){
     digitalObject(id: $id) {
       ${digitalObjectInterfaceFields},
       dynamicFieldData,
       identifiers
+    }
+  }
+`;
+
+export const getRightsDigitalObjectQuery = gql`
+  query RightsDigitalObject($id: ID!){
+    digitalObject(id: $id) {
+      ${digitalObjectInterfaceFields},
+      rights,
+      dynamicFieldData
     }
   }
 `;

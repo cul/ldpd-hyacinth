@@ -56,5 +56,5 @@ function DigitalObjectSummary(props) {
 export default DigitalObjectSummary;
 
 DigitalObjectSummary.propTypes = {
-  digitalObject: PropTypes.object.isRequired,
+  digitalObject: PropTypes.objectOf(PropTypes.any).isRequired,
 };

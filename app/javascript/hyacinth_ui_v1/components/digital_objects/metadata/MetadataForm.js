@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import produce from 'immer';
 import axios from 'axios';
 import { merge } from 'lodash';
@@ -177,3 +178,8 @@ function MetadataForm(props) {
 }
 
 export default withErrorHandler(MetadataForm, hyacinthApi);
+
+MetadataForm.propTypes = {
+  digitalObject: PropTypes.objectOf(PropTypes.any).isRequired,
+  formType: PropTypes.oneOf(['new', 'edit']).isRequired,
+};

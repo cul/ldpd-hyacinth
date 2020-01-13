@@ -108,5 +108,5 @@ function MetadataShow(props) {
 export default MetadataShow;
 
 MetadataShow.propTypes = {
-  digitalObject: PropTypes.object.isRequired,
+  digitalObject: PropTypes.objectOf(PropTypes.any).isRequired,
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 
 import GraphQLErrors from '../../ui/GraphQLErrors';
@@ -12,6 +12,7 @@ import DigitalObjectProtectedRoute from '../../DigitalObjectProtectedRoute';
 
 function Metadata(props) {
   const { id } = props;
+  const { path } = useRouteMatch();
 
   const {
     loading: digitalObjectLoading,
@@ -29,13 +30,13 @@ function Metadata(props) {
     <Switch>
       <Route
         exact
-        path="/digital_objects/:id/metadata"
+        path={path}
         render={() => <MetadataShow digitalObject={digitalObject} />}
       />
 
       <DigitalObjectProtectedRoute
         exact
-        path="/digital_objects/:id/metadata/edit"
+        path={`${path}/edit`}
         render={() => <MetadataEdit digitalObject={digitalObject} />}
         requiredAbility={{
           action: 'read_objects',

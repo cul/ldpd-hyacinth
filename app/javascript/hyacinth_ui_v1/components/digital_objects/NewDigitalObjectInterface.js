@@ -53,6 +53,6 @@ function DigitalObjectInterface(props) {
 export default DigitalObjectInterface;
 
 DigitalObjectInterface.propTypes = {
-  digitalObject: PropTypes.object.isRequired,
+  digitalObject: PropTypes.objectOf(PropTypes.any).isRequired,
   children: PropTypes.node.isRequired,
 };
