@@ -13,7 +13,7 @@ function Tabs(props) {
 }
 
 Tabs.propTypes = {
-  children: PropTypes.arrayOf(PropTypes.element).isRequired,
+  children: PropTypes.arrayOf(PropTypes.node).isRequired,
 };
 
 export default Tabs;
