@@ -54,8 +54,14 @@ class Ability
         can :manage, :vocabulary
         can :manage, :term
         can :manage, :custom_field
-      when Permission::READ_ALL_DIGITAL_OBJECTS, Permission::MANAGE_ALL_DIGITAL_OBJECTS
+      when Permission::READ_ALL_DIGITAL_OBJECTS
         can :read, [Project, PublishTarget, FieldSet]
+        can :read, DigitalObject::Base
+        can :read_objects, Project
+      when Permission::MANAGE_ALL_DIGITAL_OBJECTS
+        can :read, [Project, PublishTarget, FieldSet]
+        can :manage, DigitalObject::Base
+        can [:read_objects, :create_objects, :update_objects, :access_rights, :delete_objects, :publish_objects], Project
       end
     end
   end
