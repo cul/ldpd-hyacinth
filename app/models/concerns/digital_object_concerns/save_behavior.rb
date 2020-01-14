@@ -8,6 +8,10 @@ module DigitalObjectConcerns
     include DigitalObjectConcerns::SaveBehavior::ResourceImports
     include DigitalObjectConcerns::SaveBehavior::SaveLockValidations
 
+    def with_lock(&block)
+      Hyacinth::Config.lock_adapter.with_lock(self.uid, &block)
+    end
+
     # This method is like the other #save method, but it raises an error if the save fails.
     def save!(opts = {})
       return true if save(opts)

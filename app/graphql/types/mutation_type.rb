@@ -2,6 +2,8 @@
 
 module Types
   class MutationType < Types::BaseObject
+    field :create_asset, mutation: Mutations::CreateAsset
+
     field :create_user, mutation: Mutations::CreateUser
     field :update_user, mutation: Mutations::UpdateUser
 

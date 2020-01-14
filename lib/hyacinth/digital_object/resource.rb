@@ -36,7 +36,7 @@ module Hyacinth
       # If a successful import just occurred, it was of type :copy, delete that copied file
       def undo_last_successful_import_if_copy
         if self.import_succeeded && self.import_method == :copy
-          Rails.application.config.storage_adapter.delete(location_uri)
+          Hyacinth::Config.resource_storage.delete(location)
         end
       end
 
@@ -86,6 +86,10 @@ module Hyacinth
 
         # Extend the lock during the checksumming process so that it doesn't expire
         # lock_object.extend_lock # extend lock in case publish is slow
+      end
+
+      def content_exists?
+        location && Hyacinth::Config.resource_storage.exists?(location)
       end
 
       def self.from_serialized_form(json_var)
