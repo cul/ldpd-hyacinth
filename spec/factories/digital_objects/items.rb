@@ -27,7 +27,8 @@ FactoryBot.define do
     trait :with_other_projects do
       after(:build) do |digital_object|
         ['a', 'b'].each do |val|
-          digital_object.other_projects << create(:project,
+          digital_object.other_projects << create(
+            :project,
             is_primary: false,
             string_key: "other_project_#{val}",
             display_label: "Other Project #{val.upcase}",
