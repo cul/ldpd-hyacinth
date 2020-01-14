@@ -9,6 +9,7 @@ import TabHeading from '../../ui/tabs/TabHeading';
 import DigitalObjectInterface from '../DigitalObjectInterface';
 import DeleteButton from '../../ui/forms/buttons/DeleteButton';
 import { getSystemDataDigitalObjectQuery } from '../../../graphql/digitalObjects';
+import { digitalObject as digitalObjectApi } from '../../../util/hyacinth_api';
 
 function SystemData(props) {
   const { id } = props;
@@ -28,7 +29,7 @@ function SystemData(props) {
 
   const onDelete = (e) => {
     e.preventDefault();
-    digitalObject.delete(id).then(() => history.push('/digital_objects'));
+    digitalObjectApi.delete(id).then(() => history.push('/digital_objects'));
   };
 
   const {
