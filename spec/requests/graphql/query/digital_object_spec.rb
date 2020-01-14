@@ -61,6 +61,9 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
             }
           ],
           "publishEntries": [],
+          "rights": {
+            "rights_field": "rights value"
+          },
           "serializationVersion": "1",
           "state": "active",
           "updatedAt": "#{authorized_object.updated_at}",
@@ -119,6 +122,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
             }
           }
           optimisticLockToken
+          rights
         }
       }
     GQL

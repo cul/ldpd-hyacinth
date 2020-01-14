@@ -32,5 +32,11 @@ FactoryBot.define do
         create(:legend_of_lincoln_publish_target, atts)
       end
     end
+
+    trait :with_enabled_dynamic_field do
+      after(:build) do |project|
+        create(:enabled_dynamic_field, project: project)
+      end
+    end
   end
 end

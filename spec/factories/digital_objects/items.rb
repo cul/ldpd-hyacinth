@@ -15,6 +15,12 @@ FactoryBot.define do
           ]
         }
       )
+      instance.instance_variable_set(
+        '@rights',
+        {
+          'rights_field' => 'rights value'
+        }
+      )
       instance
     end
 

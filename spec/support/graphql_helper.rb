@@ -40,6 +40,7 @@ module GraphQLHelper
             },
             actions
           }
+          enabledDigitalObjectTypes
         }
       }
     GQL
