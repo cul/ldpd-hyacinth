@@ -37,9 +37,21 @@ function DigitalObjectNewForm() {
         title={`New ${capitalize(initialDigitalObject.digitalObjectType)}`}
         rightHandLinks={[{ link: '/digital_objects', label: 'Back to Digital Objects' }]}
       />
-      <Can I="create_objects" of={{ subjectType: 'Project', stringKey }}>
-        <DigitalObjectSummary digitalObject={initialDigitalObject} />
-        <MetadataForm formType="new" digitalObject={initialDigitalObject} />
+      <Can I="create_objects" of={{ subjectType: 'Project', stringKey }} passThrough>
+        {
+          (can) => {
+            if (can) {
+              return (
+                <>
+                <DigitalObjectSummary digitalObject={initialDigitalObject} />
+                <MetadataForm formType="new" digitalObject={initialDigitalObject} />
+                </>
+              );
+            }
+
+            return 'Invalid permissions for this view.';
+          }
+        }
       </Can>
     </>
   );
