@@ -5,6 +5,7 @@ import { useQuery } from '@apollo/react-hooks';
 import PropTypes from 'prop-types';
 
 import GraphQLErrors from '../../ui/GraphQLErrors';
+import TabHeading from '../../ui/tabs/TabHeading';
 import DigitalObjectInterface from '../NewDigitalObjectInterface';
 import DeleteButton from '../../ui/forms/buttons/DeleteButton';
 import { getSystemDataDigitalObjectQuery } from '../../../graphql/digitalObjects';
@@ -37,6 +38,7 @@ function SystemData(props) {
 
   return (
     <DigitalObjectInterface digitalObject={digitalObject}>
+      <TabHeading>System Data</TabHeading>
       <Row as="dl">
         <Col as="dt" lg={2} sm={4}>Created By</Col>
         <Col as="dd" lg={10} sm={8}>{createdBy ? createdBy.fullName : '-- Not Assigned --'}</Col>

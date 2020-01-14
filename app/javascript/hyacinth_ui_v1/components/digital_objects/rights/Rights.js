@@ -20,14 +20,7 @@ function Rights(props) {
     data: digitalObjectData,
   } = useQuery(getRightsDigitalObjectQuery, {
     variables: { id },
-    onCompleted: (data) => {
-      console.log('Rights component onCompleted with data');
-      console.log(data);
-    }
   });
-
-  console.log('rights got:');
-  console.log(digitalObjectData);
 
   if (digitalObjectLoading) return (<></>);
   if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);

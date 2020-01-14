@@ -3,9 +3,9 @@ import { Card, Collapse } from 'react-bootstrap';
 import produce from 'immer';
 
 import CopyrightOwner from './CopyrightOwner';
-import InputGroup from '../../../ui/forms/InputGroup';
-import Label from '../../../ui/forms/Label';
-import BooleanRadioButtons from '../../../ui/forms/inputs/BooleanRadioButtons';
+import InputGroup from '../../../../ui/forms/InputGroup';
+import Label from '../../../../ui/forms/Label';
+import BooleanRadioButtons from '../../../../ui/forms/inputs/BooleanRadioButtons';
 
 export default class CopyrightOwnership extends React.Component {
   onFieldChange(fieldName, fieldVal) {

@@ -2,13 +2,13 @@ import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
 import produce from 'immer';
 
-import Label from '../../../ui/forms/Label';
-import InputGroup from '../../../ui/forms/InputGroup';
-import BooleanRadioButton from '../../../ui/forms/inputs/BooleanRadioButtons';
-import SelectInput from '../../../ui/forms/inputs/SelectInput';
-import TextAreaInput from '../../../ui/forms/inputs/TextAreaInput';
-import TextInput from '../../../ui/forms/inputs/TextInput';
-import MultiSelectInput from '../../../ui/forms/inputs/MultiSelectInput';
+import Label from '../../../../ui/forms/Label';
+import InputGroup from '../../../../ui/forms/InputGroup';
+import BooleanRadioButton from '../../../../ui/forms/inputs/BooleanRadioButtons';
+import SelectInput from '../../../../ui/forms/inputs/SelectInput';
+import TextAreaInput from '../../../../ui/forms/inputs/TextAreaInput';
+import TextInput from '../../../../ui/forms/inputs/TextInput';
+import MultiSelectInput from '../../../../ui/forms/inputs/MultiSelectInput';
 
 const talentRights = [
   'SAG AFTRA',

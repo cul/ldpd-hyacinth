@@ -1,60 +1,57 @@
 import React from 'react';
-import produce from 'immer';
+import PropTypes from 'prop-types';
 import { Table, Button } from 'react-bootstrap';
+import { useQuery } from '@apollo/react-hooks';
+import { Alert } from 'react-bootstrap';
 
-import digitalObjectInterface from '../digitalObjectInterface';
+import DigitalObjectInterface from '../NewDigitalObjectInterface';
 import TabHeading from '../../ui/tabs/TabHeading';
+import { getPreservePublishDigitalObjectQuery } from '../../../graphql/digitalObjects';
+import GraphQLErrors from '../../ui/GraphQLErrors';
 
-class PreservePublish extends React.Component {
-  state = {
-    publishTargets: [],
-  }
+function PreservePublish(props) {
+  const { id } = props;
 
-  componentDidMount() {
-    const { match: { params: { id } } } = this.props;
-    // Retrive publish targets from all projects
+  const {
+    loading: digitalObjectLoading,
+    error: digitalObjectError,
+    data: digitalObjectData,
+  } = useQuery(getPreservePublishDigitalObjectQuery, {
+    variables: { id },
+  });
 
-    // digitalObject.get(id)
-    //   .then((res) => {
-    //     console.log(res.data);
-    //     this.setState(produce((draft) => {
-    //       draft.digitalObject = res.data.digitalObject;
-    //     }));
-    //   });
-  }
+  if (digitalObjectLoading) return (<></>);
+  if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
+  const { digitalObject } = digitalObjectData;
 
-  render() {
-    const { publishTargets } = this.state;
+  return (
+    <DigitalObjectInterface digitalObject={digitalObject}>
+      <TabHeading>
+        Preserve / Publish
+      </TabHeading>
 
-    return (
-      <>
-        <TabHeading>
-          Preserve
-        </TabHeading>
-        <p>Paragraph describing what preserving means?</p>
+      <Alert variant="info">
+        <strong>Preserve: </strong> Write the latest data for this digital object to the preservation repository.
+      </Alert>
 
+      <div className="text-right mb-3">
         <Button>Preserve</Button>
+      </div>
 
-        <hr />
+      <Alert variant="info">
+        <strong>Preserve &amp; Publish: </strong>
+        Performs a preserve operation <strong>AND </strong> publishes the latest data for this digital object to all enabled publish targets.
+      </Alert>
 
-        {
-          publishTargets && (
-            <>
-              <TabHeading>
-                Perserve & Publish
-              </TabHeading>
-              <p>Currently published to: </p>
+      <div className="text-right mb-3">
+        <Button>Preserve &amp; Publish</Button>
+      </div>
+    </DigitalObjectInterface>
+  );
+};
 
-              <Table>
+export default PreservePublish;
 
-              </Table>
-              <Button>Perserve & Publish</Button>
-            </>
-          )
-        }
-      </>
-    );
-  }
-}
-
-export default digitalObjectInterface(PreservePublish);
+PreservePublish.propTypes = {
+  id: PropTypes.string.isRequired,
+};

@@ -2,12 +2,12 @@ import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
 import produce from 'immer';
 
-import Label from '../../../ui/forms/Label';
-import InputGroup from '../../../ui/forms/InputGroup';
-import BooleanRadioButtons from '../../../ui/forms/inputs/BooleanRadioButtons';
-import SelectInput from '../../../ui/forms/inputs/SelectInput';
-import TextAreaInput from '../../../ui/forms/inputs/TextAreaInput';
-import YesNoSelect from '../../../ui/forms/inputs/YesNoSelect';
+import Label from '../../../../ui/forms/Label';
+import InputGroup from '../../../../ui/forms/InputGroup';
+import BooleanRadioButtons from '../../../../ui/forms/inputs/BooleanRadioButtons';
+import SelectInput from '../../../../ui/forms/inputs/SelectInput';
+import TextAreaInput from '../../../../ui/forms/inputs/TextAreaInput';
+import YesNoSelect from '../../../../ui/forms/inputs/YesNoSelect';
 
 const publicityRights = [
   'Written Release',

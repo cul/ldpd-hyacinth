@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Card } from 'react-bootstrap';
+import { useQuery } from '@apollo/react-hooks';
 
-import DigitalObjectInterface from '../NewDigitalObjectInterface';
+import MetadataTab from './MetadataTab';
 import EditButton from '../../ui/buttons/EditButton';
 import TabHeading from '../../ui/tabs/TabHeading';
 import { dynamicFieldCategories } from '../../../util/hyacinth_api';
 import InputGroup from '../../ui/forms/InputGroup';
 import Label from '../../ui/forms/Label';
 import PlainText from '../../ui/forms/inputs/PlainText';
+import { getMetadataDigitalObjectQuery } from '../../../graphql/digitalObjects';
+import GraphQLErrors from '../../ui/GraphQLErrors';
 
 function MetadataShow(props) {
+  const { id } = props;
+
   const [dynamicFieldHierarchy, setDynamicFieldHierarchy] = useState(null);
-  const { digitalObject } = props;
-  const { id, identifiers, dynamicFieldData } = digitalObject;
 
   // TODO: Replace effect below with GraphQL when we have a GraphQL DynamicFieldCategories API
   useEffect(() => {
@@ -22,7 +25,20 @@ function MetadataShow(props) {
     });
   }, []);
 
+  const {
+    loading: digitalObjectLoading,
+    error: digitalObjectError,
+    data: digitalObjectData,
+  } = useQuery(getMetadataDigitalObjectQuery, {
+    variables: { id },
+  });
+
   if (!dynamicFieldHierarchy) return (<></>);
+  if (digitalObjectLoading) return (<></>);
+  if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
+
+  const { digitalObject } = digitalObjectData;
+  const { identifiers, dynamicFieldData } = digitalObject;
 
   const renderField = (dynamicField, data) => {
     const { displayLabel, fieldType } = dynamicField;
@@ -86,27 +102,18 @@ function MetadataShow(props) {
   };
 
   return (
-    <DigitalObjectInterface digitalObject={digitalObject}>
-      <TabHeading>
-        Metadata
-        <EditButton
-          className="float-right"
-          size="lg"
-          link={`/digital_objects/${id}/metadata/edit`}
-        />
-      </TabHeading>
-
+    <MetadataTab digitalObject={digitalObject} editButton>
       { dynamicFieldHierarchy.map(category => renderCategory(category, dynamicFieldData)) }
       <h4 className="text-orange">Identifiers</h4>
       <ul className="list-unstyled">
         { identifiers.length ? identifiers.map(i => <li>{i}</li>) : '- None -'}
       </ul>
-    </DigitalObjectInterface>
+    </MetadataTab>
   );
 }
 
 export default MetadataShow;
 
 MetadataShow.propTypes = {
-  digitalObject: PropTypes.objectOf(PropTypes.any).isRequired,
+  id: PropTypes.string.isRequired,
 };

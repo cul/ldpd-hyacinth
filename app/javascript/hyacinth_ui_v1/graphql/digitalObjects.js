@@ -66,3 +66,27 @@ export const getRightsDigitalObjectQuery = gql`
     }
   }
 `;
+
+export const getChildrenDigitalObjectQuery = gql`
+  query RightsDigitalObject($id: ID!){
+    digitalObject(id: $id) {
+      ${digitalObjectInterfaceFields},
+      structuredChildren {
+        type
+        structure
+      }
+    }
+  }
+`;
+
+
+export const getPreservePublishDigitalObjectQuery = gql`
+  query RightsDigitalObject($id: ID!){
+    digitalObject(id: $id) {
+      ${digitalObjectInterfaceFields},
+      publishEntries {
+        publishTargetStringKey
+      }
+    }
+  }
+`;

@@ -50,13 +50,13 @@ function MetadataForm(props) {
       return digitalObjectApi.update(
         id,
         { digitalObject: { dynamicFieldData, identifiers } },
-      ).then(res => history.push(`/digital_objects/${res.data.digitalObject.uid}`));
+      ).then(res => history.push(`/digital_objects/${res.data.digitalObject.uid}/metadata`));
     }
 
     if (formType === 'new') {
       return digitalObjectApi.create({
         digitalObject: { ...digitalObject, dynamicFieldData, identifiers },
-      }).then(res => history.push(`/digital_objects/${res.data.digitalObject.uid}`));
+      }).then(res => history.push(`/digital_objects/${res.data.digitalObject.uid}/metadata`));
     }
 
     throw new Error(`Unhandled formType: ${formType}`);

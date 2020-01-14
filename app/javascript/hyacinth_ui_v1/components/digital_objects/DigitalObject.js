@@ -5,8 +5,10 @@ import {
 import { useQuery } from '@apollo/react-hooks';
 
 import PageNotFound from '../layout/PageNotFound';
-import Rights from './rights/Rights';
-import Metadata from './metadata/Metadata';
+import RightsShow from './rights/RightsShow';
+import RightsEdit from './rights/RightsEdit';
+import MetadataShow from './metadata/MetadataShow';
+import MetadataEdit from './metadata/MetadataEdit';
 import Children from './children/Children';
 import PreservePublish from './preserve_publish/PreservePublish';
 import SystemData from './system_data/SystemData';
@@ -36,19 +38,25 @@ function DigitalObject() {
       <Switch>
         {
           [
-            { routePath: `${path}/system_data`, Component: SystemData },
-            { routePath: `${path}/metadata`, Component: Metadata },
-            { routePath: `${path}/rights`, Component: Rights },
-            { routePath: `${path}/children`, Component: Children },
-            { routePath: `${path}/preserve_publish`, Component: PreservePublish },
+            { routePath: `${path}/system_data`, Component: SystemData, action: 'read_objects' },
+            { routePath: `${path}/metadata/edit`, Component: MetadataEdit, action: 'update_objects' },
+            { routePath: `${path}/metadata`, Component: MetadataShow, action: 'read_objects' },
+            { routePath: `${path}/rights/edit`, Component: RightsEdit, action: 'assess_rights' },
+            { routePath: `${path}/rights`, Component: RightsShow, action: 'read_objects' },
+            { routePath: `${path}/children`, Component: Children, action: 'read_objects' },
+            { routePath: `${path}/preserve_publish`, Component: PreservePublish, action: 'read_objects' },
           ].map((entry) => {
-            const { routePath, Component } = entry;
+            const { routePath, Component, action } = entry;
             return (
               <DigitalObjectProtectedRoute
                 key={routePath}
                 path={routePath}
-                render={() => <Component key={{}} id={minimalDigitalObject.id} />}
-                requiredAbility={{ action: 'read_objects', primaryProject: minimalDigitalObject.primaryProject, otherProjects: minimalDigitalObject.otherProjects }}
+                render={() => <Component id={minimalDigitalObject.id} />}
+                requiredAbility={{
+                  action,
+                  primaryProject: minimalDigitalObject.primaryProject,
+                  otherProjects: minimalDigitalObject.otherProjects,
+                }}
               />
             );
           })

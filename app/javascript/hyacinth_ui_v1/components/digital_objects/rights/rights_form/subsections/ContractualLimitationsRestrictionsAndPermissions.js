@@ -4,13 +4,13 @@ import {
 } from 'react-bootstrap';
 import produce from 'immer';
 
-import Label from '../../../ui/forms/Label';
-import InputGroup from '../../../ui/forms/InputGroup';
-import BooleanRadioButtons from '../../../ui/forms/inputs/BooleanRadioButtons';
-import TextInput from '../../../ui/forms/inputs/TextInput';
-import DateInput from '../../../ui/forms/inputs/DateInput';
-import MultiSelectInput from '../../../ui/forms/inputs/MultiSelectInput';
-import Checkbox from '../../../ui/forms/inputs/Checkbox';
+import Label from '../../../../ui/forms/Label';
+import InputGroup from '../../../../ui/forms/InputGroup';
+import BooleanRadioButtons from '../../../../ui/forms/inputs/BooleanRadioButtons';
+import TextInput from '../../../../ui/forms/inputs/TextInput';
+import DateInput from '../../../../ui/forms/inputs/DateInput';
+import MultiSelectInput from '../../../../ui/forms/inputs/MultiSelectInput';
+import Checkbox from '../../../../ui/forms/inputs/Checkbox';
 
 const permissionsGrantedAsPartOfTheUseLicense = [
   'Reproduction',

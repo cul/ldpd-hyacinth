@@ -3,12 +3,12 @@ import { Card, Collapse } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import produce from 'immer';
 
-import ReadOnlyInput from '../../../ui/forms/inputs/ReadOnlyInput';
-import TermSelect from '../../../ui/forms/inputs/TermSelect';
-import YesNoSelect from '../../../ui/forms/inputs/YesNoSelect';
-import SelectInput from '../../../ui/forms/inputs/SelectInput';
-import Label from '../../../ui/forms/Label';
-import InputGroup from '../../../ui/forms/InputGroup';
+import ReadOnlyInput from '../../../../ui/forms/inputs/ReadOnlyInput';
+import TermSelect from '../../../../ui/forms/inputs/TermSelect';
+import YesNoSelect from '../../../../ui/forms/inputs/YesNoSelect';
+import SelectInput from '../../../../ui/forms/inputs/SelectInput';
+import Label from '../../../../ui/forms/Label';
+import InputGroup from '../../../../ui/forms/InputGroup';
 
 const typeOfContent = [
   { label: 'Compilation', value: 'compilation' },

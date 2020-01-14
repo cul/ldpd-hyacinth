@@ -5,13 +5,11 @@ import { Form, Collapse } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { merge } from 'lodash';
 
-import Label from '../../ui/forms/Label';
-import InputGroup from '../../ui/forms/InputGroup';
-import BooleanRadioButtons from '../../ui/forms/inputs/BooleanRadioButtons';
-import { digitalObject as digitalObjectApi } from '../../../util/hyacinth_api';
-import DigitalObjectInterface from '../NewDigitalObjectInterface';
-import TabHeading from '../../ui/tabs/TabHeading';
-import FormButtons from '../../ui/forms/FormButtons';
+import Label from '../../../ui/forms/Label';
+import InputGroup from '../../../ui/forms/InputGroup';
+import BooleanRadioButtons from '../../../ui/forms/inputs/BooleanRadioButtons';
+import { digitalObject as digitalObjectApi } from '../../../../util/hyacinth_api';
+import FormButtons from '../../../ui/forms/FormButtons';
 
 import DescriptiveMetadata from './subsections/DescriptiveMetadata';
 import CopyrightStatus from './subsections/CopyrightStatus';
@@ -121,12 +119,7 @@ function ItemRightsForm(props) {
     },
   });
 
-  const [rights, setRights] = useState(
-    Object.entries(initialRights).length
-      // Merge defaultRights with initialRights in case the rights form changes over time
-      ? merge({}, defaultRights(), initialRights)
-      : defaultRights(),
-  );
+  const [rights, setRights] = useState(merge({}, defaultRights(), initialRights));
 
   const onChange = (subsection, value) => {
     setRights(produce(rights, (draft) => {
@@ -134,7 +127,7 @@ function ItemRightsForm(props) {
     }));
   };
 
-  const onSubmitHandler = (event) => {
+  const onSubmitHandler = () => {
     return digitalObjectApi.rights.update(
       id,
       { digitalObject: { rights } },
@@ -154,76 +147,71 @@ function ItemRightsForm(props) {
   } = rights;
 
   return (
-    <DigitalObjectInterface digitalObject={digitalObject}>
-      <TabHeading>
-        Rights
-      </TabHeading>
-      <Form key={id} className="digital-object-interface">
-        <DescriptiveMetadata
-          dynamicFieldData={dynamicFieldData}
-          value={descriptiveMetadata}
-          onChange={v => onChange('descriptiveMetadata', v)}
-        />
+    <Form key={id} className="digital-object-interface">
+      <DescriptiveMetadata
+        dynamicFieldData={dynamicFieldData}
+        value={descriptiveMetadata}
+        onChange={v => onChange('descriptiveMetadata', v)}
+      />
 
-        <CopyrightStatus
-          value={copyrightStatus}
-          onChange={v => onChange('copyrightStatus', v)}
-        />
+      <CopyrightStatus
+        value={copyrightStatus}
+        onChange={v => onChange('copyrightStatus', v)}
+      />
 
-        <InputGroup>
-          <Label sm={4} align="right">Is there additional copyright or permissions information to record?</Label>
-          <BooleanRadioButtons
-            value={additionalRightsToRecord.enabled}
-            onChange={v => onChange('additionalRightsToRecord', { enabled: v })}
+      <InputGroup>
+        <Label sm={4} align="right">Is there additional copyright or permissions information to record?</Label>
+        <BooleanRadioButtons
+          value={additionalRightsToRecord.enabled}
+          onChange={v => onChange('additionalRightsToRecord', { enabled: v })}
+        />
+      </InputGroup>
+
+      <Collapse in={additionalRightsToRecord.enabled}>
+        <div>
+          <CopyrightOwnership
+            value={copyrightOwnership}
+            onChange={v => onChange('copyrightOwnership', v)}
           />
-        </InputGroup>
 
-        <Collapse in={additionalRightsToRecord.enabled}>
-          <div>
-            <CopyrightOwnership
-              value={copyrightOwnership}
-              onChange={v => onChange('copyrightOwnership', v)}
-            />
+          <ColumbiaUniversityIsCopyrightHolder
+            value={columbiaUniversityIsCopyrightHolder}
+            onChange={v => onChange('columbiaUniversityIsCopyrightHolder', v)}
+          />
 
-            <ColumbiaUniversityIsCopyrightHolder
-              value={columbiaUniversityIsCopyrightHolder}
-              onChange={v => onChange('columbiaUniversityIsCopyrightHolder', v)}
-            />
+          <LicensedToColumbiaUniversity
+            value={licensedToColumbiaUniversity}
+            onChange={v => onChange('licensedToColumbiaUniversity', v)}
+          />
 
-            <LicensedToColumbiaUniversity
-              value={licensedToColumbiaUniversity}
-              onChange={v => onChange('licensedToColumbiaUniversity', v)}
-            />
+          <ContractualLimitationsRestrictionsAndPermissions
+            audioVisualContent={descriptiveMetadata.typeOfContent === 'motionPicture'}
+            value={contractualLimitationsRestrictionsAndPermissions}
+            onChange={v => onChange('contractualLimitationsRestrictionsAndPermissions', v)}
+          />
 
-            <ContractualLimitationsRestrictionsAndPermissions
-              audioVisualContent={descriptiveMetadata.typeOfContent === 'motionPicture'}
-              value={contractualLimitationsRestrictionsAndPermissions}
-              onChange={v => onChange('contractualLimitationsRestrictionsAndPermissions', v)}
-            />
+          {
+            descriptiveMetadata.typeOfContent === 'pictoralGraphicAndScuptural' && (
+              <RightsForWorksOfArtSculptureAndPhotographs
+                value={rightsForWorksOfArtSculptureAndPhotographs}
+                onChange={v => onChange('rightsForWorksOfArtSculptureAndPhotographs', v)}
+              />
+            )
+          }
 
-            {
-              descriptiveMetadata.typeOfContent === 'pictoralGraphicAndScuptural' && (
-                <RightsForWorksOfArtSculptureAndPhotographs
-                  value={rightsForWorksOfArtSculptureAndPhotographs}
-                  onChange={v => onChange('rightsForWorksOfArtSculptureAndPhotographs', v)}
-                />
-              )
-            }
+          <UnderlyingRights
+            value={underlyingRights}
+            onChange={v => onChange('underlyingRights', v)}
+          />
+        </div>
+      </Collapse>
 
-            <UnderlyingRights
-              value={underlyingRights}
-              onChange={v => onChange('underlyingRights', v)}
-            />
-          </div>
-        </Collapse>
-
-        <FormButtons
-          formType="edit"
-          cancelTo={`/digital_objects/${id}/rights`}
-          onSave={onSubmitHandler}
-        />
-      </Form>
-    </DigitalObjectInterface>
+      <FormButtons
+        formType="edit"
+        cancelTo={`/digital_objects/${id}/rights`}
+        onSave={onSubmitHandler}
+      />
+    </Form>
   );
 }
 

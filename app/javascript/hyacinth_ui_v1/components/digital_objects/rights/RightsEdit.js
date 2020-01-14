@@ -3,10 +3,11 @@ import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 
 import GraphQLErrors from '../../ui/GraphQLErrors';
-import { getRightsDigitalObjectQuery } from '../../../graphql/digitalObjects';
 import RightsTab from './RightsTab';
+import ItemRightsForm from './rights_form/ItemRightsForm';
+import { getRightsDigitalObjectQuery } from '../../../graphql/digitalObjects';
 
-function RightsShow(props) {
+function RightsEdit(props) {
   const { id } = props;
 
   const {
@@ -20,21 +21,25 @@ function RightsShow(props) {
   if (digitalObjectLoading) return (<></>);
   if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
   const { digitalObject } = digitalObjectData;
-  const { rights } = digitalObject;
+
+  const renderTabContent = () => {
+    switch (digitalObject.digitalObjectType) {
+      case 'item':
+        return <ItemRightsForm digitalObject={digitalObject} />;
+      default:
+        return `Rights form view is not supported for digital object type: ${digitalObject.digitalObjectType}`;
+    }
+  };
 
   return (
-    <RightsTab digitalObject={digitalObject} editButton>
-      <div className="card">
-        <div className="card-body">
-          <code>{ JSON.stringify(rights) }</code>
-        </div>
-      </div>
+    <RightsTab digitalObject={digitalObject}>
+      { renderTabContent() }
     </RightsTab>
   );
 }
 
-export default RightsShow;
+export default RightsEdit;
 
-RightsShow.propTypes = {
+RightsEdit.propTypes = {
   id: PropTypes.string.isRequired,
 };

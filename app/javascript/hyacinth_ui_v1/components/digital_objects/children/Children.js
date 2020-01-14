@@ -1,39 +1,38 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import produce from 'immer';
+import { useQuery } from '@apollo/react-hooks';
 
-import digitalObjectInterface from '../digitalObjectInterface';
+import DigitalObjectInterface from '../NewDigitalObjectInterface';
 import TabHeading from '../../ui/tabs/TabHeading';
+import { getChildrenDigitalObjectQuery } from '../../../graphql/digitalObjects';
+import GraphQLErrors from '../../ui/GraphQLErrors';
 
-class Children extends React.Component {
-  // state = {
-  //   digitalObject: {},
-  // }
+function Children(props) {
+  const { id } = props;
 
-  // componentDidMount() {
-  //   const { match: { params: { id } } } = this.props;
-  //
-  //   digitalObject.get(id)
-  //     .then((res) => {
-  //       console.log(res.data);
-  //       this.setState(produce((draft) => {
-  //         draft.digitalObject = res.data.digitalObject;
-  //       }));
-  //     });
-  // }
+  const {
+    loading: digitalObjectLoading,
+    error: digitalObjectError,
+    data: digitalObjectData,
+  } = useQuery(getChildrenDigitalObjectQuery, {
+    variables: { id },
+  });
 
-  render() {
-    const { data: { uid } } = this.props;
+  if (digitalObjectLoading) return (<></>);
+  if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
+  const { digitalObject } = digitalObjectData;
 
-    return (
-      <>
-        <TabHeading>Manage Child Assets</TabHeading>
-        <p>Child Digital Objects</p>
-        <p># Total</p>
-
-
-      </>
-    );
-  }
+  return (
+    <DigitalObjectInterface digitalObject={digitalObject}>
+      <TabHeading>Manage Child Assets</TabHeading>
+      <p>This feature is currently unavailable.</p>
+    </DigitalObjectInterface>
+  );
 }
 
-export default digitalObjectInterface(Children);
+export default Children;
+
+Children.propTypes = {
+  id: PropTypes.string.isRequired,
+};

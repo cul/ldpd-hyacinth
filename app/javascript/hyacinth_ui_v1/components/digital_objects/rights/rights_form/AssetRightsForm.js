@@ -6,7 +6,7 @@ import ContextualNavbar from '../../layout/ContextualNavbar';
 import CopyrightStatus from './subsections/CopyrightStatus';
 import AccessCondition from './subsections/AccessCondition';
 
-class AssetRightsEdit extends React.Component {
+class AssetRightsForm extends React.Component {
   state = {
     rights: {
       accessCondition: {
@@ -61,4 +61,4 @@ class AssetRightsEdit extends React.Component {
   }
 }
 
-export default AssetRightsEdit;
+export default AssetRightsForm;
