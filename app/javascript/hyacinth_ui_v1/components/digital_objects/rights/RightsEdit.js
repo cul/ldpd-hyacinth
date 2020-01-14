@@ -21,13 +21,14 @@ function RightsEdit(props) {
   if (digitalObjectLoading) return (<></>);
   if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
   const { digitalObject } = digitalObjectData;
+  const { digitalObjectType } = digitalObject;
 
   const renderTabContent = () => {
-    switch (digitalObject.digitalObjectType) {
+    switch (digitalObjectType) {
       case 'item':
         return <ItemRightsForm digitalObject={digitalObject} />;
       default:
-        return `Rights form view is not supported for digital object type: ${digitalObject.digitalObjectType}`;
+        return `Rights form view is not supported for digital object type: ${digitalObjectType}`;
     }
   };
 
