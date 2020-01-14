@@ -1,34 +1,53 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { Card } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 
 import DigitalObjectInterface from '../DigitalObjectInterface';
+import DigitalObjectList from '../DigitalObjectList';
+import AssetNew from '../new/AssetNew';
 import TabHeading from '../../ui/tabs/TabHeading';
-import { getChildrenDigitalObjectQuery } from '../../../graphql/digitalObjects';
+import { getChildStructureQuery } from '../../../graphql/digitalObjects';
 import GraphQLErrors from '../../ui/GraphQLErrors';
 
-function Children(props) {
+const Children = (props) => {
   const { id } = props;
-
+  const [inputId] = useState(AssetNew.randomInputId());
   const {
-    loading: digitalObjectLoading,
-    error: digitalObjectError,
-    data: digitalObjectData,
-  } = useQuery(getChildrenDigitalObjectQuery, {
+    loading: childStructureLoading,
+    error: childStructureError,
+    data: childStructureData,
+    refetch: refreshChildStructure,
+  } = useQuery(getChildStructureQuery, {
     variables: { id },
   });
 
-  if (digitalObjectLoading) return (<></>);
-  if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
-  const { digitalObject } = digitalObjectData;
-
+  if (childStructureLoading) return (<></>);
+  if (childStructureError) return (<GraphQLErrors errors={childStructureError} />);
+  const { childStructure: { parent, structure } } = childStructureData;
   return (
-    <DigitalObjectInterface digitalObject={digitalObject}>
+    <DigitalObjectInterface digitalObject={parent}>
       <TabHeading>Manage Child Assets</TabHeading>
-      <p>This feature is currently unavailable.</p>
+      <Card className="mb-3">
+        <Card.Body>
+          <Card.Title>
+            Add New Asset
+          </Card.Title>
+          <AssetNew parentId={id} refetch={refreshChildStructure} inputId={inputId} />
+        </Card.Body>
+      </Card>
+      <Card className="mb-3">
+        <Card.Body>
+          <Card.Title>
+            Child Digital Objects
+          </Card.Title>
+          <Card.Subtitle>{`${structure.length} Total`}</Card.Subtitle>
+          <DigitalObjectList digitalObjects={structure} />
+        </Card.Body>
+      </Card>
     </DigitalObjectInterface>
   );
-}
+};
 
 export default Children;
 

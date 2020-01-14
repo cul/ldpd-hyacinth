@@ -11,7 +11,7 @@ module Api
       # GET /digital_objects/search.json
       def search
         @digital_objects = DigitalObjectRecord.all.map do |dor|
-          DigitalObject::Base.find(dor.uid).as_json(except: ['digital_object_record'])
+          DigitalObject::Base.find(dor.uid).as_json(except: ['digital_object_record']).merge('id' => dor.uid)
         end
         render json: {
           digital_objects: @digital_objects
