@@ -39,7 +39,7 @@ function DigitalObjectInterface(props) {
             : <></>
         }
 
-        <Tab to={`/digital_objects/${id}/assignment`} name="Assign This" />
+        <Tab to={`/digital_objects/${id}/assignments`} name="Assignments" />
         <Tab to={`/digital_objects/${id}/preserve_publish`} name="Preserve/Publish" />
       </Tabs>
 

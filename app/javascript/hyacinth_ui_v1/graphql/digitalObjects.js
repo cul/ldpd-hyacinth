@@ -68,7 +68,7 @@ export const getRightsDigitalObjectQuery = gql`
 `;
 
 export const getChildrenDigitalObjectQuery = gql`
-  query RightsDigitalObject($id: ID!){
+  query ChildrenDigitalObject($id: ID!){
     digitalObject(id: $id) {
       ${digitalObjectInterfaceFields},
       structuredChildren {
@@ -79,9 +79,16 @@ export const getChildrenDigitalObjectQuery = gql`
   }
 `;
 
+export const getAssignmentsDigitalObjectQuery = gql`
+  query AssignmentsDigitalObject($id: ID!){
+    digitalObject(id: $id) {
+      ${digitalObjectInterfaceFields}
+    }
+  }
+`;
 
 export const getPreservePublishDigitalObjectQuery = gql`
-  query RightsDigitalObject($id: ID!){
+  query PreservePublishDigitalObject($id: ID!){
     digitalObject(id: $id) {
       ${digitalObjectInterfaceFields},
       publishEntries {

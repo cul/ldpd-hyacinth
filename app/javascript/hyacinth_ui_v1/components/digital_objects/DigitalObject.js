@@ -10,6 +10,7 @@ import RightsEdit from './rights/RightsEdit';
 import MetadataShow from './metadata/MetadataShow';
 import MetadataEdit from './metadata/MetadataEdit';
 import Children from './children/Children';
+import Assignments from './assignments/Assignments';
 import PreservePublish from './preserve_publish/PreservePublish';
 import SystemData from './system_data/SystemData';
 import GraphQLErrors from '../ui/GraphQLErrors';
@@ -45,6 +46,7 @@ function DigitalObject() {
             { routePath: `${path}/rights`, Component: RightsShow, action: 'read_objects' },
             { routePath: `${path}/children`, Component: Children, action: 'read_objects' },
             { routePath: `${path}/preserve_publish`, Component: PreservePublish, action: 'read_objects' },
+            { routePath: `${path}/assignments`, Component: Assignments, action: 'read_objects' },
           ].map((entry) => {
             const { routePath, Component, action } = entry;
             return (

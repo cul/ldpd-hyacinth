@@ -31,7 +31,8 @@ function PreservePublish(props) {
       </TabHeading>
 
       <Alert variant="info">
-        <strong>Preserve: </strong> Write the latest data for this digital object to the preservation repository.
+        <strong>Preserve: </strong>
+        Write the latest data for this digital object to the preservation repository.
       </Alert>
 
       <div className="text-right mb-3">
@@ -40,7 +41,9 @@ function PreservePublish(props) {
 
       <Alert variant="info">
         <strong>Preserve &amp; Publish: </strong>
-        Performs a preserve operation <strong>AND </strong> publishes the latest data for this digital object to all enabled publish targets.
+        Performs a preserve operation
+        <strong> AND </strong>
+        publishes the latest data for this digital object to all enabled publish targets.
       </Alert>
 
       <div className="text-right mb-3">
