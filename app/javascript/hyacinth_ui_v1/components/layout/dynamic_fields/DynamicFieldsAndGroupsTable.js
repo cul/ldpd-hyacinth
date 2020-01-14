@@ -13,7 +13,7 @@ import DownArrowButton from '../../ui/buttons/DownArrowButton';
 class DynamicFieldsAndGroupsTable extends React.PureComponent {
   updateSortOrder(type, id, sortOrder) {
     const data = { [lowerFirst(type)]: { sortOrder } };
-    const { history: { push }, onChange } = this.props;
+    const { onChange } = this.props;
 
     hyacinthApi.patch(`/${snakeCase(type)}s/${id}`, data)
       .then(() => onChange());

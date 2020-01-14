@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import produce from 'immer';
 import axios from 'axios';
 import { merge } from 'lodash';
-import { Fade } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 
 import hyacinthApi, {

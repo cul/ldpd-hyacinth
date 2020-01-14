@@ -4,8 +4,6 @@ import { Card } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 
 import MetadataTab from './MetadataTab';
-import EditButton from '../../ui/buttons/EditButton';
-import TabHeading from '../../ui/tabs/TabHeading';
 import { dynamicFieldCategories } from '../../../util/hyacinth_api';
 import InputGroup from '../../ui/forms/InputGroup';
 import Label from '../../ui/forms/Label';

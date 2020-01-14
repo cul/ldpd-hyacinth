@@ -1,7 +1,6 @@
 import React from 'react';
 import { Card } from 'react-bootstrap';
 import produce from 'immer';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Field from './Field';
 import FieldGroupArray from './FieldGroupArray';

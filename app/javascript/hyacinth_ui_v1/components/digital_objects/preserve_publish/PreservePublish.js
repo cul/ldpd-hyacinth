@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Table, Button } from 'react-bootstrap';
+import { Button, Alert } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
-import { Alert } from 'react-bootstrap';
 
 import DigitalObjectInterface from '../DigitalObjectInterface';
 import TabHeading from '../../ui/tabs/TabHeading';

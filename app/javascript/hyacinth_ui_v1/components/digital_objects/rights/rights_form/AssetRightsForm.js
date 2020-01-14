@@ -2,7 +2,7 @@ import React from 'react';
 import produce from 'immer';
 import { Form } from 'react-bootstrap';
 
-import ContextualNavbar from '../../layout/ContextualNavbar';
+import ContextualNavbar from '../../../layout/ContextualNavbar';
 import CopyrightStatus from './subsections/CopyrightStatus';
 import AccessCondition from './subsections/AccessCondition';
 
