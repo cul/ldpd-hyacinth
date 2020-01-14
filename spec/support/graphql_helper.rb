@@ -8,17 +8,30 @@ module GraphQLHelper
     post '/graphql', params: params
   end
 
-  def projects_query
-    <<~GQL
-      query {
-        projects {
-          stringKey
-          displayLabel
-          projectUrl
-          isPrimary
+  def projects_query(is_primary: nil)
+    if is_primary.nil?
+      <<~GQL
+        query {
+          projects {
+            stringKey
+            displayLabel
+            projectUrl
+            isPrimary
+          }
         }
-      }
-    GQL
+      GQL
+    else
+      <<~GQL
+        query {
+          projects(isPrimary: #{is_primary}) {
+            stringKey
+            displayLabel
+            projectUrl
+            isPrimary
+          }
+        }
+      GQL
+    end
   end
 
   def project_query(string_key)
