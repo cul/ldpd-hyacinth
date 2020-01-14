@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 
 import GraphQLErrors from '../../ui/GraphQLErrors';
 import TabHeading from '../../ui/tabs/TabHeading';
-import DigitalObjectInterface from '../NewDigitalObjectInterface';
+import DigitalObjectInterface from '../DigitalObjectInterface';
 import DeleteButton from '../../ui/forms/buttons/DeleteButton';
 import { getSystemDataDigitalObjectQuery } from '../../../graphql/digitalObjects';
 

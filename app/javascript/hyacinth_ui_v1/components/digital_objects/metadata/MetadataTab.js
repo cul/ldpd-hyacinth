@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import DigitalObjectInterface from '../NewDigitalObjectInterface';
+import DigitalObjectInterface from '../DigitalObjectInterface';
 import EditButton from '../../ui/buttons/EditButton';
 import TabHeading from '../../ui/tabs/TabHeading';
 

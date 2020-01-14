@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 
-import DigitalObjectInterface from '../NewDigitalObjectInterface';
+import DigitalObjectInterface from '../DigitalObjectInterface';
 import TabHeading from '../../ui/tabs/TabHeading';
 import { getAssignmentsDigitalObjectQuery } from '../../../graphql/digitalObjects';
 import GraphQLErrors from '../../ui/GraphQLErrors';

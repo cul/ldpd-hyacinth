@@ -4,7 +4,7 @@ import { Table, Button } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 import { Alert } from 'react-bootstrap';
 
-import DigitalObjectInterface from '../NewDigitalObjectInterface';
+import DigitalObjectInterface from '../DigitalObjectInterface';
 import TabHeading from '../../ui/tabs/TabHeading';
 import { getPreservePublishDigitalObjectQuery } from '../../../graphql/digitalObjects';
 import GraphQLErrors from '../../ui/GraphQLErrors';
