@@ -51,11 +51,6 @@ Layout/TrailingWhitespace:
   Exclude:
     - 'app/controllers/api/v1/digital_objects_controller.rb'
 
-# Offense count: 1
-Lint/NestedMethodDefinition:
-  Exclude:
-    - 'app/controllers/concerns/hyacinth/users/cas_authentication_behavior.rb'
-
 # Offense count: 5
 # Cop supports --auto-correct.
 # Configuration parameters: IgnoreEmptyBlocks, AllowUnusedKeywordArguments.

@@ -45,6 +45,9 @@ module Hyacinth
 
           identify_uni_user(user_uni, cas_logout_uri)
         end
+      end
+
+      private
 
         def identify_uni_user(user_uni, cas_logout_uri)
           if user_uni.present?
@@ -66,7 +69,6 @@ module Hyacinth
             render inline: 'CAS Authentication failed, Please try again later.'
           end
         end
-      end
     end
   end
 end
