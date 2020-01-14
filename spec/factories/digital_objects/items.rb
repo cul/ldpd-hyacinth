@@ -43,5 +43,11 @@ FactoryBot.define do
         end
       end
     end
+
+    trait :with_asset do
+      after(:create) do |digital_object|
+        digital_object.append_child_uid(create(:asset, parent: digital_object).uid)
+      end
+    end
   end
 end
