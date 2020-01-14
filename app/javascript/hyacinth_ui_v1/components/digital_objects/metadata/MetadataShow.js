@@ -106,7 +106,7 @@ function MetadataShow(props) {
       { dynamicFieldHierarchy.map(category => renderCategory(category, dynamicFieldData)) }
       <h4 className="text-orange">Identifiers</h4>
       <ul className="list-unstyled">
-        { identifiers.length ? identifiers.map(i => <li>{i}</li>) : '- None -'}
+        { identifiers.length ? identifiers.map((identifier, i) => <li key={i}>{identifier}</li>) : '- None -'}
       </ul>
     </MetadataTab>
   );
