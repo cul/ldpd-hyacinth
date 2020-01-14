@@ -72,6 +72,7 @@ export const getProjectWithPermissionsQuery = gql`
   query ProjectWithPermissions($stringKey: ID!){
     project(stringKey: $stringKey) {
       stringKey
+      displayLabel
       isPrimary
       projectPermissions {
         ${projectPermissionsFields}
