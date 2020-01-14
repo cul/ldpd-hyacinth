@@ -8,7 +8,7 @@ import SubmitButton from '../../layout/forms/SubmitButton';
 import SelectInput from '../../ui/forms/inputs/SelectInput';
 import Label from '../../ui/forms/Label';
 import InputGroup from '../../ui/forms/InputGroup';
-import SelectPrimaryProject from '../primary_project/SelectPrimaryProject';
+import SelectCreatablePrimaryProject from '../primary_project/SelectCreatablePrimaryProject';
 
 function DigitalObjectNew() {
   const [primaryProject, setPrimaryProject] = useState(null);
@@ -64,7 +64,7 @@ function DigitalObjectNew() {
       />
 
       <Form className="m-3">
-        <SelectPrimaryProject
+        <SelectCreatablePrimaryProject
           primaryProject={primaryProject}
           changeHandler={(selectedProject) => { setPrimaryProject(selectedProject); }}
         />
