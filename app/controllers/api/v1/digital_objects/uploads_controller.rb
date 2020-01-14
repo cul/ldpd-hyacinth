@@ -3,6 +3,10 @@
 module Api
   module V1
     module DigitalObjects
+      # Because Rails 5 ActiveStorage does not export the BlobRecord class,
+      # we must create the direct upload via REST. In Rails 6, the create logic
+      # below could be moved into a GraphQL mutation, and the returned metadata used
+      # to initiate the ActiveStorage upload.
       class UploadsController < ApplicationApiController
         before_action :ensure_json_request
         before_action :load_resource, only: [:create]
