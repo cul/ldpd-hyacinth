@@ -4,11 +4,11 @@ import { useQuery } from '@apollo/react-hooks';
 import { capitalize } from 'lodash';
 
 import ContextualNavbar from '../../layout/ContextualNavbar';
+import { Can } from '../../../util/ability_context';
 import { getProjectQuery } from '../../../graphql/projects';
 import GraphQLErrors from '../../ui/GraphQLErrors';
 import MetadataForm from '../metadata/MetadataForm';
 import DigitalObjectSummary from '../DigitalObjectSummary';
-
 
 function DigitalObjectNewForm() {
   const { projectStringKey, digitalObjectType } = useParams();
@@ -18,7 +18,7 @@ function DigitalObjectNewForm() {
     getProjectQuery, { variables: { stringKey: projectStringKey } },
   );
 
-  if (projectLoading ) return (<></>);
+  if (projectLoading) return (<></>);
   if (projectError) return (<GraphQLErrors errors={projectError} />);
   const { project: { stringKey, displayLabel } } = projectData;
 
@@ -37,8 +37,10 @@ function DigitalObjectNewForm() {
         title={`New ${capitalize(initialDigitalObject.digitalObjectType)}`}
         rightHandLinks={[{ link: '/digital_objects', label: 'Back to Digital Objects' }]}
       />
-      <DigitalObjectSummary digitalObject={initialDigitalObject} />
-      <MetadataForm formType="new" digitalObject={initialDigitalObject} />
+      <Can I="create_objects" of={{ subjectType: 'Project', stringKey }}>
+        <DigitalObjectSummary digitalObject={initialDigitalObject} />
+        <MetadataForm formType="new" digitalObject={initialDigitalObject} />
+      </Can>
     </>
   );
 }
