@@ -50,7 +50,8 @@ module Types
 
     def enabled_digital_object_types
       distinct_types = EnabledDynamicField.where(project: object).distinct('digital_object_type').pluck('digital_object_type')
-      # Ensure that values are always returned in alphabetical order
+      # Ensure that values are always returned in consistent
+      # alphabetical order so they can be used in UI lists
       distinct_types.sort!
     end
   end

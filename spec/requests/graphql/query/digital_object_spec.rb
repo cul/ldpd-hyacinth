@@ -18,7 +18,6 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
     end
 
     it "return a single digital object with expected fields" do
-      puts response.body.inspect
       expect(response.body).to be_json_eql(%(
         {
           "id": "#{authorized_object.uid}",
@@ -70,6 +69,21 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
           "updatedBy": null
         }
       )).at_path('data/digitalObject')
+    end
+  end
+
+  context "missing title field" do
+    before do
+      sign_in_project_contributor to: :read_objects, project: authorized_project
+      authorized_object.dynamic_field_data.delete('title')
+      authorized_object.save
+      graphql query(authorized_object.uid)
+    end
+
+    it "return a placeholder no-title value" do
+      expect(response.body).to be_json_eql(%(
+        "[No Title]"
+      )).at_path('data/digitalObject/title')
     end
   end
 
