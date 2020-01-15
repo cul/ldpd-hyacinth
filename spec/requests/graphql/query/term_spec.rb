@@ -100,7 +100,7 @@ RSpec.describe 'Query for Term', type: :request, solr: true do
         graphql query(vocabulary.string_key, term.uri)
       end
 
-      it 'returns expected json response' do
+      it 'still returns the term, despite the vocabulary being locked' do
         expect(response.body).to be_json_eql(expected_response).at_path('data/vocabulary')
       end
     end
