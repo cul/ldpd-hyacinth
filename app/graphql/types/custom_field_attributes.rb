@@ -5,6 +5,6 @@ module Types
     description 'A custom field field/value pair'
 
     argument :field, String, required: true
-    argument :value, Types::Scalar::AnyPrimativeType, required: true
+    argument :value, Types::Scalar::AnyPrimitiveType, required: true
   end
 end

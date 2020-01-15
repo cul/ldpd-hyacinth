@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Types::Scalar::AnyPrimativeType < Types::BaseScalar
+class Types::Scalar::AnyPrimitiveType < Types::BaseScalar
   description "A valid Integer, String, or Boolean"
 
   def self.coerce_input(input_value, _context)

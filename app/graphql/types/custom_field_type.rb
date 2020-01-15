@@ -5,6 +5,6 @@ module Types
     description 'A custom field value'
 
     field :field, String, null: false
-    field :value, Types::Scalar::AnyPrimativeType, null: true
+    field :value, Types::Scalar::AnyPrimitiveType, null: true
   end
 end
