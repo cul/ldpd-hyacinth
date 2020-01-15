@@ -14,7 +14,7 @@ class Mutations::Term::CreateTerm < Mutations::Term::BaseMutation
   def resolve(vocabulary_string_key:, custom_fields: [], **attributes)
     ability.authorize! :create, Term
 
-    vocabulary = find_vocabulary!(vocabulary_string_key)
+    vocabulary = find_unlocked_vocabulary!(vocabulary_string_key)
 
     term = Term.new(**attributes)
     term.vocabulary = vocabulary

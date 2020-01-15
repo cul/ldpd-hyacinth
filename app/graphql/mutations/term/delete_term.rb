@@ -7,7 +7,7 @@ class Mutations::Term::DeleteTerm < Mutations::Term::BaseMutation
   field :term, Types::TermType, null: true
 
   def resolve(vocabulary_string_key:, uri:)
-    vocabulary = find_vocabulary!(vocabulary_string_key)
+    vocabulary = find_unlocked_vocabulary!(vocabulary_string_key)
     term = Term.find_by!(vocabulary: vocabulary, uri: uri)
 
     ability.authorize! :delete, term
