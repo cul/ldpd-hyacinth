@@ -1,14 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-class TabBody extends React.PureComponent {
-  render() {
-    const { children } = this.props;
+function TabBody(props) {
+  const { children } = props;
 
-    return (
-      <div className="m-3">{children}</div>
-    );
-  }
+  return <div className="m-3">{children}</div>;
 }
 
 TabBody.propTypes = {
