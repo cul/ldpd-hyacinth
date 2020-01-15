@@ -38,7 +38,7 @@ RSpec.describe Mutations::Vocabulary::CreateVocabulary, type: :request do
       end
     end
 
-    context 'when string_key is missing' do
+    context 'when stringKey is missing' do
       let(:variables) do
         { input: { stringKey: nil, label: 'Collections' } }
       end
