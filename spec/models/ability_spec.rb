@@ -9,6 +9,7 @@ RSpec.describe Ability, type: :model do
       { actions: [:read, :update], conditions: { id: 1 }, subject: ["User"], inverted: false },
       { actions: [:read, :update], conditions: { uid: user.uid }, subject: ["User"], inverted: false },
       { actions: [:read, :create], conditions: {}, subject: ["Term"], inverted: false },
+      { actions: [:read], conditions: {}, subject: ["Vocabulary"], inverted: false },
       { actions: [:read], conditions: {}, subject: ["DynamicFieldCategory"], inverted: false }
     ]
   end
@@ -28,7 +29,7 @@ RSpec.describe Ability, type: :model do
     let(:user) { FactoryBot.create(:user, is_admin: true) }
 
     it { is_expected.to be_able_to(:manage, :all) }
-    it { is_expected.to be_able_to(:manage, :vocabulary) }
+    it { is_expected.to be_able_to(:manage, Vocabulary) }
     it { is_expected.to be_able_to(:manage, DigitalObject) }
     it { is_expected.to be_able_to(:update, Project) }
     it { is_expected.to be_able_to(:update, PublishTarget) }
@@ -84,9 +85,10 @@ RSpec.describe Ability, type: :model do
     it { is_expected.to be_able_to(:manage, User) }
     it { is_expected.to be_able_to(:read, User) }
     it { is_expected.to be_able_to(:update, User) }
-    it { is_expected.to be_able_to(:show, :vocabulary) }
-    it { is_expected.to be_able_to(:update, :vocabulary) }
-    it { is_expected.to be_able_to(:manage, :vocabulary) }
+
+    it { is_expected.to be_able_to(:show, Vocabulary) }
+    it { is_expected.to be_able_to(:update, Vocabulary) }
+    it { is_expected.to be_able_to(:manage, Vocabulary) }
 
     it 'serializes correctly' do
       expect(ability.to_list).to match_array(

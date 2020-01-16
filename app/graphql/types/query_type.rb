@@ -10,7 +10,7 @@ module Types
     end
 
     field :users, [UserType], null: true do
-      description "List of all users"
+      description 'List of all users'
     end
 
     field :user, UserType, null: true do
@@ -38,6 +38,14 @@ module Types
       description 'Information about available project permission actions.'
     end
 
+    field :vocabulary, VocabularyType, null: true do
+      argument :string_key, ID, required: true
+    end
+
+    field :vocabularies, VocabularyType.results_type, null: true, extensions: [Types::Extensions::Paginate] do
+      description "List of all vocabularies"
+    end
+
     def digital_objects
       # This is a temporary implementation, this should actually querying solr
       # and considering object read permissions.
@@ -48,6 +56,17 @@ module Types
       digital_object = ::DigitalObject::Base.find(id)
       ability.authorize!(:read, digital_object)
       digital_object
+    end
+
+    def vocabulary(string_key:)
+      vocabulary = Vocabulary.find_by!(string_key: string_key)
+      ability.authorize!(:read, vocabulary)
+      vocabulary
+    end
+
+    def vocabularies(_arguments)
+      ability.authorize!(:read, Vocabulary)
+      Vocabulary.accessible_by(ability).order(:label)
     end
 
     def project(string_key:)
@@ -82,10 +101,6 @@ module Types
 
     def authenticated_user
       context[:current_user]
-    end
-
-    def ability
-      context[:ability]
     end
   end
 end

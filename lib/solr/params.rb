@@ -15,7 +15,7 @@ module Solr
     end
 
     def fq(field, value)
-      @parameters[:fq] << "#{field}:\"#{Solr::Utils.escape(value)}\"" unless value.nil? ## should probably escape
+      @parameters[:fq] << "#{field}:\"#{Solr::Utils.escape(value)}\"" unless value.nil?
       self
     end
 

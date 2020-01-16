@@ -19,7 +19,8 @@ class Ability
       # Permissions all users get
       can [:read, :update], User, id: user.id
       can [:read, :update], User, uid: user.uid
-      can [:read, :create], :term
+      can [:read, :create], Term
+      can :read, Vocabulary           # Need to allow this because Terms are nested under vocabularies
       can :read, DynamicFieldCategory # Need to allow this so we can render EnabledDynamicField pages.
 
       # System Wide Permissions
@@ -51,8 +52,8 @@ class Ability
       when Permission::MANAGE_USERS
         can :manage, User
       when Permission::MANAGE_VOCABULARIES
-        can :manage, :vocabulary
-        can :manage, :term
+        can :manage, Vocabulary
+        can :manage, Term
         can :manage, :custom_field
       when Permission::READ_ALL_DIGITAL_OBJECTS
         can :read, [Project, PublishTarget, FieldSet]

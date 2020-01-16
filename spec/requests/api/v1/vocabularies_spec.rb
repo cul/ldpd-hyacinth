@@ -10,16 +10,10 @@ RSpec.describe 'Vocabularies Request', type: :request do
   end
 
   describe 'GET /api/v1/vocabularies' do
-    include_examples 'requires user to have correct permissions' do
-      let(:request) do
-        get '/api/v1/vocabularies'
-      end
-    end
-
-    context 'when logged in user has appropriate permissions' do
+    context 'when user is logged in' do
       let(:response) { instance_double('UriService::Client::Response', data: {}, status: 200) }
 
-      before { sign_in_user as: :vocabulary_manager }
+      before { sign_in_user }
 
       it 'makes correct request to external service' do
         expect(connection).to receive(:vocabularies).with({}) { response }
@@ -34,16 +28,10 @@ RSpec.describe 'Vocabularies Request', type: :request do
   end
 
   describe 'GET /api/v1/vocabularies/:string_key' do
-    include_examples 'requires user to have correct permissions' do
-      let(:request) do
-        get '/api/v1/vocabularies/spells'
-      end
-    end
-
-    context 'when logged in user has appropriate permissions' do
+    context 'when user is logged in' do
       let(:response) { instance_double('UriService::Client::Response', data: {}, status: 200) }
 
-      before { sign_in_user as: :vocabulary_manager }
+      before { sign_in_user }
 
       it 'makes correct request to external service' do
         expect(connection).to receive(:vocabulary).with('spells') { response }
