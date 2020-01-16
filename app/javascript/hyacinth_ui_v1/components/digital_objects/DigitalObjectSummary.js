@@ -2,9 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 function DigitalObjectSummary(props) {
-
-  const { digitalObject } = props;
-  const { id, doi, primaryProject, otherProjects, numberOfChildren } = digitalObject;
+  const {
+    digitalObject: {
+      id, doi, primaryProject, otherProjects, numberOfChildren,
+    }
+  } = props;
 
   return (
     <div className="m-3">

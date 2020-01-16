@@ -9,29 +9,17 @@ module GraphQLHelper
   end
 
   def projects_query(is_primary: nil)
-    if is_primary.nil?
-      <<~GQL
-        query {
-          projects {
-            stringKey
-            displayLabel
-            projectUrl
-            isPrimary
-          }
+    # Remember: passing nil/null to isPrimary is a way to omit an isPrimary true/false filter altogether
+    <<~GQL
+      query {
+        projects(isPrimary: #{is_primary}) {
+          stringKey
+          displayLabel
+          projectUrl
+          isPrimary
         }
-      GQL
-    else
-      <<~GQL
-        query {
-          projects(isPrimary: #{is_primary}) {
-            stringKey
-            displayLabel
-            projectUrl
-            isPrimary
-          }
-        }
-      GQL
-    end
+      }
+    GQL
   end
 
   def project_query(string_key)

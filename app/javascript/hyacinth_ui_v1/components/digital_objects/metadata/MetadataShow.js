@@ -10,6 +10,7 @@ import Label from '../../ui/forms/Label';
 import PlainText from '../../ui/forms/inputs/PlainText';
 import { getMetadataDigitalObjectQuery } from '../../../graphql/digitalObjects';
 import GraphQLErrors from '../../ui/GraphQLErrors';
+import { digitalObjectAbility } from '../../../util/ability';
 
 function MetadataShow(props) {
   const { id } = props;
@@ -36,7 +37,7 @@ function MetadataShow(props) {
   if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
 
   const { digitalObject } = digitalObjectData;
-  const { identifiers, dynamicFieldData } = digitalObject;
+  const { identifiers, dynamicFieldData, primaryProject } = digitalObject;
 
   const renderField = (dynamicField, data) => {
     const { displayLabel, fieldType } = dynamicField;
@@ -99,8 +100,10 @@ function MetadataShow(props) {
     );
   };
 
+  const canEdit = digitalObjectAbility.can('update_objects', { primaryProject: digitalObject.primaryProject, otherProjects: digitalObject.otherProjects });
+
   return (
-    <MetadataTab digitalObject={digitalObject} editButton>
+    <MetadataTab digitalObject={digitalObject} editButton={canEdit}>
       { dynamicFieldHierarchy.map(category => renderCategory(category, dynamicFieldData)) }
       <h4 className="text-orange">Identifiers</h4>
       <ul className="list-unstyled">

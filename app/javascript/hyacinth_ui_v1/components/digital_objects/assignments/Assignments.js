@@ -30,8 +30,8 @@ function Assignments(props) {
   );
 }
 
-export default Assignments;
-
 Assignments.propTypes = {
   id: PropTypes.string.isRequired,
 };
+
+export default Assignments;
