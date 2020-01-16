@@ -20,7 +20,7 @@ module Hyacinth
           # If we got here, there's an existing lock on this record. Let's examime that lock.
           database_entry_lock = ::DatabaseEntryLock.find_by(lock_key: key)
 
-          if database_entry_lock.created_at > DateTime.current
+          if database_entry_lock.expires_at > DateTime.current
             # If the lock is still valid, based on expires_at time, then raise an exception.
             raise Hyacinth::Exceptions::UnableToObtainLockError, "Lock on #{key} is currently held by another process."
           else
