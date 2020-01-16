@@ -110,26 +110,6 @@ RSpec.describe Mutations::Term::UpdateTerm, type: :request, solr: true do
       end
     end
 
-    context 'when updating term_type' do
-      let(:term) { FactoryBot.create(:external_term, vocabulary: vocabulary) }
-      let(:variables) do
-        {
-          input: {
-            vocabularyStringKey: vocabulary.string_key,
-            uri: term.uri,
-            termType: 'local'
-          }
-        }
-      end
-
-      before { graphql query, variables }
-
-      it 'does not update record' do
-        term.reload
-        expect(term.uri).not_to eql 'local'
-      end
-    end
-
     context 'when attempting to update a uri that is not associated with a known term' do
       let(:variables) do
         {
