@@ -7,6 +7,7 @@ import DigitalObjectInterface from '../DigitalObjectInterface';
 import TabHeading from '../../ui/tabs/TabHeading';
 import { getPreservePublishDigitalObjectQuery } from '../../../graphql/digitalObjects';
 import GraphQLErrors from '../../ui/GraphQLErrors';
+import { digitalObjectAbility } from '../../../util/ability';
 
 function PreservePublish(props) {
   const { id } = props;
@@ -23,19 +24,22 @@ function PreservePublish(props) {
   if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
   const { digitalObject } = digitalObjectData;
 
-  return (
-    <DigitalObjectInterface digitalObject={digitalObject}>
-      <TabHeading>
-        Preserve / Publish
-      </TabHeading>
+  const canUpdateObject = digitalObjectAbility.can('update_objects', { primaryProject: digitalObject.primaryProject, otherProjects: digitalObject.otherProjects });
+  const canPublishObject = digitalObjectAbility.can('publish_objects', { primaryProject: digitalObject.primaryProject, otherProjects: digitalObject.otherProjects });
 
+  const renderPreservePublishContent = () => (
+    <>
       <Alert variant="info">
         <strong>Preserve: </strong>
         Write the latest data for this digital object to the preservation repository.
       </Alert>
 
       <div className="text-right mb-3">
-        <Button>Preserve</Button>
+        {
+          canUpdateObject
+            ? <Button>Preserve</Button>
+            : <span>You do not have permission to preserve this Digital Object.</span>
+        }
       </div>
 
       <Alert variant="info">
@@ -46,11 +50,24 @@ function PreservePublish(props) {
       </Alert>
 
       <div className="text-right mb-3">
-        <Button>Preserve &amp; Publish</Button>
+        {
+          canUpdateObject && canPublishObject
+            ? <Button>Preserve &amp; Publish</Button>
+            : <span>You do not have permission to preserve and publish this Digital Object.</span>
+        }
       </div>
+    </>
+  );
+
+  return (
+    <DigitalObjectInterface digitalObject={digitalObject}>
+      <TabHeading>
+        Preserve / Publish
+      </TabHeading>
+      { renderPreservePublishContent() }
     </DigitalObjectInterface>
   );
-};
+}
 
 export default PreservePublish;
 
