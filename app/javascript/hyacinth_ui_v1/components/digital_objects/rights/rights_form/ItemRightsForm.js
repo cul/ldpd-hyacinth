@@ -5,6 +5,7 @@ import { Form, Collapse } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { merge } from 'lodash';
 
+import keyTransformer from '../../../../util/keyTransformer';
 import Label from '../../../ui/forms/Label';
 import InputGroup from '../../../ui/forms/InputGroup';
 import BooleanRadioButtons from '../../../ui/forms/inputs/BooleanRadioButtons';
@@ -26,8 +27,8 @@ function ItemRightsForm(props) {
   const { id, rights: initialRights, dynamicFieldData } = digitalObject;
   const history = useHistory();
 
-  const [rights, setRights] = useState(merge({}, defaultItemRights(), initialRights));
-
+  const camelizedInitialRights = keyTransformer.deepCamelCase(initialRights);
+  const [rights, setRights] = useState(merge({}, defaultItemRights(), camelizedInitialRights));
   const onChange = (subsection, value) => {
     setRights(produce(rights, (draft) => {
       draft[subsection] = value;
@@ -37,7 +38,7 @@ function ItemRightsForm(props) {
   const onSubmitHandler = () => {
     return digitalObjectApi.rights.update(
       id,
-      { digitalObject: { rights } },
+      { digitalObject: { rights: keyTransformer.deepSnakeCase(rights) } },
     ).then(res => history.push(`/digital_objects/${res.data.digitalObject.uid}/rights`));
   };
 

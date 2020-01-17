@@ -15,10 +15,10 @@ const typeOfContent = [
   { label: 'Literary works', value: 'literary' },
   { label: 'Musical works, including any accompanying words', value: 'musical' },
   { label: 'Dramatic works, including any accompanying music', value: 'dramatic' },
-  { label: 'Pantomimes and choreographic works', value: 'pantomimesAndChoreographic' },
-  { label: 'Pictorial, graphic, and sculptural works', value: 'pictoralGraphicAndScuptural' },
-  { label: 'Motion pictures and other audiovisual works ', value: 'motionPicture' },
-  { label: 'Sound recordings', value: 'soundRecordings' },
+  { label: 'Pantomimes and choreographic works', value: 'pantomimes_and_choreographic' },
+  { label: 'Pictorial, graphic, and sculptural works', value: 'pictoral_graphic_and_scuptural' },
+  { label: 'Motion pictures and other audiovisual works ', value: 'motion_picture' },
+  { label: 'Sound recordings', value: 'sound_recordings' },
   { label: 'Architectural works', value: 'architectural' },
 ];
 
