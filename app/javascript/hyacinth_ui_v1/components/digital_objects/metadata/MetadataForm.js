@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import produce from 'immer';
 import axios from 'axios';
-import { merge, camelCase } from 'lodash';
-import { Fade } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
+import { merge } from 'lodash';
+import { useHistory } from 'react-router-dom';
 
 import hyacinthApi, {
-  enabledDynamicFields, dynamicFieldCategories, digitalObject,
+  enabledDynamicFields, dynamicFieldCategories, digitalObject as digitalObjectApi
 } from '../../../util/hyacinth_api';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import TabHeading from '../../ui/tabs/TabHeading';
@@ -25,29 +25,98 @@ const defaultFieldValue = {
   controlled_term: {},
 };
 
-class MetadataForm extends React.PureComponent {
-  state = {
-    formType: 'edit',
-    uid: '',
-    dynamicFields: [],
-    dynamicFieldData: {},
-    defaultFieldData: {},
-    identifiers: [],
-    loaded: false,
-  }
+function MetadataForm(props) {
+  const { digitalObject, formType } = props;
+  const { id, primaryProject, digitalObjectType, dynamicFieldData: initialDynamicFieldData } = digitalObject;
+  const [dynamicFieldHierarchy, setDynamicFieldHierarchy] = useState(null);
+  const [defaultFieldData, setDefaultFieldData] = useState(null);
+  const [dynamicFieldData, setDynamicFieldData] = useState(null);
+  const [identifiers, setIdentifiers] = useState(digitalObject.identifiers);
+  const history = useHistory();
 
-  componentDidMount = () => {
-    const {
-      data: {
-        uid, dynamicFieldData, primaryProject, digitalObjectType, identifiers
-      },
-      formType,
-    } = this.props;
-    // this.setState(produce((draft) => {
-    //   draft.digitalObject.digitalObjectDataJson.projects[0].stringKey = project;
-    //   draft.digitalObject.digitalObjectDataJson.digitalObjectType = digitalObjectType;
-    // }));
+  const onChange = (fieldName, fieldVal) => {
+    setDynamicFieldData(produce(dynamicFieldData, (draft) => {
+      draft[fieldName] = fieldVal;
+    }));
+  };
 
+  const onIdentifierChange = (value) => {
+    setIdentifiers(value);
+  };
+
+  const onSubmitHandler = () => {
+    if (formType === 'edit') {
+      return digitalObjectApi.update(
+        id,
+        { digitalObject: { dynamicFieldData, identifiers } },
+      ).then(res => history.push(`/digital_objects/${res.data.digitalObject.uid}/metadata`));
+    }
+
+    if (formType === 'new') {
+      return digitalObjectApi.create({
+        digitalObject: { ...digitalObject, dynamicFieldData, identifiers },
+      }).then(res => history.push(`/digital_objects/${res.data.digitalObject.uid}/metadata`));
+    }
+
+    throw new Error(`Unhandled formType: ${formType}`);
+  };
+
+  const emptyDynamicFieldData = (dynamicFields, newObject) => {
+    dynamicFields.forEach((i) => {
+      switch (i.type) {
+        case 'DynamicFieldGroup':
+          newObject[i.stringKey] = [emptyDynamicFieldData(i.children, {})];
+          break;
+        case 'DynamicField':
+          newObject[i.stringKey] = defaultFieldValue[i.fieldType];
+          break;
+        default:
+          break;
+      }
+    });
+
+    return newObject;
+  };
+
+  const keepEnabledFields = (enabledFieldIds, children) => {
+    return children.map((c) => {
+      switch (c.type) {
+        case 'DynamicFieldGroup':
+          c.children = keepEnabledFields(enabledFieldIds, c.children);
+          return c.children.length > 0 ? c : null;
+        case 'DynamicField':
+          return enabledFieldIds.includes(c.id) ? c : null;
+        default:
+          return c;
+      }
+    }).filter(c => c !== null);
+  };
+
+  const renderCategory = (category) => {
+    const { displayLabel, children } = category;
+    return (
+      <div key={displayLabel}>
+        <h4 className="text-orange">{displayLabel}</h4>
+        {
+          children.map((fieldGroup) => {
+            return (
+              <FieldGroupArray
+                key={`array_${fieldGroup.stringKey}`}
+                dynamicFieldGroup={fieldGroup}
+                value={dynamicFieldData[fieldGroup.stringKey]}
+                defaultValue={defaultFieldData[fieldGroup.stringKey][0]}
+                onChange={v => onChange(fieldGroup.stringKey, v)}
+              />
+            )
+          })
+        }
+      </div>
+    );
+  };
+
+  // TODO: Replace effect below with GraphQL when we have a GraphQL DynamicFieldCategories API
+
+  useEffect(() => {
     // Grab all dynamic fields. Grab all the fields that are enabled for this digital object
     // type within this project. Remove any fields in the group of dynamic fields that aren't
     // enabled for this object's projects.
@@ -57,152 +126,59 @@ class MetadataForm extends React.PureComponent {
     ]).then(axios.spread((enabledFields, dynamicFieldGraph) => {
       const enabledFieldIds = enabledFields.data.enabledDynamicFields.map(f => f.dynamicFieldId);
 
-      const dynamicFields = dynamicFieldGraph.data.dynamicFieldCategories.map((category) => {
-        category.children = this.keepEnabledFields(enabledFieldIds, category.children);
+      const filteredDynamicFields = dynamicFieldGraph.data.dynamicFieldCategories.map((category) => {
+        category.children = keepEnabledFields(enabledFieldIds, category.children);
         return category;
       }).filter(c => c.children.length > 0);
 
-      let emptyData = {};
-      dynamicFields.forEach((category) => {
-        this.emptyDynamicFieldData(category.children, emptyData);
+      const emptyData = {};
+      filteredDynamicFields.forEach((category) => {
+        emptyDynamicFieldData(category.children, emptyData);
       });
 
-      this.setState(produce((draft) => {
-        draft.uid = uid;
-        draft.formType = formType;
-        draft.dynamicFields = dynamicFields;
-        draft.defaultFieldData = emptyData;
-        draft.dynamicFieldData = merge({}, emptyData, dynamicFieldData);
-        draft.identifiers = identifiers;
-        draft.loaded = true;
-      }));
+      setDynamicFieldHierarchy(filteredDynamicFields);
+      setIdentifiers(identifiers);
+      setDefaultFieldData(emptyData);
+
+      // Merge emptyData and dynamicFieldData so that we don't supply undefined values to the
+      // form as we build out the hierarchy.
+      setDynamicFieldData(merge({}, emptyData, initialDynamicFieldData));
     }));
-  }
+  }, []);
 
-  onChange(fieldName, fieldVal) {
-    this.setState(produce((draft) => {
-      draft.dynamicFieldData[fieldName] = fieldVal;
-    }));
-  }
+  if (!(dynamicFieldHierarchy && dynamicFieldData && defaultFieldData)) return (<></>);
 
-  onIdentifierChange(value) {
-    this.setState(produce((draft) => {
-      draft.identifiers = value;
-    }));
-  }
+  return (
+    <>
+      <TabHeading>
+        Metadata
+      </TabHeading>
 
-  onSubmitHandler = () => {
-    const { dynamicFieldData, identifiers, uid, formType } = this.state;
-    const { history: { push } } = this.props;
+      <form>
+        { dynamicFieldHierarchy.map(category => renderCategory(category)) }
 
-    if (formType === 'edit') {
-      return digitalObject.update(
-        uid,
-        { digitalObject: { dynamicFieldData, identifiers } },
-      ).then(res => push(`/digital_objects/${res.data.digitalObject.uid}`));
-    }
+        <h4 className="text-orange">Identifiers</h4>
+        <InputGroup>
+          <TextInputWithAddAndRemove
+            sm={12}
+            values={identifiers}
+            onChange={v => onIdentifierChange(v)}
+          />
+        </InputGroup>
 
-    if (formType === 'new') {
-      const { data } = this.props;
-
-      return digitalObject.create({
-        digitalObject: { ...data, dynamicFieldData, identifiers },
-      }).then(res => push(`/digital_objects/${res.data.digitalObject.uid}`));
-    }
-  }
-
-  emptyDynamicFieldData(dynamicFields, newObject) {
-    dynamicFields.forEach((i) => {
-      switch (i.type) {
-        case 'DynamicFieldGroup':
-          newObject[camelCase(i.stringKey)] = [this.emptyDynamicFieldData(i.children, {})];
-          break;
-        case 'DynamicField':
-          newObject[camelCase(i.stringKey)] = defaultFieldValue[i.fieldType];
-          break;
-        default:
-          break;
-      }
-    });
-
-    return newObject;
-  }
-
-  keepEnabledFields(enabledFieldIds, children) {
-    return children.map((c) => {
-      switch (c.type) {
-        case 'DynamicFieldGroup':
-          c.children = this.keepEnabledFields(enabledFieldIds, c.children);
-          return c.children.length > 0 ? c : null;
-        case 'DynamicField':
-          return enabledFieldIds.includes(c.id) ? c : null;
-        default:
-          return c;
-      }
-    }).filter(c => c !== null);
-  }
-
-  renderCategory(category) {
-    const { displayLabel, children } = category;
-    const { dynamicFieldData, defaultFieldData } = this.state;
-
-    return (
-      <div key={displayLabel}>
-        <h4 className="text-orange">{displayLabel}</h4>
-        {
-          children.map(c => (
-            <FieldGroupArray
-              key={`array_${c.stringKey}`}
-              dynamicFieldGroup={c}
-              value={dynamicFieldData[camelCase(c.stringKey)]}
-              defaultValue={defaultFieldData[camelCase(c.stringKey)][0]}
-              onChange={v => this.onChange(camelCase(c.stringKey), v)}
-            />
-          ))
-        }
-      </div>
-    );
-  }
-
-  render() {
-    const {
-      loaded, dynamicFields, identifiers, formType, uid,
-    } = this.state;
-
-    return (
-      <>
-        <TabHeading>
-          Metadata
-          {/* <EditButton
-            className="float-right"
-            size="lg"
-            link={`/digital_objects/${id}/metadata/edit`}
-          /> */}
-        </TabHeading>
-
-        <Fade in={loaded}>
-          <div>
-            { dynamicFields.map(category => this.renderCategory(category)) }
-
-            <h4 className="text-orange">Identifiers</h4>
-            <InputGroup>
-              <TextInputWithAddAndRemove
-                sm={12}
-                values={identifiers}
-                onChange={v => this.onIdentifierChange(v)}
-              />
-            </InputGroup>
-
-            <FormButtons
-              formType={formType}
-              cancelTo={`/digital_objects/${uid}/metadata`}
-              onSave={this.onSubmitHandler}
-            />
-          </div>
-        </Fade>
-      </>
-    );
-  }
+        <FormButtons
+          formType={formType}
+          cancelTo={`/digital_objects/${id}/metadata`}
+          onSave={onSubmitHandler}
+        />
+      </form>
+    </>
+  );
 }
 
-export default withRouter(withErrorHandler(MetadataForm, hyacinthApi));
+export default withErrorHandler(MetadataForm, hyacinthApi);
+
+MetadataForm.propTypes = {
+  digitalObject: PropTypes.objectOf(PropTypes.any).isRequired,
+  formType: PropTypes.oneOf(['new', 'edit']).isRequired,
+};

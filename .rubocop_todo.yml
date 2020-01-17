@@ -160,6 +160,7 @@ Metrics/MethodLength:
     - 'lib/hyacinth/adapters/preservation_adapter/fedora3/rels_ext_properties.rb'
     - 'lib/hyacinth/xml_generator/element.rb'
     - 'lib/tasks/hyacinth/setup.rake'
+    - 'spec/support/graphql_helper.rb'
 
 # Offense count: 1
 # Configuration parameters: CountComments, Max.

@@ -23,6 +23,7 @@ module Types
     end
 
     field :projects, [ProjectType], null: true do
+      argument :is_primary, Boolean, required: false
       description "List of all projects"
     end
 
@@ -75,9 +76,13 @@ module Types
       project
     end
 
-    def projects
+    def projects(is_primary: nil)
       ability.authorize!(:read, Project)
-      Project.accessible_by(ability)
+      if is_primary.nil?
+        Project.accessible_by(ability)
+      else
+        Project.where(is_primary: is_primary).accessible_by(ability)
+      end
     end
 
     def user(id:)

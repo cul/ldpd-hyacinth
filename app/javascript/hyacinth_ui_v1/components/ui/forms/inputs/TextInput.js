@@ -19,6 +19,7 @@ class TextInput extends React.PureComponent {
       <Col sm={10} style={{ alignSelf: 'center' }} {...rest}>
         <Form.Control
           type="text"
+          tabIndex="0"
           name={inputName}
           value={value}
           onChange={this.onChangeHandler}

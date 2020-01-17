@@ -42,13 +42,26 @@ export const deleteProjectMutation = gql`
   }
 `;
 
+const getProjectsFields = `
+  stringKey
+  displayLabel
+  isPrimary
+  projectUrl,
+  enabledDigitalObjectTypes
+`;
+
 export const getProjectsQuery = gql`
   query {
     projects {
-      stringKey
-      displayLabel
-      isPrimary
-      projectUrl
+      ${getProjectsFields}
+    }
+  }
+`;
+
+export const getPrimaryProjectsQuery = gql`
+  query {
+    projects(isPrimary: true) {
+      ${getProjectsFields}
     }
   }
 `;
@@ -71,6 +84,7 @@ export const getProjectWithPermissionsQuery = gql`
   query ProjectWithPermissions($stringKey: ID!){
     project(stringKey: $stringKey) {
       stringKey
+      displayLabel
       isPrimary
       projectPermissions {
         ${projectPermissionsFields}

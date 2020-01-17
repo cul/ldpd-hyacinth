@@ -36,7 +36,7 @@ export const digitalObject = {
   rights: {
     get: id => instance.get(`/digital_objects/${id}/rights`),
     update: (id, data) => instance.patch(`/digital_objects/${id}/rights`, data),
-  }
+  },
 };
 
 

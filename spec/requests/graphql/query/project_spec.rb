@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Retrieving Project', type: :request do
-  let(:project) { FactoryBot.create(:project) }
+  let(:project) { FactoryBot.create(:project, :with_enabled_dynamic_field) }
 
   include_examples 'requires user to have correct permissions for graphql request' do
     let(:request) { graphql project_query(project.string_key) }
@@ -12,7 +12,7 @@ RSpec.describe 'Retrieving Project', type: :request do
   context 'when logged in user has appropriate permissions' do
     before do
       sign_in_project_contributor to: :read_objects, project: project
-      user = FactoryBot.create(:user)
+      user = FactoryBot.create(:user, :basic)
       Permission.create(user: user, subject: 'Project', subject_id: project.id, action: 'read_objects')
       Permission.create(user: user, subject: 'Project', subject_id: project.id, action: 'create_objects')
     end
@@ -50,9 +50,12 @@ RSpec.describe 'Retrieving Project', type: :request do
                   "stringKey": "great_project"
                 },
                 "user": {
-                  "fullName": "Jane Doe"
+                  "fullName": "Basic User"
                 }
               }
+            ],
+            "enabledDigitalObjectTypes" : [
+              "item"
             ]
           }
         })).at_path('data')

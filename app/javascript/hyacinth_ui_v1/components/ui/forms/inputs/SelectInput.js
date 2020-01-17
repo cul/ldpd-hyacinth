@@ -23,7 +23,7 @@ class SelectInput extends React.PureComponent {
           value={value}
           onChange={this.onChangeHandler}
         >
-          <option value="">Select one...</option>
+          <option key="" value="">Select one...</option>
           {
             options.map(o => (
               <option key={o.value} value={o.value}>{o.label}</option>

@@ -2,11 +2,11 @@ import React from 'react';
 import { Card } from 'react-bootstrap';
 import produce from 'immer';
 
-import Label from '../../../ui/forms/Label';
-import InputGroup from '../../../ui/forms/InputGroup';
-import DateInput from '../../../ui/forms/inputs/DateInput';
-import ReadOnlyInput from '../../../ui/forms/inputs/ReadOnlyInput';
-import YesNoSelect from '../../../ui/forms/inputs/YesNoSelect';
+import Label from '../../../../ui/forms/Label';
+import InputGroup from '../../../../ui/forms/InputGroup';
+import DateInput from '../../../../ui/forms/inputs/DateInput';
+import ReadOnlyInput from '../../../../ui/forms/inputs/ReadOnlyInput';
+import YesNoSelect from '../../../../ui/forms/inputs/YesNoSelect';
 
 class CopyrightStatus extends React.PureComponent {
   onChange(fieldName, fieldVal) {

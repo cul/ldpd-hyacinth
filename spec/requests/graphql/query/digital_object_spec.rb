@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Retrieving Field Set', type: :request do
-  let(:authorized_object) { FactoryBot.create(:item, :with_project) }
+RSpec.describe 'Retrieving Digital Object', type: :request do
+  let(:authorized_object) { FactoryBot.create(:item, :with_primary_project, :with_other_projects) }
   let(:authorized_project) { authorized_object.projects.first }
   let(:authorized_publish_target) { authorized_project.publish_targets.first }
 
@@ -17,10 +17,12 @@ RSpec.describe 'Retrieving Field Set', type: :request do
       graphql query(authorized_object.uid)
     end
 
-    it "return a single digital object with id" do
+    it "return a single digital object with expected fields" do
       expect(response.body).to be_json_eql(%(
         {
           "id": "#{authorized_object.uid}",
+          "title": "The Best Item Ever",
+          "numberOfChildren": 0,
           "createdAt": "#{authorized_object.created_at}",
           "createdBy": null,
           "digitalObjectType": "item",
@@ -28,8 +30,8 @@ RSpec.describe 'Retrieving Field Set', type: :request do
           "dynamicFieldData": {
             "title": [
               {
-                "non_sort_portion": "The",
-                "sort_portion": "Best Item Ever"
+                "title_non_sort_portion": "The",
+                "title_sort_portion": "Best Item Ever"
               }
             ]
           },
@@ -40,14 +42,27 @@ RSpec.describe 'Retrieving Field Set', type: :request do
           "optimisticLockToken": "#{authorized_object.optimistic_lock_token}",
           "parents": [],
           "preservedAt": null,
-          "projects": [
+          "primaryProject": {
+            "displayLabel": "Great Project",
+            "projectUrl": "https://example.com/great_project",
+            "stringKey": "great_project"
+          },
+          "otherProjects" : [
             {
-              "displayLabel": "Great Project",
-              "projectUrl": "https://example.com/great_project",
-              "stringKey": "great_project"
+              "displayLabel": "Other Project A",
+              "projectUrl": "https://example.com/other_project_a",
+              "stringKey": "other_project_a"
+            },
+            {
+              "displayLabel": "Other Project B",
+              "projectUrl": "https://example.com/other_project_b",
+              "stringKey": "other_project_b"
             }
           ],
           "publishEntries": [],
+          "rights": {
+            "rights_field": "rights value"
+          },
           "serializationVersion": "1",
           "state": "active",
           "updatedAt": "#{authorized_object.updated_at}",
@@ -57,18 +72,40 @@ RSpec.describe 'Retrieving Field Set', type: :request do
     end
   end
 
+  context "missing title field" do
+    before do
+      sign_in_project_contributor to: :read_objects, project: authorized_project
+      authorized_object.dynamic_field_data.delete('title')
+      authorized_object.save
+      graphql query(authorized_object.uid)
+    end
+
+    it "return a placeholder no-title value" do
+      expect(response.body).to be_json_eql(%(
+        "[No Title]"
+      )).at_path('data/digitalObject/title')
+    end
+  end
+
   def query(id)
     <<~GQL
       query {
         digitalObject(id: "#{id}") {
           id
+          title
+          numberOfChildren
           serializationVersion
           dynamicFieldData
           doi
           state
           digitalObjectType
           identifiers
-          projects {
+          primaryProject {
+            stringKey
+            displayLabel
+            projectUrl
+          }
+          otherProjects {
             stringKey
             displayLabel
             projectUrl
@@ -99,6 +136,7 @@ RSpec.describe 'Retrieving Field Set', type: :request do
             }
           }
           optimisticLockToken
+          rights
         }
       }
     GQL

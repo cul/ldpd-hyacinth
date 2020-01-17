@@ -2,10 +2,10 @@ import React from 'react';
 import { Card } from 'react-bootstrap';
 import produce from 'immer';
 
-import Label from '../../../ui/forms/Label';
-import InputGroup from '../../../ui/forms/InputGroup';
-import ReadOnlyInput from '../../../ui/forms/inputs/ReadOnlyInput';
-import TextAreaInput from '../../../ui/forms/inputs/TextAreaInput';
+import Label from '../../../../ui/forms/Label';
+import InputGroup from '../../../../ui/forms/InputGroup';
+import ReadOnlyInput from '../../../../ui/forms/inputs/ReadOnlyInput';
+import TextAreaInput from '../../../../ui/forms/inputs/TextAreaInput';
 
 class AccessCondition extends React.PureComponent {
   onChange(fieldName, fieldVal) {

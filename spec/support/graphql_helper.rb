@@ -8,10 +8,11 @@ module GraphQLHelper
     post '/graphql', params: params
   end
 
-  def projects_query
+  def projects_query(is_primary: nil)
+    # Remember: passing nil/null to isPrimary is a way to omit an isPrimary true/false filter altogether
     <<~GQL
       query {
-        projects {
+        projects(isPrimary: #{is_primary}) {
           stringKey
           displayLabel
           projectUrl
@@ -40,6 +41,7 @@ module GraphQLHelper
             },
             actions
           }
+          enabledDigitalObjectTypes
         }
       }
     GQL

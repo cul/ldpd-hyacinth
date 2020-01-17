@@ -4,17 +4,17 @@ import { useQuery } from '@apollo/react-hooks';
 
 import DigitalObjectInterface from '../DigitalObjectInterface';
 import TabHeading from '../../ui/tabs/TabHeading';
-import { getChildrenDigitalObjectQuery } from '../../../graphql/digitalObjects';
+import { getAssignmentsDigitalObjectQuery } from '../../../graphql/digitalObjects';
 import GraphQLErrors from '../../ui/GraphQLErrors';
 
-function Children(props) {
+function Assignments(props) {
   const { id } = props;
 
   const {
     loading: digitalObjectLoading,
     error: digitalObjectError,
     data: digitalObjectData,
-  } = useQuery(getChildrenDigitalObjectQuery, {
+  } = useQuery(getAssignmentsDigitalObjectQuery, {
     variables: { id },
   });
 
@@ -24,14 +24,14 @@ function Children(props) {
 
   return (
     <DigitalObjectInterface digitalObject={digitalObject}>
-      <TabHeading>Manage Child Assets</TabHeading>
+      <TabHeading>Assignments</TabHeading>
       <p>This feature is currently unavailable.</p>
     </DigitalObjectInterface>
   );
 }
 
-export default Children;
-
-Children.propTypes = {
+Assignments.propTypes = {
   id: PropTypes.string.isRequired,
 };
+
+export default Assignments;
