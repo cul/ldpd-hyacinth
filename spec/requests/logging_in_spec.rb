@@ -51,12 +51,12 @@ describe 'Logging in', type: :request do
           If you believe that you should have access, please contact an application administrator.
         MESSAGE
       end
-      let(:normalized_flash_message) { flash_message.strip.gsub(/\s+/,' ') }
+      let(:normalized_flash_message) { flash_message.strip.gsub(/\s+/, ' ') }
 
       before { get '/users/do_cas_login', params: { ticket: ticket } }
 
       it 'error is displayed via flash notice' do
-        expect(flash[:notice].strip.gsub(/\s+/,' ')).to be_eql normalized_flash_message
+        expect(flash[:notice].strip.gsub(/\s+/, ' ')).to be_eql normalized_flash_message
       end
 
       it 'redirected to logout' do
@@ -95,6 +95,17 @@ describe 'Logging in', type: :request do
 
       it 'error is displayed via flash notice' do
         expect(flash[:alert]).to be_eql 'Invalid Email or password.'
+      end
+    end
+
+    context 'when user is deactivated' do
+      before do
+        FactoryBot.create(:user, :deactivated)
+        post '/users/sign_in', params: { user: { email: 'jane-doe@example.com', password: 'terriblepassword' } }
+      end
+
+      it 'error is displayed via flash notice' do
+        expect(flash[:alert]).to be_eql 'Your account is not active.'
       end
     end
   end
