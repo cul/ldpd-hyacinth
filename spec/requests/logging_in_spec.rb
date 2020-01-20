@@ -48,14 +48,15 @@ describe 'Logging in', type: :request do
       let(:flash_message) do
         <<~MESSAGE
           The UNI abc123 is not authorized to log into Hyacinth (no account exists with email abc123@columbia.edu).
-          If you believe that you should have access, please contact an application administrator.'
+          If you believe that you should have access, please contact an application administrator.
         MESSAGE
       end
+      let(:normalized_flash_message) { flash_message.strip.gsub(/\s+/,' ') }
 
       before { get '/users/do_cas_login', params: { ticket: ticket } }
 
       it 'error is displayed via flash notice' do
-        expect(flash[:notice]).to be_eql flash_message
+        expect(flash[:notice].strip.gsub(/\s+/,' ')).to be_eql normalized_flash_message
       end
 
       it 'redirected to logout' do
