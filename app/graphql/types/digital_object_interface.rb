@@ -41,6 +41,10 @@ module Types
     end
 
     def title
+      DigitalObjectInterface.title_for(object)
+    end
+
+    def self.title_for(object)
       val = '[No Title]'
 
       title_field_group = object.dynamic_field_data[TITLE_DYNAMIC_FIELD_GROUP_NAME]

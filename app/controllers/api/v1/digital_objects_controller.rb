@@ -11,7 +11,11 @@ module Api
       # GET /digital_objects/search.json
       def search
         @digital_objects = DigitalObjectRecord.all.map do |dor|
-          DigitalObject::Base.find(dor.uid).as_json(except: ['digital_object_record']).merge('id' => dor.uid)
+          object = DigitalObject::Base.find(dor.uid)
+          gql_compatibility_props = {
+            'id' => dor.uid, 'title' => Types::DigitalObjectInterface.title_for(object)
+          }
+          object.as_json(except: ['digital_object_record']).merge(gql_compatibility_props)
         end
         render json: {
           digital_objects: @digital_objects

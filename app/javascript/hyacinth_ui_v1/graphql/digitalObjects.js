@@ -72,12 +72,10 @@ export const getChildStructureQuery = gql`
     childStructure(id: $id) {
       parent {
         ${digitalObjectInterfaceFields},
-        dynamicFieldData,
       },
       type,
       structure {
         ${digitalObjectInterfaceFields},
-        dynamicFieldData,
       }
     }
   }

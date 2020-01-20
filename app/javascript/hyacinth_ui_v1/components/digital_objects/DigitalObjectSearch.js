@@ -22,18 +22,6 @@ export default class DigitalObjectSearch extends React.Component {
       });
   }
 
-  titleForDigitalObject = (digObj) => {
-    let title = '[No Title]';
-    if (has(digObj, 'dynamicFieldData.title[0]')) {
-      const titleData = digObj.dynamicFieldData.title[0];
-      title = titleData.titleSortPortion;
-      if (titleData.titleNonSortPortion) {
-        title = `${titleData.titleNonSortPortion} ${title}`;
-      }
-    }
-    return title;
-  }
-
   render() {
     const { digitalObjects } = this.state;
     return (
