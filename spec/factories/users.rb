@@ -40,5 +40,9 @@ FactoryBot.define do
         create(:permission, action: Permission::READ_ALL_DIGITAL_OBJECTS, user: user)
       end
     end
+
+    trait :deactivated do
+      is_active { false }
+    end
   end
 end
