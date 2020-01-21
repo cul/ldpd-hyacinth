@@ -110,6 +110,45 @@ RSpec.describe Mutations::Term::UpdateTerm, type: :request, solr: true do
       end
     end
 
+    context 'when trying to update custom fields' do
+      let(:term) { FactoryBot.create(:external_term, vocabulary: vocabulary) }
+      let(:variables) do
+        {
+          input: {
+            vocabularyStringKey: vocabulary.string_key,
+            uri: term.uri,
+            customFields: [
+              { field: "classification", value: "Horses" },
+              { field: "harry_potter_reference", value: false }
+            ]
+          }
+        }
+      end
+      let(:expected_response) do
+        %(
+          {
+            "term": {
+              "uri": "http://id.worldcat.org/fast/1161301/",
+              "prefLabel": "Unicorns",
+              "altLabels": [],
+              "authority": "fast",
+              "termType": "external",
+              "customFields": [
+                { "field": "classification", "value": "Horses" },
+                { "field": "harry_potter_reference", "value": false }
+              ]
+            }
+          }
+        )
+      end
+
+      before { graphql query, variables }
+
+      it 'returns updated term' do
+        expect(response.body).to be_json_eql(expected_response).at_path('data/updateTerm')
+      end
+    end
+
     context 'when attempting to update a uri that is not associated with a known term' do
       let(:variables) do
         {

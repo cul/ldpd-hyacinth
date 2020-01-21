@@ -1,45 +1,39 @@
 import React from 'react';
-import produce from 'immer';
+import { useParams } from 'react-router-dom';
+import { useQuery } from '@apollo/react-hooks';
+
 import ContextualNavbar from '../../layout/ContextualNavbar';
 import TermForm from './TermForm';
 import TermBreadcrumbs from './TermBreadcrumbs';
+import { getVocabularyQuery } from '../../../graphql/vocabularies';
+import GraphQLErrors from '../../ui/GraphQLErrors';
 
-import hyacinthApi, { vocabulary } from '../../../util/hyacinth_api';
+function TermNew() {
+  const { stringKey } = useParams();
 
-class TermNew extends React.Component {
-  state = {
-    vocabulary: null,
-  }
+  const { loading, error, data } = useQuery(
+    getVocabularyQuery, {
+      variables: { stringKey },
+    },
+  );
 
-  componentDidMount = () => {
-    const { match: { params: { stringKey, uri } } } = this.props;
+  if (loading) return (<></>);
+  if (error) return (<GraphQLErrors errors={error} />);
 
-    vocabulary(stringKey).get()
-      .then((res) => {
-        this.setState(produce((draft) => {
-          draft.vocabulary = res.data.vocabulary;
-        }));
-      });
-  }
+  const { vocabulary } = data;
 
-  render() {
-    const { vocabulary } = this.state;
+  return (
+    <>
+      <ContextualNavbar
+        title="Create Term"
+        rightHandLinks={[{ link: `/controlled_vocabularies/${vocabulary.stringKey}`, label: `Back to ${vocabulary.label}` }]}
+      />
 
-    return (
-      vocabulary && (
-        <>
-          <ContextualNavbar
-            title="Create Term"
-            rightHandLinks={[{ link: `/controlled_vocabularies/${vocabulary.stringKey}`, label: `Back to ${vocabulary.label}` }]}
-          />
+      <TermBreadcrumbs vocabulary={vocabulary} />
 
-          <TermBreadcrumbs vocabulary={vocabulary} />
-
-          <TermForm formType="new" vocabulary={vocabulary} />
-        </>
-      )
-    );
-  }
+      <TermForm formType="new" vocabulary={vocabulary} />
+    </>
+  );
 }
 
 export default TermNew;

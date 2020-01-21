@@ -1,118 +1,100 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Form } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
-import produce from 'immer';
+import { useMutation } from '@apollo/react-hooks';
+import { useHistory } from 'react-router-dom';
 
-import hyacinthApi, { vocabulary } from '../../util/hyacinth_api';
-import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import InputGroup from '../ui/forms/InputGroup';
 import Label from '../ui/forms/Label';
 import TextInput from '../ui/forms/inputs/TextInput';
 import PlainText from '../ui/forms/inputs/PlainText';
+import Checkbox from '../ui/forms/inputs/Checkbox';
 import FormButtons from '../ui/forms/FormButtons';
+import { createVocabularyMutation, updateVocabularyMutation, deleteVocabularyMutation } from '../../graphql/vocabularies';
+import GraphQLErrors from '../ui/GraphQLErrors';
 
-class ControlledVocabularyForm extends React.Component {
-  state = {
-    formType: '',
-    controlledVocabulary: {
-      stringKey: '',
-      label: '',
-      customFields: {},
-    },
-  }
+function ControlledVocabularyForm(props) {
+  const { formType, vocabulary } = props;
 
-  componentDidMount() {
-    const { formType, stringKey } = this.props;
+  const [label, setLabel] = useState(vocabulary ? vocabulary.label : '');
+  const [stringKey, setStringKey] = useState(vocabulary ? vocabulary.stringKey : '');
+  const [locked, setLocked] = useState(vocabulary ? vocabulary.locked : false);
 
-    if (stringKey) {
-      vocabulary(stringKey).get()
-        .then((res) => {
-          this.setState(produce((draft) => {
-            draft.controlledVocabulary = res.data.vocabulary;
-          }));
-        });
-    }
+  const history = useHistory();
 
-    this.setState(produce((draft) => {
-      draft.formType = formType;
-    }));
-  }
+  const [createVocabulary, { error: createError }] = useMutation(createVocabularyMutation);
+  const [updateVocabulary, { error: updateError }] = useMutation(updateVocabularyMutation);
+  const [deleteVocabulary, { error: deleteError }] = useMutation(deleteVocabularyMutation);
 
-  onSubmitHandler = () => {
-    const { formType, controlledVocabulary: { stringKey }, controlledVocabulary } = this.state;
-    const { history: { push } } = this.props;
+  const onSubmitHandler = () => {
+    const variables = { input: { stringKey, label, locked } };
 
     switch (formType) {
       case 'new':
-        return hyacinthApi.post('/vocabularies', { vocabulary: controlledVocabulary })
-          .then((res) => {
-            const { vocabulary: { stringKey: newStringKey } } = res.data;
-
-            push(`/controlled_vocabularies/${newStringKey}/edit`);
-          });
+        return createVocabulary({ variables }).then((res) => {
+          history.push(`/controlled_vocabularies/${res.data.createVocabulary.vocabulary.stringKey}/edit`);
+        });
       case 'edit':
-        return hyacinthApi.patch(`/vocabularies/${stringKey}`, { vocabulary: controlledVocabulary });
+        return updateVocabulary({ variables });
       default:
         return null;
     }
-  }
+  };
 
-  onDeleteHandler = (event) => {
+  const onDeleteHandler = (event) => {
     event.preventDefault();
 
-    const { controlledVocabulary: { stringKey } } = this.state;
-    const { history: { push } } = this.props;
+    const variables = { input: { stringKey } };
 
-    hyacinthApi.delete(`/controlled_vocabularies/${stringKey}`)
-      .then(() => push('/controlled_vocabularies'));
-  }
+    deleteVocabulary({ variables }).then(() => history.push('/controlled_vocabularies'));
+  };
 
-  onChangeHandler = (name, value) => {
-    this.setState(produce((draft) => { draft.controlledVocabulary[name] = value; }));
-  }
+  return (
+    <Form onSubmit={onSubmitHandler}>
+      <GraphQLErrors errors={createError || updateError || deleteError} />
 
-  render() {
-    const { formType, controlledVocabulary: { label, stringKey } } = this.state;
+      <InputGroup>
+        <Label>String Key</Label>
+        {
+          formType === 'new'
+            ? <TextInput value={stringKey} onChange={v => setStringKey(v)} />
+            : <PlainText value={stringKey} />
+        }
+      </InputGroup>
 
-    return (
-      <Form onSubmit={this.onSubmitHandler}>
-        <InputGroup>
-          <Label>String Key</Label>
-          {
-            formType === 'new'
-              ? <TextInput value={stringKey} onChange={v => this.onChangeHandler('stringKey', v)} />
-              : <PlainText value={stringKey} />
-          }
-        </InputGroup>
-
-        <InputGroup>
-          <Label>Label</Label>
-          <TextInput
-            value={label}
-            onChange={v => this.onChangeHandler('label', v)}
-          />
-        </InputGroup>
-
-        <FormButtons
-          formType={formType}
-          cancelTo={`/controlled_vocabularies/${stringKey}`}
-          onDelete={this.onDeleteHandler}
-          onSave={this.onSubmitHandler}
+      <InputGroup>
+        <Label>Label</Label>
+        <TextInput
+          value={label}
+          onChange={v => setLabel(v)}
         />
-      </Form>
+      </InputGroup>
 
-    );
-  }
+      <InputGroup>
+        <Label>Locked</Label>
+        <Checkbox value={locked} onChange={v => setLocked(v)} />
+      </InputGroup>
+
+      <FormButtons
+        formType={formType}
+        cancelTo={`/controlled_vocabularies/${stringKey}`}
+        onDelete={onDeleteHandler}
+        onSave={onSubmitHandler}
+      />
+    </Form>
+  );
 }
 
 ControlledVocabularyForm.defaultProps = {
-  stringKey: null,
+  vocabulary: null,
 };
 
 ControlledVocabularyForm.propTypes = {
   formType: PropTypes.oneOf(['new', 'edit']).isRequired,
-  stringKey: PropTypes.string,
+  vocabulary: PropTypes.shape({
+    stringKey: PropTypes.string,
+    label: PropTypes.string,
+  }),
 };
 
-export default withRouter(withErrorHandler(ControlledVocabularyForm, hyacinthApi));
+export default ControlledVocabularyForm;

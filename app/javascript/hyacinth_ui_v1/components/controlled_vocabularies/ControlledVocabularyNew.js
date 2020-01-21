@@ -3,19 +3,17 @@ import React from 'react';
 import ContextualNavbar from '../layout/ContextualNavbar';
 import ControlledVocabularyForm from './ControlledVocabularyForm';
 
-class ControlledVocabularyNew extends React.PureComponent {
-  render() {
-    return (
-      <>
-        <ContextualNavbar
-          title="Create Controlled Vocabulary"
-          rightHandLinks={[{ link: '/controlled_vocabularies', label: 'Back to All Controlled Vocabularies' }]}
-        />
+function ControlledVocabularyNew() {
+  return (
+    <>
+      <ContextualNavbar
+        title="Create Controlled Vocabulary"
+        rightHandLinks={[{ link: '/controlled_vocabularies', label: 'Back to All Controlled Vocabularies' }]}
+      />
 
-        <ControlledVocabularyForm formType="new" />
-      </>
-    );
-  }
+      <ControlledVocabularyForm formType="new" />
+    </>
+  );
 }
 
 export default ControlledVocabularyNew;

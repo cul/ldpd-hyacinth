@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Form } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
+import { useMutation } from '@apollo/react-hooks';
+import { useHistory } from 'react-router-dom';
 import produce from 'immer';
 
-import hyacinthApi, { terms } from '../../../util/hyacinth_api';
-import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import InputGroup from '../../ui/forms/InputGroup';
 import Label from '../../ui/forms/Label';
 import TextInput from '../../ui/forms/inputs/TextInput';
@@ -15,181 +14,196 @@ import NumberInput from '../../ui/forms/inputs/NumberInput';
 import ReadOnlyInput from '../../ui/forms/inputs/ReadOnlyInput';
 import PlainText from '../../ui/forms/inputs/PlainText';
 import FormButtons from '../../ui/forms/FormButtons';
+import GraphQLErrors from '../../ui/GraphQLErrors';
+import { createTermMutation, updateTermMutation, deleteTermMutation } from '../../../graphql/terms';
 
 const types = ['external', 'local', 'temporary'];
 
-class TermForm extends React.Component {
-  state = {
-    formType: '',
-    term: {
-      uri: '',
-      authority: '',
-      termType: '',
-      prefLabel: '',
-      altLabels: [],
-    },
-  }
+const useCustomFields = (initialState) => {
+  // Removing _typename from each hash.
+  const cleanedInitialState = initialState.map(({ __typename, ...rest }) => (rest));
 
-  componentDidMount() {
-    const { formType, term } = this.props;
+  const [customFields, setCustomFields] = useState(cleanedInitialState);
 
-    if (term) {
-      this.setState(produce((draft) => {
-        draft.term = term;
-      }));
+  const setCustomField = (field, value) => {
+    const index = customFields.findIndex(f => f.field === field);
+
+    if (index === -1) {
+      setCustomFields(produce(draft => draft.push({ field, value })));
+    } else {
+      setCustomFields(produce((draft) => { draft[index].value = value; }));
     }
+  };
 
-    this.setState(produce((draft) => {
-      draft.formType = formType;
-    }));
-  }
+  return [customFields, setCustomField];
+};
 
-  onSubmitHandler = (event) => {
-    const { formType, term: { uri }, term } = this.state;
-    const { history: { push }, vocabulary: { stringKey }, submitAction } = this.props;
+function TermForm(props) {
+  const {
+    formType, small, vocabulary, term, cancelAction, submitAction,
+  } = props;
+
+  const [uri, setUri] = useState(term ? term.uri : '');
+  const [prefLabel, setPrefLabel] = useState(term ? term.prefLabel : '');
+  const [altLabels, setAltLabels] = useState(term ? term.altLabels : []);
+  const [termType, setTermType] = useState(term ? term.termType : '');
+  const [authority, setAuthority] = useState(term ? term.authority : '');
+  const [customFields, setCustomField] = useCustomFields(term ? term.customFields : []);
+
+  const history = useHistory();
+
+  const [createTerm, { error: createError }] = useMutation(createTermMutation);
+  const [updateTerm, { error: updateError }] = useMutation(updateTermMutation);
+  const [deleteTerm, { error: deleteError }] = useMutation(deleteTermMutation);
+
+  const onSubmitHandler = () => {
+    const variables = {
+      input: {
+        vocabularyStringKey: vocabulary.stringKey,
+        uri,
+        prefLabel,
+        altLabels,
+        authority,
+        customFields,
+      },
+    };
 
     switch (formType) {
       case 'new':
-        return terms.create(stringKey, { term })
-          .then((res) => {
-            const { term: { uri: newURI } } = res.data;
+        variables.input.termType = termType;
 
-            if (submitAction) {
-              submitAction(res.data.term);
-            } else {
-              push(`/controlled_vocabularies/${stringKey}/terms/${encodeURIComponent(newURI)}/edit`);
-            }
-          });
+        return createTerm({ variables }).then((res) => {
+          const { term: { uri: newURI } } = res.data.createTerm;
+
+          if (submitAction) {
+            submitAction(res.data.createTerm.term);
+          } else {
+            history.push(`/controlled_vocabularies/${vocabulary.stringKey}/terms/${encodeURIComponent(newURI)}/edit`);
+          }
+        });
       case 'edit':
-        return terms.update(stringKey, encodeURIComponent(uri), { term });
+        return updateTerm({ variables });
       default:
         return null;
     }
-  }
+  };
 
-  onDeleteHandler = (event) => {
+  const onDeleteHandler = (event) => {
     event.preventDefault();
+    const variables = { input: { vocabularyStringKey: vocabulary.stringKey, uri } };
 
-    const {
-      match: { params: { stringKey, uri } },
-      history: { push }
-    } = this.props;
+    deleteTerm({ variables }).then(() => history.push(`/controlled_vocabularies/${vocabulary.stringKey}`));
+  };
 
-    terms.delete(stringKey, uri)
-      .then(() => push(`/controlled_vocabularies/${stringKey}`));
-  }
+  const labelColWidth = small ? 4 : 2;
+  const inputColWidth = small ? 8 : 10;
 
-  onChangeHandler = (name, value) => {
-    this.setState(produce((draft) => { draft.term[name] = value; }));
-  }
+  return (
+    <Form onSubmit={onSubmitHandler}>
+      <GraphQLErrors errors={createError || updateError || deleteError} />
 
-  render() {
-    const { match: { params: { stringKey } }, cancelAction, small } = this.props;
-    const {
-      formType,
-      term,
-      term: {
-        prefLabel, uri, authority, altLabels, termType,
-      },
-    } = this.state;
-
-    const { vocabulary } = this.props;
-    const labelColWidth = small ? 4 : 2;
-    const inputColWidth = small ? 8 : 10;
-
-    return (
-      <Form onSubmit={this.onSubmitHandler}>
-        <InputGroup>
-          <Label sm={labelColWidth}>Term Type</Label>
-          {
-            formType === 'new'
-              ? <SelectInput sm={inputColWidth} value={termType} onChange={v => this.onChangeHandler('termType', v)} options={types.map(t => ({ label: t, value: t }))} />
-              : <PlainText sm={inputColWidth} value={termType} />
-          }
-        </InputGroup>
-
-        <InputGroup>
-          <Label sm={labelColWidth}>URI</Label>
-          {
-            (() => {
-              if (formType === 'edit') {
-                return <PlainText value={uri} />;
-              } else if (termType === 'external' || termType === '') {
-                return <TextInput sm={inputColWidth} value={uri} onChange={v => this.onChangeHandler('uri', v)} />;
-              } else {
-                return <ReadOnlyInput sm={inputColWidth} value={uri} />;
-              }
-            })()
-          }
-        </InputGroup>
-
-        <InputGroup>
-          <Label sm={labelColWidth}>Pref Label</Label>
-          {
-            termType === 'temporary' && formType !== 'new'
-              ? <PlainText sm={inputColWidth} value={prefLabel} />
-              : <TextInput sm={inputColWidth} value={prefLabel} onChange={v => this.onChangeHandler('prefLabel', v)} />
-          }
-        </InputGroup>
-
+      <InputGroup>
+        <Label sm={labelColWidth}>Term Type</Label>
         {
-          termType !== 'temporary' && (
-            <InputGroup>
-              <Label sm={labelColWidth}>Alternative Labels</Label>
-              <TextInputWithAddAndRemove sm={inputColWidth} values={altLabels} onChange={v => this.onChangeHandler('altLabels', v)} />
-            </InputGroup>
-          )
+          formType === 'new'
+            ? <SelectInput sm={inputColWidth} value={termType} onChange={v => setTermType(v)} options={types.map(t => ({ label: t, value: t }))} />
+            : <PlainText sm={inputColWidth} value={termType} />
         }
+      </InputGroup>
 
-        <InputGroup>
-          <Label sm={labelColWidth}>Authority</Label>
-          <TextInput sm={inputColWidth} value={authority} onChange={v => this.onChangeHandler('authority', v)} />
-        </InputGroup>
+      <InputGroup>
+        <Label sm={labelColWidth}>URI</Label>
 
         {
-          Object.keys(vocabulary.customFields).map((k) => {
-            const { label, dataType } = vocabulary.customFields[k];
-
-            let field = '';
-
-            switch (dataType) {
-              case 'string':
-                field = <TextInput sm={inputColWidth} value={term[k]} onChange={v => this.onChangeHandler(k, v)} />;
-                break;
-              case 'integer':
-                field = <NumberInput sm={inputColWidth} value={term[k]} onChange={v => this.onChangeHandler(k, v)} />;
-                break;
-              default:
-                field = '';
-                break;
+          (() => {
+            if (formType === 'edit') {
+              return <PlainText value={uri} />;
+            } else if (termType === 'external' || termType === '') {
+              return <TextInput sm={inputColWidth} value={uri} onChange={v => setUri(v)} />;
+            } else {
+              return <ReadOnlyInput sm={inputColWidth} value={uri} />;
             }
-
-            return (
-              <InputGroup>
-                <Label sm={labelColWidth}>{label}</Label>
-                { field }
-              </InputGroup>
-            );
-          })
+          })()
         }
+      </InputGroup>
 
-        <FormButtons
-          formType={formType}
-          cancelTo={`/controlled_vocabularies/${stringKey}`}
-          cancelAction={cancelAction}
-          onSave={this.onSubmitHandler}
-          onDelete={this.onDeleteHandler}
-        />
-      </Form>
-    );
-  }
+      <InputGroup>
+        <Label sm={labelColWidth}>Pref Label</Label>
+        {
+          termType === 'temporary' && formType !== 'new'
+            ? <PlainText sm={inputColWidth} value={prefLabel} />
+            : <TextInput sm={inputColWidth} value={prefLabel} onChange={v => setPrefLabel(v)} />
+        }
+      </InputGroup>
+
+      {
+        termType !== 'temporary' && (
+          <InputGroup>
+            <Label sm={labelColWidth}>Alternative Labels</Label>
+            <TextInputWithAddAndRemove sm={inputColWidth} values={altLabels} onChange={v => setAltLabels(v)} />
+          </InputGroup>
+        )
+      }
+
+      <InputGroup>
+        <Label sm={labelColWidth}>Authority</Label>
+        <TextInput sm={inputColWidth} value={authority} onChange={v => setAuthority(v)} />
+      </InputGroup>
+
+      {
+        vocabulary.customFieldDefinitions.map((definition) => {
+          const { fieldKey, label, dataType } = definition;
+
+          let field = '';
+          const customField = customFields.find(element => element.field === fieldKey);
+          const value = customField ? customField.value : '';
+
+          switch (dataType) {
+            case 'string':
+              field = <TextInput key={fieldKey} sm={inputColWidth} value={value} onChange={v => setCustomField(fieldKey, v)} />;
+              break;
+            case 'integer':
+              field = <NumberInput key={fieldKey} sm={inputColWidth} value={value} onChange={v => setCustomField(fieldKey, v)} />;
+              break;
+            default:
+              field = '';
+              break;
+          }
+
+          return (
+            <InputGroup>
+              <Label sm={labelColWidth}>{label}</Label>
+              { field }
+            </InputGroup>
+          );
+        })
+      }
+
+      <FormButtons
+        formType={formType}
+        cancelTo={`/controlled_vocabularies/${vocabulary.stringKey}`}
+        cancelAction={cancelAction}
+        onSave={onSubmitHandler}
+        onDelete={onDeleteHandler}
+      />
+    </Form>
+  );
 }
+
+TermForm.defaultProps = {
+  term: null,
+};
 
 TermForm.propTypes = {
   formType: PropTypes.oneOf(['new', 'edit']).isRequired,
   vocabulary: PropTypes.shape({
     stringKey: PropTypes.string,
   }).isRequired,
+  term: PropTypes.shape({
+    uri: PropTypes.string,
+    prefLabel: PropTypes.string,
+    authority: PropTypes.string,
+  }),
 };
 
-export default withRouter(withErrorHandler(TermForm, hyacinthApi));
+export default TermForm;

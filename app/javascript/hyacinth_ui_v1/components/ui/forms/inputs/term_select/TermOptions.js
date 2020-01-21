@@ -1,102 +1,139 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Form } from 'react-bootstrap';
+import {
+  Dropdown, Button, Form, Spinner,
+} from 'react-bootstrap';
+import { useQuery } from '@apollo/react-hooks';
+import { produce } from 'immer';
 
 import TermOption from './TermOption';
-import { terms } from '../../../../../util/hyacinth_api';
+import { getTermsQuery } from '../../../../../graphql/terms';
+import GraphQLErrors from '../../../GraphQLErrors';
+import AddButton from '../../../buttons/AddButton';
+import TermForm from '../../../../controlled_vocabularies/terms/TermForm';
 
-const limit = '10';
+const limit = 10;
 
-function TermOptions({ vocabulary, onChange }) {
-  const [options, setOptions] = useState([]);
-  const [search, setSearch] = useState('');
-  const [offset, setOffset] = useState(0);
-  const [totalResults, setTotalResults] = useState(0);
+function TermOptions({ vocabularyStringKey, onChange, close }) {
+  const [query, setQuery] = useState('');
+  const [totalTerms, setTotalTerms] = useState(0);
   const [infoExpandedFor, setInfoExpandedFor] = useState('');
+  const [displayNewTerm, setDisplayNewTerm] = useState(false);
 
-  useEffect(() => {
-    terms.search(vocabulary, `offset=0&limit=${limit}`).then((res) => {
-      setOptions(res.data.terms);
-      setOffset(0);
-      setTotalResults(res.data.totalRecords);
-    });
-  }, []);
+  const {
+    loading, error, data, refetch, fetchMore,
+  } = useQuery(getTermsQuery, {
+    variables: {
+      vocabularyStringKey, limit, offset: 0, query: query.length >= 3 ? query : '',
+    },
+    onCompleted: res => setTotalTerms(res.vocabulary.terms.totalCount),
+  });
 
-  const onSelectHandler = (uri) => {
-    const term = options.find(o => o.uri === uri);
-
-    onChange(term);
-  };
+  if (error) return (<GraphQLErrors errors={error} />);
+  if (loading) return (<div className="m-3"><Spinner animation="border" variant="warning" /></div>);
 
   const onSearchHandler = (event) => {
     const { target: { value } } = event;
 
-    setSearch(event.target.value);
+    setQuery(value);
 
-    const q = (value.length < 3) ? '' : value;
-
-    terms.search(vocabulary, `offset=0&limit=${limit}&q=${q}`)
-      .then((res) => {
-        setOptions(res.data.terms);
-        setOffset(0);
-        setTotalResults(res.data.totalRecords);
-      });
+    if (value.length >= 3) { refetch(); }
   };
 
-  const onCollapseHandler = (uuid) => {
-    if (uuid === infoExpandedFor) {
-      setInfoExpandedFor('');
-    } else {
-      setInfoExpandedFor(uuid);
-    }
+  const onCollapseHandler = (id) => {
+    setInfoExpandedFor(id === infoExpandedFor ? '' : id);
   };
+
+  const { vocabulary: { terms: { nodes: terms }, ...vocabulary } } = data;
 
   const onMoreHandler = () => {
-    let queryString = `offset=${offset + limit}&limit=${limit}`;
-    if (search && search.length >= 3) queryString = queryString.concat(`&q=${search}`);
+    if (terms.length >= totalTerms) return;
 
-    terms.search(vocabulary, queryString).then((res) => {
-      setOffset(offset + limit);
-      setOptions(oldOptions => [...oldOptions, ...res.data.terms]);
+    fetchMore({
+      variables: { offset: terms.length },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult) return prev;
+        return produce(prev, (draft) => {
+          draft.vocabulary.terms.nodes = [
+            ...prev.vocabulary.terms.nodes,
+            ...fetchMoreResult.vocabulary.terms.nodes,
+          ];
+        });
+      },
     });
   };
 
-  return (
-    <div style={{ maxHeight: '350px', overflowY: 'auto' }}>
-      <Form.Control
-        size="sm"
-        autoFocus
-        className="mx-3 my-2 w-auto"
-        placeholder="Type to search..."
-        onChange={onSearchHandler}
-        value={search}
-      />
+  const onSelectHandler = (uri) => {
+    const term = terms.find(o => o.uri === uri);
 
-      <ul className="list-unstyled">
+    onChange(term);
+  };
+
+  return (
+    <>
+      <Dropdown.Header>
+        {`${vocabulary.label} Controlled Vocabulary`}
         {
-          options.map(term => (
-            <TermOption
-              key={term.uuid}
-              term={term}
-              onSelect={() => onSelectHandler(term.uri)}
-              onCollapseToggle={() => onCollapseHandler(term.uuid)}
-              expanded={infoExpandedFor === term.uuid}
-            />
-          ))
+          !displayNewTerm && (
+            <span className="float-right">
+              <AddButton onClick={() => setDisplayNewTerm(true)}> New Term</AddButton>
+            </span>
+          )
         }
-      </ul>
+      </Dropdown.Header>
+      <Dropdown.Divider />
 
       {
-        totalResults > options.length
-          && <Button variant="link" onClick={onMoreHandler} className="float-right py-0">More...</Button>
+        displayNewTerm ? (
+          <div className="px-3">
+            <TermForm
+              small
+              formType="new"
+              vocabulary={vocabulary}
+              submitAction={(term) => { onChange(term); setDisplayNewTerm(false); close(); }}
+              cancelAction={() => setDisplayNewTerm(false)}
+            />
+          </div>
+        ) : (
+          <div style={{ maxHeight: '350px', overflowY: 'auto' }}>
+            <Form.Control
+              size="sm"
+              autoFocus
+              className="mx-3 my-2 w-auto"
+              placeholder="Type to search..."
+              onChange={onSearchHandler}
+              value={query}
+            />
+
+            <ul className="list-unstyled">
+              {
+                terms.map(term => (
+                  <TermOption
+                    key={term.id}
+                    term={term}
+                    onSelect={() => onSelectHandler(term.uri)}
+                    onCollapseToggle={() => onCollapseHandler(term.id)}
+                    expanded={infoExpandedFor === term.id}
+                  />
+                ))
+              }
+            </ul>
+
+            {
+              totalTerms > terms.length
+                && <Button variant="link" onClick={onMoreHandler} className="float-right py-0">More...</Button>
+            }
+          </div>
+        )
       }
-    </div>
+    </>
   );
 }
 
 TermOptions.propTypes = {
-  vocabulary: PropTypes.string.isRequired,
+  vocabularyStringKey: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
+  close: PropTypes.func.isRequired,
 };
 
 export default TermOptions;

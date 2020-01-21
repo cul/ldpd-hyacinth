@@ -6,7 +6,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 
 class EditButton extends React.PureComponent {
   render() {
-    const { link, ...rest } = this.props;
+    const { link, children, ...rest } = this.props;
 
     return (
       <LinkContainer to={link} style={{ padding: '0.05rem 0.35rem', marginLeft: '.25rem' }}>
@@ -16,6 +16,7 @@ class EditButton extends React.PureComponent {
           {...rest}
         >
           <FontAwesomeIcon icon="pen" />
+          { children }
         </Button>
       </LinkContainer>
     );
