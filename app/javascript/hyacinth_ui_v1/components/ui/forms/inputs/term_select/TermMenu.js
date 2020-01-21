@@ -26,10 +26,6 @@ const TermMenu = React.forwardRef((props, ref) => {
 
 TermMenu.propTypes = {
   vocabulary: PropTypes.string.isRequired,
-  // value: PropTypes.shape({
-  //   prefLabel: PropTypes.string,
-  //   uri: PropTypes.string,
-  // }).isRequired,
   onChange: PropTypes.func.isRequired,
   close: PropTypes.func.isRequired,
   className: PropTypes.string.isRequired,
