@@ -41,11 +41,6 @@ Rails.application.routes.draw do
         end
       end
 
-      resources :vocabularies, param: :string_key, except: [:new, :edit] do
-        resources :custom_fields, param: :field_key, except: [:new, :edit, :show, :index], module: 'vocabularies'
-        resources :terms,         param: :uri,       except: [:new, :edit],                module: 'vocabularies', constraints: { uri: /.*/ }
-      end
-
       resources :projects, param: :string_key, only: [:show] do
         resources :publish_targets, param: :string_key, except: [:new, :edit], module: 'projects'
         resources :field_sets,                          except: [:new, :edit], module: 'projects'
