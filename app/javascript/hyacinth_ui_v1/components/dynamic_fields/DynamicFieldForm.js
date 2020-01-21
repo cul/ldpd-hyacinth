@@ -61,14 +61,14 @@ class DynamicFieldForm extends React.Component {
       }));
     }
 
-    hyacinthApi.get('vocabularies')
-      .then((res) => {
-        const { vocabularies } = res.data;
-
-        this.setState(produce((draft) => {
-          draft.vocabularies = vocabularies.map(v => ({ value: v.stringKey, label: v.label }));
-        }));
-      });
+    // hyacinthApi.get('vocabularies')
+    //   .then((res) => {
+    //     const { vocabularies } = res.data;
+    //
+    //     this.setState(produce((draft) => {
+    //       draft.vocabularies = vocabularies.map(v => ({ value: v.stringKey, label: v.label }));
+    //     }));
+    //   });
   }
 
   onSave = () => {
@@ -157,7 +157,7 @@ class DynamicFieldForm extends React.Component {
           />
         </InputGroup>
 
-        <Collapse in={fieldType === 'controlled_term'}>
+        {/* <Collapse in={fieldType === 'controlled_term'}>
           <div>
             <InputGroup>
               <Label>Controlled Vocabulary</Label>
@@ -168,7 +168,7 @@ class DynamicFieldForm extends React.Component {
               />
             </InputGroup>
           </div>
-        </Collapse>
+        </Collapse> */}
 
         <Collapse in={fieldType === 'select'}>
           <div>
