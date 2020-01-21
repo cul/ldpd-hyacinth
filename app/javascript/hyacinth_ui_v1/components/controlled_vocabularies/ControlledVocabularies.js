@@ -17,7 +17,7 @@ function ControlledVocabularies() {
         exact
         path="/controlled_vocabularies"
         component={ControlledVocabularyIndex}
-        requiredAbility={{ action: 'read', subject: 'Vocabulary' }}
+        requiredAbility={{ action: 'update', subject: 'Vocabulary' }}
       />
 
       <ProtectedRoute
@@ -27,7 +27,13 @@ function ControlledVocabularies() {
         requiredAbility={{ action: 'create', subject: 'Vocabulary' }}
       />
 
-      <Route path="/controlled_vocabularies/:stringKey/edit" component={ControlledVocabularyEdit} />
+      <ProtectedRoute
+        path="/controlled_vocabularies/:stringKey/edit"
+        component={ControlledVocabularyEdit}
+        requiredAbility={params => (
+          { action: 'update', subject: 'Vocabulary', stringKey: params.stringKey }
+        )}
+      />
 
       <Route path="/controlled_vocabularies/:stringKey/terms" component={Terms} />
 
@@ -35,7 +41,7 @@ function ControlledVocabularies() {
         path="/controlled_vocabularies/:stringKey"
         component={ControlledVocabularyShow}
         requiredAbility={params => (
-          { action: 'update', subject: 'Vocabulary', id: params.id }
+          { action: 'update', subject: 'Vocabulary', stringKey: params.stringKey }
         )}
       />
 
