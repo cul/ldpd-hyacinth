@@ -26,7 +26,7 @@ function ControlledVocabularyEdit() {
         rightHandLinks={[{ link: '/controlled_vocabularies', label: 'Back to Controlled Vocabulary' }]}
       />
 
-      <ControlledVocabularyForm formType="edit" vocabulary={data.vocabulary} key={stringKey} />
+      <ControlledVocabularyForm formType="edit" vocabulary={data.vocabulary} />
     </div>
   );
 }
