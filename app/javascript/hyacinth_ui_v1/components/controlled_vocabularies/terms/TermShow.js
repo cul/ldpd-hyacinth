@@ -1,71 +1,57 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Row, Col, Breadcrumb } from 'react-bootstrap';
-import produce from 'immer';
-import { LinkContainer } from 'react-router-bootstrap';
+import { useParams } from 'react-router-dom';
+import { Row, Col } from 'react-bootstrap';
+import { useQuery } from '@apollo/react-hooks';
 
 import ContextualNavbar from '../../layout/ContextualNavbar';
-import hyacinthApi, { vocabulary } from '../../../util/hyacinth_api';
-import TabHeading from '../../ui/tabs/TabHeading';
+import { getTermQuery } from '../../../graphql/terms';
+import GraphQLErrors from '../../ui/GraphQLErrors';
+import TermBreadcrumbs from './TermBreadcrumbs';
+import EditButton from '../../ui/buttons/EditButton';
 
-export default class TermShow extends React.Component {
-  state = {
-    term: null,
-  }
+function TermShow() {
+  const { stringKey, uri } = useParams();
 
-  componentDidMount() {
-    const { match: { params: { stringKey, uri } } } = this.props;
+  const { loading, error, data } = useQuery(
+    getTermQuery, {
+      variables: { vocabularyStringKey: stringKey, uri: decodeURIComponent(uri) },
+    },
+  );
 
-    vocabulary(stringKey).terms().get(uri)
-      .then((res) => {
-        this.setState(produce((draft) => {
-          draft.term = res.data.term;
-          draft.loaded = true;
-        }));
-      });
-  }
+  if (loading) return (<></>);
+  if (error) return (<GraphQLErrors errors={error} />);
 
-  render() {
-    const { match: { params: { stringKey } } } = this.props;
-    const { term } = this.state;
+  const { vocabulary: { term, ...vocabulary } } = data;
 
-    return (
-      term && (
-        <>
-          <ContextualNavbar
-            title={`Term | ${term.prefLabel}`}
-            rightHandLinks={[{ link: `/controlled_vocabularies/${stringKey}`, label: 'Back to Search' }]}
-          />
+  return (
+    <>
+      <ContextualNavbar
+        title={`Term | ${term.prefLabel}`}
+        rightHandLinks={[{ link: `/controlled_vocabularies/${stringKey}`, label: 'Back to Search' }]}
+      />
 
-          <Breadcrumb>
-            <LinkContainer to="/controlled_vocabularies">
-              <Breadcrumb.Item>Controlled Vocabularies</Breadcrumb.Item>
-            </LinkContainer>
-            <LinkContainer to={`/controlled_vocabularies/${stringKey}`}>
-              <Breadcrumb.Item>Vocabulary Name</Breadcrumb.Item>
-            </LinkContainer>
-            <Breadcrumb.Item active>Terms</Breadcrumb.Item>
-            <Breadcrumb.Item active>{term.prefLabel}</Breadcrumb.Item>
-          </Breadcrumb>
+      <TermBreadcrumbs vocabulary={vocabulary} term={term} />
 
-          <Row as="dl">
-            <Col as="dt" sm={2}>Pref Label</Col>
-            <Col as="dd" sm={10}>{term.prefLabel}</Col>
+      <Row as="dl">
+        <Col as="dt" sm={3} md={2}>Pref Label</Col>
+        <Col as="dd" sm={9} md={10}>{term.prefLabel}</Col>
 
-            <Col as="dt" sm={2}>Alternative Labels</Col>
-            <Col as="dd" sm={10}>{term.altLabels.join() || '-- None --'}</Col>
+        <Col as="dt" sm={3} md={2}>Alt. Labels</Col>
+        <Col as="dd" sm={9} md={10}>{term.altLabels.join() || '-- None --'}</Col>
 
-            <Col as="dt" sm={2}>Term Type</Col>
-            <Col as="dd" sm={10}>{term.termType}</Col>
+        <Col as="dt" sm={3} md={2}>Term Type</Col>
+        <Col as="dd" sm={9}>{term.termType}</Col>
 
-            <Col as="dt" sm={2}>Authority</Col>
-            <Col as="dd" sm={10}>{term.authority || '-- None --'}</Col>
+        <Col as="dt" sm={3} md={2}>Authority</Col>
+        <Col as="dd" sm={9} md={10}>{term.authority || '-- None --'}</Col>
 
-            <Col as="dt" sm={2}>URI</Col>
-            <Col as="dd" sm={10}>{term.uri}</Col>
-          </Row>
-        </>
-      )
-    );
-  }
+        <Col as="dt" sm={3} md={2}>URI</Col>
+        <Col as="dd" sm={9} md={10}>{term.uri}</Col>
+      </Row>
+
+      <EditButton className="ml-2" link={`/controlled_vocabularies/${vocabulary.stringKey}/terms/${encodeURIComponent(term.uri)}/edit`}> Edit</EditButton>
+    </>
+  );
 }
+
+export default TermShow;

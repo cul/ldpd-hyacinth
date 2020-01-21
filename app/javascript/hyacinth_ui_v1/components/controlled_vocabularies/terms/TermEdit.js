@@ -1,56 +1,41 @@
 import React from 'react';
-import produce from 'immer';
+import { useParams } from 'react-router-dom';
+import { useQuery } from '@apollo/react-hooks';
 
-import hyacinthApi, { vocabulary } from '../../../util/hyacinth_api';
 import ContextualNavbar from '../../layout/ContextualNavbar';
 import TermForm from './TermForm';
 import TermBreadcrumbs from './TermBreadcrumbs';
+import GraphQLErrors from '../../ui/GraphQLErrors';
+import { getTermQuery } from '../../../graphql/terms';
 
-class TermEdit extends React.Component {
-  state = {
-    vocabulary: null,
-    term: null
-  }
+function TermEdit() {
+  const { stringKey, uri } = useParams();
 
-  componentDidMount = () => {
-    const { match: { params: { stringKey, uri } } } = this.props;
+  const { loading, error, data } = useQuery(
+    getTermQuery, {
+      variables: { vocabularyStringKey: stringKey, uri: decodeURIComponent(uri) },
+    },
+  );
 
-    vocabulary(stringKey).get()
-      .then((res) => {
-        this.setState(produce((draft) => {
-          draft.vocabulary = res.data.vocabulary;
-        }));
-      });
+  if (loading) return (<></>);
+  if (error) return (<GraphQLErrors errors={error} />);
 
-    vocabulary(stringKey).terms().get(uri)
-      .then((res) => {
-        this.setState(produce((draft) => {
-          draft.term = res.data.term;
-        }));
-      });
-  }
+  const { vocabulary, vocabulary: { term } } = data;
 
-  render() {
-    const { match: { params: { stringKey, uri } } } = this.props;
-    const { vocabulary, term } = this.state;
+  return (
+    <>
+      <ContextualNavbar
+        title={`Term | ${term.prefLabel}`}
+        rightHandLinks={[{ link: `/controlled_vocabularies/${vocabulary.stringKey}`, label: 'Back to Search' }]}
+      />
 
-    return (
-      (vocabulary && term) && (
-        <>
-          <ContextualNavbar
-            title={`Term | ${term.prefLabel}`}
-            rightHandLinks={[{ link: `/controlled_vocabularies/${vocabulary.stringKey}`, label: 'Back to Search' }]}
-          />
+      <TermBreadcrumbs vocabulary={vocabulary} term={term} />
 
-          <TermBreadcrumbs vocabulary={vocabulary} term={term} />
-
-          <div className="m-3">
-            <TermForm formType="edit" vocabulary={vocabulary} term={term} key={uri} />
-          </div>
-        </>
-      )
-    );
-  }
+      <div className="m-3">
+        <TermForm formType="edit" vocabulary={vocabulary} term={term} key={term.uri} />
+      </div>
+    </>
+  );
 }
 
 export default TermEdit;

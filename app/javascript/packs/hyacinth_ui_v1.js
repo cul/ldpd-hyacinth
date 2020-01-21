@@ -19,23 +19,29 @@ const client = new ApolloClient({
 });
 
 // Apollo is no longer caching data. This configuration fetches
-// fresh data with every page request. In order to use cached data
+// fresh data with every page request. In order to use cached data,
 // addition and deletion requests need to be set up with methods that
 // update the cache. Additionally, using cached data on the client
 // side can lead to unexpected behaviors if another user is editing
 // the same data.
+//
+// Using network-only fetch policy instead of no-cache because updating results
+// using fetchMore doesn't work when using a no-cache policy. This policy will
+// not display any stale results and will always make a request.
+// More information: https://github.com/apollographql/apollo-client/issues/5239
 client.defaultOptions = {
   watchQuery: {
     errorPolicy: 'none',
-    fetchPolicy: 'no-cache',
+    fetchPolicy: 'network-only',
   },
   query: {
     errorPolicy: 'none',
-    fetchPolicy: 'no-cache',
+    fetchPolicy: 'network-only',
   },
   mutation: {
     errorPolicy: 'none',
   },
+  addTypename: false,
 };
 
 

@@ -5,34 +5,32 @@ import { Col, Dropdown } from 'react-bootstrap';
 import TermMenu from './term_select/TermMenu';
 import RemoveButton from '../../buttons/RemoveButton';
 
-class TermSelect extends React.PureComponent {
-  render() {
-    const {
-      name, value, vocabulary, onChange,
-    } = this.props;
+function TermSelect(props) {
+  const {
+    name, value, vocabulary, onChange,
+  } = props;
 
-    return (
-      <Col sm={8} style={{ alignSelf: 'center' }}>
-        <Dropdown name={name} drop="right">
-          <Dropdown.Toggle size="sm" variant="outline-secondary">
-            { (value && value.prefLabel) ? value.prefLabel : 'Select one...' }
-          </Dropdown.Toggle>
+  return (
+    <Col sm={8} style={{ alignSelf: 'center' }}>
+      <Dropdown name={name} drop="right">
+        <Dropdown.Toggle size="sm" variant="outline-secondary">
+          { (value && value.prefLabel) ? value.prefLabel : 'Select one...' }
+        </Dropdown.Toggle>
 
-          {
-            value && value.prefLabel && (
-              <RemoveButton onClick={() => onChange({})} />
-            )
-          }
+        {
+          value && value.prefLabel && (
+            <RemoveButton onClick={() => onChange({})} />
+          )
+        }
 
-          <Dropdown.Menu
-            as={TermMenu}
-            vocabulary={vocabulary}
-            onChange={onChange}
-          />
-        </Dropdown>
-      </Col>
-    );
-  }
+        <Dropdown.Menu
+          as={TermMenu}
+          vocabulary={vocabulary}
+          onChange={onChange}
+        />
+      </Dropdown>
+    </Col>
+  );
 }
 
 TermSelect.defaultProps = {
