@@ -10,6 +10,7 @@ import DigitalObjectInterface from '../DigitalObjectInterface';
 import DeleteButton from '../../ui/forms/buttons/DeleteButton';
 import { getSystemDataDigitalObjectQuery } from '../../../graphql/digitalObjects';
 import { digitalObject as digitalObjectApi } from '../../../util/hyacinth_api';
+import { digitalObjectAbility } from '../../../util/ability';
 
 function SystemData(props) {
   const { id } = props;
@@ -27,10 +28,24 @@ function SystemData(props) {
   if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
   const { digitalObject } = digitalObjectData;
 
+  const canDeleteObject = digitalObjectAbility.can('delete_objects', { primaryProject: digitalObject.primaryProject, otherProjects: digitalObject.otherProjects });
+
   const onDelete = (e) => {
     e.preventDefault();
     digitalObjectApi.delete(id).then(() => history.push('/digital_objects'));
   };
+
+  const renderDeleteSection = () => {
+    if (!canDeleteObject) return '';
+
+    return (
+      <>
+        <hr />
+        <h4>Delete Digital Object</h4>
+        <DeleteButton formType="edit" onClick={onDelete} />
+      </>
+    );
+  }
 
   const {
     createdBy, createdAt, updatedBy, updatedAt, firstPublishedAt,
@@ -61,9 +76,7 @@ function SystemData(props) {
       <p>{primaryProject.displayLabel}</p>
       <h4>Other Projects</h4>
       <p>{otherProjects.length ? otherProjects.map(p => p.displayLabel).join(', ') : 'None'}</p>
-      <hr />
-      <h4>Delete Digital Object</h4>
-      <DeleteButton formType="edit" onClick={onDelete} />
+      { renderDeleteSection() }
     </DigitalObjectInterface>
   );
 }
