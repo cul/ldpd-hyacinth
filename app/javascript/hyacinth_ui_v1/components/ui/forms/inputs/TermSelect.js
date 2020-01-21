@@ -14,11 +14,11 @@ function TermSelect(props) {
     <Col sm={8} style={{ alignSelf: 'center' }}>
       <Dropdown name={name} drop="right">
         <Dropdown.Toggle size="sm" variant="outline-secondary">
-          { (value && value.prefLabel) ? value.prefLabel : 'Select one...' }
+          { (value && value.pref_label) ? value.pref_label : 'Select one...' }
         </Dropdown.Toggle>
 
         {
-          value && value.prefLabel && (
+          value && value.pref_label && (
             <RemoveButton onClick={() => onChange({})} />
           )
         }
@@ -40,7 +40,7 @@ TermSelect.defaultProps = {
 TermSelect.propTypes = {
   vocabulary: PropTypes.string.isRequired,
   value: PropTypes.shape({
-    prefLabel: PropTypes.string,
+    pref_label: PropTypes.string,
     uri: PropTypes.string,
   }).isRequired,
   onChange: PropTypes.func.isRequired,
