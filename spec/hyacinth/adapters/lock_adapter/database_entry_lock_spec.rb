@@ -23,6 +23,13 @@ RSpec.describe Hyacinth::Adapters::LockAdapter::DatabaseEntryLock do
     it "yields the expected value" do
       expect { |b| adapter.with_lock(key, &b) }.to yield_with_args(Hyacinth::Adapters::LockAdapter::DatabaseEntryLock::LockObject)
     end
+    it "raises if competing lock is requested" do
+      expect {
+        adapter.with_lock(key) do
+          adapter.with_lock(key) {}
+        end
+      }.to raise_exception
+    end
   end
 
   context "#with_multilock" do
@@ -42,6 +49,13 @@ RSpec.describe Hyacinth::Adapters::LockAdapter::DatabaseEntryLock do
         expect(lock_objects[key2]).to be_a(Hyacinth::Adapters::LockAdapter::DatabaseEntryLock::LockObject)
         expect(lock_objects[key3]).to be_a(Hyacinth::Adapters::LockAdapter::DatabaseEntryLock::LockObject)
       end
+    end
+    it "raises if competing lock is requested" do
+      expect {
+        adapter.with_multilock([key1, key2, key3]) do
+          adapter.with_lock(key2) {}
+        end
+      }.to raise_exception
     end
   end
 end

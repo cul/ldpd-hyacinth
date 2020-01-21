@@ -23,6 +23,12 @@ RSpec.shared_examples "a storage adapter" do
     it "implements #write_impl" do
       expect(adapter).to respond_to(:write_impl)
     end
+    it "implements #with_writeable" do
+      expect(adapter).to respond_to(:with_writeable)
+    end
+    it "implements #writeable_impl" do
+      expect(adapter).to respond_to(:writeable_impl)
+    end
     it "implements #uri_prefix" do
       expect(adapter).to respond_to(:write_impl)
     end

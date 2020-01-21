@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Hyacinth::DigitalObject::Resource do
-  let(:argument_names) { [:import_location, :import_method, :import_checksum, :location, :checksum, :original_filename, :file_size] }
+  let(:argument_names) { [:import_location, :import_method, :import_checksum, :location, :checksum, :original_filename, :file_size, :media_type] }
   let(:arguments) { argument_names.map { |s| [s.to_s, s.to_s] }.to_h }
   let(:attribute_names) { argument_names.select { |n| !n.to_s.starts_with?('import_') } }
   let(:attributes) { attribute_names.map { |s| [s.to_s, s.to_s] }.to_h }
@@ -43,6 +43,25 @@ RSpec.describe Hyacinth::DigitalObject::Resource do
     it "is not valid without import_location" do
       instance.import_location = ''
       expect(instance).not_to have_valid_import
+    end
+  end
+  describe "#process_import_if_present" do
+    let(:uid) { "testobject-1234" }
+    let(:resource_name) { "rspecResource" }
+    let(:lock_object) { Object.new }
+    let(:example_content) { "Content to test import." }
+    let(:import_file) do
+      file = Tempfile.create(['rspecs', '.txt'])
+      file.write(example_content)
+      file.rewind
+      file
+    end
+
+    it "persists the imported content" do
+      instance.import_location = import_file.path
+      instance.import_method = :copy
+      instance.process_import_if_present(uid, resource_name, lock_object)
+      expect(Hyacinth::Config.resource_storage.read(instance.location)).to eql(example_content)
     end
   end
 end

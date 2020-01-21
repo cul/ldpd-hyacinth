@@ -24,6 +24,13 @@ RSpec.describe Hyacinth::Adapters::StorageAdapter::Memory do
       expect(adapter.read(sample_location_uri)).to eq(content)
     end
 
+    it "can write to streamable content and then read that written content" do
+      adapter.with_writeable(sample_location_uri) do |blob|
+        blob.write content
+      end
+      expect(adapter.read(sample_location_uri)).to eq(content)
+    end
+
     context "reject unhandled URIs" do
       let(:unhandled_location_uri) { 'unhandled:///a/b/c/d/e' }
       it "rejects for read" do

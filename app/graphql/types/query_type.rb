@@ -35,6 +35,11 @@ module Types
       argument :id, ID, required: true
     end
 
+    field :child_structure, ChildStructureType, null: true do
+      description "Return dereferenced child digital objects"
+      argument :id, ID, required: true
+    end
+
     field :permission_actions, PermissionActionsType, null: true do
       description 'Information about available project permission actions.'
     end
@@ -68,6 +73,17 @@ module Types
     def vocabularies(_arguments)
       ability.authorize!(:read, Vocabulary)
       Vocabulary.accessible_by(ability).order(:label)
+    end
+
+    # This is a temporary implementation
+    def child_structure(id:)
+      digital_object = ::DigitalObject::Base.find(id)
+      ability.authorize!(:read, digital_object)
+      {
+        parent: digital_object,
+        type: digital_object.structured_children['type'],
+        structure: digital_object.structured_children['structure'].map! { |cid| ::DigitalObject::Base.find(cid) }
+      }
     end
 
     def project(string_key:)

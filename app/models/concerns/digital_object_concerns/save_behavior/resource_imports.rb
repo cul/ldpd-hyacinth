@@ -21,7 +21,8 @@ module DigitalObjectConcerns
       def clear_resource_import_data
         self.resource_attributes.each do |resource_name|
           resource = resources[resource_name]
-          resource.clear_import_data
+          # resource attribute may be nil if unassigned
+          resource&.clear_import_data
         end
       end
     end

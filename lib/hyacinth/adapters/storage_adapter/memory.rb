@@ -39,6 +39,16 @@ module Hyacinth
           @cache[location_uri] = content
         end
 
+        def writeable_impl(location_uri, &block)
+          io_stub = StringIO.new
+          block.yield(io_stub)
+          io_stub.rewind
+          @cache[location_uri] = io_stub.read
+        ensure
+          io_stub.truncate(0)
+          io_stub.close
+        end
+
         def delete_impl(location_uri)
           @cache.delete(location_uri)
         end

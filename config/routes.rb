@@ -38,6 +38,7 @@ Rails.application.routes.draw do
         end
         member do
           resource :rights, controller: 'digital_objects/rights', only: [:show, :edit, :update]
+          resource :uploads, controller: 'digital_objects/uploads', only: [:create]
         end
       end
 
