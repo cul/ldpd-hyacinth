@@ -1,4 +1,4 @@
-class AddSortNameToUsers < ActiveRecord::Migration[5.2]
+class AddSortNameToUsers < ActiveRecord::Migration[6.0]
   def change
     add_column :users, :sort_name, :string
     add_index :users, :sort_name

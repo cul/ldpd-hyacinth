@@ -1,4 +1,4 @@
-class CreateDynamicFieldCategories < ActiveRecord::Migration[5.2]
+class CreateDynamicFieldCategories < ActiveRecord::Migration[6.0]
   def change
     create_table :dynamic_field_categories do |t|
       t.string :display_label, null: false

@@ -1,4 +1,4 @@
-class RemoveGroups < ActiveRecord::Migration[5.2]
+class RemoveGroups < ActiveRecord::Migration[6.0]
   def change
     drop_table :groups
     drop_table :groups_users

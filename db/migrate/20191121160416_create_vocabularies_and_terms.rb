@@ -1,4 +1,4 @@
-class CreateVocabulariesAndTerms < ActiveRecord::Migration[5.2]
+class CreateVocabulariesAndTerms < ActiveRecord::Migration[6.0]
   def change
     create_table :vocabularies do |t|
       t.string  :label, null: false

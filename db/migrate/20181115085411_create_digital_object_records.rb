@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateDigitalObjectRecords < ActiveRecord::Migration[5.2]
+class CreateDigitalObjectRecords < ActiveRecord::Migration[6.0]
   def change
     create_table :digital_object_records do |t|
       t.string :uid, null: false
