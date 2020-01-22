@@ -3,11 +3,11 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-gem 'rails', '~> 5.2.2'
+gem 'rails', '~> 6.0.2'
 
 # Databases
 gem 'mysql2', '~> 0.5'
-gem 'sqlite3', '~> 1.3.13'
+gem 'sqlite3', '~> 1.4'
 
 # Fedora 3 related gems
 gem 'noid', '>= 0.7.1' # For unique, opaque id generation
@@ -15,8 +15,8 @@ gem 'rubydora'
 
 gem 'best_type', '0.0.4'
 gem 'bootsnap', '>= 1.1.0', require: false # Reduces boot times through caching; required in config/boot.rb
-gem 'cancancan', '~> 2.0'
-gem 'devise', '~> 4.6'
+gem 'cancancan', '~> 3.0'
+gem 'devise', '~> 4.7'
 gem 'graphql'
 gem 'graphql-errors'
 gem 'jbuilder', '~> 2.5' # Do we need this?
