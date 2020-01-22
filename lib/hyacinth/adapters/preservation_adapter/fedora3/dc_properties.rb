@@ -3,7 +3,7 @@
 module Hyacinth
   module Adapters
     module PreservationAdapter
-      class Fedora3::DCProperties
+      class Fedora3::DcProperties
         XML_PREFIX = '<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"'\
                      ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">'
         XML_SUFFIX = '</oai_dc:dc>'
