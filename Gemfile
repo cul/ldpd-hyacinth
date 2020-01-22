@@ -19,7 +19,6 @@ gem 'cancancan', '~> 3.0'
 gem 'devise', '~> 4.7'
 gem 'graphql'
 gem 'graphql-errors'
-gem 'jbuilder', '~> 2.5' # Do we need this?
 gem 'olive_branch'
 gem 'puma', '~> 3.12'
 gem 'rainbow', '~> 3.0'
