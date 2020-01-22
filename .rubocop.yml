@@ -4,5 +4,5 @@ inherit_gem:
 inherit_from: .rubocop_todo.yml
 
 AllCops:
-  TargetRubyVersion: 2.5.3
+  TargetRubyVersion: 2.6.4
   TargetRailsVersion: 6.0.2
