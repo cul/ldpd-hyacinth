@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Hyacinth
-  class XMLGenerator::FieldValues
+  class XmlGenerator::FieldValues
     attr_reader :generator
 
     def initialize(generator)

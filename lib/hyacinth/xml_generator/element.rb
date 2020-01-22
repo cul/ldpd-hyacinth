@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 module Hyacinth
-  class XMLGenerator::Element
+  class XmlGenerator::Element
     attr_reader :generator, :field_values
     delegate :generate_field_val, :value_with_substitutions, :value_for_field_name,
              :render_output_of_ternary, :render_output_of_join, to: :field_values
     def initialize(generator)
       @generator = generator
-      @field_values = XMLGenerator::FieldValues.new(generator)
+      @field_values = XmlGenerator::FieldValues.new(generator)
     end
 
     def validate_present(value, label)
