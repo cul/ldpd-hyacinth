@@ -2,38 +2,37 @@
 
 require 'rails_helper'
 
-RSpec.describe Mutations::UpdateProject, type: :request do
-  let(:project) { FactoryBot.create(:project) }
+RSpec.describe Mutations::UpdateDynamicFieldCategory, type: :request do
+  let(:dynamic_field_category) { FactoryBot.create(:dynamic_field_category) }
 
   include_examples 'requires user to have correct permissions for graphql request' do
-    let(:variables) { { input: { stringKey: project.string_key, displayLabel: 'Best Project' } } }
+    let(:variables) { { input: { id: dynamic_field_category.id, displayLabel: 'Best Dynamic Field Category' } } }
     let(:request) { graphql query, variables }
   end
 
   context 'when logged in user has appropriate permissions' do
-    before { sign_in_project_contributor to: :manage, project: project }
+    before { sign_in_user as: :administrator }
 
     context 'when updating record' do
       let(:variables) do
-        { input: { stringKey: project.string_key, displayLabel: 'Best Project', projectUrl: 'https://best_project.com' } }
+        { input: { id: dynamic_field_category.id, displayLabel: 'Best Dynamic Field Category' } }
       end
 
       before { graphql query, variables }
 
       it 'correctly updates record' do
-        project.reload
-        expect(project.display_label).to eql 'Best Project'
-        expect(project.project_url).to eql 'https://best_project.com'
+        dynamic_field_category.reload
+        expect(dynamic_field_category.display_label).to eql 'Best Dynamic Field Category'
       end
     end
   end
 
   def query
     <<~GQL
-      mutation ($input: UpdateProjectInput!) {
-        updateProject(input: $input) {
-          project {
-            stringKey
+      mutation ($input: UpdateDynamicFieldCategoryInput!) {
+        updateDynamicFieldCategory(input: $input) {
+          dynamicFieldCategory {
+            id
           }
         }
       }
