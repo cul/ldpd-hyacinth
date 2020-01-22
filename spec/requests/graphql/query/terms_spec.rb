@@ -146,7 +146,7 @@ RSpec.describe 'Query for Terms', type: :request, solr: true do
       end
     end
 
-    context `by exact term_type` do
+    context 'by exact term_type' do
       include_context 'json contains temporary term'
       include_context 'json includes exact number of terms', 1
 
