@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe Hyacinth::DigitalObject::TypeDef::URI do
+describe Hyacinth::DigitalObject::TypeDef::Uri do
   let(:type_def) { described_class.new }
   it "accepts a file URI" do
     expect(type_def.valid?("file:/path/to.file")).to be true
@@ -14,7 +14,7 @@ describe Hyacinth::DigitalObject::TypeDef::URI do
     expect(type_def.valid?("http://example.org")).to be true
     expect(type_def.valid?("https://example.org/index.html")).to be true
   end
-  describe Hyacinth::DigitalObject::TypeDef::URI::HTTP do
+  describe Hyacinth::DigitalObject::TypeDef::Uri::Http do
     it "accepts http[s] URIs" do
       expect(type_def.valid?("http://example.org")).to be true
       expect(type_def.valid?("https://example.org/index.html")).to be true
