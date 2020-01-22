@@ -10,15 +10,20 @@ function TermSelect(props) {
     name, value, vocabulary, onChange,
   } = props;
 
+  let prefLabel = null;
+  if (value) {
+    prefLabel = value.pref_label || value.prefLabel || null;
+  }
+
   return (
     <Col sm={8} style={{ alignSelf: 'center' }}>
       <Dropdown name={name} drop="right">
         <Dropdown.Toggle size="sm" variant="outline-secondary">
-          { (value && value.pref_label) ? value.pref_label : 'Select one...' }
+          { prefLabel ? prefLabel  : 'Select one...' }
         </Dropdown.Toggle>
 
         {
-          value && value.pref_label && (
+          prefLabel && (
             <RemoveButton onClick={() => onChange({})} />
           )
         }

@@ -45,7 +45,7 @@ function MetadataShow(props) {
     return (
       <InputGroup key={dynamicField.stringKey}>
         <Label align="right">{displayLabel}</Label>
-        <PlainText value={fieldType === 'controlled_term' ? data.pref_label : data } />
+        <PlainText value={fieldType === 'controlled_term' ? (data.pref_label || data.prefLabel) : data } />
       </InputGroup>
     );
   };
