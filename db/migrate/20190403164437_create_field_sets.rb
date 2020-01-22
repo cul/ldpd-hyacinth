@@ -1,4 +1,4 @@
-class CreateFieldSets < ActiveRecord::Migration[5.2]
+class CreateFieldSets < ActiveRecord::Migration[6.0]
   def change
     create_table :field_sets do |t|
       t.string :display_label, null: false

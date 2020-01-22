@@ -1,4 +1,4 @@
-class RequireColumnsToPublishTargets < ActiveRecord::Migration[5.2]
+class RequireColumnsToPublishTargets < ActiveRecord::Migration[6.0]
   def change
     change_column_null :publish_targets, :string_key, false
     change_column_null :publish_targets, :display_label, false

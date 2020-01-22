@@ -9,7 +9,7 @@ module Hyacinth
           {
             'published_at' => Hyacinth::DigitalObject::TypeDef::DateTime.new.to_serialized_form(json_object.published_at),
             'published_by' => Hyacinth::DigitalObject::TypeDef::User.new.to_serialized_form(json_object.published_by),
-            'cited_at' => Hyacinth::DigitalObject::TypeDef::URI::HTTP.new.to_serialized_form(json_object.cited_at)
+            'cited_at' => Hyacinth::DigitalObject::TypeDef::Uri::Http.new.to_serialized_form(json_object.cited_at)
           }
         end
 
@@ -18,7 +18,7 @@ module Hyacinth
           Hyacinth::PublishEntry.new(
             published_at: Hyacinth::DigitalObject::TypeDef::DateTime.new.from_serialized_form(json_object['published_at']),
             published_by: Hyacinth::DigitalObject::TypeDef::User.new.from_serialized_form(json_object['published_by']),
-            cited_at: Hyacinth::DigitalObject::TypeDef::URI::HTTP.new.from_serialized_form(json_object['cited_at'])
+            cited_at: Hyacinth::DigitalObject::TypeDef::Uri::Http.new.from_serialized_form(json_object['cited_at'])
           )
         end
       end

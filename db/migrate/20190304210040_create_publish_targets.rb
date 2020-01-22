@@ -1,4 +1,4 @@
-class CreatePublishTargets < ActiveRecord::Migration[5.2]
+class CreatePublishTargets < ActiveRecord::Migration[6.0]
   def change
     create_table :publish_targets do |t|
       t.references :project, foreign_key: true

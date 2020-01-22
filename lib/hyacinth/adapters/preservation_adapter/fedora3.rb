@@ -81,7 +81,7 @@ module Hyacinth
           end
 
           assign(Fedora3::ObjectProperties).from(digital_object).to(fedora_object)
-          assign(Fedora3::DCProperties).from(digital_object).to(fedora_object)
+          assign(Fedora3::DcProperties).from(digital_object).to(fedora_object)
           assign(Fedora3::RelsExtProperties).from(digital_object).to(fedora_object)
           assign(Fedora3::RelsIntProperties).from(digital_object).to(fedora_object)
           assign(Fedora3::StructProperties).from(digital_object).to(fedora_object)

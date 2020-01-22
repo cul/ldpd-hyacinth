@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateDatabaseEntryLock < ActiveRecord::Migration[5.2]
+class CreateDatabaseEntryLock < ActiveRecord::Migration[6.0]
   def change
     create_table :database_entry_locks do |t|
       t.string :lock_key, null: false

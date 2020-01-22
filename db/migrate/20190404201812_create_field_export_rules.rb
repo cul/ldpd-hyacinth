@@ -1,4 +1,4 @@
-class CreateFieldExportRules < ActiveRecord::Migration[5.2]
+class CreateFieldExportRules < ActiveRecord::Migration[6.0]
   def change
     create_table :field_export_profiles do |t|
       t.string :name,      null: false

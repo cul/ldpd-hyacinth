@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-describe Hyacinth::XMLGenerator do
+describe Hyacinth::XmlGenerator do
   let(:dynamic_field_data) do
     JSON.parse(file_fixture('xml_generator/dynamic_field_data.json').read)
   end

@@ -28,7 +28,7 @@ RSpec.describe Hyacinth::Adapters::LockAdapter::DatabaseEntryLock do
         adapter.with_lock(key) do
           adapter.with_lock(key) {}
         end
-      }.to raise_exception
+      }.to raise_exception(Hyacinth::Exceptions::UnableToObtainLockError)
     end
   end
 
@@ -55,7 +55,7 @@ RSpec.describe Hyacinth::Adapters::LockAdapter::DatabaseEntryLock do
         adapter.with_multilock([key1, key2, key3]) do
           adapter.with_lock(key2) {}
         end
-      }.to raise_exception
+      }.to raise_exception(Hyacinth::Exceptions::UnableToObtainLockError)
     end
   end
 end

@@ -1,4 +1,4 @@
-class CreateDynamicFields < ActiveRecord::Migration[5.2]
+class CreateDynamicFields < ActiveRecord::Migration[6.0]
   def change
     create_table :dynamic_fields do |t|
       t.string  :string_key,    null: false
