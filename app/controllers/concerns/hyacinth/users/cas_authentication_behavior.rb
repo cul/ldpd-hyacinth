@@ -54,7 +54,7 @@ module Hyacinth
             possible_user = User.where(email: (user_uni + '@columbia.edu')).first
 
             if possible_user.present? && possible_user.is_active
-              sign_in possible_user, bypass: true
+              bypass_sign_in possible_user
               cookies[:signed_in_using_uni] = true # Use this cookie to know when to do a CAS logout upon Devise logout
               flash[:notice] = 'You are now logged in.'
 
