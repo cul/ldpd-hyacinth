@@ -25,6 +25,10 @@ module Types
     field :update_dynamic_field_group, mutation: Mutations::UpdateDynamicFieldGroup
     field :delete_dynamic_field_group, mutation: Mutations::DeleteDynamicFieldGroup
 
+    field :create_dynamic_field, mutation: Mutations::CreateDynamicField
+    field :update_dynamic_field, mutation: Mutations::UpdateDynamicField
+    field :delete_dynamic_field, mutation: Mutations::DeleteDynamicField
+
     field :create_field_set, mutation: Mutations::FieldSet::CreateFieldSet
     field :update_field_set, mutation: Mutations::FieldSet::UpdateFieldSet
     field :delete_field_set, mutation: Mutations::FieldSet::DeleteFieldSet

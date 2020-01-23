@@ -12,6 +12,6 @@ class Mutations::DeleteDynamicFieldGroup < Mutations::BaseMutation
 
     dynamic_field_group.destroy!
 
-    { dynamic_field_category: dynamic_field_group }
+    { dynamic_field_group: dynamic_field_group }
   end
 end
