@@ -174,7 +174,7 @@ class DescriptiveMetadata extends React.PureComponent {
             ))
           }
 
-          <Collapse in={value.typeOfContent === 'motionPicture'}>
+          <Collapse in={value.typeOfContent === 'motion_picture'}>
             <div>
               <InputGroup>
                 <Label sm={4} align="right">Film distributed to public?</Label>
