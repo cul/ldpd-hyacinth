@@ -14,7 +14,7 @@ gem 'noid', '>= 0.7.1' # For unique, opaque id generation
 gem 'rubydora'
 
 gem 'best_type', '0.0.4'
-gem 'bootsnap', '>= 1.1.0', require: false # Reduces boot times through caching; required in config/boot.rb
+gem 'bootsnap', '>= 1.4.5', require: false # Reduces boot times through caching; required in config/boot.rb
 gem 'cancancan', '~> 3.0'
 gem 'devise', '~> 4.7'
 gem 'graphql'
