@@ -24,6 +24,7 @@ gem 'puma', '~> 3.12'
 gem 'rainbow', '~> 3.0'
 gem 'rsolr'
 gem 'sass-rails', '~> 5.0'
+gem 'timecop', '~> 0.9'
 gem 'uglifier', '>= 1.3.0'
 gem 'webpacker'
 
