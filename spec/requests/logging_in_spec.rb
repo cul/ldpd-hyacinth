@@ -56,11 +56,23 @@ describe 'Logging in', type: :request do
       before { get '/users/do_cas_login', params: { ticket: ticket } }
 
       it 'error is displayed via flash notice' do
-        expect(flash[:notice].strip.gsub(/\s+/, ' ')).to be_eql normalized_flash_message
+        expect(flash[:alert].strip.gsub(/\s+/, ' ')).to be_eql normalized_flash_message
       end
 
       it 'redirected to logout' do
         expect(response).to redirect_to 'https://cas.columbia.edu/cas/logout?service=http%3A%2F%2Fwww.example.com%2F'
+      end
+    end
+
+    context 'when user is deactivated' do
+      let(:uni) { 'abc123' }
+      before do
+        FactoryBot.create(:user, :deactivated, email: "#{uni}@columbia.edu")
+        get '/users/do_cas_login', params: { ticket: ticket }
+      end
+
+      it 'error is displayed via flash notice' do
+        expect(flash[:alert]).to be_eql 'Your account is not active.'
       end
     end
   end
