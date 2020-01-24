@@ -27,9 +27,7 @@ RSpec.describe Mutations::CreateDynamicFieldCategory, type: :request do
         it 'returns correct response' do
           expect(response.body).to be_json_eql(%({
             "dynamicFieldCategory": {
-              "displayLabel": "Another Dynamic Field Category",
-              "children": [],
-              "sortOrder": 8
+              "displayLabel": "Another Dynamic Field Category", "children": [], "sortOrder": 8
             }
           })).at_path('data/createDynamicFieldCategory')
         end
@@ -41,7 +39,7 @@ RSpec.describe Mutations::CreateDynamicFieldCategory, type: :request do
 
       context 'when create request is missing displayLabel' do
         let(:variables) do
-          { input: {  sortOrder: 8 } }
+          { input: { sortOrder: 8 } }
         end
 
         before { graphql query, variables }
@@ -55,7 +53,7 @@ RSpec.describe Mutations::CreateDynamicFieldCategory, type: :request do
 
       context 'when create request is missing sortOrder' do
         let(:variables) do
-          { input: {  displayLabel: 'New Dynamic Field Category' } }
+          { input: { displayLabel: 'New Dynamic Field Category' } }
         end
 
         before { graphql query, variables }

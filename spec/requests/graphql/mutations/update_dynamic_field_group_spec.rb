@@ -7,14 +7,14 @@ RSpec.describe Mutations::UpdateDynamicFieldGroup, type: :request do
 
   include_examples 'requires user to have correct permissions for graphql request' do
     let(:variables) do
-      { input: { 
-        stringKey: dynamic_field_group.string_key, 
+      { input: {
+        stringKey: dynamic_field_group.string_key,
         displayLabel: 'Best Dynamic Field Group',
         sortOrder: 1,
         isRepeatable: true,
         parentId: 1,
-        parentType: 'DynamicFieldCategory' 
-        } 
+        parentType: 'DynamicFieldCategory'
+       }
       }
     end
     let(:request) { graphql query, variables }

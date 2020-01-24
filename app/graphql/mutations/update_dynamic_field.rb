@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-
 class Mutations::UpdateDynamicField < Mutations::BaseMutation
   argument :string_key, ID, required: true
   argument :display_label, String, required: true
@@ -12,7 +11,6 @@ class Mutations::UpdateDynamicField < Mutations::BaseMutation
   argument :is_identifier_searchable, Boolean, required: true
   argument :controlled_vocabulary, String, required: false
   argument :dynamic_field_group_id, ID, required: true
-
 
   field :dynamic_field, Types::DynamicFieldType, null: true
 

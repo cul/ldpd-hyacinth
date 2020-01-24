@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Mutations::DeleteDynamicFieldCategory, type: :request do
-  let(:dynamic_field_category) { FactoryBot.create(:dynamic_field_category) } 
+  let(:dynamic_field_category) { FactoryBot.create(:dynamic_field_category) }
 
   include_examples 'requires user to have correct permissions for graphql request' do
     let(:variables) { { input: { id: dynamic_field_category.id } } }
