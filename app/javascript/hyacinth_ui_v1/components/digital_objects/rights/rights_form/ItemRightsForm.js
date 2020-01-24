@@ -93,13 +93,13 @@ function ItemRightsForm(props) {
           />
 
           <ContractualLimitationsRestrictionsAndPermissions
-            audioVisualContent={descriptiveMetadata.typeOfContent === 'motionPicture'}
+            audioVisualContent={descriptiveMetadata.typeOfContent === 'motion_picture'}
             value={contractualLimitationsRestrictionsAndPermissions}
             onChange={v => onChange('contractualLimitationsRestrictionsAndPermissions', v)}
           />
 
           {
-            descriptiveMetadata.typeOfContent === 'pictoralGraphicAndScuptural' && (
+            descriptiveMetadata.typeOfContent === 'pictoral_graphic_and_scuptural' && (
               <RightsForWorksOfArtSculptureAndPhotographs
                 value={rightsForWorksOfArtSculptureAndPhotographs}
                 onChange={v => onChange('rightsForWorksOfArtSculptureAndPhotographs', v)}
