@@ -21,6 +21,10 @@ FactoryBot.define do
       is_primary { false }
     end
 
+    trait :allow_asset_rights do
+      has_asset_rights { true }
+    end
+
     trait :with_publish_target do
       after(:build) do |project|
         atts = {

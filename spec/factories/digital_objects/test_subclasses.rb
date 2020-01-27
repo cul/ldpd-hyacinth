@@ -32,7 +32,7 @@ FactoryBot.define do
     trait :with_lincoln_project do
       after(:build) do |digital_object|
         right_now = Time.current
-        digital_object.primary_project = create(:project, :legend_of_lincoln, :with_publish_target)
+        digital_object.primary_project = create(:project, :legend_of_lincoln, :with_publish_target, :allow_asset_rights)
         entries = digital_object.projects.map do |proj|
           proj.publish_targets.map(&:string_key)
         end.to_a.flatten.uniq.map do |sk|
