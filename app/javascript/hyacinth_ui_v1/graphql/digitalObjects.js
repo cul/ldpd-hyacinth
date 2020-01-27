@@ -26,7 +26,8 @@ const digitalObjectInterfaceFields = `
   doi,
   primaryProject {
     displayLabel,
-    stringKey
+    stringKey,
+    hasAssetRights
   },
   otherProjects {
     displayLabel,

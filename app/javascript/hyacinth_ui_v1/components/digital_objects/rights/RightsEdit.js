@@ -4,6 +4,7 @@ import { useQuery } from '@apollo/react-hooks';
 
 import GraphQLErrors from '../../ui/GraphQLErrors';
 import RightsTab from './RightsTab';
+import AssetRightsForm from './rights_form/AssetRightsForm';
 import ItemRightsForm from './rights_form/ItemRightsForm';
 import { getRightsDigitalObjectQuery } from '../../../graphql/digitalObjects';
 
@@ -27,6 +28,12 @@ function RightsEdit(props) {
     switch (digitalObjectType) {
       case 'item':
         return <ItemRightsForm digitalObject={digitalObject} />;
+      case 'asset':
+        if (digitalObject.primaryProject.hasAssetRights) {
+          return <AssetRightsForm digitalObject={digitalObject} />;
+        } else {
+          return `Rights form view is not supported for assets in the '${digitalObject.primaryProject.displayLabel}' project`;
+        }
       default:
         return `Rights form view is not supported for digital object type: ${digitalObjectType}`;
     }
