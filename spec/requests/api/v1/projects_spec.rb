@@ -32,6 +32,20 @@ RSpec.describe 'Projects Requests', type: :request do
             }
           }))
         end
+        context 'project has_asset_rights' do
+          let(:project) { FactoryBot.create(:project, :allow_asset_rights) }
+          it 'returns correct response' do
+            expect(response.body).to be_json_eql(%({
+              "project": {
+                "display_label": "Great Project",
+                "is_primary": true,
+                "has_asset_rights": true,
+                "project_url": "https://example.com/great_project",
+                "string_key": "great_project"
+              }
+            }))
+          end
+        end
       end
 
       context 'when string_key is invalid' do
