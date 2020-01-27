@@ -26,6 +26,7 @@ RSpec.describe 'Projects Requests', type: :request do
             "project": {
               "display_label": "Great Project",
               "is_primary": true,
+              "has_asset_rights": false,
               "project_url": "https://example.com/great_project",
               "string_key": "great_project"
             }
