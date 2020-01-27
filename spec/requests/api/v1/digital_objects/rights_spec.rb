@@ -33,6 +33,9 @@ RSpec.describe "Digital Object Rights API endpoint", type: :request do
       it "return a single Digital Object with the expected fields" do
         expect(JSON.parse(response.body)['digital_object']).to include('uid' => authorized_object.uid)
       end
+      it "return a single Digital Object with the expected project fields" do
+        expect(JSON.parse(response.body)['digital_object']['primary_project']).to include('has_asset_rights' => true)
+      end
     end
   end
 
