@@ -34,6 +34,17 @@ class AssetRightsForm extends React.Component {
 
   render() {
     const { rights: { copyrightStatusOverride, accessCondition } } = this.state;
+    const { digitalObject: { primaryProject: { hasAssetRights } } } = this.props;
+    let copyrightForm;
+    if (hasAssetRights) {
+      copyrightForm = <CopyrightStatus
+            title="Asset Copyright Status Override"
+            value={copyrightStatusOverride}
+            onChange={v => this.onChange('copyrightStatusOverride', v)}
+          />;
+    } else {
+      copyrightForm = <></>;
+    }
 
     return (
       <>
@@ -49,11 +60,7 @@ class AssetRightsForm extends React.Component {
             value={accessCondition}
             onChange={v => this.onChange('accessCondition', v)}
           />
-          <CopyrightStatus
-            title="Asset Copyright Status Override"
-            value={copyrightStatusOverride}
-            onChange={v => this.onChange('copyrightStatusOverride', v)}
-          />
+          {copyrightForm}
         </Form>
 
       </>
