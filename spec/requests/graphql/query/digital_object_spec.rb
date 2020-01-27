@@ -45,7 +45,8 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
           "primaryProject": {
             "displayLabel": "Great Project",
             "projectUrl": "https://example.com/great_project",
-            "stringKey": "great_project"
+            "stringKey": "great_project",
+            "hasAssetRights": false
           },
           "otherProjects" : [
             {
@@ -108,6 +109,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
             stringKey
             displayLabel
             projectUrl
+            hasAssetRights
           }
           otherProjects {
             stringKey
