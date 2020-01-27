@@ -29,11 +29,7 @@ function RightsEdit(props) {
       case 'item':
         return <ItemRightsForm digitalObject={digitalObject} />;
       case 'asset':
-        if (digitalObject.primaryProject.hasAssetRights) {
-          return <AssetRightsForm digitalObject={digitalObject} />;
-        } else {
-          return `Rights form view is not supported for assets in the '${digitalObject.primaryProject.displayLabel}' project`;
-        }
+        return <AssetRightsForm digitalObject={digitalObject} />;
       default:
         return `Rights form view is not supported for digital object type: ${digitalObjectType}`;
     }
