@@ -6,6 +6,7 @@ export const getProjectQuery = gql`
       stringKey
       displayLabel
       isPrimary
+      hasAssetRights
       projectUrl
     }
   }
@@ -46,6 +47,7 @@ const getProjectsFields = `
   stringKey
   displayLabel
   isPrimary
+  hasAssetRights
   projectUrl,
   enabledDigitalObjectTypes
 `;
