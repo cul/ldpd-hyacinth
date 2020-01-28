@@ -18,7 +18,9 @@ FactoryBot.define do
       instance.instance_variable_set(
         '@rights',
         {
-          'rights_field' => 'rights value'
+          'descriptive_metadata' => [
+            { 'type_of_content' => 'literary' }
+          ]
         }
       )
       instance

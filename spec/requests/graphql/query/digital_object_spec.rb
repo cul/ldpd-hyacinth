@@ -61,7 +61,11 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
           ],
           "publishEntries": [],
           "rights": {
-            "rights_field": "rights value"
+            "descriptiveMetadata": [
+              {
+                "typeOfContent": "literary"
+              }
+            ]
           },
           "serializationVersion": "1",
           "state": "active",
@@ -136,7 +140,14 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
             }
           }
           optimisticLockToken
-          rights
+
+          ... on Item {
+            rights {
+              descriptiveMetadata {
+                typeOfContent
+              }
+            }
+          }
         }
       }
     GQL
