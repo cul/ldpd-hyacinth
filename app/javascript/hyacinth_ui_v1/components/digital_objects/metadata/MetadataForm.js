@@ -150,10 +150,6 @@ function MetadataForm(props) {
 
   return (
     <>
-      <TabHeading>
-        Metadata
-      </TabHeading>
-
       <form>
         { dynamicFieldHierarchy.map(category => renderCategory(category)) }
 
