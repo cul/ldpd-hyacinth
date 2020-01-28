@@ -6,6 +6,7 @@ module Types
       implements Types::DigitalObjectInterface
 
       field :asset_type, Enums::AssetTypeEnum, null: false # enum delegating to BestType library
+      field :rights, Types::DigitalObject::AssetRightsType, null: true
     end
   end
 end
