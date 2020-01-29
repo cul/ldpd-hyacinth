@@ -120,8 +120,10 @@ function CoreDataEdit() {
             <Form.Control
               type="checkbox"
               name="hasAssetRights"
-              checked={hasAssetRights}
-              onChange={e => setHasAssetRights(e.target.checked)}
+              value={hasAssetRights}
+              onChange={e => setHasAssetRights(isPrimary && e.target.checked)}
+              disabled={!isPrimary}
+              checked={isPrimary && hasAssetRights}
             />
           </Col>
         </Form.Group>
