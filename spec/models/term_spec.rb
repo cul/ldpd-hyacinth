@@ -29,7 +29,7 @@ RSpec.describe Term, type: :model, solr: true do
       expect(term_solr_doc).to include(expected_solr_doc)
     end
 
-    context 'with an invalid URI' do
+    context 'with an invalid URI', solr: false do
       let(:term) { FactoryBot.build(:external_term, uri: 'ldfkja') }
 
       it 'returns validation error' do
@@ -38,11 +38,13 @@ RSpec.describe Term, type: :model, solr: true do
       end
     end
 
-    context 'with a missing uri' do
+    context 'with a missing uri', solr: false do
       let(:term) { FactoryBot.build(:external_term, uri: '') }
 
       it 'returns validation error' do
         expect(term.save).to be false
+        expect(term.errors.keys).to include :uri
+        expect(term.errors.keys).not_to include :uri_hash
         expect(term.errors.full_messages).to include 'Uri can\'t be blank'
       end
     end
