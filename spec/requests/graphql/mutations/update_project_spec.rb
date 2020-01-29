@@ -15,7 +15,7 @@ RSpec.describe Mutations::UpdateProject, type: :request do
 
     context 'when updating record' do
       let(:variables) do
-        { input: { stringKey: project.string_key, displayLabel: 'Best Project', projectUrl: 'https://best_project.com' } }
+        { input: { stringKey: project.string_key, displayLabel: 'Best Project', projectUrl: 'https://best_project.com', hasAssetRights: true } }
       end
 
       before { graphql query, variables }
@@ -24,6 +24,7 @@ RSpec.describe Mutations::UpdateProject, type: :request do
         project.reload
         expect(project.display_label).to eql 'Best Project'
         expect(project.project_url).to eql 'https://best_project.com'
+        expect(project.has_asset_rights).to be true
       end
     end
   end
