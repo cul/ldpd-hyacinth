@@ -92,12 +92,14 @@ function ProjectNew() {
 
         <Form.Row>
           <Form.Group as={Col}>
-          <Form.Label>Assets Override Rights (CHANGE THIS)?</Form.Label>
+          <Form.Label>Assets Rights?</Form.Label>
             <Form.Control
               type="checkbox"
               name="hasAssetRights"
               value={hasAssetRights}
-              onChange={e => setHasAssetRights(e.target.checked)}
+              onChange={e => setHasAssetRights(isPrimary && e.target.checked)}
+              disabled={!isPrimary}
+              checked={isPrimary && hasAssetRights}
             />
           </Form.Group>
         </Form.Row>
