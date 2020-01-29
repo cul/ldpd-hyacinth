@@ -19,6 +19,7 @@ RSpec.describe Mutations::CreateProject, type: :request do
               stringKey: 'best_project',
               displayLabel: 'Best Project',
               isPrimary: true,
+              hasAssetRights: true,
               projectUrl: 'https://best_project.com'
             }
           }
@@ -31,6 +32,7 @@ RSpec.describe Mutations::CreateProject, type: :request do
             "project": {
               "displayLabel": "Best Project",
               "isPrimary": true,
+              "hasAssetRights": true,
               "projectUrl": "https://best_project.com",
               "stringKey": "best_project"
             }
@@ -80,6 +82,7 @@ RSpec.describe Mutations::CreateProject, type: :request do
               displayLabel
               projectUrl
               isPrimary
+              hasAssetRights
             }
           }
         }
