@@ -29,7 +29,7 @@ class Mutations::CreateAsset < Mutations::BaseMutation
     asset = DigitalObject::Asset.new
     asset.primary_project = parent.primary_project
     asset.add_parent_uid(parent.uid)
-    asset.asset_type = BestType.dc_type.for_file_name(file_name)
+    asset.asset_type = BestType.pcdm_type.for_file_name(file_name)
     asset
   end
 

@@ -10,10 +10,10 @@ RSpec.describe Mutations::CreateAsset, type: :request do
   let(:blob_checksum) { Digest::MD5.hexdigest blob_content }
   let(:blob_args) do
     {
-      filename: 'blob.xyz',
+      filename: 'blob.tiff',
       byte_size: blob_content.bytesize,
       checksum: blob_checksum,
-      content_type: 'text/plain'
+      content_type: 'image/tiff'
     }
   end
   let(:active_storage_blob) do
@@ -49,6 +49,7 @@ RSpec.describe Mutations::CreateAsset, type: :request do
 
       it 'returns a new asset' do
         expect(response.body).to have_json_type(String).at_path('data/createAsset/asset/id')
+        expect(response.body).to be_json_eql("\"Image\"").at_path('data/createAsset/asset/assetType')
       end
       it 'deletes the upload' do
         expect(ActiveStorage::Blob.exists?(active_storage_blob.id)).to be false
@@ -62,6 +63,7 @@ RSpec.describe Mutations::CreateAsset, type: :request do
         createAsset(input: $input) {
           asset {
             id
+            assetType
           }
         }
       }

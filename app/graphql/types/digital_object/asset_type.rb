@@ -5,7 +5,7 @@ module Types
     class AssetType < Types::BaseObject
       implements Types::DigitalObjectInterface
 
-      # ... additional fields
+      field :asset_type, Enums::AssetTypeEnum, null: false # enum delegating to BestType library
     end
   end
 end
