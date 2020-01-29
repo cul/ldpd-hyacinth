@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Updating Asset Rights', type: :request do
-  let(:authorized_item) { FactoryBot.create(:item, :with_primary_project) }
+  let(:authorized_item) { FactoryBot.create(:item, :with_primary_project_asset_rights) }
   let(:authorized_project) { authorized_item.primary_project }
   let(:authorized_asset) { FactoryBot.create(:asset, parent: authorized_item) }
 

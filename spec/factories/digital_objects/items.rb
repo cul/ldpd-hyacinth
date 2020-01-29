@@ -32,6 +32,12 @@ FactoryBot.define do
       end
     end
 
+    trait :with_primary_project_asset_rights do
+      after(:build) do |digital_object|
+        digital_object.primary_project = create(:project, :allow_asset_rights)
+      end
+    end
+
     trait :with_other_projects do
       after(:build) do |digital_object|
         ['a', 'b'].each do |val|
