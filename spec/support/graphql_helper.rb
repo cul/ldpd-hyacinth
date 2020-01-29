@@ -16,6 +16,7 @@ module GraphQLHelper
           stringKey
           displayLabel
           projectUrl
+          hasAssetRights
           isPrimary
         }
       }
@@ -30,6 +31,7 @@ module GraphQLHelper
           displayLabel
           projectUrl
           isPrimary
+          hasAssetRights
           projectPermissions {
             user {
               id,
