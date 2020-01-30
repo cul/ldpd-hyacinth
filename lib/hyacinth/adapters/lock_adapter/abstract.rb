@@ -12,6 +12,11 @@ module Hyacinth
         def with_lock(key)
           raise NotImplementedError
         end
+
+        # Returns true if there is a lock on the given key, otherwise returns false.
+        def locked?(key)
+          raise NotImplementedError
+        end
       end
     end
   end

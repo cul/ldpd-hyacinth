@@ -39,6 +39,7 @@ Rails.application.routes.draw do
         member do
           resource :rights, controller: 'digital_objects/rights', only: [:show, :edit, :update]
           resource :uploads, controller: 'digital_objects/uploads', only: [:create]
+          get 'resources/:resource_name/download' => 'digital_objects/resources#download', as: :download_resource
         end
       end
 
