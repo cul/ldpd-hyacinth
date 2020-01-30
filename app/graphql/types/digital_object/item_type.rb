@@ -6,7 +6,6 @@ module Types
       implements Types::DigitalObjectInterface
 
       # ... additional fields
-      field :rights, Types::DigitalObject::ItemRightsType, null: true
     end
   end
 end

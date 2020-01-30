@@ -186,13 +186,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
             }
           }
           optimisticLockToken
-          ... on Item {
-            rights {
-              descriptiveMetadata {
-                typeOfContent
-              }
-            }
-          }
+          rights
           resources {
             id
             displayLabel

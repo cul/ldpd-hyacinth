@@ -94,4 +94,9 @@ const defaultItemRights = () => (
   }
 );
 
-export default defaultItemRights;
+const itemRightsSelectors = () => (
+  ""
+ // `{${defaultItemRights().keys().join(',')}}`
+);
+
+export { itemRightsSelectors, defaultItemRights };

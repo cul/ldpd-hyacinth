@@ -36,6 +36,8 @@ module Types
     field :number_of_children, Integer, null: false
     field :resources, [ResourceType], null: false
 
+    field :rights, GraphQL::Types::JSON, null: false
+
     def publish_entries
       object.publish_entries.map { |k, h| { publish_target_string_key: k }.merge(h) }
     end
@@ -53,6 +55,10 @@ module Types
           resource.as_json
         )
       end
+    end
+
+    def rights
+      object.rights.deep_transform_keys! { |key| key.to_s.camelize(:lower) }
     end
 
     def self.title_for(object)

@@ -56,18 +56,9 @@ RSpec.describe 'Updating Asset Rights', type: :request do
     let(:expected_response) do
       %(
         {
-          "id": "#{authorized_asset.uid}",
-          "rights": {
-            "copyrightStatusOverride": [
-              {
-                "copyrightStatement": {
-                  "prefLabel": "In Copyright",
-                  "termType": "external",
-                  "uri": "https://example.com/term/in_copyright"
-                }
-              }
-            ]
-          }
+          "prefLabel": "In Copyright",
+          "uri": "https://example.com/term/in_copyright",
+          "termType": "external"
         }
       )
     end
@@ -78,11 +69,14 @@ RSpec.describe 'Updating Asset Rights', type: :request do
     end
 
     it "return a asset with the expected rights fields" do
-      expect(response.body).to be_json_eql(expected_response).at_path('data/updateAssetRights/asset')
+      response_data = JSON.parse(response.body)
+      copyright_statement = response_data['data']['updateAssetRights']['asset']['rights']['copyrightStatusOverride'][0]['copyrightStatement']
+      expected_props = JSON.parse(expected_response)
+      expect(copyright_statement).to include expected_props
     end
 
     it 'sets rights fields' do
-      expect(DigitalObject::Base.find(authorized_asset.uid).rights).to match expected_rights
+      expect(DigitalObject::Base.find(authorized_asset.uid).rights).to include expected_rights
     end
   end
 
@@ -92,15 +86,7 @@ RSpec.describe 'Updating Asset Rights', type: :request do
         updateAssetRights(input: $input) {
           asset {
             id
-            rights {
-              copyrightStatusOverride {
-                copyrightStatement {
-                  prefLabel
-                  uri
-                  termType
-                }
-              }
-            }
+            rights
           }
         }
       }
