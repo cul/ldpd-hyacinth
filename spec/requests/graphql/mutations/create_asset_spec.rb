@@ -50,6 +50,7 @@ RSpec.describe Mutations::CreateAsset, type: :request do
       it 'returns a new asset' do
         expect(response.body).to have_json_type(String).at_path('data/createAsset/asset/id')
         expect(response.body).to be_json_eql("\"Image\"").at_path('data/createAsset/asset/assetType')
+        expect(response.body).to be_json_eql("\"blob.tiff\"").at_path('data/createAsset/asset/title')
       end
       it 'deletes the upload' do
         expect(ActiveStorage::Blob.exists?(active_storage_blob.id)).to be false
@@ -64,6 +65,7 @@ RSpec.describe Mutations::CreateAsset, type: :request do
           asset {
             id
             assetType
+            title
           }
         }
       }

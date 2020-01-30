@@ -47,5 +47,20 @@ FactoryBot.define do
         digital_object.primary_project = create(:project, :myth_of_minken)
       end
     end
+
+    trait :with_test_resource1 do
+      after(:build) do |digital_object|
+        test_file_fixture_name = 'test.txt'
+        text_file_fixture_path = Rails.root.join('spec', 'fixtures', 'files', test_file_fixture_name).to_s
+
+        digital_object.resources['test_resource1'] = Hyacinth::DigitalObject::Resource.new(
+          location: 'disk://' + text_file_fixture_path,
+          checksum: 'SHA256:e1266b81a70083fa5e3bf456239a1160fc6ebc179cdd71e458a9dd4bc7cc21f6',
+          original_filename: test_file_fixture_name,
+          media_type: 'text/plain',
+          file_size: File.size(text_file_fixture_path)
+        )
+      end
+    end
   end
 end

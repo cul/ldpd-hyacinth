@@ -37,6 +37,15 @@ module Hyacinth
           raise NotImplementedError
         end
 
+        def with_readable(location_uri, &block)
+          raise Hyacinth::Exceptions::UnhandledLocationError, "Unhandled location_uri for #{self.class.name}: #{location_uri}" unless handles?(location_uri)
+          readable_impl(location_uri, &block)
+        end
+
+        def readable_impl(*args)
+          raise NotImplementedError
+        end
+
         # @param location_uri [String] location to write to
         # @param content [bytes] content to write
         def write(location_uri, content)

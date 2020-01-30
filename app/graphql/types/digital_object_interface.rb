@@ -35,6 +35,7 @@ module Types
 
     field :title, String, null: false
     field :number_of_children, Integer, null: false
+    field :resources, [ResourceType], null: false
 
     def publish_entries
       object.publish_entries.map { |k, h| { publish_target_string_key: k }.merge(h) }
@@ -42,6 +43,14 @@ module Types
 
     def title
       DigitalObjectInterface.title_for(object)
+    end
+
+    def resources
+      object.resources.map do |resource_name, resource|
+        { 'id' => resource_name, 'display_label' => resource_name.camelize(:upper) }.merge(
+          resource.as_json
+        )
+      end
     end
 
     def self.title_for(object)

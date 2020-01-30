@@ -12,5 +12,9 @@ RSpec.shared_examples "a lock adapter" do
     it "implements #with_lock" do
       expect(adapter).to respond_to(:with_lock)
     end
+
+    it "implements #locked?" do
+      expect(adapter).to respond_to(:locked?)
+    end
   end
 end

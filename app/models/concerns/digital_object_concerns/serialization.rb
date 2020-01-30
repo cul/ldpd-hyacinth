@@ -47,6 +47,7 @@ module DigitalObjectConcerns
             digital_object.resources[resource_name] = Hyacinth::DigitalObject::Resource.from_serialized_form(json_var['resources'][resource_name])
           end
         end
+
         # set restrictions
         digital_object.restriction_attributes.map do |restriction_name|
           restriction_name = restriction_name.to_s

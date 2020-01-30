@@ -12,6 +12,10 @@ module Hyacinth
           @lock_timeout = adapter_config[:lock_timeout]
         end
 
+        def locked?(key)
+          ::DatabaseEntryLock.exists?(lock_key: key)
+        end
+
         # Generally, the lock method should not be called.  It's better to call with_lock, which automatically unlocks locks after a block has completed processing.
         def lock(key)
           # Attempt to create a new lock
@@ -22,7 +26,7 @@ module Hyacinth
 
           if database_entry_lock.expires_at > DateTime.current
             # If the lock is still valid, based on expires_at time, then raise an exception.
-            raise Hyacinth::Exceptions::UnableToObtainLockError, "Lock on #{key} is currently held by another process."
+            raise Hyacinth::Exceptions::LockError, "Lock on #{key} is currently held by another process."
           else
             # If the lock has expired, delete this lock entry and create a new one, then yield later in this method.
             begin
@@ -30,8 +34,8 @@ module Hyacinth
               database_entry_lock = ::DatabaseEntryLock.create!(lock_key: key, expires_at: DateTime.current + @lock_timeout.seconds)
             rescue ActiveRecord::RecordNotUnique
               # It's very unlikely that this rescue block will run, but if another process somehow sneaks in a row creation
-              # right before the above create operation can run, just return an UnableToObtainLockError.
-              raise Hyacinth::Exceptions::UnableToObtainLockError, "Lock on #{key} is currently held by another process."
+              # right before the above create operation can run, just return an LockError.
+              raise Hyacinth::Exceptions::LockError, "Lock on #{key} is currently held by another process."
             end
           end
           LockObject.new(database_entry_lock, @lock_timeout)
@@ -70,7 +74,7 @@ module Hyacinth
 
           keys.each do |key|
             lock_objects[key] = lock(key)
-          rescue Hyacinth::Exceptions::UnableToObtainLockError
+          rescue Hyacinth::Exceptions::LockError
             already_locked_ids << key
           end
 
@@ -80,7 +84,7 @@ module Hyacinth
               lock_object.unlock
             end
             # and then raise an exception
-            raise Hyacinth::Exceptions::UnableToObtainLockError, already_locked_ids.length == 1 ?
+            raise Hyacinth::Exceptions::LockError, already_locked_ids.length == 1 ?
               "Lock on #{already_locked_ids.first} is currently held by another process." :
               "Locks on #{already_locked_ids.join(', ')} are currently held by other processes."
           end
@@ -109,7 +113,7 @@ module Hyacinth
           end
 
           def extend_lock
-            raise Hyacinth::Exceptions::UnableToObtainLockError, 'Cannot call #extend_lock because #unlock has already been called.' unless @locked
+            raise Hyacinth::Exceptions::LockError, 'Cannot call #extend_lock because #unlock has already been called.' unless @locked
             @database_entry_lock.update!(expires_at: DateTime.current + @lock_timeout.seconds)
           end
 

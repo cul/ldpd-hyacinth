@@ -8,6 +8,7 @@ export const getMinimalDigitalObjectWithProjectsQuery = gql`
   query MinimalDigitalObject($id: ID!){
     digitalObject(id: $id) {
       id,
+      digitalObjectType,
       primaryProject {
         ${minimalDigitalObjctProjectFields}
       },
@@ -95,6 +96,26 @@ export const getPreservePublishDigitalObjectQuery = gql`
       ${digitalObjectInterfaceFields},
       publishEntries {
         publishTargetStringKey
+      }
+    }
+  }
+`;
+
+export const getAssetDataDigitalObjectQuery = gql`
+  query AssetDataDigitalObject($id: ID!){
+    digitalObject(id: $id) {
+      ${digitalObjectInterfaceFields},
+      resources {
+        id
+        displayLabel
+        location
+        checksum
+        originalFilename
+        mediaType
+        fileSize
+      },
+      ... on Asset {
+        assetType
       }
     }
   }
