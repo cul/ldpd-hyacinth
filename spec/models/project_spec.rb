@@ -19,6 +19,19 @@ RSpec.describe Project, type: :model do
       end
     end
 
+    context 'when asset rights flag is true but project is not a primary project' do
+      let(:project) { FactoryBot.build(:project, is_primary: false, has_asset_rights: true) }
+
+      it 'does not save' do
+        expect(project.save).to be false
+      end
+
+      it 'returns correct error' do
+        project.save
+        expect(project.errors.full_messages).to include 'Is primary is false so Has Asset Rights cannot be true'
+      end
+    end
+
     context 'when missing string_key' do
       let(:project) { FactoryBot.build(:project, string_key: nil) }
 
