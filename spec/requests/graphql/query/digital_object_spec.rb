@@ -68,6 +68,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
               }
             ]
           },
+          "resources" : [],
           "serializationVersion": "1",
           "state": "active",
           "updatedAt": "#{authorized_object.updated_at}",
@@ -89,6 +90,49 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
       expect(response.body).to be_json_eql(%(
         "[No Title]"
       )).at_path('data/digitalObject/title')
+    end
+  end
+
+  context "resources response" do
+    let(:authorized_object) { FactoryBot.create(:asset, :with_primary_project, :with_master_resource) }
+    let(:authorized_project) { authorized_object.projects.first }
+    before do
+      sign_in_project_contributor to: :read_objects, project: authorized_project
+      graphql query(authorized_object.uid)
+    end
+
+    it "returns the expected resources response" do
+      expect(response.body).to be_json_eql(%(
+        [
+          {
+            "id": "master",
+            "checksum": "SHA256:e1266b81a70083fa5e3bf456239a1160fc6ebc179cdd71e458a9dd4bc7cc21f6",
+            "displayLabel": "Master",
+            "fileSize": 23,
+            "location": "disk://#{Rails.root}/spec/fixtures/files/test.txt",
+            "mediaType": "text/plain",
+            "originalFilename": "test.txt"
+          },
+          {
+            "id": "service",
+            "checksum": null,
+            "displayLabel": "Service",
+            "fileSize": null,
+            "location": null,
+            "mediaType": null,
+            "originalFilename": null
+          },
+          {
+            "id": "access",
+            "checksum": null,
+            "displayLabel": "Access",
+            "fileSize": null,
+            "location": null,
+            "mediaType": null,
+            "originalFilename": null
+          }
+        ]
+      )).at_path('data/digitalObject/resources')
     end
   end
 
@@ -142,13 +186,21 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
             }
           }
           optimisticLockToken
-
           ... on Item {
             rights {
               descriptiveMetadata {
                 typeOfContent
               }
             }
+          }
+          resources {
+            id
+            displayLabel
+            location
+            checksum
+            originalFilename
+            mediaType
+            fileSize
           }
         }
       }

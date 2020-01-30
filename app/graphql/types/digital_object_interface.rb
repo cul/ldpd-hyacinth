@@ -46,7 +46,10 @@ module Types
 
     def resources
       object.resources.map do |resource_name, resource|
-        { 'id' => resource_name, 'display_label' => resource_name.camelize(:upper) }.merge(
+        {
+          'id' => resource_name,
+          'display_label' => resource_name.humanize.split(' ').map(&:capitalize).join(' ')
+        }.merge(
           resource.as_json
         )
       end

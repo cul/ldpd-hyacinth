@@ -4,10 +4,10 @@ require 'rails_helper'
 
 RSpec.describe "Digital Object Resources API endpoint", type: :request do
   let(:authorized_object) do
-    FactoryBot.create(:digital_object_test_subclass, :with_sample_data, :with_lincoln_project, :with_test_resource1)
+    FactoryBot.create(:asset, :with_primary_project, :with_master_resource)
   end
-  let(:resource_name) { 'test_resource1' }
-  let(:empty_resource_name) { 'test_resource2' }
+  let(:resource_name) { 'master' }
+  let(:empty_resource_name) { 'service' }
   let(:authorized_project) { authorized_object.primary_project }
 
   describe 'GET /api/v1/digital_objects/:id/resources/:resource_name/download' do
@@ -37,7 +37,7 @@ RSpec.describe "Digital Object Resources API endpoint", type: :request do
           get "/api/v1/digital_objects/#{authorized_object.uid}/resources/#{resource_name}/download"
         end
         it 'returns 200' do
-          expect(response.status).to be 200
+          expect(response.status).to eq 200
         end
 
         context "headers" do
