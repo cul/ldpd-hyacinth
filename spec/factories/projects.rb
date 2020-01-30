@@ -6,6 +6,7 @@ FactoryBot.define do
     display_label { 'Great Project' }
     project_url   { 'https://example.com/great_project' }
     is_primary { true }
+    has_asset_rights { false }
 
     trait :legend_of_lincoln do
       string_key { 'legend_of_lincoln' }
