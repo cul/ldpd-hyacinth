@@ -20,7 +20,7 @@ import LicensedToColumbiaUniversity from './subsections/LicensedToColumbiaUniver
 import ContractualLimitationsRestrictionsAndPermissions from './subsections/ContractualLimitationsRestrictionsAndPermissions';
 import RightsForWorksOfArtSculptureAndPhotographs from './subsections/RightsForWorksOfArtSculptureAndPhotographs';
 import UnderlyingRights from './subsections/UnderlyingRights';
-import defaultItemRights from './defaultItemRights';
+import { defaultItemRights } from './defaultItemRights';
 
 const useHash = (initialHash) => {
   const [hash, setHash] = useState(initialHash);

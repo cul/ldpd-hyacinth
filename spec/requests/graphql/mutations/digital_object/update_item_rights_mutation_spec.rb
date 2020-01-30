@@ -98,32 +98,17 @@ RSpec.describe 'Updating Item Rights', type: :request do
       variables[:input].except(:id).deep_transform_keys { |k| k.to_s.underscore }
     end
 
-    let(:expected_response) do
-      %(
-        {
-          "id": "#{authorized_object.uid}",
-          "rights": {
-            "descriptiveMetadata": [
-              {
-                "typeOfContent": "motion_picture"
-              }
-            ]
-          }
-        }
-      )
-    end
-
     before do
       sign_in_project_contributor to: [:read_objects, :assess_rights], project: authorized_project
       graphql query, variables
     end
 
     it "return a single item with the expected rights fields" do
-      expect(response.body).to be_json_eql(expected_response).at_path('data/updateItemRights/item')
+      expect(response.body).to be_json_eql("\"motion_picture\"").at_path('data/updateItemRights/item/rights/descriptiveMetadata/0/typeOfContent')
     end
 
     it 'sets rights fields' do
-      expect(DigitalObject::Base.find(authorized_object.uid).rights).to match expected_rights
+      expect(DigitalObject::Base.find(authorized_object.uid).rights).to include expected_rights
     end
   end
 
@@ -133,11 +118,7 @@ RSpec.describe 'Updating Item Rights', type: :request do
         updateItemRights(input: $input) {
           item {
             id
-            rights {
-              descriptiveMetadata {
-                typeOfContent
-              }
-            }
+            rights
           }
         }
       }
