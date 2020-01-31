@@ -38,12 +38,16 @@ function AssetRightsForm(props) {
   const { copyrightStatusOverride, restrictionOnAccess } = rights;
   let copyrightForm;
   if (hasAssetRights) {
-    copyrightForm = <CopyrightStatus
-          title="Asset Copyright Status Override"
-          value={copyrightStatusOverride}
-          onChange={v => setRights('copyrightStatusOverride', v)}
-        />;
+    copyrightForm = (
+      <CopyrightStatus
+        title="Asset Copyright Status Override"
+        value={copyrightStatusOverride}
+        onChange={v => setRights('copyrightStatusOverride', v)}
+      />
+    );
   } else {
+    // If project does not have asset rights enabled, don't send copyright status override.
+    delete rights.copyrightStatusOverride;
     copyrightForm = <></>;
   }
 
