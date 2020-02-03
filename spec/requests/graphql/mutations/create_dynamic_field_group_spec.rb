@@ -40,7 +40,7 @@ RSpec.describe Mutations::CreateDynamicFieldGroup, type: :request do
 
     it 'adds child to parent' do
       parent.reload
-      expect(parent.children.length).to eq 1
+      expect(parent.children.length).to be 1
     end
 
     context 'when creating without a string_key' do
