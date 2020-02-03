@@ -6,17 +6,7 @@ RSpec.describe Mutations::UpdateDynamicFieldGroup, type: :request do
   let(:dynamic_field_group) { FactoryBot.create(:dynamic_field_group) }
 
   include_examples 'requires user to have correct permissions for graphql request' do
-    let(:variables) do
-      { input: {
-        stringKey: dynamic_field_group.string_key,
-        displayLabel: 'Best Dynamic Field Group',
-        sortOrder: 1,
-        isRepeatable: true,
-        parentId: 1,
-        parentType: 'DynamicFieldCategory'
-       }
-      }
-    end
+    let(:variables) { { input: { stringKey: dynamic_field_group.string_key, displayLabel: 'Best Dynamic Field Group', sortOrder: 1, isRepeatable: true } } }
     let(:request) { graphql query, variables }
   end
 
@@ -25,20 +15,18 @@ RSpec.describe Mutations::UpdateDynamicFieldGroup, type: :request do
 
     context 'when updating record' do
       let(:variables) do
-        { input: { 
-          stringKey: dynamic_field_group.string_key, 
+        { input: 
+          {
+          stringKey: dynamic_field_group.string_key,
           displayLabel: 'Best Dynamic Field Group',
           sortOrder: 1,
-          isRepeatable: true,
-          parentId: 1,
-          parentType: 'DynamicFieldCategory' 
+          isRepeatable: true
           } 
         }
       end
 
       before { 
-        graphql query, variables 
-        puts response.body
+        graphql query, variables
       }
 
       it 'correctly updates record' do
@@ -47,7 +35,6 @@ RSpec.describe Mutations::UpdateDynamicFieldGroup, type: :request do
       end
     end
   end
-
   def query
     <<~GQL
       mutation ($input: UpdateDynamicFieldGroupInput!) {

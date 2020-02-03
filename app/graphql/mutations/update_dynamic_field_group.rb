@@ -3,11 +3,9 @@
 class Mutations::UpdateDynamicFieldGroup < Mutations::BaseMutation
   argument :string_key, ID, required: true
   argument :display_label, String, required: true
-  argument :sort_order, Integer, required: true
-  argument :is_repeatable, Boolean, required: true
+  argument :sort_order, Integer, required: false
+  argument :is_repeatable, Boolean, required: false
   argument :export_rules, [GraphQL::Types::JSON], required: false
-  argument :parent_id, ID, required: true
-  argument :parent_type, String, required: true
 
   field :dynamic_field_group, Types::DynamicFieldGroupType, null: true
 

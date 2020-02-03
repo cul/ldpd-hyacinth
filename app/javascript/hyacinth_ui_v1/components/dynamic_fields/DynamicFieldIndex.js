@@ -21,7 +21,7 @@ import { Table } from 'react-bootstrap';
 
 
 
-  const DYNAMICFIELDS = gql`
+  const dynamicFields = gql`
     query {
        dynamicFieldCategories {
         id
@@ -47,7 +47,7 @@ import { Table } from 'react-bootstrap';
 
 
 function DynamicFieldIndex() {
-   const { loading, error, data, refetch } = useQuery(DYNAMICFIELDS);
+   const { loading, error, data, refetch } = useQuery(dynamicFields);
 
   if (loading) return (<></>);
   if (error) return (<GraphQLErrors errors={error} />);

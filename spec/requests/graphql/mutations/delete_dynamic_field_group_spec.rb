@@ -15,7 +15,7 @@ RSpec.describe Mutations::DeleteDynamicFieldGroup, type: :request do
 
     context 'when deleting a dynamic field group that exists' do
       before do
-        graphql query, { input: { stringKey: dynamic_field_group.string_key } }
+        graphql query, input: { stringKey: dynamic_field_group.string_key }
       end
 
       it 'deletes record from database' do
@@ -24,7 +24,7 @@ RSpec.describe Mutations::DeleteDynamicFieldGroup, type: :request do
     end
 
     context 'when deleting a dynamic field group that does not exist' do
-      before { graphql query, { input: { stringKey: 'invalid-string-key' } } }
+      before { graphql query, input: { stringKey: 'invalid-string-key' } }
 
       it 'returns errors' do
         expect(response.body).to be_json_eql(%(

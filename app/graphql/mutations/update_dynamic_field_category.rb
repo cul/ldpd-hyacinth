@@ -8,7 +8,7 @@ class Mutations::UpdateDynamicFieldCategory < Mutations::BaseMutation
   field :dynamic_field_category, Types::DynamicFieldCategoryType, null: true
 
   def resolve(id:, **attributes)
-    dynamic_field_category = DynamicFieldCategory.find_by!(id: id)
+    dynamic_field_category = DynamicFieldCategory.find(id)
 
     ability.authorize! :update, dynamic_field_category
 

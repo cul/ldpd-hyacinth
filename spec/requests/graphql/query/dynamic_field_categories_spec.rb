@@ -3,9 +3,6 @@
 require 'rails_helper'
 
 RSpec.describe 'Retrieving Dynamic Field Categories', type: :request do
-  include_examples 'requires user to have correct permissions for graphql request' do
-    let(:request) { graphql query }
-  end
 
   context 'when logged in user is an admin shows all dynamic field categories' do
     describe 'when there are multiple results' do

@@ -13,8 +13,6 @@ module Types
     field :created_by, UserType, null: true
     field :updated_by, UserType, null: true
     field :children, [DynamicFieldGroupChildType], null: true
-    field :parent, DynamicFieldCategoryType, null: false
-    field :parent_id, ID, null: false
-    field :parent_type, ID, null: false
+    field :parent, DynamicFieldCollationType, null: false
   end
 end

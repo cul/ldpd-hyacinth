@@ -106,21 +106,21 @@ module Types
     end
 
     field :dynamic_field_group, DynamicFieldGroupType, null: true do
-      argument :id, ID, required: true
+      argument :stringKey, ID, required: true
     end
 
-    def dynamic_field_group(id:)
-      dynamic_field_group = DynamicFieldGroup.find(id)
+    def dynamic_field_group(string_key:)
+      dynamic_field_group = DynamicFieldGroup.find_by!(string_key: string_key)
       ability.authorize!(:read, dynamic_field_group)
       dynamic_field_group
     end
 
     field :dynamic_field, DynamicFieldType, null: true do
-      argument :id, ID, required: true
+      argument :string_key, ID, required: true
     end
 
-    def dynamic_field(id:)
-      dynamic_field = DynamicField.find(id)
+    def dynamic_field(string_key:)
+      dynamic_field = DynamicField.find_by!(string_key: string_key)
       ability.authorize!(:read, dynamic_field)
       dynamic_field
     end
