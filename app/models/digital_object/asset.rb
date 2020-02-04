@@ -262,6 +262,7 @@ class DigitalObject::Asset < DigitalObject::Base
     save_synchronized_transcript_datastream
     save_chapters_datastream
     save_transcript_datastream
+    save_captions_datastream
     true
   end
 
@@ -303,8 +304,15 @@ class DigitalObject::Asset < DigitalObject::Base
     # ensure that uuid directory exists
     FileUtils.mkdir_p(Hyacinth::Utils::PathUtils.data_directory_path_for_uuid(self.uuid))
     write_update_transcript_file_if_changed!
+    write_update_captions_file_if_changed!
     write_update_index_document_file_if_changed!
     write_update_synchronized_transcript_file_if_changed!
+  end
+
+  def write_update_captions_file_if_changed!
+    if captions_changed?
+      IO.write(self.captions_location, self.captions)
+    end
   end
 
   def write_update_transcript_file_if_changed!

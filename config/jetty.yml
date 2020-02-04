@@ -9,6 +9,7 @@ default:
   java_opts:
     - "-XX:MaxPermSize=128m"
     - "-Xmx256m"
+    - "-Djetty.host=127.0.0.1"
 test:
   startup_wait: 120
   jetty_port: 9983
@@ -16,3 +17,4 @@ test:
   java_opts:
     - "-XX:MaxPermSize=128m"
     - "-Xmx256m"
+    - "-Djetty.host=127.0.0.1"
