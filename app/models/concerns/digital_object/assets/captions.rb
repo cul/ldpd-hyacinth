@@ -15,7 +15,6 @@ module DigitalObject::Assets::Captions
 
   def captions=(content)
     @captions_changed = true
-    20.times { puts "captions=#{content.length} characters" }
     @captions = encoded_string(content)
   end
 
