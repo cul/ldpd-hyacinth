@@ -13,7 +13,8 @@ class DigitalObjectsController < ApplicationController
     :add_parent, :remove_parents, :mods, :xacml, :media_view, :rotate_image, :swap_order_of_first_two_child_assets,
     :download_transcript, :update_transcript,
     :download_index_document, :update_index_document,
-    :download_captions, :update_captions, :clear_captions_and_reimport_transcript
+    :download_captions, :update_captions,
+    :download_synchronized_transcript, :update_synchronized_transcript, :clear_synchronized_transcript_and_reimport_transcript
   ]
   before_action :set_digital_object_for_data_for_editor_action, only: [:data_for_editor]
   before_action :set_contextual_nav_options
@@ -311,7 +312,7 @@ class DigitalObjectsController < ApplicationController
       case params[:action]
       when 'index', 'search', 'upload_directory_listing', 'titles_for_pids', 'search_results_to_csv'
         # Do nothing.  These actions are open to all logged-in users.
-      when 'show', 'data_for_editor', 'mods', 'download', 'data_for_ordered_child_editor', 'media_view', 'download_transcript', 'download_index_document', 'download_captions', 'download_access_copy', 'download_service_copy', 'download'
+      when 'show', 'data_for_editor', 'mods', 'download', 'data_for_ordered_child_editor', 'media_view', 'download_transcript', 'download_index_document', 'download_captions', 'download_synchronized_transcript', 'download_access_copy', 'download_service_copy', 'download'
         require_project_permission!(@digital_object.project, :read)
       when 'create'
         # Access logic inside action method
@@ -319,7 +320,7 @@ class DigitalObjectsController < ApplicationController
         associated_project = Project.find_by(project_find_criteria)
         publish_requirements << :create
         require_project_permission!(associated_project, publish_requirements)
-      when 'update', 'reorder_child_digital_objects', 'add_parent', 'remove_parents', 'rotate_image', 'swap_order_of_first_two_child_assets', 'update_transcript', 'update_index_document', 'update_captions', 'clear_captions_and_reimport_transcript'
+      when 'update', 'reorder_child_digital_objects', 'add_parent', 'remove_parents', 'rotate_image', 'swap_order_of_first_two_child_assets', 'update_transcript', 'update_index_document', 'update_captions', 'update_synchronized_transcript', 'clear_synchronized_transcript_and_reimport_transcript'
         require_project_permission!(@digital_object.project, :update)
         # Also require publish permission if params[:publish] is set to true (note: applies to the 'update' action)
         publish_requirements << :update
