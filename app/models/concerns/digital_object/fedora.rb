@@ -263,6 +263,32 @@ module DigitalObject::Fedora
     end
 
     def save_captions_datastream
+      return unless File.exists?(captions_location)
+      captions_ds =
+        @fedora_object.datastreams[CAPTIONS_DATASTREAM_NAME]
+
+      if captions_ds.blank?
+        captions_ds = @fedora_object.create_datastream(
+          ActiveFedora::Datastream,
+          CAPTIONS_DATASTREAM_NAME,
+          controlGroup: 'M',
+          mimeType: 'text/vtt',
+          dsLabel: CAPTIONS_DATASTREAM_NAME,
+          versionable: false,
+          checksumType: 'MD5',
+          blob: ''
+        )
+        @fedora_object.add_datastream(captions_ds)
+      end
+      # Only update content if it has changed
+      new_content = IO.read(captions_location)
+      new_content_checksum = Digest::MD5.hexdigest(new_content)
+      if new_content_checksum != captions_ds.checksum
+        captions_ds.content = new_content
+      end
+    end
+
+    def save_synchronized_transcript_datastream
       return unless File.exists?(synchronized_transcript_location)
       synchronized_transcript_ds =
         @fedora_object.datastreams[SYNCHRONIZED_TRANSCRIPT_DATASTREAM_NAME]
