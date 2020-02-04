@@ -9,10 +9,17 @@ module Hyacinth::DigitalObjects::Captions
   end
 
   def update_captions
+    form_object = Hyacinth::FormObjects::CaptionsUpdateFormObject.new(captions_params)
     if @digital_object.is_a?(DigitalObject::Asset)
-      if captions_params[:captions_text]
-        @digital_object.captions = captions_params[:captions_text]
+      if form_object.valid?
+        @digital_object.captions = form_object.captions_content
         @digital_object.save
+      else
+        render json: {
+          success: false,
+          errors: form_object.errors.full_messages
+        }
+        return
       end
     else
       @digital_object.errors.add(:captions, 'Cannot upload captions for an ' + @digital_object.digital_object_type.display_label)
@@ -62,7 +69,7 @@ module Hyacinth::DigitalObjects::Captions
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def captions_params
-      params.permit(:captions_text)
+      params.permit(:captions_vtt)
     end
 
     def synchronized_transcript_params
