@@ -69,7 +69,7 @@ module Hyacinth::DigitalObjects::Captions
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def captions_params
-      params.permit(:captions_vtt)
+      params.permit(:captions_vtt, :file)
     end
 
     def synchronized_transcript_params

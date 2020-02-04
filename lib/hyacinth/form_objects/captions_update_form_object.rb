@@ -11,9 +11,9 @@ module Hyacinth
 
       def captions_content
         if file.present?
-          encoded_string(file.tempfile.read)
+          @captions_content ||= encoded_string(file.tempfile.read)
         else
-          encoded_string(captions_vtt)
+          @captions_content ||= encoded_string(captions_vtt)
         end
       end
 
