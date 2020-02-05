@@ -25,7 +25,7 @@ module DigitalObject
 
     # Set up callbacks
     define_model_callbacks :validation, :save, :destroy
-    before_validation :trim_whitespace_for_dynamic_field_data!, :remove_blank_fields_from_dynamic_field_data!
+    before_validation :clean_dynamic_field_data!, :clean_rights!
     # TODO: Add these before_validations ---> :register_new_uris_and_values_for_dynamic_field_data!, normalize_controlled_term_fields!
 
     # Simple attributes

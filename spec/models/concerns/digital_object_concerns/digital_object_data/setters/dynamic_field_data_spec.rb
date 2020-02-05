@@ -41,19 +41,22 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters::DynamicFieldDa
     end
   end
 
-  context '#remove_blank_fields_from_dynamic_field_data' do
-    let(:dfd_with_blank_fields) do
+  context '#clean_dynamic_field_data!' do
+    let(:dfd) do
       {
         'alternate_title' => [
           {
             'title_non_sort_portion' => '',
-            'title_sort_portion' => 'Catcher in the Rye'
+            'title_sort_portion' => '    Catcher in the Rye    '
           }
         ],
         'name' => [
           {
-            'name_value' => '',
+            'name_value' => ' Random, Person ',
             'name_role' => [
+              {
+                'name_role_value' => ' Author     '
+              },
               {
                 'name_role_value' => ''
               }
@@ -63,8 +66,8 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters::DynamicFieldDa
         'controlled_field_group' => [
           {
             'controlled_field' => {
-              'controlled_field_uri' => '',
-              'controlled_field_value' => ''
+              'controlled_field_uri' => '        http://id.library.columbia.edu/with/leading/space',
+              'controlled_field_value' => 'Great value here'
             }
           }
         ],
@@ -81,11 +84,29 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters::DynamicFieldDa
         ]
       }
     end
-    let(:expected_dfd_without_blank_fields) do
+    let(:cleaned_dfd) do
       {
         'alternate_title' => [
           {
             'title_sort_portion' => 'Catcher in the Rye'
+          }
+        ],
+        'name' => [
+          {
+            'name_value' => 'Random, Person',
+            'name_role' => [
+              {
+                'name_role_value' => 'Author'
+              }
+            ]
+          }
+        ],
+        'controlled_field_group' => [
+          {
+            'controlled_field' => {
+              'controlled_field_uri' => 'http://id.library.columbia.edu/with/leading/space',
+              'controlled_field_value' => 'Great value here'
+            }
           }
         ],
         'collection' => [
@@ -95,92 +116,11 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters::DynamicFieldDa
         ]
       }
     end
+
     it 'works as expected on dynamic_field_data instance variable' do
-      digital_object_with_sample_data.set_digital_object_data({ 'dynamic_field_data' => dfd_with_blank_fields }, false)
-      digital_object_with_sample_data.remove_blank_fields_from_dynamic_field_data!
-      expect(digital_object_with_sample_data.dynamic_field_data).to eq(expected_dfd_without_blank_fields)
-    end
-
-    it 'works as expected on passed-in data' do
-      digital_object_with_sample_data.remove_blank_fields_from_dynamic_field_data!(dfd_with_blank_fields)
-      expect(dfd_with_blank_fields).to eq(expected_dfd_without_blank_fields)
-    end
-  end
-
-  context '#trim_whitespace_for_dynamic_field_data' do
-    let(:dfd_with_whitespace) do
-      {
-          'alternate_title' => [
-            {
-              'title_non_sort_portion' => 'No Extra Spaces',
-              'title_sort_portion' => '    Catcher in the Rye    '
-            }
-          ],
-          'name' => [
-            {
-              'name_value' => ' This has space ',
-              'name_role' => [
-                {
-                  'name_role_value' => ' This value has spaaaace     '
-                },
-                {
-                  'name_role_value' => 'Unchanged role without extra space'
-                }
-              ]
-            }
-          ],
-          'some_field_group' => [
-            {
-              'some_field' => 'Great value here',
-              'controlled_field' => {
-                'controlled_field_uri' => '        http://id.library.columbia.edu/with/leading/space',
-                'controlled_field_value' => 'Value with trailing space       '
-              }
-            }
-          ]
-        }
-    end
-    let(:expected_dfd_without_whitespace) do
-      {
-          'alternate_title' => [
-            {
-              'title_non_sort_portion' => 'No Extra Spaces',
-              'title_sort_portion' => 'Catcher in the Rye'
-            }
-          ],
-          'name' => [
-            {
-              'name_value' => 'This has space',
-              'name_role' => [
-                {
-                  'name_role_value' => 'This value has spaaaace'
-                },
-                {
-                  'name_role_value' => 'Unchanged role without extra space'
-                }
-              ]
-            }
-          ],
-          'some_field_group' => [
-            {
-              'some_field' => 'Great value here',
-              'controlled_field' => {
-                'controlled_field_uri' => 'http://id.library.columbia.edu/with/leading/space',
-                'controlled_field_value' => 'Value with trailing space'
-              }
-            }
-          ]
-        }
-    end
-    it 'works as expected on dynamic_field_data instance variable' do
-      digital_object_with_sample_data.set_digital_object_data({ 'dynamic_field_data' => dfd_with_whitespace }, false)
-      digital_object_with_sample_data.trim_whitespace_for_dynamic_field_data!
-      expect(digital_object_with_sample_data.dynamic_field_data).to eq(expected_dfd_without_whitespace)
-    end
-
-    it 'works as expected on passed-in data' do
-      digital_object_with_sample_data.trim_whitespace_for_dynamic_field_data!(dfd_with_whitespace)
-      expect(dfd_with_whitespace).to eq(expected_dfd_without_whitespace)
+      digital_object_with_sample_data.set_digital_object_data({ 'dynamic_field_data' => dfd }, false)
+      digital_object_with_sample_data.clean_dynamic_field_data!
+      expect(digital_object_with_sample_data.dynamic_field_data).to eq(cleaned_dfd)
     end
   end
 end

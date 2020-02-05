@@ -14,6 +14,12 @@ module DigitalObjectConcerns
           # See: HYACINTH-429
           self.rights = digital_object_data['rights']
         end
+
+        # Trims whitespace and removes blank fields from dynamic field data.
+        def clean_rights!
+          Hyacinth::Utils::Clean.trim_whitespace!(rights)
+          Hyacinth::Utils::Clean.remove_blank_fields!(rights)
+        end
       end
     end
   end
