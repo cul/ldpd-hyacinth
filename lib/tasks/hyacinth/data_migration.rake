@@ -50,8 +50,16 @@ namespace :hyacinth do
       elsif ENV['PIDLIST'].present?
         pids = open(ENV['PIDLIST'],'r').map(&:strip)
       else
-        puts 'Error: Please supply a value for PIDS (one or more comma-separated Hyacinth PIDs)'
+        puts 'Error: Please supply a value for PIDS (one or more comma-separated Hyacinth PIDs) or PIDLIST (filepath)'
         next
+      end
+      pids.each do |pid|
+        digital_object = DigitalObject::Base.find(pid)
+        if digital_object.captions.present?
+          digital_object.synchronized_transcript = digital_object.captions
+          digital_object.publish_after_save = (ENV['PUBLISH'] == 'true')
+          digital_object.save
+        end
       end
     end
   end
