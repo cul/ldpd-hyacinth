@@ -44,6 +44,15 @@ namespace :hyacinth do
       end
 
     end
-
+    task :migrate_captions_content_to_synchronized => :environment do
+      if ENV['PIDS'].present?
+        pids = ENV['PIDS'].split(',')
+      elsif ENV['PIDLIST'].present?
+        pids = open(ENV['PIDLIST'],'r').map(&:strip)
+      else
+        puts 'Error: Please supply a value for PIDS (one or more comma-separated Hyacinth PIDs)'
+        next
+      end
+    end
   end
 end
