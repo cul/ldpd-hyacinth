@@ -354,6 +354,58 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_transcript 
   });
 };
 
+//Manage Captions Action - show or edit closed captions for an asset
+Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_captions = function() {
+  var that = this;
+
+  $.ajax({
+    url: '/digital_objects/data_for_editor.json',
+    type: 'POST',
+    data: {
+      pid: Hyacinth.DigitalObjectsApp.params['pid']
+    },
+    cache: false
+  }).done(function(data_for_editor){
+
+    var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
+    var mode = 'view'; //default
+
+    if(Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) {
+      mode = 'edit';
+    }
+
+    $.ajax({
+      url: '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '/captions',
+      type: 'GET',
+      cache: false
+    }).done(function(captionsVtt){
+
+      Hyacinth.ContextualNav.setNavTitle('&laquo; Back', '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: digitalObject.pid}));
+      Hyacinth.ContextualNav.setNavItems([]);
+
+      $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/manage_captions.ejs', {digitalObject: digitalObject}));
+
+      var captionsEditor = new Hyacinth.DigitalObjectsApp.CaptionsEditor('digital-object-captions-editor', {
+        digitalObject: digitalObject,
+        captionsVtt: captionsVtt,
+        mode: mode,
+        assignment: false
+      });
+
+      //Event cleanup
+      that.dispose = function(){
+        captionsEditor.dispose();
+        captionsEditor = null;
+      };
+
+    }).fail(function(){
+      alert(Hyacinth.unexpectedAjaxErrorMessage);
+    });
+  }).fail(function(){
+    alert(Hyacinth.unexpectedAjaxErrorMessage);
+  });
+};
+
 //Annotate action - Manage annotation for an object (synchronize, rotate, select representative image, etc.)
 Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_annotation = function() {
   var that = this;
@@ -399,7 +451,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_annotation 
 };
 
 //Annotate action - Manage annotation for an object (synchronize, rotate, select representative image, etc.)
-Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_captions = function() {
+Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_synchronized_transcript = function() {
   var that = this;
 
   $.ajax({
@@ -424,20 +476,20 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_captions = 
     Hyacinth.ContextualNav.setNavItems([]);
     Hyacinth.ContextualNav.setNavItems([
       {
-        label: 'Clear Captions and Reimport Transcript',
+        label: 'Clear Synchronized Transcript and Reimport Transcript',
         url: '#',
-        id: 'clear_captions'
+        id: 'clear_synchronized_transcript'
       }
     ]);
 
-    $('#clear_captions').on('click', function(e){
+    $('#clear_synchronized_transcript').on('click', function(e){
       e.preventDefault();
 
-      var confirmResponse = confirm('Are you sure you want to clear your captions and start over from the latest version of your plain text transcript?');
+      var confirmResponse = confirm('Are you sure you want to clear your synchronized transcript and start over from the latest version of your plain text transcript?');
       if (confirmResponse) {
         //After successful deletion, refresh the page
         $.ajax({
-          url: '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '/clear_captions_and_reimport_transcript.json',
+          url: '/digital_objects/' + Hyacinth.DigitalObjectsApp.params['pid'] + '/clear_synchronized_transcript_and_reimport_transcript.json',
           type: 'POST',
           data: {
             '_method': 'DELETE' //For proper RESTful Rails requests
@@ -445,7 +497,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_captions = 
           cache: false
         }).done(function(clearResponse){
           if (clearResponse['success']) {
-            Hyacinth.addAlert('Captions cleared.', 'info');
+            Hyacinth.addAlert('Synchronized transcript cleared.', 'info');
             Hyacinth.DigitalObjectsApp.reloadCurrentAction();
           } else {
             alert(Hyacinth.unexpectedAjaxErrorMessage);
@@ -456,8 +508,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_captions = 
       }
     });
 
-    $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/manage_captions.ejs', {digitalObject: digitalObject}));
-    var captionsEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor('digital-object-captions-editor', {
+    $('#digital-object-dynamic-content').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/manage_synchronized_transcript.ejs', {digitalObject: digitalObject}));
+    var synchronizedTranscriptEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor('digital-object-synchronized-transcript-editor', {
       digitalObject: digitalObject,
       mode: mode,
       assignment: assignment,
@@ -466,9 +518,9 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_captions = 
 
     //Event cleanup
     that.dispose = function(){
-      captionsEditor.dispose();
-      captionsEditor = null;
-      $('#clear_captions').off('click');
+      synchronizedTranscriptEditor.dispose();
+      synchronizedTranscriptEditor = null;
+      $('#clear_synchronized_transcript').off('click');
     };
 
   }).fail(function(){

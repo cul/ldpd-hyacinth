@@ -96,7 +96,7 @@ class Assignments::ChangesetsController < ApplicationController
 
     def create_or_update_synchronize_changeset(assignment, digital_object, new_content)
       if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
-        assignment.original = digital_object.captions if assignment.original.nil?
+        assignment.original = digital_object.synchronized_transcript if assignment.original.nil?
       else
         raise 'Not implemented yet'
       end
@@ -120,6 +120,10 @@ class Assignments::ChangesetsController < ApplicationController
 
     def captions_params
       params.permit(:captions_text)
+    end
+
+    def synchronized_transcript_params
+      params.permit(:synchronized_transcript_text)
     end
 
     def description_params

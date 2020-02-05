@@ -1,4 +1,4 @@
-Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor = function(containerElementId, options) {
+Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor = function(containerElementId, options) {
 
   this.$containerElement = $('#' + containerElementId);
   this.digitalObject = options['digitalObject'];
@@ -14,11 +14,11 @@ Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor = function(containerEleme
  *******************************
  *******************************/
 
-Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.CAPTIONS_EDITOR_ELEMENT_CLASS = 'digital-object-captions-editor';
-Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.CAPTIONS_EDITOR_DATA_KEY = 'captions_editor';
+Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.SYNCHRONIZED_TRANSCRIPT_EDITOR_ELEMENT_CLASS = 'digital-object-synchronized-transcript-editor';
+Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.SYNCHRONIZED_TRANSCRIPT_EDITOR_DATA_KEY = 'synchronized_transcript_editor';
 
-Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.getEditorInstanceForElement = function(element) {
-  return $(element).closest('.' + Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.CAPTIONS_EDITOR_ELEMENT_CLASS).data(Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.CAPTIONS_EDITOR_DATA_KEY);
+Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.getEditorInstanceForElement = function(element) {
+  return $(element).closest('.' + Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.SYNCHRONIZED_TRANSCRIPT_EDITOR_ELEMENT_CLASS).data(Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.SYNCHRONIZED_TRANSCRIPT_EDITOR_DATA_KEY);
 };
 
 /**********************************
@@ -31,14 +31,14 @@ Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.getEditorInstanceForEleme
  * Setup / Cleanup *
  *******************/
 
-Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.prototype.init = function() {
+Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.init = function() {
 
-  this.$containerElement.addClass(Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.CAPTIONS_EDITOR_ELEMENT_CLASS); //Add class to container element
-  this.$containerElement.data(Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.CAPTIONS_EDITOR_DATA_KEY, this); //Assign this editor object as data to the container element so that we can access it later
+  this.$containerElement.addClass(Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.SYNCHRONIZED_TRANSCRIPT_EDITOR_ELEMENT_CLASS); //Add class to container element
+  this.$containerElement.data(Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.SYNCHRONIZED_TRANSCRIPT_EDITOR_DATA_KEY, this); //Assign this editor object as data to the container element so that we can access it later
 
   if(['MovingImage', 'Sound'].indexOf(this.digitalObject.getDcType()) > -1) {
     this.$containerElement.html(
-      Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_captions_editor/oh_synchronizer_transcript_mode.ejs', {
+      Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_synchronized_transcript_editor/oh_synchronizer_transcript_mode.ejs', {
         digitalObject: this.digitalObject,
         mode: this.mode,
         assignment: this.assignment
@@ -48,7 +48,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.prototype.init = function
     this.createSynchronizerWidget();
   } else {
     this.$containerElement.html(
-      Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_captions_editor/unsupported_object_type.ejs', {
+      Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_synchronized_transcript_editor/unsupported_object_type.ejs', {
         digitalObject: this.digitalObject,
         mode: this.mode,
         assignment: this.assignment
@@ -57,14 +57,14 @@ Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.prototype.init = function
   }
 };
 
-Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.prototype.dispose = function() {
+Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.dispose = function() {
   if(this.synchronizerWidget) {
     this.synchronizerWidget.dispose();
     this.synchronizerWidget = null;
   }
 }
 
-Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.prototype.createSynchronizerWidget = function(){
+Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.createSynchronizerWidget = function(){
   var widgetOptions = {
     player: {
       type: 'video',
@@ -73,7 +73,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.prototype.createSynchroni
     transcript: {
       id: 'input-transcript',
       // TODO: Don't use Hyacinth.DigitalObjectsApp.currentUser as an indication of whether we're in the js app or not. There's a better way. Temp solution here.
-      url: this.assignment && (!Hyacinth.DigitalObjectsApp.currentUser) ? '/assignments/' + this.assignment['id'] + '/changeset/proposed' : '/digital_objects/' + this.digitalObject.getPid() + '/captions',
+      url: this.assignment && (!Hyacinth.DigitalObjectsApp.currentUser) ? '/assignments/' + this.assignment['id'] + '/changeset/proposed' : '/digital_objects/' + this.digitalObject.getPid() + '/synchronized_transcript',
     },
     options: {
       previewOnly: this.mode == 'view'
@@ -86,14 +86,14 @@ Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.prototype.createSynchroni
     Hyacinth.addAlert(e, 'danger');
   }
 
-  this.$containerElement.find('.save-captions-button').on('click', $.proxy(this.saveCaptions, this));
+  this.$containerElement.find('.save-synchronized-transcript-button').on('click', $.proxy(this.saveSynchronizedTranscript, this));
 
   // TODO: Move code below into synchronizer widget?
   //////////////////////////////////////////////
 	if (widgetOptions.options.previewOnly) {
 		this.$containerElement.find('.preview-button').hide();
     this.$containerElement.find('#sync-controls').hide();
-    this.$containerElement.find('.save-captions-button').hide();
+    this.$containerElement.find('.save-synchronized-transcript-button').hide();
     this.$containerElement.find('#sync-roll').val('0'); // no sync time offset when in captions preview mode
 	} else {
 		$('.preview-button').on('click', function() {
@@ -110,23 +110,23 @@ Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.prototype.createSynchroni
   //////////////////////////////////////////////
 };
 
-Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.prototype.saveCaptions = function() {
+Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.saveSynchronizedTranscript = function() {
   var vttExport = this.synchronizerWidget.transcript.exportVTT();
   if(vttExport === false) {
     Hyacinth.addAlert('An error occurred during VTT export.', 'danger');
     return;
   }
   $.ajax({
-    url: this.assignment ? '/assignments/' + this.assignment['id'] + '/changeset' : '/digital_objects/' + this.digitalObject.getPid() + '/captions',
+    url: this.assignment ? '/assignments/' + this.assignment['id'] + '/changeset' : '/digital_objects/' + this.digitalObject.getPid() + '/synchronized_transcript',
     type: 'POST',
     data: {
       '_method': 'PUT', //For proper RESTful Rails requests
-      'captions_text': vttExport
+      'synchronized_transcript_text': vttExport
     },
     cache: false
   }).done(function(transcriptPutResponse){
     if (transcriptPutResponse['success']) {
-      Hyacinth.addAlert('Captions updated.', 'info');
+      Hyacinth.addAlert('Synchronized transcript updated.', 'info');
     } else {
       alert(Hyacinth.unexpectedAjaxErrorMessage);
     }
@@ -136,8 +136,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.prototype.saveCaptions = 
 };
 
 //Clean up event handlers
-Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.prototype.dispose = function() {
-  this.$containerElement.removeData(Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor.CAPTIONS_EDITOR_DATA_KEY) // Break this (circular) reference.  This is important!
+Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.dispose = function() {
+  this.$containerElement.removeData(Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.SYNCHRONIZED_TRANSCRIPT_EDITOR_DATA_KEY) // Break this (circular) reference.  This is important!
   if(this.$containerElement.find('.save-transcript-button').length > 0) {
     this.$containerElement.find('.save-transcript-button').off('click');
   }

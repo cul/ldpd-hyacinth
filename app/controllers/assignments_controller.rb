@@ -44,7 +44,7 @@ class AssignmentsController < ApplicationController
     when 'synchronize'
       # store current state of transcript in *original* field
       if ['MovingImage', 'Sound'].include?(@digital_object.dc_type)
-        @assignment.original = @digital_object.captions
+        @assignment.original = @digital_object.synchronized_transcript
       else
         raise 'Not implemented yet'
       end
@@ -131,9 +131,9 @@ class AssignmentsController < ApplicationController
       end
     when 'synchronize'
       if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
-        digital_object.captions = @assignment.proposed
+        digital_object.synchronized_transcript = @assignment.proposed
       else
-        raise "Cannot commit captions for non-audiovisual resource (pid: #{digital_object.pid}, dc_type: #{digital_object.dc_type})"
+        raise "Cannot commit synchronized transcript for non-audiovisual resource (pid: #{digital_object.pid}, dc_type: #{digital_object.dc_type})"
       end
     when 'describe'
       digital_object.set_digital_object_data({'dynamic_field_data' => JSON.parse(@assignment.proposed)}, true)

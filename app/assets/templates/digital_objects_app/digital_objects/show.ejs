@@ -31,6 +31,10 @@ if (digitalObject.digital_object_type.string_key == 'asset' && (digitalObject.ge
                                                                action: 'manage_annotation',
                                                                pid: Hyacinth.DigitalObjectsApp.params['pid']})});
 
+  navItems.push({label: '<span class="glyphicon glyphicon-edit"></span> Synchronized Transcript', url: '#' +
+                Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects',
+                                                              action: 'manage_synchronized_transcript',
+                                                              pid: Hyacinth.DigitalObjectsApp.params['pid']})});
   navItems.push({label: '<span class="glyphicon glyphicon-edit"></span> Captions', url: '#' +
                 Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects',
                                                               action: 'manage_captions',

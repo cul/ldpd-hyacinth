@@ -17,8 +17,8 @@
     var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
     var assignment = digitalObject.hasAssignment(Hyacinth.AssignmentTaskTypes.synchronize);
 
-    $('#widget-template-container').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/manage_captions.ejs', {digitalObject: digitalObject}));
-    var annotationEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectCaptionsEditor('digital-object-captions-editor', {
+    $('#widget-template-container').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/manage_synchronized_transcript.ejs', {digitalObject: digitalObject}));
+    var annotationEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor('digital-object-synchronized-transcript-editor', {
       digitalObject: digitalObject,
       mode: currentUserId == assignment['assignee_id'] ? 'edit' : 'view',
       assignment: assignment,
