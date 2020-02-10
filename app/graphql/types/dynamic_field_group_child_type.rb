@@ -8,7 +8,7 @@ module Types
     def self.resolve_type(object, _context)
       if object.is_a?(DynamicFieldGroup)
         Types::DynamicFieldGroupType
-      else object.is_a?(DynamicField)
+      elsif object.is_a?(DynamicField)
         Types::DynamicFieldType
       end
     end
