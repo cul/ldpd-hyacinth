@@ -16,8 +16,8 @@ module Types
     field :id, ID, null: false, method: :uid
     field :serialization_version, String, null: false
     field :doi, String, null: true
-    field :state, String, null: false # can be an enum
-    field :digital_object_type, String, null: false # can be an enum type
+    field :state, Enums::DigitalObjectStateEnum, null: false
+    field :digital_object_type, Enums::DigitalObjectTypeEnum, null: false
     field :primary_project, ProjectType, null: false
     field :other_projects, [ProjectType], null: false
     field :identifiers, [String], null: true
