@@ -13,22 +13,9 @@ RSpec.describe 'Retrieving Dynamic Field', type: :request do
     context 'when stringKey is valid' do
       before { graphql query(dynamic_field.string_key) }
       it 'returns correct response' do
-        expect(response.body).to be_json_eql(%({
-                                                 "dynamicField": {
-                                                   "controlledVocabulary": "name_role",
-                                                   "displayLabel": "Value",
-                                                   "fieldType": "controlled_term",
-                                                   "filterLabel": "Name",
-                                                   "isFacetable": true,
-                                                   "isIdentifierSearchable": false,
-                                                   "isKeywordSearchable": false,
-                                                   "isTitleSearchable": false,
-                                                   "selectOptions": null,
-                                                   "sortOrder": 7,
-                                                   "stringKey": "term",
-                                                   "type": "DynamicField"
-                                                 }
-                                               }
+        expect(response.body).to be_json_eql(%({  "dynamicField": { "controlledVocabulary": "name_role", "displayLabel": "Value",
+          "fieldType": "controlled_term", "filterLabel": "Name", "isFacetable": true, "isIdentifierSearchable": false, "isKeywordSearchable": false,
+          "isTitleSearchable": false, "selectOptions": null,  "sortOrder": 7, "stringKey": "term", "type": "DynamicField" } }
           )).at_path('data')
       end
     end

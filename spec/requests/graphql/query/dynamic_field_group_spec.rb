@@ -16,20 +16,8 @@ RSpec.describe 'Retrieving Dynamic Field Group', type: :request do
     context 'when stringKey is valid' do
       before { graphql query(dynamic_field_group.string_key) }
       it 'returns correct response' do
-        expect(response.body).to be_json_eql(%({
-                                                 "dynamicFieldGroup": {
-                                                   "parent": {
-                                                     "type": "DynamicFieldCategory"
-                                                   },
-                                                   "children": [],
-                                                   "displayLabel": "Name",
-                                                   "isRepeatable": true,
-                                                   "sortOrder": 3,
-                                                   "stringKey": "name",
-                                                   "type": "DynamicFieldGroup",
-                                                   "exportRules": []
-                                                 }
-                                               }
+        expect(response.body).to be_json_eql(%({ "dynamicFieldGroup": { "parent": { "type": "DynamicFieldCategory" }, "children": [], "displayLabel": "Name",
+                                                 "isRepeatable": true,  "sortOrder": 3, "stringKey": "name", "type": "DynamicFieldGroup", "exportRules": [] } }
           )).at_path('data')
       end
     end

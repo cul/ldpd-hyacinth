@@ -34,7 +34,7 @@ RSpec.describe Mutations::UpdateDynamicFieldCategory, type: :request do
 
       it 'correctly updates record' do
         dynamic_field_category.reload
-        expect(dynamic_field_category.sort_order).to eql 15
+        expect(dynamic_field_category.sort_order).to be 15
       end
     end
   end

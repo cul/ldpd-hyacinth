@@ -6,10 +6,9 @@ RSpec.describe Mutations::UpdateDynamicField, type: :request do
   let(:dynamic_field) { FactoryBot.create(:dynamic_field) }
 
   include_examples 'requires user to have correct permissions for graphql request' do
-     let(:variables) { { input: { stringKey: dynamic_field.string_key, displayLabel: 'New Location' } } }
+    let(:variables) { { input: { stringKey: dynamic_field.string_key, displayLabel: 'New Location' } } }
     let(:request) { graphql query, variables }
   end
-
 
   context 'when logged in user is an administrator' do
     before { sign_in_user as: :administrator }
@@ -78,7 +77,7 @@ RSpec.describe Mutations::UpdateDynamicField, type: :request do
       before { graphql query, variables }
       it 'correctly updates record' do
         dynamic_field.reload
-        expect(dynamic_field.is_title_searchable).to eql true
+        expect(dynamic_field.is_title_searchable).to be true
       end
     end
 
@@ -87,7 +86,7 @@ RSpec.describe Mutations::UpdateDynamicField, type: :request do
         {
           input: {
             stringKey: dynamic_field.string_key,
-            displayLabel: 'New Location',            
+            displayLabel: 'New Location',
             fieldType: 'not-valid'
           }
         }

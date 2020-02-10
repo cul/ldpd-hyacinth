@@ -15,17 +15,10 @@ RSpec.describe Mutations::UpdateDynamicFieldGroup, type: :request do
 
     context 'when updating display label' do
       let(:variables) do
-        { input: 
-          {
-          stringKey: dynamic_field_group.string_key,
-          displayLabel: 'Best Dynamic Field Group'
-          } 
-        }
+        { input: { stringKey: dynamic_field_group.string_key, displayLabel: 'Best Dynamic Field Group' } }
       end
 
-      before { 
-        graphql query, variables
-      }
+      before { graphql query, variables }
 
       it 'correctly updates record' do
         dynamic_field_group.reload
@@ -34,36 +27,22 @@ RSpec.describe Mutations::UpdateDynamicFieldGroup, type: :request do
     end
     context 'when updating sort order' do
       let(:variables) do
-        { input: 
-          {
-          stringKey: dynamic_field_group.string_key,
-          sortOrder: 3
-          } 
-        }
+        { input: { stringKey: dynamic_field_group.string_key, sortOrder: 3 } }
       end
 
-      before { 
-        graphql query, variables
-      }
+      before { graphql query, variables }
 
       it 'correctly updates record' do
         dynamic_field_group.reload
-        expect(dynamic_field_group.sort_order).to eql 3
+        expect(dynamic_field_group.sort_order).to be 3
       end
     end
     context 'when updating is repeatable' do
       let(:variables) do
-        { input: 
-          {
-          stringKey: dynamic_field_group.string_key,
-          isRepeatable: false
-          } 
-        }
+        { input: { stringKey: dynamic_field_group.string_key, isRepeatable: false } }
       end
 
-      before { 
-        graphql query, variables
-      }
+      before { graphql query, variables }
 
       it 'correctly updates record' do
         dynamic_field_group.reload

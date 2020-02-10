@@ -8,14 +8,11 @@ RSpec.describe Mutations::CreateDynamicField, type: :request do
 
   include_examples 'requires user to have correct permissions for graphql request' do
     let(:variables) do
-      { input: {
-          stringKey: 'term', displayLabel: 'Term', fieldType: 'controlled_term', controlledVocabulary: 'names',
-          sortOrder: 6, dynamicFieldGroupId: parent.id, isFacetable: true, isKeywordSearchable: true, isTitleSearchable: true,
-          isIdentifierSearchable: true } }
+      { input: { stringKey: 'term', displayLabel: 'Term', fieldType: 'controlled_term', controlledVocabulary: 'names',
+                 sortOrder: 6, dynamicFieldGroupId: parent.id, isFacetable: true, isKeywordSearchable: true, isTitleSearchable: true, isIdentifierSearchable: true } }
     end
     let(:request) { graphql query, variables }
   end
-
 
   context 'when logged in user has appropriate permissions' do
     let(:variables) do
@@ -33,22 +30,9 @@ RSpec.describe Mutations::CreateDynamicField, type: :request do
       before { graphql query, variables }
 
       it 'returns correct response' do
-        expect(response.body).to be_json_eql(%({
-                                                 "dynamicField": {
-                                                   "controlledVocabulary": "names",
-                                                   "displayLabel": "Term",
-                                                   "fieldType": "controlled_term",
-                                                   "filterLabel": null,
-                                                   "isFacetable": true,
-                                                   "isIdentifierSearchable": true,
-                                                   "isKeywordSearchable": true,
-                                                   "isTitleSearchable": true,
-                                                   "selectOptions": null,
-                                                   "sortOrder": 6,
-                                                   "stringKey": "term",
-                                                   "type": "DynamicField"
-                                                 }
-        })).at_path('data/createDynamicField')
+        expect(response.body).to be_json_eql(%({ "dynamicField": { "controlledVocabulary": "names", "displayLabel": "Term", "fieldType": "controlled_term",
+                                                  "filterLabel": null, "isFacetable": true, "isIdentifierSearchable": true, "isKeywordSearchable": true,
+                                                  "isTitleSearchable": true, "selectOptions": null, "sortOrder": 6, "stringKey": "term", "type": "DynamicField" } })).at_path('data/createDynamicField')
       end
     end
 

@@ -16,13 +16,7 @@ RSpec.describe 'Retrieving Dynamic Field Category', type: :request do
 
     it 'returns correct response' do
       expect(response.body).to be_json_eql(%(
-            {
-                                               "dynamicFieldCategory": {
-                                                 "displayLabel": "Descriptive Metadata",
-                                                 "children": [],
-                                                 "sortOrder": 3
-                                               }
-                                             }
+            { "dynamicFieldCategory": { "displayLabel": "Descriptive Metadata", "children": [], "sortOrder": 3 } }
            )).at_path('data')
     end
   end

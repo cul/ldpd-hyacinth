@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Mutations::DeleteDynamicFieldGroup, type: :request do
-  let(:dynamic_field_group) { FactoryBot.create(:dynamic_field_group) } 
+  let(:dynamic_field_group) { FactoryBot.create(:dynamic_field_group) }
 
   include_examples 'requires user to have correct permissions for graphql request' do
     let(:variables) { { input: { stringKey: dynamic_field_group.string_key } } }

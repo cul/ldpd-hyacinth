@@ -37,13 +37,11 @@ RSpec.describe Mutations::CreateDynamicFieldGroup, type: :request do
         expect(DynamicFieldGroup.find_by(display_label: 'Location')).not_to be nil
       end
 
-    it 'adds child to parent' do
-
-      parent.reload
-      expect(parent.children.length).to be 1
+      it 'adds child to parent' do
+        parent.reload
+        expect(parent.children.length).to be 1
+      end
     end
-    end
-
 
     context 'when creating without a string_key' do
       let(:variables) do

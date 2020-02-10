@@ -15,7 +15,7 @@ RSpec.describe Mutations::DeleteDynamicFieldCategory, type: :request do
 
     context 'when deleting a dynamic field category that exists' do
       before do
-        graphql query, input: { id: dynamic_field_category.id } 
+        graphql query, input: { id: dynamic_field_category.id }
       end
 
       it 'deletes record from database' do
