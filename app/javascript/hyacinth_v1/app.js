@@ -3,7 +3,7 @@ import { Route, Redirect, Switch } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 
-import TopNavbar from './components/layout/TopNavbar';
+import TopNavbar from '@hyacinth_v1/components/layout/TopNavbar';
 import PageNotFound from './components/layout/PageNotFound';
 import DigitalObjects from './components/digital_objects/DigitalObjects';
 import Users from './components/users/Users';
