@@ -3,6 +3,8 @@
 module Types
   module DigitalObjectInterface
     include Types::BaseInterface
+    include Types::Pageable
+
     description 'A digital object'
 
     TITLE_DYNAMIC_FIELD_GROUP_NAME = 'title'
