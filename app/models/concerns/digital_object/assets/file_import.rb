@@ -60,8 +60,7 @@ module DigitalObject::Assets::FileImport
 
   def do_access_copy_import
     access_filename = File.basename(@access_copy_import_path)
-    dest_dir = File.join(HYACINTH['access_copy_directory'], Hyacinth::Utils::PathUtils.uuid_pairtree(self.uuid))
-    FileUtils.mkdir_p(dest_dir)
+    dest_dir = Hyacinth::Utils::PathUtils.access_directory_path_for_uuid!(self.uuid)
     dest_file_path = File.join(dest_dir, 'access' + File.extname(access_filename))
     FileUtils.cp(@access_copy_import_path, dest_file_path)
     access_ds_location = filesystem_path_to_ds_location(dest_file_path)

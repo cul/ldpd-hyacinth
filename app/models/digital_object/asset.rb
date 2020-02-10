@@ -262,7 +262,10 @@ class DigitalObject::Asset < DigitalObject::Base
     save_synchronized_transcript_datastream
     save_chapters_datastream
     save_transcript_datastream
-    save_captions_datastream
+    save_captions_datastream do |new_content|
+      companion_file_path = File.join(Hyacinth::Utils::PathUtils.access_directory_path_for_uuid!(self.uuid), 'access.vtt')
+      open(companion_file_path, 'wb') { |io| io.write(new_content) }
+    end
     true
   end
 
