@@ -11,7 +11,7 @@ RSpec.describe Mutations::CreateDynamicFieldCategory, type: :request do
   context 'when logged in user has appropriate permissions' do
     before { sign_in_user as: :administrator }
 
-    context 'when creating a new project' do
+    context 'when creating a new dynamic field category' do
       let(:variables) do
         {
           input: {
