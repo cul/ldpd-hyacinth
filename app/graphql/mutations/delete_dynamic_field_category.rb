@@ -6,7 +6,7 @@ class Mutations::DeleteDynamicFieldCategory < Mutations::BaseMutation
   field :dynamic_field_category, Types::DynamicFieldCategoryType, null: true
 
   def resolve(id:)
-    dynamic_field_category = DynamicFieldCategory.find_by!(id: id)
+    dynamic_field_category = DynamicFieldCategory.find(id)
 
     ability.authorize! :delete, dynamic_field_category
 
