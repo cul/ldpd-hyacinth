@@ -24,8 +24,8 @@ RSpec.describe 'Updating Asset Rights', type: :request do
               uri: "https://example.com/term/in_copyright"
             },
             copyrightNotes: "No Copyright Notes",
-            copyrightRegistered: false,
-            copyrightRenewed: false,
+            copyrightRegistered: true,
+            copyrightRenewed: true,
             copyrightDateOfRenewal: "2001-01-01",
             copyrightExpirationDate: "2001-01-01",
             culCopyrightAssessmentDate: "2001-01-01"

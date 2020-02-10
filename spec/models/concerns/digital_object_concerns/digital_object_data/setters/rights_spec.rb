@@ -20,7 +20,7 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters::Rights do
           {
             'copyrightNote' => '   ',
             'copyrightRegistered' => true,
-            'copyrightRenewed' => true,
+            'copyrightRenewed' => false,
             'copyrightDateOfRenewal' => '',
             'copyrightExpirationDate' => '',
             'culCopyrightAssessmentDate' => ''
@@ -37,8 +37,7 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters::Rights do
         ],
         'copyrightStatus' => [
           {
-            'copyrightRegistered' => true,
-            'copyrightRenewed' => true
+            'copyrightRegistered' => true
           }
         ]
       }

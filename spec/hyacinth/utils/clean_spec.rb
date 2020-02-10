@@ -116,7 +116,7 @@ RSpec.describe Hyacinth::Utils::Clean do
             'note_type' => ''
           }
         ],
-        'an_array_field' => ['', nil, 'some_value', ['', nil]]
+        'an_array_field' => ['', nil, 'some_value', ['', nil], true, false]
       }
     end
 
@@ -132,12 +132,13 @@ RSpec.describe Hyacinth::Utils::Clean do
             'collection_authorized_term_uri' => 'http://example.com/a/b/c'
           }
         ],
-        'an_array_field' => ['some_value']
+        'an_array_field' => ['some_value', true]
       }
     end
 
     it 'cleans data as expected' do
       expect(described_class.remove_blank_fields!(hash_with_blank_fields)).to eq(expected_hash_without_blank_fields)
+      expect(hash_with_blank_fields).to eq(expected_hash_without_blank_fields)
     end
   end
 end
