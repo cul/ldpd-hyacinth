@@ -262,7 +262,7 @@ module DigitalObject::Fedora
       @fedora_object.datastreams[struct_ds_name].delete if @fedora_object.datastreams[struct_ds_name].present?
     end
 
-    def save_captions_datastream
+    def save_captions_datastream(&block)
       return unless File.exists?(captions_location)
       captions_ds =
         @fedora_object.datastreams[CAPTIONS_DATASTREAM_NAME]
@@ -285,6 +285,7 @@ module DigitalObject::Fedora
       new_content_checksum = Digest::MD5.hexdigest(new_content)
       if new_content_checksum != captions_ds.checksum
         captions_ds.content = new_content
+        yield(new_content) if block_given?
       end
     end
 
