@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 class Mutations::UpdateDynamicField < Mutations::BaseMutation
   argument :string_key, ID, required: true
-  argument :display_label, String, required: true
+  argument :display_label, String, required: false
+  argument :field_type, String, required: false
   argument :sort_order, Integer, required: false
   argument :is_facetable, Boolean, required: false
   argument :filter_label, String, required: false
