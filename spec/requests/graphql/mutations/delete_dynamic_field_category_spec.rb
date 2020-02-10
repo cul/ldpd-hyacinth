@@ -28,7 +28,7 @@ RSpec.describe Mutations::DeleteDynamicFieldCategory, type: :request do
 
       it 'returns errors' do
         expect(response.body).to be_json_eql(%(
-          "Couldn't find DynamicFieldCategory"
+          "Couldn't find DynamicFieldCategory with 'id'=1234"
         )).at_path('errors/0/message')
       end
     end

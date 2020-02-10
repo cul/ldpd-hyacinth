@@ -31,6 +31,57 @@ RSpec.describe Mutations::UpdateDynamicField, type: :request do
       end
     end
 
+    context 'when updating controlled vocabulary' do
+      let(:variables) do
+        {
+          input: {
+            stringKey: dynamic_field.string_key,
+            controlledVocabulary: 'vocabulary2'
+          }
+        }
+      end
+
+      before { graphql query, variables }
+      it 'correctly updates record' do
+        dynamic_field.reload
+        expect(dynamic_field.controlled_vocabulary).to eql 'vocabulary2'
+      end
+    end
+
+    context 'when updating select options' do
+      let(:variables) do
+        {
+          input: {
+            stringKey: dynamic_field.string_key,
+            selectOptions: '{}'
+          }
+        }
+      end
+
+      before { graphql query, variables }
+      it 'correctly updates record' do
+        dynamic_field.reload
+        expect(dynamic_field.select_options).to eql '{}'
+      end
+    end
+
+    context 'when updating is title searchable' do
+      let(:variables) do
+        {
+          input: {
+            stringKey: dynamic_field.string_key,
+            isTitleSearchable: true
+          }
+        }
+      end
+
+      before { graphql query, variables }
+      it 'correctly updates record' do
+        dynamic_field.reload
+        expect(dynamic_field.is_title_searchable).to eql true
+      end
+    end
+
     context 'when updating to incorrect field type' do
       let(:variables) do
         {
@@ -45,7 +96,7 @@ RSpec.describe Mutations::UpdateDynamicField, type: :request do
       before { graphql query, variables }
       it 'returns errors' do
         expect(response.body).to be_json_eql(%(
-          "Variable input of type UpdateDynamicFieldInput! was provided invalid value for fieldType (Field is not defined on UpdateDynamicFieldInput)"
+          "Field type is not among the list of allowed values"
         )).at_path('errors/0/message')
       end
     end

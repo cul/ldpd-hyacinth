@@ -13,7 +13,7 @@ RSpec.describe Mutations::UpdateDynamicFieldCategory, type: :request do
   context 'when logged in user has appropriate permissions' do
     before { sign_in_user as: :administrator }
 
-    context 'when updating record' do
+    context 'when updating display label' do
       let(:variables) do
         { input: { id: dynamic_field_category.id, displayLabel: 'Best Dynamic Field Category' } }
       end
@@ -23,6 +23,18 @@ RSpec.describe Mutations::UpdateDynamicFieldCategory, type: :request do
       it 'correctly updates record' do
         dynamic_field_category.reload
         expect(dynamic_field_category.display_label).to eql 'Best Dynamic Field Category'
+      end
+    end
+    context 'when updating sort order' do
+      let(:variables) do
+        { input: { id: dynamic_field_category.id, sortOrder: 15 } }
+      end
+
+      before { graphql query, variables }
+
+      it 'correctly updates record' do
+        dynamic_field_category.reload
+        expect(dynamic_field_category.sort_order).to eql 15
       end
     end
   end
