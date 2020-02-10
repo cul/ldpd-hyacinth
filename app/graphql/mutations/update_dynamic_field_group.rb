@@ -2,7 +2,7 @@
 
 class Mutations::UpdateDynamicFieldGroup < Mutations::BaseMutation
   argument :string_key, ID, required: true
-  argument :display_label, String, required: true
+  argument :display_label, String, required: false
   argument :sort_order, Integer, required: false
   argument :is_repeatable, Boolean, required: false
   argument :export_rules, [GraphQL::Types::JSON], required: false
