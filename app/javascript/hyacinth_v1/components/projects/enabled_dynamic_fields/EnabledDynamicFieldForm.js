@@ -7,7 +7,7 @@ import produce from 'immer';
 import { withRouter } from 'react-router-dom';
 import axios from 'axios';
 import Select from 'react-select';
-import FormButtons from '../../ui/forms/FormButtons';
+import FormButtons from '../../shared/forms/FormButtons';
 import hyacinthApi from '../../../util/hyacinth_api';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 

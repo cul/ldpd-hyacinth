@@ -2,10 +2,10 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 
-import ContextualNavbar from '../../layout/ContextualNavbar';
+import ContextualNavbar from '../../shared/ContextualNavbar';
 import TermForm from './TermForm';
 import TermBreadcrumbs from './TermBreadcrumbs';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 import { getTermQuery } from '../../../graphql/terms';
 
 function TermEdit() {

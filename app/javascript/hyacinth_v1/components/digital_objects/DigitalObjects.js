@@ -1,12 +1,12 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import PageNotFound from '../layout/PageNotFound';
+import PageNotFound from '../shared/PageNotFound';
 import DigitalObjectNew from './new/DigitalObjectNew';
 import DigitalObjectNewForm from './new/DigitalObjectNewForm';
 import DigitalObjectSearch from './DigitalObjectSearch';
 import DigitalObject from './DigitalObject';
-import ProtectedRoute from '../ProtectedRoute';
+import ProtectedRoute from '../shared/routes/ProtectedRoute';
 
 function DigitalObjects() {
   return (

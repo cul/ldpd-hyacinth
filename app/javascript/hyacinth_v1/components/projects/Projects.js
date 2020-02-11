@@ -1,11 +1,11 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import PageNotFound from '../layout/PageNotFound';
+import PageNotFound from '../shared/PageNotFound';
 import ProjectIndex from './ProjectIndex';
 import ProjectNew from './ProjectNew';
 import Project from './Project';
-import ProtectedRoute from '../ProtectedRoute';
+import ProtectedRoute from '../shared/routes/ProtectedRoute';
 
 function Projects() {
   return (

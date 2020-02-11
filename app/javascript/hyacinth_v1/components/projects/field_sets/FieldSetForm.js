@@ -5,8 +5,8 @@ import { gql } from 'apollo-boost';
 import { useMutation } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 
-import FormButtons from '../../ui/forms/FormButtons';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import FormButtons from '../../shared/forms/FormButtons';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 
 const CREATE_FIELD_SET = gql`
   mutation CreateFieldSet($input: CreateFieldSetInput!) {

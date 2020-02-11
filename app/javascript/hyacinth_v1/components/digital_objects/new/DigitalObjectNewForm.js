@@ -3,10 +3,10 @@ import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 import { capitalize } from 'lodash';
 
-import ContextualNavbar from '../../layout/ContextualNavbar';
+import ContextualNavbar from '../../shared/ContextualNavbar';
 import { Can } from '../../../util/ability_context';
 import { getProjectQuery } from '../../../graphql/projects';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 import MetadataForm from '../metadata/MetadataForm';
 import DigitalObjectSummary from '../DigitalObjectSummary';
 

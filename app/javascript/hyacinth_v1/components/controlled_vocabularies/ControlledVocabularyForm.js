@@ -4,14 +4,14 @@ import { Form } from 'react-bootstrap';
 import { useMutation } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 
-import InputGroup from '../ui/forms/InputGroup';
-import Label from '../ui/forms/Label';
-import TextInput from '../ui/forms/inputs/TextInput';
-import PlainText from '../ui/forms/inputs/PlainText';
-import Checkbox from '../ui/forms/inputs/Checkbox';
-import FormButtons from '../ui/forms/FormButtons';
+import InputGroup from '../shared/forms/InputGroup';
+import Label from '../shared/forms/Label';
+import TextInput from '../shared/forms/inputs/TextInput';
+import PlainText from '../shared/forms/inputs/PlainText';
+import Checkbox from '../shared/forms/inputs/Checkbox';
+import FormButtons from '../shared/forms/FormButtons';
 import { createVocabularyMutation, updateVocabularyMutation, deleteVocabularyMutation } from '../../graphql/vocabularies';
-import GraphQLErrors from '../ui/GraphQLErrors';
+import GraphQLErrors from '../shared/GraphQLErrors';
 
 function ControlledVocabularyForm(props) {
   const { formType, vocabulary } = props;

@@ -1,11 +1,11 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import PageNotFound from '../layout/PageNotFound';
+import PageNotFound from '../shared/PageNotFound';
 import UserIndex from './UserIndex';
 import UserNew from './UserNew';
 import UserEdit from './UserEdit';
-import ProtectedRoute from '../ProtectedRoute';
+import ProtectedRoute from '../shared/routes/ProtectedRoute';
 
 export default class Users extends React.PureComponent {
   render() {

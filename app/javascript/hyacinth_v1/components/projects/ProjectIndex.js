@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { Table } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 
-import ContextualNavbar from '../layout/ContextualNavbar';
+import ContextualNavbar from '../shared/ContextualNavbar';
 import { Can } from '../../util/ability_context';
 import { getProjectsQuery } from '../../graphql/projects';
-import GraphQLErrors from '../ui/GraphQLErrors';
+import GraphQLErrors from '../shared/GraphQLErrors';
 
 function ProjectIndex() {
   const { loading, error, data } = useQuery(getProjectsQuery);

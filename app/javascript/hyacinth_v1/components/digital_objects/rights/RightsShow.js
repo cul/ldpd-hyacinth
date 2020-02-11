@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 import { getRightsDigitalObjectQuery } from '../../../graphql/digitalObjects';
 import RightsTab from './RightsTab';
 import { digitalObjectAbility } from '../../../util/ability';

@@ -2,10 +2,10 @@ import React from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { useParams } from 'react-router-dom';
 
-import TabHeading from '../../ui/tabs/TabHeading';
+import TabHeading from '../../shared/tabs/TabHeading';
 import ProjectInterface from '../ProjectInterface';
 import { getProjectWithPermissionsQuery } from '../../../graphql/projects';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 import PermissionsEditor from './PermissionsEditor';
 
 function PermissionsEdit() {

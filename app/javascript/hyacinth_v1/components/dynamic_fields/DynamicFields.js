@@ -1,11 +1,11 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import PageNotFound from '../layout/PageNotFound';
+import PageNotFound from '../shared/PageNotFound';
 import DynamicFieldIndex from './DynamicFieldIndex';
 import DynamicFieldNew from './DynamicFieldNew';
 import DynamicFieldEdit from './DynamicFieldEdit';
-import ProtectedRoute from '../ProtectedRoute';
+import ProtectedRoute from '../shared/routes/ProtectedRoute';
 
 export default class DynamicFields extends React.PureComponent {
   render() {

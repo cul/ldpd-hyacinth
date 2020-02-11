@@ -5,7 +5,7 @@ import { useQuery } from '@apollo/react-hooks';
 import MetadataTab from './MetadataTab';
 import MetadataForm from './MetadataForm';
 import { getMetadataDigitalObjectQuery } from '../../../graphql/digitalObjects';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 
 function MetadataEdit(props) {
   const { id } = props;

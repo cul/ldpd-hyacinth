@@ -4,9 +4,9 @@ import { useQuery } from '@apollo/react-hooks';
 
 import DigitalObjectList from './DigitalObjectList';
 
-import ContextualNavbar from '../layout/ContextualNavbar';
-import PaginationBar from '../ui/PaginationBar';
-import GraphQLErrors from '../ui/GraphQLErrors';
+import ContextualNavbar from '../shared/ContextualNavbar';
+import PaginationBar from '../shared/PaginationBar';
+import GraphQLErrors from '../shared/GraphQLErrors';
 import { getDigitalObjectsQuery } from '../../graphql/digitalObjects';
 
 const limit = 20;

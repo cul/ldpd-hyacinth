@@ -4,10 +4,10 @@ import produce from 'immer';
 
 import Field from './Field';
 import FieldGroupArray from './FieldGroupArray';
-import AddButton from '../../ui/buttons/AddButton';
-import RemoveButton from '../../ui/buttons/RemoveButton';
-import UpArrowButton from '../../ui/buttons/UpArrowButton';
-import DownArrowButton from '../../ui/buttons/DownArrowButton';
+import AddButton from '../../shared/buttons/AddButton';
+import RemoveButton from '../../shared/buttons/RemoveButton';
+import UpArrowButton from '../../shared/buttons/UpArrowButton';
+import DownArrowButton from '../../shared/buttons/DownArrowButton';
 
 
 class FieldGroup extends React.Component {

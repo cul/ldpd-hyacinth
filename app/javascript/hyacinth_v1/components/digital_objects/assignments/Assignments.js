@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 
 import DigitalObjectInterface from '../DigitalObjectInterface';
-import TabHeading from '../../ui/tabs/TabHeading';
+import TabHeading from '../../shared/tabs/TabHeading';
 import { getAssignmentsDigitalObjectQuery } from '../../../graphql/digitalObjects';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 
 function Assignments(props) {
   const { id } = props;

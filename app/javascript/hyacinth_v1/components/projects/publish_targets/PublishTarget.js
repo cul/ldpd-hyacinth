@@ -1,11 +1,11 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import PageNotFound from '../../layout/PageNotFound';
+import PageNotFound from '../../shared/PageNotFound';
 import PublishTargetIndex from './PublishTargetIndex';
 import PublishTargetNew from './PublishTargetNew';
 import PublishTargetEdit from './PublishTargetEdit';
-import ProtectedRoute from '../../ProtectedRoute';
+import ProtectedRoute from '../../shared/routes/ProtectedRoute';
 
 export default class PublishTarget extends React.PureComponent {
   render() {

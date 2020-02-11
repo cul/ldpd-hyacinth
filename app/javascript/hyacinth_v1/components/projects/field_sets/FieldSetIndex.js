@@ -6,10 +6,10 @@ import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
 import { Link, useParams } from 'react-router-dom';
 
-import TabHeading from '../../ui/tabs/TabHeading';
+import TabHeading from '../../shared/tabs/TabHeading';
 import { Can } from '../../../util/ability_context';
 import ProjectInterface from '../ProjectInterface';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 
 const PROJECT_WITH_FIELD_SETS = gql`
   query Project($stringKey: ID!){

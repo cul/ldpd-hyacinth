@@ -3,11 +3,11 @@ import { Col, Form, Collapse } from 'react-bootstrap';
 import { capitalize } from 'lodash';
 import { useHistory } from 'react-router-dom';
 
-import ContextualNavbar from '../../layout/ContextualNavbar';
-import SubmitButton from '../../layout/forms/SubmitButton';
-import SelectInput from '../../ui/forms/inputs/SelectInput';
-import Label from '../../ui/forms/Label';
-import InputGroup from '../../ui/forms/InputGroup';
+import ContextualNavbar from '../../shared/ContextualNavbar';
+import SubmitButton from '../../shared/forms/buttons/SubmitButton';
+import SelectInput from '../../shared/forms/inputs/SelectInput';
+import Label from '../../shared/forms/Label';
+import InputGroup from '../../shared/forms/InputGroup';
 import SelectCreatablePrimaryProject from '../primary_project/SelectCreatablePrimaryProject';
 
 function DigitalObjectNew() {

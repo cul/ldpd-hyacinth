@@ -2,13 +2,13 @@ import React from 'react';
 import { Card } from 'react-bootstrap';
 import produce from 'immer';
 
-import InputGroup from '../../../../ui/forms/InputGroup';
-import Label from '../../../../ui/forms/Label';
-import TextAreaInput from '../../../../ui/forms/inputs/TextAreaInput';
-import TermSelect from '../../../../ui/forms/inputs/TermSelect';
-import TextInput from '../../../../ui/forms/inputs/TextInput';
-import RemoveButton from '../../../../ui/buttons/RemoveButton';
-import AddButton from '../../../../ui/buttons/AddButton';
+import InputGroup from '../../../../shared/forms/InputGroup';
+import Label from '../../../../shared/forms/Label';
+import TextAreaInput from '../../../../shared/forms/inputs/TextAreaInput';
+import TermSelect from '../../../../shared/forms/inputs/TermSelect';
+import TextInput from '../../../../shared/forms/inputs/TextInput';
+import RemoveButton from '../../../../shared/buttons/RemoveButton';
+import AddButton from '../../../../shared/buttons/AddButton';
 
 export default class CopyrightOwner extends React.PureComponent {
   onFieldChange(fieldName, fieldVal) {

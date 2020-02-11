@@ -3,9 +3,9 @@ import { Col, Form, Button } from 'react-bootstrap';
 import { useMutation } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 
-import ContextualNavbar from '../layout/ContextualNavbar';
+import ContextualNavbar from '../shared/ContextualNavbar';
 import { createProjectMutation } from '../../graphql/projects';
-import GraphQLErrors from '../ui/GraphQLErrors';
+import GraphQLErrors from '../shared/GraphQLErrors';
 
 function ProjectNew() {
   const [stringKey, setStringKey] = useState('');
