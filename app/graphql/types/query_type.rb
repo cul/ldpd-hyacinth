@@ -70,7 +70,7 @@ module Types
       vocabulary
     end
 
-    def vocabularies(_arguments)
+    def vocabularies(**_arguments)
       ability.authorize!(:read, Vocabulary)
       Vocabulary.accessible_by(ability).order(:label)
     end
