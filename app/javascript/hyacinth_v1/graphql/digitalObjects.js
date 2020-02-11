@@ -1,6 +1,6 @@
 import { gql } from 'apollo-boost';
 
-const minimalDigitalObjctProjectFields = `
+const minimalDigitalObjectProjectFields = `
   stringKey
 `;
 
@@ -10,10 +10,10 @@ export const getMinimalDigitalObjectWithProjectsQuery = gql`
       id,
       digitalObjectType,
       primaryProject {
-        ${minimalDigitalObjctProjectFields}
+        ${minimalDigitalObjectProjectFields}
       },
       otherProjects {
-        ${minimalDigitalObjctProjectFields}
+        ${minimalDigitalObjectProjectFields}
       }
     }
   }
@@ -117,6 +117,19 @@ export const getAssetDataDigitalObjectQuery = gql`
       },
       ... on Asset {
         assetType
+      }
+    }
+  }
+`;
+
+export const getDigitalObjectsQuery = gql`
+  query DigitalObjects($limit: Limit!, $offset: Offset = 0){
+    digitalObjects(limit: $limit, offset: $offset) {
+      totalCount
+      nodes {
+        id
+        title
+        digitalObjectType
       }
     }
   }

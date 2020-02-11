@@ -27,7 +27,7 @@ module Types
       description "List of all projects"
     end
 
-    field :digital_objects, [DigitalObjectInterface], null: true do
+    field :digital_objects, DigitalObjectInterface.results_type, null: true, extensions: [Types::Extensions::Paginate, Types::Extensions::MapToDigitalObjects] do
       description "List and searches all digital objects"
     end
 
