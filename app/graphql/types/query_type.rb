@@ -106,7 +106,7 @@ module Types
     end
 
     field :dynamic_field_group, DynamicFieldGroupType, null: true do
-      argument :stringKey, ID, required: true
+      argument :string_key, ID, required: true
     end
 
     def dynamic_field_group(string_key:)
