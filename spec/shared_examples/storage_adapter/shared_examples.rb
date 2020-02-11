@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.shared_examples "a storage adapter" do
+RSpec.shared_examples "a readable storage adapter" do
   before {
     # This shared spec requires the including context to define an adapter in a variable called adapter
     raise 'Must define variable `adapter` via `let(:adapter)`' unless defined?(adapter)
@@ -17,6 +17,18 @@ RSpec.shared_examples "a storage adapter" do
     it "implements #read_impl" do
       expect(adapter).to respond_to(:read_impl)
     end
+    it "implements #uri_prefix" do
+      expect(adapter).to respond_to(:uri_prefix)
+    end
+  end
+end
+
+RSpec.shared_examples "a writable storage adapter" do
+  before {
+    # This shared spec requires the including context to define an adapter in a variable called adapter
+    raise 'Must define variable `adapter` via `let(:adapter)`' unless defined?(adapter)
+  }
+  context "implements expected methods" do
     it "implements #write" do
       expect(adapter).to respond_to(:write)
     end
@@ -28,9 +40,6 @@ RSpec.shared_examples "a storage adapter" do
     end
     it "implements #writeable_impl" do
       expect(adapter).to respond_to(:writeable_impl)
-    end
-    it "implements #uri_prefix" do
-      expect(adapter).to respond_to(:write_impl)
     end
   end
 end

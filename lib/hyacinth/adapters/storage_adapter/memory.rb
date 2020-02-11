@@ -6,14 +6,10 @@ module Hyacinth
       # An adapter for storing and retrieving file records in memory.
       # There is no limit to how large this in-memory store can grow,
       # so be careful!
-      class Memory < Abstract
+      class Memory < AbstractReadableWritable
         def initialize(adapter_config = {})
           super(adapter_config)
           @cache = {}
-        end
-
-        def uri_prefix
-          "memory://"
         end
 
         # Generates a new storage location for the given identifier, ensuring that nothing currently exists at that location.

@@ -8,6 +8,13 @@ module Hyacinth
         @storage_adapters = config[:adapters].map do |adapter_config|
           Hyacinth::Adapters.create_from_config('Hyacinth::Adapters::StorageAdapter', adapter_config)
         end
+        # ensure that none of the storage adapters have the same uri_prefix
+        uri_prefixes = Set.new
+        @storage_adapters.each do |adapter|
+          prefix = adapter.uri_prefix
+          raise "Duplicate uri_prefix #{prefix} found for #{self.class}" if uri_prefixes.include?(prefix)
+          uri_prefixes << prefix
+        end
       end
 
       # The primary storage adapter is always the first storage adapter in the storage adapters list

@@ -33,7 +33,7 @@ FactoryBot.define do
         text_file_fixture_path = Rails.root.join('spec', 'fixtures', 'files', test_file_fixture_name).to_s
 
         digital_object.resources['master'] = Hyacinth::DigitalObject::Resource.new(
-          location: 'disk://' + text_file_fixture_path,
+          location: 'managed-disk://' + text_file_fixture_path,
           checksum: 'SHA256:e1266b81a70083fa5e3bf456239a1160fc6ebc179cdd71e458a9dd4bc7cc21f6',
           original_filename: test_file_fixture_name,
           media_type: 'text/plain',

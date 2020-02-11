@@ -4,11 +4,13 @@ require 'rails_helper'
 require 'shared_examples/storage_adapter/shared_examples'
 
 RSpec.describe Hyacinth::Adapters::StorageAdapter::Memory do
-  let(:expected_adapter_uri_prefix) { 'memory://' }
+  let(:uri_protocol) { 'great-memory' }
+  let(:adapter) { described_class.new(uri_protocol: uri_protocol) }
+  let(:expected_adapter_uri_prefix) { "#{uri_protocol}://" }
   let(:sample_location_uri) { expected_adapter_uri_prefix + 'anything' }
-  let(:adapter) { described_class.new }
 
-  it_behaves_like "a storage adapter"
+  it_behaves_like "a readable storage adapter"
+  it_behaves_like "a writable storage adapter"
 
   context "#uri_prefix" do
     it "has the expected prefix" do

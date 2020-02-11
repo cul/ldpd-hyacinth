@@ -3,46 +3,20 @@
 module Hyacinth
   module Adapters
     module StorageAdapter
-      class Abstract
+      class AbstractReadableWritable < AbstractReadable
         def initialize(adapter_config = {})
+          raise 'Missing config option: uri_protocol' if adapter_config[:uri_protocol].blank?
+          @uri_protocol = adapter_config[:uri_protocol]
         end
 
-        # @param location_uri [String]
-        # @return [Boolean] true if this adapter can handle this type of location_uri
-        def handles?(location_uri)
-          location_uri.start_with?(uri_prefix)
+        # Important to override parent method's writable? method
+        def writable?
+          true
         end
 
         # Generates a new storage location for the given identifier, ensuring that nothing currently exists at that location.
         # @return [String] a location uri
-        def generate_new_location_uri(identifier)
-          raise NotImplementedError
-        end
-
-        def exists?(location_uri)
-          raise NotImplementedError
-        end
-
-        # @return [string] the expected prefix for a location_uri associated with this adapter ('disk://', 'memory://', etc.)
-        def uri_prefix
-          raise NotImplementedError
-        end
-
-        def read(location_uri)
-          raise Hyacinth::Exceptions::UnhandledLocationError, "Unhandled location_uri for #{self.class.name}: #{location_uri}" unless handles?(location_uri)
-          read_impl(location_uri)
-        end
-
-        def read_impl
-          raise NotImplementedError
-        end
-
-        def with_readable(location_uri, &block)
-          raise Hyacinth::Exceptions::UnhandledLocationError, "Unhandled location_uri for #{self.class.name}: #{location_uri}" unless handles?(location_uri)
-          readable_impl(location_uri, &block)
-        end
-
-        def readable_impl(*args)
+        def generate_new_location_uri(_identifier)
           raise NotImplementedError
         end
 
@@ -53,7 +27,7 @@ module Hyacinth
           write_impl(location_uri, content)
         end
 
-        def write_impl(*args)
+        def write_impl(*_args)
           raise NotImplementedError
         end
 
@@ -62,7 +36,7 @@ module Hyacinth
           writeable_impl(location_uri, &block)
         end
 
-        def writeable_impl(*args)
+        def writeable_impl(*_args)
           raise NotImplementedError
         end
 
@@ -72,7 +46,7 @@ module Hyacinth
           delete_impl(location_uri)
         end
 
-        def delete_impl(*args)
+        def delete_impl(*_args)
           raise NotImplementedError
         end
       end
