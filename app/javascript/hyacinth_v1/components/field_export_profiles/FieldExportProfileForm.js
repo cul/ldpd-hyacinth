@@ -9,7 +9,7 @@ import JSONInput from '../shared/forms/inputs/JSONInput';
 import TextInput from '../shared/forms/inputs/TextInput';
 import InputGroup from '../shared/forms/InputGroup';
 import Label from '../shared/forms/Label';
-import hyacinthApi from '../../utils/hyacinth_api';
+import hyacinthApi from '../../utils/hyacinthApi';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
 class FieldExportProfileForm extends React.Component {

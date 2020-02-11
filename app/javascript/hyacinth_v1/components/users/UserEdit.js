@@ -12,7 +12,7 @@ import GraphQLErrors from '../shared/GraphQLErrors';
 import InputGroup from '../shared/forms/InputGroup';
 import Label from '../shared/forms/Label';
 import FormButtons from '../shared/forms/FormButtons';
-import { Can } from '../../utils/ability_context';
+import { Can } from '../../utils/abilityContext';
 import { getUserQuery, updateUserMutation } from '../../graphql/users';
 import Checkbox from '../shared/forms/inputs/Checkbox';
 

@@ -6,7 +6,7 @@ import {
 } from 'lodash';
 import { withRouter, Link } from 'react-router-dom';
 
-import hyacinthApi from '../../../utils/hyacinth_api';
+import hyacinthApi from '../../../utils/hyacinthApi';
 import UpArrowButton from '../buttons/UpArrowButton';
 import DownArrowButton from '../buttons/DownArrowButton';
 

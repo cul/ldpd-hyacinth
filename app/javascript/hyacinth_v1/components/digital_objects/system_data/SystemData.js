@@ -9,7 +9,7 @@ import TabHeading from '../../shared/tabs/TabHeading';
 import DigitalObjectInterface from '../DigitalObjectInterface';
 import DeleteButton from '../../shared/forms/buttons/DeleteButton';
 import { getSystemDataDigitalObjectQuery } from '../../../graphql/digitalObjects';
-import { digitalObject as digitalObjectApi } from '../../../utils/hyacinth_api';
+import { digitalObject as digitalObjectApi } from '../../../utils/hyacinthApi';
 import { digitalObjectAbility } from '../../../utils/ability';
 
 function SystemData(props) {

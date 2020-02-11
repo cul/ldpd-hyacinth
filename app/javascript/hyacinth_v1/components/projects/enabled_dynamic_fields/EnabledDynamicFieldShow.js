@@ -4,9 +4,9 @@ import produce from 'immer';
 
 import TabHeading from '../../shared/tabs/TabHeading';
 import EnabledDynamicFieldForm from './EnabledDynamicFieldForm';
-import { Can } from '../../../utils/ability_context';
+import { Can } from '../../../utils/abilityContext';
 import EditButton from '../../shared/buttons/EditButton';
-import { projects } from '../../../utils/hyacinth_api';
+import { projects } from '../../../utils/hyacinthApi';
 import ProjectInterface from '../ProjectInterface';
 
 export default class EnabledDynamicFieldShow extends React.Component {

@@ -4,7 +4,7 @@ import produce from 'immer';
 
 import TabHeading from '../../shared/tabs/TabHeading';
 import EnabledDynamicFieldForm from './EnabledDynamicFieldForm';
-import { projects } from '../../../utils/hyacinth_api';
+import { projects } from '../../../utils/hyacinthApi';
 import ProjectInterface from '../ProjectInterface';
 
 export default class EnabledDynamicFieldsEdit extends React.Component {

@@ -8,7 +8,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import TabHeading from '../../shared/tabs/TabHeading';
 import CancelButton from '../../shared/forms/buttons/CancelButton';
 import SubmitButton from '../../shared/forms/buttons/SubmitButton';
-import { Can } from '../../../util/ability_context';
+import { Can } from '../../../utils/abilityContext';
 import ProjectInterface from '../ProjectInterface';
 import { getProjectQuery, updateProjectMutation, deleteProjectMutation } from '../../../graphql/projects';
 import GraphQLErrors from '../../shared/GraphQLErrors';
