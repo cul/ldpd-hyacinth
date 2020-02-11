@@ -6,9 +6,9 @@ import { useQuery } from '@apollo/react-hooks';
 import DigitalObjectInterface from '../DigitalObjectInterface';
 import DigitalObjectList from '../DigitalObjectList';
 import AssetNew from '../new/AssetNew';
-import TabHeading from '../../ui/tabs/TabHeading';
+import TabHeading from '../../shared/tabs/TabHeading';
 import { getChildStructureQuery } from '../../../graphql/digitalObjects';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 
 const Children = (props) => {
   const { id } = props;

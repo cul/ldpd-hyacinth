@@ -1,14 +1,14 @@
 import React from 'react';
 
-import Label from '../../ui/forms/Label';
-import InputGroup from '../../ui/forms/InputGroup';
-import TextInput from '../../ui/forms/inputs/TextInput';
-import TextAreaInput from '../../ui/forms/inputs/TextAreaInput';
-import SelectInput from '../../ui/forms/inputs/SelectInput';
-import TermSelect from '../../ui/forms/inputs/TermSelect';
-import DateInput from '../../ui/forms/inputs/DateInput';
-import NumberInput from '../../ui/forms/inputs/NumberInput';
-import Checkbox from '../../ui/forms/inputs/Checkbox';
+import Label from '../../shared/forms/Label';
+import InputGroup from '../../shared/forms/InputGroup';
+import TextInput from '../../shared/forms/inputs/TextInput';
+import TextAreaInput from '../../shared/forms/inputs/TextAreaInput';
+import SelectInput from '../../shared/forms/inputs/SelectInput';
+import TermSelect from '../../shared/forms/inputs/TermSelect';
+import DateInput from '../../shared/forms/inputs/DateInput';
+import NumberInput from '../../shared/forms/inputs/NumberInput';
+import Checkbox from '../../shared/forms/inputs/Checkbox';
 
 class Field extends React.PureComponent {
   render() {

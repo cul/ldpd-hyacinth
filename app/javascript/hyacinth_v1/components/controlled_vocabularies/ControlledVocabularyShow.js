@@ -5,10 +5,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 
-import ContextualNavbar from '../layout/ContextualNavbar';
+import ContextualNavbar from '../shared/ContextualNavbar';
 import TermIndex from './terms/TermIndex';
-import EditButton from '../ui/buttons/EditButton';
-import GraphQLErrors from '../ui/GraphQLErrors';
+import EditButton from '../shared/buttons/EditButton';
+import GraphQLErrors from '../shared/GraphQLErrors';
 import { getVocabularyQuery } from '../../graphql/vocabularies';
 
 function ControlledVocabularyShow() {

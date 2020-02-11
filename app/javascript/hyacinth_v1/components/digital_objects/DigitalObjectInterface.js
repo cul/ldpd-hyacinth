@@ -2,10 +2,10 @@ import React from 'react';
 import { capitalize } from 'lodash';
 import PropTypes from 'prop-types';
 
-import Tab from '../ui/tabs/Tab';
-import Tabs from '../ui/tabs/Tabs';
-import TabBody from '../ui/tabs/TabBody';
-import ContextualNavbar from '../layout/ContextualNavbar';
+import Tab from '../shared/tabs/Tab';
+import Tabs from '../shared/tabs/Tabs';
+import TabBody from '../shared/tabs/TabBody';
+import ContextualNavbar from '../shared/ContextualNavbar';
 import DigitalObjectSummary from './DigitalObjectSummary';
 
 function DigitalObjectInterface(props) {

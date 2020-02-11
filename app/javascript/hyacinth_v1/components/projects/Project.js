@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 
-import PageNotFound from '../layout/PageNotFound';
+import PageNotFound from '../shared/PageNotFound';
 import CoreData from './core_data/CoreData';
 import FieldSet from './field_sets/FieldSet';
 import Permissions from './permissions/Permissions';

@@ -6,10 +6,10 @@ import { useQuery } from '@apollo/react-hooks';
 import { Link, useParams } from 'react-router-dom';
 import { gql } from 'apollo-boost';
 
-import TabHeading from '../../ui/tabs/TabHeading';
+import TabHeading from '../../shared/tabs/TabHeading';
 import { Can } from '../../../util/ability_context';
 import ProjectInterface from '../ProjectInterface';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 
 const PROJECT_WITH_PUBLISH_TARGETS = gql`
   query Project($stringKey: ID!){

@@ -4,9 +4,9 @@ import { Button, Alert } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 
 import DigitalObjectInterface from '../DigitalObjectInterface';
-import TabHeading from '../../ui/tabs/TabHeading';
+import TabHeading from '../../shared/tabs/TabHeading';
 import { getPreservePublishDigitalObjectQuery } from '../../../graphql/digitalObjects';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 import { digitalObjectAbility } from '../../../util/ability';
 
 function PreservePublish(props) {

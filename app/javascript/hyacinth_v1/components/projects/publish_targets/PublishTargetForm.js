@@ -3,18 +3,18 @@ import { Form, Collapse } from 'react-bootstrap';
 import { useMutation } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 
-import InputGroup from '../../ui/forms/InputGroup';
-import Label from '../../ui/forms/Label';
-import FormButtons from '../../ui/forms/FormButtons';
-import NumberInput from '../../ui/forms/inputs/NumberInput';
-import TextInput from '../../ui/forms/inputs/TextInput';
-import Checkbox from '../../ui/forms/inputs/Checkbox';
+import InputGroup from '../../shared/forms/InputGroup';
+import Label from '../../shared/forms/Label';
+import FormButtons from '../../shared/forms/FormButtons';
+import NumberInput from '../../shared/forms/inputs/NumberInput';
+import TextInput from '../../shared/forms/inputs/TextInput';
+import Checkbox from '../../shared/forms/inputs/Checkbox';
 import {
   createPublishTargetMutation,
   updatePublishTargetMutation,
   deletePublishTargetMutation,
 } from '../../../graphql/publishTargets';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 
 function PublishTargetForm({ projectStringKey, publishTarget, formType }) {
   const [stringKey, setStringKey] = useState(publishTarget ? publishTarget.stringKey : '');

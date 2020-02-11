@@ -7,12 +7,12 @@ import Select from 'react-select';
 import { remove as arrRemove, sortBy as collectionSortBy } from 'lodash';
 import { useHistory } from 'react-router-dom';
 
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 import { updateProjectPermissionsMutation } from '../../../graphql/projects';
 import { getUsersQuery } from '../../../graphql/users';
-import AddButton from '../../ui/buttons/AddButton';
-import RemoveButton from '../../ui/buttons/RemoveButton';
-import CancelButton from '../../ui/forms/buttons/CancelButton';
+import AddButton from '../../shared/buttons/AddButton';
+import RemoveButton from '../../shared/buttons/RemoveButton';
+import CancelButton from '../../shared/forms/buttons/CancelButton';
 import {
   ProjectAction, ProjectActions, PrimaryProjectActions, AggregatorProjectActions
 } from '../../../util/permission_actions';

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import PageNotFound from '../../layout/PageNotFound';
-import ProtectedRoute from '../../ProtectedRoute';
+import PageNotFound from '../../shared/PageNotFound';
+import ProtectedRoute from '../../shared/routes/ProtectedRoute';
 
 import EnabledDynamicFieldEdit from './EnabledDynamicFieldEdit';
 import EnabledDynamicFieldShow from './EnabledDynamicFieldShow';

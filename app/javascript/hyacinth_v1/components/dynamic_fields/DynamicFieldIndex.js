@@ -4,17 +4,17 @@ import { Card } from 'react-bootstrap';
 import produce from 'immer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import ContextualNavbar from '../layout/ContextualNavbar';
+import ContextualNavbar from '../shared/ContextualNavbar';
 
 import { useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 
 import { Can } from '../../util/ability_context';
-import GraphQLErrors from '../ui/GraphQLErrors';
+import GraphQLErrors from '../shared/GraphQLErrors';
 
 
-import DynamicFieldsAndGroupsTable from '../layout/dynamic_fields/DynamicFieldsAndGroupsTable';
-import EditButton from '../ui/buttons/EditButton';
+import DynamicFieldsAndGroupsTable from '../shared/dynamic_fields/DynamicFieldsAndGroupsTable';
+import EditButton from '../shared/buttons/EditButton';
 
 
 import { Table } from 'react-bootstrap';

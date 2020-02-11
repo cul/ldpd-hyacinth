@@ -3,8 +3,8 @@ import { Route, Redirect, Switch } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 
-import TopNavbar from '@hyacinth_v1/components/layout/TopNavbar';
-import PageNotFound from './components/layout/PageNotFound';
+import TopNavbar from '@hyacinth_v1/components/shared/TopNavbar';
+import PageNotFound from './components/shared/PageNotFound';
 import DigitalObjects from './components/digital_objects/DigitalObjects';
 import Users from './components/users/Users';
 import DynamicFields from './components/dynamic_fields/DynamicFields';
@@ -18,7 +18,7 @@ import ability from './util/ability';
 import { setupPermissionActions } from './util/permission_actions';
 import { getAuthenticatedUserQuery } from './graphql/users';
 import { getPermissionActionsQuery } from './graphql/permissionActions';
-import GraphQLErrors from './components/ui/GraphQLErrors';
+import GraphQLErrors from './components/shared/GraphQLErrors';
 
 const Index = () => (
   <div>

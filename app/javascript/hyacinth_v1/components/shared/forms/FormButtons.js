@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, Col } from 'react-bootstrap';
 
-import SubmitButton from './buttons/SubmitButton';
+import ResponsiveSubmitButton from './buttons/ResponsiveSubmitButton';
 import CancelButton from './buttons/CancelButton';
 import DeleteButton from './buttons/DeleteButton';
 
@@ -21,7 +21,7 @@ function FormButtons(props) {
       </Col>
 
       <Col sm="auto">
-        <SubmitButton saveData={onSave} formType={formType} />
+        <ResponsiveSubmitButton saveData={onSave} formType={formType} />
       </Col>
     </Form.Row>
   );

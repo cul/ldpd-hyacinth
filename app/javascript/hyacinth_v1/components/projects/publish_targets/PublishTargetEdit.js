@@ -3,8 +3,8 @@ import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
 import { useParams } from 'react-router-dom';
 
-import GraphQLErrors from '../../ui/GraphQLErrors';
-import TabHeading from '../../ui/tabs/TabHeading';
+import GraphQLErrors from '../../shared/GraphQLErrors';
+import TabHeading from '../../shared/tabs/TabHeading';
 import PublishTargetForm from './PublishTargetForm';
 import ProjectInterface from '../ProjectInterface';
 

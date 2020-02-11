@@ -1,10 +1,10 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import PageNotFound from '../../layout/PageNotFound';
+import PageNotFound from '../../shared/PageNotFound';
 import PermissionsShow from './PermissionsShow';
 import PermissionsEdit from './PermissionsEdit';
-import ProtectedRoute from '../../ProtectedRoute';
+import ProtectedRoute from '../../shared/routes/ProtectedRoute';
 
 export default class Permissions extends React.PureComponent {
   render() {

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Table } from 'react-bootstrap';
 import produce from 'immer';
 
-import ContextualNavbar from '../layout/ContextualNavbar';
+import ContextualNavbar from '../shared/ContextualNavbar';
 import hyacinthApi from '../../util/hyacinth_api';
 
 export default class FieldExportProfileIndex extends React.Component {

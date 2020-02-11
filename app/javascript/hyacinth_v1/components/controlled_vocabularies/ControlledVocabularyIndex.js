@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import { Table } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 
-import ContextualNavbar from '../layout/ContextualNavbar';
-import PaginationBar from '../ui/PaginationBar';
-import GraphQLErrors from '../ui/GraphQLErrors';
+import ContextualNavbar from '../shared/ContextualNavbar';
+import PaginationBar from '../shared/PaginationBar';
+import GraphQLErrors from '../shared/GraphQLErrors';
 import { getVocabulariesQuery } from '../../graphql/vocabularies';
 
 const limit = 20;

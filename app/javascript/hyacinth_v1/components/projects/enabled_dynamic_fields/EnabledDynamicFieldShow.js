@@ -2,10 +2,10 @@ import React from 'react';
 import { startCase } from 'lodash';
 import produce from 'immer';
 
-import TabHeading from '../../ui/tabs/TabHeading';
+import TabHeading from '../../shared/tabs/TabHeading';
 import EnabledDynamicFieldForm from './EnabledDynamicFieldForm';
 import { Can } from '../../../util/ability_context';
-import EditButton from '../../ui/buttons/EditButton';
+import EditButton from '../../shared/buttons/EditButton';
 import { projects } from '../../../util/hyacinth_api';
 import ProjectInterface from '../ProjectInterface';
 

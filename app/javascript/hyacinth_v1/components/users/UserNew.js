@@ -3,8 +3,8 @@ import { Col, Form, Button } from 'react-bootstrap';
 import { useMutation } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 
-import ContextualNavbar from '../layout/ContextualNavbar';
-import GraphQLErrors from '../ui/GraphQLErrors';
+import ContextualNavbar from '../shared/ContextualNavbar';
+import GraphQLErrors from '../shared/GraphQLErrors';
 import { createUserMutation } from '../../graphql/users';
 
 function UserNew() {

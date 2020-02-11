@@ -8,12 +8,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { upperCase } from 'lodash';
 import { useQuery } from '@apollo/react-hooks';
 
-import TextInput from '../../ui/forms/inputs/TextInput';
-import SearchButton from '../../ui/buttons/SearchButton';
-import PaginationBar from '../../ui/PaginationBar';
-import SelectInput from '../../ui/forms/inputs/SelectInput';
+import TextInput from '../../shared/forms/inputs/TextInput';
+import SearchButton from '../../shared/buttons/SearchButton';
+import PaginationBar from '../../shared/PaginationBar';
+import SelectInput from '../../shared/forms/inputs/SelectInput';
 import { getTermsQuery } from '../../../graphql/terms';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 
 const limit = 10;
 const defaultFilters = ['authority', 'uri', 'pref_label', 'alt_labels', 'term_type'];

@@ -1,9 +1,9 @@
 import React from 'react';
 
-import Tab from '../ui/tabs/Tab';
-import Tabs from '../ui/tabs/Tabs';
-import TabBody from '../ui/tabs/TabBody';
-import ContextualNavbar from '../layout/ContextualNavbar';
+import Tab from '../shared/tabs/Tab';
+import Tabs from '../shared/tabs/Tabs';
+import TabBody from '../shared/tabs/TabBody';
+import ContextualNavbar from '../shared/ContextualNavbar';
 
 function ProjectInterface(props) {
   const { project, children } = props;

@@ -5,13 +5,13 @@ import {
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { useParams, useHistory } from 'react-router-dom';
 
-import TabHeading from '../../ui/tabs/TabHeading';
-import CancelButton from '../../layout/forms/CancelButton';
-import SubmitButton from '../../layout/forms/SubmitButton';
+import TabHeading from '../../shared/tabs/TabHeading';
+import CancelButton from '../../shared/forms/buttons/CancelButton';
+import SubmitButton from '../../shared/forms/buttons/SubmitButton';
 import { Can } from '../../../util/ability_context';
 import ProjectInterface from '../ProjectInterface';
 import { getProjectQuery, updateProjectMutation, deleteProjectMutation } from '../../../graphql/projects';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 
 function CoreDataEdit() {
   const { stringKey } = useParams();

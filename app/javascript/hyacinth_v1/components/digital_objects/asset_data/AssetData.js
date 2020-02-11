@@ -5,9 +5,9 @@ import { Card } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import DigitalObjectInterface from '../DigitalObjectInterface';
-import TabHeading from '../../ui/tabs/TabHeading';
+import TabHeading from '../../shared/tabs/TabHeading';
 import { getAssetDataDigitalObjectQuery } from '../../../graphql/digitalObjects';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 
 function AssetData(props) {
   const { id } = props;

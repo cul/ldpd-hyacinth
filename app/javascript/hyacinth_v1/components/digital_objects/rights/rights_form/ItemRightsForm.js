@@ -6,11 +6,11 @@ import { useHistory } from 'react-router-dom';
 import { merge } from 'lodash';
 
 import keyTransformer from '../../../../util/keyTransformer';
-import Label from '../../../ui/forms/Label';
-import InputGroup from '../../../ui/forms/InputGroup';
-import BooleanRadioButtons from '../../../ui/forms/inputs/BooleanRadioButtons';
+import Label from '../../../shared/forms/Label';
+import InputGroup from '../../../shared/forms/InputGroup';
+import BooleanRadioButtons from '../../../shared/forms/inputs/BooleanRadioButtons';
 import { digitalObject as digitalObjectApi } from '../../../../util/hyacinth_api';
-import FormButtons from '../../../ui/forms/FormButtons';
+import FormButtons from '../../../shared/forms/FormButtons';
 
 import DescriptiveMetadata from './subsections/DescriptiveMetadata';
 import CopyrightStatus from './subsections/CopyrightStatus';

@@ -5,11 +5,11 @@ import { useQuery } from '@apollo/react-hooks';
 
 import MetadataTab from './MetadataTab';
 import { dynamicFieldCategories } from '../../../util/hyacinth_api';
-import InputGroup from '../../ui/forms/InputGroup';
-import Label from '../../ui/forms/Label';
-import PlainText from '../../ui/forms/inputs/PlainText';
+import InputGroup from '../../shared/forms/InputGroup';
+import Label from '../../shared/forms/Label';
+import PlainText from '../../shared/forms/inputs/PlainText';
 import { getMetadataDigitalObjectQuery } from '../../../graphql/digitalObjects';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 import { digitalObjectAbility } from '../../../util/ability';
 
 function MetadataShow(props) {

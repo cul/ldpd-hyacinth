@@ -1,6 +1,6 @@
 import React from 'react';
 
-import ContextualNavbar from '../layout/ContextualNavbar';
+import ContextualNavbar from '../shared/ContextualNavbar';
 import FieldExportProfileForm from './FieldExportProfileForm';
 
 class DynamicFieldGroupNew extends React.PureComponent {
