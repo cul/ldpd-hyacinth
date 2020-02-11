@@ -4,15 +4,15 @@ import { BrowserRouter } from 'react-router-dom';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks';
 
-import Constants from '../hyacinth_ui_v1/Constants';
+import Constants from '../hyacinth_v1/Constants';
 
 // app js entry point
-import App from '../hyacinth_ui_v1/app';
+import App from '../hyacinth_v1/app';
 // app css entry point
-import '../hyacinth_ui_v1/stylesheets/hyacinth_ui_v1.scss';
+import '../hyacinth_v1/stylesheets/hyacinth_v1.scss';
 
 // add app-wide support for FontAwesome
-import '../hyacinth_ui_v1/util/FontAwesome';
+import '../hyacinth_v1/util/FontAwesome';
 
 const client = new ApolloClient({
   uri: '/graphql',

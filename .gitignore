@@ -56,3 +56,6 @@ jetty-test
 
 # old friends, long forgotten
 .DS_Store
+
+# IDE-specific files
+/jsconfig.json
