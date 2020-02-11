@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ContextualNavbar from '../shared/ContextualNavbar';
 
 import { useQuery } from '@apollo/react-hooks';
-import { gql } from 'apollo-boost';
+import gql from 'graphql-tag';
 
 import { Can } from '../../utils/abilityContext';
 import GraphQLErrors from '../shared/GraphQLErrors';

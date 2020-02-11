@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 import { Link, useParams } from 'react-router-dom';
-import { gql } from 'apollo-boost';
+import gql from 'graphql-tag';
 
 import TabHeading from '../../shared/tabs/TabHeading';
 import { Can } from '../../../utils/abilityContext';

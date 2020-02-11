@@ -1,4 +1,4 @@
-import { gql } from 'apollo-boost';
+import gql from 'graphql-tag';
 
 export const getTermsQuery = gql`
   query Terms($vocabularyStringKey: ID!, $limit: Limit!, $offset: Offset, $query: String) {

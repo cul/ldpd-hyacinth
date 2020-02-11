@@ -1,4 +1,4 @@
-import { gql } from 'apollo-boost';
+import gql from 'graphql-tag';
 
 export const createPublishTargetMutation = gql`
   mutation CreatePublishTarget($input: CreatePublishTargetInput!) {

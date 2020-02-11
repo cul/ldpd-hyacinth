@@ -1,7 +1,7 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
-import { gql } from 'apollo-boost';
+import gql from 'graphql-tag';
 
 import ProjectInterface from '../ProjectInterface';
 import TabHeading from '../../shared/tabs/TabHeading';
