@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Route } from 'react-router-dom';
 
-import ability from '../../../util/ability';
+import ability from '../../../utils/ability';
 import PageNotFound from '../PageNotFound';
 
 function DigitalObjectProtectedRoute(props) {

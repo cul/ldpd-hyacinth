@@ -5,8 +5,8 @@ import { Form } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { merge } from 'lodash';
 
-import keyTransformer from '../../../../util/keyTransformer';
-import { digitalObject as digitalObjectApi } from '../../../../util/hyacinth_api';
+import keyTransformer from '../../../../utils/keyTransformer';
+import { digitalObject as digitalObjectApi } from '../../../../utils/hyacinth_api';
 import ContextualNavbar from '../../../shared/ContextualNavbar';
 import FormButtons from '../../../shared/forms/FormButtons';
 import CopyrightStatus from './subsections/CopyrightStatus';

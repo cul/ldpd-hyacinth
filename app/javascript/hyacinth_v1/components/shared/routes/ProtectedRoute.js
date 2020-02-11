@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
 
-import ability from '../../../util/ability';
+import ability from '../../../utils/ability';
 import PageNotFound from '../PageNotFound';
 
 class ProtectedRoute extends React.PureComponent {

@@ -9,8 +9,8 @@ import TabHeading from '../../shared/tabs/TabHeading';
 import DigitalObjectInterface from '../DigitalObjectInterface';
 import DeleteButton from '../../shared/forms/buttons/DeleteButton';
 import { getSystemDataDigitalObjectQuery } from '../../../graphql/digitalObjects';
-import { digitalObject as digitalObjectApi } from '../../../util/hyacinth_api';
-import { digitalObjectAbility } from '../../../util/ability';
+import { digitalObject as digitalObjectApi } from '../../../utils/hyacinth_api';
+import { digitalObjectAbility } from '../../../utils/ability';
 
 function SystemData(props) {
   const { id } = props;

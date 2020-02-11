@@ -8,7 +8,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import produce from 'immer';
 import axios from 'axios';
 
-import hyacinthApi from '../../util/hyacinth_api';
+import hyacinthApi from '../../utils/hyacinth_api';
 import DynamicFieldsAndGroupsTable from '../shared/dynamic_fields/DynamicFieldsAndGroupsTable';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import FormButtons from '../shared/forms/FormButtons';

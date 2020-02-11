@@ -8,7 +8,7 @@ import { withRouter } from 'react-router-dom';
 import axios from 'axios';
 import Select from 'react-select';
 import FormButtons from '../../shared/forms/FormButtons';
-import hyacinthApi from '../../../util/hyacinth_api';
+import hyacinthApi from '../../../utils/hyacinth_api';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 
 class EnabledDynamicFieldEdit extends React.Component {

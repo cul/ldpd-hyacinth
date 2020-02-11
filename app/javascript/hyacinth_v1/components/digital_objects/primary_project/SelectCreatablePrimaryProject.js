@@ -6,7 +6,7 @@ import SelectInput from '../../shared/forms/inputs/SelectInput';
 import Label from '../../shared/forms/Label';
 import InputGroup from '../../shared/forms/InputGroup';
 import GraphQLErrors from '../../shared/GraphQLErrors';
-import ability from '../../../util/ability';
+import ability from '../../../utils/ability';
 
 function SelectCreatablePrimaryProject({ primaryProject, changeHandler }) {
   const { loading, error, data } = useQuery(getPrimaryProjectsQuery, { isPrimary: true });

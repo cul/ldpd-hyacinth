@@ -7,7 +7,7 @@ import { useHistory } from 'react-router-dom';
 
 import hyacinthApi, {
   enabledDynamicFields, dynamicFieldCategories, digitalObject as digitalObjectApi
-} from '../../../util/hyacinth_api';
+} from '../../../utils/hyacinth_api';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 import TabHeading from '../../shared/tabs/TabHeading';
 import FieldGroupArray from './FieldGroupArray';
