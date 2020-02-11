@@ -81,3 +81,22 @@ We use Capistrano for deployment. To deploy to our temporary dev instance run:
 ```
 cap hyacinth_3_dev deploy
 ```
+
+## Development / IDE Notes
+
+If you have an IDE that supports jsconfig.json files (e.g. Visual Studio Code), you can add the following (git ignored) jsconfig.json file to your local copy (top level) and it will enable js import autocomplete for the @hyacinth_v1 alias:
+
+```
+{
+  "compilerOptions": {
+    "baseUrl": "app/javascript",
+    "jsx": "react",
+    "paths": {
+      "@hyacinth_v1/*" : ["hyacinth_v1/*"]
+    }
+  },
+  "include": [
+    "app/javascript/**/*"
+  ]
+}
+```
