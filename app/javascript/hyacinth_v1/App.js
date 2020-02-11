@@ -1,81 +1,62 @@
-import React, { useState } from 'react';
-import { Route, Redirect, Switch } from 'react-router-dom';
-import { Container } from 'react-bootstrap';
-import { useQuery } from '@apollo/react-hooks';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { ApolloProvider } from '@apollo/react-hooks';
+import axios from 'axios';
 
-import TopNavbar from '@hyacinth_v1/components/shared/TopNavbar';
-import PageNotFound from './components/shared/PageNotFound';
-import DigitalObjects from './components/digital_objects/DigitalObjects';
-import Users from './components/users/Users';
-import DynamicFields from './components/dynamic_fields/DynamicFields';
-import DynamicFieldGroups from './components/dynamic_field_groups/DynamicFieldGroups';
-import DynamicFieldCategories from './components/dynamic_field_categories/DynamicFieldCategories';
-import FieldExportProfiles from './components/field_export_profiles/FieldExportProfiles';
-import ControlledVocabularies from './components/controlled_vocabularies/ControlledVocabularies';
-import Projects from './components/projects/Projects';
-import { AbilityContext } from './utils/abilityContext';
-import ability from './utils/ability';
-import { setupPermissionActions } from './utils/permissionActions';
-import { getAuthenticatedUserQuery } from './graphql/users';
-import { getPermissionActionsQuery } from './graphql/permissionActions';
-import GraphQLErrors from './components/shared/GraphQLErrors';
-
-const Index = () => (
-  <div>
-    { /* TODO: If not logged in, redirect to login screen */ }
-    <Redirect to="/digital_objects" />
-  </div>
-);
+import MainContent from './MainContent';
+import createApolloClient from './utils/createApolloClient';
 
 function App() {
-  const [user, setUser] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState(false);
+  const [schemaTypes, setSchemaTypes] = useState({});
 
-  const { loading: userLoading, error: userError } = useQuery(
-    getAuthenticatedUserQuery,
-    {
-      onCompleted: (userData) => {
-        const { authenticatedUser: { rules, ...rest } } = userData;
-        ability.update(rules);
-        setUser({ ...rest });
-      },
-    },
-  );
+  // On app load we need to query for a portion of the graphql schema that will help
+  // configure our Apollo instance.
+  useEffect(() => {
+    axios({
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      url: '/graphql',
+      data: JSON.stringify({
+        variables: {},
+        query: `
+          {
+            __schema {
+              types {
+                kind
+                name
+                possibleTypes {
+                  name
+                }
+              }
+            }
+          }
+        `,
+      }),
+    }).then((response) => {
+      const result = response.data;
+      /* eslint-disable no-underscore-dangle */
+      // Filtering out any type information unrelated to unions or interfaces.
+      const filteredData = result.data.__schema.types.filter(
+        type => type.possibleTypes !== null,
+      );
+      result.data.__schema.types = filteredData;
+      /* eslint-enable no-underscore-dangle */
+      setSchemaTypes(result.data);
+      setLoading(false);
+    }).catch(() => setErrors(true));
+  }, []);
 
-  const { loading: permissionActionsLoading, error: permissionActionsError } = useQuery(
-    getPermissionActionsQuery,
-    {
-      onCompleted: (permissionActionData) => {
-        const {
-          permissionActions: { projectActions, primaryProjectActions, aggregatorProjectActions }
-        } = permissionActionData;
-        setupPermissionActions(projectActions, primaryProjectActions, aggregatorProjectActions);
-      },
-    },
-  );
-
-  if (userLoading || permissionActionsLoading) return (<></>);
-  if (userError || permissionActionsError) return (<GraphQLErrors errors={userError || permissionActionsError} />);
+  if (loading) return (<></>);
+  if (errors) return (<p>Error Loading GraphQL Schema.</p>);
 
   return (
-    <AbilityContext.Provider value={ability}>
-      <TopNavbar user={user} />
-      <Container id="main">
-        <Switch>
-          <Route exact path="/" component={Index} />
-          <Route path="/digital_objects" component={DigitalObjects} />
-          <Route path="/users" component={Users} />
-          <Route path="/projects" component={Projects} />
-          <Route path="/dynamic_fields" component={DynamicFields} />
-          <Route path="/dynamic_field_groups" component={DynamicFieldGroups} />
-          <Route path="/dynamic_field_categories" component={DynamicFieldCategories} />
-          <Route path="/field_export_profiles" component={FieldExportProfiles} />
-          <Route path="/controlled_vocabularies" component={ControlledVocabularies} />
-          { /* When none of the above match, <PageNotFound> will be rendered */ }
-          <Route path="/404" component={PageNotFound} />
-          <Route component={PageNotFound} />
-        </Switch>
-      </Container>
-    </AbilityContext.Provider>
+    <BrowserRouter basename="/ui/v1">
+      <ApolloProvider client={createApolloClient(schemaTypes)}>
+        <MainContent />
+      </ApolloProvider>
+    </BrowserRouter>
   );
 }
 
