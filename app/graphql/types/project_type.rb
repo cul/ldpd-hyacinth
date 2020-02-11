@@ -24,6 +24,8 @@ module Types
 
     field :enabled_digital_object_types, [String], null: false
 
+    field :has_asset_rights, Boolean, null: false
+
     def field_set(id:)
       field_set = FieldSet.find_by!(id: id, project: object)
       # TODO: Change :show below to :read

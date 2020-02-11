@@ -25,6 +25,7 @@ RSpec.describe 'Retrieving Project', type: :request do
           "project": {
             "displayLabel": "Great Project",
             "isPrimary": true,
+            "hasAssetRights": false,
             "projectUrl": "https://example.com/great_project",
             "stringKey": "great_project",
             "projectPermissions": [

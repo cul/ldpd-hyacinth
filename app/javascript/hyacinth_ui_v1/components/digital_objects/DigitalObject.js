@@ -13,6 +13,7 @@ import Children from './children/Children';
 import Assignments from './assignments/Assignments';
 import PreservePublish from './preserve_publish/PreservePublish';
 import SystemData from './system_data/SystemData';
+import AssetData from './asset_data/AssetData';
 import GraphQLErrors from '../ui/GraphQLErrors';
 import DigitalObjectProtectedRoute from '../DigitalObjectProtectedRoute';
 
@@ -62,6 +63,21 @@ function DigitalObject() {
               />
             );
           })
+        }
+
+        { minimalDigitalObject.digitalObjectType === 'asset'
+          && (
+            <DigitalObjectProtectedRoute
+              key="assetData"
+              path={`${path}/asset_data`}
+              render={() => <AssetData id={minimalDigitalObject.id} />}
+              requiredAbility={{
+                action: 'read_objects',
+                primaryProject: minimalDigitalObject.primaryProject,
+                otherProjects: minimalDigitalObject.otherProjects,
+              }}
+            />
+          )
         }
 
         <Redirect exact from={path} to="/digital_objects/:id/metadata" />

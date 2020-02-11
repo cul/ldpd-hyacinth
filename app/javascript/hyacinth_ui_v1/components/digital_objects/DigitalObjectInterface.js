@@ -34,7 +34,10 @@ function DigitalObjectInterface(props) {
 
         {
           (digitalObjectType === 'asset') ? (
-            <Tab to={`/digital_objects/${id}/parents`} name="Parents" />
+            <>
+              <Tab to={`/digital_objects/${id}/parents`} name="Parents" />
+              <Tab to={`/digital_objects/${id}/asset_data`} name="Asset Data" />
+            </>
           )
             : <></>
         }

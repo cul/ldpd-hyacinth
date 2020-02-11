@@ -92,6 +92,14 @@ module Hyacinth
         location && Hyacinth::Config.resource_storage.exists?(location)
       end
 
+      # Yields a readable io object for this resource's content.
+      # @yield [io] A readable io object.
+      def with_readable
+        Hyacinth::Config.resource_storage.with_readable(location) do |io|
+          yield io
+        end
+      end
+
       def self.from_serialized_form(json_var)
         self.new(json_var)
       end

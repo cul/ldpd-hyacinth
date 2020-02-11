@@ -23,12 +23,14 @@ RSpec.describe 'Retrieving Projects', type: :request do
               {
                 "displayLabel": "Great Project",
                 "isPrimary": true,
+                "hasAssetRights": false,
                 "projectUrl": "https://example.com/great_project",
                 "stringKey": "great_project"
               },
               {
                 "displayLabel": "Legend of Lincoln",
                 "isPrimary": true,
+                "hasAssetRights": false,
                 "projectUrl": "https://example.com/legend_of_lincoln",
                 "stringKey": "legend_of_lincoln"
               }
@@ -54,6 +56,7 @@ RSpec.describe 'Retrieving Projects', type: :request do
             {
               "displayLabel": "Great Project",
               "isPrimary": true,
+              "hasAssetRights": false,
               "projectUrl": "https://example.com/great_project",
               "stringKey": "great_project"
             }
@@ -81,6 +84,7 @@ RSpec.describe 'Retrieving Projects', type: :request do
               {
                 "displayLabel": "Legend of Lincoln",
                 "isPrimary": true,
+                "hasAssetRights": false,
                 "projectUrl": "https://example.com/legend_of_lincoln",
                 "stringKey": "legend_of_lincoln"
               }
@@ -102,6 +106,7 @@ RSpec.describe 'Retrieving Projects', type: :request do
               {
                 "displayLabel": "Myth of Minken",
                 "isPrimary": false,
+                "hasAssetRights": false,
                 "projectUrl": "https://example.com/myth_of_minken",
                 "stringKey": "myth_of_minken"
               }

@@ -28,7 +28,7 @@ RSpec.describe Hyacinth::Adapters::LockAdapter::DatabaseEntryLock do
         adapter.with_lock(key) do
           adapter.with_lock(key) {}
         end
-      }.to raise_exception(Hyacinth::Exceptions::UnableToObtainLockError)
+      }.to raise_exception(Hyacinth::Exceptions::LockError)
     end
   end
 
@@ -55,7 +55,21 @@ RSpec.describe Hyacinth::Adapters::LockAdapter::DatabaseEntryLock do
         adapter.with_multilock([key1, key2, key3]) do
           adapter.with_lock(key2) {}
         end
-      }.to raise_exception(Hyacinth::Exceptions::UnableToObtainLockError)
+      }.to raise_exception(Hyacinth::Exceptions::LockError)
+    end
+  end
+
+  context "#locked?" do
+    let(:key) { 'some_key' }
+
+    it "returns true if a lock has been established on the key" do
+      adapter.with_lock(key) do
+        expect(adapter.locked?(key)).to eq(true)
+      end
+    end
+
+    it "returns false if a lock has not been established on the key" do
+      expect(adapter.locked?(key)).to eq(false)
     end
   end
 end

@@ -15,6 +15,9 @@ class Mutations::CreateAsset < Mutations::BaseMutation
     asset = initialize_child_asset(parent, blob.filename.to_s)
     begin
       resource = initialize_asset_resource_for_blob(asset, blob, Hyacinth::Config.resource_storage)
+      asset.dynamic_field_data['title'] = [{
+        'title_sort_portion' => blob.filename.to_s
+      }]
       asset.save!
       { asset: asset }
     rescue StandardError => e
@@ -29,7 +32,7 @@ class Mutations::CreateAsset < Mutations::BaseMutation
     asset = DigitalObject::Asset.new
     asset.primary_project = parent.primary_project
     asset.add_parent_uid(parent.uid)
-    asset.asset_type = BestType.dc_type.for_file_name(file_name)
+    asset.asset_type = BestType.pcdm_type.for_file_name(file_name)
     asset
   end
 

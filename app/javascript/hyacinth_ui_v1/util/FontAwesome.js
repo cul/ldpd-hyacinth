@@ -16,6 +16,7 @@ import {
   faAngleDoubleUp,
   faInfoCircle,
   faExternalLinkSquareAlt,
+  faDownload,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -30,4 +31,5 @@ library.add(
   faAngleDoubleUp,
   faInfoCircle,
   faExternalLinkSquareAlt,
+  faDownload,
 );

@@ -41,6 +41,11 @@ module Hyacinth
           IO.binread(location_uri_to_file_path(location_uri))
         end
 
+        def readable_impl(location_uri, &block)
+          file_path = location_uri_to_file_path(location_uri)
+          open(file_path, 'rb') { |blob| block.yield(blob) }
+        end
+
         def write_impl(location_uri, content)
           file_path = location_uri_to_file_path(location_uri)
           FileUtils.mkdir_p(File.dirname(file_path))

@@ -33,6 +33,9 @@ RSpec.describe "Digital Object Rights API endpoint", type: :request do
       it "return a single Digital Object with the expected fields" do
         expect(JSON.parse(response.body)['digital_object']).to include('uid' => authorized_object.uid)
       end
+      it "return a single Digital Object with the expected project fields" do
+        expect(JSON.parse(response.body)['digital_object']['primary_project']).to include('has_asset_rights' => true)
+      end
     end
   end
 
@@ -70,6 +73,60 @@ RSpec.describe "Digital Object Rights API endpoint", type: :request do
         expect(
           JSON.parse(response.body)['digital_object']['rights'].to_json
         ).to be_json_eql(properties[:digital_object][:rights].to_json)
+      end
+      context "to assess an Asset object" do
+        let(:authorized_object) { DigitalObject::Base.find(authorized_item.structured_children['structure'].first) }
+        let(:authorized_item) { create(:item, :with_primary_project, :with_asset) }
+
+        context "in a project that has not enabled asset rights assessment" do
+          let(:properties) do
+            {
+              digital_object: {
+                rights: {
+                  copyright_status_override: {
+                    copyright_note: ['some notes']
+                  }
+                }
+              }
+            }
+          end
+          it 'returns 400' do
+            expect(response.status).to be 400
+          end
+        end
+        context "in a project that has enabled asset rights assessment" do
+          let(:authorized_item) { create(:item, :with_primary_project_asset_rights, :with_asset) }
+          let(:properties) do
+            {
+              digital_object: {
+                rights: {
+                  copyright_status_override: {
+                    copyright_note: ['some notes']
+                  }
+                }
+              }
+            }
+          end
+          it 'returns 200' do
+            expect(response.status).to be 200
+          end
+        end
+        context "with only access control data" do
+          let(:properties) do
+            {
+              digital_object: {
+                rights: {
+                  restriction_on_access: {
+                    note: ['some notes']
+                  }
+                }
+              }
+            }
+          end
+          it 'returns 200' do
+            expect(response.status).to be 200
+          end
+        end
       end
     end
   end

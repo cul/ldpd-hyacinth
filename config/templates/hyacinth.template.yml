@@ -10,7 +10,7 @@ development:
         default_path: <%= Rails.root.join('tmp', 'development', 'resources') %>
   lock_adapter:
     type: DatabaseEntryLock
-    lock_timeout: <%= 1.minute %>
+    lock_timeout: <%= 20.seconds %>
   digital_object_search_adapter:
     type: Solr
     url: http://localhost:8983/hyacinth_development

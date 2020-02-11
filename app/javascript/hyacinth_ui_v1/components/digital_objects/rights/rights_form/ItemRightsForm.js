@@ -20,20 +20,22 @@ import LicensedToColumbiaUniversity from './subsections/LicensedToColumbiaUniver
 import ContractualLimitationsRestrictionsAndPermissions from './subsections/ContractualLimitationsRestrictionsAndPermissions';
 import RightsForWorksOfArtSculptureAndPhotographs from './subsections/RightsForWorksOfArtSculptureAndPhotographs';
 import UnderlyingRights from './subsections/UnderlyingRights';
-import defaultItemRights from './defaultItemRights';
+import { defaultItemRights } from './defaultItemRights';
+
+const useHash = (initialHash) => {
+  const [hash, setHash] = useState(initialHash);
+
+  const setHashViaKey = (key, value) => setHash(produce(hash, (draft) => { draft[key] = value; }));
+
+  return [hash, setHashViaKey];
+};
 
 function ItemRightsForm(props) {
-  const { digitalObject } = props;
-  const { id, rights: initialRights, dynamicFieldData } = digitalObject;
+  const { digitalObject: { id, rights: initialRights, dynamicFieldData } } = props;
   const history = useHistory();
 
   const camelizedInitialRights = keyTransformer.deepCamelCase(initialRights);
-  const [rights, setRights] = useState(merge({}, defaultItemRights(), camelizedInitialRights));
-  const onChange = (subsection, value) => {
-    setRights(produce(rights, (draft) => {
-      draft[subsection] = value;
-    }));
-  };
+  const [rights, setRights] = useHash(merge({}, defaultItemRights(), camelizedInitialRights));
 
   const onSubmitHandler = () => {
     return digitalObjectApi.rights.update(
@@ -59,19 +61,19 @@ function ItemRightsForm(props) {
       <DescriptiveMetadata
         dynamicFieldData={dynamicFieldData}
         value={descriptiveMetadata}
-        onChange={v => onChange('descriptiveMetadata', v)}
+        onChange={v => setRights('descriptiveMetadata', v)}
       />
 
       <CopyrightStatus
         value={copyrightStatus}
-        onChange={v => onChange('copyrightStatus', v)}
+        onChange={v => setRights('copyrightStatus', v)}
       />
 
       <InputGroup>
         <Label sm={4} align="right">Is there additional copyright or permissions information to record?</Label>
         <BooleanRadioButtons
           value={additionalRightsToRecord.enabled}
-          onChange={v => onChange('additionalRightsToRecord', { enabled: v })}
+          onChange={v => setRights('additionalRightsToRecord', { enabled: v })}
         />
       </InputGroup>
 
@@ -79,37 +81,37 @@ function ItemRightsForm(props) {
         <div>
           <CopyrightOwnership
             value={copyrightOwnership}
-            onChange={v => onChange('copyrightOwnership', v)}
+            onChange={v => setRights('copyrightOwnership', v)}
           />
 
           <ColumbiaUniversityIsCopyrightHolder
             value={columbiaUniversityIsCopyrightHolder}
-            onChange={v => onChange('columbiaUniversityIsCopyrightHolder', v)}
+            onChange={v => setRights('columbiaUniversityIsCopyrightHolder', v)}
           />
 
           <LicensedToColumbiaUniversity
             value={licensedToColumbiaUniversity}
-            onChange={v => onChange('licensedToColumbiaUniversity', v)}
+            onChange={v => setRights('licensedToColumbiaUniversity', v)}
           />
 
           <ContractualLimitationsRestrictionsAndPermissions
-            audioVisualContent={descriptiveMetadata.typeOfContent === 'motionPicture'}
+            audioVisualContent={descriptiveMetadata.typeOfContent === 'motion_picture'}
             value={contractualLimitationsRestrictionsAndPermissions}
-            onChange={v => onChange('contractualLimitationsRestrictionsAndPermissions', v)}
+            onChange={v => setRights('contractualLimitationsRestrictionsAndPermissions', v)}
           />
 
           {
-            descriptiveMetadata.typeOfContent === 'pictoralGraphicAndScuptural' && (
+            descriptiveMetadata.typeOfContent === 'pictoral_graphic_and_scuptural' && (
               <RightsForWorksOfArtSculptureAndPhotographs
                 value={rightsForWorksOfArtSculptureAndPhotographs}
-                onChange={v => onChange('rightsForWorksOfArtSculptureAndPhotographs', v)}
+                onChange={v => setRights('rightsForWorksOfArtSculptureAndPhotographs', v)}
               />
             )
           }
 
           <UnderlyingRights
             value={underlyingRights}
-            onChange={v => onChange('underlyingRights', v)}
+            onChange={v => setRights('underlyingRights', v)}
           />
         </div>
       </Collapse>
