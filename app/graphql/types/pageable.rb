@@ -2,9 +2,7 @@
 
 module Types
   module Pageable
-    def self.included(includer)
-      includer.extend ClassMethods
-    end
+    extend ActiveSupport::Concern
 
     module ClassMethods
       def results_type(&block)
