@@ -4,8 +4,6 @@ import { BrowserRouter } from 'react-router-dom';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks';
 
-import Constants from '../hyacinth_v1/Constants';
-
 // app js entry point
 import App from '../hyacinth_v1/app';
 // app css entry point
@@ -47,7 +45,7 @@ client.defaultOptions = {
 
 document.addEventListener('DOMContentLoaded', () => {
   ReactDOM.render(
-    <BrowserRouter basename={Constants.APPLICATION_BASE_PATH}>
+    <BrowserRouter basename="/ui/v1">
       <ApolloProvider client={client}>
         <App />
       </ApolloProvider>
