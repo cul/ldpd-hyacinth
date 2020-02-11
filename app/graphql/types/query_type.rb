@@ -86,6 +86,45 @@ module Types
       }
     end
 
+    field :dynamic_field_categories, [DynamicFieldCategoryType], null: true do
+      description "List of all dynamic field categories"
+    end
+
+    def dynamic_field_categories
+      ability.authorize!(:read, DynamicFieldCategory)
+      DynamicFieldCategory.order(:sort_order)
+    end
+
+    field :dynamic_field_category, DynamicFieldCategoryType, null: true do
+      argument :id, ID, required: true
+    end
+
+    def dynamic_field_category(id:)
+      dynamic_field_category = DynamicFieldCategory.find(id)
+      ability.authorize!(:read, dynamic_field_category)
+      dynamic_field_category
+    end
+
+    field :dynamic_field_group, DynamicFieldGroupType, null: true do
+      argument :string_key, ID, required: true
+    end
+
+    def dynamic_field_group(string_key:)
+      dynamic_field_group = DynamicFieldGroup.find_by!(string_key: string_key)
+      ability.authorize!(:read, dynamic_field_group)
+      dynamic_field_group
+    end
+
+    field :dynamic_field, DynamicFieldType, null: true do
+      argument :string_key, ID, required: true
+    end
+
+    def dynamic_field(string_key:)
+      dynamic_field = DynamicField.find_by!(string_key: string_key)
+      ability.authorize!(:read, dynamic_field)
+      dynamic_field
+    end
+
     def project(string_key:)
       project = Project.find_by!(string_key: string_key)
       ability.authorize!(:read, project)
