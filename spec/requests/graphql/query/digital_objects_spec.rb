@@ -19,7 +19,6 @@ RSpec.describe 'Retrieving Digital Objects', type: :request do
     end
 
     it "return digital objects with expected fields" do
-      puts response.body
       expect(response.body).to be_json_eql(expected_response).at_path('data/digitalObjects/nodes')
     end
   end
