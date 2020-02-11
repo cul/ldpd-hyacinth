@@ -13,9 +13,9 @@ import DynamicFieldCategories from './components/dynamic_field_categories/Dynami
 import FieldExportProfiles from './components/field_export_profiles/FieldExportProfiles';
 import ControlledVocabularies from './components/controlled_vocabularies/ControlledVocabularies';
 import Projects from './components/projects/Projects';
-import { AbilityContext } from './util/ability_context';
-import ability from './util/ability';
-import { setupPermissionActions } from './util/permission_actions';
+import { AbilityContext } from './utils/ability_context';
+import ability from './utils/ability';
+import { setupPermissionActions } from './utils/permission_actions';
 import { getAuthenticatedUserQuery } from './graphql/users';
 import { getPermissionActionsQuery } from './graphql/permissionActions';
 import GraphQLErrors from './components/shared/GraphQLErrors';

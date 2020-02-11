@@ -9,7 +9,7 @@ import ContextualNavbar from '../shared/ContextualNavbar';
 import { useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 
-import { Can } from '../../util/ability_context';
+import { Can } from '../../utils/ability_context';
 import GraphQLErrors from '../shared/GraphQLErrors';
 
 
@@ -63,7 +63,7 @@ function DynamicFieldIndex() {
 
      data && data.dynamicFieldCategories.map(cat => (
 
-         
+
           <Card className="mb-3" key={cat.id} id={cat.displayLabel.replace(' ', '-')}>
             <Card.Header as="h5" className="text-center p-2">
               <span className="badge badge-primary float-left">Category</span>
@@ -75,7 +75,7 @@ function DynamicFieldIndex() {
                 rows={cat.children}
                 onChange={() => refetch()}
               />
-            </Card.Body>    
+            </Card.Body>
               <Card.Text className="text-center">
                 <Link
                   to={`/dynamic_field_groups/new?parentType=DynamicFieldCategory&parentId=${cat.id}`}
@@ -83,14 +83,13 @@ function DynamicFieldIndex() {
                   <FontAwesomeIcon icon="plus" />
                   {' New Dynamic Field Group'}
                 </Link>
-              </Card.Text>                     
+              </Card.Text>
           </Card>
     ))
-  }    
+  }
       </>
 );
 }
 
 
 export default DynamicFieldIndex;
-

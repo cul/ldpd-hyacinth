@@ -3,7 +3,7 @@ import { Form } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import produce from 'immer';
 
-import hyacinthApi from '../../util/hyacinth_api';
+import hyacinthApi from '../../utils/hyacinth_api';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import FormButtons from '../shared/forms/FormButtons';
 import InputGroup from '../shared/forms/InputGroup';

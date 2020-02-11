@@ -5,11 +5,11 @@ import { Form, Collapse } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { merge } from 'lodash';
 
-import keyTransformer from '../../../../util/keyTransformer';
+import keyTransformer from '../../../../utils/keyTransformer';
 import Label from '../../../shared/forms/Label';
 import InputGroup from '../../../shared/forms/InputGroup';
 import BooleanRadioButtons from '../../../shared/forms/inputs/BooleanRadioButtons';
-import { digitalObject as digitalObjectApi } from '../../../../util/hyacinth_api';
+import { digitalObject as digitalObjectApi } from '../../../../utils/hyacinth_api';
 import FormButtons from '../../../shared/forms/FormButtons';
 
 import DescriptiveMetadata from './subsections/DescriptiveMetadata';

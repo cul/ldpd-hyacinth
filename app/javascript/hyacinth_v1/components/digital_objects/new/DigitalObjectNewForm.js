@@ -4,7 +4,7 @@ import { useQuery } from '@apollo/react-hooks';
 import { capitalize } from 'lodash';
 
 import ContextualNavbar from '../../shared/ContextualNavbar';
-import { Can } from '../../../util/ability_context';
+import { Can } from '../../../utils/ability_context';
 import { getProjectQuery } from '../../../graphql/projects';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 import MetadataForm from '../metadata/MetadataForm';

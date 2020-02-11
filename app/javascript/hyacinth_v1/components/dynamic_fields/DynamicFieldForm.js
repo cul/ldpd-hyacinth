@@ -4,7 +4,7 @@ import produce from 'immer';
 import { startCase } from 'lodash';
 import { withRouter } from 'react-router-dom';
 
-import hyacinthApi from '../../util/hyacinth_api';
+import hyacinthApi from '../../utils/hyacinth_api';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import InputGroup from '../shared/forms/InputGroup';
 import Label from '../shared/forms/Label';

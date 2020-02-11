@@ -6,9 +6,9 @@ import {
 } from 'lodash';
 import { withRouter, Link } from 'react-router-dom';
 
-import hyacinthApi from '../../../util/hyacinth_api';
-import UpArrowButton from '../../shared/buttons/UpArrowButton';
-import DownArrowButton from '../../shared/buttons/DownArrowButton';
+import hyacinthApi from '../../../utils/hyacinth_api';
+import UpArrowButton from '../buttons/UpArrowButton';
+import DownArrowButton from '../buttons/DownArrowButton';
 
 class DynamicFieldsAndGroupsTable extends React.PureComponent {
   updateSortOrder(type, id, sortOrder) {
