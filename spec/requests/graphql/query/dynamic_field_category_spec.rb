@@ -10,10 +10,6 @@ RSpec.describe 'Retrieving Dynamic Field Category', type: :request do
   context 'when id is valid' do
     before { graphql query(dynamic_field_category.id) }
 
-    it 'returns 200' do
-      expect(response.status).to be 200
-    end
-
     it 'returns correct response' do
       expect(response.body).to be_json_eql(%(
             { "dynamicFieldCategory": { "displayLabel": "Descriptive Metadata", "children": [], "sortOrder": 3 } }

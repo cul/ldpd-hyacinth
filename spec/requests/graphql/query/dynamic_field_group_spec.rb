@@ -4,7 +4,6 @@ require 'rails_helper'
 
 RSpec.describe 'Retrieving Dynamic Field Group', type: :request do
   let(:dynamic_field_group) { FactoryBot.create(:dynamic_field_group) }
-  let(:field_export_profile) { FactoryBot.create(:field_export_profile) }
 
   include_examples 'requires user to have correct permissions for graphql request' do
     let(:request) { graphql query(dynamic_field_group.string_key) }
