@@ -4,7 +4,7 @@ import { Table } from 'react-bootstrap';
 import produce from 'immer';
 
 import ContextualNavbar from '../shared/ContextualNavbar';
-import hyacinthApi from '../../utils/hyacinth_api';
+import hyacinthApi from '../../utils/hyacinthApi';
 
 export default class FieldExportProfileIndex extends React.Component {
   state = {

@@ -9,7 +9,7 @@ import keyTransformer from '../../../../utils/keyTransformer';
 import Label from '../../../shared/forms/Label';
 import InputGroup from '../../../shared/forms/InputGroup';
 import BooleanRadioButtons from '../../../shared/forms/inputs/BooleanRadioButtons';
-import { digitalObject as digitalObjectApi } from '../../../../utils/hyacinth_api';
+import { digitalObject as digitalObjectApi } from '../../../../utils/hyacinthApi';
 import FormButtons from '../../../shared/forms/FormButtons';
 
 import DescriptiveMetadata from './subsections/DescriptiveMetadata';

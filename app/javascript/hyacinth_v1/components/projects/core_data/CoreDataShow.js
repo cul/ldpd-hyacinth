@@ -4,7 +4,7 @@ import { useQuery } from '@apollo/react-hooks';
 import { useParams } from 'react-router-dom';
 
 import TabHeading from '../../shared/tabs/TabHeading';
-import { Can } from '../../../util/ability_context';
+import { Can } from '../../../utils/abilityContext';
 import EditButton from '../../shared/buttons/EditButton';
 import { getProjectQuery } from '../../../graphql/projects';
 import ProjectInterface from '../ProjectInterface';

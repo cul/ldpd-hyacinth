@@ -4,7 +4,7 @@ import { Table } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 
 import ContextualNavbar from '../shared/ContextualNavbar';
-import { Can } from '../../utils/ability_context';
+import { Can } from '../../utils/abilityContext';
 import { getProjectsQuery } from '../../graphql/projects';
 import GraphQLErrors from '../shared/GraphQLErrors';
 

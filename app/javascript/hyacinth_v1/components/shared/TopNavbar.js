@@ -4,7 +4,7 @@ import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
 import Constants from '../../Constants';
-import { Can } from '../../utils/ability_context';
+import { Can } from '../../utils/abilityContext';
 
 function TopNavbar(props) {
   const { user } = props;

@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 import { merge } from 'lodash';
 
 import keyTransformer from '../../../../utils/keyTransformer';
-import { digitalObject as digitalObjectApi } from '../../../../utils/hyacinth_api';
+import { digitalObject as digitalObjectApi } from '../../../../utils/hyacinthApi';
 import ContextualNavbar from '../../../shared/ContextualNavbar';
 import FormButtons from '../../../shared/forms/FormButtons';
 import CopyrightStatus from './subsections/CopyrightStatus';

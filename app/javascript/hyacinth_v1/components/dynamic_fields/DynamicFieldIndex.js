@@ -9,7 +9,7 @@ import ContextualNavbar from '../shared/ContextualNavbar';
 import { useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 
-import { Can } from '../../utils/ability_context';
+import { Can } from '../../utils/abilityContext';
 import GraphQLErrors from '../shared/GraphQLErrors';
 
 

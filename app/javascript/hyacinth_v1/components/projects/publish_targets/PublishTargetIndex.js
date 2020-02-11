@@ -7,7 +7,7 @@ import { Link, useParams } from 'react-router-dom';
 import { gql } from 'apollo-boost';
 
 import TabHeading from '../../shared/tabs/TabHeading';
-import { Can } from '../../../utils/ability_context';
+import { Can } from '../../../utils/abilityContext';
 import ProjectInterface from '../ProjectInterface';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 

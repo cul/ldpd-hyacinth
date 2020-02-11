@@ -15,7 +15,7 @@ import RemoveButton from '../../shared/buttons/RemoveButton';
 import CancelButton from '../../shared/forms/buttons/CancelButton';
 import {
   ProjectAction, ProjectActions, PrimaryProjectActions, AggregatorProjectActions
-} from '../../../util/permission_actions';
+} from '../../../utils/permissionActions';
 
 function PermissionsEditor(props) {
   const { readOnly } = props;
