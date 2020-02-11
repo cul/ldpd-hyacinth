@@ -29,7 +29,7 @@ function RightsShow(props) {
     <RightsTab digitalObject={digitalObject} editButton={canEdit}>
       <div className="card">
         <div className="card-body">
-          <code>{ JSON.stringify(rights) }</code>
+          <pre><code>{ JSON.stringify(rights, null, 2) }</code></pre>
         </div>
       </div>
     </RightsTab>

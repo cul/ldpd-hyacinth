@@ -18,7 +18,8 @@ class Term < ApplicationRecord
   validates :term_type, inclusion: { in: TERM_TYPES, message: 'is not valid: %{value}' }, allow_nil: true
   validates :uri,  format: { with: /\A#{URI.regexp}\z/ },
                    if: proc { |t| t.uri? && (t.term_type == LOCAL || t.term_type == EXTERNAL) }
-  validates :uri_hash, uniqueness: { scope: :vocabulary, message: 'unique check failed. This uri already exists in this vocabulary.' }
+  validates :uri_hash, if: proc { |t| t.uri? },
+                       uniqueness: { scope: :vocabulary, message: 'unique check failed. This uri already exists in this vocabulary.' }
   validates :uid, format: { with: /\A\h{8}-\h{4}-4\h{3}-[89ab]\h{3}-\h{12}\z/ }, allow_nil: true
   validates :alt_labels, absence: { message: 'is not allowed for temporary terms' }, if: proc { |t| t.term_type == TEMPORARY }
   validate  :uid_uri_and_term_type_unchanged, :pref_label_unchanged_for_temp_term, :validate_custom_fields

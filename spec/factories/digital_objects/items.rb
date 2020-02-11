@@ -18,7 +18,9 @@ FactoryBot.define do
       instance.instance_variable_set(
         '@rights',
         {
-          'rights_field' => 'rights value'
+          'descriptive_metadata' => [
+            { 'type_of_content' => 'literary' }
+          ]
         }
       )
       instance
@@ -27,6 +29,12 @@ FactoryBot.define do
     trait :with_primary_project do
       after(:build) do |digital_object|
         digital_object.primary_project = create(:project)
+      end
+    end
+
+    trait :with_primary_project_asset_rights do
+      after(:build) do |digital_object|
+        digital_object.primary_project = create(:project, :allow_asset_rights)
       end
     end
 

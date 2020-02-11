@@ -28,13 +28,15 @@ module Types
     field :first_preserved_at, GraphQL::Types::ISO8601DateTime, null: true
     field :preserved_at, GraphQL::Types::ISO8601DateTime, null: true
     field :parents, [DigitalObjectInterface], null: true
-    field :rights, GraphQL::Types::JSON, null: false
     field :structured_children, DigitalObject::StructuredChildrenType, null: true
     field :publish_entries, [DigitalObject::PublishEntryType], null: true
     field :optimistic_lock_token, String, null: false
 
     field :title, String, null: false
     field :number_of_children, Integer, null: false
+    field :resources, [ResourceType], null: false
+
+    field :rights, GraphQL::Types::JSON, null: false
 
     def publish_entries
       object.publish_entries.map { |k, h| { publish_target_string_key: k }.merge(h) }
@@ -42,6 +44,21 @@ module Types
 
     def title
       DigitalObjectInterface.title_for(object)
+    end
+
+    def resources
+      object.resources.map do |resource_name, resource|
+        {
+          'id' => resource_name,
+          'display_label' => resource_name.humanize.split(' ').map(&:capitalize).join(' ')
+        }.merge(
+          resource.as_json
+        )
+      end
+    end
+
+    def rights
+      object.rights.deep_transform_keys! { |key| key.to_s.camelize(:lower) }
     end
 
     def self.title_for(object)

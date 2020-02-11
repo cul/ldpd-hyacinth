@@ -12,6 +12,7 @@ function ProjectNew() {
   const [displayLabel, setDisplayLabel] = useState('');
   const [projectUrl, setProjectUrl] = useState('');
   const [isPrimary, setIsPrimary] = useState(false);
+  const [hasAssetRights, setHasAssetRights] = useState(false);
 
   const [createProject, { error }] = useMutation(createProjectMutation);
   const history = useHistory();
@@ -25,6 +26,7 @@ function ProjectNew() {
           displayLabel,
           projectUrl,
           isPrimary,
+          hasAssetRights,
         },
       },
     }).then((res) => {
@@ -84,6 +86,20 @@ function ProjectNew() {
               name="isPrimary"
               value={isPrimary}
               onChange={e => setIsPrimary(e.target.checked)}
+            />
+          </Form.Group>
+        </Form.Row>
+
+        <Form.Row>
+          <Form.Group as={Col}>
+          <Form.Label>Assets Rights?</Form.Label>
+            <Form.Control
+              type="checkbox"
+              name="hasAssetRights"
+              value={hasAssetRights}
+              onChange={e => setHasAssetRights(isPrimary && e.target.checked)}
+              disabled={!isPrimary}
+              checked={isPrimary && hasAssetRights}
             />
           </Form.Group>
         </Form.Row>

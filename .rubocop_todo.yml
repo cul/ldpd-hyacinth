@@ -36,14 +36,6 @@ Layout/EmptyLinesAroundClassBody:
   Exclude:
     - 'app/controllers/application_controller.rb'
 
-# Offense count: 4
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, IndentationWidth.
-# SupportedStyles: special_inside_parentheses, consistent, align_braces
-Layout/IndentHash:
-  Exclude:
-    - 'spec/models/concerns/digital_object_concerns/digital_object_data/setters/dynamic_field_data_spec.rb'
-
 # Offense count: 5
 # Cop supports --auto-correct.
 # Configuration parameters: IgnoreEmptyBlocks, AllowUnusedKeywordArguments.
@@ -53,7 +45,7 @@ Lint/UnusedBlockArgument:
     - 'lib/hyacinth/preservation/preservation_persistence.rb'
     - 'lib/tasks/hyacinth/ci.rake'
 
-# Offense count: 25
+# Offense count: 27
 # Cop supports --auto-correct.
 # Configuration parameters: AllowUnusedKeywordArguments, IgnoreEmptyMethods.
 Lint/UnusedMethodArgument:
@@ -136,11 +128,12 @@ Metrics/LineLength:
     - 'app/models/digital_object/base.rb'
     - 'spec/models/dynamic_field_group_spec.rb'
 
-# Offense count: 26
+# Offense count: 28
 # Configuration parameters: CountComments, Max, ExcludedMethods.
 Metrics/MethodLength:
   Exclude:
     - 'app/controllers/concerns/hyacinth/users/cas_authentication_behavior.rb'
+    - 'app/graphql/mutations/create_asset.rb'
     - 'app/graphql/types/vocabulary_type.rb'
     - 'app/models/ability.rb'
     - 'app/models/concerns/digital_object_concerns/destroy_behavior.rb'
@@ -157,6 +150,7 @@ Metrics/MethodLength:
     - 'lib/hyacinth/adapters/external_identifier_adapter/datacite/metadata_builder.rb'
     - 'lib/hyacinth/adapters/lock_adapter/database_entry_lock.rb'
     - 'lib/hyacinth/adapters/preservation_adapter/fedora3/rels_ext_properties.rb'
+    - 'lib/hyacinth/utils/clean.rb'
     - 'lib/hyacinth/xml_generator/element.rb'
     - 'lib/tasks/hyacinth/setup.rake'
 
@@ -166,7 +160,7 @@ Metrics/ModuleLength:
   Exclude:
     - 'app/models/concerns/digital_object_concerns/save_behavior.rb'
 
-# Offense count: 8
+# Offense count: 9
 # Configuration parameters: Max.
 Metrics/PerceivedComplexity:
   Exclude:
@@ -176,6 +170,7 @@ Metrics/PerceivedComplexity:
     - 'app/models/concerns/digital_object_concerns/digital_object_data/setters/parent_uids.rb'
     - 'app/models/concerns/digital_object_concerns/save_behavior.rb'
     - 'lib/hyacinth/adapters/external_identifier_adapter/datacite/metadata_builder.rb'
+    - 'lib/hyacinth/utils/clean.rb'
     - 'lib/hyacinth/xml_generator/element.rb'
 
 # Offense count: 13
@@ -222,7 +217,7 @@ RSpec/EmptyExampleGroup:
   Exclude:
     - 'spec/models/digital_object/item_spec.rb'
 
-# Offense count: 59
+# Offense count: 61
 # Configuration parameters: Max.
 RSpec/ExampleLength:
   Exclude:
@@ -435,7 +430,7 @@ Style/RedundantBegin:
   Exclude:
     - 'bin/yarn'
 
-# Offense count: 130
+# Offense count: 128
 # Cop supports --auto-correct.
 Style/RedundantSelf:
   Exclude:
