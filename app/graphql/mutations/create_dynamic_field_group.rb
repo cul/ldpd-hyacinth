@@ -5,7 +5,7 @@ class Mutations::CreateDynamicFieldGroup < Mutations::BaseMutation
   argument :display_label, String, required: true
   argument :sort_order, Integer, required: false
   argument :is_repeatable, Boolean, required: false
-  argument :export_rules, [Types::ExportRuleAttributes], required: false
+  argument :export_rules, [Inputs::ExportRuleInput], required: false
   argument :parent_id, ID, required: true
   argument :parent_type, String, required: true
 
