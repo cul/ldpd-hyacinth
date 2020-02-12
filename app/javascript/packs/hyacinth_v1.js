@@ -10,7 +10,7 @@ import App from '../hyacinth_v1/app';
 import '../hyacinth_v1/stylesheets/hyacinth_v1.scss';
 
 // add app-wide support for FontAwesome
-import '../hyacinth_v1/utils/FontAwesome';
+import '../hyacinth_v1/utils/fontAwesome';
 
 const client = new ApolloClient({
   uri: '/graphql',
