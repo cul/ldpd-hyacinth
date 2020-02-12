@@ -9,7 +9,7 @@ module Types
     field :display_label, String, null: false
     field :sort_order, Integer, null: false
     field :is_repeatable, Boolean, null: false
-    field :export_rules, [GraphQL::Types::JSON], null: true
+    field :export_rules, [ExportRuleType], null: true
     field :created_by, UserType, null: true
     field :updated_by, UserType, null: true
     field :children, [DynamicFieldGroupChildType], null: true
