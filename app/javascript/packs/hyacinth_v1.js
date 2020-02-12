@@ -5,7 +5,7 @@ import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks';
 
 // app js entry point
-import App from '../hyacinth_v1/app';
+import App from '../hyacinth_v1/App';
 // app css entry point
 import '../hyacinth_v1/stylesheets/hyacinth_v1.scss';
 
