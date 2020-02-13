@@ -30,26 +30,32 @@ RSpec.describe 'Retrieving Dynamic Field Group', type: :request do
       end
     end
   end
+
   def query(string_key)
     <<~GQL
-    query {
-      dynamicFieldGroup(stringKey: "#{string_key}") {
-        parent{
+      query {
+        dynamicFieldGroup(stringKey: "#{string_key}") {
+          parent{
+            type: __typename
+          }
+          children{
+            type: __typename
+            ... on DynamicFieldGroup {stringKey}
+            ... on DynamicField {stringKey}
+          }
+          displayLabel
+          isRepeatable
+          sortOrder
+          stringKey
           type: __typename
+          exportRules {
+            translationLogic
+            fieldExportProfile {
+              id
+            }
+          }
         }
-        children{
-          type: __typename
-          ... on DynamicFieldGroup {stringKey}
-          ... on DynamicField {stringKey}
-        }
-        displayLabel
-        isRepeatable
-        sortOrder
-        stringKey
-        type: __typename
-        exportRules
       }
-    }
     GQL
   end
 end

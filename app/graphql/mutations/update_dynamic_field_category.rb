@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Mutations::UpdateDynamicFieldCategory < Mutations::BaseMutation
-  argument :id, Integer, required: true
+  argument :id, ID, required: true
   argument :display_label, String, required: false
   argument :sort_order, Integer, required: false
 

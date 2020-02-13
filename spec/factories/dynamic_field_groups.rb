@@ -18,5 +18,11 @@ FactoryBot.define do
 
       parent        { nil }
     end
+
+    trait(:with_export_rule) do
+      after(:create) do |dynamic_field_group|
+        create(:export_rule, dynamic_field_group: dynamic_field_group)
+      end
+    end
   end
 end
