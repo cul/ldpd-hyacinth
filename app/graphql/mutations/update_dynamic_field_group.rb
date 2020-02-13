@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Mutations::UpdateDynamicFieldGroup < Mutations::BaseMutation
-  argument :string_key, ID, required: true
+  argument :id, ID, required: true
   argument :display_label, String, required: false
   argument :sort_order, Integer, required: false
   argument :is_repeatable, Boolean, required: false
@@ -9,8 +9,8 @@ class Mutations::UpdateDynamicFieldGroup < Mutations::BaseMutation
 
   field :dynamic_field_group, Types::DynamicFieldGroupType, null: true
 
-  def resolve(string_key:, **attributes)
-    dynamic_field_group = DynamicFieldGroup.find_by!(string_key: string_key)
+  def resolve(id:, **attributes)
+    dynamic_field_group = DynamicFieldGroup.find(id)
 
     ability.authorize! :update, dynamic_field_group
 

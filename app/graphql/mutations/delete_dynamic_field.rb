@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 class Mutations::DeleteDynamicField < Mutations::BaseMutation
-  argument :string_key, ID, required: true
+  argument :id, ID, required: true
 
   field :dynamic_field, Types::DynamicFieldType, null: true
 
-  def resolve(string_key:)
-    dynamic_field = DynamicField.find_by!(string_key: string_key)
+  def resolve(id:)
+    dynamic_field = DynamicField.find(id)
 
     ability.authorize! :delete, dynamic_field
 
