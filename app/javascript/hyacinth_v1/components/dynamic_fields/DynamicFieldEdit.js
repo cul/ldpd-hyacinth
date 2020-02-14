@@ -1,26 +1,35 @@
 import React from 'react';
+import { useQuery } from '@apollo/react-hooks';
+import { useParams } from 'react-router-dom';
 
 import ContextualNavbar from '../shared/ContextualNavbar';
 import DynamicFieldForm from './DynamicFieldForm';
 import DynamicFieldsBreadcrumbs from '../shared/dynamic_fields/DynamicFieldsBreadcrumbs';
+import { getDynamicFieldQuery } from '../../graphql/dynamicField';
+import GraphQLErrors from '../shared/GraphQLErrors';
 
-class DynamicFieldEdit extends React.PureComponent {
-  render() {
-    const { match: { params: { id } } } = this.props;
+function DynamicFieldEdit() {
+  const { id } = useParams();
 
-    return (
-      <>
-        <ContextualNavbar
-          title="Update Dynamic Field"
-          rightHandLinks={[{ link: '/dynamic_fields', label: 'Back to Dynamic Fields' }]}
-        />
+  const { loading, error, data } = useQuery(
+    getDynamicFieldQuery, { variables: { id } },
+  );
 
-        <DynamicFieldsBreadcrumbs for={{ id, type: 'DynamicField' }} />
+  if (loading) return (<></>);
+  if (error) return (<GraphQLErrors errors={error} />);
 
-        <DynamicFieldForm formType="edit" id={id} key={id} />
-      </>
-    );
-  }
+  return (
+    <>
+      <ContextualNavbar
+        title="Update Dynamic Field"
+        rightHandLinks={[{ link: '/dynamic_fields', label: 'Back to Dynamic Fields' }]}
+      />
+
+      <DynamicFieldsBreadcrumbs for={{ id, type: 'DynamicField' }} />
+
+      <DynamicFieldForm formType="edit" dynamicField={data.dynamicField} />
+    </>
+  );
 }
 
 export default DynamicFieldEdit;
