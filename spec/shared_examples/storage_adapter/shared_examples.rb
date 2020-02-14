@@ -124,6 +124,9 @@ RSpec.shared_examples "a readable-writable storage adapter" do
       adapter.write(sample_location_uri, new_content)
       expect(adapter.read(sample_location_uri)).to eq(new_content)
     end
+    it "rejects unhandled URIs" do
+      expect { adapter.write(unhandled_location_uri, new_content) }.to raise_error(Hyacinth::Exceptions::UnhandledLocationError)
+    end
   end
 
   context "#with_writable" do
@@ -131,15 +134,20 @@ RSpec.shared_examples "a readable-writable storage adapter" do
       adapter.with_writable(sample_location_uri) { |blob| blob.write new_content }
       adapter.with_readable(sample_location_uri) { |blob| expect(blob.read).to eq(new_content) }
     end
+    it "rejects unhandled URIs" do
+      expect { adapter.with_writable(unhandled_location_uri) {} }.to raise_error(Hyacinth::Exceptions::UnhandledLocationError)
+    end
   end
 
-  context "rejects unhandled URIs" do
-    it "rejects for write" do
-      expect { adapter.write(unhandled_location_uri, new_content) }.to raise_error(Hyacinth::Exceptions::UnhandledLocationError)
+  context "#delete" do
+    it "can write content and then delete that content" do
+      adapter.write(sample_location_uri, new_content)
+      expect(adapter.exists?(sample_location_uri)).to eq(true)
+      adapter.delete(sample_location_uri)
+      expect(adapter.exists?(sample_location_uri)).to eq(false)
     end
-
-    it "rejects for with_writable" do
-      expect { adapter.with_writable(unhandled_location_uri) {} }.to raise_error(Hyacinth::Exceptions::UnhandledLocationError)
+    it "rejects unhandled URIs" do
+      expect { adapter.delete(unhandled_location_uri) }.to raise_error(Hyacinth::Exceptions::UnhandledLocationError)
     end
   end
 end
