@@ -11,9 +11,7 @@ module Hyacinth
       # for the given identifier, ensuring that nothing currently exists at that location.
       # @param uid [String] identifier
       # @return [String] a location uri
-      def generate_new_location_uri(identifier)
-        primary_storage_adapter.generate_new_location_uri(identifier)
-      end
+      delegate :generate_new_location_uri, to: :primary_storage_adapter
     end
   end
 end

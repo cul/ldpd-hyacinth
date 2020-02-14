@@ -11,9 +11,7 @@ module Hyacinth
       # for the given uid, ensuring that nothing currently exists at that location.
       # @param uid [String] uid of an object
       # @return [String] a location uri
-      def generate_new_location_uri(uid)
-        primary_storage_adapter.generate_new_location_uri(uid)
-      end
+      delegate :generate_new_location_uri, to: :primary_storage_adapter
     end
   end
 end
