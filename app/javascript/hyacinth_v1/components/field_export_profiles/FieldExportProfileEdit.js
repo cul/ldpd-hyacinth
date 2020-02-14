@@ -1,23 +1,34 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
+import { useQuery } from '@apollo/react-hooks';
 
 import ContextualNavbar from '../shared/ContextualNavbar';
 import FieldExportProfileForm from './FieldExportProfileForm';
+import { fieldExportProfileQuery } from '../../graphql/fieldExportProfiles';
+import GraphQLErrors from '../shared/GraphQLErrors';
 
-class FieldExportProfileEdit extends React.PureComponent {
-  render() {
-    const { match: { params: { id } } } = this.props;
+function FieldExportProfileEdit() {
+  const { id } = useParams();
 
-    return (
-      <>
-        <ContextualNavbar
-          title="Update Field Export Profile"
-          rightHandLinks={[{ link: '/field_export_profiles', label: 'Back to All Field Export Profiles' }]}
-        />
+  const { loading, error, data } = useQuery(
+    fieldExportProfileQuery, {
+      variables: { id },
+    },
+  );
 
-        <FieldExportProfileForm formType="edit" id={id} key={id} />
-      </>
-    );
-  }
+  if (loading) return (<></>);
+  if (error) return (<GraphQLErrors errors={error} />);
+
+  return (
+    <>
+      <ContextualNavbar
+        title="Update Field Export Profile"
+        rightHandLinks={[{ link: '/field_export_profiles', label: 'Back to All Field Export Profiles' }]}
+      />
+
+      <FieldExportProfileForm formType="edit" fieldExportProfile={data.fieldExportProfile} />
+    </>
+  );
 }
 
 export default FieldExportProfileEdit;

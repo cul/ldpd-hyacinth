@@ -1,52 +1,45 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Table } from 'react-bootstrap';
-import produce from 'immer';
+import { useQuery } from '@apollo/react-hooks';
 
 import ContextualNavbar from '../shared/ContextualNavbar';
-import hyacinthApi from '../../utils/hyacinthApi';
+import { fieldExportProfilesQuery } from '../../graphql/fieldExportProfiles';
+import GraphQLErrors from '../shared/GraphQLErrors';
 
-export default class FieldExportProfileIndex extends React.Component {
-  state = {
-    fieldExportProfiles: [],
-  }
+function FieldExportProfileIndex() {
+  const { loading, error, data } = useQuery(fieldExportProfilesQuery);
 
-  componentDidMount() {
-    hyacinthApi.get('/field_export_profiles')
-      .then((res) => {
-        this.setState(produce((draft) => { draft.fieldExportProfiles = res.data.fieldExportProfiles; }));
-      });
-  }
+  if (loading) return (<></>);
+  if (error) return (<GraphQLErrors errors={error} />);
 
-  render() {
-    const { fieldExportProfiles } = this.state;
+  return (
+    <>
+      <ContextualNavbar
+        title="Field Export Profiles"
+        rightHandLinks={[{ link: '/field_export_profiles/new', label: 'New Field Export Profile' }]}
+      />
 
-    return (
-      <>
-        <ContextualNavbar
-          title="Field Export Profiles"
-          rightHandLinks={[{ link: '/field_export_profiles/new', label: 'New Field Export Profile' }]}
-        />
-
-        <Table hover>
-          <thead>
-            <tr>
-              <th>Name</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              fieldExportProfiles && (
-                fieldExportProfiles.map(fieldExportProfile => (
-                  <tr key={fieldExportProfile.id}>
-                    <td><Link to={`/field_export_profiles/${fieldExportProfile.id}/edit`}>{fieldExportProfile.name}</Link></td>
-                  </tr>
-                ))
-              )
-            }
-          </tbody>
-        </Table>
-      </>
-    );
-  }
+      <Table hover>
+        <thead>
+          <tr>
+            <th>Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            data.fieldExportProfiles && (
+              data.fieldExportProfiles.map(fieldExportProfile => (
+                <tr key={fieldExportProfile.id}>
+                  <td><Link to={`/field_export_profiles/${fieldExportProfile.id}/edit`}>{fieldExportProfile.name}</Link></td>
+                </tr>
+              ))
+            )
+          }
+        </tbody>
+      </Table>
+    </>
+  );
 }
+
+export default FieldExportProfileIndex;
