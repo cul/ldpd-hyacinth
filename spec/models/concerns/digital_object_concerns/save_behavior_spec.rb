@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe DigitalObjectConcerns::SaveBehavior do
+RSpec.describe DigitalObjectConcerns::SaveBehavior, solr: true do
   let(:digital_object_with_sample_data) { FactoryBot.build(:digital_object_test_subclass, :with_sample_data) }
 
   context "#flat_child_uid_set" do

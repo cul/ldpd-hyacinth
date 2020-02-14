@@ -9,6 +9,8 @@ RSpec.describe "Digital Object Uploads API endpoint", type: :request do
   let(:digital_object_search_adapter) { instance_double(Hyacinth::Adapters::DigitalObjectSearchAdapter::Abstract) }
   before do
     # Stub adapters to limit tests to API
+    allow(digital_object_search_adapter).to receive(:index)
+    allow(digital_object_search_adapter).to receive(:remove)
     allow(Hyacinth::Config).to receive(:digital_object_search_adapter).and_return(digital_object_search_adapter)
   end
 

@@ -10,6 +10,8 @@ RSpec.describe "Digital Object Rights API endpoint", type: :request do
   let!(:external_identifier_adapter) { Hyacinth::Adapters::ExternalIdentifierAdapter::Memory.new }
   before do
     # Stub adapters to limit tests to API
+    allow(digital_object_search_adapter).to receive(:index)
+    allow(digital_object_search_adapter).to receive(:remove)
     allow(Hyacinth::Config).to receive(:digital_object_search_adapter).and_return(digital_object_search_adapter)
     allow(Hyacinth::Config).to receive(:external_identifier_adapter).and_return(external_identifier_adapter)
   end

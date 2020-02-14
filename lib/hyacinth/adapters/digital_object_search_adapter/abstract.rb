@@ -7,15 +7,15 @@ module Hyacinth
         def initialize(adapter_config = {})
         end
 
-        def index(digital_object)
+        def index(digital_object, **opts)
           raise NotImplementedError
         end
 
-        def remove(digital_object)
+        def remove(digital_object, **opts)
           raise NotImplementedError
         end
 
-        def search(search_params)
+        def search(search_params, **opts)
           raise NotImplementedError
         end
 
