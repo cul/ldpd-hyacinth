@@ -33,7 +33,6 @@ import { Table } from 'react-bootstrap';
           stringKey
           displayLabel
           sortOrder
-          exportRules
           children {
             type: __typename
             ... on DynamicFieldGroup {id}

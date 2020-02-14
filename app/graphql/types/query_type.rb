@@ -52,6 +52,18 @@ module Types
       description "List of all vocabularies"
     end
 
+    field :dynamic_field_categories, [DynamicFieldCategoryType], null: true do
+      description "List of all dynamic field categories"
+    end
+
+    field :dynamic_field_group, DynamicFieldGroupType, null: true do
+      argument :id, ID, required: true
+    end
+
+    field :dynamic_field, DynamicFieldType, null: true do
+      argument :id, ID, required: true
+    end
+
     def digital_objects
       # This is a temporary implementation, this should actually querying solr
       # and considering object read permissions.
@@ -86,10 +98,6 @@ module Types
       }
     end
 
-    field :dynamic_field_categories, [DynamicFieldCategoryType], null: true do
-      description "List of all dynamic field categories"
-    end
-
     def dynamic_field_categories
       ability.authorize!(:read, DynamicFieldCategory)
       DynamicFieldCategory.order(:sort_order)
@@ -105,22 +113,14 @@ module Types
       dynamic_field_category
     end
 
-    field :dynamic_field_group, DynamicFieldGroupType, null: true do
-      argument :string_key, ID, required: true
-    end
-
-    def dynamic_field_group(string_key:)
-      dynamic_field_group = DynamicFieldGroup.find_by!(string_key: string_key)
+    def dynamic_field_group(id:)
+      dynamic_field_group = DynamicFieldGroup.find(id)
       ability.authorize!(:read, dynamic_field_group)
       dynamic_field_group
     end
 
-    field :dynamic_field, DynamicFieldType, null: true do
-      argument :string_key, ID, required: true
-    end
-
-    def dynamic_field(string_key:)
-      dynamic_field = DynamicField.find_by!(string_key: string_key)
+    def dynamic_field(id:)
+      dynamic_field = DynamicField.find(id)
       ability.authorize!(:read, dynamic_field)
       dynamic_field
     end
