@@ -51,7 +51,7 @@ RSpec.describe Mutations::CreateAsset, type: :model do
         expect(asset).to receive(:save!).and_raise(expected_error_message)
         expect(Hyacinth::Config.resource_storage).to receive(:generate_new_managed_location_uri).and_return(predictable_location_uri)
         expect(Hyacinth::Config.resource_storage).to receive(:delete).with(predictable_location_uri).and_call_original
-        expect(Hyacinth::Config.resource_storage).to receive(:with_writeable).and_wrap_original do |m, *args, &b|
+        expect(Hyacinth::Config.resource_storage).to receive(:with_writable).and_wrap_original do |m, *args, &b|
           result = m.call(*args, &b)
           expect(args[0]).to eq(predictable_location_uri)
           expect(Hyacinth::Config.resource_storage.exists?(args[0])).to eq(true)

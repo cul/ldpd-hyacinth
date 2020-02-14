@@ -3,7 +3,7 @@
 module Hyacinth
   module Adapters
     module StorageAdapter
-      class ManagedDisk < AbstractReadableWritable
+      class ManagedDisk < Abstract
         include Disk::ReadableWritableDiskBehavior
 
         def initialize(adapter_config = {})

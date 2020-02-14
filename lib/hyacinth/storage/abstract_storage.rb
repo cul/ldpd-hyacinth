@@ -44,9 +44,9 @@ module Hyacinth
         end
       end
 
-      def with_writeable(location, &block)
+      def with_writable(location, &block)
         Hyacinth::Config.lock_adapter.with_lock(location) do
-          storage_adapter_for_location(location).with_writeable(location, &block)
+          storage_adapter_for_location(location).with_writable(location, &block)
         end
       end
 
@@ -62,7 +62,9 @@ module Hyacinth
 
       # Returns the first compatible storage adapter for the given location, or nil if no compatible storage adapter is found.
       def storage_adapter_for_location(location)
-        @storage_adapters.find { |adapter| adapter.handles?(location) }
+        adapter = @storage_adapters.find { |ad| ad.handles?(location) }
+        Rails.logger.error("Tried to find storage adapter for #{location}, but no adapter was found.")
+        adapter
       end
     end
   end

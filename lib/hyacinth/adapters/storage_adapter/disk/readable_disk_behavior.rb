@@ -7,6 +7,10 @@ module Hyacinth
         module ReadableDiskBehavior
           extend ActiveSupport::Concern
 
+          def readable?
+            true
+          end
+
           def exists?(location_uri)
             File.exist?(location_uri_to_file_path(location_uri))
           end

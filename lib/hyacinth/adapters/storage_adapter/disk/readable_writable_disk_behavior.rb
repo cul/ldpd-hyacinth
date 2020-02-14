@@ -8,6 +8,10 @@ module Hyacinth
           extend ActiveSupport::Concern
           include ReadableDiskBehavior
 
+          def writable?
+            true
+          end
+
           # Generates a new storage location for the given identifier, ensuring that nothing currently exists at that location.
           # @return [String] a location uri
           def generate_new_location_uri(identifier)
@@ -25,7 +29,7 @@ module Hyacinth
             IO.binwrite(file_path, content)
           end
 
-          def writeable_impl(location_uri, &block)
+          def writable_impl(location_uri, &block)
             file_path = location_uri_to_file_path(location_uri)
             FileUtils.mkdir_p(File.dirname(file_path))
             open(file_path, 'wb') { |blob| block.yield(blob) }

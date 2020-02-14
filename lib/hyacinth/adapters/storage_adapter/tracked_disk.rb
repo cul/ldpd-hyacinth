@@ -3,7 +3,7 @@
 module Hyacinth
   module Adapters
     module StorageAdapter
-      class TrackedDisk < AbstractReadable
+      class TrackedDisk < Abstract
         include Disk::ReadableDiskBehavior
 
         def initialize(adapter_config = {})

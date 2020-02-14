@@ -6,10 +6,18 @@ module Hyacinth
       # An adapter for storing and retrieving file records in memory.
       # There is no limit to how large this in-memory store can grow,
       # so be careful!
-      class Memory < AbstractReadableWritable
+      class Memory < Abstract
         def initialize(adapter_config = {})
           super(adapter_config)
           @cache = {}
+        end
+
+        def readable?
+          true
+        end
+
+        def writable?
+          true
         end
 
         # Generates a new storage location for the given identifier, ensuring that nothing currently exists at that location.
@@ -45,7 +53,7 @@ module Hyacinth
           @cache[location_uri] = content
         end
 
-        def writeable_impl(location_uri, &block)
+        def writable_impl(location_uri, &block)
           io_stub = StringIO.new
           block.yield(io_stub)
           io_stub.rewind

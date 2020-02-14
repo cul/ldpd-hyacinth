@@ -41,7 +41,7 @@ class Mutations::CreateAsset < Mutations::BaseMutation
       resource.original_filename = blob.filename.to_s
       resource.media_type = BestType.mime_type.for_file_name(blob.filename.to_s)
       resource.location = Hyacinth::Config.resource_storage.generate_new_managed_location_uri(SecureRandom.uuid, 'upload')
-      Hyacinth::Config.resource_storage.with_writeable(resource.location) do |output_file|
+      Hyacinth::Config.resource_storage.with_writable(resource.location) do |output_file|
         blob.download { |chunk| output_file << chunk }
       end
     end
