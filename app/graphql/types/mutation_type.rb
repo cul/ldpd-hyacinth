@@ -32,6 +32,10 @@ module Types
     field :update_dynamic_field, mutation: Mutations::UpdateDynamicField
     field :delete_dynamic_field, mutation: Mutations::DeleteDynamicField
 
+    field :create_field_export_profile, mutation: Mutations::FieldExportProfile::CreateFieldExportProfile
+    field :update_field_export_profile, mutation: Mutations::FieldExportProfile::UpdateFieldExportProfile
+    field :delete_field_export_profile, mutation: Mutations::FieldExportProfile::DeleteFieldExportProfile
+
     field :create_field_set, mutation: Mutations::FieldSet::CreateFieldSet
     field :update_field_set, mutation: Mutations::FieldSet::UpdateFieldSet
     field :delete_field_set, mutation: Mutations::FieldSet::DeleteFieldSet
