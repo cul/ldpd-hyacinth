@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Route } from 'react-router-dom';
 
-import ability from '../util/ability';
-import PageNotFound from './layout/PageNotFound';
+import ability from '../../../utils/ability';
+import PageNotFound from '../PageNotFound';
 
 function DigitalObjectProtectedRoute(props) {
   const {

@@ -3,12 +3,12 @@ import { Row, Col } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 import { useParams } from 'react-router-dom';
 
-import TabHeading from '../../ui/tabs/TabHeading';
-import { Can } from '../../../util/ability_context';
-import EditButton from '../../ui/buttons/EditButton';
+import TabHeading from '../../shared/tabs/TabHeading';
+import { Can } from '../../../utils/abilityContext';
+import EditButton from '../../shared/buttons/EditButton';
 import { getProjectQuery } from '../../../graphql/projects';
 import ProjectInterface from '../ProjectInterface';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 
 function CoreDataShow() {
   const { stringKey } = useParams();

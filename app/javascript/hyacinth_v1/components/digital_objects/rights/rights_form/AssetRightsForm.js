@@ -5,10 +5,10 @@ import { Form } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { merge } from 'lodash';
 
-import keyTransformer from '../../../../util/keyTransformer';
-import { digitalObject as digitalObjectApi } from '../../../../util/hyacinth_api';
-import ContextualNavbar from '../../../layout/ContextualNavbar';
-import FormButtons from '../../../ui/forms/FormButtons';
+import keyTransformer from '../../../../utils/keyTransformer';
+import { digitalObject as digitalObjectApi } from '../../../../utils/hyacinthApi';
+import ContextualNavbar from '../../../shared/ContextualNavbar';
+import FormButtons from '../../../shared/forms/FormButtons';
 import CopyrightStatus from './subsections/CopyrightStatus';
 import AccessCondition from './subsections/AccessCondition';
 import { defaultAssetRights } from './defaultAssetRights';

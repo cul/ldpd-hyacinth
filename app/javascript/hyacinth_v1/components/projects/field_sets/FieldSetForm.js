@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Row, Col, Form } from 'react-bootstrap';
-import { gql } from 'apollo-boost';
+import gql from 'graphql-tag';
 import { useMutation } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 
-import FormButtons from '../../ui/forms/FormButtons';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import FormButtons from '../../shared/forms/FormButtons';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 
 const CREATE_FIELD_SET = gql`
   mutation CreateFieldSet($input: CreateFieldSetInput!) {

@@ -2,9 +2,9 @@ import React from 'react';
 import { startCase } from 'lodash';
 import produce from 'immer';
 
-import TabHeading from '../../ui/tabs/TabHeading';
+import TabHeading from '../../shared/tabs/TabHeading';
 import EnabledDynamicFieldForm from './EnabledDynamicFieldForm';
-import { projects } from '../../../util/hyacinth_api';
+import { projects } from '../../../utils/hyacinthApi';
 import ProjectInterface from '../ProjectInterface';
 
 export default class EnabledDynamicFieldsEdit extends React.Component {

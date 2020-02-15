@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 class Mutations::UpdateDynamicField < Mutations::BaseMutation
-  argument :string_key, ID, required: true
+  argument :id, ID, required: true
   argument :display_label, String, required: false
   argument :field_type, String, required: false
   argument :sort_order, Integer, required: false
@@ -14,8 +14,8 @@ class Mutations::UpdateDynamicField < Mutations::BaseMutation
 
   field :dynamic_field, Types::DynamicFieldType, null: true
 
-  def resolve(string_key:, **attributes)
-    dynamic_field = DynamicField.find_by!(string_key: string_key)
+  def resolve(id:, **attributes)
+    dynamic_field = DynamicField.find(id)
 
     ability.authorize! :update, dynamic_field
 

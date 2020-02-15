@@ -6,17 +6,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { useParams, useHistory } from 'react-router-dom';
 
-import ContextualNavbar from '../layout/ContextualNavbar';
-import ability from '../../util/ability';
-import GraphQLErrors from '../ui/GraphQLErrors';
-import InputGroup from '../ui/forms/InputGroup';
-import Label from '../ui/forms/Label';
-import FormButtons from '../ui/forms/FormButtons';
-import { Can } from '../../util/ability_context';
+import ContextualNavbar from '../shared/ContextualNavbar';
+import ability from '../../utils/ability';
+import GraphQLErrors from '../shared/GraphQLErrors';
+import InputGroup from '../shared/forms/InputGroup';
+import Label from '../shared/forms/Label';
+import FormButtons from '../shared/forms/FormButtons';
+import { Can } from '../../utils/abilityContext';
 import { getUserQuery, updateUserMutation } from '../../graphql/users';
-import Checkbox from '../ui/forms/inputs/Checkbox';
+import Checkbox from '../shared/forms/inputs/Checkbox';
 
-import BooleanRadioButtons from '../ui/forms/inputs/BooleanRadioButtons';
+import BooleanRadioButtons from '../shared/forms/inputs/BooleanRadioButtons';
 
 function UserEdit() {
   const { uid: id } = useParams();

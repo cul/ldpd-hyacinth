@@ -4,7 +4,7 @@ import { Table } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 
 import { getUsersQuery } from '../../graphql/users';
-import ContextualNavbar from '../layout/ContextualNavbar';
+import ContextualNavbar from '../shared/ContextualNavbar';
 
 function UserIndex() {
   const { loading, error, data } = useQuery(getUsersQuery);

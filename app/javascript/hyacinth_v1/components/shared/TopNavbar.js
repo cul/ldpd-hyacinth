@@ -3,8 +3,7 @@ import PropTypes from 'prop-types';
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 
-import Constants from '../../Constants';
-import { Can } from '../../util/ability_context';
+import { Can } from '../../utils/abilityContext';
 
 function TopNavbar(props) {
   const { user } = props;
@@ -15,7 +14,7 @@ function TopNavbar(props) {
     const postData = {};
     postData[document.querySelector("meta[name='csrf-param']").getAttribute('content')] = document.querySelector("meta[name='csrf-token']").getAttribute('content');
 
-    fetch(Constants.SIGN_OUT_PATH, {
+    fetch('/users/sign_out', {
       method: 'delete',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(postData),

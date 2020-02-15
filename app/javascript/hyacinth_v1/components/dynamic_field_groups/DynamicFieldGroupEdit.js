@@ -1,8 +1,8 @@
 import React from 'react';
 
-import ContextualNavbar from '../layout/ContextualNavbar';
+import ContextualNavbar from '../shared/ContextualNavbar';
 import DynamicFieldGroupForm from './DynamicFieldGroupForm';
-import DynamicFieldsBreadcrumbs from '../layout/dynamic_fields/DynamicFieldsBreadcrumbs';
+import DynamicFieldsBreadcrumbs from '../shared/dynamic_fields/DynamicFieldsBreadcrumbs';
 
 class DynamicFieldGroupEdit extends React.PureComponent {
   render() {

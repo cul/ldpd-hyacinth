@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 
-class SubmitButton extends React.Component {
+class ResponsiveSubmitButton extends React.Component {
   state = {
     isSaving: false,
     success: null,
@@ -45,4 +45,4 @@ class SubmitButton extends React.Component {
   }
 }
 
-export default withRouter(SubmitButton);
+export default withRouter(ResponsiveSubmitButton);

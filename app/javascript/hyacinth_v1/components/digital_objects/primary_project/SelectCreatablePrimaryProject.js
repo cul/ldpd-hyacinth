@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
 import { getPrimaryProjectsQuery } from '../../../graphql/projects';
-import SelectInput from '../../ui/forms/inputs/SelectInput';
-import Label from '../../ui/forms/Label';
-import InputGroup from '../../ui/forms/InputGroup';
-import GraphQLErrors from '../../ui/GraphQLErrors';
-import ability from '../../../util/ability';
+import SelectInput from '../../shared/forms/inputs/SelectInput';
+import Label from '../../shared/forms/Label';
+import InputGroup from '../../shared/forms/InputGroup';
+import GraphQLErrors from '../../shared/GraphQLErrors';
+import ability from '../../../utils/ability';
 
 function SelectCreatablePrimaryProject({ primaryProject, changeHandler }) {
   const { loading, error, data } = useQuery(getPrimaryProjectsQuery, { isPrimary: true });

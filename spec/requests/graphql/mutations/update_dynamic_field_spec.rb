@@ -6,7 +6,7 @@ RSpec.describe Mutations::UpdateDynamicField, type: :request do
   let(:dynamic_field) { FactoryBot.create(:dynamic_field) }
 
   include_examples 'requires user to have correct permissions for graphql request' do
-    let(:variables) { { input: { stringKey: dynamic_field.string_key, displayLabel: 'New Location' } } }
+    let(:variables) { { input: { id: dynamic_field.id, displayLabel: 'New Location' } } }
     let(:request) { graphql query, variables }
   end
 
@@ -17,7 +17,7 @@ RSpec.describe Mutations::UpdateDynamicField, type: :request do
       let(:variables) do
         {
           input: {
-            stringKey: dynamic_field.string_key,
+            id: dynamic_field.id,
             displayLabel: 'New Location'
           }
         }
@@ -34,7 +34,7 @@ RSpec.describe Mutations::UpdateDynamicField, type: :request do
       let(:variables) do
         {
           input: {
-            stringKey: dynamic_field.string_key,
+            id: dynamic_field.id,
             controlledVocabulary: 'vocabulary2'
           }
         }
@@ -51,7 +51,7 @@ RSpec.describe Mutations::UpdateDynamicField, type: :request do
       let(:variables) do
         {
           input: {
-            stringKey: dynamic_field.string_key,
+            id: dynamic_field.id,
             selectOptions: '[{"value":"val1","display_label":"Value 1"}, {"value":"val2","display_label":"Value 2"}]'
           }
         }
@@ -68,7 +68,7 @@ RSpec.describe Mutations::UpdateDynamicField, type: :request do
       let(:variables) do
         {
           input: {
-            stringKey: dynamic_field.string_key,
+            id: dynamic_field.id,
             isTitleSearchable: true
           }
         }
@@ -85,7 +85,7 @@ RSpec.describe Mutations::UpdateDynamicField, type: :request do
       let(:variables) do
         {
           input: {
-            stringKey: dynamic_field.string_key,
+            id: dynamic_field.id,
             displayLabel: 'New Location',
             fieldType: 'not-valid'
           }

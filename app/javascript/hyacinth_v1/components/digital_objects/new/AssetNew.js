@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Form } from 'react-bootstrap';
 import { useMutation } from '@apollo/react-hooks';
-import uploadFile from '../../../graphql/file_uploads';
+import uploadFile from '../../../graphql/fileUploads';
 import { createAssetMutation } from '../../../graphql/assets';
 
 function AssetNew(props) {

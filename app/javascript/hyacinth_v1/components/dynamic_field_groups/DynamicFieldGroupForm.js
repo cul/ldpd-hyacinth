@@ -8,17 +8,17 @@ import { LinkContainer } from 'react-router-bootstrap';
 import produce from 'immer';
 import axios from 'axios';
 
-import hyacinthApi from '../../util/hyacinth_api';
-import DynamicFieldsAndGroupsTable from '../layout/dynamic_fields/DynamicFieldsAndGroupsTable';
+import hyacinthApi from '../../utils/hyacinthApi';
+import DynamicFieldsAndGroupsTable from '../shared/dynamic_fields/DynamicFieldsAndGroupsTable';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
-import FormButtons from '../ui/forms/FormButtons';
-import InputGroup from '../ui/forms/InputGroup';
-import Label from '../ui/forms/Label';
-import NumberInput from '../ui/forms/inputs/NumberInput';
-import TextInput from '../ui/forms/inputs/TextInput';
-import SelectInput from '../ui/forms/inputs/SelectInput';
-import Checkbox from '../ui/forms/inputs/Checkbox';
-import JSONInput from '../ui/forms/inputs/JSONInput';
+import FormButtons from '../shared/forms/FormButtons';
+import InputGroup from '../shared/forms/InputGroup';
+import Label from '../shared/forms/Label';
+import NumberInput from '../shared/forms/inputs/NumberInput';
+import TextInput from '../shared/forms/inputs/TextInput';
+import SelectInput from '../shared/forms/inputs/SelectInput';
+import Checkbox from '../shared/forms/inputs/Checkbox';
+import JSONInput from '../shared/forms/inputs/JSONInput';
 
 class DynamicFieldGroupForm extends React.Component {
   state = {

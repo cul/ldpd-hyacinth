@@ -2,12 +2,12 @@ import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
 import produce from 'immer';
 
-import Label from '../../../../ui/forms/Label';
-import InputGroup from '../../../../ui/forms/InputGroup';
-import BooleanRadioButton from '../../../../ui/forms/inputs/BooleanRadioButtons';
-import DateInput from '../../../../ui/forms/inputs/DateInput';
-import TextAreaInput from '../../../../ui/forms/inputs/TextAreaInput';
-import TextInput from '../../../../ui/forms/inputs/TextInput';
+import Label from '../../../../shared/forms/Label';
+import InputGroup from '../../../../shared/forms/InputGroup';
+import BooleanRadioButton from '../../../../shared/forms/inputs/BooleanRadioButtons';
+import DateInput from '../../../../shared/forms/inputs/DateInput';
+import TextAreaInput from '../../../../shared/forms/inputs/TextAreaInput';
+import TextInput from '../../../../shared/forms/inputs/TextInput';
 
 export default class LicenseToColumbiaUniversity extends React.PureComponent {
   onChange(fieldName, fieldVal) {

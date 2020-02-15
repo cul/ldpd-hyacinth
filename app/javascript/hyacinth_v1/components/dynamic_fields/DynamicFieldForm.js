@@ -4,16 +4,16 @@ import produce from 'immer';
 import { startCase } from 'lodash';
 import { withRouter } from 'react-router-dom';
 
-import hyacinthApi from '../../util/hyacinth_api';
+import hyacinthApi from '../../utils/hyacinthApi';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
-import InputGroup from '../ui/forms/InputGroup';
-import Label from '../ui/forms/Label';
-import FormButtons from '../ui/forms/FormButtons';
-import TextInput from '../ui/forms/inputs/TextInput';
-import NumberInput from '../ui/forms/inputs/NumberInput';
-import JSONInput from '../ui/forms/inputs/JSONInput';
-import SelectInput from '../ui/forms/inputs/SelectInput';
-import Checkbox from '../ui/forms/inputs/Checkbox';
+import InputGroup from '../shared/forms/InputGroup';
+import Label from '../shared/forms/Label';
+import FormButtons from '../shared/forms/FormButtons';
+import TextInput from '../shared/forms/inputs/TextInput';
+import NumberInput from '../shared/forms/inputs/NumberInput';
+import JSONInput from '../shared/forms/inputs/JSONInput';
+import SelectInput from '../shared/forms/inputs/SelectInput';
+import Checkbox from '../shared/forms/inputs/Checkbox';
 
 const fieldTypes = [
   'string', 'textarea', 'integer', 'boolean', 'select', 'date', 'controlled_term',

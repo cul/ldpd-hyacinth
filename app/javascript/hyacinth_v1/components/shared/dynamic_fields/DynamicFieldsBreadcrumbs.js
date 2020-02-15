@@ -3,7 +3,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { Breadcrumb } from 'react-bootstrap';
 import produce from 'immer';
 
-import hyacinthApi from '../../../util/hyacinth_api';
+import hyacinthApi from '../../../utils/hyacinthApi';
 
 class DynamicFieldsBreadcrumbs extends React.Component {
   state = {

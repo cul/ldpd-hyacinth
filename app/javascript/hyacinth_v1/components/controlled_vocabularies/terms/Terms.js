@@ -1,11 +1,11 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import PageNotFound from '../../layout/PageNotFound';
+import PageNotFound from '../../shared/PageNotFound';
 import TermEdit from './TermEdit';
 import TermNew from './TermNew';
 import TermShow from './TermShow';
-import ProtectedRoute from '../../ProtectedRoute';
+import ProtectedRoute from '../../shared/routes/ProtectedRoute';
 
 export default class Terms extends React.PureComponent {
   render() {

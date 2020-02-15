@@ -2,11 +2,11 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 
-import TabHeading from '../../ui/tabs/TabHeading';
+import TabHeading from '../../shared/tabs/TabHeading';
 import FieldSetForm from './FieldSetForm';
 import { getProjectQuery } from '../../../graphql/projects';
 import ProjectInterface from '../ProjectInterface';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 
 function FieldSetNew() {
   const { projectStringKey } = useParams();

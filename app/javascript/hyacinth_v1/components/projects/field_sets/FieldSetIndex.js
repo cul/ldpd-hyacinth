@@ -2,14 +2,14 @@ import React from 'react';
 import { Table, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LinkContainer } from 'react-router-bootstrap';
-import { gql } from 'apollo-boost';
+import gql from 'graphql-tag';
 import { useQuery } from '@apollo/react-hooks';
 import { Link, useParams } from 'react-router-dom';
 
-import TabHeading from '../../ui/tabs/TabHeading';
-import { Can } from '../../../util/ability_context';
+import TabHeading from '../../shared/tabs/TabHeading';
+import { Can } from '../../../utils/abilityContext';
 import ProjectInterface from '../ProjectInterface';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 
 const PROJECT_WITH_FIELD_SETS = gql`
   query Project($stringKey: ID!){

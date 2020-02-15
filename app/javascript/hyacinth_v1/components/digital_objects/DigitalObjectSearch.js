@@ -1,39 +1,52 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from 'react-bootstrap';
-import produce from 'immer';
-import { has } from 'lodash';
+import { useQuery } from '@apollo/react-hooks';
 
 import DigitalObjectList from './DigitalObjectList';
 
-import ContextualNavbar from '../layout/ContextualNavbar';
-import { digitalObject } from '../../util/hyacinth_api';
+import ContextualNavbar from '../shared/ContextualNavbar';
+import PaginationBar from '../shared/PaginationBar';
+import GraphQLErrors from '../shared/GraphQLErrors';
+import { getDigitalObjectsQuery } from '../../graphql/digitalObjects';
 
-export default class DigitalObjectSearch extends React.Component {
-  state = {
-    digitalObjects: [],
-  }
+const limit = 20;
 
-  componentDidMount() {
-    digitalObject.search()
-      .then((res) => {
-        this.setState(produce((draft) => {
-          draft.digitalObjects = res.data.digitalObjects;
-        }));
-      });
-  }
+export default function DigitalObjectSearch() {
+  const [offset, setOffset] = useState(0);
+  const [totalObjects, setTotalObjects] = useState(0);
 
-  render() {
-    const { digitalObjects } = this.state;
-    return (
-      <>
-        <ContextualNavbar
-          title="Digital Objects"
-          rightHandLinks={[{ label: 'New Digital Object', link: '/digital_objects/new' }]}
-        />
-        { digitalObjects.length === 0 ? <Card header="No Digital Objects found." />
-          : <DigitalObjectList className="digital-object-search-results" digitalObjects={digitalObjects} />
-        }
-      </>
-    );
-  }
+  const {
+    loading, error, data, refetch,
+  } = useQuery(
+    getDigitalObjectsQuery, {
+      variables: { limit, offset },
+      onCompleted: (searchData) => { setTotalObjects(searchData.digitalObjects.totalCount); },
+    },
+  );
+
+  if (loading) return (<></>);
+  if (error) return (<GraphQLErrors errors={error} />);
+  const { digitalObjects: { nodes } } = data;
+  const onPageNumberClick = (page) => {
+    setOffset(limit * (page - 1));
+    refetch();
+  };
+
+  return (
+    <>
+      <ContextualNavbar
+        title="Digital Objects"
+        rightHandLinks={[{ label: 'New Digital Object', link: '/digital_objects/new' }]}
+      />
+      { nodes.length === 0 ? <Card header="No Digital Objects found." />
+        : <DigitalObjectList className="digital-object-search-results" digitalObjects={nodes} />
+      }
+      <PaginationBar
+        offset={offset}
+        limit={limit}
+        totalItems={totalObjects}
+        onPageNumberClick={onPageNumberClick}
+      />
+    </>
+  );
 }

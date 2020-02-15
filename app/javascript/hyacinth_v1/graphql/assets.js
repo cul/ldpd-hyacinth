@@ -1,4 +1,4 @@
-import { gql } from 'apollo-boost';
+import gql from 'graphql-tag';
 import { DirectUpload } from "activestorage"
 
 export const createAssetMutation = gql`

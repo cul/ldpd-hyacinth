@@ -5,16 +5,16 @@ import { useMutation } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 import produce from 'immer';
 
-import InputGroup from '../../ui/forms/InputGroup';
-import Label from '../../ui/forms/Label';
-import TextInput from '../../ui/forms/inputs/TextInput';
-import TextInputWithAddAndRemove from '../../ui/forms/inputs/TextInputWithAddAndRemove';
-import SelectInput from '../../ui/forms/inputs/SelectInput';
-import NumberInput from '../../ui/forms/inputs/NumberInput';
-import ReadOnlyInput from '../../ui/forms/inputs/ReadOnlyInput';
-import PlainText from '../../ui/forms/inputs/PlainText';
-import FormButtons from '../../ui/forms/FormButtons';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import InputGroup from '../../shared/forms/InputGroup';
+import Label from '../../shared/forms/Label';
+import TextInput from '../../shared/forms/inputs/TextInput';
+import TextInputWithAddAndRemove from '../../shared/forms/inputs/TextInputWithAddAndRemove';
+import SelectInput from '../../shared/forms/inputs/SelectInput';
+import NumberInput from '../../shared/forms/inputs/NumberInput';
+import ReadOnlyInput from '../../shared/forms/inputs/ReadOnlyInput';
+import PlainText from '../../shared/forms/inputs/PlainText';
+import FormButtons from '../../shared/forms/FormButtons';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 import { createTermMutation, updateTermMutation, deleteTermMutation } from '../../../graphql/terms';
 
 const types = ['external', 'local', 'temporary'];

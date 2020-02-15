@@ -82,6 +82,13 @@ We use Capistrano for deployment. To deploy to our temporary dev instance run:
 cap hyacinth_3_dev deploy
 ```
 
+## Development / Naming Conventions
+
+For JavaScript files:
+- PascalCase.js for a file that exports a default constant that matches the file's capital-starting name (like a component)
+- camelCase.js for a file that exports a default constant that matches that file's lower-starting name (like an exported plain function or variable) OR files that do not export a default constant
+- snake_case for directories, to differentiate from js objects (convenient when searching through files and directories)
+
 ## Development / IDE Notes
 
 If you have an IDE that supports jsconfig.json files (e.g. Visual Studio Code), you can add the following (git ignored) jsconfig.json file to your local copy (top level) and it will enable js import autocomplete for the @hyacinth_v1 alias:

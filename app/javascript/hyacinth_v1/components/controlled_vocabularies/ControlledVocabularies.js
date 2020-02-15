@@ -1,14 +1,14 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import PageNotFound from '../layout/PageNotFound';
+import PageNotFound from '../shared/PageNotFound';
 import ControlledVocabularyIndex from './ControlledVocabularyIndex';
 import ControlledVocabularyNew from './ControlledVocabularyNew';
 import ControlledVocabularyShow from './ControlledVocabularyShow';
 import ControlledVocabularyEdit from './ControlledVocabularyEdit';
 
 import Terms from './terms/Terms';
-import ProtectedRoute from '../ProtectedRoute';
+import ProtectedRoute from '../shared/routes/ProtectedRoute';
 
 function ControlledVocabularies() {
   return (

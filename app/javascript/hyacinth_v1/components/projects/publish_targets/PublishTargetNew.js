@@ -2,11 +2,11 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 
-import TabHeading from '../../ui/tabs/TabHeading';
+import TabHeading from '../../shared/tabs/TabHeading';
 import PublishTargetForm from './PublishTargetForm';
 import ProjectInterface from '../ProjectInterface';
 import { getProjectQuery } from '../../../graphql/projects';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 
 function PublishTargetNew() {
   const { projectStringKey } = useParams();

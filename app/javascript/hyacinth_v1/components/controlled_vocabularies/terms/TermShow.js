@@ -3,11 +3,11 @@ import { useParams } from 'react-router-dom';
 import { Row, Col } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 
-import ContextualNavbar from '../../layout/ContextualNavbar';
+import ContextualNavbar from '../../shared/ContextualNavbar';
 import { getTermQuery } from '../../../graphql/terms';
-import GraphQLErrors from '../../ui/GraphQLErrors';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 import TermBreadcrumbs from './TermBreadcrumbs';
-import EditButton from '../../ui/buttons/EditButton';
+import EditButton from '../../shared/buttons/EditButton';
 
 function TermShow() {
   const { stringKey, uri } = useParams();

@@ -4,17 +4,17 @@ import { Card } from 'react-bootstrap';
 import produce from 'immer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import ContextualNavbar from '../layout/ContextualNavbar';
+import ContextualNavbar from '../shared/ContextualNavbar';
 
 import { useQuery } from '@apollo/react-hooks';
-import { gql } from 'apollo-boost';
+import gql from 'graphql-tag';
 
-import { Can } from '../../util/ability_context';
-import GraphQLErrors from '../ui/GraphQLErrors';
+import { Can } from '../../utils/abilityContext';
+import GraphQLErrors from '../shared/GraphQLErrors';
 
 
-import DynamicFieldsAndGroupsTable from '../layout/dynamic_fields/DynamicFieldsAndGroupsTable';
-import EditButton from '../ui/buttons/EditButton';
+import DynamicFieldsAndGroupsTable from '../shared/dynamic_fields/DynamicFieldsAndGroupsTable';
+import EditButton from '../shared/buttons/EditButton';
 
 
 import { Table } from 'react-bootstrap';
@@ -33,7 +33,6 @@ import { Table } from 'react-bootstrap';
           stringKey
           displayLabel
           sortOrder
-          exportRules
           children {
             type: __typename
             ... on DynamicFieldGroup {id}
@@ -63,7 +62,7 @@ function DynamicFieldIndex() {
 
      data && data.dynamicFieldCategories.map(cat => (
 
-         
+
           <Card className="mb-3" key={cat.id} id={cat.displayLabel.replace(' ', '-')}>
             <Card.Header as="h5" className="text-center p-2">
               <span className="badge badge-primary float-left">Category</span>
@@ -75,7 +74,7 @@ function DynamicFieldIndex() {
                 rows={cat.children}
                 onChange={() => refetch()}
               />
-            </Card.Body>    
+            </Card.Body>
               <Card.Text className="text-center">
                 <Link
                   to={`/dynamic_field_groups/new?parentType=DynamicFieldCategory&parentId=${cat.id}`}
@@ -83,14 +82,13 @@ function DynamicFieldIndex() {
                   <FontAwesomeIcon icon="plus" />
                   {' New Dynamic Field Group'}
                 </Link>
-              </Card.Text>                     
+              </Card.Text>
           </Card>
     ))
-  }    
+  }
       </>
 );
 }
 
 
 export default DynamicFieldIndex;
-

@@ -9,10 +9,10 @@ module Types
       end
 
       def resolve(object:, arguments:, context:)
-        next_args = arguments.dup
-        next_args.delete(:limit)
-        next_args.delete(:offset)
-        yield(object, arguments)
+        unpaginated_args = arguments.dup
+        unpaginated_args.delete(:limit)
+        unpaginated_args.delete(:offset)
+        yield(object, unpaginated_args)
       end
 
       def after_resolve(object:, arguments:, value:, context:, memo:)

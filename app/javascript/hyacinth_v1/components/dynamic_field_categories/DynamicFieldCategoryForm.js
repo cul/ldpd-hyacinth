@@ -3,13 +3,13 @@ import { Form } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import produce from 'immer';
 
-import hyacinthApi from '../../util/hyacinth_api';
+import hyacinthApi from '../../utils/hyacinthApi';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
-import FormButtons from '../ui/forms/FormButtons';
-import InputGroup from '../ui/forms/InputGroup';
-import Label from '../ui/forms/Label';
-import NumberInput from '../ui/forms/inputs/NumberInput';
-import TextInput from '../ui/forms/inputs/TextInput';
+import FormButtons from '../shared/forms/FormButtons';
+import InputGroup from '../shared/forms/InputGroup';
+import Label from '../shared/forms/Label';
+import NumberInput from '../shared/forms/inputs/NumberInput';
+import TextInput from '../shared/forms/inputs/TextInput';
 
 class DynamicFieldCategoryForm extends React.Component {
   state = {

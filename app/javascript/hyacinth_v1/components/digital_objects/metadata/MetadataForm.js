@@ -7,13 +7,13 @@ import { useHistory } from 'react-router-dom';
 
 import hyacinthApi, {
   enabledDynamicFields, dynamicFieldCategories, digitalObject as digitalObjectApi
-} from '../../../util/hyacinth_api';
+} from '../../../utils/hyacinthApi';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
-import TabHeading from '../../ui/tabs/TabHeading';
+import TabHeading from '../../shared/tabs/TabHeading';
 import FieldGroupArray from './FieldGroupArray';
-import FormButtons from '../../ui/forms/FormButtons';
-import InputGroup from '../../ui/forms/InputGroup';
-import TextInputWithAddAndRemove from '../../ui/forms/inputs/TextInputWithAddAndRemove';
+import FormButtons from '../../shared/forms/FormButtons';
+import InputGroup from '../../shared/forms/InputGroup';
+import TextInputWithAddAndRemove from '../../shared/forms/inputs/TextInputWithAddAndRemove';
 
 const defaultFieldValue = {
   string: '',

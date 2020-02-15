@@ -2,11 +2,11 @@ import React from 'react';
 import { startCase } from 'lodash';
 import produce from 'immer';
 
-import TabHeading from '../../ui/tabs/TabHeading';
+import TabHeading from '../../shared/tabs/TabHeading';
 import EnabledDynamicFieldForm from './EnabledDynamicFieldForm';
-import { Can } from '../../../util/ability_context';
-import EditButton from '../../ui/buttons/EditButton';
-import { projects } from '../../../util/hyacinth_api';
+import { Can } from '../../../utils/abilityContext';
+import EditButton from '../../shared/buttons/EditButton';
+import { projects } from '../../../utils/hyacinthApi';
 import ProjectInterface from '../ProjectInterface';
 
 export default class EnabledDynamicFieldShow extends React.Component {

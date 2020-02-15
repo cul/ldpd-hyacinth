@@ -4,12 +4,12 @@ import { Form } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 import produce from 'immer';
 
-import FormButtons from '../ui/forms/FormButtons';
-import JSONInput from '../ui/forms/inputs/JSONInput';
-import TextInput from '../ui/forms/inputs/TextInput';
-import InputGroup from '../ui/forms/InputGroup';
-import Label from '../ui/forms/Label';
-import hyacinthApi from '../../util/hyacinth_api';
+import FormButtons from '../shared/forms/FormButtons';
+import JSONInput from '../shared/forms/inputs/JSONInput';
+import TextInput from '../shared/forms/inputs/TextInput';
+import InputGroup from '../shared/forms/InputGroup';
+import Label from '../shared/forms/Label';
+import hyacinthApi from '../../utils/hyacinthApi';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 
 class FieldExportProfileForm extends React.Component {

@@ -3,8 +3,8 @@ import { Route, Redirect, Switch } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 
-import TopNavbar from '@hyacinth_v1/components/layout/TopNavbar';
-import PageNotFound from './components/layout/PageNotFound';
+import TopNavbar from './components/shared/TopNavbar';
+import PageNotFound from './components/shared/PageNotFound';
 import DigitalObjects from './components/digital_objects/DigitalObjects';
 import Users from './components/users/Users';
 import DynamicFields from './components/dynamic_fields/DynamicFields';
@@ -13,12 +13,12 @@ import DynamicFieldCategories from './components/dynamic_field_categories/Dynami
 import FieldExportProfiles from './components/field_export_profiles/FieldExportProfiles';
 import ControlledVocabularies from './components/controlled_vocabularies/ControlledVocabularies';
 import Projects from './components/projects/Projects';
-import { AbilityContext } from './util/ability_context';
-import ability from './util/ability';
-import { setupPermissionActions } from './util/permission_actions';
+import { AbilityContext } from './utils/abilityContext';
+import ability from './utils/ability';
+import { setupPermissionActions } from './utils/permissionActions';
 import { getAuthenticatedUserQuery } from './graphql/users';
 import { getPermissionActionsQuery } from './graphql/permissionActions';
-import GraphQLErrors from './components/ui/GraphQLErrors';
+import GraphQLErrors from './components/shared/GraphQLErrors';
 
 const Index = () => (
   <div>
@@ -27,7 +27,7 @@ const Index = () => (
   </div>
 );
 
-function App() {
+function MainContent() {
   const [user, setUser] = useState({});
 
   const { loading: userLoading, error: userError } = useQuery(
@@ -79,4 +79,4 @@ function App() {
   );
 }
 
-export default App;
+export default MainContent;

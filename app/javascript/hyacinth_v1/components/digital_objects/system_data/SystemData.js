@@ -4,13 +4,13 @@ import { useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 import PropTypes from 'prop-types';
 
-import GraphQLErrors from '../../ui/GraphQLErrors';
-import TabHeading from '../../ui/tabs/TabHeading';
+import GraphQLErrors from '../../shared/GraphQLErrors';
+import TabHeading from '../../shared/tabs/TabHeading';
 import DigitalObjectInterface from '../DigitalObjectInterface';
-import DeleteButton from '../../ui/forms/buttons/DeleteButton';
+import DeleteButton from '../../shared/forms/buttons/DeleteButton';
 import { getSystemDataDigitalObjectQuery } from '../../../graphql/digitalObjects';
-import { digitalObject as digitalObjectApi } from '../../../util/hyacinth_api';
-import { digitalObjectAbility } from '../../../util/ability';
+import { digitalObject as digitalObjectApi } from '../../../utils/hyacinthApi';
+import { digitalObjectAbility } from '../../../utils/ability';
 
 function SystemData(props) {
   const { id } = props;
