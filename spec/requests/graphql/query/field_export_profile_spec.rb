@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Retrieving Dynamic Field', type: :request do
+RSpec.describe 'Retrieving Field Export Profile', type: :request do
   let(:field_export_profile) { FactoryBot.create(:field_export_profile) }
 
   include_examples 'requires user to have correct permissions for graphql request' do

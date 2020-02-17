@@ -3,7 +3,7 @@ import React from 'react';
 import ContextualNavbar from '../shared/ContextualNavbar';
 import FieldExportProfileForm from './FieldExportProfileForm';
 
-function DynamicFieldGroupNew() {
+function FieldExportProfileNew() {
   return (
     <>
       <ContextualNavbar
@@ -16,4 +16,4 @@ function DynamicFieldGroupNew() {
   );
 }
 
-export default DynamicFieldGroupNew;
+export default FieldExportProfileNew;

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Retrieving Dynamic Field', type: :request do
+RSpec.describe 'Retrieving Field Export Profile', type: :request do
   before do
     FactoryBot.create(:field_export_profile)
     FactoryBot.create(:field_export_profile, name: 'rightsMetadata')
