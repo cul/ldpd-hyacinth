@@ -56,11 +56,23 @@ module Types
       description "List of all dynamic field categories"
     end
 
+    field :dynamic_field_category, DynamicFieldCategoryType, null: true do
+      argument :id, ID, required: true
+    end
+
     field :dynamic_field_group, DynamicFieldGroupType, null: true do
       argument :id, ID, required: true
     end
 
     field :dynamic_field, DynamicFieldType, null: true do
+      argument :id, ID, required: true
+    end
+
+    field :field_export_profiles, [FieldExportProfileType], null: true do
+      description "List of all field export profiles"
+    end
+
+    field :field_export_profile, FieldExportProfileType, null: true do
       argument :id, ID, required: true
     end
 
@@ -103,10 +115,6 @@ module Types
       DynamicFieldCategory.order(:sort_order)
     end
 
-    field :dynamic_field_category, DynamicFieldCategoryType, null: true do
-      argument :id, ID, required: true
-    end
-
     def dynamic_field_category(id:)
       dynamic_field_category = DynamicFieldCategory.find(id)
       ability.authorize!(:read, dynamic_field_category)
@@ -123,6 +131,17 @@ module Types
       dynamic_field = DynamicField.find(id)
       ability.authorize!(:read, dynamic_field)
       dynamic_field
+    end
+
+    def field_export_profiles
+      ability.authorize!(:read, FieldExportProfile)
+      FieldExportProfile.order(:name)
+    end
+
+    def field_export_profile(id:)
+      field_export_profile = FieldExportProfile.find(id)
+      ability.authorize!(:read, field_export_profile)
+      field_export_profile
     end
 
     def project(string_key:)

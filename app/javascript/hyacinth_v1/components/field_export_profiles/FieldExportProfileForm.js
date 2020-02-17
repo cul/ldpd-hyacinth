@@ -1,126 +1,101 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Form } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
-import produce from 'immer';
+import { useHistory } from 'react-router-dom';
+import { useMutation } from '@apollo/react-hooks';
 
 import FormButtons from '../shared/forms/FormButtons';
 import JSONInput from '../shared/forms/inputs/JSONInput';
 import TextInput from '../shared/forms/inputs/TextInput';
 import InputGroup from '../shared/forms/InputGroup';
 import Label from '../shared/forms/Label';
-import hyacinthApi from '../../utils/hyacinthApi';
-import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
+import {
+  createFieldExportProfileMutation,
+  updateFieldExportProfileMutation,
+  deleteFieldExportProfileMutation,
+} from '../../graphql/fieldExportProfiles';
+import GraphQLErrors from '../shared/GraphQLErrors';
 
-class FieldExportProfileForm extends React.Component {
-  state = {
-    formType: '',
-    fieldExportProfile: {
-      name: '',
-      translationLogic: '{}',
-    },
-  }
+function FieldExportProfileForm(props) {
+  const { formType, fieldExportProfile } = props;
 
-  componentDidMount() {
-    const { formType, id } = this.props;
+  const [name, setName] = useState(fieldExportProfile ? fieldExportProfile.name : '');
+  const [translationLogic, setTranslationLogic] = useState(fieldExportProfile ? fieldExportProfile.translationLogic : '{}');
 
-    if (id) {
-      hyacinthApi.get(`/field_export_profiles/${id}`)
-        .then((res) => {
-          const { fieldExportProfile } = res.data;
+  const history = useHistory();
 
-          this.setState(produce((draft) => {
-            draft.fieldExportProfile = fieldExportProfile;
-          }));
-        });
-    }
+  const [createFieldExportProfile, { error: createError }] = useMutation(
+    createFieldExportProfileMutation,
+  );
+  const [updateFieldExportProfile, { error: updateError }] = useMutation(
+    updateFieldExportProfileMutation,
+  );
+  const [deleteFieldExportProfile, { error: deleteError }] = useMutation(
+    deleteFieldExportProfileMutation,
+  );
 
-    this.setState(produce((draft) => {
-      draft.formType = formType;
-    }));
-  }
-
-  onSave = () => {
-    const { formType, fieldExportProfile: { id }, fieldExportProfile } = this.state;
-    const { history: { push } } = this.props;
+  const onSave = () => {
+    const variables = { input: { name, translationLogic } };
 
     switch (formType) {
       case 'new':
-        return hyacinthApi.post('/field_export_profiles', { fieldExportProfile })
-          .then((res) => {
-            const { fieldExportProfile: { id: newId } } = res.data;
+        return createFieldExportProfile({ variables }).then((res) => {
+          const { fieldExportProfile: { id: newId } } = res.data.createFieldExportProfile;
 
-            push(`/field_export_profiles/${newId}/edit`);
-          });
+          history.push(`/field_export_profiles/${newId}/edit`);
+        });
       case 'edit':
-        return hyacinthApi.patch(`/field_export_profiles/${id}`, { fieldExportProfile })
-          .then((res) => {
-            this.setState(produce((draft) => {
-              draft.fieldExportProfile = res.data.fieldExportProfile;
-            }));
-          });
+        variables.input.id = fieldExportProfile.id;
+        return updateFieldExportProfile({ variables });
       default:
         return null;
     }
-  }
+  };
 
-  onDeleteHandler = (event) => {
+  const onDeleteHandler = (event) => {
     event.preventDefault();
 
-    const { fieldExportProfile: { id } } = this.state;
+    const variables = { input: { id: fieldExportProfile.id } };
+    deleteFieldExportProfile({ variables }).then(() => {
+      history.push('/field_export_profiles');
+    });
+  };
 
-    hyacinthApi.delete(`/field_export_profiles/${id}`)
-      .then(() => {
-        this.props.history.push('/field_export_profiles');
-      });
-  }
+  return (
+    <Form>
+      <GraphQLErrors errors={createError || updateError || deleteError} />
 
-  onChangeHandler(name, value) {
-    this.setState(produce((draft) => {
-      draft.fieldExportProfile[name] = value;
-    }));
-  }
+      <InputGroup>
+        <Label>Name</Label>
+        <TextInput value={name} onChange={setName} />
+      </InputGroup>
 
-  render() {
-    const { formType, fieldExportProfile: { name, translationLogic } } = this.state;
+      <InputGroup>
+        <Label>Translation Logic</Label>
+        <JSONInput value={translationLogic} onChange={v => setTranslationLogic(v)} inputName="translationLogic" />
+      </InputGroup>
 
-    return (
-      <Form onSubmit={this.onSubmitHandler}>
-        <InputGroup>
-          <Label>Name</Label>
-          <TextInput
-            value={name}
-            onChange={v => this.onChangeHandler('name', v)}
-          />
-        </InputGroup>
-
-        <InputGroup>
-          <Label>Translation Logic</Label>
-          <JSONInput
-            onChange={v => this.onChangeHandler('translationLogic', v)}
-            value={translationLogic}
-            inputName="translationLogic"
-          />
-        </InputGroup>
-
-        <FormButtons
-          formType={formType}
-          cancelTo="/field_export_profiles"
-          onDelete={this.onDeleteHandler}
-          onSave={this.onSave}
-        />
-      </Form>
-    );
-  }
+      <FormButtons
+        formType={formType}
+        cancelTo="/field_export_profiles"
+        onDelete={onDeleteHandler}
+        onSave={onSave}
+      />
+    </Form>
+  );
 }
 
 FieldExportProfileForm.defaultProps = {
-  id: null,
+  fieldExportProfile: null,
 };
 
 FieldExportProfileForm.propTypes = {
   formType: PropTypes.oneOf(['new', 'edit']).isRequired,
-  id: PropTypes.string,
+  fieldExportProfile: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string.isRequired,
+    translationLogic: PropTypes.string.isRequired,
+  }),
 };
 
-export default withRouter(withErrorHandler(FieldExportProfileForm, hyacinthApi));
+export default FieldExportProfileForm;
