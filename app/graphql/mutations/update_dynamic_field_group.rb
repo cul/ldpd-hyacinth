@@ -6,6 +6,8 @@ class Mutations::UpdateDynamicFieldGroup < Mutations::BaseMutation
   argument :sort_order, Integer, required: false
   argument :is_repeatable, Boolean, required: false
   argument :export_rules, [Inputs::ExportRuleInput], required: false
+  argument :parent_id, ID, required: false
+  argument :parent_type, String, required: false
 
   field :dynamic_field_group, Types::DynamicFieldGroupType, null: true
 
