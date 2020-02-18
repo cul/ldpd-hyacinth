@@ -31,8 +31,8 @@ function JSONInput(props) {
 
 JSONInput.defaultProps = {
   inputName: null,
-  height: null,
-  placeholder: null,
+  height: undefined,
+  placeholder: undefined,
 };
 
 JSONInput.propTypes = {
