@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import ContextualNavbar from '../shared/ContextualNavbar';
 import DynamicFieldForm from './DynamicFieldForm';
 import DynamicFieldsBreadcrumbs from '../shared/dynamic_fields/DynamicFieldsBreadcrumbs';
-import { getDynamicFieldQuery } from '../../graphql/dynamicField';
+import { getDynamicFieldQuery } from '../../graphql/dynamicFields';
 import GraphQLErrors from '../shared/GraphQLErrors';
 
 function DynamicFieldEdit() {

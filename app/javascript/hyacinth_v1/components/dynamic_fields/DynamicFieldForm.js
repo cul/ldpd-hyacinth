@@ -18,7 +18,7 @@ import {
   createDynamicFieldMutation,
   updateDynamicFieldMutation,
   deleteDynamicFieldMutation,
-} from '../../graphql/dynamicField';
+} from '../../graphql/dynamicFields';
 import GraphQLErrors from '../shared/GraphQLErrors';
 
 const fieldTypes = [

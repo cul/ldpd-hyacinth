@@ -1,72 +1,80 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Table } from 'react-bootstrap';
-import {
-  snakeCase, lowerFirst, words, last,
-} from 'lodash';
-import { withRouter, Link } from 'react-router-dom';
+import { snakeCase, words, last } from 'lodash';
+import { Link } from 'react-router-dom';
+import { useMutation } from '@apollo/react-hooks';
 
-import hyacinthApi from '../../../utils/hyacinthApi';
 import UpArrowButton from '../buttons/UpArrowButton';
 import DownArrowButton from '../buttons/DownArrowButton';
+import { updateDynamicFieldGroupMutation } from '../../../graphql/dynamicFieldGroups';
+import { updateDynamicFieldMutation } from '../../../graphql/dynamicFields';
+import GraphQLErrors from '../GraphQLErrors';
 
-class DynamicFieldsAndGroupsTable extends React.PureComponent {
-  updateSortOrder(type, id, sortOrder) {
-    const data = { [lowerFirst(type)]: { sortOrder } };
-    const { onChange } = this.props;
+function DynamicFieldsAndGroupsTable(props) {
+  const { rows, onChange, ...rest } = props;
 
-    hyacinthApi.patch(`/${snakeCase(type)}s/${id}`, data)
-      .then(() => onChange());
-  }
+  const [updateDynamicFieldGroup, { error: updateGroupError }] = useMutation(
+    updateDynamicFieldGroupMutation,
+  );
 
-  render() {
-    const { rows, ...rest } = this.props;
+  const [updateDynamicField, { error: updateFieldError }] = useMutation(
+    updateDynamicFieldMutation,
+  );
 
-    let body = null;
-
-    if (!Array.isArray(rows) || !rows.length) {
-      body = <p>Child elements have not been defined.</p>;
-    } else {
-      body = (
-        <Table hover borderless {...rest}>
-          <tbody>
-            {
-              rows.map((fieldOrGroup, index) => {
-                const sortUp = (index === 0) ? null : Math.max(0, rows[index - 1].sortOrder - 1);
-                const sortDown = (index === rows.length - 1) ? null : rows[index + 1].sortOrder + 1;
-
-                const { displayLabel, id, type } = fieldOrGroup;
-
-                return (
-                  <tr key={`${type}_${id}`}>
-                    <td className="text-center"><span className="badge badge-primary" style={{ fontSize: '80%' }}>{last(words(type))}</span></td>
-                    <td className="text-center">
-                      <Link to={`/${snakeCase(type)}s/${id}/edit`}>
-                        {displayLabel}
-                      </Link>
-                    </td>
-                    <td className="text-center">
-                      <UpArrowButton
-                        variant="outline-secondary"
-                        onClick={() => this.updateSortOrder(type, id, sortUp)}
-                        disabled={sortUp === null}
-                      />
-                      <DownArrowButton
-                        variant="outline-secondary"
-                        onClick={() => this.updateSortOrder(type, id, sortDown)}
-                        disabled={sortDown === null}
-                      />
-                    </td>
-                  </tr>
-                );
-              })
-            }
-          </tbody>
-        </Table>
-      );
+  const updateSortOrder = (type, id, sortOrder) => {
+    const variables = { input: { id, sortOrder } };
+    if (type === 'DynamicField') {
+      updateDynamicField({ variables }).then(() => onChange());
+    } else if (type === 'DynamicFieldGroup') {
+      updateDynamicFieldGroup({ variables }).then(() => onChange());
     }
-    return (body);
+  };
+
+  if (!Array.isArray(rows) || !rows.length) {
+    return (<p>Child elements have not been defined.</p>);
   }
+
+  return (
+    <>
+      <GraphQLErrors errors={updateGroupError || updateFieldError} />
+      <Table hover borderless {...rest}>
+        <tbody>
+          {
+            rows.map((fieldOrGroup, index) => {
+              const sortUp = (index === 0) ? null : Math.max(0, rows[index - 1].sortOrder - 1);
+              const sortDown = (index === rows.length - 1) ? null : rows[index + 1].sortOrder + 1;
+
+              const { displayLabel, id, type } = fieldOrGroup;
+
+              return (
+                <tr key={`${type}_${id}`}>
+                  <td className="text-center"><span className="badge badge-primary" style={{ fontSize: '80%' }}>{last(words(type))}</span></td>
+                  <td className="text-center">
+                    <Link to={`/${snakeCase(type)}s/${id}/edit`}>
+                      {displayLabel}
+                    </Link>
+                  </td>
+                  <td className="text-center">
+                    <UpArrowButton
+                      variant="outline-secondary"
+                      onClick={() => updateSortOrder(type, id, sortUp)}
+                      disabled={sortUp === null}
+                    />
+                    <DownArrowButton
+                      variant="outline-secondary"
+                      onClick={() => updateSortOrder(type, id, sortDown)}
+                      disabled={sortDown === null}
+                    />
+                  </td>
+                </tr>
+              );
+            })
+          }
+        </tbody>
+      </Table>
+    </>
+  );
 }
 
 DynamicFieldsAndGroupsTable.defaultProps = {
@@ -74,6 +82,7 @@ DynamicFieldsAndGroupsTable.defaultProps = {
 };
 
 DynamicFieldsAndGroupsTable.propTypes = {
+  onChange: PropTypes.func.isRequired,
   rows: PropTypes.arrayOf(
     PropTypes.shape({
       displayLabel: PropTypes.string.isRequired,
@@ -84,4 +93,4 @@ DynamicFieldsAndGroupsTable.propTypes = {
   ),
 };
 
-export default withRouter(DynamicFieldsAndGroupsTable);
+export default DynamicFieldsAndGroupsTable;
