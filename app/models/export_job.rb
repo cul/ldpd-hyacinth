@@ -9,6 +9,6 @@ class ExportJob < ApplicationRecord
   serialize :export_errors, Array
 
   def delete_associated_file_if_exist
-    FileUtils.rm(path_to_export_file) if path_to_export_file.present? && File.exist?(path_to_export_file)
+    Hyacinth::Config.export_job_storage.delete(file_location)
   end
 end

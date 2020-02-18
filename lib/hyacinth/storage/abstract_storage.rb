@@ -5,6 +5,7 @@ module Hyacinth
     class AbstractStorage
       def initialize(config)
         raise 'Missing config option: adapters' if config[:adapters].blank?
+        raise ':adapters config option must be an array ' unless config[:adapters].is_a?(Array)
         @storage_adapters = config[:adapters].map do |adapter_config|
           Hyacinth::Adapters.create_from_config('Hyacinth::Adapters::StorageAdapter', adapter_config)
         end
@@ -63,7 +64,11 @@ module Hyacinth
       # Returns the first compatible storage adapter for the given location, or nil if no compatible storage adapter is found.
       def storage_adapter_for_location(location)
         adapter = @storage_adapters.find { |ad| ad.handles?(location) }
-        Rails.logger.error("Tried to find storage adapter for #{location}, but no adapter was found.")
+        if adapter.nil?
+          raise Hyacinth::Exceptions::AdapterNotFoundError,
+                "Tried to find storage adapter for #{location}, but no adapter was found. "\
+                "Known adapters: #{@storage_adapters.map(&:uri_prefix).join(', ')}"
+        end
         adapter
       end
     end

@@ -123,7 +123,7 @@ ActiveRecord::Schema.define(version: 2020_01_27_180724) do
   create_table "export_jobs", force: :cascade do |t|
     t.text "search_params"
     t.integer "user_id"
-    t.text "path_to_export_file"
+    t.text "file_location"
     t.text "export_errors"
     t.integer "status", default: 0, null: false
     t.integer "duration", default: 0, null: false

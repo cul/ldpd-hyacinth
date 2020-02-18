@@ -32,6 +32,9 @@ module Types
     field :update_dynamic_field, mutation: Mutations::UpdateDynamicField
     field :delete_dynamic_field, mutation: Mutations::DeleteDynamicField
 
+    field :create_export_job, mutation: Mutations::ExportJob::CreateExportJob
+    field :delete_export_job, mutation: Mutations::ExportJob::DeleteExportJob
+
     field :create_field_export_profile, mutation: Mutations::FieldExportProfile::CreateFieldExportProfile
     field :update_field_export_profile, mutation: Mutations::FieldExportProfile::UpdateFieldExportProfile
     field :delete_field_export_profile, mutation: Mutations::FieldExportProfile::DeleteFieldExportProfile
@@ -40,12 +43,12 @@ module Types
     field :update_field_set, mutation: Mutations::FieldSet::UpdateFieldSet
     field :delete_field_set, mutation: Mutations::FieldSet::DeleteFieldSet
 
-    field :create_vocabulary, mutation: Mutations::Vocabulary::CreateVocabulary
-    field :update_vocabulary, mutation: Mutations::Vocabulary::UpdateVocabulary
-    field :delete_vocabulary, mutation: Mutations::Vocabulary::DeleteVocabulary
-
     field :create_term, mutation: Mutations::Term::CreateTerm
     field :update_term, mutation: Mutations::Term::UpdateTerm
     field :delete_term, mutation: Mutations::Term::DeleteTerm
+
+    field :create_vocabulary, mutation: Mutations::Vocabulary::CreateVocabulary
+    field :update_vocabulary, mutation: Mutations::Vocabulary::UpdateVocabulary
+    field :delete_vocabulary, mutation: Mutations::Vocabulary::DeleteVocabulary
   end
 end

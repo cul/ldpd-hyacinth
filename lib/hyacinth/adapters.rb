@@ -11,7 +11,6 @@ module Hyacinth
       rescue NameError
         raise Hyacinth::Exceptions::AdapterNotFoundError, "Could not resolve constant: #{class_string}"
       end
-
       klass.new(config)
     end
   end

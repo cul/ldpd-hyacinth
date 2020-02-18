@@ -10,7 +10,7 @@ RSpec.describe ExportJob, type: :model do
       it { is_expected.to be_a ExportJob }
       its(:search_params) { is_expected.to eq '{"search":"true","f":{"project_display_label_sim":["University Seminars Digital Archive"]},"page":"1"}' }
       its(:user) { is_expected.to be_a User }
-      its(:path_to_export_file) { is_expected.to eq '/some/path/to/file' }
+      its(:file_location) { is_expected.to be_nil }
       its(:export_errors) { is_expected.to eq [] }
       its(:status) { is_expected.to eq 'pending' }
       its(:duration) { is_expected.to eq 0 }
@@ -29,8 +29,8 @@ RSpec.describe ExportJob, type: :model do
   end
 
   describe '#delete_associated_file_if_exist' do
-    let(:path_to_export_file) { Tempfile.new(['temp', '.csv']).path }
-    let(:export_job) { FactoryBot.create(:export_job, path_to_export_file: path_to_export_file) }
+    let(:file_location) { Tempfile.new(['temp', '.csv']).path }
+    let(:export_job) { FactoryBot.create(:export_job, :success, file_location: "managed-disk://#{file_location}") }
 
     it 'runs after object destroy' do
       expect(export_job).to receive(:delete_associated_file_if_exist)
@@ -38,9 +38,9 @@ RSpec.describe ExportJob, type: :model do
     end
 
     it 'successfully deletes the associated file' do
-      expect(File.exist?(path_to_export_file)).to be true
+      expect(File.exist?(file_location)).to be true
       export_job.delete_associated_file_if_exist
-      expect(File.exist?(path_to_export_file)).to be false
+      expect(File.exist?(file_location)).to be false
     end
   end
 end
