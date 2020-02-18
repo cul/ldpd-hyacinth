@@ -97,7 +97,7 @@ function DynamicFieldForm(props) {
 
     const variables = { input: { id: dynamicField.id } };
 
-    deleteDynamicField(variables).then(() => history.push('/dynamic_fields'));
+    deleteDynamicField({ variables }).then(() => history.push('/dynamic_fields'));
   };
 
   return (
