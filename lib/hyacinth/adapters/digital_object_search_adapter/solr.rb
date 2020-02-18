@@ -43,8 +43,10 @@ module Hyacinth
             search_params.each do |k, v|
               if k.to_s == 'q'
                 sp.q(v)
+              elsif k.to_s == 'facet_on'
+                Array(v).map { |eachv| sp.facet_on(eachv) }
               else
-                Array(v).map { |ev| sp.fq(k, ev) }
+                Array(v).map { |eachv| sp.fq(k, eachv) }
               end
             end
           end
