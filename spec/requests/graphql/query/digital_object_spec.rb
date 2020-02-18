@@ -109,7 +109,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
             "checksum": "SHA256:e1266b81a70083fa5e3bf456239a1160fc6ebc179cdd71e458a9dd4bc7cc21f6",
             "displayLabel": "Master",
             "fileSize": 23,
-            "location": "disk://#{Rails.root}/spec/fixtures/files/test.txt",
+            "location": "managed-disk://#{Rails.root.join('spec', 'fixtures', 'files', 'test.txt')}",
             "mediaType": "text/plain",
             "originalFilename": "test.txt"
           },

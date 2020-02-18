@@ -12,8 +12,12 @@ module Hyacinth
           @cache = {}
         end
 
-        def uri_prefix
-          "memory://"
+        def readable?
+          true
+        end
+
+        def writable?
+          true
         end
 
         # Generates a new storage location for the given identifier, ensuring that nothing currently exists at that location.
@@ -49,7 +53,7 @@ module Hyacinth
           @cache[location_uri] = content
         end
 
-        def writeable_impl(location_uri, &block)
+        def writable_impl(location_uri, &block)
           io_stub = StringIO.new
           block.yield(io_stub)
           io_stub.rewind

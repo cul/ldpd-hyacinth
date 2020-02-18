@@ -8,6 +8,13 @@ module Hyacinth
         @storage_adapters = config[:adapters].map do |adapter_config|
           Hyacinth::Adapters.create_from_config('Hyacinth::Adapters::StorageAdapter', adapter_config)
         end
+        # ensure that none of the storage adapters have the same uri_prefix
+        uri_prefixes = Set.new
+        @storage_adapters.each do |adapter|
+          prefix = adapter.uri_prefix
+          raise "Duplicate uri_prefix #{prefix} found for #{self.class}" if uri_prefixes.include?(prefix)
+          uri_prefixes << prefix
+        end
       end
 
       # The primary storage adapter is always the first storage adapter in the storage adapters list
@@ -37,9 +44,9 @@ module Hyacinth
         end
       end
 
-      def with_writeable(location, &block)
+      def with_writable(location, &block)
         Hyacinth::Config.lock_adapter.with_lock(location) do
-          storage_adapter_for_location(location).with_writeable(location, &block)
+          storage_adapter_for_location(location).with_writable(location, &block)
         end
       end
 
@@ -55,7 +62,9 @@ module Hyacinth
 
       # Returns the first compatible storage adapter for the given location, or nil if no compatible storage adapter is found.
       def storage_adapter_for_location(location)
-        @storage_adapters.find { |adapter| adapter.handles?(location) }
+        adapter = @storage_adapters.find { |ad| ad.handles?(location) }
+        Rails.logger.error("Tried to find storage adapter for #{location}, but no adapter was found.")
+        adapter
       end
     end
   end

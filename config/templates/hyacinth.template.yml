@@ -2,12 +2,27 @@ development:
   local_uri_prefix: localhost:3000 # prefix to use when minting local URIs
   metadata_storage:
     adapters:
-      - type: Disk
+      - uri_protocol: 'managed-disk'
+        type: ManagedDisk
         default_path: <%= Rails.root.join('tmp', 'development', 'metadata') %>
   resource_storage:
-    adapters:
-      - type: Disk
+    managed_storage_adapters:
+      - uri_protocol: 'managed-disk'
+        type: ManagedDisk
         default_path: <%= Rails.root.join('tmp', 'development', 'resources') %>
+    tracked_storage_adapters:
+      - uri_protocol: 'tracked-disk'
+        type: TrackedDisk
+  csv_import_storage:
+    adapters:
+      - uri_protocol: 'managed-disk'
+        type: ManagedDisk
+        default_path: <%= Rails.root.join('tmp', 'development', 'csv-imports') %>
+  csv_export_storage:
+    adapters:
+      - uri_protocol: 'managed-disk'
+        type: ManagedDisk
+        default_path: <%= Rails.root.join('tmp', 'development', 'csv-exports') %>
   lock_adapter:
     type: DatabaseEntryLock
     lock_timeout: <%= 20.seconds %>
@@ -33,12 +48,27 @@ test:
   local_uri_prefix: https://example.com
   metadata_storage:
     adapters:
-      - type: Disk
+      - uri_protocol: 'managed-disk'
+        type: ManagedDisk
         default_path: <%= Rails.root.join('tmp', 'test', 'metadata') %>
   resource_storage:
-    adapters:
-      - type: Disk
+    managed_storage_adapters:
+      - uri_protocol: 'managed-disk'
+        type: ManagedDisk
         default_path: <%= Rails.root.join('tmp', 'test', 'resources') %>
+    tracked_storage_adapters:
+      - uri_protocol: 'tracked-disk'
+        type: TrackedDisk
+  csv_import_storage:
+    adapters:
+      - uri_protocol: 'managed-disk'
+        type: ManagedDisk
+        default_path: <%= Rails.root.join('tmp', 'test', 'csv-imports') %>
+  csv_export_storage:
+    adapters:
+      - uri_protocol: 'managed-disk'
+        type: ManagedDisk
+        default_path: <%= Rails.root.join('tmp', 'test', 'csv-exports') %>
   lock_adapter:
     type: DatabaseEntryLock
     lock_timeout: <%= 30.seconds %>

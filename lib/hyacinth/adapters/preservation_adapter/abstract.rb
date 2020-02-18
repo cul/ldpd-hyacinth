@@ -10,6 +10,7 @@ module Hyacinth
         # @param location_uri [String]
         # @return [Boolean] true if this adapter can handle this type of location_uri
         def handles?(location_uri)
+          return false if location_uri.nil?
           location_uri.start_with?(uri_prefix)
         end
 

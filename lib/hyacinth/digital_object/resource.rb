@@ -66,9 +66,9 @@ module Hyacinth
         else
           # Non-tracking import operations require a file copy
           self.with_import_file do |input_file|
-            save_location = Hyacinth::Config.resource_storage.generate_new_location_uri(object_uid, resource_name)
+            save_location = Hyacinth::Config.resource_storage.generate_new_managed_location_uri(object_uid, resource_name)
 
-            Hyacinth::Config.resource_storage.with_writeable(save_location) do |output_blob|
+            Hyacinth::Config.resource_storage.with_writable(save_location) do |output_blob|
               IO.copy_stream(input_file, output_blob)
             end
             self.location = save_location

@@ -40,8 +40,8 @@ class Mutations::CreateAsset < Mutations::BaseMutation
     asset.with_primary_resource do |_resource_name, resource|
       resource.original_filename = blob.filename.to_s
       resource.media_type = BestType.mime_type.for_file_name(blob.filename.to_s)
-      resource.location = storage.generate_new_location_uri(SecureRandom.uuid, 'upload')
-      storage.with_writeable(resource.location) do |output_file|
+      resource.location = storage.generate_new_managed_location_uri(SecureRandom.uuid, 'upload')
+      storage.with_writable(resource.location) do |output_file|
         blob.download { |chunk| output_file << chunk }
       end
     end
