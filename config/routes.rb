@@ -54,8 +54,6 @@ Rails.application.routes.draw do
       resources :dynamic_field_categories, except: [:new, :edit]
       resources :dynamic_field_groups,     except: [:new, :edit, :index]
       resources :dynamic_fields,           except: [:new, :edit, :index]
-
-      resources :field_export_profiles,    except: [:new, :edit]
     end
   end
 end
