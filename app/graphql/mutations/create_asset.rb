@@ -14,7 +14,7 @@ class Mutations::CreateAsset < Mutations::BaseMutation
 
     asset = initialize_child_asset(parent, blob.filename.to_s)
     begin
-      resource = initialize_asset_resource_for_blob(asset, blob)
+      resource = initialize_asset_resource_for_blob(asset, blob, Hyacinth::Config.resource_storage)
       asset.dynamic_field_data['title'] = [{
         'title_sort_portion' => blob.filename.to_s
       }]
@@ -36,12 +36,12 @@ class Mutations::CreateAsset < Mutations::BaseMutation
     asset
   end
 
-  def initialize_asset_resource_for_blob(asset, blob)
+  def initialize_asset_resource_for_blob(asset, blob, storage)
     asset.with_primary_resource do |_resource_name, resource|
       resource.original_filename = blob.filename.to_s
       resource.media_type = BestType.mime_type.for_file_name(blob.filename.to_s)
-      resource.location = Hyacinth::Config.resource_storage.generate_new_managed_location_uri(SecureRandom.uuid, 'upload')
-      Hyacinth::Config.resource_storage.with_writable(resource.location) do |output_file|
+      resource.location = storage.generate_new_managed_location_uri(SecureRandom.uuid, 'upload')
+      storage.with_writable(resource.location) do |output_file|
         blob.download { |chunk| output_file << chunk }
       end
     end
