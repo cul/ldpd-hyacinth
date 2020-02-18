@@ -6,28 +6,28 @@ import DynamicFieldGroupNew from './DynamicFieldGroupNew';
 import DynamicFieldGroupEdit from './DynamicFieldGroupEdit';
 import ProtectedRoute from '../shared/routes/ProtectedRoute';
 
-export default class DynamicFieldGroups extends React.PureComponent {
-  render() {
-    return (
-      <Switch>
-        <ProtectedRoute
-          exact
-          path="/dynamic_field_groups/new"
-          component={DynamicFieldGroupNew}
-          requiredAbility={{ action: 'create', subject: 'DynamicFieldGroup' }}
-        />
+function DynamicFieldGroups() {
+  return (
+    <Switch>
+      <ProtectedRoute
+        exact
+        path="/dynamic_field_groups/new"
+        component={DynamicFieldGroupNew}
+        requiredAbility={{ action: 'create', subject: 'DynamicFieldGroup' }}
+      />
 
-        <ProtectedRoute
-          path="/dynamic_field_groups/:id/edit"
-          component={DynamicFieldGroupEdit}
-          requiredAbility={params => (
-            { action: 'update', subject: 'DynamicFieldGroup', id: params.id }
-          )}
-        />
+      <ProtectedRoute
+        path="/dynamic_field_groups/:id/edit"
+        component={DynamicFieldGroupEdit}
+        requiredAbility={params => (
+          { action: 'update', subject: 'DynamicFieldGroup', id: params.id }
+        )}
+      />
 
-        { /* When none of the above match, <PageNotFound> will be rendered */ }
-        <Route component={PageNotFound} />
-      </Switch>
-    );
-  }
+      { /* When none of the above match, <PageNotFound> will be rendered */ }
+      <Route component={PageNotFound} />
+    </Switch>
+  );
 }
+
+export default DynamicFieldGroups;

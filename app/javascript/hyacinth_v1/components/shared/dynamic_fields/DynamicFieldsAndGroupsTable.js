@@ -77,7 +77,7 @@ DynamicFieldsAndGroupsTable.propTypes = {
   rows: PropTypes.arrayOf(
     PropTypes.shape({
       displayLabel: PropTypes.string.isRequired,
-      id: PropTypes.number.isRequired,
+      id: PropTypes.string.isRequired,
       type: PropTypes.string.isRequired,
       sortOrder: PropTypes.number.isRequired,
     }),

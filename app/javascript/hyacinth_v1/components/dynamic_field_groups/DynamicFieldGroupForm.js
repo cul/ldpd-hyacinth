@@ -1,300 +1,219 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
-  Row, Col, Form, Button, Card, Tabs, Tab,
+  Row, Col, Form, Tabs, Tab,
 } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
-import { LinkContainer } from 'react-router-bootstrap';
-import produce from 'immer';
-import axios from 'axios';
+import { useHistory } from 'react-router-dom';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { produce } from 'immer';
 
-import hyacinthApi from '../../utils/hyacinthApi';
-import DynamicFieldsAndGroupsTable from '../shared/dynamic_fields/DynamicFieldsAndGroupsTable';
-import withErrorHandler from '../../hoc/withErrorHandler/withErrorHandler';
 import FormButtons from '../shared/forms/FormButtons';
 import InputGroup from '../shared/forms/InputGroup';
 import Label from '../shared/forms/Label';
 import NumberInput from '../shared/forms/inputs/NumberInput';
 import TextInput from '../shared/forms/inputs/TextInput';
-import SelectInput from '../shared/forms/inputs/SelectInput';
 import Checkbox from '../shared/forms/inputs/Checkbox';
 import JSONInput from '../shared/forms/inputs/JSONInput';
+import DynamicFieldCategorySelect from '../shared/forms/inputs/selects/DynamicFieldCategorySelect';
+import {
+  createDynamicFieldGroupMutation,
+  updateDynamicFieldGroupMutation,
+  deleteDynamicFieldGroupMutation,
+} from '../../graphql/dynamicFieldGroups';
+import GraphQLErrors from '../shared/GraphQLErrors';
+import DynamicFieldGroupChildren from './DynamicFieldGroupChildren';
+import { fieldExportProfilesQuery } from '../../graphql/fieldExportProfiles';
 
-class DynamicFieldGroupForm extends React.Component {
-  state = {
-    formType: '',
-    fieldExportProfiles: [],
-    dynamicFieldCategories: [],
-    dynamicFieldGroup: {
-      stringKey: '',
-      displayLabel: '',
-      sortOrder: '',
-      isRepeatable: false,
-      parentType: '',
-      parentId: '',
-      exportRules: [],
-    },
-    children: [],
-  }
+function DynamicFieldGroupForm(props) {
+  const { formType, dynamicFieldGroup, defaultValues } = props;
+  const id = dynamicFieldGroup ? dynamicFieldGroup.id : null;
 
-  componentDidMount() {
-    const { id, formType, defaultValues } = this.props;
+  const history = useHistory();
 
-    if (formType === 'edit' && id) {
-      axios.all([
-        hyacinthApi.get(`/dynamic_field_groups/${id}`),
-        hyacinthApi.get('/field_export_profiles')
-      ]).then(axios.spread((group, profiles) => {
-        const { data: { dynamicFieldGroup, dynamicFieldGroup: { parentType } } } = group;
-        const { data: { fieldExportProfiles } } = profiles;
+  const transformExportRules = rules => rules.map(r => ({
+    id: r.id,
+    fieldExportProfileId: r.fieldExportProfile.id,
+    translationLogic: r.translationLogic,
+  }));
 
-        if (parentType === 'DynamicFieldCategory') {
-          this.loadCategories();
-        }
+  const [stringKey, setStringKey] = useState(dynamicFieldGroup ? dynamicFieldGroup.stringKey : '');
+  const [displayLabel, setDisplayLabel] = useState(dynamicFieldGroup ? dynamicFieldGroup.displayLabel : '');
+  const [sortOrder, setSortOrder] = useState(
+    dynamicFieldGroup ? dynamicFieldGroup.sortOrder : null,
+  );
+  const [isRepeatable, setIsRepeatable] = useState(
+    dynamicFieldGroup ? dynamicFieldGroup.isRepeatable : false,
+  );
+  const [parentType] = useState(
+    dynamicFieldGroup ? dynamicFieldGroup.parent.type : defaultValues.parentType,
+  );
+  const [parentId, setParentId] = useState(
+    dynamicFieldGroup ? dynamicFieldGroup.parent.id : defaultValues.parentId,
+  );
+  const [exportRules, setExportRules] = useState(
+    dynamicFieldGroup ? transformExportRules(dynamicFieldGroup.exportRules) : [],
+  );
 
-        this.setState(produce((draft) => {
-          draft.formType = formType;
-          draft.dynamicFieldGroup = dynamicFieldGroup; // except children
-          draft.children = dynamicFieldGroup.children;
-          draft.fieldExportProfiles = fieldExportProfiles.map(p => ({ id: p.id, name: p.name }));
-          draft.dynamicFieldGroup.exportRules = this.mergingExportProfiles(dynamicFieldGroup.exportRules, fieldExportProfiles)
-        }));
-      }));
-    } else if (formType === 'new') {
-      const { parentType, parentId } = defaultValues;
+  const [createDynamicFieldGroup, { error: createError }] = useMutation(
+    createDynamicFieldGroupMutation,
+  );
+  const [updateDynamicFieldGroup, { error: updateError }] = useMutation(
+    updateDynamicFieldGroupMutation,
+  );
+  const [deleteDynamicFieldGroup, { error: deleteError }] = useMutation(
+    deleteDynamicFieldGroupMutation,
+  );
 
-      if (parentType === 'DynamicFieldCategory') {
-        this.loadCategories();
-      }
-
-      hyacinthApi.get('/field_export_profiles')
-        .then((res) => {
-          this.setState(produce((draft) => {
-            draft.formType = formType;
-            draft.dynamicFieldGroup.parentType = parentType || 'DynamicFieldCategory';
-            draft.dynamicFieldGroup.parentId = parentId;
-            draft.fieldExportProfiles = res.data.fieldExportProfiles.map(p => ({ id: p.id, name: p.name }));
-            draft.dynamicFieldGroup.exportRules = this.mergingExportProfiles([], res.data.fieldExportProfiles)
-          }));
+  const { data: fieldExportProfileResponse } = useQuery(fieldExportProfilesQuery, {
+    onCompleted: (data) => {
+      setExportRules(prevExportRules => produce(prevExportRules, (draft) => {
+        data.fieldExportProfiles.forEach((p) => {
+          if (!prevExportRules.map(i => i.fieldExportProfileId).includes(p.id)) {
+            draft.push({ fieldExportProfileId: p.id, translationLogic: '{}' });
+          }
         });
-    }
-  }
+      }));
+    },
+  });
 
-  onSave = () => {
-    const { formType, dynamicFieldGroup: { id }, dynamicFieldGroup } = this.state;
-    const { history: { push } } = this.props;
+  const onTranslationRuleChange = (fieldExportProfileId, translationLogic) => {
+    setExportRules(prevExportRules => produce(prevExportRules, (draft) => {
+      const index = draft.findIndex(e => e.fieldExportProfileId === fieldExportProfileId);
+      draft[index].translationLogic = translationLogic;
+    }));
+  };
+
+  const onDeleteHandler = (event) => {
+    event.preventDefault();
+
+    const variables = { input: { id } };
+
+    deleteDynamicFieldGroup({ variables }).then(() => history.push('/dynamic_fields'));
+  };
+
+  const onSave = () => {
+    const variables = {
+      input: {
+        displayLabel, sortOrder, isRepeatable, parentType, parentId, exportRules,
+      },
+    };
 
     switch (formType) {
       case 'new':
-        return hyacinthApi.post('/dynamic_field_groups', { dynamicFieldGroup })
-          .then((res) => {
-            const { dynamicFieldGroup: { id: newId } } = res.data;
+        variables.input.stringKey = stringKey;
+        return createDynamicFieldGroup({ variables }).then((res) => {
+          const { dynamicFieldGroup: { id: newId } } = res.data.createDynamicFieldGroup;
 
-            push(`/dynamic_field_groups/${newId}/edit`);
-          });
+          history.push(`/dynamic_field_groups/${newId}/edit`);
+        });
       case 'edit':
-        return hyacinthApi.patch(`/dynamic_field_groups/${id}`, { dynamicFieldGroup })
+        variables.input.id = id;
+        return updateDynamicFieldGroup({ variables });
       default:
         return null;
     }
-  }
+  };
 
-  onDeleteHandler = (event) => {
-    event.preventDefault();
+  return (
+    <Row>
+      <Col sm={7}>
+        <Form>
+          <GraphQLErrors errors={createError || updateError || deleteError} />
+          <InputGroup>
+            <Label sm={12} xl={3}>String Key</Label>
+            <TextInput sm={12} xl={9} value={stringKey} onChange={setStringKey} disabled={formType === 'edit'} />
+          </InputGroup>
 
-    const { id, history: { push } } = this.props;
+          <InputGroup>
+            <Label sm={12} xl={3}>Display Label</Label>
+            <TextInput sm={12} xl={9} value={displayLabel} onChange={setDisplayLabel} />
+          </InputGroup>
 
-    hyacinthApi.delete(`/dynamic_field_groups/${id}`)
-      .then(() => push('/dynamic_fields'));
-  }
+          <InputGroup>
+            <Label sm={12} xl={3}>Sort Order</Label>
+            <NumberInput sm={12} xl={9} value={sortOrder} onChange={setSortOrder} />
+          </InputGroup>
 
-  onChangeHandler(name, value) {
-    this.setState(produce((draft) => {
-      draft.dynamicFieldGroup[name] = value;
-    }));
-  }
+          {
+            parentType === 'DynamicFieldCategory' && (
+              <InputGroup>
+                <Label sm={12} xl={3}>Dynamic Field Category</Label>
+                <DynamicFieldCategorySelect
+                  sm={12}
+                  xl={9}
+                  value={parentId}
+                  onChange={setParentId}
+                />
+              </InputGroup>
+            )
+          }
 
-  onExportRuleChange(index, value) {
-    this.setState(produce((draft) => {
-      draft.dynamicFieldGroup.exportRules[index].translationLogic = value;
-    }));
-  }
+          <InputGroup>
+            <Label sm={12} xl={3}>Is Repeatable?</Label>
+            <Checkbox sm={12} xl={9} value={isRepeatable} onChange={setIsRepeatable} />
+          </InputGroup>
 
-  mergingExportProfiles(exportRules, profiles) {
-    let newExportRules = [...exportRules];
-
-    profiles.forEach(p => {
-      if (!exportRules.map(r => r.fieldExportProfileId).includes(p.id)) {
-        newExportRules.push({ fieldExportProfileId: p.id, translationLogic: '{}'})
-      }
-    })
-
-    return newExportRules;
-  }
-
-  loadCategories() {
-    hyacinthApi.get('/dynamic_field_categories')
-      .then((res) => {
-        this.setState(produce((draft) => {
-          draft.dynamicFieldCategories = res.data.dynamicFieldCategories.map(category => (
-            { id: category.id, displayLabel: category.displayLabel }
-          ));
-        }));
-      });
-  }
-
-  updateChildren = () => {
-    const { dynamicFieldGroup: { id } } = this.state;
-
-    hyacinthApi.get(`/dynamic_field_groups/${id}`)
-      .then((res) => {
-        this.setState(produce((draft) => {
-          draft.children = res.data.dynamicFieldGroup.children;
-        }));
-      });
-  }
-
-  render() {
-    const {
-      formType,
-      dynamicFieldGroup: {
-        id, stringKey, displayLabel, sortOrder, isRepeatable, parentType, parentId, exportRules,
-      },
-      dynamicFieldCategories,
-      fieldExportProfiles,
-      children,
-    } = this.state;
-
-    return (
-      <Row>
-        <Col sm={7}>
-          <Form onSubmit={this.onSubmitHandler}>
-            <InputGroup>
-              <Label sm={12} xl={3}>String Key</Label>
-              <TextInput
-                sm={12}
-                xl={9}
-                value={stringKey}
-                onChange={v => this.onChangeHandler('stringKey', v)}
-                disabled={formType === 'edit'}
-              />
-            </InputGroup>
-
-            <InputGroup>
-              <Label sm={12} xl={3}>Display Label</Label>
-              <TextInput
-                sm={12}
-                xl={9}
-                value={displayLabel}
-                onChange={v => this.onChangeHandler('displayLabel', v)}
-              />
-            </InputGroup>
-
-            <InputGroup>
-              <Label sm={12} xl={3}>Sort Order</Label>
-              <NumberInput
-                sm={12}
-                xl={9}
-                value={sortOrder}
-                onChange={v => this.onChangeHandler('sortOrder', v)}
-              />
-            </InputGroup>
-
-            {
-              parentType === 'DynamicFieldCategory' && (
-                <InputGroup>
-                  <Label sm={12} xl={3}>Dynamic Field Category</Label>
-                  <SelectInput
-                    sm={12}
-                    xl={9}
-                    value={parentId}
-                    options={dynamicFieldCategories.map(c => ({ label: c.displayLabel, value: c.id }))}
-                    onChange={v => this.onChangeHandler('parentId', v)}
-                  />
-                </InputGroup>
-              )
-            }
-
-            <InputGroup>
-              <Label sm={12} xl={3}>Is Repeatable?</Label>
-              <Checkbox
-                sm={12}
-                xl={9}
-                value={isRepeatable}
-                onChange={v => this.onChangeHandler('isRepeatable', v)}
-              />
-            </InputGroup>
-
-            <InputGroup>
-              <Label sm={12} xl={3}>Export Rules</Label>
-              <Col sm={12} xl={9}>
-                {
-                  exportRules.length > 0 ? (
-                    <Tabs id="export_profiles">
-                      {
-                        exportRules.map((rule, index) => {
-                          const { name } = fieldExportProfiles.find(p => p.id === rule.fieldExportProfileId);
-
-                          return (
-                            <Tab eventKey={name} title={name} key={name}>
-                              <JSONInput
-                                sm={12}
-                                name={`${name}_input`}
-                                value={rule.translationLogic}
-                                onChange={v => this.onExportRuleChange(index, v)}
-                              />
-                            </Tab>
-                          );
-                        })
-                      }
-                    </Tabs>
-                  ) : '-- None ---'
-                }
-              </Col>
-            </InputGroup>
-
-            <FormButtons
-              formType={formType}
-              cancelTo="/dynamic_fields"
-              onDelete={this.onDeleteHandler}
-              onSave={this.onSave}
-            />
-          </Form>
-        </Col>
-        <Col sm={5}>
-          <Card>
-            <Card.Header>Child Fields and Field Groups</Card.Header>
-            <Card.Body>
-              <DynamicFieldsAndGroupsTable rows={children} onChange={this.updateChildren}/>
-
+          <InputGroup>
+            <Label sm={12} xl={3}>Export Rules</Label>
+            <Col sm={12} xl={9}>
               {
-                formType === 'edit' && (
-                  <>
-                    <LinkContainer className="m-1" to={`/dynamic_fields/new?dynamicFieldGroupId=${id}`}>
-                      <Button variant="secondary">New Child Field</Button>
-                    </LinkContainer>
+                fieldExportProfileResponse && exportRules.length > 0 ? (
+                  <Tabs id="export_profiles">
+                    {
+                      exportRules.map((rule) => {
+                        const { fieldExportProfileId, translationLogic } = rule;
+                        const { fieldExportProfiles } = fieldExportProfileResponse;
+                        const { name } = fieldExportProfiles.find(p => (
+                          p.id === fieldExportProfileId
+                        ));
 
-                    <LinkContainer className="m-1" to={`/dynamic_field_groups/new?parentId=${id}&parentType=DynamicFieldGroup`}>
-                      <Button variant="secondary">New Child Field Group</Button>
-                    </LinkContainer>
-                  </>
-                )
+                        return (
+                          <Tab eventKey={name} title={name} key={name}>
+                            <JSONInput
+                              sm={12}
+                              name={`${name}_input`}
+                              value={translationLogic}
+                              onChange={v => onTranslationRuleChange(fieldExportProfileId, v)}
+                            />
+                          </Tab>
+                        );
+                      })
+                    }
+                  </Tabs>
+                ) : '-- None ---'
               }
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    );
-  }
+            </Col>
+          </InputGroup>
+
+          <FormButtons
+            formType={formType}
+            cancelTo="/dynamic_fields"
+            onDelete={onDeleteHandler}
+            onSave={onSave}
+          />
+        </Form>
+      </Col>
+      <Col sm={5}>
+        <DynamicFieldGroupChildren id={id} />
+      </Col>
+    </Row>
+  );
 }
 
 DynamicFieldGroupForm.defaultProps = {
-  id: null,
+  dynamicFieldGroup: null,
+  defaultValues: null,
 };
 
 DynamicFieldGroupForm.propTypes = {
   formType: PropTypes.oneOf(['new', 'edit']).isRequired,
-  id: PropTypes.string,
+  dynamicFieldGroup: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+  }),
+  defaultValues: PropTypes.shape({
+    parentId: PropTypes.string.isRequired,
+    parentType: PropTypes.string.isRequired,
+  }),
 };
 
-export default withRouter(withErrorHandler(DynamicFieldGroupForm, hyacinthApi));
+export default DynamicFieldGroupForm;

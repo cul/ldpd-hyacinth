@@ -1,26 +1,35 @@
 import React from 'react';
+import { useQuery } from '@apollo/react-hooks';
+import { useParams } from 'react-router-dom';
 
 import ContextualNavbar from '../shared/ContextualNavbar';
 import DynamicFieldGroupForm from './DynamicFieldGroupForm';
 import DynamicFieldsBreadcrumbs from '../shared/dynamic_fields/DynamicFieldsBreadcrumbs';
+import { getDynamicFieldGroupQuery } from '../../graphql/dynamicFieldGroups';
+import GraphQLErrors from '../shared/GraphQLErrors';
 
-class DynamicFieldGroupEdit extends React.PureComponent {
-  render() {
-    const { match: { params: { id } } } = this.props;
+function DynamicFieldGroupEdit() {
+  const { id } = useParams();
 
-    return (
-      <>
-        <ContextualNavbar
-          title="Update Dynamic Field Group"
-          rightHandLinks={[{ link: '/dynamic_fields', label: 'Back to Dynamic Fields' }]}
-        />
+  const { loading, error, data } = useQuery(
+    getDynamicFieldGroupQuery, { variables: { id } },
+  );
 
-        <DynamicFieldsBreadcrumbs for={{ id, type: 'DynamicFieldGroup' }} />
+  if (loading) return (<></>);
+  if (error) return (<GraphQLErrors errors={error} />);
 
-        <DynamicFieldGroupForm formType="edit" key={id} id={id} />
-      </>
-    );
-  }
+  return (
+    <>
+      <ContextualNavbar
+        title="Update Dynamic Field Group"
+        rightHandLinks={[{ link: '/dynamic_fields', label: 'Back to Dynamic Fields' }]}
+      />
+
+      <DynamicFieldsBreadcrumbs for={{ id, type: 'DynamicFieldGroup' }} />
+
+      <DynamicFieldGroupForm formType="edit" id={id} dynamicFieldGroup={data.dynamicFieldGroup} />
+    </>
+  );
 }
 
 export default DynamicFieldGroupEdit;
