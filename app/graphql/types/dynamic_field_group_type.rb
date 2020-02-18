@@ -12,7 +12,7 @@ module Types
     field :export_rules, [ExportRuleType], null: true
     field :created_by, UserType, null: true
     field :updated_by, UserType, null: true
-    field :children, [DynamicFieldGroupChildType], null: true
+    field :children, [DynamicFieldGroupChildType], null: true, method: :ordered_children
     field :parent, DynamicFieldCollationType, null: false
   end
 end
