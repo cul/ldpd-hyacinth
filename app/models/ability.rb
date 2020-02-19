@@ -22,6 +22,7 @@ class Ability
       can [:read, :create], Term
       can :read, Vocabulary           # Need to allow this because Terms are nested under vocabularies
       can :read, DynamicFieldCategory # Need to allow this so we can render EnabledDynamicField pages.
+      can :read, ExportJob, user_id: user.id
       can :destroy, ExportJob, user_id: user.id
 
       # System Wide Permissions
