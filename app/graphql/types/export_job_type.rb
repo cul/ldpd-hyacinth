@@ -2,6 +2,8 @@
 
 module Types
   class ExportJobType < Types::BaseObject
+    include Types::Pageable
+
     description 'An export job'
 
     field :id, ID, null: false
