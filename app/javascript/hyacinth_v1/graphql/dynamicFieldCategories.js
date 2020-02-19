@@ -6,6 +6,7 @@ export const getDynamicFieldCategoryQuery = gql`
       id
       displayLabel
       sortOrder
+      type: __typename
     }
   }
 `;

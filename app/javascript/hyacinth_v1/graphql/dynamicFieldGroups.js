@@ -49,6 +49,28 @@ export const dynamicFieldGroupChildrenQuery = gql`
   }
 `;
 
+export const dynamicFieldGroupPathQuery = gql`
+  query DynamicFieldGroupPathQuery($id: ID!) {
+    dynamicFieldGroup(id: $id) {
+      id
+      displayLabel
+      type: __typename
+      __typename
+      path {
+        ...on DynamicFieldGroup {
+          id
+          displayLabel
+        }
+        ...on DynamicFieldCategory {
+          id
+          displayLabel
+        }
+        type: __typename
+      }
+    }
+  }
+`;
+
 export const createDynamicFieldGroupMutation = gql`
   mutation CreateDynamicFieldGroup($input: CreateDynamicFieldGroupInput!) {
     createDynamicFieldGroup(input: $input) {

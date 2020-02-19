@@ -27,7 +27,7 @@ function DynamicFieldGroupEdit() {
 
       <DynamicFieldsBreadcrumbs for={{ id, type: 'DynamicFieldGroup' }} />
 
-      <DynamicFieldGroupForm formType="edit" id={id} dynamicFieldGroup={data.dynamicFieldGroup} />
+      <DynamicFieldGroupForm formType="edit" dynamicFieldGroup={data.dynamicFieldGroup} />
     </>
   );
 }

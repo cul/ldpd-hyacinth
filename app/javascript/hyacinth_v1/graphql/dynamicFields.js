@@ -19,6 +19,29 @@ export const getDynamicFieldQuery = gql`
   }
 `;
 
+export const dynamicFieldPathQuery = gql`
+  query DynamicFieldPathQuery($id: ID!) {
+    dynamicField(id: $id) {
+      id
+      displayLabel
+      type: __typename
+      __typename # Apollo can't correctly cache if we override this field. Eventually we might override how cache identifiers are generated.
+      path {
+        ...on DynamicFieldGroup {
+          id
+          displayLabel
+        }
+        ...on DynamicFieldCategory {
+          id
+          displayLabel
+        }
+        type: __typename
+        __typename
+      }
+    }
+  }
+`;
+
 export const createDynamicFieldMutation = gql`
   mutation CreateDynamicField($input: CreateDynamicFieldInput!) {
     createDynamicField(input: $input) {
