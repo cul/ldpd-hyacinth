@@ -1,18 +1,17 @@
 import { useQuery } from '@apollo/react-hooks';
 import PaginationBar from '@hyacinth_v1/components/shared/PaginationBar';
-import React from 'react';
+import React, { useState } from 'react';
 import { Table } from 'react-bootstrap';
 import { exportJobsQuery } from '../../graphql/exportJobs';
 import ContextualNavbar from '../shared/ContextualNavbar';
 import GraphQLErrors from '../shared/GraphQLErrors';
 
 function ExportJobIndex() {
-  const perPage = 2;
-  const page = 1;
-  const limit = 2;
-  const offset = 0;
 
-  const { loading, error, data } = useQuery(exportJobsQuery, {
+  const limit = 30;
+  const [offset, setOffset] = useState(0);
+
+  const { loading, error, data, refetch } = useQuery(exportJobsQuery, {
     variables: {
       limit,
       offset,
@@ -26,14 +25,14 @@ function ExportJobIndex() {
   const totalExportJobs = data.exportJobs.totalCount;
 
   const onPageNumberClick = (page) => {
-    console.log("Clicked on page: " + page);
+    setOffset(limit * (page - 1));
+    refetch();
   };
 
   return (
     <>
       <ContextualNavbar
-        title="Field Export Profiles"
-        rightHandLinks={[{ link: '/field_export_profiles/new', label: 'New Field Export Profile' }]}
+        title="Export Jobs"
       />
       <PaginationBar
         offset={offset}
@@ -44,7 +43,14 @@ function ExportJobIndex() {
       <Table hover>
         <thead>
           <tr>
-            <th>Name</th>
+            <th>Export Job ID</th>
+            <th>Search Params</th>
+            <th>User</th>
+            <th>Created</th>
+            <th>Status</th>
+            <th>Records Processed</th>
+            <th>Download</th>
+            <th>Delete?</th>
           </tr>
         </thead>
         <tbody>
@@ -52,8 +58,17 @@ function ExportJobIndex() {
             (
               exportJobs.map(exportJob => (
                 <tr key={exportJob.id}>
+                  <td>{exportJob.id}</td>
+                  <td>{exportJob.searchParams}</td>
+                  <td>{exportJob.user.fullName}</td>
+                  <td>{exportJob.createdAt}</td>
+                  <td>{exportJob.status}</td>
+                  <td>{exportJob.numberOfRecordsProcessed}</td>
                   <td>
-                    {exportJob.id}
+                    <a href="#">Download</a>
+                  </td>
+                  <td>
+                    <a href="#">Delete</a>
                   </td>
                 </tr>
               ))
@@ -61,6 +76,12 @@ function ExportJobIndex() {
           }
         </tbody>
       </Table>
+      <PaginationBar
+        offset={offset}
+        limit={limit}
+        totalItems={totalExportJobs}
+        onPageNumberClick={onPageNumberClick}
+      />
     </>
   );
 }

@@ -5,6 +5,13 @@ export const exportJobsQuery = gql`
     exportJobs(limit: $limit, offset: $offset) {
       nodes {
         id
+        searchParams
+        user {
+          fullName
+        }
+        createdAt,
+        status
+        numberOfRecordsProcessed
       }
       pageInfo {
         hasPreviousPage
