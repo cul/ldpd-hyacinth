@@ -15,8 +15,7 @@ RSpec.describe Mutations::ExportJob::CreateExportJob, type: :request do
       let(:variables) do
         {
           input: {
-            searchParams: search_params,
-            userId: user.id
+            searchParams: search_params
           }
         }
       end
@@ -37,7 +36,7 @@ RSpec.describe Mutations::ExportJob::CreateExportJob, type: :request do
 
       it 'returns error' do
         expect(response.body).to be_json_eql(%(
-           "Variable input of type CreateExportJobInput! was provided invalid value for userId (Expected value to not be null), searchParams (Expected value to not be null)"
+           "Variable input of type CreateExportJobInput! was provided invalid value for searchParams (Expected value to not be null)"
         )).at_path('errors/0/message')
       end
     end

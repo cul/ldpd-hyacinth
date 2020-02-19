@@ -69,6 +69,7 @@ Lint/UselessAssignment:
 Metrics/AbcSize:
   Exclude:
     - 'app/controllers/concerns/hyacinth/users/cas_authentication_behavior.rb'
+    - 'app/models/ability.rb'
     - 'app/models/concerns/digital_object_concerns/digital_object_data/setters/parent_uids.rb'
     - 'app/models/concerns/digital_object_concerns/publish_behavior.rb'
     - 'app/models/concerns/digital_object_concerns/save_behavior.rb'

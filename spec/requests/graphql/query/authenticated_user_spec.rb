@@ -48,6 +48,18 @@ RSpec.describe 'Query for Authenticated User', type: :request do
           },
           {
             "actions": [
+              "read"
+            ],
+            "conditions": {
+              "userId": #{User.first.id}
+            },
+            "inverted": false,
+            "subject": [
+              "ExportJob"
+            ]
+          },
+          {
+            "actions": [
               "destroy"
             ],
             "conditions": {
@@ -110,6 +122,18 @@ RSpec.describe 'Query for Authenticated User', type: :request do
             "conditions": {},
             "inverted": false,
             "subject": ["DynamicFieldCategory"]
+          },
+          {
+            "actions": [
+              "read"
+            ],
+            "conditions": {
+              "userId": #{User.first.id}
+            },
+            "inverted": false,
+            "subject": [
+              "ExportJob"
+            ]
           },
           {
             "actions": [
