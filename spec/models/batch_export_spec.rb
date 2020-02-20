@@ -15,13 +15,19 @@ RSpec.describe BatchExport, type: :model do
       its(:status) { is_expected.to eq 'pending' }
       its(:duration) { is_expected.to eq 0 }
       its(:number_of_records_processed) { is_expected.to eq 0 }
-      it 'has the expected created_at time' do
-        Timecop.freeze do
+
+      context "time-based tests" do
+        before do
+          # Must use (nsec: 0) below to work around Timecop nanosecond drift bug (that appears in Travis CI)
+          # See: https://github.com/travisjeffery/timecop/issues/97#issuecomment-41294684
+          Timecop.freeze(Time.current.change(nsec: 0))
+        end
+        after { Timecop.return }
+
+        it 'has the expected created_at time' do
           expect(batch_export.created_at).to eq(Time.current)
         end
-      end
-      it 'has the expected updated_at time' do
-        Timecop.freeze do
+        it 'has the expected updated_at time' do
           expect(batch_export.updated_at).to eq(Time.current)
         end
       end
