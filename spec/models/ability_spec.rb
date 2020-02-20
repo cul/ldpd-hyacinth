@@ -13,7 +13,10 @@ RSpec.describe Ability, type: :model do
       { actions: [:read], conditions: {}, subject: ["DynamicFieldCategory"], inverted: false },
       { actions: [:create], conditions: {}, subject: ["BatchExport"], inverted: false },
       { actions: [:read], conditions: { user_id: 1 }, subject: ["BatchExport"], inverted: false },
-      { actions: [:destroy], conditions: { user_id: 1 }, subject: ["BatchExport"], inverted: false }
+      { actions: [:destroy], conditions: { user_id: 1 }, subject: ["BatchExport"], inverted: false },
+      { actions: [:create], conditions: {}, subject: ["BatchImport"], inverted: false },
+      { actions: [:read], conditions: { user_id: 1 }, subject: ["BatchImport"], inverted: false },
+      { actions: [:destroy], conditions: { user_id: 1 }, subject: ["BatchImport"], inverted: false }
     ]
   end
 

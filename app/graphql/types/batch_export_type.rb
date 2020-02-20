@@ -4,7 +4,7 @@ module Types
   class BatchExportType < Types::BaseObject
     include Types::Pageable
 
-    description 'An batch export'
+    description 'A batch export'
 
     field :id, ID, null: false
     field :search_params, String, null: false

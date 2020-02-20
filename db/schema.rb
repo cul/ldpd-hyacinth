@@ -48,11 +48,32 @@ ActiveRecord::Schema.define(version: 2020_02_21_165018) do
     t.index ["user_id"], name: "index_batch_exports_on_user_id"
   end
 
+  create_table "batch_imports", force: :cascade do |t|
+    t.integer "user_id"
+    t.text "file_location"
+    t.integer "status", default: 0, null: false
+    t.integer "priority", default: 0, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_batch_imports_on_user_id"
+  end
+
   create_table "database_entry_locks", force: :cascade do |t|
     t.string "lock_key", null: false
     t.datetime "created_at", null: false
     t.datetime "expires_at", null: false
     t.index ["lock_key"], name: "index_database_entry_locks_on_lock_key", unique: true
+  end
+
+  create_table "digital_object_imports", force: :cascade do |t|
+    t.integer "batch_import_id"
+    t.text "digital_object_data", null: false
+    t.text "import_errors"
+    t.integer "status", default: 0, null: false
+    t.integer "index"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["batch_import_id"], name: "index_digital_object_imports_on_batch_import_id"
   end
 
   create_table "digital_object_records", force: :cascade do |t|

@@ -7,7 +7,9 @@ class HyacinthSchema < GraphQL::Schema
 
   rescue_from(ActiveRecord::RecordNotFound) do |err, _obj, _args, _ctx, _field|
     # Raise a graphql-friendly error with a custom message or we could just send back nil
-    raise GraphQL::ExecutionError, err.message.to_s
+    error = "Couldn't find #{err.model}"
+    error += " with '#{err.primary_key}'=#{err.id}" if err.primary_key && err.id
+    raise GraphQL::ExecutionError, error
   end
 
   rescue_from ActiveRecord::RecordInvalid do |exception|
