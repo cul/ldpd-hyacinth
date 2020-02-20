@@ -81,8 +81,11 @@ module Types
     end
 
     def digital_objects(**arguments)
-      search_params = {}.merge(arguments.fetch('filters', {}))
-      search_params['q'] = arguments['query']
+      search_params = {}
+      arguments.fetch(:filters, []).each do |filter_attribute|
+        (search_params[filter_attribute.field] ||= []) << filter_attribute.value
+      end
+      search_params['q'] = arguments[:query]
       search_params['facet_on'] = ['digital_object_type_ssi']
       # TODO: consider object read permissions via projects
       # TODO: identification of possible filters in scope of search
