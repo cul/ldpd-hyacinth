@@ -14,7 +14,6 @@ RSpec.describe DigitalObjectConcerns::IndexBehavior, solr: true do
       digital_object_with_sample_data.save
       results = Hyacinth::Config.digital_object_search_adapter.search(search_params)
       curr = results['response']['docs'].first
-      puts(results.inspect)
       expect(curr["timestamp"]).to be > prior["timestamp"]
     end
   end
