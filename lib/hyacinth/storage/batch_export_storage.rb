@@ -2,7 +2,7 @@
 
 module Hyacinth
   module Storage
-    class ExportJobStorage < AbstractStorage
+    class BatchExportStorage < AbstractStorage
       def initialize(config)
         super(config)
       end

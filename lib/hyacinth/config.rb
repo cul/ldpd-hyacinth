@@ -26,8 +26,8 @@ module Hyacinth
       @import_job_storage ||= Hyacinth::Storage::CsvImportStorage.new(HYACINTH[:import_job_storage])
     end
 
-    def self.export_job_storage
-      @export_job_storage ||= Hyacinth::Storage::ExportJobStorage.new(HYACINTH[:export_job_storage])
+    def self.batch_export_storage
+      @batch_export_storage ||= Hyacinth::Storage::BatchExportStorage.new(HYACINTH[:batch_export_storage])
     end
 
     def self.preservation_persistence

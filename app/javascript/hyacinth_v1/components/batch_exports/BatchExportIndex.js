@@ -2,16 +2,16 @@ import { useQuery } from '@apollo/react-hooks';
 import PaginationBar from '@hyacinth_v1/components/shared/PaginationBar';
 import React, { useState } from 'react';
 import { Table } from 'react-bootstrap';
-import { exportJobsQuery } from '../../graphql/exportJobs';
+import { batchExportsQuery } from '../../graphql/batchExports';
 import ContextualNavbar from '../shared/ContextualNavbar';
 import GraphQLErrors from '../shared/GraphQLErrors';
 
-function ExportJobIndex() {
+function BatchExportIndex() {
 
   const limit = 30;
   const [offset, setOffset] = useState(0);
 
-  const { loading, error, data, refetch } = useQuery(exportJobsQuery, {
+  const { loading, error, data, refetch } = useQuery(batchExportsQuery, {
     variables: {
       limit,
       offset,
@@ -21,8 +21,8 @@ function ExportJobIndex() {
   if (loading) return (<></>);
   if (error) return (<GraphQLErrors errors={error} />);
 
-  const exportJobs = data.exportJobs.nodes;
-  const totalExportJobs = data.exportJobs.totalCount;
+  const batchExports = data.batchExports.nodes;
+  const totalBatchExports = data.batchExports.totalCount;
 
   const onPageNumberClick = (page) => {
     setOffset(limit * (page - 1));
@@ -32,18 +32,18 @@ function ExportJobIndex() {
   return (
     <>
       <ContextualNavbar
-        title="Export Jobs"
+        title="Batch Exports"
       />
       <PaginationBar
         offset={offset}
         limit={limit}
-        totalItems={totalExportJobs}
+        totalItems={totalBatchExports}
         onPageNumberClick={onPageNumberClick}
       />
       <Table hover>
         <thead>
           <tr>
-            <th>Export Job ID</th>
+            <th>Batch Export ID</th>
             <th>Search Params</th>
             <th>User</th>
             <th>Created</th>
@@ -56,14 +56,14 @@ function ExportJobIndex() {
         <tbody>
           {
             (
-              exportJobs.map(exportJob => (
-                <tr key={exportJob.id}>
-                  <td>{exportJob.id}</td>
-                  <td>{exportJob.searchParams}</td>
-                  <td>{exportJob.user.fullName}</td>
-                  <td>{exportJob.createdAt}</td>
-                  <td>{exportJob.status}</td>
-                  <td>{exportJob.numberOfRecordsProcessed}</td>
+              batchExports.map(batchExport => (
+                <tr key={batchExport.id}>
+                  <td>{batchExport.id}</td>
+                  <td>{batchExport.searchParams}</td>
+                  <td>{batchExport.user.fullName}</td>
+                  <td>{batchExport.createdAt}</td>
+                  <td>{batchExport.status}</td>
+                  <td>{batchExport.numberOfRecordsProcessed}</td>
                   <td>
                     <a href="#">Download</a>
                   </td>
@@ -79,11 +79,11 @@ function ExportJobIndex() {
       <PaginationBar
         offset={offset}
         limit={limit}
-        totalItems={totalExportJobs}
+        totalItems={totalBatchExports}
         onPageNumberClick={onPageNumberClick}
       />
     </>
   );
 }
 
-export default ExportJobIndex;
+export default BatchExportIndex;

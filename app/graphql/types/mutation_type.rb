@@ -32,8 +32,8 @@ module Types
     field :update_dynamic_field, mutation: Mutations::UpdateDynamicField
     field :delete_dynamic_field, mutation: Mutations::DeleteDynamicField
 
-    field :create_export_job, mutation: Mutations::ExportJob::CreateExportJob
-    field :delete_export_job, mutation: Mutations::ExportJob::DeleteExportJob
+    field :create_batch_export, mutation: Mutations::BatchExport::CreateBatchExport
+    field :delete_batch_export, mutation: Mutations::BatchExport::DeleteBatchExport
 
     field :create_field_export_profile, mutation: Mutations::FieldExportProfile::CreateFieldExportProfile
     field :update_field_export_profile, mutation: Mutations::FieldExportProfile::UpdateFieldExportProfile

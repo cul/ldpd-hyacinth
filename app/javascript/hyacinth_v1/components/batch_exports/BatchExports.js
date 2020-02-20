@@ -2,12 +2,12 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 import PageNotFound from '../shared/PageNotFound';
-import ExportJobIndex from './ExportJobIndex';
+import BatchExportIndex from './BatchExportIndex';
 
-function ExportJobs() {
+function BatchExports() {
   return (
     <Switch>
-      <Route exact path="/export_jobs" component={ExportJobIndex} />
+      <Route exact path="/batch_exports" component={BatchExportIndex} />
 
       { /* When none of the above match, <PageNotFound> will be rendered */ }
       <Route component={PageNotFound} />
@@ -15,4 +15,4 @@ function ExportJobs() {
   );
 }
 
-export default ExportJobs;
+export default BatchExports;

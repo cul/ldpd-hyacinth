@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class ExportJob < ApplicationRecord
+class BatchExport < ApplicationRecord
   after_destroy :delete_associated_file_if_exist
 
   belongs_to :user
@@ -9,6 +9,6 @@ class ExportJob < ApplicationRecord
   serialize :export_errors, Array
 
   def delete_associated_file_if_exist
-    Hyacinth::Config.export_job_storage.delete(file_location)
+    Hyacinth::Config.batch_export_storage.delete(file_location)
   end
 end

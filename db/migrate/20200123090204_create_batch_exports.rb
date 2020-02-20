@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-class CreateExportJobs < ActiveRecord::Migration[6.0]
+class CreateBatchExports < ActiveRecord::Migration[6.0]
   def change
-    create_table :export_jobs do |t|
+    create_table :batch_exports do |t|
       t.text :search_params
       t.belongs_to :user, index: true
       t.text :file_location

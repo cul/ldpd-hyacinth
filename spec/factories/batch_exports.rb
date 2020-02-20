@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :export_job do
+  factory :batch_export do
     search_params { '{"search":"true","f":{"project_display_label_sim":["University Seminars Digital Archive"]},"page":"1"}' }
     file_location { nil }
     user { User.first || create(:user) }
@@ -36,6 +36,7 @@ FactoryBot.define do
 
     trait :failure do
       status { 'failure' }
+      export_errors { ['An error'] }
       number_of_records_processed { 5 }
       updated_at { Time.current + 5 }
       duration { 3 }

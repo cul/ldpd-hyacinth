@@ -1,8 +1,8 @@
 import gql from 'graphql-tag';
 
-export const exportJobsQuery = gql`
-  query ExportJobs($limit: Limit!, $offset: Offset = 0){
-    exportJobs(limit: $limit, offset: $offset) {
+export const batchExportsQuery = gql`
+  query BatchExports($limit: Limit!, $offset: Offset = 0){
+    batchExports(limit: $limit, offset: $offset) {
       nodes {
         id
         searchParams

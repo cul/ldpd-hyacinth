@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-class Mutations::ExportJob::CreateExportJob < Mutations::BaseMutation
+class Mutations::BatchExport::CreateBatchExport < Mutations::BaseMutation
   argument :search_params, String, required: true
 
-  field :export_job, Types::ExportJobType, null: true
+  field :batch_export, Types::BatchExportType, null: true
 
   def resolve(**attributes)
     # Note: No ability-based authorization for creating a CSV export.
@@ -11,9 +11,9 @@ class Mutations::ExportJob::CreateExportJob < Mutations::BaseMutation
     # return results if you don't have permission to view those results.
 
     attributes[:user] = context[:current_user]
-    export_job = ExportJob.new(**attributes)
-    export_job.save!
+    batch_export = BatchExport.new(**attributes)
+    batch_export.save!
 
-    { export_job: export_job }
+    { batch_export: batch_export }
   end
 end

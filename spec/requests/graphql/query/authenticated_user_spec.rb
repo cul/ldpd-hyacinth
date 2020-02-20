@@ -55,7 +55,7 @@ RSpec.describe 'Query for Authenticated User', type: :request do
             },
             "inverted": false,
             "subject": [
-              "ExportJob"
+              "BatchExport"
             ]
           },
           {
@@ -67,7 +67,7 @@ RSpec.describe 'Query for Authenticated User', type: :request do
             },
             "inverted": false,
             "subject": [
-              "ExportJob"
+              "BatchExport"
             ]
           }
         ]
@@ -132,7 +132,7 @@ RSpec.describe 'Query for Authenticated User', type: :request do
             },
             "inverted": false,
             "subject": [
-              "ExportJob"
+              "BatchExport"
             ]
           },
           {
@@ -144,7 +144,7 @@ RSpec.describe 'Query for Authenticated User', type: :request do
             },
             "inverted": false,
             "subject": [
-              "ExportJob"
+              "BatchExport"
             ]
           },
           {

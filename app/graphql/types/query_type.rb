@@ -76,8 +76,8 @@ module Types
       argument :id, ID, required: true
     end
 
-    field :export_jobs, ExportJobType.results_type, null: false, extensions: [Types::Extensions::Paginate] do
-      description 'List of ExportJobs visible to the logged-in user, ordered from most recent to least recent.'
+    field :batch_exports, BatchExportType.results_type, null: false, extensions: [Types::Extensions::Paginate] do
+      description 'List of BatchExports visible to the logged-in user, ordered from most recent to least recent.'
     end
 
     def digital_objects
@@ -182,8 +182,8 @@ module Types
       }
     end
 
-    def export_jobs
-      ExportJob.accessible_by(ability).order(id: :desc)
+    def batch_exports
+      BatchExport.accessible_by(ability).order(id: :desc)
     end
 
     def authenticated_user

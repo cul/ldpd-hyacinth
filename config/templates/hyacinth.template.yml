@@ -18,11 +18,11 @@ development:
       - uri_protocol: 'managed-disk'
         type: ManagedDisk
         default_path: <%= Rails.root.join('tmp', 'development', 'import-jobs') %>
-  export_job_storage:
+  batch_export_storage:
     adapters:
       - uri_protocol: 'managed-disk'
         type: ManagedDisk
-        default_path: <%= Rails.root.join('tmp', 'development', 'export-jobs') %>
+        default_path: <%= Rails.root.join('tmp', 'development', 'batch-exports') %>
   lock_adapter:
     type: DatabaseEntryLock
     lock_timeout: <%= 20.seconds %>
@@ -64,11 +64,11 @@ test:
       - uri_protocol: 'managed-disk'
         type: ManagedDisk
         default_path: <%= Rails.root.join('tmp', 'test', 'import-jobs') %>
-  export_job_storage:
+  batch_export_storage:
     adapters:
       - uri_protocol: 'managed-disk'
         type: ManagedDisk
-        default_path: <%= Rails.root.join('tmp', 'test', 'export-jobs') %>
+        default_path: <%= Rails.root.join('tmp', 'test', 'batch-exports') %>
   lock_adapter:
     type: DatabaseEntryLock
     lock_timeout: <%= 30.seconds %>

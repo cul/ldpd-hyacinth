@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Mutations::ExportJob::CreateExportJob, type: :request do
+RSpec.describe Mutations::BatchExport::CreateBatchExport, type: :request do
   let(:user) { FactoryBot.create(:user) }
   let(:search_params) do
     { 'param_one' => 'value one', 'param_2' => 'value two' }.to_json
@@ -11,7 +11,7 @@ RSpec.describe Mutations::ExportJob::CreateExportJob, type: :request do
   context 'when user is logged in' do
     before { login_as user, scope: :user }
 
-    context 'when creating a new export job' do
+    context 'when creating a new batch export' do
       let(:variables) do
         {
           input: {
@@ -24,8 +24,8 @@ RSpec.describe Mutations::ExportJob::CreateExportJob, type: :request do
 
       it 'returns correct response' do
         expect(response.body).to be_json_eql(%({
-          "exportJob": { "searchParams": "#{search_params.gsub(/"/, '\"')}" }
-        })).at_path('data/createExportJob')
+          "batchExport": { "searchParams": "#{search_params.gsub(/"/, '\"')}" }
+        })).at_path('data/createBatchExport')
       end
     end
 
@@ -36,7 +36,7 @@ RSpec.describe Mutations::ExportJob::CreateExportJob, type: :request do
 
       it 'returns error' do
         expect(response.body).to be_json_eql(%(
-           "Variable input of type CreateExportJobInput! was provided invalid value for searchParams (Expected value to not be null)"
+           "Variable input of type CreateBatchExportInput! was provided invalid value for searchParams (Expected value to not be null)"
         )).at_path('errors/0/message')
       end
     end
@@ -44,9 +44,9 @@ RSpec.describe Mutations::ExportJob::CreateExportJob, type: :request do
 
   def query
     <<~GQL
-      mutation ($input: CreateExportJobInput!) {
-        createExportJob(input: $input) {
-          exportJob {
+      mutation ($input: CreateBatchExportInput!) {
+        createBatchExport(input: $input) {
+          batchExport {
             searchParams
           }
         }
