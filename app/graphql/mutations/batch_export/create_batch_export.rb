@@ -6,9 +6,7 @@ class Mutations::BatchExport::CreateBatchExport < Mutations::BaseMutation
   field :batch_export, Types::BatchExportType, null: true
 
   def resolve(**attributes)
-    # Note: No ability-based authorization for creating a CSV export.
-    # Just need to be a logged in user. The Hyacinth search function won't
-    # return results if you don't have permission to view those results.
+    ability.authorize! :create, BatchExport
 
     attributes[:user] = context[:current_user]
     batch_export = BatchExport.new(**attributes)

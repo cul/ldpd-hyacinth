@@ -11,6 +11,7 @@ RSpec.describe Ability, type: :model do
       { actions: [:read, :create], conditions: {}, subject: ["Term"], inverted: false },
       { actions: [:read], conditions: {}, subject: ["Vocabulary"], inverted: false },
       { actions: [:read], conditions: {}, subject: ["DynamicFieldCategory"], inverted: false },
+      { actions: [:create], conditions: {}, subject: ["BatchExport"], inverted: false },
       { actions: [:read], conditions: { user_id: 1 }, subject: ["BatchExport"], inverted: false },
       { actions: [:destroy], conditions: { user_id: 1 }, subject: ["BatchExport"], inverted: false }
     ]

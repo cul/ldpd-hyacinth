@@ -20,7 +20,6 @@ RSpec.describe Mutations::BatchExport::DeleteBatchExport, type: :request do
   context 'when user is logged in' do
     before do
       login_as user, scope: :user
-      batch_export # create the batch export
     end
 
     context 'when deleting an batch export that exists' do

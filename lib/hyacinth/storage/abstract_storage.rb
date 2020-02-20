@@ -63,13 +63,11 @@ module Hyacinth
 
       # Returns the first compatible storage adapter for the given location, or nil if no compatible storage adapter is found.
       def storage_adapter_for_location(location)
-        adapter = @storage_adapters.find { |ad| ad.handles?(location) }
-        if adapter.nil?
+        @storage_adapters.find { |ad| ad.handles?(location) } || (
           raise Hyacinth::Exceptions::AdapterNotFoundError,
                 "Tried to find storage adapter for #{location}, but no adapter was found. "\
                 "Known adapters: #{@storage_adapters.map(&:uri_prefix).join(', ')}"
-        end
-        adapter
+        )
       end
     end
   end
