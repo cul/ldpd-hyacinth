@@ -40,7 +40,7 @@ class PaginationBar extends React.PureComponent {
           }
         {
           pageNumbers.map(num => (
-            <Pagination.Item active={page === num} onClick={() => onPageNumberClick(num)}>
+            <Pagination.Item key={num} active={page === num} onClick={() => onPageNumberClick(num)}>
               {num}
             </Pagination.Item>
           ))

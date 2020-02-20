@@ -33,6 +33,20 @@ ActiveRecord::Schema.define(version: 2020_01_27_180724) do
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
+  create_table "batch_exports", force: :cascade do |t|
+    t.text "search_params"
+    t.integer "user_id"
+    t.text "file_location"
+    t.text "export_errors"
+    t.integer "status", default: 0, null: false
+    t.integer "duration", default: 0, null: false
+    t.integer "number_of_records_processed", default: 0, null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["status"], name: "index_batch_exports_on_status"
+    t.index ["user_id"], name: "index_batch_exports_on_user_id"
+  end
+
   create_table "database_entry_locks", force: :cascade do |t|
     t.string "lock_key", null: false
     t.datetime "created_at", null: false
