@@ -14,7 +14,7 @@ module Solr
     # @return [RSolr::Client] connection to solr
     attr_reader :connection
 
-    delegate :get, to: :connection
+    delegate :get, :commit, to: :connection
 
     def initialize(config)
       url = config[:url]

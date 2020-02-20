@@ -16,6 +16,7 @@ module Types
 
           field :totalCount, !types.Int, "Count of total results", property: :total_count
           field :nodes, types[wrapped_type], "A list of nodes."
+          field :facets, types[Types::Facets::FieldType], "A list of facets.", property: :facets
           field :pageInfo, PageInfo.to_non_null_type, "Information to aid in pagination.", property: :page_info
 
           # Once we have a use case for edges we can add them here. Because we don't have any

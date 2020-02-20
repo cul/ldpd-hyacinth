@@ -20,6 +20,7 @@ module DigitalObject
     include DigitalObjectConcerns::DestroyBehavior
     include DigitalObjectConcerns::ExportFieldsBehavior
     include DigitalObjectConcerns::PreserveBehavior
+    include DigitalObjectConcerns::IndexBehavior
 
     SERIALIZATION_VERSION = '1' # Increment this if the serialized data format changes so that we can upgrade to the new format.
 
@@ -27,6 +28,8 @@ module DigitalObject
     define_model_callbacks :validation, :save, :destroy
     before_validation :clean_dynamic_field_data!, :clean_rights!
     # TODO: Add these before_validations ---> :register_new_uris_and_values_for_dynamic_field_data!, normalize_controlled_term_fields!
+    after_save :index
+    after_destroy :deindex
 
     # Simple attributes
     metadata_attribute :serialization_version, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { SERIALIZATION_VERSION }).private_writer

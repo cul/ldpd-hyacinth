@@ -27,7 +27,7 @@ module Types
       description "List of all projects"
     end
 
-    field :digital_objects, DigitalObjectInterface.results_type, null: true, extensions: [Types::Extensions::Paginate, Types::Extensions::MapToDigitalObjects] do
+    field :digital_objects, DigitalObjectInterface.results_type, null: true, extensions: [Types::Extensions::SolrSearch, Types::Extensions::MapToDigitalObjects] do
       description "List and searches all digital objects"
     end
 
@@ -80,10 +80,13 @@ module Types
       description 'List of BatchExports visible to the logged-in user, ordered from most recent to least recent.'
     end
 
-    def digital_objects
-      # This is a temporary implementation, this should actually querying solr
-      # and considering object read permissions.
-      DigitalObjectRecord.all
+    def digital_objects(**arguments)
+      search_params = {}.merge(arguments.fetch('filters', {}))
+      search_params['q'] = arguments['query']
+      search_params['facet_on'] = ['digital_object_type_ssi']
+      # TODO: consider object read permissions via projects
+      # TODO: identification of possible filters in scope of search
+      Hyacinth::Config.digital_object_search_adapter.search(search_params)
     end
 
     def digital_object(id:)

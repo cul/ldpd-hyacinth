@@ -123,13 +123,21 @@ export const getAssetDataDigitalObjectQuery = gql`
 `;
 
 export const getDigitalObjectsQuery = gql`
-  query DigitalObjects($limit: Limit!, $offset: Offset = 0){
-    digitalObjects(limit: $limit, offset: $offset) {
+  query DigitalObjects($limit: Limit!, $offset: Offset = 0, $filters: [FilterAttributes], $query: String){
+    digitalObjects(limit: $limit, offset: $offset, filters: $filters, query: $query) {
       totalCount
       nodes {
-        id
-        title
+        id,
+        title,
         digitalObjectType
+      },
+      facets {
+        fieldName,
+        displayLabel,
+        values {
+          value,
+          count
+        }
       }
     }
   }

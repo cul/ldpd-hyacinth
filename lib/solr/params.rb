@@ -9,13 +9,18 @@ module Solr
         q: nil,
         qt: 'search',
         fq: [],
-        # rows: URIService::DEFAULT_LIMIT,
+        'facet.field'.to_sym => [],
         start: 0
       }
     end
 
     def fq(field, value)
       @parameters[:fq] << "#{field}:\"#{Solr::Utils.escape(value)}\"" unless value.nil?
+      self
+    end
+
+    def facet_on(field)
+      @parameters[:"facet.field"] << field unless field.blank?
       self
     end
 
@@ -35,7 +40,7 @@ module Solr
     end
 
     def to_h
-      parameters
+      parameters[:"facet.field"].present? ? parameters.merge(facet: 'on') : parameters
     end
   end
 end
