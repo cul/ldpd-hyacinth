@@ -10,7 +10,6 @@ module Solr
         qt: 'search',
         fq: [],
         'facet.field'.to_sym => [],
-        # rows: URIService::DEFAULT_LIMIT,
         start: 0
       }
     end
