@@ -23,6 +23,10 @@ class Ability
       can :read, Vocabulary           # Need to allow this because Terms are nested under vocabularies
       can :read, DynamicFieldCategory # Need to allow this so we can render EnabledDynamicField pages.
 
+      can :create, BatchExport # All users can create BatchExports
+      can :read, BatchExport, user_id: user.id
+      can :destroy, BatchExport, user_id: user.id
+
       # System Wide Permissions
       assign_system_wide_permissions(system_permissions)
 

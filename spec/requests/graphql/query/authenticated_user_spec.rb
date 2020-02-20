@@ -45,6 +45,40 @@ RSpec.describe 'Query for Authenticated User', type: :request do
             "conditions": {},
             "inverted": false,
             "subject": ["DynamicFieldCategory"]
+          },
+          {
+            "actions": [
+              "create"
+            ],
+            "conditions": {},
+            "inverted": false,
+            "subject": [
+              "BatchExport"
+            ]
+          },
+          {
+            "actions": [
+              "read"
+            ],
+            "conditions": {
+              "userId": #{User.first.id}
+            },
+            "inverted": false,
+            "subject": [
+              "BatchExport"
+            ]
+          },
+          {
+            "actions": [
+              "destroy"
+            ],
+            "conditions": {
+              "userId": #{User.first.id}
+            },
+            "inverted": false,
+            "subject": [
+              "BatchExport"
+            ]
           }
         ]
        )
@@ -98,6 +132,40 @@ RSpec.describe 'Query for Authenticated User', type: :request do
             "conditions": {},
             "inverted": false,
             "subject": ["DynamicFieldCategory"]
+          },
+          {
+            "actions": [
+              "create"
+            ],
+            "conditions": {},
+            "inverted": false,
+            "subject": [
+              "BatchExport"
+            ]
+          },
+          {
+            "actions": [
+              "read"
+            ],
+            "conditions": {
+              "userId": #{User.first.id}
+            },
+            "inverted": false,
+            "subject": [
+              "BatchExport"
+            ]
+          },
+          {
+            "actions": [
+              "destroy"
+            ],
+            "conditions": {
+              "userId": #{User.first.id}
+            },
+            "inverted": false,
+            "subject": [
+              "BatchExport"
+            ]
           },
           {
             "actions": ["read"],

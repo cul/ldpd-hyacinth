@@ -22,12 +22,12 @@ module Hyacinth
       @resource_storage ||= Hyacinth::Storage::ResourceStorage.new(HYACINTH[:resource_storage])
     end
 
-    def self.csv_import_storage
-      @csv_import_storage ||= Hyacinth::Storage::CsvImportStorage.new(HYACINTH[:csv_import_storage])
+    def self.import_job_storage
+      @import_job_storage ||= Hyacinth::Storage::CsvImportStorage.new(HYACINTH[:import_job_storage])
     end
 
-    def self.csv_export_storage
-      @csv_export_storage ||= Hyacinth::Storage::CsvExportStorage.new(HYACINTH[:csv_export_storage])
+    def self.batch_export_storage
+      @batch_export_storage ||= Hyacinth::Storage::BatchExportStorage.new(HYACINTH[:batch_export_storage])
     end
 
     def self.preservation_persistence

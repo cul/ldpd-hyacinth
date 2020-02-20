@@ -57,11 +57,11 @@ function TopNavbar(props) {
 
             <NavDropdown.Divider />
 
-            <LinkContainer to="/export-jobs">
-              <NavDropdown.Item>Export Jobs</NavDropdown.Item>
+            <LinkContainer to="/batch_exports">
+              <NavDropdown.Item>Batch Exports</NavDropdown.Item>
             </LinkContainer>
 
-            <LinkContainer to="/import-jobs">
+            <LinkContainer to="/import_jobs">
               <NavDropdown.Item>Import Jobs</NavDropdown.Item>
             </LinkContainer>
           </NavDropdown>

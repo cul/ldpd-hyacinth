@@ -36,7 +36,7 @@ module Hyacinth
           end
 
           def delete_impl(location_uri)
-            File.delete(location_uri_to_file_path(location_uri)) if exists?(location_uri)
+            File.delete(location_uri_to_file_path(location_uri))
           end
         end
       end

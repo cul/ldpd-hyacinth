@@ -84,7 +84,7 @@ module Hyacinth
         # @param location_uri [String] location to delete from
         def delete(location_uri)
           raise Hyacinth::Exceptions::UnhandledLocationError, "Unhandled location_uri for #{self.class.name}: #{location_uri}" unless handles?(location_uri)
-          delete_impl(location_uri)
+          delete_impl(location_uri) if exists?(location_uri)
         end
 
         def delete_impl(*_args)
