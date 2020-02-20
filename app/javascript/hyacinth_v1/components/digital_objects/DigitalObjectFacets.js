@@ -1,21 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Nav, Navbar } from 'react-bootstrap';
+import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
 
 const DigitalObjectFacets = (props) => {
   const { facets } = props;
 
   return (
-    <>
-      {
-        facets.map(facet => (
-          <Navbar key={facet.fieldName} className="flex-column">
-            <Navbar.Brand>{facet.displayLabel}</Navbar.Brand>
-            <DigitalObjectFacetValues values={facet.values} />
-          </Navbar>
-        ))
-      }
-    </>
+    <Navbar key="digital-object-facets" className="flex-column">
+      <Navbar.Brand>Facets</Navbar.Brand>
+      <Nav className="mr-auto">
+        {
+          facets.map(facet => (
+            <NavDropdown title={facet.displayLabel}>
+              <DigitalObjectFacetValues values={facet.values} />
+            </NavDropdown>
+          ))
+        }
+      </Nav>
+    </Navbar>
   );
 };
 
@@ -26,7 +28,7 @@ const DigitalObjectFacetValues = (props) => {
       {
         values.map((value) => {
           const displayText = `${value.value} (${value.count})`;
-          return <Nav>{displayText}</Nav>;
+          return <NavDropdown.Item href="">{displayText}</NavDropdown.Item>;
         })
       }
     </>
