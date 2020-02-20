@@ -8,7 +8,7 @@ module Types
       end
 
       def after_resolve(object:, value:, arguments:, context:, memo:)
-        raise GraphQL::ExecutionError, 'ToDigitalObjects can only be downstream of SolrSearch' unless value.is_a?(OpenStruct) && value[:page_info].is_a?(OpenStruct)
+        raise GraphQL::ExecutionError, 'MapToDigitalObjects can only be downstream of SolrSearch' unless value.is_a?(OpenStruct) && value[:page_info].is_a?(OpenStruct)
         value[:nodes] = value[:nodes].map { |solr_doc| ::DigitalObject::Base.find(solr_doc['id']) }
         value
       end
