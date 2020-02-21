@@ -60,7 +60,7 @@ export default function DigitalObjectSearch() {
       { nodes.length === 0 ? <Card header="No Digital Objects found." />
         : (
           <>
-            <ResultCountAndSortOptions totalCount={totalCount} limit={limit} offset={offset} searchParams={{}} />
+            <ResultCountAndSortOptions totalCount={totalCount} limit={limit} offset={offset} searchParams={{ filters, query }} />
             <Row>
               <Col xs={10}>
                 <DigitalObjectList className="digital-object-search-results" digitalObjects={nodes} />
