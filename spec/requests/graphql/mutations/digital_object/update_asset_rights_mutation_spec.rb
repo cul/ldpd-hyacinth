@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Updating Asset Rights', type: :request do
+RSpec.describe 'Updating Asset Rights', type: :request, solr: true do
   let(:authorized_item) { FactoryBot.create(:item, :with_primary_project_asset_rights) }
   let(:authorized_project) { authorized_item.primary_project }
   let(:authorized_asset) { FactoryBot.create(:asset, parent: authorized_item) }
@@ -23,16 +23,16 @@ RSpec.describe 'Updating Asset Rights', type: :request do
               termType: "external",
               uri: "https://example.com/term/in_copyright"
             },
-            copyrightNotes: "No Copyright Notes",
-            copyrightRegistered: true,
-            copyrightRenewed: true,
+            note: "No Copyright Notes",
+            copyrightRegistered: 'yes',
+            copyrightRenewed: 'yes',
             copyrightDateOfRenewal: "2001-01-01",
             copyrightExpirationDate: "2001-01-01",
             culCopyrightAssessmentDate: "2001-01-01"
           }],
           restrictionOnAccess: [{
             value: "Open",
-            embargoRelease: "2001-01-01",
+            embargoReleaseDate: "2001-01-01",
             location: [{
               term: {
                 prefLabel: "Great Location",
@@ -86,7 +86,36 @@ RSpec.describe 'Updating Asset Rights', type: :request do
         updateAssetRights(input: $input) {
           asset {
             id
-            rights
+            rights {
+              restrictionOnAccess {
+                affiliation {
+                  value
+                }
+                embargoReleaseDate
+                location {
+                  term {
+                    prefLabel
+                    uri
+                    termType
+                  }
+                }
+                note
+                value
+              }
+              copyrightStatusOverride {
+                copyrightDateOfRenewal
+                copyrightExpirationDate
+                note
+                copyrightRegistered
+                copyrightRenewed
+                copyrightStatement {
+                  prefLabel
+                  uri
+                  termType
+                }
+                culCopyrightAssessmentDate
+              }
+            }
           }
         }
       }

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Card } from 'react-bootstrap';
 import produce from 'immer';
 
@@ -10,57 +11,59 @@ import TextInput from '../../../../shared/forms/inputs/TextInput';
 import RemoveButton from '../../../../shared/buttons/RemoveButton';
 import AddButton from '../../../../shared/buttons/AddButton';
 
-export default class CopyrightOwner extends React.PureComponent {
-  onFieldChange(fieldName, fieldVal) {
-    const { value, onChange } = this.props;
+function CopyrightOwner(props) {
+  const {
+    value, onChange, index, onRemove, onAdd,
+  } = props;
 
-    const nextValue = produce(value, (draft) => {
+  const onFieldChange = (fieldName, fieldVal) => {
+    onChange(produce((draft) => {
       draft[fieldName] = fieldVal;
-    });
+    }));
+  };
 
-    onChange(nextValue);
-  }
+  return (
+    <Card className="mb-3">
+      <Card.Header>
+        {`Copyright Owner ${index + 1}`}
 
-  render() {
-    const {
-      value, index, onRemove, onAdd
-    } = this.props;
+        <span className="float-right">
+          <RemoveButton onClick={onRemove} />
+          <AddButton onClick={onAdd} />
+        </span>
+      </Card.Header>
 
-    return (
-      <Card className="mb-3">
-        <Card.Header>
-          {`Copyright Owner ${index + 1}`}
+      <Card.Body>
+        <InputGroup>
+          <Label sm={4} align="right">Name</Label>
+          <TermSelect
+            vocabulary="name"
+            value={value.name}
+            onChange={v => onFieldChange('name', v)}
+          />
+        </InputGroup>
 
-          <span className="float-right">
-            <RemoveButton onClick={onRemove} />
-            <AddButton onClick={onAdd} />
-          </span>
-        </Card.Header>
+        <InputGroup>
+          <Label sm={4} align="right">Heirs</Label>
+          <TextInput sm={8} value={value.heirs} onChange={v => onFieldChange('heirs', v)} />
+        </InputGroup>
 
-        <Card.Body>
-          <InputGroup>
-            <Label sm={4} align="right">Name</Label>
-            <TermSelect
-              vocabulary="name"
-              value={value.name}
-              onChange={v => this.onFieldChange('name', v)}
-            />
-          </InputGroup>
-
-          <InputGroup>
-            <Label sm={4} align="right">Heirs</Label>
-            <TextInput sm={8} value={value.heirs} onChange={v => this.onFieldChange('heirs', v)} />
-          </InputGroup>
-
-          <InputGroup>
-            <Label sm={4} align="right">Contact information for Copyright Owner or Heirs</Label>
-            <TextAreaInput
-              value={value.contactInformation}
-              onChange={v => this.onFieldChange('contactInformation', v)}
-            />
-          </InputGroup>
-        </Card.Body>
-      </Card>
-    );
-  }
+        <InputGroup>
+          <Label sm={4} align="right">Contact information for Copyright Owner or Heirs</Label>
+          <TextAreaInput
+            value={value.contactInformation}
+            onChange={v => onFieldChange('contactInformation', v)}
+          />
+        </InputGroup>
+      </Card.Body>
+    </Card>
+  );
 }
+
+CopyrightOwner.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  onRemove: PropTypes.func.isRequired,
+  onAdd: PropTypes.func.isRequired,
+};
+
+export default CopyrightOwner;

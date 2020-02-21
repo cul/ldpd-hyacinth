@@ -1,56 +1,99 @@
 import React from 'react';
 import { Card } from 'react-bootstrap';
-import produce from 'immer';
+import PropTypes from 'prop-types';
 
-import Label from '../../../../shared/forms/Label';
-import InputGroup from '../../../../shared/forms/InputGroup';
-import ReadOnlyInput from '../../../../shared/forms/inputs/ReadOnlyInput';
-import TextAreaInput from '../../../../shared/forms/inputs/TextAreaInput';
+import FieldGroupArray from '../fields/FieldGroupArray';
+import { defaultAssetRights } from '../defaultRights';
 
-class AccessCondition extends React.PureComponent {
-  onChange(fieldName, fieldVal) {
-    const { value, onChange } = this.props;
+const restrictionOnAccessOptions = [
+  { value: 'Public Access', label: 'Public Access' },
+  { value: 'On-site Access', label: 'On-site Access' },
+  { value: 'Specified Group/UNI Access', label: 'Specified Group/UNI Access' },
+  { value: 'Closed', label: 'Closed' },
+  { value: 'Embargoed', label: 'Embargoed' },
+];
 
-    const nextValue = produce(value, (draft) => {
-      draft[fieldName] = fieldVal;
-    });
+// This is temporary! Eventually we should be able to query for this data from the database.
+const dynamicFieldGroupConfig = {
+  displayLabel: 'CUL Access Condition',
+  stringKey: '',
+  isRepeatable: true,
+  children: [
+    {
+      stringKey: 'value',
+      displayLabel: 'Access Condition',
+      fieldType: 'select',
+      selectOptions: JSON.stringify(restrictionOnAccessOptions),
+      type: 'DynamicField',
+    },
+    {
+      stringKey: 'location',
+      displayLabel: 'Location',
+      isRepeatable: true,
+      type: 'DynamicFieldGroup',
+      children: [
+        {
+          stringKey: 'term',
+          displayLabel: 'Term',
+          fieldType: 'controlled_term',
+          controlledVocabulary: 'location',
+          type: 'DynamicField',
+        },
+      ],
+    },
+    {
+      stringKey: 'embargoReleaseDate',
+      displayLabel: 'Closed/Embargo Release Date',
+      fieldType: 'date',
+      type: 'DynamicField',
+    },
+    {
+      stringKey: 'affiliation',
+      displayLabel: 'Affiliation',
+      type: 'DynamicFieldGroup',
+      isRepeatable: true,
+      children: [
+        {
+          stringKey: 'value',
+          displayLabel: 'Value',
+          fieldType: 'string',
+          type: 'DynamicField',
+        },
+      ],
+    },
+    {
+      stringKey: 'note',
+      displayLabel: 'Note',
+      fieldType: 'textarea',
+      type: 'DynamicField',
+    },
+  ],
+};
 
-    onChange(nextValue);
-  }
 
-  render() {
-    const { value } = this.props;
+function AccessCondition(props) {
+  const { values, onChange } = props;
 
-    return (
-      <Card className="mb-3">
-        <Card.Body>
-          <Card.Title>CUL Access Condition</Card.Title>
+  return (
+    <Card className="mb-3">
+      <Card.Body>
+        <Card.Title>CUL Access Condition</Card.Title>
 
-          <InputGroup>
-            <Label sm={4} align="right">Access Condition</Label>
-            <ReadOnlyInput sm={8} value={value.accessCondition} />
-          </InputGroup>
+        <FieldGroupArray
+          value={values}
+          defaultValue={defaultAssetRights.restrictionOnAccess[0]}
+          dynamicFieldGroup={dynamicFieldGroupConfig}
+          onChange={onChange}
+        />
 
-          <InputGroup>
-            <Label sm={4} align="right">Closed/Embargo Release Date:</Label>
-            <ReadOnlyInput
-              sm={8}
-              value={value.embargoReleaseDate}
-            />
-          </InputGroup>
-
-          <InputGroup>
-            <Label sm={4} align="right">Access Note</Label>
-            <TextAreaInput
-              sm={8}
-              value={value.note}
-              onChange={v => this.onChange('note', v)}
-            />
-          </InputGroup>
-        </Card.Body>
-      </Card>
-    );
-  }
+      </Card.Body>
+    </Card>
+  );
 }
+
+AccessCondition.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  values: PropTypes.arrayOf(PropTypes.any).isRequired,
+};
 
 export default AccessCondition;

@@ -11,18 +11,14 @@ import { getRightsDigitalObjectQuery } from '../../../graphql/digitalObjects';
 function RightsEdit(props) {
   const { id } = props;
 
-  const {
-    loading: digitalObjectLoading,
-    error: digitalObjectError,
-    data: digitalObjectData,
-  } = useQuery(getRightsDigitalObjectQuery, {
+  const { loading, error, data } = useQuery(getRightsDigitalObjectQuery, {
     variables: { id },
   });
 
-  if (digitalObjectLoading) return (<></>);
-  if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
-  const { digitalObject } = digitalObjectData;
-  const { digitalObjectType } = digitalObject;
+  if (loading) return (<></>);
+  if (error) return (<GraphQLErrors errors={error} />);
+
+  const { digitalObject, digitalObject: { digitalObjectType } } = data;
 
   const renderTabContent = () => {
     switch (digitalObjectType) {

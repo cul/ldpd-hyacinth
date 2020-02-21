@@ -6,7 +6,9 @@ module Types
       Hyacinth::DigitalObject::RightsFields.asset.each do |dynamic_field_group|
         object_type = define_dynamic_field_group_type(dynamic_field_group)
 
-        field dynamic_field_group[:string_key], [object_type], null: true
+        string_key = dynamic_field_group[:string_key]
+
+        field string_key, [object_type], null: true, resolve: ->(o, _, _) { o.fetch(string_key, []) }
       end
     end
   end

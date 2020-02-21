@@ -23,7 +23,7 @@ module Mutations
         digital_object.rights = rights.deep_transform_values(&:to_h)
         digital_object.save!(update_index: true, user: context[:current_user])
 
-        { item: digital_object }
+        { item: ::DigitalObject::Base.find(id) } # Need to refetch because the reference to the digital object isn't updated.
       end
     end
   end

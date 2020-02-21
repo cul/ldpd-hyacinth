@@ -19,7 +19,7 @@ function TermSelect(props) {
     <Col sm={8} style={{ alignSelf: 'center' }}>
       <Dropdown name={name} drop="right">
         <Dropdown.Toggle size="sm" variant="outline-secondary">
-          { prefLabel ? prefLabel  : 'Select one...' }
+          { prefLabel || 'Select one...' }
         </Dropdown.Toggle>
 
         {

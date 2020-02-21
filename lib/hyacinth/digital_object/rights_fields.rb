@@ -17,8 +17,8 @@ module Hyacinth
             children: [
               { string_key: "type_of_content", field_type: "select", select_options: "{}", type: "DynamicField" },
               { string_key: "country_of_origin", field_type: "controlled_term", controlled_vocabulary: "geonames", type: "DynamicField" },
-              { string_key: "film_distributed_to_public", field_type: "boolean", type: "DynamicField" },
-              { string_key: "film_distributed_commercially", field_type: "boolean", type: "DynamicField" }
+              { string_key: "film_distributed_to_public", field_type: "string", type: "DynamicField" },
+              { string_key: "film_distributed_commercially", field_type: "string", type: "DynamicField" }
             ]
           },
           {
@@ -27,9 +27,9 @@ module Hyacinth
             is_repeatable: false,
             children: [
               { string_key: "copyright_statement", field_type: "controlled_term", controlled_vocabulary: "rights_statement", type: "DynamicField" },
-              { string_key: "copyright_notes", field_type: "textarea", type: "DynamicField" },
-              { string_key: "copyright_registered", field_type: "boolean", type: "DynamicField" },
-              { string_key: "copyright_renewed", field_type: "boolean", type: "DynamicField" },
+              { string_key: "note", field_type: "textarea", type: "DynamicField" },
+              { string_key: "copyright_registered", field_type: "string", type: "DynamicField" },
+              { string_key: "copyright_renewed", field_type: "string", type: "DynamicField" },
               { string_key: "copyright_date_of_renewal", field_type: "date", type: "DynamicField" },
               { string_key: "copyright_expiration_date", field_type: "date", type: "DynamicField" },
               { string_key: "cul_copyright_assessment_date", field_type: "date", type: "DynamicField" }
@@ -75,11 +75,11 @@ module Hyacinth
             is_repeatable: false,
             children: [
               { string_key: "publicity_rights_present", field_type: "string", type: "DynamicField" },
-              { string_key: "trademarks_prominently_visible", field_type: "boolean", type: "DynamicField" },
-              { string_key: "sensitive_in_nature", field_type: "boolean", type: "DynamicField" },
-              { string_key: "privacy_concerns", field_type: "boolean", type: "DynamicField" },
-              { string_key: "children_materially_identifiable_in_work", field_type: "boolean", type: "DynamicField" },
-              { string_key: "vara_rights_concerns", field_type: "boolean", type: "DynamicField" },
+              { string_key: "trademarks_prominently_visible", field_type: "string", type: "DynamicField" },
+              { string_key: "sensitive_in_nature", field_type: "string", type: "DynamicField" },
+              { string_key: "privacy_concerns", field_type: "string", type: "DynamicField" },
+              { string_key: "children_materially_identifiable_in_work", field_type: "string", type: "DynamicField" },
+              { string_key: "vara_rights_concerns", field_type: "string", type: "DynamicField" },
               { string_key: "note", field_type: "string", type: "DynamicField" }
             ]
           },
@@ -106,7 +106,6 @@ module Hyacinth
               {
                 type: "DynamicFieldGroup",
                 string_key: "permissions_granted_as_part_of_the_use_license",
-                field_type: "select",
                 children: [
                   { string_key: "value", field_type: "select", type: "DynamicField" } # MultiSelect
                 ]
@@ -144,7 +143,7 @@ module Hyacinth
             is_repeatable: true,
             children: [
               { string_key: "value", field_type: "select", type: "DynamicField" },
-              { string_key: "embargo_release", field_type: "date", type: "DynamicField" },
+              { string_key: "embargo_release_date", field_type: "date", type: "DynamicField" },
               {
                 type: "DynamicFieldGroup",
                 string_key: "location",
@@ -170,9 +169,9 @@ module Hyacinth
             is_repeatable: false,
             children: [
               { string_key: "copyright_statement", field_type: "controlled_term", controlled_vocabulary: "rights_statement", type: "DynamicField" },
-              { string_key: "copyright_notes", field_type: "textarea", type: "DynamicField" },
-              { string_key: "copyright_registered", field_type: "boolean", type: "DynamicField" },
-              { string_key: "copyright_renewed", field_type: "boolean", type: "DynamicField" },
+              { string_key: "note", field_type: "textarea", type: "DynamicField" },
+              { string_key: "copyright_registered", field_type: "string", type: "DynamicField" },
+              { string_key: "copyright_renewed", field_type: "string", type: "DynamicField" },
               { string_key: "copyright_date_of_renewal", field_type: "date", type: "DynamicField" },
               { string_key: "copyright_expiration_date", field_type: "date", type: "DynamicField" },
               { string_key: "cul_copyright_assessment_date", field_type: "date", type: "DynamicField" }

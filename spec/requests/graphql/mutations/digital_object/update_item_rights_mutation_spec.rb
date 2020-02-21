@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Updating Item Rights', type: :request do
+RSpec.describe 'Updating Item Rights', type: :request, solr: true do
   let(:authorized_object) { FactoryBot.create(:item, :with_primary_project) }
   let(:authorized_project) { authorized_object.primary_project }
 
@@ -23,8 +23,8 @@ RSpec.describe 'Updating Item Rights', type: :request do
               termType: "external",
               uri: "https://example.com/term/united_states"
             },
-            filmDistributedToPublic: true,
-            filmDistributedCommercially: true
+            filmDistributedToPublic: 'yes',
+            filmDistributedCommercially: 'yes'
           }],
           copyrightStatus: [{
             copyrightStatement: {
@@ -32,9 +32,9 @@ RSpec.describe 'Updating Item Rights', type: :request do
               termType: "external",
               uri: "https://example.com/term/in_copyright"
             },
-            copyrightNotes: "No Copyright Notes",
-            copyrightRegistered: true,
-            copyrightRenewed: true,
+            note: "No Copyright Notes",
+            copyrightRegistered: 'yes',
+            copyrightRenewed: 'yes',
             copyrightDateOfRenewal: "2001-01-01",
             copyrightExpirationDate: "2001-01-01",
             culCopyrightAssessmentDate: "2001-01-01"
@@ -118,7 +118,95 @@ RSpec.describe 'Updating Item Rights', type: :request do
         updateItemRights(input: $input) {
           item {
             id
-            rights
+            rights {
+              copyrightStatus {
+                copyrightDateOfRenewal
+                copyrightExpirationDate
+                note
+                copyrightRegistered
+                copyrightRenewed
+                copyrightStatement {
+                  prefLabel
+                  uri
+                  termType
+                }
+                culCopyrightAssessmentDate
+              }
+              columbiaUniversityIsCopyrightHolder {
+                dateOfExpiration
+                dateOfTransfer
+                otherTransferEvidence
+                transferDocumentation
+                transferDocumentationNote
+              }
+              contractualLimitationsRestrictionsAndPermissions {
+                excerptLimitedTo
+                optionA
+                optionB
+                optionC
+                optionD
+                optionE
+                optionAvA
+                optionAvB
+                optionAvC
+                optionAvD
+                optionAvE
+                optionAvF
+                optionAvG
+                other
+                permissionsGrantedAsPartOfTheUseLicense {
+                  value
+                }
+                photographicOrFilmCredit
+                reproductionAndDistributionProhibitedUntil
+              }
+              copyrightOwnership {
+                contactInformation
+                heirs
+                name {
+                  termType
+                  prefLabel
+                  uri
+                }
+              }
+              descriptiveMetadata {
+                typeOfContent
+                countryOfOrigin {
+                  prefLabel
+                  uri
+                  termType
+                }
+                filmDistributedCommercially
+                filmDistributedToPublic
+              }
+              licensedToColumbiaUniversity {
+                acknowledgements
+                credits
+                dateOfLicense
+                licenseDocumentationLocation
+                terminationDateOfLicense
+              }
+              rightsForWorksOfArtSculptureAndPhotographs {
+                childrenMateriallyIdentifiableInWork
+                note
+                privacyConcerns
+                publicityRightsPresent
+                sensitiveInNature
+                trademarksProminentlyVisible
+                varaRightsConcerns
+              }
+              underlyingRights {
+                columbiaMusicLicense
+                composition
+                note
+                other
+                otherUnderlyingRights {
+                  value
+                }
+                recording
+                talentRights
+              }
+            }
           }
         }
       }
