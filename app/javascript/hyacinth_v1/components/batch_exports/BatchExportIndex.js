@@ -1,18 +1,25 @@
-import { useQuery, useMutation } from '@apollo/react-hooks';
-import { Button } from 'react-bootstrap';
+import { useMutation, useQuery } from '@apollo/react-hooks';
+import ContextualNavbar from '@hyacinth_v1/components/shared/ContextualNavbar';
+import GraphQLErrors from '@hyacinth_v1/components/shared/GraphQLErrors';
 import PaginationBar from '@hyacinth_v1/components/shared/PaginationBar';
+import { batchExportsQuery, deleteBatchExportMutation } from '@hyacinth_v1/graphql/batchExports';
+import queryString from 'query-string';
 import React, { useState } from 'react';
-import { Table } from 'react-bootstrap';
-import { batchExportsQuery, deleteBatchExportMutation } from '../../graphql/batchExports';
-import ContextualNavbar from '../shared/ContextualNavbar';
-import GraphQLErrors from '../shared/GraphQLErrors';
+import { Button, Table } from 'react-bootstrap';
+import { useLocation } from 'react-router-dom';
 
 function BatchExportIndex() {
-
   const limit = 30;
   const [offset, setOffset] = useState(0);
+  const { search } = useLocation();
+  const { highlight } = queryString.parse(search);
 
-  const { loading: batchExportsLoading, error: batchExportsError, data: batchExportsData, refetch: batchExportsRefresh } = useQuery(batchExportsQuery, {
+  const {
+    loading: batchExportsLoading,
+    error: batchExportsError,
+    data: batchExportsData,
+    refetch: batchExportsRefresh,
+  } = useQuery(batchExportsQuery, {
     variables: {
       limit,
       offset,
@@ -72,7 +79,7 @@ function BatchExportIndex() {
           {
             (
               batchExports.map(batchExport => (
-                <tr key={batchExport.id}>
+                <tr key={batchExport.id} className={highlight && batchExport.id == highlight ? 'table-info' : ''}>
                   <td>{batchExport.id}</td>
                   <td>{batchExport.searchParams}</td>
                   <td>{batchExport.user.fullName}</td>
@@ -80,11 +87,12 @@ function BatchExportIndex() {
                   <td>{batchExport.status}</td>
                   <td>{batchExport.numberOfRecordsProcessed}</td>
                   <td>
-                    <Button variant="secondary">Download</Button>
+                    <Button variant="secondary" size="sm">Download</Button>
                   </td>
                   <td>
                     <Button
                       variant="danger"
+                      size="sm"
                       onClick={(e) => {
                         e.preventDefault(); deleteBatchExportAndRefresh(batchExport.id);
                       }}

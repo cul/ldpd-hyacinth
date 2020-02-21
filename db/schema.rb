@@ -64,8 +64,8 @@ ActiveRecord::Schema.define(version: 2020_01_27_180724) do
   create_table "dynamic_field_categories", force: :cascade do |t|
     t.string "display_label", null: false
     t.integer "sort_order", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["display_label"], name: "index_dynamic_field_categories_on_display_label", unique: true
   end
 
@@ -79,8 +79,8 @@ ActiveRecord::Schema.define(version: 2020_01_27_180724) do
     t.integer "parent_id"
     t.integer "created_by_id"
     t.integer "updated_by_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["parent_type", "parent_id"], name: "index_dynamic_field_groups_on_parent_type_and_parent_id"
     t.index ["string_key", "parent_type", "parent_id"], name: "index_dynamic_field_groups_on_string_key_and_parent", unique: true
     t.index ["string_key"], name: "index_dynamic_field_groups_on_string_key", unique: true
@@ -102,8 +102,8 @@ ActiveRecord::Schema.define(version: 2020_01_27_180724) do
     t.integer "dynamic_field_group_id"
     t.integer "created_by_id"
     t.integer "updated_by_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["controlled_vocabulary"], name: "index_dynamic_fields_on_controlled_vocabulary"
     t.index ["dynamic_field_group_id"], name: "index_dynamic_fields_on_dynamic_field_group_id"
     t.index ["string_key", "dynamic_field_group_id"], name: "index_dynamic_fields_on_string_key_and_dynamic_field_group_id", unique: true
@@ -119,8 +119,8 @@ ActiveRecord::Schema.define(version: 2020_01_27_180724) do
     t.boolean "hidden", default: false, null: false
     t.boolean "owner_only", default: false, null: false
     t.text "default_value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.boolean "shareable", default: false, null: false
     t.index ["digital_object_type", "project_id", "dynamic_field_id"], name: "index_enabled_dynamic_fields_unique", unique: true
     t.index ["digital_object_type", "project_id"], name: "index_enabled_dynamic_fields_on_project_and_type"
@@ -138,8 +138,8 @@ ActiveRecord::Schema.define(version: 2020_01_27_180724) do
     t.integer "dynamic_field_group_id"
     t.integer "field_export_profile_id"
     t.text "translation_logic", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["dynamic_field_group_id"], name: "index_export_rules_on_dynamic_field_group_id"
     t.index ["field_export_profile_id", "dynamic_field_group_id"], name: "index_export_rules_on_export_profile_and_dynamic_field_group", unique: true
     t.index ["field_export_profile_id"], name: "index_export_rules_on_field_export_profile_id"
@@ -148,15 +148,15 @@ ActiveRecord::Schema.define(version: 2020_01_27_180724) do
   create_table "field_export_profiles", force: :cascade do |t|
     t.string "name", null: false
     t.text "translation_logic", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "field_sets", force: :cascade do |t|
     t.string "display_label", null: false
     t.integer "project_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["project_id"], name: "index_field_sets_on_project_id"
   end
 
@@ -165,8 +165,8 @@ ActiveRecord::Schema.define(version: 2020_01_27_180724) do
     t.string "action", null: false
     t.string "subject"
     t.string "subject_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_permissions_on_user_id"
   end
 
@@ -175,16 +175,16 @@ ActiveRecord::Schema.define(version: 2020_01_27_180724) do
     t.string "template"
     t.string "seed"
     t.integer "sequence", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["namespace"], name: "index_pid_generators_on_namespace", unique: true
   end
 
   create_table "projects", force: :cascade do |t|
     t.string "string_key", null: false
     t.string "display_label", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.string "project_url"
     t.boolean "is_primary", default: false, null: false
     t.boolean "has_asset_rights", default: false, null: false
@@ -198,8 +198,8 @@ ActiveRecord::Schema.define(version: 2020_01_27_180724) do
     t.string "display_label", null: false
     t.text "publish_url", null: false
     t.string "api_key", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.boolean "is_allowed_doi_target", default: false, null: false
     t.integer "doi_priority", default: 100, null: false
     t.index ["project_id"], name: "index_publish_targets_on_project_id"
@@ -215,8 +215,8 @@ ActiveRecord::Schema.define(version: 2020_01_27_180724) do
     t.string "term_type", null: false
     t.text "custom_fields"
     t.string "uid", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["uid"], name: "index_terms_on_uid", unique: true
     t.index ["uri_hash", "vocabulary_id"], name: "index_terms_on_uri_hash_and_vocabulary_id", unique: true
     t.index ["vocabulary_id"], name: "index_terms_on_vocabulary_id"
@@ -237,8 +237,8 @@ ActiveRecord::Schema.define(version: 2020_01_27_180724) do
     t.datetime "last_sign_in_at"
     t.string "current_sign_in_ip"
     t.string "last_sign_in_ip"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.string "uid", null: false
     t.boolean "is_admin", default: false
     t.string "sort_name"
@@ -253,10 +253,11 @@ ActiveRecord::Schema.define(version: 2020_01_27_180724) do
     t.string "string_key", null: false
     t.text "custom_fields"
     t.boolean "locked", default: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
     t.index ["string_key"], name: "index_vocabularies_on_string_key", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "publish_targets", "projects"
 end
