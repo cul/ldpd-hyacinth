@@ -2,7 +2,7 @@
 
 module Hyacinth
   module Storage
-    class CsvImportStorage < AbstractStorage
+    class ImportJobStorage < AbstractStorage
       def initialize(config)
         super(config)
       end
