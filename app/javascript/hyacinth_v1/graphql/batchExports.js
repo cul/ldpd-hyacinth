@@ -21,3 +21,23 @@ export const batchExportsQuery = gql`
     }
   }
 `;
+
+export const createBatchExportMutation = gql`
+  mutation CreateBatchExport($input: CreateBatchExportInput!) {
+    createBatchExport(input: $input) {
+      batchExport {
+        id
+      }
+    }
+  }
+`;
+
+export const deleteBatchExportMutation = gql`
+  mutation DeleteBatchExport($input: DeleteBatchExportInput!) {
+    deleteBatchExport(input: $input) {
+      batchExport {
+        id
+      }
+    }
+  }
+`;

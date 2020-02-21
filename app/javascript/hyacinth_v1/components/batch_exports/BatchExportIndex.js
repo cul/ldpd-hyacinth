@@ -1,8 +1,9 @@
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { Button } from 'react-bootstrap';
 import PaginationBar from '@hyacinth_v1/components/shared/PaginationBar';
 import React, { useState } from 'react';
 import { Table } from 'react-bootstrap';
-import { batchExportsQuery } from '../../graphql/batchExports';
+import { batchExportsQuery, deleteBatchExportMutation } from '../../graphql/batchExports';
 import ContextualNavbar from '../shared/ContextualNavbar';
 import GraphQLErrors from '../shared/GraphQLErrors';
 
@@ -11,22 +12,36 @@ function BatchExportIndex() {
   const limit = 30;
   const [offset, setOffset] = useState(0);
 
-  const { loading, error, data, refetch } = useQuery(batchExportsQuery, {
+  const { loading: batchExportsLoading, error: batchExportsError, data: batchExportsData, refetch: batchExportsRefresh } = useQuery(batchExportsQuery, {
     variables: {
       limit,
       offset,
     },
   });
 
-  if (loading) return (<></>);
-  if (error) return (<GraphQLErrors errors={error} />);
+  const [deleteBatchExport, { error: deleteBatchExportError }] = useMutation(
+    deleteBatchExportMutation,
+  );
 
-  const batchExports = data.batchExports.nodes;
-  const totalBatchExports = data.batchExports.totalCount;
+  if (batchExportsLoading) return (<></>);
+  if (batchExportsError) {
+    return (<GraphQLErrors errors={batchExportsError || deleteBatchExportError} />);
+  }
+
+  const batchExports = batchExportsData.batchExports.nodes;
+  const totalBatchExports = batchExportsData.batchExports.totalCount;
 
   const onPageNumberClick = (page) => {
     setOffset(limit * (page - 1));
-    refetch();
+    batchExportsRefresh();
+  };
+
+  const deleteBatchExportAndRefresh = (batchExportId) => {
+    // eslint-disable-next-line no-alert
+    if (window.confirm(`Are you sure you want to delete Export Job ${batchExportId}?`)) {
+      const variables = { input: { id: batchExportId } };
+      deleteBatchExport({ variables }).then(() => batchExportsRefresh());
+    }
   };
 
   return (
@@ -65,10 +80,17 @@ function BatchExportIndex() {
                   <td>{batchExport.status}</td>
                   <td>{batchExport.numberOfRecordsProcessed}</td>
                   <td>
-                    <a href="#">Download</a>
+                    <Button variant="secondary">Download</Button>
                   </td>
                   <td>
-                    <a href="#">Delete</a>
+                    <Button
+                      variant="danger"
+                      onClick={(e) => {
+                        e.preventDefault(); deleteBatchExportAndRefresh(batchExport.id);
+                      }}
+                    >
+                        Delete
+                    </Button>
                   </td>
                 </tr>
               ))
