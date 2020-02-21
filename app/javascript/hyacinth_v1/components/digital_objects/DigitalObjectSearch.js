@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 
 import DigitalObjectList from './DigitalObjectList';
 import DigitalObjectFacets from './DigitalObjectFacets';
-import DigitalObjectSearchSummary from './DigitalObjectSearchSummary';
+import ResultCountAndSortOptions from './search/ResultCountAndSortOptions';
 
 import ContextualNavbar from '../shared/ContextualNavbar';
 import PaginationBar from '../shared/PaginationBar';
@@ -43,7 +43,7 @@ export default function DigitalObjectSearch() {
       { nodes.length === 0 ? <Card header="No Digital Objects found." />
         : (
           <>
-            <DigitalObjectSearchSummary totalCount={totalCount} limit={limit} offset={offset} />
+            <ResultCountAndSortOptions totalCount={totalCount} limit={limit} offset={offset} />
             <Row>
               <Col xs={10}>
                 <DigitalObjectList className="digital-object-search-results" digitalObjects={nodes} />

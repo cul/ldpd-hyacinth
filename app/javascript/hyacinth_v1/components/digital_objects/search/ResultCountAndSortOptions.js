@@ -4,15 +4,15 @@ import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import { Button, Card, Collapse } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { createBatchExportMutation } from '../../graphql/batchExports';
-import GraphQLErrors from '../shared/GraphQLErrors';
+import { createBatchExportMutation } from '../../../graphql/batchExports';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 
-const DigitalObjectSearchSummary = (props) => {
+const ResultCountAndSortOptions = (props) => {
   const { totalCount, limit, offset } = props;
   const firstResultNumForPage = offset + 1;
   const lastResultNumForPage = totalCount < offset + limit ? totalCount : offset + limit;
 
-  const [latestExportUrlHref, setLatestExportUrlHref] = useState(null);
+  const [latestExportId, setLatestExportId] = useState(null);
 
   const [createBatchExport, { error: createBatchExportError }] = useMutation(
     createBatchExportMutation,
@@ -26,7 +26,7 @@ const DigitalObjectSearchSummary = (props) => {
     const variables = { input: { searchParams: '{}' } }; // TODO: Use real searchParams
     createBatchExport({ variables }).then((res) => {
       const { data: { createBatchExport: { batchExport: { id: newExportJobId } } } } = res;
-      setLatestExportUrlHref(`/batch_exports?highlight=${newExportJobId}`);
+      setLatestExportId(newExportJobId);
     });
   };
 
@@ -41,29 +41,31 @@ const DigitalObjectSearchSummary = (props) => {
             {' '}
             <FontAwesomeIcon icon="file-export" />
           </Button>
-          <Collapse in={latestExportUrlHref != null}>
+          <Collapse in={latestExportId != null}>
             <div>
               <strong>
-                Export has been queued as a background job.
-                {' '}
+                {`Export with id ${latestExportId} been queued as a background job. `}
                 {
-                  latestExportUrlHref && (
-                    <Link to={latestExportUrlHref}>Click here to monitor the job status.</Link>
+                  latestExportId && (
+                    <Link to={`/batch_exports?highlight=${latestExportId}`}>Click here to monitor the job status.</Link>
                   )
                 }
               </strong>
             </div>
           </Collapse>
         </small>
+        {
+          // TODO: Later on, add sort and per page dropdowns here.
+        }
       </Card.Body>
     </Card>
   );
 };
 
-DigitalObjectSearchSummary.propTypes = {
+ResultCountAndSortOptions.propTypes = {
   totalCount: PropTypes.number.isRequired,
   limit: PropTypes.number.isRequired,
   offset: PropTypes.number.isRequired,
 };
 
-export default DigitalObjectSearchSummary;
+export default ResultCountAndSortOptions;
