@@ -1,15 +1,18 @@
-import { useQuery } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
+import ContextualNavbar from '@hyacinth_v1/components/shared/ContextualNavbar';
+import GraphQLErrors from '@hyacinth_v1/components/shared/GraphQLErrors';
 import PaginationBar from '@hyacinth_v1/components/shared/PaginationBar';
+import { batchExportsQuery, deleteBatchExportMutation } from '@hyacinth_v1/graphql/batchExports';
+import queryString from 'query-string';
 import React, { useState } from 'react';
-import { Table } from 'react-bootstrap';
-import { batchExportsQuery } from '../../graphql/batchExports';
-import ContextualNavbar from '../shared/ContextualNavbar';
-import GraphQLErrors from '../shared/GraphQLErrors';
+import { Button, Table } from 'react-bootstrap';
+import { useLocation } from 'react-router-dom';
 
 function BatchExportIndex() {
-
   const limit = 30;
   const [offset, setOffset] = useState(0);
+  const { search } = useLocation();
+  const { highlight } = queryString.parse(search);
 
   const { loading, error, data, refetch } = useQuery(batchExportsQuery, {
     variables: {
@@ -18,8 +21,14 @@ function BatchExportIndex() {
     },
   });
 
+  const [deleteBatchExport, { error: deleteBatchExportError }] = useMutation(
+    deleteBatchExportMutation,
+  );
+
   if (loading) return (<></>);
-  if (error) return (<GraphQLErrors errors={error} />);
+  if (error) {
+    return (<GraphQLErrors errors={error || deleteBatchExportError} />);
+  }
 
   const batchExports = data.batchExports.nodes;
   const totalBatchExports = data.batchExports.totalCount;
@@ -27,6 +36,14 @@ function BatchExportIndex() {
   const onPageNumberClick = (page) => {
     setOffset(limit * (page - 1));
     refetch();
+  };
+
+  const deleteBatchExportAndRefresh = (batchExportId) => {
+    // eslint-disable-next-line no-alert
+    if (window.confirm(`Are you sure you want to delete Export Job ${batchExportId}?`)) {
+      const variables = { input: { id: batchExportId } };
+      deleteBatchExport({ variables }).then(() => refetch());
+    }
   };
 
   return (
@@ -57,7 +74,7 @@ function BatchExportIndex() {
           {
             (
               batchExports.map(batchExport => (
-                <tr key={batchExport.id}>
+                <tr key={batchExport.id} className={highlight && batchExport.id == highlight ? 'table-info' : ''}>
                   <td>{batchExport.id}</td>
                   <td>{batchExport.searchParams}</td>
                   <td>{batchExport.user.fullName}</td>
@@ -65,10 +82,18 @@ function BatchExportIndex() {
                   <td>{batchExport.status}</td>
                   <td>{batchExport.numberOfRecordsProcessed}</td>
                   <td>
-                    <a href="#">Download</a>
+                    <Button variant="secondary" size="sm">Download</Button>
                   </td>
                   <td>
-                    <a href="#">Delete</a>
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={(e) => {
+                        e.preventDefault(); deleteBatchExportAndRefresh(batchExport.id);
+                      }}
+                    >
+                        Delete
+                    </Button>
                   </td>
                 </tr>
               ))

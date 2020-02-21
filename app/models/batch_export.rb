@@ -9,6 +9,6 @@ class BatchExport < ApplicationRecord
   serialize :export_errors, Array
 
   def delete_associated_file_if_exist
-    Hyacinth::Config.batch_export_storage.delete(file_location)
+    Hyacinth::Config.batch_export_storage.delete(file_location) if file_location.present?
   end
 end

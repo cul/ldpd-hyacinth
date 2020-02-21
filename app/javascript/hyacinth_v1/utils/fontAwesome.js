@@ -17,6 +17,7 @@ import {
   faInfoCircle,
   faExternalLinkSquareAlt,
   faDownload,
+  faFileExport,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -32,4 +33,5 @@ library.add(
   faInfoCircle,
   faExternalLinkSquareAlt,
   faDownload,
+  faFileExport,
 );

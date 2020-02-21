@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 
 import DigitalObjectList from './DigitalObjectList';
 import DigitalObjectFacets from './DigitalObjectFacets';
+import ResultCountAndSortOptions from './search/ResultCountAndSortOptions';
 
 import ContextualNavbar from '../shared/ContextualNavbar';
 import PaginationBar from '../shared/PaginationBar';
@@ -27,7 +28,7 @@ export default function DigitalObjectSearch() {
 
   if (loading) return (<></>);
   if (error) return (<GraphQLErrors errors={error} />);
-  const { digitalObjects: { nodes, facets } } = data;
+  const { digitalObjects: { nodes, facets, totalCount } } = data;
   const onPageNumberClick = (page) => {
     setOffset(limit * (page - 1));
     refetch();
@@ -41,7 +42,8 @@ export default function DigitalObjectSearch() {
       />
       { nodes.length === 0 ? <Card header="No Digital Objects found." />
         : (
-          <Container>
+          <>
+            <ResultCountAndSortOptions totalCount={totalCount} limit={limit} offset={offset} searchParams={{}} />
             <Row>
               <Col xs={10}>
                 <DigitalObjectList className="digital-object-search-results" digitalObjects={nodes} />
@@ -50,7 +52,7 @@ export default function DigitalObjectSearch() {
                 <DigitalObjectFacets className="digital-object-search-facets" facets={facets} />
               </Col>
             </Row>
-          </Container>
+          </>
         )
       }
       <PaginationBar
