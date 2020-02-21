@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter } from 'react-router-dom';
+import { QueryParamProvider } from 'use-query-params';
 import { ApolloProvider } from '@apollo/react-hooks';
 import axios from 'axios';
 
@@ -53,9 +54,11 @@ function App() {
 
   return (
     <BrowserRouter basename="/ui/v1">
-      <ApolloProvider client={createApolloClient(schemaTypes)}>
-        <MainContent />
-      </ApolloProvider>
+      <QueryParamProvider ReactRouterRoute={BrowserRouter.Route}>
+        <ApolloProvider client={createApolloClient(schemaTypes)}>
+          <MainContent />
+        </ApolloProvider>
+      </QueryParamProvider>
     </BrowserRouter>
   );
 }
