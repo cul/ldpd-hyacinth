@@ -1,23 +1,32 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
+import { useQuery } from '@apollo/react-hooks';
 
+import { getDynamicFieldCategoryQuery } from '@hyacinth_v1/graphql/dynamicFieldCategories';
 import ContextualNavbar from '../shared/ContextualNavbar';
 import DynamicFieldCategoryForm from './DynamicFieldCategoryForm';
+import GraphQLErrors from '../shared/GraphQLErrors';
 
-class DynamicFieldCategoryEdit extends React.PureComponent {
-  render() {
-    const { match: { params: { id } } } = this.props;
+function DynamicFieldCategoryEdit() {
+  const { id } = useParams();
 
-    return (
-      <>
-        <ContextualNavbar
-          title="Edit Dynamic Field Category"
-          rightHandLinks={[{ link: '/dynamic_fields', label: 'Back to Dynamic Fields' }]}
-        />
+  const { loading, error, data } = useQuery(
+    getDynamicFieldCategoryQuery, { variables: { id } },
+  );
 
-        <DynamicFieldCategoryForm key={id} id={id} formType="edit" />
-      </>
-    );
-  }
+  if (loading) return (<></>);
+  if (error) return (<GraphQLErrors errors={error} />);
+
+  return (
+    <>
+      <ContextualNavbar
+        title="Edit Dynamic Field Category"
+        rightHandLinks={[{ link: '/dynamic_fields', label: 'Back to Dynamic Fields' }]}
+      />
+
+      <DynamicFieldCategoryForm formType="edit" dynamicFieldCategory={data.dynamicFieldCategory} />
+    </>
+  );
 }
 
 export default DynamicFieldCategoryEdit;

@@ -3,6 +3,7 @@
 class DynamicFieldGroup < ActiveRecord::Base
   include DynamicFieldStructure::Sortable
   include DynamicFieldStructure::StringKey
+  include DynamicFieldStructure::Path
 
   PARENT_TYPES = ['DynamicFieldCategory', 'DynamicFieldGroup'].freeze
 

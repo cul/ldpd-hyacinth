@@ -1,78 +1,70 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { useQuery } from '@apollo/react-hooks';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Breadcrumb } from 'react-bootstrap';
-import produce from 'immer';
+import { lowerFirst } from 'lodash';
 
-import hyacinthApi from '../../../utils/hyacinthApi';
+import GraphQLErrors from '../GraphQLErrors';
+import { dynamicFieldPathQuery } from '../../../graphql/dynamicFields';
+import { dynamicFieldGroupPathQuery } from '../../../graphql/dynamicFieldGroups';
+import { getDynamicFieldCategoryQuery } from '../../../graphql/dynamicFieldCategories';
 
-class DynamicFieldsBreadcrumbs extends React.Component {
-  state = {
-    dynamicFieldGraph: [],
-  }
+const mappedQueries = {
+  DynamicFieldGroup: dynamicFieldGroupPathQuery,
+  DynamicField: dynamicFieldPathQuery,
+  DynamicFieldCategory: getDynamicFieldCategoryQuery,
+};
 
-  componentDidMount() {
-    hyacinthApi.get('/dynamic_field_categories')
-      .then((res) => {
-        this.setState(produce((draft) => {
-          draft.dynamicFieldGraph = res.data.dynamicFieldCategories;
-        }));
-      });
-  }
 
-  findPath(dynamicFieldHierarchy, seekId, seekType) {
-    const {
-      id, type, displayLabel, children,
-    } = dynamicFieldHierarchy;
+function DynamicFieldsBreadcrumbs(props) {
+  const { for: { id, type }, last } = props;
 
-    if (id === seekId && type === seekType) {
-      return [{ id, type, displayLabel }];
-    } if (children && children.length !== 0) {
-      for (const child of children) {
-        const foundPath = this.findPath(child, seekId, seekType);
-        if (foundPath !== null) {
-          return [{ id, type, displayLabel }].concat(foundPath);
-        }
+  const { loading, error, data } = useQuery(
+    mappedQueries[type], { variables: { id } },
+  );
+
+  if (loading) return (<></>);
+  if (error) return (<GraphQLErrors errors={error} />);
+
+  const { path: allParents, ...rest } = data[lowerFirst(type)];
+
+  const path = (allParents || []).concat(rest);
+
+  return (
+    <Breadcrumb>
+      {
+        path.map((segment, index) => (
+          <LinkContainer
+            key={segment.id}
+            to={segment.type === 'DynamicFieldCategory' ? '/dynamic_fields' : `/dynamic_field_groups/${segment.id}/edit`}
+          >
+            <Breadcrumb.Item active={!last && index === path.length - 1}>
+              {segment.displayLabel}
+            </Breadcrumb.Item>
+          </LinkContainer>
+        ))
       }
-    }
-
-    return null;
-  }
-
-  render() {
-    const { for: { id: stringId, type }, last } = this.props;
-
-    let id = parseInt(stringId);
-
-    let path = [];
-    for (const category of this.state.dynamicFieldGraph) {
-      const foundPath = this.findPath(category, id, type);
-      if (foundPath != null) {
-        path = foundPath;
-        break;
+      {
+        last && (
+          <Breadcrumb.Item active>{last}</Breadcrumb.Item>
+        )
       }
-    }
-
-    const crumbs = path.map((segment, index) => (
-      <LinkContainer
-        to={segment.type === 'DynamicFieldCategory' ? '/dynamic_fields' : `/dynamic_field_groups/${segment.id}/edit`}
-      >
-        <Breadcrumb.Item active={!last && index === path.length - 1}>
-          {segment.displayLabel}
-        </Breadcrumb.Item>
-      </LinkContainer>
-    ));
-
-    return (
-      <Breadcrumb>
-        {crumbs}
-        {
-          last && (
-            <Breadcrumb.Item active>{last}</Breadcrumb.Item>
-          )
-        }
-      </Breadcrumb>
-    );
-  }
+    </Breadcrumb>
+  );
 }
+
+DynamicFieldsBreadcrumbs.defaultProps = {
+  for: null,
+  last: null,
+};
+
+DynamicFieldsBreadcrumbs.propTypes = {
+  for: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    type: PropTypes.oneOf(['DynamicFieldGroup', 'DynamicField', 'DynamicFieldCategory']).isRequired,
+  }),
+  last: PropTypes.string,
+};
 
 export default DynamicFieldsBreadcrumbs;

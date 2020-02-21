@@ -18,7 +18,7 @@ import TextInputWithAddAndRemove from '../../shared/forms/inputs/TextInputWithAd
 const defaultFieldValue = {
   string: '',
   textarea: '',
-  integer: '',
+  integer: null,
   boolean: false,
   select: '',
   date: '',

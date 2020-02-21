@@ -51,11 +51,7 @@ Rails.application.routes.draw do
                   param: :digital_object_type, constraints: { digital_object_type: /(#{Hyacinth::Config.digital_object_types.keys.join('|')})/ }
       end
 
-      resources :dynamic_field_categories, except: [:new, :edit]
-      resources :dynamic_field_groups,     except: [:new, :edit, :index]
-      resources :dynamic_fields,           except: [:new, :edit, :index]
-
-      resources :field_export_profiles,    except: [:new, :edit]
+      resources :dynamic_field_categories, only: [:index]
     end
   end
 end

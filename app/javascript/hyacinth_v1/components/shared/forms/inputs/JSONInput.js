@@ -6,33 +6,39 @@ import 'brace';
 import 'brace/mode/json';
 import 'brace/theme/textmate';
 
-class JSONInput extends React.PureComponent {
-  render() {
-    const {
-      inputName, onChange, value, height, placeholder, ...rest
-    } = this.props;
+function JSONInput(props) {
+  const {
+    inputName, onChange, value, height, placeholder, ...rest
+  } = props;
 
-    return (
-      <Col sm={10} className="py-2" {...rest}>
-        <AceEditor
-          mode="json"
-          theme="textmate"
-          width="inherit"
-          editorProps={{ $blockScrolling: true }}
-          tabSize={2}
-          onChange={onChange}
-          value={value}
-          name={inputName}
-          height={height}
-          placeholder={placeholder}
-        />
-      </Col>
-    );
-  }
+  return (
+    <Col sm={10} className="py-2" {...rest}>
+      <AceEditor
+        mode="json"
+        theme="textmate"
+        width="inherit"
+        editorProps={{ $blockScrolling: true }}
+        tabSize={2}
+        onChange={v => onChange(v)} // only send the first param to the callback function
+        value={value}
+        name={inputName}
+        height={height}
+        placeholder={placeholder}
+      />
+    </Col>
+  );
 }
+
+JSONInput.defaultProps = {
+  inputName: null,
+  height: undefined,
+  placeholder: undefined,
+};
 
 JSONInput.propTypes = {
   inputName: PropTypes.string,
+  height: PropTypes.string,
+  placeholder: PropTypes.string,
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
 };

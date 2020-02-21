@@ -16,5 +16,6 @@ module Types
     field :is_identifier_searchable, Boolean, null: false
     field :controlled_vocabulary, String, null: true
     field :dynamic_field_group, DynamicFieldGroupType, null: true
+    field :path, [DynamicFieldCollationType], "Path of categories and groups leading to this field", null: false
   end
 end

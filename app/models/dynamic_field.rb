@@ -3,6 +3,7 @@
 class DynamicField < ActiveRecord::Base
   include DynamicFieldStructure::Sortable
   include DynamicFieldStructure::StringKey
+  include DynamicFieldStructure::Path
 
   module Type
     STRING = 'string'
@@ -55,6 +56,10 @@ class DynamicField < ActiveRecord::Base
 
   def siblings
     dynamic_field_group.respond_to?(:children) ? dynamic_field_group.children.reject { |c| c.eql?(self) } : []
+  end
+
+  def parent
+    dynamic_field_group
   end
 
   private

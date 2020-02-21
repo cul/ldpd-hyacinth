@@ -1,31 +1,31 @@
 import React from 'react';
 import queryString from 'query-string';
+import { useLocation } from 'react-router-dom';
 
 import ContextualNavbar from '../shared/ContextualNavbar';
 import DynamicFieldForm from './DynamicFieldForm';
 import DynamicFieldsBreadcrumbs from '../shared/dynamic_fields/DynamicFieldsBreadcrumbs';
 
-class DynamicFieldNew extends React.PureComponent {
-  render() {
-    const { location: { search } } = this.props;
-    const { dynamicFieldGroupId } = queryString.parse(search);
+function DynamicFieldNew() {
+  const { search } = useLocation();
 
-    return (
-      <>
-        <ContextualNavbar
-          title="Create Dynamic Field"
-          rightHandLinks={[{ link: '/dynamic_fields', label: 'Back to Dynamic Fields' }]}
-        />
+  const { dynamicFieldGroupId } = queryString.parse(search);
 
-        <DynamicFieldsBreadcrumbs
-          for={{ id: dynamicFieldGroupId, type: 'DynamicFieldGroup' }}
-          last="New Dynamic Field"
-        />
+  return (
+    <>
+      <ContextualNavbar
+        title="Create Dynamic Field"
+        rightHandLinks={[{ link: '/dynamic_fields', label: 'Back to Dynamic Fields' }]}
+      />
 
-        <DynamicFieldForm formType="new" defaultValues={{ dynamicFieldGroupId }} />
-      </>
-    );
-  }
+      <DynamicFieldsBreadcrumbs
+        for={{ id: dynamicFieldGroupId, type: 'DynamicFieldGroup' }}
+        last="New Dynamic Field"
+      />
+
+      <DynamicFieldForm formType="new" defaultValues={{ dynamicFieldGroupId }} />
+    </>
+  );
 }
 
 export default DynamicFieldNew;
