@@ -13,11 +13,11 @@ development:
     tracked_storage_adapters:
       - uri_protocol: 'tracked-disk'
         type: TrackedDisk
-  import_job_storage:
+  batch_import_storage:
     adapters:
       - uri_protocol: 'managed-disk'
         type: ManagedDisk
-        default_path: <%= Rails.root.join('tmp', 'development', 'import-jobs') %>
+        default_path: <%= Rails.root.join('tmp', 'development', 'batch-imports') %>
   batch_export_storage:
     adapters:
       - uri_protocol: 'managed-disk'
@@ -59,11 +59,11 @@ test:
     tracked_storage_adapters:
       - uri_protocol: 'tracked-disk'
         type: TrackedDisk
-  import_job_storage:
+  batch_import_storage:
     adapters:
       - uri_protocol: 'managed-disk'
         type: ManagedDisk
-        default_path: <%= Rails.root.join('tmp', 'test', 'import-jobs') %>
+        default_path: <%= Rails.root.join('tmp', 'test', 'batch-imports') %>
   batch_export_storage:
     adapters:
       - uri_protocol: 'managed-disk'

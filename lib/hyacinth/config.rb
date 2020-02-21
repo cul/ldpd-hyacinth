@@ -22,8 +22,8 @@ module Hyacinth
       @resource_storage ||= Hyacinth::Storage::ResourceStorage.new(HYACINTH[:resource_storage])
     end
 
-    def self.import_job_storage
-      @import_job_storage ||= Hyacinth::Storage::CsvImportStorage.new(HYACINTH[:import_job_storage])
+    def self.batch_import_storage
+      @batch_import_storage ||= Hyacinth::Storage::BatchImportStorage.new(HYACINTH[:batch_import_storage])
     end
 
     def self.batch_export_storage
