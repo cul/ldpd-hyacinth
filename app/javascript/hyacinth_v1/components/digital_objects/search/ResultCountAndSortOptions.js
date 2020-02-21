@@ -8,7 +8,9 @@ import { createBatchExportMutation } from '../../../graphql/batchExports';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 
 const ResultCountAndSortOptions = (props) => {
-  const { totalCount, limit, offset } = props;
+  const {
+    totalCount, limit, offset, searchParams,
+  } = props;
   const firstResultNumForPage = offset + 1;
   const lastResultNumForPage = totalCount < offset + limit ? totalCount : offset + limit;
 
@@ -23,7 +25,7 @@ const ResultCountAndSortOptions = (props) => {
   }
 
   const exportCurrentSearch = () => {
-    const variables = { input: { searchParams: '{}' } }; // TODO: Use real searchParams
+    const variables = { input: { searchParams: JSON.stringify(searchParams) } };
     createBatchExport({ variables }).then((res) => {
       const { data: { createBatchExport: { batchExport: { id: newExportJobId } } } } = res;
       setLatestExportId(newExportJobId);
@@ -63,6 +65,7 @@ const ResultCountAndSortOptions = (props) => {
 };
 
 ResultCountAndSortOptions.propTypes = {
+  searchParams: PropTypes.objectOf(PropTypes.any).isRequired,
   totalCount: PropTypes.number.isRequired,
   limit: PropTypes.number.isRequired,
   offset: PropTypes.number.isRequired,

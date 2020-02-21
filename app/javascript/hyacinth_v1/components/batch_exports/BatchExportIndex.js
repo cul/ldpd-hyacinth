@@ -14,12 +14,7 @@ function BatchExportIndex() {
   const { search } = useLocation();
   const { highlight } = queryString.parse(search);
 
-  const {
-    loading: batchExportsLoading,
-    error: batchExportsError,
-    data: batchExportsData,
-    refetch: batchExportsRefresh,
-  } = useQuery(batchExportsQuery, {
+  const { loading, error, data, refetch } = useQuery(batchExportsQuery, {
     variables: {
       limit,
       offset,
@@ -30,24 +25,24 @@ function BatchExportIndex() {
     deleteBatchExportMutation,
   );
 
-  if (batchExportsLoading) return (<></>);
-  if (batchExportsError) {
-    return (<GraphQLErrors errors={batchExportsError || deleteBatchExportError} />);
+  if (loading) return (<></>);
+  if (error) {
+    return (<GraphQLErrors errors={error || deleteBatchExportError} />);
   }
 
-  const batchExports = batchExportsData.batchExports.nodes;
-  const totalBatchExports = batchExportsData.batchExports.totalCount;
+  const batchExports = data.batchExports.nodes;
+  const totalBatchExports = data.batchExports.totalCount;
 
   const onPageNumberClick = (page) => {
     setOffset(limit * (page - 1));
-    batchExportsRefresh();
+    refetch();
   };
 
   const deleteBatchExportAndRefresh = (batchExportId) => {
     // eslint-disable-next-line no-alert
     if (window.confirm(`Are you sure you want to delete Export Job ${batchExportId}?`)) {
       const variables = { input: { id: batchExportId } };
-      deleteBatchExport({ variables }).then(() => batchExportsRefresh());
+      deleteBatchExport({ variables }).then(() => refetch());
     }
   };
 
