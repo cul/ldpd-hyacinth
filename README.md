@@ -107,3 +107,10 @@ If you have an IDE that supports jsconfig.json files (e.g. Visual Studio Code), 
   ]
 }
 ```
+
+## Development / Rubocop
+
+When regenerating our .rubocop_todo.yml file, we use this command:
+```
+rubocop --auto-gen-config --auto-gen-only-exclude --exclude-limit 10000
+```

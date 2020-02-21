@@ -17,7 +17,6 @@ Rails.application.routes.draw do
     end
   end
 
-
   constraints dev_or_admin_constraints do
     mount Resque::Server.new, at: "/resque"
   end

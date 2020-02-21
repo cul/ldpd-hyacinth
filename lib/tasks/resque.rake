@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Enable resque tasks and ensure that setup and work tasks have access to the environment
 require 'resque/tasks'
 task "resque:setup" => :environment
@@ -7,20 +9,19 @@ MAX_WAIT_TIME_TO_KILL_WORKERS = 120
 PIDFILE_PATH = 'tmp/pids/resque.pid'
 
 namespace :resque do
-
   desc "Stop current workers and start new workers"
-  task :restart_workers => :environment do
+  task restart_workers: :environment do
     Rake::Task['resque:stop_workers'].invoke
     Rake::Task['resque:start_workers'].invoke
   end
 
   desc "Stop running workers"
-  task :stop_workers => :environment do
+  task stop_workers: :environment do
     stop_workers
   end
 
   desc "Start workers"
-  task :start_workers => :environment do
+  task start_workers: :environment do
     start_workers(Rails.application.config_for(:resque))
   end
 
@@ -33,9 +34,9 @@ namespace :resque do
 
   def read_pids
     pid_file_path = File.expand_path(PIDFILE_PATH, Rails.root)
-    return [] if ! File.exists?(pid_file_path)
+    return [] unless File.exist?(pid_file_path)
 
-    File.read(pid_file_path).split(',').collect {|p| p.to_i }
+    File.read(pid_file_path).split(',').collect(&:to_i)
   end
 
   def stop_workers
@@ -51,15 +52,15 @@ namespace :resque do
       `#{syscmd}`
       puts "\n"
       puts "Waiting for workers to finish current jobs..."
-      start_time = Time.now
-      while (Time.now - start_time) < MAX_WAIT_TIME_TO_KILL_WORKERS do
+      start_time = Time.current
+      while (Time.current - start_time) < MAX_WAIT_TIME_TO_KILL_WORKERS
         sleep 1
-        num_workers_working = Resque.workers.select { |w| w.working? }.length
+        num_workers_working = Resque.workers.select(&:working?).length
         puts "#{num_workers_working} workers still working..."
         break if num_workers_working.zero?
       end
       puts "\n"
-      if Resque.workers.select(&:working?).length > 0
+      if Resque.workers.select(&:working?).positive?
         puts "Workers are still running, but wait time of #{MAX_WAIT_TIME_TO_KILL_WORKERS} has been exceeded. Sending QUIT signal anyway."
       else
         puts 'Workers are no longer processing any jobs. Safely sending QUIT signal...'
@@ -73,7 +74,7 @@ namespace :resque do
     end
 
     # Unregister old workers
-    Resque.workers.each {|w| w.unregister_worker}
+    Resque.workers.each(&:unregister_worker)
   end
 
   # Start a worker with proper env vars and output redirection
@@ -101,13 +102,13 @@ namespace :resque do
         'RAILS_ENV' => Rails.env.to_s,
         'INTERVAL' => polling_interval.to_s # jobs tend to run for a while, so a 5-second checking interval is fine
       }
-      count.times {
+      count.times do
         # Using Kernel.spawn and Process.detach because regular system() call would
         # cause the processes to quit when capistrano finishes.
         pid = spawn(env_vars, "rake resque:work", ops)
         Process.detach(pid)
         pids << pid
-      }
+      end
     end
 
     store_pids(pids, :append)
