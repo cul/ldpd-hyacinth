@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'resque/server'
+
 Rails.application.routes.draw do
   # Constraint for restricting certain routes to only admins, or to the development environment
   dev_or_admin_constraints = lambda do |request|
@@ -13,6 +15,11 @@ Rails.application.routes.draw do
     constraints dev_or_admin_constraints do
       mount GraphiQL::Rails::Engine, at: '/graphiql', graphql_path: '/graphql'
     end
+  end
+
+
+  constraints dev_or_admin_constraints do
+    mount Resque::Server.new, at: "/resque"
   end
 
   post "/graphql", to: "graphql#execute"

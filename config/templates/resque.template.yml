@@ -1,0 +1,20 @@
+default: &default
+  inline: false
+  workers:
+    '*' : 1
+  polling_interval: 5
+
+development:
+  <<: *default
+  inline: true
+
+test:
+  <<: *default
+  inline: true
+
+production:
+  <<: *default
+  workers:
+    '*' : 1
+    'high' : 3
+    'low,medium' : 1

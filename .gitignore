@@ -44,6 +44,7 @@ yarn-debug.log*
 database.yml
 datacite.yml
 hyacinth.yml
+redis.yml
 resque.yml
 secrets.yml
 fedora.yml
