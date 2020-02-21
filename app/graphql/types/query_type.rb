@@ -81,15 +81,13 @@ module Types
     end
 
     def digital_objects(**arguments)
-      search_params = {}
-      arguments.fetch(:filters, []).each do |filter_attribute|
-        (search_params[filter_attribute.field] ||= []) << filter_attribute.value
-      end
-      search_params['q'] = arguments[:query]
-      search_params['facet_on'] = ['digital_object_type_ssi']
       # TODO: consider object read permissions via projects
       # TODO: identification of possible filters in scope of search
-      Hyacinth::Config.digital_object_search_adapter.search(search_params)
+      search_params = arguments[:search_params] ? arguments[:search_params].prepare : {}
+      Hyacinth::Config.digital_object_search_adapter.search(search_params) do |solr_params|
+        solr_params.rows(arguments[:limit])
+        solr_params.start(arguments[:offset])
+      end
     end
 
     def digital_object(id:)

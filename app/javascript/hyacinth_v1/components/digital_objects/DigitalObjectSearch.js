@@ -26,7 +26,7 @@ export default function DigitalObjectSearch() {
     loading, error, data, refetch,
   } = useQuery(
     getDigitalObjectsQuery, {
-      variables: { limit, offset, filters, query },
+      variables: { limit, offset, searchParams: { filters, query } },
       onCompleted: (searchData) => { setTotalObjects(searchData.digitalObjects.totalCount); },
     },
   );
