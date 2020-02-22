@@ -9,7 +9,7 @@ const FilterArrayParam = {
       const { field, value } = filter;
       return encodeObject(Object.fromEntries([[field, value]]),'::','__');
     };
-    return encodeArray(filters.map(encodeFilter));
+    return encodeArray([filters].flat().map(encodeFilter));
   },
   decode: (arrayStr) => {
     const decodeFilter = (encoded) => {
