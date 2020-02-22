@@ -134,6 +134,7 @@ Metrics/MethodLength:
     - 'app/controllers/concerns/hyacinth/users/cas_authentication_behavior.rb'
     - 'app/graphql/mutations/create_asset.rb'
     - 'app/graphql/types/vocabulary_type.rb'
+    - 'app/jobs/batch_export_job.rb'
     - 'app/models/ability.rb'
     - 'app/models/concerns/digital_object_concerns/destroy_behavior.rb'
     - 'app/models/concerns/digital_object_concerns/digital_object_data/setters/parent_uids.rb'

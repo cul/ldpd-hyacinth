@@ -1,16 +1,25 @@
+# frozen_string_literal: true
+
 class BatchExportJob
   @queue = :export_jobs
 
   BATCH_SIZE = 10
 
   def self.perform(batch_export_id)
-    start_time = Time.now
-    digital_objects_for_batch_export(BatchExport.find(batch_export_id)) do |digital_object|
-      puts digital_object.uid
+    start_time = Time.current
+    batch_export = BatchExport.find(batch_export_id)
+    digital_objects_for_batch_export(batch_export) do |digital_object|
+      # puts digital_object.uid
     end
+    batch_export.duration = (Time.current - start_time).to_i
+    batch_export.save!
   end
 
-  def self.digital_objects_for_batch_export(batch_export, &block)
+  # Given a batch_export, calls the given block once for each digital object returned by executing
+  # a digital object search for the batch_export's search_params.
+  # @param [BatchExport] A BatchExport object.
+  # @yield [digital_object] A DigitalObject::Base subclass instance.
+  def self.digital_objects_for_batch_export(batch_export)
     search_params = JSON.parse(batch_export.search_params)
 
     # TODO: Pass user into search method (when that functionality exists) so that we scope export

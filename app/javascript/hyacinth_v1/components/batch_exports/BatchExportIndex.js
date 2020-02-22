@@ -74,7 +74,7 @@ function BatchExportIndex() {
           {
             (
               batchExports.map(batchExport => (
-                <tr key={batchExport.id} className={highlight && batchExport.id == highlight ? 'table-info' : ''}>
+                <tr key={batchExport.id} className={highlight && batchExport.id === highlight ? 'table-info' : ''}>
                   <td>{batchExport.id}</td>
                   <td>{batchExport.searchParams}</td>
                   <td>{batchExport.user.fullName}</td>

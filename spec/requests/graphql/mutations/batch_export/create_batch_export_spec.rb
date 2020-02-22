@@ -4,8 +4,26 @@ require 'rails_helper'
 
 RSpec.describe Mutations::BatchExport::CreateBatchExport, type: :request do
   let(:user) { FactoryBot.create(:user) }
-  let(:search_params) do
-    { 'param_one' => 'value one', 'param_2' => 'value two' }
+  let(:mutation_search_params) do
+    {
+      'filters' => [
+        {
+          'field' => 'digital_object_type_ssi',
+          'value' => 'asset'
+        },
+        {
+          'field' => 'projects_ssim',
+          'value' => 'test'
+        }
+      ]
+    }
+  end
+  let(:expected_stored_search_params) do
+    {
+      'digital_object_type_ssi' => ['asset'],
+      'projects_ssim' => ['test'],
+      'q' => nil
+    }
   end
 
   context 'when user is logged in' do
@@ -15,9 +33,7 @@ RSpec.describe Mutations::BatchExport::CreateBatchExport, type: :request do
       let(:variables) do
         {
           input: {
-            searchParams:  {
-              filters: search_params.map { |k, v| { field: k, value: v } }
-            }
+            searchParams: mutation_search_params
           }
         }
       end
@@ -26,8 +42,8 @@ RSpec.describe Mutations::BatchExport::CreateBatchExport, type: :request do
 
       it 'returns correct response' do
         json_response = JSON.parse(response.body)
-        returned_params = JSON.parse(json_response.dig('data', 'createBatchExport', 'batchExport', 'searchParams'))
-        expect(returned_params).to include(search_params.map { |k, v| [k, [v]] }.to_h)
+        returned_search_params = JSON.parse(json_response.dig('data', 'createBatchExport', 'batchExport', 'searchParams'))
+        expect(returned_search_params).to eq(expected_stored_search_params)
       end
     end
 
