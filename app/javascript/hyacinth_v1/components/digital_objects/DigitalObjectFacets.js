@@ -22,12 +22,14 @@ const DigitalObjectFacets = (props) => {
 };
 
 const DigitalObjectFacetValues = (props) => {
-  const { values, fieldName, isFacetCurrent, onFacetSelect } = props;
+  const {
+    values, fieldName, isFacetCurrent, onFacetSelect,
+  } = props;
   return (
     <>
       {
         values.map((value) => {
-          const onSelect = () => { onFacetSelect(fieldName, value.value); }
+          const onSelect = () => { onFacetSelect(fieldName, value.value); };
           const displayText = isFacetCurrent(fieldName, value.value) ? `${value.value} (remove)` : `${value.value} (${value.count})`;
           return <NavDropdown.Item key={`${fieldName}-${value.value}`} eventKey={`${fieldName}-${value.value}`} onSelect={onSelect}>{displayText}</NavDropdown.Item>;
         })
@@ -38,6 +40,8 @@ const DigitalObjectFacetValues = (props) => {
 
 DigitalObjectFacets.propTypes = {
   facets: PropTypes.arrayOf(PropTypes.object).isRequired,
+  isFacetCurrent: PropTypes.func.isRequired,
+  onFacetSelect: PropTypes.func.isRequired,
 };
 
 DigitalObjectFacetValues.propTypes = {
@@ -47,6 +51,9 @@ DigitalObjectFacetValues.propTypes = {
       count: PropTypes.number.isRequired,
     }),
   ).isRequired,
+  fieldName: PropTypes.string.isRequired,
+  isFacetCurrent: PropTypes.func.isRequired,
+  onFacetSelect: PropTypes.func.isRequired,
 };
 
 export default DigitalObjectFacets;
