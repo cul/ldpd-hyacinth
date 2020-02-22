@@ -84,6 +84,7 @@ module Types
       # TODO: consider object read permissions via projects
       # TODO: identification of possible filters in scope of search
       search_params = arguments[:search_params] ? arguments[:search_params].prepare : {}
+      search_params['facet_on'] = ['digital_object_type_ssi','projects_ssim']
       Hyacinth::Config.digital_object_search_adapter.search(search_params) do |solr_params|
         solr_params.rows(arguments[:limit])
         solr_params.start(arguments[:offset])

@@ -13,7 +13,6 @@ module Types
         (search_params[filter_attribute.field] ||= []) << filter_attribute.value
       end
       search_params['q'] = @arguments[:query]
-      search_params['facet_on'] = ['digital_object_type_ssi']
       search_params
     end
   end
