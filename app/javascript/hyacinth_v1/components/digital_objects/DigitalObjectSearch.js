@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Card, Col, Row } from 'react-bootstrap';
+import {
+  Card, Col, Row,
+} from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
-import { useQueryParam } from 'use-query-params';
+import { useQueryParam, StringParam } from 'use-query-params';
 
 import DigitalObjectList from './DigitalObjectList';
 import DigitalObjectFacets from './DigitalObjectFacets';
@@ -12,6 +14,7 @@ import PaginationBar from '../shared/PaginationBar';
 import GraphQLErrors from '../shared/GraphQLErrors';
 import { getDigitalObjectsQuery } from '../../graphql/digitalObjects';
 import FilterArrayParam from '../../utils/filterArrayParam';
+import QueryForm from './search/QueryForm';
 
 const limit = 20;
 
@@ -20,7 +23,8 @@ export default function DigitalObjectSearch() {
   const [totalObjects, setTotalObjects] = useState(0);
   const [urlFilters = [], setUrlFilters] = useQueryParam('filters', FilterArrayParam);
   const [filters = urlFilters, setFilters] = useState(urlFilters);
-  const [query, setQuery] = useState();
+  const [urlQuery, setUrlQuery] = useQueryParam('q', StringParam);
+  const [query, setQuery] = useState(urlQuery);
 
   const {
     loading, error, data, refetch,
@@ -51,6 +55,10 @@ export default function DigitalObjectSearch() {
     setFilters(updatedFilters);
     refetch();
   };
+  const onQueryChange = (value) => {
+    setUrlQuery(value);
+    setQuery(value);
+  };
   return (
     <>
       <ContextualNavbar
@@ -66,6 +74,7 @@ export default function DigitalObjectSearch() {
                 <DigitalObjectList className="digital-object-search-results" digitalObjects={nodes} />
               </Col>
               <Col xs={2}>
+                <QueryForm value={query} onQueryChange={onQueryChange} onSubmit={refetch} />
                 <DigitalObjectFacets className="digital-object-search-facets" facets={facets} isFacetCurrent={isFacetCurrent} onFacetSelect={onFacetSelect} />
               </Col>
             </Row>
