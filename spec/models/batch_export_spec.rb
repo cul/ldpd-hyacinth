@@ -15,6 +15,7 @@ RSpec.describe BatchExport, type: :model do
       its(:status) { is_expected.to eq 'pending' }
       its(:duration) { is_expected.to eq 0 }
       its(:number_of_records_processed) { is_expected.to eq 0 }
+      its(:total_records_to_process) { is_expected.to eq 0 }
 
       context "time-based tests" do
         before do

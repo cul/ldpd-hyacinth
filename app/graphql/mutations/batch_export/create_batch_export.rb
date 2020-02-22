@@ -12,6 +12,8 @@ class Mutations::BatchExport::CreateBatchExport < Mutations::BaseMutation
     batch_export = BatchExport.new(**attributes)
     batch_export.save!
 
+    Resque.enqueue(BatchExportJob, batch_export.id)
+
     { batch_export: batch_export }
   end
 end

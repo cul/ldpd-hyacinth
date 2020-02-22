@@ -12,6 +12,7 @@ export const batchExportsQuery = gql`
         createdAt,
         status
         numberOfRecordsProcessed
+        totalRecordsToProcess
       }
       pageInfo {
         hasPreviousPage

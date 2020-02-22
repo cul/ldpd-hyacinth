@@ -80,7 +80,10 @@ function BatchExportIndex() {
                   <td>{batchExport.user.fullName}</td>
                   <td>{batchExport.createdAt}</td>
                   <td>{batchExport.status}</td>
-                  <td>{batchExport.numberOfRecordsProcessed}</td>
+                  <td>{`${batchExport.numberOfRecordsProcessed} / ${batchExport.totalRecordsToProcess}`}</td>
+                  {
+                    // TODO: Maybe display exportErrors errors here
+                  }
                   <td>
                     <Button variant="secondary" size="sm">Download</Button>
                   </td>
