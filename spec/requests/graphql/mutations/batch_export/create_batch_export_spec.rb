@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Mutations::BatchExport::CreateBatchExport, type: :request do
   let(:user) { FactoryBot.create(:user) }
   let(:search_params) do
-    { 'param_one' => 'value one', 'param_2' => 'value two' }.to_json
+    { 'param_one' => 'value one', 'param_2' => 'value two' }
   end
 
   context 'when user is logged in' do
@@ -15,7 +15,9 @@ RSpec.describe Mutations::BatchExport::CreateBatchExport, type: :request do
       let(:variables) do
         {
           input: {
-            searchParams: search_params
+            searchParams:  {
+              filters: search_params.map { |k, v| { field: k, value: v } }
+            }
           }
         }
       end
@@ -23,9 +25,9 @@ RSpec.describe Mutations::BatchExport::CreateBatchExport, type: :request do
       before { graphql query, variables }
 
       it 'returns correct response' do
-        expect(response.body).to be_json_eql(%({
-          "batchExport": { "searchParams": "#{search_params.gsub(/"/, '\"')}" }
-        })).at_path('data/createBatchExport')
+        json_response = JSON.parse(response.body)
+        returned_params = JSON.parse(json_response.dig('data', 'createBatchExport', 'batchExport', 'searchParams'))
+        expect(returned_params).to include(search_params.map { |k, v| [k, [v]] }.to_h)
       end
     end
 

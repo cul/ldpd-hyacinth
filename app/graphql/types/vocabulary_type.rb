@@ -29,7 +29,7 @@ module Types
       term
     end
 
-    def terms(limit:, offset: 0, query: nil, filters: [])
+    def terms(limit:, offset: 0, search_params: {})
       ability.authorize!(:read, Term)
 
       custom_fields = object.custom_fields
@@ -40,12 +40,12 @@ module Types
       all_valid_filters = custom_fields.keys + valid_filters
 
       Hyacinth::Config.term_search_adapter.search do |params|
-        params.q     query
+        params.q     search_params[:query]
         params.start offset
         params.rows  limit
         params.fq('vocabulary', object.string_key)
-
-        filters.each do |filter|
+        filters = search_params[:filters]
+        filters&.each do |filter|
           # Need to convert the field name to snake_case because field names maybe provided in camelcase.
           field = filter[:field].underscore
 

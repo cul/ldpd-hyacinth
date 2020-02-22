@@ -6,7 +6,7 @@ module Types
       def apply
         field.argument :limit, "Types::Scalar::Limit", required: true
         field.argument :offset, "Types::Scalar::Offset", required: false
-        field.argument :query, String, required: false
+        field.argument :search_params, Types::SearchAttributes, required: false
         field.argument :filters, [FilterAttributes, null: true], required: false
       end
 
