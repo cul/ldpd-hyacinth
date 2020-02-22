@@ -8,7 +8,7 @@ const DigitalObjectFacets = (props) => {
   return (
     <Navbar key="digital-object-facets" className="flex-column">
       <Navbar.Brand>Facets</Navbar.Brand>
-      <Nav className="mr-auto">
+      <Nav className="flex-column">
         {
           facets.map(facet => (
             <NavDropdown title={facet.displayLabel} key={`dropdown-${facet.fieldName}`}>
