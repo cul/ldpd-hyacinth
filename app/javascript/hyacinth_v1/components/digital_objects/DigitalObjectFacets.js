@@ -3,16 +3,16 @@ import PropTypes from 'prop-types';
 import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
 
 const DigitalObjectFacets = (props) => {
-  const { facets } = props;
+  const { facets, isFacetCurrent, onFacetSelect } = props;
 
   return (
     <Navbar key="digital-object-facets" className="flex-column">
       <Navbar.Brand>Facets</Navbar.Brand>
-      <Nav className="mr-auto">
+      <Nav className="flex-column">
         {
           facets.map(facet => (
-            <NavDropdown title={facet.displayLabel}>
-              <DigitalObjectFacetValues values={facet.values} />
+            <NavDropdown title={facet.displayLabel} key={`dropdown-${facet.fieldName}`}>
+              <DigitalObjectFacetValues values={facet.values} fieldName={facet.fieldName} isFacetCurrent={isFacetCurrent} onFacetSelect={onFacetSelect} />
             </NavDropdown>
           ))
         }
@@ -22,13 +22,16 @@ const DigitalObjectFacets = (props) => {
 };
 
 const DigitalObjectFacetValues = (props) => {
-  const { values } = props;
+  const {
+    values, fieldName, isFacetCurrent, onFacetSelect,
+  } = props;
   return (
     <>
       {
         values.map((value) => {
-          const displayText = `${value.value} (${value.count})`;
-          return <NavDropdown.Item href="">{displayText}</NavDropdown.Item>;
+          const onSelect = () => { onFacetSelect(fieldName, value.value); };
+          const displayText = isFacetCurrent(fieldName, value.value) ? `${value.value} (remove)` : `${value.value} (${value.count})`;
+          return <NavDropdown.Item key={`${fieldName}-${value.value}`} eventKey={`${fieldName}-${value.value}`} onSelect={onSelect}>{displayText}</NavDropdown.Item>;
         })
       }
     </>
@@ -37,6 +40,8 @@ const DigitalObjectFacetValues = (props) => {
 
 DigitalObjectFacets.propTypes = {
   facets: PropTypes.arrayOf(PropTypes.object).isRequired,
+  isFacetCurrent: PropTypes.func.isRequired,
+  onFacetSelect: PropTypes.func.isRequired,
 };
 
 DigitalObjectFacetValues.propTypes = {
@@ -46,6 +51,9 @@ DigitalObjectFacetValues.propTypes = {
       count: PropTypes.number.isRequired,
     }),
   ).isRequired,
+  fieldName: PropTypes.string.isRequired,
+  isFacetCurrent: PropTypes.func.isRequired,
+  onFacetSelect: PropTypes.func.isRequired,
 };
 
 export default DigitalObjectFacets;
