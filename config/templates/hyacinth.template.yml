@@ -74,7 +74,7 @@ test:
     lock_timeout: <%= 30.seconds %>
   digital_object_search_adapter:
     type: Solr
-    url: http://localhost:9983/solr/hyacinth-test
+    url: http://localhost:8993/solr/hyacinth-test
   preservation_persistence:
     adapters:
       - type: Fedora3
@@ -87,5 +87,5 @@ test:
     type: Memory
   term_search_adapter:
     type: Solr
-    url: http://localhost:9983/solr/terms-test
+    url: http://localhost:8993/solr/terms-test
     commit_after_change: true
