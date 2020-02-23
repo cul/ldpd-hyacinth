@@ -17,5 +17,10 @@ module Types
     field :total_records_to_process, Integer, null: false
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
+    field :download_path, String, null: true
+
+    def download_path
+      "/api/v1/downloads/batch_export/#{object.id}"
+    end
   end
 end

@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from '@apollo/react-hooks';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ContextualNavbar from '@hyacinth_v1/components/shared/ContextualNavbar';
 import GraphQLErrors from '@hyacinth_v1/components/shared/GraphQLErrors';
 import PaginationBar from '@hyacinth_v1/components/shared/PaginationBar';
@@ -123,7 +124,11 @@ function BatchExportIndex() {
                         </>
                       )
                   }
-                  <Button variant="secondary" size="sm">Download</Button>
+                  <a href={batchExport.downloadPath} className="btn btn-secondary btn-sm">
+                    <FontAwesomeIcon icon="download" />
+                    {' '}
+                    Download
+                  </a>
                   {' '}
                   <Button
                     variant="danger"
