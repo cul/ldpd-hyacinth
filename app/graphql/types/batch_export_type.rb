@@ -10,7 +10,7 @@ module Types
     field :search_params, String, null: false
     field :file_location, String, null: false
     field :user, UserType, null: true
-    field :errors, [String], null: true
+    field :export_errors, [String], null: true
     field :status, Enums::BatchExportStatusEnum, null: false
     field :duration, Integer, null: false
     field :number_of_records_processed, Integer, null: false

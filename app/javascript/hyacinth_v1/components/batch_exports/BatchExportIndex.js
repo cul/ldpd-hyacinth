@@ -5,19 +5,21 @@ import PaginationBar from '@hyacinth_v1/components/shared/PaginationBar';
 import { batchExportsQuery, deleteBatchExportMutation } from '@hyacinth_v1/graphql/batchExports';
 import queryString from 'query-string';
 import React, { useState } from 'react';
-import { Button, Table } from 'react-bootstrap';
+import { Button, Collapse, Table } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
+import produce from 'immer';
 
 function BatchExportIndex() {
   const limit = 30;
   const [offset, setOffset] = useState(0);
   const { search } = useLocation();
   const { highlight } = queryString.parse(search);
-
-  const { loading, error, data, refetch } = useQuery(batchExportsQuery, {
+  const [expandedErrorIds, setExpandedErrorIds] = useState(new Set());
+  const {
+    loading, error, data, refetch,
+  } = useQuery(batchExportsQuery, {
     variables: {
-      limit,
-      offset,
+      limit, offset,
     },
   });
 
@@ -46,6 +48,18 @@ function BatchExportIndex() {
     }
   };
 
+  const toggleExpandedError = (batchExportId) => {
+    setExpandedErrorIds(
+      produce(expandedErrorIds, (draft) => {
+        if (draft.has(batchExportId)) {
+          draft.delete(batchExportId);
+        } else {
+          draft.add(batchExportId);
+        }
+      }),
+    );
+  };
+
   return (
     <>
       <ContextualNavbar
@@ -65,40 +79,72 @@ function BatchExportIndex() {
             <th>User</th>
             <th>Created</th>
             <th>Status</th>
-            <th>Records Processed</th>
-            <th>Download</th>
-            <th>Delete?</th>
+            <th>Progress</th>
+            <th className="text-center">Errors</th>
+            <th className="text-center">Actions</th>
           </tr>
         </thead>
         <tbody>
           {
             (
               batchExports.map(batchExport => (
-                <tr key={batchExport.id} className={highlight && batchExport.id === highlight ? 'table-info' : ''}>
-                  <td>{batchExport.id}</td>
-                  <td>{batchExport.searchParams}</td>
-                  <td>{batchExport.user.fullName}</td>
-                  <td>{batchExport.createdAt}</td>
-                  <td>{batchExport.status}</td>
-                  <td>{`${batchExport.numberOfRecordsProcessed} / ${batchExport.totalRecordsToProcess}`}</td>
+                <React.Fragment key={batchExport.id}>
+                  <tr className={highlight && batchExport.id === highlight ? 'table-info' : ''}>
+                    <td>{batchExport.id}</td>
+                    <td>{batchExport.searchParams}</td>
+                    <td>{batchExport.user.fullName}</td>
+                    <td>{batchExport.createdAt}</td>
+                    <td>{batchExport.status}</td>
+                    <td>{`${batchExport.numberOfRecordsProcessed} / ${batchExport.totalRecordsToProcess}`}</td>
+                    <td className="text-center">
+                      {
+                        batchExport.exportErrors.length === 0
+                          ? <>None</>
+                          : (
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              onClick={() => { toggleExpandedError(batchExport.id); }}
+                            >
+                              View Errors
+                            </Button>
+                          )
+                      }
+                    </td>
+                    <td className="text-center">
+                      <Button variant="secondary" size="sm">Download</Button>
+                      {' '}
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={(e) => {
+                          e.preventDefault(); deleteBatchExportAndRefresh(batchExport.id);
+                        }}
+                      >
+                          Delete
+                      </Button>
+                    </td>
+                  </tr>
                   {
-                    // TODO: Maybe display exportErrors errors here
+                    batchExport.exportErrors.length > 0
+                    && (
+                      <tr key={`errors-for-${batchExport.id}`}>
+                        <td colSpan="8">
+                          <Collapse in={expandedErrorIds.has(batchExport.id)}>
+                            <div>
+                              {
+                                batchExport.exportErrors.map((exportError, ix) => (
+                                  // eslint-disable-next-line react/no-array-index-key
+                                  <pre key={ix}><code>{exportError}</code></pre>
+                                ))
+                              }
+                            </div>
+                          </Collapse>
+                        </td>
+                      </tr>
+                    )
                   }
-                  <td>
-                    <Button variant="secondary" size="sm">Download</Button>
-                  </td>
-                  <td>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={(e) => {
-                        e.preventDefault(); deleteBatchExportAndRefresh(batchExport.id);
-                      }}
-                    >
-                        Delete
-                    </Button>
-                  </td>
-                </tr>
+                </React.Fragment>
               ))
             )
           }

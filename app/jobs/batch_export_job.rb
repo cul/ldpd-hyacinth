@@ -4,15 +4,24 @@ class BatchExportJob
   @queue = :export_jobs
 
   BATCH_SIZE = 10
+  PROCESSED_RECORD_COUNT_UPDATE_FREQUENCY = 100
 
   def self.perform(batch_export_id)
     start_time = Time.current
     batch_export = BatchExport.find(batch_export_id)
+    records_processed = 0
     digital_objects_for_batch_export(batch_export) do |digital_object|
       # puts digital_object.uid
+      records_processed += 1
+      batch_export.update(number_of_records_processed: records_processed) if (records_processed % PROCESSED_RECORD_COUNT_UPDATE_FREQUENCY).zero?
     end
     batch_export.duration = (Time.current - start_time).to_i
-    batch_export.save!
+    batch_export.number_of_records_processed = records_processed
+    batch_export.success!
+    raise StandardError, 'Oh no! An error!'
+  rescue StandardError => e
+    batch_export.export_errors << e.message + "\n\n" + e.backtrace.join("\n")
+    batch_export.failure!
   end
 
   # Given a batch_export, calls the given block once for each digital object returned by executing
