@@ -60,7 +60,7 @@ namespace :resque do
         break if num_workers_working.zero?
       end
       puts "\n"
-      if Resque.workers.select(&:working?).positive?
+      if Resque.workers.select(&:working?).size.positive?
         puts "Workers are still running, but wait time of #{MAX_WAIT_TIME_TO_KILL_WORKERS} has been exceeded. Sending QUIT signal anyway."
       else
         puts 'Workers are no longer processing any jobs. Safely sending QUIT signal...'

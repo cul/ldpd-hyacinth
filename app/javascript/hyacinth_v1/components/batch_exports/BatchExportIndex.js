@@ -3,13 +3,13 @@ import ContextualNavbar from '@hyacinth_v1/components/shared/ContextualNavbar';
 import GraphQLErrors from '@hyacinth_v1/components/shared/GraphQLErrors';
 import PaginationBar from '@hyacinth_v1/components/shared/PaginationBar';
 import { batchExportsQuery, deleteBatchExportMutation } from '@hyacinth_v1/graphql/batchExports';
-import queryString from 'query-string';
-import React, { useState } from 'react';
-import { Button, Card, Collapse, Row, Col } from 'react-bootstrap';
 import { Can } from '@hyacinth_v1/utils/abilityContext';
-import { useLocation } from 'react-router-dom';
 import produce from 'immer';
 import * as moment from 'moment';
+import queryString from 'query-string';
+import React, { useState } from 'react';
+import { Button, Card, Collapse } from 'react-bootstrap';
+import { useLocation } from 'react-router-dom';
 
 function BatchExportIndex() {
   const limit = 30;
@@ -100,14 +100,14 @@ function BatchExportIndex() {
                 <Card.Text className="mb-1">
                   <strong>Records Processed: </strong>
                   {
-                    `${batchExport.numberOfRecordsProcessed} / ${batchExport.totalRecordsToProcess}`
+                    `${batchExport.numberOfRecordsProcessed} / ${batchExport.totalRecordsToProcess} (in ${batchExport.duration} seconds)`
                   }
                 </Card.Text>
                 <Card.Text className="mb-1 float-left">
                   <strong>Status: </strong>
                   {batchExport.status}
                 </Card.Text>
-                <Card.Text className="mb-1 float-right">
+                <Card.Text className="mb-0 float-right">
                   {
                     batchExport.exportErrors.length > 0
                       && (
@@ -137,7 +137,7 @@ function BatchExportIndex() {
                 </Card.Text>
                 <div className="clearfix" />
                 <Collapse in={expandedErrorIds.has(batchExport.id)}>
-                  <Card className="mt-1">
+                  <Card className="mt-2">
                     <Card.Body>
                       {
                         batchExport.exportErrors.map((exportError, ix) => (

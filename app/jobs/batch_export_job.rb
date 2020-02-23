@@ -13,12 +13,17 @@ class BatchExportJob
     digital_objects_for_batch_export(batch_export) do |digital_object|
       Rails.logger.debug(digital_object.uid)
       records_processed += 1
-      batch_export.update(number_of_records_processed: records_processed) if (records_processed % PROCESSED_RECORD_COUNT_UPDATE_FREQUENCY).zero?
+      sleep 1
+      if (records_processed % PROCESSED_RECORD_COUNT_UPDATE_FREQUENCY).zero?
+        batch_export.update(
+          number_of_records_processed: records_processed,
+          duration: (Time.current - start_time).to_i
+        )
+      end
     end
     batch_export.duration = (Time.current - start_time).to_i
     batch_export.number_of_records_processed = records_processed
     batch_export.success!
-    raise StandardError, 'Oh no! An error!'
   rescue StandardError => e
     batch_export.export_errors << e.message + "\n\n" + e.backtrace.join("\n")
     batch_export.failure!
