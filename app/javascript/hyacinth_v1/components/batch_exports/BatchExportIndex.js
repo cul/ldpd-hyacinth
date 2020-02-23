@@ -5,9 +5,11 @@ import PaginationBar from '@hyacinth_v1/components/shared/PaginationBar';
 import { batchExportsQuery, deleteBatchExportMutation } from '@hyacinth_v1/graphql/batchExports';
 import queryString from 'query-string';
 import React, { useState } from 'react';
-import { Button, Collapse, Table } from 'react-bootstrap';
+import { Button, Card, Collapse, Row, Col } from 'react-bootstrap';
+import { Can } from '@hyacinth_v1/utils/abilityContext';
 import { useLocation } from 'react-router-dom';
 import produce from 'immer';
+import * as moment from 'moment';
 
 function BatchExportIndex() {
   const limit = 30;
@@ -71,85 +73,86 @@ function BatchExportIndex() {
         totalItems={totalBatchExports}
         onPageNumberClick={onPageNumberClick}
       />
-      <Table hover>
-        <thead>
-          <tr>
-            <th>Batch Export ID</th>
-            <th>Search Params</th>
-            <th>User</th>
-            <th>Created</th>
-            <th>Status</th>
-            <th>Progress</th>
-            <th className="text-center">Errors</th>
-            <th className="text-center">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {
-            (
-              batchExports.map(batchExport => (
-                <React.Fragment key={batchExport.id}>
-                  <tr className={highlight && batchExport.id === highlight ? 'table-info' : ''}>
-                    <td>{batchExport.id}</td>
-                    <td>{batchExport.searchParams}</td>
-                    <td>{batchExport.user.fullName}</td>
-                    <td>{batchExport.createdAt}</td>
-                    <td>{batchExport.status}</td>
-                    <td>{`${batchExport.numberOfRecordsProcessed} / ${batchExport.totalRecordsToProcess}`}</td>
-                    <td className="text-center">
-                      {
-                        batchExport.exportErrors.length === 0
-                          ? <>None</>
-                          : (
-                            <Button
-                              variant="secondary"
-                              size="sm"
-                              onClick={() => { toggleExpandedError(batchExport.id); }}
-                            >
-                              View Errors
-                            </Button>
-                          )
-                      }
-                    </td>
-                    <td className="text-center">
-                      <Button variant="secondary" size="sm">Download</Button>
-                      {' '}
-                      <Button
-                        variant="danger"
-                        size="sm"
-                        onClick={(e) => {
-                          e.preventDefault(); deleteBatchExportAndRefresh(batchExport.id);
-                        }}
-                      >
-                          Delete
-                      </Button>
-                    </td>
-                  </tr>
+      <div>
+        {
+          batchExports.map(batchExport => (
+            <Card key={batchExport.id} className={`mb-3 ${highlight && highlight === batchExport.id ? 'bg-light' : ''}`}>
+              <Card.Header>
+                {`Export ID: ${batchExport.id}`}
+                <div className="float-right">
+                  {moment(batchExport.createdAt).format('MMMM Do YYYY, h:mm:ss a')}
+                </div>
+              </Card.Header>
+              <Card.Body>
+                <Can I="manage" a="all">
+                  {/* Only want to show user field when viewing as admin */}
+                  <Card.Text className="mb-1">
+                    <strong>User: </strong>
+                    {batchExport.user.fullName}
+                  </Card.Text>
+                </Can>
+                <Card.Text className="mb-1">
+                  <strong>Search Params: </strong>
+                  <code>
+                    {batchExport.searchParams}
+                  </code>
+                </Card.Text>
+                <Card.Text className="mb-1">
+                  <strong>Records Processed: </strong>
+                  {
+                    `${batchExport.numberOfRecordsProcessed} / ${batchExport.totalRecordsToProcess}`
+                  }
+                </Card.Text>
+                <Card.Text className="mb-1 float-left">
+                  <strong>Status: </strong>
+                  {batchExport.status}
+                </Card.Text>
+                <Card.Text className="mb-1 float-right">
                   {
                     batchExport.exportErrors.length > 0
-                    && (
-                      <tr key={`errors-for-${batchExport.id}`}>
-                        <td colSpan="8">
-                          <Collapse in={expandedErrorIds.has(batchExport.id)}>
-                            <div>
-                              {
-                                batchExport.exportErrors.map((exportError, ix) => (
-                                  // eslint-disable-next-line react/no-array-index-key
-                                  <pre key={ix}><code>{exportError}</code></pre>
-                                ))
-                              }
-                            </div>
-                          </Collapse>
-                        </td>
-                      </tr>
-                    )
+                      && (
+                        <>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => { toggleExpandedError(batchExport.id); }}
+                          >
+                            {expandedErrorIds.has(batchExport.id) ? 'Hide Errors' : 'Show Errors'}
+                          </Button>
+                          {' '}
+                        </>
+                      )
                   }
-                </React.Fragment>
-              ))
-            )
-          }
-        </tbody>
-      </Table>
+                  <Button variant="secondary" size="sm">Download</Button>
+                  {' '}
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={(e) => {
+                      e.preventDefault(); deleteBatchExportAndRefresh(batchExport.id);
+                    }}
+                  >
+                      Delete
+                  </Button>
+                </Card.Text>
+                <div className="clearfix" />
+                <Collapse in={expandedErrorIds.has(batchExport.id)}>
+                  <Card className="mt-1">
+                    <Card.Body>
+                      {
+                        batchExport.exportErrors.map((exportError, ix) => (
+                          // eslint-disable-next-line react/no-array-index-key
+                          <pre key={ix}><code>{exportError}</code></pre>
+                        ))
+                      }
+                    </Card.Body>
+                  </Card>
+                </Collapse>
+              </Card.Body>
+            </Card>
+          ))
+        }
+      </div>
       <PaginationBar
         offset={offset}
         limit={limit}

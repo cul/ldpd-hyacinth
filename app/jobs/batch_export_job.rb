@@ -11,7 +11,7 @@ class BatchExportJob
     batch_export = BatchExport.find(batch_export_id)
     records_processed = 0
     digital_objects_for_batch_export(batch_export) do |digital_object|
-      # puts digital_object.uid
+      Rails.logger.debug(digital_object.uid)
       records_processed += 1
       batch_export.update(number_of_records_processed: records_processed) if (records_processed % PROCESSED_RECORD_COUNT_UPDATE_FREQUENCY).zero?
     end
