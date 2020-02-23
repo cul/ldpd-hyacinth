@@ -1,31 +1,90 @@
 # frozen_string_literal: true
 
 class BatchExportJob
-  @queue = :export_jobs
+  @queue = :batch_exports
 
   BATCH_SIZE = 10
   PROCESSED_RECORD_COUNT_UPDATE_FREQUENCY = 100
+  COPY_OPERATION_READ_BUFFER_SIZE = 5.megabytes
 
   def self.perform(batch_export_id)
     start_time = Time.current
-    batch_export = BatchExport.find(batch_export_id)
     records_processed = 0
-    digital_objects_for_batch_export(batch_export) do |digital_object|
-      Rails.logger.debug(digital_object.uid)
-      records_processed += 1
-      sleep 1
-      if (records_processed % PROCESSED_RECORD_COUNT_UPDATE_FREQUENCY).zero?
-        batch_export.update(
-          number_of_records_processed: records_processed,
-          duration: (Time.current - start_time).to_i
-        )
+    batch_export = BatchExport.find(batch_export_id)
+
+    # We can't write directly to batch export storage because the CSV class expects disk, and our
+    # storage isn't guaranteed to be disk (could be memory, remote server, etc.), so we'll write to
+    # a tempfile and then later on, copy that complete tempfile's contents to batch export storage.
+    unordered_headers_temp_csv_file = Tempfile.new('unordered-headers-batch-export')
+    # We will reorder columns and write to another temporary csv after we're done.
+    ordered_headers_temp_csv_file = Tempfile.new('ordered-headers-batch-export')
+
+    CSV.open(unordered_headers_temp_csv_file.path, 'wb') do |csv|
+      digital_objects_for_batch_export(batch_export) do |digital_object|
+        update_export_progress_info_on_frequency_modulus(batch_export, records_processed += 1, start_time)
+        csv << [digital_object.uid]
       end
     end
+
+    unodered_csv_to_ordered_csv(unordered_headers_temp_csv_file, ordered_headers_temp_csv_file, {})
+
+    file_location = Hyacinth::Config.batch_export_storage
+                                    .primary_storage_adapter
+                                    .generate_new_location_uri("#{batch_export.id}.csv")
+
+    write_csv_to_storage(ordered_headers_temp_csv_file, Hyacinth::Config.batch_export_storage, file_location)
+    handle_job_success(batch_export, start_time, records_processed, file_location)
+  rescue StandardError => e
+    handle_job_error(batch_export, e)
+  ensure
+    # Close and unlink our tempfiles
+    unordered_headers_temp_csv_file.close!
+    ordered_headers_temp_csv_file.close!
+  end
+
+  # Converts the unordered headers csv file into a new csv file with ordered headers
+  # @param unordered_headers_temp_csv_file [File] Input unordered headers CSV file
+  # @param ordered_headers_temp_csv_file [File] Output ordered headers CSV file
+  # @param ordered_headers_temp_csv_file [Hash] Mapping of header names to 0-indexed column indexes
+  # @return [void]
+  def self.unodered_csv_to_ordered_csv(unordered_headers_temp_csv_file, ordered_headers_temp_csv_file, _headers_to_indexes)
+    # TODO: Real implementation. Right now we're just copying the unordered CSV content to the output file.
+    unordered_headers_temp_csv_file.rewind
+
+    while (chunk = unordered_headers_temp_csv_file.read(COPY_OPERATION_READ_BUFFER_SIZE))
+      ordered_headers_temp_csv_file.write(chunk)
+    end
+  end
+
+  def self.write_csv_to_storage(csv_file, storage, file_location)
+    csv_file.rewind
+    storage.with_writable(file_location) do |io|
+      while (chunk = csv_file.read(COPY_OPERATION_READ_BUFFER_SIZE))
+        io.write(chunk)
+      end
+    end
+  end
+
+  # Updates the batch_export's number_of_records_processed and duration properties when
+  # number_of_records_processed is a multiple of PROCESSED_RECORD_COUNT_UPDATE_FREQUENCY
+  # @return [void]
+  def self.update_export_progress_info_on_frequency_modulus(batch_export, records_processed, start_time)
+    return unless (records_processed % PROCESSED_RECORD_COUNT_UPDATE_FREQUENCY).zero?
+    batch_export.update(
+      number_of_records_processed: records_processed,
+      duration: (Time.current - start_time).to_i
+    )
+  end
+
+  def self.handle_job_success(batch_export, start_time, records_processed, file_location)
     batch_export.duration = (Time.current - start_time).to_i
     batch_export.number_of_records_processed = records_processed
+    batch_export.file_location = file_location
     batch_export.success!
-  rescue StandardError => e
-    batch_export.export_errors << e.message + "\n\n" + e.backtrace.join("\n")
+  end
+
+  def self.handle_job_error(batch_export, error)
+    batch_export.export_errors << error.message + "\n\n" + error.backtrace.join("\n")
     batch_export.failure!
   end
 
@@ -33,6 +92,7 @@ class BatchExportJob
   # a digital object search for the batch_export's search_params.
   # @param [BatchExport] A BatchExport object.
   # @yield [digital_object] A DigitalObject::Base subclass instance.
+  # @return [void]
   def self.digital_objects_for_batch_export(batch_export)
     search_params = JSON.parse(batch_export.search_params)
 
