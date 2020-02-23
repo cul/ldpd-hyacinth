@@ -58,6 +58,8 @@ Rails.application.routes.draw do
       end
 
       resources :dynamic_field_categories, only: [:index]
+
+      get 'downloads/:type/:id(/:subresource)' => 'downloads#download', as: :download
     end
   end
 end

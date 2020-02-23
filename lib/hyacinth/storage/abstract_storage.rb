@@ -55,6 +55,11 @@ module Hyacinth
         storage_adapter_for_location(location).exists?(location)
       end
 
+      # Returns the size in bytes of the file at the given location.
+      def size(location)
+        storage_adapter_for_location(location).size(location)
+      end
+
       def delete(location)
         Hyacinth::Config.lock_adapter.with_lock(location) do
           storage_adapter_for_location(location).delete(location)

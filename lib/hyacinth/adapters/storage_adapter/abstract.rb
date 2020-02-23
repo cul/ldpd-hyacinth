@@ -33,6 +33,10 @@ module Hyacinth
           raise NotImplementedError
         end
 
+        def size(_location_uri)
+          raise NotImplementedError
+        end
+
         def read(location_uri)
           raise Hyacinth::Exceptions::UnhandledLocationError, "Unhandled location_uri for #{self.class.name}: #{location_uri}" unless handles?(location_uri)
           read_impl(location_uri)

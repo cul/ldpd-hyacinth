@@ -15,6 +15,10 @@ module Hyacinth
             File.exist?(location_uri_to_file_path(location_uri))
           end
 
+          def size(location_uri)
+            File.size(location_uri_to_file_path(location_uri))
+          end
+
           def read_impl(location_uri)
             IO.binread(location_uri_to_file_path(location_uri))
           end

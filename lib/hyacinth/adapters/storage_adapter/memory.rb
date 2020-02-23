@@ -35,6 +35,10 @@ module Hyacinth
           @cache.key?(location_uri)
         end
 
+        def size(location_uri)
+          @cache[location_uri].bytesize
+        end
+
         def read_impl(location_uri)
           @cache[location_uri]
         end
