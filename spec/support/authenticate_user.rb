@@ -13,13 +13,17 @@ module AuthenticateUser
     login_as user, scope: :user
   end
 
-  def sign_in_project_contributor(to:, project:)
-    permissions = Array.wrap(to).map { |action| Permission.new(action: action, subject: Project.to_s, subject_id: project.id) }
-
-    user = FactoryBot.create(
-      :user, first_name: 'Signed In', last_name: 'User', email: 'logged-in-user@exaple.com', permissions: permissions
-    )
+  def sign_in_project_contributor(**args)
+    user = create_project_contributor(args)
 
     login_as user, scope: :user
+  end
+
+  def create_project_contributor(to:, project:)
+    permissions = Array.wrap(to).map { |action| Permission.new(action: action, subject: Project.to_s, subject_id: project.id) }
+
+    FactoryBot.create(
+      :user, first_name: 'Signed In', last_name: 'User', email: 'logged-in-user@exaple.com', permissions: permissions
+    )
   end
 end

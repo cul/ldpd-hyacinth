@@ -36,8 +36,9 @@ RSpec.describe BatchExport, type: :model do
   end
 
   describe '#delete_associated_file_if_exist' do
-    let(:file_location) { Tempfile.new(['temp', '.csv']).path }
-    let(:batch_export) { FactoryBot.create(:batch_export, :success, file_location: "managed-disk://#{file_location}") }
+    let(:file_path) { Tempfile.new(['temp', '.csv']).path }
+    let(:file_location) { "managed-disk://#{file_path}" }
+    let(:batch_export) { FactoryBot.create(:batch_export, :success, file_location: file_location) }
 
     it 'runs after object destroy' do
       expect(batch_export).to receive(:delete_associated_file_if_exist)
@@ -45,9 +46,9 @@ RSpec.describe BatchExport, type: :model do
     end
 
     it 'successfully deletes the associated file' do
-      expect(File.exist?(file_location)).to be true
+      expect(File.exist?(file_path)).to be true
       batch_export.delete_associated_file_if_exist
-      expect(File.exist?(file_location)).to be false
+      expect(File.exist?(file_path)).to be false
     end
   end
 end
