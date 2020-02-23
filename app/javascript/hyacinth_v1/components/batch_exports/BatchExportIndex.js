@@ -68,12 +68,6 @@ function BatchExportIndex() {
       <ContextualNavbar
         title="Batch Exports"
       />
-      <PaginationBar
-        offset={offset}
-        limit={limit}
-        totalItems={totalBatchExports}
-        onPageNumberClick={onPageNumberClick}
-      />
       <div>
         {
           batchExports.map(batchExport => (
