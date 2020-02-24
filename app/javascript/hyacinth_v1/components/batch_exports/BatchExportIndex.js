@@ -95,13 +95,13 @@ function BatchExportIndex() {
                 </Card.Text>
                 <Card.Text className="mb-1">
                   <strong>Records Processed: </strong>
-                  {
-                    `${batchExport.numberOfRecordsProcessed} / ${batchExport.totalRecordsToProcess} (in ${batchExport.duration} seconds)`
-                  }
+                  { `${batchExport.numberOfRecordsProcessed} / ${batchExport.totalRecordsToProcess}` }
                 </Card.Text>
                 <Card.Text className="mb-1 float-left">
                   <strong>Status: </strong>
                   {batchExport.status}
+                  {' '}
+                  <small>{ `(${batchExport.duration} ${batchExport.duration === 1 ? 'second' : 'seconds'})` }</small>
                 </Card.Text>
                 <Card.Text className="mb-0 float-right">
                   {
@@ -119,12 +119,19 @@ function BatchExportIndex() {
                         </>
                       )
                   }
-                  <a href={batchExport.downloadPath} className="btn btn-secondary btn-sm">
-                    <FontAwesomeIcon icon="download" />
-                    {' '}
-                    Download
-                  </a>
-                  {' '}
+                  {
+                    batchExport.status === 'success'
+                    && (
+                      <>
+                        <a href={batchExport.downloadPath} className="btn btn-secondary btn-sm">
+                          <FontAwesomeIcon icon="download" />
+                          {' '}
+                          Download
+                        </a>
+                        {' '}
+                      </>
+                    )
+                  }
                   <Button
                     variant="danger"
                     size="sm"
