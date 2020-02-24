@@ -13,6 +13,7 @@ module Api
 
       # GET /api/v1/downloads/:type/:id/:subresource
       def download
+        # TODO: Maybe support range requests in the future
         set_download_headers(response, @last_modified_datetime, @content_type, @size, @file_name)
         @storage.with_readable(@location) do |io|
           while (chunk = io.read(DOWNLOAD_BUFFER_BYTE_SIZE))
