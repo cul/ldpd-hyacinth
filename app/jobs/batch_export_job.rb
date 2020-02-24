@@ -15,45 +15,26 @@ class BatchExportJob
     # We can't write directly to batch export storage because the CSV class expects disk, and our
     # storage isn't guaranteed to be disk (could be memory, remote server, etc.), so we'll write to
     # a tempfile and then later on, copy that complete tempfile's contents to batch export storage.
-    unordered_headers_temp_csv_file = Tempfile.new('unordered-headers-batch-export')
-    # We will reorder columns and write to another temporary csv after we're done.
     ordered_headers_temp_csv_file = Tempfile.new('ordered-headers-batch-export')
 
-    CSV.open(unordered_headers_temp_csv_file.path, 'wb') do |csv|
+    JsonCsv.create_csv_for_json_records(ordered_headers_temp_csv_file.path) do |csv_builder|
       digital_objects_for_batch_export(batch_export) do |digital_object|
+        csv_builder.add(digital_object.as_json.deep_stringify_keys)
         update_export_progress_info_on_frequency_modulus(batch_export, records_processed += 1, start_time)
-        csv << [digital_object.uid]
       end
     end
 
-    unodered_csv_to_ordered_csv(unordered_headers_temp_csv_file, ordered_headers_temp_csv_file, {})
-
     file_location = Hyacinth::Config.batch_export_storage
-                                    .primary_storage_adapter
-                                    .generate_new_location_uri("#{batch_export.id}.csv")
+    .primary_storage_adapter
+    .generate_new_location_uri("#{batch_export.id}.csv")
 
     write_csv_to_storage(ordered_headers_temp_csv_file, Hyacinth::Config.batch_export_storage, file_location)
     handle_job_success(batch_export, start_time, records_processed, file_location)
   rescue StandardError => e
     handle_job_error(batch_export, e)
   ensure
-    # Close and unlink our tempfiles
-    unordered_headers_temp_csv_file.close!
+    # Close and unlink our tempfile
     ordered_headers_temp_csv_file.close!
-  end
-
-  # Converts the unordered headers csv file into a new csv file with ordered headers
-  # @param unordered_headers_temp_csv_file [File] Input unordered headers CSV file
-  # @param ordered_headers_temp_csv_file [File] Output ordered headers CSV file
-  # @param ordered_headers_temp_csv_file [Hash] Mapping of header names to 0-indexed column indexes
-  # @return [void]
-  def self.unodered_csv_to_ordered_csv(unordered_headers_temp_csv_file, ordered_headers_temp_csv_file, _headers_to_indexes)
-    # TODO: Real implementation. Right now we're just copying the unordered CSV content to the output file.
-    unordered_headers_temp_csv_file.rewind
-
-    while (chunk = unordered_headers_temp_csv_file.read(COPY_OPERATION_READ_BUFFER_SIZE))
-      ordered_headers_temp_csv_file.write(chunk)
-    end
   end
 
   def self.write_csv_to_storage(csv_file, storage, file_location)

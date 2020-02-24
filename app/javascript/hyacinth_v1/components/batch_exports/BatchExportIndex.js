@@ -69,6 +69,7 @@ function BatchExportIndex() {
         title="Batch Exports"
       />
       <div>
+        { batchExports.length === 0 && (<p className="text-center">No Batch Exports to show. Perform a Digital Object search to create an export!</p>) }
         {
           batchExports.map(batchExport => (
             <Card key={batchExport.id} className={`mb-3 ${highlight && highlight === batchExport.id ? 'bg-light' : ''}`}>
