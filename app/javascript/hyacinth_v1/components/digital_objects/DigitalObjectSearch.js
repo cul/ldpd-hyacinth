@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import {
   Card, Col, Row,
 } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
-import { useQueryParam, StringParam } from 'use-query-params';
+import { StringParam, withQueryParams } from 'use-query-params';
+import * as qs from 'query-string';
 
 import DigitalObjectList from './DigitalObjectList';
 import DigitalObjectFacets from './DigitalObjectFacets';
@@ -18,21 +20,32 @@ import QueryForm from './search/QueryForm';
 
 const limit = 20;
 
-export default function DigitalObjectSearch() {
+const DigitalObjectSearch = ({ query }) => {
   const [offset, setOffset] = useState(0);
   const [totalObjects, setTotalObjects] = useState(0);
-  const [urlFilters = [], setUrlFilters] = useQueryParam('filters', FilterArrayParam);
-  const [filters = urlFilters, setFilters] = useState(urlFilters);
-  const [urlQuery, setUrlQuery] = useQueryParam('q', StringParam);
-  const [query, setQuery] = useState(urlQuery);
+  const [searchParams, setSearchParams] = useState({ query: query.q, filters: query.filters });
 
   const {
     loading, error, data, refetch,
   } = useQuery(
     getDigitalObjectsQuery, {
-      variables: { limit, offset, searchParams: { filters, query } },
+      variables: { limit, offset, searchParams },
       onCompleted: (searchData) => { setTotalObjects(searchData.digitalObjects.totalCount); },
     },
+  );
+  const history = useHistory();
+  const location = useLocation();
+  useEffect(
+    () => {
+      const parsedQueryString = qs.parse(location.search);
+      const { q } = parsedQueryString;
+      const filters = (parsedQueryString.filters) ? FilterArrayParam.decode(parsedQueryString.filters) : parsedQueryString.filters;
+      if (!(q === searchParams.query) || !(filters === searchParams.filters)) {
+        setSearchParams({ query: q, filters });
+        refetch();
+      }
+    },
+    [location.search, history.location],
   );
 
   if (loading) return (<></>);
@@ -44,20 +57,28 @@ export default function DigitalObjectSearch() {
   };
   const isFacetCurrent = (fieldName, value) => {
     const detector = filter => ((filter.field === fieldName) && (filter.value === value));
+    const { filters = [] } = searchParams;
     return filters ? filters.find(detector) : false;
   };
   const onFacetSelect = (fieldName, value) => {
     const detector = filter => ((filter.field === fieldName) && (filter.value === value));
     const others = filter => ((filter.field !== fieldName) || (filter.value !== value));
+    const { filters = [] } = searchParams;
     const isFiltered = filters ? filters.find(detector) : false;
     const updatedFilters = isFiltered ? filters.filter(others) : [...filters, { field: fieldName, value }];
-    setUrlFilters(updatedFilters);
-    setFilters(updatedFilters);
-    refetch();
+    const parsedQueryString = qs.parse(location.search);
+    parsedQueryString.filters = FilterArrayParam.encode(updatedFilters);
+    parsedQueryString.q = searchParams.query;
+    location.search = qs.stringify(parsedQueryString);
+    history.push(location);
   };
   const onQueryChange = (value) => {
-    setUrlQuery(value);
-    setQuery(value);
+    const { filters = [] } = searchParams;
+    const parsedQueryString = qs.parse(location.search);
+    parsedQueryString.q = value;
+    parsedQueryString.filters = FilterArrayParam.encode(filters);
+    location.search = qs.stringify(parsedQueryString);
+    history.push(location);
   };
   return (
     <>
@@ -68,13 +89,13 @@ export default function DigitalObjectSearch() {
       { nodes.length === 0 ? <Card header="No Digital Objects found." />
         : (
           <>
-            <ResultCountAndSortOptions totalCount={totalCount} limit={limit} offset={offset} searchParams={{ filters, query }} />
+            <ResultCountAndSortOptions totalCount={totalCount} limit={limit} offset={offset} searchParams={searchParams} />
             <Row>
               <Col xs={10}>
                 <DigitalObjectList className="digital-object-search-results" digitalObjects={nodes} />
               </Col>
               <Col xs={2}>
-                <QueryForm value={query} onQueryChange={onQueryChange} onSubmit={refetch} />
+                <QueryForm value={query.q} onQueryChange={onQueryChange} onSubmit={refetch} />
                 <DigitalObjectFacets className="digital-object-search-facets" facets={facets} isFacetCurrent={isFacetCurrent} onFacetSelect={onFacetSelect} />
               </Col>
             </Row>
@@ -89,4 +110,12 @@ export default function DigitalObjectSearch() {
       />
     </>
   );
-}
+};
+
+export default withQueryParams(
+  {
+    q: StringParam,
+    filters: FilterArrayParam,
+  },
+  DigitalObjectSearch,
+);
