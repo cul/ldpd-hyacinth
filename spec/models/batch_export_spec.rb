@@ -8,7 +8,7 @@ RSpec.describe BatchExport, type: :model do
       subject(:batch_export) { FactoryBot.create(:batch_export) }
 
       it { is_expected.to be_a BatchExport }
-      its(:search_params) { is_expected.to eq '{"search":"true","f":{"project_display_label_sim":["University Seminars Digital Archive"]},"page":"1"}' }
+      its(:search_params) { is_expected.to eq '{"digital_object_type_ssi":["item"],"q":null}' }
       its(:user) { is_expected.to be_a User }
       its(:file_location) { is_expected.to be_nil }
       its(:export_errors) { is_expected.to eq [] }

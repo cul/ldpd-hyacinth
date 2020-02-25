@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :batch_export do
-    search_params { '{"search":"true","f":{"project_display_label_sim":["University Seminars Digital Archive"]},"page":"1"}' }
+    search_params { '{"digital_object_type_ssi":["item"],"q":null}' }
     file_location { nil }
     user { User.first || create(:user) }
     export_errors { [] }

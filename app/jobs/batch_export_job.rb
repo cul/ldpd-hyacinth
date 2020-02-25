@@ -12,29 +12,31 @@ class BatchExportJob
     records_processed = 0
     batch_export = BatchExport.find(batch_export_id)
 
-    # We can't write directly to batch export storage because the CSV class expects disk, and our
-    # storage isn't guaranteed to be disk (could be memory, remote server, etc.), so we'll write to
-    # a tempfile and then later on, copy that complete tempfile's contents to batch export storage.
-    ordered_headers_temp_csv_file = Tempfile.new('ordered-headers-batch-export')
+    begin
+      # We can't write directly to batch export storage because the CSV class expects disk, and our
+      # storage isn't guaranteed to be disk (could be memory, remote server, etc.), so we'll write to
+      # a tempfile and then later on, copy that complete tempfile's contents to batch export storage.
+      ordered_headers_temp_csv_file = Tempfile.new('ordered-headers-batch-export')
 
-    JsonCsv.create_csv_for_json_records(ordered_headers_temp_csv_file.path) do |csv_builder|
-      digital_objects_for_batch_export(batch_export) do |digital_object|
-        csv_builder.add(digital_object_as_export(digital_object))
-        update_export_progress_info_on_frequency_modulus(batch_export, records_processed += 1, start_time)
+      JsonCsv.create_csv_for_json_records(ordered_headers_temp_csv_file.path) do |csv_builder|
+        digital_objects_for_batch_export(batch_export) do |digital_object|
+          csv_builder.add(digital_object_as_export(digital_object))
+          update_export_progress_info_on_frequency_modulus(batch_export, records_processed += 1, start_time)
+        end
       end
+
+      file_location = Hyacinth::Config.batch_export_storage
+                                      .primary_storage_adapter
+                                      .generate_new_location_uri("#{batch_export.id}.csv")
+
+      write_csv_to_storage(ordered_headers_temp_csv_file, Hyacinth::Config.batch_export_storage, file_location)
+      handle_job_success(batch_export, start_time, records_processed, file_location)
+    rescue StandardError => e
+      handle_job_error(batch_export, e, start_time)
+    ensure
+      # Close and unlink our tempfile
+      ordered_headers_temp_csv_file.close!
     end
-
-    file_location = Hyacinth::Config.batch_export_storage
-                                    .primary_storage_adapter
-                                    .generate_new_location_uri("#{batch_export.id}.csv")
-
-    write_csv_to_storage(ordered_headers_temp_csv_file, Hyacinth::Config.batch_export_storage, file_location)
-    handle_job_success(batch_export, start_time, records_processed, file_location)
-  rescue StandardError => e
-    handle_job_error(batch_export, e, start_time)
-  ensure
-    # Close and unlink our tempfile
-    ordered_headers_temp_csv_file.close!
   end
 
   def self.write_csv_to_storage(csv_file, storage, file_location)

@@ -50,7 +50,7 @@ RSpec.describe 'Retrieving Batch Exports', type: :request do
                 "duration": 15,
                 "exportErrors": [],
                 "numberOfRecordsProcessed": 100,
-                "searchParams": "{\\"search\\":\\"true\\",\\"f\\":{\\"project_display_label_sim\\":[\\"University Seminars Digital Archive\\"]},\\"page\\":\\"1\\"}",
+                "searchParams": "{\\"digital_object_type_ssi\\":[\\"item\\"],\\"q\\":null}",
                 "status": "success",
                 "totalRecordsToProcess": 100,
                 "user": {
@@ -90,7 +90,7 @@ RSpec.describe 'Retrieving Batch Exports', type: :request do
                 "duration": 15,
                 "exportErrors": [],
                 "numberOfRecordsProcessed": 100,
-                "searchParams": "{\\"search\\":\\"true\\",\\"f\\":{\\"project_display_label_sim\\":[\\"University Seminars Digital Archive\\"]},\\"page\\":\\"1\\"}",
+                "searchParams": "{\\"digital_object_type_ssi\\":[\\"item\\"],\\"q\\":null}",
                 "status": "success",
                 "totalRecordsToProcess": 100,
                 "user": {
@@ -104,7 +104,7 @@ RSpec.describe 'Retrieving Batch Exports', type: :request do
                 "duration": 15,
                 "exportErrors": [],
                 "numberOfRecordsProcessed": 100,
-                "searchParams": "{\\"search\\":\\"true\\",\\"f\\":{\\"project_display_label_sim\\":[\\"University Seminars Digital Archive\\"]},\\"page\\":\\"1\\"}",
+                "searchParams": "{\\"digital_object_type_ssi\\":[\\"item\\"],\\"q\\":null}",
                 "status": "success",
                 "totalRecordsToProcess": 100,
                 "user": {
