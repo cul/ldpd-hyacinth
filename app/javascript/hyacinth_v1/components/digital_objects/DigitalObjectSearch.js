@@ -4,7 +4,7 @@ import {
   Card, Col, Row,
 } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
-import { StringParam, withQueryParams } from 'use-query-params';
+import { NumberParam, StringParam, withQueryParams } from 'use-query-params';
 import * as qs from 'query-string';
 
 import DigitalObjectList from './DigitalObjectList';
@@ -21,10 +21,10 @@ import QueryForm from './search/QueryForm';
 const limit = 20;
 
 const DigitalObjectSearch = ({ query }) => {
-  const [offset, setOffset] = useState(0);
+  const [pageNumber] = useState(query.pageNumber);
+  const [offset, setOffset] = useState(((pageNumber || 1) - 1) * limit);
   const [totalObjects, setTotalObjects] = useState(0);
   const [searchParams, setSearchParams] = useState({ query: query.q, filters: query.filters });
-
   const {
     loading, error, data, refetch,
   } = useQuery(
@@ -39,9 +39,16 @@ const DigitalObjectSearch = ({ query }) => {
     () => {
       const parsedQueryString = qs.parse(location.search);
       const { q } = parsedQueryString;
-      const filters = (parsedQueryString.filters) ? FilterArrayParam.decode(parsedQueryString.filters) : parsedQueryString.filters;
-      if (!(q === searchParams.query) || !(filters === searchParams.filters)) {
+      const queryPageNumber = Number.parseInt((parsedQueryString.pageNumber || '1'), 10);
+      const filters = (parsedQueryString.filters)
+        ? FilterArrayParam.decode(parsedQueryString.filters)
+        : parsedQueryString.filters;
+      const keywordChanged = !(q === searchParams.query);
+      const filtersChanged = !(filters === searchParams.filters);
+      const pageChanged = !(pageNumber === queryPageNumber);
+      if (keywordChanged || filtersChanged || pageChanged) {
         setSearchParams({ query: q, filters });
+        setOffset((queryPageNumber - 1) * limit);
         refetch();
       }
     },
@@ -52,8 +59,12 @@ const DigitalObjectSearch = ({ query }) => {
   if (error) return (<GraphQLErrors errors={error} />);
   const { digitalObjects: { nodes, facets, totalCount } } = data;
   const onPageNumberClick = (page) => {
-    setOffset(limit * (page - 1));
-    refetch();
+    const { filters = [] } = searchParams;
+    const parsedQueryString = qs.parse(location.search);
+    parsedQueryString.pageNumber = page;
+    parsedQueryString.filters = FilterArrayParam.encode(filters);
+    location.search = qs.stringify(parsedQueryString);
+    history.push(location);
   };
   const isFacetCurrent = (fieldName, value) => {
     const detector = filter => ((filter.field === fieldName) && (filter.value === value));
@@ -65,10 +76,14 @@ const DigitalObjectSearch = ({ query }) => {
     const others = filter => ((filter.field !== fieldName) || (filter.value !== value));
     const { filters = [] } = searchParams;
     const isFiltered = filters ? filters.find(detector) : false;
-    const updatedFilters = isFiltered ? filters.filter(others) : [...filters, { field: fieldName, value }];
+    const updatedFilters = isFiltered
+      ? filters.filter(others)
+      : [...filters, { field: fieldName, value }];
     const parsedQueryString = qs.parse(location.search);
     parsedQueryString.filters = FilterArrayParam.encode(updatedFilters);
     parsedQueryString.q = searchParams.query;
+    // all changes should reset pageNumber to 1
+    parsedQueryString.pageNumber = '1';
     location.search = qs.stringify(parsedQueryString);
     history.push(location);
   };
@@ -77,6 +92,8 @@ const DigitalObjectSearch = ({ query }) => {
     const parsedQueryString = qs.parse(location.search);
     parsedQueryString.q = value;
     parsedQueryString.filters = FilterArrayParam.encode(filters);
+    // all changes should reset pageNumber to 1
+    parsedQueryString.pageNumber = '1';
     location.search = qs.stringify(parsedQueryString);
     history.push(location);
   };
@@ -118,6 +135,7 @@ export default withQueryParams(
   {
     q: StringParam,
     filters: FilterArrayParam,
+    pageNumber: NumberParam,
   },
   DigitalObjectSearch,
 );
