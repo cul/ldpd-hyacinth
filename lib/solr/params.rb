@@ -8,6 +8,7 @@ module Solr
       @parameters = {
         q: nil,
         qt: 'search',
+        df: 'keywords_teim',
         fq: [],
         'facet.field'.to_sym => [],
         start: 0
@@ -35,7 +36,13 @@ module Solr
     end
 
     def q(query)
-      @parameters[:q] = Solr::Utils.escape(query) unless query.nil?
+      if query.blank?
+        @parameters[:q] = nil
+        @parameters[:qt] = 'search'
+      else
+        @parameters[:q] = Solr::Utils.escape(query)
+        @parameters[:qt] = 'select'
+      end
       self
     end
 
