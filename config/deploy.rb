@@ -34,8 +34,14 @@ set :deploy_to,   "/opt/passenger/#{fetch(:instance)}/#{fetch(:deploy_name)}"
 # set :pty, true
 
 # Default value for :linked_files is []
-append :linked_files, 'config/database.yml', 'config/hyacinth.yml', 'config/fedora.yml',
-       'config/datacite.yml', 'config/master.key'
+append  :linked_files,
+        'config/database.yml',
+        'config/datacite.yml',
+        'config/fedora.yml',
+        'config/hyacinth.yml',
+        'config/master.key',
+        'config/redis.yml',
+        'config/resque.yml'
 
 # Default value for linked_dirs is []
 append :linked_dirs, 'log', 'tmp/pids', 'node_modules', 'public/packs'
@@ -53,3 +59,18 @@ set :keep_releases, 3
 
 # Uncomment the following to require manually verifying the host key before first deploy.
 # set :ssh_options, verify_host_key: :secure
+
+after 'deploy:finished', 'hyacinth:restart_resque_workers'
+
+namespace :hyacinth do
+  desc "Restart the resque workers"
+  task :restart_resque_workers do
+    on roles(:web) do
+      within release_path do
+        with rails_env: fetch(:rails_env) do
+          execute :rake, 'resque:restart_workers'
+        end
+      end
+    end
+  end
+end
