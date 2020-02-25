@@ -42,7 +42,6 @@ function AssetRightsForm(props) {
     delete rights.copyrightStatusOverride;
   }
 
-  console.log(rights)
 
   return (
     <Form className="mb-3">
