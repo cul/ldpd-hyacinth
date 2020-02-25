@@ -11,7 +11,7 @@ module Mutations
         argument dynamic_field_group[:string_key], [child_input_type], required: false
       end
 
-      field :asset, Types::DigitalObject::AssetType, null: true
+      field :asset, Types::DigitalObject::AssetType, null: false
 
       def resolve(id:, **rights)
         digital_object = ::DigitalObject::Base.find(id)
@@ -20,9 +20,9 @@ module Mutations
 
         ability.authorize! :update_rights, digital_object
 
-        digital_object.rights = rights.deep_transform_values(&:to_h)
+        digital_object.rights = rights.deep_transform_values(&:to_h).stringify_keys
         digital_object.save!(update_index: true, user: context[:current_user])
-        { asset: ::DigitalObject::Base.find(id) } # Need to refetch because the reference to the digital object isn't updated.
+        { asset: digital_object }
       end
     end
   end

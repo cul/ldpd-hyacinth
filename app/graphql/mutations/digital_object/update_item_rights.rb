@@ -20,10 +20,9 @@ module Mutations
 
         ability.authorize! :update_rights, digital_object
 
-        digital_object.rights = rights.deep_transform_values(&:to_h)
+        digital_object.rights = rights.deep_transform_values(&:to_h).stringify_keys
         digital_object.save!(update_index: true, user: context[:current_user])
-
-        { item: ::DigitalObject::Base.find(id) } # Need to refetch because the reference to the digital object isn't updated.
+        { item: digital_object }
       end
     end
   end
