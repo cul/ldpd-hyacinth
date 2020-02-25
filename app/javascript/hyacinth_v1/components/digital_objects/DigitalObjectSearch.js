@@ -80,28 +80,30 @@ const DigitalObjectSearch = ({ query }) => {
     location.search = qs.stringify(parsedQueryString);
     history.push(location);
   };
+  const docsFound = nodes.length > 0;
   return (
     <>
       <ContextualNavbar
         title="Digital Objects"
         rightHandLinks={[{ label: 'New Digital Object', link: '/digital_objects/new' }]}
       />
-      { nodes.length === 0 ? <Card header="No Digital Objects found." />
-        : (
-          <>
-            <ResultCountAndSortOptions totalCount={totalCount} limit={limit} offset={offset} searchParams={searchParams} />
-            <Row>
-              <Col xs={10}>
-                <DigitalObjectList className="digital-object-search-results" digitalObjects={nodes} />
-              </Col>
-              <Col xs={2}>
-                <QueryForm value={query.q} onQueryChange={onQueryChange} onSubmit={refetch} />
-                <DigitalObjectFacets className="digital-object-search-facets" facets={facets} isFacetCurrent={isFacetCurrent} onFacetSelect={onFacetSelect} />
-              </Col>
-            </Row>
-          </>
-        )
-      }
+      <>
+        {
+          docsFound && <ResultCountAndSortOptions totalCount={totalCount} limit={limit} offset={offset} searchParams={searchParams} />
+        }
+        <Row>
+          <Col xs={10}>
+            { docsFound
+              ? <DigitalObjectList className="digital-object-search-results" digitalObjects={nodes} />
+              : <Card><Card.Header>No Digital Objects found.</Card.Header></Card>
+            }
+          </Col>
+          <Col xs={2}>
+            <QueryForm value={query.q} onQueryChange={onQueryChange} onSubmit={refetch} />
+            <DigitalObjectFacets className="digital-object-search-facets" facets={facets} isFacetCurrent={isFacetCurrent} onFacetSelect={onFacetSelect} />
+          </Col>
+        </Row>
+      </>
       <PaginationBar
         offset={offset}
         limit={limit}
