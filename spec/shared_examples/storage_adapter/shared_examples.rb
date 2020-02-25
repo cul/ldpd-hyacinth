@@ -8,15 +8,13 @@ RSpec.shared_examples "an abstract storage adapter" do
     raise 'Must define adapter via let(:adapter)' unless defined?(adapter)
   }
   context "defines expected methods" do
-    ### readable methods ###
+    ### readable methods ##
     it "implements #readable?" do
       expect(adapter).to respond_to(:readable?)
     end
-
     it "implements #writable?" do
       expect(adapter).to respond_to(:writable?)
     end
-
     it "implements #handles?" do
       expect(adapter).to respond_to(:handles?)
     end
@@ -28,6 +26,12 @@ RSpec.shared_examples "an abstract storage adapter" do
     end
     it "implements #uri_prefix" do
       expect(adapter).to respond_to(:uri_prefix)
+    end
+    it "implements #exists?" do
+      expect(adapter).to respond_to(:exists?)
+    end
+    it "implements #size" do
+      expect(adapter).to respond_to(:size)
     end
 
     ### writable methods ###
@@ -77,6 +81,15 @@ RSpec.shared_examples "a readable storage adapter" do
     end
     it "returns false for non-existent path" do
       expect(adapter.exists?(sample_location_uri + '.nope')).to eq(false)
+    end
+  end
+
+  context "#size" do
+    it "returns the expected size" do
+      expect(adapter.size(sample_location_uri)).to eq(content.bytesize)
+    end
+    it "rejects unhandled URIs" do
+      expect { adapter.read(unhandled_location_uri) }.to raise_error(Hyacinth::Exceptions::UnhandledLocationError)
     end
   end
 

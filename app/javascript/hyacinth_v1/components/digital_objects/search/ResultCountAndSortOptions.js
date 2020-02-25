@@ -25,7 +25,7 @@ const ResultCountAndSortOptions = (props) => {
   }
 
   const exportCurrentSearch = () => {
-    const variables = { input: { searchParams: JSON.stringify(searchParams) } };
+    const variables = { input: { searchParams } };
     createBatchExport({ variables }).then((res) => {
       const { data: { createBatchExport: { batchExport: { id: newExportJobId } } } } = res;
       setLatestExportId(newExportJobId);

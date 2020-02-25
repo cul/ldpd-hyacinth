@@ -40,7 +40,7 @@ function AssetData(props) {
                   <dd className="col-lg-9">
                     <FontAwesomeIcon icon="download" />
                     {' '}
-                    <a href={`/api/v1/digital_objects/${id}/resources/${resourceId}/download`}>
+                    <a href={`/api/v1/downloads/digital_object/${id}/${resourceId}`}>
                       {` ${originalFilename}`}
                     </a>
                   </dd>

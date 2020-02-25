@@ -15,6 +15,13 @@ FactoryBot.define do
       is_primary { true }
     end
 
+    trait :history_of_hamilton do
+      string_key { 'history_of_hamilton' }
+      display_label { 'History of Hamilton' }
+      project_url   { 'https://example.com/history_of_hamilton' }
+      is_primary { true }
+    end
+
     trait :myth_of_minken do
       string_key { 'myth_of_minken' }
       display_label { 'Myth of Minken' }

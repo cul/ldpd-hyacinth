@@ -107,3 +107,28 @@ If you have an IDE that supports jsconfig.json files (e.g. Visual Studio Code), 
   ]
 }
 ```
+
+## Development / Rubocop
+
+When regenerating our .rubocop_todo.yml file, we use this command:
+```
+rubocop --auto-gen-config --auto-gen-only-exclude --exclude-limit 10000
+```
+
+## Development / Running Local Development Solr While Running CI Tests
+During development, it's often convenient to use the built-in solr rake task to run a local solr instance:
+```
+# start development solr
+bundle exec rake solr:start
+
+# stop development solr
+bundle exec rake solr:stop
+```
+
+This development solr runs on a port specified in config/solr_wrapper.yml (8983 by default).
+
+When you run the CI task (`bundle exec rake hyacinth:ci`), it temporarily spins up another solr in parallel while running tests, and this runs on a separate port (8993 by default).
+
+One important thing to know is that solr's built-in start script defines a separate port for solr to listen on for stop commands, and this port is equal to your selected port **MINUS 1000**.  This normally isn't an issue, but note that if you set config/solr_wrapper.yml values for your development and test environments that are exactly 1000 apart, you'll run into problems.  So, for example, don't set the development port to 8983 and the test port to 9983.
+
+This also means that you shouldn't set your solr ports to anything that conflicts with other running services.  If you development rails server runs on port 3000, don't set solr to run on port 4000.

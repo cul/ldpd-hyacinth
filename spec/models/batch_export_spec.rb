@@ -8,13 +8,14 @@ RSpec.describe BatchExport, type: :model do
       subject(:batch_export) { FactoryBot.create(:batch_export) }
 
       it { is_expected.to be_a BatchExport }
-      its(:search_params) { is_expected.to eq '{"search":"true","f":{"project_display_label_sim":["University Seminars Digital Archive"]},"page":"1"}' }
+      its(:search_params) { is_expected.to eq '{"digital_object_type_ssi":["item"],"q":null}' }
       its(:user) { is_expected.to be_a User }
       its(:file_location) { is_expected.to be_nil }
       its(:export_errors) { is_expected.to eq [] }
       its(:status) { is_expected.to eq 'pending' }
       its(:duration) { is_expected.to eq 0 }
       its(:number_of_records_processed) { is_expected.to eq 0 }
+      its(:total_records_to_process) { is_expected.to eq 0 }
 
       context "time-based tests" do
         before do
@@ -35,8 +36,9 @@ RSpec.describe BatchExport, type: :model do
   end
 
   describe '#delete_associated_file_if_exist' do
-    let(:file_location) { Tempfile.new(['temp', '.csv']).path }
-    let(:batch_export) { FactoryBot.create(:batch_export, :success, file_location: "managed-disk://#{file_location}") }
+    let(:file_path) { Tempfile.new(['temp', '.csv']).path }
+    let(:file_location) { "managed-disk://#{file_path}" }
+    let(:batch_export) { FactoryBot.create(:batch_export, :success, file_location: file_location) }
 
     it 'runs after object destroy' do
       expect(batch_export).to receive(:delete_associated_file_if_exist)
@@ -44,9 +46,9 @@ RSpec.describe BatchExport, type: :model do
     end
 
     it 'successfully deletes the associated file' do
-      expect(File.exist?(file_location)).to be true
+      expect(File.exist?(file_path)).to be true
       batch_export.delete_associated_file_if_exist
-      expect(File.exist?(file_location)).to be false
+      expect(File.exist?(file_path)).to be false
     end
   end
 end
