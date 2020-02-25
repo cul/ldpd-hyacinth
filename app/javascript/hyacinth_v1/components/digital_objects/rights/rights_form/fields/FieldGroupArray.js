@@ -4,25 +4,26 @@ import PropTypes from 'prop-types';
 
 import FieldGroup from './FieldGroup';
 
+/* This is a copy of the class for the metadata form, these can be merged later when the use the same strategy to update state */
+
 class FieldGroupArray extends React.Component {
-  onChange(index, newValue) {
-    const { value, onChange } = this.props;
+  onChange(index, updates) {
+    const { onChange } = this.props;
 
-    const nextValue = produce(value, (draft) => {
-      draft[index] = newValue;
+    onChange((obj) => {
+      const updated = updates(obj[index]);
+      return produce(obj, (draft) => {
+        draft[index] = updated;
+      });
     });
-
-    onChange(nextValue);
   }
 
   addHandler = (index) => {
-    const { value, onChange, defaultValue } = this.props;
+    const { onChange, defaultValue } = this.props;
 
-    const nextValue = produce(value, (draft) => {
+    onChange(produce((draft) => {
       draft.splice(index + 1, 0, defaultValue);
-    });
-
-    onChange(nextValue);
+    }));
   }
 
   moveHandler = (move, index) => {
@@ -31,18 +32,16 @@ class FieldGroupArray extends React.Component {
     switch (move) {
       case 'up':
         if (index !== 0) {
-          const nextValue = produce(value, (draft) => {
+          onChange(produce((draft) => {
             [draft[index - 1], draft[index]] = [draft[index], draft[index - 1]];
-          });
-          onChange(nextValue);
+          }));
         }
         break;
       case 'down':
         if (index !== (value.length - 1)) {
-          const nextValue = produce(value, (draft) => {
+          onChange(produce((draft) => {
             [draft[index], draft[index + 1]] = [draft[index + 1], draft[index]];
-          });
-          onChange(nextValue);
+          }));
         }
         break;
       default:
@@ -51,15 +50,12 @@ class FieldGroupArray extends React.Component {
   }
 
   removeHandler = (index) => {
-    const { value, onChange } = this.props;
+    const { onChange } = this.props;
 
-    const nextValue = produce(value, (draft) => {
+    onChange(produce((draft) => {
       delete draft[index];
-    });
-
-    onChange(nextValue);
+    }));
   }
-
 
   render() {
     const { value, dynamicFieldGroup, defaultValue } = this.props;
@@ -72,7 +68,7 @@ class FieldGroupArray extends React.Component {
           index={i}
           defaultValue={defaultValue}
           dynamicFieldGroup={dynamicFieldGroup}
-          onChange={newValue => this.onChange(i, newValue)}
+          onChange={updates => this.onChange(i, updates)}
           addHandler={() => this.addHandler(i)}
           removeHandler={() => this.removeHandler(i)}
           moveHandler={move => this.moveHandler(move, i)}

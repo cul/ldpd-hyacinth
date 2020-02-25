@@ -22,187 +22,186 @@ const typeOfContent = [
   { label: 'Architectural works', value: 'architectural' },
 ];
 
-class DescriptiveMetadata extends React.PureComponent {
-  onChange(fieldName, fieldVal) {
-    const { value, onChange } = this.props;
+function DescriptiveMetadata(props) {
+  const { onChange, values: [value], dynamicFieldData, typeOfContentChange } = props;
 
-    const nextValue = produce(value, (draft) => {
-      draft[fieldName] = fieldVal;
-    });
+  const onChangeHandler = (fieldName, fieldVal) => {
+    if (fieldName === 'typeOfContent') typeOfContentChange(fieldVal);
 
-    onChange(nextValue);
-  }
+    onChange(produce((draft) => {
+      draft[0][fieldName] = fieldVal;
+    }));
+  };
 
-  render() {
-    const { value, dynamicFieldData } = this.props;
+  return (
+    <Card className="mb-3">
+      <Card.Body>
+        <Card.Title>
+          Descriptive Metadata
+        </Card.Title>
 
-    return (
-      <Card className="mb-3">
-        <Card.Body>
-          <Card.Title>
-            Descriptive Metadata
-          </Card.Title>
+        <InputGroup>
+          <Label sm={4} align="right">Type of Content Subject to Copyright</Label>
+          <SelectInput
+            sm={8}
+            value={value.typeOfContent}
+            options={typeOfContent}
+            onChange={v => onChangeHandler('typeOfContent', v)}
+          />
+        </InputGroup>
 
-          <InputGroup>
-            <Label sm={4} align="right">Type of Content Subject to Copyright</Label>
-            <SelectInput
-              sm={8}
-              value={value.typeOfContent}
-              options={typeOfContent}
-              onChange={v => this.onChange('typeOfContent', v)}
-            />
-          </InputGroup>
+        {
+          (dynamicFieldData.genre || [{}]).map((t, i) => (
+            <InputGroup key={i}>
+              <Label sm={4} align="right">Specific Genre of Work</Label>
+              <ReadOnlyInput sm={8} value={t.genreTerm ? t.genreTerm.prefLabel : ''} />
+            </InputGroup>
+          ))
+        }
 
-          {
-            (dynamicFieldData.genre || [{}]).map((t, i) => (
-              <InputGroup key={i}>
-                <Label sm={4} align="right">Specific Genre of Work</Label>
-                <ReadOnlyInput sm={8} value={t.genreTerm ? t.genreTerm.prefLabel : ''} />
-              </InputGroup>
-            ))
-          }
+        {
+          (dynamicFieldData.form || [{}]).map((t, i) => (
+            <InputGroup key={i}>
+              <Label sm={4} align="right">Form</Label>
+              <ReadOnlyInput sm={8} value={t.formTerm ? t.formTerm.prefLabel : ''} />
+            </InputGroup>
+          ))
+        }
 
-          {
-            (dynamicFieldData.form || [{}]).map((t, i) => (
-              <InputGroup key={i}>
-                <Label sm={4} align="right">Form</Label>
-                <ReadOnlyInput sm={8} value={t.formTerm ? t.formTerm.prefLabel : ''} />
-              </InputGroup>
-            ))
-          }
+        {
+          (dynamicFieldData.name || [{}]).map((n, i) => (
+            <Card className="my-3" key={i}>
+              <Card.Header>{`Creator ${i + 1}`}</Card.Header>
+              <Card.Body>
+                <InputGroup>
+                  <Label sm={4} align="right">Name</Label>
+                  <ReadOnlyInput sm={8} value={n.nameTerm ? n.nameTerm.prefLabel : ''} />
+                </InputGroup>
 
-          {
-            (dynamicFieldData.name || [{}]).map((n, i) => (
-              <Card className="my-3" key={i}>
-                <Card.Header>{`Creator ${i + 1}`}</Card.Header>
-                <Card.Body>
-                  <InputGroup>
-                    <Label sm={4} align="right">Name</Label>
-                    <ReadOnlyInput sm={8} value={n.nameTerm ? n.nameTerm.prefLabel : ''} />
-                  </InputGroup>
+                <InputGroup>
+                  <Label sm={4} align="right">Role(s)</Label>
+                  <ReadOnlyInput sm={8} value={n.nameRole ? n.nameRole.map(r => r.nameRoleTerm.prefLabel).join(', ') : ''} />
+                </InputGroup>
 
-                  <InputGroup>
-                    <Label sm={4} align="right">Role(s)</Label>
-                    <ReadOnlyInput sm={8} value={n.nameRole ? n.nameRole.map(r => r.nameRoleTerm.prefLabel).join(', ') : ''} />
-                  </InputGroup>
+                <InputGroup>
+                  <Label sm={4} align="right">Date of Birth</Label>
+                  <ReadOnlyInput sm={8} value="" />
+                </InputGroup>
 
-                  <InputGroup>
-                    <Label sm={4} align="right">Date of Birth</Label>
-                    <ReadOnlyInput sm={8} value="" />
-                  </InputGroup>
+                <InputGroup>
+                  <Label sm={4} align="right">Date of Death</Label>
+                  <ReadOnlyInput sm={8} value="" />
+                </InputGroup>
+              </Card.Body>
+            </Card>
+          ))
+        }
 
-                  <InputGroup>
-                    <Label sm={4} align="right">Date of Death</Label>
-                    <ReadOnlyInput sm={8} value="" />
-                  </InputGroup>
-                </Card.Body>
-              </Card>
-            ))
-          }
+        {
+          (dynamicFieldData.title || [{}]).map((t, i) => (
+            <InputGroup key={i}>
+              <Label sm={4} align="right">Title</Label>
+              <ReadOnlyInput sm={8} value={t.titleSortPortion} />
+            </InputGroup>
+          ))
+        }
 
-          {
-            (dynamicFieldData.title || [{}]).map((t, i) => (
-              <InputGroup key={i}>
-                <Label sm={4} align="right">Title</Label>
-                <ReadOnlyInput sm={8} value={t.titleSortPortion} />
-              </InputGroup>
-            ))
-          }
+        {
+          (dynamicFieldData.alternativeTitle || [{}]).map((t, i) => (
+            <InputGroup key={i}>
+              <Label sm={4} align="right">Alternate Title</Label>
+              <ReadOnlyInput sm={8} value={t.alternativeTitleValue} />
+            </InputGroup>
+          ))
+        }
 
-          {
-            (dynamicFieldData.alternativeTitle || [{}]).map((t, i) => (
-              <InputGroup key={i}>
-                <Label sm={4} align="right">Alternate Title</Label>
-                <ReadOnlyInput sm={8} value={t.alternativeTitleValue} />
-              </InputGroup>
-            ))
-          }
+        <InputGroup>
+          <Label sm={4} align="right">Country of Origin</Label>
+          <TermSelect
+            vocabulary="geonames"
+            value={value.countryOfOrigin}
+            onChange={v => onChangeHandler('countryOfOrigin', v)}
+          />
+        </InputGroup>
 
-          <InputGroup>
-            <Label sm={4} align="right">Country of Origin</Label>
-            <TermSelect
-              vocabulary="geonames"
-              value={value.countryOfOrigin}
-              onChange={v => this.onChange('countryOfOrigin', v)}
-            />
-          </InputGroup>
+        {
+          (dynamicFieldData.publisher || [{}]).map((t, i) => (
+            <InputGroup key={i}>
+              <Label sm={4} align="right">Publisher Name</Label>
+              <ReadOnlyInput sm={8} value={t.publisherValue} />
+            </InputGroup>
+          ))
+        }
 
-          {
-            (dynamicFieldData.publisher || [{}]).map((t, i) => (
-              <InputGroup key={i}>
-                <Label sm={4} align="right">Publisher Name</Label>
-                <ReadOnlyInput sm={8} value={t.publisherValue} />
-              </InputGroup>
-            ))
-          }
+        {
+          (dynamicFieldData.dateCreated || [{}]).map((d, i) => (
+            <Card className="my-3" key={i}>
+              <Card.Header>{`Date of Creation ${i + 1}`}</Card.Header>
+              <Card.Body>
+                <InputGroup>
+                  <Label sm={4} align="right">Start Date</Label>
+                  <ReadOnlyInput sm={8} value={d.dateCreatedStartValue} />
+                </InputGroup>
 
-          {
-            (dynamicFieldData.dateCreated || [{}]).map((d, i) => (
-              <Card className="my-3" key={i}>
-                <Card.Header>{`Date of Creation ${i + 1}`}</Card.Header>
-                <Card.Body>
-                  <InputGroup>
-                    <Label sm={4} align="right">Start Date</Label>
-                    <ReadOnlyInput sm={8} value={d.dateCreatedStartValue} />
-                  </InputGroup>
+                <InputGroup>
+                  <Label sm={4} align="right">End Date</Label>
+                  <ReadOnlyInput sm={8} value={d.dateCreatedEndValue} />
+                </InputGroup>
 
-                  <InputGroup>
-                    <Label sm={4} align="right">End Date</Label>
-                    <ReadOnlyInput sm={8} value={d.dateCreatedEndValue} />
-                  </InputGroup>
+                <InputGroup>
+                  <Label sm={4} align="right">Type</Label>
+                  <ReadOnlyInput sm={8} value={d.dateCreatedType} />
+                </InputGroup>
 
-                  <InputGroup>
-                    <Label sm={4} align="right">Type</Label>
-                    <ReadOnlyInput sm={8} value={d.dateCreatedType} />
-                  </InputGroup>
+                <InputGroup>
+                  <Label sm={4} align="right">Key Date</Label>
+                  <ReadOnlyInput sm={8} value={d.dateCreatedKeyDate} />
+                </InputGroup>
+              </Card.Body>
+            </Card>
+          ))
+        }
 
-                  <InputGroup>
-                    <Label sm={4} align="right">Key Date</Label>
-                    <ReadOnlyInput sm={8} value={d.dateCreatedKeyDate} />
-                  </InputGroup>
-                </Card.Body>
-              </Card>
-            ))
-          }
+        {
+          (dynamicFieldData.dateCreatedTextual || [{}]).map((t, i) => (
+            <InputGroup key={i}>
+              <Label sm={4} align="right">Descriptive Date</Label>
+              <ReadOnlyInput sm={8} value={t.dateCreatedTextualValue} />
+            </InputGroup>
+          ))
+        }
 
-          {
-            (dynamicFieldData.dateCreatedTextual || [{}]).map((t, i) => (
-              <InputGroup key={i}>
-                <Label sm={4} align="right">Descriptive Date</Label>
-                <ReadOnlyInput sm={8} value={t.dateCreatedTextualValue} />
-              </InputGroup>
-            ))
-          }
+        <Collapse in={value.typeOfContent === 'motion_picture'}>
+          <div>
+            <InputGroup>
+              <Label sm={4} align="right">Film distributed to public?</Label>
+              <YesNoSelect
+                value={value.filmDistributedToPublic}
+                onChange={v => onChangeHandler('filmDistributedToPublic', v)}
+              />
+            </InputGroup>
 
-          <Collapse in={value.typeOfContent === 'motion_picture'}>
-            <div>
-              <InputGroup>
-                <Label sm={4} align="right">Film distributed to public?</Label>
-                <YesNoSelect
-                  value={value.filmDistributedToPublic}
-                  onChange={v => this.onChange('filmDistributedToPublic', v)}
-                />
-              </InputGroup>
-
-              <InputGroup>
-                <Label sm={4} align="right">Film distributed commercially?</Label>
-                <YesNoSelect
-                  value={value.filmDistributedCommercially}
-                  onChange={v => this.onChange('filmDistributedCommercially', v)}
-                />
-              </InputGroup>
-            </div>
-          </Collapse>
-        </Card.Body>
-      </Card>
-    );
-  }
+            <InputGroup>
+              <Label sm={4} align="right">Film distributed commercially?</Label>
+              <YesNoSelect
+                value={value.filmDistributedCommercially}
+                onChange={v => onChangeHandler('filmDistributedCommercially', v)}
+              />
+            </InputGroup>
+          </div>
+        </Collapse>
+      </Card.Body>
+    </Card>
+  );
 }
 
 DescriptiveMetadata.propTypes = {
   onChange: PropTypes.func.isRequired,
   dynamicFieldData: PropTypes.any, // or dynamicFieldData
-  value: PropTypes.any,
+  // values: PropTypes.arrayOf(PropTypes.shape({
+  //   color: PropTypes.string,
+  //   fontSize: PropTypes.number
+  // })).isRequired,
 };
 
 export default DescriptiveMetadata;

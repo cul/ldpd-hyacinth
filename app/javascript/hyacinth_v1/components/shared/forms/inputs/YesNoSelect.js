@@ -3,24 +3,23 @@ import PropTypes from 'prop-types';
 
 import SelectInput from './SelectInput';
 
-class YesNoSelect extends React.PureComponent {
-  render() {
-    const options = [{ label: 'Yes', value: 'yes' }, { label: 'No', value: 'no' }];
-
-    return (
-      <SelectInput sm={4} options={options} {...this.props} />
-    );
-  }
+function YesNoSelect(props) {
+  return (
+    <SelectInput
+      sm={4}
+      options={[{ label: 'Yes', value: 'yes' }, { label: 'No', value: 'no' }]}
+      {...props}
+    />
+  );
 }
 
 YesNoSelect.defaultProps = {
-  inputName: '',
+  value: '',
 };
 
 YesNoSelect.propTypes = {
-  inputName: PropTypes.string,
   onChange: PropTypes.func.isRequired,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.oneOf(['', 'yes', 'no']),
 };
 
 export default YesNoSelect;

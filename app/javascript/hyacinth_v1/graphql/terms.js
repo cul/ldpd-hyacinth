@@ -65,6 +65,7 @@ export const createTermMutation = gql`
         id
         uri
         prefLabel
+        termType
       }
     }
   }

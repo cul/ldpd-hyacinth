@@ -6,6 +6,7 @@ module Mutations
       TERM_INPUT_TYPE = GraphQL::InputObjectType.define do
         name "TermInput"
 
+        argument :id, types.ID
         argument :prefLabel, !types.String, as: :pref_label
         argument :altLabels, types[types.String], as: :alt_label
         argument :authority, types.String

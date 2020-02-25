@@ -186,7 +186,6 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
             }
           }
           optimisticLockToken
-          rights
           resources {
             id
             displayLabel
@@ -195,6 +194,14 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
             originalFilename
             mediaType
             fileSize
+          }
+
+          ... on Item {
+            rights {
+              descriptiveMetadata {
+                typeOfContent
+              }
+            }
           }
         }
       }

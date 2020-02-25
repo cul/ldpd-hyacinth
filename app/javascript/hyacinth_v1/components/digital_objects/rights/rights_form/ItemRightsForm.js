@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import produce from 'immer';
 import { Form, Collapse } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
-import { merge } from 'lodash';
+import { merge, omit, isEmpty, cloneDeep } from 'lodash';
+import { useMutation } from '@apollo/react-hooks';
 
-import keyTransformer from '../../../../utils/keyTransformer';
 import Label from '../../../shared/forms/Label';
 import InputGroup from '../../../shared/forms/InputGroup';
 import BooleanRadioButtons from '../../../shared/forms/inputs/BooleanRadioButtons';
-import { digitalObject as digitalObjectApi } from '../../../../utils/hyacinthApi';
 import FormButtons from '../../../shared/forms/FormButtons';
+import { updateItemRightsMutation } from '../../../../graphql/digitalObjects';
+import GraphQLErrors from '../../../shared/GraphQLErrors';
 
 import DescriptiveMetadata from './subsections/DescriptiveMetadata';
 import CopyrightStatus from './subsections/CopyrightStatus';
@@ -20,34 +21,73 @@ import LicensedToColumbiaUniversity from './subsections/LicensedToColumbiaUniver
 import ContractualLimitationsRestrictionsAndPermissions from './subsections/ContractualLimitationsRestrictionsAndPermissions';
 import RightsForWorksOfArtSculptureAndPhotographs from './subsections/RightsForWorksOfArtSculptureAndPhotographs';
 import UnderlyingRights from './subsections/UnderlyingRights';
-import { defaultItemRights } from './defaultItemRights';
-
-const useHash = (initialHash) => {
-  const [hash, setHash] = useState(initialHash);
-
-  const setHashViaKey = (key, value) => setHash(produce(hash, (draft) => { draft[key] = value; }));
-
-  return [hash, setHashViaKey];
-};
+import { defaultItemRights } from './defaultRights';
+import { removeTypename, removeEmptyKeys } from '../../../../utils/deepKeyRemove';
+import { useEnabled, useHash } from './rightsHooks';
 
 function ItemRightsForm(props) {
   const { digitalObject: { id, rights: initialRights, dynamicFieldData } } = props;
+
   const history = useHistory();
 
-  const camelizedInitialRights = keyTransformer.deepCamelCase(initialRights);
-  const [rights, setRights] = useHash(merge({}, defaultItemRights(), camelizedInitialRights));
+  const [rights, setRights] = useHash(merge({}, defaultItemRights, removeTypename(removeEmptyKeys(initialRights))));
+
+  const [updateRights, { error: updateError }] = useMutation(updateItemRightsMutation);
+
+  const [enabledAdditionalRights, setEnabledAdditionalRights] = useEnabled(
+    omit(rights, 'descriptiveMetadata', 'copyrightStatus'),
+    () => {
+      // if no longer adding additional rights need to reset all sections
+      // but descriptiveMetadata and copyrightStatus
+      setRights(
+        'rightsForWorksOfArtSculptureAndPhotographs',
+        cloneDeep(defaultItemRights.rightsForWorksOfArtSculptureAndPhotographs),
+      );
+      setRights('copyrightOwnership', cloneDeep(defaultItemRights.copyrightOwnership));
+      setRights('columbiaUniversityIsCopyrightHolder', cloneDeep(defaultItemRights.columbiaUniversityIsCopyrightHolder));
+      setRights('licensedToColumbiaUniversity', cloneDeep(defaultItemRights.licensedToColumbiaUniversity));
+      setRights('contractualLimitationsRestrictionsAndPermissions', cloneDeep(defaultItemRights.contractualLimitationsRestrictionsAndPermissions));
+      setRights('underlyingRights', cloneDeep(defaultItemRights.underlyingRights));
+    },
+  );
 
   const onSubmitHandler = () => {
-    return digitalObjectApi.rights.update(
-      id,
-      { digitalObject: { rights: keyTransformer.deepSnakeCase(rights) } },
-    ).then(res => history.push(`/digital_objects/${res.data.digitalObject.uid}/rights`));
+    const cleanRights = removeEmptyKeys(removeTypename(rights));
+    const variables = { input: merge({ id }, cleanRights) };
+    return updateRights({ variables }).then(res => history.push(`/digital_objects/${res.data.updateItemRights.item.id}/rights`));
+  };
+
+  const typeOfContentChange = (type) => {
+    if (type !== 'motion_picture') {
+      setRights('descriptiveMetadata', produce((draft) => {
+        draft[0].filmDistributedToPublic = '';
+        draft[0].filmDistributedCommercially = '';
+      }));
+
+      setRights('contractualLimitationsRestrictionsAndPermissions', produce((draft) => {
+        draft[0].optionAvA = false;
+        draft[0].optionAvB = false;
+        draft[0].optionAvC = false;
+        draft[0].optionAvD = false;
+        draft[0].optionAvE = false;
+        draft[0].optionAvF = false;
+        draft[0].optionAvG = false;
+        draft[0].excerptLimitedTo = '';
+      }));
+    }
+
+    if (type !== 'pictoral_graphic_and_scuptural') {
+      // reset the entire section dedicated to that type
+      setRights(
+        'rightsForWorksOfArtSculptureAndPhotographs',
+        [{ ...defaultItemRights.rightsForWorksOfArtSculptureAndPhotographs[0] }],
+      );
+    }
   };
 
   const {
     descriptiveMetadata,
     copyrightStatus,
-    additionalRightsToRecord,
     copyrightOwnership,
     columbiaUniversityIsCopyrightHolder,
     licensedToColumbiaUniversity,
@@ -58,59 +98,59 @@ function ItemRightsForm(props) {
 
   return (
     <Form key={id} className="digital-object-interface">
+      <GraphQLErrors errors={updateError} />
+
       <DescriptiveMetadata
         dynamicFieldData={dynamicFieldData}
-        value={descriptiveMetadata}
+        values={descriptiveMetadata}
         onChange={v => setRights('descriptiveMetadata', v)}
+        typeOfContentChange={typeOfContentChange}
       />
 
       <CopyrightStatus
-        value={copyrightStatus}
+        values={copyrightStatus}
         onChange={v => setRights('copyrightStatus', v)}
       />
 
       <InputGroup>
         <Label sm={4} align="right">Is there additional copyright or permissions information to record?</Label>
-        <BooleanRadioButtons
-          value={additionalRightsToRecord.enabled}
-          onChange={v => setRights('additionalRightsToRecord', { enabled: v })}
-        />
+        <BooleanRadioButtons value={enabledAdditionalRights} onChange={setEnabledAdditionalRights} />
       </InputGroup>
 
-      <Collapse in={additionalRightsToRecord.enabled}>
+      <Collapse in={enabledAdditionalRights}>
         <div>
           <CopyrightOwnership
-            value={copyrightOwnership}
+            values={copyrightOwnership}
             onChange={v => setRights('copyrightOwnership', v)}
           />
 
           <ColumbiaUniversityIsCopyrightHolder
-            value={columbiaUniversityIsCopyrightHolder}
+            values={columbiaUniversityIsCopyrightHolder}
             onChange={v => setRights('columbiaUniversityIsCopyrightHolder', v)}
           />
 
           <LicensedToColumbiaUniversity
-            value={licensedToColumbiaUniversity}
+            values={licensedToColumbiaUniversity}
             onChange={v => setRights('licensedToColumbiaUniversity', v)}
           />
 
           <ContractualLimitationsRestrictionsAndPermissions
-            audioVisualContent={descriptiveMetadata.typeOfContent === 'motion_picture'}
-            value={contractualLimitationsRestrictionsAndPermissions}
+            audioVisualContent={descriptiveMetadata[0].typeOfContent === 'motion_picture'}
+            values={contractualLimitationsRestrictionsAndPermissions}
             onChange={v => setRights('contractualLimitationsRestrictionsAndPermissions', v)}
           />
 
           {
-            descriptiveMetadata.typeOfContent === 'pictoral_graphic_and_scuptural' && (
+            descriptiveMetadata[0].typeOfContent === 'pictoral_graphic_and_scuptural' && (
               <RightsForWorksOfArtSculptureAndPhotographs
-                value={rightsForWorksOfArtSculptureAndPhotographs}
+                values={rightsForWorksOfArtSculptureAndPhotographs}
                 onChange={v => setRights('rightsForWorksOfArtSculptureAndPhotographs', v)}
               />
             )
           }
 
           <UnderlyingRights
-            value={underlyingRights}
+            values={underlyingRights}
             onChange={v => setRights('underlyingRights', v)}
           />
         </div>
