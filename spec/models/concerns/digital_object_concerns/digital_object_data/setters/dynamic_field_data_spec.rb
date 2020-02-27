@@ -96,7 +96,7 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters::DynamicFieldDa
             'value' => 'Random, Person',
             'role' => [
               {
-                'role_value' => 'Author'
+                'value' => 'Author'
               }
             ]
           }
