@@ -32,48 +32,48 @@
 	"title" :
 	[
             {
-		"title_sort_portion" : "Catcher in the Rye",
-		"title_non_sort_portion" : "The"
+		"sort_portion" : "Catcher in the Rye",
+		"non_sort_portion" : "The"
             }
 	]
 	,
 	"cnri_handle_identifier" :
 	[
 	    {
-		"cnri_handle_identifier_value" : "http://hdl.handle.net/10022/AC:P:29183"
+		"value" : "http://hdl.handle.net/10022/AC:P:29183"
 	    }
 	]
 	,
 	"type_of_resource" :
 	[
 	    {
-		"type_of_resource_value" : "Image"
+		"value" : "Image"
 	    }
 	]
 	,
 	"abstract" :
 	[
             {
-		"abstract_value" : "This is an abstract; yes, a very nice abstract"
+		"value" : "This is an abstract; yes, a very nice abstract"
             }
 	]
 	,
 	"name" :
 	[
         {
-            "name_term" :
+            "term" :
             {
                 "pref_label" : "Salinger, J. D.",
                 "uri" : "http://id.loc.gov/authorities/names/n50016589",
-                "name_type" : "personal"
+                "type" : "personal"
             }
         },
         {
-            "name_term" :
+            "term" :
             {
                 "pref_label" : "Lincoln, Abraham",
                 "uri" : "http://id.loc.gov/authorities/names/n79006779",
-                "name_type" : "personal"
+                "type" : "personal"
             }
         }
 	]
@@ -81,7 +81,7 @@
 	"subject_topic" :
 	[
 	    {
-		"subject_topic_term" :
+		"term" :
 		{
 		    "uri" : "http://id.worldcat.org/fast/872451",
 		    "pref_label" : "Computer science",
@@ -92,7 +92,7 @@
 	    }
 	    ,
 	    {
-		"subject_topic_term" :
+		"term" :
 		{
 		    "uri" : "http://experimental.worldcat.org/fast/873333",
 		    "pref_label" : "Concertos (Flute)",
@@ -106,26 +106,26 @@
 	"date_issued" :
 	[
 	    {
-		"date_issued_start_value" : "1951-01-01"
+		"start_value" : "1951-01-01"
 	    }
 	]
 	,
 	"parent_publication" :
 	[
 	    {
-		"parent_publication_issn" : "1932-6203",
-		"parent_publication_isbn" : "0670734608",
-		"parent_publication_volume" : "10",
-		"parent_publication_issue" : "3",
-		"parent_publication_publisher" : "PLoS ONE",
-		"parent_publication_doi" : "10.1371/journal.pone.0119638"
+		"issn" : "1932-6203",
+		"isbn" : "0670734608",
+		"volume" : "10",
+		"issue" : "3",
+		"publisher" : "PLoS ONE",
+		"doi" : "10.1371/journal.pone.0119638"
 	    }
 	]
 	,
 	"subject_topic" :
 	[
 	    {
-		"subject_topic_term" :
+		"term" :
 		{
 		    "uri" : "http://id.worldcat.org/fast/1737284",
 		    "pref_label" : "Educational attainment",
@@ -135,7 +135,7 @@
 		}
 	    },
 	    {
-		"subject_topic_term" :
+		"term" :
 		{
 		    "uri" : "http://id.worldcat.org/fast/1053367",
 		    "pref_label" : "Parental influences",
@@ -146,7 +146,7 @@
 	    }
 	    ,
 	    {
-		"subject_topic_term":
+		"term":
 		{
 		    "uri" : "http://id.worldcat.org/fast/1026881",
 		    "pref_label" : "Mother and child--Psychological aspects",
