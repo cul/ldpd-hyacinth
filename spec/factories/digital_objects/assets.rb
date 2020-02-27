@@ -10,8 +10,8 @@ FactoryBot.define do
         '@dynamic_field_data',
         'title' => [
           {
-            'title_non_sort_portion' => 'The',
-            'title_sort_portion' => 'Best Asset Ever'
+            'non_sort_portion' => 'The',
+            'sort_portion' => 'Best Asset Ever'
           }
         ]
       )

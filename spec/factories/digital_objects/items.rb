@@ -9,8 +9,8 @@ FactoryBot.define do
         {
           'title' => [
             {
-              'title_non_sort_portion' => 'The',
-              'title_sort_portion' => 'Best Item Ever'
+              'non_sort_portion' => 'The',
+              'sort_portion' => 'Best Item Ever'
             }
           ]
         }

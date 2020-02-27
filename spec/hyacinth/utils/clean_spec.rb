@@ -8,19 +8,19 @@ RSpec.describe Hyacinth::Utils::Clean do
       {
         'alternate_title' => [
           {
-            'title_non_sort_portion' => 'No Extra Spaces',
-            'title_sort_portion' => '    Catcher in the Rye    '
+            'non_sort_portion' => 'No Extra Spaces',
+            'sort_portion' => '    Catcher in the Rye    '
           }
         ],
         'name' => [
           {
-            'name_value' => ' This has space ',
-            'name_role' => [
+            'value' => ' This has space ',
+            'role' => [
               {
-                'name_role_value' => ' This value has spaaaace     '
+                'value' => ' This value has spaaaace     '
               },
               {
-                'name_role_value' => 'Unchanged role without extra space'
+                'value' => 'Unchanged role without extra space'
               }
             ]
           }
@@ -29,8 +29,8 @@ RSpec.describe Hyacinth::Utils::Clean do
           {
             'some_field' => 'Great value here',
             'controlled_field' => {
-              'controlled_field_uri' => '        http://id.library.columbia.edu/with/leading/space',
-              'controlled_field_value' => 'Value with trailing space       '
+              'uri' => '        http://id.library.columbia.edu/with/leading/space',
+              'value' => 'Value with trailing space       '
             }
           }
         ],
@@ -42,19 +42,19 @@ RSpec.describe Hyacinth::Utils::Clean do
       {
         'alternate_title' => [
           {
-            'title_non_sort_portion' => 'No Extra Spaces',
-            'title_sort_portion' => 'Catcher in the Rye'
+            'non_sort_portion' => 'No Extra Spaces',
+            'sort_portion' => 'Catcher in the Rye'
           }
         ],
         'name' => [
           {
-            'name_value' => 'This has space',
-            'name_role' => [
+            'value' => 'This has space',
+            'role' => [
               {
-                'name_role_value' => 'This value has spaaaace'
+                'value' => 'This value has spaaaace'
               },
               {
-                'name_role_value' => 'Unchanged role without extra space'
+                'value' => 'Unchanged role without extra space'
               }
             ]
           }
@@ -63,8 +63,8 @@ RSpec.describe Hyacinth::Utils::Clean do
           {
             'some_field' => 'Great value here',
             'controlled_field' => {
-              'controlled_field_uri' => 'http://id.library.columbia.edu/with/leading/space',
-              'controlled_field_value' => 'Value with trailing space'
+              'uri' => 'http://id.library.columbia.edu/with/leading/space',
+              'value' => 'Value with trailing space'
             }
           }
         ],
@@ -83,16 +83,16 @@ RSpec.describe Hyacinth::Utils::Clean do
       {
         'alternate_title' => [
           {
-            'title_non_sort_portion' => '',
-            'title_sort_portion' => 'Catcher in the Rye'
+            'non_sort_portion' => '',
+            'sort_portion' => 'Catcher in the Rye'
           }
         ],
         'name' => [
           {
-            'name_value' => '',
-            'name_role' => [
+            'value' => '',
+            'role' => [
               {
-                'name_role_value' => ''
+                'value' => ''
               }
             ]
           }
@@ -100,20 +100,20 @@ RSpec.describe Hyacinth::Utils::Clean do
         'controlled_field_group' => [
           {
             'controlled_field' => {
-              'controlled_field_uri' => '',
-              'controlled_field_value' => ''
+              'uri' => '',
+              'value' => ''
             }
           }
         ],
         'collection' => [
           {
-            'collection_authorized_term_uri' => 'http://example.com/a/b/c'
+            'authorized_term_uri' => 'http://example.com/a/b/c'
           }
         ],
         'note' => [
           {
-            'note_value' => '                         ', # A bunch of spaces
-            'note_type' => ''
+            'value' => '                         ', # A bunch of spaces
+            'type' => ''
           }
         ],
         'an_array_field' => ['', nil, 'some_value', ['', nil], true, false]
@@ -124,12 +124,12 @@ RSpec.describe Hyacinth::Utils::Clean do
       {
         'alternate_title' => [
           {
-            'title_sort_portion' => 'Catcher in the Rye'
+            'sort_portion' => 'Catcher in the Rye'
           }
         ],
         'collection' => [
           {
-            'collection_authorized_term_uri' => 'http://example.com/a/b/c'
+            'authorized_term_uri' => 'http://example.com/a/b/c'
           }
         ],
         'an_array_field' => ['some_value', true]

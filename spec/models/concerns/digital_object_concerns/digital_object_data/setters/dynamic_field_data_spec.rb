@@ -9,8 +9,8 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters::DynamicFieldDa
       'dynamic_field_data' => {
         'note' => [
           {
-            'note_value' => 'Great Note',
-            'note_type' => 'So Great'
+            'value' => 'Great Note',
+            'type' => 'So Great'
           }
         ]
       }
@@ -25,8 +25,8 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters::DynamicFieldDa
       }])
 
       expect(digital_object_with_sample_data.dynamic_field_data['note']).to eq([{
-        'note_value' => 'Great Note',
-        'note_type' => 'So Great'
+        'value' => 'Great Note',
+        'type' => 'So Great'
       }])
     end
 
@@ -35,8 +35,8 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters::DynamicFieldDa
       expect(digital_object_with_sample_data.dynamic_field_data['title']).to be_nil
 
       expect(digital_object_with_sample_data.dynamic_field_data['note']).to eq([{
-        'note_value' => 'Great Note',
-        'note_type' => 'So Great'
+        'value' => 'Great Note',
+        'type' => 'So Great'
       }])
     end
   end
@@ -46,19 +46,19 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters::DynamicFieldDa
       {
         'alternate_title' => [
           {
-            'title_non_sort_portion' => '',
-            'title_sort_portion' => '    Catcher in the Rye    '
+            'non_sort_portion' => '',
+            'sort_portion' => '    Catcher in the Rye    '
           }
         ],
         'name' => [
           {
-            'name_value' => ' Random, Person ',
-            'name_role' => [
+            'value' => ' Random, Person ',
+            'role' => [
               {
-                'name_role_value' => ' Author     '
+                'value' => ' Author     '
               },
               {
-                'name_role_value' => ''
+                'value' => ''
               }
             ]
           }
@@ -66,20 +66,20 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters::DynamicFieldDa
         'controlled_field_group' => [
           {
             'controlled_field' => {
-              'controlled_field_uri' => '        http://id.library.columbia.edu/with/leading/space',
-              'controlled_field_value' => 'Great value here'
+              'uri' => '        http://id.library.columbia.edu/with/leading/space',
+              'value' => 'Great value here'
             }
           }
         ],
         'collection' => [
           {
-            'collection_authorized_term_uri' => 'http://example.com/a/b/c'
+            'authorized_term_uri' => 'http://example.com/a/b/c'
           }
         ],
         'note' => [
           {
-            'note_value' => '                         ', # A bunch of spaces
-            'note_type' => ''
+            'value' => '                         ', # A bunch of spaces
+            'type' => ''
           }
         ]
       }
@@ -88,15 +88,15 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters::DynamicFieldDa
       {
         'alternate_title' => [
           {
-            'title_sort_portion' => 'Catcher in the Rye'
+            'sort_portion' => 'Catcher in the Rye'
           }
         ],
         'name' => [
           {
-            'name_value' => 'Random, Person',
-            'name_role' => [
+            'value' => 'Random, Person',
+            'role' => [
               {
-                'name_role_value' => 'Author'
+                'role_value' => 'Author'
               }
             ]
           }
@@ -104,14 +104,14 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters::DynamicFieldDa
         'controlled_field_group' => [
           {
             'controlled_field' => {
-              'controlled_field_uri' => 'http://id.library.columbia.edu/with/leading/space',
-              'controlled_field_value' => 'Great value here'
+              'uri' => 'http://id.library.columbia.edu/with/leading/space',
+              'value' => 'Great value here'
             }
           }
         ],
         'collection' => [
           {
-            'collection_authorized_term_uri' => 'http://example.com/a/b/c'
+            'authorized_term_uri' => 'http://example.com/a/b/c'
           }
         ]
       }

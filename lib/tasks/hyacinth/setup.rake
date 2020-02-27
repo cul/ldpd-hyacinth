@@ -74,7 +74,7 @@ namespace :hyacinth do
       default_dynamic_fields = [
         {
           display_label: 'Sort Portion',
-          string_key: 'title_sort_portion',
+          string_key: 'sort_portion',
           dynamic_field_group: df_group,
           field_type: 'string',
           created_by: user,
@@ -86,7 +86,7 @@ namespace :hyacinth do
         },
         {
           display_label: 'Non-Sort Portion',
-          string_key: 'title_non_sort_portion',
+          string_key: 'non_sort_portion',
           dynamic_field_group: df_group,
           field_type: 'string',
           created_by: user,

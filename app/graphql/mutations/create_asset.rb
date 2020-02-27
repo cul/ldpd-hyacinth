@@ -16,7 +16,7 @@ class Mutations::CreateAsset < Mutations::BaseMutation
     begin
       resource = initialize_asset_resource_for_blob(asset, blob, Hyacinth::Config.resource_storage)
       asset.dynamic_field_data['title'] = [{
-        'title_sort_portion' => blob.filename.to_s
+        'sort_portion' => blob.filename.to_s
       }]
       asset.save!
       { asset: asset }

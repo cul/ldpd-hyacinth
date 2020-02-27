@@ -77,7 +77,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
       end
       it "makes core object property assignments" do
         # object label is pulled from title data
-        hyacinth_object.dynamic_field_data['title'] = [{ 'title_sort_portion' => digital_object_title }]
+        hyacinth_object.dynamic_field_data['title'] = [{ 'sort_portion' => digital_object_title }]
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
         expect(rubydora_object.label).to eql(digital_object_title)
         # state should be assigned automatically
@@ -142,7 +142,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
       let(:child_object_title) { "Assigned Label" }
       let(:child_hyacinth_object) do
         obj = DigitalObject::Item.new
-        obj.dynamic_field_data['title'] = [{ 'title_sort_portion' => child_object_title }]
+        obj.dynamic_field_data['title'] = [{ 'sort_portion' => child_object_title }]
         obj.save
         obj
       end
