@@ -32,7 +32,7 @@ describe Hyacinth::XmlGenerator::Element do
               "authority" => {
                 "render_if" => {
                   "equal" => {
-                    "name_term.authority" => "ISNI"
+                    "term.authority" => "ISNI"
                   }
                 },
                 "val" => "fast"
@@ -78,7 +78,7 @@ describe Hyacinth::XmlGenerator::Element do
           'element' => 'mods:name',
           "attrs" => {
             "type" => "personal",
-            "valueUNI" => "{{name_term.uni}}",
+            "valueUNI" => "{{term.uni}}",
             "authority" => { "val" => "fast" },
             "xmlns:mods" => "http://www.loc.gov/mods/v3"
           }
@@ -124,8 +124,8 @@ describe Hyacinth::XmlGenerator::Element do
     context 'when checking for multiple conditions' do
       let(:render_if) do
         {
-          "present" => ["name_term.value", "name_term.uri"],
-          "absent" => ["name_term.uni"]
+          "present" => ["term.value", "term.uri"],
+          "absent" => ["term.uni"]
         }
       end
 
@@ -146,7 +146,7 @@ describe Hyacinth::XmlGenerator::Element do
       let(:df_data) { dynamic_field_data["title"][0] }
 
       it 'returns true if all fields are present' do
-        render_if = { "present" => ["title_sort_portion", "non_sort_portion"] }
+        render_if = { "present" => ["sort_portion", "non_sort_portion"] }
         expect(element.render?(render_if, df_data)).to be true
       end
 
