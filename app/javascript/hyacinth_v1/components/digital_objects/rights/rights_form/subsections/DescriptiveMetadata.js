@@ -51,19 +51,19 @@ function DescriptiveMetadata(props) {
         </InputGroup>
 
         {
-          (dynamicFieldData.genre || [{}]).map((t, i) => (
+          (dynamicFieldData.genre || [{}]).map((g, i) => (
             <InputGroup key={i}>
               <Label sm={4} align="right">Specific Genre of Work</Label>
-              <ReadOnlyInput sm={8} value={t.genreTerm ? t.genreTerm.prefLabel : ''} />
+              <ReadOnlyInput sm={8} value={g.term ? g.term.prefLabel : ''} />
             </InputGroup>
           ))
         }
 
         {
-          (dynamicFieldData.form || [{}]).map((t, i) => (
+          (dynamicFieldData.form || [{}]).map((f, i) => (
             <InputGroup key={i}>
               <Label sm={4} align="right">Form</Label>
-              <ReadOnlyInput sm={8} value={t.formTerm ? t.formTerm.prefLabel : ''} />
+              <ReadOnlyInput sm={8} value={f.term ? f.term.prefLabel : ''} />
             </InputGroup>
           ))
         }
@@ -75,12 +75,12 @@ function DescriptiveMetadata(props) {
               <Card.Body>
                 <InputGroup>
                   <Label sm={4} align="right">Name</Label>
-                  <ReadOnlyInput sm={8} value={n.nameTerm ? n.nameTerm.prefLabel : ''} />
+                  <ReadOnlyInput sm={8} value={n.term ? n.term.prefLabel : ''} />
                 </InputGroup>
 
                 <InputGroup>
                   <Label sm={4} align="right">Role(s)</Label>
-                  <ReadOnlyInput sm={8} value={n.nameRole ? n.nameRole.map(r => r.nameRoleTerm.prefLabel).join(', ') : ''} />
+                  <ReadOnlyInput sm={8} value={n.role ? n.role.map(r => r.term.prefLabel).join(', ') : ''} />
                 </InputGroup>
 
                 <InputGroup>
@@ -101,7 +101,7 @@ function DescriptiveMetadata(props) {
           (dynamicFieldData.title || [{}]).map((t, i) => (
             <InputGroup key={i}>
               <Label sm={4} align="right">Title</Label>
-              <ReadOnlyInput sm={8} value={t.titleSortPortion} />
+              <ReadOnlyInput sm={8} value={t.sortPortion} />
             </InputGroup>
           ))
         }
@@ -110,7 +110,7 @@ function DescriptiveMetadata(props) {
           (dynamicFieldData.alternativeTitle || [{}]).map((t, i) => (
             <InputGroup key={i}>
               <Label sm={4} align="right">Alternate Title</Label>
-              <ReadOnlyInput sm={8} value={t.alternativeTitleValue} />
+              <ReadOnlyInput sm={8} value={t.value} />
             </InputGroup>
           ))
         }
@@ -128,7 +128,7 @@ function DescriptiveMetadata(props) {
           (dynamicFieldData.publisher || [{}]).map((t, i) => (
             <InputGroup key={i}>
               <Label sm={4} align="right">Publisher Name</Label>
-              <ReadOnlyInput sm={8} value={t.publisherValue} />
+              <ReadOnlyInput sm={8} value={t.value} />
             </InputGroup>
           ))
         }
@@ -140,22 +140,22 @@ function DescriptiveMetadata(props) {
               <Card.Body>
                 <InputGroup>
                   <Label sm={4} align="right">Start Date</Label>
-                  <ReadOnlyInput sm={8} value={d.dateCreatedStartValue} />
+                  <ReadOnlyInput sm={8} value={d.startValue} />
                 </InputGroup>
 
                 <InputGroup>
                   <Label sm={4} align="right">End Date</Label>
-                  <ReadOnlyInput sm={8} value={d.dateCreatedEndValue} />
+                  <ReadOnlyInput sm={8} value={d.endValue} />
                 </InputGroup>
 
                 <InputGroup>
                   <Label sm={4} align="right">Type</Label>
-                  <ReadOnlyInput sm={8} value={d.dateCreatedType} />
+                  <ReadOnlyInput sm={8} value={d.type} />
                 </InputGroup>
 
                 <InputGroup>
                   <Label sm={4} align="right">Key Date</Label>
-                  <ReadOnlyInput sm={8} value={d.dateCreatedKeyDate} />
+                  <ReadOnlyInput sm={8} value={d.keyDate} />
                 </InputGroup>
               </Card.Body>
             </Card>
@@ -166,7 +166,7 @@ function DescriptiveMetadata(props) {
           (dynamicFieldData.dateCreatedTextual || [{}]).map((t, i) => (
             <InputGroup key={i}>
               <Label sm={4} align="right">Descriptive Date</Label>
-              <ReadOnlyInput sm={8} value={t.dateCreatedTextualValue} />
+              <ReadOnlyInput sm={8} value={t.value} />
             </InputGroup>
           ))
         }
