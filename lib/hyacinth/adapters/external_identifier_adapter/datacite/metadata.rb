@@ -44,8 +44,8 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
   def title
     return nil unless @dynamic_field_data.key? 'title'
     # concatenates the non sort portion with the sort portion
-    non_sort_portion = @dynamic_field_data.dig('title', 0, 'title_non_sort_portion')
-    sort_portion = @dynamic_field_data.dig('title', 0, 'title_sort_portion')
+    non_sort_portion = @dynamic_field_data.dig('title', 0, 'non_sort_portion')
+    sort_portion = @dynamic_field_data.dig('title', 0, 'sort_portion')
     [non_sort_portion, sort_portion].compact.join(' ')
   end
 
@@ -54,7 +54,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
   # @return [String, nil]
   # @note only returns the first genre value
   def genre_uri
-    @dynamic_field_data.dig('genre', 0, 'genre_term', 'uri')
+    @dynamic_field_data.dig('genre', 0, 'term', 'uri')
   end
 
   # the abstract of an item
@@ -62,21 +62,21 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
   # @return [String, nil]
   # @note only returns the first abstract value
   def abstract
-    @dynamic_field_data.dig('abstract', 0, 'abstract_value')
+    @dynamic_field_data.dig('abstract', 0, 'value')
   end
 
   # the type of resource for an item
   # @api public
   # @return [String, nil]
   def type_of_resource
-    @dynamic_field_data.dig('type_of_resource', 0, 'type_of_resource_value')
+    @dynamic_field_data.dig('type_of_resource', 0, 'value')
   end
 
   # starting year of the w3cdtf-encoded Date Issued field (first 4 characters)
   # @api public
   # @return [String, nil]
   def date_issued_start_year
-    local_value = @dynamic_field_data.dig('date_issued', 0, 'date_issued_start_value')
+    local_value = @dynamic_field_data.dig('date_issued', 0, 'start_value')
     local_value[0..3] if local_value
   end
 
@@ -107,28 +107,28 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
   # @api public
   # @return [String, nil]
   def parent_publication_issn
-    @dynamic_field_data.dig('parent_publication', 0, 'parent_publication_issn')
+    @dynamic_field_data.dig('parent_publication', 0, 'issn')
   end
 
   # ISBN of the parent publication
   # @api public
   # @return [String, nil]
   def parent_publication_isbn
-    @dynamic_field_data.dig('parent_publication', 0, 'parent_publication_isbn')
+    @dynamic_field_data.dig('parent_publication', 0, 'isbn')
   end
 
   # DOI of the parent publication
   # @api public
   # @return [String, nil]
   def parent_publication_doi
-    @dynamic_field_data.dig('parent_publication', 0, 'parent_publication_doi')
+    @dynamic_field_data.dig('parent_publication', 0, 'doi')
   end
 
   # handle indentifier value
   # @api public
   # @return [String, nil]
   def handle_net_identifier
-    @dynamic_field_data.dig('cnri_handle_identifier', 0, 'cnri_handle_identifier_value')
+    @dynamic_field_data.dig('cnri_handle_identifier', 0, 'value')
   end
 
   # retrieve subject topics from [@dynamic_field_data]
@@ -136,7 +136,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
   # @return [void]
   def subject_topics
     @dynamic_field_data.fetch('subject_topic', []).map do |topic|
-      topic['subject_topic_term']['pref_label']
+      topic['term']['pref_label']
     end
   end
 
@@ -170,12 +170,12 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
     CONTRIBUTOR_ROLES = ['author', 'editor', 'moderator', 'contributor'].freeze
 
     def process_name(name_hash)
-      return [name_hash['name_term']['pref_label'], [:contributor]] if name_hash['name_role'].blank?
+      return [name_hash['term']['pref_label'], [:contributor]] if name_hash['role'].blank?
 
-      roles = CONTRIBUTOR_ROLES & name_hash['name_role'].map do |role|
-        role['name_role_term']['pref_label'].downcase
+      roles = CONTRIBUTOR_ROLES & name_hash['role'].map do |role|
+        role['term']['pref_label'].downcase
       end
-      [name_hash['name_term']['pref_label'], roles.map(&:to_sym)]
+      [name_hash['term']['pref_label'], roles.map(&:to_sym)]
     end
 
     def deserialize_datetime(value)

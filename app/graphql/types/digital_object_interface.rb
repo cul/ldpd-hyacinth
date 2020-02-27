@@ -8,8 +8,8 @@ module Types
     description 'A digital object'
 
     TITLE_DYNAMIC_FIELD_GROUP_NAME = 'title'
-    TITLE_SORT_PORTION_DYNAMIC_FIELD_NAME = 'title_sort_portion'
-    TITLE_NON_SORT_PORTION_DYNAMIC_FIELD_NAME = 'title_non_sort_portion'
+    TITLE_SORT_PORTION_DYNAMIC_FIELD_NAME = 'sort_portion'
+    TITLE_NON_SORT_PORTION_DYNAMIC_FIELD_NAME = 'non_sort_portion'
 
     orphan_types Types::DigitalObject::ItemType, Types::DigitalObject::AssetType, Types::DigitalObject::SiteType
 

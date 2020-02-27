@@ -11,25 +11,25 @@ describe Hyacinth::XmlGenerator do
     JSON('[
       {
         "render_if": {
-          "present": ["name_term.value"]
+          "present": ["term.value"]
         },
         "element": "mods:name",
         "attrs": {
-          "type": "{{name_term.name_type}}",
-          "ID": "{{name_term.uni}}",
+          "type": "{{term.name_type}}",
+          "ID": "{{term.uni}}",
           "usage": {
-            "ternary": ["name_usage_primary", "primary", ""]
+            "ternary": ["usage_primary", "primary", ""]
           },
-          "valueURI": "{{name_term.uri}}",
-          "authority": "{{name_term.authority}}"
+          "valueURI": "{{term.uri}}",
+          "authority": "{{term.authority}}"
         },
         "content": [
           {
             "element": "mods:namePart",
-            "content": "{{name_term.value}}"
+            "content": "{{term.value}}"
           },
           {
-            "yield": "name_role"
+            "yield": "role"
           }
         ]
       }
@@ -41,7 +41,7 @@ describe Hyacinth::XmlGenerator do
       {
         "render_if": {
           "present": [
-              "name_role_term.value"
+              "term.value"
           ]
         },
         "element": "mods:role",
@@ -50,10 +50,10 @@ describe Hyacinth::XmlGenerator do
             "element": "mods:roleTerm",
             "attrs": {
                 "type": "text",
-                "valueURI": "{{name_role_term.uri}}",
-                "authority": "{{name_role_term.authority}}"
+                "valueURI": "{{term.uri}}",
+                "authority": "{{term.authority}}"
             },
-            "content": "{{name_role_term.value}}"
+            "content": "{{term.value}}"
           }
         ]
       }
@@ -61,7 +61,7 @@ describe Hyacinth::XmlGenerator do
   end
 
   let(:xml_translation_map) do
-    { 'name' => name_translation_logic, 'name_role' => role_translation_logic }
+    { 'name' => name_translation_logic, 'role' => role_translation_logic }
   end
 
   let(:base_xml_translation) do
@@ -115,10 +115,10 @@ describe Hyacinth::XmlGenerator do
           {
             "render_if": {
               "present": [
-                  "name_role_term.value"
+                  "term.value"
               ],
               "equal": {
-                "name_role_term.value": "Author"
+                "term.value": "Author"
               }
             },
             "element": "mods:role",
@@ -127,10 +127,10 @@ describe Hyacinth::XmlGenerator do
                 "element": "mods:roleTerm",
                 "attrs": {
                     "type": "text",
-                    "valueURI": "{{name_role_term.uri}}",
-                    "authority": "{{name_role_term.authority}}"
+                    "valueURI": "{{term.uri}}",
+                    "authority": "{{term.authority}}"
                 },
-                "content": "{{name_role_term.value}}"
+                "content": "{{term.value}}"
               }
             ]
           }
@@ -162,17 +162,17 @@ describe Hyacinth::XmlGenerator do
         JSON('[
           {
             "render_if": {
-              "present": ["name_term.value"]
+              "present": ["term.value"]
             },
             "element": "mods:name",
             "attrs": {
-              "type": "{{name_term.name_type}}",
-              "ID": "{{name_term.uni}}",
+              "type": "{{term.name_type}}",
+              "ID": "{{term.uni}}",
               "usage": {
                 "ternary": ["name_usage_primary", "primary", ""]
               },
-              "valueURI": "{{name_term.uri}}",
-              "authority": "{{name_term.authority}}"
+              "valueURI": "{{term.uri}}",
+              "authority": "{{term.authority}}"
             },
             "content": [
               {
@@ -180,7 +180,7 @@ describe Hyacinth::XmlGenerator do
                 "content": [{
                   "join": {
                     "delimiter": " - ",
-                    "pieces": ["{{name_term.value}}", "{{name_term.uni}}"]
+                    "pieces": ["{{term.value}}", "{{term.uni}}"]
                   }
                 }]
               }
@@ -211,24 +211,24 @@ describe Hyacinth::XmlGenerator do
         JSON('[
           {
             "render_if": {
-              "present": ["name_term.value"]
+              "present": ["term.value"]
             },
             "element": "mods:name",
             "attrs": {
-              "type": "{{name_term.name_type}}",
+              "type": "{{term.name_type}}",
               "ID": {
                 "join": {
                   "delimiter": " ",
-                  "pieces": ["{{name_term.uni}}", "{{name_term.value}}"]
+                  "pieces": ["{{term.uni}}", "{{term.value}}"]
                 }
               },
-              "valueURI": "{{name_term.uri}}",
-              "authority": "{{name_term.authority}}"
+              "valueURI": "{{term.uri}}",
+              "authority": "{{term.authority}}"
             },
             "content": [
               {
                 "element": "mods:namePart",
-                "content": "{{name_term.value}}"
+                "content": "{{term.value}}"
               }
             ]
           }
@@ -258,7 +258,7 @@ describe Hyacinth::XmlGenerator do
           {
             "render_if": {
               "present": [
-                  "name_role_term.value"
+                  "term.value"
               ]
             },
             "element": "mods:role",
@@ -267,10 +267,10 @@ describe Hyacinth::XmlGenerator do
                 "element": "mods:roleTerm",
                 "attrs": {
                     "type": "text",
-                    "valueURI": "{{name_role_term.uri}}",
-                    "authority": "{{name_role_term.authority}}"
+                    "valueURI": "{{term.uri}}",
+                    "authority": "{{term.authority}}"
                 },
-                "content": ["{{name_role_term.value}}"]
+                "content": ["{{term.value}}"]
               }
             ]
           }

@@ -9,8 +9,8 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters do
       'dynamic_field_data' => {
         'note' => [
           {
-            'note_value' => 'Great Note',
-            'note_type' => 'So Great'
+            'value' => 'Great Note',
+            'type' => 'So Great'
           }
         ]
       }
@@ -39,8 +39,8 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters do
       }])
 
       expect(digital_object_with_sample_data.dynamic_field_data['note']).to eq([{
-        'note_value' => 'Great Note',
-        'note_type' => 'So Great'
+        'value' => 'Great Note',
+        'type' => 'So Great'
       }])
     end
   end

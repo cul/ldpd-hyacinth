@@ -24,13 +24,13 @@ describe Hyacinth::XmlGenerator::FieldValues do
     end
 
     it 'returns calculated ternary result' do
-      value = { "ternary" => ["name_term.value", "name_term.value", ""] }
+      value = { "ternary" => ["term.value", "term.value", ""] }
       expect(values).to receive(:render_output_of_ternary).with(value["ternary"], df_data)
       values.generate_field_val(value, df_data)
     end
 
     it 'returns joined string' do
-      value = { "join" => { "delimiter" => ",", "pieces" => ["{{name_term.value}}"] } }
+      value = { "join" => { "delimiter" => ",", "pieces" => ["{{term.value}}"] } }
       expect(values).to receive(:render_output_of_join).with(value["join"], df_data)
       values.generate_field_val(value, df_data)
     end
@@ -38,15 +38,15 @@ describe Hyacinth::XmlGenerator::FieldValues do
 
   describe '#value_with_substitutions' do
     it "replaces value when its the only thing in the string" do
-      expect(values.value_with_substitutions("{{name_term.value}}", df_data)).to eql "Salinger, J. D."
+      expect(values.value_with_substitutions("{{term.value}}", df_data)).to eql "Salinger, J. D."
     end
 
     it "replaces correct value when there are multiple references" do
-      expect(values.value_with_substitutions("{{name_term.value}}{{name_term.uni}}", df_data)).to eql "Salinger, J. D.jds1329"
+      expect(values.value_with_substitutions("{{term.value}}{{term.uni}}", df_data)).to eql "Salinger, J. D.jds1329"
     end
 
     it "replaces corrext value when reference is surrounded by characters" do
-      expect(values.value_with_substitutions("Author name is {{name_term.value}}.", df_data)).to eql "Author name is Salinger, J. D.."
+      expect(values.value_with_substitutions("Author name is {{term.value}}.", df_data)).to eql "Author name is Salinger, J. D.."
     end
   end
 
@@ -60,36 +60,36 @@ describe Hyacinth::XmlGenerator::FieldValues do
     end
 
     it "returns correct value when fields are nested" do
-      expect(values.value_for_field_name("name_term.uni", df_data)).to eql "jds1329"
+      expect(values.value_for_field_name("term.uni", df_data)).to eql "jds1329"
     end
 
     it "returns empty string if field does not exist" do
-      expect(values.value_for_field_name("name_term.last_name", df_data)).to eql ""
+      expect(values.value_for_field_name("term.last_name", df_data)).to eql ""
     end
 
     context 'when value not nested' do
       let(:df_data) { dynamic_field_data["title"][0] }
 
       it "returns correct value" do
-        expect(values.value_for_field_name("title_sort_portion", df_data)).to eql "Catcher in the Rye"
+        expect(values.value_for_field_name("sort_portion", df_data)).to eql "Catcher in the Rye"
       end
     end
   end
 
   describe "#render_output_of_ternary" do
     it 'returns "true" value if field present' do
-      arr = ["name_term.value", "Yes", "No"]
+      arr = ["term.value", "Yes", "No"]
       expect(values.render_output_of_ternary(arr, df_data)).to eql "Yes"
     end
 
     it 'returns "false" value if field present' do
-      arr = ["name_term.first_name", "Yes", "No"]
+      arr = ["term.first_name", "Yes", "No"]
       expect(values.render_output_of_ternary(arr, df_data)).to eql "No"
     end
 
     it "renders field value if field present" do
-      arr = ["name_term.value", "name_term.value", "No"]
-      expect(values.render_output_of_ternary(arr, df_data)).to eql "name_term.value"
+      arr = ["term.value", "term.value", "No"]
+      expect(values.render_output_of_ternary(arr, df_data)).to eql "term.value"
     end
   end
 
@@ -97,7 +97,7 @@ describe Hyacinth::XmlGenerator::FieldValues do
     it "joins pieces with delimiter" do
       join_template = {
         "delimiter" => ", ",
-        "pieces" => ["{{name_term.value}}", "{{name_term.uni}}", "{{name_term.uri}}"]
+        "pieces" => ["{{term.value}}", "{{term.uni}}", "{{term.uri}}"]
       }
       expect(values.render_output_of_join(join_template, df_data)).to eql "Salinger, J. D., jds1329, http://id.loc.gov/authorities/names/n50016589"
     end
@@ -106,9 +106,9 @@ describe Hyacinth::XmlGenerator::FieldValues do
       join_template = {
         "delimiter" => ":",
         "pieces" => [
-          { "ternary" => ["name_term.value", "{{name_term.value}}", ""] },
-          { "ternary" => ["name_term.lastname", "{{name_term.lastname}}", "doe"] },
-          "{{name_term.uni}}"
+          { "ternary" => ["term.value", "{{term.value}}", ""] },
+          { "ternary" => ["term.lastname", "{{term.lastname}}", "doe"] },
+          "{{term.uni}}"
         ]
       }
       expect(values.render_output_of_join(join_template, df_data)).to eql "Salinger, J. D.:doe:jds1329"
@@ -117,7 +117,7 @@ describe Hyacinth::XmlGenerator::FieldValues do
     it "removes blank values" do
       join_template = {
         "delimiter" => ", ",
-        "pieces" => ['', '', '{{name_term.value}}']
+        "pieces" => ['', '', '{{term.value}}']
       }
       expect(values.render_output_of_join(join_template, df_data)).to eql "Salinger, J. D."
     end
