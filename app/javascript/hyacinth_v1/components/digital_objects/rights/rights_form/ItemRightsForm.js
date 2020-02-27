@@ -23,6 +23,8 @@ import RightsForWorksOfArtSculptureAndPhotographs from './subsections/RightsForW
 import UnderlyingRights from './subsections/UnderlyingRights';
 import { defaultItemRights } from './defaultRights';
 import { removeTypename, removeEmptyKeys } from '../../../../utils/deepKeyRemove';
+import keyTransformer from '../../../../utils/keyTransformer';
+
 import { useEnabled, useHash } from './rightsHooks';
 
 function ItemRightsForm(props) {
@@ -101,7 +103,7 @@ function ItemRightsForm(props) {
       <GraphQLErrors errors={updateError} />
 
       <DescriptiveMetadata
-        dynamicFieldData={dynamicFieldData}
+        dynamicFieldData={keyTransformer.deepCamelCase(dynamicFieldData)}
         values={descriptiveMetadata}
         onChange={v => setRights('descriptiveMetadata', v)}
         typeOfContentChange={typeOfContentChange}
