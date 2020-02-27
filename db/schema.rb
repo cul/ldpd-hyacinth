@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_21_165018) do
+ActiveRecord::Schema.define(version: 2020_02_27_172812) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -73,7 +73,10 @@ ActiveRecord::Schema.define(version: 2020_02_21_165018) do
     t.integer "index"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["batch_import_id", "status"], name: "index_digital_object_imports_on_batch_import_id_and_status"
     t.index ["batch_import_id"], name: "index_digital_object_imports_on_batch_import_id"
+    t.index ["index"], name: "index_digital_object_imports_on_index"
+    t.index ["status"], name: "index_digital_object_imports_on_status"
   end
 
   create_table "digital_object_records", force: :cascade do |t|
