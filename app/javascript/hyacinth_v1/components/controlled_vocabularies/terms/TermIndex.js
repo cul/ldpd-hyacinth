@@ -30,7 +30,7 @@ function TermIndex(props) {
     loading, error, data, refetch,
   } = useQuery(getTermsQuery, {
     variables: {
-      vocabularyStringKey, limit, offset, query,
+      vocabularyStringKey, limit, offset, searchParams: { query },
     },
     onCompleted: res => setTotalTerms(res.vocabulary.terms.totalCount),
   });

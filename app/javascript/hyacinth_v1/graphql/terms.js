@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export const getTermsQuery = gql`
-  query Terms($vocabularyStringKey: ID!, $limit: Limit!, $offset: Offset, $query: String) {
+  query Terms($vocabularyStringKey: ID!, $limit: Limit!, $offset: Offset, $searchParams: SearchAttributes) {
     vocabulary(stringKey: $vocabularyStringKey) {
       stringKey
       label
@@ -11,7 +11,7 @@ export const getTermsQuery = gql`
         label
         dataType
       }
-      terms(limit: $limit, offset: $offset, query: $query) {
+      terms(limit: $limit, offset: $offset, searchParams: $searchParams) {
         totalCount
         nodes {
           id
