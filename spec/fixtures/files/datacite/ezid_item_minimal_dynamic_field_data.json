@@ -21,14 +21,14 @@
   "dynamic_field_data" : {
     "name" : [
       {
-        "name_term" : {
+        "term" : {
           "pref_label" : "Salinger, J. D.",
           "uri" : "http://id.loc.gov/authorities/names/n50016589",
-          "name_type" : "personal"
+          "type" : "personal"
         },
-        "name_role" : [
+        "role" : [
           {
-            "name_role_term" : {
+            "term" : {
               "pref_label" : "Author",
               "uri" : "http://id.loc.gov/vocabulary/relators/aut"
             }
