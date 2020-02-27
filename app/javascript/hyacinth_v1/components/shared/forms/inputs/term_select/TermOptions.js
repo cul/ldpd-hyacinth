@@ -24,7 +24,7 @@ function TermOptions({ vocabularyStringKey, onChange, close }) {
     loading, error, data, refetch, fetchMore,
   } = useQuery(getTermsQuery, {
     variables: {
-      vocabularyStringKey, limit, offset: 0, query: query.length >= 3 ? query : '',
+      vocabularyStringKey, limit, offset: 0, searchParams: { query: query.length >= 3 ? query : '' },
     },
     onCompleted: res => setTotalTerms(res.vocabulary.terms.totalCount),
   });
