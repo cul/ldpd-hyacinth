@@ -9,6 +9,7 @@ module Types
     field :user, UserType, null: true
     field :priority, Enums::BatchImportPriorityEnum, null: true
     field :status, Enums::BatchImportStatusEnum, null: false
+    field :cancelled, Boolean, null: false
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
 
