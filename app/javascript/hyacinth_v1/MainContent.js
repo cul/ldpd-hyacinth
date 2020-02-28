@@ -16,9 +16,7 @@ import Projects from './components/projects/Projects';
 import BatchExports from './components/batch_exports/BatchExports';
 import { AbilityContext } from './utils/abilityContext';
 import ability from './utils/ability';
-import { setupPermissionActions } from './utils/permissionActions';
 import { getAuthenticatedUserQuery } from './graphql/users';
-import { getPermissionActionsQuery } from './graphql/permissionActions';
 import GraphQLErrors from './components/shared/GraphQLErrors';
 
 const Index = () => (
@@ -42,20 +40,8 @@ function MainContent() {
     },
   );
 
-  const { loading: permissionActionsLoading, error: permissionActionsError } = useQuery(
-    getPermissionActionsQuery,
-    {
-      onCompleted: (permissionActionData) => {
-        const {
-          permissionActions: { projectActions, primaryProjectActions, aggregatorProjectActions }
-        } = permissionActionData;
-        setupPermissionActions(projectActions, primaryProjectActions, aggregatorProjectActions);
-      },
-    },
-  );
-
-  if (userLoading || permissionActionsLoading) return (<></>);
-  if (userError || permissionActionsError) return (<GraphQLErrors errors={userError || permissionActionsError} />);
+  if (userLoading) return (<></>);
+  if (userError) return (<GraphQLErrors errors={userError} />);
 
   return (
     <AbilityContext.Provider value={ability}>
