@@ -1,13 +1,12 @@
 // Actions will be populated with server-side data when app loads:
-
 export const ProjectAction = {};
 export const ProjectActions = [];
 export const PrimaryProjectActions = [];
 export const AggregatorProjectActions = [];
 
-export const setupPermissionActions = (
-  projectActions, primaryProjectActions, aggregatorProjectActions,
-) => {
+export const setupPermissionActions = (permissionActions) => {
+  const { projectActions, primaryProjectActions, aggregatorProjectActions } = permissionActions;
+
   // Set up frozen ProjectAction object so we can reference actions
   // using ProjectAction.read_objects, ProjectAction.manage etc.
   projectActions.forEach((action) => {
