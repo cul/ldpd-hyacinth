@@ -9,7 +9,7 @@ RSpec.describe 'Retrieving Batch Imports', type: :request do
         [
           {
             "fileLocation": "managed-disk://path/to/file",
-            "status": "in_progress",
+            "status": "pending",
             "priority": "high",
             "user": {
               "firstName": "Jane",
@@ -18,7 +18,7 @@ RSpec.describe 'Retrieving Batch Imports', type: :request do
           },
           {
             "fileLocation": "managed-disk://path/to/file",
-            "status": "in_progress",
+            "status": "pending",
             "priority": "high",
             "user": {
               "firstName": "Signed In",
@@ -47,7 +47,7 @@ RSpec.describe 'Retrieving Batch Imports', type: :request do
         [
           {
             "fileLocation": "managed-disk://path/to/file",
-            "status": "in_progress",
+            "status": "pending",
             "priority": "high",
             "user": {
               "firstName": "Signed In",

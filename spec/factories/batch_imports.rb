@@ -4,8 +4,8 @@ FactoryBot.define do
   factory :batch_import do
     file_location { 'managed-disk://path/to/file' }
 
-    priority { 2 }
-    status { 1 }
+    priority { 'high' }
+    cancelled { false }
 
     association :user, strategy: :create
 
