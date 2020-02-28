@@ -20,7 +20,7 @@ function JSONInput(props) {
         editorProps={{ $blockScrolling: true }}
         tabSize={2}
         onChange={v => onChange(v)} // only send the first param to the callback function
-        value={value}
+        value={value == null ? '' : value}
         name={inputName}
         height={height}
         placeholder={placeholder}
