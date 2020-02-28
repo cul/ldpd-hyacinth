@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
 module DigitalObjectConcerns
-  module DigitalObjectData::Setters
+  module AttributeAssignment
     module PendingPublishEntries
       extend ActiveSupport::Concern
 
-      def set_pending_publish_entries(digital_object_data)
+      def assign_pending_publish_entries(digital_object_data)
         pub_to = []
         unpub_from = []
 
         if digital_object_data['republish'].to_s == 'true'
-          pub_to = self.publish_entries.keys
+          pub_to = publish_entries.keys
           raise ArgumentError, 'Cannot supply republish flag AND supply publish_to/unpublish_from directives.)' if publish_to_or_unpublish_from_values_present?(digital_object_data)
         elsif publish_to_or_unpublish_from_values_present?(digital_object_data)
           pub_to = digital_object_data['publish_to']

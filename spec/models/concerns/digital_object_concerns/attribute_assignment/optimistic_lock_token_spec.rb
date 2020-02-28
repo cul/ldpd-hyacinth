@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters::Resources do
+RSpec.describe DigitalObjectConcerns::AttributeAssignment::OptimisticLockToken do
   context "todo" do
     skip 'todo'
   end

@@ -77,7 +77,7 @@ module Api
         # been set by the save method, or we are republishing all the existing targets.
         is_preserved = preserved? || @digital_object.preserve
         republish = (action_name.to_sym == :publish)
-        @digital_object.set_pending_publish_entries('republish' => true) if republish
+        @digital_object.assign_pending_publish_entries('republish' => true) if republish
         if is_preserved && @digital_object.publish
           show if republish
           true
