@@ -80,6 +80,15 @@ module Types
       description 'List of BatchExports visible to the logged-in user, ordered from most recent to least recent.'
     end
 
+    field :batch_imports, BatchImportType.results_type, null: false, extensions: [Types::Extensions::Paginate] do
+      description 'List of BatchImport visible to the logged-in user, ordered from most recent to least recent.'
+    end
+
+    field :batch_import, BatchImportType, null: true do
+      description 'A batch import'
+      argument :id, ID, required: true
+    end
+
     def digital_objects(**arguments)
       # TODO: consider object read permissions via projects
       # TODO: identification of possible filters in scope of search
@@ -189,6 +198,16 @@ module Types
 
     def batch_exports
       BatchExport.accessible_by(ability).order(id: :desc)
+    end
+
+    def batch_imports
+      BatchImport.accessible_by(ability).order(id: :desc)
+    end
+
+    def batch_import(id:)
+      batch_import = BatchImport.find(id)
+      ability.authorize!(:read, batch_import)
+      batch_import
     end
 
     def authenticated_user

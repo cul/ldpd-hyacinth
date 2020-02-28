@@ -79,6 +79,40 @@ RSpec.describe 'Query for Authenticated User', type: :request do
             "subject": [
               "BatchExport"
             ]
+          },
+          {
+            "actions": [
+              "create"
+           ],
+            "conditions": {},
+            "inverted": false,
+            "subject": [
+              "BatchImport"
+            ]
+           },
+           {
+            "actions": [
+              "read"
+            ],
+            "conditions": {
+              "userId": #{User.first.id}
+            },
+            "inverted": false,
+            "subject": [
+              "BatchImport"
+            ]
+           },
+           {
+            "actions": [
+              "destroy"
+            ],
+            "conditions": {
+              "userId": #{User.first.id}
+            },
+            "inverted": false,
+            "subject": [
+              "BatchImport"
+            ]
           }
         ]
        )
@@ -165,6 +199,40 @@ RSpec.describe 'Query for Authenticated User', type: :request do
             "inverted": false,
             "subject": [
               "BatchExport"
+            ]
+          },
+          {
+            "actions": [
+              "create"
+            ],
+            "conditions": {},
+            "inverted": false,
+            "subject": [
+              "BatchImport"
+            ]
+          },
+          {
+            "actions": [
+              "read"
+            ],
+            "conditions": {
+              "userId": #{User.first.id}
+            },
+            "inverted": false,
+            "subject": [
+              "BatchImport"
+            ]
+          },
+          {
+            "actions": [
+              "destroy"
+            ],
+            "conditions": {
+              "userId": #{User.first.id}
+            },
+            "inverted": false,
+            "subject": [
+              "BatchImport"
             ]
           },
           {
