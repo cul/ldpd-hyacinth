@@ -15,7 +15,7 @@ namespace :hyacinth do
         atts = atts.dup
         vocabulary = Vocabulary.find_by(string_key: atts.delete('vocabulary_string_key'))
         return nil unless vocabulary
-        if atts.delete('term_type') == 'local'
+        if atts['term_type'] == 'local'
           atts['uri'] = "#{Term.local_uri_prefix}term/#{atts['uri'].split('/')[-1]}"
         end
         term = Term.find_by(vocabulary: vocabulary, uri: atts['uri'])
@@ -123,14 +123,14 @@ namespace :hyacinth do
             term_hash['pref_label'] = term_hash.delete("value")
             term_hash.delete("internal_id")
           end
-          new_value["term"] = term_for_hash(new_value["term"])
+          new_value["term"] = JSON.load(term_for_hash(new_value["term"]).to_json)
           if new_value["role"].present?
             new_value["role"].map! do |role|
               term_hash = role.delete('name_role_term')
               term_hash['term_type'] = term_hash.delete("type")
               term_hash['pref_label'] = term_hash.delete("value")
               term_hash.delete("internal_id")
-              role['term'] = term_for_hash(term_hash)
+              role['term'] = JSON.load(term_for_hash(term_hash).to_json)
               role
             end
           end
@@ -144,7 +144,7 @@ namespace :hyacinth do
             term_hash['pref_label'] = term_hash.delete("value")
             term_hash.delete("internal_id")
           end
-          new_value["term"] = term_for_hash(new_value["term"])
+          new_value["term"] = JSON.load(term_for_hash(new_value["term"]).to_json)
           new_value
         end
         # Dynamic Field Data: Date Created
@@ -167,7 +167,7 @@ namespace :hyacinth do
             term_hash['pref_label'] = term_hash.delete("value")
             term_hash.delete("internal_id")
           end
-          new_value["term"] = term_for_hash(new_value["term"])
+          new_value["term"] = JSON.load(term_for_hash(new_value["term"]).to_json)
           new_value
         end
         # Dynamic Field Data: Location
@@ -178,7 +178,7 @@ namespace :hyacinth do
             term_hash['pref_label'] = term_hash.delete("value")
             term_hash.delete("internal_id")
           end
-          new_value["term"] = term_for_hash(new_value["term"])
+          new_value["term"] = JSON.load(term_for_hash(new_value["term"]).to_json)
           new_value
         end
         digital_object.set_dynamic_field_data({ 'dynamic_field_data' => target_dfd }, false)
