@@ -16,7 +16,7 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters do
       }
     }
   end
-  context "#set_digital_object_data" do
+  context "#assign_attributes" do
     it "calls the expected sub-methods and changes some data" do
       expect(digital_object_with_sample_data).to receive(:set_dynamic_field_data).with(digital_object_data, true).and_call_original
       expect(digital_object_with_sample_data).to receive(:set_doi).with(digital_object_data).and_call_original
@@ -31,7 +31,7 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters do
       expect(digital_object_with_sample_data).to receive(:set_projects).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:set_rights).with(digital_object_data).and_call_original
 
-      digital_object_with_sample_data.set_digital_object_data(digital_object_data, true)
+      digital_object_with_sample_data.assign_attributes(digital_object_data, true)
 
       expect(digital_object_with_sample_data.dynamic_field_data['title']).to eq([{
         'non_sort_portion' => 'The',

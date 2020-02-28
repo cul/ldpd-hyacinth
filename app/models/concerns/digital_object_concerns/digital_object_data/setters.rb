@@ -22,7 +22,7 @@ module DigitalObjectConcerns
       # @param digital_object_data [Hash] A hash of data used to update many of this object's properties.
       # @param merge_dynamic_fields [boolean] If true, merges given dynamic_field_data Hash into into existing dynamic_field_data.
       #        If false, replaces existing dynamic_field_data with new dynamic_field_data Hash.
-      def set_digital_object_data(new_digital_object_data, merge_dynamic_fields)
+      def assign_attributes(new_digital_object_data, merge_dynamic_fields)
         # Note: You can optionally include an optimistic_lock_token in the digital_object_data
         # if you want the save operation to fail if the object has been modified by another process.
         # TODO: Make sure to include an optimistic_lock_token in the Hyacinth UI editor save submissions

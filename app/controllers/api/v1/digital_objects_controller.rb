@@ -33,7 +33,7 @@ module Api
       def create
         digital_object_data = create_or_update_params
         @digital_object = Hyacinth::Config.digital_object_types.key_to_class(digital_object_data['digital_object_type']).new
-        @digital_object.set_digital_object_data(digital_object_data, true)
+        @digital_object.assign_attributes(digital_object_data, true)
 
         authorize! :create_objects, @digital_object.primary_project
 
@@ -48,7 +48,7 @@ module Api
       # PATCH/PUT /digital_objects/1.json
       def update
         digital_object_data = create_or_update_params
-        @digital_object.set_digital_object_data(digital_object_data, true)
+        @digital_object.assign_attributes(digital_object_data, true)
 
         update_result = @digital_object.save(update_index: true, user: current_user)
         update_result &&= publish if params[:publish].to_s.eql?('true')
