@@ -30,6 +30,7 @@ namespace :hyacinth do
           term.uri = atts.delete('uri')
         end
         term.authority = atts.delete('authority')
+        atts.delete_if { |k, v| v.blank? } # delete stray custom fields
         term.custom_fields = atts
         term.save!
         term
@@ -96,168 +97,83 @@ namespace :hyacinth do
           digital_object.send(:doi=, doi_value)
         end
         digital_object.preservation_target_uris << preservation_uri
-        # Dynamic Field Data
-        target_dfd = {}
-        source_dfd = hyacinth2_obj['dynamic_field_data']
-        # Dynamic Field Data: Title
-        title = source_dfd.fetch('title', []).first
-        if title
-          target_dfd['title'] = [
-            {
-              'non_sort_portion' => title['title_non_sort_portion'],
-              'sort_portion' => title['title_sort_portion']
-            }
-          ]
+
+        def deprefixed_field(source, fieldname, *subfields)
+          results = source.fetch(fieldname, []).map do |source_value|
+            target_value = source_value.deep_dup
+            subfields.each { |subfield| target_value[subfield] = target_value.delete("#{fieldname}_#{subfield}") }
+            target_value.delete_if { |k, v| v.blank? }
+            yield(target_value) if block_given?
+          end
+          results
         end
 
-        # Dynamic Field Data: Abstract
-        abstract_values = source_dfd.fetch('abstract', []).map { |orig| { 'value' => orig['abstract_value'] } }
-        target_dfd['abstract'] = abstract_values if abstract_values.present?
-
-        # Dynamic Field Data: Names
-        target_dfd['name'] = source_dfd.fetch("name", []).map do |old_value|
-          new_value = { "term" => old_value['name_term'], "role" => old_value["name_role"] }
-          new_value.compact!
-          new_value["term"].tap do |term_hash|
-            term_hash['term_type'] = term_hash.delete("type")
-            term_hash['pref_label'] = term_hash.delete("value")
-            term_hash.delete("internal_id")
-          end
-          new_value["term"] = JSON.load(term_for_hash(new_value["term"]).to_json)
-          if new_value["role"].present?
-            new_value["role"].map! do |role|
-              term_hash = role.delete('name_role_term')
+        def simple_term_field(source, fieldname)
+          results = source.fetch(fieldname, []).map do |source_value|
+            target_value = source_value.deep_dup
+            target_value["term"] = target_value.delete("#{fieldname}_term")
+            target_value["term"].tap do |term_hash|
               term_hash['term_type'] = term_hash.delete("type")
               term_hash['pref_label'] = term_hash.delete("value")
               term_hash.delete("internal_id")
-              role['term'] = JSON.load(term_for_hash(term_hash).to_json)
-              role
             end
+            term_value = term_for_hash(target_value["term"])
+            target_value["term"] = JSON.load(term_value.to_json)
+            yield(target_value) if block_given?
           end
-          new_value
+          results
+        end
+
+        # Dynamic Field Data
+        target_dfd = {}
+        source_dfd = hyacinth2_obj['dynamic_field_data']
+
+        # Dynamic Field Data: Title
+        target_dfd['title'] = deprefixed_field(source_dfd, 'non_sort_portion', 'sort_portion')
+
+        # Dynamic Field Data: Abstract
+        target_dfd['abstract'] = deprefixed_field(source_dfd, 'abstract', 'value')
+
+        # Dynamic Field Data: Names
+        target_dfd['name'] = simple_term_field(source_dfd, 'name') do |name_hash|
+          name_hash['role'] = simple_term_field(name_hash, 'name_role')
+          name_hash.delete('name_role')
+          name_hash.delete('role') unless name_hash['role'].present?
         end
         # Dynamic Field Data: Collections
-        target_dfd['collection'] = source_dfd.fetch("collection", []).map do |old_value|
-          new_value = { "term" => old_value['collection_term'] }
-          new_value["term"].tap do |term_hash|
-            term_hash['term_type'] = term_hash.delete("type")
-            term_hash['pref_label'] = term_hash.delete("value")
-            term_hash.delete("internal_id")
-          end
-          new_value["term"] = JSON.load(term_for_hash(new_value["term"]).to_json)
-          new_value
-        end
+        target_dfd['collection'] = simple_term_field(source_dfd, 'collection')
         # Dynamic Field Data: Date Created
-        target_dfd['date_created'] = source_dfd.fetch('date_created', []).map do |old_value|
-          new_value = {}
-          new_value['start_value'] = old_value['date_created_start_value']
-          new_value['key_date'] = old_value['date_created_key_date']
-          new_value
-        end
-        target_dfd['date_created_textual'] = source_dfd.fetch('date_created_textual', []).map do |old_value|
-          new_value = {}
-          new_value['value'] = old_value['date_created_textual_value']
-          new_value
-        end
+        target_dfd['date_created'] = deprefixed_field(source_dfd, 'date_created', 'start_value', 'end_value', 'key_date')
+        target_dfd['date_created_textual'] = deprefixed_field(source_dfd, 'date_created_textual', 'value')
+
         # Dynamic Field Data: Language
-        target_dfd['language'] = source_dfd.fetch('language', []).map do |old_value|
-          new_value = { "term" => old_value['language_term'] }
-          new_value["term"].tap do |term_hash|
-            term_hash['term_type'] = term_hash.delete("type")
-            term_hash['pref_label'] = term_hash.delete("value")
-            term_hash.delete("internal_id")
-          end
-          new_value["term"] = JSON.load(term_for_hash(new_value["term"]).to_json)
-          new_value
-        end
+        target_dfd['language'] = simple_term_field(source_dfd, 'language')
         # Dynamic Field Data: Location
-        target_dfd['location'] = source_dfd.fetch('location', []).map do |old_value|
-          new_value = { "term" => old_value['location_term'] }
-          new_value["term"].tap do |term_hash|
-            term_hash['term_type'] = term_hash.delete("type")
-            term_hash['pref_label'] = term_hash.delete("value")
-            term_hash.delete("internal_id")
-          end
-          new_value["term"] = JSON.load(term_for_hash(new_value["term"]).to_json)
-          new_value
-        end
+        target_dfd['location'] = simple_term_field(source_dfd, 'location')
         # Dynamic Field Data: Form
-        target_dfd['form'] = source_dfd.fetch('form', []).map do |old_value|
-          new_value = { "term" => old_value['form_term'] }
-          new_value["term"].tap do |term_hash|
-            term_hash['term_type'] = term_hash.delete("type")
-            term_hash['pref_label'] = term_hash.delete("value")
-            term_hash.delete("internal_id")
-          end
-          new_value["term"] = JSON.load(term_for_hash(new_value["term"]).to_json)
-          new_value
-        end
+        target_dfd['form'] = simple_term_field(source_dfd, 'form')
         # Dynamic Field Data: Genre
-        target_dfd['genre'] = source_dfd.fetch('genre', []).map do |old_value|
-          new_value = { "term" => old_value['genre_term'] }
-          new_value["term"].tap do |term_hash|
-            term_hash['term_type'] = term_hash.delete("type")
-            term_hash['pref_label'] = term_hash.delete("value")
-            term_hash.delete("internal_id")
-          end
-          new_value["term"] = JSON.load(term_for_hash(new_value["term"]).to_json)
-          new_value
-        end
+        target_dfd['genre'] = simple_term_field(source_dfd, 'genre')
 
         # Dynamic Field Data: Subjects
-        target_dfd['subject_topic'] = source_dfd.fetch('subject_topic', []).map do |old_value|
-          new_value = { "term" => old_value['subject_topic_term'] }
-          new_value["term"].tap do |term_hash|
-            term_hash['term_type'] = term_hash.delete("type")
-            term_hash['pref_label'] = term_hash.delete("value")
-            term_hash.delete("internal_id")
-          end
-          new_value["term"] = JSON.load(term_for_hash(new_value["term"]).to_json)
-          new_value
-        end
-        target_dfd['subject_geographic'] = source_dfd.fetch('subject_geographic', []).map do |old_value|
-          new_value = { "term" => old_value['subject_geographic_term'] }
-          new_value["term"].tap do |term_hash|
-            term_hash['term_type'] = term_hash.delete("type")
-            term_hash['pref_label'] = term_hash.delete("value")
-            term_hash.delete("internal_id")
-          end
-          new_value["term"] = JSON.load(term_for_hash(new_value["term"]).to_json)
-          new_value
-        end
-        target_dfd['subject_name'] = source_dfd.fetch('subject_name', []).map do |old_value|
-          new_value = { "term" => old_value['subject_name_term'] }
-          new_value["term"].tap do |term_hash|
-            term_hash['term_type'] = term_hash.delete("type")
-            term_hash['pref_label'] = term_hash.delete("value")
-            term_hash.delete("internal_id")
-          end
-          new_value["term"] = JSON.load(term_for_hash(new_value["term"]).to_json)
-          new_value
-        end
+        target_dfd['subject_topic'] = simple_term_field(source_dfd, 'subject_topic')
+        target_dfd['subject_geographic'] = simple_term_field(source_dfd, 'subject_geographic')
+        target_dfd['subject_name'] = simple_term_field(source_dfd, 'subject_name')
 
         # Dynamic Field Data: Type of Resource
-        target_dfd['type_of_resource'] = source_dfd.fetch('type_of_resource', []).map do |old_value|
-          new_value = {}
-          new_value['value'] = old_value['type_of_resource_value']
-          new_value['is_collection'] = old_value['is_collection']
-          new_value
-        end
+        target_dfd['type_of_resource'] = deprefixed_field(source_dfd, 'type_of_resource', 'value', 'is_collection')
 
         # Dynamic Field Data: Note
-        target_dfd['note'] = source_dfd.fetch('note', []).map do |old_value|
-          new_value = {}
-          new_value['value'] = old_value['note_value']
-          new_value['type'] = old_value['note_type']
-          new_value
-        end
+        target_dfd['note'] = deprefixed_field(source_dfd, 'note', 'value', 'type')
 
         # Dynamic Field Data: Internal Note
-        target_dfd['internal_note'] = source_dfd.fetch('internal_note', []).map do |old_value|
-          new_value = {}
-          new_value['value'] = old_value['internal_note_value']
-          new_value
-        end
+        target_dfd['internal_note'] = deprefixed_field(source_dfd, 'internal_note', 'value')
+
+        # Dynamic Field Data: Alternative Title
+        target_dfd['alternative_title'] = deprefixed_field(source_dfd, 'alternative_title', 'value')
+
+        # Dynamic Field Data: Extent
+        target_dfd['extent'] = deprefixed_field(source_dfd, 'extent', 'value')
 
         digital_object.set_dynamic_field_data({ 'dynamic_field_data' => target_dfd }, false)
         digital_object.save
