@@ -86,7 +86,7 @@ namespace :hyacinth do
             digital_object.send(:updated_at=, ::DateTime.iso8601(hyacinth2_obj['modified']))
           end
         end
-        primary_project = Project.find_by!(string_key: hyacinth2_obj.dig('project', 'string_key'))
+        primary_project = Project.find_by!(string_key: hyacinth2_obj.dig('project', 'string_key').downcase)
         digital_object.primary_project = primary_project
         actual_identifiers = hyacinth2_obj['identifiers'].reject { |value| [pid, uid].include?(value) }
         digital_object.identifiers.merge(actual_identifiers)
@@ -181,6 +181,84 @@ namespace :hyacinth do
           new_value["term"] = JSON.load(term_for_hash(new_value["term"]).to_json)
           new_value
         end
+        # Dynamic Field Data: Form
+        target_dfd['form'] = source_dfd.fetch('form', []).map do |old_value|
+          new_value = { "term" => old_value['form_term'] }
+          new_value["term"].tap do |term_hash|
+            term_hash['term_type'] = term_hash.delete("type")
+            term_hash['pref_label'] = term_hash.delete("value")
+            term_hash.delete("internal_id")
+          end
+          new_value["term"] = JSON.load(term_for_hash(new_value["term"]).to_json)
+          new_value
+        end
+        # Dynamic Field Data: Genre
+        target_dfd['genre'] = source_dfd.fetch('genre', []).map do |old_value|
+          new_value = { "term" => old_value['genre_term'] }
+          new_value["term"].tap do |term_hash|
+            term_hash['term_type'] = term_hash.delete("type")
+            term_hash['pref_label'] = term_hash.delete("value")
+            term_hash.delete("internal_id")
+          end
+          new_value["term"] = JSON.load(term_for_hash(new_value["term"]).to_json)
+          new_value
+        end
+
+        # Dynamic Field Data: Subjects
+        target_dfd['subject_topic'] = source_dfd.fetch('subject_topic', []).map do |old_value|
+          new_value = { "term" => old_value['subject_topic_term'] }
+          new_value["term"].tap do |term_hash|
+            term_hash['term_type'] = term_hash.delete("type")
+            term_hash['pref_label'] = term_hash.delete("value")
+            term_hash.delete("internal_id")
+          end
+          new_value["term"] = JSON.load(term_for_hash(new_value["term"]).to_json)
+          new_value
+        end
+        target_dfd['subject_geographic'] = source_dfd.fetch('subject_geographic', []).map do |old_value|
+          new_value = { "term" => old_value['subject_geographic_term'] }
+          new_value["term"].tap do |term_hash|
+            term_hash['term_type'] = term_hash.delete("type")
+            term_hash['pref_label'] = term_hash.delete("value")
+            term_hash.delete("internal_id")
+          end
+          new_value["term"] = JSON.load(term_for_hash(new_value["term"]).to_json)
+          new_value
+        end
+        target_dfd['subject_name'] = source_dfd.fetch('subject_name', []).map do |old_value|
+          new_value = { "term" => old_value['subject_name_term'] }
+          new_value["term"].tap do |term_hash|
+            term_hash['term_type'] = term_hash.delete("type")
+            term_hash['pref_label'] = term_hash.delete("value")
+            term_hash.delete("internal_id")
+          end
+          new_value["term"] = JSON.load(term_for_hash(new_value["term"]).to_json)
+          new_value
+        end
+
+        # Dynamic Field Data: Type of Resource
+        target_dfd['type_of_resource'] = source_dfd.fetch('type_of_resource', []).map do |old_value|
+          new_value = {}
+          new_value['value'] = old_value['type_of_resource_value']
+          new_value['is_collection'] = old_value['is_collection']
+          new_value
+        end
+
+        # Dynamic Field Data: Note
+        target_dfd['note'] = source_dfd.fetch('note', []).map do |old_value|
+          new_value = {}
+          new_value['value'] = old_value['note_value']
+          new_value['type'] = old_value['note_type']
+          new_value
+        end
+
+        # Dynamic Field Data: Internal Note
+        target_dfd['internal_note'] = source_dfd.fetch('internal_note', []).map do |old_value|
+          new_value = {}
+          new_value['value'] = old_value['internal_note_value']
+          new_value
+        end
+
         digital_object.set_dynamic_field_data({ 'dynamic_field_data' => target_dfd }, false)
         digital_object.save
       end
