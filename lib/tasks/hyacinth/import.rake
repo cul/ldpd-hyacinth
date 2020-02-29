@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-# rubocop:disable Metrics/BlockLength, Metrics/MethodLength
+# rubocop:disable Metrics/BlockLength, Metrics/MethodLength, Metrics/AbcSize
 namespace :hyacinth do
   namespace :import do
     task hyacinth2: :environment do
@@ -13,11 +13,14 @@ namespace :hyacinth do
       end
       def term_for_hash(atts)
         atts = atts.dup
-        vocabulary = Vocabulary.find_by(string_key: atts.delete('vocabulary_string_key'))
-        return nil unless vocabulary
-        if atts['term_type'] == 'local'
-          atts['uri'] = "#{Term.local_uri_prefix}term/#{atts['uri'].split('/')[-1]}"
+        vocabulary_string_key = atts.delete('vocabulary_string_key')
+        vocabulary = Vocabulary.find_by(string_key: vocabulary_string_key)
+        unless vocabulary
+          puts "could not find Vocabulary.string_key == '#{vocabulary_string_key}'"
+          return nil
         end
+
+        atts['uri'] = "#{Term.local_uri_prefix}term/#{atts['uri'].split('/')[-1]}" if atts['term_type'] == 'local'
         term = Term.find_by(vocabulary: vocabulary, uri: atts['uri'])
         return term if term
         term = Term.new
@@ -30,7 +33,7 @@ namespace :hyacinth do
           term.uri = atts.delete('uri')
         end
         term.authority = atts.delete('authority')
-        atts.delete_if { |k, v| v.blank? } # delete stray custom fields
+        atts.delete_if { |_k, v| v.blank? } # delete stray custom fields
         term.custom_fields = atts
         term.save!
         term
@@ -60,8 +63,8 @@ namespace :hyacinth do
       pids.each do |pid|
         preservation_uri = "fedora3://#{pid}"
         hyacinth2_obj = hyacinth2_client.data_for(pid)
-        puts JSON.pretty_generate(hyacinth2_obj)
         uid = hyacinth2_obj['uuid']
+        puts "#{uid}\t#{preservation_uri}"
         # Find or create object and set system data
         if ::DigitalObject::Base.exists?(uid)
           digital_object = ::DigitalObject::Base.find(uid)
@@ -102,8 +105,9 @@ namespace :hyacinth do
           results = source.fetch(fieldname, []).map do |source_value|
             target_value = source_value.deep_dup
             subfields.each { |subfield| target_value[subfield] = target_value.delete("#{fieldname}_#{subfield}") }
-            target_value.delete_if { |k, v| v.blank? }
+            target_value.delete_if { |_k, v| v.blank? }
             yield(target_value) if block_given?
+            target_value
           end
           results
         end
@@ -112,14 +116,17 @@ namespace :hyacinth do
           results = source.fetch(fieldname, []).map do |source_value|
             target_value = source_value.deep_dup
             target_value["term"] = target_value.delete("#{fieldname}_term")
-            target_value["term"].tap do |term_hash|
-              term_hash['term_type'] = term_hash.delete("type")
-              term_hash['pref_label'] = term_hash.delete("value")
-              term_hash.delete("internal_id")
+            if target_value["term"] # some groups have mixed content
+              target_value["term"].tap do |term_hash|
+                term_hash['term_type'] = term_hash.delete("type")
+                term_hash['pref_label'] = term_hash.delete("value")
+                term_hash.delete("internal_id")
+              end
+              term_value = term_for_hash(target_value["term"])
+              target_value["term"] = JSON.parse(term_value.to_json)
             end
-            term_value = term_for_hash(target_value["term"])
-            target_value["term"] = JSON.load(term_value.to_json)
             yield(target_value) if block_given?
+            target_value
           end
           results
         end
@@ -129,7 +136,7 @@ namespace :hyacinth do
         source_dfd = hyacinth2_obj['dynamic_field_data']
 
         # Dynamic Field Data: Title
-        target_dfd['title'] = deprefixed_field(source_dfd, 'non_sort_portion', 'sort_portion')
+        target_dfd['title'] = deprefixed_field(source_dfd, 'title', 'non_sort_portion', 'sort_portion')
 
         # Dynamic Field Data: Abstract
         target_dfd['abstract'] = deprefixed_field(source_dfd, 'abstract', 'value')
@@ -142,14 +149,19 @@ namespace :hyacinth do
         end
         # Dynamic Field Data: Collections
         target_dfd['collection'] = simple_term_field(source_dfd, 'collection')
-        # Dynamic Field Data: Date Created
-        target_dfd['date_created'] = deprefixed_field(source_dfd, 'date_created', 'start_value', 'end_value', 'key_date')
+        # Dynamic Field Data: Dates
+        target_dfd['date_created'] = deprefixed_field(source_dfd, 'date_created', 'start_value', 'end_value', 'key_date', 'type')
         target_dfd['date_created_textual'] = deprefixed_field(source_dfd, 'date_created_textual', 'value')
+        target_dfd['date_issued'] = deprefixed_field(source_dfd, 'date_issued', 'start_value', 'end_value', 'key_date', 'type')
+        target_dfd['date_issued_textual'] = deprefixed_field(source_dfd, 'date_issued_textual', 'value')
 
         # Dynamic Field Data: Language
         target_dfd['language'] = simple_term_field(source_dfd, 'language')
         # Dynamic Field Data: Location
-        target_dfd['location'] = simple_term_field(source_dfd, 'location')
+        target_dfd['location'] = simple_term_field(source_dfd, 'location') do |location_hash|
+          location_hash['shelf_location'] = deprefixed_field(location_hash, 'location_shelf_location', 'box_number', 'call_number', 'folder_number', 'item_number', 'free_text')
+          location_hash.delete('location_shelf_location')
+        end
         # Dynamic Field Data: Form
         target_dfd['form'] = simple_term_field(source_dfd, 'form')
         # Dynamic Field Data: Genre
@@ -159,14 +171,13 @@ namespace :hyacinth do
         target_dfd['subject_topic'] = simple_term_field(source_dfd, 'subject_topic')
         target_dfd['subject_geographic'] = simple_term_field(source_dfd, 'subject_geographic')
         target_dfd['subject_name'] = simple_term_field(source_dfd, 'subject_name')
+        target_dfd['culture'] = simple_term_field(source_dfd, 'culture')
 
         # Dynamic Field Data: Type of Resource
         target_dfd['type_of_resource'] = deprefixed_field(source_dfd, 'type_of_resource', 'value', 'is_collection')
 
-        # Dynamic Field Data: Note
+        # Dynamic Field Data: Notes
         target_dfd['note'] = deprefixed_field(source_dfd, 'note', 'value', 'type')
-
-        # Dynamic Field Data: Internal Note
         target_dfd['internal_note'] = deprefixed_field(source_dfd, 'internal_note', 'value')
 
         # Dynamic Field Data: Alternative Title
@@ -175,7 +186,43 @@ namespace :hyacinth do
         # Dynamic Field Data: Extent
         target_dfd['extent'] = deprefixed_field(source_dfd, 'extent', 'value')
 
+        # Dynamic Field Data: Place of Origin
+        target_dfd['place_of_origin'] = deprefixed_field(source_dfd, 'place_of_origin', 'value')
+
+        # Dynamic Field Data: Identifiers
+        target_dfd['accession_number'] = deprefixed_field(source_dfd, 'accession_number', 'value')
+        target_dfd['clio_identifier'] = deprefixed_field(source_dfd, 'clio_identifier', 'value')
+        target_dfd['clio_identifier'].delete_if do |id_hash|
+          target_dfd['collection'].detect { |collection| id_hash['value'] && id_hash['value'] == collection.dig('term', 'clio_id') }
+        end
+
+        # Dynamic Field Data: Customer Order Information
+        target_dfd['order_date'] = deprefixed_field(source_dfd, 'order_date', 'value')
+        target_dfd['order_number'] = deprefixed_field(source_dfd, 'order_number', 'value')
+
+        # Dynamic Field Data: Record Information
+        target_dfd['record_content_source'] = deprefixed_field(source_dfd, 'record_content_source', 'value')
+
+        rights_data = {}
+        # Rights Data: Copyright Status (Term from use_and_reproduction)
+        copyright_value = simple_term_field(source_dfd, 'use_and_reproduction')
+        copyright_note = copyright_value.map { |value_hash| value_hash.delete('use_and_reproduction_value') }
+        copyright_note.compact!
+        if copyright_value.present? || copyright_note.present?
+          copyright_status = {
+            'copyright_statement' => copyright_value.first&.fetch('term'),
+            'note' => copyright_note.join("\n")
+          }
+          copyright_status.compact!
+          rights_data['copyright_status'] = [copyright_status]
+        end
+
+        # Rights Data: Copyright Owner Name (Term)
+        copyright_owner = simple_term_field(source_dfd, 'copyright_owner')
+        rights_data['copyright_ownership'] = copyright_owner.map { |term| { 'name' => term['term'] } } if copyright_owner.present?
+
         digital_object.set_dynamic_field_data({ 'dynamic_field_data' => target_dfd }, false)
+        digital_object.set_rights('rights' => rights_data)
         digital_object.save
       end
     end
