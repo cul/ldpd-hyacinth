@@ -81,11 +81,11 @@ namespace :hyacinth do
 
           digital_object.send(:first_published_at=, ::DateTime.iso8601(hyacinth2_obj['first_published'])) if hyacinth2_obj['first_published']
 
-          created_by_sort_name = hyacinth2_obj["created_by"].split(' ').map(&:strip).reverse.join(', ')
+          created_by_sort_name = (hyacinth2_obj["created_by"] || "Admin User").split(' ').map(&:strip).reverse.join(', ')
           digital_object.send(:created_by=, User.find_by(sort_name: created_by_sort_name) || admin_user)
           digital_object.send(:created_at=, ::DateTime.iso8601(hyacinth2_obj['created']))
           if hyacinth2_obj['modified']
-            updated_by_sort_name = hyacinth2_obj["modified_by"].split(' ').map(&:strip).reverse.join(', ')
+            updated_by_sort_name = (hyacinth2_obj["modified_by"] || "Admin User").split(' ').map(&:strip).reverse.join(', ')
             digital_object.send(:updated_by=, User.find_by(sort_name: updated_by_sort_name) || admin_user)
             digital_object.send(:updated_at=, ::DateTime.iso8601(hyacinth2_obj['modified']))
           end
@@ -148,7 +148,16 @@ namespace :hyacinth do
           name_hash.delete('role') unless name_hash['role'].present?
         end
         # Dynamic Field Data: Collections
-        target_dfd['collection'] = simple_term_field(source_dfd, 'collection')
+        target_dfd['collection'] = simple_term_field(source_dfd, 'collection') do |collection_hash|
+          collection_hash['archival_series'] = deprefixed_field(collection_hash, 'collection_archival_series', 'part') do |archival_series_hash|
+            archival_series_hash['part'] && archival_series_hash['part'].each do |part_hash|
+              deep_nests = ['level', 'title', 'type']
+              deep_nests.each { |deep_nest| part_hash[deep_nest] = part_hash.delete("collection_archival_series_part_#{deep_nest}") }
+              part_hash.compact!
+            end
+          end
+          collection_hash.delete('collection_archival_series')
+        end
         # Dynamic Field Data: Dates
         target_dfd['date_created'] = deprefixed_field(source_dfd, 'date_created', 'start_value', 'end_value', 'key_date', 'type')
         target_dfd['date_created_textual'] = deprefixed_field(source_dfd, 'date_created_textual', 'value')
@@ -162,8 +171,15 @@ namespace :hyacinth do
           location_hash['shelf_location'] = deprefixed_field(location_hash, 'location_shelf_location', 'box_number', 'call_number', 'folder_number', 'item_number', 'free_text')
           location_hash.delete('location_shelf_location')
         end
-        # Dynamic Field Data: Form
+
+        # Dynamic Field Data: Physical Information
         target_dfd['form'] = simple_term_field(source_dfd, 'form')
+        target_dfd['extent'] = deprefixed_field(source_dfd, 'extent', 'value')
+        target_dfd['digital_origin'] = deprefixed_field(source_dfd, 'digital_origin', 'value')
+
+        # Dynamic Field Data: Publisher
+        target_dfd['publisher'] = deprefixed_field(source_dfd, 'publisher', 'value')
+
         # Dynamic Field Data: Genre
         target_dfd['genre'] = simple_term_field(source_dfd, 'genre')
 
@@ -182,9 +198,6 @@ namespace :hyacinth do
 
         # Dynamic Field Data: Alternative Title
         target_dfd['alternative_title'] = deprefixed_field(source_dfd, 'alternative_title', 'value')
-
-        # Dynamic Field Data: Extent
-        target_dfd['extent'] = deprefixed_field(source_dfd, 'extent', 'value')
 
         # Dynamic Field Data: Place of Origin
         target_dfd['place_of_origin'] = deprefixed_field(source_dfd, 'place_of_origin', 'value')
