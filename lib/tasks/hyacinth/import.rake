@@ -187,6 +187,7 @@ namespace :hyacinth do
         target_dfd['subject_topic'] = simple_term_field(source_dfd, 'subject_topic')
         target_dfd['subject_geographic'] = simple_term_field(source_dfd, 'subject_geographic')
         target_dfd['subject_name'] = simple_term_field(source_dfd, 'subject_name')
+        target_dfd['subject_title'] = simple_term_field(source_dfd, 'subject_title')
         target_dfd['culture'] = simple_term_field(source_dfd, 'culture')
 
         # Dynamic Field Data: Type of Resource
