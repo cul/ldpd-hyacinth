@@ -20,7 +20,6 @@ module Hyacinth
           solr_document.merge!(
             'id' => digital_object.uid,
             'digital_object_type_ssi' => digital_object.digital_object_type,
-            'uid_ssi' => digital_object.uid,
             'doi_ssi' => digital_object.doi,
             'identifier_ssim' => digital_object.identifiers.to_a,
             'title_ssi' => indexable_title,
