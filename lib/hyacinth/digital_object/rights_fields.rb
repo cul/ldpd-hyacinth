@@ -4,6 +4,7 @@
 module Hyacinth
   module DigitalObject
     module RightsFields
+      UNASSIGNED_STATUS_INDEX = "[Unassigned]"
       # Returns list of mock dynamic field group definitions for the rights item form.
       #
       # This is temporary solution to help generate the GraphQL types for item rights. Eventually, we will want to move

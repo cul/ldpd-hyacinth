@@ -4,11 +4,13 @@ module Hyacinth
   module Adapters
     module DigitalObjectSearchAdapter
       class Solr < Abstract
-        attr_reader :solr
+        attr_reader :solr, :document_generator
+        delegate :solr_document_for, to: :document_generator
 
         def initialize(adapter_config = {})
           super(adapter_config)
           @solr = ::Solr::Client.new(adapter_config)
+          @document_generator = DocumentGenerator.new
         end
 
         def index(digital_object, **opts)
@@ -76,24 +78,6 @@ module Hyacinth
         # Deletes all records from the search index
         def clear_index
           solr.clear
-        end
-
-        # Create a solr doc for a digital object
-        def solr_document_for(digital_object)
-          indexable_title = ::Types::DigitalObjectInterface.title_for(digital_object)
-          project_keys = digital_object.other_projects.map(&:string_key)
-          project_keys << digital_object.primary_project.string_key if digital_object.primary_project
-          {
-            'id' => digital_object.uid,
-            'digital_object_type_ssi' => digital_object.digital_object_type,
-            'uid_ssi' => digital_object.uid,
-            'doi_ssi' => digital_object.doi,
-            'identifier_ssim' => digital_object.identifiers.to_a,
-            'title_ssi' => indexable_title,
-            'primary_project_ssi' => digital_object.primary_project&.string_key,
-            'projects_ssim' => project_keys,
-            'keywords_teim' => [indexable_title]
-          }
         end
       end
     end

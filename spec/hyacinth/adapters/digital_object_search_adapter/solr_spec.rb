@@ -29,17 +29,11 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr do
       allow(Hyacinth::Config).to receive(:external_identifier_adapter).and_return(external_identifier_adapter)
     end
 
-    it "indexes the uid into id" do
-      expect(adapter.solr_document_for(authorized_object)['id']).to eql(authorized_object.uid)
-    end
-
-    it "indexes the digital object type" do
-      expect(adapter.solr_document_for(authorized_object)['digital_object_type_ssi']).to eql(authorized_object.digital_object_type)
-    end
-
-    it "indexes the title into title_ssi" do
-      pending("object factory field name corrections to align with title practice")
-      expect(adapter.solr_document_for(authorized_object)['title_ssi']).to eql('Tall Man and His Hat')
+    it "delegates to an adapter" do
+      delegate = instance_double(Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator)
+      adapter.instance_variable_set(:@document_generator, delegate)
+      expect(delegate).to receive(:solr_document_for)
+      adapter.solr_document_for(authorized_object)
     end
   end
 end

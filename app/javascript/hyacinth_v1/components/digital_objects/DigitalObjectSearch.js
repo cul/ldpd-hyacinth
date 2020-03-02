@@ -109,13 +109,13 @@ const DigitalObjectSearch = ({ query }) => {
           docsFound && <ResultCountAndSortOptions totalCount={totalCount} limit={limit} offset={offset} searchParams={searchParams} />
         }
         <Row>
-          <Col xs={10}>
+          <Col xs={9}>
             { docsFound
               ? <DigitalObjectList className="digital-object-search-results" digitalObjects={nodes} />
               : <Card><Card.Header>No Digital Objects found.</Card.Header></Card>
             }
           </Col>
-          <Col xs={2}>
+          <Col xs={3}>
             <QueryForm value={query.q} onQueryChange={onQueryChange} onSubmit={refetch} />
             <DigitalObjectFacets className="digital-object-search-facets" facets={facets} isFacetCurrent={isFacetCurrent} onFacetSelect={onFacetSelect} />
           </Col>
