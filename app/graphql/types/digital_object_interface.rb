@@ -64,7 +64,7 @@ module Types
       if title_field_group.present? && (title_field = title_field_group[0]).present?
         val = title_field[TITLE_SORT_PORTION_DYNAMIC_FIELD_NAME]
         non_sort_portion = title_field[TITLE_NON_SORT_PORTION_DYNAMIC_FIELD_NAME]
-        val = "#{non_sort_portion} #{val}" if non_sort_portion && !indexable
+        val = "#{non_sort_portion} #{val}" if non_sort_portion && !sortable
       end
 
       val
