@@ -36,7 +36,7 @@ module DigitalObjectConcerns
           lock_object.extend_lock # extend lock in case unpublish is slow
         end
         # Reset pending entries after successful un/publish.
-        self.set_pending_publish_entries({})
+        self.assign_pending_publish_entries({})
         self.publish_entries = current_publish_entries.freeze unless current_publish_entries.blank?
         self.write_to_metadata_storage
       rescue StandardError => e

@@ -10,7 +10,7 @@ module DigitalObject
     include Hyacinth::DigitalObject::MetadataAttributes
     include Hyacinth::DigitalObject::ResourceAttributes
     include Hyacinth::DigitalObject::Restrictions
-    include DigitalObjectConcerns::DigitalObjectData::Setters
+    include DigitalObjectConcerns::AttributeAssignment
     include DigitalObjectConcerns::Validations
     include DigitalObjectConcerns::SaveBehavior
     include DigitalObjectConcerns::Serialization

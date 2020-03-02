@@ -43,7 +43,7 @@ module DigitalObjectConcerns
           all_targets = self.projects.map do |project|
             project.publish_targets.map(&:string_key)
           end.flatten.uniq
-          self.set_pending_publish_entries({ 'publish_to' => [], 'unpublish_from' => all_targets })
+          self.assign_pending_publish_entries({ 'publish_to' => [], 'unpublish_from' => all_targets })
           # if everything worked, destroy digital object record
           self.digital_object_record.destroy!
         end

@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters::DynamicFieldData do
+RSpec.describe DigitalObjectConcerns::AttributeAssignment::DynamicFieldData do
   let(:digital_object_with_sample_data) { FactoryBot.build(:digital_object_test_subclass, :with_sample_data) }
   let(:digital_object_data) do
     {
@@ -16,9 +16,9 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters::DynamicFieldDa
       }
     }
   end
-  context '#set_dynamic_field_data' do
+  context '#assign_dynamic_field_data' do
     it 'merges dynamic field data when merge param is true' do
-      digital_object_with_sample_data.set_dynamic_field_data(digital_object_data, true)
+      digital_object_with_sample_data.assign_dynamic_field_data(digital_object_data, true)
       expect(digital_object_with_sample_data.dynamic_field_data['title']).to eq([{
         'non_sort_portion' => 'The',
         'sort_portion' => 'Tall Man and His Hat'
@@ -31,7 +31,7 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters::DynamicFieldDa
     end
 
     it 'merges dynamic field data when merge param is false' do
-      digital_object_with_sample_data.set_dynamic_field_data(digital_object_data, false)
+      digital_object_with_sample_data.assign_dynamic_field_data(digital_object_data, false)
       expect(digital_object_with_sample_data.dynamic_field_data['title']).to be_nil
 
       expect(digital_object_with_sample_data.dynamic_field_data['note']).to eq([{
@@ -118,7 +118,7 @@ RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters::DynamicFieldDa
     end
 
     it 'works as expected on dynamic_field_data instance variable' do
-      digital_object_with_sample_data.set_digital_object_data({ 'dynamic_field_data' => dfd }, false)
+      digital_object_with_sample_data.assign_attributes({ 'dynamic_field_data' => dfd }, merge_dynamic_field_data: false)
       digital_object_with_sample_data.clean_dynamic_field_data!
       expect(digital_object_with_sample_data.dynamic_field_data).to eq(cleaned_dfd)
     end

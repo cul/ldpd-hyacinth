@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe DigitalObjectConcerns::DigitalObjectData::Setters::Preserve do
+RSpec.describe DigitalObjectConcerns::AttributeAssignment::State do
   context "todo" do
     skip 'todo'
   end
