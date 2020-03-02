@@ -4,13 +4,13 @@ module Hyacinth
   module Adapters
     module DigitalObjectSearchAdapter
       class Solr < Abstract
-        attr_reader :solr, :document_adapter
-        delegate :solr_document_for, to: :document_adapter
+        attr_reader :solr, :document_generator
+        delegate :solr_document_for, to: :document_generator
 
         def initialize(adapter_config = {})
           super(adapter_config)
           @solr = ::Solr::Client.new(adapter_config)
-          @document_adapter = DocumentAdapter.new
+          @document_generator = DocumentGenerator.new
         end
 
         def index(digital_object, **opts)

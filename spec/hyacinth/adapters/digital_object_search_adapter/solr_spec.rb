@@ -30,8 +30,8 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr do
     end
 
     it "delegates to an adapter" do
-      delegate = instance_double(Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentAdapter)
-      adapter.instance_variable_set(:@document_adapter, delegate)
+      delegate = instance_double(Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator)
+      adapter.instance_variable_set(:@document_generator, delegate)
       expect(delegate).to receive(:solr_document_for)
       adapter.solr_document_for(authorized_object)
     end

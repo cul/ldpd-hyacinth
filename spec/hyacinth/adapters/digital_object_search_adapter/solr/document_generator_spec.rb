@@ -3,7 +3,7 @@
 require 'rails_helper'
 require 'shared_examples/digital_object_search_adapter/shared_examples'
 
-describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentAdapter do
+describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator do
   context "#solr_document_for" do
     let(:authorized_object) { FactoryBot.build(:digital_object_test_subclass, :with_sample_data) }
     let(:adapter) { described_class.new }

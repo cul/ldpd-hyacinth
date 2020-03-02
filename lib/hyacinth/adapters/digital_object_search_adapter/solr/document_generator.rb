@@ -3,7 +3,7 @@
 module Hyacinth
   module Adapters
     module DigitalObjectSearchAdapter
-      class Solr::DocumentAdapter
+      class Solr::DocumentGenerator
         def solr_document_for(digital_object)
           solr_document = merge_core_fields_for(digital_object)
           merge_dynamic_fields_for!(digital_object, solr_document)
