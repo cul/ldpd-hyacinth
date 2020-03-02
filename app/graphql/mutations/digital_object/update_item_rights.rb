@@ -20,7 +20,7 @@ module Mutations
 
         ability.authorize! :update_rights, digital_object
 
-        digital_object.assign_attributes({ 'rights' => rights.deep_transform_values(&:to_h).stringify_keys }, false)
+        digital_object.assign_rights({ 'rights' => rights.deep_transform_values(&:to_h).stringify_keys }, false)
         digital_object.save!(update_index: true, user: context[:current_user])
         { item: digital_object }
       end

@@ -5,11 +5,11 @@ module DigitalObjectConcerns
     module DynamicFieldData
       extend ActiveSupport::Concern
 
-      def assign_dynamic_field_data(new_digital_object_data, merge_dynamic_fields)
+      def assign_dynamic_field_data(new_digital_object_data, merge_dynamic_field_data = true)
         return unless new_digital_object_data.key?('dynamic_field_data')
         new_dynamic_field_data = new_digital_object_data['dynamic_field_data']
 
-        if merge_dynamic_fields
+        if merge_dynamic_field_data
           # During a merge, new top level key-value pairs are added and existing top level keys have their values replace by new values
           dynamic_field_data.merge!(new_dynamic_field_data)
         else

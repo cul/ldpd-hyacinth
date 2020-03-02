@@ -5,13 +5,19 @@ module DigitalObjectConcerns
     module Rights
       extend ActiveSupport::Concern
 
-      def assign_rights(digital_object_data)
+      def assign_rights(digital_object_data, merge_rights = true)
         return unless digital_object_data.key?('rights')
         # TODO: We need to add some kind of validation here, or potentially
         # store the rights config info on the server side and then pass it
         # to the client side when rendering the rights editing form.
         # See: HYACINTH-429
-        self.rights = digital_object_data['rights']
+        new_rights = digital_object_data['rights']
+
+        if merge_rights
+          rights.merge!(new_rights)
+        else
+          self.rights = new_rights
+        end
       end
 
       # Trims whitespace and removes blank fields from dynamic field data.

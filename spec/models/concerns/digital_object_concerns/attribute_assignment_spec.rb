@@ -29,9 +29,9 @@ RSpec.describe DigitalObjectConcerns::AttributeAssignment do
       expect(digital_object_with_sample_data).to receive(:assign_state).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:assign_preserve).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:assign_projects).with(digital_object_data).and_call_original
-      expect(digital_object_with_sample_data).to receive(:assign_rights).with(digital_object_data).and_call_original
+      expect(digital_object_with_sample_data).to receive(:assign_rights).with(digital_object_data, true).and_call_original
 
-      digital_object_with_sample_data.assign_attributes(digital_object_data, true)
+      digital_object_with_sample_data.assign_attributes(digital_object_data)
 
       expect(digital_object_with_sample_data.dynamic_field_data['title']).to eq([{
         'non_sort_portion' => 'The',
@@ -42,6 +42,18 @@ RSpec.describe DigitalObjectConcerns::AttributeAssignment do
         'value' => 'Great Note',
         'type' => 'So Great'
       }])
+    end
+
+    context "with opts" do
+      it "passes along merge_dynamic_field_data opt appropriately" do
+        expect(digital_object_with_sample_data).to receive(:assign_dynamic_field_data).with(digital_object_data, false)
+        digital_object_with_sample_data.assign_attributes(digital_object_data, merge_dynamic_field_data: false)
+      end
+
+      it "passes along merge_rights opt appropriately" do
+        expect(digital_object_with_sample_data).to receive(:assign_rights).with(digital_object_data, false)
+        digital_object_with_sample_data.assign_attributes(digital_object_data, merge_rights: false)
+      end
     end
   end
 end

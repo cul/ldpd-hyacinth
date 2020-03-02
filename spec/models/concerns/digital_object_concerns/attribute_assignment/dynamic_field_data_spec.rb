@@ -118,7 +118,7 @@ RSpec.describe DigitalObjectConcerns::AttributeAssignment::DynamicFieldData do
     end
 
     it 'works as expected on dynamic_field_data instance variable' do
-      digital_object_with_sample_data.assign_attributes({ 'dynamic_field_data' => dfd }, false)
+      digital_object_with_sample_data.assign_attributes({ 'dynamic_field_data' => dfd }, merge_dynamic_field_data: false)
       digital_object_with_sample_data.clean_dynamic_field_data!
       expect(digital_object_with_sample_data.dynamic_field_data).to eq(cleaned_dfd)
     end
