@@ -24,6 +24,11 @@ module DigitalObject
 
     SERIALIZATION_VERSION = '1' # Increment this if the serialized data format changes so that we can upgrade to the new format.
 
+    # Special structure for the title dynamic field
+    TITLE_DYNAMIC_FIELD_GROUP_NAME = 'title'
+    TITLE_SORT_PORTION_DYNAMIC_FIELD_NAME = 'sort_portion'
+    TITLE_NON_SORT_PORTION_DYNAMIC_FIELD_NAME = 'non_sort_portion'
+
     # Set up callbacks
     define_model_callbacks :validation, :save, :destroy
     before_validation :clean_dynamic_field_data!, :clean_rights!
@@ -92,6 +97,19 @@ module DigitalObject
 
     def parents
       @parents ||= parent_uids.map { |i| DigitalObject::Base.find(i) }
+    end
+
+    def generate_title(sortable = false)
+      val = '[No Title]'
+
+      title_field_group = dynamic_field_data[TITLE_DYNAMIC_FIELD_GROUP_NAME]
+      if title_field_group.present? && (title_field = title_field_group[0]).present?
+        val = title_field[TITLE_SORT_PORTION_DYNAMIC_FIELD_NAME]
+        non_sort_portion = title_field[TITLE_NON_SORT_PORTION_DYNAMIC_FIELD_NAME]
+        val = "#{non_sort_portion} #{val}" if non_sort_portion && !sortable
+      end
+
+      val
     end
   end
 end

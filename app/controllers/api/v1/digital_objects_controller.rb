@@ -13,7 +13,7 @@ module Api
         @digital_objects = DigitalObjectRecord.all.map do |dor|
           object = DigitalObject::Base.find(dor.uid)
           gql_compatibility_props = {
-            'id' => dor.uid, 'title' => Types::DigitalObjectInterface.title_for(object)
+            'id' => dor.uid, 'title' => object.generate_title
           }
           object.as_json(except: ['digital_object_record']).merge(gql_compatibility_props)
         end

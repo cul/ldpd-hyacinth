@@ -7,10 +7,6 @@ module Types
 
     description 'A digital object'
 
-    TITLE_DYNAMIC_FIELD_GROUP_NAME = 'title'
-    TITLE_SORT_PORTION_DYNAMIC_FIELD_NAME = 'sort_portion'
-    TITLE_NON_SORT_PORTION_DYNAMIC_FIELD_NAME = 'non_sort_portion'
-
     orphan_types Types::DigitalObject::ItemType, Types::DigitalObject::AssetType, Types::DigitalObject::SiteType
 
     field :id, ID, null: false, method: :uid
@@ -43,7 +39,7 @@ module Types
     end
 
     def title
-      DigitalObjectInterface.title_for(object)
+      object.generate_title
     end
 
     def resources
@@ -55,19 +51,6 @@ module Types
           resource.as_json
         )
       end
-    end
-
-    def self.title_for(object, sortable = false)
-      val = '[No Title]'
-
-      title_field_group = object.dynamic_field_data[TITLE_DYNAMIC_FIELD_GROUP_NAME]
-      if title_field_group.present? && (title_field = title_field_group[0]).present?
-        val = title_field[TITLE_SORT_PORTION_DYNAMIC_FIELD_NAME]
-        non_sort_portion = title_field[TITLE_NON_SORT_PORTION_DYNAMIC_FIELD_NAME]
-        val = "#{non_sort_portion} #{val}" if non_sort_portion && !sortable
-      end
-
-      val
     end
 
     def number_of_children

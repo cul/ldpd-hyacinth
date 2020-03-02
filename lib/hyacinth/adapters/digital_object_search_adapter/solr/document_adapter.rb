@@ -16,7 +16,7 @@ module Hyacinth
         end
 
         def merge_core_fields_for!(digital_object, solr_document = {})
-          indexable_title = ::Types::DigitalObjectInterface.title_for(digital_object, true)
+          indexable_title = digital_object.generate_title(true)
           solr_document.merge!(
             'id' => digital_object.uid,
             'digital_object_type_ssi' => digital_object.digital_object_type,
