@@ -57,7 +57,7 @@ module Types
       end
     end
 
-    def self.title_for(object, indexable = false)
+    def self.title_for(object, sortable = false)
       val = '[No Title]'
 
       title_field_group = object.dynamic_field_data[TITLE_DYNAMIC_FIELD_GROUP_NAME]
