@@ -92,6 +92,18 @@ RSpec.describe BatchImport, type: :model do
       end
     end
 
+    context 'when at leat one digital_object_import is pending' do
+      before do
+        FactoryBot.create(:digital_object_import, :pending, batch_import: batch_import)
+        FactoryBot.create(:digital_object_import, :failure, batch_import: batch_import)
+        FactoryBot.create(:digital_object_import, :success, batch_import: batch_import)
+      end
+
+      it 'returns pending' do
+        is_expected.to eql 'pending'
+      end
+    end
+
     context 'when all jobs are complete but at least one has failed' do
       before do
         FactoryBot.create(:digital_object_import, :failure, batch_import: batch_import)

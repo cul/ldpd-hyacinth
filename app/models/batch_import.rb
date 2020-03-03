@@ -28,7 +28,7 @@ class BatchImport < ApplicationRecord
     total_imports = import_status_count.values.sum
     if import_count('in_progress').positive?
       IN_PROGRESS
-    elsif import_count('pending') == total_imports
+    elsif import_count('pending').positive? || total_imports.zero?
       PENDING
     elsif import_count('success') == total_imports
       COMPLETED_SUCCESSFULLY
