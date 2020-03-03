@@ -5,7 +5,7 @@ module Types
     description 'A batch import'
 
     field :id, ID, null: false
-    field :file_location, String, null: false
+    field :file_location, String, null: true
     field :user, UserType, null: true
     field :priority, Enums::BatchImportPriorityEnum, null: true
     field :status, Enums::BatchImportStatusEnum, null: false
