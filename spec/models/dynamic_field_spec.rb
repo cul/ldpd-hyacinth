@@ -75,32 +75,6 @@ RSpec.describe DynamicField, type: :model do
       end
     end
 
-    context 'when missing created_by' do
-      let(:dynamic_field) { FactoryBot.build(:dynamic_field, created_by: nil) }
-
-      it 'does not save' do
-        expect(dynamic_field.save).to be false
-      end
-
-      it 'returns correct error' do
-        dynamic_field.save
-        expect(dynamic_field.errors.full_messages).to include 'Created by is required'
-      end
-    end
-
-    context 'when missing updated_by' do
-      let(:dynamic_field) { FactoryBot.build(:dynamic_field, updated_by: nil) }
-
-      it 'does not save' do
-        expect(dynamic_field.save).to be false
-      end
-
-      it 'returns correct error' do
-        dynamic_field.save
-        expect(dynamic_field.errors.full_messages).to include 'Updated by is required'
-      end
-    end
-
     context 'when creating select dynamic field' do
       let(:dynamic_field) { FactoryBot.build(:dynamic_field, field_type: DynamicField::Type::SELECT) }
 

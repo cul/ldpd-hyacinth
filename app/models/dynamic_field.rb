@@ -20,8 +20,8 @@ class DynamicField < ActiveRecord::Base
   has_many :enabled_dynamic_fields, dependent: :destroy
 
   belongs_to :dynamic_field_group
-  belongs_to :created_by, class_name: 'User'
-  belongs_to :updated_by, class_name: 'User'
+  belongs_to :created_by, required: false, class_name: 'User'
+  belongs_to :updated_by, required: false, class_name: 'User'
 
   before_save :set_default_for_additional_data
 

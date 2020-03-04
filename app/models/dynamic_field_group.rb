@@ -16,8 +16,8 @@ class DynamicFieldGroup < ActiveRecord::Base
   has_many :dynamic_field_groups, as: :parent
   belongs_to :parent, polymorphic: true # DynamicFieldGroup or DynamicFieldCategory
 
-  belongs_to :created_by, class_name: 'User'
-  belongs_to :updated_by, class_name: 'User'
+  belongs_to :created_by, required: false, class_name: 'User'
+  belongs_to :updated_by, required: false, class_name: 'User'
 
   validates :display_label, presence: true
   validates :parent_id,     presence: true, numericality: { only_integer: true }
