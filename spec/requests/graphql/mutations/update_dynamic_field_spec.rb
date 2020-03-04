@@ -52,7 +52,7 @@ RSpec.describe Mutations::UpdateDynamicField, type: :request do
         {
           input: {
             id: dynamic_field.id,
-            selectOptions: '[{"value":"val1","display_label":"Value 1"}, {"value":"val2","display_label":"Value 2"}]'
+            selectOptions: '[{"value":"val1","label":"Value 1"}, {"value":"val2","label":"Value 2"}]'
           }
         }
       end
@@ -60,7 +60,7 @@ RSpec.describe Mutations::UpdateDynamicField, type: :request do
       before { graphql query, variables }
       it 'correctly updates record' do
         dynamic_field.reload
-        expect(dynamic_field.select_options).to eql '[{"value":"val1","display_label":"Value 1"}, {"value":"val2","display_label":"Value 2"}]'
+        expect(dynamic_field.select_options).to eql '[{"value":"val1","label":"Value 1"}, {"value":"val2","label":"Value 2"}]'
       end
     end
 

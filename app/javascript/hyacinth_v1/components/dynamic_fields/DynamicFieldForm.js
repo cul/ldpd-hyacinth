@@ -147,7 +147,7 @@ function DynamicFieldForm(props) {
               value={selectOptions}
               onChange={setSelectOptions}
               height="100px"
-              placeholder={'[{ "option": "label" }]'}
+              placeholder={'[{ "value": "", "label": "" }]'}
             />
           </InputGroup>
         </div>
