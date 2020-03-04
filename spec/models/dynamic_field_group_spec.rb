@@ -118,32 +118,6 @@ RSpec.describe DynamicFieldGroup, type: :model do
       end
     end
 
-    context 'when created_by is missing' do
-      let(:dynamic_field_group) { FactoryBot.build(:dynamic_field_group, created_by: nil) }
-
-      it 'does not save' do
-        expect(dynamic_field_group.save).to be false
-      end
-
-      it 'returns correct error' do
-        dynamic_field_group.save
-        expect(dynamic_field_group.errors.full_messages).to include 'Created by is required'
-      end
-    end
-
-    context 'when updated_by is missing' do
-      let(:dynamic_field_group) { FactoryBot.build(:dynamic_field_group, updated_by: nil) }
-
-      it 'does not save' do
-        expect(dynamic_field_group.save).to be false
-      end
-
-      it 'returns correct error' do
-        dynamic_field_group.save
-        expect(dynamic_field_group.errors.full_messages).to include 'Updated by is required'
-      end
-    end
-
     context 'when creating a group with the same name as a sibling' do
       context 'and the sibiling is a dynamic_field' do
         let(:parent) { FactoryBot.create(:dynamic_field_group) }
