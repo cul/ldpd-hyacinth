@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_27_202735) do
+ActiveRecord::Schema.define(version: 2020_03_04_202224) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -108,7 +108,7 @@ ActiveRecord::Schema.define(version: 2020_02_27_202735) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["parent_type", "parent_id"], name: "index_dynamic_field_groups_on_parent_type_and_parent_id"
     t.index ["string_key", "parent_type", "parent_id"], name: "index_dynamic_field_groups_on_string_key_and_parent", unique: true
-    t.index ["string_key"], name: "index_dynamic_field_groups_on_string_key", unique: true
+    t.index ["string_key"], name: "index_dynamic_field_groups_on_string_key"
   end
 
   create_table "dynamic_fields", force: :cascade do |t|
