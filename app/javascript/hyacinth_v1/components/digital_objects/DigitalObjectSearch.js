@@ -58,10 +58,10 @@ const DigitalObjectSearch = ({ query }) => {
   if (loading) return (<></>);
   if (error) return (<GraphQLErrors errors={error} />);
   const { digitalObjects: { nodes, facets, totalCount } } = data;
-  const onPageNumberClick = (page) => {
+  const onPageNumberClick = (newOffset) => {
     const { filters = [] } = searchParams;
     const parsedQueryString = qs.parse(location.search);
-    parsedQueryString.pageNumber = page;
+    parsedQueryString.pageNumber = (newOffset / limit) + 1;
     parsedQueryString.filters = FilterArrayParam.encode(filters);
     location.search = qs.stringify(parsedQueryString);
     history.push(location);
@@ -125,7 +125,7 @@ const DigitalObjectSearch = ({ query }) => {
         offset={offset}
         limit={limit}
         totalItems={totalObjects}
-        onPageNumberClick={onPageNumberClick}
+        onClick={onPageNumberClick}
       />
     </>
   );

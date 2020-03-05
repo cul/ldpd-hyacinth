@@ -28,8 +28,8 @@ function ControlledVocabularyIndex() {
 
   const { vocabularies: { nodes: controlledVocabularies } } = data;
 
-  const onPageNumberClick = (page) => {
-    setOffset(limit * (page - 1));
+  const onPageNumberClick = (newOffset) => {
+    setOffset(newOffset);
     refetch();
   };
 
@@ -71,7 +71,7 @@ function ControlledVocabularyIndex() {
         offset={offset}
         limit={limit}
         totalItems={totalVocabularies}
-        onPageNumberClick={onPageNumberClick}
+        onClick={onPageNumberClick}
       />
     </>
   );
