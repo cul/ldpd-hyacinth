@@ -47,75 +47,35 @@ RSpec.describe 'Query for Authenticated User', type: :request do
             "subject": ["DynamicFieldCategory"]
           },
           {
-            "actions": [
-              "create"
-            ],
+            "actions": ["create"],
             "conditions": {},
             "inverted": false,
-            "subject": [
-              "BatchExport"
-            ]
+            "subject": ["BatchExport"]
           },
           {
-            "actions": [
-              "read"
-            ],
+            "actions": ["read", "destroy"],
             "conditions": {
               "userId": #{User.first.id}
             },
             "inverted": false,
-            "subject": [
-              "BatchExport"
-            ]
+            "subject": ["BatchExport"]
           },
           {
-            "actions": [
-              "destroy"
-            ],
-            "conditions": {
-              "userId": #{User.first.id}
-            },
-            "inverted": false,
-            "subject": [
-              "BatchExport"
-            ]
-          },
-          {
-            "actions": [
-              "create"
-           ],
+            "actions": ["create"],
             "conditions": {},
             "inverted": false,
-            "subject": [
-              "BatchImport"
-            ]
-           },
-           {
-            "actions": [
-              "read"
-            ],
+            "subject": ["BatchImport"]
+          },
+          {
+            "actions": ["read", "update", "destroy"],
             "conditions": {
               "userId": #{User.first.id}
             },
             "inverted": false,
-            "subject": [
-              "BatchImport"
-            ]
-           },
-           {
-            "actions": [
-              "destroy"
-            ],
-            "conditions": {
-              "userId": #{User.first.id}
-            },
-            "inverted": false,
-            "subject": [
-              "BatchImport"
-            ]
+            "subject": ["BatchImport"]
           }
         ]
-       )
+      )
     end
 
     it 'returns expected rules' do
@@ -168,43 +128,21 @@ RSpec.describe 'Query for Authenticated User', type: :request do
             "subject": ["DynamicFieldCategory"]
           },
           {
-            "actions": [
-              "create"
-            ],
+            "actions": ["create"],
             "conditions": {},
             "inverted": false,
-            "subject": [
-              "BatchExport"
-            ]
+            "subject": ["BatchExport"]
           },
           {
-            "actions": [
-              "read"
-            ],
+            "actions": ["read", "destroy"],
             "conditions": {
               "userId": #{User.first.id}
             },
             "inverted": false,
-            "subject": [
-              "BatchExport"
-            ]
+            "subject": ["BatchExport"]
           },
           {
-            "actions": [
-              "destroy"
-            ],
-            "conditions": {
-              "userId": #{User.first.id}
-            },
-            "inverted": false,
-            "subject": [
-              "BatchExport"
-            ]
-          },
-          {
-            "actions": [
-              "create"
-            ],
+            "actions": ["create"],
             "conditions": {},
             "inverted": false,
             "subject": [
@@ -212,28 +150,12 @@ RSpec.describe 'Query for Authenticated User', type: :request do
             ]
           },
           {
-            "actions": [
-              "read"
-            ],
+            "actions": ["read", "update", "destroy"],
             "conditions": {
               "userId": #{User.first.id}
             },
             "inverted": false,
-            "subject": [
-              "BatchImport"
-            ]
-          },
-          {
-            "actions": [
-              "destroy"
-            ],
-            "conditions": {
-              "userId": #{User.first.id}
-            },
-            "inverted": false,
-            "subject": [
-              "BatchImport"
-            ]
+            "subject": ["BatchImport"]
           },
           {
             "actions": ["read"],
