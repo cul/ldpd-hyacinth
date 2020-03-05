@@ -38,8 +38,8 @@ function BatchExportIndex() {
   const batchExports = data.batchExports.nodes;
   const totalBatchExports = data.batchExports.totalCount;
 
-  const onPageNumberClick = (page) => {
-    setOffset(limit * (page - 1));
+  const onPageNumberClick = (newOffset) => {
+    setOffset(newOffset);
     refetch();
   };
 
@@ -164,7 +164,7 @@ function BatchExportIndex() {
         offset={offset}
         limit={limit}
         totalItems={totalBatchExports}
-        onPageNumberClick={onPageNumberClick}
+        onClick={onPageNumberClick}
       />
     </>
   );

@@ -47,8 +47,8 @@ function TermIndex(props) {
     refetch();
   };
 
-  const onPageNumberClick = (page) => {
-    setOffset(limit * (page - 1));
+  const onPageNumberClick = (newOffset) => {
+    setOffset(newOffset);
     refetch();
   };
 
@@ -126,7 +126,7 @@ function TermIndex(props) {
         limit={limit}
         offset={offset}
         totalItems={totalTerms}
-        onPageNumberClick={onPageNumberClick}
+        onClick={onPageNumberClick}
       />
     </>
   );
