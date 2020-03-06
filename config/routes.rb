@@ -59,7 +59,10 @@ Rails.application.routes.draw do
 
       resources :dynamic_field_categories, only: [:index]
 
-      get 'downloads/:type/:id(/:subresource)' => 'downloads#download', as: :download
+      namespace :downloads do
+        get '/digital_object/:id/:resource_name', action: :digital_object, as: :digital_object
+        get '/batch_export/:id', action: :batch_export, as: :batch_export
+      end
     end
   end
 end
