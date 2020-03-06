@@ -12,7 +12,7 @@ module Api
       # GET /downloads/digital_object/:id/:resource_name
       def digital_object
         id = digital_object_params[:id]
-        subresource = digital_object_params[:resource_name]
+        resource_name = digital_object_params[:resource_name]
 
         digital_object = DigitalObject::Base.find(id)
         authorize! :read, digital_object
