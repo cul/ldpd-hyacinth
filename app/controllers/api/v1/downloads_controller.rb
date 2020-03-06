@@ -16,7 +16,7 @@ module Api
 
         digital_object = DigitalObject::Base.find(id)
         authorize! :read, digital_object
-        resource = digital_object.resources[subresource]
+        resource = digital_object.resources[resource_name]
         raise Hyacinth::Exceptions::NotFound if resource.nil? || resource.location.blank?
 
         storage = Hyacinth::Config.resource_storage
