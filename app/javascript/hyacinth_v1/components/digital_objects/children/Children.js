@@ -12,7 +12,6 @@ import GraphQLErrors from '../../shared/GraphQLErrors';
 
 const Children = (props) => {
   const { id } = props;
-  const [inputId] = useState(AssetNew.randomInputId());
   const {
     loading: childStructureLoading,
     error: childStructureError,
@@ -33,7 +32,7 @@ const Children = (props) => {
           <Card.Title>
             Add New Asset
           </Card.Title>
-          <AssetNew parentId={id} refetch={refreshChildStructure} inputId={inputId} />
+          <AssetNew parentId={id} refetch={refreshChildStructure} />
         </Card.Body>
       </Card>
       <Card className="mb-3">
