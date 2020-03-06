@@ -44,7 +44,6 @@ Rails.application.routes.draw do
         end
         member do
           resource :rights, controller: 'digital_objects/rights', only: [:show, :edit, :update]
-          resource :uploads, controller: 'digital_objects/uploads', only: [:create]
           get 'resources/:resource_name/download' => 'digital_objects/resources#download', as: :download_resource
         end
       end
@@ -58,6 +57,8 @@ Rails.application.routes.draw do
       end
 
       resources :dynamic_field_categories, only: [:index]
+
+      post 'uploads' => 'uploads#create', as: :upload
 
       namespace :downloads do
         get '/digital_object/:id/:resource_name', action: :digital_object, as: :digital_object
