@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_04_202224) do
+ActiveRecord::Schema.define(version: 2020_03_06_171010) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -55,6 +55,7 @@ ActiveRecord::Schema.define(version: 2020_03_04_202224) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "cancelled", default: false, null: false
+    t.string "original_filename"
     t.index ["user_id"], name: "index_batch_imports_on_user_id"
   end
 

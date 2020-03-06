@@ -12,6 +12,7 @@ RSpec.describe BatchImport, type: :model do
     its(:file_location) { 'managed-disk://path/to/file' }
     its(:cancelled)     { is_expected.to be false }
 
+    its(:original_filename) { is_expected.to eql 'import.csv' }
     its('digital_object_imports.length') { is_expected.to be 1 }
 
     its(:status) { is_expected.to eql 'in_progress' }

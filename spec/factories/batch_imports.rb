@@ -2,6 +2,7 @@
 
 FactoryBot.define do
   factory :batch_import do
+    original_filename { 'import.csv' }
     file_location { 'managed-disk://path/to/file' }
 
     priority { 'high' }
