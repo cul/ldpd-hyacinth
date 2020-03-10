@@ -13,6 +13,8 @@ module Types
     field :cancelled, Boolean, null: false
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
+    field :download_path, String, null: true
+    field :without_successful_imports_download_path, String, null: true
 
     # Retrieve counts for each status of digital object imports.
     DigitalObjectImport.statuses.each do |status, _number|
@@ -21,6 +23,16 @@ module Types
       define_method "#{status}_count" do
         object.import_count(status)
       end
+    end
+
+    def download_path
+      return nil unless object.file_location
+      "/api/v1/downloads/batch_import/#{object.id}"
+    end
+
+    def without_successful_imports_download_path
+      return nil unless object.file_location
+      "/api/v1/downloads/batch_import/#{object.id}/without_successful_imports"
     end
 
     field :digital_object_imports, DigitalObjectImportType.results_type, extensions: [Types::Extensions::Paginate], null: true do

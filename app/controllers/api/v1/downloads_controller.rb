@@ -44,6 +44,26 @@ module Api
         download(storage, file_location)
       end
 
+      # GET /downloads/batch_import/:id(/:option)
+      def batch_import
+        batch_import = load_and_authorize_batch_import!
+
+        if batch_import_params[:option] == 'without_successful_imports'
+          send_data(
+            batch_import.csv_without_successful_imports,
+            type: 'text/csv',
+            filename: "without-successful-rows-#{batch_import.original_filename}"
+          )
+        else
+          storage = Hyacinth::Config.batch_import_storage
+          size = storage.size(file_location).to_s
+          file_name = batch_import.original_filename || "import-#{batch_import.id}.csv"
+
+          set_download_headers(batch_import.updated_at, 'text/csv', size, file_name)
+          download(storage, batch_import.file_location)
+        end
+      end
+
       private
 
         def digital_object_params
@@ -52,6 +72,10 @@ module Api
 
         def batch_export_params
           params.permit(:id)
+        end
+
+        def batch_import_params
+          params.permit(:id, :option)
         end
 
         # File download.
@@ -80,6 +104,14 @@ module Api
           safe_label = label.gsub(' ', '%20').gsub(',', '%2C')
           # The two adjacent single quotes in the line below look weird, but are correct:
           (attachment ? 'attachment; ' : 'inline') + "; filename*=utf-8''" + safe_label
+        end
+
+        def load_and_authorize_batch_import!
+          batch_import = BatchImport.find(batch_import_params[:id])
+          authorize! :read, batch_import
+          file_location = batch_import.file_location
+          raise Hyacinth::Exceptions::NotFound if file_location.blank?
+          batch_import
         end
     end
   end

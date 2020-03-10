@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Mutations::CreateAsset < Mutations::BaseMutation
-  argument :signed_blob_id, String, "Signed blob ID generated via `createDirectUpload` mutation", required: true
+  argument :signed_blob_id, String, "Signed blob ID generated via `/api/v1/uploads`", required: true
   argument :parent_id, ID, required: true
 
   field :asset, Types::DigitalObject::AssetType, null: true
