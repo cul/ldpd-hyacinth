@@ -11,6 +11,7 @@ class BatchImport < ApplicationRecord
 
   enum priority: { low: 0, medium: 1, high: 2 }
 
+  before_destroy :ensure_imports_are_complete!, prepend: true
   after_destroy :delete_associated_file
 
   has_many :digital_object_imports, dependent: :destroy
@@ -79,4 +80,22 @@ class BatchImport < ApplicationRecord
 
     new_csv
   end
+
+  private
+
+    # Callback to check that a batch import can be deleted. A batch import
+    # can only be deleted if it's cancelled and no digital object imports
+    # are in progress or if no digital object imports are 'in_progress' or 'pending'
+    def ensure_imports_are_complete!
+      imports_pending = import_count('pending').positive?
+      imports_in_progress = import_count('in_progress').positive?
+
+      if cancelled && imports_in_progress
+        errors[:base] << 'Cannot destroy cancelled batch import while imports are in_progress'
+        throw :abort
+      elsif !cancelled && (imports_in_progress || imports_pending)
+        errors[:base] << 'Cannot destroy batch import while imports are in_progress or pending'
+        throw :abort
+      end
+    end
 end

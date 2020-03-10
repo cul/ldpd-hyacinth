@@ -128,14 +128,95 @@ RSpec.describe BatchImport, type: :model do
   end
 
   describe '#destroy' do
-    let(:batch_import) { FactoryBot.create(:batch_import, :with_digital_object_import) }
-    let!(:digital_object_import_id) { batch_import.digital_object_imports.first.id }
-
     context 'when batch_import contains associated digital_object_imports' do
+      let(:batch_import) { FactoryBot.create(:batch_import, :with_successful_digital_object_import) }
+      let!(:digital_object_import_id) { batch_import.digital_object_imports.first.id }
+
       before { batch_import.destroy }
 
       it 'destroys both batch_import and child digital_object_imports' do
         expect(DigitalObjectImport.exists?(digital_object_import_id)).to be false
+      end
+    end
+  end
+
+  describe '#destroy!' do
+    context 'when batch import is cancelled' do
+      let(:batch_import) { FactoryBot.create(:batch_import, cancelled: true) }
+
+      context 'with in progress imports' do
+        before do
+          FactoryBot.create(:digital_object_import, :in_progress, batch_import: batch_import)
+        end
+
+        it 'returns error' do
+          expect { batch_import.destroy! }.to raise_error ActiveRecord::RecordNotDestroyed
+        end
+      end
+
+      context 'when pending imports' do
+        before do
+          FactoryBot.create(:digital_object_import, :pending, batch_import: batch_import)
+          batch_import.destroy!
+        end
+
+        it 'destroys batch import' do
+          expect(batch_import.destroyed?).to be true
+        end
+      end
+    end
+
+    context 'when batch import is not cancelled' do
+      let(:batch_import) { FactoryBot.create(:batch_import) }
+
+      context 'with imports in_progress and pending' do
+        before do
+          FactoryBot.create(:digital_object_import, :pending, batch_import: batch_import)
+          FactoryBot.create(:digital_object_import, :in_progress, batch_import: batch_import)
+        end
+
+        it 'returns error' do
+          expect { batch_import.destroy! }.to raise_error ActiveRecord::RecordNotDestroyed
+        end
+      end
+
+      context 'with imports in_progress' do
+        before do
+          FactoryBot.create(:digital_object_import, :in_progress, batch_import: batch_import)
+        end
+
+        it 'returns error' do
+          expect { batch_import.destroy! }.to raise_error ActiveRecord::RecordNotDestroyed
+        end
+      end
+
+      context 'with imports pending' do
+        before do
+          FactoryBot.create(:digital_object_import, :pending, batch_import: batch_import)
+        end
+
+        it 'returns error' do
+          expect { batch_import.destroy! }.to raise_error ActiveRecord::RecordNotDestroyed
+        end
+      end
+
+      context 'without any imports' do
+        it 'destroys batch import' do
+          batch_import.destroy!
+          expect(batch_import.destroyed?).to be true
+        end
+      end
+
+      context 'with successful and failed imports' do
+        before do
+          FactoryBot.create(:digital_object_import, :success, batch_import: batch_import)
+          FactoryBot.create(:digital_object_import, :failure, batch_import: batch_import)
+          batch_import.destroy!
+        end
+
+        it 'destroys batch import' do
+          expect(batch_import.destroyed?).to be true
+        end
       end
     end
   end
