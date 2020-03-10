@@ -10,7 +10,7 @@ function AssetNew(props) {
   const { parentId, refetch } = props;
   const [createAsset] = useMutation(createAssetMutation);
 
-  const saveBlobToRecord = blobAttributes => createAsset(
+  const onUpload = blobAttributes => createAsset(
     {
       variables: {
         input: {
@@ -24,7 +24,7 @@ function AssetNew(props) {
 
   return (
     <Form>
-      <FileInput saveBlobToRecord={saveBlobToRecord} />
+      <FileInput onUpload={onUpload} />
     </Form>
   );
 }

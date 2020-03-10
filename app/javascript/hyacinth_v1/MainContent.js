@@ -14,6 +14,8 @@ import FieldExportProfiles from './components/field_export_profiles/FieldExportP
 import ControlledVocabularies from './components/controlled_vocabularies/ControlledVocabularies';
 import Projects from './components/projects/Projects';
 import BatchExports from './components/batch_exports/BatchExports';
+import BatchImports from './components/batch_imports/BatchImports';
+
 import { AbilityContext } from './utils/abilityContext';
 import ability from './utils/ability';
 import { getAuthenticatedUserQuery } from './graphql/users';
@@ -58,6 +60,8 @@ function MainContent() {
           <Route path="/field_export_profiles" component={FieldExportProfiles} />
           <Route path="/controlled_vocabularies" component={ControlledVocabularies} />
           <Route path="/batch_exports" component={BatchExports} />
+          <Route path="/batch_imports" component={BatchImports} />
+
           { /* When none of the above match, <PageNotFound> will be rendered */ }
           <Route path="/404" component={PageNotFound} />
           <Route component={PageNotFound} />

@@ -7,7 +7,7 @@ function FileInput(props) {
   const randomInputId = () => `input-${Math.random().toString().replace('.', '')}`;
 
   const [inputId] = useState(randomInputId);
-  const { saveBlobToRecord } = props;
+  const { onUpload, resetAfterUpload } = props;
 
   const onChange = (event) => {
     const {
@@ -19,13 +19,15 @@ function FileInput(props) {
     if (!validity.valid) return false;
 
     function resetFileInput() {
-      document.getElementById(inputId).value = '';
+      if (resetAfterUpload) {
+        document.getElementById(inputId).value = '';
+      }
     }
 
     const url = '/api/v1/uploads';
 
     return uploadFile(file, url)
-      .then(blobAttributes => saveBlobToRecord(blobAttributes).then(resetFileInput()));
+      .then(blobAttributes => onUpload(blobAttributes).then(resetFileInput()));
   };
 
   return (
@@ -39,8 +41,13 @@ function FileInput(props) {
   );
 }
 
+FileInput.defaultProps = {
+  resetAfterUpload: true,
+};
+
 FileInput.propTypes = {
-  saveBlobToRecord: PropTypes.func.isRequired,
+  onUpload: PropTypes.func.isRequired,
+  resetAfterUpload: PropTypes.bool,
 };
 
 export default FileInput;

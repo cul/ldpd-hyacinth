@@ -62,7 +62,7 @@ function TopNavbar(props) {
             </LinkContainer>
 
             <LinkContainer to="/batch_imports">
-              <NavDropdown.Item>Import Jobs</NavDropdown.Item>
+              <NavDropdown.Item>Batch Imports</NavDropdown.Item>
             </LinkContainer>
           </NavDropdown>
 
