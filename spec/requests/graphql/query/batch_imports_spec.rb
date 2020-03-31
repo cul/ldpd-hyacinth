@@ -9,6 +9,7 @@ RSpec.describe 'Retrieving Batch Imports', type: :request do
         [
           {
             "fileLocation": "managed-disk://path/to/file",
+            "originalFilename": "import.csv",
             "status": "pending",
             "priority": "high",
             "user": {
@@ -18,6 +19,7 @@ RSpec.describe 'Retrieving Batch Imports', type: :request do
           },
           {
             "fileLocation": "managed-disk://path/to/file",
+            "originalFilename": "import.csv",
             "status": "pending",
             "priority": "high",
             "user": {
@@ -47,6 +49,7 @@ RSpec.describe 'Retrieving Batch Imports', type: :request do
         [
           {
             "fileLocation": "managed-disk://path/to/file",
+            "originalFilename": "import.csv",
             "status": "pending",
             "priority": "high",
             "user": {
@@ -76,6 +79,7 @@ RSpec.describe 'Retrieving Batch Imports', type: :request do
         batchImports(limit: 5) {
           nodes {
             id
+            originalFilename
             fileLocation
             status
             priority

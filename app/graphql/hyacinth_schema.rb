@@ -12,6 +12,10 @@ class HyacinthSchema < GraphQL::Schema
     raise GraphQL::ExecutionError, error
   end
 
+  rescue_from ActiveRecord::RecordNotDestroyed do |exception|
+    raise GraphQL::ExecutionError, exception.record.errors.full_messages.join('; ')
+  end
+
   rescue_from ActiveRecord::RecordInvalid do |exception|
     raise GraphQL::ExecutionError, exception.record.errors.full_messages.join('; ')
   end

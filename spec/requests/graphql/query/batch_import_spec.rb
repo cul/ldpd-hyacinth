@@ -21,6 +21,7 @@ RSpec.describe 'Retrieving Batch Import', type: :request do
             "numberOfInProgressImports": 1,
             "numberOfSuccessImports": 0,
             "numberOfFailureImports": 0,
+            "originalFilename": "import.csv",
             "user": {
               "firstName": "Signed In",
               "lastName": "User"
@@ -58,6 +59,7 @@ RSpec.describe 'Retrieving Batch Import', type: :request do
       query {
         batchImport(id: "#{id}") {
           id
+          originalFilename
           fileLocation
           status
           priority

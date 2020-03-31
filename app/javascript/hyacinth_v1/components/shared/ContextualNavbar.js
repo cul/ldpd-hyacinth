@@ -8,14 +8,14 @@ class ContextualNavbar extends React.PureComponent {
     const { title, rightHandLinks, children } = this.props;
 
     return (
-      <Navbar variant="dark" bg="dark" expand="lg" className="px-3 py-0 mt-2 mb-3 rounded contextual-navbar">
+      <Navbar variant="dark" bg="dark" expand="lg" className="px-3 py-0 mt-2 mb-2 rounded contextual-navbar">
         { title && <Navbar.Brand>{title}</Navbar.Brand> }
         <Nav className="ml-auto">
           {children}
           {
             rightHandLinks.map((obj, i) => (
               <Nav.Item as="li" key={i}>
-                <LinkContainer to={obj.link}>
+                <LinkContainer exact to={obj.link}>
                   <Nav.Link>{obj.label}</Nav.Link>
                 </LinkContainer>
               </Nav.Item>

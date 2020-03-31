@@ -63,6 +63,7 @@ Rails.application.routes.draw do
       namespace :downloads do
         get '/digital_object/:id/:resource_name', action: :digital_object, as: :digital_object
         get '/batch_export/:id', action: :batch_export, as: :batch_export
+        get '/batch_import/:id(/:option)', action: :batch_import, as: :batch_import, constraints: { option: /(without_successful_imports)/ }
       end
     end
   end

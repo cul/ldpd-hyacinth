@@ -24,12 +24,10 @@ class Ability
       can :read, DynamicFieldCategory # Need to allow this so we can render EnabledDynamicField pages.
 
       can :create, BatchExport # All users can create BatchExports
-      can :read, BatchExport, user_id: user.id
-      can :destroy, BatchExport, user_id: user.id
+      can [:read, :destroy], BatchExport, user_id: user.id
 
       can :create, BatchImport # All users can create BatchImports
-      can :read, BatchImport, user_id: user.id
-      can :destroy, BatchImport, user_id: user.id
+      can [:read, :update, :destroy], BatchImport, user_id: user.id
 
       # System Wide Permissions
       assign_system_wide_permissions(system_permissions)
