@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Card, Button } from 'react-bootstrap';
-import * as moment from 'moment';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { startCase } from 'lodash';
 
@@ -8,6 +7,7 @@ import { Can } from '@hyacinth_v1/utils/abilityContext';
 import ContextualNavbar from '../shared/ContextualNavbar';
 import GraphQLErrors from '../shared/GraphQLErrors';
 import PaginationBar from '../shared/PaginationBar';
+import ReadableDate from '../shared/ReadableDate';
 import { batchImportsQuery, updateBatchImportMutation, deleteBatchImportMutation } from '../../graphql/batchImports';
 
 function BatchImportIndex() {
@@ -57,7 +57,7 @@ function BatchImportIndex() {
             <Card.Header>
               {`Import ID: ${batchImport.id}`}
               <div className="float-right">
-                {moment(batchImport.createdAt).format('MMMM Do YYYY, h:mm:ss a')}
+                <ReadableDate date={batchImport.createdAt} />
               </div>
             </Card.Header>
             <Card.Body>
