@@ -125,10 +125,94 @@ RSpec.describe "Downloads API endpoint", type: :request do
         get request_url
       end
 
-      context "when a csv file hasn't been generated for a batch export" do
+      context 'when a csv file hasn\'t been generated for a batch export' do
         let(:batch_export) { FactoryBot.create(:batch_export, :in_progress, user: authorized_user) }
 
-        it "returns 404" do
+        it 'returns 404' do
+          expect(response.status).to be 404
+        end
+      end
+    end
+  end
+
+  context "for batch imports" do
+    let(:authorized_user) { FactoryBot.create(:user, :basic) }
+    let(:batch_import) { FactoryBot.create(:batch_import, user: authorized_user, file_location: nil) }
+
+    context 'when batch_import has an original csv' do
+      let(:original_csv) do
+        <<~CSV
+          _id,abstract.0.value,date_created.value
+          12,abstract number 1,1984
+          34,abstract number 2,1990
+        CSV
+      end
+
+      let(:active_storage_blob) do
+        blob = ActiveStorage::Blob.create_before_direct_upload!(
+          filename: 'import.csv',
+          byte_size: original_csv.bytesize,
+          checksum: Digest::MD5.hexdigest(original_csv),
+          content_type: 'text/csv'
+        )
+        blob.upload(StringIO.new(original_csv))
+        blob
+      end
+
+      before do
+        batch_import.add_blob(active_storage_blob)
+
+        FactoryBot.create(:digital_object_import, :success, batch_import: batch_import, index: 2)
+        FactoryBot.create(:digital_object_import, :in_progress, batch_import: batch_import, index: 3)
+
+        batch_import.save!
+      end
+
+      context 'when requesting original csv' do
+        let(:request_url) { "/api/v1/downloads/batch_import/#{batch_import.id}" }
+        let(:expected_download_content) { original_csv }
+
+        include_examples 'shared download examples' do
+          let(:expected_content_type_header) { 'text/csv' }
+          let(:expected_content_disposition_header) { "attachment; ; filename*=utf-8''import.csv" }
+          let(:expected_content_length_header) { expected_download_content.bytesize.to_s }
+          let(:expected_content_last_modified_header) { batch_import.updated_at.httpdate }
+        end
+      end
+
+      context "when requesting csv without successful imports" do
+        let(:request_url) { "/api/v1/downloads/batch_import/#{batch_import.id}/without_successful_imports" }
+        let(:expected_download_content) do
+          <<~CSV
+            _id,abstract.0.value,date_created.value
+            34,abstract number 2,1990
+          CSV
+        end
+
+        include_examples 'shared download examples' do
+          let(:expected_content_type_header) { 'text/csv' }
+          let(:expected_content_disposition_header) { "attachment; filename=\"without-successful-imports-import.csv\"; filename*=UTF-8''without-successful-imports-import.csv" }
+          let(:expected_content_length_header) { expected_download_content.bytesize.to_s }
+          let(:expected_content_last_modified_header) { batch_import.updated_at.httpdate }
+        end
+      end
+    end
+
+    context 'when batch_import does not have an original csv' do
+      before { sign_in authorized_user }
+
+      context 'when requesting original csv' do
+        before { get "/api/v1/downloads/batch_import/#{batch_import.id}" }
+
+        it 'returns 404' do
+          expect(response.status).to be 404
+        end
+      end
+
+      context 'when requesting csv withour successful imports' do
+        before { get "/api/v1/downloads/batch_import/#{batch_import.id}/without_successful_imports" }
+
+        it 'returns 404' do
           expect(response.status).to be 404
         end
       end

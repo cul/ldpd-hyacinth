@@ -49,14 +49,14 @@ module Api
         batch_import = load_and_authorize_batch_import!
 
         if batch_import_params[:option] == 'without_successful_imports'
+          response.headers["Last-Modified"] = batch_import.updated_at.httpdate
           send_data(
             batch_import.csv_without_successful_imports,
-            type: 'text/csv',
-            filename: "without-successful-rows-#{batch_import.original_filename}"
+            type: 'text/csv', filename: "without-successful-imports-#{batch_import.original_filename}"
           )
         else
           storage = Hyacinth::Config.batch_import_storage
-          size = storage.size(file_location).to_s
+          size = storage.size(batch_import.file_location).to_s
           file_name = batch_import.original_filename || "import-#{batch_import.id}.csv"
 
           set_download_headers(batch_import.updated_at, 'text/csv', size, file_name)
