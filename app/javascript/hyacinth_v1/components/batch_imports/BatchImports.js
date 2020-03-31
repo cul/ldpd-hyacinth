@@ -2,7 +2,6 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 import PageNotFound from '../shared/PageNotFound';
-import ProtectedRoute from '../shared/routes/ProtectedRoute';
 import BatchImportIndex from './BatchImportIndex';
 import BatchImportShow from './BatchImportShow';
 import BatchImportNew from './BatchImportNew';
@@ -15,7 +14,11 @@ function BatchImports() {
       <Route exact path="/batch_imports/new" component={BatchImportNew} />
       <Route path="/batch_imports/:id/digital_object_imports" component={DigitalObjectImports} />
 
-      {/* need to check  permissions somehow */}
+      {/*
+        Cannot check permissions because we need to retrieve the batch import
+        in order to check if the user has the correct permissions. We will
+        default to rendering permissions errors raised by the GraphQL query.
+      */}
       <Route exact path="/batch_imports/:id" component={BatchImportShow} />
 
       { /* When none of the above match, <PageNotFound> will be rendered */ }
