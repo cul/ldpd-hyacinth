@@ -74,7 +74,7 @@ class BatchImport < ApplicationRecord
     storage.with_readable(file_location) do |io|
       csv = CSV.new(io, headers: :first_row, return_headers: true)
       csv.each_with_index do |row, index|
-        new_csv += CSV.generate_line row if row.header_row? || unsuccessful_indices.include?(index + 1)
+        new_csv += CSV.generate_line(row) if row.header_row? || unsuccessful_indices.include?(index + 1)
       end
     end
 

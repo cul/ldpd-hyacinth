@@ -8,9 +8,7 @@ import PageNotFound from '../../shared/PageNotFound';
 function DigitalObjectImports() {
   return (
     <Switch>
-
       <Route exact path="/batch_imports/:id/digital_object_imports" component={DigitalObjectImportIndex} />
-
       <Route exact path="/batch_imports/:batchImportId/digital_object_imports/:id" component={DigitalObjectImportShow} />
 
       { /* When none of the above match, <PageNotFound> will be rendered */ }

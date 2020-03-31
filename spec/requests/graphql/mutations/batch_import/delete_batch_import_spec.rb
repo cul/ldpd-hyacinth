@@ -17,7 +17,7 @@ RSpec.describe Mutations::BatchImport::DeleteBatchImport, type: :request do
       sign_in user
     end
 
-    context 'when deleting an batch import that exists' do
+    context 'when deleting a batch import that exists' do
       let(:variables) { { input: { id: id } } }
 
       before { graphql query, variables }
@@ -42,7 +42,7 @@ RSpec.describe Mutations::BatchImport::DeleteBatchImport, type: :request do
       end
     end
 
-    context "when deleting an batch import that doesn't exist" do
+    context "when deleting a batch import that doesn't exist" do
       let(:variables) { { input: { id: '90210' } } }
 
       before { graphql query, variables }
