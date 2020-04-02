@@ -29,6 +29,7 @@ module Types
     field :structured_children, DigitalObject::StructuredChildrenType, null: true
     field :publish_entries, [DigitalObject::PublishEntryType], null: true
     field :optimistic_lock_token, String, null: false
+    field :rights, GraphQL::Types::JSON, null: false
 
     field :title, String, null: false
     field :number_of_children, Integer, null: false

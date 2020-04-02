@@ -13,7 +13,10 @@ import { getDynamicFieldCategoriesQuery } from '../../graphql/dynamicFieldCatego
 function DynamicFieldIndex() {
   const {
     loading, error, data, refetch,
-  } = useQuery(getDynamicFieldCategoriesQuery);
+  } = useQuery(
+    getDynamicFieldCategoriesQuery,
+    { variables: { metadataForm: 'descriptive' } },
+  );
 
   if (loading) return (<></>);
   if (error) return (<GraphQLErrors errors={error} />);

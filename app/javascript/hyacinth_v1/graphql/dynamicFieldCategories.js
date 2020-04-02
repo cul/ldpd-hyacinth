@@ -12,8 +12,8 @@ export const getDynamicFieldCategoryQuery = gql`
 `;
 
 export const getDynamicFieldCategoriesQuery = gql`
-  query DynamicFieldCategories {
-     dynamicFieldCategories {
+  query DynamicFieldCategories($metadataForm: MetadataFormEnum) {
+     dynamicFieldCategories(metadataForm: $metadataForm) {
       id
       displayLabel
       sortOrder

@@ -8,44 +8,32 @@ import PropTypes from 'prop-types';
 import Label from '../../../../shared/forms/Label';
 import InputGroup from '../../../../shared/forms/InputGroup';
 import BooleanRadioButtons from '../../../../shared/forms/inputs/BooleanRadioButtons';
-import TextInput from '../../../../shared/forms/inputs/TextInput';
-import DateInput from '../../../../shared/forms/inputs/DateInput';
 import MultiSelectInput from '../../../../shared/forms/inputs/MultiSelectInput';
 import Checkbox from '../../../../shared/forms/inputs/Checkbox';
 import { useEnabled } from '../rightsHooks';
-import { defaultItemRights } from '../defaultRights';
-
-const permissionsGrantedAsPartOfTheUseLicense = [
-  'Reproduction',
-  'Distribution',
-  'Derivative Works',
-  'Public Display',
-  'Public Performance',
-  'Digital Streaming',
-  'Right of First Publication',
-];
+import Field from '../fields/Field';
 
 const avLimitationsOnAccess = [
-  { value: 'optionAvA', label: 'Screening of excerpt permitted for closed event exhibition for non-broadcast purposes only' },
-  { value: 'optionAvB', label: 'Right to make excerpt is limited to collections purposes only' },
-  { value: 'optionAvC', label: 'Film or video may be screened in-house for non-paying audiences only' },
-  { value: 'optionAvD', label: 'Excerpts may be licensed to third parties only for non-exclusive non-commercial purposes' },
-  { value: 'optionAvE', label: 'Excerpts may be reproduced and distributed to Columbia University students and faculty for educational purposes only' },
-  { value: 'optionAvF', label: 'No online reproduction and distribution' },
-  { value: 'optionAvG', label: 'No editing or modification' },
+  'option_av_a',
+  'option_av_b',
+  'option_av_c',
+  'option_av_d',
+  'option_av_e',
+  'option_av_f',
+  'option_av_g',
 ];
 
 const limitationsOnAccess = [
-  { value: 'optionA', label: 'Access limited to on-site only for reseach and study' },
-  { value: 'optionB', label: 'No reproduction and distribution unless with prior permission of copyright owner' },
-  { value: 'optionC', label: 'No Reproduction and distribution unless with prior permission of donor' },
-  { value: 'optionD', label: 'Reproduction and distribution online limited to non-profit educational use only' },
-  { value: 'optionE', label: 'Online use limited to specific website' },
+  'option_a',
+  'option_b',
+  'option_c',
+  'option_d',
+  'option_e',
 ];
 
 function ContractualLimitationsRestrictionsAndPermissions(props) {
   const {
-    audioVisualContent, values: [value], onChange,
+    audioVisualContent, values: [value], onChange, defaultValue, fieldConfig,
   } = props;
 
   const onChangeHandler = (fieldName, fieldVal) => {
@@ -55,13 +43,13 @@ function ContractualLimitationsRestrictionsAndPermissions(props) {
   };
 
   const [permissionsGrantedEnabled, setPermissionsGrantedEnabled] = useEnabled(
-    value.permissionsGrantedAsPartOfTheUseLicense,
-    () => onChangeHandler('permissionsGrantedAsPartOfTheUseLicense', []),
+    value.permissions_granted_as_part_of_the_use_license,
+    () => onChangeHandler('permissions_granted_as_part_of_the_use_license', []),
   );
 
   const [enabled, setEnabled] = useEnabled(
     value, () => {
-      onChange(defaultItemRights.contractualLimitationsRestrictionsAndPermissions);
+      onChange([{ ...defaultValue }]);
       setPermissionsGrantedEnabled(false);
     },
   );
@@ -81,10 +69,7 @@ function ContractualLimitationsRestrictionsAndPermissions(props) {
           <Label sm={4} align="right">
             Are Contractual restrictions included as part of the Copyright Transfer or Use License?
           </Label>
-          <BooleanRadioButtons
-            value={enabled}
-            onChange={setEnabled}
-          />
+          <BooleanRadioButtons value={enabled} onChange={setEnabled} />
         </InputGroup>
 
         <Collapse in={enabled}>
@@ -97,56 +82,52 @@ function ContractualLimitationsRestrictionsAndPermissions(props) {
             <Row>
               <Col sm={{ offset: 1 }}>
                 {
-                  checkboxLimitations.map(entry => (
-                    <InputGroup key={entry.value}>
-                      <Checkbox
-                        value={value[entry.value]}
-                        label={entry.label}
-                        inputName={entry.value}
-                        onChange={newVal => onChangeHandler(entry.value, newVal)}
-                      />
-                    </InputGroup>
-                  ))
+                  checkboxLimitations.map((entry) => {
+                    const {
+                      stringKey,
+                      displayLabel,
+                    } = fieldConfig.children.find(c => c.stringKey === entry);
+
+                    return (
+                      <InputGroup key={stringKey}>
+                        <Checkbox
+                          value={value[stringKey]}
+                          label={displayLabel}
+                          inputName={stringKey}
+                          onChange={newVal => onChangeHandler(stringKey, newVal)}
+                        />
+                      </InputGroup>
+                    );
+                  })
                 }
 
-                <InputGroup>
-                  <Label sm={4} align="right">Reproduction and Distribution Prohibited Until Date</Label>
-                  <DateInput
-                    value={value.reproductionAndDistributionProhibitedUntil}
-                    onChange={v => onChangeHandler('reproductionAndDistributionProhibitedUntil', v)}
-                  />
-                </InputGroup>
+                <Field
+                  value={value.reproduction_and_distribution_prohibited_until}
+                  onChange={v => onChangeHandler('reproduction_and_distribution_prohibited_until', v)}
+                  dynamicField={fieldConfig.children.find(c => c.stringKey === 'reproduction_and_distribution_prohibited_until')}
+                />
 
-                <InputGroup>
-                  <Label sm={4} align="right">Photographic or film credit required [photo credit entered here]</Label>
-                  <TextInput
-                    sm={8}
-                    value={value.photographicOrFilmCredit}
-                    onChange={v => onChangeHandler('photographicOrFilmCredit', v)}
-                  />
-                </InputGroup>
+                <Field
+                  value={value.photographic_or_film_credit}
+                  onChange={v => onChangeHandler('photographic_or_film_credit', v)}
+                  dynamicField={fieldConfig.children.find(c => c.stringKey === 'photographic_or_film_credit')}
+                />
 
                 <Collapse in={audioVisualContent}>
                   <div>
-                    <InputGroup>
-                      <Label sm={4} align="right">Excerpts limited to [X] minutes</Label>
-                      <TextInput
-                        sm={8}
-                        value={value.excerptLimitedTo}
-                        onChange={v => onChangeHandler('excerptLimitedTo', v)}
-                      />
-                    </InputGroup>
+                    <Field
+                      value={value.excerpt_limited_to}
+                      onChange={v => onChangeHandler('excerpt_limited_to', v)}
+                      dynamicField={fieldConfig.children.find(c => c.stringKey === 'excerpt_limited_to')}
+                    />
                   </div>
                 </Collapse>
 
-                <InputGroup>
-                  <Label sm={4} align="right">Other</Label>
-                  <TextInput
-                    sm={8}
-                    value={value.other}
-                    onChange={v => onChangeHandler('other', v)}
-                  />
-                </InputGroup>
+                <Field
+                  value={value.other}
+                  onChange={v => onChangeHandler('other', v)}
+                  dynamicField={fieldConfig.children.find(c => c.stringKey === 'other')}
+                />
               </Col>
             </Row>
 
@@ -163,10 +144,14 @@ function ContractualLimitationsRestrictionsAndPermissions(props) {
                 <InputGroup>
                   <Label sm={4} />
                   <MultiSelectInput
-                    values={value.permissionsGrantedAsPartOfTheUseLicense.map(i => i.value)}
-                    onChange={v => onChangeHandler('permissionsGrantedAsPartOfTheUseLicense', v.map(i => ({ value: i })))}
+                    values={value.permissions_granted_as_part_of_the_use_license.filter(i => i.value.length > 0).map(i => i.value)}
+                    onChange={v => onChangeHandler('permissions_granted_as_part_of_the_use_license', v.map(i => ({ value: i })))}
                     options={
-                      permissionsGrantedAsPartOfTheUseLicense.map(i => ({ value: i, label: i }))
+                      JSON.parse(
+                        fieldConfig
+                          .children.find(c => c.stringKey === 'permissions_granted_as_part_of_the_use_license')
+                          .children.find(c => c.stringKey === 'value').selectOptions
+                      )
                     }
                   />
                 </InputGroup>

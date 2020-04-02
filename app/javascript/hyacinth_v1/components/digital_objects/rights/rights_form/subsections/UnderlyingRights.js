@@ -6,43 +6,14 @@ import { omit, pick } from 'lodash';
 import Label from '../../../../shared/forms/Label';
 import InputGroup from '../../../../shared/forms/InputGroup';
 import BooleanRadioButton from '../../../../shared/forms/inputs/BooleanRadioButtons';
-import SelectInput from '../../../../shared/forms/inputs/SelectInput';
-import TextAreaInput from '../../../../shared/forms/inputs/TextAreaInput';
-import TextInput from '../../../../shared/forms/inputs/TextInput';
 import MultiSelectInput from '../../../../shared/forms/inputs/MultiSelectInput';
 import { useEnabled } from '../rightsHooks';
-import { defaultItemRights } from '../defaultRights';
-
-const talentRights = [
-  'SAG AFTRA',
-  'AFM',
-  'DGA',
-  'Writers Guild',
-  'Actors Equity',
-  'USA',
-  'Theatre Actors and Stage Managers',
-];
-
-const columbiaMusicLicense = [
-  'Sync license',
-  'Master recording license',
-];
-
-const otherUnderlyingRights = [
-  'Authors rights [screenplay]',
-  'Photographic rights [photos]',
-  'Rights in artistic works',
-  'VARA rights',
-  'Trademarks',
-  'Rights in graphics and text',
-  'Location rights',
-  'Performance rights',
-  'Choreography',
-  'Costume design',
-];
+import Field from '../fields/Field';
 
 function UnderlyingRights(props) {
-  const { values, values: [value], onChange } = props;
+  const {
+    values: [value], onChange, fieldConfig,
+  } = props;
 
   const onChangeHandler = (fieldName, fieldVal) => {
     onChange(produce((draft) => {
@@ -51,11 +22,11 @@ function UnderlyingRights(props) {
   };
 
   const [musicLicensedToColumbiaEnabled, setMusicLicensedToColumbiaEnabled] = useEnabled(
-    pick(value, 'columbiaMusicLicense'), () => onChangeHandler('columbiaMusicLicense', ''),
+    pick(value, 'columbia_music_license'), () => onChangeHandler('columbia_music_license', ''),
   );
 
   const [musicRightsEnabled, setMusicRightsEnabled] = useEnabled(
-    pick(value, ['composition', 'columbiaMusicLicense', 'recording']),
+    pick(value, ['composition', 'columbia_music_license', 'recording']),
     () => {
       setMusicLicensedToColumbiaEnabled(false);
       onChange(produce((draft) => {
@@ -74,8 +45,8 @@ function UnderlyingRights(props) {
       setMusicRightsEnabled(false);
       setMusicLicensedToColumbiaEnabled(false);
       onChange(produce((draft) => {
-        draft[0].talentRights = '';
-        draft[0].otherUnderlyingRights = [];
+        draft[0].talent_rights = '';
+        draft[0].other_underlying_rights = [];
         draft[0].other = '';
       }));
     },
@@ -138,70 +109,58 @@ function UnderlyingRights(props) {
 
                     <Collapse in={musicLicensedToColumbiaEnabled}>
                       <div>
-                        <InputGroup>
-                          <Label sm={4} />
-                          <SelectInput
-                            sm={8}
-                            value={value.columbiaMusicLicense}
-                            onChange={v => onChangeHandler('columbiaMusicLicense', v)}
-                            options={columbiaMusicLicense.map(i => ({ value: i, label: i }))}
-                          />
-                        </InputGroup>
+                        <Field
+                          value={value.columbia_music_license}
+                          onChange={v => onChangeHandler('columbia_music_license', v)}
+                          dynamicField={fieldConfig.children.find(c => c.stringKey === 'columbia_music_license')}
+                        />
                       </div>
                     </Collapse>
 
-                    <InputGroup>
-                      <Label sm={4} align="right">Composition [music publisher]</Label>
-                      <TextInput
-                        sm={8}
-                        value={value.composition}
-                        onChange={v => onChangeHandler('composition', v)}
-                      />
-                    </InputGroup>
+                    <Field
+                      value={value.composition}
+                      onChange={v => onChangeHandler('composition', v)}
+                      dynamicField={fieldConfig.children.find(c => c.stringKey === 'composition')}
+                    />
 
-                    <InputGroup>
-                      <Label sm={4} align="right">Recording [record label]</Label>
-                      <TextInput
-                        sm={8}
-                        value={value.recording}
-                        onChange={v => onChangeHandler('recording', v)}
-                      />
-                    </InputGroup>
+                    <Field
+                      value={value.recording}
+                      onChange={v => onChangeHandler('recording', v)}
+                      dynamicField={fieldConfig.children.find(c => c.stringKey === 'recording')}
+                    />
                   </div>
                 </Collapse>
 
-                <InputGroup>
-                  <Label sm={4} align="right">If film/video produced commercially, talent rights</Label>
-                  <SelectInput
-                    sm={8}
-                    value={value.talentRights}
-                    onChange={v => onChangeHandler('talentRights', v)}
-                    options={talentRights.map(i => ({ value: i, label: i }))}
-                  />
-                </InputGroup>
+                <Field
+                  value={value.talent_rights}
+                  onChange={v => onChangeHandler('talent_rights', v)}
+                  dynamicField={fieldConfig.children.find(c => c.stringKey === 'talent_rights')}
+                />
 
                 <InputGroup>
                   <Label sm={4} align="right">Other Underlying Rights</Label>
                   <MultiSelectInput
-                    values={value.otherUnderlyingRights.map(e => e.value)}
-                    onChange={v => onChangeHandler('otherUnderlyingRights', v.map(e => ({ value: e })))}
-                    options={otherUnderlyingRights.map(i => ({ value: i, label: i }))}
+                    values={value.other_underlying_rights.map(e => e.value)}
+                    onChange={v => onChangeHandler('other_underlying_rights', v.map(e => ({ value: e })))}
+                    options={JSON.parse(fieldConfig.children.find(c => c.stringKey === 'other_underlying_rights').children.find(c => c.stringKey === 'value').selectOptions)}
                   />
                 </InputGroup>
 
-                <InputGroup>
-                  <Label sm={4} align="right">Other</Label>
-                  <TextInput sm={8} value={value.other} onChange={v => onChangeHandler('other', v)} />
-                </InputGroup>
+                <Field
+                  value={value.other}
+                  onChange={v => onChangeHandler('other', v)}
+                  dynamicField={fieldConfig.children.find(c => c.stringKey === 'other')}
+                />
               </div>
             </Collapse>
 
             <Collapse in={!doWeKnowSpecificUnderlyingRightsEnabled}>
               <div>
-                <InputGroup>
-                  <Label sm={4} align="right">Describe in a Note</Label>
-                  <TextAreaInput value={value.note} onChange={v => onChangeHandler('note', v)} />
-                </InputGroup>
+                <Field
+                  value={value.note}
+                  onChange={v => onChangeHandler('note', v)}
+                  dynamicField={fieldConfig.children.find(c => c.stringKey === 'note')}
+                />
               </div>
             </Collapse>
           </div>

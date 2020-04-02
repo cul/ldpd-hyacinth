@@ -57,7 +57,7 @@ RSpec.describe 'Enabled Dynamic Fields Requests', type: :request do
                 }
               ]
             }
-          ))
+          )).excluding('dynamic_field_id')
         end
       end
     end

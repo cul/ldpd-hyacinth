@@ -4,29 +4,21 @@ import PropTypes from 'prop-types';
 import produce from 'immer';
 
 import ReadOnlyInput from '../../../../shared/forms/inputs/ReadOnlyInput';
-import TermSelect from '../../../../shared/forms/inputs/TermSelect';
-import YesNoSelect from '../../../../shared/forms/inputs/YesNoSelect';
-import SelectInput from '../../../../shared/forms/inputs/SelectInput';
 import Label from '../../../../shared/forms/Label';
 import InputGroup from '../../../../shared/forms/InputGroup';
-
-const typeOfContent = [
-  { label: 'Compilation', value: 'compilation' },
-  { label: 'Literary works', value: 'literary' },
-  { label: 'Musical works, including any accompanying words', value: 'musical' },
-  { label: 'Dramatic works, including any accompanying music', value: 'dramatic' },
-  { label: 'Pantomimes and choreographic works', value: 'pantomimes_and_choreographic' },
-  { label: 'Pictorial, graphic, and sculptural works', value: 'pictoral_graphic_and_scuptural' },
-  { label: 'Motion pictures and other audiovisual works ', value: 'motion_picture' },
-  { label: 'Sound recordings', value: 'sound_recordings' },
-  { label: 'Architectural works', value: 'architectural' },
-];
+import Field from '../fields/Field';
 
 function DescriptiveMetadata(props) {
-  const { onChange, values: [value], dynamicFieldData, typeOfContentChange } = props;
+  const {
+    onChange,
+    values: [value],
+    dynamicFieldData,
+    typeOfContentChange,
+    fieldConfig
+  } = props;
 
   const onChangeHandler = (fieldName, fieldVal) => {
-    if (fieldName === 'typeOfContent') typeOfContentChange(fieldVal);
+    if (fieldName === 'type_of_content') typeOfContentChange(fieldVal);
 
     onChange(produce((draft) => {
       draft[0][fieldName] = fieldVal;
@@ -34,21 +26,16 @@ function DescriptiveMetadata(props) {
   };
 
   return (
-    <Card className="mb-3">
+    <Card className="my-2">
+      <Card.Header>
+        Descriptive Metadata
+      </Card.Header>
       <Card.Body>
-        <Card.Title>
-          Descriptive Metadata
-        </Card.Title>
-
-        <InputGroup>
-          <Label sm={4} align="right">Type of Content Subject to Copyright</Label>
-          <SelectInput
-            sm={8}
-            value={value.typeOfContent}
-            options={typeOfContent}
-            onChange={v => onChangeHandler('typeOfContent', v)}
-          />
-        </InputGroup>
+        <Field
+          value={value.type_of_content}
+          onChange={v => onChangeHandler('type_of_content', v)}
+          dynamicField={fieldConfig.children.find(c => c.stringKey === 'type_of_content')}
+        />
 
         {
           (dynamicFieldData.genre || [{}]).map((g, i) => (
@@ -115,14 +102,11 @@ function DescriptiveMetadata(props) {
           ))
         }
 
-        <InputGroup>
-          <Label sm={4} align="right">Country of Origin</Label>
-          <TermSelect
-            vocabulary="geonames"
-            value={value.countryOfOrigin}
-            onChange={v => onChangeHandler('countryOfOrigin', v)}
-          />
-        </InputGroup>
+        <Field
+          value={value.country_of_origin}
+          onChange={v => onChangeHandler('country_of_origin', v)}
+          dynamicField={fieldConfig.children.find(c => c.stringKey === 'country_of_origin')}
+        />
 
         {
           (dynamicFieldData.publisher || [{}]).map((t, i) => (
@@ -171,23 +155,19 @@ function DescriptiveMetadata(props) {
           ))
         }
 
-        <Collapse in={value.typeOfContent === 'motion_picture'}>
+        <Collapse in={value.type_of_content === 'motion_picture'}>
           <div>
-            <InputGroup>
-              <Label sm={4} align="right">Film distributed to public?</Label>
-              <YesNoSelect
-                value={value.filmDistributedToPublic}
-                onChange={v => onChangeHandler('filmDistributedToPublic', v)}
-              />
-            </InputGroup>
+            <Field
+              value={value.film_distributed_to_public}
+              onChange={v => onChangeHandler('film_distributed_to_public', v)}
+              dynamicField={fieldConfig.children.find(c => c.stringKey === 'film_distributed_to_public')}
+            />
 
-            <InputGroup>
-              <Label sm={4} align="right">Film distributed commercially?</Label>
-              <YesNoSelect
-                value={value.filmDistributedCommercially}
-                onChange={v => onChangeHandler('filmDistributedCommercially', v)}
-              />
-            </InputGroup>
+            <Field
+              value={value.film_distributed_commercially}
+              onChange={v => onChangeHandler('film_distributed_commercially', v)}
+              dynamicField={fieldConfig.children.find(c => c.stringKey === 'film_distributed_commercially')}
+            />
           </div>
         </Collapse>
       </Card.Body>

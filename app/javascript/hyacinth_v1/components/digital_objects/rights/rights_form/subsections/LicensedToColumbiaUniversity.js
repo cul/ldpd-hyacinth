@@ -6,18 +6,15 @@ import produce from 'immer';
 import Label from '../../../../shared/forms/Label';
 import InputGroup from '../../../../shared/forms/InputGroup';
 import BooleanRadioButton from '../../../../shared/forms/inputs/BooleanRadioButtons';
-import DateInput from '../../../../shared/forms/inputs/DateInput';
-import TextAreaInput from '../../../../shared/forms/inputs/TextAreaInput';
-import TextInput from '../../../../shared/forms/inputs/TextInput';
 import { useEnabled } from '../rightsHooks';
-import { defaultItemRights } from '../defaultRights';
+import Field from '../fields/Field';
 
 function LicenseToColumbiaUniversity(props) {
-  const { values: [value], onChange } = props;
+  const { defaultValue, values: [value], onChange, fieldConfig } = props;
 
   const [enabled, setEnabled] = useEnabled(
     value,
-    () => onChange(defaultItemRights.licensedToColumbiaUniversity),
+    () => onChange([{ ...defaultValue }]),
   );
 
   const onChangeHandler = (fieldName, fieldVal) => {
@@ -43,46 +40,35 @@ function LicenseToColumbiaUniversity(props) {
 
         <Collapse in={enabled}>
           <div>
-            <InputGroup>
-              <Label sm={4} align="right">Date of License</Label>
-              <DateInput
-                value={value.dateOfLicense}
-                onChange={v => onChangeHandler('dateOfLicense', v)}
-              />
-            </InputGroup>
+            <Field
+              value={value.date_of_license}
+              onChange={v => onChangeHandler('date_of_license', v)}
+              dynamicField={fieldConfig.children.find(c => c.stringKey === 'date_of_license')}
+            />
 
-            <InputGroup>
-              <Label sm={4} align="right">Termination Date of License</Label>
-              <DateInput
-                value={value.terminationDateOfLicense}
-                onChange={v => onChangeHandler('terminationDateOfLicense', v)}
-              />
-            </InputGroup>
+            <Field
+              value={value.termination_date_of_license}
+              onChange={v => onChangeHandler('termination_date_of_license', v)}
+              dynamicField={fieldConfig.children.find(c => c.stringKey === 'termination_date_of_license')}
+            />
 
-            <InputGroup>
-              <Label sm={4} align="right">Credits / Other Display Requirements</Label>
-              <TextAreaInput
-                value={value.credits}
-                onChange={v => onChangeHandler('credits', v)}
-              />
-            </InputGroup>
+            <Field
+              value={value.credits}
+              onChange={v => onChangeHandler('credits', v)}
+              dynamicField={fieldConfig.children.find(c => c.stringKey === 'credits')}
+            />
 
-            <InputGroup>
-              <Label sm={4} align="right">Acknowledgements</Label>
-              <TextAreaInput
-                value={value.acknowledgements}
-                onChange={v => onChangeHandler('acknowledgements', v)}
-              />
-            </InputGroup>
+            <Field
+              value={value.acknowledgements}
+              onChange={v => onChangeHandler('acknowledgements', v)}
+              dynamicField={fieldConfig.children.find(c => c.stringKey === 'acknowledgements')}
+            />
 
-            <InputGroup>
-              <Label sm={4} align="right">License Documentation Location</Label>
-              <TextInput
-                sm={8}
-                value={value.licenseDocumentationLocation}
-                onChange={v => onChangeHandler('licenseDocumentationLocation', v)}
-              />
-            </InputGroup>
+            <Field
+              value={value.license_documentation_location}
+              onChange={v => onChangeHandler('license_documentation_location', v)}
+              dynamicField={fieldConfig.children.find(c => c.stringKey === 'license_documentation_location')}
+            />
           </div>
         </Collapse>
       </Card.Body>

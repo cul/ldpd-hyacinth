@@ -15,15 +15,19 @@ FactoryBot.define do
           ]
         }
       )
-      instance.instance_variable_set(
-        '@rights',
-        {
-          'descriptive_metadata' => [
-            { 'type_of_content' => 'literary' }
-          ]
-        }
-      )
       instance
+    end
+
+    trait :with_rights do
+      after(:build) do |digital_object|
+        digital_object.assign_rights({
+          'rights' => {
+            'descriptive_metadata' => [
+              { 'type_of_content' => 'literary' }
+            ]
+          }
+        }, false)
+      end
     end
 
     trait :with_primary_project do
