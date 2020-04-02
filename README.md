@@ -29,6 +29,7 @@ yarn install # this assumes you have node and yarn installed (tested with Node 8
 bundle exec rake hyacinth:setup:config_files # Set up hyacinth config files like hyacinth.yml and database.yml
 bundle exec rake db:migrate # Run database migrations
 bundle exec rake hyacinth:setup:default_users # Set up default Hyacinth users
+bundle exec rake hyacinth:rights_fields:load # Set up rights fields
 bundle exec rake solr:start # Start a local solr server in the background
 bundle exec rake jetty:start # Start a local jetty server for Fedora 3 in the background
 rails s -p 3000 # Start the application using rails server
