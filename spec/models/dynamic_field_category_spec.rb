@@ -11,6 +11,7 @@ RSpec.describe DynamicFieldCategory, type: 'model' do
 
       its(:display_label) { is_expected.to eql 'Descriptive Metadata' }
       its(:sort_order)    { 3 }
+      its(:metadata_form) { :descriptive }
     end
 
     context 'when missing display_label' do
