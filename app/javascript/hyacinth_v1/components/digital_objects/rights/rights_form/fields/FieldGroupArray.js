@@ -86,7 +86,7 @@ FieldGroupArray.propTypes = {
     isRepeatable: PropTypes.bool.isRequired,
   }).isRequired,
   value: PropTypes.arrayOf(PropTypes.object).isRequired,
-  defaultValue: PropTypes.shape(PropTypes.any).isRequired,
+  defaultValue: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 export default FieldGroupArray;
