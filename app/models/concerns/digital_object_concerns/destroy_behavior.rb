@@ -17,7 +17,6 @@ module DigitalObjectConcerns
     #                             this object outside of the save call for another reason. Defaults to true.
     #             :user [User] User who is performing the destroy operation.
     def destroy(opts = {})
-      destroy_result = false
       # run_callbacks returns the result of its block
       run_callbacks :destroy do
         destroy_impl(opts)
