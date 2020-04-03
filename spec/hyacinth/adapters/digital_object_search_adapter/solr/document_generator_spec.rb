@@ -15,6 +15,10 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
       expect(adapter.solr_document_for(authorized_object)['id']).to eql(authorized_object.uid)
     end
 
+    it "indexes the state" do
+      expect(adapter.solr_document_for(authorized_object)['state_ssi']).to eql(authorized_object.state)
+    end
+
     it "indexes the digital object type" do
       expect(adapter.solr_document_for(authorized_object)['digital_object_type_ssi']).to eql(authorized_object.digital_object_type)
     end

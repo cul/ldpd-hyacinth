@@ -2,6 +2,23 @@
 
 namespace :hyacinth do
   namespace :setup do
+    desc "Set up hyacinth config files"
+    task :config_files do
+      config_template_dir = Rails.root.join('config', 'templates')
+      config_dir = Rails.root.join('config')
+      Dir.foreach(config_template_dir) do |entry|
+        next unless entry.end_with?('.yml')
+        src_path = File.join(config_template_dir, entry)
+        dst_path = File.join(config_dir, entry.gsub('.template', ''))
+        if File.exist?(dst_path)
+          puts Rainbow("File already exists (skipping): #{dst_path}").blue.bright + "\n"
+        else
+          FileUtils.cp(src_path, dst_path)
+          puts Rainbow("Created file at: #{dst_path}").green
+        end
+      end
+    end
+
     desc "Set up default Hyacinth users"
     task default_users: :environment do
       default_user_accounts.each do |account_info|
@@ -23,21 +40,14 @@ namespace :hyacinth do
       end
     end
 
-    desc "Set up hyacinth config files"
-    task :config_files do
-      config_template_dir = Rails.root.join('config', 'templates')
-      config_dir = Rails.root.join('config')
-      Dir.foreach(config_template_dir) do |entry|
-        next unless entry.end_with?('.yml')
-        src_path = File.join(config_template_dir, entry)
-        dst_path = File.join(config_dir, entry.gsub('.template', ''))
-        if File.exist?(dst_path)
-          puts Rainbow("File already exists (skipping): #{dst_path}").blue.bright + "\n"
-        else
-          FileUtils.cp(src_path, dst_path)
-          puts Rainbow("Created file at: #{dst_path}").green
-        end
-      end
+    desc "Set up Test project"
+    task test_project: :environment do
+      Project.create!(
+        string_key: 'test',
+        display_label: 'Test',
+        is_primary: true,
+        has_asset_rights: true
+      )
     end
 
     desc "Add Descriptive Metadata category and Title dynamic fields"

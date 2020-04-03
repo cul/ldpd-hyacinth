@@ -83,8 +83,8 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
         # state should be assigned automatically
         expect(rubydora_object.state).to eql('A')
       end
-      it "assigns a state property to inactive if withdrawn" do
-        hyacinth_object.state = Hyacinth::DigitalObject::State::WITHDRAWN
+      it "assigns a state property to inactive if deleted" do
+        hyacinth_object.state = Hyacinth::DigitalObject::State::DELETED
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
         expect(rubydora_object.state).to eql('I')
       end
@@ -161,9 +161,9 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
     context "RelsInt properties for resources" do
       let(:dsids) { ['structMetadata'] }
       let(:hyacinth_object) { DigitalObject::Asset.new }
-      let(:resource_args) { { original_filename: '/old/path/to/file.doc', location: '/path/to/file.doc', checksum: 'asdf', file_size: 'asdf' } }
+      let(:resource_args) { { original_file_path: '/old/path/to/file.doc', location: '/path/to/file.doc', checksum: 'urn:asdf', file_size: 'asdf' } }
       before do
-        hyacinth_object.resources['master'].send(:initialize, resource_args)
+        hyacinth_object.resources['master'] = Hyacinth::DigitalObject::Resource.new(resource_args)
       end
       it "persists model properties" do
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)

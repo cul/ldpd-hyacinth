@@ -19,6 +19,7 @@ module Hyacinth
           indexable_title = digital_object.generate_title(true)
           solr_document.merge!(
             'id' => digital_object.uid,
+            'state_ssi' => digital_object.state,
             'digital_object_type_ssi' => digital_object.digital_object_type,
             'doi_ssi' => digital_object.doi,
             'identifier_ssim' => digital_object.identifiers.to_a,

@@ -25,15 +25,16 @@ function AssetData(props) {
   const { digitalObject } = digitalObjectData;
 
   const renderResources = () => {
-    return digitalObject.resources.map((resource) => {
+    return digitalObject.resources.map((resourceWrapper) => {
       const {
-        id: resourceId, displayLabel, location, checksum, originalFilename, mediaType, fileSize
-      } = resource;
+        id: resourceId, displayLabel, resource,
+      } = resourceWrapper;
+      // location, checksum, originalFilename, mediaType, fileSize,
       return (
         <Card key={resourceId}>
           <Card.Header>{displayLabel}</Card.Header>
           <Card.Body>
-            { location ?
+            { resource ?
               (
                 <dl className="row">
                   <dt className="col-lg-3">Download</dt>
@@ -41,24 +42,27 @@ function AssetData(props) {
                     <FontAwesomeIcon icon="download" />
                     {' '}
                     <a href={`/api/v1/downloads/digital_object/${id}/${resourceId}`}>
-                      {` ${originalFilename}`}
+                      {` ${resource.originalFilename}`}
                     </a>
                   </dd>
 
                   <dt className="col-lg-3">Original Filename</dt>
-                  <dd className="col-lg-9">{originalFilename}</dd>
+                  <dd className="col-lg-9">{resource.originalFilename}</dd>
+
+                  <dt className="col-lg-3">Original File Path</dt>
+                  <dd className="col-lg-9">{resource.originalFilePath}</dd>
 
                   <dt className="col-lg-3">Location</dt>
-                  <dd className="col-lg-9">{location}</dd>
+                  <dd className="col-lg-9">{resource.location}</dd>
 
                   <dt className="col-lg-3">Checksum</dt>
-                  <dd className="col-lg-9">{checksum || 'unavailable'}</dd>
+                  <dd className="col-lg-9">{resource.checksum || 'unavailable'}</dd>
 
                   <dt className="col-lg-3">Media Type</dt>
-                  <dd className="col-lg-9">{mediaType}</dd>
+                  <dd className="col-lg-9">{resource.mediaType}</dd>
 
                   <dt className="col-lg-3">File Size</dt>
-                  <dd className="col-lg-9">{fileSize || 'unavailable'}</dd>
+                  <dd className="col-lg-9">{resource.fileSize || 'unavailable'}</dd>
                 </dl>
               )
               : 'None'

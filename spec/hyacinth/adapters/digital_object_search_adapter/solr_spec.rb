@@ -13,7 +13,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr do
     context "with multiple filter values on the same filter" do
       let(:search_params) { { 'animals' => ['dogs', 'cats'] } }
       it "collects fq values" do
-        expect(solr_params.to_h).to include(fq: ['animals:"dogs"', 'animals:"cats"'])
+        expect(solr_params.to_h).to include(fq: ['state_ssi:"active"', 'animals:"dogs"', 'animals:"cats"'])
       end
     end
   end

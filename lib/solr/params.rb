@@ -8,7 +8,7 @@ module Solr
       @parameters = {
         q: nil,
         qt: 'search',
-        df: 'keywords_teim',
+        df: 'keywords_teim', # TODO: Is this actually the default we want? This class is used by the TermSearchAdapter too.
         fq: [],
         'facet.field'.to_sym => [],
         start: 0

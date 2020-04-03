@@ -25,8 +25,12 @@ module Hyacinth
           solr.commit if opts[:commit]
         end
 
-        def search(search_params = {})
+        def search(search_params = {}, user_for_permission_context = nil)
           solr_parameters = solr_params_for(search_params)
+
+          # If a user_for_permission_context has been provided, limit search results to objects
+          # in projects that are readable for that user.
+          apply_user_project_filters(solr_parameters, user_for_permission_context) if user_for_permission_context
 
           yield(solr_parameters) if block_given?
 
@@ -42,6 +46,10 @@ module Hyacinth
         def solr_params_for(search_params)
           solr_parameters = ::Solr::Params.new
           solr_parameters.tap do |sp|
+            # Only return active objects
+            sp.fq('state_ssi', Hyacinth::DigitalObject::State::ACTIVE)
+
+            # Apply search_params
             search_params.each do |k, v|
               if k.to_s == 'q'
                 sp.q(v)
@@ -53,6 +61,14 @@ module Hyacinth
             end
           end
           solr_parameters
+        end
+
+        # Adds filter queries to the given solr_prameters based on projects where the
+        # given user has read access.
+        def apply_user_project_filters(solr_parameters, user)
+          Project.accessible_by(Ability.new(user), :read_objects).each do |project|
+            solr_parameters.fq('projects_ssim', project.string_key)
+          end
         end
 
         # Returns the uids associated with the given identifier

@@ -137,28 +137,46 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
         sign_in_project_contributor to: [:delete_objects, :read_objects], project: authorized_project
         allow(publication_adapter).to receive(:unpublish).and_call_original
         allow(publication_adapter).to receive(:update_doi).and_call_original
+        allow(digital_object_search_adapter).to receive(:index).with(instance_of(DigitalObject::TestSubclass)).and_return([true, []])
       end
 
-      it 'returns 204' do
+      it 'returns 200' do
         allow(publication_adapter).to receive(:unpublish_impl).with(authorized_publish_target, digital_object_matcher).and_return([true, []])
-        allow(digital_object_search_adapter).to receive(:remove).with(digital_object_matcher).and_return([true, []])
         delete "/api/v1/digital_objects/#{authorized_object.uid}"
-        expect(response.status).to be 204
+        expect(response.status).to be 200
         get "/api/v1/digital_objects/#{authorized_object.uid}"
-        expect(response.status).to be 404
+        expect(response.status).to be 200
+      end
+      it "returns object response, with status of 'deleted'" do
+        allow(publication_adapter).to receive(:unpublish_impl).with(authorized_publish_target, digital_object_matcher).and_return([true, []])
+        delete "/api/v1/digital_objects/#{authorized_object.uid}"
+        expect(JSON.parse(response.body)['digital_object']).to include('state' => Hyacinth::DigitalObject::State::DELETED)
       end
       it 'unpublishes the object on delete' do
         expect(publication_adapter).to receive(:unpublish_impl).with(authorized_publish_target, digital_object_matcher).and_return([true, []])
-        expect(digital_object_search_adapter).to receive(:remove).with(digital_object_matcher).and_return([true, []])
         delete "/api/v1/digital_objects/#{authorized_object.uid}"
-      end
-      it "return blank response entity" do
-        allow(publication_adapter).to receive(:unpublish_impl).with(authorized_publish_target, digital_object_matcher).and_return([true, []])
-        allow(digital_object_search_adapter).to receive(:remove).with(digital_object_matcher).and_return([true, []])
-        delete "/api/v1/digital_objects/#{authorized_object.uid}"
-        expect(response.body).to be_blank
       end
     end
+  end
+
+  describe 'DELETE /api/v1/digital_objects/:id?purge=true' do
+    pending('implementation of purge API endpoint (which will move to graphql')
+
+    # it "return blank response entity" do
+    #   allow(publication_adapter).to receive(:unpublish_impl).with(authorized_publish_target, digital_object_matcher).and_return([true, []])
+    #   allow(digital_object_search_adapter).to receive(:remove).with(digital_object_matcher).and_return([true, []])
+    #   delete "/api/v1/digital_objects/#{authorized_object.uid}"
+    #   expect(response.body).to be_blank
+    # end
+
+    # it 'returns 204' do
+    #   allow(publication_adapter).to receive(:unpublish_impl).with(authorized_publish_target, digital_object_matcher).and_return([true, []])
+    #   allow(digital_object_search_adapter).to receive(:remove).with(digital_object_matcher).and_return([true, []])
+    #   delete "/api/v1/digital_objects/#{authorized_object.uid}"
+    #   expect(response.status).to be 204
+    #   get "/api/v1/digital_objects/#{authorized_object.uid}"
+    #   expect(response.status).to be 404
+    # end
   end
 
   describe 'POST /api/v1/digital_objects/:id/publish' do

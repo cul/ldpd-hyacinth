@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe DigitalObjectConcerns::AttributeAssignment::Resources do
+RSpec.describe DigitalObjectConcerns::AttributeAssignment::ResourceImports do
   context "todo" do
     skip 'todo'
   end

@@ -10,7 +10,7 @@ module DigitalObjectConcerns
     include DigitalObjectConcerns::AttributeAssignment::Preserve
     include DigitalObjectConcerns::AttributeAssignment::Projects
     include DigitalObjectConcerns::AttributeAssignment::PendingPublishEntries
-    include DigitalObjectConcerns::AttributeAssignment::Resources
+    include DigitalObjectConcerns::AttributeAssignment::ResourceImports
     include DigitalObjectConcerns::AttributeAssignment::Rights
     include DigitalObjectConcerns::AttributeAssignment::State
     include DigitalObjectConcerns::AttributeAssignment::StructuredChildren

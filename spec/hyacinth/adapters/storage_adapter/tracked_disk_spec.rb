@@ -18,4 +18,17 @@ RSpec.describe Hyacinth::Adapters::StorageAdapter::TrackedDisk do
   it "is not writable" do
     expect(adapter.writable?).to eq(false)
   end
+
+  context "#delete" do
+    it "raises an exception" do
+      expect { adapter.delete(sample_location_uri) }.to raise_error(Hyacinth::Exceptions::DeletionError)
+    end
+
+    it "does not delete the file at the given location" do
+      adapter.delete(sample_location_uri)
+    rescue # rubocop:disable Lint/HandleExceptions
+    ensure
+      expect(adapter.exists?(example_file_path)).to eq(true)
+    end
+  end
 end

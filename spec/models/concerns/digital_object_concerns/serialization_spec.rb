@@ -27,14 +27,14 @@ RSpec.describe DigitalObjectConcerns::Serialization do
           'location' => 'managed-disk:///path/to/file1',
           'checksum' => 'SHA256:e1266b81a70083fa5e3bf456239a1160fc6ebc179cdd71e458a9dd4bc7cc21f6',
           'media_type' => nil,
-          'original_filename' => nil,
+          'original_file_path' => nil,
           'file_size' => nil
         },
         'test_resource2' => {
           'location' => 'managed-disk:///path/to/file2',
           'checksum' => 'SHA256:30a7b320463d2d4a2052b72ea48518f5ad36dcb935b54628f292861241a7632e',
           'media_type' => nil,
-          'original_filename' => nil,
+          'original_file_path' => nil,
           'file_size' => nil
         },
       }
@@ -62,7 +62,9 @@ RSpec.describe DigitalObjectConcerns::Serialization do
     let(:deserialized_instance) { digital_object_with_sample_data.class.from_serialized_form(digital_object_record, expected_serialized_form) }
     it "deserializes as expected" do
       expect(deserialized_instance).to be_a(DigitalObject::TestSubclass)
-      expect(deserialized_instance.to_serialized_form).to include(expected_serialized_form)
+      deserialized_instance.to_serialized_form.each do |key, value|
+        expect(value).to eq(expected_serialized_form[key])
+      end
     end
   end
 end

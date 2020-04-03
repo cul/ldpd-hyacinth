@@ -4,7 +4,8 @@ module Hyacinth
   module Exceptions
     class HyacinthError < StandardError; end
 
-    class NotDestroyed < HyacinthError; end
+    class DeletionError < HyacinthError; end
+    class PurgeError < HyacinthError; end
     class NotFound < HyacinthError; end
     class NotSaved < HyacinthError; end
     class LockError < HyacinthError; end
@@ -21,9 +22,11 @@ module Hyacinth
 
     class UnsupportedType < HyacinthError; end
 
-    class AdapterNotFoundError < StandardError; end
-    class UnhandledLocationError < StandardError; end
+    class ChecksumMismatchError < HyacinthError; end
 
-    class DuplicateTypeError < StandardError; end
+    class AdapterNotFoundError < HyacinthError; end
+    class UnhandledLocationError < HyacinthError; end
+
+    class DuplicateTypeError < HyacinthError; end
   end
 end

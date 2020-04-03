@@ -29,8 +29,8 @@ module Hyacinth
 
         def delta_for(resource, fedora_obj, dsid)
           proposed_values = {
-            URIS::EXTENT => [resource.file_size],
-            URIS::HAS_MESSAGE_DIGEST => [resource.checksum ? "urn:#{resource.checksum}" : nil]
+            URIS::EXTENT => [resource && resource.file_size.present? ? resource.file_size : nil],
+            URIS::HAS_MESSAGE_DIGEST => [resource && resource.checksum.present? ? resource.checksum : nil]
           }
 
           proposed_values.each { |_k, v| v.compact! }

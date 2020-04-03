@@ -42,7 +42,8 @@ module Hyacinth
         end
 
         # Attempts to establish a lock on the given key and then yields to a block. The lock is are automatically unlocked when the block is completed.
-        # :yields: lock_object [Hyacinth::Adapters::LockAdapter::DatabaseEntryLock::LockObject] Which has an #extend_lock method that can be called to the lock by the application-wide lock timeout.
+        # :yields: lock_object [Hyacinth::Adapters::LockAdapter::DatabaseEntryLock::LockObject] A lock object that can have its lock extended if necessary,
+        # or nil if a nil key is given.
         def with_lock(key)
           with_multilock(Array.wrap(key)) do |lock_objects|
             yield lock_objects[key]
@@ -115,6 +116,12 @@ module Hyacinth
           def extend_lock
             raise Hyacinth::Exceptions::LockError, 'Cannot call #extend_lock because #unlock has already been called.' unless @locked
             @database_entry_lock.update!(expires_at: DateTime.current + @lock_timeout.seconds)
+          end
+
+          # Extends the lock if it will expire in less than the given duration.
+          # @param [Integer or ActiveSupport::Duration] duration
+          def extend_lock_if_expires_in_less_than(duration)
+            extend_lock if DateTime.current + duration > @database_entry_lock.expires_at
           end
 
           def unlock

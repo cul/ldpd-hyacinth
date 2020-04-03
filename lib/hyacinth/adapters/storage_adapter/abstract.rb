@@ -17,6 +17,10 @@ module Hyacinth
           false
         end
 
+        def deletable?
+          writable?
+        end
+
         # @return [string] the expected prefix for a location_uri associated with this adapter
         def uri_prefix
           "#{@uri_protocol}://"
@@ -88,6 +92,7 @@ module Hyacinth
         # @param location_uri [String] location to delete from
         def delete(location_uri)
           raise Hyacinth::Exceptions::UnhandledLocationError, "Unhandled location_uri for #{self.class.name}: #{location_uri}" unless handles?(location_uri)
+          raise Hyacinth::Exceptions::DeletionError, "Cannot delete #{location_uri} because associated adapter doesn't support deletions" unless deletable?
           delete_impl(location_uri) if exists?(location_uri)
         end
 

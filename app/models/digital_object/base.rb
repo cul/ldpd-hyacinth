@@ -18,6 +18,7 @@ module DigitalObject
     include DigitalObjectConcerns::CopyBehavior
     include DigitalObjectConcerns::PublishBehavior
     include DigitalObjectConcerns::DestroyBehavior
+    include DigitalObjectConcerns::PurgeBehavior
     include DigitalObjectConcerns::ExportFieldsBehavior
     include DigitalObjectConcerns::PreserveBehavior
     include DigitalObjectConcerns::IndexBehavior
@@ -34,7 +35,8 @@ module DigitalObject
     before_validation :clean_dynamic_field_data!, :clean_rights!
     # TODO: Add these before_validations ---> :register_new_uris_and_values_for_dynamic_field_data!, normalize_controlled_term_fields!
     after_save :index
-    after_destroy :deindex
+    before_destroy :remove_all_parents, :unpublish_from_all
+    after_destroy :index
 
     # Simple attributes
     metadata_attribute :serialization_version, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { SERIALIZATION_VERSION }).private_writer
@@ -42,7 +44,7 @@ module DigitalObject
     metadata_attribute :doi, Hyacinth::DigitalObject::TypeDef::String.new.private_writer
     # constrain type to the keys for registered type classes
     metadata_attribute :digital_object_type, Hyacinth::DigitalObject::TypeDef::String.new.private_writer
-    metadata_attribute :state, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { 'active' })
+    metadata_attribute :state, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { Hyacinth::DigitalObject::State::ACTIVE })
     # Modification Info
     metadata_attribute :created_by, Hyacinth::DigitalObject::TypeDef::User.new.private_writer
     metadata_attribute :updated_by, Hyacinth::DigitalObject::TypeDef::User.new.private_writer

@@ -7,54 +7,53 @@ module DigitalObjectConcerns
     # This method is like the other #destroy method, but it raises an error if the destruction fails.
     def destroy!(opts = {})
       return true if destroy(opts)
-      raise Hyacinth::Exceptions::NotDestroyed, "DigitalObject could not be destroyed. Errors: #{self.errors.full_messages}"
+      raise Hyacinth::Exceptions::DeletionError, "DigitalObject may not have been fully destroyed. Errors: #{self.errors.full_messages}"
     end
 
-    # destroy this object, changing its status in permanent storage, unpublishing it,
-    # and optionally removing it from the searchable index.
+    # Marks this object as deleted and runs destroy callbacks.
     # @param opts [Hash] A hash of options. Options include:
-    #             :lock [boolean] Whether or not to lock on this object during delete.
-    #                             You generally want this to be true, unless you're establishing a lock on this object
-    #                             outside of the save call for another reason. Defaults to true.
-    #             :update_index [boolean] Whether or not to update the search index after delete.
-    #             :user [User] User who is performing the save operation.
+    #             :lock [boolean] Whether or not to lock on this object during destroy.
+    #                             You generally want this to be true, unless you're establishing a lock on
+    #                             this object outside of the save call for another reason. Defaults to true.
+    #             :user [User] User who is performing the destroy operation.
     def destroy(opts = {})
-      delete_result = false
+      destroy_result = false
       run_callbacks :destroy do
-        delete_result = delete_impl(opts)
+        destroy_result = destroy_impl(opts)
       end
-      delete_result
+      destroy_result
     end
 
-    def delete_impl(opts = {})
-      # Always lock during delete unless opts[:lock] explicitly tells us not to.
-      # In the line below, self.uid will be nil for new objects and this lock
-      # line will simply yield without locking on anything, which is fine.
+    # Marks this object as active.
+    # @param opts [Hash] A hash of options. Options include:
+    #             :lock [boolean] Whether or not to lock on this object during undestroy.
+    #                             You generally want this to be true, unless you're establishing a lock on
+    #                             this object outside of the save call for another reason. Defaults to true.
+    #             :user [User] User who is performing the undestroy operation.
+    def undestroy(opts = {})
+      # Always lock during undestroy unless opts[:lock] explicitly tells us not to.
       Hyacinth::Config.lock_adapter.with_lock(opts.fetch(:lock, true) ? self.uid : nil) do |_lock_object|
-        @parent_uids_to_remove.merge(parent_uids)
-        @parent_uids_to_add.clear
-        self.handle_parent_changes do
-          # Modify DigitalObjectRecord last, since creating it switches new_record? to false,
-          # and optimistic_lock_token should change as part of a successful destroy.
-          self.digital_object_record.optimistic_lock_token = self.mint_optimistic_lock_token
-
-          # remove metadata storage
-          self.remove_from_metadata_storage
-          all_targets = self.projects.map do |project|
-            project.publish_targets.map(&:string_key)
-          end.flatten.uniq
-          self.assign_pending_publish_entries({ 'publish_to' => [], 'unpublish_from' => all_targets })
-          # if everything worked, destroy digital object record
-          self.digital_object_record.destroy!
-        end
+        self.state = Hyacinth::DigitalObject::State::ACTIVE
+        self.updated_by = opts[:user] if opts[:user]
+        self.updated_at = DateTime.current
+        write_to_metadata_storage
       end
-
-      Hyacinth::Config.digital_object_search_adapter.remove(self) if opts[:update_index] == true
       self.errors.blank?
     end
 
-    def remove_from_metadata_storage
-      Hyacinth::Config.metadata_storage.delete(self.digital_object_record.metadata_location_uri)
-    end
+    private
+
+      def destroy_impl(opts = {})
+        # Always lock during destroy unless opts[:lock] explicitly tells us not to.
+        # In the line below, self.uid will be nil for new objects and this lock
+        # line will simply yield without locking on anything, which is fine.
+        Hyacinth::Config.lock_adapter.with_lock(opts.fetch(:lock, true) ? self.uid : nil) do |_lock_object|
+          self.state = Hyacinth::DigitalObject::State::DELETED
+          self.updated_by = opts[:user] if opts[:user]
+          self.updated_at = DateTime.current
+          write_to_metadata_storage
+        end
+        self.errors.blank?
+      end
   end
 end

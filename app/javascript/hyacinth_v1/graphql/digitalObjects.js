@@ -234,11 +234,14 @@ export const getAssetDataDigitalObjectQuery = gql`
       resources {
         id
         displayLabel
-        location
-        checksum
-        originalFilename
-        mediaType
-        fileSize
+        resource {
+          location
+          checksum
+          originalFilePath
+          originalFilename
+          mediaType
+          fileSize
+        }
       },
       ... on Asset {
         assetType
