@@ -21,6 +21,7 @@ export const getMinimalDigitalObjectWithProjectsQuery = gql`
 
 const digitalObjectInterfaceFields = `
   id,
+  state,
   digitalObjectType,
   title,
   numberOfChildren,

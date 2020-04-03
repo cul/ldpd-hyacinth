@@ -48,7 +48,7 @@ function SystemData(props) {
   }
 
   const {
-    createdBy, createdAt, updatedBy, updatedAt, firstPublishedAt,
+    state, createdBy, createdAt, updatedBy, updatedAt, firstPublishedAt,
     primaryProject, otherProjects,
   } = digitalObject;
 
@@ -76,7 +76,7 @@ function SystemData(props) {
       <p>{primaryProject.displayLabel}</p>
       <h4>Other Projects</h4>
       <p>{otherProjects.length ? otherProjects.map(p => p.displayLabel).join(', ') : 'None'}</p>
-      { renderDeleteSection() }
+      { state === 'active' && renderDeleteSection() }
     </DigitalObjectInterface>
   );
 }

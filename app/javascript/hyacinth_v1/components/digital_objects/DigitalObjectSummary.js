@@ -1,15 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Alert } from 'react-bootstrap';
 
 function DigitalObjectSummary(props) {
   const {
     digitalObject: {
-      id, doi, primaryProject, otherProjects, numberOfChildren,
+      id, state, doi, primaryProject, otherProjects, numberOfChildren,
     }
   } = props;
 
   return (
-    <div className="m-3">
+    <div className="my-3">
+      {
+          state === 'deleted' && (
+            <Alert variant="danger">
+              This object has been deleted.
+            </Alert>
+          )
+        }
       <dl className="row mb-0">
         <dt className="col-sm-3">Primary Project</dt>
         <dd className="col-sm-9">
