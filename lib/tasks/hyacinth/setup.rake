@@ -157,7 +157,7 @@ namespace :hyacinth do
         first_name: 'Test',
         last_name: 'User',
         uid: SecureRandom.uuid,
-        is_admin: true
+        is_admin: false
       }
     ]
   end
