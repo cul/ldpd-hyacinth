@@ -23,7 +23,7 @@ namespace :hyacinth do
     task default_users: :environment do
       default_user_accounts.each do |account_info|
         user_email = account_info[:email]
-        if User.exists?(email: account_info[:email])
+        if User.exists?(email: user_email)
           puts Rainbow("Skipping creation of user #{user_email} because user already exists.").blue.bright
         else
           User.create!(
@@ -40,14 +40,36 @@ namespace :hyacinth do
       end
     end
 
-    desc "Set up Test project"
-    task test_project: :environment do
-      Project.create!(
-        string_key: 'test',
-        display_label: 'Test',
-        is_primary: true,
-        has_asset_rights: true
-      )
+    desc "Set up Test projects"
+    task test_projects: :environment do
+      [
+        {
+          string_key: 'test_primary_project',
+          display_label: 'Test Primary Project',
+          is_primary: true,
+          has_asset_rights: true
+        },
+        {
+          string_key: 'another_test_primary_project',
+          display_label: 'Another Test Primary Project',
+          is_primary: true,
+          has_asset_rights: true
+        },
+        {
+          string_key: 'test_aggregator_project',
+          display_label: 'Test Aggregator Project',
+          is_primary: false,
+          has_asset_rights: false
+        }
+      ].each do |project_config|
+        project_string_key = project_config[:string_key]
+        if Project.exists?(string_key: project_string_key)
+          puts Rainbow("Skipping creation of project #{project_string_key} because project already exists.").blue.bright
+        else
+          Project.create!(project_config)
+          puts Rainbow("Created project: #{project_string_key}").green
+        end
+      end
     end
 
     desc "Add Descriptive Metadata category and Title dynamic fields"
