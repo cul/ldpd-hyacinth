@@ -29,11 +29,14 @@ module DigitalObjectConcerns
     #                             outside of the save call for another reason. Defaults to true.
     #             :user [User] User who is performing the save operation.
     def save(opts = {})
-      run_callbacks :validation do self.valid? end
+      run_callbacks :validation do
+        self.valid?
+      end
       return false if self.errors.present?
-      save_result = false
-      run_callbacks :save do save_result = save_impl(opts) end
-      save_result
+      # run_callbacks returns the result of its block
+      run_callbacks :save do
+        save_impl(opts)
+      end
     end
 
     def save_impl(opts = {})

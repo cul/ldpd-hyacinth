@@ -18,10 +18,10 @@ module DigitalObjectConcerns
     #             :user [User] User who is performing the destroy operation.
     def destroy(opts = {})
       destroy_result = false
+      # run_callbacks returns the result of its block
       run_callbacks :destroy do
-        destroy_result = destroy_impl(opts)
+        destroy_impl(opts)
       end
-      destroy_result
     end
 
     # Marks this object as active.
