@@ -66,8 +66,14 @@ module Hyacinth
         # Adds filter queries to the given solr_prameters based on projects where the
         # given user has read access.
         def apply_user_project_filters(solr_parameters, user)
-          Project.accessible_by(Ability.new(user), :read_objects).each do |project|
-            solr_parameters.fq('projects_ssim', project.string_key)
+          read_objects_access_project_string_keys = Project.accessible_by(Ability.new(user), :read_objects).map(&:string_key)
+          if read_objects_access_project_string_keys.present?
+            solr_parameters.fq('projects_ssim', read_objects_access_project_string_keys)
+          else
+            # User has no project permissions, so we'll deliberately put in an unresolvable value
+            # to get zero results. Projects cannot have exclamation points in their string keys,
+            # so the value below will work.
+            solr_parameters.fq('projects_ssim', '!nomatch!')
           end
         end
 
