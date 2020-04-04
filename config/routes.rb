@@ -43,7 +43,6 @@ Rails.application.routes.draw do
           post ':id/preserve' => 'digital_objects#preserve', as: :preserve
         end
         member do
-          resource :rights, controller: 'digital_objects/rights', only: [:show, :edit, :update]
           get 'resources/:resource_name/download' => 'digital_objects/resources#download', as: :download_resource
         end
       end

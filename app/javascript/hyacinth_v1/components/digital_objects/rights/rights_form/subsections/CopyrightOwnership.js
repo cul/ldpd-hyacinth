@@ -1,43 +1,17 @@
 import React from 'react';
 import { Card, Collapse } from 'react-bootstrap';
-import { produce } from 'immer';
-import CopyrightOwner from './CopyrightOwner';
 import InputGroup from '../../../../shared/forms/InputGroup';
 import Label from '../../../../shared/forms/Label';
 import BooleanRadioButtons from '../../../../shared/forms/inputs/BooleanRadioButtons';
 import { useEnabled } from '../rightsHooks';
-import { defaultItemRights } from '../defaultRights';
-
-// Default value for one owner
-const defaultValue = defaultItemRights.copyrightOwnership[0];
+import FieldGroupArray from '../fields/FieldGroupArray';
 
 function CopyrightOwnership(props) {
-  const { values, onChange } = props;
+  const { fieldConfig, values, defaultValue, onChange } = props;
 
-  const clear = () => onChange([defaultValue]);
+  const clear = () => onChange([{ ...defaultValue }]);
 
   const [enabled, setEnabled] = useEnabled(values, clear);
-
-  const onCopyrightOwnerChange = (index, updates) => {
-    onChange((obj) => {
-      const updatedValue = updates(obj[index]);
-      return produce(obj, (draft) => {
-        draft[index] = updatedValue;
-      });
-    });
-  };
-
-  const addCopyrightOwner = (index) => {
-    onChange(produce((draft) => {
-      draft.splice(index + 1, 0, defaultValue);
-    }));
-  };
-
-  const removeCopyrightOwner = (index) => {
-    onChange(produce((draft) => {
-      draft.splice(index, 1);
-    }));
-  };
 
   return (
     <Card className="mb-3">
@@ -51,18 +25,12 @@ function CopyrightOwnership(props) {
 
         <Collapse in={enabled}>
           <div>
-            {
-              values.map((copyrightOwner, index) => (
-                <CopyrightOwner
-                  index={index}
-                  key={index}
-                  value={copyrightOwner}
-                  onChange={updates => onCopyrightOwnerChange(index, updates)}
-                  onRemove={() => removeCopyrightOwner(index)}
-                  onAdd={() => addCopyrightOwner(index)}
-                />
-              ))
-            }
+            <FieldGroupArray
+              value={values}
+              defaultValue={defaultValue}
+              dynamicFieldGroup={fieldConfig}
+              onChange={onChange}
+            />
           </div>
         </Collapse>
       </Card.Body>

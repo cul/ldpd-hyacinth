@@ -5,16 +5,12 @@ import produce from 'immer';
 
 import InputGroup from '../../../../shared/forms/InputGroup';
 import Label from '../../../../shared/forms/Label';
-import DateInput from '../../../../shared/forms/inputs/DateInput';
-import TextInput from '../../../../shared/forms/inputs/TextInput';
 import BooleanRadioButtons from '../../../../shared/forms/inputs/BooleanRadioButtons';
 import { useEnabled } from '../rightsHooks';
-import { defaultItemRights } from '../defaultRights';
-
-const defaults = defaultItemRights.columbiaUniversityIsCopyrightHolder;
+import Field from '../fields/Field';
 
 function ColumbiaUniversityIsCopyrightHolder(props) {
-  const { values, values: [value], onChange } = props;
+  const { defaultValue, fieldConfig, values: [value], onChange } = props;
 
   const onChangeHandler = (fieldName, fieldVal) => {
     onChange(produce((draft) => {
@@ -23,15 +19,15 @@ function ColumbiaUniversityIsCopyrightHolder(props) {
   };
 
   const [otherTransferEvidenceEnabled, setOtherTransferEvidenceEnabled] = useEnabled(
-    value.otherTransferEvidence, () => onChangeHandler('otherTransferEvidence', ''),
+    value.other_transfer_evidence, () => onChangeHandler('other_transfer_evidence', ''),
   );
 
   const [transferDocumentionEnabled, setTransferDocumentionEnabled] = useEnabled(
-    value.transferDocumentation, () => onChangeHandler('transferDocumentation', ''),
+    value.transfer_documentation, () => onChangeHandler('transfer_documentation', ''),
   );
 
   const clear = () => {
-    onChange([{ ...defaults[0] }]);
+    onChange([{ ...defaultValue }]);
     setOtherTransferEvidenceEnabled(false);
     setTransferDocumentionEnabled(false);
   };
@@ -54,15 +50,17 @@ function ColumbiaUniversityIsCopyrightHolder(props) {
 
         <Collapse in={enabled}>
           <div>
-            <InputGroup>
-              <Label sm={4} align="right">Date of Transfer</Label>
-              <DateInput value={value.dateOfTransfer} onChange={v => onChangeHandler('dateOfTransfer', v)} />
-            </InputGroup>
+            <Field
+              value={value.date_of_transfer}
+              onChange={v => onChangeHandler('date_of_transfer', v)}
+              dynamicField={fieldConfig.children.find(c => c.stringKey === 'date_of_transfer')}
+            />
 
-            <InputGroup>
-              <Label sm={4} align="right">Date of Expiration of Columbia Copyright (if known)</Label>
-              <DateInput value={value.dateOfExpiration} onChange={v => onChangeHandler('dateOfExpiration', v)} />
-            </InputGroup>
+            <Field
+              value={value.date_of_expiration}
+              onChange={v => onChangeHandler('date_of_expiration', v)}
+              dynamicField={fieldConfig.children.find(c => c.stringKey === 'date_of_expiration')}
+            />
 
             <InputGroup>
               <Label sm={4} align="right">Transfer Document to Columbia University Exists</Label>
@@ -74,14 +72,11 @@ function ColumbiaUniversityIsCopyrightHolder(props) {
 
             <Collapse in={transferDocumentionEnabled}>
               <div>
-                <InputGroup>
-                  <Label sm={4} align="right">Transfer Documentation</Label>
-                  <TextInput
-                    sm={8}
-                    value={value.transferDocumentation}
-                    onChange={v => onChangeHandler('transferDocumentation', v)}
-                  />
-                </InputGroup>
+                <Field
+                  value={value.transfer_documentation}
+                  onChange={v => onChangeHandler('transfer_documentation', v)}
+                  dynamicField={fieldConfig.children.find(c => c.stringKey === 'transfer_documentation')}
+                />
               </div>
             </Collapse>
 
@@ -97,27 +92,21 @@ function ColumbiaUniversityIsCopyrightHolder(props) {
 
                 <Collapse in={otherTransferEvidenceEnabled}>
                   <div>
-                    <InputGroup>
-                      <Label sm={4} align="right">Evidence of Transfer Documentation</Label>
-                      <TextInput
-                        sm={8}
-                        value={value.otherTransferEvidence}
-                        onChange={v => onChangeHandler('otherTransferEvidence', v)}
-                      />
-                    </InputGroup>
+                    <Field
+                      value={value.other_transfer_evidence}
+                      onChange={v => onChangeHandler('other_transfer_evidence', v)}
+                      dynamicField={fieldConfig.children.find(c => c.stringKey === 'other_transfer_evidence')}
+                    />
                   </div>
                 </Collapse>
               </div>
             </Collapse>
 
-            <InputGroup>
-              <Label sm={4} align="right">Transfer Documentation Note</Label>
-              <TextInput
-                sm={8}
-                value={value.transferDocumentationNote}
-                onChange={v => onChangeHandler('transferDocumentationNote', v)}
-              />
-            </InputGroup>
+            <Field
+              value={value.transfer_documentation_note}
+              onChange={v => onChangeHandler('transfer_documentation_note', v)}
+              dynamicField={fieldConfig.children.find(c => c.stringKey === 'transfer_documentation_note')}
+            />
           </div>
         </Collapse>
       </Card.Body>

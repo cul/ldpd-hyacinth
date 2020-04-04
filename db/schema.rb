@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_06_171010) do
+ActiveRecord::Schema.define(version: 2020_03_11_183754) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -92,6 +92,7 @@ ActiveRecord::Schema.define(version: 2020_03_06_171010) do
     t.integer "sort_order", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "metadata_form", default: 0, null: false
     t.index ["display_label"], name: "index_dynamic_field_categories_on_display_label", unique: true
   end
 
