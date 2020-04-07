@@ -17,7 +17,7 @@ module DigitalObjectConcerns
         self.resource_import_attributes.each do |resource_import_name|
           process_resource_import(lock_object, resource_import_name)
         end
-        yield
+        yield if block_given?
         # If everything went well, then clear the file imports
         clear_resource_imports
       rescue StandardError => e
