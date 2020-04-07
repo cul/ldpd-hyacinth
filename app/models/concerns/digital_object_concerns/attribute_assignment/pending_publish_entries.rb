@@ -22,8 +22,6 @@ module DigitalObjectConcerns
         # Raise error if pub_to and unpub_from have any overlapping values
         raise ArgumentError, 'Cannot include the same publish target in publish_to and unpublish_from' if (pub_to & unpub_from).length.positive?
 
-        pub_to.freeze
-        unpub_from.freeze
         self.pending_publish_to = pub_to
         self.pending_unpublish_from = unpub_from
       end

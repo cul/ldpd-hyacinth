@@ -41,27 +41,27 @@ module DigitalObject
     # Simple attributes
     metadata_attribute :serialization_version, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { SERIALIZATION_VERSION }).private_writer
     metadata_attribute :uid, Hyacinth::DigitalObject::TypeDef::String.new.private_writer
-    metadata_attribute :doi, Hyacinth::DigitalObject::TypeDef::String.new.private_writer
+    metadata_attribute :doi, Hyacinth::DigitalObject::TypeDef::String.new
     # constrain type to the keys for registered type classes
-    metadata_attribute :digital_object_type, Hyacinth::DigitalObject::TypeDef::String.new.private_writer
+    metadata_attribute :digital_object_type, Hyacinth::DigitalObject::TypeDef::String.new
     metadata_attribute :state, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { Hyacinth::DigitalObject::State::ACTIVE })
     # Modification Info
-    metadata_attribute :created_by, Hyacinth::DigitalObject::TypeDef::User.new.private_writer
-    metadata_attribute :updated_by, Hyacinth::DigitalObject::TypeDef::User.new.private_writer
-    metadata_attribute :created_at, Hyacinth::DigitalObject::TypeDef::DateTime.new.default(-> { DateTime.current }).private_writer
-    metadata_attribute :updated_at, Hyacinth::DigitalObject::TypeDef::DateTime.new.default(-> { DateTime.current }).private_writer
-    metadata_attribute :first_published_at, Hyacinth::DigitalObject::TypeDef::DateTime.new.private_writer
-    metadata_attribute :preserved_at, Hyacinth::DigitalObject::TypeDef::DateTime.new.private_writer
-    metadata_attribute :first_preserved_at, Hyacinth::DigitalObject::TypeDef::DateTime.new.private_writer
+    metadata_attribute :created_by, Hyacinth::DigitalObject::TypeDef::User.new
+    metadata_attribute :updated_by, Hyacinth::DigitalObject::TypeDef::User.new
+    metadata_attribute :created_at, Hyacinth::DigitalObject::TypeDef::DateTime.new.default(-> { DateTime.current })
+    metadata_attribute :updated_at, Hyacinth::DigitalObject::TypeDef::DateTime.new.default(-> { DateTime.current })
+    metadata_attribute :first_published_at, Hyacinth::DigitalObject::TypeDef::DateTime.new
+    metadata_attribute :preserved_at, Hyacinth::DigitalObject::TypeDef::DateTime.new
+    metadata_attribute :first_preserved_at, Hyacinth::DigitalObject::TypeDef::DateTime.new
     # Identifiers
-    metadata_attribute :identifiers, Hyacinth::DigitalObject::TypeDef::JsonSerializableSet.new.default(-> { Set.new }).private_writer
+    metadata_attribute :identifiers, Hyacinth::DigitalObject::TypeDef::JsonSerializableSet.new.default(-> { Set.new })
     # Dynamic Fields
-    metadata_attribute :dynamic_field_data, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Hash.new }).private_writer
+    metadata_attribute :dynamic_field_data, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Hash.new })
     # Rights Information
     metadata_attribute :rights, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Hash.new })
     # Administrative Relationsip Objects
     metadata_attribute :primary_project, Hyacinth::DigitalObject::TypeDef::Project.new
-    metadata_attribute :other_projects, Hyacinth::DigitalObject::TypeDef::Projects.new.default(-> { Set.new }).private_writer
+    metadata_attribute :other_projects, Hyacinth::DigitalObject::TypeDef::Projects.new.default(-> { Set.new })
     # Preservation System Linkage
     metadata_attribute :preservation_target_uris, Hyacinth::DigitalObject::TypeDef::JsonSerializableSet.new.default(-> { Set.new }).private_writer
     # Parent-Child Structural Data
@@ -83,8 +83,6 @@ module DigitalObject
       @digital_object_record = DigitalObjectRecord.new
       @parent_uids_to_add = Set.new
       @parent_uids_to_remove = Set.new
-      @publish_to = []
-      @unpublish_from = []
       @preserve = false
       @mint_doi = false
     end

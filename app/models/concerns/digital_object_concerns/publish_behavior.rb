@@ -81,7 +81,8 @@ module DigitalObjectConcerns
         publication_adapter = Hyacinth::Config.publication_adapter
         publish_result, messages = publication_adapter.publish(publish_target, self, opts[:update_doi_url])
         if publish_result
-          # Remove publish_to and add publish entry
+          # Remove pending_publish_to and add publish entry
+          pending_publish_to.delete(publish_target.string_key)
           publish_entry = {
             published_at: (opts[:current_datetime] || DateTime.current),
             published_by: opts[:user]
@@ -99,7 +100,8 @@ module DigitalObjectConcerns
         publication_adapter = Hyacinth::Config.publication_adapter
         unpublish_result, errors = publication_adapter.unpublish(publish_target, self, opts[:update_doi_url])
         if unpublish_result
-          # Remove unpublish_from and publish entry
+          # Remove pending_unpublish_from and publish entry
+          pending_unpublish_from.delete(publish_target.string_key)
           current_publish_entries.delete(publish_target.string_key)
         else
           self.errors.add(:unpublish_from, "Failed to unpublish from #{publish_target.string_key}. See error log for details.")

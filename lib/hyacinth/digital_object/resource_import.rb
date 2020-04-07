@@ -53,11 +53,6 @@ module Hyacinth
       def method_copy?
         method == COPY
       end
-
-      def with_import_file(&block)
-        # TODO: Implement this
-        # open(location, &block)
-      end
     end
   end
 end

@@ -29,21 +29,18 @@ RSpec.describe BatchExportJob, solr: true do
     its(:duration) { is_expected.to be_positive }
     its(:export_errors) { is_expected.to be_blank }
     its(:number_of_records_processed) do
-      pending('export filter only including results from readable projects')
       is_expected.to eq(2)
     end
     its(:total_records_to_process) do
-      pending('export filter only including results from readable projects')
       is_expected.to eq(2)
     end
     its(:file_location) { is_expected.to be_present }
 
     it 'has the expected content in the exported csv, only including items from projects that the user can read' do
-      pending('export filter only including results from readable projects')
       csv_data = CSV.parse(Hyacinth::Config.batch_export_storage.read(batch_export.file_location), headers: true)
       expect(csv_data.length).to eq(2)
       unique_project_string_keys = csv_data.map { |row| row['_primary_project.string_key'] }.uniq
-      expect(unique_project_string_keys).to eq('legend_of_lincoln')
+      expect(unique_project_string_keys).to eq(['legend_of_lincoln'])
     end
   end
 

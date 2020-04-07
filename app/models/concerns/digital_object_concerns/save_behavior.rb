@@ -107,9 +107,10 @@ module DigitalObjectConcerns
     end
 
     # Removes all parents and then yields to the given block.
+    # Note: By necessity, this method clears all previously set parent_uids_to_remove and parent_uids_to_add.
     # @yield [void] A block to run
     def remove_all_parents
-      @parent_uids_to_remove.merge(parent_uids)
+      @parent_uids_to_remove = parent_uids.dup
       @parent_uids_to_add.clear
       self.handle_parent_changes
     end
