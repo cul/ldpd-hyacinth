@@ -53,7 +53,8 @@ module Types
     end
 
     field :dynamic_field_categories, [DynamicFieldCategoryType], null: true do
-      description "List of all dynamic field categories"
+      description 'List of all dynamic field categories'
+      argument :metadata_form, Enums::MetadataFormEnum, required: false
     end
 
     field :dynamic_field_category, DynamicFieldCategoryType, null: true do
@@ -128,9 +129,10 @@ module Types
       }
     end
 
-    def dynamic_field_categories
+    def dynamic_field_categories(metadata_form: nil)
       ability.authorize!(:read, DynamicFieldCategory)
-      DynamicFieldCategory.order(:sort_order)
+      categories = DynamicFieldCategory.order(:sort_order).includes(:dynamic_field_groups)
+      metadata_form ? categories.where(metadata_form: metadata_form) : categories
     end
 
     def dynamic_field_category(id:)

@@ -6,22 +6,11 @@ import produce from 'immer';
 import Label from '../../../../shared/forms/Label';
 import InputGroup from '../../../../shared/forms/InputGroup';
 import BooleanRadioButtons from '../../../../shared/forms/inputs/BooleanRadioButtons';
-import SelectInput from '../../../../shared/forms/inputs/SelectInput';
-import TextAreaInput from '../../../../shared/forms/inputs/TextAreaInput';
-import YesNoSelect from '../../../../shared/forms/inputs/YesNoSelect';
-import { defaultItemRights } from '../defaultRights';
 import { useEnabled } from '../rightsHooks';
-
-const publicityRights = [
-  'Written Release',
-  'Proof of Release in Written Form',
-  'Conditional Release',
-  'Partial Release',
-  'No release',
-];
+import Field from '../fields/Field';
 
 function RightsForWorksOfArtSculptureAndPhotographs(props) {
-  const { values: [value], onChange } = props;
+  const { values: [value], onChange, defaultValue, fieldConfig } = props;
 
   const onChangeHandler = (fieldName, fieldVal) => {
     onChange(produce((draft) => {
@@ -30,13 +19,13 @@ function RightsForWorksOfArtSculptureAndPhotographs(props) {
   };
 
   const [publicityRightsPresentEnabled, setPublicityRightsPresentEnabled] = useEnabled(
-    value.publicityRightsPresent, () => onChangeHandler('publicityRightsPresent', ''),
+    value.publicity_rights_present, () => onChangeHandler('publicity_rights_present', ''),
   );
 
   const [enabled, setEnabled] = useEnabled(
     value, () => {
       setPublicityRightsPresentEnabled(false);
-      onChange([{ ...defaultItemRights.rightsForWorksOfArtSculptureAndPhotographs[0] }]);
+      onChange([{ ...defaultValue }]);
     },
   );
 
@@ -51,10 +40,7 @@ function RightsForWorksOfArtSculptureAndPhotographs(props) {
           <Label sm={4} align="right">
             Are there other rights considerations for works of art, sculptures or photographs?
           </Label>
-          <BooleanRadioButtons
-            value={enabled}
-            onChange={setEnabled}
-          />
+          <BooleanRadioButtons value={enabled} onChange={setEnabled} />
         </InputGroup>
 
         <Collapse in={enabled}>
@@ -69,64 +55,49 @@ function RightsForWorksOfArtSculptureAndPhotographs(props) {
 
             <Collapse in={publicityRightsPresentEnabled}>
               <div>
-                <InputGroup>
-                  <Label sm={4} />
-                  <SelectInput
-                    sm={8}
-                    value={value.publicityRightsPresent}
-                    options={publicityRights.map(r => ({ label: r, value: r }))}
-                    onChange={v => onChangeHandler('publicityRightsPresent', v)}
-                  />
-                </InputGroup>
+                <Field
+                  value={value.publicity_rights_present}
+                  onChange={v => onChangeHandler('publicity_rights_present', v)}
+                  dynamicField={fieldConfig.children.find(c => c.stringKey === 'publicity_rights_present')}
+                />
               </div>
             </Collapse>
 
-            <InputGroup>
-              <Label sm={4} align="right">Are trademarks prominently visible?</Label>
-              <YesNoSelect
-                value={value.trademarksProminentlyVisible}
-                onChange={v => onChangeHandler('trademarksProminentlyVisible', v)}
-              />
-            </InputGroup>
+            <Field
+              value={value.trademarks_prominently_visible}
+              onChange={v => onChangeHandler('trademarks_prominently_visible', v)}
+              dynamicField={fieldConfig.children.find(c => c.stringKey === 'trademarks_prominently_visible')}
+            />
 
-            <InputGroup>
-              <Label sm={4} align="right">Is material sensitive in nature?</Label>
-              <YesNoSelect
-                value={value.sensitiveInNature}
-                onChange={v => onChangeHandler('sensitiveInNature', v)}
-              />
-            </InputGroup>
+            <Field
+              value={value.sensitive_in_nature}
+              onChange={v => onChangeHandler('sensitive_in_nature', v)}
+              dynamicField={fieldConfig.children.find(c => c.stringKey === 'sensitive_in_nature')}
+            />
 
-            <InputGroup>
-              <Label sm={4} align="right">Are there privacy concerns?</Label>
-              <YesNoSelect
-                value={value.privacyConcerns}
-                onChange={v => onChangeHandler('privacyConcerns', v)}
-              />
-            </InputGroup>
+            <Field
+              value={value.privacy_concerns}
+              onChange={v => onChangeHandler('privacy_concerns', v)}
+              dynamicField={fieldConfig.children.find(c => c.stringKey === 'privacy_concerns')}
+            />
 
-            <InputGroup>
-              <Label sm={4} align="right">Are children materially identifiable in work?</Label>
-              <YesNoSelect
-                value={value.childrenMateriallyIdentifiableInWork}
-                onChange={v => onChangeHandler('childrenMateriallyIdentifiableInWork', v)}
-              />
-            </InputGroup>
+            <Field
+              value={value.children_materially_identifiable_in_work}
+              onChange={v => onChangeHandler('children_materially_identifiable_in_work', v)}
+              dynamicField={fieldConfig.children.find(c => c.stringKey === 'children_materially_identifiable_in_work')}
+            />
 
-            <InputGroup>
-              <Label sm={4} align="right">Are there VARA (Visual Artists Rights Act of 1990) rights concerns?</Label>
-              <YesNoSelect
-                value={value.varaRightsConcerns}
-                onChange={v => onChangeHandler('varaRightsConcerns', v)}
-              />
-            </InputGroup>
+            <Field
+              value={value.vara_rights_concerns}
+              onChange={v => onChangeHandler('vara_rights_concerns', v)}
+              dynamicField={fieldConfig.children.find(c => c.stringKey === 'vara_rights_concerns')}
+            />
 
-            <InputGroup>
-              <Label sm={4} align="right">
-                If legal restrictions apply or require additional explanation, describe in a note
-              </Label>
-              <TextAreaInput value={value.note} onChange={v => onChangeHandler('note', v)} />
-            </InputGroup>
+            <Field
+              value={value.note}
+              onChange={v => onChangeHandler('note', v)}
+              dynamicField={fieldConfig.children.find(c => c.stringKey === 'note')}
+            />
           </div>
         </Collapse>
       </Card.Body>

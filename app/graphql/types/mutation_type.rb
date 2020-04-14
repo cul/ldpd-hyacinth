@@ -4,8 +4,7 @@ module Types
   class MutationType < Types::BaseObject
     field :create_asset, mutation: Mutations::CreateAsset
 
-    field :update_item_rights, mutation: Mutations::DigitalObject::UpdateItemRights
-    field :update_asset_rights, mutation: Mutations::DigitalObject::UpdateAssetRights
+    field :update_rights, mutation: Mutations::DigitalObject::UpdateRights
 
     field :create_user, mutation: Mutations::CreateUser
     field :update_user, mutation: Mutations::UpdateUser

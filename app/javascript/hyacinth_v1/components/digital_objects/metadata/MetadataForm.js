@@ -98,17 +98,15 @@ function MetadataForm(props) {
       <div key={displayLabel}>
         <h4 className="text-orange">{displayLabel}</h4>
         {
-          children.map((fieldGroup) => {
-            return (
-              <FieldGroupArray
-                key={`array_${fieldGroup.stringKey}`}
-                dynamicFieldGroup={fieldGroup}
-                value={dynamicFieldData[fieldGroup.stringKey]}
-                defaultValue={defaultFieldData[fieldGroup.stringKey][0]}
-                onChange={v => onChange(fieldGroup.stringKey, v)}
-              />
-            )
-          })
+          children.map(fieldGroup => (
+            <FieldGroupArray
+              key={`array_${fieldGroup.stringKey}`}
+              dynamicFieldGroup={fieldGroup}
+              value={dynamicFieldData[fieldGroup.stringKey]}
+              defaultValue={defaultFieldData[fieldGroup.stringKey][0]}
+              onChange={v => onChange(fieldGroup.stringKey, v)}
+            />
+          ))
         }
       </div>
     );

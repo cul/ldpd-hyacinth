@@ -3,7 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe 'Retrieving Digital Object', type: :request do
-  let(:authorized_object) { FactoryBot.create(:item, :with_primary_project, :with_other_projects) }
+  before { Hyacinth::DynamicFieldsLoader.load_rights_fields! }
+
+  let(:authorized_object) { FactoryBot.create(:item, :with_rights, :with_primary_project, :with_other_projects) }
   let(:authorized_project) { authorized_object.projects.first }
   let(:authorized_publish_target) { authorized_project.publish_targets.first }
 
@@ -62,9 +64,9 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
           ],
           "publishEntries": [],
           "rights": {
-            "descriptiveMetadata": [
+            "descriptive_metadata": [
               {
-                "typeOfContent": "literary"
+                "type_of_content": "literary"
               }
             ]
           },
@@ -182,6 +184,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
             }
           }
           optimisticLockToken
+          rights
           resources {
             id
             displayLabel
@@ -192,14 +195,6 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
               originalFilename
               mediaType
               fileSize
-            }
-          }
-
-          ... on Item {
-            rights {
-              descriptiveMetadata {
-                typeOfContent
-              }
             }
           }
         }

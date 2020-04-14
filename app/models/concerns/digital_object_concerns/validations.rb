@@ -9,7 +9,7 @@ module DigitalObjectConcerns::Validations
     validates_with DigitalObject::TypeValidator
     validates_with DigitalObject::RestrictionsValidator
     validates_with DigitalObject::ProjectsValidator
-
+    validates_with DigitalObject::RightsValidator
     # Validate URI fields and raise exception if any of them are malformed
     # raise_exception_if_malformed_controlled_field_data!
 

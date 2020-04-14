@@ -18,7 +18,7 @@ class Field extends React.PureComponent {
 
     let field = '';
 
-    const sharedProps = { onChange, value };
+    const sharedProps = { sm: 8, onChange, value };
 
     switch (fieldType) {
       case 'string':
@@ -53,7 +53,7 @@ class Field extends React.PureComponent {
 
     return (
       <InputGroup>
-        <Label align="right">{displayLabel}</Label>
+        <Label sm={4} align="right">{displayLabel}</Label>
         {field}
       </InputGroup>
     );

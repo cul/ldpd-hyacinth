@@ -66,131 +66,7 @@ export const getRightsDigitalObjectQuery = gql`
     digitalObject(id: $id) {
       ${digitalObjectInterfaceFields},
       dynamicFieldData
-
-      ... on Asset {
-        rights {
-          restrictionOnAccess {
-            affiliation {
-              value
-            }
-            embargoReleaseDate
-            location {
-              term {
-                prefLabel
-                uri
-                termType
-              }
-            }
-            note
-            value
-          }
-          copyrightStatusOverride {
-            copyrightDateOfRenewal
-            copyrightExpirationDate
-            note
-            copyrightRegistered
-            copyrightRenewed
-            copyrightStatement {
-              prefLabel
-              uri
-              termType
-            }
-            culCopyrightAssessmentDate
-          }
-        }
-      }
-
-      ... on Item {
-        rights {
-          copyrightStatus {
-            copyrightDateOfRenewal
-            copyrightExpirationDate
-            note
-            copyrightRegistered
-            copyrightRenewed
-            copyrightStatement {
-              prefLabel
-              uri
-              termType
-            }
-            culCopyrightAssessmentDate
-          }
-          columbiaUniversityIsCopyrightHolder {
-            dateOfExpiration
-            dateOfTransfer
-            otherTransferEvidence
-            transferDocumentation
-            transferDocumentationNote
-          }
-          contractualLimitationsRestrictionsAndPermissions {
-            excerptLimitedTo
-            optionA
-            optionB
-            optionC
-            optionD
-            optionE
-            optionAvA
-            optionAvB
-            optionAvC
-            optionAvD
-            optionAvE
-            optionAvF
-            optionAvG
-            other
-            permissionsGrantedAsPartOfTheUseLicense {
-              value
-            }
-            photographicOrFilmCredit
-            reproductionAndDistributionProhibitedUntil
-          }
-          copyrightOwnership {
-            contactInformation
-            heirs
-            name {
-              termType
-              prefLabel
-              uri
-            }
-          }
-          descriptiveMetadata {
-            typeOfContent
-            countryOfOrigin {
-              prefLabel
-              uri
-              termType
-            }
-            filmDistributedCommercially
-            filmDistributedToPublic
-          }
-          licensedToColumbiaUniversity {
-            acknowledgements
-            credits
-            dateOfLicense
-            licenseDocumentationLocation
-            terminationDateOfLicense
-          }
-          rightsForWorksOfArtSculptureAndPhotographs {
-            childrenMateriallyIdentifiableInWork
-            note
-            privacyConcerns
-            publicityRightsPresent
-            sensitiveInNature
-            trademarksProminentlyVisible
-            varaRightsConcerns
-          }
-          underlyingRights {
-            columbiaMusicLicense
-            composition
-            note
-            other
-            otherUnderlyingRights {
-              value
-            }
-            recording
-            talentRights
-          }
-        }
-      }
+      rights
     }
   }
 `;
@@ -272,20 +148,10 @@ export const getDigitalObjectsQuery = gql`
   }
 `;
 
-export const updateItemRightsMutation = gql`
-  mutation UpdateItemRights($input: UpdateItemRightsInput!) {
-    updateItemRights(input: $input) {
-      item {
-        id
-      }
-    }
-  }
-`;
-
-export const updateAssetRightsMutation = gql`
-  mutation UpdateAssetRights($input: UpdateAssetRightsInput!) {
-    updateAssetRights(input: $input) {
-      asset {
+export const updateRightsMutation = gql`
+  mutation UpdateRights($input: UpdateRightsInput!) {
+    updateRights(input: $input) {
+      digitalObject {
         id
       }
     }

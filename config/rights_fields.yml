@@ -1,0 +1,425 @@
+# TODO: Which fields do we want to facet? index?
+# Rights fields for item and asset forms.
+
+# Each entry under the item or asset key is a DynamicFieldGroup.
+# A rake task reads in this configuration and generates rights fields.
+rights_fields:
+  item:
+    - display_label: Descriptive Metadata
+      string_key: descriptive_metadata
+      is_repeatable: false
+      dynamic_fields:
+        - display_label: Type of Content Subject to Copyright
+          string_key: type_of_content
+          field_type: select
+          is_facetable: true
+          is_keyword_searchable: true
+          select_options: >
+            [
+              { "label": "Compilation", "value": "compilation" },
+              { "label": "Literary works", "value": "literary" },
+              { "label": "Musical works, including any accompanying words", "value": "musical" },
+              { "label": "Dramatic works, including any accompanying music", "value": "dramatic" },
+              { "label": "Pantomimes and choreographic works", "value": "pantomimes_and_choreographic" },
+              { "label": "Pictorial, graphic, and sculptural works", "value": "pictoral_graphic_and_scuptural" },
+              { "label": "Motion pictures and other audiovisual works", "value": "motion_picture" },
+              { "label": "Sound recordings", "value": "sound_recordings" },
+              { "label": "Architectural works", "value": "architectural" }
+            ]
+        - display_label: Country of Origin
+          string_key: country_of_origin
+          field_type: controlled_term
+          controlled_vocabulary: geonames
+        - display_label: Film distributed to public?
+          string_key: film_distributed_to_public
+          field_type: select
+          select_options: >
+            [
+              { "label": "Yes", "value": "yes" },
+              { "label": "No", "value": "no" }
+            ]
+        - display_label: Film distributed commercially?
+          string_key: film_distributed_commercially
+          field_type: select
+          select_options: >
+            [
+              { "label": "Yes", "value": "yes" },
+              { "label": "No", "value": "no" }
+            ]
+    - display_label: Copyright Status
+      string_key: copyright_status
+      is_repeatable: false
+      dynamic_fields:
+        - display_label: Copyright Statement
+          string_key: copyright_statement
+          field_type: controlled_term
+          controlled_vocabulary: rights_statement
+          sort_order: 1
+          is_facetable: true
+        - display_label: Copyright Note
+          string_key: note
+          field_type: textarea
+          sort_order: 2
+          is_keyword_searchable: true
+        - display_label: Copyright Registered?
+          string_key: copyright_registered
+          sort_order: 3
+          field_type: select
+          select_options: >
+            [
+              { "label": "Yes", "value": "yes" },
+              { "label": "No", "value": "no" }
+            ]
+        - display_label: Copyright Renewed?
+          string_key: copyright_renewed
+          sort_order: 4
+          field_type: select
+          select_options: >
+            [
+              { "label": "Yes", "value": "yes" },
+              { "label": "No", "value": "no" }
+            ]
+        - display_label: If Renewed, Date of Renewal
+          string_key: copyright_date_of_renewal
+          field_type: date
+          sort_order: 5
+        - display_label: Copyright Expiration Date
+          string_key: copyright_expiration_date
+          field_type: date
+          sort_order: 6
+        - display_label: CUL Copyright Assessment Date
+          string_key: cul_copyright_assessment_date
+          field_type: date
+          sort_order: 7
+    - display_label: Copyright Owner
+      string_key: copyright_ownership
+      is_repeatable: true
+      dynamic_fields:
+        - display_label: Name
+          string_key: name
+          field_type: controlled_term
+          controlled_vocabulary: name
+          sort_order: 1
+          is_keyword_searchable: true
+          is_facetable: true
+        - display_label: Heirs
+          string_key: heirs
+          field_type: string
+          sort_order: 2
+        - display_label: Contact information for Copyright Owner or Heirs
+          string_key: contact_information
+          field_type: textarea
+          sort_order: 3
+    - display_label: Columbia University Is Copyright Holder
+      string_key: columbia_university_is_copyright_holder
+      is_repeatable: false
+      dynamic_fields:
+        - display_label: Date of Transfer
+          string_key: date_of_transfer
+          field_type: date
+        - display_label: Date of Expiration of Columbia Copyright (if known)
+          string_key: date_of_expiration
+          field_type: date
+        - display_label: Transfer Documentation
+          string_key: transfer_documentation
+          field_type: string
+        - display_label: Evidence of Transfer Documentation
+          string_key: other_transfer_evidence
+          field_type: string
+        - display_label: Transfer Documentation Note
+          string_key: transfer_documentation_note
+          field_type: string
+    - display_label: Licensed To Columbia University (Copyright Not Transferred)
+      string_key: licensed_to_columbia_university
+      is_repeatable: false
+      dynamic_fields:
+        - display_label: Date of License
+          string_key: date_of_license
+          field_type: date
+        - display_label: Termination Date of License
+          string_key: termination_date_of_license
+          field_type: date
+        - display_label: Credits / Other Display Requirements
+          string_key: credits
+          field_type: string
+        - display_label: Acknowledgements
+          string_key: acknowledgements
+          field_type: string
+        - display_label: License Documentation Location
+          string_key: license_documentation_location
+          field_type: string
+    - display_label: Other Rights Considerations for Works of Art, Sculpture, or Photographs
+      string_key: rights_for_works_of_art_sculpture_and_photographs
+      is_repeatable: false
+      dynamic_fields:
+        - display_label: Publicity rights present
+          string_key: publicity_rights_present
+          field_type: select
+          select_options: >
+            [
+              { "label": "Written Release", "value": "Written Release" },
+              { "label": "Proof of Release in Written Form", "value": "Proof of Release in Written Form"},
+              { "label": "Conditional Release", "value": "Conditional Release" },
+              { "label": "Partial Release", "value": "Partial Release" },
+              { "label": "No release", "value": "No release" }
+            ]
+        - display_label: Are trademarks prominently visible?
+          string_key: trademarks_prominently_visible
+          field_type: select
+          select_options: >
+            [
+              { "label": "Yes", "value": "yes" },
+              { "label": "No", "value": "no" }
+            ]
+        - display_label: Is material sensitive in nature?
+          string_key: sensitive_in_nature
+          field_type: select
+          select_options: >
+            [
+              { "label": "Yes", "value": "yes" },
+              { "label": "No", "value": "no" }
+            ]
+        - display_label: Are there privacy concerns?
+          string_key: privacy_concerns
+          field_type: select
+          select_options: >
+            [
+              { "label": "Yes", "value": "yes" },
+              { "label": "No", "value": "no" }
+            ]
+        - display_label: Are children materially identifiable in work?
+          string_key: children_materially_identifiable_in_work
+          field_type: select
+          select_options: >
+            [
+              { "label": "Yes", "value": "yes" },
+              { "label": "No", "value": "no" }
+            ]
+        - display_label: Are there VARA (Visual Artists Rights Act of 1990) rights concerns?
+          string_key: vara_rights_concerns
+          field_type: select
+          select_options: >
+            [
+              { "label": "Yes", "value": "yes" },
+              { "label": "No", "value": "no" }
+            ]
+        - display_label: If legal restrictions apply or require additional explanation, describe in a note
+          string_key: note
+          field_type: string
+    - display_label: Contractual Limitations, Restrictions, and Permissions
+      string_key: contractual_limitations_restrictions_and_permissions
+      is_repeatable: false
+      dynamic_fields:
+        - display_label: Access limited to on-site only for reseach and study
+          string_key: option_a
+          field_type: boolean
+        - display_label: No reproduction and distribution unless with prior permission of copyright owner
+          string_key: option_b
+          field_type: boolean
+        - display_label: No Reproduction and distribution unless with prior permission of donor
+          string_key: option_c
+          field_type: boolean
+        - display_label: Reproduction and distribution online limited to non-profit educational use only
+          string_key: option_d
+          field_type: boolean
+        - display_label: Online use limited to specific website
+          string_key: option_e
+          field_type: boolean
+        - display_label: Screening of excerpt permitted for closed event exhibition for non-broadcast purposes only
+          string_key: option_av_a
+          field_type: boolean
+        - display_label: Right to make excerpt is limited to collections purposes only
+          string_key: option_av_b
+          field_type: boolean
+        - display_label: Film or video may be screened in-house for non-paying audiences only
+          string_key: option_av_c
+          field_type: boolean
+        - display_label: Excerpts may be licensed to third parties only for non-exclusive non-commercial purposes
+          string_key: option_av_d
+          field_type: boolean
+        - display_label: Excerpts may be reproduced and distributed to Columbia University students and faculty for educational purposes only
+          string_key: option_av_e
+          field_type: boolean
+        - display_label: No online reproduction and distribution
+          string_key: option_av_f
+          field_type: boolean
+        - display_label: No editing or modification
+          string_key: option_av_g
+          field_type: boolean
+        - display_label: Reproduction and Distribution Prohibited Until Date
+          string_key: reproduction_and_distribution_prohibited_until
+          field_type: date
+        - display_label: Photographic or film credit required [photo credit entered here]
+          string_key: photographic_or_film_credit
+          field_type: string
+        - display_label: Excerpts limited to [X] minutes
+          string_key: excerpt_limited_to
+          field_type: string
+        - display_label: Other
+          string_key: other
+          field_type: string
+      dynamic_field_groups:
+        - display_label: Are permissions granted as part of the Use License?
+          string_key: permissions_granted_as_part_of_the_use_license
+          is_repeatable: false
+          dynamic_fields:
+            - display_label: Value
+              string_key: value
+              field_type: select
+              select_options: >
+                [
+                  { "label": "Reproduction", "value": "Reproduction" },
+                  { "label": "Distribution", "value": "Distribution" },
+                  { "label": "Derivative Works", "value": "Derivative Works" },
+                  { "label": "Public Display", "value": "Public Display" },
+                  { "label": "Public Performance", "value": "Public Performance" },
+                  { "label": "Digital Streaming", "value": "Digital Streaming" },
+                  { "label": "Right of First Publication", "value": "Right of First Publication" }
+                ]
+    - display_label: Underlying Rights
+      string_key: underlying_rights
+      is_repeatable: false
+      dynamic_fields:
+        - display_label: Describe in a Note
+          string_key: note
+          field_type: string
+        - display_label: If film/video produced commercially, talent rights
+          string_key: talent_rights
+          field_type: select
+          select_options: >
+            [
+              { "label": "SAG AFTRA", "value": "SAG AFTRA" },
+              { "label": "AFM", "value": "AFM" },
+              { "label": "DGA", "value": "DGA" },
+              { "label": "Writers Guild", "value": "Writers Guild" },
+              { "label": "Actors Equity", "value": "Actors Equity" },
+              { "label": "USA", "value": "USA" },
+              { "label": "Theatre Actors and Stage Managers", "value": "Theatre Actors and Stage Managers" }
+            ]
+        - display_label: Columbia Music License
+          string_key: columbia_music_license
+          field_type: select
+          select_options: >
+            [
+              { "label": "Sync license", "value": "Sync license" },
+              { "label": "Master recording license", "value": "Master recording license" }
+            ]
+        - display_label: Composition [music publisher]
+          string_key: composition
+          field_type: string
+        - display_label: Recording [record label]
+          string_key: recording
+          field_type: string
+        - display_label: Other
+          string_key: other
+          field_type: string
+      dynamic_field_groups:
+        - display_label: Other Underlying Rights
+          string_key: other_underlying_rights
+          is_repeatable: true
+          dynamic_fields:
+            - display_label: Value
+              string_key: value
+              field_type: select
+              select_options: >
+                [
+                  { "label": "Authors rights [screenplay]", "value": "Authors rights [screenplay]" },
+                  { "label": "Photographic rights [photos]", "value": "Photographic rights [photos]" },
+                  { "label": "Rights in artistic works", "value": "Rights in artistic works" },
+                  { "label": "VARA rights", "value": "VARA rights" },
+                  { "label": "Trademarks", "value": "Trademarks" },
+                  { "label": "Rights in graphics and text", "value": "Rights in graphics and text" },
+                  { "label": "Location rights", "value": "Location rights" },
+                  { "label": "Performance rights", "value": "Performance rights" },
+                  { "label": "Choreography", "value": "Choreography" },
+                  { "label": "Costume design", "value": "Costume design" }
+                ]
+  asset:
+    - display_label: "CUL Access Condition"
+      string_key: restriction_on_access
+      is_repeatable: true
+      dynamic_fields:
+        - display_label: Access Condition
+          string_key: value
+          sort_order: 1
+          field_type: select
+          select_options: >
+            [
+              { "value": "Public Access", "label": "Public Access" },
+              { "value": "On-site Access", "label": "On-site Access" },
+              { "value": "Specified Group/UNI Access", "label": "Specified Group/UNI Access" },
+              { "value": "Closed", "label": "Closed" },
+              { "value": "Embargoed", "label": "Embargoed" }
+            ]
+        - display_label: Closed/Embargo Release Date
+          string_key: embargo_release_date
+          field_type: date
+          sort_order: 3
+        - display_label: Note
+          string_key: note
+          field_type: string
+          sort_order: 5
+          is_keyword_searchable: true
+      dynamic_field_groups:
+        - display_label: Location
+          string_key: location
+          sort_order: 2
+          is_repeatable: true
+          dynamic_fields:
+            - display_label: Term
+              string_key: term
+              field_type: controlled_term
+              controlled_vocabulary: location
+        - display_label: Affiliation
+          string_key: affiliation
+          is_repeatable: true
+          sort_order: 4
+          dynamic_fields:
+            - display_label: Value
+              string_key: value
+              field_type: string
+    - display_label: Asset Copyright Status Override
+      string_key: copyright_status_override
+      is_repeatable: false
+      dynamic_fields:
+        - display_label: Copyright Statement
+          string_key: copyright_statement
+          field_type: controlled_term
+          controlled_vocabulary: rights_statement
+          sort_order: 1
+          is_facetable: true
+        - display_label: Copyright Note
+          string_key: note
+          field_type: textarea
+          sort_order: 2
+          is_keyword_searchable: true
+        - display_label: Copyright Registered?
+          string_key: copyright_registered
+          field_type: select
+          select_options: >
+            [
+              { "label": "Yes", "value": "yes" },
+              { "label": "No", "value": "no" }
+            ]
+          sort_order: 3
+        - display_label: Copyright Renewed?
+          string_key: copyright_renewed
+          field_type: select
+          select_options: >
+            [
+              { "label": "Yes", "value": "yes" },
+              { "label": "No", "value": "no" }
+            ]
+          sort_order: 4
+        - display_label: If Renewed, Date of Renewal
+          string_key: copyright_date_of_renewal
+          field_type: date
+          sort_order: 5
+        - display_label: Copyright Expiration Date
+          string_key: copyright_expiration_date
+          field_type: date
+          sort_order: 6
+        - display_label: CUL Copyright Assessment Date
+          string_key: cul_copyright_assessment_date
+          field_type: date
+          sort_order: 7
