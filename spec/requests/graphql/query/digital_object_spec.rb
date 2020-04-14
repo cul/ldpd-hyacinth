@@ -109,7 +109,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
             "id": "master",
             "displayLabel": "Master",
             "resource": {
-              "checksum": "SHA256:e1266b81a70083fa5e3bf456239a1160fc6ebc179cdd71e458a9dd4bc7cc21f6",
+              "checksum": "urn:sha256:e1266b81a70083fa5e3bf456239a1160fc6ebc179cdd71e458a9dd4bc7cc21f6",
               "fileSize": 23,
               "location": "managed-disk://#{expected_location}",
               "mediaType": "text/plain",

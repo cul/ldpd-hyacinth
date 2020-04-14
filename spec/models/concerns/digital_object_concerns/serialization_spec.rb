@@ -8,11 +8,11 @@ RSpec.describe DigitalObjectConcerns::Serialization do
     obj.instance_variable_set :@uid, 'unique-id-123'
     obj.resources['test_resource1'] = Hyacinth::DigitalObject::Resource.new(
       location: 'managed-disk:///path/to/file1',
-      checksum: 'SHA256:e1266b81a70083fa5e3bf456239a1160fc6ebc179cdd71e458a9dd4bc7cc21f6'
+      checksum: 'urn:sha256:e1266b81a70083fa5e3bf456239a1160fc6ebc179cdd71e458a9dd4bc7cc21f6'
     )
     obj.resources['test_resource2'] = Hyacinth::DigitalObject::Resource.new(
       location: 'managed-disk:///path/to/file2',
-      checksum: 'SHA256:30a7b320463d2d4a2052b72ea48518f5ad36dcb935b54628f292861241a7632e'
+      checksum: 'urn:sha256:30a7b320463d2d4a2052b72ea48518f5ad36dcb935b54628f292861241a7632e'
     )
     obj
   end
@@ -25,14 +25,14 @@ RSpec.describe DigitalObjectConcerns::Serialization do
       'resources' => {
         'test_resource1' => {
           'location' => 'managed-disk:///path/to/file1',
-          'checksum' => 'SHA256:e1266b81a70083fa5e3bf456239a1160fc6ebc179cdd71e458a9dd4bc7cc21f6',
+          'checksum' => 'urn:sha256:e1266b81a70083fa5e3bf456239a1160fc6ebc179cdd71e458a9dd4bc7cc21f6',
           'media_type' => nil,
           'original_file_path' => nil,
           'file_size' => nil
         },
         'test_resource2' => {
           'location' => 'managed-disk:///path/to/file2',
-          'checksum' => 'SHA256:30a7b320463d2d4a2052b72ea48518f5ad36dcb935b54628f292861241a7632e',
+          'checksum' => 'urn:sha256:30a7b320463d2d4a2052b72ea48518f5ad36dcb935b54628f292861241a7632e',
           'media_type' => nil,
           'original_file_path' => nil,
           'file_size' => nil

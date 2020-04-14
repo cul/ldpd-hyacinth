@@ -16,6 +16,9 @@ module DigitalObjectConcerns
     #                             You generally want this to be true, unless you're establishing a lock on
     #                             this object outside of the save call for another reason. Defaults to true.
     #             :user [User] User who is performing the destroy operation.
+    #             :skip_child_check [Boolean] Whether or not to skip a check for child digital objects before deleting.
+    #                                         Defaults to false, meaning that by default an object cannot be destroyed
+    #                                         if it has children.
     def destroy(opts = {})
       # run_callbacks returns the result of its block
       run_callbacks :destroy do
@@ -30,6 +33,13 @@ module DigitalObjectConcerns
     #                             this object outside of the save call for another reason. Defaults to true.
     #             :user [User] User who is performing the undestroy operation.
     def undestroy(opts = {})
+      opts[:skip_child_check] ||= false # default to false
+      run_callbacks :undestroy do
+        undestroy_impl(opts)
+      end
+    end
+
+    def undestroy_impl(opts = {})
       # Always lock during undestroy unless opts[:lock] explicitly tells us not to.
       Hyacinth::Config.lock_adapter.with_lock(opts.fetch(:lock, true) ? self.uid : nil) do |_lock_object|
         self.state = Hyacinth::DigitalObject::State::ACTIVE
@@ -43,6 +53,10 @@ module DigitalObjectConcerns
     private
 
       def destroy_impl(opts = {})
+        if self.number_of_children.positive? && !opts[:skip_child_check]
+          self.errors.add(:destroy, 'Cannot destroy an object with children. Remove the children first.')
+          return false
+        end
         # Always lock during destroy unless opts[:lock] explicitly tells us not to.
         # In the line below, self.uid will be nil for new objects and this lock
         # line will simply yield without locking on anything, which is fine.

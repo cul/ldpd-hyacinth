@@ -5,8 +5,6 @@ module DigitalObjectConcerns
     module ResourceImports
       extend ActiveSupport::Concern
 
-      VALID_CHECKSUM_REGEX = /sha256:([a-f0-9]{64})/.freeze
-
       # @param lock_object [LockObject] A lock object can be optionally passed in
       # so that an external lock can be extended while the resource import occurs.
       # Imports can take a long time, so an externally-established lock may
@@ -14,12 +12,15 @@ module DigitalObjectConcerns
       # Note that this method will undo any file copy operations if the passed-in block
       # raises an error.
       def process_resource_imports(lock_object = nil)
-        self.resource_import_attributes.each do |resource_import_name|
-          process_resource_import(lock_object, resource_import_name)
+        raise_error_if_invalid_imports_present!
+        self.resource_imports.each do |resource_import_name, resource_import|
+          process_resource_import(lock_object, resource_import_name, resource_import)
         end
         yield if block_given?
         # If everything went well, then clear the file imports
         clear_resource_imports
+        # And mark all current resources as is_new=false
+        mark_resources_as_not_new
       rescue StandardError => e
         # The import failed, so we want to undo all file copy operations that occurred
         undo_new_resource_file_copies
@@ -28,8 +29,7 @@ module DigitalObjectConcerns
 
       # Processes the data for the resource_import at key resource_import_name (e.g. 'access') and
       # upon success assigns a new resource at key resource_import_name.
-      def process_resource_import(lock_object, resource_import_name)
-        resource_import = self.resource_imports[resource_import_name]
+      def process_resource_import(lock_object, resource_import_name, resource_import)
         return if resource_import.nil? # nothing to import for this resource
 
         # Immediately assign this resource, with location, to resources hash, even though we
@@ -40,7 +40,7 @@ module DigitalObjectConcerns
         # Next we're going to do a checksum comparison, if a checksum was given.
         # We want to fail quickly if an invalid checksum was given, so we'll check the given
         # value first.
-        provided_hexdigest = hexgidest_from_import_checksum(resource_import)
+        provided_hexdigest = resource_import.hexgidest_from_checksum
         provided_file_size = resource_import.file_size.present? ? resource_import.file_size : nil
 
         hexdigest, file_size = analyze_and_optionally_copy_resource_import(resource_import, self.resources[resource_import_name], lock_object)
@@ -58,12 +58,10 @@ module DigitalObjectConcerns
       end
 
       def new_resource_for_import(resource_import, resource_import_name)
-        original_file_path = original_file_path_from_import(resource_import)
-
         Hyacinth::DigitalObject::Resource.new(
           location: location_from_import(resource_import, resource_import_name),
-          original_file_path: original_file_path,
-          media_type: media_type_from_import(File.basename(original_file_path)),
+          original_file_path: resource_import.preferred_original_file_path,
+          media_type: resource_import.media_type || resource_import.media_type_for_filename,
           is_new: true # used during rollback
         )
       end
@@ -103,7 +101,7 @@ module DigitalObjectConcerns
         self.resource_attributes.each do |resource_name|
           resource = self.resources[resource_name]
           # As we iterate through current resources, we only want to undo copy for newly-created resources
-          next unless resource.is_new
+          next if resource.nil? || !resource.is_new
 
           resource_import = self.resource_imports[resource_name]
           # Only undo a copy for resource imports that WERE a copy, and if the copy actually went through.
@@ -126,30 +124,6 @@ module DigitalObjectConcerns
         end
       end
 
-      def original_file_path_from_import(resource_import)
-        return resource_import.original_file_path if resource_import.original_file_path.present?
-        return resource_import.location.filename.to_s if resource_import.location_is_active_storage_blob?
-        resource_import.location
-      end
-
-      def media_type_from_import(filename)
-        BestType.mime_type.for_file_name(filename)
-      end
-
-      # Extracts checksum value from the resource_import data
-      def hexgidest_from_import_checksum(resource_import)
-        hexdigest = resource_import.checksum.present? ? resource_import.checksum : nil
-        if hexdigest.present?
-          if (match_data = hexdigest.match(VALID_CHECKSUM_REGEX))
-            hexdigest = match_data[1]
-          else
-            raise "Invalid checksum supplied for import (#{hexdigest}). "\
-              "Must match format: #{VALID_CHECKSUM_REGEX.inspect}"
-          end
-        end
-        hexdigest
-      end
-
       # Raises an exception if a non-nil provided_hexdigest is given and it does not match the given hexdigest.
       def validate_provided_hexdigest!(provided_hexdigest, hexdigest)
         return unless provided_hexdigest && hexdigest != provided_hexdigest
@@ -166,6 +140,26 @@ module DigitalObjectConcerns
         self.resource_import_attributes.each do |resource_import_name|
           self.resource_imports[resource_import_name] = nil
         end
+      end
+
+      def mark_resources_as_not_new
+        self.resources.each do |_resource_name, resource|
+          resource&.is_new = false
+        end
+      end
+
+      def raise_error_if_invalid_imports_present!
+        raise_error_if_invalid_import_keys_present!
+
+        self.resource_imports.each do |resource_import_name, resource_import|
+          next if resource_import.nil?
+          raise Hyacinth::Exceptions::ResourceImportError, "Invalid resource import: #{resource_import_name}" unless resource_import.valid?
+        end
+      end
+
+      def raise_error_if_invalid_import_keys_present!
+        invalid_import_keys = self.resource_imports.keys.map(&:to_sym) - self.resource_import_attributes.to_a
+        raise Hyacinth::Exceptions::ResourceImportError, "Invalid resource import keys: #{invalid_import_keys.to_a.join(', ')}" if invalid_import_keys.present?
       end
     end
   end

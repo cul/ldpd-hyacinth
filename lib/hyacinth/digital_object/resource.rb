@@ -14,6 +14,7 @@ module Hyacinth
           raise ArgumentError, "Invalid option: #{opt_name}" unless FIELDS.include?(opt_name.to_sym)
           instance_variable_set("@#{opt_name}", opt_value)
         end
+        self.is_new = false if self.is_new.nil?
       end
 
       def original_filename
@@ -33,6 +34,7 @@ module Hyacinth
       end
 
       def self.from_serialized_form(json_var)
+        # we only deserialize existing resources, so they are by definition not new
         self.new(json_var)
       end
 

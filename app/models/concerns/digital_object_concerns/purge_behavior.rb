@@ -15,7 +15,9 @@ module DigitalObjectConcerns
     #             :user [User] User who is performing the purge operation.
     def purge!(opts = {})
       destroy!(opts)
-      purge_impl(opts)
+      run_callbacks :purge do
+        purge_impl(opts)
+      end
     end
 
     def purge_impl(opts = {})
@@ -31,8 +33,6 @@ module DigitalObjectConcerns
         # destroy digital object record
         self.digital_object_record.destroy!
       end
-
-      Hyacinth::Config.digital_object_search_adapter.remove(self) if opts[:update_index] == true
 
       return true if @errors.blank?
       raise Hyacinth::Exceptions::PurgeError, "DigitalObject may not have been fully purged. Errors: #{self.errors.full_messages}"

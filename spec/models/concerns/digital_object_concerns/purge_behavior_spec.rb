@@ -32,5 +32,10 @@ RSpec.describe DigitalObjectConcerns::DestroyBehavior, solr: true do
         expect(DigitalObjectRecord.exists?(uid: object_uid)).to eq(false)
       end
     end
+
+    it "runs the expected on_purge callbacks" do
+      expect(digital_object_with_sample_data).to receive(:deindex)
+      digital_object_with_sample_data.purge!
+    end
   end
 end

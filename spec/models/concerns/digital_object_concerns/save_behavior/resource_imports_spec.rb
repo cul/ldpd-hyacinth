@@ -94,5 +94,26 @@ RSpec.describe DigitalObjectConcerns::SaveBehavior::ResourceImports do
         expect(digital_object.resources['test_resource2']).to be_a(Hyacinth::DigitalObject::Resource)
       end
     end
+
+    context "with bad resource import data" do
+      before do
+        expect(digital_object).to receive(:undo_new_resource_file_copies).and_call_original
+      end
+      context "performs an undo and raises an error" do
+        it "when invalid resource import keys are present" do
+          digital_object.assign_resource_imports(
+            'resource_imports' => { 'not_a_valid_resource_import_key' => { method: 'copy', location: test_file_path } }
+          )
+          expect { digital_object.process_resource_imports }.to raise_error(Hyacinth::Exceptions::ResourceImportError)
+        end
+
+        it "when an invalid import type is given" do
+          digital_object.assign_resource_imports(
+            'resource_imports' => { 'test_resource1' => { method: 'banana', location: test_file_path } }
+          )
+          expect { digital_object.process_resource_imports }.to raise_error(Hyacinth::Exceptions::ResourceImportError)
+        end
+      end
+    end
   end
 end

@@ -31,12 +31,14 @@ module DigitalObject
     TITLE_NON_SORT_PORTION_DYNAMIC_FIELD_NAME = 'non_sort_portion'
 
     # Set up callbacks
-    define_model_callbacks :validation, :save, :destroy
+    define_model_callbacks :validation, :save, :destroy, :undestroy, :purge
     before_validation :clean_dynamic_field_data!, :clean_rights!
     # TODO: Add these before_validations ---> :register_new_uris_and_values_for_dynamic_field_data!, normalize_controlled_term_fields!
     after_save :index
     before_destroy :remove_all_parents, :unpublish_from_all
     after_destroy :index
+    after_undestroy :index
+    after_purge :deindex
 
     # Simple attributes
     metadata_attribute :serialization_version, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { SERIALIZATION_VERSION }).private_writer
@@ -110,6 +112,10 @@ module DigitalObject
       end
 
       val
+    end
+
+    def number_of_children
+      structured_children['structure'].length
     end
   end
 end

@@ -31,12 +31,13 @@ RSpec.describe DigitalObjectConcerns::DestroyBehavior, solr: true do
           expect(destroyed_digital_object.updated_at).not_to eq(previous_updated_at_date_time)
         end
       end
-    end
 
-    it "runs the expected on_destroy callbacks" do
-      expect(digital_object_with_sample_data).to receive(:remove_all_parents)
-      expect(digital_object_with_sample_data).to receive(:unpublish_from_all)
-      digital_object_with_sample_data.destroy
+      it "runs the expected on_destroy callbacks" do
+        expect(digital_object_with_sample_data).to receive(:remove_all_parents)
+        expect(digital_object_with_sample_data).to receive(:unpublish_from_all)
+        expect(digital_object_with_sample_data).to receive(:index)
+        digital_object_with_sample_data.destroy
+      end
     end
   end
 
@@ -70,6 +71,11 @@ RSpec.describe DigitalObjectConcerns::DestroyBehavior, solr: true do
         it do
           expect(undestroyed_digital_object.updated_at).not_to eq(previous_updated_at_date_time)
         end
+      end
+
+      it "runs the expected on_undestroy callbacks" do
+        expect(destroyed_digital_object).to receive(:index)
+        destroyed_digital_object.undestroy
       end
     end
   end

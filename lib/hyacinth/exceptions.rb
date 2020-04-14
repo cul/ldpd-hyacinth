@@ -23,10 +23,13 @@ module Hyacinth
     class UnsupportedType < HyacinthError; end
 
     class ChecksumMismatchError < HyacinthError; end
+    class InvalidChecksumFormatError < HyacinthError; end
 
     class AdapterNotFoundError < HyacinthError; end
     class UnhandledLocationError < HyacinthError; end
 
     class DuplicateTypeError < HyacinthError; end
+
+    class ResourceImportError < HyacinthError; end
   end
 end

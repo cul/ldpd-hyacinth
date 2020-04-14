@@ -13,6 +13,8 @@ module Hyacinth
       TRACK = 'track'
       VALID_IMPORT_METHODS = [COPY, TRACK].freeze
 
+      VALID_CHECKSUM_REGEX = /sha256:([a-f0-9]{64})/.freeze
+
       # The opts hash should only include symbol keys.
       # The :checksum value, if provided, should be of the format:
       # "sha256:50d858e0985ecc7f60418aaf0cc5ab587f42c2570a884095a9e8ccacd0f6545c"
@@ -52,6 +54,31 @@ module Hyacinth
 
       def method_copy?
         method == COPY
+      end
+
+      # Extracts checksum hex value from the checksum field
+      def hexgidest_from_checksum
+        hexdigest = checksum.present? ? checksum : nil
+        if hexdigest.present?
+          if (match_data = hexdigest.match(VALID_CHECKSUM_REGEX))
+            hexdigest = match_data[1]
+          else
+            raise Hyacinth::Exceptions::InvalidChecksumFormatError, "Invalid checksum format supplied for import (#{hexdigest}). "\
+              "Must match format: #{VALID_CHECKSUM_REGEX.inspect}"
+          end
+        end
+        hexdigest
+      end
+
+      def media_type_for_filename
+        BestType.mime_type.for_file_name(File.basename(preferred_original_file_path))
+      end
+
+      # Returns the best original_file_path value, based on available data
+      def preferred_original_file_path
+        return original_file_path if original_file_path.present?
+        return location.filename.to_s if location_is_active_storage_blob?
+        location
       end
     end
   end

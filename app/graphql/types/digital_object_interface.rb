@@ -52,10 +52,6 @@ module Types
       end
     end
 
-    def number_of_children
-      object.structured_children['structure'].length
-    end
-
     definition_methods do
       def resolve_type(object, _context)
         case object
