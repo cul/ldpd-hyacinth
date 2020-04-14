@@ -6,7 +6,7 @@ RSpec.describe Hyacinth::DigitalObject::Resource do
   let(:arguments) do
     {
       location: 'managed-disk:///path/to/file.txt',
-      checksum: 'urn:sha256:e1266b81a70083fa5e3bf456239a1160fc6ebc179cdd71e458a9dd4bc7cc21f6',
+      checksum: 'sha256:e1266b81a70083fa5e3bf456239a1160fc6ebc179cdd71e458a9dd4bc7cc21f6',
       original_file_path: '/some/original/path',
       media_type: 'text/plain',
       file_size: 123

@@ -161,7 +161,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
     context "RelsInt properties for resources" do
       let(:dsids) { ['structMetadata'] }
       let(:hyacinth_object) { DigitalObject::Asset.new }
-      let(:resource_args) { { original_file_path: '/old/path/to/file.doc', location: '/path/to/file.doc', checksum: 'urn:asdf', file_size: 'asdf' } }
+      let(:resource_args) { { original_file_path: '/old/path/to/file.doc', location: '/path/to/file.doc', checksum: 'sha256:asdf', file_size: 'asdf' } }
       before do
         hyacinth_object.resources['master'] = Hyacinth::DigitalObject::Resource.new(resource_args)
       end
@@ -173,7 +173,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
         css_node = ng_xml.at_css("RDF > Description[about=\"info:fedora/test:1/master\"] > extent")
         expect(css_node.text).to eql('asdf')
         css_node = ng_xml.at_css("RDF > Description[about=\"info:fedora/test:1/master\"] > hasMessageDigest")
-        expect(css_node['resource']).to eql('urn:asdf')
+        expect(css_node['resource']).to eql('urn:sha256:asdf')
       end
     end
   end

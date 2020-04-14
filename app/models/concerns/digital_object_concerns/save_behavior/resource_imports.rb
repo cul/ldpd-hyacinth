@@ -53,7 +53,7 @@ module DigitalObjectConcerns
 
         # If we got here, everything worked!  Let's convert the checksum to our internally-stored
         # URN format and assign it and the file_size to the newly-created resource object.
-        self.resources[resource_import_name].checksum = "urn:sha256:#{hexdigest}"
+        self.resources[resource_import_name].checksum = "sha256:#{hexdigest}"
         self.resources[resource_import_name].file_size = file_size
       end
 

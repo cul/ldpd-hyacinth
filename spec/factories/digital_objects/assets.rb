@@ -33,7 +33,7 @@ FactoryBot.define do
 
         digital_object.resources['master'] = Hyacinth::DigitalObject::Resource.new(
           location: 'managed-disk://' + test_file_fixture_path,
-          checksum: 'urn:sha256:e1266b81a70083fa5e3bf456239a1160fc6ebc179cdd71e458a9dd4bc7cc21f6',
+          checksum: 'sha256:e1266b81a70083fa5e3bf456239a1160fc6ebc179cdd71e458a9dd4bc7cc21f6',
           original_file_path: test_file_fixture_path,
           media_type: 'text/plain',
           file_size: File.size(test_file_fixture_path)

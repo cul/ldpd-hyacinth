@@ -25,7 +25,7 @@ RSpec.describe DigitalObjectConcerns::SaveBehavior::ResourceImports do
         let(:method) { 'copy' }
 
         it "generates checksums for the created resources" do
-          expect(digital_object.resources['test_resource1'].checksum).to eq('urn:sha256:717f2c6ffbd649cd57ecc41ac6130c3b6210f1473303bcd9101a9014551bffb2')
+          expect(digital_object.resources['test_resource1'].checksum).to eq('sha256:717f2c6ffbd649cd57ecc41ac6130c3b6210f1473303bcd9101a9014551bffb2')
         end
 
         it "generates file sizes for the created resources" do
@@ -38,7 +38,7 @@ RSpec.describe DigitalObjectConcerns::SaveBehavior::ResourceImports do
         let(:method) { 'track' }
 
         it "generates checksums for the created resources" do
-          expect(digital_object.resources['test_resource1'].checksum).to eq('urn:sha256:717f2c6ffbd649cd57ecc41ac6130c3b6210f1473303bcd9101a9014551bffb2')
+          expect(digital_object.resources['test_resource1'].checksum).to eq('sha256:717f2c6ffbd649cd57ecc41ac6130c3b6210f1473303bcd9101a9014551bffb2')
         end
 
         it "generates file sizes for the created resources" do
@@ -61,7 +61,7 @@ RSpec.describe DigitalObjectConcerns::SaveBehavior::ResourceImports do
         let(:method) { 'copy' }
 
         it "generates checksums for the created resources" do
-          expect(digital_object.resources['test_resource1'].checksum).to eq('urn:sha256:c72a7eb71263aa3e8936049a925556881c4f9e562dcdc1cae036b11579dfa175')
+          expect(digital_object.resources['test_resource1'].checksum).to eq('sha256:c72a7eb71263aa3e8936049a925556881c4f9e562dcdc1cae036b11579dfa175')
         end
 
         it "generates file sizes for the created resources" do

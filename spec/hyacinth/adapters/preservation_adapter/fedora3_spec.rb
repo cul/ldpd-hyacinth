@@ -251,7 +251,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
     context "RelsInt properties for resources" do
       let(:dsids) { ['structMetadata'] }
       let(:hyacinth_object) { DigitalObject::Asset.new }
-      let(:resource_args) { { original_file_path: '/old/path/to/file.doc', location: '/path/to/file.doc', checksum: 'urn:asdf', file_size: 'asdf' } }
+      let(:resource_args) { { original_file_path: '/old/path/to/file.doc', location: '/path/to/file.doc', checksum: 'sha256:asdf', file_size: 'asdf' } }
       let(:extent_property) do
         {
           predicate: described_class::RelsIntProperties::URIS::EXTENT,
@@ -264,7 +264,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       let(:checksum_property) do
         {
           predicate: described_class::RelsIntProperties::URIS::HAS_MESSAGE_DIGEST,
-          object: "urn:asdf",
+          object: "urn:sha256:asdf",
           pid: object_pid,
           subject: "info:fedora/#{object_pid}/master",
           isLiteral: false

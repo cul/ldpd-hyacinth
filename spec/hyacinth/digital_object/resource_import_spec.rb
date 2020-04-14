@@ -7,7 +7,7 @@ RSpec.describe Hyacinth::DigitalObject::ResourceImport do
     {
       method: described_class::COPY,
       location: Rails.root.join('spec', 'fixtures', 'files', 'test.txt').to_s,
-      checksum: 'urn:sha256:e1266b81a70083fa5e3bf456239a1160fc6ebc179cdd71e458a9dd4bc7cc21f6',
+      checksum: 'sha256:e1266b81a70083fa5e3bf456239a1160fc6ebc179cdd71e458a9dd4bc7cc21f6',
       original_file_path: '/original/file/path.txt',
       media_type: 'text/plain',
       file_size: 100
@@ -33,7 +33,7 @@ RSpec.describe Hyacinth::DigitalObject::ResourceImport do
     {
       method: described_class::COPY,
       location: blob,
-      checksum: 'urn:sha256:c72a7eb71263aa3e8936049a925556881c4f9e562dcdc1cae036b11579dfa175',
+      checksum: 'sha256:c72a7eb71263aa3e8936049a925556881c4f9e562dcdc1cae036b11579dfa175',
       original_file_path: '/original/file/path.txt',
       media_type: 'text/plain',
       file_size: 32
