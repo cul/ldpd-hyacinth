@@ -11,7 +11,7 @@ namespace :hyacinth do
   task purge_all_digital_objects: :environment do
     puts Rainbow("This will delete ALL digital objects in Rails.env #{Rails.env} and cannot be undone. Are you sure you want to do this? (yes/no)").red.bright
     print '> '
-    response = STDIN.gets.chomp
+    response = ENV['yes'] || STDIN.gets.chomp
 
     if response != 'yes'
       puts 'Aborting because "yes" was not entered.'
@@ -35,7 +35,7 @@ namespace :hyacinth do
           merge_rights: false
         )
         begin
-          dobj.purge!
+          dobj.purge!(skip_child_check: true)
           puts "Purged: #{record.uid}"
         rescue Hyacinth::Exceptions::NotFound
           puts "Purged #{record.uid} (but no associated metadata was found)"
