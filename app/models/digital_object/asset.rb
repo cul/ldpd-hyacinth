@@ -4,9 +4,9 @@ module DigitalObject
   class Asset < DigitalObject::Base
     include DigitalObjectConcerns::Assets::Validations
 
-    PRIMARY_RESOURCE = 'master'
+    PRIMARY_RESOURCE_NAME = 'master'
 
-    resource_attribute PRIMARY_RESOURCE.to_sym
+    resource_attribute PRIMARY_RESOURCE_NAME.to_sym
     resource_attribute :service
     resource_attribute :access
 
@@ -19,11 +19,8 @@ module DigitalObject
       super
     end
 
-    # yields to a block with the primary resource name and object
-    # returns the resource
-    def with_primary_resource(&block)
-      block.yield(PRIMARY_RESOURCE, resources[PRIMARY_RESOURCE] ||= Hyacinth::DigitalObject::Resource.new)
-      resources[PRIMARY_RESOURCE]
+    def primary_resource_name
+      PRIMARY_RESOURCE_NAME
     end
   end
 end

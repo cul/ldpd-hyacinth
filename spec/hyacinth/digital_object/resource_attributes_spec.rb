@@ -23,11 +23,19 @@ describe Hyacinth::DigitalObject::ResourceAttributes do
     it "adds the expected methods to an instance" do
       expect(instance.resource_attributes).to be_a(Set)
     end
+
+    it "adds the expected resource keys to an instance" do
+      expect(instance.resource_attributes).to include(:example)
+    end
   end
 
   context ".resources" do
     it "adds a public getter method" do
       expect(instance).to respond_to(:resources)
+    end
+
+    before do
+      instance.resources[:example] = Hyacinth::DigitalObject::Resource.new
     end
 
     it "accesses individual resources indifferently by key" do

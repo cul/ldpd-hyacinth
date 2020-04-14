@@ -33,7 +33,7 @@ module Types
 
     field :title, String, null: false
     field :number_of_children, Integer, null: false
-    field :resources, [ResourceType], null: false
+    field :resources, [ResourceWrapperType], null: false
 
     def publish_entries
       object.publish_entries.map { |k, h| { publish_target_string_key: k }.merge(h) }
@@ -47,15 +47,10 @@ module Types
       object.resources.map do |resource_name, resource|
         {
           'id' => resource_name,
-          'display_label' => resource_name.humanize.split(' ').map(&:capitalize).join(' ')
-        }.merge(
-          resource.as_json
-        )
+          'display_label' => resource_name.humanize.split(' ').map(&:capitalize).join(' '),
+          'resource' => resource
+        }
       end
-    end
-
-    def number_of_children
-      object.structured_children['structure'].length
     end
 
     definition_methods do

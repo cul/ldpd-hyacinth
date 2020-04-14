@@ -79,6 +79,7 @@ class BatchExportJob
   # @return [void]
   def self.digital_objects_for_batch_export(batch_export)
     search_params = JSON.parse(batch_export.search_params)
+    searching_user = batch_export.user
 
     # TODO: Pass user into search method (when that functionality exists) so that we scope export
     # to only projects that the user has permission to read.
@@ -87,7 +88,7 @@ class BatchExportJob
 
     # TODO: Eventually the results object avove will be a DigitalObjectSearchResult (or similar)
     # type of object instead of a solr response. At that point, we'll refactor this code.
-    results = Hyacinth::Config.digital_object_search_adapter.search(search_params) do |solr_params|
+    results = Hyacinth::Config.digital_object_search_adapter.search(search_params, searching_user) do |solr_params|
       solr_params.rows(BATCH_SIZE)
       solr_params.start(0)
     end
@@ -105,7 +106,7 @@ class BatchExportJob
         yield DigitalObject::Base.find(doc['id'])
       end
 
-      results = Hyacinth::Config.digital_object_search_adapter.search(search_params) do |solr_params|
+      results = Hyacinth::Config.digital_object_search_adapter.search(search_params, searching_user) do |solr_params|
         solr_params.rows(BATCH_SIZE)
         solr_params.start(BATCH_SIZE * batch_counter)
       end

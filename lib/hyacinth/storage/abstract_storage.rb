@@ -55,6 +55,18 @@ module Hyacinth
         storage_adapter_for_location(location).exists?(location)
       end
 
+      def readable?(location)
+        storage_adapter_for_location(location).readable?
+      end
+
+      def writable?(location)
+        storage_adapter_for_location(location).writable?
+      end
+
+      def deletable?(location)
+        storage_adapter_for_location(location).deletable?
+      end
+
       # Returns the size in bytes of the file at the given location.
       def size(location)
         storage_adapter_for_location(location).size(location)

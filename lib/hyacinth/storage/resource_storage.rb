@@ -27,14 +27,11 @@ module Hyacinth
         @primary_managed_storage_adapter.generate_new_location_uri("#{uid}-#{resource_name}")
       end
 
-      # Uses the primary TRACKED storage adapter to generate a new storage location
-      # for the given uid and resource_name, ensuring that nothing currently exists
-      # at that location.
-      # @param uid [String] uid of an object
-      # @param resouce_name [String] name of the resource (e.g. master, access, transcript, etc.)
-      # @return [String] a location uri
-      def generate_new_tracked_location_uri(uid, resource_name)
-        @primary_tracked_storage_adapter.generate_new_location_uri("#{uid}-#{resource_name}")
+      # Prepends the uri_prefix of the primary TRACKED storage adapter to the given location_without_prefix.
+      # @param location_without_prefix [String] A location without a prefix. (e.g. a file path like /a/b/c.txt)
+      # @return [String] a location uri that starts with a uri_prefix
+      def generate_new_tracked_location_uri(location_without_uri_prefix)
+        @primary_tracked_storage_adapter.generate_new_tracked_location_uri(location_without_uri_prefix)
       end
     end
   end

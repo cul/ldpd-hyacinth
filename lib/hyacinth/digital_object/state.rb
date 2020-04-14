@@ -4,9 +4,9 @@ module Hyacinth
   module DigitalObject
     module State
       ACTIVE = 'active'
-      WITHDRAWN = 'withdrawn'
+      DELETED = 'deleted'
 
-      VALID_STATES = [ACTIVE, WITHDRAWN].freeze
+      VALID_STATES = [ACTIVE, DELETED].freeze
     end
   end
 end

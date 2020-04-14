@@ -27,20 +27,16 @@ module DigitalObjectConcerns
     #             :lock [boolean] Whether or not to lock on this object during save.
     #                             You generally want this to be true, unless you're establishing a lock on this object
     #                             outside of the save call for another reason. Defaults to true.
-    #             :update_index [boolean] Whether or not to update the search index after save.
     #             :user [User] User who is performing the save operation.
     def save(opts = {})
       run_callbacks :validation do
         self.valid?
       end
-
       return false if self.errors.present?
-
-      save_result = false
+      # run_callbacks returns the result of its block
       run_callbacks :save do
-        save_result = save_impl(opts)
+        save_impl(opts)
       end
-      save_result
     end
 
     def save_impl(opts = {})
@@ -60,7 +56,7 @@ module DigitalObjectConcerns
           self.update_modification_info(current_datetime, opts[:user])
           # TODO: #114 how should the minted DOI be treated in the event of a failed save (rescued below)
           self.mint_reserved_doi_if_doi_blank
-          self.handle_asset_imports(lock_object) do
+          self.process_resource_imports(lock_object) do
             self.handle_parent_changes do
               # Modify DigitalObjectRecord last, since creating it switches new_record? to false,
               # and optimistic_lock_token should change as part of a successful save.
@@ -72,14 +68,13 @@ module DigitalObjectConcerns
               Hyacinth::Config.external_identifier_adapter.update(self.doi, self, nil)
             end
           end
-          Hyacinth::Config.digital_object_search_adapter.index(self) if opts[:update_index] == true
         rescue StandardError => e
           # Save a copy of the metadata_location_uri in case this was a new record,
           # since we'll need to delete the metadata
           metadata_location_uri_backup = self.digital_object_record.metadata_location_uri
 
           errors_backup = self.errors # Preserve errors before we revert
-          self.deep_copy_instance_variables_from(before_save_copy) # Revert state
+          self.deep_copy_instance_variables_from(before_save_copy) # Revert state, including old resource data
           self.errors.clear
           self.errors.merge!(errors_backup) # Reassign errors after reversion
 
@@ -111,25 +106,22 @@ module DigitalObjectConcerns
       self.created_by = user if self.created_by.blank?
     end
 
-    # @param lock_object [LockObject] A lock object can be optionally passed in
-    # so that an external lock can be extended while the resource import occurs.
-    # Imports can take a long time, so an externally-established lock may
-    # expire if not renewed within a resource import.
-    def handle_asset_imports(lock_object = nil)
-      self.handle_resource_imports(lock_object)
-      yield
-      self.clear_resource_import_data
-    rescue StandardError => e
-      self.resource_attributes.map do |_resource_name, resource|
-        resource&.undo_last_successful_import_if_copy
-      end
-
-      raise e # pass along the exception
+    # Removes all parents and then yields to the given block.
+    # Note: By necessity, this method clears all previously set parent_uids_to_remove and parent_uids_to_add.
+    # @yield [void] A block to run
+    def remove_all_parents
+      @parent_uids_to_remove = parent_uids.dup
+      @parent_uids_to_add.clear
+      self.handle_parent_changes
     end
 
+    # Handles parent changes (based on @parent_uids_to_add and @parent_uids_to_remove) and then
+    # yields to the (optional) given block. If an error is raised in the given block, parent changes
+    # are reverted and the error is re-raised.
+    # @yield [void]
     def handle_parent_changes
       unless self.parents_changed?
-        yield
+        yield if block_given?
         return
       end
 
@@ -168,7 +160,7 @@ module DigitalObjectConcerns
         self.parent_uids = (self.parent_uids - @parent_uids_to_remove + @parent_uids_to_add).freeze
         @parent_uids_to_add.clear
         @parent_uids_to_remove.clear
-        yield
+        yield if block_given?
       rescue StandardError => e
         # If any parents were successfully updated, we need to revert them
         # to their previous state by re-saving the previous state objects.

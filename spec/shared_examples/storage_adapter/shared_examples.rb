@@ -15,6 +15,9 @@ RSpec.shared_examples "an abstract storage adapter" do
     it "implements #writable?" do
       expect(adapter).to respond_to(:writable?)
     end
+    it "implements #deletable?" do
+      expect(adapter).to respond_to(:deletable?)
+    end
     it "implements #handles?" do
       expect(adapter).to respond_to(:handles?)
     end
@@ -118,8 +121,10 @@ RSpec.shared_examples "a readable-writable storage adapter" do
   before {
     # This shared spec requires the including context to define variables:
     raise 'Must define adapter via let(:adapter)' unless defined?(adapter)
-    raise 'Must define adapter via let(:expected_adapter_uri_prefix)' unless defined?(expected_adapter_uri_prefix)
-    raise 'Must define adapter via let(:sample_location_uri)' unless defined?(sample_location_uri)
+    raise 'Must define expected_adapter_uri_prefix via let(:expected_adapter_uri_prefix)' unless defined?(expected_adapter_uri_prefix)
+    raise 'Must define sample_location_uri via let(:sample_location_uri)' unless defined?(sample_location_uri)
+    raise 'Must define new_record_identifier via let(:new_record_identifier)' unless defined?(new_record_identifier)
+    raise 'Must define expected_new_location_uri via let(:expected_new_location_uri)' unless defined?(expected_new_location_uri)
   }
 
   let(:unhandled_location_uri) { 'unhandled:///a/b/c/d/e' }
@@ -161,6 +166,12 @@ RSpec.shared_examples "a readable-writable storage adapter" do
     end
     it "rejects unhandled URIs" do
       expect { adapter.delete(unhandled_location_uri) }.to raise_error(Hyacinth::Exceptions::UnhandledLocationError)
+    end
+  end
+
+  context "#generate_new_location_uri" do
+    it "generates the a location uri" do
+      expect(adapter.generate_new_location_uri(new_record_identifier)).to eq(expected_new_location_uri)
     end
   end
 end

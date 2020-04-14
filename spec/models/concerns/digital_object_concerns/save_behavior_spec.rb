@@ -59,4 +59,22 @@ RSpec.describe DigitalObjectConcerns::SaveBehavior, solr: true do
       end
     end
   end
+
+  context "#remove_all_parents" do
+    let(:parent_digital_object_1) { FactoryBot.create(:digital_object_test_subclass) }
+    let(:parent_digital_object_2) { FactoryBot.create(:digital_object_test_subclass) }
+    let(:digital_object_with_parents) do
+      obj = FactoryBot.create(:digital_object_test_subclass)
+      obj.add_parent_uid(parent_digital_object_1.uid)
+      obj.add_parent_uid(parent_digital_object_2.uid)
+      obj.save
+      obj
+    end
+
+    it "works as expected" do
+      expect(digital_object_with_parents.parent_uids).to be_present
+      digital_object_with_parents.remove_all_parents
+      expect(digital_object_with_parents.parent_uids).to be_empty
+    end
+  end
 end

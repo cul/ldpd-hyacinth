@@ -9,6 +9,8 @@ RSpec.describe Hyacinth::Adapters::StorageAdapter::Memory do
   let(:expected_adapter_uri_prefix) { "#{uri_protocol}://" }
   let(:sample_location_uri) { expected_adapter_uri_prefix + 'anything' }
   let(:content) { 'This text should be stored.' }
+  let(:new_record_identifier) { "abc123" }
+  let(:expected_new_location_uri) { "#{expected_adapter_uri_prefix}#{new_record_identifier}" }
 
   it_behaves_like "a readable-writable storage adapter" do
     before do

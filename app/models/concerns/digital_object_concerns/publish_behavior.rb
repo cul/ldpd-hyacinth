@@ -67,74 +67,86 @@ module DigitalObjectConcerns
       self.errors.blank?
     end
 
-    def publish_to(publish_target, current_publish_entries, opts = {})
-      publication_adapter = Hyacinth::Config.publication_adapter
-      publish_result, messages = publication_adapter.publish(publish_target, self, opts[:update_doi_url])
-      if publish_result
-        # Remove publish_to and add publish entry
-        publish_entry = {
-          published_at: (opts[:current_datetime] || DateTime.current),
-          published_by: opts[:user]
-        }
-        # if result was true, messages array should be the published url
-        publish_entry[:cited_at] = messages.first if opts[:update_doi_url]
-        current_publish_entries[publish_target.string_key] = Hyacinth::PublishEntry.new(publish_entry)
-      else
-        self.errors.add(:publish_to, "Failed to publish to #{publish_target.string_key}. See error log for details.")
-        Rails.logger.error("Failed to publish #{self.uid} to #{publish_target.string_key} due to the following errors: #{messages.join(', ')}")
-      end
+    # Unpublishes this object from all of its current publish targets
+    # and clears out publish_entries.
+    def unpublish_from_all
+      return if publish_entries.blank?
+      self.pending_unpublish_from = publish_entries.keys
+      publish
     end
 
-    def unpublish_from(publish_target, current_publish_entries, opts = {})
-      publication_adapter = Hyacinth::Config.publication_adapter
-      unpublish_result, errors = publication_adapter.unpublish(publish_target, self, opts[:update_doi_url])
-      if unpublish_result
-        # Remove unpublish_from and publish entry
-        current_publish_entries.delete(publish_target.string_key)
-      else
-        self.errors.add(:unpublish_from, "Failed to unpublish from #{publish_target.string_key}. See error log for details.")
-        Rails.logger.error("Failed to unpublish #{self.uid} from #{publish_target.string_key} due to the following errors: #{errors.join(', ')}")
-      end
-    end
+    private
 
-    # Given a publish entries Hash, returns the string key of the publish target with the highest
-    # doi priority, ignoring any publish targets that have an is_valid_doi_location value of false.
-    # @param pub_entries [Hash] A Hash of publish target string keys to publish entries.
-    # @param publish_target_string_keys_to_publish_targets [Hash] A Hash of publish target string keys to PublishTarget instances
-    # @return [String] The string_key of the highest priority publish entry,
-    # or nil if none of the publish targets meet the requirements necessary to
-    # be considered for prioritization.
-    def select_highest_priority_publish_entry(pub_entries, publish_target_string_keys_to_publish_targets)
-      pub_entries.keys.select do |publish_target_string_key|
-        publish_target_string_keys_to_publish_targets[publish_target_string_key].valid_doi_location?
-      end.max_by do |publish_target_string_key|
-        publish_target_string_keys_to_publish_targets[publish_target_string_key].doi_priority
+      def publish_to(publish_target, current_publish_entries, opts = {})
+        publication_adapter = Hyacinth::Config.publication_adapter
+        publish_result, messages = publication_adapter.publish(publish_target, self, opts[:update_doi_url])
+        if publish_result
+          # Remove pending_publish_to and add publish entry
+          pending_publish_to.delete(publish_target.string_key)
+          publish_entry = {
+            published_at: (opts[:current_datetime] || DateTime.current),
+            published_by: opts[:user]
+          }
+          # if result was true, messages array should be the published url
+          publish_entry[:cited_at] = messages.first if opts[:update_doi_url]
+          current_publish_entries[publish_target.string_key] = Hyacinth::PublishEntry.new(publish_entry)
+        else
+          self.errors.add(:publish_to, "Failed to publish to #{publish_target.string_key}. See error log for details.")
+          Rails.logger.error("Failed to publish #{self.uid} to #{publish_target.string_key} due to the following errors: #{messages.join(', ')}")
+        end
       end
-    end
 
-    class PotentialPublishTargets
-      delegate :[], to: :@targets
-      def initialize(digital_object)
-        @targets = PublishTarget.where(
-          string_key: (digital_object.pending_publish_to + digital_object.pending_unpublish_from + digital_object.publish_entries.keys).uniq
-        ).map do |publish_target|
-          [publish_target.string_key, publish_target]
-        end.to_h
+      def unpublish_from(publish_target, current_publish_entries, opts = {})
+        publication_adapter = Hyacinth::Config.publication_adapter
+        unpublish_result, errors = publication_adapter.unpublish(publish_target, self, opts[:update_doi_url])
+        if unpublish_result
+          # Remove pending_unpublish_from and publish entry
+          pending_unpublish_from.delete(publish_target.string_key)
+          current_publish_entries.delete(publish_target.string_key)
+        else
+          self.errors.add(:unpublish_from, "Failed to unpublish from #{publish_target.string_key}. See error log for details.")
+          Rails.logger.error("Failed to unpublish #{self.uid} from #{publish_target.string_key} due to the following errors: #{errors.join(', ')}")
+        end
       end
 
       # Given a publish entries Hash, returns the string key of the publish target with the highest
       # doi priority, ignoring any publish targets that have an is_valid_doi_location value of false.
       # @param pub_entries [Hash] A Hash of publish target string keys to publish entries.
+      # @param publish_target_string_keys_to_publish_targets [Hash] A Hash of publish target string keys to PublishTarget instances
       # @return [String] The string_key of the highest priority publish entry,
       # or nil if none of the publish targets meet the requirements necessary to
       # be considered for prioritization.
-      def highest_priority_publish_entry(pub_entries)
+      def select_highest_priority_publish_entry(pub_entries, publish_target_string_keys_to_publish_targets)
         pub_entries.keys.select do |publish_target_string_key|
-          self[publish_target_string_key].valid_doi_location?
+          publish_target_string_keys_to_publish_targets[publish_target_string_key].valid_doi_location?
         end.max_by do |publish_target_string_key|
-          self[publish_target_string_key].doi_priority
+          publish_target_string_keys_to_publish_targets[publish_target_string_key].doi_priority
         end
       end
-    end
+
+      class PotentialPublishTargets
+        delegate :[], to: :@targets
+        def initialize(digital_object)
+          @targets = PublishTarget.where(
+            string_key: (digital_object.pending_publish_to + digital_object.pending_unpublish_from + digital_object.publish_entries.keys).uniq
+          ).map do |publish_target|
+            [publish_target.string_key, publish_target]
+          end.to_h
+        end
+
+        # Given a publish entries Hash, returns the string key of the publish target with the highest
+        # doi priority, ignoring any publish targets that have an is_valid_doi_location value of false.
+        # @param pub_entries [Hash] A Hash of publish target string keys to publish entries.
+        # @return [String] The string_key of the highest priority publish entry,
+        # or nil if none of the publish targets meet the requirements necessary to
+        # be considered for prioritization.
+        def highest_priority_publish_entry(pub_entries)
+          pub_entries.keys.select do |publish_target_string_key|
+            self[publish_target_string_key].valid_doi_location?
+          end.max_by do |publish_target_string_key|
+            self[publish_target_string_key].doi_priority
+          end
+        end
+      end
   end
 end

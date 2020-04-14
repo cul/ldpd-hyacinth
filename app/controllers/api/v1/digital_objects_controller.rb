@@ -93,12 +93,8 @@ module Api
         @digital_object.projects.each do |project|
           authorize! :delete_objects, project
         end
-        # TODO: un-preserve or tombstone
-        # TODO: unindex and remove param?
-        @digital_object.destroy(update_index: true)
-        # unpublish
-        @digital_object.publish
-        head :no_content
+        @digital_object.destroy
+        show
       end
 
       def load_resource

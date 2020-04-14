@@ -10,7 +10,7 @@ module DigitalObjectConcerns
     include DigitalObjectConcerns::AttributeAssignment::Preserve
     include DigitalObjectConcerns::AttributeAssignment::Projects
     include DigitalObjectConcerns::AttributeAssignment::PendingPublishEntries
-    include DigitalObjectConcerns::AttributeAssignment::Resources
+    include DigitalObjectConcerns::AttributeAssignment::ResourceImports
     include DigitalObjectConcerns::AttributeAssignment::Rights
     include DigitalObjectConcerns::AttributeAssignment::State
     include DigitalObjectConcerns::AttributeAssignment::StructuredChildren
@@ -45,7 +45,7 @@ module DigitalObjectConcerns
       assign_parent_uids(new_digital_object_data)
       assign_preserve(new_digital_object_data)
       assign_pending_publish_entries(new_digital_object_data)
-      assign_resources(new_digital_object_data)
+      assign_resource_imports(new_digital_object_data)
       assign_state(new_digital_object_data)
       assign_projects(new_digital_object_data)
       assign_rights(new_digital_object_data, merge_rights)

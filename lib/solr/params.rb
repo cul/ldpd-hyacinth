@@ -8,15 +8,17 @@ module Solr
       @parameters = {
         q: nil,
         qt: 'search',
-        df: 'keywords_teim',
+        df: 'keywords_teim', # TODO: Is this actually the default we want? This class is used by the TermSearchAdapter too.
         fq: [],
         'facet.field'.to_sym => [],
         start: 0
       }
     end
 
-    def fq(field, value)
-      @parameters[:fq] << "#{field}:\"#{Solr::Utils.escape(value)}\"" unless value.nil?
+    def fq(field, values, boolean_operator = :or)
+      raise ArgumentError unless [:and, :or].include?(boolean_operator)
+      escaped_values = Array.wrap(values).map { |value| Solr::Utils.escape(value).gsub(' ', '\ ') }
+      @parameters[:fq] << "#{field}:(#{escaped_values.join(boolean_operator == :and ? ' AND ' : ' OR ')})" unless escaped_values.blank?
       self
     end
 

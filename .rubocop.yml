@@ -7,5 +7,7 @@ AllCops:
   TargetRubyVersion: 2.6.4
   TargetRailsVersion: 6.0.2
 
-Lint/UnusedMethodArgument:
-  AllowUnusedKeywordArguments: true
+# If we also want to disable this rule in another project, we'll end up disabling it in
+# the rubocul gem instead.
+Style/RedundantSelf:
+  Enabled: false

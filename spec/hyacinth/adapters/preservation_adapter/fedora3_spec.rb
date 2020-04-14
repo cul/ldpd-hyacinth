@@ -164,8 +164,8 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
         # state should be assigned automatically
         expect(rubydora_object.state).to eql('A')
       end
-      it "assigns a state property to inactive if withdrawn" do
-        hyacinth_object.state = Hyacinth::DigitalObject::State::WITHDRAWN
+      it "assigns a state property to inactive if deleted" do
+        hyacinth_object.state = Hyacinth::DigitalObject::State::DELETED
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
         expect(rubydora_object.state).to eql('I')
       end
@@ -251,7 +251,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
     context "RelsInt properties for resources" do
       let(:dsids) { ['structMetadata'] }
       let(:hyacinth_object) { DigitalObject::Asset.new }
-      let(:resource_args) { { original_filename: '/old/path/to/file.doc', location: '/path/to/file.doc', checksum: 'asdf', file_size: 'asdf' } }
+      let(:resource_args) { { original_file_path: '/old/path/to/file.doc', location: '/path/to/file.doc', checksum: 'sha256:asdf', file_size: 'asdf' } }
       let(:extent_property) do
         {
           predicate: described_class::RelsIntProperties::URIS::EXTENT,
@@ -264,7 +264,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       let(:checksum_property) do
         {
           predicate: described_class::RelsIntProperties::URIS::HAS_MESSAGE_DIGEST,
-          object: "urn:asdf",
+          object: "urn:sha256:asdf",
           pid: object_pid,
           subject: "info:fedora/#{object_pid}/master",
           isLiteral: false
@@ -276,7 +276,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
         allow(connection).to receive(:find_by_sparql_relationship).and_return([]) # fresh properties!
         expect(connection).to receive(:add_relationship).with(extent_property)
         expect(connection).to receive(:add_relationship).with(checksum_property)
-        hyacinth_object.resources['master'].send(:initialize, resource_args)
+        hyacinth_object.resources['master'] = Hyacinth::DigitalObject::Resource.new(resource_args)
       end
       it "persists model properties" do
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)

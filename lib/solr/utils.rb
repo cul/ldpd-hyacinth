@@ -12,13 +12,11 @@ module Solr
       SUFFIX_BY_DATA_TYPE[data_type]
     end
 
-    # Escape for solr parameters
+    # Escape characters that have special meaning to Solr query parser:
+    # These include: + - & | ! ( ) { } [ ] ^ " ~ * ? : \ /
+    # Does not escape whitespace. You need to do that on your own.
     def self.escape(str)
-      if RSolr.respond_to?(:solr_escape)
-        RSolr.solr_escape(str) # Newer method
-      else
-        RSolr.escape(str) # Fall back to older method
-      end
+      RSolr.solr_escape(str)
     end
   end
 end

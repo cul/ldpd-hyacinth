@@ -41,16 +41,18 @@ function DigitalObjectNew() {
             />
           </InputGroup>
 
-          <div>
-            <Form.Row>
-              <Col sm="auto" className="ml-auto">
-                <SubmitButton
-                  formType="new"
-                  onClick={onSubmitHandler}
-                />
-              </Col>
-            </Form.Row>
-          </div>
+          <Collapse in={digitalObjectType != null && digitalObjectType !== ''}>
+            <div>
+              <Form.Row>
+                <Col sm="auto" className="ml-auto">
+                  <SubmitButton
+                    formType="new"
+                    onClick={onSubmitHandler}
+                  />
+                </Col>
+              </Form.Row>
+            </div>
+          </Collapse>
         </div>
       </Collapse>
     );
@@ -70,7 +72,6 @@ function DigitalObjectNew() {
         />
 
         { renderDigitalObjectTypeSelect() }
-
       </Form>
     </>
   );

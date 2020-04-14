@@ -2,11 +2,28 @@
 
 namespace :hyacinth do
   namespace :setup do
+    desc "Set up hyacinth config files"
+    task :config_files do
+      config_template_dir = Rails.root.join('config', 'templates')
+      config_dir = Rails.root.join('config')
+      Dir.foreach(config_template_dir) do |entry|
+        next unless entry.end_with?('.yml')
+        src_path = File.join(config_template_dir, entry)
+        dst_path = File.join(config_dir, entry.gsub('.template', ''))
+        if File.exist?(dst_path)
+          puts Rainbow("File already exists (skipping): #{dst_path}").blue.bright + "\n"
+        else
+          FileUtils.cp(src_path, dst_path)
+          puts Rainbow("Created file at: #{dst_path}").green
+        end
+      end
+    end
+
     desc "Set up default Hyacinth users"
     task default_users: :environment do
       default_user_accounts.each do |account_info|
         user_email = account_info[:email]
-        if User.exists?(email: account_info[:email])
+        if User.exists?(email: user_email)
           puts Rainbow("Skipping creation of user #{user_email} because user already exists.").blue.bright
         else
           User.create!(
@@ -23,19 +40,34 @@ namespace :hyacinth do
       end
     end
 
-    desc "Set up hyacinth config files"
-    task :config_files do
-      config_template_dir = Rails.root.join('config', 'templates')
-      config_dir = Rails.root.join('config')
-      Dir.foreach(config_template_dir) do |entry|
-        next unless entry.end_with?('.yml')
-        src_path = File.join(config_template_dir, entry)
-        dst_path = File.join(config_dir, entry.gsub('.template', ''))
-        if File.exist?(dst_path)
-          puts Rainbow("File already exists (skipping): #{dst_path}").blue.bright + "\n"
+    desc "Set up Test projects"
+    task test_projects: :environment do
+      [
+        {
+          string_key: 'test_primary_project',
+          display_label: 'Test Primary Project',
+          is_primary: true,
+          has_asset_rights: true
+        },
+        {
+          string_key: 'another_test_primary_project',
+          display_label: 'Another Test Primary Project',
+          is_primary: true,
+          has_asset_rights: true
+        },
+        {
+          string_key: 'test_aggregator_project',
+          display_label: 'Test Aggregator Project',
+          is_primary: false,
+          has_asset_rights: false
+        }
+      ].each do |project_config|
+        project_string_key = project_config[:string_key]
+        if Project.exists?(string_key: project_string_key)
+          puts Rainbow("Skipping creation of project #{project_string_key} because project already exists.").blue.bright
         else
-          FileUtils.cp(src_path, dst_path)
-          puts Rainbow("Created file at: #{dst_path}").green
+          Project.create!(project_config)
+          puts Rainbow("Created project: #{project_string_key}").green
         end
       end
     end
@@ -125,7 +157,7 @@ namespace :hyacinth do
         first_name: 'Test',
         last_name: 'User',
         uid: SecureRandom.uuid,
-        is_admin: true
+        is_admin: false
       }
     ]
   end

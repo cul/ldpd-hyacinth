@@ -81,7 +81,7 @@ RSpec.describe DigitalObjectConcerns::CopyBehavior do
     end
 
     it "copies as expected when valid attributes are given" do
-      digital_object_with_sample_data.send(:state=, 'withdrawn')
+      digital_object_with_sample_data.send(:state=, 'deleted')
       digital_object_with_sample_data.send(:doi=, 'ABC/12345')
       new_instance.deep_copy_metadata_attributes_from(digital_object_with_sample_data, valid_metadata_attribute_names)
 

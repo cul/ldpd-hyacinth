@@ -20,7 +20,6 @@ RSpec.describe DigitalObjectConcerns::IndexBehavior, solr: true do
 
   context "#destroy" do
     it "runs as expected, removing the destroyed object from the index" do
-      digital_object_with_sample_data.save
       digital_object_with_sample_data.destroy
       results = Hyacinth::Config.digital_object_search_adapter.search(search_params)
       expect(results['response']['docs']).to be_blank
