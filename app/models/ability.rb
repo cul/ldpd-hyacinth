@@ -68,7 +68,7 @@ class Ability
       when Permission::MANAGE_ALL_DIGITAL_OBJECTS
         can :read, [Project, PublishTarget, FieldSet]
         can :manage, DigitalObject::Base
-        can [:read_objects, :create_objects, :update_objects, :access_rights, :delete_objects, :publish_objects], Project
+        can [:read_objects, :create_objects, :update_objects, :assess_rights, :delete_objects, :publish_objects], Project
       end
     end
   end
