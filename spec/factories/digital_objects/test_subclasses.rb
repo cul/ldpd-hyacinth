@@ -15,17 +15,30 @@ FactoryBot.define do
 
   factory :digital_object_test_subclass, class: DigitalObject::TestSubclass do
     trait :with_sample_data do
+      with_descriptive_metadata
+
       initialize_with do
         instance = new
-        instance.instance_variable_set('@descriptive_metadata', {
-          'title' => [{
-            'non_sort_portion' => 'The',
-            'sort_portion' => 'Tall Man and His Hat'
-          }]
-        })
         instance.instance_variable_set('@custom_field1', 'excellent value 1')
         instance.instance_variable_set('@custom_field2', 'excellent value 2')
         instance
+      end
+    end
+
+    trait :with_descriptive_metadata do
+      after(:build) do |digital_object|
+        DynamicFieldsHelper.load_title_fields! # Load fields.
+
+        digital_object.assign_descriptive_metadata({
+          'descriptive_metadata' => {
+            'title' => [
+              {
+                'non_sort_portion' => 'The',
+                'sort_portion' => 'Tall Man and His Hat'
+              }
+            ]
+          }
+        })
       end
     end
 

@@ -6,19 +6,27 @@ FactoryBot.define do
     asset_type { BestType.dc_type.for_file_name("foo.xyz") }
     initialize_with do
       instance = new
-      instance.instance_variable_set(
-        '@descriptive_metadata',
-        'title' => [
-          {
-            'non_sort_portion' => 'The',
-            'sort_portion' => 'Best Asset Ever'
-          }
-        ]
-      )
       instance.primary_project = parent.primary_project if parent
       instance.add_parent_uid(parent.uid) if parent
       instance.asset_type = asset_type
       instance
+    end
+
+    trait :with_descriptive_metadata do
+      after(:build) do |digital_object|
+        DynamicFieldsHelper.load_title_fields! # Load fields
+
+        digital_object.assign_descriptive_metadata(
+          'descriptive_metadata' => {
+            'title' => [
+              {
+                'non_sort_portion' => 'The',
+                'sort_portion' => 'Best Asset Ever'
+              }
+            ]
+          }
+        )
+      end
     end
 
     trait :with_primary_project do

@@ -2,24 +2,27 @@
 
 FactoryBot.define do
   factory :item, class: DigitalObject::Item do
-    initialize_with do
-      instance = new
-      instance.instance_variable_set(
-        '@descriptive_metadata',
-        {
-          'title' => [
-            {
-              'non_sort_portion' => 'The',
-              'sort_portion' => 'Best Item Ever'
-            }
-          ]
-        }
-      )
-      instance
+    trait :with_descriptive_metadata do
+      after(:build) do |digital_object|
+        DynamicFieldsHelper.load_title_fields! # Adding dynamic fields used in dynamic field data. Validations will fail if these field definitions aren't present.
+
+        digital_object.assign_descriptive_metadata({
+          'descriptive_metadata' => {
+            'title' => [
+              {
+                'non_sort_portion' => 'The',
+                'sort_portion' => 'Best Item Ever'
+              }
+            ]
+          }
+        })
+      end
     end
 
     trait :with_rights do
       after(:build) do |digital_object|
+        Hyacinth::DynamicFieldsLoader.load_rights_fields!(load_vocabularies: true)
+
         digital_object.assign_rights({
           'rights' => {
             'descriptive_metadata' => [

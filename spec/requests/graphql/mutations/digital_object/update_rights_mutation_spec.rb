@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Updating Item Rights', type: :request, solr: true do
-  before { Hyacinth::DynamicFieldsLoader.load_rights_fields! }
+  before { Hyacinth::DynamicFieldsLoader.load_rights_fields!(load_vocabularies: true) }
 
   let(:authorized_project) { FactoryBot.create(:project, :allow_asset_rights) }
   let(:authorized_item) { FactoryBot.create(:item, primary_project: authorized_project) }

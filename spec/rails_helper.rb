@@ -72,6 +72,7 @@ RSpec.configure do |config|
   config.include JsonSpec::Helpers
   config.include AuthenticatedRequests, type: :request
   config.include HyacinthTestCleanup
+  config.include DynamicFieldsHelper
 
   config.before(:each, solr: true) do
     solr_cleanup

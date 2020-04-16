@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe DigitalObject::RightsValidator, type: :model do
-  before { Hyacinth::DynamicFieldsLoader.load_rights_fields! }
+RSpec.describe DigitalObject::RightsFieldsValidator, type: :model do
+  before { Hyacinth::DynamicFieldsLoader.load_rights_fields!(load_vocabularies: true) }
 
   describe 'validating rights for DigitalObject::Item' do
     let(:item) { FactoryBot.create(:item) }
@@ -68,12 +68,12 @@ RSpec.describe DigitalObject::RightsValidator, type: :model do
         }
       end
       let(:expected_errors) do
-        [
-          "'descriptive_metadata[0].new_field' is not a valid field",
-          "'author' is not a valid field",
-          "'underlying_rights[0].other_underlying_rights[0].newer_value' is not a valid field",
-          "'contractual_limitations_restrictions_and_permissions[0].option_a' does not contain the correct value for a field of type boolean"
-        ]
+        {
+          'rights.descriptive_metadata[0].new_field': ['is not a valid field'],
+          'rights.author': ['is not a valid field'],
+          'rights.underlying_rights[0].other_underlying_rights[0].newer_value': ['is not a valid field'],
+          'rights.contractual_limitations_restrictions_and_permissions[0].option_a': ['must be a boolean']
+        }
       end
 
       before do
@@ -82,7 +82,7 @@ RSpec.describe DigitalObject::RightsValidator, type: :model do
 
       it 'does not validate successfully' do
         expect(item.valid?).to be false
-        expect(item.errors[:rights]).to match_array(expected_errors)
+        expect(item.errors.messages).to include(expected_errors)
       end
     end
   end
