@@ -140,7 +140,7 @@ function UnderlyingRights(props) {
                 <InputGroup>
                   <Label sm={4} align="right">Other Underlying Rights</Label>
                   <MultiSelectInput
-                    values={value.other_underlying_rights.map(e => e.value)}
+                    values={value.other_underlying_rights.filter(i => i.value.length > 0).map(e => e.value)}
                     onChange={v => onChangeHandler('other_underlying_rights', v.map(e => ({ value: e })))}
                     options={JSON.parse(fieldConfig.children.find(c => c.stringKey === 'other_underlying_rights').children.find(c => c.stringKey === 'value').selectOptions)}
                   />
