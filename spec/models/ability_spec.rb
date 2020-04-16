@@ -152,7 +152,7 @@ RSpec.describe Ability, type: :model do
     it { is_expected.to be_able_to(:read, FieldSet) }
     it { is_expected.not_to be_able_to(:update, Project) }
     it { is_expected.to be_able_to(:publish_objects, Project) }
-    it { is_expected.to be_able_to(:access_rights, Project) }
+    it { is_expected.to be_able_to(:assess_rights, Project) }
     it { is_expected.to be_able_to(:read, DigitalObject::Base) }
     it { is_expected.to be_able_to(:update, DigitalObject::Base) }
     it { is_expected.to be_able_to(:destroy, DigitalObject::Base) }
