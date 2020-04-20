@@ -28,6 +28,7 @@ namespace :hyacinth do
       Rake::Task['hyacinth:setup:config_files'].invoke
       Rake::Task['hyacinth:setup:default_users'].invoke
       Rake::Task['hyacinth:setup:test_projects'].invoke
+      Rake::Task['hyacinth:rights_fields:load'].invoke
       Rake::Task['hyacinth:setup:seed_dynamic_field_entries'].invoke
     end
   end
