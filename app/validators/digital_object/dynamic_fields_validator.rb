@@ -66,9 +66,9 @@ class DigitalObject::DynamicFieldsValidator < ActiveModel::EachValidator
       errors_for_string_field(configuration, value)
     end
 
-    # TODO: Add more specific checks for this field. Select value should be one of the configured values.
     def errors_for_select_field(configuration, value)
-      errors_for_string_field(configuration, value)
+      valid_options = JSON.parse(configuration[:select_options]).map { |option| option['value'] }
+      valid_options.include?(value) ? false : ["has invalid value: '#{value}'"]
     end
 
     def errors_for_integer_field(_configuration, value)

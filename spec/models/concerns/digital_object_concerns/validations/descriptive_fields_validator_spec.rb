@@ -43,6 +43,13 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
               dynamic_fields: [
                 { string_key: 'term', display_label: 'Value', field_type: DynamicField::Type::CONTROLLED_TERM, controlled_vocabulary: 'genre' }
               ]
+            },
+            {
+              string_key: 'type_of_resource',
+              display_label: 'Type of Resource',
+              dynamic_fields: [
+                { string_key: 'value', display_label: 'Value', field_type: DynamicField::Type::SELECT, select_options: '[{ "value": "text","label": "Text" }, { "value": "still image","label": "still image" }]'}
+              ]
             }
           ]
         }
@@ -73,7 +80,8 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
         ],
         'genre' => [
           { 'term' => { 'pref_label' => 'biography' } }
-        ]
+        ],
+        'type_of_resource' => [ { 'value' => 'text' } ]
       }
     end
 
@@ -205,6 +213,23 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
       expect(item.valid?).to be false
       expect(item.errors.messages).to include(
         'descriptive_metadata.alternative_title[0].sort_order': ['must be an integer']
+      )
+    end
+  end
+
+  context 'with invalid value for select field' do
+    let(:dynamic_field_data) do
+      {
+        'type_of_resource': [
+          { value: 'not_valid' }
+        ]
+      }
+    end
+
+    it 'returns errors' do
+      expect(item.valid?).to be false
+      expect(item.errors.messages).to include(
+        'dynamic_field_data.type_of_resource[0].value': ["has invalid value: 'not_valid'"]
       )
     end
   end

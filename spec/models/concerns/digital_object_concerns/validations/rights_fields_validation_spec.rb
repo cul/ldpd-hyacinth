@@ -26,7 +26,7 @@ RSpec.describe DigitalObject::RightsFieldsValidator, type: :model do
           'underlying_rights' => [
             {
               'other_underlying_rights' => [
-                { 'value' => 'something' }
+                { 'value' => 'Rights in artistic works' }
               ]
             }
           ],

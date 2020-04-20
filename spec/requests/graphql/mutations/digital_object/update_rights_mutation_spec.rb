@@ -84,11 +84,11 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
                 photographic_or_film_credit: "No Credits",
                 excerpt_limited_to: "23 minutes",
                 other: "None",
-                permissions_granted_as_part_of_the_use_license: [{ value: "No permissions" }]
+                permissions_granted_as_part_of_the_use_license: [{ value: "Reproduction" }]
               }],
               underlying_rights: [{
                 note: "No underlying rights",
-                talent_rights: "No talent rights",
+                talent_rights: "SAG AFTRA",
                 columbia_music_license: "Master recording license",
                 composition: "none",
                 recording: "none",
@@ -138,7 +138,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
                 cul_copyright_assessment_date: "2001-01-01"
               }],
               restriction_on_access: [{
-                value: "Open",
+                value: "Public Access",
                 embargo_release_date: "2001-01-01",
                 location: [{
                   term: {
