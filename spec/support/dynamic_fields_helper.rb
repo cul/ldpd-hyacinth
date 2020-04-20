@@ -21,7 +21,7 @@ module DynamicFieldsHelper
         }
       ]
     }
-    
+
     Hyacinth::DynamicFieldsLoader.load_fields!(title_fields)
   end
 end

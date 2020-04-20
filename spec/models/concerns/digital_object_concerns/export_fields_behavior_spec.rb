@@ -25,7 +25,8 @@ RSpec.describe DigitalObjectConcerns::ExportFieldsBehavior do
   describe "#render_field_export" do
     let(:field_export_profile) { FieldExportProfile.find_by(name: 'descMetadata') }
     before do
-      FactoryBot.create(:export_rule)
+      dynamic_field_group = FactoryBot.create(:dynamic_field_group, parent: DynamicFieldCategory.first)
+      FactoryBot.create(:export_rule, dynamic_field_group: dynamic_field_group)
     end
     it "persists templated field exports to datastreams" do
       digital_object_with_sample_data.descriptive_metadata['name'] = [{ 'role' => "Farmer" }]
