@@ -13,7 +13,7 @@ module DigitalObjectConcerns
         [dfg.string_key, rules.map(&:translation_logic).map { |src| JSON.parse(src) }]
       end.to_h
       translation_logic = JSON.parse(export_profile.translation_logic)
-      generator = Hyacinth::XmlGenerator.new(dynamic_field_data, translation_logic,
+      generator = Hyacinth::XmlGenerator.new(descriptive, translation_logic,
                                              dynamic_field_groups_map, internal_fields)
       generator.generate.to_xml
     end

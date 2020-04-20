@@ -9,7 +9,7 @@ RSpec.describe 'Retrieving Digital Objects', type: :request, solr: true do
     FactoryBot.create(
       :item,
       'primary_project' => FactoryBot.create(:project, string_key: 'a', display_label: 'A'),
-      'dynamic_field_data' => {
+      'descriptive' => {
         'title' => [
           {
             'non_sort_portion' => 'The',

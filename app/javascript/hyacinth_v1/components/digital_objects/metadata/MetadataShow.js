@@ -36,7 +36,7 @@ function MetadataShow(props) {
   const {
     digitalObject,
     digitalObject: {
-      identifiers, dynamicFieldData, otherProjects, primaryProject,
+      identifiers, descriptive, otherProjects, primaryProject,
     },
   } = digitalObjectData;
 
@@ -48,7 +48,7 @@ function MetadataShow(props) {
         dynamicFieldHierarchy.map(category => (
           <DisplayFieldCategory
             key={category.id}
-            data={dynamicFieldData}
+            data={descriptive}
             dynamicFieldCategory={category}
           />
         ))

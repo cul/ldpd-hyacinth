@@ -32,8 +32,8 @@ module DigitalObject
 
     # Set up callbacks
     define_model_callbacks :validation, :save, :destroy, :undestroy, :purge
-    before_validation :clean_dynamic_field_data!, :clean_rights!
-    # TODO: Add these before_validations ---> :register_new_uris_and_values_for_dynamic_field_data!, normalize_controlled_term_fields!
+    before_validation :clean_descriptive!, :clean_rights!
+    # TODO: Add these before_validations ---> :register_new_uris_and_values_for_descriptive!, normalize_controlled_term_fields!
     after_save :index
     before_destroy :remove_all_parents, :unpublish_from_all
     after_destroy :index
@@ -57,9 +57,9 @@ module DigitalObject
     metadata_attribute :first_preserved_at, Hyacinth::DigitalObject::TypeDef::DateTime.new
     # Identifiers
     metadata_attribute :identifiers, Hyacinth::DigitalObject::TypeDef::JsonSerializableSet.new.default(-> { Set.new })
-    # Dynamic Fields
-    metadata_attribute :dynamic_field_data, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Hash.new })
-    # Rights Information
+    # Descriptive Metadata
+    metadata_attribute :descriptive, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Hash.new })
+    # Rights Metadata
     metadata_attribute :rights, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Hash.new })
     # Administrative Relationsip Objects
     metadata_attribute :primary_project, Hyacinth::DigitalObject::TypeDef::Project.new
@@ -104,7 +104,7 @@ module DigitalObject
     def generate_title(sortable = false)
       val = '[No Title]'
 
-      title_field_group = dynamic_field_data[TITLE_DYNAMIC_FIELD_GROUP_NAME]
+      title_field_group = descriptive[TITLE_DYNAMIC_FIELD_GROUP_NAME]
       if title_field_group.present? && (title_field = title_field_group[0]).present?
         val = title_field[TITLE_SORT_PORTION_DYNAMIC_FIELD_NAME]
         non_sort_portion = title_field[TITLE_NON_SORT_PORTION_DYNAMIC_FIELD_NAME]

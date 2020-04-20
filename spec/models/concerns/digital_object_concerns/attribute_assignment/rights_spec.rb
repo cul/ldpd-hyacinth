@@ -43,7 +43,7 @@ RSpec.describe DigitalObjectConcerns::AttributeAssignment::Rights do
       }
     end
 
-    it 'works as expected on dynamic_field_data instance variable' do
+    it 'works as expected on rights instance variable' do
       digital_object_with_sample_data.assign_rights('rights' => rights)
       digital_object_with_sample_data.clean_rights!
       expect(digital_object_with_sample_data.rights).to eq(cleaned_rights)

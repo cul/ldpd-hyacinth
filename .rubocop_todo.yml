@@ -206,7 +206,7 @@ RSpec/ExampleLength:
     - 'spec/hyacinth/digital_object/types_spec.rb'
     - 'spec/hyacinth/xml_generator/field_values_spec.rb'
     - 'spec/models/concerns/digital_object_concerns/attribute_assignment/doi_spec.rb'
-    - 'spec/models/concerns/digital_object_concerns/attribute_assignment/dynamic_field_data_spec.rb'
+    - 'spec/models/concerns/digital_object_concerns/attribute_assignment/descriptive_spec.rb'
     - 'spec/models/concerns/digital_object_concerns/attribute_assignment/resource_imports_spec.rb'
     - 'spec/models/concerns/digital_object_concerns/attribute_assignment_spec.rb'
     - 'spec/models/concerns/digital_object_concerns/copy_behavior_spec.rb'

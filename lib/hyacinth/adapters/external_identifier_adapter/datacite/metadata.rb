@@ -1,17 +1,16 @@
 # frozen_string_literal: true
 
 # Following module contains functionality to retrieve metadata
-# from the dynamic_field_data hash from DigitalObject::Base
+# from the descriptive hash from DigitalObject::Base
 class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
-  attr_reader :source, :dynamic_field_data
+  attr_reader :source, :descriptive_metadata
   # parse metadata from Hyacinth Digital Objects Data
   # @param digital_object_data_arg [Hash]
   # @api public
   def initialize(digital_object_data_arg)
     # dod is shorthand for digital_object_data
     @source = HashWithIndifferentAccess.new(digital_object_data_arg).freeze
-    # dfd is shorthand for dynamic_field_data
-    @dynamic_field_data = @source['dynamic_field_data'].dup.freeze
+    @descriptive_metadata = @source['descriptive'].dup.freeze
   end
 
   # DOI identifier value
@@ -42,10 +41,10 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
   # @return [String, nil]
   # @note only returns the first title value
   def title
-    return nil unless @dynamic_field_data.key? 'title'
+    return nil unless @descriptive_metadata.key? 'title'
     # concatenates the non sort portion with the sort portion
-    non_sort_portion = @dynamic_field_data.dig('title', 0, 'non_sort_portion')
-    sort_portion = @dynamic_field_data.dig('title', 0, 'sort_portion')
+    non_sort_portion = @descriptive_metadata.dig('title', 0, 'non_sort_portion')
+    sort_portion = @descriptive_metadata.dig('title', 0, 'sort_portion')
     [non_sort_portion, sort_portion].compact.join(' ')
   end
 
@@ -54,7 +53,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
   # @return [String, nil]
   # @note only returns the first genre value
   def genre_uri
-    @dynamic_field_data.dig('genre', 0, 'term', 'uri')
+    @descriptive_metadata.dig('genre', 0, 'term', 'uri')
   end
 
   # the abstract of an item
@@ -62,21 +61,21 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
   # @return [String, nil]
   # @note only returns the first abstract value
   def abstract
-    @dynamic_field_data.dig('abstract', 0, 'value')
+    @descriptive_metadata.dig('abstract', 0, 'value')
   end
 
   # the type of resource for an item
   # @api public
   # @return [String, nil]
   def type_of_resource
-    @dynamic_field_data.dig('type_of_resource', 0, 'value')
+    @descriptive_metadata.dig('type_of_resource', 0, 'value')
   end
 
   # starting year of the w3cdtf-encoded Date Issued field (first 4 characters)
   # @api public
   # @return [String, nil]
   def date_issued_start_year
-    local_value = @dynamic_field_data.dig('date_issued', 0, 'start_value')
+    local_value = @descriptive_metadata.dig('date_issued', 0, 'start_value')
     local_value[0..3] if local_value
   end
 
@@ -107,62 +106,62 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
   # @api public
   # @return [String, nil]
   def parent_publication_issn
-    @dynamic_field_data.dig('parent_publication', 0, 'issn')
+    @descriptive_metadata.dig('parent_publication', 0, 'issn')
   end
 
   # ISBN of the parent publication
   # @api public
   # @return [String, nil]
   def parent_publication_isbn
-    @dynamic_field_data.dig('parent_publication', 0, 'isbn')
+    @descriptive_metadata.dig('parent_publication', 0, 'isbn')
   end
 
   # DOI of the parent publication
   # @api public
   # @return [String, nil]
   def parent_publication_doi
-    @dynamic_field_data.dig('parent_publication', 0, 'doi')
+    @descriptive_metadata.dig('parent_publication', 0, 'doi')
   end
 
   # handle indentifier value
   # @api public
   # @return [String, nil]
   def handle_net_identifier
-    @dynamic_field_data.dig('cnri_handle_identifier', 0, 'value')
+    @descriptive_metadata.dig('cnri_handle_identifier', 0, 'value')
   end
 
-  # retrieve subject topics from [@dynamic_field_data]
+  # retrieve subject topics from [@descriptive_metadata]
   # @api private
   # @return [void]
   def subject_topics
-    @dynamic_field_data.fetch('subject_topic', []).map do |topic|
+    @descriptive_metadata.fetch('subject_topic', []).map do |topic|
       topic['term']['pref_label']
     end
   end
 
-  # retrieve name terms by role from [@dynamic_field_data]
+  # retrieve name terms by role from [@descriptive_metadata]
   # @param Array<Symbol> filter_types optional types to filter to
   # @return Hash of contributor names to array of types
-  def contributor_values(dynamic_field_data, filter_types = [])
-    dynamic_field_data.fetch('name', []).map do |name|
+  def contributor_values(descriptive_metadata, filter_types = [])
+    descriptive_metadata.fetch('name', []).map do |name|
       process_name(name)
     end.select { |key_value_pair| filter_types.blank? || (filter_types & key_value_pair[1]).present? }.to_h
   end
 
   def creators
-    contributor_values(@dynamic_field_data, [:author]).keys
+    contributor_values(@descriptive_metadata, [:author]).keys
   end
 
   def editors
-    contributor_values(@dynamic_field_data, [:editor]).keys
+    contributor_values(@descriptive_metadata, [:editor]).keys
   end
 
   def moderators
-    contributor_values(@dynamic_field_data, [:moderator]).keys
+    contributor_values(@descriptive_metadata, [:moderator]).keys
   end
 
   def contributors
-    contributor_values(@dynamic_field_data, [:contributor]).keys
+    contributor_values(@descriptive_metadata, [:contributor]).keys
   end
 
   private

@@ -17,7 +17,7 @@ module Types
     field :primary_project, ProjectType, null: false
     field :other_projects, [ProjectType], null: false
     field :identifiers, [String], null: true
-    field :dynamic_field_data, GraphQL::Types::JSON, null: false
+    field :descriptive, GraphQL::Types::JSON, null: false
     field :created_at, GraphQL::Types::ISO8601DateTime, null: false
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
     field :created_by, UserType, null: true

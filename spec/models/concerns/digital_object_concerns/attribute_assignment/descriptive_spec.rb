@@ -2,11 +2,11 @@
 
 require 'rails_helper'
 
-RSpec.describe DigitalObjectConcerns::AttributeAssignment::DynamicFieldData do
+RSpec.describe DigitalObjectConcerns::AttributeAssignment::Descriptive do
   let(:digital_object_with_sample_data) { FactoryBot.build(:digital_object_test_subclass, :with_sample_data) }
   let(:digital_object_data) do
     {
-      'dynamic_field_data' => {
+      'descriptive' => {
         'note' => [
           {
             'value' => 'Great Note',
@@ -16,32 +16,32 @@ RSpec.describe DigitalObjectConcerns::AttributeAssignment::DynamicFieldData do
       }
     }
   end
-  context '#assign_dynamic_field_data' do
-    it 'merges dynamic field data when merge param is true' do
-      digital_object_with_sample_data.assign_dynamic_field_data(digital_object_data, true)
-      expect(digital_object_with_sample_data.dynamic_field_data['title']).to eq([{
+  context '#assign_descriptive' do
+    it 'merges descriptive data when merge param is true' do
+      digital_object_with_sample_data.assign_descriptive(digital_object_data, true)
+      expect(digital_object_with_sample_data.descriptive['title']).to eq([{
         'non_sort_portion' => 'The',
         'sort_portion' => 'Tall Man and His Hat'
       }])
 
-      expect(digital_object_with_sample_data.dynamic_field_data['note']).to eq([{
+      expect(digital_object_with_sample_data.descriptive['note']).to eq([{
         'value' => 'Great Note',
         'type' => 'So Great'
       }])
     end
 
-    it 'merges dynamic field data when merge param is false' do
-      digital_object_with_sample_data.assign_dynamic_field_data(digital_object_data, false)
-      expect(digital_object_with_sample_data.dynamic_field_data['title']).to be_nil
+    it 'merges descriptive data when merge param is false' do
+      digital_object_with_sample_data.assign_descriptive(digital_object_data, false)
+      expect(digital_object_with_sample_data.descriptive['title']).to be_nil
 
-      expect(digital_object_with_sample_data.dynamic_field_data['note']).to eq([{
+      expect(digital_object_with_sample_data.descriptive['note']).to eq([{
         'value' => 'Great Note',
         'type' => 'So Great'
       }])
     end
   end
 
-  context '#clean_dynamic_field_data!' do
+  context '#clean_descriptive!' do
     let(:dfd) do
       {
         'alternate_title' => [
@@ -84,7 +84,7 @@ RSpec.describe DigitalObjectConcerns::AttributeAssignment::DynamicFieldData do
         ]
       }
     end
-    let(:cleaned_dfd) do
+    let(:cleaned_descriptive) do
       {
         'alternate_title' => [
           {
@@ -117,10 +117,10 @@ RSpec.describe DigitalObjectConcerns::AttributeAssignment::DynamicFieldData do
       }
     end
 
-    it 'works as expected on dynamic_field_data instance variable' do
-      digital_object_with_sample_data.assign_attributes({ 'dynamic_field_data' => dfd }, merge_dynamic_field_data: false)
-      digital_object_with_sample_data.clean_dynamic_field_data!
-      expect(digital_object_with_sample_data.dynamic_field_data).to eq(cleaned_dfd)
+    it 'works as expected on descriptive instance variable' do
+      digital_object_with_sample_data.assign_attributes({ 'descriptive' => dfd }, merge_descriptive: false)
+      digital_object_with_sample_data.clean_descriptive!
+      expect(digital_object_with_sample_data.descriptive).to eq(cleaned_descriptive)
     end
   end
 end

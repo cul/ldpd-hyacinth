@@ -5,7 +5,7 @@ FactoryBot.define do
     initialize_with do
       instance = new
       instance.instance_variable_set(
-        '@dynamic_field_data',
+        '@descriptive',
         {
           'title' => [
             {

@@ -27,7 +27,7 @@ import { useEnabled, useHash } from './rightsHooks';
 import FieldGroupArray from './fields/FieldGroupArray';
 
 function ItemRightsForm(props) {
-  const { fieldConfiguration, digitalObject: { id, rights: initialRights, dynamicFieldData } } = props;
+  const { fieldConfiguration, digitalObject: { id, rights: initialRights, descriptive } } = props;
 
   const history = useHistory();
 
@@ -97,7 +97,7 @@ function ItemRightsForm(props) {
       <GraphQLErrors errors={updateError} />
 
       <DescriptiveMetadata
-        dynamicFieldData={keyTransformer.deepCamelCase(dynamicFieldData)}
+        descriptiveMetadata={keyTransformer.deepCamelCase(descriptive)}
         values={rights.descriptive_metadata}
         onChange={v => setRights('descriptive_metadata', v)}
         typeOfContentChange={typeOfContentChange}

@@ -12,8 +12,8 @@ RSpec.describe DigitalObjectConcerns::CopyBehavior do
       expect(digital_object_with_sample_data.digital_object_record).not_to equal(copy.digital_object_record)
 
       # Check one of the fields to make sure it's a copy by value, but not a copy by identify
-      expect(digital_object_with_sample_data.dynamic_field_data).to eq(copy.dynamic_field_data)
-      expect(digital_object_with_sample_data.dynamic_field_data).not_to equal(copy.dynamic_field_data)
+      expect(digital_object_with_sample_data.descriptive).to eq(copy.descriptive)
+      expect(digital_object_with_sample_data.descriptive).not_to equal(copy.descriptive)
     end
   end
 
@@ -93,8 +93,8 @@ RSpec.describe DigitalObjectConcerns::CopyBehavior do
       expect(new_instance.doi).to eq(digital_object_with_sample_data.doi)
       expect(new_instance.doi).not_to equal(digital_object_with_sample_data.doi)
 
-      # We didn't copy dynamic_field_data, so values shouldn't be the same
-      expect(new_instance.dynamic_field_data).not_to eq(digital_object_with_sample_data.dynamic_field_data)
+      # We didn't copy descriptive data, so values shouldn't be the same
+      expect(new_instance.descriptive).not_to eq(digital_object_with_sample_data.descriptive)
     end
 
   end
