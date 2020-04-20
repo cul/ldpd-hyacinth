@@ -4,12 +4,10 @@ namespace :hyacinth do
   task reindex: :environment do
     DigitalObjectRecord.find_in_batches(batch_size: (ENV['BATCH_SIZE'] || 1000).to_i) do |records|
       records.each do |record|
-        begin
-          ::DigitalObject::Base.find(record.uid).index(false)
-        rescue => e
-          puts "Error while reindexing #{record.uid}. See raised error below:"
-          raise e
-        end
+        ::DigitalObject::Base.find(record.uid).index(false)
+      rescue => e
+        puts "Error while reindexing #{record.uid}. See raised error below:"
+        raise e
       end
       Hyacinth::Config.digital_object_search_adapter.solr.commit
     end

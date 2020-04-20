@@ -10,7 +10,7 @@ namespace :hyacinth do
       end
 
       begin
-        Hyacinth::Config.digital_object_search_adapter.search({}).inspect
+        Hyacinth::Config.digital_object_search_adapter.search({})
       rescue Errno::ECONNREFUSED
         # Solr isn't running so we'll start it
         Rake::Task['solr:start'].invoke

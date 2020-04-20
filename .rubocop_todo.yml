@@ -93,6 +93,7 @@ Metrics/BlockLength:
     - 'lib/hyacinth/adapters/external_identifier_adapter/datacite/metadata_builder.rb'
     - 'lib/tasks/hyacinth.rake'
     - 'lib/tasks/hyacinth/ci.rake'
+    - 'lib/tasks/hyacinth/development.rake'
     - 'lib/tasks/hyacinth/setup.rake'
     - 'lib/tasks/resque.rake'
 
