@@ -21,10 +21,10 @@ class DynamicFieldCategory < ActiveRecord::Base
   end
 
   def children
-    dynamic_field_groups
+    dynamic_field_groups.order(sort_order: :asc)
   end
 
   def siblings
-    DynamicFieldCategory.where.not(id: id)
+    DynamicFieldCategory.unscoped.where.not(id: id)
   end
 end

@@ -7,8 +7,6 @@ class DynamicFieldGroup < ActiveRecord::Base
 
   PARENT_TYPES = ['DynamicFieldCategory', 'DynamicFieldGroup'].freeze
 
-  default_scope { order(sort_order: :asc) }
-
   has_many :dynamic_fields, dependent: :destroy
   has_many :export_rules, dependent: :destroy
   accepts_nested_attributes_for :export_rules
