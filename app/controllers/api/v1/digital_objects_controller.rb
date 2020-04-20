@@ -40,7 +40,7 @@ module Api
         if @digital_object.save(update_index: true, user: current_user)
           show
         else
-          render json: @digital_object.errors, status: :bad_request
+          render json: errors(@digital_object.errors.full_messages), status: :bad_request
         end
       end
 
@@ -56,7 +56,7 @@ module Api
         if update_result
           show
         else
-          render json: @digital_object.errors, status: :bad_request
+          render json: errors(@digital_object.errors.full_messages), status: :bad_request
         end
       end
 
@@ -64,7 +64,7 @@ module Api
         if @digital_object.preserve
           show
         else
-          render json: @digital_object.errors, status: :bad_request
+          render json: errors(@digital_object.errors.full_messages), status: :bad_request
         end
       end
 
@@ -82,7 +82,7 @@ module Api
           show if republish
           true
         else
-          render json: @digital_object.errors, status: :bad_request if republish
+          render json: errors(@digital_object.errors.full_messages), status: :bad_request if republish
           false
         end
       end
