@@ -46,7 +46,7 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
     let(:properties) do
       {
         digital_object: {
-          dynamic_field_data: {
+          descriptive_metadata: {
             title: [{
               non_sort_portion: 'The',
               sort_portion: 'Short Man and His Scarf'
@@ -74,8 +74,8 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
       end
       it "return a single Digital Object with the expected fields" do
         expect(
-          JSON.parse(response.body)['digital_object']['dynamic_field_data'].to_json
-        ).to be_json_eql(properties[:digital_object][:dynamic_field_data].to_json)
+          JSON.parse(response.body)['digital_object']['descriptive_metadata'].to_json
+        ).to be_json_eql(properties[:digital_object][:descriptive_metadata].to_json)
       end
     end
   end
@@ -89,7 +89,7 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
           primary_project: {
             string_key: authorized_project.string_key
           },
-          dynamic_field_data: {
+          descriptive_metadata: {
             title: [{
               non_sort_portion: 'The',
               sort_portion: 'Short Man and His Scarf'
@@ -118,8 +118,8 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
       it "return a single Digital Object with the expected fields" do
         new_object = JSON.parse(response.body)['digital_object']
         expect(
-          new_object['dynamic_field_data'].to_json
-        ).to be_json_eql(properties[:digital_object][:dynamic_field_data].to_json)
+          new_object['descriptive_metadata'].to_json
+        ).to be_json_eql(properties[:digital_object][:descriptive_metadata].to_json)
         expect(new_object['primary_project']).to include('string_key' => authorized_project.string_key)
       end
     end

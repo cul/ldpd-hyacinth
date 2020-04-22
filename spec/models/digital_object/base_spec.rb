@@ -36,7 +36,7 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
           :custom_field2,
           :digital_object_type,
           :doi,
-          :dynamic_field_data,
+          :descriptive_metadata,
           :first_preserved_at,
           :first_published_at,
           :identifiers,
@@ -97,7 +97,7 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
             pending_publish_to: [],
             pending_unpublish_from: [],
             structured_children: { 'type' => 'sequence', 'structure' => [] },
-            dynamic_field_data: {},
+            descriptive_metadata: {},
             rights: {},
             preservation_target_uris: Set.new,
             custom_field1: 'custom default value 1',
@@ -108,7 +108,7 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
     end
 
     it "returns expected values for a few previously-set fields" do
-      expect(digital_object_with_sample_data.dynamic_field_data).to eq({
+      expect(digital_object_with_sample_data.descriptive_metadata).to eq({
         'title' => [{
           'non_sort_portion' => 'The',
           'sort_portion' => 'Tall Man and His Hat'

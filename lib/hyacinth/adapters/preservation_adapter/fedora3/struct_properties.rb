@@ -32,7 +32,7 @@ module Hyacinth
           list = []
           hyacinth_obj.structured_children['structure'].each_with_index do |uid, ix|
             child = ::DigitalObject::Base.find(uid)
-            list << { uid: uid, order: (ix + 1).to_s, label: get_title(child.dynamic_field_data) }
+            list << { uid: uid, order: (ix + 1).to_s, label: get_title(child.descriptive_metadata) }
           end
           list
         end

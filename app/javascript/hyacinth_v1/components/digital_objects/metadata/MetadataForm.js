@@ -27,15 +27,15 @@ const defaultFieldValue = {
 
 function MetadataForm(props) {
   const { digitalObject, formType } = props;
-  const { id, primaryProject, digitalObjectType, dynamicFieldData: initialDynamicFieldData } = digitalObject;
+  const { id, primaryProject, digitalObjectType, descriptiveMetadata: initialDescriptiveMetadata } = digitalObject;
   const [dynamicFieldHierarchy, setDynamicFieldHierarchy] = useState(null);
   const [defaultFieldData, setDefaultFieldData] = useState(null);
-  const [dynamicFieldData, setDynamicFieldData] = useState(null);
+  const [descriptiveMetadata, setDescriptiveMetadata] = useState(null);
   const [identifiers, setIdentifiers] = useState(digitalObject.identifiers);
   const history = useHistory();
 
   const onChange = (fieldName, fieldVal) => {
-    setDynamicFieldData(produce(dynamicFieldData, (draft) => {
+    setDescriptiveMetadata(produce(descriptiveMetadata, (draft) => {
       draft[fieldName] = fieldVal;
     }));
   };
@@ -48,24 +48,24 @@ function MetadataForm(props) {
     if (formType === 'edit') {
       return digitalObjectApi.update(
         id,
-        { digitalObject: { dynamicFieldData, identifiers } },
+        { digitalObject: { descriptiveMetadata, identifiers } },
       ).then(res => history.push(`/digital_objects/${res.data.digitalObject.uid}/metadata`));
     }
 
     if (formType === 'new') {
       return digitalObjectApi.create({
-        digitalObject: { ...digitalObject, dynamicFieldData, identifiers },
+        digitalObject: { ...digitalObject, descriptiveMetadata, identifiers },
       }).then(res => history.push(`/digital_objects/${res.data.digitalObject.uid}/metadata`));
     }
 
     throw new Error(`Unhandled formType: ${formType}`);
   };
 
-  const emptyDynamicFieldData = (dynamicFields, newObject) => {
+  const emptyDescriptiveMetadata = (dynamicFields, newObject) => {
     dynamicFields.forEach((i) => {
       switch (i.type) {
         case 'DynamicFieldGroup':
-          newObject[i.stringKey] = [emptyDynamicFieldData(i.children, {})];
+          newObject[i.stringKey] = [emptyDescriptiveMetadata(i.children, {})];
           break;
         case 'DynamicField':
           newObject[i.stringKey] = defaultFieldValue[i.fieldType];
@@ -102,7 +102,7 @@ function MetadataForm(props) {
             <FieldGroupArray
               key={`array_${fieldGroup.stringKey}`}
               dynamicFieldGroup={fieldGroup}
-              value={dynamicFieldData[fieldGroup.stringKey]}
+              value={descriptiveMetadata[fieldGroup.stringKey]}
               defaultValue={defaultFieldData[fieldGroup.stringKey][0]}
               onChange={v => onChange(fieldGroup.stringKey, v)}
             />
@@ -131,20 +131,20 @@ function MetadataForm(props) {
 
       const emptyData = {};
       filteredDynamicFields.forEach((category) => {
-        emptyDynamicFieldData(category.children, emptyData);
+        emptyDescriptiveMetadata(category.children, emptyData);
       });
 
       setDynamicFieldHierarchy(filteredDynamicFields);
       setIdentifiers(identifiers);
       setDefaultFieldData(emptyData);
 
-      // Merge emptyData and dynamicFieldData so that we don't supply undefined values to the
+      // Merge emptyData and descriptiveMetadata so that we don't supply undefined values to the
       // form as we build out the hierarchy.
-      setDynamicFieldData(merge({}, emptyData, initialDynamicFieldData));
+      setDescriptiveMetadata(merge({}, emptyData, initialDescriptiveMetadata));
     }));
   }, []);
 
-  if (!(dynamicFieldHierarchy && dynamicFieldData && defaultFieldData)) return (<></>);
+  if (!(dynamicFieldHierarchy && descriptiveMetadata && defaultFieldData)) return (<></>);
 
   return (
     <>

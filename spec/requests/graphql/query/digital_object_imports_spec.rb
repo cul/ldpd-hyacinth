@@ -29,31 +29,31 @@ RSpec.describe 'Retrieving Digital Object Imports', type: :request do
               "digitalObjectImports": {
                 "nodes": [
                   {
-                    "digitalObjectData": "{\\"dynamic_field_data\\":{\\"identifier\\":[{\\"value\\":\\"something_1\\"}]}}",
+                    "digitalObjectData": "{\\"descriptive_metadata\\":{\\"identifier\\":[{\\"value\\":\\"something_1\\"}]}}",
                     "importErrors": [],
                     "index": 19,
                     "status": "in_progress"
                   },
                   {
-                    "digitalObjectData": "{\\"dynamic_field_data\\":{\\"note\\":[{\\"value\\":\\"fantastic note\\"}]}}",
+                    "digitalObjectData": "{\\"descriptive_metadata\\":{\\"note\\":[{\\"value\\":\\"fantastic note\\"}]}}",
                     "importErrors": [],
                     "index": 25,
                     "status": "pending"
                   },
                   {
-                    "digitalObjectData": "{\\"dynamic_field_data\\":{\\"abstract\\":[{\\"abstract_value\\":\\"some abstract\\"}]}}",
+                    "digitalObjectData": "{\\"descriptive_metadata\\":{\\"abstract\\":[{\\"abstract_value\\":\\"some abstract\\"}]}}",
                     "importErrors": [],
                     "index": 34,
                     "status": "in_progress"
                   },
                   {
-                     "digitalObjectData": "{\\"dynamic_field_data\\":{\\"date\\":[{\\"value\\":\\"2001\\"}]}}",
+                     "digitalObjectData": "{\\"descriptive_metadata\\":{\\"date\\":[{\\"value\\":\\"2001\\"}]}}",
                     "importErrors": [],
                     "index": 89,
                     "status": "success"
                   },
                   {
-                    "digitalObjectData": "{\\"dynamic_field_data\\":{\\"location\\":[{\\"value\\":\\"some place\\"}]}}",
+                    "digitalObjectData": "{\\"descriptive_metadata\\":{\\"location\\":[{\\"value\\":\\"some place\\"}]}}",
                     "importErrors": [
                       "location.value is not a valid field"
                     ],
@@ -82,13 +82,13 @@ RSpec.describe 'Retrieving Digital Object Imports', type: :request do
               "digitalObjectImports": {
                 "nodes": [
                   {
-                    "digitalObjectData": "{\\"dynamic_field_data\\":{\\"identifier\\":[{\\"value\\":\\"something_1\\"}]}}",
+                    "digitalObjectData": "{\\"descriptive_metadata\\":{\\"identifier\\":[{\\"value\\":\\"something_1\\"}]}}",
                     "importErrors": [],
                     "index": 19,
                     "status":  "in_progress"
                   },
                   {
-                    "digitalObjectData": "{\\"dynamic_field_data\\":{\\"abstract\\":[{\\"abstract_value\\":\\"some abstract\\"}]}}",
+                    "digitalObjectData": "{\\"descriptive_metadata\\":{\\"abstract\\":[{\\"abstract_value\\":\\"some abstract\\"}]}}",
                     "importErrors": [],
                     "index": 34,
                     "status": "in_progress"
