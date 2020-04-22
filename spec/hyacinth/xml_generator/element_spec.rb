@@ -7,11 +7,11 @@ describe Hyacinth::XmlGenerator::Element do
   let(:xml_translation) { {} }
   let(:generator) { Hyacinth::XmlGenerator.new(nil, nil, nil, internal_fields) }
 
-  let(:dynamic_field_data) do
-    JSON.parse(file_fixture('xml_generator/dynamic_field_data.json').read)
+  let(:descriptive_metadata) do
+    JSON.parse(file_fixture('xml_generator/descriptive_metadata.json').read)
   end
 
-  let(:df_data) { dynamic_field_data["name"][0] }
+  let(:df_data) { descriptive_metadata["name"][0] }
   let(:element) { described_class.new(generator) }
 
   describe '#add_attributes' do
@@ -134,7 +134,7 @@ describe Hyacinth::XmlGenerator::Element do
       end
 
       context 'when they are all true' do
-        let(:df_data) { dynamic_field_data["name"][1] }
+        let(:df_data) { descriptive_metadata["name"][1] }
 
         it 'returns true' do
           expect(element.render?(render_if, df_data)).to be true
@@ -143,7 +143,7 @@ describe Hyacinth::XmlGenerator::Element do
     end
 
     context 'when checking for fields that are present' do
-      let(:df_data) { dynamic_field_data["title"][0] }
+      let(:df_data) { descriptive_metadata["title"][0] }
 
       it 'returns true if all fields are present' do
         render_if = { "present" => ["sort_portion", "non_sort_portion"] }
@@ -157,7 +157,7 @@ describe Hyacinth::XmlGenerator::Element do
     end
 
     context "when checking for fields that are absent" do
-      let(:df_data) { dynamic_field_data["title"][0] }
+      let(:df_data) { descriptive_metadata["title"][0] }
 
       it "returns true if all fields are absent" do
         render_if = { "absent" => ["title_fake_field", "title_fake_field_two"] }
@@ -182,7 +182,7 @@ describe Hyacinth::XmlGenerator::Element do
       end
 
       context 'when one field does not eql the given value' do
-        let(:df_data) { dynamic_field_data["name"][1] }
+        let(:df_data) { descriptive_metadata["name"][1] }
 
         it "returns false" do
           render_if = { "equal" => { "term.uni" => "jds1329", "term.value" => "Lincoln, Abraham" } }
@@ -225,7 +225,7 @@ describe Hyacinth::XmlGenerator::Element do
       end
 
       context 'when one field does not eql any of the given array values for that field' do
-        let(:df_data) { dynamic_field_data["name"][1] }
+        let(:df_data) { descriptive_metadata["name"][1] }
 
         it "returns false" do
           render_if = { "equals_any_of" => { "term.uni" => ["jds1329"], "term.value" => ["zzz"] } }

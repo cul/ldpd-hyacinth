@@ -103,7 +103,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::MetadataBuilder
   end
 
   def add_contributors(xml)
-    contributors = @hyacinth_metadata.contributor_values(@hyacinth_metadata.dynamic_field_data, [:editor, :moderator, :contributor])
+    contributors = @hyacinth_metadata.contributor_values(@hyacinth_metadata.descriptive_metadata, [:editor, :moderator, :contributor])
     contributors.reject! { |_contributor, types| types.blank? || types.eql?([:creator]) }
     return if contributors.blank?
 

@@ -11,7 +11,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata do
   end
 
   let(:dod_empty_dfd) do
-    data = JSON.parse(file_fixture('files/datacite/ezid_item_empty_dynamic_field_data.json').read)
+    data = JSON.parse(file_fixture('files/datacite/ezid_item_empty_descriptive_metadata.json').read)
     data['identifiers'] = ['item.' + SecureRandom.uuid] # random identifer to avoid collisions
     data
   end

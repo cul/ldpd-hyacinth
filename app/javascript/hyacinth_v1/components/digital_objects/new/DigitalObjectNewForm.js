@@ -27,7 +27,7 @@ function DigitalObjectNewForm() {
     digitalObjectType,
     primaryProject: { stringKey, displayLabel },
     otherProjects: [],
-    dynamicFieldData: {},
+    descriptiveMetadata: {},
     identifiers: [],
   };
 

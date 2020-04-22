@@ -3,7 +3,7 @@
 module DigitalObjectConcerns
   module AttributeAssignment
     include DigitalObjectConcerns::AttributeAssignment::Doi
-    include DigitalObjectConcerns::AttributeAssignment::DynamicFieldData
+    include DigitalObjectConcerns::AttributeAssignment::DescriptiveMetadata
     include DigitalObjectConcerns::AttributeAssignment::Identifiers
     include DigitalObjectConcerns::AttributeAssignment::OptimisticLockToken
     include DigitalObjectConcerns::AttributeAssignment::ParentUids
@@ -23,21 +23,21 @@ module DigitalObjectConcerns
     # exceptions. All of the deliberately-thrown exceptions will extend Hyacinth::Exceptions::HyacinthError.
     # @param digital_object_data [Hash] A hash of digital object data used to update many of this
     # digital object's attributes.
-    # @param merge_dynamic_field_data [boolean] If true, merges given dynamic_field_data Hash into into existing dynamic_field_data.
-    #        If false, replaces existing dynamic_field_data with new dynamic_field_data Hash.
+    # @param merge_descriptive_metadata [boolean] If true, merges given descriptive_metadata Hash into into existing descriptive_metadata.
+    #        If false, replaces existing descriptive_metadata with new descriptive_metadata Hash.
     # @param opts [Hash] A hash of options. Options include:
-    #             :merge_dynamic_field_data [boolean] If true, merges given dynamic_field_data Hash into
-    #                                             into existing dynamic_field_data.
+    #             :merge_descriptive_metadata [boolean] If true, merges given descriptive_metadata Hash into
+    #                                             into existing descriptive_metadata.
     #             :merge_rights [boolean] If true, merges given rights_data Hash into
     #                                     into existing rights_data.
-    def assign_attributes(new_digital_object_data, merge_dynamic_field_data: true, merge_rights: true)
+    def assign_attributes(new_digital_object_data, merge_descriptive_metadata: true, merge_rights: true)
       # Note: You can optionally include an optimistic_lock_token in the digital_object_data
       # if you want the save operation to fail if the object has been modified by another process.
       # TODO: Make sure to include an optimistic_lock_token in the Hyacinth UI editor save submissions
       # so that users will know to refresh the page and redo changes if another user or process made changes
       # while they had the editing screen open.
 
-      assign_dynamic_field_data(new_digital_object_data, merge_dynamic_field_data)
+      assign_descriptive_metadata(new_digital_object_data, merge_descriptive_metadata)
       assign_doi(new_digital_object_data)
       assign_identifiers(new_digital_object_data)
       assign_mint_doi(new_digital_object_data)

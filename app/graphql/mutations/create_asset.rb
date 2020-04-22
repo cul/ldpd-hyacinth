@@ -11,7 +11,7 @@ class Mutations::CreateAsset < Mutations::BaseMutation
     ability.authorize! :create_objects, parent.primary_project
     blob = ActiveStorage::Blob.find_signed(signed_blob_id)
     asset = initialize_child_asset(parent, blob.filename.to_s)
-    asset.dynamic_field_data['title'] = [{ 'sort_portion' => blob.filename.to_s }]
+    asset.descriptive_metadata['title'] = [{ 'sort_portion' => blob.filename.to_s }]
     begin
       asset.resource_imports[asset.primary_resource_name] = Hyacinth::DigitalObject::ResourceImport.new(
         method: Hyacinth::DigitalObject::ResourceImport::COPY,

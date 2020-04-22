@@ -7,11 +7,11 @@ describe Hyacinth::XmlGenerator::FieldValues do
   let(:xml_translation) { {} }
   let(:generator) { Hyacinth::XmlGenerator.new(nil, nil, nil, internal_fields) }
 
-  let(:dynamic_field_data) do
-    JSON.parse(file_fixture('xml_generator/dynamic_field_data.json').read)
+  let(:descriptive_metadata) do
+    JSON.parse(file_fixture('xml_generator/descriptive_metadata.json').read)
   end
 
-  let(:df_data) { dynamic_field_data["name"][0] }
+  let(:df_data) { descriptive_metadata["name"][0] }
   let(:values) { described_class.new(generator) }
 
   describe '#generate_field_val' do
@@ -68,7 +68,7 @@ describe Hyacinth::XmlGenerator::FieldValues do
     end
 
     context 'when value not nested' do
-      let(:df_data) { dynamic_field_data["title"][0] }
+      let(:df_data) { descriptive_metadata["title"][0] }
 
       it "returns correct value" do
         expect(values.value_for_field_name("sort_portion", df_data)).to eql "Catcher in the Rye"

@@ -29,7 +29,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
           "createdBy": null,
           "digitalObjectType": "item",
           "doi": "#{authorized_object.doi}",
-          "dynamicFieldData": {
+          "descriptiveMetadata": {
             "title": [
               {
                 "non_sort_portion": "The",
@@ -83,7 +83,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
   context "missing title field" do
     before do
       sign_in_project_contributor to: :read_objects, project: authorized_project
-      authorized_object.dynamic_field_data.delete('title')
+      authorized_object.descriptive_metadata.delete('title')
       authorized_object.save
       graphql query(authorized_object.uid)
     end
@@ -142,7 +142,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
           title
           numberOfChildren
           serializationVersion
-          dynamicFieldData
+          descriptiveMetadata
           doi
           state
           digitalObjectType
