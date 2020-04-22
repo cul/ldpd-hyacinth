@@ -16,7 +16,7 @@ namespace :hyacinth do
         Rake::Task['solr:start'].invoke
       end
 
-      ENV['yes'] = 'yes' # allow automatic yes to prompt in purge task
+      ENV['rails_env_confirmation'] = 'development' # allow automatic prompt confirmation in purge task
       Rake::Task['hyacinth:purge_all_digital_objects'].invoke
       ENV.delete('yes') # done with this env variable
 
