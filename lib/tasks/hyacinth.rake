@@ -3,18 +3,24 @@
 namespace :hyacinth do
   task reindex: :environment do
     DigitalObjectRecord.find_in_batches(batch_size: (ENV['BATCH_SIZE'] || 1000).to_i) do |records|
-      records.each { |record| ::DigitalObject::Base.find(record.uid).index(false) }
+      records.each do |record|
+        ::DigitalObject::Base.find(record.uid).index(false)
+      rescue
+        puts "Error while reindexing #{record.uid}. See raised error below:"
+        raise
+      end
       Hyacinth::Config.digital_object_search_adapter.solr.commit
     end
   end
 
   task purge_all_digital_objects: :environment do
-    puts Rainbow("This will delete ALL digital objects in Rails.env #{Rails.env} and cannot be undone. Are you sure you want to do this? (yes/no)").red.bright
+    puts Rainbow("This will delete ALL digital objects in the selected Rails environment (#{Rails.env}) and cannot be undone. "\
+      "Please confirm that you want to continue by typing in the selected Rails environment (#{Rails.env}):").red.bright
     print '> '
-    response = STDIN.gets.chomp
+    response = ENV['rails_env_confirmation'] || STDIN.gets.chomp
 
-    if response != 'yes'
-      puts 'Aborting because "yes" was not entered.'
+    if response != Rails.env
+      puts "Aborting because \"#{Rails.env}\" was not entered."
       next
     end
 
@@ -35,7 +41,7 @@ namespace :hyacinth do
           merge_rights: false
         )
         begin
-          dobj.purge!
+          dobj.purge!(skip_child_check: true)
           puts "Purged: #{record.uid}"
         rescue Hyacinth::Exceptions::NotFound
           puts "Purged #{record.uid} (but no associated metadata was found)"
