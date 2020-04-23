@@ -22,8 +22,8 @@ namespace :hyacinth do
     DigitalObjectRecord.find_in_batches(batch_size: (ENV['BATCH_SIZE'] || 1000).to_i) do |records|
       records.each do |record|
         json_var = JSON.parse(Hyacinth::Config.metadata_storage.read(record.metadata_location_uri))
-        next unless json_var.key?('descriptive')
-        json_var['descriptive_metadata'] = json_var.delete('descriptive')
+        next unless json_var.key?('dynamic_field_data')
+        json_var['descriptive_metadata'] = json_var.delete('dynamic_field_data')
         Hyacinth::Config.metadata_storage.write(record.metadata_location_uri, JSON.generate(json_var))
       end
     end
