@@ -64,9 +64,9 @@ function TermOptions({ vocabularyStringKey, onChange, close }) {
   };
 
   const onSelectHandler = (uri) => {
-    const term = terms.find(o => o.uri === uri);
+    const { prefLabel, uri: selectedURI } = terms.find(o => o.uri === uri);
 
-    onChange(term);
+    onChange({ pref_label: prefLabel, uri: selectedURI });
   };
 
   return (
