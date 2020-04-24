@@ -149,7 +149,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
       let(:child_uid) { child_hyacinth_object.uid }
 
       before do
-        load_title_fields! # Need to defined the fields that are being used in dynamic field data.
+        load_title_fields! # Need to defined the fields that are being used in descriptive metadata.
         hyacinth_object.structured_children['structure'] << child_uid
       end
 

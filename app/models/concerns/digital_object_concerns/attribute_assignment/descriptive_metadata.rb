@@ -26,7 +26,7 @@ module DigitalObjectConcerns
       #   add_extra_controlled_term_uri_data_to_descriptive_metadata!(df_data)
       # end
 
-      # Trims whitespace and removes blank fields from dynamic field data.
+      # Trims whitespace and removes blank fields from descriptive_metadata.
       def clean_descriptive_metadata!
         Hyacinth::Utils::Clean.trim_whitespace!(descriptive_metadata)
         Hyacinth::Utils::Clean.remove_blank_fields!(descriptive_metadata)

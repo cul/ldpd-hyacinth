@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :item, class: DigitalObject::Item do
     trait :with_descriptive_metadata do
       after(:build) do |digital_object|
-        DynamicFieldsHelper.load_title_fields! # Adding dynamic fields used in dynamic field data. Validations will fail if these field definitions aren't present.
+        DynamicFieldsHelper.load_title_fields! # Adding dynamic fields used in descriptive metadata. Validations will fail if these field definitions aren't present.
 
         digital_object.assign_descriptive_metadata({
           'descriptive_metadata' => {

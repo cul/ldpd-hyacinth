@@ -22,105 +22,105 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata do
     data
   end
 
-  context "empty dynamic field data:" do
-    it "title handles empty dynamic field data" do
+  context "empty descriptive metadata:" do
+    it "title handles empty descriptive metadata" do
       local_metadata_retrieval = described_class.new dod_empty_dfd
       expected_full_title = nil
       actual_full_title = local_metadata_retrieval.title
       expect(actual_full_title).to eq(expected_full_title)
     end
 
-    it "abstract handles empty dynamic field data" do
+    it "abstract handles empty descriptive metadata" do
       local_metadata_retrieval = described_class.new dod_empty_dfd
       expected_abstract = nil
       actual_abstract = local_metadata_retrieval.abstract
       expect(actual_abstract).to eq(expected_abstract)
     end
 
-    it "type_of_resource handles empty dynamic field data" do
+    it "type_of_resource handles empty descriptive metadata" do
       local_metadata_retrieval = described_class.new dod_empty_dfd
       expected_type_of_resource = nil
       actual_type_of_resource = local_metadata_retrieval.type_of_resource
       expect(actual_type_of_resource).to eq(expected_type_of_resource)
     end
 
-    it "genre_uri handles empty dynamic field data" do
+    it "genre_uri handles empty descriptive metadata" do
       local_metadata_retrieval = described_class.new dod_empty_dfd
       expected_genre_uri = nil
       actual_genre_uri = local_metadata_retrieval.genre_uri
       expect(actual_genre_uri).to eq(expected_genre_uri)
     end
 
-    it "date_issued_start_year handles empty dynamic field data" do
+    it "date_issued_start_year handles empty descriptive metadata" do
       local_metadata_retrieval = described_class.new dod_empty_dfd
       expected_date = nil
       actual_date = local_metadata_retrieval.date_issued_start_year
       expect(actual_date).to eq(expected_date)
     end
 
-    it "parent_publication_issn handles empty dynamic field data" do
+    it "parent_publication_issn handles empty descriptive metadata" do
       local_metadata_retrieval = described_class.new dod_empty_dfd
       expected_issn = nil
       actual_issn = local_metadata_retrieval.parent_publication_issn
       expect(actual_issn).to eq(expected_issn)
     end
 
-    it "parent_publication_isbn handles empty dynamic field data" do
+    it "parent_publication_isbn handles empty descriptive metadata" do
       local_metadata_retrieval = described_class.new dod_empty_dfd
       expected_isbn = nil
       actual_isbn = local_metadata_retrieval.parent_publication_isbn
       expect(actual_isbn).to eq(expected_isbn)
     end
 
-    it "parent_publication_doi handles empty dynamic field data" do
+    it "parent_publication_doi handles empty descriptive metadata" do
       local_metadata_retrieval = described_class.new dod_empty_dfd
       expected_doi = nil
       actual_doi = local_metadata_retrieval.parent_publication_doi
       expect(actual_doi).to eq(expected_doi)
     end
 
-    it "doi handles empty dynamic field data" do
+    it "doi handles empty descriptive metadata" do
       local_metadata_retrieval = described_class.new dod_empty_dfd
       expected_doi = nil
       actual_doi = local_metadata_retrieval.doi
       expect(actual_doi).to eq(expected_doi)
     end
 
-    it "handle_net_identifier handles empty dynamic field data" do
+    it "handle_net_identifier handles empty descriptive metadata" do
       local_metadata_retrieval = described_class.new dod_empty_dfd
       expected_handle_net_identifier = nil
       actual_handle_net_identifier = local_metadata_retrieval.handle_net_identifier
       expect(actual_handle_net_identifier).to eq(expected_handle_net_identifier)
     end
 
-    it "subjects_topic handles empty dynamic field data" do
+    it "subjects_topic handles empty descriptive metadata" do
       local_metadata_retrieval = described_class.new dod_empty_dfd
       expected_subjects_topic = []
       actual_subjects_topic = local_metadata_retrieval.subject_topics
       expect(actual_subjects_topic).to eq(expected_subjects_topic)
     end
 
-    it "date_created handles empty dynamic field data" do
+    it "date_created handles empty descriptive metadata" do
       local_metadata_retrieval = described_class.new dod_empty_dfd
       expected_date_created = '2015-02-04'
       actual_date_created = local_metadata_retrieval.date_created
       expect(actual_date_created).to eq(expected_date_created)
     end
 
-    it "date_modified handles empty dynamic field data" do
+    it "date_modified handles empty descriptive metadata" do
       local_metadata_retrieval = described_class.new dod_empty_dfd
       expected_date_modified = '2016-03-31'
       actual_date_modified = local_metadata_retrieval.date_modified
       expect(actual_date_modified).to eq(expected_date_modified)
     end
 
-    it "creators handles empty dynamic field data" do
+    it "creators handles empty descriptive metadata" do
       local_metadata_retrieval = described_class.new dod_empty_dfd
       expected_creators = []
       expect(local_metadata_retrieval.creators).to eq(expected_creators)
     end
 
-    it "editors handles empty dynamic field data" do
+    it "editors handles empty descriptive metadata" do
       local_metadata_retrieval = described_class.new dod_empty_dfd
       expected_editors = []
       expect(local_metadata_retrieval.editors).to eq(expected_editors)

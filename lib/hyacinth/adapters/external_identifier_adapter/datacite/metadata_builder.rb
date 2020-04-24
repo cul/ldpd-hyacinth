@@ -98,7 +98,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::MetadataBuilder
   end
 
   def creator_values(hyacinth_metadata)
-    # TODO: return creators from dynamic field data
+    # TODO: return creators from descriptive metadata
     hyacinth_metadata.creators
   end
 
