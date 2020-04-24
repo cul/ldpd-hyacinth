@@ -218,7 +218,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
   end
 
   context 'with invalid value for select field' do
-    let(:dynamic_field_data) do
+    let(:descriptive_metadata) do
       {
         'type_of_resource': [
           { value: 'not_valid' }
@@ -229,7 +229,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
     it 'returns errors' do
       expect(item.valid?).to be false
       expect(item.errors.messages).to include(
-        'dynamic_field_data.type_of_resource[0].value': ["has invalid value: 'not_valid'"]
+        'descriptive_metadata.type_of_resource[0].value': ["has invalid value: 'not_valid'"]
       )
     end
   end
