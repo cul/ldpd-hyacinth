@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Hyacinth
   module DigitalObject
     module TypeDef
@@ -5,7 +7,7 @@ module Hyacinth
         TYPE_TO_FORM_TYPE = {
           rights_metadata: ['item_rights', 'asset_rights'],
           descriptive_metadata: ['descriptive']
-        }
+        }.freeze
 
         def initialize(type)
           super()
@@ -52,7 +54,7 @@ module Hyacinth
 
               full_term = {}
 
-              { 'authority' => '', 'pref_label'=> '', 'alt_labels' => [], 'term_type' => '' }.map do |key, default|
+              { 'authority' => '', 'pref_label' => '', 'alt_labels' => [], 'term_type' => '' }.map do |key, default|
                 full_term[key] = solr_term_hash.fetch(key, default)
               end
 
@@ -88,7 +90,8 @@ module Hyacinth
             case reduced_map[:type]
             when 'DynamicFieldGroup'
               next unless value.is_a?(Array)
-              value.each do |v, i|
+
+              value.each do |v|
                 extract_terms(reduced_map[:children], v).each do |vocab, new_terms|
                   terms[vocab] = terms.fetch(vocab, []).concat(new_terms)
                 end

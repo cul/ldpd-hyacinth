@@ -74,15 +74,15 @@ describe Hyacinth::DigitalObject::TypeDef::DynamicFieldData do
   before do
     Hyacinth::DynamicFieldsLoader.load_fields!(field_definitions)
     name_vocab = Vocabulary.create(string_key: 'name', label: 'Name')
-    name_vocab.add_custom_field(field_key: 'uni' , label: 'UNI' , data_type: 'string')
+    name_vocab.add_custom_field(field_key: 'uni', label: 'UNI', data_type: 'string')
     name_vocab.save
 
     name_role_vocab = Vocabulary.create(string_key: 'name_role', label: 'Name Role')
     genre_vocab = Vocabulary.create(string_key: 'genre', label: 'Genre')
 
-    Term.create!(pref_label: 'Person, Random', term_type: 'temporary', vocabulary: name_vocab, custom_fields: { uni: 'abc123' } )
-    Term.create!(uri: 'http://id.loc.gov/vocabulary/relators/aut', pref_label: 'Author', alt_labels: ['writer'], authority: 'marcrelator', term_type: 'external', vocabulary: name_role_vocab )
-    Term.create!(uri: 'http://vocab.getty.edu/aat/300048715', pref_label: 'articles', authority: 'aat', term_type: 'external', vocabulary: genre_vocab )
+    Term.create!(pref_label: 'Person, Random', term_type: 'temporary', vocabulary: name_vocab, custom_fields: { uni: 'abc123' })
+    Term.create!(uri: 'http://id.loc.gov/vocabulary/relators/aut', pref_label: 'Author', alt_labels: ['writer'], authority: 'marcrelator', term_type: 'external', vocabulary: name_role_vocab)
+    Term.create!(uri: 'http://vocab.getty.edu/aat/300048715', pref_label: 'articles', authority: 'aat', term_type: 'external', vocabulary: genre_vocab)
   end
 
   describe '#from_serialized_form_impl' do
