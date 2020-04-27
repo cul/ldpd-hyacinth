@@ -11,19 +11,13 @@ class DigitalObjectImportProcessingJob
 
     digital_object_data = JSON.parse(digital_object_import.digital_object_data)
 
-    if digital_object_data['uid'].present?
-      # If a uid is present in the digital_object_data, then this is an update operation
-      digital_object = DigitalObject::Base.find(digital_object_data['uid'])
-    else
-      # No uid present, so we'll create a new object with type based on the digital_object_type value
-      digital_object = Hyacinth::Config.digital_object_types.key_to_class(digital_object_data['digital_object_type']).new
-    end
+    digital_object = digital_object_for_digital_object_data(digital_object_data)
 
     # # Update the DigitalObject's attributes with the given digital_object_data
     digital_object.assign_attributes(digital_object_data)
 
     # Save the object, and terminate processing if the save fails.
-    if !digital_object.save
+    unless digital_object.save
       digital_object_import.import_errors = digital_object.errors.map { |err_key, message| "#{err_key}: #{message}" }
       # Apply a recursive failure to this digital_object_import and all other DigitalObjectImports
       # that depend on it, since it doesn't make sense to run the others if this one failed.
@@ -63,6 +57,14 @@ class DigitalObjectImportProcessingJob
     handle_job_error(digital_object_import, e)
   end
 
+  def self.digital_object_for_digital_object_data(digital_object_data)
+    # If a uid is present in the digital_object_data, then this is an update operation
+    return DigitalObject::Base.find(digital_object_data['uid']) if digital_object_data['uid'].present?
+
+    # No uid present, so we'll create a new object with type based on the digital_object_type value
+    Hyacinth::Config.digital_object_types.key_to_class(digital_object_data['digital_object_type']).new
+  end
+
   def self.apply_recursive_failure!(digital_object_import)
     digital_object_import.failure!
 
@@ -75,9 +77,10 @@ class DigitalObjectImportProcessingJob
   end
 
   def self.handle_job_error(digital_object_import, error)
-    digital_object_import.import_errors << error.message + "\n\n" +
-      "See application error log for more details.\n" +
-      + "Message generated at #{Time.current}"
+    digital_object_import.import_errors <<
+      error.message + "\n\n"\
+      "See application error log for more details.\n"\
+      "Message generated at #{Time.current}"
     Rails.logger.error(error.message + "\n" + error.backtrace.join("\n"))
     digital_object_import.failure!
   end

@@ -42,7 +42,7 @@ class BatchImportSetupJob
     # Find all DigitalObjectImports in this batch that have no prerequisites so we can enqueue them
     # for immediate background job processing.
     no_prerequisite_digital_object_imports_query = DigitalObjectImport.select(:id).left_outer_joins(:import_prerequisites).where(
-      {import_prerequisites: {id: nil}}
+      import_prerequisites: { id: nil }
     )
     # Mark all as queued
     no_prerequisite_digital_object_imports_query.update_all(status: 'queued')
@@ -77,8 +77,10 @@ class BatchImportSetupJob
 
       # Each of the found identifiers is associated with the current row, so we'll store that info.
       identifiers.each do |identifier|
-        raise Hyacinth::Exceptions::BatchImportError, "More than one row in the spreadsheet claims to have the same "\
-          "identifier: #{identifier}" if identifiers_to_row_numbers.key?(identifier)
+        if identifiers_to_row_numbers.key?(identifier)
+          raise Hyacinth::Exceptions::BatchImportError, "More than one row in the spreadsheet "\
+                "claims to have the same identifier: #{identifier}"
+        end
         # Add idenfifier mapping
         identifiers_to_row_numbers[identifier] = csv_row_number
       end
@@ -135,16 +137,17 @@ class BatchImportSetupJob
         if found_object_uids.blank?
           # If we found zero uids for the given identifier, that's not good because that
           # means the csv data refers to a parent that doesn't exist in the spreadsheet
-          # and also doesn't exist in Hyacinth. Let's raise an error.
-          raise Hyacinth::Exceptions::BatchImportError,
-            "Parent identifier #{identifier} not found in CSV data or among existing Hyacinth objects."
+          # and also doesn't exist in Hyacinth. We'll log this unresolvable identifier
+          # and later on we'll raise an error.
+          unresolvable_identifiers << identifier
+          next
         elsif found_object_uids.length > 1
           # If we found more than one uid for the given identifier, that's not good because that
           # means we have an ambiguous parent reference. We'll raise an error.
           raise Hyacinth::Exceptions::BatchImportError,
-            "Ambiguous parent reference. Parent identifier #{identifier} was resolved to "\
-            "#{found_object_uids.length} objects in Hyacinth (#{found_object_uids.join(', ')}), "\
-            "so it's unclear which parent is being referenced."
+                "Ambiguous parent reference. Parent identifier #{identifier} was resolved to "\
+                "#{found_object_uids.length} objects in Hyacinth (#{found_object_uids.join(', ')}), "\
+                "so it's unclear which parent is being referenced."
         end
 
         # If we got here, that means we found just one uid for the given identifier. That's great.
@@ -153,11 +156,21 @@ class BatchImportSetupJob
         parent_row_numbers << identifiers_to_row_numbers[found_object_uids.first]
       end
 
-       # If there are any duplicate values in parent_row_numbers, that indicates that the
-       # spreadsheet data is trying to associate an object with the same parent twice, which
-       # would be a mistake.  Raise an error in this (likely rare) case:
-      raise Hyacinth::Exceptions::BatchImportError, "Row #{row_number} contains multiple parent digital object values "\
-        "that refer to the the same parent." if parent_row_numbers.length != parent_row_numbers.uniq.length
+      # Raise an error if we encountered any unresolvable identifiers
+      if unresolvable_identifiers.present?
+        raise Hyacinth::Exceptions::BatchImportError,
+              "The following parent identifiers could not be found in CSV data or "\
+              "among existing Hyacinth objects: #{unresolvable_identifiers.join(', ')}"
+      end
+
+      # If there are any duplicate values in parent_row_numbers, that indicates that the
+      # spreadsheet data is trying to associate an object with the same parent twice, which
+      # would be a mistake.  Raise an error in this (likely rare) case:
+      if parent_row_numbers.length != parent_row_numbers.uniq.length
+        raise Hyacinth::Exceptions::BatchImportError,
+              "Row #{row_number} contains multiple parent digital object values "\
+              "that refer to the the same parent."
+      end
 
       row_numbers_to_parent_row_numbers[row_number] = parent_row_numbers unless parent_row_numbers.empty?
     end
@@ -246,15 +259,17 @@ class BatchImportSetupJob
   #   19 => [18], # 19 requires 18
   #   18 => [20]  # 18 requires 20
   # }
-  def self.raise_error_if_circular_dependency_found!(index_prerequisite_map, already_seen_indices = Set.new)
+  def self.raise_error_if_circular_dependency_found!(index_prerequisite_map)
     index_prerequisite_map.each do |row_number, prerequisite_row_numbers|
       seen = []
       seen << row_number
-      recurse_hierarchy(index_prerequisite_map, prerequisite_row_numbers) do |row_number|
-        raise Hyacinth::Exceptions::BatchImportError,
-          "Prerequisite circular dependency detected in csv data, "\
-          "starting at row: #{row_number}" if seen.include?(row_number)
-        seen << row_number
+      recurse_hierarchy(index_prerequisite_map, prerequisite_row_numbers) do |encountered_row_number|
+        if seen.include?(encountered_row_number)
+          raise Hyacinth::Exceptions::BatchImportError,
+                "Prerequisite circular dependency detected in csv data, "\
+                "starting at row: #{row_number}"
+        end
+        seen << encountered_row_number
       end
     end
   end
@@ -265,16 +280,15 @@ class BatchImportSetupJob
     row_numbers.each do |row_number|
       block.yield row_number
       prerequisite_row_numbers = index_prerequisite_map[row_number]
-      if prerequisite_row_numbers.present?
-        recurse_hierarchy(index_prerequisite_map, prerequisite_row_numbers, &block)
-      end
+      recurse_hierarchy(index_prerequisite_map, prerequisite_row_numbers, &block) if prerequisite_row_numbers.present?
     end
   end
 
   def self.handle_job_error(batch_import, error)
-    batch_import.setup_errors << error.message + "\n\n" +
-      "See application error log for more details.\n" +
-      + "Message generated at #{Time.current}"
+    batch_import.setup_errors <<
+      error.message + "\n\n"\
+      "See application error log for more details.\n"\
+      "Message generated at #{Time.current}"
     Rails.logger.error(error.message + "\n" + error.backtrace.join("\n"))
     # Mark as cancelled, to indicate that this job isn't running and to limit the number
     # of DigitalObjectImports that might be running (if any were successfully queued before
