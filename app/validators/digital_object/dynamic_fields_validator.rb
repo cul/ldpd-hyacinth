@@ -61,9 +61,17 @@ class DigitalObject::DynamicFieldsValidator < ActiveModel::EachValidator
       errors_for_string_field(configuration, value)
     end
 
-    # TODO: Add more specific checks for this field.
-    def errors_for_date_field(configuration, value)
-      errors_for_string_field(configuration, value)
+    def errors_for_date_field(_configuration, value)
+      return ['must be a string'] unless value.is_a?(String)
+      return ['must be in YYYY-MM-DD format'] unless value.match?(/^-?\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[1,2][0-9]|3[0,1]))?)?/)
+
+      begin
+        Date.parse(value)
+      rescue
+        return ['invalid date']
+      end
+
+      false
     end
 
     def errors_for_select_field(configuration, value)
@@ -84,14 +92,22 @@ class DigitalObject::DynamicFieldsValidator < ActiveModel::EachValidator
       return ['must contain a uri or pref_label'] unless value['uri'] || value['pref_label']
 
       # Check that every value provided is a core field or a valid custom field value for that vocabulary.
-      vocabulary = Vocabulary.find_by(string_key: configuration[:controlled_vocabulary])
+      custom_fields = custom_fields_for(configuration[:controlled_vocabulary])
+      return ["#{configuration[:controlled_vocabulary]} is not a valid vocabulary"] if custom_fields.nil?
 
-      return ["#{configuration[:controlled_vocabulary]} is not a valid vocabulary"] unless vocabulary
-
-      valid_fields = CORE_TERM_FIELDS + vocabulary.custom_fields.keys
+      valid_fields = CORE_TERM_FIELDS + custom_fields
 
       errors = (value.keys - valid_fields).map { |f| "has invalid key, \"#{f}\" in hash" }
 
       errors.empty? ? false : errors
+    end
+
+    # Returns nil if vocabulary is not represented in hash
+    def custom_fields_for(vocabulary)
+      vocabulary_to_custom_fields_map.fetch(vocabulary, nil)
+    end
+
+    def vocabulary_to_custom_fields_map
+      @vocabulary_to_custom_fields_map ||= Vocabulary.all.map { |v| [v.string_key, v.custom_fields.keys] }.to_h
     end
 end

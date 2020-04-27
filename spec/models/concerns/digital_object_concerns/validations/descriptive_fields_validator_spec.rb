@@ -45,10 +45,17 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
               ]
             },
             {
+              string_key: 'date_created',
+              display_label: 'Date Created',
+              dynamic_fields: [
+                { string_key: 'start_date', display_label: 'Start Date', field_type: DynamicField::Type::DATE }
+              ]
+            },
+            {
               string_key: 'type_of_resource',
               display_label: 'Type of Resource',
               dynamic_fields: [
-                { string_key: 'value', display_label: 'Value', field_type: DynamicField::Type::SELECT, select_options: '[{ "value": "text","label": "Text" }, { "value": "still image","label": "still image" }]'}
+                { string_key: 'value', display_label: 'Value', field_type: DynamicField::Type::SELECT, select_options: '[{ "value": "text","label": "Text" }, { "value": "still image","label": "still image" }]' }
               ]
             }
           ]
@@ -81,7 +88,10 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
         'genre' => [
           { 'term' => { 'pref_label' => 'biography' } }
         ],
-        'type_of_resource' => [ { 'value' => 'text' } ]
+        'date_created' => [
+          { 'start_date' => '2020-01-01' }
+        ],
+        'type_of_resource' => [{ 'value' => 'text' }]
       }
     end
 
@@ -243,6 +253,45 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
       expect(item.valid?).to be false
       expect(item.errors.messages).to include(
         'descriptive_metadata.alternative_title[0].value': ['must be a string']
+      )
+    end
+  end
+
+  context 'with non-string value for date field' do
+    let(:descriptive_metadata) do
+      { 'date_created' => [{ 'start_date' => 123 }] }
+    end
+
+    it 'return errors' do
+      expect(item.valid?).to be false
+      expect(item.errors.messages).to include(
+        'descriptive_metadata.date_created[0].start_date': ['must be a string']
+      )
+    end
+  end
+
+  context 'with invalid format for date field' do
+    let(:descriptive_metadata) do
+      { 'date_created' => [{ 'start_date' => '09-09-2009' }] }
+    end
+
+    it 'return errors' do
+      expect(item.valid?).to be false
+      expect(item.errors.messages).to include(
+        'descriptive_metadata.date_created[0].start_date': ['must be in YYYY-MM-DD format']
+      )
+    end
+  end
+
+  context 'with invalid date for date field' do
+    let(:descriptive_metadata) do
+      { 'date_created' => [{ 'start_date' => '2009-02-31' }] }
+    end
+
+    it 'return errors' do
+      expect(item.valid?).to be false
+      expect(item.errors.messages).to include(
+        'descriptive_metadata.date_created[0].start_date': ['invalid date']
       )
     end
   end
