@@ -31,7 +31,7 @@ function StatusNavItem({ eventKey, amount }) {
 }
 
 function DigitalObjectImportIndex() {
-  const limit = 1;
+  const limit = 100;
   const { id } = useParams();
 
   const [offset, setOffset] = useState(0);

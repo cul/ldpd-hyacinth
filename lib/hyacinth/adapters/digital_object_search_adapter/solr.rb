@@ -81,7 +81,7 @@ module Hyacinth
         # @param identifier
         # @param opts
         #        opts[:retry_with_delay] If no results are found, search again after the specified delay (in seconds).
-        def identifier_to_uids(identifier, opts)
+        def identifier_to_uids(identifier, opts = {})
           2.times do
             results = search do |params|
               params.fq('identifier_ssim', identifier)

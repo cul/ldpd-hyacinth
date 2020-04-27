@@ -4,8 +4,8 @@ require 'rails_helper'
 
 RSpec.describe Mutations::BatchImport::CreateBatchImport, type: :request do
   context 'when creating a batch import' do
-    let(:blob_content) { "id,field,field.other_field\n123,somedata,someotherdata" }
-    let(:blob_checksum) { Digest::MD5.hexdigest blob_content }
+    let(:blob_content) { "_id,_field,field[0].other_field\n123,somedata,someotherdata" }
+    let(:blob_checksum) { Digest::MD5.base64digest blob_content }
     let(:blob_args) do
       {
         filename: 'blob.csv',

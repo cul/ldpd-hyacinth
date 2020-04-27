@@ -27,6 +27,15 @@ RSpec.shared_examples "an abstract storage adapter" do
     it "implements #read_impl" do
       expect(adapter).to respond_to(:read_impl)
     end
+    it "implements #with_readable" do
+      expect(adapter).to respond_to(:with_readable)
+    end
+    it "implements #readable_impl" do
+      expect(adapter).to respond_to(:readable_impl)
+    end
+    it "implements #with_readable_tempfile" do
+      expect(adapter).to respond_to(:with_readable_tempfile)
+    end
     it "implements #uri_prefix" do
       expect(adapter).to respond_to(:uri_prefix)
     end
@@ -113,6 +122,24 @@ RSpec.shared_examples "a readable storage adapter" do
     end
     it "rejects unhandled URIs" do
       expect { adapter.with_readable(unhandled_location_uri) {} }.to raise_error(Hyacinth::Exceptions::UnhandledLocationError)
+    end
+  end
+
+  context "#with_readable_tempfile" do
+    it "returns the expected content" do
+      adapter.with_readable_tempfile(sample_location_uri) do |file|
+        expect(file.read).to eq(content)
+      end
+    end
+    it "deletes the tempfile after the block runs" do
+      file_path = nil
+      adapter.with_readable_tempfile(sample_location_uri) do |file|
+        file_path = file.path
+      end
+      expect(File.exist?(file_path)).to eq(false)
+    end
+    it "rejects unhandled URIs" do
+      expect { adapter.with_readable_tempfile(unhandled_location_uri) {} }.to raise_error(Hyacinth::Exceptions::UnhandledLocationError)
     end
   end
 end

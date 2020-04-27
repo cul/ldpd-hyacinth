@@ -39,11 +39,11 @@ module DigitalObjectConcerns
 
         # Add new UIDs that don't already exist in set of parents
         (new_set_of_uids - parent_uids).each do |uid|
-          add_parent_uid(uid, false)
+          add_parent_uid(uid)
         end
 
         # Remove omitted UIDs that currently exist in set of parents
-        uids_to_remove.each do |uid|
+        (parent_uids - new_set_of_identifiers.to_a).each do |uid|
           remove_parent_uid(uid)
         end
       end

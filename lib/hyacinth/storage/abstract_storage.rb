@@ -38,6 +38,13 @@ module Hyacinth
         storage_adapter_for_location(location).with_readable(location, &block)
       end
 
+      def with_readable_tempfile(location, &block)
+        # We don't need to establish a lock while reading, but we don't want to read if
+        # a lock has already been established (e.g. by a write process).
+        raise Hyacinth::Exceptions::LockError, "Cannot read #{location} because it is locked by another process." if Hyacinth::Config.lock_adapter.locked?(location)
+        storage_adapter_for_location(location).with_readable_tempfile(location, &block)
+      end
+
       # NOTE: Probably want to stop using #write and switch entirely to #with_writable
       def write(location, content)
         Hyacinth::Config.lock_adapter.with_lock(location) do

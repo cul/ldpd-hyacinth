@@ -4,7 +4,7 @@ import { Form } from 'react-bootstrap';
 import { useMutation } from '@apollo/react-hooks';
 
 import { createAssetMutation } from '../../../graphql/assets';
-import FileInput from '../../shared/forms/inputs/FileInput';
+import AutoUploadFileInput from '../../shared/forms/inputs/AutoUploadFileInput';
 
 function AssetNew(props) {
   const { parentId, refetch } = props;
@@ -24,7 +24,7 @@ function AssetNew(props) {
 
   return (
     <Form>
-      <FileInput onUpload={onUpload} />
+      <AutoUploadFileInput onUpload={onUpload} promptForNewFileAfterUpload />
     </Form>
   );
 }

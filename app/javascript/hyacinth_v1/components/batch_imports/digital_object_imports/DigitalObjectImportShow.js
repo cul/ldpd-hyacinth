@@ -57,12 +57,19 @@ function DigitalObjectImportShow() {
 
           <Col as="dt" sm={3}>Errors</Col>
           <Col as="dd" sm={9}>
-            { hasErrors ? digitalObjectImport.importErrors.map(e => <div>{e}</div>) : '-- None --' }
+            {
+              hasErrors
+                ? digitalObjectImport.importErrors.map(
+                  // eslint-disable-next-line react/no-array-index-key
+                  (e, ix) => (<pre className="border p-3" key={ix}><code>{e}</code></pre>),
+                )
+                : '-- None --'
+            }
           </Col>
 
           <Col as="dt" sm={3}>Digital Object Data</Col>
           <Col as="dd" sm={9}>
-            <pre>
+            <pre className="border p-3">
               <code>
                 { JSON.stringify(JSON.parse(digitalObjectImport.digitalObjectData), null, 2) }
               </code>

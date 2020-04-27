@@ -9,6 +9,11 @@ module DigitalObjectConcerns::Assets::Validations
   end
 
   def validate_type
+    if asset_type.blank?
+      errors.add(:asset_type, "Missing asset type")
+      return
+    end
+
     errors.add(:asset_type, "Invalid asset type: #{asset_type}") unless BestType.pcdm_type.valid_type?(asset_type)
   end
 

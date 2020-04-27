@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_11_183754) do
+ActiveRecord::Schema.define(version: 2020_04_24_153858) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -56,6 +56,7 @@ ActiveRecord::Schema.define(version: 2020_03_11_183754) do
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "cancelled", default: false, null: false
     t.string "original_filename"
+    t.text "setup_errors"
     t.index ["user_id"], name: "index_batch_imports_on_user_id"
   end
 
@@ -74,6 +75,7 @@ ActiveRecord::Schema.define(version: 2020_03_11_183754) do
     t.integer "index"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["batch_import_id", "index"], name: "index_digital_object_imports_on_batch_import_id_and_index", unique: true
     t.index ["batch_import_id", "status"], name: "index_digital_object_imports_on_batch_import_id_and_status"
     t.index ["batch_import_id"], name: "index_digital_object_imports_on_batch_import_id"
     t.index ["index"], name: "index_digital_object_imports_on_index"
@@ -185,6 +187,17 @@ ActiveRecord::Schema.define(version: 2020_03_11_183754) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["project_id"], name: "index_field_sets_on_project_id"
+  end
+
+  create_table "import_prerequisites", force: :cascade do |t|
+    t.integer "digital_object_import_id"
+    t.integer "prerequisite_digital_object_import_id"
+    t.integer "batch_import_id"
+    t.datetime "created_at", null: false
+    t.index ["batch_import_id", "digital_object_import_id", "prerequisite_digital_object_import_id"], name: "unique_import_prerequisite", unique: true
+    t.index ["batch_import_id"], name: "index_import_prerequisites_on_batch_import_id"
+    t.index ["digital_object_import_id"], name: "index_import_prerequisites_on_digital_object_import_id"
+    t.index ["prerequisite_digital_object_import_id"], name: "prerequisite_digital_object_import_id"
   end
 
   create_table "permissions", force: :cascade do |t|

@@ -248,7 +248,7 @@ RSpec.describe BatchImport, type: :model do
         blob = ActiveStorage::Blob.create_before_direct_upload!(
           filename: 'import.csv',
           byte_size: original_csv.bytesize,
-          checksum: Digest::MD5.hexdigest(original_csv),
+          checksum: Digest::MD5.base64digest(original_csv),
           content_type: 'text/csv'
         )
         blob.upload(StringIO.new(original_csv))

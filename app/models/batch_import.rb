@@ -10,6 +10,7 @@ class BatchImport < ApplicationRecord
   STATUSES = [PENDING, IN_PROGRESS, COMPLETED_SUCCESSFULLY, COMPLETE_WITH_FAILURES, CANCELLED].freeze
 
   enum priority: { low: 0, medium: 1, high: 2 }
+  serialize :setup_errors, Array
 
   before_destroy :ensure_imports_are_complete!, prepend: true
   after_destroy :delete_associated_file
@@ -79,6 +80,64 @@ class BatchImport < ApplicationRecord
     end
 
     new_csv
+  end
+
+  def self.csv_file_to_hierarchical_json_hash(csv_file)
+    JsonCsv.csv_file_to_hierarchical_json_hash(csv_file.path) do |json_hash_for_row, csv_row_number|
+      # Convert csv-formatted, header-derived json to the expected attribute format
+      BatchImport.import_json_to_digital_object_attribute_format!(json_hash_for_row)
+      yield json_hash_for_row, csv_row_number
+    end
+  end
+
+  # Reads the csv data from the given blob and performs "pre-validation" on the CSV data.
+  # "Pre-validation" is a non-comprehensive check that's meant to quickly catch common errors
+  # without doing more computationally expensive operations like creating objects or doing extensive
+  # database queries.  This method is primarily used for validating a CSV before it's split up and
+  # turned into DigitalObjectImports, which have more extensive checks done as they're processed.
+  #
+  # @return Array(Boolean, String[])
+  #   Sample return value for failed validation:
+  #   [false, ['Something went wrong!', 'Something else went wrong!']]
+  #   Sample return value for successful validation:
+  #   [true, []]
+  def self.pre_validate_blob(blob)
+    pre_validation_errors = []
+    blob.open do |file|
+      # TODO: Make sure there aren't any duplicate headers
+      csv_file_to_hierarchical_json_hash(file) do |json_hash_for_row, _csv_row_number|
+        # TODO: Make sure that only valid fields are present in the dynamic field data properties
+        # TODO: Make sure that the same UID doesn't appear in more than one row
+        # TODO: Maybe some other validations later on too.
+      end
+    end
+
+    [pre_validation_errors.blank?, pre_validation_errors]
+  end
+
+  # Converts a CSV-header-derived JSON-like hash structure to the expected digital object
+  # attribute format, moving all non-underscore-prefixed top level key-value pairs under
+  # dynamic_field_data and removing the underscore prefix from all top level keys.
+  # Note: This method modifies the passed-in object!
+  def self.import_json_to_digital_object_attribute_format!(import_json)
+    # Add dynamic_field_data hash
+    dynamic_field_data = {}
+
+    # Move all non-underscore-prefixed keys under dynamic_field_data
+    import_json.delete_if do |key|
+      next false if key.start_with?('_')
+      dynamic_field_data[key] = import_json[key]
+      true
+    end
+
+    # Assign dynamic_field_data to 'dynamic_field_data' key in import_json
+    import_json['dynamic_field_data'] = dynamic_field_data
+
+    # Remove leading underscore from all remaining underscore-prefixed keys
+    import_json.transform_keys! { |key| key.start_with?('_') ? key[1..-1] : key }
+
+    # Return modified hash
+    import_json
   end
 
   private
