@@ -70,6 +70,9 @@ module Hyacinth
           return nil if json_var.nil?
           raise ArgumentError, "Expected hash, but got: #{json_var.class}" unless json_var.is_a?(Hash)
 
+          # Create a copy of json_var
+          json_var = json_var.deep_dup
+
           # Dehydrate URI terms. Remove all other fields in terms hash except for 'uri'
           extract_terms(field_map, json_var).values.sum([]).each { |t| t.slice!('uri') }
 
