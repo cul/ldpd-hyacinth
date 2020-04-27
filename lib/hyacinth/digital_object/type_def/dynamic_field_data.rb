@@ -13,17 +13,14 @@ module Hyacinth
           super()
           raise ArgumentError, "type '#{type}' is invalid" unless TYPE_TO_FORM_TYPE.keys.map(&:to_s).include?(type.to_s)
 
-          # Generate Dynamic Field Map
-          @field_map = Hyacinth::DynamicFieldsMap.generate(TYPE_TO_FORM_TYPE[type])
+          @type = type.to_sym
         end
-
-        # TODO: Pull in field name change.
 
         def from_serialized_form_impl(json_var)
           return nil if json_var.nil?
           raise ArgumentError, "Expected hash, but got: #{json_var.class}" unless json_var.is_a?(Hash)
 
-          terms_map = extract_terms(@field_map, json_var)
+          terms_map = extract_terms(field_map, json_var)
 
           search_query = terms_map.map { |vocab, terms|
             uris = terms.map { |t| "\"#{t['uri']}\"" }.compact.join(' OR ')
@@ -74,9 +71,13 @@ module Hyacinth
           raise ArgumentError, "Expected hash, but got: #{json_var.class}" unless json_var.is_a?(Hash)
 
           # Dehydrate URI terms. Remove all other fields in terms hash except for 'uri'
-          extract_terms(@field_map, json_var).values.sum([]).each { |t| t.slice!('uri') }
+          extract_terms(field_map, json_var).values.sum([]).each { |t| t.slice!('uri') }
 
           json_var
+        end
+
+        def field_map
+          Hyacinth::DynamicFieldsMap.generate(TYPE_TO_FORM_TYPE[@type])
         end
 
         def extract_terms(map, data)
