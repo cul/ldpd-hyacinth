@@ -47,7 +47,7 @@ function ControlledVocabularyIndex() {
         }
       </Can>
 
-      <Table hover>
+      <Table hover responsive>
         <thead>
           <tr>
             <th>Label</th>
