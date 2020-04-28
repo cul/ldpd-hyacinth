@@ -10,6 +10,7 @@ import TermIndex from './terms/TermIndex';
 import EditButton from '../shared/buttons/EditButton';
 import GraphQLErrors from '../shared/GraphQLErrors';
 import { getVocabularyQuery } from '../../graphql/vocabularies';
+import { Can } from '../../utils/abilityContext';
 
 function ControlledVocabularyShow() {
   const { stringKey } = useParams();
@@ -34,7 +35,9 @@ function ControlledVocabularyShow() {
       <div className="m-2">
         <h3>
           Vocabulary
-          <EditButton className="ml-2" link={`/controlled_vocabularies/${vocabulary.stringKey}/edit`} />
+          <Can I="edit" of={{ subjectType: 'Vocabulary', stringKey: vocabulary.stringKey }}>
+            <EditButton className="ml-2" link={`/controlled_vocabularies/${vocabulary.stringKey}/edit`} />
+          </Can>
         </h3>
 
         <Row as="dl">
@@ -55,12 +58,14 @@ function ControlledVocabularyShow() {
       <hr />
       <h3>
         Terms
-        <LinkContainer to={`/controlled_vocabularies/${vocabulary.stringKey}/terms/new`}>
-          <Button variant="outline-primary" className="float-right">
-            <FontAwesomeIcon icon="plus" />
-            {' Add New Term'}
-          </Button>
-        </LinkContainer>
+        <Can I="update" a="Term">
+          <LinkContainer to={`/controlled_vocabularies/${vocabulary.stringKey}/terms/new`}>
+            <Button variant="outline-primary" className="float-right">
+              <FontAwesomeIcon icon="plus" />
+              {' Add New Term'}
+            </Button>
+          </LinkContainer>
+        </Can>
       </h3>
 
       <TermIndex vocabularyStringKey={stringKey} />

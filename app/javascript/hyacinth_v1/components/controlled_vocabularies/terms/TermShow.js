@@ -8,6 +8,7 @@ import { getTermQuery } from '../../../graphql/terms';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 import TermBreadcrumbs from './TermBreadcrumbs';
 import EditButton from '../../shared/buttons/EditButton';
+import { Can } from '../../../utils/abilityContext';
 
 function TermShow() {
   const { stringKey, uri } = useParams();
@@ -49,7 +50,9 @@ function TermShow() {
         <Col as="dd" sm={9} md={10}>{term.uri}</Col>
       </Row>
 
-      <EditButton className="ml-2" link={`/controlled_vocabularies/${vocabulary.stringKey}/terms/${encodeURIComponent(term.uri)}/edit`}> Edit</EditButton>
+      <Can I="update" a="Term">
+        <EditButton className="ml-2" link={`/controlled_vocabularies/${vocabulary.stringKey}/terms/${encodeURIComponent(term.uri)}/edit`}> Edit</EditButton>
+      </Can>
     </>
   );
 }

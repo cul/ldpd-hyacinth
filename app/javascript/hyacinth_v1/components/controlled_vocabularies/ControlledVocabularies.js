@@ -17,7 +17,7 @@ function ControlledVocabularies() {
         exact
         path="/controlled_vocabularies"
         component={ControlledVocabularyIndex}
-        requiredAbility={{ action: 'update', subject: 'Vocabulary' }}
+        requiredAbility={{ action: 'read', subject: 'Vocabulary' }}
       />
 
       <ProtectedRoute
@@ -41,7 +41,7 @@ function ControlledVocabularies() {
         path="/controlled_vocabularies/:stringKey"
         component={ControlledVocabularyShow}
         requiredAbility={params => (
-          { action: 'update', subject: 'Vocabulary', stringKey: params.stringKey }
+          { action: 'read', subject: 'Vocabulary', stringKey: params.stringKey }
         )}
       />
 

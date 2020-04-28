@@ -45,7 +45,7 @@ function TopNavbar(props) {
               <NavDropdown.Item>Projects</NavDropdown.Item>
             </LinkContainer>
 
-            <Can I="manage" a="Vocabulary">
+            <Can I="read" a="Vocabulary">
               <LinkContainer to="/controlled_vocabularies">
                 <NavDropdown.Item>Controlled Vocabularies</NavDropdown.Item>
               </LinkContainer>
