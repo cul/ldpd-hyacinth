@@ -35,7 +35,7 @@ module Hyacinth
         end
 
         # Solr query. Returns solr json.
-        def search
+        def search(post: false)
           search_parameters = ::Solr::Params.new
 
           yield(search_parameters)
@@ -46,7 +46,10 @@ module Hyacinth
           # queries with just filters are faster than /search queries.
           handler = params[:q].blank? ? 'select' : 'search'
 
-          solr.get(handler, params: params)
+          # Allows data to be POST'ed for large requests
+          method = post ? 'post' : 'get'
+
+          solr.send(method, handler, params: params)
         end
 
         def delete(uid)
