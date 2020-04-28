@@ -160,10 +160,10 @@ function TermForm(props) {
 
           switch (dataType) {
             case 'string':
-              field = <TextInput key={fieldKey} sm={inputColWidth} value={value} onChange={v => setCustomField(fieldKey, v)} />;
+              field = <TextInput sm={inputColWidth} value={value} onChange={v => setCustomField(fieldKey, v)} />;
               break;
             case 'integer':
-              field = <NumberInput key={fieldKey} sm={inputColWidth} value={value} onChange={v => setCustomField(fieldKey, v)} />;
+              field = <NumberInput sm={inputColWidth} value={value} onChange={v => setCustomField(fieldKey, v)} />;
               break;
             default:
               field = '';
@@ -171,7 +171,7 @@ function TermForm(props) {
           }
 
           return (
-            <InputGroup>
+            <InputGroup key={fieldKey}>
               <Label sm={labelColWidth}>{label}</Label>
               { field }
             </InputGroup>
@@ -192,6 +192,9 @@ function TermForm(props) {
 
 TermForm.defaultProps = {
   term: null,
+  small: false,
+  cancelAction: null,
+  submitAction: null,
 };
 
 TermForm.propTypes = {
@@ -204,6 +207,9 @@ TermForm.propTypes = {
     prefLabel: PropTypes.string,
     authority: PropTypes.string,
   }),
+  small: PropTypes.bool,
+  cancelAction: PropTypes.func,
+  submitAction: PropTypes.func,
 };
 
 export default TermForm;

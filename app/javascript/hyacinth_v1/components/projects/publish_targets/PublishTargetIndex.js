@@ -41,7 +41,7 @@ function PublishTargetIndex() {
     <ProjectInterface project={data.project}>
       <TabHeading>Publish Targets</TabHeading>
 
-      <Table hover>
+      <Table hover responsive>
         <thead>
           <tr>
             <th>Display Label</th>
