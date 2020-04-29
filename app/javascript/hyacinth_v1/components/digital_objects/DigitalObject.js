@@ -10,6 +10,7 @@ import RightsEdit from './rights/RightsEdit';
 import MetadataShow from './metadata/MetadataShow';
 import MetadataEdit from './metadata/MetadataEdit';
 import Children from './children/Children';
+import Parents from './parents/Parents';
 import Assignments from './assignments/Assignments';
 import PreservePublish from './preserve_publish/PreservePublish';
 import SystemData from './system_data/SystemData';
@@ -46,6 +47,7 @@ function DigitalObject() {
             { routePath: `${path}/rights/edit`, Component: RightsEdit, action: 'assess_rights' },
             { routePath: `${path}/rights`, Component: RightsShow, action: 'read_objects' },
             { routePath: `${path}/children`, Component: Children, action: 'read_objects' },
+            { routePath: `${path}/parents`, Component: Parents, action: 'read_objects' },
             { routePath: `${path}/preserve_publish`, Component: PreservePublish, action: 'read_objects' },
             { routePath: `${path}/assignments`, Component: Assignments, action: 'read_objects' },
           ].map((entry) => {

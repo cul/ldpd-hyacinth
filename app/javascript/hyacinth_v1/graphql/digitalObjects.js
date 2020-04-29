@@ -85,6 +85,19 @@ export const getChildStructureQuery = gql`
   }
 `;
 
+export const getParentsQuery = gql`
+  query DigitalObjectParents($id: ID!){
+    digitalObject(id: $id) {
+      ${digitalObjectInterfaceFields},
+      parents {
+        id
+        title
+        digitalObjectType
+      }
+    }
+  }
+`;
+
 export const getAssignmentsDigitalObjectQuery = gql`
   query AssignmentsDigitalObject($id: ID!){
     digitalObject(id: $id) {
