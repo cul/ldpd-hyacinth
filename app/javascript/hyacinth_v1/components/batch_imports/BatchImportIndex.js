@@ -31,7 +31,7 @@ function BatchImportIndex() {
 
   const onCancel = (id) => {
     // eslint-disable-next-line no-alert
-    if (window.confirm(`Are you sure you want to cancel Export Job ${id}?`)) {
+    if (window.confirm(`Are you sure you want to cancel Import Job ${id}?`)) {
       const variables = { input: { id, cancelled: true } };
       updateBatchImport({ variables }).then(refetch);
     }
