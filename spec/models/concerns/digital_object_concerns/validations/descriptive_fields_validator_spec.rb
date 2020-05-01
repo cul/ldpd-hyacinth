@@ -138,7 +138,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
     end
   end
 
-  context 'when field does not exists' do
+  context 'when field does not exist' do
     let(:descriptive_metadata) do
       {
         'name' => [
