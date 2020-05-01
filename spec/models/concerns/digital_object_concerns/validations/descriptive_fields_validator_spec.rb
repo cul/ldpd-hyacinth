@@ -291,7 +291,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
     it 'return errors' do
       expect(item.valid?).to be false
       expect(item.errors.messages).to include(
-        'descriptive_metadata.date_created[0].start_date': ['invalid date']
+        'descriptive_metadata.date_created[0].start_date': ['is an invalid date']
       )
     end
   end

@@ -68,7 +68,7 @@ class DigitalObject::DynamicFieldsValidator < ActiveModel::EachValidator
       begin
         Date.parse(value)
       rescue
-        return ['invalid date']
+        return ['is an invalid date']
       end
 
       false
