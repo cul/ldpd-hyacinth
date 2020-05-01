@@ -31,7 +31,7 @@ function BatchImportIndex() {
 
   const onCancel = (id) => {
     // eslint-disable-next-line no-alert
-    if (window.confirm(`Are you sure you want to cancel Export Job ${id}?`)) {
+    if (window.confirm(`Are you sure you want to cancel Batch Import ${id}?`)) {
       const variables = { input: { id, cancelled: true } };
       updateBatchImport({ variables }).then(refetch);
     }
@@ -39,7 +39,7 @@ function BatchImportIndex() {
 
   const onDelete = (id) => {
     // eslint-disable-next-line no-alert
-    if (window.confirm(`Are you sure you want to delete Export Job ${id}?`)) {
+    if (window.confirm(`Are you sure you want to delete Batch Import ${id}?`)) {
       const variables = { input: { id } };
       deleteBatchImport({ variables }).then(refetch);
     }

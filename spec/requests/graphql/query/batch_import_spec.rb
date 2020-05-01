@@ -35,7 +35,7 @@ RSpec.describe 'Retrieving Batch Import', type: :request do
         graphql query(batch_import.id)
       end
 
-      it "return batch import" do
+      it "returns batch import" do
         expect(response.body).to be_json_eql(expected_response).at_path('data/batchImport')
       end
     end

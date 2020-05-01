@@ -53,7 +53,7 @@ export const createBatchImportMutation = gql`
   mutation CreateBatchImport($input: CreateBatchImportInput!) {
     createBatchImport(input: $input) {
       batchImport {
-        id,
+        id
       }
       isValid
       errors

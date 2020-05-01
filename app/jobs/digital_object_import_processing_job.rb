@@ -82,6 +82,6 @@ class DigitalObjectImportProcessingJob
       "See application error log for more details.\n"\
       "Message generated at #{Time.current}"
     Rails.logger.error(error.message + "\n" + error.backtrace.join("\n"))
-    digital_object_import.failure!
+    apply_recursive_failure!(digital_object_import)
   end
 end

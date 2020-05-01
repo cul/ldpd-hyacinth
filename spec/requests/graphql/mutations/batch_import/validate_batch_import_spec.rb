@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe Mutations::BatchImport::CreateBatchImport, type: :request do
-  context 'when creating a batch import' do
+RSpec.describe Mutations::BatchImport::ValidateBatchImport, type: :request do
+  context 'when submitting a blob for validation' do
     before { sign_in_user }
 
     let(:blob_content) { "_uid,_field,field[0].other_field\n123,somedata,someotherdata" }
@@ -25,49 +25,25 @@ RSpec.describe Mutations::BatchImport::CreateBatchImport, type: :request do
     let(:variables) do
       {
         input: {
-          priority: 'high',
           signedBlobId: active_storage_blob.signed_id
         }
       }
     end
 
-    let(:response_hash) { JSON.parse(response.body)['data']['createBatchImport'] }
-
     let(:expected_response) do
       %(
         {
-          "batchImport": {
-            "priority": "high",
-            "originalFilename": "blob.csv",
-            "user": {
-              "fullName": "Signed In User",
-              "email": "logged-in-user@exaple.com"
-            },
-            "setupErrors": []
-          },
           "isValid": true,
           "errors": []
         }
       )
     end
 
-    let(:expected_response_hash) { JSON.parse(expected_response) }
-
     context "successful creation" do
       before { graphql query, variables }
 
       it 'returns expected response' do
-        expected_response_hash['fileLocation'] = response_hash['batchImport']['fileLocation']
-        expect(response_hash).to eq(response_hash)
-      end
-
-      it 'correctly adds a batch import' do
-        expect(BatchImport.count).to be 1
-      end
-
-      it 'adds file' do
-        file_location = JSON.parse(response.body)['data']['createBatchImport']['batchImport']['fileLocation']
-        expect(Hyacinth::Config.batch_import_storage.read(file_location)).to eql blob_content
+        expect(response.body).to be_json_eql(expected_response).at_path('data/validateBatchImport')
       end
 
       it 'deletes the upload' do
@@ -84,7 +60,6 @@ RSpec.describe Mutations::BatchImport::CreateBatchImport, type: :request do
       let(:expected_validation_error_response) do
         %(
           {
-            "batchImport": null,
             "isValid": false,
             "errors": ["An error"]
           }
@@ -92,26 +67,15 @@ RSpec.describe Mutations::BatchImport::CreateBatchImport, type: :request do
       end
 
       it 'returns expected response' do
-        expect(response.body).to be_json_eql(expected_validation_error_response).at_path('data/createBatchImport')
+        expect(response.body).to be_json_eql(expected_validation_error_response).at_path('data/validateBatchImport')
       end
     end
   end
 
   def query
     <<~GQL
-      mutation ($input: CreateBatchImportInput!) {
-        createBatchImport(input: $input) {
-          batchImport {
-            id
-            priority
-            fileLocation
-            originalFilename
-            user {
-              fullName
-              email
-            }
-            setupErrors
-          }
+      mutation ($input: ValidateBatchImportInput!) {
+        validateBatchImport(input: $input) {
           isValid
           errors
         }

@@ -146,10 +146,9 @@ function BatchImportShow() {
           )}
         </Row>
 
+        <Link className="float-right" to={`/batch_imports/${id}/digital_object_imports`}>View Details &raquo;</Link>
         <h5>
-          <Link to={`/batch_imports/${id}/digital_object_imports`}>
-            Digital Object Imports (view all)
-          </Link>
+            Digital Object Imports
         </h5>
 
         <Row as="dl">

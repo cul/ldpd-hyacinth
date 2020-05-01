@@ -9,7 +9,7 @@ class Mutations::BatchImport::StartBatchImport < Mutations::BaseMutation
     batch_import = BatchImport.find(id)
     ability.authorize! :update, batch_import
 
-    Resque.enqueue(BatchImportSetupJob, batch_import.id)
+    Resque.enqueue(BatchImportStartJob, batch_import.id)
     { batch_import: batch_import }
   end
 end
