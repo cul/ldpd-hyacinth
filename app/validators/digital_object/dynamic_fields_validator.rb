@@ -11,7 +11,7 @@ class DigitalObject::DynamicFieldsValidator < ActiveModel::EachValidator
     end
 
     # Returns errors that should be recorded for any of the fields in the data given.
-    # Errors include, invalid fields appearing in the data given, field values containing the wrong type of data.
+    # Errors include: invalid fields appearing in the data given, field values containing the wrong type of data.
     def errors_for(field_map, data, path = nil)
       errors = []
 
