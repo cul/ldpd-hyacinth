@@ -28,6 +28,31 @@ class DigitalObjectImportProcessingJob
     # Mark this digital object import as successful
     digital_object_import.success!
 
+    queue_applicable_import_prerequisites(digital_object_import)
+  rescue StandardError => e
+    handle_job_error(digital_object_import, e)
+  end
+
+  def self.digital_object_for_digital_object_data(digital_object_data)
+    # If a uid is present in the digital_object_data, then this is an update operation
+    return DigitalObject::Base.find(digital_object_data['uid']) if digital_object_data['uid'].present?
+
+    # No uid present, so we'll create a new object with type based on the digital_object_type value
+    Hyacinth::Config.digital_object_types.key_to_class(digital_object_data['digital_object_type']).new
+  end
+
+  def self.apply_recursive_failure!(digital_object_import)
+    digital_object_import.failure!
+
+    # Find all DigitalObjectImports that this DigitalObjectImport was a prerequisite for
+    ImportPrerequisite.where(prerequisite_digital_object_import: digital_object_import).each do |import_prerequisite|
+      dependent_digital_object_import = import_prerequisite.digital_object_import
+      dependent_digital_object_import.import_errors << "Failed because prerequisite Digital Object Import failed. Prerequisite Row = #{digital_object_import.index}"
+      apply_recursive_failure!(dependent_digital_object_import)
+    end
+  end
+
+  def self.queue_applicable_import_prerequisites(digital_object_import)
     # Now we'll find and destroy all ImportPrerequisites that this DigitalObjectImport was a
     # prerequisite for, but store the returned object values so we can queue their processing next.
     destroyed_import_prerequisites = ImportPrerequisite.where(prerequisite_digital_object_import: digital_object_import).destroy_all
@@ -52,27 +77,6 @@ class DigitalObjectImportProcessingJob
         digital_object_import_to_queue.queued!
         Resque.enqueue(DigitalObjectImportProcessingJob, digital_object_import_to_queue.id)
       end
-    end
-  rescue StandardError => e
-    handle_job_error(digital_object_import, e)
-  end
-
-  def self.digital_object_for_digital_object_data(digital_object_data)
-    # If a uid is present in the digital_object_data, then this is an update operation
-    return DigitalObject::Base.find(digital_object_data['uid']) if digital_object_data['uid'].present?
-
-    # No uid present, so we'll create a new object with type based on the digital_object_type value
-    Hyacinth::Config.digital_object_types.key_to_class(digital_object_data['digital_object_type']).new
-  end
-
-  def self.apply_recursive_failure!(digital_object_import)
-    digital_object_import.failure!
-
-    # Find all DigitalObjectImports that this DigitalObjectImport was a prerequisite for
-    ImportPrerequisite.where(prerequisite_digital_object_import: digital_object_import).each do |import_prerequisite|
-      dependent_digital_object_import = import_prerequisite.digital_object_import
-      dependent_digital_object_import.import_errors << "Failed because prerequisite Digital Object Import failed. Prerequisite Row = #{digital_object_import.index}"
-      apply_recursive_failure!(dependent_digital_object_import)
     end
   end
 
