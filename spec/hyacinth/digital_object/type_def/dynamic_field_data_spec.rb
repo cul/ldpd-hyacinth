@@ -49,6 +49,7 @@ describe Hyacinth::DigitalObject::TypeDef::DynamicFieldData do
             'prefLabel' => 'something',
             'uri' => 'temp:4712538a19c162783874c45c4682fddcf247ac031b06a98912d7df0bc43a3a54'
           },
+          'is_primary' => true,
           'role' => [
             {
               'term' => {
@@ -98,6 +99,7 @@ describe Hyacinth::DigitalObject::TypeDef::DynamicFieldData do
               'alt_labels' => [],
               'uni' => 'abc123'
             },
+            'is_primary' => true,
             'role' => [
               {
                 'term' => {
@@ -136,6 +138,7 @@ describe Hyacinth::DigitalObject::TypeDef::DynamicFieldData do
         'name' => [
           {
             'term' => { 'uri' => 'temp:4712538a19c162783874c45c4682fddcf247ac031b06a98912d7df0bc43a3a54' },
+            'is_primary' => true,
             'role' => [
               {
                 'term' => { 'uri' => 'http://id.loc.gov/vocabulary/relators/aut' }
