@@ -12,6 +12,58 @@ describe Hyacinth::DynamicFieldsMap do
       end
     end
 
+    context 'when generating map for two form types' do
+      subject(:map) { described_class.generate('descriptive', 'item_rights') }
+
+      before do
+        descriptive_category = FactoryBot.create(:dynamic_field_category)
+        rights_category = FactoryBot.create(:dynamic_field_category, display_label: 'Rights', metadata_form: 'item_rights')
+        name_group = FactoryBot.create(:dynamic_field_group, parent: descriptive_category)
+        copyright_group = FactoryBot.create(:dynamic_field_group, display_label: 'Copyright Status', string_key: 'copyright_status', parent: rights_category)
+        FactoryBot.create(:dynamic_field, display_label: 'Value', string_key: 'term', controlled_vocabulary: 'name', dynamic_field_group: name_group)
+        FactoryBot.create(:dynamic_field, display_label: 'Copyright Statement', string_key: 'copyright_statement', controlled_vocabulary: 'rights_statement', dynamic_field_group: copyright_group)
+      end
+
+      let(:expected_map) do
+        {
+          "copyright_status" => {
+            "type" => "DynamicFieldGroup",
+            "children" => {
+              "copyright_statement" => {
+                'controlled_vocabulary' => "rights_statement",
+                'field_type' => "controlled_term",
+                'is_facetable' => true,
+                'is_identifier_searchable' => false,
+                'is_keyword_searchable' => false,
+                'is_title_searchable' => false,
+                'select_options' => nil,
+                'type' => "DynamicField"
+              }
+            }
+          },
+          "name" => {
+            "type" => "DynamicFieldGroup",
+            "children" => {
+              "term" => {
+                'controlled_vocabulary' => "name",
+                'field_type' => "controlled_term",
+                'is_facetable' => true,
+                'is_identifier_searchable' => false,
+                'is_keyword_searchable' => false,
+                'is_title_searchable' => false,
+                'select_options' => nil,
+                'type' => "DynamicField"
+              }
+            }
+          }
+        }
+      end
+
+      it 'returns complete map' do
+        expect(map).to eql expected_map
+      end
+    end
+
     context 'when generating map for asset_rights form' do
       subject(:map) { described_class.generate('asset_rights') }
       before { Hyacinth::DynamicFieldsLoader.load_rights_fields! }

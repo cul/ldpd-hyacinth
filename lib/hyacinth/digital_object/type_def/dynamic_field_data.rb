@@ -79,7 +79,7 @@ module Hyacinth
         end
 
         def field_map
-          Hyacinth::DynamicFieldsMap.generate(TYPE_TO_FORM_TYPE[@type])
+          Hyacinth::DynamicFieldsMap.generate(*TYPE_TO_FORM_TYPE[@type])
         end
 
         def extract_terms(map, data)

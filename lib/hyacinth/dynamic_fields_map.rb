@@ -5,11 +5,9 @@ module Hyacinth
     # Generates map of dynamic fields for the given metadata form.
     #
     # @param [String|Array<String>] for_metadata_form limits map to fields related forms
-    def self.generate(for_metadata_form)
-      for_metadata_form = Array.wrap(for_metadata_form)
-
+    def self.generate(*for_metadata_form)
       valid_metadata_forms = DynamicFieldCategory.metadata_forms.keys
-      raise ArgumentError, "for_metadata_form parameter must be one of #{valid_metadata_forms}" unless (for_metadata_form - valid_metadata_forms).blank?
+      raise ArgumentError, "for_metadata_form parameters must be one of #{valid_metadata_forms}" unless (for_metadata_form - valid_metadata_forms).blank?
 
       categories = DynamicFieldCategory.where(metadata_form: for_metadata_form)
                                        .includes(dynamic_field_groups: [:dynamic_field_groups, :dynamic_fields])
