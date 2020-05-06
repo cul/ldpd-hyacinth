@@ -30,7 +30,7 @@ module DigitalObjectConcerns
           if uids.blank?
             raise Hyacinth::Exceptions::NotFound,
                   "Could not find parent digital object using identifier: #{identifier}"
-          elsif uids > 1
+          elsif uids.length > 1
             raise Hyacinth::Exceptions::NotFound,
                   "Ambiguous parent linkage. Found more than one UID for identifier #{identifier}. UIDS: #{uids.join(', ')}"
           end

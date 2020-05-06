@@ -12,32 +12,56 @@ RSpec.describe BatchImportStartJob, solr: true do
 
   context '.perform' do
     before do
-      # We don't want Resque.enqueue to process anything immediately (which is the default behavior
-      # in the test environment), since we're not testing the queued job code. So we'll stub the
-      # enqueue method for .perform tests, and we'll check for calls to enqueue in a test.
-      allow(Resque).to receive(:enqueue)
-      # Force created item to have the same uid that appears in the csv fixture we're working with
-      allow_any_instance_of(DigitalObject::Item).to receive(:mint_uid).and_return('2f4e2917-26f5-4d8f-968c-a4015b10e50f')
       # Create item that one of the csv rows will update
-      FactoryBot.create(:item, :with_primary_project)
-      # Run import
-      described_class.perform(batch_import.id)
+      item = FactoryBot.build(:item, :with_primary_project)
+      # Force created item to have the expected uid that appears in the csv fixture
+      item.instance_variable_set(:@uid, '2f4e2917-26f5-4d8f-968c-a4015b10e50f')
+      item.save
     end
 
-    it "creates the expected DigitalObjectImports and ImportPrerequisites" do
-      expect(DigitalObjectImport.count).to eq(5)
-      expect(ImportPrerequisite.count).to eq(4)
+    context "with stubbeed Resque.enqueue method to simulate normal asynchronous processing (and focus just on setup)" do
+      before do
+        # We don't want Resque.enqueue to process anything immediately for these tests (which is the
+        # default behavior for our test environment), since we're not testing the queued job code.
+        # So we'll stub the enqueue method for .perform tests, and we'll check for calls to enqueue in a test.
+        allow(Resque).to receive(:enqueue)
+
+        # Run import
+        described_class.perform(batch_import.id)
+      end
+
+      it "creates the expected DigitalObjectImports and ImportPrerequisites" do
+        expect(DigitalObjectImport.count).to eq(5)
+        expect(ImportPrerequisite.count).to eq(4)
+      end
+
+      it "enqueues the expected DigitalObjectImports" do
+        expect(Resque).to have_received(:enqueue).with(DigitalObjectImportProcessingJob, 1)
+        expect(Resque).to have_received(:enqueue).with(DigitalObjectImportProcessingJob, 5)
+      end
+
+      it "sets the status of only expected DigitalObjectImports to 'queued'" do
+        expect(
+          DigitalObjectImport.order(:index).map(&:status)
+        ).to eq(['queued', 'pending', 'pending', 'pending', 'queued'])
+      end
     end
 
-    it "enqueues the expected DigitalObjectImports" do
-      expect(Resque).to have_received(:enqueue).with(DigitalObjectImportProcessingJob, 1)
-      expect(Resque).to have_received(:enqueue).with(DigitalObjectImportProcessingJob, 5)
-    end
+    context "with synchronous processing of jobs" do
+      before do
+        described_class.perform(batch_import.id)
+        batch_import.reload
+      end
+      it "runs successfully, without errors, and creates the correct number of objects" do
+        # This is a slow test, so that's why we're checking multiple things in the same test.
 
-    it "sets the status of only expected DigitalObjectImports to 'queued'" do
-      expect(
-        DigitalObjectImport.order(:index).map(&:status)
-      ).to eq(['queued', 'pending', 'pending', 'pending', 'queued'])
+        expect(batch_import.setup_errors).to be_blank
+        # Expect no remaining ImportPrerequisite because they've all been processed
+        expect(ImportPrerequisite.count).to eq(0)
+        # Expect that all records have been created
+        expect(DigitalObjectRecord.count).to eq(5)
+        expect(batch_import.status).to eq(BatchImport::COMPLETED_SUCCESSFULLY)
+      end
     end
   end
 

@@ -11,16 +11,20 @@ class BatchImportStartJob
     process_csv_file_if_present(batch_import)
 
     # Find all DigitalObjectImports in this batch that have no prerequisites so we can enqueue them
-    # for immediate background job processing.
-    no_prerequisite_digital_object_imports_query = DigitalObjectImport.select(:id).left_outer_joins(:import_prerequisites).where(
-      import_prerequisites: { id: nil }
-    )
-    # Batch mark these objects as queued, in advance of us enqueueing them
-    no_prerequisite_digital_object_imports_query.update_all(status: 'queued')
-    # Enqueue processing jobs for these objects
-    no_prerequisite_digital_object_imports_query.pluck(:id).each do |digital_object_import_id|
-      Resque.enqueue(DigitalObjectImportProcessingJob, digital_object_import_id)
+    # for immediate background job processing. Mark them as queued in advance of us enqueueing them.
+    pending_dois_ready_for_processing_query_proc = lambda do
+      DigitalObjectImport.select(:id).distinct(:id).left_outer_joins(:import_prerequisites).where(
+        batch_import: batch_import, status: 'pending', import_prerequisites: { id: nil }
+      )
     end
+    pending_dois_ready_for_processing_query_proc.call.update_all(status: 'queued')
+
+    # And then enqueue those objects
+    DigitalObjectImport.select(:id).where(batch_import: batch_import, status: 'queued').pluck(:id).each do |doi_id|
+      Resque.enqueue(DigitalObjectImportProcessingJob, doi_id)
+    end
+
+    handle_resque_inline(pending_dois_ready_for_processing_query_proc)
   rescue StandardError => e
     handle_job_error(batch_import, e)
   end
@@ -60,6 +64,31 @@ class BatchImportStartJob
       index: csv_row_number,
       digital_object_data: JSON.generate(json_hash_for_row)
     )
+  end
+
+  # If Resque is running in inline mode (synchronous import processing), which is common in
+  # developement and test environments, the above-triggered enqueue chain may not work properly
+  # for DigitalObjectImports that have prerequisite imports that appear later in the spreadsheet,
+  # so we'll handle this by looping over the batch imports that need to be re-queued and running
+  # them here.  This isn't efficient, but ideally we'll never be processing large jobs in a
+  # synchronous-processing environment.
+  def self.handle_resque_inline(pending_dois_ready_for_processing_query_proc)
+    return unless Resque.inline
+
+    dois_to_process = pending_dois_ready_for_processing_query_proc.call
+    return unless dois_to_process.length.positive?
+    loop do
+      number_to_process = dois_to_process.length
+
+      dois_to_process.each do |doi|
+        DigitalObjectImportProcessingJob.perform(doi.id)
+      end
+
+      # Break out of the loop if the new number of DigitalObjectRecords to process is the same as
+      # the previous number to process.  Ideally they would both be equal to zero when this break
+      # occurrs, but this check also stops infinite loops.
+      break if number_to_process == (dois_to_process = pending_dois_ready_for_processing_query_proc.call)
+    end
   end
 
   def self.handle_job_error(batch_import, error)

@@ -88,7 +88,7 @@ RSpec.describe DigitalObject::RightsValidator, type: :model do
   end
 
   describe 'validating rights for DigitalObject::Asset' do
-    let(:asset) { FactoryBot.create(:asset) }
+    let(:asset) { FactoryBot.create(:asset, :with_master_resource) }
 
     context 'when setting valid rights values' do
       let(:rights) do

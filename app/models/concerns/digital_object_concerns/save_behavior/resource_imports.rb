@@ -113,6 +113,8 @@ module DigitalObjectConcerns
       end
 
       def location_from_import(resource_import, resource_import_name)
+        convert_relative_import_if_applicable!(resource_import)
+
         if resource_import.method_copy?
           Hyacinth::Config.resource_storage.generate_new_managed_location_uri(self.uid, resource_import_name)
         else
@@ -122,6 +124,15 @@ module DigitalObjectConcerns
           end
           Hyacinth::Config.resource_storage.generate_new_tracked_location_uri(resource_import.location)
         end
+      end
+
+      # Converts ResourceImports of relative-type methods (e.g. 'fixture') to use a full location
+      # path insstead of a relative one (prefixed with fixture path), and converts method to 'copy'.
+      # TODO: Potentially support specific import_directory method in the future.
+      def convert_relative_import_if_applicable!(resource_import)
+        return unless resource_import.method == Hyacinth::DigitalObject::ResourceImport::FIXTURE_FILE
+        resource_import.location = Rails.root.join('spec', 'fixtures', 'files', resource_import.location)
+        resource_import.method = Hyacinth::DigitalObject::ResourceImport::COPY
       end
 
       # Raises an exception if a non-nil provided_hexdigest is given and it does not match the given hexdigest.

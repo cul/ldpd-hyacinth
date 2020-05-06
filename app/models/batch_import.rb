@@ -107,7 +107,9 @@ class BatchImport < ApplicationRecord
       # TODO: Make sure there aren't any duplicate headers
       csv_file_to_hierarchical_json_hash(file) do |json_hash_for_row, _csv_row_number|
         # TODO: Make sure that only valid fields are present in the dynamic field data properties
-        # TODO: Make sure that all new asset rows minimally have a master file
+        # TODO: Make sure that all new object rows have a digital_object_type
+        # TODO: Make sure that all referenced projects exist
+        # TODO: Make sure that all new asset rows minimally have a master
         # TODO: Make sure that the same UID doesn't appear in more than one row
       end
     end

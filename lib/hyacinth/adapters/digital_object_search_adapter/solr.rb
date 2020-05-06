@@ -87,14 +87,10 @@ module Hyacinth
               params.fq('identifier_ssim', identifier)
             end
 
-            results['response']['docs'].map { |doc| doc['id'] } if results['response']['numFound'].positive?
-
-            if opts[:retry_with_delay].present?
-              sleep opts[:retry_with_delay]
-            else
-              break
-            end
+            return results['response']['docs'].map { |doc| doc['id'] } if results['response']['numFound'].positive?
+            sleep opts[:retry_with_delay] if opts[:retry_with_delay].present?
           end
+          []
         end
 
         # Deletes all records from the search index

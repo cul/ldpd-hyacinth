@@ -15,7 +15,7 @@ RSpec.describe BatchImport, type: :model do
     its(:original_filename) { is_expected.to eql 'import.csv' }
     its('digital_object_imports.length') { is_expected.to be 1 }
 
-    its(:status) { is_expected.to eql 'in_progress' }
+    its(:status) { is_expected.to eql 'pending' }
   end
 
   describe '#delete_associated_file' do
@@ -51,12 +51,12 @@ RSpec.describe BatchImport, type: :model do
       expect(batch_import.import_count('success')).to be 1
     end
 
-    it "returns 1 when counting pending imports" do
-      expect(batch_import.import_count('pending')).to be 1
+    it "returns 2 when counting pending imports" do
+      expect(batch_import.import_count('pending')).to be 2
     end
 
-    it "returns 2 when counting in progress imports" do
-      expect(batch_import.import_count('in_progress')).to be 2
+    it "returns 1 when counting in progress imports" do
+      expect(batch_import.import_count('in_progress')).to be 1
     end
   end
 

@@ -11,7 +11,8 @@ module Hyacinth
 
       COPY = 'copy'
       TRACK = 'track'
-      VALID_IMPORT_METHODS = [COPY, TRACK].freeze
+      FIXTURE_FILE = 'fixture_file'
+      VALID_IMPORT_METHODS = [COPY, TRACK, FIXTURE_FILE].freeze
 
       VALID_CHECKSUM_REGEX = /sha256:([a-f0-9]{64})/.freeze
 
@@ -71,7 +72,11 @@ module Hyacinth
       end
 
       def media_type_for_filename
-        BestType.mime_type.for_file_name(File.basename(preferred_original_file_path))
+        BestType.mime_type.for_file_name(preferred_filename)
+      end
+
+      def preferred_filename
+        File.basename(preferred_original_file_path)
       end
 
       # Returns the best original_file_path value, based on available data

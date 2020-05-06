@@ -4,16 +4,24 @@ class DigitalObjectImportProcessingJob
   @queue = :digital_object_import_processing
 
   def self.perform(digital_object_import_id)
-    digital_object_import = DigitalObjectImport.find(digital_object_import_id)
+    digital_object_import = find_digital_object_import(digital_object_import_id)
+    # If the parent BatchImport has been cancelled, do not run this job.
+    if digital_object_import.batch_import.cancelled
+      apply_recursive_cancellation!(digital_object_import)
+      return
+    end
+
+    # As a safety measure, make sure that a job that was started is never accidentally re-queued
+    # by any means (rails console, manual resque job restart, etc.) because this could lead to
+    # duplicate object creation in certain situations.
+    return unless ['pending', 'queued'].include?(digital_object_import.status)
 
     # Mark this DigitalObjectImport as in progress
     digital_object_import.in_progress!
-
     digital_object_data = JSON.parse(digital_object_import.digital_object_data)
-
     digital_object = digital_object_for_digital_object_data(digital_object_data)
 
-    # # Update the DigitalObject's attributes with the given digital_object_data
+    # Update the DigitalObject's attributes with the given digital_object_data
     digital_object.assign_attributes(digital_object_data)
 
     # Save the object, and terminate processing if the save fails.
@@ -27,7 +35,6 @@ class DigitalObjectImportProcessingJob
 
     # Mark this digital object import as successful
     digital_object_import.success!
-
     queue_applicable_import_prerequisites(digital_object_import)
   rescue StandardError => e
     handle_job_error(digital_object_import, e)
@@ -38,17 +45,29 @@ class DigitalObjectImportProcessingJob
     return DigitalObject::Base.find(digital_object_data['uid']) if digital_object_data['uid'].present?
 
     # No uid present, so we'll create a new object with type based on the digital_object_type value
-    Hyacinth::Config.digital_object_types.key_to_class(digital_object_data['digital_object_type']).new
+    return Hyacinth::Config.digital_object_types.key_to_class(digital_object_data['digital_object_type']).new if digital_object_data['digital_object_type'].present?
+
+    raise ArgumentError, 'Unable to find or create digital object because neither "uid" nor "digital_object_type" attributes were present in digital_object_data.'
   end
 
   def self.apply_recursive_failure!(digital_object_import)
     digital_object_import.failure!
 
-    # Find all DigitalObjectImports that this DigitalObjectImport was a prerequisite for
+    # Find all DigitalObjectImports for which this DigitalObjectImport was a prerequisite.
     ImportPrerequisite.where(prerequisite_digital_object_import: digital_object_import).each do |import_prerequisite|
       dependent_digital_object_import = import_prerequisite.digital_object_import
       dependent_digital_object_import.import_errors << "Failed because prerequisite Digital Object Import failed. Prerequisite Row = #{digital_object_import.index}"
       apply_recursive_failure!(dependent_digital_object_import)
+    end
+  end
+
+  def self.apply_recursive_cancellation!(digital_object_import)
+    digital_object_import.cancelled!
+
+    # Find all DigitalObjectImports for which this DigitalObjectImport was a prerequisite.
+    ImportPrerequisite.where(prerequisite_digital_object_import: digital_object_import).each do |import_prerequisite|
+      dependent_digital_object_import = import_prerequisite.digital_object_import
+      apply_recursive_cancellation!(dependent_digital_object_import)
     end
   end
 
@@ -78,6 +97,10 @@ class DigitalObjectImportProcessingJob
         Resque.enqueue(DigitalObjectImportProcessingJob, digital_object_import_to_queue.id)
       end
     end
+  end
+
+  def self.find_digital_object_import(digital_object_import_id)
+    DigitalObjectImport.includes(:batch_import).find(digital_object_import_id)
   end
 
   def self.handle_job_error(digital_object_import, error)

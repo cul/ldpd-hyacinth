@@ -32,6 +32,7 @@ module DigitalObjectConcerns
       run_callbacks :validation do
         self.valid?
       end
+
       return false if self.errors.present?
       # run_callbacks returns the result of its block
       run_callbacks :save do
