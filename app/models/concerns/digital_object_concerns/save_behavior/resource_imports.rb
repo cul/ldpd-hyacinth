@@ -127,7 +127,7 @@ module DigitalObjectConcerns
       end
 
       # Converts ResourceImports of relative-type methods (e.g. 'fixture') to use a full location
-      # path insstead of a relative one (prefixed with fixture path), and converts method to 'copy'.
+      # path instead of a relative one (prefixed with fixture path), and converts method to 'copy'.
       # TODO: Potentially support specific import_directory method in the future.
       def convert_relative_import_if_applicable!(resource_import)
         return unless resource_import.method == Hyacinth::DigitalObject::ResourceImport::FIXTURE_FILE
