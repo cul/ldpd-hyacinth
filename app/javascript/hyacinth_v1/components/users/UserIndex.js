@@ -16,7 +16,7 @@ function UserIndex() {
         rightHandLinks={[{ link: '/users/new', label: 'New User' }]}
       />
 
-      <Table striped>
+      <Table striped responsive>
         <thead>
           <tr>
             <th>Name</th>

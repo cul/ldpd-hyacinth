@@ -125,8 +125,8 @@ class BatchExportJob
     # Convert to hash with string keys
     dobj_as_hash = digital_object.as_json.deep_stringify_keys
 
-    # Remove dynamic_field_data so we can handle them separately
-    dynamic_field_data = dobj_as_hash.delete('dynamic_field_data')
+    # Remove descriptive_metadata so we can handle them separately
+    descriptive_metadata = dobj_as_hash.delete('descriptive_metadata')
 
     # Build new hash with all remaining keys prefixed with an underscore
     hash_to_return = {}
@@ -134,8 +134,8 @@ class BatchExportJob
       hash_to_return["_#{key}"] = value
     end
 
-    # Assign all dynamic_field_data key-value pairs to the top level
-    dynamic_field_data.each do |key, value|
+    # Assign all descriptive_metadata key-value pairs to the top level
+    descriptive_metadata.each do |key, value|
       hash_to_return[key] = value
     end
 

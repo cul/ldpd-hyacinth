@@ -119,21 +119,21 @@ class BatchImport < ApplicationRecord
 
   # Converts a CSV-header-derived JSON-like hash structure to the expected digital object
   # attribute format, moving all non-underscore-prefixed top level key-value pairs under
-  # dynamic_field_data and removing the underscore prefix from all top level keys.
+  # descriptive_metadata and removing the underscore prefix from all top level keys.
   # Note: This method modifies the passed-in object!
   def self.import_json_to_digital_object_attribute_format!(import_json)
-    # Add dynamic_field_data hash
-    dynamic_field_data = {}
+    # Add descriptive_metadata hash
+    descriptive_metadata = {}
 
-    # Move all non-underscore-prefixed keys under dynamic_field_data
+    # Move all non-underscore-prefixed keys under descriptive_metadata
     import_json.delete_if do |key|
       next false if key.start_with?('_')
-      dynamic_field_data[key] = import_json[key]
+      descriptive_metadata[key] = import_json[key]
       true
     end
 
-    # Assign dynamic_field_data to 'dynamic_field_data' key in import_json
-    import_json['dynamic_field_data'] = dynamic_field_data
+    # Assign descriptive_metadata to 'descriptive_metadata' key in import_json
+    import_json['descriptive_metadata'] = descriptive_metadata
 
     # Remove leading underscore from all remaining underscore-prefixed keys
     import_json.transform_keys! { |key| key.start_with?('_') ? key[1..-1] : key }

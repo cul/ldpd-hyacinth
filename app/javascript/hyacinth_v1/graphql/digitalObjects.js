@@ -54,7 +54,7 @@ export const getMetadataDigitalObjectQuery = gql`
   query MetadataDigitalObject($id: ID!){
     digitalObject(id: $id) {
       ${digitalObjectInterfaceFields},
-      dynamicFieldData,
+      descriptiveMetadata,
       identifiers
     }
   }
@@ -65,7 +65,7 @@ export const getRightsDigitalObjectQuery = gql`
   query RightsDigitalObject($id: ID!){
     digitalObject(id: $id) {
       ${digitalObjectInterfaceFields},
-      dynamicFieldData
+      descriptiveMetadata
       rights
     }
   }
@@ -80,6 +80,19 @@ export const getChildStructureQuery = gql`
       type,
       structure {
         ${digitalObjectInterfaceFields},
+      }
+    }
+  }
+`;
+
+export const getParentsQuery = gql`
+  query DigitalObjectParents($id: ID!){
+    digitalObject(id: $id) {
+      ${digitalObjectInterfaceFields},
+      parents {
+        id
+        title
+        digitalObjectType
       }
     }
   }

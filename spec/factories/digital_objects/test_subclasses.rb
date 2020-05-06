@@ -17,7 +17,7 @@ FactoryBot.define do
     trait :with_sample_data do
       initialize_with do
         instance = new
-        instance.instance_variable_set('@dynamic_field_data', {
+        instance.instance_variable_set('@descriptive_metadata', {
           'title' => [{
             'non_sort_portion' => 'The',
             'sort_portion' => 'Tall Man and His Hat'

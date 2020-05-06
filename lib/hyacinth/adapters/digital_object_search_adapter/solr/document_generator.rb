@@ -39,7 +39,7 @@ module Hyacinth
           # TODO: iterate over dynamic fields for type and project
           # build keys, inspect values
           # add flag for content at all if field is not facetable
-          collection_values = digital_object.dynamic_field_data.fetch('collection', [])
+          collection_values = digital_object.descriptive_metadata.fetch('collection', [])
           collection_values.each do |collection_value|
             (solr_document['collection_ssim'] ||= []) << collection_value.dig('term', 'pref_label')
             add_keywords(collection_value.dig('term', 'pref_label'), solr_document)

@@ -28,7 +28,7 @@ RSpec.describe DigitalObjectConcerns::ExportFieldsBehavior do
       FactoryBot.create(:export_rule)
     end
     it "persists templated field exports to datastreams" do
-      digital_object_with_sample_data.dynamic_field_data['name'] = [{ 'role' => "Farmer" }]
+      digital_object_with_sample_data.descriptive_metadata['name'] = [{ 'role' => "Farmer" }]
       actual_xml = digital_object_with_sample_data.render_field_export(field_export_profile)
       actual_xml.sub!(/^<\?.+\?>/, '') # remove XML declaration
       actual_xml.gsub!('mods:', '') # remove ns

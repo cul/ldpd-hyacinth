@@ -38,7 +38,7 @@ function DynamicFieldsAndGroupsTable(props) {
   return (
     <>
       <GraphQLErrors errors={updateGroupError || updateFieldError} />
-      <Table hover borderless {...rest}>
+      <Table hover borderless responsive {...rest}>
         <tbody>
           {
             rows.map((fieldOrGroup, index) => {

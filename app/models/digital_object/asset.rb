@@ -40,12 +40,12 @@ module DigitalObject
     end
 
     def assign_title_from_primary_resource_import_if_blank
-      return if self.dynamic_field_data['title'].present?
+      return if self.descriptive_metadata['title'].present?
 
       resource_import = resource_import_for_primary_resource
       return if resource_import.blank?
 
-      self.dynamic_field_data['title'] = [{ 'sort_portion' => resource_import.preferred_filename }]
+      self.descriptive_metadata['title'] = [{ 'sort_portion' => resource_import.preferred_filename }]
     end
   end
 end

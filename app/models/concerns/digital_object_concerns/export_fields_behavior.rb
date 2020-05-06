@@ -4,7 +4,7 @@ module DigitalObjectConcerns
   module ExportFieldsBehavior
     extend ActiveSupport::Concern
 
-    # Exports dynamic field data from the digital_object to string data per
+    # Exports descriptive_metadata from the digital_object to string data per
     # the export profile.
     # @param export_profile [FieldExportProfile] The export profile of the serialization rules.
     def render_field_export(export_profile)
@@ -13,7 +13,7 @@ module DigitalObjectConcerns
         [dfg.string_key, rules.map(&:translation_logic).map { |src| JSON.parse(src) }]
       end.to_h
       translation_logic = JSON.parse(export_profile.translation_logic)
-      generator = Hyacinth::XmlGenerator.new(dynamic_field_data, translation_logic,
+      generator = Hyacinth::XmlGenerator.new(descriptive_metadata, translation_logic,
                                              dynamic_field_groups_map, internal_fields)
       generator.generate.to_xml
     end

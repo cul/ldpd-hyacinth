@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Table } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 
+import { Can } from '../../utils/abilityContext';
 import ContextualNavbar from '../shared/ContextualNavbar';
 import PaginationBar from '../shared/PaginationBar';
 import GraphQLErrors from '../shared/GraphQLErrors';
@@ -35,12 +36,18 @@ function ControlledVocabularyIndex() {
 
   return (
     <>
-      <ContextualNavbar
-        title="Controlled Vocabularies"
-        rightHandLinks={[{ link: '/controlled_vocabularies/new', label: 'New Controlled Vocabulary' }]}
-      />
+      <Can I="create" a="Vocabulary" passThrough>
+        {
+          can => (
+            <ContextualNavbar
+              title="Controlled Vocabularies"
+              rightHandLinks={can ? [{ link: '/controlled_vocabularies/new', label: 'New Controlled Vocabulary' }] : []}
+            />
+          )
+        }
+      </Can>
 
-      <Table hover>
+      <Table hover responsive>
         <thead>
           <tr>
             <th>Label</th>

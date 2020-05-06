@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 describe Hyacinth::XmlGenerator do
-  let(:dynamic_field_data) do
-    JSON.parse(file_fixture('xml_generator/dynamic_field_data.json').read)
+  let(:descriptive_metadata) do
+    JSON.parse(file_fixture('xml_generator/descriptive_metadata.json').read)
   end
 
   let(:name_translation_logic) do
@@ -78,7 +78,7 @@ describe Hyacinth::XmlGenerator do
   end
 
   let(:xml_generator) do
-    described_class.new(dynamic_field_data, base_xml_translation, xml_translation_map)
+    described_class.new(descriptive_metadata, base_xml_translation, xml_translation_map)
   end
 
   let(:expected_mods) do

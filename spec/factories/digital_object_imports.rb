@@ -6,7 +6,7 @@ FactoryBot.define do
     digital_object_data do
       {
         'digital_object_type' => 'item',
-        'dynamic_field_data' => {
+        'descriptive_metadata' => {
           'title' => [{ 'sort_portion' => 'The', 'non_sort_portion' => 'Cool Item' }],
           'abstract' => [{ 'abstract_value' => 'some abstract' }]
         }
@@ -19,7 +19,7 @@ FactoryBot.define do
       digital_object_data do
         {
           'digital_object_type' => 'asset',
-          'dynamic_field_data' => {
+          'descriptive_metadata' => {
             'title' => [{ 'sort_portion' => 'The', 'non_sort_portion' => 'Asset' }]
           },
           'resource_imports' => {
@@ -36,7 +36,7 @@ FactoryBot.define do
       status { 'pending' }
       index { 25 }
       digital_object_data do
-        { "dynamic_field_data": { "note": [{ "value": "fantastic note" }] } }.to_json
+        { "descriptive_metadata": { "note": [{ "value": "fantastic note" }] } }.to_json
       end
     end
 
@@ -44,7 +44,7 @@ FactoryBot.define do
       status { 'queued' }
       index { 30 }
       digital_object_data do
-        { 'dynamic_field_data': { 'note': [{ 'value': 'another fantastic note' }] } }.to_json
+        { 'descriptive_metadata': { 'note': [{ 'value': 'another fantastic note' }] } }.to_json
       end
     end
 
@@ -52,7 +52,7 @@ FactoryBot.define do
       status { 'in_progress' }
       index { 19 }
       digital_object_data do
-        { "dynamic_field_data": { "identifier": [{ "value": "something_1" }] } }.to_json
+        { "descriptive_metadata": { "identifier": [{ "value": "something_1" }] } }.to_json
       end
     end
 
@@ -60,7 +60,7 @@ FactoryBot.define do
       status { 'success' }
       index { 89 }
       digital_object_data do
-        { "dynamic_field_data": { "date": [{ "value": "2001" }] } }.to_json
+        { "descriptive_metadata": { "date": [{ "value": "2001" }] } }.to_json
       end
     end
 
@@ -69,7 +69,7 @@ FactoryBot.define do
       index { 99 }
       import_errors { ["location.value is not a valid field"] }
       digital_object_data do
-        { "dynamic_field_data": { "location": [{ "value": "some place" }] } }.to_json
+        { "descriptive_metadata": { "location": [{ "value": "some place" }] } }.to_json
       end
     end
   end

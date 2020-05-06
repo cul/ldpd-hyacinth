@@ -30,14 +30,14 @@ namespace :hyacinth do
       records.each do |record|
         dobj = ::DigitalObject::Base.find(record.uid)
 
-        # Clear dynamic_field_data and rights to reduce likelihood of data issues during
+        # Clear descriptive_metadata and rights to reduce likelihood of data issues during
         # destroy operation that runs before purge.
         dobj.assign_attributes(
           {
-            'dynamic_field_data' => {},
+            'descriptive_metadata' => {},
             'rights' => {}
           },
-          merge_dynamic_field_data: false,
+          merge_descriptive_metadata: false,
           merge_rights: false
         )
         begin

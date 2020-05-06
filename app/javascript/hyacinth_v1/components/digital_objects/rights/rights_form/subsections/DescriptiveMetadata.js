@@ -12,7 +12,7 @@ function DescriptiveMetadata(props) {
   const {
     onChange,
     values: [value],
-    dynamicFieldData,
+    descriptiveMetadata,
     typeOfContentChange,
     fieldConfig
   } = props;
@@ -38,7 +38,7 @@ function DescriptiveMetadata(props) {
         />
 
         {
-          (dynamicFieldData.genre || [{}]).map((g, i) => (
+          (descriptiveMetadata.genre || [{}]).map((g, i) => (
             <InputGroup key={i}>
               <Label sm={4} align="right">Specific Genre of Work</Label>
               <ReadOnlyInput sm={8} value={g.term ? g.term.prefLabel : ''} />
@@ -47,7 +47,7 @@ function DescriptiveMetadata(props) {
         }
 
         {
-          (dynamicFieldData.form || [{}]).map((f, i) => (
+          (descriptiveMetadata.form || [{}]).map((f, i) => (
             <InputGroup key={i}>
               <Label sm={4} align="right">Form</Label>
               <ReadOnlyInput sm={8} value={f.term ? f.term.prefLabel : ''} />
@@ -56,7 +56,7 @@ function DescriptiveMetadata(props) {
         }
 
         {
-          (dynamicFieldData.name || [{}]).map((n, i) => (
+          (descriptiveMetadata.name || [{}]).map((n, i) => (
             <Card className="my-3" key={i}>
               <Card.Header>{`Creator ${i + 1}`}</Card.Header>
               <Card.Body>
@@ -85,7 +85,7 @@ function DescriptiveMetadata(props) {
         }
 
         {
-          (dynamicFieldData.title || [{}]).map((t, i) => (
+          (descriptiveMetadata.title || [{}]).map((t, i) => (
             <InputGroup key={i}>
               <Label sm={4} align="right">Title</Label>
               <ReadOnlyInput sm={8} value={t.sortPortion} />
@@ -94,7 +94,7 @@ function DescriptiveMetadata(props) {
         }
 
         {
-          (dynamicFieldData.alternativeTitle || [{}]).map((t, i) => (
+          (descriptiveMetadata.alternativeTitle || [{}]).map((t, i) => (
             <InputGroup key={i}>
               <Label sm={4} align="right">Alternate Title</Label>
               <ReadOnlyInput sm={8} value={t.value} />
@@ -109,7 +109,7 @@ function DescriptiveMetadata(props) {
         />
 
         {
-          (dynamicFieldData.publisher || [{}]).map((t, i) => (
+          (descriptiveMetadata.publisher || [{}]).map((t, i) => (
             <InputGroup key={i}>
               <Label sm={4} align="right">Publisher Name</Label>
               <ReadOnlyInput sm={8} value={t.value} />
@@ -118,7 +118,7 @@ function DescriptiveMetadata(props) {
         }
 
         {
-          (dynamicFieldData.dateCreated || [{}]).map((d, i) => (
+          (descriptiveMetadata.dateCreated || [{}]).map((d, i) => (
             <Card className="my-3" key={i}>
               <Card.Header>{`Date of Creation ${i + 1}`}</Card.Header>
               <Card.Body>
@@ -147,7 +147,7 @@ function DescriptiveMetadata(props) {
         }
 
         {
-          (dynamicFieldData.dateCreatedTextual || [{}]).map((t, i) => (
+          (descriptiveMetadata.dateCreatedTextual || [{}]).map((t, i) => (
             <InputGroup key={i}>
               <Label sm={4} align="right">Descriptive Date</Label>
               <ReadOnlyInput sm={8} value={t.value} />
@@ -177,7 +177,7 @@ function DescriptiveMetadata(props) {
 
 DescriptiveMetadata.propTypes = {
   onChange: PropTypes.func.isRequired,
-  dynamicFieldData: PropTypes.any, // or dynamicFieldData
+  descriptiveMetadata: PropTypes.any,
   // values: PropTypes.arrayOf(PropTypes.shape({
   //   color: PropTypes.string,
   //   fontSize: PropTypes.number

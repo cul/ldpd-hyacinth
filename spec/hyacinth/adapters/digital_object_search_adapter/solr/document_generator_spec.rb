@@ -54,7 +54,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
     context "with collections data" do
       let(:collection_value) { "Non-existent collection" }
       before do
-        authorized_object.dynamic_field_data['collection'] = [
+        authorized_object.descriptive_metadata['collection'] = [
           {
             'term' => {
               'pref_label' => collection_value,

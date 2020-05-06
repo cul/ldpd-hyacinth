@@ -70,7 +70,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::MetadataBuilde
     end
     context "empty dynamic fields" do
       let(:dod) do
-        JSON.parse(file_fixture('files/datacite/ezid_item_empty_dynamic_field_data.json').read)
+        JSON.parse(file_fixture('files/datacite/ezid_item_empty_descriptive_metadata.json').read)
       end
 
       it "produce a valid XML serialization with creator = '(:unav)' when creator isn't present" do
@@ -84,7 +84,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::MetadataBuilde
       end
 
       let(:dod) do
-        JSON.parse(file_fixture('files/datacite/ezid_item_minimal_dynamic_field_data.json').read)
+        JSON.parse(file_fixture('files/datacite/ezid_item_minimal_descriptive_metadata.json').read)
       end
       let(:expected_xml) do
         xml = file_fixture('files/datacite/datacite_minimal.xml').read
