@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Term < ApplicationRecord
+  CORE_FIELDS = ['uri', 'alt_labels', 'pref_label', 'term_type', 'authority', 'term_type'].freeze
+
   TEMPORARY_URI_BASE = 'temp:'
   LOCAL     = 'local'
   TEMPORARY = 'temporary'
