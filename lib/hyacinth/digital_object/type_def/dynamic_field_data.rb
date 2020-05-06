@@ -27,7 +27,7 @@ module Hyacinth
             "(vocabulary:\"#{vocab}\" AND uri:(#{uris}))"
           }.join(' OR ')
 
-          search_results = Hyacinth::Config.term_search_adapter.search(post: true) do |solr_params|
+          search_results = Hyacinth::Config.term_search_adapter.search do |solr_params|
             solr_params.q(search_query, escape: false)
           end
 
