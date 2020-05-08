@@ -48,8 +48,8 @@ RSpec.describe DigitalObjectImportProcessingJob, solr: true do
         end
 
         it "is marked as created and updated by the expected user" do
-          expect(created_digital_object.created_by).to eq(nil)
-          expect(created_digital_object.updated_by).to eq(nil)
+          expect(created_digital_object.created_by).to eq(user)
+          expect(created_digital_object.updated_by).to eq(user)
         end
       end
 

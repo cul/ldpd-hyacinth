@@ -5,8 +5,9 @@ class DigitalObjectImportProcessingJob
 
   def self.perform(digital_object_import_id)
     digital_object_import = find_digital_object_import(digital_object_import_id)
+    batch_import = digital_object_import.batch_import
     # If the parent BatchImport has been cancelled, do not run this job.
-    if digital_object_import.batch_import.cancelled
+    if batch_import.cancelled
       apply_recursive_cancellation!(digital_object_import)
       return
     end
@@ -25,7 +26,7 @@ class DigitalObjectImportProcessingJob
     digital_object.assign_attributes(digital_object_data)
 
     # Save the object, and terminate processing if the save fails.
-    unless digital_object.save
+    unless digital_object.save(user: batch_import.user)
       digital_object_import.import_errors = digital_object.errors.map { |err_key, message| "#{err_key}: #{message}" }
       # Apply a recursive failure to this digital_object_import and all other DigitalObjectImports
       # that depend on it, since it doesn't make sense to run the others if this one failed.
