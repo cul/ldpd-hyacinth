@@ -17,6 +17,7 @@ export const batchImportsQuery = gql`
         createdAt
         status
         cancelled
+        setupErrors
       }
       totalCount
     }
@@ -43,6 +44,7 @@ export const batchImportQuery = gql`
       createdAt
       status
       cancelled
+      setupErrors
     }
   }
 `;
@@ -53,6 +55,17 @@ export const createBatchImportMutation = gql`
       batchImport {
         id
       }
+      isValid
+      errors
+    }
+  }
+`;
+
+export const validateBatchImportMutation = gql`
+  mutation ValidateBatchImport($input: ValidateBatchImportInput!) {
+    validateBatchImport(input: $input) {
+      isValid
+      errors
     }
   }
 `;
@@ -70,6 +83,16 @@ export const updateBatchImportMutation = gql`
 export const deleteBatchImportMutation = gql`
   mutation DeleteBatchImport($input: DeleteBatchImportInput!) {
     deleteBatchImport(input: $input) {
+      batchImport {
+        id
+      }
+    }
+  }
+`;
+
+export const startBatchImportMutation = gql`
+  mutation StartBatchImport($input: StartBatchImportInput!) {
+    startBatchImport(input: $input) {
       batchImport {
         id
       }

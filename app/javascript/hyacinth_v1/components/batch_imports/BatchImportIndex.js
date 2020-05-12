@@ -30,13 +30,19 @@ function BatchImportIndex() {
   };
 
   const onCancel = (id) => {
-    const variables = { input: { id, cancelled: true } };
-    updateBatchImport({ variables }).then(refetch);
+    // eslint-disable-next-line no-alert
+    if (window.confirm(`Are you sure you want to cancel Batch Import ${id}?`)) {
+      const variables = { input: { id, cancelled: true } };
+      updateBatchImport({ variables }).then(refetch);
+    }
   };
 
   const onDelete = (id) => {
-    const variables = { input: { id } };
-    deleteBatchImport({ variables }).then(refetch);
+    // eslint-disable-next-line no-alert
+    if (window.confirm(`Are you sure you want to delete Batch Import ${id}?`)) {
+      const variables = { input: { id } };
+      deleteBatchImport({ variables }).then(refetch);
+    }
   };
 
   const { batchImports: { nodes: batchImports, totalCount: totalBatchImports } } = data;
@@ -56,6 +62,12 @@ function BatchImportIndex() {
           <Card key={batchImport.id} className="mb-3">
             <Card.Header>
               {`Import ID: ${batchImport.id}`}
+              {batchImport.setupErrors && batchImport.setupErrors.length > 0 && (
+                <>
+                  &nbsp;-&nbsp;
+                  <strong className="text-danger">Setup errors encountered. View import details for more info.</strong>
+                </>
+              )}
               <div className="float-right">
                 <ReadableDate date={batchImport.createdAt} />
               </div>
@@ -86,7 +98,7 @@ function BatchImportIndex() {
                 </Button>
                 {' '}
                 {
-                  !batchImport.cancelled && (
+                  !batchImport.cancelled && !batchImport.status.startsWith('complete') && (
                     <Button variant="secondary" size="sm" onClick={() => onCancel(batchImport.id)}>
                       Cancel Import
                     </Button>

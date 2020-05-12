@@ -7,7 +7,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
 
   let(:authorized_project) { FactoryBot.create(:project, :allow_asset_rights) }
   let(:authorized_item) { FactoryBot.create(:item, primary_project: authorized_project) }
-  let(:authorized_asset) { FactoryBot.create(:asset, parent: authorized_item) }
+  let(:authorized_asset) { FactoryBot.create(:asset, :with_master_resource, parent: authorized_item) }
 
   include_examples 'requires user to have correct permissions for graphql request' do
     let(:variables) { { input: { id: authorized_item.uid, rights: {} } } }

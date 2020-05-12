@@ -1,0 +1,6 @@
+_uid,_identifiers[0],_digital_object_type,_parent_digital_objects[0].uid,_parent_digital_objects[1].identifier,_parent_digital_objects[2].identifier,_primary_project.string_key,title[0].sort_portion,_resource_imports.master.method,_resource_imports.master.location
+2f4e2917-26f5-4d8f-968c-a4015b10e50f,item1,item,,,,great_project,Existing Item 1,,
+,asset1,asset,2f4e2917-26f5-4d8f-968c-a4015b10e50f,,,great_project,New Asset 1,fixture_file,test.txt
+,asset2,asset,,item1,,great_project,New Asset 2,fixture_file,test.txt
+,asset3,asset,,item1,item2,great_project,New Asset 3,fixture_file,test.txt
+,item2,item,,,,great_project,New Item 2,,

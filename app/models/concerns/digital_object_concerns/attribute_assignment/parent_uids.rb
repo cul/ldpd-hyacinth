@@ -30,7 +30,7 @@ module DigitalObjectConcerns
           if uids.blank?
             raise Hyacinth::Exceptions::NotFound,
                   "Could not find parent digital object using identifier: #{identifier}"
-          elsif uids > 1
+          elsif uids.length > 1
             raise Hyacinth::Exceptions::NotFound,
                   "Ambiguous parent linkage. Found more than one UID for identifier #{identifier}. UIDS: #{uids.join(', ')}"
           end
@@ -39,11 +39,11 @@ module DigitalObjectConcerns
 
         # Add new UIDs that don't already exist in set of parents
         (new_set_of_uids - parent_uids).each do |uid|
-          add_parent_uid(uid, false)
+          add_parent_uid(uid)
         end
 
         # Remove omitted UIDs that currently exist in set of parents
-        uids_to_remove.each do |uid|
+        (parent_uids - new_set_of_identifiers.to_a).each do |uid|
           remove_parent_uid(uid)
         end
       end

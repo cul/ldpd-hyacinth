@@ -2,13 +2,51 @@
 
 FactoryBot.define do
   factory :digital_object_import do
-    status { 'in_progress' }
-    index  { 34 }
+    index { 34 }
     digital_object_data do
-      { "descriptive_metadata": { "abstract": [{ "abstract_value": "some abstract" }] } }.to_json
+      {
+        'digital_object_type' => 'item',
+        'descriptive_metadata' => {
+          'title' => [{ 'sort_portion' => 'The', 'non_sort_portion' => 'Cool Item' }],
+          'abstract' => [{ 'abstract_value' => 'some abstract' }]
+        }
+      }.to_json
     end
 
     association :batch_import, strategy: :create
+
+    trait(:asset) do
+      digital_object_data do
+        {
+          'digital_object_type' => 'asset',
+          'descriptive_metadata' => {
+            'title' => [{ 'sort_portion' => 'The', 'non_sort_portion' => 'Asset' }]
+          },
+          'resource_imports' => {
+            'master' => {
+              method: 'copy',
+              location: Rails.root.join('spec', 'fixtures', 'files', 'test.txt')
+            }
+          }
+        }.to_json
+      end
+    end
+
+    trait(:pending) do
+      status { 'pending' }
+      index { 25 }
+      digital_object_data do
+        { "descriptive_metadata": { "note": [{ "value": "fantastic note" }] } }.to_json
+      end
+    end
+
+    trait(:queued) do
+      status { 'queued' }
+      index { 30 }
+      digital_object_data do
+        { 'descriptive_metadata': { 'note': [{ 'value': 'another fantastic note' }] } }.to_json
+      end
+    end
 
     trait(:in_progress) do
       status { 'in_progress' }
@@ -32,14 +70,6 @@ FactoryBot.define do
       import_errors { ["location.value is not a valid field"] }
       digital_object_data do
         { "descriptive_metadata": { "location": [{ "value": "some place" }] } }.to_json
-      end
-    end
-
-    trait(:pending) do
-      status { 'pending' }
-      index { 25 }
-      digital_object_data do
-        { "descriptive_metadata": { "note": [{ "value": "fantastic note" }] } }.to_json
       end
     end
   end

@@ -149,7 +149,7 @@ function BatchExportIndex() {
                       {
                         batchExport.exportErrors.map((exportError, ix) => (
                           // eslint-disable-next-line react/no-array-index-key
-                          <pre key={ix}><code>{exportError}</code></pre>
+                          <pre className="border p-3" key={ix}><code>{exportError}</code></pre>
                         ))
                       }
                     </Card.Body>

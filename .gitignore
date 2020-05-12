@@ -60,3 +60,6 @@ jetty-test
 
 # IDE-specific files
 /jsconfig.json
+
+# LibreOffice
+.~lock*

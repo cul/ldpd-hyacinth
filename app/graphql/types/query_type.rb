@@ -91,7 +91,6 @@ module Types
     end
 
     def digital_objects(**arguments)
-      # TODO: consider object read permissions via projects
       # TODO: identification of possible filters in scope of search
       search_params = arguments[:search_params] ? arguments[:search_params].prepare : {}
       search_params['facet_on'] = ['digital_object_type_ssi', 'projects_ssim', 'collection_ssim', 'copyright_status_copyright_statement_ssi', 'rights_category_present_bi']

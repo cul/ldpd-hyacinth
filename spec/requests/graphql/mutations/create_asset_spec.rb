@@ -7,7 +7,7 @@ RSpec.describe Mutations::CreateAsset, type: :request do
   let(:authorized_object) { FactoryBot.create(:item, :with_primary_project) }
   let(:authorized_project) { authorized_object.projects.first }
   let(:blob_content) { "This is text to store in a blob" }
-  let(:blob_checksum) { Digest::MD5.hexdigest blob_content }
+  let(:blob_checksum) { Digest::MD5.base64digest blob_content }
   let(:blob_args) do
     {
       filename: 'blob.tiff',

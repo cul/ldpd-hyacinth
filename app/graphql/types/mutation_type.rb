@@ -35,8 +35,10 @@ module Types
     field :delete_batch_export, mutation: Mutations::BatchExport::DeleteBatchExport
 
     field :create_batch_import, mutation: Mutations::BatchImport::CreateBatchImport
+    field :validate_batch_import, mutation: Mutations::BatchImport::ValidateBatchImport
     field :update_batch_import, mutation: Mutations::BatchImport::UpdateBatchImport
     field :delete_batch_import, mutation: Mutations::BatchImport::DeleteBatchImport
+    field :start_batch_import, mutation: Mutations::BatchImport::StartBatchImport
 
     field :create_field_export_profile, mutation: Mutations::FieldExportProfile::CreateFieldExportProfile
     field :update_field_export_profile, mutation: Mutations::FieldExportProfile::UpdateFieldExportProfile

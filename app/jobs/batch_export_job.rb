@@ -68,7 +68,11 @@ class BatchExportJob
 
   def self.handle_job_error(batch_export, error, start_time)
     batch_export.duration = [1, (Time.current - start_time).to_i].max
-    batch_export.export_errors << error.message + "\n\n" + error.backtrace.join("\n")
+    batch_export.export_errors <<
+      error.message + "\n\n"\
+      "See application error log for more details.\n"\
+      "Message generated at #{Time.current}"
+    Rails.logger.error(error.message + "\n" + error.backtrace.join("\n"))
     batch_export.failure!
   end
 

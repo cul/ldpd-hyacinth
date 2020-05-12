@@ -30,6 +30,7 @@ namespace :hyacinth do
       Rake::Task['hyacinth:setup:test_projects'].invoke
       Rake::Task['hyacinth:rights_fields:load'].invoke
       Rake::Task['hyacinth:setup:seed_dynamic_field_entries'].invoke
+      Rake::Task['hyacinth:setup:enable_fields_for_test_projects'].invoke
     end
   end
 end

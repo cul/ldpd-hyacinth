@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Col, Row, Button, ProgressBar,
+  Col, Row, Button, ProgressBar, Card,
 } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 import { Link, useParams } from 'react-router-dom';
@@ -57,6 +57,7 @@ function BatchImportShow() {
       status,
       user,
       priority,
+      setupErrors,
     },
   } = data;
 
@@ -125,12 +126,29 @@ function BatchImportShow() {
               </>
             )
           }
+
+          { setupErrors && setupErrors.length > 0 && (
+            <>
+              <Col as="dt" sm={3}>Setup Errors</Col>
+              <Col as="dd" sm={9}>
+                <Card className="mt-2">
+                  <Card.Body>
+                    {
+                      setupErrors.map((setupError, ix) => (
+                        // eslint-disable-next-line react/no-array-index-key
+                        <pre className="border p-3" key={ix}><code>{setupError}</code></pre>
+                      ))
+                    }
+                  </Card.Body>
+                </Card>
+              </Col>
+            </>
+          )}
         </Row>
 
+        <Link className="float-right" to={`/batch_imports/${id}/digital_object_imports`}>View Details &raquo;</Link>
         <h5>
-          <Link to={`/batch_imports/${id}/digital_object_imports`}>
-            Digital Object Imports (view all)
-          </Link>
+            Digital Object Imports
         </h5>
 
         <Row as="dl">
