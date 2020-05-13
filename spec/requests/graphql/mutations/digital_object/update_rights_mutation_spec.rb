@@ -54,7 +54,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
                 country_of_origin: {
                   pref_label: "United States",
                   term_type: "external",
-                  authority: '',
+                  authority: nil,
                   alt_labels: [],
                   uri: "https://example.com/term/united_states"
                 },
@@ -65,7 +65,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
                 copyright_statement: {
                   pref_label: "In Copyright",
                   term_type: "external",
-                  authority: '',
+                  authority: nil,
                   alt_labels: [],
                   uri: "https://example.com/term/in_copyright"
                 },
@@ -80,7 +80,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
                 name: {
                   pref_label: "Random, Person",
                   term_type: "external",
-                  authority: '',
+                  authority: nil,
                   alt_labels: [],
                   uri: "https://example.com/term/random,person"
                 },
@@ -162,7 +162,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
                 copyright_statement: {
                   pref_label: "In Copyright",
                   term_type: "external",
-                  authority: '',
+                  authority: nil,
                   alt_labels: [],
                   uri: "https://example.com/term/in_copyright"
                 },
@@ -181,7 +181,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
                     pref_label: "Great Location",
                     term_type: "external",
                     uri: "https://example.com/great_location",
-                    authority: '',
+                    authority: nil,
                     alt_labels: []
                   }
                 }],
@@ -205,7 +205,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
           'uri' => "https://example.com/term/in_copyright",
           'term_type' => "external",
           'alt_labels' => [],
-          'authority' => ''
+          'authority' => nil
         }
       end
 

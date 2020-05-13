@@ -14,7 +14,7 @@ class DigitalObject::RightsFieldsValidator < DigitalObject::DynamicFieldsValidat
       digital_object,
       attribute,
       value,
-      Hyacinth::DynamicFieldsMap.generate("#{digital_object.digital_object_type}_rights")
+      Hyacinth::DynamicFieldsMap.new("#{digital_object.digital_object_type}_rights").map
     )
   end
 end

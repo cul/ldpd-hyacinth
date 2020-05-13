@@ -20,16 +20,11 @@ module Hyacinth
           return nil if json_var.nil?
           raise ArgumentError, "Expected hash, but got: #{json_var.class}" unless json_var.is_a?(Hash)
 
-          terms_map = extract_terms(field_map, json_var)
+          terms_map = map.extract_terms(json_var)
 
-          search_query = terms_map.map { |vocab, terms|
-            uris = terms.map { |t| "\"#{t['uri']}\"" }.compact.join(' OR ')
-            "(vocabulary:\"#{vocab}\" AND uri:(#{uris}))"
-          }.join(' OR ')
+          lookup_hash = terms_map.transform_values { |values| values.map { |v| v['uri'] } }
 
-          search_results = Hyacinth::Config.term_search_adapter.search do |solr_params|
-            solr_params.q(search_query, escape: false)
-          end
+          search_results = Hyacinth::Config.term_search_adapter.batch_find(lookup_hash)
 
           # Retrieve all custom fields for vocabularies so we know which fields should be add to the hash.
           # This ensure that there's always a value for the all the custom fields defined and does not add
@@ -48,17 +43,9 @@ module Hyacinth
 
               next if solr_term_hash.blank?
 
-              full_term = {}
+              full_term = Hyacinth::DynamicFieldDataHelper.format_term(solr_term_hash, custom_field_definitions.keys)
 
-              { 'authority' => '', 'pref_label' => '', 'alt_labels' => [], 'term_type' => '' }.map do |key, default|
-                full_term[key] = solr_term_hash.fetch(key, default)
-              end
-
-              custom_field_values = JSON.parse(solr_term_hash['custom_fields'])
-              custom_field_definitions.each { |field_key, _config| full_term[field_key] = custom_field_values.fetch(field_key, '') }
-
-              term_hash.slice!('uri')
-              term_hash.merge!(full_term)
+              Hyacinth::DynamicFieldDataHelper.rehydrate_term(term_hash, full_term)
             end
           end
 
@@ -73,43 +60,13 @@ module Hyacinth
           json_var = json_var.deep_dup
 
           # Dehydrate URI terms. Remove all other fields in terms hash except for 'uri'
-          extract_terms(field_map, json_var).values.sum([]).each { |t| t.slice!('uri') }
+          map.extract_terms(json_var).values.sum([]).each { |t| t.slice!('uri') }
 
           json_var
         end
 
-        def field_map
-          Hyacinth::DynamicFieldsMap.generate(*TYPE_TO_FORM_TYPE[@type])
-        end
-
-        def extract_terms(map, data)
-          terms = {}
-
-          data.each do |field_or_group_key, value|
-            next unless map.key?(field_or_group_key)
-
-            reduced_map = map[field_or_group_key]
-
-            case reduced_map[:type]
-            when 'DynamicFieldGroup'
-              next unless value.is_a?(Array)
-
-              value.each do |v|
-                extract_terms(reduced_map[:children], v).each do |vocab, new_terms|
-                  terms[vocab] = terms.fetch(vocab, []).concat(new_terms)
-                end
-              end
-            when 'DynamicField'
-              next unless reduced_map[:field_type] == DynamicField::Type::CONTROLLED_TERM
-              next unless value.is_a?(Hash)
-              vocab = reduced_map[:controlled_vocabulary]
-
-              terms[vocab] = [] unless terms.key?(vocab)
-              terms[vocab] += [value]
-            end
-          end
-
-          terms
+        def map
+          Hyacinth::DynamicFieldsMap.new(*TYPE_TO_FORM_TYPE[@type])
         end
       end
     end

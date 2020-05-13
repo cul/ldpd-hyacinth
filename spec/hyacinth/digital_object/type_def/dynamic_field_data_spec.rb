@@ -94,7 +94,7 @@ describe Hyacinth::DigitalObject::TypeDef::DynamicFieldData do
             'term' => {
               'pref_label' => 'Person, Random',
               'uri' => 'temp:4712538a19c162783874c45c4682fddcf247ac031b06a98912d7df0bc43a3a54',
-              'authority' => '',
+              'authority' => nil,
               'term_type' => 'temporary',
               'alt_labels' => [],
               'uni' => 'abc123'
