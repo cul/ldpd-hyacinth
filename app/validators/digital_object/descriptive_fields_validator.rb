@@ -4,7 +4,7 @@ class DigitalObject::DescriptiveFieldsValidator < DigitalObject::DynamicFieldsVa
   def validate_each(digital_object, attribute, value)
     return if value.blank?
 
-    map = Hyacinth::DynamicFieldsMap.generate('descriptive')
+    map = Hyacinth::DynamicFieldsMap.new('descriptive').map
 
     generate_errors(digital_object, attribute, value, map)
   end

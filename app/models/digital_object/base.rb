@@ -22,6 +22,7 @@ module DigitalObject
     include DigitalObjectConcerns::ExportFieldsBehavior
     include DigitalObjectConcerns::PreserveBehavior
     include DigitalObjectConcerns::IndexBehavior
+    include DigitalObjectConcerns::CreateAndUpdateTerms
 
     SERIALIZATION_VERSION = '1' # Increment this if the serialized data format changes so that we can upgrade to the new format.
 
@@ -33,7 +34,7 @@ module DigitalObject
     # Set up callbacks
     define_model_callbacks :validation, :save, :destroy, :undestroy, :purge
     before_validation :clean_descriptive_metadata!, :clean_rights!
-    # TODO: Add these before_save ---> :register_new_uris_and_values_for_descriptive_metadata!
+    before_save :create_and_update_terms
     after_save :index
     before_destroy :remove_all_parents, :unpublish_from_all
     after_destroy :index

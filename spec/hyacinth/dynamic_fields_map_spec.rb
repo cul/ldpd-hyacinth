@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 describe Hyacinth::DynamicFieldsMap do
-  describe '.generate' do
+  describe '#map' do
     before do
       descriptive_category = FactoryBot.create(:dynamic_field_category)
       rights_category = FactoryBot.create(:dynamic_field_category, display_label: 'Rights', metadata_form: 'item_rights')
@@ -16,7 +16,7 @@ describe Hyacinth::DynamicFieldsMap do
     end
 
     context 'when there aren\'t any categories present' do
-      subject(:map) { described_class.generate('asset_rights') }
+      subject(:map) { described_class.new('asset_rights').map }
 
       it 'returns empty map' do
         expect(map).to eql({})
@@ -24,7 +24,7 @@ describe Hyacinth::DynamicFieldsMap do
     end
 
     context 'when generating map for one form type' do
-      subject(:map) { described_class.generate('item_rights') }
+      subject(:map) { described_class.new('item_rights').map }
 
       let(:expected_map) do
         {
@@ -52,7 +52,7 @@ describe Hyacinth::DynamicFieldsMap do
     end
 
     context 'when generating map for two form types' do
-      subject(:map) { described_class.generate('descriptive', 'item_rights') }
+      subject(:map) { described_class.new('descriptive', 'item_rights').map }
 
       let(:expected_map) do
         {
