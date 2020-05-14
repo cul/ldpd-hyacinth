@@ -29,6 +29,7 @@ module Types
 
     field :digital_objects, DigitalObjectInterface.results_type, null: true, extensions: [Types::Extensions::SolrSearch, Types::Extensions::MapToDigitalObjects] do
       description "List and searches all digital objects"
+      argument :order_by, Inputs::DigitalObject::OrderByInput, required: false, default_value: { field: 'score', direction: 'desc' }
     end
 
     field :digital_object, DigitalObjectInterface, null: true do
@@ -97,6 +98,7 @@ module Types
       Hyacinth::Config.digital_object_search_adapter.search(search_params, context[:current_user]) do |solr_params|
         solr_params.rows(arguments[:limit])
         solr_params.start(arguments[:offset])
+        solr_params.sort(arguments[:order_by][:field], arguments[:order_by][:direction]) if arguments[:order_by]
       end
     end
 
