@@ -39,11 +39,7 @@ module Solr
     end
 
     def q(query)
-      if query.blank?
-        @parameters[:q] = nil
-      else
-        @parameters[:q] = Solr::Utils.escape(query)
-      end
+      @parameters[:q] = query.blank? ? nil : Solr::Utils.escape(query)
       self
     end
 
