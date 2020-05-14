@@ -28,7 +28,9 @@ module Hyacinth
             'primary_project_ssi' => digital_object.primary_project&.string_key,
             'projects_ssim' => project_keys_for(digital_object),
             'created_at_dtsi' => digital_object.created_at.utc.iso8601,
-            'updated_at_dtsi' => digital_object.updated_at.utc.iso8601
+            'updated_at_dtsi' => digital_object.updated_at.utc.iso8601,
+            'number_of_children_isi' => digital_object.number_of_children,
+            'parent_ids_ssim' => digital_object.parent_uids
           )
           add_keywords(indexable_title, solr_document)
           solr_document
