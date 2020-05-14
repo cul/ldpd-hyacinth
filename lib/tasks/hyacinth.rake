@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 namespace :hyacinth do
+  desc "Reindexes all digital objects"
   task reindex: :environment do
     DigitalObjectRecord.find_in_batches(batch_size: (ENV['BATCH_SIZE'] || 1000).to_i) do |records|
       records.each do |record|
