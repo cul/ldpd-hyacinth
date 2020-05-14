@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe Solr::Params do
-  context 'when creating fq queries' do
-    let(:params) { described_class.new }
+  let(:params) { described_class.new }
 
+  context 'when creating fq queries' do
     it 'properly handles and escapes a single fq value' do
       params.fq('animals', 'dogs + cats')
       expect(params.to_h).to include(fq: ['animals:(dogs\ \+\ cats)'])
@@ -23,11 +23,22 @@ RSpec.describe Solr::Params do
   end
 
   context 'when creating q queries' do
-    let(:params) { described_class.new }
-
     it 'solr escapes q values' do
       params.q('foo-bar')
       expect(params.to_h).to include(q: 'foo\-bar')
+    end
+  end
+
+  context 'when creating sort' do
+    it 'returns error if invalid direction' do
+      expect {
+        params.sort('title', 'invalid')
+      }.to raise_error ArgumentError, 'direction must be one of asc, desc, instead got \'invalid\''
+    end
+
+    it 'adds sort param' do
+      params.sort('title', 'desc')
+      expect(params.to_h).to include(sort: 'title desc')
     end
   end
 end
