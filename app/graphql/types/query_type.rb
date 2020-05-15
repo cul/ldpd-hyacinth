@@ -27,7 +27,7 @@ module Types
       description "List of all projects"
     end
 
-    field :digital_objects, DigitalObject::MinimalRecord.results_type, null: true, extensions: [Types::Extensions::SolrSearch, Types::Extensions::MapToDigitalObjects] do
+    field :digital_objects, DigitalObject::MinimalRecord.results_type, null: true, extensions: [Types::Extensions::SolrSearch, Types::Extensions::MapToDigitalObjectMinimalRecord] do
       description "List and searches all digital objects"
       argument :order_by, Inputs::DigitalObject::OrderByInput, required: false, default_value: { field: 'score', direction: 'desc' }
     end
