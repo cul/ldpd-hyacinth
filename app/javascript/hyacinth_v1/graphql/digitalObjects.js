@@ -147,7 +147,13 @@ export const getDigitalObjectsQuery = gql`
       nodes {
         id,
         title,
-        digitalObjectType
+        digitalObjectType,
+        numberOfChildren,
+        parentIds,
+        projects {
+          stringKey
+          displayLabel
+        }
       },
       facets {
         fieldName,
