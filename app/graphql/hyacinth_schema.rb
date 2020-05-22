@@ -38,6 +38,10 @@ class HyacinthSchema < GraphQL::Schema
     raise GraphQL::ExecutionError, 'Unexpected Error'
   end
 
+  rescue_from Hyacinth::Exceptions::VocabularyLocked do |_e|
+    raise GraphQL::ExecutionError, 'Vocabulary is locked'
+  end
+
   mutation(Types::MutationType)
   query(Types::QueryType)
 end

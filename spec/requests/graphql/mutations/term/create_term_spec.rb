@@ -225,7 +225,7 @@ RSpec.describe Mutations::Term::CreateTerm, type: :request, solr: true do
 
       it 'returns error in json' do
         expect(response.body).to be_json_eql(%(
-          "Vocabulary is locked."
+          "Vocabulary is locked"
         )).at_path("errors/0/message")
       end
     end

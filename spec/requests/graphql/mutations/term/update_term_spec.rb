@@ -168,7 +168,7 @@ RSpec.describe Mutations::Term::UpdateTerm, type: :request, solr: true do
     end
 
     context 'when updating a term on a locked vocabulary' do
-      let(:term) { FactoryBot.create(:external_term, vocabulary: vocabulary) }
+      let!(:term) { FactoryBot.create(:external_term, vocabulary: vocabulary) }
       let(:variables) do
         {
           input: {
@@ -186,7 +186,7 @@ RSpec.describe Mutations::Term::UpdateTerm, type: :request, solr: true do
 
       it 'returns error in json' do
         expect(response.body).to be_json_eql(%(
-          "Vocabulary is locked."
+          "Vocabulary is locked"
         )).at_path('errors/0/message')
       end
     end

@@ -2,7 +2,7 @@
 
 module Mutations
   module Term
-    class CreateTerm < Mutations::Term::BaseMutation
+    class CreateTerm < Mutations::BaseMutation
       argument :vocabulary_string_key, ID, required: true
       argument :pref_label, String, required: true
       argument :alt_labels, [String], required: false
@@ -16,7 +16,7 @@ module Mutations
       def resolve(vocabulary_string_key:, custom_fields: [], **attributes)
         ability.authorize! :create, ::Term
 
-        vocabulary = find_unlocked_vocabulary!(vocabulary_string_key)
+        vocabulary = ::Vocabulary.find_by!(string_key: vocabulary_string_key)
 
         term = ::Term.new(**attributes)
         term.vocabulary = vocabulary
