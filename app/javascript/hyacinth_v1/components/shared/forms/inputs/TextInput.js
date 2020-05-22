@@ -12,7 +12,7 @@ class TextInput extends React.PureComponent {
 
   render() {
     const {
-      onChange, inputName, value, disabled, placeholder, ...rest
+      onChange, inputName, value, size, disabled, placeholder, ...rest
     } = this.props;
 
     return (
@@ -22,6 +22,7 @@ class TextInput extends React.PureComponent {
           tabIndex="0"
           name={inputName}
           value={value}
+          size={size}
           onChange={this.onChangeHandler}
           placeholder={placeholder}
           disabled={disabled}
@@ -31,10 +32,17 @@ class TextInput extends React.PureComponent {
   }
 }
 
+TextInput.defaultProps = {
+  size: null,
+  disabled: false,
+};
+
 TextInput.propTypes = {
   inputName: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   value: PropTypes.string.isRequired,
+  size: PropTypes.string,
+  disabled: PropTypes.bool,
 };
 
 export default TextInput;

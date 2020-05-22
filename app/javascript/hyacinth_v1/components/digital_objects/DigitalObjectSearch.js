@@ -4,11 +4,13 @@ import {
   Card, Col, Row,
 } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
-import { NumberParam, StringParam, withQueryParams } from 'use-query-params';
+import {
+  NumberParam, StringParam, withQueryParams, withDefault, decodeQueryParams, encodeQueryParams,
+} from 'use-query-params';
 import * as qs from 'query-string';
 
 import DigitalObjectList from './DigitalObjectList';
-import DigitalObjectFacets from './DigitalObjectFacets';
+import FacetSidebar from './search/FacetSidebar';
 import ResultCountAndSortOptions from './search/ResultCountAndSortOptions';
 
 import ContextualNavbar from '../shared/ContextualNavbar';
@@ -17,60 +19,87 @@ import GraphQLErrors from '../shared/GraphQLErrors';
 import { getDigitalObjectsQuery } from '../../graphql/digitalObjects';
 import FilterArrayParam from '../../utils/filterArrayParam';
 import QueryForm from './search/QueryForm';
+import SelectedFacetsBar from './search/SelectedFacetsBar';
 
-const limit = 20;
+// NOTE: We are using the use-query-params library to automatically parse
+// query params only. The library is able to update the browser
+// history (thus making the back button work), but there isn't a way to
+// re-render the page. UseEffect hooks don't seem to notice any
+// history changes made by the external library.
+
+const queryParamsConfig = {
+  q: StringParam,
+  filters: withDefault(FilterArrayParam, []),
+  pageNumber: withDefault(NumberParam, 1),
+  perPage: withDefault(NumberParam, 20),
+};
 
 const DigitalObjectSearch = ({ query }) => {
-  const [pageNumber] = useState(query.pageNumber);
-  const [offset, setOffset] = useState(((pageNumber || 1) - 1) * limit);
+  const [pageNumber, setPageNumber] = useState(query.pageNumber);
+  const [limit, setLimit] = useState(query.perPage);
+  const [offset] = useState((query.pageNumber - 1) * limit);
   const [totalObjects, setTotalObjects] = useState(0);
   const [searchParams, setSearchParams] = useState({ query: query.q, filters: query.filters });
+
   const {
     loading, error, data, refetch,
   } = useQuery(
     getDigitalObjectsQuery, {
-      variables: { limit, offset, searchParams },
+      variables: { limit, offset: (pageNumber - 1) * limit, searchParams },
       onCompleted: (searchData) => { setTotalObjects(searchData.digitalObjects.totalCount); },
     },
   );
+
   const history = useHistory();
   const location = useLocation();
-  useEffect(
-    () => {
-      const parsedQueryString = qs.parse(location.search);
-      const { q } = parsedQueryString;
-      const queryPageNumber = Number.parseInt((parsedQueryString.pageNumber || '1'), 10);
-      const filters = (parsedQueryString.filters)
-        ? FilterArrayParam.decode(parsedQueryString.filters)
-        : parsedQueryString.filters;
-      const keywordChanged = !(q === searchParams.query);
-      const filtersChanged = !(filters === searchParams.filters);
-      const pageChanged = !(pageNumber === queryPageNumber);
-      if (keywordChanged || filtersChanged || pageChanged) {
-        setSearchParams({ query: q, filters });
-        setOffset((queryPageNumber - 1) * limit);
-        refetch();
-      }
-    },
-    [location.search, history.location],
-  );
+
+  // Runs when the component is initialized as well as when location.search
+  // or history.location changes.
+  // NOTE: Apollo seems to not requery when the variables are the same.
+  useEffect(() => {
+    // Decodes query parameters with the same logic used to instantiate the component
+    const queryParams = {
+      query: undefined,
+      pageNumber: undefined,
+      perPage: undefined,
+      filters: undefined,
+      ...qs.parse(location.search),
+    };
+    const {
+      q, filters, pageNumber: newPageNumber, perPage: newPerPage,
+    } = decodeQueryParams(queryParamsConfig, queryParams);
+
+    setSearchParams({ query: q, filters });
+    setLimit(newPerPage);
+    setPageNumber(newPageNumber);
+    refetch();
+  }, [location.search, history.location]);
 
   if (loading) return (<></>);
   if (error) return (<GraphQLErrors errors={error} />);
+
   const { digitalObjects: { nodes, facets, totalCount } } = data;
-  const onPageNumberClick = (newOffset) => {
-    const { filters = [] } = searchParams;
-    const parsedQueryString = qs.parse(location.search);
-    parsedQueryString.pageNumber = (newOffset / limit) + 1;
-    parsedQueryString.filters = FilterArrayParam.encode(filters);
-    location.search = qs.stringify(parsedQueryString);
+
+  const updateQueryParameters = (newParams) => {
+    location.search = qs.stringify(encodeQueryParams(queryParamsConfig, newParams));
     history.push(location);
   };
+
+  const onPageNumberClick = (newOffset) => {
+    updateQueryParameters({
+      pageNumber: (newOffset / limit) + 1,
+      perPage: limit,
+      filters: searchParams.filters,
+      q: searchParams.filters,
+    });
+  };
+
   const isFacetCurrent = (fieldName, value) => {
     const detector = filter => ((filter.field === fieldName) && (filter.value === value));
     const { filters = [] } = searchParams;
     return filters ? filters.find(detector) : false;
   };
+
   const onFacetSelect = (fieldName, value) => {
     const detector = filter => ((filter.field === fieldName) && (filter.value === value));
     const others = filter => ((filter.field !== fieldName) || (filter.value !== value));
@@ -79,50 +108,87 @@ const DigitalObjectSearch = ({ query }) => {
     const updatedFilters = isFiltered
       ? filters.filter(others)
       : [...filters, { field: fieldName, value }];
-    const parsedQueryString = qs.parse(location.search);
-    parsedQueryString.filters = FilterArrayParam.encode(updatedFilters);
-    parsedQueryString.q = searchParams.query;
-    // all changes should reset pageNumber to 1
-    parsedQueryString.pageNumber = '1';
-    location.search = qs.stringify(parsedQueryString);
-    history.push(location);
+
+    updateQueryParameters({
+      pageNumber: 1,
+      perPage: limit,
+      filters: updatedFilters,
+      q: searchParams.query,
+    });
   };
+
+  // TODO: This is going to eventually a query value and type of search value.
   const onQueryChange = (value) => {
-    const { filters = [] } = searchParams;
-    const parsedQueryString = qs.parse(location.search);
-    parsedQueryString.q = value;
-    parsedQueryString.filters = FilterArrayParam.encode(filters);
-    // all changes should reset pageNumber to 1
-    parsedQueryString.pageNumber = '1';
-    location.search = qs.stringify(parsedQueryString);
-    history.push(location);
+    updateQueryParameters({
+      pageNumber: 1,
+      perPage: limit,
+      filters: searchParams.filters,
+      q: value,
+    });
   };
+
+  const onPerPageChange = (value) => {
+    updateQueryParameters({
+      pageNumber: 1,
+      perPage: value,
+      filters: searchParams.filters,
+      q: searchParams.query,
+    });
+  };
+
+  // TODO: Method to apply sort change.
+  const onSortChange = (field, direction) => {}
+
   const docsFound = nodes.length > 0;
+
   return (
     <>
       <ContextualNavbar
         title="Digital Objects"
         rightHandLinks={[{ label: 'New Digital Object', link: '/digital_objects/new' }]}
       />
-      <>
-        {
-          docsFound && <ResultCountAndSortOptions totalCount={totalCount} limit={limit} offset={offset} searchParams={searchParams} />
-        }
-        <Row>
-          <Col xs={9}>
-            { docsFound
-              ? <DigitalObjectList className="digital-object-search-results" digitalObjects={nodes} />
-              : <Card><Card.Header>No Digital Objects found.</Card.Header></Card>
-            }
-          </Col>
-          <Col xs={3}>
-            <QueryForm value={query.q} onQueryChange={onQueryChange} onSubmit={refetch} />
-            <DigitalObjectFacets className="digital-object-search-facets" facets={facets} isFacetCurrent={isFacetCurrent} onFacetSelect={onFacetSelect} />
-          </Col>
-        </Row>
-      </>
+
+      <QueryForm value={query.q} onQueryChange={onQueryChange} />
+
+      <SelectedFacetsBar
+        selectedFacets={searchParams.filters}
+        facets={facets}
+        onRemoveFacet={onFacetSelect}
+      />
+
+      {
+        docsFound && (
+          <ResultCountAndSortOptions
+            // selected sort
+            onSortChange={onSortChange}
+            onPerPageChange={onPerPageChange}
+            totalCount={totalCount}
+            limit={limit}
+            offset={offset}
+            searchParams={searchParams}
+          />
+        )
+      }
+
+      <Row>
+        <Col md={8}>
+          { docsFound
+            ? <DigitalObjectList className="digital-object-search-results" digitalObjects={nodes} />
+            : <Card><Card.Header>No Digital Objects found.</Card.Header></Card>
+          }
+        </Col>
+        <Col md={4}>
+          <FacetSidebar
+            facets={facets}
+            isFacetCurrent={isFacetCurrent}
+            onFacetSelect={onFacetSelect}
+            selectedFacets={searchParams.filters}
+          />
+        </Col>
+      </Row>
+
       <PaginationBar
-        offset={offset}
+        offset={(pageNumber - 1) * limit}
         limit={limit}
         totalItems={totalObjects}
         onClick={onPageNumberClick}
@@ -131,11 +197,4 @@ const DigitalObjectSearch = ({ query }) => {
   );
 };
 
-export default withQueryParams(
-  {
-    q: StringParam,
-    filters: FilterArrayParam,
-    pageNumber: NumberParam,
-  },
-  DigitalObjectSearch,
-);
+export default withQueryParams(queryParamsConfig, DigitalObjectSearch);
