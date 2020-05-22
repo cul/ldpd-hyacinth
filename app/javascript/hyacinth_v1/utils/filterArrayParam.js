@@ -16,7 +16,9 @@ const FilterArrayParam = {
       const [field, value] = Object.entries(decodeObject(encoded,'::','__'))[0];
       return { field, value };
     };
-    return decodeArray(arrayStr).map(decodeFilter) || [];
+
+    const decodedArray = decodeArray(arrayStr);
+    return decodedArray == null ? decodedArray : decodedArray.map(decodeFilter);
   },
 };
 

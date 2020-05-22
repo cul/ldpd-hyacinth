@@ -122,3 +122,9 @@ nav.contextual-navbar {
     border-bottom: none;
   }
 }
+
+// Rounding out pills
+.badge-pill {
+  border-radius: 10rem;
+  padding: .2rem .3rem;
+}
