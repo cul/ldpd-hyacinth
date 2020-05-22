@@ -292,6 +292,18 @@ RSpec.describe Term, type: :model, solr: true do
         expect(term.save).to be true
       end
     end
+
+    context 'when vocabulary is locked' do
+      let(:vocab) { FactoryBot.create(:vocabulary) }
+
+      before { vocab.update(locked: true) }
+
+      it 'raises error' do
+        expect {
+          Term.create(vocabulary: vocab, pref_label: 'new_term', term_type: Term::TEMPORARY)
+        }.to raise_error(Hyacinth::Exceptions::VocabularyLocked)
+      end
+    end
   end
 
   describe 'when updating record' do
@@ -321,6 +333,14 @@ RSpec.describe Term, type: :model, solr: true do
         expect(term.update(pref_label: 'Big Foot')).to be false
       end
     end
+
+    context 'when vocabulary is locked' do
+      before { term.vocabulary.update(locked: true) }
+
+      it 'raises error' do
+        expect { term.update(authority: "new") }.to raise_error(Hyacinth::Exceptions::VocabularyLocked)
+      end
+    end
   end
 
   describe 'when destroying a term' do
@@ -330,6 +350,14 @@ RSpec.describe Term, type: :model, solr: true do
       expect(term_solr_doc).not_to be nil
       term.destroy
       expect(Hyacinth::Config.term_search_adapter.find(term.vocabulary.string_key, term.uri)).to be nil
+    end
+
+    context 'when vocabulary is locked' do
+      before { term.vocabulary.update(locked: true) }
+
+      it 'raises error' do
+        expect { term.destroy }.to raise_error(Hyacinth::Exceptions::VocabularyLocked)
+      end
     end
   end
 end

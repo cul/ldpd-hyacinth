@@ -11,7 +11,8 @@ class Term < ApplicationRecord
   belongs_to :vocabulary
 
   before_validation :set_uid, :set_uri, :set_uri_hash, on: :create
-  before_save :cast_custom_fields
+  before_save :cast_custom_fields, :vocabulary_locked!
+  before_destroy :vocabulary_locked!
   after_commit :update_solr # Is triggered after successful save/update/destroy.
 
   validates :vocabulary, :pref_label, :uri, :uri_hash, :uid, :term_type, presence: true
@@ -139,6 +140,11 @@ class Term < ApplicationRecord
       return unless persisted? && term_type == TEMPORARY # skip if object is new or is deleted
 
       errors.add(:pref_label, 'cannot be updated for temp terms') if pref_label_changed?
+    end
+
+    # Raise error if vocabulary is locked
+    def vocabulary_locked!
+      raise Hyacinth::Exceptions::VocabularyLocked, 'term cannot be created/updated/deleted while vocabulary is locked' if vocabulary.locked?
     end
 
     def update_solr # If this is unsuccessful the solr core will be out of sync

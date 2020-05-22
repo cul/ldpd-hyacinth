@@ -32,5 +32,7 @@ module Hyacinth
 
     class ResourceImportError < HyacinthError; end
     class BatchImportError < HyacinthError; end
+
+    class VocabularyLocked < HyacinthError; end
   end
 end
