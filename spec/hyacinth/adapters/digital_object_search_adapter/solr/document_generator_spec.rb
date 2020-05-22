@@ -17,7 +17,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
     its(['id']) { is_expected.to eql authorized_object.uid }
     its(['state_ssi']) { is_expected.to eql authorized_object.state }
     its(['digital_object_type_ssi']) { is_expected.to eql authorized_object.digital_object_type }
-    its(['title_ssi']) { is_expected.to eql('The Tall Man and His Hat') }
+    its(['title_ss']) { is_expected.to eql('The Tall Man and His Hat') }
     its(['sort_title_ssi']) { is_expected.to eql('Tall Man and His Hat') }
     its(['created_at_dtsi']) { is_expected.to match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/) }
     its(['updated_at_dtsi']) { is_expected.to match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/) }
