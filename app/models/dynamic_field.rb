@@ -29,7 +29,7 @@ class DynamicField < ActiveRecord::Base
   validates :field_type,            presence: true, inclusion: { in: TYPES }
   validates :controlled_vocabulary, presence: true, if: proc { |d| d.field_type == Type::CONTROLLED_TERM }
   validates :select_options,        presence: true, if: proc { |d| d.field_type == Type::SELECT }
-
+  validates :is_facetable,          inclusion: { in: [false], message: 'cannot be true for textareas' }, if: proc { |d| d.field_type == Type::TEXTAREA }
   validates :additional_data_json, :select_options, valid_json: true
 
   def as_json(_options = {})
