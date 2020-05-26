@@ -100,6 +100,13 @@ function DynamicFieldForm(props) {
     deleteDynamicField({ variables }).then(() => history.push('/dynamic_fields'));
   };
 
+  const onFieldTypeSelect = (newFieldType) => {
+    if (newFieldType !== 'controlled_term') setControlledVocabulary('');
+    if (newFieldType === 'textarea') setIsFacetable(false);
+
+    setFieldType(newFieldType);
+  };
+
   return (
     <Form>
       <GraphQLErrors errors={createError || updateError || deleteError} />
@@ -126,7 +133,7 @@ function DynamicFieldForm(props) {
         <SelectInput
           value={fieldType}
           options={fieldTypes.map(t => ({ value: t, label: startCase(t) }))}
-          onChange={setFieldType}
+          onChange={onFieldTypeSelect}
         />
       </InputGroup>
 
@@ -159,10 +166,14 @@ function DynamicFieldForm(props) {
         <TextInput value={filterLabel} onChange={setFilterLabel} />
       </InputGroup>
 
-      <InputGroup>
-        <Label>Is Facetable?</Label>
-        <Checkbox value={isFacetable} onChange={setIsFacetable} />
-      </InputGroup>
+      <Collapse in={fieldType !== 'textarea'}>
+        <div>
+          <InputGroup>
+            <Label>Is Facetable?</Label>
+            <Checkbox value={isFacetable} onChange={setIsFacetable} />
+          </InputGroup>
+        </div>
+      </Collapse>
 
       <InputGroup>
         <Label>Include in:</Label>
