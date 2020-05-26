@@ -84,6 +84,15 @@ RSpec.describe DynamicField, type: :model do
       end
     end
 
+    context 'when creating a textarea dynamic field' do
+      let(:dynamic_field) { FactoryBot.build(:dynamic_field, field_type: DynamicField::Type::TEXTAREA, is_facetable: true) }
+
+      it 'requires is_facetable to be false' do
+        expect(dynamic_field.save).to be false
+        expect(dynamic_field.errors.full_messages).to include 'Is facetable cannot be true for textareas'
+      end
+    end
+
     context 'when creating controlled term dynamic field' do
       let(:dynamic_field) { FactoryBot.build(:dynamic_field, controlled_vocabulary: nil) }
 
