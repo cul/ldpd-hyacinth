@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Retrieving Digital Objects', type: :request, solr: true do
-  let!(:authorized_object) { FactoryBot.create(:item, :with_primary_project, :with_other_projects) }
+  let!(:authorized_object) { FactoryBot.create(:item, :with_descriptive_metadata, :with_primary_project, :with_other_projects) }
   let!(:authorized_project) { authorized_object.projects.first }
   let!(:unauthorized_object) do
     FactoryBot.create(

@@ -19,5 +19,10 @@ FactoryBot.define do
     updated_by      { User.first || create(:user) }
 
     association :dynamic_field_group, factory: :dynamic_field_group, strategy: :create
+
+    trait :string do
+      field_type { DynamicField::Type::STRING }
+      controlled_vocabulary { nil }
+    end
   end
 end

@@ -20,7 +20,7 @@ module DigitalObjectConcerns
         end
       end
 
-      # Trims whitespace and removes blank fields from dynamic field data.
+      # Trims whitespace and removes blank fields from descriptive metadata.
       def clean_rights!
         Hyacinth::Utils::Clean.trim_whitespace!(rights)
         Hyacinth::Utils::Clean.remove_blank_fields!(rights)

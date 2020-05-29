@@ -43,7 +43,7 @@ RSpec.describe DigitalObjectImportProcessingJob, solr: true do
         it "has the expected dyanmic field data" do
           expect(created_digital_object.descriptive_metadata).to eq(
             'title' => [{ 'sort_portion' => 'The', 'non_sort_portion' => 'Cool Item' }],
-            'abstract' => [{ 'abstract_value' => 'some abstract' }]
+            'abstract' => [{ 'value' => 'some abstract' }]
           )
         end
 

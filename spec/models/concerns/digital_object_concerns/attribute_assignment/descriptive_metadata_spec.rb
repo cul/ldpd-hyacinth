@@ -17,7 +17,7 @@ RSpec.describe DigitalObjectConcerns::AttributeAssignment::DescriptiveMetadata d
     }
   end
   context '#assign_descriptive_metadata' do
-    it 'merges dynamic field data when merge param is true' do
+    it 'merges descriptive metadata when merge param is true' do
       digital_object_with_sample_data.assign_descriptive_metadata(digital_object_data, true)
       expect(digital_object_with_sample_data.descriptive_metadata['title']).to eq([{
         'non_sort_portion' => 'The',
@@ -30,7 +30,7 @@ RSpec.describe DigitalObjectConcerns::AttributeAssignment::DescriptiveMetadata d
       }])
     end
 
-    it 'merges dynamic field data when merge param is false' do
+    it 'merges descriptive metadata data when merge param is false' do
       digital_object_with_sample_data.assign_descriptive_metadata(digital_object_data, false)
       expect(digital_object_with_sample_data.descriptive_metadata['title']).to be_nil
 

@@ -8,9 +8,14 @@ FactoryBot.define do
         'digital_object_type' => 'item',
         'descriptive_metadata' => {
           'title' => [{ 'sort_portion' => 'The', 'non_sort_portion' => 'Cool Item' }],
-          'abstract' => [{ 'abstract_value' => 'some abstract' }]
+          'abstract' => [{ 'value' => 'some abstract' }]
         }
       }.to_json
+    end
+
+    after(:build) do
+      DynamicFieldsHelper.load_title_fields!
+      DynamicFieldsHelper.load_abstract_fields!
     end
 
     association :batch_import, strategy: :create

@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe 'Retrieving Digital Object', type: :request do
-  before { Hyacinth::DynamicFieldsLoader.load_rights_fields! }
-
-  let(:authorized_object) { FactoryBot.create(:item, :with_rights, :with_primary_project, :with_other_projects) }
+  let(:authorized_object) do
+    FactoryBot.create(:item, :with_rights, :with_descriptive_metadata, :with_primary_project, :with_other_projects)
+  end
   let(:authorized_project) { authorized_object.projects.first }
   let(:authorized_publish_target) { authorized_project.publish_targets.first }
 

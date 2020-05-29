@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Updating Item Rights', type: :request, solr: true do
-  before { Hyacinth::DynamicFieldsLoader.load_rights_fields! }
+  before { Hyacinth::DynamicFieldsLoader.load_rights_fields!(load_vocabularies: true) }
 
   let(:authorized_project) { FactoryBot.create(:project, :allow_asset_rights) }
   let(:authorized_item) { FactoryBot.create(:item, primary_project: authorized_project) }
@@ -15,6 +15,34 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
   end
 
   context "when logged in user has appropriate permissions" do
+    before do
+      # Have to create terms so they rehydrate + dehydrate properly
+      Term.create(
+        pref_label: 'In Copyright',
+        uri: 'https://example.com/term/in_copyright',
+        term_type: 'external',
+        vocabulary: Vocabulary.find_by(string_key: 'rights_statement')
+      )
+      Term.create(
+        pref_label: "Random, Person",
+        term_type: "external",
+        uri: "https://example.com/term/random,person",
+        vocabulary: Vocabulary.find_by(string_key: 'name')
+      )
+      Term.create(
+        pref_label: "United States",
+        term_type: "external",
+        uri: "https://example.com/term/united_states",
+        vocabulary: Vocabulary.find_by(string_key: 'geonames')
+      )
+      Term.create(
+        pref_label: "Great Location",
+        term_type: "external",
+        uri: "https://example.com/great_location",
+        vocabulary: Vocabulary.find_by(string_key: 'location')
+      )
+    end
+
     context 'when updating item rights' do
       let(:variables) do
         {
@@ -26,6 +54,8 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
                 country_of_origin: {
                   pref_label: "United States",
                   term_type: "external",
+                  authority: nil,
+                  alt_labels: [],
                   uri: "https://example.com/term/united_states"
                 },
                 film_distributed_to_public: 'yes',
@@ -35,6 +65,8 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
                 copyright_statement: {
                   pref_label: "In Copyright",
                   term_type: "external",
+                  authority: nil,
+                  alt_labels: [],
                   uri: "https://example.com/term/in_copyright"
                 },
                 note: "No Copyright Notes",
@@ -48,6 +80,8 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
                 name: {
                   pref_label: "Random, Person",
                   term_type: "external",
+                  authority: nil,
+                  alt_labels: [],
                   uri: "https://example.com/term/random,person"
                 },
                 heirs: "No Heirs",
@@ -84,11 +118,11 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
                 photographic_or_film_credit: "No Credits",
                 excerpt_limited_to: "23 minutes",
                 other: "None",
-                permissions_granted_as_part_of_the_use_license: [{ value: "No permissions" }]
+                permissions_granted_as_part_of_the_use_license: [{ value: "Reproduction" }]
               }],
               underlying_rights: [{
                 note: "No underlying rights",
-                talent_rights: "No talent rights",
+                talent_rights: "SAG AFTRA",
                 columbia_music_license: "Master recording license",
                 composition: "none",
                 recording: "none",
@@ -128,6 +162,8 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
                 copyright_statement: {
                   pref_label: "In Copyright",
                   term_type: "external",
+                  authority: nil,
+                  alt_labels: [],
                   uri: "https://example.com/term/in_copyright"
                 },
                 note: "No Copyright Notes",
@@ -138,13 +174,15 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
                 cul_copyright_assessment_date: "2001-01-01"
               }],
               restriction_on_access: [{
-                value: "Open",
+                value: "Public Access",
                 embargo_release_date: "2001-01-01",
                 location: [{
                   term: {
                     pref_label: "Great Location",
                     term_type: "external",
-                    uri: "https://example.com/great_location"
+                    uri: "https://example.com/great_location",
+                    authority: nil,
+                    alt_labels: []
                   }
                 }],
                 affiliation: [
@@ -162,13 +200,13 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
       end
 
       let(:expected_response) do
-        %(
-          {
-            "pref_label": "In Copyright",
-            "uri": "https://example.com/term/in_copyright",
-            "term_type": "external"
-          }
-        )
+        {
+          'pref_label' => "In Copyright",
+          'uri' => "https://example.com/term/in_copyright",
+          'term_type' => "external",
+          'alt_labels' => [],
+          'authority' => nil
+        }
       end
 
       before do
@@ -179,8 +217,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
       it "return a asset with the expected rights fields" do
         response_data = JSON.parse(response.body)
         copyright_statement = response_data['data']['updateRights']['digitalObject']['rights']['copyright_status_override'][0]['copyright_statement']
-        expected_props = JSON.parse(expected_response)
-        expect(copyright_statement).to include expected_props
+        expect(copyright_statement).to include expected_response
       end
 
       it 'sets rights fields' do

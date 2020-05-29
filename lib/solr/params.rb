@@ -38,8 +38,12 @@ module Solr
       self
     end
 
-    def q(query)
-      @parameters[:q] = query.blank? ? nil : Solr::Utils.escape(query)
+    def q(query, escape: true)
+      if query.blank?
+        @parameters[:q] = nil
+      else
+        @parameters[:q] = escape ? Solr::Utils.escape(query) : query
+      end
       self
     end
 

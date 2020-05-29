@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Term < ApplicationRecord
+  CORE_FIELDS = ['uri', 'alt_labels', 'pref_label', 'term_type', 'authority'].freeze
+
   TEMPORARY_URI_BASE = 'temp:'
   LOCAL     = 'local'
   TEMPORARY = 'temporary'
@@ -54,6 +56,10 @@ class Term < ApplicationRecord
 
     raise 'Missing local_uri_prefix in config/hyacinth.yml' unless host
     host.ends_with?('/') ? host : "#{host}/"
+  end
+
+  def self.temporary_uri(vocabulary, pref_label)
+    URI(TEMPORARY_URI_BASE + Digest::SHA256.hexdigest(vocabulary + pref_label)).to_s
   end
 
   private
@@ -117,7 +123,7 @@ class Term < ApplicationRecord
       when LOCAL
         self.uri = "#{Term.local_uri_prefix}term/#{uid}"
       when TEMPORARY
-        self.uri = URI(TEMPORARY_URI_BASE + Digest::SHA256.hexdigest(vocabulary.string_key + pref_label)).to_s
+        self.uri = Term.temporary_uri(vocabulary.string_key, pref_label)
       end
     end
 

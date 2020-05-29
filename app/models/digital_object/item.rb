@@ -5,5 +5,9 @@ module DigitalObject
     def initialize
       super
     end
+
+    def can_have_rights?
+      true
+    end
   end
 end

@@ -22,6 +22,7 @@ module DigitalObject
     include DigitalObjectConcerns::ExportFieldsBehavior
     include DigitalObjectConcerns::PreserveBehavior
     include DigitalObjectConcerns::IndexBehavior
+    include DigitalObjectConcerns::CreateAndUpdateTerms
 
     SERIALIZATION_VERSION = '1' # Increment this if the serialized data format changes so that we can upgrade to the new format.
 
@@ -33,7 +34,7 @@ module DigitalObject
     # Set up callbacks
     define_model_callbacks :validation, :save, :destroy, :undestroy, :purge
     before_validation :clean_descriptive_metadata!, :clean_rights!
-    # TODO: Add these before_validations ---> :register_new_uris_and_values_for_descriptive_metadata!, normalize_controlled_term_fields!
+    before_save :create_and_update_terms
     after_save :index
     before_destroy :remove_all_parents, :unpublish_from_all
     after_destroy :index
@@ -58,9 +59,9 @@ module DigitalObject
     # Identifiers
     metadata_attribute :identifiers, Hyacinth::DigitalObject::TypeDef::JsonSerializableSet.new.default(-> { Set.new })
     # Descriptive Metadata
-    metadata_attribute :descriptive_metadata, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Hash.new })
+    metadata_attribute :descriptive_metadata, Hyacinth::DigitalObject::TypeDef::DynamicFieldData.new(:descriptive_metadata).default(-> { Hash.new })
     # Rights Information
-    metadata_attribute :rights, Hyacinth::DigitalObject::TypeDef::JsonSerializableHash.new.default(-> { Hash.new })
+    metadata_attribute :rights, Hyacinth::DigitalObject::TypeDef::DynamicFieldData.new(:rights_metadata).default(-> { Hash.new })
     # Administrative Relationsip Objects
     metadata_attribute :primary_project, Hyacinth::DigitalObject::TypeDef::Project.new
     metadata_attribute :other_projects, Hyacinth::DigitalObject::TypeDef::Projects.new.default(-> { Set.new })
@@ -116,6 +117,10 @@ module DigitalObject
 
     def number_of_children
       structured_children['structure'].length
+    end
+
+    def can_have_rights?
+      false
     end
   end
 end

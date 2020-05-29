@@ -41,7 +41,7 @@ RSpec.describe 'Retrieving Digital Object Imports', type: :request do
                     "status": "pending"
                   },
                   {
-                    "digitalObjectData": "{\\"digital_object_type\\":\\"item\\",\\"descriptive_metadata\\":{\\"title\\":[{\\"sort_portion\\":\\"The\\",\\"non_sort_portion\\":\\"Cool Item\\"}],\\"abstract\\":[{\\"abstract_value\\":\\"some abstract\\"}]}}",
+                    "digitalObjectData": "{\\"digital_object_type\\":\\"item\\",\\"descriptive_metadata\\":{\\"title\\":[{\\"sort_portion\\":\\"The\\",\\"non_sort_portion\\":\\"Cool Item\\"}],\\"abstract\\":[{\\"value\\":\\"some abstract\\"}]}}",
                     "importErrors": [],
                     "index": 34,
                     "status": "pending"

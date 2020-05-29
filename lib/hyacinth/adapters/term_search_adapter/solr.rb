@@ -46,7 +46,20 @@ module Hyacinth
           # queries with just filters are faster than /search queries.
           handler = params[:q].blank? ? 'select' : 'search'
 
-          solr.get(handler, params: params)
+          solr.post(handler, params: params)
+        end
+
+        # Batch lookup of terms by vocabulary and uri combination. The hash should be
+        # vocabulary string keys mapped to an array of uris.
+        #
+        # @param [Hash<String, Array<String>>] terms_to_lookup
+        def batch_find(terms_to_lookup)
+          search_query = terms_to_lookup.map { |vocab, uris|
+            uri_query = uris.compact.uniq.map { |u| "\"#{u}\"" }.join(' OR ')
+            "(vocabulary:\"#{vocab}\" AND uri:(#{uri_query}))"
+          }.join(' OR ')
+
+          search { |params| params.q(search_query, escape: false) }
         end
 
         def delete(uid)
