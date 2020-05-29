@@ -22,5 +22,9 @@ module DigitalObject
     def primary_resource_name
       PRIMARY_RESOURCE_NAME
     end
+
+    def can_have_rights?
+      true
+    end
   end
 end

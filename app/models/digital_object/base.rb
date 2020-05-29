@@ -118,5 +118,9 @@ module DigitalObject
     def number_of_children
       structured_children['structure'].length
     end
+
+    def can_have_rights?
+      false
+    end
   end
 end
