@@ -13,11 +13,7 @@ module DigitalObjectConcerns
       def create_and_update_terms
         # Extract for rights and descriptive_metadata. If digital object is not of the appropriate type
         # do not extract rights terms.
-        rights_terms = if self.is_a?(DigitalObject::Item) || self.is_a?(DigitalObject::Asset)
-                         Hyacinth::DynamicFieldsMap.new("#{digital_object_type}_rights").extract_terms(rights)
-                       else
-                         {}
-                       end
+        rights_terms = can_have_rights? ? Hyacinth::DynamicFieldsMap.new("#{digital_object_type}_rights").extract_terms(rights) : {}
 
         descriptive_terms = Hyacinth::DynamicFieldsMap.new('descriptive').extract_terms(descriptive_metadata)
 
