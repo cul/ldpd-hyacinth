@@ -35,7 +35,7 @@ module DynamicFieldsHelper
               string_key: 'abstract',
               display_label: 'Abstract',
               dynamic_fields: [
-                { string_key: 'value', display_label: 'Value', field_type: DynamicField::Type::STRING },
+                { string_key: 'value', display_label: 'Value', field_type: DynamicField::Type::STRING }
               ]
             }
           ]
