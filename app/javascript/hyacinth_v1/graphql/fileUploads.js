@@ -1,9 +1,12 @@
 import * as ActiveStorage from 'activestorage';
 
-const uploadFile = (file, url) => {
+const uploadFile = (file, url, onProgress) => {
   const delegate = {
-    directUploadWillCreateBlobWithXHR: (data) => { console.debug(data); },
-    directUploadWillStoreFileWithXHR: (data) => { console.debug(data); },
+    directUploadWillStoreFileWithXHR: (request) => {
+      request.upload.addEventListener('progress', (event) => {
+        onProgress(Math.round(event.loaded * 100 / event.total));
+      });
+    },
   };
   const directUpload = new ActiveStorage.DirectUpload(file, url, delegate);
   return new Promise((resolve, reject) => {

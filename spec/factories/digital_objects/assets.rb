@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :asset, class: DigitalObject::Asset do
     parent { nil } # parent should be passed in when factory build or create or called, otherwise this object won't validate
-    asset_type { BestType.dc_type.for_file_name("foo.xyz") }
+    asset_type { nil }
     initialize_with do
       instance = new
       instance.primary_project = parent.primary_project if parent
@@ -46,6 +46,10 @@ FactoryBot.define do
           media_type: 'text/plain',
           file_size: File.size(test_file_fixture_path)
         )
+
+        # Need to manually set asset_type since it's normally set during a resource import
+        # and we're manually creating the resource above.
+        digital_object.asset_type = 'Text'
       end
     end
   end

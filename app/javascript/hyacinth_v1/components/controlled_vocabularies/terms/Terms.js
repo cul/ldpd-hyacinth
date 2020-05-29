@@ -15,7 +15,7 @@ export default class Terms extends React.PureComponent {
           exact
           path="/controlled_vocabularies/:stringKey/terms/new"
           component={TermNew}
-          requiredAbility={{ action: 'create', subject: 'Term' }}
+          requiredAbility={{ action: 'update', subject: 'Term' }} // Use 'update' instead of 'create' because all users are allowed to 'create'
         />
 
         <ProtectedRoute

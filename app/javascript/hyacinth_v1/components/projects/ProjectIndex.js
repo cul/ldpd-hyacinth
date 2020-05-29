@@ -27,7 +27,7 @@ function ProjectIndex() {
         }
       </Can>
 
-      <Table hover>
+      <Table hover responsive>
         <thead>
           <tr>
             <th>Display Label</th>

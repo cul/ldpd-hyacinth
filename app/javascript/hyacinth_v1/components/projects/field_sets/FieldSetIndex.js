@@ -58,7 +58,7 @@ function FieldSetIndex() {
   return (
     <ProjectInterface project={data.project}>
       <TabHeading>Field Sets</TabHeading>
-      <Table hover>
+      <Table hover responsive>
         <tbody>
           {rows}
 

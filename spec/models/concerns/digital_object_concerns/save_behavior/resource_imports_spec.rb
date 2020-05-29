@@ -52,7 +52,7 @@ RSpec.describe DigitalObjectConcerns::SaveBehavior::ResourceImports do
           blob = ActiveStorage::Blob.create_before_direct_upload!(
             filename: 'blobfile.txt',
             byte_size: blob_content.bytesize,
-            checksum: Digest::MD5.hexdigest(blob_content),
+            checksum: Digest::MD5.base64digest(blob_content),
             content_type: 'text/plain'
           )
           blob.upload(StringIO.new(blob_content))

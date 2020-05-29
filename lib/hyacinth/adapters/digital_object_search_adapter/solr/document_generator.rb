@@ -16,16 +16,19 @@ module Hyacinth
         end
 
         def merge_core_fields_for!(digital_object, solr_document = {})
-          indexable_title = digital_object.generate_title(true)
+          indexable_title = digital_object.generate_title
           solr_document.merge!(
             'id' => digital_object.uid,
             'state_ssi' => digital_object.state,
             'digital_object_type_ssi' => digital_object.digital_object_type,
             'doi_ssi' => digital_object.doi,
             'identifier_ssim' => digital_object.identifiers.to_a,
-            'title_ssi' => indexable_title,
+            'title_ss' => digital_object.generate_title,
+            'sort_title_ssi' => digital_object.generate_title(true),
             'primary_project_ssi' => digital_object.primary_project&.string_key,
-            'projects_ssim' => project_keys_for(digital_object)
+            'projects_ssim' => project_keys_for(digital_object),
+            'created_at_dtsi' => digital_object.created_at.utc.iso8601,
+            'updated_at_dtsi' => digital_object.updated_at.utc.iso8601
           )
           add_keywords(indexable_title, solr_document)
           solr_document

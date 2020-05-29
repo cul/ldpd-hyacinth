@@ -234,7 +234,7 @@ function PermissionsEditor(props) {
 
   return (
     <form onSubmit={onSubmitHandler}>
-      <Table striped bordered hover size="sm">
+      <Table striped bordered hover responsive size="sm">
         <thead>
           <tr>
             <th key="name">Name</th>

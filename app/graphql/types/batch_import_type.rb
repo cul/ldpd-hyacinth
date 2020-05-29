@@ -15,6 +15,7 @@ module Types
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: false
     field :download_path, String, null: true
     field :without_successful_imports_download_path, String, null: true
+    field :setup_errors, [String], null: true
 
     # Retrieve counts for each status of digital object imports.
     DigitalObjectImport.statuses.each do |status, _number|

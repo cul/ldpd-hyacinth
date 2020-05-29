@@ -10,6 +10,9 @@ module DigitalObject
     resource_attribute :service
     resource_attribute :access
 
+    before_validation :assign_asset_type_from_primary_resource_import_if_blank
+    before_validation :assign_title_from_primary_resource_import_if_blank
+
     metadata_attribute :asset_type, Hyacinth::DigitalObject::TypeDef::String.new
 
     restriction_attribute :restricted_onsite, Hyacinth::DigitalObject::TypeDef::Boolean.new
@@ -25,6 +28,28 @@ module DigitalObject
 
     def can_have_rights?
       true
+    end
+
+    def resource_import_for_primary_resource
+      resource_imports[primary_resource_name]
+    end
+
+    def assign_asset_type_from_primary_resource_import_if_blank
+      return if self.asset_type.present?
+
+      resource_import = resource_import_for_primary_resource
+      return if resource_import.blank?
+
+      self.asset_type = BestType.pcdm_type.for_file_name(resource_import.preferred_filename)
+    end
+
+    def assign_title_from_primary_resource_import_if_blank
+      return if self.descriptive_metadata['title'].present?
+
+      resource_import = resource_import_for_primary_resource
+      return if resource_import.blank?
+
+      self.descriptive_metadata['title'] = [{ 'sort_portion' => resource_import.preferred_filename }]
     end
   end
 end

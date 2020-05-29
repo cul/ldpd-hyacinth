@@ -24,4 +24,25 @@ module DynamicFieldsHelper
 
     Hyacinth::DynamicFieldsLoader.load_fields!(title_fields)
   end
+
+  def load_abstract_fields!
+    abstract_fields = {
+      dynamic_field_categories: [
+        {
+          display_label: "Descriptive Metadata",
+          dynamic_field_groups: [
+            {
+              string_key: 'abstract',
+              display_label: 'Abstract',
+              dynamic_fields: [
+                { string_key: 'value', display_label: 'Value', field_type: DynamicField::Type::STRING },
+              ]
+            }
+          ]
+        }
+      ]
+    }
+
+    Hyacinth::DynamicFieldsLoader.load_fields!(abstract_fields)
+  end
 end

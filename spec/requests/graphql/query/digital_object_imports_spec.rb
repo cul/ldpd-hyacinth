@@ -41,10 +41,10 @@ RSpec.describe 'Retrieving Digital Object Imports', type: :request do
                     "status": "pending"
                   },
                   {
-                    "digitalObjectData": "{\\"descriptive_metadata\\":{\\"abstract\\":[{\\"abstract_value\\":\\"some abstract\\"}]}}",
+                    "digitalObjectData": "{\\"digital_object_type\\":\\"item\\",\\"descriptive_metadata\\":{\\"title\\":[{\\"sort_portion\\":\\"The\\",\\"non_sort_portion\\":\\"Cool Item\\"}],\\"abstract\\":[{\\"value\\":\\"some abstract\\"}]}}",
                     "importErrors": [],
                     "index": 34,
-                    "status": "in_progress"
+                    "status": "pending"
                   },
                   {
                      "digitalObjectData": "{\\"descriptive_metadata\\":{\\"date\\":[{\\"value\\":\\"2001\\"}]}}",
@@ -86,12 +86,6 @@ RSpec.describe 'Retrieving Digital Object Imports', type: :request do
                     "importErrors": [],
                     "index": 19,
                     "status":  "in_progress"
-                  },
-                  {
-                    "digitalObjectData": "{\\"descriptive_metadata\\":{\\"abstract\\":[{\\"abstract_value\\":\\"some abstract\\"}]}}",
-                    "importErrors": [],
-                    "index": 34,
-                    "status": "in_progress"
                   }
                 ]
               }

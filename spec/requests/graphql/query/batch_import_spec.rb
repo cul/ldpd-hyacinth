@@ -16,9 +16,9 @@ RSpec.describe 'Retrieving Batch Import', type: :request do
           {
             "fileLocation": "managed-disk://path/to/file",
             "priority": "high",
-            "status": "in_progress",
-            "numberOfPendingImports": 0,
-            "numberOfInProgressImports": 1,
+            "status": "pending",
+            "numberOfPendingImports": 1,
+            "numberOfInProgressImports": 0,
             "numberOfSuccessImports": 0,
             "numberOfFailureImports": 0,
             "originalFilename": "import.csv",
@@ -35,7 +35,7 @@ RSpec.describe 'Retrieving Batch Import', type: :request do
         graphql query(batch_import.id)
       end
 
-      it "return batch import" do
+      it "returns batch import" do
         expect(response.body).to be_json_eql(expected_response).at_path('data/batchImport')
       end
     end

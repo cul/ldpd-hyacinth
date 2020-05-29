@@ -20,7 +20,7 @@ function FieldExportProfileIndex() {
         rightHandLinks={[{ link: '/field_export_profiles/new', label: 'New Field Export Profile' }]}
       />
 
-      <Table hover>
+      <Table hover responsive>
         <thead>
           <tr>
             <th>Name</th>

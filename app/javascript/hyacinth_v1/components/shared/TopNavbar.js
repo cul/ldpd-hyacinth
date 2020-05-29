@@ -45,7 +45,7 @@ function TopNavbar(props) {
               <NavDropdown.Item>Projects</NavDropdown.Item>
             </LinkContainer>
 
-            <Can I="manage" a="Vocabulary">
+            <Can I="read" a="Vocabulary">
               <LinkContainer to="/controlled_vocabularies">
                 <NavDropdown.Item>Controlled Vocabularies</NavDropdown.Item>
               </LinkContainer>
@@ -57,12 +57,12 @@ function TopNavbar(props) {
 
             <NavDropdown.Divider />
 
-            <LinkContainer to="/batch_exports">
-              <NavDropdown.Item>Batch Exports</NavDropdown.Item>
-            </LinkContainer>
-
             <LinkContainer to="/batch_imports">
               <NavDropdown.Item>Batch Imports</NavDropdown.Item>
+            </LinkContainer>
+
+            <LinkContainer to="/batch_exports">
+              <NavDropdown.Item>Batch Exports</NavDropdown.Item>
             </LinkContainer>
           </NavDropdown>
 

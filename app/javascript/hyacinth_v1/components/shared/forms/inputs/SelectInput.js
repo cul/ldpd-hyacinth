@@ -12,7 +12,7 @@ class SelectInput extends React.PureComponent {
 
   render() {
     const {
-      inputName, value, options, onChange, ...rest
+      inputName, value, options, onChange, size, disabled, ...rest
     } = this.props;
 
     return (
@@ -21,6 +21,8 @@ class SelectInput extends React.PureComponent {
           as="select"
           name={inputName}
           value={value}
+          size={size}
+          disabled={disabled}
           onChange={this.onChangeHandler}
         >
           <option key="" value="">Select one...</option>
@@ -35,10 +37,17 @@ class SelectInput extends React.PureComponent {
   }
 }
 
+SelectInput.defaultProps = {
+  size: null,
+  disabled: false,
+};
+
 SelectInput.propTypes = {
   inputName: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  size: PropTypes.string,
+  disabled: PropTypes.bool,
   options: PropTypes.arrayOf(
     PropTypes.shape({
       value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,

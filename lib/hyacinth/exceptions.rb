@@ -31,5 +31,6 @@ module Hyacinth
     class DuplicateTypeError < HyacinthError; end
 
     class ResourceImportError < HyacinthError; end
+    class BatchImportError < HyacinthError; end
   end
 end

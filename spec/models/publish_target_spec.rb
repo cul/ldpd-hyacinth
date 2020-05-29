@@ -80,29 +80,5 @@ RSpec.describe PublishTarget, type: :model do
         expect(publish_target.errors.full_messages).to include 'Doi priority must be less than or equal to 100'
       end
     end
-
-    context "when deserialized from json" do
-      subject(:publish_target) { described_class.new.from_json(json_param) }
-      let(:attr_hash) do
-        {
-          'string_key' => 'great_project_website',
-          'display_label' => 'Great Project Website',
-          'publish_url' => 'https://www.example.com/publish',
-          'api_key' => 'bestapikey',
-          'is_allowed_doi_target' => true,
-          'doi_priority' => 2,
-          'project' => 'great_project'
-        }
-      end
-      let(:json_param) { attr_hash.to_json }
-
-      its(:string_key) { is_expected.to eql 'great_project_website' }
-      its(:display_label) { is_expected.to eql 'Great Project Website' }
-      its(:publish_url) { is_expected.to eql 'https://www.example.com/publish' }
-      its(:api_key) { is_expected.to eql 'bestapikey' }
-      its(:is_allowed_doi_target) { is_expected.to be true }
-      its(:doi_priority) { is_expected.to be 2 }
-      its(:project) { is_expected.to eql Project.find_by(string_key: 'great_project') }
-    end
   end
 end

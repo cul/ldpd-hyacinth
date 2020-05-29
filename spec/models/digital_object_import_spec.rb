@@ -8,10 +8,15 @@ RSpec.describe DigitalObjectImport, type: :model do
 
     it { is_expected.to be_a DigitalObjectImport }
     its(:batch_import) { is_expected.to be_a BatchImport }
-    its(:status)       { is_expected.to eql 'in_progress' }
+    its(:status)       { is_expected.to eql 'pending' }
     its(:index)        { is_expected.to be 34 }
     its(:digital_object_data) do
-      is_expected.to eql('{"descriptive_metadata":{"abstract":[{"abstract_value":"some abstract"}]}}')
+      is_expected.to eql(
+        {
+          'digital_object_type': 'item',
+          'descriptive_metadata': { 'title': [{ 'sort_portion': 'The', 'non_sort_portion': 'Cool Item' }], 'abstract': [{ 'value': 'some abstract' }] }
+        }.to_json
+      )
     end
   end
 end

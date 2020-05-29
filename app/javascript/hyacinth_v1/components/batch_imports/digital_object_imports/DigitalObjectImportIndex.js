@@ -31,7 +31,7 @@ function StatusNavItem({ eventKey, amount }) {
 }
 
 function DigitalObjectImportIndex() {
-  const limit = 1;
+  const limit = 100;
   const { id } = useParams();
 
   const [offset, setOffset] = useState(0);
@@ -107,7 +107,7 @@ function DigitalObjectImportIndex() {
         </Nav>
 
         <div className="m-2">
-          <Table striped hover size="sm">
+          <Table striped hover responsive size="sm">
             <thead>
               <tr>
                 <th style={{ borderTop: 'none' }}>id</th>

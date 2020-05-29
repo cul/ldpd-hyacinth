@@ -4,10 +4,11 @@ module Solr
   class Params
     attr_reader :parameters
 
+    VALID_SORT_DIRECTION = ['asc', 'desc'].freeze
+
     def initialize
       @parameters = {
         q: nil,
-        qt: 'search',
         df: 'keywords_teim', # TODO: Is this actually the default we want? This class is used by the TermSearchAdapter too.
         fq: [],
         'facet.field'.to_sym => [],
@@ -40,12 +41,16 @@ module Solr
     def q(query, escape: true)
       if query.blank?
         @parameters[:q] = nil
-        @parameters[:qt] = 'search'
       else
         @parameters[:q] = escape ? Solr::Utils.escape(query) : query
-        @parameters[:qt] = 'select'
       end
       self
+    end
+
+    def sort(field, direction)
+      raise ArgumentError, "direction must be one of #{VALID_SORT_DIRECTION.join(', ')}, instead got '#{direction}'" unless VALID_SORT_DIRECTION.include?(direction)
+
+      @parameters[:sort] = "#{field} #{direction}"
     end
 
     def to_h

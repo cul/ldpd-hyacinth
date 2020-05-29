@@ -92,6 +92,21 @@ namespace :hyacinth do
 
       Hyacinth::DynamicFieldsLoader.load_fields!(field_definitions)
     end
+
+    desc "Enables some basic fields for the test projects"
+    task enable_fields_for_test_projects: :environment do
+      title_subfields = DynamicFieldGroup.find_by(string_key: "title").dynamic_fields
+      projects = Project.where(string_key: ['test_primary_project', 'another_test_primary_project'])
+      projects.each do |project|
+        title_subfields.each do |title_subfield|
+          EnabledDynamicField.create!(
+            project: project,
+            dynamic_field: title_subfield,
+            digital_object_type: 'item'
+          )
+        end
+      end
+    end
   end
 
   def default_user_accounts

@@ -53,6 +53,7 @@ RSpec.describe BatchExportJob, solr: true do
 
     its(:status) { is_expected.to eq('failure') }
     its(:file_location) { is_expected.to be_blank }
+    its(:export_errors) { is_expected.to be_present }
   end
 
   context 'batch export is not found' do

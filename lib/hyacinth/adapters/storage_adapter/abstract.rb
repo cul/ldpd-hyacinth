@@ -4,6 +4,8 @@ module Hyacinth
   module Adapters
     module StorageAdapter
       class Abstract
+        TEMPFILE_WRITE_BUFFER_BYTE_SIZE = 5.megabytes
+
         def initialize(adapter_config = {})
           raise 'Missing config option: uri_protocol' if adapter_config[:uri_protocol].blank?
           @uri_protocol = adapter_config[:uri_protocol]
@@ -57,6 +59,22 @@ module Hyacinth
 
         def readable_impl(*_args)
           raise NotImplementedError
+        end
+
+        # Writes the given resource to a tempfile, yields that tempfile, and then deletes that
+        # tempfile when the given block has finished execution.
+        def with_readable_tempfile(location_uri, &block)
+          tempfile = Tempfile.new('ordered-headers-batch-export')
+          with_readable(location_uri) do |io|
+            while (chunk = io.read(TEMPFILE_WRITE_BUFFER_BYTE_SIZE))
+              tempfile.write(chunk)
+            end
+            tempfile.rewind
+            block.yield tempfile
+          ensure
+            # Close and unlink our tempfile
+            tempfile.close!
+          end
         end
 
         ##########################
