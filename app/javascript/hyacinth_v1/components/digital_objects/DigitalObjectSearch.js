@@ -173,7 +173,7 @@ const DigitalObjectSearch = ({ query }) => {
       <Row>
         <Col md={8}>
           { docsFound
-            ? <DigitalObjectList className="digital-object-search-results" digitalObjects={nodes} />
+            ? <DigitalObjectList className="digital-object-search-results" digitalObjects={nodes} displayParentIds displayProjects />
             : <Card><Card.Header>No Digital Objects found.</Card.Header></Card>
           }
         </Col>

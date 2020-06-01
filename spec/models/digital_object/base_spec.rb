@@ -119,7 +119,7 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
     end
   end
 
-  context "#new_record?" do
+  context "#new_record?", solr: true do
     it "returns true for a saved record" do
       expect(digital_object_with_sample_data.new_record?).to eq(true)
     end
@@ -156,7 +156,7 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
     end
   end
 
-  context '#parents' do
+  context '#parents', solr: true do
     let(:parent) { FactoryBot.create(:item) }
 
     before do

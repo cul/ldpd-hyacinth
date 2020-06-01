@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe DigitalObject::RightsFieldsValidator, type: :model do
+RSpec.describe DigitalObject::RightsFieldsValidator, type: :model, solr: true do
   before { Hyacinth::DynamicFieldsLoader.load_rights_fields!(load_vocabularies: true) }
 
   describe 'validating rights for DigitalObject::Item' do

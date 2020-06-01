@@ -31,16 +31,12 @@ module Types
     field :optimistic_lock_token, String, null: false
     field :rights, GraphQL::Types::JSON, null: false
 
-    field :title, String, null: false
+    field :title, String, null: false, method: :generate_title
     field :number_of_children, Integer, null: false
     field :resources, [ResourceWrapperType], null: false
 
     def publish_entries
       object.publish_entries.map { |k, h| { publish_target_string_key: k }.merge(h) }
-    end
-
-    def title
-      object.generate_title
     end
 
     def resources

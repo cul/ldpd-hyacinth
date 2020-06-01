@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Retrieving Digital Object', type: :request do
+RSpec.describe 'Retrieving Digital Object', type: :request, solr: true do
   let(:authorized_object) do
     FactoryBot.create(:item, :with_rights, :with_descriptive_metadata, :with_primary_project, :with_other_projects)
   end
