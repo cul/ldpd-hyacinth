@@ -17,10 +17,10 @@ RSpec.describe Types::Extensions::MapToDigitalObjectMinimalRecord do
         OpenStruct.new(
           nodes: [{
             'id' => id_from_solr,
-            'title_ssi' => 'Glorious new item',
+            'title_ss' => 'Glorious new item',
             'digital_object_type_ssi' => 'item',
             'projects_ssim' => [project.string_key],
-            'number_of_children_isi' => 1,
+            'number_of_children_isi' => 1
           }],
           page_info: OpenStruct.new
         )
