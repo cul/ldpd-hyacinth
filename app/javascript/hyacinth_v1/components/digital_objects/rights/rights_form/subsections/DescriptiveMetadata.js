@@ -72,12 +72,12 @@ function DescriptiveMetadata(props) {
 
                 <InputGroup>
                   <Label sm={4} align="right">Date of Birth</Label>
-                  <ReadOnlyInput sm={8} value="" />
+                  <ReadOnlyInput sm={8} value={n.term ? n.term.dateOfBirth : ''} />
                 </InputGroup>
 
                 <InputGroup>
                   <Label sm={4} align="right">Date of Death</Label>
-                  <ReadOnlyInput sm={8} value="" />
+                  <ReadOnlyInput sm={8} value={n.term ? n.term.dateOfDeath : ''} />
                 </InputGroup>
               </Card.Body>
             </Card>
