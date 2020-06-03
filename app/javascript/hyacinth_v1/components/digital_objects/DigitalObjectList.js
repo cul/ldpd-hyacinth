@@ -24,37 +24,35 @@ const DigitalObjectList = (props) => {
               </LinkContainer>
             </Card.Header>
             <Card.Body>
-              <Card.Text>
-                <ul className="list-unstyled small">
-                  <li>
-                    <strong>ID: </strong>
-                    {digitalObject.id}
-                  </li>
-                  {
-                    digitalObject.numberOfChildren > 0 && (
-                      <li>
-                        <strong>Children: </strong>
-                        {digitalObject.numberOfChildren}
-                      </li>
-                    )
-                  }
-                  {
-                    displayParentIds && digitalObject.parentIds.length > 0 && (
-                      <li>
-                        <strong>Parent(s): </strong>
-                        { digitalObject.parentIds.map(id => <a href={`digital_objects/${id}`}>{id}</a>) }
-                      </li>
-                    )
-                  }
-                </ul>
-              </Card.Text>
+              <ul className="list-unstyled small">
+                <li>
+                  <strong>ID: </strong>
+                  {digitalObject.id}
+                </li>
+                {
+                  digitalObject.numberOfChildren > 0 && (
+                    <li>
+                      <strong>Children: </strong>
+                      {digitalObject.numberOfChildren}
+                    </li>
+                  )
+                }
+                {
+                  displayParentIds && digitalObject.parentIds.length > 0 && (
+                    <li>
+                      <strong>Parent(s): </strong>
+                      { digitalObject.parentIds.map(id => <a key={id} href={`digital_objects/${id}`}>{id}</a>) }
+                    </li>
+                  )
+                }
+              </ul>
               <Badge variant="secondary">{startCase(digitalObject.digitalObjectType)}</Badge>
               {
                 displayProjects && digitalObject.projects.map(p => (
-                  <>
+                  <span key={`${digitalObject.id}_${p.stringKey}`}>
                     {' '}
                     <Badge variant="primary">{p.displayLabel}</Badge>
-                  </>
+                  </span>
                 ))
               }
             </Card.Body>

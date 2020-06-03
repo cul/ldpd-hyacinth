@@ -32,6 +32,7 @@ const queryParamsConfig = {
   filters: withDefault(FilterArrayParam, []),
   pageNumber: withDefault(NumberParam, 1),
   perPage: withDefault(NumberParam, 20),
+  orderBy: withDefault(StringParam, 'TITLE ASC'),
 };
 
 const DigitalObjectSearch = ({ query }) => {
@@ -40,12 +41,18 @@ const DigitalObjectSearch = ({ query }) => {
   const [offset] = useState((query.pageNumber - 1) * limit);
   const [totalObjects, setTotalObjects] = useState(0);
   const [searchParams, setSearchParams] = useState({ query: query.q, filters: query.filters });
+  const [orderBy, setOrderBy] = useState(query.orderBy);
 
   const {
     loading, error, data, refetch,
   } = useQuery(
     getDigitalObjectsQuery, {
-      variables: { limit, offset: (pageNumber - 1) * limit, searchParams },
+      variables: {
+        limit,
+        offset: (pageNumber - 1) * limit,
+        searchParams,
+        orderBy: { field: orderBy.split(' ')[0], direction: orderBy.split(' ')[1] },
+      },
       onCompleted: (searchData) => { setTotalObjects(searchData.digitalObjects.totalCount); },
     },
   );
@@ -63,15 +70,17 @@ const DigitalObjectSearch = ({ query }) => {
       pageNumber: undefined,
       perPage: undefined,
       filters: undefined,
+      orderBy: undefined,
       ...qs.parse(location.search),
     };
     const {
-      q, filters, pageNumber: newPageNumber, perPage: newPerPage,
+      q, filters, pageNumber: newPageNumber, perPage: newPerPage, orderBy: newOrderBy,
     } = decodeQueryParams(queryParamsConfig, queryParams);
 
     setSearchParams({ query: q, filters });
     setLimit(newPerPage);
     setPageNumber(newPageNumber);
+    setOrderBy(newOrderBy);
     refetch();
   }, [location.search, history.location]);
 
@@ -114,6 +123,7 @@ const DigitalObjectSearch = ({ query }) => {
       perPage: limit,
       filters: updatedFilters,
       q: searchParams.query,
+      orderBy,
     });
   };
 
@@ -124,6 +134,7 @@ const DigitalObjectSearch = ({ query }) => {
       perPage: limit,
       filters: searchParams.filters,
       q: value,
+      orderBy,
     });
   };
 
@@ -133,11 +144,22 @@ const DigitalObjectSearch = ({ query }) => {
       perPage: value,
       filters: searchParams.filters,
       q: searchParams.query,
+      orderBy,
     });
   };
 
   // TODO: Method to apply sort change.
-  const onSortChange = (field, direction) => {}
+  // orderBy is a string that is a combination of the field and direction.
+  // Example: 'LAST_MODIFIED ASC'
+  const onSortChange = (newOrderBy) => {
+    updateQueryParameters({
+      pageNumber: 1,
+      perPage: limit,
+      filters: searchParams.filters,
+      q: searchParams.query,
+      orderBy: newOrderBy,
+    });
+  };
 
   const docsFound = nodes.length > 0;
 
@@ -159,7 +181,7 @@ const DigitalObjectSearch = ({ query }) => {
       {
         docsFound && (
           <ResultCountAndSortOptions
-            // selected sort
+            orderBy={orderBy}
             onSortChange={onSortChange}
             onPerPageChange={onPerPageChange}
             totalCount={totalCount}
