@@ -14,12 +14,16 @@ import Label from '../../shared/forms/Label';
 import InputGroup from '../../shared/forms/InputGroup';
 
 const sortOptions = [
-  { label: 'Title A-Z', value: 'title asc' },
+  { label: 'Title A-Z', value: 'TITLE ASC' },
+  { label: 'Title Z-A', value: 'TITLE DESC' },
+  { label: 'Relevance', value: 'RELEVANCE DESC' },
+  { label: 'Most Recently Modified First', value: 'LAST_MODIFIED DESC' },
+  { label: 'Least Recently Modified First', value: 'LAST_MODIFIED ASC' },
 ];
 
-const ResultCountAndSortOptions = (props) => {
+const ResultCountAndOptions = (props) => {
   const {
-    totalCount, limit, offset, searchParams, onPerPageChange, onSortChange,
+    totalCount, limit, offset, searchParams, onPerPageChange, onOrderByChange, orderBy,
   } = props;
   const firstResultNumForPage = offset + 1;
   const lastResultNumForPage = totalCount < offset + limit ? totalCount : offset + limit;
@@ -67,7 +71,7 @@ const ResultCountAndSortOptions = (props) => {
             <Col sm={6} md={3}>
               <InputGroup className="mb-0 justify-content-center align-items-center">
                 <Label xs={2} sm={2} md={4} className="text-right px-1">Sort:</Label>
-                <SelectInput onChange={onSortChange} xs={8} sm={8} size="sm" className="pl-1" value={limit} options={sortOptions} disabled />
+                <SelectInput onChange={onOrderByChange} xs={8} sm={8} size="sm" className="pl-1" value={orderBy} options={sortOptions} />
               </InputGroup>
             </Col>
           </Row>
@@ -90,13 +94,14 @@ const ResultCountAndSortOptions = (props) => {
   );
 };
 
-ResultCountAndSortOptions.propTypes = {
+ResultCountAndOptions.propTypes = {
   searchParams: PropTypes.objectOf(PropTypes.any).isRequired,
   totalCount: PropTypes.number.isRequired,
   limit: PropTypes.number.isRequired,
   offset: PropTypes.number.isRequired,
   onPerPageChange: PropTypes.func.isRequired,
-  onSortChange: PropTypes.func.isRequired,
+  onOrderByChange: PropTypes.func.isRequired,
+  orderBy: PropTypes.string.isRequired,
 };
 
-export default ResultCountAndSortOptions;
+export default ResultCountAndOptions;
