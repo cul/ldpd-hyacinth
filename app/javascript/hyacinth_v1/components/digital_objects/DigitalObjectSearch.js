@@ -11,7 +11,7 @@ import * as qs from 'query-string';
 
 import DigitalObjectList from './DigitalObjectList';
 import FacetSidebar from './search/FacetSidebar';
-import ResultCountAndSortOptions from './search/ResultCountAndSortOptions';
+import ResultCountAndOptions from './search/ResultCountAndOptions';
 
 import ContextualNavbar from '../shared/ContextualNavbar';
 import PaginationBar from '../shared/PaginationBar';
@@ -148,10 +148,9 @@ const DigitalObjectSearch = ({ query }) => {
     });
   };
 
-  // TODO: Method to apply sort change.
   // orderBy is a string that is a combination of the field and direction.
   // Example: 'LAST_MODIFIED ASC'
-  const onSortChange = (newOrderBy) => {
+  const onOrderByChange = (newOrderBy) => {
     updateQueryParameters({
       pageNumber: 1,
       perPage: limit,
@@ -180,9 +179,9 @@ const DigitalObjectSearch = ({ query }) => {
 
       {
         docsFound && (
-          <ResultCountAndSortOptions
+          <ResultCountAndOptions
             orderBy={orderBy}
-            onSortChange={onSortChange}
+            onOrderByChange={onOrderByChange}
             onPerPageChange={onPerPageChange}
             totalCount={totalCount}
             limit={limit}
