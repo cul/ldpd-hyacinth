@@ -40,7 +40,7 @@ RSpec.describe DynamicFieldGroup, type: :model do
 
       it 'returns correct error' do
         dynamic_field_group.save
-        expect(dynamic_field_group.errors.full_messages).to include 'String key values must start with a letter, can only have up to 240 characters and can only contain lower case letters, numbers and underscores'
+        expect(dynamic_field_group.errors.full_messages).to include 'String key values must be up to 240 characters long, start with a lowercase letter, groupings of lowercase letters and numbers can be seperated by ONE underscore'
       end
     end
 

@@ -11,7 +11,7 @@ RSpec.describe Vocabulary, type: :model do
         expect(vocabulary.save).to be false
         expect(
           vocabulary.errors.full_messages
-        ).to include 'String key values must start with a letter, can only have up to 240 characters and can only contain lower case letters, numbers and underscores'
+        ).to include 'String key values must be up to 240 characters long, start with a lowercase letter, groupings of lowercase letters and numbers can be seperated by ONE underscore'
       end
     end
 
@@ -22,7 +22,7 @@ RSpec.describe Vocabulary, type: :model do
         expect(vocabulary.save).to be false
         expect(
           vocabulary.errors.full_messages
-        ).to include 'String key values must start with a letter, can only have up to 240 characters and can only contain lower case letters, numbers and underscores'
+        ).to include 'String key values must be up to 240 characters long, start with a lowercase letter, groupings of lowercase letters and numbers can be seperated by ONE underscore'
       end
     end
 
@@ -33,7 +33,7 @@ RSpec.describe Vocabulary, type: :model do
         expect(vocabulary.save).to be false
         expect(
           vocabulary.errors.full_messages
-        ).to include 'String key values must start with a letter, can only have up to 240 characters and can only contain lower case letters, numbers and underscores'
+        ).to include 'String key values must be up to 240 characters long, start with a lowercase letter, groupings of lowercase letters and numbers can be seperated by ONE underscore'
       end
     end
 
