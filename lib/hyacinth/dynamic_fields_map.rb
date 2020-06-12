@@ -18,7 +18,29 @@ module Hyacinth
       get_terms(map, data)
     end
 
+    # Based on the map returns a list of all the dynamic fields. Return an array of dynamic fields
+    # configs. Each config includes a path to the field.
+    def all_fields
+      get_all_fields(map)
+    end
+
     private
+
+      def get_all_fields(dynamic_field_map, path = [])
+        all_fields = []
+
+        dynamic_field_map.each do |field_or_group_key, config|
+          new_path = path + [field_or_group_key]
+          if config[:type] == 'DynamicFieldGroup'
+            all_fields.concat get_all_fields(config[:children], new_path)
+          else
+            config[:path] = new_path
+            all_fields.append(config)
+          end
+        end
+
+        all_fields
+      end
 
       def get_terms(dynamic_field_map, data)
         terms = {}
@@ -70,7 +92,7 @@ module Hyacinth
         fields_or_groups.map { |field_or_group|
           case field_or_group
           when DynamicField
-            value = field_or_group.as_json.except(:id, :string_key, :sort_order, :display_label, :filter_label)
+            value = field_or_group.as_json.except(:id, :string_key, :sort_order)
           when DynamicFieldGroup
             value = { type: 'DynamicFieldGroup', children: field_map(field_or_group.children) }
           else
