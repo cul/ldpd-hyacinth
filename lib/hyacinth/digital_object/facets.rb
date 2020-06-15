@@ -5,7 +5,7 @@ module Hyacinth
     module Facets
       # Return all solr keys for facetable dynamic fields.
       def self.all_solr_keys
-        all_facetable_fields.map { |config| solr_key_for_dynamic_field(config[:path]) }
+        all_facetable_fields.map { |config| SolrKeys.for_dynamic_field(config[:path]) }
       end
 
       # Returns configuration for all facetable dynamic fields.
@@ -18,12 +18,8 @@ module Hyacinth
       # Return hash mapping solr keys to facet display label
       def self.facet_display_label_map
         all_facetable_fields.map { |config|
-          [solr_key_for_dynamic_field(config[:path]), config[:filter_label] || config[:display_label]]
+          [SolrKeys.for_dynamic_field(config[:path]), config[:filter_label] || config[:display_label]]
         }.to_h
-      end
-
-      def self.solr_key_for_dynamic_field(path)
-        'df_' + path.map { |p| p.camelcase(:lower) }.join('_') + '_ssim'
       end
     end
   end

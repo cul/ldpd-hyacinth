@@ -49,15 +49,6 @@ module Hyacinth
         end
 
         def merge_descriptive_fields_for!(digital_object, solr_document = {})
-          # TODO: iterate over dynamic fields for type and project
-          # build keys, inspect values
-          # add flag for content at all if field is not facetable
-          collection_values = digital_object.descriptive_metadata.fetch('collection', [])
-          collection_values.each do |collection_value|
-            (solr_document['collection_ssim'] ||= []) << collection_value.dig('term', 'pref_label')
-            add_keywords(collection_value.dig('term', 'pref_label'), solr_document)
-          end
-
           merge_dynamic_fields(digital_object.descriptive_metadata, 'descriptive', solr_document)
           solr_document
         end
@@ -68,14 +59,8 @@ module Hyacinth
 
         def merge_rights_fields_for!(digital_object, solr_document = {})
           return unless digital_object.can_have_rights?
-          # TODO: iterate over rights fields for type
-          # build keys, inspect values
-          # add flag for category content at all
-          solr_document['copyright_status_copyright_statement_ssi'] =
-            digital_object.rights.fetch('copyright_status', [])
-                          .map { |rd| rd.dig('copyright_statement', 'pref_label') }
-                          .first
-          solr_document['copyright_status_copyright_statement_ssi'] ||= Hyacinth::DigitalObject::RightsFields::UNASSIGNED_STATUS_INDEX
+
+          # Add flag for rights content at all
           solr_document['rights_category_present_bi'] = digital_object.rights.present?
 
           merge_dynamic_fields(digital_object.rights, "#{digital_object.digital_object_type}_rights", solr_document)
@@ -94,7 +79,7 @@ module Hyacinth
 
               # Indexing field because its a non-textarea field
               if config[:field_type] != DynamicField::Type::TEXTAREA
-                solr_key = 'df_' + path.map { |p| p.camelcase(:lower) }.join('_') + '_ssim'
+                solr_key = Hyacinth::DigitalObject::SolrKeys.for_dynamic_field(path)
                 solr_document[solr_key] = values
               end
 

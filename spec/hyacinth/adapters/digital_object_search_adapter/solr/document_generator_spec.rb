@@ -24,7 +24,6 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
 
     it "does not set rights fields" do
       expect(document['rights_category_present_bi']).to be false
-      expect(document['copyright_status_copyright_statement_ssi']).to eql(Hyacinth::DigitalObject::RightsFields::UNASSIGNED_STATUS_INDEX)
     end
 
     context "with rights" do
@@ -52,7 +51,6 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
 
       it "sets rights fields" do
         expect(document['rights_category_present_bi']).to be true
-        expect(document['copyright_status_copyright_statement_ssi']).to eql(rights_status)
       end
     end
 
