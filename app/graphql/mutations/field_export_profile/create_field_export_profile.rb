@@ -2,7 +2,7 @@
 
 module Mutations
   module FieldExportProfile
-    class CreateFieldExportProfile < Mutations::Term::BaseMutation
+    class CreateFieldExportProfile < Mutations::BaseMutation
       argument :name, String, required: true
       argument :translation_logic, GraphQL::Types::JSON, required: true
 

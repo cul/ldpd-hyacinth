@@ -2,7 +2,7 @@
 
 module Mutations
   module Term
-    class UpdateTerm < Mutations::Term::BaseMutation
+    class UpdateTerm < Mutations::BaseMutation
       argument :vocabulary_string_key, ID, required: true
       argument :uri, String, required: true
       argument :pref_label, String, required: false
@@ -13,7 +13,7 @@ module Mutations
       field :term, Types::TermType, null: true
 
       def resolve(vocabulary_string_key:, uri:, custom_fields: [], **attributes)
-        vocabulary = find_unlocked_vocabulary!(vocabulary_string_key)
+        vocabulary = ::Vocabulary.find_by!(string_key: vocabulary_string_key)
         term = ::Term.find_by!(vocabulary: vocabulary, uri: uri)
 
         ability.authorize! :update, term

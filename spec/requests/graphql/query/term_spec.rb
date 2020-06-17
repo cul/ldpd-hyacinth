@@ -96,6 +96,7 @@ RSpec.describe 'Query for Term', type: :request, solr: true do
         )
       end
       before do
+        term
         vocabulary.update(locked: true)
         graphql query(vocabulary.string_key, term.uri)
       end
