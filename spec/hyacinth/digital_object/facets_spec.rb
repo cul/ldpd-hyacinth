@@ -23,7 +23,7 @@ describe Hyacinth::DigitalObject::Facets do
         Hyacinth::DigitalObject::SolrKeys.for_dynamic_field(path)
       end
     end
-    it { expect(described_class.all_solr_keys - expected).to eql([]) }
+    it { expect(described_class.all_solr_keys).to match_array(expected) }
   end
   describe '.all_facetable_fields' do
     let!(:expected) { DynamicField.where(is_facetable: true).all }
