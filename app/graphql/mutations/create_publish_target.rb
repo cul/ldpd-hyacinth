@@ -2,8 +2,7 @@
 
 class Mutations::CreatePublishTarget < Mutations::BaseMutation
   argument :project_string_key, ID, required: true
-  argument :string_key, ID, required: true
-  argument :display_label, String, required: true
+  argument :type, Enums::PublishTargetTypeEnum, required: true, as: :target_type
   argument :publish_url, String, required: true
   argument :api_key, String, required: true
   argument :doi_priority, Integer, required: false

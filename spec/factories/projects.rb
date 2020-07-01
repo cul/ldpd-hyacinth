@@ -37,8 +37,7 @@ FactoryBot.define do
       after(:build) do |project|
         atts = {
           project: project,
-          string_key: project.string_key + "_website",
-          display_label: project.display_label + " Website",
+          target_type: PublishTarget::Type::PRODUCTION,
           publish_url: project.project_url + "/publish"
         }
         create(:legend_of_lincoln_publish_target, atts)

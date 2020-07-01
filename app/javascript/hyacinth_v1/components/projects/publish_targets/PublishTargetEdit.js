@@ -1,36 +1,20 @@
 import React from 'react';
-import gql from 'graphql-tag';
 import { useQuery } from '@apollo/react-hooks';
 import { useParams } from 'react-router-dom';
+import { upperCase } from 'lodash';
 
 import GraphQLErrors from '../../shared/GraphQLErrors';
 import TabHeading from '../../shared/tabs/TabHeading';
 import PublishTargetForm from './PublishTargetForm';
 import ProjectInterface from '../ProjectInterface';
-
-const getPublishTarget = gql`
-  query FieldSet($projectStringKey: ID!, $stringKey: ID!) {
-    project(stringKey: $projectStringKey) {
-      stringKey
-      displayLabel
-      publishTarget(stringKey: $stringKey) {
-        stringKey
-        displayLabel
-        publishUrl
-        apiKey
-        doiPriority
-        isAllowedDoiTarget
-      }
-    }
-  }
-`;
+import { publishTargetQuery } from '../../../graphql/publishTargets';
 
 function PublishTargetEdit() {
-  const { projectStringKey, stringKey } = useParams();
+  const { projectStringKey, type } = useParams();
 
   const { loading, error, data } = useQuery(
-    getPublishTarget,
-    { variables: { projectStringKey, stringKey } },
+    publishTargetQuery,
+    { variables: { projectStringKey, type: upperCase(type) } },
   );
 
   if (loading) return (<></>);

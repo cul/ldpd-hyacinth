@@ -8,7 +8,7 @@ RSpec.describe Mutations::UpdatePublishTarget, type: :request do
 
   include_examples 'requires user to have correct permissions for graphql request' do
     let(:variables) do
-      { input: { projectStringKey: project.string_key, stringKey: publish_target.string_key } }
+      { input: { projectStringKey: project.string_key, type: publish_target.target_type.upcase } }
     end
     let(:request) { graphql query, variables }
   end
@@ -21,8 +21,8 @@ RSpec.describe Mutations::UpdatePublishTarget, type: :request do
         {
           input: {
             projectStringKey: project.string_key,
-            stringKey: publish_target.string_key,
-            displayLabel: 'Bestest Project',
+            type: publish_target.target_type.upcase,
+            apiKey: 'something-new',
             publishUrl: 'https://best_project.com/publish'
           }
         }
@@ -32,7 +32,7 @@ RSpec.describe Mutations::UpdatePublishTarget, type: :request do
 
       it 'correctly updates record' do
         publish_target.reload
-        expect(publish_target.display_label).to eql 'Bestest Project'
+        expect(publish_target.api_key).to eql 'something-new'
         expect(publish_target.publish_url).to eql 'https://best_project.com/publish'
       end
     end
@@ -43,8 +43,7 @@ RSpec.describe Mutations::UpdatePublishTarget, type: :request do
       mutation ($input: UpdatePublishTargetInput!) {
         updatePublishTarget(input: $input) {
           publishTarget {
-            stringKey
-            displayLabel
+            type
           }
         }
       }

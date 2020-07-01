@@ -8,16 +8,16 @@ RSpec.describe 'Retrieving Publish Targets', type: :request do
 
   include_examples 'requires user to have correct permissions for graphql request' do
     let(:request) do
-      graphql query(publish_target.string_key)
+      graphql query(publish_target.target_type)
     end
   end
 
   context 'when logged in user has correct permissions' do
     before { sign_in_project_contributor to: :read_objects, project: project }
 
-    context 'when string_key is valid' do
+    context 'when type is valid' do
       before do
-        graphql query(publish_target.string_key)
+        graphql query(publish_target.target_type)
       end
 
       it 'returns correct response' do
@@ -26,9 +26,8 @@ RSpec.describe 'Retrieving Publish Targets', type: :request do
             "stringKey": "great_project",
             "publishTarget": {
               "apiKey": "bestapikey",
-              "displayLabel": "Great Project Website",
               "publishUrl": "https://www.example.com/publish",
-              "stringKey": "great_project_website",
+              "type": "PRODUCTION",
               "doiPriority": 100,
               "isAllowedDoiTarget": false
             }
@@ -37,25 +36,24 @@ RSpec.describe 'Retrieving Publish Targets', type: :request do
       end
     end
 
-    context 'when string_key is invalid' do
+    context 'when type is invalid' do
       before { graphql query('not_valid') }
 
       it 'returns correct response' do
         expect(response.body).to be_json_eql(%(
-          "Couldn't find PublishTarget"
+          "Argument 'type' on Field 'publishTarget' has an invalid value. Expected type 'PublishTargetTypeEnum!'."
         )).at_path('errors/0/message')
       end
     end
   end
 
-  def query(string_key)
+  def query(target_type)
     <<~GQL
       query {
         project(stringKey: "#{project.string_key}") {
           stringKey
-          publishTarget(stringKey: "#{string_key}") {
-            stringKey
-            displayLabel
+          publishTarget(type: #{target_type.upcase}) {
+            type
             publishUrl
             doiPriority
             isAllowedDoiTarget

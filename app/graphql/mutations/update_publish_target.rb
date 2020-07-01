@@ -2,8 +2,7 @@
 
 class Mutations::UpdatePublishTarget < Mutations::BaseMutation
   argument :project_string_key, ID, required: true
-  argument :string_key, ID, required: true
-  argument :display_label, String, required: false
+  argument :type, Enums::PublishTargetTypeEnum, required: true, as: :target_type
   argument :publish_url, String, required: false
   argument :api_key, String, required: false
   argument :doi_priority, Integer, required: false
@@ -11,7 +10,7 @@ class Mutations::UpdatePublishTarget < Mutations::BaseMutation
 
   field :publish_target, Types::PublishTargetType, null: true
 
-  def resolve(project_string_key:, string_key:, **attributes)
+  def resolve(project_string_key:, target_type:, **attributes)
     # check that we can do something with project
     project = Project.find_by!(string_key: project_string_key)
 
@@ -19,7 +18,7 @@ class Mutations::UpdatePublishTarget < Mutations::BaseMutation
 
     # ability.authorize! :create, PublishTarget # for this project
 
-    publish_target = project.publish_targets.find_by!(string_key: string_key)
+    publish_target = project.publish_targets.find_by!(target_type: target_type)
 
     ability.authorize! :update, publish_target
 

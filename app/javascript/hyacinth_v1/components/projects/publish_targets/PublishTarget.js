@@ -26,7 +26,7 @@ export default class PublishTarget extends React.PureComponent {
 
         <ProtectedRoute
           exact
-          path="/projects/:projectStringKey/publish_targets/:stringKey/edit"
+          path="/projects/:projectStringKey/publish_targets/:type/edit"
           component={PublishTargetEdit}
           requiredAbility={params => ({ action: 'update', subject: 'PublishTarget', project: { stringKey: params.projectStringKey } })}
         />

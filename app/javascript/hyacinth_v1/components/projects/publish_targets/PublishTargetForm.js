@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import { Form, Collapse } from 'react-bootstrap';
 import { useMutation } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
+import { lowerCase } from 'lodash';
 
 import InputGroup from '../../shared/forms/InputGroup';
 import Label from '../../shared/forms/Label';
 import FormButtons from '../../shared/forms/FormButtons';
 import NumberInput from '../../shared/forms/inputs/NumberInput';
 import TextInput from '../../shared/forms/inputs/TextInput';
+import SelectInput from '../../shared/forms/inputs/SelectInput';
 import Checkbox from '../../shared/forms/inputs/Checkbox';
 import {
   createPublishTargetMutation,
@@ -16,9 +18,10 @@ import {
 } from '../../../graphql/publishTargets';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 
+const publishTargetTypes = ['PRODUCTION', 'STAGING'];
+
 function PublishTargetForm({ projectStringKey, publishTarget, formType }) {
-  const [stringKey, setStringKey] = useState(publishTarget ? publishTarget.stringKey : '');
-  const [displayLabel, setDisplayLabel] = useState(publishTarget ? publishTarget.displayLabel : '');
+  const [type, setType] = useState(publishTarget ? publishTarget.type : '');
   const [publishUrl, setPublishUrl] = useState(publishTarget ? publishTarget.publishUrl : '');
   const [apiKey, setApiKey] = useState(publishTarget ? publishTarget.apiKey : '');
   const [isAllowedDoiTarget, setIsAllowedDoiTarget] = useState(publishTarget ? publishTarget.isAllowedDoiTarget : false);
@@ -33,14 +36,14 @@ function PublishTargetForm({ projectStringKey, publishTarget, formType }) {
   const onSaveHandler = () => {
     const variables = {
       input: {
-        projectStringKey, stringKey, displayLabel, publishUrl, apiKey, isAllowedDoiTarget, doiPriority,
+        projectStringKey, type, publishUrl, apiKey, isAllowedDoiTarget, doiPriority,
       },
     };
 
     switch (formType) {
       case 'new':
         return createPublishTarget({ variables }).then((res) => {
-          history.push(`/projects/${projectStringKey}/publish_targets/${res.data.createPublishTarget.publishTarget.stringKey}/edit`);
+          history.push(`/projects/${projectStringKey}/publish_targets/${lowerCase(res.data.createPublishTarget.publishTarget.type)}/edit`);
         });
       case 'edit':
         return updatePublishTarget({ variables }).then(() => {
@@ -54,7 +57,7 @@ function PublishTargetForm({ projectStringKey, publishTarget, formType }) {
   const onDeleteHandler = (e) => {
     e.preventDefault();
 
-    const variables = { input: { projectStringKey, stringKey: publishTarget.stringKey } };
+    const variables = { input: { projectStringKey, type: publishTarget.type } };
 
     deletePublishTarget({ variables }).then(() => {
       history.push(`/projects/${projectStringKey}/publish_targets`);
@@ -66,13 +69,13 @@ function PublishTargetForm({ projectStringKey, publishTarget, formType }) {
       <GraphQLErrors errors={createError || updateError || deleteError} />
 
       <InputGroup>
-        <Label>String Key</Label>
-        <TextInput value={stringKey} onChange={v => setStringKey(v)} disabled={formType === 'edit'} />
-      </InputGroup>
-
-      <InputGroup>
-        <Label>Display Label</Label>
-        <TextInput value={displayLabel} onChange={v => setDisplayLabel(v)} />
+        <Label>Type</Label>
+        <SelectInput
+          value={type}
+          options={publishTargetTypes.map(t => ({ label: lowerCase(t), value: t }))}
+          onChange={v => setType(v)}
+          disabled={formType === 'edit'}
+        />
       </InputGroup>
 
       <InputGroup>

@@ -10,7 +10,7 @@ module Types
 
     field :publish_targets, [PublishTargetType], null: true
     field :publish_target, PublishTargetType, null: true do
-      argument :string_key, ID, required: true
+      argument :type, Enums::PublishTargetTypeEnum, required: true
     end
 
     field :field_sets, [FieldSetType], null: true
@@ -33,8 +33,8 @@ module Types
       field_set
     end
 
-    def publish_target(string_key:)
-      publish_target = PublishTarget.find_by!(string_key: string_key, project: object)
+    def publish_target(type:)
+      publish_target = PublishTarget.find_by!(target_type: type, project: object)
       # TODO: Change :show below to :read
       context[:ability].authorize!(:show, publish_target)
       publish_target

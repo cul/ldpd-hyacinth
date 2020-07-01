@@ -208,13 +208,13 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
         post "/api/v1/digital_objects/#{authorized_object.uid}/publish"
         new_object = JSON.parse(response.body)['digital_object']
         expect(new_object).to have_key('publish_entries')
-        publish_entry = new_object['publish_entries'][authorized_publish_target.string_key]
+        publish_entry = new_object['publish_entries']["#{authorized_project.string_key}_#{authorized_publish_target.target_type}"]
         expect(publish_entry['published_at']).to be_present
         expect(publish_entry['cited_at']).to eql(published_location)
         get "/api/v1/digital_objects/#{authorized_object.uid}"
         old_object = JSON.parse(response.body)['digital_object']
         expect(old_object).to have_key('publish_entries')
-        publish_entry = old_object['publish_entries'][authorized_publish_target.string_key]
+        publish_entry = old_object['publish_entries']["#{authorized_project.string_key}_#{authorized_publish_target.target_type}"]
         expect(publish_entry['published_at']).to be_present
         expect(authorized_object.doi).to be_present
         # the in-memory external id adapter allows us to inspect its data

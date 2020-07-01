@@ -10,10 +10,9 @@ RSpec.describe Mutations::CreatePublishTarget, type: :request do
       {
         input: {
           projectStringKey: project.string_key,
-          stringKey: 'new_publish_target',
+          type: 'PRODUCTION',
           publishUrl: 'https://example.com',
-          apiKey: 'something',
-          displayLabel: "New Publish Target"
+          apiKey: 'something'
         }
       }
     end
@@ -28,8 +27,7 @@ RSpec.describe Mutations::CreatePublishTarget, type: :request do
         {
           input: {
             projectStringKey: project.string_key,
-            displayLabel: 'Best Project Website',
-            stringKey: 'best_project_website',
+            type: 'PRODUCTION',
             publishUrl: 'https://bestproject/publish',
             apiKey: 'bestprojectapikey',
             isAllowedDoiTarget: true,
@@ -43,8 +41,7 @@ RSpec.describe Mutations::CreatePublishTarget, type: :request do
       it 'returns correct response' do
         expect(response.body).to be_json_eql(%({
           "publishTarget": {
-            "displayLabel": "Best Project Website",
-            "stringKey": "best_project_website",
+            "type": "PRODUCTION",
             "publishUrl": "https://bestproject/publish",
             "apiKey": "bestprojectapikey",
             "doiPriority": 4,
@@ -54,12 +51,11 @@ RSpec.describe Mutations::CreatePublishTarget, type: :request do
       end
     end
 
-    context 'when create request is missing string_key' do
+    context 'when create request is missing type' do
       let(:variables) do
         {
           input: {
             projectStringKey: project.string_key,
-            displayLabel: 'Best Project Website',
             publishUrl: 'https://bestproject/publish',
             apiKey: 'bestprojectapikey'
           }
@@ -70,7 +66,7 @@ RSpec.describe Mutations::CreatePublishTarget, type: :request do
 
       it 'returns error' do
         expect(response.body).to be_json_eql(%(
-          "Variable input of type CreatePublishTargetInput! was provided invalid value for stringKey (Expected value to not be null)"
+          "Variable input of type CreatePublishTargetInput! was provided invalid value for type (Expected value to not be null)"
         )).at_path('errors/0/message')
       end
     end
@@ -81,8 +77,7 @@ RSpec.describe Mutations::CreatePublishTarget, type: :request do
       mutation ($input: CreatePublishTargetInput!) {
         createPublishTarget(input: $input) {
           publishTarget {
-            stringKey
-            displayLabel
+            type
             publishUrl
             apiKey
             doiPriority

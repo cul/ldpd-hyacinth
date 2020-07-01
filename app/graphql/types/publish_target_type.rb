@@ -4,11 +4,11 @@ module Types
   class PublishTargetType < Types::BaseObject
     description 'A publish target'
 
-    field :string_key, ID, null: false
-    field :display_label, String, null: false
+    field :type, Enums::PublishTargetTypeEnum, null: false, method: :target_type
     field :publish_url, String, null: false
     field :api_key, String, null: false
     field :doi_priority, Integer, null: false
     field :is_allowed_doi_target, Boolean, null: false
+    field :string_identifier, String, null: false, method: :string_identifier
   end
 end
