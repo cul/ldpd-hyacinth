@@ -92,10 +92,16 @@ module Types
     end
 
     def digital_objects(**arguments)
-      # TODO: identification of possible filters in scope of search
       search_params = arguments[:search_params] ? arguments[:search_params].prepare : {}
-      search_params['facet_on'] = ['digital_object_type_ssi', 'projects_ssim', 'collection_ssim', 'copyright_status_copyright_statement_ssi', 'rights_category_present_bi']
+
+      # Generating all facets.
+      core_facets = ['digital_object_type_ssi', 'projects_ssim', 'rights_category_present_bi'] # Non-Dynamic-Field facets
+      df_facets = Hyacinth::DigitalObject::Facets.all_solr_keys # Generate solr keys for all dynamic fields where is_facetable is true.
+
+      search_params['facet_on'] = core_facets.concat(df_facets)
+
       Hyacinth::Config.digital_object_search_adapter.search(search_params, context[:current_user]) do |solr_params|
+        solr_params.default_field('keyword_search_teim') # TODO: Accept searchType parameter (HYACINTH-542)
         solr_params.rows(arguments[:limit])
         solr_params.start(arguments[:offset])
         solr_params.sort(arguments[:order_by][:field], arguments[:order_by][:direction]) if arguments[:order_by]

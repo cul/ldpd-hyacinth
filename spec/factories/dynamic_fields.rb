@@ -23,6 +23,7 @@ FactoryBot.define do
     trait :string do
       field_type { DynamicField::Type::STRING }
       controlled_vocabulary { nil }
+      filter_label { nil }
     end
   end
 end

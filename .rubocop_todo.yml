@@ -100,7 +100,7 @@ Metrics/BlockLength:
     - 'lib/tasks/hyacinth/setup.rake'
     - 'lib/tasks/resque.rake'
 
-# Offense count: 3
+# Offense count: 4
 # Configuration parameters: CountComments, Max.
 Metrics/ClassLength:
   Exclude:
@@ -108,6 +108,7 @@ Metrics/ClassLength:
     - 'app/graphql/types/query_type.rb'
     - 'app/models/ability.rb'
     - 'app/models/term.rb'
+    - 'lib/hyacinth/adapters/digital_object_search_adapter/solr/document_generator.rb'
 
 # Offense count: 13
 # Configuration parameters: Max.
@@ -137,7 +138,7 @@ Metrics/LineLength:
     - 'spec/models/dynamic_field_group_spec.rb'
     - 'spec/requests/graphql/query/digital_object_imports_spec.rb'
 
-# Offense count: 41
+# Offense count: 45
 # Configuration parameters: CountComments, Max, ExcludedMethods.
 Metrics/MethodLength:
   Exclude:
@@ -172,13 +173,14 @@ Metrics/MethodLength:
     - 'lib/tasks/resque.rake'
     - 'spec/support/dynamic_fields_helper.rb'
 
-# Offense count: 3
+# Offense count: 4
 # Configuration parameters: CountComments, Max.
 Metrics/ModuleLength:
   Exclude:
     - 'app/models/concerns/digital_object_concerns/save_behavior.rb'
     - 'app/models/concerns/digital_object_concerns/save_behavior/resource_imports.rb'
     - 'lib/hyacinth/batch_import/index_prerequisite_map.rb'
+    - 'spec/support/dynamic_fields_helper.rb'
 
 # Offense count: 12
 # Configuration parameters: Max.
@@ -221,6 +223,7 @@ RSpec/EmptyExampleGroup:
 # Configuration parameters: Max.
 RSpec/ExampleLength:
   Exclude:
+    - 'spec/hyacinth/adapters/digital_object_search_adapter/solr/document_generator_spec.rb'
     - 'spec/hyacinth/adapters/lock_adapter/database_entry_lock_spec.rb'
     - 'spec/hyacinth/adapters/preservation_adapter/fedora3/system_spec.rb'
     - 'spec/hyacinth/adapters/preservation_adapter/fedora3_spec.rb'

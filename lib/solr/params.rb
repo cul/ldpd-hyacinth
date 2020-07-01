@@ -9,10 +9,10 @@ module Solr
     def initialize
       @parameters = {
         q: nil,
-        df: 'keywords_teim', # TODO: Is this actually the default we want? This class is used by the TermSearchAdapter too.
         fq: [],
         'facet.field'.to_sym => [],
-        start: 0
+        start: 0,
+        'facet.mincount': 1 # TODO: Check to make sure this is okay as a global default for digital objects and terms.
       }
     end
 
@@ -44,6 +44,11 @@ module Solr
       else
         @parameters[:q] = escape ? Solr::Utils.escape(query) : query
       end
+      self
+    end
+
+    def default_field(field)
+      @parameters[:df] = field
       self
     end
 

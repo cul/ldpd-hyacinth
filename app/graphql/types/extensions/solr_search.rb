@@ -35,10 +35,11 @@ module Types
       # parse the facet objects or return an empty array
       def facets(facet_counts)
         return [] unless facet_counts['facet_fields']
+        display_label_map = Hyacinth::DigitalObject::Facets.facet_display_label_map
         facet_counts['facet_fields'].map do |facet_field, value_counts|
           {
             field_name: facet_field,
-            display_label: facet_field.split('_')[0...-1].map(&:titlecase).join(' '),
+            display_label: display_label_map[facet_field] || facet_field.split('_')[0...-1].map(&:titlecase).join(' '),
             values: (0...value_counts.length).step(2).map { |ix| { value: value_counts[ix], count: value_counts[ix + 1] } }
           }
         end

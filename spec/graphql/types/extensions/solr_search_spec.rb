@@ -71,6 +71,41 @@ RSpec.describe Types::Extensions::SolrSearch do
       let(:asset) { facet_list.first[:values].detect { |value| value[:value] == 'asset' } }
       let(:item) { facet_list.first[:values].detect { |value| value[:value] == 'item' } }
 
+      context "when there's no configured display label" do
+        it "uses a default facet label when there is no data" do
+          expect(facet_list.first[:display_label]).to eql("Digital Object Type")
+        end
+      end
+      context "when there's a configured display label" do
+        let(:display_label) { 'Unusual Display Label' }
+        let(:test_category) { FactoryBot.create(:dynamic_field_category) }
+        let(:test_group) do
+          FactoryBot.create(:dynamic_field_group, display_label: 'Test Fields',
+                                                  string_key: 'test', parent: test_category)
+        end
+        let(:test_field) do
+          FactoryBot.create(:dynamic_field, display_label: display_label, string_key: 'field', is_facetable: true,
+                                            dynamic_field_group: test_group, filter_label: display_label)
+        end
+        let(:solr_key) do
+          path = [test_group, test_field].map(&:string_key)
+          Hyacinth::DigitalObject::SolrKeys.for_dynamic_field(path)
+        end
+        let(:facet_counts) do
+          {
+            "facet_fields" => {
+              solr_key => [
+                "asset", 2,
+                "item", 1
+              ]
+            }
+          }
+        end
+        it "uses the configured facet label" do
+          expect(facet_list.first[:display_label]).to eql(display_label)
+        end
+      end
+
       it "parses the solr facets array into a suitable hash of values and counts" do
         expect(item[:count]).to be 1
         expect(asset[:count]).to be 2
