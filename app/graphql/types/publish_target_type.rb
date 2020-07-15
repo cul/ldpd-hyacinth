@@ -9,6 +9,6 @@ module Types
     field :api_key, String, null: false
     field :doi_priority, Integer, null: false
     field :is_allowed_doi_target, Boolean, null: false
-    field :string_identifier, String, null: false, method: :string_identifier
+    field :combined_key, String, null: false, method: :combined_key
   end
 end

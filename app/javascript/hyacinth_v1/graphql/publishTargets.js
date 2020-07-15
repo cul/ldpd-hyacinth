@@ -7,7 +7,7 @@ export const publishTargetsQuery = gql`
       displayLabel
       publishTargets {
         type
-        stringIdentifier
+        combinedKey
         publishUrl
         apiKey
       }
@@ -21,7 +21,7 @@ export const publishTargetQuery = gql`
       stringKey
       displayLabel
       publishTarget(type: $type) {
-        stringIdentifier
+        combinedKey
         type
         publishUrl
         apiKey

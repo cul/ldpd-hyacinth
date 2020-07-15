@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 import { Link, useParams } from 'react-router-dom';
-import { lowerCase } from 'lodash';
 
 import TabHeading from '../../shared/tabs/TabHeading';
 import { Can } from '../../../utils/abilityContext';
@@ -39,19 +38,19 @@ function PublishTargetIndex() {
           {
             data.project.publishTargets && (
               data.project.publishTargets.map(publishTarget => (
-                <tr key={publishTarget.stringIdentifier}>
+                <tr key={publishTarget.combinedKey}>
                   <td>
                     <Can I="update" of={{ subjectType: 'PublishTarget', project: { stringKey: projectStringKey } }} passThrough>
                       {
                           can => (
                             can
-                              ? <Link to={`/projects/${projectStringKey}/publish_targets/${lowerCase(publishTarget.type)}/edit`}>{lowerCase(publishTarget.type)}</Link>
+                              ? <Link to={`/projects/${projectStringKey}/publish_targets/${publishTarget.type.toLowerCase()}/edit`}>{publishTarget.type.toLowerCase()}</Link>
                               : publishTarget.type
                           )
                         }
                     </Can>
                   </td>
-                  <td>{publishTarget.stringIdentifier}</td>
+                  <td>{publishTarget.combinedKey}</td>
                   <td>{publishTarget.publishUrl}</td>
                 </tr>
               ))

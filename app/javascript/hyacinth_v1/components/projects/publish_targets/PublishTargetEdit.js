@@ -1,7 +1,6 @@
 import React from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { useParams } from 'react-router-dom';
-import { upperCase } from 'lodash';
 
 import GraphQLErrors from '../../shared/GraphQLErrors';
 import TabHeading from '../../shared/tabs/TabHeading';
@@ -14,7 +13,7 @@ function PublishTargetEdit() {
 
   const { loading, error, data } = useQuery(
     publishTargetQuery,
-    { variables: { projectStringKey, type: upperCase(type) } },
+    { variables: { projectStringKey, type: type.toUpperCase() } },
   );
 
   if (loading) return (<></>);

@@ -17,10 +17,10 @@ RSpec.describe DigitalObjectConcerns::PublishBehavior, solr: true do
     obj = FactoryBot.create(:digital_object_test_subclass)
     obj.send(
       :publish_entries=,
-      publish_target_1.string_identifier => Hyacinth::PublishEntry.new(
+      publish_target_1.combined_key => Hyacinth::PublishEntry.new(
         published_at: Time.current, published_by: publishing_user
       ),
-      publish_target_2.string_identifier => Hyacinth::PublishEntry.new(
+      publish_target_2.combined_key => Hyacinth::PublishEntry.new(
         published_at: Time.current, published_by: publishing_user
       )
     )
@@ -36,7 +36,7 @@ RSpec.describe DigitalObjectConcerns::PublishBehavior, solr: true do
 
     it "calls unpublish_from for all current publish_entries" do
       digital_object_with_publish_entries.publish_entries.keys.each do |publish_entry_key|
-        project, target_type = PublishTarget.parse_string_identifier(publish_entry_key)
+        project, target_type = PublishTarget.parse_combined_key(publish_entry_key)
         expect(digital_object_with_publish_entries).to receive(:unpublish_from)
           .with(Project.find_by(string_key: project).publish_targets.find_by(target_type: target_type), any_args).ordered.and_call_original
       end

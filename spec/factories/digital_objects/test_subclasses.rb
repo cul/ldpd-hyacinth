@@ -47,7 +47,7 @@ FactoryBot.define do
         right_now = Time.current
         digital_object.primary_project = create(:project, :legend_of_lincoln, :with_publish_target, :allow_asset_rights)
         entries = digital_object.projects.map do |proj|
-          proj.publish_targets.map(&:string_identifier)
+          proj.publish_targets.map(&:combined_key)
         end.to_a.flatten.uniq.map do |sk|
           [sk, Hyacinth::PublishEntry.new(published_at: right_now, published_by: create(:user, :administrator, uid: "test-uid-#{Random.rand}"))]
         end.to_h

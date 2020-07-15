@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Form, Collapse } from 'react-bootstrap';
 import { useMutation } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
-import { lowerCase } from 'lodash';
 
 import InputGroup from '../../shared/forms/InputGroup';
 import Label from '../../shared/forms/Label';
@@ -43,7 +42,7 @@ function PublishTargetForm({ projectStringKey, publishTarget, formType }) {
     switch (formType) {
       case 'new':
         return createPublishTarget({ variables }).then((res) => {
-          history.push(`/projects/${projectStringKey}/publish_targets/${lowerCase(res.data.createPublishTarget.publishTarget.type)}/edit`);
+          history.push(`/projects/${projectStringKey}/publish_targets/${res.data.createPublishTarget.publishTarget.type.toLowerCase()}/edit`);
         });
       case 'edit':
         return updatePublishTarget({ variables }).then(() => {
@@ -72,7 +71,7 @@ function PublishTargetForm({ projectStringKey, publishTarget, formType }) {
         <Label>Type</Label>
         <SelectInput
           value={type}
-          options={publishTargetTypes.map(t => ({ label: lowerCase(t), value: t }))}
+          options={publishTargetTypes.map(t => ({ label: t.toLowerCase(), value: t }))}
           onChange={v => setType(v)}
           disabled={formType === 'edit'}
         />

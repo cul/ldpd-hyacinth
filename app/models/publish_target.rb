@@ -32,12 +32,12 @@ class PublishTarget < ApplicationRecord
     is_allowed_doi_target
   end
 
-  def string_identifier
+  def combined_key
     "#{project.string_key}_#{target_type}"
   end
 
-  def self.parse_string_identifier(string_identifier)
-    match_data = /^(.+)_(#{PublishTarget::TYPES.join('|')})$/.match(string_identifier)
+  def self.parse_combined_key(combined_key)
+    match_data = /^(.+)_(#{PublishTarget::TYPES.join('|')})$/.match(combined_key)
     [match_data[1], match_data[2]]
   end
 end
