@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_04_24_153858) do
+ActiveRecord::Schema.define(version: 2020_05_26_195717) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -234,14 +234,14 @@ ActiveRecord::Schema.define(version: 2020_04_24_153858) do
 
   create_table "publish_targets", force: :cascade do |t|
     t.integer "project_id"
-    t.string "string_key", null: false
-    t.string "display_label", null: false
     t.text "publish_url", null: false
     t.string "api_key", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "is_allowed_doi_target", default: false, null: false
     t.integer "doi_priority", default: 100, null: false
+    t.string "target_type", default: "production", null: false
+    t.index ["project_id", "target_type"], name: "index_publish_targets_on_project_id_and_target_type", unique: true
     t.index ["project_id"], name: "index_publish_targets_on_project_id"
   end
 

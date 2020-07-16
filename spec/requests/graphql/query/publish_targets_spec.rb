@@ -15,7 +15,7 @@ RSpec.describe 'Retrieving Publish Targets', type: :request do
     describe 'when there are multiple results' do
       before do
         FactoryBot.create(:publish_target, project: project)
-        FactoryBot.create(:publish_target, project: project, string_key: 'second_publish_target')
+        FactoryBot.create(:publish_target, project: project, target_type: 'staging')
         graphql query
       end
 
@@ -27,17 +27,15 @@ RSpec.describe 'Retrieving Publish Targets', type: :request do
               "publishTargets": [
                 {
                   "apiKey": "bestapikey",
-                  "displayLabel": "Great Project Website",
                   "publishUrl": "https://www.example.com/publish",
-                  "stringKey": "great_project_website",
+                  "type": "PRODUCTION",
                   "doiPriority": 100,
                   "isAllowedDoiTarget": false
                 },
                 {
                   "apiKey": "bestapikey",
-                  "displayLabel": "Great Project Website",
                   "publishUrl": "https://www.example.com/publish",
-                  "stringKey": "second_publish_target",
+                  "type": "STAGING",
                   "doiPriority": 100,
                   "isAllowedDoiTarget": false
                 }
@@ -56,9 +54,8 @@ RSpec.describe 'Retrieving Publish Targets', type: :request do
           stringKey
           publishTargets {
             apiKey
-            displayLabel
             publishUrl
-            stringKey
+            type
             doiPriority
             isAllowedDoiTarget
           }

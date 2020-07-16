@@ -82,17 +82,17 @@ module DigitalObjectConcerns
         publish_result, messages = publication_adapter.publish(publish_target, self, opts[:update_doi_url])
         if publish_result
           # Remove pending_publish_to and add publish entry
-          pending_publish_to.delete(publish_target.string_key)
+          pending_publish_to.delete(publish_target.combined_key)
           publish_entry = {
             published_at: (opts[:current_datetime] || DateTime.current),
             published_by: opts[:user]
           }
           # if result was true, messages array should be the published url
           publish_entry[:cited_at] = messages.first if opts[:update_doi_url]
-          current_publish_entries[publish_target.string_key] = Hyacinth::PublishEntry.new(publish_entry)
+          current_publish_entries[publish_target.combined_key] = Hyacinth::PublishEntry.new(publish_entry)
         else
-          self.errors.add(:publish_to, "Failed to publish to #{publish_target.string_key}. See error log for details.")
-          Rails.logger.error("Failed to publish #{self.uid} to #{publish_target.string_key} due to the following errors: #{messages.join(', ')}")
+          self.errors.add(:publish_to, "Failed to publish to #{publish_target.combined_key}. See error log for details.")
+          Rails.logger.error("Failed to publish #{self.uid} to #{publish_target.combined_key} due to the following errors: #{messages.join(', ')}")
         end
       end
 
@@ -101,11 +101,11 @@ module DigitalObjectConcerns
         unpublish_result, errors = publication_adapter.unpublish(publish_target, self, opts[:update_doi_url])
         if unpublish_result
           # Remove pending_unpublish_from and publish entry
-          pending_unpublish_from.delete(publish_target.string_key)
-          current_publish_entries.delete(publish_target.string_key)
+          pending_unpublish_from.delete(publish_target.combined_key)
+          current_publish_entries.delete(publish_target.combined_key)
         else
-          self.errors.add(:unpublish_from, "Failed to unpublish from #{publish_target.string_key}. See error log for details.")
-          Rails.logger.error("Failed to unpublish #{self.uid} from #{publish_target.string_key} due to the following errors: #{errors.join(', ')}")
+          self.errors.add(:unpublish_from, "Failed to unpublish from #{publish_target.combined_key}. See error log for details.")
+          Rails.logger.error("Failed to unpublish #{self.uid} from #{publish_target.combined_key} due to the following errors: #{errors.join(', ')}")
         end
       end
 
@@ -127,10 +127,16 @@ module DigitalObjectConcerns
       class PotentialPublishTargets
         delegate :[], to: :@targets
         def initialize(digital_object)
-          @targets = PublishTarget.where(
-            string_key: (digital_object.pending_publish_to + digital_object.pending_unpublish_from + digital_object.publish_entries.keys).uniq
-          ).map do |publish_target|
-            [publish_target.string_key, publish_target]
+          publish_target_string_keys = (digital_object.pending_publish_to + digital_object.pending_unpublish_from + digital_object.publish_entries.keys).uniq
+
+          # Here we assume that publish targets are validated before this point: HYACINTH-617
+          publish_target_query = publish_target_string_keys.map { |string_key|
+            project, target_type = PublishTarget.parse_combined_key(string_key)
+            "target_type = '#{target_type}' and projects.string_key = '#{project}'"
+          }.join(' or ')
+
+          @targets = PublishTarget.joins(:project).where(publish_target_query).map do |publish_target|
+            [[publish_target.project.string_key, publish_target.target_type].join('_'), publish_target]
           end.to_h
         end
 

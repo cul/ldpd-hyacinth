@@ -4,33 +4,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 import { Link, useParams } from 'react-router-dom';
-import gql from 'graphql-tag';
 
 import TabHeading from '../../shared/tabs/TabHeading';
 import { Can } from '../../../utils/abilityContext';
 import ProjectInterface from '../ProjectInterface';
 import GraphQLErrors from '../../shared/GraphQLErrors';
-
-const PROJECT_WITH_PUBLISH_TARGETS = gql`
-  query Project($stringKey: ID!){
-    project(stringKey: $stringKey) {
-      stringKey
-      displayLabel
-      publishTargets {
-        stringKey
-        displayLabel
-        publishUrl
-        apiKey
-      }
-    }
-  }
-`;
+import { publishTargetsQuery } from '../../../graphql/publishTargets';
 
 function PublishTargetIndex() {
   const { projectStringKey } = useParams();
 
   const { loading, error, data } = useQuery(
-    PROJECT_WITH_PUBLISH_TARGETS,
+    publishTargetsQuery,
     { variables: { stringKey: projectStringKey } },
   );
 
@@ -44,8 +29,8 @@ function PublishTargetIndex() {
       <Table hover responsive>
         <thead>
           <tr>
-            <th>Display Label</th>
-            <th>String Key</th>
+            <th>Target Type</th>
+            <th>String Identifier</th>
             <th>Publish URL</th>
           </tr>
         </thead>
@@ -53,19 +38,19 @@ function PublishTargetIndex() {
           {
             data.project.publishTargets && (
               data.project.publishTargets.map(publishTarget => (
-                <tr key={publishTarget.stringKey}>
+                <tr key={publishTarget.combinedKey}>
                   <td>
                     <Can I="update" of={{ subjectType: 'PublishTarget', project: { stringKey: projectStringKey } }} passThrough>
                       {
                           can => (
                             can
-                              ? <Link to={`/projects/${projectStringKey}/publish_targets/${publishTarget.stringKey}/edit`}>{publishTarget.displayLabel}</Link>
-                              : publishTarget.displayLabel
+                              ? <Link to={`/projects/${projectStringKey}/publish_targets/${publishTarget.type.toLowerCase()}/edit`}>{publishTarget.type.toLowerCase()}</Link>
+                              : publishTarget.type
                           )
                         }
                     </Can>
                   </td>
-                  <td>{publishTarget.stringKey}</td>
+                  <td>{publishTarget.combinedKey}</td>
                   <td>{publishTarget.publishUrl}</td>
                 </tr>
               ))
