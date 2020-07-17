@@ -11,7 +11,7 @@ import FormButtons from '../../shared/forms/FormButtons';
 import hyacinthApi from '../../../utils/hyacinthApi';
 import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
 
-class EnabledDynamicFieldEdit extends React.Component {
+class EnabledDynamicFieldForm extends React.Component {
   state = {
     disabled: true,
     enabledDynamicFields: {},
@@ -20,7 +20,7 @@ class EnabledDynamicFieldEdit extends React.Component {
   }
 
   componentDidMount() {
-    axios.all([EnabledDynamicFieldEdit.getDynamicFieldGraph(), this.getEnabledDynamicFields()])
+    axios.all([EnabledDynamicFieldForm.getDynamicFieldGraph(), this.getEnabledDynamicFields()])
       .then(axios.spread((graph, enabledDynamicFields) => {
         const allFieldsHash = {};
 
@@ -320,10 +320,10 @@ class EnabledDynamicFieldEdit extends React.Component {
   }
 }
 
-EnabledDynamicFieldEdit.propTypes = {
+EnabledDynamicFieldForm.propTypes = {
   formType: PropTypes.string.isRequired,
   projectStringKey: PropTypes.string.isRequired,
   digitalObjectType: PropTypes.string.isRequired,
 };
 
-export default withRouter(withErrorHandler(EnabledDynamicFieldEdit, hyacinthApi));
+export default withRouter(withErrorHandler(EnabledDynamicFieldForm, hyacinthApi));

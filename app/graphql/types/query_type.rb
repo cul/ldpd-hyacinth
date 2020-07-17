@@ -70,6 +70,15 @@ module Types
       argument :id, ID, required: true
     end
 
+    field :enabled_dynamic_field, EnabledDynamicFieldType, null: true do
+      argument :id, ID, required: true
+    end
+
+    field :enabled_dynamic_fields, [EnabledDynamicFieldType], null: true do
+      argument :project, Inputs::Project::StringKey, required: true
+      argument :digital_object_type, Enums::DigitalObjectTypeEnum, required: true
+    end
+
     field :field_export_profiles, [FieldExportProfileType], null: true do
       description "List of all field export profiles"
     end
@@ -158,6 +167,19 @@ module Types
       dynamic_field = DynamicField.find(id)
       ability.authorize!(:read, dynamic_field)
       dynamic_field
+    end
+
+    def enabled_dynamic_field(id:)
+      enabled_dynamic_field = EnabledDynamicField.find(id)
+      ability.authorize!(:read, enabled_dynamic_field)
+      enabled_dynamic_field
+    end
+
+    def enabled_dynamic_fields(project:, digital_object_type:)
+      project = Project.find_by!(project.to_h)
+      ability.authorize!(:read, project)
+      EnabledDynamicField.includes(:field_sets)
+                         .where(project_id: project.id, digital_object_type: digital_object_type)
     end
 
     def field_export_profiles
