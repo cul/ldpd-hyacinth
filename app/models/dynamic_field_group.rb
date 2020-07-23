@@ -6,6 +6,10 @@ class DynamicFieldGroup < ActiveRecord::Base
   include DynamicFieldStructure::Path
 
   PARENT_TYPES = ['DynamicFieldCategory', 'DynamicFieldGroup'].freeze
+  EXPORTABLE_ATTRIBUTES = [
+    :id, :string_key, :display_label, :sort_order, :is_repeatable, :export_rules,
+    :parent_type, :parent_id
+  ].freeze
 
   has_many :dynamic_fields, dependent: :destroy
   has_many :export_rules, dependent: :destroy
@@ -35,19 +39,13 @@ class DynamicFieldGroup < ActiveRecord::Base
     parent.respond_to?(:children) ? parent.children.reject { |c| c.eql?(self) } : []
   end
 
-  def as_json(_options = {})
-    {
-      id: id,
-      type: self.class.name,
-      string_key: string_key,
-      display_label: display_label,
-      sort_order: sort_order,
-      is_repeatable: is_repeatable,
-      children: ordered_children,
-      export_rules: export_rules,
-      parent_type: parent_type,
-      parent_id: parent_id
-    }
+  def as_json(options = {})
+    json = EXPORTABLE_ATTRIBUTES.map { |k| [k, self.send(k)] }.to_h
+    json[:type] = self.class.name
+    json[:children] = ordered_children.map(&:as_json)
+    return json unless options[:camelize]
+    json.deep_transform_keys! { |key| key.to_s.camelize(:lower).to_sym }
+    json
   end
 
   private

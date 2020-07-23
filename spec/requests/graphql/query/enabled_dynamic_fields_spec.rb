@@ -45,7 +45,6 @@ RSpec.describe 'Retrieving Enabled Dynamic Fields', type: :request do
     query {
       enabledDynamicFields(project: {stringKey: "#{project_string_key}"}, digitalObjectType: #{digital_object_type}) {
         type: __typename
-        id
         project {
           stringKey
         }

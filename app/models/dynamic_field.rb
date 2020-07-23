@@ -17,6 +17,12 @@ class DynamicField < ActiveRecord::Base
 
   TYPES = [Type::STRING, Type::TEXTAREA, Type::INTEGER, Type::BOOLEAN, Type::SELECT, Type::DATE, Type::CONTROLLED_TERM].freeze
 
+  EXPORTABLE_ATTRIBUTES = [
+    :id, :string_key, :display_label, :sort_order, :field_type, :filter_label, :select_options,
+    :is_facetable, :is_keyword_searchable, :is_title_searchable, :is_identifier_searchable,
+    :controlled_vocabulary
+  ].freeze
+
   has_many :enabled_dynamic_fields, dependent: :destroy
 
   belongs_to :dynamic_field_group
@@ -32,22 +38,12 @@ class DynamicField < ActiveRecord::Base
   validates :is_facetable,          inclusion: { in: [false], message: 'cannot be true for textareas' }, if: proc { |d| d.field_type == Type::TEXTAREA }
   validates :additional_data_json, :select_options, valid_json: true
 
-  def as_json(_options = {})
-    {
-      type: self.class.name,
-      id: id,
-      string_key: string_key,
-      display_label: display_label,
-      sort_order: sort_order,
-      field_type: field_type,
-      is_facetable: is_facetable,
-      filter_label: filter_label,
-      select_options: select_options,
-      is_keyword_searchable: is_keyword_searchable,
-      is_title_searchable: is_title_searchable,
-      is_identifier_searchable: is_identifier_searchable,
-      controlled_vocabulary: controlled_vocabulary
-    }
+  def as_json(options = {})
+    json = EXPORTABLE_ATTRIBUTES.map { |k| [k, self.send(k)] }.to_h
+    json[:type] = self.class.name
+    return json unless options[:camelize]
+    json.deep_transform_keys! { |key| key.to_s.camelize(:lower).to_sym }
+    json
   end
 
   def additional_data

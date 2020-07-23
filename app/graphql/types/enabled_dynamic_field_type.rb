@@ -4,7 +4,6 @@ module Types
   class EnabledDynamicFieldType < Types::BaseObject
     description 'An enabled dynamic field in a project'
 
-    field :id, ID, null: false
     field :dynamic_field, DynamicFieldType, null: false
     field :field_sets, [FieldSetType], null: false
     field :project, ProjectType, null: false
@@ -18,5 +17,11 @@ module Types
     field :default_value, String, null: true
     field :created_at, GraphQL::Types::ISO8601DateTime, null: true
     field :updated_at, GraphQL::Types::ISO8601DateTime, null: true
+    field :enabled, Boolean, null: false
+
+    # this will be false for placeholder values with no id
+    def enabled
+      object.id.present?
+    end
   end
 end

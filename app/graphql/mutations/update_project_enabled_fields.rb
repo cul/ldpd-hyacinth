@@ -7,7 +7,7 @@ class Mutations::UpdateProjectEnabledFields < Mutations::BaseMutation
     :enabled_dynamic_fields,
     [Inputs::EnabledDynamicFieldInput],
     "An array representing the new set of enabled dynamic fields for the object type in the given project, "\
-    "or an empty array to remove all project actions for the given user.",
+    "or an empty array to remove all project enabled fields for the digital object type.",
     required: true
   )
 
