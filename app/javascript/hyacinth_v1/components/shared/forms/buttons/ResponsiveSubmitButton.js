@@ -1,48 +1,45 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { withRouter } from 'react-router-dom';
 
-class ResponsiveSubmitButton extends React.Component {
-  state = {
-    isSaving: false,
-    success: null,
-  }
+const ResponsiveSubmitButton = (props) => {
+  const { formType, saveData, staticContext, ...rest } = props;
+  const [isSaving, setIsSaving] = useState(false);
+  const [success, setSuccess] = useState(null);
 
-  onClick = (e) => {
+  const onClick = (e) => {
     e.preventDefault();
 
-    this.setState({ isSaving: true });
-    const { saveData } = this.props;
+    const exec = () => {
+      setIsSaving(true);
+      saveData();
+      setIsSaving(false);
+      setSuccess(true);
+    };
 
-    saveData()
-      .then(() => this.setState({ success: true }))
-      .catch(() => this.setState({ success: false }))
-      .then(() => setTimeout(() => this.setState({ isSaving: false, success: null }), 1000));
+    new Promise(exec)
+      .catch(() => setIsSaving(false) && setSuccess(false))
+      .then(() => setTimeout(() => setIsSaving(false) && setSuccess(null)), 1000);
+  };
+
+  let savingText = 'Saving...';
+  let variant = 'primary';
+
+  if (success) {
+    savingText = 'Saved!';
+    variant = 'success';
+  } else if (success === false) {
+    savingText = 'Could Not Save!';
+    variant = 'warning';
+  } else {
+    savingText = formType === 'new' ? 'Create' : 'Update';
   }
 
-  render() {
-    // Note: Extracting staticContext here won't be necessary when we
-    // switch to functional components + hooks
-    const { formType, saveData, staticContext, ...rest } = this.props;
-    const { isSaving, success } = this.state;
-
-    let savingText = 'Saving...';
-    let variant = 'primary';
-
-    if (success) {
-      savingText = 'Saved!';
-      variant = 'success';
-    } else if (success === false) {
-      savingText = 'Could Not Save!';
-      variant = 'warning';
-    }
-
-    return (
-      <Button variant={variant} type="submit" onClick={this.onClick} disabled={isSaving} {...rest}>
-        {isSaving ? savingText : formType === 'new' ? 'Create' : 'Update'}
-      </Button>
-    );
-  }
-}
+  return (
+    <Button variant={variant} type="submit" onClick={onClick} disabled={isSaving} {...rest}>
+      {savingText}
+    </Button>
+  );
+};
 
 export default withRouter(ResponsiveSubmitButton);

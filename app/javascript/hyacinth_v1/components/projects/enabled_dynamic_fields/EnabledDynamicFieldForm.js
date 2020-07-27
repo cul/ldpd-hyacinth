@@ -235,7 +235,7 @@ export const EnabledDynamicFieldForm = (props) => {
     loading: fieldGraphLoading,
     error: fieldGraphError,
     data: fieldGraphData,
-  } = useQuery(getDynamicFieldGraphQuery, { variables: { } });
+  } = useQuery(getDynamicFieldGraphQuery, { variables: { metadataForm: 'descriptive' } });
 
   const [updateEnabledFields, { error: updateError }] = useMutation(updateEnabledDynamicFieldsMutation);
 

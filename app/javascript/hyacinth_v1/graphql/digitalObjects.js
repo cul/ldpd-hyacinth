@@ -167,6 +167,26 @@ export const getDigitalObjectsQuery = gql`
   }
 `;
 
+export const createDigitalObjectMutation = gql`
+  mutation CreateDigitalObject($input: CreateDigitalObjectInput!) {
+    createDigitalObject(input: $input) {
+      digitalObject {
+        id
+      }
+    }
+  }
+`;
+
+export const updateDescriptiveMetadataMutation = gql`
+  mutation UpdateDescriptiveMetadata($input: UpdateDescriptiveMetadataInput!) {
+    updateDescriptiveMetadata(input: $input) {
+      digitalObject {
+        id
+      }
+    }
+  }
+`;
+
 export const updateRightsMutation = gql`
   mutation UpdateRights($input: UpdateRightsInput!) {
     updateRights(input: $input) {

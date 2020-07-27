@@ -4,30 +4,28 @@ import PropTypes from 'prop-types';
 
 import FieldGroup from './FieldGroup';
 
-class FieldGroupArray extends React.Component {
-  onChange(index, newValue) {
-    const { value, onChange } = this.props;
+const FieldGroupArray = (props) => {
+  const {
+    value, onChange, defaultValue, dynamicFieldGroup,
+  } = props;
 
+  const onChangeWrapper = (index, newValue) => {
     const nextValue = produce(value, (draft) => {
       draft[index] = newValue;
     });
 
-    onChange(nextValue);
-  }
+    return onChange(nextValue);
+  };
 
-  addHandler = (index) => {
-    const { value, onChange, defaultValue } = this.props;
-
+  const addHandler = (index) => {
     const nextValue = produce(value, (draft) => {
       draft.splice(index + 1, 0, defaultValue);
     });
 
     onChange(nextValue);
-  }
+  };
 
-  moveHandler = (move, index) => {
-    const { value, onChange } = this.props;
-
+  const moveHandler = (move, index) => {
     switch (move) {
       case 'up':
         if (index !== 0) {
@@ -48,39 +46,32 @@ class FieldGroupArray extends React.Component {
       default:
         break;
     }
-  }
+  };
 
-  removeHandler = (index) => {
-    const { value, onChange } = this.props;
-
+  const removeHandler = (index) => {
     const nextValue = produce(value, (draft) => {
       delete draft[index];
     });
 
     onChange(nextValue);
-  }
+  };
 
-
-  render() {
-    const { value, dynamicFieldGroup, defaultValue } = this.props;
-
-    return (
-      value.map((v, i) => (
-        <FieldGroup
-          key={`${dynamicFieldGroup.stringKey}_${i}`}
-          value={v}
-          index={i}
-          defaultValue={defaultValue}
-          dynamicFieldGroup={dynamicFieldGroup}
-          onChange={newValue => this.onChange(i, newValue)}
-          addHandler={() => this.addHandler(i)}
-          removeHandler={() => this.removeHandler(i)}
-          moveHandler={move => this.moveHandler(move, i)}
-        />
-      ))
-    );
-  }
-}
+  return (
+    value.map((v, i) => (
+      <FieldGroup
+        key={`${dynamicFieldGroup.stringKey}_${i}`}
+        value={v}
+        index={i}
+        defaultValue={defaultValue}
+        dynamicFieldGroup={dynamicFieldGroup}
+        onChange={newValue => onChangeWrapper(i, newValue)}
+        addHandler={() => addHandler(i)}
+        removeHandler={() => removeHandler(i)}
+        moveHandler={move => moveHandler(move, i)}
+      />
+    ))
+  );
+};
 
 FieldGroupArray.propTypes = {
   onChange: PropTypes.func.isRequired,

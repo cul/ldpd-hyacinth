@@ -1,19 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 import PropTypes from 'prop-types';
 import produce from 'immer';
-import axios from 'axios';
 import { merge } from 'lodash';
 import { useHistory } from 'react-router-dom';
 
-import hyacinthApi, {
-  enabledDynamicFields, dynamicFieldCategories, digitalObject as digitalObjectApi
-} from '../../../utils/hyacinthApi';
-import withErrorHandler from '../../../hoc/withErrorHandler/withErrorHandler';
-import TabHeading from '../../shared/tabs/TabHeading';
 import FieldGroupArray from './FieldGroupArray';
 import FormButtons from '../../shared/forms/FormButtons';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 import InputGroup from '../../shared/forms/InputGroup';
 import TextInputWithAddAndRemove from '../../shared/forms/inputs/TextInputWithAddAndRemove';
+import { createDigitalObjectMutation, updateDescriptiveMetadataMutation } from '../../../graphql/digitalObjects';
+import { getEnabledDynamicFieldsQuery } from '../../../graphql/projects/enabledDynamicFields';
+import { getDynamicFieldGraphQuery } from '../../../graphql/dynamicFieldCategories';
 
 const defaultFieldValue = {
   string: '',
@@ -25,12 +24,41 @@ const defaultFieldValue = {
   controlled_term: {},
 };
 
+const DynamicFieldCategory = (props) => {
+  const { category, onChange, descriptiveMetadata, defaultFieldData } = props;
+  const { displayLabel, children } = category;
+  const changeHandler = (sk) => {
+    const stringKey = sk;
+    return (v) => {
+      return onChange(stringKey, v);
+    };
+  };
+  return (
+    <div key={displayLabel}>
+      <h4 className="text-orange">{displayLabel}</h4>
+      {
+        children.map(fieldGroup => (
+          <FieldGroupArray
+            key={`array_${fieldGroup.stringKey}`}
+            dynamicFieldGroup={fieldGroup}
+            value={descriptiveMetadata[fieldGroup.stringKey]}
+            defaultValue={defaultFieldData[fieldGroup.stringKey][0]}
+            onChange={changeHandler(fieldGroup.stringKey)}
+          />
+        ))
+      }
+    </div>
+  );
+};
+
 function MetadataForm(props) {
-  const { digitalObject, formType } = props;
-  const { id, primaryProject, digitalObjectType, descriptiveMetadata: initialDescriptiveMetadata } = digitalObject;
-  const [dynamicFieldHierarchy, setDynamicFieldHierarchy] = useState(null);
-  const [defaultFieldData, setDefaultFieldData] = useState(null);
-  const [descriptiveMetadata, setDescriptiveMetadata] = useState(null);
+  const { digitalObject, formType, project, createType } = props;
+  const {
+    id, primaryProject, digitalObjectType, descriptiveMetadata: initialDescriptiveMetadata,
+  } = digitalObject;
+  const [descriptiveMetadata, setDescriptiveMetadata] = useState({});
+  const [createDigitalObject, { errors: createErrors }] = useMutation(createDigitalObjectMutation);
+  const [updateDescriptiveMetadata, { errors: updateErrors }] = useMutation(updateDescriptiveMetadataMutation);
   const [identifiers, setIdentifiers] = useState(digitalObject.identifiers);
   const history = useHistory();
 
@@ -45,20 +73,39 @@ function MetadataForm(props) {
   };
 
   const onSubmitHandler = () => {
-    if (formType === 'edit') {
-      return digitalObjectApi.update(
+    let historyPromise = () => {};
+    const variables = {
+      input: {
         id,
-        { digitalObject: { descriptiveMetadata, identifiers } },
-      ).then(res => history.push(`/digital_objects/${res.data.digitalObject.uid}/metadata`));
+        descriptiveMetadata,
+        identifiers,
+      },
+    };
+    let action;
+    switch (formType) {
+      case 'edit':
+        action = updateDescriptiveMetadata;
+        historyPromise = (res) => {
+          const path = `/digital_objects/${res.data.updateDescriptiveMetadata.digitalObject.id}/metadata`;
+          history.push(path);
+        };
+        break;
+      case 'new':
+        variables.input.project = project;
+        variables.input.digitalObjectType = createType;
+        action = createDigitalObject;
+        historyPromise = (res) => {
+          const path = `/digital_objects/${res.data.createDigitalObject.digitalObject.id}/metadata`;
+          history.push(path);
+        };
+        break;
+      default:
+        action = () => {
+          console.log(`Unhandled formType: ${formType}`);
+          throw new Error(`Unhandled formType: ${formType}`);
+        };
     }
-
-    if (formType === 'new') {
-      return digitalObjectApi.create({
-        digitalObject: { ...digitalObject, descriptiveMetadata, identifiers },
-      }).then(res => history.push(`/digital_objects/${res.data.digitalObject.uid}/metadata`));
-    }
-
-    throw new Error(`Unhandled formType: ${formType}`);
+    return action({ variables }).then(historyPromise);
   };
 
   const emptyDescriptiveMetadata = (dynamicFields, newObject) => {
@@ -78,78 +125,75 @@ function MetadataForm(props) {
     return newObject;
   };
 
-  const keepEnabledFields = (enabledFieldIds, children) => {
-    return children.map((c) => {
-      switch (c.type) {
-        case 'DynamicFieldGroup':
-          c.children = keepEnabledFields(enabledFieldIds, c.children);
-          return c.children.length > 0 ? c : null;
-        case 'DynamicField':
-          return enabledFieldIds.includes(c.id) ? c : null;
-        default:
-          return c;
-      }
-    }).filter(c => c !== null);
-  };
-
-  const renderCategory = (category) => {
-    const { displayLabel, children } = category;
-    return (
-      <div key={displayLabel}>
-        <h4 className="text-orange">{displayLabel}</h4>
-        {
-          children.map(fieldGroup => (
-            <FieldGroupArray
-              key={`array_${fieldGroup.stringKey}`}
-              dynamicFieldGroup={fieldGroup}
-              value={descriptiveMetadata[fieldGroup.stringKey]}
-              defaultValue={defaultFieldData[fieldGroup.stringKey][0]}
-              onChange={v => onChange(fieldGroup.stringKey, v)}
-            />
-          ))
-        }
-      </div>
-    );
-  };
+  const keepEnabledFields = (enabledFieldIds, children) => children.map((c) => {
+    switch (c.type) {
+      case 'DynamicFieldGroup':
+        c.children = keepEnabledFields(enabledFieldIds, c.children);
+        return c.children.length > 0 ? c : null;
+      case 'DynamicField':
+        if (enabledFieldIds.includes(c.id)) return c;
+        // if the ids are fetched in queries ID scalars and JSON, strings must be compared
+        if (enabledFieldIds.includes(String(c.id))) return c;
+        return null;
+      default:
+        return c;
+    }
+  }).filter(c => c !== null);
 
   // TODO: Replace effect below with GraphQL when we have a GraphQL DynamicFieldCategories API
+  const variables = { project: { stringKey: primaryProject.stringKey }, digitalObjectType };
+  const {
+    loading: enabledFieldsLoading,
+    error: enabledFieldsError,
+    data: enabledFieldsData,
+  } = useQuery(getEnabledDynamicFieldsQuery, { variables });
 
-  useEffect(() => {
-    // Grab all dynamic fields. Grab all the fields that are enabled for this digital object
-    // type within this project. Remove any fields in the group of dynamic fields that aren't
-    // enabled for this object's projects.
-    axios.all([
-      enabledDynamicFields.all(primaryProject.stringKey, digitalObjectType),
-      dynamicFieldCategories.all(),
-    ]).then(axios.spread((enabledFields, dynamicFieldGraph) => {
-      const enabledFieldIds = enabledFields.data.enabledDynamicFields.map(f => f.dynamicFieldId);
+  const {
+    loading: fieldGraphLoading,
+    error: fieldGraphError,
+    data: fieldGraphData,
+  } = useQuery(getDynamicFieldGraphQuery, { variables: { } });
 
-      const filteredDynamicFields = dynamicFieldGraph.data.dynamicFieldCategories.map((category) => {
-        category.children = keepEnabledFields(enabledFieldIds, category.children);
-        return category;
-      }).filter(c => c.children.length > 0);
+  if (enabledFieldsLoading || fieldGraphLoading) return (<></>);
 
-      const emptyData = {};
-      filteredDynamicFields.forEach((category) => {
-        emptyDescriptiveMetadata(category.children, emptyData);
-      });
+  const anyErrors = (enabledFieldsError || fieldGraphError || createErrors || updateErrors)
+  if (anyErrors) {
+    return (<GraphQLErrors errors={anyErrors} />);
+  }
 
-      setDynamicFieldHierarchy(filteredDynamicFields);
-      setIdentifiers(identifiers);
-      setDefaultFieldData(emptyData);
+  const enabledFieldIds = [];
+  enabledFieldsData.enabledDynamicFields.forEach((enabledField) => {
+    const { dynamicField, ...rest } = enabledField;
+    if (rest.enabled) enabledFieldIds.push(dynamicField.id);
+  });
 
-      // Merge emptyData and descriptiveMetadata so that we don't supply undefined values to the
-      // form as we build out the hierarchy.
-      setDescriptiveMetadata(merge({}, emptyData, initialDescriptiveMetadata));
-    }));
-  }, []);
+  const filteredCategories = fieldGraphData.dynamicFieldGraph.dynamicFieldCategories.map((cat) => {
+    cat.children = keepEnabledFields(enabledFieldIds, cat.children);
+    return cat;
+  }).filter(cat => cat.children.length > 0);
 
-  if (!(dynamicFieldHierarchy && descriptiveMetadata && defaultFieldData)) return (<></>);
+  const emptyData = {};
+  filteredCategories.forEach((category) => {
+    emptyDescriptiveMetadata(category.children, emptyData);
+  });
 
+  // Merge emptyData and descriptiveMetadata so that we don't supply undefined values to the form as we build out the hierarchy.
+  merge(descriptiveMetadata, emptyData, initialDescriptiveMetadata);
+  const cancelPath = (formType === 'new') ? '/digital_objects' : `/digital_objects/${id}/metadata`;
   return (
     <>
       <form>
-        { dynamicFieldHierarchy.map(category => renderCategory(category)) }
+        {
+          filteredCategories.map(category => (
+            <DynamicFieldCategory
+              key={category.id}
+              category={category}
+              onChange={onChange}
+              descriptiveMetadata={descriptiveMetadata}
+              defaultFieldData={emptyData}
+            />
+          ))
+        }
 
         <h4 className="text-orange">Identifiers</h4>
         <InputGroup>
@@ -162,7 +206,7 @@ function MetadataForm(props) {
 
         <FormButtons
           formType={formType}
-          cancelTo={`/digital_objects/${id}/metadata`}
+          cancelTo={cancelPath}
           onSave={onSubmitHandler}
         />
       </form>
@@ -170,9 +214,16 @@ function MetadataForm(props) {
   );
 }
 
-export default withErrorHandler(MetadataForm, hyacinthApi);
+export default MetadataForm;
 
 MetadataForm.propTypes = {
+  project: PropTypes.objectOf(PropTypes.any),
+  createType: PropTypes.oneOf(['item', 'site', 'none']),
   digitalObject: PropTypes.objectOf(PropTypes.any).isRequired,
   formType: PropTypes.oneOf(['new', 'edit']).isRequired,
+};
+
+MetadataForm.defaultProps = {
+  project: { stringKey: 'none' },
+  createType: 'none',
 };

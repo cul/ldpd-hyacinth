@@ -4,7 +4,6 @@ import { useQuery } from '@apollo/react-hooks';
 import { capitalize } from 'lodash';
 
 import ContextualNavbar from '../../shared/ContextualNavbar';
-import { Can } from '../../../utils/abilityContext';
 import { getProjectQuery } from '../../../graphql/projects';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 import MetadataForm from '../metadata/MetadataForm';
@@ -14,8 +13,9 @@ function DigitalObjectNewForm() {
   const { projectStringKey, digitalObjectType } = useParams();
 
   // Retrieve data and set data
+  const project = { stringKey: projectStringKey };
   const { loading: projectLoading, error: projectError, data: projectData } = useQuery(
-    getProjectQuery, { variables: { stringKey: projectStringKey } },
+    getProjectQuery, { variables: project },
   );
 
   if (projectLoading) return (<></>);
@@ -30,7 +30,6 @@ function DigitalObjectNewForm() {
     descriptiveMetadata: {},
     identifiers: [],
   };
-
   return (
     <>
       <ContextualNavbar
@@ -38,7 +37,7 @@ function DigitalObjectNewForm() {
         rightHandLinks={[{ link: '/digital_objects', label: 'Back to Digital Objects' }]}
       />
       <DigitalObjectSummary digitalObject={initialDigitalObject} />
-      <MetadataForm formType="new" digitalObject={initialDigitalObject} />
+      <MetadataForm formType="new" digitalObject={initialDigitalObject} project={project} createType={digitalObjectType} />
     </>
   );
 }
