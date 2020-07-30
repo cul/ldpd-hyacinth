@@ -21,12 +21,6 @@ export const projects = {
   delete: '',
 };
 
-export const enabledDynamicFields = {
-  all: (project, digitalObjectType) => (
-    instance.get(`/projects/${project}/enabled_dynamic_fields/${digitalObjectType}`)
-  ),
-};
-
 export const digitalObject = {
   search: () => instance.get('/digital_objects/search'),
   get: id => instance.get(`/digital_objects/${id}`),
