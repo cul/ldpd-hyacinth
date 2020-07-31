@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class Mutations::UpdateProjectEnabledFields < Mutations::BaseMutation
-  argument :project, Inputs::Project::StringKey, "String key for project", required: true
+  argument :project, Inputs::StringKey, "String key for project", required: true
   argument :digital_object_type, Enums::DigitalObjectTypeEnum, "digital object type", required: true
   argument(
     :enabled_dynamic_fields,

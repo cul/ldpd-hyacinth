@@ -3,7 +3,7 @@
 module Mutations
   module DigitalObject
     class CreateDigitalObject < Mutations::BaseMutation
-      argument :project, Inputs::Project::StringKey, "String key for project", required: true
+      argument :project, Inputs::StringKey, "String key for project", required: true
       argument :digital_object_type, Enums::DigitalObjectTypeEnum, "digital object type", required: true
       argument :descriptive_metadata, GraphQL::Types::JSON, required: true
       argument :identifiers, [String], required: true

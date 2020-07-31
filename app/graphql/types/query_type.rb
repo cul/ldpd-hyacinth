@@ -76,7 +76,7 @@ module Types
     end
 
     field :enabled_dynamic_fields, [EnabledDynamicFieldType], null: true do
-      argument :project, Inputs::Project::StringKey, required: true
+      argument :project, Inputs::StringKey, required: true
       argument :digital_object_type, Enums::DigitalObjectTypeEnum, required: true
     end
 
