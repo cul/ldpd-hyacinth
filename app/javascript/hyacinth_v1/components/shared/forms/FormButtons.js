@@ -21,7 +21,7 @@ function FormButtons(props) {
       </Col>
 
       <Col sm="auto">
-        <ResponsiveSubmitButton key={`${formType}-submit`} saveData={onSave} formType={formType} />
+        <ResponsiveSubmitButton saveData={onSave} formType={formType} />
       </Col>
     </Form.Row>
   );
