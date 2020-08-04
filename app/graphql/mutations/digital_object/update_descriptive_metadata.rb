@@ -17,7 +17,7 @@ module Mutations
           'identifiers' => identifiers,
           'descriptive_metadata' => descriptive_metadata
         )
-        if digital_object.save(update_index: true, user: context[:current_user])
+        if digital_object.save(user: context[:current_user])
           { digital_object: digital_object, errors: [] }
         else
           {
