@@ -18,7 +18,7 @@ module Mutations
         digital_object = Hyacinth::Config.digital_object_types.key_to_class(digital_object_type).new
         digital_object.primary_project = project
         digital_object.assign_attributes(
-          'identifiers' => Set.new(identifiers), 'descriptive_metadata' => descriptive_metadata
+          'identifiers' => identifiers, 'descriptive_metadata' => descriptive_metadata
         )
         if digital_object.save(update_index: true, user: context[:current_user])
           { digital_object: digital_object, errors: [] }

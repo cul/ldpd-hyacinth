@@ -14,7 +14,7 @@ module Mutations
         digital_object = ::DigitalObject::Base.find(id)
         ability.authorize! :update, digital_object
         digital_object.assign_attributes(
-          'identifiers' => Set.new(identifiers),
+          'identifiers' => identifiers,
           'descriptive_metadata' => descriptive_metadata
         )
         if digital_object.save(update_index: true, user: context[:current_user])
