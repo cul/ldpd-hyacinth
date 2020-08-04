@@ -132,7 +132,7 @@ function MetadataForm(props) {
         return c.children.length > 0 ? c : null;
       case 'DynamicField':
         if (enabledFieldIds.includes(c.id)) return c;
-        // if the ids are fetched in queries ID scalars and JSON, strings must be compared
+        // if the ids are fetched in queries mixing ID scalars and JSON, strings must be compared
         if (enabledFieldIds.includes(String(c.id))) return c;
         return null;
       default:
@@ -140,7 +140,6 @@ function MetadataForm(props) {
     }
   }).filter(c => c !== null);
 
-  // TODO: Replace effect below with GraphQL when we have a GraphQL DynamicFieldCategories API
   const variables = { project: { stringKey: primaryProject.stringKey }, digitalObjectType };
   const {
     loading: enabledFieldsLoading,

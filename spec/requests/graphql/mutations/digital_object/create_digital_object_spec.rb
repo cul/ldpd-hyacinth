@@ -75,7 +75,7 @@ RSpec.describe 'Create Digital Object', type: :request, solr: true do
         graphql query, variables
       end
 
-      it "return a single item with the expected metadata fields" do
+      it "returns a single item with the expected metadata fields" do
         expect(response.body).to be_json_eql("\"United States\"").at_path('data/createDigitalObject/digitalObject/descriptiveMetadata/title/0/sort_portion')
       end
 
