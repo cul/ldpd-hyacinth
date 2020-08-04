@@ -28,7 +28,6 @@ RSpec.describe 'Updating Item Descriptive Metadata', type: :request, solr: true 
   before do
     Hyacinth::DynamicFieldsLoader.load_fields!(field_definitions)
     search_params = { digital_object_type: 'item' }
-    EnabledDynamicField.where(search_params).delete_all
     search_params[:project_id] = project.id
     dfields = DynamicField.where(string_key: ['non_sort_portion', 'sort_portion'])
     dfields.each do |df|
