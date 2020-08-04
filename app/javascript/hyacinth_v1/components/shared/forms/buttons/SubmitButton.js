@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
 
 const SubmitButton = (props) => {
   // Note: Extracting staticContext here won't be necessary when we
@@ -13,4 +12,4 @@ const SubmitButton = (props) => {
   );
 };
 
-export default withRouter(SubmitButton);
+export default SubmitButton;

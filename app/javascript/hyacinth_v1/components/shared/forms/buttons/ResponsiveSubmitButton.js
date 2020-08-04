@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
 
 const ResponsiveSubmitButton = (props) => {
   const { formType, saveData, staticContext, ...rest } = props;
@@ -42,4 +41,4 @@ const ResponsiveSubmitButton = (props) => {
   );
 };
 
-export default withRouter(ResponsiveSubmitButton);
+export default ResponsiveSubmitButton;
