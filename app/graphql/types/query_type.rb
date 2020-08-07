@@ -181,6 +181,7 @@ module Types
     def enabled_dynamic_fields(project:, digital_object_type:)
       project = Project.find_by!(project.to_h)
       ability.authorize!(:read, project)
+      # TODO: Move this SQL query and parsing to a model method (HYACINTH-646)
       join_query = "SELECT dynamic_fields.id AS df_id, enabled_dynamic_fields.* FROM dynamic_fields"\
                    " LEFT OUTER JOIN enabled_dynamic_fields ON enabled_dynamic_fields.dynamic_field_id = dynamic_fields.id"\
                    " AND enabled_dynamic_fields.project_id = #{project.id} AND enabled_dynamic_fields.digital_object_type = '#{digital_object_type}'"
