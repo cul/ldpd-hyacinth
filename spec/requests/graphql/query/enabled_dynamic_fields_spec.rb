@@ -17,8 +17,8 @@ RSpec.describe 'Retrieving Enabled Dynamic Fields', type: :request do
     let(:request) { graphql query(project.string_key, digital_object_type) }
   end
 
-  context 'when logged in user is an administrator' do
-    before { sign_in_user as: :administrator }
+  context 'when logged in user is an project contributor' do
+    before { sign_in_project_contributor to: :read_objects, project: project }
     context 'when id is valid' do
       before { graphql query(project.string_key, enabled_dynamic_field.digital_object_type) }
       it 'returns correct response' do
