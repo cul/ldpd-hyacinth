@@ -52,13 +52,15 @@ const DynamicFieldCategory = (props) => {
 };
 
 function MetadataForm(props) {
-  const { digitalObject, formType, project, createType } = props;
+  const { digitalObject, formType } = props;
   const {
     id, primaryProject, digitalObjectType, descriptiveMetadata: initialDescriptiveMetadata,
   } = digitalObject;
   const [descriptiveMetadata, setDescriptiveMetadata] = useState({});
   const [createDigitalObject, { errors: createErrors }] = useMutation(createDigitalObjectMutation);
-  const [updateDescriptiveMetadata, { errors: updateErrors }] = useMutation(updateDescriptiveMetadataMutation);
+  const [updateDescriptiveMetadata, { errors: updateErrors }] = useMutation(
+    updateDescriptiveMetadataMutation,
+  );
   const [identifiers, setIdentifiers] = useState(digitalObject.identifiers);
 
   const history = useHistory();
@@ -93,8 +95,8 @@ function MetadataForm(props) {
         };
         break;
       case 'new':
-        variables.input.project = project;
-        variables.input.digitalObjectType = createType;
+        variables.input.project = { stringKey: primaryProject.stringKey };
+        variables.input.digitalObjectType = digitalObjectType;
         action = createDigitalObject;
         historyPromise = (res) => {
           const path = `/digital_objects/${res.data.createDigitalObject.digitalObject.id}/metadata`;
@@ -158,7 +160,7 @@ function MetadataForm(props) {
 
   if (enabledFieldsLoading || fieldGraphLoading) return (<></>);
 
-  const anyErrors = (enabledFieldsError || fieldGraphError || createErrors || updateErrors)
+  const anyErrors = (enabledFieldsError || fieldGraphError || createErrors || updateErrors);
   if (anyErrors) {
     return (<GraphQLErrors errors={anyErrors} />);
   }
@@ -179,7 +181,10 @@ function MetadataForm(props) {
     emptyDescriptiveMetadata(category.children, emptyData);
   });
 
-  // Merge emptyData and descriptiveMetadata so that we don't supply undefined values to the form as we build out the hierarchy.
+  /*
+    Merge emptyData and descriptiveMetadata so that we don't supply undefined values to the form
+    as we build out the hierarchy.
+   */
   merge(descriptiveMetadata, emptyData, initialDescriptiveMetadata);
   const cancelPath = (formType === 'new') ? '/digital_objects' : `/digital_objects/${id}/metadata`;
   return (
@@ -219,13 +224,6 @@ function MetadataForm(props) {
 export default MetadataForm;
 
 MetadataForm.propTypes = {
-  project: PropTypes.objectOf(PropTypes.any),
-  createType: PropTypes.oneOf(['item', 'site', 'none']),
   digitalObject: PropTypes.objectOf(PropTypes.any).isRequired,
   formType: PropTypes.oneOf(['new', 'edit']).isRequired,
-};
-
-MetadataForm.defaultProps = {
-  project: { stringKey: 'none' },
-  createType: 'none',
 };

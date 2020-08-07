@@ -37,7 +37,7 @@ function DigitalObjectNewForm() {
         rightHandLinks={[{ link: '/digital_objects', label: 'Back to Digital Objects' }]}
       />
       <DigitalObjectSummary digitalObject={initialDigitalObject} />
-      <MetadataForm formType="new" digitalObject={initialDigitalObject} project={project} createType={digitalObjectType} />
+      <MetadataForm formType="new" digitalObject={initialDigitalObject} />
     </>
   );
 }
