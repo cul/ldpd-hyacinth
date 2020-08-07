@@ -60,6 +60,7 @@ function MetadataForm(props) {
   const [createDigitalObject, { errors: createErrors }] = useMutation(createDigitalObjectMutation);
   const [updateDescriptiveMetadata, { errors: updateErrors }] = useMutation(updateDescriptiveMetadataMutation);
   const [identifiers, setIdentifiers] = useState(digitalObject.identifiers);
+
   const history = useHistory();
 
   const onChange = (fieldName, fieldVal) => {
@@ -88,6 +89,7 @@ function MetadataForm(props) {
         historyPromise = (res) => {
           const path = `/digital_objects/${res.data.updateDescriptiveMetadata.digitalObject.id}/metadata`;
           history.push(path);
+          return { redirect: path };
         };
         break;
       case 'new':
@@ -97,6 +99,7 @@ function MetadataForm(props) {
         historyPromise = (res) => {
           const path = `/digital_objects/${res.data.createDigitalObject.digitalObject.id}/metadata`;
           history.push(path);
+          return { redirect: path };
         };
         break;
       default:
