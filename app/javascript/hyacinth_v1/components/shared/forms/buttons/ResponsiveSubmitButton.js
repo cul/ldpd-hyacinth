@@ -1,48 +1,69 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
-class ResponsiveSubmitButton extends React.Component {
-  state = {
-    isSaving: false,
-    success: null,
-  }
+/*
+  saveData should be a function returning a function or Promise
+  Unless saveData resolves to a value with a data property,
+  the component will suppress state updates/component redraws to
+  prevent memory leaks.
+ */
+const ResponsiveSubmitButton = (props) => {
+  const { formType, saveData, ...rest } = props;
+  const [isSaving, setIsSaving] = useState(false);
+  const [success, setSuccess] = useState(null);
 
-  onClick = (e) => {
+  const onClick = (e) => {
     e.preventDefault();
+    const element = e.target;
+    element.text = 'Saving...';
+    element.disabled = true;
+    const resetButton = () => {
+      setIsSaving(false);
+      setSuccess(null);
+      element.disabled = false;
+    };
+    const onError = () => {
+      setIsSaving(false);
+      setSuccess(false);
+      return true; // to enable the timed reset of the form
+    };
+    const onSuccess = (res) => {
+      if (res.data) {
+        setIsSaving(false);
+        setSuccess(true);
+        return res;
+      }
+      return false;
+    };
 
-    this.setState({ isSaving: true });
-    const { saveData } = this.props;
+    Promise.resolve(saveData())
+      .then(onSuccess).catch(onError)
+      .then((reset) => {
+        if (reset) setTimeout(resetButton, 1000);
+      });
+  };
 
-    saveData()
-      .then(() => this.setState({ success: true }))
-      .catch(() => this.setState({ success: false }))
-      .then(() => setTimeout(() => this.setState({ isSaving: false, success: null }), 1000));
+  let savingText = formType === 'new' ? 'Create' : 'Update';
+  let variant = 'primary';
+
+  if (success) {
+    savingText = 'Saved!';
+    variant = 'success';
+  } else if (success === false) {
+    savingText = 'Could Not Save!';
+    variant = 'warning';
   }
 
-  render() {
-    // Note: Extracting staticContext here won't be necessary when we
-    // switch to functional components + hooks
-    const { formType, saveData, staticContext, ...rest } = this.props;
-    const { isSaving, success } = this.state;
+  return (
+    <Button variant={variant} type="submit" onClick={onClick} disabled={isSaving} {...rest}>
+      {savingText}
+    </Button>
+  );
+};
 
-    let savingText = 'Saving...';
-    let variant = 'primary';
-
-    if (success) {
-      savingText = 'Saved!';
-      variant = 'success';
-    } else if (success === false) {
-      savingText = 'Could Not Save!';
-      variant = 'warning';
-    }
-
-    return (
-      <Button variant={variant} type="submit" onClick={this.onClick} disabled={isSaving} {...rest}>
-        {isSaving ? savingText : formType === 'new' ? 'Create' : 'Update'}
-      </Button>
-    );
-  }
-}
-
-export default withRouter(ResponsiveSubmitButton);
+ResponsiveSubmitButton.propTypes = {
+  formType: PropTypes.oneOf(['new', 'edit']).isRequired,
+  saveData: PropTypes.func.isRequired,
+};
+export default ResponsiveSubmitButton;

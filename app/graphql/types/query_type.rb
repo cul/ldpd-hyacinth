@@ -58,6 +58,11 @@ module Types
       argument :metadata_form, Enums::MetadataFormEnum, required: false
     end
 
+    field :dynamic_field_graph, DynamicFieldGraphType, null: true do
+      description 'Graph of all dynamic field definitions'
+      argument :metadata_form, Enums::MetadataFormEnum, required: false
+    end
+
     field :dynamic_field_category, DynamicFieldCategoryType, null: true do
       argument :id, ID, required: true
     end
@@ -68,6 +73,11 @@ module Types
 
     field :dynamic_field, DynamicFieldType, null: true do
       argument :id, ID, required: true
+    end
+
+    field :enabled_dynamic_fields, [EnabledDynamicFieldType], null: true do
+      argument :project, Inputs::StringKey, required: true
+      argument :digital_object_type, Enums::DigitalObjectTypeEnum, required: true
     end
 
     field :field_export_profiles, [FieldExportProfileType], null: true do
@@ -142,6 +152,14 @@ module Types
       metadata_form ? categories.where(metadata_form: metadata_form) : categories
     end
 
+    def dynamic_field_graph(metadata_form: nil)
+      ability.authorize!(:read, DynamicFieldCategory)
+      categories = DynamicFieldCategory.order(:sort_order).includes(:dynamic_field_groups)
+      categories = categories.where(metadata_form: metadata_form) if metadata_form
+      categories = categories.map { |category| category.as_json(camelize: true) }
+      { dynamic_field_categories: categories }
+    end
+
     def dynamic_field_category(id:)
       dynamic_field_category = DynamicFieldCategory.find(id)
       ability.authorize!(:read, dynamic_field_category)
@@ -158,6 +176,24 @@ module Types
       dynamic_field = DynamicField.find(id)
       ability.authorize!(:read, dynamic_field)
       dynamic_field
+    end
+
+    def enabled_dynamic_fields(project:, digital_object_type:)
+      project = Project.find_by!(project.to_h)
+      ability.authorize!(:read, project)
+      # TODO: Move this SQL query and parsing to a model method (HYACINTH-646)
+      join_query = "SELECT dynamic_fields.id AS df_id, enabled_dynamic_fields.* FROM dynamic_fields"\
+                   " LEFT OUTER JOIN enabled_dynamic_fields ON enabled_dynamic_fields.dynamic_field_id = dynamic_fields.id"\
+                   " AND enabled_dynamic_fields.project_id = #{project.id} AND enabled_dynamic_fields.digital_object_type = '#{digital_object_type}'"
+      field_sets = project.field_sets.where(enabled_dynamic_fields: { digital_object_type: digital_object_type }).includes(:enabled_dynamic_fields)
+      DynamicField.connection.select_all(join_query).map do |result|
+        dynamic_field_id = result.delete('df_id')
+        edf = result['id'] ? EnabledDynamicField.new(result) : EnabledDynamicField.new(digital_object_type: digital_object_type)
+        edf.project = project
+        edf.dynamic_field = DynamicField.new(id: dynamic_field_id)
+        edf.field_sets = field_sets.select { |fs| fs.enabled_dynamic_field_ids.include?(result['id']) } if result['id']
+        edf
+      end
     end
 
     def field_export_profiles

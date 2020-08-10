@@ -27,6 +27,13 @@ export const getDynamicFieldCategoriesQuery = gql`
     }
   }
 `;
+export const getDynamicFieldGraphQuery = gql`
+  query DynamicFieldGraph($metadataForm: MetadataFormEnum) {
+     dynamicFieldGraph(metadataForm: $metadataForm) {
+      dynamicFieldCategories
+     }
+  }
+`;
 
 export const createDynamicFieldCategoryMutation = gql`
   mutation CreateDynamicFieldCategory($input: CreateDynamicFieldCategoryInput!) {

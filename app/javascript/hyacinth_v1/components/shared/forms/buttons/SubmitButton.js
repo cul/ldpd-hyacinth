@@ -1,18 +1,17 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
-import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
-class SubmitButton extends React.PureComponent {
-  render() {
-    // Note: Extracting staticContext here won't be necessary when we
-    // switch to functional components + hooks
-    const { formType, staticContext, ...rest } = this.props;
-    return (
-      <Button variant="primary" type="submit" {...rest}>
-        {formType === 'new' ? 'Create' : 'Update'}
-      </Button>
-    );
-  }
-}
+const SubmitButton = (props) => {
+  const { formType, ...rest } = props;
+  return (
+    <Button variant="primary" type="submit" {...rest}>
+      {formType === 'new' ? 'Create' : 'Update'}
+    </Button>
+  );
+};
+SubmitButton.propTypes = {
+  formType: PropTypes.oneOf(['new', 'edit']).isRequired,
+};
 
-export default withRouter(SubmitButton);
+export default SubmitButton;

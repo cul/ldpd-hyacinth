@@ -3,7 +3,9 @@
 module Types
   class MutationType < Types::BaseObject
     field :create_asset, mutation: Mutations::CreateAsset
+    field :create_digital_object, mutation: Mutations::DigitalObject::CreateDigitalObject
 
+    field :update_descriptive_metadata, mutation: Mutations::DigitalObject::UpdateDescriptiveMetadata
     field :update_rights, mutation: Mutations::DigitalObject::UpdateRights
 
     field :create_user, mutation: Mutations::CreateUser
@@ -14,6 +16,7 @@ module Types
     field :delete_project, mutation: Mutations::DeleteProject
 
     field :update_project_permissions, mutation: Mutations::UpdateProjectPermissions
+    field :update_project_enabled_fields, mutation: Mutations::UpdateProjectEnabledFields
 
     field :create_publish_target, mutation: Mutations::CreatePublishTarget
     field :update_publish_target, mutation: Mutations::UpdatePublishTarget

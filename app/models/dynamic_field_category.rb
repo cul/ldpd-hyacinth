@@ -10,14 +10,17 @@ class DynamicFieldCategory < ActiveRecord::Base
   validates :display_label, presence: true, uniqueness: true
   validates :metadata_form, presence: true
 
-  def as_json(_options = {})
-    {
+  def as_json(options = {})
+    json = {
       id: id,
       type: self.class.name,
       display_label: display_label,
       sort_order: sort_order,
-      children: children
+      children: children.map(&:as_json)
     }
+    return json unless options[:camelize]
+    json.deep_transform_keys! { |key| key.to_s.camelize(:lower).to_sym }
+    json
   end
 
   def children

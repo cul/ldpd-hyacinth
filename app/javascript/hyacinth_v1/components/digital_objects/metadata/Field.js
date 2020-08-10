@@ -10,52 +10,52 @@ import DateInput from '../../shared/forms/inputs/DateInput';
 import NumberInput from '../../shared/forms/inputs/NumberInput';
 import Checkbox from '../../shared/forms/inputs/Checkbox';
 
-class Field extends React.PureComponent {
-  render() {
-    const { onChange, value, dynamicField, dynamicField: { displayLabel, fieldType } } = this.props;
+const Field = (props) => {
+  const {
+    onChange, value, dynamicField, dynamicField: { displayLabel, fieldType }
+  } = props;
 
-    let field = '';
+  let field = '';
 
-    const sharedProps = { onChange, value };
+  const sharedProps = { onChange, value };
 
-    switch (fieldType) {
-      case 'string':
-        field = <TextInput {...sharedProps} />;
-        break;
-      case 'controlled_term':
-        field = (
-          <TermSelect
-            vocabulary={dynamicField.controlledVocabulary}
-            {...sharedProps}
-          />
-        );
-        break;
-      case 'textarea':
-        field = <TextAreaInput {...sharedProps} />;
-        break;
-      case 'select':
-        field = <SelectInput options={JSON.parse(dynamicField.selectOptions)} {...sharedProps} />;
-        break;
-      case 'date':
-        field = <DateInput {...sharedProps} />;
-        break;
-      case 'integer':
-        field = <NumberInput {...sharedProps} />;
-        break;
-      case 'boolean':
-        field = <Checkbox checked {...sharedProps} />;
-        break;
-      default:
-        break;
-    }
-
-    return (
-      <InputGroup>
-        <Label align="right">{displayLabel}</Label>
-        {field}
-      </InputGroup>
-    );
+  switch (fieldType) {
+    case 'string':
+      field = <TextInput {...sharedProps} />;
+      break;
+    case 'controlled_term':
+      field = (
+        <TermSelect
+          vocabulary={dynamicField.controlledVocabulary}
+          {...sharedProps}
+        />
+      );
+      break;
+    case 'textarea':
+      field = <TextAreaInput {...sharedProps} />;
+      break;
+    case 'select':
+      field = <SelectInput options={JSON.parse(dynamicField.selectOptions)} {...sharedProps} />;
+      break;
+    case 'date':
+      field = <DateInput {...sharedProps} />;
+      break;
+    case 'integer':
+      field = <NumberInput {...sharedProps} />;
+      break;
+    case 'boolean':
+      field = <Checkbox checked {...sharedProps} />;
+      break;
+    default:
+      break;
   }
-}
+
+  return (
+    <InputGroup>
+      <Label align="right">{displayLabel}</Label>
+      {field}
+    </InputGroup>
+  );
+};
 
 export default Field;

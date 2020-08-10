@@ -5,6 +5,7 @@ FactoryBot.define do
     association :project
     association :dynamic_field
 
+    field_sets { [] }
     digital_object_type { 'item' }
     required            { true }
     locked              { false }
