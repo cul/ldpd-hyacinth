@@ -14,14 +14,15 @@
 <% if @terms.length == 0 %>
     No Terms found.
 <% else %>
-  
+
   <%= render 'terms_prev_next' %>
 
   <table class="table table-bordered table-striped">
     <thead>
       <tr>
-        <th class="col-xs-5">Value</th>
-        <th class="col-xs-5">Type</th>
+        <th class="col-xs-4">Value</th>
+        <th class="col-xs-2">Authority</th>
+        <th class="col-xs-2">Type</th>
         <th class="col-xs-2">URI</th>
         <th class="col-xs-2"></th>
       </tr>
@@ -31,6 +32,7 @@
       <% @terms.each_with_index do |term| %>
         <tr>
           <td><%= term['value'] %></td>
+          <td><%= term['authority'] %></td>
           <td>
             <% if term['type'] == UriService::TermType::TEMPORARY %>
               <strong><%= term['type'] %></strong>
@@ -51,7 +53,7 @@
       <% end %>
     </tbody>
   </table>
-  
+
   <%= render 'terms_prev_next' %>
-  
+
 <% end %>
