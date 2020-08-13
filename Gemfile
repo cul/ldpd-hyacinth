@@ -13,7 +13,7 @@ gem 'sqlite3', '~> 1.4'
 gem 'noid', '>= 0.7.1' # For unique, opaque id generation
 gem 'rubydora'
 
-gem 'best_type', '0.0.5'
+gem 'best_type', '0.0.9'
 gem 'bootsnap', '>= 1.4.5', require: false # Reduces boot times through caching; required in config/boot.rb
 gem 'cancancan', '~> 3.0'
 gem 'devise', '~> 4.7'
