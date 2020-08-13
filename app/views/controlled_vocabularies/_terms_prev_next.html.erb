@@ -1,10 +1,9 @@
 <div class="term-paging">
   <% if @page > 1 %>
-    <%= link_to '&laquo; Previous'.html_safe, terms_controlled_vocabulary_path(@controlled_vocabulary, {page: @page-1}), class: 'pull-left' %>
+    <%= link_to '&laquo; Previous'.html_safe, terms_controlled_vocabulary_path(@controlled_vocabulary, {page: @page-1, per_page: @per_page, q: params[:q]}), class: 'pull-left' %>
   <% end %>
   <% if @terms.length > @per_page %>
-    <%= link_to 'Next &raquo;'.html_safe, terms_controlled_vocabulary_path(@controlled_vocabulary, {page: @page+1}), class: 'pull-right' %>
+    <%= link_to 'Next &raquo;'.html_safe, terms_controlled_vocabulary_path(@controlled_vocabulary, {page: @page+1, per_page: @per_page, q: params[:q]}), class: 'pull-right' %>
   <% end %>
   <div class="clearfix"></div>
 </div>
- 
