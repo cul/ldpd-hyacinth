@@ -19,7 +19,7 @@ describe Hyacinth::DigitalObject::Facets do
   describe '.all_solr_keys' do
     let!(:expected) do
       [term_field, role_field, rights_field].map do |df|
-        path = df.path[1..-1].map(&:string_key) << df.string_key
+        path = df.ancestor_nodes[1..-1].map(&:string_key) << df.string_key
         Hyacinth::DigitalObject::SolrKeys.for_dynamic_field(path)
       end
     end
@@ -32,7 +32,7 @@ describe Hyacinth::DigitalObject::Facets do
   describe '.facet_display_label_map' do
     let!(:expected) do
       DynamicField.where(is_facetable: true).all.map { |df|
-        path = df.path[1..-1].map(&:string_key) << df.string_key
+        path = df.ancestor_nodes[1..-1].map(&:string_key) << df.string_key
         [Hyacinth::DigitalObject::SolrKeys.for_dynamic_field(path), df.display_label]
       }.to_h
     end

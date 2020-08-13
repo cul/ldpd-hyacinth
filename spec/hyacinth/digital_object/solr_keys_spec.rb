@@ -12,7 +12,7 @@ describe Hyacinth::DigitalObject::SolrKeys do
     FactoryBot.create(:dynamic_field, display_label: "Field", string_key: 'field', is_facetable: true,
                                       dynamic_field_group: test_group, filter_label: "Field")
   end
-  let(:path) { test_field.path[1..-1].map(&:string_key) << test_field.string_key }
+  let(:path) { test_field.ancestor_nodes[1..-1].map(&:string_key) << test_field.string_key }
   describe 'for_dynamic_field' do
     subject { described_class.for_dynamic_field(path) }
     it { is_expected.to eql('df_test_field_ssim') }
