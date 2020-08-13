@@ -76,7 +76,7 @@ GEM
     ast (2.4.1)
     bcrypt (3.1.13)
     bcrypt_pbkdf (1.0.1)
-    best_type (0.0.5)
+    best_type (0.0.9)
       mime-types (~> 3.0)
     bindex (0.5.0)
     bixby (2.0.0)
@@ -410,7 +410,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  best_type (= 0.0.5)
+  best_type (= 0.0.9)
   bootsnap (>= 1.4.5)
   byebug
   cancancan (~> 3.0)
