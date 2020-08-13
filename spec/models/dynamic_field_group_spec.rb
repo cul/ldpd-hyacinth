@@ -10,6 +10,7 @@ RSpec.describe DynamicFieldGroup, type: :model do
       it { is_expected.to be_a DynamicFieldGroup }
 
       its(:string_key)    { is_expected.to eql 'name' }
+      its(:path)          { is_expected.to eql 'name' }
       its(:display_label) { is_expected.to eql 'Name' }
       its(:is_repeatable) { is_expected.to be true }
       its(:sort_order)    { is_expected.to be 3 }
@@ -243,14 +244,15 @@ RSpec.describe DynamicFieldGroup, type: :model do
       dynamic_field_group.reload
 
       expect(dynamic_field_group.dynamic_fields).to match_array [dynamic_field_1]
+      expect(dynamic_field_group.dynamic_fields.map(&:path).sort).to match_array ["name/term"]
     end
 
     it 'can add multiple dynamic fields' do
       dynamic_field_group.dynamic_fields << dynamic_field_1
       dynamic_field_group.dynamic_fields << dynamic_field_2
-      dynamic_field_group.save
-      dynamic_field_group.reload
+      dynamic_field_group.save && dynamic_field_group.reload
       expect(dynamic_field_group.dynamic_fields).to match_array [dynamic_field_1, dynamic_field_2]
+      expect(dynamic_field_group.dynamic_fields.map(&:path).sort).to match_array ["name/term", "name/usage_primary"]
     end
   end
 
@@ -315,6 +317,47 @@ RSpec.describe DynamicFieldGroup, type: :model do
     it 'does not include current object' do
       dynamic_field_group.reload
       expect(dynamic_field_group.siblings).to match_array []
+    end
+  end
+
+  describe '#path' do
+    subject(:dynamic_field_group) { FactoryBot.create(:dynamic_field_group) }
+    it 'is derived from ancestor path' do
+      expect(dynamic_field_group.path).to eql(dynamic_field_group.string_key.to_s)
+    end
+    it 'is unique' do
+      expect {
+        FactoryBot.create(:dynamic_field_group, string_key: dynamic_field_group.string_key, parent: dynamic_field_group.parent)
+      }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+    it 'is unique against cross-type siblings' do
+      field = FactoryBot.create(:dynamic_field, dynamic_field_group: dynamic_field_group)
+      expect {
+        FactoryBot.create(:dynamic_field_group, string_key: field.string_key, parent: dynamic_field_group)
+      }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+    context 'when string_key is updated' do
+      let(:old_string_key) { dynamic_field_group.string_key }
+      let(:new_string_key) { "#{old_string_key}_suffix" }
+      let(:dynamic_field) { FactoryBot.create(:dynamic_field, dynamic_field_group: dynamic_field_group, display_label: "Dynamic Field Display Label") }
+      it 'updates the path' do
+        dynamic_field_group.string_key = new_string_key
+        dynamic_field_group.save && dynamic_field_group.reload
+        expect(dynamic_field_group.path).to eql(new_string_key)
+      end
+      it 'updates the paths of descendants' do
+        dynamic_field_group.string_key = new_string_key
+        dynamic_field_group.save
+        new_path = DynamicField.find(dynamic_field.id).path
+        expect(new_path).to start_with(dynamic_field_group.path)
+      end
+      it 'submits an update/reindexing job for the previous path' do
+        old_path = dynamic_field_group.path
+        changes = { old_path => old_path.sub(old_string_key, new_string_key) }
+        expect(ChangeDynamicFieldPathsJob).to receive(:perform).with(changes)
+        dynamic_field_group.string_key = new_string_key
+        dynamic_field_group.save
+      end
     end
   end
 end

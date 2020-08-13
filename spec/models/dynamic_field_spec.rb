@@ -10,6 +10,7 @@ RSpec.describe DynamicField, type: :model do
       it { is_expected.to be_a DynamicField }
 
       its(:string_key) { is_expected.to eql 'term' }
+      its(:path) { is_expected.to eql 'name/term' }
       its(:display_label) { is_expected.to eql 'Value' }
       its(:field_type) { is_expected.to eql DynamicField::Type::CONTROLLED_TERM }
       its(:sort_order) { is_expected.to be 7 }
@@ -175,6 +176,40 @@ RSpec.describe DynamicField, type: :model do
     it 'does not include current object' do
       dynamic_field.reload
       expect(dynamic_field.siblings).to match_array []
+    end
+  end
+
+  describe '#path' do
+    let(:dynamic_field) { FactoryBot.create(:dynamic_field) }
+    it 'is derived from ancestor path' do
+      expect(dynamic_field.path).to eql("#{dynamic_field.parent&.path}/#{dynamic_field.string_key}")
+    end
+    it 'is unique' do
+      expect {
+        FactoryBot.create(:dynamic_field, string_key: dynamic_field.string_key, parent: dynamic_field.parent)
+      }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+    it 'is unique against cross-type siblings' do
+      expect {
+        FactoryBot.create(:dynamic_field, string_key: dynamic_field.dynamic_field_group.string_key, dynamic_field_group: nil)
+      }.to raise_error(ActiveRecord::RecordInvalid)
+    end
+    context 'when string_key is updated' do
+      let(:old_string_key) { dynamic_field.string_key }
+      let(:new_string_key) { "#{old_string_key}_suffix" }
+      it 'updates the path' do
+        expected = "#{dynamic_field.parent.string_key}/#{new_string_key}"
+        dynamic_field.string_key = new_string_key
+        dynamic_field.save
+        expect(dynamic_field.path).to eql(expected)
+      end
+      it 'submits an update/reindexing job for the previous path' do
+        old_path = dynamic_field.path
+        changes = { old_path => old_path.sub(old_string_key, new_string_key) }
+        expect(ChangeDynamicFieldPathsJob).to receive(:perform).with(changes)
+        dynamic_field.string_key = new_string_key
+        dynamic_field.save
+      end
     end
   end
 end
