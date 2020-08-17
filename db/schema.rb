@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_26_195717) do
+ActiveRecord::Schema.define(version: 2020_08_17_191334) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -110,7 +110,9 @@ ActiveRecord::Schema.define(version: 2020_05_26_195717) do
     t.integer "updated_by_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "path"
     t.index ["parent_type", "parent_id"], name: "index_dynamic_field_groups_on_parent_type_and_parent_id"
+    t.index ["path"], name: "index_dynamic_field_groups_on_path", unique: true
     t.index ["string_key", "parent_type", "parent_id"], name: "index_dynamic_field_groups_on_string_key_and_parent", unique: true
     t.index ["string_key"], name: "index_dynamic_field_groups_on_string_key"
   end
@@ -133,8 +135,10 @@ ActiveRecord::Schema.define(version: 2020_05_26_195717) do
     t.integer "updated_by_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "path"
     t.index ["controlled_vocabulary"], name: "index_dynamic_fields_on_controlled_vocabulary"
     t.index ["dynamic_field_group_id"], name: "index_dynamic_fields_on_dynamic_field_group_id"
+    t.index ["path"], name: "index_dynamic_fields_on_path", unique: true
     t.index ["string_key", "dynamic_field_group_id"], name: "index_dynamic_fields_on_string_key_and_dynamic_field_group_id", unique: true
     t.index ["string_key"], name: "index_dynamic_fields_on_string_key"
   end

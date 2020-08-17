@@ -37,6 +37,7 @@ class DynamicField < ActiveRecord::Base
   validates :select_options,        presence: true, if: proc { |d| d.field_type == Type::SELECT }
   validates :is_facetable,          inclusion: { in: [false], message: 'cannot be true for textareas' }, if: proc { |d| d.field_type == Type::TEXTAREA }
   validates :additional_data_json, :select_options, valid_json: true
+  validates_with StringKey::AbsentInSiblingGroupsValidator
 
   def as_json(options = {})
     json = EXPORTABLE_ATTRIBUTES.map { |k| [k, self.send(k)] }.to_h
