@@ -11,6 +11,8 @@ class DynamicFieldGroup < ActiveRecord::Base
     :parent_type, :parent_id
   ].freeze
 
+  after_save :update_descendant_paths
+
   has_many :dynamic_fields, dependent: :destroy
   has_many :export_rules, dependent: :destroy
   accepts_nested_attributes_for :export_rules
@@ -25,6 +27,7 @@ class DynamicFieldGroup < ActiveRecord::Base
   validates :parent_id,     presence: true, numericality: { only_integer: true }
   validates :parent_type,   presence: true, inclusion: { in: PARENT_TYPES }
   validate  :non_circular_relationship
+  validates_with StringKey::AbsentInSiblingFieldsValidator
 
   # Order children first by sort_order and then by string_key to break up ties.
   def ordered_children
@@ -47,6 +50,17 @@ class DynamicFieldGroup < ActiveRecord::Base
     json.deep_transform_keys! { |key| key.to_s.camelize(:lower).to_sym }
     json
   end
+
+  protected
+
+    def update_descendant_paths
+      return unless previous_changes['path'].present?
+      dynamic_field_groups.reload
+      dynamic_fields.reload
+      children.each do |node|
+        node.assign_path!(true)
+      end
+    end
 
   private
 

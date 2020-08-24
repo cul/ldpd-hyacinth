@@ -3,13 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe DynamicFieldStructure::Path do
-  describe '.collect_path' do
+  describe '.collect_ancestor_nodes' do
     context 'when starting object is a DynamicFieldCategory' do
       let(:dynamic_field_category) { FactoryBot.create(:dynamic_field_category) }
 
       it 'return empty array' do
         expect(
-          DynamicField.collect_path([], dynamic_field_category)
+          DynamicField.collect_ancestor_nodes([], dynamic_field_category)
         ).to match([])
       end
 
@@ -18,19 +18,19 @@ RSpec.describe DynamicFieldStructure::Path do
 
         it 'raises error' do
           expect {
-            DynamicField.collect_path([], project)
+            DynamicField.collect_ancestor_nodes([], project)
           }.to raise_error(ArgumentError, 'Must respond to #parent in order to collect path')
         end
       end
     end
   end
 
-  describe '#path' do
+  describe '#ancestor_nodes' do
     context 'when generating path for dynamic_field_group' do
       let(:dynamic_field_group_1) { FactoryBot.create(:dynamic_field_group) }
       let(:dynamic_field_group_2) { FactoryBot.create(:dynamic_field_group, :child, parent: dynamic_field_group_1) }
 
-      let(:path) { dynamic_field_group_2.path }
+      let(:path) { dynamic_field_group_2.ancestor_nodes }
 
       it 'return list of dynamic field categories and dynamic group leading to this group' do
         expect(path.length).to be 2
@@ -42,7 +42,7 @@ RSpec.describe DynamicFieldStructure::Path do
     context 'when generating path for dynamic_field' do
       let(:dynamic_field) { FactoryBot.create(:dynamic_field) }
 
-      let(:path) { dynamic_field.path }
+      let(:path) { dynamic_field.ancestor_nodes }
 
       it 'returns list of dynamic field categories and group leading to this field' do
         expect(path.length).to be 2
