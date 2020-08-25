@@ -91,6 +91,7 @@ const DigitalObjectSearch = ({ query }) => {
 
   const updateQueryParameters = (newParams) => {
     location.search = qs.stringify(encodeQueryParams(queryParamsConfig, newParams));
+    window.sessionStorage.setItem('latestSearchQueryString', location.search);
     history.push(location);
   };
 
