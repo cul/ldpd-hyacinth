@@ -44,9 +44,9 @@ class Assignments::ChangesetsController < ApplicationController
         end
       end
     when 'synchronize'
-      if captions_params[:captions_text]
+      if synchronized_transcript_params[:synchronized_transcript_text]
         if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
-          create_or_update_synchronize_changeset(@assignment, digital_object, captions_params[:captions_text])
+          create_or_update_synchronize_changeset(@assignment, digital_object, synchronized_transcript_params[:synchronized_transcript_text])
           @assignment.save
         else
           raise 'Not implemented yet'
