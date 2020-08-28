@@ -91,7 +91,6 @@ const DigitalObjectSearch = ({ query }) => {
 
   const updateQueryParameters = (newParams) => {
     location.search = qs.stringify(encodeQueryParams(queryParamsConfig, newParams));
-    window.sessionStorage.setItem('latestSearchQueryString', location.search);
     history.push(location);
   };
 
@@ -195,7 +194,18 @@ const DigitalObjectSearch = ({ query }) => {
       <Row>
         <Col md={8}>
           { docsFound
-            ? <DigitalObjectList className="digital-object-search-results" digitalObjects={nodes} displayParentIds displayProjects />
+            ? <DigitalObjectList
+                className="digital-object-search-results"
+                digitalObjects={nodes}
+                displayParentIds
+                displayProjects
+
+                orderBy={orderBy}
+                totalCount={totalCount}
+                limit={limit}
+                offset={offset}
+                searchParams={searchParams}
+              />
             : <Card><Card.Header>No Digital Objects found.</Card.Header></Card>
           }
         </Col>

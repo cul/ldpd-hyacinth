@@ -10,8 +10,23 @@ import { startCase } from 'lodash';
   to display a list of digital objects.
 */
 
+
+const storeSearchQueryParams = (orderBy, totalCount, limit, offset, searchParams) => {
+  window.sessionStorage.setItem('searchQueryParams',
+  JSON.stringify(
+    {
+      orderBy,
+      totalCount,
+      limit,
+      offset,
+      searchParams,
+    }
+  ));
+}
+
+
 const DigitalObjectList = (props) => {
-  const { digitalObjects, displayProjects, displayParentIds } = props;
+  const { digitalObjects, displayProjects, displayParentIds, orderBy, totalCount, limit, offset, searchParams } = props;
 
   return (
     <>
@@ -19,7 +34,9 @@ const DigitalObjectList = (props) => {
         digitalObjects.map(digitalObject => (
           <Card key={digitalObject.id} className="mb-3">
             <Card.Header>
-              <LinkContainer to={`/digital_objects/${digitalObject.id}`}>
+              <LinkContainer to={`/digital_objects/${digitalObject.id}`}
+                             onClick={() => storeSearchQueryParams(orderBy, totalCount, limit, offset, searchParams)}
+              >
                 <a>{digitalObject.title}</a>
               </LinkContainer>
             </Card.Header>
@@ -62,6 +79,7 @@ const DigitalObjectList = (props) => {
     </>
   );
 };
+
 
 DigitalObjectList.defaultProps = {
   displayProjects: false,
