@@ -48,7 +48,7 @@ Lint/UnusedBlockArgument:
 # Configuration parameters: AllowUnusedKeywordArguments, IgnoreEmptyMethods.
 Lint/UnusedMethodArgument:
   Exclude:
-    - 'app/graphql/types/extensions/map_to_digital_object_minimal_record.rb'
+    - 'app/graphql/types/extensions/map_to_digital_object_search_record.rb'
     - 'app/graphql/types/extensions/paginate.rb'
     - 'app/graphql/types/extensions/solr_search.rb'
     - 'app/models/concerns/digital_object_concerns/copy_behavior.rb'

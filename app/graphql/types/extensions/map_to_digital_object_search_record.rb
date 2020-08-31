@@ -2,13 +2,13 @@
 
 module Types
   module Extensions
-    class MapToDigitalObjectMinimalRecord < GraphQL::Schema::FieldExtension
+    class MapToDigitalObjectSearchRecord < GraphQL::Schema::FieldExtension
       def resolve(object:, arguments:, context:)
         yield(object, arguments)
       end
 
       def after_resolve(object:, value:, arguments:, context:, memo:)
-        raise GraphQL::ExecutionError, 'MapToDigitalObjectMinimalRecord can only be downstream of SolrSearch' unless value.is_a?(OpenStruct) && value[:page_info].is_a?(OpenStruct)
+        raise GraphQL::ExecutionError, 'MapToDigitalObjectSearchRecord can only be downstream of SolrSearch' unless value.is_a?(OpenStruct) && value[:page_info].is_a?(OpenStruct)
         projects = Project.all.map { |p| [p.string_key, p] }.to_h
         value[:nodes] = value[:nodes].map do |solr_doc|
           OpenStruct.new(
