@@ -26,14 +26,14 @@ RSpec.describe 'Retrieving Publish Targets', type: :request do
               "stringKey": "great_project",
               "publishTargets": [
                 {
-                  "apiKey": "bestapikey",
+                  "apiKey": "#{Types::PublishTargetType::OBSCURED_API_KEY}",
                   "publishUrl": "https://www.example.com/publish",
                   "type": "PRODUCTION",
                   "doiPriority": 100,
                   "isAllowedDoiTarget": false
                 },
                 {
-                  "apiKey": "bestapikey",
+                  "apiKey": "#{Types::PublishTargetType::OBSCURED_API_KEY}",
                   "publishUrl": "https://www.example.com/publish",
                   "type": "STAGING",
                   "doiPriority": 100,

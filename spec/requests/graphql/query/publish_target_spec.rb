@@ -12,7 +12,32 @@ RSpec.describe 'Retrieving Publish Targets', type: :request do
     end
   end
 
-  context 'when logged in user has correct permissions' do
+  context 'when logged in user is admin' do
+    before { sign_in_user as: :administrator }
+
+    context 'when type is valid' do
+      before do
+        graphql query(publish_target.target_type)
+      end
+
+      it 'returns correct response' do
+        expect(response.body).to be_json_eql(%({
+          "project": {
+            "stringKey": "#{project.string_key}",
+            "publishTarget": {
+              "apiKey": "#{publish_target.api_key}",
+              "publishUrl": "https://www.example.com/publish",
+              "type": "PRODUCTION",
+              "doiPriority": 100,
+              "isAllowedDoiTarget": false
+            }
+          }
+        })).at_path('data')
+      end
+    end
+  end
+
+  context 'when logged in user has read permissions' do
     before { sign_in_project_contributor to: :read_objects, project: project }
 
     context 'when type is valid' do
@@ -23,9 +48,9 @@ RSpec.describe 'Retrieving Publish Targets', type: :request do
       it 'returns correct response' do
         expect(response.body).to be_json_eql(%({
           "project": {
-            "stringKey": "great_project",
+            "stringKey": "#{project.string_key}",
             "publishTarget": {
-              "apiKey": "bestapikey",
+              "apiKey": "#{Types::PublishTargetType::OBSCURED_API_KEY}",
               "publishUrl": "https://www.example.com/publish",
               "type": "PRODUCTION",
               "doiPriority": 100,
