@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Types::Extensions::MapToDigitalObjectMinimalRecord do
+RSpec.describe Types::Extensions::MapToDigitalObjectSearchRecord do
   context "stateless methods" do
     let(:project) { FactoryBot.create(:project) }
     let(:client) do

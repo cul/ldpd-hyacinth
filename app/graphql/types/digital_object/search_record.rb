@@ -2,8 +2,8 @@
 
 module Types
   module DigitalObject
-    class MinimalRecord < Types::BaseObject
-      description 'A minimal representation of a digital object used for search results'
+    class SearchRecord < Types::BaseObject
+      description 'A limited-field variation of a Digital Object used for search results'
 
       field :id, ID, null: false
       field :title, String, null: false

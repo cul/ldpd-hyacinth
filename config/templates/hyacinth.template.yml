@@ -39,7 +39,7 @@ development:
     type: Development
   external_identifier_adapter:
     type: Memory
-  term_search_adapater:
+  term_search_adapter:
     type: Solr
     url: http://localhost:8983/solr/terms-development
     commit_after_change: true
