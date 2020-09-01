@@ -5,7 +5,7 @@ import {
 } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 import {
-  NumberParam, StringParam, withQueryParams, withDefault, decodeQueryParams, encodeQueryParams,
+  withQueryParams, decodeQueryParams
 } from 'use-query-params';
 import * as qs from 'query-string';
 
@@ -21,19 +21,13 @@ import FilterArrayParam from '../../utils/filterArrayParam';
 import QueryForm from './search/QueryForm';
 import SelectedFacetsBar from './search/SelectedFacetsBar';
 
+import { queryParamsConfig, redirectToSearch } from '../../utils/redirectToSearch';
+
 // NOTE: We are using the use-query-params library to automatically parse
 // query params only. The library is able to update the browser
 // history (thus making the back button work), but there isn't a way to
 // re-render the page. UseEffect hooks don't seem to notice any
 // history changes made by the external library.
-
-const queryParamsConfig = {
-  q: StringParam,
-  filters: withDefault(FilterArrayParam, []),
-  pageNumber: withDefault(NumberParam, 1),
-  perPage: withDefault(NumberParam, 20),
-  orderBy: withDefault(StringParam, 'TITLE ASC'),
-};
 
 const DigitalObjectSearch = ({ query }) => {
   const [pageNumber, setPageNumber] = useState(query.pageNumber);
@@ -90,8 +84,7 @@ const DigitalObjectSearch = ({ query }) => {
   const { digitalObjects: { nodes, facets, totalCount } } = data;
 
   const updateQueryParameters = (newParams) => {
-    location.search = qs.stringify(encodeQueryParams(queryParamsConfig, newParams));
-    history.push(location);
+    redirectToSearch(history, newParams);
   };
 
   const onPageNumberClick = (newOffset) => {
@@ -99,7 +92,7 @@ const DigitalObjectSearch = ({ query }) => {
       pageNumber: (newOffset / limit) + 1,
       perPage: limit,
       filters: searchParams.filters,
-      q: searchParams.filters,
+      q: searchParams.query,
     });
   };
 
@@ -186,6 +179,7 @@ const DigitalObjectSearch = ({ query }) => {
             totalCount={totalCount}
             limit={limit}
             offset={offset}
+            pageNumber={pageNumber}
             searchParams={searchParams}
           />
         )
@@ -204,6 +198,7 @@ const DigitalObjectSearch = ({ query }) => {
                 totalCount={totalCount}
                 limit={limit}
                 offset={offset}
+                pageNumber={pageNumber}
                 searchParams={searchParams}
               />
             : <Card><Card.Header>No Digital Objects found.</Card.Header></Card>

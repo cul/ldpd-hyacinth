@@ -9,25 +9,31 @@ import TabBody from '../shared/tabs/TabBody';
 import ContextualNavbar from '../shared/ContextualNavbar';
 import { Button } from 'react-bootstrap';
 import DigitalObjectSummary from './DigitalObjectSummary';
+import { redirectToSearch } from '../../utils/redirectToSearch';
 
 function DigitalObjectInterface(props) {
   const { digitalObject, children } = props;
   const { id, title, digitalObjectType } = digitalObject;
   const history = useHistory();
-  const latestSearchQueryString = sessionStorage.getItem('latestSearchQueryString');
+  const latestSearchQueryString = sessionStorage.getItem('searchQueryParams');
 
-  const returnToSearchHandler = (event) => {
-    event.preventDefault();
-    history.push(`/digital_objects?${latestSearchQueryString}`);
+
+  const backToSearchHandler = () => {
+    const latestSearchQuery = JSON.parse(latestSearchQueryString);
+    redirectToSearch(history, latestSearchQuery);
   };
 
-  const returnToSearchButton = () => {
+  const backToSearchButton = () => {
     if(latestSearchQueryString)
     return (
           <div>
                 <Button
-                  onClick={returnToSearchHandler}>
-                  Return to Search
+                  variant="Dark"
+                  style={{
+                    color: "#FFFFFF80"
+                  }}
+                  onClick={backToSearchHandler}>
+                  Back to Search
                   </Button>
           </div>
     );
@@ -39,7 +45,7 @@ function DigitalObjectInterface(props) {
     <div className="digital-object-interface">
       <ContextualNavbar
         title={`${capitalize(digitalObjectType)}: ${title}`}
-        children={ returnToSearchButton() }
+        children={ backToSearchButton() }
 	/>
 
 

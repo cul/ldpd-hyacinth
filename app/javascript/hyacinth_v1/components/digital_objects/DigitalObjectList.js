@@ -11,22 +11,28 @@ import { startCase } from 'lodash';
 */
 
 
-const storeSearchQueryParams = (orderBy, totalCount, limit, offset, searchParams) => {
-  window.sessionStorage.setItem('searchQueryParams',
-  JSON.stringify(
-    {
-      orderBy,
-      totalCount,
-      limit,
-      offset,
-      searchParams,
-    }
-  ));
+const storeSearchQueryParams =  (orderBy, totalCount, perPage, offset, pageNumber, q, filters) => {
+  if (q || filters.length > 0) {
+    window.sessionStorage.setItem('searchQueryParams',
+    JSON.stringify(
+      {
+        orderBy,
+        totalCount,
+        perPage,
+        offset,
+        pageNumber,
+        q,
+        filters
+      }
+    ));
+  }else{
+    window.sessionStorage.setItem('searchQueryParams', '');
+  }
 }
 
 
 const DigitalObjectList = (props) => {
-  const { digitalObjects, displayProjects, displayParentIds, orderBy, totalCount, limit, offset, searchParams } = props;
+  const { digitalObjects, displayProjects, displayParentIds, orderBy, totalCount, limit, offset, pageNumber, searchParams } = props;
 
   return (
     <>
@@ -35,7 +41,7 @@ const DigitalObjectList = (props) => {
           <Card key={digitalObject.id} className="mb-3">
             <Card.Header>
               <LinkContainer to={`/digital_objects/${digitalObject.id}`}
-                             onClick={() => storeSearchQueryParams(orderBy, totalCount, limit, offset, searchParams)}
+                             onClick={() => storeSearchQueryParams(orderBy, totalCount, limit, offset, pageNumber, searchParams.query, searchParams.filters)}
               >
                 <a>{digitalObject.title}</a>
               </LinkContainer>
