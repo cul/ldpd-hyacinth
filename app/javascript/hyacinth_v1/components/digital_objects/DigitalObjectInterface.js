@@ -24,8 +24,7 @@ function DigitalObjectInterface(props) {
   };
 
   const backToSearchButton = () => {
-    if(latestSearchQueryString)
-    return (
+    const button = latestSearchQueryString ?
           <div>
                 <Button
                   variant="Dark"
@@ -36,7 +35,8 @@ function DigitalObjectInterface(props) {
                   Back to Search
                   </Button>
           </div>
-    );
+           : null;
+        return button;
   };
 
 
