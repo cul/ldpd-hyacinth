@@ -22,7 +22,8 @@ RSpec.describe Mutations::BatchExport::CreateBatchExport, type: :request do
     {
       'digital_object_type_ssi' => ['asset'],
       'projects_ssim' => ['test'],
-      'q' => nil
+      'q' => nil,
+      'search_type' => nil
     }
   end
 

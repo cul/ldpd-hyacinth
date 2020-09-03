@@ -6,6 +6,7 @@ module Hyacinth
       class Solr < Abstract
         attr_reader :solr, :document_generator
         delegate :solr_document_for, to: :document_generator
+        delegate :search_types, to: :document_generator
 
         def initialize(adapter_config = {})
           super(adapter_config)
@@ -45,19 +46,19 @@ module Hyacinth
 
         def solr_params_for(search_params)
           solr_parameters = ::Solr::Params.new
-          solr_parameters.tap do |sp|
-            # Only return active objects
-            sp.fq('state_ssi', Hyacinth::DigitalObject::State::ACTIVE)
+          # Only return active objects
+          solr_parameters.fq('state_ssi', Hyacinth::DigitalObject::State::ACTIVE)
 
-            # Apply search_params
-            search_params.each do |k, v|
-              if k.to_s == 'q'
-                sp.q(v)
-              elsif k.to_s == 'facet_on'
-                Array(v).map { |eachv| sp.facet_on(eachv) }
-              else
-                Array(v).map { |eachv| sp.fq(k, eachv) }
-              end
+          # Apply search_params
+          search_params.each do |k, v|
+            if k.to_s == 'q'
+              solr_parameters.q(v)
+            elsif k.to_s == 'search_type'
+              solr_parameters.default_field(document_generator.search_field(v)) if document_generator.search_field(v)
+            elsif k.to_s == 'facet_on'
+              Array(v).map { |eachv| solr_parameters.facet_on(eachv) }
+            else
+              Array(v).map { |eachv| solr_parameters.fq(k, eachv) }
             end
           end
           solr_parameters

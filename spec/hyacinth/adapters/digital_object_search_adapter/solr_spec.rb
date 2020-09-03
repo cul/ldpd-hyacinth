@@ -16,6 +16,12 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr do
         expect(solr_params.to_h).to include(fq: ['state_ssi:(active)', 'animals:(dogs)', 'animals:(cats)'])
       end
     end
+    context "with a search type parameter" do
+      let(:search_params) { { 'search_type' => 'identifier' } }
+      it "assigns df value" do
+        expect(solr_params.to_h).to include(df: 'identifier_search_sim')
+      end
+    end
   end
 
   context "#solr_document_for" do
