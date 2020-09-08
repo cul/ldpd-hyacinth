@@ -37,7 +37,7 @@ RSpec.describe 'Retrieving Publish Targets', type: :request do
     end
   end
 
-  context 'when logged in user has read permissions' do
+  context 'when logged in user is not an admin, but has read permissions' do
     before { sign_in_project_contributor to: :read_objects, project: project }
 
     context 'when type is valid' do
