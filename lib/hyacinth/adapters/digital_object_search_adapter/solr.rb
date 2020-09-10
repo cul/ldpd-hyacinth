@@ -58,7 +58,7 @@ module Hyacinth
             elsif k.to_s == 'facet_on'
               Array(v).map { |eachv| solr_parameters.facet_on(eachv) }
             else
-              Array(v).map { |eachv| solr_parameters.fq(k, eachv) }
+              Array(v).map { |eachv| solr_parameters.fq(k, *eachv) }
             end
           end
           solr_parameters

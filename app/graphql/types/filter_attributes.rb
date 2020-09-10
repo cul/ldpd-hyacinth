@@ -2,9 +2,10 @@
 
 module Types
   class FilterAttributes < Types::BaseInputObject
-    description 'A field/value pair that can be used to filter results'
+    description 'A field/value/function tuple that can be used to filter results'
 
     argument :field, String, required: true
     argument :value, String, required: true
+    argument :match_type, Enums::FilterMatchEnum, default_value: 'matches', required: false
   end
 end

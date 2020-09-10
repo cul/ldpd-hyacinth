@@ -20,8 +20,8 @@ RSpec.describe Mutations::BatchExport::CreateBatchExport, type: :request do
   end
   let(:expected_stored_search_params) do
     {
-      'digital_object_type_ssi' => ['asset'],
-      'projects_ssim' => ['test'],
+      'digital_object_type_ssi' => [['asset', 'matches']],
+      'projects_ssim' => [['test', 'matches']],
       'q' => nil,
       'search_type' => nil
     }

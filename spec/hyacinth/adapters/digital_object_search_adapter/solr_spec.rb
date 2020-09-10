@@ -11,9 +11,22 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr do
   context "#solr_params_for" do
     let(:solr_params) { adapter.solr_params_for(search_params) }
     context "with multiple filter values on the same filter" do
-      let(:search_params) { { 'animals' => ['dogs', 'cats'] } }
+      let(:search_params) do
+        {
+          'animals' => [
+            ['aardvarks', 'absent'], ['celocanths', 'contains'], ['elephants', 'matches'],
+            ['ostriches', 'omits'], ['panthers', 'present'], ['voles', 'varies']
+          ]
+        }
+      end
+      let(:expected_filters) do
+        [
+          'state_ssi:(active)', '-animals:*', 'animals:(*celocanths*)', 'animals:(elephants)',
+          '-animals:(*ostriches*)', 'animals:*', '-animals:(voles)'
+        ]
+      end
       it "collects fq values" do
-        expect(solr_params.to_h).to include(fq: ['state_ssi:(active)', 'animals:(dogs)', 'animals:(cats)'])
+        expect(solr_params.to_h).to include(fq: expected_filters)
       end
     end
     context "with a search type parameter" do

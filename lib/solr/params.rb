@@ -4,6 +4,15 @@ module Solr
   class Params
     attr_reader :parameters
 
+    VALID_BOOLEAN_OPERATORS = { and: ' AND ', or: ' OR ' }.freeze
+    VALID_FILTER_MATCHES = {
+      'absent' => { field_template: '-%s:%s', value: '*' },
+      'contains' => { field_template: '%s:(%s)', value_template: '*%s*' },
+      'matches' => { field_template: '%s:(%s)' },
+      'omits' => { field_template: '-%s:(%s)', value_template: '*%s*' },
+      'present' => { field_template: '%s:%s', value: '*' },
+      'varies' => { field_template: '-%s:(%s)' }
+    }.freeze
     VALID_SORT_DIRECTION = ['asc', 'desc'].freeze
 
     def initialize
@@ -16,10 +25,13 @@ module Solr
       }
     end
 
-    def fq(field, values, boolean_operator = :or)
-      raise ArgumentError unless [:and, :or].include?(boolean_operator)
-      escaped_values = Array.wrap(values).map { |value| Solr::Utils.escape(value).gsub(' ', '\ ') }
-      @parameters[:fq] << "#{field}:(#{escaped_values.join(boolean_operator == :and ? ' AND ' : ' OR ')})" unless escaped_values.blank?
+    def fq(field, value_or_values, match_operator = 'matches', boolean_operator = :or)
+      raise(ArgumentError, "Invalid match operator: #{match_operator}") unless VALID_FILTER_MATCHES.include?(match_operator)
+      raise(ArgumentError, "Invalid boolean operator: #{boolean_operator}") unless VALID_BOOLEAN_OPERATORS.include?(boolean_operator)
+      escaped_values = Array.wrap(value_or_values).map { |value| Solr::Utils.escape(value).gsub(' ', '\ ') }
+      filter_data = VALID_FILTER_MATCHES[match_operator]
+      value = filter_data[:value] || escaped_values.map { |ev| filter_data[:value_template]&.%(ev) || ev }.join(VALID_BOOLEAN_OPERATORS[boolean_operator])
+      @parameters[:fq] << format(filter_data[:field_template], field, value) unless value.blank?
       self
     end
 
