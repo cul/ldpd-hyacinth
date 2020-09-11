@@ -27,7 +27,7 @@ function DigitalObjectInterface(props) {
     const button = latestSearchQueryString ?
           <div>
                 <Button
-                  variant="Dark"
+                  variant="dark"
                   style={{
                     color: "#FFFFFF80"
                   }}
