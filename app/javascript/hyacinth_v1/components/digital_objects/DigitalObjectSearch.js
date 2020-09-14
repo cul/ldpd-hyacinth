@@ -5,9 +5,10 @@ import {
 } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 import {
-  withQueryParams, decodeQueryParams
+  withQueryParams, decodeQueryParams,
 } from 'use-query-params';
 import * as qs from 'query-string';
+import { queryParamsConfig, encodeAndStringifySearch } from '../../utils/encodeAndStringifySearch';
 
 import DigitalObjectList from './DigitalObjectList';
 import FacetSidebar from './search/FacetSidebar';
@@ -17,11 +18,8 @@ import ContextualNavbar from '../shared/ContextualNavbar';
 import PaginationBar from '../shared/PaginationBar';
 import GraphQLErrors from '../shared/GraphQLErrors';
 import { getDigitalObjectsQuery } from '../../graphql/digitalObjects';
-import FilterArrayParam from '../../utils/filterArrayParam';
 import QueryForm from './search/QueryForm';
 import SelectedFacetsBar from './search/SelectedFacetsBar';
-
-import { queryParamsConfig, redirectToSearch } from '../../utils/redirectToSearch';
 
 // NOTE: We are using the use-query-params library to automatically parse
 // query params only. The library is able to update the browser
@@ -84,7 +82,8 @@ const DigitalObjectSearch = ({ query }) => {
   const { digitalObjects: { nodes, facets, totalCount } } = data;
 
   const updateQueryParameters = (newParams) => {
-    redirectToSearch(history, newParams);
+    const search = encodeAndStringifySearch(newParams);
+    history.push(`/digital_objects?${search}`);
   };
 
   const onPageNumberClick = (newOffset) => {
@@ -188,7 +187,8 @@ const DigitalObjectSearch = ({ query }) => {
       <Row>
         <Col md={8}>
           { docsFound
-            ? <DigitalObjectList
+            ? (
+              <DigitalObjectList
                 className="digital-object-search-results"
                 digitalObjects={nodes}
                 displayParentIds
@@ -201,6 +201,7 @@ const DigitalObjectSearch = ({ query }) => {
                 pageNumber={pageNumber}
                 searchParams={searchParams}
               />
+            )
             : <Card><Card.Header>No Digital Objects found.</Card.Header></Card>
           }
         </Col>

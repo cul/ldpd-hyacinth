@@ -11,28 +11,31 @@ import { startCase } from 'lodash';
 */
 
 
-const storeSearchQueryParams =  (orderBy, totalCount, perPage, offset, pageNumber, q, filters) => {
+const storeSearchQueryParams = (orderBy, totalCount, perPage, offset, pageNumber, q, filters) => {
   if (q || filters.length > 0) {
     window.sessionStorage.setItem('searchQueryParams',
-    JSON.stringify(
-      {
-        orderBy,
-        totalCount,
-        perPage,
-        offset,
-        pageNumber,
-        q,
-        filters
-      }
-    ));
-  }else{
+      JSON.stringify(
+        {
+          orderBy,
+          totalCount,
+          perPage,
+          offset,
+          pageNumber,
+          q,
+          filters,
+        },
+      ));
+  } else {
     window.sessionStorage.setItem('searchQueryParams', '');
   }
-}
+};
 
 
 const DigitalObjectList = (props) => {
-  const { digitalObjects, displayProjects, displayParentIds, orderBy, totalCount, limit, offset, pageNumber, searchParams } = props;
+  const {
+    digitalObjects, displayProjects, displayParentIds, orderBy, totalCount,
+    limit, offset, pageNumber, searchParams,
+  } = props;
 
   return (
     <>
@@ -40,8 +43,13 @@ const DigitalObjectList = (props) => {
         digitalObjects.map(digitalObject => (
           <Card key={digitalObject.id} className="mb-3">
             <Card.Header>
-              <LinkContainer to={`/digital_objects/${digitalObject.id}`}
-                             onClick={() => storeSearchQueryParams(orderBy, totalCount, limit, offset, pageNumber, searchParams.query, searchParams.filters)}
+              <LinkContainer
+                to={`/digital_objects/${digitalObject.id}`}
+                onClick={() => storeSearchQueryParams(
+                  orderBy, totalCount, limit, offset,
+                  pageNumber, searchParams.query, searchParams.filters,
+                )
+                }
               >
                 <a>{digitalObject.title}</a>
               </LinkContainer>
@@ -90,6 +98,12 @@ const DigitalObjectList = (props) => {
 DigitalObjectList.defaultProps = {
   displayProjects: false,
   displayParentIds: false,
+  orderBy: false,
+  totalCount: false,
+  limit: false,
+  offset: false,
+  pageNumber: false,
+  searchParams: false,
 };
 
 DigitalObjectList.propTypes = {
@@ -102,6 +116,20 @@ DigitalObjectList.propTypes = {
   ).isRequired,
   displayProjects: PropTypes.bool,
   displayParentIds: PropTypes.bool,
+  orderBy: PropTypes.string,
+  totalCount: PropTypes.number,
+  limit: PropTypes.number,
+  offset: PropTypes.number,
+  pageNumber: PropTypes.number,
+  searchParams: PropTypes.shape({
+    query: PropTypes.string,
+    filters: PropTypes.arrayOf(
+      PropTypes.shape({
+        field: PropTypes.string,
+        value: PropTypes.string,
+      }),
+    ),
+  }),
 };
 
 export default DigitalObjectList;
