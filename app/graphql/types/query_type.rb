@@ -111,7 +111,6 @@ module Types
       search_params['facet_on'] = core_facets.concat(df_facets)
 
       Hyacinth::Config.digital_object_search_adapter.search(search_params, context[:current_user]) do |solr_params|
-        solr_params.default_field('keyword_search_teim') # TODO: Accept searchType parameter (HYACINTH-542)
         solr_params.rows(arguments[:limit])
         solr_params.start(arguments[:offset])
         solr_params.sort(arguments[:order_by][:field], arguments[:order_by][:direction]) if arguments[:order_by]
