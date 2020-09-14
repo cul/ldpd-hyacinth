@@ -41,4 +41,35 @@ RSpec.describe Solr::Params do
       expect(params.to_h).to include(sort: 'title desc')
     end
   end
+
+  context 'when making a facet values query' do
+    let(:facet_name) { 'animals' }
+    let(:rows) { (0..100).to_a.sample(1) }
+    let(:start) { (0..100).to_a.sample(1) }
+    let(:sort) { 'count' }
+    # sort_direction not used until Solr 8
+    let(:sort_direction) { 'asc' }
+    let(:expected) do
+      {
+        :"f.#{facet_name}.facet.limit" => rows,
+        :"f.#{facet_name}.facet.offset" => start,
+        :"f.#{facet_name}.facet.sort" => sort,
+        :"stats.field" => "{!countDistinct=true}#{facet_name}",
+        stats: 'on'
+      }
+    end
+    before do
+      params.facet_on(facet_name) do |f_params|
+        f_params.start(start)
+        f_params.rows(rows)
+        f_params.sort(sort, sort_direction)
+        f_params.with_statistics!
+      end
+    end
+
+    it 'adds facet value params' do
+      actual = params.to_h
+      expect(actual).to include(expected)
+    end
+  end
 end

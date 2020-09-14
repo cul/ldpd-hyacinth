@@ -37,6 +37,7 @@ module Solr
 
     def facet_on(field)
       @parameters[:"facet.field"] << field unless field.blank?
+      yield FacetProxy.new(field, self) if block_given?
       self
     end
 
@@ -64,6 +65,10 @@ module Solr
       self
     end
 
+    def raw_parameter(key, value)
+      @parameters[key.to_sym] = value
+    end
+
     def sort(field, direction)
       raise ArgumentError, "direction must be one of #{VALID_SORT_DIRECTION.join(', ')}, instead got '#{direction}'" unless VALID_SORT_DIRECTION.include?(direction)
 
@@ -72,6 +77,31 @@ module Solr
 
     def to_h
       parameters[:"facet.field"].present? ? parameters.merge(facet: 'on') : parameters
+    end
+
+    class FacetProxy
+      def initialize(facet_name, params)
+        @params = params
+        @facet_name = facet_name
+      end
+
+      def with_statistics!
+        @params.raw_parameter(:stats, 'on')
+        @params.raw_parameter(:"stats.field", "{!countDistinct=true}#{@facet_name}")
+      end
+
+      def rows(num)
+        @params.raw_parameter(:"f.#{@facet_name}.facet.limit", num)
+      end
+
+      def start(num)
+        @params.raw_parameter(:"f.#{@facet_name}.facet.offset", num)
+      end
+
+      # TODO: Enable direction after Solr 8 upgrade
+      def sort(field, _direction)
+        @params.raw_parameter(:"f.#{@facet_name}.facet.sort", field)
+      end
     end
   end
 end
