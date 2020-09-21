@@ -11,7 +11,7 @@ RSpec.describe Solr::Params do
       expect(params.to_h).to include(fq: ['animals:(dogs\ \+\ cats)'])
     end
 
-    it 'properly handles and escapes multiple values and defaults to match function' do
+    it 'properly handles and escapes multiple values and defaults to OR-ing them together with equals comparison' do
       params.fq('animals', ['dogs + cats', 'llamas', 'alpacas'])
       expect(params.to_h).to include(fq: ['animals:(dogs\ \+\ cats OR llamas OR alpacas)'])
     end
