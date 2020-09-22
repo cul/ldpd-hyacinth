@@ -9,16 +9,16 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector = function(containerElementId,
   this.controlledVocabularyStringKey = this.$controlledTermUriFieldElement.attr('data-controlled-vocabulary-string-key');
   this.controlledVocabularyDisplayLabel = this.$controlledTermUriFieldElement.attr('data-controlled-vocabulary-display-label');
   this.additionalFieldsForControlledVocabulary = {};
-  
+
   this.latestSearchPhrase = null;
   this.currentPage = 1;
   this.autoUpdateIntervalId = null;
   this.updateInProgress = false;
-  
+
   //Get additional fields for this controlled vocabulary and then run init() function.
-  
+
   var that = this;
-  
+
   $.ajax({
       url: '/controlled_vocabularies/' + this.controlledVocabularyStringKey + '/term_additional_fields.json',
       type: 'GET',
@@ -57,7 +57,7 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
   //Add class to container element and add object reference to the container element
   this.$containerElement.addClass(Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.SELECTOR_ELEMENT_CLASS); //Add class to container element
   this.$containerElement.data(Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.SELECTOR_DATA_KEY, this); //Assign this editor object as data to the container element so that we can access it later
-  
+
   this.$containerElement.on('click', '.choose_authorized_term_button', function(e){
     e.preventDefault();
 
@@ -67,7 +67,10 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
     that.$controlledTermUriFieldElement.val(uri);
     that.$controlledTermValueDisplayElement.html(value);
     that.$controlledTermUriDisplayElement.html('URI: ' + uri);
-    if (document.getElementById("showuri").checked) {
+
+    var showUriCheckbox = document.getElementById("showuri");
+    // Checkbox is currently only available for existing records, not new ones
+    if (showUriCheckbox && showUriCheckbox.checked) {
       that.$controlledTermUriDisplayElement.parent().removeClass('hidden');
     }
     that.$clearButtonElement.removeClass('hidden');
@@ -89,7 +92,7 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
   this.$containerElement.html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/authorized_term_selector/index.ejs'));
 
   this.$containerElement.find('.authorized_term_adder').hide();
-  
+
   //Set up add_authorized_term_form fields
   this.$containerElement.find('.add_authorized_term_form').find('.term_fields').html(this.generateAuthorizedTermFormFieldHtml());
 
@@ -110,13 +113,13 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
     that.$containerElement.find('.authorized_term_search').hide();
     that.$containerElement.find('.authorized_term_adder').show();
   });
-  
+
   this.$containerElement.on('click', '.back_to_term_search', function(e){
     e.preventDefault();
     that.$containerElement.find('.authorized_term_search').show();
     that.$containerElement.find('.authorized_term_adder').hide();
   });
-  
+
   //add_authorized_term_form type select element should hide or show certain form fields
   this.$containerElement.find('.add_authorized_term_form').on('change', '.term-type-select', function(e){
     var type = $(this).val();
@@ -147,7 +150,7 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
     $(this).find('.term_fields').find('.term-field-form-element').each(function(){
       termData[$(this).attr('name')] = $(this).val();
     })
-    
+
     $.ajax({
       url: '/terms.json',
       type: 'POST',
@@ -203,9 +206,9 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.init = function(){
 };
 
 Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.generateAuthorizedTermFormFieldHtml = function() {
-  
+
   var htmlToReturn = '';
-  
+
   var defaultFields = {
     'value' : {
       'display_label' : 'Value'
@@ -217,12 +220,12 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.generateAuthorizedTe
       'display_label' : 'URI'
     }
   }
-  
+
   var formFieldsToRender = Hyacinth.ObjectHelpers.merge(this.additionalFieldsForControlledVocabulary, defaultFields);
   var orderedFieldNames = ['value', 'authority', 'uri'].concat(_.keys(this.additionalFieldsForControlledVocabulary).sort());
-  
+
   orderedFieldNames.forEach(function(field_name){
-    
+
     var fieldClass = null;
     if(field_name == 'uri') {
         fieldClass = 'term-uri-field';
@@ -233,7 +236,7 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.generateAuthorizedTe
     } else {
         fieldClass = 'term-additional-field';
     }
-    
+
     htmlToReturn += '<div class="row field ' + fieldClass + '">' +
       '<div class="col-md-2">' +
         formFieldsToRender[field_name]['display_label'] +
@@ -243,7 +246,7 @@ Hyacinth.DigitalObjectsApp.AuthorizedTermSelector.prototype.generateAuthorizedTe
       '</div>' +
     '</div>';
   });
-  
+
   return htmlToReturn;
 };
 
