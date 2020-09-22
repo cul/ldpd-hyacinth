@@ -220,8 +220,9 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.addDynamicFieldGroup = function(d
   Hyacinth.DigitalObjectsApp.DigitalObjectEditor.recursivelyEnsureOnlyUniqueDynamicFieldGroups($clonedElement); //In those cloned group, remove any dynamic fields with the same name (on the same level)
   $clonedElement.find('input[type!="checkbox"], select').val(''); //Clear all form field values (except checkboxes, which should not have their value attributes cleared)
   $clonedElement.find('input[type="checkbox"]').prop('checked', false); //Uncheck check boxes
-  //Hyacinth.DigitalObjectsApp.DigitalObjectEditor.refreshAuthorizedTermButtonsBasedOnHiddenFieldValue($clonedElement); //Update AuthorizedTerm button display for now-cleared AuthorizedTerm fields
   $dynamicFieldGroup.after($clonedElement);
+  // Reset any copied controlled term buttons
+  $clonedElement.find('.controlled_term_clear_button').click();
 }
 
 //Creates a new identifier field, based on the given identifier element.  The new group coupy is placed in the DOM, after the source element.
