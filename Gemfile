@@ -5,7 +5,8 @@ gem 'rails', '~> 4.2.10'
 
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3', '~> 1.3.10'
-gem 'mysql2', '~> 0.5'
+# Rails 4 can only be used with mysql2 version 0.4 and is not compatible with 0.5
+gem 'mysql2', '~> 0.4.0'
 
 # Lock rake due to rspec/rubocop v11 incompatibilities
 gem 'rake', '~> 10.0'
