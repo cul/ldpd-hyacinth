@@ -58,7 +58,7 @@ const DigitalObjectSearch = ({ query }) => {
   useEffect(() => {
     // Decodes query parameters with the same logic used to instantiate the component
     const queryParams = {
-      query: undefined,
+      q: undefined,
       pageNumber: undefined,
       perPage: undefined,
       filters: undefined,
