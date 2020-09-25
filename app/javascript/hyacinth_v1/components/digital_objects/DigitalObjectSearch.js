@@ -200,6 +200,7 @@ const DigitalObjectSearch = ({ query }) => {
                 offset={offset}
                 pageNumber={pageNumber}
                 searchParams={searchParams}
+                path={location.pathname}
               />
             )
             : <Card><Card.Header>No Digital Objects found.</Card.Header></Card>
