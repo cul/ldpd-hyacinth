@@ -11,8 +11,10 @@ import { startCase } from 'lodash';
 */
 
 
-const storeSearchQueryParams = (orderBy, totalCount, perPage, offset, pageNumber, q, filters) => {
-  if (q || filters.length > 0) {
+const storeSearchQueryParams = (
+  orderBy, totalCount, perPage, offset, pageNumber, q, filters, path,
+) => {
+  if (path === '/digital_objects') {
     window.sessionStorage.setItem('searchQueryParams',
       JSON.stringify(
         {
@@ -30,11 +32,10 @@ const storeSearchQueryParams = (orderBy, totalCount, perPage, offset, pageNumber
   }
 };
 
-
 const DigitalObjectList = (props) => {
   const {
     digitalObjects, displayProjects, displayParentIds, orderBy, totalCount,
-    limit, offset, pageNumber, searchParams,
+    limit, offset, pageNumber, searchParams, path,
   } = props;
 
   return (
@@ -47,7 +48,7 @@ const DigitalObjectList = (props) => {
                 to={`/digital_objects/${digitalObject.id}`}
                 onClick={() => storeSearchQueryParams(
                   orderBy, totalCount, limit, offset,
-                  pageNumber, searchParams.query, searchParams.filters,
+                  pageNumber, searchParams.query, searchParams.filters, path,
                 )
                 }
               >
@@ -98,12 +99,13 @@ const DigitalObjectList = (props) => {
 DigitalObjectList.defaultProps = {
   displayProjects: false,
   displayParentIds: false,
-  orderBy: false,
-  totalCount: false,
-  limit: false,
-  offset: false,
-  pageNumber: false,
+  orderBy: '',
+  totalCount: 0,
+  limit: 0,
+  offset: 0,
+  pageNumber: 0,
   searchParams: false,
+  path: '',
 };
 
 DigitalObjectList.propTypes = {
@@ -130,6 +132,7 @@ DigitalObjectList.propTypes = {
       }),
     ),
   }),
+  path: PropTypes.string,
 };
 
 export default DigitalObjectList;
