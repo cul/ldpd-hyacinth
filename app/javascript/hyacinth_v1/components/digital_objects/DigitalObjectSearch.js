@@ -5,9 +5,10 @@ import {
 } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 import {
-  NumberParam, StringParam, withQueryParams, withDefault, decodeQueryParams, encodeQueryParams,
+  withQueryParams, decodeQueryParams,
 } from 'use-query-params';
 import * as qs from 'query-string';
+import { queryParamsConfig, encodeAndStringifySearch } from '../../utils/encodeAndStringifySearch';
 
 import DigitalObjectList from './DigitalObjectList';
 import FacetSidebar from './search/FacetSidebar';
@@ -17,7 +18,6 @@ import ContextualNavbar from '../shared/ContextualNavbar';
 import PaginationBar from '../shared/PaginationBar';
 import GraphQLErrors from '../shared/GraphQLErrors';
 import { getDigitalObjectsQuery } from '../../graphql/digitalObjects';
-import FilterArrayParam from '../../utils/filterArrayParam';
 import QueryForm from './search/QueryForm';
 import SelectedFacetsBar from './search/SelectedFacetsBar';
 
@@ -26,14 +26,6 @@ import SelectedFacetsBar from './search/SelectedFacetsBar';
 // history (thus making the back button work), but there isn't a way to
 // re-render the page. UseEffect hooks don't seem to notice any
 // history changes made by the external library.
-
-const queryParamsConfig = {
-  q: StringParam,
-  filters: withDefault(FilterArrayParam, []),
-  pageNumber: withDefault(NumberParam, 1),
-  perPage: withDefault(NumberParam, 20),
-  orderBy: withDefault(StringParam, 'TITLE ASC'),
-};
 
 const DigitalObjectSearch = ({ query }) => {
   const [pageNumber, setPageNumber] = useState(query.pageNumber);
@@ -66,7 +58,7 @@ const DigitalObjectSearch = ({ query }) => {
   useEffect(() => {
     // Decodes query parameters with the same logic used to instantiate the component
     const queryParams = {
-      query: undefined,
+      q: undefined,
       pageNumber: undefined,
       perPage: undefined,
       filters: undefined,
@@ -90,8 +82,8 @@ const DigitalObjectSearch = ({ query }) => {
   const { digitalObjects: { nodes, facets, totalCount } } = data;
 
   const updateQueryParameters = (newParams) => {
-    location.search = qs.stringify(encodeQueryParams(queryParamsConfig, newParams));
-    history.push(location);
+    const search = encodeAndStringifySearch(newParams);
+    history.push(`/digital_objects?${search}`);
   };
 
   const onPageNumberClick = (newOffset) => {
@@ -99,7 +91,7 @@ const DigitalObjectSearch = ({ query }) => {
       pageNumber: (newOffset / limit) + 1,
       perPage: limit,
       filters: searchParams.filters,
-      q: searchParams.filters,
+      q: searchParams.query,
     });
   };
 
@@ -186,6 +178,7 @@ const DigitalObjectSearch = ({ query }) => {
             totalCount={totalCount}
             limit={limit}
             offset={offset}
+            pageNumber={pageNumber}
             searchParams={searchParams}
           />
         )
@@ -194,7 +187,22 @@ const DigitalObjectSearch = ({ query }) => {
       <Row>
         <Col md={8}>
           { docsFound
-            ? <DigitalObjectList className="digital-object-search-results" digitalObjects={nodes} displayParentIds displayProjects />
+            ? (
+              <DigitalObjectList
+                className="digital-object-search-results"
+                digitalObjects={nodes}
+                displayParentIds
+                displayProjects
+
+                orderBy={orderBy}
+                totalCount={totalCount}
+                limit={limit}
+                offset={offset}
+                pageNumber={pageNumber}
+                searchParams={searchParams}
+                path={location.pathname}
+              />
+            )
             : <Card><Card.Header>No Digital Objects found.</Card.Header></Card>
           }
         </Col>
