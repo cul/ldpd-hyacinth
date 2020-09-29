@@ -16,6 +16,10 @@ function DigitalObjectInterface(props) {
 
   const backToSearchPath = () => {
     const latestSearchQuery = JSON.parse(latestSearchQueryString);
+    
+    // Delete a couple of search parameters that shouldn't appear in a user-facing search url
+    delete latestSearchQuery.offset;
+    delete latestSearchQuery.totalCount;
     const search = encodeAndStringifySearch(latestSearchQuery);
     return `/digital_objects?${search}`;
   };
