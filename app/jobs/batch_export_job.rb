@@ -11,40 +11,45 @@ class BatchExportJob
     start_time = Time.current
     records_processed = 0
     batch_export = BatchExport.find(batch_export_id)
+    export_filter = export_filter_from_config(batch_export.export_filter_config)
 
     begin
       # We can't write directly to batch export storage because the CSV class expects disk, and our
       # storage isn't guaranteed to be disk (could be memory, remote server, etc.), so we'll write to
       # a tempfile and then later on, copy that complete tempfile's contents to batch export storage.
-      ordered_headers_temp_csv_file = Tempfile.new('ordered-headers-batch-export')
+      # Additionally, writing to a temp file first is useful because we want to filter out some of
+      # this CSV file's columns before writing to permanent storage.
+      temp_csv_file = Tempfile.new('temp-batch-export')
+      temp_filtered_csv_file = Tempfile.new('temp-filtered-batch-export')
 
-      JsonCsv.create_csv_for_json_records(ordered_headers_temp_csv_file.path) do |csv_builder|
+      JsonCsv.create_csv_for_json_records(temp_csv_file.path) do |csv_builder|
         digital_objects_for_batch_export(batch_export) do |digital_object|
           csv_builder.add(digital_object_as_export(digital_object))
           update_export_progress_info_on_frequency_modulus(batch_export, records_processed += 1, start_time)
         end
       end
 
-      file_location = Hyacinth::Config.batch_export_storage
-                                      .primary_storage_adapter
-                                      .generate_new_location_uri("#{batch_export.id}.csv")
+      export_filter.generate_filtered_export(temp_csv_file.path, temp_filtered_csv_file.path)
 
-      write_csv_to_storage(ordered_headers_temp_csv_file, Hyacinth::Config.batch_export_storage, file_location)
-      handle_job_success(batch_export, start_time, records_processed, file_location)
+      final_file_location = Hyacinth::Config.batch_export_storage
+                                            .primary_storage_adapter
+                                            .generate_new_location_uri("#{batch_export.id}.csv")
+
+      write_csv_to_storage(temp_filtered_csv_file, Hyacinth::Config.batch_export_storage, final_file_location)
+      handle_job_success(batch_export, start_time, records_processed, final_file_location)
     rescue StandardError => e
       handle_job_error(batch_export, e, start_time)
     ensure
-      # Close and unlink our tempfile
-      ordered_headers_temp_csv_file.close!
+      # Close and unlink our tempfiles
+      temp_csv_file&.close!
+      temp_filtered_csv_file&.close!
     end
   end
 
   def self.write_csv_to_storage(csv_file, storage, file_location)
     csv_file.rewind
     storage.with_writable(file_location) do |io|
-      while (chunk = csv_file.read(COPY_OPERATION_READ_BUFFER_SIZE))
-        io.write(chunk)
-      end
+      while (chunk = csv_file.read(COPY_OPERATION_READ_BUFFER_SIZE)); io.write(chunk); end
     end
   end
 
@@ -53,10 +58,7 @@ class BatchExportJob
   # @return [void]
   def self.update_export_progress_info_on_frequency_modulus(batch_export, records_processed, start_time)
     return unless (records_processed % PROCESSED_RECORD_COUNT_UPDATE_FREQUENCY).zero?
-    batch_export.update(
-      number_of_records_processed: records_processed,
-      duration: (Time.current - start_time).to_i
-    )
+    batch_export.update(number_of_records_processed: records_processed, duration: (Time.current - start_time).to_i)
   end
 
   def self.handle_job_success(batch_export, start_time, records_processed, file_location)
@@ -90,7 +92,7 @@ class BatchExportJob
     # OR: Add an fq on a user's readable projects so that search results only return things that
     # the user should see. (We're not currently indexing projects, so this isn't possible right now.)
 
-    # TODO: Eventually the results object avove will be a DigitalObjectSearchResult (or similar)
+    # TODO: Eventually the results object above will be a DigitalObjectSearchResult (or similar)
     # type of object instead of a solr response. At that point, we'll refactor this code.
     results = Hyacinth::Config.digital_object_search_adapter.search(search_params, searching_user) do |solr_params|
       solr_params.rows(BATCH_SIZE)
@@ -140,5 +142,16 @@ class BatchExportJob
     end
 
     hash_to_return
+  end
+
+  def self.export_filter_from_config(export_filter_config)
+    return Hyacinth::Jobs::BatchExportJob::ExportFilter.default_export_filter if export_filter_config.blank?
+
+    Hyacinth::Jobs::BatchExportJob::ExportFilter.new(
+      {
+        inclusion_filters: export_filter_config.fetch('inclusion_filters', nil),
+        exclusion_filters: export_filter_config.fetch('exclusion_filters', nil)
+      }.compact!
+    )
   end
 end
