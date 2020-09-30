@@ -32,5 +32,27 @@ namespace :hyacinth do
       Rake::Task['hyacinth:setup:seed_dynamic_field_entries'].invoke
       Rake::Task['hyacinth:setup:enable_fields_for_test_projects'].invoke
     end
+
+    desc "Creates some sample records."
+    task create_sample_records: :environment do
+      unless Rails.env.development?
+        puts 'This task can only be run in the development environment.'
+        next
+      end
+
+      21.times do |i|
+        item = DigitalObject::Item.new
+        item.descriptive_metadata['title'] = [{ 'sort_portion' => "Item #{i + 1}" }]
+        item.primary_project = Project.find_by(is_primary: true)
+
+        next if item.save
+
+        puts  "\nErrors encountered during item save.\n"\
+              "Digital Object creation requirements may have changed since this rake task was last updated.\n"\
+              "Errors:\n" +
+              item.errors.full_messages.inspect
+        break
+      end
+    end
   end
 end
