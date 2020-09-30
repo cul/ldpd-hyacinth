@@ -43,8 +43,8 @@ module Hyacinth
         #                        expressions that will be used to filter a csv export file.
         #                        Example: ['_uid', /descriptive_metadata\..*/])
         def initialize(inclusion_filters: [], exclusion_filters: [])
-          @inclusion_filters = inclusion_filters
-          @exclusion_filters = exclusion_filters
+          @inclusion_filters = inclusion_filters || []
+          @exclusion_filters = exclusion_filters || []
         end
 
         def self.default_export_filter

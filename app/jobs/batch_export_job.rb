@@ -148,10 +148,12 @@ class BatchExportJob
     return Hyacinth::Jobs::BatchExportJob::ExportFilter.default_export_filter if export_filter_config.blank?
 
     Hyacinth::Jobs::BatchExportJob::ExportFilter.new(
-      {
-        inclusion_filters: export_filter_config.fetch('inclusion_filters', nil),
-        exclusion_filters: export_filter_config.fetch('exclusion_filters', nil)
-      }.compact!
+      inclusion_filters: export_filter_config.fetch('inclusion_filters', nil),
+      # If a user supplies any exclusion filters with the BatchExport, merge them into our array
+      # of default exclusion filters so that they can't un-exclude any of our mandatory
+      # exclusions (i.e. ask for additional data that they don't have permission to see).
+      exclusion_filters: export_filter_config.fetch('exclusion_filters', []) +
+        Hyacinth::Jobs::BatchExportJob::ExportFilter.default_exclusion_filters
     )
   end
 end

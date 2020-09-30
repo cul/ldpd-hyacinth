@@ -61,4 +61,42 @@ RSpec.describe BatchExportJob, solr: true do
       expect { described_class.perform(12_345) }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
+
+  context '.export_filter_from_config' do
+    context 'when the given export_filter_config is blank' do
+      let(:expected_export_filter) { Hyacinth::Jobs::BatchExportJob::ExportFilter.default_export_filter }
+      let(:expected_inclusion_filters) { expected_export_filter.inclusion_filters }
+      let(:expected_exclusion_filters) { expected_export_filter.exclusion_filters }
+
+      [{}, nil].each do |val|
+        it 'returns an export filter with the default inclusion and exclusion filters' do
+          export_filter = described_class.export_filter_from_config(val)
+          expect(export_filter.inclusion_filters).to eq(expected_inclusion_filters)
+          expect(export_filter.exclusion_filters).to eq(expected_exclusion_filters)
+        end
+      end
+    end
+
+    context 'when a user supplies an export_filter_config with inclusion and exclusion filters' do
+      let(:inclusion_filters) { ['_aaa'] }
+      let(:exclusion_filters) { ['_zzz'] }
+      let(:export_filter_config) do
+        {
+          'inclusion_filters' => inclusion_filters,
+          'exclusion_filters' => exclusion_filters
+        }
+      end
+      let(:export_filter) { described_class.export_filter_from_config(export_filter_config) }
+
+      it 'returns an ExportFilter object that includes only the given inclusion filters' do
+        expect(export_filter.inclusion_filters).to eq(inclusion_filters)
+      end
+
+      it 'returns an ExportFilter object that includes the given exclusion filters AND our default exclusion filters' do
+        expect(export_filter.exclusion_filters).to eq(
+          exclusion_filters + Hyacinth::Jobs::BatchExportJob::ExportFilter.default_exclusion_filters
+        )
+      end
+    end
+  end
 end
