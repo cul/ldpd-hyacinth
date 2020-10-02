@@ -15,14 +15,15 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr do
         {
           'animals' => [
             ['aardvarks', 'DOES_NOT_EXIST'], ['celocanths', 'CONTAINS'], ['elephants', 'EQUALS'],
-            ['ostriches', 'DOES_NOT_CONTAIN'], ['panthers', 'EXISTS'], ['voles', 'DOES_NOT_EQUAL']
+            ['ostriches', 'DOES_NOT_CONTAIN'], ['panthers', 'EXISTS'], ['voles', 'DOES_NOT_EQUAL'],
+            ['ferrets', 'STARTS_WITH'], ['groundhogs', 'DOES_NOT_START_WITH']
           ]
         }
       end
       let(:expected_filters) do
         [
           'state_ssi:(active)', '-animals:*', 'animals:(*celocanths*)', 'animals:(elephants)',
-          '-animals:(*ostriches*)', 'animals:*', '-animals:(voles)'
+          '-animals:(*ostriches*)', 'animals:*', '-animals:(voles)', 'animals:(ferrets*)', '-animals:(groundhogs*)'
         ]
       end
       it "collects fq values" do

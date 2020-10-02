@@ -10,8 +10,10 @@ module Solr
       'DOES_NOT_CONTAIN' => { field_template: '-%s:(%s)', value_template: '*%s*' },
       'DOES_NOT_EQUAL' => { field_template: '-%s:(%s)' },
       'DOES_NOT_EXIST' => { field_template: '-%s:%s', value: '*' },
+      'DOES_NOT_START_WITH' => { field_template: '-%s:(%s)', value_template: '%s*' },
       'EQUALS' => { field_template: '%s:(%s)' },
-      'EXISTS' => { field_template: '%s:%s', value: '*' }
+      'EXISTS' => { field_template: '%s:%s', value: '*' },
+      'STARTS_WITH' => { field_template: '%s:(%s)', value_template: '%s*' }
     }.freeze
     VALID_SORT_DIRECTION = ['asc', 'desc'].freeze
 
