@@ -11,7 +11,7 @@ module Types
     def prepare
       search_params = {}
       (@arguments[:filters] || []).each do |filter_attribute|
-        (search_params[filter_attribute.field] ||= []) << [filter_attribute.value, filter_attribute.match_type]
+        (search_params[filter_attribute.field] ||= []) << [filter_attribute.values, filter_attribute.match_type]
       end
       search_params['search_type'] = @arguments[:search_type].blank? ? 'keyword' : @arguments[:search_type]
       search_params['q'] = @arguments[:query]

@@ -114,7 +114,7 @@ RSpec.describe 'Query for Terms', type: :request, solr: true do
       include_context 'json includes exact number of terms', 1
 
       before do
-        graphql query(filters: [{ field: 'authority', value: 'fast' }])
+        graphql query(filters: [{ field: 'authority', values: ['fast'] }])
       end
     end
 
@@ -124,7 +124,7 @@ RSpec.describe 'Query for Terms', type: :request, solr: true do
       # include_context 'json includes pagination', 0, 20, 1
 
       before do
-        graphql query(filters: [{ field: 'uri', value: 'http://id.worldcat.org/fast/1161301/' }])
+        graphql query(filters: [{ field: 'uri', values: ['http://id.worldcat.org/fast/1161301/'] }])
       end
     end
 
@@ -133,7 +133,7 @@ RSpec.describe 'Query for Terms', type: :request, solr: true do
       include_context 'json includes exact number of terms', 1
 
       before do
-        graphql query(filters: [{ field: 'pref_label', value: 'Yeti' }])
+        graphql query(filters: [{ field: 'pref_label', values: ['Yeti'] }])
       end
     end
 
@@ -142,7 +142,7 @@ RSpec.describe 'Query for Terms', type: :request, solr: true do
       include_context 'json includes exact number of terms', 1
 
       before do
-        graphql query(filters: [{ field: 'alt_labels', value: 'Uni' }])
+        graphql query(filters: [{ field: 'alt_labels', values: ['Uni'] }])
       end
     end
 
@@ -151,7 +151,7 @@ RSpec.describe 'Query for Terms', type: :request, solr: true do
       include_context 'json includes exact number of terms', 1
 
       before do
-        graphql query(filters: [{ field: 'term_type', value: 'temporary' }])
+        graphql query(filters: [{ field: 'term_type', values: ['temporary'] }])
       end
     end
 
@@ -161,13 +161,13 @@ RSpec.describe 'Query for Terms', type: :request, solr: true do
       include_context 'json includes exact number of terms', 2
 
       before do
-        graphql query(filters: [{ field: 'harry_potter_reference', value: true }])
+        graphql query(filters: [{ field: 'harry_potter_reference', values: [true] }])
       end
     end
 
     context 'by invalid custom field' do
       before do
-        graphql query(filters: [{ field: "dangerous", value: true }])
+        graphql query(filters: [{ field: "dangerous", values: [true] }])
       end
 
       it 'returns error' do
@@ -182,13 +182,13 @@ RSpec.describe 'Query for Terms', type: :request, solr: true do
       include_context 'json includes exact number of terms', 1
 
       before do
-        graphql query(filters: [{ field: 'prefLabel', value: 'Unicorns' }])
+        graphql query(filters: [{ field: 'prefLabel', values: ['Unicorns'] }])
       end
     end
   end
 
   def query(query: nil, filters: [])
-    filters = filters.map { |f| "{ field: \"#{f[:field]}\", value: \"#{f[:value]}\"}" }
+    filters = filters.map { |f| "{ field: \"#{f[:field]}\", values: #{f[:values].map(&:to_s).to_json}}" }
                      .join(', ')
                      .prepend('[')
                      .concat(']')
