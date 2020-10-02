@@ -6,12 +6,12 @@ module Solr
 
     VALID_BOOLEAN_OPERATORS = { and: ' AND ', or: ' OR ' }.freeze
     VALID_FILTER_MATCHES = {
-      'absent' => { field_template: '-%s:%s', value: '*' },
-      'contains' => { field_template: '%s:(%s)', value_template: '*%s*' },
-      'matches' => { field_template: '%s:(%s)' },
-      'omits' => { field_template: '-%s:(%s)', value_template: '*%s*' },
-      'present' => { field_template: '%s:%s', value: '*' },
-      'varies' => { field_template: '-%s:(%s)' }
+      'CONTAINS' => { field_template: '%s:(%s)', value_template: '*%s*' },
+      'DOES_NOT_CONTAIN' => { field_template: '-%s:(%s)', value_template: '*%s*' },
+      'DOES_NOT_EQUAL' => { field_template: '-%s:(%s)' },
+      'DOES_NOT_EXIST' => { field_template: '-%s:%s', value: '*' },
+      'EQUALS' => { field_template: '%s:(%s)' },
+      'EXISTS' => { field_template: '%s:%s', value: '*' }
     }.freeze
     VALID_SORT_DIRECTION = ['asc', 'desc'].freeze
 
@@ -25,7 +25,7 @@ module Solr
       }
     end
 
-    def fq(field, value_or_values, match_operator = 'matches', boolean_operator = :or)
+    def fq(field, value_or_values, match_operator = 'EQUALS', boolean_operator = :or)
       raise(ArgumentError, "Invalid match operator: #{match_operator}") unless VALID_FILTER_MATCHES.include?(match_operator)
       raise(ArgumentError, "Invalid boolean operator: #{boolean_operator}") unless VALID_BOOLEAN_OPERATORS.include?(boolean_operator)
       escaped_values = Array.wrap(value_or_values).map { |value| Solr::Utils.escape(value).gsub(' ', '\ ') }

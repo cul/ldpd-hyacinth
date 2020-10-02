@@ -6,6 +6,6 @@ module Types
 
     argument :field, String, required: true
     argument :value, String, required: true
-    argument :match_type, Enums::FilterMatchEnum, default_value: 'matches', required: false
+    argument :match_type, Enums::FilterMatchEnum, default_value: 'EQUALS', required: false
   end
 end

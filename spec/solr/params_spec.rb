@@ -17,7 +17,7 @@ RSpec.describe Solr::Params do
     end
 
     it 'properly handles and escapes multiple values with the match param passed, OR-ing them together' do
-      params.fq('animals', ['dogs + cats', 'llamas', 'alpacas'], 'contains')
+      params.fq('animals', ['dogs + cats', 'llamas', 'alpacas'], 'CONTAINS')
       expect(params.to_h).to include(fq: ['animals:(*dogs\ \+\ cats* OR *llamas* OR *alpacas*)'])
     end
   end
