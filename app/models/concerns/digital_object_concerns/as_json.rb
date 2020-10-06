@@ -4,7 +4,7 @@ module DigitalObjectConcerns
   module AsJson
     extend ActiveSupport::Concern
 
-    def as_json(options = {})
+    def as_json(options = nil)
       [
         'uid',
         'digital_object_type',
@@ -25,11 +25,9 @@ module DigitalObjectConcerns
         'number_of_children',
         'publish_entries'
       ].map { |field_name|
-        [field_name, self.send(field_name)]
+        [field_name, self.send(field_name).as_json(options)]
       }.to_h.merge(
-        {
-          'parent_digital_objects' => self.parent_uids.map { |parent_uid| { 'uid' => parent_uid } }
-        }
+        'parent_digital_objects' => self.parent_uids.map { |parent_uid| { 'uid' => parent_uid } }
       )
     end
   end
