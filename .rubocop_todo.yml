@@ -89,7 +89,6 @@ Metrics/BlockLength:
   Exclude:
     - '**/*.gemspec'
     - 'config/**/*'
-    - '**/*/catalog_controller.rb'
     - 'spec/**/*'
     - 'app/models/concerns/digital_object_concerns/save_behavior.rb'
     - 'lib/hyacinth/adapters/external_identifier_adapter/datacite/metadata_builder.rb'
@@ -104,10 +103,10 @@ Metrics/BlockLength:
 # Configuration parameters: CountComments, Max.
 Metrics/ClassLength:
   Exclude:
-    - '**/*/catalog_controller.rb'
     - 'app/graphql/types/query_type.rb'
     - 'app/models/ability.rb'
     - 'app/models/term.rb'
+    - 'app/jobs/batch_export_job.rb'
 
 # Offense count: 13
 # Configuration parameters: Max.
@@ -147,6 +146,7 @@ Metrics/MethodLength:
     - 'app/jobs/batch_import_start_job.rb'
     - 'app/jobs/digital_object_import_processing_job.rb'
     - 'app/models/ability.rb'
+    - 'app/models/concerns/digital_object_concerns/as_json.rb'
     - 'app/models/concerns/digital_object_concerns/attribute_assignment/parent_uids.rb'
     - 'app/models/concerns/digital_object_concerns/create_and_update_terms.rb'
     - 'app/models/concerns/digital_object_concerns/preserve_behavior.rb'

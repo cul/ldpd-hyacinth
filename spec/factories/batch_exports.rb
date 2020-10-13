@@ -3,6 +3,7 @@
 FactoryBot.define do
   factory :batch_export do
     search_params { '{"digital_object_type_ssi":["item"],"q":null}' }
+    export_filter_config { nil }
     file_location { nil }
     user { User.first || create(:user) }
     export_errors { [] }
