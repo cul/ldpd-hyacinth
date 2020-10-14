@@ -14,8 +14,8 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr do
       let(:search_params) do
         {
           'animals' => [
-            ['aardvarks', 'DOES_NOT_EXIST'], ['celocanths', 'CONTAINS'], ['elephants', 'EQUALS'],
-            ['ostriches', 'DOES_NOT_CONTAIN'], ['panthers', 'EXISTS'], ['voles', 'DOES_NOT_EQUAL'],
+            ['any value ignored', 'DOES_NOT_EXIST'], ['celocanths', 'CONTAINS'], ['elephants', 'EQUALS'],
+            ['ostriches', 'DOES_NOT_CONTAIN'], ['any value ignored', 'EXISTS'], ['voles', 'DOES_NOT_EQUAL'],
             ['ferrets', 'STARTS_WITH'], ['groundhogs', 'DOES_NOT_START_WITH']
           ]
         }
