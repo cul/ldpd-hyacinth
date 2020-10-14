@@ -69,6 +69,14 @@ module Hyacinth
           solr_document
         end
 
+        def search_types
+          SEARCH_TYPES.keys
+        end
+
+        def search_field(search_type)
+          SEARCH_TYPES[search_type]
+        end
+
         private
 
           def merge_dynamic_fields(dynamic_field_data, metadata_form, solr_document)

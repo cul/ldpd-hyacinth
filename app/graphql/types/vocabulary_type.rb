@@ -57,7 +57,7 @@ module Types
             field = "#{field}#{Solr::Utils.suffix(custom_field[:data_type])}"
           end
 
-          params.fq(field, filter[:value])
+          params.fq(field, filter[:values])
         end
       end
     end

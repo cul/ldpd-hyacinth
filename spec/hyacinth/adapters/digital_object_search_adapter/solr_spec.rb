@@ -10,10 +10,50 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr do
 
   context "#solr_params_for" do
     let(:solr_params) { adapter.solr_params_for(search_params) }
-    context "with multiple filter values on the same filter" do
-      let(:search_params) { { 'animals' => ['dogs', 'cats'] } }
+    context "with multiple filters on the same field" do
+      let(:search_params) do
+        {
+          'animals' => [
+            ['any value ignored', 'DOES_NOT_EXIST'], ['celocanths', 'CONTAINS'], ['elephants', 'EQUALS'],
+            ['ostriches', 'DOES_NOT_CONTAIN'], ['any value ignored', 'EXISTS'], ['voles', 'DOES_NOT_EQUAL'],
+            ['ferrets', 'STARTS_WITH'], ['groundhogs', 'DOES_NOT_START_WITH']
+          ]
+        }
+      end
+      let(:expected_filters) do
+        [
+          'state_ssi:(active)', '-animals:*', 'animals:(*celocanths*)', 'animals:(elephants)',
+          '-animals:(*ostriches*)', 'animals:*', '-animals:(voles)', 'animals:(ferrets*)', '-animals:(groundhogs*)'
+        ]
+      end
       it "collects fq values" do
-        expect(solr_params.to_h).to include(fq: ['state_ssi:(active)', 'animals:(dogs)', 'animals:(cats)'])
+        expect(solr_params.to_h).to include(fq: expected_filters)
+      end
+    end
+    context "with multiple values on the same filter" do
+      let(:search_params) do
+        {
+          'animals' => [
+            [
+              ['aardvarks', 'celocanths', 'elephants', 'ostriches', 'panthers', 'voles'],
+              'DOES_NOT_EQUAL'
+            ]
+          ]
+        }
+      end
+      let(:expected_filters) do
+        [
+          'state_ssi:(active)', '-animals:(aardvarks OR celocanths OR elephants OR ostriches OR panthers OR voles)'
+        ]
+      end
+      it "collects fq values" do
+        expect(solr_params.to_h).to include(fq: expected_filters)
+      end
+    end
+    context "with a search type parameter" do
+      let(:search_params) { { 'search_type' => 'identifier' } }
+      it "assigns df value" do
+        expect(solr_params.to_h).to include(df: 'identifier_search_sim')
       end
     end
   end

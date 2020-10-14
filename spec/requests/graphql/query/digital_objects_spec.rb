@@ -22,8 +22,9 @@ RSpec.describe 'Retrieving Digital Objects', type: :request, solr: true do
   context 'logged in non-admin user' do
     before do
       sign_in_project_contributor to: :read_objects, project: authorized_project
-      graphql query(limit: 2)
+      graphql(query, search_params)
     end
+    let(:search_params) { { limit: 2, searchParams: {} } }
     let(:expected_response) do
       %(
         [
@@ -40,26 +41,42 @@ RSpec.describe 'Retrieving Digital Objects', type: :request, solr: true do
   context 'logged in admin user' do
     before do
       sign_in_user as: :administrator
-      graphql query(limit: 2)
+      graphql(query, search_params)
     end
-    let(:expected_response) do
-      %(
-        [
-          { "id": "#{authorized_object.uid}", "title": "The Best Item Ever", "digitalObjectType": "item" },
-          { "id": "#{unauthorized_object.uid}", "title": "The Other Pretty Great Item", "digitalObjectType": "item" }
-        ]
-      )
-    end
+    context "with no search type or query defined" do
+      let(:search_params) { { limit: 2, searchParams: {} } }
+      let(:expected_response) do
+        %(
+          [
+            { "id": "#{authorized_object.uid}", "title": "The Best Item Ever", "digitalObjectType": "item" },
+            { "id": "#{unauthorized_object.uid}", "title": "The Other Pretty Great Item", "digitalObjectType": "item" }
+          ]
+        )
+      end
 
-    it "returns all objects, with expected fields" do
-      expect(response.body).to be_json_eql(expected_response).at_path('data/digitalObjects/nodes')
+      it "returns all objects, with expected fields" do
+        expect(response.body).to be_json_eql(expected_response).at_path('data/digitalObjects/nodes')
+      end
+    end
+    context "with a search type and query" do
+      let(:search_params) { { limit: 2, searchParams: { searchType: 'TITLE', query: 'Pretty Great' } } }
+      let(:expected_response) do
+        %(
+          [
+            { "id": "#{unauthorized_object.uid}", "title": "The Other Pretty Great Item", "digitalObjectType": "item" }
+          ]
+        )
+      end
+
+      it "returns all objects, with expected fields" do
+        expect(response.body).to be_json_eql(expected_response).at_path('data/digitalObjects/nodes')
+      end
     end
   end
-
-  def query(limit:)
+  def query
     <<~GQL
-      query {
-        digitalObjects(limit: #{limit}) {
+      query($limit: Limit!, $searchParams: SearchAttributes!) {
+        digitalObjects(limit: $limit, searchParams: $searchParams) {
           nodes {
             id
             title
