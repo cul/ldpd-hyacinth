@@ -4,7 +4,7 @@ module Solr
   class Params
     attr_reader :parameters
 
-    VALID_BOOLEAN_OPERATORS = { and: ' AND ', or: ' OR ' }.freeze
+    FILTER_VALUE_JOINER = ' OR '
     VALID_FILTER_MATCHES = {
       'CONTAINS' => { field_template: '%s:(%s)', value_template: '*%s*' },
       'DOES_NOT_CONTAIN' => { field_template: '-%s:(%s)', value_template: '*%s*' },
@@ -27,12 +27,11 @@ module Solr
       }
     end
 
-    def fq(field, value_or_values, match_operator = 'EQUALS', boolean_operator = :or)
+    def fq(field, value_or_values, match_operator = 'EQUALS')
       raise(ArgumentError, "Invalid match operator: #{match_operator}") unless VALID_FILTER_MATCHES.include?(match_operator)
-      raise(ArgumentError, "Invalid boolean operator: #{boolean_operator}") unless VALID_BOOLEAN_OPERATORS.include?(boolean_operator)
       escaped_values = Array.wrap(value_or_values).map { |value| Solr::Utils.escape(value).gsub(' ', '\ ') }
       filter_data = VALID_FILTER_MATCHES[match_operator]
-      value = filter_data[:value] || escaped_values.map { |ev| filter_data[:value_template]&.%(ev) || ev }.join(VALID_BOOLEAN_OPERATORS[boolean_operator])
+      value = filter_data[:value] || escaped_values.map { |ev| filter_data[:value_template]&.%(ev) || ev }.join(FILTER_VALUE_JOINER)
       @parameters[:fq] << format(filter_data[:field_template], field, value) unless value.blank?
       self
     end
