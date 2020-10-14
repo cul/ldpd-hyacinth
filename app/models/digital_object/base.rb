@@ -11,6 +11,7 @@ module DigitalObject
     include Hyacinth::DigitalObject::ResourceAttributes
     include Hyacinth::DigitalObject::Restrictions
     include DigitalObjectConcerns::AttributeAssignment
+    include DigitalObjectConcerns::AsJson
     include DigitalObjectConcerns::Validations
     include DigitalObjectConcerns::SaveBehavior
     include DigitalObjectConcerns::Serialization

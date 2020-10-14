@@ -1,0 +1,55 @@
+# frozen_string_literal: true
+
+require 'rails_helper'
+
+RSpec.describe DigitalObjectConcerns::AsJson do
+  let(:project) { FactoryBot.create(:project) }
+  let(:digital_object_with_sample_data) do
+    obj = FactoryBot.build(:digital_object_test_subclass, :with_sample_data)
+    obj.primary_project = project
+    allow(obj).to receive(:number_of_children).and_return(1)
+    allow(obj).to receive(:parent_uids).and_return(['parent:1', 'parent:2', 'parent:3'])
+    obj
+  end
+  context '#as_json' do
+    let(:expected) do
+      {
+        'created_at' => digital_object_with_sample_data.created_at.as_json,
+        'created_by' => nil,
+        'descriptive_metadata' => { 'title' => [{ 'non_sort_portion' => 'The', 'sort_portion' => 'Tall Man and His Hat' }] },
+        'digital_object_type' => 'test_subclass',
+        'doi' => nil,
+        'first_preserved_at' => nil,
+        'first_published_at' => nil,
+        'identifiers' => [],
+        'number_of_children' => 1,
+        'other_projects' => [],
+        'parent_digital_objects' => [
+          { 'uid' => 'parent:1' },
+          { 'uid' => 'parent:2' },
+          { 'uid' => 'parent:3' }
+        ],
+        'preserved_at' => nil,
+        'primary_project' => {
+          'created_at' => project.created_at.as_json,
+          'display_label' => 'Great Project',
+          'has_asset_rights' => false,
+          'id' => project.id,
+          'is_primary' => true,
+          'project_url' => 'https://example.com/great_project',
+          'string_key' => 'great_project',
+          'updated_at' => project.updated_at.as_json
+        },
+        'publish_entries' => {},
+        'rights' => {},
+        'state' => 'active',
+        'uid' => nil,
+        'updated_at' => digital_object_with_sample_data.updated_at.as_json,
+        'updated_by' => nil
+      }
+    end
+    it 'produces the expected output' do
+      expect(digital_object_with_sample_data.as_json).to eq(expected)
+    end
+  end
+end

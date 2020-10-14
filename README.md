@@ -26,13 +26,20 @@ git checkout 3.x # Check out the branch for v3. If this has been merged to maste
 # Note: Make sure rvm has selected the correct ruby version. You may need to move out of the directory and back into it force rvm to use the ruby version specified in .ruby_version.
 bundle install # Install gem dependencies
 yarn install # this assumes you have node and yarn installed (tested with Node 8 and Node 10)
-bundle exec rake hyacinth:setup:config_files # Set up hyacinth config files like hyacinth.yml and database.yml
-bundle exec rake db:migrate # Run database migrations
-bundle exec rake hyacinth:setup:default_users # Set up default Hyacinth users
-bundle exec rake hyacinth:rights_fields:load # Set up rights fields
-bundle exec rake solr:start # Start a local solr server in the background
-bundle exec rake jetty:start # Start a local jetty server for Fedora 3 in the background
-rails s -p 3000 # Start the application using rails server
+
+# This next line does A LOT (see development.rake file for full details).
+# It's completely safe to run for a brand new setup, but note that it will drop and recreate your currently-configured development database.
+# It will also automatically start a copy of solr by internally running `bundle exec rake solr:start`.
+bundle exec rake hyacinth:development:reset
+
+# This is optional. Creates 21 basic sample records.
+bundle exec rake hyacinth:development:create_sample_records
+
+# Start a local jetty server for Fedora 3 in the background (only required if you want to preserve/publish records during development)
+bundle exec rake jetty:start
+
+# Start the application using rails server
+rails s -p 3000
 ```
 And for faster React app recompiling during development, run this in a separate terminal window:
 
@@ -51,7 +58,7 @@ Then navigate to http://localhost:3000 in your browser and sign in using the "Em
 
 ```
 bundle exec rake solr:stop # Stop local solr
-bundle exec rake jetty:stop # Stop local jetty / Fedora 3
+bundle exec rake jetty:stop # Stop local jetty / Fedora 3 (if running)
 ```
 
 ## To run Hyacinth locally again after the first time setup, all you need to do is run:
@@ -67,6 +74,13 @@ rails s -p 3000 # Start the application using rails server
 ```
 bundle exec rake solr:clean # Wipe out and regenerate solr
 bundle exec rake jetty:clean # Wipe out and regenerate jetty / Fedora 3
+```
+
+### But it's usually better to use the hyacinth:development:reset task if you want to clear out all data and star from a fresh state:
+
+```
+# Remember, the command below also runs `bundle exec rake solr:start` (so that solr is available during digital object cleanup and setup), so don't forget to shut solr down when you're done with it.
+bundle exec rake hyacinth:development:reset
 ```
 
 ## Testing

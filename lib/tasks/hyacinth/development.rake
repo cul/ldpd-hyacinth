@@ -53,7 +53,5 @@ namespace :hyacinth do
         break
       end
     end
-
-
   end
 end
