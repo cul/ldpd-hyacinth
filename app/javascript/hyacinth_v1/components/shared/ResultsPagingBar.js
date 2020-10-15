@@ -41,7 +41,7 @@ function ResultsPagingBar(props) {
         disabled={resultIndex === 1}
       />
       <>
-        <Pagination.Item disabled>
+        <Pagination.Item active>
           {resultIndex}
           {' '}
 of
