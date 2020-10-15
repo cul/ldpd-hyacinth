@@ -70,6 +70,11 @@ function DigitalObjectInterface(props) {
 
   const { digitalObjects: { totalCount, nodes } } = data;
 
+  const uids = [];
+  [...nodes.values()].forEach((value) => {
+    uids.push(value.id);
+  });
+
   const backToSearchPath = () => {
     const latestSearchQuery = JSON.parse(latestSearchQueryString);
     // Delete a couple of search parameters that shouldn't appear in a user-facing search url
@@ -85,16 +90,16 @@ function DigitalObjectInterface(props) {
     rightHandLinksArray = [{ link: backToSearchPath(), label: 'Back to Search' }];
   }
 
-  const onResultClick = (offset, resultIndex, resultId) => {
-    // handles special cases for first and second result
-    let finalOffset = offset;
-    if (offset === 1 && resultIndex === 2) {
+  const onResultClick = (currentOffset, currentIndex, resultId) => {
+    // handles special calculat for first and second result
+    let finalOffset = currentOffset;
+    if (currentOffset === 1 && currentIndex === 2) {
       finalOffset = 0;
-    } else if (offset < 0) {
+    } else if (currentOffset < 0) {
       finalOffset = 0;
     }
     window.sessionStorage.setItem('offset', finalOffset);
-    window.sessionStorage.setItem('resultIndex', resultIndex);
+    window.sessionStorage.setItem('resultIndex', currentIndex);
     history.push(`/digital_objects/${resultId}`);
   };
 
@@ -138,11 +143,11 @@ function DigitalObjectInterface(props) {
       </TabBody>
       {
         // only show results paging if we came from a search and if there is more than one result
-      (nodes.length > 1 && latestSearchQueryString != null) ? (
+      (uids.length > 1 && latestSearchQueryString != null) ? (
         <ResultsPagingBar
           totalCount={Number(totalCount)}
           offset={Number(offset)}
-          nodes={nodes}
+          uids={uids}
           uidCurrent={id}
           resultIndex={Number(resultIndex)}
           onResultClick={onResultClick}

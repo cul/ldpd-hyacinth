@@ -4,34 +4,33 @@ import { Pagination } from 'react-bootstrap';
 
 function ResultsPagingBar(props) {
   const {
-    totalCount, offset, nodes, uidCurrent, resultIndex, onResultClick,
+    totalCount, offset, uids, uidCurrent, resultIndex, onResultClick,
   } = props;
 
   let uidPrev = null;
   let uidNext = null;
+  const [firstResult, secondResult, thirdResult] = uids;
 
-  // if  offset is 0 and total is N,
-  // then this is the first result: prev is disabled and next is nodes[1]
+
+  // offset is zero for the first or second result
   if (offset === 0) {
-    if (nodes.length > 1) {
-      if (uidCurrent === nodes[0].id) {
-        uidNext = nodes[1].id;
-      } else if (uidCurrent === nodes[1].id) {
-        uidPrev = nodes[0].id;
-        if (nodes.length > 2) {
-          uidNext = nodes[2].id;
-        }
+    // previous value remains null for the first result
+    if (uidCurrent === firstResult) {
+      uidNext = secondResult;
+    } else if (uidCurrent === secondResult) {
+      uidPrev = firstResult;
+      if (thirdResult) {
+        uidNext = thirdResult;
       }
     }
   }
 
-  // if offset > 0 and offset < totalCount
+  // setting values for all other cases
   if (offset > 0 && offset < totalCount) {
-    if (nodes.length === 2) {
-      uidPrev = nodes[0].id;
-    } else {
-      uidPrev = nodes[0].id;
-      uidNext = nodes[2].id;
+    uidPrev = firstResult;
+    // thirdId is null for the last result
+    if (thirdResult) {
+      uidNext = thirdResult;
     }
   }
 
@@ -42,7 +41,7 @@ function ResultsPagingBar(props) {
         disabled={resultIndex === 1}
       />
       <>
-        <Pagination.Item>
+        <Pagination.Item disabled>
           {resultIndex}
           {' '}
 of
@@ -63,11 +62,7 @@ ResultsPagingBar.propTypes = {
   offset: PropTypes.number.isRequired,
   resultIndex: PropTypes.number.isRequired,
   totalCount: PropTypes.number.isRequired,
-  nodes: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string,
-    }),
-  ).isRequired,
+  uids: PropTypes.arrayOf(PropTypes.string).isRequired,
   uidCurrent: PropTypes.string.isRequired,
   onResultClick: PropTypes.func.isRequired,
 };
