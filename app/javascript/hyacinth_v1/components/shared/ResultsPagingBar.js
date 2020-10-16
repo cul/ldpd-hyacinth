@@ -12,23 +12,12 @@ function ResultsPagingBar(props) {
   const [firstResult, secondResult, thirdResult] = uids;
 
 
-  // offset is zero for the first or second result
-  if (offset === 0) {
-    // previous value remains null for the first result
-    if (uidCurrent === firstResult) {
-      uidNext = secondResult;
-    } else if (uidCurrent === secondResult) {
-      uidPrev = firstResult;
-      if (thirdResult) {
-        uidNext = thirdResult;
-      }
-    }
-  }
-
-  // setting values for all other cases
-  if (offset > 0 && offset < totalCount) {
+  if (uidCurrent === firstResult) {
+  // uidPrev remains null for the first result
+    uidNext = secondResult;
+  } else {
     uidPrev = firstResult;
-    // thirdId is null for the last result
+    // uidNext remains null for last result
     if (thirdResult) {
       uidNext = thirdResult;
     }
@@ -44,7 +33,7 @@ function ResultsPagingBar(props) {
         <Pagination.Item active>
           {resultIndex}
           {' '}
-of
+            of
           {' '}
           {totalCount}
         </Pagination.Item>

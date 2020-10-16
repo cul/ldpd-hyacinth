@@ -19,11 +19,10 @@ import GraphQLErrors from '../shared/GraphQLErrors';
 function DigitalObjectInterface(props) {
   const { digitalObject, children } = props;
   const { id, title, digitalObjectType } = digitalObject;
-  const latestSearchQueryString = sessionStorage.getItem('searchQueryParams');
+  const latestSearchQueryString = window.sessionStorage.getItem('searchQueryParams');
   const history = useHistory();
-  const offset = sessionStorage.getItem('offset');
-  const resultIndex = sessionStorage.getItem('resultIndex');
-
+  const offset = window.sessionStorage.getItem('offset');
+  const resultIndex = window.sessionStorage.getItem('resultIndex');
   const limit = 3;
 
   const queryParams = {
@@ -91,7 +90,7 @@ function DigitalObjectInterface(props) {
   }
 
   const onResultClick = (currentOffset, currentIndex, resultId) => {
-    // handles special calculat for first and second result
+    // calculates offset for first and second result
     let finalOffset = currentOffset;
     if (currentOffset === 1 && currentIndex === 2) {
       finalOffset = 0;
