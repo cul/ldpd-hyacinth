@@ -167,6 +167,18 @@ export const getDigitalObjectsQuery = gql`
   }
 `;
 
+export const getDigitalObjectIDsQuery = gql`
+query DigitalObjects($limit: Limit!, $offset: Offset = 0, $searchParams: SearchAttributes, $orderBy: OrderByInput){
+  digitalObjects(limit: $limit, offset: $offset, searchParams: $searchParams, orderBy: $orderBy) {
+    totalCount
+    nodes {
+      id
+    }
+  }
+}
+`;
+
+
 export const createDigitalObjectMutation = gql`
   mutation CreateDigitalObject($input: CreateDigitalObjectInput!) {
     createDigitalObject(input: $input) {

@@ -3,7 +3,6 @@ import { useHistory } from 'react-router-dom';
 import { capitalize } from 'lodash';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/react-hooks';
-import gql from 'graphql-tag';
 import { decodeQueryParams } from 'use-query-params';
 
 import Tab from '../shared/tabs/Tab';
@@ -12,6 +11,7 @@ import TabBody from '../shared/tabs/TabBody';
 import ContextualNavbar from '../shared/ContextualNavbar';
 import ResultsPagingBar from '../shared/ResultsPagingBar';
 import DigitalObjectSummary from './DigitalObjectSummary';
+import { getDigitalObjectIDsQuery } from '../../graphql/digitalObjects';
 import { queryParamsConfig, encodeAndStringifySearch } from '../../utils/encodeAndStringifySearch';
 import GraphQLErrors from '../shared/GraphQLErrors';
 
@@ -40,21 +40,10 @@ function DigitalObjectInterface(props) {
 
   const searchParams = { query: q, filters };
 
-  const getDigitalObjectIDQuery = gql`
-  query DigitalObjects($limit: Limit!, $offset: Offset = 0, $searchParams: SearchAttributes, $orderBy: OrderByInput){
-    digitalObjects(limit: $limit, offset: $offset, searchParams: $searchParams, orderBy: $orderBy) {
-      totalCount
-      nodes {
-        id
-      }
-    }
-  }
-`;
-
   const {
     loading, error, data,
   } = useQuery(
-    getDigitalObjectIDQuery, {
+    getDigitalObjectIDsQuery, {
       variables: {
         limit,
         offset: Number(offset),
