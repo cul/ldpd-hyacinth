@@ -37,6 +37,8 @@ function DigitalObjectInterface(props) {
   const {
     q, filters, orderBy,
   } = decodeQueryParams(queryParamsConfig, queryParams);
+  
+  const [orderField, orderDirection] = orderBy.split(' ');
 
   const searchParams = { query: q, filters };
 
