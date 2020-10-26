@@ -50,7 +50,7 @@ function DigitalObjectInterface(props) {
         limit,
         offset: Number(offset),
         searchParams,
-        orderBy: { field: orderBy.split(' ')[0], direction: orderBy.split(' ')[1] },
+        orderBy: { field: orderField, direction: orderDirection },
       },
     },
   );
