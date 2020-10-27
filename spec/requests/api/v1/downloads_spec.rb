@@ -58,7 +58,7 @@ RSpec.describe "Downloads API endpoint", type: :request do
     end
 
     let(:digital_object) do
-      FactoryBot.create(:asset, :with_primary_project, :with_master_resource)
+      FactoryBot.create(:asset, :with_master_resource)
     end
     let(:resource_name) { 'master' }
     let(:request_url) { "/api/v1/downloads/digital_object/#{digital_object.uid}/#{resource_name}" }

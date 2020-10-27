@@ -13,7 +13,7 @@ RSpec.describe BatchImportStartJob, solr: true do
   context '.perform' do
     before do
       # Create item that one of the csv rows will update
-      item = FactoryBot.build(:item, :with_primary_project)
+      item = FactoryBot.build(:item)
       # Force created item to have the expected uid that appears in the csv fixture
       item.instance_variable_set(:@uid, '2f4e2917-26f5-4d8f-968c-a4015b10e50f')
       item.save
@@ -80,7 +80,7 @@ RSpec.describe BatchImportStartJob, solr: true do
         # Force created item to have the same uid that appears in the csv fixture we're working with
         allow_any_instance_of(DigitalObject::Item).to receive(:mint_uid).and_return('2f4e2917-26f5-4d8f-968c-a4015b10e50f')
         # Create item that one of the csv rows will update
-        FactoryBot.create(:item, :with_primary_project)
+        FactoryBot.create(:item)
         described_class.process_csv_file_if_present(batch_import)
         batch_import.reload
       end

@@ -18,7 +18,6 @@ function CoreDataEdit() {
   const history = useHistory();
 
   const [displayLabel, setDisplayLabel] = useState('');
-  const [isPrimary, setIsPrimary] = useState(false);
   const [hasAssetRights, setHasAssetRights] = useState(false);
   const [projectUrl, setProjectUrl] = useState('');
 
@@ -32,7 +31,6 @@ function CoreDataEdit() {
 
         setDisplayLabel(project.displayLabel);
         setProjectUrl(project.projectUrl);
-        setIsPrimary(project.isPrimary);
         setHasAssetRights(project.hasAssetRights);
       },
     },
@@ -103,27 +101,14 @@ function CoreDataEdit() {
         </Form.Group>
 
         <Form.Group as={Row}>
-          <Form.Label column sm={2}>Is Primary</Form.Label>
-          <Col sm={10}>
-            <Form.Control
-              type="checkbox"
-              name="isPrimary"
-              checked={isPrimary}
-              disabled
-            />
-          </Col>
-        </Form.Group>
-
-        <Form.Group as={Row}>
           <Form.Label column sm={2}>Has Asset Rights</Form.Label>
           <Col sm={10}>
             <Form.Control
               type="checkbox"
               name="hasAssetRights"
               value={hasAssetRights}
-              onChange={e => setHasAssetRights(isPrimary && e.target.checked)}
-              disabled={!isPrimary}
-              checked={isPrimary && hasAssetRights}
+              onChange={e => setHasAssetRights(e.target.checked)}
+              checked={hasAssetRights}
             />
           </Col>
         </Form.Group>

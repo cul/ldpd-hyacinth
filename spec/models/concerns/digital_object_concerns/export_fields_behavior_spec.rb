@@ -21,6 +21,14 @@ RSpec.describe DigitalObjectConcerns::ExportFieldsBehavior do
     it "includes uid when value is present" do
       is_expected.to include('uid' => uid_value)
     end
+
+    it "includes primary_project.display_label when value is present" do
+      is_expected.to include('primary_project.display_label' => 'Great Project')
+    end
+
+    it "includes primary_project.project_url when value is present" do
+      is_expected.to include('primary_project.project_url' => 'https://example.com/great_project')
+    end
   end
   describe "#render_field_export" do
     let(:field_export_profile) { FieldExportProfile.find_by(name: 'descMetadata') }

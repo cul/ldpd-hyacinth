@@ -44,21 +44,18 @@ namespace :hyacinth do
     task test_projects: :environment do
       [
         {
-          string_key: 'test_primary_project',
-          display_label: 'Test Primary Project',
-          is_primary: true,
+          string_key: 'test_project',
+          display_label: 'Test Project',
           has_asset_rights: true
         },
         {
-          string_key: 'another_test_primary_project',
-          display_label: 'Another Test Primary Project',
-          is_primary: true,
+          string_key: 'project_a',
+          display_label: 'Project A',
           has_asset_rights: true
         },
         {
-          string_key: 'test_aggregator_project',
-          display_label: 'Test Aggregator Project',
-          is_primary: false,
+          string_key: 'project_b',
+          display_label: 'Project B',
           has_asset_rights: false
         }
       ].each do |project_config|

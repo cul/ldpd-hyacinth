@@ -2,6 +2,12 @@
 
 FactoryBot.define do
   factory :item, class: DigitalObject::Item do
+    initialize_with do
+      instance = new
+      instance.primary_project = create(:project)
+      instance
+    end
+
     trait :with_descriptive_metadata do
       after(:build) do |digital_object|
         DynamicFieldsHelper.load_title_fields! # Adding dynamic fields used in descriptive metadata. Validations will fail if these field definitions aren't present.
@@ -33,12 +39,6 @@ FactoryBot.define do
       end
     end
 
-    trait :with_primary_project do
-      after(:build) do |digital_object|
-        digital_object.primary_project = create(:project)
-      end
-    end
-
     trait :with_primary_project_asset_rights do
       after(:build) do |digital_object|
         digital_object.primary_project = create(:project, :allow_asset_rights)
@@ -50,7 +50,6 @@ FactoryBot.define do
         ['a', 'b'].each do |val|
           digital_object.other_projects << create(
             :project,
-            is_primary: false,
             string_key: "other_project_#{val}",
             display_label: "Other Project #{val.upcase}",
             project_url: "https://example.com/other_project_#{val}"

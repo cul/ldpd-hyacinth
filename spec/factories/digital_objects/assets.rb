@@ -6,8 +6,12 @@ FactoryBot.define do
     asset_type { nil }
     initialize_with do
       instance = new
-      instance.primary_project = parent.primary_project if parent
-      instance.add_parent_uid(parent.uid) if parent
+      if parent
+        instance.primary_project = parent.primary_project
+        instance.add_parent_uid(parent.uid)
+      else
+        instance.primary_project = create(:project)
+      end
       instance.asset_type = asset_type
       instance
     end
@@ -26,12 +30,6 @@ FactoryBot.define do
             ]
           }
         )
-      end
-    end
-
-    trait :with_primary_project do
-      after(:build) do |digital_object|
-        digital_object.primary_project = create(:project)
       end
     end
 

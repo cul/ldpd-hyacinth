@@ -20,21 +20,6 @@ RSpec.describe 'Retrieve permission actions', type: :request do
             "publish_objects",
             "assess_rights",
             "manage"
-          ],
-          "primaryProjectActions": [
-            "read_objects",
-            "create_objects",
-            "update_objects",
-            "delete_objects",
-            "publish_objects",
-            "assess_rights",
-            "manage"
-          ],
-          "aggregatorProjectActions": [
-            "read_objects",
-            "update_objects",
-            "publish_objects",
-            "manage"
           ]
         }
       })).at_path('data')
@@ -46,8 +31,6 @@ RSpec.describe 'Retrieve permission actions', type: :request do
       query {
         permissionActions {
           projectActions
-          primaryProjectActions
-          aggregatorProjectActions
         }
       }
     GQL

@@ -40,10 +40,16 @@ namespace :hyacinth do
         next
       end
 
+      project = Project.create!(
+        string_key: 'sample_record_project',
+        display_label: 'Sample Record Project',
+        has_asset_rights: true
+      )
+
       21.times do |i|
         item = DigitalObject::Item.new
         item.descriptive_metadata['title'] = [{ 'sort_portion' => "Item #{i + 1}" }]
-        item.primary_project = Project.find_by(is_primary: true)
+        item.primary_project = project
 
         next if item.save
 

@@ -22,7 +22,7 @@ function PermissionsEditor(props) {
   const [permissionsChanged, setPermissionsChanged] = useState(false);
   const [removedUserIds, setRemovedUserIds] = useState(new Set());
   const [projectPermissions, setProjectPermissions] = useState(
-    collectionSortBy(project.projectPermissions, [perm => perm.user.sortName])
+    collectionSortBy(project.projectPermissions, [perm => perm.user.sortName]),
   );
   const [currentAddUserSelection, setCurrentAddUserSelection] = useState(null);
   const { loading: usersLoading, error: usersError, data: userData } = useQuery(getUsersQuery);
@@ -43,7 +43,7 @@ function PermissionsEditor(props) {
 
   const allUsers = userData.users;
   const {
-    permissionActions: { projectActions, primaryProjectActions, aggregatorProjectActions },
+    permissionActions: { projectActions },
   } = permissionActionsData;
 
   const actionToDisplayLabel = (action) => {
@@ -55,7 +55,7 @@ function PermissionsEditor(props) {
 
     setProjectPermissions(
       produce(projectPermissions, (draft) => {
-        const { actions: currentActionsForUser, project } = draft.find(
+        const { actions: currentActionsForUser } = draft.find(
           projectPermission => projectPermission.user.id === userId,
         );
         if (enabled) {
@@ -64,7 +64,7 @@ function PermissionsEditor(props) {
             currentActionsForUser.splice(0, currentActionsForUser.length);
             // enable all allowed actions
             currentActionsForUser.push(
-              ...(project.isPrimary ? primaryProjectActions : aggregatorProjectActions),
+              ...projectActions,
             );
           } else {
             // enable single action
@@ -91,12 +91,6 @@ function PermissionsEditor(props) {
 
   const renderProjectPermission = (projectPermission) => {
     return projectActions.map((action) => {
-      // Show empty cell if this is an unavailable field for an aggregator project
-
-      if (!projectPermission.project.isPrimary && !aggregatorProjectActions.includes(action)) {
-        return <td key={action} />;
-      }
-
       const disabledCheckbox = readOnly || action === 'read_objects';
 
       return (

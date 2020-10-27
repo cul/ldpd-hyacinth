@@ -11,8 +11,7 @@ RSpec.describe DigitalObject::Base, type: :model do
 end
 
 RSpec.describe DigitalObject::TestSubclass, type: :model do
-  let(:digital_object) { FactoryBot.build(:digital_object_test_subclass) }
-  let(:digital_object_with_sample_data) { FactoryBot.build(:digital_object_test_subclass, :with_sample_data) }
+  let(:digital_object) { described_class.new }
 
   context "a new subclass instance" do
     it "can be instantiated" do
@@ -106,6 +105,10 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
         )
       end
     end
+  end
+
+  context "with sample data" do
+    let(:digital_object_with_sample_data) { FactoryBot.build(:digital_object_test_subclass, :with_sample_data) }
 
     it "returns expected values for a few previously-set fields" do
       expect(digital_object_with_sample_data.descriptive_metadata).to eq({
@@ -117,55 +120,52 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
       expect(digital_object_with_sample_data.custom_field1).to eq('excellent value 1')
       expect(digital_object_with_sample_data.custom_field2).to eq('excellent value 2')
     end
-  end
 
-  context "#new_record?", solr: true do
-    it "returns true for a saved record" do
-      expect(digital_object_with_sample_data.new_record?).to eq(true)
+    context "#new_record?", solr: true do
+      it "returns true for a saved record" do
+        expect(digital_object_with_sample_data.new_record?).to eq(true)
+      end
+
+      it "returns false for a successfully saved instance" do
+        expect(digital_object_with_sample_data.save).to eq(true)
+        expect(digital_object_with_sample_data.new_record?).to eq(false)
+      end
     end
 
-    it "returns false for a successfully saved instance" do
-      expect(digital_object_with_sample_data.save).to eq(true)
-      expect(digital_object_with_sample_data.new_record?).to eq(false)
-    end
-  end
-
-  context "#digital_object_record" do
-    it "returns the underlying digital_object_record" do
-      expect(digital_object_with_sample_data.digital_object_record).to be_a(DigitalObjectRecord)
-    end
-  end
-
-  context "#optimistic_lock_token= and #optimistic_lock_token" do
-    let(:token) { SecureRandom.uuid }
-    it "can be set and retrieved" do
-      digital_object_with_sample_data.optimistic_lock_token = token
-      expect(digital_object_with_sample_data.optimistic_lock_token).to eq(token)
-    end
-  end
-  context "validates digital_object_type" do
-    it "is valid on construction" do
-      expect(digital_object).to be_valid
+    context "#digital_object_record" do
+      it "returns the underlying digital_object_record" do
+        expect(digital_object_with_sample_data.digital_object_record).to be_a(DigitalObjectRecord)
+      end
     end
 
-    it "invalidates unregistered values" do
-      digital_object.instance_variable_set :@digital_object_type, digital_object.digital_object_type.reverse
-      expect(digital_object).not_to be_valid
-      digital_object.instance_variable_set :@digital_object_type, digital_object.digital_object_type.reverse
-      expect(digital_object).to be_valid
-    end
-  end
-
-  context '#parents', solr: true do
-    let(:parent) { FactoryBot.create(:item) }
-
-    before do
-      digital_object_with_sample_data.add_parent_uid(parent.uid)
-      digital_object_with_sample_data.save
+    context "#optimistic_lock_token= and #optimistic_lock_token" do
+      let(:token) { SecureRandom.uuid }
+      it "can be set and retrieved" do
+        digital_object_with_sample_data.optimistic_lock_token = token
+        expect(digital_object_with_sample_data.optimistic_lock_token).to eq(token)
+      end
     end
 
-    it 'returns list of parents' do
-      expect(digital_object_with_sample_data.parents.map(&:uid)).to match_array [parent.uid]
+    context "validates digital_object_type" do
+      it "invalidates unregistered values" do
+        digital_object_with_sample_data.instance_variable_set :@digital_object_type, digital_object_with_sample_data.digital_object_type.reverse
+        expect(digital_object_with_sample_data).not_to be_valid
+        digital_object_with_sample_data.instance_variable_set :@digital_object_type, digital_object_with_sample_data.digital_object_type.reverse
+        expect(digital_object_with_sample_data).to be_valid
+      end
+    end
+
+    context '#parents', solr: true do
+      let(:parent) { FactoryBot.create(:item) }
+
+      before do
+        digital_object_with_sample_data.add_parent_uid(parent.uid)
+        digital_object_with_sample_data.save
+      end
+
+      it 'returns list of parents' do
+        expect(digital_object_with_sample_data.parents.map(&:uid)).to match_array [parent.uid]
+      end
     end
   end
 end

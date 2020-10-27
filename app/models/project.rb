@@ -9,7 +9,5 @@ class Project < ApplicationRecord
 
   validates :string_key, presence: true, uniqueness: true, string_key: true
   validates :display_label, presence: true, uniqueness: true
-  validates :is_primary, inclusion: { in: [true, false] }
   validates :has_asset_rights, inclusion: { in: [true, false] }
-  validates :is_primary, inclusion: { in: [true], message: 'is false so Has Asset Rights cannot be true' }, if: :has_asset_rights
 end

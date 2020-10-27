@@ -113,7 +113,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
   end
   describe "#persist_impl" do
     let(:rubydora_object) { Rubydora::DigitalObject.new(object_pid, connection) }
-    let(:hyacinth_object) { DigitalObject::Item.new }
+    let(:hyacinth_object) { FactoryBot.build(:item) }
     let(:profile_xml) { file_fixture("fedora3/new-object.xml").read }
     let(:datastreams_xml) { file_fixture("fedora3/new-datastreams.xml").read }
     before do
@@ -173,6 +173,14 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
     context "basic rels-ext properties" do
       let(:dsids) { ['structMetadata'] }
       let(:digital_object_title) { "Assigned Label" }
+      let(:project_property) do
+        {
+          isLiteral: true,
+          object: hyacinth_object.primary_project.string_key,
+          pid: object_pid,
+          predicate: "http://dbpedia.org/ontology/project"
+        }
+      end
       let(:model_property) do
         {
           predicate: "info:fedora/fedora-system:def/model#hasModel",
@@ -197,6 +205,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       end
       before do
         expect(connection).to receive(:datastream_profile).with(object_pid, described_class::HYACINTH_CORE_DATASTREAM_NAME, nil, nil).and_return({})
+        expect(connection).to receive(:add_relationship).with(project_property)
         expect(connection).to receive(:add_relationship).with(model_property)
         expect(connection).to receive(:add_relationship).with(rdftype_property)
         expect(connection).to receive(:add_relationship).with(restriction_property)
@@ -228,7 +237,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       let(:child_object_title) { "Assigned Label" }
       let(:child_uid) { 'asdf' }
       let(:child_hyacinth_object) do
-        obj = DigitalObject::Item.new
+        obj = FactoryBot.build(:item)
         obj.descriptive_metadata['title'] = [{ 'sort_portion' => child_object_title }]
         obj.instance_variable_set(:@uid, child_uid)
         obj
@@ -250,7 +259,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
     end
     context "RelsInt properties for resources" do
       let(:dsids) { ['structMetadata'] }
-      let(:hyacinth_object) { DigitalObject::Asset.new }
+      let(:hyacinth_object) { FactoryBot.build(:asset) }
       let(:resource_args) { { original_file_path: '/old/path/to/file.doc', location: '/path/to/file.doc', checksum: 'sha256:asdf', file_size: 'asdf' } }
       let(:extent_property) do
         {

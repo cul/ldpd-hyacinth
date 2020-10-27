@@ -22,14 +22,12 @@ RSpec.describe 'Retrieving Projects', type: :request do
             "projects": [
               {
                 "displayLabel": "Great Project",
-                "isPrimary": true,
                 "hasAssetRights": false,
                 "projectUrl": "https://example.com/great_project",
                 "stringKey": "great_project"
               },
               {
                 "displayLabel": "Legend of Lincoln",
-                "isPrimary": true,
                 "hasAssetRights": false,
                 "projectUrl": "https://example.com/legend_of_lincoln",
                 "stringKey": "legend_of_lincoln"
@@ -55,7 +53,6 @@ RSpec.describe 'Retrieving Projects', type: :request do
           "projects": [
             {
               "displayLabel": "Great Project",
-              "isPrimary": true,
               "hasAssetRights": false,
               "projectUrl": "https://example.com/great_project",
               "stringKey": "great_project"
@@ -63,57 +60,6 @@ RSpec.describe 'Retrieving Projects', type: :request do
           ]
         }
       )).at_path('data')
-    end
-  end
-
-  context 'when querying with isPrimary argument' do
-    before do
-      sign_in_user as: :administrator
-      FactoryBot.create(:project, :legend_of_lincoln)
-      FactoryBot.create(:project, :myth_of_minken)
-    end
-
-    context 'when isPrimary is set to true' do
-      before do
-        graphql projects_query(is_primary: true)
-      end
-      it 'only returns primary projects' do
-        expect(response.body).to be_json_eql(%(
-          {
-            "projects": [
-              {
-                "displayLabel": "Legend of Lincoln",
-                "isPrimary": true,
-                "hasAssetRights": false,
-                "projectUrl": "https://example.com/legend_of_lincoln",
-                "stringKey": "legend_of_lincoln"
-              }
-            ]
-          }
-        )).at_path('data')
-      end
-    end
-
-    context 'when isPrimary is set to false' do
-      before do
-        graphql projects_query(is_primary: false)
-      end
-
-      it 'only returns non-primary projects' do
-        expect(response.body).to be_json_eql(%(
-          {
-            "projects": [
-              {
-                "displayLabel": "Myth of Minken",
-                "isPrimary": false,
-                "hasAssetRights": false,
-                "projectUrl": "https://example.com/myth_of_minken",
-                "stringKey": "myth_of_minken"
-              }
-            ]
-          }
-        )).at_path('data')
-      end
     end
   end
 end

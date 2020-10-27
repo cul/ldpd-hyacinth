@@ -20,9 +20,8 @@ module DigitalObjectConcerns
 
     def internal_fields
       {
-        'project.display_label' => projects.map(&:display_label),
-        'project.short_label' => projects.map { |project| project.short_label.present? ? project.short_label : project.display_label },
-        'project.uri' => projects.map { |project| project.uri.present? ? project.uri : '' },
+        'primary_project.display_label' => primary_project.display_label.present? ? primary_project.display_label : '',
+        'primary_project.project_url' => primary_project.project_url.present? ? primary_project.project_url : '',
         'created_at' => created_at.iso8601,
         'updated_at' => updated_at.iso8601,
         'first_published_at' => first_published_at ? first_published_at.iso8601 : '',

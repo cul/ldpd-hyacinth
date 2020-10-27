@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_21_100816) do
+ActiveRecord::Schema.define(version: 2020_10_09_171038) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -231,7 +231,6 @@ ActiveRecord::Schema.define(version: 2020_09_21_100816) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "project_url"
-    t.boolean "is_primary", default: false, null: false
     t.boolean "has_asset_rights", default: false, null: false
     t.index ["display_label"], name: "index_projects_on_display_label", unique: true
     t.index ["string_key"], name: "index_projects_on_string_key", unique: true

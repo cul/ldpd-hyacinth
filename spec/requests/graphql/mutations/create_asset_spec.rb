@@ -6,7 +6,7 @@ require 'digest'
 RSpec.describe Mutations::CreateAsset, type: :request, solr: true do
   before { load_title_fields! } # Need to load dynamic fields for title, because its set as part of the mutation.
 
-  let(:authorized_object) { FactoryBot.create(:item, :with_primary_project) }
+  let(:authorized_object) { FactoryBot.create(:item) }
   let(:authorized_project) { authorized_object.projects.first }
   let(:blob_content) { "This is text to store in a blob" }
   let(:blob_checksum) { Digest::MD5.base64digest blob_content }

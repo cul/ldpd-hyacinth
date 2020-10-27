@@ -24,7 +24,6 @@ RSpec.describe 'Retrieving Project', type: :request do
         expect(response.body).to be_json_eql(%({
           "project": {
             "displayLabel": "Great Project",
-            "isPrimary": true,
             "hasAssetRights": false,
             "projectUrl": "https://example.com/great_project",
             "stringKey": "great_project",

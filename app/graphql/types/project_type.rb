@@ -18,8 +18,6 @@ module Types
       argument :id, ID, required: true
     end
 
-    field :is_primary, Boolean, null: false
-
     field :project_permissions, [ProjectPermissionsType], null: true
 
     field :enabled_digital_object_types, [String], null: false
