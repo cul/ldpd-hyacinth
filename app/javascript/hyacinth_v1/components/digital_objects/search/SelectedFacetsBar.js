@@ -11,12 +11,18 @@ const SelectedFacetsBar = (props) => {
   return (
     <div className="py-3">
       {
-        selectedFacets.map(({ field, value }) => (
-          <Button key={`${field}_${value}`} className="rounded mx-1" size="sm" variant="secondary" onClick={() => onRemoveFacet(field, value)}>
-            {`${displayLabelFor(field)} > ${value} `}
-            <FontAwesomeIcon icon="times" />
-          </Button>
-        ))
+        selectedFacets.flatMap(
+          ({ field, values }) => (
+            values.map(
+              (value) => (
+                <Button key={`${field}_${value}`} className="rounded mx-1" size="sm" variant="secondary" onClick={() => onRemoveFacet(field, value)}>
+                  {`${displayLabelFor(field)} > ${value} `}
+                  <FontAwesomeIcon icon="times" />
+                </Button>
+              )
+            )
+          )
+        )
       }
     </div>
   );
@@ -27,7 +33,7 @@ SelectedFacetsBar.propTypes = {
   selectedFacets: PropTypes.arrayOf(
     PropTypes.shape({
       field: PropTypes.string.isRequired,
-      value: PropTypes.string.isRequired,
+      values: PropTypes.arrayOf(PropTypes.string).isRequired,
     }),
   ).isRequired,
   onRemoveFacet: PropTypes.func.isRequired,

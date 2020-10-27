@@ -9,7 +9,7 @@ const FacetSidebar = (props) => {
   const { facets, onFacetSelect, selectedFacets } = props;
 
   const selectedValuesFor = fieldName => (
-    selectedFacets.filter(f => f.field === fieldName).map(f => f.value)
+    selectedFacets.filter(f => f.field === fieldName).flatMap(f => f.values)
   );
 
   return (
@@ -35,7 +35,7 @@ FacetSidebar.propTypes = {
   selectedFacets: PropTypes.arrayOf(
     PropTypes.shape({
       field: PropTypes.string.isRequired,
-      value: PropTypes.string.isRequired,
+      values: PropTypes.arrayOf(PropTypes.string).isRequired,
     }),
   ).isRequired,
 };
