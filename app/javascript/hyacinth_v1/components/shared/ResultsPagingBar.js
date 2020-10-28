@@ -31,11 +31,7 @@ function ResultsPagingBar(props) {
       />
       <>
         <Pagination.Item active>
-          {resultIndex}
-          {' '}
-            of
-          {' '}
-          {totalCount}
+          {`${resultIndex} of ${totalCount}`}
         </Pagination.Item>
       </>
 
