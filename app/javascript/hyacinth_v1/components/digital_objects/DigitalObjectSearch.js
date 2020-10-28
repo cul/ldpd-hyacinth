@@ -65,6 +65,7 @@ const DigitalObjectSearch = ({ query }) => {
       orderBy: undefined,
       ...qs.parse(location.search),
     };
+
     const {
       q, filters, pageNumber: newPageNumber, perPage: newPerPage, orderBy: newOrderBy,
     } = decodeQueryParams(queryParamsConfig, queryParams);

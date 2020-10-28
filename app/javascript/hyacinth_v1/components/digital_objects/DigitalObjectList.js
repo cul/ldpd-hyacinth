@@ -10,9 +10,8 @@ import { startCase } from 'lodash';
   to display a list of digital objects.
 */
 
-
-const storeSearchQueryParams = (
-  orderBy, totalCount, perPage, offset, pageNumber, q, filters, path,
+const storeSearchValues = (
+  orderBy, totalCount, perPage, offset, pageNumber, q, filters, path, pageResultIndex,
 ) => {
   if (path === '/digital_objects') {
     window.sessionStorage.setItem('searchQueryParams',
@@ -27,8 +26,17 @@ const storeSearchQueryParams = (
           filters,
         },
       ));
+
+    const resultIndex = ((pageNumber - 1) * perPage) + pageResultIndex + 1;
+    const newOffset = resultIndex < 3 ? 0 : resultIndex - 2;
+    window.sessionStorage.setItem('offset', newOffset);
+    window.sessionStorage.setItem('resultIndex', resultIndex);
+    window.sessionStorage.setItem('totalCount', totalCount);
   } else {
     window.sessionStorage.setItem('searchQueryParams', '');
+    window.sessionStorage.setItem('offset', '');
+    window.sessionStorage.setItem('resultIndex', '');
+    window.sessionStorage.setItem('totalCount', '');
   }
 };
 
@@ -41,14 +49,14 @@ const DigitalObjectList = (props) => {
   return (
     <>
       {
-        digitalObjects.map(digitalObject => (
+        digitalObjects.map((digitalObject, resultIndex) => (
           <Card key={digitalObject.id} className="mb-3">
             <Card.Header>
               <LinkContainer
                 to={`/digital_objects/${digitalObject.id}`}
-                onClick={() => storeSearchQueryParams(
+                onClick={() => storeSearchValues(
                   orderBy, totalCount, limit, offset,
-                  pageNumber, searchParams.query, searchParams.filters, path,
+                  pageNumber, searchParams.query, searchParams.filters, path, resultIndex,
                 )
                 }
               >

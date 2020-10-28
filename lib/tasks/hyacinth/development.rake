@@ -32,7 +32,6 @@ namespace :hyacinth do
       Rake::Task['hyacinth:setup:seed_dynamic_field_entries'].invoke
       Rake::Task['hyacinth:setup:enable_fields_for_test_projects'].invoke
     end
-
     desc "Creates some sample records."
     task create_sample_records: :environment do
       unless Rails.env.development?
