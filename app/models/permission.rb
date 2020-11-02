@@ -26,15 +26,6 @@ class Permission < ApplicationRecord
     PROJECT_ACTION_MANAGE
   ].freeze
 
-  PROJECT_ACTIONS_DISALLOWED_FOR_AGGREGATOR_PROJECTS = [
-    PROJECT_ACTION_CREATE_OBJECTS,
-    PROJECT_ACTION_DELETE_OBJECTS,
-    PROJECT_ACTION_ASSESS_RIGHTS
-  ].freeze
-
-  PRIMARY_PROJECT_ACTIONS = PROJECT_ACTIONS
-  AGGREGATOR_PROJECT_ACTIONS = (PROJECT_ACTIONS - PROJECT_ACTIONS_DISALLOWED_FOR_AGGREGATOR_PROJECTS).freeze
-
   validate :valid_permission_combination
 
   belongs_to :user
@@ -43,12 +34,8 @@ class Permission < ApplicationRecord
     SYSTEM_WIDE_PERMISSIONS.include?(action)
   end
 
-  def self.valid_project_action?(is_primary_project, action)
-    if is_primary_project
-      PRIMARY_PROJECT_ACTIONS.include?(action)
-    else
-      AGGREGATOR_PROJECT_ACTIONS.include?(action)
-    end
+  def self.valid_project_action?(action)
+    PROJECT_ACTIONS.include?(action)
   end
 
   private
@@ -66,11 +53,9 @@ class Permission < ApplicationRecord
     def validate_project_permission
       if subject_id.blank?
         errors.add(:subject_id, 'cannot be blank if subject is present')
-      else
-        is_primary = Project.find(subject_id).is_primary
-        unless Permission.valid_project_action?(is_primary, action)
-          errors.add(:action, "#{action} is not allowed for #{is_primary ? 'a primary' : 'an aggregator'} project")
-        end
+        return
       end
+
+      errors.add(:action, "#{action} is not allowed for a project") unless Permission.valid_project_action?(action)
     end
 end

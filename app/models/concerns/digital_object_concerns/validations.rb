@@ -6,13 +6,13 @@ module DigitalObjectConcerns::Validations
   included do
     validates :uid, presence: true, if: :persisted?
     validates :state, inclusion: { in: Hyacinth::DigitalObject::State::VALID_STATES, message: "Invalid state: %{value}" }
+    validates :primary_project, presence: true
 
     validates :descriptive_metadata, 'digital_object/descriptive_fields': true
     validates :rights, 'digital_object/rights_fields': true
 
     validates_with DigitalObject::TypeValidator
     validates_with DigitalObject::RestrictionsValidator
-    validates_with DigitalObject::ProjectsValidator
 
     # Validate that import files are readable before we import them
 

@@ -14,14 +14,18 @@ FactoryBot.define do
   Hyacinth::Config.digital_object_types.register('test_subclass', DigitalObject::TestSubclass)
 
   factory :digital_object_test_subclass, class: DigitalObject::TestSubclass do
+    initialize_with do
+      instance = new
+      instance.primary_project = create(:project)
+      instance
+    end
+
     trait :with_sample_data do
       with_descriptive_metadata
 
-      initialize_with do
-        instance = new
-        instance.instance_variable_set('@custom_field1', 'excellent value 1')
-        instance.instance_variable_set('@custom_field2', 'excellent value 2')
-        instance
+      after(:build) do |digital_object|
+        digital_object.instance_variable_set('@custom_field1', 'excellent value 1')
+        digital_object.instance_variable_set('@custom_field2', 'excellent value 2')
       end
     end
 

@@ -52,9 +52,7 @@ class Mutations::UpdateProjectPermissions < Mutations::BaseMutation
     # And then create all of the appropriate new permissions:
 
     # If the manage permission has been provided, enable all applicable project actions.
-    if permission_actions.include?(Permission::PROJECT_ACTION_MANAGE)
-      permission_actions = project.is_primary ? Permission::PROJECT_ACTIONS : Permission::PROJECT_ACTIONS - Permission::PROJECT_ACTIONS_DISALLOWED_FOR_AGGREGATOR_PROJECTS
-    end
+    permission_actions = Permission::PROJECT_ACTIONS if permission_actions.include?(Permission::PROJECT_ACTION_MANAGE)
 
     permission_actions.each do |permission_action|
       Permission.create!(user: user, subject: 'Project', subject_id: project.id, action: permission_action)

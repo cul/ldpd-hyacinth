@@ -69,7 +69,7 @@ RSpec.describe Mutations::UpdateProjectPermissions, type: :request do
 
       it 'returns error' do
         expect(response.body).to be_json_eql(%(
-          "Action bananas is not allowed for a primary project"
+          "Action bananas is not allowed for a project"
         )).at_path('errors/0/message')
       end
     end
@@ -88,7 +88,6 @@ RSpec.describe Mutations::UpdateProjectPermissions, type: :request do
             project {
               stringKey
               displayLabel
-              isPrimary
             },
             actions
           }

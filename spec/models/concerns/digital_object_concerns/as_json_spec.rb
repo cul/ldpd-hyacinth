@@ -3,10 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe DigitalObjectConcerns::AsJson do
-  let(:project) { FactoryBot.create(:project) }
   let(:digital_object_with_sample_data) do
     obj = FactoryBot.build(:digital_object_test_subclass, :with_sample_data)
-    obj.primary_project = project
     allow(obj).to receive(:number_of_children).and_return(1)
     allow(obj).to receive(:parent_uids).and_return(['parent:1', 'parent:2', 'parent:3'])
     obj
@@ -31,14 +29,13 @@ RSpec.describe DigitalObjectConcerns::AsJson do
         ],
         'preserved_at' => nil,
         'primary_project' => {
-          'created_at' => project.created_at.as_json,
-          'display_label' => 'Great Project',
+          'created_at' => digital_object_with_sample_data.primary_project.created_at.as_json,
+          'display_label' => digital_object_with_sample_data.primary_project.display_label,
           'has_asset_rights' => false,
-          'id' => project.id,
-          'is_primary' => true,
-          'project_url' => 'https://example.com/great_project',
-          'string_key' => 'great_project',
-          'updated_at' => project.updated_at.as_json
+          'id' => digital_object_with_sample_data.primary_project.id,
+          'project_url' => digital_object_with_sample_data.primary_project.project_url,
+          'string_key' => digital_object_with_sample_data.primary_project.string_key,
+          'updated_at' => digital_object_with_sample_data.primary_project.updated_at.as_json
         },
         'publish_entries' => {},
         'rights' => {},

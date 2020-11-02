@@ -9,6 +9,9 @@ FactoryBot.define do
         'descriptive_metadata' => {
           'title' => [{ 'sort_portion' => 'The', 'non_sort_portion' => 'Cool Item' }],
           'abstract' => [{ 'value' => 'some abstract' }]
+        },
+        'primary_project' => {
+          'string_key' => FactoryBot.create(:project).string_key
         }
       }.to_json
     end
@@ -27,6 +30,9 @@ FactoryBot.define do
           'descriptive_metadata' => {
             'title' => [{ 'sort_portion' => 'The', 'non_sort_portion' => 'Asset' }]
           },
+          'primary_project' => {
+            'string_key' => FactoryBot.create(:project).string_key
+          },
           'resource_imports' => {
             'master' => {
               method: 'copy',
@@ -41,7 +47,12 @@ FactoryBot.define do
       status { 'pending' }
       index { 25 }
       digital_object_data do
-        { "descriptive_metadata": { "note": [{ "value": "fantastic note" }] } }.to_json
+        {
+          "descriptive_metadata": { "note": [{ "value": "fantastic note" }] },
+          'primary_project' => {
+            'string_key' => FactoryBot.create(:project).string_key
+          }
+        }.to_json
       end
     end
 
@@ -49,7 +60,12 @@ FactoryBot.define do
       status { 'queued' }
       index { 30 }
       digital_object_data do
-        { 'descriptive_metadata': { 'note': [{ 'value': 'another fantastic note' }] } }.to_json
+        {
+          'descriptive_metadata': { 'note': [{ 'value': 'another fantastic note' }] },
+          'primary_project' => {
+            'string_key' => FactoryBot.create(:project).string_key
+          }
+        }.to_json
       end
     end
 
@@ -57,7 +73,12 @@ FactoryBot.define do
       status { 'in_progress' }
       index { 19 }
       digital_object_data do
-        { "descriptive_metadata": { "identifier": [{ "value": "something_1" }] } }.to_json
+        {
+          "descriptive_metadata": { "identifier": [{ "value": "something_1" }] },
+          'primary_project' => {
+            'string_key' => FactoryBot.create(:project).string_key
+          }
+        }.to_json
       end
     end
 
@@ -65,7 +86,12 @@ FactoryBot.define do
       status { 'success' }
       index { 89 }
       digital_object_data do
-        { "descriptive_metadata": { "date": [{ "value": "2001" }] } }.to_json
+        {
+          "descriptive_metadata": { "date": [{ "value": "2001" }] },
+          'primary_project' => {
+            'string_key' => FactoryBot.create(:project).string_key
+          }
+        }.to_json
       end
     end
 
@@ -74,7 +100,12 @@ FactoryBot.define do
       index { 99 }
       import_errors { ["location.value is not a valid field"] }
       digital_object_data do
-        { "descriptive_metadata": { "location": [{ "value": "some place" }] } }.to_json
+        {
+          "descriptive_metadata": { "location": [{ "value": "some place" }] },
+          'primary_project' => {
+            'string_key' => FactoryBot.create(:project).string_key
+          }
+        }.to_json
       end
     end
   end

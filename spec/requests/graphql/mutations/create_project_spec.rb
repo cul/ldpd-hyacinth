@@ -18,7 +18,6 @@ RSpec.describe Mutations::CreateProject, type: :request do
             input: {
               stringKey: 'best_project',
               displayLabel: 'Best Project',
-              isPrimary: true,
               hasAssetRights: true,
               projectUrl: 'https://best_project.com'
             }
@@ -31,7 +30,6 @@ RSpec.describe Mutations::CreateProject, type: :request do
           expect(response.body).to be_json_eql(%({
             "project": {
               "displayLabel": "Best Project",
-              "isPrimary": true,
               "hasAssetRights": true,
               "projectUrl": "https://best_project.com",
               "stringKey": "best_project"
@@ -81,7 +79,6 @@ RSpec.describe Mutations::CreateProject, type: :request do
               stringKey
               displayLabel
               projectUrl
-              isPrimary
               hasAssetRights
             }
           }

@@ -23,7 +23,6 @@ module Types
     end
 
     field :projects, [ProjectType], null: true do
-      argument :is_primary, Boolean, required: false
       description "List of all projects"
     end
 
@@ -234,13 +233,9 @@ module Types
       project
     end
 
-    def projects(is_primary: nil)
+    def projects
       ability.authorize!(:read, Project)
-      if is_primary.nil?
-        Project.accessible_by(ability)
-      else
-        Project.where(is_primary: is_primary).accessible_by(ability)
-      end
+      Project.accessible_by(ability)
     end
 
     def user(id:)
@@ -256,9 +251,7 @@ module Types
 
     def permission_actions
       {
-        project_actions: Permission::PROJECT_ACTIONS,
-        primary_project_actions: Permission::PRIMARY_PROJECT_ACTIONS,
-        aggregator_project_actions: Permission::AGGREGATOR_PROJECT_ACTIONS
+        project_actions: Permission::PROJECT_ACTIONS
       }
     end
 

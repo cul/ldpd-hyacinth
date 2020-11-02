@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Retrieving Child Assets', type: :request, solr: true do
-  let(:authorized_object) { FactoryBot.create(:item, :with_primary_project, :with_asset) }
+  let(:authorized_object) { FactoryBot.create(:item, :with_asset) }
   let(:authorized_project) { authorized_object.projects.first }
   let(:expected_type) { authorized_object.structured_children['type'] }
   let(:expected_child_assets) { authorized_object.structured_children['structure'].map { |cid| { 'id' => cid } } }

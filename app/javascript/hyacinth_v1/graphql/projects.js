@@ -5,7 +5,6 @@ export const getProjectQuery = gql`
     project(stringKey: $stringKey) {
       stringKey
       displayLabel
-      isPrimary
       hasAssetRights
       projectUrl
     }
@@ -17,7 +16,6 @@ export const createProjectMutation = gql`
     createProject(input: $input) {
       project {
         stringKey
-        isPrimary
       }
     }
   }
@@ -46,7 +44,6 @@ export const deleteProjectMutation = gql`
 const getProjectsFields = `
   stringKey
   displayLabel
-  isPrimary
   hasAssetRights
   projectUrl,
   enabledDigitalObjectTypes
@@ -55,14 +52,6 @@ const getProjectsFields = `
 export const getProjectsQuery = gql`
   query {
     projects {
-      ${getProjectsFields}
-    }
-  }
-`;
-
-export const getPrimaryProjectsQuery = gql`
-  query {
-    projects(isPrimary: true) {
       ${getProjectsFields}
     }
   }
@@ -77,7 +66,6 @@ const projectPermissionsFields = `
   project {
     stringKey
     displayLabel
-    isPrimary
   },
   actions
 `;
@@ -87,7 +75,6 @@ export const getProjectWithPermissionsQuery = gql`
     project(stringKey: $stringKey) {
       stringKey
       displayLabel
-      isPrimary
       projectPermissions {
         ${projectPermissionsFields}
       }

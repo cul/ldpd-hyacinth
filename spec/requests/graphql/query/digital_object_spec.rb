@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Retrieving Digital Object', type: :request, solr: true do
   let(:authorized_object) do
-    FactoryBot.create(:item, :with_rights, :with_descriptive_metadata, :with_primary_project, :with_other_projects)
+    FactoryBot.create(:item, :with_rights, :with_descriptive_metadata, :with_other_projects)
   end
   let(:authorized_project) { authorized_object.projects.first }
   let(:authorized_publish_target) { authorized_project.publish_targets.first }
@@ -96,7 +96,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request, solr: true do
   end
 
   context "resources response" do
-    let(:authorized_object) { FactoryBot.create(:asset, :with_primary_project, :with_master_resource) }
+    let(:authorized_object) { FactoryBot.create(:asset, :with_master_resource) }
     let(:authorized_project) { authorized_object.projects.first }
     before do
       sign_in_project_contributor to: :read_objects, project: authorized_project

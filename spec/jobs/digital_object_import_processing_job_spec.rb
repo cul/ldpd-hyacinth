@@ -69,7 +69,13 @@ RSpec.describe DigitalObjectImportProcessingJob, solr: true do
     end
 
     context 'failed run' do
-      let(:digital_object_import) { FactoryBot.create(:digital_object_import, batch_import: batch_import, digital_object_data: '{"digital_object_type": "item", "state": "ZZZ"}') }
+      let(:digital_object_import) do
+        doi = FactoryBot.create(:digital_object_import, batch_import: batch_import)
+        dod = JSON.parse(doi.digital_object_data)
+        dod['state'] = 'ZZZ'
+        doi.digital_object_data = JSON.generate(dod)
+        doi
+      end
 
       it 'results in a DigitalObjectImport status of failure at the end of the job' do
         expect(digital_object_import.status).to eq('failure')

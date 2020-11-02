@@ -77,4 +77,9 @@ RSpec.configure do |config|
   config.before(:each, solr: true) do
     solr_cleanup
   end
+
+  # Reset factory sequences between tests
+  config.before do
+    FactoryBot.rewind_sequences
+  end
 end

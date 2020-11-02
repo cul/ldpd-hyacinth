@@ -5,7 +5,5 @@ module Types
     description 'Information about available permission actions.'
 
     field :project_actions, [String], null: false
-    field :primary_project_actions, [String], null: false
-    field :aggregator_project_actions, [String], null: false
   end
 end

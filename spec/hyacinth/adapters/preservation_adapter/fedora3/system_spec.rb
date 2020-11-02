@@ -53,7 +53,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
   end
   describe "#persist_impl" do
     let(:rubydora_object) { Rubydora::DigitalObject.new(object_pid, Rubydora.repository) }
-    let(:hyacinth_object) { DigitalObject::Item.new }
+    let(:hyacinth_object) { FactoryBot.build(:item) }
     context "core data" do
       it "persists core data to Fedora3" do
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
@@ -92,6 +92,14 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
     context "basic rels-ext properties" do
       let(:dsids) { ['structMetadata'] }
       let(:digital_object_title) { "Assigned Label" }
+      let(:project_property) do
+        {
+          isLiteral: true,
+          object: hyacinth_object.primary_project.string_key,
+          pid: object_pid,
+          predicate: "http://dbpedia.org/ontology/project"
+        }
+      end
       let(:model_property) do
         {
           predicate: "info:fedora/fedora-system:def/model#hasModel",
@@ -141,7 +149,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
       let(:dsids) { ['structMetadata'] }
       let(:child_object_title) { "Assigned Label" }
       let(:child_hyacinth_object) do
-        obj = DigitalObject::Item.new
+        obj = FactoryBot.build(:item)
         obj.descriptive_metadata['title'] = [{ 'sort_portion' => child_object_title }]
         obj.save
         obj
@@ -161,7 +169,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
     end
     context "RelsInt properties for resources" do
       let(:dsids) { ['structMetadata'] }
-      let(:hyacinth_object) { DigitalObject::Asset.new }
+      let(:hyacinth_object) { FactoryBot.build(:asset) }
       let(:resource_args) { { original_file_path: '/old/path/to/file.doc', location: '/path/to/file.doc', checksum: 'sha256:asdf', file_size: 'asdf' } }
       before do
         hyacinth_object.resources['master'] = Hyacinth::DigitalObject::Resource.new(resource_args)
