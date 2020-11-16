@@ -46,5 +46,4 @@ config/subs.yml
 .DS_Store
 
 .byebug_history
-.ruby-version
 .ruby-gemset
