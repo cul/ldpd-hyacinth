@@ -61,8 +61,8 @@ gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-gem 'therubyracer', '>= 0.12.3',  platforms: :ruby
-gem 'libv8', '>= 3.16.14.19' # Min version for Mac OS 10.11, XCode 9.0, Ruby 2.4
+#gem 'therubyracer', '>= 0.12.3',  platforms: :ruby
+gem 'libv8', '>= 8.4.255.0' # Min version for Mac OS 10.15
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails', '>= 4.0.4'
