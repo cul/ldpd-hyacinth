@@ -1,12 +1,11 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 4.2.10'
+gem 'rails', '~> 4.2.11'
 
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3', '~> 1.3.10'
-# Rails 4 can only be used with mysql2 version 0.4 and is not compatible with 0.5
-gem 'mysql2', '~> 0.4.0'
+gem 'mysql2', '~> 0.5.2'
 
 # Lock rake due to rspec/rubocop v11 incompatibilities
 gem 'rake', '~> 10.0'
@@ -61,7 +60,6 @@ gem 'uglifier', '>= 1.3.0'
 gem 'coffee-rails'
 
 # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-#gem 'therubyracer', '>= 0.12.3',  platforms: :ruby
 gem 'libv8', '>= 8.4.255.0' # Min version for Mac OS 10.15
 
 # Use jquery as the JavaScript library
@@ -145,8 +143,8 @@ gem 'rails-html-sanitizer', '>= 1.0.4'
 group :development, :test do
   gem 'byebug'
   gem 'rspec-rails', '~> 3.3'
-  gem 'capybara', '>= 2.5'
-  gem 'poltergeist', '>= 1.7' # For headless-browser JavaScript testing
+  gem 'capybara', '~> 3.32'
+  gem 'selenium-webdriver'
   gem 'factory_girl_rails', '>= 4.4.1'
   gem 'rubocop', '~> 0.58.2', require: false
   gem 'rubocop-rspec', '>= 1.20.1', require: false

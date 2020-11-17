@@ -62,17 +62,21 @@ Hyacinth delegates image generation to a separate, asynchronous image processing
 
 If you're using sqlite, avoid using the same sqlite database file for UriService and your standard ActiveRecord tables.  See: https://github.com/cul/uri_service#problems-when-sharing-an-sqlite-database-with-rails
 
-### Running Integration Tests (for developers):
+### Running Tests (for developers):
 
-Integration tests are great and we should run them.  Here's how:
+Tests are great and we should run them.  You'll need to install chromedriver for javascript tests.
+
+With Homebrew: brew cask install chromedriver
+
+And on macOS Catalina (10.15) and later, you'll need to update security settings to allow chromedriver to run because the first-time run will tell you that "the developer cannot be verified." See: https://stackoverflow.com/a/60362134
+
+Then run the test suite with:
 
 ```sh
 bundle exec rake hyacinth:ci
 ```
 
 Note 1: By default, jetty will run on port 8983 in the development environment and 9983 in the test environment.
-
-Note 2: Hyacinth requires JavaScript for integration tests and uses the capybara and poltergrist gems.  You'll need to install PhantomJS and have it available on your PATH.
 
 ### Other Development Notes
 

@@ -2,6 +2,12 @@ language: ruby
 cache: bundler
 sudo: false
 
+addons:
+  chrome: stable
+  apt:
+    packages:
+      - chromium-chromedriver
+
 rvm:
   - 2.4.1
 
@@ -15,6 +21,7 @@ env:
     - NOKOGIRI_USE_SYSTEM_LIBRARIES=true
 
 before_script:
+  - ln -s /usr/lib/chromium-browser/chromedriver ~/bin/chromedriver
   - bundle exec rake hyacinth:setup:config_files
 
 script: bundle exec rake hyacinth:ci
