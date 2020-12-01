@@ -9,7 +9,7 @@ module Types
     field :pref_label, String, null: false
     field :alt_labels, [String], null: false, resolver_method: :alt_labels
     field :authority, String, null: true
-    field :term_type, TermCategory, null: false # enum local, temporary, external
+    field :term_type, TermTypeEnum, null: false # enum local, temporary, external
     field :custom_fields, [CustomFieldType], null: true, resolver_method: :custom_fields
 
     def alt_labels

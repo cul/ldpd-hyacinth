@@ -8,7 +8,7 @@ module Mutations
       argument :alt_labels, [String], required: false
       argument :authority, String, required: false
       argument :uri, String, required: false
-      argument :term_type, Types::TermCategory, required: false # enum local, temporary, external
+      argument :term_type, Types::TermTypeEnum, required: false # enum local, temporary, external
       argument :custom_fields, [Types::CustomFieldAttributes], required: false
 
       field :term, Types::TermType, null: true
