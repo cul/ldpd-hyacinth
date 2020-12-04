@@ -2,6 +2,6 @@
 
 class Enums::MetadataFormEnum < Types::BaseEnum
   DynamicFieldCategory.metadata_forms.each do |value_string, _value_number|
-    value value_string.upcase.tr(' ', '_'), value_string, value: value_string
+    value value_string.upcase.tr(' ', '_'), "Metadata form of #{value_string}", value: value_string
   end
 end
