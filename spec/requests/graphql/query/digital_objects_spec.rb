@@ -28,7 +28,7 @@ RSpec.describe 'Retrieving Digital Objects', type: :request, solr: true do
     let(:expected_response) do
       %(
         [
-          { "id": "#{authorized_object.uid}", "title": "The Best Item Ever", "digitalObjectType": "item" }
+          { "id": "#{authorized_object.uid}", "title": "The Best Item Ever", "digitalObjectType": "ITEM" }
         ]
       )
     end
@@ -48,8 +48,8 @@ RSpec.describe 'Retrieving Digital Objects', type: :request, solr: true do
       let(:expected_response) do
         %(
           [
-            { "id": "#{authorized_object.uid}", "title": "The Best Item Ever", "digitalObjectType": "item" },
-            { "id": "#{unauthorized_object.uid}", "title": "The Other Pretty Great Item", "digitalObjectType": "item" }
+            { "id": "#{authorized_object.uid}", "title": "The Best Item Ever", "digitalObjectType": "ITEM" },
+            { "id": "#{unauthorized_object.uid}", "title": "The Other Pretty Great Item", "digitalObjectType": "ITEM" }
           ]
         )
       end
@@ -63,7 +63,7 @@ RSpec.describe 'Retrieving Digital Objects', type: :request, solr: true do
       let(:expected_response) do
         %(
           [
-            { "id": "#{unauthorized_object.uid}", "title": "The Other Pretty Great Item", "digitalObjectType": "item" }
+            { "id": "#{unauthorized_object.uid}", "title": "The Other Pretty Great Item", "digitalObjectType": "ITEM" }
           ]
         )
       end

@@ -7,7 +7,7 @@ RSpec.describe 'Retrieving Enabled Dynamic Fields', type: :request do
   let(:field_set) { FactoryBot.create(:field_set, project: project) }
   let(:dynamic_field) { FactoryBot.create(:dynamic_field) }
   let(:default_value) { "exampleDefaultValue" }
-  let(:digital_object_type) { "item" }
+  let(:digital_object_type) { "ITEM" }
   let!(:enabled_dynamic_field) do
     FactoryBot.create(:enabled_dynamic_field, project: project, digital_object_type: digital_object_type,
       dynamic_field: dynamic_field, required: false, default_value: default_value, field_sets: [field_set])
@@ -23,7 +23,7 @@ RSpec.describe 'Retrieving Enabled Dynamic Fields', type: :request do
       before { graphql query(project.string_key, enabled_dynamic_field.digital_object_type) }
       it 'returns correct response' do
         expect(response.body).to be_json_eql(%({  "enabledDynamicFields": [{
-          "digitalObjectType": "item", "type": "EnabledDynamicField", "project": { "stringKey": "#{project.string_key}" },
+          "digitalObjectType": "ITEM", "type": "EnabledDynamicField", "project": { "stringKey": "#{project.string_key}" },
           "hidden": false, "locked": false, "ownerOnly": false, "required": false, "defaultValue": "#{default_value}",
           "shareable": false, "dynamicField": { "id": #{dynamic_field.id} }, "fieldSets": [ { "id": #{field_set.id} } ] }]
           })).at_path('data')

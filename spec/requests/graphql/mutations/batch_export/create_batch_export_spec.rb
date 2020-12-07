@@ -9,7 +9,7 @@ RSpec.describe Mutations::BatchExport::CreateBatchExport, type: :request do
       'filters' => [
         {
           'field' => 'digital_object_type_ssi',
-          'values' => ['asset']
+          'values' => ['ASSET']
         },
         {
           'field' => 'projects_ssim',
@@ -20,7 +20,7 @@ RSpec.describe Mutations::BatchExport::CreateBatchExport, type: :request do
   end
   let(:expected_stored_search_params) do
     {
-      'digital_object_type_ssi' => [[['asset'], 'EQUALS']],
+      'digital_object_type_ssi' => [[['ASSET'], 'EQUALS']],
       'projects_ssim' => [[['test'], 'EQUALS']],
       'q' => nil,
       'search_type' => 'keyword'
