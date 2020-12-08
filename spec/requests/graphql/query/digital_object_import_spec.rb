@@ -24,7 +24,7 @@ RSpec.describe 'Retrieving Digital Object Import', type: :request do
                 "digitalObjectData": "{\\"descriptive_metadata\\":{\\"note\\":[{\\"value\\":\\"fantastic note\\"}]},\\"primary_project\\":{\\"string_key\\":\\"great_project\\"}}",
                 "importErrors": [],
                 "index": 25,
-                "status": "pending",
+                "status": "PENDING",
                 "updatedAt": "#{digital_object_import.created_at.strftime('%FT%TZ')}"
               }
             }

@@ -55,7 +55,7 @@ RSpec.describe 'Retrieving Project', type: :request do
               }
             ],
             "enabledDigitalObjectTypes" : [
-              "ITEM"
+              "item"
             ]
           }
         })).at_path('data')

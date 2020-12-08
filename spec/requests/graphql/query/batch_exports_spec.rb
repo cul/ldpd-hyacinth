@@ -51,7 +51,7 @@ RSpec.describe 'Retrieving Batch Exports', type: :request do
                 "exportErrors": [],
                 "numberOfRecordsProcessed": 100,
                 "searchParams": "{\\"digital_object_type_ssi\\":[\\"item\\"],\\"q\\":null}",
-                "status": "success",
+                "status": "SUCCESS",
                 "totalRecordsToProcess": 100,
                 "user": {
                   "fullName": "Jane Doe"
@@ -91,7 +91,7 @@ RSpec.describe 'Retrieving Batch Exports', type: :request do
                 "exportErrors": [],
                 "numberOfRecordsProcessed": 100,
                 "searchParams": "{\\"digital_object_type_ssi\\":[\\"item\\"],\\"q\\":null}",
-                "status": "success",
+                "status": "SUCCESS",
                 "totalRecordsToProcess": 100,
                 "user": {
                   "fullName": "Basic User"
@@ -105,7 +105,7 @@ RSpec.describe 'Retrieving Batch Exports', type: :request do
                 "exportErrors": [],
                 "numberOfRecordsProcessed": 100,
                 "searchParams": "{\\"digital_object_type_ssi\\":[\\"item\\"],\\"q\\":null}",
-                "status": "success",
+                "status": "SUCCESS",
                 "totalRecordsToProcess": 100,
                 "user": {
                   "fullName": "Jane Doe"

@@ -37,7 +37,7 @@ RSpec.describe 'Create Digital Object', type: :request, solr: true do
   end
 
   include_examples 'requires user to have correct permissions for graphql request' do
-    let(:variables) { { input: { digitalObjectType: 'item', project: { stringKey: project.string_key }, descriptiveMetadata: {}, identifiers: [] } } }
+    let(:variables) { { input: { digitalObjectType: 'ITEM', project: { stringKey: project.string_key }, descriptiveMetadata: {}, identifiers: [] } } }
     let(:request) { graphql query, variables }
   end
 
@@ -47,7 +47,7 @@ RSpec.describe 'Create Digital Object', type: :request, solr: true do
       let(:variables) do
         {
           input: {
-            digitalObjectType: 'item',
+            digitalObjectType: 'ITEM',
             project: {
               stringKey: project.string_key
             },
@@ -75,6 +75,7 @@ RSpec.describe 'Create Digital Object', type: :request, solr: true do
       end
 
       it "returns a single item with the expected metadata fields" do
+        puts response.body
         expect(response.body).to be_json_eql("\"United States\"").at_path('data/createDigitalObject/digitalObject/descriptiveMetadata/title/0/sort_portion')
       end
 

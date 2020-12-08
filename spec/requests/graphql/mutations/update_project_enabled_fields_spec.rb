@@ -62,7 +62,7 @@ RSpec.describe Mutations::UpdateProjectEnabledFields, type: :request do
       context 'with a replacement dynamic field' do
         it 'enables the expected dynamic fields' do
           results = EnabledDynamicField.where(
-            project_id: project.id, digital_object_type: 'ITEM'
+            project_id: project.id, digital_object_type: 'item'
           ).to_a
           expect(results.length).to be 1
           expect(results.first.dynamic_field_id).to be added_dynamic_field.id
