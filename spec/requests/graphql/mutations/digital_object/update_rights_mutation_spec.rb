@@ -20,24 +20,24 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
       Term.create(
         pref_label: 'In Copyright',
         uri: 'https://example.com/term/in_copyright',
-        term_type: 'EXTERNAL',
+        term_type: 'external',
         vocabulary: Vocabulary.find_by(string_key: 'rights_statement')
       )
       Term.create(
         pref_label: "Random, Person",
-        term_type: "EXTERNAL",
+        term_type: "external",
         uri: "https://example.com/term/random,person",
         vocabulary: Vocabulary.find_by(string_key: 'name')
       )
       Term.create(
         pref_label: "United States",
-        term_type: "EXTERNAL",
+        term_type: "external",
         uri: "https://example.com/term/united_states",
         vocabulary: Vocabulary.find_by(string_key: 'geonames')
       )
       Term.create(
         pref_label: "Great Location",
-        term_type: "EXTERNAL",
+        term_type: "external",
         uri: "https://example.com/great_location",
         vocabulary: Vocabulary.find_by(string_key: 'location')
       )
@@ -53,7 +53,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
                 type_of_content: "motion_picture",
                 country_of_origin: {
                   pref_label: "United States",
-                  term_type: "EXTERNAL",
+                  term_type: "external",
                   authority: nil,
                   alt_labels: [],
                   uri: "https://example.com/term/united_states"
@@ -64,7 +64,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
               copyright_status: [{
                 copyright_statement: {
                   pref_label: "In Copyright",
-                  term_type: "EXTERNAL",
+                  term_type: "external",
                   authority: nil,
                   alt_labels: [],
                   uri: "https://example.com/term/in_copyright"
@@ -79,7 +79,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
               copyright_ownership: [{
                 name: {
                   pref_label: "Random, Person",
-                  term_type: "EXTERNAL",
+                  term_type: "external",
                   authority: nil,
                   alt_labels: [],
                   uri: "https://example.com/term/random,person"
@@ -161,7 +161,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
               copyright_status_override: [{
                 copyright_statement: {
                   pref_label: "In Copyright",
-                  term_type: "EXTERNAL",
+                  term_type: "external",
                   authority: nil,
                   alt_labels: [],
                   uri: "https://example.com/term/in_copyright"
@@ -179,7 +179,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
                 location: [{
                   term: {
                     pref_label: "Great Location",
-                    term_type: "EXTERNAL",
+                    term_type: "external",
                     uri: "https://example.com/great_location",
                     authority: nil,
                     alt_labels: []

@@ -82,8 +82,8 @@ describe Hyacinth::DigitalObject::TypeDef::DynamicFieldData do
     genre_vocab = Vocabulary.create(string_key: 'genre', label: 'Genre')
 
     Term.create!(pref_label: 'Person, Random', term_type: 'temporary', vocabulary: name_vocab, custom_fields: { uni: 'abc123' })
-    Term.create!(uri: 'http://id.loc.gov/vocabulary/relators/aut', pref_label: 'Author', alt_labels: ['writer'], authority: 'marcrelator', term_type: 'EXTERNAL', vocabulary: name_role_vocab)
-    Term.create!(uri: 'http://vocab.getty.edu/aat/300048715', pref_label: 'articles', authority: 'aat', term_type: 'EXTERNAL', vocabulary: genre_vocab)
+    Term.create!(uri: 'http://id.loc.gov/vocabulary/relators/aut', pref_label: 'Author', alt_labels: ['writer'], authority: 'marcrelator', term_type: 'external', vocabulary: name_role_vocab)
+    Term.create!(uri: 'http://vocab.getty.edu/aat/300048715', pref_label: 'articles', authority: 'aat', term_type: 'external', vocabulary: genre_vocab)
   end
 
   describe '#from_serialized_form_impl' do
@@ -95,7 +95,7 @@ describe Hyacinth::DigitalObject::TypeDef::DynamicFieldData do
               'pref_label' => 'Person, Random',
               'uri' => 'temp:4712538a19c162783874c45c4682fddcf247ac031b06a98912d7df0bc43a3a54',
               'authority' => nil,
-              'term_type' => 'TEMPORARY',
+              'term_type' => 'temporary',
               'alt_labels' => [],
               'uni' => 'abc123'
             },
@@ -106,7 +106,7 @@ describe Hyacinth::DigitalObject::TypeDef::DynamicFieldData do
                   'pref_label' => 'Author',
                   'uri' => 'http://id.loc.gov/vocabulary/relators/aut',
                   'authority' => 'marcrelator',
-                  'term_type' => 'EXTERNAL',
+                  'term_type' => 'external',
                   'alt_labels' => ['writer']
                 }
               }
@@ -119,7 +119,7 @@ describe Hyacinth::DigitalObject::TypeDef::DynamicFieldData do
               'pref_label' => 'articles',
               'uri' => 'http://vocab.getty.edu/aat/300048715',
               'authority' => 'aat',
-              'term_type' => 'EXTERNAL',
+              'term_type' => 'external',
               'alt_labels' => []
             }
           }
