@@ -4,16 +4,8 @@ require 'spec_helper'
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
 require 'capybara/rails'
-require 'capybara/poltergeist'
 
-Capybara.register_driver :poltergeist do |app|
-  Capybara::Poltergeist::Driver.new(app,
-    :window_size  => [1280, 1440],
-    :timeout => 30
-  )
-end
-
-Capybara.javascript_driver = :poltergeist
+Capybara.javascript_driver = :selenium_chrome_headless
 Capybara.default_max_wait_time = 30 # Some ajax requests might take longer than the default waut time of 2 seconds.
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -60,12 +52,12 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
 
   # Added so that we can test Devise logins
-  config.include Devise::TestHelpers, :type => :controller # Cannot use this for request/feature specs
+  config.include Devise::Test::ControllerHelpers, :type => :controller # Cannot use this for request/feature specs
   def sign_in_admin_user_controller_spec()
     sign_in(FactoryGirl.create(:admin_user))
   end
-  
-  ## Set Warden (which backs devise) in test mode for 
+
+  ## Set Warden (which backs devise) in test mode for
   #config.include Warden::Test::Helpers
   #config.before :suite do
   #  Warden.test_mode!
@@ -73,7 +65,7 @@ RSpec.configure do |config|
   #config.after :each do
   #  Warden.test_reset!
   #end
-  
+
   def feature_spec_sign_in_admin_user
     visit '/users/sign_in'
     within("#new_user") do
@@ -82,7 +74,7 @@ RSpec.configure do |config|
     end
     click_button 'Sign in'
   end
-  
+
   def destroy_all_hyacinth_groups_items_and_assets
     DigitalObjectRecord.all.each do |digital_object_record|
       begin
@@ -92,5 +84,5 @@ RSpec.configure do |config|
       end
     end
   end
-  
+
 end
