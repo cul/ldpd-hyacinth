@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 describe Hyacinth::XMLGenerator::Element do
-  let(:internal_fields) { { 'project.display_label' => 'Test Project' } }
+  let(:internal_fields) { { 'project.display_label' => 'Test Project', 'project.string_key' => 'test_project' } }
   let(:xml_translation) { {} }
   let(:generator) { Hyacinth::XMLGenerator.new(nil, nil, nil, internal_fields) }
 
@@ -143,6 +143,7 @@ describe Hyacinth::XMLGenerator::Element do
   describe '#value_with_substitutions' do
     it "replaces value when its the only thing in the string" do
       expect(element.value_with_substitutions("{{name_term.value}}")).to eql "Salinger, J. D."
+      expect(element.value_with_substitutions("substitute:{{$project.string_key}}")).to eql "substitute:test_project"
     end
 
     it "replaces correct value when there are multiple references" do

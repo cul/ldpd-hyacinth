@@ -15,6 +15,7 @@ module DigitalObject::XmlDatastreamRendering
 
     def internal_fields
       {
+        'project.string_key' => self.project.string_key,
         'project.display_label' => self.project.display_label,
         'project.short_label'   => self.project.short_label.present? ? self.project.short_label : self.project.display_label,
         'project.uri'           => self.project.uri.present? ? self.project.uri : '',
