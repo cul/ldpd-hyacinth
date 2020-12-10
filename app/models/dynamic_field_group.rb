@@ -29,6 +29,11 @@ class DynamicFieldGroup < ActiveRecord::Base
   validate  :non_circular_relationship
   validates_with StringKey::AbsentInSiblingFieldsValidator
 
+  def save
+    super
+  rescue ActiveRecord::RecordNotUnique
+    path_error
+  end
   # Order children first by sort_order and then by string_key to break up ties.
   def ordered_children
     children.sort_by { |c| [c.sort_order, c.string_key] }

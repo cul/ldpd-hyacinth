@@ -17,7 +17,12 @@ module DynamicFieldStructure
       # Validate that the string_key is unique between all siblings.
       def unique_string_key
         sibling_string_keys = siblings.map(&:string_key)
-        errors.add(:string_key, 'is already in use by a sibling field or field group') if sibling_string_keys.include?(string_key)
+        path_error if sibling_string_keys.include?(string_key)
+      end
+
+      def path_error
+        errors.add(:string_key, 'is already in use by a sibling field or field group')
+        return false
       end
   end
 end

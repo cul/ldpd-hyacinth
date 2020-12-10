@@ -166,6 +166,22 @@ RSpec.describe DynamicFieldGroup, type: :model do
       it 'saves the object' do
         expect(dynamic_field_group.save).to be true
       end
+
+      context 'and the sibiling is a dynamic_field_group, even across dynamic field categories', focus: true do
+        let(:parent1) { FactoryBot.create(:dynamic_field_category, display_label: 'DFC 1') }
+        let(:parent2) { FactoryBot.create(:dynamic_field_category, display_label: 'DFC 2') }
+        let(:dynamic_field_group) { FactoryBot.build(:dynamic_field_group, string_key: 'name', parent: parent1) }
+        before do
+          FactoryBot.create(:dynamic_field_group, string_key: 'name', parent: parent2)
+        end
+        it 'does not save' do
+          expect(dynamic_field_group.save).to be false
+        end
+        it 'returns correct error' do
+          dynamic_field_group.save
+          expect(dynamic_field_group.errors.full_messages).to include 'String key is already in use by a sibling field or field group'
+        end
+      end
     end
   end
 
