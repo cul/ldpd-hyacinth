@@ -67,7 +67,7 @@ function DigitalObject() {
           })
         }
 
-        { minimalDigitalObject.digitalObjectType === 'asset'
+        { minimalDigitalObject.digitalObjectType === 'ASSET'
           && (
             <DigitalObjectProtectedRoute
               key="assetData"

@@ -108,14 +108,14 @@ function DigitalObjectInterface(props) {
         <Tab to={`/digital_objects/${id}/rights`} name="Rights" />
 
         {
-          (digitalObjectType === 'item') ? (
+          (digitalObjectType === 'ITEM') ? (
             <Tab to={`/digital_objects/${id}/children`} name="Manage Child Assets" />
           )
             : <></>
         }
 
         {
-          (digitalObjectType === 'asset') ? (
+          (digitalObjectType === 'ASSET') ? (
             <>
               <Tab to={`/digital_objects/${id}/parents`} name="Parents" />
               <Tab to={`/digital_objects/${id}/asset_data`} name="Asset Data" />

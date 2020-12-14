@@ -108,7 +108,7 @@ function BatchImportNew() {
               sm={12}
               value={priority}
               onChange={setPriority}
-              options={priorities.map(p => ({ value: p, label: `Priority: ${startCase(p)}` }))}
+              options={priorities.map(p => ({ value: p.toUpperCase(), label: `Priority: ${startCase(p)}` }))}
             />
           </InputGroup>
 

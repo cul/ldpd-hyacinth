@@ -68,9 +68,13 @@ function TermForm(props) {
       },
     };
 
+    // ALL CAPS enum value per graphql API
+    const termTypeUcase = termType.toUpperCase();
+
     switch (formType) {
+
       case 'new':
-        variables.input.termType = termType;
+        variables.input.termType = termTypeUcase;
 
         return createTerm({ variables }).then((res) => {
           const { term: { uri: newURI } } = res.data.createTerm;

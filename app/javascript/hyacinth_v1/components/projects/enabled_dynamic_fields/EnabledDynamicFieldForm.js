@@ -223,7 +223,10 @@ export const EnabledDynamicFieldForm = (props) => {
   const [disabled] = useState(formType !== 'edit');
   const [enabledDynamicFields] = useState({});
 
-  const variables = { project: { stringKey: projectStringKey }, digitalObjectType };
+  // ALL CAPS enum value per graphql API
+  const digitalObjectTypeUcase = digitalObjectType.toUpperCase();
+
+  const variables = { project: { stringKey: projectStringKey }, digitalObjectType: digitalObjectTypeUcase };
 
   const {
     loading: enabledFieldsLoading,
@@ -235,7 +238,7 @@ export const EnabledDynamicFieldForm = (props) => {
     loading: fieldGraphLoading,
     error: fieldGraphError,
     data: fieldGraphData,
-  } = useQuery(getDynamicFieldGraphQuery, { variables: { metadataForm: 'descriptive' } });
+  } = useQuery(getDynamicFieldGraphQuery, { variables: { metadataForm: 'DESCRIPTIVE' } });
 
   const [updateEnabledFields, { error: updateError }] = useMutation(updateEnabledDynamicFieldsMutation);
 

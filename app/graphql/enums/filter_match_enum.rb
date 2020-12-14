@@ -1,12 +1,16 @@
 # frozen_string_literal: true
 
 class Enums::FilterMatchEnum < Types::BaseEnum
-  value 'CONTAINS', 'contains', value: 'CONTAINS'
-  value 'DOES_NOT_CONTAIN', 'does not contain', value: 'DOES_NOT_CONTAIN'
-  value 'DOES_NOT_EQUAL', 'does not equal', value: 'DOES_NOT_EQUAL'
-  value 'DOES_NOT_EXIST', 'does not exist', value: 'DOES_NOT_EXIST'
-  value 'DOES_NOT_START_WITH', 'does not start with', value: 'DOES_NOT_START_WITH'
-  value 'EQUALS', 'equals', value: 'EQUALS'
-  value 'EXISTS', 'exists', value: 'EXISTS'
-  value 'STARTS_WITH', 'starts with', value: 'STARTS_WITH'
+  {
+    'contains' => 'contains',
+    'does_not_contain' => 'does not contain',
+    'does_not_equal' => 'does not equal',
+    'does_not_exist' => 'does not exist',
+    'does_not_start_with' => 'does not start with',
+    'equals' => 'equals',
+    'exists' => 'exists',
+    'starts_with' => 'starts with'
+  }.each do |val, description|
+    value val.upcase.tr(' ', '_'), description, value: val
+  end
 end

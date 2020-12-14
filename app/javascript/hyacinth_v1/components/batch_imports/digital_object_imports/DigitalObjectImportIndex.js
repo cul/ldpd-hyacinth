@@ -35,7 +35,7 @@ function DigitalObjectImportIndex() {
   const { id } = useParams();
 
   const [offset, setOffset] = useState(0);
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('ALL');
 
   const {
     loading, error, data, refetch,
@@ -45,7 +45,7 @@ function DigitalObjectImportIndex() {
         id,
         limit,
         offset,
-        status: statusFilter === 'all' ? null : statusFilter,
+        status: statusFilter === 'ALL' ? null : statusFilter,
       },
     },
   );
@@ -59,8 +59,10 @@ function DigitalObjectImportIndex() {
   };
 
   const onTabClick = (status) => {
+    // ALL CAPS enum value per graphql API
+    const statusUcase = status.toUpperCase();
     setOffset(0);
-    setStatusFilter(status);
+    setStatusFilter(statusUcase);
     refetch();
   };
 

@@ -15,7 +15,7 @@ function DynamicFieldIndex() {
     loading, error, data, refetch,
   } = useQuery(
     getDynamicFieldCategoriesQuery,
-    { variables: { metadataForm: 'descriptive' } },
+    { variables: { metadataForm: 'DESCRIPTIVE' } },
   );
 
   if (loading) return (<></>);
