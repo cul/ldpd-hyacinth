@@ -492,4 +492,22 @@ RSpec.describe DigitalObject::Base, :type => :model do
       it { is_expected.to be model }
     end
   end
+
+  describe '#internal_fields' do
+    let(:item) {
+      item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+      item.set_digital_object_data(sample_item_digital_object_data, false)
+      item.db_record.created_at = Time.now
+      item.db_record.updated_at = Time.now
+      item
+    }
+    let(:expected_internal_field_values) do
+      {
+        'project.string_key' => 'test'
+      }
+    end
+    it 'includes project fields' do
+      expect(item.send :internal_fields).to include(expected_internal_field_values)
+    end
+  end
 end
