@@ -54,7 +54,7 @@ const DigitalObjectList = (props) => {
             <Card.Header>
               <LinkContainer
                 to={`/digital_objects/${digitalObject.id}`}
-                onClick={() => storeSearchValues(
+                onClick={() => searchParams && storeSearchValues(
                   orderBy, totalCount, limit, offset,
                   pageNumber, searchParams.query, searchParams.filters, path, resultIndex,
                 )
@@ -112,7 +112,7 @@ DigitalObjectList.defaultProps = {
   limit: 0,
   offset: 0,
   pageNumber: 0,
-  searchParams: false,
+  searchParams: null,
   path: '',
 };
 
