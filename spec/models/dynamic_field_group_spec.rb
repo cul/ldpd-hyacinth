@@ -119,7 +119,7 @@ RSpec.describe DynamicFieldGroup, type: :model do
       end
     end
 
-    context 'when creating a group with the same name as a sibling' do
+    context 'when creating a group with the same string_key as a sibling' do
       context 'and the sibiling is a dynamic_field' do
         let(:parent) { FactoryBot.create(:dynamic_field_group) }
         let(:dynamic_field_group) { FactoryBot.build(:dynamic_field_group, :child, parent: parent) }
@@ -160,10 +160,15 @@ RSpec.describe DynamicFieldGroup, type: :model do
     end
 
     context 'when creating a group that shares the same string_key as a non-sibling group' do
+      let(:parent1) { FactoryBot.create(:dynamic_field_category, display_label: 'DFC 1') }
+      let(:parent2) { FactoryBot.create(:dynamic_field_category, display_label: 'DFC 2') }
+      let(:dynamic_field_group) { FactoryBot.build(:dynamic_field_group, string_key: 'name', parent: parent1) }
+
+      it 'saves the object' do
+        expect(dynamic_field_group.save).to be true
+      end
+
       context 'and the sibiling is a dynamic_field_group, even across dynamic field categories' do
-        let(:parent1) { FactoryBot.create(:dynamic_field_category, display_label: 'DFC 1') }
-        let(:parent2) { FactoryBot.create(:dynamic_field_category, display_label: 'DFC 2') }
-        let(:dynamic_field_group) { FactoryBot.build(:dynamic_field_group, string_key: 'name', parent: parent1) }
         before do
           FactoryBot.create(:dynamic_field_group, string_key: 'name', parent: parent2)
         end
