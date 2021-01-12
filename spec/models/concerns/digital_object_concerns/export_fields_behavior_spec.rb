@@ -22,6 +22,10 @@ RSpec.describe DigitalObjectConcerns::ExportFieldsBehavior do
       is_expected.to include('uid' => uid_value)
     end
 
+    it "includes primary_project.string_key when value is present" do
+      is_expected.to include('primary_project.string_key' => 'great_project')
+    end
+
     it "includes primary_project.display_label when value is present" do
       is_expected.to include('primary_project.display_label' => 'Great Project')
     end
