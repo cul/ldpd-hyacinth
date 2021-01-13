@@ -16,8 +16,24 @@ module DynamicFieldStructure
 
       # Validate that the string_key is unique between all siblings.
       def unique_string_key
-        sibling_string_keys = siblings.map(&:string_key)
-        errors.add(:string_key, 'is already in use by a sibling field or field group') if sibling_string_keys.include?(string_key)
+        if parent.class == DynamicFieldCategory
+          # Ensure unique top level string_key values across all immediate descendants of DynamicFieldCategories
+          dynamic_field_group_ids_with_same_key = DynamicFieldGroup.unscoped.where(
+            parent_type: DynamicFieldCategory.name,
+            parent_id: DynamicFieldCategory.all.pluck(:id),
+            string_key: string_key
+          ).pluck(:id)
+
+          # If a matching DynamicFieldGroup is found, add an error...unless the found DynamicFieldGroup IS the current object!
+          add_path_error if dynamic_field_group_ids_with_same_key.length.positive? && dynamic_field_group_ids_with_same_key.first != self.id
+        elsif siblings.map(&:string_key).include?(string_key)
+          # Ensure unique string_key values across all siblings anywhere in the field hierarchy
+          add_path_error
+        end
+      end
+
+      def add_path_error
+        errors.add(:string_key, 'is already in use by a sibling field or field group')
       end
   end
 end

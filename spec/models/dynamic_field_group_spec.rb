@@ -119,7 +119,7 @@ RSpec.describe DynamicFieldGroup, type: :model do
       end
     end
 
-    context 'when creating a group with the same name as a sibling' do
+    context 'when creating a group with the same string_key as a sibling' do
       context 'and the sibiling is a dynamic_field' do
         let(:parent) { FactoryBot.create(:dynamic_field_group) }
         let(:dynamic_field_group) { FactoryBot.build(:dynamic_field_group, :child, parent: parent) }
@@ -160,11 +160,25 @@ RSpec.describe DynamicFieldGroup, type: :model do
     end
 
     context 'when creating a group that shares the same string_key as a non-sibling group' do
-      let(:dynamic_field_group) { FactoryBot.create(:dynamic_field_group) }
-      let(:dynamic_field) { FactoryBot.build(:dynamic_field, string_key: 'name', dynamic_field_group: dynamic_field_group) }
+      let(:parent1) { FactoryBot.create(:dynamic_field_category, display_label: 'DFC 1') }
+      let(:parent2) { FactoryBot.create(:dynamic_field_category, display_label: 'DFC 2') }
+      let(:dynamic_field_group) { FactoryBot.build(:dynamic_field_group, string_key: 'name', parent: parent1) }
 
       it 'saves the object' do
         expect(dynamic_field_group.save).to be true
+      end
+
+      context 'and the sibiling is a dynamic_field_group, even across dynamic field categories' do
+        before do
+          FactoryBot.create(:dynamic_field_group, string_key: 'name', parent: parent2)
+        end
+        it 'does not save' do
+          expect(dynamic_field_group.save).to be false
+        end
+        it 'returns correct error' do
+          dynamic_field_group.save
+          expect(dynamic_field_group.errors.full_messages).to include 'String key is already in use by a sibling field or field group'
+        end
       end
     end
   end
@@ -342,12 +356,13 @@ RSpec.describe DynamicFieldGroup, type: :model do
       let(:dynamic_field) { FactoryBot.create(:dynamic_field, dynamic_field_group: dynamic_field_group, display_label: "Dynamic Field Display Label") }
       it 'updates the path' do
         dynamic_field_group.string_key = new_string_key
-        dynamic_field_group.save && dynamic_field_group.reload
+        expect(dynamic_field_group.save).to eq(true)
+        dynamic_field_group.reload
         expect(dynamic_field_group.path).to eql(new_string_key)
       end
       it 'updates the paths of descendants' do
         dynamic_field_group.string_key = new_string_key
-        dynamic_field_group.save
+        expect(dynamic_field_group.save).to eq(true)
         new_path = DynamicField.find(dynamic_field.id).path
         expect(new_path).to start_with(dynamic_field_group.path)
       end
@@ -356,7 +371,7 @@ RSpec.describe DynamicFieldGroup, type: :model do
         changes = { old_path => old_path.sub(old_string_key, new_string_key) }
         expect(ChangeDynamicFieldPathsJob).to receive(:perform).with(changes)
         dynamic_field_group.string_key = new_string_key
-        dynamic_field_group.save
+        expect(dynamic_field_group.save).to eq(true)
       end
     end
   end
