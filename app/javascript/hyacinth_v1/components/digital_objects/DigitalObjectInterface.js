@@ -33,6 +33,9 @@ function DigitalObjectInterface(props) {
     ...JSON.parse(latestSearchQueryString),
   };
 
+  // reformat filters values for filterArrayParams encode parsing
+  queryParams.filters = queryParams.filters.map(filter => `${filter.field}::${filter.values}`);
+
   const {
     q, filters, orderBy,
   } = decodeQueryParams(queryParamsConfig, queryParams);
