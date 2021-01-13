@@ -15,7 +15,6 @@ import { getDigitalObjectIDsQuery } from '../../graphql/digitalObjects';
 import { queryParamsConfig, encodeAndStringifySearch } from '../../utils/encodeAndStringifySearch';
 import GraphQLErrors from '../shared/GraphQLErrors';
 
-
 function DigitalObjectInterface(props) {
   const { digitalObject, children } = props;
   const { id, title, digitalObjectType } = digitalObject;
@@ -37,7 +36,7 @@ function DigitalObjectInterface(props) {
   const {
     q, filters, orderBy,
   } = decodeQueryParams(queryParamsConfig, queryParams);
-  
+
   const [orderField, orderDirection] = orderBy.split(' ');
 
   const searchParams = { query: q, filters };
@@ -133,16 +132,17 @@ function DigitalObjectInterface(props) {
       </TabBody>
       {
         // only show results paging if we came from a search and if there is more than one result
-      (uids.length > 1 && latestSearchQueryString != null) ? (
-        <ResultsPagingBar
-          totalCount={Number(totalCount)}
-          offset={Number(offset)}
-          uids={uids}
-          uidCurrent={id}
-          resultIndex={Number(resultIndex)}
-          onResultClick={onResultClick}
-        />
-      ) : <></>
+        // and if the current object was in the search result set
+        (uids.length > 1 && latestSearchQueryString != null && uids.includes(id)) ? (
+          <ResultsPagingBar
+            totalCount={Number(totalCount)}
+            offset={Number(offset)}
+            uids={uids}
+            uidCurrent={id}
+            resultIndex={Number(resultIndex)}
+            onResultClick={onResultClick}
+          />
+        ) : <></>
 }
     </div>
   );
