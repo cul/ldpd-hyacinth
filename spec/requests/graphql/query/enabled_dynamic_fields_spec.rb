@@ -9,7 +9,7 @@ RSpec.describe 'Retrieving Enabled Dynamic Fields', type: :request do
   let(:default_value) { "exampleDefaultValue" }
   let(:digital_object_type) { "item" }
   let(:graphql_digital_object_type) { "ITEM" }
-  let!(:enabled_dynamic_field) do
+  before do
     FactoryBot.create(:enabled_dynamic_field, project: project, digital_object_type: digital_object_type,
       dynamic_field: dynamic_field, required: false, default_value: default_value, field_sets: [field_set])
   end
