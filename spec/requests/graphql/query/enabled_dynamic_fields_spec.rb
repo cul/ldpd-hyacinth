@@ -24,7 +24,7 @@ RSpec.describe 'Retrieving Enabled Dynamic Fields', type: :request do
       before { graphql query(project.string_key, graphql_digital_object_type) }
       it 'returns correct response' do
         expect(response.body).to be_json_eql(%({  "enabledDynamicFields": [{
-          "digitalObjectType": "ITEM", "type": "EnabledDynamicField", "project": { "stringKey": "#{project.string_key}" },
+          "digitalObjectType": "#{graphql_digital_object_type}", "type": "EnabledDynamicField", "project": { "stringKey": "#{project.string_key}" },
           "hidden": false, "locked": false, "ownerOnly": false, "required": false, "defaultValue": "#{default_value}",
           "shareable": false, "dynamicField": { "id": #{dynamic_field.id} }, "fieldSets": [ { "id": #{field_set.id} } ] }]
           })).at_path('data')
