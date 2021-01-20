@@ -29,7 +29,7 @@ export default class EnabledDynamicFieldsEdit extends React.Component {
     const { match: { params: { projectStringKey, digitalObjectType } } } = this.props;
 
     // ALL CAPS enum value per graphql API
-    const digitalObjectTypeUcase = digitalObjectType.toUpperCase();
+    const digitalObjectTypeUcase = digitalObjectType;
 
     return (
       <ProjectInterface project={this.state.project} key={digitalObjectType}>

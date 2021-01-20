@@ -223,7 +223,7 @@ export const EnabledDynamicFieldForm = (props) => {
   const [disabled] = useState(formType !== 'edit');
   const [enabledDynamicFields] = useState({});
 
-  const variables = { project: { stringKey: projectStringKey }, digitalObjectType: digitalObjectType };
+  const variables = { project: { stringKey: projectStringKey }, digitalObjectType };
 
   const {
     loading: enabledFieldsLoading,
