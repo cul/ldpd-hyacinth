@@ -28,9 +28,6 @@ export default class EnabledDynamicFieldsEdit extends React.Component {
   render() {
     const { match: { params: { projectStringKey, digitalObjectType } } } = this.props;
 
-    // ALL CAPS enum value per graphql API
-    const digitalObjectTypeUcase = digitalObjectType;
-
     return (
       <ProjectInterface project={this.state.project} key={digitalObjectType}>
         <TabHeading>{`Edit Enabled Dynamic Fields for ${startCase(digitalObjectType)}`}</TabHeading>
