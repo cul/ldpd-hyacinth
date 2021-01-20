@@ -37,7 +37,7 @@ export default class EnabledDynamicFieldsEdit extends React.Component {
         <EnabledDynamicFieldForm
           formType="edit"
           projectStringKey={projectStringKey}
-          digitalObjectType={digitalObjectTypeUcase}
+          digitalObjectType={digitalObjectType}
         />
       </ProjectInterface>
     );

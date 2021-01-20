@@ -223,10 +223,7 @@ export const EnabledDynamicFieldForm = (props) => {
   const [disabled] = useState(formType !== 'edit');
   const [enabledDynamicFields] = useState({});
 
-  // ALL CAPS enum value per graphql API
-  const digitalObjectTypeUcase = digitalObjectType.toUpperCase();
-
-  const variables = { project: { stringKey: projectStringKey }, digitalObjectType: digitalObjectTypeUcase };
+  const variables = { project: { stringKey: projectStringKey }, digitalObjectType: digitalObjectType };
 
   const {
     loading: enabledFieldsLoading,

@@ -17,7 +17,7 @@ import FormButtons from '../../shared/forms/FormButtons';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 import { createTermMutation, updateTermMutation, deleteTermMutation } from '../../../graphql/terms';
 
-const types = ['external', 'local', 'temporary'];
+const types = ['EXTERNAL', 'LOCAL', 'TEMPORARY'];
 
 const useCustomFields = (initialState) => {
   // Removing _typename from each hash.
@@ -68,13 +68,9 @@ function TermForm(props) {
       },
     };
 
-    // ALL CAPS enum value per graphql API
-    const termTypeUcase = termType.toUpperCase();
-
     switch (formType) {
-
       case 'new':
-        variables.input.termType = termTypeUcase;
+        variables.input.termType = termType;
 
         return createTerm({ variables }).then((res) => {
           const { term: { uri: newURI } } = res.data.createTerm;

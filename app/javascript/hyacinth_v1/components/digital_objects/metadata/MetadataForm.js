@@ -63,9 +63,6 @@ function MetadataForm(props) {
   );
   const [identifiers, setIdentifiers] = useState(digitalObject.identifiers);
 
-  // ALL CAPS enum value per graphql API
-  const digitalObjectTypeUcase = digitalObjectType.toUpperCase();
-
   const history = useHistory();
 
 
@@ -100,7 +97,7 @@ function MetadataForm(props) {
         break;
       case 'new':
         variables.input.project = { stringKey: primaryProject.stringKey };
-        variables.input.digitalObjectType = digitalObjectTypeUcase;
+        variables.input.digitalObjectType = digitalObjectType;
         action = createDigitalObject;
         historyPromise = (res) => {
           const path = `/digital_objects/${res.data.createDigitalObject.digitalObject.id}/metadata`;
@@ -149,7 +146,7 @@ function MetadataForm(props) {
     }
   }).filter(c => c !== null);
 
-  const variables = { project: { stringKey: primaryProject.stringKey }, digitalObjectType: digitalObjectTypeUcase };
+  const variables = { project: { stringKey: primaryProject.stringKey }, digitalObjectType: digitalObjectType };
   const {
     loading: enabledFieldsLoading,
     error: enabledFieldsError,
