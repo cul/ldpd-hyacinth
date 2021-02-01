@@ -120,7 +120,7 @@ function BatchExportIndex() {
                       )
                   }
                   {
-                    batchExport.status === 'success'
+                    batchExport.status === 'SUCCESS'
                     && (
                       <>
                         <a href={batchExport.downloadPath} className="btn btn-secondary btn-sm">

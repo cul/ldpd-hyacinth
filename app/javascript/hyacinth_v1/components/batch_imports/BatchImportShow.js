@@ -35,7 +35,7 @@ function BatchImportShow() {
     if (!data) { return; }
 
     const { batchImport: { status } } = data;
-    if (polling && status !== 'in_progress' && status !== 'pending') {
+    if (polling && status !== 'IN_PROGRESS' && status !== 'PENDING') {
       flipPolling();
     }
   }, [data]);
@@ -168,7 +168,7 @@ function BatchImportShow() {
           <Col as="dd" sm={9}>
             {`${total} `}
             {
-              (status === 'in_progress' || status === 'pending') && (
+              (status === 'IN_PROGRESS' || status === 'PENDING') && (
                 <Button variant="link" className="float-right" size="sm" onClick={flipPolling}>
                   {polling ? 'Stop' : 'Start'}
                   {' '}

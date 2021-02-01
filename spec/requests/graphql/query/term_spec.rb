@@ -32,7 +32,7 @@ RSpec.describe 'Query for Term', type: :request, solr: true do
               "prefLabel": "Unicorns",
               "altLabels": [],
               "authority": "fast",
-              "termType": "external",
+              "termType": "EXTERNAL",
               "customFields": [
                 { "field": "classification", "value": "Horse" },
                 { "field": "harry_potter_reference", "value": null }
@@ -89,7 +89,7 @@ RSpec.describe 'Query for Term', type: :request, solr: true do
                 }
               ],
               "prefLabel": "Unicorns",
-              "termType": "external",
+              "termType": "EXTERNAL",
               "uri": "http://id.worldcat.org/fast/1161301/"
             }
           }

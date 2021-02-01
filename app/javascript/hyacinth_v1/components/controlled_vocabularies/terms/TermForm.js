@@ -17,7 +17,7 @@ import FormButtons from '../../shared/forms/FormButtons';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 import { createTermMutation, updateTermMutation, deleteTermMutation } from '../../../graphql/terms';
 
-const types = ['external', 'local', 'temporary'];
+const types = ['EXTERNAL', 'LOCAL', 'TEMPORARY'];
 
 const useCustomFields = (initialState) => {
   // Removing _typename from each hash.

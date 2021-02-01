@@ -42,7 +42,7 @@ RSpec.describe Mutations::Term::UpdateTerm, type: :request, solr: true do
               "prefLabel": "Unicorns",
               "altLabels": ["Uni"],
               "authority": "fast",
-              "termType": "external",
+              "termType": "EXTERNAL",
               "customFields": [
                 { "field": "classification", "value": "Horses" },
                 { "field": "harry_potter_reference", "value": null }
@@ -88,7 +88,7 @@ RSpec.describe Mutations::Term::UpdateTerm, type: :request, solr: true do
               "prefLabel": "Unicorns",
               "altLabels": ["Uni", "Horse with Horn"],
               "authority": "fast",
-              "termType": "external",
+              "termType": "EXTERNAL",
               "customFields": [
                 { "field": "classification", "value": null },
                 { "field": "harry_potter_reference", "value": true }
@@ -132,7 +132,7 @@ RSpec.describe Mutations::Term::UpdateTerm, type: :request, solr: true do
               "prefLabel": "Unicorns",
               "altLabels": [],
               "authority": "fast",
-              "termType": "external",
+              "termType": "EXTERNAL",
               "customFields": [
                 { "field": "classification", "value": "Horses" },
                 { "field": "harry_potter_reference", "value": false }

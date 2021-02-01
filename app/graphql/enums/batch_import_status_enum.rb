@@ -2,6 +2,6 @@
 
 class Enums::BatchImportStatusEnum < Types::BaseEnum
   BatchImport::STATUSES.each do |status|
-    value status, status
+    value status.upcase.tr(' ', '_'), "Batch import status of #{status}", value: status
   end
 end

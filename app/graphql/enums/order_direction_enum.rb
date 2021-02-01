@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 class Enums::OrderDirectionEnum < Types::BaseEnum
-  value 'ASC', 'ascending', value: 'asc'
-  value 'DESC', 'descending', value: 'desc'
+  {
+    'asc' => 'ascending',
+    'desc' => 'descending'
+  }.each do |val, description|
+    value val.upcase.tr(' ', '_'), description, value: val
+  end
 end

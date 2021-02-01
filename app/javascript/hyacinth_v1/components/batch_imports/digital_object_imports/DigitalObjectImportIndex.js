@@ -35,7 +35,7 @@ function DigitalObjectImportIndex() {
   const { id } = useParams();
 
   const [offset, setOffset] = useState(0);
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('ALL');
 
   const {
     loading, error, data, refetch,
@@ -45,7 +45,7 @@ function DigitalObjectImportIndex() {
         id,
         limit,
         offset,
-        status: statusFilter === 'all' ? null : statusFilter,
+        status: statusFilter === 'ALL' ? null : statusFilter,
       },
     },
   );
@@ -98,12 +98,12 @@ function DigitalObjectImportIndex() {
           <Col as="dd" sm={9}>{status}</Col>
         </Row>
 
-        <Nav variant="tabs" defaultActiveKey="all" activeKey={statusFilter} onSelect={onTabClick}>
-          <StatusNavItem eventKey="all" amount={pending + failure + success + inProgress} />
-          <StatusNavItem eventKey="pending" amount={pending} />
-          <StatusNavItem eventKey="in_progress" amount={inProgress} />
-          <StatusNavItem eventKey="success" amount={success} />
-          <StatusNavItem eventKey="failure" amount={failure} />
+        <Nav variant="tabs" defaultActiveKey="ALL" activeKey={statusFilter} onSelect={onTabClick}>
+          <StatusNavItem eventKey="ALL" amount={pending + failure + success + inProgress} />
+          <StatusNavItem eventKey="PENDING" amount={pending} />
+          <StatusNavItem eventKey="IN_PROGRESS" amount={inProgress} />
+          <StatusNavItem eventKey="SUCCESS" amount={success} />
+          <StatusNavItem eventKey="FAILURE" amount={failure} />
         </Nav>
 
         <div className="m-2">

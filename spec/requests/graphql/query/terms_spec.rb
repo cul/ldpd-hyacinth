@@ -12,7 +12,7 @@ RSpec.describe 'Query for Terms', type: :request, solr: true do
         "uri": "http://id.worldcat.org/fast/1161301/",
         "altLabels": ["Uni"],
         "authority": "fast",
-        "termType": "external",
+        "termType": "EXTERNAL",
         "customFields": [
           { "field": "harry_potter_reference", "value": true }
         ]
@@ -26,7 +26,7 @@ RSpec.describe 'Query for Terms', type: :request, solr: true do
         "prefLabel": "Dragons",
         "altLabels": [],
         "authority": null,
-        "termType": "local",
+        "termType": "LOCAL",
         "customFields": [
           { "field": "harry_potter_reference", "value": true }
         ]
@@ -40,7 +40,7 @@ RSpec.describe 'Query for Terms', type: :request, solr: true do
         "altLabels": [],
         "prefLabel": "Yeti",
         "authority": null,
-        "termType": "temporary",
+        "termType": "TEMPORARY",
         "uri": "temp:559aae72a74e0c9b6ccfadfe09f4da14c76808acc44ccc02ed5b5fc88d38f316",
         "customFields": [
           { "field": "harry_potter_reference", "value": false }
