@@ -12,7 +12,7 @@ function DigitalObjectSummary(props) {
   return (
     <div className="my-3">
       {
-          state === 'deleted' && (
+          state === 'DELETED' && (
             <Alert variant="danger">
               This object has been deleted.
             </Alert>

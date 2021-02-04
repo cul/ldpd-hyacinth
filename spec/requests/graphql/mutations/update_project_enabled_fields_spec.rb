@@ -30,7 +30,7 @@ RSpec.describe Mutations::UpdateProjectEnabledFields, type: :request do
         project: {
           stringKey: project.string_key
         },
-        digitalObjectType: 'item',
+        digitalObjectType: 'ITEM',
         enabledDynamicFields: enabled_dynamic_fields
       }
     }
@@ -54,7 +54,7 @@ RSpec.describe Mutations::UpdateProjectEnabledFields, type: :request do
         let(:enabled_dynamic_fields) { [] }
         it 'enables no dynamic fields' do
           results = EnabledDynamicField.where(
-            project_id: project.id, digital_object_type: 'item'
+            project_id: project.id, digital_object_type: 'ITEM'
           ).to_a
           expect(results.length).to be 0
         end

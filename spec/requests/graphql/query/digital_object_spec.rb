@@ -27,7 +27,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request, solr: true do
           "numberOfChildren": 0,
           "createdAt": "#{authorized_object.created_at}",
           "createdBy": null,
-          "digitalObjectType": "item",
+          "digitalObjectType": "ITEM",
           "doi": "#{authorized_object.doi}",
           "descriptiveMetadata": {
             "title": [
@@ -72,7 +72,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request, solr: true do
           },
           "resources" : [],
           "serializationVersion": "1",
-          "state": "active",
+          "state": "ACTIVE",
           "updatedAt": "#{authorized_object.updated_at}",
           "updatedBy": null
         }

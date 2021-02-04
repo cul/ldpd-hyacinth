@@ -27,7 +27,7 @@ function RightsShow(props) {
     data: rightsFieldsData,
   } = useQuery(rightsFieldsQuery, {
     skip: !digitalObjectData,
-    variables: { metadataForm: digitalObjectData && `${digitalObjectData.digitalObject.digitalObjectType}_rights` },
+    variables: { metadataForm: digitalObjectData && `${digitalObjectData.digitalObject.digitalObjectType}_RIGHTS` },
   });
 
   if (digitalObjectLoading || rightsFieldsLoading) return (<></>);

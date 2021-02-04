@@ -34,7 +34,7 @@ RSpec.describe 'Retrieving Dynamic Field Categories', type: :request do
         FactoryBot.create(:dynamic_field_category)
         FactoryBot.create(:dynamic_field_category, display_label: 'Item Rights', metadata_form: :item_rights)
         FactoryBot.create(:dynamic_field_category, display_label: 'Asset Rights', metadata_form: :asset_rights)
-        graphql query, metadataForm: :item_rights
+        graphql query, metadataForm: "ITEM_RIGHTS"
       end
 
       it 'returns results that match the filter' do

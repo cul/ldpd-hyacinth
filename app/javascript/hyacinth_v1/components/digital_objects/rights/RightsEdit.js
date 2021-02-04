@@ -25,7 +25,7 @@ function RightsEdit(props) {
     data: rightsFieldsData,
   } = useQuery(rightsFieldsQuery, {
     skip: !digitalObjectData,
-    variables: { metadataForm: digitalObjectData && `${digitalObjectData.digitalObject.digitalObjectType}_rights` },
+    variables: { metadataForm: digitalObjectData && `${digitalObjectData.digitalObject.digitalObjectType}_RIGHTS` },
   });
 
   if (digitalObjectLoading || rightsFieldsLoading) return (<></>);
@@ -39,9 +39,9 @@ function RightsEdit(props) {
 
   const renderTabContent = () => {
     switch (digitalObjectType) {
-      case 'item':
+      case 'ITEM':
         return <ItemRightsForm digitalObject={digitalObject} fieldConfiguration={dynamicFieldGroups} />;
-      case 'asset':
+      case 'ASSET':
         return <AssetRightsForm digitalObject={digitalObject} fieldConfiguration={dynamicFieldGroups} />;
       default:
         return `Rights form view is not supported for digital object type: ${digitalObjectType}`;

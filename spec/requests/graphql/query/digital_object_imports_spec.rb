@@ -32,25 +32,25 @@ RSpec.describe 'Retrieving Digital Object Imports', type: :request do
                     "digitalObjectData": "{\\"descriptive_metadata\\":{\\"identifier\\":[{\\"value\\":\\"something_1\\"}]},\\"primary_project\\":{\\"string_key\\":\\"great_project_3\\"}}",
                     "importErrors": [],
                     "index": 19,
-                    "status": "in_progress"
+                    "status": "IN_PROGRESS"
                   },
                   {
                     "digitalObjectData": "{\\"descriptive_metadata\\":{\\"note\\":[{\\"value\\":\\"fantastic note\\"}]},\\"primary_project\\":{\\"string_key\\":\\"great_project_5\\"}}",
                     "importErrors": [],
                     "index": 25,
-                    "status": "pending"
+                    "status": "PENDING"
                   },
                   {
                     "digitalObjectData": "{\\"digital_object_type\\":\\"item\\",\\"descriptive_metadata\\":{\\"title\\":[{\\"sort_portion\\":\\"The\\",\\"non_sort_portion\\":\\"Cool Item\\"}],\\"abstract\\":[{\\"value\\":\\"some abstract\\"}]},\\"primary_project\\":{\\"string_key\\":\\"great_project\\"}}",
                     "importErrors": [],
                     "index": 34,
-                    "status": "pending"
+                    "status": "PENDING"
                   },
                   {
                      "digitalObjectData": "{\\"descriptive_metadata\\":{\\"date\\":[{\\"value\\":\\"2001\\"}]},\\"primary_project\\":{\\"string_key\\":\\"great_project_2\\"}}",
                     "importErrors": [],
                     "index": 89,
-                    "status": "success"
+                    "status": "SUCCESS"
                   },
                   {
                     "digitalObjectData": "{\\"descriptive_metadata\\":{\\"location\\":[{\\"value\\":\\"some place\\"}]},\\"primary_project\\":{\\"string_key\\":\\"great_project_4\\"}}",
@@ -58,7 +58,7 @@ RSpec.describe 'Retrieving Digital Object Imports', type: :request do
                       "location.value is not a valid field"
                     ],
                     "index": 99,
-                    "status": "failure"
+                    "status": "FAILURE"
                   }
                 ]
               }
@@ -85,7 +85,7 @@ RSpec.describe 'Retrieving Digital Object Imports', type: :request do
                     "digitalObjectData": "{\\"descriptive_metadata\\":{\\"identifier\\":[{\\"value\\":\\"something_1\\"}]},\\"primary_project\\":{\\"string_key\\":\\"great_project_3\\"}}",
                     "importErrors": [],
                     "index": 19,
-                    "status":  "in_progress"
+                    "status":  "IN_PROGRESS"
                   }
                 ]
               }
@@ -94,7 +94,7 @@ RSpec.describe 'Retrieving Digital Object Imports', type: :request do
         )
       end
 
-      before { graphql query, id: batch_import.id, status: 'in_progress' }
+      before { graphql query, id: batch_import.id, status: 'IN_PROGRESS' }
 
       it 'returns expected response' do
         expect(response.body).to be_json_eql(expected_response).at_path('data')

@@ -2,6 +2,6 @@
 
 class Enums::DigitalObjectStateEnum < Types::BaseEnum
   ::Hyacinth::DigitalObject::State::VALID_STATES.each do |state|
-    value state, state.camelize
+    value state.upcase.tr(' ', '_'), "Digital object state of #{state}", value: state
   end
 end

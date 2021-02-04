@@ -14,12 +14,12 @@ import GraphQLErrors from '../shared/GraphQLErrors';
 import ErrorList from '../shared/ErrorList';
 import SubmitButton from '../shared/forms/buttons/SubmitButton';
 
-const priorities = ['low', 'medium', 'high'];
+const priorities = ['LOW', 'MEDIUM', 'HIGH'];
 
 function BatchImportNew() {
   const uploadUrl = '/api/v1/uploads';
   const history = useHistory();
-  const [priority, setPriority] = useState('medium');
+  const [priority, setPriority] = useState('MEDIUM');
   const [file, setFile] = useState(null);
   const [uploadPercentage, setUploadPercentage] = useState(0);
   const [validationResult, setValidationResult] = useState(null);

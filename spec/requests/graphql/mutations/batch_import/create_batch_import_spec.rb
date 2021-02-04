@@ -25,7 +25,7 @@ RSpec.describe Mutations::BatchImport::CreateBatchImport, type: :request do
     let(:variables) do
       {
         input: {
-          priority: 'high',
+          priority: 'HIGH',
           signedBlobId: active_storage_blob.signed_id
         }
       }

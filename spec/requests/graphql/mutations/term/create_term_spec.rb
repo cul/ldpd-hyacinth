@@ -21,7 +21,7 @@ RSpec.describe Mutations::Term::CreateTerm, type: :request, solr: true do
             prefLabel: 'Minotaur (Greek mythological character)',
             uri: 'http://id.worldcat.org/fast/1023481',
             authority: 'fast',
-            termType: 'external',
+            termType: 'EXTERNAL',
             customFields: [
               { field: "classification", value: "Human" }
             ]
@@ -35,7 +35,7 @@ RSpec.describe Mutations::Term::CreateTerm, type: :request, solr: true do
               "altLabels": [],
               "uri": "http://id.worldcat.org/fast/1023481",
               "authority": "fast",
-              "termType": "external",
+              "termType": "EXTERNAL",
               "customFields": [
                 { "field": "classification", "value": "Human" },
                 { "field": "harry_potter_reference", "value": null}
@@ -63,7 +63,7 @@ RSpec.describe Mutations::Term::CreateTerm, type: :request, solr: true do
             vocabularyStringKey: vocabulary.string_key,
             prefLabel: 'Hippogriff',
             altLabels: ['Hippogryph'],
-            termType: 'local',
+            termType: 'LOCAL',
             customFields: [
               { field: 'classification', value: 'Eagle' }
             ]
@@ -75,7 +75,7 @@ RSpec.describe Mutations::Term::CreateTerm, type: :request, solr: true do
             "term": {
               "prefLabel": "Hippogriff",
               "altLabels": ["Hippogryph"],
-              "termType": "local",
+              "termType": "LOCAL",
               "authority": null,
               "customFields": [
                 { "field": "classification", "value": "Eagle" },
@@ -104,7 +104,7 @@ RSpec.describe Mutations::Term::CreateTerm, type: :request, solr: true do
           input: {
             vocabularyStringKey: vocabulary.string_key,
             prefLabel: 'Hippogriff',
-            termType: 'temporary'
+            termType: 'TEMPORARY'
           }
         }
       end
@@ -115,7 +115,7 @@ RSpec.describe Mutations::Term::CreateTerm, type: :request, solr: true do
               "prefLabel": "Hippogriff",
               "altLabels": [],
               "authority": null,
-              "termType": "temporary",
+              "termType": "TEMPORARY",
               "customFields": [
                 { "field": "classification", "value": null },
                 { "field": "harry_potter_reference", "value": null }
@@ -144,7 +144,7 @@ RSpec.describe Mutations::Term::CreateTerm, type: :request, solr: true do
             vocabularyStringKey: vocabulary.string_key,
             prefLabel: 'Minotaur (Greek mythological character)',
             authority: 'fast',
-            termType: 'external',
+            termType: 'EXTERNAL',
             customFields: [
               { field: 'harry_potter_reference', value: false }
             ]
@@ -169,7 +169,7 @@ RSpec.describe Mutations::Term::CreateTerm, type: :request, solr: true do
             prefLabel: 'Unicorn',
             uri: 'http://id.worldcat.org/fast/1161301/',
             authority: 'fast',
-            termType: 'external'
+            termType: 'EXTERNAL'
           }
         }
       end
@@ -192,7 +192,7 @@ RSpec.describe Mutations::Term::CreateTerm, type: :request, solr: true do
           input: {
             vocabularyStringKey: vocabulary.string_key,
             prefLabel: 'Yeti',
-            termType: 'temporary'
+            termType: 'TEMPORARY'
           }
         }
       end
@@ -214,7 +214,7 @@ RSpec.describe Mutations::Term::CreateTerm, type: :request, solr: true do
           input: {
             vocabularyStringKey: vocabulary.string_key,
             prefLabel: 'Hippogriff',
-            termType: 'temporary'
+            termType: 'TEMPORARY'
           }
         }
       end

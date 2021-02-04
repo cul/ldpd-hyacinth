@@ -2,6 +2,10 @@
 
 class Enums::FacetValues::OrderFieldsEnum < Types::BaseEnum
   graphql_name("FacetOrderFieldsEnum")
-  value 'COUNT', 'sorting by relevance score', value: 'count'
-  value 'INDEX', 'sorting by value alphabetically', value: 'index'
+  {
+    'count' => 'sorting by relevance score',
+    'index' => 'sorting by value alphabetically'
+  }.each do |val, description|
+    value val.upcase.tr(' ', '_'), description, value: val
+  end
 end

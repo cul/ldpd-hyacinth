@@ -65,6 +65,7 @@ function MetadataForm(props) {
 
   const history = useHistory();
 
+
   const onChange = (fieldName, fieldVal) => {
     setDescriptiveMetadata(produce(descriptiveMetadata, (draft) => {
       draft[fieldName] = fieldVal;
@@ -145,7 +146,7 @@ function MetadataForm(props) {
     }
   }).filter(c => c !== null);
 
-  const variables = { project: { stringKey: primaryProject.stringKey }, digitalObjectType };
+  const variables = { project: { stringKey: primaryProject.stringKey }, digitalObjectType: digitalObjectType };
   const {
     loading: enabledFieldsLoading,
     error: enabledFieldsError,

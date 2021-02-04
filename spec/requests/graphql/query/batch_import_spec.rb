@@ -15,8 +15,8 @@ RSpec.describe 'Retrieving Batch Import', type: :request do
         %(
           {
             "fileLocation": "managed-disk://path/to/file",
-            "priority": "high",
-            "status": "pending",
+            "priority": "HIGH",
+            "status": "PENDING",
             "numberOfPendingImports": 1,
             "numberOfInProgressImports": 0,
             "numberOfSuccessImports": 0,
