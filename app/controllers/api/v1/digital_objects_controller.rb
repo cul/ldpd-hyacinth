@@ -87,16 +87,6 @@ module Api
         end
       end
 
-      # DELETE /digital_objects/1
-      # DELETE /digital_objects/1.json
-      def destroy
-        @digital_object.projects.each do |project|
-          authorize! :delete_objects, project
-        end
-        @digital_object.destroy
-        show
-      end
-
       def load_resource
         @digital_object ||= DigitalObject::Base.find(params[:id])
       end
