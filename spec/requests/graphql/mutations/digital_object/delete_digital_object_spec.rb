@@ -19,7 +19,7 @@ RSpec.describe Mutations::DigitalObject::DeleteDigitalObject, type: :request do
       end
 
       it 'changes object state to deleted' do
-        expect(response.body).to be_json_eql('"deleted"').at_path('data/deleteDigitalObject/digitalObject/state')
+        expect(response.body).to be_json_eql('"DELETED"').at_path('data/deleteDigitalObject/digitalObject/state')
       end
     end
 
