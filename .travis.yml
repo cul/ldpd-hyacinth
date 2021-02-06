@@ -1,5 +1,5 @@
+dist: bionic
 language: ruby
-sudo: false
 cache:
   bundler: true
   npm: true
