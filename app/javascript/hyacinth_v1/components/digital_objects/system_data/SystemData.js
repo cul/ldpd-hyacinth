@@ -1,20 +1,27 @@
 import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import PropTypes from 'prop-types';
 
 import GraphQLErrors from '../../shared/GraphQLErrors';
 import TabHeading from '../../shared/tabs/TabHeading';
 import DigitalObjectInterface from '../DigitalObjectInterface';
 import DeleteButton from '../../shared/forms/buttons/DeleteButton';
-import { getSystemDataDigitalObjectQuery } from '../../../graphql/digitalObjects';
-import { digitalObject as digitalObjectApi } from '../../../utils/hyacinthApi';
+import PurgeButton from '../../shared/forms/buttons/PurgeButton';
+import {
+  getSystemDataDigitalObjectQuery,
+  deleteDigitalObjectMutation,
+  purgeDigitalObjectMutation,
+} from '../../../graphql/digitalObjects';
 import { digitalObjectAbility } from '../../../utils/ability';
 
 function SystemData(props) {
   const { id } = props;
   const history = useHistory();
+  const [deleteDigitalObject, { error: deleteError }] = useMutation(deleteDigitalObjectMutation);
+  const [purgeDigitalObject, { error: purgeError }] = useMutation(purgeDigitalObjectMutation);
+
 
   const {
     loading: digitalObjectLoading,
@@ -29,10 +36,23 @@ function SystemData(props) {
   const { digitalObject } = digitalObjectData;
 
   const canDeleteObject = digitalObjectAbility.can('delete_objects', { primaryProject: digitalObject.primaryProject, otherProjects: digitalObject.otherProjects });
+  const canPurgeObject = digitalObjectAbility.can('purge_objects', { primaryProject: digitalObject.primaryProject, otherProjects: digitalObject.otherProjects });
+
 
   const onDelete = (e) => {
     e.preventDefault();
-    digitalObjectApi.delete(id).then(() => history.push('/digital_objects'));
+
+    const variables = { input: { id: digitalObject.id } };
+
+    deleteDigitalObject({ variables }).then(() => history.push('/digital_objects'));
+  };
+
+  const onPurge = (e) => {
+    e.preventDefault();
+
+    const variables = { input: { id: digitalObject.id } };
+
+    purgeDigitalObject({ variables }).then(() => history.push('/digital_objects'));
   };
 
   const renderDeleteSection = () => {
@@ -45,7 +65,19 @@ function SystemData(props) {
         <DeleteButton formType="edit" onClick={onDelete} />
       </>
     );
-  }
+  };
+
+  const renderPurgeSection = () => {
+    if (!canPurgeObject) return '';
+
+    return (
+      <>
+        <hr />
+        <h4>Purge Digital Object</h4>
+        <PurgeButton formType="edit" onClick={onPurge} />
+      </>
+    );
+  };
 
   const {
     state, createdBy, createdAt, updatedBy, updatedAt, firstPublishedAt,
@@ -55,6 +87,10 @@ function SystemData(props) {
   return (
     <DigitalObjectInterface digitalObject={digitalObject}>
       <TabHeading>System Data</TabHeading>
+
+      <GraphQLErrors errors={deleteError || purgeError} />
+
+
       <Row as="dl">
         <Col as="dt" lg={2} sm={4}>Created By</Col>
         <Col as="dd" lg={10} sm={8}>{createdBy ? createdBy.fullName : '-- Not Assigned --'}</Col>
@@ -77,6 +113,7 @@ function SystemData(props) {
       <h4>Other Projects</h4>
       <p>{otherProjects.length ? otherProjects.map(p => p.displayLabel).join(', ') : 'None'}</p>
       { state === 'active' && renderDeleteSection() }
+      { renderPurgeSection() }
     </DigitalObjectInterface>
   );
 }
