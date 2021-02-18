@@ -25,8 +25,11 @@ class Mutations::UpdateUser < Mutations::BaseMutation
 
     attributes[:permissions_attributes] = permissions_attributes(user, permissions) if ability.can?(:manage, :all) && !permissions.nil?
 
-    # user_managers can only update is_active if the use is a non-admin
+    # user_managers can only update is_active if the user is a non-admin
     attributes.delete(:is_active) unless ability.can?(:manage, user.admin? ? :all : user)
+
+    # users cannot update their own email, only user_managers can
+    attributes.delete(:email) unless ability.can?(:manage, User)
 
     success = update(user, attributes)
 
