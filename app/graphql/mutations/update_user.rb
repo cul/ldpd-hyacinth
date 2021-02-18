@@ -21,15 +21,9 @@ class Mutations::UpdateUser < Mutations::BaseMutation
 
     permissions = attributes.delete(:permissions)
 
-    attributes.delete(:is_admin) unless ability.can?(:manage, :all)
+    attributes = prune_restricted_values(user, attributes)
 
     attributes[:permissions_attributes] = permissions_attributes(user, permissions) if ability.can?(:manage, :all) && !permissions.nil?
-
-    # user_managers can only update is_active if the user is a non-admin
-    attributes.delete(:is_active) unless ability.can?(:manage, user.admin? ? :all : user)
-
-    # users cannot update their own email, only user_managers can
-    attributes.delete(:email) unless ability.can?(:manage, User)
 
     success = update(user, attributes)
 
@@ -48,6 +42,15 @@ class Mutations::UpdateUser < Mutations::BaseMutation
 
     def changing_password?(attributes)
       [:current_password, :password, :password_confirmation].any? { |k| attributes.include?(k) && attributes[k].present? }
+    end
+
+    def prune_restricted_values(user, attributes)
+      attributes.delete(:is_admin) unless ability.can?(:manage, :all)
+      # user_managers can only update is_active if the user is a non-admin
+      attributes.delete(:is_active) unless ability.can?(:manage, user.admin? ? :all : user)
+      # users cannot update their own email, only user_managers can
+      attributes.delete(:email) unless ability.can?(:manage, User)
+      attributes
     end
 
     def permissions_attributes(user, permissions)
