@@ -45,6 +45,7 @@ class Mutations::UpdateUser < Mutations::BaseMutation
     end
 
     def prune_restricted_values(user, attributes)
+      # only administrators can make other users into administrators
       attributes.delete(:is_admin) unless ability.can?(:manage, :all)
       # user_managers can only update is_active if the user is a non-admin
       attributes.delete(:is_active) unless ability.can?(:manage, user.admin? ? :all : user)
