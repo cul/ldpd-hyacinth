@@ -44,13 +44,7 @@ function UserEdit() {
     return activatable;
   };
 
-  const canEditEmail = () => {
-    let editEmail = ability.can('manage', 'all');
-    if (!editEmail) {
-      editEmail = (ability.can('manage', 'User') && !isAdmin);
-    }
-    return editEmail;
-  };
+  const canEditEmail = () => ability.can('manage', 'all') || (ability.can('manage', 'User') && !isAdmin);
 
   const gqlResponse = useQuery(
     getUserQuery,
