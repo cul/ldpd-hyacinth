@@ -99,6 +99,7 @@ module Hyacinth::Ezid
         if @last_response_from_server.http_status_code == '200'
           true
         else
+          Hyacinth::Utils::Logger.logger.error("modify_identifier: #{response.code}\n#{make_anvl(metadata_hash)}\n#{response.body}")
           false
         end
       rescue Net::ReadTimeout, SocketError
