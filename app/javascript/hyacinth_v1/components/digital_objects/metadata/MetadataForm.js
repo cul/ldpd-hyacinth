@@ -57,8 +57,8 @@ function MetadataForm(props) {
     id, primaryProject, digitalObjectType, descriptiveMetadata: initialDescriptiveMetadata,
   } = digitalObject;
   const [descriptiveMetadata, setDescriptiveMetadata] = useState({});
-  const [createDigitalObject, { errors: createErrors }] = useMutation(createDigitalObjectMutation);
-  const [updateDescriptiveMetadata, { errors: updateErrors }] = useMutation(
+  const [createDigitalObject, { error: createErrors }] = useMutation(createDigitalObjectMutation);
+  const [updateDescriptiveMetadata, { error: updateErrors }] = useMutation(
     updateDescriptiveMetadataMutation,
   );
   const [identifiers, setIdentifiers] = useState(digitalObject.identifiers);
