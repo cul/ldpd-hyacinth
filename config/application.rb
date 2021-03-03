@@ -25,5 +25,9 @@ module Hyacinth
     config.generators.system_tests = true
 
     config.middleware.use OliveBranch::Middleware
+
+    config.active_job.queue_adapter = :resque
+    config.active_job.queue_name_prefix = "hyacinth.#{Rails.env}"
+    config.active_job.queue_name_delimiter = '.'
   end
 end

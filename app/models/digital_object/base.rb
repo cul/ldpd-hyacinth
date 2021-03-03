@@ -33,7 +33,7 @@ module DigitalObject
     TITLE_NON_SORT_PORTION_DYNAMIC_FIELD_NAME = 'non_sort_portion'
 
     # Set up callbacks
-    define_model_callbacks :validation, :save, :destroy, :undestroy, :purge
+    define_model_callbacks :validation, :save, :commit, :destroy, :undestroy, :purge
     before_validation :clean_descriptive_metadata!, :clean_rights!
     before_save :create_and_update_terms
     after_save :index
@@ -122,6 +122,15 @@ module DigitalObject
 
     def can_have_rights?
       false
+    end
+
+    # TODO: When DigitalObject becomes an ActiveRecord object, move underlying file deletion into the
+    # (eventual) associated Resource model as a destroy callback.
+    def delete_resource(resource_name)
+      return unless (resource = self.resources[resource_name]).present?
+
+      Hyacinth::Config.resource_storage.delete(resource.location) if Hyacinth::Config.resource_storage.deletable?(resource.location)
+      self.resources[resource_name] = nil
     end
   end
 end

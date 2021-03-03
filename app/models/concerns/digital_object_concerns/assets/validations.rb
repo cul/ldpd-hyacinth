@@ -10,8 +10,8 @@ module DigitalObjectConcerns::Assets::Validations
   end
 
   def validate_master_resource
-    return if resources[self.primary_resource_name].present? || resource_imports[self.primary_resource_name].present?
-    errors.add("resources[#{primary_resource_name}]", "Missing primary resource: #{primary_resource_name}")
+    return if has_master_resource? || resource_imports[master_resource_name].present?
+    errors.add("resources[#{master_resource_name}]", "Missing master resource: #{master_resource_name}")
   end
 
   def validate_type

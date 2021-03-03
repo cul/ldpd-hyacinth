@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_09_171038) do
+ActiveRecord::Schema.define(version: 2021_01_11_131038) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -247,6 +247,18 @@ ActiveRecord::Schema.define(version: 2020_10_09_171038) do
     t.string "target_type", default: "production", null: false
     t.index ["project_id", "target_type"], name: "index_publish_targets_on_project_id_and_target_type", unique: true
     t.index ["project_id"], name: "index_publish_targets_on_project_id"
+  end
+
+  create_table "resource_requests", force: :cascade do |t|
+    t.string "digital_object_uid", null: false
+    t.integer "job_type", null: false
+    t.integer "status", default: 0, null: false
+    t.text "src_file_location", null: false
+    t.text "options"
+    t.text "processing_errors"
+    t.index ["digital_object_uid"], name: "index_resource_requests_on_digital_object_uid"
+    t.index ["job_type"], name: "index_resource_requests_on_job_type"
+    t.index ["status"], name: "index_resource_requests_on_status"
   end
 
   create_table "terms", force: :cascade do |t|

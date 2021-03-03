@@ -24,6 +24,8 @@ module Hyacinth
           raise ArgumentError, "Invalid option: #{opt_name}" unless FIELDS.include?(opt_name.to_sym)
           instance_variable_set("@#{opt_name}", opt_value)
         end
+
+        @location = ActiveStorage::Blob.find_signed(location.sub('blob://', '')) if @location.is_a?(String) && @location.start_with?('blob://')
       end
 
       def valid?

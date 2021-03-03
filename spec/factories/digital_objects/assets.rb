@@ -16,6 +16,12 @@ FactoryBot.define do
       instance
     end
 
+    trait :skip_resource_request_callbacks do
+      after(:build) do |digital_object|
+        digital_object.skip_resource_request_callbacks = true
+      end
+    end
+
     trait :with_descriptive_metadata do
       after(:build) do |digital_object|
         DynamicFieldsHelper.load_title_fields! # Load fields
@@ -38,8 +44,8 @@ FactoryBot.define do
         test_file_fixture_path = Rails.root.join('spec', 'fixtures', 'files', 'test.txt').to_s
 
         digital_object.resources['master'] = Hyacinth::DigitalObject::Resource.new(
-          location: 'managed-disk://' + test_file_fixture_path,
-          checksum: 'sha256:e1266b81a70083fa5e3bf456239a1160fc6ebc179cdd71e458a9dd4bc7cc21f6',
+          location: 'tracked-disk://' + test_file_fixture_path,
+          checksum: 'sha256:717f2c6ffbd649cd57ecc41ac6130c3b6210f1473303bcd9101a9014551bffb2',
           original_file_path: test_file_fixture_path,
           media_type: 'text/plain',
           file_size: File.size(test_file_fixture_path)
@@ -48,6 +54,62 @@ FactoryBot.define do
         # Need to manually set asset_type since it's normally set during a resource import
         # and we're manually creating the resource above.
         digital_object.asset_type = 'Text'
+      end
+    end
+
+    trait :with_service_resource do
+      after(:build) do |digital_object|
+        test_file_fixture_path = Rails.root.join('spec', 'fixtures', 'files', 'test.txt').to_s
+
+        digital_object.resources['service'] = Hyacinth::DigitalObject::Resource.new(
+          location: 'tracked-disk://' + test_file_fixture_path,
+          checksum: 'sha256:717f2c6ffbd649cd57ecc41ac6130c3b6210f1473303bcd9101a9014551bffb2',
+          original_file_path: test_file_fixture_path,
+          media_type: 'text/plain',
+          file_size: File.size(test_file_fixture_path)
+        )
+      end
+    end
+
+    trait :with_access_resource do
+      after(:build) do |digital_object|
+        test_file_fixture_path = Rails.root.join('spec', 'fixtures', 'files', 'test.pdf').to_s
+
+        digital_object.resources['access'] = Hyacinth::DigitalObject::Resource.new(
+          location: 'tracked-disk://' + test_file_fixture_path,
+          checksum: 'sha256:348c166ea8b30c780add29f2d42e961174f23c87b0851621de5019799347b063',
+          original_file_path: test_file_fixture_path,
+          media_type: 'text/plain',
+          file_size: File.size(test_file_fixture_path)
+        )
+      end
+    end
+
+    trait :with_poster_resource do
+      after(:build) do |digital_object|
+        test_file_fixture_path = Rails.root.join('spec', 'fixtures', 'files', 'test.png').to_s
+
+        digital_object.resources['poster'] = Hyacinth::DigitalObject::Resource.new(
+          location: 'tracked-disk://' + test_file_fixture_path,
+          checksum: 'sha256:401bc02419abb53a29eee7c4fa1050a9c4146a5b3723e5fcfc8088d624d20184',
+          original_file_path: test_file_fixture_path,
+          media_type: 'text/plain',
+          file_size: File.size(test_file_fixture_path)
+        )
+      end
+    end
+
+    trait :with_fulltext_resource do
+      after(:build) do |digital_object|
+        test_file_fixture_path = Rails.root.join('spec', 'fixtures', 'files', 'test.txt').to_s
+
+        digital_object.resources['fulltext'] = Hyacinth::DigitalObject::Resource.new(
+          location: 'tracked-disk://' + test_file_fixture_path,
+          checksum: 'sha256:717f2c6ffbd649cd57ecc41ac6130c3b6210f1473303bcd9101a9014551bffb2',
+          original_file_path: test_file_fixture_path,
+          media_type: 'text/plain',
+          file_size: File.size(test_file_fixture_path)
+        )
       end
     end
   end

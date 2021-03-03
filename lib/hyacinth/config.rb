@@ -14,6 +14,10 @@ module Hyacinth
       )
     end
 
+    def derivativo
+      @derivativo ||= Derivativo::Client.new(HYACINTH[:derivativo])
+    end
+
     def self.metadata_storage
       @metadata_storage ||= Hyacinth::Storage::MetadataStorage.new(HYACINTH[:metadata_storage])
     end

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useQuery } from '@apollo/react-hooks';
-import { Card } from 'react-bootstrap';
+import { useMutation, useQuery } from '@apollo/react-hooks';
+import { Button, Card } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import DigitalObjectInterface from '../DigitalObjectInterface';
@@ -9,13 +9,17 @@ import TabHeading from '../../shared/tabs/TabHeading';
 import { getAssetDataDigitalObjectQuery } from '../../../graphql/digitalObjects';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 
+import { deleteResourceMutation } from '../../../graphql/digitalObjects';
+
 function AssetData(props) {
   const { id } = props;
+  const [deleteResource] = useMutation(deleteResourceMutation);
 
   const {
     loading: digitalObjectLoading,
     error: digitalObjectError,
     data: digitalObjectData,
+    refetch: digitalObjectRefetch,
   } = useQuery(getAssetDataDigitalObjectQuery, {
     variables: { id },
   });
@@ -23,6 +27,23 @@ function AssetData(props) {
   if (digitalObjectLoading) return (<></>);
   if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
   const { digitalObject } = digitalObjectData;
+
+  const onDeleteResource = (digitalObjectId, resourceName) => {
+    // eslint-disable-next-line no-alert
+    if (window.confirm(`Are you sure you want to delete the ${resourceName} resource? This cannot be undone.`)) {
+      deleteResource(
+        {
+          variables: {
+            input: {
+              id: digitalObjectId,
+              resourceName,
+            },
+          },
+          update: digitalObjectRefetch,
+        },
+      );
+    }
+  };
 
   const renderResources = () => {
     return digitalObject.resources.map((resourceWrapper) => {
@@ -63,6 +84,9 @@ function AssetData(props) {
 
                   <dt className="col-lg-3">File Size</dt>
                   <dd className="col-lg-9">{resource.fileSize || 'unavailable'}</dd>
+
+                  <dt className="col-lg-3">Delete Resource</dt>
+                  <dd className="col-lg-9"><Button variant="danger" size="sm" onClick={() => { onDeleteResource(digitalObject.id, resourceId); }}>Delete</Button></dd>
                 </dl>
               )
               : 'None'
@@ -79,7 +103,9 @@ function AssetData(props) {
         Asset Data
       </TabHeading>
       <h5>Asset Type</h5>
-      {digitalObject.assetType}
+      <p>{digitalObject.assetType}</p>
+      <h5>Featured Thumbnail Region</h5>
+      <p>{digitalObject.featuredThumbnailRegion || 'None'}</p>
       <h5 className="mt-3">Resources</h5>
       { renderResources() }
     </DigitalObjectInterface>

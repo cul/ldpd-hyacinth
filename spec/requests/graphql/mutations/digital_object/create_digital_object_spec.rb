@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Create Digital Object', type: :request, solr: true do
+RSpec.describe Mutations::DigitalObject::CreateDigitalObject, type: :request, solr: true do
   let(:project) { FactoryBot.create(:project) }
 
   let(:field_definitions) do
