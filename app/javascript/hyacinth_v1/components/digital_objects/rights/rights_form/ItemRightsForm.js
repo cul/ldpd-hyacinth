@@ -27,8 +27,9 @@ import { useEnabled, useHash } from './rightsHooks';
 import FieldGroupArray from './fields/FieldGroupArray';
 
 function ItemRightsForm(props) {
-  const { fieldConfiguration, digitalObject: { id, rights: initialRights, descriptiveMetadata } } = props;
-
+  const { fieldConfiguration, digitalObject: {
+    id, rights: initialRights, descriptiveMetadata, optimisticLockToken }
+  } = props;
   const history = useHistory();
 
   const defaultItemRights = defaultFieldValues(fieldConfiguration);
@@ -56,7 +57,7 @@ function ItemRightsForm(props) {
 
   const onSubmitHandler = () => {
     const cleanRights = removeEmptyKeys(removeTypename(rights));
-    const variables = { input: { id, rights: cleanRights } };
+    const variables = { input: { id, rights: cleanRights, optimisticLockToken } };
     return updateRights({ variables }).then(res => history.push(`/digital_objects/${res.data.updateRights.digitalObject.id}/rights`));
   };
 
