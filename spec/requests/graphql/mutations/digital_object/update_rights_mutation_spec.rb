@@ -10,7 +10,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
   let(:authorized_asset) { FactoryBot.create(:asset, :with_master_resource, parent: authorized_item) }
 
   include_examples 'requires user to have correct permissions for graphql request' do
-    let(:variables) { { input: { id: authorized_item.uid, rights: {} } } }
+    let(:variables) { { input: { id: authorized_item.uid, rights: {}, optimisticLockToken: authorized_item.optimistic_lock_token } } }
     let(:request) { graphql query, variables }
   end
 
@@ -129,7 +129,8 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
                 other_underlying_rights: [{ value: "VARA rights" }],
                 other: "no other"
               }]
-            }
+            },
+            optimisticLockToken: authorized_item.optimistic_lock_token
           }
         }
       end
@@ -190,7 +191,8 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
                 ],
                 note: "restriction note"
               }]
-            }
+            },
+            optimisticLockToken: authorized_asset.optimistic_lock_token
           }
         }
       end

@@ -38,7 +38,7 @@ RSpec.describe 'Updating Item Descriptive Metadata', type: :request, solr: true 
   end
 
   include_examples 'requires user to have correct permissions for graphql request' do
-    let(:variables) { { input: { id: authorized_item.uid, descriptiveMetadata: {}, identifiers: [] } } }
+    let(:variables) { { input: { id: authorized_item.uid, descriptiveMetadata: {}, identifiers: [], optimisticLockToken: authorized_item.optimistic_lock_token } } }
     let(:request) { graphql query, variables }
   end
 
@@ -55,7 +55,8 @@ RSpec.describe 'Updating Item Descriptive Metadata', type: :request, solr: true 
                 sort_portion: "United States"
               }]
             },
-            identifiers: ['US']
+            identifiers: ['US'],
+            optimisticLockToken: authorized_item.optimistic_lock_token
           }
         }
       end
