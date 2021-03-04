@@ -210,3 +210,23 @@ export const updateRightsMutation = gql`
     }
   }
 `;
+
+export const deleteDigitalObjectMutation = gql`
+  mutation DeleteDigitalObject($input: DeleteDigitalObjectInput!) {
+    deleteDigitalObject(input: $input) {
+      digitalObject {
+        id
+      }
+    }
+  }
+`;
+
+export const purgeDigitalObjectMutation = gql`
+  mutation PurgeDigitalObject($input: PurgeDigitalObjectInput!) {
+    purgeDigitalObject(input: $input) {
+      digitalObject {
+        id
+      }
+    }
+  }
+`;

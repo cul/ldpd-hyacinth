@@ -51,8 +51,8 @@ RSpec.describe Mutations::UpdateUser, type: :request do
         expect(user.last_name).to eql 'Doe'
       end
 
-      it 'can update email' do
-        expect(user.email).to eql 'john.doe@example.com'
+      it 'cannot update email' do
+        expect(user.email).to eql 'jane-doe@example.com'
       end
     end
 

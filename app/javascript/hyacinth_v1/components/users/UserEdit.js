@@ -44,6 +44,8 @@ function UserEdit() {
     return activatable;
   };
 
+  const canEditEmail = () => ability.can('manage', 'all') || (ability.can('manage', 'User') && !isAdmin);
+
   const gqlResponse = useQuery(
     getUserQuery,
     {
@@ -89,8 +91,12 @@ function UserEdit() {
       },
     };
     if (ability.can('manage', 'User')) {
-      if (!isAdmin) userData.input.isActive = isActive;
+      if (!isAdmin) {
+        userData.input.isActive = isActive;
+        userData.input.email = email;
+      }
     }
+
     if (ability.can('manage', 'all')) {
       userData.input.permissions = permissions;
       userData.input.isAdmin = isAdmin;
@@ -142,7 +148,13 @@ function UserEdit() {
         <Form.Row>
           <Form.Group as={Col}>
             <Form.Label>Email</Form.Label>
-            <Form.Control type="email" name="email" value={email} onChange={e => setEmail(e.target.value)} />
+            <Form.Control
+              type="email"
+              name="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              disabled={(!canEditEmail())}
+            />
             <Form.Text className="text-muted">
               For Columbia sign-in, please use Columbia email: uni@columbia.edu
             </Form.Text>
