@@ -55,6 +55,7 @@ function MetadataForm(props) {
   const { digitalObject, formType } = props;
   const {
     id, primaryProject, digitalObjectType, descriptiveMetadata: initialDescriptiveMetadata,
+    optimisticLockToken,
   } = digitalObject;
   const [descriptiveMetadata, setDescriptiveMetadata] = useState({});
   const [createDigitalObject, { error: createErrors }] = useMutation(createDigitalObjectMutation);
@@ -83,6 +84,7 @@ function MetadataForm(props) {
         id,
         descriptiveMetadata,
         identifiers,
+        optimisticLockToken,
       },
     };
     let action;
