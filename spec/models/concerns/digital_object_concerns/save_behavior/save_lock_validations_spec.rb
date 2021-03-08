@@ -10,7 +10,7 @@ RSpec.describe DigitalObjectConcerns::SaveBehavior::SaveLockValidations do
     end
     it 'fails with the expected error' do
       expect(item.save).to eq(false)
-      expect(item.errors.include?(:stale_data)).to eq(true)
+      expect(item.errors.include?(:optimistic_lock_token)).to eq(true)
     end
   end
 end
