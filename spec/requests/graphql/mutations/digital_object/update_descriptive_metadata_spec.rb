@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Updating Item Descriptive Metadata', type: :request, solr: true do
+RSpec.describe Mutations::DigitalObject::UpdateDescriptiveMetadata, type: :request, solr: true do
   let(:project) { FactoryBot.create(:project) }
   let(:authorized_item) { FactoryBot.create(:item, primary_project: project) }
 
