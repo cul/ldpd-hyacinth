@@ -46,6 +46,10 @@ class HyacinthSchema < GraphQL::Schema
     raise GraphQL::ExecutionError, exception.message
   end
 
+  rescue_from Hyacinth::Exceptions::HyacinthError do |exception|
+    raise GraphQL::ExecutionError, exception.message
+  end
+
   mutation(Types::MutationType)
   query(Types::QueryType)
 end

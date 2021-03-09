@@ -206,6 +206,7 @@ Performance/RegexpMatch:
 RSpec/AnyInstance:
   Exclude:
     - 'spec/jobs/batch_import_start_job_spec.rb'
+    - 'spec/graphql/hyacinth_schema_spec.rb'
 
 # Offense count: 1
 RSpec/DescribeClass:
