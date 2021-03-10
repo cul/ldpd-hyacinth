@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe HyacinthSchema, solr: true do
-  subject(:graphql_request) { HyacinthSchema.execute(query, context: context, variables: variables) }
+  let(:graphql_request) { HyacinthSchema.execute(query, context: context, variables: variables) }
   let(:context) { { current_user: FactoryBot.create(:user), ability: ability } }
   let(:ability) do
     abil = double
