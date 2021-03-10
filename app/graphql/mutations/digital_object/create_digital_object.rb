@@ -8,8 +8,8 @@ module Mutations
       argument :descriptive_metadata, GraphQL::Types::JSON, required: true
       argument :identifiers, [String], required: true
 
-      field :digital_object, Types::DigitalObjectInterface, null: false
-      field :errors, [Types::Errors::FieldedInput], null: false
+      field :digital_object, Types::DigitalObjectInterface, null: true
+      field :user_errors, [Types::Errors::FieldedInput], null: false
 
       def resolve(project:, digital_object_type:, descriptive_metadata:, identifiers:)
         project = Project.find_by!(project.to_h)
@@ -21,9 +21,9 @@ module Mutations
           'identifiers' => identifiers, 'descriptive_metadata' => descriptive_metadata
         )
         if digital_object.save(user: context[:current_user])
-          { digital_object: digital_object, errors: [] }
+          { digital_object: digital_object, user_errors: [] }
         else
-          { digital_object: { id: 'new' }, errors: digital_object.errors.full_messages.map { |msg| { message: msg, path: [] } } }
+          { digital_object: nil, user_errors: digital_object.errors.map { |key, message| { path: [key], message: message } } }
         end
       end
     end

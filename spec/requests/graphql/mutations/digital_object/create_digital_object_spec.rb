@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe 'Create Digital Object', type: :request, solr: true do
+RSpec.describe Mutations::DigitalObject::CreateDigitalObject, type: :request, solr: true do
   let(:project) { FactoryBot.create(:project) }
 
   let(:field_definitions) do
@@ -91,6 +91,31 @@ RSpec.describe 'Create Digital Object', type: :request, solr: true do
         expect(digital_object_id).not_to be_nil
         expect(DigitalObject::Base.find(digital_object_id).identifiers.to_a).to include(*expected_identifiers)
       end
+
+      context "when user errors are present" do
+        let(:variables) do
+          {
+            input: {
+              digitalObjectType: 'ITEM',
+              project: {
+                stringKey: project.string_key
+              },
+              descriptiveMetadata: {
+                this_field_group_does_not_exist: [{ this_field_also_does_not_exist: "Invalid" }]
+              },
+              identifiers: ['US']
+            }
+          }
+        end
+
+        it "returns a null digital object and an error of the expected format at the expected path" do
+          expect(response.body).to be_json_eql(%(null)).at_path('data/createDigitalObject/digitalObject')
+          expect(response.body).to be_json_eql(%(["descriptive_metadata.this_field_group_does_not_exist"])).at_path('data/createDigitalObject/userErrors/0/path')
+          expect(response.body).to be_json_eql(%(
+            "is not a valid field"
+          )).at_path('data/createDigitalObject/userErrors/0/message')
+        end
+      end
     end
   end
 
@@ -101,6 +126,10 @@ RSpec.describe 'Create Digital Object', type: :request, solr: true do
           digitalObject {
             id
             descriptiveMetadata
+          }
+          userErrors {
+            message
+            path
           }
         }
       }
