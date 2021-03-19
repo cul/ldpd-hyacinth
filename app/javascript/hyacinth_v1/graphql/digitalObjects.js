@@ -207,6 +207,10 @@ export const updateRightsMutation = gql`
       digitalObject {
         id
       }
+      userErrors {
+        message
+        path
+      }
     }
   }
 `;
