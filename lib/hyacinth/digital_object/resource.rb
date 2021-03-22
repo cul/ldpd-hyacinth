@@ -62,11 +62,15 @@ module Hyacinth
       end
 
       def pdf?
-        media_type == 'application/pdf' || original_filename.ends_with?('.pdf')
+        media_type == 'application/pdf' || original_filename.downcase.ends_with?('.pdf')
       end
 
       def text_or_office_document?
-        media_type.match?(/text|msword|ms-word|officedocument|powerpoint|excel|iwork/)
+        return if pdf? # our "text or office documents" category does not include PDFs
+
+        ['Dataset', 'Email', 'HTML', 'PageDescription', 'Presentation', 'SourceCode', 'Spreadsheet', 'StructuredText', 'Text', 'UnstructuredText'].include?(
+          BestType.pcdm_type.for_mime_type(media_type) || BestType.pcdm_type.for_file_name(original_filename)
+        )
       end
     end
   end
