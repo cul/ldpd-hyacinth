@@ -18,7 +18,7 @@ module Mutations
         digital_object.featured_thumbnail_region = featured_thumbnail_region
 
         if digital_object.save(user: context[:current_user])
-          { digital_object: digital_object, errors: [] }
+          { digital_object: digital_object, user_errors: [] }
         else
           {
             digital_object: digital_object,
