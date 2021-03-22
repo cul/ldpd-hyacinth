@@ -41,6 +41,12 @@ FactoryBot.define do
       end
     end
 
+    trait :resource_request_manager do
+      after(:create) do |user|
+        create(:permission, action: Permission::MANAGE_RESOURCE_REQUESTS, user: user)
+      end
+    end
+
     trait :deactivated do
       is_active { false }
     end

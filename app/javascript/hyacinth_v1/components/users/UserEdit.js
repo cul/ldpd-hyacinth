@@ -35,6 +35,7 @@ function UserEdit() {
   const [manageUsers, setManageUsers] = useState(false);
   const [readAllDigitalObjects, setReadAllDigitalObjects] = useState(false);
   const [manageAllDigitalObjects, setManageAllDigitalObjects] = useState(false);
+  const [manageResourceRequests, setManageResourceRequests] = useState(false);
 
   const canActivateUser = () => {
     let activatable = ability.can('manage', 'all');
@@ -60,6 +61,7 @@ function UserEdit() {
         setManageUsers(userData.user.permissions.includes('manage_users'));
         setReadAllDigitalObjects(userData.user.permissions.includes('read_all_digital_objects'));
         setManageAllDigitalObjects(userData.user.permissions.includes('manage_all_digital_objects'));
+        setManageResourceRequests(userData.user.permissions.includes('manage_resource_requests'));
       },
     },
   );
@@ -272,6 +274,15 @@ function UserEdit() {
                   onChange={v => setManageAllDigitalObjects(v)}
                   label="Manage All Digital Objects"
                   helpText="has ability to read/create/edit/delete all digital objects and view all projects"
+                />
+                <Checkbox
+                  md={6}
+                  sn={12}
+                  value={manageResourceRequests}
+                  disabled={!ability.can('manage', 'all')}
+                  onChange={v => setManageResourceRequests(v)}
+                  label="Manage Resource Requests"
+                  helpText="has ability to read/create/edit/delete all resource requests"
                 />
               </InputGroup>
             </>

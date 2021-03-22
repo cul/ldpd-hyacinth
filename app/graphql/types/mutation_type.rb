@@ -7,8 +7,15 @@ module Types
     field :delete_digital_object, mutation: Mutations::DigitalObject::DeleteDigitalObject
     field :purge_digital_object, mutation: Mutations::DigitalObject::PurgeDigitalObject
 
+    field :create_resource, mutation: Mutations::DigitalObject::Resource::CreateResource
+    field :delete_resource, mutation: Mutations::DigitalObject::Resource::DeleteResource
+
+    field :update_resource_request, mutation: Mutations::ResourceRequest::UpdateResourceRequest
+    field :delete_resource_request, mutation: Mutations::ResourceRequest::DeleteResourceRequest
+
     field :update_descriptive_metadata, mutation: Mutations::DigitalObject::UpdateDescriptiveMetadata
     field :update_rights, mutation: Mutations::DigitalObject::UpdateRights
+    field :update_featured_thumbnail_region, mutation: Mutations::DigitalObject::UpdateFeaturedThumbnailRegion
 
     field :create_user, mutation: Mutations::CreateUser
     field :update_user, mutation: Mutations::UpdateUser

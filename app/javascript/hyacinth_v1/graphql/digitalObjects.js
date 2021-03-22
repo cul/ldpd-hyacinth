@@ -37,6 +37,21 @@ const digitalObjectInterfaceFields = `
   }
 `;
 
+const digitalObjectResourcesFields = `
+  resources {
+    id
+    displayLabel
+    resource {
+      location
+      checksum
+      originalFilePath
+      originalFilename
+      mediaType
+      fileSize
+    }
+  }
+`;
+
 export const getSystemDataDigitalObjectQuery = gql`
   query SystemDataDigitalObject($id: ID!){
     digitalObject(id: $id) {
@@ -123,20 +138,10 @@ export const getAssetDataDigitalObjectQuery = gql`
   query AssetDataDigitalObject($id: ID!){
     digitalObject(id: $id) {
       ${digitalObjectInterfaceFields},
-      resources {
-        id
-        displayLabel
-        resource {
-          location
-          checksum
-          originalFilePath
-          originalFilename
-          mediaType
-          fileSize
-        }
-      },
+      ${digitalObjectResourcesFields},
       ... on Asset {
         assetType
+        featuredThumbnailRegion
       }
     }
   }
@@ -210,6 +215,29 @@ export const updateRightsMutation = gql`
     }
   }
 `;
+
+export const createResourceMutation = gql`
+  mutation CreateResource($input: CreateResourceInput!) {
+    createResource(input: $input) {
+      digitalObject {
+        id,
+        ${digitalObjectResourcesFields},
+      }
+    }
+  }
+`;
+
+export const deleteResourceMutation = gql`
+  mutation DeleteResource($input: DeleteResourceInput!) {
+    deleteResource(input: $input) {
+      digitalObject {
+        id,
+        ${digitalObjectResourcesFields},
+      }
+    }
+  }
+`;
+
 
 export const deleteDigitalObjectMutation = gql`
   mutation DeleteDigitalObject($input: DeleteDigitalObjectInput!) {

@@ -1,26 +1,30 @@
 # frozen_string_literal: true
 
 class Mutations::CreateAsset < Mutations::BaseMutation
-  argument :signed_blob_id, String, "Signed blob ID generated via `/api/v1/uploads`", required: true
   argument :parent_id, ID, required: true
+  argument  :file_location, String,
+            "ActiveStorage signed blob id URI (e.g. blob://abcdefg), file URI (file:///path/to/file), or other type of supported import location.",
+            required: true
 
   field :asset, Types::DigitalObject::AssetType, null: true
 
-  def resolve(signed_blob_id:, parent_id:)
+  def resolve(file_location:, parent_id:)
     parent = DigitalObject::Item.find(parent_id)
     ability.authorize! :create_objects, parent.primary_project
-    blob = ActiveStorage::Blob.find_signed(signed_blob_id)
+
+    # At this time, non-admins can only perform blob-based asset creation
+    raise GraphQL::ExecutionError, 'You are only authorized to create assets from ActiveStorage blob uploads.' unless file_location.start_with?('blob://') || ability.can?(:manage, :all)
+
     asset = initialize_child_asset(parent)
-    begin
-      asset.resource_imports[asset.primary_resource_name] = Hyacinth::DigitalObject::ResourceImport.new(
-        method: Hyacinth::DigitalObject::ResourceImport::COPY,
-        location: blob
-      )
-      asset.save!
-      { asset: asset }
-    ensure
-      blob&.purge
-    end
+    asset.resource_imports[asset.master_resource_name] = Hyacinth::DigitalObject::ResourceImport.new(
+      method: Hyacinth::DigitalObject::ResourceImport::COPY,
+      location: file_location
+    )
+    asset.save!
+    { asset: asset }
+  ensure
+    # If the file location was an ActiveStorage blob, make sure to delete it now that we're done with it.
+    ActiveStorage::Blob.find_signed(file_location.sub('blob://', ''))&.purge if file_location.start_with?('blob://')
   end
 
   def initialize_child_asset(parent)

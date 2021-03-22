@@ -1,5 +1,33 @@
+derivativo_default_job_options: &derivativo_default_job_options
+  access_for_image:
+    format: 'png'
+  access_for_video:
+    format: 'mp4'
+    #ffmpeg_input_args: '-threads 2'
+    ffmpeg_output_args: '-pix_fmt yuv420p -c:v libx264 -r 29.97 -crf 23 -vf scale=trunc(iw/2)*2:trunc(ih/2)*2 -c:a aac -b:a 128k -ar 48000 -ac 2 -af aresample=async=1:min_hard_comp=0.100000:first_pts=0 -c:s mov_text -map 0:v -map 0:a'
+  access_for_audio:
+    format: 'm4a'
+    #ffmpeg_input_args: '-threads 2'
+    ffmpeg_output_args: '-threads 2 -vn -c:a aac -b:a 128k -ar 48000 -ac 2 -af aresample=async=1:min_hard_comp=0.100000:first_pts=0'
+  access_for_pdf:
+    format: 'pdf'
+  access_for_text_or_office_document:
+    format: 'pdf'
+  poster_for_video:
+    format: 'png'
+    size: 1200
+  poster_for_pdf:
+    format: 'png'
+    size: 1200
+
 development:
   local_uri_prefix: localhost:3000 # prefix to use when minting local URIs
+  derivativo:
+    url: http://localhost:4000
+    api_key: 'changethis'
+    request_timeout: 120
+    default_job_options:
+      <<: *derivativo_default_job_options
   metadata_storage:
     adapters:
       - uri_protocol: 'managed-disk'
@@ -46,16 +74,26 @@ development:
 
 test:
   local_uri_prefix: https://example.com
+  derivativo:
+    url: http://localhost:4000
+    api_key: 'changethis'
+    request_timeout: 120
+    default_job_options:
+      <<: *derivativo_default_job_options
   metadata_storage:
     adapters:
       - uri_protocol: 'managed-disk'
         type: ManagedDisk
         default_path: <%= Rails.root.join('tmp', 'test', 'metadata') %>
+      - uri_protocol: 'memory'
+        type: Memory
   resource_storage:
     managed_storage_adapters:
       - uri_protocol: 'managed-disk'
         type: ManagedDisk
         default_path: <%= Rails.root.join('tmp', 'test', 'resources') %>
+      - uri_protocol: 'memory'
+        type: Memory
     tracked_storage_adapters:
       - uri_protocol: 'tracked-disk'
         type: TrackedDisk

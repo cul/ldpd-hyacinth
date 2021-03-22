@@ -1,7 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Badge, Card } from 'react-bootstrap';
-import { LinkContainer } from 'react-router-bootstrap';
 import { startCase } from 'lodash';
 /*
   Display for list of Digital Objects. Have a flag to optionally display
@@ -52,16 +52,15 @@ const DigitalObjectList = (props) => {
         digitalObjects.map((digitalObject, resultIndex) => (
           <Card key={digitalObject.id} className="mb-3">
             <Card.Header>
-              <LinkContainer
+              <Link
                 to={`/digital_objects/${digitalObject.id}`}
                 onClick={() => searchParams && storeSearchValues(
                   orderBy, totalCount, limit, offset,
                   pageNumber, searchParams.query, searchParams.filters, path, resultIndex,
-                )
-                }
+                )}
               >
-                <a>{digitalObject.title}</a>
-              </LinkContainer>
+                {digitalObject.title}
+              </Link>
             </Card.Header>
             <Card.Body>
               <ul className="list-unstyled small">

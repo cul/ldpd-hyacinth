@@ -3,18 +3,21 @@
 module DigitalObjectConcerns::Assets::Validations
   extend ActiveSupport::Concern
 
+  FEATURED_THUMBNAIL_REGION_PATTERN = /^\d+,\d+,(\d+),(\d+)$/.freeze
+
   included do
     validate :validate_master_resource
-    validate :validate_type
+    validate :validate_asset_type
     validate :validate_rights_updates
+    validate :validate_featured_thumbnail_region
   end
 
   def validate_master_resource
-    return if resources[self.primary_resource_name].present? || resource_imports[self.primary_resource_name].present?
-    errors.add("resources[#{primary_resource_name}]", "Missing primary resource: #{primary_resource_name}")
+    return if has_master_resource? || resource_imports[master_resource_name].present?
+    errors.add("resources[#{master_resource_name}]", "Missing master resource: #{master_resource_name}")
   end
 
-  def validate_type
+  def validate_asset_type
     if asset_type.blank?
       errors.add(:asset_type, "Missing asset type (probably because of missing master resource)")
       return
@@ -24,7 +27,20 @@ module DigitalObjectConcerns::Assets::Validations
   end
 
   def validate_rights_updates
-    return unless rights.keys.detect { |key| rights[key].present? && !'restriction_on_access'.eql?(key.to_s) }
-    errors.add(:rights, "Asset-level rights assessment not enabled in #{primary_project.display_label}") unless primary_project.has_asset_rights
+    return if primary_project.has_asset_rights # nothing to validate if assets rights are enabled for this project
+    return if rights.reject { |k, _v| k.to_s == 'restriction_on_access' }.blank? # restriction_on_access updates are always allowed even if other asset rights updates aren't
+    errors.add(:rights, "Asset-level rights assessment not enabled in #{primary_project.display_label}")
+  end
+
+  def validate_featured_thumbnail_region
+    return if featured_thumbnail_region.blank?
+    # ensure that region conforms to expected regex
+    match_data = featured_thumbnail_region.match(FEATURED_THUMBNAIL_REGION_PATTERN)
+    if match_data.nil?
+      errors.add(:featured_thumbnail_region, "Invalid featured thumbnail region format. Must be for comma-delimited numbers (e.g. '5,10,100,100').")
+      return
+    end
+    # ensure that region is a square
+    errors.add(:featured_thumbnail_region, "Invalid featured thumbnail region. Must be a square region.") unless match_data[1] == match_data[2]
   end
 end

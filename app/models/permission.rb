@@ -5,10 +5,12 @@ class Permission < ApplicationRecord
   MANAGE_USERS = 'manage_users'
   MANAGE_ALL_DIGITAL_OBJECTS = 'manage_all_digital_objects'
   READ_ALL_DIGITAL_OBJECTS = 'read_all_digital_objects'
+  MANAGE_RESOURCE_REQUESTS = 'manage_resource_requests'
 
   SYSTEM_WIDE_PERMISSIONS = [
     MANAGE_VOCABULARIES, MANAGE_USERS,
-    MANAGE_ALL_DIGITAL_OBJECTS, READ_ALL_DIGITAL_OBJECTS
+    MANAGE_ALL_DIGITAL_OBJECTS, READ_ALL_DIGITAL_OBJECTS,
+    MANAGE_RESOURCE_REQUESTS
   ].freeze
 
   PROJECT_ACTION_READ_OBJECTS = 'read_objects'

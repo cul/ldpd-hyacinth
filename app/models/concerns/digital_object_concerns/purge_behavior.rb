@@ -27,8 +27,7 @@ module DigitalObjectConcerns
       Hyacinth::Config.lock_adapter.with_lock(opts.fetch(:lock, true) ? self.uid : nil) do |_lock_object|
         # remove from metadata storage
         self.purge_metadata(@digital_object_record.metadata_location_uri)
-
-        self.purge_resources
+        self.resources.keys.map { |resource_name| self.delete_resource(resource_name) }
 
         # destroy digital object record
         self.digital_object_record.destroy!
@@ -36,16 +35,6 @@ module DigitalObjectConcerns
 
       return true if @errors.blank?
       raise Hyacinth::Exceptions::PurgeError, "DigitalObject may not have been fully purged. Errors: #{self.errors.full_messages}"
-    end
-
-    def purge_resources
-      self.resources.keys.map do |resource_name|
-        resource = self.resources[resource_name]
-        next if resource.blank? || !Hyacinth::Config.resource_storage.deletable?(resource.location)
-        Hyacinth::Config.resource_storage.delete(resource.location)
-        # Assign new nil value to the key
-        self.resources[resource_name] = nil
-      end
     end
 
     def purge_metadata(location_uri)

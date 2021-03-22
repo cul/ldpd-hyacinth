@@ -17,6 +17,9 @@ default: &default
   cache_manifest: false
 
   # Extract and emit a css file
+  # We want this so that we can put the CSS include in the <head> and the
+  # application script at the bottom of the <body> tag. Putting the CSS include
+  # in the <head> prevents a flash of unstyled content.
   extract_css: true
 
   static_assets_extensions:

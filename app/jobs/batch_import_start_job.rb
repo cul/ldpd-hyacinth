@@ -84,7 +84,7 @@ class BatchImportStartJob
         DigitalObjectImportProcessingJob.perform(doi.id)
       end
 
-      # Break out of the loop if the new number of DigitalObjectRecords to process is the same as
+      # Break out of the loop if the new number of DigitalObjectImports to process is the same as
       # the previous number to process.  Ideally they would both be equal to zero when this break
       # occurrs, but this check also stops infinite loops.
       break if number_to_process == (dois_to_process = pending_dois_ready_for_processing_query_proc.call)

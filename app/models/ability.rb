@@ -69,6 +69,8 @@ class Ability
         can :read, [Project, PublishTarget, FieldSet]
         can :manage, DigitalObject::Base
         can [:read_objects, :create_objects, :update_objects, :assess_rights, :delete_objects, :publish_objects], Project
+      when Permission::MANAGE_RESOURCE_REQUESTS
+        can :manage, ResourceRequest
       end
     end
   end
