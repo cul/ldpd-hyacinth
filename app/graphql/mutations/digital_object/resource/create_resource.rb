@@ -16,7 +16,7 @@ module Mutations
           ability.authorize! :update, digital_object
 
           # At this time, non-admins can only perform blob-based asset creation
-          raise GraphQL::ExecutionError, 'You are only authorized to create resources from ActiveStorage blob uploads.' if !file_location.start_with?('blob://') && ability.cannot?(:manage, :all)
+          raise GraphQL::ExecutionError, 'You are only authorized to create resources from ActiveStorage blob uploads.' unless file_location.start_with?('blob://') || ability.can?(:manage, :all)
 
           raise_error_if_invalid_resource!(digital_object, resource_name)
 
