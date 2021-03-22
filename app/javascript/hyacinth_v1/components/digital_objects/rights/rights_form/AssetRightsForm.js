@@ -18,11 +18,11 @@ function AssetRightsForm(props) {
     fieldConfiguration,
     digitalObject: {
       id,
+      optimisticLockToken,
       primaryProject: { hasAssetRights },
       rights: initialRights,
     },
   } = props;
-
   const history = useHistory();
 
   const defaultAssetRights = defaultFieldValues(fieldConfiguration);
@@ -33,7 +33,7 @@ function AssetRightsForm(props) {
 
   const onSubmitHandler = () => {
     const cleanRights = removeEmptyKeys(removeTypename(rights));
-    const variables = { input: { id, rights: cleanRights } };
+    const variables = { input: { id, rights: cleanRights, optimisticLockToken } };
 
     return updateRights({ variables }).then(res => history.push(`/digital_objects/${res.data.updateRights.digitalObject.id}/rights`));
   };

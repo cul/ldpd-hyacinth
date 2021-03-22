@@ -69,6 +69,7 @@ export const getMetadataDigitalObjectQuery = gql`
   query MetadataDigitalObject($id: ID!){
     digitalObject(id: $id) {
       ${digitalObjectInterfaceFields},
+      optimisticLockToken,
       descriptiveMetadata,
       identifiers
     }
@@ -80,7 +81,8 @@ export const getRightsDigitalObjectQuery = gql`
   query RightsDigitalObject($id: ID!){
     digitalObject(id: $id) {
       ${digitalObjectInterfaceFields},
-      descriptiveMetadata
+      optimisticLockToken,
+      descriptiveMetadata,
       rights
     }
   }

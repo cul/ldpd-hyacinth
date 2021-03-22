@@ -10,7 +10,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
   let(:authorized_asset) { FactoryBot.create(:asset, :with_master_resource, parent: authorized_item) }
 
   include_examples 'requires user to have correct permissions for graphql request' do
-    let(:variables) { { input: { id: authorized_item.uid, rights: {} } } }
+    let(:variables) { { input: { id: authorized_item.uid, rights: {}, optimisticLockToken: authorized_item.optimistic_lock_token } } }
     let(:request) { graphql query, variables }
   end
 
@@ -224,6 +224,74 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
         expect(DigitalObject::Base.find(authorized_asset.uid).rights).to include expected_rights
       end
     end
+
+    context "when user errors are present" do
+      let(:variables) do
+        {
+          input: {
+            id: authorized_asset.uid,
+            rights: {
+              this_field_group_does_not_exist: [{ this_field_also_does_not_exist: "Invalid" }]
+            },
+            optimisticLockToken: authorized_asset.optimistic_lock_token
+          }
+        }
+      end
+
+      before do
+        sign_in_project_contributor to: [:read_objects, :assess_rights], project: authorized_project
+        graphql query, variables
+      end
+
+      it "returns an error of the expected format at the expected path" do
+        expect(response.body).to be_json_eql(%(null)).at_path('data/updateRights/digitalObject')
+        expect(response.body).to be_json_eql(%(["rights.this_field_group_does_not_exist"])).at_path('data/updateRights/userErrors/0/path')
+        expect(response.body).to be_json_eql(%(
+          "is not a valid field"
+        )).at_path('data/updateRights/userErrors/0/message')
+      end
+    end
+
+    context "when optional optimistic lock token is provided" do
+      let(:variables) do
+        {
+          input: {
+            id: authorized_asset.uid,
+            rights: {
+              restriction_on_access: [{ note: "restriction note" }]
+            },
+            optimisticLockToken: authorized_asset.optimistic_lock_token
+          }
+        }
+      end
+
+      before { sign_in_project_contributor to: [:read_objects, :assess_rights], project: authorized_project }
+
+      context "when the token provided matches the db-stored value" do
+        before do
+          graphql query, variables
+        end
+        it "successfully updates the object" do
+          response_data = JSON.parse(response.body)
+          restriction_on_access_note = response_data['data']['updateRights']['digitalObject']['rights']['restriction_on_access'][0]['note']
+          expect(restriction_on_access_note).to eq('restriction note')
+        end
+      end
+
+      context "when the optimistic lock token doesn't match the expected value in the database" do
+        before do
+          DigitalObject::Base.find(authorized_asset.uid).save # change the optimistic lock token in the db
+          graphql query, variables
+        end
+        it "returns an error of the expected format at the expected path" do
+          expect(response.body).to be_json_eql(%(null)).at_path('data/updateRights/digitalObject')
+          expect(response.body).to be_json_eql(%(["optimistic_lock_token"])).at_path('data/updateRights/userErrors/0/path')
+          expect(response.body).to be_json_eql(%(
+            "This digital object has been updated by another process and your data is stale. Please reload and apply your changes again."
+          )).at_path('data/updateRights/userErrors/0/message')
+        end
+      end
+    end
   end
 
   def query
@@ -233,6 +301,10 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
           digitalObject {
             id
             rights
+          }
+          userErrors {
+            message
+            path
           }
         }
       }
