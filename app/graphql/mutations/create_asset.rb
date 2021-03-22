@@ -13,7 +13,7 @@ class Mutations::CreateAsset < Mutations::BaseMutation
     ability.authorize! :create_objects, parent.primary_project
 
     # At this time, non-admins can only perform blob-based asset creation
-    raise GraphQL::ExecutionError, 'You are only authorized to create assets from ActiveStorage blob uploads.' if !file_location.start_with?('blob://') && ability.cannot?(:manage, :all)
+    raise GraphQL::ExecutionError, 'You are only authorized to create assets from ActiveStorage blob uploads.' unless file_location.start_with?('blob://') || ability.can?(:manage, :all)
 
     asset = initialize_child_asset(parent)
     asset.resource_imports[asset.master_resource_name] = Hyacinth::DigitalObject::ResourceImport.new(
