@@ -197,6 +197,10 @@ export const updateDescriptiveMetadataMutation = gql`
       digitalObject {
         id
       }
+      userErrors {
+        message
+        path
+      }
     }
   }
 `;

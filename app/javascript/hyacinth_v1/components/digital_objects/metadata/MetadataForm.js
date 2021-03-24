@@ -8,6 +8,7 @@ import { useHistory } from 'react-router-dom';
 import FieldGroupArray from './FieldGroupArray';
 import FormButtons from '../../shared/forms/FormButtons';
 import GraphQLErrors from '../../shared/GraphQLErrors';
+import ErrorList from '../../shared/ErrorList';
 import InputGroup from '../../shared/forms/InputGroup';
 import TextInputWithAddAndRemove from '../../shared/forms/inputs/TextInputWithAddAndRemove';
 import { createDigitalObjectMutation, updateDescriptiveMetadataMutation } from '../../../graphql/digitalObjects';
@@ -59,9 +60,13 @@ function MetadataForm(props) {
   } = digitalObject;
   const [descriptiveMetadata, setDescriptiveMetadata] = useState({});
   const [createDigitalObject, { error: createErrors }] = useMutation(createDigitalObjectMutation);
-  const [updateDescriptiveMetadata, { error: updateErrors }] = useMutation(
+  const [updateDescriptiveMetadata, { data: updateData }] = useMutation(
     updateDescriptiveMetadataMutation,
-  );
+    );
+
+  // One day, maybe enable optionalChaining JS feature in babel to simplify lines like the one below.
+  const userErrors = (updateData && updateData.updateDescriptiveMetadata && updateData.updateDescriptiveMetadata.userErrors) || [];
+  
   const [identifiers, setIdentifiers] = useState(digitalObject.identifiers);
 
   const history = useHistory();
@@ -163,7 +168,7 @@ function MetadataForm(props) {
 
   if (enabledFieldsLoading || fieldGraphLoading) return (<></>);
 
-  const anyErrors = (enabledFieldsError || fieldGraphError || createErrors || updateErrors);
+  const anyErrors = (enabledFieldsError || fieldGraphError || createErrors );
   if (anyErrors) {
     return (<GraphQLErrors errors={anyErrors} />);
   }
@@ -193,6 +198,7 @@ function MetadataForm(props) {
   return (
     <>
       <form>
+        <ErrorList errors={userErrors.map((userError) => (`${userError.message} (path=${userError.path.join('/')})`))} />
         {
           filteredCategories.map(category => (
             <DynamicFieldCategory

@@ -15,19 +15,14 @@ module Mutations
         ability.authorize! :update_rights, digital_object
         digital_object.assign_attributes(attributes.stringify_keys, merge_descriptive_metadata: true, merge_rights: false)
 
-        {
-          digital_object: nil,
-          user_errors: [{path: ['a', 'b', 'c'], message: 'This is a test error message.'}]
-        }
-
-        # if digital_object.save(update_index: true, user: context[:current_user])
-        #   { digital_object: digital_object, user_errors: [] }
-        # else
-        #   {
-        #     digital_object: nil,
-        #     user_errors: digital_object.errors.map { |key, message| { path: [key], message: message } }
-        #   }
-        # end
+        if digital_object.save(update_index: true, user: context[:current_user])
+          { digital_object: digital_object, user_errors: [] }
+        else
+          {
+            digital_object: nil,
+            user_errors: digital_object.errors.map { |key, message| { path: [key], message: message } }
+          }
+        end
       end
     end
   end
