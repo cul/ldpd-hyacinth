@@ -60,7 +60,7 @@ function MetadataForm(props) {
   } = digitalObject;
   const [descriptiveMetadata, setDescriptiveMetadata] = useState({});
   const [createDigitalObject, { error: createErrors }] = useMutation(createDigitalObjectMutation);
-  const [updateDescriptiveMetadata, { data: updateData }] = useMutation(
+  const [updateDescriptiveMetadata, { data: updateData, error: updateErrors }] = useMutation(
     updateDescriptiveMetadataMutation,
     );
 
@@ -168,7 +168,7 @@ function MetadataForm(props) {
 
   if (enabledFieldsLoading || fieldGraphLoading) return (<></>);
 
-  const anyErrors = (enabledFieldsError || fieldGraphError || createErrors );
+  const anyErrors = (enabledFieldsError || fieldGraphError || createErrors || updateErrors);
   if (anyErrors) {
     return (<GraphQLErrors errors={anyErrors} />);
   }

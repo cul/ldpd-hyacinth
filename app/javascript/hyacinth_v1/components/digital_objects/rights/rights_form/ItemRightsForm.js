@@ -12,6 +12,7 @@ import BooleanRadioButtons from '../../../shared/forms/inputs/BooleanRadioButton
 import FormButtons from '../../../shared/forms/FormButtons';
 import { updateRightsMutation } from '../../../../graphql/digitalObjects';
 import ErrorList from '../../../shared/ErrorList';
+import GraphQLErrors from '../../../shared/GraphQLErrors';
 
 import DescriptiveMetadata from './subsections/DescriptiveMetadata';
 import CopyrightOwnership from './subsections/CopyrightOwnership';
@@ -36,7 +37,7 @@ function ItemRightsForm(props) {
 
   const [rights, setRights] = useHash(mergeDefaultValues(fieldConfiguration, initialRights));
 
-  const [updateRights, { data: updateData }] = useMutation(updateRightsMutation);
+  const [updateRights, { data: updateData, error: updateError }] = useMutation(updateRightsMutation);
 
   // One day, maybe enable optionalChaining JS feature in babel to simplify lines like the one below.
   const userErrors = (updateData && updateData.updateRights && updateData.updateRights.userErrors) || [];
@@ -98,6 +99,7 @@ function ItemRightsForm(props) {
 
   return (
     <Form key={id} className="digital-object-interface">
+      <GraphQLErrors errors={updateError} />    
       <ErrorList errors={userErrors.map((userError) => (`${userError.message} (path=${userError.path.join('/')})`))} />
 
       <DescriptiveMetadata

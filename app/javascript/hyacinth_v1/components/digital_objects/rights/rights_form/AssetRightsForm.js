@@ -9,6 +9,7 @@ import FormButtons from '../../../shared/forms/FormButtons';
 import { useHash } from './rightsHooks';
 import { updateRightsMutation } from '../../../../graphql/digitalObjects';
 import ErrorList from '../../../shared/ErrorList';
+import GraphQLErrors from '../../../shared/GraphQLErrors';
 import { removeTypename, removeEmptyKeys } from '../../../../utils/deepKeyRemove';
 import { defaultFieldValues } from '../../common/defaultFieldValues';
 import FieldGroupArray from './fields/FieldGroupArray';
@@ -29,7 +30,7 @@ function AssetRightsForm(props) {
 
   const [rights, setRights] = useHash(merge({}, defaultAssetRights, initialRights));
 
-  const [updateRights, { data: updateData }] = useMutation(updateRightsMutation);
+  const [updateRights, { data: updateData, error: updateError }] = useMutation(updateRightsMutation);
 
   // One day, maybe enable optionalChaining JS feature in babel to simplify lines like the one below.
   const userErrors = (updateData && updateData.updateRights && updateData.updateRights.userErrors) || [];
@@ -52,6 +53,7 @@ function AssetRightsForm(props) {
 
   return (
     <Form className="mb-3">
+      <GraphQLErrors errors={updateError} />    
       <ErrorList errors={userErrors.map((userError) => (`${userError.message} (path=${userError.path.join('/')})`))} />
 
       <FieldGroupArray
