@@ -1,3 +1,7 @@
+# Build config validation version (to opt into beta travis.yml validation feature)
+version: ~> 1.0
+
+os: linux
 dist: bionic
 language: ruby
 cache:
@@ -13,9 +17,9 @@ rvm:
 env:
   global:
     - NOKOGIRI_USE_SYSTEM_LIBRARIES=true
-  matrix:
+  jobs:
     - NODE_VERSION=8
-    - NODE_VERSION=10
+    - NODE_VERSION=12
 
 jdk: 'openjdk8'
 

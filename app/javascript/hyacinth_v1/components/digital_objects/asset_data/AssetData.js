@@ -48,15 +48,15 @@ function AssetData(props) {
   const renderResources = () => {
     return digitalObject.resources.map((resourceWrapper) => {
       const {
-        id: resourceId, displayLabel, resource,
+        id: resourceId, displayLabel, resource, uiDeletable
       } = resourceWrapper;
       // location, checksum, originalFilename, mediaType, fileSize,
       return (
         <Card key={resourceId}>
           <Card.Header>{displayLabel}</Card.Header>
           <Card.Body>
-            { resource ?
-              (
+            { resource
+              ? (
                 <dl className="row">
                   <dt className="col-lg-3">Download</dt>
                   <dd className="col-lg-9">
@@ -85,8 +85,12 @@ function AssetData(props) {
                   <dt className="col-lg-3">File Size</dt>
                   <dd className="col-lg-9">{resource.fileSize || 'unavailable'}</dd>
 
-                  <dt className="col-lg-3">Delete Resource</dt>
-                  <dd className="col-lg-9"><Button variant="danger" size="sm" onClick={() => { onDeleteResource(digitalObject.id, resourceId); }}>Delete</Button></dd>
+                  { uiDeletable && (
+                    <>
+                      <dt className="col-lg-3">Delete Resource</dt>
+                      <dd className="col-lg-9"><Button variant="danger" size="sm" onClick={() => { onDeleteResource(digitalObject.id, resourceId); }}>Delete</Button></dd>
+                    </>
+                  )}
                 </dl>
               )
               : 'None'

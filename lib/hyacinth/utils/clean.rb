@@ -3,13 +3,6 @@
 module Hyacinth
   module Utils
     module Clean
-      # Recursively trims whitespace from strings and removes any blank
-      # values (aka values that return true for .blank?).
-      def self.trim_whitespace_and_remove_blank_fields!(data)
-        trim_whitespace!(data)
-        remove_blank_fields!(data)
-      end
-
       # Recursively removes blank fields from the Arrays and Hashes. Blank values are any values that
       # return true to `#blank?`. This method is destructive and updates directly the object that is given.
       #

@@ -23,8 +23,8 @@ module DigitalObjectConcerns
         'primary_project.string_key' => primary_project.string_key.present? ? primary_project.string_key : '',
         'primary_project.display_label' => primary_project.display_label.present? ? primary_project.display_label : '',
         'primary_project.project_url' => primary_project.project_url.present? ? primary_project.project_url : '',
-        'created_at' => created_at.iso8601,
-        'updated_at' => updated_at.iso8601,
+        'created_at' => created_at&.iso8601,
+        'updated_at' => updated_at&.iso8601,
         'first_published_at' => first_published_at ? first_published_at.iso8601 : '',
         'doi' => doi.present? ? doi.sub(/^doi:/, '') : '',
         'uid' => uid

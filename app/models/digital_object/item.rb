@@ -1,13 +1,7 @@
 # frozen_string_literal: true
 
-module DigitalObject
-  class Item < DigitalObject::Base
-    def initialize
-      super
-    end
-
-    def can_have_rights?
-      true
-    end
+class DigitalObject::Item < DigitalObject
+  def can_have_rights?
+    true
   end
 end

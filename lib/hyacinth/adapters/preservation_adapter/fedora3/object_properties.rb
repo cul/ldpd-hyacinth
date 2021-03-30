@@ -17,7 +17,7 @@ module Hyacinth
         def to(fedora_obj)
           fedora_obj.label = get_title(@hyacinth_obj.descriptive_metadata)
           # no apparent state analog to Fedora 3's 'D' (deleted)
-          fedora_obj.state = @hyacinth_obj.state == Hyacinth::DigitalObject::State::DELETED ? 'I' : 'A'
+          fedora_obj.state = @hyacinth_obj.state == 'deleted' ? 'I' : 'A'
         end
       end
     end

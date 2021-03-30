@@ -1,5 +1,4 @@
 import { Ability } from '@casl/ability';
-import { digitalObject } from './hyacinthApi';
 
 const ability = new Ability([], {
   subjectName(subject) {

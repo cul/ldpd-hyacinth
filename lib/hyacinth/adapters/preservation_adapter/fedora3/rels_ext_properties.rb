@@ -23,7 +23,6 @@ module Hyacinth
           ORIGINAL_FILENAME = "http://www.loc.gov/premis/rdf/v1#hasOriginalName"
         end
 
-        ONSITE_RESTRICTION_LITERAL_VALUE = "onsite restriction"
         SIZE_RESTRICTION_LITERAL_VALUE = "size restriction"
         TYPE_INFORMATION = {
           'asset' => { rdf_type: 'http://purl.oclc.org/NET/CUL/Resource', cmodel: 'info:fedora/ldpd:GenericResource' },
@@ -51,10 +50,6 @@ module Hyacinth
           prospective_values = project_string_keys_for(@hyacinth_obj)
           delta = delta_for(fedora_obj, URIS::HAS_PROJECT, prospective_values)
           apply_delta(fedora_obj, URIS::HAS_PROJECT, delta, isLiteral: true)
-          # add object->publisher string keys
-          prospective_values = publisher_string_keys_for(@hyacinth_obj)
-          delta = delta_for(fedora_obj, URIS::HAS_PUBLISHER, prospective_values)
-          apply_delta(fedora_obj, URIS::HAS_PUBLISHER, delta, isLiteral: true)
           # add DOI URIs
           prospective_values = dois_for(@hyacinth_obj)
           delta = delta_for(fedora_obj, URIS::HAS_DOI, prospective_values)
@@ -80,17 +75,13 @@ module Hyacinth
         end
 
         def parent_uris_for(hyacinth_obj)
-          hyacinth_obj.parent_uids.map { |uid| ::DigitalObject::Base.find(uid) }.compact.map do |parent|
+          hyacinth_obj.parents.map do |parent|
             digital_object_fedora_uris(parent)
           end.flatten.compact
         end
 
         def project_string_keys_for(hyacinth_obj)
           hyacinth_obj.projects.map(&:string_key)
-        end
-
-        def publisher_string_keys_for(hyacinth_obj)
-          hyacinth_obj.publish_entries.map { |string_key, _entry| string_key }
         end
 
         def dois_for(hyacinth_obj)
@@ -115,9 +106,10 @@ module Hyacinth
 
         def restrictions_for(hyacinth_obj)
           restrictions = []
-          restriction_data = hyacinth_obj.restrictions
-          restrictions << ONSITE_RESTRICTION_LITERAL_VALUE if restriction_data['restricted_onsite'] == true
-          restrictions << SIZE_RESTRICTION_LITERAL_VALUE if restriction_data['restricted_size_image'] == true
+          if hyacinth_obj.is_a?(::DigitalObject::Asset) && hyacinth_obj.image_size_restriction == Hyacinth::DigitalObject::Asset::ImageSizeRestriction::DOWNSCALE_UNLESS_AUTHORIZED
+            # Note: In the future, we probably won't be serializing this value to Fedora anymore.  This is currently done for compatibility with Hyacinth 2 practices.
+            restrictions << SIZE_RESTRICTION_LITERAL_VALUE
+          end
           restrictions
         end
 

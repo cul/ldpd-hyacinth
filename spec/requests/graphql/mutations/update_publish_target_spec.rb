@@ -3,12 +3,12 @@
 require 'rails_helper'
 
 RSpec.describe Mutations::UpdatePublishTarget, type: :request do
-  let(:project) { FactoryBot.create(:project) }
-  let(:publish_target) { FactoryBot.create(:publish_target, project: project) }
+  let(:publish_target) { FactoryBot.create(:publish_target, string_key: 'cool_publish_target') }
+  let(:string_key) { publish_target.string_key }
 
   include_examples 'requires user to have correct permissions for graphql request' do
     let(:variables) do
-      { input: { projectStringKey: project.string_key, type: publish_target.target_type.upcase } }
+      { input: { stringKey: string_key } }
     end
     let(:request) { graphql query, variables }
   end
@@ -20,10 +20,9 @@ RSpec.describe Mutations::UpdatePublishTarget, type: :request do
       let(:variables) do
         {
           input: {
-            projectStringKey: project.string_key,
-            type: publish_target.target_type.upcase,
+            stringKey: string_key,
             apiKey: 'something-new',
-            publishUrl: 'https://best_project.com/publish'
+            publishUrl: 'https://bestproject.com/publish'
           }
         }
       end
@@ -33,7 +32,7 @@ RSpec.describe Mutations::UpdatePublishTarget, type: :request do
       it 'correctly updates record' do
         publish_target.reload
         expect(publish_target.api_key).to eql 'something-new'
-        expect(publish_target.publish_url).to eql 'https://best_project.com/publish'
+        expect(publish_target.publish_url).to eql 'https://bestproject.com/publish'
       end
     end
   end
@@ -43,7 +42,7 @@ RSpec.describe Mutations::UpdatePublishTarget, type: :request do
       mutation ($input: UpdatePublishTargetInput!) {
         updatePublishTarget(input: $input) {
           publishTarget {
-            type
+            stringKey
           }
         }
       }

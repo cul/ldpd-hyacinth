@@ -17,7 +17,7 @@ RSpec.describe 'Retrieving Digital Object Imports', type: :request do
     before do
       FactoryBot.create(:digital_object_import, :success, batch_import: batch_import)
       FactoryBot.create(:digital_object_import, :in_progress, batch_import: batch_import)
-      FactoryBot.create(:digital_object_import, :failure, batch_import: batch_import)
+      FactoryBot.create(:digital_object_import, :creation_failure, batch_import: batch_import)
       FactoryBot.create(:digital_object_import, :pending, batch_import: batch_import)
     end
 
@@ -58,7 +58,7 @@ RSpec.describe 'Retrieving Digital Object Imports', type: :request do
                       "location.value is not a valid field"
                     ],
                     "index": 99,
-                    "status": "FAILURE"
+                    "status": "CREATION_FAILURE"
                   }
                 ]
               }

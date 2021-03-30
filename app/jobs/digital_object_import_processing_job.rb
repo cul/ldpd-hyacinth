@@ -24,9 +24,11 @@ class DigitalObjectImportProcessingJob
 
     # Update the DigitalObject's attributes with the given digital_object_data
     digital_object.assign_attributes(digital_object_data)
+    digital_object.created_by = batch_import.user if digital_object.new_record?
+    digital_object.updated_by = batch_import.user
 
     # Save the object, and terminate processing if the save fails.
-    unless digital_object.save(user: batch_import.user)
+    unless digital_object.save
       digital_object_import.import_errors = digital_object.errors.map { |err_key, message| "#{err_key}: #{message}" }
       # Apply a recursive failure to this digital_object_import and all other DigitalObjectImports
       # that depend on it, since it doesn't make sense to run the others if this one failed.
@@ -43,7 +45,7 @@ class DigitalObjectImportProcessingJob
 
   def self.digital_object_for_digital_object_data(digital_object_data)
     # If a uid is present in the digital_object_data, then this is an update operation
-    return DigitalObject::Base.find(digital_object_data['uid']) if digital_object_data['uid'].present?
+    return DigitalObject.find_by_uid!(digital_object_data['uid']) if digital_object_data['uid'].present?
 
     # No uid present, so we'll create a new object with type based on the digital_object_type value
     return Hyacinth::Config.digital_object_types.key_to_class(digital_object_data['digital_object_type']).new if digital_object_data['digital_object_type'].present?
@@ -52,7 +54,8 @@ class DigitalObjectImportProcessingJob
   end
 
   def self.apply_recursive_failure!(digital_object_import)
-    digital_object_import.failure!
+    dod = JSON.parse(digital_object_import.digital_object_data)
+    dod['uid'].present? ? digital_object_import.update_failure! : digital_object_import.creation_failure!
 
     # Find all DigitalObjectImports for which this DigitalObjectImport was a prerequisite.
     ImportPrerequisite.where(prerequisite_digital_object_import: digital_object_import).each do |import_prerequisite|

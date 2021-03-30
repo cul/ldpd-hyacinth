@@ -2,15 +2,17 @@
 
 FactoryBot.define do
   factory :publish_target do
-    target_type { PublishTarget::Type::PRODUCTION }
+    transient do
+      sequence :publish_target_string_key, 1 do |n|
+        n == 1 ? 'great_publish_target' : "great_publish_target_#{n}"
+      end
+    end
+
+    string_key { publish_target_string_key }
     publish_url { 'https://www.example.com/publish' }
     api_key { 'bestapikey' }
-    association :project, factory: :project, strategy: :create
 
     factory :legend_of_lincoln_publish_target do
-      project { nil } # project should be passed in when factory build or create or called, otherwise this object won't validate
-
-      publish_url { 'https://www.example.com/publish' }
       api_key { '12345' }
       is_allowed_doi_target { true }
     end

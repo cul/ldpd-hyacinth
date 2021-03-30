@@ -58,7 +58,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
       it "persists core data to Fedora3" do
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
         actual_json = JSON.parse(rubydora_object.datastreams[described_class::HYACINTH_CORE_DATASTREAM_NAME].content)
-        expect(actual_json).to have_key("uid")
+        expect(actual_json['metadata']).to have_key("descriptive_metadata")
       end
     end
     context "field exports" do
@@ -84,7 +84,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
         expect(rubydora_object.state).to eql('A')
       end
       it "assigns a state property to inactive if deleted" do
-        hyacinth_object.state = Hyacinth::DigitalObject::State::DELETED
+        hyacinth_object.state = 'deleted'
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
         expect(rubydora_object.state).to eql('I')
       end
@@ -158,7 +158,8 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
 
       before do
         load_title_fields! # Need to defined the fields that are being used in descriptive metadata.
-        hyacinth_object.structured_children['structure'] << child_uid
+        hyacinth_object.children_to_add << child_hyacinth_object
+        hyacinth_object.save
       end
 
       it "persists model properties" do

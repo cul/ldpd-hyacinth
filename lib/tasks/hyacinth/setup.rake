@@ -33,7 +33,7 @@ namespace :hyacinth do
       end
     end
 
-    desc "Set up Test projects"
+    desc "Set up test projects"
     task test_projects: :environment do
       [
         {
@@ -58,6 +58,32 @@ namespace :hyacinth do
         else
           Project.create!(project_config)
           puts Rainbow("Created project: #{project_string_key}").green
+        end
+      end
+    end
+
+    desc "Set up test publish targets"
+    task test_publish_targets: :environment do
+      [
+        {
+          string_key: 'test_publish_target1',
+          publish_url: 'https://www.example.com/publish1',
+          api_key: 'test1',
+          is_allowed_doi_target: true
+        },
+        {
+          string_key: 'test_publish_target2',
+          publish_url: 'https://www.example.com/publish2',
+          api_key: 'test2',
+          is_allowed_doi_target: false
+        }
+      ].each do |publish_target_config|
+        publish_target_string_key = publish_target_config[:string_key]
+        if PublishTarget.exists?(string_key: publish_target_string_key)
+          puts Rainbow("Skipping creation of publish target #{publish_target_string_key} because publish target already exists.").blue.bright
+        else
+          PublishTarget.create!(publish_target_config)
+          puts Rainbow("Created publish target: #{publish_target_string_key}").green
         end
       end
     end

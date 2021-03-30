@@ -20,7 +20,10 @@ RSpec.describe 'Retrieving Batch Import', type: :request do
             "numberOfPendingImports": 1,
             "numberOfInProgressImports": 0,
             "numberOfSuccessImports": 0,
-            "numberOfFailureImports": 0,
+            "numberOfCreationFailureImports": 0,
+            "numberOfUpdateFailureImports": 0,
+            "numberOfPersistFailureImports": 0,
+            "numberOfPublishFailureImports": 0,
             "originalFilename": "import.csv",
             "user": {
               "firstName": "Signed In",
@@ -66,7 +69,10 @@ RSpec.describe 'Retrieving Batch Import', type: :request do
           numberOfPendingImports
           numberOfInProgressImports
           numberOfSuccessImports
-          numberOfFailureImports
+          numberOfCreationFailureImports
+          numberOfUpdateFailureImports
+          numberOfPersistFailureImports
+          numberOfPublishFailureImports
           user {
             id
             firstName

@@ -7,5 +7,6 @@ module Types
     field :id, ID, null: false
     field :display_label, String, null: false
     field :resource, ResourceType, null: true
+    field :ui_deletable, Boolean, null: false
   end
 end

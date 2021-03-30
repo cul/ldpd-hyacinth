@@ -9,6 +9,7 @@ module DigitalObjectConcerns::Assets::Validations
     validate :validate_master_resource
     validate :validate_asset_type
     validate :validate_rights_updates
+    validate :validate_image_size_restriction
     validate :validate_featured_thumbnail_region
   end
 
@@ -30,6 +31,12 @@ module DigitalObjectConcerns::Assets::Validations
     return if primary_project.has_asset_rights # nothing to validate if assets rights are enabled for this project
     return if rights.reject { |k, _v| k.to_s == 'restriction_on_access' }.blank? # restriction_on_access updates are always allowed even if other asset rights updates aren't
     errors.add(:rights, "Asset-level rights assessment not enabled in #{primary_project.display_label}")
+  end
+
+  def validate_image_size_restriction
+    allowed_restriction_values = Hyacinth::DigitalObject::Asset::ImageSizeRestriction::VALID_IMAGE_SIZE_RESTRICTIONS
+    return if allowed_restriction_values.include?(self.image_size_restriction)
+    errors.add(:asset_type, "Invalid image_size_restriction value: #{self.image_size_restriction}.  Must be one of: #{allowed_restriction_values.join(', ')}")
   end
 
   def validate_featured_thumbnail_region

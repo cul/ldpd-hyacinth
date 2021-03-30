@@ -7,16 +7,14 @@ RSpec.describe PublishTarget, type: :model do
     context 'when all parameters correct' do
       subject(:publish_target) { FactoryBot.create(:publish_target) }
 
-      its(:target_type) { is_expected.to eql 'production' }
       its(:publish_url) { is_expected.to eql 'https://www.example.com/publish' }
       its(:api_key) { is_expected.to eql 'bestapikey' }
       its(:is_allowed_doi_target) { is_expected.to be false }
       its(:doi_priority) { is_expected.to be 100 }
-      its(:project) { is_expected.to eql Project.find_by(string_key: 'great_project') }
     end
 
-    context 'when target_type missing' do
-      subject(:publish_target) { FactoryBot.build(:publish_target, target_type: nil) }
+    context 'when string_key missing' do
+      subject(:publish_target) { FactoryBot.build(:publish_target, string_key: nil) }
 
       it 'does not save object' do
         expect(publish_target.save).to be false
@@ -24,7 +22,7 @@ RSpec.describe PublishTarget, type: :model do
 
       it 'returns correct error' do
         publish_target.save
-        expect(publish_target.errors.full_messages).to include 'Target type can\'t be blank'
+        expect(publish_target.errors.full_messages).to include 'String key can\'t be blank'
       end
     end
 

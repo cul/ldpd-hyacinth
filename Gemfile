@@ -16,6 +16,7 @@ gem 'rubydora'
 gem 'best_type', '0.0.10'
 gem 'bootsnap', '>= 1.4.5', require: false # Reduces boot times through caching; required in config/boot.rb
 gem 'cancancan', '~> 3.0'
+gem 'concurrent-ruby', '~> 1.1.8'
 gem 'devise', '~> 4.7'
 gem 'faraday', '~> 1.1'
 gem 'graphql'
@@ -35,7 +36,7 @@ group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'equivalent-xml'
   gem 'jettywrapper', '>=1.4.0', git: 'https://github.com/samvera-deprecated/jettywrapper.git', branch: 'master'
-  gem 'rubocul', '2.0.0'
+  gem 'rubocul', '2.0.1'
   gem 'solr_wrapper', '~> 2.0'
 end
 

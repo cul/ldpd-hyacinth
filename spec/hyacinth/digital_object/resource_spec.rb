@@ -22,16 +22,6 @@ RSpec.describe Hyacinth::DigitalObject::Resource do
         expect(instance.send(attribute)).to eql(attributes[attribute])
       end
     end
-
-    it "defaults is_new to false" do
-      expect(instance.is_new).to eq(false)
-    end
-
-    it "sets is_new to true when given an an opt" do
-      expect(described_class.new(
-        arguments.merge(is_new: true)
-      ).is_new).to eq(true)
-    end
   end
 
   describe "#to_serialized_form" do

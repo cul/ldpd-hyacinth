@@ -22,6 +22,7 @@ class Ability
       can [:read, :create], Term
       can :read, Vocabulary           # Need to allow this because Terms are nested under vocabularies
       can :read, DynamicFieldCategory # Need to allow this so we can render EnabledDynamicField pages.
+      can :read, PublishTarget        # No harm in letting everyone read publish targets.  API keys are obscured for non-admins.
 
       can :create, BatchExport # All users can create BatchExports
       can [:read, :destroy], BatchExport, user_id: user.id
@@ -38,9 +39,6 @@ class Ability
 
         can :read, Project, id: project_id
         can :read, Project, string_key: project_string_key
-
-        can :read, PublishTarget, project_id: project_id
-        can :read, PublishTarget, project: { string_key: project_string_key }
 
         can :read, FieldSet, project_id: project_id
         can :read, FieldSet, project: { string_key: project_string_key }
@@ -63,11 +61,11 @@ class Ability
         can :manage, :custom_field
       when Permission::READ_ALL_DIGITAL_OBJECTS
         can :read, [Project, PublishTarget, FieldSet]
-        can :read, DigitalObject::Base
+        can :read, DigitalObject
         can :read_objects, Project
       when Permission::MANAGE_ALL_DIGITAL_OBJECTS
         can :read, [Project, PublishTarget, FieldSet]
-        can :manage, DigitalObject::Base
+        can :manage, DigitalObject
         can [:read_objects, :create_objects, :update_objects, :assess_rights, :delete_objects, :publish_objects], Project
       when Permission::MANAGE_RESOURCE_REQUESTS
         can :manage, ResourceRequest
@@ -130,7 +128,7 @@ class Ability
     can :read_objects, Project, { id: project_id }
     can :read_objects, Project, { string_key: project_string_key }
     # and in the context of a specific object where applicable
-    can :read, DigitalObject::Base do |digital_object|
+    can :read, DigitalObject do |digital_object|
       digital_object.projects.detect { |p| p.id.eql?(project_id) }
     end
   end
@@ -146,7 +144,7 @@ class Ability
     can :update_objects, Project, { id: project_id }
     can :update_objects, Project, { string_key: project_string_key }
     # and in the context of a specific object where applicable
-    can :update, DigitalObject::Base do |digital_object|
+    can :update, DigitalObject do |digital_object|
       digital_object.projects.detect { |p| p.id.eql?(project_id) || p.string_key.eql?(project_string_key) }
     end
   end
@@ -156,7 +154,7 @@ class Ability
     can :delete_objects, Project, { id: project_id }
     can :delete_objects, Project, { string_key: project_string_key }
     # and in the context of a specific object where applicable
-    can :destroy, DigitalObject::Base do |digital_object|
+    can :destroy, DigitalObject do |digital_object|
       digital_object.projects.detect { |p| p.id.eql?(project_id) || p.string_key.eql?(project_string_key) }
     end
   end
@@ -166,7 +164,7 @@ class Ability
     can :publish_objects, Project, { id: project_id }
     can :publish_objects, Project, { string_key: project_string_key }
     # and in the context of a specific object where applicable
-    can [:publish, :preserve], DigitalObject::Base do |digital_object|
+    can [:publish, :preserve], DigitalObject do |digital_object|
       digital_object.projects.detect { |p| p.id.eql?(project_id) || p.string_key.eql?(project_string_key) }
     end
   end
@@ -176,7 +174,7 @@ class Ability
     can :assess_rights, Project, { id: project_id }
     can :assess_rights, Project, { string_key: project_string_key }
     # and in the context of a specific object where applicable
-    can :update_rights, DigitalObject::Base do |digital_object|
+    can :update_rights, DigitalObject do |digital_object|
       digital_object.projects.detect { |p| p.id.eql?(project_id) || p.string_key.eql?(project_string_key) }
     end
   end

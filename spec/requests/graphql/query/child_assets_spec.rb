@@ -2,11 +2,13 @@
 
 require 'rails_helper'
 
+# TODO: Update these tests because the structure of children in the graphql request has changed (now "children" instead of "structured_children")
+
 RSpec.describe 'Retrieving Child Assets', type: :request, solr: true do
   let(:authorized_object) { FactoryBot.create(:item, :with_asset) }
   let(:authorized_project) { authorized_object.projects.first }
-  let(:expected_type) { authorized_object.structured_children['type'] }
-  let(:expected_child_assets) { authorized_object.structured_children['structure'].map { |cid| { 'id' => cid } } }
+  let(:expected_type) { 'sequence' }
+  let(:expected_child_assets) { authorized_object.children.map { |child| { 'id' => child.uid } } }
   include_examples 'requires user to have correct permissions for graphql request' do
     let(:request) { graphql query(authorized_object.uid) }
   end

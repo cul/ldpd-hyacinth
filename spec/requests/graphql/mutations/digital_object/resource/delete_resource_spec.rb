@@ -44,6 +44,13 @@ RSpec.describe Mutations::DigitalObject::Resource::DeleteResource, type: :reques
           expect(response.body).to be_json_eql("\"No \\\"service\\\" resource found for this asset\"").at_path('errors/0/message')
         end
       end
+
+      context 'when resource is the master resource' do
+        let(:variables) { { input: { id: digital_object.uid, resourceName: 'master' } } }
+        it 'returns the expected error message' do
+          expect(response.body).to be_json_eql(%("Cannot delete the master resource for an asset. Create a new asset instead.")).at_path('errors/0/message')
+        end
+      end
     end
   end
 

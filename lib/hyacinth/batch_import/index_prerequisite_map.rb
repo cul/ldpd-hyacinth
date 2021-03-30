@@ -204,9 +204,9 @@ module Hyacinth
             identifiers_to_row_numbers[identifier] = csv_row_number
           end
 
-          if json_hash_for_row['parent_digital_objects'].present?
+          if json_hash_for_row['parents'].present?
             parent_identifiers = []
-            json_hash_for_row['parent_digital_objects'].each do |parent_digital_object|
+            json_hash_for_row['parents'].each do |parent_digital_object|
               parent_identifiers << parent_digital_object['identifier'] if parent_digital_object['identifier'].present?
               parent_identifiers << parent_digital_object['uid'] if parent_digital_object['uid'].present?
             end

@@ -29,7 +29,7 @@ RSpec.describe Mutations::DigitalObject::DeleteDigitalObject, type: :request do
       end
       it 'returns errors' do
         expect(response.body).to be_json_eql(%(
-          "Could not find DigitalObject with uid: invalid-key"
+          "Couldn't find DigitalObject"
           )).at_path('errors/0/message')
       end
     end

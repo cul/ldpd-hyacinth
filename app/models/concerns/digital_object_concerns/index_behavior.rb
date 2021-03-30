@@ -5,13 +5,17 @@ module DigitalObjectConcerns
     extend ActiveSupport::Concern
 
     # index this digital object for search.
-    def index(commit = true)
-      Hyacinth::Config.digital_object_search_adapter.index(self, commit: commit)
+    def index
+      Hyacinth::Config.digital_object_search_adapter.index(self)
     end
 
     # remove this digital object from index for search.
-    def deindex(commit = true)
-      Hyacinth::Config.digital_object_search_adapter.remove(self, commit: commit)
+    def deindex
+      Hyacinth::Config.digital_object_search_adapter.remove(self)
+    end
+
+    def index_test
+      Hyacinth::Config.digital_object_search_adapter.index_test(self)
     end
   end
 end

@@ -23,6 +23,14 @@ module Hyacinth
         @resource_imports ||= resource_import_attributes.map { |key| [key.to_s, nil] }.to_h.with_indifferent_access
       end
 
+      def old_resources
+        @old_resources ||= resource_attributes.map { |key| [key.to_s, nil] }.to_h.with_indifferent_access
+      end
+
+      def deleted_resources
+        @deleted_resources ||= resource_attributes.map { |key| [key.to_s, nil] }.to_h.with_indifferent_access
+      end
+
       module ClassMethods
         def resource_attributes
           @resource_attributes ||= Set.new # initialized here because it may not have been initialized in a subclass of the including class

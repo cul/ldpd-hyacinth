@@ -10,7 +10,7 @@ module Hyacinth
           '_digital_object_type',
           '_doi',
           /_identifiers\[\d+\]/,
-          /_parent_digital_objects\[\d+\]\..+/,
+          /_parents\[\d+\]\..+/,
           '_primary_project.string_key',
           /_resources\..+/
         ].freeze
@@ -24,9 +24,7 @@ module Hyacinth
           '_parent_uids',
           '_preservation_target_uris',
           '_preserve',
-          '_serialization_version',
           '_state',
-          /_structured_children\..*/,
           'updated_at',
           /_updated_by\..*/
         ].freeze

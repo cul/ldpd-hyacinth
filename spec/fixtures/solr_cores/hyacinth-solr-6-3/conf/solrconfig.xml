@@ -311,7 +311,11 @@
       -->
     <autoCommit>
       <maxTime>30000</maxTime>
-      <openSearcher>true</openSearcher>
+      <!--
+        We're setting openSearcher to false because our more frequent autoSoftCommit
+        policy DOES open a new searcher each time it soft-commits.
+      -->
+      <openSearcher>false</openSearcher>
     </autoCommit>
 
     <!-- softAutoCommit is like autoCommit except it causes a

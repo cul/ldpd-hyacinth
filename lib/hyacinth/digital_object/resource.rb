@@ -4,8 +4,7 @@ module Hyacinth
   module DigitalObject
     class Resource
       LOCATION_FIELD = :location
-      SERIALIZED_FIELDS = [LOCATION_FIELD, :checksum, :original_file_path, :media_type, :file_size].freeze
-      FIELDS = (SERIALIZED_FIELDS + [:is_new]).freeze
+      FIELDS = [LOCATION_FIELD, :checksum, :original_file_path, :media_type, :file_size].freeze
       attr_accessor(*FIELDS)
 
       # The opts hash should only include symbol keys
@@ -14,7 +13,6 @@ module Hyacinth
           raise ArgumentError, "Invalid option: #{opt_name}" unless FIELDS.include?(opt_name.to_sym)
           instance_variable_set("@#{opt_name}", opt_value)
         end
-        self.is_new = false if self.is_new.nil?
       end
 
       def original_filename
@@ -34,6 +32,7 @@ module Hyacinth
       end
 
       def self.from_serialized_form(json_var)
+        return nil if json_var.nil?
         # we only deserialize existing resources, so they are by definition not new
         self.new(json_var)
       end
@@ -43,7 +42,7 @@ module Hyacinth
       end
 
       def as_json(_options = {})
-        SERIALIZED_FIELDS.map { |field| [field.to_s, self.send(field)] }.to_h
+        FIELDS.map { |field| [field.to_s, self.send(field)] }.to_h
       end
 
       def image?
