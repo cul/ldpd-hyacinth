@@ -59,14 +59,19 @@ function MetadataForm(props) {
     optimisticLockToken,
   } = digitalObject;
   const [descriptiveMetadata, setDescriptiveMetadata] = useState({});
-  const [createDigitalObject, { error: createErrors }] = useMutation(createDigitalObjectMutation);
+  const [createDigitalObject, { data: createData, error: createErrors }] = useMutation(createDigitalObjectMutation);
   const [updateDescriptiveMetadata, { data: updateData, error: updateErrors }] = useMutation(
     updateDescriptiveMetadataMutation,
     );
 
+  let userErrors = [];
   // One day, maybe enable optionalChaining JS feature in babel to simplify lines like the one below.
-  const userErrors = (updateData && updateData.updateDescriptiveMetadata && updateData.updateDescriptiveMetadata.userErrors) || [];
-  
+  if(createData && createData.createDigitalObject && createData.createDigitalObject.userErrors){
+    userErrors = createData.createDigitalObject.userErrors;
+  }else if(updateData && updateData.updateDescriptiveMetadata && updateData.updateDescriptiveMetadata.userErrors){
+    userErrors = updateData.updateDescriptiveMetadata.userErrors;
+  }
+
   const [identifiers, setIdentifiers] = useState(digitalObject.identifiers);
 
   const history = useHistory();
