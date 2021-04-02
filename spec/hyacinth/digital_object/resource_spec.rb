@@ -6,7 +6,7 @@ RSpec.describe Hyacinth::DigitalObject::Resource do
   let(:arguments) do
     {
       location: 'managed-disk:///path/to/file.txt',
-      checksum: 'sha256:e1266b81a70083fa5e3bf456239a1160fc6ebc179cdd71e458a9dd4bc7cc21f6',
+      checksum: 'sha256:717f2c6ffbd649cd57ecc41ac6130c3b6210f1473303bcd9101a9014551bffb2',
       original_file_path: '/some/original/path',
       media_type: 'text/plain',
       file_size: 123
@@ -46,6 +46,52 @@ RSpec.describe Hyacinth::DigitalObject::Resource do
       attribute_names.each do |attribute|
         expect(instance.send(attribute)).to eql(deserialized.send(attribute))
       end
+    end
+  end
+
+  describe '#image?' do
+    it 'returns true for an image resource' do
+      expect(FactoryBot.build(:resource, :image).image?).to eq(true)
+    end
+    it 'returns false for a non-image resource' do
+      expect(FactoryBot.build(:resource, :text).image?).to eq(false)
+    end
+  end
+
+  describe '#video?' do
+    it 'returns true for a video resource' do
+      expect(FactoryBot.build(:resource, :video).video?).to eq(true)
+    end
+    it 'returns false for a non-video resource' do
+      expect(FactoryBot.build(:resource, :text).video?).to eq(false)
+    end
+  end
+
+  describe '#audio?' do
+    it 'returns true for an audio resource' do
+      expect(FactoryBot.build(:resource, :audio).audio?).to eq(true)
+    end
+    it 'returns false for a non-audio resource' do
+      expect(FactoryBot.build(:resource, :text).audio?).to eq(false)
+    end
+  end
+
+  describe '#pdf?' do
+    it 'returns true for a pdf resource' do
+      expect(FactoryBot.build(:resource, :pdf).pdf?).to eq(true)
+    end
+    it 'returns false for a non-pdf resource' do
+      expect(FactoryBot.build(:resource, :text).pdf?).to eq(false)
+    end
+  end
+
+  describe '#text_or_office_document?' do
+    it 'returns true for a text or office document resource' do
+      expect(FactoryBot.build(:resource, :text).text_or_office_document?).to eq(true)
+      expect(FactoryBot.build(:resource, :office_document).text_or_office_document?).to eq(true)
+    end
+    it 'returns false for a non-text and non-office-document resource' do
+      expect(FactoryBot.build(:resource, :image).text_or_office_document?).to eq(false)
     end
   end
 end

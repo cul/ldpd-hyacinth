@@ -111,9 +111,9 @@ RSpec.describe 'Retrieving Digital Object', type: :request, solr: true do
             "id": "master",
             "displayLabel": "Master",
             "resource": {
-              "checksum": "sha256:e1266b81a70083fa5e3bf456239a1160fc6ebc179cdd71e458a9dd4bc7cc21f6",
+              "checksum": "sha256:717f2c6ffbd649cd57ecc41ac6130c3b6210f1473303bcd9101a9014551bffb2",
               "fileSize": 23,
-              "location": "managed-disk://#{expected_location}",
+              "location": "tracked-disk://#{expected_location}",
               "mediaType": "text/plain",
               "originalFilePath": "#{expected_location}",
               "originalFilename": "test.txt"
@@ -127,6 +127,16 @@ RSpec.describe 'Retrieving Digital Object', type: :request, solr: true do
           {
             "id": "access",
             "displayLabel": "Access",
+            "resource": null
+          },
+          {
+            "id": "poster",
+            "displayLabel": "Poster",
+            "resource": null
+          },
+          {
+            "id": "fulltext",
+            "displayLabel": "Fulltext",
             "resource": null
           }
         ]

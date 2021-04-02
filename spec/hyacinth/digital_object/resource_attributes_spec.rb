@@ -3,7 +3,8 @@
 require 'rails_helper'
 
 describe Hyacinth::DigitalObject::ResourceAttributes do
-  let(:resource_name) { :example }
+  let(:resource_name) { 'example' }
+  let(:resource) { Hyacinth::DigitalObject::Resource.new }
   let(:klass) do
     Class.new do
       include Hyacinth::DigitalObject::ResourceAttributes
@@ -12,7 +13,9 @@ describe Hyacinth::DigitalObject::ResourceAttributes do
   end
 
   let(:instance) do
-    klass.new
+    inst = klass.new
+    inst.resources[resource_name] = resource
+    inst
   end
 
   context "module inclusion" do
@@ -22,10 +25,35 @@ describe Hyacinth::DigitalObject::ResourceAttributes do
 
     it "adds the expected methods to an instance" do
       expect(instance.resource_attributes).to be_a(Set)
+      expect(instance).to respond_to(:example_resource_name)
+      expect(instance).to respond_to(:has_example_resource?)
+      expect(instance).to respond_to(:example_resource)
     end
 
     it "adds the expected resource keys to an instance" do
       expect(instance.resource_attributes).to include(:example)
+    end
+  end
+
+  context '#x_resource_name' do
+    it 'returns the expected value for a registered resource' do
+      expect(instance.example_resource_name).to eq(resource_name)
+    end
+  end
+
+  context '#has_x_resource?' do
+    it 'returns the expected value when a resource value is present or absent' do
+      expect(instance.has_example_resource?).to eq(true)
+      instance.resources['example'] = nil
+      expect(instance.has_example_resource?).to eq(false)
+    end
+  end
+
+  context '#x_resource' do
+    it 'returns the expected resource, if present' do
+      expect(instance.example_resource).to eq(resource)
+      instance.resources['example'] = nil
+      expect(instance.example_resource).to eq(nil)
     end
   end
 

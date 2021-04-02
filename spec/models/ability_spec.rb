@@ -64,6 +64,28 @@ RSpec.describe Ability, type: :model do
     end
   end
 
+  describe 'when user is resource request manager' do
+    subject(:ability) { described_class.new(user) }
+
+    let(:user) do
+      FactoryBot.create(
+        :user, permissions: [Permission.create(action: Permission::MANAGE_RESOURCE_REQUESTS)]
+      )
+    end
+
+    it { is_expected.not_to be_able_to(:manage, :all) }
+    it { is_expected.to be_able_to(:manage, ResourceRequest) }
+    it { is_expected.to be_able_to(:read, ResourceRequest) }
+    it { is_expected.to be_able_to(:update, ResourceRequest) }
+    it { is_expected.to be_able_to(:delete, ResourceRequest) }
+
+    it 'serializes correctly' do
+      expect(ability.to_list).to match_array(
+        base_rules.concat([{ actions: [:manage], conditions: {}, subject: ['ResourceRequest'], inverted: false }])
+      )
+    end
+  end
+
   describe 'when user has multiple system wide permissions' do
     subject(:ability) { described_class.new(user) }
 

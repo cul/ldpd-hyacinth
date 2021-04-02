@@ -23,18 +23,11 @@ namespace :hyacinth do
     task default_users: :environment do
       default_user_accounts.each do |account_info|
         user_email = account_info[:email]
+
         if User.exists?(email: user_email)
           puts Rainbow("Skipping creation of user #{user_email} because user already exists.").blue.bright
         else
-          User.create!(
-            email: account_info[:email],
-            uid: account_info[:uid],
-            password: account_info[:password],
-            password_confirmation: account_info[:password],
-            first_name: account_info[:first_name],
-            last_name: account_info[:last_name],
-            is_admin: account_info[:is_admin]
-          )
+          User.create!(account_info.merge(password_confirmation: account_info[:password]))
           puts Rainbow("Created user: #{user_email}").green
         end
       end
@@ -123,6 +116,26 @@ namespace :hyacinth do
         last_name: 'User',
         uid: SecureRandom.uuid,
         is_admin: false
+      },
+      {
+        email: 'derivativo@library.columbia.edu',
+        password: 'derivativo',
+        first_name: 'Derivativo',
+        last_name: 'Service',
+        uid: SecureRandom.uuid,
+        is_admin: false,
+        permissions_attributes: [
+          {
+            subject: nil,
+            subject_id: nil,
+            action: Permission::MANAGE_ALL_DIGITAL_OBJECTS
+          },
+          {
+            subject: nil,
+            subject_id: nil,
+            action: Permission::MANAGE_RESOURCE_REQUESTS
+          }
+        ]
       }
     ]
   end

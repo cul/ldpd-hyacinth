@@ -14,7 +14,7 @@ function AssetNew(props) {
     {
       variables: {
         input: {
-          signedBlobId: blobAttributes.signed_id,
+          fileLocation: `blob://${blobAttributes.signed_id}`,
           parentId,
         },
       },

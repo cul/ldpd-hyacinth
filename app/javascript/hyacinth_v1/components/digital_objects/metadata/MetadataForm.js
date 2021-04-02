@@ -164,7 +164,7 @@ function MetadataForm(props) {
     loading: fieldGraphLoading,
     error: fieldGraphError,
     data: fieldGraphData,
-  } = useQuery(getDynamicFieldGraphQuery, { variables: { } });
+  } = useQuery(getDynamicFieldGraphQuery, { variables: {} });
 
   if (enabledFieldsLoading || fieldGraphLoading) return (<></>);
 

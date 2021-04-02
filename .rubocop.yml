@@ -11,3 +11,6 @@ AllCops:
 # the rubocul gem instead.
 Style/RedundantSelf:
   Enabled: false
+
+RSpec/ExampleLength:
+  Max: 7
