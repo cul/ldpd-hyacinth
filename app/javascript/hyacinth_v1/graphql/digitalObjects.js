@@ -192,6 +192,10 @@ export const createDigitalObjectMutation = gql`
       digitalObject {
         id
       }
+      userErrors {
+        message
+        path
+      }
     }
   }
 `;
