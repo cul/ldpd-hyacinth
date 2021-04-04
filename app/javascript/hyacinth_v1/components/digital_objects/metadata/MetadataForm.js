@@ -109,7 +109,7 @@ function MetadataForm(props) {
         break;
       case 'new':
         variables.input.project = { stringKey: primaryProject.stringKey };
-        variables.input.digitalObjectType = digitalObjectType;
+        variables.input.digitalObjectType = digitalObjectType.toUpperCase();
         action = createDigitalObject;
         historyPromise = (res) => {
           const path = `/digital_objects/${res.data.createDigitalObject.digitalObject.id}/metadata`;
@@ -158,7 +158,7 @@ function MetadataForm(props) {
     }
   }).filter(c => c !== null);
 
-  const variables = { project: { stringKey: primaryProject.stringKey }, digitalObjectType: digitalObjectType };
+  const variables = { project: { stringKey: primaryProject.stringKey }, digitalObjectType: digitalObjectType.toUpperCase() };
   const {
     loading: enabledFieldsLoading,
     error: enabledFieldsError,
