@@ -158,12 +158,13 @@ function MetadataForm(props) {
     }
   }).filter(c => c !== null);
 
-  const variables = { project: { stringKey: primaryProject.stringKey }, digitalObjectType: digitalObjectType.toUpperCase() };
   const {
     loading: enabledFieldsLoading,
     error: enabledFieldsError,
     data: enabledFieldsData,
-  } = useQuery(getEnabledDynamicFieldsQuery, { variables });
+  } = useQuery(getEnabledDynamicFieldsQuery,
+    { project: { stringKey: primaryProject.stringKey }, digitalObjectType: digitalObjectType.toUpperCase() }
+  );
 
   const {
     loading: fieldGraphLoading,
