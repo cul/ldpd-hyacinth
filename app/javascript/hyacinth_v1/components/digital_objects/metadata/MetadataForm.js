@@ -8,6 +8,7 @@ import { useHistory } from 'react-router-dom';
 import FieldGroupArray from './FieldGroupArray';
 import FormButtons from '../../shared/forms/FormButtons';
 import GraphQLErrors from '../../shared/GraphQLErrors';
+import ErrorList from '../../shared/ErrorList';
 import InputGroup from '../../shared/forms/InputGroup';
 import TextInputWithAddAndRemove from '../../shared/forms/inputs/TextInputWithAddAndRemove';
 import { createDigitalObjectMutation, updateDescriptiveMetadataMutation } from '../../../graphql/digitalObjects';
@@ -58,10 +59,19 @@ function MetadataForm(props) {
     optimisticLockToken,
   } = digitalObject;
   const [descriptiveMetadata, setDescriptiveMetadata] = useState({});
-  const [createDigitalObject, { error: createErrors }] = useMutation(createDigitalObjectMutation);
-  const [updateDescriptiveMetadata, { error: updateErrors }] = useMutation(
+  const [createDigitalObject, { data: createData, error: createErrors }] = useMutation(createDigitalObjectMutation);
+  const [updateDescriptiveMetadata, { data: updateData, error: updateErrors }] = useMutation(
     updateDescriptiveMetadataMutation,
-  );
+    );
+
+  let userErrors = [];
+  // One day, maybe enable optionalChaining JS feature in babel to simplify lines like the one below.
+  if(createData && createData.createDigitalObject && createData.createDigitalObject.userErrors){
+    userErrors = createData.createDigitalObject.userErrors;
+  }else if(updateData && updateData.updateDescriptiveMetadata && updateData.updateDescriptiveMetadata.userErrors){
+    userErrors = updateData.updateDescriptiveMetadata.userErrors;
+  }
+
   const [identifiers, setIdentifiers] = useState(digitalObject.identifiers);
 
   const history = useHistory();
@@ -99,7 +109,7 @@ function MetadataForm(props) {
         break;
       case 'new':
         variables.input.project = { stringKey: primaryProject.stringKey };
-        variables.input.digitalObjectType = digitalObjectType;
+        variables.input.digitalObjectType = digitalObjectType.toUpperCase();
         action = createDigitalObject;
         historyPromise = (res) => {
           const path = `/digital_objects/${res.data.createDigitalObject.digitalObject.id}/metadata`;
@@ -148,12 +158,13 @@ function MetadataForm(props) {
     }
   }).filter(c => c !== null);
 
-  const variables = { project: { stringKey: primaryProject.stringKey }, digitalObjectType: digitalObjectType };
   const {
     loading: enabledFieldsLoading,
     error: enabledFieldsError,
     data: enabledFieldsData,
-  } = useQuery(getEnabledDynamicFieldsQuery, { variables });
+  } = useQuery(getEnabledDynamicFieldsQuery,
+    { project: { stringKey: primaryProject.stringKey }, digitalObjectType: digitalObjectType.toUpperCase() }
+  );
 
   const {
     loading: fieldGraphLoading,
@@ -193,6 +204,7 @@ function MetadataForm(props) {
   return (
     <>
       <form>
+        <ErrorList errors={userErrors.map((userError) => (`${userError.message} (path=${userError.path.join('/')})`))} />
         {
           filteredCategories.map(category => (
             <DynamicFieldCategory

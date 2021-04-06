@@ -8,6 +8,7 @@ import { useMutation } from '@apollo/react-hooks';
 import FormButtons from '../../../shared/forms/FormButtons';
 import { useHash } from './rightsHooks';
 import { updateRightsMutation } from '../../../../graphql/digitalObjects';
+import ErrorList from '../../../shared/ErrorList';
 import GraphQLErrors from '../../../shared/GraphQLErrors';
 import { removeTypename, removeEmptyKeys } from '../../../../utils/deepKeyRemove';
 import { defaultFieldValues } from '../../common/defaultFieldValues';
@@ -29,7 +30,11 @@ function AssetRightsForm(props) {
 
   const [rights, setRights] = useHash(merge({}, defaultAssetRights, initialRights));
 
-  const [updateRights, { error: updateError }] = useMutation(updateRightsMutation);
+  const [updateRights, { data: updateData, error: updateError }] = useMutation(updateRightsMutation);
+
+  // One day, maybe enable optionalChaining JS feature in babel to simplify lines like the one below.
+  const userErrors = (updateData && updateData.updateRights && updateData.updateRights.userErrors) || [];
+
 
   const onSubmitHandler = () => {
     const cleanRights = removeEmptyKeys(removeTypename(rights));
@@ -48,7 +53,8 @@ function AssetRightsForm(props) {
 
   return (
     <Form className="mb-3">
-      <GraphQLErrors errors={updateError} />
+      <GraphQLErrors errors={updateError} />    
+      <ErrorList errors={userErrors.map((userError) => (`${userError.message} (path=${userError.path.join('/')})`))} />
 
       <FieldGroupArray
         value={rights.restriction_on_access}

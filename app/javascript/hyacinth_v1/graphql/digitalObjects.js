@@ -192,6 +192,10 @@ export const createDigitalObjectMutation = gql`
       digitalObject {
         id
       }
+      userErrors {
+        message
+        path
+      }
     }
   }
 `;
@@ -202,6 +206,10 @@ export const updateDescriptiveMetadataMutation = gql`
       digitalObject {
         id
       }
+      userErrors {
+        message
+        path
+      }
     }
   }
 `;
@@ -211,6 +219,10 @@ export const updateRightsMutation = gql`
     updateRights(input: $input) {
       digitalObject {
         id
+      }
+      userErrors {
+        message
+        path
       }
     }
   }
