@@ -163,7 +163,7 @@ function MetadataForm(props) {
     error: enabledFieldsError,
     data: enabledFieldsData,
   } = useQuery(getEnabledDynamicFieldsQuery,
-    { project: { stringKey: primaryProject.stringKey }, digitalObjectType: digitalObjectType.toUpperCase() }
+    { variables: { project: { stringKey: primaryProject.stringKey }, digitalObjectType: digitalObjectType.toUpperCase() } }
   );
 
   const {
