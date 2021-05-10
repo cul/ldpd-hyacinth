@@ -68,6 +68,29 @@ describe Hyacinth::XMLGenerator::Element do
           expect(element.ng_element.attribute("authority").value).to eql "fast"
         end
       end
+      context 'when render_unless false' do
+        let(:xml_translation) do
+          {
+            'element' => 'mods:name',
+            "attrs" => {
+              "type" => "personal",
+              "valueUNI" => "{{name_term.uni}}",
+              "authority" => {
+                "render_unless" => {
+                  "absent" => ["name_term.uni"],
+                },
+                "val" => "fast"
+              },
+            }
+          }
+        end
+
+        it "adds attributes if render_unless is false" do
+          expect(element.ng_element.attribute("type").value).to eql "personal"
+          expect(element.ng_element.attribute("valueUNI").value).to eql "jds1329"
+          expect(element.ng_element.attribute("authority").value).to eql "fast"
+        end
+      end
     end
 
     context 'when attributes listed in translation' do

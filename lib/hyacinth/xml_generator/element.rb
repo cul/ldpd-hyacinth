@@ -12,8 +12,8 @@ module Hyacinth
     end
 
     def generate
-      # Return if element shouldn't be rended based on render_if arguments.
-      return unless render?(xml_translation.fetch('render_if', nil))
+      # Return if element shouldn't be rended based on render_if/render_unless arguments.
+      return unless render?(xml_translation.fetch('render_if', nil)) && !render?(xml_translation.fetch('render_unless', nil), false)
 
       create_ng_element # Create new element
       add_attributes
@@ -71,7 +71,7 @@ module Hyacinth
       return if attrs.blank?
 
       attrs.each do |attr_key, attr_val|
-        next if attr_val.is_a?(Hash) && !render?(attr_val.fetch('render_if', nil))
+        next if attr_val.is_a?(Hash) && !render?(attr_val.fetch('render_if', nil)) && render?(attr_val.fetch('render_unless', nil), false)
 
         val = generate_field_val(attr_val)
         val.strip! if val.respond_to?(:strip!)
@@ -102,8 +102,8 @@ module Hyacinth
       end
     end
 
-    def render?(render_if)
-      return true if render_if.nil?
+    def render?(render_if, default_value = true)
+      return default_value if render_if.nil?
 
       # Check for DynamicFieldGroup existence and DynamicField non-blank value
       if render_if['present'].present?
@@ -162,7 +162,7 @@ module Hyacinth
         end
       end
 
-      true
+      default_value
     end
 
     # Captures everything between the {{}} and replaces it with the value provided in the df_data map.
