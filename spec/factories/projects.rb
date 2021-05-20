@@ -48,6 +48,8 @@ FactoryBot.define do
 
     trait :with_enabled_dynamic_field do
       after(:build) do |project|
+        puts "enabled's project: "
+        puts project.inspect
         create(:enabled_dynamic_field, project: project)
       end
     end
