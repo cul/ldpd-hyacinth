@@ -4,12 +4,12 @@
 class DigitalObject::DynamicFieldsValidator < ActiveModel::EachValidator
   private
 
-    def generate_errors(digital_object, attribute, value, map)
+    def generate_errors(digital_object, attribute, value, map, enablable = false)
       #enabled checks are skipped for rights validation
-      unless value.key?("descriptive_metadata")
+      if enablable
         enabled_field_errors(value, digital_object).each { |a| 
-          digital_object.errors.add(a[0], a[1]) 
-        }
+            digital_object.errors.add(a[0], a[1]) 
+          }
       end
       errors_for(map, value, attribute).each { |a| digital_object.errors.add(a[0], a[1]) }
     end
