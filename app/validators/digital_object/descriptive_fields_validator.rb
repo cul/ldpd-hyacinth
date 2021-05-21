@@ -6,6 +6,6 @@ class DigitalObject::DescriptiveFieldsValidator < DigitalObject::DynamicFieldsVa
 
     map = Hyacinth::DynamicFieldsMap.new('descriptive').map
 
-    generate_errors(digital_object, attribute, value, map)
+    generate_errors(digital_object, attribute, value, map, true)
   end
 end
