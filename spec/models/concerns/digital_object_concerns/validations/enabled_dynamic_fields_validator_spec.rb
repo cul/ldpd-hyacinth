@@ -68,56 +68,37 @@ RSpec.describe DigitalObject::DynamicFieldsValidator do
     item.assign_descriptive_metadata({ 'descriptive_metadata' => descriptive_metadata }, false)
   end
 
-  context 'when new value is being added to a descriptive field' do
+  context 'when new value is being added to a descriptive field' do  
+
+    let(:descriptive_metadata) do
+      {
+        'group1' => [
+          { 'string_field' => 'A string value', 'integer_field' => 1 },
+        ]
+      }
+    end
+
+    before do
+      FactoryBot.create(:enabled_dynamic_field, project: project, dynamic_field: DynamicField.find_by_path_traversal(['group2', 'controlled_term_field']))
+      FactoryBot.create(:enabled_dynamic_field, project: project, dynamic_field: DynamicField.find_by_path_traversal(['group2', 'boolean_field']))
+    end
 
     context 'when field is not enabled' do
-      let(:descriptive_metadata) do
-        # {
-        #   'alternative_title' => [
-        #     { 'value' => 'Other Title', 'sort_order' => 1 }
-        #   ],
-        #   'name' => [
-        #     {
-        #       'term' => { 'pref_label' => 'Random, Person' },
-        #       'is_primary' => false,
-        #       'role' => [
-        #         { 'term' => { 'pref_label' => 'author' } },
-        #         { 'term' => { 'pref_label' => 'writer' } }
-        #       ]
-        #     }
-        #   ],
-        #   'genre' => [
-        #     { 'term' => { 'pref_label' => 'biography' } }
-        #   ],
-        #   'date_created' => [
-        #     { 'start_date' => '2020-01-01' }
-        #   ],
-        #   'type_of_resource' => [{ 'value' => 'text' }]
-        # }
-        {
-          'group1' => [
-            { 'string_field' => 'A string value', 'integer_field' => 1 }
-          ]
-        }
-      end
-
-      before do
-        FactoryBot.create(:enabled_dynamic_field, project: project, dynamic_field: DynamicField.find_by_path_traversal(['group1', 'string_field']))
-        FactoryBot.create(:enabled_dynamic_field, project: project, dynamic_field: DynamicField.find_by_path_traversal(['group1', 'integer_field']))
-        puts '----------'
-        EnabledDynamicField.all.each {|edf| puts "#{edf.dynamic_field.string_key} is enabled" }
-        puts '----------'
-      end
-
-      it 'is not valid' do
-        expect(item.valid?).to be false
-      end
-
       it 'returns errors' do
+        expect(item.valid?).to be false
         expect(item.errors.messages).to include(
-        'descriptive_metadata.group1[0].string_field': ['must be an enabled field']
+        'group1/string_field': ['field must be enabled']
+      )
+      end  
+    end
+
+    context 'when the value for a required field is blank' do
+      it 'returns errors' do
+        expect(item.valid?).to be false
+        expect(item.errors.messages).to include(
+        'group2/boolean_field': ['is required']
       )
       end
-    end
+    end      
   end
 end
