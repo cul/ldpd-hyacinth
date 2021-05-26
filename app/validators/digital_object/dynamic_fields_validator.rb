@@ -34,14 +34,9 @@ class DigitalObject::DynamicFieldsValidator < ActiveModel::EachValidator
           end
 
           dynamic_field_group = DynamicFieldGroup.find_by(string_key: field_or_group_key)
-          if dynamic_field_group
-            if dynamic_field_group.is_repeatable
-              if value.length > 1
+          if dynamic_field_group && !dynamic_field_group.is_repeatable && value.length > 1
                 errors.append([new_path, "is not repeatable"])
-              end
-            end
           end
-
           
           value.each_with_index do |v, i|
             errors.concat errors_for(reduced_map[:children], v, "#{new_path}[#{i}]")
@@ -64,13 +59,16 @@ class DigitalObject::DynamicFieldsValidator < ActiveModel::EachValidator
       send("errors_for_#{configuration[:field_type]}_field", configuration, value)
     end
 
+    # Returns any errors related to project level validations.
+    #
+    # @return [String] if there are errors
+    # @return false if there are no errors
     def enabled_field_errors(data, digital_object)
       errors = []
       dynamic_field_paths = []
       data.each do |df_group, children|
         children.each do |child|
           child.each do |df_name, value|
-            # only check field if a value is provided
             if value
               dynamic_field_paths << "#{df_group}/#{df_name}"
             end
@@ -92,24 +90,11 @@ class DigitalObject::DynamicFieldsValidator < ActiveModel::EachValidator
     def is_disabled(dynamic_field_path, digital_object)
       no_match = true
       dynamic_field = DynamicField.find_by(path: dynamic_field_path)
-      puts "is disabled ... "
-      DynamicField.all.each do |df|
-        puts df.display_label
-      end
-      if dynamic_field
-        # puts dynamic_field.id
-        # puts digital_object.primary_project.id
-        # puts digital_object.digital_object_type
-      else
-        puts "no  dyna field for "
-        puts dynamic_field_path
-      end
       if dynamic_field && EnabledDynamicField.where(dynamic_field: dynamic_field.id, 
                                   project: digital_object.primary_project, 
-                                  digital_object_type: digital_object.digital_object_type)
+                                  digital_object_type: digital_object.digital_object_type).first
           no_match = false
       end
-
       return ['field must be enabled'] if no_match
       false
     end
