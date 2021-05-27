@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe DigitalObject::DynamicFieldsValidator do
@@ -54,7 +56,10 @@ RSpec.describe DigitalObject::DynamicFieldsValidator do
               string_key: 'group5',
               display_label: 'Group 5',
               dynamic_fields: [
-                { string_key: 'select_field', display_label: 'Select Field', field_type: DynamicField::Type::SELECT, select_options: '[{ "value": "text","label": "Text" }, { "value": "still image","label": "still image" }]' }
+                {
+                  string_key: 'select_field', display_label: 'Select Field', field_type: DynamicField::Type::SELECT, select_options:
+                  '[{ "value": "text","label": "Text" }, { "value": "still image","label": "still image" }]'
+                }
               ]
             }
           ]
@@ -68,12 +73,11 @@ RSpec.describe DigitalObject::DynamicFieldsValidator do
     item.assign_descriptive_metadata({ 'descriptive_metadata' => descriptive_metadata }, false)
   end
 
-  context 'when new value is being added to a descriptive field' do  
-
+  context 'when new value is being added to a descriptive field' do
     let(:descriptive_metadata) do
       {
         'group1' => [
-          { 'string_field' => 'A string value', 'integer_field' => 1 },
+          { 'string_field' => 'A string value', 'integer_field' => 1 }
         ]
       }
     end
@@ -87,18 +91,18 @@ RSpec.describe DigitalObject::DynamicFieldsValidator do
       it 'returns errors' do
         expect(item.valid?).to be false
         expect(item.errors.messages).to include(
-        'group1/string_field': ['field must be enabled']
-      )
-      end  
+          'group1/string_field': ['field must be enabled']
+        )
+      end
     end
 
     context 'when the value for a required field is blank' do
       it 'returns errors' do
         expect(item.valid?).to be false
         expect(item.errors.messages).to include(
-        'group2/boolean_field': ['is required']
-      )
+          'group2/boolean_field': ['is required']
+        )
       end
-    end      
+    end
   end
 end
