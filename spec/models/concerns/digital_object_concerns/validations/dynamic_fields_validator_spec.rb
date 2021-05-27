@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe DigitalObject::DynamicFieldsValidator do
@@ -30,8 +32,8 @@ RSpec.describe DigitalObject::DynamicFieldsValidator do
     item.assign_descriptive_metadata({ 'descriptive_metadata' => descriptive_metadata }, false)
   end
 
-  context 'when new value is being added to a descriptive field' do  
-      # that only a single value is supplied for a non-repeatable field (for descriptive AND rights fields)
+  context 'when new value is being added to a descriptive field' do
+    # that only a single value is supplied for a non-repeatable field for descriptive AND rights fields
     context 'when multiple values are being added to a non-repeatable field' do
       let(:descriptive_metadata) do
         {
@@ -41,13 +43,13 @@ RSpec.describe DigitalObject::DynamicFieldsValidator do
           ]
         }
       end
-  
+
       it 'returns errors' do
-          expect(item.valid?).to be false
-          expect(item.errors.messages).to include(
-            'descriptive_metadata.group1': ['is not repeatable']
-          )
-      end  
+        expect(item.valid?).to be false
+        expect(item.errors.messages).to include(
+          'descriptive_metadata.group1': ['is not repeatable']
+        )
+      end
     end
   end
 end
