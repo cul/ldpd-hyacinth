@@ -14,8 +14,10 @@ AllCops:
   Exclude:
     - 'bin/**/*'
     - 'db/**/*'
+    - 'node_modules/**/*'
     - 'script/**/*'
     - 'spec/**/*'
+    - 'tmp/**/*'
     - 'vendor/**/*'
     - 'app/helpers/**/*'
     - 'app/views/**/*'

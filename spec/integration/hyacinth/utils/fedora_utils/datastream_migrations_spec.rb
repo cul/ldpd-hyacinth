@@ -32,8 +32,7 @@ RSpec.describe Hyacinth::Utils::FedoraUtils::DatastreamMigrations do
 
     shared_examples "clones a datastream" do 
       it "sets up ds properties correctly" do
-        result = Hyacinth::Utils::FedoraUtils::DatastreamMigrations.clone_to_dsid(asset.pid, source_dsid, target_dsid)
-        puts result
+        result = CloneFedoraManagedDatastreamJob.clone_to_dsid(asset.pid, source_dsid, target_dsid)
         expect(result[:status]).to be true
         obj = repository.find(asset.pid)
         src_versions = obj.datastreams[source_dsid].versions.sort_by { |b| b.lastModifiedDate }
