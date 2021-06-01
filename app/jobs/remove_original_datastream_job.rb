@@ -1,5 +1,5 @@
 class RemoveOriginalDatastreamJob
-  extend Hyacinth::Utils::FedoraUtils::DatastreamMigrations
+  extend Hyacinth::Utils::FedoraUtils::DatastreamMigrations::ClassMethods
 
   def self.perform(fedora_object_pid, original_dsid = DEFAULT_ASSET_DSID, clone_dsid = nil)
     clone_dsid ||= default_clone_dsid(original_dsid)

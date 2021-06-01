@@ -1,5 +1,5 @@
 class SetUpHyacinthManagedContentJob
-  extend Hyacinth::Utils::FedoraUtils::DatastreamMigrations
+  extend Hyacinth::Utils::FedoraUtils::DatastreamMigrations::ClassMethods
 
   def self.perform(asset_pid, original_dsid, clone_dsid = nil)
     clone_dsid ||= default_clone_dsid(original_dsid)

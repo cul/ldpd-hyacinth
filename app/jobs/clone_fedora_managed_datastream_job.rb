@@ -1,5 +1,5 @@
 class CloneFedoraManagedDatastreamJob
-  extend Hyacinth::Utils::FedoraUtils::DatastreamMigrations
+  extend Hyacinth::Utils::FedoraUtils::DatastreamMigrations::ClassMethods
 
   def self.perform(fedora_object_pid, original_dsid = DEFAULT_ASSET_DSID, clone_dsid = nil)
     clone_dsid ||= default_clone_dsid(original_dsid)
@@ -114,6 +114,7 @@ class CloneFedoraManagedDatastreamJob
       msg: "Cloned #{fedora_object_pid}.#{src_dsid} to #{fedora_object_pid}.#{target_dsid}"
     }
   rescue Exception => e
+    Rails.logger.error(e)
     {
       status: false,
       msg: "Error cloning #{src_dsid} to #{target_dsid}: #{e.message}"
