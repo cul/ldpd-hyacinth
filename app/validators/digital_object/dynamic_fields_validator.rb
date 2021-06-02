@@ -20,21 +20,12 @@ class DigitalObject::DynamicFieldsValidator < ActiveModel::EachValidator
           next
         end
 
-        reduced_map = field_map[field_or_group_key]
-        case reduced_map[:type]
+        field_map_subtree = field_map[field_or_group_key]
+        case field_map_subtree[:type]
         when 'DynamicFieldGroup'
-          unless value.is_a?(Array)
-            errors.append([new_path, "must contain an array"])
-            next
-          end
-
-          errors.append([new_path, "is not repeatable"]) if violates_repeat_value_constraint(field_or_group_key, value)
-
-          value.each_with_index do |v, i|
-            errors.concat errors_for(reduced_map[:children], v, "#{new_path}[#{i}]")
-          end
+          errors.concat errors_for_field_group(value, field_or_group_key, new_path, field_map_subtree)
         when 'DynamicField'
-          if (e = field_errors(reduced_map, value))
+          if (e = field_errors(field_map_subtree, value))
             errors.concat e.map { |i| [new_path, i] }
           end
         end
@@ -49,6 +40,20 @@ class DigitalObject::DynamicFieldsValidator < ActiveModel::EachValidator
     # @return false if there are no errors
     def field_errors(configuration, value)
       send("errors_for_#{configuration[:field_type]}_field", configuration, value)
+    end
+
+    def errors_for_field_group(value, field_or_group_key, new_path, field_map_subtree)
+      errors = []
+      if value.is_a?(Array)
+        errors.append([new_path, "is not repeatable"]) if violates_repeat_value_constraint(field_or_group_key, value)
+
+        value.each_with_index do |v, i|
+          errors.concat errors_for(field_map_subtree[:children], v, "#{new_path}[#{i}]")
+        end
+      else
+        errors.append([new_path, "must contain an array"])
+      end
+      errors
     end
 
     def violates_repeat_value_constraint(field_or_group_key, value)
