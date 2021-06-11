@@ -2,6 +2,15 @@
 
 FactoryBot.define do
   factory :item, class: DigitalObject::Item do
+    transient do
+      enable_fields { true }
+    end
+
+    to_create do |item, evaluator|
+      DynamicFieldsHelper.enable_dynamic_fields(item.digital_object_type, item.primary_project) if evaluator.enable_fields
+      item.save!
+    end
+
     initialize_with do
       instance = new
       instance.primary_project = create(:project)

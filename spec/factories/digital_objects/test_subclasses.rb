@@ -14,6 +14,11 @@ FactoryBot.define do
   Hyacinth::Config.digital_object_types.register('test_subclass', DigitalObject::TestSubclass)
 
   factory :digital_object_test_subclass, class: DigitalObject::TestSubclass do
+    to_create do |digital_object|
+      DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project)
+      digital_object.save!
+    end
+
     initialize_with do
       instance = new
       instance.primary_project = create(:project)

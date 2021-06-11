@@ -2,6 +2,11 @@
 
 FactoryBot.define do
   factory :asset, class: DigitalObject::Asset do
+    to_create do |asset|
+      DynamicFieldsHelper.enable_dynamic_fields(asset.digital_object_type, asset.primary_project)
+      asset.save!
+    end
+
     parent { nil } # parent should be passed in when factory build or create or called, otherwise this object won't validate
     asset_type { nil }
     initialize_with do

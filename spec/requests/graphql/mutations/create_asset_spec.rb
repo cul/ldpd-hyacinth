@@ -4,7 +4,10 @@ require 'rails_helper'
 require 'digest'
 
 RSpec.describe Mutations::CreateAsset, type: :request, solr: true do
-  before { load_title_fields! } # Need to load dynamic fields for title, because its set as part of the mutation.
+  before do
+    load_title_fields!
+    DynamicFieldsHelper.enable_dynamic_fields('asset', authorized_project)
+  end # Need to load dynamic fields for title, because its set as part of the mutation.
 
   let(:authorized_object) { FactoryBot.create(:item) }
   let(:authorized_project) { authorized_object.projects.first }

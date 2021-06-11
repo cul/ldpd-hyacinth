@@ -31,6 +31,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
                 {
                   string_key: 'role',
                   display_label: 'Role',
+                  is_repeatable: 'true',
                   dynamic_fields: [
                     { string_key: 'term', display_label: 'Value', field_type: DynamicField::Type::CONTROLLED_TERM, controlled_vocabulary: 'name_role' }
                   ]
