@@ -2,8 +2,13 @@
 
 FactoryBot.define do
   factory :item, class: DigitalObject::Item do
+    transient do
+      enable_fields { true }
+    end
+
     after(:build) do |digital_object|
       digital_object.primary_project = create(:project) if digital_object.primary_project.blank?
+      DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project) if evaluator.enable_fields
     end
 
     # Timestamps are set when an object is saved, but sometimes it's useful

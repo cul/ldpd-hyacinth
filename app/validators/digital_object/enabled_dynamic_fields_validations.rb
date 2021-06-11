@@ -12,7 +12,7 @@ module DigitalObject::EnabledDynamicFieldsValidations
       dynamic_field_paths = collect_field_paths(df_group, children, dynamic_field_paths)
 
       dynamic_field_paths.each do |dynamic_field_path|
-        if (e = disabled?(dynamic_field_path, digital_object))
+        if (e = not_enabled?(dynamic_field_path, digital_object))
           errors.concat e.map { |i| [dynamic_field_path, i] }
         end
       end
@@ -23,7 +23,7 @@ module DigitalObject::EnabledDynamicFieldsValidations
     errors
   end
 
-  def disabled?(dynamic_field_path, digital_object)
+  def not_enabled?(dynamic_field_path, digital_object)
     no_match = true
     dynamic_field = DynamicField.find_by(path: dynamic_field_path)
     if dynamic_field && EnabledDynamicField.where(dynamic_field: dynamic_field.id,

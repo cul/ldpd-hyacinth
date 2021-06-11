@@ -16,6 +16,8 @@ FactoryBot.define do
       if digital_object.primary_project.blank?
         digital_object.primary_project = digital_object.parents_to_add.present? ? digital_object.parents_to_add.first.primary_project : create(:project)
       end
+
+      DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project)
     end
 
     trait :skip_resource_request_callbacks do

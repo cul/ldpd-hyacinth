@@ -142,4 +142,14 @@ module DynamicFieldsHelper
 
     Hyacinth::DynamicFieldsLoader.load_fields!(isbn_fields)
   end
+
+  def enable_dynamic_fields(digital_object_type, project)
+    DynamicField.all.each do |df|
+      EnabledDynamicField.create!(
+        project: project,
+        dynamic_field: df,
+        digital_object_type: digital_object_type
+      )
+    end
+  end
 end

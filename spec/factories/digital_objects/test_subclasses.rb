@@ -14,6 +14,7 @@ FactoryBot.define do
   factory :digital_object_test_subclass, class: DigitalObject::TestSubclass do
     after(:build) do |digital_object|
       digital_object.primary_project = create(:project)
+      DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project)
     end
 
     trait :with_sample_data do
