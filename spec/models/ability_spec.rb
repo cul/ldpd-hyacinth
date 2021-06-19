@@ -4,39 +4,47 @@ require 'rails_helper'
 require 'cancan/matchers'
 
 RSpec.describe Ability, type: :model do
-  let(:base_rules) do
+  subject(:ability) { described_class.new(user) }
+  let(:base_user_rules) do
     [
-      { actions: [:read, :update], conditions: { id: 1 }, subject: ["User"], inverted: false },
+      { actions: [:read, :update], conditions: { id: user.id }, subject: ["User"], inverted: false },
       { actions: [:read, :update], conditions: { uid: user.uid }, subject: ["User"], inverted: false },
       { actions: [:read, :create], conditions: {}, subject: ["Term"], inverted: false },
       { actions: [:read], conditions: {}, subject: ["Vocabulary"], inverted: false },
       { actions: [:read], conditions: {}, subject: ["DynamicFieldCategory"], inverted: false },
+      { actions: [:read], conditions: {}, subject: ["PublishTarget"], inverted: false },
       { actions: [:create], conditions: {}, subject: ["BatchExport"], inverted: false },
-      { actions: [:read, :destroy], conditions: { user_id: 1 }, subject: ["BatchExport"], inverted: false },
+      { actions: [:read, :destroy], conditions: { user_id: user.id }, subject: ["BatchExport"], inverted: false },
       { actions: [:create], conditions: {}, subject: ["BatchImport"], inverted: false },
-      { actions: [:read, :update, :destroy], conditions: { user_id: 1 }, subject: ["BatchImport"], inverted: false }
+      { actions: [:read, :update, :destroy], conditions: { user_id: user.id }, subject: ["BatchImport"], inverted: false }
     ]
   end
 
-  describe 'when user is nil' do
-    subject { described_class.new(user) }
-
+  context 'when user is nil (i.e. not logged in)' do
     let(:user) { nil }
 
-    it { is_expected.not_to be_able_to(:manage, User) }
-    it { is_expected.not_to be_able_to(:show, User) }
+    it 'has no abilities' do
+      expect(ability.permissions[:can]).to be_blank
+      expect(ability.permissions[:cannot]).to be_blank
+    end
+  end
+
+  describe 'when basic user is logged in' do
+    let(:user) { FactoryBot.create(:user) }
+
+    it 'has the expected base abilities' do
+      expect(ability.to_list).to eq(base_user_rules)
+    end
   end
 
   describe 'when user is administrator' do
-    subject(:ability) { described_class.new(user) }
-
     let(:user) { FactoryBot.create(:user, is_admin: true) }
 
     it { is_expected.to be_able_to(:manage, :all) }
     it { is_expected.to be_able_to(:manage, Vocabulary) }
     it { is_expected.to be_able_to(:manage, DigitalObject) }
     it { is_expected.to be_able_to(:update, Project) }
-    it { is_expected.to be_able_to(:update, PublishTarget) }
+    it { is_expected.to be_able_to(:manage, PublishTarget) }
 
     it 'serializes correctly' do
       expect(ability.to_list).to match([{ actions: [:manage], conditions: {}, subject: [:all], inverted: false }])
@@ -44,8 +52,6 @@ RSpec.describe Ability, type: :model do
   end
 
   describe 'when user is user manager' do
-    subject(:ability) { described_class.new(user) }
-
     let(:user) do
       FactoryBot.create(
         :user, permissions: [Permission.create(action: Permission::MANAGE_USERS)]
@@ -59,14 +65,12 @@ RSpec.describe Ability, type: :model do
 
     it 'serializes correctly' do
       expect(ability.to_list).to match_array(
-        base_rules.concat([{ actions: [:manage], conditions: {}, subject: ['User'], inverted: false }])
+        base_user_rules.concat([{ actions: [:manage], conditions: {}, subject: ['User'], inverted: false }])
       )
     end
   end
 
   describe 'when user is resource request manager' do
-    subject(:ability) { described_class.new(user) }
-
     let(:user) do
       FactoryBot.create(
         :user, permissions: [Permission.create(action: Permission::MANAGE_RESOURCE_REQUESTS)]
@@ -81,14 +85,12 @@ RSpec.describe Ability, type: :model do
 
     it 'serializes correctly' do
       expect(ability.to_list).to match_array(
-        base_rules.concat([{ actions: [:manage], conditions: {}, subject: ['ResourceRequest'], inverted: false }])
+        base_user_rules.concat([{ actions: [:manage], conditions: {}, subject: ['ResourceRequest'], inverted: false }])
       )
     end
   end
 
   describe 'when user has multiple system wide permissions' do
-    subject(:ability) { described_class.new(user) }
-
     let(:user) do
       FactoryBot.create(
         :user, permissions: [
@@ -118,23 +120,23 @@ RSpec.describe Ability, type: :model do
 
     it 'serializes correctly' do
       expect(ability.to_list).to match_array(
-        base_rules.concat(additional_rules)
+        base_user_rules.concat(additional_rules)
       )
     end
   end
 
   describe 'when user is logged in' do
-    subject(:ability) { described_class.new(user) }
-
     let(:user) { FactoryBot.create(:user) }
 
     it { is_expected.to be_able_to(:read, user) }
     it { is_expected.to be_able_to(:update, user) }
+    it { is_expected.to be_able_to(:read, PublishTarget) }
 
     it { is_expected.not_to be_able_to(:manage, User) }
+    it { is_expected.not_to be_able_to(:update, PublishTarget) }
 
     it 'serializes correctly' do
-      expect(ability.to_list).to match(base_rules)
+      expect(ability.to_list).to match(base_user_rules)
     end
   end
 
@@ -150,12 +152,11 @@ RSpec.describe Ability, type: :model do
     end
 
     it { is_expected.to be_able_to(:read, Project) }
-    it { is_expected.to be_able_to(:read, PublishTarget) }
     it { is_expected.to be_able_to(:read, FieldSet) }
     it { is_expected.not_to be_able_to(:update, Project) }
-    it { is_expected.to be_able_to(:read, FactoryBot.create(:publish_target)) }
-    it { is_expected.to be_able_to(:read, DigitalObject::Base) }
-    it { is_expected.not_to be_able_to(:update, DigitalObject::Base) }
+    it { is_expected.to be_able_to(:read, PublishTarget) }
+    it { is_expected.to be_able_to(:read, DigitalObject) }
+    it { is_expected.not_to be_able_to(:update, DigitalObject) }
   end
 
   describe 'when user has the ability to manage all digital objects' do
@@ -175,15 +176,13 @@ RSpec.describe Ability, type: :model do
     it { is_expected.not_to be_able_to(:update, Project) }
     it { is_expected.to be_able_to(:publish_objects, Project) }
     it { is_expected.to be_able_to(:assess_rights, Project) }
-    it { is_expected.to be_able_to(:read, DigitalObject::Base) }
-    it { is_expected.to be_able_to(:update, DigitalObject::Base) }
-    it { is_expected.to be_able_to(:destroy, DigitalObject::Base) }
-    it { is_expected.to be_able_to(:create, DigitalObject::Base) }
+    it { is_expected.to be_able_to(:read, DigitalObject) }
+    it { is_expected.to be_able_to(:update, DigitalObject) }
+    it { is_expected.to be_able_to(:destroy, DigitalObject) }
+    it { is_expected.to be_able_to(:create, DigitalObject) }
   end
 
   describe 'when a user has the ability to read_objects for a project' do
-    subject(:ability) { described_class.new(user) }
-
     let(:project) { FactoryBot.create(:project) }
     let(:user) do
       FactoryBot.create(
@@ -197,8 +196,6 @@ RSpec.describe Ability, type: :model do
       [
         { actions: [:read], conditions: { id: project.id }, subject: ["Project"], inverted: false },
         { actions: [:read], conditions: { string_key: project.string_key }, subject: ["Project"], inverted: false },
-        { actions: [:read], conditions: { project_id: project.id }, subject: ["PublishTarget"], inverted: false },
-        { actions: [:read], conditions: { project: { string_key: project.string_key } }, subject: ["PublishTarget"], inverted: false },
         { actions: [:read], conditions: { project_id: project.id }, subject: ["FieldSet"], inverted: false },
         { actions: [:read], conditions: { project: { string_key: project.string_key } }, subject: ["FieldSet"], inverted: false },
         { actions: [:read_objects], conditions: { id: 1 }, subject: ["Project"], inverted: false },
@@ -206,16 +203,14 @@ RSpec.describe Ability, type: :model do
       ]
     end
 
-    it { is_expected.to be_able_to(:show, FactoryBot.create(:publish_target, project: project)) }
     it { is_expected.to be_able_to(:show, project) }
     it { is_expected.to be_able_to(:show, FactoryBot.create(:field_set, project: project)) }
 
     it { is_expected.not_to be_able_to(:update, FactoryBot.create(:field_set, project: project)) }
-    it { is_expected.not_to be_able_to(:update, FactoryBot.create(:publish_target, project: project)) }
 
     it 'serializes correctly' do
       expect(ability.to_list).to match_array(
-        base_rules.concat(additional_rules)
+        base_user_rules.concat(additional_rules)
       )
     end
   end
@@ -223,7 +218,7 @@ RSpec.describe Ability, type: :model do
   describe 'for digital object permissions' do
     subject { described_class.new(user) }
 
-    let(:authorized_object) { FactoryBot.build(:digital_object_test_subclass, :with_sample_data, :with_lincoln_project) }
+    let(:authorized_object) { FactoryBot.build(:digital_object_test_subclass, :with_sample_data) }
     let(:unauthorized_object) { FactoryBot.build(:digital_object_test_subclass, :with_sample_data, :with_minken_project) }
     let(:mixed_object) do
       obj = FactoryBot.build(:digital_object_test_subclass, :with_sample_data)

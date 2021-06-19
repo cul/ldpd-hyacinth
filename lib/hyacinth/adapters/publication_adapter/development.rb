@@ -11,7 +11,7 @@ module Hyacinth
         # Mocks the publishing action by returning a successful response. Ensures that
         # object was preserved before "publishing".
         #
-        # @param digital_object [DigitalObject::Base subclass] DigitalObject to publish.
+        # @param digital_object [DigitalObject subclass] DigitalObject to publish.
         # @param publish_target
         # @return [success, msg] [boolean, Array<String>] success will be true and message will be a
         #         fake url location

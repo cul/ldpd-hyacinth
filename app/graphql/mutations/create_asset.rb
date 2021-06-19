@@ -9,7 +9,7 @@ class Mutations::CreateAsset < Mutations::BaseMutation
   field :asset, Types::DigitalObject::AssetType, null: true
 
   def resolve(file_location:, parent_id:)
-    parent = DigitalObject::Item.find(parent_id)
+    parent = DigitalObject.find_by_uid(parent_id)
     ability.authorize! :create_objects, parent.primary_project
 
     # At this time, non-admins can only perform blob-based asset creation
@@ -30,7 +30,7 @@ class Mutations::CreateAsset < Mutations::BaseMutation
   def initialize_child_asset(parent)
     asset = DigitalObject::Asset.new
     asset.primary_project = parent.primary_project
-    asset.add_parent_uid(parent.uid)
+    asset.parents_to_add << parent
     asset
   end
 end

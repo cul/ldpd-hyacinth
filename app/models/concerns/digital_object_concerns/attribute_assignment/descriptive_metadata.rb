@@ -28,6 +28,7 @@ module DigitalObjectConcerns
 
       # Trims whitespace and removes blank fields from descriptive_metadata.
       def clean_descriptive_metadata!
+        descriptive_metadata.deep_stringify_keys!
         Hyacinth::Utils::Clean.trim_whitespace!(descriptive_metadata)
         Hyacinth::Utils::Clean.remove_blank_fields!(descriptive_metadata)
       end

@@ -5,12 +5,13 @@ module Hyacinth
     class HyacinthError < StandardError; end
 
     class DeletionError < HyacinthError; end
-    class PurgeError < HyacinthError; end
     class NotFound < HyacinthError; end
     class NotSaved < HyacinthError; end
     class LockError < HyacinthError; end
 
     class Deserialization < HyacinthError; end
+
+    class InvalidLocationUri < HyacinthError; end
 
     class Rollback < HyacinthError; end
     class UnexpectedErrors < HyacinthError; end
@@ -30,9 +31,13 @@ module Hyacinth
 
     class DuplicateTypeError < HyacinthError; end
 
-    class ResourceImportError < HyacinthError; end
     class BatchImportError < HyacinthError; end
 
     class VocabularyLocked < HyacinthError; end
+
+    class InvalidPublishConditions < HyacinthError; end
+    class InvalidPersistConditions < HyacinthError; end
+    class PublishFailure < HyacinthError; end
+    class UnpublishFailure < HyacinthError; end
   end
 end

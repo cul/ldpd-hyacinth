@@ -85,7 +85,7 @@ RSpec.describe BatchImport, type: :model do
       before do
         FactoryBot.create(:digital_object_import, :in_progress, batch_import: batch_import)
         FactoryBot.create(:digital_object_import, :pending, batch_import: batch_import)
-        FactoryBot.create(:digital_object_import, :failure, batch_import: batch_import)
+        FactoryBot.create(:digital_object_import, :creation_failure, batch_import: batch_import)
       end
 
       it 'returns in progress' do
@@ -96,7 +96,7 @@ RSpec.describe BatchImport, type: :model do
     context 'when at leat one digital_object_import is pending' do
       before do
         FactoryBot.create(:digital_object_import, :pending, batch_import: batch_import)
-        FactoryBot.create(:digital_object_import, :failure, batch_import: batch_import)
+        FactoryBot.create(:digital_object_import, :creation_failure, batch_import: batch_import)
         FactoryBot.create(:digital_object_import, :success, batch_import: batch_import)
       end
 
@@ -107,7 +107,7 @@ RSpec.describe BatchImport, type: :model do
 
     context 'when all jobs are complete but at least one has failed' do
       before do
-        FactoryBot.create(:digital_object_import, :failure, batch_import: batch_import)
+        FactoryBot.create(:digital_object_import, :creation_failure, batch_import: batch_import)
         FactoryBot.create(:digital_object_import, :success, batch_import: batch_import)
       end
 
@@ -210,7 +210,7 @@ RSpec.describe BatchImport, type: :model do
       context 'with successful and failed imports' do
         before do
           FactoryBot.create(:digital_object_import, :success, batch_import: batch_import)
-          FactoryBot.create(:digital_object_import, :failure, batch_import: batch_import)
+          FactoryBot.create(:digital_object_import, :creation_failure, batch_import: batch_import)
           batch_import.destroy!
         end
 
@@ -270,7 +270,7 @@ RSpec.describe BatchImport, type: :model do
         FactoryBot.create(:digital_object_import, :in_progress, batch_import: batch_import, index: 3)
         FactoryBot.create(:digital_object_import, :pending, batch_import: batch_import, index: 4)
         FactoryBot.create(:digital_object_import, :success, batch_import: batch_import, index: 5)
-        FactoryBot.create(:digital_object_import, :failure, batch_import: batch_import, index: 6)
+        FactoryBot.create(:digital_object_import, :creation_failure, batch_import: batch_import, index: 6)
 
         batch_import.save!
       end

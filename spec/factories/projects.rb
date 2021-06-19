@@ -35,17 +35,6 @@ FactoryBot.define do
       has_asset_rights { true }
     end
 
-    trait :with_publish_target do
-      after(:build) do |project|
-        atts = {
-          project: project,
-          target_type: PublishTarget::Type::PRODUCTION,
-          publish_url: project.project_url + "/publish"
-        }
-        create(:legend_of_lincoln_publish_target, atts)
-      end
-    end
-
     trait :with_enabled_dynamic_field do
       after(:build) do |project|
         create(:enabled_dynamic_field, project: project)

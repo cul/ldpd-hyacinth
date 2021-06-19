@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
 class Mutations::CreatePublishTarget < Mutations::BaseMutation
-  argument :project_string_key, ID, required: true
-  argument :type, Enums::PublishTargetTypeEnum, required: true, as: :target_type
+  argument :string_key, ID, required: true
   argument :publish_url, String, required: true
   argument :api_key, String, required: true
   argument :doi_priority, Integer, required: false
@@ -10,20 +9,9 @@ class Mutations::CreatePublishTarget < Mutations::BaseMutation
 
   field :publish_target, Types::PublishTargetType, null: true
 
-  def resolve(project_string_key:, **attributes)
-    # check that we can do something with project
-    project = Project.find_by!(string_key: project_string_key)
-
-    ability.authorize! :read, project
-
-    # ability.authorize! :create, PublishTarget # for this project
-
-    publish_target = project.publish_targets.build(**attributes)
-
-    ability.authorize! :create, publish_target
-
-    publish_target.save!
-
+  def resolve(**attributes)
+    ability.authorize! :create, PublishTarget
+    publish_target = PublishTarget.create!(**attributes)
     { publish_target: publish_target }
   end
 end

@@ -81,7 +81,7 @@ class BatchExportJob
   # Given a batch_export, calls the given block once for each digital object returned by executing
   # a digital object search for the batch_export's search_params.
   # @param [BatchExport] A BatchExport object.
-  # @yield [digital_object] A DigitalObject::Base subclass instance.
+  # @yield [digital_object] A DigitalObject subclass instance.
   # @return [void]
   def self.digital_objects_for_batch_export(batch_export)
     search_params = JSON.parse(batch_export.search_params)
@@ -109,7 +109,7 @@ class BatchExportJob
 
     while there_are_more_records
       results['response']['docs'].each do |doc|
-        yield DigitalObject::Base.find(doc['id'])
+        yield DigitalObject.find_by_uid!(doc['id'])
       end
 
       results = Hyacinth::Config.digital_object_search_adapter.search(search_params, searching_user) do |solr_params|

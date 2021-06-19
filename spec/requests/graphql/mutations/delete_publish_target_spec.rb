@@ -3,12 +3,10 @@
 require 'rails_helper'
 
 RSpec.describe Mutations::DeletePublishTarget, type: :request do
-  let(:project) { FactoryBot.create(:project) }
-  let(:target_type) { publish_target.target_type }
-  let(:publish_target) { FactoryBot.create(:publish_target, project: project) }
+  let(:publish_target) { FactoryBot.create(:publish_target) }
 
   include_examples 'requires user to have correct permissions for graphql request' do
-    let(:variables) { { input: { projectStringKey: project.string_key, type: target_type.upcase } } }
+    let(:variables) { { input: { stringKey: publish_target.string_key } } }
     let(:request) { graphql query, variables }
   end
 
@@ -16,23 +14,23 @@ RSpec.describe Mutations::DeletePublishTarget, type: :request do
     before { sign_in_user as: :administrator }
 
     context 'when deleting a publish_target that exists' do
-      let(:variables) { { input: { projectStringKey: project.string_key, type: target_type.upcase } } }
+      let(:variables) { { input: { stringKey: publish_target.string_key } } }
 
       before { graphql query, variables }
 
       it 'deletes record from database' do
-        expect(PublishTarget.find_by(project: project, target_type: target_type)).to be nil
+        expect(PublishTarget.find_by(string_key: publish_target.string_key)).to be nil
       end
     end
 
     context 'when deleting a publish_target with an invalid type' do
-      let(:variables) { { input: { projectStringKey: project.string_key, type: 'not-valid' } } }
+      let(:variables) { { input: { stringKey: 'not-valid' } } }
 
       before { graphql query, variables }
 
       it 'returns errors' do
         expect(response.body).to be_json_eql(%(
-          "Variable input of type DeletePublishTargetInput! was provided invalid value for type (Expected \\\"not-valid\\\" to be one of: PRODUCTION, STAGING)"
+          "Couldn't find PublishTarget"
         )).at_path('errors/0/message')
       end
     end
@@ -43,7 +41,7 @@ RSpec.describe Mutations::DeletePublishTarget, type: :request do
       mutation ($input: DeletePublishTargetInput!) {
         deletePublishTarget(input: $input) {
           publishTarget {
-            type
+            stringKey
           }
         }
       }

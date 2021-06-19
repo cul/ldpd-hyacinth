@@ -7,11 +7,13 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
   context "#solr_document_for" do
     subject(:document) { adapter.solr_document_for(authorized_object) }
 
-    let(:authorized_object) { FactoryBot.build(:item, :with_descriptive_metadata) }
+    let(:authorized_object) { FactoryBot.build(:item, :with_descriptive_metadata, :with_timestamps) }
     let(:adapter) { described_class.new }
 
     before do
-      authorized_object.send :uid=, 'dummy-uid'
+      authorized_object.uid = 'dummy-uid'
+      authorized_object.created_at = DateTime.current
+      authorized_object.updated_at = DateTime.current
     end
 
     its(['id']) { is_expected.to eql authorized_object.uid }
@@ -107,7 +109,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
 
       it 'adds values to identifier search' do
         expect(document['identifier_search_sim']).to match_array(
-          ['0-4975-5421-6', '0-3831-5430-8', 'dummy-uid']
+          ['0-4975-5421-6', '0-3831-5430-8', authorized_object.uid]
         )
       end
     end

@@ -25,10 +25,10 @@ RSpec.describe 'Retrieving Digital Object', type: :request, solr: true do
           "id": "#{authorized_object.uid}",
           "title": "The Best Item Ever",
           "numberOfChildren": 0,
-          "createdAt": "#{authorized_object.created_at}",
+          "createdAt": "#{authorized_object.created_at.iso8601}",
           "createdBy": null,
           "digitalObjectType": "ITEM",
-          "doi": "#{authorized_object.doi}",
+          "doi": #{authorized_object.doi.nil? ? 'null' : '"#{authorized_object.doi}"'},
           "descriptiveMetadata": {
             "title": [
               {
@@ -71,9 +71,8 @@ RSpec.describe 'Retrieving Digital Object', type: :request, solr: true do
             ]
           },
           "resources" : [],
-          "serializationVersion": "1",
           "state": "ACTIVE",
-          "updatedAt": "#{authorized_object.updated_at}",
+          "updatedAt": "#{authorized_object.updated_at.iso8601}",
           "updatedBy": null
         }
       )).at_path('data/digitalObject')
@@ -151,7 +150,6 @@ RSpec.describe 'Retrieving Digital Object', type: :request, solr: true do
           id
           title
           numberOfChildren
-          serializationVersion
           descriptiveMetadata
           doi
           state
@@ -187,7 +185,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request, solr: true do
             id
           }
           publishEntries {
-            citedAt
+            citationLocation
             publishedAt
             publishedBy {
               id

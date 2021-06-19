@@ -246,7 +246,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
 
   context 'with invalid value for a string field' do
     let(:descriptive_metadata) do
-      { 'alternative_title': [{ value: false }] }
+      { 'alternative_title': [{ value: 5 }] }
     end
 
     it 'return errors' do

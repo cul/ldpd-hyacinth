@@ -10,7 +10,6 @@ module Types
     orphan_types Types::DigitalObject::ItemType, Types::DigitalObject::AssetType, Types::DigitalObject::SiteType
 
     field :id, ID, null: false, method: :uid
-    field :serialization_version, String, null: false
     field :doi, String, null: true
     field :state, Enums::DigitalObjectStateEnum, null: false
     field :digital_object_type, Enums::DigitalObjectTypeEnum, null: false
@@ -44,6 +43,7 @@ module Types
         {
           'id' => resource_name,
           'display_label' => resource_name.humanize.split(' ').map(&:capitalize).join(' '),
+          'ui_deletable' => (resource_name != object.master_resource_name),
           'resource' => resource
         }
       end

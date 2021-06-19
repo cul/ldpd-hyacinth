@@ -9,7 +9,7 @@ module Solr
     # this isn't always ideal.
     #
     # @return [Boolean] optionally sends commit message to solr after a change, defaults to false
-    attr_reader :commit_after_change
+    attr_accessor :commit_after_change
 
     # @return [RSolr::Client] connection to solr
     attr_reader :connection

@@ -95,8 +95,8 @@ FactoryBot.define do
       end
     end
 
-    trait(:failure) do
-      status { 'failure' }
+    trait(:creation_failure) do
+      status { 'creation_failure' }
       index { 99 }
       import_errors { ["location.value is not a valid field"] }
       digital_object_data do

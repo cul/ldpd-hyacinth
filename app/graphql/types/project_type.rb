@@ -7,12 +7,7 @@ module Types
     field :string_key, ID, null: false
     field :display_label, String, null: false
     field :project_url, String, null: true
-
     field :publish_targets, [PublishTargetType], null: true
-    field :publish_target, PublishTargetType, null: true do
-      argument :type, Enums::PublishTargetTypeEnum, required: true
-    end
-
     field :field_sets, [FieldSetType], null: true
     field :field_set, FieldSetType, null: true do
       argument :id, ID, required: true
@@ -29,13 +24,6 @@ module Types
       # TODO: Change :show below to :read
       context[:ability].authorize!(:show, field_set)
       field_set
-    end
-
-    def publish_target(type:)
-      publish_target = PublishTarget.find_by!(target_type: type, project: object)
-      # TODO: Change :show below to :read
-      context[:ability].authorize!(:show, publish_target)
-      publish_target
     end
 
     def project_permissions

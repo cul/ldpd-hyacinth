@@ -10,14 +10,15 @@ module Mutations
       field :user_errors, [Types::Errors::FieldedInput], null: false
 
       def resolve(id:, featured_thumbnail_region:)
-        digital_object = ::DigitalObject::Base.find(id)
+        digital_object = ::DigitalObject.find_by_uid!(id)
         ability.authorize! :update, digital_object
 
         raise_error_if_unsupported_object_type!(digital_object)
 
         digital_object.featured_thumbnail_region = featured_thumbnail_region
+        digital_object.updated_by = context[:current_user]
 
-        if digital_object.save(user: context[:current_user])
+        if digital_object.save
           { digital_object: digital_object, user_errors: [] }
         else
           {

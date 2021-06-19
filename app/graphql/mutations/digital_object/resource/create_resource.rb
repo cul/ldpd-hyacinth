@@ -12,7 +12,7 @@ module Mutations
         field :user_errors, [Types::Errors::FieldedInput], null: false
 
         def resolve(id:, resource_name:, file_location:)
-          digital_object = ::DigitalObject::Base.find(id)
+          digital_object = ::DigitalObject.find_by_uid!(id)
           ability.authorize! :update, digital_object
 
           # At this time, non-admins can only perform blob-based asset creation
@@ -25,9 +25,10 @@ module Mutations
 
           # Create a new resource import, which will be processed when the object is saved
           digital_object.resource_imports[resource_name] = Hyacinth::DigitalObject::ResourceImport.new(method: Hyacinth::DigitalObject::ResourceImport::COPY, location: file_location)
+          digital_object.updated_by = context[:current_user]
 
           # Save the object
-          if digital_object.save!(update_index: true, user: context[:current_user])
+          if digital_object.save
             { digital_object: digital_object, user_errors: [] }
           else
             { digital_object: digital_object, user_errors: digital_object.errors.full_messages.map { |msg| { message: msg, path: [] } } }

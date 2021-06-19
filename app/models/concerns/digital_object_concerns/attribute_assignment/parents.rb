@@ -2,24 +2,23 @@
 
 module DigitalObjectConcerns
   module AttributeAssignment
-    module ParentUids
+    module Parents # TODO: Rename to Parents
       extend ActiveSupport::Concern
-      # TODO: Test these methods via shared_example (https://stackoverflow.com/questions/16525222/how-to-test-a-concern-in-rails)
 
-      def assign_parent_uids(digital_object_data)
-        return unless digital_object_data.key?('parent_digital_objects')
+      def assign_parents(digital_object_data)
+        return unless digital_object_data.key?('parents')
 
         new_set_of_uids = Set.new
         new_set_of_identifiers = Set.new
 
         # Get uids and identifiers
-        digital_object_data['parent_digital_objects'].each do |dod_parent_digital_object|
-          if dod_parent_digital_object['uid'].present?
-            new_set_of_uids << dod_parent_digital_object['uid']
-          elsif dod_parent_digital_object['identifier'].present?
-            new_set_of_identifiers << dod_parent_digital_object['identifier']
+        digital_object_data['parents'].each do |dod_parent|
+          if dod_parent['uid'].present?
+            new_set_of_uids << dod_parent['uid']
+          elsif dod_parent['identifier'].present?
+            new_set_of_identifiers << dod_parent['identifier']
           else
-            raise Hyacinth::Exceptions::NotFound, "Could not find parent digital object using find criteria: #{dod_parent_digital_object.inspect}"
+            raise Hyacinth::Exceptions::NotFound, "Could not find parent digital object using find criteria: #{dod_parent.inspect}"
           end
         end
 
@@ -37,23 +36,17 @@ module DigitalObjectConcerns
           new_set_of_uids << uids.first
         end
 
+        current_parent_uids = self.currently_persisted_parent_uids
+
         # Add new UIDs that don't already exist in set of parents
-        (new_set_of_uids - parent_uids).each do |uid|
-          add_parent_uid(uid)
+        (new_set_of_uids - current_parent_uids).each do |uid|
+          self.parents_to_add << DigitalObject.find_by_uid!(uid)
         end
 
         # Remove omitted UIDs that currently exist in set of parents
-        (parent_uids - new_set_of_identifiers.to_a).each do |uid|
-          remove_parent_uid(uid)
+        (current_parent_uids - new_set_of_identifiers.to_a).each do |uid|
+          self.parents_to_remove << DigitalObject.find_by_uid!(uid)
         end
-      end
-
-      def add_parent_uid(uid)
-        @parent_uids_to_add << uid
-      end
-
-      def remove_parent_uid(uid)
-        @parent_uids_to_remove << uid
       end
     end
   end

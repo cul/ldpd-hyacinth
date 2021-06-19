@@ -2,18 +2,20 @@
 
 FactoryBot.define do
   factory :asset, class: DigitalObject::Asset do
-    parent { nil } # parent should be passed in when factory build or create or called, otherwise this object won't validate
+    transient do
+      parents_to_add { [] }
+    end
+
     asset_type { nil }
-    initialize_with do
-      instance = new
-      if parent
-        instance.primary_project = parent.primary_project
-        instance.add_parent_uid(parent.uid)
-      else
-        instance.primary_project = create(:project)
+
+    after(:build) do |digital_object, evaluator|
+      evaluator.parents_to_add.each do |parent|
+        digital_object.parents_to_add << parent
       end
-      instance.asset_type = asset_type
-      instance
+
+      if digital_object.primary_project.blank?
+        digital_object.primary_project = digital_object.parents_to_add.present? ? digital_object.parents_to_add.first.primary_project : create(:project)
+      end
     end
 
     trait :skip_resource_request_callbacks do

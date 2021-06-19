@@ -3,23 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe DigitalObjectConcerns::ExportFieldsBehavior do
-  let(:digital_object_with_sample_data) { FactoryBot.build(:digital_object_test_subclass, :with_sample_data) }
-  let(:uid_value) { 'unique-id-123' }
-  before do
-    allow(digital_object_with_sample_data).to receive(:metadata_attributes).and_return(
-      {
-        'uid' => Hyacinth::DigitalObject::TypeDef::String.new,
-        'group' => Hyacinth::DigitalObject::TypeDef::Group.new
-      }
-    )
-    allow(digital_object_with_sample_data).to receive(:uid).and_return(uid_value)
-  end
+  let!(:digital_object_with_sample_data) { FactoryBot.build(:digital_object_test_subclass, :with_sample_data, uid: 'unique-id-123') }
 
   describe "#internal_fields" do
     subject { digital_object_with_sample_data.internal_fields }
 
     it "includes uid when value is present" do
-      is_expected.to include('uid' => uid_value)
+      is_expected.to include('uid' => digital_object_with_sample_data.uid)
     end
 
     it "includes primary_project.string_key when value is present" do

@@ -13,7 +13,9 @@ module Hyacinth
 
       module ClassMethods
         def metadata_attributes
-          @metadata_attributes ||= {} # initialized here because it may not have been initialized in a subclass of the including class
+          # We initialize @metadata_attributes here because it may not have been
+          # initialized in a subclass of the including class.
+          @metadata_attributes ||= {}
           if self.superclass.respond_to?(:metadata_attributes)
             @metadata_attributes.merge(self.superclass.metadata_attributes)
           else
@@ -33,14 +35,13 @@ module Hyacinth
             instance_variable_get("@#{metadata_attribute_name}")
           end
 
-          # create a writer method, which may or may not be public.
-          # writer only accepts allowed types (or nil)
+          # Create a writer method, which may or may not be public.
           writer_method_name = "#{metadata_attribute_name}="
           define_method(writer_method_name) do |value|
             instance_variable_set("@#{metadata_attribute_name}", value)
           end
 
-          # make writer method private, if requested
+          # Make writer method private by default, unless requested as public.
           private writer_method_name.to_sym unless type_def.public_writer?
         end
       end

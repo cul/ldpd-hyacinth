@@ -1,23 +1,19 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  module DigitalObject
-    class TestSubclass < DigitalObject::Base
-      metadata_attribute :custom_field1, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { 'custom default value 1' }).private_writer
-      metadata_attribute :custom_field2, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { 'custom default value 2' })
-      resource_attribute :test_resource1
-      resource_attribute :test_resource2
-    end
+  class DigitalObject::TestSubclass < DigitalObject
+    metadata_attribute :custom_field1, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { 'custom default value 1' }).private_writer
+    metadata_attribute :custom_field2, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { 'custom default value 2' })
+    resource_attribute :test_resource1
+    resource_attribute :test_resource2
   end
 
   # Add ability to resolve digital object type to class
   Hyacinth::Config.digital_object_types.register('test_subclass', DigitalObject::TestSubclass)
 
   factory :digital_object_test_subclass, class: DigitalObject::TestSubclass do
-    initialize_with do
-      instance = new
-      instance.primary_project = create(:project)
-      instance
+    after(:build) do |digital_object|
+      digital_object.primary_project = create(:project)
     end
 
     trait :with_sample_data do
@@ -46,16 +42,23 @@ FactoryBot.define do
       end
     end
 
+    trait :with_test_resource1 do
+      after(:build) do |digital_object|
+        test_file_fixture_path = Rails.root.join('spec', 'fixtures', 'files', 'test.txt').to_s
+
+        digital_object.resources['test_resource1'] = Hyacinth::DigitalObject::Resource.new(
+          location: 'tracked-disk://' + test_file_fixture_path,
+          checksum: 'sha256:717f2c6ffbd649cd57ecc41ac6130c3b6210f1473303bcd9101a9014551bffb2',
+          original_file_path: test_file_fixture_path,
+          media_type: 'text/plain',
+          file_size: File.size(test_file_fixture_path)
+        )
+      end
+    end
+
     trait :with_lincoln_project do
       after(:build) do |digital_object|
-        right_now = Time.current
-        digital_object.primary_project = create(:project, :legend_of_lincoln, :with_publish_target, :allow_asset_rights)
-        entries = digital_object.projects.map do |proj|
-          proj.publish_targets.map(&:combined_key)
-        end.to_a.flatten.uniq.map do |sk|
-          [sk, Hyacinth::PublishEntry.new(published_at: right_now, published_by: create(:user, :administrator, uid: "test-uid-#{Random.rand}"))]
-        end.to_h
-        digital_object.send :publish_entries=, entries.freeze
+        digital_object.primary_project = create(:project, :legend_of_lincoln)
       end
     end
 

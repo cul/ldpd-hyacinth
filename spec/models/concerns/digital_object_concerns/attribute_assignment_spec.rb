@@ -23,7 +23,7 @@ RSpec.describe DigitalObjectConcerns::AttributeAssignment do
       expect(digital_object_with_sample_data).to receive(:assign_identifiers).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:assign_mint_doi).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:assign_optimistic_lock_token).with(digital_object_data).and_call_original
-      expect(digital_object_with_sample_data).to receive(:assign_parent_uids).with(digital_object_data).and_call_original
+      expect(digital_object_with_sample_data).to receive(:assign_parents).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:assign_pending_publish_entries).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:assign_resource_imports).with(digital_object_data).and_call_original
       expect(digital_object_with_sample_data).to receive(:assign_state).with(digital_object_data).and_call_original

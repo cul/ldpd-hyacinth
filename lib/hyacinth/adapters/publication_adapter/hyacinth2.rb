@@ -11,7 +11,7 @@ module Hyacinth
         # Publishes the given digital object to this publish target's url,
         # optionally pointing the doi to this publish target if
         # point_doi_to_this_publish_target is given a value of true.
-        # @param digital_object [DigitalObject::Base subclass] DigitalObject to publish.
+        # @param digital_object [DigitalObject subclass] DigitalObject to publish.
         # @param point_doi_to_this_publish_target [boolean] A flag that determines whether
         #        the published digital object's doi should point to a location associated
         #        with this PublishTarget.

@@ -46,17 +46,17 @@ RSpec.describe DigitalObjectConcerns::AttributeAssignment::Doi do
   end
 
   context "#assign_mint_doi" do
-    context "when no doi has been set" do
-      it "sets @mint_doi to the given value, converted to a boolean value" do
-        expect(digital_object.instance_variable_get('@mint_doi')).to eq(false)
-        {
-          true => true,
-          false => false,
-          'true' => true,
-          'false' => false,
-          'TRUE' => true,
-          'FALSE' => false
-        }.each do |value_to_set, expected_result|
+    context "when no doi has been set, it sets @mint_doi to the given value, converted to a boolean value" do
+      {
+        true => true,
+        false => false,
+        'true' => true,
+        'false' => false,
+        'TRUE' => true,
+        'FALSE' => false
+      }.each do |value_to_set, expected_result|
+        it "converts as expected for #{value_to_set.inspect}" do
+          expect(digital_object.instance_variable_get('@mint_doi')).to eq(false)
           digital_object.assign_mint_doi('mint_doi' => value_to_set)
           expect(digital_object.instance_variable_get('@mint_doi')).to eq(expected_result)
         end

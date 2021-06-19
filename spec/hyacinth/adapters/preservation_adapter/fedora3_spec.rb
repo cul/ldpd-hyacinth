@@ -113,7 +113,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
   end
   describe "#persist_impl" do
     let(:rubydora_object) { Rubydora::DigitalObject.new(object_pid, connection) }
-    let(:hyacinth_object) { FactoryBot.build(:item) }
+    let(:hyacinth_object) { FactoryBot.build(:item, :with_timestamps) }
     let(:profile_xml) { file_fixture("fedora3/new-object.xml").read }
     let(:datastreams_xml) { file_fixture("fedora3/new-datastreams.xml").read }
     before do
@@ -125,6 +125,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       end
       expect(rubydora_object).to receive(:save).and_return(nil)
       allow(rubydora_object).to receive(:relationship).and_return([]) # all new values!
+      allow(hyacinth_object).to receive(:children).and_return([FactoryBot.build(:asset, :with_master_resource)])
     end
     context "core data" do
       let(:dsids) { [described_class::HYACINTH_CORE_DATASTREAM_NAME, 'structMetadata'] }
@@ -135,7 +136,8 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       it "persists core data to Fedora3" do
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
         actual_json = JSON.parse(rubydora_object.datastreams[described_class::HYACINTH_CORE_DATASTREAM_NAME].content)
-        expect(actual_json).to have_key("uid")
+        expect(actual_json).to have_key('metadata')
+        expect(actual_json['metadata']).to have_key('descriptive_metadata')
       end
     end
     context "field exports" do
@@ -165,7 +167,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
         expect(rubydora_object.state).to eql('A')
       end
       it "assigns a state property to inactive if deleted" do
-        hyacinth_object.state = Hyacinth::DigitalObject::State::DELETED
+        hyacinth_object.state = 'deleted'
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
         expect(rubydora_object.state).to eql('I')
       end
@@ -181,38 +183,87 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
           predicate: "http://dbpedia.org/ontology/project"
         }
       end
-      let(:model_property) do
-        {
-          predicate: "info:fedora/fedora-system:def/model#hasModel",
-          object: "info:fedora/ldpd:ContentAggregator",
-          pid: object_pid
-        }
-      end
-      let(:rdftype_property) do
-        {
-          predicate: "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
-          object: "http://purl.oclc.org/NET/CUL/Aggregator",
-          pid: object_pid
-        }
-      end
-      let(:restriction_property) do
-        {
-          predicate: "http://www.loc.gov/premis/rdf/v1#hasRestriction",
-          object: "onsite restriction",
-          pid: object_pid,
-          isLiteral: true
-        }
-      end
+
       before do
         expect(connection).to receive(:datastream_profile).with(object_pid, described_class::HYACINTH_CORE_DATASTREAM_NAME, nil, nil).and_return({})
-        expect(connection).to receive(:add_relationship).with(project_property)
-        expect(connection).to receive(:add_relationship).with(model_property)
-        expect(connection).to receive(:add_relationship).with(rdftype_property)
-        expect(connection).to receive(:add_relationship).with(restriction_property)
       end
-      it "persists model properties" do
-        hyacinth_object.restrictions['restricted_onsite'] = true
-        adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
+
+      context "persisting model properties that apply to an item" do
+        let(:model_property) do
+          {
+            predicate: "info:fedora/fedora-system:def/model#hasModel",
+            object: "info:fedora/ldpd:ContentAggregator",
+            pid: object_pid
+          }
+        end
+        let(:rdftype_property) do
+          {
+            predicate: "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+            object: "http://purl.oclc.org/NET/CUL/Aggregator",
+            pid: object_pid
+          }
+        end
+
+        before do
+          expect(connection).to receive(:add_relationship).with(project_property)
+          expect(connection).to receive(:add_relationship).with(model_property)
+          expect(connection).to receive(:add_relationship).with(rdftype_property)
+        end
+        it do
+          adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
+        end
+      end
+
+      context "persists model properties that apply to an asset" do
+        let(:hyacinth_object) { FactoryBot.build(:asset, :with_master_resource) }
+        let(:model_property) do
+          {
+            predicate: "info:fedora/fedora-system:def/model#hasModel",
+            object: "info:fedora/ldpd:GenericResource",
+            pid: object_pid
+          }
+        end
+        let(:rdftype_property) do
+          {
+            predicate: "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+            object: "http://purl.oclc.org/NET/CUL/Resource",
+            pid: object_pid
+          }
+        end
+        let(:restriction_property) do
+          {
+            predicate: "http://www.loc.gov/premis/rdf/v1#hasRestriction",
+            object: "size restriction",
+            pid: object_pid,
+            isLiteral: true
+          }
+        end
+        let(:original_name_property) do
+          {
+            predicate: "http://www.loc.gov/premis/rdf/v1#hasOriginalName",
+            object: "test.txt",
+            pid: object_pid,
+            isLiteral: true
+          }
+        end
+        before do
+          expect(connection).to receive(:add_relationship).with(project_property)
+          expect(connection).to receive(:add_relationship).with(model_property)
+          expect(connection).to receive(:add_relationship).with(rdftype_property)
+          expect(connection).to receive(:add_relationship).with(restriction_property)
+          expect(connection).to receive(:add_relationship).with(original_name_property)
+          # TODO: RELS-INT properties still need to be tested.
+          # They make use of the find_by_sparql_relationship, which isn't compatible with this Fedora-less test.
+          allow(Hyacinth::Adapters::PreservationAdapter::Fedora3::RelsIntProperties).to receive(:from).and_wrap_original do |method, arg|
+            ri_props = method.call(arg)
+            allow(ri_props).to receive(:to)
+            ri_props
+          end
+        end
+        it do
+          hyacinth_object.image_size_restriction = Hyacinth::DigitalObject::Asset::ImageSizeRestriction::DOWNSCALE_UNLESS_AUTHORIZED
+          adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
+        end
       end
     end
     context "DC properties" do
@@ -235,26 +286,23 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       # do not need to fetch profiles for DC and RELS-EXT
       let(:dsids) { ['structMetadata'] }
       let(:child_object_title) { "Assigned Label" }
-      let(:child_uid) { 'asdf' }
       let(:child_hyacinth_object) do
-        obj = FactoryBot.build(:item)
+        obj = FactoryBot.build(:asset, :with_master_resource)
         obj.descriptive_metadata['title'] = [{ 'sort_portion' => child_object_title }]
-        obj.instance_variable_set(:@uid, child_uid)
         obj
       end
 
       before do
-        hyacinth_object.structured_children['structure'] << child_uid
+        allow(hyacinth_object).to receive(:children).and_return([child_hyacinth_object])
         expect(connection).to receive(:datastream_profile).with(object_pid, described_class::HYACINTH_CORE_DATASTREAM_NAME, nil, nil).and_return({})
         allow(connection).to receive(:add_relationship) # tested elsewhere
-        expect(::DigitalObject::Base).to receive(:find).with(child_uid).and_return(child_hyacinth_object)
       end
 
       it "persists model properties" do
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
         # because .save is stubbed, the datastream should still be dirty
         expect(rubydora_object.datastreams['structMetadata'].changed?).to be(true)
-        expect(rubydora_object.datastreams['structMetadata'].content).to include("<mets:div LABEL=\"#{child_object_title}\" ORDER=\"1\" CONTENTIDS=\"#{child_uid}\"/>")
+        expect(rubydora_object.datastreams['structMetadata'].content).to include("<mets:div LABEL=\"#{child_object_title}\" ORDER=\"1\" CONTENTIDS=\"#{child_hyacinth_object.uid}\"/>")
       end
     end
     context "RelsInt properties for resources" do

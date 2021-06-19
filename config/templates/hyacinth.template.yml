@@ -53,10 +53,11 @@ development:
         default_path: <%= Rails.root.join('tmp', 'development', 'batch-exports') %>
   lock_adapter:
     type: DatabaseEntryLock
-    lock_timeout: <%= 20.seconds %>
+    lock_timeout: 20
   digital_object_search_adapter:
     type: Solr
     url: http://localhost:8983/solr/hyacinth-development
+    commit_after_change: true
   preservation_persistence:
     adapters:
       - type: Fedora3
@@ -109,10 +110,11 @@ test:
         default_path: <%= Rails.root.join('tmp', 'test', 'batch-exports') %>
   lock_adapter:
     type: DatabaseEntryLock
-    lock_timeout: <%= 30.seconds %>
+    lock_timeout: 30
   digital_object_search_adapter:
     type: Solr
     url: http://localhost:8993/solr/hyacinth-test
+    commit_after_change: true
   preservation_persistence:
     adapters:
       - type: Fedora3

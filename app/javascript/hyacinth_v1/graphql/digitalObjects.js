@@ -41,6 +41,7 @@ const digitalObjectResourcesFields = `
   resources {
     id
     displayLabel
+    uiDeletable
     resource {
       location
       checksum

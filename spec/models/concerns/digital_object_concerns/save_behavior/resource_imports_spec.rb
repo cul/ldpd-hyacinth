@@ -2,11 +2,13 @@
 
 require 'rails_helper'
 
-RSpec.describe DigitalObjectConcerns::SaveBehavior::ResourceImports do
+RSpec.describe DigitalObjectConcerns::ResourceImports do
   let(:digital_object) { FactoryBot.build(:digital_object_test_subclass) }
   let(:test_file_path) { Rails.root.join('spec', 'fixtures', 'files', 'test.txt').to_s }
+  let(:location) { test_file_path }
+  let(:method) { 'copy' }
 
-  context "#process_resource_imports" do
+  describe "#process_resource_imports" do
     context "successful single file import" do
       before do
         digital_object.assign_resource_imports(
@@ -94,26 +96,36 @@ RSpec.describe DigitalObjectConcerns::SaveBehavior::ResourceImports do
         expect(digital_object.resources['test_resource2']).to be_a(Hyacinth::DigitalObject::Resource)
       end
     end
+  end
 
-    context "with bad resource import data" do
-      before do
-        expect(digital_object).to receive(:undo_new_resource_file_copies).and_call_original
-      end
-      context "performs an undo and raises an error" do
-        it "when invalid resource import keys are present" do
-          digital_object.assign_resource_imports(
-            'resource_imports' => { 'not_a_valid_resource_import_key' => { method: 'copy', location: test_file_path } }
-          )
-          expect { digital_object.process_resource_imports }.to raise_error(Hyacinth::Exceptions::ResourceImportError)
-        end
+  describe '#finalize_resource_imports' do
+    let(:test_file_path) { Rails.root.join('spec', 'fixtures', 'files', 'test.txt').to_s }
+    let(:resource_import_data) do
+      {
+        'resource_imports' => {
+          'test_resource1' => {
+            method: method,
+            location: location
+          }
+        }
+      }
+    end
+    before do
+      # Set up some resources
+      digital_object.assign_resource_imports(resource_import_data)
+      digital_object.save
+      # Prepare new resource imports with same field name to ensure presence of old_resources during save
+      digital_object.assign_resource_imports(resource_import_data)
+      expect(digital_object).to receive(:finalize_resource_imports).and_call_original
+    end
 
-        it "when an invalid import type is given" do
-          digital_object.assign_resource_imports(
-            'resource_imports' => { 'test_resource1' => { method: 'banana', location: test_file_path } }
-          )
-          expect { digital_object.process_resource_imports }.to raise_error(Hyacinth::Exceptions::ResourceImportError)
-        end
-      end
+    it "deletes the previous resource's file, clears the resource import value, and clears the old_resource for this resource name" do
+      old_resource = digital_object.resources['test_resource1']
+      expect(Hyacinth::Config.resource_storage).to receive(:delete).with(old_resource.location)
+      digital_object.save
+      expect(digital_object.resources['test_resource1']).not_to equal(old_resource)
+      expect(digital_object.resource_imports['test_resource1']).to eq(nil)
+      expect(digital_object.old_resources['test_resource1']).to eq(nil)
     end
   end
 end
