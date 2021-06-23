@@ -2,7 +2,7 @@
 
 # Following module contains functionality to retrieve metadata
 # from the descriptive_metadata hash from DigitalObject
-class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
+class Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata
   attr_reader :source, :descriptive_metadata
   # parse metadata from Hyacinth Digital Objects Data
   # @param digital_object_data_arg [Hash]
@@ -65,6 +65,14 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
     @descriptive_metadata.dig('abstract', 0, 'value')
   end
 
+  # the abstract of an item
+  # @api public
+  # @return [String, nil]
+  # @note only returns the first abstract value
+  def publisher
+    @descriptive_metadata.dig('publisher', 0, 'value')
+  end
+
   # the type of resource for an item
   # @api public
   # @return [String, nil]
@@ -124,13 +132,6 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
     @descriptive_metadata.dig('parent_publication', 0, 'doi')
   end
 
-  # handle indentifier value
-  # @api public
-  # @return [String, nil]
-  def handle_net_identifier
-    @descriptive_metadata.dig('cnri_handle_identifier', 0, 'value')
-  end
-
   # retrieve subject topics from [@descriptive_metadata]
   # @api private
   # @return [void]
@@ -144,9 +145,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
   # @param Array<Symbol> filter_types optional types to filter to
   # @return Hash of contributor names to array of types
   def contributor_values(descriptive_metadata, filter_types = [])
-    descriptive_metadata.fetch('name', []).map do |name|
-      process_name(name)
-    end.select { |key_value_pair| filter_types.blank? || (filter_types & key_value_pair[1]).present? }.to_h
+    descriptive_metadata.fetch('name', []).map { |name| process_name(name) }.select { |key_value_pair| filter_types.blank? || (filter_types & key_value_pair[1]).present? }.to_h
   end
 
   def creators

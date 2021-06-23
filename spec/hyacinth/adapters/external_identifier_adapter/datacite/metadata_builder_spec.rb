@@ -6,7 +6,7 @@ require 'equivalent-xml'
 describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::MetadataBuilder do
   let(:metadata_builder) { described_class.new metadata_retrieval }
 
-  let(:metadata_retrieval) { Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata.new dod }
+  let(:metadata_retrieval) { Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata.new dod }
 
   let(:schema_source) { file_fixture('files/datacite/xsd/kernel-3.xsd') }
   let(:schema) do
@@ -28,7 +28,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::MetadataBuilde
         expect(schema).to be_valid(expected_xml)
       end
       let(:dod) do
-        JSON.parse(file_fixture('files/datacite/ezid_item.json').read)
+        JSON.parse(file_fixture('files/datacite/item.json').read)
       end
       let(:expected_xml) do
         Nokogiri::XML(file_fixture('files/datacite/datacite.xml').read)
