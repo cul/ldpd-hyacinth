@@ -65,6 +65,14 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
     @descriptive_metadata.dig('abstract', 0, 'value')
   end
 
+  # the abstract of an item
+  # @api public
+  # @return [String, nil]
+  # @note only returns the first abstract value
+  def publisher
+    @descriptive_metadata.dig('publisher', 0, 'value')
+  end
+
   # the type of resource for an item
   # @api public
   # @return [String, nil]
@@ -122,13 +130,6 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
   # @return [String, nil]
   def parent_publication_doi
     @descriptive_metadata.dig('parent_publication', 0, 'doi')
-  end
-
-  # handle indentifier value
-  # @api public
-  # @return [String, nil]
-  def handle_net_identifier
-    @descriptive_metadata.dig('cnri_handle_identifier', 0, 'value')
   end
 
   # retrieve subject topics from [@descriptive_metadata]

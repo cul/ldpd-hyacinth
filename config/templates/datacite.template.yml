@@ -1,6 +1,10 @@
 default: &default
+  rest_api: 'https://api.test.datacite.org'
   user: apitest
   password: apitest
+  prefix: '10.33555'
+  log_api: false
+  log_level: warn
   shoulder:
     ark: 'ark:99999/fk4'
     doi: 'doi:10.5072/FK2'

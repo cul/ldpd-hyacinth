@@ -58,6 +58,13 @@
             }
 	]
 	,
+	"publisher" :
+	[
+            {
+		"value" : "The Best Publisher Ever"
+            }
+	]
+	,
 	"name" :
 	[
             {

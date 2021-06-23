@@ -86,13 +86,6 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata do
       expect(actual_doi).to eq(expected_doi)
     end
 
-    it "handle_net_identifier handles empty descriptive metadata" do
-      local_metadata_retrieval = described_class.new dod_empty_dfd
-      expected_handle_net_identifier = nil
-      actual_handle_net_identifier = local_metadata_retrieval.handle_net_identifier
-      expect(actual_handle_net_identifier).to eq(expected_handle_net_identifier)
-    end
-
     it "subjects_topic handles empty descriptive metadata" do
       local_metadata_retrieval = described_class.new dod_empty_dfd
       expected_subjects_topic = []
@@ -142,6 +135,15 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata do
       expected_abstract = 'This is an abstract; yes, a very nice abstract'
       actual_abstract = local_metadata_retrieval.abstract
       expect(actual_abstract).to eq(expected_abstract)
+    end
+  end
+
+  context "#publisher:" do
+    it "publisher" do
+      local_metadata_retrieval = described_class.new dod
+      expected_publisher = 'The Best Publisher Ever'
+      actual_publisher = local_metadata_retrieval.publisher
+      expect(actual_publisher).to eq(expected_publisher)
     end
   end
 
@@ -204,15 +206,6 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata do
     it "doi" do
       local_metadata_retrieval = described_class.new dod
       actual = local_metadata_retrieval.doi
-      expect(actual).to eq(expected)
-    end
-  end
-
-  context "#handle_net_identifier" do
-    let(:expected) { 'http://hdl.handle.net/10022/AC:P:29183' }
-    it "handle_net_identifier" do
-      local_metadata_retrieval = described_class.new dod
-      actual = local_metadata_retrieval.handle_net_identifier
       expect(actual).to eq(expected)
     end
   end
