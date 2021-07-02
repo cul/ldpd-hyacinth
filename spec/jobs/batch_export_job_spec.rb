@@ -100,3 +100,20 @@ RSpec.describe BatchExportJob, solr: true do
     end
   end
 end
+
+RSpec.describe BatchExportJob, solr: false do
+  describe '.digital_object_as_export' do
+    context 'with utf8 descriptive metadata values' do
+      let(:authorized_object) do
+        FactoryBot.build(:item, :with_rights, :with_utf8_descriptive_metadata, :with_other_projects)
+      end
+      let(:json_data) { described_class.digital_object_as_export(authorized_object) }
+      let(:actual_value) { json_data&.dig('title', 0, 'sort_portion') }
+      # expected value ends in Cora\u00e7\u00e3o (67, 111, 114, 97, 231, 227, 111)
+      let(:expected_value) { [80, 97, 114, 97, 32, 77, 97, 99, 104, 117, 99, 97, 114, 32, 77, 101, 117, 32, 67, 111, 114, 97, 231, 227, 111] }
+      it "preserves utf-8 data" do
+        expect(actual_value&.unpack('U*')).to eql(expected_value)
+      end
+    end
+  end
+end

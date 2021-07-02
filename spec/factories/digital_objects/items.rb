@@ -30,6 +30,22 @@ FactoryBot.define do
       end
     end
 
+    trait :with_utf8_descriptive_metadata do
+      after(:build) do |digital_object|
+        DynamicFieldsHelper.load_title_fields! # Adding dynamic fields used in descriptive metadata. Validations will fail if these field definitions aren't present.
+
+        digital_object.assign_descriptive_metadata({
+          'descriptive_metadata' => {
+            'title' => [
+              {
+                'sort_portion' => [80, 97, 114, 97, 32, 77, 97, 99, 104, 117, 99, 97, 114, 32, 77, 101, 117, 32, 67, 111, 114, 97, 231, 227, 111].pack("U*")
+              }
+            ]
+          }
+        })
+      end
+    end
+
     trait :with_rights do
       after(:build) do |digital_object|
         Hyacinth::DynamicFieldsLoader.load_rights_fields!(load_vocabularies: true)

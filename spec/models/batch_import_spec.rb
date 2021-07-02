@@ -280,4 +280,20 @@ RSpec.describe BatchImport, type: :model do
       end
     end
   end
+  describe ".csv_file_to_hierarchical_json_hash" do
+    context 'utf8 data' do
+      let(:csv_file) { File.new(file_fixture('files/batch_import/sample-batch-import-utf8.csv')) }
+      let(:json_row) do
+        rows = []
+        described_class.csv_file_to_hierarchical_json_hash(csv_file) { |row, _ix| rows << row }
+        rows.first
+      end
+      let(:mapped_value) { json_row&.dig('descriptive_metadata', 'title', 0, 'sort_portion') }
+      # expected value ends in Cora\u00e7\u00e3o (67, 111, 114, 97, 231, 227, 111)
+      let(:expected_value) { [80, 97, 114, 97, 32, 77, 97, 99, 104, 117, 99, 97, 114, 32, 77, 101, 117, 32, 67, 111, 114, 97, 231, 227, 111] }
+      it "preserves utf-8 data" do
+        expect(mapped_value&.unpack('U*')).to eql(expected_value)
+      end
+    end
+  end
 end

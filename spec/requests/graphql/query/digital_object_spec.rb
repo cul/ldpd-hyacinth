@@ -77,6 +77,18 @@ RSpec.describe 'Retrieving Digital Object', type: :request, solr: true do
         }
       )).at_path('data/digitalObject')
     end
+    context 'with utf8 descriptive metadata values' do
+      let(:authorized_object) do
+        FactoryBot.create(:item, :with_rights, :with_utf8_descriptive_metadata, :with_other_projects)
+      end
+      let(:json_data) { JSON.parse(response.body) }
+      let(:actual_value) { json_data&.dig('data', 'digitalObject', 'descriptiveMetadata', 'title', 0, 'sort_portion') }
+      # expected value ends in Cora\u00e7\u00e3o (67, 111, 114, 97, 231, 227, 111)
+      let(:expected_value) { [80, 97, 114, 97, 32, 77, 97, 99, 104, 117, 99, 97, 114, 32, 77, 101, 117, 32, 67, 111, 114, 97, 231, 227, 111] }
+      it "preserves utf-8 data" do
+        expect(actual_value&.unpack('U*')).to eql(expected_value)
+      end
+    end
   end
 
   context "missing title field" do
