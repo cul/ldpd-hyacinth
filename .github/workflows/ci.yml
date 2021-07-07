@@ -3,11 +3,38 @@ name: CI
 on:
   push:
     branches: [ '*' ]
-  pull_request:
-    branches: [ 'master' ]
+  # pull_request:
+  #   branches: [ 'master' ]
 
 jobs:
+  # # We run CI for all pushed commits AND for any branches that have pull requests against master,
+  # # but this leads to duplicate runs when a commit is pushed to a branch that has a pull request
+  # # against master.  The pre-check below prevents this duplication.
+  # duplicate_job_pre_check:
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     should_skip: ${{ steps.skip_check.outputs.should_skip }}
+  #   steps:
+  #     - id: skip_check
+  #       uses: fkirc/skip-duplicate-actions@master
+  #       with:
+  #         concurrent_skipping: 'outdated_runs'
+  #         # Skip this run if there's already a successful run with the same commit
+  #         #do_not_skip: '["pull_request", "workflow_dispatch", "schedule"]'
+
+  # duplicate_job_pre_check:
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     should_skip: ${{ steps.skip_check.outputs.should_skip }}
+  #   steps:
+  #     - id: skip_check
+  #       run: echo "::set-output name=test::${{  }}"
+
+    #variables available: $GITHUB_SHA, $GITHUB_WORKFLOW
+
   ci:
+    # needs: duplicate_job_pre_check
+    # if: ${{ needs.duplicate_job_pre_check.outputs.should_skip != 'true' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -18,32 +45,35 @@ jobs:
       NOKOGIRI_USE_SYSTEM_LIBRARIES: true
 
     steps:
-      - uses: actions/checkout@v2
-      # Caching the solr download makes a huge difference. It can take up to 10 minutes to download.
-      # Note that this action's caches will be evicted if not accessed for more than a week.
-      - name: Cache Solr Download
-        id: cache-solr-download
-        uses: actions/cache@v2
-        with:
-          path: tmp/solr-download
-          key: ${{ runner.os }}-solr-download
-      - name: Add --no-document option to .gemrc file to speed up bundle install
-        run: "echo 'gem: --no-document' > ~/.gemrc"
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby-version }}
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-      - name: Set up Java
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'adopt-hotspot'
-          java-version: '8'
-      - name: Set up Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node }}
-      - run: npm install -g yarn
-      - run: yarn install
       - name: Run CI task
-        run: bundle exec rake hyacinth:ci
+        run: echo 'done'
+
+      # - uses: actions/checkout@v2
+      # # Caching the solr download makes a huge difference. It can take up to 10 minutes to download.
+      # # Note that this action's caches will be evicted if not accessed for more than a week.
+      # - name: Cache Solr Download
+      #   id: cache-solr-download
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: tmp/solr-download
+      #     key: ${{ runner.os }}-solr-download
+      # - name: Add --no-document option to .gemrc file to speed up bundle install
+      #   run: "echo 'gem: --no-document' > ~/.gemrc"
+      # - name: Set up Ruby
+      #   uses: ruby/setup-ruby@v1
+      #   with:
+      #     ruby-version: ${{ matrix.ruby-version }}
+      #     bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      # - name: Set up Java
+      #   uses: actions/setup-java@v2
+      #   with:
+      #     distribution: 'adopt-hotspot'
+      #     java-version: '8'
+      # - name: Set up Node
+      #   uses: actions/setup-node@v2
+      #   with:
+      #     node-version: ${{ matrix.node }}
+      # - run: npm install -g yarn
+      # - run: yarn install
+      # - name: Run CI task
+      #   run: bundle exec rake hyacinth:ci
