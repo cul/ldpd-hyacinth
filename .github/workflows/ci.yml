@@ -7,7 +7,25 @@ on:
     branches: [ 'master' ]
 
 jobs:
+
+  # We run CI for all pushed commits AND for any branches that have pull requests against master,
+  # but this leads to duplicate runs when a commit is pushed to a branch that has a pull request
+  # against master.  The pre-check below prevents this duplication.
+  duplicate_job_pre_check:
+    runs-on: ubuntu-latest
+    # Map a step output to a job output
+    outputs:
+      should_skip: ${{ steps.skip_check.outputs.should_skip }}
+    steps:
+      - id: skip_check
+        uses: fkirc/skip-duplicate-actions@master
+        with:
+          concurrent_skipping: 'same_content'
+          skip_after_successful_duplicate: 'true'
+
   ci:
+    needs: duplicate_job_pre_check
+    if: ${{ needs.duplicate_job_pre_check.outputs.should_skip != 'true' }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
