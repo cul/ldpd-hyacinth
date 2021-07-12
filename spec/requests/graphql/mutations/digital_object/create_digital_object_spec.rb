@@ -110,9 +110,9 @@ RSpec.describe Mutations::DigitalObject::CreateDigitalObject, type: :request, so
 
         it "returns a null digital object and an error of the expected format at the expected path" do
           expect(response.body).to be_json_eql(%(null)).at_path('data/createDigitalObject/digitalObject')
-          expect(response.body).to be_json_eql(%(["descriptive_metadata.this_field_group_does_not_exist"])).at_path('data/createDigitalObject/userErrors/0/path')
+          expect(response.body).to be_json_eql(%(["this_field_group_does_not_exist/this_field_also_does_not_exist"])).at_path('data/createDigitalObject/userErrors/0/path')
           expect(response.body).to be_json_eql(%(
-            "is not a valid field"
+            "field must be enabled"
           )).at_path('data/createDigitalObject/userErrors/0/message')
         end
       end
