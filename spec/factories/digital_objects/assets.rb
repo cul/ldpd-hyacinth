@@ -7,7 +7,6 @@ FactoryBot.define do
       asset.save!
     end
 
-    parent { nil } # parent should be passed in when factory build or create or called, otherwise this object won't validate
     transient do
       parents_to_add { [] }
     end
