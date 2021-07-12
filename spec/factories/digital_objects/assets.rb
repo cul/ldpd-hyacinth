@@ -18,6 +18,7 @@ FactoryBot.define do
       end
 
       DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project)
+      DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project)
     end
 
     trait :skip_resource_request_callbacks do
