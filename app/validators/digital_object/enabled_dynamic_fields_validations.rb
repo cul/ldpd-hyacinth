@@ -10,7 +10,6 @@ module DigitalObject::EnabledDynamicFieldsValidations
     dynamic_field_paths = []
     data.each do |df_group, children|
       dynamic_field_paths = collect_field_paths(df_group, children, dynamic_field_paths)
-
       dynamic_field_paths.each do |dynamic_field_path|
         if (e = not_enabled?(dynamic_field_path, digital_object))
           errors.concat e.map { |i| [dynamic_field_path, i] }
@@ -49,9 +48,20 @@ module DigitalObject::EnabledDynamicFieldsValidations
   def collect_field_paths(df_group, children, df_paths)
     children.each do |child|
       child.each do |df_name, value|
-        df_paths << "#{df_group}/#{df_name}" if value
+        df_paths << construct_path(df_group, df_name, value) unless value.nil?
       end
     end
     df_paths
+  end
+
+  def construct_path(parent_path, field_name, value)
+    path = "#{parent_path}/#{field_name}"
+    if value.is_a?(Array)
+      subfields = value[0]
+      subfields.each do |name, val|
+        path = construct_path(path, name, val)
+      end
+    end
+    path
   end
 end
