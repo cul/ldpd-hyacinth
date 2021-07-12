@@ -82,14 +82,14 @@ RSpec.describe Mutations::DigitalObject::CreateDigitalObject, type: :request, so
         json_response = JSON.parse(response.body)
         digital_object_id = json_response.dig('data', 'createDigitalObject', 'digitalObject', 'id')
         expect(digital_object_id).not_to be_nil
-        expect(DigitalObject::Base.find(digital_object_id).descriptive_metadata).to include expected_descriptive_metadata
+        expect(DigitalObject.find_by_uid!(digital_object_id).descriptive_metadata).to include expected_descriptive_metadata
       end
 
       it 'sets identifiers' do
         json_response = JSON.parse(response.body)
         digital_object_id = json_response.dig('data', 'createDigitalObject', 'digitalObject', 'id')
         expect(digital_object_id).not_to be_nil
-        expect(DigitalObject::Base.find(digital_object_id).identifiers.to_a).to include(*expected_identifiers)
+        expect(DigitalObject.find_by_uid!(digital_object_id).identifiers.to_a).to include(*expected_identifiers)
       end
 
       context "when user errors are present" do

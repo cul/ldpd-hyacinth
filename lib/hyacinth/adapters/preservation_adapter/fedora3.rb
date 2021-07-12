@@ -72,9 +72,9 @@ module Hyacinth
           # get the Rubydora object
           fedora_object = connection.find_or_initialize(location_uri_to_fedora3_pid(location_uri))
           ensure_json_datastream(fedora_object, HYACINTH_CORE_DATASTREAM_NAME, versionable: true)
-          # persist the digital object json
+          # persist the metadata storage data to fedora (provides history of descriptive metadata)
           fedora_object.datastreams[HYACINTH_CORE_DATASTREAM_NAME].content =
-            JSON.generate(digital_object.to_serialized_form)
+            JSON.generate(digital_object.as_metadata_storage_json)
           # serialize the other datastreams
           FieldExportProfile.all.each do |profile|
             assign(datastream_for(profile)).from(digital_object).to(fedora_object)

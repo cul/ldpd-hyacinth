@@ -3,19 +3,22 @@
 require 'rails_helper'
 
 RSpec.describe Hyacinth::DigitalObject::ResourceImport do
+  let(:method) { described_class::COPY }
+  let(:location) { Rails.root.join('spec', 'fixtures', 'files', 'test.txt').to_s }
+  let(:checksum) { 'sha256:717f2c6ffbd649cd57ecc41ac6130c3b6210f1473303bcd9101a9014551bffb2' }
+  let(:original_file_path) { '/original/file/path.txt' }
   let(:file_copy_attributes) do
     {
-      method: described_class::COPY,
-      location: Rails.root.join('spec', 'fixtures', 'files', 'test.txt').to_s,
-      checksum: 'sha256:717f2c6ffbd649cd57ecc41ac6130c3b6210f1473303bcd9101a9014551bffb2',
-      original_file_path: '/original/file/path.txt',
+      method: method,
+      location: location,
+      checksum: checksum,
+      original_file_path: original_file_path,
       media_type: 'text/plain',
       file_size: 100
     }
   end
   let(:file_copy_arguments) { file_copy_attributes.dup }
   let(:file_copy_instance) { described_class.new(file_copy_arguments) }
-
   let(:file_track_instance) { described_class.new(file_copy_arguments.merge(method: described_class::TRACK)) }
 
   let(:blob) do
@@ -34,7 +37,7 @@ RSpec.describe Hyacinth::DigitalObject::ResourceImport do
       method: described_class::COPY,
       location: blob,
       checksum: 'sha256:c72a7eb71263aa3e8936049a925556881c4f9e562dcdc1cae036b11579dfa175',
-      original_file_path: '/original/file/path.txt',
+      original_file_path: original_file_path,
       media_type: 'text/plain',
       file_size: 32
     }
@@ -59,17 +62,23 @@ RSpec.describe Hyacinth::DigitalObject::ResourceImport do
       expect(blob_copy_instance).to be_valid
     end
 
-    it "is not valid without method" do
-      file_copy_instance.method = ''
-      expect(file_copy_instance).not_to be_valid
+    context "without method" do
+      let(:method) { nil }
+      it 'is not valid' do
+        expect(file_copy_instance).not_to be_valid
+      end
     end
-    it "is not valid for invalid method value" do
-      file_copy_instance.method = :improvisational
-      expect(file_copy_instance).not_to be_valid
+    context "with invalid method" do
+      let(:method) { :improvisational }
+      it 'is not valid' do
+        expect(file_copy_instance).not_to be_valid
+      end
     end
-    it "is not valid without location" do
-      file_copy_instance.location = ''
-      expect(file_copy_instance).not_to be_valid
+    context "without location" do
+      let(:location) { nil }
+      it 'is not valid' do
+        expect(file_copy_instance).not_to be_valid
+      end
     end
   end
 
@@ -116,16 +125,25 @@ RSpec.describe Hyacinth::DigitalObject::ResourceImport do
       expect(file_copy_instance.hexgidest_from_checksum).to eq('717f2c6ffbd649cd57ecc41ac6130c3b6210f1473303bcd9101a9014551bffb2')
     end
 
-    it "returns nil when checksum is blank" do
-      file_copy_instance.checksum = nil
-      expect(file_copy_instance.hexgidest_from_checksum).to eq(nil)
-      file_copy_instance.checksum = ''
-      expect(file_copy_instance.hexgidest_from_checksum).to eq(nil)
+    context "when checksum is nil" do
+      let(:checksum) { nil }
+      it 'returns nil' do
+        expect(file_copy_instance.hexgidest_from_checksum).to eq(nil)
+      end
     end
 
-    it "raises an exception if the provided checksum is not a valid sha256-format checksum" do
-      file_copy_instance.checksum = 'nah256:abcdefg'
-      expect { file_copy_instance.hexgidest_from_checksum }.to raise_error(Hyacinth::Exceptions::InvalidChecksumFormatError)
+    context "when checksum is an empty string" do
+      let(:checksum) { '' }
+      it 'returns nil' do
+        expect(file_copy_instance.hexgidest_from_checksum).to eq(nil)
+      end
+    end
+
+    context "when checksum is not a valid sha256-format checksum" do
+      let(:checksum) { 'nah256:abcdefg' }
+      it "raises an exception" do
+        expect { file_copy_instance.hexgidest_from_checksum }.to raise_error(Hyacinth::Exceptions::InvalidChecksumFormatError)
+      end
     end
   end
 
@@ -141,14 +159,18 @@ RSpec.describe Hyacinth::DigitalObject::ResourceImport do
       expect(file_copy_instance.preferred_original_file_path).to eq('/original/file/path.txt')
     end
 
-    it "for a blob, uses a blob's filename value if an original file path was not given" do
-      blob_copy_instance.original_file_path = nil
-      expect(blob_copy_instance.preferred_original_file_path).to eq(blob_copy_instance.location.filename.to_s)
+    context "for a blob, when an original file path is not given" do
+      let(:original_file_path) { nil }
+      it "uses the blob's filename value" do
+        expect(blob_copy_instance.preferred_original_file_path).to eq(blob_copy_instance.location.filename.to_s)
+      end
     end
 
-    it "for a non-blob, falls back to the location value if an original file path was not given" do
-      file_copy_instance.original_file_path = nil
-      expect(file_copy_instance.preferred_original_file_path).to eq(file_copy_instance.location)
+    context "for a non-blob, when an original file path is not given" do
+      let(:original_file_path) { nil }
+      it "falls back to the location value" do
+        expect(file_copy_instance.preferred_original_file_path).to eq(file_copy_instance.location)
+      end
     end
   end
 end

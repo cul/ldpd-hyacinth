@@ -8,7 +8,7 @@ module Types
       field :publish_target_string_key, String, null: false
       field :published_at, GraphQL::Types::ISO8601DateTime, null: false
       field :published_by, UserType, null: false
-      field :cited_at, String, null: false
+      field :citation_location, String, null: false
     end
   end
 end

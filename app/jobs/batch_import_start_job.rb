@@ -12,19 +12,19 @@ class BatchImportStartJob
 
     # Find all DigitalObjectImports in this batch that have no prerequisites so we can enqueue them
     # for immediate background job processing. Mark them as queued in advance of us enqueueing them.
-    pending_dois_ready_for_processing_query_proc = lambda do
+    pending_imports_ready_for_processing_query_proc = lambda do
       DigitalObjectImport.select(:id).distinct(:id).left_outer_joins(:import_prerequisites).where(
         batch_import: batch_import, status: 'pending', import_prerequisites: { id: nil }
       )
     end
-    pending_dois_ready_for_processing_query_proc.call.update_all(status: 'queued')
+    pending_imports_ready_for_processing_query_proc.call.update_all(status: 'queued')
 
     # And then enqueue those objects
-    DigitalObjectImport.select(:id).where(batch_import: batch_import, status: 'queued').pluck(:id).each do |doi_id|
-      Resque.enqueue(DigitalObjectImportProcessingJob, doi_id)
+    DigitalObjectImport.select(:id).where(batch_import: batch_import, status: 'queued').pluck(:id).each do |import_id|
+      Resque.enqueue(DigitalObjectImportProcessingJob, import_id)
     end
 
-    handle_resque_inline(pending_dois_ready_for_processing_query_proc)
+    handle_resque_inline(pending_imports_ready_for_processing_query_proc)
   rescue StandardError => e
     handle_job_error(batch_import, e)
   end
@@ -72,22 +72,23 @@ class BatchImportStartJob
   # so we'll handle this by looping over the batch imports that need to be re-queued and running
   # them here.  This isn't efficient, but ideally we'll never be processing large jobs in a
   # synchronous-processing environment.
-  def self.handle_resque_inline(pending_dois_ready_for_processing_query_proc)
+  def self.handle_resque_inline(pending_imports_ready_for_processing_query_proc)
     return unless Resque.inline
 
-    dois_to_process = pending_dois_ready_for_processing_query_proc.call
-    return unless dois_to_process.length.positive?
-    loop do
-      number_to_process = dois_to_process.length
+    imports_to_process = pending_imports_ready_for_processing_query_proc.call
 
-      dois_to_process.each do |doi|
-        DigitalObjectImportProcessingJob.perform(doi.id)
+    return unless imports_to_process.length.positive?
+    loop do
+      number_to_process = imports_to_process.length
+
+      imports_to_process.each do |import|
+        DigitalObjectImportProcessingJob.perform(import.id)
       end
 
       # Break out of the loop if the new number of DigitalObjectImports to process is the same as
       # the previous number to process.  Ideally they would both be equal to zero when this break
       # occurrs, but this check also stops infinite loops.
-      break if number_to_process == (dois_to_process = pending_dois_ready_for_processing_query_proc.call)
+      break if number_to_process == (imports_to_process = pending_imports_ready_for_processing_query_proc.call)
     end
   end
 

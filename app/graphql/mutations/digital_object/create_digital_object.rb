@@ -20,7 +20,10 @@ module Mutations
         digital_object.assign_attributes(
           'identifiers' => identifiers, 'descriptive_metadata' => descriptive_metadata
         )
-        if digital_object.save(user: context[:current_user])
+        digital_object.created_by = context[:current_user]
+        digital_object.updated_by = context[:current_user]
+
+        if digital_object.save
           { digital_object: digital_object, user_errors: [] }
         else
           { digital_object: nil, user_errors: digital_object.errors.map { |key, message| { path: [key], message: message } } }

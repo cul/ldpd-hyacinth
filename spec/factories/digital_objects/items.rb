@@ -11,10 +11,15 @@ FactoryBot.define do
       item.save!
     end
 
-    initialize_with do
-      instance = new
-      instance.primary_project = create(:project)
-      instance
+    after(:build) do |digital_object|
+      digital_object.primary_project = create(:project) if digital_object.primary_project.blank?
+    end
+
+    # Timestamps are set when an object is saved, but sometimes it's useful
+    # to have timestamps set when we build an object and haven't saved it yet.
+    trait :with_timestamps do
+      created_at { DateTime.current }
+      updated_at { DateTime.current }
     end
 
     trait :with_descriptive_metadata do
@@ -69,7 +74,8 @@ FactoryBot.define do
 
     trait :with_asset do
       after(:create) do |digital_object|
-        digital_object.append_child_uid(create(:asset, :with_master_resource, parent: digital_object).uid)
+        digital_object.children_to_add << create(:asset, :with_master_resource)
+        digital_object.save
       end
     end
   end

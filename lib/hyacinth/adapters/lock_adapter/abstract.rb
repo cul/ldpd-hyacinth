@@ -7,8 +7,16 @@ module Hyacinth
         def initialize(adapter_config = {})
         end
 
+        # Establishes a lock on the key and returns a lock object.
+        def lock(key)
+          raise NotImplementedError
+        end
+
+        def unlock(key)
+          raise NotImplementedError
+        end
+
         # Establishes a lock on the key and yields to a block that runs within the established lock.
-        # TODO: Add second optional param for number of seconds to wait before giving up.
         def with_lock(key)
           raise NotImplementedError
         end

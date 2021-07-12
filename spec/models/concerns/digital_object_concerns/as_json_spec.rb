@@ -5,8 +5,10 @@ require 'rails_helper'
 RSpec.describe DigitalObjectConcerns::AsJson do
   let(:digital_object_with_sample_data) do
     obj = FactoryBot.build(:digital_object_test_subclass, :with_sample_data)
-    allow(obj).to receive(:number_of_children).and_return(1)
-    allow(obj).to receive(:parent_uids).and_return(['parent:1', 'parent:2', 'parent:3'])
+    obj.children_to_add << FactoryBot.build(:digital_object_test_subclass, :with_sample_data)
+    obj.parents_to_add << FactoryBot.build(:digital_object_test_subclass, :with_sample_data)
+    obj.parents_to_add << FactoryBot.build(:digital_object_test_subclass, :with_sample_data)
+    obj.save
     obj
   end
   context '#as_json' do
@@ -22,11 +24,7 @@ RSpec.describe DigitalObjectConcerns::AsJson do
         'identifiers' => [],
         'number_of_children' => 1,
         'other_projects' => [],
-        'parent_digital_objects' => [
-          { 'uid' => 'parent:1' },
-          { 'uid' => 'parent:2' },
-          { 'uid' => 'parent:3' }
-        ],
+        'parents' => digital_object_with_sample_data.parents.map { |dobj| { 'uid' => dobj.uid } },
         'preserved_at' => nil,
         'primary_project' => {
           'created_at' => digital_object_with_sample_data.primary_project.created_at.as_json,
@@ -37,10 +35,10 @@ RSpec.describe DigitalObjectConcerns::AsJson do
           'string_key' => digital_object_with_sample_data.primary_project.string_key,
           'updated_at' => digital_object_with_sample_data.primary_project.updated_at.as_json
         },
-        'publish_entries' => {},
+        'publish_entries' => [],
         'rights' => {},
         'state' => 'active',
-        'uid' => nil,
+        'uid' => digital_object_with_sample_data.uid,
         'updated_at' => digital_object_with_sample_data.updated_at.as_json,
         'updated_by' => nil
       }

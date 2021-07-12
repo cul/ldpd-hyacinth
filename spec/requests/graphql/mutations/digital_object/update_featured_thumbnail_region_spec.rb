@@ -26,7 +26,7 @@ RSpec.describe Mutations::DigitalObject::UpdateFeaturedThumbnailRegion, type: :r
       end
 
       it 'sets the region to the expected value' do
-        expect(DigitalObject::Base.find(authorized_object.uid).featured_thumbnail_region).to eq(featured_thumbnail_region)
+        expect(DigitalObject.find_by_uid!(authorized_object.uid).featured_thumbnail_region).to eq(featured_thumbnail_region)
       end
 
       context 'and an attempt is made to set a featured thumbnail region on a digital object type that does not have a featured thumbnail region field' do

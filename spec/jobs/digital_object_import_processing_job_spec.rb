@@ -11,7 +11,7 @@ RSpec.describe DigitalObjectImportProcessingJob, solr: true do
   let(:second_digital_object_import) { FactoryBot.create(:digital_object_import, batch_import: batch_import, index: 2) }
   let(:third_digital_object_import) { FactoryBot.create(:digital_object_import, batch_import: batch_import, index: 3) }
 
-  let(:created_digital_object) { DigitalObject::Base.find(DigitalObjectRecord.first.uid) }
+  let(:created_digital_object) { DigitalObject.find_by_uid!(DigitalObject.first.uid) }
 
   context '.perform' do
     before do
@@ -79,8 +79,8 @@ RSpec.describe DigitalObjectImportProcessingJob, solr: true do
         doi
       end
 
-      it 'results in a DigitalObjectImport status of failure at the end of the job' do
-        expect(digital_object_import.status).to eq('failure')
+      it 'results in a DigitalObjectImport status of creation_failure at the end of the job' do
+        expect(digital_object_import.status).to eq('creation_failure')
       end
 
       it 'results in a DigitalObjectImport with import_errors' do
@@ -88,7 +88,8 @@ RSpec.describe DigitalObjectImportProcessingJob, solr: true do
       end
 
       it "includes digital object validation error messages in the import_errors array" do
-        expect(digital_object_import.import_errors).to eq(["state: Invalid state: ZZZ"])
+        expect(digital_object_import.import_errors.length).to eq(1)
+        expect(digital_object_import.import_errors.first).to start_with("'ZZZ' is not a valid state")
       end
 
       it "does NOT queue associated import prerequisites" do
@@ -178,7 +179,6 @@ RSpec.describe DigitalObjectImportProcessingJob, solr: true do
         digital_object_import: third_digital_object_import,
         batch_import: batch_import
       )
-
       described_class.apply_recursive_failure!(digital_object_import)
       second_digital_object_import.reload
       third_digital_object_import.reload
@@ -186,9 +186,26 @@ RSpec.describe DigitalObjectImportProcessingJob, solr: true do
 
     it "applies a failure status to the given digital_object_import, and recursively calls itself "\
       "for any other DigitalObjectImports the given import was a prerequiste for" do
-      expect(digital_object_import.status).to eq('failure')
-      expect(second_digital_object_import.status).to eq('failure')
-      expect(third_digital_object_import.status).to eq('failure')
+      expect(digital_object_import.status).to eq('creation_failure')
+      expect(second_digital_object_import.status).to eq('creation_failure')
+      expect(third_digital_object_import.status).to eq('creation_failure')
+    end
+
+    context 'appropriate failure types' do
+      let(:third_digital_object_import) do
+        dobj_import = FactoryBot.create(:digital_object_import, batch_import: batch_import, index: 3)
+        dobj_import.digital_object_data = { 'uid' => 'some-uid-value' }.to_json
+        dobj_import.save
+        dobj_import
+      end
+
+      it "marks an object creation failure as a creation_failure" do
+        expect(digital_object_import.status).to eq('creation_failure')
+      end
+
+      it "marks an object update failure as an update_failure" do
+        expect(third_digital_object_import.status).to eq('update_failure')
+      end
     end
   end
 end

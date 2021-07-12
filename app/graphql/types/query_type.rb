@@ -18,6 +18,14 @@ module Types
       argument :id, ID, required: true
     end
 
+    field :publish_targets, [PublishTargetType], null: true do
+      description "List of all publish targets"
+    end
+
+    field :publish_target, PublishTargetType, null: true do
+      argument :string_key, ID, required: true
+    end
+
     field :project, ProjectType, null: true do
       argument :string_key, ID, required: true
     end
@@ -126,7 +134,7 @@ module Types
     end
 
     def digital_object(id:)
-      digital_object = ::DigitalObject::Base.find(id)
+      digital_object = ::DigitalObject.find_by_uid!(id)
       ability.authorize!(:read, digital_object)
       digital_object
     end
@@ -157,12 +165,12 @@ module Types
 
     # This is a temporary implementation
     def child_structure(id:)
-      digital_object = ::DigitalObject::Base.find(id)
+      digital_object = ::DigitalObject.find_by_uid!(id)
       ability.authorize!(:read, digital_object)
       {
         parent: digital_object,
-        type: digital_object.structured_children['type'],
-        structure: digital_object.structured_children['structure'].map! { |cid| ::DigitalObject::Base.find(cid) }
+        type: 'sequence', # only sequences are supported right now
+        structure: digital_object.children
       }
     end
 
@@ -236,6 +244,17 @@ module Types
     def projects
       ability.authorize!(:read, Project)
       Project.accessible_by(ability)
+    end
+
+    def publish_targets
+      ability.authorize!(:read, PublishTarget)
+      PublishTarget.accessible_by(ability)
+    end
+
+    def publish_target(string_key:)
+      publish_target = PublishTarget.find_by!(string_key: string_key)
+      ability.authorize!(:read, publish_target)
+      publish_target
     end
 
     def user(id:)

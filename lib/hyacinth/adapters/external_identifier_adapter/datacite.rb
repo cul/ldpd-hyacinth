@@ -53,7 +53,7 @@ module Hyacinth
         end
 
         # @param id [String]
-        # @param digital_object [DigitalObject::Base]
+        # @param digital_object [DigitalObject]
         # @param location_uri [String]
         # @return [Boolean] true if this adapter can handle this type of identifier
         def update_impl(id, digital_object, location_uri)

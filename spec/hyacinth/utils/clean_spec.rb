@@ -72,7 +72,7 @@ RSpec.describe Hyacinth::Utils::Clean do
       }
     end
 
-    it 'cleans data structure as expected' do
+    it 'cleans data structure as expected, modifying and returning the passed-in object' do
       expect(described_class.trim_whitespace!(hash_with_whitespace)).to eq(expected_hash_without_whitespace)
       expect(hash_with_whitespace).to eq(expected_hash_without_whitespace)
     end
@@ -136,7 +136,7 @@ RSpec.describe Hyacinth::Utils::Clean do
       }
     end
 
-    it 'cleans data as expected' do
+    it 'cleans data as expected, modifying and returning the passed-in object' do
       expect(described_class.remove_blank_fields!(hash_with_blank_fields)).to eq(expected_hash_without_blank_fields)
       expect(hash_with_blank_fields).to eq(expected_hash_without_blank_fields)
     end

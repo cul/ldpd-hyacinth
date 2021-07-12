@@ -20,7 +20,7 @@ module Hyacinth
         end
 
         def to(fedora_obj)
-          return unless @hyacinth_obj.structured_children.detect(&:present?)
+          return unless @hyacinth_obj.children.present?
           proposed_list = structured_children(@hyacinth_obj)
           current_list = parse_struct_xml(fedora_obj)
           return if current_list.eql? proposed_list
@@ -30,9 +30,8 @@ module Hyacinth
 
         def structured_children(hyacinth_obj = @hyacinth_obj)
           list = []
-          hyacinth_obj.structured_children['structure'].each_with_index do |uid, ix|
-            child = ::DigitalObject::Base.find(uid)
-            list << { uid: uid, order: (ix + 1).to_s, label: get_title(child.descriptive_metadata) }
+          hyacinth_obj.children.each_with_index do |child, ix|
+            list << { uid: child.uid, order: (ix + 1).to_s, label: get_title(child.descriptive_metadata) }
           end
           list
         end

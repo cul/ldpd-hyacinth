@@ -11,11 +11,22 @@ module Hyacinth
           raise NotImplementedError
         end
 
+        # Runs an indexing test, generating an indexable document but not actually
+        # adding that document to the search index.
+        # @return [Boolean] true if document generation suceeds, or false if it fails
+        def index_test(digital_object)
+          raise NotImplementedError
+        end
+
         def remove(digital_object, **opts)
           raise NotImplementedError
         end
 
         def search(search_params, **opts)
+          raise NotImplementedError
+        end
+
+        def commit
           raise NotImplementedError
         end
 

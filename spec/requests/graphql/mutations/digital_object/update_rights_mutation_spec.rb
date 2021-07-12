@@ -7,7 +7,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
 
   let(:authorized_project) { FactoryBot.create(:project, :allow_asset_rights) }
   let(:authorized_item) { FactoryBot.create(:item, primary_project: authorized_project) }
-  let(:authorized_asset) { FactoryBot.create(:asset, :with_master_resource, parent: authorized_item) }
+  let(:authorized_asset) { FactoryBot.create(:asset, :with_master_resource, parents_to_add: [authorized_item]) }
 
   include_examples 'requires user to have correct permissions for graphql request' do
     let(:variables) { { input: { id: authorized_item.uid, rights: {}, optimisticLockToken: authorized_item.optimistic_lock_token } } }
@@ -148,7 +148,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
       end
 
       it 'sets rights fields' do
-        expect(DigitalObject::Base.find(authorized_item.uid).rights).to include expected_rights
+        expect(DigitalObject.find_by_uid!(authorized_item.uid).rights).to include expected_rights
       end
     end
 
@@ -221,7 +221,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
       end
 
       it 'sets rights fields' do
-        expect(DigitalObject::Base.find(authorized_asset.uid).rights).to include expected_rights
+        expect(DigitalObject.find_by_uid!(authorized_asset.uid).rights).to include expected_rights
       end
     end
 
@@ -280,7 +280,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
 
       context "when the optimistic lock token doesn't match the expected value in the database" do
         before do
-          DigitalObject::Base.find(authorized_asset.uid).save # change the optimistic lock token in the db
+          DigitalObject.find_by_uid!(authorized_asset.uid).save # change the optimistic lock token in the db
           graphql query, variables
         end
         it "returns an error of the expected format at the expected path" do

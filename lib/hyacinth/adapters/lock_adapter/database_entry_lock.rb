@@ -9,17 +9,16 @@ module Hyacinth
         def initialize(adapter_config = {})
           super(adapter_config)
           raise 'Missing config option: lock_timeout' if adapter_config[:lock_timeout].blank?
-          @lock_timeout = adapter_config[:lock_timeout]
+          @lock_timeout = adapter_config[:lock_timeout].seconds
         end
 
         def locked?(key)
           ::DatabaseEntryLock.exists?(lock_key: key)
         end
 
-        # Generally, the lock method should not be called.  It's better to call with_lock, which automatically unlocks locks after a block has completed processing.
         def lock(key)
           # Attempt to create a new lock
-          LockObject.new(::DatabaseEntryLock.create!(lock_key: key, expires_at: DateTime.current + @lock_timeout.seconds), @lock_timeout)
+          LockObject.new(::DatabaseEntryLock.create!(lock_key: key, expires_at: DateTime.current + @lock_timeout), @lock_timeout)
         rescue ActiveRecord::RecordNotUnique
           # If we got here, there's an existing lock on this record. Let's examime that lock.
           database_entry_lock = ::DatabaseEntryLock.find_by(lock_key: key)
@@ -31,7 +30,7 @@ module Hyacinth
             # If the lock has expired, delete this lock entry and create a new one, then yield later in this method.
             begin
               database_entry_lock.destroy
-              database_entry_lock = ::DatabaseEntryLock.create!(lock_key: key, expires_at: DateTime.current + @lock_timeout.seconds)
+              database_entry_lock = ::DatabaseEntryLock.create!(lock_key: key, expires_at: DateTime.current + @lock_timeout)
             rescue ActiveRecord::RecordNotUnique
               # It's very unlikely that this rescue block will run, but if another process somehow sneaks in a row creation
               # right before the above create operation can run, just return an LockError.
@@ -102,6 +101,14 @@ module Hyacinth
           end
         end
 
+        # Removes the lock for the given key. Generally you don't want to use this method. It's
+        # just here in cases when you need to manually remove a lock that was obtained by another
+        # process. Instead of calling this method, it's generally better to instead use the
+        # LockObject returned by #lock (i.e. lock_object.unlock).
+        def unlock!(key)
+          ::DatabaseEntryLock.destroy_by(lock_key: key)
+        end
+
         # TODO: Add tests for this class
         class LockObject
           attr_reader :database_entry_lock
@@ -121,7 +128,11 @@ module Hyacinth
           # Extends the lock if it will expire in less than the given duration.
           # @param [Integer or ActiveSupport::Duration] duration
           def extend_lock_if_expires_in_less_than(duration)
-            extend_lock if DateTime.current + duration > @database_entry_lock.expires_at
+            extend_lock if duration > remaining_lock_time
+          end
+
+          def remaining_lock_time
+            (@database_entry_lock.expires_at - DateTime.current).to_f
           end
 
           def unlock

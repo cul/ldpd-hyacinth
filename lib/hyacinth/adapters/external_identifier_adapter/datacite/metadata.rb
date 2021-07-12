@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Following module contains functionality to retrieve metadata
-# from the descriptive_metadata hash from DigitalObject::Base
+# from the descriptive_metadata hash from DigitalObject
 class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata
   attr_reader :source, :descriptive_metadata
   # parse metadata from Hyacinth Digital Objects Data

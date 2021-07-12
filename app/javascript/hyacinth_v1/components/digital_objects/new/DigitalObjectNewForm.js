@@ -23,7 +23,6 @@ function DigitalObjectNewForm() {
   const { project: { stringKey, displayLabel } } = projectData;
 
   const initialDigitalObject = {
-    serializationVersion: '1',
     digitalObjectType,
     primaryProject: { stringKey, displayLabel },
     otherProjects: [],

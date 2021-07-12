@@ -29,15 +29,17 @@ RSpec.describe DigitalObject::Asset, type: :model do
     end
   end
 
-  describe "restriction validations" do
+  describe "image_size_restriction validation" do
     let(:asset) { FactoryBot.build(:asset, :with_master_resource) }
     before { asset.asset_type = BestType::PcdmTypeLookup::VALID_TYPES.first }
-    it "validates boolean values for restrictions" do
-      asset.restrictions['restricted_onsite'] = true
-      expect(asset.valid?).to be true
+    it "allows valid values" do
+      Hyacinth::DigitalObject::Asset::ImageSizeRestriction::VALID_IMAGE_SIZE_RESTRICTIONS.each do |value|
+        asset.image_size_restriction = value
+        expect(asset.valid?).to be true
+      end
     end
-    it "invalidates non-boolean values for restrictions" do
-      asset.restrictions['restricted_onsite'] = 'true'
+    it "rejects an invalid value" do
+      asset.image_size_restriction = 'invalid'
       expect(asset.valid?).to be false
     end
   end

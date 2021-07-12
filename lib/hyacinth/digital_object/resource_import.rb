@@ -7,7 +7,7 @@ module Hyacinth
 
       REQUIRED_FIELDS = [:method, :location].freeze
       FIELDS = (REQUIRED_FIELDS + [:checksum, :original_file_path, :media_type, :file_size]).freeze
-      attr_accessor(*FIELDS)
+      attr_reader(*FIELDS)
 
       COPY = 'copy'
       TRACK = 'track'
@@ -25,7 +25,15 @@ module Hyacinth
           instance_variable_set("@#{opt_name}", opt_value)
         end
 
-        @location = ActiveStorage::Blob.find_signed(location.sub('blob://', '')) if @location.is_a?(String) && @location.start_with?('blob://')
+        if @method == FIXTURE_FILE
+          # The FIXTURE_FILE import method is actually a copy from a relative path (the fixture directory)
+          @method = COPY
+          @location = Rails.root.join('spec', 'fixtures', 'files', @location).to_s
+        elsif @location.is_a?(String) && @location.start_with?('blob://')
+          @location = ActiveStorage::Blob.find_signed(location.sub('blob://', ''))
+        end
+
+        # TODO: Eventually add support for a path-relative import directory for users. This will be similar to how the FIXTURE FILE method works.
       end
 
       def valid?
@@ -34,6 +42,23 @@ module Hyacinth
         end
         return false unless VALID_IMPORT_METHODS.include?(self.method)
         true
+      end
+
+      def location_is_readable?
+        # It's generally safe to assume an ActiveStorage blob is readable.
+        return true if location_is_active_storage_blob?
+        # Check readability of file at given path
+        return File.readable?(location) if location.start_with?('/')
+        # If the location is a URL, try a head request to determine readability
+        if location.match?(/^https*:\/\//)
+          begin
+            return Faraday.head(location, request: { timeout: 5 }).status == 200
+          rescue Faraday::ConnectionFailed
+            return false
+          end
+        end
+
+        false
       end
 
       def location_is_active_storage_blob?

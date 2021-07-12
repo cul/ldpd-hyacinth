@@ -28,7 +28,7 @@ RSpec.describe Mutations::DigitalObject::Resource::DeleteResource, solr: true do
     end
 
     before do
-      allow(::DigitalObject::Base).to receive(:find).and_return(digital_object)
+      allow(::DigitalObject).to receive(:find_by_uid!).and_return(digital_object)
       allow(ability.authorize!)
     end
 

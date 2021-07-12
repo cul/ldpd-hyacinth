@@ -28,6 +28,7 @@ namespace :hyacinth do
       Rake::Task['hyacinth:setup:config_files'].invoke
       Rake::Task['hyacinth:setup:default_users'].invoke
       Rake::Task['hyacinth:setup:test_projects'].invoke
+      Rake::Task['hyacinth:setup:test_publish_targets'].invoke
       Rake::Task['hyacinth:rights_fields:load'].invoke
       Rake::Task['hyacinth:setup:seed_dynamic_field_entries'].invoke
       Rake::Task['hyacinth:setup:enable_fields_for_test_projects'].invoke
@@ -44,6 +45,17 @@ namespace :hyacinth do
         display_label: 'Sample Record Project',
         has_asset_rights: true
       )
+
+      # Enable title fields for the sample project
+      title_subfields = DynamicFieldGroup.find_by(string_key: "title").dynamic_fields
+      project = Project.find_by(string_key: project.string_key)
+      title_subfields.each do |title_subfield|
+        EnabledDynamicField.create!(
+          project: project,
+          dynamic_field: title_subfield,
+          digital_object_type: 'item'
+        )
+      end
 
       21.times do |i|
         item = DigitalObject::Item.new

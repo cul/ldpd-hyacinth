@@ -69,11 +69,11 @@ RSpec.describe Mutations::DigitalObject::UpdateDescriptiveMetadata, type: :reque
       end
 
       it 'sets descriptive metadata fields' do
-        expect(DigitalObject::Base.find(authorized_item.uid).descriptive_metadata).to include expected_descriptive_metadata
+        expect(DigitalObject.find_by_uid!(authorized_item.uid).descriptive_metadata).to include expected_descriptive_metadata
       end
 
       it 'sets identifiers' do
-        expect(DigitalObject::Base.find(authorized_item.uid).identifiers.to_a).to include(*expected_identifiers)
+        expect(DigitalObject.find_by_uid!(authorized_item.uid).identifiers.to_a).to include(*expected_identifiers)
       end
 
       context "when user errors are present" do
@@ -121,7 +121,7 @@ RSpec.describe Mutations::DigitalObject::UpdateDescriptiveMetadata, type: :reque
 
       context "when the optimistic lock token doesn't match the expected value in the database" do
         before do
-          DigitalObject::Base.find(authorized_item.uid).save # change the optimistic lock token in the db
+          DigitalObject.find_by_uid!(authorized_item.uid).save # change the optimistic lock token in the db
           graphql query, variables
         end
         it "returns an error of the expected format at the expected path" do

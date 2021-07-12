@@ -12,14 +12,11 @@ RSpec.describe BatchImportStartJob, solr: true do
 
   context '.perform' do
     before do
-      # Create item that one of the csv rows will update
-      item = FactoryBot.build(:item)
-      # Force created item to have the expected uid that appears in the csv fixture
-      item.instance_variable_set(:@uid, '2f4e2917-26f5-4d8f-968c-a4015b10e50f')
-      item.save
+      # Create an item with an expected uid that one of the csv rows will update
+      FactoryBot.create(:item, uid: '2f4e2917-26f5-4d8f-968c-a4015b10e50f')
     end
 
-    context "with stubbeed Resque.enqueue method to simulate normal asynchronous processing (and focus just on setup)" do
+    context "with stubbed Resque.enqueue method to simulate normal asynchronous processing (and focus just on setup)" do
       before do
         # We don't want Resque.enqueue to process anything immediately for these tests (which is the
         # default behavior for our test environment), since we're not testing the queued job code.
@@ -54,15 +51,19 @@ RSpec.describe BatchImportStartJob, solr: true do
         DynamicFieldsHelper.enable_dynamic_fields('asset', Project.find_by_string_key('great_project'))
         described_class.perform(batch_import.id)
         batch_import.reload
+        expect(batch_import.setup_errors).to be_blank
       end
       it "runs successfully, without errors, and creates the correct number of objects" do
         # This is a slow test, so that's why we're checking multiple things in the same test.
-
-        expect(batch_import.setup_errors).to be_blank
+        # Expect all DigitalObjectImports to be successful
+        expect(DigitalObjectImport.all.pluck(:status).uniq).to eq(['success']), lambda {
+          "Expected success status for all imports, but encountered some failures. More info: \n" +
+            DigitalObjectImport.where.not(status: 'success').map { |import| "Row #{import.index} had error(s): #{import.import_errors.join(', ')}" }.join("\n")
+        }
         # Expect no remaining ImportPrerequisite because they've all been processed
         expect(ImportPrerequisite.count).to eq(0)
         # Expect that all records have been created
-        expect(DigitalObjectRecord.count).to eq(5)
+        expect(DigitalObject.count).to eq(5)
         expect(batch_import.status).to eq(BatchImport::COMPLETED_SUCCESSFULLY)
       end
     end

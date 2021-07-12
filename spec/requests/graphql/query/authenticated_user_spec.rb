@@ -47,6 +47,12 @@ RSpec.describe 'Query for Authenticated User', type: :request do
             "subject": ["DynamicFieldCategory"]
           },
           {
+            "actions": ["read"],
+            "conditions": {},
+            "inverted": false,
+            "subject": ["PublishTarget"]
+          },
+          {
             "actions": ["create"],
             "conditions": {},
             "inverted": false,
@@ -128,6 +134,12 @@ RSpec.describe 'Query for Authenticated User', type: :request do
             "subject": ["DynamicFieldCategory"]
           },
           {
+            "actions": ["read"],
+            "conditions": {},
+            "inverted": false,
+            "subject": ["PublishTarget"]
+          },
+          {
             "actions": ["create"],
             "conditions": {},
             "inverted": false,
@@ -172,24 +184,6 @@ RSpec.describe 'Query for Authenticated User', type: :request do
             },
             "inverted": false,
             "subject": ["Project"]
-          },
-          {
-            "actions": ["read"],
-            "conditions": {
-              "projectId": 1
-            },
-            "inverted": false,
-            "subject": ["PublishTarget"]
-          },
-          {
-            "actions": ["read"],
-            "conditions": {
-              "project": {
-                "stringKey": "great_project"
-              }
-            },
-            "inverted": false,
-            "subject": ["PublishTarget"]
           },
           {
             "actions": ["read"],

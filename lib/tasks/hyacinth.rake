@@ -3,14 +3,14 @@
 namespace :hyacinth do
   desc "Reindexes all digital objects"
   task reindex: :environment do
-    DigitalObjectRecord.find_in_batches(batch_size: (ENV['BATCH_SIZE'] || 1000).to_i) do |records|
-      records.each do |record|
-        ::DigitalObject::Base.find(record.uid).index(false)
-      rescue
-        puts "Error while reindexing #{record.uid}. See raised error below:"
-        raise
-      end
-      Hyacinth::Config.digital_object_search_adapter.solr.commit
+    Hyacinth::Config.digital_object_search_adapter.commit_after_change = false
+    DigitalObject.find_each(batch_size: (ENV['BATCH_SIZE'] || 200).to_i) do |digital_object|
+      digital_object.index
+    rescue
+      puts "Error while reindexing #{record.uid}. See raised error below:"
+      raise # re-raise original exception
+    ensure
+      Hyacinth::Config.digital_object_search_adapter.commit # commit whatever we were able to reindex
     end
   end
 
@@ -27,27 +27,23 @@ namespace :hyacinth do
 
     puts 'Running!'
 
-    DigitalObjectRecord.find_in_batches(batch_size: (ENV['BATCH_SIZE'] || 1000).to_i) do |records|
-      records.each do |record|
-        dobj = ::DigitalObject::Base.find(record.uid)
-
-        # Clear descriptive_metadata and rights to reduce likelihood of data issues during
-        # destroy operation that runs before purge.
-        dobj.assign_attributes(
-          {
-            'descriptive_metadata' => {},
-            'rights' => {}
-          },
-          merge_descriptive_metadata: false,
-          merge_rights: false
-        )
-        begin
-          dobj.purge!(skip_child_check: true)
-          puts "Purged: #{record.uid}"
-        rescue Hyacinth::Exceptions::NotFound
-          puts "Purged #{record.uid} (but no associated metadata was found)"
-        end
-        record.destroy
+    DigitalObject.find_each(batch_size: (ENV['BATCH_SIZE'] || 200).to_i) do |digital_object|
+      # Clear descriptive_metadata and rights to reduce likelihood of data issues during
+      # destroy operation that runs before purge.
+      digital_object.assign_attributes(
+        {
+          'descriptive_metadata' => {},
+          'rights' => {}
+        },
+        merge_descriptive_metadata: false,
+        merge_rights: false
+      )
+      begin
+        digital_object.remove_all_children!
+        digital_object.destroy
+        puts "Purged: #{digital_object.uid}"
+      rescue Hyacinth::Exceptions::NotFound
+        puts "Purged #{digital_object.uid} (but no associated metadata was found)"
       end
     end
     Hyacinth::Config.digital_object_search_adapter.clear_index

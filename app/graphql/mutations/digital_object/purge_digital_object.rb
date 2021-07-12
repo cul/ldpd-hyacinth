@@ -7,12 +7,11 @@ module Mutations
 
       field :digital_object, Types::DigitalObjectInterface, null: true
 
+      # TODO: Consider renaming this mutation to DeleteDigitalObject if the DeleteDigitalObject is replaced by an UpdateDigitalObjectState mutation
       def resolve(id:)
-        digital_object = ::DigitalObject::Base.find(id)
-
+        digital_object = ::DigitalObject.find_by_uid!(id)
         ability.authorize! :purge, digital_object
-
-        digital_object.purge!
+        digital_object.destroy!
 
         { digital_object: digital_object }
       end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_11_131038) do
+ActiveRecord::Schema.define(version: 2021_06_17_181707) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -83,11 +83,24 @@ ActiveRecord::Schema.define(version: 2021_01_11_131038) do
     t.index ["status"], name: "index_digital_object_imports_on_status"
   end
 
-  create_table "digital_object_records", force: :cascade do |t|
+  create_table "digital_objects", force: :cascade do |t|
     t.string "uid", null: false
     t.string "metadata_location_uri"
     t.string "optimistic_lock_token"
-    t.index ["uid"], name: "index_digital_object_records_on_uid", unique: true
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "type", default: "", null: false
+    t.datetime "first_published_at"
+    t.datetime "preserved_at"
+    t.datetime "first_preserved_at"
+    t.integer "state", default: 0, null: false
+    t.string "doi"
+    t.integer "created_by_id"
+    t.integer "updated_by_id"
+    t.string "backup_metadata_location_uri"
+    t.index ["created_by_id"], name: "index_digital_objects_on_created_by_id"
+    t.index ["uid"], name: "index_digital_objects_on_uid", unique: true
+    t.index ["updated_by_id"], name: "index_digital_objects_on_updated_by_id"
   end
 
   create_table "dynamic_field_categories", force: :cascade do |t|
@@ -205,6 +218,16 @@ ActiveRecord::Schema.define(version: 2021_01_11_131038) do
     t.index ["prerequisite_digital_object_import_id"], name: "prerequisite_digital_object_import_id"
   end
 
+  create_table "parent_child_relationships", force: :cascade do |t|
+    t.integer "parent_id", null: false
+    t.integer "child_id", null: false
+    t.integer "order", null: false
+    t.index ["child_id"], name: "index_parent_child_relationships_on_child_id"
+    t.index ["order"], name: "index_parent_child_relationships_on_order"
+    t.index ["parent_id", "child_id", "order"], name: "unique_parent_and_child_and_order", unique: true
+    t.index ["parent_id"], name: "index_parent_child_relationships_on_parent_id"
+  end
+
   create_table "permissions", force: :cascade do |t|
     t.integer "user_id"
     t.string "action", null: false
@@ -236,17 +259,35 @@ ActiveRecord::Schema.define(version: 2021_01_11_131038) do
     t.index ["string_key"], name: "index_projects_on_string_key", unique: true
   end
 
+  create_table "projects_publish_targets", force: :cascade do |t|
+    t.integer "project_id", null: false
+    t.integer "publish_target_id", null: false
+    t.index ["project_id", "publish_target_id"], name: "unique_project_and_publish_target", unique: true
+    t.index ["project_id"], name: "index_projects_publish_targets_on_project_id"
+    t.index ["publish_target_id"], name: "index_projects_publish_targets_on_publish_target_id"
+  end
+
+  create_table "publish_entries", force: :cascade do |t|
+    t.integer "digital_object_id", null: false
+    t.integer "publish_target_id", null: false
+    t.integer "published_by_id"
+    t.datetime "published_at"
+    t.text "citation_location"
+    t.index ["digital_object_id", "publish_target_id"], name: "unique_digital_object_and_publish_target", unique: true
+    t.index ["digital_object_id"], name: "index_publish_entries_on_digital_object_id"
+    t.index ["publish_target_id"], name: "index_publish_entries_on_publish_target_id"
+    t.index ["published_by_id"], name: "index_publish_entries_on_published_by_id"
+  end
+
   create_table "publish_targets", force: :cascade do |t|
-    t.integer "project_id"
     t.text "publish_url", null: false
     t.string "api_key", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "is_allowed_doi_target", default: false, null: false
     t.integer "doi_priority", default: 100, null: false
-    t.string "target_type", default: "production", null: false
-    t.index ["project_id", "target_type"], name: "index_publish_targets_on_project_id_and_target_type", unique: true
-    t.index ["project_id"], name: "index_publish_targets_on_project_id"
+    t.string "string_key"
+    t.index ["string_key"], name: "index_publish_targets_on_string_key", unique: true
   end
 
   create_table "resource_requests", force: :cascade do |t|
@@ -315,5 +356,11 @@ ActiveRecord::Schema.define(version: 2021_01_11_131038) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "publish_targets", "projects"
+  add_foreign_key "parent_child_relationships", "digital_objects", column: "child_id"
+  add_foreign_key "parent_child_relationships", "digital_objects", column: "parent_id"
+  add_foreign_key "projects_publish_targets", "projects"
+  add_foreign_key "projects_publish_targets", "publish_targets"
+  add_foreign_key "publish_entries", "digital_objects"
+  add_foreign_key "publish_entries", "publish_targets"
+  add_foreign_key "publish_entries", "users", column: "published_by_id"
 end

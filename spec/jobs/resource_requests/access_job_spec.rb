@@ -23,7 +23,9 @@ RSpec.describe ResourceRequests::AccessJob, solr: true do
     end
 
     context 'when the given object is eligible' do
-      before { instance.perform(asset.uid) }
+      before do
+        instance.perform(asset.uid)
+      end
       it 'creates the expected ResourceRequest' do
         expect(ResourceRequest.count).to eq(1)
       end

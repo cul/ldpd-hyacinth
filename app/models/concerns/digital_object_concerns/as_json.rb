@@ -27,7 +27,7 @@ module DigitalObjectConcerns
       ].map { |field_name|
         [field_name, self.send(field_name).as_json(options)]
       }.to_h.merge(
-        'parent_digital_objects' => self.parent_uids.map { |parent_uid| { 'uid' => parent_uid } }
+        'parents' => self.parents.map { |parent| { 'uid' => parent.uid } }
       )
     end
   end

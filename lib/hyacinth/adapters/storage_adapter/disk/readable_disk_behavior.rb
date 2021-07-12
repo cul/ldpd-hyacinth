@@ -29,6 +29,7 @@ module Hyacinth
           end
 
           def location_uri_to_file_path(location_uri)
+            raise Hyacinth::Exceptions::InvalidLocationUri, 'Cannot resolve nil location_uri' if location_uri.nil?
             location_uri.gsub(/^#{uri_prefix}/, '')
           end
         end

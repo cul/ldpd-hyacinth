@@ -7,6 +7,9 @@ module Hyacinth
         attr_reader :solr, :document_generator
         delegate :solr_document_for, to: :document_generator
         delegate :search_types, to: :document_generator
+        delegate :commit, to: :solr
+        delegate :commit_after_change, to: :solr
+        delegate :commit_after_change=, to: :solr
 
         def initialize(adapter_config = {})
           super(adapter_config)
@@ -19,6 +22,10 @@ module Hyacinth
           solr.commit if opts[:commit]
 
           # TODO: index presence or absence of field values, even if the field itself isn't indexed for search
+        end
+
+        def index_test(digital_object)
+          solr_document_for(digital_object).is_a?(Hash)
         end
 
         def remove(digital_object, **opts)
@@ -47,7 +54,7 @@ module Hyacinth
         def solr_params_for(search_params)
           solr_parameters = ::Solr::Params.new
           # Only return active objects
-          solr_parameters.fq('state_ssi', Hyacinth::DigitalObject::State::ACTIVE)
+          solr_parameters.fq('state_ssi', 'active')
 
           # Apply search_params
           search_params.each do |k, v|
