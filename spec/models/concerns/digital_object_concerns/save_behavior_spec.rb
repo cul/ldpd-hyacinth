@@ -16,6 +16,9 @@ RSpec.describe DigitalObjectConcerns::SaveBehavior, solr: true do
   end
 
   context "#save" do
+    before do
+      DynamicFieldsHelper.enable_dynamic_fields(digital_object_with_sample_data.digital_object_type, digital_object_with_sample_data.primary_project)
+    end
     it "runs as expected, returning true when a valid object is saved successfully, and doesn't have any errors in the #errors array" do
       success = digital_object_with_sample_data.save
       expect(digital_object_with_sample_data.errors.empty?).to eq(true)

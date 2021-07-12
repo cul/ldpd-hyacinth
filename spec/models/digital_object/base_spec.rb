@@ -109,6 +109,9 @@ RSpec.describe DigitalObject::TestSubclass, type: :model do
 
   context "with sample data" do
     let(:digital_object_with_sample_data) { FactoryBot.build(:digital_object_test_subclass, :with_sample_data) }
+    before do
+      DynamicFieldsHelper.enable_dynamic_fields(digital_object_with_sample_data.digital_object_type, digital_object_with_sample_data.primary_project)
+    end
 
     it "returns expected values for a few previously-set fields" do
       expect(digital_object_with_sample_data.descriptive_metadata).to eq({
