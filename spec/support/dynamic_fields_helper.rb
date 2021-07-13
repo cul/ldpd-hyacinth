@@ -145,11 +145,13 @@ module DynamicFieldsHelper
 
   def enable_dynamic_fields(digital_object_type, project)
     DynamicField.all.each do |df|
-      EnabledDynamicField.create!(
+      attrs = {
         project: project,
         dynamic_field: df,
         digital_object_type: digital_object_type
-      )
+      }
+      next if EnabledDynamicField.exists?(attrs)
+      EnabledDynamicField.create!(attrs)
     end
   end
 end

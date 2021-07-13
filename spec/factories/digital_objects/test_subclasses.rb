@@ -32,6 +32,7 @@ FactoryBot.define do
     trait :with_descriptive_metadata do
       after(:build) do |digital_object|
         DynamicFieldsHelper.load_title_fields! # Load fields.
+        DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project)
 
         digital_object.assign_descriptive_metadata({
           'descriptive_metadata' => {
