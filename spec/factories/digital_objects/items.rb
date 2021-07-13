@@ -8,6 +8,9 @@ FactoryBot.define do
 
     after(:build) do |digital_object|
       digital_object.primary_project = create(:project) if digital_object.primary_project.blank?
+    end
+
+    before(:create) do |digital_object, evaluator|
       DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project) if evaluator.enable_fields
     end
 
