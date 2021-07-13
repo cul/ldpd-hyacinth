@@ -1,0 +1,153 @@
+require 'digest'
+require 'tempfile'
+
+module Hyacinth::Utils::FedoraUtils::DatastreamMigrations
+  DEFAULT_ASSET_DSID = 'content'
+
+  module ClassMethods
+    def repository
+      @repository ||= Rubydora.connect(Rails.application.config_for(:fedora))
+    end
+
+    def exists?(ds)
+      !(ds.nil? || ds.new?)
+    end
+
+    def content_descriptor(repository, ds, resolve_managed_to = false)
+      if ds.controlGroup == 'M' && resolve_managed_to
+        managed_content_descriptor(repository, ds, resolve_managed_to)
+      else
+        streamed_content_descriptor(repository, ds)
+      end
+    end
+
+    def streamed_content_descriptor(repository, ds)
+      content_digest = Digest::SHA256.new
+      content_byte_length = 0
+      stream_ds(repository, ds) do |chunk|
+        content_byte_length += chunk.length
+        content_digest.update(chunk)
+      end
+      "bytes:#{content_byte_length};SHA256:#{content_digest.hexdigest}"
+    end
+
+    def managed_content_descriptor(repository, ds, repository_path)
+      local_path = File.join(repository_path,ds.createDate.getlocal.strftime('%Y/%m%d/%H/%M'), ds.dsLocation.gsub(':', '_'))
+      descriptor = "bytes:"
+      content_digest = Digest::SHA256.new
+      open(local_path) do |blob|
+        descriptor << blob.size.to_s
+        blob.each(nil, 1024**2) { |chunk| content_digest.update(chunk) }
+      end
+      descriptor << ";SHA256:" << content_digest.hexdigest
+    rescue
+      streamed_content_descriptor(repository, ds)
+    end
+
+    def external_content_descriptor(repository, ds)
+      content_digest = Digest::SHA256.new
+      content_byte_length = 0
+      stream_ds(repository, ds) do |chunk|
+        content_byte_length += chunk.length
+        content_digest.update(chunk)
+      end
+      "bytes:#{content_byte_length};SHA256:#{content_digest.hexdigest}"
+    end
+
+    def entity_size(http_response)
+      if content_length = http_response['Content-Length']
+        return content_length.to_i
+      end
+      http_response.body.length
+    end
+
+    def default_migration_target_dsid(src_dsid = nil)
+      "legacy#{(src_dsid || DEFAULT_ASSET_DSID).capitalize}"
+    end
+
+    def stream_ds(repository, ds, &block)
+      dissem_opts = { pid: ds.digital_object.pid, dsid: ds.dsid }
+      dissem_opts[:asOfDateTime] = ds.asOfDateTime if ds.asOfDateTime
+      repository.datastream_dissemination(dissem_opts) do |response|
+        size = ds.external? ? entity_size(response) : ds.dsSize
+        raise "Can't determine content length" unless size
+        length = size
+
+        counter = 0
+        response.read_body do |chunk|
+          last_counter = counter
+          counter += chunk.size
+          if counter > length
+            offset = (length) - counter - 1
+            block.yield chunk[0..offset]
+          else
+            block.yield chunk
+          end
+        end
+      end
+    end
+
+    def verify_identical_content(fedora_object_pid, src_dsid, target_dsid)
+      obj = repository.find(fedora_object_pid)
+      compare_content_descriptors(obj.datastreams[src_dsid], obj.datastreams[target_dsid])
+    end
+
+    def compare_content_descriptors(src_ds, target_ds, resolve_managed_to = false)
+      unless exists?(src_ds)
+        return {
+          status: false,
+          msg: "Source datastream #{src_ds.dsid} does not exist"
+        }
+      end
+      unless exists?(target_ds)
+        return {
+          status: false,
+          msg: "Target datastream #{target_ds.dsid} does not exist"
+        }
+      end
+      src_data = content_descriptor(repository, src_ds, resolve_managed_to)
+      target_data = content_descriptor(repository, target_ds, resolve_managed_to)
+      if src_data == target_data && !src_data.start_with?('bytes:0')
+        {
+          status: true,
+          msg: "common content descriptor for #{src_ds.dsid} and #{target_ds.dsid}: #{src_data}"
+        }
+      else
+        {
+          status: false,
+          msg: "content descriptor mismatch #{src_ds.dsid} (#{src_data}); #{target_ds.dsid} (#{target_data})"
+        }
+      end
+    end
+  end
+  extend ClassMethods
+
+  module Backups
+    module ClassMethods
+      def backup_dir_for(fedora_object_pid)
+        dir_name = fedora_object_pid.clone
+        dir_name.gsub!('/', '.')
+        dir_name.gsub!(':', '_')
+        result = File.join(Rails.root, 'log', 'migration-backups', dir_name)
+      end
+
+      def backup_profile(fedora_object_pid, original_dsid = nil)
+        dsid = original_dsid || DEFAULT_ASSET_DSID
+        JSON.load(File.read(File.join(backup_dir_path, "#{dsid}.json")))
+      end
+
+      def backup_content_descriptor(fedora_object_pid, original_dsid = nil)
+        dsid = original_dsid || DEFAULT_ASSET_DSID
+        descriptor = "bytes:"
+        content_digest = Digest::SHA256.new
+        backup_dir_path = backup_dir_for(fedora_object_pid)
+        open(File.join(backup_dir_path, "#{dsid}.bin")) do |blob|
+          descriptor << blob.size.to_s
+          blob.each(nil, 1024**2) { |chunk| content_digest.update(chunk) }
+        end
+        descriptor << ";SHA256:" << content_digest.hexdigest
+      end
+    end
+    extend ClassMethods
+  end
+end
