@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe DigitalObject::DescriptiveFieldsValidator do
-  let(:item) { FactoryBot.create(:item) }
+  let(:item) { FactoryBot.create(:item, enable_fields: false) }
 
   # Setting up descriptive_metadata fields
   let(:field_definitions) do
@@ -31,6 +31,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
                 {
                   string_key: 'role',
                   display_label: 'Role',
+                  is_repeatable: 'true',
                   dynamic_fields: [
                     { string_key: 'term', display_label: 'Value', field_type: DynamicField::Type::CONTROLLED_TERM, controlled_vocabulary: 'name_role' }
                   ]
@@ -96,6 +97,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
     end
 
     it 'validates' do
+      DynamicFieldsHelper.enable_dynamic_fields(item.digital_object_type, item.primary_project)
       expect(item.valid?).to be true
     end
   end

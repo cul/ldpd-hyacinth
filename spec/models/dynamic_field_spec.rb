@@ -212,4 +212,57 @@ RSpec.describe DynamicField, type: :model do
       end
     end
   end
+
+  describe '.find_by_path_traversal' do
+    let(:field_definitions) do
+      {
+        dynamic_field_categories: [
+          {
+            display_label: 'Sample Dynamic Field Category',
+            dynamic_field_groups: [
+              {
+                string_key: 'group1',
+                display_label: 'Group 1',
+                dynamic_fields: [
+                  { string_key: 'string_field', display_label: 'String Field', field_type: DynamicField::Type::STRING },
+                  { string_key: 'integer_field', display_label: 'Integer Field', field_type: DynamicField::Type::INTEGER }
+                ]
+              },
+              {
+                string_key: 'group2',
+                display_label: 'Group 2',
+                dynamic_fields: [
+                  { string_key: 'string_field', display_label: 'String Field', field_type: DynamicField::Type::STRING },
+                  { string_key: 'integer_field', display_label: 'Integer Field', field_type: DynamicField::Type::INTEGER }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    end
+    before do
+      Hyacinth::DynamicFieldsLoader.load_fields!(field_definitions, load_vocabularies: true)
+    end
+    let(:expected_group1_string_field)  { DynamicField.find_by(dynamic_field_group: DynamicFieldGroup.find_by(string_key: 'group1'), string_key: 'string_field') }
+    let(:expected_group1_integer_field) { DynamicField.find_by(dynamic_field_group: DynamicFieldGroup.find_by(string_key: 'group1'), string_key: 'integer_field') }
+    let(:expected_group2_string_field)  { DynamicField.find_by(dynamic_field_group: DynamicFieldGroup.find_by(string_key: 'group2'), string_key: 'string_field') }
+    let(:expected_group2_integer_field) { DynamicField.find_by(dynamic_field_group: DynamicFieldGroup.find_by(string_key: 'group2'), string_key: 'integer_field') }
+
+    it 'finds existing fields' do
+      expect(DynamicField.find_by_path_traversal(['group1', 'string_field'])).to eq(expected_group1_string_field)
+      expect(DynamicField.find_by_path_traversal(['group1', 'integer_field'])).to eq(expected_group1_integer_field)
+      expect(DynamicField.find_by_path_traversal(['group2', 'string_field'])).to eq(expected_group2_string_field)
+      expect(DynamicField.find_by_path_traversal(['group2', 'integer_field'])).to eq(expected_group2_integer_field)
+    end
+
+    it 'raises an error for impossible paths' do
+      expect { DynamicField.find_by_path_traversal(nil) }.to raise_error(ActiveRecord::RecordNotFound)
+      expect { DynamicField.find_by_path_traversal(['there_are_no_top_level_fields']) }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+
+    it 'raises an error for a field that cannot be found' do
+      expect { DynamicField.find_by_path_traversal(['group1234567', 'string_field']) }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
 end

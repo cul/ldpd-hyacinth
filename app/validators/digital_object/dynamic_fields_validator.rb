@@ -15,26 +15,17 @@ class DigitalObject::DynamicFieldsValidator < ActiveModel::EachValidator
 
       data.each do |field_or_group_key, value|
         new_path = [path, field_or_group_key].compact.join('.')
-
         unless field_map.key?(field_or_group_key)
           errors.append([new_path, "is not a valid field"])
           next
         end
 
-        reduced_map = field_map[field_or_group_key]
-
-        case reduced_map[:type]
+        field_map_subtree = field_map[field_or_group_key]
+        case field_map_subtree[:type]
         when 'DynamicFieldGroup'
-          unless value.is_a?(Array)
-            errors.append([new_path, "must contain an array"])
-            next
-          end
-
-          value.each_with_index do |v, i|
-            errors.concat errors_for(reduced_map[:children], v, "#{new_path}[#{i}]")
-          end
+          errors.concat errors_for_field_group(value, field_or_group_key, new_path, field_map_subtree)
         when 'DynamicField'
-          if (e = field_errors(reduced_map, value))
+          if (e = field_errors(field_map_subtree, value))
             errors.concat e.map { |i| [new_path, i] }
           end
         end
@@ -49,6 +40,25 @@ class DigitalObject::DynamicFieldsValidator < ActiveModel::EachValidator
     # @return false if there are no errors
     def field_errors(configuration, value)
       send("errors_for_#{configuration[:field_type]}_field", configuration, value)
+    end
+
+    def errors_for_field_group(value, field_or_group_key, new_path, field_map_subtree)
+      errors = []
+      if value.is_a?(Array)
+        errors.append([new_path, "is not repeatable"]) if violates_repeat_value_constraint(field_or_group_key, value)
+
+        value.each_with_index do |v, i|
+          errors.concat errors_for(field_map_subtree[:children], v, "#{new_path}[#{i}]")
+        end
+      else
+        errors.append([new_path, "must contain an array"])
+      end
+      errors
+    end
+
+    def violates_repeat_value_constraint(field_or_group_key, value)
+      dynamic_field_group = DynamicFieldGroup.find_by(string_key: field_or_group_key)
+      dynamic_field_group && !dynamic_field_group.is_repeatable && value.length > 1
     end
 
     def errors_for_string_field(_configuration, value)

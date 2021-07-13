@@ -47,6 +47,8 @@ RSpec.describe BatchImportStartJob, solr: true do
     context "with synchronous processing of jobs" do
       before do
         DynamicFieldsHelper.load_title_fields!
+        DynamicFieldsHelper.enable_dynamic_fields('item', Project.find_by_string_key('great_project'))
+        DynamicFieldsHelper.enable_dynamic_fields('asset', Project.find_by_string_key('great_project'))
         described_class.perform(batch_import.id)
         batch_import.reload
         expect(batch_import.setup_errors).to be_blank

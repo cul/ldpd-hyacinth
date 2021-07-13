@@ -27,14 +27,6 @@ RSpec.describe Mutations::DigitalObject::UpdateDescriptiveMetadata, type: :reque
 
   before do
     Hyacinth::DynamicFieldsLoader.load_fields!(field_definitions)
-    search_params = { digital_object_type: 'ITEM' }
-    search_params[:project_id] = project.id
-    dfields = DynamicField.where(string_key: ['non_sort_portion', 'sort_portion'])
-    dfields.each do |df|
-      attributes = search_params.dup
-      attributes[:dynamic_field_id] = df.id
-      EnabledDynamicField.create(attributes)
-    end
   end
 
   include_examples 'requires user to have correct permissions for graphql request' do
@@ -98,9 +90,9 @@ RSpec.describe Mutations::DigitalObject::UpdateDescriptiveMetadata, type: :reque
 
         it "returns a null digital object and an error of the expected format at the expected path" do
           expect(response.body).to be_json_eql(%(null)).at_path('data/updateDescriptiveMetadata/digitalObject')
-          expect(response.body).to be_json_eql(%(["descriptive_metadata.this_field_group_does_not_exist"])).at_path('data/updateDescriptiveMetadata/userErrors/0/path')
+          expect(response.body).to be_json_eql(%(["this_field_group_does_not_exist/this_field_also_does_not_exist"])).at_path('data/updateDescriptiveMetadata/userErrors/0/path')
           expect(response.body).to be_json_eql(%(
-            "is not a valid field"
+            "field must be enabled"
           )).at_path('data/updateDescriptiveMetadata/userErrors/0/message')
         end
       end

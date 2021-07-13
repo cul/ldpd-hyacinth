@@ -41,7 +41,7 @@ RSpec.describe DynamicFieldCategory, type: 'model' do
 
       it 'returns correct error' do
         dynamic_field_category.save
-        expect(dynamic_field_category.errors.full_messages).to include 'Display label has already been taken'
+        expect(dynamic_field_category.errors.full_messages).to include 'Display label Subjects is already taken'
       end
     end
 

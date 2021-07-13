@@ -7,7 +7,7 @@ class DynamicFieldCategory < ActiveRecord::Base
 
   has_many :dynamic_field_groups, as: :parent
 
-  validates :display_label, presence: true, uniqueness: true
+  validates :display_label, presence: true, uniqueness: { message: "%{value} is already taken" }
   validates :metadata_form, presence: true
 
   def as_json(options = {})

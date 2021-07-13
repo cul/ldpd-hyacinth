@@ -57,7 +57,7 @@ RSpec.describe Project, type: :model do
 
       it 'returns correct error' do
         project.save
-        expect(project.errors.full_messages).to include 'Display label has already been taken'
+        expect(project.errors.full_messages).to include 'Display label Best Project is already taken'
       end
     end
 

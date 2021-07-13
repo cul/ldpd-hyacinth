@@ -19,6 +19,8 @@ RSpec.describe DigitalObjectImportProcessingJob, solr: true do
       allow(described_class).to receive(:queue_applicable_import_prerequisites).and_call_original
       allow(described_class).to receive(:apply_recursive_failure!).and_call_original
       allow(digital_object_import).to receive(:in_progress!).and_call_original
+      data_hash = JSON.parse(digital_object_import.digital_object_data)
+      DynamicFieldsHelper.enable_dynamic_fields(data_hash["digital_object_type"], Project.find_by_string_key(data_hash["primary_project"]["string_key"]))
       described_class.perform(digital_object_import_id)
     end
 
