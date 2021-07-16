@@ -12,7 +12,9 @@ import { getEnabledDynamicFieldsQuery, updateEnabledDynamicFieldsMutation } from
 import { getDynamicFieldGraphQuery } from '../../../graphql/dynamicFieldCategories';
 
 const DynamicField = (props) => {
-  const { field, initalFieldData, enabledFieldDataCallback, disabled } = props;
+  const {
+    field, initalFieldData, enabledFieldDataCallback, disabled,
+  } = props;
   const [fieldSets] = useState([]);
   const [enabledFieldData, setEnabledFieldData] = useState(enabledFieldDataCallback(field.id));
 
@@ -160,7 +162,9 @@ const DynamicField = (props) => {
 };
 
 const DynamicFieldGroup = (props) => {
-  const { group, handlers, enabledFieldDataCallback } = props;
+  const {
+    group, handlers, enabledFieldDataCallback, disabled,
+  } = props;
   return (
     <Card key={`group_content_${group.id}`} className="mt-2 mb-3">
       <Card.Body>
@@ -187,6 +191,7 @@ const DynamicFieldGroup = (props) => {
                       key={child.id}
                       handlers={handlers}
                       enabledFieldDataCallback={enabledFieldDataCallback}
+                      disabled={disabled}
                     />
                   );
                 default:
@@ -201,7 +206,7 @@ const DynamicFieldGroup = (props) => {
 };
 
 const DynamicFieldCategory = (props) => {
-  const { category, enabledFieldDataCallback } = props;
+  const { category, enabledFieldDataCallback, disabled } = props;
   return (
     <>
       <h4 className="text-center text-orange">{category.displayLabel}</h4>
@@ -210,6 +215,7 @@ const DynamicFieldCategory = (props) => {
           group={child}
           key={child.id}
           enabledFieldDataCallback={enabledFieldDataCallback}
+          disabled={disabled}
         />
       )) }
     </>
@@ -302,6 +308,7 @@ export const EnabledDynamicFieldForm = (props) => {
             key={category.id}
             category={category}
             enabledFieldDataCallback={enabledFieldDataCallback}
+            disabled={disabled}
           />
         ))
       }
