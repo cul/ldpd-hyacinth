@@ -83,6 +83,10 @@ function TopNavbar(props) {
                   <NavDropdown.Item>Field Export Profiles</NavDropdown.Item>
                 </LinkContainer>
 
+                <LinkContainer to="/publish_targets">
+                  <NavDropdown.Item>Publish Targets</NavDropdown.Item>
+                </LinkContainer>
+
                 <NavDropdown.Divider />
 
                 <LinkContainer to="/system_information">

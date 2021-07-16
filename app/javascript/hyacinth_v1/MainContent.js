@@ -15,6 +15,7 @@ import ControlledVocabularies from './components/controlled_vocabularies/Control
 import Projects from './components/projects/Projects';
 import BatchExports from './components/batch_exports/BatchExports';
 import BatchImports from './components/batch_imports/BatchImports';
+import PublishTargets from './components/publish_targets/PublishTargets';
 
 import { AbilityContext } from './utils/abilityContext';
 import ability from './utils/ability';
@@ -61,6 +62,7 @@ function MainContent() {
           <Route path="/controlled_vocabularies" component={ControlledVocabularies} />
           <Route path="/batch_exports" component={BatchExports} />
           <Route path="/batch_imports" component={BatchImports} />
+          <Route path="/publish_targets" component={PublishTargets} />
 
           { /* When none of the above match, <PageNotFound> will be rendered */ }
           <Route path="/404" component={PageNotFound} />

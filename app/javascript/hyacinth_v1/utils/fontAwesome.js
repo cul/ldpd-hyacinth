@@ -18,6 +18,7 @@ import {
   faExternalLinkSquareAlt,
   faDownload,
   faFileExport,
+  faEye,
 } from '@fortawesome/free-solid-svg-icons';
 
 library.add(
@@ -34,4 +35,5 @@ library.add(
   faExternalLinkSquareAlt,
   faDownload,
   faFileExport,
+  faEye,
 );

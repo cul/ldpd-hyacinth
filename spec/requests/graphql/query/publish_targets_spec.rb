@@ -3,8 +3,12 @@
 require 'rails_helper'
 
 RSpec.describe 'Retrieving Publish Targets', type: :request do
-  context 'when non-admin logged in user has correct permissions' do
-    before { sign_in_user }
+  include_examples 'requires user to have correct permissions for graphql request' do
+    let(:request) { graphql projects_query }
+  end
+
+  context 'when logged in user is admin' do
+    before { sign_in_user as: :administrator }
 
     describe 'when there are multiple results' do
       before do
@@ -19,14 +23,14 @@ RSpec.describe 'Retrieving Publish Targets', type: :request do
             "publishTargets": [
               {
                 "stringKey": "great_publish_target",
-                "apiKey": "#{Types::PublishTargetType::OBSCURED_API_KEY}",
+                "apiKey": "bestapikey",
                 "publishUrl": "https://www.example.com/publish",
                 "doiPriority": 100,
                 "isAllowedDoiTarget": false
               },
               {
                 "stringKey": "great_publish_target_2",
-                "apiKey": "#{Types::PublishTargetType::OBSCURED_API_KEY}",
+                "apiKey": "bestapikey",
                 "publishUrl": "https://www.example.com/publish",
                 "doiPriority": 100,
                 "isAllowedDoiTarget": false

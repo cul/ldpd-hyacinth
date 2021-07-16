@@ -248,7 +248,7 @@ module Types
 
     def publish_targets
       ability.authorize!(:read, PublishTarget)
-      PublishTarget.accessible_by(ability)
+      PublishTarget.accessible_by(ability).order(:string_key)
     end
 
     def publish_target(string_key:)

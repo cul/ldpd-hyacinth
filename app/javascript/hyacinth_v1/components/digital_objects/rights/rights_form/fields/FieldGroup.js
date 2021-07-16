@@ -2,10 +2,10 @@ import React from 'react';
 import { Card } from 'react-bootstrap';
 import produce from 'immer';
 
-import AddButton from '@hyacinth_v1/components/shared/buttons/AddButton';
-import RemoveButton from '@hyacinth_v1/components/shared/buttons/RemoveButton';
-import UpArrowButton from '@hyacinth_v1/components/shared/buttons/UpArrowButton';
-import DownArrowButton from '@hyacinth_v1/components/shared/buttons/DownArrowButton';
+import RemoveButton from '../../../../shared/buttons/RemoveButton';
+import UpArrowButton from '../../../../shared/buttons/UpArrowButton';
+import DownArrowButton from '../../../../shared/buttons/DownArrowButton';
+import AddButton from '../../../../shared/buttons/AddButton';
 import Field from './Field';
 import FieldGroupArray from './FieldGroupArray';
 
@@ -39,7 +39,9 @@ class FieldGroup extends React.Component {
       moveHandler,
       value,
       defaultValue,
-      dynamicFieldGroup: { stringKey, displayLabel, children, isRepeatable }
+      dynamicFieldGroup: {
+        stringKey, displayLabel, children, isRepeatable,
+      },
     } = this.props;
 
 

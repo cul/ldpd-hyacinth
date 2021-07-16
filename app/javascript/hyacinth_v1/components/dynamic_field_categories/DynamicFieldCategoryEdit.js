@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 
-import { getDynamicFieldCategoryQuery } from '@hyacinth_v1/graphql/dynamicFieldCategories';
+import { getDynamicFieldCategoryQuery } from '../../graphql/dynamicFieldCategories';
 import ContextualNavbar from '../shared/ContextualNavbar';
 import DynamicFieldCategoryForm from './DynamicFieldCategoryForm';
 import GraphQLErrors from '../shared/GraphQLErrors';

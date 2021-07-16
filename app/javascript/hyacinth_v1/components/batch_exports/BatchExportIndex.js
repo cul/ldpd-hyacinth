@@ -1,16 +1,16 @@
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import ContextualNavbar from '@hyacinth_v1/components/shared/ContextualNavbar';
-import GraphQLErrors from '@hyacinth_v1/components/shared/GraphQLErrors';
-import PaginationBar from '@hyacinth_v1/components/shared/PaginationBar';
-import { batchExportsQuery, deleteBatchExportMutation } from '@hyacinth_v1/graphql/batchExports';
-import { Can } from '@hyacinth_v1/utils/abilityContext';
 import produce from 'immer';
 import * as moment from 'moment';
 import queryString from 'query-string';
 import React, { useState } from 'react';
 import { Button, Card, Collapse } from 'react-bootstrap';
 import { useLocation } from 'react-router-dom';
+import { Can } from '../../utils/abilityContext';
+import { batchExportsQuery, deleteBatchExportMutation } from '../../graphql/batchExports';
+import PaginationBar from '../shared/PaginationBar';
+import GraphQLErrors from '../shared/GraphQLErrors';
+import ContextualNavbar from '../shared/ContextualNavbar';
 
 function BatchExportIndex() {
   const limit = 30;
