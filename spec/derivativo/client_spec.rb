@@ -77,9 +77,9 @@ describe Derivativo::Client do
     context 'when a Faraday::ConnectionFailed error is raised' do
       before do
         allow(internal_conn).to receive(:post).and_raise(Faraday::ConnectionFailed, 'Some error message.')
-        expect(Rails.logger).to receive(:error).with("Unable to connect to Derivativo, so #{job_type} resource request for #{digital_object_uid} was skipped.")
+        expect(Rails.logger).to receive(:info).with("Unable to connect to Derivativo, so #{job_type} resource request for #{digital_object_uid} was skipped.")
       end
-      it 'logs an error' do
+      it 'logs a message at the info level' do
         instance.enqueue_job(args)
       end
     end

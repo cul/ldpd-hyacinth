@@ -30,12 +30,12 @@ module DigitalObjectConcerns
 
     def parents
       # The returned array must be frozen.  We don't want modifications to be made directly to this array.
-      @parents ||= DigitalObject.where(id: currently_persisted_parent_ids).order(:id).to_a.freeze # parent order only matters for the sake of consistent display order
+      @parents ||= ordered_digital_objects_for_ids(currently_persisted_parent_ids).freeze
     end
 
     def children
       # The returned array must be frozen.  We don't want modifications to be made directly to this array.
-      @children ||= DigitalObject.where(id: currently_persisted_child_ids).order(:order).to_a.freeze
+      @children ||= ordered_digital_objects_for_ids(currently_persisted_child_ids).freeze
     end
 
     def remove_all_parents!
@@ -54,6 +54,16 @@ module DigitalObjectConcerns
     end
 
     private
+
+      # Returns an array of DigitalObject instances for the given array of ordered_ids, ordered by
+      # the id order specified by ordered_ids.
+      def ordered_digital_objects_for_ids(ordered_ids)
+        digital_objects = DigitalObject.where(id: ordered_ids).to_a
+        id_order_map = {}
+        ordered_ids.each_with_index { |id, index| id_order_map[id] = index }
+        digital_objects.sort_by! { |digital_object| id_order_map[digital_object.id] }
+        digital_objects
+      end
 
       # Ensures that all add/remove lists are unique
       def eliminate_duplicate_parent_child_additions!
@@ -118,11 +128,11 @@ module DigitalObjectConcerns
         return unless parents_to_add.present?
         # Perform additions, appending new entries so they're ordered last among existing objects.
         parents_to_add.each do |parent_to_add|
-          order = (ParentChildRelationship.where(parent: parent_to_add).maximum(:order) || -1) + 1
+          order = (ParentChildRelationship.where(parent: parent_to_add).maximum(:sort_order) || -1) + 1
           ParentChildRelationship.create!(
             parent: parent_to_add,
             child: self,
-            order: order
+            sort_order: order
           )
         end
         @parents = nil # clear parent instance variable cache
@@ -131,12 +141,12 @@ module DigitalObjectConcerns
       def apply_child_additions!
         return unless children_to_add.present?
         # Perform additions, appending new entries so they're ordered last among existing objects.
-        order = (ParentChildRelationship.where(parent: self).maximum(:order) || -1) + 1
+        order = (ParentChildRelationship.where(parent: self).maximum(:sort_order) || -1) + 1
         children_to_add.each do |child_to_add|
           ParentChildRelationship.create!(
             parent: self,
             child: child_to_add,
-            order: order
+            sort_order: order
           )
           order += 1
         end
@@ -169,13 +179,15 @@ module DigitalObjectConcerns
 
       def currently_persisted_parent_ids
         ActiveRecord::Base.uncached do
-          parent_directed_parent_child_relationships.pluck(:parent_id)
+          # sort order doesn't matter here, but it should be consistent
+          parent_directed_parent_child_relationships.order(:id).pluck(:parent_id)
         end
       end
 
       def currently_persisted_child_ids
         ActiveRecord::Base.uncached do
-          child_directed_parent_child_relationships.pluck(:child_id)
+          # sort order matters here!
+          child_directed_parent_child_relationships.order(:sort_order).pluck(:child_id)
         end
       end
   end

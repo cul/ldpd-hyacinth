@@ -33,7 +33,7 @@ module Derivativo
 
       response.status == 200
     rescue Faraday::ConnectionFailed
-      Rails.logger.error("Unable to connect to Derivativo, so #{job_type} resource request for #{digital_object_uid} was skipped.")
+      Rails.logger.info("Unable to connect to Derivativo, so #{job_type} resource request for #{digital_object_uid} was skipped.")
       false
     end
 

@@ -221,11 +221,11 @@ ActiveRecord::Schema.define(version: 2021_06_17_181707) do
   create_table "parent_child_relationships", force: :cascade do |t|
     t.integer "parent_id", null: false
     t.integer "child_id", null: false
-    t.integer "order", null: false
+    t.integer "sort_order", null: false
     t.index ["child_id"], name: "index_parent_child_relationships_on_child_id"
-    t.index ["order"], name: "index_parent_child_relationships_on_order"
-    t.index ["parent_id", "child_id", "order"], name: "unique_parent_and_child_and_order", unique: true
+    t.index ["parent_id", "child_id", "sort_order"], name: "unique_parent_and_child_and_sort_order", unique: true
     t.index ["parent_id"], name: "index_parent_child_relationships_on_parent_id"
+    t.index ["sort_order"], name: "index_parent_child_relationships_on_sort_order"
   end
 
   create_table "permissions", force: :cascade do |t|
