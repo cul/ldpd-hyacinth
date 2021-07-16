@@ -22,7 +22,6 @@ class Ability
       can [:read, :create], Term
       can :read, Vocabulary           # Need to allow this because Terms are nested under vocabularies
       can :read, DynamicFieldCategory # Need to allow this so we can render EnabledDynamicField pages.
-      can :read, PublishTarget        # No harm in letting everyone read publish targets.  API keys are obscured for non-admins.
 
       can :create, BatchExport # All users can create BatchExports
       can [:read, :destroy], BatchExport, user_id: user.id
@@ -60,11 +59,11 @@ class Ability
         can :manage, Term
         can :manage, :custom_field
       when Permission::READ_ALL_DIGITAL_OBJECTS
-        can :read, [Project, PublishTarget, FieldSet]
+        can :read, [Project, FieldSet]
         can :read, DigitalObject
         can :read_objects, Project
       when Permission::MANAGE_ALL_DIGITAL_OBJECTS
-        can :read, [Project, PublishTarget, FieldSet]
+        can :read, [Project, FieldSet]
         can :manage, DigitalObject
         can [:read_objects, :create_objects, :update_objects, :assess_rights, :delete_objects, :publish_objects], Project
       when Permission::MANAGE_RESOURCE_REQUESTS

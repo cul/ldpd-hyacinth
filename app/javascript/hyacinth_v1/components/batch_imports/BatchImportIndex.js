@@ -3,7 +3,7 @@ import { Card, Button } from 'react-bootstrap';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { startCase } from 'lodash';
 
-import { Can } from '@hyacinth_v1/utils/abilityContext';
+import { Can } from '../../utils/abilityContext';
 import ContextualNavbar from '../shared/ContextualNavbar';
 import GraphQLErrors from '../shared/GraphQLErrors';
 import PaginationBar from '../shared/PaginationBar';

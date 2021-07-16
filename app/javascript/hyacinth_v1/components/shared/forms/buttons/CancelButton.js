@@ -24,4 +24,9 @@ CancelButton.propTypes = {
   action: PropTypes.func,
 };
 
+CancelButton.defaultProps = {
+  to: null,
+  action: null,
+};
+
 export default CancelButton;

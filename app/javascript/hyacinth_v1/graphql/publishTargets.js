@@ -1,33 +1,25 @@
 import gql from 'graphql-tag';
 
 export const publishTargetsQuery = gql`
-  query PublishTargets($stringKey: ID!){
-    project(stringKey: $stringKey) {
+  query PublishTargets {
+    publishTargets {
       stringKey
-      displayLabel
-      publishTargets {
-        type
-        combinedKey
-        publishUrl
-        apiKey
-      }
+      publishUrl
+      apiKey
+      doiPriority
+      isAllowedDoiTarget
     }
   }
 `;
 
 export const publishTargetQuery = gql`
-  query PublishTargets($projectStringKey: ID!, $type: PublishTargetTypeEnum!) {
-    project(stringKey: $projectStringKey) {
+  query PublishTargets($stringKey: ID!) {
+    publishTarget(stringKey: $stringKey) {
       stringKey
-      displayLabel
-      publishTarget(type: $type) {
-        combinedKey
-        type
-        publishUrl
-        apiKey
-        doiPriority
-        isAllowedDoiTarget
-      }
+      publishUrl
+      apiKey
+      doiPriority
+      isAllowedDoiTarget
     }
   }
 `;
@@ -36,7 +28,7 @@ export const createPublishTargetMutation = gql`
   mutation CreatePublishTarget($input: CreatePublishTargetInput!) {
     createPublishTarget(input: $input) {
       publishTarget {
-        type
+        stringKey
       }
     }
   }
@@ -46,7 +38,7 @@ export const updatePublishTargetMutation = gql`
   mutation UpdatePublishTarget($input: UpdatePublishTargetInput!) {
     updatePublishTarget(input: $input) {
       publishTarget {
-        type
+        stringKey
       }
     }
   }
@@ -56,7 +48,7 @@ export const deletePublishTargetMutation = gql`
   mutation DeletePublishTarget($input: DeletePublishTargetInput!) {
     deletePublishTarget(input: $input) {
       publishTarget {
-        type
+        stringKey
       }
     }
   }

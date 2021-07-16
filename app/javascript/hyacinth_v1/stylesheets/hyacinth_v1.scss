@@ -11,6 +11,10 @@ $breadcrumb-padding-y: .45rem !default; // Reducing the padding
 
 body {}
 
+.table thead th {
+  border-top: none;
+}
+
 .text-orange {
   color: #c78203;
 }

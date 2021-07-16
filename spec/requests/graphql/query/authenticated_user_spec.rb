@@ -47,12 +47,6 @@ RSpec.describe 'Query for Authenticated User', type: :request do
             "subject": ["DynamicFieldCategory"]
           },
           {
-            "actions": ["read"],
-            "conditions": {},
-            "inverted": false,
-            "subject": ["PublishTarget"]
-          },
-          {
             "actions": ["create"],
             "conditions": {},
             "inverted": false,
@@ -132,12 +126,6 @@ RSpec.describe 'Query for Authenticated User', type: :request do
             "conditions": {},
             "inverted": false,
             "subject": ["DynamicFieldCategory"]
-          },
-          {
-            "actions": ["read"],
-            "conditions": {},
-            "inverted": false,
-            "subject": ["PublishTarget"]
           },
           {
             "actions": ["create"],

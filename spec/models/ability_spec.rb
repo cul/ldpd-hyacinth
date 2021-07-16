@@ -12,7 +12,6 @@ RSpec.describe Ability, type: :model do
       { actions: [:read, :create], conditions: {}, subject: ["Term"], inverted: false },
       { actions: [:read], conditions: {}, subject: ["Vocabulary"], inverted: false },
       { actions: [:read], conditions: {}, subject: ["DynamicFieldCategory"], inverted: false },
-      { actions: [:read], conditions: {}, subject: ["PublishTarget"], inverted: false },
       { actions: [:create], conditions: {}, subject: ["BatchExport"], inverted: false },
       { actions: [:read, :destroy], conditions: { user_id: user.id }, subject: ["BatchExport"], inverted: false },
       { actions: [:create], conditions: {}, subject: ["BatchImport"], inverted: false },
@@ -130,10 +129,9 @@ RSpec.describe Ability, type: :model do
 
     it { is_expected.to be_able_to(:read, user) }
     it { is_expected.to be_able_to(:update, user) }
-    it { is_expected.to be_able_to(:read, PublishTarget) }
 
     it { is_expected.not_to be_able_to(:manage, User) }
-    it { is_expected.not_to be_able_to(:update, PublishTarget) }
+    it { is_expected.not_to be_able_to(:read, PublishTarget) }
 
     it 'serializes correctly' do
       expect(ability.to_list).to match(base_user_rules)
@@ -154,7 +152,6 @@ RSpec.describe Ability, type: :model do
     it { is_expected.to be_able_to(:read, Project) }
     it { is_expected.to be_able_to(:read, FieldSet) }
     it { is_expected.not_to be_able_to(:update, Project) }
-    it { is_expected.to be_able_to(:read, PublishTarget) }
     it { is_expected.to be_able_to(:read, DigitalObject) }
     it { is_expected.not_to be_able_to(:update, DigitalObject) }
   end
@@ -171,7 +168,6 @@ RSpec.describe Ability, type: :model do
     end
 
     it { is_expected.to be_able_to(:read, Project) }
-    it { is_expected.to be_able_to(:read, PublishTarget) }
     it { is_expected.to be_able_to(:read, FieldSet) }
     it { is_expected.not_to be_able_to(:update, Project) }
     it { is_expected.to be_able_to(:publish_objects, Project) }
