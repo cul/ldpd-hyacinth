@@ -54,6 +54,7 @@ class MigrateHyacinthV1MetadataToV2 < ActiveRecord::Migration[6.0]
     # And then re-save all objects to clean up extraneous data in metadata storage file,
     # and when applicable link parents to children.
     DigitalObject.find_each(batch_size: 200) do |digital_object|
+      print "Updating #{digital_object.uid} - metadata_location_uri: #{digital_object.metadata_location_uri} ..."
       if (ordered_child_uids = parents_to_ordered_children[digital_object.uid]).present?
         puts "For parent #{digital_object.uid}, adding children: #{ordered_child_uids.inspect}"
         DigitalObject.where(uid: ordered_child_uids).each do |child|
@@ -61,6 +62,7 @@ class MigrateHyacinthV1MetadataToV2 < ActiveRecord::Migration[6.0]
         end
       end
       digital_object.save!
+      puts "done"
     end
   end
 end

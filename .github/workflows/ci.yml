@@ -25,6 +25,8 @@ jobs:
         with:
           path: tmp/solr-download
           key: ${{ runner.os }}-solr-download
+      - name: Install libxslt for nokogiri gem (required for version < 1.11)
+        run: sudo apt-get install -y libxml2-dev libxslt-dev
       - name: Add --no-document option to .gemrc file to speed up bundle install
         run: "echo 'gem: --no-document' > ~/.gemrc"
       - name: Set up Ruby
