@@ -112,7 +112,7 @@ function SystemData(props) {
       <p>{primaryProject.displayLabel}</p>
       <h4>Other Projects</h4>
       <p>{otherProjects.length ? otherProjects.map(p => p.displayLabel).join(', ') : 'None'}</p>
-      { state === 'active' && renderDeleteSection() }
+      { state === 'ACTIVE' && renderDeleteSection() }
       { renderPurgeSection() }
     </DigitalObjectInterface>
   );
