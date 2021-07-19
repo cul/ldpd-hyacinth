@@ -13,7 +13,7 @@ import { getDynamicFieldGraphQuery } from '../../../graphql/dynamicFieldCategori
 
 const DynamicField = (props) => {
   const {
-    field, initalFieldData, enabledFieldDataCallback, disabled,
+    field, enabledFieldDataCallback, disabled,
   } = props;
   const [fieldSets] = useState([]);
   const [enabledFieldData, setEnabledFieldData] = useState(enabledFieldDataCallback(field.id));
@@ -163,7 +163,7 @@ const DynamicField = (props) => {
 
 const DynamicFieldGroup = (props) => {
   const {
-    group, handlers, enabledFieldDataCallback, disabled,
+    group, enabledFieldDataCallback, disabled,
   } = props;
   return (
     <Card key={`group_content_${group.id}`} className="mt-2 mb-3">
@@ -180,16 +180,14 @@ const DynamicFieldGroup = (props) => {
                     <DynamicFieldGroup
                       group={child}
                       key={child.id}
-                      handlers={handlers}
                       enabledFieldDataCallback={enabledFieldDataCallback}
+                      disabled={disabled}
                     />
                   );
                 case 'DynamicField':
                   return (
                     <DynamicField
                       field={child}
-                      key={child.id}
-                      handlers={handlers}
                       enabledFieldDataCallback={enabledFieldDataCallback}
                       disabled={disabled}
                     />
@@ -229,7 +227,9 @@ export const EnabledDynamicFieldForm = (props) => {
   const [disabled] = useState(formType !== 'edit');
   const [enabledDynamicFields] = useState({});
 
-  const variables = { project: { stringKey: projectStringKey }, digitalObjectType: digitalObjectType.toUpperCase() };
+  const variables = {
+    project: { stringKey: projectStringKey }, digitalObjectType: digitalObjectType.toUpperCase(),
+  };
 
   const {
     loading: enabledFieldsLoading,
@@ -329,6 +329,34 @@ EnabledDynamicFieldForm.propTypes = {
   formType: PropTypes.string.isRequired,
   projectStringKey: PropTypes.string.isRequired,
   digitalObjectType: PropTypes.string.isRequired,
+};
+
+DynamicFieldCategory.propTypes = {
+  category: PropTypes.string.isRequired,
+  enabledFieldDataCallback: PropTypes.func.isRequired,
+  disabled: PropTypes.bool.isRequired,
+};
+
+DynamicFieldGroup.propTypes = {
+  group: PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    displayLabel: PropTypes.string.isRequired,
+    children: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string,
+      }),
+    ),
+  }).isRequired,
+  enabledFieldDataCallback: PropTypes.func.isRequired,
+  disabled: PropTypes.bool.isRequired,
+};
+
+DynamicField.propTypes = {
+  field: PropTypes.shape({
+    id: PropTypes.string,
+  }).isRequired,
+  enabledFieldDataCallback: PropTypes.func.isRequired,
+  disabled: PropTypes.bool.isRequired,
 };
 
 export default EnabledDynamicFieldForm;
