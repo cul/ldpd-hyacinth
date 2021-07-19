@@ -8,6 +8,6 @@ module Types
     # TODO: Maybe change the name of this 'values' argument because is a reserved name. Adding
     # `method_access: false` stops this from raising a warning, but it may be better to just rename.
     argument :values, [String], required: true, method_access: false # need method_access param to silence errors
-    argument :match_type, Enums::FilterMatchEnum, default_value: 'equals', required: false
+    argument :match_type, Enums::FilterMatchEnum, default_value: 'EQUALS', required: false
   end
 end
