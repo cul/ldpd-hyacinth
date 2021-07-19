@@ -28,7 +28,7 @@ function DigitalObjectInterface(props) {
     q: undefined,
     pageNumber: undefined,
     perPage: undefined,
-    filters: undefined,
+    filters: [],
     orderBy: undefined,
     ...JSON.parse(latestSearchQueryString),
   };
