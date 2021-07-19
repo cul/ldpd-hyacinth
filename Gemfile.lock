@@ -140,6 +140,8 @@ GEM
     domain_name (0.5.20180417)
       unf (>= 0.0.5, < 1.0.0)
     ed25519 (1.2.4)
+    edtf (3.0.6)
+      activesupport (>= 3.0, < 7.0)
     equivalent-xml (0.6.0)
       nokogiri (>= 1.4.3)
     erubi (1.10.0)
@@ -423,6 +425,7 @@ DEPENDENCIES
   chromedriver-helper
   concurrent-ruby (~> 1.1.8)
   devise (~> 4.7)
+  edtf (~> 3.0)
   equivalent-xml
   factory_bot_rails
   faraday (~> 1.1)
