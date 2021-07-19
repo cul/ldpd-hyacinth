@@ -188,6 +188,7 @@ const DynamicFieldGroup = (props) => {
                   return (
                     <DynamicField
                       field={child}
+                      key={child.id}
                       enabledFieldDataCallback={enabledFieldDataCallback}
                       disabled={disabled}
                     />
@@ -337,18 +338,26 @@ EnabledDynamicFieldForm.propTypes = {
 };
 
 DynamicFieldCategory.propTypes = {
-  category: PropTypes.string.isRequired,
+  category: PropTypes.shape({
+    id: PropTypes.number,
+    displayLabel: PropTypes.string,
+    children: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.number,
+      }),
+    ),
+  }).isRequired,
   enabledFieldDataCallback: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
 };
 
 DynamicFieldGroup.propTypes = {
   group: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    id: PropTypes.number.isRequired,
     displayLabel: PropTypes.string.isRequired,
     children: PropTypes.arrayOf(
       PropTypes.shape({
-        id: PropTypes.string,
+        id: PropTypes.number,
       }),
     ),
   }).isRequired,
@@ -358,7 +367,7 @@ DynamicFieldGroup.propTypes = {
 
 DynamicField.propTypes = {
   field: PropTypes.shape({
-    id: PropTypes.string,
+    id: PropTypes.number,
   }).isRequired,
   enabledFieldDataCallback: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
