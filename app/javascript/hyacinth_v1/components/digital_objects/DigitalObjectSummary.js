@@ -6,18 +6,18 @@ function DigitalObjectSummary(props) {
   const {
     digitalObject: {
       id, state, doi, primaryProject, otherProjects, numberOfChildren,
-    }
+    },
   } = props;
 
   return (
     <div className="my-3">
       {
-          state === 'DELETED' && (
-            <Alert variant="danger">
-              This object has been deleted.
-            </Alert>
-          )
-        }
+        state === 'DELETED' && (
+          <Alert variant="danger">
+            This object has been deleted.
+          </Alert>
+        )
+      }
       <dl className="row mb-0">
         <dt className="col-sm-3">Primary Project</dt>
         <dd className="col-sm-9">
@@ -25,16 +25,14 @@ function DigitalObjectSummary(props) {
         </dd>
         <dt className="col-sm-3">Other Projects</dt>
         <dd className="col-sm-9">
-          { otherProjects.length === 0 ?
-            '- None -'
-            : otherProjects.map((p, i) => {
-              return (
-                <span key={p.stringKey}>
-                  {p.displayLabel}
-                  { i + 1 < otherProjects.length ? ', ' : '' }
-                </span>
-              );
-            })
+          { otherProjects.length === 0
+            ? '- None -'
+            : otherProjects.map((p, i) => (
+              <span key={p.stringKey}>
+                {p.displayLabel}
+                { i + 1 < otherProjects.length ? ', ' : '' }
+              </span>
+            ))
           }
         </dd>
 

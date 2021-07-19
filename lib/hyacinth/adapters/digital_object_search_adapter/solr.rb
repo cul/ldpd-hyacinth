@@ -17,20 +17,17 @@ module Hyacinth
           @document_generator = DocumentGenerator.new
         end
 
-        def index(digital_object, **opts)
-          solr.add(solr_document_for(digital_object))
-          solr.commit if opts[:commit]
-
+        def index(digital_object)
           # TODO: index presence or absence of field values, even if the field itself isn't indexed for search
+          solr.add(solr_document_for(digital_object))
         end
 
         def index_test(digital_object)
           solr_document_for(digital_object).is_a?(Hash)
         end
 
-        def remove(digital_object, **opts)
+        def remove(digital_object)
           solr.delete("id: #{::Solr::Utils.escape(digital_object.uid)}")
-          solr.commit if opts[:commit]
         end
 
         def search(search_params = {}, user_for_permission_context = nil)
