@@ -61,14 +61,7 @@ class DigitalObject::DynamicFieldsValidator < ActiveModel::EachValidator
 
     def errors_for_date_field(_configuration, value)
       return ['must be a string'] unless value.is_a?(String)
-      return ['must be in YYYY-MM-DD format'] unless value.match?(/^-?\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[1,2][0-9]|3[0,1]))?)?/)
-
-      begin
-        Date.parse(value)
-      rescue
-        return ['is an invalid date']
-      end
-
+      return ['must be a valid EDTF date'] unless Date.edtf(value)
       false
     end
 

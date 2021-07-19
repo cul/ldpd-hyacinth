@@ -257,6 +257,26 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
     end
   end
 
+  context 'with valid EDTF dates of varying specificity' do
+    [
+      '1900-01-01', '1900-01', '1900',
+      '-1900-01-01', '-1900-01', '-1900',
+      '1900-01-01', '1900-01', '1900',
+      '190X', '19XX', '000X', '00XX'
+    ].each do |date|
+      context "date = #{date}" do
+        let(:descriptive_metadata) do
+          { 'date_created' => [{ 'start_date' => date }] }
+        end
+
+        it 'is valid' do
+          item.validate
+          expect(item.errors.full_messages).to be_blank
+        end
+      end
+    end
+  end
+
   context 'with non-string value for date field' do
     let(:descriptive_metadata) do
       { 'date_created' => [{ 'start_date' => 123 }] }
@@ -278,7 +298,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
     it 'return errors' do
       expect(item.valid?).to be false
       expect(item.errors.messages).to include(
-        'descriptive_metadata.date_created[0].start_date': ['must be in YYYY-MM-DD format']
+        'descriptive_metadata.date_created[0].start_date': ['must be a valid EDTF date']
       )
     end
   end
@@ -291,7 +311,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
     it 'return errors' do
       expect(item.valid?).to be false
       expect(item.errors.messages).to include(
-        'descriptive_metadata.date_created[0].start_date': ['is an invalid date']
+        'descriptive_metadata.date_created[0].start_date': ['must be a valid EDTF date']
       )
     end
   end

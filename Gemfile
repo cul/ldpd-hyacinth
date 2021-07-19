@@ -18,6 +18,7 @@ gem 'bootsnap', '>= 1.4.5', require: false # Reduces boot times through caching;
 gem 'cancancan', '~> 3.0'
 gem 'concurrent-ruby', '~> 1.1.8'
 gem 'devise', '~> 4.7'
+gem 'edtf', '~> 3.0'
 gem 'faraday', '~> 1.1'
 gem 'graphql'
 gem 'graphql-errors'
