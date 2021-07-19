@@ -33,5 +33,10 @@ module Hyacinth
     # Custom asset paths
     config.assets.paths << Rails.root.join("templates") # EJS Templates
     Sprockets.register_engine '.ejs', Tilt::PlainTemplate
+    # Load locally-defined/temporary rake tasks outside source control
+    rake_tasks do
+      paths.add "local/tasks", glob: "**/*.rake"
+      paths["local/tasks"].existent.sort.each { |ext| load(ext) }
+    end
   end
 end

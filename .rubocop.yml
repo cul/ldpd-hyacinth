@@ -14,8 +14,10 @@ AllCops:
   Exclude:
     - 'bin/**/*'
     - 'db/**/*'
+    - 'node_modules/**/*'
     - 'script/**/*'
     - 'spec/**/*'
+    - 'tmp/**/*'
     - 'vendor/**/*'
     - 'app/helpers/**/*'
     - 'app/views/**/*'
@@ -25,6 +27,7 @@ AllCops:
     - 'app/controllers/assignments/changesets_controller.rb'
     - 'app/models/digital_object/asset.rb'
     - 'app/models/concerns/digital_object/assets/validations.rb'
+    - 'local/**/*'
 
 Layout/BlockEndNewline:
   Exclude:

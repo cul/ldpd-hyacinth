@@ -15,13 +15,16 @@
 /log/*.log
 /log/resque*
 /tmp
-
+# Ignore local space for temporary rake tasks, etc.
+/local
+/spec/local
 # Ignore editor files
 *~
 \#*\#
 
 # Ignore config files with sensitive data
 database.yml
+datacite.yml
 fedora.yml
 hyacinth.yml
 secrets.yml
@@ -47,3 +50,7 @@ config/subs.yml
 
 .byebug_history
 .ruby-gemset
+/node_modules
+
+# Ignore coverage reports
+/coverage
