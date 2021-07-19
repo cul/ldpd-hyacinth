@@ -293,6 +293,10 @@ export const EnabledDynamicFieldForm = (props) => {
       .then(historyPromise);
   };
 
+  const onSuccessHandler = (result) => {
+    history.push(`/projects/${projectStringKey}/enabled_dynamic_fields/${digitalObjectType}`);
+  };
+
   const enabledFieldDataCallback = (dynamicFieldId, data) => {
     if (data) {
       enabledDynamicFields[dynamicFieldId] = { ...data };
@@ -318,6 +322,7 @@ export const EnabledDynamicFieldForm = (props) => {
             formType="edit"
             cancelTo={`/projects/${projectStringKey}/enabled_dynamic_fields/${digitalObjectType}`}
             onSave={onSubmitHandler}
+            onSuccess={onSuccessHandler}
           />
         )
       }
