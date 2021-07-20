@@ -6,6 +6,6 @@ class Enums::FacetValues::OrderFieldsEnum < Types::BaseEnum
     'count' => 'sorting by relevance score',
     'index' => 'sorting by value alphabetically'
   }.each do |val, description|
-    value val.upcase.tr(' ', '_'), description, value: val
+    value str_to_gql_enum(val), description, value: val
   end
 end

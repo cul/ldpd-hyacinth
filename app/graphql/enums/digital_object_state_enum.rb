@@ -2,6 +2,6 @@
 
 class Enums::DigitalObjectStateEnum < Types::BaseEnum
   DigitalObject.states.each_key do |state|
-    value state.upcase.tr(' ', '_'), "Digital object state of #{state}", value: state
+    value str_to_gql_enum(state), "Digital object state of #{state}", value: state
   end
 end
