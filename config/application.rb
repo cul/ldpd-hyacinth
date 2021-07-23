@@ -29,5 +29,10 @@ module Hyacinth
     config.active_job.queue_adapter = :resque
     config.active_job.queue_name_prefix = "hyacinth.#{Rails.env}"
     config.active_job.queue_name_delimiter = '.'
+
+    # Rails will use the Eastern time zone
+    config.time_zone = 'Eastern Time (US & Canada)'
+    # Database will store dates in UTC (which is the rails default behavior)
+    config.active_record.default_timezone = :utc
   end
 end
