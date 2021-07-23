@@ -24,7 +24,7 @@ module Hyacinth
 
           lookup_hash = terms_map.transform_values { |values| values.map { |v| v['uri'] } }
 
-          search_results = Hyacinth::Config.term_search_adapter.batch_find(lookup_hash)
+          term_search_results = Hyacinth::Config.term_search_adapter.batch_find(lookup_hash)
 
           # Retrieve all custom fields for vocabularies so we know which fields should be add to the hash.
           # This ensure that there's always a value for the all the custom fields defined and does not add
@@ -37,7 +37,7 @@ module Hyacinth
             custom_field_definitions = vocab_to_custom_fields[vocab]
 
             terms.each do |term_hash|
-              solr_term_hash = search_results['response']['docs'].find do |result|
+              solr_term_hash = term_search_results.find do |result|
                 result['uri'] == term_hash['uri'] && result['vocabulary'] == vocab
               end
 

@@ -75,7 +75,7 @@ module DigitalObjectConcerns
           batch_lookup[vocabulary] = new_terms
         end
 
-        Hyacinth::Config.term_search_adapter.batch_find(batch_lookup)['response']['docs']
+        Hyacinth::Config.term_search_adapter.batch_find(batch_lookup)
       end
 
       # Creates new term based on the information given. Errors will be raised if there's problems with
