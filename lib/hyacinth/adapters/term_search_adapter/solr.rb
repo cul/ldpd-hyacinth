@@ -53,13 +53,28 @@ module Hyacinth
         # vocabulary string keys mapped to an array of uris.
         #
         # @param [Hash<String, Array<String>>] terms_to_lookup
+        # @return [Array<Hash>] An array of solr term documents.
         def batch_find(terms_to_lookup)
           search_query = terms_to_lookup.map { |vocab, uris|
             uri_query = uris.compact.uniq.map { |u| "\"#{u}\"" }.join(' OR ')
             "(vocabulary:\"#{vocab}\" AND uri:(#{uri_query}))"
           }.join(' OR ')
 
-          search { |params| params.q(search_query, escape: false) }
+          start = 0
+          count = 100
+          docs = []
+          loop do
+            response = search do |params|
+              params.q(search_query, escape: false)
+              params.start(start)
+              params.rows(count)
+              start += count
+            end
+            break if response['response']['docs'].empty?
+            docs.concat(response['response']['docs'])
+          end
+
+          docs
         end
 
         def delete(uid)

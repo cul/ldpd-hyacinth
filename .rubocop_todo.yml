@@ -139,6 +139,7 @@ Metrics/MethodLength:
     - 'lib/hyacinth/adapters/external_identifier_adapter/datacite/metadata_builder.rb'
     - 'lib/hyacinth/adapters/lock_adapter/database_entry_lock.rb'
     - 'lib/hyacinth/adapters/preservation_adapter/fedora3/rels_ext_properties.rb'
+    - 'lib/hyacinth/adapters/term_search_adapter/solr.rb'
     - 'lib/hyacinth/batch_import/index_prerequisite_map.rb'
     - 'lib/hyacinth/digital_object/type_def/dynamic_field_data.rb'
     - 'lib/hyacinth/dynamic_fields_map.rb'
