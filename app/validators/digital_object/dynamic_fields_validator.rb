@@ -61,7 +61,23 @@ class DigitalObject::DynamicFieldsValidator < ActiveModel::EachValidator
 
     def errors_for_date_field(_configuration, value)
       return ['must be a string'] unless value.is_a?(String)
-      return ['must be a valid EDTF date'] unless Date.edtf(value)
+      return ['must be a valid EDTF date'] unless valid_edtf_date?(value)
+      false
+    end
+
+    def valid_edtf_date?(value)
+      return true if Date.edtf(value)
+
+      # The EDTF library we're using doesn't currently validate YYYY-MM-XX or YYYY-XX dates,
+      # so we'll add an extra check here.
+      if (unknown_month_match = value.match(/^(\d{4})-XX$/))
+        return true if Date.edtf(unknown_month_match[1]) # validate year
+      end
+
+      if (unknown_day_match = value.match(/^(\d{4})-(\d{2})-XX$/))
+        return true if Date.edtf("#{unknown_day_match[1]}-#{unknown_day_match[2]}") # validate year and month
+      end
+
       false
     end
 

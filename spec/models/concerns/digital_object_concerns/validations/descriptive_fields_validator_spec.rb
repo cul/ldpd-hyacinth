@@ -261,8 +261,8 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
     [
       '1900-01-01', '1900-01', '1900',
       '-1900-01-01', '-1900-01', '-1900',
-      '1900-01-01', '1900-01', '1900',
-      '190X', '19XX', '000X', '00XX'
+      '190X', '19XX', '000X', '00XX',
+      '1900-01-XX', '1900-XX'
     ].each do |date|
       context "date = #{date}" do
         let(:descriptive_metadata) do
@@ -272,6 +272,25 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
         it 'is valid' do
           item.validate
           expect(item.errors.full_messages).to be_blank
+        end
+      end
+    end
+  end
+
+  context 'with impossible-date EDTF dates of varying specificity' do
+    [
+      '1900-15-15', '1900-15',
+      '-1900-15-15', '-1900-15',
+      '1900-01-40', '-1900-01-40',
+      '1900-15-XX'
+    ].each do |date|
+      context "date = #{date}" do
+        let(:descriptive_metadata) do
+          { 'date_created' => [{ 'start_date' => date }] }
+        end
+
+        it 'is not valid' do
+          expect(item.valid?).to eq(false)
         end
       end
     end
