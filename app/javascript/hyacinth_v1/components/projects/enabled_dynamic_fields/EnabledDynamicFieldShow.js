@@ -44,7 +44,7 @@ export default class EnabledDynamicFieldShow extends React.Component {
         </TabHeading>
 
         <EnabledDynamicFieldForm
-          formType="show"
+          readOnly
           projectStringKey={projectStringKey}
           digitalObjectType={digitalObjectType}
         />

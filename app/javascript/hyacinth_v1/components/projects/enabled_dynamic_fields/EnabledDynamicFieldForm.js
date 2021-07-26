@@ -11,10 +11,7 @@ import FormButtons from '../../shared/forms/FormButtons';
 import { getEnabledDynamicFieldsQuery, updateEnabledDynamicFieldsMutation } from '../../../graphql/projects/enabledDynamicFields';
 import { getDynamicFieldGraphQuery } from '../../../graphql/dynamicFieldCategories';
 
-const DynamicField = (props) => {
-  const {
-    field, enabledFieldDataCallback, disabled,
-  } = props;
+const DynamicField = ({ field, enabledFieldDataCallback, disabled }) => {
   const [fieldSets] = useState([]);
   const [enabledFieldData, setEnabledFieldData] = useState(enabledFieldDataCallback(field.id));
 
@@ -161,17 +158,13 @@ const DynamicField = (props) => {
   );
 };
 
-const DynamicFieldGroup = (props) => {
-  const {
-    group, enabledFieldDataCallback, disabled,
-  } = props;
-  return (
-    <Card key={`group_content_${group.id}`} className="mt-2 mb-3">
-      <Card.Body>
-        <Card.Title>
-          {group.displayLabel}
-        </Card.Title>
-        {
+const DynamicFieldGroup = ({ group, enabledFieldDataCallback, disabled }) => (
+  <Card key={`group_content_${group.id}`} className="mt-2 mb-3">
+    <Card.Body>
+      <Card.Title>
+        {group.displayLabel}
+      </Card.Title>
+      {
           group.children.length > 0 && (
             group.children.map((child) => {
               switch (child.type) {
@@ -199,33 +192,27 @@ const DynamicFieldGroup = (props) => {
             })
           )
         }
-      </Card.Body>
-    </Card>
-  );
-};
+    </Card.Body>
+  </Card>
+);
 
-const DynamicFieldCategory = (props) => {
-  const { category, enabledFieldDataCallback, disabled } = props;
-  return (
-    <>
-      <h4 className="text-center text-orange">{category.displayLabel}</h4>
-      { category.children.map(child => (
-        <DynamicFieldGroup
-          group={child}
-          key={child.id}
-          enabledFieldDataCallback={enabledFieldDataCallback}
-          disabled={disabled}
-        />
-      )) }
-    </>
-  );
-};
+const DynamicFieldCategory = ({ category, enabledFieldDataCallback, disabled }) => (
+  <>
+    <h4 className="text-center text-orange">{category.displayLabel}</h4>
+    { category.children.map(child => (
+      <DynamicFieldGroup
+        group={child}
+        key={child.id}
+        enabledFieldDataCallback={enabledFieldDataCallback}
+        disabled={disabled}
+      />
+    )) }
+  </>
+);
 
 
-export const EnabledDynamicFieldForm = (props) => {
-  const { formType, projectStringKey, digitalObjectType } = props;
+export const EnabledDynamicFieldForm = ({ readOnly, projectStringKey, digitalObjectType }) => {
   const history = useHistory();
-  const [disabled] = useState(formType !== 'edit');
   const [enabledDynamicFields] = useState({});
 
   const variables = {
@@ -313,12 +300,12 @@ export const EnabledDynamicFieldForm = (props) => {
             key={category.id}
             category={category}
             enabledFieldDataCallback={enabledFieldDataCallback}
-            disabled={disabled}
+            disabled={readOnly}
           />
         ))
       }
       {
-        !disabled && (
+        !readOnly && (
           <FormButtons
             formType="edit"
             cancelTo={`/projects/${projectStringKey}/enabled_dynamic_fields/${digitalObjectType}`}
@@ -331,8 +318,12 @@ export const EnabledDynamicFieldForm = (props) => {
   );
 };
 
+EnabledDynamicFieldForm.defaultProps = {
+  readOnly: false,
+};
+
 EnabledDynamicFieldForm.propTypes = {
-  formType: PropTypes.string.isRequired,
+  readOnly: PropTypes.bool,
   projectStringKey: PropTypes.string.isRequired,
   digitalObjectType: PropTypes.string.isRequired,
 };

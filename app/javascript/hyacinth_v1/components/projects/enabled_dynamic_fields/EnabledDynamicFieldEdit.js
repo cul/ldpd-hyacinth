@@ -32,7 +32,6 @@ export default class EnabledDynamicFieldsEdit extends React.Component {
       <ProjectInterface project={this.state.project} key={digitalObjectType}>
         <TabHeading>{`Edit Enabled Dynamic Fields for ${startCase(digitalObjectType)}`}</TabHeading>
         <EnabledDynamicFieldForm
-          formType="edit"
           projectStringKey={projectStringKey}
           digitalObjectType={digitalObjectType}
         />
