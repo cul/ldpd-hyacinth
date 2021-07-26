@@ -32,24 +32,21 @@ RSpec.describe DigitalObject::DynamicFieldsValidator do
     item.assign_descriptive_metadata({ 'descriptive_metadata' => descriptive_metadata }, false)
   end
 
-  context 'when new value is being added to a descriptive field' do
-    # that only a single value is supplied for a non-repeatable field for descriptive AND rights fields
-    context 'when multiple values are being added to a non-repeatable field' do
-      let(:descriptive_metadata) do
-        {
-          'group1' => [
-            { 'string_field' => 'A string value', 'integer_field' => 1 },
-            { 'string_field' => 'Another string value', 'integer_field' => 2 }
-          ]
-        }
-      end
+  context 'when multiple values are being added to a non-repeatable field' do
+    let(:descriptive_metadata) do
+      {
+        'group1' => [
+          { 'string_field' => 'A string value', 'integer_field' => 1 },
+          { 'string_field' => 'Another string value', 'integer_field' => 2 }
+        ]
+      }
+    end
 
-      it 'returns errors' do
-        expect(item.valid?).to be false
-        expect(item.errors.messages).to include(
-          'descriptive_metadata.group1': ['is not repeatable']
-        )
-      end
+    it 'returns errors' do
+      expect(item.valid?).to be false
+      expect(item.errors.messages).to include(
+        'descriptive_metadata.group1': ['is not repeatable']
+      )
     end
   end
 end
