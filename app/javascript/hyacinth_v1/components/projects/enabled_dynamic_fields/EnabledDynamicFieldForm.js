@@ -11,7 +11,7 @@ import FormButtons from '../../shared/forms/FormButtons';
 import { getEnabledDynamicFieldsQuery, updateEnabledDynamicFieldsMutation } from '../../../graphql/projects/enabledDynamicFields';
 import { getDynamicFieldGraphQuery } from '../../../graphql/dynamicFieldCategories';
 
-const DynamicField = ({ field, enabledFieldDataCallback, disabled }) => {
+const DynamicField = ({ field, enabledFieldDataCallback, readOnly }) => {
   const [fieldSets] = useState([]);
   const [enabledFieldData, setEnabledFieldData] = useState(enabledFieldDataCallback(field.id));
 
@@ -73,7 +73,7 @@ const DynamicField = ({ field, enabledFieldDataCallback, disabled }) => {
               onChange={onEnable}
               className="align-middle"
               inline
-              disabled={disabled}
+              disabled={readOnly}
             />
           </Col>
           <Col xs={4} md={2}>
@@ -88,7 +88,7 @@ const DynamicField = ({ field, enabledFieldDataCallback, disabled }) => {
                   className="align-middle"
                   onChange={onChange}
                   inline
-                  disabled={disabled}
+                  disabled={readOnly}
                 />
               )
             }
@@ -105,7 +105,7 @@ const DynamicField = ({ field, enabledFieldDataCallback, disabled }) => {
                   className="align-middle"
                   onChange={onChange}
                   inline
-                  disabled={disabled}
+                  disabled={readOnly}
                 />
               )
             }
@@ -120,7 +120,7 @@ const DynamicField = ({ field, enabledFieldDataCallback, disabled }) => {
                   placeholder="Default value (optional)"
                   value={enabledFieldData.defaultValue || ''}
                   onChange={onChange}
-                  disabled={disabled}
+                  disabled={readOnly}
                 />
               )
             }
@@ -129,7 +129,7 @@ const DynamicField = ({ field, enabledFieldDataCallback, disabled }) => {
         {
           enabledFieldData.enabled && fieldSets.length > 0 && (
             <Row>
-              <Form.Label column md={{ span: 2, offset: 2 }} disabled={disabled}>
+              <Form.Label column md={{ span: 2, offset: 2 }} disabled={readOnly}>
                 <span className="float-left">Field Sets</span>
               </Form.Label>
               <Col md={8}>
@@ -142,7 +142,7 @@ const DynamicField = ({ field, enabledFieldDataCallback, disabled }) => {
                   isMulti
                   isSearchable={false}
                   isClearable={false}
-                  isDisabled={disabled}
+                  isDisabled={readOnly}
                   getOptionLabel={option => option.displayLabel}
                   getOptionValue={option => option.id}
                   styles={{
@@ -158,7 +158,7 @@ const DynamicField = ({ field, enabledFieldDataCallback, disabled }) => {
   );
 };
 
-const DynamicFieldGroup = ({ group, enabledFieldDataCallback, disabled }) => (
+const DynamicFieldGroup = ({ group, enabledFieldDataCallback, readOnly }) => (
   <Card key={`group_content_${group.id}`} className="mt-2 mb-3">
     <Card.Body>
       <Card.Title>
@@ -174,7 +174,7 @@ const DynamicFieldGroup = ({ group, enabledFieldDataCallback, disabled }) => (
                       group={child}
                       key={child.id}
                       enabledFieldDataCallback={enabledFieldDataCallback}
-                      disabled={disabled}
+                      readOnly={readOnly}
                     />
                   );
                 case 'DynamicField':
@@ -183,7 +183,7 @@ const DynamicFieldGroup = ({ group, enabledFieldDataCallback, disabled }) => (
                       field={child}
                       key={child.id}
                       enabledFieldDataCallback={enabledFieldDataCallback}
-                      disabled={disabled}
+                      readOnly={readOnly}
                     />
                   );
                 default:
@@ -196,7 +196,7 @@ const DynamicFieldGroup = ({ group, enabledFieldDataCallback, disabled }) => (
   </Card>
 );
 
-const DynamicFieldCategory = ({ category, enabledFieldDataCallback, disabled }) => (
+const DynamicFieldCategory = ({ category, enabledFieldDataCallback, readOnly }) => (
   <>
     <h4 className="text-center text-orange">{category.displayLabel}</h4>
     { category.children.map(child => (
@@ -204,7 +204,7 @@ const DynamicFieldCategory = ({ category, enabledFieldDataCallback, disabled }) 
         group={child}
         key={child.id}
         enabledFieldDataCallback={enabledFieldDataCallback}
-        disabled={disabled}
+        readOnly={readOnly}
       />
     )) }
   </>
@@ -300,7 +300,7 @@ export const EnabledDynamicFieldForm = ({ readOnly, projectStringKey, digitalObj
             key={category.id}
             category={category}
             enabledFieldDataCallback={enabledFieldDataCallback}
-            disabled={readOnly}
+            readOnly={readOnly}
           />
         ))
       }
@@ -339,7 +339,7 @@ DynamicFieldCategory.propTypes = {
     ),
   }).isRequired,
   enabledFieldDataCallback: PropTypes.func.isRequired,
-  disabled: PropTypes.bool.isRequired,
+  readOnly: PropTypes.bool.isRequired,
 };
 
 DynamicFieldGroup.propTypes = {
@@ -353,7 +353,7 @@ DynamicFieldGroup.propTypes = {
     ),
   }).isRequired,
   enabledFieldDataCallback: PropTypes.func.isRequired,
-  disabled: PropTypes.bool.isRequired,
+  readOnly: PropTypes.bool.isRequired,
 };
 
 DynamicField.propTypes = {
@@ -361,7 +361,7 @@ DynamicField.propTypes = {
     id: PropTypes.number,
   }).isRequired,
   enabledFieldDataCallback: PropTypes.func.isRequired,
-  disabled: PropTypes.bool.isRequired,
+  readOnly: PropTypes.bool.isRequired,
 };
 
 export default EnabledDynamicFieldForm;
