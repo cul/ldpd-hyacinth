@@ -4,7 +4,7 @@ import {
 } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useQuery, useMutation } from '@apollo/react-hooks';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import ContextualNavbar from '../shared/ContextualNavbar';
 import ability from '../../utils/ability';
@@ -20,7 +20,6 @@ import BooleanRadioButtons from '../shared/forms/inputs/BooleanRadioButtons';
 
 function UserEdit() {
   const { uid: id } = useParams();
-  const history = useHistory();
 
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -77,10 +76,11 @@ function UserEdit() {
   const onSave = () => {
     const permissions = [];
 
-    if (manageUsers) permissions.push('manage_users');
-    if (manageVocabularies) permissions.push('manage_vocabularies');
-    if (readAllDigitalObjects) permissions.push('read_all_digital_objects');
-    if (manageAllDigitalObjects) permissions.push('manage_all_digital_objects');
+    if (manageUsers) { permissions.push('manage_users'); }
+    if (manageVocabularies) { permissions.push('manage_vocabularies'); }
+    if (readAllDigitalObjects) { permissions.push('read_all_digital_objects'); }
+    if (manageAllDigitalObjects) { permissions.push('manage_all_digital_objects'); }
+    if (manageResourceRequests) { permissions.push('manage_resource_requests'); }
     const userData = {
       input: {
         id,
@@ -106,8 +106,6 @@ function UserEdit() {
     }
     return updateUser({
       variables: userData,
-    }).then((res) => {
-      history.push(`/users/${res.data.updateUser.user.id}/edit`);
     });
   };
   if (gqlResponse.loading) return (<></>);
