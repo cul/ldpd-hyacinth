@@ -1,4 +1,4 @@
-import * as ActiveStorage from 'activestorage';
+import * as ActiveStorage from '@rails/activestorage';
 
 const uploadFile = (file, url, onProgress) => {
   const delegate = {

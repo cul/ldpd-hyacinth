@@ -14,7 +14,7 @@
   "settings": {
     "import/resolver": {
       "alias": [
-        ["@hyacinth_v1", "./app/javascript/hyacinth_v1"]
+        ["./app/javascript/hyacinth_v1"]
        ]
      }
   }

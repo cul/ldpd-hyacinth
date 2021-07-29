@@ -1,5 +1,5 @@
 import gql from 'graphql-tag';
-import { DirectUpload } from "activestorage"
+import { DirectUpload } from '@rails/activestorage';
 
 export const createAssetMutation = gql`
   mutation CreateAsset($input: CreateAssetInput!) {
