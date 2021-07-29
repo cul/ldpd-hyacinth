@@ -1,0 +1,56 @@
+//$form-group-margin-bottom: 1rem !default;
+
+// Default bootswatch pulse font size is too small, so we'll increase it.
+$font-size-base: 0.9375rem !default;
+
+//$breadcrumb-padding-y: .45rem !default; // Reducing the padding
+
+@import "~bootswatch/dist/pulse/variables";
+@import '~bootstrap/scss/bootstrap.scss';
+@import "~bootswatch/dist/pulse/bootswatch";
+
+body {}
+
+// Disable Bootstrap 5 underlined links
+
+a, .btn-link {
+  text-decoration: none;
+}
+
+a:hover, .btn-link:hover {
+  text-decoration: underline;
+}
+
+.navbar {
+  a:hover, .btn-link:hover {
+    text-decoration: none;
+  }
+}
+
+// Disable Bootstrap 5 link focus shadow
+
+.btn-link:focus {
+  box-shadow: none;
+}
+
+.progress {
+  height: 1rem;
+}
+
+// Other Styles
+
+.table > :not(:last-child) > :last-child > * {
+  border-bottom-color: #ccc;
+}
+
+.text-orange {
+  color: #c78203;
+}
+
+.ace_editor {
+  border: 1px solid #ddd;
+}
+
+.dropdown-header {
+  padding: 0rem .5rem;
+}

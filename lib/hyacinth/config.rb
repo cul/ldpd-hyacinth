@@ -3,6 +3,7 @@
 module Hyacinth
   # Provides app-wide configuration information for Hyacinth and caches
   # information in non-dev environments.
+
   module Config
     module_function
 
