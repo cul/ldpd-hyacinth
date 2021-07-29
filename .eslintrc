@@ -1,8 +1,12 @@
 {
-  "extends": "airbnb",
-  "parser": "babel-eslint",
+  "extends": [
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "airbnb"
+  ],
+  "parser": "@babel/eslint-parser",
   "env": {
-    "es6": true,
+    "es2020": true,
     "browser": true,
     "node": true
   },
@@ -10,12 +14,5 @@
     "no-param-reassign": ["error", { "ignorePropertyModificationsFor" : ["draft"] } ],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "max-len": ["error", { "code": 120 }]
-  },
-  "settings": {
-    "import/resolver": {
-      "alias": [
-        ["./app/javascript/hyacinth_v1"]
-       ]
-     }
   }
 }
