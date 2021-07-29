@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         ruby-version: ['2.6.4']
-        node: ['8', '12']
+        node: ['10', '12']
     env:
       RAILS_ENV: test
       NOKOGIRI_USE_SYSTEM_LIBRARIES: true
