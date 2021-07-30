@@ -4,8 +4,8 @@
 class DigitalObject::DynamicFieldsValidator < ActiveModel::EachValidator
   private
 
-    def generate_errors(digital_object, attribute, value, map)
-      errors_for(map, value, attribute).each { |a| digital_object.errors.add(a[0], a[1]) }
+    def generate_errors(attribute, value, map)
+      errors_for(map, value, attribute)
     end
 
     # Returns errors that should be recorded for any of the fields in the data given.
@@ -23,7 +23,7 @@ class DigitalObject::DynamicFieldsValidator < ActiveModel::EachValidator
         field_map_subtree = field_map[field_or_group_key]
         case field_map_subtree[:type]
         when 'DynamicFieldGroup'
-          errors.concat errors_for_field_group(value, field_or_group_key, new_path, field_map_subtree)
+          errors.concat errors_for_field_group(value, new_path, field_map_subtree)
         when 'DynamicField'
           if (e = field_errors(field_map_subtree, value))
             errors.concat e.map { |i| [new_path, i] }
@@ -42,10 +42,10 @@ class DigitalObject::DynamicFieldsValidator < ActiveModel::EachValidator
       send("errors_for_#{configuration[:field_type]}_field", configuration, value)
     end
 
-    def errors_for_field_group(value, group_key, new_path, field_map_subtree)
+    def errors_for_field_group(value, new_path, field_map_subtree)
       errors = []
       if value.is_a?(Array)
-        errors.append([new_path, "is not repeatable"]) if violates_repeat_value_constraint(group_key, value)
+        errors.append([new_path, "is not repeatable"]) if !field_map_subtree['is_repeatable'] && value.length > 1
 
         value.each_with_index do |v, i|
           errors.concat errors_for(field_map_subtree[:children], v, "#{new_path}[#{i}]")
@@ -54,11 +54,6 @@ class DigitalObject::DynamicFieldsValidator < ActiveModel::EachValidator
         errors.append([new_path, "must contain an array"])
       end
       errors
-    end
-
-    def violates_repeat_value_constraint(group_key, value)
-      dynamic_field_group = DynamicFieldGroup.find_by(string_key: group_key)
-      dynamic_field_group && !dynamic_field_group.is_repeatable && value.length > 1
     end
 
     def errors_for_string_field(_configuration, value)

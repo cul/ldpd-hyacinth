@@ -1,27 +1,27 @@
 # frozen_string_literal: true
 
 module DigitalObject::EnabledDynamicFieldsValidations
-  # Returns any errors related to project level validations.
-  #
-  # @return [String] if there are errors
-  # @return [] if there are no errors
-  def enabled_field_errors(digital_object, data)
+  # Returns any errors related to project-and-digital_object_type based enabled field validations.
+  # @param project [Project] Project that should be considered when determining which fields are enabled.
+  # @param digital_object_type [String] Digital object type that should be considered when determining which fields are enabled.
+  # @return [Array<Array<String, String>>] A list of errors of the format [['error path', 'error message']]
+  def enabled_field_errors(project, digital_object_type, data)
     errors = []
     data_dynamic_field_paths = []
 
-    data.each do |df_group, children|
-      data_dynamic_field_paths = collect_field_paths(df_group, children, data_dynamic_field_paths)
-    end
+    data.each { |df_group, children| data_dynamic_field_paths = collect_field_paths(df_group, children, data_dynamic_field_paths) }
 
-    enabled_dynamic_fields = EnabledDynamicField.where(project: digital_object.primary_project, digital_object_type: digital_object.digital_object_type).includes(:dynamic_field)
+    enabled_dynamic_fields = EnabledDynamicField.where(project: project, digital_object_type: digital_object_type).includes(:dynamic_field)
 
     enabled_dynamic_field_paths = enabled_dynamic_fields.map { |edf| edf.dynamic_field.path }
-
-    data_dynamic_field_paths.each { |dfp| errors << [dfp, 'field must be enabled'] unless enabled_dynamic_field_paths.include? dfp }
+    (data_dynamic_field_paths - enabled_dynamic_field_paths).each do |field_that_needs_to_be_enabled|
+      errors << [field_that_needs_to_be_enabled, 'field must be enabled']
+    end
 
     required_dynamic_field_paths = enabled_dynamic_fields.select(&:required).map { |edf| edf.dynamic_field.path }
-
-    required_dynamic_field_paths.each { |rdfp| errors << [rdfp, 'is required'] unless data_dynamic_field_paths.include? rdfp }
+    (required_dynamic_field_paths - data_dynamic_field_paths).each do |missing_required_field_path|
+      errors << [missing_required_field_path, 'is required']
+    end
 
     errors
   end

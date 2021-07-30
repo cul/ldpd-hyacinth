@@ -4,14 +4,14 @@ class DigitalObject::DescriptiveFieldsValidator < DigitalObject::DynamicFieldsVa
   include DigitalObject::EnabledDynamicFieldsValidations
 
   def validate_each(digital_object, attribute, value)
-    enabled_field_errors(digital_object, value).each do |a|
+    return if value.blank?
+
+    enabled_field_errors(digital_object.primary_project, digital_object.digital_object_type, value).each do |a|
       digital_object.errors.add(a[0], a[1])
     end
 
-    return if value.blank?
-
-    map = Hyacinth::DynamicFieldsMap.new('descriptive').map
-
-    generate_errors(digital_object, attribute, value, map)
+    generate_errors(attribute, value, Hyacinth::DynamicFieldsMap.new('descriptive').map).each do |a|
+      digital_object.errors.add(a[0], a[1])
+    end
   end
 end

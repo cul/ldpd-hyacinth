@@ -31,6 +31,7 @@ describe Hyacinth::DynamicFieldsMap do
         {
           "copyright_status" => {
             "type" => "DynamicFieldGroup",
+            "is_repeatable" => true,
             "children" => {
               "copyright_statement" => {
                 'filter_label' => nil,
@@ -61,6 +62,7 @@ describe Hyacinth::DynamicFieldsMap do
         {
           "copyright_status" => {
             "type" => "DynamicFieldGroup",
+            "is_repeatable" => true,
             "children" => {
               "copyright_statement" => {
                 'display_label' => 'Copyright Statement',
@@ -78,9 +80,11 @@ describe Hyacinth::DynamicFieldsMap do
           },
           "name" => {
             "type" => "DynamicFieldGroup",
+            "is_repeatable" => true,
             "children" => {
               "role" => {
                 "type" => "DynamicFieldGroup",
+                "is_repeatable" => true,
                 "children" => {
                   "value" => {
                     'display_label' => 'Value',

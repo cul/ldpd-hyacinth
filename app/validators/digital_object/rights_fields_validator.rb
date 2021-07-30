@@ -10,11 +10,8 @@ class DigitalObject::RightsFieldsValidator < DigitalObject::DynamicFieldsValidat
       return
     end
 
-    generate_errors(
-      digital_object,
-      attribute,
-      value,
-      Hyacinth::DynamicFieldsMap.new("#{digital_object.digital_object_type}_rights").map
-    )
+    generate_errors(attribute, value, Hyacinth::DynamicFieldsMap.new("#{digital_object.digital_object_type}_rights").map).each do |a|
+      digital_object.errors.add(a[0], a[1])
+    end
   end
 end

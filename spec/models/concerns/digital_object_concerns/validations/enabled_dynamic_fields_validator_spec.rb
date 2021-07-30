@@ -68,39 +68,57 @@ RSpec.describe DigitalObject::DynamicFieldsValidator do
     }
   end
 
-  before do
-    Hyacinth::DynamicFieldsLoader.load_fields!(field_definitions, load_vocabularies: true)
-    item.assign_descriptive_metadata({ 'descriptive_metadata' => descriptive_metadata }, false)
-  end
-
-  context 'when new value is being added to a descriptive field' do
-    let(:descriptive_metadata) do
-      {
-        'group1' => [
-          { 'string_field' => 'A string value', 'integer_field' => 1 }
-        ]
-      }
-    end
-
+  context 'when new values are being added to a descriptive field' do
     before do
+      Hyacinth::DynamicFieldsLoader.load_fields!(field_definitions, load_vocabularies: true)
+      item.assign_descriptive_metadata({ 'descriptive_metadata' => descriptive_metadata }, false)
+
       FactoryBot.create(:enabled_dynamic_field, project: project, dynamic_field: DynamicField.find_by_path_traversal(['group2', 'controlled_term_field']))
       FactoryBot.create(:enabled_dynamic_field, project: project, dynamic_field: DynamicField.find_by_path_traversal(['group2', 'boolean_field']))
     end
 
-    context 'when field is not enabled' do
-      it 'returns errors' do
+    context 'when some of the assigned fields in the data are not enabled' do
+      let(:descriptive_metadata) do
+        {
+          'group1' => [
+            {
+              'string_field' => 'A string value',
+              'integer_field' => 1
+            }
+          ],
+          'group2' => [
+            {
+              'controlled_term_field' => { 'uri' => 'https://www.example.com' },
+              'boolean_field' => true
+            }
+          ]
+        }
+      end
+
+      it 'sets the expected errors on the digital object' do
         expect(item.valid?).to be false
-        expect(item.errors.messages).to include(
-          'group1/string_field': ['field must be enabled']
+        expect(item.errors.messages).to eq(
+          'group1/string_field': ['field must be enabled'],
+          'group1/integer_field': ['field must be enabled']
         )
       end
     end
 
-    context 'when the value for a required field is blank' do
-      it 'returns errors' do
+    context 'when the assigned data is missing a required field' do
+      let(:descriptive_metadata) do
+        {
+          'group2' => [
+            {
+              'boolean_field' => true
+            }
+          ]
+        }
+      end
+
+      it 'sets the expected errors on the digital object' do
         expect(item.valid?).to be false
-        expect(item.errors.messages).to include(
-          'group2/boolean_field': ['is required']
+        expect(item.errors.messages).to eq(
+          "group2/controlled_term_field": ["is required"]
         )
       end
     end
