@@ -6,6 +6,6 @@ class Enums::TermTypeEnum < Types::BaseEnum
     'temporary' => 'term with a temporary uri',
     'local' => 'term local to our instance'
   }.each do |val, description|
-    value val.upcase.tr(' ', '_'), description, value: val
+    value str_to_gql_enum(val), description, value: val
   end
 end

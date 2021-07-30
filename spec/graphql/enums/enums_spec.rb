@@ -10,7 +10,7 @@ RSpec.describe 'Enums', type: :request do
     it 'is upper case and replaces spaces with underscores' do
       enum_array.each do |enum_name|
         enum_values(enum_name).each do |ev|
-          expect(ev['name']).to eq(ev['name'].upcase.tr(' ', '_'))
+          expect(ev['name']).to eq(Types::BaseEnum.str_to_gql_enum(ev['name']))
         end
       end
     end
