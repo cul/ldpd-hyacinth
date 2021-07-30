@@ -430,7 +430,7 @@ DEPENDENCIES
   factory_bot_rails
   faraday (~> 1.1)
   graphiql-rails
-  graphql
+  graphql (~> 1.9.12)
   graphql-errors
   jettywrapper (>= 1.4.0)!
   json_csv (~> 1.0.0)
@@ -462,4 +462,4 @@ DEPENDENCIES
   webpacker
 
 BUNDLED WITH
-   2.1.4
+   2.2.15

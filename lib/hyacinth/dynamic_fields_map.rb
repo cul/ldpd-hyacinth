@@ -94,7 +94,7 @@ module Hyacinth
           when DynamicField
             value = field_or_group.as_json.except(:id, :string_key, :sort_order)
           when DynamicFieldGroup
-            value = { type: 'DynamicFieldGroup', children: field_map(field_or_group.children) }
+            value = { type: 'DynamicFieldGroup', is_repeatable: field_or_group.is_repeatable, children: field_map(field_or_group.children) }
           else
             raise 'Invalid type when generating field map'
           end

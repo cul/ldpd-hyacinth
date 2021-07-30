@@ -151,6 +151,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
       let(:child_hyacinth_object) do
         obj = FactoryBot.build(:item)
         obj.descriptive_metadata['title'] = [{ 'sort_portion' => child_object_title }]
+        DynamicFieldsHelper.enable_dynamic_fields(obj.digital_object_type, obj.primary_project)
         obj.save
         obj
       end

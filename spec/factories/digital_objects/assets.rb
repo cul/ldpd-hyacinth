@@ -18,6 +18,10 @@ FactoryBot.define do
       end
     end
 
+    before(:create) do |digital_object|
+      DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project)
+    end
+
     trait :skip_resource_request_callbacks do
       after(:build) do |digital_object|
         digital_object.skip_resource_request_callbacks = true

@@ -20,7 +20,7 @@ gem 'concurrent-ruby', '~> 1.1.8'
 gem 'devise', '~> 4.7'
 gem 'edtf', '~> 3.0'
 gem 'faraday', '~> 1.1'
-gem 'graphql'
+gem 'graphql', '~> 1.9.12'
 gem 'graphql-errors'
 gem 'json_csv', '~> 1.0.0'
 gem 'nokogiri', '~> 1.10.10' # can't update to 1.11 because our server version of GLIBC is too old

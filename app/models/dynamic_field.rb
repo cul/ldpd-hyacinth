@@ -39,6 +39,23 @@ class DynamicField < ActiveRecord::Base
   validates :additional_data_json, :select_options, valid_json: true
   validates_with StringKey::AbsentInSiblingGroupsValidator
 
+  def self.find_by_path_traversal(path)
+    # There are no top level DynamicFields.  Field must be under a DynamicFieldGroup.
+    raise ActiveRecord::RecordNotFound, "Could not find a DynamicField at path: #{path.inspect}" if path.nil? || path.length < 2
+
+    # Save a copy of the original path for potential error reporting later on
+    original_path = path.dup
+
+    current_node = DynamicFieldGroup.find_by!(string_key: path.shift)
+
+    current_node = DynamicFieldGroup.find_by!(string_key: path.shift, dynamic_field_group: current_node) while path.length > 1
+
+    DynamicField.find_by!(string_key: path.shift, dynamic_field_group: current_node)
+  rescue ActiveRecord::RecordNotFound
+    # Re-raise with more helpful error message
+    raise ActiveRecord::RecordNotFound, "Could not find DynamicField at path: #{original_path.inspect}"
+  end
+
   def as_json(options = {})
     json = EXPORTABLE_ATTRIBUTES.map { |k| [k, self.send(k)] }.to_h
     json[:type] = self.class.name
