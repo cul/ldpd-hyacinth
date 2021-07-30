@@ -65,6 +65,8 @@ module DigitalObjectConcerns
       end
 
       def search_for_terms(extracted_terms)
+        return [] if extracted_terms.blank?
+
         # Solr query to retrieve all the terms
         # NOTE: For terms with a pref_label and no uri, we generate the temp uri would look like.
         # NOTE: Prior validation should have caught any terms that are missing a uri or pref_label. In this part of the code,
