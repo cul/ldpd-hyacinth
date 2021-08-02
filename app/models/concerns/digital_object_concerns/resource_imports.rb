@@ -64,7 +64,7 @@ module DigitalObjectConcerns
 
       # Next we're going to do a checksum comparison, if a checksum was given.
       # We want to fail quickly if an invalid checksum was given, so we'll check the given value first.
-      provided_hexdigest = resource_import.hexgidest_from_checksum
+      provided_hexdigest = resource_import.hexdigest_from_checksum
       provided_file_size = resource_import.file_size.present? ? resource_import.file_size : nil
 
       hexdigest, file_size = analyze_and_optionally_copy_resource_import(resource_import, new_resource, lock_object)

@@ -85,7 +85,7 @@ module Hyacinth
       end
 
       # Extracts checksum hex value from the checksum field
-      def hexgidest_from_checksum
+      def hexdigest_from_checksum
         hexdigest = checksum.present? ? checksum : nil
         if hexdigest.present?
           if (match_data = hexdigest.match(VALID_CHECKSUM_REGEX))

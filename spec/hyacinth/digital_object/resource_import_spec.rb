@@ -120,29 +120,29 @@ RSpec.describe Hyacinth::DigitalObject::ResourceImport do
     end
   end
 
-  describe "#hexgidest_from_checksum" do
+  describe "#hexdigest_from_checksum" do
     it "extracts the expected value" do
-      expect(file_copy_instance.hexgidest_from_checksum).to eq('717f2c6ffbd649cd57ecc41ac6130c3b6210f1473303bcd9101a9014551bffb2')
+      expect(file_copy_instance.hexdigest_from_checksum).to eq('717f2c6ffbd649cd57ecc41ac6130c3b6210f1473303bcd9101a9014551bffb2')
     end
 
     context "when checksum is nil" do
       let(:checksum) { nil }
       it 'returns nil' do
-        expect(file_copy_instance.hexgidest_from_checksum).to eq(nil)
+        expect(file_copy_instance.hexdigest_from_checksum).to eq(nil)
       end
     end
 
     context "when checksum is an empty string" do
       let(:checksum) { '' }
       it 'returns nil' do
-        expect(file_copy_instance.hexgidest_from_checksum).to eq(nil)
+        expect(file_copy_instance.hexdigest_from_checksum).to eq(nil)
       end
     end
 
     context "when checksum is not a valid sha256-format checksum" do
       let(:checksum) { 'nah256:abcdefg' }
       it "raises an exception" do
-        expect { file_copy_instance.hexgidest_from_checksum }.to raise_error(Hyacinth::Exceptions::InvalidChecksumFormatError)
+        expect { file_copy_instance.hexdigest_from_checksum }.to raise_error(Hyacinth::Exceptions::InvalidChecksumFormatError)
       end
     end
   end
