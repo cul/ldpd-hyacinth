@@ -95,20 +95,7 @@ class DigitalObject < ApplicationRecord
     false
   end
 
-  def delete_resource(resource_name)
-    return unless self.resources[resource_name].present?
-
-    self.deleted_resources[resource_name] = self.resources[resource_name]
-    self.resources[resource_name] = nil
-  end
-
   private
-
-    def delete_all_resources
-      self.resource_attributes.each do |resource_name|
-        self.delete_resource(resource_name)
-      end
-    end
 
     def raise_error_if_base_class!
       raise NotImplementedError, 'Base class DigitalObject cannot be instantiated! Instantiate a subclass instead.' if self.class == DigitalObject

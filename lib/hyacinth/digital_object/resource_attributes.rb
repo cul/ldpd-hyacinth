@@ -31,6 +31,13 @@ module Hyacinth
         @deleted_resources ||= resource_attributes.map { |key| [key.to_s, nil] }.to_h.with_indifferent_access
       end
 
+      def delete_resource(resource_name)
+        return unless self.resources[resource_name].present?
+
+        self.deleted_resources[resource_name] = self.resources[resource_name]
+        self.resources[resource_name] = nil
+      end
+
       module ClassMethods
         def resource_attributes
           @resource_attributes ||= Set.new # initialized here because it may not have been initialized in a subclass of the including class
@@ -73,6 +80,14 @@ module Hyacinth
           end
         end
       end
+
+      private
+
+        def delete_all_resources
+          self.resource_attributes.each do |resource_name|
+            self.delete_resource(resource_name)
+          end
+        end
     end
   end
 end
