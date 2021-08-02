@@ -9,12 +9,13 @@ class DigitalObject::Asset < DigitalObject
   ACCESS_RESOURCE_NAME = 'access'
   POSTER_RESOURCE_NAME = 'poster'
   FULLTEXT_RESOURCE_NAME = 'fulltext'
+  TEXT_RESOURCE_NAMES = ['synchronized_transcript', 'chapters', 'captions', FULLTEXT_RESOURCE_NAME].freeze
 
   resource_attribute MASTER_RESOURCE_NAME.to_sym
   resource_attribute SERVICE_RESOURCE_NAME.to_sym
   resource_attribute ACCESS_RESOURCE_NAME.to_sym
   resource_attribute POSTER_RESOURCE_NAME.to_sym
-  resource_attribute FULLTEXT_RESOURCE_NAME.to_sym
+  TEXT_RESOURCE_NAMES.each { |resource_name| resource_attribute resource_name.to_sym }
 
   before_validation :assign_asset_type_from_master_resource_import_if_blank
   before_validation :assign_title_from_master_resource_import_if_blank
@@ -27,6 +28,10 @@ class DigitalObject::Asset < DigitalObject
   metadata_attribute :image_size_restriction, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { Hyacinth::DigitalObject::Asset::ImageSizeRestriction::NONE })
 
   attr_accessor :skip_resource_request_callbacks
+
+  def can_have_children?
+    false
+  end
 
   def can_have_rights?
     true

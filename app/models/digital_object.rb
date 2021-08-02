@@ -91,6 +91,10 @@ class DigitalObject < ApplicationRecord
     children.length
   end
 
+  def can_have_children?
+    false
+  end
+
   def can_have_rights?
     false
   end

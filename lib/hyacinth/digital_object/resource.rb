@@ -4,7 +4,7 @@ module Hyacinth
   module DigitalObject
     class Resource
       LOCATION_FIELD = :location
-      FIELDS = [LOCATION_FIELD, :checksum, :original_file_path, :media_type, :file_size].freeze
+      FIELDS = [LOCATION_FIELD, :checksum, :original_file_path, :media_type, :file_size, :preservable, :versionable].freeze
       attr_accessor(*FIELDS)
 
       # The opts hash should only include symbol keys

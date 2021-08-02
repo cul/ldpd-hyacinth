@@ -85,6 +85,7 @@ module Hyacinth
           assign(Fedora3::RelsExtProperties).from(digital_object).to(fedora_object)
           assign(Fedora3::RelsIntProperties).from(digital_object).to(fedora_object)
           assign(Fedora3::StructProperties).from(digital_object).to(fedora_object)
+          assign(Fedora3::TextResourceProperties).from(digital_object).to(fedora_object)
 
           fedora_object.save
         end

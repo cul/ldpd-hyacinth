@@ -90,7 +90,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
       end
     end
     context "basic rels-ext properties" do
-      let(:dsids) { ['structMetadata'] }
+      # let(:dsids) { ['structMetadata'] }
       let(:digital_object_title) { "Assigned Label" }
       let(:project_property) do
         {
@@ -145,8 +145,6 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
       end
     end
     context "Struct properties" do
-      # do not need to fetch profiles for DC and RELS-EXT
-      let(:dsids) { ['structMetadata'] }
       let(:child_object_title) { "Assigned Label" }
       let(:child_hyacinth_object) do
         obj = FactoryBot.build(:item)
@@ -164,12 +162,10 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
 
       it "persists model properties" do
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
-        # because .save is stubbed, the datastream should still be dirty
         expect(rubydora_object.datastreams['structMetadata'].content).to include("<mets:div LABEL=\"#{child_object_title}\" ORDER=\"1\" CONTENTIDS=\"#{child_uid}\"/>")
       end
     end
     context "RelsInt properties for resources" do
-      let(:dsids) { ['structMetadata'] }
       let(:hyacinth_object) { FactoryBot.build(:asset) }
       let(:resource_args) { { original_file_path: '/old/path/to/file.doc', location: '/path/to/file.doc', checksum: 'sha256:asdf', file_size: 'asdf' } }
       before do
@@ -184,6 +180,13 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
         expect(css_node.text).to eql('asdf')
         css_node = ng_xml.at_css("RDF > Description[about=\"info:fedora/test:1/master\"] > hasMessageDigest")
         expect(css_node['resource']).to eql('urn:sha256:asdf')
+      end
+    end
+    context "Fulltext resources marked as preservable" do
+      let(:hyacinth_object) { FactoryBot.build(:asset, :with_master_resource, :with_fulltext_resource) }
+      it "persists fulltext resource" do
+        adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
+        expect(rubydora_object.datastreams['fulltext'].content).to include("What a great test file!")
       end
     end
   end

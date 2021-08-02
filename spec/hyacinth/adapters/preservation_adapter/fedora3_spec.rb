@@ -215,6 +215,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       end
 
       context "persists model properties that apply to an asset" do
+        let(:dsids) { [] }
         let(:hyacinth_object) { FactoryBot.build(:asset, :with_master_resource) }
         let(:model_property) do
           {
@@ -306,7 +307,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       end
     end
     context "RelsInt properties for resources" do
-      let(:dsids) { ['structMetadata'] }
+      let(:dsids) { [] }
       let(:hyacinth_object) { FactoryBot.build(:asset) }
       let(:resource_args) { { original_file_path: '/old/path/to/file.doc', location: '/path/to/file.doc', checksum: 'sha256:asdf', file_size: 'asdf' } }
       let(:extent_property) do
@@ -337,6 +338,25 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       end
       it "persists model properties" do
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
+      end
+    end
+    context "text derivative resource for an Asset" do
+      let(:dsids) { ['fulltext', 'hyacinth_data'] }
+      let(:hyacinth_object) { FactoryBot.build(:asset, :with_master_resource, :with_fulltext_resource) }
+      let(:profile_xml) { file_fixture("fedora3/new-object.xml").read }
+      let(:datastreams_xml) { file_fixture("fedora3/new-datastreams.xml").read }
+      let(:expected_content) { file_fixture('files/test.txt').read }
+      before do
+        allow(connection).to receive(:add_relationship)
+        allow(connection).to receive(:find_by_sparql_relationship).and_return([]) # fresh properties!
+      end
+      it "persists resource properties" do
+        adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
+        # because .save is stubbed, the datastream should still be dirty
+        fulltext = rubydora_object.datastreams['fulltext']
+        expect(fulltext.changed?).to be(true)
+        expect(fulltext.label).to eql('fulltext.txt')
+        expect(fulltext.content).to eql(expected_content)
       end
     end
   end

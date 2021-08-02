@@ -20,7 +20,7 @@ module Hyacinth
         end
 
         def to(fedora_obj)
-          return unless @hyacinth_obj.children.present?
+          return unless @hyacinth_obj.can_have_children? && @hyacinth_obj.children.present?
           proposed_list = structured_children(@hyacinth_obj)
           current_list = parse_struct_xml(fedora_obj)
           return if current_list.eql? proposed_list

@@ -37,14 +37,18 @@ RSpec.describe DigitalObjectConcerns::MetadataStorageSerialization do
           'checksum' => 'sha256:717f2c6ffbd649cd57ecc41ac6130c3b6210f1473303bcd9101a9014551bffb2',
           'media_type' => nil,
           'original_file_path' => nil,
-          'file_size' => nil
+          'file_size' => nil,
+          'preservable' => nil,
+          'versionable' => nil
         },
         'test_resource2' => {
           'location' => 'managed-disk:///path/to/file2',
           'checksum' => 'sha256:30a7b320463d2d4a2052b72ea48518f5ad36dcb935b54628f292861241a7632e',
           'media_type' => nil,
           'original_file_path' => nil,
-          'file_size' => nil
+          'file_size' => nil,
+          'preservable' => nil,
+          'versionable' => nil
         }
       }
     }

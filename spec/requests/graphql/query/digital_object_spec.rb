@@ -146,6 +146,21 @@ RSpec.describe 'Retrieving Digital Object', type: :request, solr: true do
             "resource": null
           },
           {
+            "id": "synchronized_transcript",
+            "displayLabel": "Synchronized Transcript",
+            "resource": null
+          },
+          {
+            "id": "chapters",
+            "displayLabel": "Chapters",
+            "resource": null
+          },
+          {
+            "id": "captions",
+            "displayLabel": "Captions",
+            "resource": null
+          },
+          {
             "id": "fulltext",
             "displayLabel": "Fulltext",
             "resource": null

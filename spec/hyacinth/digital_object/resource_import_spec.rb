@@ -54,31 +54,34 @@ RSpec.describe Hyacinth::DigitalObject::ResourceImport do
   end
 
   describe "#valid?" do
-    it "is valid with method and location" do
-      expect(file_copy_instance).to be_valid
-    end
+    subject { described_class.new(import_arguments) }
+    let(:import_arguments) { file_copy_attributes.dup }
+    it { is_expected.to be_valid }
 
-    it "is valid for a blob location" do
-      expect(blob_copy_instance).to be_valid
+    context "with a blob location" do
+      let(:import_arguments) { blob_copy_attributes.dup }
+      it { is_expected.to be_valid }
     end
 
     context "without method" do
-      let(:method) { nil }
-      it 'is not valid' do
-        expect(file_copy_instance).not_to be_valid
-      end
+      let(:import_arguments) { file_copy_attributes.merge(method: nil) }
+      it { is_expected.not_to be_valid }
     end
     context "with invalid method" do
-      let(:method) { :improvisational }
-      it 'is not valid' do
-        expect(file_copy_instance).not_to be_valid
-      end
+      let(:import_arguments) { file_copy_attributes.merge(method: :improvisational) }
+      it { is_expected.not_to be_valid }
     end
     context "without location" do
-      let(:location) { nil }
-      it 'is not valid' do
-        expect(file_copy_instance).not_to be_valid
-      end
+      let(:import_arguments) { file_copy_attributes.merge(location: nil) }
+      it { is_expected.not_to be_valid }
+    end
+    context "with preservable but not versionable" do
+      let(:import_arguments) { file_copy_attributes.merge(preservable: true, versionable: nil) }
+      it { is_expected.to be_valid }
+    end
+    context "with versionable but not preservable" do
+      let(:import_arguments) { file_copy_attributes.merge(versionable: true, preservable: nil) }
+      it { is_expected.not_to be_valid }
     end
   end
 

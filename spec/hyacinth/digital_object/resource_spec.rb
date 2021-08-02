@@ -9,7 +9,9 @@ RSpec.describe Hyacinth::DigitalObject::Resource do
       checksum: 'sha256:717f2c6ffbd649cd57ecc41ac6130c3b6210f1473303bcd9101a9014551bffb2',
       original_file_path: '/some/original/path',
       media_type: 'text/plain',
-      file_size: 123
+      file_size: 123,
+      preservable: true,
+      versionable: false
     }
   end
   let(:attributes) { arguments.dup }
