@@ -6,7 +6,7 @@ module Hyacinth
       DOWNLOAD_BUFFER_BYTE_SIZE = 5.megabytes
 
       REQUIRED_FIELDS = [:method, :location].freeze
-      FIELDS = (REQUIRED_FIELDS + [:checksum, :original_file_path, :media_type, :file_size, :preservable, :versionable]).freeze
+      FIELDS = (REQUIRED_FIELDS + [:checksum, :original_file_path, :media_type, :file_size]).freeze
       attr_reader(*FIELDS)
 
       COPY = 'copy'
@@ -41,7 +41,6 @@ module Hyacinth
           return false if send(field).blank?
         end
         return false unless VALID_IMPORT_METHODS.include?(self.method)
-        return false if send(:versionable) && !send(:preservable)
         true
       end
 

@@ -11,7 +11,7 @@ module DigitalObjectConcerns
     end
 
     def finalize_resource_imports
-      self.resource_attributes.each do |resource_name|
+      self.resource_attribute_names.each do |resource_name|
         next if old_resources[resource_name].blank?
 
         # Delete old resource since we don't need it anymore
@@ -32,7 +32,7 @@ module DigitalObjectConcerns
         next if resource.nil? || !Hyacinth::Config.resource_storage.deletable?(resource.location)
         Hyacinth::Config.resource_storage.delete(resource.location)
       end
-      self.resource_attributes.each do |resource_name|
+      self.resource_attribute_names.each do |resource_name|
         self.deleted_resources[resource_name] = nil
       end
     end

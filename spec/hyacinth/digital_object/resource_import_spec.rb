@@ -75,14 +75,6 @@ RSpec.describe Hyacinth::DigitalObject::ResourceImport do
       let(:import_arguments) { file_copy_attributes.merge(location: nil) }
       it { is_expected.not_to be_valid }
     end
-    context "with preservable but not versionable" do
-      let(:import_arguments) { file_copy_attributes.merge(preservable: true, versionable: nil) }
-      it { is_expected.to be_valid }
-    end
-    context "with versionable but not preservable" do
-      let(:import_arguments) { file_copy_attributes.merge(versionable: true, preservable: nil) }
-      it { is_expected.not_to be_valid }
-    end
   end
 
   describe "#location_is_active_storage_blob?" do

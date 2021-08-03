@@ -11,24 +11,28 @@ module Hyacinth
         self.class.send(__method__) # class method name same as instance method
       end
 
+      def resource_attribute_names
+        self.class.send(__method__) # class method name same as instance method
+      end
+
       def resource_import_attributes
         self.class.send(__method__) # class method name same as instance method
       end
 
       def resources
-        @resources ||= resource_attributes.map { |key| [key.to_s, nil] }.to_h.with_indifferent_access
+        @resources ||= resource_attributes.map { |key, _config| [key.to_s, nil] }.to_h.with_indifferent_access
       end
 
       def resource_imports
-        @resource_imports ||= resource_import_attributes.map { |key| [key.to_s, nil] }.to_h.with_indifferent_access
+        @resource_imports ||= resource_import_attributes.map { |key, _config| [key.to_s, nil] }.to_h.with_indifferent_access
       end
 
       def old_resources
-        @old_resources ||= resource_attributes.map { |key| [key.to_s, nil] }.to_h.with_indifferent_access
+        @old_resources ||= resource_attributes.map { |key, _config| [key.to_s, nil] }.to_h.with_indifferent_access
       end
 
       def deleted_resources
-        @deleted_resources ||= resource_attributes.map { |key| [key.to_s, nil] }.to_h.with_indifferent_access
+        @deleted_resources ||= resource_attributes.map { |key, _config| [key.to_s, nil] }.to_h.with_indifferent_access
       end
 
       def delete_resource(resource_name)
@@ -40,7 +44,7 @@ module Hyacinth
 
       module ClassMethods
         def resource_attributes
-          @resource_attributes ||= Set.new # initialized here because it may not have been initialized in a subclass of the including class
+          @resource_attributes ||= {} # initialized here because it may not have been initialized in a subclass of the including class
           if self.superclass.respond_to?(:resource_attributes)
             @resource_attributes.merge(self.superclass.resource_attributes)
           else
@@ -48,8 +52,12 @@ module Hyacinth
           end
         end
 
+        def resource_attribute_names
+          resource_attributes.keys.dup.freeze
+        end
+
         def resource_import_attributes
-          @resource_import_attributes ||= Set.new # initialized here because it may not have been initialized in a subclass of the including class
+          @resource_import_attributes ||= {} # initialized here because it may not have been initialized in a subclass of the including class
           if self.superclass.respond_to?(:resource_import_attributes)
             @resource_import_attributes.merge(self.superclass.resource_import_attributes)
           else
@@ -57,12 +65,13 @@ module Hyacinth
           end
         end
 
-        def resource_attribute(resource_attribute_name)
-          @resource_attributes ||= Set.new
-          @resource_attributes << resource_attribute_name.to_sym
+        def resource_attribute(resource_attribute_name, config = {})
+          config ||= {}
+          @resource_attributes ||= {}
+          @resource_attributes[resource_attribute_name.to_sym] = config
 
-          @resource_import_attributes ||= Set.new
-          @resource_import_attributes << resource_attribute_name.to_sym
+          @resource_import_attributes ||= {}
+          @resource_import_attributes[resource_attribute_name.to_sym] = config
 
           # Add x_resource_name method (e.g. master_resource_name)
           define_method :"#{resource_attribute_name}_resource_name" do
@@ -79,6 +88,10 @@ module Hyacinth
             resources[resource_attribute_name].present?
           end
         end
+      end
+
+      def validate_resource_attribute_config(resource_attribute_name, config)
+        raise "Cannot define #{resource_attribute_name}: Only preservable resources may be versionable" if config[:versionable] && !config[:preservable]
       end
 
       private

@@ -15,7 +15,7 @@ class DigitalObject::Asset < DigitalObject
   resource_attribute SERVICE_RESOURCE_NAME.to_sym
   resource_attribute ACCESS_RESOURCE_NAME.to_sym
   resource_attribute POSTER_RESOURCE_NAME.to_sym
-  TEXT_RESOURCE_NAMES.each { |resource_name| resource_attribute resource_name.to_sym }
+  TEXT_RESOURCE_NAMES.each { |resource_name| resource_attribute resource_name.to_sym, preservable: true }
 
   before_validation :assign_asset_type_from_master_resource_import_if_blank
   before_validation :assign_title_from_master_resource_import_if_blank

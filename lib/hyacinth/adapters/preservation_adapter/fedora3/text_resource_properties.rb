@@ -19,35 +19,27 @@ module Hyacinth
           ::DigitalObject::Asset::TEXT_RESOURCE_NAMES.each do |resource_name|
             next unless @hyacinth_obj.send :"has_#{resource_name}_resource?"
             resource = @hyacinth_obj.send :"#{resource_name}_resource"
-            next unless resource.preservable && resource.content_exists?
-            ensure_datastream(fedora_obj, resource_name, datastream_props_for(resource_name, resource))
+            resource_config = @hyacinth_obj.class.resource_attributes.fetch(resource_name.to_sym, {})
+            next unless resource_config[:preservable] && resource.content_exists?
+            ensure_datastream(fedora_obj, resource_name, datastream_props_for(resource_name, resource_config, resource))
             datastream = fedora_obj.datastreams[resource_name]
-            content_digest = md5_digest(resource)
             # Only update content if it has changed
-            next if datastream.checksum == content_digest
+            next if "sha256:#{datastream.checksum}" == resource.checksum
             resource.with_readable do |blob|
               datastream.content = blob.read
-              datastream.checksum = content_digest
+              datastream.checksum = resource.checksum.sub("sha256:", '')
             end
           end
         end
 
-        def datastream_props_for(resource_name, resource)
+        def datastream_props_for(resource_name, resource_config, resource)
           {
-            versionable: resource.versionable,
+            versionable: resource_config.fetch(:versionable, false),
             mimeType: resource.media_type,
             controlGroup: 'M',
             dsLabel: resource.original_file_path || "#{resource_name}.txt",
-            checksumType: 'MD5'
+            checksumType: 'SHA-256'
           }
-        end
-
-        def md5_digest(resource)
-          md5 = Digest::MD5.new
-          resource.with_readable do |blob|
-            blob.each(nil, 1024**2) { |chunk| md5.update(chunk) }
-          end
-          md5.hexdigest
         end
       end
     end

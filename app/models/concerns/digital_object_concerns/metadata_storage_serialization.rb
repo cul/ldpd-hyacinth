@@ -50,7 +50,7 @@ module DigitalObjectConcerns
           hsh[metadata_attribute_name.to_s] = type_def.to_serialized_form(self.send(metadata_attribute_name))
         end
 
-        json_var['resources'] = self.resource_attributes.each_with_object({}) do |resource_attribute_name, hsh|
+        json_var['resources'] = self.resource_attribute_names.each_with_object({}) do |resource_attribute_name, hsh|
           resource = resources[resource_attribute_name]
           next if resource.blank?
           hsh[resource_attribute_name.to_s] = resource.to_serialized_form
@@ -69,7 +69,7 @@ module DigitalObjectConcerns
         end
 
         (json_var['resources'] || {}).tap do |serialized_resources|
-          self.resource_attributes.map(&:to_s).map do |resource_name|
+          self.resource_attribute_names.map(&:to_s).map do |resource_name|
             self.resources[resource_name] = Hyacinth::DigitalObject::Resource.from_serialized_form(serialized_resources[resource_name])
           end
         end
