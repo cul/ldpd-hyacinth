@@ -37,10 +37,10 @@ const FieldGroup = (props) => {
         {
           isRepeatable && (
             <>
-              <span className="float-right"><AddButton tabIndex="-1" className="field-group-header-button" onClick={addHandler} /></span>
-              <span className="float-right"><UpArrowButton tabIndex="-1" className="field-group-header-button" onClick={() => moveHandler('up')} /></span>
-              <span className="float-right"><DownArrowButton tabIndex="-1" className="field-group-header-button" onClick={() => moveHandler('down')} /></span>
-              <span className="float-right"><RemoveButton tabIndex="-1" className="field-group-header-button" onClick={removeHandler} /></span>
+              <span className="float-end"><AddButton tabIndex="-1" className="field-group-header-button" onClick={addHandler} /></span>
+              <span className="float-end"><UpArrowButton tabIndex="-1" className="field-group-header-button" onClick={() => moveHandler('up')} /></span>
+              <span className="float-end"><DownArrowButton tabIndex="-1" className="field-group-header-button" onClick={() => moveHandler('down')} /></span>
+              <span className="float-end"><RemoveButton tabIndex="-1" className="field-group-header-button" onClick={removeHandler} /></span>
             </>
           )
         }

@@ -13,6 +13,6 @@
   "rules": {
     "no-param-reassign": ["error", { "ignorePropertyModificationsFor" : ["draft"] } ],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-    "max-len": ["error", { "code": 120 }]
+    "max-len": ["error", { "code": 140 }]
   }
 }

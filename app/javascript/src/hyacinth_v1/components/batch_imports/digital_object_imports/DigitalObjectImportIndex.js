@@ -21,7 +21,7 @@ function StatusNavItem({ eventKey, amount }) {
           amount > 0 && (
             <>
               {' '}
-              <Badge variant="secondary">{amount}</Badge>
+              <Badge bg="secondary">{amount}</Badge>
             </>
           )
         }

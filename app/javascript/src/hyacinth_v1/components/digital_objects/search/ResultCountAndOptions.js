@@ -48,7 +48,7 @@ const ResultCountAndOptions = (props) => {
 
   return (
     <Card className="mb-3">
-      <Card.Body>
+      <Card.Body className="py-2">
         <small>
           <Row className="align-items-center">
             <Col xs={12} md={6}>

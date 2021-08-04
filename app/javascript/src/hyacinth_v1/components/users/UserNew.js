@@ -61,8 +61,8 @@ function UserNew() {
       <GraphQLErrors errors={error} />
 
       <Form onSubmit={e => handleSubmit(e)}>
-        <Form.Row>
-          <Form.Group as={Col} sm={6}>
+        <Row>
+          <Col sm={6}>
             <Form.Label>First Name</Form.Label>
             <Form.Control
               type="text"
@@ -70,9 +70,9 @@ function UserNew() {
               value={firstName}
               onChange={e => setFirstName(e.target.value)}
             />
-          </Form.Group>
+          </Col>
 
-          <Form.Group as={Col} sm={6}>
+          <Col sm={6}>
             <Form.Label>Last Name</Form.Label>
             <Form.Control
               type="text"
@@ -80,11 +80,11 @@ function UserNew() {
               value={lastName}
               onChange={e => setLastName(e.target.value)}
             />
-          </Form.Group>
-        </Form.Row>
+          </Col>
+        </Row>
 
-        <Form.Row>
-          <Form.Group as={Col}>
+        <Row>
+          <Col>
             <Form.Label>Email</Form.Label>
             <Form.Control
               type="email"
@@ -95,16 +95,16 @@ function UserNew() {
             <Form.Text className="text-muted">
               For Columbia sign-in, please use columbia email: uni@columbia.edu
             </Form.Text>
-          </Form.Group>
-        </Form.Row>
+          </Col>
+        </Row>
 
-        <Form.Row>
-          <Form.Group as={Col} sm={6}>
+        <Row>
+          <Col sm={6}>
             <Form.Label>Password</Form.Label>
             <Form.Control type="text" name="password" value={password} onChange={e => setPassword(e.target.value)} />
-          </Form.Group>
+          </Col>
 
-          <Form.Group as={Col} sm={6}>
+          <Col sm={6}>
             <Form.Label>Password Confirmation</Form.Label>
             <Form.Control
               type="text"
@@ -112,11 +112,11 @@ function UserNew() {
               value={passwordConfirmation}
               onChange={e => setPasswordConfirmation(e.target.value)}
             />
-          </Form.Group>
-        </Form.Row>
+          </Col>
+        </Row>
 
-        <Form.Row>
-          <Form.Group as={Col} sm={{ span: 6, offset: 6 }}>
+        <Row>
+          <Col sm={{ span: 6, offset: 6 }}>
             <Button
               variant="outline-dark"
               onClick={generatePasswordHandler}
@@ -124,8 +124,8 @@ function UserNew() {
               Generate Random Password
             </Button>
             <Form.Text>Must generate password for Columbia sign-ins.</Form.Text>
-          </Form.Group>
-        </Form.Row>
+          </Col>
+        </Row>
 
         <Button variant="primary" type="submit">Create</Button>
       </Form>

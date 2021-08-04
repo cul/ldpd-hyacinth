@@ -1,9 +1,9 @@
-$form-group-margin-bottom: 1rem !default;
+//$form-group-margin-bottom: 1rem !default;
 
 // Default bootswatch pulse font size is too small, so we'll increase it.
 $font-size-base: 0.9375rem !default;
 
-$breadcrumb-padding-y: .45rem !default; // Reducing the padding
+//$breadcrumb-padding-y: .45rem !default; // Reducing the padding
 
 @import "~bootswatch/dist/pulse/variables";
 @import '~bootstrap/scss/bootstrap.scss';
@@ -11,124 +11,148 @@ $breadcrumb-padding-y: .45rem !default; // Reducing the padding
 
 body {}
 
-.table thead th {
-  border-top: none;
+
+
+// Disable Bootstrap 5 underlined links
+
+a, .btn-link {
+  text-decoration: none;
 }
 
-.text-orange {
-  color: #c78203;
+a:hover, .btn-link:hover {
+  text-decoration: underline;
 }
 
-// Lightening contextual-navbar
-nav.contextual-navbar {
-  background-color: #2e2b35 !important;
-}
-.ace_editor {
-  border: 1px solid #ddd;
-}
-
-.dropdown-header {
-  padding: 0rem .5rem;
-}
-
-.form-group.row {
-  margin-bottom: .5rem
-}
-
-@media (min-width: 576px) {
-  .float-right-form-label {
-    text-align: right
+.navbar {
+  a:hover, .btn-link:hover {
+    text-decoration: none;
   }
 }
 
-.digital-object-interface {
-  font-size: .9rem
+// Disable Bootstrap 5 link focus shadow
+
+.btn-link:focus {
+  box-shadow: none;
 }
 
-.digital-object-interface, {
-  .form-control {
-    @extend .form-control-sm;
-  }
-
-  .form-group {
-    margin-bottom: .25rem;
-  }
-
-  .card {
-    margin-bottom: .5rem;
-    margin-top: .5rem;
-  }
-}
-
-
-.term-search-form {
-  .form-control {
-    @extend .form-control-sm;
-  }
-}
-// Reducing padding for Cards.
-// .card {
-//   margin-bottom: 1rem;
-// }
-.card-header {
-  font-weight: 500;
-  padding: 0.25rem .5rem;
-}
-
-.card-body {
-  padding: .5rem;
-}
-
-.field-group-header-button {
-  padding: 0.05rem 0.35rem;
-  margin-left: .25rem;
-}
-
-// Making progress bars larger
 .progress {
-  height: 1.3rem;
-  font-size: .9rem;
+  height: 1rem;
 }
 
-// Adding rounded border to tabs
-.nav-tabs {
-  border-bottom: $nav-tabs-border-width solid #c6b6e2;
+// .table thead th {
+//   border-top: none;
+// }
 
-  .nav-link {
-    border: $nav-tabs-border-width solid transparent;
-    border-top-left-radius: 0.25rem;
-    border-top-right-radius: 0.25rem;
+// .text-orange {
+//   color: #c78203;
+// }
 
-    @include hover-focus {
-      border-color: lighten(#c6b6e2, 10);
-    }
+// // Lightening contextual-navbar
+// nav.contextual-navbar {
+//   background-color: #2e2b35 !important;
+// }
+// .ace_editor {
+//   border: 1px solid #ddd;
+// }
 
-    &.disabled {
-      color: $nav-link-disabled-color;
-      background-color: transparent;
-      border-color: transparent;
-    }
-  }
+// .dropdown-header {
+//   padding: 0rem .5rem;
+// }
 
-  .nav-link,
-  .nav-link.active, {
-    border-width: 1px 1px 0 1px;
-  }
+// .form-group.row {
+//   margin-bottom: .5rem
+// }
 
-  .nav-link.active {
-    border-color: #c6b6e2;
-  }
+// @media (min-width: 576px) {
+//   .float-right-form-label {
+//     text-align: right
+//   }
+// }
 
-  .nav-link:hover,
-  .nav-link.active,
-  .nav-link.active:hover,
-  .nav-link.active:focus {
-    border-bottom: none;
-  }
-}
+// .digital-object-interface {
+//   font-size: .9rem
+// }
 
-// Rounding out pills
-.badge-pill {
-  border-radius: 10rem;
-  padding: .2rem .3rem;
-}
+// .digital-object-interface, {
+//   .form-control {
+//     @extend .form-control-sm;
+//   }
+
+//   .form-group {
+//     margin-bottom: .25rem;
+//   }
+
+//   .card {
+//     margin-bottom: .5rem;
+//     margin-top: .5rem;
+//   }
+// }
+
+
+// .term-search-form {
+//   .form-control {
+//     @extend .form-control-sm;
+//   }
+// }
+// // Reducing padding for Cards.
+// // .card {
+// //   margin-bottom: 1rem;
+// // }
+// .card-header {
+//   font-weight: 500;
+//   padding: 0.25rem .5rem;
+// }
+
+// .card-body {
+//   padding: .5rem;
+// }
+
+// .field-group-header-button {
+//   padding: 0.05rem 0.35rem;
+//   margin-left: .25rem;
+// }
+
+// // Making progress bars larger
+// .progress {
+//   height: 1.3rem;
+//   font-size: .9rem;
+// }
+
+// // Adding rounded border to tabs
+// .nav-tabs {
+//   border-bottom: $nav-tabs-border-width solid #c6b6e2;
+
+//   .nav-link {
+//     border: $nav-tabs-border-width solid transparent;
+//     border-top-left-radius: 0.25rem;
+//     border-top-right-radius: 0.25rem;
+
+//     &.disabled {
+//       color: $nav-link-disabled-color;
+//       background-color: transparent;
+//       border-color: transparent;
+//     }
+//   }
+
+//   .nav-link,
+//   .nav-link.active, {
+//     border-width: 1px 1px 0 1px;
+//   }
+
+//   .nav-link.active {
+//     border-color: #c6b6e2;
+//   }
+
+//   .nav-link:hover,
+//   .nav-link.active,
+//   .nav-link.active:hover,
+//   .nav-link.active:focus {
+//     border-bottom: none;
+//   }
+// }
+
+// // Rounding out pills
+// .badge-pill {
+//   border-radius: 10rem;
+//   padding: .2rem .3rem;
+// }

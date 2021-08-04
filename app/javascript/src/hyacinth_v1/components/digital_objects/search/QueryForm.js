@@ -24,7 +24,7 @@ function QueryForm(props) {
   };
 
   return (
-    <Form onSubmit={submitHandler} className="flex-column">
+    <Form onSubmit={submitHandler} className="flex-column mt-3">
       <Form.Group as={Row}>
         <SelectInput
           xs={4}

@@ -128,13 +128,13 @@ function UserEdit() {
           </Col>
         </Form.Group>
 
-        <Form.Row>
-          <Form.Group as={Col}>
+        <Row>
+          <Col>
             <Form.Label>First Name</Form.Label>
             <Form.Control type="text" name="firstName" value={firstName} onChange={e => setFirstName(e.target.value)} />
-          </Form.Group>
+          </Col>
 
-          <Form.Group as={Col}>
+          <Col>
             <Form.Label>Last Name</Form.Label>
             <Form.Control
               type="text"
@@ -142,11 +142,11 @@ function UserEdit() {
               value={lastName}
               onChange={e => setLastName(e.target.value)}
             />
-          </Form.Group>
-        </Form.Row>
+          </Col>
+        </Row>
 
-        <Form.Row>
-          <Form.Group as={Col}>
+        <Row>
+          <Col>
             <Form.Label>Email</Form.Label>
             <Form.Control
               type="email"
@@ -158,8 +158,8 @@ function UserEdit() {
             <Form.Text className="text-muted">
               For Columbia sign-in, please use Columbia email: uni@columbia.edu
             </Form.Text>
-          </Form.Group>
-        </Form.Row>
+          </Col>
+        </Row>
 
         <InputGroup>
           <Label sm={2}>Is Active?</Label>
@@ -176,11 +176,11 @@ function UserEdit() {
           </Col>
         </InputGroup>
 
-        <Form.Row>
+        <Row>
           <Col>
             <Button
               variant="link"
-              className="pl-0"
+              className="p-0 mt-1 mb-3"
               onClick={() => setChangePasswordOpen(!changePasswordOpen)}
               aria-controls="collapse-form"
               aria-expanded={changePasswordOpen}
@@ -190,27 +190,27 @@ function UserEdit() {
               <FontAwesomeIcon icon={changePasswordOpen ? 'angle-double-up' : 'angle-double-down'} />
             </Button>
           </Col>
-        </Form.Row>
+        </Row>
 
         <Collapse in={changePasswordOpen}>
-          <div id="collapse-form">
+          <div id="collapse-form" className="mb-3">
             <Form.Group as={Row}>
-              <Form.Label column sm={{ span: 4, offset: 1 }}>Current Password</Form.Label>
-              <Col sm={6}>
+              <Form.Label column md={3} lg={2}>Current Password</Form.Label>
+              <Col md={9} lg={10}>
                 <Form.Control type="text" name="currentPassword" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} />
               </Col>
             </Form.Group>
 
             <Form.Group as={Row}>
-              <Form.Label column sm={{ span: 4, offset: 1 }}>Password</Form.Label>
-              <Col sm={6}>
+              <Form.Label column md={3} lg={2}>Password</Form.Label>
+              <Col md={9} lg={10}>
                 <Form.Control type="text" name="password" value={password} onChange={e => setPassword(e.target.value)} />
               </Col>
             </Form.Group>
 
             <Form.Group as={Row}>
-              <Form.Label column sm={{ span: 4, offset: 1 }}>Password Confirmation</Form.Label>
-              <Col sm={6}>
+              <Form.Label column md={3} lg={2}>Password Confirmation</Form.Label>
+              <Col md={9} lg={10}>
                 <Form.Control
                   type="text"
                   name="passwordConfirmation"
@@ -225,7 +225,7 @@ function UserEdit() {
         {
           isActive && (
             <>
-              <h5>System Wide Permissions</h5>
+              <h5 className="mb-3">System Wide Permissions</h5>
 
               <InputGroup>
                 <Can I="manage" a="all">
@@ -266,7 +266,7 @@ function UserEdit() {
                 />
                 <Checkbox
                   md={6}
-                  sn={12}
+                  sm={12}
                   value={manageAllDigitalObjects}
                   disabled={!ability.can('manage', 'all')}
                   onChange={v => setManageAllDigitalObjects(v)}
@@ -275,7 +275,7 @@ function UserEdit() {
                 />
                 <Checkbox
                   md={6}
-                  sn={12}
+                  sm={12}
                   value={manageResourceRequests}
                   disabled={!ability.can('manage', 'all')}
                   onChange={v => setManageResourceRequests(v)}
@@ -287,7 +287,7 @@ function UserEdit() {
           )
         }
 
-        <FormButtons onSave={onSave} />
+        <FormButtons onSave={onSave} formType="edit" />
       </Form>
     </>
   );

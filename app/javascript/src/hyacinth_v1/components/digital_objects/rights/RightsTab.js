@@ -15,7 +15,7 @@ function RightsTab(props) {
         { editButton
           && (
             <EditButton
-              className="float-right"
+              className="float-end"
               size="lg"
               link={`/digital_objects/${digitalObject.id}/rights/edit`}
             />

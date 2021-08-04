@@ -61,7 +61,7 @@ const DynamicField = ({ field, enabledFieldDataCallback, readOnly }) => {
       <Card.Body style={{ padding: '.75rem' }}>
         <Row>
           <Col md={2}>
-            <Badge variant="info">{field.displayLabel}</Badge>
+            <Badge bg="info">{field.displayLabel}</Badge>
           </Col>
           <Col xs={4} md={2}>
             <Form.Check
@@ -130,7 +130,7 @@ const DynamicField = ({ field, enabledFieldDataCallback, readOnly }) => {
           enabledFieldData.enabled && fieldSets.length > 0 && (
             <Row>
               <Form.Label column md={{ span: 2, offset: 2 }} disabled={readOnly}>
-                <span className="float-left">Field Sets</span>
+                <span className="float-start">Field Sets</span>
               </Form.Label>
               <Col md={8}>
                 <Select

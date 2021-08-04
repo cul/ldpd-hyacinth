@@ -31,9 +31,9 @@ function DynamicFieldIndex() {
         data && data.dynamicFieldCategories.map(cat => (
           <Card className="mb-3" key={cat.id} id={cat.displayLabel.replace(' ', '-')}>
             <Card.Header as="h5" className="text-center p-2">
-              <span className="badge badge-primary float-left">Category</span>
+              <span className="badge badge-primary float-start">Category</span>
               {cat.displayLabel}
-              <EditButton className="float-right" link={`/dynamic_field_categories/${cat.id}/edit`} />
+              <EditButton className="float-end" link={`/dynamic_field_categories/${cat.id}/edit`} />
             </Card.Header>
             <Card.Body>
               <DynamicFieldsAndGroupsTable rows={cat.children} onChange={refetch} />

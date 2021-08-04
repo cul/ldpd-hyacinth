@@ -17,8 +17,7 @@ class SelectInput extends React.PureComponent {
 
     return (
       <Col sm={10} style={{ alignSelf: 'center' }} {...rest}>
-        <Form.Control
-          as="select"
+        <Form.Select
           name={inputName}
           value={value}
           size={size}
@@ -31,7 +30,7 @@ class SelectInput extends React.PureComponent {
               <option key={o.value} value={o.value}>{o.label}</option>
             ))
           }
-        </Form.Control>
+        </Form.Select>
       </Col>
     );
   }

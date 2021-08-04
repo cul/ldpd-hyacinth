@@ -68,7 +68,7 @@ function BatchImportIndex() {
                   <strong className="text-danger">Setup errors encountered. View import details for more info.</strong>
                 </>
               )}
-              <div className="float-right">
+              <div className="float-end">
                 <ReadableDate date={batchImport.createdAt} />
               </div>
             </Card.Header>
@@ -88,11 +88,11 @@ function BatchImportIndex() {
                 <strong>Priority: </strong>
                 {startCase(batchImport.priority)}
               </Card.Text>
-              <Card.Text className="mb-1 float-left">
+              <Card.Text className="mb-1 float-start">
                 <strong>Status: </strong>
                 {startCase(batchImport.status)}
               </Card.Text>
-              <Card.Text className="mb-0 float-right">
+              <Card.Text className="mb-0 float-end">
                 <Button variant="danger" size="sm" onClick={() => onDelete(batchImport.id)}>
                   Delete
                 </Button>

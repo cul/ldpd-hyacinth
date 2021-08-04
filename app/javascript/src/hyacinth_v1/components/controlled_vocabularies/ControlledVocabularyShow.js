@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Form, Row, Col, Button, Table,
+  Form, Row, Col, Button, Table, InputGroup
 } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,7 +9,6 @@ import { useQuery } from '@apollo/react-hooks';
 
 import ContextualNavbar from '../shared/ContextualNavbar';
 import TextInput from '../shared/forms/inputs/TextInput';
-import InputGroup from '../shared/forms/InputGroup';
 import SearchButton from '../shared/buttons/SearchButton';
 import GraphQLErrors from '../shared/GraphQLErrors';
 import { getTermsQuery } from '../../graphql/terms';
@@ -69,7 +68,7 @@ function ControlledVocabularyShow() {
           Vocabulary
           <Can I="edit" of={{ subjectType: 'Vocabulary', stringKey: vocabulary.stringKey }}>
             <LinkContainer to={`/controlled_vocabularies/${vocabulary.stringKey}/edit`}>
-              <Button size="sm" variant="outline-primary" className="float-right">
+              <Button size="sm" variant="outline-primary" className="float-end">
                 <FontAwesomeIcon icon="pen" />
                 {' Edit Vocabulary'}
               </Button>
@@ -97,7 +96,7 @@ function ControlledVocabularyShow() {
         Terms
         <Can I="update" a="Term">
           <LinkContainer to={`/controlled_vocabularies/${vocabulary.stringKey}/terms/new`}>
-            <Button size="sm" variant="outline-primary" className="float-right" disabled={vocabulary.locked}>
+            <Button size="sm" variant="outline-primary" className="float-end" disabled={vocabulary.locked}>
               <FontAwesomeIcon icon="plus" />
               {' Add New Term'}
             </Button>
@@ -108,11 +107,16 @@ function ControlledVocabularyShow() {
       <div className="m-2">
         <Form className="term-search-form" onSubmit={onSearchHandler}>
           <InputGroup>
-            <TextInput sm={8} value={query} onChange={v => setQuery(v)} placeholder="Search for terms..." />
-            <SearchButton onClick={onSearchHandler} />
-            { query.length > 0 && query.length < 3 && <Form.Text className="text-muted pl-2">Query must be at least three characters.</Form.Text> }
+            <Form.Control
+              type="text"
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search for terms..."
+            />
+            <SearchButton sm="auto" onClick={onSearchHandler} />
           </InputGroup>
         </Form>
+
+        { query.length > 0 && query.length < 3 && <Form.Text className="text-muted pl-2">Query must be at least three characters.</Form.Text> }
 
         <Table hover responsive>
           <thead>

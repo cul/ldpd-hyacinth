@@ -36,7 +36,7 @@ export default class EnabledDynamicFieldShow extends React.Component {
           {`Enabled Dynamic Fields for ${startCase(digitalObjectType)}`}
           <Can I="update" of={{ subjectType: 'Project', stringKey: projectStringKey }}>
             <EditButton
-              className="float-right"
+              className="float-end"
               size="lg"
               link={`/projects/${projectStringKey}/enabled_dynamic_fields/${digitalObjectType}/edit`}
             />

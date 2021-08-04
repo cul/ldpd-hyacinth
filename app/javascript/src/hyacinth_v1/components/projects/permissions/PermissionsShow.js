@@ -23,7 +23,7 @@ function PermissionsShow() {
         Permissions
         <Can I="update" of={{ subjectType: 'Project', stringKey: data.project.stringKey }}>
           <EditButton
-            className="float-right"
+            className="float-end"
             size="lg"
             link={`/projects/${data.project.stringKey}/permissions/edit`}
           />

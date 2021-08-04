@@ -16,7 +16,8 @@ function TermOption(props) {
         <FontAwesomeIcon icon="info-circle" />
       </Button>
 
-      <Dropdown.Item
+      <Button
+        variant="link"
         className="px-1 mx-1"
         onClick={onSelect}
         key={term.uri}
@@ -24,11 +25,11 @@ function TermOption(props) {
         style={{ display: 'inline' }}
       >
         {`${term.prefLabel} `}
-      </Dropdown.Item>
+      </Button>
 
       {
         term.termType === 'temporary'
-          ? <Badge variant="danger">Temporary Term</Badge>
+          ? <Badge bg="danger">Temporary Term</Badge>
           : <a className="badge badge-primary" href={term.uri} target="_blank" rel="noopener noreferrer">{term.authority}</a>
       }
       <Collapse in={expanded}>

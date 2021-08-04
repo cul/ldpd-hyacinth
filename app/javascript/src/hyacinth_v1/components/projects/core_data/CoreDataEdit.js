@@ -100,20 +100,20 @@ function CoreDataEdit() {
           </Col>
         </Form.Group>
 
-        <Form.Group as={Row}>
-          <Form.Label column sm={2}>Has Asset Rights</Form.Label>
+        <Form.Group as={Row} className="my-3">
           <Col sm={10}>
-            <Form.Control
+            <Form.Check
               type="checkbox"
               name="hasAssetRights"
               value={hasAssetRights}
+              label="Has Asset Rights"
               onChange={e => setHasAssetRights(e.target.checked)}
               checked={hasAssetRights}
             />
           </Col>
         </Form.Group>
 
-        <Form.Row>
+        <Col>
           <Col sm="auto" className="mr-auto">
             <Can I="delete" a="Project">
               <Button variant="outline-danger" type="submit" onClick={onDeleteHandler}>Delete Project</Button>
@@ -127,7 +127,7 @@ function CoreDataEdit() {
           <Col sm="auto">
             <SubmitButton formType="edit" onClick={onSubmitHandler} />
           </Col>
-        </Form.Row>
+        </Col>
       </Form>
     </ProjectInterface>
   );

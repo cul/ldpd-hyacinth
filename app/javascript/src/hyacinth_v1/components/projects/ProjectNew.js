@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Col, Form, Button } from 'react-bootstrap';
+import { Row, Col, Form, Button } from 'react-bootstrap';
 import { useMutation } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 
@@ -42,8 +42,8 @@ function ProjectNew() {
       <GraphQLErrors errors={error} />
 
       <Form onSubmit={handleSubmit}>
-        <Form.Row>
-          <Form.Group as={Col} sm={6}>
+        <Row>
+          <Col sm={6}>
             <Form.Label>String Key</Form.Label>
             <Form.Control
               type="text"
@@ -51,9 +51,9 @@ function ProjectNew() {
               value={stringKey}
               onChange={e => setStringKey(e.target.value)}
             />
-          </Form.Group>
+          </Col>
 
-          <Form.Group as={Col} sm={6}>
+          <Col sm={6}>
             <Form.Label>Display Label</Form.Label>
             <Form.Control
               type="text"
@@ -61,11 +61,11 @@ function ProjectNew() {
               value={displayLabel}
               onChange={e => setDisplayLabel(e.target.value)}
             />
-          </Form.Group>
-        </Form.Row>
+          </Col>
+        </Row>
 
-        <Form.Row>
-          <Form.Group as={Col}>
+        <Row>
+          <Col>
             <Form.Label>Project URL</Form.Label>
             <Form.Control
               type="text"
@@ -73,21 +73,21 @@ function ProjectNew() {
               value={projectUrl}
               onChange={e => setProjectUrl(e.target.value)}
             />
-          </Form.Group>
-        </Form.Row>
+          </Col>
+        </Row>
 
-        <Form.Row>
-          <Form.Group as={Col}>
-            <Form.Label>Assets Rights?</Form.Label>
-            <Form.Control
+        <Row className="my-3">
+          <Col>
+            <Form.Check
               type="checkbox"
               name="hasAssetRights"
               value={hasAssetRights}
+              label="Asset Rights?"
               onChange={e => setHasAssetRights(e.target.checked)}
               checked={hasAssetRights}
             />
-          </Form.Group>
-        </Form.Row>
+          </Col>
+        </Row>
 
         <Button variant="primary" type="submit" onClick={handleSubmit}>Create</Button>
       </Form>

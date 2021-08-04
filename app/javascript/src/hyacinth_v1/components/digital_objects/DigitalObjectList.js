@@ -51,7 +51,7 @@ const DigitalObjectList = (props) => {
       {
         digitalObjects.map((digitalObject, resultIndex) => (
           <Card key={digitalObject.id} className="mb-3">
-            <Card.Header>
+            <Card.Header className="px-2 py-1">
               <Link
                 to={`/digital_objects/${digitalObject.id}`}
                 onClick={() => searchParams && storeSearchValues(
@@ -62,7 +62,7 @@ const DigitalObjectList = (props) => {
                 {digitalObject.title}
               </Link>
             </Card.Header>
-            <Card.Body>
+            <Card.Body className="p-2">
               <ul className="list-unstyled small">
                 <li>
                   <strong>ID: </strong>
@@ -85,12 +85,12 @@ const DigitalObjectList = (props) => {
                   )
                 }
               </ul>
-              <Badge variant="secondary">{startCase(digitalObject.digitalObjectType)}</Badge>
+              <Badge bg="secondary">{startCase(digitalObject.digitalObjectType)}</Badge>
               {
                 displayProjects && digitalObject.projects.map(p => (
                   <span key={`${digitalObject.id}_${p.stringKey}`}>
                     {' '}
-                    <Badge variant="primary">{p.displayLabel}</Badge>
+                    <Badge bg="primary">{p.displayLabel}</Badge>
                   </span>
                 ))
               }

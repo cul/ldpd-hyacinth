@@ -75,7 +75,7 @@ function BatchExportIndex() {
             <Card key={batchExport.id} className={`mb-3 ${highlight && highlight === batchExport.id ? 'bg-light' : ''}`}>
               <Card.Header>
                 {`Export ID: ${batchExport.id}`}
-                <div className="float-right">
+                <div className="float-end">
                   {moment(batchExport.createdAt).format('MMMM Do YYYY, h:mm:ss a')}
                 </div>
               </Card.Header>
@@ -97,13 +97,13 @@ function BatchExportIndex() {
                   <strong>Records Processed: </strong>
                   { `${batchExport.numberOfRecordsProcessed} / ${batchExport.totalRecordsToProcess}` }
                 </Card.Text>
-                <Card.Text className="mb-1 float-left">
+                <Card.Text className="mb-1 float-start">
                   <strong>Status: </strong>
                   {batchExport.status}
                   {' '}
                   <small>{ `(${batchExport.duration} ${batchExport.duration === 1 ? 'second' : 'seconds'})` }</small>
                 </Card.Text>
-                <Card.Text className="mb-0 float-right">
+                <Card.Text className="mb-0 float-end">
                   {
                     batchExport.exportErrors.length > 0
                       && (

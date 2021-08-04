@@ -10,7 +10,7 @@ class ContextualNavbar extends React.PureComponent {
     return (
       <Navbar variant="dark" bg="dark" expand="lg" className="px-3 py-0 mt-2 mb-2 rounded contextual-navbar">
         { title && <Navbar.Brand>{title}</Navbar.Brand> }
-        <Nav className="ml-auto">
+        <Nav className="ms-auto">
           {children}
           {
             rightHandLinks.map((obj, i) => (

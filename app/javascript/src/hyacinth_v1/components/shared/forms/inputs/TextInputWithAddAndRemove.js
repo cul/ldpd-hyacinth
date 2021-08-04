@@ -57,14 +57,12 @@ class TextInputWithAddAndRemove extends React.PureComponent {
                     onChange={e => this.onChangeHandler(i, e)}
                     placeholder={placeholder}
                   />
-                  <InputGroup.Append>
-                    <Button variant="danger" size="sm" onClick={() => this.removeHandler(i)}>
-                      <FontAwesomeIcon icon="minus" />
-                    </Button>
-                    <Button variant="success" size="sm" onClick={() => this.addHandler(i)}>
-                      <FontAwesomeIcon icon="plus" />
-                    </Button>
-                  </InputGroup.Append>
+                  <Button variant="danger" size="sm" onClick={() => this.removeHandler(i)}>
+                    <FontAwesomeIcon icon="minus" />
+                  </Button>
+                  <Button variant="success" size="sm" onClick={() => this.addHandler(i)}>
+                    <FontAwesomeIcon icon="plus" />
+                  </Button>
                 </InputGroup>
               </Col>
             </Form.Group>

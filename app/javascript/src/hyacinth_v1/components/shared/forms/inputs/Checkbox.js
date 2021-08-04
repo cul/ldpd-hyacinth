@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Col, Form } from 'react-bootstrap';
 
+let uniqueCheckboxIdCounter = 0;
+
 class Checkbox extends React.PureComponent {
   onChangeHandler = (event) => {
     const { target: { checked } } = event;
@@ -16,12 +18,17 @@ class Checkbox extends React.PureComponent {
     } = this.props;
 
     return (
-      <Col sm={8} style={{ alignSelf: 'center' }} {...rest}>
-        <Form.Check type="checkbox" id={inputName}>
-          <Form.Check.Input type="checkbox" onChange={this.onChangeHandler} name={inputName} checked={value} disabled={disabled} />
-          <Form.Check.Label>{label}</Form.Check.Label>
-          { helpText && <p className="text-muted">{helpText}</p> }
-        </Form.Check>
+      <Col {...rest}>
+        <Form.Check
+          id={inputName || `checkbox-${uniqueCheckboxIdCounter++}`} // id is required for label to work with
+          name={inputName}
+          type="checkbox"
+          label={label}
+          onChange={this.onChangeHandler}
+          checked={value}
+          disabled={disabled}
+        />
+        { helpText && <p className="text-muted">{helpText}</p> }
       </Col>
     );
   }

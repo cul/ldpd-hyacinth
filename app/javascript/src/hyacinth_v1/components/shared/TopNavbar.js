@@ -35,7 +35,7 @@ function TopNavbar(props) {
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
 
       <Navbar.Collapse id="responsive-navbar-nav">
-        <Nav className="mr-auto">
+        <Nav className="me-auto">
           <LinkContainer to="/digital_objects">
             <Nav.Link>Digital Objects</Nav.Link>
           </LinkContainer>
@@ -98,7 +98,7 @@ function TopNavbar(props) {
         </Nav>
 
         <Nav>
-          <NavDropdown alignRight title={`${user.firstName} ${user.lastName}`}>
+          <NavDropdown title={`${user.firstName} ${user.lastName}`}>
             <LinkContainer to={`/users/${user.id}/edit`}>
               <NavDropdown.Item>Profile</NavDropdown.Item>
             </LinkContainer>

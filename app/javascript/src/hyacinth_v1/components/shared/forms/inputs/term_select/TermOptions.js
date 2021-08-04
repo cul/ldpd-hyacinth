@@ -75,7 +75,7 @@ function TermOptions({ vocabularyStringKey, onChange, close }) {
         {`${vocabulary.label} Controlled Vocabulary`}
         {
           !displayNewTerm && (
-            <span className="float-right">
+            <span className="float-end">
               <AddButton onClick={() => setDisplayNewTerm(true)}> New Term</AddButton>
             </span>
           )
@@ -121,7 +121,7 @@ function TermOptions({ vocabularyStringKey, onChange, close }) {
 
             {
               totalTerms > terms.length
-                && <Button variant="link" onClick={onMoreHandler} className="float-right py-0">More...</Button>
+                && <Button variant="link" onClick={onMoreHandler} className="float-end py-0">More...</Button>
             }
           </div>
         )

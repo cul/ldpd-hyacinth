@@ -102,7 +102,7 @@ function TermForm(props) {
     <Form onSubmit={onSubmitHandler}>
       <GraphQLErrors errors={createError || updateError || deleteError} />
 
-      <InputGroup>
+      <InputGroup className="mb-2">
         <Label sm={labelColWidth}>Term Type</Label>
         {
           formType === 'new'
@@ -111,7 +111,7 @@ function TermForm(props) {
         }
       </InputGroup>
 
-      <InputGroup>
+      <InputGroup className="mb-2">
         <Label sm={labelColWidth}>URI</Label>
 
         {
@@ -127,7 +127,7 @@ function TermForm(props) {
         }
       </InputGroup>
 
-      <InputGroup>
+      <InputGroup className="mb-2">
         <Label sm={labelColWidth}>Pref Label</Label>
         {
           termType === 'temporary' && formType !== 'new'
@@ -138,14 +138,14 @@ function TermForm(props) {
 
       {
         termType !== 'temporary' && (
-          <InputGroup>
+          <InputGroup className="mb-2">
             <Label sm={labelColWidth}>Alternative Labels</Label>
             <TextInputWithAddAndRemove sm={inputColWidth} values={altLabels} onChange={v => setAltLabels(v)} />
           </InputGroup>
         )
       }
 
-      <InputGroup>
+      <InputGroup className="mb-2">
         <Label sm={labelColWidth}>Authority</Label>
         <TextInput sm={inputColWidth} value={authority} onChange={v => setAuthority(v)} />
       </InputGroup>

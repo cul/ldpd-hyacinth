@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Form, Col } from 'react-bootstrap';
+import { Form, Row, Col } from 'react-bootstrap';
 
 import ProgressButton from './buttons/ProgressButton';
 import CancelButton from './buttons/CancelButton';
@@ -10,8 +10,8 @@ function FormButtons({
   formType, cancelTo, cancelAction, onDelete, onSave, onSuccess, onError,
 }) {
   return (
-    <Form.Row>
-      <Col sm="auto" className="mr-auto">
+    <Row>
+      <Col className="mr-auto">
         { onDelete && <DeleteButton onClick={onDelete} formType={formType} /> }
       </Col>
 
@@ -29,7 +29,7 @@ function FormButtons({
           onError={onError}
         />
       </Col>
-    </Form.Row>
+    </Row>
   );
 }
 
@@ -48,7 +48,7 @@ FormButtons.propTypes = {
 FormButtons.defaultProps = {
   cancelTo: null,
   cancelAction: null,
-  onDelete: () => {},
+  onDelete: null,
   onSave: () => {},
   onSuccess: () => {},
   onError: () => {},

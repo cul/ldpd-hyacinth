@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Col, Form, Collapse } from 'react-bootstrap';
+import { Row, Col, Form, Collapse } from 'react-bootstrap';
 import { capitalize } from 'lodash';
 import { useHistory } from 'react-router-dom';
 
@@ -43,14 +43,14 @@ function DigitalObjectNew() {
 
           <Collapse in={digitalObjectType != null && digitalObjectType !== ''}>
             <div>
-              <Form.Row>
+              <Row>
                 <Col sm="auto" className="ml-auto">
                   <SubmitButton
                     formType="new"
                     onClick={onSubmitHandler}
                   />
                 </Col>
-              </Form.Row>
+              </Row>
             </div>
           </Collapse>
         </div>

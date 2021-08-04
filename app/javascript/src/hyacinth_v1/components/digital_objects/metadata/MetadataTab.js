@@ -15,7 +15,7 @@ function MetadataTab(props) {
         { editButton
           && (
             <EditButton
-              className="float-right"
+              className="float-end"
               size="lg"
               link={`/digital_objects/${digitalObject.id}/metadata/edit`}
             />

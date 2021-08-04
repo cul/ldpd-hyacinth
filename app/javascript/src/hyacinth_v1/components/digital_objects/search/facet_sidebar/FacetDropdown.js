@@ -13,9 +13,9 @@ const FacetDropdown = ({ facet, onFacetSelect, selectedValues }) => {
 
   return (
     <div className="border-bottom border-secondary">
-      <Button className="px-0" variant="link" block onClick={() => setOpen(o => !o)}>
-        <span className="text-left float-left">{facet.displayLabel}</span>
-        <span className="float-right"><FontAwesomeIcon size="lg" icon={open ? 'caret-up' : 'caret-down'} /></span>
+      <Button className="px-0 w-100" variant="link" block onClick={() => setOpen(o => !o)}>
+        <span className="float-start">{facet.displayLabel}</span>
+        <span className="float-end"><FontAwesomeIcon size="lg" icon={open ? 'caret-up' : 'caret-down'} /></span>
       </Button>
       <Collapse in={open}>
         <div>

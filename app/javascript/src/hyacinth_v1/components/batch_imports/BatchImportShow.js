@@ -146,7 +146,7 @@ function BatchImportShow() {
           )}
         </Row>
 
-        <Link className="float-right" to={`/batch_imports/${id}/digital_object_imports`}>View Details &raquo;</Link>
+        <Link className="float-end" to={`/batch_imports/${id}/digital_object_imports`}>View Details &raquo;</Link>
         <h5>
             Digital Object Imports
         </h5>
@@ -169,7 +169,7 @@ function BatchImportShow() {
             {`${total} `}
             {
               (status === 'IN_PROGRESS' || status === 'PENDING') && (
-                <Button variant="link" className="float-right" size="sm" onClick={flipPolling}>
+                <Button variant="link" className="float-end" size="sm" onClick={flipPolling}>
                   {polling ? 'Stop' : 'Start'}
                   {' '}
                   Polling

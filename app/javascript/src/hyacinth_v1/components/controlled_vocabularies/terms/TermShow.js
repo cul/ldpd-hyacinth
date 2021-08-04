@@ -69,7 +69,7 @@ function TermShow() {
 
         <Can I="update" a="Term">
           <EditButton
-            className="float-right"
+            className="float-end"
             size={null}
             link={`/controlled_vocabularies/${vocabulary.stringKey}/terms/${encodeURIComponent(term.uri)}/edit`}
             disabled={vocabulary.locked}
