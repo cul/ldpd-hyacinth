@@ -5,10 +5,13 @@ require 'rails_helper'
 RSpec.describe 'Retrieving Facet Values', type: :request, solr: true do
   let!(:authorized_object) { FactoryBot.create(:item, :with_ascii_title, :with_other_projects) }
   let!(:authorized_project) { authorized_object.projects.first }
+  let!(:unauthorized_project) { FactoryBot.create(:project, string_key: 'other_project', display_label: 'Another Project') }
   let!(:unauthorized_object) do
+    dynamic_fields = DynamicFieldsHelper.load_title_fields! # Adding dynamic fields used in descriptive metadata. Validations will fail if these field definitions aren't present.
+    DynamicFieldsHelper.enable_dynamic_fields(:item, unauthorized_project, dynamic_fields)
     FactoryBot.create(
       :item,
-      'primary_project' => FactoryBot.create(:project, string_key: 'other_project', display_label: 'Another Project'),
+      'primary_project' => unauthorized_project,
       'descriptive_metadata' => {
         'title' => [
           {

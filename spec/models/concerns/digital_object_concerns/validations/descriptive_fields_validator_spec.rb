@@ -66,7 +66,8 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
   end
 
   before do
-    Hyacinth::DynamicFieldsLoader.load_fields!(field_definitions, load_vocabularies: true)
+    Hyacinth::DynamicFieldsLoader.load_fields!(field_definitions.deep_dup, load_vocabularies: true)
+    enable_dynamic_fields(item.digital_object_type, item.primary_project, fields_for_category_definitions(field_definitions))
   end
 
   context 'with correct structure' do

@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe DigitalObject::DynamicFieldsValidator do
   let(:project) { FactoryBot.create(:project) }
-  let(:item) { FactoryBot.build(:item, primary_project: project, enable_fields: false, descriptive_metadata: descriptive_metadata) }
+  let(:item) { FactoryBot.build(:item, primary_project: project, descriptive_metadata: descriptive_metadata) }
 
   # Setting up descriptive_metadata fields
   let(:field_definitions) do
