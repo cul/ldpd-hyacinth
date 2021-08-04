@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe DigitalObject::DescriptiveFieldsValidator do
-  let(:item) { FactoryBot.create(:item, enable_fields: false) }
+  let(:item) { FactoryBot.build(:item, :with_ascii_title, descriptive_metadata: descriptive_metadata) }
 
   # Setting up descriptive_metadata fields
   let(:field_definitions) do
@@ -67,7 +67,6 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
 
   before do
     Hyacinth::DynamicFieldsLoader.load_fields!(field_definitions, load_vocabularies: true)
-    item.assign_descriptive_metadata({ 'descriptive_metadata' => descriptive_metadata }, false)
   end
 
   context 'with correct structure' do

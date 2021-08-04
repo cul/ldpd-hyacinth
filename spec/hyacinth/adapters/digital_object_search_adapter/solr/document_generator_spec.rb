@@ -7,9 +7,8 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
   context "#solr_document_for" do
     subject(:document) { adapter.solr_document_for(authorized_object) }
 
-    let(:authorized_object) { FactoryBot.build(:item, :with_descriptive_metadata, :with_timestamps) }
+    let(:authorized_object) { FactoryBot.build(:item, :with_ascii_title, :with_timestamps) }
     let(:adapter) { described_class.new }
-
     before do
       authorized_object.uid = 'dummy-uid'
       authorized_object.created_at = DateTime.current
@@ -57,6 +56,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
     end
 
     context 'with descriptive_metadata' do
+      let(:authorized_object) { FactoryBot.build(:item, :with_ascii_title, :with_timestamps, descriptive_metadata: descriptive_metadata) }
       let(:descriptive_metadata) do
         {
           'name' => [
@@ -83,7 +83,6 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
         DynamicFieldsHelper.load_name_fields!
         DynamicFieldsHelper.load_alternate_title_fields!
         DynamicFieldsHelper.load_isbn_fields!
-        authorized_object.assign_descriptive_metadata('descriptive_metadata' => descriptive_metadata)
       end
 
       it 'adds correct fields' do

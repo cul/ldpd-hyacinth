@@ -21,7 +21,7 @@ FactoryBot.define do
     end
 
     trait :with_sample_data do
-      with_descriptive_metadata
+      with_ascii_title
 
       after(:build) do |digital_object|
         digital_object.instance_variable_set('@custom_field1', 'excellent value 1')
@@ -29,7 +29,7 @@ FactoryBot.define do
       end
     end
 
-    trait :with_descriptive_metadata do
+    trait :with_ascii_title do
       after(:build) do |digital_object|
         DynamicFieldsHelper.load_title_fields! # Load fields.
         DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project)

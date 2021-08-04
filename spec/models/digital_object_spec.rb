@@ -242,7 +242,7 @@ RSpec.describe DigitalObject, type: :model, solr: true do
     end
 
     describe 'metadata and resource attribute persistence and retrieval' do
-      let(:instance) { FactoryBot.build(:digital_object_test_subclass, :with_descriptive_metadata, :with_test_resource1) }
+      let(:instance) { FactoryBot.build(:digital_object_test_subclass, :with_ascii_title, :with_test_resource1) }
       it 'persists metadata attributes and can retrieve them when a record is loaded' do
         instance.save
         expect(DigitalObject.find_by_uid(instance.uid).descriptive_metadata['title'].first['sort_portion']).to eq('Tall Man and His Hat')

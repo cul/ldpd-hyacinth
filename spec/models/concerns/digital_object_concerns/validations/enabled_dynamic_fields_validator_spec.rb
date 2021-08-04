@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe DigitalObject::DynamicFieldsValidator do
   let(:project) { FactoryBot.create(:project) }
-  let(:item) { FactoryBot.create(:item, primary_project: project, enable_fields: false) }
+  let(:item) { FactoryBot.build(:item, primary_project: project, enable_fields: false, descriptive_metadata: descriptive_metadata) }
 
   # Setting up descriptive_metadata fields
   let(:field_definitions) do
@@ -71,7 +71,6 @@ RSpec.describe DigitalObject::DynamicFieldsValidator do
   context 'when new values are being added to a descriptive field' do
     before do
       Hyacinth::DynamicFieldsLoader.load_fields!(field_definitions, load_vocabularies: true)
-      item.assign_descriptive_metadata({ 'descriptive_metadata' => descriptive_metadata }, false)
 
       FactoryBot.create(:enabled_dynamic_field, project: project, dynamic_field: DynamicField.find_by_path_traversal(['group2', 'controlled_term_field']))
       FactoryBot.create(:enabled_dynamic_field, project: project, dynamic_field: DynamicField.find_by_path_traversal(['group2', 'boolean_field']))
