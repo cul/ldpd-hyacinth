@@ -103,7 +103,7 @@ RSpec.describe BatchExportJob do
   describe '.digital_object_as_export', solr: false do
     context 'with utf8 descriptive metadata values' do
       let(:authorized_object) do
-        FactoryBot.build(:item, :with_rights, :with_utf8_descriptive_metadata, :with_other_projects)
+        FactoryBot.build(:item, :with_rights, :with_utf8_title, :with_other_projects)
       end
       let(:json_data) { described_class.digital_object_as_export(authorized_object) }
       let(:actual_value) { json_data&.dig('title', 0, 'sort_portion') }

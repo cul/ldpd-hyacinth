@@ -6,11 +6,8 @@ FactoryBot.define do
       enable_fields { true }
     end
 
-    after(:build) do |digital_object|
+    after(:build) do |digital_object, evaluator|
       digital_object.primary_project = create(:project) if digital_object.primary_project.blank?
-    end
-
-    before(:create) do |digital_object, evaluator|
       DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project) if evaluator.enable_fields
     end
 
@@ -21,11 +18,11 @@ FactoryBot.define do
       updated_at { DateTime.current }
     end
 
-    trait :with_descriptive_metadata do
-      after(:build) do |digital_object|
+    trait :with_ascii_title do
+      after(:build) do |digital_object, evaluator|
         DynamicFieldsHelper.load_title_fields! # Adding dynamic fields used in descriptive metadata. Validations will fail if these field definitions aren't present.
-
-        digital_object.assign_descriptive_metadata({
+        DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project) if evaluator.enable_fields
+        digital_object.assign_descriptive_metadata(
           'descriptive_metadata' => {
             'title' => [
               {
@@ -34,15 +31,15 @@ FactoryBot.define do
               }
             ]
           }
-        })
+        )
       end
     end
 
-    trait :with_utf8_descriptive_metadata do
-      after(:build) do |digital_object|
+    trait :with_utf8_title do
+      after(:build) do |digital_object, evaluator|
         DynamicFieldsHelper.load_title_fields! # Adding dynamic fields used in descriptive metadata. Validations will fail if these field definitions aren't present.
-
-        digital_object.assign_descriptive_metadata({
+        DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project) if evaluator.enable_fields
+        digital_object.assign_descriptive_metadata(
           'descriptive_metadata' => {
             'title' => [
               {
@@ -50,7 +47,7 @@ FactoryBot.define do
               }
             ]
           }
-        })
+        )
       end
     end
 

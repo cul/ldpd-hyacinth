@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe 'Retrieving Digital Object', type: :request, solr: true do
   let(:authorized_object) do
-    FactoryBot.create(:item, :with_rights, :with_descriptive_metadata, :with_other_projects)
+    FactoryBot.create(:item, :with_rights, :with_ascii_title, :with_other_projects)
   end
   let(:authorized_project) { authorized_object.projects.first }
   let(:authorized_publish_target) { authorized_project.publish_targets.first }
@@ -79,7 +79,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request, solr: true do
     end
     context 'with utf8 descriptive metadata values' do
       let(:authorized_object) do
-        FactoryBot.create(:item, :with_rights, :with_utf8_descriptive_metadata, :with_other_projects)
+        FactoryBot.create(:item, :with_rights, :with_utf8_title, :with_other_projects)
       end
       let(:json_data) { JSON.parse(response.body) }
       let(:actual_value) { json_data&.dig('data', 'digitalObject', 'descriptiveMetadata', 'title', 0, 'sort_portion') }

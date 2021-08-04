@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe DigitalObjectConcerns::CreateAndUpdateTerms, solr: true do
-  let(:digital_object) { FactoryBot.build(:digital_object_test_subclass) }
+  let(:digital_object) { FactoryBot.build(:digital_object_test_subclass, descriptive_metadata: descriptive_metadata) }
   let(:vocab) { FactoryBot.create(:vocabulary, :with_custom_field) }
 
   let(:field_definitions) do
@@ -27,7 +27,6 @@ RSpec.describe DigitalObjectConcerns::CreateAndUpdateTerms, solr: true do
 
   before do
     Hyacinth::DynamicFieldsLoader.load_fields!(field_definitions) # Define Fields
-    digital_object.assign_descriptive_metadata('descriptive_metadata' => descriptive_metadata)
   end
 
   context "#create_and_update_terms" do

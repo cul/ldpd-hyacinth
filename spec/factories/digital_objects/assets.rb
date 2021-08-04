@@ -28,7 +28,7 @@ FactoryBot.define do
       end
     end
 
-    trait :with_descriptive_metadata do
+    trait :with_ascii_title do
       after(:build) do |digital_object|
         DynamicFieldsHelper.load_title_fields! # Load fields
 
