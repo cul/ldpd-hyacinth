@@ -43,6 +43,7 @@ module DigitalObjectConcerns
       assign_optimistic_lock_token(new_digital_object_data)
       assign_parents(new_digital_object_data)
       assign_preserve(new_digital_object_data)
+      assign_preservation_target_uris(new_digital_object_data)
       assign_pending_publish_entries(new_digital_object_data)
       assign_resource_imports(new_digital_object_data)
       assign_state(new_digital_object_data)
