@@ -2,13 +2,8 @@
 
 FactoryBot.define do
   factory :item, class: DigitalObject::Item do
-    transient do
-      enable_fields { true }
-    end
-
-    after(:build) do |digital_object, evaluator|
+    after(:build) do |digital_object|
       digital_object.primary_project = create(:project) if digital_object.primary_project.blank?
-      DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project) if evaluator.enable_fields
     end
 
     # Timestamps are set when an object is saved, but sometimes it's useful
@@ -19,9 +14,9 @@ FactoryBot.define do
     end
 
     trait :with_ascii_title do
-      after(:build) do |digital_object, evaluator|
-        DynamicFieldsHelper.load_title_fields! # Adding dynamic fields used in descriptive metadata. Validations will fail if these field definitions aren't present.
-        DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project) if evaluator.enable_fields
+      after(:build) do |digital_object|
+        dynamic_fields = DynamicFieldsHelper.load_title_fields! # Adding dynamic fields used in descriptive metadata. Validations will fail if these field definitions aren't present.
+        DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project, dynamic_fields)
         digital_object.assign_descriptive_metadata(
           'descriptive_metadata' => {
             'title' => [
@@ -36,9 +31,9 @@ FactoryBot.define do
     end
 
     trait :with_utf8_title do
-      after(:build) do |digital_object, evaluator|
-        DynamicFieldsHelper.load_title_fields! # Adding dynamic fields used in descriptive metadata. Validations will fail if these field definitions aren't present.
-        DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project) if evaluator.enable_fields
+      after(:build) do |digital_object|
+        dynamic_fields = DynamicFieldsHelper.load_title_fields! # Adding dynamic fields used in descriptive metadata. Validations will fail if these field definitions aren't present.
+        DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project, dynamic_fields)
         digital_object.assign_descriptive_metadata(
           'descriptive_metadata' => {
             'title' => [

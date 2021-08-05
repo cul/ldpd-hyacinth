@@ -26,7 +26,8 @@ RSpec.describe Mutations::DigitalObject::UpdateDescriptiveMetadata, type: :reque
   end
 
   before do
-    Hyacinth::DynamicFieldsLoader.load_fields!(field_definitions)
+    Hyacinth::DynamicFieldsLoader.load_fields!(field_definitions.deep_dup, load_vocabularies: true)
+    enable_dynamic_fields(authorized_item.digital_object_type, authorized_item.primary_project, fields_for_category_definitions(field_definitions))
   end
 
   include_examples 'requires user to have correct permissions for graphql request' do

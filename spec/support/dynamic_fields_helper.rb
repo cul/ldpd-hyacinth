@@ -3,6 +3,45 @@
 module DynamicFieldsHelper
   module_function
 
+  def fields_for_category_definitions(field_definitions)
+    fields = []
+    field_definitions[:dynamic_field_categories].each do |category_config|
+      display_label = category_config.delete(:display_label)
+      dynamic_field_groups = category_config.delete(:dynamic_field_groups)
+
+      category = DynamicFieldCategory.find_by!(display_label: display_label)
+      dynamic_field_groups.each do |group_config|
+        fields.concat(fields_for_group_definition(category, group_config))
+      end
+    end
+    fields
+  end
+
+  def fields_for_group_definition(parent, group_config)
+    fields = []
+    dynamic_fields = group_config.delete(:dynamic_fields)
+    dynamic_field_groups = group_config.delete(:dynamic_field_groups)
+    string_key = group_config.delete(:string_key)
+
+    group = DynamicFieldGroup.find_by!(string_key: string_key, parent: parent)
+
+    fields.concat dynamic_fields.map { |field_config| field_for_definition(group, field_config) } if dynamic_fields
+    dynamic_field_groups&.each do |child_group_config|
+      fields.concat(fields_for_group_definition(group, child_group_config))
+    end
+    fields
+  end
+
+  def field_for_definition(group, field_config)
+    string_key = field_config.fetch(:string_key, nil)
+    DynamicField.find_by!(string_key: string_key, dynamic_field_group: group)
+  end
+
+  def load_and_return!(field_definitions)
+    Hyacinth::DynamicFieldsLoader.load_fields!(field_definitions.deep_dup)
+    fields_for_category_definitions(field_definitions)
+  end
+
   def load_sample_item_rights_fields!
     rights_fields = {
       dynamic_field_categories: [
@@ -24,7 +63,7 @@ module DynamicFieldsHelper
       ]
     }
 
-    Hyacinth::DynamicFieldsLoader.load_fields!(rights_fields)
+    load_and_return!(rights_fields)
   end
 
   def load_title_fields!
@@ -46,7 +85,7 @@ module DynamicFieldsHelper
       ]
     }
 
-    Hyacinth::DynamicFieldsLoader.load_fields!(title_fields)
+    load_and_return!(title_fields)
   end
 
   def load_abstract_fields!
@@ -67,7 +106,7 @@ module DynamicFieldsHelper
       ]
     }
 
-    Hyacinth::DynamicFieldsLoader.load_fields!(abstract_fields)
+    load_and_return!(abstract_fields)
   end
 
   def load_name_fields!
@@ -98,7 +137,7 @@ module DynamicFieldsHelper
       ]
     }
 
-    Hyacinth::DynamicFieldsLoader.load_fields!(name_fields)
+    load_and_return!(name_fields)
   end
 
   def load_alternate_title_fields!
@@ -119,7 +158,7 @@ module DynamicFieldsHelper
       ]
     }
 
-    Hyacinth::DynamicFieldsLoader.load_fields!(alternate_title_fields)
+    load_and_return!(alternate_title_fields)
   end
 
   def load_isbn_fields!
@@ -140,11 +179,11 @@ module DynamicFieldsHelper
       ]
     }
 
-    Hyacinth::DynamicFieldsLoader.load_fields!(isbn_fields)
+    load_and_return!(isbn_fields)
   end
 
-  def enable_dynamic_fields(digital_object_type, project)
-    DynamicField.all.each do |df|
+  def enable_dynamic_fields(digital_object_type, project, dynamic_fields = DynamicField.all)
+    dynamic_fields.each do |df|
       attrs = {
         project: project,
         dynamic_field: df,
