@@ -216,8 +216,8 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       end
 
       context "persists model properties that apply to an asset" do
-        let(:dsids) { [] }
         let(:hyacinth_object) { FactoryBot.build(:asset, :with_master_resource) }
+        let(:dsids) { ['content'] }
         let(:model_property) do
           {
             predicate: "info:fedora/fedora-system:def/model#hasModel",
@@ -265,6 +265,12 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
         it do
           hyacinth_object.image_size_restriction = Hyacinth::DigitalObject::Asset::ImageSizeRestriction::DOWNSCALE_UNLESS_AUTHORIZED
           adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
+          content_ds = rubydora_object.datastreams['content']
+
+          expect(content_ds.changed?).to be true
+          expect(content_ds.controlGroup).to eql('E')
+          expect(content_ds.content).to be_blank
+          expect(content_ds.dsLocation).to start_with "file:/"
         end
       end
     end
@@ -308,10 +314,10 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       end
     end
     context "RelsInt properties for resources" do
-      let(:dsids) { [] }
       let(:hyacinth_object) { FactoryBot.build(:asset) }
+      let(:dsids) { [] }
       let(:resource_name) { hyacinth_object.master_resource_name }
-      let(:resource_args) { { original_file_path: '/old/path/to/file.doc', location: '/path/to/file.doc', checksum: 'sha256:asdf', file_size: 'asdf' } }
+      let(:resource_args) { { original_file_path: '/old/path/to/file.doc', location: 'tracked-disk:///path/to/file.doc', checksum: 'sha256:asdf', file_size: 'asdf' } }
       let(:extent_property) do
         {
           predicate: described_class::RelsIntProperties::URIS::EXTENT,
@@ -343,8 +349,8 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       end
     end
     context "text derivative resource for an Asset" do
-      let(:dsids) { ['fulltext', 'hyacinth_data'] }
       let(:hyacinth_object) { FactoryBot.build(:asset, :with_master_resource, :with_fulltext_resource) }
+      let(:dsids) { ['fulltext', 'hyacinth_data', 'content'] }
       let(:profile_xml) { file_fixture("fedora3/new-object.xml").read }
       let(:datastreams_xml) { file_fixture("fedora3/new-datastreams.xml").read }
       let(:expected_content) { file_fixture('files/test.txt').read }
@@ -359,6 +365,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
         expect(fulltext.changed?).to be(true)
         expect(fulltext.label).to eql('fulltext.txt')
         expect(fulltext.content).to eql(expected_content)
+        expect(fulltext.controlGroup).to eql('M')
       end
     end
   end

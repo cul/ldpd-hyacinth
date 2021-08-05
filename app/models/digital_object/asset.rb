@@ -11,11 +11,11 @@ class DigitalObject::Asset < DigitalObject
   FULLTEXT_RESOURCE_NAME = 'fulltext'
   TEXT_RESOURCE_NAMES = ['synchronized_transcript', 'chapters', 'captions', FULLTEXT_RESOURCE_NAME].freeze
 
-  resource_attribute MASTER_RESOURCE_NAME.to_sym
+  resource_attribute MASTER_RESOURCE_NAME.to_sym, preservable: { as: :reference }
   resource_attribute SERVICE_RESOURCE_NAME.to_sym
   resource_attribute ACCESS_RESOURCE_NAME.to_sym
   resource_attribute POSTER_RESOURCE_NAME.to_sym
-  TEXT_RESOURCE_NAMES.each { |resource_name| resource_attribute resource_name.to_sym, preservable: true }
+  TEXT_RESOURCE_NAMES.each { |resource_name| resource_attribute resource_name.to_sym, preservable: { as: :copy } }
 
   before_validation :assign_asset_type_from_master_resource_import_if_blank
   before_validation :assign_title_from_master_resource_import_if_blank

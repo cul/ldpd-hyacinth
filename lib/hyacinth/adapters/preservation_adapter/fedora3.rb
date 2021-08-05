@@ -30,6 +30,7 @@ module Hyacinth
           OPTIONAL_CONFIG_OPTS.each do |opt|
             self.instance_variable_set("@#{opt}", adapter_config[opt]) if adapter_config[opt].present?
           end
+          @dsids_for_resources = @dsids_for_resources.with_indifferent_access if @dsids_for_resources
         end
 
         def uri_prefix
@@ -89,7 +90,7 @@ module Hyacinth
           assign(Fedora3::RelsExtProperties).from(self, digital_object).to(fedora_object)
           assign(Fedora3::RelsIntProperties).from(self, digital_object).to(fedora_object)
           assign(Fedora3::StructProperties).from(self, digital_object).to(fedora_object)
-          assign(Fedora3::TextResourceProperties).from(self, digital_object).to(fedora_object)
+          assign(Fedora3::PreservedResourceProperties).from(self, digital_object).to(fedora_object)
 
           fedora_object.save
         end

@@ -91,7 +91,6 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
       end
     end
     context "basic rels-ext properties" do
-      # let(:dsids) { ['structMetadata'] }
       let(:digital_object_title) { "Assigned Label" }
       let(:project_property) do
         {
@@ -168,7 +167,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
     end
     context "RelsInt properties for resources" do
       let(:hyacinth_object) { FactoryBot.build(:asset) }
-      let(:resource_args) { { original_file_path: '/old/path/to/file.doc', location: '/path/to/file.doc', checksum: 'sha256:asdf', file_size: 'asdf' } }
+      let(:resource_args) { { original_file_path: '/old/path/to/file.doc', location: 'tracked-disk:///path/to/file.doc', checksum: 'sha256:asdf', file_size: 'asdf' } }
       let(:resource_name) { hyacinth_object.master_resource_name }
       before do
         hyacinth_object.resources[resource_name] = Hyacinth::DigitalObject::Resource.new(resource_args)
