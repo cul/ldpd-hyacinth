@@ -157,7 +157,7 @@ RSpec.describe ResourceRequests::AccessJob, solr: true do
 
   describe '.src_resource_for_digital_object' do
     context 'when service resource is not present' do
-      it 'returns the master resource' do
+      it 'returns the main resource' do
         expect(described_class.src_resource_for_digital_object(asset)).to eq(asset.master_resource)
       end
     end

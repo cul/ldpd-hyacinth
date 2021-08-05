@@ -14,7 +14,8 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
   let(:object_pid) { "test:1" }
   let(:location_uri) { "fedora3://" + object_pid }
   let(:pid_generator) { instance_double(PidGenerator) }
-  let(:adapter_args) { { url: 'foo', password: 'foo', user: 'foo', pid_generator: pid_generator } }
+  let(:dsids_for_resources) { { 'master' => 'content', 'main' => 'content' } }
+  let(:adapter_args) { { url: 'foo', password: 'foo', user: 'foo', pid_generator: pid_generator, dsids_for_resources: dsids_for_resources } }
   let(:adapter) do
     a = described_class.new(adapter_args)
     a.instance_variable_set("@connection", connection)
@@ -255,8 +256,8 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
           expect(connection).to receive(:add_relationship).with(original_name_property)
           # TODO: RELS-INT properties still need to be tested.
           # They make use of the find_by_sparql_relationship, which isn't compatible with this Fedora-less test.
-          allow(Hyacinth::Adapters::PreservationAdapter::Fedora3::RelsIntProperties).to receive(:from).and_wrap_original do |method, arg|
-            ri_props = method.call(arg)
+          allow(Hyacinth::Adapters::PreservationAdapter::Fedora3::RelsIntProperties).to receive(:from).and_wrap_original do |method, arg, arg2|
+            ri_props = method.call(arg, arg2)
             allow(ri_props).to receive(:to)
             ri_props
           end
@@ -309,13 +310,14 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
     context "RelsInt properties for resources" do
       let(:dsids) { [] }
       let(:hyacinth_object) { FactoryBot.build(:asset) }
+      let(:resource_name) { hyacinth_object.master_resource_name }
       let(:resource_args) { { original_file_path: '/old/path/to/file.doc', location: '/path/to/file.doc', checksum: 'sha256:asdf', file_size: 'asdf' } }
       let(:extent_property) do
         {
           predicate: described_class::RelsIntProperties::URIS::EXTENT,
           object: "asdf",
           pid: object_pid,
-          subject: "info:fedora/#{object_pid}/master",
+          subject: "info:fedora/#{object_pid}/content",
           isLiteral: true
         }
       end
@@ -324,7 +326,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
           predicate: described_class::RelsIntProperties::URIS::HAS_MESSAGE_DIGEST,
           object: "urn:sha256:asdf",
           pid: object_pid,
-          subject: "info:fedora/#{object_pid}/master",
+          subject: "info:fedora/#{object_pid}/content",
           isLiteral: false
         }
       end
@@ -334,7 +336,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
         allow(connection).to receive(:find_by_sparql_relationship).and_return([]) # fresh properties!
         expect(connection).to receive(:add_relationship).with(extent_property)
         expect(connection).to receive(:add_relationship).with(checksum_property)
-        hyacinth_object.resources['master'] = Hyacinth::DigitalObject::Resource.new(resource_args)
+        hyacinth_object.resources[resource_name] = Hyacinth::DigitalObject::Resource.new(resource_args)
       end
       it "persists model properties" do
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)

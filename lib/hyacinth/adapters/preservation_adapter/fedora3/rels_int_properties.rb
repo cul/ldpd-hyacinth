@@ -9,20 +9,15 @@ module Hyacinth
           HAS_MESSAGE_DIGEST = "http://www.loc.gov/premis/rdf/v1#hasMessageDigest"
         end
 
+        include Fedora3::PropertyContextInitializers
         include Fedora3::PidHelpers
-
-        def self.from(hyacinth_obj)
-          new(hyacinth_obj)
-        end
-
-        def initialize(hyacinth_obj)
-          @hyacinth_obj = hyacinth_obj
-        end
 
         def to(fedora_obj)
           return unless @hyacinth_obj.is_a? ::DigitalObject::Asset
-          ['master', 'service', 'access'].each do |dsid|
-            resource = @hyacinth_obj.resources[dsid]
+          [:master_resource_name, :service_resource_name, :access_resource_name].each do |resource_name_method|
+            resource_name = @hyacinth_obj.send resource_name_method
+            dsid = adapter.dsids_for_resources.fetch(resource_name, resource_name)
+            resource = @hyacinth_obj.resources[resource_name]
             apply_delta(fedora_obj, dsid, delta_for(resource, fedora_obj, dsid))
           end
         end

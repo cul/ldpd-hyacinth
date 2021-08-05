@@ -15,12 +15,12 @@ module DigitalObjectConcerns::Assets::Validations
 
   def validate_master_resource
     return if has_master_resource? || resource_imports[master_resource_name].present?
-    errors.add("resources[#{master_resource_name}]", "Missing master resource: #{master_resource_name}")
+    errors.add("resources[#{master_resource_name}]", "Missing main resource: #{master_resource_name}")
   end
 
   def validate_asset_type
     if asset_type.blank?
-      errors.add(:asset_type, "Missing asset type (probably because of missing master resource)")
+      errors.add(:asset_type, "Missing asset type (probably because of missing main resource)")
       return
     end
 

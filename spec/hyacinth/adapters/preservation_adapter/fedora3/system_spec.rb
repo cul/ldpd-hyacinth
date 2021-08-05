@@ -6,8 +6,9 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
   let(:object_pid) { "test:1" }
   let(:location_uri) { "fedora3://" + object_pid }
   let(:pid_generator) { instance_double(PidGenerator) }
+  let(:dsids_for_resources) { { 'master' => 'content', 'main' => 'content' } }
   let(:rubydora_config) { Rails.application.config_for(:fedora) }
-  let(:adapter_args) { rubydora_config.merge(pid_generator: pid_generator) }
+  let(:adapter_args) { rubydora_config.merge(pid_generator: pid_generator, dsids_for_resources: dsids_for_resources) }
 
   let(:adapter) do
     described_class.new(adapter_args)
@@ -168,17 +169,18 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
     context "RelsInt properties for resources" do
       let(:hyacinth_object) { FactoryBot.build(:asset) }
       let(:resource_args) { { original_file_path: '/old/path/to/file.doc', location: '/path/to/file.doc', checksum: 'sha256:asdf', file_size: 'asdf' } }
+      let(:resource_name) { hyacinth_object.master_resource_name }
       before do
-        hyacinth_object.resources['master'] = Hyacinth::DigitalObject::Resource.new(resource_args)
+        hyacinth_object.resources[resource_name] = Hyacinth::DigitalObject::Resource.new(resource_args)
       end
       it "persists model properties" do
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
         rels_int = rubydora_object.datastreams['RELS-INT'].content
         ng_xml = Nokogiri::XML(rels_int)
         ng_xml.remove_namespaces!
-        css_node = ng_xml.at_css("RDF > Description[about=\"info:fedora/test:1/master\"] > extent")
+        css_node = ng_xml.at_css("RDF > Description[about=\"info:fedora/test:1/content\"] > extent")
         expect(css_node.text).to eql('asdf')
-        css_node = ng_xml.at_css("RDF > Description[about=\"info:fedora/test:1/master\"] > hasMessageDigest")
+        css_node = ng_xml.at_css("RDF > Description[about=\"info:fedora/test:1/content\"] > hasMessageDigest")
         expect(css_node['resource']).to eql('urn:sha256:asdf')
       end
     end

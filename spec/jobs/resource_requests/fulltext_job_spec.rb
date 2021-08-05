@@ -45,7 +45,7 @@ RSpec.describe ResourceRequests::FulltextJob, solr: true do
   end
 
   describe '.src_resource_for_digital_object' do
-    it 'returns the master resource' do
+    it 'returns the main resource' do
       expect(described_class.src_resource_for_digital_object(asset)).to eq(asset.master_resource)
     end
   end

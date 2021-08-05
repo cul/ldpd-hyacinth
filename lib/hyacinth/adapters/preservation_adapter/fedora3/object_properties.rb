@@ -5,14 +5,7 @@ module Hyacinth
     module PreservationAdapter
       class Fedora3::ObjectProperties
         include Fedora3::TitleHelpers
-
-        def self.from(hyacinth_obj)
-          new(hyacinth_obj)
-        end
-
-        def initialize(hyacinth_obj)
-          @hyacinth_obj = hyacinth_obj
-        end
+        include Fedora3::PropertyContextInitializers
 
         def to(fedora_obj)
           fedora_obj.label = get_title(@hyacinth_obj.descriptive_metadata)

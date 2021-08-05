@@ -5,14 +5,7 @@ module Hyacinth
     module PreservationAdapter
       class Fedora3::TextResourceProperties
         include Fedora3::DatastreamMethods
-
-        def self.from(hyacinth_obj)
-          new(hyacinth_obj)
-        end
-
-        def initialize(hyacinth_obj)
-          @hyacinth_obj = hyacinth_obj
-        end
+        include Fedora3::PropertyContextInitializers
 
         def to(fedora_obj)
           return unless @hyacinth_obj.is_a? ::DigitalObject::Asset

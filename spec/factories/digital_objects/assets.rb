@@ -44,8 +44,8 @@ FactoryBot.define do
     trait :with_master_resource do
       after(:build) do |digital_object|
         test_file_fixture_path = Rails.root.join('spec', 'fixtures', 'files', 'test.txt').to_s
-
-        digital_object.resources['master'] = Hyacinth::DigitalObject::Resource.new(
+        resource_name = digital_object.master_resource_name
+        digital_object.resources[resource_name] = Hyacinth::DigitalObject::Resource.new(
           location: 'tracked-disk://' + test_file_fixture_path,
           checksum: 'sha256:717f2c6ffbd649cd57ecc41ac6130c3b6210f1473303bcd9101a9014551bffb2',
           original_file_path: test_file_fixture_path,

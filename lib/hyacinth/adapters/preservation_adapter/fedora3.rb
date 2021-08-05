@@ -5,7 +5,7 @@ module Hyacinth
     module PreservationAdapter
       class Fedora3 < Abstract
         REQUIRED_CONFIG_OPTS = [:url, :user, :password].freeze
-        OPTIONAL_CONFIG_OPTS = [:pid_generator].freeze
+        OPTIONAL_CONFIG_OPTS = [:pid_generator, :dsids_for_resources].freeze
         HYACINTH_CORE_DATASTREAM_NAME = 'hyacinth_data'
 
         delegate :client, to: :connection
@@ -68,6 +68,10 @@ module Hyacinth
           @pid_generator ||= PidGenerator.default_pid_generator
         end
 
+        def dsids_for_resources
+          @dsids_for_resources ||= {}
+        end
+
         def persist_impl(location_uri, digital_object)
           # get the Rubydora object
           fedora_object = connection.find_or_initialize(location_uri_to_fedora3_pid(location_uri))
@@ -77,15 +81,15 @@ module Hyacinth
             JSON.generate(digital_object.as_metadata_storage_json)
           # serialize the other datastreams
           FieldExportProfile.all.each do |profile|
-            assign(datastream_for(profile)).from(digital_object).to(fedora_object)
+            assign(datastream_for(profile)).from(self, digital_object).to(fedora_object)
           end
 
-          assign(Fedora3::ObjectProperties).from(digital_object).to(fedora_object)
-          assign(Fedora3::DcProperties).from(digital_object).to(fedora_object)
-          assign(Fedora3::RelsExtProperties).from(digital_object).to(fedora_object)
-          assign(Fedora3::RelsIntProperties).from(digital_object).to(fedora_object)
-          assign(Fedora3::StructProperties).from(digital_object).to(fedora_object)
-          assign(Fedora3::TextResourceProperties).from(digital_object).to(fedora_object)
+          assign(Fedora3::ObjectProperties).from(self, digital_object).to(fedora_object)
+          assign(Fedora3::DcProperties).from(self, digital_object).to(fedora_object)
+          assign(Fedora3::RelsExtProperties).from(self, digital_object).to(fedora_object)
+          assign(Fedora3::RelsIntProperties).from(self, digital_object).to(fedora_object)
+          assign(Fedora3::StructProperties).from(self, digital_object).to(fedora_object)
+          assign(Fedora3::TextResourceProperties).from(self, digital_object).to(fedora_object)
 
           fedora_object.save
         end

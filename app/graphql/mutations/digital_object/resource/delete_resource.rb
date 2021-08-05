@@ -50,7 +50,7 @@ module Mutations
           def raise_error_if_asset_master_resource!(digital_object, resource_name)
             return unless digital_object.is_a?(::DigitalObject::Asset)
             return unless resource_name == digital_object.master_resource_name
-            raise GraphQL::ExecutionError, "Cannot delete the master resource for an #{digital_object.digital_object_type}. Create a new #{digital_object.digital_object_type} instead."
+            raise GraphQL::ExecutionError, "Cannot delete the #{resource_name} resource for an #{digital_object.digital_object_type}. Create a new #{digital_object.digital_object_type} instead."
           end
       end
     end
