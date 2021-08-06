@@ -12,9 +12,10 @@ module Hyacinth
 
         def solr_document_for(digital_object)
           solr_document = merge_core_fields_for(digital_object)
+          merge_title_fields_for!(digital_object, solr_document)
           merge_descriptive_fields_for!(digital_object, solr_document)
           merge_rights_fields_for!(digital_object, solr_document)
-          solr_document
+          solr_document.compact
         end
 
         def merge_core_fields_for(digital_object, solr_document = {})
@@ -22,26 +23,34 @@ module Hyacinth
         end
 
         def merge_core_fields_for!(digital_object, solr_document = {})
-          indexable_title = digital_object.generate_title
+          indexable_identifiers = digital_object.identifiers.to_a
           solr_document.merge!(
             'id' => digital_object.uid,
             'state_ssi' => digital_object.state,
             'digital_object_type_ssi' => digital_object.digital_object_type,
             'doi_ssi' => digital_object.doi,
-            'identifier_ssim' => digital_object.identifiers.to_a,
-            'title_ss' => digital_object.generate_title,
-            'sort_title_ssi' => digital_object.generate_title(true),
+            'identifier_ssim' => indexable_identifiers.dup,
             'primary_project_ssi' => digital_object.primary_project&.string_key,
             'projects_ssim' => project_keys_for(digital_object),
-            'created_at_dtsi' => digital_object.created_at&.utc&.iso8601,
-            'updated_at_dtsi' => digital_object.updated_at&.utc&.iso8601,
+            'created_at_dtsi' => iso8601_or_nil(digital_object.created_at),
+            'updated_at_dtsi' => iso8601_or_nil(digital_object.updated_at),
             'number_of_children_isi' => digital_object.number_of_children,
             'parent_ids_ssim' => digital_object.parents.map(&:uid)
           )
+          indexable_identifiers.concat([digital_object.uid]).concat digital_object.preservation_target_uris.map { |uri| uri.split('//').last }
+          add_identifiers(indexable_identifiers, solr_document)
+        end
+
+        def merge_title_fields_for(digital_object, solr_document = {})
+          merge_descriptive_fields_for!(digital_object, solr_document.dup)
+        end
+
+        def merge_title_fields_for!(digital_object, solr_document = {})
+          solr_document['sort_title_ssi'] = digital_object.generate_title(true)
+          indexable_title = digital_object.generate_title
+          solr_document['title_ss'] = indexable_title
           add_keywords(indexable_title, solr_document)
           add_titles(indexable_title, solr_document)
-          add_identifiers(digital_object.uid, solr_document)
-          solr_document
         end
 
         def merge_descriptive_fields_for(digital_object, solr_document = {})
@@ -50,7 +59,6 @@ module Hyacinth
 
         def merge_descriptive_fields_for!(digital_object, solr_document = {})
           merge_dynamic_fields(digital_object.descriptive_metadata, 'descriptive', solr_document)
-          solr_document
         end
 
         def merge_rights_fields_for(digital_object, solr_document = {})
@@ -64,9 +72,6 @@ module Hyacinth
           solr_document['rights_category_present_bi'] = digital_object.rights.present?
 
           merge_dynamic_fields(digital_object.rights, "#{digital_object.digital_object_type}_rights", solr_document)
-
-          solr_document.compact!
-          solr_document
         end
 
         def search_types
@@ -78,6 +83,10 @@ module Hyacinth
         end
 
         private
+
+          def iso8601_or_nil(val)
+            val&.utc&.iso8601
+          end
 
           def merge_dynamic_fields(dynamic_field_data, metadata_form, solr_document)
             Hyacinth::DynamicFieldsMap.new(metadata_form).all_fields.each do |config| # For each dynamic field
@@ -96,6 +105,7 @@ module Hyacinth
               add_titles(values, solr_document) if config[:is_title_searchable]
               add_identifiers(values, solr_document) if config[:is_identifier_searchable]
             end
+            solr_document
           end
 
           # Extracts all the values at the given path.
@@ -121,9 +131,7 @@ module Hyacinth
           end
 
           def project_keys_for(digital_object)
-            project_keys = digital_object.other_projects.map(&:string_key)
-            project_keys << digital_object.primary_project.string_key if digital_object.primary_project
-            project_keys
+            (digital_object.other_projects.map(&:string_key) + [digital_object.primary_project&.string_key]).compact
           end
 
           # Methods to add values for keyword, title and identifier search.
@@ -131,7 +139,8 @@ module Hyacinth
           SEARCH_TYPES.each do |search_type, solr_key|
             define_method "add_#{search_type.pluralize}" do |value, solr_document|
               values = Array.wrap(value)
-              (solr_document[solr_key] ||= []).concat(values)
+              (solr_document[solr_key] ||= []).concat(values).uniq!
+              solr_document
             end
           end
       end
