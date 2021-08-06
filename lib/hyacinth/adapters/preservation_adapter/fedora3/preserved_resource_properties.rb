@@ -16,7 +16,7 @@ module Hyacinth
             resource_config = @hyacinth_obj.class.resource_attributes.fetch(resource_name.to_sym, {})
             preservable_config = resource_config.fetch(:preservable, {})
             next unless preservable_config.present? && resource.content_exists?
-            dsid = adapter.dsids_for_resources.fetch(resource_name, resource_name)
+            dsid = adapter.resource_dsid_overrides.fetch(resource_name, resource_name)
             ensure_datastream(fedora_obj, dsid, datastream_props_for(resource_name, preservable_config, resource))
             datastream = fedora_obj.datastreams[dsid]
             # Only update content if it has changed

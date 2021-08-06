@@ -64,7 +64,7 @@ development:
         url: http://localhost:8080/fedora
         user: fedoraAdmin
         password: fedoraAdmin
-        dsids_for_resources:
+        resource_dsid_overrides:
           master: 'content'
           main: 'content'
   publication_adapter:
@@ -124,7 +124,7 @@ test:
         url: http://localhost:9080/fedora
         user: fedoraAdmin
         password: fedoraAdmin
-        dsids_for_resources:
+        resource_dsid_overrides:
           master: 'content'
           main: 'content'
   publication_adapter:

@@ -6,9 +6,9 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
   let(:object_pid) { "test:1" }
   let(:location_uri) { "fedora3://" + object_pid }
   let(:pid_generator) { instance_double(PidGenerator) }
-  let(:dsids_for_resources) { { 'master' => 'content', 'main' => 'content' } }
+  let(:resource_dsid_overrides) { { 'master' => 'content', 'main' => 'content' } }
   let(:rubydora_config) { Rails.application.config_for(:fedora) }
-  let(:adapter_args) { rubydora_config.merge(pid_generator: pid_generator, dsids_for_resources: dsids_for_resources) }
+  let(:adapter_args) { rubydora_config.merge(pid_generator: pid_generator, resource_dsid_overrides: resource_dsid_overrides) }
 
   let(:adapter) do
     described_class.new(adapter_args)

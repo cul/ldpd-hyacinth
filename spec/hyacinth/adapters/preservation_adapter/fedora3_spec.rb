@@ -14,8 +14,8 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
   let(:object_pid) { "test:1" }
   let(:location_uri) { "fedora3://" + object_pid }
   let(:pid_generator) { instance_double(PidGenerator) }
-  let(:dsids_for_resources) { { 'master' => 'content', 'main' => 'content' } }
-  let(:adapter_args) { { url: 'foo', password: 'foo', user: 'foo', pid_generator: pid_generator, dsids_for_resources: dsids_for_resources } }
+  let(:resource_dsid_overrides) { { 'master' => 'content', 'main' => 'content' } }
+  let(:adapter_args) { { url: 'foo', password: 'foo', user: 'foo', pid_generator: pid_generator, resource_dsid_overrides: resource_dsid_overrides } }
   let(:adapter) do
     a = described_class.new(adapter_args)
     a.instance_variable_set("@connection", connection)

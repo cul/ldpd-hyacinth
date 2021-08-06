@@ -5,7 +5,7 @@ module Hyacinth
     module PreservationAdapter
       class Fedora3 < Abstract
         REQUIRED_CONFIG_OPTS = [:url, :user, :password].freeze
-        OPTIONAL_CONFIG_OPTS = [:pid_generator, :dsids_for_resources].freeze
+        OPTIONAL_CONFIG_OPTS = [:pid_generator, :resource_dsid_overrides].freeze
         HYACINTH_CORE_DATASTREAM_NAME = 'hyacinth_data'
 
         delegate :client, to: :connection
@@ -30,7 +30,7 @@ module Hyacinth
           OPTIONAL_CONFIG_OPTS.each do |opt|
             self.instance_variable_set("@#{opt}", adapter_config[opt]) if adapter_config[opt].present?
           end
-          @dsids_for_resources = @dsids_for_resources.with_indifferent_access if @dsids_for_resources
+          @resource_dsid_overrides = @resource_dsid_overrides.with_indifferent_access if @resource_dsid_overrides
         end
 
         def uri_prefix
@@ -69,8 +69,8 @@ module Hyacinth
           @pid_generator ||= PidGenerator.default_pid_generator
         end
 
-        def dsids_for_resources
-          @dsids_for_resources ||= {}
+        def resource_dsid_overrides
+          @resource_dsid_overrides ||= {}
         end
 
         def persist_impl(location_uri, digital_object)
