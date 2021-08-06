@@ -57,7 +57,7 @@ module Hyacinth
         end
 
         def resource_import_attributes
-          @resource_import_attributes ||= {} # initialized here because it may not have been initialized in a subclass of the including class
+          @resource_import_attributes ||= Set.new # initialized here because it may not have been initialized in a subclass of the including class
           if self.superclass.respond_to?(:resource_import_attributes)
             @resource_import_attributes.merge(self.superclass.resource_import_attributes)
           else
@@ -70,8 +70,8 @@ module Hyacinth
           @resource_attributes ||= {}
           @resource_attributes[resource_attribute_name.to_sym] = config
 
-          @resource_import_attributes ||= {}
-          @resource_import_attributes[resource_attribute_name.to_sym] = config
+          @resource_import_attributes ||= Set.new
+          @resource_import_attributes << resource_attribute_name.to_sym
 
           # Add x_resource_name method (e.g. master_resource_name)
           define_method :"#{resource_attribute_name}_resource_name" do

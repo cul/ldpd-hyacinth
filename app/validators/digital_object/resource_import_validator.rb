@@ -9,7 +9,7 @@ class DigitalObject::ResourceImportValidator < ActiveModel::Validator
   private
 
     def validate_resource_import_keys(digital_object)
-      invalid_import_keys = digital_object.resource_imports.keys.map(&:to_sym) - digital_object.resource_import_attributes.keys.map(&:to_sym)
+      invalid_import_keys = digital_object.resource_imports.keys.map(&:to_sym) - digital_object.resource_import_attributes.to_a
       return if invalid_import_keys.blank?
       digital_object.errors.add(:resource_imports, "Invalid resource import keys: #{invalid_import_keys.to_a.join(', ')}") if invalid_import_keys.present?
     end
