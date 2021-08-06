@@ -88,7 +88,7 @@ RSpec.describe DigitalObject::RightsFieldsValidator, type: :model, solr: true do
   end
 
   describe 'validating rights for DigitalObject::Asset' do
-    let(:asset) { FactoryBot.create(:asset, :with_master_resource) }
+    let(:asset) { FactoryBot.create(:asset, :with_main_resource) }
 
     context 'when setting valid rights values' do
       let(:rights) do

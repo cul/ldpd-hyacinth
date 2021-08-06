@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Mutations::DigitalObject::Resource::DeleteResource, type: :request, solr: true do
-  let(:digital_object) { FactoryBot.create(:asset, :with_master_resource, :with_access_resource) }
+  let(:digital_object) { FactoryBot.create(:asset, :with_main_resource, :with_access_resource) }
   let(:project) { digital_object.projects.first }
   let(:resource_name) { 'access' }
 
@@ -46,7 +46,7 @@ RSpec.describe Mutations::DigitalObject::Resource::DeleteResource, type: :reques
       end
 
       context 'when resource is the main resource' do
-        let(:resource_name) { digital_object.master_resource_name }
+        let(:resource_name) { digital_object.main_resource_name }
         let(:variables) { { input: { id: digital_object.uid, resourceName: resource_name } } }
         it 'returns the expected error message' do
           expect(response.body).to be_json_eql("\"Cannot delete the #{resource_name} resource for an asset. Create a new asset instead.\"").at_path('errors/0/message')

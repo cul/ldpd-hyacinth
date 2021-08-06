@@ -73,17 +73,17 @@ module Hyacinth
           @resource_import_attributes ||= Set.new
           @resource_import_attributes << resource_attribute_name.to_sym
 
-          # Add x_resource_name method (e.g. master_resource_name)
+          # Add x_resource_name method (e.g. main_resource_name)
           define_method :"#{resource_attribute_name}_resource_name" do
             resource_attribute_name.to_s # cast to string because otherwise we'd return a symbol
           end
 
-          # Add x_resource method (e.g. master_resource)
+          # Add x_resource method (e.g. main_resource)
           define_method :"#{resource_attribute_name}_resource" do
             resources[resource_attribute_name]
           end
 
-          # Add has_x_resource? method (e.g. has_master_resource?)
+          # Add has_x_resource? method (e.g. has_main_resource?)
           define_method :"has_#{resource_attribute_name}_resource?" do
             resources[resource_attribute_name].present?
           end

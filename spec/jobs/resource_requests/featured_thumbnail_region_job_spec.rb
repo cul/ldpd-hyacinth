@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe ResourceRequests::FeaturedThumbnailRegionJob, solr: true do
   let(:instance) { described_class.new }
-  let(:asset) { FactoryBot.create(:asset, :with_master_resource, :with_access_resource, :with_poster_resource, :skip_resource_request_callbacks) }
+  let(:asset) { FactoryBot.create(:asset, :with_main_resource, :with_access_resource, :with_poster_resource, :skip_resource_request_callbacks) }
 
   before do
     # No ResourceRequests should exist before any of these tests.
@@ -60,7 +60,7 @@ RSpec.describe ResourceRequests::FeaturedThumbnailRegionJob, solr: true do
     end
 
     context 'when no applicable resource is present' do
-      let(:asset) { FactoryBot.create(:asset, :with_master_resource, :skip_resource_request_callbacks) }
+      let(:asset) { FactoryBot.create(:asset, :with_main_resource, :skip_resource_request_callbacks) }
       it 'returns nil' do
         expect(described_class.src_resource_for_digital_object(asset)).to eq(nil)
       end
@@ -79,7 +79,7 @@ RSpec.describe ResourceRequests::FeaturedThumbnailRegionJob, solr: true do
     end
 
     context 'for an Asset that already has a featured_thumbnail_region' do
-      let(:asset) { FactoryBot.create(:asset, :with_master_resource, :with_poster_resource, :skip_resource_request_callbacks, featured_thumbnail_region: '5,10,100,100') }
+      let(:asset) { FactoryBot.create(:asset, :with_main_resource, :with_poster_resource, :skip_resource_request_callbacks, featured_thumbnail_region: '5,10,100,100') }
       it 'returns false' do
         expect(described_class.eligible_object?(asset)).to eq(false)
       end

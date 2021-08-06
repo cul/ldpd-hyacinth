@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe ResourceRequests::FulltextJob, solr: true do
   let(:instance) { described_class.new }
-  let(:asset) { FactoryBot.create(:asset, :with_master_resource, :with_access_resource, :skip_resource_request_callbacks) }
+  let(:asset) { FactoryBot.create(:asset, :with_main_resource, :with_access_resource, :skip_resource_request_callbacks) }
 
   before do
     # No ResourceRequests should exist before any of these tests.
@@ -46,7 +46,7 @@ RSpec.describe ResourceRequests::FulltextJob, solr: true do
 
   describe '.src_resource_for_digital_object' do
     it 'returns the main resource' do
-      expect(described_class.src_resource_for_digital_object(asset)).to eq(asset.master_resource)
+      expect(described_class.src_resource_for_digital_object(asset)).to eq(asset.main_resource)
     end
   end
 
@@ -62,7 +62,7 @@ RSpec.describe ResourceRequests::FulltextJob, solr: true do
     end
 
     context 'for an Asset that already has a fulltext resource' do
-      let(:asset) { FactoryBot.create(:asset, :with_master_resource, :with_fulltext_resource, :skip_resource_request_callbacks) }
+      let(:asset) { FactoryBot.create(:asset, :with_main_resource, :with_fulltext_resource, :skip_resource_request_callbacks) }
       it 'returns false' do
         expect(described_class.eligible_object?(asset)).to eq(false)
       end

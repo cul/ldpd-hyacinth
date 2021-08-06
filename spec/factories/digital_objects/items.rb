@@ -81,7 +81,7 @@ FactoryBot.define do
 
     trait :with_asset do
       after(:create) do |digital_object|
-        digital_object.children_to_add << create(:asset, :with_master_resource)
+        digital_object.children_to_add << create(:asset, :with_main_resource)
         digital_object.save
       end
     end

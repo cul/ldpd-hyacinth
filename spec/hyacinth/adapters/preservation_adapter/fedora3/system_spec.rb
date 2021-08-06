@@ -168,7 +168,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
     context "RelsInt properties for resources" do
       let(:hyacinth_object) { FactoryBot.build(:asset) }
       let(:resource_args) { { original_file_path: '/old/path/to/file.doc', location: 'tracked-disk:///path/to/file.doc', checksum: 'sha256:asdf', file_size: 'asdf' } }
-      let(:resource_name) { hyacinth_object.master_resource_name }
+      let(:resource_name) { hyacinth_object.main_resource_name }
       before do
         hyacinth_object.resources[resource_name] = Hyacinth::DigitalObject::Resource.new(resource_args)
       end
@@ -184,7 +184,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
       end
     end
     context "Fulltext resources marked as preservable" do
-      let(:hyacinth_object) { FactoryBot.build(:asset, :with_master_resource, :with_fulltext_resource) }
+      let(:hyacinth_object) { FactoryBot.build(:asset, :with_main_resource, :with_fulltext_resource) }
       it "persists fulltext resource" do
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
         expect(rubydora_object.datastreams['fulltext'].content).to include("What a great test file!")

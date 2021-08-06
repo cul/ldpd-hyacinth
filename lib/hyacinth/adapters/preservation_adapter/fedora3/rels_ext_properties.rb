@@ -62,7 +62,7 @@ module Hyacinth
 
           return unless @hyacinth_obj.is_a? ::DigitalObject::Asset
           # Asset-only properties
-          resource_name = @hyacinth_obj.master_resource_name
+          resource_name = @hyacinth_obj.main_resource_name
           prospective_values = [@hyacinth_obj.resources[resource_name].original_filename].compact
           delta = delta_for(fedora_obj, URIS::ORIGINAL_FILENAME, prospective_values)
           apply_delta(fedora_obj, URIS::ORIGINAL_FILENAME, delta, isLiteral: true)

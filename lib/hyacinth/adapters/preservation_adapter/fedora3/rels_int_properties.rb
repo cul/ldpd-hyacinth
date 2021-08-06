@@ -14,7 +14,7 @@ module Hyacinth
 
         def to(fedora_obj)
           return unless @hyacinth_obj.is_a? ::DigitalObject::Asset
-          [:master_resource_name, :service_resource_name, :access_resource_name].each do |resource_name_method|
+          [:main_resource_name, :service_resource_name, :access_resource_name].each do |resource_name_method|
             resource_name = @hyacinth_obj.send resource_name_method
             dsid = adapter.resource_dsid_overrides.fetch(resource_name, resource_name)
             resource = @hyacinth_obj.resources[resource_name]

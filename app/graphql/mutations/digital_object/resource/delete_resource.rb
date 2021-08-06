@@ -14,7 +14,7 @@ module Mutations
           digital_object = ::DigitalObject.find_by_uid!(id)
           ability.authorize! :update, digital_object
 
-          raise_error_if_asset_master_resource!(digital_object, resource_name)
+          raise_error_if_asset_main_resource!(digital_object, resource_name)
           raise_error_if_invalid_resource!(digital_object, resource_name)
           raise_error_if_resource_not_found!(digital_object, resource_name)
           digital_object.delete_resource(resource_name)
@@ -47,9 +47,9 @@ module Mutations
             raise GraphQL::ExecutionError, %(No "#{resource_name}" resource found for this #{digital_object.digital_object_type})
           end
 
-          def raise_error_if_asset_master_resource!(digital_object, resource_name)
+          def raise_error_if_asset_main_resource!(digital_object, resource_name)
             return unless digital_object.is_a?(::DigitalObject::Asset)
-            return unless resource_name == digital_object.master_resource_name
+            return unless resource_name == digital_object.main_resource_name
             raise GraphQL::ExecutionError, "Cannot delete the #{resource_name} resource for an #{digital_object.digital_object_type}. Create a new #{digital_object.digital_object_type} instead."
           end
       end

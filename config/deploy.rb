@@ -17,7 +17,7 @@ set :repo_url, 'git@github.com:cul/ldpd-hyacinth.git'
 
 set :remote_user, "#{fetch(:instance)}serv"
 
-# Default branch is :master
+# Default branch is :main
 # ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
 
 # Default deploy_to directory is /var/www/my_app_name

@@ -126,7 +126,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       end
       expect(rubydora_object).to receive(:save).and_return(nil)
       allow(rubydora_object).to receive(:relationship).and_return([]) # all new values!
-      allow(hyacinth_object).to receive(:children).and_return([FactoryBot.build(:asset, :with_master_resource)])
+      allow(hyacinth_object).to receive(:children).and_return([FactoryBot.build(:asset, :with_main_resource)])
     end
     context "core data" do
       let(:dsids) { [described_class::HYACINTH_CORE_DATASTREAM_NAME, 'structMetadata'] }
@@ -216,7 +216,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       end
 
       context "persists model properties that apply to an asset" do
-        let(:hyacinth_object) { FactoryBot.build(:asset, :with_master_resource) }
+        let(:hyacinth_object) { FactoryBot.build(:asset, :with_main_resource) }
         let(:dsids) { ['content'] }
         let(:model_property) do
           {
@@ -295,7 +295,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       let(:dsids) { ['structMetadata'] }
       let(:child_object_title) { "Assigned Label" }
       let(:child_hyacinth_object) do
-        obj = FactoryBot.build(:asset, :with_master_resource)
+        obj = FactoryBot.build(:asset, :with_main_resource)
         obj.descriptive_metadata['title'] = [{ 'sort_portion' => child_object_title }]
         obj
       end
@@ -316,7 +316,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
     context "RelsInt properties for resources" do
       let(:hyacinth_object) { FactoryBot.build(:asset) }
       let(:dsids) { [] }
-      let(:resource_name) { hyacinth_object.master_resource_name }
+      let(:resource_name) { hyacinth_object.main_resource_name }
       let(:resource_args) { { original_file_path: '/old/path/to/file.doc', location: 'tracked-disk:///path/to/file.doc', checksum: 'sha256:asdf', file_size: 'asdf' } }
       let(:extent_property) do
         {
@@ -349,7 +349,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       end
     end
     context "text derivative resource for an Asset" do
-      let(:hyacinth_object) { FactoryBot.build(:asset, :with_master_resource, :with_fulltext_resource) }
+      let(:hyacinth_object) { FactoryBot.build(:asset, :with_main_resource, :with_fulltext_resource) }
       let(:dsids) { ['fulltext', 'hyacinth_data', 'content'] }
       let(:profile_xml) { file_fixture("fedora3/new-object.xml").read }
       let(:datastreams_xml) { file_fixture("fedora3/new-datastreams.xml").read }

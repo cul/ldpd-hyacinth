@@ -1,2 +1,2 @@
-_uid,_identifiers[0],_digital_object_type,_parents[0].uid,_parents[1].identifier,_parents[2].identifier,_primary_project.string_key,title[0].sort_portion,_resource_imports.master.method,_resource_imports.master.location
+_uid,_identifiers[0],_digital_object_type,_parents[0].uid,_parents[1].identifier,_parents[2].identifier,_primary_project.string_key,title[0].sort_portion,_resource_imports.main.method,_resource_imports.main.location
 3f4e2917-26f5-4d8f-968c-a4015b10e50e,utf8-test-item,item,,,,great_project,Para Machucar Meu Coração,,

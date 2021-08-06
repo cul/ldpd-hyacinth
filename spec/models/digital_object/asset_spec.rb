@@ -7,12 +7,12 @@ RSpec.describe DigitalObject::Asset, type: :model do
     let(:asset) { FactoryBot.build(:asset) }
     it "fails if there is no resource or resource_import entry for the primary resource" do
       asset.save
-      expect(asset.errors.keys).to include(:"resources[#{asset.master_resource_name}]", :asset_type)
+      expect(asset.errors.keys).to include(:"resources[#{asset.main_resource_name}]", :asset_type)
     end
   end
 
   describe "type validations" do
-    let(:asset) { FactoryBot.build(:asset, :with_master_resource) }
+    let(:asset) { FactoryBot.build(:asset, :with_main_resource) }
     it "works for all valid values" do
       failed = BestType::PcdmTypeLookup::VALID_TYPES.detect do |type|
         asset.asset_type = type
@@ -30,7 +30,7 @@ RSpec.describe DigitalObject::Asset, type: :model do
   end
 
   describe "image_size_restriction validation" do
-    let(:asset) { FactoryBot.build(:asset, :with_master_resource) }
+    let(:asset) { FactoryBot.build(:asset, :with_main_resource) }
     before { asset.asset_type = BestType::PcdmTypeLookup::VALID_TYPES.first }
     it "allows valid values" do
       Hyacinth::DigitalObject::Asset::ImageSizeRestriction::VALID_IMAGE_SIZE_RESTRICTIONS.each do |value|
@@ -45,7 +45,7 @@ RSpec.describe DigitalObject::Asset, type: :model do
   end
 
   describe "the run_resource_requests after_save callback method" do
-    let(:asset) { FactoryBot.build(:asset, :with_master_resource) }
+    let(:asset) { FactoryBot.build(:asset, :with_main_resource) }
 
     # TODO: Need to update to the way that digital objects save, since deep_clone method
     # (which uses Marshal.dump) isn't compatible with rspec mocks.
