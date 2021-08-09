@@ -86,8 +86,8 @@ module Hyacinth
 
         private
 
-          def iso8601_or_nil(val)
-            val&.utc&.iso8601
+          def iso8601_or_nil(datetime)
+            datetime&.utc&.iso8601
           end
 
           def merge_dynamic_fields(dynamic_field_data, metadata_form, solr_document)
