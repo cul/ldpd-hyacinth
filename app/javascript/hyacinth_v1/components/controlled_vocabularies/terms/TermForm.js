@@ -56,7 +56,18 @@ function TermForm(props) {
   const [updateTerm, { error: updateError }] = useMutation(updateTermMutation);
   const [deleteTerm, { error: deleteError }] = useMutation(deleteTermMutation);
 
-  const onSubmitHandler = () => {
+  const onSuccessHandler = (result) => {
+    const opResult = result.data.createTerm || result.data.updateTerm;
+    const { term: { uri: newURI } } = opResult;
+
+    if (submitAction) {
+      submitAction(opResult.term);
+    } else {
+      history.push(`/controlled_vocabularies/${vocabulary.stringKey}/terms/${encodeURIComponent(newURI)}/edit`);
+    }
+  };
+
+  const onSaveHandler = () => {
     const variables = {
       input: {
         vocabularyStringKey: vocabulary.stringKey,
@@ -71,16 +82,7 @@ function TermForm(props) {
     switch (formType) {
       case 'new':
         variables.input.termType = termType;
-
-        return createTerm({ variables }).then((res) => {
-          const { term: { uri: newURI } } = res.data.createTerm;
-
-          if (submitAction) {
-            submitAction(res.data.createTerm.term);
-          } else {
-            history.push(`/controlled_vocabularies/${vocabulary.stringKey}/terms/${encodeURIComponent(newURI)}/edit`);
-          }
-        });
+        return createTerm({ variables });
       case 'edit':
         return updateTerm({ variables });
       default:
@@ -99,7 +101,7 @@ function TermForm(props) {
   const inputColWidth = small ? 8 : 10;
 
   return (
-    <Form onSubmit={onSubmitHandler}>
+    <Form>
       <GraphQLErrors errors={createError || updateError || deleteError} />
 
       <InputGroup>
@@ -183,8 +185,9 @@ function TermForm(props) {
         formType={formType}
         cancelTo={`/controlled_vocabularies/${vocabulary.stringKey}`}
         cancelAction={cancelAction}
-        onSave={onSubmitHandler}
+        onSave={onSaveHandler}
         onDelete={onDeleteHandler}
+        onSuccess={onSuccessHandler}
       />
     </Form>
   );
