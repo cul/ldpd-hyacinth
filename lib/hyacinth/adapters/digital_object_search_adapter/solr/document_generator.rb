@@ -44,7 +44,7 @@ module Hyacinth
         end
 
         def merge_title_fields_for(digital_object, solr_document = {})
-          merge_descriptive_fields_for!(digital_object, solr_document.dup)
+          merge_title_fields_for!(digital_object, solr_document.dup)
         end
 
         def merge_title_fields_for!(digital_object, solr_document = {})
