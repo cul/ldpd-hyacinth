@@ -40,7 +40,7 @@ module Types
       all_valid_filters = custom_fields.keys + valid_filters
 
       Hyacinth::Config.term_search_adapter.search do |params|
-        params.q     search_params[:query]
+        params.q     search_params[:searchTerms]
         params.start offset
         params.rows  limit
         params.fq('vocabulary', object.string_key)

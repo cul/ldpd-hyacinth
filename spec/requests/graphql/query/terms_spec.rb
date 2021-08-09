@@ -196,7 +196,7 @@ RSpec.describe 'Query for Terms', type: :request, solr: true do
     <<~GQL
       query {
         vocabulary(stringKey: "#{vocab.string_key}") {
-          terms(limit: 5, searchParams: { query: "#{query}", filters: #{filters} }) {
+          terms(limit: 5, searchParams: { searchTerms: "#{query}", filters: #{filters} }) {
             nodes {
               prefLabel
               uri

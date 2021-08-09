@@ -10,16 +10,22 @@ import SearchButton from '../../shared/buttons/SearchButton';
 const searchTypes = ['KEYWORD', 'TITLE', 'IDENTIFER'];
 
 function QueryForm(props) {
-  const { value, onQueryChange } = props;
-  const [queryValue, setQueryValue] = useState(value);
+  const { searchTerms, searchType, onQueryChange } = props;
+  const [queryType, setQueryType] = useState(searchType);
+  const [queryValue, setQueryValue] = useState(searchTerms);
 
   const submitHandler = (ev) => {
     ev.preventDefault();
-    onQueryChange(queryValue);
+    onQueryChange({ searchTerms: queryValue, searchType: queryType });
   };
 
-  const changeHandler = (changed) => {
+  const valueChangeHandler = (changed) => {
     setQueryValue(changed);
+    return changed;
+  };
+
+  const typeChangeHandler = (changed) => {
+    setQueryType(changed);
     return changed;
   };
 
@@ -31,17 +37,16 @@ function QueryForm(props) {
           sm={3}
           md={2}
           size="sm"
-          value="KEYWORD"
-          onChange={changeHandler}
+          value={queryType}
+          onChange={typeChangeHandler}
           options={searchTypes.map(t => ({ label: capitalize(t), value: t }))}
-          disabled
         />
         <TextInput
           sm={null}
           size="sm"
           value={queryValue}
           placeholder="Search..."
-          onChange={changeHandler}
+          onChange={valueChangeHandler}
         />
         <Col xs="auto"><SearchButton onClick={submitHandler} /></Col>
       </Form.Group>
@@ -50,11 +55,13 @@ function QueryForm(props) {
 }
 
 QueryForm.defaultProps = {
-  value: '',
+  searchTerms: '',
+  searchType: 'KEYWORD',
 };
 
 QueryForm.propTypes = {
-  value: PropTypes.string,
+  searchTerms: PropTypes.string,
+  searchType: PropTypes.string,
   onQueryChange: PropTypes.func.isRequired,
 };
 

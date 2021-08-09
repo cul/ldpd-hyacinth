@@ -45,15 +45,15 @@ function ControlledVocabularyShow() {
   const onSearchHandler = (event) => {
     event.preventDefault();
 
-    if (query.length >= 3) {
+    if (query.length >= 3 || query === "") {
       setOffset(0);
-      refetch({ offset: 0, searchParams: { query } });
+      refetch({ offset: 0, searchParams: { searchTerms: query } });
     }
   };
 
   const onPageNumberClick = (newOffset) => {
     setOffset(newOffset);
-    refetch({ offset: newOffset, searchParams: { query } });
+    refetch({ offset: newOffset, searchParams: { searchTerms: query } });
   };
 
   const { vocabulary, vocabulary: { terms: { nodes: terms } } } = data;

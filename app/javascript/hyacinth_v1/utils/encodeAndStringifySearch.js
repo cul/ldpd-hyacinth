@@ -6,6 +6,7 @@ import FilterArrayParam from './filterArrayParam';
 
 export const queryParamsConfig = {
   q: StringParam,
+  searchType: withDefault(StringParam, 'KEYWORD'),
   filters: withDefault(FilterArrayParam, []),
   pageNumber: withDefault(NumberParam, 1),
   perPage: withDefault(NumberParam, 20),
