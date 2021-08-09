@@ -21,7 +21,7 @@ const limit = 10;
 function ControlledVocabularyShow() {
   const { stringKey } = useParams();
 
-  const [query, setQuery] = useState('');
+  const [searchTerms, setSearchTerms] = useState('');
   const [offset, setOffset] = useState(0);
   const [totalTerms, setTotalTerms] = useState(0);
 
@@ -45,15 +45,15 @@ function ControlledVocabularyShow() {
   const onSearchHandler = (event) => {
     event.preventDefault();
 
-    if (query.length >= 3) {
+    if (searchTerms.length >= 3 || searchTerms === "") {
       setOffset(0);
-      refetch({ offset: 0, searchParams: { query } });
+      refetch({ offset: 0, searchParams: { searchTerms } });
     }
   };
 
   const onPageNumberClick = (newOffset) => {
     setOffset(newOffset);
-    refetch({ offset: newOffset, searchParams: { query } });
+    refetch({ offset: newOffset, searchParams: { searchTerms } });
   };
 
   const { vocabulary, vocabulary: { terms: { nodes: terms } } } = data;
@@ -108,9 +108,9 @@ function ControlledVocabularyShow() {
       <div className="m-2">
         <Form className="term-search-form" onSubmit={onSearchHandler}>
           <InputGroup>
-            <TextInput sm={8} value={query} onChange={v => setQuery(v)} placeholder="Search for terms..." />
+            <TextInput sm={8} value={searchTerms} onChange={v => setSearchTerms(v)} placeholder="Search for terms..." />
             <SearchButton onClick={onSearchHandler} />
-            { query.length > 0 && query.length < 3 && <Form.Text className="text-muted pl-2">Query must be at least three characters.</Form.Text> }
+            { searchTerms.length > 0 && searchTerms.length < 3 && <Form.Text className="text-muted pl-2">Query must be at least three characters.</Form.Text> }
           </InputGroup>
         </Form>
 

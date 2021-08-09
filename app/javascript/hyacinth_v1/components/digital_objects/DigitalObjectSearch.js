@@ -32,7 +32,7 @@ const DigitalObjectSearch = ({ query }) => {
   const [limit, setLimit] = useState(query.perPage);
   const [offset] = useState((query.pageNumber - 1) * limit);
   const [totalObjects, setTotalObjects] = useState(0);
-  const [searchParams, setSearchParams] = useState({ query: query.q, filters: query.filters });
+  const [searchParams, setSearchParams] = useState({ searchType: query.searchType, searchTerms: query.q, filters: query.filters });
   const [orderBy, setOrderBy] = useState(query.orderBy);
 
   const {
@@ -58,6 +58,7 @@ const DigitalObjectSearch = ({ query }) => {
   useEffect(() => {
     // Decodes query parameters with the same logic used to instantiate the component
     const queryParams = {
+      searchType: undefined,
       q: undefined,
       pageNumber: undefined,
       perPage: undefined,
@@ -67,10 +68,10 @@ const DigitalObjectSearch = ({ query }) => {
     };
 
     const {
-      q, filters, pageNumber: newPageNumber, perPage: newPerPage, orderBy: newOrderBy,
+      searchType, q, filters, pageNumber: newPageNumber, perPage: newPerPage, orderBy: newOrderBy,
     } = decodeQueryParams(queryParamsConfig, queryParams);
 
-    setSearchParams({ query: q, filters });
+    setSearchParams({ searchTerms: q, searchType, filters });
     setLimit(newPerPage);
     setPageNumber(newPageNumber);
     setOrderBy(newOrderBy);
@@ -89,6 +90,7 @@ const DigitalObjectSearch = ({ query }) => {
 
   const onPageNumberClick = (newOffset) => {
     updateQueryParameters({
+      searchType: searchParams.searchType,
       pageNumber: (newOffset / limit) + 1,
       perPage: limit,
       filters: searchParams.filters,
@@ -97,11 +99,11 @@ const DigitalObjectSearch = ({ query }) => {
   };
 
   const sameValues = (array1, array2) => {
-    if (array1.length == array2.length) {
-      return !array1.find((val) => array2.indexOf(val) == -1);
+    if (array1.length === array2.length) {
+      return !array1.find(val => array2.indexOf(val) === -1);
     }
     return false;
-  }
+  };
   const isFacetCurrent = (fieldName, value) => {
     const detector = filter => ((filter.field === fieldName) && sameValues(filter.values, [value]));
     const { filters = [] } = searchParams;
@@ -118,31 +120,33 @@ const DigitalObjectSearch = ({ query }) => {
       : [...filters, { field: fieldName, values: [value] }];
 
     updateQueryParameters({
+      searchType: searchParams.searchType,
       pageNumber: 1,
       perPage: limit,
       filters: updatedFilters,
-      q: searchParams.query,
+      q: searchParams.searchTerms,
       orderBy,
     });
   };
 
-  // TODO: This is going to eventually a query value and type of search value.
   const onQueryChange = (value) => {
     updateQueryParameters({
+      searchType: value.searchType,
       pageNumber: 1,
       perPage: limit,
       filters: searchParams.filters,
-      q: value,
+      q: value.searchTerms,
       orderBy,
     });
   };
 
   const onPerPageChange = (value) => {
     updateQueryParameters({
+      searchType: searchParams.searchType,
       pageNumber: 1,
       perPage: value,
       filters: searchParams.filters,
-      q: searchParams.query,
+      q: searchParams.searchTerms,
       orderBy,
     });
   };
@@ -151,6 +155,7 @@ const DigitalObjectSearch = ({ query }) => {
   // Example: 'LAST_MODIFIED ASC'
   const onOrderByChange = (newOrderBy) => {
     updateQueryParameters({
+      searchType: searchParams.searchType,
       pageNumber: 1,
       perPage: limit,
       filters: searchParams.filters,
@@ -168,7 +173,11 @@ const DigitalObjectSearch = ({ query }) => {
         rightHandLinks={[{ label: 'New Digital Object', link: '/digital_objects/new' }]}
       />
 
-      <QueryForm value={query.q} onQueryChange={onQueryChange} />
+      <QueryForm
+        searchTerms={query.q}
+        searchType={query.searchType}
+        onQueryChange={onQueryChange}
+      />
 
       <SelectedFacetsBar
         selectedFacets={searchParams.filters}

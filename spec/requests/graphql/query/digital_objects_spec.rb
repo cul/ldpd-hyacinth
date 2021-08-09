@@ -62,7 +62,7 @@ RSpec.describe 'Retrieving Digital Objects', type: :request, solr: true do
       end
     end
     context "with a search type and query" do
-      let(:search_params) { { limit: 2, searchParams: { searchType: 'TITLE', query: 'Pretty Great' } } }
+      let(:search_params) { { limit: 2, searchParams: { searchType: 'TITLE', searchTerms: 'Pretty Great' } } }
       let(:expected_response) do
         %(
           [

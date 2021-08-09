@@ -62,7 +62,7 @@ RSpec.describe 'Retrieving Facet Values', type: :request, solr: true do
       end
     end
     context "with a search type and query" do
-      let(:search_params) { { fieldName: 'primary_project_ssi', limit: 2, searchParams: { searchType: 'TITLE', query: 'Pretty Great' }, orderBy: { field: 'COUNT' } } }
+      let(:search_params) { { fieldName: 'primary_project_ssi', limit: 2, searchParams: { searchType: 'TITLE', searchTerms: 'Pretty Great' }, orderBy: { field: 'COUNT' } } }
       let(:expected_response) do
         %(
           [
