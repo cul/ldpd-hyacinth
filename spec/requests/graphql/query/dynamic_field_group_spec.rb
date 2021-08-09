@@ -14,10 +14,33 @@ RSpec.describe 'Retrieving Dynamic Field Group', type: :request do
 
     context 'when stringKey is valid' do
       before { graphql query(dynamic_field_group.id) }
+      let(:expected_json) do
+        %(
+          {
+            "dynamicFieldGroup": {
+              "parent": {
+                "type": "DynamicFieldCategory"
+              },
+              "children": [],
+              "displayLabel": "Name",
+              "isRepeatable": true,
+              "sortOrder": 3,
+              "stringKey": "name",
+              "type": "DynamicFieldGroup",
+              "exportRules": [],
+              "path": "name",
+              "ancestorNodes": [
+                {
+                  "displayLabel": "Descriptive Metadata",
+                  "type": "DynamicFieldCategory"
+                }
+              ]
+            }
+          }
+        )
+      end
       it 'returns correct response' do
-        expect(response.body).to be_json_eql(%({ "dynamicFieldGroup": { "parent": { "type": "DynamicFieldCategory" }, "children": [], "displayLabel": "Name",
-                                                 "isRepeatable": true,  "sortOrder": 3, "stringKey": "name", "type": "DynamicFieldGroup", "exportRules": [] } }
-          )).at_path('data')
+        expect(response.body).to be_json_eql(expected_json).at_path('data')
       end
     end
     context 'when id is invalid' do
@@ -53,6 +76,18 @@ RSpec.describe 'Retrieving Dynamic Field Group', type: :request do
             fieldExportProfile {
               id
             }
+          }
+          path
+          ancestorNodes {
+            ...on DynamicFieldGroup {
+              id
+              displayLabel
+            }
+            ...on DynamicFieldCategory {
+              id
+              displayLabel
+            }
+            type: __typename
           }
         }
       }

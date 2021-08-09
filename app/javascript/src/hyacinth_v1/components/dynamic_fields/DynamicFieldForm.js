@@ -30,14 +30,14 @@ function DynamicFieldForm(props) {
 
   const history = useHistory();
 
-  const [stringKey, setStringKey] = useState(dynamicField ? dynamicField.stringKey : '');
-  const [displayLabel, setDisplayLabel] = useState(dynamicField ? dynamicField.displayLabel : '');
-  const [fieldType, setFieldType] = useState(dynamicField ? dynamicField.fieldType : 'string');
-  const [sortOrder, setSortOrder] = useState(dynamicField ? dynamicField.sortOrder : null);
-  const [isFacetable, setIsFacetable] = useState(dynamicField ? dynamicField.isFacetable : false);
-  const [filterLabel, setFilterLabel] = useState(dynamicField ? dynamicField.filterLabel : '');
-  const [controlledVocabulary, setControlledVocabulary] = useState(dynamicField ? dynamicField.controlledVocabulary : '');
-  const [selectOptions, setSelectOptions] = useState(dynamicField ? dynamicField.selectOptions : '{}');
+  const [stringKey, setStringKey] = useState((dynamicField && dynamicField.stringKey) || '');
+  const [displayLabel, setDisplayLabel] = useState((dynamicField && dynamicField.displayLabel) || '');
+  const [fieldType, setFieldType] = useState((dynamicField && dynamicField.fieldType) || 'string');
+  const [sortOrder, setSortOrder] = useState((dynamicField && dynamicField.sortOrder) || null);
+  const [isFacetable, setIsFacetable] = useState((dynamicField && dynamicField.isFacetable) || false);
+  const [filterLabel, setFilterLabel] = useState((dynamicField && dynamicField.filterLabel) || '');
+  const [controlledVocabulary, setControlledVocabulary] = useState((dynamicField && dynamicField.controlledVocabulary) || '');
+  const [selectOptions, setSelectOptions] = useState((dynamicField && dynamicField.selectOptions) || '{}');
   const [
     isKeywordSearchable,
     setIsKeywordSearchable,
@@ -107,6 +107,10 @@ function DynamicFieldForm(props) {
     setFieldType(newFieldType);
   };
 
+  const showControlledVocabularySelector = (fieldType === 'controlled_term');
+  const showSelectOptionsInput = (fieldType === 'select');
+  const showIsFacetableCheckbox = (fieldType !== 'textarea');
+
   return (
     <Form>
       <GraphQLErrors errors={createError || updateError || deleteError} />
@@ -137,7 +141,7 @@ function DynamicFieldForm(props) {
         />
       </InputGroup>
 
-      <Collapse in={fieldType === 'controlled_term'}>
+      <Collapse in={showControlledVocabularySelector}>
         <div>
           <InputGroup>
             <Label>Controlled Vocabulary</Label>
@@ -146,7 +150,7 @@ function DynamicFieldForm(props) {
         </div>
       </Collapse>
 
-      <Collapse in={fieldType === 'select'}>
+      <Collapse in={showSelectOptionsInput}>
         <div>
           <InputGroup>
             <Label>Select Options</Label>
@@ -166,7 +170,7 @@ function DynamicFieldForm(props) {
         <TextInput value={filterLabel} onChange={setFilterLabel} />
       </InputGroup>
 
-      <Collapse in={fieldType !== 'textarea'}>
+      <Collapse in={showIsFacetableCheckbox}>
         <div>
           <InputGroup>
             <Label>Is Facetable?</Label>

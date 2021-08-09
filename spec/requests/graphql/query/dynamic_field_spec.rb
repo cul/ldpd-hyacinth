@@ -13,11 +13,39 @@ RSpec.describe 'Retrieving Dynamic Field', type: :request do
     before { sign_in_user as: :administrator }
     context 'when stringKey is valid' do
       before { graphql query(dynamic_field.id) }
+      let(:expected_json) do
+        %(
+          {
+            "dynamicField":{
+              "controlledVocabulary":"name_role",
+              "displayLabel":"Value",
+              "fieldType":"controlled_term",
+              "filterLabel":"Name",
+              "isFacetable":true,
+              "isIdentifierSearchable":false,
+              "isKeywordSearchable":false,
+              "isTitleSearchable":false,
+              "selectOptions":null,
+              "sortOrder":7,
+              "stringKey":"term",
+              "type":"DynamicField",
+              "path": "name/term",
+              "ancestorNodes": [
+                {
+                  "displayLabel": "Descriptive Metadata",
+                  "type": "DynamicFieldCategory"
+                },
+                {
+                  "displayLabel": "Name",
+                  "type": "DynamicFieldGroup"
+                }
+              ]
+            }
+          }
+        )
+      end
       it 'returns correct response' do
-        expect(response.body).to be_json_eql(%({  "dynamicField": { "controlledVocabulary": "name_role", "displayLabel": "Value",
-          "fieldType": "controlled_term", "filterLabel": "Name", "isFacetable": true, "isIdentifierSearchable": false, "isKeywordSearchable": false,
-          "isTitleSearchable": false, "selectOptions": null,  "sortOrder": 7, "stringKey": "term", "type": "DynamicField" } }
-          )).at_path('data')
+        expect(response.body).to be_json_eql(expected_json).at_path('data')
       end
     end
 
@@ -47,6 +75,18 @@ RSpec.describe 'Retrieving Dynamic Field', type: :request do
         isTitleSearchable
         isIdentifierSearchable
         controlledVocabulary
+        path
+        ancestorNodes {
+          ...on DynamicFieldGroup {
+            id
+            displayLabel
+          }
+          ...on DynamicFieldCategory {
+            id
+            displayLabel
+          }
+          type: __typename
+        }
       }
     }
     GQL
