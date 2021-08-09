@@ -89,6 +89,7 @@ Metrics/ClassLength:
     - 'app/jobs/batch_export_job.rb'
     - 'app/models/ability.rb'
     - 'app/models/term.rb'
+    - 'lib/hyacinth/adapters/digital_object_search_adapter/solr/document_generator.rb'
 
 # Offense count: 11
 # Configuration parameters: Max.

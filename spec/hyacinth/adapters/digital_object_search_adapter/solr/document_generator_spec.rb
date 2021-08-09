@@ -57,6 +57,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
 
     context 'with descriptive_metadata' do
       let(:authorized_object) { FactoryBot.build(:item, :with_ascii_title, :with_timestamps, descriptive_metadata: descriptive_metadata) }
+      let(:isbn_values) { ['0-4975-5421-6', '0-3831-5430-8'] }
       let(:descriptive_metadata) do
         {
           'name' => [
@@ -72,10 +73,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
             { 'value' => 'Other Title' },
             { 'value' => 'New Title' }
           ],
-          'isbn' => [
-            { 'value' => '0-4975-5421-6' },
-            { 'value' => '0-3831-5430-8' }
-          ]
+          'isbn' => isbn_values.map { |value| { 'value' => value } }
         }
       end
 
@@ -91,7 +89,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
         expect(document['df_name_term_ssim']).to match_array ['Random, Person']
         expect(document['df_name_role_term_ssim']).to match_array ['writer', 'author']
         expect(document['df_alternateTitle_value_ssim']).to match_array ['Other Title', 'New Title']
-        expect(document['df_isbn_value_ssim']).to match_array ['0-4975-5421-6', '0-3831-5430-8']
+        expect(document['df_isbn_value_ssim']).to match_array isbn_values
       end
 
       it 'adds values to keyword search' do
@@ -106,10 +104,23 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
         )
       end
 
-      it 'adds values to identifier search' do
-        expect(document['identifier_search_sim']).to match_array(
-          ['0-4975-5421-6', '0-3831-5430-8', authorized_object.uid]
-        )
+      context "identifier-scoped indexing" do
+        let(:fedora_pid) { 'test:pid' }
+        let(:preservation_target_uris) { ["fedora3://#{fedora_pid}"] }
+        before do
+          authorized_object.preservation_target_uris.merge(preservation_target_uris)
+        end
+        it 'adds uid to identifier search' do
+          expect(document['identifier_search_sim']).to include(authorized_object.uid)
+        end
+
+        it 'adds values from identifier-scoped fields to identifier search' do
+          expect(document['identifier_search_sim']).to include(*isbn_values)
+        end
+
+        it 'adds values from preservation uris to identifier search' do
+          expect(document['identifier_search_sim']).to include(fedora_pid)
+        end
       end
     end
   end
