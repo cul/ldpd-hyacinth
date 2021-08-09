@@ -23,13 +23,13 @@ module Hyacinth
         end
 
         def merge_core_fields_for!(digital_object, solr_document = {})
-          indexable_identifiers = digital_object.identifiers.to_a
+          identifiers = digital_object.identifiers.to_a
           solr_document.merge!(
             'id' => digital_object.uid,
             'state_ssi' => digital_object.state,
             'digital_object_type_ssi' => digital_object.digital_object_type,
             'doi_ssi' => digital_object.doi,
-            'identifier_ssim' => indexable_identifiers.dup,
+            'identifier_ssim' => identifiers,
             'primary_project_ssi' => digital_object.primary_project&.string_key,
             'projects_ssim' => project_keys_for(digital_object),
             'created_at_dtsi' => iso8601_or_nil(digital_object.created_at),
@@ -37,8 +37,10 @@ module Hyacinth
             'number_of_children_isi' => digital_object.number_of_children,
             'parent_ids_ssim' => digital_object.parents.map(&:uid)
           )
-          indexable_identifiers.concat([digital_object.uid]).concat digital_object.preservation_target_uris.map { |uri| uri.split('//').last }
-          add_identifiers(indexable_identifiers, solr_document)
+          add_identifiers(
+            identifiers + [digital_object.uid] + digital_object.preservation_target_uris.map { |uri| uri.split('//').last },
+            solr_document
+          )
         end
 
         def merge_title_fields_for(digital_object, solr_document = {})
