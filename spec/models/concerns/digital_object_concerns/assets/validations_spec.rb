@@ -3,13 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe DigitalObjectConcerns::Assets::Validations do
-  let(:asset) { FactoryBot.build(:asset, :with_master_resource) }
+  let(:asset) { FactoryBot.build(:asset, :with_main_resource) }
 
-  describe '.validate_master_resource' do
-    it 'fails validation when master resource is not present' do
-      asset.delete_resource(asset.master_resource_name)
+  describe '.validate_main_resource' do
+    it 'fails validation when main resource is not present' do
+      asset.delete_resource(asset.main_resource_name)
       expect(asset.save).to eq(false)
-      expect(asset.errors.keys).to include(:"resources[#{asset.master_resource_name}]")
+      expect(asset.errors.keys).to include(:"resources[#{asset.main_resource_name}]")
     end
   end
 
@@ -46,10 +46,10 @@ RSpec.describe DigitalObjectConcerns::Assets::Validations do
   end
 
   describe '.validate_featured_thumbnail_region' do
-    it 'fails validation when master resource is not present' do
-      asset.delete_resource(asset.master_resource_name)
+    it 'fails validation when main resource is not present' do
+      asset.delete_resource(asset.main_resource_name)
       expect(asset.save).to eq(false)
-      expect(asset.errors.keys).to include(:"resources[#{asset.master_resource_name}]")
+      expect(asset.errors.keys).to include(:"resources[#{asset.main_resource_name}]")
     end
   end
 

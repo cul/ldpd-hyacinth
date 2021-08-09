@@ -14,7 +14,8 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
   let(:object_pid) { "test:1" }
   let(:location_uri) { "fedora3://" + object_pid }
   let(:pid_generator) { instance_double(PidGenerator) }
-  let(:adapter_args) { { url: 'foo', password: 'foo', user: 'foo', pid_generator: pid_generator } }
+  let(:resource_dsid_overrides) { { 'master' => 'content', 'main' => 'content' } }
+  let(:adapter_args) { { url: 'foo', password: 'foo', user: 'foo', pid_generator: pid_generator, resource_dsid_overrides: resource_dsid_overrides } }
   let(:adapter) do
     a = described_class.new(adapter_args)
     a.instance_variable_set("@connection", connection)
@@ -125,7 +126,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       end
       expect(rubydora_object).to receive(:save).and_return(nil)
       allow(rubydora_object).to receive(:relationship).and_return([]) # all new values!
-      allow(hyacinth_object).to receive(:children).and_return([FactoryBot.build(:asset, :with_master_resource)])
+      allow(hyacinth_object).to receive(:children).and_return([FactoryBot.build(:asset, :with_main_resource)])
     end
     context "core data" do
       let(:dsids) { [described_class::HYACINTH_CORE_DATASTREAM_NAME, 'structMetadata'] }
@@ -215,7 +216,8 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       end
 
       context "persists model properties that apply to an asset" do
-        let(:hyacinth_object) { FactoryBot.build(:asset, :with_master_resource) }
+        let(:hyacinth_object) { FactoryBot.build(:asset, :with_main_resource) }
+        let(:dsids) { ['content'] }
         let(:model_property) do
           {
             predicate: "info:fedora/fedora-system:def/model#hasModel",
@@ -254,8 +256,8 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
           expect(connection).to receive(:add_relationship).with(original_name_property)
           # TODO: RELS-INT properties still need to be tested.
           # They make use of the find_by_sparql_relationship, which isn't compatible with this Fedora-less test.
-          allow(Hyacinth::Adapters::PreservationAdapter::Fedora3::RelsIntProperties).to receive(:from).and_wrap_original do |method, arg|
-            ri_props = method.call(arg)
+          allow(Hyacinth::Adapters::PreservationAdapter::Fedora3::RelsIntProperties).to receive(:from).and_wrap_original do |method, arg, arg2|
+            ri_props = method.call(arg, arg2)
             allow(ri_props).to receive(:to)
             ri_props
           end
@@ -263,6 +265,12 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
         it do
           hyacinth_object.image_size_restriction = Hyacinth::DigitalObject::Asset::ImageSizeRestriction::DOWNSCALE_UNLESS_AUTHORIZED
           adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
+          content_ds = rubydora_object.datastreams['content']
+
+          expect(content_ds.changed?).to be true
+          expect(content_ds.controlGroup).to eql('E')
+          expect(content_ds.content).to be_blank
+          expect(content_ds.dsLocation).to start_with "file:/"
         end
       end
     end
@@ -287,7 +295,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       let(:dsids) { ['structMetadata'] }
       let(:child_object_title) { "Assigned Label" }
       let(:child_hyacinth_object) do
-        obj = FactoryBot.build(:asset, :with_master_resource)
+        obj = FactoryBot.build(:asset, :with_main_resource)
         obj.descriptive_metadata['title'] = [{ 'sort_portion' => child_object_title }]
         obj
       end
@@ -306,15 +314,16 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       end
     end
     context "RelsInt properties for resources" do
-      let(:dsids) { ['structMetadata'] }
       let(:hyacinth_object) { FactoryBot.build(:asset) }
-      let(:resource_args) { { original_file_path: '/old/path/to/file.doc', location: '/path/to/file.doc', checksum: 'sha256:asdf', file_size: 'asdf' } }
+      let(:dsids) { [] }
+      let(:resource_name) { hyacinth_object.main_resource_name }
+      let(:resource_args) { { original_file_path: '/old/path/to/file.doc', location: 'tracked-disk:///path/to/file.doc', checksum: 'sha256:asdf', file_size: 'asdf' } }
       let(:extent_property) do
         {
           predicate: described_class::RelsIntProperties::URIS::EXTENT,
           object: "asdf",
           pid: object_pid,
-          subject: "info:fedora/#{object_pid}/master",
+          subject: "info:fedora/#{object_pid}/content",
           isLiteral: true
         }
       end
@@ -323,7 +332,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
           predicate: described_class::RelsIntProperties::URIS::HAS_MESSAGE_DIGEST,
           object: "urn:sha256:asdf",
           pid: object_pid,
-          subject: "info:fedora/#{object_pid}/master",
+          subject: "info:fedora/#{object_pid}/content",
           isLiteral: false
         }
       end
@@ -333,10 +342,30 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
         allow(connection).to receive(:find_by_sparql_relationship).and_return([]) # fresh properties!
         expect(connection).to receive(:add_relationship).with(extent_property)
         expect(connection).to receive(:add_relationship).with(checksum_property)
-        hyacinth_object.resources['master'] = Hyacinth::DigitalObject::Resource.new(resource_args)
+        hyacinth_object.resources[resource_name] = Hyacinth::DigitalObject::Resource.new(resource_args)
       end
       it "persists model properties" do
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
+      end
+    end
+    context "text derivative resource for an Asset" do
+      let(:hyacinth_object) { FactoryBot.build(:asset, :with_main_resource, :with_fulltext_resource) }
+      let(:dsids) { ['fulltext', 'hyacinth_data', 'content'] }
+      let(:profile_xml) { file_fixture("fedora3/new-object.xml").read }
+      let(:datastreams_xml) { file_fixture("fedora3/new-datastreams.xml").read }
+      let(:expected_content) { file_fixture('files/test.txt').read }
+      before do
+        allow(connection).to receive(:add_relationship)
+        allow(connection).to receive(:find_by_sparql_relationship).and_return([]) # fresh properties!
+      end
+      it "persists resource properties" do
+        adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
+        # because .save is stubbed, the datastream should still be dirty
+        fulltext = rubydora_object.datastreams['fulltext']
+        expect(fulltext.changed?).to be(true)
+        expect(fulltext.label).to eql('fulltext.txt')
+        expect(fulltext.content).to eql(expected_content)
+        expect(fulltext.controlGroup).to eql('M')
       end
     end
   end

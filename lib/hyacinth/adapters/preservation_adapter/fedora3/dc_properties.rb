@@ -8,17 +8,10 @@ module Hyacinth
                      ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dc/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">'
         XML_SUFFIX = '</oai_dc:dc>'
 
+        include Fedora3::PropertyContextInitializers
         include Fedora3::PidHelpers
         include Fedora3::TitleHelpers
         include Fedora3::DatastreamMethods
-
-        def self.from(hyacinth_obj)
-          new(hyacinth_obj)
-        end
-
-        def initialize(hyacinth_obj)
-          @hyacinth_obj = hyacinth_obj
-        end
 
         def to(fedora_obj)
           proposed_dc_properties = proposed_dc_properties(@hyacinth_obj)
@@ -38,7 +31,7 @@ module Hyacinth
             # set the type
             properties[:type] = [hyacinth_obj.asset_type].compact
             # set the source
-            filename = hyacinth_obj.master_resource.original_filename || hyacinth_obj.master_resource.location
+            filename = hyacinth_obj.main_resource.original_filename || hyacinth_obj.main_resource.location
             properties[:source] = [filename].compact
             # set the format (MIME)
             properties[:format] = [BestType.mime_type.for_file_name(filename)].compact

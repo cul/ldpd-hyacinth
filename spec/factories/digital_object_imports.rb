@@ -34,7 +34,7 @@ FactoryBot.define do
             'string_key' => FactoryBot.create(:project).string_key
           },
           'resource_imports' => {
-            'master' => {
+            'main' => {
               method: 'copy',
               location: Rails.root.join('spec', 'fixtures', 'files', 'test.txt')
             }

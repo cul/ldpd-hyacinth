@@ -6,21 +6,21 @@ module DigitalObjectConcerns::Assets::Validations
   FEATURED_THUMBNAIL_REGION_PATTERN = /^\d+,\d+,(\d+),(\d+)$/.freeze
 
   included do
-    validate :validate_master_resource
+    validate :validate_main_resource
     validate :validate_asset_type
     validate :validate_rights_updates
     validate :validate_image_size_restriction
     validate :validate_featured_thumbnail_region
   end
 
-  def validate_master_resource
-    return if has_master_resource? || resource_imports[master_resource_name].present?
-    errors.add("resources[#{master_resource_name}]", "Missing master resource: #{master_resource_name}")
+  def validate_main_resource
+    return if has_main_resource? || resource_imports[main_resource_name].present?
+    errors.add("resources[#{main_resource_name}]", "Missing main resource: #{main_resource_name}")
   end
 
   def validate_asset_type
     if asset_type.blank?
-      errors.add(:asset_type, "Missing asset type (probably because of missing master resource)")
+      errors.add(:asset_type, "Missing asset type (probably because of missing main resource)")
       return
     end
 

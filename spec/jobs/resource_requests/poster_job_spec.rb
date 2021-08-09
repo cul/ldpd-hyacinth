@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe ResourceRequests::PosterJob, solr: true do
   let(:instance) { described_class.new }
-  let(:asset) { FactoryBot.create(:asset, :with_master_resource, :with_access_resource, :skip_resource_request_callbacks) }
+  let(:asset) { FactoryBot.create(:asset, :with_main_resource, :with_access_resource, :skip_resource_request_callbacks) }
 
   before do
     # No ResourceRequests should exist before any of these tests.
@@ -84,7 +84,7 @@ RSpec.describe ResourceRequests::PosterJob, solr: true do
 
   describe '.src_resource_for_digital_object' do
     context 'when access resource is not present' do
-      let(:asset) { FactoryBot.create(:asset, :with_master_resource, :skip_resource_request_callbacks) }
+      let(:asset) { FactoryBot.create(:asset, :with_main_resource, :skip_resource_request_callbacks) }
       it 'returns nil' do
         expect(described_class.src_resource_for_digital_object(asset)).to eq(nil)
       end
@@ -109,14 +109,14 @@ RSpec.describe ResourceRequests::PosterJob, solr: true do
     end
 
     context 'for an Asset that already has a poster resource' do
-      let(:asset) { FactoryBot.create(:asset, :with_master_resource, :with_access_resource, :with_poster_resource, :skip_resource_request_callbacks) }
+      let(:asset) { FactoryBot.create(:asset, :with_main_resource, :with_access_resource, :with_poster_resource, :skip_resource_request_callbacks) }
       it 'returns false' do
         expect(described_class.eligible_object?(asset)).to eq(false)
       end
     end
 
     context 'for an Asset that has no source (i.e. access) resource' do
-      let(:asset) { FactoryBot.create(:asset, :with_master_resource, :skip_resource_request_callbacks) }
+      let(:asset) { FactoryBot.create(:asset, :with_main_resource, :skip_resource_request_callbacks) }
       it 'returns false' do
         expect(described_class.eligible_object?(asset)).to eq(false)
       end

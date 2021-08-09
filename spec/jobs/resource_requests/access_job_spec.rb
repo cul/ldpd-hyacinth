@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe ResourceRequests::AccessJob, solr: true do
   let(:instance) { described_class.new }
-  let(:asset) { FactoryBot.create(:asset, :with_master_resource, :skip_resource_request_callbacks) }
+  let(:asset) { FactoryBot.create(:asset, :with_main_resource, :skip_resource_request_callbacks) }
 
   before do
     # No ResourceRequests should exist before any of these tests.
@@ -126,7 +126,7 @@ RSpec.describe ResourceRequests::AccessJob, solr: true do
     end
 
     it 'generates the expected args for a non-image resource' do
-      expect(described_class.generate_base_resource_request_args(asset, asset.master_resource)).to eq(
+      expect(described_class.generate_base_resource_request_args(asset, asset.main_resource)).to eq(
         digital_object_uid: asset.uid, src_file_location: "file://#{Rails.root.join('spec', 'fixtures', 'files', 'test.txt')}", options: {}
       )
     end
@@ -157,13 +157,13 @@ RSpec.describe ResourceRequests::AccessJob, solr: true do
 
   describe '.src_resource_for_digital_object' do
     context 'when service resource is not present' do
-      it 'returns the master resource' do
-        expect(described_class.src_resource_for_digital_object(asset)).to eq(asset.master_resource)
+      it 'returns the main resource' do
+        expect(described_class.src_resource_for_digital_object(asset)).to eq(asset.main_resource)
       end
     end
 
     context 'when service resource is present' do
-      let(:asset) { FactoryBot.create(:asset, :with_master_resource, :with_service_resource, :skip_resource_request_callbacks) }
+      let(:asset) { FactoryBot.create(:asset, :with_main_resource, :with_service_resource, :skip_resource_request_callbacks) }
       it 'returns the service resource' do
         expect(described_class.src_resource_for_digital_object(asset)).to eq(asset.service_resource)
       end
@@ -182,7 +182,7 @@ RSpec.describe ResourceRequests::AccessJob, solr: true do
     end
 
     context 'for an Asset that already has an access resource' do
-      let(:asset) { FactoryBot.create(:asset, :with_master_resource, :with_access_resource, :skip_resource_request_callbacks) }
+      let(:asset) { FactoryBot.create(:asset, :with_main_resource, :with_access_resource, :skip_resource_request_callbacks) }
       it 'returns false' do
         expect(described_class.eligible_object?(asset)).to eq(false)
       end

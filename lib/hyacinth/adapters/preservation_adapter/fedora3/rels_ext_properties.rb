@@ -31,15 +31,8 @@ module Hyacinth
           'site' => { rdf_type: 'http://purl.oclc.org/NET/CUL/Aggregator', cmodel: 'info:fedora/ldpd:Concept' }
         }.freeze
 
+        include Fedora3::PropertyContextInitializers
         include Fedora3::PidHelpers
-
-        def self.from(hyacinth_obj)
-          new(hyacinth_obj)
-        end
-
-        def initialize(hyacinth_obj)
-          @hyacinth_obj = hyacinth_obj
-        end
 
         def to(fedora_obj)
           # add child->parent URIs
@@ -69,7 +62,8 @@ module Hyacinth
 
           return unless @hyacinth_obj.is_a? ::DigitalObject::Asset
           # Asset-only properties
-          prospective_values = [@hyacinth_obj.resources['master'].original_filename].compact
+          resource_name = @hyacinth_obj.main_resource_name
+          prospective_values = [@hyacinth_obj.resources[resource_name].original_filename].compact
           delta = delta_for(fedora_obj, URIS::ORIGINAL_FILENAME, prospective_values)
           apply_delta(fedora_obj, URIS::ORIGINAL_FILENAME, delta, isLiteral: true)
         end

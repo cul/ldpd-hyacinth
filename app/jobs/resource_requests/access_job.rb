@@ -58,8 +58,8 @@ module ResourceRequests
     end
 
     def self.src_resource_for_digital_object(digital_object)
-      # Try to use service resource, but fall back to master resource
-      digital_object.service_resource || digital_object.master_resource
+      # Try to use service resource, but fall back to main resource
+      digital_object.service_resource || digital_object.main_resource
     end
 
     def self.eligible_object?(digital_object)

@@ -22,14 +22,15 @@ module Hyacinth
           Deferred.new(@property_class, fedora_obj)
         end
 
-        def from(hyacinth_obj)
-          @property_class.from(hyacinth_obj)
+        def from(adapter, hyacinth_obj)
+          @property_class.from(adapter, hyacinth_obj)
         end
 
         class DatastreamExportContext
           include Fedora3::DatastreamMethods
 
-          def initialize(export_profile, hyacinth_obj)
+          def initialize(adapter, export_profile, hyacinth_obj)
+            @adapter = adapter
             @export_profile = export_profile
             @hyacinth_obj = hyacinth_obj
           end
@@ -47,8 +48,8 @@ module Hyacinth
             @export_profile = export_profile
           end
 
-          def from(hyacinth_obj)
-            Fedora3::AssignmentContext::DatastreamExportContext.new(@export_profile, hyacinth_obj)
+          def from(adapter, hyacinth_obj)
+            Fedora3::AssignmentContext::DatastreamExportContext.new(adapter, @export_profile, hyacinth_obj)
           end
 
           def to(fedora_obj)
@@ -62,8 +63,8 @@ module Hyacinth
             @fedora_obj = fedora_obj
           end
 
-          def from(hyacinth_obj)
-            @property_class.from(hyacinth_obj).to(@fedora_obj)
+          def from(adapter, hyacinth_obj)
+            @property_class.from(adapter, hyacinth_obj).to(@fedora_obj)
           end
         end
       end

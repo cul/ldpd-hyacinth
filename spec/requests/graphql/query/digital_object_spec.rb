@@ -107,7 +107,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request, solr: true do
   end
 
   context "resources response" do
-    let(:authorized_object) { FactoryBot.create(:asset, :with_master_resource) }
+    let(:authorized_object) { FactoryBot.create(:asset, :with_main_resource) }
     let(:authorized_project) { authorized_object.projects.first }
     before do
       sign_in_project_contributor to: :read_objects, project: authorized_project
@@ -119,8 +119,8 @@ RSpec.describe 'Retrieving Digital Object', type: :request, solr: true do
       expect(response.body).to be_json_eql(%(
         [
           {
-            "id": "master",
-            "displayLabel": "Master",
+            "id": "main",
+            "displayLabel": "Main",
             "resource": {
               "checksum": "sha256:717f2c6ffbd649cd57ecc41ac6130c3b6210f1473303bcd9101a9014551bffb2",
               "fileSize": 23,
@@ -143,6 +143,21 @@ RSpec.describe 'Retrieving Digital Object', type: :request, solr: true do
           {
             "id": "poster",
             "displayLabel": "Poster",
+            "resource": null
+          },
+          {
+            "id": "synchronized_transcript",
+            "displayLabel": "Synchronized Transcript",
+            "resource": null
+          },
+          {
+            "id": "chapters",
+            "displayLabel": "Chapters",
+            "resource": null
+          },
+          {
+            "id": "captions",
+            "displayLabel": "Captions",
             "resource": null
           },
           {

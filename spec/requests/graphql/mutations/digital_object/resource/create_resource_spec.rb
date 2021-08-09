@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Mutations::DigitalObject::Resource::CreateResource, type: :request, solr: true do
-  let(:authorized_object) { FactoryBot.create(:asset, :with_master_resource) }
+  let(:authorized_object) { FactoryBot.create(:asset, :with_main_resource) }
   let(:authorized_project) { authorized_object.projects.first }
 
   let(:digital_object_uid) { authorized_object.uid }
@@ -58,7 +58,7 @@ RSpec.describe Mutations::DigitalObject::Resource::CreateResource, type: :reques
       end
 
       context 'when a resource with the given resourceName already exists' do
-        let(:authorized_object) { FactoryBot.create(:asset, :with_master_resource, :with_access_resource) }
+        let(:authorized_object) { FactoryBot.create(:asset, :with_main_resource, :with_access_resource) }
 
         it 'fails with the expected error message' do
           expect(response.body).to be_json_eql(

@@ -16,7 +16,7 @@ class Mutations::CreateAsset < Mutations::BaseMutation
     raise GraphQL::ExecutionError, 'You are only authorized to create assets from ActiveStorage blob uploads.' unless file_location.start_with?('blob://') || ability.can?(:manage, :all)
 
     asset = initialize_child_asset(parent)
-    asset.resource_imports[asset.master_resource_name] = Hyacinth::DigitalObject::ResourceImport.new(
+    asset.resource_imports[asset.main_resource_name] = Hyacinth::DigitalObject::ResourceImport.new(
       method: Hyacinth::DigitalObject::ResourceImport::COPY,
       location: file_location
     )

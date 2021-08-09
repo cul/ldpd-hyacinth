@@ -20,7 +20,7 @@ RSpec.describe DigitalObject, type: :model, solr: true do
   describe 'a basic subclass instance' do
     context "metadata_resources fields" do
       it "has the expected resources defined" do
-        expect(instance.resource_attributes.to_a.sort).to eq([:test_resource1, :test_resource2])
+        expect(instance.resource_attribute_names.to_a.sort).to eq([:test_resource1, :test_resource2])
       end
     end
 

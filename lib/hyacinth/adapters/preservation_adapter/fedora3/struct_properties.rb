@@ -10,17 +10,10 @@ module Hyacinth
 
         include Fedora3::TitleHelpers
         include Fedora3::DatastreamMethods
-
-        def self.from(hyacinth_obj)
-          new(hyacinth_obj)
-        end
-
-        def initialize(hyacinth_obj)
-          @hyacinth_obj = hyacinth_obj
-        end
+        include Fedora3::PropertyContextInitializers
 
         def to(fedora_obj)
-          return unless @hyacinth_obj.children.present?
+          return unless @hyacinth_obj.can_have_children? && @hyacinth_obj.children.present?
           proposed_list = structured_children(@hyacinth_obj)
           current_list = parse_struct_xml(fedora_obj)
           return if current_list.eql? proposed_list

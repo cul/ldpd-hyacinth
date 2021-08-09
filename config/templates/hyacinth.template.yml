@@ -64,6 +64,9 @@ development:
         url: http://localhost:8080/fedora
         user: fedoraAdmin
         password: fedoraAdmin
+        resource_dsid_overrides:
+          master: 'content'
+          main: 'content'
   publication_adapter:
     type: Development
   external_identifier_adapter:
@@ -121,6 +124,9 @@ test:
         url: http://localhost:9080/fedora
         user: fedoraAdmin
         password: fedoraAdmin
+        resource_dsid_overrides:
+          master: 'content'
+          main: 'content'
   publication_adapter:
     type: Hyacinth2
   external_identifier_adapter:

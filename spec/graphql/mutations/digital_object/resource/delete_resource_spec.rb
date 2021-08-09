@@ -7,7 +7,7 @@ RSpec.describe Mutations::DigitalObject::Resource::DeleteResource, solr: true do
   let(:context) { { current_user: FactoryBot.create(:user), ability: ability } }
 
   context 'when digital object is an Asset' do
-    let(:digital_object) { FactoryBot.create(:asset, :with_master_resource, :with_access_resource) }
+    let(:digital_object) { FactoryBot.create(:asset, :with_main_resource, :with_access_resource) }
     let(:variables) { { input: { id: digital_object.uid, resourceName: 'access' } } }
     let(:ability) do
       abil = double

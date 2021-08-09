@@ -5,8 +5,8 @@ require 'rails_helper'
 RSpec.describe DigitalObjectConcerns::ParentChildBehavior, solr: true do
   let(:item1) { FactoryBot.create(:item) }
   let(:item2) { FactoryBot.create(:item) }
-  let(:asset1) { FactoryBot.create(:asset, :with_master_resource) }
-  let(:asset2) { FactoryBot.create(:asset, :with_master_resource) }
+  let(:asset1) { FactoryBot.create(:asset, :with_main_resource) }
+  let(:asset2) { FactoryBot.create(:asset, :with_main_resource) }
 
   context 'adding children' do
     before do

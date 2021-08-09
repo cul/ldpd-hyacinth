@@ -54,31 +54,26 @@ RSpec.describe Hyacinth::DigitalObject::ResourceImport do
   end
 
   describe "#valid?" do
-    it "is valid with method and location" do
-      expect(file_copy_instance).to be_valid
-    end
+    subject { described_class.new(import_arguments) }
+    let(:import_arguments) { file_copy_attributes.dup }
+    it { is_expected.to be_valid }
 
-    it "is valid for a blob location" do
-      expect(blob_copy_instance).to be_valid
+    context "with a blob location" do
+      let(:import_arguments) { blob_copy_attributes.dup }
+      it { is_expected.to be_valid }
     end
 
     context "without method" do
-      let(:method) { nil }
-      it 'is not valid' do
-        expect(file_copy_instance).not_to be_valid
-      end
+      let(:import_arguments) { file_copy_attributes.merge(method: nil) }
+      it { is_expected.not_to be_valid }
     end
     context "with invalid method" do
-      let(:method) { :improvisational }
-      it 'is not valid' do
-        expect(file_copy_instance).not_to be_valid
-      end
+      let(:import_arguments) { file_copy_attributes.merge(method: :improvisational) }
+      it { is_expected.not_to be_valid }
     end
     context "without location" do
-      let(:location) { nil }
-      it 'is not valid' do
-        expect(file_copy_instance).not_to be_valid
-      end
+      let(:import_arguments) { file_copy_attributes.merge(location: nil) }
+      it { is_expected.not_to be_valid }
     end
   end
 
@@ -120,29 +115,29 @@ RSpec.describe Hyacinth::DigitalObject::ResourceImport do
     end
   end
 
-  describe "#hexgidest_from_checksum" do
+  describe "#hexdigest_from_checksum" do
     it "extracts the expected value" do
-      expect(file_copy_instance.hexgidest_from_checksum).to eq('717f2c6ffbd649cd57ecc41ac6130c3b6210f1473303bcd9101a9014551bffb2')
+      expect(file_copy_instance.hexdigest_from_checksum).to eq('717f2c6ffbd649cd57ecc41ac6130c3b6210f1473303bcd9101a9014551bffb2')
     end
 
     context "when checksum is nil" do
       let(:checksum) { nil }
       it 'returns nil' do
-        expect(file_copy_instance.hexgidest_from_checksum).to eq(nil)
+        expect(file_copy_instance.hexdigest_from_checksum).to eq(nil)
       end
     end
 
     context "when checksum is an empty string" do
       let(:checksum) { '' }
       it 'returns nil' do
-        expect(file_copy_instance.hexgidest_from_checksum).to eq(nil)
+        expect(file_copy_instance.hexdigest_from_checksum).to eq(nil)
       end
     end
 
     context "when checksum is not a valid sha256-format checksum" do
       let(:checksum) { 'nah256:abcdefg' }
       it "raises an exception" do
-        expect { file_copy_instance.hexgidest_from_checksum }.to raise_error(Hyacinth::Exceptions::InvalidChecksumFormatError)
+        expect { file_copy_instance.hexdigest_from_checksum }.to raise_error(Hyacinth::Exceptions::InvalidChecksumFormatError)
       end
     end
   end

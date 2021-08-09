@@ -20,7 +20,7 @@ module ResourceRequests
     end
 
     def self.src_resource_for_digital_object(digital_object)
-      digital_object.master_resource
+      digital_object.main_resource
     end
 
     def self.eligible_object?(digital_object)

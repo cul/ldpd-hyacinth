@@ -20,11 +20,12 @@ describe Hyacinth::DigitalObject::ResourceAttributes do
 
   context "module inclusion" do
     it "adds the expected methods to the class" do
-      expect(klass.resource_attributes).to be_a(Set)
+      expect(klass.resource_attributes).to be_a(Hash)
+      expect(klass.resource_attribute_names).to be_a(Array)
     end
 
     it "adds the expected methods to an instance" do
-      expect(instance.resource_attributes).to be_a(Set)
+      expect(instance.resource_attributes).to be_a(Hash)
       expect(instance).to respond_to(:example_resource_name)
       expect(instance).to respond_to(:has_example_resource?)
       expect(instance).to respond_to(:example_resource)

@@ -43,7 +43,7 @@ module Types
         {
           'id' => resource_name,
           'display_label' => resource_name.humanize.split(' ').map(&:capitalize).join(' '),
-          'ui_deletable' => (resource_name != object.master_resource_name),
+          'ui_deletable' => (resource_name != object.main_resource_name),
           'resource' => resource
         }
       end

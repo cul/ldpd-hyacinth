@@ -4,7 +4,7 @@ require 'rails_helper'
 
 describe Hyacinth::Adapters::PreservationAdapter::Fedora3::AssignmentContext do
   let(:client) { test_class.new }
-
+  let(:adapter) { instance_double(Hyacinth::Adapters::PreservationAdapter::Fedora3) }
   let(:test_class) do
     Class.new do
       include Hyacinth::Adapters::PreservationAdapter::Fedora3::AssignmentContext::Client
@@ -13,11 +13,11 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3::AssignmentContext do
 
   let(:test_property_class) do
     Class.new do
-      def self.from(src)
-        new(src)
+      def self.from(adapter, src)
+        new(adapter, src)
       end
 
-      def initialize(src)
+      def initialize(_adapter, src)
         @src = src
       end
 
@@ -32,12 +32,12 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3::AssignmentContext do
   let(:test_target) { { message:  'decoy message' } }
 
   it "works going from to" do
-    client.assign(test_property_class).from(test_source).to(test_target)
+    client.assign(test_property_class).from(adapter, test_source).to(test_target)
     expect(test_target[:message]).to eql(expected_message)
   end
 
   it "works going to from" do
-    client.assign(test_property_class).to(test_target).from(test_source)
+    client.assign(test_property_class).to(test_target).from(adapter, test_source)
     expect(test_target[:message]).to eql(expected_message)
   end
 end

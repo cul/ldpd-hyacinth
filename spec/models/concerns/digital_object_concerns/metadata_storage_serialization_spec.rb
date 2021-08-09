@@ -70,7 +70,7 @@ RSpec.describe DigitalObjectConcerns::MetadataStorageSerialization do
       digital_object.metadata_attributes.map do |metadata_attribute_name, type_def|
         expect(digital_object).to receive("#{metadata_attribute_name}=").with(type_def.from_serialized_form(expected_metadata_storage_json['metadata'][metadata_attribute_name.to_s]))
       end
-      digital_object.resource_attributes.map do |resource_attribute_name|
+      digital_object.resource_attribute_names.map do |resource_attribute_name|
         expect(digital_object.resources).to receive(:[]=).with(resource_attribute_name.to_s, Hyacinth::DigitalObject::Resource)
       end
       digital_object.load_fields_from_metadata_storage
