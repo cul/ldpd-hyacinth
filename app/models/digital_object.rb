@@ -37,7 +37,8 @@ class DigitalObject < ApplicationRecord
               :write_metadata_storage_backup,
               :create_and_update_terms, :process_resource_imports
   after_save :write_fields_to_metadata_storage
-  after_commit :finalize_deleted_resources, :finalize_resource_imports, :unlock, :index
+  after_commit :finalize_deleted_resources, :finalize_resource_imports, :unlock
+  after_save_commit :index
   after_rollback :rollback_metadata_storage, :rollback_resource_imports, :unlock
   before_destroy :unpublish_from_all, :delete_all_resources
   after_destroy :delete_from_metadata_storage, :deindex
