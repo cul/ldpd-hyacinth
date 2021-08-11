@@ -34,5 +34,9 @@ module Hyacinth
     config.time_zone = 'Eastern Time (US & Canada)'
     # Database will store dates in UTC (which is the rails default behavior)
     config.active_record.default_timezone = :utc
+
+    def self.version
+      @version ||= File.read(Rails.root.join('VERSION')).strip
+    end
   end
 end
