@@ -11,6 +11,10 @@ require 'rspec/rails'
 require 'webmock/rspec'
 WebMock.disable_net_connect!(allow_localhost: true)
 
+require 'capybara/rails'
+Capybara.javascript_driver = :selenium_chrome_headless
+Capybara.default_max_wait_time = 30 # Some ajax requests might take longer than the default waut time of 2 seconds.
+
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end
@@ -36,9 +40,6 @@ rescue ActiveRecord::PendingMigrationError => e
 end
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
-  config.include Devise::Test::IntegrationHelpers, type: :request
-  config.include AuthenticateUser, type: :request
-  config.include GraphQLHelper, type: :request
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.file_fixture_path = "#{::Rails.root}/spec/fixtures"
@@ -70,9 +71,15 @@ RSpec.configure do |config|
 
   # Include helpers
   config.include JsonSpec::Helpers
-  config.include AuthenticatedRequests, type: :request
   config.include HyacinthTestCleanup
   config.include DynamicFieldsHelper
+  authenticatable_spec_types = [:feature, :request]
+  authenticatable_spec_types.each do |spec_type|
+    config.include Devise::Test::IntegrationHelpers, type: spec_type
+    config.include AuthenticatedRequests, type: spec_type
+    config.include AuthenticateUser, type: spec_type
+  end
+  config.include GraphQLHelper, type: :request
 
   config.before(:each, solr: true) do
     solr_cleanup

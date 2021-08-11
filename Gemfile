@@ -58,13 +58,13 @@ end
 
 group :test do
   gem 'capybara', '>= 2.15'
-  gem 'chromedriver-helper'
   gem 'factory_bot_rails'
   gem 'json_spec'
   gem 'rspec-its'
   gem 'rspec-rails', '~> 3.8'
-  gem 'selenium-webdriver'
+  gem 'selenium-webdriver', '~> 3.142'
   gem 'simplecov', require: false
+  gem 'webdrivers', '~> 4.0', require: false
   gem 'webmock'
 end
 
