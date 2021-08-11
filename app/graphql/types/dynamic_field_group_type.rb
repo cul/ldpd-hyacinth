@@ -14,6 +14,7 @@ module Types
     field :updated_by, UserType, null: true
     field :children, [DynamicFieldGroupChildType], null: true, method: :ordered_children
     field :parent, DynamicFieldCollationType, null: false
-    field :path, [DynamicFieldCollationType], "Path of categories and groups leading to this group", null: false
+    field :path, String, null: false
+    field :ancestor_nodes, [DynamicFieldCollationType], "Path of categories and groups leading to this group", null: false
   end
 end

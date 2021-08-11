@@ -55,8 +55,8 @@ export const dynamicFieldGroupPathQuery = gql`
       id
       displayLabel
       type: __typename
-      __typename
-      path {
+      __typename # Apollo can't correctly cache if we override this field. Maybe later: override how cache identifiers are generated.
+      ancestorNodes {
         ...on DynamicFieldGroup {
           id
           displayLabel

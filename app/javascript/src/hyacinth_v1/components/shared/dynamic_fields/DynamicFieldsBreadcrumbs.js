@@ -16,7 +16,6 @@ const mappedQueries = {
   DynamicFieldCategory: getDynamicFieldCategoryQuery,
 };
 
-
 function DynamicFieldsBreadcrumbs(props) {
   const { for: { id, type }, last } = props;
 
@@ -27,19 +26,18 @@ function DynamicFieldsBreadcrumbs(props) {
   if (loading) return (<></>);
   if (error) return (<GraphQLErrors errors={error} />);
 
-  const { path: allParents, ...rest } = data[lowerFirst(type)];
-
-  const path = (allParents || []).concat(rest);
+  const { ancestorNodes, ...fieldOrGroupData } = data[lowerFirst(type)];
+  const ancestorPathWithCurrent = (ancestorNodes || []).concat(fieldOrGroupData);
 
   return (
     <Breadcrumb>
       {
-        path.map((segment, index) => (
+        ancestorPathWithCurrent.map((segment, index) => (
           <LinkContainer
             key={segment.id}
             to={segment.type === 'DynamicFieldCategory' ? '/dynamic_fields' : `/dynamic_field_groups/${segment.id}/edit`}
           >
-            <Breadcrumb.Item active={!last && index === path.length - 1}>
+            <Breadcrumb.Item active={!last && index === ancestorPathWithCurrent.length - 1}>
               {segment.displayLabel}
             </Breadcrumb.Item>
           </LinkContainer>
