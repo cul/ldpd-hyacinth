@@ -120,6 +120,11 @@ namespace :hyacinth do
             dynamic_field: title_subfield,
             digital_object_type: 'item'
           )
+          EnabledDynamicField.create!(
+            project: project,
+            dynamic_field: title_subfield,
+            digital_object_type: 'asset'
+          )
         end
       end
     end
