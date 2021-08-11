@@ -267,6 +267,8 @@ RSpec.describe DigitalObject, type: :model, solr: true do
 
       context 'successful destroy' do
         before do
+          expect(instance).not_to receive(:index)
+          expect(instance).to receive(:deindex)
           expect(instance.destroy)
         end
 
@@ -292,6 +294,24 @@ RSpec.describe DigitalObject, type: :model, solr: true do
           expect(instance.errors.size).to eq(1)
           expect(instance.errors[:children]).to eq(['Cannot destroy digital object because it has children.  Disconnect or delete the child digital objects first.'])
         end
+      end
+    end
+
+    describe '#index' do
+      before do
+        expect(Hyacinth::Config.digital_object_search_adapter).to receive(:index)
+      end
+      it 'delegates indexing behavior to digital_object_search_adapter' do
+        instance.index
+      end
+    end
+
+    describe '#deindex' do
+      before do
+        expect(Hyacinth::Config.digital_object_search_adapter).to receive(:remove)
+      end
+      it 'delegates de-indexing behavior to digital_object_search_adapter' do
+        instance.deindex
       end
     end
 
