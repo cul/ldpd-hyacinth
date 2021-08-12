@@ -44,6 +44,6 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: npm install -g yarn
-      - run: yarn install
+      - run: yarn install --frozen-lockfile
       - name: Run CI task
         run: bundle exec rake hyacinth:ci
