@@ -58,7 +58,7 @@ function BatchImportIndex() {
       <GraphQLErrors errors={updateError || deleteError} />
       { batchImports.length === 0 && (<p className="text-center">No Batch Imports have been created.</p>) }
       {
-        batchImports.map(batchImport => (
+        batchImports.map((batchImport) => (
           <Card key={batchImport.id} className="mb-3">
             <Card.Header>
               {`Import ID: ${batchImport.id}`}
@@ -69,7 +69,7 @@ function BatchImportIndex() {
                 </>
               )}
               <div className="float-end">
-                <ReadableDate date={batchImport.createdAt} />
+                <ReadableDate isoDate={batchImport.createdAt} />
               </div>
             </Card.Header>
             <Card.Body>

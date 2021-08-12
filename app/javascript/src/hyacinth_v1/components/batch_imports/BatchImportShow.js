@@ -28,7 +28,7 @@ function BatchImportShow() {
     } else {
       stopPolling();
     }
-    setPolling(prevPolling => !prevPolling);
+    setPolling((prevPolling) => !prevPolling);
   };
 
   useEffect(() => {
@@ -89,7 +89,7 @@ function BatchImportShow() {
           <Col as="dd" sm={9}>{originalFilename || '-- None --'}</Col>
 
           <Col as="dt" sm={3}>Created At</Col>
-          <Col as="dd" sm={9}><ReadableDate date={createdAt} /></Col>
+          <Col as="dd" sm={9}><ReadableDate isoDate={createdAt} /></Col>
 
           <Col as="dt" sm={3}>User</Col>
           <Col as="dd" sm={9}>{user.fullName}</Col>
@@ -148,7 +148,7 @@ function BatchImportShow() {
 
         <Link className="float-end" to={`/batch_imports/${id}/digital_object_imports`}>View Details &raquo;</Link>
         <h5>
-            Digital Object Imports
+          Digital Object Imports
         </h5>
 
         <Row as="dl">

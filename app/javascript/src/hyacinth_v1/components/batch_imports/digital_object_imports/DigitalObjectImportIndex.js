@@ -119,7 +119,7 @@ function DigitalObjectImportIndex() {
             </thead>
             <tbody>
               {
-                digitalObjectImports.map(digitalObjectImport => (
+                digitalObjectImports.map((digitalObjectImport) => (
                   <tr key={digitalObjectImport.id}>
                     <td>
                       <Link to={`/batch_imports/${id}/digital_object_imports/${digitalObjectImport.id}`}>
@@ -128,8 +128,8 @@ function DigitalObjectImportIndex() {
                     </td>
                     <td>{digitalObjectImport.index}</td>
                     <td>{startCase(digitalObjectImport.status)}</td>
-                    <td><ReadableDate date={digitalObjectImport.createdAt} /></td>
-                    <td><ReadableDate date={digitalObjectImport.updatedAt} /></td>
+                    <td><ReadableDate isoDate={digitalObjectImport.createdAt} /></td>
+                    <td><ReadableDate isoDate={digitalObjectImport.updatedAt} /></td>
                   </tr>
                 ))
               }
