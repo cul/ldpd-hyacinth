@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Col, Form, Button } from 'react-bootstrap';
+import {
+  Row, Col, Form, Button,
+} from 'react-bootstrap';
 import { useMutation } from '@apollo/react-hooks';
 import { useHistory } from 'react-router-dom';
 
