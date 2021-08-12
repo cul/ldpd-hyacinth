@@ -26,4 +26,18 @@ module AuthenticateUser
       :user, first_name: 'Signed In', last_name: 'User', email: 'logged-in-user@exaple.com', permissions: permissions
     )
   end
+
+  def sign_in_user_manager(**args)
+    user = create_user_manager(**args)
+
+    login_as user, scope: :user
+  end
+
+  def create_user_manager(**_args)
+    permissions = [Permission.create(action: Permission::MANAGE_USERS)]
+
+    FactoryBot.create(
+      :user, first_name: 'Signed In', last_name: 'User', email: 'logged-in-user@exaple.com', permissions: permissions
+    )
+  end
 end
