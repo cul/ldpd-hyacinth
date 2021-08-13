@@ -35,12 +35,15 @@ function AssetRightsForm(props) {
   // One day, maybe enable optionalChaining JS feature in babel to simplify lines like the one below.
   const userErrors = (updateData && updateData.updateRights && updateData.updateRights.userErrors) || [];
 
+  const onSuccessHandler = (result) => {
+    history.push(`/digital_objects/${result.data.updateRights.digitalObject.id}/rights`);
+  };
 
-  const onSubmitHandler = () => {
+  const onSaveHandler = () => {
     const cleanRights = removeEmptyKeys(removeTypename(rights));
     const variables = { input: { id, rights: cleanRights, optimisticLockToken } };
 
-    return updateRights({ variables }).then(res => history.push(`/digital_objects/${res.data.updateRights.digitalObject.id}/rights`));
+    return updateRights({ variables });
   };
 
   if (!hasAssetRights) {
@@ -53,7 +56,7 @@ function AssetRightsForm(props) {
 
   return (
     <Form className="mb-3">
-      <GraphQLErrors errors={updateError} />    
+      <GraphQLErrors errors={updateError} />
       <ErrorList errors={userErrors.map((userError) => (`${userError.message} (path=${userError.path.join('/')})`))} />
 
       <FieldGroupArray
@@ -76,7 +79,8 @@ function AssetRightsForm(props) {
       <FormButtons
         formType="edit"
         cancelTo={`/digital_objects/${id}/rights`}
-        onSave={onSubmitHandler}
+        onSave={onSaveHandler}
+        onSuccess={onSuccessHandler}
       />
     </Form>
   );
