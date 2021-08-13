@@ -2,9 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import AceEditor from 'react-ace';
 import { Col } from 'react-bootstrap';
-import 'brace';
-import 'brace/mode/json';
-import 'brace/theme/textmate';
+import 'ace-builds/src-noconflict/mode-json';
+import 'ace-builds/src-noconflict/theme-textmate';
 
 function JSONInput(props) {
   const {
@@ -24,6 +23,7 @@ function JSONInput(props) {
         name={inputName}
         height={height}
         placeholder={placeholder}
+        setOptions={{ useWorker: false }}
       />
     </Col>
   );
