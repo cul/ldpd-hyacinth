@@ -13,7 +13,7 @@ import Label from '../shared/forms/Label';
 import NumberInput from '../shared/forms/inputs/NumberInput';
 import TextInput from '../shared/forms/inputs/TextInput';
 import Checkbox from '../shared/forms/inputs/Checkbox';
-import JSONInput from '../shared/forms/inputs/JSONInput';
+
 import DynamicFieldCategorySelect from '../shared/forms/inputs/selects/DynamicFieldCategorySelect';
 import {
   createDynamicFieldGroupMutation,
@@ -23,6 +23,7 @@ import {
 import GraphQLErrors from '../shared/GraphQLErrors';
 import DynamicFieldGroupChildren from './DynamicFieldGroupChildren';
 import { fieldExportProfilesQuery } from '../../graphql/fieldExportProfiles';
+import JSONInput from '../shared/forms/inputs/lazyJSONInput';
 
 function DynamicFieldGroupForm(props) {
   const { formType, dynamicFieldGroup, defaultValues } = props;

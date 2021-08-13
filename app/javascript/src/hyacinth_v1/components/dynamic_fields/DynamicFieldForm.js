@@ -10,7 +10,6 @@ import Label from '../shared/forms/Label';
 import FormButtons from '../shared/forms/FormButtons';
 import TextInput from '../shared/forms/inputs/TextInput';
 import NumberInput from '../shared/forms/inputs/NumberInput';
-import JSONInput from '../shared/forms/inputs/JSONInput';
 import SelectInput from '../shared/forms/inputs/SelectInput';
 import VocabularySelect from '../shared/forms/inputs/selects/VocabularySelect';
 import Checkbox from '../shared/forms/inputs/Checkbox';
@@ -20,6 +19,7 @@ import {
   deleteDynamicFieldMutation,
 } from '../../graphql/dynamicFields';
 import GraphQLErrors from '../shared/GraphQLErrors';
+import JSONInput from '../shared/forms/inputs/lazyJSONInput';
 
 const fieldTypes = [
   'string', 'textarea', 'integer', 'boolean', 'select', 'date', 'controlled_term',

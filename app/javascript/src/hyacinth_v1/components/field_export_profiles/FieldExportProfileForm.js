@@ -5,7 +5,6 @@ import { useHistory } from 'react-router-dom';
 import { useMutation } from '@apollo/react-hooks';
 
 import FormButtons from '../shared/forms/FormButtons';
-import JSONInput from '../shared/forms/inputs/JSONInput';
 import TextInput from '../shared/forms/inputs/TextInput';
 import InputGroup from '../shared/forms/InputGroup';
 import Label from '../shared/forms/Label';
@@ -15,6 +14,7 @@ import {
   deleteFieldExportProfileMutation,
 } from '../../graphql/fieldExportProfiles';
 import GraphQLErrors from '../shared/GraphQLErrors';
+import JSONInput from '../shared/forms/inputs/lazyJSONInput';
 
 function FieldExportProfileForm(props) {
   const { formType, fieldExportProfile } = props;
