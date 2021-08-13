@@ -44,10 +44,10 @@ function DigitalObjectImportShow() {
           </Col>
 
           <Col as="dt" sm={3}>Created At</Col>
-          <Col as="dd" sm={9}><ReadableDate date={digitalObjectImport.createdAt} /></Col>
+          <Col as="dd" sm={9}><ReadableDate isoDate={digitalObjectImport.createdAt} /></Col>
 
           <Col as="dt" sm={3}>Updated At</Col>
-          <Col as="dd" sm={9}><ReadableDate date={digitalObjectImport.updatedAt} /></Col>
+          <Col as="dd" sm={9}><ReadableDate isoDate={digitalObjectImport.updatedAt} /></Col>
 
           <Col as="dt" sm={3}>Row Number</Col>
           <Col as="dd" sm={9}>{digitalObjectImport.index || '-- None --'}</Col>

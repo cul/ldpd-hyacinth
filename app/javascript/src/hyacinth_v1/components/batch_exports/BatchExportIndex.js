@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import produce from 'immer';
-import * as moment from 'moment';
 import queryString from 'query-string';
 import React, { useState } from 'react';
 import { Button, Card, Collapse } from 'react-bootstrap';
@@ -11,6 +10,7 @@ import { batchExportsQuery, deleteBatchExportMutation } from '../../graphql/batc
 import PaginationBar from '../shared/PaginationBar';
 import GraphQLErrors from '../shared/GraphQLErrors';
 import ContextualNavbar from '../shared/ContextualNavbar';
+import ReadableDate from '../shared/ReadableDate';
 
 function BatchExportIndex() {
   const limit = 30;
@@ -71,12 +71,12 @@ function BatchExportIndex() {
       <div>
         { batchExports.length === 0 && (<p className="text-center">No Batch Exports to show. Perform a Digital Object search to create an export!</p>) }
         {
-          batchExports.map(batchExport => (
+          batchExports.map((batchExport) => (
             <Card key={batchExport.id} className={`mb-3 ${highlight && highlight === batchExport.id ? 'bg-light' : ''}`}>
               <Card.Header>
                 {`Export ID: ${batchExport.id}`}
                 <div className="float-end">
-                  {moment(batchExport.createdAt).format('MMMM Do YYYY, h:mm:ss a')}
+                  <ReadableDate isoDate={batchExport.createdAt} />
                 </div>
               </Card.Header>
               <Card.Body>
@@ -139,7 +139,7 @@ function BatchExportIndex() {
                       e.preventDefault(); deleteBatchExportAndRefresh(batchExport.id);
                     }}
                   >
-                      Delete
+                    Delete
                   </Button>
                 </Card.Text>
                 <div className="clearfix" />

@@ -1,18 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import * as moment from 'moment';
 
-function ReadableDate({ date, format }) {
-  return moment(date).format(format);
+function ReadableDate({ isoDate }) {
+  return Intl.DateTimeFormat(
+    'en-US',
+    {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+    },
+  ).format(new Date(isoDate));
 }
 
-ReadableDate.defaultProps = {
-  format: 'MMMM Do YYYY, h:mm:ss a',
-};
-
 ReadableDate.propTypes = {
-  format: PropTypes.string,
-  date: PropTypes.string.isRequired,
+  isoDate: PropTypes.string.isRequired,
 };
 
 export default ReadableDate;
