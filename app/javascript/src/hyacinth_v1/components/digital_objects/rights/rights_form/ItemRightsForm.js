@@ -59,10 +59,14 @@ function ItemRightsForm(props) {
     },
   );
 
-  const onSubmitHandler = () => {
+  const onSuccessHandler = (result) => {
+    history.push(`/digital_objects/${result.data.updateRights.digitalObject.id}/rights`);
+  };
+
+  const onSaveHandler = () => {
     const cleanRights = removeEmptyKeys(removeTypename(rights));
     const variables = { input: { id, rights: cleanRights, optimisticLockToken } };
-    return updateRights({ variables }).then(res => history.push(`/digital_objects/${res.data.updateRights.digitalObject.id}/rights`));
+    return updateRights({ variables });
   };
 
   const typeOfContentChange = (type) => {
@@ -176,7 +180,8 @@ function ItemRightsForm(props) {
       <FormButtons
         formType="edit"
         cancelTo={`/digital_objects/${id}/rights`}
-        onSave={onSubmitHandler}
+        onSave={onSaveHandler}
+        onSuccess={onSuccessHandler}
       />
     </Form>
   );
