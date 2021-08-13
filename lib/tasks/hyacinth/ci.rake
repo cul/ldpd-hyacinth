@@ -32,9 +32,20 @@ namespace :hyacinth do
     task_stack = ['hyacinth:rspec']
     task_stack.prepend('hyacinth:solr_wrapper') if includes.include?('solr')
     task_stack.prepend('hyacinth:fedora_wrapper') if includes.include?('fedora')
+
     duration = Benchmark.realtime do
       ENV['RAILS_ENV'] = 'test'
       Rails.env = ENV['RAILS_ENV']
+
+      # A webpacker recompile isn't strictly required, but it speeds up the first feature test run and
+      # can prevent first feature test timeout issues, especially in a slower CI server environment.
+      if ENV['WEBPACKER_RECOMPILE'] == 'true'
+        puts 'Recompiling pack...'
+        recompile_duration = Benchmark.realtime do
+          Rake::Task['webpacker:compile'].invoke
+        end
+        puts "Done recompiling pack.  Took #{recompile_duration} seconds."
+      end
 
       puts "setting up test db...\n"
       Rake::Task['db:environment:set'].invoke
