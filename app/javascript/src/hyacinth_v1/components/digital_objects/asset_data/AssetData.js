@@ -2,14 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import { Button, Card } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import DigitalObjectInterface from '../DigitalObjectInterface';
 import TabHeading from '../../shared/tabs/TabHeading';
-import { getAssetDataDigitalObjectQuery } from '../../../graphql/digitalObjects';
+import { getAssetDataDigitalObjectQuery, deleteResourceMutation } from '../../../graphql/digitalObjects';
 import GraphQLErrors from '../../shared/GraphQLErrors';
-
-import { deleteResourceMutation } from '../../../graphql/digitalObjects';
+import FontAwesomeIcon from '../../../utils/lazyFontAwesome';
 
 function AssetData(props) {
   const { id } = props;

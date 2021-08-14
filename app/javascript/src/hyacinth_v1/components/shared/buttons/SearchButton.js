@@ -1,23 +1,21 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import FontAwesomeIcon from '../../../utils/lazyFontAwesome';
 
-class SearchButton extends React.PureComponent {
-  render() {
-    const { onClick } = this.props;
+const SearchButton = (props) => {
+  const { onClick } = props;
 
-    return (
-      <Button
-        variant="primary"
-        size="sm"
-        onClick={onClick}
-      >
-        <FontAwesomeIcon icon="search" />
-      </Button>
-    );
-  }
-}
+  return (
+    <Button
+      variant="primary"
+      size="sm"
+      onClick={onClick}
+    >
+      <FontAwesomeIcon icon="search" />
+    </Button>
+  );
+};
 
 SearchButton.propTypes = {
   onClick: PropTypes.func.isRequired,

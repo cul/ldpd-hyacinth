@@ -1,6 +1,5 @@
 import React from 'react';
 import { Table, Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { LinkContainer } from 'react-router-bootstrap';
 import gql from 'graphql-tag';
 import { useQuery } from '@apollo/react-hooks';
@@ -8,6 +7,7 @@ import { Link, useParams } from 'react-router-dom';
 
 import TabHeading from '../../shared/tabs/TabHeading';
 import { Can } from '../../../utils/abilityContext';
+import FontAwesomeIcon from '../../../utils/lazyFontAwesome';
 import ProjectInterface from '../ProjectInterface';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 
@@ -38,12 +38,12 @@ function FieldSetIndex() {
   let rows = <tr><td colSpan="2">No fieldsets have been defined</td></tr>;
 
   if (data.project.fieldSets.length > 0) {
-    rows = data.project.fieldSets.map(fieldSet => (
+    rows = data.project.fieldSets.map((fieldSet) => (
       <tr key={fieldSet.id}>
         <td>
           <Can I="update" of={{ subjectType: 'FieldSet', project: { stringKey: projectStringKey } }} passThrough>
             {
-                can => (
+                (can) => (
                   can
                     ? <Link to={`/projects/${projectStringKey}/field_sets/${fieldSet.id}/edit`}>{fieldSet.displayLabel}</Link>
                     : fieldSet.displayLabel

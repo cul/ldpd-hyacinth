@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  Button, Dropdown, Badge, Collapse,
+  Button, Badge, Collapse,
 } from 'react-bootstrap';
+import FontAwesomeIcon from '../../../../../utils/lazyFontAwesome';
 
 function TermOption(props) {
   const {

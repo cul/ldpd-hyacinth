@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/react-hooks';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 import {
@@ -12,6 +11,7 @@ import GraphQLErrors from '../../shared/GraphQLErrors';
 import SelectInput from '../../shared/forms/inputs/SelectInput';
 import Label from '../../shared/forms/Label';
 import InputGroup from '../../shared/forms/InputGroup';
+import FontAwesomeIcon from '../../../utils/lazyFontAwesome';
 
 const sortOptions = [
   { label: 'Title A-Z', value: 'TITLE ASC' },

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   Row, Col, Form, Button, Collapse,
 } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useQuery, useMutation } from '@apollo/react-hooks';
 import { useParams } from 'react-router-dom';
 
@@ -13,6 +12,7 @@ import InputGroup from '../shared/forms/InputGroup';
 import Label from '../shared/forms/Label';
 import FormButtons from '../shared/forms/FormButtons';
 import { Can } from '../../utils/abilityContext';
+import FontAwesomeIcon from '../../utils/lazyFontAwesome';
 import { getUserQuery, updateUserMutation } from '../../graphql/users';
 import Checkbox from '../shared/forms/inputs/Checkbox';
 

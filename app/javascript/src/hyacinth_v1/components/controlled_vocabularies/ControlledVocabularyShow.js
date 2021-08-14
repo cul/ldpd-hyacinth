@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Form, Row, Col, Button, Table, InputGroup
+  Form, Row, Col, Button, Table, InputGroup,
 } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 
 import ContextualNavbar from '../shared/ContextualNavbar';
-import TextInput from '../shared/forms/inputs/TextInput';
 import SearchButton from '../shared/buttons/SearchButton';
 import GraphQLErrors from '../shared/GraphQLErrors';
 import { getTermsQuery } from '../../graphql/terms';
 import { Can } from '../../utils/abilityContext';
 import PaginationBar from '../shared/PaginationBar';
+import FontAwesomeIcon from '../../utils/lazyFontAwesome';
 
 const limit = 10;
 

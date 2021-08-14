@@ -1,12 +1,11 @@
 import { useQuery } from '@apollo/react-hooks';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Table } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { publishTargetsQuery } from '../../graphql/publishTargets';
 import ContextualNavbar from '../shared/ContextualNavbar';
 import GraphQLErrors from '../shared/GraphQLErrors';
-
+import FontAwesomeIcon from '../../utils/lazyFontAwesome';
 
 function PublishTargetIndex() {
   const { loading, error, data } = useQuery(publishTargetsQuery);
@@ -34,7 +33,7 @@ function PublishTargetIndex() {
         <tbody>
           {
             data && (
-              data.publishTargets.map(publishTarget => (
+              data.publishTargets.map((publishTarget) => (
                 <tr key={publishTarget.stringKey}>
                   <td>{publishTarget.stringKey}</td>
                   <td>{publishTarget.publishUrl}</td>

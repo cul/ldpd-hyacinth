@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Badge, Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import FontAwesomeIcon from '../../../../utils/lazyFontAwesome';
 
 const FacetOptions = (props) => {
   const {
     values, fieldName, onFacetSelect, selectedValues,
   } = props;
 
-  return values.map(value => (
+  return values.map((value) => (
     <FacetOption
       key={`option_${fieldName}_${value.value}`}
       value={value.value}
