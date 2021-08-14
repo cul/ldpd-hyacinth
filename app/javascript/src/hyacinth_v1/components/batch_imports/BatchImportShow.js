@@ -4,13 +4,13 @@ import {
 } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
 import { Link, useParams } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { startCase } from 'lodash';
 
 import ContextualNavbar from '../shared/ContextualNavbar';
 import { batchImportQuery } from '../../graphql/batchImports';
 import GraphQLErrors from '../shared/GraphQLErrors';
 import ReadableDate from '../shared/ReadableDate';
+import FontAwesomeIcon from '../../utils/lazyFontAwesome';
 
 function BatchImportShow() {
   const [polling, setPolling] = useState(false);

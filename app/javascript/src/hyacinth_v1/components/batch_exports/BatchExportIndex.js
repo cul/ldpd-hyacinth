@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from '@apollo/react-hooks';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import produce from 'immer';
 import queryString from 'query-string';
 import React, { useState } from 'react';
@@ -11,6 +10,7 @@ import PaginationBar from '../shared/PaginationBar';
 import GraphQLErrors from '../shared/GraphQLErrors';
 import ContextualNavbar from '../shared/ContextualNavbar';
 import ReadableDate from '../shared/ReadableDate';
+import FontAwesomeIcon from '../../utils/lazyFontAwesome';
 
 function BatchExportIndex() {
   const limit = 30;
