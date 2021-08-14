@@ -13,7 +13,7 @@ function FormButtons({
     <div className="mt-3">
       <Row>
         <Col className="mr-auto">
-          { onDelete && <DeleteButton onClick={onDelete} formType={formType} /> }
+          { onDelete && <DeleteButton onClick={onDelete} formType={formType} onSuccess={onSuccess} /> }
         </Col>
 
         <Col sm="auto">
