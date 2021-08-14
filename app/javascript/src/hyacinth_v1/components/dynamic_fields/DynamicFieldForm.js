@@ -58,7 +58,16 @@ function DynamicFieldForm(props) {
   const [updateDynamicField, { error: updateError }] = useMutation(updateDynamicFieldMutation);
   const [deleteDynamicField, { error: deleteError }] = useMutation(deleteDynamicFieldMutation);
 
-  const onSave = () => {
+  const onSuccessHandler = (result) => {
+    if (result.data.createDynamicField) {
+      const { dynamicField: { id: newId } } = result.data.createDynamicField;
+      history.push(`/dynamic_fields/${newId}/edit`);
+    } else if (result.data.deleteDynamicField) {
+      history.push('/dynamic_fields');
+    }
+  };
+
+  const onSaveHandler = () => {
     const variables = {
       input: {
         displayLabel,
@@ -79,11 +88,7 @@ function DynamicFieldForm(props) {
         variables.input.stringKey = stringKey;
         variables.input.dynamicFieldGroupId = dynamicFieldGroupId;
 
-        return createDynamicField({ variables }).then((res) => {
-          const { dynamicField: { id: newId } } = res.data.createDynamicField;
-
-          history.push(`/dynamic_fields/${newId}/edit`);
-        });
+        return createDynamicField({ variables });
       case 'edit':
         variables.input.id = dynamicField.id;
         return updateDynamicField({ variables });
@@ -97,7 +102,7 @@ function DynamicFieldForm(props) {
 
     const variables = { input: { id: dynamicField.id } };
 
-    deleteDynamicField({ variables }).then(() => history.push('/dynamic_fields'));
+    return deleteDynamicField({ variables });
   };
 
   const onFieldTypeSelect = (newFieldType) => {
@@ -110,6 +115,7 @@ function DynamicFieldForm(props) {
   const showControlledVocabularySelector = (fieldType === 'controlled_term');
   const showSelectOptionsInput = (fieldType === 'select');
   const showIsFacetableCheckbox = (fieldType !== 'textarea');
+  const cancelTo = '/dynamic_fields';
 
   return (
     <Form>
@@ -188,9 +194,10 @@ function DynamicFieldForm(props) {
 
       <FormButtons
         formType={formType}
-        cancelTo="/dynamic_fields"
+        cancelTo={cancelTo}
         onDelete={onDeleteHandler}
-        onSave={onSave}
+        onSave={onSaveHandler}
+        onSuccess={onSuccessHandler}
       />
     </Form>
   );
