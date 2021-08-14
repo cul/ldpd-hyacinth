@@ -34,16 +34,21 @@ function FieldExportProfileForm(props) {
     deleteFieldExportProfileMutation,
   );
 
-  const onSave = () => {
+  const onSuccessHandler = (result) => {
+    if (result.data.createFieldExportProfile) {
+      const { fieldExportProfile: { id: newId } } = result.data.createFieldExportProfile;
+      history.push(`/field_export_profiles/${newId}/edit`);
+    } else if (result.data.deleteFieldExportProfile) {
+      history.push('/field_export_profiles');
+    }
+  };
+
+  const onSaveHandler = () => {
     const variables = { input: { name, translationLogic } };
 
     switch (formType) {
       case 'new':
-        return createFieldExportProfile({ variables }).then((res) => {
-          const { fieldExportProfile: { id: newId } } = res.data.createFieldExportProfile;
-
-          history.push(`/field_export_profiles/${newId}/edit`);
-        });
+        return createFieldExportProfile({ variables });
       case 'edit':
         variables.input.id = fieldExportProfile.id;
         return updateFieldExportProfile({ variables });
@@ -56,10 +61,9 @@ function FieldExportProfileForm(props) {
     event.preventDefault();
 
     const variables = { input: { id: fieldExportProfile.id } };
-    deleteFieldExportProfile({ variables }).then(() => {
-      history.push('/field_export_profiles');
-    });
+    return deleteFieldExportProfile({ variables });
   };
+  const cancelTo = '/field_export_profiles';
 
   return (
     <Form>
@@ -77,9 +81,10 @@ function FieldExportProfileForm(props) {
 
       <FormButtons
         formType={formType}
-        cancelTo="/field_export_profiles"
+        cancelTo={cancelTo}
         onDelete={onDeleteHandler}
-        onSave={onSave}
+        onSave={onSaveHandler}
+        onSuccess={onSuccessHandler}
       />
     </Form>
   );
