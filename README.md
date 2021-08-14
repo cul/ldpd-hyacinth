@@ -104,6 +104,34 @@ For JavaScript files:
 - camelCase.js for a file that exports a default constant that matches that file's lower-starting name (like an exported plain function or variable) OR files that do not export a default constant
 - snake_case for directories, to differentiate from js objects (convenient when searching through files and directories)
 
+## Development / WebPack
+
+For performance in the deployed app and in system/feature tests, the non-development environments use chunked webpacks. There are some named chunks that are loaded dynamically in components to isolate large, rarely changing dependencies:
+- jsonEditor: used to isolate the *JSONInput* component and associated dependencies
+- fontAwesome: used to isolate the *FontAwesomeIcon* component and associated dependencies
+- CSS is extracted
+
+Please be careful not to `import` these components outside of a runtime function to prevent unnecessary loading of their dependencies! Use their lazy wrappers. For more information about React and webpack code-splitting, see: https://reactjs.org/docs/code-splitting.html
+
+The CI suite expects that you have built the test packs. This happens automatically if you include an environment variable:
+
+```bash
+bundle exec rake hyacinth:ci WEBPACKER_RECOMPILE=true
+```
+
+You can also precompile it to save time if you are not working in the js app:
+```bash
+RAILS_ENV=test bundle exec rake webpacker:clobber webpacker:compile
+bundle exec rake hyacinth:ci
+```
+
+If you *are* working on the js app, you can build and analyze the production packs from your development machine:
+```bash
+NODE_ENV=production RAILS_ENV=production bin/webpack --profile --json > tmp/webpack-stats.json
+npx webpack-bundle-analyzer tmp/webpack-stats.json public/packs
+```
+This will open a browser window with a treemap of chunked dependencies and size information.
+
 ## Development / IDE Notes
 
 If you have an IDE that supports jsconfig.json files (e.g. Visual Studio Code), you can add the following (git ignored) jsconfig.json file to your local copy (top level) and it will enable js import autocomplete for the @hyacinth_v1 alias:
