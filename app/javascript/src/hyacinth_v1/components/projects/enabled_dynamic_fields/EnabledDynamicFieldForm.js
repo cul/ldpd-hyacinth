@@ -273,12 +273,7 @@ export const EnabledDynamicFieldForm = ({ readOnly, projectStringKey, digitalObj
       digitalObjectType: digitalObjectType.toUpperCase(),
       enabledDynamicFields: enabledDynamicFieldsArray,
     };
-    const historyPromise = () => {
-      const path = `/projects/${projectStringKey}/enabled_dynamic_fields/${digitalObjectType}/edit`;
-      history.push(path);
-    };
-    return updateEnabledFields({ variables: { input } })
-      .then(historyPromise);
+    return updateEnabledFields({ variables: { input } });
   };
 
   const onSuccessHandler = (result) => {
