@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Form } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
@@ -24,6 +24,8 @@ function FieldExportProfileForm(props) {
 
   const history = useHistory();
 
+  const jsonInput = useRef();
+
   const [createFieldExportProfile, { error: createError }] = useMutation(
     createFieldExportProfileMutation,
   );
@@ -35,6 +37,7 @@ function FieldExportProfileForm(props) {
   );
 
   const onSave = () => {
+    setTranslationLogic(jsonInput.current.jsonValue());
     const variables = { input: { name, translationLogic } };
 
     switch (formType) {
@@ -72,7 +75,7 @@ function FieldExportProfileForm(props) {
 
       <InputGroup>
         <Label>Translation Logic</Label>
-        <JSONInput value={translationLogic} onChange={v => setTranslationLogic(v)} inputName="translationLogic" />
+        <JSONInput ref={jsonInput} value={translationLogic} inputName="translationLogic" />
       </InputGroup>
 
       <FormButtons

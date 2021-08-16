@@ -1,11 +1,11 @@
 import React, { Suspense } from 'react';
 import PropTypes from 'prop-types';
 
-const LazyJSONInput = (props) => {
+const LazyJSONInput = React.forwardRef((props, ref) => {
   const { fallback, ...rest } = props;
   const JSONInput = React.lazy(() => import(/* webpackChunkName: 'jsonEditor' */ './JSONInput'));
-  return <Suspense fallback={fallback}><JSONInput { ...rest } /></Suspense>;
-};
+  return <Suspense fallback={fallback}><JSONInput ref={ref} { ...rest } /></Suspense>;
+});
 
 LazyJSONInput.propTypes = {
   fallback: PropTypes.object,

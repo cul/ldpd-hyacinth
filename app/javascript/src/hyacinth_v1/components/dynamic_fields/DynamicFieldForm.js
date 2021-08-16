@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Row, Form, Collapse } from 'react-bootstrap';
 import { startCase } from 'lodash';
@@ -30,6 +30,8 @@ function DynamicFieldForm(props) {
 
   const history = useHistory();
 
+  const jsonInput = useRef();
+
   const [stringKey, setStringKey] = useState((dynamicField && dynamicField.stringKey) || '');
   const [displayLabel, setDisplayLabel] = useState((dynamicField && dynamicField.displayLabel) || '');
   const [fieldType, setFieldType] = useState((dynamicField && dynamicField.fieldType) || 'string');
@@ -59,6 +61,7 @@ function DynamicFieldForm(props) {
   const [deleteDynamicField, { error: deleteError }] = useMutation(deleteDynamicFieldMutation);
 
   const onSave = () => {
+    setSelectOptions(jsonInput.current.jsonValue());
     const variables = {
       input: {
         displayLabel,
@@ -105,6 +108,10 @@ function DynamicFieldForm(props) {
     if (newFieldType === 'textarea') setIsFacetable(false);
 
     setFieldType(newFieldType);
+  };
+
+  const onSuccessHandler = (result) => {
+    setSelectOptions(jsonInput.current.jsonValue());
   };
 
   const showControlledVocabularySelector = (fieldType === 'controlled_term');
@@ -155,8 +162,8 @@ function DynamicFieldForm(props) {
           <InputGroup>
             <Label>Select Options</Label>
             <JSONInput
+              ref={jsonInput}
               value={selectOptions}
-              onChange={setSelectOptions}
               height="100px"
               placeholder={'[{ "value": "", "label": "" }]'}
             />
@@ -191,6 +198,7 @@ function DynamicFieldForm(props) {
         cancelTo="/dynamic_fields"
         onDelete={onDeleteHandler}
         onSave={onSave}
+        onSuccess={onSuccessHandler}
       />
     </Form>
   );

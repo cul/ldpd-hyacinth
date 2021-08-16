@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   Row, Col, Form, Tabs, Tab,
@@ -30,6 +30,8 @@ function DynamicFieldGroupForm(props) {
   const id = dynamicFieldGroup ? dynamicFieldGroup.id : null;
 
   const history = useHistory();
+
+  const jsonInput = useRef();
 
   const transformExportRules = rules => rules.map(r => ({
     id: r.id,
@@ -92,7 +94,14 @@ function DynamicFieldGroupForm(props) {
     deleteDynamicFieldGroup({ variables }).then(() => history.push('/dynamic_fields'));
   };
 
+  const valueHandle = (fieldExportProfileId) => `jsonValue${fieldExportProfileId}`;
+
   const onSave = () => {
+    exportRules.forEach((rule) => {
+      const { fieldExportProfileId } = rule;
+      const jsonValue = jsonInput.current.[valueHandle(fieldExportProfileId)]();
+      onTranslationRuleChange(fieldExportProfileId, jsonValue);
+    });
     const variables = {
       input: {
         displayLabel, sortOrder, isRepeatable, parentType, parentId, exportRules,
@@ -171,10 +180,11 @@ function DynamicFieldGroupForm(props) {
                         return (
                           <Tab eventKey={name} title={name} key={name}>
                             <JSONInput
+                              ref={jsonInput}
+                              valueHandle={valueHandle(fieldExportProfileId)}
                               sm={12}
                               name={`${name}_input`}
                               value={translationLogic}
-                              onChange={v => onTranslationRuleChange(fieldExportProfileId, v)}
                             />
                           </Tab>
                         );
