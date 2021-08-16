@@ -27,7 +27,7 @@ const JSONInput = React.forwardRef((props, ref) => {
         width="inherit"
         editorProps={{ $blockScrolling: true }}
         tabSize={2}
-        onChange={onChange}
+        onChange={v => onChange(v)} // only send the first param to the callback function
         value={value == null ? '' : value}
         name={inputName}
         height={height}

@@ -110,10 +110,6 @@ function DynamicFieldForm(props) {
     setFieldType(newFieldType);
   };
 
-  const onSuccessHandler = (result) => {
-    setSelectOptions(jsonInput.current.jsonValue());
-  };
-
   const showControlledVocabularySelector = (fieldType === 'controlled_term');
   const showSelectOptionsInput = (fieldType === 'select');
   const showIsFacetableCheckbox = (fieldType !== 'textarea');
@@ -198,7 +194,6 @@ function DynamicFieldForm(props) {
         cancelTo="/dynamic_fields"
         onDelete={onDeleteHandler}
         onSave={onSave}
-        onSuccess={onSuccessHandler}
       />
     </Form>
   );
