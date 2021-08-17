@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import FontAwesomeIcon from '../../../utils/lazyFontAwesome';
 
 const SelectedFacetsBar = (props) => {
   const { facets, selectedFacets, onRemoveFacet } = props;
 
-  if(!selectedFacets) { return false; }
+  if (!selectedFacets) { return false; }
 
-  const displayLabelFor = facet => facets.find(f => f.fieldName === facet).displayLabel;
+  const displayLabelFor = (facet) => facets.find((f) => f.fieldName === facet).displayLabel;
 
   return (
     <div className="py-3">

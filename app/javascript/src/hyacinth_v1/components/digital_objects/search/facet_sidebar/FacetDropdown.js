@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Collapse, Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import FacetOptions from './FacetOptions';
+import FontAwesomeIcon from '../../../../utils/lazyFontAwesome';
 
 const FacetDropdown = ({ facet, onFacetSelect, selectedValues }) => {
   const [open, setOpen] = useState(selectedValues.length > 0);

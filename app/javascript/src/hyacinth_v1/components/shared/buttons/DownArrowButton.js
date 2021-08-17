@@ -1,21 +1,19 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import FontAwesomeIcon from '../../../utils/lazyFontAwesome';
 
-class DownArrowButton extends React.PureComponent {
-  render() {
-    return (
-      <Button
-        variant="secondary"
-        size="sm"
-        {...this.props}
-      >
-        <FontAwesomeIcon icon="caret-down" size="lg" />
-      </Button>
-    );
-  }
-}
+const DownArrowButton = (props) => {
+  return (
+    <Button
+      variant="secondary"
+      size="sm"
+      { ... props }
+    >
+      <FontAwesomeIcon icon="caret-down" size="lg" />
+    </Button>
+  );
+};
 
 DownArrowButton.propTypes = {
   onClick: PropTypes.func.isRequired,
