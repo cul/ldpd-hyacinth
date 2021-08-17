@@ -40,7 +40,7 @@ const useCustomFields = (initialState) => {
 
 function TermForm(props) {
   const {
-    formType, small, vocabulary, term, cancelAction, submitAction,
+    formType, small, vocabulary, term, onCancel, submitAction,
   } = props;
 
   const [uri, setUri] = useState(term ? term.uri : '');
@@ -184,7 +184,7 @@ function TermForm(props) {
       <FormButtons
         formType={formType}
         cancelTo={`/controlled_vocabularies/${vocabulary.stringKey}`}
-        cancelAction={cancelAction}
+        onCancel={onCancel}
         onSave={onSaveHandler}
         onDelete={onDeleteHandler}
         onSuccess={onSuccessHandler}
@@ -196,7 +196,7 @@ function TermForm(props) {
 TermForm.defaultProps = {
   term: null,
   small: false,
-  cancelAction: null,
+  onCancel: null,
   submitAction: null,
 };
 
@@ -211,7 +211,7 @@ TermForm.propTypes = {
     authority: PropTypes.string,
   }),
   small: PropTypes.bool,
-  cancelAction: PropTypes.func,
+  onCancel: PropTypes.func,
   submitAction: PropTypes.func,
 };
 

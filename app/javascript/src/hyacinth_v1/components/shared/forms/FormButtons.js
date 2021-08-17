@@ -7,7 +7,7 @@ import CancelButton from './buttons/CancelButton';
 import DeleteButton from './buttons/DeleteButton';
 
 function FormButtons({
-  formType, cancelTo, cancelAction, onDelete, onSave, onSuccess, onError,
+  formType, cancelTo, onCancel, onDelete, onSave, onSuccess, onError,
 }) {
   return (
     <div className="mt-3">
@@ -17,7 +17,7 @@ function FormButtons({
         </Col>
 
         <Col sm="auto">
-          { (cancelTo || cancelAction) && <CancelButton to={cancelTo} action={cancelAction} />}
+          { (cancelTo || onCancel) && <CancelButton to={cancelTo} action={onCancel} />}
         </Col>
 
         <Col sm="auto">
@@ -40,7 +40,7 @@ export default FormButtons;
 FormButtons.propTypes = {
   formType: PropTypes.oneOf(['new', 'edit']).isRequired,
   cancelTo: PropTypes.string,
-  cancelAction: PropTypes.func,
+  onCancel: PropTypes.func,
   onDelete: PropTypes.func,
   onSave: PropTypes.func,
   onSuccess: PropTypes.func,
@@ -49,7 +49,7 @@ FormButtons.propTypes = {
 
 FormButtons.defaultProps = {
   cancelTo: null,
-  cancelAction: null,
+  onCancel: null,
   onDelete: null,
   onSave: () => {},
   onSuccess: () => {},
