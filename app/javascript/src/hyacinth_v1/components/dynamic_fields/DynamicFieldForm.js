@@ -58,13 +58,14 @@ function DynamicFieldForm(props) {
   const [updateDynamicField, { error: updateError }] = useMutation(updateDynamicFieldMutation);
   const [deleteDynamicField, { error: deleteError }] = useMutation(deleteDynamicFieldMutation);
 
-  const onSuccessHandler = (result) => {
+  const saveSuccessHandler = (result) => {
     if (result.data.createDynamicField) {
       const { dynamicField: { id: newId } } = result.data.createDynamicField;
       history.push(`/dynamic_fields/${newId}/edit`);
-    } else if (result.data.deleteDynamicField) {
-      history.push('/dynamic_fields');
     }
+  };
+  const deleteSuccessHandler = () => {
+    history.push('/dynamic_fields');
   };
 
   const onSaveHandler = () => {
@@ -196,8 +197,9 @@ function DynamicFieldForm(props) {
         formType={formType}
         cancelTo={cancelTo}
         onDelete={onDeleteHandler}
+        onDeleteSuccess={deleteSuccessHandler}
         onSave={onSaveHandler}
-        onSuccess={onSuccessHandler}
+        onSaveSuccess={saveSuccessHandler}
       />
     </Form>
   );

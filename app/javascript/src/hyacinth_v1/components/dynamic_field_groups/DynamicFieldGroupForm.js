@@ -91,13 +91,15 @@ function DynamicFieldGroupForm(props) {
     return deleteDynamicFieldGroup({ variables });
   };
 
-  const onSuccessHandler = (result) => {
+  const saveSuccessHandler = (result) => {
     if (result.data.createDynamicFieldGroup) {
       const { dynamicFieldGroup: { id: newId } } = result.data.createDynamicFieldGroup;
       history.push(`/dynamic_field_groups/${newId}/edit`);
-    } else if (result.data.deleteDynamicFieldCategory) {
-      history.push('/dynamic_fields');
     }
+  };
+
+  const deleteSuccessHandler = () => {
+    history.push('/dynamic_fields');
   };
 
   const onSaveHandler = () => {
@@ -196,8 +198,9 @@ function DynamicFieldGroupForm(props) {
             formType={formType}
             cancelTo={cancelTo}
             onDelete={onDeleteHandler}
+            onDeleteSuccess={deleteSuccessHandler}
             onSave={onSaveHandler}
-            onSuccessHandler={onSuccessHandler}
+            onSaveSuccess={saveSuccessHandler}
           />
         </Form>
       </Col>

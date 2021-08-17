@@ -40,7 +40,7 @@ function PublishTargetForm({ publishTarget, formType }) {
     return formType === 'new' ? createPublishTarget({ variables }) : updatePublishTarget({ variables });
   };
 
-  const onSuccessHandler = (result) => {
+  const saveSuccessHandler = (result) => {
     if (formType === 'new') {
       history.push(`/publish_targets/${result.data.createPublishTarget.publishTarget.stringKey}`);
     } else {
@@ -53,9 +53,11 @@ function PublishTargetForm({ publishTarget, formType }) {
 
     const variables = { input: { stringKey } };
 
-    deletePublishTarget({ variables }).then(() => {
-      history.push('/publish_targets');
-    });
+    return deletePublishTarget({ variables });
+  };
+
+  const deleteSuccessHandler = () => {
+    history.push('/publish_targets');
   };
 
   return (
@@ -95,8 +97,9 @@ function PublishTargetForm({ publishTarget, formType }) {
         formType={formType}
         cancelTo={formType === 'new' ? '/publish_targets' : `/publish_targets/${publishTarget.stringKey}`}
         onSave={onSaveHandler}
+        onDeleteSuccess={deleteSuccessHandler}
         onDelete={onDeleteHandler}
-        onSuccess={onSuccessHandler}
+        onSaveSuccess={saveSuccessHandler}
       />
     </Form>
   );

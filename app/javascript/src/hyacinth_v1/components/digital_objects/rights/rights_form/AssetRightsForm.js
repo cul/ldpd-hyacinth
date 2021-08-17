@@ -35,7 +35,7 @@ function AssetRightsForm(props) {
   // One day, maybe enable optionalChaining JS feature in babel to simplify lines like the one below.
   const userErrors = (updateData && updateData.updateRights && updateData.updateRights.userErrors) || [];
 
-  const onSuccessHandler = (result) => {
+  const saveSuccessHandler = (result) => {
     history.push(`/digital_objects/${result.data.updateRights.digitalObject.id}/rights`);
   };
 
@@ -50,7 +50,7 @@ function AssetRightsForm(props) {
     delete rights.copyright_status_override;
   }
 
-  const findFieldConfig = stringKey => fieldConfiguration.find(c => c.stringKey === stringKey);
+  const findFieldConfig = (stringKey) => fieldConfiguration.find((c) => c.stringKey === stringKey);
 
   if (fieldConfiguration.length === 0) return (<p>Rights field configuration missing.</p>);
 
@@ -63,7 +63,7 @@ function AssetRightsForm(props) {
         value={rights.restriction_on_access}
         defaultValue={defaultAssetRights.restriction_on_access[0]}
         dynamicFieldGroup={findFieldConfig('restriction_on_access')}
-        onChange={v => setRights('restriction_on_access', v)}
+        onChange={(v) => setRights('restriction_on_access', v)}
       />
 
       {
@@ -72,7 +72,7 @@ function AssetRightsForm(props) {
             value={rights.copyright_status_override}
             defaultValue={defaultAssetRights.copyright_status_override[0]}
             dynamicFieldGroup={findFieldConfig('copyright_status_override')}
-            onChange={v => setRights('copyright_status_override', v)}
+            onChange={(v) => setRights('copyright_status_override', v)}
           />
         )
       }
@@ -80,7 +80,7 @@ function AssetRightsForm(props) {
         formType="edit"
         cancelTo={`/digital_objects/${id}/rights`}
         onSave={onSaveHandler}
-        onSuccess={onSuccessHandler}
+        onSaveSuccess={saveSuccessHandler}
       />
     </Form>
   );
@@ -90,4 +90,5 @@ export default AssetRightsForm;
 
 AssetRightsForm.propTypes = {
   digitalObject: PropTypes.objectOf(PropTypes.any).isRequired,
+  fieldConfiguration: PropTypes.objectOf(PropTypes.any).isRequired,
 };

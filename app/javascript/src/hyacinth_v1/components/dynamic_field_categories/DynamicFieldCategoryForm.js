@@ -36,12 +36,13 @@ function DynamicFieldCategoryForm(props) {
     deleteDynamicFieldCategoryMutation,
   );
 
-  const onSuccessHandler = (result) => {
+  const saveSuccessHandler = (result) => {
     if (result.data.createDynamicFieldCategory) {
       history.push(`/dynamic_field_categories/${result.data.createDynamicFieldCategory.dynamicFieldCategory.id}/edit`);
-    } else if (result.data.deleteDynamicFieldCategory) {
-      history.push('/dynamic_fields');
     }
+  };
+  const deleteSuccessHandler = () => {
+    history.push('/dynamic_fields');
   };
 
   const onSaveHandler = () => {
@@ -86,8 +87,9 @@ function DynamicFieldCategoryForm(props) {
         formType={formType}
         cancelTo={cancelTo}
         onDelete={onDeleteHandler}
+        onDeleteSuccess={deleteSuccessHandler}
         onSave={onSaveHandler}
-        onSuccess={onSuccessHandler}
+        onSaveSuccess={saveSuccessHandler}
       />
     </Form>
   );

@@ -48,12 +48,13 @@ function FieldSetForm({ projectStringKey, fieldSet, formType }) {
 
   const history = useHistory();
 
-  const onSuccessHandler = (result) => {
+  const saveSuccessHandler = (result) => {
     if (result.data.createFieldSet) {
       history.push(`/projects/${projectStringKey}/field_sets/${result.data.createFieldSet.fieldSet.id}/edit`);
-    } else if (result.data.deleteFieldSet) {
-      history.push(`/projects/${projectStringKey}/field_sets`);
     }
+  };
+  const deleteSuccessHandler = () => {
+    history.push(`/projects/${projectStringKey}/field_sets`);
   };
 
   const onSaveHandler = () => {
@@ -91,7 +92,7 @@ function FieldSetForm({ projectStringKey, fieldSet, formType }) {
             type="text"
             name="displayLabel"
             value={displayLabel}
-            onChange={e => setDisplayLabel(e.target.value)}
+            onChange={(e) => setDisplayLabel(e.target.value)}
           />
         </Col>
       </Form.Group>
@@ -100,8 +101,9 @@ function FieldSetForm({ projectStringKey, fieldSet, formType }) {
         formType={formType}
         cancelTo={`/projects/${projectStringKey}/field_sets`}
         onDelete={onDeleteHandler}
+        onDeleteSuccess={deleteSuccessHandler}
         onSave={onSaveHandler}
-        onSuccess={onSuccessHandler}
+        onSaveSuccess={saveSuccessHandler}
       />
     </Form>
   );

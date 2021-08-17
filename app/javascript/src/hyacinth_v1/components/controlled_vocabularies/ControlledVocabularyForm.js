@@ -26,12 +26,14 @@ function ControlledVocabularyForm(props) {
   const [updateVocabulary, { error: updateError }] = useMutation(updateVocabularyMutation);
   const [deleteVocabulary, { error: deleteError }] = useMutation(deleteVocabularyMutation);
 
-  const onSuccessHandler = (result) => {
+  const saveSuccessHandler = (result) => {
     if (result.data.createVocabulary) {
       history.push(`/controlled_vocabularies/${result.data.createVocabulary.vocabulary.stringKey}/edit`);
-    } else if (result.data.deleteVocabulary) {
-      history.push('/controlled_vocabularies');
     }
+  };
+
+  const deleteSuccessHandler = () => {
+    history.push('/controlled_vocabularies');
   };
 
   const onSaveHandler = () => {
@@ -85,8 +87,9 @@ function ControlledVocabularyForm(props) {
         formType={formType}
         cancelTo={`/controlled_vocabularies/${stringKey}`}
         onDelete={onDeleteHandler}
+        onDeleteSuccess={deleteSuccessHandler}
         onSave={onSaveHandler}
-        onSuccess={onSuccessHandler}
+        onSaveSuccess={saveSuccessHandler}
       />
     </Form>
   );

@@ -34,13 +34,14 @@ function FieldExportProfileForm(props) {
     deleteFieldExportProfileMutation,
   );
 
-  const onSuccessHandler = (result) => {
+  const saveSuccessHandler = (result) => {
     if (result.data.createFieldExportProfile) {
       const { fieldExportProfile: { id: newId } } = result.data.createFieldExportProfile;
       history.push(`/field_export_profiles/${newId}/edit`);
-    } else if (result.data.deleteFieldExportProfile) {
-      history.push('/field_export_profiles');
     }
+  };
+  const deleteSuccessHandler = () => {
+    history.push('/field_export_profiles');
   };
 
   const onSaveHandler = () => {
@@ -83,8 +84,9 @@ function FieldExportProfileForm(props) {
         formType={formType}
         cancelTo={cancelTo}
         onDelete={onDeleteHandler}
+        onDeleteSuccess={deleteSuccessHandler}
         onSave={onSaveHandler}
-        onSuccess={onSuccessHandler}
+        onSaveSuccess={saveSuccessHandler}
       />
     </Form>
   );
