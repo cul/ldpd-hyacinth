@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Badge, Card } from 'react-bootstrap';
 import { startCase } from 'lodash';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 /*
   Display for list of Digital Objects. Have a flag to optionally display
   parents and projects. Parents and Projects are only displayed on the search
@@ -43,32 +44,79 @@ const storeSearchValues = (
 const DigitalObjectList = (props) => {
   const {
     digitalObjects, displayProjects, displayParentIds, orderBy, totalCount,
-    limit, offset, pageNumber, searchParams, path,
+    limit, offset, pageNumber, searchParams, path, disableDrag,
   } = props;
+
+  const [currentObjectList, setCurrentObjectList] = useState(digitalObjects);
+
+  const onDragEnd = (result) => {
+    const { destination, source } = result;
+
+    if (!destination) {
+      return;
+    }
+
+    // no changes
+    if (
+      destination.droppableId === source.droppableId
+      && destination.index === source.index
+    ) {
+      return;
+    }
+
+    const newList = Array.from(currentObjectList);
+    // insert dragged element to new location
+    newList.splice(destination.index, 0, newList.splice(source.index, 1)[0]);
+    setCurrentObjectList(newList);
+  };
+
 
   return (
     <>
-      {
-        digitalObjects.map((digitalObject, resultIndex) => (
-          <Card key={digitalObject.id} className="mb-3">
-            <Card.Header className="px-2 py-1">
-              <Link
-                to={`/digital_objects/${digitalObject.id}`}
-                onClick={() => searchParams && storeSearchValues(
-                  orderBy, totalCount, limit, offset,
-                  pageNumber, searchParams.query, searchParams.filters, path, resultIndex,
-                )}
+      <DragDropContext onDragEnd={onDragEnd}>
+
+        <Droppable droppableId="droppable-1">
+          {DroppableProvided => (
+            <div
+              ref={DroppableProvided.innerRef}
+              {...DroppableProvided.droppableProps}
+            >
+              {
+        currentObjectList.map((digitalObject, resultIndex) => (
+          <Draggable
+            draggableId={
+            digitalObject.id}
+            index={resultIndex}
+            key={digitalObject.id}
+            isDragDisabled={disableDrag
+            }
+          >
+            {provided => (
+              <Card
+                key={digitalObject.id}
+                className="mb-3"
+                {...provided.draggableProps}
+                {...provided.dragHandleProps}
+                ref={provided.innerRef}
               >
-                {digitalObject.title}
-              </Link>
-            </Card.Header>
-            <Card.Body className="p-2">
-              <ul className="list-unstyled small">
-                <li>
-                  <strong>ID: </strong>
-                  {digitalObject.id}
-                </li>
-                {
+                <Card.Header>
+                  <Link
+                    to={`/digital_objects/${digitalObject.id}`}
+                    onClick={() => searchParams && storeSearchValues(
+                      orderBy, totalCount, limit, offset,
+                      pageNumber, searchParams.query, searchParams.filters, path, resultIndex,
+                    )}
+                  >
+                    {digitalObject.title}
+                  </Link>
+                </Card.Header>
+                <Card.Body>
+                  <ul className="list-unstyled small">
+                    <li>
+                      <strong>ID: </strong>
+                      {digitalObject.id}
+                    </li>
+                    {
                   digitalObject.numberOfChildren > 0 && (
                     <li>
                       <strong>Children: </strong>
@@ -76,7 +124,7 @@ const DigitalObjectList = (props) => {
                     </li>
                   )
                 }
-                {
+                    {
                   displayParentIds && digitalObject.parentIds.length > 0 && (
                     <li>
                       <strong>Parent(s): </strong>
@@ -94,10 +142,21 @@ const DigitalObjectList = (props) => {
                   </span>
                 ))
               }
-            </Card.Body>
-          </Card>
+                </Card.Body>
+              </Card>
+            )}
+          </Draggable>
+
         ))
       }
+
+              {DroppableProvided.placeholder}
+            </div>
+
+          )}
+        </Droppable>
+      </DragDropContext>
+
     </>
   );
 };
@@ -113,6 +172,7 @@ DigitalObjectList.defaultProps = {
   pageNumber: 0,
   searchParams: null,
   path: '',
+  disableDrag: true,
 };
 
 DigitalObjectList.propTypes = {
@@ -140,6 +200,7 @@ DigitalObjectList.propTypes = {
     ),
   }),
   path: PropTypes.string,
+  disableDrag: PropTypes.bool,
 };
 
 export default DigitalObjectList;

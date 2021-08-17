@@ -217,6 +217,7 @@ const DigitalObjectSearch = ({ query }) => {
                 pageNumber={pageNumber}
                 searchParams={searchParams}
                 path={location.pathname}
+                disableDrag
               />
             )
             : <Card><Card.Header>No Digital Objects found.</Card.Header></Card>
