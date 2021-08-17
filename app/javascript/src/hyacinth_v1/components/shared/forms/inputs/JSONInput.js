@@ -4,6 +4,7 @@ import AceEditor from 'react-ace';
 import { Col } from 'react-bootstrap';
 import 'ace-builds/src-noconflict/mode-json';
 import 'ace-builds/src-noconflict/theme-textmate';
+import 'ace-builds/webpack-resolver';
 
 function JSONInput(props) {
   const {
@@ -23,7 +24,6 @@ function JSONInput(props) {
         name={inputName}
         height={height}
         placeholder={placeholder}
-        setOptions={{ useWorker: false }}
       />
     </Col>
   );
