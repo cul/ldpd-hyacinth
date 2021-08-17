@@ -37,8 +37,9 @@ function FieldExportProfileForm(props) {
   );
 
   const onSave = () => {
-    setTranslationLogic(jsonInput.current.jsonValue());
-    const variables = { input: { name, translationLogic } };
+    const jsonValue = jsonInput.current.jsonValue();
+    if (translationLogic !== jsonValue) setTranslationLogic(jsonValue);
+    const variables = { input: { name, translationLogic: jsonValue } };
 
     switch (formType) {
       case 'new':

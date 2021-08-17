@@ -61,7 +61,8 @@ function DynamicFieldForm(props) {
   const [deleteDynamicField, { error: deleteError }] = useMutation(deleteDynamicFieldMutation);
 
   const onSave = () => {
-    setSelectOptions(jsonInput.current.jsonValue());
+    const jsonValue = jsonInput.current.jsonValue();
+    if (selectOptions !== jsonValue) setSelectOptions(jsonValue);
     const variables = {
       input: {
         displayLabel,
@@ -70,7 +71,7 @@ function DynamicFieldForm(props) {
         isFacetable,
         filterLabel,
         controlledVocabulary,
-        selectOptions,
+        selectOptions: jsonValue,
         isKeywordSearchable,
         isTitleSearchable,
         isIdentifierSearchable,

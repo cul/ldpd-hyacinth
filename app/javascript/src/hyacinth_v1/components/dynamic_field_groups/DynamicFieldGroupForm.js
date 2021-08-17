@@ -100,7 +100,8 @@ function DynamicFieldGroupForm(props) {
     exportRules.forEach((rule) => {
       const { fieldExportProfileId } = rule;
       const jsonValue = jsonInput.current.[valueHandle(fieldExportProfileId)]();
-      onTranslationRuleChange(fieldExportProfileId, jsonValue);
+      const exportRule = exportRules.find((e) => e.fieldExportProfileId === fieldExportProfileId);
+      if (exportRule.translationLogic !== jsonValue) onTranslationRuleChange(fieldExportProfileId, jsonValue);
     });
     const variables = {
       input: {
