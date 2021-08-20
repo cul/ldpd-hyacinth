@@ -82,7 +82,7 @@ RSpec.describe DigitalObject::RightsFieldsValidator, type: :model, solr: true do
 
       it 'does not validate successfully' do
         expect(item.valid?).to be false
-        expect(item.errors.messages).to include(expected_errors)
+        expect(item.errors.to_hash).to include(expected_errors)
       end
     end
   end

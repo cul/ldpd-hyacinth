@@ -29,7 +29,7 @@ class DigitalObjectImportProcessingJob
 
     # Save the object, and terminate processing if the save fails.
     unless digital_object.save
-      digital_object_import.import_errors = digital_object.errors.map { |err_key, message| "#{err_key}: #{message}" }
+      digital_object_import.import_errors = digital_object.errors.map { |error| "#{error.attribute}: #{error.message}" }
       # Apply a recursive failure to this digital_object_import and all other DigitalObjectImports
       # that depend on it, since it doesn't make sense to run the others if this one failed.
       apply_recursive_failure!(digital_object_import)

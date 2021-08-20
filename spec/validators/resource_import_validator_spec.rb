@@ -40,7 +40,7 @@ RSpec.describe DigitalObject::ResourceImportValidator do
       end
 
       it 'adds the expected error to the object being validated' do
-        expect(digital_object.errors.messages).to eq(resource_imports: ['Invalid resource import keys: what_an_invalid_resource_name'])
+        expect(digital_object.errors.to_hash).to eq(resource_imports: ['Invalid resource import keys: what_an_invalid_resource_name'])
       end
     end
 
@@ -58,7 +58,7 @@ RSpec.describe DigitalObject::ResourceImportValidator do
       end
 
       it 'adds the expected error to the object being validated' do
-        expect(digital_object.errors.messages).to eq('resource_imports.test_resource1': ['Invalid resource import: test_resource1'])
+        expect(digital_object.errors.to_hash).to eq('resource_imports.test_resource1': ['Invalid resource import: test_resource1'])
       end
     end
 
@@ -76,7 +76,7 @@ RSpec.describe DigitalObject::ResourceImportValidator do
       end
 
       it 'adds the expected error to the object being validated' do
-        expect(digital_object.errors.messages).to eq('resource_imports.test_resource1': ['Unreadable file for resource import: test_resource1'])
+        expect(digital_object.errors.to_hash).to eq('resource_imports.test_resource1': ['Unreadable file for resource import: test_resource1'])
       end
     end
   end

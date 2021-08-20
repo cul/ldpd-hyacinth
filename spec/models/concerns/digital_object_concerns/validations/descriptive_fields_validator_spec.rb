@@ -113,7 +113,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
 
     it 'returns errors' do
       expect(item.valid?).to be false
-      expect(item.errors.messages).to include(
+      expect(item.errors.to_hash).to include(
         'descriptive_metadata.name[0].role[0].term': ['must be a controlled term']
       )
     end
@@ -134,7 +134,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
 
     it 'returns errors' do
       expect(item.valid?).to be false
-      expect(item.errors.messages).to include(
+      expect(item.errors.to_hash).to include(
         'descriptive_metadata.name[0].role[0].term': ['has invalid key, "other_field" in hash', 'has invalid key, "other_field_2" in hash']
       )
     end
@@ -151,7 +151,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
 
     it 'returns errors' do
       expect(item.valid?).to be false
-      expect(item.errors.messages).to include(
+      expect(item.errors.to_hash).to include(
         'descriptive_metadata.name[0].role[0].value': ['is not a valid field']
       )
     end
@@ -172,7 +172,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
 
     it 'returns errors' do
       expect(item.valid?).to be false
-      expect(item.errors.messages).to include(
+      expect(item.errors.to_hash).to include(
         'descriptive_metadata.name[0].role[0].term': ['must contain a uri or pref_label']
       )
     end
@@ -193,7 +193,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
 
     it 'return errors' do
       expect(item.valid?).to be false
-      expect(item.errors.messages).to include(
+      expect(item.errors.to_hash).to include(
         'descriptive_metadata.name[0].role': ['must contain an array']
       )
     end
@@ -206,7 +206,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
 
     it 'return errors' do
       expect(item.valid?).to be false
-      expect(item.errors.messages).to include(
+      expect(item.errors.to_hash).to include(
         'descriptive_metadata.name[0].is_primary': ['must be a boolean']
       )
     end
@@ -223,7 +223,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
 
     it 'returns errors' do
       expect(item.valid?).to be false
-      expect(item.errors.messages).to include(
+      expect(item.errors.to_hash).to include(
         'descriptive_metadata.alternative_title[0].sort_order': ['must be an integer']
       )
     end
@@ -240,7 +240,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
 
     it 'returns errors' do
       expect(item.valid?).to be false
-      expect(item.errors.messages).to include(
+      expect(item.errors.to_hash).to include(
         'descriptive_metadata.type_of_resource[0].value': ["has invalid value: 'not_valid'"]
       )
     end
@@ -253,7 +253,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
 
     it 'return errors' do
       expect(item.valid?).to be false
-      expect(item.errors.messages).to include(
+      expect(item.errors.to_hash).to include(
         'descriptive_metadata.alternative_title[0].value': ['must be a string']
       )
     end
@@ -305,7 +305,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
 
     it 'return errors' do
       expect(item.valid?).to be false
-      expect(item.errors.messages).to include(
+      expect(item.errors.to_hash).to include(
         'descriptive_metadata.date_created[0].start_date': ['must be a string']
       )
     end
@@ -318,7 +318,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
 
     it 'return errors' do
       expect(item.valid?).to be false
-      expect(item.errors.messages).to include(
+      expect(item.errors.to_hash).to include(
         'descriptive_metadata.date_created[0].start_date': ['must be a valid EDTF date']
       )
     end
@@ -331,7 +331,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
 
     it 'return errors' do
       expect(item.valid?).to be false
-      expect(item.errors.messages).to include(
+      expect(item.errors.to_hash).to include(
         'descriptive_metadata.date_created[0].start_date': ['must be a valid EDTF date']
       )
     end

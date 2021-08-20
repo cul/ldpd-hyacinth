@@ -96,7 +96,7 @@ RSpec.describe DigitalObject::DynamicFieldsValidator do
 
       it 'sets the expected errors on the digital object' do
         expect(item.valid?).to be false
-        expect(item.errors.messages).to eq(
+        expect(item.errors.to_hash).to eq(
           'group1/string_field': ['field must be enabled'],
           'group1/integer_field': ['field must be enabled']
         )
@@ -116,7 +116,7 @@ RSpec.describe DigitalObject::DynamicFieldsValidator do
 
       it 'sets the expected errors on the digital object' do
         expect(item.valid?).to be false
-        expect(item.errors.messages).to eq(
+        expect(item.errors.to_hash).to eq(
           "group2/controlled_term_field": ["is required"]
         )
       end

@@ -43,8 +43,8 @@ RSpec.describe Term, type: :model, solr: true do
 
       it 'returns validation error' do
         expect(term.save).to be false
-        expect(term.errors.keys).to include :uri
-        expect(term.errors.keys).not_to include :uri_hash
+        expect(term.errors.attribute_names).to include :uri
+        expect(term.errors.attribute_names).not_to include :uri_hash
         expect(term.errors.full_messages).to include 'Uri can\'t be blank'
       end
     end

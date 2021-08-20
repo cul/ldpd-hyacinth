@@ -26,7 +26,7 @@ RSpec.describe DigitalObjectConcerns::ParentChildBehavior, solr: true do
     it 'does not persist updates when digital object save fails' do
       item1.state = nil
       expect(item1.save).to eq(false)
-      expect(item1.errors.keys).to eq([:state])
+      expect(item1.errors.attribute_names).to eq([:state])
       expect(item1.children.length).to eq(0) # proof that update was NOT applied to instance
       expect(DigitalObject.find(item1.id).children.length).to eq(0) # proof that update was NOT persisted
       expect(item1.children_to_add.length).to eq(2) # pending updates remain because save failed
@@ -60,7 +60,7 @@ RSpec.describe DigitalObjectConcerns::ParentChildBehavior, solr: true do
     it 'does not persist updates when digital object save fails' do
       item1.state = nil
       expect(item1.save).to eq(false)
-      expect(item1.errors.keys).to eq([:state])
+      expect(item1.errors.attribute_names).to eq([:state])
       expect(item1.children.length).to eq(2) # proof that update was NOT applied to instance
       expect(DigitalObject.find(item1.id).children.length).to eq(2) # proof that update was NOT persisted
       expect(item1.children_to_remove.length).to eq(2) # pending updates are NOT cleared because save failed
@@ -85,7 +85,7 @@ RSpec.describe DigitalObjectConcerns::ParentChildBehavior, solr: true do
     it 'does not persist updates when digital object save fails' do
       asset1.state = nil
       expect(asset1.save).to eq(false)
-      expect(asset1.errors.keys).to eq([:state])
+      expect(asset1.errors.attribute_names).to eq([:state])
       expect(asset1.parents.length).to eq(0) # proof that update was NOT applied to instance
       expect(DigitalObject.find(asset1.id).parents.length).to eq(0) # proof that update was NOT persisted
       expect(asset1.parents_to_add.length).to eq(2) # pending updates remain because save failed
@@ -127,7 +127,7 @@ RSpec.describe DigitalObjectConcerns::ParentChildBehavior, solr: true do
     it 'does not persist updates when digital object save fails' do
       asset1.state = nil
       expect(asset1.save).to eq(false)
-      expect(asset1.errors.keys).to eq([:state])
+      expect(asset1.errors.attribute_names).to eq([:state])
       expect(asset1.parents.length).to eq(2) # proof that update was NOT applied to instance
       expect(DigitalObject.find(asset1.id).parents.length).to eq(2) # proof that update was NOT persisted
       expect(asset1.parents_to_remove.length).to eq(2) # pending updates are NOT cleared because save failed
