@@ -1,0 +1,35 @@
+%%
+Type: language
+Subtag: cqu
+Description: Chilean Quechua
+Added: 2009-07-29
+Deprecated: 2016-05-30
+Preferred-Value: quh
+Macrolanguage: qu
+%%
+Type: language
+Subtag: quh
+Description: South Bolivian Quechua
+Added: 2009-07-29
+Macrolanguage: qu
+%%
+Type: language
+Subtag: qu
+Description: Quechua
+Added: 2005-10-16
+Suppress-Script: Latn
+Scope: macrolanguage
+%%
+Type: script
+Subtag: Latn
+Description: Latin
+Added: 2005-10-16
+%%
+Type: variant
+Subtag: alalc97
+Description: ALA-LC Romanization, 1997 edition
+Added: 2009-12-09
+Comments: Romanizations recommended by the American Library Association
+  and the Library of Congress, in "ALA-LC Romanization Tables:
+  Transliteration Schemes for Non-Roman Scripts" (1997), ISBN
+  978-0-8444-0940-5.

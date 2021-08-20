@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_13_053837) do
+ActiveRecord::Schema.define(version: 2021_08_19_192227) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -223,6 +223,50 @@ ActiveRecord::Schema.define(version: 2021_08_13_053837) do
     t.index ["batch_import_id"], name: "index_import_prerequisites_on_batch_import_id"
     t.index ["digital_object_import_id"], name: "index_import_prerequisites_on_digital_object_import_id"
     t.index ["prerequisite_digital_object_import_id"], name: "prerequisite_digital_object_import_id"
+  end
+
+  create_table "language_subtags", force: :cascade do |t|
+    t.string "subtag", null: false
+    t.string "subtag_type", null: false
+    t.datetime "added", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.string "scope"
+    t.datetime "deprecated"
+    t.integer "preferred_value_id"
+    t.integer "suppress_script_id"
+    t.integer "macrolanguage_id"
+    t.text "prefixes"
+    t.text "comments"
+    t.text "descriptions"
+    t.index "\"type\"", name: "index_language_subtags_on_type"
+    t.index ["preferred_value_id"], name: "index_language_subtags_on_preferred_value_id"
+    t.index ["subtag", "subtag_type"], name: "index_language_subtags_on_subtag_and_subtag_type", unique: true
+  end
+
+  create_table "language_subtags_tags", force: :cascade do |t|
+    t.integer "tag_id", null: false
+    t.integer "subtag_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["subtag_id"], name: "index_language_subtags_tags_on_subtag_id"
+    t.index ["tag_id", "subtag_id"], name: "tag_subtag", unique: true
+    t.index ["tag_id"], name: "index_language_subtags_tags_on_tag_id"
+  end
+
+  create_table "language_tags", force: :cascade do |t|
+    t.string "tag", null: false
+    t.string "tag_type", default: "redundant", null: false
+    t.datetime "added", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "deprecated"
+    t.integer "preferred_value_id"
+    t.text "comments"
+    t.text "descriptions"
+    t.index "\"type\"", name: "index_language_tags_on_type"
+    t.index ["preferred_value_id"], name: "index_language_tags_on_preferred_value_id"
+    t.index ["tag"], name: "index_language_tags_on_tag", unique: true
   end
 
   create_table "parent_child_relationships", force: :cascade do |t|

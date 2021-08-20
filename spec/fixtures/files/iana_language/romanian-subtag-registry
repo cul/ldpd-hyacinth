@@ -1,0 +1,22 @@
+%%
+Type: language
+Subtag: ro
+Description: Romanian
+Description: Moldavian
+Description: Moldovan
+Added: 2005-10-16
+Suppress-Script: Latn
+%%
+Type: language
+Subtag: mo
+Description: Moldavian
+Description: Moldovan
+Added: 2005-10-16
+Deprecated: 2008-11-22
+Preferred-Value: ro
+Suppress-Script: Latn
+%%
+Type: script
+Subtag: Latn
+Description: Latin
+Added: 2005-10-16

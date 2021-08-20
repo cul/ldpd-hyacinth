@@ -1,0 +1,19 @@
+%%
+Type: language
+Subtag: tlh
+Description: Klingon
+Description: tlhIngan Hol
+Added: 2005-10-16
+%%
+Type: grandfathered
+Tag: i-enochian
+Description: Enochian
+Added: 2002-07-03
+Deprecated: 2015-03-29
+%%
+Type: grandfathered
+Tag: i-klingon
+Description: Klingon
+Added: 1999-05-26
+Deprecated: 2004-02-24
+Preferred-Value: tlh

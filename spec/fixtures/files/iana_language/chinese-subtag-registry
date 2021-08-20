@@ -1,0 +1,59 @@
+%%
+Type: language
+Subtag: zh
+Description: Chinese
+Added: 2005-10-16
+Scope: macrolanguage
+%%
+Type: language
+Subtag: cmn
+Description: Mandarin Chinese
+Added: 2009-07-29
+Macrolanguage: zh
+%%
+Type: language
+Subtag: gan
+Description: Gan Chinese
+Added: 2009-07-29
+Macrolanguage: zh
+%%
+Type: extlang
+Subtag: gan
+Description: Gan Chinese
+Added: 2009-07-29
+Preferred-Value: gan
+Prefix: zh
+Macrolanguage: zh
+%%
+Type: script
+Subtag: Hans
+Description: Han (Simplified variant)
+Added: 2005-10-16
+%%
+Type: script
+Subtag: Hant
+Description: Han (Traditional variant)
+Added: 2005-10-16
+%%
+Type: region
+Subtag: CN
+Description: China
+Added: 2005-10-16
+%%
+Type: redundant
+Tag: zh-cmn-Hant
+Description: Mandarin Chinese (Traditional)
+Added: 2005-07-15
+Deprecated: 2009-07-29
+Preferred-Value: cmn-Hant
+%%
+Type: language
+Subtag: en
+Description: English
+Added: 2005-10-16
+Suppress-Script: Latn
+%%
+Type: script
+Subtag: Latn
+Description: Latin
+Added: 2005-10-16
