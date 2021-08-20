@@ -100,19 +100,19 @@ const DigitalObjectSearch = ({ query }) => {
 
   const sameValues = (array1, array2) => {
     if (array1.length === array2.length) {
-      return !array1.find(val => array2.indexOf(val) === -1);
+      return !array1.find((val) => array2.indexOf(val) === -1);
     }
     return false;
   };
   const isFacetCurrent = (fieldName, value) => {
-    const detector = filter => ((filter.field === fieldName) && sameValues(filter.values, [value]));
+    const detector = (filter) => ((filter.field === fieldName) && sameValues(filter.values, [value]));
     const { filters = [] } = searchParams;
     return filters ? filters.find(detector) : false;
   };
 
   const onFacetSelect = (fieldName, value) => {
-    const detector = filter => ((filter.field === fieldName) && sameValues(filter.values, [value]));
-    const others = filter => ((filter.field !== fieldName) || !sameValues(filter.values, [value]));
+    const detector = (filter) => ((filter.field === fieldName) && sameValues(filter.values, [value]));
+    const others = (filter) => ((filter.field !== fieldName) || !sameValues(filter.values, [value]));
     const { filters = [] } = searchParams;
     const isFiltered = filters ? filters.find(detector) : false;
     const updatedFilters = isFiltered
@@ -217,11 +217,9 @@ const DigitalObjectSearch = ({ query }) => {
                 pageNumber={pageNumber}
                 searchParams={searchParams}
                 path={location.pathname}
-                disableDrag
               />
             )
-            : <Card><Card.Header>No Digital Objects found.</Card.Header></Card>
-          }
+            : <Card><Card.Header>No Digital Objects found.</Card.Header></Card>}
         </Col>
         <Col md={4}>
           <FacetSidebar
