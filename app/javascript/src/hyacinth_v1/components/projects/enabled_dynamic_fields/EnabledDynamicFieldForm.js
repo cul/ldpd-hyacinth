@@ -210,7 +210,6 @@ const DynamicFieldCategory = ({ category, enabledFieldDataCallback, readOnly }) 
   </>
 );
 
-
 export const EnabledDynamicFieldForm = ({ readOnly, projectStringKey, digitalObjectType }) => {
   const history = useHistory();
   const [enabledDynamicFields] = useState({});
@@ -273,15 +272,10 @@ export const EnabledDynamicFieldForm = ({ readOnly, projectStringKey, digitalObj
       digitalObjectType: digitalObjectType.toUpperCase(),
       enabledDynamicFields: enabledDynamicFieldsArray,
     };
-    const historyPromise = () => {
-      const path = `/projects/${projectStringKey}/enabled_dynamic_fields/${digitalObjectType}/edit`;
-      history.push(path);
-    };
-    return updateEnabledFields({ variables: { input } })
-      .then(historyPromise);
+    return updateEnabledFields({ variables: { input } });
   };
 
-  const onSuccessHandler = (result) => {
+  const saveSuccessHandler = () => {
     history.push(`/projects/${projectStringKey}/enabled_dynamic_fields/${digitalObjectType}`);
   };
 
@@ -295,7 +289,7 @@ export const EnabledDynamicFieldForm = ({ readOnly, projectStringKey, digitalObj
   return (
     <Form>
       {
-        dynamicFieldGraphs.map(category => (
+        dynamicFieldGraphs.map((category) => (
           <DynamicFieldCategory
             key={category.id}
             category={category}
@@ -310,7 +304,7 @@ export const EnabledDynamicFieldForm = ({ readOnly, projectStringKey, digitalObj
             formType="edit"
             cancelTo={`/projects/${projectStringKey}/enabled_dynamic_fields/${digitalObjectType}`}
             onSave={onSubmitHandler}
-            onSuccess={onSuccessHandler}
+            onSaveSuccess={saveSuccessHandler}
           />
         )
       }

@@ -26,14 +26,22 @@ function ControlledVocabularyForm(props) {
   const [updateVocabulary, { error: updateError }] = useMutation(updateVocabularyMutation);
   const [deleteVocabulary, { error: deleteError }] = useMutation(deleteVocabularyMutation);
 
-  const onSubmitHandler = () => {
+  const saveSuccessHandler = (result) => {
+    if (result.data.createVocabulary) {
+      history.push(`/controlled_vocabularies/${result.data.createVocabulary.vocabulary.stringKey}/edit`);
+    }
+  };
+
+  const deleteSuccessHandler = () => {
+    history.push('/controlled_vocabularies');
+  };
+
+  const onSaveHandler = () => {
     const variables = { input: { stringKey, label, locked } };
 
     switch (formType) {
       case 'new':
-        return createVocabulary({ variables }).then((res) => {
-          history.push(`/controlled_vocabularies/${res.data.createVocabulary.vocabulary.stringKey}/edit`);
-        });
+        return createVocabulary({ variables });
       case 'edit':
         return updateVocabulary({ variables });
       default:
@@ -46,11 +54,11 @@ function ControlledVocabularyForm(props) {
 
     const variables = { input: { stringKey } };
 
-    deleteVocabulary({ variables }).then(() => history.push('/controlled_vocabularies'));
+    return deleteVocabulary({ variables });
   };
 
   return (
-    <Form onSubmit={onSubmitHandler}>
+    <Form>
       <GraphQLErrors errors={createError || updateError || deleteError} />
 
       <InputGroup>
@@ -79,7 +87,9 @@ function ControlledVocabularyForm(props) {
         formType={formType}
         cancelTo={`/controlled_vocabularies/${stringKey}`}
         onDelete={onDeleteHandler}
-        onSave={onSubmitHandler}
+        onDeleteSuccess={deleteSuccessHandler}
+        onSave={onSaveHandler}
+        onSaveSuccess={saveSuccessHandler}
       />
     </Form>
   );

@@ -48,19 +48,24 @@ function FieldSetForm({ projectStringKey, fieldSet, formType }) {
 
   const history = useHistory();
 
+  const saveSuccessHandler = (result) => {
+    if (result.data.createFieldSet) {
+      history.push(`/projects/${projectStringKey}/field_sets/${result.data.createFieldSet.fieldSet.id}/edit`);
+    }
+  };
+  const deleteSuccessHandler = () => {
+    history.push(`/projects/${projectStringKey}/field_sets`);
+  };
+
   const onSaveHandler = () => {
     const variables = { input: { projectStringKey, displayLabel } };
 
     switch (formType) {
       case 'new':
-        return createFieldSet({ variables }).then((res) => {
-          history.push(`/projects/${projectStringKey}/field_sets/${res.data.createFieldSet.fieldSet.id}/edit`);
-        });
+        return createFieldSet({ variables });
       case 'edit':
         variables.input.id = fieldSet.id;
-        return updateFieldSet({ variables }).then(() => {
-          history.push(`/projects/${projectStringKey}/field_sets/`);
-        });
+        return updateFieldSet({ variables });
       default:
         return null;
     }
@@ -69,11 +74,11 @@ function FieldSetForm({ projectStringKey, fieldSet, formType }) {
   const onDeleteHandler = (event) => {
     event.preventDefault();
 
-    deleteFieldSet({
+    return deleteFieldSet({
       variables: {
         input: { projectStringKey, id: fieldSet.id },
       },
-    }).then(() => history.push(`/projects/${projectStringKey}/field_sets`));
+    });
   };
 
   return (
@@ -87,7 +92,7 @@ function FieldSetForm({ projectStringKey, fieldSet, formType }) {
             type="text"
             name="displayLabel"
             value={displayLabel}
-            onChange={e => setDisplayLabel(e.target.value)}
+            onChange={(e) => setDisplayLabel(e.target.value)}
           />
         </Col>
       </Form.Group>
@@ -96,7 +101,9 @@ function FieldSetForm({ projectStringKey, fieldSet, formType }) {
         formType={formType}
         cancelTo={`/projects/${projectStringKey}/field_sets`}
         onDelete={onDeleteHandler}
+        onDeleteSuccess={deleteSuccessHandler}
         onSave={onSaveHandler}
+        onSaveSuccess={saveSuccessHandler}
       />
     </Form>
   );

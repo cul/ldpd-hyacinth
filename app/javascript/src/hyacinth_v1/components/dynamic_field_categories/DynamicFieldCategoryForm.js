@@ -36,14 +36,21 @@ function DynamicFieldCategoryForm(props) {
     deleteDynamicFieldCategoryMutation,
   );
 
-  const onSubmitHandler = () => {
+  const saveSuccessHandler = (result) => {
+    if (result.data.createDynamicFieldCategory) {
+      history.push(`/dynamic_field_categories/${result.data.createDynamicFieldCategory.dynamicFieldCategory.id}/edit`);
+    }
+  };
+  const deleteSuccessHandler = () => {
+    history.push('/dynamic_fields');
+  };
+
+  const onSaveHandler = () => {
     const variables = { input: { displayLabel, sortOrder } };
 
     switch (formType) {
       case 'new':
-        return createDynamicFieldCategory({ variables }).then((res) => {
-          history.push(`/dynamic_field_categories/${res.data.createDynamicFieldCategory.dynamicFieldCategory.id}/edit`);
-        });
+        return createDynamicFieldCategory({ variables });
       case 'edit':
         variables.input.id = dynamicFieldCategory.id;
         return updateDynamicFieldCategory({ variables });
@@ -57,11 +64,13 @@ function DynamicFieldCategoryForm(props) {
 
     const variables = { input: { id: dynamicFieldCategory.id } };
 
-    deleteDynamicFieldCategory({ variables }).then(() => history.push('/dynamic_fields'));
+    return deleteDynamicFieldCategory({ variables });
   };
 
+  const cancelTo = '/dynamic_fields';
+
   return (
-    <Form onSubmit={onSubmitHandler}>
+    <Form>
       <GraphQLErrors errors={createError || updateError || deleteError} />
 
       <InputGroup>
@@ -76,9 +85,11 @@ function DynamicFieldCategoryForm(props) {
 
       <FormButtons
         formType={formType}
-        cancelTo="/dynamic_fields"
+        cancelTo={cancelTo}
         onDelete={onDeleteHandler}
-        onSave={onSubmitHandler}
+        onDeleteSuccess={deleteSuccessHandler}
+        onSave={onSaveHandler}
+        onSaveSuccess={saveSuccessHandler}
       />
     </Form>
   );

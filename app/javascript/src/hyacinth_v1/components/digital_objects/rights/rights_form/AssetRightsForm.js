@@ -35,32 +35,35 @@ function AssetRightsForm(props) {
   // One day, maybe enable optionalChaining JS feature in babel to simplify lines like the one below.
   const userErrors = (updateData && updateData.updateRights && updateData.updateRights.userErrors) || [];
 
+  const saveSuccessHandler = (result) => {
+    history.push(`/digital_objects/${result.data.updateRights.digitalObject.id}/rights`);
+  };
 
-  const onSubmitHandler = () => {
+  const onSaveHandler = () => {
     const cleanRights = removeEmptyKeys(removeTypename(rights));
     const variables = { input: { id, rights: cleanRights, optimisticLockToken } };
 
-    return updateRights({ variables }).then(res => history.push(`/digital_objects/${res.data.updateRights.digitalObject.id}/rights`));
+    return updateRights({ variables });
   };
 
   if (!hasAssetRights) {
     delete rights.copyright_status_override;
   }
 
-  const findFieldConfig = stringKey => fieldConfiguration.find(c => c.stringKey === stringKey);
+  const findFieldConfig = (stringKey) => fieldConfiguration.find((c) => c.stringKey === stringKey);
 
   if (fieldConfiguration.length === 0) return (<p>Rights field configuration missing.</p>);
 
   return (
     <Form className="mb-3">
-      <GraphQLErrors errors={updateError} />    
+      <GraphQLErrors errors={updateError} />
       <ErrorList errors={userErrors.map((userError) => (`${userError.message} (path=${userError.path.join('/')})`))} />
 
       <FieldGroupArray
         value={rights.restriction_on_access}
         defaultValue={defaultAssetRights.restriction_on_access[0]}
         dynamicFieldGroup={findFieldConfig('restriction_on_access')}
-        onChange={v => setRights('restriction_on_access', v)}
+        onChange={(v) => setRights('restriction_on_access', v)}
       />
 
       {
@@ -69,14 +72,15 @@ function AssetRightsForm(props) {
             value={rights.copyright_status_override}
             defaultValue={defaultAssetRights.copyright_status_override[0]}
             dynamicFieldGroup={findFieldConfig('copyright_status_override')}
-            onChange={v => setRights('copyright_status_override', v)}
+            onChange={(v) => setRights('copyright_status_override', v)}
           />
         )
       }
       <FormButtons
         formType="edit"
         cancelTo={`/digital_objects/${id}/rights`}
-        onSave={onSubmitHandler}
+        onSave={onSaveHandler}
+        onSaveSuccess={saveSuccessHandler}
       />
     </Form>
   );
@@ -86,4 +90,5 @@ export default AssetRightsForm;
 
 AssetRightsForm.propTypes = {
   digitalObject: PropTypes.objectOf(PropTypes.any).isRequired,
+  fieldConfiguration: PropTypes.objectOf(PropTypes.any).isRequired,
 };

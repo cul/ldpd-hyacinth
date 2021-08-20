@@ -40,7 +40,7 @@ const useCustomFields = (initialState) => {
 
 function TermForm(props) {
   const {
-    formType, small, vocabulary, term, cancelAction, submitAction,
+    formType, small, vocabulary, term, onCancel, submitAction,
   } = props;
 
   const [uri, setUri] = useState(term ? term.uri : '');
@@ -56,7 +56,7 @@ function TermForm(props) {
   const [updateTerm, { error: updateError }] = useMutation(updateTermMutation);
   const [deleteTerm, { error: deleteError }] = useMutation(deleteTermMutation);
 
-  const onSuccessHandler = (result) => {
+  const saveSuccessHandler = (result) => {
     const opResult = result.data.createTerm || result.data.updateTerm;
     const { term: { uri: newURI } } = opResult;
 
@@ -93,8 +93,11 @@ function TermForm(props) {
   const onDeleteHandler = (event) => {
     event.preventDefault();
     const variables = { input: { vocabularyStringKey: vocabulary.stringKey, uri } };
+    return deleteTerm({ variables });
+  };
 
-    deleteTerm({ variables }).then(() => history.push(`/controlled_vocabularies/${vocabulary.stringKey}`));
+  const deleteSuccessHandler = () => {
+    history.push(`/controlled_vocabularies/${vocabulary.stringKey}`);
   };
 
   const labelColWidth = small ? 4 : 2;
@@ -184,10 +187,11 @@ function TermForm(props) {
       <FormButtons
         formType={formType}
         cancelTo={`/controlled_vocabularies/${vocabulary.stringKey}`}
-        cancelAction={cancelAction}
+        onCancel={onCancel}
         onSave={onSaveHandler}
         onDelete={onDeleteHandler}
-        onSuccess={onSuccessHandler}
+        onSaveSuccess={saveSuccessHandler}
+        onDeleteSuccess={deleteSuccessHandler}
       />
     </Form>
   );
@@ -196,7 +200,7 @@ function TermForm(props) {
 TermForm.defaultProps = {
   term: null,
   small: false,
-  cancelAction: null,
+  onCancel: null,
   submitAction: null,
 };
 
@@ -211,7 +215,7 @@ TermForm.propTypes = {
     authority: PropTypes.string,
   }),
   small: PropTypes.bool,
-  cancelAction: PropTypes.func,
+  onCancel: PropTypes.func,
   submitAction: PropTypes.func,
 };
 

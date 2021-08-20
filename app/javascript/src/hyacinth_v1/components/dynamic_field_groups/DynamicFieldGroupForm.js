@@ -88,10 +88,21 @@ function DynamicFieldGroupForm(props) {
 
     const variables = { input: { id } };
 
-    deleteDynamicFieldGroup({ variables }).then(() => history.push('/dynamic_fields'));
+    return deleteDynamicFieldGroup({ variables });
   };
 
-  const onSave = () => {
+  const saveSuccessHandler = (result) => {
+    if (result.data.createDynamicFieldGroup) {
+      const { dynamicFieldGroup: { id: newId } } = result.data.createDynamicFieldGroup;
+      history.push(`/dynamic_field_groups/${newId}/edit`);
+    }
+  };
+
+  const deleteSuccessHandler = () => {
+    history.push('/dynamic_fields');
+  };
+
+  const onSaveHandler = () => {
     const variables = {
       input: {
         displayLabel, sortOrder, isRepeatable, parentType, parentId, exportRules,
@@ -101,11 +112,7 @@ function DynamicFieldGroupForm(props) {
     switch (formType) {
       case 'new':
         variables.input.stringKey = stringKey;
-        return createDynamicFieldGroup({ variables }).then((res) => {
-          const { dynamicFieldGroup: { id: newId } } = res.data.createDynamicFieldGroup;
-
-          history.push(`/dynamic_field_groups/${newId}/edit`);
-        });
+        return createDynamicFieldGroup({ variables });
       case 'edit':
         variables.input.id = id;
         return updateDynamicFieldGroup({ variables });
@@ -113,6 +120,8 @@ function DynamicFieldGroupForm(props) {
         return null;
     }
   };
+
+  const cancelTo = '/dynamic_fields';
 
   return (
     <Row>
@@ -187,9 +196,11 @@ function DynamicFieldGroupForm(props) {
 
           <FormButtons
             formType={formType}
-            cancelTo="/dynamic_fields"
+            cancelTo={cancelTo}
             onDelete={onDeleteHandler}
-            onSave={onSave}
+            onDeleteSuccess={deleteSuccessHandler}
+            onSave={onSaveHandler}
+            onSaveSuccess={saveSuccessHandler}
           />
         </Form>
       </Col>

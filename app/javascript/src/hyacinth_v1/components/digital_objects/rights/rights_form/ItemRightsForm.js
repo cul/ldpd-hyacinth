@@ -28,8 +28,10 @@ import { useEnabled, useHash } from './rightsHooks';
 import FieldGroupArray from './fields/FieldGroupArray';
 
 function ItemRightsForm(props) {
-  const { fieldConfiguration, digitalObject: {
-    id, rights: initialRights, descriptiveMetadata, optimisticLockToken }
+  const { fieldConfiguration,
+    digitalObject: {
+      id, rights: initialRights, descriptiveMetadata, optimisticLockToken,
+    },
   } = props;
   const history = useHistory();
 
@@ -59,10 +61,14 @@ function ItemRightsForm(props) {
     },
   );
 
-  const onSubmitHandler = () => {
+  const saveSuccessHandler = (result) => {
+    history.push(`/digital_objects/${result.data.updateRights.digitalObject.id}/rights`);
+  };
+
+  const onSaveHandler = () => {
     const cleanRights = removeEmptyKeys(removeTypename(rights));
     const variables = { input: { id, rights: cleanRights, optimisticLockToken } };
-    return updateRights({ variables }).then(res => history.push(`/digital_objects/${res.data.updateRights.digitalObject.id}/rights`));
+    return updateRights({ variables });
   };
 
   const typeOfContentChange = (type) => {
@@ -99,13 +105,13 @@ function ItemRightsForm(props) {
 
   return (
     <Form key={id} className="digital-object-interface">
-      <GraphQLErrors errors={updateError} />    
+      <GraphQLErrors errors={updateError} />
       <ErrorList errors={userErrors.map((userError) => (`${userError.message} (path=${userError.path.join('/')})`))} />
 
       <DescriptiveMetadata
         descriptiveMetadata={keyTransformer.deepCamelCase(descriptiveMetadata)}
         values={rights.descriptive_metadata}
-        onChange={v => setRights('descriptive_metadata', v)}
+        onChange={(v) => setRights('descriptive_metadata', v)}
         typeOfContentChange={typeOfContentChange}
         fieldConfig={findFieldConfig('descriptive_metadata')}
       />
@@ -114,7 +120,7 @@ function ItemRightsForm(props) {
         value={rights.copyright_status}
         defaultValue={defaultItemRights.copyright_status[0]}
         dynamicFieldGroup={findFieldConfig('copyright_status')}
-        onChange={v => setRights('copyright_status', v)}
+        onChange={(v) => setRights('copyright_status', v)}
       />
 
       <InputGroup>
@@ -127,20 +133,20 @@ function ItemRightsForm(props) {
           <CopyrightOwnership
             values={rights.copyright_ownership}
             defaultValue={defaultItemRights.copyright_ownership[0]}
-            onChange={v => setRights('copyright_ownership', v)}
+            onChange={(v) => setRights('copyright_ownership', v)}
             fieldConfig={findFieldConfig('copyright_ownership')}
           />
 
           <ColumbiaUniversityIsCopyrightHolder
             values={rights.columbia_university_is_copyright_holder}
-            onChange={v => setRights('columbia_university_is_copyright_holder', v)}
+            onChange={(v) => setRights('columbia_university_is_copyright_holder', v)}
             fieldConfig={findFieldConfig('columbia_university_is_copyright_holder')}
             defaultValue={defaultItemRights.columbia_university_is_copyright_holder[0]}
           />
 
           <LicensedToColumbiaUniversity
             values={rights.licensed_to_columbia_university}
-            onChange={v => setRights('licensed_to_columbia_university', v)}
+            onChange={(v) => setRights('licensed_to_columbia_university', v)}
             fieldConfig={findFieldConfig('licensed_to_columbia_university')}
             defaultValue={defaultItemRights.licensed_to_columbia_university[0]}
           />
@@ -148,7 +154,7 @@ function ItemRightsForm(props) {
           <ContractualLimitationsRestrictionsAndPermissions
             audioVisualContent={rights.descriptive_metadata[0].type_of_content === 'motion_picture'}
             values={rights.contractual_limitations_restrictions_and_permissions}
-            onChange={v => setRights('contractual_limitations_restrictions_and_permissions', v)}
+            onChange={(v) => setRights('contractual_limitations_restrictions_and_permissions', v)}
             defaultValue={defaultItemRights.contractual_limitations_restrictions_and_permissions[0]}
             fieldConfig={findFieldConfig('contractual_limitations_restrictions_and_permissions')}
           />
@@ -157,7 +163,7 @@ function ItemRightsForm(props) {
             rights.descriptive_metadata[0].type_of_content === 'pictoral_graphic_and_scuptural' && (
               <RightsForWorksOfArtSculptureAndPhotographs
                 values={rights.rights_for_works_of_art_sculpture_and_photographs}
-                onChange={v => setRights('rights_for_works_of_art_sculpture_and_photographs', v)}
+                onChange={(v) => setRights('rights_for_works_of_art_sculpture_and_photographs', v)}
                 defaultValue={defaultItemRights.rights_for_works_of_art_sculpture_and_photographs[0]}
                 fieldConfig={findFieldConfig('rights_for_works_of_art_sculpture_and_photographs')}
               />
@@ -166,7 +172,7 @@ function ItemRightsForm(props) {
 
           <UnderlyingRights
             values={rights.underlying_rights}
-            onChange={v => setRights('underlying_rights', v)}
+            onChange={(v) => setRights('underlying_rights', v)}
             defaultValue={defaultItemRights.underlying_rights[0]}
             fieldConfig={findFieldConfig('underlying_rights')}
           />
@@ -176,7 +182,8 @@ function ItemRightsForm(props) {
       <FormButtons
         formType="edit"
         cancelTo={`/digital_objects/${id}/rights`}
-        onSave={onSubmitHandler}
+        onSave={onSaveHandler}
+        onSaveSuccess={saveSuccessHandler}
       />
     </Form>
   );

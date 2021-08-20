@@ -91,7 +91,7 @@ function TermOptions({ vocabularyStringKey, onChange, close }) {
               formType="new"
               vocabulary={vocabulary}
               submitAction={(term) => { onChange(term); setDisplayNewTerm(false); close(); }}
-              cancelAction={() => setDisplayNewTerm(false)}
+              onCancel={() => setDisplayNewTerm(false)}
             />
           </div>
         ) : (
