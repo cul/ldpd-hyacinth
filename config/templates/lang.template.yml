@@ -1,0 +1,28 @@
+# SQLite version 3.x
+#   gem install sqlite3
+#
+#   Ensure the SQLite 3 gem is defined in your Gemfile
+#   gem 'sqlite3'
+#
+default: &default
+  default_lang_value: en-US
+  default_lang_subtags:
+    Latn:
+      type: script
+      description: Latin
+      added: '2005-10-16'
+    en:
+      type: language
+      description: English
+      suppress-script: Latn
+      added: '2005-10-16'
+    US:
+      type: region
+      description: United States
+      added: '2005-10-16'
+
+development:
+  <<: *default
+
+test:
+  <<: *default

@@ -58,5 +58,22 @@ module Hyacinth
     def self.term_search_adapter
       @term_search_adapter ||= Hyacinth::Adapters.create_from_config('Hyacinth::Adapters::TermSearchAdapter', HYACINTH[:term_search_adapter])
     end
+
+    def self.default_lang_value
+      @default_lang_value ||= ::Language::Tag.for(LANG[:default_lang_value])
+    end
+
+    def self.allowed_lang_value?(tag_value)
+      ::Language::Tag.for(tag_value)
+    rescue
+      false
+    end
+
+    def self.load_default_subtags!
+      Rails.application.config_for(:lang).fetch(:default_lang_subtags, {}).each do |subtag, attributes|
+        subtag_atts = attributes.merge(subtag: subtag).map { |k, v| [k, Array[v]] }.to_h.with_indifferent_access
+        Hyacinth::Language::SubtagLoader.new(nil).load_resolved_attributes(subtag_atts)
+      end
+    end
   end
 end
