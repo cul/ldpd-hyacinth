@@ -62,11 +62,6 @@ module Hyacinth
           @identifiers[id][:status] = :inactive
           true
         end
-
-        private
-
-          # TODO: Remove this method when there's a general logging proxy
-          def log(status, message); end
       end
     end
   end

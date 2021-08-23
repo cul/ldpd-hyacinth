@@ -15,7 +15,9 @@ require 'hyacinth/adapters/external_identifier_adapter/datacite/ezid_response'
 require 'hyacinth/adapters/external_identifier_adapter/datacite/doi'
 
 class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::EzidSession
-  attr_accessor :naa, :username, :password
+  include Hyacinth::Adapters::ConfigurableLogger
+
+  attr_accessor :naa, :username, :password, :logger
   attr_reader :scheme, :last_response_from_server, :timed_out
 
   def initialize(username,
@@ -24,6 +26,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::EzidSession
     @password = password
     @last_response_from_server = nil
     @timed_out = false
+    @logger = configured_logger(DATACITE)
   end
 
   def timed_out?
@@ -39,7 +42,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::EzidSession
       @last_response_from_server = Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::EzidResponse.new response
       @last_response_from_server.parsed_body_hash
     rescue Net::ReadTimeout, SocketError
-      log(:error, '#get_identifier_metadata: EZID API call to get identifier metadata timed-out')
+      logger.error('#get_identifier_metadata: EZID API call to get identifier metadata timed-out')
       @timed_out = true
       nil
     end
@@ -65,7 +68,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::EzidSession
       # following code chunk assumes we asked to mint a DOI identifier. Code will need to be changed
       # if ARK or URN identifiers support is added
       unless @last_response_from_server.success?
-        log(:error, "#mint_identifier: Response from EZID server failed:\n" \
+        logger.error("#mint_identifier: Response from EZID server failed:\n" \
                     "identifier_status: #{identifier_status}\n" \
                     "identifier_type: #{identifier_type}\n" \
                     "target_url: #{target_url}\n" \
@@ -75,7 +78,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::EzidSession
 
       Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Doi.new(@last_response_from_server.doi, identifier_status) if @last_response_from_server.success?
     rescue Net::ReadTimeout, SocketError
-      log(:error, '#mint_identifier: EZID API call to mint identifier timed-out')
+      logger.error('#mint_identifier: EZID API call to mint identifier timed-out')
       @timed_out = true
       nil
     end
@@ -100,7 +103,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::EzidSession
         false
       end
     rescue Net::ReadTimeout, SocketError
-      log(:error, 'modify_identifier: EZID API call to modify identifier timed-out')
+      logger.error('modify_identifier: EZID API call to modify identifier timed-out')
       @timed_out = true
       false
     end
@@ -134,7 +137,4 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::EzidSession
       end
       anvl.strip
     end
-
-    # TODO: Remove this method when there's a general logging proxy
-    def log(status, message); end
 end

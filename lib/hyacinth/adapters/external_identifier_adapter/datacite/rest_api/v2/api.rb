@@ -15,6 +15,8 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api
                      findable: 'publish',
                      registered: 'hide' }.freeze
 
+  include Hyacinth::Adapters::ConfigurableLogger
+
   attr_accessor :most_recent_request_body,
                 :most_recent_response
 
@@ -24,6 +26,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api
     @datacite_rest_api_url = datacite_rest_api_url
     @basic_auth_user = basic_auth_user
     @basic_auth_password = basic_auth_password
+    @logger = configured_logger(DATACITE)
   end
 
   # see https://support.datacite.org/reference/dois-2#get_dois-id
@@ -32,13 +35,8 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api
     conn = Faraday.new(@datacite_rest_api_url)
     conn.basic_auth(@basic_auth_user, @basic_auth_password)
     response = conn.get("/dois/#{doi}")
-    log("API response body: #{response.body}", DATACITE[:log_level]) if DATACITE[:log_api]
+    logger.debug("API response body: #{response.body}")
     response
-  end
-
-  def log(log_msg, log_level)
-    return if ['debug', 'info', 'warn', 'error', 'fatal', 'unknown'].exclude? log_level
-    Rails.logger.public_send(log_level, log_msg)
   end
 
   def parse_doi_from_api_response_body(api_http_response_body)
@@ -63,7 +61,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api
       req.headers['Content-Type'] = 'application/vnd.api+json'
       req.body = request_body_json
     end
-    log("API response body: #{response.body}", DATACITE[:log_level]) if DATACITE[:log_api]
+    logger.debug("API response body: #{response.body}")
     response
   end
 
@@ -76,7 +74,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api
       req.headers['Content-Type'] = 'application/vnd.api+json'
       req.body = request_body_json
     end
-    log("API response body: #{response.body}", DATACITE[:log_level]) if DATACITE[:log_api]
+    logger.debug("API response body: #{response.body}")
     response
   end
 end
