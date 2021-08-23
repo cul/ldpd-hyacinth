@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 class EnabledDynamicField < ApplicationRecord
-  has_and_belongs_to_many :field_sets
+  # Below, we need to set join_table explicity because of a Rails 6.1 bug
+  has_and_belongs_to_many :field_sets, join_table: 'enabled_dynamic_fields_field_sets'
 
   belongs_to :project, inverse_of: :enabled_dynamic_fields
   belongs_to :dynamic_field, inverse_of: :enabled_dynamic_fields

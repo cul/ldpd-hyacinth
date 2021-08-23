@@ -152,10 +152,10 @@ class BatchImport < ApplicationRecord
       imports_in_progress = import_count('in_progress').positive?
 
       if cancelled && imports_in_progress
-        errors[:base] << 'Cannot destroy cancelled batch import while imports are in_progress'
+        errors.add(:base, 'Cannot destroy cancelled batch import while imports are in_progress')
         throw :abort
       elsif !cancelled && (imports_in_progress || imports_pending)
-        errors[:base] << 'Cannot destroy batch import while imports are in_progress or pending'
+        errors.add(:base, 'Cannot destroy batch import while imports are in_progress or pending')
         throw :abort
       end
     end

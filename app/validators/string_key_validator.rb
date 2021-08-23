@@ -8,6 +8,6 @@ class StringKeyValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
     return if value.nil?
 
-    record.errors[attribute] << (options[:message] || MESSAGE) unless value.match? ALPHANUMERIC_UNDERSCORE_KEY_REGEX
+    record.errors.add(attribute, options[:message] || MESSAGE) unless value.match? ALPHANUMERIC_UNDERSCORE_KEY_REGEX
   end
 end

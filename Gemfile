@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-gem 'rails', '~> 6.0.4'
+gem 'rails', '~> 6.1.4'
 
 # Databases
 gem 'mysql2', '~> 0.5'
@@ -15,7 +15,7 @@ gem 'rubydora'
 
 gem 'best_type', '0.0.10'
 gem 'bootsnap', '>= 1.4.5', require: false # Reduces boot times through caching; required in config/boot.rb
-gem 'cancancan', '~> 3.0'
+gem 'cancancan', '~> 3.3'
 gem 'concurrent-ruby', '~> 1.1.8'
 gem 'devise', '~> 4.7'
 gem 'edtf', '~> 3.0'
@@ -61,7 +61,7 @@ group :test do
   gem 'factory_bot_rails'
   gem 'json_spec'
   gem 'rspec-its'
-  gem 'rspec-rails', '~> 3.8'
+  gem 'rspec-rails', '~> 5.0'
   gem 'selenium-webdriver', '~> 3.142'
   gem 'simplecov', require: false
   gem 'webdrivers', '~> 4.0', require: false

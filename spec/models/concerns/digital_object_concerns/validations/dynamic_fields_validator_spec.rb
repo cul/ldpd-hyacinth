@@ -44,7 +44,7 @@ RSpec.describe DigitalObject::DynamicFieldsValidator do
 
     it 'returns errors' do
       expect(item.valid?).to be false
-      expect(item.errors.messages).to include(
+      expect(item.errors.to_hash).to include(
         'descriptive_metadata.group1': ['is not repeatable']
       )
     end

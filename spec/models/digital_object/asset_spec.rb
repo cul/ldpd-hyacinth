@@ -7,7 +7,7 @@ RSpec.describe DigitalObject::Asset, type: :model do
     let(:asset) { FactoryBot.build(:asset) }
     it "fails if there is no resource or resource_import entry for the primary resource" do
       asset.save
-      expect(asset.errors.keys).to include(:"resources[#{asset.main_resource_name}]", :asset_type)
+      expect(asset.errors.attribute_names).to include(:"resources[#{asset.main_resource_name}]", :asset_type)
     end
   end
 

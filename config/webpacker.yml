@@ -16,9 +16,6 @@ default: &default
   cache_manifest: false
 
   # Extract and emit a css file
-  # We want this so that we can put the CSS include in the <head> and the
-  # application script at the bottom of the <body> tag. Putting the CSS include
-  # in the <head> prevents a flash of unstyled content.
   extract_css: false
 
   static_assets_extensions:
@@ -77,8 +74,7 @@ development:
 
 test:
   <<: *default
-  # CI runs compile before starting.
-  compile: false
+  compile: true
 
   # Extract and emit a css file
   extract_css: true
@@ -93,6 +89,8 @@ production: &production
   compile: false
 
   # Extract and emit a css file
+  # Setting this to true extracts the CSS into a separate stylesheet and prevents a flash of
+  # unstyled content that you would otherwise see if the CSS were included via JavaScript.
   extract_css: true
 
   # Cache manifest.json for performance

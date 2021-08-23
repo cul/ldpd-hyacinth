@@ -2,21 +2,21 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_17_181707) do
+ActiveRecord::Schema.define(version: 2021_08_13_053837) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
-    t.integer "record_id", null: false
-    t.integer "blob_id", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
@@ -27,15 +27,22 @@ ActiveRecord::Schema.define(version: 2021_06_17_181707) do
     t.string "filename", null: false
     t.string "content_type"
     t.text "metadata"
-    t.bigint "byte_size", null: false
+    t.integer "byte_size", null: false
     t.string "checksum", null: false
     t.datetime "created_at", null: false
+    t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
   create_table "batch_exports", force: :cascade do |t|
     t.text "search_params"
-    t.integer "user_id"
+    t.bigint "user_id"
     t.text "file_location"
     t.text "export_errors"
     t.integer "status", default: 0, null: false
@@ -69,7 +76,7 @@ ActiveRecord::Schema.define(version: 2021_06_17_181707) do
   end
 
   create_table "digital_object_imports", force: :cascade do |t|
-    t.integer "batch_import_id"
+    t.bigint "batch_import_id"
     t.text "digital_object_data", null: false
     t.text "import_errors"
     t.integer "status", default: 0, null: false
@@ -119,9 +126,9 @@ ActiveRecord::Schema.define(version: 2021_06_17_181707) do
     t.text "xml_translation"
     t.integer "sort_order", null: false
     t.string "parent_type"
-    t.integer "parent_id"
-    t.integer "created_by_id"
-    t.integer "updated_by_id"
+    t.bigint "parent_id"
+    t.bigint "created_by_id"
+    t.bigint "updated_by_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "path"
@@ -144,9 +151,9 @@ ActiveRecord::Schema.define(version: 2021_06_17_181707) do
     t.boolean "is_keyword_searchable", default: false, null: false
     t.boolean "is_title_searchable", default: false, null: false
     t.boolean "is_identifier_searchable", default: false, null: false
-    t.integer "dynamic_field_group_id"
-    t.integer "created_by_id"
-    t.integer "updated_by_id"
+    t.bigint "dynamic_field_group_id"
+    t.bigint "created_by_id"
+    t.bigint "updated_by_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "path"
@@ -182,8 +189,8 @@ ActiveRecord::Schema.define(version: 2021_06_17_181707) do
   end
 
   create_table "export_rules", force: :cascade do |t|
-    t.integer "dynamic_field_group_id"
-    t.integer "field_export_profile_id"
+    t.bigint "dynamic_field_group_id"
+    t.bigint "field_export_profile_id"
     t.text "translation_logic", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -201,16 +208,16 @@ ActiveRecord::Schema.define(version: 2021_06_17_181707) do
 
   create_table "field_sets", force: :cascade do |t|
     t.string "display_label", null: false
-    t.integer "project_id"
+    t.bigint "project_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["project_id"], name: "index_field_sets_on_project_id"
   end
 
   create_table "import_prerequisites", force: :cascade do |t|
-    t.integer "digital_object_import_id"
-    t.integer "prerequisite_digital_object_import_id"
-    t.integer "batch_import_id"
+    t.bigint "digital_object_import_id"
+    t.bigint "prerequisite_digital_object_import_id"
+    t.bigint "batch_import_id"
     t.datetime "created_at", null: false
     t.index ["batch_import_id", "digital_object_import_id", "prerequisite_digital_object_import_id"], name: "unique_import_prerequisite", unique: true
     t.index ["batch_import_id"], name: "index_import_prerequisites_on_batch_import_id"
@@ -303,7 +310,7 @@ ActiveRecord::Schema.define(version: 2021_06_17_181707) do
   end
 
   create_table "terms", force: :cascade do |t|
-    t.integer "vocabulary_id", null: false
+    t.bigint "vocabulary_id", null: false
     t.string "pref_label", null: false
     t.text "alt_labels"
     t.string "uri", null: false
@@ -356,6 +363,7 @@ ActiveRecord::Schema.define(version: 2021_06_17_181707) do
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "parent_child_relationships", "digital_objects", column: "child_id"
   add_foreign_key "parent_child_relationships", "digital_objects", column: "parent_id"
   add_foreign_key "projects_publish_targets", "projects"

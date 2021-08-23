@@ -26,7 +26,7 @@ module Mutations
         if digital_object.save
           { digital_object: digital_object, user_errors: [] }
         else
-          { digital_object: nil, user_errors: digital_object.errors.map { |key, message| { path: [key], message: message } } }
+          { digital_object: nil, user_errors: digital_object.errors.map { |error| { path: [error.attribute], message: error.message } } }
         end
       end
     end

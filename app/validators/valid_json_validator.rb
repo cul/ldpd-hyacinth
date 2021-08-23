@@ -6,7 +6,7 @@ class ValidJsonValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
     return if value.nil?
 
-    record.errors[attribute] << (options[:message] || MESSAGE) unless valid_json?(value)
+    record.errors.add(attribute, options[:message] || MESSAGE) unless valid_json?(value)
   end
 
   private
