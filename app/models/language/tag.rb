@@ -5,7 +5,7 @@ class Language::Tag < ApplicationRecord
   has_and_belongs_to_many :subtags
   belongs_to :preferred_value, class_name: 'Language::Tag', optional: true
 
-  before_validation :set_tag, :set_preferred_value
+  before_validation :set_tag_from_subtags!, :set_preferred_value_from_subtags!
 
   validates :tag, presence: true, uniqueness: true
   validates_with Language::Validators::SubtagsTypeValidator
@@ -38,23 +38,6 @@ class Language::Tag < ApplicationRecord
     self.errors.add :subtags, ex.message
   end
 
-  def set_tag
-    return if tag_type == 'grandfathered'
-    self.tag = tag_value
-  end
-
-  def set_preferred_value
-    return if preferred_value || tag_type.eql?('grandfathered')
-    language = first_subtag_of_type('language')
-    script = first_subtag_of_type('script')
-    extlang = first_subtag_of_type('extlang')
-    has_preferred = language.preferred_value
-    has_preferred ||= script && (language.suppress_script == script)
-    has_preferred ||= extlang&.preferred_value
-    return unless has_preferred
-    self.preferred_value = ::Language::Tag.for(TagValue.for_subtags(subtags, true))
-  end
-
   def use_value
     preferred_value || self
   end
@@ -72,7 +55,7 @@ class Language::Tag < ApplicationRecord
     subtags = subtags_for(tag_value.split('-'))
     tag_value = TagValue.for_subtags(subtags)
     candidate = ::Language::Tag.find_by(tag: tag_value) || ::Language::Tag.new(added: Time.new.getlocal, subtags: subtags)
-    candidate.set_tag
+    candidate.send :set_tag_from_subtags!
     tag = ::Language::Tag.find_by(tag: candidate.tag) || candidate
     tag.save! unless tag.persisted?
     tag
@@ -176,4 +159,23 @@ class Language::Tag < ApplicationRecord
       end
     end
   end
+
+  private
+
+    def set_tag_from_subtags!
+      return if tag_type == 'grandfathered'
+      self.tag = tag_value
+    end
+
+    def set_preferred_value_from_subtags!
+      return if preferred_value || tag_type.eql?('grandfathered')
+      language = first_subtag_of_type('language')
+      script = first_subtag_of_type('script')
+      extlang = first_subtag_of_type('extlang')
+      has_preferred = language.preferred_value
+      has_preferred ||= script && (language.suppress_script == script)
+      has_preferred ||= extlang&.preferred_value
+      return unless has_preferred
+      self.preferred_value = ::Language::Tag.for(TagValue.for_subtags(subtags, true))
+    end
 end
