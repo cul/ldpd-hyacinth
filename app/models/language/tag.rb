@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Language::Tag < ApplicationRecord
-  has_many :tag_subtags
   has_and_belongs_to_many :subtags
   belongs_to :preferred_value, class_name: 'Language::Tag', optional: true
 
