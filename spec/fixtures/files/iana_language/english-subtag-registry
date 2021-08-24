@@ -1,0 +1,63 @@
+%%
+Type: language
+Subtag: en
+Description: English
+Added: 2005-10-16
+Suppress-Script: Latn
+%%
+Type: language
+Subtag: sco
+Description: Scots
+Added: 2005-10-16
+%%
+Type: region
+Subtag: CA
+Description: Canada
+Added: 2005-10-16
+%%
+Type: region
+Subtag: GB
+Description: United Kingdom
+Added: 2005-10-16
+Comments: as of 2006-03-29 GB no longer includes the Channel Islands and
+  Isle of Man; see GG, JE, IM
+%%
+Type: region
+Subtag: US
+Description: United States
+Added: 2005-10-16
+%%
+Type: script
+Subtag: Latn
+Description: Latin
+Added: 2005-10-16
+%%
+Type: variant
+Subtag: unifon
+Description: Unifon phonetic alphabet
+Added: 2013-10-02
+Prefix: en
+Prefix: hup
+Prefix: kyh
+Prefix: tol
+Prefix: yur
+%%
+Type: variant
+Subtag: ulster
+Description: Ulster dialect of Scots
+Added: 2010-04-10
+Prefix: sco
+%%
+Type: variant
+Subtag: newfound
+Description: Newfoundland English
+Added: 2015-11-25
+Prefix: en-CA
+%%
+Type: variant
+Subtag: cornu
+Description: Cornu-English
+Description: Cornish English
+Description: Anglo-Cornish
+Added: 2015-12-07
+Prefix: en

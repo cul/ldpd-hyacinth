@@ -52,6 +52,7 @@ namespace :hyacinth do
       Rake::Task['db:drop'].invoke
       Rake::Task['db:create'].invoke
       Rake::Task['db:migrate'].invoke
+      Rake::Task['hyacinth:languages:load_default_subtags'].invoke
       begin
         Rake::Task[task_stack.shift].invoke(task_stack)
       rescue SystemExit => e

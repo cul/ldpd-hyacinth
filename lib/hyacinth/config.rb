@@ -58,5 +58,9 @@ module Hyacinth
     def self.term_search_adapter
       @term_search_adapter ||= Hyacinth::Adapters.create_from_config('Hyacinth::Adapters::TermSearchAdapter', HYACINTH[:term_search_adapter])
     end
+
+    def self.default_lang_value
+      @default_lang_value ||= ::Language::Tag.for(LANG[:default_lang_value])
+    end
   end
 end
