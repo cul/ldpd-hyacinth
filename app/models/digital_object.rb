@@ -17,10 +17,9 @@ class DigitalObject < ApplicationRecord
   include DigitalObjectConcerns::ParentChildBehavior
   include DigitalObjectConcerns::ResourceImports
 
-  # Special structure for the title dynamic field
-  TITLE_DYNAMIC_FIELD_GROUP_NAME = 'title'
-  TITLE_SORT_PORTION_DYNAMIC_FIELD_NAME = 'sort_portion'
-  TITLE_NON_SORT_PORTION_DYNAMIC_FIELD_NAME = 'non_sort_portion'
+  # Access keys for the title attribute
+  TITLE_SORT_PORTION_KEY = 'sort_portion'
+  TITLE_NON_SORT_PORTION_KEY = 'non_sort_portion'
 
   after_initialize :raise_error_if_base_class!
   after_find :load_fields_from_metadata_storage
@@ -77,13 +76,13 @@ class DigitalObject < ApplicationRecord
     ([primary_project] + other_projects.to_a).compact.freeze
   end
 
-  def generate_title(sortable = false)
-    val = '[No Title]'
+  def generate_label
+    val = uid.dup
 
     if title.present?
-      val = title[TITLE_SORT_PORTION_DYNAMIC_FIELD_NAME]
-      non_sort_portion = title[TITLE_NON_SORT_PORTION_DYNAMIC_FIELD_NAME]
-      val = "#{non_sort_portion} #{val}" if non_sort_portion && !sortable
+      val = title[TITLE_SORT_PORTION_KEY]
+      non_sort_portion = title[TITLE_NON_SORT_PORTION_KEY]
+      val = "#{non_sort_portion} #{val}" if non_sort_portion
     end
 
     val

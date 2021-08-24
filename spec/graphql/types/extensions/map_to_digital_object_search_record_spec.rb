@@ -17,7 +17,7 @@ RSpec.describe Types::Extensions::MapToDigitalObjectSearchRecord do
         OpenStruct.new(
           nodes: [{
             'id' => id_from_solr,
-            'title_ss' => 'Glorious new item',
+            'displayLabel_ss' => 'Glorious new item',
             'digital_object_type_ssi' => 'item',
             'projects_ssim' => [project.string_key],
             'number_of_children_isi' => 1
@@ -29,7 +29,7 @@ RSpec.describe Types::Extensions::MapToDigitalObjectSearchRecord do
       let(:generated_open_struct) do
         OpenStruct.new(
           id: id_from_solr,
-          title: 'Glorious new item',
+          display_label: 'Glorious new item',
           digital_object_type: 'item',
           projects: [project],
           number_of_children: 1,

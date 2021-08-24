@@ -34,7 +34,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
           "createdAt": "#{authorized_object.created_at.iso8601}",
           "createdBy": null,
           "digitalObjectType": "ITEM",
-          "displayTitle": "The Best Item Ever",
+          "displayLabel": "The Best Item Ever",
           "doi": #{authorized_object.doi.nil? ? 'null' : '"#{authorized_object.doi}"'},
           "descriptiveMetadata": {},
           "firstPreservedAt": null,
@@ -104,8 +104,8 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
 
     it "return a placeholder no-title value" do
       expect(response.body).to be_json_eql(%(
-        "[No Title]"
-      )).at_path('data/digitalObject/displayTitle')
+        "#{authorized_object.uid}"
+      )).at_path('data/digitalObject/displayLabel')
     end
   end
 
@@ -178,7 +178,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
       query {
         digitalObject(id: "#{id}") {
           id
-          displayTitle
+          displayLabel
           title {
             nonSortPortion
             sortPortion

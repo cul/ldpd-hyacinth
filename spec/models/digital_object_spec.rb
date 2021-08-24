@@ -329,13 +329,18 @@ RSpec.describe DigitalObject, type: :model do
       end
     end
 
-    describe '#generate_title' do
-      let(:instance) { FactoryBot.build(:digital_object_test_subclass, :with_ascii_title) }
-      it do
-        expect(instance.generate_title).to eql('The Tall Man and His Hat')
+    describe '#generate_label' do
+      context 'has title data' do
+        let(:instance) { FactoryBot.build(:digital_object_test_subclass, :with_ascii_title) }
+        it do
+          expect(instance.generate_label).to eql('The Tall Man and His Hat')
+        end
       end
-      it "ignores nonsort if requested" do
-        expect(instance.generate_title(true)).to eql('Tall Man and His Hat')
+      context 'with no title data' do
+        let(:instance) { FactoryBot.build(:digital_object_test_subclass) }
+        it do
+          expect(instance.generate_label).to eql(instance.uid)
+        end
       end
     end
     # TODO: Add tests for timestamps created_at, updated_at, preserved_at, etc.

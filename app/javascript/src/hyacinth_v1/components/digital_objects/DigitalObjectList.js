@@ -59,7 +59,7 @@ const DigitalObjectList = (props) => {
                   pageNumber, searchParams.query, searchParams.filters, path, resultIndex,
                 )}
               >
-                {digitalObject.title}
+                {digitalObject.displayLabel}
               </Link>
             </Card.Header>
             <Card.Body className="p-2">
@@ -119,7 +119,7 @@ DigitalObjectList.propTypes = {
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       digitalObjectType: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
+      displayLabel: PropTypes.string.isRequired,
     }),
   ).isRequired,
   displayProjects: PropTypes.bool,

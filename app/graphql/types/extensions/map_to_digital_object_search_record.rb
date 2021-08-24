@@ -13,7 +13,7 @@ module Types
         value[:nodes] = value[:nodes].map do |solr_doc|
           OpenStruct.new(
             id: solr_doc['id'],
-            title: solr_doc['title_ss'],
+            display_label: solr_doc['displayLabel_ss'],
             projects: solr_doc.fetch('projects_ssim', []).map { |p| projects[p] },
             digital_object_type: solr_doc['digital_object_type_ssi'],
             number_of_children: solr_doc['number_of_children_isi'],
