@@ -28,7 +28,7 @@ namespace :hyacinth do
     task load_default_subtags: :environment do
       subtag_configs = Rails.application.config_for(:lang).fetch(:default_lang_subtags, {})
       default_subtags = subtag_configs.keys
-      Hyacinth::Config.load_default_subtags!
+      Hyacinth::Language.load_default_subtags!
       default_subtags = ::Language::Subtag.where(subtag: default_subtags).to_a
       puts "#{Rails.env} Loaded #{default_subtags.length} default subtags:\n"
       default_subtags.each { |subtag| puts "#{subtag.subtag} (#{subtag.subtag_type})" }
