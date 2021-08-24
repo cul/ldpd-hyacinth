@@ -17,7 +17,7 @@ import GraphQLErrors from '../shared/GraphQLErrors';
 
 function DigitalObjectInterface(props) {
   const { digitalObject, children } = props;
-  const { id, title, digitalObjectType } = digitalObject;
+  const { id, displayLabel, digitalObjectType } = digitalObject;
   const latestSearchQueryString = window.sessionStorage.getItem('searchQueryParams');
   const history = useHistory();
   const offset = window.sessionStorage.getItem('offset');
@@ -98,7 +98,7 @@ function DigitalObjectInterface(props) {
   return (
     <div className="digital-object-interface">
       <ContextualNavbar
-        title={`${capitalize(digitalObjectType)}: ${title}`}
+        title={`${capitalize(digitalObjectType)}: ${displayLabel}`}
         rightHandLinks={rightHandLinksArray}
       />
 

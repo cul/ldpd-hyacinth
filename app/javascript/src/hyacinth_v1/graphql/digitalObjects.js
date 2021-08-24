@@ -23,7 +23,13 @@ const digitalObjectInterfaceFields = `
   id,
   state,
   digitalObjectType,
-  title,
+  displayLabel,
+  title {
+    nonSortPortion,
+    sortPortion,
+    subtitle,
+    lang
+  },
   numberOfChildren,
   doi,
   primaryProject {
@@ -77,7 +83,6 @@ export const getMetadataDigitalObjectQuery = gql`
   }
 `;
 
-
 export const getRightsDigitalObjectQuery = gql`
   query RightsDigitalObject($id: ID!){
     digitalObject(id: $id) {
@@ -109,7 +114,7 @@ export const getParentsQuery = gql`
       ${digitalObjectInterfaceFields},
       parents {
         id
-        title
+        displayLabel
         digitalObjectType
       }
     }
@@ -154,7 +159,7 @@ export const getDigitalObjectsQuery = gql`
       totalCount
       nodes {
         id,
-        title,
+        displayLabel,
         digitalObjectType,
         numberOfChildren,
         parentIds,
@@ -185,7 +190,6 @@ query DigitalObjects($limit: Limit!, $offset: Offset = 0, $searchParams: SearchA
   }
 }
 `;
-
 
 export const createDigitalObjectMutation = gql`
   mutation CreateDigitalObject($input: CreateDigitalObjectInput!) {
@@ -250,7 +254,6 @@ export const deleteResourceMutation = gql`
     }
   }
 `;
-
 
 export const deleteDigitalObjectMutation = gql`
   mutation DeleteDigitalObject($input: DeleteDigitalObjectInput!) {
