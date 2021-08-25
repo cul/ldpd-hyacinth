@@ -28,6 +28,19 @@ describe Hyacinth::DigitalObject::TypeDef::Title do
       expect(type_def.from_serialized_form(given_values)).to include(given_values)
     end
   end
+  context "with nillable data" do
+    let(:non_whitespace_values) { { 'sort_portion' => 'Present', 'non_sort_portion' => 'A ' } }
+    let(:whitespace_property) { 'non_sort_portion' }
+    let(:whitespace_values) { non_whitespace_values.merge(whitespace_property => '  ') }
+    let(:all_whitespace_values) { non_whitespace_values.map { |k, _v| [k, ' '] }.to_h }
+    it "strips blank values before storing" do
+      expect(type_def.to_serialized_form(whitespace_values)).not_to include(whitespace_property)
+    end
+    it "nils completely blank hashes before storing" do
+      expect(type_def.to_serialized_form(all_whitespace_values)).to be_nil
+      expect(type_def.to_serialized_form({})).to be_nil
+    end
+  end
   context "with lang tag" do
     let(:iana_en_fixture) { file_fixture('files/iana_language/english-subtag-registry') }
     before do

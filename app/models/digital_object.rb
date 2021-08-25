@@ -51,7 +51,7 @@ class DigitalObject < ApplicationRecord
   end
 
   # Title
-  metadata_attribute :title, Hyacinth::DigitalObject::TypeDef::Title.new
+  metadata_attribute :title, Hyacinth::DigitalObject::TypeDef::Title.new.validation(proc { |value| value.blank? || value['sort_portion']&.strip.present? })
   # Identifiers
   metadata_attribute :identifiers, Hyacinth::DigitalObject::TypeDef::JsonSerializableSet.new.default(-> { Set.new })
   # Descriptive Metadata

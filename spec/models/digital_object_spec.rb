@@ -343,6 +343,32 @@ RSpec.describe DigitalObject, type: :model do
         end
       end
     end
+    describe "#valid?" do
+      describe 'title validations' do
+        let(:valid_with_sort_portion) { { 'sort_portion' => 'Test Fixture' } }
+        let(:invalid_with_whitespace_sort_portion) { { 'sort_portion' => ' ' } }
+        let(:invalid_without_sort_portion) { { 'non_sort_portion' => 'A ' } }
+        let(:valid_blank) { {} }
+        it 'is valid with only a sort portion' do
+          instance.assign_attributes('title' => valid_with_sort_portion)
+          expect(instance).to be_valid
+        end
+        it 'is valid with an empty title hash' do
+          instance.assign_attributes('title' => valid_blank)
+          expect(instance).to be_valid
+        end
+        it 'is valid with a nil title' do
+          instance.assign_attributes('title' => nil)
+          expect(instance).to be_valid
+        end
+        it 'is invalid when title hash is present but sort_portion is blank' do
+          instance.assign_attributes('title' => invalid_with_whitespace_sort_portion)
+          expect(instance).not_to be_valid
+          instance.assign_attributes('title' => invalid_without_sort_portion)
+          expect(instance).not_to be_valid
+        end
+      end
+    end
     # TODO: Add tests for timestamps created_at, updated_at, preserved_at, etc.
   end
 end
