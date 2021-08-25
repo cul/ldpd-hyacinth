@@ -10,14 +10,17 @@ import DateInput from '../../shared/forms/inputs/DateInput';
 import NumberInput from '../../shared/forms/inputs/NumberInput';
 import Checkbox from '../../shared/forms/inputs/Checkbox';
 
+const randomId = (prefix) => `${prefix}${Math.random()}`.replace('.','');
+
 const Field = (props) => {
   const {
-    onChange, value, dynamicField, dynamicField: { displayLabel, fieldType }
+    inputName, onChange, value, dynamicField, dynamicField: { displayLabel, fieldType }
   } = props;
 
   let field = '';
 
-  const sharedProps = { onChange, value };
+  const sharedProps = { onChange, value, inputName };
+  sharedProps.inputName ||= randomId('input-');
 
   switch (fieldType) {
     case 'string':
@@ -52,7 +55,7 @@ const Field = (props) => {
 
   return (
     <InputGroup>
-      <Label align="right">{displayLabel}</Label>
+      <Label align="right" for={sharedProps.inputName}>{displayLabel}</Label>
       {field}
     </InputGroup>
   );

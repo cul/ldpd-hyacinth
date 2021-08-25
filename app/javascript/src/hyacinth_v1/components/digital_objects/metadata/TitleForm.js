@@ -53,6 +53,7 @@ const TitleForm = (props) => {
             (c) => (
               <Field
                 key={c.stringKey}
+                inputName={`title-${c.stringKey}`}
                 value={title[c.stringKey]}
                 dynamicField={c}
                 onChange={(v) => onChangeWrapper(c.stringKey, v)}

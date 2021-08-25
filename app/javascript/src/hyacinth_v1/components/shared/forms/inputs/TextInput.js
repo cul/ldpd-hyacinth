@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Col, Form } from 'react-bootstrap';
 
+let uniqueTextInputIdCounter = 0;
+
 class TextInput extends React.PureComponent {
   onChangeHandler = (event) => {
     const { target: { value } } = event;
@@ -18,6 +20,7 @@ class TextInput extends React.PureComponent {
     return (
       <Col sm={10} style={{ alignSelf: 'center' }} {...rest}>
         <Form.Control
+          id={inputName || `checkbox-${uniqueTextInputIdCounter++}`} // id is required for label to work with
           type="text"
           tabIndex="0"
           name={inputName}
