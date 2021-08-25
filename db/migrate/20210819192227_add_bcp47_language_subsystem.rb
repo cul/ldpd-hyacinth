@@ -16,7 +16,7 @@ class AddBcp47LanguageSubsystem < ActiveRecord::Migration[6.0]
       t.text    :descriptions
     end
     add_index :language_subtags, [:subtag, :subtag_type], unique: true
-    add_index :language_subtags, :type
+    add_index :language_subtags, :subtag_type
     add_index :language_subtags, :preferred_value_id
 
     create_table :language_tags do |t|
@@ -31,7 +31,7 @@ class AddBcp47LanguageSubsystem < ActiveRecord::Migration[6.0]
       t.text    :descriptions
     end
     add_index :language_tags, :tag, unique: true
-    add_index :language_tags, :type
+    add_index :language_tags, :tag_type
     add_index :language_tags, :preferred_value_id
 
     create_table :language_subtags_tags do |t|
