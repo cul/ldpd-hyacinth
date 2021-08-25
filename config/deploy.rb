@@ -39,6 +39,7 @@ append  :linked_files,
         'config/datacite.yml',
         'config/fedora.yml',
         'config/hyacinth.yml',
+        'config/lang.yml',
         'config/master.key',
         'config/redis.yml',
         'config/resque.yml'
