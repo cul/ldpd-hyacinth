@@ -19,7 +19,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::MetadataBuilde
     let(:unique_id) { 'item.' + SecureRandom.uuid }
 
     before do
-      # random identifer to avoid collisions
+      # random identifier to avoid collisions
       dod['identifiers'] = [unique_id]
     end
     context "dynamic fields" do

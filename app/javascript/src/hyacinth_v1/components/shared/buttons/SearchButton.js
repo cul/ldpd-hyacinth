@@ -4,10 +4,11 @@ import PropTypes from 'prop-types';
 import FontAwesomeIcon from '../../../utils/lazyFontAwesome';
 
 const SearchButton = (props) => {
-  const { onClick } = props;
+  const { onClick, id } = props;
 
   return (
     <Button
+      id={id}
       variant="primary"
       size="sm"
       onClick={onClick}
@@ -19,6 +20,11 @@ const SearchButton = (props) => {
 
 SearchButton.propTypes = {
   onClick: PropTypes.func.isRequired,
+  id: PropTypes.string,
+};
+
+SearchButton.defaultProps = {
+  id: undefined,
 };
 
 export default SearchButton;

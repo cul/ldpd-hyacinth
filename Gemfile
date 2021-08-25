@@ -57,7 +57,7 @@ group :development do
 end
 
 group :test do
-  gem 'capybara', '>= 2.15'
+  gem 'capybara', '~> 3.35'
   gem 'factory_bot_rails'
   gem 'json_spec'
   gem 'rspec-its'
