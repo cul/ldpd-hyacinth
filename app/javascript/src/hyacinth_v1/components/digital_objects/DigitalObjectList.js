@@ -65,7 +65,7 @@ const DigitalObjectList = (props) => {
             <Card.Body className="p-2">
               <ul className="list-unstyled small">
                 <li>
-                  <strong>ID: </strong>
+                  <strong>UID: </strong>
                   {digitalObject.id}
                 </li>
                 {
@@ -80,14 +80,14 @@ const DigitalObjectList = (props) => {
                   displayParentIds && digitalObject.parentIds.length > 0 && (
                     <li>
                       <strong>Parent(s): </strong>
-                      { digitalObject.parentIds.map(id => <a key={id} href={`digital_objects/${id}`}>{id}</a>) }
+                      { digitalObject.parentIds.map((id) => <a key={id} href={`digital_objects/${id}`}>{id}</a>) }
                     </li>
                   )
                 }
               </ul>
               <Badge bg="secondary">{startCase(digitalObject.digitalObjectType)}</Badge>
               {
-                displayProjects && digitalObject.projects.map(p => (
+                displayProjects && digitalObject.projects.map((p) => (
                   <span key={`${digitalObject.id}_${p.stringKey}`}>
                     {' '}
                     <Badge bg="primary">{p.displayLabel}</Badge>
@@ -101,7 +101,6 @@ const DigitalObjectList = (props) => {
     </>
   );
 };
-
 
 DigitalObjectList.defaultProps = {
   displayProjects: false,

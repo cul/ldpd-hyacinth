@@ -7,7 +7,7 @@ import SelectInput from '../../shared/forms/inputs/SelectInput';
 
 import SearchButton from '../../shared/buttons/SearchButton';
 
-const searchTypes = ['KEYWORD', 'TITLE', 'IDENTIFER'];
+const searchTypes = ['KEYWORD', 'TITLE', 'IDENTIFIER'];
 
 function QueryForm(props) {
   const { searchTerms, searchType, onQueryChange } = props;
@@ -39,7 +39,8 @@ function QueryForm(props) {
           size="sm"
           value={queryType}
           onChange={typeChangeHandler}
-          options={searchTypes.map(t => ({ label: capitalize(t), value: t }))}
+          options={searchTypes.map((t) => ({ label: capitalize(t), value: t }))}
+          inputName="queryType"
         />
         <TextInput
           sm={null}
@@ -47,8 +48,9 @@ function QueryForm(props) {
           value={queryValue}
           placeholder="Search..."
           onChange={valueChangeHandler}
+          inputName="queryValue"
         />
-        <Col xs="auto"><SearchButton onClick={submitHandler} /></Col>
+        <Col xs="auto"><SearchButton id="digital-object-search-submit" onClick={submitHandler} /></Col>
       </Form.Group>
     </Form>
   );

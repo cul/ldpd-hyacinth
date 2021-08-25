@@ -6,19 +6,19 @@ require 'rails_helper'
 describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::Metadata do
   let(:dod) do
     data = JSON.parse(file_fixture('files/datacite/ezid_item.json').read)
-    data['identifiers'] = ['item.' + SecureRandom.uuid] # random identifer to avoid collisions
+    data['identifiers'] = ['item.' + SecureRandom.uuid] # random identifier to avoid collisions
     data
   end
 
   let(:dod_empty_dfd) do
     data = JSON.parse(file_fixture('files/datacite/ezid_item_empty_descriptive_metadata.json').read)
-    data['identifiers'] = ['item.' + SecureRandom.uuid] # random identifer to avoid collisions
+    data['identifiers'] = ['item.' + SecureRandom.uuid] # random identifier to avoid collisions
     data
   end
 
   let(:dod_names_without_roles) do
     data = JSON.parse(file_fixture('files/datacite/ezid_item_names_without_roles.json').read)
-    data['identifiers'] = ['item.' + SecureRandom.uuid] # random identifer to avoid collisions
+    data['identifiers'] = ['item.' + SecureRandom.uuid] # random identifier to avoid collisions
     data
   end
 
