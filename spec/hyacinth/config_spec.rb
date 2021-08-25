@@ -56,4 +56,14 @@ describe Hyacinth::Config do
       expect(described_class.term_search_adapter).to be_a(Hyacinth::Adapters::TermSearchAdapter::Solr)
     end
   end
+
+  context ".default_lang_value" do
+    before do
+      # this runs in an initializer, but isn't guaranteed to have run before a standalone rspec invocation
+      Hyacinth::Language.load_default_subtags!
+    end
+    it 'returns an object of the expected type' do
+      expect(described_class.default_lang_value).to be_a ::Language::Tag
+    end
+  end
 end
