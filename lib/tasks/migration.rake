@@ -24,4 +24,31 @@ namespace :hyacinth do
       Hyacinth::Config.metadata_storage.write(digital_object.metadata_location_uri, JSON.generate(json_var))
     end
   end
+
+  # Title dynamic field data is now tracked in a metadata attribute, and should be copied if
+  # the dynamic field data is present but the attribute is blank
+  task copy_dynamic_field_titles: :environment do
+    title_dynamic_field_group_name = 'title'
+
+    DigitalObject.find_each(batch_size: (ENV['BATCH_SIZE'] || 200).to_i) do |digital_object|
+      next unless digital_object.title.blank?
+      title_field_group = digital_object.descriptive_metadata[title_dynamic_field_group_name]
+      next unless title_field_group.present? && (title_field_group[0]).present?
+      digital_object.title = title_field_group[0].dup
+      digital_object.save
+    end
+  end
+
+  # Title dynamic field data is now tracked in a metadata attribute, and can be removed if
+  # the dynamic field data is present and matches the attribute
+  task remove_dynamic_field_titles: :environment do
+    title_dynamic_field_group_name = 'title'
+
+    DigitalObject.find_each(batch_size: (ENV['BATCH_SIZE'] || 200).to_i) do |digital_object|
+      next if digital_object.title.blank?
+      title_field_group = digital_object.descriptive_metadata[title_dynamic_field_group_name]
+      next unless title_field_group.present? && (title_field_group[0]).present?
+      digital_object.save if digital_object.title == title_field_group.shift
+    end
+  end
 end
