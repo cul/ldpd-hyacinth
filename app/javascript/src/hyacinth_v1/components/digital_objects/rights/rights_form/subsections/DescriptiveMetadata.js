@@ -12,6 +12,7 @@ function DescriptiveMetadata(props) {
   const {
     onChange,
     values: [value],
+    title,
     descriptiveMetadata,
     typeOfContentChange,
     fieldConfig
@@ -33,8 +34,8 @@ function DescriptiveMetadata(props) {
       <Card.Body>
         <Field
           value={value.type_of_content}
-          onChange={v => onChangeHandler('type_of_content', v)}
-          dynamicField={fieldConfig.children.find(c => c.stringKey === 'type_of_content')}
+          onChange={(v) => onChangeHandler('type_of_content', v)}
+          dynamicField={fieldConfig.children.find((c) => c.stringKey === 'type_of_content')}
         />
 
         {
@@ -84,14 +85,10 @@ function DescriptiveMetadata(props) {
           ))
         }
 
-        {
-          (descriptiveMetadata.title || [{}]).map((t, i) => (
-            <InputGroup key={i}>
-              <Label sm={4} align="right">Title</Label>
-              <ReadOnlyInput sm={8} value={t.sortPortion} />
-            </InputGroup>
-          ))
-        }
+        <InputGroup key="title_group">
+          <Label sm={4} align="right" for="rights_title_display">Title</Label>
+          <ReadOnlyInput sm={8} inputName="rights_title_display" value={(title || {}).sortPortion} />
+        </InputGroup>
 
         {
           (descriptiveMetadata.alternativeTitle || [{}]).map((t, i) => (
@@ -177,6 +174,7 @@ function DescriptiveMetadata(props) {
 
 DescriptiveMetadata.propTypes = {
   onChange: PropTypes.func.isRequired,
+  title: PropTypes.any,
   descriptiveMetadata: PropTypes.any,
   // values: PropTypes.arrayOf(PropTypes.shape({
   //   color: PropTypes.string,
