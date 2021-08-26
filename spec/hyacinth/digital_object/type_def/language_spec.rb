@@ -4,10 +4,7 @@ require 'rails_helper'
 
 describe Hyacinth::DigitalObject::TypeDef::Language do
   let(:type_def) { described_class.new }
-  let(:iana_en_fixture) { file_fixture('files/iana_language/english-subtag-registry') }
-  before do
-    Hyacinth::Language::SubtagLoader.new(iana_en_fixture).load
-  end
+  include_context 'with english-adjacent language subtags'
   let(:use_preferred) { false }
   let(:json_var) { type_def.to_serialized_form(tag) }
 

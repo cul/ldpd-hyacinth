@@ -142,6 +142,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       end
     end
     context "field exports" do
+      include_context 'with system default language subtags'
       let(:dsids) { ['descMetadata', 'structMetadata'] }
       let(:digital_object_title) { "Assigned Label" }
       before do

@@ -38,5 +38,25 @@ RSpec.describe DigitalObjectConcerns::ExportFieldsBehavior do
       actual_xml.gsub!(/\s/, '') # remove whitespace
       expect(actual_xml).to eql("<mods><name>Farmer</name></mods>")
     end
+    context "with title data" do
+      include_context 'with english-adjacent language subtags'
+      include_context 'with stubbed search adapters'
+      let(:lang) { 'sco' }
+      let(:non_sort_portion) { 'Ane' }
+      let(:sort_portion) { 'Pleasant Satyre of the Thrie Estaitis' }
+      let(:subtitle) { 'in Commendation of Vertew and Vituperation of Vyce' }
+      let(:title) { { 'lang' => lang, 'non_sort_portion' => non_sort_portion, 'sort_portion' => sort_portion, 'subtitle' => subtitle } }
+      let(:item) { FactoryBot.create(:item, title: title) }
+      let(:field_export_profile) { FactoryBot.create(:field_export_profile, :for_title_attribute) }
+      let(:exported_data) { item.render_field_export(field_export_profile) }
+      let(:exported_xml) { Nokogiri::XML(exported_data) }
+      let(:xmlns) { { 'mods' => 'http://example.org/' } }
+      it {
+        expect(exported_xml.css("mods|titleInfo > mods|nonSort", xmlns).map(&:content)).to eql([title['non_sort_portion']])
+        expect(exported_xml.css("mods|titleInfo > mods|title", xmlns).map(&:content)).to eql([title['sort_portion']])
+        expect(exported_xml.css("mods|titleInfo > mods|subTitle", xmlns).map(&:content)).to eql([title['subtitle']])
+        expect(exported_xml.css("mods|titleInfo[lang]", xmlns).map { |t| t['lang'] }).to eql([title['lang']])
+      }
+    end
   end
 end

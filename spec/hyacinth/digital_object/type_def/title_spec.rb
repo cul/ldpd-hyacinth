@@ -42,10 +42,7 @@ describe Hyacinth::DigitalObject::TypeDef::Title do
     end
   end
   context "with lang tag" do
-    let(:iana_en_fixture) { file_fixture('files/iana_language/english-subtag-registry') }
-    before do
-      Hyacinth::Language::SubtagLoader.new(iana_en_fixture).load
-    end
+    include_context 'with english-adjacent language subtags'
     let(:given_values) { untagged_title.merge('lang' => lang) }
     context "in a canonical form" do
       let(:lang) { 'en' }

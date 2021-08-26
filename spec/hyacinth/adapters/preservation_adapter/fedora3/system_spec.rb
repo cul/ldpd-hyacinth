@@ -63,6 +63,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
       end
     end
     context "field exports" do
+      include_context 'with system default language subtags'
       let(:digital_object_title) { "Assigned Label" }
       before do
         FactoryBot.create(:export_rule) # creates descMetadata

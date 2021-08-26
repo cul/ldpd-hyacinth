@@ -58,10 +58,7 @@ describe Hyacinth::Config do
   end
 
   context ".default_lang_value" do
-    before do
-      # this runs in an initializer, but isn't guaranteed to have run before a standalone rspec invocation
-      Hyacinth::Language.load_default_subtags!
-    end
+    include_context 'with system default language subtags'
     it 'returns an object of the expected type' do
       expect(described_class.default_lang_value).to be_a ::Language::Tag
     end
