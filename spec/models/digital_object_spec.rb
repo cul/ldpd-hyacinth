@@ -249,7 +249,7 @@ RSpec.describe DigitalObject, type: :model do
       let(:instance) { FactoryBot.build(:digital_object_test_subclass, :with_ascii_title, :with_test_resource1) }
       it 'persists metadata attributes and can retrieve them when a record is loaded' do
         instance.save
-        expect(DigitalObject.find_by_uid(instance.uid).title['sort_portion']).to eq('Tall Man and His Hat')
+        expect(DigitalObject.find_by_uid(instance.uid).title.dig('value', 'sort_portion')).to eq('Tall Man and His Hat')
       end
 
       it 'persists resource attributes and can retrieve them when a record is loaded' do
@@ -350,7 +350,7 @@ RSpec.describe DigitalObject, type: :model do
         let(:invalid_without_sort_portion) { { 'non_sort_portion' => 'A ' } }
         let(:valid_blank) { {} }
         it 'is valid with only a sort portion' do
-          instance.assign_attributes('title' => valid_with_sort_portion)
+          instance.assign_attributes('title' => { 'value' => valid_with_sort_portion })
           expect(instance).to be_valid
         end
         it 'is valid with an empty title hash' do
@@ -362,9 +362,9 @@ RSpec.describe DigitalObject, type: :model do
           expect(instance).to be_valid
         end
         it 'is invalid when title hash is present but sort_portion is blank' do
-          instance.assign_attributes('title' => invalid_with_whitespace_sort_portion)
+          instance.assign_attributes('title' => { 'value' => invalid_with_whitespace_sort_portion })
           expect(instance).not_to be_valid
-          instance.assign_attributes('title' => invalid_without_sort_portion)
+          instance.assign_attributes('title' => { 'value' => invalid_without_sort_portion })
           expect(instance).not_to be_valid
         end
       end

@@ -93,12 +93,18 @@ function MetadataForm(props) {
   };
 
   const onSaveSuccess = (res) => {
-    if (res.data.createDigitalObject) {
-      const path = `/digital_objects/${res.data.createDigitalObject.digitalObject.id}/metadata`;
-      history.push(path);
-    } else {
-      const path = `/digital_objects/${res.data.updateDescriptiveMetadata.digitalObject.id}/metadata`;
-      history.push(path);
+    if (res.data.createDigitalObject && res.data.createDigitalObject.digitalObject) {
+      const { digitalObject: { id: objId } } = res.data.createDigitalObject;
+      if (objId) {
+        const path = `/digital_objects/${objId}/metadata`;
+        history.push(path);
+      }
+    } else if (res.data.updateDescriptiveMetadata && res.data.updateDescriptiveMetadata.digitalObject) {
+      const { updateDescriptiveMetadata: { digitalObject: { id: objId } } } = res.data;
+      if (objId) {
+        const path = `/digital_objects/${objId}/metadata`;
+        history.push(path);
+      }
     }
   };
 
@@ -161,14 +167,14 @@ function MetadataForm(props) {
       default:
         return c;
     }
-  }).filter(c => c !== null);
+  }).filter((c) => c !== null);
 
   const {
     loading: enabledFieldsLoading,
     error: enabledFieldsError,
     data: enabledFieldsData,
   } = useQuery(getEnabledDynamicFieldsQuery,
-    { variables: { project: { stringKey: primaryProject.stringKey }, digitalObjectType: digitalObjectType.toUpperCase() } }
+    { variables: { project: { stringKey: primaryProject.stringKey }, digitalObjectType: digitalObjectType.toUpperCase() } },
   );
 
   const {

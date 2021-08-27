@@ -13,7 +13,7 @@ RSpec.describe 'Digital Object Edit', solr: true, type: :feature, js: true do
       let(:permissions_required) { [:read_objects, :update_objects] }
       let(:original_title_value) { "Quizzes Aren't Specs" }
       let(:updated_title_value) { "Quizzes Are Tests" }
-      let(:title_attribute) { { 'sort_portion' => original_title_value } }
+      let(:title_attribute) { { 'value' => { 'sort_portion' => original_title_value } } }
       let(:request_url) { "/ui/v1/digital_objects/#{item.uid}/metadata/edit" }
       let(:show_path) { "/ui/v1/digital_objects/#{item.uid}/metadata" }
       let(:item) { FactoryBot.create(:item, uid: uid, title: title_attribute) }

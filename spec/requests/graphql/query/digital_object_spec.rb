@@ -25,10 +25,12 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
         {
           "id": "#{authorized_object.uid}",
           "title": {
-            "nonSortPortion": "The",
-            "sortPortion": "Best Item Ever",
+            "value" : {
+              "nonSortPortion": "The",
+              "sortPortion": "Best Item Ever"
+            },
             "subtitle": null,
-            "lang": null
+            "valueLang": null
           },
           "numberOfChildren": 0,
           "createdAt": "#{authorized_object.created_at.iso8601}",
@@ -82,7 +84,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
         FactoryBot.create(:item, :with_rights, :with_utf8_title, :with_utf8_dynamic_field_data, :with_other_projects)
       end
       let(:json_data) { JSON.parse(response.body) }
-      let(:actual_title) { json_data&.dig('data', 'digitalObject', 'title', 'sortPortion') }
+      let(:actual_title) { json_data&.dig('data', 'digitalObject', 'title', 'value', 'sortPortion') }
       let(:actual_alternate_title) { json_data&.dig('data', 'digitalObject', 'descriptiveMetadata', 'alternate_title', 0, 'value') }
       # expected value ends in Cora\u00e7\u00e3o (67, 111, 114, 97, 231, 227, 111)
       let(:expected_title_value) { [80, 97, 114, 97, 32, 77, 97, 99, 104, 117, 99, 97, 114, 32, 77, 101, 117, 32, 67, 111, 114, 97, 231, 227, 111] }
@@ -180,10 +182,14 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
           id
           displayLabel
           title {
-            nonSortPortion
-            sortPortion
+            value {
+              nonSortPortion
+              sortPortion
+            }
             subtitle
-            lang
+            valueLang {
+              tag
+            }
           }
           numberOfChildren
           descriptiveMetadata

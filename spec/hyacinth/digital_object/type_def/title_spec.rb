@@ -4,7 +4,8 @@ require 'rails_helper'
 
 describe Hyacinth::DigitalObject::TypeDef::Title do
   let(:type_def) { described_class.new }
-  let(:untagged_title) do
+  let(:untagged_title) { { 'value' => untagged_title_value } }
+  let(:untagged_title_value) do
     {
       'non_sort_portion' => 'The',
       'sort_portion' => 'Best Item Ever'
@@ -34,26 +35,26 @@ describe Hyacinth::DigitalObject::TypeDef::Title do
     let(:whitespace_values) { non_whitespace_values.merge(whitespace_property => '  ') }
     let(:all_whitespace_values) { non_whitespace_values.map { |k, _v| [k, ' '] }.to_h }
     it "strips blank values before storing" do
-      expect(type_def.to_serialized_form(whitespace_values)).not_to include(whitespace_property)
+      expect(type_def.to_serialized_form('value' => whitespace_values).fetch('value')).not_to include(whitespace_property)
     end
     it "nils completely blank hashes before storing" do
-      expect(type_def.to_serialized_form(all_whitespace_values)).to be_nil
+      expect(type_def.to_serialized_form('value' => all_whitespace_values)).to be_nil
       expect(type_def.to_serialized_form({})).to be_nil
     end
   end
   context "with lang tag" do
     include_context 'with english-adjacent language subtags'
-    let(:given_values) { untagged_title.merge('lang' => lang) }
+    let(:given_values) { untagged_title.merge('value_lang' => { 'tag' => lang }) }
     context "in a canonical form" do
       let(:lang) { 'en' }
       it "round-trips a canonical tag" do
-        expect(type_def.to_serialized_form(given_values)).to include('lang' => { 'tag' => lang })
+        expect(type_def.to_serialized_form(given_values)).to include('value_lang' => { 'tag' => lang })
       end
     end
     context "that has a preferred value" do
       let(:lang) { 'en-Latn' }
       it "round-trips a canonical tag" do
-        expect(type_def.to_serialized_form(given_values)).to include('lang' => { 'tag' => 'en' })
+        expect(type_def.to_serialized_form(given_values)).to include('value_lang' => { 'tag' => 'en' })
       end
     end
   end

@@ -51,7 +51,7 @@ class DigitalObject < ApplicationRecord
   end
 
   # Title
-  metadata_attribute :title, Hyacinth::DigitalObject::TypeDef::Title.new.validation(proc { |value| value.blank? || value['sort_portion']&.strip.present? })
+  metadata_attribute :title, Hyacinth::DigitalObject::TypeDef::Title.new.validation(proc { |value| value&.dig('value').blank? || value.dig('value', 'sort_portion')&.strip.present? })
   # Identifiers
   metadata_attribute :identifiers, Hyacinth::DigitalObject::TypeDef::JsonSerializableSet.new.default(-> { Set.new })
   # Descriptive Metadata
@@ -77,13 +77,11 @@ class DigitalObject < ApplicationRecord
   end
 
   def generate_label
-    val = uid.dup
+    return uid.dup unless title&.dig('value', TITLE_SORT_PORTION_KEY)
 
-    if title.present?
-      val = title[TITLE_SORT_PORTION_KEY]
-      non_sort_portion = title[TITLE_NON_SORT_PORTION_KEY]
-      val = "#{non_sort_portion} #{val}" if non_sort_portion
-    end
+    val = title.dig('value', TITLE_SORT_PORTION_KEY).dup
+    non_sort_portion = title.dig('value', TITLE_NON_SORT_PORTION_KEY)
+    val = "#{non_sort_portion} #{val}" if non_sort_portion
 
     val
   end

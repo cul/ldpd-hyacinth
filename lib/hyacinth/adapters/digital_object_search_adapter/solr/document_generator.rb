@@ -51,11 +51,11 @@ module Hyacinth
           display_label = digital_object.generate_label
           solr_document['displayLabel_ss'] = display_label
           if digital_object.title.present?
-            solr_document['title_sortPortion_ssi'] = digital_object.title['sort_portion']
-            solr_document['sort_title_ssi'] = digital_object.title['sort_portion']
-            solr_document['title_nonSortPortion_ssi'] = digital_object.title['non_sort_portion']
+            solr_document['title_sortPortion_ssi'] = digital_object.title.dig('value', 'sort_portion')
+            solr_document['sort_title_ssi'] = digital_object.title.dig('value', 'sort_portion')
+            solr_document['title_nonSortPortion_ssi'] = digital_object.title.dig('value', 'non_sort_portion')
             solr_document['title_subtitle_ssi'] = digital_object.title['subtitle']
-            solr_document['title_lang_ssim'] = digital_object.title['lang']&.split('-')
+            solr_document['title_lang_ssim'] = digital_object.title.dig('value_lang', 'tag')
           end
           solr_document['sort_title_ssi'] ||= display_label
           add_keywords(display_label, solr_document)

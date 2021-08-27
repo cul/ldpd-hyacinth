@@ -42,14 +42,14 @@ module DigitalObjectConcerns
         return {} unless title.present?
         result = {
           'title' => generate_label,
-          'title.non_sort_portion' => title['non_sort_portion'],
-          'title.sort_portion' => title['sort_portion'],
+          'title.value.non_sort_portion' => title.dig('value', 'non_sort_portion'),
+          'title.value.sort_portion' => title.dig('value', 'sort_portion'),
           'title.subtitle' => title['subtitle']
         }
-        lang = title['lang'].present? ? Language::Tag.for(title['lang']) : Hyacinth::Config.default_lang_value
-        result['title.lang'] = lang.lang.subtag
-        result['title.script'] = lang.script&.subtag
-        result['title.xml_lang'] = lang.tag
+        lang = title['value_lang'].present? ? Language::Tag.for(title.dig('value_lang', 'tag')) : Hyacinth::Config.default_lang_value
+        result['title.value_lang.lang'] = lang.lang.subtag
+        result['title.value_lang.script'] = lang.script&.subtag
+        result['title.value_lang.tag'] = lang.tag
         result
       end
   end

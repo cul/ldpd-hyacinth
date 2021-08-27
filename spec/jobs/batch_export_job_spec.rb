@@ -106,7 +106,7 @@ RSpec.describe BatchExportJob do
         FactoryBot.build(:item, :with_rights, :with_utf8_title, :with_other_projects)
       end
       let(:json_data) { described_class.digital_object_as_export(authorized_object) }
-      let(:actual_value) { json_data&.dig('_title', 'sort_portion') }
+      let(:actual_value) { json_data&.dig('_title', 'value', 'sort_portion') }
       # expected value ends in Cora\u00e7\u00e3o (67, 111, 114, 97, 231, 227, 111)
       let(:expected_value) { [80, 97, 114, 97, 32, 77, 97, 99, 104, 117, 99, 97, 114, 32, 77, 101, 117, 32, 67, 111, 114, 97, 231, 227, 111] }
       it "preserves utf-8 data" do

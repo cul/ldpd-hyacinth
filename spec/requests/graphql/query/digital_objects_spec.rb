@@ -11,8 +11,10 @@ RSpec.describe 'Retrieving Digital Objects', type: :request, solr: true do
       :item,
       'primary_project' => unauthorized_project,
       'title' => {
-        'non_sort_portion' => 'The',
-        'sort_portion' => 'Other Pretty Great Item'
+        'value' => {
+          'non_sort_portion' => 'The',
+          'sort_portion' => 'Other Pretty Great Item'
+        }
       }
     )
   end

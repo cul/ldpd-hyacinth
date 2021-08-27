@@ -24,6 +24,7 @@ const Field = (props) => {
 
   switch (fieldType) {
     case 'string':
+      sharedProps.value ||= '';
       field = <TextInput {...sharedProps} />;
       break;
     case 'controlled_term':
@@ -55,7 +56,7 @@ const Field = (props) => {
 
   return (
     <InputGroup>
-      <Label align="right" for={sharedProps.inputName}>{displayLabel}</Label>
+      <Label align="right" htmlFor={sharedProps.inputName}>{displayLabel}</Label>
       {field}
     </InputGroup>
   );

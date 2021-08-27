@@ -1,40 +1,67 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DisplayField from './DisplayField';
+import DisplayFieldGroup from './DisplayFieldGroup';
 
 function TitleData(props) {
   const {
-    data: { title },
+    data: {
+      title,
+    },
   } = props;
-  const attrs = [
-    {
-      stringKey: 'nonSortPortion',
-      displayLabel: 'Non-Sort Portion',
-      fieldType: 'string',
-    },
-    {
-      stringKey: 'sortPortion',
-      displayLabel: 'Sort Portion',
-      fieldType: 'string',
-    },
-    {
-      stringKey: 'subtitle',
-      displayLabel: 'Subtitle',
-      fieldType: 'string',
-    },
-    {
-      stringKey: 'lang',
-      displayLabel: 'Language',
-      fieldType: 'string',
-    },
-  ];
+  const {
+    value: titleValue,
+    valueLang,
+    subtitle,
+  } = (title || {});
+
+  const valueGroup = {
+    stringKey: 'value',
+    displayLabel: 'Value',
+    children: [
+      {
+        id: 'nonSortPortion',
+        stringKey: 'nonSortPortion',
+        displayLabel: 'Non-Sort Portion',
+        fieldType: 'string',
+        type: 'DynamicField',
+      },
+      {
+        id: 'sortPortion',
+        stringKey: 'sortPortion',
+        displayLabel: 'Sort Portion',
+        fieldType: 'string',
+        type: 'DynamicField',
+      },
+    ],
+  };
+
+  const subtitleAttr = {
+    stringKey: 'subtitle',
+    displayLabel: 'Subtitle',
+    fieldType: 'string',
+  };
+
+  const valueLangGroup = {
+    stringKey: 'valueLang',
+    displayLabel: 'Language',
+    children: [
+      {
+        id: 'tag',
+        stringKey: 'tag',
+        displayLabel: 'Tag',
+        fieldType: 'string',
+        type: 'DynamicField',
+      },
+    ],
+  };
+
   return (
     <div key="title">
       <h4 className="text-orange">Title</h4>
-      {
-        attrs.filter((c) => (title || {})[c.stringKey])
-          .map((attr) => <DisplayField key={attr.stringKey} data={title[attr.stringKey]} dynamicField={attr} />)
-      }
+      <DisplayFieldGroup key={valueGroup.stringKey} data={titleValue ? [titleValue] : []} dynamicFieldGroup={valueGroup} />
+      <DisplayFieldGroup key={valueLangGroup.stringKey} data={valueLang ? [valueLang] : []} dynamicFieldGroup={valueLangGroup} />
+      <DisplayField key={subtitleAttr.stringKey} data={subtitle ? [subtitle] : []} dynamicField={subtitleAttr} />
     </div>
   );
 }
@@ -42,16 +69,25 @@ function TitleData(props) {
 TitleData.propTypes = {
   data: PropTypes.shape({
     title: PropTypes.shape({
-      nonSortPortion: PropTypes.string,
-      sortPortion: PropTypes.string,
+      value: PropTypes.shape({
+        nonSortPortion: PropTypes.string,
+        sortPortion: PropTypes.string,
+      }),
       subtitle: PropTypes.string,
-      lang: PropTypes.string,
+      valueLang: PropTypes.shape({
+        tag: PropTypes.string,
+      }),
     }),
   }),
 };
 
 TitleData.defaultProps = {
-  data: { title: {} },
+  data: {
+    title: {
+      value: {},
+      valueLang: {},
+    },
+  },
 };
 
 export default TitleData;

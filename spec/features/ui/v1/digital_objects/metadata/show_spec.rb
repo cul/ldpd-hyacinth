@@ -26,7 +26,7 @@ RSpec.describe 'Digital Object Show', solr: true, type: :feature, js: true do
         end
         context 'and title is present' do
           let(:title_value) { "Quizzes Aren't Specs" }
-          let(:title_attribute) { { 'sort_portion' => title_value } }
+          let(:title_attribute) { { 'value' => { 'sort_portion' => title_value } } }
           it 'uses title for label' do
             expect(page).to have_content("Item: #{title_value}")
           end
@@ -34,7 +34,7 @@ RSpec.describe 'Digital Object Show', solr: true, type: :feature, js: true do
         context 'and edit button is clicked' do
           let(:permissions_required) { [:read_objects, :update_objects] }
           let(:title_value) { "Quizzes Aren't Specs" }
-          let(:title_attribute) { { 'sort_portion' => title_value } }
+          let(:title_attribute) { { 'value' => { 'sort_portion' => title_value } } }
           let(:edit_path) { "/ui/v1/digital_objects/#{uid}/metadata/edit" }
           it 'goes to edit view' do
             expect(page).to have_css('a[aria-label="Edit"]')

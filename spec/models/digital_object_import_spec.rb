@@ -14,7 +14,7 @@ RSpec.describe DigitalObjectImport, type: :model do
       is_expected.to eql(
         {
           'digital_object_type': 'item', 'descriptive_metadata': { 'abstract': [{ 'value': 'some abstract' }] },
-          'primary_project': { 'string_key': 'great_project' }, 'title': { 'sort_portion': 'The', 'non_sort_portion': 'Cool Item' }
+          'primary_project': { 'string_key': 'great_project' }, 'title': { 'value': { 'sort_portion': 'The', 'non_sort_portion': 'Cool Item' } }
         }.to_json
       )
     end

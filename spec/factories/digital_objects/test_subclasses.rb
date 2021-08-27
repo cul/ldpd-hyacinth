@@ -33,8 +33,10 @@ FactoryBot.define do
     trait :with_ascii_title do
       after(:build) do |digital_object|
         digital_object.title = {
-          'non_sort_portion' => 'The',
-          'sort_portion' => 'Tall Man and His Hat'
+          'value' => {
+            'non_sort_portion' => 'The',
+            'sort_portion' => 'Tall Man and His Hat'
+          }
         }
       end
     end

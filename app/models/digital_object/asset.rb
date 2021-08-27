@@ -31,7 +31,7 @@ class DigitalObject::Asset < DigitalObject
 
   def generate_label
     filename_fallback = resources[MAIN_RESOURCE_NAME]&.original_filename
-    if title.blank? && filename_fallback
+    if title&.fetch('value', nil).blank? && filename_fallback
       filename_fallback
     else
       super
@@ -61,6 +61,6 @@ class DigitalObject::Asset < DigitalObject
     resource_import = resource_imports[main_resource_name]
     return if resource_import.blank?
 
-    self.title = { 'sort_portion' => resource_import.preferred_filename }
+    self.title = { 'value' => { 'sort_portion' => resource_import.preferred_filename } }
   end
 end

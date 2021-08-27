@@ -40,7 +40,7 @@ RSpec.describe DigitalObjectConcerns::AsJson do
         'publish_entries' => [],
         'rights' => {},
         'state' => 'active',
-        'title' => { 'non_sort_portion' => 'The', 'sort_portion' => 'Tall Man and His Hat' },
+        'title' => { 'value' => { 'non_sort_portion' => 'The', 'sort_portion' => 'Tall Man and His Hat' } },
         'uid' => digital_object_with_sample_data.uid,
         'updated_at' => digital_object_with_sample_data.updated_at.as_json,
         'updated_by' => nil

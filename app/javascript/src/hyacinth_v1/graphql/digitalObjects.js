@@ -25,10 +25,14 @@ const digitalObjectInterfaceFields = `
   digitalObjectType,
   displayLabel,
   title {
-    nonSortPortion,
-    sortPortion,
+    value {
+      nonSortPortion,
+      sortPortion,
+    },
+    valueLang {
+      tag,
+    }
     subtitle,
-    lang
   },
   numberOfChildren,
   doi,

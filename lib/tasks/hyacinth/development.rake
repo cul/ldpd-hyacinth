@@ -51,7 +51,7 @@ namespace :hyacinth do
 
       21.times do |i|
         item = DigitalObject::Item.new
-        item.title = { 'sort_portion' => "Item #{i + 1}" }
+        item.title = { 'value' => { 'sort_portion' => "Item #{i + 1}" } }
         item.primary_project = project
 
         next if item.save

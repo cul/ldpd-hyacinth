@@ -32,8 +32,10 @@ FactoryBot.define do
     trait :with_ascii_title do
       after(:build) do |digital_object|
         digital_object.title = {
-          'non_sort_portion' => 'The',
-          'sort_portion' => 'Best Item Ever'
+          'value' => {
+            'non_sort_portion' => 'The',
+            'sort_portion' => 'Best Item Ever'
+          }
         }
       end
     end
@@ -57,7 +59,9 @@ FactoryBot.define do
     trait :with_utf8_title do
       after(:build) do |digital_object|
         digital_object.title = {
-          'sort_portion' => [80, 97, 114, 97, 32, 77, 97, 99, 104, 117, 99, 97, 114, 32, 77, 101, 117, 32, 67, 111, 114, 97, 231, 227, 111].pack("U*")
+          'value' => {
+            'sort_portion' => [80, 97, 114, 97, 32, 77, 97, 99, 104, 117, 99, 97, 114, 32, 77, 101, 117, 32, 67, 111, 114, 97, 231, 227, 111].pack("U*")
+          }
         }
       end
     end

@@ -32,26 +32,26 @@ FactoryBot.define do
                 "xml:lang": {
                   "render_if": {
                     "present": [
-                      "$title.xml_lang"
+                      "$title.value_lang.tag"
                     ]
                   },
-                  "val": "{{$title.xml_lang}}"
+                  "val": "{{$title.value_lang.tag}}"
                 },
                 "lang": {
                   "render_if": {
                     "present": [
-                      "$title.lang"
+                      "$title.value_lang.lang"
                     ]
                   },
-                  "val": "{{$title.lang}}"
+                  "val": "{{$title.value_lang.lang}}"
                 },
                 "script": {
                   "render_if": {
                     "present": [
-                      "$title.script"
+                      "$title.value_lang.script"
                     ]
                   },
-                  "val": "{{$title.script}}"
+                  "val": "{{$title.value_lang.script}}"
                 }
               },
               "content": [
@@ -59,14 +59,14 @@ FactoryBot.define do
                   "element": "mods:nonSort",
                   "render_if": {
                     "present": [
-                      "$title.non_sort_portion"
+                      "$title.value.non_sort_portion"
                     ]
                   },
-                  "content": "{{$title.non_sort_portion}}"
+                  "content": "{{$title.value.non_sort_portion}}"
                 },
                 {
                   "element": "mods:title",
-                  "content": "{{$title.sort_portion}}"
+                  "content": "{{$title.value.sort_portion}}"
                 },
                 {
                   "element": "mods:subTitle",

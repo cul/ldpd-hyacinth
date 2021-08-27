@@ -15,7 +15,7 @@ module Mutations
       def resolve(id:, **attributes)
         digital_object = ::DigitalObject.find_by_uid!(id)
         ability.authorize! :update, digital_object
-        attributes[:title] = attributes[:title].to_h.stringify_keys
+        attributes[:title] = attributes[:title].to_h.deep_stringify_keys
         digital_object.assign_attributes(attributes.stringify_keys)
         digital_object.updated_by = context[:current_user]
 

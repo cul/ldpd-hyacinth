@@ -162,7 +162,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       end
       it "makes core object property assignments" do
         # object label is pulled from title data
-        hyacinth_object.title = { 'sort_portion' => digital_object_title }
+        hyacinth_object.title = { 'value' => { 'sort_portion' => digital_object_title } }
         adapter.persist_impl("fedora3://#{object_pid}", hyacinth_object)
         expect(rubydora_object.label).to eql(digital_object_title)
         # state should be assigned automatically
@@ -297,7 +297,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
       let(:child_object_title) { "Assigned Label" }
       let(:child_hyacinth_object) do
         obj = FactoryBot.build(:asset, :with_main_resource)
-        obj.title = { 'sort_portion' => child_object_title }
+        obj.title = { 'value' => { 'sort_portion' => child_object_title } }
         obj
       end
 

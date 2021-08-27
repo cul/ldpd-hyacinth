@@ -12,7 +12,7 @@ FactoryBot.define do
         'primary_project' => {
           'string_key' => FactoryBot.create(:project).string_key
         },
-        'title' => { 'sort_portion' => 'The', 'non_sort_portion' => 'Cool Item' }
+        'title' => { 'value' => { 'sort_portion' => 'The', 'non_sort_portion' => 'Cool Item' } }
       }.to_json
     end
 
@@ -37,7 +37,7 @@ FactoryBot.define do
               location: Rails.root.join('spec', 'fixtures', 'files', 'test.txt')
             }
           },
-          'title' => { 'sort_portion' => 'The', 'non_sort_portion' => 'Asset' }
+          'title' => { 'value' => { 'sort_portion' => 'The', 'non_sort_portion' => 'Asset' } }
         }.to_json
       end
     end

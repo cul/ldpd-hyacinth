@@ -87,7 +87,7 @@ function DescriptiveMetadata(props) {
 
         <InputGroup key="title_group">
           <Label sm={4} align="right" for="rights_title_display">Title</Label>
-          <ReadOnlyInput sm={8} inputName="rights_title_display" value={(title || {}).sortPortion} />
+          <ReadOnlyInput sm={8} inputName="rights_title_display" value={(title || { value: {} }).value.sortPortion} />
         </InputGroup>
 
         {

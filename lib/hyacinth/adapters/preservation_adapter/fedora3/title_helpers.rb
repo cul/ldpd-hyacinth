@@ -5,9 +5,9 @@ module Hyacinth
     module PreservationAdapter
       module Fedora3::TitleHelpers
         def get_title(object_data, opts = {})
-          sort_portion = object_data.title&.fetch('sort_portion', nil)
+          sort_portion = object_data.title&.dig('value', 'sort_portion')
           if sort_portion.present?
-            non_sort_portion = object_data.title['non_sort_portion']
+            non_sort_portion = object_data.title.dig('value', 'non_sort_portion')
             opts[:sortable] ? sort_portion : "#{non_sort_portion}#{sort_portion}"
           else
             opts[:placeholder_if_blank] ? '[No Title]' : ''

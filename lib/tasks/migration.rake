@@ -34,7 +34,7 @@ namespace :hyacinth do
       next unless digital_object.title.blank?
       title_field_group = digital_object.descriptive_metadata[title_dynamic_field_group_name]
       next unless title_field_group.present? && (title_field_group[0]).present?
-      digital_object.title = title_field_group[0].dup
+      digital_object.title = { 'value' => title_field_group[0].dup }
       digital_object.save
     end
   end
@@ -48,7 +48,7 @@ namespace :hyacinth do
       next if digital_object.title.blank?
       title_field_group = digital_object.descriptive_metadata[title_dynamic_field_group_name]
       next unless title_field_group.present? && (title_field_group[0]).present?
-      digital_object.save if digital_object.title == title_field_group.shift
+      digital_object.save if digital_object.title&.fetch('value', {}) == title_field_group.shift
     end
   end
 end

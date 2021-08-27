@@ -54,6 +54,7 @@ RSpec.describe Mutations::CreateAsset, type: :request do
 
     context 'performing a ActiveStorage blob-based upload' do
       it 'returns a new asset' do
+        expect(response.body).not_to have_json_path('errors')
         expect(response.body).to have_json_type(String).at_path('data/createAsset/asset/id')
         expect(response.body).to be_json_eql("\"IMAGE\"").at_path('data/createAsset/asset/assetType')
         expect(response.body).to be_json_eql("\"blob.tiff\"").at_path('data/createAsset/asset/displayLabel')
@@ -84,6 +85,7 @@ RSpec.describe Mutations::CreateAsset, type: :request do
     end
 
     it 'is successful' do
+      expect(response.body).not_to have_json_path('errors')
       expect(response.body).to have_json_type(String).at_path('data/createAsset/asset/id')
       expect(response.body).to be_json_eql("\"TEXT\"").at_path('data/createAsset/asset/assetType')
       expect(response.body).to be_json_eql("\"test.txt\"").at_path('data/createAsset/asset/displayLabel')
