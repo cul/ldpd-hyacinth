@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.shared_examples "shared download examples" do
+  include_context 'with stubbed search adapters'
   before do
     # This shared spec requires the including context to define an adapter in a variable called adapter
     raise 'Must define variable `request_url` via `let(:request_url)`' unless defined?(request_url)

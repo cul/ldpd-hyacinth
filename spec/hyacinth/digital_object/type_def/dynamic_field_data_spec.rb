@@ -5,6 +5,25 @@ require 'rails_helper'
 describe Hyacinth::DigitalObject::TypeDef::DynamicFieldData do
   let(:type_def) { described_class.new(:descriptive_metadata) }
 
+  # Create terms
+  let(:name_vocab) do
+    vocab = Vocabulary.create(string_key: 'name', label: 'Name')
+    vocab.add_custom_field(field_key: 'uni', label: 'UNI', data_type: 'string')
+    vocab.save
+    vocab
+  end
+  let(:name_role_vocab) { Vocabulary.create(string_key: 'name_role', label: 'Name Role') }
+  let(:genre_vocab) { Vocabulary.create(string_key: 'genre', label: 'Genre') }
+  let(:person_term) { Term.create!(pref_label: 'Person, Random', term_type: 'temporary', vocabulary: name_vocab, custom_fields: { uni: 'abc123' }) }
+  let(:role_term) do
+    Term.create!(
+      uri: 'http://id.loc.gov/vocabulary/relators/aut',
+      pref_label: 'Author', alt_labels: ['writer'], authority: 'marcrelator',
+      term_type: 'external', vocabulary: name_role_vocab
+    )
+  end
+  let(:genre_term) { Term.create!(uri: 'http://vocab.getty.edu/aat/300048715', pref_label: 'articles', authority: 'aat', term_type: 'external', vocabulary: genre_vocab) }
+
   let(:field_definitions) do
     {
       dynamic_field_categories: [
@@ -47,14 +66,14 @@ describe Hyacinth::DigitalObject::TypeDef::DynamicFieldData do
         {
           'term' => {
             'prefLabel' => 'something',
-            'uri' => 'temp:4712538a19c162783874c45c4682fddcf247ac031b06a98912d7df0bc43a3a54'
+            'uri' => person_term.uri
           },
           'is_primary' => true,
           'role' => [
             {
               'term' => {
                 'pref_label' => 'author',
-                'uri' => 'http://id.loc.gov/vocabulary/relators/aut'
+                'uri' => role_term.uri
               }
             }
           ]
@@ -63,7 +82,7 @@ describe Hyacinth::DigitalObject::TypeDef::DynamicFieldData do
       'genre' => [
         {
           'term' => {
-            'uri' => 'http://vocab.getty.edu/aat/300048715',
+            'uri' => genre_term.uri,
             'other_data' => 'something'
           }
         }
@@ -71,29 +90,16 @@ describe Hyacinth::DigitalObject::TypeDef::DynamicFieldData do
     }
   end
 
-  # Load field definitions and create terms.
-  before do
-    Hyacinth::DynamicFieldsLoader.load_fields!(field_definitions)
-    name_vocab = Vocabulary.create(string_key: 'name', label: 'Name')
-    name_vocab.add_custom_field(field_key: 'uni', label: 'UNI', data_type: 'string')
-    name_vocab.save
-
-    name_role_vocab = Vocabulary.create(string_key: 'name_role', label: 'Name Role')
-    genre_vocab = Vocabulary.create(string_key: 'genre', label: 'Genre')
-
-    Term.create!(pref_label: 'Person, Random', term_type: 'temporary', vocabulary: name_vocab, custom_fields: { uni: 'abc123' })
-    Term.create!(uri: 'http://id.loc.gov/vocabulary/relators/aut', pref_label: 'Author', alt_labels: ['writer'], authority: 'marcrelator', term_type: 'external', vocabulary: name_role_vocab)
-    Term.create!(uri: 'http://vocab.getty.edu/aat/300048715', pref_label: 'articles', authority: 'aat', term_type: 'external', vocabulary: genre_vocab)
-  end
-
-  describe '#from_serialized_form_impl' do
+  # Load field definitions
+  before { Hyacinth::DynamicFieldsLoader.load_fields!(field_definitions) }
+  describe '#from_serialized_form_impl', solr: true do
     let(:expected_serialization) do
       {
         'name' => [
           {
             'term' => {
               'pref_label' => 'Person, Random',
-              'uri' => 'temp:4712538a19c162783874c45c4682fddcf247ac031b06a98912d7df0bc43a3a54',
+              'uri' => person_term.uri,
               'authority' => nil,
               'term_type' => 'temporary',
               'alt_labels' => [],
@@ -104,7 +110,7 @@ describe Hyacinth::DigitalObject::TypeDef::DynamicFieldData do
               {
                 'term' => {
                   'pref_label' => 'Author',
-                  'uri' => 'http://id.loc.gov/vocabulary/relators/aut',
+                  'uri' => role_term.uri,
                   'authority' => 'marcrelator',
                   'term_type' => 'external',
                   'alt_labels' => ['writer']
@@ -117,7 +123,7 @@ describe Hyacinth::DigitalObject::TypeDef::DynamicFieldData do
           {
             'term' => {
               'pref_label' => 'articles',
-              'uri' => 'http://vocab.getty.edu/aat/300048715',
+              'uri' => genre_term.uri,
               'authority' => 'aat',
               'term_type' => 'external',
               'alt_labels' => []
@@ -132,23 +138,24 @@ describe Hyacinth::DigitalObject::TypeDef::DynamicFieldData do
     end
   end
 
-  describe '#to_serialized_form_impl' do
+  describe '#to_serialized_form_impl', solr: false do
+    include_context 'with stubbed search adapters'
     let(:expected_serialization) do
       {
         'name' => [
           {
-            'term' => { 'uri' => 'temp:4712538a19c162783874c45c4682fddcf247ac031b06a98912d7df0bc43a3a54' },
+            'term' => { 'uri' => person_term.uri },
             'is_primary' => true,
             'role' => [
               {
-                'term' => { 'uri' => 'http://id.loc.gov/vocabulary/relators/aut' }
+                'term' => { 'uri' => role_term.uri }
               }
             ]
           }
         ],
         'genre' => [
           {
-            'term' => { 'uri' => 'http://vocab.getty.edu/aat/300048715' }
+            'term' => { 'uri' => genre_term.uri }
           }
         ]
       }

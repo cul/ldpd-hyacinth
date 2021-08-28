@@ -3,7 +3,8 @@
 require 'rails_helper'
 require 'digest'
 
-RSpec.describe Mutations::CreateAsset, type: :request, solr: true do
+RSpec.describe Mutations::CreateAsset, type: :request do
+  include_context 'with stubbed search adapters'
   before do
     load_title_fields!
     DynamicFieldsHelper.enable_dynamic_fields('asset', authorized_project)

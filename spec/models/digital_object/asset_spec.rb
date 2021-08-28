@@ -45,6 +45,7 @@ RSpec.describe DigitalObject::Asset, type: :model do
   end
 
   describe "the run_resource_requests after_save callback method" do
+    include_context 'with stubbed search adapters'
     let(:asset) { FactoryBot.build(:asset, :with_main_resource) }
 
     # TODO: Need to update to the way that digital objects save, since deep_clone method

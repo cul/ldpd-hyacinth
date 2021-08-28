@@ -2,7 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe Mutations::DigitalObject::UpdateDescriptiveMetadata, type: :request, solr: true do
+RSpec.describe Mutations::DigitalObject::UpdateDescriptiveMetadata, type: :request do
+  include_context 'with stubbed search adapters'
   let(:project) { FactoryBot.create(:project) }
   let(:authorized_item) { FactoryBot.create(:item, primary_project: project) }
 

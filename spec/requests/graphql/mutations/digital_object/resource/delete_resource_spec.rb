@@ -2,7 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe Mutations::DigitalObject::Resource::DeleteResource, type: :request, solr: true do
+RSpec.describe Mutations::DigitalObject::Resource::DeleteResource, type: :request do
+  include_context 'with stubbed search adapters'
   let(:digital_object) { FactoryBot.create(:asset, :with_main_resource, :with_access_resource) }
   let(:project) { digital_object.projects.first }
   let(:resource_name) { 'access' }

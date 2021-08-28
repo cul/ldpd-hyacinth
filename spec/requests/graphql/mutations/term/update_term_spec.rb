@@ -2,7 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe Mutations::Term::UpdateTerm, type: :request, solr: true do
+RSpec.describe Mutations::Term::UpdateTerm, type: :request do
+  include_context 'with stubbed search adapters'
   let(:vocabulary) do
     FactoryBot.create(:vocabulary, custom_fields: {
       classification: { label: 'Classification', data_type: 'string' },

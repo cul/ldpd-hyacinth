@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe "Digital Objects API endpoint", type: :request do
+  include_context 'with stubbed search adapters'
   let(:authorized_object) { FactoryBot.create(:digital_object_test_subclass, :with_sample_data) }
   let(:authorized_project) { authorized_object.projects.first }
 

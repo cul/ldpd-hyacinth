@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe DigitalObject::DynamicFieldsValidator do
+  include_context 'with stubbed search adapters'
   let(:project) { FactoryBot.create(:project) }
   let(:item) { FactoryBot.create(:item, primary_project: project) }
 

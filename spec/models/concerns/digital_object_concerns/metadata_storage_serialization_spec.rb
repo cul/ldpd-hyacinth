@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe DigitalObjectConcerns::MetadataStorageSerialization do
+  include_context 'with stubbed search adapters'
   let!(:digital_object) do
     obj = FactoryBot.create(:digital_object_test_subclass)
     obj.resources['test_resource1'] = Hyacinth::DigitalObject::Resource.new(

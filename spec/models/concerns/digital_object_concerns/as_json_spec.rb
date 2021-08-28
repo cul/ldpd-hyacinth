@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe DigitalObjectConcerns::AsJson do
+  include_context 'with stubbed search adapters'
   let(:digital_object_with_sample_data) do
     obj = FactoryBot.build(:digital_object_test_subclass, :with_sample_data)
     obj.children_to_add << FactoryBot.build(:digital_object_test_subclass, :with_sample_data)

@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe DigitalObjectConcerns::Assets::Validations do
+  include_context 'with stubbed search adapters'
   let(:asset) { FactoryBot.build(:asset, :with_main_resource) }
 
   describe '.validate_main_resource' do

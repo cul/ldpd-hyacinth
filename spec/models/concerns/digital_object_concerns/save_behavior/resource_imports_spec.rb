@@ -99,6 +99,7 @@ RSpec.describe DigitalObjectConcerns::ResourceImports do
   end
 
   describe '#finalize_resource_imports' do
+    include_context 'with stubbed search adapters'
     let(:test_file_path) { Rails.root.join('spec', 'fixtures', 'files', 'test.txt').to_s }
     let(:resource_import_data) do
       {

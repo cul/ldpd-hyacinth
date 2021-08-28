@@ -2,7 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe Mutations::DigitalObject::Resource::CreateResource, type: :request, solr: true do
+RSpec.describe Mutations::DigitalObject::Resource::CreateResource, type: :request do
+  include_context 'with stubbed search adapters'
   let(:authorized_object) { FactoryBot.create(:asset, :with_main_resource) }
   let(:authorized_project) { authorized_object.projects.first }
 

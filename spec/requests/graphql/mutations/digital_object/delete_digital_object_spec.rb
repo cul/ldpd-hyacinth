@@ -3,6 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Mutations::DigitalObject::DeleteDigitalObject, type: :request do
+  include_context 'with stubbed search adapters'
   let(:item) { FactoryBot.create(:item) }
 
   include_examples 'requires user to have correct permissions for graphql request' do

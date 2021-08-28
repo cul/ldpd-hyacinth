@@ -2,7 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe Mutations::DigitalObject::UpdateFeaturedThumbnailRegion, type: :request, solr: true do
+RSpec.describe Mutations::DigitalObject::UpdateFeaturedThumbnailRegion, type: :request do
+  include_context 'with stubbed search adapters'
   let(:project) { FactoryBot.create(:project) }
   let(:authorized_object) { FactoryBot.create(:asset, :with_main_resource, primary_project: project) }
   let(:featured_thumbnail_region) { '5,10,100,100' }
