@@ -51,6 +51,8 @@ class DigitalObject < ApplicationRecord
     @mint_doi = false
   end
 
+  # Title
+  metadata_attribute :title, Hyacinth::DigitalObject::TypeDef::Title.new
   # Identifiers
   metadata_attribute :identifiers, Hyacinth::DigitalObject::TypeDef::JsonSerializableSet.new.default(-> { Set.new })
   # Descriptive Metadata
@@ -78,10 +80,9 @@ class DigitalObject < ApplicationRecord
   def generate_title(sortable = false)
     val = '[No Title]'
 
-    title_field_group = descriptive_metadata[TITLE_DYNAMIC_FIELD_GROUP_NAME]
-    if title_field_group.present? && (title_field = title_field_group[0]).present?
-      val = title_field[TITLE_SORT_PORTION_DYNAMIC_FIELD_NAME]
-      non_sort_portion = title_field[TITLE_NON_SORT_PORTION_DYNAMIC_FIELD_NAME]
+    if title.present?
+      val = title[TITLE_SORT_PORTION_DYNAMIC_FIELD_NAME]
+      non_sort_portion = title[TITLE_NON_SORT_PORTION_DYNAMIC_FIELD_NAME]
       val = "#{non_sort_portion} #{val}" if non_sort_portion && !sortable
     end
 

@@ -51,7 +51,7 @@ RSpec.shared_examples "shared download examples" do
   end
 end
 
-RSpec.describe "Downloads API endpoint", type: :request do
+RSpec.describe "Downloads API endpoint", type: :request, solr: true do
   context "for digital object resources" do
     before do
       # We don't care about solr indexing for these tests, so we'll disable it.

@@ -19,7 +19,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
     its(['state_ssi']) { is_expected.to eql authorized_object.state }
     its(['digital_object_type_ssi']) { is_expected.to eql authorized_object.digital_object_type }
     its(['title_ss']) { is_expected.to eql('The Best Item Ever') }
-    its(['sort_title_ssi']) { is_expected.to eql('Best Item Ever') }
+    its(['title_sortPortion_ssi']) { is_expected.to eql('Best Item Ever') }
     its(['created_at_dtsi']) { is_expected.to match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/) }
     its(['updated_at_dtsi']) { is_expected.to match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/) }
 
@@ -84,8 +84,8 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
       end
 
       it 'adds correct fields' do
-        expect(document['df_title_nonSortPortion_ssim']).to match_array ['The']
-        expect(document['df_title_sortPortion_ssim']).to match_array ['Best Item Ever']
+        expect(document['title_nonSortPortion_ssi']).to eql 'The'
+        expect(document['title_sortPortion_ssi']).to eql 'Best Item Ever'
         expect(document['df_name_term_ssim']).to match_array ['Random, Person']
         expect(document['df_name_role_term_ssim']).to match_array ['writer', 'author']
         expect(document['df_alternateTitle_value_ssim']).to match_array ['Other Title', 'New Title']

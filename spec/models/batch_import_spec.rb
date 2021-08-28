@@ -288,7 +288,7 @@ RSpec.describe BatchImport, type: :model do
         described_class.csv_file_to_hierarchical_json_hash(csv_file) { |row, _ix| rows << row }
         rows.first
       end
-      let(:mapped_value) { json_row&.dig('descriptive_metadata', 'title', 0, 'sort_portion') }
+      let(:mapped_value) { json_row&.dig('title', 'sort_portion') }
       # expected value ends in Cora\u00e7\u00e3o (67, 111, 114, 97, 231, 227, 111)
       let(:expected_value) { [80, 97, 114, 97, 32, 77, 97, 99, 104, 117, 99, 97, 114, 32, 77, 101, 117, 32, 67, 111, 114, 97, 231, 227, 111] }
       it "preserves utf-8 data" do

@@ -4,19 +4,19 @@ module Hyacinth
   module Adapters
     module PreservationAdapter
       module Fedora3::TitleHelpers
-        def get_title(descriptive_metadata, opts = {})
-          title = descriptive_metadata['title']&.first && descriptive_metadata['title'].first['non_sort_portion'].present?
-          title ||= ''
-          title + get_sort_title(descriptive_metadata, opts)
-        end
-
-        # Returns the sort portion of the primary title
-        def get_sort_title(descriptive_metadata, opts = {})
-          if descriptive_metadata['title']&.first && descriptive_metadata['title'].first['sort_portion']
-            descriptive_metadata['title'].first['sort_portion']
+        def get_title(object_data, opts = {})
+          sort_portion = object_data.title&.fetch('sort_portion', nil)
+          if sort_portion.present?
+            non_sort_portion = object_data.title['non_sort_portion']
+            opts[:sortable] ? sort_portion : "#{non_sort_portion}#{sort_portion}"
           else
             opts[:placeholder_if_blank] ? '[No Title]' : ''
           end
+        end
+
+        # Returns the sort portion of the primary title
+        def get_sort_title(object_data, opts = {})
+          get_title(object_data, opts.merge(sortable: true))
         end
       end
     end

@@ -48,9 +48,14 @@ module Hyacinth
         end
 
         def merge_title_fields_for!(digital_object, solr_document = {})
-          solr_document['sort_title_ssi'] = digital_object.generate_title(true)
+          solr_document['title_sortPortion_ssi'] = digital_object.generate_title(true)
           indexable_title = digital_object.generate_title
           solr_document['title_ss'] = indexable_title
+          if digital_object.title.present?
+            solr_document['title_nonSortPortion_ssi'] = digital_object.title['non_sort_portion']
+            solr_document['title_subtitle_ssi'] = digital_object.title['subtitle']
+            solr_document['title_lang_ssim'] = digital_object.title['lang']&.split('-')
+          end
           add_keywords(indexable_title, solr_document)
           add_titles(indexable_title, solr_document)
         end

@@ -19,9 +19,8 @@ RSpec.describe DigitalObjectConcerns::AttributeAssignment::DescriptiveMetadata d
   context '#assign_descriptive_metadata' do
     it 'merges descriptive metadata when merge param is true' do
       digital_object_with_sample_data.assign_descriptive_metadata(digital_object_data, true)
-      expect(digital_object_with_sample_data.descriptive_metadata['title']).to eq([{
-        'non_sort_portion' => 'The',
-        'sort_portion' => 'Tall Man and His Hat'
+      expect(digital_object_with_sample_data.descriptive_metadata['alternate_title']).to eq([{
+        'value' => 'Other Title'
       }])
 
       expect(digital_object_with_sample_data.descriptive_metadata['note']).to eq([{
@@ -32,7 +31,7 @@ RSpec.describe DigitalObjectConcerns::AttributeAssignment::DescriptiveMetadata d
 
     it 'merges descriptive metadata data when merge param is false' do
       digital_object_with_sample_data.assign_descriptive_metadata(digital_object_data, false)
-      expect(digital_object_with_sample_data.descriptive_metadata['title']).to be_nil
+      expect(digital_object_with_sample_data.descriptive_metadata['alternate_title']).to be_nil
 
       expect(digital_object_with_sample_data.descriptive_metadata['note']).to eq([{
         'value' => 'Great Note',

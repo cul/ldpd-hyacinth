@@ -33,10 +33,10 @@ RSpec.describe DigitalObjectConcerns::AttributeAssignment do
 
       digital_object_with_sample_data.assign_attributes(digital_object_data)
 
-      expect(digital_object_with_sample_data.descriptive_metadata['title']).to eq([{
+      expect(digital_object_with_sample_data.title).to eq(
         'non_sort_portion' => 'The',
         'sort_portion' => 'Tall Man and His Hat'
-      }])
+      )
 
       expect(digital_object_with_sample_data.descriptive_metadata['note']).to eq([{
         'value' => 'Great Note',

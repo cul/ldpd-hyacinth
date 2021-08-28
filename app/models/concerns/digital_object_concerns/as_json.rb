@@ -20,6 +20,7 @@ module DigitalObjectConcerns
         'identifiers',
         'descriptive_metadata',
         'rights',
+        'title',
         'primary_project',
         'other_projects',
         'number_of_children',

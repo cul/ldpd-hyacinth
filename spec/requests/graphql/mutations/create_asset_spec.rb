@@ -5,10 +5,6 @@ require 'digest'
 
 RSpec.describe Mutations::CreateAsset, type: :request do
   include_context 'with stubbed search adapters'
-  before do
-    load_title_fields!
-    DynamicFieldsHelper.enable_dynamic_fields('asset', authorized_project)
-  end # Need to load dynamic fields for title, because its set as part of the mutation.
 
   let(:authorized_object) { FactoryBot.create(:item) }
   let(:authorized_project) { authorized_object.projects.first }
@@ -60,7 +56,7 @@ RSpec.describe Mutations::CreateAsset, type: :request do
       it 'returns a new asset' do
         expect(response.body).to have_json_type(String).at_path('data/createAsset/asset/id')
         expect(response.body).to be_json_eql("\"IMAGE\"").at_path('data/createAsset/asset/assetType')
-        expect(response.body).to be_json_eql("\"blob.tiff\"").at_path('data/createAsset/asset/title')
+        expect(response.body).to be_json_eql("\"blob.tiff\"").at_path('data/createAsset/asset/displayTitle')
       end
       it 'deletes the upload after success' do
         expect(ActiveStorage::Blob.exists?(active_storage_blob.id)).to be false
@@ -90,7 +86,7 @@ RSpec.describe Mutations::CreateAsset, type: :request do
     it 'is successful' do
       expect(response.body).to have_json_type(String).at_path('data/createAsset/asset/id')
       expect(response.body).to be_json_eql("\"TEXT\"").at_path('data/createAsset/asset/assetType')
-      expect(response.body).to be_json_eql("\"test.txt\"").at_path('data/createAsset/asset/title')
+      expect(response.body).to be_json_eql("\"test.txt\"").at_path('data/createAsset/asset/displayTitle')
     end
   end
 
@@ -101,7 +97,7 @@ RSpec.describe Mutations::CreateAsset, type: :request do
           asset {
             id
             assetType
-            title
+            displayTitle
           }
         }
       }

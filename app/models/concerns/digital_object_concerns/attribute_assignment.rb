@@ -13,6 +13,7 @@ module DigitalObjectConcerns
     include DigitalObjectConcerns::AttributeAssignment::ResourceImports
     include DigitalObjectConcerns::AttributeAssignment::Rights
     include DigitalObjectConcerns::AttributeAssignment::State
+    include DigitalObjectConcerns::AttributeAssignment::Title
 
     # A batch setter method that assigns many of this object's properties in one go, based on the
     # given digital_object_data hash. This method is particularly useful in cases like batch import,
@@ -49,6 +50,7 @@ module DigitalObjectConcerns
       assign_state(new_digital_object_data)
       assign_projects(new_digital_object_data)
       assign_rights(new_digital_object_data, merge_rights)
+      assign_title(new_digital_object_data)
     end
   end
 end

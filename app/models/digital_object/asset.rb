@@ -47,11 +47,11 @@ class DigitalObject::Asset < DigitalObject
   end
 
   def assign_title_from_main_resource_import_if_blank
-    return if self.descriptive_metadata['title'].present?
+    return if self.title.present?
 
     resource_import = resource_imports[main_resource_name]
     return if resource_import.blank?
 
-    self.descriptive_metadata['title'] = [{ 'sort_portion' => resource_import.preferred_filename }]
+    self.title = { 'sort_portion' => resource_import.preferred_filename }
   end
 end
