@@ -18,7 +18,7 @@ RSpec.describe DigitalObjectConcerns::AsJson do
       {
         'created_at' => digital_object_with_sample_data.created_at.as_json,
         'created_by' => nil,
-        'descriptive_metadata' => { "alternate_title" => [{ "value" => "Other Title" }] },
+        'descriptive_metadata' => { "alternative_title" => [{ "value" => "Other Title" }] },
         'digital_object_type' => 'test_subclass',
         'doi' => nil,
         'first_preserved_at' => nil,

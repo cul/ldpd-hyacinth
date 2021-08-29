@@ -85,13 +85,13 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
       end
       let(:json_data) { JSON.parse(response.body) }
       let(:actual_title) { json_data&.dig('data', 'digitalObject', 'title', 'value', 'sortPortion') }
-      let(:actual_alternate_title) { json_data&.dig('data', 'digitalObject', 'descriptiveMetadata', 'alternate_title', 0, 'value') }
+      let(:actual_alternative_title) { json_data&.dig('data', 'digitalObject', 'descriptiveMetadata', 'alternative_title', 0, 'value') }
       # expected value ends in Cora\u00e7\u00e3o (67, 111, 114, 97, 231, 227, 111)
       let(:expected_title_value) { [80, 97, 114, 97, 32, 77, 97, 99, 104, 117, 99, 97, 114, 32, 77, 101, 117, 32, 67, 111, 114, 97, 231, 227, 111] }
-      let(:expected_alternate_title_value) { [83, 243, 32, 68, 97, 110, 231, 111, 32, 83, 97, 109, 98, 97] }
+      let(:expected_alternative_title_value) { [83, 243, 32, 68, 97, 110, 231, 111, 32, 83, 97, 109, 98, 97] }
       it "preserves utf-8 data" do
         expect(actual_title&.unpack('U*')).to eql(expected_title_value)
-        expect(actual_alternate_title&.unpack('U*')).to eql(expected_alternate_title_value)
+        expect(actual_alternative_title&.unpack('U*')).to eql(expected_alternative_title_value)
       end
     end
   end

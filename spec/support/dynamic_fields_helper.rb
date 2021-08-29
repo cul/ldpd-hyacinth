@@ -66,25 +66,37 @@ module DynamicFieldsHelper
     load_and_return!(rights_fields)
   end
 
-  def load_abstract_fields!
-    abstract_fields = {
+  def simple_value_field_data(string_key, **opts)
+    field_data = {
       dynamic_field_categories: [
         {
-          display_label: "Descriptive Metadata",
+          display_label: opts.fetch(:category_label, "Descriptive Metadata"),
           dynamic_field_groups: [
             {
-              string_key: 'abstract',
-              display_label: 'Abstract',
+              string_key: string_key,
+              display_label: string_key.send(opts.fetch(:label_from, :titleize)),
               dynamic_fields: [
-                { string_key: 'value', display_label: 'Value', field_type: DynamicField::Type::TEXTAREA }
+                { string_key: 'value', display_label: 'Value', field_type: opts.fetch(:field_type, DynamicField::Type::STRING) }.merge(opts.fetch(:index, {}))
               ]
             }
           ]
         }
       ]
     }
+    if opts[:with_language_tags]
+      dynamic_fields_path = [:dynamic_field_categories, 0, :dynamic_field_groups, 0, :dynamic_fields]
+      field_data.dig(*dynamic_fields_path) << language_tag_for('value')
+    end
+    field_data
+  end
 
-    load_and_return!(abstract_fields)
+  def language_tag_for(string_key)
+    { string_key: "#{string_key}_lang", display_label: "#{string_key.titleize} Language", field_type: DynamicField::Type::LANG }
+  end
+
+  def load_abstract_fields!(**opts)
+    field_data = simple_value_field_data('abstract', opts)
+    load_and_return!(field_data)
   end
 
   def load_name_fields!
@@ -118,67 +130,24 @@ module DynamicFieldsHelper
     load_and_return!(name_fields)
   end
 
-  def load_alternate_title_fields!
-    alternate_title_fields = {
-      dynamic_field_categories: [
-        {
-          display_label: "Descriptive Metadata",
-          dynamic_field_groups: [
-            {
-              string_key: 'alternate_title',
-              display_label: 'Alternate Title',
-              dynamic_fields: [
-                { string_key: 'value', display_label: 'Value', field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_title_searchable: true }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-
-    load_and_return!(alternate_title_fields)
+  def load_alternative_title_fields!(**opts)
+    default_opts = { index: { is_keyword_searchable: true, is_title_searchable: true } }
+    opts = default_opts.merge(opts)
+    field_data = simple_value_field_data('alternative_title', opts)
+    load_and_return!(field_data)
   end
 
-  def load_isbn_fields!
-    isbn_fields = {
-      dynamic_field_categories: [
-        {
-          display_label: "Descriptive Metadata",
-          dynamic_field_groups: [
-            {
-              string_key: 'isbn',
-              display_label: 'ISBN',
-              dynamic_fields: [
-                { string_key: 'value', display_label: 'Value', field_type: DynamicField::Type::STRING, is_identifier_searchable: true }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-
-    load_and_return!(isbn_fields)
+  def load_isbn_fields!(**opts)
+    default_opts = { index: { is_identifier_searchable: true }, label_from: :upcase }
+    opts = default_opts.merge(opts)
+    field_data = simple_value_field_data('isbn', opts)
+    load_and_return!(field_data)
   end
 
   def load_note_fields!
-    note_fields = {
-      dynamic_field_categories: [
-        {
-          display_label: "Notes",
-          dynamic_field_groups: [
-            {
-              string_key: 'note',
-              display_label: 'Note',
-              dynamic_fields: [
-                { string_key: 'value', display_label: 'Value', field_type: DynamicField::Type::TEXTAREA }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-
-    load_and_return!(note_fields)
+    opts = { category_label: "Notes", field_type: DynamicField::Type::TEXTAREA }
+    field_data = simple_value_field_data('note', opts)
+    load_and_return!(field_data)
   end
 
   def enable_dynamic_fields(digital_object_type, project, dynamic_fields = DynamicField.all)

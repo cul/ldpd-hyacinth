@@ -2,6 +2,10 @@
 
 FactoryBot.define do
   factory :item, class: DigitalObject::Item do
+    transient do
+      title_lang { nil }
+      value_lang { nil }
+    end
     after(:build) do |digital_object|
       digital_object.primary_project = create(:project) if digital_object.primary_project.blank?
     end
@@ -13,16 +17,30 @@ FactoryBot.define do
       updated_at { DateTime.current }
     end
 
-    trait :with_ascii_dynamic_field_data do
-      after(:build) do |digital_object|
-        dynamic_fields = DynamicFieldsHelper.load_alternate_title_fields! # Adding dynamic fields used in descriptive metadata. Validations will fail if these field definitions aren't present.
+    trait :with_alternative_title_fields do
+      after(:build) do |digital_object, evaluator|
+        with_language_tags = evaluator.value_lang.present?
+        # Adding dynamic fields used in descriptive metadata.
+        # Validations will fail if these field definitions aren't present.
+        dynamic_fields = DynamicFieldsHelper.load_alternative_title_fields!(with_language_tags: with_language_tags)
         DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project, dynamic_fields)
+      end
+    end
+
+    trait :with_ascii_dynamic_field_data do
+      with_alternative_title_fields
+
+      transient do
+        value { 'Other Title' }
+      end
+      after(:build) do |digital_object, evaluator|
+        value_lang = { 'value_lang' => evaluator.value_lang }.compact
         digital_object.assign_descriptive_metadata(
           'descriptive_metadata' => {
-            'alternate_title' => [
+            'alternative_title' => [
               {
-                'value' => 'Other Title'
-              }
+                'value' => evaluator.value
+              }.merge(value_lang)
             ]
           }
         )
@@ -41,15 +59,19 @@ FactoryBot.define do
     end
 
     trait :with_utf8_dynamic_field_data do
-      after(:build) do |digital_object|
-        dynamic_fields = DynamicFieldsHelper.load_alternate_title_fields! # Adding dynamic fields used in descriptive metadata. Validations will fail if these field definitions aren't present.
-        DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project, dynamic_fields)
+      with_alternative_title_fields
+
+      transient do
+        value { [83, 243, 32, 68, 97, 110, 231, 111, 32, 83, 97, 109, 98, 97].pack("U*") }
+      end
+      after(:build) do |digital_object, evaluator|
+        value_lang = { 'value_lang' => evaluator.value_lang }.compact
         digital_object.assign_descriptive_metadata(
           'descriptive_metadata' => {
-            'alternate_title' => [
+            'alternative_title' => [
               {
-                'value' => [83, 243, 32, 68, 97, 110, 231, 111, 32, 83, 97, 109, 98, 97].pack("U*")
-              }
+                'value' => evaluator.value
+              }.merge(value_lang)
             ]
           }
         )
