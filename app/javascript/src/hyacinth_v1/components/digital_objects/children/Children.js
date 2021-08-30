@@ -1,17 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Card } from 'react-bootstrap';
+import { Card, Button } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
+import { Link } from 'react-router-dom';
 
 import DigitalObjectInterface from '../DigitalObjectInterface';
 import DigitalObjectList from '../DigitalObjectList';
 import AssetNew from '../new/AssetNew';
 import TabHeading from '../../shared/tabs/TabHeading';
-import { getChildStructureDigtialObjectQuery } from '../../../graphql/digitalObjects';
+import { getChildStructureDigtialObjectQuery, getMinimalDigitalObjectWithProjectsQuery } from '../../../graphql/digitalObjects';
 import GraphQLErrors from '../../shared/GraphQLErrors';
+import { digitalObjectAbility } from '../../../utils/ability';
 
 const Children = (props) => {
   const { id } = props;
+
+  const {
+    loading: minimalObjectLoading,
+    error: minimalObjectError,
+    data: minimalObjectData,
+  } = useQuery(getMinimalDigitalObjectWithProjectsQuery, {
+    variables: { id },
+  });
 
   const {
     loading: digitalObjectLoading,
@@ -26,6 +36,16 @@ const Children = (props) => {
   if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
   const { digitalObject } = digitalObjectData;
   const { childStructure: { structure } } = digitalObject;
+  if (minimalObjectLoading || digitalObjectLoading) return (<></>);
+  if (minimalObjectError) return (<GraphQLErrors errors={minimalObjectError} />);
+  if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
+
+  const { digitalObject: minimalDigitalObject } = minimalObjectData;
+
+  const canReorder = digitalObjectAbility.can('edit_objects', {
+    primaryProject: minimalDigitalObject.primaryProject,
+    otherProjects: minimalDigitalObject.otherProjects,
+  });
   return (
     <DigitalObjectInterface digitalObject={digitalObject}>
       <TabHeading>Manage Child Assets</TabHeading>
@@ -37,6 +57,18 @@ const Children = (props) => {
           <AssetNew parentId={id} refetch={refreshDigitalObject} />
         </Card.Body>
       </Card>
+      { canReorder
+          && (
+          <Card className="mb-3">
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Link to={`/digital_objects/${id}/edit_child_structure`}>
+                <Button>
+                  Reorder Children
+                </Button>
+              </Link>
+            </div>
+          </Card>
+          )}
       <Card className="mb-3">
         <Card.Body>
           <Card.Title>
