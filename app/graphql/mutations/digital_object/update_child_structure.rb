@@ -4,7 +4,7 @@ module Mutations
   module DigitalObject
     class UpdateChildStructure < Mutations::BaseMutation
       argument :parent_id, String, "parent object of children being reordered", required: true
-      argument :ordered_children, [Inputs::UpdateChildStructureInput], required: true
+      argument :ordered_children, [Inputs::ChildStructureInput], required: true
 
       field :parent, Types::DigitalObject::ItemType, null: true
       field :user_errors, [Types::Errors::FieldedInput], null: false
