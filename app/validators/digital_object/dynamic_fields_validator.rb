@@ -114,6 +114,22 @@ class DigitalObject::DynamicFieldsValidator < ActiveModel::EachValidator
       errors.empty? ? false : errors
     end
 
+    def validated_language_tags
+      @validated_language_tags ||= {}
+    end
+
+    def valid_language_tag_value?(value)
+      validated_language_tags.fetch(value['tag']) do |tag_value|
+        Language::Tag.for(tag_value)
+      rescue
+        false
+      end
+    end
+
+    def errors_for_language_tag_field(_configuration, value)
+      valid_language_tag_value?(value) ? false : ["#{value} is an invalid language tag"]
+    end
+
     # Returns nil if vocabulary is not represented in hash
     def custom_fields_for(vocabulary)
       vocabulary_to_custom_fields_map.fetch(vocabulary, nil)

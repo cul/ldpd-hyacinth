@@ -58,5 +58,28 @@ RSpec.describe DigitalObjectConcerns::ExportFieldsBehavior do
         expect(exported_xml.css("mods|titleInfo[lang]", xmlns).map { |t| t['lang'] }).to eql([title.dig('value_lang', 'tag')])
       }
     end
+    context "with language-tagged field data" do
+      include_context 'with english-adjacent language subtags'
+      include_context 'with stubbed search adapters'
+      let(:lang) { 'sco' }
+      let(:script) { 'Latn' }
+      let(:lang_tag) { "#{lang}-#{script}" }
+      let(:value_lang) { { 'tag' => lang_tag } }
+      let(:value) { 'Ane Pleasant Satyre of the Thrie Estaitis' }
+      let(:field_export_profile) { FactoryBot.create(:field_export_profile, :for_alternative_title_field) }
+      let(:xmlns) { { 'mods' => 'http://example.org/' } }
+      let(:item) { FactoryBot.create(:item, :with_ascii_dynamic_field_data, value: value, value_lang: value_lang) }
+      # reload item for rehydrated term/language data
+      let(:loaded_item) { DigitalObject::Item.find(item.id) }
+      let(:exported_data) { loaded_item.render_field_export(field_export_profile) }
+      let(:exported_xml) { Nokogiri::XML(exported_data) }
+      before { FactoryBot.create(:export_rule, :for_alternative_title_field, field_export_profile: field_export_profile, dynamic_field_group: DynamicFieldGroup.first) }
+      it {
+        expect(exported_xml.css("mods|titleInfo[type='alternative'] > mods|title", xmlns).map(&:content)).to eql([value])
+        expect(exported_xml.css("mods|titleInfo[type='alternative']", xmlns).map { |t| t['xml:lang'] }).to eql([lang_tag])
+        expect(exported_xml.css("mods|titleInfo[type='alternative']", xmlns).map { |t| t['lang'] }).to eql([lang])
+        expect(exported_xml.css("mods|titleInfo[type='alternative']", xmlns).map { |t| t['script'] }).to eql([script])
+      }
+    end
   end
 end

@@ -83,5 +83,20 @@ FactoryBot.define do
         }'
       end
     end
+    trait :for_alternative_title_field do
+      translation_logic do
+        '{
+          "element": "mods:mods",
+          "attrs": {
+            "xmlns:mods": "http://example.org/"
+          },
+          "content": [
+            {
+              "yield": "alternative_title"
+            }
+          ]
+        }'
+      end
+    end
   end
 end
