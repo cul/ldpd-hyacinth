@@ -4,6 +4,8 @@ import InputGroup from '../../shared/forms/InputGroup';
 import Label from '../../shared/forms/Label';
 import PlainText from '../../shared/forms/inputs/PlainText';
 
+const randomId = (prefix) => `${prefix}${Math.random()}`.replace('.','');
+
 function DisplayField(props) {
   const {
     data,
@@ -12,6 +14,7 @@ function DisplayField(props) {
     },
   } = props;
 
+  const inputName = randomId(stringKey);
   let value = null;
 
   switch (fieldType) {
@@ -21,14 +24,17 @@ function DisplayField(props) {
     case 'select':
       value = JSON.parse(selectOptions).find(o => o.value === data).label;
       break;
+    case 'language_tag':
+      value = data.tag;
+      break;
     default:
       value = data.toString();
   }
 
   return (
     <InputGroup key={stringKey}>
-      <Label sm={4} align="right">{displayLabel}</Label>
-      <PlainText sm={8} value={value} />
+      <Label sm={4} align="right" htmlFor={inputName}>{displayLabel}</Label>
+      <PlainText sm={8} value={value} inputName={inputName} />
     </InputGroup>
   );
 }

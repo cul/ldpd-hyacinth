@@ -31,6 +31,19 @@ RSpec.describe 'Digital Object Show', solr: true, type: :feature, js: true do
             expect(page).to have_content("Item: #{title_value}")
           end
         end
+        context 'and dynamic field data is present' do
+          include_context 'with language subtag fixtures'
+          let(:lang_subtags) { Hyacinth::Language::SubtagLoader.new(iana_en_fixture).load }
+          let(:value_lang) { { 'tag' => 'en' } }
+          let(:item) { lang_subtags && FactoryBot.create(:item, :with_ascii_dynamic_field_data, uid: uid, title: title_attribute, value_lang: value_lang) }
+          it 'shows labelled field values' do
+            card_header = page.find('.card-header', exact_text: 'Alternative Title')
+            within(card_header.sibling('.card-body')) do
+              expect(page).to have_field('Value', readonly: true, with: "Other Title")
+              expect(page).to have_field('Value Language', readonly: true, with: "en")
+            end
+          end
+        end
         context 'and edit button is clicked' do
           let(:permissions_required) { [:read_objects, :update_objects] }
           let(:title_value) { "Quizzes Aren't Specs" }
