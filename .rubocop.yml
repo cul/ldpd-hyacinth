@@ -9,3 +9,10 @@ AllCops:
 
 RSpec/ExampleLength:
   Max: 7
+
+CUL/CapybaraScreenshots:
+  Description: 'Disallow calls to save_screenshot in feature specs.'
+  Enabled: true
+  VersionAdded: '3.2.2'
+  Include:
+    - 'spec/**/*'

@@ -11,6 +11,7 @@ namespace :hyacinth do
   end
 
   require 'rubocop/rake_task'
+  require 'rubocop/cul'
   desc 'Run style checker'
   RuboCop::RakeTask.new(:rubocop) do |task|
     task.requires << 'rubocop-rspec'
