@@ -239,14 +239,14 @@ ActiveRecord::Schema.define(version: 2021_08_19_192227) do
     t.text "prefixes"
     t.text "comments"
     t.text "descriptions"
-    t.index "\"type\"", name: "index_language_subtags_on_type"
     t.index ["preferred_value_id"], name: "index_language_subtags_on_preferred_value_id"
     t.index ["subtag", "subtag_type"], name: "index_language_subtags_on_subtag_and_subtag_type", unique: true
+    t.index ["subtag_type"], name: "index_language_subtags_on_subtag_type"
   end
 
   create_table "language_subtags_tags", force: :cascade do |t|
-    t.integer "tag_id", null: false
-    t.integer "subtag_id", null: false
+    t.bigint "tag_id", null: false
+    t.bigint "subtag_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["subtag_id"], name: "index_language_subtags_tags_on_subtag_id"
@@ -264,9 +264,9 @@ ActiveRecord::Schema.define(version: 2021_08_19_192227) do
     t.integer "preferred_value_id"
     t.text "comments"
     t.text "descriptions"
-    t.index "\"type\"", name: "index_language_tags_on_type"
     t.index ["preferred_value_id"], name: "index_language_tags_on_preferred_value_id"
     t.index ["tag"], name: "index_language_tags_on_tag", unique: true
+    t.index ["tag_type"], name: "index_language_tags_on_tag_type"
   end
 
   create_table "parent_child_relationships", force: :cascade do |t|
