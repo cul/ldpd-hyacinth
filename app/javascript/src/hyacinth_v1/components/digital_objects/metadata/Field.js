@@ -10,7 +10,7 @@ import DateInput from '../../shared/forms/inputs/DateInput';
 import NumberInput from '../../shared/forms/inputs/NumberInput';
 import Checkbox from '../../shared/forms/inputs/Checkbox';
 
-const randomId = (prefix) => `${prefix}${Math.random()}`.replace('.','');
+let uniqueFieldIdCounter = 0;
 
 const Field = (props) => {
   const {
@@ -20,7 +20,7 @@ const Field = (props) => {
   let field = '';
 
   const sharedProps = { onChange, value, inputName };
-  sharedProps.inputName ||= randomId('input-');
+  sharedProps.inputName ||= `field-${uniqueFieldIdCounter ++}`;
 
   switch (fieldType) {
     case 'string':
