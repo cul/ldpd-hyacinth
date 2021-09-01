@@ -32,7 +32,7 @@ RSpec.describe ResourceRequests::PosterJob do
   end
 
   describe '.create_resource_request' do
-    let(:src_file_location) { Derivativo::ResourceHelper.resource_location_for_derivativo(resource) }
+    let(:src_file_location) { Hyacinth::DigitalObject::ResourceHelper.resource_location_uri(resource) }
 
     context 'successful run' do
       before do

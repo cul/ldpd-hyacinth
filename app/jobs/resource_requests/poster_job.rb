@@ -5,7 +5,7 @@ module ResourceRequests
     @queue = :resource_requests_poster
 
     def self.create_resource_request(digital_object, resource)
-      base_resource_request_args = { digital_object_uid: digital_object.uid, src_file_location: Derivativo::ResourceHelper.resource_location_for_derivativo(resource) }
+      base_resource_request_args = { digital_object_uid: digital_object.uid, src_file_location: resource_location_uri(resource) }
       exist_check_conditions = { digital_object_uid: digital_object.uid, status: ['pending', 'in_progress'] }
 
       job_type = job_type_for_resource(resource)

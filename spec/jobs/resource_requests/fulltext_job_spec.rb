@@ -13,7 +13,7 @@ RSpec.describe ResourceRequests::FulltextJob do
   end
 
   describe '.create_resource_request' do
-    let(:src_file_location) { Derivativo::ResourceHelper.resource_location_for_derivativo(resource) }
+    let(:src_file_location) { Hyacinth::DigitalObject::ResourceHelper.resource_location_uri(resource) }
     let(:resource) { Hyacinth::DigitalObject::Resource.new(location: 'tracked-disk:///some/file.doc', original_file_path: 'file.doc', media_type: 'application/msword') }
 
     before { allow(described_class).to receive(:src_resource_for_digital_object).and_return(resource) }

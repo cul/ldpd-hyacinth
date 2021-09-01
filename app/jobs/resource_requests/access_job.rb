@@ -30,7 +30,7 @@ module ResourceRequests
     def self.generate_base_resource_request_args(digital_object, resource)
       base_resource_request_args = {
         digital_object_uid: digital_object.uid,
-        src_file_location: Derivativo::ResourceHelper.resource_location_for_derivativo(resource),
+        src_file_location: resource_location_uri(resource),
         options: {}
       }
       base_resource_request_args[:options][:rotation] = exif_orientation_to_rotation(digital_object.exif_orientation) if resource.image?

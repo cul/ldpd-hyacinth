@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ResourceRequests::AbstractJob < ApplicationJob
+  extend Hyacinth::DigitalObject::ResourceHelper
+
   def self.perform_later_if_eligible(digital_object)
     perform_later(digital_object.uid) if eligible_object?(digital_object)
   end
@@ -17,5 +19,9 @@ class ResourceRequests::AbstractJob < ApplicationJob
 
     resource = self.class.src_resource_for_digital_object(digital_object)
     self.class.create_resource_request(digital_object, resource)
+  end
+
+  def resource_location_uri(resource)
+    Hyacinth::DigitalObject::ResourceHelper.resource_location_uri(resource)
   end
 end
