@@ -33,7 +33,7 @@ function RightsEdit(props) {
     return (<GraphQLErrors errors={digitalObjectError || rightsFieldsError} />);
   }
 
-  const { digitalObject, digitalObject: { digitalObjectType }, digitalObject: { title } } = digitalObjectData;
+  const { digitalObject, digitalObject: { digitalObjectType, title } } = digitalObjectData;
 
   const dynamicFieldGroups = rightsFieldsData.dynamicFieldCategories.map((c) => c.children).flat();
 
