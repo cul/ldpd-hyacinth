@@ -49,15 +49,19 @@ module Hyacinth
 
         def merge_title_fields_for!(digital_object, solr_document = {})
           display_label = digital_object.generate_display_label
-          solr_document['displayLabel_ss'] = display_label
-          if digital_object.title.present?
-            solr_document['title_sortPortion_ssi'] = digital_object.title.dig('value', 'sort_portion')
-            solr_document['sort_title_ssi'] = digital_object.title.dig('value', 'sort_portion')
-            solr_document['title_nonSortPortion_ssi'] = digital_object.title.dig('value', 'non_sort_portion')
-            solr_document['title_subtitle_ssi'] = digital_object.title['subtitle']
-            solr_document['title_lang_ssim'] = digital_object.title.dig('value_lang', 'tag')
-          end
+          # top-level attributes keyed as properties
+          solr_document['display_label_ss'] = display_label
           solr_document['sort_title_ssi'] ||= display_label
+          if digital_object.title.present?
+            solr_document['sort_title_ssi'] = digital_object.title.dig('value', 'sort_portion')
+            # title attributes keyed as string key paths
+            key = Hyacinth::DigitalObject::SolrKeys
+            key.for_string_key_path(['title', 'sort_portion'], 'ssi')
+            solr_document[key.for_string_key_path(['title', 'sort_portion'], 'ssi')] = digital_object.title.dig('value', 'sort_portion')
+            solr_document[key.for_string_key_path(['title', 'non_sort_portion'], 'ssi')] = digital_object.title.dig('value', 'non_sort_portion')
+            solr_document[key.for_string_key_path(['title', 'subtitle'], 'ssi')] = digital_object.title['subtitle']
+            solr_document[key.for_string_key_path(['title', 'lang'])] = digital_object.title.dig('value_lang', 'tag')
+          end
           add_keywords(display_label, solr_document)
           add_titles(display_label, solr_document)
         end
