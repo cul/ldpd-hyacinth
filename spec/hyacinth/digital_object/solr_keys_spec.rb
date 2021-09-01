@@ -24,9 +24,4 @@ describe Hyacinth::DigitalObject::SolrKeys do
       it { is_expected.to eql('df_test_otherField_ssim') }
     end
   end
-
-  describe 'for_dynamic_field_presence' do
-    subject { described_class.for_dynamic_field_presence(path) }
-    it { is_expected.to eql('df_test_field_present_bi') }
-  end
 end
