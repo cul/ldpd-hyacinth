@@ -76,7 +76,7 @@ module DynamicFieldsHelper
               string_key: 'abstract',
               display_label: 'Abstract',
               dynamic_fields: [
-                { string_key: 'value', display_label: 'Value', field_type: DynamicField::Type::STRING }
+                { string_key: 'value', display_label: 'Value', field_type: DynamicField::Type::TEXTAREA }
               ]
             }
           ]
@@ -158,6 +158,27 @@ module DynamicFieldsHelper
     }
 
     load_and_return!(isbn_fields)
+  end
+
+  def load_note_fields!
+    note_fields = {
+      dynamic_field_categories: [
+        {
+          display_label: "Notes",
+          dynamic_field_groups: [
+            {
+              string_key: 'note',
+              display_label: 'Note',
+              dynamic_fields: [
+                { string_key: 'value', display_label: 'Value', field_type: DynamicField::Type::TEXTAREA }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+
+    load_and_return!(note_fields)
   end
 
   def enable_dynamic_fields(digital_object_type, project, dynamic_fields = DynamicField.all)

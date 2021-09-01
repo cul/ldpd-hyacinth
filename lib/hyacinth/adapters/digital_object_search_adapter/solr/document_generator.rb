@@ -104,13 +104,15 @@ module Hyacinth
           def merge_dynamic_fields(dynamic_field_data, metadata_form, solr_document)
             Hyacinth::DynamicFieldsMap.new(metadata_form).all_fields.each do |config| # For each dynamic field
               path = config[:path]
-
               values = extract_dynamic_field_values_at(dynamic_field_data, path)
+              values.reject!(&:blank?) # we don't want to index blank values (e.g. '' or false)
 
-              # Indexing field because its a non-textarea field
-              if config[:field_type] != DynamicField::Type::TEXTAREA
-                solr_key = Hyacinth::DigitalObject::SolrKeys.for_dynamic_field(path)
-                solr_document[solr_key] = values
+              # We index data about the presence or absence of ALL dynamic fields
+              if values.present?
+                solr_document[Hyacinth::DigitalObject::SolrKeys.for_dynamic_field(path, 'present_bi')] = true
+
+                # We only index actual values for non-textarea fields
+                solr_document[Hyacinth::DigitalObject::SolrKeys.for_dynamic_field(path)] = values unless config[:field_type] == DynamicField::Type::TEXTAREA
               end
 
               # Adding to appropriate search type
