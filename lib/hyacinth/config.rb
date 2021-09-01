@@ -15,7 +15,7 @@ module Hyacinth
       )
     end
 
-    def derivativo
+    def self.derivativo
       @derivativo ||= Derivativo::Client.new(HYACINTH[:derivativo])
     end
 
@@ -57,6 +57,10 @@ module Hyacinth
 
     def self.term_search_adapter
       @term_search_adapter ||= Hyacinth::Adapters.create_from_config('Hyacinth::Adapters::TermSearchAdapter', HYACINTH[:term_search_adapter])
+    end
+
+    def self.triclops
+      @triclops ||= Triclops::Client.new(HYACINTH[:triclops])
     end
 
     def self.default_lang_value
