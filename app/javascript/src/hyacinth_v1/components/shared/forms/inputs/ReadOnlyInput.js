@@ -11,7 +11,7 @@ class ReadOnlyInput extends React.PureComponent {
     return (
       <Col sm={10} style={{ alignSelf: 'center' }} {...rest}>
         <Form.Control
-          id={inputName || `checkbox-${uniqueReadOnlyInputIdCounter++}`} // id is required for label to work with
+          id={inputName || `checkbox-${uniqueReadOnlyInputIdCounter++}`} // id is required for associated label linkage
           type="text"
           value={value}
           readOnly
