@@ -2,7 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe ResourceRequests::FeaturedThumbnailRegionJob, solr: true do
+RSpec.describe ResourceRequests::FeaturedThumbnailRegionJob do
+  include_context 'with stubbed search adapters'
   let(:instance) { described_class.new }
   let(:asset) { FactoryBot.create(:asset, :with_main_resource, :with_access_resource, :with_poster_resource, :skip_resource_request_callbacks) }
 

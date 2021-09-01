@@ -2,7 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe ResourceRequests::AccessJob, solr: true do
+RSpec.describe ResourceRequests::AccessJob do
+  include_context 'with stubbed search adapters'
   let(:instance) { described_class.new }
   let(:asset) { FactoryBot.create(:asset, :with_main_resource, :skip_resource_request_callbacks) }
 
