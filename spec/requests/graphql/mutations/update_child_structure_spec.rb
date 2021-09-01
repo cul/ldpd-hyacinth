@@ -16,19 +16,18 @@ RSpec.describe Mutations::DigitalObject::UpdateChildStructure, type: :request do
   context 'when reordering the children of a digital object' do
     let :ordered_children_input do
       [
-        { uid: asset1.id, sort_order: 1 },
-        { uid: asset2.id, sort_order: 0 }
+        { uid: asset1.uid, sort_order: 1 },
+        { uid: asset2.uid, sort_order: 0 }
       ]
     end
 
     let(:variables) do
-      { input: { parent_id: parent_item.id, ordered_children: ordered_children_input } }
+      { input: { parentUid: parent_item.uid, orderedChildren: ordered_children_input } }
     end
 
     before { graphql query, variables }
 
     it 'correctly updates order' do
-      parent_item.reload
       expect(ParentChildRelationship.find_by(child_id: asset1.id).sort_order).to eq 1
       expect(ParentChildRelationship.find_by(child_id: asset2.id).sort_order).to eq 0
     end
