@@ -17,10 +17,6 @@ class DigitalObject < ApplicationRecord
   include DigitalObjectConcerns::ParentChildBehavior
   include DigitalObjectConcerns::ResourceImports
 
-  # Access keys for the title attribute
-  TITLE_SORT_PORTION_KEY = 'sort_portion'
-  TITLE_NON_SORT_PORTION_KEY = 'non_sort_portion'
-
   after_initialize :raise_error_if_base_class!
   after_find :load_fields_from_metadata_storage
   after_reload :load_fields_from_metadata_storage
@@ -77,10 +73,10 @@ class DigitalObject < ApplicationRecord
   end
 
   def generate_label
-    return uid.dup unless title&.dig('value', TITLE_SORT_PORTION_KEY)
+    return uid.dup unless title&.dig('value', 'sort_portion')
 
-    val = title.dig('value', TITLE_SORT_PORTION_KEY).dup
-    non_sort_portion = title.dig('value', TITLE_NON_SORT_PORTION_KEY)
+    val = title.dig('value', 'sort_portion').dup
+    non_sort_portion = title.dig('value', 'non_sort_portion')
     val = "#{non_sort_portion} #{val}" if non_sort_portion
 
     val
