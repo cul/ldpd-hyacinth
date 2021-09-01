@@ -73,7 +73,13 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
             { 'value' => 'Other Title' },
             { 'value' => 'New Title' }
           ],
-          'isbn' => isbn_values.map { |value| { 'value' => value } }
+          'isbn' => isbn_values.map { |value| { 'value' => value } },
+          'note' => [
+            { 'value' => 'This is a great note!' }
+          ],
+          'abstract' => [
+            { 'value' => '' } # Intentionally left blank to test field presence/absence indexing
+          ]
         }
       end
 
@@ -81,6 +87,8 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
         DynamicFieldsHelper.load_name_fields!
         DynamicFieldsHelper.load_alternate_title_fields!
         DynamicFieldsHelper.load_isbn_fields!
+        DynamicFieldsHelper.load_note_fields!
+        DynamicFieldsHelper.load_abstract_fields!
       end
 
       it 'adds correct fields' do
@@ -90,6 +98,30 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
         expect(document['df_name_role_term_ssim']).to match_array ['writer', 'author']
         expect(document['df_alternateTitle_value_ssim']).to match_array ['Other Title', 'New Title']
         expect(document['df_isbn_value_ssim']).to match_array isbn_values
+      end
+
+      it 'does not index the value of the note field because it is of type textarea' do
+        expect(document['df_note_value_ssim']).to eq(nil)
+      end
+
+      it 'indexes presence of all non-textarea fields' do
+        expect(document['df_name_term_present_bi']).to eq(true)
+        expect(document['df_name_role_term_present_bi']).to eq(true)
+        expect(document['df_alternateTitle_value_present_bi']).to eq(true)
+        expect(document['df_isbn_value_present_bi']).to eq(true)
+      end
+
+      it 'indexes the presence of all textarea fields' do
+        expect(document['df_note_value_present_bi']).to eq(true)
+      end
+
+      it 'only adds presence keys for non-blank fields' do
+        expect(document.keys.select { |key| key.match?(/df_.+_present_bi/) }).to match_array(
+          [
+            'df_name_term_present_bi', 'df_name_role_term_present_bi', 'df_alternateTitle_value_present_bi',
+            'df_isbn_value_present_bi', 'df_note_value_present_bi'
+          ]
+        )
       end
 
       it 'adds values to keyword search' do
