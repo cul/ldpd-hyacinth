@@ -4,15 +4,6 @@ module ResourceRequests
   class FeaturedThumbnailRegionJob < AbstractJob
     @queue = :resource_requests_featured_thumbnail_region
 
-    # @param digital_object_uid [Integer] UID for a digital object that should make a resource request to Derivativo.
-    def perform(digital_object_uid)
-      digital_object = DigitalObject.find_by_uid!(digital_object_uid)
-      return unless self.class.eligible_object?(digital_object)
-
-      resource = self.class.src_resource_for_digital_object(digital_object)
-      self.class.create_resource_request(digital_object, resource)
-    end
-
     def self.create_resource_request(digital_object, resource)
       base_resource_request_args = { digital_object_uid: digital_object.uid, src_file_location: Derivativo::ResourceHelper.resource_location_for_derivativo(resource) }
       exist_check_conditions = { digital_object_uid: digital_object.uid, status: ['pending', 'in_progress'] }
