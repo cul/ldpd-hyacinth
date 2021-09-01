@@ -29,6 +29,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
 
     context "with rights" do
       let(:rights_status) { "Non-existent rights status" }
+      let(:rights_uri) { 'http://blank.org/not/a/rights/status' }
 
       before do
         DynamicFieldsHelper.load_sample_item_rights_fields!
@@ -36,7 +37,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
           {
             'copyright_statement' => {
               'pref_label' => rights_status,
-              'uri' => 'http://blank.org/not/a/rights/status'
+              'uri' => rights_uri
             },
             'note' => 'something',
             'copyright_expiration_date' => '2002-02-04'
@@ -48,6 +49,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
         expect(document['df_copyrightStatus_copyrightStatement_ssim']).to match_array [rights_status]
         expect(document['df_copyrightStatus_note_ssim']).to be nil
         expect(document['df_copyrightStatus_copyrightExpirationDate_ssim']).to match_array ['2002-02-04']
+        expect(document['rightsStatement_term_uris_ssim']).to include(rights_uri)
       end
 
       it "sets rights fields" do
@@ -58,11 +60,12 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
     context 'with descriptive_metadata' do
       let(:authorized_object) { FactoryBot.build(:item, :with_ascii_title, :with_timestamps, descriptive_metadata: descriptive_metadata) }
       let(:isbn_values) { ['0-4975-5421-6', '0-3831-5430-8'] }
+      let(:name_term_uri) { 'http://blank.org/random/person' }
       let(:descriptive_metadata) do
         {
           'name' => [
             {
-              'term' => { 'pref_label' => 'Random, Person', 'uri' => 'http://blank.org/random/person' },
+              'term' => { 'pref_label' => 'Random, Person', 'uri' => name_term_uri },
               'role' => [
                 { 'term' => { 'pref_label' => 'writer', 'uri' => 'http://blank.org/writer' } },
                 { 'term' => { 'pref_label' => 'author', 'uri' => 'http://blank.org/author' } }
@@ -98,6 +101,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
         expect(document['df_name_role_term_ssim']).to match_array ['writer', 'author']
         expect(document['df_alternateTitle_value_ssim']).to match_array ['Other Title', 'New Title']
         expect(document['df_isbn_value_ssim']).to match_array isbn_values
+        expect(document['name_term_uris_ssim']).to include name_term_uri
       end
 
       it 'does not index the value of the note field because it is of type textarea' do

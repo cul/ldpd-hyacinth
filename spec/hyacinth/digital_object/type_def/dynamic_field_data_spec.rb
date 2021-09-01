@@ -138,7 +138,7 @@ describe Hyacinth::DigitalObject::TypeDef::DynamicFieldData do
     end
   end
 
-  describe '#to_serialized_form_impl', solr: false do
+  describe '#to_serialized_form_impl' do
     include_context 'with stubbed search adapters'
     let(:expected_serialization) do
       {
@@ -163,6 +163,36 @@ describe Hyacinth::DigitalObject::TypeDef::DynamicFieldData do
 
     it 'removed all term data except from uri term data' do
       expect(type_def.to_serialized_form_impl(descriptive_metadata)).to include(expected_serialization)
+    end
+  end
+  describe '#term_uris' do
+    include_context 'with stubbed search adapters'
+    let(:term_uris) { type_def.term_uris(descriptive_metadata) }
+    let(:source_uris) { { 'name' => Set.new([person_term.uri]), 'name_role' => Set.new([role_term.uri]), 'genre' => Set.new([genre_term.uri]) } }
+    it "returns a Hash" do
+      expect(term_uris).to be_a Hash
+    end
+    it "adds all the term URIs to the result" do
+      expect(term_uris.length).to be 3
+      expect(term_uris).to eql source_uris
+    end
+    context "when a buffer param is given" do
+      let(:uri_buffer) { {} }
+      let(:term_uris) { type_def.term_uris(descriptive_metadata, uri_buffer) }
+      it "uses the buffer" do
+        expect(term_uris).to be uri_buffer
+      end
+      it "adds all the term URIs to the result" do
+        expect(term_uris.length).to be 3
+        expect(term_uris).to eql source_uris
+      end
+      context "with existing and duplicative data" do
+        let(:uri_buffer) { { 'genre' => Set.new([genre_term.uri]) } }
+        it "adds all the term URIs to the result" do
+          expect(term_uris.length).to be 3
+          expect(term_uris).to eql source_uris
+        end
+      end
     end
   end
 end
