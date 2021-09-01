@@ -45,10 +45,13 @@ function BatchImportShow() {
 
   const {
     batchImport: {
-      numberOfInProgressImports: inProgress,
-      numberOfPendingImports: pending,
-      numberOfFailureImports: failure,
-      numberOfSuccessImports: success,
+      numberOfInProgressImports: inProgressCount,
+      numberOfPendingImports: pendingCount,
+      numberOfCreationFailureImports: creationFailureCount,
+      numberOfUpdateFailureImports: updateFailureCount,
+      numberOfPersistFailureImports: persistFailureCount,
+      numberOfPublishFailureImports: publishFailureCount,
+      numberOfSuccessImports: successCount,
       createdAt,
       downloadPath,
       fileLocation,
@@ -61,7 +64,8 @@ function BatchImportShow() {
     },
   } = data;
 
-  const total = inProgress + pending + failure + success;
+  const failureCount = creationFailureCount + updateFailureCount + persistFailureCount + publishFailureCount;
+  const total = inProgressCount + pendingCount + failureCount + successCount;
 
   const progressBar = (variant, amount, key) => (
     <ProgressBar
@@ -153,16 +157,16 @@ function BatchImportShow() {
 
         <Row as="dl">
           <Col as="dt" sm={3}>Pending</Col>
-          <Col as="dd" sm={9}>{progressBar('info', pending, 'pending')}</Col>
+          <Col as="dd" sm={9}>{progressBar('info', pendingCount, 'pending')}</Col>
 
           <Col as="dt" sm={3}>In Progress</Col>
-          <Col as="dd" sm={9}>{progressBar('warning', inProgress, 'in_progress')}</Col>
+          <Col as="dd" sm={9}>{progressBar('warning', inProgressCount, 'in_progress')}</Col>
 
           <Col as="dt" sm={3}>Successful</Col>
-          <Col as="dd" sm={9}>{progressBar('success', success, 'success')}</Col>
+          <Col as="dd" sm={9}>{progressBar('success', successCount, 'success')}</Col>
 
           <Col as="dt" sm={3}>Failed</Col>
-          <Col as="dd" sm={9}>{progressBar('danger', failure, 'failure')}</Col>
+          <Col as="dd" sm={9}>{progressBar('danger', failureCount, 'failure')}</Col>
 
           <Col as="dt" sm={3}>Total Imports</Col>
           <Col as="dd" sm={9}>

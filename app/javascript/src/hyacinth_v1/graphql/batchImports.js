@@ -8,7 +8,10 @@ export const batchImportsQuery = gql`
         user {
           fullName
         }
-        numberOfFailureImports
+        numberOfCreationFailureImports
+        numberOfUpdateFailureImports
+        numberOfPersistFailureImports
+        numberOfPublishFailureImports
         numberOfInProgressImports
         numberOfPendingImports
         numberOfSuccessImports
@@ -32,7 +35,10 @@ export const batchImportQuery = gql`
         fullName
         email
       }
-      numberOfFailureImports
+      numberOfCreationFailureImports
+      numberOfUpdateFailureImports
+      numberOfPersistFailureImports
+      numberOfPublishFailureImports
       numberOfInProgressImports
       numberOfPendingImports
       numberOfSuccessImports
