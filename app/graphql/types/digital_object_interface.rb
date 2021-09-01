@@ -13,7 +13,7 @@ module Types
     field :doi, String, null: true
     field :state, Enums::DigitalObjectStateEnum, null: false
     field :digital_object_type, Enums::DigitalObjectTypeEnum, null: false
-    field :display_label, String, null: false, method: :generate_label
+    field :display_label, String, null: false, method: :generate_display_label
     field :primary_project, ProjectType, null: false
     field :other_projects, [ProjectType], null: false
     field :identifiers, [String], null: true

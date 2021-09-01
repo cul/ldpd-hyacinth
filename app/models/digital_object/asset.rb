@@ -29,7 +29,7 @@ class DigitalObject::Asset < DigitalObject
 
   attr_accessor :skip_resource_request_callbacks
 
-  def generate_label
+  def generate_display_label
     filename_fallback = resources[MAIN_RESOURCE_NAME]&.original_filename
     if title&.fetch('value', nil).blank? && filename_fallback
       filename_fallback

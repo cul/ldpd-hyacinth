@@ -48,7 +48,7 @@ module Hyacinth
         end
 
         def merge_title_fields_for!(digital_object, solr_document = {})
-          display_label = digital_object.generate_label
+          display_label = digital_object.generate_display_label
           solr_document['displayLabel_ss'] = display_label
           if digital_object.title.present?
             solr_document['title_sortPortion_ssi'] = digital_object.title.dig('value', 'sort_portion')

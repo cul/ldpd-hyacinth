@@ -329,17 +329,17 @@ RSpec.describe DigitalObject, type: :model do
       end
     end
 
-    describe '#generate_label' do
+    describe '#generate_display_label' do
       context 'has title data' do
         let(:instance) { FactoryBot.build(:digital_object_test_subclass, :with_ascii_title) }
         it do
-          expect(instance.generate_label).to eql('The Tall Man and His Hat')
+          expect(instance.generate_display_label).to eql('The Tall Man and His Hat')
         end
       end
       context 'with no title data' do
         let(:instance) { FactoryBot.build(:digital_object_test_subclass) }
         it do
-          expect(instance.generate_label).to eql(instance.uid)
+          expect(instance.generate_display_label).to eql(instance.uid)
         end
       end
     end

@@ -72,7 +72,7 @@ class DigitalObject < ApplicationRecord
     ([primary_project] + other_projects.to_a).compact.freeze
   end
 
-  def generate_label
+  def generate_display_label
     return uid.dup unless title&.dig('value', 'sort_portion')
 
     val = title.dig('value', 'sort_portion').dup
