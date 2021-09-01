@@ -10,7 +10,6 @@ module Hyacinth
 
         include Fedora3::PropertyContextInitializers
         include Fedora3::PidHelpers
-        include Fedora3::TitleHelpers
         include Fedora3::DatastreamMethods
 
         def to(fedora_obj)
@@ -22,7 +21,7 @@ module Hyacinth
         def proposed_dc_properties(hyacinth_obj = @hyacinth_obj)
           properties = {}
           # set the title
-          properties[:title] = [get_title(hyacinth_obj)]
+          properties[:title] = [hyacinth_obj.generate_display_label]
           # set the identifiers
           properties[:identifier] = hyacinth_obj.identifiers&.to_a || []
           # add the pid as an identifier
