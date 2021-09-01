@@ -79,6 +79,7 @@ Metrics/BlockLength:
     - 'lib/tasks/hyacinth/development.rake'
     - 'lib/tasks/hyacinth/languages.rake'
     - 'lib/tasks/hyacinth/setup.rake'
+    - 'lib/tasks/migration.rake'
     - 'lib/tasks/resque.rake'
 
 # Offense count: 4

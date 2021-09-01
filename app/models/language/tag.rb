@@ -14,6 +14,10 @@ class Language::Tag < ApplicationRecord
     TagValue.first_subtag_of_type(subtags, type)
   end
 
+  def lang
+    first_subtag_of_type('language')
+  end
+
   def suppressed_script
     first_subtag_of_type('language').suppress_script
   end

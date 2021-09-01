@@ -3,6 +3,27 @@
 require 'rails_helper'
 
 RSpec.describe DigitalObject::Asset, type: :model do
+  describe '#generate_display_label' do
+    context 'has title data' do
+      let(:asset) { FactoryBot.build(:asset, :with_ascii_title) }
+      it do
+        expect(asset.generate_display_label).to eql('The Best Asset Ever')
+      end
+    end
+    context 'with no title data' do
+      context 'has a main resource' do
+        let(:asset) { FactoryBot.build(:asset, :with_main_resource) }
+        it do
+          expect(asset.generate_display_label).to eql("test.txt")
+        end
+      end
+
+      let(:asset) { FactoryBot.build(:asset) }
+      it do
+        expect(asset.generate_display_label).to eql(asset.uid)
+      end
+    end
+  end
   describe "primary resource validations" do
     let(:asset) { FactoryBot.build(:asset) }
     it "fails if there is no resource or resource_import entry for the primary resource" do

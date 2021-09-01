@@ -17,11 +17,6 @@ class DigitalObject < ApplicationRecord
   include DigitalObjectConcerns::ParentChildBehavior
   include DigitalObjectConcerns::ResourceImports
 
-  # Special structure for the title dynamic field
-  TITLE_DYNAMIC_FIELD_GROUP_NAME = 'title'
-  TITLE_SORT_PORTION_DYNAMIC_FIELD_NAME = 'sort_portion'
-  TITLE_NON_SORT_PORTION_DYNAMIC_FIELD_NAME = 'non_sort_portion'
-
   after_initialize :raise_error_if_base_class!
   after_find :load_fields_from_metadata_storage
   after_reload :load_fields_from_metadata_storage
@@ -51,6 +46,8 @@ class DigitalObject < ApplicationRecord
     @mint_doi = false
   end
 
+  # Title
+  metadata_attribute :title, Hyacinth::DigitalObject::TypeDef::Title.new.validation(proc { |value| value&.dig('value').blank? || value.dig('value', 'sort_portion')&.strip.present? })
   # Identifiers
   metadata_attribute :identifiers, Hyacinth::DigitalObject::TypeDef::JsonSerializableSet.new.default(-> { Set.new })
   # Descriptive Metadata
@@ -75,15 +72,12 @@ class DigitalObject < ApplicationRecord
     ([primary_project] + other_projects.to_a).compact.freeze
   end
 
-  def generate_title(sortable = false)
-    val = '[No Title]'
+  def generate_display_label
+    return uid.dup unless title&.dig('value', 'sort_portion')
 
-    title_field_group = descriptive_metadata[TITLE_DYNAMIC_FIELD_GROUP_NAME]
-    if title_field_group.present? && (title_field = title_field_group[0]).present?
-      val = title_field[TITLE_SORT_PORTION_DYNAMIC_FIELD_NAME]
-      non_sort_portion = title_field[TITLE_NON_SORT_PORTION_DYNAMIC_FIELD_NAME]
-      val = "#{non_sort_portion} #{val}" if non_sort_portion && !sortable
-    end
+    val = title.dig('value', 'sort_portion').dup
+    non_sort_portion = title.dig('value', 'non_sort_portion')
+    val = "#{non_sort_portion} #{val}" if non_sort_portion
 
     val
   end

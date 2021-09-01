@@ -8,6 +8,7 @@ import { getMetadataDigitalObjectQuery } from '../../../graphql/digitalObjects';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 import { digitalObjectAbility } from '../../../utils/ability';
 import DisplayFieldCategory from '../common/DisplayFieldCategory';
+import DisplayTitle from '../common/DisplayTitle';
 
 function MetadataShow(props) {
   const { id } = props;
@@ -44,8 +45,9 @@ function MetadataShow(props) {
 
   return (
     <MetadataTab digitalObject={digitalObject} editButton={canEdit}>
+      <DisplayTitle data={digitalObject} />
       {
-        dynamicFieldHierarchy.map(category => (
+        dynamicFieldHierarchy.map((category) => (
           <DisplayFieldCategory
             key={category.id}
             data={descriptiveMetadata}
@@ -55,7 +57,7 @@ function MetadataShow(props) {
       }
       <h4 className="text-orange">Identifiers</h4>
       <ul className="list-unstyled">
-        { identifiers.length ? identifiers.map((identifier, i) => <li key={i}>{identifier}</li>) : '- None -'}
+        { identifiers.length ? identifiers.map((identifier) => <li key={identifier}>{identifier}</li>) : '- None -'}
       </ul>
     </MetadataTab>
   );

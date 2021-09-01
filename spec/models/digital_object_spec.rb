@@ -3,7 +3,7 @@
 require 'rails_helper'
 include ActiveSupport::Testing::TimeHelpers
 
-RSpec.describe DigitalObject, type: :model, solr: true do
+RSpec.describe DigitalObject, type: :model do
   # Since the DigitalObject class can't be instantiated, we'll perform all instance tests on a minimal subclass instance.
   let(:instance) { FactoryBot.build(:digital_object_test_subclass) }
 
@@ -34,7 +34,8 @@ RSpec.describe DigitalObject, type: :model, solr: true do
           :other_projects,
           :preservation_target_uris,
           :primary_project,
-          :rights
+          :rights,
+          :title
         ].sort
       end
       it "has the expected custom fields defined" do
@@ -63,7 +64,8 @@ RSpec.describe DigitalObject, type: :model, solr: true do
           primary_project: nil,
           other_projects: Set.new,
           preservation_target_uris: Set.new,
-          rights: {}
+          rights: {},
+          title: nil
         }
       end
 
@@ -90,6 +92,7 @@ RSpec.describe DigitalObject, type: :model, solr: true do
     end
 
     describe '#save' do
+      include_context 'with stubbed search adapters'
       it 'saves without errors' do
         result = instance.save
         expect(instance.errors).to be_empty
@@ -242,10 +245,11 @@ RSpec.describe DigitalObject, type: :model, solr: true do
     end
 
     describe 'metadata and resource attribute persistence and retrieval' do
+      include_context 'with stubbed search adapters'
       let(:instance) { FactoryBot.build(:digital_object_test_subclass, :with_ascii_title, :with_test_resource1) }
       it 'persists metadata attributes and can retrieve them when a record is loaded' do
         instance.save
-        expect(DigitalObject.find_by_uid(instance.uid).descriptive_metadata['title'].first['sort_portion']).to eq('Tall Man and His Hat')
+        expect(DigitalObject.find_by_uid(instance.uid).title.dig('value', 'sort_portion')).to eq('Tall Man and His Hat')
       end
 
       it 'persists resource attributes and can retrieve them when a record is loaded' do
@@ -255,6 +259,7 @@ RSpec.describe DigitalObject, type: :model, solr: true do
     end
 
     describe '#destroy' do
+      include_context 'with stubbed search adapters'
       let(:instance) do
         dobj = FactoryBot.create(:digital_object_test_subclass)
         dobj.parents_to_add << parent
@@ -298,24 +303,23 @@ RSpec.describe DigitalObject, type: :model, solr: true do
     end
 
     describe '#index' do
-      before do
-        expect(Hyacinth::Config.digital_object_search_adapter).to receive(:index)
-      end
+      include_context 'with stubbed search adapters'
       it 'delegates indexing behavior to digital_object_search_adapter' do
+        expect(search_adapter).to receive(:index)
         instance.index
       end
     end
 
     describe '#deindex' do
-      before do
-        expect(Hyacinth::Config.digital_object_search_adapter).to receive(:remove)
-      end
+      include_context 'with stubbed search adapters'
       it 'delegates de-indexing behavior to digital_object_search_adapter' do
+        expect(search_adapter).to receive(:remove)
         instance.deindex
       end
     end
 
     describe 'saving and retrieving serialized metadata attributes' do
+      include_context 'with stubbed search adapters'
       let(:identifiers) { Set.new(['some-identifier', 'some-other-identifier']) }
       it 'successfully saves and retrieves a metadata attribute' do
         expect(instance.metadata_attributes.key?(:identifiers)).to eq(true)
@@ -325,6 +329,46 @@ RSpec.describe DigitalObject, type: :model, solr: true do
       end
     end
 
+    describe '#generate_display_label' do
+      context 'has title data' do
+        let(:instance) { FactoryBot.build(:digital_object_test_subclass, :with_ascii_title) }
+        it do
+          expect(instance.generate_display_label).to eql('The Tall Man and His Hat')
+        end
+      end
+      context 'with no title data' do
+        let(:instance) { FactoryBot.build(:digital_object_test_subclass) }
+        it do
+          expect(instance.generate_display_label).to eql(instance.uid)
+        end
+      end
+    end
+    describe "#valid?" do
+      describe 'title validations' do
+        let(:valid_with_sort_portion) { { 'sort_portion' => 'Test Fixture' } }
+        let(:invalid_with_whitespace_sort_portion) { { 'sort_portion' => ' ' } }
+        let(:invalid_without_sort_portion) { { 'non_sort_portion' => 'A ' } }
+        let(:valid_blank) { {} }
+        it 'is valid with only a sort portion' do
+          instance.assign_attributes('title' => { 'value' => valid_with_sort_portion })
+          expect(instance).to be_valid
+        end
+        it 'is valid with an empty title hash' do
+          instance.assign_attributes('title' => valid_blank)
+          expect(instance).to be_valid
+        end
+        it 'is valid with a nil title' do
+          instance.assign_attributes('title' => nil)
+          expect(instance).to be_valid
+        end
+        it 'is invalid when title hash is present but sort_portion is blank' do
+          instance.assign_attributes('title' => { 'value' => invalid_with_whitespace_sort_portion })
+          expect(instance).not_to be_valid
+          instance.assign_attributes('title' => { 'value' => invalid_without_sort_portion })
+          expect(instance).not_to be_valid
+        end
+      end
+    end
     # TODO: Add tests for timestamps created_at, updated_at, preserved_at, etc.
   end
 end

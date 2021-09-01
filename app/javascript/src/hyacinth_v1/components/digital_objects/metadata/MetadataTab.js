@@ -17,6 +17,7 @@ function MetadataTab(props) {
             <EditButton
               className="float-end"
               size="lg"
+              aria-label="Edit"
               link={`/digital_objects/${digitalObject.id}/metadata/edit`}
             />
           )

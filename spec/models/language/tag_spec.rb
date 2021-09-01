@@ -3,20 +3,12 @@
 require 'rails_helper'
 
 describe Language::Tag do
-  let(:iana_en_fixture) { file_fixture('files/iana_language/english-subtag-registry') }
-  let(:iana_i_fixture) { file_fixture('files/iana_language/grandfathered-subtag-registry') }
-  let(:iana_qu_fixture) { file_fixture('files/iana_language/quechua-subtag-registry') }
-  let(:iana_zh_fixture) { file_fixture('files/iana_language/chinese-subtag-registry') }
   let(:use_preferred) { false }
   let(:lang_tag) { described_class.for(tag_value, use_preferred) }
   let(:preferred_value) { lang_tag.preferred_value }
-  before do
-    iana_fixtures.each do |iana_fixture|
-      Hyacinth::Language::SubtagLoader.new(iana_fixture).load
-    end
-  end
+
   context 'tag has only a language' do
-    let(:iana_fixtures) { [iana_en_fixture] }
+    include_context 'with english-adjacent language subtags'
     let(:tag_value) { 'en' }
     it "associates a suppressed script without including it in the tag" do
       expect(lang_tag.tag).to eql tag_value
@@ -24,7 +16,7 @@ describe Language::Tag do
     end
   end
   context 'tag has a region' do
-    let(:iana_fixtures) { [iana_en_fixture] }
+    include_context 'with english-adjacent language subtags'
     let(:tag_value) { 'en-US' }
     it "associates a suppressed script without including it in the tag" do
       expect(lang_tag.tag).to eql tag_value
@@ -41,7 +33,7 @@ describe Language::Tag do
   end
 
   context 'tag has variants' do
-    let(:iana_fixtures) { [iana_en_fixture] }
+    include_context 'with english-adjacent language subtags'
     context 'in correct context' do
       let(:tag_value) { 'en-CA-unifon-newfound' }
       it do
@@ -60,6 +52,7 @@ describe Language::Tag do
         end
       end
       context 'variants have no prefix restrictions' do
+        include_context 'with quechua-adjacent language subtags'
         let(:iana_fixtures) { [iana_qu_fixture] }
         let(:tag_value) { 'qu-Latn-alalc97' }
         it "permits association with any tag value" do
@@ -79,7 +72,7 @@ describe Language::Tag do
     end
   end
   context 'has extlangs' do
-    let(:iana_fixtures) { [iana_zh_fixture] }
+    include_context 'with chinese-adjacent language subtags'
     context 'appropriate to language' do
       let(:tag_value) { 'zh-gan-Hant' }
       it do
@@ -104,7 +97,7 @@ describe Language::Tag do
     end
   end
   context 'is grandfathered' do
-    let(:iana_fixtures) { [iana_i_fixture] }
+    include_context 'with grandfathered language subtags'
     context 'has preferred value' do
       let(:tag_value) { 'i-klingon' }
       let(:preferred_value) { 'tlh' }

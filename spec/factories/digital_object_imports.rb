@@ -7,17 +7,16 @@ FactoryBot.define do
       {
         'digital_object_type' => 'item',
         'descriptive_metadata' => {
-          'title' => [{ 'sort_portion' => 'The', 'non_sort_portion' => 'Cool Item' }],
           'abstract' => [{ 'value' => 'some abstract' }]
         },
         'primary_project' => {
           'string_key' => FactoryBot.create(:project).string_key
-        }
+        },
+        'title' => { 'value' => { 'sort_portion' => 'The', 'non_sort_portion' => 'Cool Item' } }
       }.to_json
     end
 
     after(:build) do
-      DynamicFieldsHelper.load_title_fields!
       DynamicFieldsHelper.load_abstract_fields!
     end
 
@@ -28,7 +27,6 @@ FactoryBot.define do
         {
           'digital_object_type' => 'asset',
           'descriptive_metadata' => {
-            'title' => [{ 'sort_portion' => 'The', 'non_sort_portion' => 'Asset' }]
           },
           'primary_project' => {
             'string_key' => FactoryBot.create(:project).string_key
@@ -38,7 +36,8 @@ FactoryBot.define do
               method: 'copy',
               location: Rails.root.join('spec', 'fixtures', 'files', 'test.txt')
             }
-          }
+          },
+          'title' => { 'value' => { 'sort_portion' => 'The', 'non_sort_portion' => 'Asset' } }
         }.to_json
       end
     end

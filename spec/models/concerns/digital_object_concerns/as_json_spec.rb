@@ -13,11 +13,12 @@ RSpec.describe DigitalObjectConcerns::AsJson do
     obj
   end
   context '#as_json' do
+    include_context 'with stubbed search adapters'
     let(:expected) do
       {
         'created_at' => digital_object_with_sample_data.created_at.as_json,
         'created_by' => nil,
-        'descriptive_metadata' => { 'title' => [{ 'non_sort_portion' => 'The', 'sort_portion' => 'Tall Man and His Hat' }] },
+        'descriptive_metadata' => { "alternate_title" => [{ "value" => "Other Title" }] },
         'digital_object_type' => 'test_subclass',
         'doi' => nil,
         'first_preserved_at' => nil,
@@ -39,6 +40,7 @@ RSpec.describe DigitalObjectConcerns::AsJson do
         'publish_entries' => [],
         'rights' => {},
         'state' => 'active',
+        'title' => { 'value' => { 'non_sort_portion' => 'The', 'sort_portion' => 'Tall Man and His Hat' } },
         'uid' => digital_object_with_sample_data.uid,
         'updated_at' => digital_object_with_sample_data.updated_at.as_json,
         'updated_by' => nil

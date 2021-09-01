@@ -30,7 +30,7 @@ import FieldGroupArray from './fields/FieldGroupArray';
 function ItemRightsForm(props) {
   const { fieldConfiguration,
     digitalObject: {
-      id, rights: initialRights, descriptiveMetadata, optimisticLockToken,
+      id, title, rights: initialRights, descriptiveMetadata, optimisticLockToken,
     },
   } = props;
   const history = useHistory();
@@ -110,6 +110,7 @@ function ItemRightsForm(props) {
 
       <DescriptiveMetadata
         descriptiveMetadata={keyTransformer.deepCamelCase(descriptiveMetadata)}
+        title={title}
         values={rights.descriptive_metadata}
         onChange={(v) => setRights('descriptive_metadata', v)}
         typeOfContentChange={typeOfContentChange}

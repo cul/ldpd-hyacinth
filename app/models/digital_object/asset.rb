@@ -29,6 +29,15 @@ class DigitalObject::Asset < DigitalObject
 
   attr_accessor :skip_resource_request_callbacks
 
+  def generate_display_label
+    filename_fallback = resources[MAIN_RESOURCE_NAME]&.original_filename
+    if title&.fetch('value', nil).blank? && filename_fallback
+      filename_fallback
+    else
+      super
+    end
+  end
+
   def can_have_children?
     false
   end
@@ -47,11 +56,11 @@ class DigitalObject::Asset < DigitalObject
   end
 
   def assign_title_from_main_resource_import_if_blank
-    return if self.descriptive_metadata['title'].present?
+    return if self.title.present?
 
     resource_import = resource_imports[main_resource_name]
     return if resource_import.blank?
 
-    self.descriptive_metadata['title'] = [{ 'sort_portion' => resource_import.preferred_filename }]
+    self.title = { 'value' => { 'sort_portion' => resource_import.preferred_filename } }
   end
 end

@@ -8,7 +8,6 @@ module Hyacinth
         XML_PREFIX = '<mets:structMap xmlns:mets="http://www.loc.gov/METS/" LABEL="Sequence" TYPE="logical">'
         XML_SUFFIX = '</mets:structMap>'
 
-        include Fedora3::TitleHelpers
         include Fedora3::DatastreamMethods
         include Fedora3::PropertyContextInitializers
 
@@ -24,7 +23,7 @@ module Hyacinth
         def structured_children(hyacinth_obj = @hyacinth_obj)
           list = []
           hyacinth_obj.children.each_with_index do |child, ix|
-            list << { uid: child.uid, order: (ix + 1).to_s, label: get_title(child.descriptive_metadata) }
+            list << { uid: child.uid, order: (ix + 1).to_s, label: child.generate_display_label }
           end
           list
         end

@@ -30,7 +30,8 @@ RSpec.describe DigitalObjectConcerns::MetadataStorageSerialization do
         'preservation_target_uris' => [],
         'descriptive_metadata' => {},
         'identifiers' => [],
-        'rights' => {}
+        'rights' => {},
+        'title' => nil
       },
       'resources' => {
         'test_resource1' => {

@@ -47,24 +47,11 @@ namespace :hyacinth do
       )
 
       # Enable title fields for the sample project
-      title_subfields = DynamicFieldGroup.find_by(string_key: "title").dynamic_fields
       project = Project.find_by(string_key: project.string_key)
-      title_subfields.each do |title_subfield|
-        EnabledDynamicField.create!(
-          project: project,
-          dynamic_field: title_subfield,
-          digital_object_type: 'item'
-        )
-        EnabledDynamicField.create!(
-          project: project,
-          dynamic_field: title_subfield,
-          digital_object_type: 'asset'
-        )
-      end
 
       21.times do |i|
         item = DigitalObject::Item.new
-        item.descriptive_metadata['title'] = [{ 'sort_portion' => "Item #{i + 1}" }]
+        item.title = { 'value' => { 'sort_portion' => "Item #{i + 1}" } }
         item.primary_project = project
 
         next if item.save

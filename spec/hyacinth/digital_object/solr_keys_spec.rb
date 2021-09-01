@@ -16,5 +16,12 @@ describe Hyacinth::DigitalObject::SolrKeys do
   describe 'for_dynamic_field' do
     subject { described_class.for_dynamic_field(path) }
     it { is_expected.to eql('df_test_field_ssim') }
+    context 'with a snake-cased string key' do
+      let(:test_field) do
+        FactoryBot.create(:dynamic_field, display_label: "Other Field", string_key: 'other_field', is_facetable: true,
+                                          dynamic_field_group: test_group, filter_label: "Other Field")
+      end
+      it { is_expected.to eql('df_test_otherField_ssim') }
+    end
   end
 end

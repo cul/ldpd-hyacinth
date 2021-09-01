@@ -22,6 +22,7 @@ FactoryBot.define do
 
     trait :with_sample_data do
       with_ascii_title
+      with_ascii_dynamic_field_data
 
       after(:build) do |digital_object|
         digital_object.instance_variable_set('@custom_field1', 'excellent value 1')
@@ -31,19 +32,28 @@ FactoryBot.define do
 
     trait :with_ascii_title do
       after(:build) do |digital_object|
-        DynamicFieldsHelper.load_title_fields! # Load fields.
-        DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project)
+        digital_object.title = {
+          'value' => {
+            'non_sort_portion' => 'The',
+            'sort_portion' => 'Tall Man and His Hat'
+          }
+        }
+      end
+    end
 
-        digital_object.assign_descriptive_metadata({
+    trait :with_ascii_dynamic_field_data do
+      after(:build) do |digital_object|
+        dynamic_fields = DynamicFieldsHelper.load_alternate_title_fields! # Adding dynamic fields used in descriptive metadata. Validations will fail if these field definitions aren't present.
+        DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project, dynamic_fields)
+        digital_object.assign_descriptive_metadata(
           'descriptive_metadata' => {
-            'title' => [
+            'alternate_title' => [
               {
-                'non_sort_portion' => 'The',
-                'sort_portion' => 'Tall Man and His Hat'
+                'value' => 'Other Title'
               }
             ]
           }
-        })
+        )
       end
     end
 

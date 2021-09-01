@@ -13,16 +13,42 @@ FactoryBot.define do
       updated_at { DateTime.current }
     end
 
-    trait :with_ascii_title do
+    trait :with_ascii_dynamic_field_data do
       after(:build) do |digital_object|
-        dynamic_fields = DynamicFieldsHelper.load_title_fields! # Adding dynamic fields used in descriptive metadata. Validations will fail if these field definitions aren't present.
+        dynamic_fields = DynamicFieldsHelper.load_alternate_title_fields! # Adding dynamic fields used in descriptive metadata. Validations will fail if these field definitions aren't present.
         DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project, dynamic_fields)
         digital_object.assign_descriptive_metadata(
           'descriptive_metadata' => {
-            'title' => [
+            'alternate_title' => [
               {
-                'non_sort_portion' => 'The',
-                'sort_portion' => 'Best Item Ever'
+                'value' => 'Other Title'
+              }
+            ]
+          }
+        )
+      end
+    end
+
+    trait :with_ascii_title do
+      after(:build) do |digital_object|
+        digital_object.title = {
+          'value' => {
+            'non_sort_portion' => 'The',
+            'sort_portion' => 'Best Item Ever'
+          }
+        }
+      end
+    end
+
+    trait :with_utf8_dynamic_field_data do
+      after(:build) do |digital_object|
+        dynamic_fields = DynamicFieldsHelper.load_alternate_title_fields! # Adding dynamic fields used in descriptive metadata. Validations will fail if these field definitions aren't present.
+        DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project, dynamic_fields)
+        digital_object.assign_descriptive_metadata(
+          'descriptive_metadata' => {
+            'alternate_title' => [
+              {
+                'value' => [83, 243, 32, 68, 97, 110, 231, 111, 32, 83, 97, 109, 98, 97].pack("U*")
               }
             ]
           }
@@ -32,17 +58,11 @@ FactoryBot.define do
 
     trait :with_utf8_title do
       after(:build) do |digital_object|
-        dynamic_fields = DynamicFieldsHelper.load_title_fields! # Adding dynamic fields used in descriptive metadata. Validations will fail if these field definitions aren't present.
-        DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project, dynamic_fields)
-        digital_object.assign_descriptive_metadata(
-          'descriptive_metadata' => {
-            'title' => [
-              {
-                'sort_portion' => [80, 97, 114, 97, 32, 77, 97, 99, 104, 117, 99, 97, 114, 32, 77, 101, 117, 32, 67, 111, 114, 97, 231, 227, 111].pack("U*")
-              }
-            ]
+        digital_object.title = {
+          'value' => {
+            'sort_portion' => [80, 97, 114, 97, 32, 77, 97, 99, 104, 117, 99, 97, 114, 32, 77, 101, 117, 32, 67, 111, 114, 97, 231, 227, 111].pack("U*")
           }
-        )
+        }
       end
     end
 

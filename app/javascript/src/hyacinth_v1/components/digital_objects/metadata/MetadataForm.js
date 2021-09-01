@@ -6,6 +6,7 @@ import { merge } from 'lodash';
 import { useHistory } from 'react-router-dom';
 
 import FieldGroupArray from './FieldGroupArray';
+import TitleForm from './TitleForm';
 import FormButtons from '../../shared/forms/FormButtons';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 import ErrorList from '../../shared/ErrorList';
@@ -73,9 +74,9 @@ function MetadataForm(props) {
   }
 
   const [identifiers, setIdentifiers] = useState(digitalObject.identifiers);
+  const [title, setTitle] = useState(digitalObject.title);
 
   const history = useHistory();
-
 
   const onChange = (fieldName, fieldVal) => {
     setDescriptiveMetadata(produce(descriptiveMetadata, (draft) => {
@@ -87,11 +88,31 @@ function MetadataForm(props) {
     setIdentifiers(value);
   };
 
-  const onSubmitHandler = () => {
-    let historyPromise = () => {};
+  const onTitleChange = (value) => {
+    setTitle(value);
+  };
+
+  const onSaveSuccess = (res) => {
+    if (res.data.createDigitalObject && res.data.createDigitalObject.digitalObject) {
+      const { digitalObject: { id: objId } } = res.data.createDigitalObject;
+      if (objId) {
+        const path = `/digital_objects/${objId}/metadata`;
+        history.push(path);
+      }
+    } else if (res.data.updateDescriptiveMetadata && res.data.updateDescriptiveMetadata.digitalObject) {
+      const { updateDescriptiveMetadata: { digitalObject: { id: objId } } } = res.data;
+      if (objId) {
+        const path = `/digital_objects/${objId}/metadata`;
+        history.push(path);
+      }
+    }
+  };
+
+  const onSave = () => {
     const variables = {
       input: {
         id,
+        title,
         descriptiveMetadata,
         identifiers,
         optimisticLockToken,
@@ -101,21 +122,11 @@ function MetadataForm(props) {
     switch (formType) {
       case 'edit':
         action = updateDescriptiveMetadata;
-        historyPromise = (res) => {
-          const path = `/digital_objects/${res.data.updateDescriptiveMetadata.digitalObject.id}/metadata`;
-          history.push(path);
-          return { redirect: path };
-        };
         break;
       case 'new':
         variables.input.project = { stringKey: primaryProject.stringKey };
         variables.input.digitalObjectType = digitalObjectType.toUpperCase();
         action = createDigitalObject;
-        historyPromise = (res) => {
-          const path = `/digital_objects/${res.data.createDigitalObject.digitalObject.id}/metadata`;
-          history.push(path);
-          return { redirect: path };
-        };
         break;
       default:
         action = () => {
@@ -123,7 +134,7 @@ function MetadataForm(props) {
           throw new Error(`Unhandled formType: ${formType}`);
         };
     }
-    return action({ variables }).then(historyPromise);
+    return action({ variables });
   };
 
   const emptyDescriptiveMetadata = (dynamicFields, newObject) => {
@@ -156,14 +167,14 @@ function MetadataForm(props) {
       default:
         return c;
     }
-  }).filter(c => c !== null);
+  }).filter((c) => c !== null);
 
   const {
     loading: enabledFieldsLoading,
     error: enabledFieldsError,
     data: enabledFieldsData,
   } = useQuery(getEnabledDynamicFieldsQuery,
-    { variables: { project: { stringKey: primaryProject.stringKey }, digitalObjectType: digitalObjectType.toUpperCase() } }
+    { variables: { project: { stringKey: primaryProject.stringKey }, digitalObjectType: digitalObjectType.toUpperCase() } },
   );
 
   const {
@@ -205,6 +216,7 @@ function MetadataForm(props) {
     <>
       <form>
         <ErrorList errors={userErrors.map((userError) => (`${userError.message} (path=${userError.path.join('/')})`))} />
+        <TitleForm title={title} onChange={onTitleChange} />
         {
           filteredCategories.map(category => (
             <DynamicFieldCategory
@@ -229,7 +241,8 @@ function MetadataForm(props) {
         <FormButtons
           formType={formType}
           cancelTo={cancelPath}
-          onSave={onSubmitHandler}
+          onSave={onSave}
+          onSaveSuccess={onSaveSuccess}
         />
       </form>
     </>

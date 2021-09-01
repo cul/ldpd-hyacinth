@@ -10,17 +10,21 @@ import DateInput from '../../shared/forms/inputs/DateInput';
 import NumberInput from '../../shared/forms/inputs/NumberInput';
 import Checkbox from '../../shared/forms/inputs/Checkbox';
 
+let uniqueFieldIdCounter = 0;
+
 const Field = (props) => {
   const {
-    onChange, value, dynamicField, dynamicField: { displayLabel, fieldType }
+    inputName, onChange, value, dynamicField, dynamicField: { displayLabel, fieldType }
   } = props;
 
   let field = '';
 
-  const sharedProps = { onChange, value };
+  const sharedProps = { onChange, value, inputName };
+  sharedProps.inputName ||= `field-${uniqueFieldIdCounter += 1}`;
 
   switch (fieldType) {
     case 'string':
+      sharedProps.value ||= '';
       field = <TextInput {...sharedProps} />;
       break;
     case 'controlled_term':
@@ -52,7 +56,7 @@ const Field = (props) => {
 
   return (
     <InputGroup>
-      <Label align="right">{displayLabel}</Label>
+      <Label align="right" htmlFor={sharedProps.inputName}>{displayLabel}</Label>
       {field}
     </InputGroup>
   );

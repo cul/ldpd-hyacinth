@@ -7,18 +7,14 @@ RSpec.describe 'Retrieving Digital Objects', type: :request, solr: true do
   let!(:authorized_project) { authorized_object.projects.first }
   let!(:unauthorized_project) { FactoryBot.create(:project, string_key: 'a', display_label: 'A') }
   let!(:unauthorized_object) do
-    dynamic_fields = DynamicFieldsHelper.load_title_fields! # Adding dynamic fields used in descriptive metadata. Validations will fail if these field definitions aren't present.
-    DynamicFieldsHelper.enable_dynamic_fields(:item, unauthorized_project, dynamic_fields)
     FactoryBot.create(
       :item,
       'primary_project' => unauthorized_project,
-      'descriptive_metadata' => {
-        'title' => [
-          {
-            'non_sort_portion' => 'The',
-            'sort_portion' => 'Other Pretty Great Item'
-          }
-        ]
+      'title' => {
+        'value' => {
+          'non_sort_portion' => 'The',
+          'sort_portion' => 'Other Pretty Great Item'
+        }
       }
     )
   end
@@ -31,7 +27,7 @@ RSpec.describe 'Retrieving Digital Objects', type: :request, solr: true do
     let(:expected_response) do
       %(
         [
-          { "id": "#{authorized_object.uid}", "title": "The Best Item Ever", "digitalObjectType": "ITEM" }
+          { "id": "#{authorized_object.uid}", "displayLabel": "The Best Item Ever", "digitalObjectType": "ITEM" }
         ]
       )
     end
@@ -51,8 +47,8 @@ RSpec.describe 'Retrieving Digital Objects', type: :request, solr: true do
       let(:expected_response) do
         %(
           [
-            { "id": "#{authorized_object.uid}", "title": "The Best Item Ever", "digitalObjectType": "ITEM" },
-            { "id": "#{unauthorized_object.uid}", "title": "The Other Pretty Great Item", "digitalObjectType": "ITEM" }
+            { "id": "#{authorized_object.uid}", "displayLabel": "The Best Item Ever", "digitalObjectType": "ITEM" },
+            { "id": "#{unauthorized_object.uid}", "displayLabel": "The Other Pretty Great Item", "digitalObjectType": "ITEM" }
           ]
         )
       end
@@ -66,7 +62,7 @@ RSpec.describe 'Retrieving Digital Objects', type: :request, solr: true do
       let(:expected_response) do
         %(
           [
-            { "id": "#{unauthorized_object.uid}", "title": "The Other Pretty Great Item", "digitalObjectType": "ITEM" }
+            { "id": "#{unauthorized_object.uid}", "displayLabel": "The Other Pretty Great Item", "digitalObjectType": "ITEM" }
           ]
         )
       end
@@ -82,7 +78,7 @@ RSpec.describe 'Retrieving Digital Objects', type: :request, solr: true do
         digitalObjects(limit: $limit, searchParams: $searchParams) {
           nodes {
             id
-            title
+            displayLabel
             digitalObjectType
           }
         }

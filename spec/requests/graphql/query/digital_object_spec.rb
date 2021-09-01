@@ -24,20 +24,21 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
       expect(response.body).to be_json_eql(%(
         {
           "id": "#{authorized_object.uid}",
-          "title": "The Best Item Ever",
+          "title": {
+            "value" : {
+              "nonSortPortion": "The",
+              "sortPortion": "Best Item Ever"
+            },
+            "subtitle": null,
+            "valueLang": null
+          },
           "numberOfChildren": 0,
           "createdAt": "#{authorized_object.created_at.iso8601}",
           "createdBy": null,
           "digitalObjectType": "ITEM",
+          "displayLabel": "The Best Item Ever",
           "doi": #{authorized_object.doi.nil? ? 'null' : '"#{authorized_object.doi}"'},
-          "descriptiveMetadata": {
-            "title": [
-              {
-                "non_sort_portion": "The",
-                "sort_portion": "Best Item Ever"
-              }
-            ]
-          },
+          "descriptiveMetadata": {},
           "firstPreservedAt": null,
           "firstPublishedAt": null,
           "identifiers": [
@@ -80,14 +81,17 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
     end
     context 'with utf8 descriptive metadata values' do
       let(:authorized_object) do
-        FactoryBot.create(:item, :with_rights, :with_utf8_title, :with_other_projects)
+        FactoryBot.create(:item, :with_rights, :with_utf8_title, :with_utf8_dynamic_field_data, :with_other_projects)
       end
       let(:json_data) { JSON.parse(response.body) }
-      let(:actual_value) { json_data&.dig('data', 'digitalObject', 'descriptiveMetadata', 'title', 0, 'sort_portion') }
+      let(:actual_title) { json_data&.dig('data', 'digitalObject', 'title', 'value', 'sortPortion') }
+      let(:actual_alternate_title) { json_data&.dig('data', 'digitalObject', 'descriptiveMetadata', 'alternate_title', 0, 'value') }
       # expected value ends in Cora\u00e7\u00e3o (67, 111, 114, 97, 231, 227, 111)
-      let(:expected_value) { [80, 97, 114, 97, 32, 77, 97, 99, 104, 117, 99, 97, 114, 32, 77, 101, 117, 32, 67, 111, 114, 97, 231, 227, 111] }
+      let(:expected_title_value) { [80, 97, 114, 97, 32, 77, 97, 99, 104, 117, 99, 97, 114, 32, 77, 101, 117, 32, 67, 111, 114, 97, 231, 227, 111] }
+      let(:expected_alternate_title_value) { [83, 243, 32, 68, 97, 110, 231, 111, 32, 83, 97, 109, 98, 97] }
       it "preserves utf-8 data" do
-        expect(actual_value&.unpack('U*')).to eql(expected_value)
+        expect(actual_title&.unpack('U*')).to eql(expected_title_value)
+        expect(actual_alternate_title&.unpack('U*')).to eql(expected_alternate_title_value)
       end
     end
   end
@@ -95,15 +99,15 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
   context "missing title field" do
     before do
       sign_in_project_contributor to: :read_objects, project: authorized_project
-      authorized_object.descriptive_metadata.delete('title')
+      authorized_object.title.clear
       authorized_object.save
       graphql query(authorized_object.uid)
     end
 
     it "return a placeholder no-title value" do
       expect(response.body).to be_json_eql(%(
-        "[No Title]"
-      )).at_path('data/digitalObject/title')
+        "#{authorized_object.uid}"
+      )).at_path('data/digitalObject/displayLabel')
     end
   end
 
@@ -176,7 +180,17 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
       query {
         digitalObject(id: "#{id}") {
           id
-          title
+          displayLabel
+          title {
+            value {
+              nonSortPortion
+              sortPortion
+            }
+            subtitle
+            valueLang {
+              tag
+            }
+          }
           numberOfChildren
           descriptiveMetadata
           doi

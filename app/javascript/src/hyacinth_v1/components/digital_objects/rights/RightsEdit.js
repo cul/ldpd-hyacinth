@@ -33,14 +33,14 @@ function RightsEdit(props) {
     return (<GraphQLErrors errors={digitalObjectError || rightsFieldsError} />);
   }
 
-  const { digitalObject, digitalObject: { digitalObjectType } } = digitalObjectData;
+  const { digitalObject, digitalObject: { digitalObjectType, title } } = digitalObjectData;
 
-  const dynamicFieldGroups = rightsFieldsData.dynamicFieldCategories.map(c => c.children).flat();
+  const dynamicFieldGroups = rightsFieldsData.dynamicFieldCategories.map((c) => c.children).flat();
 
   const renderTabContent = () => {
     switch (digitalObjectType) {
       case 'ITEM':
-        return <ItemRightsForm digitalObject={digitalObject} fieldConfiguration={dynamicFieldGroups} />;
+        return <ItemRightsForm digitalObject={digitalObject} title={title} fieldConfiguration={dynamicFieldGroups} />;
       case 'ASSET':
         return <AssetRightsForm digitalObject={digitalObject} fieldConfiguration={dynamicFieldGroups} />;
       default:
