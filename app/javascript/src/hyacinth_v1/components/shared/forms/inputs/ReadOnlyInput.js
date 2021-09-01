@@ -7,11 +7,11 @@ let uniqueReadOnlyInputIdCounter = 0;
 class ReadOnlyInput extends React.PureComponent {
   render() {
     const { value, inputName, ...rest } = this.props;
-
+    const controlId = inputName || `checkbox-${uniqueReadOnlyInputIdCounter += 1}`;
     return (
       <Col sm={10} style={{ alignSelf: 'center' }} {...rest}>
         <Form.Control
-          id={inputName || `checkbox-${uniqueReadOnlyInputIdCounter++}`} // id is required for associated label linkage
+          id={controlId} // id is required for associated label linkage
           type="text"
           value={value}
           readOnly

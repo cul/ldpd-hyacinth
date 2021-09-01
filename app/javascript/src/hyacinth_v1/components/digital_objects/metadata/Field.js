@@ -20,7 +20,7 @@ const Field = (props) => {
   let field = '';
 
   const sharedProps = { onChange, value, inputName };
-  sharedProps.inputName ||= `field-${uniqueFieldIdCounter ++}`;
+  sharedProps.inputName ||= `field-${uniqueFieldIdCounter += 1}`;
 
   switch (fieldType) {
     case 'string':

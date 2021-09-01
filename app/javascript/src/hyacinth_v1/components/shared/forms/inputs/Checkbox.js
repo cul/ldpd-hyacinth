@@ -16,11 +16,11 @@ class Checkbox extends React.PureComponent {
     const {
       label, inputName, helpText, value, disabled, onChange, ...rest
     } = this.props;
-
+    const controlId = inputName || `checkbox-${uniqueCheckboxIdCounter += 1}`;
     return (
       <Col {...rest}>
         <Form.Check
-          id={inputName || `checkbox-${uniqueCheckboxIdCounter++}`} // id is required for associated label linkage
+          id={controlId} // id is required for associated label linkage
           name={inputName}
           type="checkbox"
           label={label}

@@ -16,11 +16,11 @@ class TextInput extends React.PureComponent {
     const {
       onChange, inputName, value, size, disabled, placeholder, ...rest
     } = this.props;
-
+    const controlId = inputName || `textInput-${uniqueTextInputIdCounter += 1}`;
     return (
       <Col sm={10} style={{ alignSelf: 'center' }} {...rest}>
         <Form.Control
-          id={inputName || `checkbox-${uniqueTextInputIdCounter++}`} // id is required for associated label linkage
+          id={controlId} // id is required for associated label linkage
           type="text"
           tabIndex="0"
           name={inputName}
@@ -36,6 +36,8 @@ class TextInput extends React.PureComponent {
 }
 
 TextInput.defaultProps = {
+  inputName: null,
+  placeholder: null,
   size: null,
   disabled: false,
 };
@@ -43,6 +45,7 @@ TextInput.defaultProps = {
 TextInput.propTypes = {
   inputName: PropTypes.string,
   onChange: PropTypes.func.isRequired,
+  placeholder: PropTypes.string,
   value: PropTypes.string.isRequired,
   size: PropTypes.string,
   disabled: PropTypes.bool,
