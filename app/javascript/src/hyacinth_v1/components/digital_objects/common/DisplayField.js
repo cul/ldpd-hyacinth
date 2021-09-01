@@ -4,7 +4,7 @@ import InputGroup from '../../shared/forms/InputGroup';
 import Label from '../../shared/forms/Label';
 import PlainText from '../../shared/forms/inputs/PlainText';
 
-const randomId = (prefix) => `${prefix}${Math.random()}`.replace('.','');
+let uniqueDisplayFieldIdCounter = 0;
 
 function DisplayField(props) {
   const {
@@ -14,7 +14,7 @@ function DisplayField(props) {
     },
   } = props;
 
-  const inputName = randomId(stringKey);
+  const inputName = `${stringKey}-${uniqueDisplayFieldIdCounter += 1}`;
   let value = null;
 
   switch (fieldType) {
