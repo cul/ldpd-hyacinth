@@ -52,6 +52,15 @@ module Hyacinth
           json_var
         end
 
+        def term_uris(json_var, vocab_uris = {})
+          terms_map = field_map.extract_terms(json_var)
+          terms_map.each do |vocab, values|
+            uris_list = (vocab_uris[vocab] ||= Set.new)
+            values.each { |v| uris_list.add(v['uri']) }
+          end
+          vocab_uris
+        end
+
         def to_serialized_form_impl(json_var)
           return nil if json_var.nil?
           raise ArgumentError, "Expected hash, but got: #{json_var.class}" unless json_var.is_a?(Hash)

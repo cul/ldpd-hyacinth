@@ -15,6 +15,7 @@ module Hyacinth
           merge_title_fields_for!(digital_object, solr_document)
           merge_descriptive_fields_for!(digital_object, solr_document)
           merge_rights_fields_for!(digital_object, solr_document)
+          merge_term_uris_for!(digital_object, solr_document)
           solr_document.compact
         end
 
@@ -85,6 +86,18 @@ module Hyacinth
           solr_document['rights_category_present_bi'] = digital_object.rights.present?
 
           merge_dynamic_fields(digital_object.rights, "#{digital_object.digital_object_type}_rights", solr_document)
+        end
+
+        def merge_term_uris_for!(digital_object, solr_document = {})
+          term_uris = {}
+          digital_object.metadata_attributes.map do |metadata_attribute_name, type_def|
+            next unless type_def.is_a? Hyacinth::DigitalObject::TypeDef::DynamicFieldData
+            type_def.term_uris(digital_object.send(metadata_attribute_name), term_uris)
+          end
+          term_uris.each do |vocab, uris_list|
+            solr_key = Hyacinth::DigitalObject::SolrKeys.for_string_key_path([vocab, 'term', 'uris'])
+            solr_document[solr_key] = uris_list.to_a.compact
+          end
         end
 
         def search_types
