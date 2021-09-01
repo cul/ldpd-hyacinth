@@ -68,13 +68,18 @@ function DigitalObjectImportIndex() {
     batchImport: {
       status,
       originalFilename,
-      numberOfPendingImports: pending,
-      numberOfFailureImports: failure,
-      numberOfSuccessImports: success,
-      numberOfInProgressImports: inProgress,
+      numberOfPendingImports: pendingCount,
+      numberOfCreationFailureImports: creationFailureCount,
+      numberOfUpdateFailureImports: updateFailureCount,
+      numberOfPersistFailureImports: persistFailureCount,
+      numberOfPublishFailureImports: publishFailureCount,
+      numberOfSuccessImports: successCount,
+      numberOfInProgressImports: inProgressCount,
       digitalObjectImports: { totalCount, nodes: digitalObjectImports },
     },
   } = data;
+
+  const failureCount = creationFailureCount + updateFailureCount + persistFailureCount + publishFailureCount;
 
   return (
     <>
@@ -99,11 +104,14 @@ function DigitalObjectImportIndex() {
         </Row>
 
         <Nav variant="tabs" defaultActiveKey="ALL" activeKey={statusFilter} onSelect={onTabClick}>
-          <StatusNavItem eventKey="ALL" amount={pending + failure + success + inProgress} />
-          <StatusNavItem eventKey="PENDING" amount={pending} />
-          <StatusNavItem eventKey="IN_PROGRESS" amount={inProgress} />
-          <StatusNavItem eventKey="SUCCESS" amount={success} />
-          <StatusNavItem eventKey="FAILURE" amount={failure} />
+          <StatusNavItem eventKey="ALL" amount={pendingCount + failureCount + successCount + inProgressCount} />
+          <StatusNavItem eventKey="PENDING" amount={pendingCount} />
+          <StatusNavItem eventKey="IN_PROGRESS" amount={inProgressCount} />
+          <StatusNavItem eventKey="SUCCESS" amount={successCount} />
+          <StatusNavItem eventKey="CREATION_FAILURE" amount={creationFailureCount} />
+          <StatusNavItem eventKey="UPDATE_FAILURE" amount={updateFailureCount} />
+          <StatusNavItem eventKey="PERSIST_FAILURE" amount={persistFailureCount} />
+          <StatusNavItem eventKey="PUBLISH_FAILURE" amount={publishFailureCount} />
         </Nav>
 
         <div className="m-2">

@@ -6,7 +6,10 @@ export const digitalObjectImportsQuery = gql`
       id
       status
       originalFilename
-      numberOfFailureImports
+      numberOfCreationFailureImports
+      numberOfUpdateFailureImports
+      numberOfPersistFailureImports
+      numberOfPublishFailureImports
       numberOfInProgressImports
       numberOfPendingImports
       numberOfSuccessImports

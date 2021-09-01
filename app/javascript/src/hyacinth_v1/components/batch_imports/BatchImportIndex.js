@@ -105,7 +105,7 @@ function BatchImportIndex() {
                   )
                 }
                 {' '}
-                <a href={`batch_imports/${batchImport.id}`} className="btn btn-primary btn-sm">
+                <a href={`batch_imports/${batchImport.id}`} className="btn btn-primary btn-sm" id={`view-${batchImport.id}`}>
                   View
                 </a>
               </Card.Text>
