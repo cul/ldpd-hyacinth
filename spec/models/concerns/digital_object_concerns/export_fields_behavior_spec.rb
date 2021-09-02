@@ -74,12 +74,12 @@ RSpec.describe DigitalObjectConcerns::ExportFieldsBehavior do
       let(:exported_data) { loaded_item.render_field_export(field_export_profile) }
       let(:exported_xml) { Nokogiri::XML(exported_data) }
       before { FactoryBot.create(:export_rule, :for_alternative_title_field, field_export_profile: field_export_profile, dynamic_field_group: DynamicFieldGroup.first) }
-      it {
+      it "produces the expected XML" do
         expect(exported_xml.css("mods|titleInfo[type='alternative'] > mods|title", xmlns).map(&:content)).to eql([value])
         expect(exported_xml.css("mods|titleInfo[type='alternative']", xmlns).map { |t| t['xml:lang'] }).to eql([lang_tag])
         expect(exported_xml.css("mods|titleInfo[type='alternative']", xmlns).map { |t| t['lang'] }).to eql([lang])
         expect(exported_xml.css("mods|titleInfo[type='alternative']", xmlns).map { |t| t['script'] }).to eql([script])
-      }
+      end
     end
   end
 end
