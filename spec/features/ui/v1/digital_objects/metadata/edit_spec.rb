@@ -28,7 +28,7 @@ RSpec.describe 'Digital Object Edit', solr: true, type: :feature, js: true do
           page.find_field('Sort Portion').set ""
           fill_in("Sort Portion", with: updated_title_value)
           find_button('Update').click
-          # do a find to make sure scripts run
+          # doing a find to make sure capybara waits for scripts run
           find('.digital-object-interface')
           expect(page).to have_current_path(show_path)
           expect(page).to have_content("Item: #{updated_title_value}")
@@ -50,11 +50,11 @@ RSpec.describe 'Digital Object Edit', solr: true, type: :feature, js: true do
             page.find_field('Value Language').set updated_field_lang
           end
           find_button('Update').click
-          # do a find to make sure scripts run
+          # doing a find to make sure capybara waits for scripts run
           find('.digital-object-interface')
         end
-        it '' do
-          # do a find to make sure scripts run
+        it 'displays the updated values in the show view' do
+          # doing a find to make sure capybara waits for scripts run
           card_header = page.find('.card-header', exact_text: 'Alternative Title')
           expect(page).to have_current_path(show_path)
           within(card_header.sibling('.card-body')) do
