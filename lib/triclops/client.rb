@@ -19,22 +19,41 @@ module Triclops
       @conn.authorization :Token, token: api_key
     end
 
-    def enqueue_job(job_type:, resource_request_id:, digital_object_uid:, src_file_location:, options: {})
+    def enqueue_job(job_type:, resource_request_id:, digital_object_uid:, src_file_location:, featured_thumbnail_region: nil, options: {})
       # Merge default options and provided options (with provided options overwriting default ones)
       options = @default_job_options.fetch(job_type.to_sym, {}).with_indifferent_access.merge(options)
 
-      response = @conn.post('/api/v1/resource_request_jobs') do |req|
-        req.params['resource_request_job'] = {
-          job_type: job_type, resource_request_id: resource_request_id, digital_object_uid: digital_object_uid, src_file_location: src_file_location, options: options
+      if job_type == 'iiif_deregistration'
+        iiif_deregistration(digital_object_uid)
+      else
+        # TODO: How to identify that this is propagating a change vs creating a new resource
+        create_params = {
+          identifier: digital_object_uid, location_uri: src_file_location,
+          featured_region: featured_thumbnail_region, options: options
         }
+        iiif_registration(create_params.compact)
+      end
+    rescue Faraday::ConnectionFailed
+      Rails.logger.info("Unable to connect to Triclops, so #{job_type}<#{resource_request_id}> resource request for #{digital_object_uid} was skipped.")
+      false
+    end
+
+    def iiif_registration(create_params)
+      response = @conn.post('/api/v1/resources.json') do |req|
+        req.params['resource'] = create_params
       end
 
       log_response(response, digital_object_uid, job_type, options)
 
       response.status == 200
-    rescue Faraday::ConnectionFailed
-      Rails.logger.info("Unable to connect to Triclops, so #{job_type} resource request for #{digital_object_uid} was skipped.")
-      false
+    end
+
+    def iiif_deregistration(digital_object_uid)
+      response = @conn.delete("/api/v1/resources/#{digital_object_uid}.json")
+
+      log_response(response, digital_object_uid, job_type, options)
+
+      response.status == 200
     end
 
     private
