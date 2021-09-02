@@ -28,10 +28,39 @@ RSpec.describe 'Digital Object Edit', solr: true, type: :feature, js: true do
           page.find_field('Sort Portion').set ""
           fill_in("Sort Portion", with: updated_title_value)
           find_button('Update').click
-          # do a find to make sure scripts run
+          # doing a find to make sure capybara waits for scripts run
           find('.digital-object-interface')
           expect(page).to have_current_path(show_path)
           expect(page).to have_content("Item: #{updated_title_value}")
+        end
+      end
+      context 'and dynamic field data is updated with a language tag' do
+        include_context 'with language subtag fixtures'
+        let(:lang_subtags) { Hyacinth::Language::SubtagLoader.new(iana_en_fixture).load }
+        let(:value_lang) { { 'tag' => 'en' } }
+        let(:updated_field_value) { "Updated Alternative Title" }
+        let(:updated_field_lang) { "sco" }
+        let(:item) { lang_subtags && FactoryBot.create(:item, :with_ascii_dynamic_field_data, uid: uid, title: title_attribute, value_lang: value_lang) }
+        before do
+          page.find('.card-header', exact_text: 'Alternative Title')
+          card_header = page.find('.card-header', exact_text: 'Alternative Title')
+          within(card_header.sibling('.card-body')) do
+            # Selenium appears to be appending to current value with fill_in, so setting to blank first
+            page.find_field('Value').set updated_field_value
+            page.find_field('Value Language').set updated_field_lang
+          end
+          find_button('Update').click
+          # doing a find to make sure capybara waits for scripts run
+          find('.digital-object-interface')
+        end
+        it 'displays the updated values in the show view' do
+          # doing a find to make sure capybara waits for scripts run
+          card_header = page.find('.card-header', exact_text: 'Alternative Title')
+          expect(page).to have_current_path(show_path)
+          within(card_header.sibling('.card-body')) do
+            expect(page).to have_field('Value', readonly: true, with: updated_field_value)
+            expect(page).to have_field('Value Language', readonly: true, with: updated_field_lang)
+          end
         end
       end
     end

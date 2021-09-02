@@ -20,11 +20,17 @@ module Hyacinth
           return nil if json_var.nil?
           raise ArgumentError, "Expected hash, but got: #{json_var.class}" unless json_var.is_a?(Hash)
 
+          rehydrate_controlled_terms(json_var)
+          rehydrate_langs(json_var)
+          json_var
+        end
+
+        def rehydrate_controlled_terms(json_var)
           terms_map = field_map.extract_terms(json_var)
 
-          lookup_hash = terms_map.transform_values { |values| values.map { |v| v['uri'] } }
+          terms_lookup_hash = terms_map.transform_values { |values| values.map { |v| v['uri'] } }
 
-          term_search_results = Hyacinth::Config.term_search_adapter.batch_find(lookup_hash)
+          term_search_results = Hyacinth::Config.term_search_adapter.batch_find(terms_lookup_hash)
 
           # Retrieve all custom fields for vocabularies so we know which fields should be add to the hash.
           # This ensure that there's always a value for the all the custom fields defined and does not add
@@ -48,8 +54,31 @@ module Hyacinth
               Hyacinth::DynamicFieldDataHelper.rehydrate_term(term_hash, full_term)
             end
           end
+        end
 
-          json_var
+        def rehydrate_langs(json_var)
+          langs = field_map.extract_langs(json_var)
+
+          langs_lookup = langs.map { |value| value['tag'] }.uniq
+
+          lang_search_results = ::Language::Tag.where(tag: langs_lookup)
+
+          langs_fields = lang_search_results.map { |lang|
+            atts_hash = {
+              'tag' => lang.tag,
+              'lang' => lang.lang&.subtag,
+              'script' => lang.script&.subtag
+            }.compact
+            [lang.tag, atts_hash]
+          }.to_h
+
+          langs.each do |lang|
+            fields_hash = langs_fields[lang['tag']]
+
+            next if fields_hash.blank?
+
+            lang.merge!(fields_hash)
+          end
         end
 
         def term_uris(json_var, vocab_uris = {})
@@ -70,7 +99,8 @@ module Hyacinth
 
           # Dehydrate URI terms. Remove all other fields in terms hash except for 'uri'
           field_map.extract_terms(json_var).values.sum([]).each { |t| t.slice!('uri') }
-
+          # Dehydrate Language terms. Remove all other fields in terms hash except for 'tag'
+          field_map.extract_langs(json_var).each { |t| t.slice!('tag') }
           json_var
         end
 

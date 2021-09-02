@@ -43,11 +43,11 @@ FactoryBot.define do
 
     trait :with_ascii_dynamic_field_data do
       after(:build) do |digital_object|
-        dynamic_fields = DynamicFieldsHelper.load_alternate_title_fields! # Adding dynamic fields used in descriptive metadata. Validations will fail if these field definitions aren't present.
+        dynamic_fields = DynamicFieldsHelper.load_alternative_title_fields! # Adding dynamic fields used in descriptive metadata. Validations will fail if these field definitions aren't present.
         DynamicFieldsHelper.enable_dynamic_fields(digital_object.digital_object_type, digital_object.primary_project, dynamic_fields)
         digital_object.assign_descriptive_metadata(
           'descriptive_metadata' => {
-            'alternate_title' => [
+            'alternative_title' => [
               {
                 'value' => 'Other Title'
               }

@@ -72,7 +72,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
               ]
             }
           ],
-          'alternate_title' => [
+          'alternative_title' => [
             { 'value' => 'Other Title' },
             { 'value' => 'New Title' }
           ],
@@ -88,7 +88,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
 
       before do
         DynamicFieldsHelper.load_name_fields!
-        DynamicFieldsHelper.load_alternate_title_fields!
+        DynamicFieldsHelper.load_alternative_title_fields!
         DynamicFieldsHelper.load_isbn_fields!
         DynamicFieldsHelper.load_note_fields!
         DynamicFieldsHelper.load_abstract_fields!
@@ -99,7 +99,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
         expect(document['title_sortPortion_ssi']).to eql 'Best Item Ever'
         expect(document['df_name_term_ssim']).to match_array ['Random, Person']
         expect(document['df_name_role_term_ssim']).to match_array ['writer', 'author']
-        expect(document['df_alternateTitle_value_ssim']).to match_array ['Other Title', 'New Title']
+        expect(document['df_alternativeTitle_value_ssim']).to match_array ['Other Title', 'New Title']
         expect(document['df_isbn_value_ssim']).to match_array isbn_values
         expect(document['name_term_uris_ssim']).to include name_term_uri
       end
@@ -111,7 +111,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
       it 'indexes presence of all non-textarea fields' do
         expect(document['df_name_term_present_bi']).to eq(true)
         expect(document['df_name_role_term_present_bi']).to eq(true)
-        expect(document['df_alternateTitle_value_present_bi']).to eq(true)
+        expect(document['df_alternativeTitle_value_present_bi']).to eq(true)
         expect(document['df_isbn_value_present_bi']).to eq(true)
       end
 
@@ -122,7 +122,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
       it 'only adds presence keys for non-blank fields' do
         expect(document.keys.select { |key| key.match?(/df_.+_present_bi/) }).to match_array(
           [
-            'df_name_term_present_bi', 'df_name_role_term_present_bi', 'df_alternateTitle_value_present_bi',
+            'df_name_term_present_bi', 'df_name_role_term_present_bi', 'df_alternativeTitle_value_present_bi',
             'df_isbn_value_present_bi', 'df_note_value_present_bi'
           ]
         )

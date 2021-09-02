@@ -18,6 +18,13 @@ module Hyacinth
       get_terms(map, data)
     end
 
+    # Based on the map given extracts all terms within the data.
+    #
+    # @return [Hash] references to lang hashes
+    def extract_langs(data)
+      get_langs(map, data)
+    end
+
     # Based on the map returns a list of all the dynamic fields. Return an array of dynamic fields
     # configs. Each config includes a path to the field.
     def all_fields
@@ -70,6 +77,33 @@ module Hyacinth
         end
 
         terms
+      end
+
+      def get_langs(dynamic_field_map, data)
+        langs = []
+
+        data.each do |field_or_group_key, value|
+          next unless dynamic_field_map.key?(field_or_group_key)
+
+          reduced_map = dynamic_field_map[field_or_group_key]
+
+          case reduced_map[:type]
+          when 'DynamicFieldGroup'
+            next unless value.is_a?(Array)
+
+            value.each do |v|
+              get_langs(reduced_map[:children], v).tap do |new_langs|
+                langs.concat(new_langs)
+              end
+            end
+          when 'DynamicField'
+            next unless reduced_map[:field_type] == DynamicField::Type::LANG
+            next unless value.is_a?(Hash)
+            langs << value
+          end
+        end
+
+        langs
       end
 
       # Generates map of dynamic fields for the given metadata form.

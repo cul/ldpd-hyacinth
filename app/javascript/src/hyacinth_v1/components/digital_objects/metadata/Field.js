@@ -27,6 +27,11 @@ const Field = (props) => {
       sharedProps.value ||= '';
       field = <TextInput {...sharedProps} />;
       break;
+    case 'language_tag':
+      sharedProps.value ||= {};
+      sharedProps.value = sharedProps.value.tag || '';
+      field = <TextInput inputName={sharedProps.inputName} onChange={(val) => { onChange({ tag: val }); }} value={sharedProps.value} />;
+      break;
     case 'controlled_term':
       field = (
         <TermSelect

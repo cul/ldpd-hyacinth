@@ -13,9 +13,10 @@ class DynamicField < ActiveRecord::Base
     SELECT = 'select'
     DATE = 'date'
     CONTROLLED_TERM = 'controlled_term'
+    LANG = 'language_tag'
   end
 
-  TYPES = [Type::STRING, Type::TEXTAREA, Type::INTEGER, Type::BOOLEAN, Type::SELECT, Type::DATE, Type::CONTROLLED_TERM].freeze
+  TYPES = [Type::STRING, Type::TEXTAREA, Type::INTEGER, Type::BOOLEAN, Type::SELECT, Type::DATE, Type::CONTROLLED_TERM, Type::LANG].freeze
 
   EXPORTABLE_ATTRIBUTES = [
     :id, :string_key, :display_label, :sort_order, :field_type, :filter_label, :select_options,

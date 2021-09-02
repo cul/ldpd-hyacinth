@@ -4,9 +4,10 @@ import PropTypes from 'prop-types';
 
 const SubmitButton = (props) => {
   const { formType, ...rest } = props;
+  const buttonLabel = formType === 'new' ? 'Create' : 'Update';
   return (
-    <Button variant="primary" type="submit" {...rest}>
-      {formType === 'new' ? 'Create' : 'Update'}
+    <Button variant="primary" type="submit" aria-label={buttonLabel} {...rest}>
+      {buttonLabel}
     </Button>
   );
 };

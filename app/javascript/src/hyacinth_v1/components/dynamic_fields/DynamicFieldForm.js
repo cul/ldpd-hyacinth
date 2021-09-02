@@ -22,7 +22,7 @@ import {
 import GraphQLErrors from '../shared/GraphQLErrors';
 
 const fieldTypes = [
-  'string', 'textarea', 'integer', 'boolean', 'select', 'date', 'controlled_term',
+  'string', 'textarea', 'integer', 'boolean', 'select', 'date', 'controlled_term', 'language_tag',
 ];
 
 function DynamicFieldForm(props) {

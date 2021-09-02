@@ -19,7 +19,7 @@ RSpec.describe DigitalObjectConcerns::AttributeAssignment::DescriptiveMetadata d
   context '#assign_descriptive_metadata' do
     it 'merges descriptive metadata when merge param is true' do
       digital_object_with_sample_data.assign_descriptive_metadata(digital_object_data, true)
-      expect(digital_object_with_sample_data.descriptive_metadata['alternate_title']).to eq([{
+      expect(digital_object_with_sample_data.descriptive_metadata['alternative_title']).to eq([{
         'value' => 'Other Title'
       }])
 
@@ -31,7 +31,7 @@ RSpec.describe DigitalObjectConcerns::AttributeAssignment::DescriptiveMetadata d
 
     it 'merges descriptive metadata data when merge param is false' do
       digital_object_with_sample_data.assign_descriptive_metadata(digital_object_data, false)
-      expect(digital_object_with_sample_data.descriptive_metadata['alternate_title']).to be_nil
+      expect(digital_object_with_sample_data.descriptive_metadata['alternative_title']).to be_nil
 
       expect(digital_object_with_sample_data.descriptive_metadata['note']).to eq([{
         'value' => 'Great Note',
@@ -43,7 +43,7 @@ RSpec.describe DigitalObjectConcerns::AttributeAssignment::DescriptiveMetadata d
   context '#clean_descriptive_metadata!' do
     let(:dfd) do
       {
-        'alternate_title' => [
+        'alternative_title' => [
           {
             'non_sort_portion' => '',
             'sort_portion' => '    Catcher in the Rye    '
@@ -85,7 +85,7 @@ RSpec.describe DigitalObjectConcerns::AttributeAssignment::DescriptiveMetadata d
     end
     let(:cleaned_dfd) do
       {
-        'alternate_title' => [
+        'alternative_title' => [
           {
             'sort_portion' => 'Catcher in the Rye'
           }

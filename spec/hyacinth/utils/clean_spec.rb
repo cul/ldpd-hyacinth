@@ -6,7 +6,7 @@ RSpec.describe Hyacinth::Utils::Clean do
   describe '.trim_whitespace!' do
     let(:hash_with_whitespace) do
       {
-        'alternate_title' => [
+        'alternative_title' => [
           {
             'non_sort_portion' => 'No Extra Spaces',
             'sort_portion' => '    Catcher in the Rye    '
@@ -40,7 +40,7 @@ RSpec.describe Hyacinth::Utils::Clean do
 
     let(:expected_hash_without_whitespace) do
       {
-        'alternate_title' => [
+        'alternative_title' => [
           {
             'non_sort_portion' => 'No Extra Spaces',
             'sort_portion' => 'Catcher in the Rye'
@@ -81,7 +81,7 @@ RSpec.describe Hyacinth::Utils::Clean do
   describe '.remove_blank_fields!' do
     let(:hash_with_blank_fields) do
       {
-        'alternate_title' => [
+        'alternative_title' => [
           {
             'non_sort_portion' => '',
             'sort_portion' => 'Catcher in the Rye'
@@ -122,7 +122,7 @@ RSpec.describe Hyacinth::Utils::Clean do
 
     let(:expected_hash_without_blank_fields) do
       {
-        'alternate_title' => [
+        'alternative_title' => [
           {
             'sort_portion' => 'Catcher in the Rye'
           }

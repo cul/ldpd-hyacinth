@@ -70,7 +70,7 @@ const ProgressButton = ({
   };
 
   return (
-    <Button type={type} variant={currentVariant} disabled={state === 'loading'} onClick={onClickHandler}>
+    <Button type={type} variant={currentVariant} disabled={state === 'loading'} onClick={onClickHandler} aria-label={label}>
       {currentLabel}
     </Button>
   );

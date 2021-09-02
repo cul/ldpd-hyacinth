@@ -17,6 +17,7 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
               display_label: 'Alternative Title',
               dynamic_fields: [
                 { string_key: 'value', display_label: 'Value', field_type: DynamicField::Type::STRING },
+                { string_key: 'value_lang', display_label: 'Value Language', field_type: DynamicField::Type::LANG },
                 { string_key: 'sort_order', display_label: 'Sort Order', field_type: DynamicField::Type::INTEGER }
               ]
             },
@@ -333,6 +334,21 @@ RSpec.describe DigitalObject::DescriptiveFieldsValidator do
       expect(item.valid?).to be false
       expect(item.errors.to_hash).to include(
         'descriptive_metadata.date_created[0].start_date': ['must be a valid EDTF date']
+      )
+    end
+  end
+  context 'with invalid value for language tag' do
+    let(:descriptive_metadata) do
+      {
+        'alternative_title' => [
+          { 'value' => 'Acceptable', 'value_lang' => { 'tag' => 'badvalue' } }
+        ]
+      }
+    end
+    it 'return errors' do
+      expect(item.valid?).to be false
+      expect(item.errors.to_hash).to include(
+        'descriptive_metadata.alternative_title[0].value_lang': ['{"tag"=>"badvalue"} is an invalid language tag']
       )
     end
   end
