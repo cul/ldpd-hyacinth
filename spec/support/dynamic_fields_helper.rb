@@ -95,6 +95,8 @@ module DynamicFieldsHelper
   end
 
   def load_abstract_fields!(**opts)
+    default_opts = { field_type: DynamicField::Type::TEXTAREA }
+    opts = default_opts.merge(opts)
     field_data = simple_value_field_data('abstract', opts)
     load_and_return!(field_data)
   end
@@ -144,8 +146,9 @@ module DynamicFieldsHelper
     load_and_return!(field_data)
   end
 
-  def load_note_fields!
-    opts = { category_label: "Notes", field_type: DynamicField::Type::TEXTAREA }
+  def load_note_fields!(**opts)
+    default_opts = { category_label: "Notes", field_type: DynamicField::Type::TEXTAREA }
+    opts = default_opts.merge(opts)
     field_data = simple_value_field_data('note', opts)
     load_and_return!(field_data)
   end
