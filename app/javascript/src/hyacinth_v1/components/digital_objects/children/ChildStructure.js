@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Card } from 'react-bootstrap';
 import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useHistory } from 'react-router-dom';
 
 import DigitalObjectInterface from '../DigitalObjectInterface';
 import TabHeading from '../../shared/tabs/TabHeading';
@@ -20,18 +21,14 @@ const ChildStructure = (props) => {
     variables: { id },
   });
   const [updateChildStructure, {
-    data: updateChildStructureData,
     error: updateChildStructureErrors,
   }] = useMutation(
     updateChildStructureMutation,
   );
 
+  const history = useHistory();
   const [childListOrder, setChildListOrder] = useState();
-  const onSubmitHandler = () => {
-    // to be implemented.  if childListOrder is undefined, update was clicked but no changes had been made - return as success
-    // to be implemented. success returns to manage child assets page
-    // if !(childListOrder === undefined)
-
+  const onSubmitHandler = async () => {
     const orderedInput = [];
     if (childListOrder) {
       childListOrder.forEach((value, i) => {
@@ -51,15 +48,18 @@ const ChildStructure = (props) => {
     };
 
     historyPromise = (res) => {
-      const path = `/digital_objects/${res.data.updateChildStructureData.id}/children`;
+      const path = `/digital_objects/${res.data.updateChildStructure.parent.id}/children`;
       history.push(path);
       return { redirect: path };
     };
-    return updateChildStructure({ variables }).then(historyPromise);
+    const result = await updateChildStructure({ variables });
+    return historyPromise(result);
   };
 
   if (childStructureLoading) return (<></>);
-  if (childStructureError || updateChildStructureErrors) return (<GraphQLErrors errors={childStructureError} />);
+  if (childStructureError) return (<GraphQLErrors errors={childStructureError} />);
+  if (updateChildStructureErrors) return (<GraphQLErrors errors={updateChildStructureErrors} />);
+
   const { childStructure: { parent, structure } } = childStructureData;
   return (
     <DigitalObjectInterface digitalObject={parent}>

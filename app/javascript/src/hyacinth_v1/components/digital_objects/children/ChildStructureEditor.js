@@ -111,7 +111,6 @@ ChildStructureEditor.propTypes = {
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       digitalObjectType: PropTypes.string.isRequired,
-      title: PropTypes.string.isRequired,
     }),
   ).isRequired,
   onRearrange: PropTypes.func.isRequired,
