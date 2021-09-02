@@ -280,3 +280,13 @@ export const purgeDigitalObjectMutation = gql`
     }
   }
 `;
+
+export const updateChildStructureMutation = gql`
+  mutation updateChildStructure($input: UpdateChildStructureInput!) {
+    updateChildStructure(input: $input) {
+      parent {
+        id
+      }
+    }
+  }
+`;
