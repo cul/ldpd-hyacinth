@@ -161,11 +161,6 @@ Metrics/ModuleLength:
     - 'lib/hyacinth/batch_import/index_prerequisite_map.rb'
     - 'spec/support/dynamic_fields_helper.rb'
 
-# Offense count: 1
-Metrics/ParameterLists:
-  Exclude:
-    - 'lib/triclops/client.rb'
-
 # Offense count: 11
 # Configuration parameters: Max.
 Metrics/PerceivedComplexity:

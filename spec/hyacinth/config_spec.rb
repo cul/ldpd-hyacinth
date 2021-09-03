@@ -59,13 +59,13 @@ describe Hyacinth::Config do
 
   context ".derivativo" do
     it "returns an object of the expected type" do
-      expect(described_class.derivativo).to be_a(Derivativo::Client)
+      expect(described_class.derivativo).to be_a(Hyacinth::Clients::FaradayClient)
     end
   end
 
   context ".triclops" do
     it "returns an object of the expected type" do
-      expect(described_class.triclops).to be_a(Triclops::Client)
+      expect(described_class.triclops).to be_a(Hyacinth::Clients::FaradayClient)
     end
   end
 

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class ResourceRequest < ApplicationRecord
+  attr_accessor :create_callback
+
   enum status: { pending: 0, in_progress: 1, success: 2, failure: 3, cancelled: 4 }
   enum job_type: {
     access_for_image: 0,
@@ -29,36 +31,9 @@ class ResourceRequest < ApplicationRecord
   # enqueue_derivativo_job ends up making requests to Derivativo which makes requests back to
   # Hyacinth and those requests fail when there's an existing lock on the squlite database.
   # See: https://flexport.engineering/how-to-safely-use-activerecords-after-save-efde2b52baa3
-  after_commit :enqueue_job, on: :create
+  after_commit :run_create_callback, on: :create
 
-  def enqueue_job
-    if ['iiif_registration', 'iiif_deregistration'].include?(job_type)
-      enqueue_triclops_job
-    else
-      enqueue_derivativo_job
-    end
+  def run_create_callback
+    create_callback&.call(self)
   end
-
-  def enqueue_derivativo_job
-    enqueue_client_job(Hyacinth::Config.derivativo)
-  end
-
-  def enqueue_triclops_job
-    enqueue_client_job(Hyacinth::Config.triclops)
-  end
-
-  private
-
-    def enqueue_client_job(client)
-      job_params = {
-        job_type: job_type,
-        resource_request_id: id,
-        digital_object_uid: digital_object_uid,
-        src_file_location: src_file_location,
-        options: options
-      }
-      additional_params = options.delete(:params)
-      job_params.merge!(additional_params) if additional_params
-      client.enqueue_job(job_params)
-    end
 end

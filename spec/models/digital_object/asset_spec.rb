@@ -100,13 +100,13 @@ RSpec.describe DigitalObject::Asset, type: :model do
     # (which uses Marshal.dump) isn't compatible with rspec mocks.
 
     it 'runs before destroy' do
-      expect(ResourceRequests::RescindImageJob).to receive(:perform_later_if_eligible)
+      expect(ResourceRequests::IiifDeregistrationJob).to receive(:perform_later_if_eligible)
       asset.destroy
     end
 
     it 'does not run before destroy if skip_resource_request_callbacks is set to true' do
       asset.skip_resource_request_callbacks = true
-      expect(ResourceRequests::RescindImageJob).not_to receive(:perform_later_if_eligible)
+      expect(ResourceRequests::IiifDeregistrationJob).not_to receive(:perform_later_if_eligible)
       asset.destroy
     end
   end

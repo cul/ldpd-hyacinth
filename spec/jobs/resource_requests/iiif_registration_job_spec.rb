@@ -21,6 +21,7 @@ RSpec.describe ResourceRequests::IiifRegistrationJob do
 
     context 'successful run' do
       before do
+        expect(described_class).to receive(:create_callback).with(an_instance_of(ResourceRequest), asset)
         described_class.create_resource_request(asset, resource)
       end
 
