@@ -11,10 +11,10 @@ module Mutations
       def resolve(parent_uid:, ordered_children:)
         # This should be an all or nothing update
         ActiveRecord::Base.transaction do
-          parent = ::DigitalObject.find_by_uid(parent_uid)
+          parent = ::DigitalObject.find_by_uid!(parent_uid)
           ability.authorize! :update, parent
           ordered_children.each do |ordered_child|
-            child = ::DigitalObject.find_by_uid ordered_child.uid
+            child = ::DigitalObject.find_by_uid!(ordered_child.uid)
             ParentChildRelationship.where(parent_id: parent.id,
               child_id: child.id).update(sort_order: ordered_child.sort_order)
           end
