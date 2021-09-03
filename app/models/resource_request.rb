@@ -3,6 +3,8 @@
 class ResourceRequest < ApplicationRecord
   attr_accessor :create_callback
 
+  belongs_to :digital_object, foreign_key: :digital_object_uid, primary_key: :uid, inverse_of: :resource_requests, optional: true
+
   enum status: { pending: 0, in_progress: 1, success: 2, failure: 3, cancelled: 4 }
   enum job_type: {
     access_for_image: 0,

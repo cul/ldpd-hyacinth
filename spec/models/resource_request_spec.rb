@@ -18,7 +18,17 @@ RSpec.describe ResourceRequest, type: :model do
   describe "saving" do
     context 'valid object' do
       it 'saves' do
-        expect(instance.save).to eq(true)
+        expect(instance.save).to be true
+      end
+      context 'with a digital object' do
+        include_context 'with stubbed search adapters'
+        let(:digital_object) { FactoryBot.create(:asset, :with_main_resource, uid: 'abc-123') }
+        let(:instance) { FactoryBot.build(:resource_request, digital_object: digital_object) }
+        it 'builds a digital_object association' do
+          expect(instance.save).to be true
+          expect(digital_object.uid).to eql instance.digital_object_uid
+          expect(digital_object.resource_requests).to include(instance)
+        end
       end
     end
 
