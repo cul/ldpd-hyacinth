@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Card } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
@@ -7,32 +7,34 @@ import DigitalObjectInterface from '../DigitalObjectInterface';
 import DigitalObjectList from '../DigitalObjectList';
 import AssetNew from '../new/AssetNew';
 import TabHeading from '../../shared/tabs/TabHeading';
-import { getChildStructureQuery } from '../../../graphql/digitalObjects';
+import { getChildStructureDigtialObjectQuery } from '../../../graphql/digitalObjects';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 
 const Children = (props) => {
   const { id } = props;
+
   const {
-    loading: childStructureLoading,
-    error: childStructureError,
-    data: childStructureData,
-    refetch: refreshChildStructure,
-  } = useQuery(getChildStructureQuery, {
+    loading: digitalObjectLoading,
+    error: digitalObjectError,
+    data: digitalObjectData,
+    refetch: refreshDigitalObject,
+  } = useQuery(getChildStructureDigtialObjectQuery, {
     variables: { id },
   });
 
-  if (childStructureLoading) return (<></>);
-  if (childStructureError) return (<GraphQLErrors errors={childStructureError} />);
-  const { childStructure: { parent, structure } } = childStructureData;
+  if (digitalObjectLoading) return (<></>);
+  if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
+  const { digitalObject } = digitalObjectData;
+  const { childStructure: { structure } } = digitalObject;
   return (
-    <DigitalObjectInterface digitalObject={parent}>
+    <DigitalObjectInterface digitalObject={digitalObject}>
       <TabHeading>Manage Child Assets</TabHeading>
       <Card className="mb-3">
         <Card.Body>
           <Card.Title>
             Add New Asset
           </Card.Title>
-          <AssetNew parentId={id} refetch={refreshChildStructure} />
+          <AssetNew parentId={id} refetch={refreshDigitalObject} />
         </Card.Body>
       </Card>
       <Card className="mb-3">
@@ -40,7 +42,7 @@ const Children = (props) => {
           <Card.Title>
             Child Digital Objects
           </Card.Title>
-          <Card.Subtitle>{`${structure.length} Total`}</Card.Subtitle>
+          <Card.Subtitle className="mb-2">{`${structure.length} Total`}</Card.Subtitle>
           <DigitalObjectList digitalObjects={structure} />
         </Card.Body>
       </Card>

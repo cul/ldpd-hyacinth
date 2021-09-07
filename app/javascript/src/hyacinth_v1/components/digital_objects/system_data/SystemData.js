@@ -22,7 +22,6 @@ function SystemData(props) {
   const [deleteDigitalObject, { error: deleteError }] = useMutation(deleteDigitalObjectMutation);
   const [purgeDigitalObject, { error: purgeError }] = useMutation(purgeDigitalObjectMutation);
 
-
   const {
     loading: digitalObjectLoading,
     error: digitalObjectError,
@@ -35,9 +34,12 @@ function SystemData(props) {
   if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
   const { digitalObject } = digitalObjectData;
 
-  const canDeleteObject = digitalObjectAbility.can('delete_objects', { primaryProject: digitalObject.primaryProject, otherProjects: digitalObject.otherProjects });
-  const canPurgeObject = digitalObjectAbility.can('purge_objects', { primaryProject: digitalObject.primaryProject, otherProjects: digitalObject.otherProjects });
-
+  const canDeleteObject = digitalObjectAbility.can('delete_objects', {
+    primaryProject: digitalObject.primaryProject, otherProjects: digitalObject.otherProjects,
+  });
+  const canPurgeObject = digitalObjectAbility.can('purge_objects', {
+    primaryProject: digitalObject.primaryProject, otherProjects: digitalObject.otherProjects,
+  });
 
   const onDelete = (e) => {
     e.preventDefault();
@@ -90,7 +92,6 @@ function SystemData(props) {
 
       <GraphQLErrors errors={deleteError || purgeError} />
 
-
       <Row as="dl">
         <Col as="dt" lg={2} sm={4}>Created By</Col>
         <Col as="dd" lg={10} sm={8}>{createdBy ? createdBy.fullName : '-- Not Assigned --'}</Col>
@@ -111,13 +112,12 @@ function SystemData(props) {
       <h4>Primary Project</h4>
       <p>{primaryProject.displayLabel}</p>
       <h4>Other Projects</h4>
-      <p>{otherProjects.length ? otherProjects.map(p => p.displayLabel).join(', ') : 'None'}</p>
+      <p>{otherProjects.length ? otherProjects.map((p) => p.displayLabel).join(', ') : 'None'}</p>
       { state === 'ACTIVE' && renderDeleteSection() }
       { renderPurgeSection() }
     </DigitalObjectInterface>
   );
 }
-
 
 export default SystemData;
 
