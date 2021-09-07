@@ -26,7 +26,7 @@ module Types
     field :first_preserved_at, GraphQL::Types::ISO8601DateTime, null: true
     field :preserved_at, GraphQL::Types::ISO8601DateTime, null: true
     field :parents, [DigitalObjectInterface], null: true
-    field :structured_children, DigitalObject::StructuredChildrenType, null: true
+    field :child_structure, ChildStructureType, null: true
     field :publish_entries, [DigitalObject::PublishEntryType], null: true
     field :optimistic_lock_token, String, null: false
     field :rights, GraphQL::Types::JSON, null: false
