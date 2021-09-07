@@ -2,8 +2,7 @@
 
 module Types
   class ChildStructureType < Types::BaseObject
-    description 'A resolved description of how child objects should be organized'
-    field :parent, DigitalObjectInterface, null: false
+    description 'A representation of how child objects are organized'
     field :type, String, null: false
     field :structure, [DigitalObjectInterface], null: false
   end

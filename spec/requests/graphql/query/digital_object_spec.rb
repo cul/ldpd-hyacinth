@@ -5,7 +5,10 @@ require 'rails_helper'
 RSpec.describe 'Retrieving Digital Object', type: :request do
   include_context 'with stubbed search adapters'
   let(:authorized_object) do
-    FactoryBot.create(:item, :with_rights, :with_ascii_title, :with_other_projects)
+    FactoryBot.create(:item, :with_rights, :with_ascii_title, :with_other_projects, :with_asset)
+  end
+  let(:first_child) do
+    authorized_object.child_structure[:structure].first
   end
   let(:authorized_project) { authorized_object.projects.first }
   let(:authorized_publish_target) { authorized_project.publish_targets.first }
@@ -32,7 +35,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
             "subtitle": null,
             "valueLang": null
           },
-          "numberOfChildren": 0,
+          "numberOfChildren": 1,
           "createdAt": "#{authorized_object.created_at.iso8601}",
           "createdBy": null,
           "digitalObjectType": "ITEM",
@@ -75,7 +78,13 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
           "resources" : [],
           "state": "ACTIVE",
           "updatedAt": "#{authorized_object.updated_at.iso8601}",
-          "updatedBy": null
+          "updatedBy": null,
+          "childStructure": {
+            "type": "sequence",
+            "structure": [
+              { "id": "#{first_child.uid}" }
+            ]
+          }
         }
       )).at_path('data/digitalObject')
     end
@@ -245,6 +254,12 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
               originalFilename
               mediaType
               fileSize
+            }
+          }
+          childStructure {
+            type
+            structure {
+              id
             }
           }
         }

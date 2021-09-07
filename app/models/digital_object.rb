@@ -94,6 +94,13 @@ class DigitalObject < ApplicationRecord
     false
   end
 
+  def child_structure
+    {
+      type: 'sequence', # we only support sequences at this time, but may support other types later
+      structure: self.children
+    }
+  end
+
   private
 
     def raise_error_if_base_class!
