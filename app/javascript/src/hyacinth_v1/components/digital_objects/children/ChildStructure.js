@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 
 import DigitalObjectInterface from '../DigitalObjectInterface';
 import TabHeading from '../../shared/tabs/TabHeading';
-import { getChildStructureQuery, updateChildStructureMutation } from '../../../graphql/digitalObjects';
+import { getChildStructureDigtialObjectQuery, updateChildStructureMutation } from '../../../graphql/digitalObjects';
 import ChildStructureEditor from './ChildStructureEditor';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 import FormButtons from '../../shared/forms/FormButtons';
@@ -14,10 +14,10 @@ import FormButtons from '../../shared/forms/FormButtons';
 const ChildStructure = (props) => {
   const { id } = props;
   const {
-    loading: childStructureLoading,
-    error: childStructureError,
-    data: childStructureData,
-  } = useQuery(getChildStructureQuery, {
+    loading: digitalObjectLoading,
+    error: digitalObjectError,
+    data: digitalObjectData,
+  } = useQuery(getChildStructureDigtialObjectQuery, {
     variables: { id },
   });
   const [updateChildStructure, {
@@ -56,13 +56,15 @@ const ChildStructure = (props) => {
     return historyPromise(result);
   };
 
-  if (childStructureLoading) return (<></>);
-  if (childStructureError) return (<GraphQLErrors errors={childStructureError} />);
+  if (digitalObjectLoading) return (<></>);
+  if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
   if (updateChildStructureErrors) return (<GraphQLErrors errors={updateChildStructureErrors} />);
 
-  const { childStructure: { parent, structure } } = childStructureData;
+  const { digitalObject } = digitalObjectData;
+  const { childStructure: { structure } } = digitalObject;
+
   return (
-    <DigitalObjectInterface digitalObject={parent}>
+    <DigitalObjectInterface digitalObject={digitalObject}>
       <TabHeading>Edit Child Structure</TabHeading>
       <Card className="mb-3">
         <Card.Body>
