@@ -26,6 +26,7 @@ module Types
 
     field :update_project_permissions, mutation: Mutations::UpdateProjectPermissions
     field :update_project_enabled_fields, mutation: Mutations::UpdateProjectEnabledFields
+    field :update_project_publish_targets, mutation: Mutations::UpdateProjectPublishTargets
 
     field :create_publish_target, mutation: Mutations::CreatePublishTarget
     field :update_publish_target, mutation: Mutations::UpdatePublishTarget

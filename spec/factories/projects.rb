@@ -40,5 +40,11 @@ FactoryBot.define do
         create(:enabled_dynamic_field, project: project)
       end
     end
+
+    trait :with_publish_target do
+      after(:create) do |instance|
+        FactoryBot.create_list(:legend_of_lincoln_publish_target, 1, projects: [instance])
+      end
+    end
   end
 end
