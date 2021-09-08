@@ -8,7 +8,7 @@ import DigitalObjectInterface from '../DigitalObjectInterface';
 import DigitalObjectList from '../DigitalObjectList';
 import AssetNew from '../new/AssetNew';
 import TabHeading from '../../shared/tabs/TabHeading';
-import { getChildStructureDigtialObjectQuery, getMinimalDigitalObjectWithProjectsQuery } from '../../../graphql/digitalObjects';
+import { getChildStructureDigitalObjectQuery, getMinimalDigitalObjectWithProjectsQuery } from '../../../graphql/digitalObjects';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 import { digitalObjectAbility } from '../../../utils/ability';
 
@@ -28,7 +28,7 @@ const Children = (props) => {
     error: digitalObjectError,
     data: digitalObjectData,
     refetch: refreshDigitalObject,
-  } = useQuery(getChildStructureDigtialObjectQuery, {
+  } = useQuery(getChildStructureDigitalObjectQuery, {
     variables: { id },
   });
 

@@ -98,7 +98,7 @@ export const getRightsDigitalObjectQuery = gql`
   }
 `;
 
-export const getChildStructureDigtialObjectQuery = gql`
+export const getChildStructureDigitalObjectQuery = gql`
   query DigitalObjectChildStructure($id: ID!){
     digitalObject(id: $id) {
       ${digitalObjectInterfaceFields},

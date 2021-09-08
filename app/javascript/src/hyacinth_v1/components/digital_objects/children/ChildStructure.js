@@ -6,7 +6,7 @@ import { useHistory } from 'react-router-dom';
 
 import DigitalObjectInterface from '../DigitalObjectInterface';
 import TabHeading from '../../shared/tabs/TabHeading';
-import { getChildStructureDigtialObjectQuery, updateChildStructureMutation } from '../../../graphql/digitalObjects';
+import { getChildStructureDigitalObjectQuery, updateChildStructureMutation } from '../../../graphql/digitalObjects';
 import ChildStructureEditor from './ChildStructureEditor';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 import FormButtons from '../../shared/forms/FormButtons';
@@ -17,7 +17,7 @@ const ChildStructure = (props) => {
     loading: digitalObjectLoading,
     error: digitalObjectError,
     data: digitalObjectData,
-  } = useQuery(getChildStructureDigtialObjectQuery, {
+  } = useQuery(getChildStructureDigitalObjectQuery, {
     variables: { id },
   });
   const [updateChildStructure, {
@@ -53,7 +53,6 @@ const ChildStructure = (props) => {
   const onSuccessHandler = (res) => {
     const path = `/digital_objects/${res.data.updateChildStructure.parent.id}/children`;
     history.push(path);
-    // return { redirect: path };
   };
 
   if (digitalObjectLoading) return (<></>);
