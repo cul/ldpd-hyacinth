@@ -28,7 +28,8 @@ const ChildStructure = (props) => {
 
   const history = useHistory();
   const [childListOrder, setChildListOrder] = useState();
-  const onSubmitHandler = async () => {
+
+  const onSubmitHandler = () => {
     const orderedInput = [];
     if (childListOrder) {
       childListOrder.forEach((value, i) => {
@@ -39,7 +40,6 @@ const ChildStructure = (props) => {
     const parentUid = id;
     const orderedChildren = orderedInput;
 
-    let historyPromise = () => {};
     const variables = {
       input: {
         parentUid,
@@ -47,13 +47,13 @@ const ChildStructure = (props) => {
       },
     };
 
-    historyPromise = (res) => {
-      const path = `/digital_objects/${res.data.updateChildStructure.parent.id}/children`;
-      history.push(path);
-      return { redirect: path };
-    };
-    const result = await updateChildStructure({ variables });
-    return historyPromise(result);
+    return updateChildStructure({ variables });
+  };
+
+  const onSuccessHandler = (res) => {
+    const path = `/digital_objects/${res.data.updateChildStructure.parent.id}/children`;
+    history.push(path);
+    // return { redirect: path };
   };
 
   if (digitalObjectLoading) return (<></>);
@@ -78,6 +78,7 @@ const ChildStructure = (props) => {
                 formType="edit"
                 cancelTo="children"
                 onSave={onSubmitHandler}
+                onSaveSuccess={onSuccessHandler}
               />
             </div>
           </Card>

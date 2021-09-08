@@ -65,7 +65,7 @@ const ChildStructureEditor = (props) => {
                   <Link
                     to={`/digital_objects/${digitalObject.id}`}
                   >
-                    {digitalObject.title}
+                    {digitalObject.displayLabel}
                   </Link>
                 </Card.Header>
                 <Card.Body>
