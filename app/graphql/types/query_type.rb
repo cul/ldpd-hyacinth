@@ -34,6 +34,11 @@ module Types
       description "List of all projects"
     end
 
+    field :projects_publish_targets, [ProjectsPublishTargetType], null: true do
+      description "List of all publish targets annotated with enabled switch for project in scope"
+      argument :project, Inputs::StringKey, required: true
+    end
+
     field :digital_objects, DigitalObject::SearchRecord.results_type, null: true, extensions: [Types::Extensions::SolrSearch, Types::Extensions::MapToDigitalObjectSearchRecord] do
       description "List and searches all digital objects"
       argument :order_by, Inputs::DigitalObject::OrderByInput, required: false, default_value: { field: 'score', direction: 'desc' }
@@ -228,6 +233,13 @@ module Types
     def projects
       ability.authorize!(:read, Project)
       Project.accessible_by(ability)
+    end
+
+    def projects_publish_targets(project:)
+      enabled = self.project(project).publish_targets.map(&:string_key)
+      publish_targets.map do |publish_target|
+        publish_target.as_json.merge('enabled' => enabled.include?(publish_target.string_key))
+      end
     end
 
     def publish_targets
