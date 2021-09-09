@@ -8,20 +8,12 @@ import DigitalObjectInterface from '../DigitalObjectInterface';
 import DigitalObjectList from '../DigitalObjectList';
 import AssetNew from '../new/AssetNew';
 import TabHeading from '../../shared/tabs/TabHeading';
-import { getChildStructureDigitalObjectQuery, getMinimalDigitalObjectWithProjectsQuery } from '../../../graphql/digitalObjects';
+import { getChildStructureDigitalObjectQuery } from '../../../graphql/digitalObjects';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 import { digitalObjectAbility } from '../../../utils/ability';
 
 const Children = (props) => {
   const { id } = props;
-
-  const {
-    loading: minimalObjectLoading,
-    error: minimalObjectError,
-    data: minimalObjectData,
-  } = useQuery(getMinimalDigitalObjectWithProjectsQuery, {
-    variables: { id },
-  });
 
   const {
     loading: digitalObjectLoading,
@@ -36,15 +28,12 @@ const Children = (props) => {
   if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
   const { digitalObject } = digitalObjectData;
   const { childStructure: { structure } } = digitalObject;
-  if (minimalObjectLoading || digitalObjectLoading) return (<></>);
-  if (minimalObjectError) return (<GraphQLErrors errors={minimalObjectError} />);
+  if (digitalObjectLoading) return (<></>);
   if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
 
-  const { digitalObject: minimalDigitalObject } = minimalObjectData;
-
   const canReorder = digitalObjectAbility.can('edit_objects', {
-    primaryProject: minimalDigitalObject.primaryProject,
-    otherProjects: minimalDigitalObject.otherProjects,
+    primaryProject: digitalObject.primaryProject,
+    otherProjects: digitalObject.otherProjects,
   });
   return (
     <DigitalObjectInterface digitalObject={digitalObject}>

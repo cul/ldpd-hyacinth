@@ -35,71 +35,67 @@ const ChildStructureEditor = (props) => {
   };
 
   return (
-    <>
-      <DragDropContext onDragEnd={onDragEnd}>
-
-        <Droppable droppableId="droppable-1">
-          {(DroppableProvided) => (
-            <div
-              ref={DroppableProvided.innerRef}
-              {...DroppableProvided.droppableProps}
-            >
-              {
-        currentObjectList.map((digitalObject, resultIndex) => (
-          <Draggable
-            draggableId={
-            digitalObject.id
-}
-            index={resultIndex}
-            key={digitalObject.id}
+    <DragDropContext onDragEnd={onDragEnd}>
+      <Droppable droppableId="droppable-1">
+        {(DroppableProvided) => (
+          <div
+            ref={DroppableProvided.innerRef}
+            {...DroppableProvided.droppableProps}
           >
-            {(provided) => (
-              <Card
-                key={digitalObject.id}
-                className="mb-3"
-                {...provided.draggableProps}
-                {...provided.dragHandleProps}
-                ref={provided.innerRef}
-              >
-                <Card.Header>
-                  <Link
-                    to={`/digital_objects/${digitalObject.id}`}
-                  >
-                    {digitalObject.displayLabel}
-                  </Link>
-                </Card.Header>
-                <Card.Body>
-                  <ul className="list-unstyled small">
-                    <li>
-                      <strong>ID: </strong>
-                      {digitalObject.id}
-                    </li>
-                    {
-                  digitalObject.numberOfChildren > 0 && (
-                    <li>
-                      <strong>Children: </strong>
-                      {digitalObject.numberOfChildren}
-                    </li>
-                  )
-                }
-                  </ul>
-                  <Badge bg="secondary">{startCase(digitalObject.digitalObjectType)}</Badge>
-                </Card.Body>
-              </Card>
-            )}
-          </Draggable>
+            {
+              currentObjectList.map((digitalObject, resultIndex) => (
+                <Draggable
+                  draggableId={
+                    digitalObject.id
+                  }
+                  index={resultIndex}
+                  key={digitalObject.id}
+                >
+                  {(provided) => (
+                    <Card
+                      key={digitalObject.id}
+                      className="mb-3"
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                      ref={provided.innerRef}
+                    >
+                      <Card.Header>
+                        <Link
+                          to={`/digital_objects/${digitalObject.id}`}
+                        >
+                          {digitalObject.displayLabel}
+                        </Link>
+                      </Card.Header>
+                      <Card.Body>
+                        <ul className="list-unstyled small">
+                          <li>
+                            <strong>ID: </strong>
+                            {digitalObject.id}
+                          </li>
+                          {
+                            digitalObject.numberOfChildren > 0 && (
+                              <li>
+                                <strong>Children: </strong>
+                                {digitalObject.numberOfChildren}
+                              </li>
+                            )
+                          }
+                        </ul>
+                        <Badge bg="secondary">{startCase(digitalObject.digitalObjectType)}</Badge>
+                      </Card.Body>
+                    </Card>
+                  )}
+                </Draggable>
 
-        ))
-      }
+              ))
+            }
 
-              {DroppableProvided.placeholder}
-            </div>
+            {DroppableProvided.placeholder}
+          </div>
 
-          )}
-        </Droppable>
-      </DragDropContext>
-
-    </>
+        )}
+      </Droppable>
+    </DragDropContext>
   );
 };
 

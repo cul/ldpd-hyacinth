@@ -37,13 +37,10 @@ const ChildStructure = (props) => {
       });
     }
 
-    const parentUid = id;
-    const orderedChildren = orderedInput;
-
     const variables = {
       input: {
-        parentUid,
-        orderedChildren,
+        parentUid: id,
+        orderedChildren: orderedInput,
       },
     };
 
