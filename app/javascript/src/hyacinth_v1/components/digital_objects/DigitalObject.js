@@ -10,6 +10,7 @@ import RightsEdit from './rights/RightsEdit';
 import MetadataShow from './metadata/MetadataShow';
 import MetadataEdit from './metadata/MetadataEdit';
 import Children from './children/Children';
+import ChildStructure from './children/ChildStructure';
 import Parents from './parents/Parents';
 import Assignments from './assignments/Assignments';
 import PreservePublish from './preserve_publish/PreservePublish';
@@ -47,6 +48,7 @@ function DigitalObject() {
             { routePath: `${path}/rights/edit`, Component: RightsEdit, action: 'assess_rights' },
             { routePath: `${path}/rights`, Component: RightsShow, action: 'read_objects' },
             { routePath: `${path}/children`, Component: Children, action: 'read_objects' },
+            { routePath: `${path}/edit_child_structure`, Component: ChildStructure, action: 'edit_objects' },
             { routePath: `${path}/parents`, Component: Parents, action: 'read_objects' },
             { routePath: `${path}/preserve_publish`, Component: PreservePublish, action: 'read_objects' },
             { routePath: `${path}/assignments`, Component: Assignments, action: 'read_objects' },
@@ -79,8 +81,7 @@ function DigitalObject() {
                 otherProjects: minimalDigitalObject.otherProjects,
               }}
             />
-          )
-        }
+          )}
 
         <Redirect exact from={path} to="/digital_objects/:id/metadata" />
 

@@ -98,7 +98,7 @@ export const getRightsDigitalObjectQuery = gql`
   }
 `;
 
-export const getChildStructureDigtialObjectQuery = gql`
+export const getChildStructureDigitalObjectQuery = gql`
   query DigitalObjectChildStructure($id: ID!){
     digitalObject(id: $id) {
       ${digitalObjectInterfaceFields},
@@ -275,6 +275,16 @@ export const purgeDigitalObjectMutation = gql`
   mutation PurgeDigitalObject($input: PurgeDigitalObjectInput!) {
     purgeDigitalObject(input: $input) {
       digitalObject {
+        id
+      }
+    }
+  }
+`;
+
+export const updateChildStructureMutation = gql`
+  mutation updateChildStructure($input: UpdateChildStructureInput!) {
+    updateChildStructure(input: $input) {
+      parent {
         id
       }
     }
