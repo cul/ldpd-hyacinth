@@ -235,8 +235,9 @@ module Types
       Project.accessible_by(ability)
     end
 
-    def projects_publish_targets(project:)
-      enabled = self.project(project).publish_targets.map(&:string_key)
+    def projects_publish_targets(params)
+      project = self.project(params[:project])
+      enabled = project.publish_targets.map(&:string_key)
       publish_targets.map do |publish_target|
         publish_target.as_json.merge('enabled' => enabled.include?(publish_target.string_key))
       end
