@@ -38,6 +38,12 @@ RSpec.describe 'Query for Authenticated User', type: :request do
             "actions": ["read"],
             "conditions": {},
             "inverted": false,
+            "subject": ["PublishTarget"]
+          },
+          {
+            "actions": ["read"],
+            "conditions": {},
+            "inverted": false,
             "subject": ["Vocabulary"]
           },
           {
@@ -114,6 +120,12 @@ RSpec.describe 'Query for Authenticated User', type: :request do
             "conditions": {},
             "inverted": false,
             "subject": ["Term"]
+          },
+          {
+            "actions": ["read"],
+            "conditions": {},
+            "inverted": false,
+            "subject": ["PublishTarget"]
           },
           {
             "actions": ["read"],
