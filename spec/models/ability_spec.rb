@@ -10,6 +10,7 @@ RSpec.describe Ability, type: :model do
       { actions: [:read, :update], conditions: { id: user.id }, subject: ["User"], inverted: false },
       { actions: [:read, :update], conditions: { uid: user.uid }, subject: ["User"], inverted: false },
       { actions: [:read, :create], conditions: {}, subject: ["Term"], inverted: false },
+      { actions: [:read], conditions: {}, subject: ["PublishTarget"], inverted: false },
       { actions: [:read], conditions: {}, subject: ["Vocabulary"], inverted: false },
       { actions: [:read], conditions: {}, subject: ["DynamicFieldCategory"], inverted: false },
       { actions: [:create], conditions: {}, subject: ["BatchExport"], inverted: false },
@@ -129,9 +130,9 @@ RSpec.describe Ability, type: :model do
 
     it { is_expected.to be_able_to(:read, user) }
     it { is_expected.to be_able_to(:update, user) }
+    it { is_expected.to be_able_to(:read, PublishTarget) }
 
     it { is_expected.not_to be_able_to(:manage, User) }
-    it { is_expected.not_to be_able_to(:read, PublishTarget) }
 
     it 'serializes correctly' do
       expect(ability.to_list).to match(base_user_rules)

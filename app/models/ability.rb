@@ -20,6 +20,7 @@ class Ability
       can [:read, :update], User, id: user.id
       can [:read, :update], User, uid: user.uid
       can [:read, :create], Term
+      can :read, PublishTarget        # sensitive information is filtered for non-admins
       can :read, Vocabulary           # Need to allow this because Terms are nested under vocabularies
       can :read, DynamicFieldCategory # Need to allow this so we can render EnabledDynamicField pages.
 
