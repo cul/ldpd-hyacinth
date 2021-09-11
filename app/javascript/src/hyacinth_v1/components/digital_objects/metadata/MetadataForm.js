@@ -27,19 +27,19 @@ const defaultFieldValue = {
 };
 
 const DynamicFieldCategory = (props) => {
-  const { category, onChange, descriptiveMetadata, defaultFieldData } = props;
+  const {
+    category, onChange, descriptiveMetadata, defaultFieldData,
+  } = props;
   const { displayLabel, children } = category;
   const changeHandler = (sk) => {
     const stringKey = sk;
-    return (v) => {
-      return onChange(stringKey, v);
-    };
+    return (v) => onChange(stringKey, v);
   };
   return (
     <div key={displayLabel}>
       <h4 className="text-orange">{displayLabel}</h4>
       {
-        children.map(fieldGroup => (
+        children.map((fieldGroup) => (
           <FieldGroupArray
             key={`array_${fieldGroup.stringKey}`}
             dynamicFieldGroup={fieldGroup}
@@ -53,6 +53,18 @@ const DynamicFieldCategory = (props) => {
   );
 };
 
+DynamicFieldCategory.propTypes = {
+  descriptiveMetadata: PropTypes.objectOf(PropTypes.any).isRequired,
+  onChange: PropTypes.func.isRequired,
+  category: PropTypes.shape(
+    {
+      displayLabel: PropTypes.string,
+      children: PropTypes.arrayOf(PropTypes.any),
+    },
+  ).isRequired,
+  defaultFieldData: PropTypes.objectOf(PropTypes.any).isRequired,
+};
+
 function MetadataForm(props) {
   const { digitalObject, formType } = props;
   const {
@@ -63,13 +75,13 @@ function MetadataForm(props) {
   const [createDigitalObject, { data: createData, error: createErrors }] = useMutation(createDigitalObjectMutation);
   const [updateDescriptiveMetadata, { data: updateData, error: updateErrors }] = useMutation(
     updateDescriptiveMetadataMutation,
-    );
+  );
 
   let userErrors = [];
   // One day, maybe enable optionalChaining JS feature in babel to simplify lines like the one below.
-  if(createData && createData.createDigitalObject && createData.createDigitalObject.userErrors){
+  if (createData && createData.createDigitalObject && createData.createDigitalObject.userErrors) {
     userErrors = createData.createDigitalObject.userErrors;
-  }else if(updateData && updateData.updateDescriptiveMetadata && updateData.updateDescriptiveMetadata.userErrors){
+  } else if (updateData && updateData.updateDescriptiveMetadata && updateData.updateDescriptiveMetadata.userErrors) {
     userErrors = updateData.updateDescriptiveMetadata.userErrors;
   }
 
@@ -173,7 +185,8 @@ function MetadataForm(props) {
     loading: enabledFieldsLoading,
     error: enabledFieldsError,
     data: enabledFieldsData,
-  } = useQuery(getEnabledDynamicFieldsQuery,
+  } = useQuery(
+    getEnabledDynamicFieldsQuery,
     { variables: { project: { stringKey: primaryProject.stringKey }, digitalObjectType: digitalObjectType.toUpperCase() } },
   );
 
@@ -199,7 +212,7 @@ function MetadataForm(props) {
   const filteredCategories = fieldGraphData.dynamicFieldGraph.dynamicFieldCategories.map((cat) => {
     cat.children = keepEnabledFields(enabledFieldIds, cat.children);
     return cat;
-  }).filter(cat => cat.children.length > 0);
+  }).filter((cat) => cat.children.length > 0);
 
   const emptyData = {};
   filteredCategories.forEach((category) => {
@@ -218,7 +231,7 @@ function MetadataForm(props) {
         <ErrorList errors={userErrors.map((userError) => (`${userError.message} (path=${userError.path.join('/')})`))} />
         <TitleForm title={title} onChange={onTitleChange} />
         {
-          filteredCategories.map(category => (
+          filteredCategories.map((category) => (
             <DynamicFieldCategory
               key={category.id}
               category={category}
@@ -234,7 +247,7 @@ function MetadataForm(props) {
           <TextInputWithAddAndRemove
             sm={12}
             values={identifiers}
-            onChange={v => onIdentifierChange(v)}
+            onChange={(v) => onIdentifierChange(v)}
           />
         </InputGroup>
 
