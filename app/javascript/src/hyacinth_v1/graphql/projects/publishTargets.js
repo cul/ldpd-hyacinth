@@ -1,10 +1,14 @@
 import gql from 'graphql-tag';
 
-export const getProjectsPublishTargetsQuery = gql`
-  query($stringKey: ID!) {
-    projectsPublishTargets(project: { stringKey: $stringKey }) {
-      enabled
+export const getAvailablePublishTargetsQuery = gql`
+  query Project($stringKey: ID!){
+    project(stringKey: $stringKey) {
       stringKey
+      displayLabel
+      availablePublishTargets {
+        enabled
+        stringKey
+      }
     }
   }
 `;
@@ -12,7 +16,7 @@ export const getProjectsPublishTargetsQuery = gql`
 export const updateProjectsPublishTargetsMutation = gql`
   mutation ($input: UpdateProjectPublishTargetsInput!) {
     updateProjectPublishTargets(input: $input) {
-      projectPublishTargets {
+      enabledPublishTargets {
         stringKey
       }
     }

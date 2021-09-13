@@ -8,9 +8,9 @@ import { useHistory } from 'react-router-dom';
 import produce from 'immer';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 import FormButtons from '../../shared/forms/FormButtons';
-import { getProjectsPublishTargetsQuery, updateProjectsPublishTargetsMutation } from '../../../graphql/projects/publishTargets';
+import { getAvailablePublishTargetsQuery, updateProjectsPublishTargetsMutation } from '../../../graphql/projects/publishTargets';
 
-const PublishTarget = (props) => {
+const AvailablePublishTarget = (props) => {
   const {
     stringKey, enabled, readOnly, enabledDataCallback,
   } = props;
@@ -43,10 +43,10 @@ const PublishTarget = (props) => {
   );
 };
 
-const mapPublishTargetData = (projectsPublishTargetsData) => {
+const mapPublishTargetData = (availablePublishTargetsData) => {
   const publishTargetData = {};
 
-  projectsPublishTargetsData.projectsPublishTargets.forEach((publishTarget) => {
+  availablePublishTargetsData.project.availablePublishTargets.forEach((publishTarget) => {
     const { stringKey, enabled } = publishTarget;
 
     publishTargetData[stringKey] = { enabled };
@@ -57,35 +57,35 @@ const mapPublishTargetData = (projectsPublishTargetsData) => {
 export const PublishTargetsForm = ({ readOnly, projectStringKey }) => {
   const history = useHistory();
 
-  const [projectPublishTargets, setProjectPublishTargets] = useState({});
+  const [availablePublishTargets, setAvailablePublishTargets] = useState({});
 
   const variables = { stringKey: projectStringKey };
 
   const {
-    loading: projectsPublishTargetsLoading,
-    error: projectsPublishTargetsError,
-    data: projectsPublishTargetsData,
-  } = useQuery(getProjectsPublishTargetsQuery, { variables });
+    loading: availablePublishTargetsLoading,
+    error: availablePublishTargetsError,
+    data: availablePublishTargetsData,
+  } = useQuery(getAvailablePublishTargetsQuery, { variables });
 
   useEffect(() => {
-    if (projectsPublishTargetsLoading === false && projectsPublishTargetsData) {
-      const mappedQueryData = mapPublishTargetData(projectsPublishTargetsData);
-      setProjectPublishTargets(mappedQueryData);
+    if (availablePublishTargetsLoading === false && availablePublishTargetsData) {
+      const mappedQueryData = mapPublishTargetData(availablePublishTargetsData);
+      setAvailablePublishTargets(mappedQueryData);
     }
-  }, [projectsPublishTargetsLoading, projectsPublishTargetsData]);
+  }, [availablePublishTargetsLoading, availablePublishTargetsData]);
 
   const [updateEnabledPublishTargets, { error: updateError }] = useMutation(updateProjectsPublishTargetsMutation);
 
-  if (projectsPublishTargetsLoading) return (<></>);
+  if (availablePublishTargetsLoading) return (<></>);
 
-  if (projectsPublishTargetsError || updateError) {
-    return (<GraphQLErrors errors={projectsPublishTargetsError || updateError} />);
+  if (availablePublishTargetsError || updateError) {
+    return (<GraphQLErrors errors={availablePublishTargetsError || updateError} />);
   }
 
   const onSubmitHandler = () => {
     const enabledPublishTargetsArray = [];
 
-    Object.entries(projectPublishTargets).forEach((entry) => {
+    Object.entries(availablePublishTargets).forEach((entry) => {
       const [stringKey, data] = entry;
 
       if (data.enabled) {
@@ -107,16 +107,16 @@ export const PublishTargetsForm = ({ readOnly, projectStringKey }) => {
   const enabledDataCallback = (publishTargetStringKey, data) => {
     if (data) {
       const { enabled } = data;
-      setProjectPublishTargets(produce(projectPublishTargets, (draft) => { draft[publishTargetStringKey] = { enabled }; }));
+      setAvailablePublishTargets(produce(availablePublishTargets, (draft) => { draft[publishTargetStringKey] = { enabled }; }));
     }
-    return projectPublishTargets[publishTargetStringKey];
+    return availablePublishTargets[publishTargetStringKey];
   };
 
   return (
     <Form>
       {
-        Object.entries(projectPublishTargets).map(([stringKey, data]) => (
-          <PublishTarget
+        Object.entries(availablePublishTargets).map(([stringKey, data]) => (
+          <AvailablePublishTarget
             key={stringKey}
             stringKey={stringKey}
             enabled={data.enabled}
@@ -148,7 +148,7 @@ PublishTargetsForm.propTypes = {
   projectStringKey: PropTypes.string.isRequired,
 };
 
-PublishTarget.propTypes = {
+AvailablePublishTarget.propTypes = {
   stringKey: PropTypes.string.isRequired,
   enabled: PropTypes.bool.isRequired,
   enabledDataCallback: PropTypes.func.isRequired,

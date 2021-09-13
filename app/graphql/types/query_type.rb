@@ -34,11 +34,6 @@ module Types
       description "List of all projects"
     end
 
-    field :projects_publish_targets, [ProjectsPublishTargetType], null: true do
-      description "List of all publish targets annotated with enabled switch for project in scope"
-      argument :project, Inputs::StringKey, required: true
-    end
-
     field :digital_objects, DigitalObject::SearchRecord.results_type, null: true, extensions: [Types::Extensions::SolrSearch, Types::Extensions::MapToDigitalObjectSearchRecord] do
       description "List and searches all digital objects"
       argument :order_by, Inputs::DigitalObject::OrderByInput, required: false, default_value: { field: 'score', direction: 'desc' }
