@@ -54,7 +54,7 @@ const mapPublishTargetData = (availablePublishTargetsData) => {
   return publishTargetData;
 };
 
-export const PublishTargetsForm = ({ readOnly, projectStringKey }) => {
+const PublishTargetsForm = ({ readOnly, projectStringKey }) => {
   const history = useHistory();
 
   const [availablePublishTargets, setAvailablePublishTargets] = useState({});
