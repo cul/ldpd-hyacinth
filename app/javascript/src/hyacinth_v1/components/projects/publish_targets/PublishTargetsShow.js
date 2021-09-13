@@ -6,13 +6,13 @@ import TabHeading from '../../shared/tabs/TabHeading';
 import PublishTargetsForm from './PublishTargetsForm';
 import { Can } from '../../../utils/abilityContext';
 import EditButton from '../../shared/buttons/EditButton';
-import { getProjectQuery } from '../../../graphql/projects';
+import { getAvailablePublishTargetsQuery } from '../../../graphql/projects/publishTargets';
 import ProjectInterface from '../ProjectInterface';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 
 function PublishTargetsShow() {
   const { projectStringKey } = useParams();
-  const { loading, error, data } = useQuery(getProjectQuery, { variables: { stringKey: projectStringKey } });
+  const { loading, error, data } = useQuery(getAvailablePublishTargetsQuery, { variables: { stringKey: projectStringKey } });
 
   if (loading) return (<></>);
   if (error) return (<GraphQLErrors errors={error} />);
@@ -35,7 +35,7 @@ function PublishTargetsShow() {
 
       <PublishTargetsForm
         readOnly
-        projectStringKey={project.stringKey}
+        project={project}
       />
     </ProjectInterface>
   );

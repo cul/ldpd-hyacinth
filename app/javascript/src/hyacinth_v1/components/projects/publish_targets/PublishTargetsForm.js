@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useMutation, useQuery } from '@apollo/react-hooks';
+import React, { useState } from 'react';
+import { useMutation } from '@apollo/react-hooks';
 import PropTypes from 'prop-types';
 import {
   Row, Col, Form, Badge,
@@ -8,7 +8,7 @@ import { useHistory } from 'react-router-dom';
 import produce from 'immer';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 import FormButtons from '../../shared/forms/FormButtons';
-import { getAvailablePublishTargetsQuery, updateProjectsPublishTargetsMutation } from '../../../graphql/projects/publishTargets';
+import { updateProjectsPublishTargetsMutation } from '../../../graphql/projects/publishTargets';
 
 const AvailablePublishTarget = (props) => {
   const {
@@ -43,10 +43,10 @@ const AvailablePublishTarget = (props) => {
   );
 };
 
-const mapPublishTargetData = (availablePublishTargetsData) => {
+const mapPublishTargetData = (availablePublishTargets) => {
   const publishTargetData = {};
 
-  availablePublishTargetsData.project.availablePublishTargets.forEach((publishTarget) => {
+  availablePublishTargets.forEach((publishTarget) => {
     const { stringKey, enabled } = publishTarget;
 
     publishTargetData[stringKey] = { enabled };
@@ -54,32 +54,15 @@ const mapPublishTargetData = (availablePublishTargetsData) => {
   return publishTargetData;
 };
 
-const PublishTargetsForm = ({ readOnly, projectStringKey }) => {
+const PublishTargetsForm = ({ readOnly, project }) => {
   const history = useHistory();
 
-  const [availablePublishTargets, setAvailablePublishTargets] = useState({});
-
-  const variables = { stringKey: projectStringKey };
-
-  const {
-    loading: availablePublishTargetsLoading,
-    error: availablePublishTargetsError,
-    data: availablePublishTargetsData,
-  } = useQuery(getAvailablePublishTargetsQuery, { variables });
-
-  useEffect(() => {
-    if (availablePublishTargetsLoading === false && availablePublishTargetsData) {
-      const mappedQueryData = mapPublishTargetData(availablePublishTargetsData);
-      setAvailablePublishTargets(mappedQueryData);
-    }
-  }, [availablePublishTargetsLoading, availablePublishTargetsData]);
+  const [availablePublishTargets, setAvailablePublishTargets] = useState(mapPublishTargetData(project.availablePublishTargets));
 
   const [updateEnabledPublishTargets, { error: updateError }] = useMutation(updateProjectsPublishTargetsMutation);
 
-  if (availablePublishTargetsLoading) return (<></>);
-
-  if (availablePublishTargetsError || updateError) {
-    return (<GraphQLErrors errors={availablePublishTargetsError || updateError} />);
+  if (updateError) {
+    return (<GraphQLErrors errors={updateError} />);
   }
 
   const onSubmitHandler = () => {
@@ -94,14 +77,14 @@ const PublishTargetsForm = ({ readOnly, projectStringKey }) => {
     });
 
     const input = {
-      project: { stringKey: projectStringKey },
+      project: { stringKey: project.stringKey },
       publishTargets: enabledPublishTargetsArray,
     };
     return updateEnabledPublishTargets({ variables: { input } });
   };
 
   const saveSuccessHandler = () => {
-    history.push(`/projects/${projectStringKey}/publish_targets`);
+    history.push(`/projects/${project.stringKey}/publish_targets`);
   };
 
   const enabledDataCallback = (publishTargetStringKey, data) => {
@@ -129,7 +112,7 @@ const PublishTargetsForm = ({ readOnly, projectStringKey }) => {
         !readOnly && (
           <FormButtons
             formType="edit"
-            cancelTo={`/projects/${projectStringKey}/publish_targets`}
+            cancelTo={`/projects/${project.stringKey}/publish_targets`}
             onSave={onSubmitHandler}
             onSaveSuccess={saveSuccessHandler}
           />
@@ -145,7 +128,19 @@ PublishTargetsForm.defaultProps = {
 
 PublishTargetsForm.propTypes = {
   readOnly: PropTypes.bool,
-  projectStringKey: PropTypes.string.isRequired,
+  project: PropTypes.shape(
+    {
+      stringKey: PropTypes.string.isRequired,
+      availablePublishTargets: PropTypes.arrayOf(
+        PropTypes.shape(
+          {
+            stringKey: PropTypes.string.isRequired,
+            enabled: PropTypes.bool.isRequired,
+          },
+        ),
+      ).isRequired,
+    },
+  ).isRequired,
 };
 
 AvailablePublishTarget.propTypes = {
