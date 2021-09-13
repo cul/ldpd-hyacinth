@@ -13,13 +13,12 @@ class Mutations::UpdateProjectPublishTargets < Mutations::BaseMutation
   field :project_publish_targets, [Types::PublishTargetType], null: false
 
   def resolve(project:, publish_targets:)
+    project = Project.find_by!(project.to_h)
+    # Ensure that the user initiating this update is allowed to do so for the given project
+    ability.authorize! :update, project
+    publish_targets = PublishTarget.where(string_key: publish_targets.map { |pt| pt['stringKey'] })
     # This should be an all or nothing update
     ActiveRecord::Base.transaction do
-      project = Project.find_by!(project.to_h)
-      # Ensure that the user initiating this update is allowed to do so for the given project
-      ability.authorize! :update, project
-
-      publish_targets = PublishTarget.where(string_key: publish_targets.map { |pt| pt['stringKey'] })
       project.publish_targets = publish_targets.to_a
       project.save!
     end
