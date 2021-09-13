@@ -1,40 +1,30 @@
 import React from 'react';
-import { startCase } from 'lodash';
-import produce from 'immer';
+import { useQuery } from '@apollo/react-hooks';
+import { useParams } from 'react-router-dom';
 
 import TabHeading from '../../shared/tabs/TabHeading';
-import { PublishTargetsForm } from './PublishTargetsForm';
-import { projects } from '../../../utils/hyacinthApi';
+import PublishTargetsForm from './PublishTargetsForm';
+import { getProjectQuery } from '../../../graphql/projects';
 import ProjectInterface from '../ProjectInterface';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 
-export default class PublishTargetsEdit extends React.Component {
-  state = {
-    project: {},
-  }
+function PublishTargetsEdit() {
+  const { projectStringKey } = useParams();
+  const { loading, error, data } = useQuery(getProjectQuery, { variables: { stringKey: projectStringKey } });
 
-  componentDidMount() {
-    const { match: { params: { projectStringKey } } } = this.props;
+  if (loading) return (<></>);
+  if (error) return (<GraphQLErrors errors={error} />);
 
-    projects.get(projectStringKey)
-      .then((res) => {
-        const { project } = res.data;
+  const { project } = data;
 
-        this.setState(produce((draft) => {
-          draft.project = project;
-        }));
-      });
-  }
-
-  render() {
-    const { match: { params: { projectStringKey } } } = this.props;
-
-    return (
-      <ProjectInterface project={this.state.project}>
-        <TabHeading>Edit Enabled Publish Targets</TabHeading>
-        <PublishTargetsForm
-          projectStringKey={projectStringKey}
-        />
-      </ProjectInterface>
-    );
-  }
+  return (
+    <ProjectInterface project={project}>
+      <TabHeading>Edit Enabled Publish Targets</TabHeading>
+      <PublishTargetsForm
+        projectStringKey={project.stringKey}
+      />
+    </ProjectInterface>
+  );
 }
+
+export default PublishTargetsEdit;

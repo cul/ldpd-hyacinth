@@ -1,54 +1,44 @@
 import React from 'react';
-import { startCase } from 'lodash';
-import produce from 'immer';
+import { useQuery } from '@apollo/react-hooks';
+import { useParams } from 'react-router-dom';
 
 import TabHeading from '../../shared/tabs/TabHeading';
 import PublishTargetsForm from './PublishTargetsForm';
 import { Can } from '../../../utils/abilityContext';
 import EditButton from '../../shared/buttons/EditButton';
-import { projects } from '../../../utils/hyacinthApi';
+import { getProjectQuery } from '../../../graphql/projects';
 import ProjectInterface from '../ProjectInterface';
+import GraphQLErrors from '../../shared/GraphQLErrors';
 
-export default class PublishTargetsFormShow extends React.Component {
-  state = {
-    project: {},
-  }
+function PublishTargetsShow() {
+  const { projectStringKey } = useParams();
+  const { loading, error, data } = useQuery(getProjectQuery, { variables: { stringKey: projectStringKey } });
 
-  componentDidMount() {
-    const { match: { params: { projectStringKey } } } = this.props;
+  if (loading) return (<></>);
+  if (error) return (<GraphQLErrors errors={error} />);
 
-    projects.get(projectStringKey)
-      .then((res) => {
-        const { project } = res.data;
+  const { project } = data;
 
-        this.setState(produce((draft) => {
-          draft.project = project;
-        }));
-      });
-  }
+  return (
+    <ProjectInterface project={project}>
+      <TabHeading>
+        Enabled Publish Targets
+        <Can I="update" of={{ subjectType: 'Project', stringKey: project.stringKey }}>
+          <EditButton
+            className="float-end"
+            size="lg"
+            aria-label="Edit"
+            link={`/projects/${project.stringKey}/publish_targets/edit`}
+          />
+        </Can>
+      </TabHeading>
 
-  render() {
-    const { match: { params: { projectStringKey } } } = this.props;
-
-    return (
-      <ProjectInterface project={this.state.project}>
-        <TabHeading>
-          Enabled Publish Targets
-          <Can I="update" of={{ subjectType: 'Project', stringKey: projectStringKey }}>
-            <EditButton
-              className="float-end"
-              size="lg"
-              aria-label="Edit"
-              link={`/projects/${projectStringKey}/publish_targets/edit`}
-            />
-          </Can>
-        </TabHeading>
-
-        <PublishTargetsForm
-          readOnly
-          projectStringKey={projectStringKey}
-        />
-      </ProjectInterface>
-    );
-  }
+      <PublishTargetsForm
+        readOnly
+        projectStringKey={project.stringKey}
+      />
+    </ProjectInterface>
+  );
 }
+
+export default PublishTargetsShow;
