@@ -5,6 +5,7 @@ import produce from 'immer';
 import { merge } from 'lodash';
 import { useHistory } from 'react-router-dom';
 
+import FieldGroup from './FieldGroup';
 import FieldGroupArray from './FieldGroupArray';
 import TitleForm from './TitleForm';
 import FormButtons from '../../shared/forms/FormButtons';
@@ -42,6 +43,7 @@ const DynamicFieldCategory = (props) => {
         children.map((fieldGroup) => (
           <FieldGroupArray
             key={`array_${fieldGroup.stringKey}`}
+            component={FieldGroup}
             dynamicFieldGroup={fieldGroup}
             value={descriptiveMetadata[fieldGroup.stringKey]}
             defaultValue={defaultFieldData[fieldGroup.stringKey][0]}
