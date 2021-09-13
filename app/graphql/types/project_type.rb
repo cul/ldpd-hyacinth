@@ -19,10 +19,18 @@ module Types
 
     field :has_asset_rights, Boolean, null: false
 
+    field :available_publish_targets, [Types::Projects::AvailablePublishTargetType], null: false do
+      description "List of all publish targets annotated with enabled switch for project in scope"
+    end
+
+    def ability
+      context[:ability]
+    end
+
     def field_set(id:)
       field_set = FieldSet.find_by!(id: id, project: object)
       # TODO: Change :show below to :read
-      context[:ability].authorize!(:show, field_set)
+      ability.authorize!(:show, field_set)
       field_set
     end
 
@@ -42,5 +50,19 @@ module Types
       # alphabetical order so they can be used in UI lists
       distinct_types.sort!
     end
+
+    def available_publish_targets
+      enabled = object.publish_targets.map(&:string_key)
+      all_publish_targets.map do |publish_target|
+        publish_target.as_json.merge('enabled' => enabled.include?(publish_target.string_key))
+      end
+    end
+
+    private
+
+      def all_publish_targets
+        ability.authorize!(:read, PublishTarget)
+        PublishTarget.accessible_by(ability).order(:string_key)
+      end
   end
 end

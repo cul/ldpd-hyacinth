@@ -17,7 +17,7 @@ RSpec.describe Mutations::UpdateProjectPublishTargets do
       <<~GQL
         mutation ($input: UpdateProjectPublishTargetsInput!) {
           updateProjectPublishTargets(input: $input) {
-            projectPublishTargets {
+            enabledPublishTargets {
               stringKey
             }
           }
@@ -25,7 +25,7 @@ RSpec.describe Mutations::UpdateProjectPublishTargets do
       GQL
     end
     let(:errors) { graphql_request.to_h.dig('errors') }
-    let(:resolved_publish_targets) { graphql_request.to_h.dig('data', 'updateProjectPublishTargets', 'projectPublishTargets') }
+    let(:resolved_publish_targets) { graphql_request.to_h.dig('data', 'updateProjectPublishTargets', 'enabledPublishTargets') }
     let(:resolved_publish_target_ids) { resolved_publish_targets.map { |pt| pt['stringKey'] } }
     before do
       # skipping authorization because it's not part of what we're testing

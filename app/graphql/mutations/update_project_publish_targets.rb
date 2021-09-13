@@ -10,7 +10,7 @@ class Mutations::UpdateProjectPublishTargets < Mutations::BaseMutation
     required: true
   )
 
-  field :project_publish_targets, [Types::PublishTargetType], null: false
+  field :enabled_publish_targets, [Types::PublishTargetType], null: false
 
   def resolve(project:, publish_targets:)
     project = Project.find_by!(project.to_h)
@@ -23,12 +23,12 @@ class Mutations::UpdateProjectPublishTargets < Mutations::BaseMutation
       project.save!
     end
 
-    project_publish_targets_response(project.publish_targets)
+    enabled_publish_targets_response(project.publish_targets)
   end
 
-  def project_publish_targets_response(publish_targets)
+  def enabled_publish_targets_response(publish_targets)
     {
-      project_publish_targets: publish_targets.map { |pt| { 'string_key' => pt.string_key } }
+      enabled_publish_targets: publish_targets.map { |pt| { 'string_key' => pt.string_key } }
     }
   end
 end

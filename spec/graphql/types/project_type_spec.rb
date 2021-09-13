@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe Types::ProjectsPublishTargetType do
+RSpec.describe Types::ProjectType do
   let(:graphql_request) { HyacinthSchema.execute(query, context: context) }
   let(:current_user) { FactoryBot.create(:user) }
   let(:ability) { instance_double(Ability) }
@@ -17,15 +17,17 @@ RSpec.describe Types::ProjectsPublishTargetType do
     let(:query) do
       <<~GQL
         query {
-          projectsPublishTargets(project: { stringKey: "#{project.string_key}" }) {
-            stringKey
-            enabled
+          project(stringKey: "#{project.string_key}") {
+            availablePublishTargets {
+              stringKey
+              enabled
+            }
           }
         }
       GQL
     end
     let(:errors) { graphql_request.to_h.dig('errors') }
-    let(:publish_targets) { graphql_request.to_h.dig('data', 'projectsPublishTargets') }
+    let(:publish_targets) { graphql_request.to_h.dig('data', 'project', 'availablePublishTargets') }
     let(:enabled_publish_target) { publish_targets.detect { |pt| pt['enabled'] } }
     let(:non_enabled_publish_target) { publish_targets.detect { |pt| !pt['enabled'] } }
     before do
