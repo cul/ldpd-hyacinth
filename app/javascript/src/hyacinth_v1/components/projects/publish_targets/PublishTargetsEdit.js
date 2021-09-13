@@ -4,13 +4,13 @@ import { useParams } from 'react-router-dom';
 
 import TabHeading from '../../shared/tabs/TabHeading';
 import PublishTargetsForm from './PublishTargetsForm';
-import { getProjectQuery } from '../../../graphql/projects';
+import { getAvailablePublishTargetsQuery } from '../../../graphql/projects/publishTargets';
 import ProjectInterface from '../ProjectInterface';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 
 function PublishTargetsEdit() {
   const { projectStringKey } = useParams();
-  const { loading, error, data } = useQuery(getProjectQuery, { variables: { stringKey: projectStringKey } });
+  const { loading, error, data } = useQuery(getAvailablePublishTargetsQuery, { variables: { stringKey: projectStringKey } });
 
   if (loading) return (<></>);
   if (error) return (<GraphQLErrors errors={error} />);
@@ -21,7 +21,7 @@ function PublishTargetsEdit() {
     <ProjectInterface project={project}>
       <TabHeading>Edit Enabled Publish Targets</TabHeading>
       <PublishTargetsForm
-        projectStringKey={project.stringKey}
+        project={project}
       />
     </ProjectInterface>
   );
