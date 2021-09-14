@@ -7,6 +7,9 @@ module Types
     field :delete_digital_object, mutation: Mutations::DigitalObject::DeleteDigitalObject
     field :purge_digital_object, mutation: Mutations::DigitalObject::PurgeDigitalObject
 
+    field :add_parent, mutation: Mutations::DigitalObject::AddParent
+    field :remove_parent, mutation: Mutations::DigitalObject::RemoveParent
+
     field :create_resource, mutation: Mutations::DigitalObject::Resource::CreateResource
     field :delete_resource, mutation: Mutations::DigitalObject::Resource::DeleteResource
 
