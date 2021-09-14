@@ -5,7 +5,7 @@ module ResourceRequestJobs
     extend ActiveSupport::Concern
 
     class_methods do
-      def create_callback(resource_request, _digital_object)
+      def submit_derivativo_request(resource_request, _digital_object)
         Hyacinth::Config.derivativo.with_connection_and_opts(resource_request.job_type, resource_request.options) do |connection, options|
           job_params = {
             job_type: resource_request.job_type, resource_request_id: resource_request.id,

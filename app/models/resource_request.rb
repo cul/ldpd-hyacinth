@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ResourceRequest < ApplicationRecord
-  attr_accessor :create_callback
+  attr_accessor :additional_creation_commit_callback
 
   belongs_to :digital_object, foreign_key: :digital_object_uid, primary_key: :uid, inverse_of: :resource_requests, optional: true
 
@@ -30,12 +30,13 @@ class ResourceRequest < ApplicationRecord
 
   # Do not run this in after_create or you'll get sqlite database lock issues when ActiveJob jobs
   # are set to run inline (in development or test environments). The problem is that logic inside of
-  # enqueue_derivativo_job ends up making requests to Derivativo which makes requests back to
-  # Hyacinth and those requests fail when there's an existing lock on the squlite database.
+  # run_additional_creation_commit_callback can, in some cases, make requests to an external system
+  # that makes requests back to Hyacinth -- and those requests fail when there's an existing lock on
+  # the Hyacinth sqlite database.
   # See: https://flexport.engineering/how-to-safely-use-activerecords-after-save-efde2b52baa3
-  after_commit :run_create_callback, on: :create
+  after_commit :run_additional_creation_commit_callback, on: :create
 
-  def run_create_callback
-    create_callback&.call(self)
+  def run_additional_creation_commit_callback
+    additional_creation_commit_callback&.call(self)
   end
 end

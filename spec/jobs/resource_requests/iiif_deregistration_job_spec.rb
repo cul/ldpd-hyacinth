@@ -70,10 +70,6 @@ RSpec.describe ResourceRequests::IiifDeregistrationJob do
   describe '.eligible_object?' do
     let(:item) { FactoryBot.create(:item) }
 
-    it 'returns true for an Asset with a valid source resource' do
-      expect(described_class.eligible_object?(asset)).to eq(true)
-    end
-
     it 'returns false for a non-Asset digital object' do
       expect(described_class.eligible_object?(item)).to eq(false)
     end

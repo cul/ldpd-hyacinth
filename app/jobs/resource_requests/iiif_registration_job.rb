@@ -11,11 +11,11 @@ module ResourceRequests
       return if ResourceRequest.iiif_registration.exists?(exist_check_conditions)
 
       base_resource_request_args = { digital_object_uid: digital_object.uid, src_file_location: resource_location_uri(resource) }
-      base_resource_request_args[:create_callback] = proc { |resource_request| create_callback(resource_request, digital_object) }
+      base_resource_request_args[:additional_creation_commit_callback] = proc { |resource_request| submit_triclops_request(resource_request, digital_object) }
       ResourceRequest.iiif_registration.create!(base_resource_request_args) unless ResourceRequest.iiif_registration.exists?(exist_check_conditions)
     end
 
-    def self.create_callback(resource_request, digital_object)
+    def self.submit_triclops_request(resource_request, digital_object)
       Hyacinth::Config.triclops.with_connection_and_opts do |connection, options|
         response = connection.post('/api/v1/resources.json') do |req|
           req.params['resource'] = {
@@ -31,6 +31,16 @@ module ResourceRequests
       end
     rescue Faraday::ConnectionFailed
       Rails.logger.info("Unable to connect to Triclops, so #{resource_request.job_type} resource request for #{resource_request.digital_object_uid} was skipped.")
+    end
+
+    def self.eligible_object?(digital_object)
+      return false unless digital_object&.is_a?(::DigitalObject::Asset)
+      return false unless digital_object.featured_thumbnail_region.present?
+      if digital_object.asset_type == 'Image'
+        digital_object.has_access_resource?
+      else
+        digital_object.has_poster_resource?
+      end
     end
   end
 end
