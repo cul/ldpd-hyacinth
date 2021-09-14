@@ -11,7 +11,7 @@ RSpec.describe Mutations::Term::UpdateTerm, type: :request do
     })
   end
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:term) { FactoryBot.create(:external_term, vocabulary: vocabulary) }
     let(:variables) { { input: { uri: term.uri, vocabularyStringKey: vocabulary.string_key } } }
     let(:request) { graphql query, variables }

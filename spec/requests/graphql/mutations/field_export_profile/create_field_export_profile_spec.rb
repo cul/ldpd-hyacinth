@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe Mutations::FieldExportProfile::CreateFieldExportProfile, type: :request do
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) { { input: { name: "descMetadata", translationLogic: "{}" } } }
     let(:request) { graphql query, variables }
   end

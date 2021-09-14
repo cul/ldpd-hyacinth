@@ -5,10 +5,6 @@ require 'rails_helper'
 RSpec.describe 'Retrieving Publish Targets', type: :request do
   let(:publish_target) { FactoryBot.create(:publish_target) }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
-    let(:request) { graphql projects_query }
-  end
-
   context 'when logged in user is admin' do
     before { sign_in_user as: :administrator }
 

@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Mutations::UpdateProject, type: :request do
   let(:project) { FactoryBot.create(:project) }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) { { input: { stringKey: project.string_key, displayLabel: 'Best Project' } } }
     let(:request) { graphql query, variables }
   end

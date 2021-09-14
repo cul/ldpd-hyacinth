@@ -6,7 +6,7 @@ RSpec.describe Mutations::UpdateUser, type: :request do
   describe '.resolve' do
     let(:user) { FactoryBot.create(:user) }
 
-    include_examples 'requires user to have correct permissions for graphql request' do
+    include_examples 'a basic user with no abilities is not authorized to perform this request' do
       let(:variables) do
         { input: { id: user.uid, firstName: "John" } }
       end

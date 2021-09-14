@@ -8,7 +8,7 @@ RSpec.describe Mutations::DigitalObject::UpdateFeaturedThumbnailRegion, type: :r
   let(:authorized_object) { FactoryBot.create(:asset, :with_main_resource, primary_project: project) }
   let(:featured_thumbnail_region) { '5,10,100,100' }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) { { input: { id: authorized_object.uid, featuredThumbnailRegion: featured_thumbnail_region } } }
     let(:request) { graphql query, variables }
   end

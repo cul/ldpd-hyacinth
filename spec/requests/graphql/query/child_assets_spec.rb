@@ -10,7 +10,7 @@ RSpec.describe 'Retrieving Child Assets', type: :request do
   let(:authorized_project) { authorized_object.projects.first }
   let(:expected_type) { 'sequence' }
   let(:expected_child_assets) { authorized_object.children.map { |child| { 'id' => child.uid } } }
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:request) { graphql query(authorized_object.uid) }
   end
 

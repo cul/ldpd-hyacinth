@@ -7,7 +7,7 @@ RSpec.describe Mutations::ResourceRequest::UpdateResourceRequest, type: :request
   let(:status) { 'failure' }
   let(:processing_errors) { ['error1', 'error2', 'error3'] }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) do
       {
         input: {

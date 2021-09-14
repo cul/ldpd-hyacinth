@@ -10,7 +10,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
   let(:authorized_project) { authorized_object.projects.first }
   let(:authorized_publish_target) { authorized_project.publish_targets.first }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:request) { graphql query(authorized_object.uid) }
   end
 

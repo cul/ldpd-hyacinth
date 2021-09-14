@@ -6,7 +6,7 @@ RSpec.describe Mutations::DigitalObject::DeleteDigitalObject, type: :request do
   include_context 'with stubbed search adapters'
   let(:item) { FactoryBot.create(:item) }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:request) { graphql query, input: { id: item.uid } }
   end
 

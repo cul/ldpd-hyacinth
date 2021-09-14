@@ -246,14 +246,6 @@ module Types
       Project.accessible_by(ability)
     end
 
-    def projects_publish_targets(params)
-      project = self.project(params[:project])
-      enabled = project.publish_targets.map(&:string_key)
-      publish_targets.map do |publish_target|
-        publish_target.as_json.merge('enabled' => enabled.include?(publish_target.string_key))
-      end
-    end
-
     def publish_targets
       ability.authorize!(:read, PublishTarget)
       PublishTarget.accessible_by(ability).order(:string_key)

@@ -31,7 +31,7 @@ RSpec.describe Mutations::DigitalObject::UpdateDescriptiveMetadata, type: :reque
     enable_dynamic_fields(authorized_item.digital_object_type, authorized_item.primary_project, fields_for_category_definitions(field_definitions))
   end
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) { { input: { id: authorized_item.uid, descriptiveMetadata: {}, identifiers: [] } } }
     let(:request) { graphql query, variables }
   end

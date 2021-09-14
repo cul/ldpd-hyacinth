@@ -26,7 +26,7 @@ RSpec.describe Mutations::CreateAsset, type: :request do
   end
   let(:file_location) { "blob://#{active_storage_blob.signed_id}" }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) { { input: { parentId: authorized_object.uid, fileLocation: 'not-relevant' } } }
     let(:request) { graphql query, variables }
   end
