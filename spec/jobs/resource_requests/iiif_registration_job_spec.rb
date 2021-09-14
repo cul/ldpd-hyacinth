@@ -21,7 +21,7 @@ RSpec.describe ResourceRequests::IiifRegistrationJob do
 
     context 'successful run' do
       before do
-        expect(described_class).to receive(:create_callback).with(an_instance_of(ResourceRequest), asset)
+        expect(described_class).to receive(:submit_triclops_request).with(an_instance_of(ResourceRequest), asset)
         described_class.create_resource_request(asset, resource)
       end
 
@@ -71,8 +71,14 @@ RSpec.describe ResourceRequests::IiifRegistrationJob do
   describe '.eligible_object?' do
     let(:item) { FactoryBot.create(:item) }
 
-    it 'returns true for an image Asset with a valid source resource' do
+    it 'returns true for an image Asset with a valid source resource and featured_thumbnail_region' do
+      asset.featured_thumbnail_region = '1,2,3,4'
       expect(described_class.eligible_object?(asset)).to eq(true)
+    end
+
+    it 'returns false for an image Asset without a featured_thumbnail_region' do
+      asset.featured_thumbnail_region = nil
+      expect(described_class.eligible_object?(asset)).to eq(false)
     end
 
     it 'returns false for a non-Asset digital object' do

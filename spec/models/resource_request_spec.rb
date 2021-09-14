@@ -49,16 +49,16 @@ RSpec.describe ResourceRequest, type: :model do
     end
   end
 
-  describe '.run_create_callback' do
+  describe '.run_additional_creation_commit_callback' do
     let(:expected_resource_request_id) { 1 }
     it 'fires after instance create' do
-      expect(instance).to receive(:run_create_callback)
+      expect(instance).to receive(:run_additional_creation_commit_callback)
       instance.save
     end
 
     context 'enqueues a job with the expected parameters' do
       let(:callback) { instance_double(Proc) }
-      let(:instance) { FactoryBot.build(:resource_request, create_callback: callback) }
+      let(:instance) { FactoryBot.build(:resource_request, additional_creation_commit_callback: callback) }
       before do
         expect(callback).to receive(:call).with(an_instance_of(ResourceRequest))
       end
