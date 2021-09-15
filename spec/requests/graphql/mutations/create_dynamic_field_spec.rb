@@ -6,7 +6,7 @@ RSpec.describe Mutations::CreateDynamicField, type: :request do
   let(:dynamic_field) { FactoryBot.create(:dynamic_field) }
   let(:parent) { FactoryBot.create(:dynamic_field_group) }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) do
       { input: { stringKey: 'term', displayLabel: 'Term', fieldType: 'controlled_term', controlledVocabulary: 'names',
                  sortOrder: 6, dynamicFieldGroupId: parent.id, isFacetable: true, isKeywordSearchable: true, isTitleSearchable: true, isIdentifierSearchable: true } }

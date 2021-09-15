@@ -8,7 +8,7 @@ RSpec.describe Mutations::DigitalObject::Resource::DeleteResource, type: :reques
   let(:project) { digital_object.projects.first }
   let(:resource_name) { 'access' }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) { { input: { id: digital_object.uid, resourceName: 'does-not-matter' } } }
     let(:request) { graphql query, variables }
   end

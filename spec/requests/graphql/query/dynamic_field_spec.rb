@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'Retrieving Dynamic Field', type: :request do
   let(:dynamic_field) { FactoryBot.create(:dynamic_field) }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:request) { graphql query(dynamic_field.id) }
   end
 

@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'Retrieve User', type: :request do
   let(:user) { FactoryBot.create(:user) }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:request) { graphql query(user.uid) }
   end
 

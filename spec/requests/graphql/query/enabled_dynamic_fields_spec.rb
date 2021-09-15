@@ -14,7 +14,7 @@ RSpec.describe 'Retrieving Enabled Dynamic Fields', type: :request do
       dynamic_field: dynamic_field, required: false, default_value: default_value, field_sets: [field_set])
   end
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:request) { graphql query(project.string_key, graphql_digital_object_type) }
   end
 

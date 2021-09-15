@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 RSpec.describe 'Retrieving Projects', type: :request do
-  include_examples 'requires user to have correct permissions for graphql request' do
-    let(:request) { graphql projects_query }
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
+    let(:request) { graphql query }
   end
 
   context 'when logged in user is an admin shows all projects' do
@@ -13,7 +13,7 @@ RSpec.describe 'Retrieving Projects', type: :request do
         sign_in_user as: :administrator
         FactoryBot.create(:project)
         FactoryBot.create(:project, :legend_of_lincoln)
-        graphql projects_query
+        graphql query
       end
 
       it 'returns all projects' do
@@ -44,7 +44,7 @@ RSpec.describe 'Retrieving Projects', type: :request do
       project = FactoryBot.create(:project)
       FactoryBot.create(:project, :legend_of_lincoln)
       sign_in_project_contributor to: :read_objects, project: project
-      graphql projects_query
+      graphql query
     end
 
     it 'returns 1 project' do
@@ -61,5 +61,18 @@ RSpec.describe 'Retrieving Projects', type: :request do
         }
       )).at_path('data')
     end
+  end
+
+  def query
+    <<~GQL
+      query {
+        projects {
+          stringKey
+          displayLabel
+          projectUrl
+          hasAssetRights
+        }
+      }
+    GQL
   end
 end

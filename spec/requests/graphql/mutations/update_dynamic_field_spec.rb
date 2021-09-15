@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Mutations::UpdateDynamicField, type: :request do
   let(:dynamic_field) { FactoryBot.create(:dynamic_field) }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) { { input: { id: dynamic_field.id, displayLabel: 'New Location' } } }
     let(:request) { graphql query, variables }
   end

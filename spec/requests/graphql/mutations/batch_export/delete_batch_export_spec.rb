@@ -12,7 +12,7 @@ RSpec.describe Mutations::BatchExport::DeleteBatchExport, type: :request do
   end
   let(:id) { batch_export.id }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) { { input: { id: id } } }
     let(:request) { graphql query, variables }
   end
