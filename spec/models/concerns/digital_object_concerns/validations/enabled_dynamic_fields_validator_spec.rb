@@ -61,6 +61,20 @@ RSpec.describe DigitalObject::DynamicFieldsValidator do
                   '[{ "value": "text","label": "Text" }, { "value": "still image","label": "still image" }]'
                 }
               ]
+            },
+            {
+              string_key: 'group6',
+              display_label: 'Group 6',
+              dynamic_field_groups: [
+                {
+                  string_key: 'group6_1',
+                  display_label: 'Group 6.1',
+                  dynamic_fields: [
+                    { string_key: 'field1', display_label: 'Field 1', field_type: DynamicField::Type::STRING },
+                    { string_key: 'field2', display_label: 'Field 2', field_type: DynamicField::Type::STRING }
+                  ]
+                }
+              ]
             }
           ]
         }
@@ -90,6 +104,14 @@ RSpec.describe DigitalObject::DynamicFieldsValidator do
               'controlled_term_field' => { 'uri' => 'https://www.example.com' },
               'boolean_field' => true
             }
+          ],
+          'group6' => [
+            'group6_1' => [
+              {
+                'field1' => 'a',
+                'field2' => 'b'
+              }
+            ]
           ]
         }
       end
@@ -98,7 +120,9 @@ RSpec.describe DigitalObject::DynamicFieldsValidator do
         expect(item.valid?).to be false
         expect(item.errors.to_hash).to eq(
           'group1/string_field': ['field must be enabled'],
-          'group1/integer_field': ['field must be enabled']
+          'group1/integer_field': ['field must be enabled'],
+          'group6/group6_1/field1': ['field must be enabled'],
+          'group6/group6_1/field2': ['field must be enabled']
         )
       end
     end
