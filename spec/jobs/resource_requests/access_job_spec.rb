@@ -4,6 +4,7 @@ require 'rails_helper'
 
 RSpec.describe ResourceRequests::AccessJob do
   include_context 'with stubbed search adapters'
+
   let(:instance) { described_class.new }
   let(:asset) { FactoryBot.create(:asset, :with_main_resource, :skip_resource_request_callbacks) }
 
@@ -11,6 +12,8 @@ RSpec.describe ResourceRequests::AccessJob do
     # No ResourceRequests should exist before any of these tests.
     expect(ResourceRequest.count).to eq(0)
   end
+
+  include_examples 'adheres to Hyacinth ActiveJob practices'
 
   describe '#perform' do
     context 'when the given object is not eligible' do

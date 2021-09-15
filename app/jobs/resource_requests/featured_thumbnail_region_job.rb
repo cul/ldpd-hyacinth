@@ -4,7 +4,7 @@ module ResourceRequests
   class FeaturedThumbnailRegionJob < AbstractJob
     include ResourceRequestJobs::DerivativoJobBehaviors
 
-    @queue = :resource_requests_featured_thumbnail_region
+    queue_as :resource_requests_featured_thumbnail_region
 
     def self.create_resource_request(digital_object, resource)
       exist_check_conditions = { digital_object_uid: digital_object.uid, status: ['pending', 'in_progress'] }

@@ -12,6 +12,8 @@ RSpec.describe ResourceRequests::PosterJob do
     expect(ResourceRequest.count).to eq(0)
   end
 
+  include_examples 'adheres to Hyacinth ActiveJob practices'
+
   describe '#perform' do
     context 'when the given object is not eligible' do
       before do
