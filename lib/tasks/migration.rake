@@ -35,7 +35,10 @@ namespace :hyacinth do
       title_field_group = digital_object.descriptive_metadata[title_dynamic_field_group_name]
       next unless title_field_group.present? && (title_field_group[0]).present?
       digital_object.title = { 'value' => title_field_group[0].dup }
-      digital_object.save
+      result = digital_object.save
+      if !result
+        puts "Encountered errors while migrating #{digital_object.uid}: #{digital_object.errors.messages.inspect}"
+      end
     end
   end
 
@@ -48,7 +51,12 @@ namespace :hyacinth do
       next if digital_object.title.blank?
       title_field_group = digital_object.descriptive_metadata[title_dynamic_field_group_name]
       next unless title_field_group.present? && (title_field_group[0]).present?
-      digital_object.save if digital_object.title&.fetch('value', {}) == title_field_group.shift
+      if digital_object.title&.fetch('value', {}) == title_field_group.shift
+        result = digital_object.save
+        if !result
+          puts "Encountered errors while removing dynamic field title for #{digital_object.uid}: #{digital_object.errors.messages.inspect}"
+        end
+      end
     end
   end
 end
