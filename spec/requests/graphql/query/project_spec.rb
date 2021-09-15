@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'Retrieving Project', type: :request do
   let(:project) { FactoryBot.create(:project, :with_enabled_dynamic_field, :with_publish_target) }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:request) { graphql query(project.string_key) }
   end
 

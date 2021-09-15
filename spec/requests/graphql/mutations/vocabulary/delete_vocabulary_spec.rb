@@ -7,7 +7,7 @@ RSpec.describe Mutations::Vocabulary::DeleteVocabulary, type: :request do
 
   before { vocabulary }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) { { input: { stringKey: 'mythical_creatures' } } }
     let(:request) { graphql query, variables }
   end

@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Retrieving Batch Import', type: :request do
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:batch_import) { FactoryBot.create(:batch_import) }
     let(:request) { graphql query(batch_import.id) }
   end

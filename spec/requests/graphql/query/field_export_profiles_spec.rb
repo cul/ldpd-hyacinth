@@ -8,7 +8,7 @@ RSpec.describe 'Retrieving Field Export Profile', type: :request do
     FactoryBot.create(:field_export_profile, name: 'rightsMetadata')
   end
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:request) { graphql query }
   end
 

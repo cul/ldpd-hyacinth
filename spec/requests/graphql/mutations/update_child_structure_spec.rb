@@ -22,7 +22,7 @@ RSpec.describe Mutations::DigitalObject::UpdateChildStructure, type: :request do
     ]
   end
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) { { input: { parentUid: parent_item.uid, orderedChildren: ordered_children_input } } }
     let(:request) { graphql query, variables }
   end

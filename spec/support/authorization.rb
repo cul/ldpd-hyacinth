@@ -25,7 +25,7 @@ shared_examples 'does not have access' do
   end
 end
 
-shared_examples 'requires user to have correct permissions for graphql request' do
+shared_examples 'a basic user with no abilities is not authorized to perform this request' do
   context 'when logged in user does not have appropriate permissions' do
     before do
       sign_in_user

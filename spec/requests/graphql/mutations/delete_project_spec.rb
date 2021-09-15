@@ -7,7 +7,7 @@ RSpec.describe Mutations::DeleteProject, type: :request do
 
   before { FactoryBot.create(:project, string_key: string_key) }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) { { input: { stringKey: string_key } } }
     let(:request) { graphql query, variables }
   end

@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'Retrieving Field Export Profile', type: :request do
   let(:field_export_profile) { FactoryBot.create(:field_export_profile) }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:request) { graphql query(field_export_profile.id) }
   end
 

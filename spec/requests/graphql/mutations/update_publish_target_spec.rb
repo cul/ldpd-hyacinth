@@ -6,7 +6,7 @@ RSpec.describe Mutations::UpdatePublishTarget, type: :request do
   let(:publish_target) { FactoryBot.create(:publish_target, string_key: 'cool_publish_target') }
   let(:string_key) { publish_target.string_key }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) do
       { input: { stringKey: string_key } }
     end

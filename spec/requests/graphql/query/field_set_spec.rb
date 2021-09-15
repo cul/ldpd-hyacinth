@@ -6,7 +6,7 @@ RSpec.describe 'Retrieving Field Set', type: :request do
   let(:project) { FactoryBot.create(:project) }
   let(:field_set) { FactoryBot.create(:field_set, project: project) }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:request) { graphql query(field_set.id) }
   end
 

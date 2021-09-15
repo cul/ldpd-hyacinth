@@ -7,7 +7,7 @@ RSpec.describe Mutations::BatchImport::DeleteBatchImport, type: :request do
   let(:batch_import) { FactoryBot.create(:batch_import, :with_successful_digital_object_import, user: user) }
   let(:id) { batch_import.id }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) { { input: { id: id } } }
     let(:request) { graphql query, variables }
   end

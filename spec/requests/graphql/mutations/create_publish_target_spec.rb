@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Mutations::CreatePublishTarget, type: :request do
   let(:string_key) { 'new_publish_target' }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) do
       {
         input: {

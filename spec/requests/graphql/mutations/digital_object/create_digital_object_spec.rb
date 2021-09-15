@@ -37,7 +37,7 @@ RSpec.describe Mutations::DigitalObject::CreateDigitalObject, type: :request do
     end
   end
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) { { input: { digitalObjectType: 'ITEM', project: { stringKey: project.string_key }, descriptiveMetadata: {}, identifiers: [] } } }
     let(:request) { graphql query, variables }
   end

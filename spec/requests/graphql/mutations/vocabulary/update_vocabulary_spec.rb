@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Mutations::Vocabulary::UpdateVocabulary, type: :request do
   before { FactoryBot.create(:vocabulary) }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) { { input: { stringKey: 'mythical_creatures', locked: true } } }
     let(:request) { graphql query, variables }
   end

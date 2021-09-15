@@ -29,7 +29,7 @@ RSpec.describe Mutations::DigitalObject::Resource::CreateResource, type: :reques
 
   let(:disk_file_location) { Rails.root.join('spec', 'fixtures', 'files', 'test.txt') }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) { { input: { id: digital_object_uid, resourceName: 'does-not-matter', fileLocation: 'does-not-matter' } } }
     let(:request) { graphql query, variables }
   end

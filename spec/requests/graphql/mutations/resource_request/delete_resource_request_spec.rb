@@ -6,7 +6,7 @@ RSpec.describe Mutations::ResourceRequest::DeleteResourceRequest, type: :request
   let(:resource_request) { FactoryBot.create(:resource_request) }
   let(:id) { resource_request.id }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) { { input: { id: resource_request.id } } }
     let(:request) { graphql query, variables }
   end

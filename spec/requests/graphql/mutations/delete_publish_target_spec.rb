@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe Mutations::DeletePublishTarget, type: :request do
   let(:publish_target) { FactoryBot.create(:publish_target) }
 
-  include_examples 'requires user to have correct permissions for graphql request' do
+  include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) { { input: { stringKey: publish_target.string_key } } }
     let(:request) { graphql query, variables }
   end

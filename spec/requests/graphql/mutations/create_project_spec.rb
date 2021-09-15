@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe Mutations::CreateProject, type: :request do
   describe '.resolve' do
-    include_examples 'requires user to have correct permissions for graphql request' do
+    include_examples 'a basic user with no abilities is not authorized to perform this request' do
       let(:variables) { { input: { stringKey: 'best_project', displayLabel: 'Best Project' } } }
       let(:request) { graphql query, variables }
     end
