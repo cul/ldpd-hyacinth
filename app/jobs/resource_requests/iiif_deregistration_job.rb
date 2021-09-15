@@ -4,7 +4,7 @@ module ResourceRequests
   class IiifDeregistrationJob < AbstractJob
     include ResourceRequestJobs::IiifJobBehaviors
 
-    @queue = :image_syndication
+    @queue = :iiif_deregistration
 
     def self.create_resource_request(digital_object, resource)
       exist_check_conditions = { digital_object_uid: digital_object.uid, status: ['pending', 'in_progress'] }
