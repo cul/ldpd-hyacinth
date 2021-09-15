@@ -235,6 +235,20 @@ RSpec.describe DynamicField, type: :model do
                   { string_key: 'string_field', display_label: 'String Field', field_type: DynamicField::Type::STRING },
                   { string_key: 'integer_field', display_label: 'Integer Field', field_type: DynamicField::Type::INTEGER }
                 ]
+              },
+              {
+                string_key: 'group3',
+                display_label: 'Group 3',
+                dynamic_field_groups: [
+                  {
+                    string_key: 'group3_1',
+                    display_label: 'Group 3.1',
+                    dynamic_fields: [
+                      { string_key: 'string_field', display_label: 'String Field', field_type: DynamicField::Type::STRING },
+                      { string_key: 'integer_field', display_label: 'Integer Field', field_type: DynamicField::Type::INTEGER }
+                    ]
+                  }
+                ]
               }
             ]
           }
@@ -244,16 +258,14 @@ RSpec.describe DynamicField, type: :model do
     before do
       Hyacinth::DynamicFieldsLoader.load_fields!(field_definitions, load_vocabularies: true)
     end
-    let(:expected_group1_string_field)  { DynamicField.find_by(dynamic_field_group: DynamicFieldGroup.find_by(string_key: 'group1'), string_key: 'string_field') }
-    let(:expected_group1_integer_field) { DynamicField.find_by(dynamic_field_group: DynamicFieldGroup.find_by(string_key: 'group1'), string_key: 'integer_field') }
-    let(:expected_group2_string_field)  { DynamicField.find_by(dynamic_field_group: DynamicFieldGroup.find_by(string_key: 'group2'), string_key: 'string_field') }
-    let(:expected_group2_integer_field) { DynamicField.find_by(dynamic_field_group: DynamicFieldGroup.find_by(string_key: 'group2'), string_key: 'integer_field') }
 
     it 'finds existing fields' do
-      expect(DynamicField.find_by_path_traversal(['group1', 'string_field'])).to eq(expected_group1_string_field)
-      expect(DynamicField.find_by_path_traversal(['group1', 'integer_field'])).to eq(expected_group1_integer_field)
-      expect(DynamicField.find_by_path_traversal(['group2', 'string_field'])).to eq(expected_group2_string_field)
-      expect(DynamicField.find_by_path_traversal(['group2', 'integer_field'])).to eq(expected_group2_integer_field)
+      expect(DynamicField.find_by_path_traversal(['group1', 'string_field']).path).to eq('group1/string_field')
+      expect(DynamicField.find_by_path_traversal(['group1', 'integer_field']).path).to eq('group1/integer_field')
+      expect(DynamicField.find_by_path_traversal(['group2', 'string_field']).path).to eq('group2/string_field')
+      expect(DynamicField.find_by_path_traversal(['group2', 'integer_field']).path).to eq('group2/integer_field')
+      expect(DynamicField.find_by_path_traversal(['group3', 'group3_1', 'string_field']).path).to eq('group3/group3_1/string_field')
+      expect(DynamicField.find_by_path_traversal(['group3', 'group3_1', 'integer_field']).path).to eq('group3/group3_1/integer_field')
     end
 
     it 'raises an error for impossible paths' do

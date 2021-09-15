@@ -48,9 +48,7 @@ class DynamicField < ActiveRecord::Base
     original_path = path.dup
 
     current_node = DynamicFieldGroup.find_by!(string_key: path.shift)
-
-    current_node = DynamicFieldGroup.find_by!(string_key: path.shift, dynamic_field_group: current_node) while path.length > 1
-
+    current_node = DynamicFieldGroup.find_by!(string_key: path.shift, parent: current_node) while path.length > 1
     DynamicField.find_by!(string_key: path.shift, dynamic_field_group: current_node)
   rescue ActiveRecord::RecordNotFound
     # Re-raise with more helpful error message
