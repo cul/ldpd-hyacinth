@@ -4,7 +4,7 @@ module ResourceRequests
   class AccessJob < AbstractJob
     include ResourceRequestJobs::DerivativoJobBehaviors
 
-    @queue = :resource_requests_access
+    queue_as :resource_requests_access
 
     # Mapping for how many degrees to rotate by to create an upright orientation.
     # Note: Only handling non-mirrored rotations for now.

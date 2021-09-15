@@ -4,7 +4,7 @@ module ResourceRequests
   class IiifRegistrationJob < AbstractJob
     include ResourceRequestJobs::IiifJobBehaviors
 
-    @queue = :iiif_registration
+    queue_as :iiif_registration
 
     def self.create_resource_request(digital_object, resource)
       exist_check_conditions = { digital_object_uid: digital_object.uid, status: ['pending', 'in_progress'] }

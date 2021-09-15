@@ -4,7 +4,7 @@ module ResourceRequests
   class PosterJob < AbstractJob
     include ResourceRequestJobs::DerivativoJobBehaviors
 
-    @queue = :resource_requests_poster
+    queue_as :resource_requests_poster
 
     def self.create_resource_request(digital_object, resource)
       job_type = job_type_for_resource(resource)
