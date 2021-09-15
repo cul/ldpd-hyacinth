@@ -6,42 +6,4 @@ module GraphQLHelper
     params[:variables] = variables.is_a?(Hash) ? variables.to_json : variables unless variables.blank?
     post '/graphql', params: params
   end
-
-  def projects_query
-    <<~GQL
-      query {
-        projects {
-          stringKey
-          displayLabel
-          projectUrl
-          hasAssetRights
-        }
-      }
-    GQL
-  end
-
-  def project_query(string_key)
-    <<~GQL
-      query {
-        project(stringKey: "#{string_key}") {
-          stringKey
-          displayLabel
-          projectUrl
-          hasAssetRights
-          projectPermissions {
-            user {
-              id,
-              fullName
-            },
-            project {
-              stringKey
-              displayLabel
-            },
-            actions
-          }
-          enabledDigitalObjectTypes
-        }
-      }
-    GQL
-  end
 end
