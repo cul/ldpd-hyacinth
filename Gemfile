@@ -38,7 +38,7 @@ group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'equivalent-xml'
   gem 'jettywrapper', '>=1.4.0', git: 'https://github.com/samvera-deprecated/jettywrapper.git', branch: 'master'
-  gem 'rubocul', '2.0.1'
+  gem 'rubocul', '2.0.2'
   gem 'solr_wrapper', '~> 2.0'
 end
 
