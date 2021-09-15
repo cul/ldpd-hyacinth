@@ -57,6 +57,18 @@ describe Hyacinth::Config do
     end
   end
 
+  context ".derivativo" do
+    it "returns an object of the expected type" do
+      expect(described_class.derivativo).to be_a(Hyacinth::Clients::FaradayClient)
+    end
+  end
+
+  context ".triclops" do
+    it "returns an object of the expected type" do
+      expect(described_class.triclops).to be_a(Hyacinth::Clients::FaradayClient)
+    end
+  end
+
   context ".default_lang_value" do
     include_context 'with system default language subtags'
     it 'returns an object of the expected type' do

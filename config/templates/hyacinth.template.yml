@@ -28,6 +28,11 @@ development:
     request_timeout: 120
     default_job_options:
       <<: *derivativo_default_job_options
+  triclops:
+    url: http://localhost:5000
+    api_key: 'changethis'
+    request_timeout: 120
+    default_job_options: {}
   metadata_storage:
     adapters:
       - uri_protocol: 'managed-disk'
@@ -84,6 +89,11 @@ test:
     request_timeout: 120
     default_job_options:
       <<: *derivativo_default_job_options
+  triclops:
+    url: http://localhost:5000
+    api_key: 'changethis'
+    request_timeout: 120
+    default_job_options: {}
   metadata_storage:
     adapters:
       - uri_protocol: 'managed-disk'

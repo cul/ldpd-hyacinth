@@ -2,7 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe ResourceRequests::AccessJob, solr: true do
+RSpec.describe ResourceRequests::AccessJob do
+  include_context 'with stubbed search adapters'
   let(:instance) { described_class.new }
   let(:asset) { FactoryBot.create(:asset, :with_main_resource, :skip_resource_request_callbacks) }
 
@@ -33,7 +34,7 @@ RSpec.describe ResourceRequests::AccessJob, solr: true do
   end
 
   describe '.create_resource_request' do
-    let(:src_file_location) { Derivativo::ResourceHelper.resource_location_for_derivativo(resource) }
+    let(:src_file_location) { Hyacinth::DigitalObject::ResourceHelper.resource_location_uri(resource) }
 
     context 'successful run' do
       before do

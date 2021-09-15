@@ -91,4 +91,23 @@ RSpec.describe DigitalObject::Asset, type: :model do
       asset.save
     end
   end
+
+  describe "the run_resource_recalls before_destroy callback method" do
+    include_context 'with stubbed search adapters'
+    let(:asset) { FactoryBot.create(:asset, :with_main_resource) }
+
+    # TODO: Need to update to the way that digital objects save, since deep_clone method
+    # (which uses Marshal.dump) isn't compatible with rspec mocks.
+
+    it 'runs before destroy' do
+      expect(ResourceRequests::IiifDeregistrationJob).to receive(:perform_later_if_eligible)
+      asset.destroy
+    end
+
+    it 'does not run before destroy if skip_resource_request_callbacks is set to true' do
+      asset.skip_resource_request_callbacks = true
+      expect(ResourceRequests::IiifDeregistrationJob).not_to receive(:perform_later_if_eligible)
+      asset.destroy
+    end
+  end
 end

@@ -2,7 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe DigitalObjectImportProcessingJob, solr: true do
+RSpec.describe DigitalObjectImportProcessingJob do
+  include_context 'with stubbed search adapters'
   let(:user) { FactoryBot.create(:user) }
   let(:batch_import) { FactoryBot.create(:batch_import, user: user) }
   let(:digital_object_import) { FactoryBot.create(:digital_object_import, batch_import: batch_import) }
@@ -124,8 +125,8 @@ RSpec.describe DigitalObjectImportProcessingJob, solr: true do
       described_class.queue_applicable_import_prerequisites(digital_object_import)
     end
     it "queues the expected ImportPrerequisites" do
-      expect(Resque).to have_received(:enqueue).with(DigitalObjectImportProcessingJob, second_digital_object_import.id)
-      expect(Resque).to have_received(:enqueue).with(DigitalObjectImportProcessingJob, third_digital_object_import.id)
+      expect(Resque).to have_received(:enqueue).with(described_class, second_digital_object_import.id)
+      expect(Resque).to have_received(:enqueue).with(described_class, third_digital_object_import.id)
     end
   end
 

@@ -19,7 +19,9 @@ class DigitalObject::Asset < DigitalObject
 
   before_validation :assign_asset_type_from_main_resource_import_if_blank
   before_validation :assign_title_from_main_resource_import_if_blank
-  after_save :run_resource_requests, unless: :skip_resource_request_callbacks # sometimes it's useful to skip resource request callbacks when testing
+  # sometimes it's useful to skip (via attribute) resource request callbacks when testing
+  after_save :run_resource_requests, unless: :skip_resource_request_callbacks
+  before_destroy :request_iiif_deregistration, unless: :skip_resource_request_callbacks
 
   metadata_attribute :asset_type, Hyacinth::DigitalObject::TypeDef::String.new
   metadata_attribute :exif_orientation, Hyacinth::DigitalObject::TypeDef::Integer.new.default(-> { 1 }) # Value of 1-8, describing orientation, based on EXIF standard

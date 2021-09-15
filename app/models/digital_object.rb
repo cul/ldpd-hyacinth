@@ -23,6 +23,7 @@ class DigitalObject < ApplicationRecord
 
   has_many :publish_entries
   has_many :publish_targets, through: :publish_entries
+  has_many :resource_requests, foreign_key: :digital_object_uid, primary_key: :uid, dependent: :destroy
   belongs_to :created_by, required: false, class_name: 'User'
   belongs_to :updated_by, required: false, class_name: 'User'
 

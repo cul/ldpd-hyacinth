@@ -15,8 +15,8 @@ module Hyacinth
       )
     end
 
-    def derivativo
-      @derivativo ||= Derivativo::Client.new(HYACINTH[:derivativo])
+    def self.derivativo
+      @derivativo ||= Hyacinth::Clients::FaradayClient.new(HYACINTH[:derivativo])
     end
 
     def self.metadata_storage
@@ -57,6 +57,10 @@ module Hyacinth
 
     def self.term_search_adapter
       @term_search_adapter ||= Hyacinth::Adapters.create_from_config('Hyacinth::Adapters::TermSearchAdapter', HYACINTH[:term_search_adapter])
+    end
+
+    def self.triclops
+      @triclops ||= Hyacinth::Clients::FaradayClient.new(HYACINTH[:triclops])
     end
 
     def self.default_lang_value

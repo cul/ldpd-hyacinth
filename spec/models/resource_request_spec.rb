@@ -18,7 +18,17 @@ RSpec.describe ResourceRequest, type: :model do
   describe "saving" do
     context 'valid object' do
       it 'saves' do
-        expect(instance.save).to eq(true)
+        expect(instance.save).to be true
+      end
+      context 'with a digital object' do
+        include_context 'with stubbed search adapters'
+        let(:digital_object) { FactoryBot.create(:asset, :with_main_resource, uid: 'abc-123') }
+        let(:instance) { FactoryBot.build(:resource_request, digital_object: digital_object) }
+        it 'builds a digital_object association' do
+          expect(instance.save).to be true
+          expect(digital_object.uid).to eql instance.digital_object_uid
+          expect(digital_object.resource_requests).to include(instance)
+        end
       end
     end
 
@@ -39,22 +49,18 @@ RSpec.describe ResourceRequest, type: :model do
     end
   end
 
-  describe '.enqueue_derivativo_job' do
+  describe '.run_additional_creation_commit_callback' do
     let(:expected_resource_request_id) { 1 }
     it 'fires after instance create' do
-      expect(instance).to receive(:enqueue_derivativo_job)
+      expect(instance).to receive(:run_additional_creation_commit_callback)
       instance.save
     end
 
     context 'enqueues a job with the expected parameters' do
+      let(:callback) { instance_double(Proc) }
+      let(:instance) { FactoryBot.build(:resource_request, additional_creation_commit_callback: callback) }
       before do
-        expect(Hyacinth::Config.derivativo).to receive(:enqueue_job).with(
-          job_type: instance.job_type,
-          resource_request_id: expected_resource_request_id,
-          digital_object_uid: instance.digital_object_uid,
-          src_file_location: instance.src_file_location,
-          options: instance.options
-        )
+        expect(callback).to receive(:call).with(an_instance_of(ResourceRequest))
       end
       it 'and the created instance has the same id as the resource_request_id param in the enqueued job' do
         instance.save
