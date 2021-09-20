@@ -81,6 +81,7 @@ Metrics/BlockLength:
     - 'lib/tasks/hyacinth/setup.rake'
     - 'lib/tasks/migration.rake'
     - 'lib/tasks/resque.rake'
+    - 'lib/tasks/hyacinth/sample_content.rake'
 
 # Offense count: 4
 # Configuration parameters: CountComments, Max.
