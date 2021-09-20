@@ -33,7 +33,7 @@ yarn install # this assumes you have node and yarn installed (tested with Node 8
 bundle exec rake hyacinth:development:reset
 
 # This is optional. Creates 21 basic sample records.
-bundle exec rake hyacinth:development:create_sample_records
+bundle exec rake hyacinth:sample_content:create
 
 # Start a local jetty server for Fedora 3 in the background (only required if you want to preserve/publish records during development)
 bundle exec rake jetty:start
