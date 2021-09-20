@@ -15,7 +15,7 @@ function DescriptiveMetadata(props) {
     title,
     descriptiveMetadata,
     typeOfContentChange,
-    fieldConfig
+    fieldConfig,
   } = props;
 
   const onChangeHandler = (fieldName, fieldVal) => {
@@ -68,7 +68,7 @@ function DescriptiveMetadata(props) {
 
                 <InputGroup>
                   <Label sm={4} align="right">Role(s)</Label>
-                  <ReadOnlyInput sm={8} value={n.role ? n.role.map(r => r.term.prefLabel).join(', ') : ''} />
+                  <ReadOnlyInput sm={8} value={n.role ? n.role.map((r) => r.term.prefLabel).join(', ') : ''} />
                 </InputGroup>
 
                 <InputGroup>
@@ -86,7 +86,7 @@ function DescriptiveMetadata(props) {
         }
 
         <InputGroup key="title_group">
-          <Label sm={4} align="right" for="rights_title_display">Title</Label>
+          <Label sm={4} align="right" htmlFor="rights_title_display">Title</Label>
           <ReadOnlyInput sm={8} inputName="rights_title_display" value={title?.value?.sortPortion} />
         </InputGroup>
 
@@ -101,8 +101,8 @@ function DescriptiveMetadata(props) {
 
         <Field
           value={value.country_of_origin}
-          onChange={v => onChangeHandler('country_of_origin', v)}
-          dynamicField={fieldConfig.children.find(c => c.stringKey === 'country_of_origin')}
+          onChange={(v) => onChangeHandler('country_of_origin', v)}
+          dynamicField={fieldConfig.children.find((c) => c.stringKey === 'country_of_origin')}
         />
 
         {
@@ -156,14 +156,14 @@ function DescriptiveMetadata(props) {
           <div>
             <Field
               value={value.film_distributed_to_public}
-              onChange={v => onChangeHandler('film_distributed_to_public', v)}
-              dynamicField={fieldConfig.children.find(c => c.stringKey === 'film_distributed_to_public')}
+              onChange={(v) => onChangeHandler('film_distributed_to_public', v)}
+              dynamicField={fieldConfig.children.find((c) => c.stringKey === 'film_distributed_to_public')}
             />
 
             <Field
               value={value.film_distributed_commercially}
-              onChange={v => onChangeHandler('film_distributed_commercially', v)}
-              dynamicField={fieldConfig.children.find(c => c.stringKey === 'film_distributed_commercially')}
+              onChange={(v) => onChangeHandler('film_distributed_commercially', v)}
+              dynamicField={fieldConfig.children.find((c) => c.stringKey === 'film_distributed_commercially')}
             />
           </div>
         </Collapse>
