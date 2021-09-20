@@ -13,37 +13,26 @@ function MultiSelectInput(props) {
     inputName, options, values, onChange,
   } = props;
 
-  const onChangeHandler = (newValues, actionType) => {
-    switch (actionType.action) {
-      case 'select-option':
-        onChange(newValues.map(v => v.value));
-        break;
-      case 'remove-value':
-        onChange(values.filter(f => f.value !== actionType.removedValue.value));
-        break;
-      default:
-        break;
-    }
+  const onChangeHandler = (newValues) => {
+    onChange(newValues.map((v) => v.value));
   };
 
-  const valuesWithLabels = values.map(v => (
-    { value: v, label: options.find(o => o.value === v).label }
+  const valuesWithLabels = values.map((v) => (
+    { value: v, label: options.find((o) => o.value === v).label }
   ));
 
   return (
     <Col sm={8} style={{ alignSelf: 'center' }}>
       <Select
         placeholder="Select one or more..."
-        value={valuesWithLabels}
+        defaultValue={valuesWithLabels}
         name={inputName}
         onChange={onChangeHandler}
         options={options}
         isMulti
         isSearchable={false}
-        isClearable={false}
-        styles={{
-          container: styles => ({ ...styles, fontSize: '.875rem', paddingTop: '.35rem' }),
-        }}
+        isClearable
+        closeMenuOnSelect={false}
       />
     </Col>
   );
