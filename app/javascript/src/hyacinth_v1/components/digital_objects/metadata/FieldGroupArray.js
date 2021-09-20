@@ -2,8 +2,6 @@ import React from 'react';
 import produce from 'immer';
 import PropTypes from 'prop-types';
 
-const randomKey = (prefix) => `${prefix}${Math.random()}`.replace('.', '');
-
 const FieldGroupArray = (props) => {
   const {
     component, value, onChange, defaultValue, dynamicFieldGroup,

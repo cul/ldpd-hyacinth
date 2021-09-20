@@ -16,16 +16,7 @@ import TextInputWithAddAndRemove from '../../shared/forms/inputs/TextInputWithAd
 import { createDigitalObjectMutation, updateDescriptiveMetadataMutation } from '../../../graphql/digitalObjects';
 import { getEnabledDynamicFieldsQuery } from '../../../graphql/projects/enabledDynamicFields';
 import { getDynamicFieldGraphQuery } from '../../../graphql/dynamicFieldCategories';
-
-const defaultFieldValue = {
-  string: '',
-  textarea: '',
-  integer: null,
-  boolean: false,
-  select: '',
-  date: '',
-  controlled_term: {},
-};
+import { emptyDataForCategories, filterDynamicFieldCategories, padForEnabledFields } from '../../../utils/dynamicFieldStructures';
 
 const DynamicFieldCategory = (props) => {
   const {
@@ -151,38 +142,6 @@ function MetadataForm(props) {
     return action({ variables });
   };
 
-  const emptyDescriptiveMetadata = (dynamicFields, newObject) => {
-    dynamicFields.forEach((i) => {
-      switch (i.type) {
-        case 'DynamicFieldGroup':
-          newObject[i.stringKey] = [emptyDescriptiveMetadata(i.children, {})];
-          break;
-        case 'DynamicField':
-          newObject[i.stringKey] = defaultFieldValue[i.fieldType];
-          break;
-        default:
-          break;
-      }
-    });
-
-    return newObject;
-  };
-
-  const keepEnabledFields = (enabledFieldIds, children) => children.map((c) => {
-    switch (c.type) {
-      case 'DynamicFieldGroup':
-        c.children = keepEnabledFields(enabledFieldIds, c.children);
-        return c.children.length > 0 ? c : null;
-      case 'DynamicField':
-        if (enabledFieldIds.includes(c.id)) return c;
-        // if the ids are fetched in queries mixing ID scalars and JSON, strings must be compared
-        if (enabledFieldIds.includes(String(c.id))) return c;
-        return null;
-      default:
-        return c;
-    }
-  }).filter((c) => c !== null);
-
   const {
     loading: enabledFieldsLoading,
     error: enabledFieldsError,
@@ -204,28 +163,19 @@ function MetadataForm(props) {
   if (anyErrors) {
     return (<GraphQLErrors errors={anyErrors} />);
   }
+  const { enabledDynamicFields } = enabledFieldsData;
+  const { dynamicFieldGraph: { dynamicFieldCategories } } = fieldGraphData;
+  const filteredCategories = filterDynamicFieldCategories(dynamicFieldCategories, enabledDynamicFields);
 
-  const enabledFieldIds = [];
-  enabledFieldsData.enabledDynamicFields.forEach((enabledField) => {
-    const { dynamicField, ...rest } = enabledField;
-    if (rest.enabled) enabledFieldIds.push(dynamicField.id);
-  });
-
-  const filteredCategories = fieldGraphData.dynamicFieldGraph.dynamicFieldCategories.map((cat) => {
-    cat.children = keepEnabledFields(enabledFieldIds, cat.children);
-    return cat;
-  }).filter((cat) => cat.children.length > 0);
-
-  const emptyData = {};
-  filteredCategories.forEach((category) => {
-    emptyDescriptiveMetadata(category.children, emptyData);
-  });
-
+  const emptyData = emptyDataForCategories(filteredCategories);
   /*
     Merge emptyData and descriptiveMetadata so that we don't supply undefined values to the form
     as we build out the hierarchy.
    */
   merge(descriptiveMetadata, emptyData, initialDescriptiveMetadata);
+  // Pad descriptiveMetadata out for all enabled fields so that form only encounters defined values
+  padForEnabledFields(descriptiveMetadata, emptyData);
+
   const cancelPath = (formType === 'new') ? '/digital_objects' : `/digital_objects/${id}/metadata`;
   return (
     <>
