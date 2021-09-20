@@ -261,7 +261,7 @@ rights_fields:
       dynamic_field_groups:
         - display_label: Are permissions granted as part of the Use License?
           string_key: permissions_granted_as_part_of_the_use_license
-          is_repeatable: false
+          is_repeatable: true
           dynamic_fields:
             - display_label: Value
               string_key: value

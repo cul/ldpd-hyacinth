@@ -118,7 +118,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
                 photographic_or_film_credit: "No Credits",
                 excerpt_limited_to: "23 minutes",
                 other: "None",
-                permissions_granted_as_part_of_the_use_license: [{ value: "Reproduction" }]
+                permissions_granted_as_part_of_the_use_license: [{ value: "Reproduction" }, { value: "Distribution" }]
               }],
               underlying_rights: [{
                 note: "No underlying rights",
