@@ -345,28 +345,36 @@ RSpec.describe DigitalObject, type: :model do
     end
     describe "#valid?" do
       describe 'title validations' do
-        let(:valid_with_sort_portion) { { 'sort_portion' => 'Test Fixture' } }
-        let(:valid_with_whitespace_sort_portion) { { 'sort_portion' => ' ' } }
-        let(:invalid_without_sort_portion) { { 'non_sort_portion' => 'A ' } }
-        let(:valid_blank) { {} }
+        let(:only_sort_portion) { { 'sort_portion' => 'Test Fixture' } }
+        let(:only_whitespace_sort_portion) { { 'sort_portion' => ' ' } }
+        let(:only_non_sort_portion) { { 'non_sort_portion' => 'A ' } }
+        let(:empty_value) { {} }
         it 'is valid with only a sort portion' do
-          instance.assign_attributes('title' => { 'value' => valid_with_sort_portion })
+          instance.assign_attributes('title' => { 'value' => only_sort_portion })
           expect(instance).to be_valid
         end
         it 'is valid with an empty title hash' do
-          instance.assign_attributes('title' => valid_blank)
+          instance.assign_attributes('title' => empty_value)
           expect(instance).to be_valid
         end
         it 'is valid with a nil title' do
           instance.assign_attributes('title' => nil)
           expect(instance).to be_valid
         end
-        it 'is valid when the title only contains a blank non_sort_portion (because blank title fields are removed in before_validation callback)' do
-          instance.assign_attributes('title' => { 'value' => valid_with_whitespace_sort_portion })
-          expect(instance).to be_valid
+        describe 'removing stripped-blank fields in a validation callback' do
+          before do
+            instance.assign_attributes('title' => { 'value' => only_whitespace_sort_portion })
+            instance.valid?
+          end
+          it 'is valid when assigned only a whitespace sort_portion' do
+            expect(instance).to be_valid
+          end
+          it 'removes all title field values when assigned only a whitespace sort_portion' do
+            expect(instance.title).to be_blank
+          end
         end
         it 'is invalid when title hash is present but sort_portion is blank' do
-          instance.assign_attributes('title' => { 'value' => invalid_without_sort_portion })
+          instance.assign_attributes('title' => { 'value' => only_non_sort_portion })
           expect(instance).not_to be_valid
         end
       end
