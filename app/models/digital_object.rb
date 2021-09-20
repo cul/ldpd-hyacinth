@@ -27,7 +27,7 @@ class DigitalObject < ApplicationRecord
   belongs_to :created_by, required: false, class_name: 'User'
   belongs_to :updated_by, required: false, class_name: 'User'
 
-  before_validation :clean_descriptive_metadata!, :clean_rights!
+  before_validation :clean_title!, :clean_descriptive_metadata!, :clean_rights!
   before_save :lock, :assign_uid_if_not_exist, :assign_metadata_location_uri_if_not_exist,
               :reject_optimistic_lock_token_if_stale!, :update_optimistic_lock_token,
               :write_metadata_storage_backup,

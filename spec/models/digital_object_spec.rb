@@ -346,7 +346,7 @@ RSpec.describe DigitalObject, type: :model do
     describe "#valid?" do
       describe 'title validations' do
         let(:valid_with_sort_portion) { { 'sort_portion' => 'Test Fixture' } }
-        let(:invalid_with_whitespace_sort_portion) { { 'sort_portion' => ' ' } }
+        let(:valid_with_whitespace_sort_portion) { { 'sort_portion' => ' ' } }
         let(:invalid_without_sort_portion) { { 'non_sort_portion' => 'A ' } }
         let(:valid_blank) { {} }
         it 'is valid with only a sort portion' do
@@ -361,9 +361,11 @@ RSpec.describe DigitalObject, type: :model do
           instance.assign_attributes('title' => nil)
           expect(instance).to be_valid
         end
+        it 'is valid when the title only contains a blank non_sort_portion (because blank title fields are removed in before_validation callback)' do
+          instance.assign_attributes('title' => { 'value' => valid_with_whitespace_sort_portion })
+          expect(instance).to be_valid
+        end
         it 'is invalid when title hash is present but sort_portion is blank' do
-          instance.assign_attributes('title' => { 'value' => invalid_with_whitespace_sort_portion })
-          expect(instance).not_to be_valid
           instance.assign_attributes('title' => { 'value' => invalid_without_sort_portion })
           expect(instance).not_to be_valid
         end
