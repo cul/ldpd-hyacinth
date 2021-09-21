@@ -1,6 +1,12 @@
 const appPage = (relativePath) => `http://localhost:4444${relativePath}`;
 
 describe('/', () => {
+  // set jest timeouts to be very long for this e2e test suite
+  jest.setTimeout(20 * 1000);
+
+  // reset jest timeouts
+  afterAll(() => jest.setTimeout(5 * 1000));
+
   beforeEach(async () => {
     await page.goto(appPage('/'));
   });
@@ -11,6 +17,12 @@ describe('/', () => {
 });
 
 describe('/ui/v1', () => {
+  // set jest timeouts to be very long for this e2e test suite
+  jest.setTimeout(20 * 1000);
+
+  // reset jest timeouts
+  afterAll(() => jest.setTimeout(5 * 1000));
+
   beforeEach(async () => {
     await page.goto(appPage('/ui/v1'));
   });
