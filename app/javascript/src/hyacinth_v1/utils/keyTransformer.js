@@ -1,44 +1,34 @@
 import { camelCase, snakeCase } from 'lodash';
 
-class KeyTransformer {
-  /**
-   * Returns a recursively key-transformed copy of the given
-   * object or array without modifying the input.
-   */
-  transformKeys = (obj, transformFunction) => {
-    if (Array.isArray(obj)) {
-      return obj.map(v => this.transformKeys(v, transformFunction));
-    }
-
-    if (obj !== null && obj.constructor === Object) {
-      return Object.keys(obj).reduce(
-        (result, key) => ({
-          ...result,
-          [transformFunction(key)]: this.transformKeys(obj[key], transformFunction),
-        }),
-        {},
-      );
-    }
-    return obj;
+/**
+ * Returns a recursively key-transformed copy of the given
+ * object or array without modifying the input.
+ */
+const transformKeys = (obj, transformFunction) => {
+  if (Array.isArray(obj)) {
+    return obj.map((v) => transformKeys(v, transformFunction));
   }
 
-  /**
-   * Returns a recursively camelCase key-transformed copy of the given
-   * object or array without modifying the input.
-   */
-  deepCamelCase = (obj) => {
-    return this.transformKeys(obj, camelCase);
+  if (obj !== null && obj.constructor === Object) {
+    return Object.keys(obj).reduce(
+      (result, key) => ({
+        ...result,
+        [transformFunction(key)]: transformKeys(obj[key], transformFunction),
+      }),
+      {},
+    );
   }
+  return obj;
+};
 
-  /**
-   * Returns a recursively snake_case key-transformed copy of the given
-   * object or array without modifying the input.
-   */
-  deepSnakeCase = (obj) => {
-    return this.transformKeys(obj, snakeCase);
-  }
-}
+/**
+ * Returns a recursively camelCase key-transformed copy of the given
+ * object or array without modifying the input.
+ */
+export const deepCamelCase = (obj) => transformKeys(obj, camelCase);
 
-const keyTransformer = new KeyTransformer();
-
-export default keyTransformer;
+/**
+ * Returns a recursively snake_case key-transformed copy of the given
+ * object or array without modifying the input.
+ */
+export const deepSnakeCase = (obj) => transformKeys(obj, snakeCase);

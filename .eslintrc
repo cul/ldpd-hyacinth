@@ -2,17 +2,27 @@
   "extends": [
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
-    "airbnb"
+    "airbnb",
+    "plugin:jest/recommended",
+    "plugin:jest/style",
+    "plugin:testing-library/react"
+  ],
+  "plugins": [
+    "react",
+    "jest",
+    "testing-library"
   ],
   "parser": "@babel/eslint-parser",
   "env": {
     "es2020": true,
     "browser": true,
-    "node": true
+    "node": true,
+    "jest": true
   },
   "rules": {
     "no-param-reassign": ["error", { "ignorePropertyModificationsFor" : ["draft"] } ],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-    "max-len": ["error", { "code": 140 }]
+    "max-len": ["error", { "code": 140 }],
+    "jest/expect-expect": ["error", {"assertFunctionNames": ["expect", "screen.findByText"]}]
   }
 }
