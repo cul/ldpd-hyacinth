@@ -34,9 +34,11 @@
     "graphql": "^14.5.8",
     "graphql-tag": "^2.10.1",
     "immer": "^9",
+    "jest-puppeteer": "^5.0.4",
     "lodash": "^4.17.13",
     "moment": "^2.24.0",
     "prop-types": "^15.7.2",
+    "puppeteer": "^9.1.1",
     "query-string": "^6.5.0",
     "react": "^16.8.1",
     "react-ace": "^9.4.3",
@@ -73,19 +75,9 @@
   },
   "scripts": {
     "lint": "eslint app/javascript --ext .js,.jsx",
-    "test": "jest",
-    "test:watch": "jest --watch"
-  },
-  "jest": {
-    "roots": [
-      "spec/javascript",
-      "app/javascript/src"
-    ],
-    "setupFilesAfterEnv": [
-      "<rootDir>/spec/javascript/setupTests.js"
-    ],
-    "moduleNameMapper": {
-      "ace-builds": "<rootDir>/node_modules/ace-builds"
-    }
+    "test": "jest -c jest.config.js",
+    "test:watch": "jest -c jest.config.js --watch",
+    "test:e2e": "jest -c jest-e2e.config.js",
+    "test:e2e:watch": "jest -c jest-e2e.config.js --watch"
   }
 }
