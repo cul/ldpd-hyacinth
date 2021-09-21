@@ -5,7 +5,7 @@ on:
     branches: [ '*' ]
 
 jobs:
-  ci:
+  ci-rails-app:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -47,3 +47,20 @@ jobs:
       - run: yarn install --frozen-lockfile
       - name: Run CI task
         run: bundle exec rake hyacinth:ci WEBPACKER_RECOMPILE=true
+
+  ci-javascript:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ['10', '12']
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install -g yarn
+      - run: yarn install --frozen-lockfile
+      - name: Run tests
+        run: yarn run test
