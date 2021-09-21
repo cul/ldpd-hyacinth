@@ -10,7 +10,7 @@ import { ApolloLink } from 'apollo-link';
 //
 // Some things to know about our Apollo instance:
 //   CACHING: We use an InMemoryCache and configure it to cache with the `network-only` policy. This
-//            configuration fetches fresh data with very request and will no display stale results.
+//            configuration fetches fresh data with every request and will no display stale results.
 //            We use the network-only fetch policy instead of the `no-cache` policy because updating
 //            results via fetchMore doesn't work when using a `no-cache` policy.
 //            More information: https://github.com/apollographql/apollo-client/issues/5239
@@ -30,11 +30,9 @@ function createApolloClient(introspectionQueryResultData) {
     link: ApolloLink.from([
       onError(({ graphQLErrors, networkError }) => {
         if (graphQLErrors) {
-          graphQLErrors.forEach(({ message, locations, path }) =>
-            console.log(
-              `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
-            ),
-          );
+          graphQLErrors.forEach(({ message, locations, path }) => console.log(
+            `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
+          ));
         }
         if (networkError) console.log(`[Network error]: ${networkError}`);
       }),

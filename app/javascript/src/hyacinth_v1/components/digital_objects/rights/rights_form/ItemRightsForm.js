@@ -22,13 +22,14 @@ import ContractualLimitationsRestrictionsAndPermissions from './subsections/Cont
 import RightsForWorksOfArtSculptureAndPhotographs from './subsections/RightsForWorksOfArtSculptureAndPhotographs';
 import UnderlyingRights from './subsections/UnderlyingRights';
 import { removeTypename, removeEmptyKeys } from '../../../../utils/deepKeyRemove';
-import keyTransformer from '../../../../utils/keyTransformer';
+import { deepCamelCase } from '../../../../utils/keyTransformer';
 import { defaultFieldValues, mergeDefaultValues } from '../../common/defaultFieldValues';
 import { useEnabled, useHash } from './rightsHooks';
 import FieldGroupArray from './fields/FieldGroupArray';
 
 function ItemRightsForm(props) {
-  const { fieldConfiguration,
+  const {
+    fieldConfiguration,
     digitalObject: {
       id, title, rights: initialRights, descriptiveMetadata, optimisticLockToken,
     },
@@ -99,7 +100,7 @@ function ItemRightsForm(props) {
     }
   };
 
-  const findFieldConfig = stringKey => fieldConfiguration.find(c => c.stringKey === stringKey);
+  const findFieldConfig = (stringKey) => fieldConfiguration.find((c) => c.stringKey === stringKey);
 
   if (fieldConfiguration.length === 0) return (<p>Rights field configuration missing.</p>);
 
@@ -109,7 +110,7 @@ function ItemRightsForm(props) {
       <ErrorList errors={userErrors.map((userError) => (`${userError.message} (path=${userError.path.join('/')})`))} />
 
       <DescriptiveMetadata
-        descriptiveMetadata={keyTransformer.deepCamelCase(descriptiveMetadata)}
+        descriptiveMetadata={deepCamelCase(descriptiveMetadata)}
         title={title}
         values={rights.descriptive_metadata}
         onChange={(v) => setRights('descriptive_metadata', v)}
