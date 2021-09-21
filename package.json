@@ -77,6 +77,8 @@
   "scripts": {
     "lint": "eslint app/javascript --ext .js,.jsx",
     "test": "jest -c jest.config.js",
-    "test:watch": "jest -c jest.config.js --watch"
+    "test:watch": "jest -c jest.config.js --watch",
+    "test:e2e": "RAILS_ENV=test ./bin/webpack && jest -c jest-e2e.config.js",
+    "test:e2e:watch": "RAILS_ENV=test ./bin/webpack && jest -c jest-e2e.config.js --watch"
   }
 }
