@@ -106,6 +106,9 @@ jobs:
           node-version: ${{ matrix.node }}
       - run: npm install -g yarn
       - run: yarn install --frozen-lockfile
-      - run: RAILS_ENV=test ./bin/webpack
+      - name: Run webpack
+        run: RAILS_ENV=test ./bin/webpack
+      - name: Setup config files
+        run: bundle exec rake hyacinth:setup:config_files
       - name: Run tests
         run: yarn run test:e2e
