@@ -173,7 +173,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
                 copyright_expiration_date: "2001-01-01",
                 cul_copyright_assessment_date: "2001-01-01"
               }],
-              restriction_on_access: [{
+              asset_access_restriction: [{
                 value: "Public Access",
                 embargo_release_date: "2001-01-01",
                 location: [{
@@ -258,7 +258,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
           input: {
             id: authorized_asset.uid,
             rights: {
-              restriction_on_access: [{ note: "restriction note" }]
+              asset_access_restriction: [{ note: "restriction note" }]
             },
             optimisticLockToken: authorized_asset.optimistic_lock_token
           }
@@ -273,8 +273,8 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
         end
         it "successfully updates the object" do
           response_data = JSON.parse(response.body)
-          restriction_on_access_note = response_data['data']['updateRights']['digitalObject']['rights']['restriction_on_access'][0]['note']
-          expect(restriction_on_access_note).to eq('restriction note')
+          asset_access_restriction_note = response_data['data']['updateRights']['digitalObject']['rights']['asset_access_restriction'][0]['note']
+          expect(asset_access_restriction_note).to eq('restriction note')
         end
       end
 

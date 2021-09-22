@@ -60,10 +60,10 @@ function AssetRightsForm(props) {
       <ErrorList errors={userErrors.map((userError) => (`${userError.message} (path=${userError.path.join('/')})`))} />
 
       <FieldGroupArray
-        value={rights.restriction_on_access}
-        defaultValue={defaultAssetRights.restriction_on_access[0]}
-        dynamicFieldGroup={findFieldConfig('restriction_on_access')}
-        onChange={(v) => setRights('restriction_on_access', v)}
+        value={rights.asset_access_restriction}
+        defaultValue={defaultAssetRights.asset_access_restriction[0]}
+        dynamicFieldGroup={findFieldConfig('asset_access_restriction')}
+        onChange={(v) => setRights('asset_access_restriction', v)}
       />
 
       {
