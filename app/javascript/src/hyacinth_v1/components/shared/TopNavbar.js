@@ -12,7 +12,9 @@ function TopNavbar(props) {
     e.preventDefault(); // prevent hashchange when sign out link is clicked
 
     const postData = {};
-    postData[document.querySelector("meta[name='csrf-param']").getAttribute('content')] = document.querySelector("meta[name='csrf-token']").getAttribute('content');
+    postData[
+      document.querySelector("meta[name='csrf-param']").getAttribute('content')
+    ] = document.querySelector("meta[name='csrf-token']").getAttribute('content');
 
     fetch('/users/sign_out', {
       method: 'delete',

@@ -60,7 +60,7 @@ const ProgressButton = ({
       new Promise((resolve) => { setTimeout(resolve, minimumLoadingStateTime); }),
     ])
       // we only want to pass along the expectedPromise result
-      .then(allResult => allResult[0]).then((result) => {
+      .then((allResult) => allResult[0]).then((result) => {
         setState('success');
         returnToDefaultStateAfterTimeout(() => { onSuccess(result); }, successStateReturnTime);
       }).catch((error) => {

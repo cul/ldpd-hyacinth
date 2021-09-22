@@ -3,17 +3,15 @@ import { Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import FontAwesomeIcon from '../../../utils/lazyFontAwesome';
 
-const RemoveButton = (props) => {
-  return (
-    <Button
-      variant="danger"
-      size="sm"
-      { ...props }
-    >
-      <FontAwesomeIcon icon="times" size="sm" />
-    </Button>
-  );
-};
+const RemoveButton = (props) => (
+  <Button
+    variant="danger"
+    size="sm"
+    {...props}
+  >
+    <FontAwesomeIcon icon="times" size="sm" />
+  </Button>
+);
 
 RemoveButton.propTypes = {
   onClick: PropTypes.func.isRequired,

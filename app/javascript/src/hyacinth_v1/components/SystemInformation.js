@@ -27,6 +27,6 @@ const SystemInformation = () => {
       </table>
     </>
   );
-}
+};
 
 export default SystemInformation;

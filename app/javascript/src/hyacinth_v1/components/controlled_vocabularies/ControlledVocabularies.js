@@ -30,7 +30,7 @@ function ControlledVocabularies() {
       <ProtectedRoute
         path="/controlled_vocabularies/:stringKey/edit"
         component={ControlledVocabularyEdit}
-        requiredAbility={params => (
+        requiredAbility={(params) => (
           { action: 'update', subject: 'Vocabulary', stringKey: params.stringKey }
         )}
       />
@@ -40,7 +40,7 @@ function ControlledVocabularies() {
       <ProtectedRoute
         path="/controlled_vocabularies/:stringKey"
         component={ControlledVocabularyShow}
-        requiredAbility={params => (
+        requiredAbility={(params) => (
           { action: 'read', subject: 'Vocabulary', stringKey: params.stringKey }
         )}
       />

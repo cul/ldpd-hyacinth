@@ -27,7 +27,7 @@ export default class Users extends React.PureComponent {
         <ProtectedRoute
           path="/users/:uid/edit"
           component={UserEdit}
-          requiredAbility={params => ({ action: 'update', subject: 'User', uid: params.uid })}
+          requiredAbility={(params) => ({ action: 'update', subject: 'User', uid: params.uid })}
         />
 
         { /* When none of the above match, <PageNotFound> will be rendered */ }

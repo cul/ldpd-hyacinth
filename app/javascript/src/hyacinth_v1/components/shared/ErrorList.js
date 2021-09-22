@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Alert } from 'react-bootstrap';
 
-function ErrorList({errors}) {
+function ErrorList({ errors }) {
   if (!errors || errors.length === 0) return (null);
 
   return (

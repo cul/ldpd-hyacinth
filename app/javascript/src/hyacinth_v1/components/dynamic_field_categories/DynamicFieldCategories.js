@@ -19,7 +19,7 @@ function DynamicFieldCategories() {
       <ProtectedRoute
         path="/dynamic_field_categories/:id/edit"
         component={DynamicFieldCategoryEdit}
-        requiredAbility={params => ({ action: 'update', subject: 'DynamicFieldCategory', id: params.id })}
+        requiredAbility={(params) => ({ action: 'update', subject: 'DynamicFieldCategory', id: params.id })}
       />
 
       { /* When none of the above match, <PageNotFound> will be rendered */ }

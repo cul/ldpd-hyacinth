@@ -7,6 +7,7 @@ const DeleteButton = (props) => {
     formType, onClick, onSuccess, ...rest
   } = props;
   const onClickHandler = (e) => {
+    // eslint-disable-next-line no-alert
     if (window.confirm('Are you sure you want to delete?')) {
       onClick(e).then((result) => {
         onSuccess(result);

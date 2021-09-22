@@ -3,17 +3,15 @@ import { Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import FontAwesomeIcon from '../../../utils/lazyFontAwesome';
 
-const DownArrowButton = (props) => {
-  return (
-    <Button
-      variant="secondary"
-      size="sm"
-      { ... props }
-    >
-      <FontAwesomeIcon icon="caret-down" size="lg" />
-    </Button>
-  );
-};
+const DownArrowButton = (props) => (
+  <Button
+    variant="secondary"
+    size="sm"
+    {... props}
+  >
+    <FontAwesomeIcon icon="caret-down" size="lg" />
+  </Button>
+);
 
 DownArrowButton.propTypes = {
   onClick: PropTypes.func.isRequired,

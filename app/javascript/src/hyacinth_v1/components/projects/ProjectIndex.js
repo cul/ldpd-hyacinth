@@ -18,7 +18,7 @@ function ProjectIndex() {
     <>
       <Can I="create" a="Project" passThrough>
         {
-          can => (
+          (can) => (
             <ContextualNavbar
               title="Projects"
               rightHandLinks={can ? [{ link: '/projects/new', label: 'New Project' }] : []}
@@ -39,7 +39,7 @@ function ProjectIndex() {
         <tbody>
           {
             data && (
-              data.projects.map(project => (
+              data.projects.map((project) => (
                 <tr key={project.stringKey}>
                   <td><Link to={`/projects/${project.stringKey}/core_data`}>{project.displayLabel}</Link></td>
                   <td>{project.stringKey}</td>

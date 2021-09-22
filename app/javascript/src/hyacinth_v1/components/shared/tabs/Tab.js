@@ -11,7 +11,7 @@ function Tab(props) {
     <Route
       {...rest}
       children={() => (
-        <Nav.Item key={name} style={{fontWeight: '500', fontSize: '1.05rem'}}>
+        <Nav.Item key={name} style={{ fontWeight: '500', fontSize: '1.05rem' }}>
           <LinkContainer activeClassName="active" {...rest}>
             <Nav.Link eventKey={name}>
               {name}

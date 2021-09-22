@@ -11,7 +11,6 @@ function ResultsPagingBar(props) {
   let uidNext = null;
   const [firstResult, secondResult, thirdResult] = uids;
 
-
   if (uidCurrent === firstResult) {
   // uidPrev remains null for the first result
     uidNext = secondResult;

@@ -15,7 +15,7 @@ export default class Permissions extends React.PureComponent {
           exact
           path={`${path}`}
           component={PermissionsShow}
-          requiredAbility={params => (
+          requiredAbility={(params) => (
             { action: 'read', subject: 'Project', stringKey: params.stringKey }
           )}
         />
@@ -23,7 +23,7 @@ export default class Permissions extends React.PureComponent {
         <ProtectedRoute
           path={`${path}/edit`}
           component={PermissionsEdit}
-          requiredAbility={params => (
+          requiredAbility={(params) => (
             { action: 'update', subject: 'Project', stringKey: params.stringKey }
           )}
         />

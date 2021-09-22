@@ -64,7 +64,15 @@ const ResultCountAndOptions = (props) => {
             <Col sm={6} md={3} lg={{ offset: 1, span: 2 }}>
               <InputGroup className="mb-0 justify-content-center align-items-center">
                 <Label xs={4} sm={4} md={6} className="text-right px-1">Per Page:</Label>
-                <SelectInput onChange={onPerPageChange} xs={6} sm={6} size="sm" className="pl-1" value={limit} options={[20, 50, 100].map(i => ({ label: i.toString(), value: i }))} />
+                <SelectInput
+                  onChange={onPerPageChange}
+                  xs={6}
+                  sm={6}
+                  size="sm"
+                  className="pl-1"
+                  value={limit}
+                  options={[20, 50, 100].map((i) => ({ label: i.toString(), value: i }))}
+                />
               </InputGroup>
             </Col>
 

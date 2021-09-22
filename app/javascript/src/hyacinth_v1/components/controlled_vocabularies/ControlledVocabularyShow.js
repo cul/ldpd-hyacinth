@@ -43,7 +43,7 @@ function ControlledVocabularyShow() {
   const onSearchHandler = (event) => {
     event.preventDefault();
 
-    if (searchTerms.length >= 3 || searchTerms === "") {
+    if (searchTerms.length >= 3 || searchTerms === '') {
       setOffset(0);
       refetch({ offset: 0, searchParams: { searchTerms } });
     }
@@ -86,7 +86,7 @@ function ControlledVocabularyShow() {
           <Col as="dd" sm={8} md={8}>{vocabulary.locked ? 'Yes' : 'No'}</Col>
 
           <Col as="dt" sm={4} md={3}>Custom Fields</Col>
-          <Col as="dd" sm={8} md={8}>{vocabulary.customFieldDefinitions.map(v => v.label).join(', ') || '-- None --'}</Col>
+          <Col as="dd" sm={8} md={8}>{vocabulary.customFieldDefinitions.map((v) => v.label).join(', ') || '-- None --'}</Col>
         </Row>
       </div>
 
@@ -130,7 +130,7 @@ function ControlledVocabularyShow() {
           <tbody>
             {
               terms.length > 0 ? (
-                terms.map(term => (
+                terms.map((term) => (
                   <tr key={term.id}>
                     <td><Link to={`/controlled_vocabularies/${stringKey}/terms/${encodeURIComponent(term.uri)}`}>{term.prefLabel}</Link></td>
                     <td>{term.termType}</td>

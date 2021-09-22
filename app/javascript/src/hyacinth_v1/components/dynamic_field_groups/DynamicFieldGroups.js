@@ -19,7 +19,7 @@ function DynamicFieldGroups() {
       <ProtectedRoute
         path="/dynamic_field_groups/:id/edit"
         component={DynamicFieldGroupEdit}
-        requiredAbility={params => (
+        requiredAbility={(params) => (
           { action: 'update', subject: 'DynamicFieldGroup', id: params.id }
         )}
       />

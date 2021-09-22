@@ -38,7 +38,7 @@ function ControlledVocabularyIndex() {
     <>
       <Can I="create" a="Vocabulary" passThrough>
         {
-          can => (
+          (can) => (
             <ContextualNavbar
               title="Controlled Vocabularies"
               rightHandLinks={can ? [{ link: '/controlled_vocabularies/new', label: 'New Controlled Vocabulary' }] : []}
@@ -57,7 +57,7 @@ function ControlledVocabularyIndex() {
         <tbody>
           {
             controlledVocabularies && (
-              controlledVocabularies.map(controlledVocabulary => (
+              controlledVocabularies.map((controlledVocabulary) => (
                 <tr key={controlledVocabulary.stringKey}>
                   <td>
                     <Link to={`/controlled_vocabularies/${controlledVocabulary.stringKey}`}>

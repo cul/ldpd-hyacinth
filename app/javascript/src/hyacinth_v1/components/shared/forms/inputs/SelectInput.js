@@ -26,7 +26,7 @@ class SelectInput extends React.PureComponent {
         >
           <option key="" value="">Select one...</option>
           {
-            options.map(o => (
+            options.map((o) => (
               <option key={o.value} value={o.value}>{o.label}</option>
             ))
           }

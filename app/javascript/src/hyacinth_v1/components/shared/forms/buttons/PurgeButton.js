@@ -6,6 +6,7 @@ class PurgeButton extends React.Component {
   onClick = (e) => {
     const { onClick } = this.props;
 
+    // eslint-disable-next-line no-alert
     if (window.confirm('Are you sure you want to purge? This action cannot be undone.')) {
       onClick(e);
     }

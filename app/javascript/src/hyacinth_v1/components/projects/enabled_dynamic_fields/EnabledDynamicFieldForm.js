@@ -30,7 +30,7 @@ const DynamicField = ({ field, enabledFieldDataCallback, readOnly }) => {
   };
 
   const onFieldSetChange = (value, actionType) => {
-    const detector = f => f.id !== actionType.removedValue.id;
+    const detector = (f) => f.id !== actionType.removedValue.id;
     switch (actionType.action) {
       case 'select-option':
         enabledFieldData.fieldSets = value;
@@ -143,10 +143,10 @@ const DynamicField = ({ field, enabledFieldDataCallback, readOnly }) => {
                   isSearchable={false}
                   isClearable={false}
                   isDisabled={readOnly}
-                  getOptionLabel={option => option.displayLabel}
-                  getOptionValue={option => option.id}
+                  getOptionLabel={(option) => option.displayLabel}
+                  getOptionValue={(option) => option.id}
                   styles={{
-                    container: styles => ({ ...styles, fontSize: '.875rem', paddingTop: '.35rem' }),
+                    container: (styles) => ({ ...styles, fontSize: '.875rem', paddingTop: '.35rem' }),
                   }}
                 />
               </Col>
@@ -199,7 +199,7 @@ const DynamicFieldGroup = ({ group, enabledFieldDataCallback, readOnly }) => (
 const DynamicFieldCategory = ({ category, enabledFieldDataCallback, readOnly }) => (
   <>
     <h4 className="text-center text-orange">{category.displayLabel}</h4>
-    { category.children.map(child => (
+    { category.children.map((child) => (
       <DynamicFieldGroup
         group={child}
         key={child.id}
@@ -257,7 +257,7 @@ export const EnabledDynamicFieldForm = ({ readOnly, projectStringKey, digitalObj
       delete rest.project;
       delete rest.digitalObjectType;
       delete rest.type;
-      const fieldSetIds = fieldSets.map(f => ({ id: f.id }));
+      const fieldSetIds = fieldSets.map((f) => ({ id: f.id }));
       const newValue = {
         ...rest, fieldSets: fieldSetIds, dynamicField: { id: key },
       };

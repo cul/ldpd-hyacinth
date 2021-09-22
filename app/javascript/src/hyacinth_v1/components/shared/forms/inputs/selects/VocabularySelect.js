@@ -12,7 +12,7 @@ function VocabularySelect(props) {
   if (loading) return (<></>);
   if (error) return (<GraphQLErrors errors={error} />);
 
-  const options = data.vocabularies.nodes.map(v => ({ label: v.label, value: v.stringKey }));
+  const options = data.vocabularies.nodes.map((v) => ({ label: v.label, value: v.stringKey }));
 
   return (
     <SelectInput sm={4} options={options} {...props} />
