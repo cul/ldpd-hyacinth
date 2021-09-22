@@ -29,7 +29,7 @@ module DigitalObjectConcerns::Assets::Validations
 
   def validate_rights_updates
     return if primary_project.has_asset_rights # nothing to validate if assets rights are enabled for this project
-    return if rights.reject { |k, _v| k.to_s == 'restriction_on_access' }.blank? # restriction_on_access updates are always allowed even if other asset rights updates aren't
+    return if rights.reject { |k, _v| k.to_s == 'asset_access_restriction' }.blank? # asset_access_restriction updates are always allowed even if other asset rights updates aren't
     errors.add(:rights, "Asset-level rights assessment not enabled in #{primary_project.display_label}")
   end
 

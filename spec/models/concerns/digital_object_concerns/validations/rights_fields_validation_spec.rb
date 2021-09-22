@@ -93,7 +93,7 @@ RSpec.describe DigitalObject::RightsFieldsValidator, type: :model, solr: true do
     context 'when setting valid rights values' do
       let(:rights) do
         {
-          'restriction_on_access' => [{
+          'asset_access_restriction' => [{
             'affiliation' => [{ 'value' => 'something' }],
             'location' => [{ 'term' => { 'pref_label' => 'Manhattan' } }]
           }]

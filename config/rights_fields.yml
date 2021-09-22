@@ -336,7 +336,7 @@ rights_fields:
                 ]
   asset:
     - display_label: "CUL Access Condition"
-      string_key: restriction_on_access
+      string_key: asset_access_restriction
       is_repeatable: true
       dynamic_fields:
         - display_label: Access Condition
