@@ -5,11 +5,11 @@ const FontAwesomeIcon = React.lazy(() => import(/* webpackChunkName: 'fontAwesom
 
 const LazyFontAwesomeIcon = (props) => {
   const { fallback, icon, ...rest } = props;
-  return <Suspense fallback={fallback}><FontAwesomeIcon icon={icon} { ...rest } /></Suspense>;
+  return <Suspense fallback={fallback}><FontAwesomeIcon icon={icon} {...rest} /></Suspense>;
 };
 
 LazyFontAwesomeIcon.propTypes = {
-  fallback: PropTypes.object,
+  fallback: PropTypes.node,
   icon: PropTypes.string.isRequired,
 };
 

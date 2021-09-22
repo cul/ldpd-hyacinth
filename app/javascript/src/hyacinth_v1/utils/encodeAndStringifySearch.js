@@ -15,6 +15,5 @@ export const queryParamsConfig = {
   offset: withDefault(NumberParam, 1),
 };
 
-
 // eslint-disable-next-line max-len
-export const encodeAndStringifySearch = queryParams => qs.stringify(encodeQueryParams(queryParamsConfig, queryParams));
+export const encodeAndStringifySearch = (queryParams) => qs.stringify(encodeQueryParams(queryParamsConfig, queryParams));

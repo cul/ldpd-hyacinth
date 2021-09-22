@@ -16,7 +16,7 @@ import Projects from './components/projects/Projects';
 import BatchExports from './components/batch_exports/BatchExports';
 import BatchImports from './components/batch_imports/BatchImports';
 import PublishTargets from './components/publish_targets/PublishTargets';
-import SystemInformation from './components/SystemInformation'
+import SystemInformation from './components/SystemInformation';
 
 import { AbilityContext } from './utils/abilityContext';
 import ability from './utils/ability';

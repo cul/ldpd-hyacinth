@@ -13,7 +13,7 @@ const ability = new Ability([], {
 export default ability;
 
 export const digitalObjectAbility = {
-  can: (action, { primaryProject, otherProjects } ) => {
+  can: (action, { primaryProject, otherProjects }) => {
     const allProjects = [primaryProject].concat(otherProjects);
 
     let can = false;
