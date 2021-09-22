@@ -17,9 +17,7 @@ function TermBreadcrumbs(props) {
       <LinkContainer to={`/controlled_vocabularies/${stringKey}`}>
         <Breadcrumb.Item>Terms</Breadcrumb.Item>
       </LinkContainer>
-      {
-        <Breadcrumb.Item active>{term ? term.prefLabel : 'New Term'}</Breadcrumb.Item>
-      }
+      <Breadcrumb.Item active>{term ? term.prefLabel : 'New Term'}</Breadcrumb.Item>
     </Breadcrumb>
   );
 }

@@ -54,7 +54,7 @@ function TermShow() {
             vocabulary.customFieldDefinitions.map((definition) => {
               const { fieldKey, label } = definition;
 
-              const customField = term.customFields.find(element => element.field === fieldKey);
+              const customField = term.customFields.find((element) => element.field === fieldKey);
               const value = customField ? customField.value : '-- None --';
 
               return (

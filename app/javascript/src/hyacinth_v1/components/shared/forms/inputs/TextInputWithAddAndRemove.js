@@ -43,7 +43,7 @@ const TextInputWithAddAndRemove = (props) => {
   } = props;
 
   return (
-    <Col sm={10} style={{ alignSelf: 'center' }} { ...rest }>
+    <Col sm={10} style={{ alignSelf: 'center' }} {...rest}>
       {
         (values.length === 0 ? [''] : values).map((v, i) => (
           <Form.Group as={Row} key={i}>
@@ -53,7 +53,7 @@ const TextInputWithAddAndRemove = (props) => {
                   type="text"
                   name={inputName}
                   value={v}
-                  onChange={e => onChangeHandler(i, e)}
+                  onChange={(e) => onChangeHandler(i, e)}
                   placeholder={placeholder}
                 />
                 <Button variant="danger" size="sm" onClick={() => removeHandler(i)}>
@@ -69,7 +69,7 @@ const TextInputWithAddAndRemove = (props) => {
       }
     </Col>
   );
-}
+};
 
 TextInputWithAddAndRemove.defaultProps = {
   defaultValue: '',

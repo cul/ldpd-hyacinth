@@ -30,7 +30,7 @@ function DynamicFieldGroupForm(props) {
 
   const history = useHistory();
 
-  const transformExportRules = rules => rules.map(r => ({
+  const transformExportRules = (rules) => rules.map((r) => ({
     id: r.id,
     fieldExportProfileId: r.fieldExportProfile.id,
     translationLogic: r.translationLogic,
@@ -66,9 +66,9 @@ function DynamicFieldGroupForm(props) {
 
   const { data: fieldExportProfileResponse } = useQuery(fieldExportProfilesQuery, {
     onCompleted: (data) => {
-      setExportRules(prevExportRules => produce(prevExportRules, (draft) => {
+      setExportRules((prevExportRules) => produce(prevExportRules, (draft) => {
         data.fieldExportProfiles.forEach((p) => {
-          if (!prevExportRules.map(i => i.fieldExportProfileId).includes(p.id)) {
+          if (!prevExportRules.map((i) => i.fieldExportProfileId).includes(p.id)) {
             draft.push({ fieldExportProfileId: p.id, translationLogic: '{}' });
           }
         });
@@ -77,8 +77,8 @@ function DynamicFieldGroupForm(props) {
   });
 
   const onTranslationRuleChange = (fieldExportProfileId, translationLogic) => {
-    setExportRules(prevExportRules => produce(prevExportRules, (draft) => {
-      const index = draft.findIndex(e => e.fieldExportProfileId === fieldExportProfileId);
+    setExportRules((prevExportRules) => produce(prevExportRules, (draft) => {
+      const index = draft.findIndex((e) => e.fieldExportProfileId === fieldExportProfileId);
       draft[index].translationLogic = translationLogic;
     }));
   };
@@ -172,7 +172,7 @@ function DynamicFieldGroupForm(props) {
                       exportRules.map((rule) => {
                         const { fieldExportProfileId, translationLogic } = rule;
                         const { fieldExportProfiles } = fieldExportProfileResponse;
-                        const { name } = fieldExportProfiles.find(p => (
+                        const { name } = fieldExportProfiles.find((p) => (
                           p.id === fieldExportProfileId
                         ));
 
@@ -182,7 +182,7 @@ function DynamicFieldGroupForm(props) {
                               sm={12}
                               name={`${name}_input`}
                               value={translationLogic}
-                              onChange={v => onTranslationRuleChange(fieldExportProfileId, v)}
+                              onChange={(v) => onTranslationRuleChange(fieldExportProfileId, v)}
                             />
                           </Tab>
                         );

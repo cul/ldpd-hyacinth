@@ -46,13 +46,16 @@ function RightsShow(props) {
 
   const canEdit = digitalObjectAbility.can('assess_rights', { primaryProject, otherProjects });
 
-  const rightsAssigned = Object.values(rights).find(value => value.length);
+  const rightsAssigned = Object.values(rights).find((value) => value.length);
 
   return (
     <RightsTab digitalObject={digitalObject} editButton={canEdit}>
-      { !rightsAssigned && <p className="text-center">Rights for this object have not been assigned. Please click the edit button to assign rights.</p>}
       {
-        rightsAssigned && get(dynamicFieldCategories, '[0].children') && dynamicFieldCategories[0].children.map(group => (
+        !rightsAssigned
+        && <p className="text-center">Rights for this object have not been assigned. Please click the edit button to assign rights.</p>
+        }
+      {
+        rightsAssigned && get(dynamicFieldCategories, '[0].children') && dynamicFieldCategories[0].children.map((group) => (
           <DisplayFieldGroup
             key={group.id}
             data={rights[group.stringKey] || []}

@@ -69,7 +69,7 @@ function FieldSetIndex() {
                   <Button size="sm" variant="link">
                     <FontAwesomeIcon icon="plus" />
                     {' '}
-Add New Field Set
+                    Add New Field Set
                   </Button>
                 </LinkContainer>
               </td>

@@ -111,45 +111,51 @@ function UnderlyingRights(props) {
                       <div>
                         <Field
                           value={value.columbia_music_license}
-                          onChange={v => onChangeHandler('columbia_music_license', v)}
-                          dynamicField={fieldConfig.children.find(c => c.stringKey === 'columbia_music_license')}
+                          onChange={(v) => onChangeHandler('columbia_music_license', v)}
+                          dynamicField={fieldConfig.children.find((c) => c.stringKey === 'columbia_music_license')}
                         />
                       </div>
                     </Collapse>
 
                     <Field
                       value={value.composition}
-                      onChange={v => onChangeHandler('composition', v)}
-                      dynamicField={fieldConfig.children.find(c => c.stringKey === 'composition')}
+                      onChange={(v) => onChangeHandler('composition', v)}
+                      dynamicField={fieldConfig.children.find((c) => c.stringKey === 'composition')}
                     />
 
                     <Field
                       value={value.recording}
-                      onChange={v => onChangeHandler('recording', v)}
-                      dynamicField={fieldConfig.children.find(c => c.stringKey === 'recording')}
+                      onChange={(v) => onChangeHandler('recording', v)}
+                      dynamicField={fieldConfig.children.find((c) => c.stringKey === 'recording')}
                     />
                   </div>
                 </Collapse>
 
                 <Field
                   value={value.talent_rights}
-                  onChange={v => onChangeHandler('talent_rights', v)}
-                  dynamicField={fieldConfig.children.find(c => c.stringKey === 'talent_rights')}
+                  onChange={(v) => onChangeHandler('talent_rights', v)}
+                  dynamicField={fieldConfig.children.find((c) => c.stringKey === 'talent_rights')}
                 />
 
                 <InputGroup>
                   <Label sm={4} align="right">Other Underlying Rights</Label>
                   <MultiSelectInput
-                    values={value.other_underlying_rights.filter(i => i.value.length > 0).map(e => e.value)}
-                    onChange={v => onChangeHandler('other_underlying_rights', v.map(e => ({ value: e })))}
-                    options={JSON.parse(fieldConfig.children.find(c => c.stringKey === 'other_underlying_rights').children.find(c => c.stringKey === 'value').selectOptions)}
+                    values={value.other_underlying_rights.filter((i) => i.value.length > 0).map((e) => e.value)}
+                    onChange={(v) => onChangeHandler('other_underlying_rights', v.map((e) => ({ value: e })))}
+                    options={
+                      JSON.parse(
+                        fieldConfig.children.find(
+                          (c) => c.stringKey === 'other_underlying_rights',
+                        ).children.find((c) => c.stringKey === 'value').selectOptions,
+                      )
+                    }
                   />
                 </InputGroup>
 
                 <Field
                   value={value.other}
-                  onChange={v => onChangeHandler('other', v)}
-                  dynamicField={fieldConfig.children.find(c => c.stringKey === 'other')}
+                  onChange={(v) => onChangeHandler('other', v)}
+                  dynamicField={fieldConfig.children.find((c) => c.stringKey === 'other')}
                 />
               </div>
             </Collapse>
@@ -158,8 +164,8 @@ function UnderlyingRights(props) {
               <div>
                 <Field
                   value={value.note}
-                  onChange={v => onChangeHandler('note', v)}
-                  dynamicField={fieldConfig.children.find(c => c.stringKey === 'note')}
+                  onChange={(v) => onChangeHandler('note', v)}
+                  dynamicField={fieldConfig.children.find((c) => c.stringKey === 'note')}
                 />
               </div>
             </Collapse>

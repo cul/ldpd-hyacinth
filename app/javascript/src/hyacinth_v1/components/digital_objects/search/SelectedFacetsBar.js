@@ -17,13 +17,19 @@ const SelectedFacetsBar = (props) => {
           ({ field, values }) => (
             values.map(
               (value) => (
-                <Button key={`${field}_${value}`} className="rounded me-2" size="sm" variant="secondary" onClick={() => onRemoveFacet(field, value)}>
+                <Button
+                  key={`${field}_${value}`}
+                  className="rounded me-2"
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => onRemoveFacet(field, value)}
+                >
                   {`${displayLabelFor(field)} > ${value} `}
                   <FontAwesomeIcon icon="times" />
                 </Button>
-              )
+              ),
             )
-          )
+          ),
         )
       }
     </div>

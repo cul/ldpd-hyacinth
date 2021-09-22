@@ -26,7 +26,7 @@ function FieldExportProfiles() {
       <ProtectedRoute
         path="/field_export_profiles/:id/edit"
         component={FieldExportProfileEdit}
-        requiredAbility={params => (
+        requiredAbility={(params) => (
           { action: 'update', subject: 'FieldExportProfiles', id: params.id }
         )}
       />

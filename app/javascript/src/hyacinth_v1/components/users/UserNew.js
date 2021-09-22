@@ -62,7 +62,7 @@ function UserNew() {
 
       <GraphQLErrors errors={error} />
 
-      <Form onSubmit={e => handleSubmit(e)}>
+      <Form onSubmit={(e) => handleSubmit(e)}>
         <Row>
           <Col sm={6}>
             <Form.Label>First Name</Form.Label>
@@ -70,7 +70,7 @@ function UserNew() {
               type="text"
               name="firstName"
               value={firstName}
-              onChange={e => setFirstName(e.target.value)}
+              onChange={(e) => setFirstName(e.target.value)}
             />
           </Col>
 
@@ -80,7 +80,7 @@ function UserNew() {
               type="text"
               name="lastName"
               value={lastName}
-              onChange={e => setLastName(e.target.value)}
+              onChange={(e) => setLastName(e.target.value)}
             />
           </Col>
         </Row>
@@ -92,7 +92,7 @@ function UserNew() {
               type="email"
               name="email"
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <Form.Text className="text-muted">
               For Columbia sign-in, please use columbia email: uni@columbia.edu
@@ -103,7 +103,7 @@ function UserNew() {
         <Row>
           <Col sm={6}>
             <Form.Label>Password</Form.Label>
-            <Form.Control type="text" name="password" value={password} onChange={e => setPassword(e.target.value)} />
+            <Form.Control type="text" name="password" value={password} onChange={(e) => setPassword(e.target.value)} />
           </Col>
 
           <Col sm={6}>
@@ -112,7 +112,7 @@ function UserNew() {
               type="text"
               name="passwordConfirmation"
               value={passwordConfirmation}
-              onChange={e => setPasswordConfirmation(e.target.value)}
+              onChange={(e) => setPasswordConfirmation(e.target.value)}
             />
           </Col>
         </Row>
@@ -134,6 +134,5 @@ function UserNew() {
     </>
   );
 }
-
 
 export default UserNew;

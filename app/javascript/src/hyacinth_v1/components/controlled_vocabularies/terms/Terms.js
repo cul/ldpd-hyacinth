@@ -21,7 +21,7 @@ export default class Terms extends React.PureComponent {
         <ProtectedRoute
           path="/controlled_vocabularies/:stringKey/terms/:uri/edit"
           component={TermEdit}
-          requiredAbility={params => (
+          requiredAbility={(params) => (
             { action: 'update', subject: 'Term', id: params.id }
           )}
         />
@@ -29,7 +29,7 @@ export default class Terms extends React.PureComponent {
         <ProtectedRoute
           path="/controlled_vocabularies/:stringKey/terms/:uri"
           component={TermShow}
-          requiredAbility={params => (
+          requiredAbility={(params) => (
             { action: 'read', subject: 'Term', id: params.id }
           )}
         />

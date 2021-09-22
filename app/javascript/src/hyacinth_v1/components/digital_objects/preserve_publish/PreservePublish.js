@@ -24,8 +24,12 @@ function PreservePublish(props) {
   if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
   const { digitalObject } = digitalObjectData;
 
-  const canUpdateObject = digitalObjectAbility.can('update_objects', { primaryProject: digitalObject.primaryProject, otherProjects: digitalObject.otherProjects });
-  const canPublishObject = digitalObjectAbility.can('publish_objects', { primaryProject: digitalObject.primaryProject, otherProjects: digitalObject.otherProjects });
+  const canUpdateObject = digitalObjectAbility.can(
+    'update_objects', { primaryProject: digitalObject.primaryProject, otherProjects: digitalObject.otherProjects },
+  );
+  const canPublishObject = digitalObjectAbility.can(
+    'publish_objects', { primaryProject: digitalObject.primaryProject, otherProjects: digitalObject.otherProjects },
+  );
 
   const renderPreservePublishContent = () => (
     <>

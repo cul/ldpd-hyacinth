@@ -8,7 +8,6 @@ import Label from '../shared/forms/Label';
 import FormButtons from '../shared/forms/FormButtons';
 import NumberInput from '../shared/forms/inputs/NumberInput';
 import TextInput from '../shared/forms/inputs/TextInput';
-import SelectInput from '../shared/forms/inputs/SelectInput';
 import Checkbox from '../shared/forms/inputs/Checkbox';
 import {
   createPublishTargetMutation,
@@ -66,29 +65,29 @@ function PublishTargetForm({ publishTarget, formType }) {
 
       <InputGroup>
         <Label>String Key</Label>
-        <TextInput value={stringKey} onChange={v => setStringKey(v)} />
+        <TextInput value={stringKey} onChange={(v) => setStringKey(v)} />
       </InputGroup>
 
       <InputGroup>
         <Label>Publish URL</Label>
-        <TextInput value={publishUrl} onChange={v => setPublishUrl(v)} />
+        <TextInput value={publishUrl} onChange={(v) => setPublishUrl(v)} />
       </InputGroup>
 
       <InputGroup>
         <Label>API Key</Label>
-        <TextInput value={apiKey} onChange={v => setApiKey(v)} />
+        <TextInput value={apiKey} onChange={(v) => setApiKey(v)} />
       </InputGroup>
 
       <InputGroup>
         <Label>Allowed to be set as DOI target?</Label>
-        <Checkbox value={isAllowedDoiTarget} onChange={v => setIsAllowedDoiTarget(v)} />
+        <Checkbox value={isAllowedDoiTarget} onChange={(v) => setIsAllowedDoiTarget(v)} />
       </InputGroup>
 
       <Collapse in={isAllowedDoiTarget}>
         <div>
           <InputGroup>
             <Label>DOI Priority</Label>
-            <NumberInput value={doiPriority} onChange={v => setDoiPriority(v)} />
+            <NumberInput value={doiPriority} onChange={(v) => setDoiPriority(v)} />
           </InputGroup>
         </div>
       </Collapse>

@@ -65,7 +65,7 @@ function ControlledVocabularyForm(props) {
         <Label>String Key</Label>
         {
           formType === 'new'
-            ? <TextInput value={stringKey} onChange={v => setStringKey(v)} />
+            ? <TextInput value={stringKey} onChange={(v) => setStringKey(v)} />
             : <PlainText value={stringKey} />
         }
       </InputGroup>
@@ -74,13 +74,13 @@ function ControlledVocabularyForm(props) {
         <Label>Label</Label>
         <TextInput
           value={label}
-          onChange={v => setLabel(v)}
+          onChange={(v) => setLabel(v)}
         />
       </InputGroup>
 
       <InputGroup>
         <Label>Locked</Label>
-        <Checkbox value={locked} onChange={v => setLocked(v)} />
+        <Checkbox value={locked} onChange={(v) => setLocked(v)} />
       </InputGroup>
 
       <FormButtons

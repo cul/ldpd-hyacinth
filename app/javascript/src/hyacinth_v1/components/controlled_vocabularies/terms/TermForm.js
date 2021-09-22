@@ -26,10 +26,10 @@ const useCustomFields = (initialState) => {
   const [customFields, setCustomFields] = useState(cleanedInitialState);
 
   const setCustomField = (field, value) => {
-    const index = customFields.findIndex(f => f.field === field);
+    const index = customFields.findIndex((f) => f.field === field);
 
     if (index === -1) {
-      setCustomFields(produce(draft => draft.push({ field, value })));
+      setCustomFields(produce((draft) => draft.push({ field, value })));
     } else {
       setCustomFields(produce((draft) => { draft[index].value = value; }));
     }
@@ -111,7 +111,14 @@ function TermForm(props) {
         <Label sm={labelColWidth}>Term Type</Label>
         {
           formType === 'new'
-            ? <SelectInput sm={inputColWidth} value={termType} onChange={v => setTermType(v)} options={types.map(t => ({ label: t, value: t }))} />
+            ? (
+              <SelectInput
+                sm={inputColWidth}
+                value={termType}
+                onChange={(v) => setTermType(v)}
+                options={types.map((t) => ({ label: t, value: t }))}
+              />
+            )
             : <PlainText sm={inputColWidth} value={termType} />
         }
       </InputGroup>
@@ -123,11 +130,12 @@ function TermForm(props) {
           (() => {
             if (formType === 'edit') {
               return <PlainText value={uri} />;
-            } else if (termType === 'external' || termType === '') {
-              return <TextInput sm={inputColWidth} value={uri} onChange={v => setUri(v)} />;
-            } else {
-              return <ReadOnlyInput sm={inputColWidth} value={uri} />;
             }
+
+            if (termType === 'external' || termType === '') {
+              return <TextInput sm={inputColWidth} value={uri} onChange={(v) => setUri(v)} />;
+            }
+            return <ReadOnlyInput sm={inputColWidth} value={uri} />;
           })()
         }
       </InputGroup>
@@ -137,7 +145,7 @@ function TermForm(props) {
         {
           termType === 'temporary' && formType !== 'new'
             ? <PlainText sm={inputColWidth} value={prefLabel} />
-            : <TextInput sm={inputColWidth} value={prefLabel} onChange={v => setPrefLabel(v)} />
+            : <TextInput sm={inputColWidth} value={prefLabel} onChange={(v) => setPrefLabel(v)} />
         }
       </InputGroup>
 
@@ -145,14 +153,14 @@ function TermForm(props) {
         termType !== 'temporary' && (
           <InputGroup className="mb-2">
             <Label sm={labelColWidth}>Alternative Labels</Label>
-            <TextInputWithAddAndRemove sm={inputColWidth} values={altLabels} onChange={v => setAltLabels(v)} />
+            <TextInputWithAddAndRemove sm={inputColWidth} values={altLabels} onChange={(v) => setAltLabels(v)} />
           </InputGroup>
         )
       }
 
       <InputGroup className="mb-2">
         <Label sm={labelColWidth}>Authority</Label>
-        <TextInput sm={inputColWidth} value={authority} onChange={v => setAuthority(v)} />
+        <TextInput sm={inputColWidth} value={authority} onChange={(v) => setAuthority(v)} />
       </InputGroup>
 
       {
@@ -160,15 +168,15 @@ function TermForm(props) {
           const { fieldKey, label, dataType } = definition;
 
           let field = '';
-          const customField = customFields.find(element => element.field === fieldKey);
+          const customField = customFields.find((element) => element.field === fieldKey);
           const value = customField ? customField.value : '';
 
           switch (dataType) {
             case 'string':
-              field = <TextInput sm={inputColWidth} value={value} onChange={v => setCustomField(fieldKey, v)} />;
+              field = <TextInput sm={inputColWidth} value={value} onChange={(v) => setCustomField(fieldKey, v)} />;
               break;
             case 'integer':
-              field = <NumberInput sm={inputColWidth} value={value} onChange={v => setCustomField(fieldKey, v)} />;
+              field = <NumberInput sm={inputColWidth} value={value} onChange={(v) => setCustomField(fieldKey, v)} />;
               break;
             default:
               field = '';

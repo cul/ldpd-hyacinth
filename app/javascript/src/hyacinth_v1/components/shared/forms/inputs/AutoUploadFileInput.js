@@ -13,11 +13,9 @@ function AutoUploadFileInput(props) {
     setUploadPercentage(percentageComplete);
   };
 
-  const onFileChange = (file) => {
-    return uploadFile(file, uploadUrl, onProgress).then((blobAttributes) => {
-      onUpload(blobAttributes);
-    });
-  };
+  const onFileChange = (file) => uploadFile(file, uploadUrl, onProgress).then((blobAttributes) => {
+    onUpload(blobAttributes);
+  });
 
   return (
     <FileInput

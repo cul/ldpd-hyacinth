@@ -23,6 +23,7 @@
     "no-param-reassign": ["error", { "ignorePropertyModificationsFor" : ["draft"] } ],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "max-len": ["error", { "code": 140 }],
-    "jest/expect-expect": ["error", {"assertFunctionNames": ["expect", "screen.findByText"]}]
+    "jest/expect-expect": ["error", {"assertFunctionNames": ["expect", "screen.findByText"]}],
+    "react/jsx-props-no-spreading": "off"
   }
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { ProgressBar, Button } from 'react-bootstrap'
+import { ProgressBar, Button } from 'react-bootstrap';
 
 function FileInput(props) {
   const [lastSelectedFileName, setLastSelectedFileName] = useState(null);
@@ -122,7 +122,7 @@ function FileInput(props) {
 
 FileInput.defaultProps = {
   uploadPercentage: 0,
-  promptForNewFileAfterUpload: false
+  promptForNewFileAfterUpload: false,
 };
 
 FileInput.propTypes = {

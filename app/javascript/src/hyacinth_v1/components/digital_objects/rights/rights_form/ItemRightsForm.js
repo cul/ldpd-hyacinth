@@ -57,7 +57,10 @@ function ItemRightsForm(props) {
       setRights('copyright_ownership', cloneDeep(defaultItemRights.copyright_ownership));
       setRights('columbia_university_is_copyright_holder', cloneDeep(defaultItemRights.columbia_university_is_copyright_holder));
       setRights('licensed_to_columbia_university', cloneDeep(defaultItemRights.licensed_to_columbia_university));
-      setRights('contractual_limitations_restrictions_and_permissions', cloneDeep(defaultItemRights.contractual_limitations_restrictions_and_permissions));
+      setRights(
+        'contractual_limitations_restrictions_and_permissions',
+        cloneDeep(defaultItemRights.contractual_limitations_restrictions_and_permissions),
+      );
       setRights('underlying_rights', cloneDeep(defaultItemRights.underlying_rights));
     },
   );

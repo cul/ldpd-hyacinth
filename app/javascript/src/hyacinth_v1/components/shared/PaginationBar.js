@@ -23,7 +23,7 @@ function PaginationBar(props) {
     if (newPage <= totalPages) pageNumbers.push(newPage);
   }
 
-  const onPageNumberClick = p => onClick(limit * (p - 1));
+  const onPageNumberClick = (p) => onClick(limit * (p - 1));
 
   return (
     <Pagination className="justify-content-center">
@@ -40,7 +40,7 @@ function PaginationBar(props) {
         )
         }
       {
-        pageNumbers.map(num => (
+        pageNumbers.map((num) => (
           <Pagination.Item key={num} active={page === num} onClick={() => onPageNumberClick(num)}>
             {num}
           </Pagination.Item>

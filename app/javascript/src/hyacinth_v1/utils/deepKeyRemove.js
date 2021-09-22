@@ -12,7 +12,7 @@ export const deepKeyRemove = (obj, key) => {
 // Removes __typename key from nested object with method defined above.
 //
 // This method ONLY work with an hash that has primative types.
-export const removeTypename = hash => deepKeyRemove(hash, '__typename');
+export const removeTypename = (hash) => deepKeyRemove(hash, '__typename');
 
 // Removes nulls, empty hashes, arrays and strings.
 

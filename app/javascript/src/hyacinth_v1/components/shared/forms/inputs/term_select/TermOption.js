@@ -43,12 +43,16 @@ function TermOption(props) {
               </a>
             </li>
             <li>
-              <strong>Type:</strong> {term.termType}
+              <strong>Type:</strong>
+              {' '}
+              {term.termType}
             </li>
             {
               term.termType !== 'temporary' && (
                 <li>
-                  <strong>Authority:</strong> {term.authority}
+                  <strong>Authority:</strong>
+                  {' '}
+                  {term.authority}
                 </li>
               )
             }

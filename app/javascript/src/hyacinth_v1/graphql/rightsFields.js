@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import gql from 'graphql-tag';
 
 // This query will return all the rights fields for a given form. Its nesting matches

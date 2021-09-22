@@ -77,7 +77,7 @@ function FieldExportProfileForm(props) {
 
       <InputGroup>
         <Label>Translation Logic</Label>
-        <JSONInput value={translationLogic} onChange={v => setTranslationLogic(v)} inputName="translationLogic" />
+        <JSONInput value={translationLogic} onChange={(v) => setTranslationLogic(v)} inputName="translationLogic" />
       </InputGroup>
 
       <FormButtons

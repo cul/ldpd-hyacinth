@@ -131,7 +131,7 @@ function UserEdit() {
         <Row>
           <Col>
             <Form.Label>First Name</Form.Label>
-            <Form.Control type="text" name="firstName" value={firstName} onChange={e => setFirstName(e.target.value)} />
+            <Form.Control type="text" name="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
           </Col>
 
           <Col>
@@ -140,7 +140,7 @@ function UserEdit() {
               type="text"
               name="lastName"
               value={lastName}
-              onChange={e => setLastName(e.target.value)}
+              onChange={(e) => setLastName(e.target.value)}
             />
           </Col>
         </Row>
@@ -152,7 +152,7 @@ function UserEdit() {
               type="email"
               name="email"
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               disabled={(!canEditEmail())}
             />
             <Form.Text className="text-muted">
@@ -167,7 +167,7 @@ function UserEdit() {
             sm={4}
             value={isActive}
             disabled={(!canActivateUser())}
-            onChange={v => setIsActive(v)}
+            onChange={(v) => setIsActive(v)}
           />
           <Col sm={6}>
             <Form.Text className="text-muted">
@@ -197,14 +197,19 @@ function UserEdit() {
             <Form.Group as={Row}>
               <Form.Label column md={3} lg={2}>Current Password</Form.Label>
               <Col md={9} lg={10}>
-                <Form.Control type="text" name="currentPassword" value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} />
+                <Form.Control
+                  type="text"
+                  name="currentPassword"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                />
               </Col>
             </Form.Group>
 
             <Form.Group as={Row}>
               <Form.Label column md={3} lg={2}>Password</Form.Label>
               <Col md={9} lg={10}>
-                <Form.Control type="text" name="password" value={password} onChange={e => setPassword(e.target.value)} />
+                <Form.Control type="text" name="password" value={password} onChange={(e) => setPassword(e.target.value)} />
               </Col>
             </Form.Group>
 
@@ -215,7 +220,7 @@ function UserEdit() {
                   type="text"
                   name="passwordConfirmation"
                   value={passwordConfirmation}
-                  onChange={e => setPasswordConfirmation(e.target.value)}
+                  onChange={(e) => setPasswordConfirmation(e.target.value)}
                 />
               </Col>
             </Form.Group>
@@ -233,7 +238,7 @@ function UserEdit() {
                     sm={12}
                     value={isAdmin}
                     label="Administrator"
-                    onChange={v => setIsAdmin(v)}
+                    onChange={(v) => setIsAdmin(v)}
                     helpText="has ability to perform all actions"
                   />
                 </Can>
@@ -243,7 +248,7 @@ function UserEdit() {
                   value={manageVocabularies}
                   label="Manage Vocabularies"
                   disabled={!ability.can('manage', 'all')}
-                  onChange={v => setManageVocabularies(v)}
+                  onChange={(v) => setManageVocabularies(v)}
                   helpText="has ability to create/edit/delete vocabularies, and create/edit/delete terms"
                 />
                 <Checkbox
@@ -252,7 +257,7 @@ function UserEdit() {
                   value={manageUsers}
                   label="Manage Users"
                   disabled={!ability.can('manage', 'all')}
-                  onChange={v => setManageUsers(v)}
+                  onChange={(v) => setManageUsers(v)}
                   helpText="has ability to add new users, deactivate users, and add all system-wide permissions except administrator"
                 />
                 <Checkbox
@@ -261,7 +266,7 @@ function UserEdit() {
                   value={readAllDigitalObjects}
                   label="Read All Digital Objects"
                   disabled={!ability.can('manage', 'all')}
-                  onChange={v => setReadAllDigitalObjects(v)}
+                  onChange={(v) => setReadAllDigitalObjects(v)}
                   helpText="has ability to view all projects and all digital objects"
                 />
                 <Checkbox
@@ -269,7 +274,7 @@ function UserEdit() {
                   sm={12}
                   value={manageAllDigitalObjects}
                   disabled={!ability.can('manage', 'all')}
-                  onChange={v => setManageAllDigitalObjects(v)}
+                  onChange={(v) => setManageAllDigitalObjects(v)}
                   label="Manage All Digital Objects"
                   helpText="has ability to read/create/edit/delete all digital objects and view all projects"
                 />
@@ -278,7 +283,7 @@ function UserEdit() {
                   sm={12}
                   value={manageResourceRequests}
                   disabled={!ability.can('manage', 'all')}
-                  onChange={v => setManageResourceRequests(v)}
+                  onChange={(v) => setManageResourceRequests(v)}
                   label="Manage Resource Requests"
                   helpText="has ability to read/create/edit/delete all resource requests"
                 />
