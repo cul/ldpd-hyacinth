@@ -1,9 +1,10 @@
 import React, { Suspense } from 'react';
 import PropTypes from 'prop-types';
 
+const FontAwesomeIcon = React.lazy(() => import(/* webpackChunkName: 'fontAwesome' */ './fontAwesome'));
+
 const LazyFontAwesomeIcon = (props) => {
   const { fallback, icon, ...rest } = props;
-  const FontAwesomeIcon = React.lazy(() => import(/* webpackChunkName: 'fontAwesome' */ './fontAwesome'));
   return <Suspense fallback={fallback}><FontAwesomeIcon icon={icon} { ...rest } /></Suspense>;
 };
 
