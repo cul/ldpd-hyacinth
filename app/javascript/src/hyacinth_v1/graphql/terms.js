@@ -30,7 +30,6 @@ export const getTermsQuery = gql`
   }
 `;
 
-
 export const getTermQuery = gql`
   query Term($vocabularyStringKey: ID!, $uri: ID!) {
     vocabulary(stringKey: $vocabularyStringKey) {

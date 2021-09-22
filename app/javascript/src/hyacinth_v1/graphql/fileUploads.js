@@ -4,7 +4,7 @@ const uploadFile = (file, url, onProgress) => {
   const delegate = {
     directUploadWillStoreFileWithXHR: (request) => {
       request.upload.addEventListener('progress', (event) => {
-        onProgress(Math.round(event.loaded * 100 / event.total));
+        onProgress(Math.round((event.loaded * 100) / event.total));
       });
     },
   };
