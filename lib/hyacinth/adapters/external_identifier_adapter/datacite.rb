@@ -26,10 +26,9 @@ module Hyacinth
         # @param digital_object [DigitalObject]
         # @param target_url [String]
         # @param doi_state [Symbol] doi_state can be set to one of the following: :draft, :findable, :registered
-        # @param _doi [String]
         # @return [String] a new id
-        def mint(digital_object = nil, target_url = nil, doi_state = :draft, _doi = nil)
-          if doi_state != :draft && hyacinth_metadata.nil?
+        def mint(digital_object: nil, target_url: nil, doi_state: :draft, **_args)
+          if doi_state != :draft && digital_object.nil?
             Rails.logger.error "Hyacinth metadata required to mint DOI in #{doi_state} state"
             return
           end

@@ -158,22 +158,37 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
   end
 
   describe '#mint' do
-    it "no metadata supplied. Calls the appropriate Api method" do
-      stub_request(:post, "https://api.test.datacite.org/dois").with(
-        headers: mocked_headers,
-        body: no_metadata_payload_json.gsub(/\n\s+/, '')
-      ).to_return(status: 201, body: no_metadata_response_body_json, headers: {})
-      datacite.mint
+    let(:target_url) { nil }
+    let(:doi_state) { :draft }
+    let(:minted_doi) { datacite.mint(digital_object: digital_object, target_url: target_url, doi_state: doi_state) }
+    context "no DigitalObject supplied" do
+      let(:digital_object) { nil }
+      it "calls the appropriate Api method" do
+        stub_request(:post, "https://api.test.datacite.org/dois").with(
+          headers: mocked_headers,
+          body: no_metadata_payload_json.gsub(/\n\s+/, '')
+        ).to_return(status: 201, body: no_metadata_response_body_json, headers: {})
+        expect(minted_doi).to eql("10.33555/tb9q-qb07")
+      end
+      context "and status is not draft" do
+        let(:doi_state) { :findable }
+        it "returns nil" do
+          expect(minted_doi).to be_nil
+        end
+      end
     end
 
-    it "metadata supplied (via DigitalObject instance). Calls the appropriate Api method, " do
-      item = DigitalObject::Item.new
-      allow(item).to receive(:as_json).and_return(dod)
-      stub_request(:post, "https://api.test.datacite.org/dois").with(
-        headers: mocked_headers,
-        body: metadata_payload_json.gsub(/\n\s+/, '')
-      ).to_return(status: 201, body: no_metadata_response_body_json, headers: {})
-      datacite.mint(item, 'https://www.columbia.edu')
+    context "metadata supplied (via DigitalObject instance)." do
+      let(:digital_object) { DigitalObject::Item.new }
+      let(:target_url) { 'https://www.columbia.edu' }
+      before { allow(digital_object).to receive(:as_json).and_return(dod) }
+      it "calls the appropriate Api method, " do
+        stub_request(:post, "https://api.test.datacite.org/dois").with(
+          headers: mocked_headers,
+          body: metadata_payload_json.gsub(/\n\s+/, '')
+        ).to_return(status: 201, body: no_metadata_response_body_json, headers: {})
+        expect(minted_doi).to eql("10.33555/tb9q-qb07")
+      end
     end
   end
 

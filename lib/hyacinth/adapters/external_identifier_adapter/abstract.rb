@@ -13,12 +13,8 @@ module Hyacinth
         end
 
         # Generates a new persistent id, ensuring that nothing currently uses that identifier.
-        # @param digital_object [DigitalObject]
-        # @param target_url [String]
-        # @param doi_state [Symbol]
-        # @param doi [String]
         # @return [String] a new id
-        def mint(_digital_object = nil, _target_url = nil, _doi_state = :draft, _doi = nil)
+        def mint(**_args)
           raise NotImplementedError
         end
 
