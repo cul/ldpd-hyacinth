@@ -1,12 +1,6 @@
 # frozen_string_literal: true
 require 'json'
 class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api
-  # Events used when minting a DOI, depends on desired state of minted DOI
-  # see https://support.datacite.org/docs/how-do-i-make-a-findable-doi-with-the-rest-api
-  DOI_MINT_EVENT = { draft: '',
-                     findable: 'publish',
-                     registered: 'hide' }.freeze
-
   # @param datacite_rest_api_url [String] url for the DataCite REST API
   # @param basic_auth_user [String] username used to authenticate on the API
   # @param basic_auth_password [String] password used to authenticate on the API
