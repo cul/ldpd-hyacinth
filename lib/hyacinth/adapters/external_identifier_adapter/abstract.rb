@@ -26,12 +26,12 @@ module Hyacinth
         # @param id [String]
         # @param digital [String]
         # @return [Boolean] true if this adapter can handle this type of identifier
-        def update(id, digital_object, location_uri)
+        def update(id, digital_object:, location_uri:, **_args)
           raise Hyacinth::Exceptions::UnhandledLocationError, "Unhandled id for #{self.class.name}: #{id}" unless handles?(id)
-          update_impl(id, digital_object, location_uri)
+          update_impl(id, digital_object: digital_object, location_uri: location_uri)
         end
 
-        def update_impl(_id, _digital_object, _location_uri)
+        def update_impl(_id, **_args)
           raise NotImplementedError
         end
 

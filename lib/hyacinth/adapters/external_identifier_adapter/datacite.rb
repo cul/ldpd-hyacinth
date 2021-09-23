@@ -45,32 +45,10 @@ module Hyacinth
           rest_api.parse_doi_from_api_response_body(rest_api_response.body)
         end
 
-        # @param doi [String]
-        # @param digital_object [DigitalObject]
-        # @param target_url [String]
-        # @param doi_state [Symbol] doi_state can be set to one of the following: :draft, :findable, :registered
-        # @return [Boolean] true if update was successful, false otherwise
-        def update_doi(doi,
-                       digital_object,
-                       target_url, doi_state = nil)
-          datacite_data = Datacite::RestApi::V2::Data.new(@prefix)
-          datacite_data.update_properties(map_metadata(HyacinthMetadata.new(digital_object.as_json), target_url))
-          datacite_data.build_properties_update(doi_state)
-          rest_api = Datacite::RestApi::V2::Api.new(@rest_api, @user, @password)
-          rest_api_response = rest_api.put_dois(doi, datacite_data.generate_json_payload)
-          unless rest_api_response.status.eql? 200
-            Rails.logger.error "Did not update a DOI! Response Code: #{rest_api_response.status}." \
-                               "Response Body: #{rest_api_response.body}."
-            return false
-          end
-          true
-        end
-
-        # Following only updates the target url. Assumes the other required DataCite properties
-        # are already set. If not sure, use update_doi(doi, hyacinth_metadata, target_url, doi_state = nil)
-        # and supply required metadata
+        # Following only updates the DOI target url. Assumes the other required DataCite properties
+        # are already set. If not sure, use update method and supply digital object.
         # return nil if unsuccessful, else returns the new target URL
-        def update_doi_target_url(doi, target_url)
+        def update_location_uri(doi, target_url)
           datacite_data = Datacite::RestApi::V2::Data.new(@prefix)
           datacite_data.url = target_url
           datacite_data.build_properties_update
@@ -118,9 +96,20 @@ module Hyacinth
         # @param id [String]
         # @param digital_object [DigitalObject]
         # @param location_uri [String]
-        # @return [Boolean] true if this adapter can handle this type of identifier
-        def update_impl(id, digital_object, location_uri)
-          update_doi(id, digital_object, location_uri)
+        # @param doi_state [Symbol] doi_state can be set to one of the following: :draft, :findable, :registered
+        # @return [Boolean] true if update was successful, false otherwise
+        def update_impl(doi, digital_object:, location_uri:, doi_state: nil, **_args)
+          datacite_data = Datacite::RestApi::V2::Data.new(@prefix)
+          datacite_data.update_properties(map_metadata(HyacinthMetadata.new(digital_object.as_json), location_uri))
+          datacite_data.build_properties_update(doi_state)
+          rest_api = Datacite::RestApi::V2::Api.new(@rest_api, @user, @password)
+          rest_api_response = rest_api.put_dois(doi, datacite_data.generate_json_payload)
+          unless rest_api_response.status.eql? 200
+            Rails.logger.error "Did not update a DOI! Response Code: #{rest_api_response.status}." \
+                               "Response Body: #{rest_api_response.body}."
+            return false
+          end
+          true
         end
 
         def tombstone_impl(_id)

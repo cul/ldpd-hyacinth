@@ -2,7 +2,8 @@
 
 require 'rails_helper'
 
-RSpec.describe DigitalObjectConcerns::PublishBehavior, solr: true do
+RSpec.describe DigitalObjectConcerns::PublishBehavior do
+  include_context 'with stubbed search adapters'
   let(:publishing_user) { FactoryBot.create(:user) }
   let(:project) { FactoryBot.create(:project) }
   let(:publish_target_1) do
@@ -25,7 +26,26 @@ RSpec.describe DigitalObjectConcerns::PublishBehavior, solr: true do
     obj
   end
 
-  context "#unpublish_from_all" do
+  describe "#perform_publish_changes" do
+    context 'to a publish target that is an allowed DOI target' do
+      let(:publish_target) { FactoryBot.create(:publish_target, doi_priority: 1, is_allowed_doi_target: true) }
+      let(:object) { FactoryBot.create(:digital_object_test_subclass, doi: doi) }
+      let(:doi) { '10.abcd/4569' }
+      let(:location_uri) { "http://example.org/objects/#{object.uid}" }
+      let(:publish_entry) { PublishEntry.new(publish_target: publish_target, citation_location: location_uri) }
+      let(:publish_promise) do
+        Concurrent::Promise.new { publish_entry }.execute
+      end
+
+      it "calls #update on external identifier adapter" do
+        expect(object).to receive(:publish_promise).and_return(publish_promise)
+        expect(Hyacinth::Config.external_identifier_adapter).to receive(:update).with(doi, digital_object: object, location_uri: location_uri)
+        object.perform_publish_changes(publish_to: [publish_target])
+      end
+    end
+  end
+
+  describe "#unpublish_from_all" do
     it "calls unpublish_from for all current publish_entries" do
       expect(digital_object_with_publish_entries).to receive(:unpublish_from).with(targets: digital_object_with_publish_entries.publish_targets)
       digital_object_with_publish_entries.unpublish_from_all

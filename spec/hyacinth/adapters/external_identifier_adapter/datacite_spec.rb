@@ -200,29 +200,17 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
         headers: mocked_headers,
         body: metadata_payload_json.gsub(/\n\s+/, '')
       ).to_return(status: 200, body: no_metadata_response_body_json, headers: {})
-      datacite.update('10.33555/tb9q-qb07', item, 'https://www.columbia.edu')
+      datacite.update('10.33555/tb9q-qb07', digital_object: item, location_uri: 'https://www.columbia.edu')
     end
   end
 
-  describe '#update_doi' do
-    it "calls the appropriate Api method" do
-      item = DigitalObject::Item.new
-      allow(item).to receive(:as_json).and_return(dod)
-      stub_request(:put, "https://api.test.datacite.org/dois/10.33555/tb9q-qb07").with(
-        headers: mocked_headers,
-        body: metadata_payload_json.gsub(/\n\s+/, '')
-      ).to_return(status: 200, body: no_metadata_response_body_json, headers: {})
-      datacite.update_doi('10.33555/tb9q-qb07', item, 'https://www.columbia.edu')
-    end
-  end
-
-  describe '#update_doi_target_url' do
+  describe '#update_location_uri' do
     it "calls the appropriate Api method" do
       stub_request(:put, "https://api.test.datacite.org/dois/10.33555/tb9q-qb07").with(
         headers: mocked_headers,
         body: update_target_url_payload_json.gsub(/\n\s+/, '')
       ).to_return(status: 200, body: no_metadata_response_body_json, headers: {})
-      datacite.update_doi_target_url('10.33555/tb9q-qb07', 'https://www.columbia.edu')
+      datacite.update_location_uri('10.33555/tb9q-qb07', 'https://www.columbia.edu')
     end
   end
 end
