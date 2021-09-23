@@ -8,9 +8,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata
   # @param digital_object_data_arg [Hash]
   # @api public
   def initialize(digital_object_data_arg)
-    # dod is shorthand for digital_object_data
     @source = HashWithIndifferentAccess.new(digital_object_data_arg).freeze
-    # dfd is shorthand for descriptive_metadata
     @descriptive_metadata = @source['descriptive_metadata'].dup.freeze
   end
 
@@ -42,10 +40,10 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata
   # @return [String, nil]
   # @note only returns the first title value
   def title
-    return nil unless @descriptive_metadata.key? 'title'
+    return nil unless @source.key? 'title'
     # concatenates the non sort portion with the sort portion
-    non_sort_portion = @descriptive_metadata.dig('title', 0, 'non_sort_portion')
-    sort_portion = @descriptive_metadata.dig('title', 0, 'sort_portion')
+    non_sort_portion = @source.dig('title', 'value', 'non_sort_portion')
+    sort_portion = @source.dig('title', 'value', 'sort_portion')
     [non_sort_portion, sort_portion].compact.join(' ')
   end
 

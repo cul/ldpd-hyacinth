@@ -3,7 +3,7 @@
     ,
     "digital_object_type" :
     {
-	"string_key" : "item"
+    "string_key" : "item"
     }
     ,
     "created_at" : "2015-02-04T19:22:37.000Z"
@@ -12,275 +12,276 @@
     ,
     "project" :
     {
-	"string_key" : "test"
+    "string_key" : "test"
+    }
+    ,
+    "title" :
+    {
+        "value":
+        {
+            "sort_portion" : "Catcher in the Rye",
+            "non_sort_portion" : "The"
+        }
     }
     ,
     "publish_targets" :
     [
-	{
+    {
             "string_key" : "test_publish_target_1"
-	}
-	,
-	{
+    }
+    ,
+    {
             "string_key" : "test_publish_target_2"
-	}
+    }
     ]
     ,
-	"doi" : "10.1371/article.pone.0119638",
+    "doi" : "10.1371/article.pone.0119638",
     "descriptive_metadata" :
     {
-	"title" :
-	[
+    "cnri_handle_identifier" :
+    [
+        {
+        "value" : "http://hdl.handle.net/10022/AC:P:29183"
+        }
+    ]
+    ,
+    "type_of_resource" :
+    [
+        {
+        "value" : "Image"
+        }
+    ]
+    ,
+    "abstract" :
+    [
             {
-		"sort_portion" : "Catcher in the Rye",
-		"non_sort_portion" : "The"
+        "value" : "This is an abstract; yes, a very nice abstract"
             }
-	]
-	,
-	"cnri_handle_identifier" :
-	[
-	    {
-		"value" : "http://hdl.handle.net/10022/AC:P:29183"
-	    }
-	]
-	,
-	"type_of_resource" :
-	[
-	    {
-		"value" : "Image"
-	    }
-	]
-	,
-	"abstract" :
-	[
+    ]
+    ,
+    "name" :
+    [
             {
-		"value" : "This is an abstract; yes, a very nice abstract"
-            }
-	]
-	,
-	"name" :
-	[
+        "term" :
+        {
+            "pref_label" : "Salinger, J. D.",
+            "uri" : "http://id.loc.gov/authorities/names/n50016589",
+            "type" : "personal"
+        }
+        ,
+        "role" :
+        [
             {
-		"term" :
-		{
-		    "pref_label" : "Salinger, J. D.",
-		    "uri" : "http://id.loc.gov/authorities/names/n50016589",
-		    "type" : "personal"
-		}
-		,
-		"role" :
-		[
-		    {
-			"term" :
-			{
-			    "pref_label" : "Author",
-			    "uri" : "http://id.loc.gov/vocabulary/relators/aut"
-			}
-		    }
-		]
-            }
-	    ,
+            "term" :
             {
-		"term" :
-		{
-		    "pref_label" : "Picasso González, Juan",
-		    "uri" : "http://id.loc.gov/authorities/names/n2003054176.html",
-		    "type" : "personal"
-		}
-		,
-		"role" :
-		[
-		    {
-			"term" :
-			{
-			    "pref_label" : "Illustrator",
-			    "uri" : "http://id.loc.gov/vocabulary/relators/ill"
-			}
-		    }
-		]
+                "pref_label" : "Author",
+                "uri" : "http://id.loc.gov/vocabulary/relators/aut"
             }
-	    ,
+            }
+        ]
+            }
+        ,
             {
-		"term" :
-		{
-		    "pref_label" : "Christie, Agatha",
-		    "uri" : "http://id.loc.gov/authorities/names/n79038407",
-		    "type" : "personal"
-		}
-		,
-		"role" :
-		[
-		    {
-			"term" :
-			{
-			    "pref_label" : "Moderator",
-			    "uri" : "http://id.loc.gov/vocabulary/relators/mod"
-			}
-		    }
-		]
-            }
-	    ,
+        "term" :
+        {
+            "pref_label" : "Picasso González, Juan",
+            "uri" : "http://id.loc.gov/authorities/names/n2003054176.html",
+            "type" : "personal"
+        }
+        ,
+        "role" :
+        [
             {
-		"term" :
-		{
-		    "pref_label" : "Burton, Tim",
-		    "uri" : "http://id.loc.gov/authorities/names/n91100415.html",
-		    "type" : "personal"
-		}
-		,
-		"role" :
-		[
-		    {
-			"term" :
-			{
-			    "pref_label" : "Contributor",
-			    "uri" : "http://id.loc.gov/vocabulary/relators/ctb"
-			}
-		    }
-		]
-            }
-	    ,
+            "term" :
             {
-		"term" :
-		{
-		    "pref_label" : "Lincoln, Abraham",
-		    "uri" : "http://id.loc.gov/authorities/names/n79006779",
-		    "type" : "personal"
-		}
-		,
-		"role" :
-		[
-		    {
-			"term" :
-			{
-			    "pref_label" : "author",
-			    "uri" : "http://id.loc.gov/vocabulary/relators/aut"
-			}
-		    }
-		    ,
-		    {
-			"term" :
-			{
-			    "pref_label" : "Editor",
-			    "uri" : "http://id.loc.gov/vocabulary/relators/edt"
-			}
-		    }
-		]
+                "pref_label" : "Illustrator",
+                "uri" : "http://id.loc.gov/vocabulary/relators/ill"
             }
-	    ,
-	    {
-		"term" :
-		{
-		    "uri" : "temp:ea1cc077df24fbc74a96019811e6546692848b85a63cf6189c3d45b7bbdeaf17",
-		    "pref_label" : "Columbia University. English and Comparative Literature",
-		    "type" : "corporate"
-		}
-		,
-		"role":
-		[
-		    {
-			"term":
-			{
-			    "uri": "http://id.loc.gov/vocabulary/relators/org",
-			    "pref_label": "Originator"
-			}
-		    }
-		]
-	    }
-	]
-	,
-	"genre":
-	[
-	    {
-		"term":
-		{
-		    "uri": "http://example.com/foobar",
-		    "pref_label": "Foobar",
-		    "type": "external",
-		    "authority": "foobar",
-		    "vocabulary_string_key": "genre",
-		    "internal_id": 314159
-		}
-	    }
-	]
-	,
-	"subject_topic" :
-	[
-	    {
-		"term" :
-		{
-		    "uri" : "http://id.worldcat.org/fast/872451",
-		    "pref_label" : "Computer science",
-		    "type" : "external",
-		    "vocabulary_string_key" : "subject_topic",
-		    "internal_id" : 195965
-		}
-	    }
-	    ,
-	    {
-		"term" :
-		{
-		    "uri" : "http://experimental.worldcat.org/fast/873333",
-		    "pref_label" : "Concertos (Flute)",
-		    "type" : "external",
-		    "vocabulary_string_key" : "subject_topic",
-		    "internal_id" : 195966
-		}
-	    }
-	]
-	,
-	"date_issued" :
-	[
-	    {
-		"start_value" : "1951-01-01"
-	    }
-	]
-	,
-	"parent_publication" :
-	[
-	    {
-		"issn" : "1932-6203",
-		"isbn" : "0670734608",
-		"volume" : "10",
-		"issue" : "3",
-		"publisher" : "PLoS ONE",
-		"doi" : "10.1371/journal.pone.0119638"
-	    }
-	]
-	,
-	"subject_topic" :
-	[
-	    {
-		"term" :
-		{
-		    "uri" : "http://id.worldcat.org/fast/1737284",
-		    "pref_label" : "Educational attainment",
-		    "type" : "external",
-		    "vocabulary_string_key" : "subject_topic",
-		    "internal_id" : 195775
-		}
-	    },
-	    {
-		"term" :
-		{
-		    "uri" : "http://id.worldcat.org/fast/1053367",
-		    "pref_label" : "Parental influences",
-		    "type" : "external",
-		    "vocabulary_string_key" : "subject_topic",
-		    "internal_id" : 195776
-		}
-	    }
-	    ,
-	    {
-		"term":
-		{
-		    "uri" : "http://id.worldcat.org/fast/1026881",
-		    "pref_label" : "Mother and child--Psychological aspects",
-		    "type" : "external",
-		    "vocabulary_string_key" : "subject_topic",
-		    "internal_id" : 195777
-		}
-	    }
-	]
+            }
+        ]
+            }
+        ,
+            {
+        "term" :
+        {
+            "pref_label" : "Christie, Agatha",
+            "uri" : "http://id.loc.gov/authorities/names/n79038407",
+            "type" : "personal"
+        }
+        ,
+        "role" :
+        [
+            {
+            "term" :
+            {
+                "pref_label" : "Moderator",
+                "uri" : "http://id.loc.gov/vocabulary/relators/mod"
+            }
+            }
+        ]
+            }
+        ,
+            {
+        "term" :
+        {
+            "pref_label" : "Burton, Tim",
+            "uri" : "http://id.loc.gov/authorities/names/n91100415.html",
+            "type" : "personal"
+        }
+        ,
+        "role" :
+        [
+            {
+            "term" :
+            {
+                "pref_label" : "Contributor",
+                "uri" : "http://id.loc.gov/vocabulary/relators/ctb"
+            }
+            }
+        ]
+            }
+        ,
+            {
+        "term" :
+        {
+            "pref_label" : "Lincoln, Abraham",
+            "uri" : "http://id.loc.gov/authorities/names/n79006779",
+            "type" : "personal"
+        }
+        ,
+        "role" :
+        [
+            {
+            "term" :
+            {
+                "pref_label" : "author",
+                "uri" : "http://id.loc.gov/vocabulary/relators/aut"
+            }
+            }
+            ,
+            {
+            "term" :
+            {
+                "pref_label" : "Editor",
+                "uri" : "http://id.loc.gov/vocabulary/relators/edt"
+            }
+            }
+        ]
+            }
+        ,
+        {
+        "term" :
+        {
+            "uri" : "temp:ea1cc077df24fbc74a96019811e6546692848b85a63cf6189c3d45b7bbdeaf17",
+            "pref_label" : "Columbia University. English and Comparative Literature",
+            "type" : "corporate"
+        }
+        ,
+        "role":
+        [
+            {
+            "term":
+            {
+                "uri": "http://id.loc.gov/vocabulary/relators/org",
+                "pref_label": "Originator"
+            }
+            }
+        ]
+        }
+    ]
+    ,
+    "genre":
+    [
+        {
+        "term":
+        {
+            "uri": "http://example.com/foobar",
+            "pref_label": "Foobar",
+            "type": "external",
+            "authority": "foobar",
+            "vocabulary_string_key": "genre",
+            "internal_id": 314159
+        }
+        }
+    ]
+    ,
+    "subject_topic" :
+    [
+        {
+        "term" :
+        {
+            "uri" : "http://id.worldcat.org/fast/872451",
+            "pref_label" : "Computer science",
+            "type" : "external",
+            "vocabulary_string_key" : "subject_topic",
+            "internal_id" : 195965
+        }
+        }
+        ,
+        {
+        "term" :
+        {
+            "uri" : "http://experimental.worldcat.org/fast/873333",
+            "pref_label" : "Concertos (Flute)",
+            "type" : "external",
+            "vocabulary_string_key" : "subject_topic",
+            "internal_id" : 195966
+        }
+        }
+    ]
+    ,
+    "date_issued" :
+    [
+        {
+        "start_value" : "1951-01-01"
+        }
+    ]
+    ,
+    "parent_publication" :
+    [
+        {
+        "issn" : "1932-6203",
+        "isbn" : "0670734608",
+        "volume" : "10",
+        "issue" : "3",
+        "publisher" : "PLoS ONE",
+        "doi" : "10.1371/journal.pone.0119638"
+        }
+    ]
+    ,
+    "subject_topic" :
+    [
+        {
+        "term" :
+        {
+            "uri" : "http://id.worldcat.org/fast/1737284",
+            "pref_label" : "Educational attainment",
+            "type" : "external",
+            "vocabulary_string_key" : "subject_topic",
+            "internal_id" : 195775
+        }
+        },
+        {
+        "term" :
+        {
+            "uri" : "http://id.worldcat.org/fast/1053367",
+            "pref_label" : "Parental influences",
+            "type" : "external",
+            "vocabulary_string_key" : "subject_topic",
+            "internal_id" : 195776
+        }
+        }
+        ,
+        {
+        "term":
+        {
+            "uri" : "http://id.worldcat.org/fast/1026881",
+            "pref_label" : "Mother and child--Psychological aspects",
+            "type" : "external",
+            "vocabulary_string_key" : "subject_topic",
+            "internal_id" : 195777
+        }
+        }
+    ]
     }
 }

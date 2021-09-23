@@ -12,6 +12,14 @@
     "project" :
     {
 	"string_key" : "test"
+    },
+    "title" :
+    {
+        "value":
+        {
+            "sort_portion" : "Catcher in the Rye",
+            "non_sort_portion" : "The"
+        }
     }
     ,
     "publish_targets" :
@@ -29,14 +37,6 @@
 
     "descriptive_metadata" :
     {
-	"title" :
-	[
-            {
-		"sort_portion" : "Catcher in the Rye",
-		"non_sort_portion" : "The"
-            }
-	]
-	,
 	"cnri_handle_identifier" :
 	[
 	    {
