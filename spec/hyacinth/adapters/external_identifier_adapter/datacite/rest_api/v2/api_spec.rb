@@ -4,26 +4,6 @@ require 'rails_helper'
 
 describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api do
   let(:api) { described_class.new(rest_api: 'https://api.test.datacite.org', user: 'FriendlyUser', password: 'FriendlyPassword') }
-  let(:json_payload_update_doi) do
-    '
-    {"data":
-       {"type":"dois",
-        "attributes":
-          {"titles":
-             [{"title":"The Good Title"}],
-           "creators":
-             [{"name":"Doe, Jane"}],
-           "url":"https://www.columbia.edu",
-           "publisher":"Self",
-           "publicationYear":2002,
-           "types":
-             {"resourceTypeGeneral":"Text"},
-           "schemaVersion":"http://datacite.org/schema/kernel-4",
-           "prefix":"10.33555"}
-       }
-    }
-    '
-  end
 
   let(:metadata) do
     { type: 'dois',
@@ -40,6 +20,11 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::A
         prefix: '10.33555'
       } }
   end
+
+  let(:json_payload_update_doi) do
+    { data: metadata }.to_json
+  end
+
   let(:mocked_headers_with_content) do
     { 'Accept' => '*/*', 'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
       'Content-Type' => 'application/vnd.api+json', 'User-Agent' => 'Faraday v1.1.0' }
