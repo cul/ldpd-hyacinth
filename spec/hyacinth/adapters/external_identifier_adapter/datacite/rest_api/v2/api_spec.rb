@@ -100,4 +100,21 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::A
       api.put_dois('10.33555/2Y0J-BC24', json_payload_update_doi)
     end
   end
+  describe '#logger' do
+    let(:dev) { StringIO.new }
+    let(:log_level) { :warn }
+    let(:logger_config) { { log_level: log_level, dev: dev } }
+    let(:permitted_message) { 'Hello...' }
+    let(:filtered_message) { 'Goodbye...' }
+    let(:message_buffer) { dev.string.split }
+    before do
+      api.configure_logger(logger: logger_config)
+      api.logger.warn(permitted_message)
+      api.logger.info(filtered_message)
+    end
+    it "logs the api response" do
+      expect(message_buffer).to include(permitted_message)
+      expect(message_buffer).not_to include(filtered_message)
+    end
+  end
 end

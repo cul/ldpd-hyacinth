@@ -20,6 +20,9 @@ default: &default
       'http://vocab.getty.edu/aat/300048715':
         attribute_general: Text
         content: Article
+  logger:
+    log_level: debug
+    dev: 'datacite.log'
 development:
   <<: *default
 test:
