@@ -3,13 +3,21 @@
 # Following module contains functionality to retrieve metadata
 # from the descriptive_metadata hash from DigitalObject
 class Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata
-  attr_reader :source, :descriptive_metadata
+  DATETIME_PARSER = Hyacinth::DigitalObject::TypeDef::DateTime.new
+  DEFAULT_DATACITE_PROPERTIES = {
+    title: 'Placeholder Title', creators: 'Placeholder Creator',
+    resource_type_general: 'Text', url: 'https://library.columbia.edu',
+    publisher: 'Placeholder Publisher'
+  }.freeze
+
+  attr_reader :source, :descriptive_metadata, :title
   # parse metadata from Hyacinth Digital Objects Data
   # @param digital_object_data_arg [Hash]
   # @api public
-  def initialize(digital_object_data_arg)
-    @source = HashWithIndifferentAccess.new(digital_object_data_arg).freeze
+  def initialize(digital_object)
+    @source = HashWithIndifferentAccess.new(digital_object.as_json).freeze
     @descriptive_metadata = @source['descriptive_metadata'].dup.freeze
+    @title = digital_object.generate_display_label
   end
 
   # DOI identifier value
@@ -20,31 +28,19 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata
   end
 
   def created_at
-    deserialize_datetime(@source['created_at'])
+    DATETIME_PARSER.from_serialized_form_impl(@source['created_at'])
   end
 
   def updated_at
-    deserialize_datetime(@source['updated_at'])
+    DATETIME_PARSER.from_serialized_form_impl(@source['updated_at'])
   end
 
   def first_published_at
-    deserialize_datetime(@source['first_published_at'])
+    DATETIME_PARSER.from_serialized_form_impl(@source['first_published_at'])
   end
 
   def identifiers
     @source['identifiers'] || []
-  end
-
-  # the title of an item
-  # @api public
-  # @return [String, nil]
-  # @note only returns the first title value
-  def title
-    return nil unless @source.key? 'title'
-    # concatenates the non sort portion with the sort portion
-    non_sort_portion = @source.dig('title', 'value', 'non_sort_portion')
-    sort_portion = @source.dig('title', 'value', 'sort_portion')
-    [non_sort_portion, sort_portion].compact.join(' ')
   end
 
   # the genre of an item
@@ -139,43 +135,40 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata
     end
   end
 
-  # retrieve name terms by role from [@descriptive_metadata]
-  # @param Array<Symbol> filter_types optional types to filter to
-  # @return Hash of contributor names to array of types
-  def contributor_values(descriptive_metadata, filter_types = [])
-    descriptive_metadata.fetch('name', []).map { |name| process_name(name) }.select { |key_value_pair| filter_types.blank? || (filter_types & key_value_pair[1]).present? }.to_h
+  def names_for_roles(*contributor_roles)
+    contributor_values(@descriptive_metadata, contributor_roles).keys
   end
 
-  def creators
-    contributor_values(@descriptive_metadata, [:author]).keys
+  def as_datacite_properties(target_url = nil)
+    DEFAULT_DATACITE_PROPERTIES.merge({
+      title: self.title,
+      creators: self.names_for_roles(:author),
+      resource_type_general: self.type_of_resource,
+      url: target_url,
+      publisher: self.publisher,
+      publication_year: (self.date_issued_start_year || Time.zone.today.year).to_i
+    }.compact)
   end
 
-  def editors
-    contributor_values(@descriptive_metadata, [:editor]).keys
-  end
-
-  def moderators
-    contributor_values(@descriptive_metadata, [:moderator]).keys
-  end
-
-  def contributors
-    contributor_values(@descriptive_metadata, [:contributor]).keys
+  def self.as_datacite_properties(digital_object, target_url)
+    new(digital_object).as_datacite_properties(target_url)
   end
 
   private
 
-    CONTRIBUTOR_ROLES = ['author', 'editor', 'moderator', 'contributor'].freeze
+    CONTRIBUTOR_ROLES = [:author, :editor, :moderator, :contributor].freeze
 
     def process_name(name_hash)
       return [name_hash['term']['pref_label'], [:contributor]] if name_hash['role'].blank?
 
-      roles = CONTRIBUTOR_ROLES & name_hash['role'].map do |role|
-        role['term']['pref_label'].downcase
-      end
-      [name_hash['term']['pref_label'], roles.map(&:to_sym)]
+      roles = name_hash['role'].map { |role| role.dig('term', 'pref_label').downcase.to_sym }
+      [name_hash['term']['pref_label'], CONTRIBUTOR_ROLES & roles]
     end
 
-    def deserialize_datetime(value)
-      Hyacinth::DigitalObject::TypeDef::DateTime.new.from_serialized_form_impl(value)
+    # retrieve name terms by role from [@descriptive_metadata]
+    # @param Array<Symbol> filter_types optional types to filter to
+    # @return Hash of contributor names to array of types
+    def contributor_values(descriptive_metadata, filter_types = [])
+      descriptive_metadata.fetch('name', []).map { |name| process_name(name) }.select { |key_value_pair| filter_types.blank? || (filter_types & key_value_pair[1]).present? }.to_h
     end
 end

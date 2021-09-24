@@ -103,25 +103,13 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
        [{\"status\":\"404\",\"title\":\"The resource you are looking for does'nt exist.\"}]
     }"
   end
-  let(:expected_map_metadata_result) do
-    {
-      creators: ["Salinger, J. D.", "Lincoln, Abraham"],
-      publication_year: 1951,
-      publisher: "The Best Publisher Ever",
-      resource_type_general: "Image",
-      title: "The Catcher in the Rye",
-      url: "https://www.columbia.edu"
-    }
-  end
-  let(:expected_map_metadata_default) do
-    {
-      creators: ["Placeholder Creator"],
-      publication_year: Time.zone.today.year,
-      publisher: "Placeholder Publisher",
-      resource_type_general: "Text",
-      title: "Placeholder Title",
-      url: "https://library.columbia.edu"
-    }
+
+  let(:digital_object) do
+    obj = DigitalObject::Item.new
+    allow(obj).to receive(:as_json).and_return(dod)
+    allow(obj).to receive(:title).and_return(dod['title'])
+    allow(obj).to receive(:generate_display_label).and_call_original
+    obj
   end
 
   describe '#exists?' do
@@ -150,10 +138,12 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
     end
   end
 
-  describe '#map_metadata' do
-    it "returns a hash" do
-      metadata = Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata.new dod
-      expect(datacite.map_metadata(metadata, 'https://www.columbia.edu')).to eql(expected_map_metadata_result)
+  describe '#as_datacite_properties' do
+    let(:delegate) { Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata }
+    let(:target_url) { 'https://www.columbia.edu' }
+    it "delegates to HyacinthMetadata class method" do
+      expect(delegate).to receive(:as_datacite_properties).with(digital_object, target_url)
+      datacite.as_datacite_properties(digital_object, target_url)
     end
   end
 
@@ -179,9 +169,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
     end
 
     context "metadata supplied (via DigitalObject instance)." do
-      let(:digital_object) { DigitalObject::Item.new }
       let(:target_url) { 'https://www.columbia.edu' }
-      before { allow(digital_object).to receive(:as_json).and_return(dod) }
       it "calls the appropriate Api method, " do
         stub_request(:post, "https://api.test.datacite.org/dois").with(
           headers: mocked_headers,
@@ -194,13 +182,11 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
 
   describe '#update' do
     it "calls the appropriate Api method" do
-      item = DigitalObject::Item.new
-      allow(item).to receive(:as_json).and_return(dod)
       stub_request(:put, "https://api.test.datacite.org/dois/10.33555/tb9q-qb07").with(
         headers: mocked_headers,
         body: metadata_payload_json.gsub(/\n\s+/, '')
       ).to_return(status: 200, body: no_metadata_response_body_json, headers: {})
-      datacite.update('10.33555/tb9q-qb07', digital_object: item, location_uri: 'https://www.columbia.edu')
+      datacite.update('10.33555/tb9q-qb07', digital_object: digital_object, location_uri: 'https://www.columbia.edu')
     end
   end
 

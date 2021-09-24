@@ -33,7 +33,7 @@ module Hyacinth
             return
           end
           datacite_data = Datacite::RestApi::V2::Data.new(@prefix)
-          datacite_data.update_properties(map_metadata(HyacinthMetadata.new(digital_object.as_json), target_url)) if digital_object
+          datacite_data.update_properties(as_datacite_properties(digital_object, target_url)) if digital_object
           datacite_data.build_mint(doi_state)
           rest_api = Datacite::RestApi::V2::Api.new(@rest_api, @user, @password)
           rest_api_response = rest_api.post_dois(datacite_data.generate_json_payload)
@@ -62,28 +62,10 @@ module Hyacinth
           rest_api.parse_url_from_api_response_body(rest_api_response.body)
         end
 
-        # @param hyacinth_metadata [HyacinthMetadata]
+        # @param digital_object [DigitalObject]
         # @return [Hash] hash containing the publishing info ready to be JSONified
-        def map_metadata(hyacinth_metadata, target_url)
-          datacite_data = {}
-          return unless hyacinth_metadata
-          # TODO: come up with other/better default value, if needed
-          datacite_data[:title] = hyacinth_metadata.title || 'Placeholder Title'
-          datacite_data[:creators] = hyacinth_metadata.creators || 'Placeholder Creator'
-          datacite_data[:resource_type_general] = hyacinth_metadata.type_of_resource || "Text"
-          datacite_data[:url] = target_url || 'https://library.columbia.edu'
-          datacite_data.merge!(map_publication_metadata(hyacinth_metadata))
-        end
-
-        # @param hyacinth_metadata [HyacinthMetadata]
-        # @return [Hash] hash containing the publishing info ready to be JSONified
-        def map_publication_metadata(hyacinth_metadata)
-          publication_data = {}
-          # TODO: come up with other/better default value, if needed
-          publication_data[:publisher] = hyacinth_metadata.publisher || "Placeholder Publisher"
-          publication_data[:publication_year] = hyacinth_metadata.date_issued_start_year.to_i ||
-                                                Time.zone.today.year
-          publication_data
+        def as_datacite_properties(digital_object, target_url)
+          HyacinthMetadata.as_datacite_properties(digital_object, target_url)
         end
 
         # Returns true if an identifier exists in the external management system
@@ -100,7 +82,7 @@ module Hyacinth
         # @return [Boolean] true if update was successful, false otherwise
         def update_impl(doi, digital_object:, location_uri:, doi_state: nil, **_args)
           datacite_data = Datacite::RestApi::V2::Data.new(@prefix)
-          datacite_data.update_properties(map_metadata(HyacinthMetadata.new(digital_object.as_json), location_uri))
+          datacite_data.update_properties(as_datacite_properties(digital_object, location_uri))
           datacite_data.build_properties_update(doi_state)
           rest_api = Datacite::RestApi::V2::Api.new(@rest_api, @user, @password)
           rest_api_response = rest_api.put_dois(doi, datacite_data.generate_json_payload)
