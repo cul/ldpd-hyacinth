@@ -5,6 +5,7 @@ import produce from 'immer';
 import { merge } from 'lodash';
 import { useHistory } from 'react-router-dom';
 
+import FieldGroup from './FieldGroup';
 import FieldGroupArray from './FieldGroupArray';
 import TitleForm from './TitleForm';
 import FormButtons from '../../shared/forms/FormButtons';
@@ -15,33 +16,25 @@ import TextInputWithAddAndRemove from '../../shared/forms/inputs/TextInputWithAd
 import { createDigitalObjectMutation, updateDescriptiveMetadataMutation } from '../../../graphql/digitalObjects';
 import { getEnabledDynamicFieldsQuery } from '../../../graphql/projects/enabledDynamicFields';
 import { getDynamicFieldGraphQuery } from '../../../graphql/dynamicFieldCategories';
-
-const defaultFieldValue = {
-  string: '',
-  textarea: '',
-  integer: null,
-  boolean: false,
-  select: '',
-  date: '',
-  controlled_term: {},
-};
+import { emptyDataForCategories, filterDynamicFieldCategories, padForEnabledFields } from '../../../utils/dynamicFieldStructures';
 
 const DynamicFieldCategory = (props) => {
-  const { category, onChange, descriptiveMetadata, defaultFieldData } = props;
+  const {
+    category, onChange, descriptiveMetadata, defaultFieldData,
+  } = props;
   const { displayLabel, children } = category;
   const changeHandler = (sk) => {
     const stringKey = sk;
-    return (v) => {
-      return onChange(stringKey, v);
-    };
+    return (v) => onChange(stringKey, v);
   };
   return (
     <div key={displayLabel}>
       <h4 className="text-orange">{displayLabel}</h4>
       {
-        children.map(fieldGroup => (
+        children.map((fieldGroup) => (
           <FieldGroupArray
             key={`array_${fieldGroup.stringKey}`}
+            component={FieldGroup}
             dynamicFieldGroup={fieldGroup}
             value={descriptiveMetadata[fieldGroup.stringKey]}
             defaultValue={defaultFieldData[fieldGroup.stringKey][0]}
@@ -51,6 +44,18 @@ const DynamicFieldCategory = (props) => {
       }
     </div>
   );
+};
+
+DynamicFieldCategory.propTypes = {
+  descriptiveMetadata: PropTypes.objectOf(PropTypes.any).isRequired,
+  onChange: PropTypes.func.isRequired,
+  category: PropTypes.shape(
+    {
+      displayLabel: PropTypes.string,
+      children: PropTypes.arrayOf(PropTypes.any),
+    },
+  ).isRequired,
+  defaultFieldData: PropTypes.objectOf(PropTypes.any).isRequired,
 };
 
 function MetadataForm(props) {
@@ -63,13 +68,13 @@ function MetadataForm(props) {
   const [createDigitalObject, { data: createData, error: createErrors }] = useMutation(createDigitalObjectMutation);
   const [updateDescriptiveMetadata, { data: updateData, error: updateErrors }] = useMutation(
     updateDescriptiveMetadataMutation,
-    );
+  );
 
   let userErrors = [];
   // One day, maybe enable optionalChaining JS feature in babel to simplify lines like the one below.
-  if(createData && createData.createDigitalObject && createData.createDigitalObject.userErrors){
+  if (createData && createData.createDigitalObject && createData.createDigitalObject.userErrors) {
     userErrors = createData.createDigitalObject.userErrors;
-  }else if(updateData && updateData.updateDescriptiveMetadata && updateData.updateDescriptiveMetadata.userErrors){
+  } else if (updateData && updateData.updateDescriptiveMetadata && updateData.updateDescriptiveMetadata.userErrors) {
     userErrors = updateData.updateDescriptiveMetadata.userErrors;
   }
 
@@ -137,43 +142,12 @@ function MetadataForm(props) {
     return action({ variables });
   };
 
-  const emptyDescriptiveMetadata = (dynamicFields, newObject) => {
-    dynamicFields.forEach((i) => {
-      switch (i.type) {
-        case 'DynamicFieldGroup':
-          newObject[i.stringKey] = [emptyDescriptiveMetadata(i.children, {})];
-          break;
-        case 'DynamicField':
-          newObject[i.stringKey] = defaultFieldValue[i.fieldType];
-          break;
-        default:
-          break;
-      }
-    });
-
-    return newObject;
-  };
-
-  const keepEnabledFields = (enabledFieldIds, children) => children.map((c) => {
-    switch (c.type) {
-      case 'DynamicFieldGroup':
-        c.children = keepEnabledFields(enabledFieldIds, c.children);
-        return c.children.length > 0 ? c : null;
-      case 'DynamicField':
-        if (enabledFieldIds.includes(c.id)) return c;
-        // if the ids are fetched in queries mixing ID scalars and JSON, strings must be compared
-        if (enabledFieldIds.includes(String(c.id))) return c;
-        return null;
-      default:
-        return c;
-    }
-  }).filter((c) => c !== null);
-
   const {
     loading: enabledFieldsLoading,
     error: enabledFieldsError,
     data: enabledFieldsData,
-  } = useQuery(getEnabledDynamicFieldsQuery,
+  } = useQuery(
+    getEnabledDynamicFieldsQuery,
     { variables: { project: { stringKey: primaryProject.stringKey }, digitalObjectType: digitalObjectType.toUpperCase() } },
   );
 
@@ -189,28 +163,19 @@ function MetadataForm(props) {
   if (anyErrors) {
     return (<GraphQLErrors errors={anyErrors} />);
   }
+  const { enabledDynamicFields } = enabledFieldsData;
+  const { dynamicFieldGraph: { dynamicFieldCategories } } = fieldGraphData;
+  const filteredCategories = filterDynamicFieldCategories(dynamicFieldCategories, enabledDynamicFields);
 
-  const enabledFieldIds = [];
-  enabledFieldsData.enabledDynamicFields.forEach((enabledField) => {
-    const { dynamicField, ...rest } = enabledField;
-    if (rest.enabled) enabledFieldIds.push(dynamicField.id);
-  });
-
-  const filteredCategories = fieldGraphData.dynamicFieldGraph.dynamicFieldCategories.map((cat) => {
-    cat.children = keepEnabledFields(enabledFieldIds, cat.children);
-    return cat;
-  }).filter(cat => cat.children.length > 0);
-
-  const emptyData = {};
-  filteredCategories.forEach((category) => {
-    emptyDescriptiveMetadata(category.children, emptyData);
-  });
-
+  const emptyData = emptyDataForCategories(filteredCategories);
   /*
     Merge emptyData and descriptiveMetadata so that we don't supply undefined values to the form
     as we build out the hierarchy.
    */
   merge(descriptiveMetadata, emptyData, initialDescriptiveMetadata);
+  // Pad descriptiveMetadata out for all enabled fields so that form only encounters defined values
+  padForEnabledFields(descriptiveMetadata, emptyData);
+
   const cancelPath = (formType === 'new') ? '/digital_objects' : `/digital_objects/${id}/metadata`;
   return (
     <>
@@ -218,7 +183,7 @@ function MetadataForm(props) {
         <ErrorList errors={userErrors.map((userError) => (`${userError.message} (path=${userError.path.join('/')})`))} />
         <TitleForm title={title} onChange={onTitleChange} />
         {
-          filteredCategories.map(category => (
+          filteredCategories.map((category) => (
             <DynamicFieldCategory
               key={category.id}
               category={category}
@@ -234,7 +199,7 @@ function MetadataForm(props) {
           <TextInputWithAddAndRemove
             sm={12}
             values={identifiers}
-            onChange={v => onIdentifierChange(v)}
+            onChange={(v) => onIdentifierChange(v)}
           />
         </InputGroup>
 

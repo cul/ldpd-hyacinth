@@ -2,11 +2,9 @@ import React from 'react';
 import produce from 'immer';
 import PropTypes from 'prop-types';
 
-import FieldGroup from './FieldGroup';
-
 const FieldGroupArray = (props) => {
   const {
-    value, onChange, defaultValue, dynamicFieldGroup,
+    component, value, onChange, defaultValue, dynamicFieldGroup,
   } = props;
 
   const onChangeWrapper = (index, newValue) => {
@@ -56,18 +54,21 @@ const FieldGroupArray = (props) => {
     onChange(nextValue);
   };
 
+  const ListItem = component;
+
   return (
     value.map((v, i) => (
-      <FieldGroup
+      <ListItem
+        // eslint-disable-next-line react/no-array-index-key
         key={`${dynamicFieldGroup.stringKey}_${i}`}
         value={v}
         index={i}
         defaultValue={defaultValue}
         dynamicFieldGroup={dynamicFieldGroup}
-        onChange={newValue => onChangeWrapper(i, newValue)}
+        onChange={(newValue) => onChangeWrapper(i, newValue)}
         addHandler={() => addHandler(i)}
         removeHandler={() => removeHandler(i)}
-        moveHandler={move => moveHandler(move, i)}
+        moveHandler={(move) => moveHandler(move, i)}
       />
     ))
   );
