@@ -4,10 +4,9 @@ module Hyacinth
   module Adapters
     module ExternalIdentifierAdapter
       class Datacite < Abstract
+        attr_reader :rest_api
         def initialize(adapter_config = {})
-          @rest_api = adapter_config[:rest_api]
-          @user = adapter_config[:user]
-          @password = adapter_config[:password]
+          @rest_api = Datacite::RestApi::V2::Api.new(adapter_config)
           @prefix = adapter_config[:prefix]
           super(adapter_config)
         end
@@ -35,7 +34,6 @@ module Hyacinth
           datacite_data = Datacite::RestApi::V2::Data.new(@prefix)
           datacite_data.update_properties(as_datacite_properties(digital_object, target_url)) if digital_object
           datacite_data.build_mint(doi_state)
-          rest_api = Datacite::RestApi::V2::Api.new(@rest_api, @user, @password)
           rest_api_response = rest_api.post_dois(datacite_data.generate_json_payload)
           unless rest_api_response.status.eql? 201
             Rails.logger.error "Did not mint a DOI! Response Code: #{rest_api_response.status}." \
@@ -52,7 +50,6 @@ module Hyacinth
           datacite_data = Datacite::RestApi::V2::Data.new(@prefix)
           datacite_data.url = target_url
           datacite_data.build_properties_update
-          rest_api = Datacite::RestApi::V2::Api.new(@rest_api, @user, @password)
           rest_api_response = rest_api.put_dois(doi, datacite_data.generate_json_payload)
           unless rest_api_response.status.eql? 200
             Rails.logger.error "Did not mint a DOI! Response Code: #{rest_api_response.status}." \
@@ -70,7 +67,6 @@ module Hyacinth
 
         # Returns true if an identifier exists in the external management system
         def exists?(doi)
-          rest_api = Datacite::RestApi::V2::Api.new(@rest_api, @user, @password)
           resp = rest_api.get_dois(doi)
           rest_api.parse_doi_from_api_response_body(resp.body).present?
         end
@@ -84,7 +80,6 @@ module Hyacinth
           datacite_data = Datacite::RestApi::V2::Data.new(@prefix)
           datacite_data.update_properties(as_datacite_properties(digital_object, location_uri))
           datacite_data.build_properties_update(doi_state)
-          rest_api = Datacite::RestApi::V2::Api.new(@rest_api, @user, @password)
           rest_api_response = rest_api.put_dois(doi, datacite_data.generate_json_payload)
           unless rest_api_response.status.eql? 200
             Rails.logger.error "Did not update a DOI! Response Code: #{rest_api_response.status}." \

@@ -1,24 +1,25 @@
 # frozen_string_literal: true
 require 'json'
 class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api
-  # @param datacite_rest_api_url [String] url for the DataCite REST API
-  # @param basic_auth_user [String] username used to authenticate on the API
-  # @param basic_auth_password [String] password used to authenticate on the API
-  def initialize(datacite_rest_api_url = DATACITE[:rest_api],
-                 basic_auth_user = DATACITE[:user],
-                 basic_auth_password = DATACITE[:password])
-    @datacite_rest_api_url = datacite_rest_api_url
-    @basic_auth_user = basic_auth_user
-    @basic_auth_password = basic_auth_password
+  # @param rest_api [String] url for the DataCite REST API
+  # @param user [String] username used to authenticate on the API
+  # @param password [String] password used to authenticate on the API
+  def initialize(rest_api:, user:, password:, **_args)
+    @datacite_rest_api_url = rest_api
+    @basic_auth_user = user
+    @basic_auth_password = password
+  end
+
+  # @return [Faraday] connection to the DataCite REST API
+  def connect
+    Faraday.new(@datacite_rest_api_url).tap { |conn| conn.basic_auth(@basic_auth_user, @basic_auth_password) }
   end
 
   # see https://support.datacite.org/reference/dois-2#get_dois-id
   # @param doi [String] DOI
   # @return [Faraday::Response] response from the DataCite REST API
   def get_dois(doi)
-    conn = Faraday.new(@datacite_rest_api_url)
-    conn.basic_auth(@basic_auth_user, @basic_auth_password)
-    response = conn.get("/dois/#{doi}")
+    response = connect.get("/dois/#{doi}")
     log("API response body: #{response.body}", DATACITE[:log_level]) if DATACITE[:log_api]
     response
   end
@@ -52,9 +53,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api
   # @param request_body_json [String] string containing the payload (json) to be sent to the DataCite REST API
   # @return [Faraday::Response] response from the DataCite REST API
   def post_dois(request_body_json)
-    conn = Faraday.new(@datacite_rest_api_url)
-    conn.basic_auth(@basic_auth_user, @basic_auth_password)
-    response = conn.post("/dois") do |req|
+    response = connect.post("/dois") do |req|
       req.headers['Content-Type'] = 'application/vnd.api+json'
       req.body = request_body_json
     end
@@ -68,9 +67,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api
   # @param request_body_json [String] string containing the payload (json) to be sent to the DataCite REST API
   # @return [Faraday::Response] response from the DataCite REST API
   def put_dois(doi, request_body_json)
-    conn = Faraday.new(@datacite_rest_api_url)
-    conn.basic_auth(@basic_auth_user, @basic_auth_password)
-    response = conn.put("/dois/#{doi}") do |req|
+    response = connect.put("/dois/#{doi}") do |req|
       req.headers['Content-Type'] = 'application/vnd.api+json'
       req.body = request_body_json
     end

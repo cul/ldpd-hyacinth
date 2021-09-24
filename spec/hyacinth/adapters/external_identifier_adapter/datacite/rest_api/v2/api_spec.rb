@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api do
-  let(:api) { described_class.new('https://api.test.datacite.org', 'FriendlyUser', 'FriendlyPassword') }
+  let(:api) { described_class.new(rest_api: 'https://api.test.datacite.org', user: 'FriendlyUser', password: 'FriendlyPassword') }
   let(:json_payload_update_doi) do
     '
     {"data":
