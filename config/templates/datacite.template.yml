@@ -3,18 +3,14 @@ default: &default
   user: apitest
   password: apitest
   prefix: '10.33555'
-  log_api: false
-  log_level: warn
   shoulder:
     ark: 'ark:99999/fk4'
     doi: 'doi:10.5072/FK2'
-  ezid_test_user: apitest
-  ezid_test_password: apitest
-  ezid_test_shoulder:
-    ark: 'ark:99999/fk4'
-    doi: 'doi:10.5072/FK2'
-  url: 'https://ezid.cdlib.org'
-  ezid_publisher: 'Columbia University'
+  default_properties:
+    creators: 'Placeholder Creator'
+    publisher: 'Columbia University'
+    resource_type_general: 'Text'
+    title: 'Placeholder Title'
   datacite:
     genre_to_resource_type_mapping:
       'http://vocab.getty.edu/aat/300048715':

@@ -3,12 +3,6 @@
 # Following module contains functionality to retrieve metadata
 # from the descriptive_metadata hash from DigitalObject
 class Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata
-  DEFAULT_DATACITE_PROPERTIES = {
-    title: 'Placeholder Title', creators: 'Placeholder Creator',
-    resource_type_general: 'Text', url: 'https://library.columbia.edu',
-    publisher: 'Placeholder Publisher'
-  }.freeze
-
   attr_reader :descriptive_metadata, :title
 
   delegate :doi, :created_at, :updated_at, :first_published_at, :identifiers, to: :@digital_object
@@ -118,8 +112,8 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata
     contributor_values(@descriptive_metadata, contributor_roles).keys
   end
 
-  def as_datacite_properties(target_url = nil)
-    DEFAULT_DATACITE_PROPERTIES.merge({
+  def as_datacite_properties(target_url = nil, default_properties = {})
+    default_properties.merge({
       title: self.title,
       creators: self.names_for_roles(:author),
       resource_type_general: self.type_of_resource,
@@ -129,8 +123,8 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata
     }.compact)
   end
 
-  def self.as_datacite_properties(digital_object, target_url)
-    new(digital_object).as_datacite_properties(target_url)
+  def self.as_datacite_properties(digital_object, target_url, default_properties = {})
+    new(digital_object).as_datacite_properties(target_url, default_properties)
   end
 
   private
