@@ -19,10 +19,11 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata do
 
   let(:digital_object) do
     obj = DigitalObject::Item.new
-    allow(obj).to receive(:uid).and_return(digital_object_uid)
-    allow(obj).to receive(:as_json).and_return(dod)
-    allow(obj).to receive(:title).and_return(dod['title'])
-    allow(obj).to receive(:generate_display_label).and_call_original
+    obj.assign_attributes(dod)
+    obj.uid = digital_object_uid
+    date_parser = Hyacinth::DigitalObject::TypeDef::DateTime.new
+    obj.created_at = date_parser.from_serialized_form(dod['created_at'])
+    obj.updated_at = date_parser.from_serialized_form(dod['updated_at'])
     obj
   end
 

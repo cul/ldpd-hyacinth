@@ -3,44 +3,23 @@
 # Following module contains functionality to retrieve metadata
 # from the descriptive_metadata hash from DigitalObject
 class Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata
-  DATETIME_PARSER = Hyacinth::DigitalObject::TypeDef::DateTime.new
   DEFAULT_DATACITE_PROPERTIES = {
     title: 'Placeholder Title', creators: 'Placeholder Creator',
     resource_type_general: 'Text', url: 'https://library.columbia.edu',
     publisher: 'Placeholder Publisher'
   }.freeze
 
-  attr_reader :source, :descriptive_metadata, :title
+  attr_reader :descriptive_metadata, :title
+
+  delegate :doi, :created_at, :updated_at, :first_published_at, :identifiers, to: :@digital_object
+
   # parse metadata from Hyacinth Digital Objects Data
   # @param digital_object_data_arg [Hash]
   # @api public
   def initialize(digital_object)
-    @source = HashWithIndifferentAccess.new(digital_object.as_json).freeze
-    @descriptive_metadata = @source['descriptive_metadata'].dup.freeze
+    @digital_object = digital_object
+    @descriptive_metadata = @digital_object.descriptive_metadata.dup.freeze
     @title = digital_object.generate_display_label
-  end
-
-  # DOI identifier value
-  # @api public
-  # @return [String, nil]
-  def doi
-    @source['doi']
-  end
-
-  def created_at
-    DATETIME_PARSER.from_serialized_form_impl(@source['created_at'])
-  end
-
-  def updated_at
-    DATETIME_PARSER.from_serialized_form_impl(@source['updated_at'])
-  end
-
-  def first_published_at
-    DATETIME_PARSER.from_serialized_form_impl(@source['first_published_at'])
-  end
-
-  def identifiers
-    @source['identifiers'] || []
   end
 
   # the genre of an item

@@ -33,9 +33,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
 
   let(:digital_object) do
     obj = DigitalObject::Item.new
-    allow(obj).to receive(:as_json).and_return(dod)
-    allow(obj).to receive(:title).and_return(dod['title'])
-    allow(obj).to receive(:generate_display_label).and_call_original
+    obj.assign_attributes(dod)
     obj
   end
 
@@ -68,15 +66,6 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
 
     it "returns false if the passed-in identifier is not handled by DataCite" do
       expect(datacite.handles?('11.33555/tb9q-qb07abc')).to be_falsey
-    end
-  end
-
-  describe '#as_datacite_properties' do
-    let(:delegate) { Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata }
-    let(:target_url) { 'https://www.columbia.edu' }
-    it "delegates to HyacinthMetadata class method" do
-      expect(delegate).to receive(:as_datacite_properties).with(digital_object, target_url)
-      datacite.as_datacite_properties(digital_object, target_url)
     end
   end
 

@@ -5,6 +5,7 @@ module Hyacinth
     module ExternalIdentifierAdapter
       class Datacite < Abstract
         attr_reader :rest_api
+
         def initialize(adapter_config = {})
           @rest_api = Datacite::RestApi::V2::Api.new(adapter_config)
           @prefix = adapter_config[:prefix]
@@ -32,7 +33,7 @@ module Hyacinth
             return
           end
           datacite_data = Datacite::RestApi::V2::Data.new(@prefix)
-          datacite_data.update_properties(as_datacite_properties(digital_object, target_url)) if digital_object
+          datacite_data.update_properties(HyacinthMetadata.as_datacite_properties(digital_object, target_url)) if digital_object
           datacite_data.build_mint(doi_state)
           rest_api_response = rest_api.post_dois(datacite_data.generate_json_payload)
           unless rest_api_response.status.eql? 201
@@ -59,12 +60,6 @@ module Hyacinth
           rest_api.parse_url_from_api_response_body(rest_api_response.body)
         end
 
-        # @param digital_object [DigitalObject]
-        # @return [Hash] hash containing the publishing info ready to be JSONified
-        def as_datacite_properties(digital_object, target_url)
-          HyacinthMetadata.as_datacite_properties(digital_object, target_url)
-        end
-
         # Returns true if an identifier exists in the external management system
         def exists?(doi)
           resp = rest_api.get_dois(doi)
@@ -78,7 +73,7 @@ module Hyacinth
         # @return [Boolean] true if update was successful, false otherwise
         def update_impl(doi, digital_object:, location_uri:, doi_state: nil, **_rest)
           datacite_data = Datacite::RestApi::V2::Data.new(@prefix)
-          datacite_data.update_properties(as_datacite_properties(digital_object, location_uri))
+          datacite_data.update_properties(HyacinthMetadata.as_datacite_properties(digital_object, location_uri))
           datacite_data.build_properties_update(doi_state)
           rest_api_response = rest_api.put_dois(doi, datacite_data.generate_json_payload)
           unless rest_api_response.status.eql? 200
