@@ -40,20 +40,7 @@ module Hyacinth
         # @return [Boolean] true if this adapter can handle this type of identifier
         def update_impl(id, digital_object, location_uri)
           return false unless handles?(id)
-          @identifiers[id] = { uid: digital_object.uid, status: :active }
-          update_location_uri(id, location_uri)
-          true
-        end
-
-        # Following method will make a request to the EZID server to update the target URL associated
-        # with the EZID DOI entry on the server.
-        # (See _target in http://ezid.cdlib.org/doc/apidoc.html#internal-metadata)
-        # To delete the target URL stored in the DOI server, use an empty string as the argument.
-        # Uses the modify identifier API call, returns true if metadata update was successful
-        # if not, returns false
-        def update_location_uri(id, location_uri)
-          return false unless exists?(doi)
-          @identifiers[doi][:location_uri] = target_url
+          @identifiers[id] = { uid: digital_object.uid, status: :active, location_uri: location_uri }
           true
         end
 

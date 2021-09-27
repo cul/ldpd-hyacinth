@@ -116,14 +116,4 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
       expect(datacite.update(doi, digital_object: digital_object, location_uri: 'https://www.columbia.edu')).to be true
     end
   end
-
-  describe '#update_location_uri' do
-    let(:doi) { '10.33555/tb9q-qb07' }
-    let(:rest_api_response_body) { no_metadata_response_body_json }
-    let(:rest_api_response_status) { 200 }
-    it "calls the appropriate Api method" do
-      expect(rest_api).to receive(:put_dois).with(doi, kind_of(String)).and_return(rest_api_response)
-      datacite.update_location_uri(doi, 'https://www.columbia.edu')
-    end
-  end
 end

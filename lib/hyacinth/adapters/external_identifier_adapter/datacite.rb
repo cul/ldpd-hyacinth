@@ -44,24 +44,6 @@ module Hyacinth
           rest_api.parse_doi_from_api_response_body(rest_api_response.body)
         end
 
-        # Following only updates the DOI target url. Assumes the other required DataCite properties
-        # are already set. If not sure, use update method and supply digital object.
-        # return nil if unsuccessful, else returns the new target URL
-        # @param id [String] the DOI to be updated
-        # @param location_uri [String] the target URL to be associated with the DOI
-        def update_location_uri(id, location_uri)
-          datacite_data = Datacite::RestApi::V2::Data.new(@prefix)
-          datacite_data.url = location_uri
-          datacite_data.build_properties_update
-          rest_api_response = rest_api.put_dois(identifier, datacite_data.generate_json_payload)
-          unless rest_api_response.status.eql? 200
-            Rails.logger.error "Did not mint a DOI! Response Code: #{rest_api_response.status}." \
-                               "Response Body: #{rest_api_response.body}."
-            return
-          end
-          rest_api.parse_url_from_api_response_body(rest_api_response.body)
-        end
-
         # Returns true if an identifier exists in the external management system
         # @param id [String] a DOI
         def exists?(id)
