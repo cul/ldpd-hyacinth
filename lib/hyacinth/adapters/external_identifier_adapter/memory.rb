@@ -51,7 +51,7 @@ module Hyacinth
         # To delete the target URL stored in the DOI server, use an empty string as the argument.
         # Uses the modify identifier API call, returns true if metadata update was successful
         # if not, returns false
-        def update_location_uri(doi, target_url)
+        def update_location_uri(id, location_uri)
           return false unless exists?(doi)
           @identifiers[doi][:location_uri] = target_url
           true

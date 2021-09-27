@@ -70,9 +70,9 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
   end
 
   describe '#mint' do
-    let(:target_url) { nil }
+    let(:location_uri) { nil }
     let(:doi_state) { :draft }
-    let(:minted_doi) { datacite.mint(digital_object: digital_object, target_url: target_url, doi_state: doi_state) }
+    let(:minted_doi) { datacite.mint(digital_object: digital_object, location_uri: location_uri, doi_state: doi_state) }
     context "no DigitalObject supplied" do
       let(:digital_object) { nil }
       let(:rest_api_response_body) { no_metadata_response_body_json }
@@ -90,7 +90,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
     end
 
     context "DigitalObject supplied" do
-      let(:target_url) { 'https://www.columbia.edu' }
+      let(:location_uri) { 'https://www.columbia.edu' }
       let(:rest_api_response_body) { no_metadata_response_body_json }
       let(:rest_api_response_status) { 201 }
       it "calls the appropriate Api method" do
