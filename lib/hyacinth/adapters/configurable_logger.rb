@@ -13,7 +13,7 @@ module Hyacinth
       end
 
       # @param logger [Hash] config for adapter logging
-      def configured_logger(logger: {}, **_args)
+      def configured_logger(logger: {}, **_rest)
         if logger.present?
           logdev = logger[:dev] || Rails.logger.instance_variable_get(:@logdev)
           logdev = Rails.root.join('log', logdev) if logdev.is_a? String

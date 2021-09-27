@@ -26,7 +26,7 @@ module Hyacinth
         # @param target_url [String]
         # @param doi_state [Symbol] doi_state can be set to one of the following: :draft, :findable, :registered
         # @return [String] a new id
-        def mint(digital_object: nil, target_url: nil, doi_state: :draft, **_args)
+        def mint(digital_object: nil, target_url: nil, doi_state: :draft, **_rest)
           if doi_state != :draft && digital_object.nil?
             Rails.logger.error "Hyacinth metadata required to mint DOI in #{doi_state} state"
             return
@@ -76,7 +76,7 @@ module Hyacinth
         # @param location_uri [String]
         # @param doi_state [Symbol] doi_state can be set to one of the following: :draft, :findable, :registered
         # @return [Boolean] true if update was successful, false otherwise
-        def update_impl(doi, digital_object:, location_uri:, doi_state: nil, **_args)
+        def update_impl(doi, digital_object:, location_uri:, doi_state: nil, **_rest)
           datacite_data = Datacite::RestApi::V2::Data.new(@prefix)
           datacite_data.update_properties(as_datacite_properties(digital_object, location_uri))
           datacite_data.build_properties_update(doi_state)
