@@ -3,190 +3,178 @@
 require 'rails_helper'
 
 describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Data do
-  let(:data) { described_class.new('10.33555') }
+  let(:expected_url) { "www.example.com" }
+  let(:prefix) { '10.33555' }
+  let(:default_properties) { {} }
+  let(:data) { described_class.new(prefix: prefix, default_properties: default_properties) }
 
-  let(:expected_attributes_hash) do
+  let(:all_required_properties) do
     {
-      creators: [{ name: "Mouse, Minnie" }, { name: "Mouse, Mickey" }],
       prefix: "10.33555",
+      creators: [{ name: "Mouse, Minnie" }, { name: "Mouse, Mickey" }],
       publicationYear: 2021,
       publisher: "Mouse Publishing",
-      schemaVersion: "http://datacite.org/schema/kernel-4",
       titles: [{ title: "Mouse Hackers" }],
       types: { resourceTypeGeneral: "Text" },
-      url: "www.example.com"
+      url: expected_url
     }
   end
 
-  let(:properties_hash) do
-    {
-      creators: ["Mouse, Minnie", "Mouse, Mickey"],
-      publication_year: 2021,
-      publisher: "Mouse Publishing",
-      title: "Mouse Hackers",
-      resource_type_general: "Text",
-      url: "www.example.com"
-    }
+  let(:all_metadata_attributes_hash) do
+    { schemaVersion: "http://datacite.org/schema/kernel-4" }.merge(all_required_properties)
   end
 
-  let(:no_metadata_expected_attributes_hash) do
+  let(:no_metadata_attributes_hash) do
     {
       prefix: "10.33555",
       schemaVersion: "http://datacite.org/schema/kernel-4"
     }
   end
 
-  let(:expected_json_payload) do
-    '
-    {"data":
-       {"type":"dois",
-        "attributes":
-          {"prefix":"10.33555",
-           "schemaVersion":"http://datacite.org/schema/kernel-4",
-           "creators":
-             [{"name":"Mouse, Minnie"},{"name":"Mouse, Mickey"}],
-           "titles":
-             [{"title":"Mouse Hackers"}],
-           "publisher":"Mouse Publishing",
-           "publicationYear":2021,
-           "types":
-             {"resourceTypeGeneral":"Text"},
-           "url":"www.example.com"}
-       }
-    }
-    '
-  end
-
-  before do
-    data.creators = ['Mouse, Minnie', 'Mouse, Mickey']
-    data.prefix = '10.33555'
-    data.publisher = 'Mouse Publishing'
-    data.publication_year = 2021
-    data.resource_type_general = 'Text'
-    data.title = 'Mouse Hackers'
-    data.url = 'www.example.com'
+  shared_context "default metadata set" do
+    let(:datacite_properties) do
+      {
+        creators: [{ name: 'Mouse, Minnie' }, { name: 'Mouse, Mickey' }],
+        publisher: 'Mouse Publishing',
+        publicationYear: 2021,
+        types: { resourceTypeGeneral: 'Text' },
+        titles: [{ title: 'Mouse Hackers' }]
+      }
+    end
+    before do
+      expect(Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata).to receive(:as_datacite_properties).and_return(datacite_properties)
+    end
   end
 
   describe "#initialize" do
-    it "sets instance variable correctly" do
-      new_data = described_class.new('10.33555')
+    it "sets instance variables correctly" do
+      new_data = described_class.new(prefix: '10.33555')
       expect(new_data.prefix).to eql('10.33555')
+      expect(new_data.default_properties).to eql({})
     end
   end
 
-  describe "#add_properties_to_attributes_hash" do
-    it "add the metadata to the attributes hash correctly" do
-      # attributes set in the before clause
-      data.add_properties_to_attributes_hash
-      expect(data.attributes).to eql(expected_attributes_hash)
+  describe "#digital_object_properties_as_attributes" do
+    let(:digital_object) { nil }
+    let(:attributes) { data.digital_object_properties_as_attributes(digital_object) }
+    context "has metadata" do
+      let(:digital_object) { DigitalObject::Item.new }
+      include_context "default metadata set"
+      it "add the metadata to the attributes hash correctly" do
+        expect(attributes).to eql(all_metadata_attributes_hash.except(:url))
+      end
     end
     it "constructs the attributes hash correctly if metadata not supplied" do
-      data_with_no_metadata = described_class.new('10.33555')
-      data_with_no_metadata.add_properties_to_attributes_hash
-      expect(data_with_no_metadata.attributes).to eql(no_metadata_expected_attributes_hash)
-    end
-  end
-
-  describe "#update_properties" do
-    it "updates the properties correct given a populated properties hash" do
-      data.update_properties properties_hash
-      expect(data.title).to eql("Mouse Hackers")
-      expect(data.creators).to eql(["Mouse, Minnie", "Mouse, Mickey"])
-      expect(data.publication_year).to be(2021)
-      expect(data.publisher).to eql("Mouse Publishing")
-      expect(data.resource_type_general).to eql("Text")
-      expect(data.url).to eql("www.example.com")
+      expect(attributes).to eql(no_metadata_attributes_hash)
     end
   end
 
   describe "#build_mint" do
+    let(:data) { described_class.new(prefix: '10.33555') }
+    let(:digital_object) { nil }
+    let(:state) { :draft }
+    let(:payload_json) { data.build_mint(digital_object, state) }
+    let(:payload) { JSON.parse(payload_json) }
     it "builds mint payload as a hash (default: no metadata to be sent)" do
-      data_mint = described_class.new('10.33555')
-      data_mint.build_mint(:draft)
-      # expect(data_mint.data_hash).to eql(type: 'dois', attributes: { prefix: '10.33555' })
-      expect(data_mint.data_hash).to eql(type: 'dois', attributes: no_metadata_expected_attributes_hash)
+      expect(payload).to eql('data' => { 'type' => 'dois', 'attributes' => no_metadata_attributes_hash.stringify_keys })
     end
 
-    it "builds mint payload as a hash (with metadata set to true)" do
-      # attributes set in the before clause
-      # data.build_mint(:draft, true)
-      data.build_mint(:draft)
-      expect(data.data_hash).to eql(type: 'dois', attributes: expected_attributes_hash)
+    context "has metadata and url" do
+      let(:digital_object) { DigitalObject::Item.new }
+      include_context "default metadata set"
+      let(:attributes) { all_metadata_attributes_hash }
+      let(:payload_json) { data.build_mint(digital_object, state, expected_url) }
+      let(:expected_payload_json) do
+        JSON.dump(data: { type: 'dois', attributes: attributes })
+      end
+      let(:expected_payload) { JSON.parse(expected_payload_json) }
+      it "builds mint payload as a hash (with metadata set)" do
+        expect(payload).to eql(expected_payload)
+      end
+      context "set to findable" do
+        let(:state) { :findable }
+        let(:attributes) { all_metadata_attributes_hash.merge(event: :publish) }
+        it "builds an state update payload as a hash, state set to findable" do
+          expect(payload).to eql(expected_payload)
+        end
+      end
     end
   end
 
   describe "#build_properties_update" do
-    it "builds an update payload as a hash, no state change" do
-      # properties set in the before clause
-      data.build_properties_update
-      expect(data.data_hash).to eql(type: 'dois', attributes: expected_attributes_hash)
+    let(:digital_object) { DigitalObject::Item.new }
+    include_context "default metadata set"
+    let(:payload) { JSON.parse(payload_json) }
+    let(:expected_payload) { JSON.parse(JSON.dump(data: { type: 'dois', attributes: attributes })) }
+
+    context 'no state change' do
+      let(:attributes) { all_metadata_attributes_hash }
+      let(:payload_json) { data.build_properties_update(digital_object, nil, expected_url) }
+      it "builds an update payload as a hash, no state change" do
+        data.build_properties_update
+        expect(payload).to eql(expected_payload)
+      end
     end
-    it "builds an update payload as a hash, state set to findable" do
-      # properties set in the before clause
-      data.build_properties_update(:findable)
-      expect(data.data_hash).to eql(type: 'dois',
-                                    attributes: expected_attributes_hash.merge(event: 'publish'))
+    context 'state change' do
+      let(:attributes) { all_metadata_attributes_hash.merge(event: 'publish') }
+      let(:payload_json) { data.build_properties_update(digital_object, :findable, expected_url) }
+      it "builds an update payload as a hash, state set to findable" do
+        expect(payload).to eql(expected_payload)
+      end
     end
   end
 
   describe "#build_state_update" do
+    let(:payload_json) { data.build_state_update(:findable) }
+    let(:payload) { JSON.parse(payload_json) }
+    let(:expected_payload) do
+      JSON.parse(JSON.dump(data: { type: 'dois', attributes: no_metadata_attributes_hash.merge(event: 'publish') }))
+    end
     it "builds an state update payload as a hash, state set to findable" do
       data.build_state_update(:findable)
-      expect(data.data_hash).to eql(type: 'dois',
-                                    attributes: no_metadata_expected_attributes_hash.merge(event: 'publish'))
-    end
-  end
-
-  describe "#generate_json_payload" do
-    it "builds an state update payload as a hash, state set to findable" do
-      # attributes set in the before clause
-      data.build_mint(:draft)
-      expect(data.generate_json_payload).to eql(expected_json_payload.gsub(/\n\s+/, ''))
+      expect(payload).to eql(expected_payload)
     end
   end
 
   describe "#all_required_properties_present?" do
+    let(:missing_properties) { all_required_properties.except(missing_property) }
     it "returns true if all required properties are present" do
-      data.update_properties(properties_hash)
-      expect(data.all_required_properties_present?).to be_truthy
+      expect(data.all_required_properties_present?(all_required_properties)).to be true
     end
-    it "returns false if the title required property is missing present" do
-      data_no_title = described_class.new('10.33555')
-      data_no_title.update_properties(properties_hash.except(:title))
-      expect(data_no_title.all_required_properties_present?).to be_falsey
+    shared_examples "a property is missing" do
+      it "returns false" do
+        properties = all_required_properties.except(missing_property)
+        expect(data.missing_required_properties(properties)).to eql([missing_property])
+        expect(data.all_required_properties_present?(properties)).to be false
+      end
     end
-    it "returns false if the creators required property is missing present" do
-      data_no_title = described_class.new('10.33555')
-      data_no_title.update_properties(properties_hash.except(:creators))
-      expect(data_no_title.all_required_properties_present?).to be_falsey
+    context "prefix is missing" do
+      let(:missing_property) { :prefix }
+      include_examples "a property is missing"
     end
-    it "returns false if the publisher required property is missing present" do
-      data_no_title = described_class.new('10.33555')
-      data_no_title.update_properties(properties_hash.except(:publisher))
-      expect(data_no_title.all_required_properties_present?).to be_falsey
+    context "titles is missing" do
+      let(:missing_property) { :titles }
+      include_examples "a property is missing"
     end
-    it "returns false if the publication_year required property is missing present" do
-      data_no_title = described_class.new('10.33555')
-      data_no_title.update_properties(properties_hash.except(:publication_year))
-      expect(data_no_title.all_required_properties_present?).to be_falsey
+    context "creators is missing" do
+      let(:missing_property) { :creators }
+      include_examples "a property is missing"
     end
-    it "returns false if the resource_type_general required property is missing present" do
-      data_no_title = described_class.new('10.33555')
-      data_no_title.update_properties(properties_hash.except(:resource_type_general))
-      expect(data_no_title.all_required_properties_present?).to be_falsey
+    context "publisher is missing" do
+      let(:missing_property) { :publisher }
+      include_examples "a property is missing"
     end
-    it "returns false if the url required property is missing present" do
-      data_no_title = described_class.new('10.33555')
-      data_no_title.update_properties(properties_hash.except(:url))
-      expect(data_no_title.all_required_properties_present?).to be_falsey
+    context "publicationYear is missing" do
+      let(:missing_property) { :publicationYear }
+      include_examples "a property is missing"
     end
-  end
-
-  describe '#add_event' do
-    it "add the correct event for the given desired state" do
-      data.add_event(:findable)
-      expect(data.data_hash).to eql(type: 'dois',
-                                    attributes: no_metadata_expected_attributes_hash.merge(event: 'publish'))
+    context "types is missing" do
+      let(:missing_property) { :types }
+      include_examples "a property is missing"
+    end
+    context "url is missing" do
+      let(:missing_property) { :url }
+      include_examples "a property is missing"
     end
   end
 end

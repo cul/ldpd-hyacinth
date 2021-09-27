@@ -265,24 +265,24 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata do
   end
 
   describe '#as_datacite_properties' do
+    let(:default_properties) { {} }
     let(:expected) do
       {
-        creators: ["Salinger, J. D.", "Lincoln, Abraham"],
-        publication_year: 1951,
+        creators: [{ name: "Salinger, J. D." }, { name: "Lincoln, Abraham" }],
+        publicationYear: 1951,
         publisher: "The Best Publisher Ever",
-        resource_type_general: "Image",
-        title: "The Catcher in the Rye",
-        url: "https://www.columbia.edu"
+        types: { resourceTypeGeneral: "Image" },
+        titles: [{ title: "The Catcher in the Rye" }]
       }
     end
-    let(:actual) { local_metadata_retrieval.as_datacite_properties('https://www.columbia.edu') }
+    let(:actual) { local_metadata_retrieval.as_datacite_properties(default_properties) }
     it "returns expected hash" do
       expect(actual).to eql(expected)
     end
     context 'no values present' do
       include_context 'empty descriptive metadata'
       it 'returns a non-zero year' do
-        expect(actual[:publication_year]).not_to be(0)
+        expect(actual[:publicationYear]).not_to be(0)
       end
     end
   end

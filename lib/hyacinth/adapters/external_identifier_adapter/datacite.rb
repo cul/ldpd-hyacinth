@@ -4,12 +4,11 @@ module Hyacinth
   module Adapters
     module ExternalIdentifierAdapter
       class Datacite < Abstract
-        attr_reader :rest_api
+        attr_reader :rest_api, :datacite_payloads
 
         def initialize(adapter_config = {})
           @rest_api = Datacite::RestApi::V2::Api.new(adapter_config)
-          @prefix = adapter_config[:prefix]
-          @default_properties = adapter_config[:default_properties] || {}
+          @datacite_payloads = Datacite::RestApi::V2::Data.new(adapter_config)
           super(adapter_config)
         end
 
@@ -26,17 +25,15 @@ module Hyacinth
         # currently supported in this implementation.
         # @param digital_object [DigitalObject]
         # @param location_uri [String] the target URL to be associated with the new DOI
-        # @param doi_state [Symbol] doi_state can be set to one of the following: :draft, :findable, :registered
+        # @param state [Symbol] doi_state can be set to one of the following: :draft, :findable, :registered
         # @return [String] a new id
-        def mint(digital_object: nil, location_uri: nil, doi_state: :draft, **_rest)
-          if doi_state != :draft && digital_object.nil?
-            Rails.logger.error "Hyacinth metadata required to mint DOI in #{doi_state} state"
+        def mint_impl(digital_object, location_uri, state)
+          if state != :draft && digital_object.nil?
+            Rails.logger.error "Hyacinth metadata required to mint DOI in #{state} state"
             return
           end
-          datacite_data = Datacite::RestApi::V2::Data.new(@prefix)
-          datacite_data.update_properties(HyacinthMetadata.as_datacite_properties(digital_object, location_uri, @default_properties)) if digital_object
-          datacite_data.build_mint(doi_state)
-          rest_api_response = rest_api.post_dois(datacite_data.generate_json_payload)
+          json_payload = datacite_payloads.build_mint(digital_object, state, location_uri)
+          rest_api_response = rest_api.post_dois(json_payload)
           unless rest_api_response.status.eql? 201
             Rails.logger.error "Did not mint a DOI! Response Code: #{rest_api_response.status}." \
                                "Response Body: #{rest_api_response.body}."
@@ -55,13 +52,11 @@ module Hyacinth
         # @param id [String] the DOI to update
         # @param digital_object [DigitalObject]
         # @param location_uri [String] the target URL to be associated with the DOI
-        # @param doi_state [Symbol] doi_state can be set to one of the following: :draft, :findable, :registered
+        # @param state [Symbol] doi_state can be set to one of the following: :draft, :findable, :registered
         # @return [Boolean] true if update was successful, false otherwise
-        def update_impl(id, digital_object:, location_uri:, doi_state: nil, **_rest)
-          datacite_data = Datacite::RestApi::V2::Data.new(@prefix)
-          datacite_data.update_properties(HyacinthMetadata.as_datacite_properties(digital_object, location_uri, @default_properties))
-          datacite_data.build_properties_update(doi_state)
-          rest_api_response = rest_api.put_dois(id, datacite_data.generate_json_payload)
+        def update_impl(id, digital_object, location_uri, state)
+          json_payload = datacite_payloads.build_properties_update(digital_object, state, location_uri)
+          rest_api_response = rest_api.put_dois(id, json_payload)
           unless rest_api_response.status.eql? 200
             Rails.logger.error "Did not update a DOI! Response Code: #{rest_api_response.status}." \
                                "Response Body: #{rest_api_response.body}."

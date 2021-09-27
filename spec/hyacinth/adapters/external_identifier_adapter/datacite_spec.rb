@@ -72,7 +72,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
   describe '#mint' do
     let(:location_uri) { nil }
     let(:doi_state) { :draft }
-    let(:minted_doi) { datacite.mint(digital_object: digital_object, location_uri: location_uri, doi_state: doi_state) }
+    let(:minted_doi) { datacite.mint(digital_object: digital_object, location_uri: location_uri, state: doi_state) }
     context "no DigitalObject supplied" do
       let(:digital_object) { nil }
       let(:rest_api_response_body) { no_metadata_response_body_json }

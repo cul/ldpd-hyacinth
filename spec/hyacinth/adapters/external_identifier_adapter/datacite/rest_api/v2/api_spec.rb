@@ -4,6 +4,7 @@ require 'rails_helper'
 
 describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api do
   let(:api) { described_class.new(rest_api: 'https://api.test.datacite.org', user: 'FriendlyUser', password: 'FriendlyPassword') }
+  let(:data) { Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Data.new(prefix: '10.33555') }
 
   let(:metadata) do
     { type: 'dois',
@@ -65,19 +66,17 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::A
   end
 
   describe '#post_dois' do
+    let(:json_payload) { '{}' }
     it "sends a POST request" do
-      data = Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Data.new
       stub_request(:post, "https://api.test.datacite.org/dois").with(
         headers: mocked_headers_with_content
       ).to_return(status: 201, body: JSON.generate(api_response_body), headers: {})
-      api.post_dois(data.generate_json_payload)
+      api.post_dois(json_payload)
     end
   end
 
   describe '#put_dois' do
     it "sends a PUT request" do
-      data = Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Data.new
-      data.data_hash = metadata
       stub_request(:put, "https://api.test.datacite.org/dois/10.33555/2Y0J-BC24").with(
         body: json_payload_update_doi,
         headers: mocked_headers_with_content

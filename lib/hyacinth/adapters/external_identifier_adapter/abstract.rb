@@ -14,7 +14,11 @@ module Hyacinth
 
         # Generates a new persistent id, ensuring that nothing currently uses that identifier.
         # @return [String] a new id
-        def mint(**_args)
+        def mint(digital_object: nil, location_uri: nil, state: :draft)
+          mint_impl(digital_object, location_uri, state)
+        end
+
+        def mint_impl(_digital_object, _location_uri, _state)
           raise NotImplementedError
         end
 
@@ -26,12 +30,12 @@ module Hyacinth
         # @param id [String]
         # @param digital [String]
         # @return [Boolean] true if this adapter can handle this type of identifier
-        def update(id, digital_object:, location_uri:, **_rest)
+        def update(id, digital_object:, location_uri:, state: nil)
           raise Hyacinth::Exceptions::UnhandledLocationError, "Unhandled id for #{self.class.name}: #{id}" unless handles?(id)
-          update_impl(id, digital_object: digital_object, location_uri: location_uri)
+          update_impl(id, digital_object, location_uri, state)
         end
 
-        def update_impl(_id, **_rest)
+        def update_impl(_id, _digital_object, _location_uri, _state)
           raise NotImplementedError
         end
 

@@ -19,7 +19,7 @@ module Hyacinth
 
         # Generates a new persistent id, ensuring that nothing currently uses that identifier.
         # @return [String] a new id
-        def mint(**_args)
+        def mint_impl(_digital_object, _location_uri, _state)
           new_id = Random.rand.to_s
           loop do
             break unless @identifiers.key?(new_id)
@@ -38,9 +38,9 @@ module Hyacinth
         # @param digital_object [DigitalObject]
         # @param location_uri [String]
         # @return [Boolean] true if this adapter can handle this type of identifier
-        def update_impl(id, digital_object, location_uri)
+        def update_impl(id, digital_object, location_uri, state)
           return false unless handles?(id)
-          @identifiers[id] = { uid: digital_object.uid, status: :active, location_uri: location_uri }
+          @identifiers[id] = { uid: digital_object.uid, status: :active, location_uri: location_uri, state: state }
           true
         end
 

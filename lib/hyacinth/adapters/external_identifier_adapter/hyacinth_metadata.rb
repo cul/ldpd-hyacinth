@@ -7,7 +7,8 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata
 
   delegate :doi, :created_at, :updated_at, :first_published_at, :identifiers, to: :@digital_object
 
-  # parse metadata from Hyacinth Digital Objects Data
+  # parse metadata from Hyacinth Digital Objects Data into a format
+  # suitable for including in a Datacite REST API request as attributes
   # @param digital_object_data_arg [Hash]
   # @api public
   def initialize(digital_object)
@@ -112,19 +113,19 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata
     contributor_values(@descriptive_metadata, contributor_roles).keys
   end
 
-  def as_datacite_properties(target_url = nil, default_properties = {})
+  def as_datacite_properties(default_properties = {})
     default_properties.merge({
-      title: self.title,
-      creators: self.names_for_roles(:author),
-      resource_type_general: self.type_of_resource,
-      url: target_url,
+      titles: [{ title: self.title }],
+      creators: self.names_for_roles(:author).map { |creator_name| { name: creator_name } },
+      types: ({ resourceTypeGeneral: self.type_of_resource } if self.type_of_resource),
       publisher: self.publisher,
-      publication_year: (self.date_issued_start_year || Time.zone.today.year).to_i
+      publicationYear: (self.date_issued_start_year || Time.zone.today.year).to_i
     }.compact)
   end
 
-  def self.as_datacite_properties(digital_object, target_url, default_properties = {})
-    new(digital_object).as_datacite_properties(target_url, default_properties)
+  def self.as_datacite_properties(digital_object, default_properties = {})
+    return default_properties unless digital_object
+    new(digital_object).as_datacite_properties(default_properties)
   end
 
   private
