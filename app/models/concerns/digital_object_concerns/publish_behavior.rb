@@ -35,10 +35,10 @@ module DigitalObjectConcerns
 
         # Let's run the publish and unpublish operations in parallel to reduce the wait time!
         publish_promises = publish_to.map do |publish_target_to_publish_to|
-          publish_promise { perform_publish(publish_target_to_publish_to, publish_time, publishing_user) }
+          async_publish { perform_publish(publish_target_to_publish_to, publish_time, publishing_user) }
         end
         unpublish_promises = unpublish_from.map do |publish_target_to_unpublish_from|
-          unpublish_promise { perform_unpublish(publish_target_to_unpublish_from) }
+          async_unpublish { perform_unpublish(publish_target_to_unpublish_from) }
         end
 
         begin
@@ -148,11 +148,11 @@ module DigitalObjectConcerns
 
     private
 
-      def publish_promise(&block)
+      def async_publish(&block)
         Concurrent::Promise.execute(&block)
       end
 
-      def unpublish_promise(&block)
+      def async_unpublish(&block)
         Concurrent::Promise.execute(&block)
       end
 

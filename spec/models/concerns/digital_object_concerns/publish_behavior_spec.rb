@@ -38,7 +38,7 @@ RSpec.describe DigitalObjectConcerns::PublishBehavior do
       end
 
       it "calls #update on external identifier adapter" do
-        expect(object).to receive(:publish_promise).and_return(publish_promise)
+        expect(object).to receive(:async_publish).and_return(publish_promise)
         expect(Hyacinth::Config.external_identifier_adapter).to receive(:update).with(doi, digital_object: object, location_uri: location_uri)
         object.perform_publish_changes(publish_to: [publish_target])
       end
