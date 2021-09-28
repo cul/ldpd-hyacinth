@@ -113,8 +113,8 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata do
     end
   end
 
-  describe "#parent_publication_issn" do
-    let(:actual) { local_metadata_retrieval.parent_publication_issn }
+  describe "#parent_publication('issn')" do
+    let(:actual) { local_metadata_retrieval.parent_publication('issn') }
     it "returns present value" do
       expected_issn = '1932-6203'
       expect(actual).to eq(expected_issn)
@@ -127,8 +127,8 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata do
     end
   end
 
-  describe "#parent_publication_isbn" do
-    let(:actual) { local_metadata_retrieval.parent_publication_isbn }
+  describe "#parent_publication('isbn')" do
+    let(:actual) { local_metadata_retrieval.parent_publication('isbn') }
     it "returns present value" do
       expected_isbn = '0670734608'
       expect(actual).to eq(expected_isbn)
@@ -141,8 +141,8 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata do
     end
   end
 
-  describe "#parent_publication_doi" do
-    let(:actual) { local_metadata_retrieval.parent_publication_doi }
+  describe "#parent_publication('doi')" do
+    let(:actual) { local_metadata_retrieval.parent_publication('doi') }
     it "returns present value" do
       expected_doi = '10.1371/journal.pone.0119638'
       expect(actual).to eq(expected_doi)
@@ -169,11 +169,11 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata do
     end
   end
 
-  describe "#subject_topics" do
+  describe "#subject_topic_terms" do
     let(:expected) do
       ['Educational attainment', 'Parental influences', 'Mother and child--Psychological aspects']
     end
-    let(:actual) { local_metadata_retrieval.subject_topics }
+    let(:actual) { local_metadata_retrieval.subject_topic_terms&.map { |v| v['pref_label'] } }
     it "returns present values" do
       expect(actual).to eq(expected)
     end
@@ -266,18 +266,61 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata do
 
   describe '#as_datacite_properties' do
     let(:default_properties) { {} }
-    let(:expected) do
+    let(:data_mapping) { {} }
+    let(:base_expected) do
       {
         creators: [{ name: "Salinger, J. D." }, { name: "Lincoln, Abraham" }],
+        contributors: [
+          { name: "Lincoln, Abraham", contributorType: 'Editor' },
+          { name: "Christie, Agatha", contributorType: 'Other' },
+          { name: "Burton, Tim", contributorType: 'Other' }
+        ],
+        descriptions: [
+          { descriptionType: 'abstract', description: 'This is an abstract; yes, a very nice abstract' }
+        ],
         publicationYear: 1951,
         publisher: "The Best Publisher Ever",
+        relatedIdentifiers: [
+          { relatedIdentifier: '10.1371/journal.pone.0119638', relatedIdentifierType: 'DOI', relationType: 'IsVariantFormOf' },
+          { relatedIdentifier: '0670734608', relatedIdentifierType: 'ISBN', relationType: 'IsPartOf' },
+          { relatedIdentifier: '1932-6203', relatedIdentifierType: 'ISSN', relationType: 'IsPartOf' }
+        ],
+        subjects: [
+          { subject: "Educational attainment", valueUri: "http://id.worldcat.org/fast/1737284" },
+          { subject: "Parental influences", valueUri: "http://id.worldcat.org/fast/1053367" },
+          { subject: "Mother and child--Psychological aspects", valueUri: "http://id.worldcat.org/fast/1026881" }
+        ],
         types: { resourceTypeGeneral: "Image" },
         titles: [{ title: "The Catcher in the Rye" }]
       }
     end
-    let(:actual) { local_metadata_retrieval.as_datacite_properties(default_properties) }
-    it "returns expected hash" do
-      expect(actual).to eql(expected)
+    let(:mapped_genre) { { resourceType: "Article", resourceTypeGeneral: "Text" } }
+    let(:unmapped_genre) { { resourceTypeGeneral: "Image" } }
+
+    let(:actual) { local_metadata_retrieval.as_datacite_properties(default_properties, data_mapping) }
+
+    context 'with data mapping configuration' do
+      # keys are deeply symbolized upstream
+      let(:data_mapping) do
+        {
+          genre_uri: {
+            'http://vocab.getty.edu/aat/300048715'.to_sym => {
+              resourceTypeGeneral: 'Text',
+              resourceType: 'Article'
+            }
+          }
+        }
+      end
+      let(:expected) { base_expected.merge(types: mapped_genre) }
+      it "returns expected hash" do
+        expect(actual).to eql(expected)
+      end
+    end
+    context 'without mapping configuration' do
+      let(:expected) { base_expected.merge(types: unmapped_genre) }
+      it "returns expected hash" do
+        expect(actual).to eql(expected)
+      end
     end
     context 'no values present' do
       include_context 'empty descriptive metadata'

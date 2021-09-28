@@ -18,7 +18,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Data
                      findable: 'publish',
                      registered: 'hide' }.freeze
 
-  attr_accessor :prefix, :default_properties, :schema_version
+  attr_accessor :prefix, :default_properties, :schema_version, :data_mapping
 
   # Initializes a JSON payload factory for Datacite REST API requests
   # The prefix and default_properties should be configured upstream and passed from
@@ -26,9 +26,10 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Data
   # @param prefix [String] the DOI prefix
   # @param default_properties [Hash]
   # @param _rest [Hash] unused placeholder to allow operation against module config without slicing
-  def initialize(prefix:, default_properties: {}, **_rest)
+  def initialize(prefix:, default_properties: {}, data_mapping: {}, **_rest)
     @prefix = prefix
-    @default_properties = default_properties.freeze
+    @default_properties = default_properties.dup.freeze
+    @data_mapping = data_mapping.dup.freeze
     @schema_version = 'http://datacite.org/schema/kernel-4'
   end
 
