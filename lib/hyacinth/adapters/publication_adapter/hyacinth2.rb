@@ -19,7 +19,7 @@ module Hyacinth
         #         URL location the publish was successful. success will be false and message an error
         #         message if the publish failed.
         def publish_impl(publish_target, digital_object)
-          digital_object_pid = digital_object_fedora_uris(digital_object).first
+          digital_object_pid = digital_object_pids(digital_object).first
           return [false, "Never preserved to Fedora3"] unless digital_object_pid
           connection = Faraday.new(publish_target.publish_url)
           connection.token_auth(publish_target.api_key)
@@ -33,7 +33,7 @@ module Hyacinth
         #         the unpublish was successful, or false otherwise. errors is an array
         #         that will contain error messages if the unpublish failed.
         def unpublish_impl(publish_target, digital_object)
-          digital_object_pid = digital_object_fedora_uris(digital_object).first
+          digital_object_pid = digital_object_pids(digital_object).first
           return [false, "Never preserved to Fedora3"] unless digital_object_pid
           connection = Faraday.new(publish_target.publish_url)
           connection.token_auth(publish_target.api_key)

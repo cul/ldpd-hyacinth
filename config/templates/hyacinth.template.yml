@@ -20,6 +20,32 @@ derivativo_default_job_options: &derivativo_default_job_options
     format: 'png'
     size: 1200
 
+datacite_adapter_dev_config: &datacite_adapter_dev_config
+  type: Datacite
+  rest_api: 'https://api.test.datacite.org'
+  user: apitest
+  password: apitest
+  prefix: '10.33555'
+  shoulder:
+    ark: 'ark:99999/fk4'
+    doi: 'doi:10.5072/FK2'
+  default_properties:
+    creators:
+      - name: 'Placeholder Creator'
+    publisher: 'Columbia University'
+    types:
+      - resourceTypeGeneral: 'Text'
+    titles: 
+      - title: 'Placeholder Title'
+  data_mapping:
+    genre_uri:
+      'http://vocab.getty.edu/aat/300048715':
+        resourceTypeGeneral: Text
+        resourceType: Article
+  logger:
+    log_level: debug
+    dev: 'datacite.log'
+
 development:
   local_uri_prefix: localhost:3000 # prefix to use when minting local URIs
   derivativo:

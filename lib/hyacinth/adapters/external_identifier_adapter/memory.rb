@@ -19,7 +19,7 @@ module Hyacinth
 
         # Generates a new persistent id, ensuring that nothing currently uses that identifier.
         # @return [String] a new id
-        def mint
+        def mint_impl(_digital_object, _location_uri, _state)
           new_id = Random.rand.to_s
           loop do
             break unless @identifiers.key?(new_id)
@@ -38,22 +38,9 @@ module Hyacinth
         # @param digital_object [DigitalObject]
         # @param location_uri [String]
         # @return [Boolean] true if this adapter can handle this type of identifier
-        def update_impl(id, digital_object, location_uri)
+        def update_impl(id, digital_object, location_uri, state)
           return false unless handles?(id)
-          @identifiers[id] = { uid: digital_object.uid, status: :active }
-          update_doi_target_url(id, location_uri)
-          true
-        end
-
-        # Following method will make a request to the EZID server to update the target URL associated
-        # with the EZID DOI entry on the server.
-        # (See _target in http://ezid.cdlib.org/doc/apidoc.html#internal-metadata)
-        # To delete the target URL stored in the DOI server, use an empty string as the argument.
-        # Uses the modify identifier API call, returns true if metadata update was successful
-        # if not, returns false
-        def update_doi_target_url(doi, target_url)
-          return false unless exists?(doi)
-          @identifiers[doi][:location_uri] = target_url
+          @identifiers[id] = { uid: digital_object.uid, status: :active, location_uri: location_uri, state: state }
           true
         end
 
@@ -62,11 +49,6 @@ module Hyacinth
           @identifiers[id][:status] = :inactive
           true
         end
-
-        private
-
-          # TODO: Remove this method when there's a general logging proxy
-          def log(status, message); end
       end
     end
   end

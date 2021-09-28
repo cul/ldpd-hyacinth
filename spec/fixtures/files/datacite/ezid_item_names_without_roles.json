@@ -15,6 +15,15 @@
 	"string_key" : "test"
     }
     ,
+    "title" :
+    {
+        "value":
+        {
+            "sort_portion" : "Catcher in the Rye",
+            "non_sort_portion" : "The"
+        }
+    }
+    ,
     "publish_targets" :
     [
 	{
@@ -29,14 +38,6 @@
 	"doi" : "10.1371/article.pone.0119638",
     "descriptive_metadata" :
     {
-	"title" :
-	[
-            {
-		"sort_portion" : "Catcher in the Rye",
-		"non_sort_portion" : "The"
-            }
-	]
-	,
 	"cnri_handle_identifier" :
 	[
 	    {

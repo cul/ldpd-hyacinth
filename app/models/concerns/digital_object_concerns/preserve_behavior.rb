@@ -34,7 +34,7 @@ module DigitalObjectConcerns
     def assign_and_save_doi_if_blank
       return if self.doi.present?
 
-      self.doi = Hyacinth::Config.external_identifier_adapter.mint
+      self.doi = Hyacinth::Config.external_identifier_adapter.mint(digital_object: self)
       self.save
     end
   end
