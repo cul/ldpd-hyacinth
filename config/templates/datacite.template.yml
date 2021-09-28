@@ -11,11 +11,11 @@ default: &default
     publisher: 'Columbia University'
     resource_type_general: 'Text'
     title: 'Placeholder Title'
-  datacite:
-    genre_to_resource_type_mapping:
+  data_mapping:
+    genre_uri:
       'http://vocab.getty.edu/aat/300048715':
-        attribute_general: Text
-        content: Article
+        resourceTypeGeneral: Text
+        resourceType: Article
   logger:
     log_level: debug
     dev: 'datacite.log'

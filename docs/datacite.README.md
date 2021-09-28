@@ -48,11 +48,12 @@ This class wraps the Digital Object Data from a DigitalObject and provides metho
 This is the same method that will be used in the client code in Hyacinth to mint a DOI
 
 ```
-2.6.4 :001 > dc = Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite.new
+2.6.4 :001 > config = Rails.config_for(:hyacinth).deep_symbolize_keys[:external_identifier_adapter]
+2.6.4 :002 > dc = Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite.new(config)
  => #<Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite:0x000055f03ff47510>
-2.6.4 :002 > doi = dc.mint_doi
+2.6.4 :003 > doi = dc.mint
  => "10.33555/qg65-ty77"
-2.6.4 :003 > puts doi
+2.6.4 :004 > puts doi
 10.33555/qg65-ty77
  => nil
  ```
@@ -66,7 +67,7 @@ more granular functionality which may be useful when debugging
 
 ```
 2.6.4 :001 > conf.return_format = "" # supress output for clarity
-2.6.4 :002 > api =  Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api.new('https://api.test.datacite.org','USERNAME','PASSWORD')
+2.6.4 :002 > api =  Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api.new(rest_api: 'https://api.test.datacite.org', prefix: '10.33555', user: 'USERNAME', password: 'PASSWORD')
 2.6.4 :003 > resp = api.get_dois('10.33555/9fa4-xx07')
 2.6.4 :004 > puts resp.body
 {"data":{"id":"10.33555/9fa4-xx07","type":"dois","attributes":{"doi":"10.33555/9fa4-xx07","prefix":"10.33555","suffix":"9fa4-xx07", --REST REMOVED for BREVITY---
@@ -76,19 +77,18 @@ more granular functionality which may be useful when debugging
 
 ```
 2.6.4 :001 > conf.return_format = "" # supress output for clarity
-2.6.4 :002 > api =  Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api.new
+2.6.4 :002 > api =  Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api.new(rest_api: 'https://api.test.datacite.org', prefix: '10.33555', user: 'USERNAME', password: 'PASSWORD')
 2.6.4 :003 > resp = api.post_dois('{"data":{"type":"dois","attributes":{"prefix":"10.33555"}}}')
 ```
 
-Note that if no arguments are given when instantiating the Api instance, the information in the datacite config file will be used
-Note that in the example above, we passed in the payload content as json. In the example below, we will use a Data instance:
+Note that the Api libraries are designed to operate against the external_identifier_adapter module configuration. In the example above, we passed in the payload content as json. In the example below, we will use a Data instance and the adapter configuration:
 
 ```
-2.6.4 :001 > conf.return_format = "" # supress output for clarity
-2.6.4 :002 > api =  Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api.new('https://api.test.datacite.org','USERNAME','PASSWORD')
-2.6.4 :003 > data = Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Data.new('10.33555')
-2.6.4 :004 > data.build_mint(:draft)
-2.6.4 :005 > resp = api.post_dois(data.generate_json_payload)
+2.6.4 :001 > config = Rails.config_for(:hyacinth).deep_symbolize_keys[:external_identifier_adapter]
+2.6.4 :002 > api =  Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api.new(config)
+2.6.4 :003 > data = Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Data.new(config)
+2.6.4 :004 > payload = data.build_mint(nil, :draft)
+2.6.4 :005 > resp = api.post_dois(payload)
 2.6.4 :008 > puts api.parse_doi_from_api_response_body(resp.body)
 10.33555/6zy2-pw34
 2.6.4 :009 >
@@ -100,19 +100,18 @@ The Api class supplies methods to parse out relevant information from the respon
 
 ```
 2.6.4 :001 > conf.return_format = "" # supress output for clarity
-2.6.4 :002 > api =  Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api.new('https://api.test.datacite.org','USERNAME','PASSWORD')
-2.6.4 :003 > data = Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Data.new
-2.6.4 :004 > data.creators = ['Mouse, Katie', 'Mouse, John']
-2.6.4 :005 > data.publisher = 'Columbia University'
-2.6.4 :006 > data.publication_year = 2021
-2.6.4 :007 > data.resource_type_general = 'Text'
-2.6.4 :008 > data.title = "A Great Book"
-2.6.4 :009 > data.url = "https://www.columbia.edu"
-2.6.4 :010 > data.build_metadata_update
-2.6.4 :012 > resp = api.put_dois('10.33555/6zy2-pw34', data.generate_json_payload)
+2.6.4 :002 > api =  Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api.new(rest_api: 'https://api.test.datacite.org', prefix: '10.33555', user: 'USERNAME', password: 'PASSWORD')
+2.6.4 :ZZZ > attributes = { prefix: "10.33555" }
+2.6.4 :ZZZ > attributes[:titles] = [{ title: "A Great Book"}]
+2.6.4 :ZZZ > attributes[:creators] = ['Mouse, Katie', 'Mouse, John'].map {|v| { name: v } }
+2.6.4 :ZZZ > attributes[:publicationYear] = 2021
+2.6.4 :ZZZ > attributes[:publisher] = 'Columbia University'
+2.6.4 :ZZZ > attributes[:types] = { resourceTypeGeneral: 'Text' }
+2.6.4 :ZZZ > attributes[:url] = "https://www.columbia.edu"
+2.6.4 :003 > data = { type: :"dois", attributes: attributes }
+2.6.4 :003 > payload = JSON.generate(data: data)
+2.6.4 :012 > resp = api.put_dois('10.33555/6zy2-pw34', payload)
 2.6.4 :013 > puts resp.body
 {"data":{"id":"10.33555/6zy2-pw34","type":"dois","attributes":{"doi":"10.33555/6zy2-pw34","prefix":"10.33555","suffix":"6zy2-pw34","identifiers":[],"alternateIdentifiers":[],"creators":[{"name":"Mouse, Katie","affiliation":[],"nameIdentifiers":[]},{"name":"Mouse, John","affiliation":[],"nameIdentifiers":[]}],"titles":[{"title":"A Great Book"} ETC...
 ```
-
-As seen in the example above, if the prefix is not passed when the Data is instantiated (as it was in the previous example), it will get it from the config file.
 
