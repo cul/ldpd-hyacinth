@@ -33,7 +33,7 @@ module Hyacinth
             return
           end
           json_payload = datacite_payloads.build_mint(digital_object, state, location_uri)
-          rest_api_response = rest_api.post_dois(json_payload)
+          rest_api_response = rest_api.create_doi(json_payload)
           unless rest_api_response.status.eql? 201
             Rails.logger.error "Did not mint a DOI! Response Code: #{rest_api_response.status}." \
                                "Response Body: #{rest_api_response.body}."
@@ -45,8 +45,7 @@ module Hyacinth
         # Returns true if an identifier exists in the external management system
         # @param id [String] a DOI
         def exists?(id)
-          resp = rest_api.get_dois(id)
-          rest_api.parse_doi_from_api_response_body(resp.body).present?
+          rest_api.doi_exists?(id)
         end
 
         # @param id [String] the DOI to update
@@ -56,7 +55,7 @@ module Hyacinth
         # @return [Boolean] true if update was successful, false otherwise
         def update_impl(id, digital_object, location_uri, state)
           json_payload = datacite_payloads.build_properties_update(digital_object, state, location_uri)
-          rest_api_response = rest_api.put_dois(id, json_payload)
+          rest_api_response = rest_api.update_doi(id, json_payload)
           unless rest_api_response.status.eql? 200
             Rails.logger.error "Did not update a DOI! Response Code: #{rest_api_response.status}." \
                                "Response Body: #{rest_api_response.body}."
