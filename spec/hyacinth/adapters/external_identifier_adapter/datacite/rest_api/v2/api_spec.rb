@@ -56,32 +56,75 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::A
     end
   end
 
-  describe '#get_dois' do
-    it "sends a GET request" do
+  describe '#get_doi' do
+    let(:expected_body) { JSON.generate(api_response_body) }
+    let!(:mock_request) do
       stub_request(:get, "https://api.test.datacite.org/dois/10.33555/2Y0J-BC24").with(
         headers: mocked_headers_no_content
-      ).to_return(status: 200, body: JSON.generate(api_response_body), headers: {})
-      api.get_dois('10.33555/2Y0J-BC24')
+      ).to_return(status: 200, body: expected_body, headers: {})
+    end
+    it "makes the expected request" do
+      expect(api.get_doi('10.33555/2Y0J-BC24').body).to eql(expected_body)
+      expect(mock_request).to have_been_requested.times(1)
     end
   end
 
-  describe '#post_dois' do
+  describe '#doi_exists?' do
+    let(:good_doi) { '10.33555/2Y0J-BC24' }
+    let(:bad_doi) { '10.33555/2Y0J-BC24' }
+    let(:good_url) { "https://api.test.datacite.org/dois/#{good_doi}" }
+    let(:bad_url) { "https://api.test.datacite.org/dois/#{bad_doi}" }
+
+    context "when a DOI exists" do
+      let!(:mock_request) do
+        stub_request(:get, good_url).with(
+          headers: mocked_headers_no_content
+        ).to_return(status: 200, body: '{}', headers: {})
+      end
+      it "returns true" do
+        expect(api.doi_exists?(good_doi)).to eq(true)
+        expect(mock_request).to have_been_requested.times(1)
+      end
+    end
+
+    context "when a DOI does not exist" do
+      let!(:mock_request) do
+        stub_request(:get, good_url).with(
+          headers: mocked_headers_no_content
+        ).to_return(status: 404, body: '{}', headers: {})
+      end
+      it "returns true" do
+        expect(api.doi_exists?(bad_doi)).to eq(false)
+        expect(mock_request).to have_been_requested.times(1)
+      end
+    end
+  end
+
+  describe '#create_doi' do
     let(:json_payload) { '{}' }
-    it "sends a POST request" do
-      stub_request(:post, "https://api.test.datacite.org/dois").with(
+    let(:expected_body) { JSON.generate({}) }
+    let!(:mock_request) do
+      stub_request(:post, 'https://api.test.datacite.org/dois').with(
         headers: mocked_headers_with_content
-      ).to_return(status: 201, body: JSON.generate(api_response_body), headers: {})
-      api.post_dois(json_payload)
+      ).to_return(status: 201, body: expected_body, headers: {})
+    end
+    it "makes the expected request" do
+      expect(api.create_doi(json_payload).body).to eql(expected_body)
+      expect(mock_request).to have_been_requested.times(1)
     end
   end
 
-  describe '#put_dois' do
-    it "sends a PUT request" do
-      stub_request(:put, "https://api.test.datacite.org/dois/10.33555/2Y0J-BC24").with(
+  describe '#update_doi' do
+    let(:expected_body) { JSON.generate({}) }
+    let!(:mock_request) do
+      stub_request(:put, 'https://api.test.datacite.org/dois/10.33555/2Y0J-BC24').with(
         body: json_payload_update_doi,
         headers: mocked_headers_with_content
-      ).to_return(status: 200, body: "", headers: {})
-      api.put_dois('10.33555/2Y0J-BC24', json_payload_update_doi)
+      ).to_return(status: 200, body: expected_body, headers: {})
+    end
+    it "makes the expected request" do
+      expect(api.update_doi('10.33555/2Y0J-BC24', json_payload_update_doi).body).to eql(expected_body)
+      expect(mock_request).to have_been_requested.times(1)
     end
   end
   describe '#logger' do

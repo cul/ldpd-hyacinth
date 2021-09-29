@@ -41,7 +41,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
   describe '#exists?' do
     let(:doi) { '10.33555/tb9q-qb07' }
     before do
-      expect(rest_api).to receive(:get_dois).with(doi).and_return(rest_api_response)
+      expect(rest_api).to receive(:get_doi).with(doi).and_return(rest_api_response)
     end
     context "DOI is present in DataCite" do
       let(:rest_api_response_body) { no_metadata_response_body_json }
@@ -78,7 +78,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
       let(:rest_api_response_body) { no_metadata_response_body_json }
       let(:rest_api_response_status) { 201 }
       it "calls the appropriate Api method" do
-        expect(rest_api).to receive(:post_dois).with(kind_of(String)).and_return(rest_api_response)
+        expect(rest_api).to receive(:create_doi).with(kind_of(String)).and_return(rest_api_response)
         expect(minted_doi).to eql("10.33555/tb9q-qb07")
       end
       context "and status is not draft" do
@@ -94,13 +94,13 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
       let(:rest_api_response_body) { no_metadata_response_body_json }
       let(:rest_api_response_status) { 201 }
       it "calls the appropriate Api method" do
-        expect(rest_api).to receive(:post_dois).with(kind_of(String)).and_return(rest_api_response)
+        expect(rest_api).to receive(:create_doi).with(kind_of(String)).and_return(rest_api_response)
         expect(minted_doi).to eql("10.33555/tb9q-qb07")
       end
       context "and status is not draft" do
         let(:doi_state) { :findable }
         it "alls the appropriate Api method" do
-          expect(rest_api).to receive(:post_dois).with(kind_of(String)).and_return(rest_api_response)
+          expect(rest_api).to receive(:create_doi).with(kind_of(String)).and_return(rest_api_response)
           expect(minted_doi).to eql("10.33555/tb9q-qb07")
         end
       end
@@ -112,7 +112,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
     let(:rest_api_response_body) { no_metadata_response_body_json }
     let(:rest_api_response_status) { 200 }
     it "calls the appropriate Api method" do
-      expect(rest_api).to receive(:put_dois).with(doi, kind_of(String)).and_return(rest_api_response)
+      expect(rest_api).to receive(:update_doi).with(doi, kind_of(String)).and_return(rest_api_response)
       expect(datacite.update(doi, digital_object: digital_object, location_uri: 'https://www.columbia.edu')).to be true
     end
   end
