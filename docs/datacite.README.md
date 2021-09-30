@@ -41,6 +41,38 @@ the mapping functionality between Hyacinth fields and DataCite properties.
 There is also a helper class, HyacinthMetadata
 This class wraps the Digital Object Data from a DigitalObject and provides methods to access metadata.
 
+To use the Datacite adapter as your external identifier adapter, your hyacinth.yml configuration should include something like this:
+
+```
+production:
+  external_identifier_adapter:
+    type: Datacite
+    rest_api: 'https://api.test.datacite.org'
+    user: apitest
+    password: apitest
+    prefix: '10.33555'
+    shoulder:
+      ark: 'ark:99999/fk4'
+      doi: 'doi:10.5072/FK2'
+    default_properties:
+      creators:
+        - name: 'Placeholder Creator'
+      publisher: 'Columbia University'
+      types:
+        - resourceTypeGeneral: 'Text'
+      titles:
+        - title: 'Placeholder Title'
+    data_mapping:
+      genre_uri:
+        'http://vocab.getty.edu/aat/300048715':
+          resourceTypeGeneral: Text
+          resourceType: Article
+    logger:
+      log_level: debug
+      dev: 'datacite.log'
+```
+The above example references the Datacite public test URL and test credentials.  In production, you'll want to swap these for the production URL and real credentials.
+
 ## Running implementation in rails console using higher-level functionality
 
 ### Using Datacite#mint_doi to mint a draft DOI

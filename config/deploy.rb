@@ -36,7 +36,6 @@ set :deploy_to,   "/opt/passenger/#{fetch(:instance)}/#{fetch(:deploy_name)}"
 # Default value for :linked_files is []
 append  :linked_files,
         'config/database.yml',
-        'config/datacite.yml',
         'config/fedora.yml',
         'config/hyacinth.yml',
         'config/lang.yml',
