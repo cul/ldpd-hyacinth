@@ -57,10 +57,10 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Data
 
   # @param digital_object [DigitalObject]
   # @param doi_state [Symbol] doi_state can be set to one of the following: :draft, :findable, :registered
-  # @param location_uri [String] url to associate with minted DOI
-  def build_mint(digital_object = nil, doi_state = :draft, location_uri = nil)
+  # @param target_url [String] url to associate with minted DOI
+  def build_mint(digital_object = nil, doi_state = :draft, target_url = nil)
     attributes = digital_object_properties_as_attributes(digital_object)
-    attributes[:url] = location_uri if location_uri
+    attributes[:url] = target_url if target_url
     missing_required_properties = missing_required_properties(attributes)
     raise "Need metadata to mint a #{doi_state} DOI (#{missing_required_properties})" unless doi_state == :draft || missing_required_properties.empty?
     # add event, which triggers DOI state change on DataCite server
@@ -70,10 +70,10 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Data
 
   # @param digital_object [DigitalObject]
   # @param doi_state [Symbol] doi_state can be set to one of the following: :draft, :findable, :registered
-  # @param location_uri [String] url to associate with minted DOI if changed
-  def build_properties_update(digital_object = nil, doi_state = nil, location_uri = nil)
+  # @param target_url [String] url to associate with minted DOI if changed
+  def build_properties_update(digital_object = nil, doi_state = nil, target_url = nil)
     attributes = digital_object_properties_as_attributes(digital_object)
-    attributes[:url] = location_uri if location_uri
+    attributes[:url] = target_url if target_url
     # add event, which triggers DOI state change on DataCite server
     add_event(doi_state, attributes) if doi_state
     generate_json_payload(attributes)

@@ -28,7 +28,8 @@ class DigitalObject < ApplicationRecord
   belongs_to :updated_by, required: false, class_name: 'User'
 
   before_validation :clean_title!, :clean_descriptive_metadata!, :clean_rights!
-  before_save :lock, :assign_uid_if_not_exist, :assign_metadata_location_uri_if_not_exist,
+  before_save :lock, :assign_uid_if_not_exist, :ensure_doi_if_requested,
+              :assign_metadata_location_uri_if_not_exist,
               :reject_optimistic_lock_token_if_stale!, :update_optimistic_lock_token,
               :write_metadata_storage_backup,
               :create_and_update_terms, :process_resource_imports
@@ -41,10 +42,10 @@ class DigitalObject < ApplicationRecord
 
   enum state: { active: 0, deleted: 1 }
 
-  attr_accessor :mint_doi # TODO: Make sure this is considered during a save operation
+  attr_accessor :mint_doi
   attr_accessor :latest_lock_object
-  after_initialize do |_digital_object|
-    @mint_doi = false
+  after_initialize do |digital_object|
+    digital_object.mint_doi = false
   end
 
   # Title
@@ -106,15 +107,6 @@ class DigitalObject < ApplicationRecord
 
     def raise_error_if_base_class!
       raise NotImplementedError, 'Base class DigitalObject cannot be instantiated! Instantiate a subclass instead.' if self.class == DigitalObject
-    end
-
-    def assign_uid_if_not_exist
-      return if self.uid.present?
-      self.uid = mint_uid
-    end
-
-    def mint_uid
-      SecureRandom.uuid
     end
 
     def assign_metadata_location_uri_if_not_exist

@@ -143,3 +143,17 @@ The Api class supplies methods to parse out relevant information from the respon
 {"data":{"id":"10.33555/6zy2-pw34","type":"dois","attributes":{"doi":"10.33555/6zy2-pw34","prefix":"10.33555","suffix":"6zy2-pw34","identifiers":[],"alternateIdentifiers":[],"creators":[{"name":"Mouse, Katie","affiliation":[],"nameIdentifiers":[]},{"name":"Mouse, John","affiliation":[],"nameIdentifiers":[]}],"titles":[{"title":"A Great Book"} ETC...
 ```
 
+## Additional Adapter Configuration
+
+### data_mapping (Hash)
+A limited mapping of DigitalObject data to Datacite attributes, currently supporting only mapping specific genre term URIs (*genre_uri:*) to Datacite type attribute values (*resourceType:* ans *resourceTypeGeneral:*).
+
+### default_properties (Hash)
+A hash of default Datacite attribute values into which object data is merged when Datacite DOIs are minted or updated. The keys are used unmodified (and thus camelCased).
+
+### default_target_url_template (template String)
+The **default_target_url_template** is used as the *url:* attribute in the Datacite metadata whenever no target url is given, thus ensuring that there is always a *url:* property. The *default_target_url_template* value is formatted with a hash containing the **uid** before assignment, allowing the default value to be object-specific if it includes formatting information. Example:
+`http://expected/%{uid}`
+
+### logging (Hash)
+An optional hash configuring a local logger to use in place of the Rails logger. There are two available configurations: **log_level**, which overrides the logging detail level in the Rails environment for this logger, and **dev** (short for 'device'), which routes logging output to a different file. Both configurations default to the system logger's values, and if neither configuration is present the system logger is used unmodified.

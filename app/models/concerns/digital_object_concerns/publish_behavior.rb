@@ -16,6 +16,8 @@ module DigitalObjectConcerns
     end
 
     def perform_publish_changes(publish_to: [], unpublish_from: [], publishing_user: nil)
+      # No one should be publishing an object that has not been preserved
+      raise Hyacinth::Exceptions::InvalidPublishConditions, 'Cannot publish a DigitalObject that has not been preserved' unless self.preserved_at.present?
       # No one should be publishing an object that has errors
       raise Hyacinth::Exceptions::InvalidPublishConditions, 'Cannot publish a DigitalObject that has errors' if self.errors.present?
 
@@ -103,7 +105,7 @@ module DigitalObjectConcerns
             # - We now have a new highest-priority doi publish target
             # or
             # - We are re-publishing to the existing highest-priority doi publish target.
-            Hyacinth::Config.external_identifier_adapter.update(self.doi, digital_object: self, location_uri: self.citation_location)
+            Hyacinth::Config.external_identifier_adapter.update(self.doi, digital_object: self, target_url: self.citation_location)
           end
 
           # Gather error messages

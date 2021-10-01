@@ -2,18 +2,19 @@
 
 module DigitalObjectConcerns
   module AttributeAssignment
-    include DigitalObjectConcerns::AttributeAssignment::Doi
     include DigitalObjectConcerns::AttributeAssignment::DescriptiveMetadata
+    include DigitalObjectConcerns::AttributeAssignment::Doi
     include DigitalObjectConcerns::AttributeAssignment::Identifiers
     include DigitalObjectConcerns::AttributeAssignment::OptimisticLockToken
     include DigitalObjectConcerns::AttributeAssignment::Parents
+    include DigitalObjectConcerns::AttributeAssignment::PendingPublishEntries
     include DigitalObjectConcerns::AttributeAssignment::Preserve
     include DigitalObjectConcerns::AttributeAssignment::Projects
-    include DigitalObjectConcerns::AttributeAssignment::PendingPublishEntries
     include DigitalObjectConcerns::AttributeAssignment::ResourceImports
     include DigitalObjectConcerns::AttributeAssignment::Rights
     include DigitalObjectConcerns::AttributeAssignment::State
     include DigitalObjectConcerns::AttributeAssignment::Title
+    include DigitalObjectConcerns::AttributeAssignment::Uid
 
     # A batch setter method that assigns many of this object's properties in one go, based on the
     # given digital_object_data hash. This method is particularly useful in cases like batch import,

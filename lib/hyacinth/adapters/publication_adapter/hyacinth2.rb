@@ -21,6 +21,7 @@ module Hyacinth
         def publish_impl(publish_target, digital_object)
           digital_object_pid = digital_object_pids(digital_object).first
           return [false, "Never preserved to Fedora3"] unless digital_object_pid
+          return [false, "No DOI"] unless digital_object.doi.present?
           connection = Faraday.new(publish_target.publish_url)
           connection.token_auth(publish_target.api_key)
           resp = connection.put(digital_object_pid)

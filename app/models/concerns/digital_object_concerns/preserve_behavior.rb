@@ -10,7 +10,8 @@ module DigitalObjectConcerns
       raise Hyacinth::Exceptions::InvalidPersistConditions, 'Cannot persist a DigitalObject that has errors' if self.errors.present?
 
       Hyacinth::Config.lock_adapter.with_lock("#{self.uid}-preserve") do |_lock_object|
-        assign_and_save_doi_if_blank
+        ensure_doi!
+        break if self.errors.present?
 
         preservation_result, errors = Hyacinth::Config.preservation_persistence.preserve(self)
 
@@ -29,13 +30,6 @@ module DigitalObjectConcerns
     def update_preservation_timestamps(datetime)
       self.first_preserved_at = datetime if self.first_preserved_at.blank?
       self.preserved_at = datetime
-    end
-
-    def assign_and_save_doi_if_blank
-      return if self.doi.present?
-
-      self.doi = Hyacinth::Config.external_identifier_adapter.mint(digital_object: self)
-      self.save
     end
   end
 end

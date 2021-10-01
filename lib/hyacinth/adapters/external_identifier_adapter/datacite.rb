@@ -24,15 +24,15 @@ module Hyacinth
         # It is also possible to specify a (non-existent) DOI when minting. However, this is not
         # currently supported in this implementation.
         # @param digital_object [DigitalObject]
-        # @param location_uri [String] the target URL to be associated with the new DOI
+        # @param target_url [String] the target URL to be associated with the new DOI
         # @param state [Symbol] doi_state can be set to one of the following: :draft, :findable, :registered
         # @return [String] a new id
-        def mint_impl(digital_object, location_uri, state)
+        def mint_impl(digital_object, target_url, state)
           if state != :draft && digital_object.nil?
             Rails.logger.error "Hyacinth metadata required to mint DOI in #{state} state"
             return
           end
-          json_payload = datacite_payloads.build_mint(digital_object, state, location_uri)
+          json_payload = datacite_payloads.build_mint(digital_object, state, target_url)
           rest_api_response = rest_api.create_doi(json_payload)
           unless rest_api_response.status.eql? 201
             Rails.logger.error "Did not mint a DOI! Response Code: #{rest_api_response.status}." \
@@ -50,11 +50,11 @@ module Hyacinth
 
         # @param id [String] the DOI to update
         # @param digital_object [DigitalObject]
-        # @param location_uri [String] the target URL to be associated with the DOI
+        # @param target_url [String] the target URL to be associated with the DOI
         # @param state [Symbol] doi_state can be set to one of the following: :draft, :findable, :registered
         # @return [Boolean] true if update was successful, false otherwise
-        def update_impl(id, digital_object, location_uri, state)
-          json_payload = datacite_payloads.build_properties_update(digital_object, state, location_uri)
+        def update_impl(id, digital_object, target_url, state)
+          json_payload = datacite_payloads.build_properties_update(digital_object, state, target_url)
           rest_api_response = rest_api.update_doi(id, json_payload)
           unless rest_api_response.status.eql? 200
             Rails.logger.error "Did not update a DOI! Response Code: #{rest_api_response.status}." \
