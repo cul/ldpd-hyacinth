@@ -9,14 +9,14 @@ module DigitalObjectConcerns
       # No one should be preserving an object that has errors
       raise Hyacinth::Exceptions::InvalidPersistConditions, 'Cannot persist a DigitalObject that has errors' if self.errors.present?
 
-      Hyacinth::Config.lock_adapter.with_lock(self.uid) do
+      Hyacinth::Config.lock_adapter.with_lock("#{self.uid}-preserve") do |_lock_object|
         assign_and_save_doi_if_blank
 
         preservation_result, errors = Hyacinth::Config.preservation_persistence.preserve(self)
 
         unless preservation_result
           self.errors.add(:preservation, "Failed to preserve #{self.uid} due to the following errors: #{errors.join(', ')}")
-          return
+          break
         end
 
         update_preservation_timestamps(DateTime.current)
