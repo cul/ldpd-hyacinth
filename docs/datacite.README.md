@@ -51,9 +51,6 @@ production:
     user: apitest
     password: apitest
     prefix: '10.33555'
-    shoulder:
-      ark: 'ark:99999/fk4'
-      doi: 'doi:10.5072/FK2'
     default_properties:
       creators:
         - name: 'Placeholder Creator'
