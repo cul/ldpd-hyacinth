@@ -34,6 +34,7 @@ RSpec.describe DigitalObjectConcerns::PublishBehavior do
 
       it "sets object errors" do
         expect(Hyacinth::Config.preservation_persistence).to receive(:preserve).with(digital_object).and_return(preserve_fail)
+        expect(digital_object).not_to receive(:update_preservation_timestamps)
         digital_object.preserve
         expect(digital_object.errors[:preservation]).to be_present
       end
