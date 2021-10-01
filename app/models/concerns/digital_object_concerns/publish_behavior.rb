@@ -21,7 +21,7 @@ module DigitalObjectConcerns
 
       return true if publish_to.blank? && unpublish_from.blank?
 
-      Hyacinth::Config.lock_adapter.with_lock(self.uid) do |lock_object|
+      Hyacinth::Config.lock_adapter.with_lock("#{self.uid}-publish") do |lock_object|
         # Use one DateTime to sync publish time to multiple publish targets
         publish_time = DateTime.current
 
@@ -88,12 +88,11 @@ module DigitalObjectConcerns
 
             # Add new entries for successful publish operations
             if new_publish_entries.present?
-              if self.first_published_at.blank?
-                self.first_published_at = publish_time
-                lock_object.unlock && self.save
-              end
-
+              self.first_published_at = publish_time if self.first_published_at.blank?
               self.publish_entries << new_publish_entries
+              # save the DigitalObject after all changes have gone through
+              # so that indexing runs and solr publish target info is up to date.
+              self.save
             end
           end
 
@@ -114,10 +113,6 @@ module DigitalObjectConcerns
           unpublish_failure_messages.each do |message|
             self.errors.add(:unpublish, message)
           end
-
-          # Index the DigitalObject after all changes have gone through
-          # so that solr publish target info is up to date.
-          self.index
         rescue Timeout::Error
           self.errors.add(:publish, 'Request timed out during publish/unpublish and the operation may not have finished. Please try publishing or unpublishing again.')
         end
