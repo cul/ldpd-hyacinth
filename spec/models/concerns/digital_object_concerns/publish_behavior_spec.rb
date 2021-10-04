@@ -21,14 +21,14 @@ RSpec.describe DigitalObjectConcerns::PublishBehavior do
       end
       it "calls #update on external identifier adapter" do
         expect(object).to receive(:async_publish).and_return(publish_promise)
-        expect(Hyacinth::Config.external_identifier_adapter).to receive(:update).with(doi, digital_object: object, target_url: target_url)
+        expect(Hyacinth::Config.external_identifier_adapter).to receive(:update).with(doi, digital_object: object, target_url: target_url, state: :active)
         object.perform_publish_changes(publish_to: [publish_target])
       end
     end
     context 'when an object has not been preserved' do
       it "raises an exception without starting async processes" do
         expect(object).not_to receive(:async_publish)
-        expect(Hyacinth::Config.external_identifier_adapter).not_to receive(:update).with(doi, digital_object: object, target_url: target_url)
+        expect(Hyacinth::Config.external_identifier_adapter).not_to receive(:update).with(doi, digital_object: object, target_url: target_url, state: :active)
         expect { object.perform_publish_changes(publish_to: [publish_target]) }.to raise_error(Hyacinth::Exceptions::InvalidPublishConditions)
       end
     end
@@ -44,9 +44,10 @@ RSpec.describe DigitalObjectConcerns::PublishBehavior do
       FactoryBot.create(:publish_target)
     end
 
-    let(:digital_object_without_publish_entries) { FactoryBot.create(:digital_object_test_subclass) }
+    let(:doi) { '10.abcd/4569' }
+    let(:digital_object_without_publish_entries) { FactoryBot.create(:digital_object_test_subclass, doi: doi) }
     let(:digital_object_with_publish_entries) do
-      obj = FactoryBot.create(:digital_object_test_subclass)
+      obj = FactoryBot.create(:digital_object_test_subclass, doi: doi)
       obj.send(
         :publish_entries=,
         [
@@ -56,14 +57,35 @@ RSpec.describe DigitalObjectConcerns::PublishBehavior do
       )
       obj
     end
-    it "calls unpublish_from for all current publish_entries" do
-      expect(digital_object_with_publish_entries).to receive(:unpublish_from).with(targets: digital_object_with_publish_entries.publish_targets)
-      digital_object_with_publish_entries.unpublish_from_all
+    let(:unpublish_promise_1) do
+      Concurrent::Promise.new { publish_target_1 }.execute
+    end
+    let(:unpublish_promise_2) do
+      Concurrent::Promise.new { publish_target_2 }.execute
+    end
+    context "object has publish entries" do
+      let(:object) { digital_object_with_publish_entries }
+      before do
+        # pretend we were preserved 10 seconds ago
+        object.preserved_at = DateTime.new.getlocal - 10
+      end
+      it "calls unpublish_from for all current publish_entries" do
+        expect(digital_object_with_publish_entries).to receive(:unpublish_from).with(targets: digital_object_with_publish_entries.publish_targets.to_a)
+        object.unpublish_from_all
+      end
+      it "calls async_unpublish for all current publish_entries and deactivates doi" do
+        expect(object).to receive(:async_unpublish).and_return(unpublish_promise_1, unpublish_promise_2)
+        expect(Hyacinth::Config.external_identifier_adapter).to receive(:deactivate).with(doi)
+        object.unpublish_from_all
+      end
     end
 
-    it "doesn't call publish internally when an object has no publish entries" do
-      expect(digital_object_without_publish_entries).not_to receive(:unpublish_from)
-      digital_object_without_publish_entries.unpublish_from_all
+    context "object has publish entries" do
+      let(:object) { digital_object_without_publish_entries }
+      it "doesn't call publish internally when an object has no publish entries" do
+        expect(object).not_to receive(:unpublish_from)
+        object.unpublish_from_all
+      end
     end
   end
 end

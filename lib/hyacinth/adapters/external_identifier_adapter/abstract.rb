@@ -43,6 +43,15 @@ module Hyacinth
           raise NotImplementedError
         end
 
+        def deactivate(id)
+          raise Hyacinth::Exceptions::UnhandledLocationError, "Unhandled id for #{self.class.name}: #{id}" unless handles?(id)
+          deactivate_impl(id)
+        end
+
+        def deactivate_impl(_id)
+          raise NotImplementedError
+        end
+
         def tombstone(id)
           raise Hyacinth::Exceptions::UnhandledLocationError, "Unhandled id for #{self.class.name}: #{id}" unless handles?(id)
           tombstone_impl(id)

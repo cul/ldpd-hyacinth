@@ -48,10 +48,14 @@ module Hyacinth
           true
         end
 
-        def tombstone_impl(id)
+        def deactivate_impl(id)
           return false unless exists?(id)
           @identifiers[id][:status] = :inactive
           true
+        end
+
+        def tombstone_impl(_id)
+          # TODO: See HYACINTH-876
         end
       end
     end

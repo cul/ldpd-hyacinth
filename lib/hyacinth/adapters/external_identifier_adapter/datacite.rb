@@ -64,6 +64,17 @@ module Hyacinth
           true
         end
 
+        def deactivate_impl(id)
+          json_payload = datacite_payloads.build_state_update(:inactive)
+          rest_api_response = rest_api.update_doi(id, json_payload)
+          unless rest_api_response.status.eql? 200
+            Rails.logger.error "Did not update a DOI! Response Code: #{rest_api_response.status}." \
+                               "Response Body: #{rest_api_response.body}."
+            return false
+          end
+          true
+        end
+
         def tombstone_impl(_id)
           # TODO: See HYACINTH-876
         end
