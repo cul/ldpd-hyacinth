@@ -20,7 +20,9 @@ module AuthenticateUser
   end
 
   def create_project_contributor(to:, project:)
-    permissions = Array.wrap(to).map { |action| Permission.new(action: action, subject: Project.to_s, subject_id: project.id) }
+    permissions = Array.wrap(to).product(Array.wrap(project)).map do |action, subject|
+      Permission.new(action: action, subject: Project.to_s, subject_id: subject.id)
+    end
 
     FactoryBot.create(
       :user, first_name: 'Signed In', last_name: 'User', email: 'logged-in-user@exaple.com', permissions: permissions
