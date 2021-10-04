@@ -79,7 +79,7 @@ RSpec.describe DigitalObjectConcerns::AttributeAssignment::Doi do
       it "does not call ensure_doi in save hook" do
         expect(Hyacinth::Config.external_identifier_adapter).not_to receive(:mint)
         digital_object_with_doi.save
-        expect(digital_object.mint_doi).to be false
+        expect(digital_object_with_doi.mint_doi).to be false
       end
     end
     context "when a doi has not been set" do
