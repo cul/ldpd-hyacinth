@@ -51,6 +51,7 @@ production:
     user: apitest
     password: apitest
     prefix: '10.33555'
+    default_target_url_template: 'http://id.library.columbia.edu/objects/%{uid}'
     default_properties:
       creators:
         - name: 'Placeholder Creator'
