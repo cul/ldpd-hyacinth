@@ -32,6 +32,7 @@ module Hyacinth
 
         def persist(location_uri, digital_object)
           raise Hyacinth::Exceptions::UnhandledLocationError, "Unhandled location_uri for #{self.class.name}: #{location_uri}" unless handles?(location_uri)
+          raise Hyacinth::Exceptions::InvalidPersistConditions, "Persistence requires DOI" unless digital_object.ensure_doi!
           persist_impl(location_uri, digital_object)
         end
 

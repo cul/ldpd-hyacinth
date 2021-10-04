@@ -281,6 +281,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata do
         publicationYear: 1951,
         publisher: "The Best Publisher Ever",
         relatedIdentifiers: [
+          { relatedIdentifier: "urn:uuid:#{digital_object_uid}", relatedIdentifierType: 'URN', relationType: 'IsVariantFormOf' },
           { relatedIdentifier: '10.1371/journal.pone.0119638', relatedIdentifierType: 'DOI', relationType: 'IsVariantFormOf' },
           { relatedIdentifier: '0670734608', relatedIdentifierType: 'ISBN', relationType: 'IsPartOf' },
           { relatedIdentifier: '1932-6203', relatedIdentifierType: 'ISSN', relationType: 'IsPartOf' }

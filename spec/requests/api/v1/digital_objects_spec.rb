@@ -71,7 +71,8 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
   #       # the in-memory external id adapter allows us to inspect its data
   #       doi_data_hash = external_identifier_adapter.identifiers[authorized_object.doi]
   #       expect(doi_data_hash).to be_present
-  #       expect(doi_data_hash[:location_uri]).to eql(published_location)
+  #       expect(doi_data_hash[:uid]).to eql(authorized_object.uid)
+  #       expect(doi_data_hash[:target_url]).to eql(published_location)
   #       expect(doi_data_hash[:status]).to be(:active)
   #     end
 

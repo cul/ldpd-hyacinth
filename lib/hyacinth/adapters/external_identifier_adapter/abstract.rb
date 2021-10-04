@@ -4,7 +4,9 @@ module Hyacinth
   module Adapters
     module ExternalIdentifierAdapter
       class Abstract
-        def initialize(adapter_config = {}); end
+        def initialize(adapter_config = {})
+          @default_target_url_template = adapter_config[:default_target_url_template]
+        end
 
         # @param id [String]
         # @return [Boolean] true if this adapter can handle this type of identifier
@@ -14,11 +16,12 @@ module Hyacinth
 
         # Generates a new persistent id, ensuring that nothing currently uses that identifier.
         # @return [String] a new id
-        def mint(digital_object: nil, location_uri: nil, state: :draft)
-          mint_impl(digital_object, location_uri, state)
+        def mint(digital_object: nil, target_url: nil, state: :draft)
+          target_url_value = ensure_target_url(digital_object, target_url)
+          mint_impl(digital_object, target_url_value, state)
         end
 
-        def mint_impl(_digital_object, _location_uri, _state)
+        def mint_impl(_digital_object, _target_url, _state)
           raise NotImplementedError
         end
 
@@ -30,12 +33,13 @@ module Hyacinth
         # @param id [String]
         # @param digital [String]
         # @return [Boolean] true if this adapter can handle this type of identifier
-        def update(id, digital_object:, location_uri:, state: nil)
+        def update(id, digital_object:, target_url:, state: nil)
           raise Hyacinth::Exceptions::UnhandledLocationError, "Unhandled id for #{self.class.name}: #{id}" unless handles?(id)
-          update_impl(id, digital_object, location_uri, state)
+          target_url_value = ensure_target_url(digital_object, target_url)
+          update_impl(id, digital_object, target_url_value, state)
         end
 
-        def update_impl(_id, _digital_object, _location_uri, _state)
+        def update_impl(_id, _digital_object, _target_url, _state)
           raise NotImplementedError
         end
 
@@ -46,6 +50,16 @@ module Hyacinth
 
         def tombstone_impl(_id)
           raise NotImplementedError
+        end
+
+        # @param digital_object [DigitalObject]
+        # @param target_url [String] optional URL to be associated with digital_object's external ID
+        # @api private
+        # @return [String, nil] a default target URL to associate with the digital object
+        def ensure_target_url(digital_object, target_url = nil)
+          return target_url if target_url.present?
+          return nil unless digital_object
+          format(@default_target_url_template, uid: digital_object.uid) if @default_target_url_template
         end
       end
     end

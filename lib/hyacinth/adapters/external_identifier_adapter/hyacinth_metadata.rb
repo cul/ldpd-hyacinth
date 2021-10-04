@@ -5,7 +5,7 @@
 class Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata
   attr_reader :descriptive_metadata, :title
 
-  delegate :doi, :created_at, :updated_at, :first_published_at, :identifiers, to: :@digital_object
+  delegate :doi, :created_at, :updated_at, :first_published_at, :identifiers, :uid, to: :@digital_object
 
   # parse metadata from Hyacinth Digital Objects Data into a format
   # suitable for including in a Datacite REST API request as attributes
@@ -129,11 +129,11 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata
 
   # @return nil or an array of {relatedIdentifier:, relatedIdentifierType:, relationType:, resourceTypeGeneral: }
   def datacite_related_identifiers
-    hyacinth_identifiers = parent_publication_identifiers
-    return nil if hyacinth_identifiers.empty?
-    hyacinth_identifiers.map do |type, value|
-      { relatedIdentifier: value, relatedIdentifierType: type, relationType: (type == 'DOI' ? 'IsVariantFormOf' : 'IsPartOf') }
+    values = [{ relatedIdentifier: "urn:uuid:#{uid}", relatedIdentifierType: 'URN', relationType: 'IsVariantFormOf' }]
+    parent_publication_identifiers&.each do |type, value|
+      values << { relatedIdentifier: value, relatedIdentifierType: type, relationType: (type == 'DOI' ? 'IsVariantFormOf' : 'IsPartOf') }
     end
+    values
   end
 
   def as_datacite_properties(default_properties = {}, data_mapping = {})

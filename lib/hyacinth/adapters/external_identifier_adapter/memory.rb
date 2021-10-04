@@ -18,14 +18,17 @@ module Hyacinth
         end
 
         # Generates a new persistent id, ensuring that nothing currently uses that identifier.
+        # @param digital_object [DigitalObject, nil]
+        # @param target_url [String]
+        # @param state [Symbol]
         # @return [String] a new id
-        def mint_impl(_digital_object, _location_uri, _state)
+        def mint_impl(digital_object, target_url, state)
           new_id = Random.rand.to_s
           loop do
             break unless @identifiers.key?(new_id)
             new_id = Random.rand.to_s
           end
-          @identifiers[new_id] = {}
+          @identifiers[new_id] = { uid: digital_object&.uid, status: :inactive, target_url: target_url, state: state }.compact
           new_id
         end
 
@@ -36,11 +39,12 @@ module Hyacinth
 
         # @param id [String]
         # @param digital_object [DigitalObject]
-        # @param location_uri [String]
+        # @param target_url [String]
+        # @param state [Symbol]
         # @return [Boolean] true if this adapter can handle this type of identifier
-        def update_impl(id, digital_object, location_uri, state)
+        def update_impl(id, digital_object, target_url, state)
           return false unless handles?(id)
-          @identifiers[id] = { uid: digital_object.uid, status: :active, location_uri: location_uri, state: state }
+          @identifiers[id] = { uid: digital_object.uid, status: :active, target_url: target_url, state: state }
           true
         end
 

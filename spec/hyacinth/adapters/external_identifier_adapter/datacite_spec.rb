@@ -3,16 +3,22 @@
 require 'rails_helper'
 
 describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
+  let(:adapter_configuration) do
+    {
+      rest_api: 'https://api.test.datacite.org',
+      user: 'FriendlyUser',
+      password: 'FriendlyPassword',
+      prefix: '10.33555'
+    }
+  end
   let(:datacite) do
-    described_class.new(rest_api: 'https://api.test.datacite.org',
-                        user: 'FriendlyUser',
-                        password: 'FriendlyPassword',
-                        prefix: '10.33555')
+    described_class.new(adapter_configuration)
   end
   let(:rest_api) { datacite.rest_api }
-  let(:dod) do
+  let(:digital_object_uid) { SecureRandom.uuid }
+  let(:digital_object_attributes) do
     data = JSON.parse(file_fixture('files/datacite/item.json').read)
-    data['identifiers'] = ['item.' + SecureRandom.uuid] # random identifer to avoid collisions
+    data['identifiers'] = ['item.' + digital_object_uid]
     data
   end
 
@@ -33,7 +39,8 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
 
   let(:digital_object) do
     obj = DigitalObject::Item.new
-    obj.assign_attributes(dod)
+    obj.uid = digital_object_uid
+    obj.assign_attributes(digital_object_attributes)
     obj
   end
 
@@ -70,9 +77,9 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
   end
 
   describe '#mint' do
-    let(:location_uri) { nil }
+    let(:target_url) { nil }
     let(:doi_state) { :draft }
-    let(:minted_doi) { datacite.mint(digital_object: digital_object, location_uri: location_uri, state: doi_state) }
+    let(:minted_doi) { datacite.mint(digital_object: digital_object, target_url: target_url, state: doi_state) }
     context "no DigitalObject supplied" do
       let(:digital_object) { nil }
       let(:rest_api_response_body) { no_metadata_response_body_json }
@@ -90,7 +97,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
     end
 
     context "DigitalObject supplied" do
-      let(:location_uri) { 'https://www.columbia.edu' }
+      let(:target_url) { 'https://www.columbia.edu' }
       let(:rest_api_response_body) { no_metadata_response_body_json }
       let(:rest_api_response_status) { 201 }
       it "calls the appropriate Api method" do
@@ -103,6 +110,19 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
           expect(rest_api).to receive(:create_doi).with(kind_of(String)).and_return(rest_api_response)
           expect(minted_doi).to eql("10.33555/tb9q-qb07")
         end
+        context "target url is blank but default url template is configured" do
+          let(:default_target_url_template) { "http://expected/%{uid}" }
+          let(:target_url) { nil }
+          let(:expected_target) { format(default_target_url_template, uid: digital_object.uid) }
+          let(:expected_doi) { "10.33555/tb9q-qb07" }
+          let(:datacite) do
+            described_class.new(adapter_configuration.merge(default_target_url_template: default_target_url_template))
+          end
+          it 'calls mint_impl with the formatted default value' do
+            expect(datacite).to receive(:mint_impl).with(digital_object, expected_target, doi_state).and_return(expected_doi)
+            expect(minted_doi).to eql(expected_doi)
+          end
+        end
       end
     end
   end
@@ -113,7 +133,22 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
     let(:rest_api_response_status) { 200 }
     it "calls the appropriate Api method" do
       expect(rest_api).to receive(:update_doi).with(doi, kind_of(String)).and_return(rest_api_response)
-      expect(datacite.update(doi, digital_object: digital_object, location_uri: 'https://www.columbia.edu')).to be true
+      expect(datacite.update(doi, digital_object: digital_object, target_url: 'https://www.columbia.edu')).to be true
+    end
+    context "target url is blank but default url template is configured" do
+      let(:default_target_url_template) { "http://expected/%{uid}" }
+      let(:target_url) { nil }
+      let(:doi_state) { nil }
+      let(:expected_target) { format(default_target_url_template, uid: digital_object.uid) }
+      let(:expected_doi) { "10.33555/tb9q-qb07" }
+      let(:success_result) { true }
+      let(:datacite) do
+        described_class.new(adapter_configuration.merge(default_target_url_template: default_target_url_template))
+      end
+      it 'calls mint_impl with the formatted default value' do
+        expect(datacite).to receive(:update_impl).with(doi, digital_object, expected_target, doi_state).and_return(success_result)
+        expect(datacite.update(doi, digital_object: digital_object, target_url: target_url, state: doi_state)).to be success_result
+      end
     end
   end
 end
