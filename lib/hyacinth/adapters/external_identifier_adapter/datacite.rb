@@ -65,7 +65,9 @@ module Hyacinth
         end
 
         def deactivate_impl(id)
-          json_payload = datacite_payloads.build_state_update(:inactive)
+          # if DOI is not findable, there is no work to do here
+          return true unless rest_api.doi_findable?(id)
+          json_payload = datacite_payloads.build_state_update(:registered)
           rest_api_response = rest_api.update_doi(id, json_payload)
           unless rest_api_response.status.eql? 200
             Rails.logger.error "Did not update a DOI! Response Code: #{rest_api_response.status}." \

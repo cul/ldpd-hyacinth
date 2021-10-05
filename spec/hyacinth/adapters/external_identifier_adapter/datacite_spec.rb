@@ -151,4 +151,25 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
       end
     end
   end
+  describe '#deactivate' do
+    let(:doi) { '10.33555/tb9q-qb07' }
+    context "findable doi" do
+      let(:rest_api_response_body) { no_metadata_response_body_json }
+      let(:rest_api_response_status) { 200 }
+      let(:registered_payload) { '{}' }
+      it "calls the appropriate Api method" do
+        expect(rest_api).to receive(:doi_findable?).with(doi).and_return(true)
+        expect(datacite.datacite_payloads).to receive(:build_state_update).with(:registered).and_return(registered_payload)
+        expect(rest_api).to receive(:update_doi).with(doi, registered_payload).and_return(rest_api_response)
+        expect(datacite.deactivate(doi)).to be true
+      end
+    end
+    context "not findable doi" do
+      it "returns true without calling the Api method" do
+        expect(rest_api).to receive(:doi_findable?).with(doi).and_return(false)
+        expect(rest_api).not_to receive(:update_doi)
+        expect(datacite.deactivate(doi)).to be true
+      end
+    end
+  end
 end
