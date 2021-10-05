@@ -75,7 +75,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Data
     attributes = digital_object_properties_as_attributes(digital_object)
     attributes[:url] = target_url if target_url
     # add event, which triggers DOI state change on DataCite server
-    add_event(doi_state, attributes) if doi_state
+    add_event(doi_state, attributes) unless doi_state.eql?(:findable) && !all_required_properties_present?(attributes)
     generate_json_payload(attributes)
   end
 
@@ -92,10 +92,12 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Data
   private
 
     # for now, don't differentiate the event based on the current DOI state
-    # @param doi_desired_state [Symbol] doi_state can be set to one of the following: :draft, :findable, :registered
+    # state can remain :draft, but cannot return to :draft
+    # @param doi_desired_state [Symbol] doi_state can be set to one of the following: :findable, :registered
     # @param attributes [Hash]
     def add_event(doi_desired_state, attributes = {})
-      attributes[:event] = DOI_MINT_EVENT[doi_desired_state] unless doi_desired_state.eql? :draft
+      return attributes if doi_desired_state.nil? || doi_desired_state.eql?(:draft)
+      attributes[:event] = DOI_MINT_EVENT[doi_desired_state]
       attributes
     end
 

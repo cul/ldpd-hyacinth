@@ -21,14 +21,14 @@ RSpec.describe DigitalObjectConcerns::PublishBehavior do
       end
       it "calls #update on external identifier adapter" do
         expect(object).to receive(:async_publish).and_return(publish_promise)
-        expect(Hyacinth::Config.external_identifier_adapter).to receive(:update).with(doi, digital_object: object, target_url: target_url, state: :active)
+        expect(Hyacinth::Config.external_identifier_adapter).to receive(:update).with(doi, digital_object: object, target_url: target_url, publish: true)
         object.perform_publish_changes(publish_to: [publish_target])
       end
     end
     context 'when an object has not been preserved' do
       it "raises an exception without starting async processes" do
         expect(object).not_to receive(:async_publish)
-        expect(Hyacinth::Config.external_identifier_adapter).not_to receive(:update).with(doi, digital_object: object, target_url: target_url, state: :active)
+        expect(Hyacinth::Config.external_identifier_adapter).not_to receive(:update).with(doi, digital_object: object, target_url: target_url, publish: true)
         expect { object.perform_publish_changes(publish_to: [publish_target]) }.to raise_error(Hyacinth::Exceptions::InvalidPublishConditions)
       end
     end
