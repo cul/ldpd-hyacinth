@@ -14,9 +14,10 @@ module DigitalObjectConcerns::Validations
     validates :rights, 'digital_object/rights_fields': true
     validate :indexing_test_succeeds
 
-    validates_with DigitalObject::TypeValidator
-    validates_with DigitalObject::ResourceImportValidator
     validates_with DigitalObject::MetadataAttributesValidator
+    validates_with DigitalObject::ProjectsValidator
+    validates_with DigitalObject::ResourceImportValidator
+    validates_with DigitalObject::TypeValidator
 
     # Validate that import files are readable before we import them
 

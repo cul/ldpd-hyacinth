@@ -11,14 +11,20 @@ module DigitalObjectConcerns
       end
 
       def assign_primary_project(digital_object_data)
-        return unless digital_object_data.key?('primary_project')
-        self.primary_project = dereference_project_string_key(digital_object_data['primary_project']['string_key'], true)
+        primary_project_data = digital_object_data['primary_project']
+        return unless primary_project_data
+        dereferenced = primary_project_data.is_a?(Project)
+        self.primary_project = dereferenced ? primary_project_data : dereference_project_string_key(primary_project_data['string_key'], true)
       end
 
       def assign_other_projects(digital_object_data)
         return unless digital_object_data.key?('other_projects')
         self.other_projects = Set.new(digital_object_data['other_projects'].map { |digital_object_data_project|
-          dereference_project_string_key(digital_object_data_project['string_key'], true)
+          if digital_object_data_project.is_a? Project
+            digital_object_data_project
+          else
+            dereference_project_string_key(digital_object_data_project['string_key'], true)
+          end
         })
       end
 
