@@ -80,7 +80,7 @@ RSpec.describe DigitalObjectConcerns::PublishBehavior do
       end
     end
 
-    context "object has publish entries" do
+    context "object does not have publish entries" do
       let(:object) { digital_object_without_publish_entries }
       it "doesn't call unpublish_from internally when an object has no publish entries" do
         expect(object).not_to receive(:unpublish_from)
