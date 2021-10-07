@@ -143,8 +143,12 @@ RSpec.describe Mutations::DigitalObject::UpdateProjects, type: :request do
         expect(response.body).to be_json_eql("\"#{primary_project.string_key}\"").at_path('data/updateProjects/digitalObject/otherProjects/0/stringKey')
       end
 
-      it "changes the primary project" do
+      it "updates the primary project" do
         expect(authorized_item.reload.primary_project.string_key).to eql(secondary_project.string_key)
+      end
+
+      it "updates other_projects" do
+        expect(authorized_item.reload.other_projects.map(&:string_key)).to eql([primary_project.string_key])
       end
 
       context "but primary project does not exist" do
@@ -169,6 +173,38 @@ RSpec.describe Mutations::DigitalObject::UpdateProjects, type: :request do
         end
         it "does not change the primary project" do
           expect(authorized_item.reload.primary_project.string_key).to eql(primary_project.string_key)
+        end
+        it "does not change other_projects" do
+          expect(authorized_item.reload.other_projects.map(&:string_key)).to eql([secondary_project.string_key, tertiary_project.string_key])
+        end
+      end
+
+      context "but an other_projects key does not exist" do
+        let(:variables) do
+          {
+            input: {
+              id: authorized_item.uid,
+              primaryProject: {
+                stringKey: secondary_project.string_key
+              },
+              otherProjects: [
+                { stringKey: primary_project.string_key },
+                { stringKey: nonexistent_project_string_key }
+              ]
+            }
+          }
+        end
+        it "returns a null digital object and an error of the expected format at the expected path" do
+          expect(response.body).to be_json_eql(%(null)).at_path('data/updateProjects/digitalObject')
+          expect(response.body).to be_json_eql(%(
+            "Could not find project for string key: #{nonexistent_project_string_key}"
+          )).at_path('data/updateProjects/userErrors/0/message')
+        end
+        it "does not change the primary project" do
+          expect(authorized_item.reload.primary_project.string_key).to eql(primary_project.string_key)
+        end
+        it "does not change other_projects" do
+          expect(authorized_item.reload.other_projects.map(&:string_key)).to eql([secondary_project.string_key, tertiary_project.string_key])
         end
       end
     end
