@@ -86,7 +86,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::A
           headers: mocked_headers_no_content
         ).to_return(status: 404, body: '{}', headers: {})
       end
-      it "returns true" do
+      it "returns false" do
         expect(api.doi_exists?(expected_doi)).to eq(false)
         expect(mock_request).to have_been_requested.times(1)
       end
@@ -129,7 +129,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::A
           headers: mocked_headers_no_content
         ).to_return(status: 404, body: '{}', headers: {})
       end
-      it "returns true" do
+      it "returns false" do
         expect(api.doi_findable?(expected_doi)).to eq(false)
         expect(mock_request).to have_been_requested.times(1)
       end
