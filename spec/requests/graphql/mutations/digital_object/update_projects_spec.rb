@@ -89,7 +89,7 @@ RSpec.describe Mutations::DigitalObject::UpdateProjects, type: :request do
         expect(authorized_item.reload.other_projects.map(&:string_key)).to eql([tertiary_project.string_key])
       end
 
-      context "with primary project data" do
+      context "when the user attempts to assign the current primary project to other_projects" do
         let(:variables) do
           {
             input: {
