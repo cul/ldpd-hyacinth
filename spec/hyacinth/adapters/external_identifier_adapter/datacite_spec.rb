@@ -78,8 +78,8 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
 
   describe '#mint' do
     let(:target_url) { nil }
-    let(:doi_state) { :draft }
-    let(:minted_doi) { datacite.mint(digital_object: digital_object, target_url: target_url, state: doi_state) }
+    let(:publish_doi) { false }
+    let(:minted_doi) { datacite.mint(digital_object: digital_object, target_url: target_url, publish: publish_doi) }
     context "no DigitalObject supplied" do
       let(:digital_object) { nil }
       let(:rest_api_response_body) { no_metadata_response_body_json }
@@ -89,7 +89,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
         expect(minted_doi).to eql("10.33555/tb9q-qb07")
       end
       context "and status is not draft" do
-        let(:doi_state) { :findable }
+        let(:publish_doi) { true }
         it "returns nil" do
           expect(minted_doi).to be_nil
         end
@@ -105,7 +105,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
         expect(minted_doi).to eql("10.33555/tb9q-qb07")
       end
       context "and status is not draft" do
-        let(:doi_state) { :findable }
+        let(:publish_doi) { true }
         it "alls the appropriate Api method" do
           expect(rest_api).to receive(:create_doi).with(kind_of(String)).and_return(rest_api_response)
           expect(minted_doi).to eql("10.33555/tb9q-qb07")
@@ -119,7 +119,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
             described_class.new(adapter_configuration.merge(default_target_url_template: default_target_url_template))
           end
           it 'calls mint_impl with the formatted default value' do
-            expect(datacite).to receive(:mint_impl).with(digital_object, expected_target, doi_state).and_return(expected_doi)
+            expect(datacite).to receive(:mint_impl).with(digital_object, expected_target, publish_doi).and_return(expected_doi)
             expect(minted_doi).to eql(expected_doi)
           end
         end
@@ -133,12 +133,12 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
     let(:rest_api_response_status) { 200 }
     it "calls the appropriate Api method" do
       expect(rest_api).to receive(:update_doi).with(doi, kind_of(String)).and_return(rest_api_response)
-      expect(datacite.update(doi, digital_object: digital_object, target_url: 'https://www.columbia.edu')).to be true
+      datacite.update(doi, digital_object: digital_object, target_url: 'https://www.columbia.edu')
     end
     context "target url is blank but default url template is configured" do
       let(:default_target_url_template) { "http://expected/%{uid}" }
       let(:target_url) { nil }
-      let(:doi_state) { nil }
+      let(:publish_doi) { false }
       let(:expected_target) { format(default_target_url_template, uid: digital_object.uid) }
       let(:expected_doi) { "10.33555/tb9q-qb07" }
       let(:success_result) { true }
@@ -146,8 +146,29 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
         described_class.new(adapter_configuration.merge(default_target_url_template: default_target_url_template))
       end
       it 'calls mint_impl with the formatted default value' do
-        expect(datacite).to receive(:update_impl).with(doi, digital_object, expected_target, doi_state).and_return(success_result)
-        expect(datacite.update(doi, digital_object: digital_object, target_url: target_url, state: doi_state)).to be success_result
+        expect(datacite).to receive(:update_impl).with(doi, digital_object, expected_target, publish_doi).and_return(success_result)
+        expect(datacite.update(doi, digital_object: digital_object, target_url: target_url, publish: publish_doi)).to be success_result
+      end
+    end
+  end
+  describe '#deactivate' do
+    let(:doi) { '10.33555/tb9q-qb07' }
+    context "findable doi" do
+      let(:rest_api_response_body) { no_metadata_response_body_json }
+      let(:rest_api_response_status) { 200 }
+      let(:registered_payload) { '{}' }
+      it "calls the appropriate Api method" do
+        expect(rest_api).to receive(:doi_findable?).with(doi).and_return(true)
+        expect(datacite.datacite_payloads).to receive(:build_state_update).with(:registered).and_return(registered_payload)
+        expect(rest_api).to receive(:update_doi).with(doi, registered_payload).and_return(rest_api_response)
+        expect(datacite.deactivate(doi)).to be true
+      end
+    end
+    context "not findable doi" do
+      it "returns true without calling the Api method" do
+        expect(rest_api).to receive(:doi_findable?).with(doi).and_return(false)
+        expect(rest_api).not_to receive(:update_doi)
+        expect(datacite.deactivate(doi)).to be true
       end
     end
   end

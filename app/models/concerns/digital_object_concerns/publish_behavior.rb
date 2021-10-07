@@ -12,7 +12,7 @@ module DigitalObjectConcerns
     end
 
     def unpublish_from(targets: [])
-      perform_publish_changes(unpublish_from: targets, publishing_user: publishing_user)
+      perform_publish_changes(unpublish_from: targets)
     end
 
     def perform_publish_changes(publish_to: [], unpublish_from: [], publishing_user: nil)
@@ -99,13 +99,13 @@ module DigitalObjectConcerns
           end
 
           if new_highest_priority_doi_eligible_publish_target.nil?
-            Hyacinth::Config.external_identifier_adapter.tombstone(self.doi)
+            Hyacinth::Config.external_identifier_adapter.deactivate(self.doi)
           elsif (new_highest_priority_doi_eligible_publish_target != current_primary_doi_publish_target) || publish_to.include?(new_highest_priority_doi_eligible_publish_target)
             # We only need to perform an external identifier update if:
             # - We now have a new highest-priority doi publish target
             # or
             # - We are re-publishing to the existing highest-priority doi publish target.
-            Hyacinth::Config.external_identifier_adapter.update(self.doi, digital_object: self, target_url: self.citation_location)
+            Hyacinth::Config.external_identifier_adapter.update(self.doi, digital_object: self, target_url: self.citation_location, publish: true)
           end
 
           # Gather error messages
@@ -133,14 +133,14 @@ module DigitalObjectConcerns
     # Returns true on success, false on failure.
     def republish
       return true if self.publish_targets.blank?
-      publish(publish_to: self.publish_targets)
+      publish(publish_to: self.publish_targets.to_a)
     end
 
     # Unpublishes from all current publish targets.
     # Returns true on success, false on failure.
     def unpublish_from_all
       return true if self.publish_targets.blank?
-      unpublish_from(targets: self.publish_targets)
+      unpublish_from(targets: self.publish_targets.to_a)
     end
 
     private
