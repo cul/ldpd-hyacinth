@@ -17,11 +17,11 @@ function SelectCreatablePrimaryProject({ primaryProject, changeHandler }) {
     ability.can('create_objects', { subjectType: 'Project', stringKey })
   ));
   const selectOptions = allowedCreateProjects.map(
-    p => ({ value: p.stringKey, label: p.displayLabel }),
+    (p) => ({ value: p.stringKey, label: p.displayLabel }),
   );
 
   const projectForStringKey = (key) => {
-    const retVal = allowedCreateProjects.find(({ stringKey }) => { return stringKey === key; });
+    const retVal = allowedCreateProjects.find(({ stringKey }) => stringKey === key);
     return retVal;
   };
 
@@ -32,15 +32,21 @@ function SelectCreatablePrimaryProject({ primaryProject, changeHandler }) {
         sm={9}
         name="primary_project"
         value={primaryProject ? primaryProject.stringKey : ''}
-        onChange={v => changeHandler(projectForStringKey(v))}
+        onChange={(v) => changeHandler(projectForStringKey(v))}
         options={selectOptions}
       />
     </InputGroup>
   );
 }
 
+SelectCreatablePrimaryProject.defaultProps = {
+  primaryProject: null,
+};
+
 SelectCreatablePrimaryProject.propTypes = {
-  primaryProject: PropTypes.object,
+  primaryProject: PropTypes.shape({
+    stringKey: PropTypes.string.isRequired,
+  }),
   changeHandler: PropTypes.func.isRequired,
 };
 
