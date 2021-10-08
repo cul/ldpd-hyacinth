@@ -19,7 +19,7 @@ RSpec.describe Mutations::FieldSet::UpdateFieldSet, type: :request do
   end
 
   context 'when logged in user is project manager' do
-    before { sign_in_project_contributor to: :manage, project: project }
+    before { sign_in_project_contributor actions: :manage, projects: project }
 
     context 'when updating record' do
       let(:variables) do

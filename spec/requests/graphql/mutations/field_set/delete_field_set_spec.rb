@@ -13,7 +13,7 @@ RSpec.describe Mutations::FieldSet::DeleteFieldSet, type: :request do
   end
 
   context 'when logged in user is project manager' do
-    before { sign_in_project_contributor to: :manage, project: project }
+    before { sign_in_project_contributor actions: :manage, projects: project }
 
     context 'when deleting a field set that exists' do
       let(:variables) { { input: { projectStringKey: project.string_key, id: field_set.id } } }

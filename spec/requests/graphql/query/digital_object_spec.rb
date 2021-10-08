@@ -19,7 +19,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
 
   context 'logged in' do
     before do
-      sign_in_project_contributor to: :read_objects, project: authorized_project
+      sign_in_project_contributor actions: :read_objects, projects: authorized_project
       graphql query(authorized_object.uid)
     end
 
@@ -107,7 +107,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
 
   context "missing title field" do
     before do
-      sign_in_project_contributor to: :read_objects, project: authorized_project
+      sign_in_project_contributor actions: :read_objects, projects: authorized_project
       authorized_object.title.clear
       authorized_object.save
       graphql query(authorized_object.uid)
@@ -124,7 +124,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
     let(:authorized_object) { FactoryBot.create(:asset, :with_main_resource) }
     let(:authorized_project) { authorized_object.projects.first }
     before do
-      sign_in_project_contributor to: :read_objects, project: authorized_project
+      sign_in_project_contributor actions: :read_objects, projects: authorized_project
       graphql query(authorized_object.uid)
     end
     let(:expected_location) { Rails.root.join('spec', 'fixtures', 'files', 'test.txt').to_s }

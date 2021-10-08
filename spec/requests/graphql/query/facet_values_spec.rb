@@ -20,7 +20,7 @@ RSpec.describe 'Retrieving Facet Values', type: :request, solr: true do
   end
   context 'logged in non-admin user' do
     before do
-      sign_in_project_contributor to: :read_objects, project: authorized_project
+      sign_in_project_contributor actions: :read_objects, projects: authorized_project
       graphql(query, search_params)
     end
     let(:search_params) { { fieldName: 'primary_project_ssi', limit: 2, searchParams: {}, orderBy: { field: 'COUNT' } } }

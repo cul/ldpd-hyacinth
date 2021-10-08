@@ -13,7 +13,7 @@ RSpec.describe 'Projects Requests', type: :request do
     context 'when logged in user has appropriate permissions' do
       context 'when string_key is valid' do
         before do
-          sign_in_project_contributor to: :read_objects, project: project
+          sign_in_project_contributor actions: :read_objects, projects: project
           get "/api/v1/projects/#{project.string_key}"
         end
 

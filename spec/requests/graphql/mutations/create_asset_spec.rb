@@ -48,7 +48,7 @@ RSpec.describe Mutations::CreateAsset, type: :request do
     let(:variables) { { input: { parentId: authorized_object.uid, fileLocation: file_location } } }
 
     before do
-      sign_in_project_contributor to: [:read_objects, :create_objects], project: authorized_project
+      sign_in_project_contributor actions: [:read_objects, :create_objects], projects: authorized_project
       graphql query, variables
     end
 

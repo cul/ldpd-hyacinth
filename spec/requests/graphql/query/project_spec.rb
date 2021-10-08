@@ -11,7 +11,7 @@ RSpec.describe 'Retrieving Project', type: :request do
 
   context 'when logged in user has appropriate permissions' do
     before do
-      sign_in_project_contributor to: :read_objects, project: project
+      sign_in_project_contributor actions: :read_objects, projects: project
       user = FactoryBot.create(:user, :basic)
       Permission.create(user: user, subject: 'Project', subject_id: project.id, action: 'read_objects')
       Permission.create(user: user, subject: 'Project', subject_id: project.id, action: 'create_objects')

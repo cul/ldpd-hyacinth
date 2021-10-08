@@ -11,7 +11,7 @@ RSpec.describe 'Retrieving Field Set', type: :request do
   end
 
   context 'when logged in user has correct permissions' do
-    before { sign_in_project_contributor to: :read_objects, project: project }
+    before { sign_in_project_contributor actions: :read_objects, projects: project }
 
     context 'when id is valid' do
       before { graphql query(field_set.id) }

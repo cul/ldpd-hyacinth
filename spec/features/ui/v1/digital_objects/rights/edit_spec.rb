@@ -9,7 +9,7 @@ RSpec.describe 'Digital Object Rights Edit', type: :feature, js: true, solr: tru
   let(:well_known_label_value) { "The #{well_known_title_value}" }
   let(:request_url) { "/ui/v1/digital_objects/#{item.uid}/rights/edit" }
   let(:item) { FactoryBot.create(:item, :with_rights, :with_ascii_title, uid: uid) }
-  before { sign_in_project_contributor to: permissions_required, project: item.primary_project }
+  before { sign_in_project_contributor actions: permissions_required, projects: item.primary_project }
 
   describe 'GET /ui/v1/digital_objects/:uid/rights/edit' do
     before do

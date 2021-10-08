@@ -139,7 +139,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
       end
 
       before do
-        sign_in_project_contributor to: [:read_objects, :assess_rights], project: authorized_project
+        sign_in_project_contributor actions: [:read_objects, :assess_rights], projects: authorized_project
         graphql query, variables
       end
 
@@ -210,7 +210,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
       end
 
       before do
-        sign_in_project_contributor to: [:read_objects, :assess_rights], project: authorized_project
+        sign_in_project_contributor actions: [:read_objects, :assess_rights], projects: authorized_project
         graphql query, variables
       end
 
@@ -239,7 +239,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
       end
 
       before do
-        sign_in_project_contributor to: [:read_objects, :assess_rights], project: authorized_project
+        sign_in_project_contributor actions: [:read_objects, :assess_rights], projects: authorized_project
         graphql query, variables
       end
 
@@ -265,7 +265,7 @@ RSpec.describe 'Updating Item Rights', type: :request, solr: true do
         }
       end
 
-      before { sign_in_project_contributor to: [:read_objects, :assess_rights], project: authorized_project }
+      before { sign_in_project_contributor actions: [:read_objects, :assess_rights], projects: authorized_project }
 
       context "when the token provided matches the db-stored value" do
         before do

@@ -18,7 +18,7 @@ RSpec.describe Mutations::DigitalObject::UpdateFeaturedThumbnailRegion, type: :r
       let(:variables) { { input: { id: authorized_object.uid, featuredThumbnailRegion: featured_thumbnail_region } } }
 
       before do
-        sign_in_project_contributor to: :update_objects, project: project
+        sign_in_project_contributor actions: :update_objects, projects: project
         graphql query, variables
       end
 

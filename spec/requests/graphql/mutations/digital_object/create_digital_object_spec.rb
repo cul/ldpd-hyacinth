@@ -78,7 +78,7 @@ RSpec.describe Mutations::DigitalObject::CreateDigitalObject, type: :request do
       end
 
       before do
-        sign_in_project_contributor to: :create_objects, project: project
+        sign_in_project_contributor actions: :create_objects, projects: project
         graphql query, variables
       end
 

@@ -15,7 +15,7 @@ RSpec.describe Mutations::DigitalObject::Resource::DeleteResource, type: :reques
 
   context 'when logged in user has permission to delete a resource' do
     before do
-      sign_in_project_contributor to: [:read_objects, :update_objects], project: project
+      sign_in_project_contributor actions: [:read_objects, :update_objects], projects: project
     end
 
     context 'success occurs' do

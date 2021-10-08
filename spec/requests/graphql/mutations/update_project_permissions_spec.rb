@@ -26,7 +26,7 @@ RSpec.describe Mutations::UpdateProjectPermissions, type: :request do
 
   context 'when logged in user is project manager' do
     before do
-      sign_in_project_contributor to: :manage, project: project
+      sign_in_project_contributor actions: :manage, projects: project
     end
 
     context 'when updating permissions' do

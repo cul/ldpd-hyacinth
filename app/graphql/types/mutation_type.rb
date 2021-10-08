@@ -20,6 +20,7 @@ module Types
     field :update_rights, mutation: Mutations::DigitalObject::UpdateRights
     field :update_featured_thumbnail_region, mutation: Mutations::DigitalObject::UpdateFeaturedThumbnailRegion
     field :update_child_structure, mutation: Mutations::DigitalObject::UpdateChildStructure
+    field :update_projects, mutation: Mutations::DigitalObject::UpdateProjects
 
     field :create_user, mutation: Mutations::CreateUser
     field :update_user, mutation: Mutations::UpdateUser

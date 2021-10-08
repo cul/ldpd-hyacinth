@@ -11,7 +11,7 @@ RSpec.describe 'Field Sets Requests', type: :request do
     end
 
     context 'when logged in user has correct permissions' do
-      before { sign_in_project_contributor to: :read_objects, project: project }
+      before { sign_in_project_contributor actions: :read_objects, projects: project }
 
       describe 'when there are multiple results' do
         before do
@@ -48,7 +48,7 @@ RSpec.describe 'Field Sets Requests', type: :request do
     end
 
     context 'when logged in user has correct permissions' do
-      before { sign_in_project_contributor to: :read_objects, project: project }
+      before { sign_in_project_contributor actions: :read_objects, projects: project }
 
       context 'when id is valid' do
         before do
@@ -90,7 +90,7 @@ RSpec.describe 'Field Sets Requests', type: :request do
     end
 
     context 'when logged in user is project manager' do
-      before { sign_in_project_contributor to: :manage, project: project }
+      before { sign_in_project_contributor actions: :manage, projects: project }
 
       context 'when creating a new field set' do
         before do
@@ -142,7 +142,7 @@ RSpec.describe 'Field Sets Requests', type: :request do
     end
 
     context 'when logged in user is project manager' do
-      before { sign_in_project_contributor to: :manage, project: project }
+      before { sign_in_project_contributor actions: :manage, projects: project }
 
       context 'when updating record' do
         before do
@@ -192,7 +192,7 @@ RSpec.describe 'Field Sets Requests', type: :request do
     end
 
     context 'when logged in user is project manager' do
-      before { sign_in_project_contributor to: :manage, project: project }
+      before { sign_in_project_contributor actions: :manage, projects: project }
 
       context 'when deleting a field set that exists' do
         before do

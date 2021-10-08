@@ -11,7 +11,7 @@ RSpec.describe Mutations::UpdateProject, type: :request do
   end
 
   context 'when logged in user has appropriate permissions' do
-    before { sign_in_project_contributor to: :manage, project: project }
+    before { sign_in_project_contributor actions: :manage, projects: project }
 
     context 'when updating record' do
       let(:variables) do

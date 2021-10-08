@@ -38,7 +38,7 @@ RSpec.describe Mutations::DigitalObject::UpdateDescriptiveMetadata, type: :reque
 
   context "when logged in user has appropriate permissions" do
     before do
-      sign_in_project_contributor to: :update_objects, project: project
+      sign_in_project_contributor actions: :update_objects, projects: project
       graphql query, variables
     end
 
