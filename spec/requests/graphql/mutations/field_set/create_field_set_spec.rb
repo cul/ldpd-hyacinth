@@ -11,7 +11,7 @@ RSpec.describe Mutations::FieldSet::CreateFieldSet, type: :request do
   end
 
   context 'when logged in user is project manager' do
-    before { sign_in_project_contributor to: :manage, project: project }
+    before { sign_in_project_contributor actions: :manage, projects: project }
 
     context 'when creating a new field set' do
       let(:variables) do

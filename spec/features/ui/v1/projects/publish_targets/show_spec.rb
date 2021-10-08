@@ -9,7 +9,7 @@ RSpec.describe 'Project Publish Targets Show', type: :feature, js: true do
   let(:permissons_required) { [] }
   let(:show_url) { "/ui/v1/projects/#{project.string_key}/publish_targets" }
   before do
-    sign_in_project_contributor to: permissions_required, project: project
+    sign_in_project_contributor actions: permissions_required, projects: project
     additional_publish_target
     visit show_url
   end

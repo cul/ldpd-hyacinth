@@ -92,7 +92,7 @@ RSpec.describe 'Query for Authenticated User', type: :request do
   context 'when project user is logged in' do
     let(:project) { FactoryBot.create(:project) }
     before do
-      sign_in_project_contributor to: [:read_objects, :update_objects, :assess_rights], project: project
+      sign_in_project_contributor actions: [:read_objects, :update_objects, :assess_rights], projects: project
       graphql query
     end
 

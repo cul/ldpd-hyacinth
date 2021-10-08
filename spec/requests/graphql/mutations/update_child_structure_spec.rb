@@ -28,7 +28,7 @@ RSpec.describe Mutations::DigitalObject::UpdateChildStructure, type: :request do
   end
 
   context 'when logged in user is authorized to update the parent object' do
-    before { sign_in_project_contributor to: [:update_objects], project: parent_item.primary_project }
+    before { sign_in_project_contributor actions: [:update_objects], projects: parent_item.primary_project }
 
     context 'when reordering with real values the children of a digital object' do
       let(:variables) { { input: { parentUid: parent_item.uid, orderedChildren: ordered_children_input } } }

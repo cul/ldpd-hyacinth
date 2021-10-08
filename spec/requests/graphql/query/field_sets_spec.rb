@@ -10,7 +10,7 @@ RSpec.describe 'Retrieving Field Sets', type: :request do
   end
 
   context 'when logged in user has correct permissions' do
-    before { sign_in_project_contributor to: :read_objects, project: project }
+    before { sign_in_project_contributor actions: :read_objects, projects: project }
 
     describe 'when there are multiple results' do
       before do

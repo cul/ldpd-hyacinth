@@ -11,7 +11,7 @@ RSpec.describe 'Project Publish Targets Edit', type: :feature, js: true do
   let(:edit_url) { "#{show_url}/edit" }
 
   before do
-    sign_in_project_contributor to: permissions_required, project: project
+    sign_in_project_contributor actions: permissions_required, projects: project
     additional_publish_target
     visit edit_url
   end

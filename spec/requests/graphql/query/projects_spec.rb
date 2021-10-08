@@ -43,7 +43,7 @@ RSpec.describe 'Retrieving Projects', type: :request do
     before do
       project = FactoryBot.create(:project)
       FactoryBot.create(:project, :legend_of_lincoln)
-      sign_in_project_contributor to: :read_objects, project: project
+      sign_in_project_contributor actions: :read_objects, projects: project
       graphql query
     end
 

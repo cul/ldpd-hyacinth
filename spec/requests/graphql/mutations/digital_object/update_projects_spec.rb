@@ -28,7 +28,7 @@ RSpec.describe Mutations::DigitalObject::UpdateProjects, type: :request do
 
     context "when logged in user has appropriate permissions" do
       before do
-        sign_in_project_contributor to: [:create_objects, :delete_objects], project: [primary_project, secondary_project]
+        sign_in_project_contributor actions: [:create_objects, :delete_objects], projects: [primary_project, secondary_project]
         graphql query, variables
       end
 
@@ -76,7 +76,7 @@ RSpec.describe Mutations::DigitalObject::UpdateProjects, type: :request do
 
     context "when logged in user has appropriate permissions" do
       before do
-        sign_in_project_contributor to: [:update_objects], project: [primary_project]
+        sign_in_project_contributor actions: [:update_objects], projects: [primary_project]
         graphql query, variables
       end
 
@@ -134,7 +134,7 @@ RSpec.describe Mutations::DigitalObject::UpdateProjects, type: :request do
 
     context "when logged in user has appropriate permissions" do
       before do
-        sign_in_project_contributor to: [:update_objects, :create_objects, :delete_objects], project: [primary_project, secondary_project]
+        sign_in_project_contributor actions: [:update_objects, :create_objects, :delete_objects], projects: [primary_project, secondary_project]
         graphql query, variables
       end
 

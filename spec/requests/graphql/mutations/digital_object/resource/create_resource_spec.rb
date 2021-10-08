@@ -36,7 +36,7 @@ RSpec.describe Mutations::DigitalObject::Resource::CreateResource, type: :reques
 
   context 'when logged in user has permission to create a resource' do
     before do
-      sign_in_project_contributor to: [:read_objects, :update_objects], project: authorized_project
+      sign_in_project_contributor actions: [:read_objects, :update_objects], projects: authorized_project
       graphql query, variables
     end
 

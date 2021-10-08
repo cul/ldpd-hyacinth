@@ -16,7 +16,7 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
 
     context "logged in" do
       before do
-        sign_in_project_contributor to: :read_objects, project: authorized_project
+        sign_in_project_contributor actions: :read_objects, projects: authorized_project
         get "/api/v1/digital_objects/#{authorized_object.uid}"
       end
 
@@ -29,7 +29,7 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
     end
   end
 
-  # TODO: Replace this publish test with a GraphQL one
+  # TODO: Replace this publish test with a GraphQL one (HYACINTH-623)
   # describe 'POST /api/v1/digital_objects/:id/publish' do
   #   include_examples 'requires user to have correct permissions' do
   #     let(:request) do
@@ -41,7 +41,7 @@ RSpec.describe "Digital Objects API endpoint", type: :request do
   #     before do
   #       allow(Hyacinth::Config).to receive(:publication_adapter).and_return(publication_adapter)
   #       allow(Hyacinth::Config).to receive(:digital_object_search_adapter).and_return(digital_object_search_adapter)
-  #       sign_in_project_contributor to: [:publish_objects, :read_objects], project: authorized_project
+  #       sign_in_project_contributor actions: [:publish_objects, :read_objects], projects: authorized_project
   #       allow(publication_adapter).to receive(:publish).and_call_original
   #       allow(publication_adapter).to receive(:update_doi).and_call_original
   #     end

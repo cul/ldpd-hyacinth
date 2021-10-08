@@ -64,7 +64,7 @@ RSpec.describe "Downloads API endpoint", type: :request, solr: true do
     let(:resource_name) { digital_object.main_resource_name }
     let(:request_url) { "/api/v1/downloads/digital_object/#{digital_object.uid}/#{resource_name}" }
     let(:expected_download_content) { 'What a great test file!' }
-    let(:authorized_user) { create_project_contributor(to: :read_objects, project: digital_object.primary_project) }
+    let(:authorized_user) { create_project_contributor(actions: :read_objects, projects: digital_object.primary_project) }
 
     include_examples "shared download examples" do
       let(:expected_content_type_header) { 'text/plain' }
