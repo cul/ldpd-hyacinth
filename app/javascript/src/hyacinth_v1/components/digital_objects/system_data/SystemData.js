@@ -14,6 +14,8 @@ import {
   deleteDigitalObjectMutation,
   purgeDigitalObjectMutation,
 } from '../../../graphql/digitalObjects';
+import ProjectsEdit from '../projects/ProjectsEdit';
+import ProjectsShow from '../projects/ProjectsShow';
 import { digitalObjectAbility } from '../../../utils/ability';
 
 function SystemData(props) {
@@ -38,6 +40,9 @@ function SystemData(props) {
     primaryProject: digitalObject.primaryProject, otherProjects: digitalObject.otherProjects,
   });
   const canPurgeObject = digitalObjectAbility.can('purge_objects', {
+    primaryProject: digitalObject.primaryProject, otherProjects: digitalObject.otherProjects,
+  });
+  const canUpdateObject = digitalObjectAbility.can('update_objects', {
     primaryProject: digitalObject.primaryProject, otherProjects: digitalObject.otherProjects,
   });
 
@@ -83,7 +88,6 @@ function SystemData(props) {
 
   const {
     state, createdBy, createdAt, updatedBy, updatedAt, firstPublishedAt,
-    primaryProject, otherProjects,
   } = digitalObject;
 
   return (
@@ -109,10 +113,7 @@ function SystemData(props) {
         <Col as="dd" lg={10} sm={8}>{firstPublishedAt || '-- Assigned After Publish --'}</Col>
       </Row>
       <hr />
-      <h4>Primary Project</h4>
-      <p>{primaryProject.displayLabel}</p>
-      <h4>Other Projects</h4>
-      <p>{otherProjects.length ? otherProjects.map((p) => p.displayLabel).join(', ') : 'None'}</p>
+      { canUpdateObject ? <ProjectsEdit digitalObject={digitalObject} /> : <ProjectsShow digitalObject={digitalObject} /> }
       { state === 'ACTIVE' && renderDeleteSection() }
       { renderPurgeSection() }
     </DigitalObjectInterface>

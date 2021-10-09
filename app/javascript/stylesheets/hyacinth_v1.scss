@@ -54,3 +54,11 @@ a:hover, .btn-link:hover {
 .dropdown-header {
   padding: 0rem .5rem;
 }
+
+.inline-badge-list {
+  .badge {
+    border-radius: .25rem;
+    border-color: white;
+    margin-left: .25rem;
+  }
+}

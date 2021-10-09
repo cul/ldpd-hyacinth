@@ -225,6 +225,28 @@ export const updateDescriptiveMetadataMutation = gql`
   }
 `;
 
+export const updateProjectsMutation = gql`
+  mutation UpdateProjects($input: UpdateProjectsInput!) {
+    updateProjects(input: $input) {
+      digitalObject {
+        id
+        primaryProject {
+          stringKey
+          displayLabel
+        }
+        otherProjects {
+          stringKey
+          displayLabel
+        }
+      }
+      userErrors {
+        message
+        path
+      }
+    }
+  }
+`;
+
 export const updateRightsMutation = gql`
   mutation UpdateRights($input: UpdateRightsInput!) {
     updateRights(input: $input) {
