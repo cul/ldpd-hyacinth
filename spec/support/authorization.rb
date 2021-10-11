@@ -25,7 +25,7 @@ shared_examples 'does not have access' do
   end
 end
 
-shared_examples 'a basic user with no abilities is not authorized to perform this request' do
+shared_examples 'a basic user with no abilities is not authorized to perform this request' do |expected_message|
   context 'when logged in user does not have appropriate permissions' do
     before do
       sign_in_user
@@ -34,7 +34,7 @@ shared_examples 'a basic user with no abilities is not authorized to perform thi
 
     it 'returns error' do
       expect(response.body).to be_json_eql(%(
-        "You are not authorized to access this page."
+        "#{expected_message || 'You are not authorized to access this page.'}"
       )).at_path('errors/0/message')
     end
   end

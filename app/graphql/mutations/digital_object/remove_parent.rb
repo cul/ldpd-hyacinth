@@ -11,7 +11,8 @@ module Mutations
       def resolve(id:, parent_id:)
         digital_object = ::DigitalObject.find_by_uid!(id)
         parent_object = ::DigitalObject.find_by_uid!(parent_id)
-        ability.authorize! :update, parent_object, :read, digital_object
+        ability.authorize! :update, parent_object, message: 'You do not have permission to remove this parent-child relationship'
+
         digital_object.parents_to_remove << parent_object
         if digital_object.save
           { digital_object: digital_object, user_errors: [] }

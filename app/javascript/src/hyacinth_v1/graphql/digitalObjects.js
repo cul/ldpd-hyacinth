@@ -290,3 +290,23 @@ export const updateChildStructureMutation = gql`
     }
   }
 `;
+
+export const removeParentMutation = gql`
+  mutation removeParent($input: RemoveParentInput!) {
+   removeParent(input: $input) {
+     digitalObject {
+       id
+     }
+   }
+ }
+`;
+
+export const addParentMutation = gql`
+  mutation addParent($input: AddParentInput!) {
+   addParent(input: $input) {
+     digitalObject {
+       id
+     }
+   }
+ }
+`;
