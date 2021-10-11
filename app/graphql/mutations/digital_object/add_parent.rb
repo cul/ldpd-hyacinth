@@ -11,7 +11,7 @@ module Mutations
       def resolve(id:, parent_id:)
         digital_object = ::DigitalObject.find_by_uid!(id)
         parent_object = ::DigitalObject.find_by_uid!(parent_id)
-        ability.authorize! :update, parent_object, :read, digital_object, :message => "Not authorized to add parent object"
+        ability.authorize! :update, parent_object, :read, digital_object, :message, "Not authorized to add parent object"
         digital_object.parents_to_add << parent_object
         if digital_object.save
           { digital_object: digital_object, user_errors: [] }
