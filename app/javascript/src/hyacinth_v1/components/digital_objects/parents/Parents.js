@@ -1,22 +1,40 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import {
+  Row, Col, Form, Button,
+} from 'react-bootstrap';
 
+import ParentsList from './ParentsList';
 import DigitalObjectInterface from '../DigitalObjectInterface';
-import DigitalObjectList from '../DigitalObjectList';
 import TabHeading from '../../shared/tabs/TabHeading';
-import { getParentsQuery } from '../../../graphql/digitalObjects';
+import {
+  getParentsQuery,
+  addParentMutation,
+} from '../../../graphql/digitalObjects';
 import GraphQLErrors from '../../shared/GraphQLErrors';
+import FontAwesomeIcon from '../../../utils/lazyFontAwesome';
 
-const Parents = (props) => {
+function Parents(props) {
   const { id } = props;
   const {
     loading: parentsLoading,
     error: parentsError,
     data: parentsData,
+    refetch: refetchParents,
   } = useQuery(getParentsQuery, {
     variables: { id },
   });
+
+  const [addParent, { error: addParentError }] = useMutation(addParentMutation);
+  const [parentId, setParentId] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const variables = { input: { id, parentId } };
+    addParent({ variables }).then(refetchParents);
+    setParentId('');
+  };
 
   if (parentsLoading) return (<></>);
   if (parentsError) return (<GraphQLErrors errors={parentsError} />);
@@ -26,12 +44,34 @@ const Parents = (props) => {
   return (
     <DigitalObjectInterface digitalObject={digitalObject}>
       <TabHeading>Parent Digital Objects</TabHeading>
-      {/* We might want to create our own listing the adds remove buttons to all the parents. */}
-      <DigitalObjectList digitalObjects={parents} />
-      {/* TODO: Need to add the ability to add parents. */}
+      <ParentsList digitalObjects={parents} childId={digitalObject.id} refetchParents={refetchParents} />
+      <GraphQLErrors errors={addParentError} />
+      <Form onSubmit={handleSubmit}>
+        <Row>
+          <Col sm={1}>
+            <Form.Label>Add Parent</Form.Label>
+          </Col>
+          <Col sm={8}>
+            <Form.Control
+              type="text"
+              name="parentUid"
+              value={parentId}
+              onChange={(e) => setParentId(e.target.value)}
+              placeholder="Enter Parent UID"
+            />
+          </Col>
+          <Col sm={1}>
+            <Button variant="success" size="sm" onClick={handleSubmit}>
+              <FontAwesomeIcon icon="plus" />
+            </Button>
+          </Col>
+        </Row>
+
+      </Form>
+
     </DigitalObjectInterface>
   );
-};
+}
 
 export default Parents;
 
