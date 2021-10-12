@@ -8,7 +8,7 @@ import InputGroup from '../../shared/forms/InputGroup';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 import ability from '../../../utils/ability';
 
-function SelectCreatablePrimaryProject({ primaryProject, changeHandler }) {
+function SelectCreatablePrimaryProject({ primaryProject, changeHandler, ariaLabelOnly }) {
   const { loading, error, data } = useQuery(getProjectsQuery);
 
   if (loading) return (<></>);
@@ -17,30 +17,39 @@ function SelectCreatablePrimaryProject({ primaryProject, changeHandler }) {
     ability.can('create_objects', { subjectType: 'Project', stringKey })
   ));
   const selectOptions = allowedCreateProjects.map(
-    p => ({ value: p.stringKey, label: p.displayLabel }),
+    (p) => ({ value: p.stringKey, label: p.displayLabel }),
   );
 
   const projectForStringKey = (key) => {
-    const retVal = allowedCreateProjects.find(({ stringKey }) => { return stringKey === key; });
+    const retVal = allowedCreateProjects.find(({ stringKey }) => stringKey === key);
     return retVal;
   };
 
   return (
     <InputGroup>
-      <Label sm={3}>Primary Project</Label>
+      {!ariaLabelOnly && <Label sm={3} htmlFor="primary_project">Primary Project</Label> }
       <SelectInput
         sm={9}
         name="primary_project"
+        aria={{ label: 'Primary Project' }}
         value={primaryProject ? primaryProject.stringKey : ''}
-        onChange={v => changeHandler(projectForStringKey(v))}
+        onChange={(v) => changeHandler(projectForStringKey(v))}
         options={selectOptions}
       />
     </InputGroup>
   );
 }
 
+SelectCreatablePrimaryProject.defaultProps = {
+  primaryProject: null,
+  ariaLabelOnly: false,
+};
+
 SelectCreatablePrimaryProject.propTypes = {
-  primaryProject: PropTypes.object,
+  ariaLabelOnly: PropTypes.bool,
+  primaryProject: PropTypes.shape({
+    stringKey: PropTypes.string.isRequired,
+  }),
   changeHandler: PropTypes.func.isRequired,
 };
 

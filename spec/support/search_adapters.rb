@@ -16,3 +16,27 @@ shared_context 'with stubbed search adapters' do
     allow(term_search_adapter).to receive(:delete).with(String)
   end
 end
+
+shared_context 'with stubbed search result' do
+  let(:document_generator) { Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator.new }
+  let(:mock_solr_doc) { document_generator.solr_document_for(authorized_object) }
+  let(:solr_request) { { params: { 'rows' => 1, 'start' => 0 } } }
+  let(:solr_result) do
+    {
+      "response" => {
+        "numFound" => 1,
+        "docs" => [mock_solr_doc]
+      },
+      "facet_counts" => {
+
+      }
+    }
+  end
+  # Basic Solr response hash structure
+  let(:solr_response) do
+    RSolr::HashWithResponse.new(solr_request, {}, solr_result)
+  end
+  before do
+    allow(search_adapter).to receive(:search).and_return(solr_response)
+  end
+end
