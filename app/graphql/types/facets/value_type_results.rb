@@ -13,15 +13,15 @@ module Types
       end
 
       def limit
-        object.dig('responseHeader', 'params', "f.#{facet_name}.facet.limit")
+        object.dig('responseHeader', 'params', "f.#{field_name}.facet.limit").to_i
       end
 
       def offset
-        object.dig('responseHeader', 'params', "f.#{facet_name}.facet.offset") || 0
+        object.dig('responseHeader', 'params', "f.#{field_name}.facet.offset").to_i
       end
 
       def total_count
-        object.dig('stats', 'stats_fields', field_name, 'countDistinct') || 0
+        object.dig('stats', 'stats_fields', field_name, 'countDistinct').to_i
       end
 
       def raw_value_counts
@@ -29,8 +29,8 @@ module Types
       end
 
       def page_info
-        raise GraphQL::ExecutionError, 'ValueTypeResults can only be used on RSolr::HashWithResponse objects' unless value.is_a?(RSolr::HashWithResponse)
-        limit_or_returned = limit.to_i.positive? ? limit : (raw_value_counts.length / 2)
+        raise GraphQL::ExecutionError, 'ValueTypeResults can only be used on RSolr::HashWithResponse objects' unless object.is_a?(RSolr::HashWithResponse)
+        limit_or_returned = limit.positive? ? limit : (raw_value_counts.length / 2)
         count = total_count
         {
           has_next_page: limit_or_returned + offset < count,

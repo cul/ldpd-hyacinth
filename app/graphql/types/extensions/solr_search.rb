@@ -24,7 +24,7 @@ module Types
         OpenStruct.new(
           total_count: total_count,
           nodes: value['response']['docs'],
-          facets: facets(value.fetch('facet_counts', {})),
+          facets: facets(value.fetch('facet_counts', {}), value.fetch('stats', {})),
           page_info: OpenStruct.new(
             has_next_page: limit + offset < total_count,
             has_previous_page: offset != 0 && !total_count.zero?
@@ -33,16 +33,26 @@ module Types
       end
 
       # parse the facet objects or return an empty array
-      def facets(facet_counts)
+      def facets(facet_counts, stats)
         return [] unless facet_counts['facet_fields']
         display_label_map = Hyacinth::DigitalObject::Facets.facet_display_label_map
+        facet_page_size = Hyacinth::Config.digital_object_search_adapter.ui_config.facet_page_size
+
         facet_counts['facet_fields'].map do |facet_field, value_counts|
+          has_more = !value_counts[2 * facet_page_size].nil?
           {
             field_name: facet_field,
             display_label: display_label_map[facet_field] || facet_field.split('_')[0...-1].map(&:titlecase).join(' '),
-            values: (0...value_counts.length).step(2).map { |ix| { value: value_counts[ix], count: value_counts[ix + 1] } }
+            values: facet_values_from_counts(value_counts, facet_page_size),
+            total_count: stats.dig('stats_fields', facet_field, 'countDistinct').to_i,
+            has_more: has_more
           }
         end
+      end
+
+      def facet_values_from_counts(value_counts, facet_page_size)
+        value_parse_limit = (value_counts.length / 2) < facet_page_size ? value_counts.length : (2 * facet_page_size)
+        (0...value_parse_limit).step(2).map { |ix| { value: value_counts[ix], count: value_counts[ix + 1] } }
       end
     end
   end

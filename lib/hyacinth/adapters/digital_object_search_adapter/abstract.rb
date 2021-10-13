@@ -4,7 +4,9 @@ module Hyacinth
   module Adapters
     module DigitalObjectSearchAdapter
       class Abstract
+        attr_reader :ui_config
         def initialize(adapter_config = {})
+          @ui_config = UiConfig.new(adapter_config.fetch(:ui_config, {}))
         end
 
         def index(digital_object, **opts)
@@ -48,6 +50,17 @@ module Hyacinth
         # Deletes all records from the search index
         def clear_index
           raise NotImplementedError
+        end
+      end
+      class UiConfig
+        DEFAULT_FACET_PAGE_SIZE = 10
+        attr_reader :config
+        def initialize(adapter_config = {})
+          @config = adapter_config
+        end
+
+        def facet_page_size
+          config.fetch(:facet_page_size, DEFAULT_FACET_PAGE_SIZE)
         end
       end
     end

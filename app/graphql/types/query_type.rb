@@ -138,6 +138,7 @@ module Types
       search_params = arguments[:search_params] ? arguments[:search_params].prepare : {}
 
       Hyacinth::Config.digital_object_search_adapter.search(search_params, context[:current_user]) do |solr_params|
+        solr_params.rows(0)
         solr_params.facet_on(arguments[:field_name]) do |facet_params|
           facet_params.rows(arguments[:limit])
           facet_params.start(arguments[:offset])

@@ -17,7 +17,8 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr do
             ['any value ignored', 'DOES_NOT_EXIST'], ['celocanths', 'CONTAINS'], ['elephants', 'EQUALS'],
             ['ostriches', 'DOES_NOT_CONTAIN'], ['any value ignored', 'EXISTS'], ['voles', 'DOES_NOT_EQUAL'],
             ['ferrets', 'STARTS_WITH'], ['groundhogs', 'DOES_NOT_START_WITH']
-          ]
+          ],
+          'facet_on' => ['animals']
         }
       end
       let(:expected_filters) do
@@ -28,6 +29,9 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr do
       end
       it "collects fq values" do
         expect(solr_params.to_h).to include(fq: expected_filters)
+      end
+      it "add facet params" do
+        expect(solr_params.to_h).to include('facet': 'on', 'f.animals.facet.limit': 11)
       end
     end
     context "with multiple values on the same filter" do
