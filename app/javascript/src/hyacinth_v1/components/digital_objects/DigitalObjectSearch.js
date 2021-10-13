@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import {
@@ -76,7 +77,7 @@ const DigitalObjectSearch = ({ query }) => {
     setPageNumber(newPageNumber);
     setOrderBy(newOrderBy);
     refetch();
-  }, [location.search, history.location]);
+  }, [location.search, history.location, refetch]);
 
   if (loading) return (<></>);
   if (error) return (<GraphQLErrors errors={error} />);
@@ -100,19 +101,19 @@ const DigitalObjectSearch = ({ query }) => {
 
   const sameValues = (array1, array2) => {
     if (array1.length === array2.length) {
-      return !array1.find(val => array2.indexOf(val) === -1);
+      return !array1.find((val) => array2.indexOf(val) === -1);
     }
     return false;
   };
   const isFacetCurrent = (fieldName, value) => {
-    const detector = filter => ((filter.field === fieldName) && sameValues(filter.values, [value]));
+    const detector = (filter) => ((filter.field === fieldName) && sameValues(filter.values, [value]));
     const { filters = [] } = searchParams;
     return filters ? filters.find(detector) : false;
   };
 
   const onFacetSelect = (fieldName, value) => {
-    const detector = filter => ((filter.field === fieldName) && sameValues(filter.values, [value]));
-    const others = filter => ((filter.field !== fieldName) || !sameValues(filter.values, [value]));
+    const detector = (filter) => ((filter.field === fieldName) && sameValues(filter.values, [value]));
+    const others = (filter) => ((filter.field !== fieldName) || !sameValues(filter.values, [value]));
     const { filters = [] } = searchParams;
     const isFiltered = filters ? filters.find(detector) : false;
     const updatedFilters = isFiltered
@@ -202,14 +203,13 @@ const DigitalObjectSearch = ({ query }) => {
 
       <Row>
         <Col md={8}>
-          { docsFound
-            ? (
+          {
+            docsFound ? (
               <DigitalObjectList
                 className="digital-object-search-results"
                 digitalObjects={nodes}
                 displayParentIds
                 displayProjects
-
                 orderBy={orderBy}
                 totalCount={totalCount}
                 limit={limit}
@@ -218,8 +218,7 @@ const DigitalObjectSearch = ({ query }) => {
                 searchParams={searchParams}
                 path={location.pathname}
               />
-            )
-            : <Card><Card.Header>No Digital Objects found.</Card.Header></Card>
+            ) : <Card><Card.Header>No Digital Objects found.</Card.Header></Card>
           }
         </Col>
         <Col md={4}>
@@ -240,6 +239,22 @@ const DigitalObjectSearch = ({ query }) => {
       />
     </>
   );
+};
+
+DigitalObjectSearch.propTypes = {
+  query: PropTypes.shape({
+    filters: PropTypes.arrayOf(
+      PropTypes.shape({
+        field: PropTypes.string,
+        values: PropTypes.arrayOf(PropTypes.string),
+      }),
+    ),
+    orderBy: PropTypes.string,
+    pageNumber: PropTypes.number,
+    perPage: PropTypes.number,
+    q: PropTypes.string,
+    searchType: PropTypes.string,
+  }).isRequired,
 };
 
 export default withQueryParams(queryParamsConfig, DigitalObjectSearch);
