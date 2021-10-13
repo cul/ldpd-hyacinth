@@ -5,6 +5,7 @@ import {
 
 const FilterArrayParam = {
   encode: (filters) => {
+    if (!filters) return [];
     const encodeFilter = (filter) => {
       const { field, values } = filter;
       return encodeObject(Object.fromEntries([[field, values[0]]]), '::', '__');

@@ -19,6 +19,9 @@ RSpec.describe 'Digital Object Show', solr: true, type: :feature, js: true do
         before do
           visit request_url
         end
+        it 'does not link back to a search' do
+          expect(page).not_to have_link("Back to Search")
+        end
         context 'and title is blank' do
           it 'uses uid for label' do
             expect(page).to have_content("Item: #{uid}")

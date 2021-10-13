@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import FontAwesomeIcon from '../../../utils/lazyFontAwesome';
 
 const SearchButton = (props) => {
-  const { onClick, id } = props;
+  const { onClick, id, ...rest } = props;
 
   return (
     <Button
@@ -12,6 +12,7 @@ const SearchButton = (props) => {
       variant="primary"
       size="sm"
       onClick={onClick}
+      {...rest}
     >
       <FontAwesomeIcon icon="search" />
     </Button>

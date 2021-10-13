@@ -1,15 +1,17 @@
-import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import {
   Card, Col, Row,
 } from 'react-bootstrap';
 import { useQuery } from '@apollo/react-hooks';
+import { useQueryParams } from 'use-query-params';
 import {
-  withQueryParams, decodeQueryParams,
-} from 'use-query-params';
-import * as qs from 'query-string';
-import { queryParamsConfig, encodeAndStringifySearch } from '../../utils/encodeAndStringifySearch';
+  decodedQueryParamstoSearchParams,
+  encodeSessionSearchParams,
+  locationSearchToSearchParams,
+  queryParamsConfig,
+  searchParamsToLocationSearch,
+} from '../../utils/digitalObjectSearchParams';
 
 import DigitalObjectList from './DigitalObjectList';
 import FacetSidebar from './search/FacetSidebar';
@@ -22,81 +24,65 @@ import { getDigitalObjectsQuery } from '../../graphql/digitalObjects';
 import QueryForm from './search/QueryForm';
 import SelectedFacetsBar from './search/SelectedFacetsBar';
 
+const searchParamsToVariables = (searchParams) => {
+  const {
+    searchTerms, searchType, filters, limit, offset, orderBy,
+  } = searchParams;
+  return {
+    limit,
+    offset,
+    searchParams: { searchTerms, searchType, filters },
+    orderBy: { field: orderBy.split(' ')[0], direction: orderBy.split(' ')[1] },
+  };
+};
+
 // NOTE: We are using the use-query-params library to automatically parse
-// query params only. The library is able to update the browser
-// history (thus making the back button work), but there isn't a way to
-// re-render the page. UseEffect hooks don't seem to notice any
-// history changes made by the external library.
-
-const DigitalObjectSearch = ({ query }) => {
-  const [pageNumber, setPageNumber] = useState(query.pageNumber);
-  const [limit, setLimit] = useState(query.perPage);
-  const [offset] = useState((query.pageNumber - 1) * limit);
-  const [totalObjects, setTotalObjects] = useState(0);
-  const [searchParams, setSearchParams] = useState({ searchType: query.searchType, searchTerms: query.q, filters: query.filters });
-  const [orderBy, setOrderBy] = useState(query.orderBy);
-
+// query params into initial search params. The component pushes changes to
+// history (thus making the back button work), and re-renders
+// are via refetch in a history listener.
+const DigitalObjectSearch = () => {
+  const [queryParams] = useQueryParams(queryParamsConfig);
+  const searchParams = decodedQueryParamstoSearchParams({ ...queryParams });
   const {
     loading, error, data, refetch,
   } = useQuery(
     getDigitalObjectsQuery, {
-      variables: {
-        limit,
-        offset: (pageNumber - 1) * limit,
-        searchParams,
-        orderBy: { field: orderBy.split(' ')[0], direction: orderBy.split(' ')[1] },
+      variables: searchParamsToVariables(searchParams),
+      onCompleted: () => {
+        // sessionStorage is used to retrieve last search in other components
+        encodeSessionSearchParams(searchParams);
       },
-      onCompleted: (searchData) => { setTotalObjects(searchData.digitalObjects.totalCount); },
     },
   );
 
   const history = useHistory();
-  const location = useLocation();
-
-  // Runs when the component is initialized as well as when location.search
-  // or history.location changes.
-  // NOTE: Apollo seems to not requery when the variables are the same.
+  // useEffect allows the history listener to be cleaned up when navigating to another component
   useEffect(() => {
-    // Decodes query parameters with the same logic used to instantiate the component
-    const queryParams = {
-      searchType: undefined,
-      q: undefined,
-      pageNumber: undefined,
-      perPage: undefined,
-      filters: undefined,
-      orderBy: undefined,
-      ...qs.parse(location.search),
-    };
-
-    const {
-      searchType, q, filters, pageNumber: newPageNumber, perPage: newPerPage, orderBy: newOrderBy,
-    } = decodeQueryParams(queryParamsConfig, queryParams);
-
-    setSearchParams({ searchTerms: q, searchType, filters });
-    setLimit(newPerPage);
-    setPageNumber(newPageNumber);
-    setOrderBy(newOrderBy);
-    refetch();
-  }, [location.search, history.location, refetch]);
-
+    const stopListener = history.listen(
+      (location) => {
+        const refetchVariables = searchParamsToVariables(locationSearchToSearchParams(location));
+        refetch({ variables: refetchVariables });
+      },
+    );
+    return stopListener;
+  });
   if (loading) return (<></>);
   if (error) return (<GraphQLErrors errors={error} />);
 
   const { digitalObjects: { nodes, facets, totalCount } } = data;
 
-  const updateQueryParameters = (newParams) => {
-    const search = encodeAndStringifySearch(newParams);
-    history.push(`/digital_objects?${search}`);
+  const updateSearch = (update) => {
+    const newLocationQuery = searchParamsToLocationSearch({ ...searchParams, ...update });
+    // push to history directly to listen for changes
+    history.push(`/digital_objects?${newLocationQuery}`);
   };
 
+  const {
+    searchTerms, searchType, filters, limit, offset, orderBy,
+  } = searchParams;
+
   const onPageNumberClick = (newOffset) => {
-    updateQueryParameters({
-      searchType: searchParams.searchType,
-      pageNumber: (newOffset / limit) + 1,
-      perPage: limit,
-      filters: searchParams.filters,
-      q: searchParams.query,
-    });
+    updateSearch({ offset: newOffset });
   };
 
   const sameValues = (array1, array2) => {
@@ -107,60 +93,34 @@ const DigitalObjectSearch = ({ query }) => {
   };
   const isFacetCurrent = (fieldName, value) => {
     const detector = (filter) => ((filter.field === fieldName) && sameValues(filter.values, [value]));
-    const { filters = [] } = searchParams;
     return filters ? filters.find(detector) : false;
   };
 
   const onFacetSelect = (fieldName, value) => {
     const detector = (filter) => ((filter.field === fieldName) && sameValues(filter.values, [value]));
     const others = (filter) => ((filter.field !== fieldName) || !sameValues(filter.values, [value]));
-    const { filters = [] } = searchParams;
     const isFiltered = filters ? filters.find(detector) : false;
     const updatedFilters = isFiltered
       ? filters.filter(others)
       : [...filters, { field: fieldName, values: [value] }];
 
-    updateQueryParameters({
-      searchType: searchParams.searchType,
-      pageNumber: 1,
-      perPage: limit,
-      filters: updatedFilters,
-      q: searchParams.searchTerms,
-      orderBy,
-    });
+    updateSearch({ offset: 0, filters: updatedFilters });
   };
 
   const onQueryChange = (value) => {
-    updateQueryParameters({
-      searchType: value.searchType,
-      pageNumber: 1,
-      perPage: limit,
-      filters: searchParams.filters,
-      q: value.searchTerms,
-      orderBy,
-    });
+    updateSearch({ ...value, offset: 0 });
   };
 
   const onPerPageChange = (value) => {
-    updateQueryParameters({
-      searchType: searchParams.searchType,
-      pageNumber: 1,
-      perPage: value,
-      filters: searchParams.filters,
-      q: searchParams.searchTerms,
-      orderBy,
-    });
+    updateSearch({ offset: 0, limit: value });
   };
 
   // orderBy is a string that is a combination of the field and direction.
   // Example: 'LAST_MODIFIED ASC'
   const onOrderByChange = (newOrderBy) => {
-    updateQueryParameters({
-      searchType: searchParams.searchType,
-      pageNumber: 1,
-      perPage: limit,
-      filters: searchParams.filters,
-      q: searchParams.query,
+    updateSearch({
+      ...searchParams,
+      offset: 0,
       orderBy: newOrderBy,
     });
   };
@@ -175,8 +135,8 @@ const DigitalObjectSearch = ({ query }) => {
       />
 
       <QueryForm
-        searchTerms={query.q}
-        searchType={query.searchType}
+        searchTerms={searchParams.searchTerms}
+        searchType={searchParams.searchType}
         onQueryChange={onQueryChange}
       />
 
@@ -195,8 +155,7 @@ const DigitalObjectSearch = ({ query }) => {
             totalCount={totalCount}
             limit={limit}
             offset={offset}
-            pageNumber={pageNumber}
-            searchParams={searchParams}
+            searchParams={{ searchTerms, searchType, filters }}
           />
         )
       }
@@ -210,13 +169,10 @@ const DigitalObjectSearch = ({ query }) => {
                 digitalObjects={nodes}
                 displayParentIds
                 displayProjects
+                fromSearch
                 orderBy={orderBy}
                 totalCount={totalCount}
-                limit={limit}
                 offset={offset}
-                pageNumber={pageNumber}
-                searchParams={searchParams}
-                path={location.pathname}
               />
             ) : <Card><Card.Header>No Digital Objects found.</Card.Header></Card>
           }
@@ -232,29 +188,13 @@ const DigitalObjectSearch = ({ query }) => {
       </Row>
 
       <PaginationBar
-        offset={(pageNumber - 1) * limit}
+        offset={offset}
         limit={limit}
-        totalItems={totalObjects}
+        totalItems={totalCount}
         onClick={onPageNumberClick}
       />
     </>
   );
 };
 
-DigitalObjectSearch.propTypes = {
-  query: PropTypes.shape({
-    filters: PropTypes.arrayOf(
-      PropTypes.shape({
-        field: PropTypes.string,
-        values: PropTypes.arrayOf(PropTypes.string),
-      }),
-    ),
-    orderBy: PropTypes.string,
-    pageNumber: PropTypes.number,
-    perPage: PropTypes.number,
-    q: PropTypes.string,
-    searchType: PropTypes.string,
-  }).isRequired,
-};
-
-export default withQueryParams(queryParamsConfig, DigitalObjectSearch);
+export default DigitalObjectSearch;
