@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Badge, Card } from 'react-bootstrap';
 import { startCase } from 'lodash';
+import { setCurrentResultOffset } from '../../utils/digitalObjectSearchParams';
 /*
   Display for list of Digital Objects. Have a flag to optionally display
   parents and projects. Parents and Projects are only displayed on the search
@@ -10,40 +11,9 @@ import { startCase } from 'lodash';
   to display a list of digital objects.
 */
 
-const storeSearchValues = (
-  orderBy, totalCount, perPage, offset, pageNumber, q, filters, path, pageResultIndex,
-) => {
-  if (path === '/digital_objects') {
-    window.sessionStorage.setItem('searchQueryParams',
-      JSON.stringify(
-        {
-          orderBy,
-          totalCount,
-          perPage,
-          offset,
-          pageNumber,
-          q,
-          filters,
-        },
-      ));
-
-    const resultIndex = ((pageNumber - 1) * perPage) + pageResultIndex + 1;
-    const newOffset = resultIndex < 3 ? 0 : resultIndex - 2;
-    window.sessionStorage.setItem('offset', newOffset);
-    window.sessionStorage.setItem('resultIndex', resultIndex);
-    window.sessionStorage.setItem('totalCount', totalCount);
-  } else {
-    window.sessionStorage.setItem('searchQueryParams', '');
-    window.sessionStorage.setItem('offset', '');
-    window.sessionStorage.setItem('resultIndex', '');
-    window.sessionStorage.setItem('totalCount', '');
-  }
-};
-
 const DigitalObjectList = (props) => {
   const {
-    digitalObjects, displayProjects, displayParentIds, orderBy, totalCount,
-    limit, offset, pageNumber, searchParams, path,
+    digitalObjects, displayProjects, displayParentIds, offset, fromSearch,
   } = props;
 
   return (
@@ -54,10 +24,7 @@ const DigitalObjectList = (props) => {
             <Card.Header className="px-2 py-1">
               <Link
                 to={`/digital_objects/${digitalObject.id}`}
-                onClick={() => searchParams && storeSearchValues(
-                  orderBy, totalCount, limit, offset,
-                  pageNumber, searchParams.query, searchParams.filters, path, resultIndex,
-                )}
+                onClick={() => { if (fromSearch) setCurrentResultOffset(offset + resultIndex); }}
               >
                 {digitalObject.displayLabel}
               </Link>
@@ -105,13 +72,8 @@ const DigitalObjectList = (props) => {
 DigitalObjectList.defaultProps = {
   displayProjects: false,
   displayParentIds: false,
-  orderBy: '',
-  totalCount: 0,
-  limit: 0,
   offset: 0,
-  pageNumber: 0,
-  searchParams: null,
-  path: '',
+  fromSearch: false,
 };
 
 DigitalObjectList.propTypes = {
@@ -124,21 +86,8 @@ DigitalObjectList.propTypes = {
   ).isRequired,
   displayProjects: PropTypes.bool,
   displayParentIds: PropTypes.bool,
-  orderBy: PropTypes.string,
-  totalCount: PropTypes.number,
-  limit: PropTypes.number,
   offset: PropTypes.number,
-  pageNumber: PropTypes.number,
-  searchParams: PropTypes.shape({
-    query: PropTypes.string,
-    filters: PropTypes.arrayOf(
-      PropTypes.shape({
-        field: PropTypes.string,
-        value: PropTypes.string,
-      }),
-    ),
-  }),
-  path: PropTypes.string,
+  fromSearch: PropTypes.bool,
 };
 
 export default DigitalObjectList;

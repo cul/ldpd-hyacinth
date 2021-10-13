@@ -50,7 +50,7 @@ function QueryForm(props) {
           onChange={valueChangeHandler}
           inputName="queryValue"
         />
-        <Col xs="auto"><SearchButton id="digital-object-search-submit" onClick={submitHandler} /></Col>
+        <Col xs="auto"><SearchButton id="digital-object-search-submit" aria-label="Submit Search" onClick={submitHandler} /></Col>
       </Form.Group>
     </Form>
   );
