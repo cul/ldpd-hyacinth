@@ -16,7 +16,7 @@ function DigitalObjects() {
         <ProtectedRoute
           path="/digital_objects/new/:projectStringKey/:digitalObjectType"
           component={DigitalObjectNewForm}
-          requiredAbility={params => (
+          requiredAbility={(params) => (
             { action: 'create_objects', subject: 'Project', stringKey: params.projectStringKey }
           )}
         />
