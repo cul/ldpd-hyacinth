@@ -1,3 +1,4 @@
+/* eslint-disable import/newline-after-import */
 import { JSDOM } from 'jsdom';
 import fetch from 'jest-fetch-mock';
 
@@ -30,3 +31,18 @@ function copyProps(src, target) {
   });
 }
 copyProps(window, global);
+
+// Even though our app runs in modern browsers, our node tests currently run in Node 10 and 12,
+// so we sometimes need to add shims for these older versions of node.
+
+// Node 10 doesn't support Array#flat()
+const flatShim = require('array.prototype.flat');
+if (!Array.prototype.flat) flatShim.shim();
+
+// Node 10 doesn't support Array#flatMap()
+const flatMapShim = require('array.prototype.flatmap');
+if (!Array.prototype.flatMap) flatMapShim.shim();
+
+// Node 10 doesn't support Object#fromEntries()
+const objEntriesShim = require('object.fromentries');
+if (!Object.fromEntries) objEntriesShim.shim();
