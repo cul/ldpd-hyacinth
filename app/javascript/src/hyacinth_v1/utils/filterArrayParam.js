@@ -3,12 +3,6 @@ import {
   encodeObject, decodeObject,
 } from 'use-query-params';
 
-const flatShim = require('array.prototype.flat');
-const objEntriesShim = require('object.fromentries');
-
-if (!Array.prototype.flat) flatShim.shim();
-if (!Object.fromEntries) objEntriesShim.shim();
-
 const FilterArrayParam = {
   encode: (filters) => {
     if (!filters) return [];
