@@ -8,15 +8,15 @@ import FacetDropdown from './facet_sidebar/FacetDropdown';
 const FacetSidebar = (props) => {
   const { facets, onFacetSelect, selectedFacets } = props;
 
-  const selectedValuesFor = fieldName => (
-    selectedFacets.filter(f => f.field === fieldName).flatMap(f => f.values)
+  const selectedValuesFor = (fieldName) => (
+    selectedFacets.filter((f) => f.field === fieldName).flatMap((f) => f.values)
   );
 
   return (
     <>
       <h4>Refine Your Search</h4>
       {
-        facets.map(facet => (
+        facets.map((facet) => (
           <FacetDropdown
             key={facet.fieldName}
             facet={facet}

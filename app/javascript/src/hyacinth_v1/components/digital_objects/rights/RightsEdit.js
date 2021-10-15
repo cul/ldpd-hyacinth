@@ -50,7 +50,7 @@ function RightsEdit(props) {
 
   return (
     <RightsTab digitalObject={digitalObject}>
-      { renderTabContent() }
+      {renderTabContent()}
     </RightsTab>
   );
 }
