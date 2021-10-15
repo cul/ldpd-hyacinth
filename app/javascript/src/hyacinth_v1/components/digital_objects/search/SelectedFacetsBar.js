@@ -3,6 +3,10 @@ import PropTypes from 'prop-types';
 import { Button } from 'react-bootstrap';
 import FontAwesomeIcon from '../../../utils/lazyFontAwesome';
 
+const flatMapShim = require('array.prototype.flatmap');
+
+if (!Array.prototype.flatMap) flatMapShim.shim();
+
 const SelectedFacetsBar = (props) => {
   const { facets, selectedFacets, onRemoveFacet } = props;
 

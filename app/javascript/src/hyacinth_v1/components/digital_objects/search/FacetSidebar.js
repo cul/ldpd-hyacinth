@@ -3,20 +3,24 @@ import PropTypes from 'prop-types';
 
 import FacetDropdown from './facet_sidebar/FacetDropdown';
 
+const flatMapShim = require('array.prototype.flatmap');
+
+if (!Array.prototype.flatMap) flatMapShim.shim();
+
 // All the Facet components can eventually be moved to the shared folder
 // because we expect that they will be used elsewhere.
 const FacetSidebar = (props) => {
   const { facets, onFacetSelect, selectedFacets } = props;
 
-  const selectedValuesFor = fieldName => (
-    selectedFacets.filter(f => f.field === fieldName).flatMap(f => f.values)
+  const selectedValuesFor = (fieldName) => (
+    selectedFacets.filter((f) => f.field === fieldName).flatMap((f) => f.values)
   );
 
   return (
     <>
       <h4>Refine Your Search</h4>
       {
-        facets.map(facet => (
+        facets.map((facet) => (
           <FacetDropdown
             key={facet.fieldName}
             facet={facet}

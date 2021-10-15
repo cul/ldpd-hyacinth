@@ -9,6 +9,10 @@ import ItemRightsForm from './rights_form/ItemRightsForm';
 import { getRightsDigitalObjectQuery } from '../../../graphql/digitalObjects';
 import { rightsFieldsQuery } from '../../../graphql/rightsFields';
 
+const flatShim = require('array.prototype.flat');
+
+if (!Array.prototype.flat) flatShim.shim();
+
 function RightsEdit(props) {
   const { id } = props;
 
