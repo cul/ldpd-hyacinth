@@ -1,6 +1,6 @@
 import * as qs from 'query-string';
 import {
-  NumberParam, StringParam, withDefault, decodeQueryParams, encodeQueryParams,
+  NumberParam, StringParam, withDefault, encodeQueryParams,
 } from 'use-query-params';
 import FilterArrayParam from './filterArrayParam';
 
@@ -58,11 +58,6 @@ export const decodedQueryParamstoSearchParams = (decodedValues) => {
   decodedValues.limit = perPage;
   delete decodedValues.perPage;
   return decodedValues;
-};
-
-export const locationSearchToSearchParams = (location) => {
-  const encodedParamValues = qs.parse(location.search);
-  return decodedQueryParamstoSearchParams(decodeQueryParams(queryParamsConfig, encodedParamValues));
 };
 
 export const encodeSessionSearchParams = (searchParams) => {
