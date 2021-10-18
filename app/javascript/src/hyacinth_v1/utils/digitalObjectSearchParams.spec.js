@@ -3,7 +3,6 @@ import {
   decodedQueryParamstoSearchParams,
   defaultQueryParams,
   encodeSessionSearchParams,
-  locationSearchToSearchParams,
   searchParamsToLocationSearch,
 } from './digitalObjectSearchParams';
 
@@ -59,19 +58,6 @@ describe('digitalObjectSearchParams', () => {
     it('sets default query params', () => {
       const path = searchParamsToLocationSearch({});
       expect(path).toMatch('orderBy=TITLE%20ASC');
-    });
-  });
-
-  describe('locationSearchToSearchParams', () => {
-    it('decodes filters as an array', () => {
-      const location = { search: singleEncodedFilterValue };
-      const searchParams = locationSearchToSearchParams(location);
-      expect(searchParams.filters).toEqual([singleDecodedFilterValue]);
-    });
-    it('sets default values', () => {
-      const location = { search: '' };
-      const searchParams = locationSearchToSearchParams(location);
-      expect(searchParams.orderBy).toEqual('TITLE ASC');
     });
   });
 

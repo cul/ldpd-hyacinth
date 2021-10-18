@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useHistory } from 'react-router-dom';
 import {
   Card, Col, Row,
@@ -8,7 +8,6 @@ import { useQueryParams } from 'use-query-params';
 import {
   decodedQueryParamstoSearchParams,
   encodeSessionSearchParams,
-  locationSearchToSearchParams,
   queryParamsConfig,
   searchParamsToLocationSearch,
 } from '../../utils/digitalObjectSearchParams';
@@ -44,7 +43,7 @@ const DigitalObjectSearch = () => {
   const [queryParams] = useQueryParams(queryParamsConfig);
   const searchParams = decodedQueryParamstoSearchParams({ ...queryParams });
   const {
-    loading, error, data, refetch,
+    loading, error, data,
   } = useQuery(
     getDigitalObjectsQuery, {
       variables: searchParamsToVariables(searchParams),
@@ -56,17 +55,8 @@ const DigitalObjectSearch = () => {
   );
 
   const history = useHistory();
-  // useEffect allows the history listener to be cleaned up when navigating to another component
-  useEffect(() => {
-    const stopListener = history.listen(
-      (location) => {
-        const refetchVariables = searchParamsToVariables(locationSearchToSearchParams(location));
-        refetch({ variables: refetchVariables });
-      },
-    );
-    return stopListener;
-  });
-  if (loading) return (<></>);
+
+  if (loading) return (<div />);
   if (error) return (<GraphQLErrors errors={error} />);
 
   const { digitalObjects: { nodes, facets, totalCount } } = data;
