@@ -15,8 +15,14 @@ module Solr
     # Escape characters that have special meaning to Solr query parser:
     # These include: + - & | ! ( ) { } [ ] ^ " ~ * ? : \ /
     # Does not escape whitespace. You need to do that on your own.
-    def self.escape(str)
-      RSolr.solr_escape(str)
+    def self.escape(val, escape_spaces = false)
+      return val if val.is_a?(TrueClass) || val.is_a?(FalseClass)
+      escaped_val = RSolr.solr_escape(val)
+      if escape_spaces
+        escaped_val.gsub(' ', '\ ')
+      else
+        escaped_val
+      end
     end
   end
 end

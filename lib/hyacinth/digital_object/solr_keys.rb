@@ -14,6 +14,10 @@ module Hyacinth
       def self.for_dynamic_field(path, suffix = 'ssim')
         "df_#{for_string_key_path(path, suffix)}"
       end
+
+      def self.for_dynamic_field_presence(path)
+        for_dynamic_field(path, 'present_bi')
+      end
     end
   end
 end

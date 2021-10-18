@@ -18,7 +18,6 @@ module Hyacinth
         end
 
         def index(digital_object)
-          # TODO: index presence or absence of field values, even if the field itself isn't indexed for search
           solr.add(solr_document_for(digital_object))
         end
 
@@ -28,6 +27,18 @@ module Hyacinth
 
         def remove(digital_object)
           solr.delete("id: #{::Solr::Utils.escape(digital_object.uid)}")
+        end
+
+        # Returns true if the given field_path is in use by records in the specified project.
+        # You can also pass an option digital_object_type if you want to only check if the field
+        # is in use by objects of a certain type within the specified project.
+        def field_used_in_project?(field_path, project, digital_object_type = nil)
+          search do |solr_params|
+            solr_params.fq('projects_ssim', project.string_key)
+            solr_params.fq('digital_object_type_ssi', digital_object_type) if digital_object_type.present?
+            solr_params.fq(Hyacinth::DigitalObject::SolrKeys.for_dynamic_field_presence(field_path), true)
+            solr_params.rows(1)
+          end['response']['docs'].length.positive?
         end
 
         def search(search_params = {}, user_for_permission_context = nil)

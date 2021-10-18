@@ -122,7 +122,7 @@ module Hyacinth
 
               # We index data about the presence or absence of ALL dynamic fields
               if values.present?
-                solr_document[Hyacinth::DigitalObject::SolrKeys.for_dynamic_field(path, 'present_bi')] = true
+                solr_document[Hyacinth::DigitalObject::SolrKeys.for_dynamic_field_presence(path)] = true
 
                 # We only index actual values for non-textarea fields
                 solr_document[Hyacinth::DigitalObject::SolrKeys.for_dynamic_field(path)] = values unless config[:field_type] == DynamicField::Type::TEXTAREA

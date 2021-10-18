@@ -21,7 +21,7 @@ class DynamicField < ActiveRecord::Base
   EXPORTABLE_ATTRIBUTES = [
     :id, :string_key, :display_label, :sort_order, :field_type, :filter_label, :select_options,
     :is_facetable, :is_keyword_searchable, :is_title_searchable, :is_identifier_searchable,
-    :controlled_vocabulary
+    :controlled_vocabulary, :path
   ].freeze
 
   has_many :enabled_dynamic_fields, dependent: :destroy

@@ -133,22 +133,24 @@ This will open a browser window with a treemap of chunked dependencies and size 
 
 ## Development / IDE Notes
 
-If you have an IDE that supports jsconfig.json files (e.g. Visual Studio Code), you can add the following (git ignored) jsconfig.json file to your local copy (top level) and it will enable js import autocomplete for the @hyacinth_v1 alias:
+If you have an IDE that supports jsconfig.json files (e.g. Visual Studio Code), you can add the following (git ignored) jsconfig.json file to your local copy (top level) and it will enable js auto-imports:
 
 ```
 {
   "compilerOptions": {
     "baseUrl": "app/javascript",
+    "module": "commonjs",
+    "target": "es2017",
     "jsx": "react",
-    "paths": {
-      "@hyacinth_v1/*" : ["hyacinth_v1/*"]
-    }
+    "checkJs": true,
   },
   "include": [
-    "app/javascript/**/*"
+    "app/javascript"
   ]
 }
 ```
+
+Note that you may occasionally need to use a `// @ts-ignore` comment above certain lines in JS files when typescript complains about types.
 
 ## Development / Rubocop
 

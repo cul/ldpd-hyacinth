@@ -11,6 +11,14 @@ class EnabledDynamicField < ApplicationRecord
   validates :digital_object_type, inclusion: { in: Hyacinth::Config.digital_object_types.keys }
   validates :dynamic_field, uniqueness: { scope: [:project, :digital_object_type] }
 
+  before_destroy :disallow_destroy_if_field_in_use_by_project
+
+  def disallow_destroy_if_field_in_use_by_project
+    return unless Hyacinth::Config.digital_object_search_adapter.field_used_in_project?(dynamic_field.path.split('/'), project, digital_object_type)
+    self.errors.add(:destroy, "Cannot disable #{dynamic_field.string_key} because it's used by one or more #{digital_object_type.pluralize} in #{project.string_key}")
+    throw :abort
+  end
+
   def as_json(_options = {})
     {
       id: id,

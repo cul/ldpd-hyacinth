@@ -50,6 +50,10 @@ export const updateEnabledDynamicFieldsMutation = gql`
         defaultValue
         shareable
       }
+      userErrors {
+        message
+        path
+      }
     }
   }
 `;

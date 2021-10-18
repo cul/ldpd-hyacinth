@@ -3,11 +3,11 @@ import { startCase } from 'lodash';
 import produce from 'immer';
 
 import TabHeading from '../../shared/tabs/TabHeading';
-import EnabledDynamicFieldForm from './EnabledDynamicFieldForm';
 import { Can } from '../../../utils/abilityContext';
 import EditButton from '../../shared/buttons/EditButton';
 import { projects } from '../../../utils/hyacinthApi';
 import ProjectInterface from '../ProjectInterface';
+import EnabledDynamicFieldForm from './enabled_dynamic_field_form/EnabledDynamicFieldForm';
 
 export default class EnabledDynamicFieldShow extends React.Component {
   state = {
@@ -42,7 +42,6 @@ export default class EnabledDynamicFieldShow extends React.Component {
             />
           </Can>
         </TabHeading>
-
         <EnabledDynamicFieldForm
           readOnly
           projectStringKey={projectStringKey}

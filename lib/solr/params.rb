@@ -29,7 +29,7 @@ module Solr
 
     def fq(field, value_or_values, match_operator = 'EQUALS')
       raise(ArgumentError, "Invalid match operator: #{match_operator}") unless VALID_FILTER_MATCHES.include?(match_operator)
-      escaped_values = Array.wrap(value_or_values).map { |value| Solr::Utils.escape(value).gsub(' ', '\ ') }
+      escaped_values = Array.wrap(value_or_values).map { |value| Solr::Utils.escape(value, true) }
       filter_data = VALID_FILTER_MATCHES[match_operator]
       value = filter_data[:value] || escaped_values.map { |ev| filter_data[:value_template]&.%(ev) || ev }.join(FILTER_VALUE_JOINER)
       @parameters[:fq] << format(filter_data[:field_template], field, value) unless value.blank?

@@ -50,6 +50,7 @@ Lint/UselessAssignment:
 Metrics/AbcSize:
   Exclude:
     - 'app/controllers/concerns/hyacinth/users/cas_authentication_behavior.rb'
+    - 'app/graphql/mutations/update_project_enabled_fields.rb'
     - 'app/models/ability.rb'
     - 'app/models/concerns/digital_object_concerns/attribute_assignment/parents.rb'
     - 'app/models/concerns/digital_object_concerns/create_and_update_terms.rb'
@@ -125,6 +126,7 @@ Metrics/MethodLength:
   Exclude:
     - 'app/controllers/concerns/hyacinth/users/cas_authentication_behavior.rb'
     - 'app/graphql/mutations/digital_object/resource/delete_resource.rb'
+    - 'app/graphql/mutations/update_project_enabled_fields.rb'
     - 'app/graphql/types/vocabulary_type.rb'
     - 'app/jobs/batch_export_job.rb'
     - 'app/jobs/batch_import_start_job.rb'

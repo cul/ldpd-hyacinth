@@ -16,6 +16,11 @@ namespace :hyacinth do
           string_key: 'sample_project',
           display_label: 'Sample Project',
           has_asset_rights: true
+        },
+        {
+          string_key: 'other_sample_project',
+          display_label: 'Other Sample Project',
+          has_asset_rights: true
         }
       ].each do |project_config|
         project_string_key = project_config[:string_key]
@@ -59,6 +64,13 @@ namespace :hyacinth do
               dynamic_fields: [
                 { display_label: 'Sample Field', sort_order: 1, string_key: 'sample_field', field_type: DynamicField::Type::STRING }
               ]
+            },
+            {
+              string_key: 'other_sample_field_group',
+              display_label: 'Other Sample Field Group',
+              dynamic_fields: [
+                { display_label: 'Other Sample Field', sort_order: 1, string_key: 'other_sample_field', field_type: DynamicField::Type::STRING }
+              ]
             }
           ]
         }]
@@ -66,7 +78,8 @@ namespace :hyacinth do
 
       sample_project.tap do |project|
         fields = [
-          DynamicField.find_by_path_traversal(['sample_field_group', 'sample_field'])
+          DynamicField.find_by_path_traversal(['sample_field_group', 'sample_field']),
+          DynamicField.find_by_path_traversal(['other_sample_field_group', 'other_sample_field'])
         ]
 
         fields.each do |field|
