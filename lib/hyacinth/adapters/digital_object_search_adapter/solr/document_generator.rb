@@ -146,9 +146,7 @@ module Hyacinth
             next_key = path[0]
             rest_of_path = path[1..]
 
-            if next_key.blank?
-              return data.map { |value| value.is_a?(Hash) ? value['pref_label'] : value }
-            end
+            return data_values(data) if next_key.blank?
 
             if data.is_a?(Hash)
               extract_dynamic_field_values_at(data[next_key], rest_of_path)
@@ -160,6 +158,11 @@ module Hyacinth
 
           def project_keys_for(digital_object)
             (digital_object.other_projects.map(&:string_key) + [digital_object.primary_project&.string_key]).compact
+          end
+
+          # if data is a hash, value may be from pref_label (for terms) or tag (for lang)
+          def data_values(data)
+            data.map { |value| value.is_a?(Hash) ? (value['pref_label'] || value['tag']) : value }
           end
 
           # Methods to add values for keyword, title and identifier search.

@@ -6,6 +6,23 @@ Added: 2005-10-16
 Suppress-Script: Latn
 %%
 Type: language
+Subtag: cym
+Description: Welsh
+Added: 2005-10-16
+%%
+Type: language
+Subtag: ga
+Description: Irish
+Added: 2005-10-16
+Suppress-Script: Latn
+%%
+Type: language
+Subtag: gd
+Description: Scottish Gaelic
+Description: Gaelic
+Added: 2005-10-16
+%%
+Type: language
 Subtag: sco
 Description: Scots
 Added: 2005-10-16
@@ -21,6 +38,11 @@ Description: United Kingdom
 Added: 2005-10-16
 Comments: as of 2006-03-29 GB no longer includes the Channel Islands and
   Isle of Man; see GG, JE, IM
+%%
+Type: region
+Subtag: IE
+Description: Ireland
+Added: 2005-10-16
 %%
 Type: region
 Subtag: US
@@ -41,6 +63,11 @@ Prefix: hup
 Prefix: kyh
 Prefix: tol
 Prefix: yur
+%%
+Type: variant
+Subtag: fonipa
+Description: International Phonetic Alphabet
+Added: 2006-12-11
 %%
 Type: variant
 Subtag: ulster

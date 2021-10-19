@@ -8,6 +8,7 @@ namespace :hyacinth do
       Rake::Task['hyacinth:sample_content:create_publish_targets'].invoke
       Rake::Task['hyacinth:sample_content:create_and_enable_fields'].invoke
       Rake::Task['hyacinth:sample_content:create_records'].invoke
+      Rake::Task['hyacinth:sample_content:assign_sample_languages'].invoke
     end
 
     task create_projects: :environment do
@@ -69,7 +70,8 @@ namespace :hyacinth do
               string_key: 'sample_field_group',
               display_label: 'Sample Field Group',
               dynamic_fields: [
-                { display_label: 'Sample Field', sort_order: 1, string_key: 'sample_field', field_type: DynamicField::Type::STRING }
+                { display_label: 'Sample Field', sort_order: 1, string_key: 'sample_field', field_type: DynamicField::Type::STRING },
+                { display_label: 'Sample Language', sort_order: 1, string_key: 'sample_lang', field_type: DynamicField::Type::LANG, is_facetable: true, filter_label: 'Sample Language' }
               ]
             },
             {
@@ -86,7 +88,8 @@ namespace :hyacinth do
       sample_project.tap do |project|
         fields = [
           DynamicField.find_by_path_traversal(['sample_field_group', 'sample_field']),
-          DynamicField.find_by_path_traversal(['other_sample_field_group', 'other_sample_field'])
+          DynamicField.find_by_path_traversal(['other_sample_field_group', 'other_sample_field']),
+          DynamicField.find_by_path_traversal(['sample_field_group', 'sample_lang'])
         ]
 
         fields.each do |field|
@@ -103,9 +106,10 @@ namespace :hyacinth do
 
     task create_records: :environment do
       sample_project.tap do |project|
-        21.times do |i|
+        title_base = DigitalObject::Item.count + 1
+        (ENV['NUM_ITEMS'] || 21).to_i.times do |i|
           item = DigitalObject::Item.new
-          item.title = { 'value' => { 'sort_portion' => "Item #{i + 1}" } }
+          item.title = { 'value' => { 'sort_portion' => "Item #{i + title_base}" } }
           item.primary_project = project
 
           next if item.save
@@ -118,7 +122,29 @@ namespace :hyacinth do
         end
       end
     end
-
+    task load_sample_languages: :environment do
+      lang_data = ENV.fetch('LANG_DATA', './spec/fixtures/files/iana_language/english-subtag-registry')
+      Hyacinth::Language::SubtagLoader.new(lang_data).load
+    end
+    task assign_sample_languages: :load_sample_languages do
+      langs = %w[
+        cy cy-fonipa
+        en en-US en-US-fonipa en-US-unifon
+        en-CA en-CA-newfound en-CA-newfound-unifon en-CA-unifon
+        en-GB en-GB-cornu en-GB-cornu-unifon en-GB-unifon
+        en-IE en-IE-unifon en-IE-fonipa
+        ga ga-fonipa
+        gd gd-fonipa
+        sco sco-fonipa sco-ulster sco-ulster-fonipa
+      ]
+      ctr = 0
+      DigitalObject::Item.all.each do |item|
+        tag = langs[ctr % langs.length]
+        item.assign_descriptive_metadata('descriptive_metadata' => { 'sample_field_group' => [{ 'sample_lang' => { 'tag' => tag } }] })
+        item.save
+        ctr += 1
+      end
+    end
     def sample_project
       Project.find_by(string_key: 'sample_project')
     end
