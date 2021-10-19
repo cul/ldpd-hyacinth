@@ -91,3 +91,14 @@ export const updateProjectPermissionsMutation = gql`
     }
   }
 `;
+
+export const getProjectFieldSetsQuery = gql`
+  query ProjectFieldSets($stringKey: ID!){
+    project(stringKey: $stringKey) {
+      fieldSets {
+        id
+        displayLabel
+      }
+    }
+  }
+`;

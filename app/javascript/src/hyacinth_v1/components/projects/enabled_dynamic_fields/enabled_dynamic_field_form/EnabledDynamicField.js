@@ -10,7 +10,9 @@ const EnabledDynamicField = ({
   field, edfDispatch, readOnly, userErrorPaths,
 }) => {
   const [fieldSets] = useState([]);
-  const { enabledFieldData } = field;
+  const { enabledFieldData, fieldSetOptions } = field;
+  const selectedFieldSetIds = enabledFieldData.fieldSets.map((fieldSet) => fieldSet.id);
+  const selectedFieldSetOptions = fieldSetOptions.filter((fieldSet) => selectedFieldSetIds.includes(fieldSet.id));
 
   const dispatchUpdate = (newEnabledFieldData) => {
     edfDispatch({ type: 'update', payload: { newEnabledFieldData } });
@@ -23,37 +25,21 @@ const EnabledDynamicField = ({
       },
     } = event;
 
-    // enabledFieldDataCallback(field.id, newData);
     dispatchUpdate(produce(enabledFieldData, (draft) => {
       const val = type === 'checkbox' ? checked : value;
       draft[name] = val;
     }));
   };
 
-  const onFieldSetChange = (value, actionType) => {
-    const detector = (f) => f.id !== actionType.removedValue.id;
-    switch (actionType.action) {
-      case 'select-option':
-        // enabledFieldDataCallback(field.id, enabledFieldData);
-        dispatchUpdate(produce(enabledFieldData, (draft) => {
-          draft.fieldSets = value;
-        }));
-        break;
-      case 'remove-value':
-        // enabledFieldDataCallback(field.id, enabledFieldData);
-        dispatchUpdate(produce(enabledFieldData, (draft) => {
-          draft.fieldSets.splice(enabledFieldData.fieldSets.findIndex(detector), 1);
-        }));
-        break;
-      default:
-        break;
-    }
+  const onFieldSetChange = (newValues) => {
+    dispatchUpdate(produce(enabledFieldData, (draft) => {
+      draft.fieldSets = newValues;
+    }));
   };
 
   const onEnable = (event) => {
     const { target: { checked } } = event;
     if (enabledFieldData.enabled !== checked) {
-      // enabledFieldDataCallback(field.id, enabledFieldData);
       dispatchUpdate(produce(enabledFieldData, (draft) => {
         draft.enabled = checked;
       }));
@@ -64,103 +50,118 @@ const EnabledDynamicField = ({
     <Card
       key={`field_content_${field.id}`}
       className="mb-2"
-      style={{ backgroundColor: '#eaeaea', border: userErrorPaths.includes(field.path) ? '1px solid #ff0000' : 'none' }}
+      style={{ border: userErrorPaths.includes(field.path) ? '1px solid #ff0000' : 'none' }}
     >
-      <Card.Body style={{ padding: '.75rem' }}>
+      <Card.Header className="p-0 bg-transparent">
+        <Badge bg="info">{field.displayLabel}</Badge>
+      </Card.Header>
+      <Card.Body className="p-2" style={{ backgroundColor: '#eaeaea' }}>
         <Row>
-          <Col md={2}>
-            <Badge bg="info">{field.displayLabel}</Badge>
-          </Col>
-          <Col xs={4} md={2}>
-            <Form.Check
-              id={`enabled_${field.id}`}
-              type="checkbox"
-              checked={enabledFieldData.enabled}
-              label="Enabled"
-              name="enabled"
-              onChange={onEnable}
-              className="align-middle"
-              inline
-              disabled={readOnly}
-            />
-          </Col>
-          <Col xs={4} md={2}>
-            {
-              enabledFieldData.enabled && (
-                <Form.Check
-                  id={`shareable_${field.id}`}
-                  type="checkbox"
-                  checked={enabledFieldData.shareable}
-                  label="Shareable by Other Projects"
-                  name="shareable"
-                  className="align-middle"
-                  onChange={onChange}
-                  inline
-                  disabled={readOnly}
-                />
-              )
-            }
-          </Col>
-          <Col xs={4} md={2}>
-            {
-              enabledFieldData.enabled && (
-                <Form.Check
-                  id={`required_${field.id}`}
-                  type="checkbox"
-                  checked={enabledFieldData.required}
-                  label="Required"
-                  name="required"
-                  className="align-middle"
-                  onChange={onChange}
-                  inline
-                  disabled={readOnly}
-                />
-              )
-            }
-          </Col>
-          <Col md={4}>
-            {
-              enabledFieldData.enabled && (
-                <Form.Control
-                  size="sm"
-                  type="text"
-                  name="defaultValue"
-                  placeholder="Default value (optional)"
-                  value={enabledFieldData.defaultValue || ''}
-                  onChange={onChange}
-                  disabled={readOnly}
-                />
-              )
-            }
-          </Col>
-        </Row>
-        {
-          enabledFieldData.enabled && fieldSets.length > 0 && (
+          <Col>
             <Row>
-              <Form.Label column md={{ span: 2, offset: 2 }} disabled={readOnly}>
-                <span className="float-start">Field Sets</span>
-              </Form.Label>
-              <Col md={8}>
-                <Select
-                  placeholder="No Field Sets Selected"
-                  value={enabledFieldData.fieldSets}
-                  name="fieldSets"
-                  onChange={onFieldSetChange}
-                  options={fieldSets}
-                  isMulti
-                  isSearchable={false}
-                  isClearable={false}
-                  isDisabled={readOnly}
-                  getOptionLabel={(option) => option.displayLabel}
-                  getOptionValue={(option) => option.id}
-                  styles={{
-                    container: (styles) => ({ ...styles, fontSize: '.875rem', paddingTop: '.35rem' }),
-                  }}
+              <Col md="auto">
+                <Form.Check
+                  id={`enabled_${field.id}`}
+                  type="checkbox"
+                  checked={enabledFieldData.enabled}
+                  label="Enabled"
+                  name="enabled"
+                  onChange={onEnable}
+                  className="align-middle"
+                  inline
+                  disabled={readOnly}
                 />
               </Col>
+              <Col md="auto">
+                {
+                  enabledFieldData.enabled && (
+                    <Form.Check
+                      id={`shareable_${field.id}`}
+                      type="checkbox"
+                      checked={enabledFieldData.shareable}
+                      label="Shareable by Other Projects"
+                      name="shareable"
+                      className="align-middle"
+                      onChange={onChange}
+                      inline
+                      disabled={readOnly}
+                    />
+                  )
+                }
+              </Col>
+              <Col md="auto">
+                {
+                  enabledFieldData.enabled && (
+                    <Form.Check
+                      id={`required_${field.id}`}
+                      type="checkbox"
+                      checked={enabledFieldData.required}
+                      label="Required"
+                      name="required"
+                      className="align-middle"
+                      onChange={onChange}
+                      inline
+                      disabled={readOnly}
+                    />
+                  )
+                }
+              </Col>
             </Row>
-          )
-        }
+          </Col>
+        </Row>
+        <Row>
+          {
+            enabledFieldData.enabled
+            && (
+              <Col md={6} className="mt-2">
+                <Row>
+                  <Form.Label column lg="auto" htmlFor={`fieldSets-${field.id}`}>
+                    Default Value
+                  </Form.Label>
+                  <Col lg>
+                    <Form.Control
+                      type="text"
+                      name="defaultValue"
+                      placeholder={readOnly ? '- none -' : 'Default value (optional)'}
+                      value={enabledFieldData.defaultValue || ''}
+                      onChange={onChange}
+                      disabled={readOnly}
+                    />
+                  </Col>
+                </Row>
+              </Col>
+            )
+          }
+          {
+            enabledFieldData.enabled && fieldSetOptions.length > 0
+            && (
+              <Col className="mt-2">
+                <Row>
+                  <Form.Label column sm="auto" htmlFor={`fieldSets-${field.id}`}>
+                    Field Sets
+                  </Form.Label>
+                  <Col>
+                    <Select
+                      id={`fieldSets-${field.id}`}
+                      placeholder={readOnly ? '- none -' : 'Select one or more field sets (optional)'}
+                      name="fieldSets"
+                      onChange={onFieldSetChange}
+                      options={fieldSetOptions}
+                      getOptionLabel={(option) => option.displayLabel}
+                      getOptionValue={(option) => option.id}
+                      value={selectedFieldSetOptions}
+                      isMulti
+                      isSearchable={false}
+                      isClearable
+                      closeMenuOnSelect={false}
+                      isDisabled={readOnly}
+                    />
+                  </Col>
+                </Row>
+              </Col>
+            )
+          }
+        </Row>
       </Card.Body>
     </Card>
   );
@@ -174,10 +175,18 @@ EnabledDynamicField.propTypes = {
     enabledFieldData: PropTypes.shape({
       defaultValue: PropTypes.string,
       enabled: PropTypes.bool,
-      fieldSets: PropTypes.arrayOf(Object), // TODO: make this more specific
+      fieldSets: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.string,
+      })),
       required: PropTypes.bool,
       shareable: PropTypes.bool,
     }).isRequired,
+    fieldSetOptions: PropTypes.arrayOf(
+      PropTypes.shape({
+        id: PropTypes.string,
+        displayLabel: PropTypes.string,
+      }),
+    ).isRequired,
   }).isRequired,
   edfDispatch: PropTypes.func.isRequired,
   readOnly: PropTypes.bool.isRequired,

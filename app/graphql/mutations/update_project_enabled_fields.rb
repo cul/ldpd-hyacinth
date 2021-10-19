@@ -51,12 +51,13 @@ class Mutations::UpdateProjectEnabledFields < Mutations::BaseMutation
         end
 
         # Perform update actions
-        enabled_dynamic_field_inputs.select { |edf_input| dynamic_field_ids_to_update.include?(edf_input.dynamic_field.id) }.each do |edf_input|
-          dynamic_field_id = attributes.delete(:dynamic_field).fetch(:id)&.to_i
+        enabled_dynamic_field_inputs.select { |edf_input| dynamic_field_ids_to_update.include?(edf_input.dynamic_field.id.to_i) }.each do |edf_input|
           attributes = edf_input.to_h
+          dynamic_field_id = attributes.delete(:dynamic_field).fetch(:id)&.to_i
           attributes[:field_sets] = attributes.delete(:field_sets)&.map { |fs| FieldSet.find(fs[:id].to_i) }
           errors.concat(update_and_collect_errors(currently_enabled_dynamic_fields.find { |current_edf| current_edf.dynamic_field_id == dynamic_field_id }, attributes))
         end
+
         raise ActiveRecord::Rollback, "Rolling back because errors were encountered." if errors.present?
       end
     end

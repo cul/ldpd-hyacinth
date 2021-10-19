@@ -1,11 +1,12 @@
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import produce from 'immer';
-import _ from 'lodash';
+import pick from 'lodash/pick';
 import PropTypes from 'prop-types';
 import React, { useReducer, useState } from 'react';
 import { Card, Form } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { getDynamicFieldGraphQuery } from '../../../../graphql/dynamicFieldCategories';
+import { getProjectFieldSetsQuery } from '../../../../graphql/projects';
 import { getEnabledDynamicFieldsQuery, updateEnabledDynamicFieldsMutation } from '../../../../graphql/projects/enabledDynamicFields';
 import ErrorList from '../../../shared/ErrorList';
 import FormButtons from '../../../shared/forms/FormButtons';
@@ -32,19 +33,22 @@ const edfReducer = (state, action) => {
   switch (action.type) {
     case 'init':
       return produce(state, (draft) => {
-        const { dynamicFieldGraph, enabledDynamicFields } = action.payload;
+        const { dynamicFieldGraph, enabledDynamicFields, fieldSetOptions } = action.payload;
 
-        // Merge enabledFieldData into fieldGraph to produce the enabledFieldHierarchy
-        const dynamicFieldIdsToEnabledDynamicFields = enabledDynamicFields.reduce((accumulator, current) => {
-          accumulator[current.dynamicField.id] = current;
-          return accumulator;
-        }, {});
-        const dynamicFields = findDynamicFields(dynamicFieldGraph);
-        dynamicFields.forEach((dynamicField) => {
-          dynamicField.enabledFieldData = dynamicFieldIdsToEnabledDynamicFields[dynamicField.id];
+        // We're going to build a modified graph from the retrieved graph, so we'll use the
+        // produce() method to create a deep copy.
+        draft.enabledFieldHierarchy = produce(dynamicFieldGraph, (enabledFieldHierarchyDraft) => {
+          // Merge enabledFieldData and fieldSetOptions into mutableDynamicFieldGraph to fill in the enabledFieldHierarchy
+          const dynamicFieldIdsToEnabledDynamicFields = enabledDynamicFields.reduce((accumulator, current) => {
+            accumulator[current.dynamicField.id] = current;
+            return accumulator;
+          }, {});
+          const dynamicFields = findDynamicFields(enabledFieldHierarchyDraft);
+          dynamicFields.forEach((dynamicField) => {
+            dynamicField.enabledFieldData = dynamicFieldIdsToEnabledDynamicFields[dynamicField.id];
+            dynamicField.fieldSetOptions = fieldSetOptions;
+          });
         });
-
-        draft.enabledFieldHierarchy = dynamicFieldGraph;
       });
     case 'update':
       return produce(state, (draft) => {
@@ -108,7 +112,7 @@ const DynamicFieldCategory = ({
   category, edfDispatch, readOnly, userErrorPaths,
 }) => (
   <>
-    <h4 className="text-center text-orange">{category.displayLabel}</h4>
+    <h4 className="text-orange">{category.displayLabel}</h4>
     {category.children.map((child) => (
       <DynamicFieldGroup
         group={child}
@@ -138,10 +142,14 @@ const EnabledDynamicFieldForm = ({ readOnly, projectStringKey, digitalObjectType
     },
   });
 
+  const {
+    loading: fieldSetsLoading, error: fieldSetsError, data: fieldSetsData,
+  } = useQuery(getProjectFieldSetsQuery, { variables: { stringKey: projectStringKey } });
+
   const [updateEnabledFields, { data: updateData, error: updateError }] = useMutation(updateEnabledDynamicFieldsMutation);
   const userErrors = updateData?.updateProjectEnabledFields?.userErrors || [];
 
-  if (fieldGraphLoading || enabledFieldsLoading) return <></>;
+  if (fieldGraphLoading || enabledFieldsLoading || fieldSetsLoading) return <></>;
   if (!initialStateLoaded) {
     setInitialStateLoaded(true);
     edfDispatch({
@@ -149,12 +157,13 @@ const EnabledDynamicFieldForm = ({ readOnly, projectStringKey, digitalObjectType
       payload: {
         dynamicFieldGraph: fieldGraphData.dynamicFieldGraph,
         enabledDynamicFields: enabledFieldsData.enabledDynamicFields,
+        fieldSetOptions: fieldSetsData.project.fieldSets,
       },
     });
     return <></>;
   }
 
-  if (enabledFieldsError || fieldGraphError || updateError) {
+  if (enabledFieldsError || fieldGraphError || fieldSetsError, updateError) {
     return <GraphQLErrors errors={enabledFieldsError || fieldGraphError || updateError} />;
   }
 
@@ -166,11 +175,11 @@ const EnabledDynamicFieldForm = ({ readOnly, projectStringKey, digitalObjectType
         (dynamicField) => dynamicField.enabledFieldData.enabled,
       ).map((dynamicField) => {
         const { enabledFieldData } = dynamicField;
-        const enabledDynamicFieldInput = _.pick(enabledFieldData, [
+        const enabledDynamicFieldInput = pick(enabledFieldData, [
           'required', 'locked', 'hidden', 'ownerOnly', 'shareable', 'defaultValue',
         ]);
         enabledDynamicFieldInput.dynamicField = { id: enabledFieldData.dynamicField.id };
-        enabledDynamicFieldInput.fieldSets = enabledFieldData.fieldSets.map((fieldset) => fieldset.id);
+        enabledDynamicFieldInput.fieldSets = enabledFieldData.fieldSets.map((fieldSet) => ({ id: fieldSet.id }));
         return enabledDynamicFieldInput;
       }),
     };
