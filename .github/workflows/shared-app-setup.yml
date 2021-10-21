@@ -1,0 +1,10 @@
+name: Reusable Workflow - Shared app setup
+
+on:
+  workflow_call: null
+
+jobs:
+  shared_app_setup:
+    runs-on: ubuntu-latest
+    steps:
+      - run: "echo 'setup step'"
