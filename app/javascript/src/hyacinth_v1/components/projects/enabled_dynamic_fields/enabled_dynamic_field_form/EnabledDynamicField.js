@@ -49,7 +49,8 @@ const EnabledDynamicField = ({
   return (
     <Card
       key={`field_content_${field.id}`}
-      className="mb-2"
+      className="enabled-dynamic-field-configuration mb-2"
+      data-field-path={field.path}
       style={{ border: userErrorPaths.includes(field.path) ? '1px solid #ff0000' : 'none' }}
     >
       <Card.Header className="p-0 bg-transparent">
@@ -115,11 +116,12 @@ const EnabledDynamicField = ({
             && (
               <Col md={6} className="mt-2">
                 <Row>
-                  <Form.Label column lg="auto" htmlFor={`fieldSets-${field.id}`}>
+                  <Form.Label column lg="auto" htmlFor={`defaultValue-${field.id}`}>
                     Default Value
                   </Form.Label>
                   <Col lg>
                     <Form.Control
+                      id={`defaultValue-${field.id}`}
                       type="text"
                       name="defaultValue"
                       placeholder={readOnly ? '- none -' : 'Default value (optional)'}

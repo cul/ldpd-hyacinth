@@ -205,6 +205,8 @@ RSpec/EmptyExampleGroup:
 # Configuration parameters: Max.
 RSpec/ExampleLength:
   Exclude:
+    - 'spec/features/ui/v1/projects/enabled_dynamic_fields/show_spec.rb'
+    - 'spec/features/ui/v1/projects/enabled_dynamic_fields/edit_spec.rb'
     - 'spec/hyacinth/adapters/lock_adapter/database_entry_lock_spec.rb'
     - 'spec/hyacinth/adapters/preservation_adapter/fedora3/system_spec.rb'
     - 'spec/hyacinth/xml_generator/field_values_spec.rb'

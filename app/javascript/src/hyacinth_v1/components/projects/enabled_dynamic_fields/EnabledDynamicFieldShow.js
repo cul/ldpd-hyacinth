@@ -38,6 +38,7 @@ export default class EnabledDynamicFieldShow extends React.Component {
             <EditButton
               className="float-end"
               size="lg"
+              aria-label="Edit"
               link={`/projects/${projectStringKey}/enabled_dynamic_fields/${digitalObjectType}/edit`}
             />
           </Can>
