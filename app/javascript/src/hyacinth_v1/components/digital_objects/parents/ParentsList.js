@@ -24,9 +24,9 @@ const ParentsList = (props) => {
     <>
       {
         digitalObjects.map((digitalObject) => (
-          <Card key={digitalObject.id} className="mb-3">
+          <Card key={digitalObject.id} className="parent mb-3">
             <GraphQLErrors errors={removeParentError} />
-            <Card.Header className="px-2 py-1">
+            <Card.Header className="uid-header px-2 py-1">
               <Link
                 to={`/digital_objects/${digitalObject.id}`}
               >

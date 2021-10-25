@@ -21,7 +21,7 @@ RSpec.describe 'Digital Object Parents', type: :feature, js: true do
       it "lists current parents" do
         parents_header = page.find("h4", text: "Parent Digital Objects")
         expect(parents_header).not_to be_nil
-        expect(parents_header).to have_sibling(".card", text: item.generate_display_label)
+        expect(page).to have_css('.parent .uid-header', text: item.generate_display_label)
       end
     end
     context 'when a logged in user with object read permission tries to add a parent and they do not have update permission for that parent' do
