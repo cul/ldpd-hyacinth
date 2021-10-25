@@ -2,8 +2,8 @@
 
 require 'rails_helper'
 
-# TODO: Remove solr dependency when stubbed search from HYACINTH-819 is merged
-RSpec.describe 'Digital Object Parents', solr: true, type: :feature, js: true do
+RSpec.describe 'Digital Object Parents', type: :feature, js: true do
+  include_context 'with stubbed search adapters'
   let(:item) { FactoryBot.create(:item, :with_ascii_title) }
   let(:asset) { FactoryBot.create(:asset, :with_main_resource, :with_ascii_title, parents_to_add: [item]) }
 
