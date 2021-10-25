@@ -34,11 +34,17 @@ const ParentsList = (props) => {
               </Link>
               {(
                 digitalObjectAbility.can('update_objects', {
-                  primaryProject: digitalObject,
-                  otherProjects: digitalObject,
+                  primaryProject: digitalObject.primaryProject,
+                  otherProjects: digitalObject.otherProjects,
                 }))
               && (
-              <Button variant="danger" size="sm" className="float-end" onClick={() => onDelete(digitalObject.id)}>
+              <Button
+                id={`remove_parent_${digitalObject.id}`}
+                variant="danger"
+                size="sm"
+                className="float-end"
+                onClick={() => onDelete(digitalObject.id)}
+              >
                 Remove Parent
               </Button>
               )}

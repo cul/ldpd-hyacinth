@@ -8,6 +8,7 @@ RSpec.describe 'Digital Object Parents', solr: true, type: :feature, js: true do
   let(:asset) { FactoryBot.create(:asset, :with_main_resource, :with_ascii_title, parents_to_add: [item]) }
 
   let(:permissons_required) { [] }
+
   before { sign_in_project_contributor actions: permissions_required, projects: item.primary_project }
 
   describe 'GET /ui/v1/digital_objects/:uid/parents' do
@@ -27,8 +28,8 @@ RSpec.describe 'Digital Object Parents', solr: true, type: :feature, js: true do
     end
     context 'when logged in user does not have update permission on a parent' do
       context 'trying to add the parent' do
-        let(:permissions_required) { [:read_objects] }
         let(:new_item) { FactoryBot.create(:item, :with_ascii_title) }
+        let(:permissions_required) { [:read_objects] }
         let(:request_url) { "/ui/v1/digital_objects/#{asset.uid}/parents" }
         before do
           visit request_url
@@ -41,22 +42,21 @@ RSpec.describe 'Digital Object Parents', solr: true, type: :feature, js: true do
         end
       end
     end
-    context 'when logged in user has update permission on one parent but not another' do
-      context 'remove buttons' do
-        let(:permissions_required) { [:read_objects] }
+    context 'when logged in user has permissions that vary by project' do
+      context 'for a project where the user has update permission, a remove button' do
+        let(:new_item) { FactoryBot.create(:item, :with_ascii_title) }
+        let(:permissions_required) { [:read_objects, :update_objects] }
         let(:request_url) { "/ui/v1/digital_objects/#{asset.uid}/parents" }
         before do
+          asset.parents_to_add << new_item
+          asset.save
           visit request_url
         end
-        it "are displayed for the permitted parent" do
-          parents_header = page.find("h4", text: "Parent Digital Objects")
-          expect(parents_header).not_to be_nil
-          expect(parents_header).to have_sibling(".card", text: item.generate_display_label)
+        it "is displayed for the authorized parent" do
+          expect(page).to have_button("remove_parent_#{item.uid}")
         end
-        it "and not displayed for the not permitted parent" do
-          parents_header = page.find("h4", text: "Parent Digital Objects")
-          expect(parents_header).not_to be_nil
-          expect(parents_header).to have_sibling(".card", text: item.generate_display_label)
+        it "is not displayed for the unauthorized parent" do
+          expect(page).not_to have_button("remove_parent_#{new_item.uid}")
         end
       end
     end

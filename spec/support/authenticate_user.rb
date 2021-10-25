@@ -23,8 +23,6 @@ module AuthenticateUser
     permissions = Array.wrap(actions).product(Array.wrap(projects)).map do |action, project|
       Permission.new(action: action, subject: Project.to_s, subject_id: project.id)
     end
-puts "here"
-puts permissions.inspect
     FactoryBot.create(
       :user, first_name: 'Signed In', last_name: 'User', email: 'logged-in-user@exaple.com', permissions: permissions
     )
