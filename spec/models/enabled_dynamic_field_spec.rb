@@ -77,4 +77,24 @@ RSpec.describe EnabledDynamicField, type: :model do
       end
     end
   end
+
+  describe '#destroy ' do
+    let(:dynamic_field) { FactoryBot.create(:dynamic_field) }
+    let(:project) { FactoryBot.create(:project) }
+    let(:digital_object_type) { 'item' }
+    let!(:enabled_dynamic_field) { FactoryBot.create(:enabled_dynamic_field, dynamic_field: dynamic_field, project: project, digital_object_type: digital_object_type) }
+    context 'when the enabled dynamic field is in use in the project' do
+      before do
+        allow(Hyacinth::Config.digital_object_search_adapter).to receive(:field_used_in_project?).and_return(true)
+      end
+      it 'fails to destroy, and adds an error' do
+        expect(enabled_dynamic_field.destroy).to eq(false)
+        expect(enabled_dynamic_field.errors.messages).to eq(
+          destroy: [
+            "Cannot disable #{dynamic_field.display_label} because it's used by one or more #{digital_object_type.pluralize} in #{project.display_label}"
+          ]
+        )
+      end
+    end
+  end
 end

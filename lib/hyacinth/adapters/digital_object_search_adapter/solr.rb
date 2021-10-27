@@ -29,18 +29,6 @@ module Hyacinth
           solr.delete("id: #{::Solr::Utils.escape(digital_object.uid)}")
         end
 
-        # Returns true if the given field_path is in use by records in the specified project.
-        # You can also pass an option digital_object_type if you want to only check if the field
-        # is in use by objects of a certain type within the specified project.
-        def field_used_in_project?(field_path, project, digital_object_type = nil)
-          search do |solr_params|
-            solr_params.fq('projects_ssim', project.string_key)
-            solr_params.fq('digital_object_type_ssi', digital_object_type) if digital_object_type.present?
-            solr_params.fq(Hyacinth::DigitalObject::SolrKeys.for_dynamic_field_presence(field_path), true)
-            solr_params.rows(1)
-          end['response']['docs'].length.positive?
-        end
-
         def search(search_params = {}, user_for_permission_context = nil)
           solr_parameters = solr_params_for(search_params)
 
@@ -59,38 +47,15 @@ module Hyacinth
           solr.get(handler, params: params)
         end
 
-        def solr_params_for(search_params)
-          solr_parameters = ::Solr::Params.new
-          # Only return active objects
-          solr_parameters.fq('state_ssi', 'active')
-
-          # Apply search_params
-          search_params.each do |k, v|
-            if k.to_s == 'q'
-              solr_parameters.q(v)
-            elsif k.to_s == 'search_type'
-              solr_parameters.default_field(document_generator.search_field(v)) if document_generator.search_field(v)
-            elsif k.to_s == 'facet_on'
-              Array(v).map { |eachv| solr_parameters.facet_on(eachv) }
-            else
-              Array(v).map { |eachv| solr_parameters.fq(k, *eachv) }
-            end
-          end
-          solr_parameters
-        end
-
-        # Adds filter queries to the given solr_prameters based on projects where the
-        # given user has read access.
-        def apply_user_project_filters(solr_parameters, user)
-          read_objects_access_project_string_keys = Project.accessible_by(Ability.new(user), :read_objects).map(&:string_key)
-          if read_objects_access_project_string_keys.present?
-            solr_parameters.fq('projects_ssim', read_objects_access_project_string_keys)
-          else
-            # User has no project permissions, so we'll deliberately put in an unresolvable value
-            # to get zero results. Projects cannot have exclamation points in their string keys,
-            # so the value below will work.
-            solr_parameters.fq('projects_ssim', '!nomatch!')
-          end
+        # Returns true if the given field_path is in use by records of type digital_object_type in
+        # the specified project.
+        def field_used_in_project?(field_path, project, digital_object_type)
+          search do |solr_params|
+            solr_params.fq('projects_ssim', project.string_key)
+            solr_params.fq('digital_object_type_ssi', digital_object_type) if digital_object_type.present?
+            solr_params.fq(Hyacinth::DigitalObject::SolrKeys.for_dynamic_field_presence(field_path), true)
+            solr_params.rows(1)
+          end['response']['docs'].length.positive?
         end
 
         # Returns the uids associated with the given identifier
@@ -113,6 +78,42 @@ module Hyacinth
         def clear_index
           solr.clear
         end
+
+        private
+
+          def solr_params_for(search_params)
+            solr_parameters = ::Solr::Params.new
+            # Only return active objects
+            solr_parameters.fq('state_ssi', 'active')
+
+            # Apply search_params
+            search_params.each do |k, v|
+              if k.to_s == 'q'
+                solr_parameters.q(v)
+              elsif k.to_s == 'search_type'
+                solr_parameters.default_field(document_generator.search_field(v)) if document_generator.search_field(v)
+              elsif k.to_s == 'facet_on'
+                Array(v).map { |eachv| solr_parameters.facet_on(eachv) }
+              else
+                Array(v).map { |eachv| solr_parameters.fq(k, *eachv) }
+              end
+            end
+            solr_parameters
+          end
+
+          # Adds filter queries to the given solr_prameters based on projects where the
+          # given user has read access.
+          def apply_user_project_filters(solr_parameters, user)
+            read_objects_access_project_string_keys = Project.accessible_by(Ability.new(user), :read_objects).map(&:string_key)
+            if read_objects_access_project_string_keys.present?
+              solr_parameters.fq('projects_ssim', read_objects_access_project_string_keys)
+            else
+              # User has no project permissions, so we'll deliberately put in an unresolvable value
+              # to get zero results. Projects cannot have exclamation points in their string keys,
+              # so the value below will work.
+              solr_parameters.fq('projects_ssim', '!nomatch!')
+            end
+          end
       end
     end
   end

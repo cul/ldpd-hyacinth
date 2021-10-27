@@ -17,6 +17,9 @@ RSpec.shared_examples "a search adapter" do
     it "implements #search" do
       expect(adapter).to respond_to(:search)
     end
+    it "implements #field_used_in_project?" do
+      expect(adapter).to respond_to(:field_used_in_project?)
+    end
     it "implements #identifier_to_uids" do
       expect(adapter).to respond_to(:identifier_to_uids)
     end

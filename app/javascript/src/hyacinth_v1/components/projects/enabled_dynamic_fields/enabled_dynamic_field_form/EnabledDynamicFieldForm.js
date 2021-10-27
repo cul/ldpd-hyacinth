@@ -36,9 +36,11 @@ const edfReducer = (state, action) => {
         const { dynamicFieldGraph, enabledDynamicFields, fieldSetOptions } = action.payload;
 
         // We're going to build a modified graph from the retrieved graph, so we'll use the
-        // produce() method to create a deep copy.
+        // produce() method to create a deep copy.  Fields in the original dynamicFieldGraph
+        // variable are immutable because they're frozen by the Apollo client upon retrieval.
         draft.enabledFieldHierarchy = produce(dynamicFieldGraph, (enabledFieldHierarchyDraft) => {
-          // Merge enabledFieldData and fieldSetOptions into mutableDynamicFieldGraph to fill in the enabledFieldHierarchy
+          // We'll merge enabledFieldData and fieldSetOptions into dynamicFieldGraph to fill in
+          // the enabledFieldHierarchy.
           const dynamicFieldIdsToEnabledDynamicFields = enabledDynamicFields.reduce((accumulator, current) => {
             accumulator[current.dynamicField.id] = current;
             return accumulator;
