@@ -85,27 +85,25 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr do
     let(:return_value) do
       expect(adapter.solr).to receive(:get).with(
         'select',
-        {
-          params: {
-            'facet.field': [],
-            'facet.mincount': 1,
-            fq: [
-              'state_ssi:(active)',
-              'projects_ssim:(great_project)',
-              'digital_object_type_ssi:(item)',
-              'df_name::Term_present_bi:(true)'
-            ],
-            q: nil,
-            rows: 1,
-            start: 0
-          }
+        params: {
+          'facet.field': [],
+          'facet.mincount': 1,
+          fq: [
+            'state_ssi:(active)',
+            'projects_ssim:(great_project)',
+            'digital_object_type_ssi:(item)',
+            'df_name_term_present_bi:(true)'
+          ],
+          q: nil,
+          rows: 1,
+          start: 0
         }
-      ).and_return({'response' => {'docs' => docs}})
+      ).and_return('response' => { 'docs' => docs })
       adapter.field_used_in_project?(dynamic_field.path, project, digital_object_type)
     end
     context "when the field is in use" do
       # Note: doc content doesn't matter for this test
-      let(:docs) { [ { id: '12345' } ] }
+      let(:docs) { [{ id: '12345' }] }
       it 'returns true' do
         expect(return_value).to eq(true)
       end

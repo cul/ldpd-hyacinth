@@ -7,7 +7,8 @@ module Hyacinth
       # to centralize where that information is.
 
       def self.for_string_key_path(path, suffix = 'ssim')
-        prefix = Array(path).map { |p| p.camelcase(:lower) }.join('_')
+        raise ArgumentError, "Path must be an array. Got: #{path.inspect}" unless path.is_a?(Array)
+        prefix = path.map { |p| p.camelcase(:lower) }.join('_')
         "#{prefix}_#{suffix}"
       end
 

@@ -3,25 +3,42 @@
 require 'rails_helper'
 
 describe Hyacinth::DigitalObject::SolrKeys do
-  let(:test_category) { FactoryBot.create(:dynamic_field_category) }
-  let(:test_group) do
-    FactoryBot.create(:dynamic_field_group, display_label: 'Test Fields',
-                                            string_key: 'test', parent: test_category)
-  end
-  let(:test_field) do
+  let(:single_word_test_field) do
     FactoryBot.create(:dynamic_field, display_label: "Field", string_key: 'field', is_facetable: true,
-                                      dynamic_field_group: test_group, filter_label: "Field")
+                                      filter_label: "Field")
   end
-  let(:path) { test_field.ancestor_nodes[1..-1].map(&:string_key) << test_field.string_key }
-  describe 'for_dynamic_field' do
-    subject { described_class.for_dynamic_field(path) }
-    it { is_expected.to eql('df_test_field_ssim') }
-    context 'with a snake-cased string key' do
-      let(:test_field) do
-        FactoryBot.create(:dynamic_field, display_label: "Other Field", string_key: 'other_field', is_facetable: true,
-                                          dynamic_field_group: test_group, filter_label: "Other Field")
-      end
-      it { is_expected.to eql('df_test_otherField_ssim') }
+  let(:multi_word_test_field) do
+    FactoryBot.create(:dynamic_field, display_label: "Other Field", string_key: 'other_field', is_facetable: true,
+                                      filter_label: "Other Field")
+  end
+
+  describe '.for_string_key_path' do
+    it 'returns the expected value for single word path pieces' do
+      expect(described_class.for_string_key_path(['what', 'a', 'cool', 'path'], 'sm')).to eq('what_a_cool_path_sm')
+    end
+    it 'returns the expected value for a multi word path pieces' do
+      expect(described_class.for_string_key_path(['that_is', 'a_very', 'good_path'], 'sm')).to eq('thatIs_aVery_goodPath_sm')
+    end
+    it 'raises an error when a non-array is provided to the path parameter' do
+      expect { described_class.for_string_key_path('wrong/path/format').to raise_error(ArgumentError) }
+    end
+  end
+
+  describe '.for_dynamic_field' do
+    it 'returns the expected value for a single word test field' do
+      expect(described_class.for_dynamic_field(single_word_test_field.path.split('/'))).to eq('df_name_field_ssim')
+    end
+    it 'returns the expected value for a multi word test field' do
+      expect(described_class.for_dynamic_field(multi_word_test_field.path.split('/'))).to eq('df_name_otherField_ssim')
+    end
+  end
+
+  describe '.for_dynamic_field_presence' do
+    it 'returns the expected value for a single word test field' do
+      expect(described_class.for_dynamic_field_presence(single_word_test_field.path.split('/'))).to eq('df_name_field_present_bi')
+    end
+    it 'returns the expected value for a multi word test field' do
+      expect(described_class.for_dynamic_field_presence(multi_word_test_field.path.split('/'))).to eq('df_name_otherField_present_bi')
     end
   end
 end

@@ -53,7 +53,7 @@ module Hyacinth
           search do |solr_params|
             solr_params.fq('projects_ssim', project.string_key)
             solr_params.fq('digital_object_type_ssi', digital_object_type) if digital_object_type.present?
-            solr_params.fq(Hyacinth::DigitalObject::SolrKeys.for_dynamic_field_presence(field_path), true)
+            solr_params.fq(Hyacinth::DigitalObject::SolrKeys.for_dynamic_field_presence(field_path.split('/')), true)
             solr_params.rows(1)
           end['response']['docs'].length.positive?
         end
