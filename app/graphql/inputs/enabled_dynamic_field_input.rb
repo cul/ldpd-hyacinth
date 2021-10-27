@@ -9,7 +9,7 @@ module Inputs
     argument :required, Boolean, required: true
     argument :locked, Boolean, required: false # TODO: Get rid of this field if it's not useful
     argument :hidden, Boolean, required: false # TODO: Get rid of this field if it's not useful
-    argument :owner_only, Boolean, required: true # TODO: Get rid of this field if it's not useful
+    argument :owner_only, Boolean, required: false # TODO: Get rid of this field if it's not useful
     argument :shareable, Boolean, required: true
 
     argument :default_value, String, required: false

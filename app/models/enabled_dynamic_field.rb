@@ -15,7 +15,7 @@ class EnabledDynamicField < ApplicationRecord
 
   def disallow_destroy_if_field_in_use_by_project
     return unless Hyacinth::Config.digital_object_search_adapter.field_used_in_project?(dynamic_field.path.split('/'), project, digital_object_type)
-    self.errors.add(:destroy, "Cannot disable #{dynamic_field.string_key} because it's used by one or more #{digital_object_type.pluralize} in #{project.string_key}")
+    self.errors.add(:destroy, "Cannot disable #{dynamic_field.display_label} because it's used by one or more #{digital_object_type.pluralize} in #{project.display_label}")
     throw :abort
   end
 

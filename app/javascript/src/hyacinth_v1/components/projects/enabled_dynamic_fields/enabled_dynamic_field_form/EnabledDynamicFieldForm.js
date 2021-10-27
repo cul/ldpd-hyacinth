@@ -176,7 +176,7 @@ const EnabledDynamicFieldForm = ({ readOnly, projectStringKey, digitalObjectType
       ).map((dynamicField) => {
         const { enabledFieldData } = dynamicField;
         const enabledDynamicFieldInput = pick(enabledFieldData, [
-          'required', 'locked', 'hidden', 'ownerOnly', 'shareable', 'defaultValue',
+          'required', 'locked', 'hidden', 'shareable', 'defaultValue',
         ]);
         enabledDynamicFieldInput.dynamicField = { id: enabledFieldData.dynamicField.id };
         enabledDynamicFieldInput.fieldSets = enabledFieldData.fieldSets.map((fieldSet) => ({ id: fieldSet.id }));
