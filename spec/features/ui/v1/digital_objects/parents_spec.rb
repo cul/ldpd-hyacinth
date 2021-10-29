@@ -22,7 +22,7 @@ RSpec.describe 'Digital Object Parents', type: :feature, js: true do
       it "lists current parents" do
         parents_header = page.find("h4", text: "Parent Digital Objects")
         expect(parents_header).not_to be_nil
-        expect(page).to have_css('.parent .uid-header', text: item.generate_display_label)
+        expect(page).to have_css('.parent', text: item.generate_display_label)
       end
     end
     context 'when a logged in user with update permission for an item tries to add it as a parent' do
@@ -35,7 +35,7 @@ RSpec.describe 'Digital Object Parents', type: :feature, js: true do
         find_button('addParentButton').click
       end
       it "page displays added parent label" do
-        expect(page).to have_css('.parent .uid-header', text: another_item.generate_display_label)
+        expect(page).to have_css('.parent', text: another_item.generate_display_label)
       end
     end
     context 'when an authorized user removes a parent' do
@@ -45,7 +45,7 @@ RSpec.describe 'Digital Object Parents', type: :feature, js: true do
         find_button("remove_parent_#{item.uid}").click
       end
       it "page does not display parent label" do
-        expect(page).not_to have_css('.parent .uid-header', text: item.generate_display_label)
+        expect(page).not_to have_css('.parent', text: item.generate_display_label)
       end
     end
     context 'when a logged in user tries to add a parent and they do not have update permission for that parent' do
