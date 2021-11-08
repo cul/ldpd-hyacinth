@@ -122,6 +122,12 @@ export const getParentsQuery = gql`
         id
         displayLabel
         digitalObjectType
+        primaryProject {
+          ${minimalDigitalObjectProjectFields}
+        }
+        otherProjects {
+          ${minimalDigitalObjectProjectFields}
+        }
       }
     }
   }

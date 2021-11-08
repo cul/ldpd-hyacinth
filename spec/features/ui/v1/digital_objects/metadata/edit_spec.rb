@@ -24,8 +24,6 @@ RSpec.describe 'Digital Object Edit', solr: true, type: :feature, js: true do
       context 'and title data is updated with valid data' do
         let(:show_path) { "/ui/v1/digital_objects/#{uid}/metadata" }
         it 'goes to show view' do
-          # Selenium appears to be appending to current value with fill_in, so setting to blank first
-          page.find_field('Sort Portion').set ""
           fill_in("Sort Portion", with: updated_title_value)
           find_button('Update').click
           # doing a find to make sure capybara waits for scripts run

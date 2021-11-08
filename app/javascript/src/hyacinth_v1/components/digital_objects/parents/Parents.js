@@ -53,15 +53,16 @@ function Parents(props) {
           </Col>
           <Col sm={8}>
             <Form.Control
+              id="addParentInput"
               type="text"
-              name="parentUid"
+              name="addParent"
               value={parentId}
               onChange={(e) => setParentId(e.target.value)}
               placeholder="Enter Parent UID"
             />
           </Col>
           <Col sm={1}>
-            <Button variant="success" size="sm" onClick={handleSubmit}>
+            <Button variant="success" size="sm" onClick={handleSubmit} id="addParentButton">
               <FontAwesomeIcon icon="plus" />
             </Button>
           </Col>

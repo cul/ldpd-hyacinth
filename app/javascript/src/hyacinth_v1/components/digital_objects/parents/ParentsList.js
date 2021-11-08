@@ -24,7 +24,7 @@ const ParentsList = (props) => {
     <>
       {
         digitalObjects.map((digitalObject) => (
-          <Card key={digitalObject.id} className="mb-3">
+          <Card key={digitalObject.id} className="parent mb-3">
             <GraphQLErrors errors={removeParentError} />
             <Card.Header className="px-2 py-1">
               <Link
@@ -34,11 +34,17 @@ const ParentsList = (props) => {
               </Link>
               {(
                 digitalObjectAbility.can('update_objects', {
-                  primaryProject: digitalObject,
-                  otherProjects: digitalObject,
+                  primaryProject: digitalObject.primaryProject,
+                  otherProjects: digitalObject.otherProjects,
                 }))
               && (
-              <Button variant="danger" size="sm" className="float-end" onClick={() => onDelete(digitalObject.id)}>
+              <Button
+                id={`remove_parent_${digitalObject.id}`}
+                variant="danger"
+                size="sm"
+                className="float-end"
+                onClick={() => onDelete(digitalObject.id)}
+              >
                 Remove Parent
               </Button>
               )}
