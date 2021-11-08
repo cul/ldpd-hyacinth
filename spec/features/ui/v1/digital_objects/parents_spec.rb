@@ -30,7 +30,6 @@ RSpec.describe 'Digital Object Parents', type: :feature, js: true do
       let(:projects) { [item.primary_project, another_item.primary_project] }
       before do
         visit request_url
-        page.find_field('addParentInput').set ""
         fill_in("addParentInput", with: another_item.uid)
         find_button('addParentButton').click
       end
@@ -52,7 +51,6 @@ RSpec.describe 'Digital Object Parents', type: :feature, js: true do
       let(:permissions_required) { [:read_objects] }
       before do
         visit request_url
-        page.find_field('addParentInput').set ""
         fill_in("addParentInput", with: another_item.uid)
         find_button('addParentButton').click
       end
