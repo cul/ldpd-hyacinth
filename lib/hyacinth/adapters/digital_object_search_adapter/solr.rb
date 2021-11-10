@@ -49,7 +49,11 @@ module Hyacinth
 
         # Returns true if the given field_path is in use by records of type digital_object_type in
         # the specified project.
+        # @param [String] field_path
+        # @param [Project] project
+        # @param [String] digital_object_type
         def field_used_in_project?(field_path, project, digital_object_type)
+          raise ArgumentError, "field_path must be a String. Got: #{field_path.inspect}" unless field_path.is_a?(String)
           search do |solr_params|
             solr_params.fq('projects_ssim', project.string_key)
             solr_params.fq('digital_object_type_ssi', digital_object_type) if digital_object_type.present?

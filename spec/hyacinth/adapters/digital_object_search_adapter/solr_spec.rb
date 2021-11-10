@@ -79,39 +79,48 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr do
 
   context "#field_used_in_project?" do
     let(:project) { FactoryBot.create(:project) }
-    let(:dynamic_field) { FactoryBot.create(:dynamic_field) }
     let(:digital_object_type) { 'item' }
+    let(:dynamic_field) { FactoryBot.create(:dynamic_field) }
+    let(:dynamic_field_path) { dynamic_field.path }
 
-    let(:return_value) do
-      expect(adapter.solr).to receive(:get).with(
-        'select',
-        params: {
-          'facet.field': [],
-          'facet.mincount': 1,
-          fq: [
-            'state_ssi:(active)',
-            'projects_ssim:(great_project)',
-            'digital_object_type_ssi:(item)',
-            'df_name_term_present_bi:(true)'
-          ],
-          q: nil,
-          rows: 1,
-          start: 0
-        }
-      ).and_return('response' => { 'docs' => docs })
-      adapter.field_used_in_project?(dynamic_field.path, project, digital_object_type)
-    end
-    context "when the field is in use" do
-      # Note: doc content doesn't matter for this test
-      let(:docs) { [{ id: '12345' }] }
-      it 'returns true' do
-        expect(return_value).to eq(true)
+    context "with valid arguments" do
+      let(:return_value) do
+        expect(adapter.solr).to receive(:get).with(
+          'select',
+          params: {
+            'facet.field': [],
+            'facet.mincount': 1,
+            fq: [
+              'state_ssi:(active)',
+              'projects_ssim:(great_project)',
+              'digital_object_type_ssi:(item)',
+              'df_name_term_present_bi:(true)'
+            ],
+            q: nil,
+            rows: 1,
+            start: 0
+          }
+        ).and_return('response' => { 'docs' => docs })
+        adapter.field_used_in_project?(dynamic_field_path, project, digital_object_type)
+      end
+      context "when the field is in use" do
+        # Note: doc content doesn't matter for this test
+        let(:docs) { [{ id: '12345' }] }
+        it 'returns true' do
+          expect(return_value).to eq(true)
+        end
+      end
+      context "when the field is not in use" do
+        let(:docs) { [] }
+        it 'returns false' do
+          expect(return_value).to eq(false)
+        end
       end
     end
-    context "when the field is not in use" do
-      let(:docs) { [] }
-      it 'returns false' do
-        expect(return_value).to eq(false)
+    context "when an path array is provided instead of a path string" do
+      let(:dynamic_field_path) { ['this', 'is', 'an', 'array'] }
+      it "raises an exception" do
+        expect { adapter.field_used_in_project?(dynamic_field_path, project, digital_object_type) }.to raise_error(ArgumentError)
       end
     end
   end
