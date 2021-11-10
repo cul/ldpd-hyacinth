@@ -7,9 +7,9 @@ module Inputs
     argument :dynamic_field, Inputs::IdReference, required: true
     argument :field_sets, [Inputs::IdReference], required: true
     argument :required, Boolean, required: true
-    argument :locked, Boolean, required: false # TODO: Get rid of this field if it's not useful
-    argument :hidden, Boolean, required: false # TODO: Get rid of this field if it's not useful
-    argument :owner_only, Boolean, required: false # TODO: Get rid of this field if it's not useful
+    argument :locked, Boolean, required: false # TODO: HYACINTH-923 - Get rid of this field if it's not useful
+    argument :hidden, Boolean, required: false # TODO: HYACINTH-923 - Get rid of this field if it's not useful
+    argument :owner_only, Boolean, required: false # TODO: HYACINTH-923 - Get rid of this field if it's not useful
     argument :shareable, Boolean, required: true
 
     argument :default_value, String, required: false
