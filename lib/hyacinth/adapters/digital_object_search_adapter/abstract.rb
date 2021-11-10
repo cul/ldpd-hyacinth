@@ -30,6 +30,13 @@ module Hyacinth
           raise NotImplementedError
         end
 
+        # Returns true if the given field_path is in use by records in the specified project.
+        # You can also pass an option digital_object_type if you want to only check if the field
+        # is in use by objects of a certain type within the specified project.
+        def field_used_in_project?(field_path, project, digital_object_type = nil)
+          raise NotImplementedError
+        end
+
         # Returns the uids associated with the given identifier
         # @param identifier
         # @param opts

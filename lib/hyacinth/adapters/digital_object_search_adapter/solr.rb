@@ -18,7 +18,6 @@ module Hyacinth
         end
 
         def index(digital_object)
-          # TODO: index presence or absence of field values, even if the field itself isn't indexed for search
           solr.add(solr_document_for(digital_object))
         end
 
@@ -48,6 +47,46 @@ module Hyacinth
           solr.get(handler, params: params)
         end
 
+        # Returns true if the given field_path is in use by records of type digital_object_type in
+        # the specified project.
+        # @param [String] field_path
+        # @param [Project] project
+        # @param [String] digital_object_type
+        def field_used_in_project?(field_path, project, digital_object_type)
+          raise ArgumentError, "field_path must be a String. Got: #{field_path.inspect}" unless field_path.is_a?(String)
+          search do |solr_params|
+            solr_params.fq('projects_ssim', project.string_key)
+            solr_params.fq('digital_object_type_ssi', digital_object_type) if digital_object_type.present?
+            solr_params.fq(Hyacinth::DigitalObject::SolrKeys.for_dynamic_field_presence(field_path.split('/')), true)
+            solr_params.rows(1)
+          end['response']['docs'].length.positive?
+        end
+
+        # Returns the uids associated with the given identifier
+        # @param identifier
+        # @param opts
+        #        opts[:retry_with_delay] If no results are found, search again after the specified delay (in seconds).
+        def identifier_to_uids(identifier, opts = {})
+          2.times do
+            results = search do |params|
+              params.fq('identifier_ssim', identifier)
+            end
+
+            return results['response']['docs'].map { |doc| doc['id'] } if results['response']['numFound'].positive?
+            sleep opts[:retry_with_delay] if opts[:retry_with_delay].present?
+          end
+          []
+        end
+
+        # Deletes all records from the search index
+        def clear_index
+          solr.clear
+        end
+
+        # Generates a Solr::Params object for the given search_params.
+        # @param [Hash] search_params
+        # @return [Solr::Params]
+        # @!visibility private
         def solr_params_for(search_params)
           solr_parameters = ::Solr::Params.new
           # Only return active objects
@@ -70,6 +109,11 @@ module Hyacinth
 
         # Adds filter queries to the given solr_prameters based on projects where the
         # given user has read access.
+
+        # Generates a Solr::Params object for the given search_params.
+        # @param [Solr::Params] solr_parameters
+        # @param [User] user
+        # @!visibility private
         def apply_user_project_filters(solr_parameters, user)
           read_objects_access_project_string_keys = Project.accessible_by(Ability.new(user), :read_objects).map(&:string_key)
           if read_objects_access_project_string_keys.present?
@@ -80,27 +124,6 @@ module Hyacinth
             # so the value below will work.
             solr_parameters.fq('projects_ssim', '!nomatch!')
           end
-        end
-
-        # Returns the uids associated with the given identifier
-        # @param identifier
-        # @param opts
-        #        opts[:retry_with_delay] If no results are found, search again after the specified delay (in seconds).
-        def identifier_to_uids(identifier, opts = {})
-          2.times do
-            results = search do |params|
-              params.fq('identifier_ssim', identifier)
-            end
-
-            return results['response']['docs'].map { |doc| doc['id'] } if results['response']['numFound'].positive?
-            sleep opts[:retry_with_delay] if opts[:retry_with_delay].present?
-          end
-          []
-        end
-
-        # Deletes all records from the search index
-        def clear_index
-          solr.clear
         end
       end
     end

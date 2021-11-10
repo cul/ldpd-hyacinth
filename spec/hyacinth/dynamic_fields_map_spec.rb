@@ -43,7 +43,8 @@ describe Hyacinth::DynamicFieldsMap do
                 'is_keyword_searchable' => false,
                 'is_title_searchable' => false,
                 'select_options' => nil,
-                'type' => "DynamicField"
+                'type' => "DynamicField",
+                'path' => "copyright_status/copyright_statement"
               }
             }
           }
@@ -74,7 +75,8 @@ describe Hyacinth::DynamicFieldsMap do
                 'is_keyword_searchable' => false,
                 'is_title_searchable' => false,
                 'select_options' => nil,
-                'type' => "DynamicField"
+                'type' => "DynamicField",
+                'path' => "copyright_status/copyright_statement"
               }
             }
           },
@@ -96,7 +98,8 @@ describe Hyacinth::DynamicFieldsMap do
                     'is_keyword_searchable' => false,
                     'is_title_searchable' => false,
                     'select_options' => nil,
-                    'type' => "DynamicField"
+                    'type' => "DynamicField",
+                    'path' => "name/role/value"
                   }
                 }
               },
@@ -110,7 +113,8 @@ describe Hyacinth::DynamicFieldsMap do
                 'is_keyword_searchable' => false,
                 'is_title_searchable' => false,
                 'select_options' => nil,
-                'type' => "DynamicField"
+                'type' => "DynamicField",
+                'path' => "name/term"
               }
             }
           }
