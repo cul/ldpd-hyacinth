@@ -6,7 +6,7 @@ RSpec.describe 'Project Publish Targets Show', type: :feature, js: true do
   include_context 'with stubbed search adapters'
   let(:project) { FactoryBot.create(:project, :legend_of_lincoln, :with_publish_target) }
   let(:additional_publish_target) { FactoryBot.create(:publish_target) }
-  let(:permissons_required) { [] }
+  let(:permissions_required) { [] }
   let(:show_url) { "/ui/v1/projects/#{project.string_key}/publish_targets" }
   before do
     sign_in_project_contributor actions: permissions_required, projects: project

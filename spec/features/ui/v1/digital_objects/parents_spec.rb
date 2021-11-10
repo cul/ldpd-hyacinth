@@ -8,7 +8,7 @@ RSpec.describe 'Digital Object Parents', type: :feature, js: true do
   let(:another_item) { FactoryBot.create(:item, :with_ascii_title) }
   let(:asset) { FactoryBot.create(:asset, :with_main_resource, :with_ascii_title, parents_to_add: [item]) }
   let(:projects) { item.primary_project }
-  let(:permissons_required) { [] }
+  let(:permissions_required) { [] }
   let(:request_url) { "/ui/v1/digital_objects/#{asset.uid}/parents" }
 
   before { sign_in_project_contributor actions: permissions_required, projects: projects }

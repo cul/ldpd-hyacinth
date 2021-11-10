@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe 'Digital Object Show', solr: true, type: :feature, js: true do
   let(:uid) { SecureRandom.uuid }
   let(:item) { FactoryBot.create(:item, uid: uid) }
-  let(:permissons_required) { [] }
+  let(:permissions_required) { [] }
   before { sign_in_project_contributor actions: permissions_required, projects: item.primary_project }
 
   describe 'GET /ui/v1/digital_objects/:uid' do
