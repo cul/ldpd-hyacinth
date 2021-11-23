@@ -7,8 +7,11 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
   let(:location_uri) { "fedora3://" + object_pid }
   let(:pid_generator) { instance_double(PidGenerator) }
   let(:resource_dsid_overrides) { { 'master' => 'content', 'main' => 'content' } }
-  let(:rubydora_config) { Rails.application.config_for(:fedora) }
-  let(:adapter_args) { rubydora_config.merge(pid_generator: pid_generator, resource_dsid_overrides: resource_dsid_overrides) }
+  let(:adapter_args) do
+    Rails.application.config_for(:hyacinth)[:preservation_persistence][:adapters].find { |adapter| adapter[:type] == 'Fedora3' }.merge(
+      pid_generator: pid_generator, resource_dsid_overrides: resource_dsid_overrides
+    )
+  end
 
   let(:adapter) do
     described_class.new(adapter_args)
@@ -16,7 +19,9 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
   let(:dc_xml_src) { file_fixture("fedora3/update-dc.xml").read }
 
   before :all do
-    Rubydora.repository = Rubydora.connect(Rails.application.config_for(:fedora))
+    Rubydora.repository = Rubydora.connect(
+      Rails.application.config_for(:hyacinth)[:preservation_persistence][:adapters].find { |adapter| adapter[:type] == 'Fedora3' }
+    )
   end
 
   before do

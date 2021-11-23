@@ -69,6 +69,7 @@ development:
         url: http://localhost:8080/fedora
         user: fedoraAdmin
         password: fedoraAdmin
+        time_zone: America/New_York
         resource_dsid_overrides:
           master: 'content'
           main: 'content'
@@ -131,9 +132,10 @@ test:
   preservation_persistence:
     adapters:
       - type: Fedora3
-        url: http://localhost:9080/fedora
+        url: http://localhost:9090/fedora
         user: fedoraAdmin
         password: fedoraAdmin
+        time_zone: America/New_York
         resource_dsid_overrides:
           master: 'content'
           main: 'content'

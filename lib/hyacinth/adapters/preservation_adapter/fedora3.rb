@@ -4,7 +4,7 @@ module Hyacinth
   module Adapters
     module PreservationAdapter
       class Fedora3 < Abstract
-        REQUIRED_CONFIG_OPTS = [:url, :user, :password].freeze
+        REQUIRED_CONFIG_OPTS = [:url, :user, :password, :time_zone].freeze
         OPTIONAL_CONFIG_OPTS = [:pid_generator, :resource_dsid_overrides].freeze
         HYACINTH_CORE_DATASTREAM_NAME = 'hyacinth_data'
 
@@ -62,7 +62,7 @@ module Hyacinth
 
         # @return [Rubydora::Repository] Fedora connection configured from adapter attributes
         def connection
-          @connection ||= Rubydora.connect url: @url, user: @user, password: @password
+          @connection ||= Rubydora.connect url: @url, user: @user, password: @password, time_zone: @time_zone
         end
 
         def pid_generator
