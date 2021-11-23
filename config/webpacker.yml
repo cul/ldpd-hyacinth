@@ -99,5 +99,8 @@ production: &production
 hyacinth_3_dev:
   <<: *production
 
+hyacinth_3_test:
+  <<: *production
+
 hyacinth_3_prod:
   <<: *production
