@@ -93,9 +93,8 @@ module Hyacinth
       def validate_resource_attribute_config(resource_attribute_name, config)
         preservable_config = config[:preservable]
         return unless preservable.present?
-        unless preservable_config[:as] == :copy || preservable_config[:as] == :reference
-          raise "Cannot define #{resource_attribute_name}: preservable resources must be :copy or :reference (got #{preservable_config[:as]})"
-        end
+        valid_preservable_as = (preservable_config[:as] == :copy || preservable_config[:as] == :reference)
+        raise "Cannot define #{resource_attribute_name}: preservable resources must be :copy or :reference (got #{preservable_config[:as]})" unless valid_preservable_as
         versionable = preservable_config[:versionable]
         raise "Cannot define #{resource_attribute_name}: preservable resources may only have true/false values for versionable (got #{versionable})" unless nil_or_boolean?(versionable)
         verify_checksum = preservable_config[:verify_checksum]
