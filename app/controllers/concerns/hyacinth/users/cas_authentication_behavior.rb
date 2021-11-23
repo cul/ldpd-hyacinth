@@ -51,26 +51,22 @@ module Hyacinth
 
         def identify_uni_user(user_uni, cas_logout_uri)
           if user_uni.present?
-            possible_user = User.where(email: (user_uni + '@columbia.edu')).first
+            user_email = "#{user_uni}@columbia.edu"
+            possible_user = User.find_by(email: user_email)
 
             if possible_user.present? && possible_user.is_active
               bypass_sign_in possible_user
               cookies[:signed_in_using_uni] = true # Use this cookie to know when to do a CAS logout upon Devise logout
-              flash[:notice] = 'You are now logged in.'
+              flash[:notice] = I18n.t('devise.sessions.signed_in')
 
               redirect_to root_path, status: 302
             else
-              if possible_user.present? && !possible_user.is_active
-                flash[:alert] = I18n.t 'devise.failure.inactive'
-              else
-                flash[:alert] = 'The UNI ' + user_uni + ' is not authorized to log into Hyacinth (no account exists with email ' + user_uni + '@columbia.edu).  If you believe that you should have access, please contact an application administrator.'
-              end
-
+              flash[:alert] = possible_user.present? ? I18n.t('devise.failure.inactive') : I18n.t('devise.failure.unauthorized', uid: user_uni, email: user_email)
               # Log out user
               redirect_to(cas_logout_uri + '?service=' + URI.encode_www_form_component(root_url))
             end
           else
-            render inline: 'CAS Authentication failed, Please try again later.'
+            render inline: I18n.t('devise.failure.provider', provider: 'CAS')
           end
         end
     end
