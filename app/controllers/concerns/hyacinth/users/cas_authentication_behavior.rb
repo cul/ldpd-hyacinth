@@ -61,7 +61,7 @@ module Hyacinth
 
               redirect_to root_path, status: 302
             else
-              flash[:alert] = possible_user.present? ? I18n.t('devise.failure.inactive') : I18n.t('devise.failure.unauthorized', uid: user_uni, email: user_email)
+              flash[:alert] = possible_user.present? ? I18n.t('devise.failure.inactive') : I18n.t('devise.failure.unauthorized', uni: user_uni, email: user_email)
               # Log out user
               redirect_to(cas_logout_uri + '?service=' + URI.encode_www_form_component(root_url))
             end
