@@ -36,6 +36,7 @@
     "immer": "^9",
     "lodash": "^4.17.13",
     "moment": "^2.24.0",
+    "pretty-bytes": "^5.6.0",
     "prop-types": "^15.7.2",
     "query-string": "^6.5.0",
     "react": "^16.8.1",
