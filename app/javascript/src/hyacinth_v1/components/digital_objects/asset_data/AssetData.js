@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useMutation, useQuery } from '@apollo/react-hooks';
 import { Button, Card } from 'react-bootstrap';
 
+import prettyBytes from 'pretty-bytes';
 import DigitalObjectInterface from '../DigitalObjectInterface';
 import TabHeading from '../../shared/tabs/TabHeading';
 import { getAssetDataDigitalObjectQuery, deleteResourceMutation } from '../../../graphql/digitalObjects';
@@ -80,7 +81,12 @@ function AssetData(props) {
                 <dd className="col-lg-9">{resource.mediaType}</dd>
 
                 <dt className="col-lg-3">File Size</dt>
-                <dd className="col-lg-9">{(resource.fileSize || resource.fileSize === 0) ? resource.fileSize : 'unavailable'}</dd>
+                <dd className="col-lg-9">
+                  {
+                    (resource.fileSize || resource.fileSize === 0)
+                      ? `${prettyBytes(resource.fileSize)} (${resource.fileSize} bytes)` : 'unavailable'
+                  }
+                </dd>
 
                 {uiDeletable && (
                   <>
