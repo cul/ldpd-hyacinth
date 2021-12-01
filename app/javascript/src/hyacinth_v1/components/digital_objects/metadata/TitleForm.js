@@ -16,7 +16,7 @@ const TitleForm = (props) => {
     if (initialState.valueLang) delete initialState.valueLang.__typename;
   }
 
-  const [title, setTitle] = useState(initialState);
+  const [title, setTitle] = useState(initialState || {});
 
   const onChangeWrapper = (index, newValue) => {
     const nextValue = produce(title, (draft) => {
@@ -72,7 +72,7 @@ const TitleForm = (props) => {
       <h4 className="text-orange">Title</h4>
       <FieldGroup
         key={`title_${valueGroup.stringKey}`}
-        value={title.value}
+        value={title.value || {}}
         index={0}
         defaultValue={{}}
         dynamicFieldGroup={valueGroup}
