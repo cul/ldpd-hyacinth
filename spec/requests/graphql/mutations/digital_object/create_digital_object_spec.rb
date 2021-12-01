@@ -139,6 +139,31 @@ RSpec.describe Mutations::DigitalObject::CreateDigitalObject, type: :request do
         end
       end
 
+      context 'when optional fields are not present' do
+        let(:variables) do
+          {
+            input: {
+              digitalObjectType: 'ITEM',
+              project: {
+                stringKey: project.string_key
+              },
+              descriptiveMetadata: {
+                alternative_title: [{
+                  value: "Ain't That America?"
+                }]
+              }
+            }
+          }
+        end
+
+        it 'runs without any errors' do
+          json_response = JSON.parse(response.body)
+          digital_object_id = json_response.dig('data', 'createDigitalObject', 'digitalObject', 'id')
+          expect(digital_object_id).not_to be_nil
+          expect(DigitalObject.find_by_uid!(digital_object_id).descriptive_metadata).to include expected_descriptive_metadata
+        end
+      end
+
       context "when user errors are present" do
         let(:variables) do
           {
