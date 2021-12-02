@@ -43,16 +43,14 @@ const DigitalObjectSearch = () => {
   const [queryParams] = useQueryParams(queryParamsConfig);
   const searchParams = decodedQueryParamstoSearchParams({ ...queryParams });
   const {
-    loading, error, data,
-  } = useQuery(
-    getDigitalObjectsQuery, {
-      variables: searchParamsToVariables(searchParams),
-      onCompleted: () => {
-        // sessionStorage is used to retrieve last search in other components
-        encodeSessionSearchParams(searchParams);
-      },
+    loading, error, data, refetch,
+  } = useQuery(getDigitalObjectsQuery, {
+    variables: searchParamsToVariables(searchParams),
+    onCompleted: () => {
+      // sessionStorage is used to retrieve last search in other components
+      encodeSessionSearchParams(searchParams);
     },
-  );
+  });
 
   const history = useHistory();
 
@@ -63,8 +61,16 @@ const DigitalObjectSearch = () => {
 
   const updateSearch = (update) => {
     const newLocationQuery = searchParamsToLocationSearch({ ...searchParams, ...update });
-    // push to history directly to listen for changes
-    history.push(`/digital_objects?${newLocationQuery}`);
+    const newUrl = `/digital_objects?${newLocationQuery}`;
+    const currentUrl = `${history.location.pathname}${history.location.search}`;
+    if (newUrl === currentUrl) {
+      // Need to use refetch because history.push(...) doesn't trigger a
+      // react-router re-render when the url doesn't change.
+      refetch();
+    } else {
+      // push to history directly because we listen for changes elsewhere
+      history.push(`/digital_objects?${newLocationQuery}`);
+    }
   };
 
   const {
