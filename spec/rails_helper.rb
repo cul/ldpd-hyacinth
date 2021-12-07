@@ -19,6 +19,7 @@ require 'capybara/rails'
 Capybara.javascript_driver = :selenium_chrome_headless
 Capybara.default_max_wait_time = 5 # Some ajax requests might take longer than the default wait time of 2 seconds.
 Capybara.enable_aria_label = true
+Capybara.default_set_options = { clear: :backspace } # This is a better way to clear fields for React apps
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
