@@ -13,7 +13,7 @@ const FacetSidebar = (props) => {
   );
 
   return (
-    <>
+    <div id="facet-sidebar">
       <h4>Refine Your Search</h4>
       {
         facets.map((facet) => (
@@ -25,7 +25,7 @@ const FacetSidebar = (props) => {
           />
         ))
       }
-    </>
+    </div>
   );
 };
 

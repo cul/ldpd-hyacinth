@@ -26,7 +26,7 @@ import ProtectedRoute from './components/shared/routes/ProtectedRoute';
 
 const Index = () => (
   <div>
-    { /* TODO: If not logged in, redirect to login screen */ }
+    { /* TODO: If not logged in, redirect to login screen */}
     <Redirect to="/digital_objects" />
   </div>
 );
@@ -72,7 +72,7 @@ function MainContent() {
             component={SystemInformation}
           />
 
-          { /* When none of the above match, <PageNotFound> will be rendered */ }
+          { /* When none of the above match, <PageNotFound> will be rendered */}
           <Route path="/404" component={PageNotFound} />
           <Route component={PageNotFound} />
         </Switch>
