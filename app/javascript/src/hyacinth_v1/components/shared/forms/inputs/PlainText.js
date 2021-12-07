@@ -7,7 +7,7 @@ class PlainText extends React.PureComponent {
     const { value, inputName } = this.props;
 
     return (
-      <Col sm={8} style={{ alignSelf: 'center', whiteSpace: 'pre-line' }}>
+      <Col sm={8} style={{ alignSelf: 'center' }}>
         <Form.Control
           plaintext
           readOnly
