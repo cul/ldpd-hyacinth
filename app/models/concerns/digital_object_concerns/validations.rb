@@ -7,6 +7,8 @@ module DigitalObjectConcerns::Validations
     validates :uid, :metadata_location_uri, :optimistic_lock_token, :type, presence: true, if: :persisted?
 
     validates :uid, presence: true, if: :persisted?
+    validates :uid, format: /\A[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\z/, if: ->(object) { object.uid.present? }
+
     validates :primary_project, presence: true
     validates :state, presence: true
 
