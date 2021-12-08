@@ -5,6 +5,7 @@ FactoryBot.define do
     index { 34 }
     digital_object_data do
       {
+        'assign_uid' => '2f4e2917-26f5-4d8f-968c-a4015b10e50f',
         'digital_object_type' => 'item',
         'descriptive_metadata' => {
           'abstract' => [{ 'value' => 'some abstract' }]
@@ -25,6 +26,7 @@ FactoryBot.define do
     trait(:asset) do
       digital_object_data do
         {
+          'assign_uid' => '2f4e2917-26f5-4d8f-968c-a4015b10e50f',
           'digital_object_type' => 'asset',
           'descriptive_metadata' => {
           },
