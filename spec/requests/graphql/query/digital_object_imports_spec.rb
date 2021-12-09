@@ -41,7 +41,7 @@ RSpec.describe 'Retrieving Digital Object Imports', type: :request do
                     "status": "PENDING"
                   },
                   {
-                    "digitalObjectData": "{\\"digital_object_type\\":\\"item\\",\\"descriptive_metadata\\":{\\"abstract\\":[{\\"value\\":\\"some abstract\\"}]},\\"primary_project\\":{\\"string_key\\":\\"great_project\\"},\\"title\\":{\\"value\\":{\\"sort_portion\\":\\"The\\",\\"non_sort_portion\\":\\"Cool Item\\"}}}",
+                    "digitalObjectData": "{\\"assign_uid\\":\\"2f4e2917-26f5-4d8f-968c-a4015b10e50f\\",\\"digital_object_type\\":\\"item\\",\\"descriptive_metadata\\":{\\"abstract\\":[{\\"value\\":\\"some abstract\\"}]},\\"primary_project\\":{\\"string_key\\":\\"great_project\\"},\\"title\\":{\\"value\\":{\\"sort_portion\\":\\"The\\",\\"non_sort_portion\\":\\"Cool Item\\"}}}",
                     "importErrors": [],
                     "index": 34,
                     "status": "PENDING"

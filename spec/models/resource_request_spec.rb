@@ -22,7 +22,7 @@ RSpec.describe ResourceRequest, type: :model do
       end
       context 'with a digital object' do
         include_context 'with stubbed search adapters'
-        let(:digital_object) { FactoryBot.create(:asset, :with_main_resource, uid: 'abc-123') }
+        let(:digital_object) { FactoryBot.create(:asset, :with_main_resource, uid: '3f5e6977-26f5-4d8f-968c-a4015b10e50f') }
         let(:instance) { FactoryBot.build(:resource_request, digital_object: digital_object) }
         it 'builds a digital_object association' do
           expect(instance.save).to be true
