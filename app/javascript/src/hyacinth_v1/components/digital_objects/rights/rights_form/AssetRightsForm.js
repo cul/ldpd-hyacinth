@@ -13,6 +13,7 @@ import GraphQLErrors from '../../../shared/GraphQLErrors';
 import { removeTypename, removeEmptyKeys } from '../../../../utils/deepKeyRemove';
 import { defaultFieldValues } from '../../common/defaultFieldValues';
 import FieldGroupArray from './fields/FieldGroupArray';
+import UserErrorsList from '../../../shared/UserErrorsList';
 
 function AssetRightsForm(props) {
   const {
@@ -57,7 +58,7 @@ function AssetRightsForm(props) {
   return (
     <Form className="mb-3">
       <GraphQLErrors errors={updateError} />
-      <ErrorList errors={userErrors.map((userError) => (`${userError.message} (path=${userError.path.join('/')})`))} />
+      <UserErrorsList userErrors={userErrors} />
 
       <FieldGroupArray
         value={rights.asset_access_restriction}

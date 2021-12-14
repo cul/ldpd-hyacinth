@@ -26,6 +26,7 @@ import { deepCamelCase } from '../../../../utils/keyTransformer';
 import { defaultFieldValues, mergeDefaultValues } from '../../common/defaultFieldValues';
 import { useEnabled, useHash } from './rightsHooks';
 import FieldGroupArray from './fields/FieldGroupArray';
+import UserErrorsList from '../../../shared/UserErrorsList';
 
 function ItemRightsForm(props) {
   const {
@@ -110,7 +111,7 @@ function ItemRightsForm(props) {
   return (
     <Form key={id} className="digital-object-interface">
       <GraphQLErrors errors={updateError} />
-      <ErrorList errors={userErrors.map((userError) => (`${userError.message} (path=${userError.path.join('/')})`))} />
+      <UserErrorsList userErrors={userErrors} />
 
       <DescriptiveMetadata
         descriptiveMetadata={deepCamelCase(descriptiveMetadata)}

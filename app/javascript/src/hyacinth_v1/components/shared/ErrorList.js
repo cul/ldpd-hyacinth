@@ -11,6 +11,7 @@ function ErrorList({ errors }) {
       <ul>
         {
           errors.map((error, eIndex) => (
+            // eslint-disable-next-line react/no-array-index-key
             <li key={eIndex}>{error}</li>
           ))
         }
