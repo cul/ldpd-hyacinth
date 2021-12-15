@@ -431,7 +431,8 @@ RSpec.describe DigitalObject::Base, :type => :model do
       end
 
       it "mints id before saving" do
-        expect(item).to receive(:mint_and_store_doi).with("reserved")
+        # expect(item).to receive(:mint_and_store_doi).with("reserved")
+        expect(item).to receive(:mint_and_store_doi).with("draft")
         item.save
       end
 
