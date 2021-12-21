@@ -36,9 +36,6 @@ function PreservePublish(props) {
   if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
   const { digitalObject } = digitalObjectData;
 
-  const canUpdateObject = digitalObjectAbility.can(
-    'update_objects', { primaryProject: digitalObject.primaryProject, otherProjects: digitalObject.otherProjects },
-  );
   const canPublishObject = digitalObjectAbility.can(
     'publish_objects', { primaryProject: digitalObject.primaryProject, otherProjects: digitalObject.otherProjects },
   );
@@ -93,7 +90,7 @@ function PreservePublish(props) {
     <>
       <div className="text-right mb-3">
         {
-          canUpdateObject && canPublishObject
+          canPublishObject
             ? (
               <Form>
                 <PublishTargetSelector
@@ -105,7 +102,7 @@ function PreservePublish(props) {
                   onChange={(selections) => { setPublishOperationSelections(selections); }}
                 />
                 <div className="d-flex align-items-center">
-                  <span className="ms-auto text-muted">
+                  <span className="last-published ms-auto text-muted">
                     {
                       lastPublishedAt
                         ? (
@@ -127,7 +124,7 @@ function PreservePublish(props) {
                   />
                 </div>
                 <div className="d-flex align-items-center pt-1">
-                  <span className="ms-auto text-muted">
+                  <span className="last-preserved ms-auto text-muted">
                     {
                       digitalObject.preservedAt
                         ? (

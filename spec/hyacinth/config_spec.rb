@@ -41,7 +41,7 @@ describe Hyacinth::Config do
 
   context ".publication_adapter" do
     it "returns an object of the expected type" do
-      expect(described_class.publication_adapter).to be_a(Hyacinth::Adapters::PublicationAdapter::Hyacinth2)
+      expect(described_class.publication_adapter).to be_a(Hyacinth::Adapters::PublicationAdapter::Development)
     end
   end
 

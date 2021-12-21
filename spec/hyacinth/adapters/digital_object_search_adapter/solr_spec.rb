@@ -60,12 +60,10 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr do
 
   context "#solr_document_for" do
     let(:authorized_object) { FactoryBot.build(:digital_object_test_subclass, :with_sample_data) }
-    let(:publication_adapter) { Hyacinth::Adapters::PublicationAdapter::Abstract.new }
     let!(:external_identifier_adapter) { Hyacinth::Adapters::ExternalIdentifierAdapter::Memory.new }
 
     before do
       authorized_object.send :uid=, 'dummy-uid'
-      allow(Hyacinth::Config).to receive(:publication_adapter).and_return(publication_adapter)
       allow(Hyacinth::Config).to receive(:external_identifier_adapter).and_return(external_identifier_adapter)
     end
 

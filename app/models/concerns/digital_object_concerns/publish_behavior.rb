@@ -16,10 +16,17 @@ module DigitalObjectConcerns
     end
 
     def perform_publish_changes(publish_to: [], unpublish_from: [], publishing_user: nil)
+      raise ArgumentError, 'publish_to values must be of type PublishTarget' if publish_to.find { |publish_target| !publish_target.is_a?(PublishTarget) }
+      raise ArgumentError, 'unpublish_from values must be of type PublishTarget' if unpublish_from.find { |publish_target| !publish_target.is_a?(PublishTarget) }
+
+      # No one should be publishing an object that already has errors
+      return false if self.errors.present?
+
       # No one should be publishing an object that has not been preserved
-      raise Hyacinth::Exceptions::InvalidPublishConditions, 'Cannot publish a DigitalObject that has not been preserved' unless self.preserved_at.present?
-      # No one should be publishing an object that has errors
-      raise Hyacinth::Exceptions::InvalidPublishConditions, 'Cannot publish a DigitalObject that has errors' if self.errors.present?
+      unless self.preserved_at.present?
+        self.errors.add(:publish, 'Cannot publish a DigitalObject that has not been preserved')
+        return false
+      end
 
       return true if publish_to.blank? && unpublish_from.blank?
 
@@ -81,7 +88,10 @@ module DigitalObjectConcerns
             # Remove entries associated with successfull unpublishes AND successful publishes.
             # For successful publishes that need time/user updates, it's easier to do a mass deletion
             # than to find and update specific ones.
-            self.publish_entries.destroy_by(publish_target: successful_publish_targets + successful_unpublish_targets)
+            successful_additons_and_removals = successful_publish_targets + successful_unpublish_targets
+            self.publish_entries.destroy(
+              self.publish_entries.to_a.select { |publish_entry| successful_additons_and_removals.include?(publish_entry.publish_target) }
+            )
 
             # Clear out the citation_location value for any new entry that isn't the highest priority one
             new_publish_entries.map do |publish_entry|

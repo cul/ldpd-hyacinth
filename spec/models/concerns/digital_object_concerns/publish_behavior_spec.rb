@@ -11,25 +11,32 @@ RSpec.describe DigitalObjectConcerns::PublishBehavior do
     let(:doi) { '10.abcd/4569' }
     let(:target_url) { "http://example.org/objects/#{object.uid}" }
     let(:publish_entry) { PublishEntry.new(publish_target: publish_target, citation_location: target_url) }
-    let(:publish_promise) do
-      Concurrent::Promise.new { publish_entry }.execute
-    end
-    context 'to a publish target that is an allowed DOI target' do
-      before do
-        # pretend we were preserved 10 seconds ago
-        object.preserved_at = DateTime.new.getlocal - 10
-      end
-      it "calls #update on external identifier adapter" do
-        expect(object).to receive(:async_publish).and_return(publish_promise)
-        expect(Hyacinth::Config.external_identifier_adapter).to receive(:update).with(doi, digital_object: object, target_url: target_url, publish: true)
+    let(:publish_promise) { Concurrent::Promise.new { publish_entry }.execute }
+
+    context "when an object has already been preserved" do
+      before { object.preserve }
+
+      it 'correctly modifies the publish_entries list after a publish or unpublish' do
         object.perform_publish_changes(publish_to: [publish_target])
+        expect(object.publish_entries.map(&:publish_target)).to eq([publish_target])
+        object.perform_publish_changes(unpublish_from: [publish_target])
+        expect(object.publish_entries.map(&:publish_target)).to eq([])
+      end
+
+      context 'when publishing to a publish target that is an allowed DOI target' do
+        it "calls #update on external identifier adapter" do
+          expect(object).to receive(:async_publish).and_return(publish_promise)
+          expect(Hyacinth::Config.external_identifier_adapter).to receive(:update).with(doi, digital_object: object, target_url: target_url, publish: true)
+          object.perform_publish_changes(publish_to: [publish_target])
+        end
       end
     end
     context 'when an object has not been preserved' do
-      it "raises an exception without starting async processes" do
+      it "returns false, sets the expected error on the object, and does not run any async publish operations" do
         expect(object).not_to receive(:async_publish)
         expect(Hyacinth::Config.external_identifier_adapter).not_to receive(:update).with(doi, digital_object: object, target_url: target_url, publish: true)
-        expect { object.perform_publish_changes(publish_to: [publish_target]) }.to raise_error(Hyacinth::Exceptions::InvalidPublishConditions)
+        expect(object.perform_publish_changes(publish_to: [publish_target])).to eq(false)
+        expect(object.errors.messages).to eq(publish: ['Cannot publish a DigitalObject that has not been preserved'])
       end
     end
   end

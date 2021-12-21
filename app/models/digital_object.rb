@@ -21,7 +21,7 @@ class DigitalObject < ApplicationRecord
   after_find :load_fields_from_metadata_storage
   after_reload :load_fields_from_metadata_storage
 
-  has_many :publish_entries
+  has_many :publish_entries, dependent: :destroy
   has_many :publish_targets, through: :publish_entries
   has_many :resource_requests, foreign_key: :digital_object_uid, primary_key: :uid, dependent: :destroy
   belongs_to :created_by, required: false, class_name: 'User'

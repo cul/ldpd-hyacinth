@@ -90,8 +90,7 @@ const PublishTargetSelector = ({
                             Last Published:
                             <br />
                             <ReadableDate isoDate={correspondingPublishEntry.publishedAt} />
-                            {' by '}
-                            {correspondingPublishEntry.publishedBy.fullName}
+                            {correspondingPublishEntry.publishedBy ? ` by ${correspondingPublishEntry.publishedBy.fullName}` : ''}
                           </Tooltip>
                         )}
                       >

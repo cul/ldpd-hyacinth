@@ -7,8 +7,8 @@ module Mutations
       argument :publish_to, [String], required: false
       argument :unpublish_from, [String], required: false
 
-      field :digital_object, Types::DigitalObjectInterface, null: false
-      field :user_errors, [Types::Errors::FieldedInput], null: false
+      field :digital_object, Types::DigitalObjectInterface, null: true
+      field :user_errors, [Types::Errors::FieldedInput], null: true
 
       def resolve(id:, publish_to: [], unpublish_from: [])
         digital_object = ::DigitalObject.find_by_uid!(id)
@@ -19,8 +19,8 @@ module Mutations
           { digital_object: digital_object, user_errors: [] }
         else
           {
-            digital_object: digital_object,
-            user_errors: digital_object.errors.full_messages.map { |msg| { message: msg, path: [] } }
+            digital_object: nil,
+            user_errors: digital_object.errors.map { |error| { path: [error.attribute], message: error.message } }
           }
         end
       end
