@@ -42,8 +42,8 @@ RSpec.describe 'Digital Object Show', solr: true, type: :feature, js: true do
           it 'shows labelled field values' do
             card_header = page.find('.card-header', exact_text: 'Alternative Title')
             within(card_header.sibling('.card-body')) do
-              expect(page).to have_field('Value', readonly: true, with: "Other Title")
-              expect(page).to have_field('Value Language', readonly: true, with: "en")
+              expect(page).to have_css('[data-dynamic-field-string-key="value"] .field-value', exact_text: 'Other Title')
+              expect(page).to have_css('[data-dynamic-field-string-key="value_lang"] .field-value', exact_text: 'en')
             end
           end
         end

@@ -6,11 +6,13 @@ import TextInput from '../../shared/forms/inputs/TextInput';
 import SelectInput from '../../shared/forms/inputs/SelectInput';
 
 import SearchButton from '../../shared/buttons/SearchButton';
+import RemoveButton from '../../shared/buttons/RemoveButton';
 
 const searchTypes = ['KEYWORD', 'TITLE', 'IDENTIFIER'];
 
-function QueryForm(props) {
-  const { searchTerms, searchType, onQueryChange } = props;
+function QueryForm({
+  searchTerms, searchType, onQueryChange, clearSearch,
+}) {
   const [queryType, setQueryType] = useState(searchType);
   const [queryValue, setQueryValue] = useState(searchTerms);
 
@@ -50,7 +52,8 @@ function QueryForm(props) {
           onChange={valueChangeHandler}
           inputName="queryValue"
         />
-        <Col xs="auto"><SearchButton id="digital-object-search-submit" aria-label="Submit Search" onClick={submitHandler} /></Col>
+        <Col xs="auto"><RemoveButton aria-label="Clear Search" onClick={clearSearch} /></Col>
+        <Col xs="auto"><SearchButton aria-label="Submit Search" onClick={submitHandler} /></Col>
       </Form.Group>
     </Form>
   );
@@ -65,6 +68,7 @@ QueryForm.propTypes = {
   searchTerms: PropTypes.string,
   searchType: PropTypes.string,
   onQueryChange: PropTypes.func.isRequired,
+  clearSearch: PropTypes.func.isRequired,
 };
 
 export default QueryForm;

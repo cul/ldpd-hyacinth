@@ -43,7 +43,6 @@ RSpec.describe 'Digital Object Edit', solr: true, type: :feature, js: true do
           page.find('.card-header', exact_text: 'Alternative Title')
           card_header = page.find('.card-header', exact_text: 'Alternative Title')
           within(card_header.sibling('.card-body')) do
-            # Selenium appears to be appending to current value with fill_in, so setting to blank first
             page.find_field('Value').set updated_field_value
             page.find_field('Value Language').set updated_field_lang
           end
@@ -56,8 +55,8 @@ RSpec.describe 'Digital Object Edit', solr: true, type: :feature, js: true do
           card_header = page.find('.card-header', exact_text: 'Alternative Title')
           expect(page).to have_current_path(show_path)
           within(card_header.sibling('.card-body')) do
-            expect(page).to have_field('Value', readonly: true, with: updated_field_value)
-            expect(page).to have_field('Value Language', readonly: true, with: updated_field_lang)
+            expect(page).to have_css('[data-dynamic-field-string-key="value"] .field-value', exact_text: updated_field_value)
+            expect(page).to have_css('[data-dynamic-field-string-key="value_lang"] .field-value', exact_text: updated_field_lang)
           end
         end
       end

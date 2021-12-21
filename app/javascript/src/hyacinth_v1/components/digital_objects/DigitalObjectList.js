@@ -20,7 +20,7 @@ const DigitalObjectList = (props) => {
     <>
       {
         digitalObjects.map((digitalObject, resultIndex) => (
-          <Card key={digitalObject.id} className="mb-3">
+          <Card key={digitalObject.id} className="mb-3 digital-object-result">
             <Card.Header className="px-2 py-1">
               <Link
                 to={`/digital_objects/${digitalObject.id}`}
@@ -47,7 +47,7 @@ const DigitalObjectList = (props) => {
                   displayParentIds && digitalObject.parentIds.length > 0 && (
                     <li>
                       <strong>Parent(s): </strong>
-                      { digitalObject.parentIds.map((id) => <a key={id} href={`digital_objects/${id}`}>{id}</a>) }
+                      {digitalObject.parentIds.map((id) => <a key={id} href={`digital_objects/${id}`}>{id}</a>)}
                     </li>
                   )
                 }

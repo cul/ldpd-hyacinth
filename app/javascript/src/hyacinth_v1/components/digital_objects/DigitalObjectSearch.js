@@ -35,37 +35,48 @@ const searchParamsToVariables = (searchParams) => {
   };
 };
 
-// NOTE: We are using the use-query-params library to automatically parse
-// query params into initial search params. The component pushes changes to
-// history (thus making the back button work), and re-renders
-// are via refetch in a history listener.
 const DigitalObjectSearch = () => {
   const [queryParams] = useQueryParams(queryParamsConfig);
   const searchParams = decodedQueryParamstoSearchParams({ ...queryParams });
-  const {
-    loading, error, data,
-  } = useQuery(
-    getDigitalObjectsQuery, {
-      variables: searchParamsToVariables(searchParams),
-      onCompleted: () => {
-        // sessionStorage is used to retrieve last search in other components
-        encodeSessionSearchParams(searchParams);
-      },
-    },
-  );
-
   const history = useHistory();
+  const baseSearchPath = history.location.pathname;
 
-  if (loading) return (<div />);
+  const {
+    loading, error, data, refetch,
+  } = useQuery(getDigitalObjectsQuery, {
+    variables: searchParamsToVariables(searchParams),
+    onCompleted: () => {
+      // Store latest searchParams in session storage so that param data can be used by other components
+      encodeSessionSearchParams(searchParams);
+    },
+  });
+
+  const updateSearch = (update) => {
+    const previousLocationQuery = searchParamsToLocationSearch(searchParams);
+    const previousUrl = `${history.location.pathname}${history.location.search}`;
+    const newLocationQuery = searchParamsToLocationSearch({ ...searchParams, ...update });
+    const newUrl = `${baseSearchPath}?${newLocationQuery}`;
+
+    if (previousLocationQuery === newLocationQuery) {
+      // Need to refetch manually because a search update request with the same query parameters
+      // won't automatically trigger a refresh of the results.
+      refetch();
+    }
+
+    if (previousUrl !== newUrl) {
+      // Only push a new URL onto the history so we avoid adding duplicate history items
+      history.push(`${baseSearchPath}?${newLocationQuery}`);
+    }
+  };
+
+  const clearSearch = () => {
+    history.push(baseSearchPath);
+  };
+
+  if (!data || loading) return (<div />);
   if (error) return (<GraphQLErrors errors={error} />);
 
   const { digitalObjects: { nodes, facets, totalCount } } = data;
-
-  const updateSearch = (update) => {
-    const newLocationQuery = searchParamsToLocationSearch({ ...searchParams, ...update });
-    // push to history directly to listen for changes
-    history.push(`/digital_objects?${newLocationQuery}`);
-  };
 
   const {
     searchTerms, searchType, filters, limit, offset, orderBy,
@@ -121,13 +132,14 @@ const DigitalObjectSearch = () => {
     <>
       <ContextualNavbar
         title="Digital Objects"
-        rightHandLinks={[{ label: 'New Digital Object', link: '/digital_objects/new' }]}
+        rightHandLinks={[{ label: 'New Digital Object', link: `${baseSearchPath}/new` }]}
       />
 
       <QueryForm
         searchTerms={searchParams.searchTerms}
         searchType={searchParams.searchType}
         onQueryChange={onQueryChange}
+        clearSearch={clearSearch}
       />
 
       <SelectedFacetsBar

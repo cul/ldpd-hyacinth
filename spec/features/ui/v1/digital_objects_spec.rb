@@ -43,6 +43,51 @@ RSpec.describe 'Digital Object Search', solr: true, type: :feature, js: true do
           end
         end
       end
+
+      context 'refreshing search results with the search button' do
+        before do
+          FactoryBot.create(:item)
+          visit '/ui/v1/digital_objects'
+          expect(page).to have_selector('.digital-object-result', count: 1)
+          FactoryBot.create(:item)
+        end
+
+        context 'starting from a "/digital_objects" with no query string parameters' do
+          it 'finds the expected number of search results after a search-button-triggered result refresh' do
+            expect(URI.parse(current_url).query).to be_blank
+            click_link_or_button("Submit Search")
+            expect(page).to have_selector('.digital-object-result', count: 2)
+          end
+        end
+
+        context 'starting from a "/digital_objects" with query string parameters' do
+          before do
+            click_link_or_button("Submit Search") # This will assign default search query string params (searchType, orderBy, etc.)
+          end
+          it 'finds the expected number of search results after a search-button-triggered result refresh' do
+            expect(URI.parse(current_url).query).to be_present
+            click_link_or_button("Submit Search")
+            expect(page).to have_selector('.digital-object-result', count: 2)
+          end
+        end
+      end
+
+      context 'clicking the clear search button' do
+        before do
+          FactoryBot.create(:item)
+          visit '/ui/v1/digital_objects'
+          within('#facet-sidebar') do
+            click_link_or_button("Digital Object Type")
+            click_link_or_button("item")
+          end
+        end
+
+        it 'redirects to a url without any search query parameters' do
+          expect(URI.parse(current_url).query).to be_present
+          click_link_or_button("Clear Search")
+          expect(URI.parse(current_url).query).to be_blank
+        end
+      end
     end
   end
 end

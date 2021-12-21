@@ -1,18 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Col, Row } from 'react-bootstrap';
 import InputGroup from '../../shared/forms/InputGroup';
 import Label from '../../shared/forms/Label';
 import PlainText from '../../shared/forms/inputs/PlainText';
 
 let uniqueDisplayFieldIdCounter = 0;
 
-function DisplayField(props) {
+function DisplayField({ data, dynamicField }) {
   const {
-    data,
-    dynamicField: {
-      stringKey, displayLabel, fieldType, selectOptions,
-    },
-  } = props;
+    stringKey, displayLabel, fieldType, selectOptions,
+  } = dynamicField;
 
   const inputName = `${stringKey}-${uniqueDisplayFieldIdCounter += 1}`;
   let value = null;
@@ -22,7 +20,7 @@ function DisplayField(props) {
       value = data.pref_label || data.prefLabel;
       break;
     case 'select':
-      value = JSON.parse(selectOptions).find(o => o.value === data).label;
+      value = JSON.parse(selectOptions).find((o) => o.value === data).label;
       break;
     case 'language_tag':
       value = data.tag;
@@ -32,10 +30,10 @@ function DisplayField(props) {
   }
 
   return (
-    <InputGroup key={stringKey}>
-      <Label sm={4} align="right" htmlFor={inputName}>{displayLabel}</Label>
-      <PlainText sm={8} value={value} inputName={inputName} />
-    </InputGroup>
+    <Row data-dynamic-field-string-key={stringKey} style={{ whiteSpace: 'pre-wrap' }}>
+      <Col sm={4} className="field-label">{displayLabel}</Col>
+      <Col sm={8} className="field-value">{value}</Col>
+    </Row>
   );
 }
 
