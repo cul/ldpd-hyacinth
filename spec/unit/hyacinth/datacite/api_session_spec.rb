@@ -40,8 +40,7 @@ describe Hyacinth::Datacite::ApiSession do
       publisher: "Self",
       publicationYear: 2002,
       types: { resourceTypeGeneral: "Text" },
-      schemaVersion: "http://datacite.org/schema/kernel-4",
-      prefix: "10.33555"
+      schemaVersion: "http://datacite.org/schema/kernel-4"
     }
   end
 
@@ -54,7 +53,7 @@ describe Hyacinth::Datacite::ApiSession do
       :publicationYear => 2002,
       :types => {:resourceTypeGeneral=>"Text"},
       :schemaVersion => "http://datacite.org/schema/kernel-4",
-      :prefix => "10.33555",
+      :prefix => nil,
       :event=>nil
     }
   end
@@ -67,7 +66,7 @@ describe Hyacinth::Datacite::ApiSession do
                                                                                        {prefix: "10.33555"} ).and_return response
     end
     it "mint identifier" do
-      subject.mint_identifier(EZID[:prefix],:draft)
+      subject.mint_identifier('10.33555',:draft)
     end
   end
 
