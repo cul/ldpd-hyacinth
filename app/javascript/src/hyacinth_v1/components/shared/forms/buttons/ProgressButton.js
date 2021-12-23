@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 /**
  * A ProgressButton functional component.
  * @param {Object} props - An object.
+ * @param {string} props.label - Classes to add to the rendered button.
  * @param {string} props.label - The component's default label.
  * @param {string} props.type - The type attribute for the underlying button element (e.g. "submit").
  * @param {function} props.onClick - Function to call when the button is clicked. If the function
@@ -16,7 +17,7 @@ import PropTypes from 'prop-types';
  *                                   Function is given the error from the promise returned by the onClick function;
  */
 const ProgressButton = ({
-  label, type, loadingLabel, onClick, onSuccess, onError,
+  label, type, loadingLabel, onClick, onSuccess, onError, className,
 }) => {
   const [state, setState] = useState('default');
   const successStateReturnTime = 500; // milliseconds
@@ -70,13 +71,21 @@ const ProgressButton = ({
   };
 
   return (
-    <Button type={type} variant={currentVariant} disabled={state === 'loading'} onClick={onClickHandler} aria-label={label}>
+    <Button
+      type={type}
+      variant={currentVariant}
+      disabled={state === 'loading'}
+      onClick={onClickHandler}
+      aria-label={label}
+      className={className}
+    >
       {currentLabel}
     </Button>
   );
 };
 
 ProgressButton.propTypes = {
+  className: PropTypes.string,
   label: PropTypes.string.isRequired,
   type: PropTypes.string.isRequired,
   loadingLabel: PropTypes.string.isRequired,
@@ -86,8 +95,9 @@ ProgressButton.propTypes = {
 };
 
 ProgressButton.defaultProps = {
-  onSuccess: () => {},
-  onError: () => {},
+  className: undefined,
+  onSuccess: () => { },
+  onError: () => { },
 };
 
 export default ProgressButton;

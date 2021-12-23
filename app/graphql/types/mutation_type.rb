@@ -6,6 +6,8 @@ module Types
     field :create_digital_object, mutation: Mutations::DigitalObject::CreateDigitalObject
     field :delete_digital_object, mutation: Mutations::DigitalObject::DeleteDigitalObject
     field :purge_digital_object, mutation: Mutations::DigitalObject::PurgeDigitalObject
+    field :publish_digital_object, mutation: Mutations::DigitalObject::PublishDigitalObject
+    field :preserve_digital_object, mutation: Mutations::DigitalObject::PreserveDigitalObject
 
     field :add_parent, mutation: Mutations::DigitalObject::AddParent
     field :remove_parent, mutation: Mutations::DigitalObject::RemoveParent

@@ -17,6 +17,7 @@ import { createDigitalObjectMutation, updateDescriptiveMetadataMutation } from '
 import { getEnabledDynamicFieldsQuery } from '../../../graphql/projects/enabledDynamicFields';
 import { getDynamicFieldGraphQuery } from '../../../graphql/dynamicFieldCategories';
 import { emptyDataForCategories, filterDynamicFieldCategories, padForEnabledFields } from '../../../utils/dynamicFieldStructures';
+import UserErrorsList from '../../shared/UserErrorsList';
 
 const DynamicFieldCategory = (props) => {
   const {
@@ -180,7 +181,7 @@ function MetadataForm(props) {
   return (
     <>
       <form>
-        <ErrorList errors={userErrors.map((userError) => (`${userError.message} (path=${userError.path.join('/')})`))} />
+        <UserErrorsList userErrors={userErrors} />
         <TitleForm title={title} onChange={onTitleChange} />
         {
           filteredCategories.map((category) => (

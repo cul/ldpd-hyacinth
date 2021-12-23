@@ -36,8 +36,14 @@ namespace :hyacinth do
     task create_publish_targets: :environment do
       [
         {
-          string_key: 'sample_publish_target',
-          publish_url: 'https://www.example.com/publish',
+          string_key: 'sample_publish_target_1',
+          publish_url: 'https://www.example.com/publish1',
+          api_key: 'sample_api_key',
+          is_allowed_doi_target: true
+        },
+        {
+          string_key: 'sample_publish_target_2',
+          publish_url: 'https://www.example.com/publish2',
           api_key: 'sample_api_key',
           is_allowed_doi_target: true
         }
@@ -46,7 +52,8 @@ namespace :hyacinth do
         if PublishTarget.exists?(string_key: publish_target_string_key)
           puts Rainbow("Skipping creation of publish target #{publish_target_string_key} because publish target already exists.").blue.bright
         else
-          PublishTarget.create!(publish_target_config)
+          new_publish_target = PublishTarget.create!(publish_target_config)
+          sample_project.publish_targets << new_publish_target
           puts Rainbow("Created publish target: #{publish_target_string_key}").green
         end
       end

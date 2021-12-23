@@ -28,6 +28,7 @@ module Types
     field :parents, [DigitalObjectInterface], null: true
     field :child_structure, ChildStructureType, null: true
     field :publish_entries, [DigitalObject::PublishEntryType], null: true
+    field :available_publish_targets, [String], null: false
     field :optimistic_lock_token, String, null: false
     field :rights, GraphQL::Types::JSON, null: false
 
@@ -35,8 +36,14 @@ module Types
     field :number_of_children, Integer, null: false
     field :resources, [ResourceWrapperType], null: false
 
-    def publish_entries
-      object.publish_entries.map { |k, h| { publish_target_string_key: k }.merge(h) }
+    def available_publish_targets
+      available = []
+      object.projects.each do |project|
+        project.publish_targets.each do |publish_target|
+          available << publish_target.string_key
+        end
+      end
+      available.uniq
     end
 
     def resources

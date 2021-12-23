@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { useMutation } from '@apollo/react-hooks';
 import PropTypes from 'prop-types';
 import { digitalObjectAbility } from '../../../utils/ability';
-import ErrorList from '../../shared/ErrorList';
 import FormButtons from '../../shared/forms/FormButtons';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 import SelectCreatablePrimaryProject from '../primary_project/SelectCreatablePrimaryProject';
 import { updateProjectsMutation } from '../../../graphql/digitalObjects';
 import OtherProjectsSelect from './OtherProjectsSelect';
 import ProjectShow from './ProjectShow';
+import UserErrorsList from '../../shared/UserErrorsList';
 
 const onlyStringKey = (obj) => ({ stringKey: obj.stringKey });
 
@@ -48,11 +48,11 @@ const ProjectsEdit = ({ digitalObject }) => {
   return (
     <form>
       <h4>Primary Project</h4>
-      { updateErrors && <GraphQLErrors errors={updateErrors} /> }
-      { userErrors && <ErrorList errors={userErrors.map((userError) => (`${userError.message} (path=${userError.path.join('/')})`))} /> }
+      {updateErrors && <GraphQLErrors errors={updateErrors} />}
+      {userErrors && <UserErrorsList userErrors={userErrors} />}
       <p className="inline-badge-list">
-        { editPrimary ? <SelectCreatablePrimaryProject primaryProject={primaryProject} changeHandler={setPrimaryProject} ariaLabelOnly />
-          : <ProjectShow stringKey={primaryProject.stringKey} displayLabel={primaryProject.displayLabel} /> }
+        {editPrimary ? <SelectCreatablePrimaryProject primaryProject={primaryProject} changeHandler={setPrimaryProject} ariaLabelOnly />
+          : <ProjectShow stringKey={primaryProject.stringKey} displayLabel={primaryProject.displayLabel} />}
       </p>
       <h4>Other Projects</h4>
       <OtherProjectsSelect primaryProject={primaryProject} otherProjects={otherProjects} changeHandler={setOtherProjects} />

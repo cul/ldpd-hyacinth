@@ -47,6 +47,27 @@ const digitalObjectInterfaceFields = `
   }
 `;
 
+const digitalObjectPublishPreserveInfoFields = `
+  publishEntries {
+    publishTarget {
+      stringKey
+    }
+    publishedAt
+    publishedBy {
+      fullName
+    }
+  }
+  availablePublishTargets
+  preservedAt
+`;
+
+const userErrorsFields = `
+  userErrors {
+    message
+    path
+  }
+`;
+
 const digitalObjectResourcesFields = `
   resources {
     id
@@ -145,9 +166,7 @@ export const getPreservePublishDigitalObjectQuery = gql`
   query PreservePublishDigitalObject($id: ID!){
     digitalObject(id: $id) {
       ${digitalObjectInterfaceFields},
-      publishEntries {
-        publishTargetStringKey
-      }
+      ${digitalObjectPublishPreserveInfoFields},
     }
   }
 `;
@@ -209,10 +228,7 @@ export const createDigitalObjectMutation = gql`
       digitalObject {
         id
       }
-      userErrors {
-        message
-        path
-      }
+      ${userErrorsFields}
     }
   }
 `;
@@ -223,10 +239,7 @@ export const updateDescriptiveMetadataMutation = gql`
       digitalObject {
         id
       }
-      userErrors {
-        message
-        path
-      }
+      ${userErrorsFields}
     }
   }
 `;
@@ -245,10 +258,7 @@ export const updateProjectsMutation = gql`
           displayLabel
         }
       }
-      userErrors {
-        message
-        path
-      }
+      ${userErrorsFields}
     }
   }
 `;
@@ -259,10 +269,7 @@ export const updateRightsMutation = gql`
       digitalObject {
         id
       }
-      userErrors {
-        message
-        path
-      }
+      ${userErrorsFields}
     }
   }
 `;
@@ -305,6 +312,28 @@ export const purgeDigitalObjectMutation = gql`
       digitalObject {
         id
       }
+    }
+  }
+`;
+
+export const publishDigitalObjectMutation = gql`
+  mutation PublishDigitalObject($input: PublishDigitalObjectInput!) {
+    publishDigitalObject(input: $input) {
+      digitalObject {
+        id
+      }
+      ${userErrorsFields}
+    }
+  }
+`;
+
+export const preserveDigitalObjectMutation = gql`
+  mutation PreserveDigitalObject($input: PreserveDigitalObjectInput!) {
+    preserveDigitalObject(input: $input) {
+      digitalObject {
+        id
+      }
+      ${userErrorsFields}
     }
   }
 `;

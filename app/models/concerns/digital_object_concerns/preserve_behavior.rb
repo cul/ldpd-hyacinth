@@ -7,7 +7,7 @@ module DigitalObjectConcerns
     # Preserves this object to all environment-enabled preservation targets.
     def preserve
       # No one should be preserving an object that has errors
-      raise Hyacinth::Exceptions::InvalidPersistConditions, 'Cannot persist a DigitalObject that has errors' if self.errors.present?
+      return false if self.errors.present?
 
       Hyacinth::Config.lock_adapter.with_lock("#{self.uid}-preserve") do |_lock_object|
         ensure_doi!

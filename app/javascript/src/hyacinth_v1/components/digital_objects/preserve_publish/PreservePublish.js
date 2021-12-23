@@ -1,21 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Alert } from 'react-bootstrap';
-import { useQuery } from '@apollo/react-hooks';
+import { useMutation, useQuery } from '@apollo/react-hooks';
 
+import { Form } from 'react-bootstrap';
 import DigitalObjectInterface from '../DigitalObjectInterface';
 import TabHeading from '../../shared/tabs/TabHeading';
-import { getPreservePublishDigitalObjectQuery } from '../../../graphql/digitalObjects';
+import {
+  getPreservePublishDigitalObjectQuery, preserveDigitalObjectMutation, publishDigitalObjectMutation,
+} from '../../../graphql/digitalObjects';
 import GraphQLErrors from '../../shared/GraphQLErrors';
 import { digitalObjectAbility } from '../../../utils/ability';
+import PublishTargetSelector from './PublishTargetSelector';
+import ProgressButton from '../../shared/forms/buttons/ProgressButton';
+import UserErrorsList from '../../shared/UserErrorsList';
+import ReadableDate from '../../shared/ReadableDate';
 
 function PreservePublish(props) {
   const { id } = props;
+
+  const [publishDigitalObject, { error: publishDigitalObjectError }] = useMutation(publishDigitalObjectMutation);
+  const [preserveDigitalObject, { error: preserveDigitalObjectError }] = useMutation(preserveDigitalObjectMutation);
+  const [publishOperationSelections, setPublishOperationSelections] = useState({});
+  const [userErrors, setUserErrors] = useState([]);
 
   const {
     loading: digitalObjectLoading,
     error: digitalObjectError,
     data: digitalObjectData,
+    refetch: refetchDigitalObject,
   } = useQuery(getPreservePublishDigitalObjectQuery, {
     variables: { id },
   });
@@ -24,39 +36,117 @@ function PreservePublish(props) {
   if (digitalObjectError) return (<GraphQLErrors errors={digitalObjectError} />);
   const { digitalObject } = digitalObjectData;
 
-  const canUpdateObject = digitalObjectAbility.can(
-    'update_objects', { primaryProject: digitalObject.primaryProject, otherProjects: digitalObject.otherProjects },
-  );
   const canPublishObject = digitalObjectAbility.can(
     'publish_objects', { primaryProject: digitalObject.primaryProject, otherProjects: digitalObject.otherProjects },
   );
 
+  const performPreserveAndPublish = () => {
+    setUserErrors([]);
+    const publishTo = publishOperationSelections.publish || [];
+    const unpublishFrom = publishOperationSelections.unpublish || [];
+
+    if (publishTo.length + unpublishFrom.length === 0) {
+      return Promise.resolve();
+    }
+    return new Promise((resolve, reject) => {
+      preserveDigitalObject({ variables: { input: { id: digitalObject.id } } }).then((preserveResult) => {
+        if (preserveResult.data.preserveDigitalObject.userErrors?.length) {
+          setUserErrors(preserveResult.data.preserveDigitalObject.userErrors);
+          reject(new Error('An error occurred during preservation.'));
+          return;
+        }
+        publishDigitalObject({ variables: { input: { id: digitalObject.id, publishTo, unpublishFrom } } }).then((publishResult) => {
+          if (publishResult.data.publishDigitalObject.userErrors?.length) {
+            setUserErrors(publishResult.data.publishDigitalObject.userErrors);
+            reject(new Error('An error occurred during publication.'));
+            return;
+          }
+          setPublishOperationSelections({});
+          refetchDigitalObject();
+          resolve();
+        });
+      });
+    });
+  };
+
+  const performPreserve = () => new Promise((resolve, reject) => {
+    setUserErrors([]);
+    preserveDigitalObject({ variables: { input: { id: digitalObject.id } } }).then((preserveResult) => {
+      if (preserveResult.data.preserveDigitalObject.userErrors?.length) {
+        setUserErrors(preserveResult.data.preserveDigitalObject.userErrors);
+        reject(new Error('An error occurred during preservation.'));
+        return;
+      }
+      refetchDigitalObject();
+      resolve();
+    });
+  });
+
+  const lastPublishedAt = digitalObject.publishEntries.length
+    ? digitalObject.publishEntries.map((publishEntry) => publishEntry.publishedAt).sort().at(-1)
+    : null;
+
   const renderPreservePublishContent = () => (
     <>
-      <Alert variant="info">
-        <strong>Preserve: </strong>
-        Write the latest data for this digital object to the preservation repository.
-      </Alert>
-
       <div className="text-right mb-3">
         {
-          canUpdateObject
-            ? <Button>Preserve</Button>
-            : <span>You do not have permission to preserve this Digital Object.</span>
-        }
-      </div>
-
-      <Alert variant="info">
-        <strong>Preserve &amp; Publish: </strong>
-        Performs a preserve operation
-        <strong> AND </strong>
-        publishes the latest data for this digital object to all enabled publish targets.
-      </Alert>
-
-      <div className="text-right mb-3">
-        {
-          canUpdateObject && canPublishObject
-            ? <Button>Preserve &amp; Publish</Button>
+          canPublishObject
+            ? (
+              <Form>
+                <PublishTargetSelector
+                  className="mb-1"
+                  digitalObjectId={digitalObject.id}
+                  availablePublishTargets={digitalObject.availablePublishTargets}
+                  currentPublishEntries={digitalObject.publishEntries}
+                  publishOperationSelections={publishOperationSelections}
+                  onChange={(selections) => { setPublishOperationSelections(selections); }}
+                />
+                <div className="d-flex align-items-center">
+                  <span className="last-published ms-auto text-muted">
+                    {
+                      lastPublishedAt
+                        ? (
+                          <>
+                            Last published -
+                            {' '}
+                            <ReadableDate isoDate={lastPublishedAt} />
+                          </>
+                        )
+                        : 'Not published'
+                    }
+                  </span>
+                  <ProgressButton
+                    label="Run Publish / Unpublish Operations"
+                    type="submit"
+                    loadingLabel="Running publish / unpublish operations..."
+                    className="ms-3"
+                    onClick={performPreserveAndPublish}
+                  />
+                </div>
+                <div className="d-flex align-items-center pt-1">
+                  <span className="last-preserved ms-auto text-muted">
+                    {
+                      digitalObject.preservedAt
+                        ? (
+                          <>
+                            Last preserved -
+                            {' '}
+                            <ReadableDate isoDate={digitalObject.preservedAt} />
+                          </>
+                        )
+                        : 'Not preserved'
+                    }
+                  </span>
+                  <ProgressButton
+                    label="Preserve Only"
+                    type="submit"
+                    loadingLabel="Preserving..."
+                    className="ms-3"
+                    onClick={performPreserve}
+                  />
+                </div>
+              </Form>
+            )
             : <span>You do not have permission to preserve and publish this Digital Object.</span>
         }
       </div>
@@ -68,7 +158,9 @@ function PreservePublish(props) {
       <TabHeading>
         Preserve / Publish
       </TabHeading>
-      { renderPreservePublishContent() }
+      <GraphQLErrors errors={publishDigitalObjectError || preserveDigitalObjectError} />
+      <UserErrorsList userErrors={userErrors} />
+      {renderPreservePublishContent()}
     </DigitalObjectInterface>
   );
 }

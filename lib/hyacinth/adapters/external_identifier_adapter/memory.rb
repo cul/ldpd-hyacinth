@@ -43,7 +43,7 @@ module Hyacinth
         # @param target_url [String]
         # @param publish [Boolean]
         # @return [Boolean] true if this adapter can handle this type of identifier
-        def update_impl(id, digital_object, target_url, state)
+        def update_impl(id, digital_object, target_url, publish)
           return false unless handles?(id)
           state = publish ? :findable : :registered
           @identifiers[id] = { uid: digital_object.uid, status: :active, target_url: target_url, state: state }

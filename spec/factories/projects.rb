@@ -46,5 +46,11 @@ FactoryBot.define do
         FactoryBot.create_list(:legend_of_lincoln_publish_target, 1, projects: [instance])
       end
     end
+
+    trait :with_publish_targets do
+      after(:create) do |instance|
+        FactoryBot.create_list(:publish_target, 2, projects: [instance])
+      end
+    end
   end
 end

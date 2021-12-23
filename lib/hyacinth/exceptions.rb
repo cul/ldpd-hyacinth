@@ -35,7 +35,6 @@ module Hyacinth
 
     class VocabularyLocked < HyacinthError; end
 
-    class InvalidPublishConditions < HyacinthError; end
     class InvalidPersistConditions < HyacinthError; end
     class PublishFailure < HyacinthError; end
     class UnpublishFailure < HyacinthError; end

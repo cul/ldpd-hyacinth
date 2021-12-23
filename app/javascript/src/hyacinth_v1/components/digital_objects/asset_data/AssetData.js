@@ -44,7 +44,7 @@ function AssetData(props) {
     }
   };
 
-  const renderResources = () => digitalObject.resources.map((resourceWrapper) => {
+  const renderResources = (resources) => resources.map((resourceWrapper) => {
     const {
       id: resourceId, displayLabel, resource, uiDeletable,
     } = resourceWrapper;
@@ -114,7 +114,7 @@ function AssetData(props) {
       <h5>Featured Thumbnail Region</h5>
       <p>{digitalObject.featuredThumbnailRegion || 'None'}</p>
       <h5 className="mt-3">Resources</h5>
-      {renderResources()}
+      {renderResources(digitalObject.resources)}
     </DigitalObjectInterface>
   );
 }

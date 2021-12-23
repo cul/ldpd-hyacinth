@@ -140,7 +140,7 @@ test:
           master: 'content'
           main: 'content'
   publication_adapter:
-    type: Hyacinth2
+    type: Development
   external_identifier_adapter:
     type: Memory
   term_search_adapter:
