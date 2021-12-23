@@ -431,17 +431,18 @@ RSpec.describe DigitalObject::Base, :type => :model do
       end
 
       it "mints id before saving" do
-        # expect(item).to receive(:mint_and_store_doi).with("reserved")
         expect(item).to receive(:mint_and_store_doi).with("draft")
         item.save
       end
 
       it "calls publish method" do
+        allow(item).to receive(:mint_and_store_doi).with("draft")
         expect(item).to receive(:publish)
         item.save
       end
 
       it "sets first_published_at date" do
+        allow(item).to receive(:mint_and_store_doi).with("draft")
         item.save
         expect(item.first_published_at).to be_within(10.seconds).of(Time.current)
         expect(item.instance_variable_get(:@db_record).first_published_at).to be_within(10.seconds).of(Time.current)
