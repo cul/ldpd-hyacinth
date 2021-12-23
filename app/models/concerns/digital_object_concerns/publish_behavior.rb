@@ -88,9 +88,9 @@ module DigitalObjectConcerns
             # Remove entries associated with successfull unpublishes AND successful publishes.
             # For successful publishes that need time/user updates, it's easier to do a mass deletion
             # than to find and update specific ones.
-            successful_additons_and_removals = successful_publish_targets + successful_unpublish_targets
+            successful_additions_and_removals = successful_publish_targets + successful_unpublish_targets
             self.publish_entries.destroy(
-              self.publish_entries.to_a.select { |publish_entry| successful_additons_and_removals.include?(publish_entry.publish_target) }
+              self.publish_entries.to_a.select { |publish_entry| successful_additions_and_removals.include?(publish_entry.publish_target) }
             )
 
             # Clear out the citation_location value for any new entry that isn't the highest priority one
