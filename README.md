@@ -11,7 +11,7 @@ Your friendly neighborhood digital object management system.
 
 ## Requirements
 
-- Ruby 2.5
+- Ruby 2.6
 - Sqlite3 or MySQL (tested with MySQL 5.5)
 - Apache Solr 6.3
 - Fedora 3.8.1 (for publishing)
