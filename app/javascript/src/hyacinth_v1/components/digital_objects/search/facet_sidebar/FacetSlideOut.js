@@ -70,6 +70,7 @@ const FacetSlideOut = (props) => {
   };
   const handleFilter = (filterChange) => {
     setFacetFilter(filterChange);
+    setOffset(0);
     handleUpdate();
   };
   const handlePaging = (pageOffset) => {
@@ -78,6 +79,7 @@ const FacetSlideOut = (props) => {
   };
   const handleSort = (sortValue) => {
     setOrderBy(sortValue);
+    setOffset(0);
     handleUpdate();
   };
   // wrap facetSelect function to remove filter if set
@@ -86,7 +88,7 @@ const FacetSlideOut = (props) => {
     setOffset(0);
     onFacetSelect(wrapFieldName, wrapValue);
   };
-  // TODO changes to filter or sort should reset offset
+
   const { values, totalCount } = responseData(data);
   return (
     <>
