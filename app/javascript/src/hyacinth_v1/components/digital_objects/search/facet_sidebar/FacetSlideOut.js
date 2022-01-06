@@ -16,15 +16,17 @@ const objectSearchParams = () => (
   { filters: [], ...pick(['searchTerms', 'searchType', 'filters'], decodeSessionSearchParams()) }
 );
 
-const facetSearchVariables = (fieldName, offset, limit, orderBy, facetFilter) => {
+export const facetSearchVariables = (fieldName, offset, limit, orderBy, facetFilter) => {
   const searchParams = objectSearchParams();
+  const variables = {
+    fieldName, offset, limit, searchParams, orderBy: { field: orderBy },
+  };
   if (facetFilter.filterValue) {
     const newFilter = { field: fieldName, values: [facetFilter.filterValue], matchType: facetFilter.filterFunction };
     searchParams.filters.push(newFilter);
+    variables.facetFilter = newFilter;
   }
-  return {
-    fieldName, offset, limit, searchParams, orderBy: { field: orderBy }, facetFilter: {},
-  };
+  return variables;
 };
 
 const responseData = (data) => {

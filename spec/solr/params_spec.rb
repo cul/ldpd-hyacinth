@@ -53,6 +53,7 @@ RSpec.describe Solr::Params do
     let(:rows) { (0..100).to_a.sample(1) }
     let(:start) { (0..100).to_a.sample(1) }
     let(:sort) { 'count' }
+    let(:filter_value) { 'filter' }
     # sort_direction not used until Solr 8
     let(:sort_direction) { 'asc' }
     let(:expected) do
@@ -64,18 +65,55 @@ RSpec.describe Solr::Params do
         stats: 'on'
       }
     end
-    before do
-      params.facet_on(facet_name) do |f_params|
-        f_params.start(start)
-        f_params.rows(rows)
-        f_params.sort(sort, sort_direction)
-        f_params.with_statistics!
+    context 'without a filter' do
+      before do
+        params.facet_on(facet_name) do |f_params|
+          f_params.start(start)
+          f_params.rows(rows)
+          f_params.sort(sort, sort_direction)
+          f_params.with_statistics!
+        end
+      end
+
+      it 'adds facet value params' do
+        actual = params.to_h
+        expect(actual).to include(expected)
       end
     end
-
-    it 'adds facet value params' do
-      actual = params.to_h
-      expect(actual).to include(expected)
+    context 'with a filter' do
+      let(:actual) do
+        params.facet_on(facet_name) { |f_params|
+          f_params.filter(filter_value, filter_function)
+        }.to_h
+      end
+      context 'with prefix match' do
+        let(:filter_function) { 'STARTS_WITH' }
+        let(:expected) do
+          {
+            :"f.#{facet_name}.facet.prefix" => filter_value
+          }
+        end
+        it 'adds facet value params' do
+          expect(actual).to include(expected)
+        end
+      end
+      context 'with contains match' do
+        let(:filter_function) { 'CONTAINS' }
+        let(:expected) do
+          {
+            :"f.#{facet_name}.facet.contains" => filter_value
+          }
+        end
+        it 'adds facet value params' do
+          expect(actual).to include(expected)
+        end
+      end
+      context 'with bad match' do
+        let(:filter_function) { 'RAISE_AN_ERROR' }
+        it 'raises an error' do
+          expect { actual }.to raise_error(ArgumentError, "Invalid match operator: #{filter_function}")
+        end
+      end
     end
   end
 end

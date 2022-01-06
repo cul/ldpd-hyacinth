@@ -86,6 +86,17 @@ module Solr
         @facet_name = facet_name
       end
 
+      def match_param(match_operator)
+        return :"f.#{@facet_name}.facet.contains" if match_operator == 'CONTAINS'
+        return :"f.#{@facet_name}.facet.prefix" if match_operator == 'STARTS_WITH'
+      end
+
+      def filter(value_or_values, match_operator = 'CONTAINS')
+        match_field = match_param(match_operator)
+        raise(ArgumentError, "Invalid match operator: #{match_operator}") unless match_field
+        Array.wrap(value_or_values).compact.each { |value| @params.raw_parameter(match_field, value) }
+      end
+
       def with_statistics!
         @params.raw_parameter(:stats, 'on')
         @params.raw_parameter(:"stats.field", "{!countDistinct=true}#{@facet_name}")
