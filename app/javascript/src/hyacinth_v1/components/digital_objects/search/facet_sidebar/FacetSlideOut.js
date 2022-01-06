@@ -6,7 +6,7 @@ import pick from 'lodash/pick';
 import FacetOption from './FacetOption';
 import SlideOutControls from './slide_out/Controls';
 import { facetValuesQuery } from '../../../../graphql/facetValues';
-import PaginationBar from '../../../shared/PaginationBar';
+import PrevNextPaginationBar from '../../../shared/PrevNextPaginationBar';
 import GraphQLErrors from '../../../shared/GraphQLErrors';
 import {
   decodeSessionSearchParams,
@@ -43,7 +43,7 @@ const FacetSlideOut = (props) => {
   const [offset, setOffset] = useState(0);
   const [orderBy, setOrderBy] = useState('INDEX');
   const [facetFilter, setFacetFilter] = useState({ filterValue: null, filterFunction: 'CONTAINS' });
-  const variables = facetSearchVariables(fieldName, offset, limit, orderBy, facetFilter);
+  const variables = facetSearchVariables(fieldName, offset, limit + 1, orderBy, facetFilter);
 
   const [getValues, { error, data, refetch }] = useLazyQuery(
     facetValuesQuery, { variables },
@@ -108,7 +108,7 @@ const FacetSlideOut = (props) => {
             setFacetFilter={handleFilter}
           />
           {
-            values.map((value) => (
+            values.slice(0, limit).map((value) => (
               <FacetOption
                 key={`option_${fieldName}_${value.value}`}
                 value={value.value}
@@ -118,7 +118,7 @@ const FacetSlideOut = (props) => {
               />
             ))
           }
-          <PaginationBar totalItems={totalCount} onClick={handlePaging} limit={limit} offset={offset} />
+          <PrevNextPaginationBar pageItems={values.length} onClick={handlePaging} limit={limit} offset={offset} />
         </Offcanvas.Body>
       </Offcanvas>
     </>
