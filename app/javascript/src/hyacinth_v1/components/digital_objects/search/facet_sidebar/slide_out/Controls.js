@@ -15,7 +15,7 @@ const Controls = (props) => {
   } = props;
   const changeFacetFilter = (newFilter) => {
     const prev = facetFilter || { filterFunction: 'CONTAINS' };
-    if (newFilter.length > 1) {
+    if (newFilter.length > 0) {
       setFacetFilter({ ...prev, filterValue: newFilter });
     } else if (prev.filterValue) {
       setFacetFilter({ ...prev, filterValue: null });
