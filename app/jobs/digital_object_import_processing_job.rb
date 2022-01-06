@@ -44,18 +44,23 @@ class DigitalObjectImportProcessingJob
   end
 
   def self.digital_object_for_digital_object_data(digital_object_data)
-    if digital_object_data['assign_uid'].present?
-      raise ArgumentError, 'Either "uid" or "assign_uid" attribute may be present in digital_object_data, but not both.' if digital_object_data['uid'].present?
-      raise ArgumentError, 'Cannot create new digital object with "assign_uid"; object with same uid already exists' if DigitalObject.find_by_uid(digital_object_data['assign_uid'])
-      raise ArgumentError, 'Cannot create new digital object with "assign_uid"; digital object type is required' unless digital_object_data['digital_object_type'].present?
-      # assign_uid present, so we'll create a new object with type based on the digital_object_type value
-      Hyacinth::Config.digital_object_types.key_to_class(digital_object_data['digital_object_type']).new
-    elsif digital_object_data['uid'].present?
+    if digital_object_data['uid'].present? && digital_object_data['assign_uid'].present?
+      raise ArgumentError, 'Either "uid" or "assign_uid" attribute may be present in digital_object_data, but not both.'
+    end
+    if digital_object_data['uid'].present?
       # If a uid is present in the digital_object_data, then this is an update operation
       DigitalObject.find_by_uid!(digital_object_data['uid'])
-    else
-      raise ArgumentError, 'Unable to find or create digital object because "uid" or “assign_uid”/"digital_object_type" attributes were not present in digital_object_data.'
+    elsif appropriate_create_data_present(digital_object_data)
+      Hyacinth::Config.digital_object_types.key_to_class(digital_object_data['digital_object_type']).new
     end
+  end
+
+  def self.appropriate_create_data_present(digital_object_data)
+    raise ArgumentError, 'Cannot create new digital object; digital object type is required' unless digital_object_data['digital_object_type'].present?
+    if digital_object_data['assign_uid'].present?
+      raise ArgumentError, 'Cannot create new digital object with "assign_uid"; object with same uid already exists' if DigitalObject.find_by_uid(digital_object_data['assign_uid'])
+    end
+    true
   end
 
   def self.apply_recursive_failure!(digital_object_import)

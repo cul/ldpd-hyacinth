@@ -13,7 +13,7 @@ RSpec.describe DigitalObjectImport, type: :model do
     its(:digital_object_data) do
       is_expected.to eql(
         {
-          'assign_uid': '2f4e2917-26f5-4d8f-968c-a4015b10e50f', 'digital_object_type': 'item', 'descriptive_metadata': { 'abstract': [{ 'value': 'some abstract' }] },
+          'digital_object_type': 'item', 'descriptive_metadata': { 'abstract': [{ 'value': 'some abstract' }] },
           'primary_project': { 'string_key': 'great_project' }, 'title': { 'value': { 'sort_portion': 'The', 'non_sort_portion': 'Cool Item' } }
         }.to_json
       )
