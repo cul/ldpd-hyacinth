@@ -26,7 +26,6 @@ module Types
             facet_params.start(arguments[:offset])
             facet_params.sort(arguments[:order_by][:field], arguments[:order_by][:direction]) if arguments[:order_by]
             facet_params.filter(facet_filter[:values], facet_filter[:match_type]) if facet_filter
-            facet_params.with_statistics!
           end
         end
       end

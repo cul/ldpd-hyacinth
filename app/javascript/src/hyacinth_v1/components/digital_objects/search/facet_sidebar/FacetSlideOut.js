@@ -30,9 +30,7 @@ export const facetSearchVariables = (fieldName, offset, limit, orderBy, facetFil
 };
 
 const responseData = (data) => {
-  const values = (data?.facetValues?.nodes ? data.facetValues.nodes : []);
-  const totalCount = data?.facetValues ? data.facetValues.totalCount : 0;
-  return { totalCount, values };
+  return (data?.facetValues?.nodes ? data.facetValues.nodes : []);
 };
 
 const FacetSlideOut = (props) => {
@@ -89,7 +87,7 @@ const FacetSlideOut = (props) => {
     onFacetSelect(wrapFieldName, wrapValue);
   };
 
-  const { values, totalCount } = responseData(data);
+  const values = responseData(data);
   return (
     <>
       <Button variant="primary" size="sm" onClick={handleShow}>
