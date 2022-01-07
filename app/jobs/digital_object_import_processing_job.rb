@@ -47,12 +47,10 @@ class DigitalObjectImportProcessingJob
     if digital_object_data['uid'].present? && digital_object_data['assign_uid'].present?
       raise ArgumentError, 'Either "uid" or "assign_uid" attribute may be present in digital_object_data, but not both.'
     end
-    if digital_object_data['uid'].present?
-      # If a uid is present in the digital_object_data, then this is an update operation
-      DigitalObject.find_by_uid!(digital_object_data['uid'])
-    elsif appropriate_create_data_present(digital_object_data)
-      Hyacinth::Config.digital_object_types.key_to_class(digital_object_data['digital_object_type']).new
-    end
+    return DigitalObject.find_by_uid!(digital_object_data['uid']) if digital_object_data['uid'].present?
+
+    ensure_appropriate_create_data_present!(digital_object_data)
+    Hyacinth::Config.digital_object_types.key_to_class(digital_object_data['digital_object_type']).new
   end
 
   def self.appropriate_create_data_present(digital_object_data)
