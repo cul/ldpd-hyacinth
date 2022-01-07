@@ -53,10 +53,10 @@ class DigitalObjectImportProcessingJob
     Hyacinth::Config.digital_object_types.key_to_class(digital_object_data['digital_object_type']).new
   end
 
-  def self.appropriate_create_data_present(digital_object_data)
+  def self.ensure_appropriate_create_data_present!(digital_object_data)
     raise ArgumentError, 'Cannot create new digital object; digital object type is required' unless digital_object_data['digital_object_type'].present?
-    if digital_object_data['assign_uid'].present?
-      raise ArgumentError, 'Cannot create new digital object with "assign_uid"; object with same uid already exists' if DigitalObject.find_by_uid(digital_object_data['assign_uid'])
+    if digital_object_data['assign_uid'].present? && DigitalObject.find_by_uid(digital_object_data['assign_uid'])
+      raise ArgumentError, 'Cannot create new digital object with "assign_uid"; object with same uid already exists'
     end
     true
   end
