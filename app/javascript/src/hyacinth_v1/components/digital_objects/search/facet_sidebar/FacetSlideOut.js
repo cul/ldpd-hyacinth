@@ -16,10 +16,11 @@ const objectSearchParams = () => (
   { filters: [], ...pick(['searchTerms', 'searchType', 'filters'], decodeSessionSearchParams()) }
 );
 
-export const facetSearchVariables = (fieldName, offset, limit, orderBy, facetFilter) => {
+export const facetSearchVariables = (fieldName, searchState) => {
   const searchParams = objectSearchParams();
+  const { offset, limit, orderBy, facetFilter } = searchState;
   const variables = {
-    fieldName, offset, limit, searchParams, orderBy: { field: orderBy },
+    fieldName, offset, searchParams, orderBy: { field: orderBy }, limit: (limit + 1),
   };
   if (facetFilter.filterValue) {
     const newFilter = { field: fieldName, values: [facetFilter.filterValue], matchType: facetFilter.filterFunction };
@@ -37,57 +38,45 @@ const FacetSlideOut = (props) => {
   const {
     fieldName, limit, onFacetSelect, selectedValues, displayLabel, hasMore,
   } = props;
-  const [show, setShow] = useState(false);
-  const [offset, setOffset] = useState(0);
-  const [orderBy, setOrderBy] = useState('INDEX');
-  const [facetFilter, setFacetFilter] = useState({ filterValue: null, filterFunction: 'CONTAINS' });
-  const variables = facetSearchVariables(fieldName, offset, limit + 1, orderBy, facetFilter);
+  const [searchState, setSearchState] = useState({ show: false, offset: 0, limit: limit, orderBy: 'INDEX', facetFilter: { filterValue: null, filterFunction: 'CONTAINS' } })
 
   const [getValues, { error, data, refetch }] = useLazyQuery(
-    facetValuesQuery, { variables },
+    facetValuesQuery, { variables: facetSearchVariables(fieldName, searchState) },
   );
   if (!hasMore) return <></>;
   const handleShow = () => {
-    // get values for search
     // set show state flag
-    setShow(true);
+    setSearchState({...searchState, show: true});
+    // get values for search
     if (data) {
-      refetch({ variables });
+      const updatedVariables = facetSearchVariables(fieldName, searchState);
+      refetch({ variables: updatedVariables });
     } else {
       getValues();
     }
   };
   const handleClose = () => {
-    setShow(false);
-    setFacetFilter({ ...facetFilter, filterValue: null });
-    setOffset(0);
-  };
-  const handleUpdate = () => {
-    const updatedVariables = facetSearchVariables(fieldName, offset, limit, orderBy, facetFilter);
-    refetch({ variables: updatedVariables });
+    const blankFilter = {...searchState.facetFilter, filterValue: null };
+    setSearchState({...searchState, facetFilter: blankFilter, offset: 0, show: false});
   };
   const handleFilter = (filterChange) => {
-    setFacetFilter(filterChange);
-    setOffset(0);
-    handleUpdate();
+    setSearchState({...searchState, facetFilter: filterChange, offset: 0});
   };
   const handlePaging = (pageOffset) => {
-    setOffset(pageOffset);
-    handleUpdate();
+    setSearchState({...searchState, offset: pageOffset});
   };
   const handleSort = (sortValue) => {
-    setOrderBy(sortValue);
-    setOffset(0);
-    handleUpdate();
+    setSearchState({...searchState, orderBy: sortValue, offset: 0});
   };
   // wrap facetSelect function to remove filter if set
   const wrapFacetSelect = (wrapFieldName, wrapValue) => {
-    setFacetFilter({ ...facetFilter, filterValue: null });
-    setOffset(0);
+    const blankFilter = {...searchState.facetFilter, filterValue: null };
+    setSearchState({...searchState, facetFilter: blankFilter, offset: 0});
     onFacetSelect(wrapFieldName, wrapValue);
   };
 
   const values = responseData(data);
+  const { show, offset } = searchState;
   return (
     <>
       <Button variant="primary" size="sm" onClick={handleShow}>
@@ -102,9 +91,9 @@ const FacetSlideOut = (props) => {
           { error && <GraphQLErrors errors={error} /> }
           <SlideOutControls
             fieldName={fieldName}
-            orderBy={orderBy}
+            orderBy={searchState.orderBy}
             setOrderBy={handleSort}
-            facetFilter={facetFilter}
+            facetFilter={searchState.facetFilter}
             setFacetFilter={handleFilter}
           />
           {

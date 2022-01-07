@@ -34,17 +34,18 @@ describe('FacetSlideOut', () => {
     const orderBy = 'INDEX';
     it('adds filters to local search attributes and to facet filter param', () => {
       const expectedFacetFilter = { field: fieldName, values: [facetFilter.filterValue], matchType: facetFilter.filterFunction };
-      const actual = facetSearchVariables(fieldName, offset, limit, orderBy, facetFilter);
+      const actual = facetSearchVariables(fieldName, {offset, limit, orderBy, facetFilter});
       expect(actual.searchParams.filters[actual.searchParams.filters.length - 1]).toEqual(expectedFacetFilter);
     });
     it('adds sort to facet filter values query', () => {
-      const actual = facetSearchVariables(fieldName, offset, limit, orderBy, facetFilter);
+      const actual = facetSearchVariables(fieldName, {offset, limit, orderBy, facetFilter});
       expect(actual.orderBy).toEqual({ field: orderBy });
     });
     it('adds offset and limit to facet filter values query', () => {
-      const actual = facetSearchVariables(fieldName, offset, limit, orderBy, facetFilter);
+      const actual = facetSearchVariables(fieldName, {offset, limit, orderBy, facetFilter});
       expect(actual.offset).toEqual(offset);
-      expect(actual.limit).toEqual(limit);
+      // queried limit is incremented for simple paging support
+      expect(actual.limit).toEqual(limit +1);
     });
   });
 });
