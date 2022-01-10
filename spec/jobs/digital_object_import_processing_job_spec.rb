@@ -171,6 +171,13 @@ RSpec.describe DigitalObjectImportProcessingJob do
       }
     end
 
+    let(:new_digital_object_with_assign_id) do
+      {
+        'assign_uid' => '6f4e2917-26f5-4d8f-968c-a4015b10e50f',
+        'digital_object_type' => 'item'
+      }
+    end
+
     it 'finds an existing digital object when a uid is provided in the digital_object_data' do
       expect(
         described_class.digital_object_for_digital_object_data(existing_digital_object_data).new_record?
@@ -181,6 +188,13 @@ RSpec.describe DigitalObjectImportProcessingJob do
       obj = described_class.digital_object_for_digital_object_data(new_digital_object_data)
       expect(obj).to be_a(DigitalObject::Item)
       expect(obj.new_record?).to eq(true)
+    end
+
+    it 'instantiates a new digital object of the expected type when an assign_uid attribute is provided' do
+      obj = described_class.digital_object_for_digital_object_data(new_digital_object_with_assign_id)
+      expect(obj).to be_a(DigitalObject::Item)
+      expect(obj.new_record?).to eq(true)
+      expect(obj.uid).to eq(new_digital_object_with_assign_id['assign_uid'])
     end
 
     it 'raises an error if neither uid nor digital_object_type are keys in the digital_object_data' do

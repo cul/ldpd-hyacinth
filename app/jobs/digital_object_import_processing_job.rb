@@ -50,7 +50,9 @@ class DigitalObjectImportProcessingJob
     return DigitalObject.find_by_uid!(digital_object_data['uid']) if digital_object_data['uid'].present?
 
     ensure_appropriate_create_data_present!(digital_object_data)
-    Hyacinth::Config.digital_object_types.key_to_class(digital_object_data['digital_object_type']).new
+    Hyacinth::Config.digital_object_types.key_to_class(digital_object_data['digital_object_type']).new.tap do |dobj|
+      dobj.uid = digital_object_data['assign_uid'] if digital_object_data['assign_uid'].present?
+    end
   end
 
   def self.ensure_appropriate_create_data_present!(digital_object_data)
