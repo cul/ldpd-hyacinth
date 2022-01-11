@@ -139,6 +139,13 @@ RSpec.describe DigitalObjectImportProcessingJob do
       }
     end
 
+    let(:digital_object_data_attempt_to_create_existing_object) do
+      {
+        'assign_uid' => digital_object.uid,
+        'digital_object_type' => 'item'
+      }
+    end
+
     let(:new_digital_object_data) do
       {
         'identifier' => 'this-identifier-does-not-exist-anywhere',
@@ -148,6 +155,27 @@ RSpec.describe DigitalObjectImportProcessingJob do
 
     let(:unusable_digital_object_data) do
       {}
+    end
+
+    let(:digital_object_data_without_digital_object_type) do
+      {
+        'assign_uid' => 'new_uid'
+      }
+    end
+
+    let(:digital_object_data_with_conflicting_params) do
+      {
+        'uid' => digital_object.uid,
+        'assign_uid' => digital_object.uid,
+        'digital_object_type' => 'item'
+      }
+    end
+
+    let(:new_digital_object_with_assign_id) do
+      {
+        'assign_uid' => '6f4e2917-26f5-4d8f-968c-a4015b10e50f',
+        'digital_object_type' => 'item'
+      }
     end
 
     it 'finds an existing digital object when a uid is provided in the digital_object_data' do
@@ -162,9 +190,34 @@ RSpec.describe DigitalObjectImportProcessingJob do
       expect(obj.new_record?).to eq(true)
     end
 
+    it 'instantiates a new digital object of the expected type when an assign_uid attribute is provided' do
+      obj = described_class.digital_object_for_digital_object_data(new_digital_object_with_assign_id)
+      expect(obj).to be_a(DigitalObject::Item)
+      expect(obj.new_record?).to eq(true)
+      expect(obj.uid).to eq(new_digital_object_with_assign_id['assign_uid'])
+    end
+
     it 'raises an error if neither uid nor digital_object_type are keys in the digital_object_data' do
       expect {
         described_class.digital_object_for_digital_object_data(unusable_digital_object_data).new_record?
+      }.to raise_error(ArgumentError)
+    end
+
+    it 'raises an error if value for assign_uid is already assigned to a digital object' do
+      expect {
+        described_class.digital_object_for_digital_object_data(digital_object_data_attempt_to_create_existing_object)
+      }.to raise_error(ArgumentError, "Cannot create new digital object with \"assign_uid\"; object with same uid already exists")
+    end
+
+    it 'raises an error if assign_uid is provided but digital_object_type is not provided in the digital_object_data' do
+      expect {
+        described_class.digital_object_for_digital_object_data(digital_object_data_without_digital_object_type).new_record?
+      }.to raise_error(ArgumentError, "Cannot create new digital object; digital object type is required")
+    end
+
+    it 'raises an error if both uid and assign_uid are keys in the digital_object_data' do
+      expect {
+        described_class.digital_object_for_digital_object_data(digital_object_data_with_conflicting_params)
       }.to raise_error(ArgumentError)
     end
   end
