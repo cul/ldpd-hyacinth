@@ -17,7 +17,7 @@ describe Hyacinth::Datacite::DataciteMetadataBuilder do
       { titles: [{ title: "The Catcher in the Rye" }],
         publisher: "Columbia University",
         publicationYear: "1951",
-        types: { resourceTypeGeneral: "Article"},
+        types: { resourceTypeGeneral: "Text"},
         creators: [{ name: "Salinger, J. D." }, { name: "Lincoln, Abraham" }] }
     end
     subject { metadata_builder.datacite_attributes }

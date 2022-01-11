@@ -64,7 +64,7 @@ module Hyacinth::Datacite
     def add_resource_type
       hyacinth_genre_uri = @hyacinth_metadata_retrieval.genre_uri
       if EZID[:datacite][:genre_to_resource_type_mapping].key? hyacinth_genre_uri
-        @attributes[:types] = { resourceTypeGeneral: "#{EZID[:datacite][:genre_to_resource_type_mapping][hyacinth_genre_uri][:content]}" }
+        @attributes[:types] = { resourceTypeGeneral: "#{EZID[:datacite][:genre_to_resource_type_mapping][hyacinth_genre_uri][:attribute_general]}" }
       else
         # required element, but no content. If use ':unav', DataCite REST API generates error as follows:
         # The value ':unav' is not an element of the set {'Audiovisual', ....}
