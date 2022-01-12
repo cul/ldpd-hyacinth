@@ -44,9 +44,8 @@ class DigitalObjectImportProcessingJob
   end
 
   def self.digital_object_for_digital_object_data(digital_object_data)
-    if digital_object_data['uid'].present? && digital_object_data['assign_uid'].present?
-      raise ArgumentError, 'Either "uid" or "assign_uid" attribute may be present in digital_object_data, but not both.'
-    end
+    raise ArgumentError, 'Either "uid" or "assign_uid" attribute may be present in digital_object_data, but not both.' if
+      digital_object_data['uid'].present? && digital_object_data['assign_uid'].present?
     return DigitalObject.find_by_uid!(digital_object_data['uid']) if digital_object_data['uid'].present?
 
     ensure_appropriate_create_data_present!(digital_object_data)
@@ -57,9 +56,9 @@ class DigitalObjectImportProcessingJob
 
   def self.ensure_appropriate_create_data_present!(digital_object_data)
     raise ArgumentError, 'Cannot create new digital object; digital object type is required' unless digital_object_data['digital_object_type'].present?
-    if digital_object_data['assign_uid'].present? && DigitalObject.find_by_uid(digital_object_data['assign_uid'])
-      raise ArgumentError, 'Cannot create new digital object with "assign_uid"; object with same uid already exists'
-    end
+    raise ArgumentError, 'Cannot create new digital object with "assign_uid"; object with same uid already exists' if
+      digital_object_data['assign_uid'].present? && DigitalObject.find_by_uid(digital_object_data['assign_uid'])
+
     true
   end
 
