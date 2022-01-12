@@ -4,6 +4,7 @@ module Types
   class QueryType < Types::BaseObject
     # Add root-level fields here.
     # They will be entry points for queries on your schema.
+    include Types::Facets::ValueQueries
 
     field :authenticated_user, AuthenticatedUserType, null: true do
       description 'Logged-in user'
@@ -37,15 +38,6 @@ module Types
     field :digital_objects, DigitalObject::SearchRecord.results_type, null: true, extensions: [Types::Extensions::SolrSearch, Types::Extensions::MapToDigitalObjectSearchRecord] do
       description "List and searches all digital objects"
       argument :order_by, Inputs::DigitalObject::OrderByInput, required: false, default_value: { field: 'score', direction: 'desc' }
-    end
-
-    field :facet_values, Facets::ValueTypeResults, null: true do
-      description "List facet values for a specified facet in a search context"
-      argument :field_name, String, required: true
-      argument :limit, "Types::Scalar::Limit", required: true
-      argument :offset, "Types::Scalar::Offset", required: false
-      argument :order_by, Inputs::FacetValues::OrderByInput, required: false, default_value: { field: 'count', direction: 'asc' }
-      argument :search_params, Types::SearchAttributes, required: false
     end
 
     field :digital_object, DigitalObjectInterface, null: true do
@@ -132,19 +124,6 @@ module Types
       digital_object = ::DigitalObject.find_by_uid!(id)
       ability.authorize!(:read, digital_object)
       digital_object
-    end
-
-    def facet_values(**arguments)
-      search_params = arguments[:search_params] ? arguments[:search_params].prepare : {}
-
-      Hyacinth::Config.digital_object_search_adapter.search(search_params, context[:current_user]) do |solr_params|
-        solr_params.facet_on(arguments[:field_name]) do |facet_params|
-          facet_params.rows(arguments[:limit])
-          facet_params.start(arguments[:offset])
-          facet_params.sort(arguments[:order_by][:field], arguments[:order_by][:direction]) if arguments[:order_by]
-          facet_params.with_statistics!
-        end
-      end
     end
 
     def vocabulary(string_key:)

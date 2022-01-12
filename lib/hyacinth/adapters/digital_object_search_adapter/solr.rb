@@ -99,7 +99,8 @@ module Hyacinth
             elsif k.to_s == 'search_type'
               solr_parameters.default_field(document_generator.search_field(v)) if document_generator.search_field(v)
             elsif k.to_s == 'facet_on'
-              Array(v).map { |eachv| solr_parameters.facet_on(eachv) }
+              # facet on field and fetch one more than the configured page size (for has_more flag)
+              Array(v).map { |eachv| solr_parameters.facet_on(eachv) { |facet| facet.rows(ui_config.facet_page_size + 1) } }
             else
               Array(v).map { |eachv| solr_parameters.fq(k, *eachv) }
             end

@@ -26,5 +26,8 @@ RSpec.shared_examples "a search adapter" do
     it "implements #clear_index" do
       expect(adapter).to respond_to(:clear_index)
     end
+    it "has a ui config" do
+      expect(adapter.ui_config).to be_a(Hyacinth::Adapters::DigitalObjectSearchAdapter::UiConfig)
+    end
   end
 end

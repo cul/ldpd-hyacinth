@@ -67,7 +67,17 @@ RSpec.describe Types::Extensions::SolrSearch do
           }
         }
       end
-      let(:facet_list) { client.facets(facet_counts) }
+      let(:stats) do
+        {
+          'stats_fields' => {
+            "facet_fields" => {
+              "digital_object_type_ssi" => { 'countDistinct' => 2 }
+            }
+          }
+        }
+      end
+      let(:facet_list) { client.facets(facet_counts, stats) }
+      let(:has_more) { facet_list.first[:has_more] }
       let(:asset) { facet_list.first[:values].detect { |value| value[:value] == 'asset' } }
       let(:item) { facet_list.first[:values].detect { |value| value[:value] == 'item' } }
 
@@ -109,6 +119,9 @@ RSpec.describe Types::Extensions::SolrSearch do
       it "parses the solr facets array into a suitable hash of values and counts" do
         expect(item[:count]).to be 1
         expect(asset[:count]).to be 2
+      end
+      it "sets has_more" do
+        expect(has_more).to be false
       end
     end
   end

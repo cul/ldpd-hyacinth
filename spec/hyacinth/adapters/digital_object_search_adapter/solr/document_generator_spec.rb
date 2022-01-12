@@ -73,8 +73,9 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
             }
           ],
           'alternative_title' => [
-            { 'value' => 'Other Title' },
+            { 'value' => 'Other Title', 'value_lang' => { 'tag' => 'en' } },
             { 'value' => 'New Title' }
+
           ],
           'isbn' => isbn_values.map { |value| { 'value' => value } },
           'note' => [
@@ -88,7 +89,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
 
       before do
         DynamicFieldsHelper.load_name_fields!
-        DynamicFieldsHelper.load_alternative_title_fields!
+        DynamicFieldsHelper.load_alternative_title_fields!(with_language_tags: true)
         DynamicFieldsHelper.load_isbn_fields!
         DynamicFieldsHelper.load_note_fields!
         DynamicFieldsHelper.load_abstract_fields!
@@ -100,6 +101,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
         expect(document['df_name_term_ssim']).to match_array ['Random, Person']
         expect(document['df_name_role_term_ssim']).to match_array ['writer', 'author']
         expect(document['df_alternativeTitle_value_ssim']).to match_array ['Other Title', 'New Title']
+        expect(document['df_alternativeTitle_valueLang_ssim']).to match_array ['en']
         expect(document['df_isbn_value_ssim']).to match_array isbn_values
         expect(document['name_term_uris_ssim']).to include name_term_uri
       end
@@ -112,6 +114,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
         expect(document['df_name_term_present_bi']).to eq(true)
         expect(document['df_name_role_term_present_bi']).to eq(true)
         expect(document['df_alternativeTitle_value_present_bi']).to eq(true)
+        expect(document['df_alternativeTitle_valueLang_present_bi']).to eq(true)
         expect(document['df_isbn_value_present_bi']).to eq(true)
       end
 
@@ -123,7 +126,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr::DocumentGenerator
         expect(document.keys.select { |key| key.match?(/df_.+_present_bi/) }).to match_array(
           [
             'df_name_term_present_bi', 'df_name_role_term_present_bi', 'df_alternativeTitle_value_present_bi',
-            'df_isbn_value_present_bi', 'df_note_value_present_bi'
+            'df_alternativeTitle_valueLang_present_bi', 'df_isbn_value_present_bi', 'df_note_value_present_bi'
           ]
         )
       end

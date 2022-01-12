@@ -8,6 +8,8 @@ module Types
       field :field_name, String, null: false
       field :display_label, String, null: false
       field :values, [Types::Facets::ValueType], null: false
+      field :total_count, Integer, null: true
+      field :has_more, Boolean, null: false
     end
   end
 end

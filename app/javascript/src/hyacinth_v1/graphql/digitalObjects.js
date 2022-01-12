@@ -202,6 +202,7 @@ export const getDigitalObjectsQuery = gql`
       facets {
         fieldName,
         displayLabel,
+        hasMore,
         values {
           value,
           count

@@ -63,6 +63,8 @@ development:
     type: Solr
     url: http://localhost:8983/solr/hyacinth-development
     commit_after_change: true
+    search_ui:
+      facet_page_size: 10
   preservation_persistence:
     adapters:
       - type: Fedora3
@@ -129,6 +131,8 @@ test:
     type: Solr
     url: http://localhost:8993/solr/hyacinth-test
     commit_after_change: true
+    search_ui:
+      facet_page_size: 10
   preservation_persistence:
     adapters:
       - type: Fedora3
