@@ -24,9 +24,9 @@ function TermOptions({ vocabularyStringKey, onChange, close }) {
     loading, error, data, refetch, fetchMore,
   } = useQuery(getTermsQuery, {
     variables: {
-      vocabularyStringKey, limit, offset: 0, searchParams: { query: query.length >= 3 ? query : '' },
+      vocabularyStringKey, limit, offset: 0, searchParams: { searchTerms: query.length >= 3 ? query : '' },
     },
-    onCompleted: res => setTotalTerms(res.vocabulary.terms.totalCount),
+    onCompleted: (res) => setTotalTerms(res.vocabulary.terms.totalCount),
   });
 
   if (error) return (<GraphQLErrors errors={error} />);
@@ -64,7 +64,7 @@ function TermOptions({ vocabularyStringKey, onChange, close }) {
   };
 
   const onSelectHandler = (uri) => {
-    const { prefLabel, uri: selectedURI } = terms.find(o => o.uri === uri);
+    const { prefLabel, uri: selectedURI } = terms.find((o) => o.uri === uri);
 
     onChange({ pref_label: prefLabel, uri: selectedURI });
   };
@@ -107,7 +107,7 @@ function TermOptions({ vocabularyStringKey, onChange, close }) {
 
             <ul className="list-unstyled">
               {
-                terms.map(term => (
+                terms.map((term) => (
                   <TermOption
                     key={term.id}
                     term={term}
