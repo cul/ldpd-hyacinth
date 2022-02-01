@@ -71,6 +71,7 @@ module Hyacinth::Datacite
       attributes_hash[:url] = target_url unless target_url.nil?
       attributes_hash[:event] = DOI_MINT_EVENT[doi_status] unless doi_status == :draft
       attributes_hash[:prefix] = EZID[:prefix]
+      attributes_hash[:schemaVersion] = 'http://datacite.org/schema/kernel-4'
       uri_path = '/dois/' + doi
       uri = URI(EZID[:url] + uri_path)
       request = Net::HTTP::Put.new uri.request_uri
