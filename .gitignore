@@ -65,9 +65,15 @@ jetty-test
 # LibreOffice
 .~lock*
 
+# Webpack builds
 /public/packs
 /public/packs-test
+
+# Node and Yarn
 /node_modules
 /yarn-error.log
 yarn-debug.log*
 .yarn-integrity
+
+# VSCode
+.vscode
