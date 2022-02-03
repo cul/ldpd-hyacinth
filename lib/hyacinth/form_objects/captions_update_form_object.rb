@@ -18,7 +18,7 @@ module Hyacinth
       end
 
       def valid_webvtt?(content)
-        content.start_with?("WEBVTT")
+        content.blank? || content.start_with?("WEBVTT")
       end
 
       def validate_presence_of_file_or_captions_text
