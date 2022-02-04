@@ -25,9 +25,9 @@ module DigitalObjectConcerns
         'other_projects',
         'number_of_children',
         'publish_entries'
-      ].map { |field_name|
-        [field_name, self.send(field_name).as_json(options)]
-      }.to_h.merge(
+      ].index_with { |field_name|
+        self.send(field_name).as_json(options)
+      }.merge(
         'parents' => self.parents.map { |parent| { 'uid' => parent.uid } }
       )
     end

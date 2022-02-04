@@ -24,8 +24,8 @@ class DigitalObject < ApplicationRecord
   has_many :publish_entries, dependent: :destroy
   has_many :publish_targets, through: :publish_entries
   has_many :resource_requests, foreign_key: :digital_object_uid, primary_key: :uid, dependent: :destroy
-  belongs_to :created_by, required: false, class_name: 'User'
-  belongs_to :updated_by, required: false, class_name: 'User'
+  belongs_to :created_by, optional: true, class_name: 'User'
+  belongs_to :updated_by, optional: true, class_name: 'User'
 
   before_validation :clean_title!, :clean_descriptive_metadata!, :clean_rights!
   before_save :lock, :assign_uid_if_not_exist, :ensure_doi_if_requested,
@@ -110,8 +110,8 @@ class DigitalObject < ApplicationRecord
     end
 
     def assign_metadata_location_uri_if_not_exist
-      self.metadata_location_uri = Hyacinth::Config.metadata_storage.generate_new_location_uri(self.uid) unless self.metadata_location_uri.present?
-      self.backup_metadata_location_uri = Hyacinth::Config.metadata_storage.generate_new_location_uri("#{self.uid}-backup") unless self.backup_metadata_location_uri.present?
+      self.metadata_location_uri = Hyacinth::Config.metadata_storage.generate_new_location_uri(self.uid) if self.metadata_location_uri.blank?
+      self.backup_metadata_location_uri = Hyacinth::Config.metadata_storage.generate_new_location_uri("#{self.uid}-backup") if self.backup_metadata_location_uri.blank?
     end
 
     def update_optimistic_lock_token

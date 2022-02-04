@@ -30,7 +30,7 @@ class BatchImportStartJob
   end
 
   def self.process_csv_file_if_present(batch_import)
-    return unless batch_import.file_location.present?
+    return if batch_import.file_location.blank?
 
     Hyacinth::Config.batch_import_storage.with_readable_tempfile(batch_import.file_location) do |csv_file|
       row_prerequisite_map = Hyacinth::BatchImport::IndexPrerequisiteMap.generate(csv_file)

@@ -10,7 +10,7 @@
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, IndentationWidth.
 # SupportedStyles: with_first_parameter, with_fixed_indentation
-Layout/AlignParameters:
+Layout/ParameterAlignment:
   Exclude:
     - 'bin/rspec'
     - 'bin/webpack'
@@ -85,7 +85,7 @@ Metrics/CyclomaticComplexity:
 # Offense count: 3
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
 # URISchemes: http, https
-Metrics/LineLength:
+Layout/LineLength:
   Max: 319
 
 # Offense count: 38
@@ -200,17 +200,6 @@ Style/BlockDelimiters:
     - 'lib/hyacinth/adapters/preservation_adapter/fedora3/rels_ext_properties.rb'
     - 'spec/shared_examples/lock_adapter/shared_examples.rb'
     - 'spec/shared_examples/storage_adapter/shared_examples.rb'
-
-# Offense count: 16
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: braces, no_braces, context_dependent
-Style/BracesAroundHashParameters:
-  Exclude:
-    - 'app/models/ability.rb'
-    - 'config/deploy.rb'
-    - 'lib/tasks/hyacinth/ci.rake'
-    - 'spec/requests/graphql/mutations/delete_project_spec.rb'
 
 # Offense count: 1
 # Cop supports --auto-correct.

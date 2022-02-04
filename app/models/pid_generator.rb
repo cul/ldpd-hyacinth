@@ -1,14 +1,14 @@
 # frozen_string_literal: true
 
-class PidGenerator < ActiveRecord::Base
-  has_many :projects
+class PidGenerator < ApplicationRecord
+  has_many :projects, dependent: :restrict_with_error
   before_validation :set_template_if_blank_and_get_seed, on: :create
 
   DEFAULT_TEMPLATE = '.reeeeeeeeee'
   VALID_NAMESPACE_REGEX = /\A([A-Za-z0-9-]+)\z/.freeze
   VALID_PID_WITHOUT_NAMESPACE_REGEX = /\A([0123456789bcdfghjkmnpqrstvwxz_-]+)\z/.freeze
 
-  validates :namespace, presence: true, uniqueness: true, allow_blank: false, allow_nil: false
+  validates :namespace, presence: true, uniqueness: true, allow_blank: false
   validate :validate_sample_mint
 
   def self.default_pid_generator

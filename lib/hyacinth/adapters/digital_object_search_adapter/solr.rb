@@ -54,12 +54,12 @@ module Hyacinth
         # @param [String] digital_object_type
         def field_used_in_project?(field_path, project, digital_object_type)
           raise ArgumentError, "field_path must be a String. Got: #{field_path.inspect}" unless field_path.is_a?(String)
-          search do |solr_params|
+          search { |solr_params|
             solr_params.fq('projects_ssim', project.string_key)
             solr_params.fq('digital_object_type_ssi', digital_object_type) if digital_object_type.present?
             solr_params.fq(Hyacinth::DigitalObject::SolrKeys.for_dynamic_field_presence(field_path.split('/')), true)
             solr_params.rows(1)
-          end['response']['docs'].length.positive?
+          }['response']['docs'].length.positive?
         end
 
         # Returns the uids associated with the given identifier

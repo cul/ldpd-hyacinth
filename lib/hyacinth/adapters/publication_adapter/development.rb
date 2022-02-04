@@ -16,7 +16,7 @@ module Hyacinth
         # @return [success, msg] [boolean, Array<String>] success will be true and message will be a
         #         fake url location
         def publish_impl(publish_target, digital_object)
-          return [false, "Never preserved"] unless digital_object.first_preserved_at.present?
+          return [false, "Never preserved"] if digital_object.first_preserved_at.blank?
 
           [true, ["https://example.com/#{publish_target.string_key}/#{digital_object.uid}"]]
         rescue StandardError => e
@@ -30,7 +30,7 @@ module Hyacinth
         #         the unpublish was successful, or false otherwise. errors is an array
         #         that will contain error messages if the unpublish failed.
         def unpublish_impl(_publish_target, digital_object)
-          return [false, "Never preserved"] unless digital_object.first_preserved_at.present?
+          return [false, "Never preserved"] if digital_object.first_preserved_at.blank?
 
           [true]
         rescue StandardError => e

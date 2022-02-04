@@ -9,7 +9,7 @@ module Hyacinth
     # @param [Array<String>] custom field keys that should be represented in the returning hash/
     def self.format_term(term, custom_fields)
       if term.is_a? Term
-        new_term = Term::CORE_FIELDS.map { |f| [f, term.send(f)] }.to_h
+        new_term = Term::CORE_FIELDS.index_with { |f| term.send(f) }
         new_term['alt_labels'] = [] if new_term['alt_labels'].nil?
         custom_fields_data = term.custom_fields
       elsif term.is_a? Hash

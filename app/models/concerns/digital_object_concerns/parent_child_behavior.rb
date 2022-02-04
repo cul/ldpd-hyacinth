@@ -6,7 +6,7 @@ module DigitalObjectConcerns
 
     included do
       has_many :parent_directed_parent_child_relationships, class_name: 'ParentChildRelationship', foreign_key: 'child_id', dependent: :destroy
-      has_many :child_directed_parent_child_relationships, class_name: 'ParentChildRelationship', foreign_key: 'parent_id'
+      has_many :child_directed_parent_child_relationships, class_name: 'ParentChildRelationship', foreign_key: 'parent_id', dependent: :destroy
 
       attr_reader :parents_to_add
       attr_reader :parents_to_remove
@@ -113,19 +113,19 @@ module DigitalObjectConcerns
       end
 
       def apply_parent_removals!
-        return unless parents_to_remove.present?
+        return if parents_to_remove.blank?
         ParentChildRelationship.where(child: self, parent: parents_to_remove).delete_all
         @parents = nil # clear parent instance variable cache
       end
 
       def apply_child_removals!
-        return unless children_to_remove.present?
+        return if children_to_remove.blank?
         ParentChildRelationship.where(parent_id: self.id, child_id: children_to_remove).delete_all
         @children = nil # clear children instance variable cache
       end
 
       def apply_parent_additions!
-        return unless parents_to_add.present?
+        return if parents_to_add.blank?
         # Perform additions, appending new entries so they're ordered last among existing objects.
         parents_to_add.each do |parent_to_add|
           order = (ParentChildRelationship.where(parent: parent_to_add).maximum(:sort_order) || -1) + 1
@@ -139,7 +139,7 @@ module DigitalObjectConcerns
       end
 
       def apply_child_additions!
-        return unless children_to_add.present?
+        return if children_to_add.blank?
         # Perform additions, appending new entries so they're ordered last among existing objects.
         order = (ParentChildRelationship.where(parent: self).maximum(:sort_order) || -1) + 1
         children_to_add.each do |child_to_add|

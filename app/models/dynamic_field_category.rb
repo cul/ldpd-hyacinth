@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-class DynamicFieldCategory < ActiveRecord::Base
+class DynamicFieldCategory < ApplicationRecord
   include DynamicFieldStructure::Sortable
 
   enum metadata_form: { descriptive: 0, item_rights: 1, asset_rights: 2 }
 
-  has_many :dynamic_field_groups, as: :parent
+  has_many :dynamic_field_groups, as: :parent, dependent: :restrict_with_error
 
   validates :display_label, presence: true, uniqueness: { message: "%{value} is already taken" }
   validates :metadata_form, presence: true

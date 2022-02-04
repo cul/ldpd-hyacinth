@@ -6,7 +6,7 @@ module DigitalObjectConcerns
       extend ActiveSupport::Concern
 
       def assign_doi(digital_object_data)
-        return unless digital_object_data.key?('doi').present?
+        return unless digital_object_data.key?('doi')
         doi_value = digital_object_data['doi']
         return if doi_value == doi # no-op if same as current doi
         raise Hyacinth::Exceptions::AlreadySet, "Cannot set doi because doi has already been set." if doi.present?

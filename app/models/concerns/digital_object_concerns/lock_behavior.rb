@@ -25,7 +25,7 @@ module DigitalObjectConcerns
       # Note: pluck does not lead to ActiveRecord object instantiation, so we don't need to worry
       # about ongoing object locks.
       return if self.new_record?
-      return if self.optimistic_lock_token == DigitalObject.where(id: self.id).pluck(:optimistic_lock_token).first
+      return if self.optimistic_lock_token == DigitalObject.where(id: self.id).pick(:optimistic_lock_token)
       self.errors.add(:optimistic_lock_token, "This digital object has been updated by another process and your data is stale. Please reload and apply your changes again.")
       throw(:abort)
     end

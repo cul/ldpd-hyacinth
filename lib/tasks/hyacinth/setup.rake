@@ -3,7 +3,7 @@
 namespace :hyacinth do
   namespace :setup do
     desc "Set up hyacinth config files"
-    task :config_files do
+    task :config_files do # rubocop:disable Rails/RakeEnvironment
       config_template_dir = Rails.root.join('config', 'templates')
       config_dir = Rails.root.join('config')
       Dir.foreach(config_template_dir) do |entry|

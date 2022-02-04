@@ -31,7 +31,7 @@ namespace :hyacinth do
     title_dynamic_field_group_name = 'title'
 
     DigitalObject.find_each(batch_size: (ENV['BATCH_SIZE'] || 200).to_i) do |digital_object|
-      next unless digital_object.title.blank?
+      next if digital_object.title.present?
       title_field_group = digital_object.descriptive_metadata[title_dynamic_field_group_name]
       next unless title_field_group.present? && (title_field_group[0]).present?
       digital_object.title = { 'value' => title_field_group[0].dup }

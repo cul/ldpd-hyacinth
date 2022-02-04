@@ -19,13 +19,15 @@ module DigitalObjectConcerns
 
       def assign_other_projects(digital_object_data)
         return unless digital_object_data.key?('other_projects')
-        self.other_projects = Set.new(digital_object_data['other_projects'].map { |digital_object_data_project|
-          if digital_object_data_project.is_a? Project
-            digital_object_data_project
-          else
-            dereference_project_string_key(digital_object_data_project['string_key'], true)
+        self.other_projects = Set.new(
+          digital_object_data['other_projects'].map do |digital_object_data_project|
+            if digital_object_data_project.is_a? Project
+              digital_object_data_project
+            else
+              dereference_project_string_key(digital_object_data_project['string_key'], true)
+            end
           end
-        })
+        )
       end
 
       def dereference_project_string_key(string_key, raise_error = false)

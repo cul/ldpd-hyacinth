@@ -46,7 +46,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Data
   # @param attributes [Hash]
   # @return [Array] symbol keys of missing required properties
   def missing_required_properties(attributes)
-    REQUIRED_PROPERTIES_FINDABLE_DOI.map { |prop| prop unless attributes[prop].present? }.compact
+    REQUIRED_PROPERTIES_FINDABLE_DOI.select { |prop| attributes[prop].blank? }
   end
 
   # @param attributes [Hash]

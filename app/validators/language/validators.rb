@@ -52,7 +52,7 @@ module Language::Validators
   class VariantValidator < ActiveModel::Validator
     def validate(record)
       variants = record.subtags.select { |t| t.subtag_type.eql?('variant') }.to_a
-      return unless variants.present?
+      return if variants.blank?
       nonvariants = record.subtags.to_a - variants
       prefix = ::Language::Tag.tag_value(nonvariants, true)
       variants.each do |variant|

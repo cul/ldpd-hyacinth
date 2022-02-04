@@ -55,7 +55,7 @@ class DigitalObjectImportProcessingJob
   end
 
   def self.ensure_appropriate_create_data_present!(digital_object_data)
-    raise ArgumentError, 'Cannot create new digital object; digital object type is required' unless digital_object_data['digital_object_type'].present?
+    raise ArgumentError, 'Cannot create new digital object; digital object type is required' if digital_object_data['digital_object_type'].blank?
     raise ArgumentError, 'Cannot create new digital object with "assign_uid"; object with same uid already exists' if
       digital_object_data['assign_uid'].present? && DigitalObject.find_by_uid(digital_object_data['assign_uid'])
 

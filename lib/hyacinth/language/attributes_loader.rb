@@ -23,9 +23,9 @@ class Hyacinth::Language::AttributesLoader
     records.each do |record_fields|
       yield record_fields if atts.inject(true) do |memo, entry|
         if memo
-          (entry[1] == :* && !record_fields[entry[0]].blank?) ||
+          (entry[1] == :* && record_fields[entry[0]].present?) ||
           (record_fields[entry[0]] == entry[1]) ||
-          !(record_fields[entry[0]] & Array(entry[1])).blank?
+          (record_fields[entry[0]] & Array(entry[1])).present?
         else
           false
         end

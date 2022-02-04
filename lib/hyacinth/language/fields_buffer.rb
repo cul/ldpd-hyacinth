@@ -35,7 +35,7 @@ class Hyacinth::Language::FieldsBuffer
   end
 
   def empty?
-    !present?
+    !present? # rubocop:disable Rails/Blank
   end
 
   alias blank? empty?

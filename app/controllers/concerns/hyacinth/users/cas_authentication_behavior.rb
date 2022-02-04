@@ -31,7 +31,7 @@ module Hyacinth
           uri = URI.parse(full_validate_uri)
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = true
-          http.verify_mode = OpenSSL::SSL::VERIFY_NONE if Rails.env == 'development'
+          http.verify_mode = OpenSSL::SSL::VERIFY_NONE if Rails.env.development?
 
           cas_request = Net::HTTP::Get.new(uri.request_uri)
           response_body = http.request(cas_request).body
@@ -59,7 +59,7 @@ module Hyacinth
               cookies[:signed_in_using_uni] = true # Use this cookie to know when to do a CAS logout upon Devise logout
               flash[:notice] = I18n.t('devise.sessions.signed_in')
 
-              redirect_to root_path, status: 302
+              redirect_to root_path, status: :found
             else
               flash[:alert] = possible_user.present? ? I18n.t('devise.failure.inactive') : I18n.t('devise.failure.unauthorized', uni: user_uni, email: user_email)
               # Log out user
