@@ -1,12 +1,3 @@
-# fcd1, 08/30/16: Original code was copied verbatim from
-# hypatia-new, and then modified. Modifications should be
-# kept to a minimum
-
-# This code interfaces with the EZID server
-# and therefore implements parts of the EZID server
-# API (http://ezid.cdlib.org/doc/apidoc.2.html)
-# EZID API, Version 2
-
 require 'net/http'
 require 'hyacinth/datacite/server_response'
 require 'hyacinth/datacite/doi'
@@ -99,19 +90,12 @@ module Hyacinth::Datacite
         data = { type: 'dois' }
         data[:attributes] = attributes
         request.body = { data: data }.to_json
-        # fcd1, 12/23/21: Following can be uncommented for in situ debugging
-        # Hyacinth::Utils::Logger.logger.error("URL: #{uri}")
-        # Hyacinth::Utils::Logger.logger.error("REQUEST BODY #{request.body}")
         request.basic_auth @username, @password
         request.add_field('Content-Type', 'application/vnd.api+json')
         result = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
           response = http.request(request)
           response
         end
-        # fcd1, 12/23/21: Following can be uncommented for in situ debugging
-        # Hyacinth::Utils::Logger.logger.error("RESPONSE STATUS/CODE #{result.code}")
-        # Hyacinth::Utils::Logger.logger.error("RESPONSE MSG #{result.msg}")
-        # Hyacinth::Utils::Logger.logger.error("RESPONSE BODY #{result.body}")
         result
       end
   end
