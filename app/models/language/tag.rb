@@ -119,7 +119,7 @@ class Language::Tag < ApplicationRecord
     end
 
     def self.validate_variant_for_prefix(prefix, variant)
-      return unless variant.prefixes.present? # blank prefixes can be used everywhere
+      return if variant.prefixes.blank? # blank prefixes can be used everywhere
       return if variant.prefixes.detect { |p| prefix.include?(p) }
       raise SubtagError, "variant #{variant.subtag} cannot be used in the context of #{prefix}"
     end

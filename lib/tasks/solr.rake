@@ -4,7 +4,7 @@
 # if they don't already exist.
 
 namespace :solr do
-  task :after_start do
+  task :after_start do # rubocop:disable Rails/RakeEnvironment
     solr_config = SolrWrapper.default_instance_options
 
     restart_required = false
@@ -28,7 +28,7 @@ namespace :solr do
 
   # After hook that runs after existing solr:start task from solr_wrapper.
   # For more information: https://coderwall.com/p/qhdhgw/adding-a-post-execution-hook-to-the-rails-db-migrate-task
-  task :start do
+  task :start do # rubocop:disable Rails/RakeEnvironment
     at_exit do
       Rake::Task['solr:after_start'].invoke
     end

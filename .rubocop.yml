@@ -7,6 +7,15 @@ AllCops:
   TargetRubyVersion: 2.7.2
   TargetRailsVersion: 6.1.4.4
 
+Layout/IndentationConsistency:
+  EnforcedStyle: indented_internal_methods
+
+Rails/Presence:
+  Enabled: false
+
+RSpec/DescribedClass:
+  Enabled: false
+
 RSpec/ExampleLength:
   Max: 7
 

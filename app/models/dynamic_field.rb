@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DynamicField < ActiveRecord::Base
+class DynamicField < ApplicationRecord
   include DynamicFieldStructure::Sortable
   include DynamicFieldStructure::StringKey
   include DynamicFieldStructure::Path
@@ -27,8 +27,8 @@ class DynamicField < ActiveRecord::Base
   has_many :enabled_dynamic_fields, dependent: :destroy
 
   belongs_to :dynamic_field_group
-  belongs_to :created_by, required: false, class_name: 'User'
-  belongs_to :updated_by, required: false, class_name: 'User'
+  belongs_to :created_by, optional: true, class_name: 'User'
+  belongs_to :updated_by, optional: true, class_name: 'User'
 
   before_save :set_default_for_additional_data
 
@@ -56,7 +56,7 @@ class DynamicField < ActiveRecord::Base
   end
 
   def as_json(options = {})
-    json = EXPORTABLE_ATTRIBUTES.map { |k| [k, self.send(k)] }.to_h
+    json = EXPORTABLE_ATTRIBUTES.index_with { |k| self.send(k) }
     json[:type] = self.class.name
     return json unless options[:camelize]
     json.deep_transform_keys! { |key| key.to_s.camelize(:lower).to_sym }

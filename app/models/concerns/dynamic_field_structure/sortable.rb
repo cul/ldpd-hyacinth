@@ -12,7 +12,7 @@ module DynamicFieldStructure
     private
 
       def set_sort_order
-        return unless sort_order.blank?
+        return if sort_order.present?
 
         highest_sort_order = siblings.map(&:sort_order).max
         self.sort_order = highest_sort_order.blank? ? 0 : highest_sort_order + 1

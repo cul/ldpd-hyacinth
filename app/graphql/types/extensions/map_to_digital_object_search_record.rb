@@ -9,7 +9,7 @@ module Types
 
       def after_resolve(object:, value:, arguments:, context:, memo:)
         raise GraphQL::ExecutionError, 'MapToDigitalObjectSearchRecord can only be downstream of SolrSearch' unless value.is_a?(OpenStruct) && value[:page_info].is_a?(OpenStruct)
-        projects = Project.all.map { |p| [p.string_key, p] }.to_h
+        projects = Project.all.index_by(&:string_key)
         value[:nodes] = value[:nodes].map do |solr_doc|
           OpenStruct.new(
             id: solr_doc['id'],

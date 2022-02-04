@@ -36,7 +36,7 @@ module Hyacinth
       end
 
       def delete_resource(resource_name)
-        return unless self.resources[resource_name].present?
+        return if self.resources[resource_name].blank?
 
         self.deleted_resources[resource_name] = self.resources[resource_name]
         self.resources[resource_name] = nil
@@ -92,7 +92,7 @@ module Hyacinth
 
       def validate_resource_attribute_config(resource_attribute_name, config)
         preservable_config = config[:preservable]
-        return unless preservable.present?
+        return if preservable.blank?
         valid_preservable_as = (preservable_config[:as] == :copy || preservable_config[:as] == :reference)
         raise "Cannot define #{resource_attribute_name}: preservable resources must be :copy or :reference (got #{preservable_config[:as]})" unless valid_preservable_as
         versionable = preservable_config[:versionable]

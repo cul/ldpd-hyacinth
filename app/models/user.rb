@@ -10,7 +10,7 @@ class User < ApplicationRecord
   validates :password, :password_confirmation, presence: true, on: :create
   validates :password_confirmation, presence: true, if: proc { |a| a.password.present? }, on: :update
 
-  has_many :permissions
+  has_many :permissions, dependent: :destroy
   accepts_nested_attributes_for :permissions, allow_destroy: true
 
   before_validation :set_uid, on: :create

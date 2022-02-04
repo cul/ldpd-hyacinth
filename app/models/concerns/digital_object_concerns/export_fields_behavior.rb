@@ -39,7 +39,7 @@ module DigitalObjectConcerns
       end
 
       def title_internal_fields
-        return {} unless title.present?
+        return {} if title.blank?
         result = {
           'title' => generate_display_label,
           'title.value.non_sort_portion' => title.dig('value', 'non_sort_portion'),

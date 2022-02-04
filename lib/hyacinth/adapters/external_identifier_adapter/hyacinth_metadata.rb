@@ -71,7 +71,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata
 
   # @return Hash<String> identifier type mapped to identifier value of parent publication IDs
   def parent_publication_identifiers
-    ['DOI', 'ISBN', 'ISSN'].map { |type| [type, parent_publication(type.downcase)] }.to_h.compact
+    ['DOI', 'ISBN', 'ISSN'].index_with { |type| parent_publication(type.downcase) }.compact
   end
 
   # Identifier of the parent publication

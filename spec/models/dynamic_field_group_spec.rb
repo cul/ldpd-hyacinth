@@ -369,7 +369,7 @@ RSpec.describe DynamicFieldGroup, type: :model do
       it 'submits an update/reindexing job for the previous path' do
         old_path = dynamic_field_group.path
         changes = { old_path => old_path.sub(old_string_key, new_string_key) }
-        expect(ChangeDynamicFieldPathsJob).to receive(:perform).with(changes)
+        expect(ChangeDynamicFieldPathsJob).to receive(:perform_later).with(changes)
         dynamic_field_group.string_key = new_string_key
         expect(dynamic_field_group.save).to eq(true)
       end

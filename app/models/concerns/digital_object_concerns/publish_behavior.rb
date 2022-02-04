@@ -23,7 +23,7 @@ module DigitalObjectConcerns
       return false if self.errors.present?
 
       # No one should be publishing an object that has not been preserved
-      unless self.preserved_at.present?
+      if self.preserved_at.blank?
         self.errors.add(:publish, 'Cannot publish a DigitalObject that has not been preserved')
         return false
       end

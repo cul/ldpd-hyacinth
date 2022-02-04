@@ -35,7 +35,7 @@ module ResourceRequests
 
     def self.eligible_object?(digital_object)
       return false unless digital_object&.is_a?(::DigitalObject::Asset)
-      return false unless digital_object.featured_thumbnail_region.present?
+      return false if digital_object.featured_thumbnail_region.blank?
       if digital_object.asset_type == 'Image'
         digital_object.has_access_resource?
       else

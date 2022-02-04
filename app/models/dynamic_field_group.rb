@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class DynamicFieldGroup < ActiveRecord::Base
+class DynamicFieldGroup < ApplicationRecord
   include DynamicFieldStructure::Sortable
   include DynamicFieldStructure::StringKey
   include DynamicFieldStructure::Path
@@ -17,11 +17,11 @@ class DynamicFieldGroup < ActiveRecord::Base
   has_many :export_rules, dependent: :destroy
   accepts_nested_attributes_for :export_rules
 
-  has_many :dynamic_field_groups, as: :parent
+  has_many :dynamic_field_groups, as: :parent, dependent: :restrict_with_error
   belongs_to :parent, polymorphic: true # DynamicFieldGroup or DynamicFieldCategory
 
-  belongs_to :created_by, required: false, class_name: 'User'
-  belongs_to :updated_by, required: false, class_name: 'User'
+  belongs_to :created_by, optional: true, class_name: 'User'
+  belongs_to :updated_by, optional: true, class_name: 'User'
 
   validates :display_label, presence: true
   validates :parent_id,     presence: true, numericality: { only_integer: true }
@@ -43,7 +43,7 @@ class DynamicFieldGroup < ActiveRecord::Base
   end
 
   def as_json(options = {})
-    json = EXPORTABLE_ATTRIBUTES.map { |k| [k, self.send(k)] }.to_h
+    json = EXPORTABLE_ATTRIBUTES.index_with { |k| self.send(k) }
     json[:type] = self.class.name
     json[:children] = ordered_children.map(&:as_json)
     return json unless options[:camelize]
@@ -54,7 +54,7 @@ class DynamicFieldGroup < ActiveRecord::Base
   protected
 
     def update_descendant_paths
-      return unless previous_changes['path'].present?
+      return if previous_changes['path'].blank?
       dynamic_field_groups.reload
       dynamic_fields.reload
       children.each do |node|

@@ -58,10 +58,10 @@ RSpec.describe Solr::Params do
     let(:sort_direction) { 'asc' }
     let(:expected) do
       {
-        :"f.#{facet_name}.facet.limit" => rows,
-        :"f.#{facet_name}.facet.offset" => start,
-        :"f.#{facet_name}.facet.sort" => sort,
-        :"stats.field" => "{!countDistinct=true}#{facet_name}",
+        "f.#{facet_name}.facet.limit": rows,
+        "f.#{facet_name}.facet.offset": start,
+        "f.#{facet_name}.facet.sort": sort,
+        "stats.field": "{!countDistinct=true}#{facet_name}",
         stats: 'on'
       }
     end
@@ -90,7 +90,7 @@ RSpec.describe Solr::Params do
         let(:filter_function) { 'STARTS_WITH' }
         let(:expected) do
           {
-            :"f.#{facet_name}.facet.prefix" => filter_value
+            "f.#{facet_name}.facet.prefix": filter_value
           }
         end
         it 'adds facet value params' do
@@ -101,7 +101,7 @@ RSpec.describe Solr::Params do
         let(:filter_function) { 'CONTAINS' }
         let(:expected) do
           {
-            :"f.#{facet_name}.facet.contains" => filter_value
+            "f.#{facet_name}.facet.contains": filter_value
           }
         end
         it 'adds facet value params' do

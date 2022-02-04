@@ -26,7 +26,7 @@ RSpec.describe Hyacinth::Adapters::StorageAdapter::TrackedDisk do
 
     it "does not delete the file at the given location" do
       adapter.delete(sample_location_uri)
-    rescue # rubocop:disable Lint/HandleExceptions
+    rescue # rubocop:disable Lint/SuppressedException
     ensure
       expect(adapter.exists?(example_file_path)).to eq(true)
     end

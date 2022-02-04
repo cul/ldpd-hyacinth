@@ -76,7 +76,7 @@ module Hyacinth
           ng_element.add_namespace_definition(attr_key.gsub(/^xmlns:/, ''), val)
         else
           processed_val = value_with_substitutions(val, df_data)
-          ng_element.set_attribute(attr_key, processed_val) unless processed_val.blank?
+          ng_element.set_attribute(attr_key, processed_val) if processed_val.present?
         end
       end
     end
