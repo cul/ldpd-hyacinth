@@ -11,7 +11,7 @@ class DigitalObject::Base
   include DigitalObject::Serialization
   include DigitalObject::Publishing
   include DigitalObject::Data
-  include DigitalObject::Ezid
+  include DigitalObject::Datacite
 
   NUM_FEDORA_RETRY_ATTEMPTS = 3
   DELAY_IN_SECONDS_BETWEEN_FEDORA_RETRY_ATTEMPTS = 5

@@ -207,8 +207,10 @@ namespace :hyacinth do
       ezid_yml = YAML.load_file(ezid_yml_file) || {}
       ['development', 'test'].each do |env_name|
         ezid_yml[env_name] = {
+          'url' => 'https://ezid.cdlib.org',
           'user' => 'apitest',
           'password' => 'apitest',
+          'prefix' => '10.33555',
           'shoulder' => {
             'ark' => 'ark:99999/fk4',
             'doi' => 'doi:10.5072/FK2'
@@ -219,7 +221,6 @@ namespace :hyacinth do
             'ark' => 'ark:99999/fk4',
             'doi' => 'doi:10.5072/FK2'
           },
-          'url' => 'https://ezid.cdlib.org',
           'ezid_publisher' => 'Columbia University',
 	        'datacite' => {
 	          'genre_to_resource_type_mapping' => {
