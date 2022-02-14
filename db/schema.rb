@@ -15,8 +15,8 @@ ActiveRecord::Schema.define(version: 2021_08_19_192227) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
-    t.bigint "record_id", null: false
-    t.bigint "blob_id", null: false
+    t.integer "record_id", null: false
+    t.integer "blob_id", null: false
     t.datetime "created_at", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
@@ -35,14 +35,14 @@ ActiveRecord::Schema.define(version: 2021_08_19_192227) do
   end
 
   create_table "active_storage_variant_records", force: :cascade do |t|
-    t.bigint "blob_id", null: false
+    t.integer "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
   create_table "batch_exports", force: :cascade do |t|
     t.text "search_params"
-    t.bigint "user_id"
+    t.integer "user_id"
     t.text "file_location"
     t.text "export_errors"
     t.integer "status", default: 0, null: false
@@ -76,7 +76,7 @@ ActiveRecord::Schema.define(version: 2021_08_19_192227) do
   end
 
   create_table "digital_object_imports", force: :cascade do |t|
-    t.bigint "batch_import_id"
+    t.integer "batch_import_id"
     t.text "digital_object_data", null: false
     t.text "import_errors"
     t.integer "status", default: 0, null: false
@@ -126,9 +126,9 @@ ActiveRecord::Schema.define(version: 2021_08_19_192227) do
     t.text "xml_translation"
     t.integer "sort_order", null: false
     t.string "parent_type"
-    t.bigint "parent_id"
-    t.bigint "created_by_id"
-    t.bigint "updated_by_id"
+    t.integer "parent_id"
+    t.integer "created_by_id"
+    t.integer "updated_by_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "path"
@@ -151,9 +151,9 @@ ActiveRecord::Schema.define(version: 2021_08_19_192227) do
     t.boolean "is_keyword_searchable", default: false, null: false
     t.boolean "is_title_searchable", default: false, null: false
     t.boolean "is_identifier_searchable", default: false, null: false
-    t.bigint "dynamic_field_group_id"
-    t.bigint "created_by_id"
-    t.bigint "updated_by_id"
+    t.integer "dynamic_field_group_id"
+    t.integer "created_by_id"
+    t.integer "updated_by_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "path"
@@ -189,8 +189,8 @@ ActiveRecord::Schema.define(version: 2021_08_19_192227) do
   end
 
   create_table "export_rules", force: :cascade do |t|
-    t.bigint "dynamic_field_group_id"
-    t.bigint "field_export_profile_id"
+    t.integer "dynamic_field_group_id"
+    t.integer "field_export_profile_id"
     t.text "translation_logic", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -208,16 +208,16 @@ ActiveRecord::Schema.define(version: 2021_08_19_192227) do
 
   create_table "field_sets", force: :cascade do |t|
     t.string "display_label", null: false
-    t.bigint "project_id"
+    t.integer "project_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["project_id"], name: "index_field_sets_on_project_id"
   end
 
   create_table "import_prerequisites", force: :cascade do |t|
-    t.bigint "digital_object_import_id"
-    t.bigint "prerequisite_digital_object_import_id"
-    t.bigint "batch_import_id"
+    t.integer "digital_object_import_id"
+    t.integer "prerequisite_digital_object_import_id"
+    t.integer "batch_import_id"
     t.datetime "created_at", null: false
     t.index ["batch_import_id", "digital_object_import_id", "prerequisite_digital_object_import_id"], name: "unique_import_prerequisite", unique: true
     t.index ["batch_import_id"], name: "index_import_prerequisites_on_batch_import_id"
@@ -245,8 +245,8 @@ ActiveRecord::Schema.define(version: 2021_08_19_192227) do
   end
 
   create_table "language_subtags_tags", force: :cascade do |t|
-    t.bigint "tag_id", null: false
-    t.bigint "subtag_id", null: false
+    t.integer "tag_id", null: false
+    t.integer "subtag_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["subtag_id"], name: "index_language_subtags_tags_on_subtag_id"
@@ -354,7 +354,7 @@ ActiveRecord::Schema.define(version: 2021_08_19_192227) do
   end
 
   create_table "terms", force: :cascade do |t|
-    t.bigint "vocabulary_id", null: false
+    t.integer "vocabulary_id", null: false
     t.string "pref_label", null: false
     t.text "alt_labels"
     t.string "uri", null: false

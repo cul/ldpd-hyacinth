@@ -20,8 +20,9 @@ module Hyacinth
           request: {
             timeout: request_timeout
           }
-        )
-        @conn.authorization :Token, token: api_key
+        ) do |c|
+          c.request :authorization, 'Bearer', token: api_key
+        end
         @conn
       end
 

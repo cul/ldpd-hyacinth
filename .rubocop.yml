@@ -5,7 +5,7 @@ inherit_from: .rubocop_todo.yml
 
 AllCops:
   TargetRubyVersion: 2.7.2
-  TargetRailsVersion: 6.1.4.4
+  TargetRailsVersion: 7.0.1
 
 Layout/IndentationConsistency:
   EnforcedStyle: indented_internal_methods

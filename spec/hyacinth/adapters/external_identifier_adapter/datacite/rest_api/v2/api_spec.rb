@@ -28,12 +28,17 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::A
   let(:json_payload_update_doi) { JSON.generate(data: metadata) }
 
   let(:mocked_headers_with_content) do
-    { 'Accept' => '*/*', 'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-      'Content-Type' => 'application/vnd.api+json', 'User-Agent' => 'Faraday v1.1.0' }
+    # Only mock intentionally added headers that we want to validate
+    {
+      'Content-Type' => 'application/vnd.api+json',
+      'Authorization' => 'Basic RnJpZW5kbHlVc2VyOkZyaWVuZGx5UGFzc3dvcmQ='
+    }
   end
   let(:mocked_headers_no_content) do
-    { 'Accept' => '*/*', 'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-      'User-Agent' => 'Faraday v1.1.0' }
+    # Only mock intentionally added headers that we want to validate
+    {
+      'Authorization' => 'Basic RnJpZW5kbHlVc2VyOkZyaWVuZGx5UGFzc3dvcmQ='
+    }
   end
   let(:api_response_body) { JSON.generate(data: metadata) }
 
