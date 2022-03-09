@@ -20,14 +20,8 @@ gem 'concurrent-ruby', '~> 1.1.8'
 gem 'devise', '~> 4.7'
 gem 'edtf', '~> 3.0'
 gem 'faraday', '~> 2.2'
-#gem 'graphql', '~> 1.13.10'
 gem 'graphql', '~> 2.0.0'
-#gem 'graphql-errors'
 gem 'json_csv', '~> 1.0.0'
-# For now, we're including net-http in the Gemfile to prevent "always initialized constant"
-# warnings but we might be able to remove it when we go to Ruby >= 3.0.
-# For more info, see: https://github.com/ruby/net-imap/issues/16
-# gem 'net-http', '~> 0.2.0'
 gem 'nokogiri', '~> 1.10.10' # can't update to 1.11 because our server version of GLIBC is too old
 gem 'olive_branch', '~> 4.0.1'
 gem 'puma', '~> 5.2'
