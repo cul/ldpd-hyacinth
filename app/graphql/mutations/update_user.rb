@@ -68,7 +68,7 @@ class Mutations::UpdateUser < Mutations::BaseMutation
         end
       end
 
-      permission_attributes.concat new_permissions.map { |new_perm| { action: new_perm } }
+      permission_attributes.concat(new_permissions.map { |new_perm| { action: new_perm } })
 
       permission_attributes
     end

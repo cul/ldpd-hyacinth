@@ -18,11 +18,13 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3, fedora: true do
   end
   let(:dc_xml_src) { file_fixture("fedora3/update-dc.xml").read }
 
+  # rubocop:disable RSpec/BeforeAfterAll
   before :all do
     Rubydora.repository = Rubydora.connect(
       Rails.application.config_for(:hyacinth)[:preservation_persistence][:adapters].find { |adapter| adapter[:type] == 'Fedora3' }
     )
   end
+  # rubocop:enable RSpec/BeforeAfterAll
 
   before do
     # create the test object

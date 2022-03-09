@@ -59,12 +59,12 @@ describe Hyacinth::DigitalObject::ResourceAttributes do
   end
 
   context ".resources" do
-    it "adds a public getter method" do
-      expect(instance).to respond_to(:resources)
-    end
-
     before do
       instance.resources[:example] = Hyacinth::DigitalObject::Resource.new
+    end
+
+    it "adds a public getter method" do
+      expect(instance).to respond_to(:resources)
     end
 
     it "accesses individual resources indifferently by key" do

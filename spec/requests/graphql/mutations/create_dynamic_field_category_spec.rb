@@ -45,7 +45,7 @@ RSpec.describe Mutations::CreateDynamicFieldCategory, type: :request do
 
       it 'returns error' do
         expect(response.body).to be_json_eql(%(
-            "Variable input of type CreateDynamicFieldCategoryInput! was provided invalid value for displayLabel (Expected value to not be null)"
+            "Variable $input of type CreateDynamicFieldCategoryInput! was provided invalid value for displayLabel (Expected value to not be null)"
           )).at_path('errors/0/message')
       end
     end

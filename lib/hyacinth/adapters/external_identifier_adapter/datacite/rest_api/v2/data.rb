@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'json'
 class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Data
   # a findable DOI has a minimum set of required properties

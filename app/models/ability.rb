@@ -93,7 +93,7 @@ class Ability
 
   def to_list
     # Skipping rules that only contain a block.
-    rules.select { |r| !r.only_block? }.map do |rule|
+    rules.reject(&:only_block?).map do |rule|
       rule.only_block?
       object = { actions: rule.actions }
       object[:subject] = rule.subjects.map do |s|

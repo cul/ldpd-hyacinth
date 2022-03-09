@@ -19,7 +19,7 @@ class Term < ApplicationRecord
 
   validates :vocabulary, :pref_label, :uri, :uri_hash, :uid, :term_type, presence: true
   validates :term_type, inclusion: { in: TERM_TYPES, message: 'is not valid: %{value}' }, allow_nil: true
-  validates :uri,  format: { with: /\A#{URI.regexp}\z/ },
+  validates :uri,  format: { with: /\A#{URI::DEFAULT_PARSER.make_regexp}\z/ },
                    if: proc { |t| t.uri? && (t.term_type == LOCAL || t.term_type == EXTERNAL) }
   validates :uri_hash, if: proc { |t| t.uri? },
                        uniqueness: { scope: :vocabulary, message: 'unique check failed. This uri already exists in this vocabulary.' }
@@ -68,7 +68,7 @@ class Term < ApplicationRecord
     def cast_custom_fields
       custom_fields.each do |k, v|
         next if v.nil?
-        raise "custom_field #{k} is not a valid custom field" unless vocabulary.custom_fields.keys.include?(k)
+        raise "custom_field #{k} is not a valid custom field" unless vocabulary.custom_fields.key?(k)
 
         data_type = vocabulary.custom_fields[k][:data_type]
 
@@ -92,7 +92,7 @@ class Term < ApplicationRecord
       custom_fields.each do |k, v|
         next if v.nil?
 
-        if vocabulary.custom_fields.keys.include?(k)
+        if vocabulary.custom_fields.key?(k)
           data_type = vocabulary.custom_fields[k][:data_type]
           errors.add(:custom_field, "#{k} must be a valid #{data_type}") unless send("valid_#{data_type}?", v)
         else

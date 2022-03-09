@@ -22,10 +22,10 @@ module Mutations
         term.vocabulary = vocabulary
 
         custom_fields.each do |custom_field|
-          field = custom_field['field']
-          value = custom_field['value']
+          field = custom_field.field
+          value = custom_field.value
 
-          next unless vocabulary.custom_fields.keys.include?(field)
+          next unless vocabulary.custom_fields.key?(field)
           term.set_custom_field(field, value)
         end
 

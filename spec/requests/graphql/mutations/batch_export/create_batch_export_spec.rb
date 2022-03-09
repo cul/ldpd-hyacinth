@@ -55,7 +55,7 @@ RSpec.describe Mutations::BatchExport::CreateBatchExport, type: :request do
 
       it 'returns error' do
         expect(response.body).to be_json_eql(%(
-           "Variable input of type CreateBatchExportInput! was provided invalid value for searchParams (Expected value to not be null)"
+           "Variable $input of type CreateBatchExportInput! was provided invalid value for searchParams (Expected value to not be null)"
         )).at_path('errors/0/message')
       end
     end

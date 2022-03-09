@@ -65,7 +65,7 @@ module Hyacinth
           docs = []
           loop do
             response = search do |params|
-              params.q(search_query, escape: false)
+              params.q(search_query, false)
               params.start(start)
               params.rows(count)
               start += count

@@ -111,8 +111,7 @@ module Hyacinth
 
         # TODO: Add tests for this class
         class LockObject
-          attr_reader :database_entry_lock
-          attr_reader :lock_timeout
+          attr_reader :database_entry_lock, :lock_timeout
 
           def initialize(database_entry_lock, lock_timeout)
             @database_entry_lock = database_entry_lock

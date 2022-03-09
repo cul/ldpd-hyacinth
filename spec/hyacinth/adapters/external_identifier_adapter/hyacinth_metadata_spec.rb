@@ -1,15 +1,13 @@
-# -*- coding: utf-8 -*-
 # frozen_string_literal: true
 
 require 'rails_helper'
 
 describe Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata do
-  let(:item_json) { file_fixture('files/datacite/item.json').read }
-
   shared_context 'empty descriptive metadata' do
     let(:item_json) { file_fixture('files/datacite/ezid_item_empty_descriptive_metadata.json').read }
   end
 
+  let(:item_json) { file_fixture('files/datacite/item.json').read }
   let(:digital_object_uid) { SecureRandom.uuid }
   let(:dod) do
     data = JSON.parse(item_json)

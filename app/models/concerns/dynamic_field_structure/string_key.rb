@@ -16,7 +16,7 @@ module DynamicFieldStructure
 
       # Validate that the string_key is unique between all siblings.
       def unique_string_key
-        if parent.class == DynamicFieldCategory
+        if parent.instance_of?(DynamicFieldCategory)
           # Ensure unique top level string_key values across all immediate descendants of DynamicFieldCategories
           dynamic_field_group_ids_with_same_key = DynamicFieldGroup.unscoped.where(
             parent_type: DynamicFieldCategory.name,

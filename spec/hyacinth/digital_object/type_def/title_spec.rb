@@ -33,7 +33,7 @@ describe Hyacinth::DigitalObject::TypeDef::Title do
     let(:non_whitespace_values) { { 'sort_portion' => 'Present', 'non_sort_portion' => 'A ' } }
     let(:whitespace_property) { 'non_sort_portion' }
     let(:whitespace_values) { non_whitespace_values.merge(whitespace_property => '  ') }
-    let(:all_whitespace_values) { non_whitespace_values.map { |k, _v| [k, ' '] }.to_h }
+    let(:all_whitespace_values) { non_whitespace_values.transform_values { |_v| ' ' } }
     it "strips blank values before storing" do
       expect(type_def.to_serialized_form('value' => whitespace_values).fetch('value')).not_to include(whitespace_property)
     end

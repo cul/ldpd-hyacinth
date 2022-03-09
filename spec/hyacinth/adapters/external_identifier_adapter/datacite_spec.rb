@@ -133,7 +133,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
     let(:rest_api_response_status) { 200 }
     it "calls the appropriate Api method" do
       expect(rest_api).to receive(:update_doi).with(doi, kind_of(String)).and_return(rest_api_response)
-      datacite.update(doi, digital_object: digital_object, target_url: 'https://www.columbia.edu')
+      datacite.update(id: doi, digital_object: digital_object, target_url: 'https://www.columbia.edu')
     end
     context "target url is blank but default url template is configured" do
       let(:default_target_url_template) { "http://expected/%{uid}" }
@@ -147,7 +147,7 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite do
       end
       it 'calls mint_impl with the formatted default value' do
         expect(datacite).to receive(:update_impl).with(doi, digital_object, expected_target, publish_doi).and_return(success_result)
-        expect(datacite.update(doi, digital_object: digital_object, target_url: target_url, publish: publish_doi)).to be success_result
+        expect(datacite.update(id: doi, digital_object: digital_object, target_url: target_url, publish: publish_doi)).to be success_result
       end
     end
   end

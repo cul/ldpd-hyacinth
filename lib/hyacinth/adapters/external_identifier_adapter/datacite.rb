@@ -7,8 +7,8 @@ module Hyacinth
         attr_reader :rest_api, :datacite_payloads
 
         def initialize(adapter_config = {})
-          @rest_api = Datacite::RestApi::V2::Api.new(adapter_config)
-          @datacite_payloads = Datacite::RestApi::V2::Data.new(adapter_config)
+          @rest_api = Datacite::RestApi::V2::Api.new(**adapter_config)
+          @datacite_payloads = Datacite::RestApi::V2::Data.new(**adapter_config)
           super(adapter_config)
         end
 

@@ -17,14 +17,8 @@ function MetadataShow(props) {
   const [dynamicFieldHierarchy, setDynamicFieldHierarchy] = useState(null);
 
   // TODO: Replace effect below with GraphQL when we have a GraphQL DynamicFieldCategories API
-  // const {
-  //   loading: fieldGraphLoading,
-  //   error: fieldGraphError,
-  //   data: fieldGraphData,
-  // } = useQuery(getDynamicFieldGraphQuery, { variables: {} });
   useEffect(() => {
     dynamicFieldCategories.all().then((res) => {
-      console.log(res.data);
       setDynamicFieldHierarchy(res.data.dynamicFieldCategories);
     });
   }, []);

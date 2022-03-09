@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'json'
 class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api
   include Hyacinth::Adapters::ConfigurableLogger

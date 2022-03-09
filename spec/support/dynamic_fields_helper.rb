@@ -25,7 +25,7 @@ module DynamicFieldsHelper
 
     group = DynamicFieldGroup.find_by!(string_key: string_key, parent: parent)
 
-    fields.concat dynamic_fields.map { |field_config| field_for_definition(group, field_config) } if dynamic_fields
+    fields.concat(dynamic_fields.map { |field_config| field_for_definition(group, field_config) }) if dynamic_fields
     dynamic_field_groups&.each do |child_group_config|
       fields.concat(fields_for_group_definition(group, child_group_config))
     end
@@ -97,7 +97,7 @@ module DynamicFieldsHelper
   def load_abstract_fields!(**opts)
     default_opts = { field_type: DynamicField::Type::TEXTAREA }
     opts = default_opts.merge(opts)
-    field_data = simple_value_field_data('abstract', opts)
+    field_data = simple_value_field_data('abstract', **opts)
     load_and_return!(field_data)
   end
 
@@ -135,21 +135,21 @@ module DynamicFieldsHelper
   def load_alternative_title_fields!(**opts)
     default_opts = { index: { is_keyword_searchable: true, is_title_searchable: true } }
     opts = default_opts.merge(opts)
-    field_data = simple_value_field_data('alternative_title', opts)
+    field_data = simple_value_field_data('alternative_title', **opts)
     load_and_return!(field_data)
   end
 
   def load_isbn_fields!(**opts)
     default_opts = { index: { is_identifier_searchable: true }, label_from: :upcase }
     opts = default_opts.merge(opts)
-    field_data = simple_value_field_data('isbn', opts)
+    field_data = simple_value_field_data('isbn', **opts)
     load_and_return!(field_data)
   end
 
   def load_note_fields!(**opts)
     default_opts = { category_label: "Notes", field_type: DynamicField::Type::TEXTAREA }
     opts = default_opts.merge(opts)
-    field_data = simple_value_field_data('note', opts)
+    field_data = simple_value_field_data('note', **opts)
     load_and_return!(field_data)
   end
 

@@ -9,7 +9,7 @@ module Hyacinth
       end
 
       def configure_logger(config)
-        @logger = configured_logger(config)
+        @logger = configured_logger(**config)
       end
 
       # @param logger [Hash] config for adapter logging

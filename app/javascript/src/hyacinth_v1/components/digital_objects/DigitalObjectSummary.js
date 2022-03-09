@@ -25,15 +25,14 @@ function DigitalObjectSummary(props) {
         </dd>
         <dt className="col-sm-3">Other Projects</dt>
         <dd className="col-sm-9">
-          { otherProjects.length === 0
+          {otherProjects.length === 0
             ? '- None -'
             : otherProjects.map((p, i) => (
               <span key={p.stringKey}>
                 {p.displayLabel}
-                { i + 1 < otherProjects.length ? ', ' : '' }
+                {i + 1 < otherProjects.length ? ', ' : ''}
               </span>
-            ))
-          }
+            ))}
         </dd>
 
         <dt className="col-sm-3">UID</dt>

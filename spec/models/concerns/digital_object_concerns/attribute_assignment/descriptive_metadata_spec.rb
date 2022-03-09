@@ -117,7 +117,7 @@ RSpec.describe DigitalObjectConcerns::AttributeAssignment::DescriptiveMetadata d
     end
 
     it 'works as expected on descriptive_metadata instance variable' do
-      digital_object_with_sample_data.assign_attributes({ 'descriptive_metadata' => dfd }, merge_descriptive_metadata: false)
+      digital_object_with_sample_data.assign_attributes({ 'descriptive_metadata' => dfd }, false)
       digital_object_with_sample_data.clean_descriptive_metadata!
       expect(digital_object_with_sample_data.descriptive_metadata).to eq(cleaned_dfd)
     end

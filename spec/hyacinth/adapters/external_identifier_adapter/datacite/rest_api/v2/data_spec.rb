@@ -80,8 +80,8 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::D
     end
 
     context "has metadata and url" do
-      let(:digital_object) { DigitalObject::Item.new }
       include_context "default metadata set"
+      let(:digital_object) { DigitalObject::Item.new }
       let(:attributes) { all_metadata_attributes_hash }
       let(:payload_json) { data.build_mint(digital_object, state, expected_url) }
       let(:expected_payload_json) do
@@ -102,8 +102,8 @@ describe Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::D
   end
 
   describe "#build_properties_update" do
-    let(:digital_object) { DigitalObject::Item.new }
     include_context "default metadata set"
+    let(:digital_object) { DigitalObject::Item.new }
     let(:payload) { JSON.parse(payload_json) }
     let(:expected_payload) { JSON.parse(JSON.dump(data: { type: 'dois', attributes: attributes })) }
 

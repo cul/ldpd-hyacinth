@@ -101,7 +101,7 @@ module Hyacinth
         def restrictions_for(hyacinth_obj)
           restrictions = []
           if hyacinth_obj.is_a?(::DigitalObject::Asset) && hyacinth_obj.image_size_restriction == Hyacinth::DigitalObject::Asset::ImageSizeRestriction::DOWNSCALE_UNLESS_AUTHORIZED
-            # Note: In the future, we probably won't be serializing this value to Fedora anymore.  This is currently done for compatibility with Hyacinth 2 practices.
+            # NOTE: In the future, we probably won't be serializing this value to Fedora anymore.  This is currently done for compatibility with Hyacinth 2 practices.
             restrictions << SIZE_RESTRICTION_LITERAL_VALUE
           end
           restrictions

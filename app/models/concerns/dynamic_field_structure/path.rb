@@ -11,7 +11,7 @@ module DynamicFieldStructure
 
     class_methods do
       def collect_ancestor_nodes(nodes, group_or_category)
-        return nodes if group_or_category.class == DynamicFieldCategory
+        return nodes if group_or_category.instance_of?(DynamicFieldCategory)
 
         raise ArgumentError, 'Must respond to #parent in order to collect path' unless group_or_category.respond_to?(:parent)
         parent = group_or_category.parent

@@ -3,12 +3,12 @@
 require 'rails_helper'
 
 RSpec.describe Mutations::BatchImport::StartBatchImport, type: :request do
-  let(:batch_import) { FactoryBot.create(:batch_import) }
-
   include_examples 'a basic user with no abilities is not authorized to perform this request' do
     let(:variables) { { input: { id: batch_import.id } } }
     let(:request) { graphql query, variables }
   end
+
+  let(:batch_import) { FactoryBot.create(:batch_import) }
 
   let(:variables) do
     {

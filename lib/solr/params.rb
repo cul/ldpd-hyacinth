@@ -52,7 +52,7 @@ module Solr
       self
     end
 
-    def q(query, escape: true)
+    def q(query, escape = true)
       if query.blank?
         @parameters[:q] = nil
       else

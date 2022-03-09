@@ -11,6 +11,8 @@ RSpec.describe DigitalObject::Asset, type: :model do
       end
     end
     context 'with no title data' do
+      let(:asset) { FactoryBot.build(:asset) }
+
       context 'has a main resource' do
         let(:asset) { FactoryBot.build(:asset, :with_main_resource) }
         it do
@@ -18,7 +20,6 @@ RSpec.describe DigitalObject::Asset, type: :model do
         end
       end
 
-      let(:asset) { FactoryBot.build(:asset) }
       it do
         expect(asset.generate_display_label).to eql(asset.uid)
       end

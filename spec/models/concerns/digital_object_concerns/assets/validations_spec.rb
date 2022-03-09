@@ -52,9 +52,7 @@ RSpec.describe DigitalObjectConcerns::Assets::Validations do
       expect(asset.save).to eq(false)
       expect(asset.errors.attribute_names).to include(:"resources[#{asset.main_resource_name}]")
     end
-  end
 
-  describe '.validate_featured_thumbnail_region' do
     it 'passes validation for a valid region' do
       asset.featured_thumbnail_region = '1,2,100,100'
       expect(asset.save).to eq(true)

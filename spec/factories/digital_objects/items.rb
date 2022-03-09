@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :item, class: DigitalObject::Item do
+  factory :item, class: 'DigitalObject::Item' do
     transient do
       title_lang { nil }
       value_lang { nil }

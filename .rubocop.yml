@@ -4,7 +4,7 @@ inherit_gem:
 inherit_from: .rubocop_todo.yml
 
 AllCops:
-  TargetRubyVersion: 2.7.2
+  TargetRubyVersion: 3.1.0
   TargetRailsVersion: 7.0.1
 
 Layout/IndentationConsistency:
@@ -25,3 +25,56 @@ CUL/CapybaraScreenshots:
   VersionAdded: '3.2.2'
   Include:
     - 'spec/**/*'
+
+Rails/DynamicFindBy:
+  Whitelist:
+    - find_by_uid!
+    - find_by_uid
+    - find_by_path_traversal
+    - find_by_sparql_relationship
+    - find_by_string_key
+
+RSpec/PredicateMatcher:
+  Enabled: false
+
+# Temporarily disabling the following cops (which may be useful, but currently cause too many warnings):
+# Note: Some of these occurrences should be changed in batch later (potentially using rubocop auto-correct).
+
+Style/StringLiterals:
+  Enabled: false
+
+RSpec/EmptyLineAfterExampleGroup:
+  Enabled: false
+
+RSpec/ContextWording:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/EmptyLineAfterFinalLet:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
+
+RSpec/EmptyLineAfterExample:
+  Enabled: false
+
+RSpec/MessageSpies:
+  Enabled: false
+
+RSpec/EmptyLineAfterHook:
+  Enabled: false
+
+RSpec/ContextMethod:
+  Enabled: false
+
+Style/StringConcatenation:
+  Enabled: false

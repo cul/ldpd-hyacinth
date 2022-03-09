@@ -21,7 +21,7 @@ class Permission < ApplicationRecord
   PROJECT_ACTION_ASSESS_RIGHTS = 'assess_rights'
   PROJECT_ACTION_PUBLISH_OBJECTS = 'publish_objects'
 
-  # Note: The order of actions in this array determines display order in the UI.
+  # NOTE: The order of actions in this array determines display order in the UI.
   PROJECT_ACTIONS = [
     PROJECT_ACTION_READ_OBJECTS, PROJECT_ACTION_CREATE_OBJECTS, PROJECT_ACTION_UPDATE_OBJECTS,
     PROJECT_ACTION_DELETE_OBJECTS, PROJECT_ACTION_PUBLISH_OBJECTS, PROJECT_ACTION_ASSESS_RIGHTS,

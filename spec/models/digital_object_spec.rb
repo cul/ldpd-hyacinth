@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 require 'rails_helper'
-include ActiveSupport::Testing::TimeHelpers
 
 RSpec.describe DigitalObject, type: :model do
+  include ActiveSupport::Testing::TimeHelpers
+
   # Since the DigitalObject class can't be instantiated, we'll perform all instance tests on a minimal subclass instance.
   let(:instance) { FactoryBot.build(:digital_object_test_subclass) }
 
@@ -274,7 +275,7 @@ RSpec.describe DigitalObject, type: :model do
         before do
           expect(instance).not_to receive(:index)
           expect(instance).to receive(:deindex)
-          expect(instance.destroy)
+          expect(instance.destroy).to be_truthy
         end
 
         it 'deletes the file at metadata_location_uri' do
