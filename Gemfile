@@ -42,7 +42,7 @@ gem 'webpacker'
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'equivalent-xml'
-  gem 'jettywrapper', '>=1.4.0', git: 'https://github.com/samvera-deprecated/jettywrapper.git', branch: 'master'
+  gem 'jettywrapper', git: 'https://github.com/cul/jettywrapper.git', branch: 'ruby-3'
   gem 'rubocul', '4.0.1'
   gem 'solr_wrapper', '~> 3.1.2'
 end

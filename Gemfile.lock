@@ -1,7 +1,7 @@
 GIT
-  remote: https://github.com/samvera-deprecated/jettywrapper.git
-  revision: 6b03c21726a83dcecf09d9b20683bfcd63f106d1
-  branch: master
+  remote: https://github.com/cul/jettywrapper.git
+  revision: 5509b695f2fbf1e6b7d9a2a5721c4d253e64e043
+  branch: ruby-3
   specs:
     jettywrapper (2.0.5)
       activesupport (>= 3.0.0)
@@ -476,7 +476,7 @@ DEPENDENCIES
   faraday (~> 2.2)
   graphiql-rails
   graphql (~> 2.0.0)
-  jettywrapper (>= 1.4.0)!
+  jettywrapper!
   json_csv (~> 1.0.0)
   json_spec
   mysql2 (~> 0.5)
