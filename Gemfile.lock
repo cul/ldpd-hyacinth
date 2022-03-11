@@ -167,7 +167,7 @@ GEM
     graphiql-rails (1.8.0)
       railties
       sprockets-rails
-    graphql (2.0.1)
+    graphql (2.0.2)
     hashdiff (1.0.1)
     hooks (0.4.1)
       uber (~> 0.0.14)
