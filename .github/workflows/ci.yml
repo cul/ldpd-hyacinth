@@ -49,10 +49,6 @@ jobs:
       - run: yarn install --frozen-lockfile
       - name: Run CI task
         run: bundle exec rake hyacinth:ci WEBPACKER_RECOMPILE=true
-      # - name: Temporary run only one of the individual failing rspec test files on CI
-      #   run: |
-      #     bundle exec rake hyacinth:setup:config_files
-      #     bundle exec rspec ./spec/models/ability_spec.rb
 
   ci-javascript:
     runs-on: ubuntu-latest

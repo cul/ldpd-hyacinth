@@ -10,8 +10,7 @@ module Types
           argument :order_by, Inputs::FacetValues::OrderByInput, required: false, default_value: { field: 'count', direction: 'asc' }
           argument :limit, "Types::Scalar::Limit", required: true
           argument :offset, "Types::Scalar::Offset", required: false
-          argument :search_params, Types::SearchAttributes, required: false#,
-            #as_search_adapter_paramsprepare: ->(s_prms, ctx) { s_prms.as_search_adapter_params }
+          argument :search_params, Types::SearchAttributes, required: false
           argument :facet_filter, Types::FilterAttributes, required: false
         end
       end
