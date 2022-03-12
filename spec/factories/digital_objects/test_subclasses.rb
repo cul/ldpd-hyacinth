@@ -12,8 +12,6 @@ end
 # Add ability to resolve digital object type to class
 Hyacinth::Config.digital_object_types.register('test_subclass', DigitalObject::TestSubclass)
 
-puts "test_subclass.rb: allowed digital object types: #{Hyacinth::Config.digital_object_types.keys.inspect}"
-
 FactoryBot.define do
   factory :digital_object_test_subclass, class: 'DigitalObject::TestSubclass' do
     after(:build) do |digital_object|

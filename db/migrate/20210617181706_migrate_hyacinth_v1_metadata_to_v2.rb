@@ -62,7 +62,6 @@ class MigrateHyacinthV1MetadataToV2 < ActiveRecord::Migration[6.0]
         end
       end
       digital_object.save!
-      puts "done"
     end
   end
 end
