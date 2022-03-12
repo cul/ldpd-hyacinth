@@ -2,7 +2,7 @@
 
 module Types
   class BatchExportType < Types::BaseObject
-    #include Types::Pageable
+    include Types::Pageable
 
     description 'A batch export'
 
