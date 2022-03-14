@@ -13,7 +13,13 @@ require 'webdrivers/chromedriver'
 require 'webmock/rspec'
 # Disable network connections because we want to mock them instead, but allow connections to
 # the chromedriver download domain so that we can automatically install/update chromedriver.
-WebMock.disable_net_connect!(allow_localhost: true, allow: 'chromedriver.storage.googleapis.com')
+# Also use net_http_connect_on_start to avoid "too many open files" issue.  For more info, see:
+# https://github.com/bblimke/webmock/blob/master/README.md#connecting-on-nethttpstart
+WebMock.disable_net_connect!(
+  allow_localhost: true,
+  allow: 'chromedriver.storage.googleapis.com',
+  net_http_connect_on_start: true
+)
 
 require 'capybara/rails'
 Capybara.javascript_driver = :selenium_chrome_headless
