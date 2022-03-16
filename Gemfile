@@ -21,6 +21,8 @@ gem 'devise', '~> 4.7'
 gem 'edtf', '~> 3.0'
 gem 'faraday', '~> 2.2'
 gem 'graphql', '~> 2.0.0'
+# Explicitly including io-wait dependency to match default version of the gem that comes with Ruby 3.0.
+gem 'io-wait', '0.2.0'
 gem 'json_csv', '~> 1.0.0'
 gem 'nokogiri', '~> 1.10.10' # can't update to 1.11 because our server version of GLIBC is too old
 gem 'olive_branch', '~> 4.0.1'

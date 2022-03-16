@@ -182,7 +182,7 @@ GEM
     http-form_data (2.3.0)
     i18n (1.10.0)
       concurrent-ruby (~> 1.0)
-    io-wait (0.2.1)
+    io-wait (0.2.0)
     json_csv (1.0.0)
     json_spec (1.1.5)
       multi_json (~> 1.0)
@@ -476,6 +476,7 @@ DEPENDENCIES
   faraday (~> 2.2)
   graphiql-rails
   graphql (~> 2.0.0)
+  io-wait (= 0.2.0)
   jettywrapper!
   json_csv (~> 1.0.0)
   json_spec
