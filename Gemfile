@@ -50,13 +50,6 @@ group :development do
 
   gem 'graphiql-rails'
 
-  # For now, we need to explicitly reference the openssl gem (version 2.x) to fix an issue with
-  # net-ssh in Ruby 3.1 (returns error "Net::SSH::Exception: could not verify server signature").
-  # See the following open issues:
-  # https://github.com/net-ssh/net-ssh/issues/847
-  # https://github.com/ruby/openssl/issues/489
-  gem 'openssl', '~> 2.2'
-
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
   gem 'web-console', '>= 3.3.0'
 end
