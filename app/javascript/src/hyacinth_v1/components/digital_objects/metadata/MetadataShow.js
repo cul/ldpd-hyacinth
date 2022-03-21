@@ -18,13 +18,10 @@ function MetadataShow(props) {
 
   // TODO: Replace effect below with GraphQL when we have a GraphQL DynamicFieldCategories API
   // const {
-  //   loading: fieldGraphLoading,
-  //   error: fieldGraphError,
-  //   data: fieldGraphData,
-  // } = useQuery(getDynamicFieldGraphQuery, { variables: {} });
+  //   loading: fieldGraphLoading, error: fieldGraphError, data: fieldGraphData,
+  // } = useQuery(getDynamicFieldGraphQuery, { variables: { metadataForm: 'DESCRIPTIVE' } });
   useEffect(() => {
     dynamicFieldCategories.all().then((res) => {
-      console.log(res.data);
       setDynamicFieldHierarchy(res.data.dynamicFieldCategories);
     });
   }, []);

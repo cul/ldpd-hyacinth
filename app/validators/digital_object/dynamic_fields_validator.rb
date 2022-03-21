@@ -26,7 +26,7 @@ class DigitalObject::DynamicFieldsValidator < ActiveModel::EachValidator
           errors.concat errors_for_field_group(value, new_path, field_map_subtree)
         when 'DynamicField'
           if (e = field_errors(field_map_subtree, value))
-            errors.concat e.map { |i| [new_path, i] }
+            errors.concat(e.map { |i| [new_path, i] })
           end
         end
       end

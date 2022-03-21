@@ -49,12 +49,12 @@ RSpec.describe DigitalObjectConcerns::AttributeAssignment do
     context "with opts" do
       it "passes along merge_descriptive_metadata opt appropriately" do
         expect(digital_object_with_sample_data).to receive(:assign_descriptive_metadata).with(digital_object_data, false)
-        digital_object_with_sample_data.assign_attributes(digital_object_data, merge_descriptive_metadata: false)
+        digital_object_with_sample_data.assign_attributes(digital_object_data, false, true)
       end
 
       it "passes along merge_rights opt appropriately" do
         expect(digital_object_with_sample_data).to receive(:assign_rights).with(digital_object_data, false)
-        digital_object_with_sample_data.assign_attributes(digital_object_data, merge_rights: false)
+        digital_object_with_sample_data.assign_attributes(digital_object_data, true, false)
       end
     end
   end

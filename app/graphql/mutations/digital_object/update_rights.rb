@@ -13,7 +13,7 @@ module Mutations
       def resolve(id:, **attributes)
         digital_object = ::DigitalObject.find_by_uid!(id)
         ability.authorize! :update_rights, digital_object
-        digital_object.assign_attributes(attributes.stringify_keys, merge_descriptive_metadata: true, merge_rights: false)
+        digital_object.assign_attributes(attributes.stringify_keys, true, false)
         digital_object.updated_by = context[:current_user]
 
         if digital_object.save

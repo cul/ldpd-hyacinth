@@ -114,7 +114,7 @@ RSpec.describe Ability, type: :model do
     it { is_expected.to be_able_to(:read, User) }
     it { is_expected.to be_able_to(:update, User) }
 
-    it { is_expected.to be_able_to(:show, Vocabulary) }
+    it { is_expected.to be_able_to(:read, Vocabulary) }
     it { is_expected.to be_able_to(:update, Vocabulary) }
     it { is_expected.to be_able_to(:manage, Vocabulary) }
 
@@ -200,8 +200,8 @@ RSpec.describe Ability, type: :model do
       ]
     end
 
-    it { is_expected.to be_able_to(:show, project) }
-    it { is_expected.to be_able_to(:show, FactoryBot.create(:field_set, project: project)) }
+    it { is_expected.to be_able_to(:read, project) }
+    it { is_expected.to be_able_to(:read, FactoryBot.create(:field_set, project: project)) }
 
     it { is_expected.not_to be_able_to(:update, FactoryBot.create(:field_set, project: project)) }
 

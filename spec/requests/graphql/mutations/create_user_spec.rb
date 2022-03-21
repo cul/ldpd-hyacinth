@@ -80,7 +80,7 @@ RSpec.describe Mutations::CreateUser, type: :request do
 
         it 'returns error' do
           expect(response.body).to be_json_eql(%(
-            "Variable input of type CreateUserInput! was provided invalid value for email (Expected value to not be null)"
+            "Variable $input of type CreateUserInput! was provided invalid value for email (Expected value to not be null)"
           )).at_path('errors/0/message')
         end
       end
@@ -103,7 +103,7 @@ RSpec.describe Mutations::CreateUser, type: :request do
 
         it 'returns error' do
           expect(response.body).to be_json_eql(%(
-            "Variable input of type CreateUserInput! was provided invalid value for password (Expected value to not be null)"
+            "Variable $input of type CreateUserInput! was provided invalid value for password (Expected value to not be null)"
           )).at_path('errors/0/message')
         end
       end
@@ -126,7 +126,7 @@ RSpec.describe Mutations::CreateUser, type: :request do
 
         it 'returns error' do
           expect(response.body).to be_json_eql(%(
-            "Variable input of type CreateUserInput! was provided invalid value for passwordConfirmation (Expected value to not be null)"
+            "Variable $input of type CreateUserInput! was provided invalid value for passwordConfirmation (Expected value to not be null)"
           )).at_path('errors/0/message')
         end
       end

@@ -16,8 +16,10 @@ module Mutations
         ActiveRecord::Base.transaction do
           ordered_children.each do |ordered_child|
             child = ::DigitalObject.find_by_uid!(ordered_child.uid)
-            ParentChildRelationship.where(parent_id: parent.id,
-              child_id: child.id).update(sort_order: ordered_child.sort_order)
+            ParentChildRelationship.where(
+              parent_id: parent.id,
+              child_id: child.id
+            ).update(sort_order: ordered_child.sort_order)
           end
         end
 

@@ -27,7 +27,7 @@ function SelectCreatablePrimaryProject({ primaryProject, changeHandler, ariaLabe
 
   return (
     <InputGroup>
-      {!ariaLabelOnly && <Label sm={3} htmlFor="primary_project">Primary Project</Label> }
+      {!ariaLabelOnly && <Label sm={3} htmlFor="primary_project">Primary Project</Label>}
       <SelectInput
         sm={9}
         name="primary_project"

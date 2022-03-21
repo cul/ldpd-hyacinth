@@ -9,7 +9,7 @@ class Mutations::BatchExport::CreateBatchExport < Mutations::BaseMutation
     ability.authorize! :create, BatchExport
     create_attributes = {}.merge(attributes)
     create_attributes[:user] = context[:current_user]
-    create_attributes[:search_params] = JSON.generate(attributes[:search_params].prepare)
+    create_attributes[:search_params] = JSON.generate(attributes[:search_params].as_search_adapter_params)
     batch_export = BatchExport.new(**create_attributes)
     batch_export.save!
 

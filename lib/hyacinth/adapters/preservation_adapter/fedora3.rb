@@ -40,8 +40,11 @@ module Hyacinth
         # Generates a new persistence identifier, ensuring that no object exists for the new URI.
         # @return [String] a location uri
         def generate_new_location_uri
-          candidate = uri_prefix + pid_generator.next_pid
-          while exists?(candidate) do candidate = uri_prefix + pid_generator.next_pid; end
+          candidate = nil
+          loop do
+            candidate = uri_prefix + pid_generator.next_pid
+            break unless exists?(candidate)
+          end
           candidate
         end
 

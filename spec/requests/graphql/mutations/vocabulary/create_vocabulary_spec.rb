@@ -47,7 +47,7 @@ RSpec.describe Mutations::Vocabulary::CreateVocabulary, type: :request do
 
       it 'returns error in json' do
         expect(response.body).to be_json_eql(%(
-          "Variable input of type CreateVocabularyInput! was provided invalid value for stringKey (Expected value to not be null)"
+          "Variable $input of type CreateVocabularyInput! was provided invalid value for stringKey (Expected value to not be null)"
         )).at_path('errors/0/message')
       end
     end

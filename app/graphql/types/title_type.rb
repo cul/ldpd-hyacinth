@@ -8,6 +8,7 @@ module Types
       field :sort_portion, String, null: false
       field :non_sort_portion, String, null: true
     end
+
     class ValueLangType < Types::BaseObject
       field :tag, String, null: false
     end

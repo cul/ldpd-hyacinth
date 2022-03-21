@@ -37,8 +37,8 @@ class Language::Tag < ApplicationRecord
 
   def tag_value(use_preferred = false)
     TagValue.for_subtags(subtags, use_preferred)
-  rescue SubtagError => ex
-    self.errors.add :subtags, ex.message
+  rescue SubtagError => e
+    self.errors.add :subtags, e.message
   end
 
   def use_value
@@ -50,8 +50,8 @@ class Language::Tag < ApplicationRecord
   def self.for(tag_value, use_preferred = true)
     tag = ::Language::Tag.find_by(tag: tag_value) || compose_tag_for(tag_value)
     (use_preferred && tag.preferred_value) || tag
-  rescue ActiveRecord::RecordInvalid => ex
-    raise SubtagError, ex.message.sub('Validation failed: ', '')
+  rescue ActiveRecord::RecordInvalid => e
+    raise SubtagError, e.message.sub('Validation failed: ', '')
   end
 
   def self.compose_tag_for(tag_value)
@@ -82,6 +82,7 @@ class Language::Tag < ApplicationRecord
     end
     subtags
   end
+
   class SubtagError < RuntimeError; end
 
   module TagValue

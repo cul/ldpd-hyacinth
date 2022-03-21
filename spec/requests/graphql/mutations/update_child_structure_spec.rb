@@ -8,18 +8,17 @@ RSpec.describe Mutations::DigitalObject::UpdateChildStructure, type: :request do
   let(:parent_item) { FactoryBot.create(:item) }
   let(:asset1) { FactoryBot.create(:asset, :with_main_resource) }
   let(:asset2) { FactoryBot.create(:asset, :with_main_resource) }
-
-  before do
-    parent_item.children_to_add << asset1
-    parent_item.children_to_add << asset2
-    parent_item.save
-  end
-
   let :ordered_children_input do
     [
       { uid: asset1.uid, sortOrder: 1 },
       { uid: asset2.uid, sortOrder: 0 }
     ]
+  end
+
+  before do
+    parent_item.children_to_add << asset1
+    parent_item.children_to_add << asset2
+    parent_item.save
   end
 
   include_examples 'a basic user with no abilities is not authorized to perform this request' do

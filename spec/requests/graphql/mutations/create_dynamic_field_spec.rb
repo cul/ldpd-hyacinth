@@ -49,7 +49,7 @@ RSpec.describe Mutations::CreateDynamicField, type: :request do
       before { graphql query, variables }
       it 'returns errors' do
         expect(response.body).to be_json_eql(%(
-          "Variable input of type CreateDynamicFieldInput! was provided invalid value for displayLabel (Expected value to not be null)"
+          "Variable $input of type CreateDynamicFieldInput! was provided invalid value for displayLabel (Expected value to not be null)"
         )).at_path('errors/0/message')
       end
     end

@@ -18,7 +18,7 @@ namespace :hyacinth do
     puts Rainbow("This will delete ALL digital objects in the selected Rails environment (#{Rails.env}) and cannot be undone. "\
       "Please confirm that you want to continue by typing in the selected Rails environment (#{Rails.env}):").red.bright
     print '> '
-    response = ENV['rails_env_confirmation'] || STDIN.gets.chomp
+    response = ENV['rails_env_confirmation'] || $stdin.gets.chomp
 
     if response != Rails.env
       puts "Aborting because \"#{Rails.env}\" was not entered."
@@ -35,8 +35,8 @@ namespace :hyacinth do
           'descriptive_metadata' => {},
           'rights' => {}
         },
-        merge_descriptive_metadata: false,
-        merge_rights: false
+        false,
+        false
       )
       begin
         digital_object.remove_all_children!

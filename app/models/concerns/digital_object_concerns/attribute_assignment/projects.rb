@@ -33,7 +33,7 @@ module DigitalObjectConcerns
       def dereference_project_string_key(string_key, raise_error = false)
         # do not find_by! so that we control the exception implementation
         project_lookup = Project.find_by(string_key: string_key)
-        raise Hyacinth::Exceptions::NotFound, "Could not find project for string key: #{string_key}" if project_lookup.nil? && raise_error
+        raise Hyacinth::Exceptions::NotFound, %(Could not find project for string key: #{string_key}) if project_lookup.nil? && raise_error
         project_lookup
       end
     end

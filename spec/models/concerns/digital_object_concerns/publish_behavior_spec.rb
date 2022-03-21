@@ -26,7 +26,7 @@ RSpec.describe DigitalObjectConcerns::PublishBehavior do
       context 'when publishing to a publish target that is an allowed DOI target' do
         it "calls #update on external identifier adapter" do
           expect(object).to receive(:async_publish).and_return(publish_promise)
-          expect(Hyacinth::Config.external_identifier_adapter).to receive(:update).with(doi, digital_object: object, target_url: target_url, publish: true)
+          expect(Hyacinth::Config.external_identifier_adapter).to receive(:update).with(id: doi, digital_object: object, target_url: target_url, publish: true)
           object.perform_publish_changes(publish_to: [publish_target])
         end
       end
@@ -34,7 +34,7 @@ RSpec.describe DigitalObjectConcerns::PublishBehavior do
     context 'when an object has not been preserved' do
       it "returns false, sets the expected error on the object, and does not run any async publish operations" do
         expect(object).not_to receive(:async_publish)
-        expect(Hyacinth::Config.external_identifier_adapter).not_to receive(:update).with(doi, digital_object: object, target_url: target_url, publish: true)
+        expect(Hyacinth::Config.external_identifier_adapter).not_to receive(:update).with(id: doi, digital_object: object, target_url: target_url, publish: true)
         expect(object.perform_publish_changes(publish_to: [publish_target])).to eq(false)
         expect(object.errors.messages).to eq(publish: ['Cannot publish a DigitalObject that has not been preserved'])
       end

@@ -29,8 +29,7 @@ module Types
 
     def field_set(id:)
       field_set = FieldSet.find_by!(id: id, project: object)
-      # TODO: Change :show below to :read
-      ability.authorize!(:show, field_set)
+      ability.authorize!(:read, field_set)
       field_set
     end
 

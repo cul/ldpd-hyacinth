@@ -7,6 +7,7 @@ module Hyacinth
         def self.included(mod)
           mod.extend ClassMethods
         end
+
         module ClassMethods
           def from(adapter, hyacinth_obj)
             new(adapter, hyacinth_obj)

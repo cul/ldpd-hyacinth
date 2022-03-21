@@ -8,16 +8,17 @@ module Types
       def results_type(&block)
         wrapped_type = self
 
-        GraphQL::ObjectType.define do
-          type_name = wrapped_type.is_a?(GraphQL::BaseType) ? wrapped_type.name : wrapped_type.graphql_name
+        Class.new(GraphQL::Schema::Object) do
+          type_extends_graphql_schema_object = wrapped_type < GraphQL::Schema::Object
+          type_name = type_extends_graphql_schema_object ? wrapped_type.graphql_name : wrapped_type.name.demodulize
 
-          name("#{type_name}Results")
+          graphql_name("#{type_name}Results")
           description("The search result type for #{type_name}.")
 
-          field :totalCount, !types.Int, "Count of total results", property: :total_count
-          field :nodes, types[wrapped_type], "A list of nodes."
-          field :facets, types[Types::Facets::FieldType], "A list of facets.", property: :facets
-          field :pageInfo, PageInfo.to_non_null_type, "Information to aid in pagination.", property: :page_info
+          field :totalCount, Integer, "Count of total results", method: :total_count
+          field :nodes, [wrapped_type], "A list of nodes."
+          field :facets, [Types::Facets::FieldType], "A list of facets.", method: :facets
+          field :pageInfo, PageInfo.to_non_null_type, "Information to aid in pagination.", method: :page_info
 
           # Once we have a use case for edges we can add them here. Because we don't have any
           # information to add to an edge besides a node, its probably best to discorage their use.

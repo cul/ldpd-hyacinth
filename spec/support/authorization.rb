@@ -4,12 +4,12 @@
 # access to the given request.
 shared_examples 'requires user to have correct permissions' do
   context 'when logged in user does not have appropriate permissions' do
-    include_examples 'does not have access'
-
     before do
       sign_in_user
       request
     end
+
+    include_examples 'does not have access'
   end
 end
 

@@ -5,6 +5,7 @@ module Hyacinth
     module DigitalObjectSearchAdapter
       class Abstract
         attr_reader :ui_config
+
         def initialize(adapter_config = {})
           @ui_config = UiConfig.new(adapter_config.fetch(:ui_config, {}))
         end
@@ -52,9 +53,11 @@ module Hyacinth
           raise NotImplementedError
         end
       end
+
       class UiConfig
         DEFAULT_FACET_PAGE_SIZE = 10
         attr_reader :config
+
         def initialize(adapter_config = {})
           @config = adapter_config
         end

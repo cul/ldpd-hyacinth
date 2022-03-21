@@ -46,8 +46,7 @@ class Mutations::UpdateProjectPermissions < Mutations::BaseMutation
 
   def apply_new_permission_actions(project, user, permission_actions)
     # Perform update by clearing out all old permissions for this user+project combo
-    # TODO: In Rails 6, change operation below Permission.delete_by(...)
-    Permission.where(user: user, subject: 'Project', subject_id: project.id).delete_all
+    Permission.delete_by(user: user, subject: 'Project', subject_id: project.id)
 
     # And then create all of the appropriate new permissions:
 

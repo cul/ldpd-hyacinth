@@ -1,17 +1,19 @@
 # frozen_string_literal: true
 
+# Create minimal test subclass to be used, when possible, in place of
+# other core DigitalObject classes (Item, Asset, etc.)
+class DigitalObject::TestSubclass < DigitalObject
+  metadata_attribute :custom_field1, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { 'custom default value 1' }).private_writer
+  metadata_attribute :custom_field2, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { 'custom default value 2' })
+  resource_attribute :test_resource1
+  resource_attribute :test_resource2
+end
+
+# Add ability to resolve digital object type to class
+Hyacinth::Config.digital_object_types.register('test_subclass', DigitalObject::TestSubclass)
+
 FactoryBot.define do
-  class DigitalObject::TestSubclass < DigitalObject
-    metadata_attribute :custom_field1, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { 'custom default value 1' }).private_writer
-    metadata_attribute :custom_field2, Hyacinth::DigitalObject::TypeDef::String.new.default(-> { 'custom default value 2' })
-    resource_attribute :test_resource1
-    resource_attribute :test_resource2
-  end
-
-  # Add ability to resolve digital object type to class
-  Hyacinth::Config.digital_object_types.register('test_subclass', DigitalObject::TestSubclass)
-
-  factory :digital_object_test_subclass, class: DigitalObject::TestSubclass do
+  factory :digital_object_test_subclass, class: 'DigitalObject::TestSubclass' do
     after(:build) do |digital_object|
       digital_object.primary_project = create(:project)
     end

@@ -85,7 +85,7 @@ module DigitalObjectConcerns
       def create_term(term, vocabulary_id, custom_field_keys)
         core_fields = term.slice(*Term::CORE_FIELDS).symbolize_keys
         custom_fields = term.slice(*custom_field_keys)
-        # Note: Invalid fields should have been caught during validation
+        # NOTE: Invalid fields should have been caught during validation
         term_type = term['uri'] ? Term::EXTERNAL : Term::TEMPORARY
         new_term = Term.create!(**core_fields, term_type: term_type, vocabulary_id: vocabulary_id, custom_fields: custom_fields)
 

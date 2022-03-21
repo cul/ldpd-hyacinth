@@ -5,7 +5,7 @@ module Hyacinth
     class FaradayClient
       def initialize(default_job_options:, **other_opts)
         @default_job_options = default_job_options
-        init_connection(other_opts)
+        init_connection(**other_opts)
       end
 
       def init_connection(url:, api_key:, request_timeout: 120, **_other_opts)

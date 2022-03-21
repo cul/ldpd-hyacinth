@@ -4,6 +4,7 @@ module Hyacinth
   module Preservation
     class PreservationPersistence
       attr_reader :preservation_adapters
+
       def initialize(config)
         raise 'Missing config option: adapters' if config[:adapters].blank?
         @preservation_adapters = config[:adapters].map { |adapter_config| Hyacinth::Adapters.create_from_config('Hyacinth::Adapters::PreservationAdapter', adapter_config) }

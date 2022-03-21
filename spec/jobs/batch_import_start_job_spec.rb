@@ -104,9 +104,7 @@ RSpec.describe BatchImportStartJob, solr: true do
         end
 
         it "assigns digital_object_data to all of the DigitalObjectImports" do
-          doi_records_by_row.values.map(&:digital_object_data).each do |dod|
-            expect(dod).to be_present
-          end
+          expect(doi_records_by_row.values.map(&:digital_object_data)).to all(be_present)
         end
 
         it "sets up the expected DigitalObjectImports, all with status 'pending'" do

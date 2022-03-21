@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class StringKey::AbsentInSiblingFieldsValidator < ActiveModel::Validator
   def validate(dynamic_field_group)
     conditions = {

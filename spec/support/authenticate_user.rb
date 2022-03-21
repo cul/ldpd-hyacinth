@@ -14,7 +14,7 @@ module AuthenticateUser
   end
 
   def sign_in_project_contributor(**args)
-    user = create_project_contributor(args)
+    user = create_project_contributor(**args)
 
     login_as user, scope: :user
   end

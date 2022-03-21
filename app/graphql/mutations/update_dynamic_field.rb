@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 class Mutations::UpdateDynamicField < Mutations::BaseMutation
   argument :id, ID, required: true
   argument :display_label, String, required: false

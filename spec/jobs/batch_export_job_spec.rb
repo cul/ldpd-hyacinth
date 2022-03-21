@@ -12,8 +12,8 @@ RSpec.describe BatchExportJob do
   context 'batch_export is successful', solr: true do
     before do
       # Create some items
-      2.times { FactoryBot.create(:item, primary_project: legend_of_lincoln_project) }
-      2.times { FactoryBot.create(:item, primary_project: history_of_hamilton_project) }
+      FactoryBot.create_list(:item, 2, primary_project: legend_of_lincoln_project)
+      FactoryBot.create_list(:item, 2, primary_project: history_of_hamilton_project)
       # Grant read permission to only one project for batch_export's user
       batch_export.user.permissions << Permission.new(
         action: Permission::PROJECT_ACTION_READ_OBJECTS,

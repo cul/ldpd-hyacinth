@@ -15,7 +15,7 @@ RSpec.describe 'Retrieving Digital Object Import', type: :request do
       let(:batch_import) { FactoryBot.create(:batch_import, user: User.first) }
       let(:digital_object_import) { FactoryBot.create(:digital_object_import, :pending, batch_import: batch_import) }
 
-      # Note: For the created_at and updated_at times below, we're converting ActiveSupport::TimeWithZone
+      # NOTE: For the created_at and updated_at times below, we're converting ActiveSupport::TimeWithZone
       # to DateTime so that %Z outputs an hour offset instead of a time zone name.
       let(:expected_response) do
         %(

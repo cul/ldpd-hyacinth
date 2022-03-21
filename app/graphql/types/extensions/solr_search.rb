@@ -7,7 +7,7 @@ module Types
         field.argument :limit, "Types::Scalar::Limit", required: true
         field.argument :offset, "Types::Scalar::Offset", required: false
         field.argument :search_params, Types::SearchAttributes, required: false
-        field.argument :filters, [FilterAttributes, null: true], required: false
+        field.argument :filters, [FilterAttributes], required: false
       end
 
       def resolve(object:, arguments:, context:)

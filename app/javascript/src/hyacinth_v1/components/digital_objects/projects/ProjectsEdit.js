@@ -50,10 +50,10 @@ const ProjectsEdit = ({ digitalObject }) => {
       <h4>Primary Project</h4>
       {updateErrors && <GraphQLErrors errors={updateErrors} />}
       {userErrors && <UserErrorsList userErrors={userErrors} />}
-      <p className="inline-badge-list">
+      <div className="inline-badge-list">
         {editPrimary ? <SelectCreatablePrimaryProject primaryProject={primaryProject} changeHandler={setPrimaryProject} ariaLabelOnly />
           : <ProjectShow stringKey={primaryProject.stringKey} displayLabel={primaryProject.displayLabel} />}
-      </p>
+      </div>
       <h4>Other Projects</h4>
       <OtherProjectsSelect primaryProject={primaryProject} otherProjects={otherProjects} changeHandler={setOtherProjects} />
       <FormButtons

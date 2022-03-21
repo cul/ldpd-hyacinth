@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'concurrent'
 
 module DigitalObjectConcerns
@@ -115,7 +116,7 @@ module DigitalObjectConcerns
             # - We now have a new highest-priority doi publish target
             # or
             # - We are re-publishing to the existing highest-priority doi publish target.
-            Hyacinth::Config.external_identifier_adapter.update(self.doi, digital_object: self, target_url: self.citation_location, publish: true)
+            Hyacinth::Config.external_identifier_adapter.update(id: self.doi, digital_object: self, target_url: self.citation_location, publish: true)
           end
 
           # Gather error messages

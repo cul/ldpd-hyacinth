@@ -16,7 +16,7 @@ module Hyacinth
     end
 
     def self.derivativo
-      @derivativo ||= Hyacinth::Clients::FaradayClient.new(HYACINTH[:derivativo])
+      @derivativo ||= Hyacinth::Clients::FaradayClient.new(**HYACINTH[:derivativo])
     end
 
     def self.metadata_storage
@@ -60,7 +60,7 @@ module Hyacinth
     end
 
     def self.triclops
-      @triclops ||= Hyacinth::Clients::FaradayClient.new(HYACINTH[:triclops])
+      @triclops ||= Hyacinth::Clients::FaradayClient.new(**HYACINTH[:triclops])
     end
 
     def self.default_lang_value

@@ -50,6 +50,8 @@ class Hyacinth::Language::AttributesLoader
   def load
     @records ||= begin
       records = []
+      # TODO: If this is ever expected to load from an external URL, Kernel.open won't work
+      # in Ruby >= 3.  We'd need to use URI.open instead.
       open(@path) do |blob|
         self.class.load(blob, records)
       end

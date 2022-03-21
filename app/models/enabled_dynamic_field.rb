@@ -8,7 +8,7 @@ class EnabledDynamicField < ApplicationRecord
   belongs_to :dynamic_field, inverse_of: :enabled_dynamic_fields
 
   validates :project, :dynamic_field, :digital_object_type, presence: true
-  validates :digital_object_type, inclusion: { in: Hyacinth::Config.digital_object_types.keys }
+  validates :digital_object_type, inclusion: { in: proc { Hyacinth::Config.digital_object_types.keys } }
   validates :dynamic_field, uniqueness: { scope: [:project, :digital_object_type] }
 
   before_destroy :disallow_destroy_if_field_in_use_by_project
