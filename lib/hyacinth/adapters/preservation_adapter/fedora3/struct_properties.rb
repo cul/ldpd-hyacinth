@@ -33,8 +33,7 @@ module Hyacinth
           ng_xml = Nokogiri::XML(fedora_obj.datastreams[DSID].content)
           ng_xml.remove_namespaces!
           struct_map = ng_xml.at_css("structMap")
-          list = struct_map.elements.map { |ele| { uid: ele['CONTENTIDS'], label: ele['LABEL'], order: ele['ORDER'] } }
-          list
+          struct_map.elements.map { |ele| { uid: ele['CONTENTIDS'], label: ele['LABEL'], order: ele['ORDER'] } }
         end
 
         def to_struct_xml(proposed_list)

@@ -9,6 +9,7 @@ import GraphQLErrors from '../../shared/GraphQLErrors';
 import { digitalObjectAbility } from '../../../utils/ability';
 import DisplayFieldCategory from '../common/DisplayFieldCategory';
 import DisplayTitle from '../common/DisplayTitle';
+import { getDynamicFieldGraphQuery } from '../../../graphql/dynamicFieldCategories';
 
 function MetadataShow(props) {
   const { id } = props;
@@ -16,6 +17,9 @@ function MetadataShow(props) {
   const [dynamicFieldHierarchy, setDynamicFieldHierarchy] = useState(null);
 
   // TODO: Replace effect below with GraphQL when we have a GraphQL DynamicFieldCategories API
+  // const {
+  //   loading: fieldGraphLoading, error: fieldGraphError, data: fieldGraphData,
+  // } = useQuery(getDynamicFieldGraphQuery, { variables: { metadataForm: 'DESCRIPTIVE' } });
   useEffect(() => {
     dynamicFieldCategories.all().then((res) => {
       setDynamicFieldHierarchy(res.data.dynamicFieldCategories);
@@ -57,7 +61,7 @@ function MetadataShow(props) {
       }
       <h4 className="text-orange">Identifiers</h4>
       <ul className="list-unstyled">
-        { identifiers.length ? identifiers.map((identifier) => <li key={identifier}>{identifier}</li>) : '- None -'}
+        {identifiers.length ? identifiers.map((identifier) => <li key={identifier}>{identifier}</li>) : '- None -'}
       </ul>
     </MetadataTab>
   );

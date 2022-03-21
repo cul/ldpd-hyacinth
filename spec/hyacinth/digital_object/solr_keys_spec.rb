@@ -20,7 +20,7 @@ describe Hyacinth::DigitalObject::SolrKeys do
       expect(described_class.for_string_key_path(['that_is', 'a_very', 'good_path'], 'sm')).to eq('thatIs_aVery_goodPath_sm')
     end
     it 'raises an error when a non-array is provided to the path parameter' do
-      expect { described_class.for_string_key_path('wrong/path/format').to raise_error(ArgumentError) }
+      expect { described_class.for_string_key_path('wrong/path/format') }.to raise_error(ArgumentError)
     end
   end
 

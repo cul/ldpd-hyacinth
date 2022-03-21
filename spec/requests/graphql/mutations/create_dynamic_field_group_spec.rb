@@ -103,7 +103,7 @@ RSpec.describe Mutations::CreateDynamicFieldGroup, type: :request do
 
       it 'returns errors' do
         expect(response.body).to be_json_eql(%(
-          "Variable input of type CreateDynamicFieldGroupInput! was provided invalid value for stringKey (Expected value to not be null)"
+          "Variable $input of type CreateDynamicFieldGroupInput! was provided invalid value for stringKey (Expected value to not be null)"
         )).at_path('errors/0/message')
       end
     end

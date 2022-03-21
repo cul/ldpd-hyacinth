@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :resource, class: Hyacinth::DigitalObject::Resource do
+  factory :resource, class: 'Hyacinth::DigitalObject::Resource' do
     initialize_with do
       new(
         checksum: 'sha256:asdf',

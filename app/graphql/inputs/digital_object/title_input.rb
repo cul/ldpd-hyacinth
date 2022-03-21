@@ -3,10 +3,12 @@
 module Inputs
   class DigitalObject::TitleInput < Types::BaseInputObject
     description 'Digital Object Title Parameters'
+
     class ValueInput < Types::BaseInputObject
       argument :sort_portion, String, required: true
       argument :non_sort_portion, String, required: false
     end
+
     class ValueLangInput < Types::BaseInputObject
       argument :tag, String, required: true
     end

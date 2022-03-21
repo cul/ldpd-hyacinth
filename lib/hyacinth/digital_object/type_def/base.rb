@@ -5,8 +5,7 @@ module Hyacinth
     module TypeDef
       class Base
         def initialize
-          raise NotImplementedError,
-            "Cannot instantiate #{self.class}. Instantiate a subclass instead." if self.class == Base
+          raise NotImplementedError, "Cannot instantiate #{self.class}. Instantiate a subclass instead." if self.class == Base
           @default_value_proc = -> { nil }
           @private_writer = false
           @freeze_on_deserialize = false

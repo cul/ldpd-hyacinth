@@ -96,14 +96,4 @@ RSpec.describe Hyacinth::DigitalObject::Types do
       expect(types_instance_with_registered_types.class_to_key(String)).to eq(nil)
     end
   end
-
-  context '#class_to_key' do
-    it 'returns the key associated with the given class' do
-      expect(types_instance_with_registered_types.class_to_key(item_type_class)).to eq(item_type_key)
-    end
-
-    it 'returns nil if no key is associated with the given class' do
-      expect(types_instance_with_registered_types.class_to_key(String)).to eq(nil)
-    end
-  end
 end

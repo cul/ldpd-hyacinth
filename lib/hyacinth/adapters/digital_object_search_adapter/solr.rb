@@ -5,6 +5,7 @@ module Hyacinth
     module DigitalObjectSearchAdapter
       class Solr < Abstract
         attr_reader :solr, :document_generator
+
         delegate :solr_document_for, to: :document_generator
         delegate :search_types, to: :document_generator
         delegate :commit, to: :solr

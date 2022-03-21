@@ -2,6 +2,7 @@
 
 class Hyacinth::Language::SubtagLoader
   attr_accessor :attributes_loader
+
   def initialize(data)
     data = Hyacinth::Language::AttributesLoader.new(data) unless data.is_a? Hyacinth::Language::AttributesLoader
     self.attributes_loader = data

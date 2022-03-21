@@ -13,11 +13,11 @@ module Api
       def create
         blob = ActiveStorage::Blob.create_before_direct_upload!(**create_params)
 
-        # this is a development hack to alow us to get the path despite ActiveStorage's protests
-        ActiveStorage::Current.host = 'stubhost'
+        # This is a development hack to alow us to get the path despite ActiveStorage's protests
+        ActiveStorage::Current.url_options = { host: 'stubhost' }
 
         render json: blob.as_json(root: false, methods: :signed_id).merge(direct_upload: {
-          url: blob.service_url_for_direct_upload.sub("http://#{ActiveStorage::Current.host}", ''),
+          url: blob.service_url_for_direct_upload.sub("http://#{ActiveStorage::Current.url_options[:host]}", ''),
           headers: blob.service_headers_for_direct_upload
         })
       end

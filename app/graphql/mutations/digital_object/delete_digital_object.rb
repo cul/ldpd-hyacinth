@@ -7,7 +7,6 @@ module Mutations
 
       field :digital_object, Types::DigitalObjectInterface, null: true
 
-      # TODO: Consider removing this mutation in favor of one that just changes the state
       def resolve(id:)
         digital_object = ::DigitalObject.find_by_uid!(id)
         ability.authorize! :delete, digital_object

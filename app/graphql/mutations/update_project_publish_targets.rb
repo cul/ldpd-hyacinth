@@ -16,7 +16,7 @@ class Mutations::UpdateProjectPublishTargets < Mutations::BaseMutation
     project = Project.find_by!(project.to_h)
     # Ensure that the user initiating this update is allowed to do so for the given project
     ability.authorize! :update, project
-    publish_targets = PublishTarget.where(string_key: publish_targets.map { |pt| pt['stringKey'] })
+    publish_targets = PublishTarget.where(string_key: publish_targets.map(&:string_key))
     # This should be an all or nothing update
     ActiveRecord::Base.transaction do
       project.publish_targets = publish_targets.to_a

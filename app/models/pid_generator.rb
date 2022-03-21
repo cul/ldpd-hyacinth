@@ -5,8 +5,8 @@ class PidGenerator < ApplicationRecord
   before_validation :set_template_if_blank_and_get_seed, on: :create
 
   DEFAULT_TEMPLATE = '.reeeeeeeeee'
-  VALID_NAMESPACE_REGEX = /\A([A-Za-z0-9-]+)\z/.freeze
-  VALID_PID_WITHOUT_NAMESPACE_REGEX = /\A([0123456789bcdfghjkmnpqrstvwxz_-]+)\z/.freeze
+  VALID_NAMESPACE_REGEX = /\A([A-Za-z0-9-]+)\z/
+  VALID_PID_WITHOUT_NAMESPACE_REGEX = /\A([0123456789bcdfghjkmnpqrstvwxz_-]+)\z/
 
   validates :namespace, presence: true, uniqueness: true, allow_blank: false
   validate :validate_sample_mint

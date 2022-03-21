@@ -2,7 +2,7 @@
 
 module DigitalObjectConcerns
   module AttributeAssignment
-    module Parents # TODO: Rename to Parents
+    module Parents
       extend ActiveSupport::Concern
 
       def assign_parents(digital_object_data)

@@ -20,7 +20,7 @@ module Hyacinth
           # If ticket is NOT set, this means that the user hasn't gotten to the uni/password login page yet.  Let's send them there.
           # After they log in, they'll be redirected to this page and they'll continue with the authentication.
 
-          redirect_to(cas_login_uri + '?service=' + URI.encode_www_form_component(request.protocol + request.host_with_port + '/users/do_cas_login'))
+          redirect_to(cas_login_uri + '?service=' + URI.encode_www_form_component(request.protocol + request.host_with_port + '/users/do_cas_login'), allow_other_host: true)
         else
           # Login: Part 2
           # If ticket is set, we'll use that ticket for login part 2.
@@ -63,7 +63,7 @@ module Hyacinth
             else
               flash[:alert] = possible_user.present? ? I18n.t('devise.failure.inactive') : I18n.t('devise.failure.unauthorized', uni: user_uni, email: user_email)
               # Log out user
-              redirect_to(cas_logout_uri + '?service=' + URI.encode_www_form_component(root_url))
+              redirect_to(cas_logout_uri + '?service=' + URI.encode_www_form_component(root_url), allow_other_host: true)
             end
           else
             render inline: I18n.t('devise.failure.provider', provider: 'CAS')

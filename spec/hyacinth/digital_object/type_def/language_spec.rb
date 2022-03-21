@@ -3,8 +3,8 @@
 require 'rails_helper'
 
 describe Hyacinth::DigitalObject::TypeDef::Language do
-  let(:type_def) { described_class.new }
   include_context 'with english-adjacent language subtags'
+  let(:type_def) { described_class.new }
   let(:use_preferred) { false }
   let(:json_var) { type_def.to_serialized_form('tag' => tag) }
 

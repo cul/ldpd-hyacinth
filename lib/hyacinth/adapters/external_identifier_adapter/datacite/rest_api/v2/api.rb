@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'json'
 class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api
   include Hyacinth::Adapters::ConfigurableLogger
@@ -15,7 +16,9 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::Datacite::RestApi::V2::Api
 
   # @return [Faraday] connection to the DataCite REST API
   def connect
-    Faraday.new(@datacite_rest_api_url).tap { |conn| conn.basic_auth(@basic_auth_user, @basic_auth_password) }
+    Faraday.new(@datacite_rest_api_url).tap do |c|
+      c.request :authorization, :basic, @basic_auth_user, @basic_auth_password
+    end
   end
 
   # Get data for a given DOI

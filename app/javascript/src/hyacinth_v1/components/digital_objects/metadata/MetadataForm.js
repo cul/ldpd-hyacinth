@@ -10,7 +10,6 @@ import FieldGroupArray from './FieldGroupArray';
 import TitleForm from './TitleForm';
 import FormButtons from '../../shared/forms/FormButtons';
 import GraphQLErrors from '../../shared/GraphQLErrors';
-import ErrorList from '../../shared/ErrorList';
 import InputGroup from '../../shared/forms/InputGroup';
 import TextInputWithAddAndRemove from '../../shared/forms/inputs/TextInputWithAddAndRemove';
 import { createDigitalObjectMutation, updateDescriptiveMetadataMutation } from '../../../graphql/digitalObjects';

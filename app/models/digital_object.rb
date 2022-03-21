@@ -42,8 +42,8 @@ class DigitalObject < ApplicationRecord
 
   enum state: { active: 0, deleted: 1 }
 
-  attr_accessor :mint_doi
-  attr_accessor :latest_lock_object
+  attr_accessor :mint_doi, :latest_lock_object
+
   after_initialize do |digital_object|
     digital_object.mint_doi = false
   end

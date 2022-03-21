@@ -7,8 +7,7 @@ module Hyacinth
       class JsonSerializableBase < Hyacinth::DigitalObject::TypeDef::Base
         def initialize
           super
-          raise NotImplementedError,
-            "Cannot instantiate #{self.class}. Instantiate a subclass instead." if self.class == JsonSerializableBase
+          raise NotImplementedError, "Cannot instantiate #{self.class}. Instantiate a subclass instead." if self.class == JsonSerializableBase
         end
 
         def to_serialized_form_impl(value)

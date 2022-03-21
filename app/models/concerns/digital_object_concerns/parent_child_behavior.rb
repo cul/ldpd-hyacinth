@@ -165,8 +165,8 @@ module DigitalObjectConcerns
 
         parents_to_add.reject! { |dobj| existing_parent_ids.include?(dobj.id) }
         children_to_add.reject! { |dobj| existing_child_ids.include?(dobj.id) }
-        parents_to_remove.reject! { |dobj| !existing_parent_ids.include?(dobj.id) }
-        children_to_remove.reject! { |dobj| !existing_child_ids.include?(dobj.id) }
+        parents_to_remove.select! { |dobj| existing_parent_ids.include?(dobj.id) }
+        children_to_remove.select! { |dobj| existing_child_ids.include?(dobj.id) }
 
         eliminate_negated_parent_child_additions_and_removals!
 

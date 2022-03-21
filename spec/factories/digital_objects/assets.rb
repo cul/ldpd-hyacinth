@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :asset, class: DigitalObject::Asset do
+  factory :asset, class: 'DigitalObject::Asset' do
     transient do
       parents_to_add { [] }
     end

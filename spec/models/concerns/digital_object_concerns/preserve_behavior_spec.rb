@@ -2,7 +2,7 @@
 
 require 'rails_helper'
 
-RSpec.describe DigitalObjectConcerns::PublishBehavior do
+RSpec.describe DigitalObjectConcerns::PreserveBehavior do
   include_context 'with stubbed search adapters'
   let(:digital_object) { FactoryBot.create(:digital_object_test_subclass, doi: doi) }
   let(:expected_doi) { '10.abcd/4569' }

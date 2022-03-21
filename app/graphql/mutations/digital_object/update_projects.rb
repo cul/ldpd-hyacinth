@@ -24,9 +24,9 @@ module Mutations
 
         persist_change(digital_object, primary_project_change, other_project_change)
         projects_update_response(digital_object)
-      rescue Hyacinth::Exceptions::NotFound => ex
+      rescue Hyacinth::Exceptions::NotFound => e
         # raised when primary project change cannot be dereferenced
-        digital_object.errors.add(:primary_project, ex.message)
+        digital_object.errors.add(:primary_project, e.message)
         projects_update_response(digital_object)
       end
 
@@ -34,7 +34,7 @@ module Mutations
       # bad string keys will raise to prevent orphaned digital objects
       # @return proposed new primary project or nil if no change
       def proposed_primary_project_change(digital_object, proposed_primary)
-        proposed_string_key = proposed_primary['stringKey']
+        proposed_string_key = proposed_primary.string_key
         digital_object.dereference_project_string_key(proposed_string_key, true) unless proposed_string_key == digital_object.primary_project.string_key
       end
 
@@ -67,9 +67,9 @@ module Mutations
           digital_object.updated_by = context[:current_user]
           digital_object.save!
         end
-      rescue Hyacinth::Exceptions::NotFound, ActiveRecord::RecordInvalid => ex
+      rescue Hyacinth::Exceptions::NotFound, ActiveRecord::RecordInvalid => e
         # raised when other project change cannot be dereferenced, or is invalid
-        digital_object.errors.add(:other_projects, ex.message)
+        digital_object.errors.add(:other_projects, e.message)
       end
 
       def projects_update_response(digital_object)

@@ -24,7 +24,7 @@ RSpec.describe Mutations::UpdateProjectPublishTargets do
         }
       GQL
     end
-    let(:errors) { graphql_request.to_h.dig('errors') }
+    let(:errors) { graphql_request.to_h['errors'] }
     let(:resolved_publish_targets) { graphql_request.to_h.dig('data', 'updateProjectPublishTargets', 'enabledPublishTargets') }
     let(:resolved_publish_target_ids) { resolved_publish_targets.map { |pt| pt['stringKey'] } }
     before do

@@ -5,7 +5,7 @@ module Hyacinth
     class FaradayClient
       def initialize(default_job_options:, **other_opts)
         @default_job_options = default_job_options
-        init_connection(other_opts)
+        init_connection(**other_opts)
       end
 
       def init_connection(url:, api_key:, request_timeout: 120, **_other_opts)
@@ -20,8 +20,9 @@ module Hyacinth
           request: {
             timeout: request_timeout
           }
-        )
-        @conn.authorization :Token, token: api_key
+        ) do |c|
+          c.request :authorization, 'Bearer', token: api_key
+        end
         @conn
       end
 

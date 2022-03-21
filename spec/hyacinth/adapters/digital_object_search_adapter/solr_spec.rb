@@ -106,7 +106,7 @@ describe Hyacinth::Adapters::DigitalObjectSearchAdapter::Solr do
         adapter.field_used_in_project?(dynamic_field_path, project, digital_object_type)
       end
       context "when the field is in use" do
-        # Note: doc content doesn't matter for this test
+        # NOTE: doc content doesn't matter for this test
         let(:docs) { [{ id: '12345' }] }
         it 'returns true' do
           expect(return_value).to eq(true)

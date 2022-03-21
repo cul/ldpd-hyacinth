@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 class HyacinthSchema < GraphQL::Schema
-  use GraphQL::Execution::Errors
-
   max_depth 13
 
   rescue_from(ActiveRecord::RecordNotFound) do |err, _obj, _args, _ctx, _field|

@@ -30,6 +30,8 @@ export default class EnabledDynamicFieldShow extends React.Component {
   render() {
     const { match: { params: { projectStringKey, digitalObjectType } } } = this.props;
 
+    if (!this.state.project) { return ''; }
+
     return (
       <ProjectInterface project={this.state.project} key={digitalObjectType}>
         <TabHeading>

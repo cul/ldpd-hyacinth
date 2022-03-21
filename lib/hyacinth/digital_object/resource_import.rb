@@ -14,7 +14,7 @@ module Hyacinth
       FIXTURE_FILE = 'fixture_file'
       VALID_IMPORT_METHODS = [COPY, TRACK, FIXTURE_FILE].freeze
 
-      VALID_CHECKSUM_REGEX = /sha256:([a-f0-9]{64})/.freeze
+      VALID_CHECKSUM_REGEX = /sha256:([a-f0-9]{64})/
 
       # The opts hash should only include symbol keys.
       # The :checksum value, if provided, should be of the format:

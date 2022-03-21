@@ -8,18 +8,21 @@ module Types
         field.argument :offset, "Types::Scalar::Offset", required: false
       end
 
-      def resolve(object:, arguments:, context:)
+      def resolve(object:, arguments:, **rest)
+        # Since the underlying type that we're extending doesn't have limit and offset fields,
+        # we only want to yield arguments that are NOT limit or offset.
         unpaginated_args = arguments.dup
-        unpaginated_args.delete(:limit)
-        unpaginated_args.delete(:offset)
-        yield(object, unpaginated_args)
+        limit = unpaginated_args.delete(:limit)
+        offset = unpaginated_args.delete(:offset)
+        # The arguments passed to yield are the arguments that are passed to after_resolve,
+        # so we need to pass limit and offset in the third "memo" argument so they're available.
+        yield(object, unpaginated_args, { limit: limit, offset: offset })
       end
 
-      def after_resolve(object:, arguments:, value:, context:, memo:)
+      def after_resolve(value:, arguments:, memo:,  **rest)
         raise GraphQL::ExecutionError, 'Paginate extension can only be used on ActiveRecord:Relation objects' unless value.is_a?(ActiveRecord::Relation)
-
-        limit = arguments[:limit]
-        offset = arguments.fetch(:offset, 0)
+        limit = memo[:limit]
+        offset = memo[:offset] || 0
         total_count = value.count
 
         OpenStruct.new(

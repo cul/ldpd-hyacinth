@@ -12,7 +12,7 @@ module Hyacinth
 
     def self.load_default_subtags!
       Rails.application.config_for(:lang).fetch(:default_lang_subtags, {}).each do |subtag, attributes|
-        subtag_atts = attributes.merge(subtag: subtag).map { |k, v| [k, Array[v]] }.to_h.with_indifferent_access
+        subtag_atts = attributes.merge(subtag: subtag).transform_values { |v| Array[v] }.with_indifferent_access
         Hyacinth::Language::SubtagLoader.new(nil).load_resolved_attributes(subtag_atts)
       end
     end

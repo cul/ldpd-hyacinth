@@ -40,7 +40,7 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
           "createdBy": null,
           "digitalObjectType": "ITEM",
           "displayLabel": "The Best Item Ever",
-          "doi": #{authorized_object.doi.nil? ? 'null' : '"#{authorized_object.doi}"'},
+          "doi": #{authorized_object.doi.nil? ? 'null' : %("#{authorized_object.doi}")},
           "descriptiveMetadata": {},
           "firstPreservedAt": null,
           "firstPublishedAt": null,
@@ -123,11 +123,11 @@ RSpec.describe 'Retrieving Digital Object', type: :request do
   context "resources response" do
     let(:authorized_object) { FactoryBot.create(:asset, :with_main_resource) }
     let(:authorized_project) { authorized_object.projects.first }
+    let(:expected_location) { Rails.root.join('spec', 'fixtures', 'files', 'test.txt').to_s }
     before do
       sign_in_project_contributor actions: :read_objects, projects: authorized_project
       graphql query(authorized_object.uid)
     end
-    let(:expected_location) { Rails.root.join('spec', 'fixtures', 'files', 'test.txt').to_s }
 
     it "returns the expected resources response" do
       expect(response.body).to be_json_eql(%(

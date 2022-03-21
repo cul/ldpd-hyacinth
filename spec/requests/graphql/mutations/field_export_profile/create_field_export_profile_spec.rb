@@ -45,7 +45,7 @@ RSpec.describe Mutations::FieldExportProfile::CreateFieldExportProfile, type: :r
 
       it 'returns error' do
         expect(response.body).to be_json_eql(%(
-          "Variable input of type CreateFieldExportProfileInput! was provided invalid value for name (Expected value to not be null)"
+          "Variable $input of type CreateFieldExportProfileInput! was provided invalid value for name (Expected value to not be null)"
         )).at_path('errors/0/message')
       end
     end

@@ -3,7 +3,7 @@
 module DigitalObjectConcerns::Assets::Validations
   extend ActiveSupport::Concern
 
-  FEATURED_THUMBNAIL_REGION_PATTERN = /^\d+,\d+,(\d+),(\d+)$/.freeze
+  FEATURED_THUMBNAIL_REGION_PATTERN = /^\d+,\d+,(\d+),(\d+)$/
 
   included do
     validate :validate_main_resource

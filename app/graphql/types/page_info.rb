@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 module Types
   # The return type of a connection's `pageInfo` field
   class PageInfo < Types::BaseObject

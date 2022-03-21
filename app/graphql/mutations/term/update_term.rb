@@ -18,12 +18,12 @@ module Mutations
 
         ability.authorize! :update, term
 
-        term.assign_attributes(**attributes) # updates, but doesn't save.
+        term.assign_attributes(attributes) # This updates the term, but does not save it
 
         custom_fields.each do |f|
           field = f[:field]
 
-          next unless vocabulary.custom_fields.keys.include?(field)
+          next unless vocabulary.custom_fields.key?(field)
           term.set_custom_field(field, f[:value])
         end
 
