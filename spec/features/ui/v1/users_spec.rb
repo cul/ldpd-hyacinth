@@ -16,4 +16,24 @@ RSpec.describe 'Users Requests', type: :feature, js: true do
       end
     end
   end
+
+  describe 'GET /ui/v1/users/:id/edit' do
+    context 'when logged in user is an admin' do
+      before { sign_in_user as: :administrator }
+
+      context 'and the admin navigates to the edit page for a user' do
+        let!(:user) { FactoryBot.create(:user) }
+        before do
+          visit "/ui/v1/users/#{user.uid}/edit"
+        end
+
+        specify 'the admin can click a button to log in as that user' do
+          click_link_or_button('Switch to this user')
+          within('#top-navbar') do
+            expect(page).to have_content(user.full_name)
+          end
+        end
+      end
+    end
+  end
 end

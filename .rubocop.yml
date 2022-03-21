@@ -7,8 +7,23 @@ AllCops:
   TargetRubyVersion: 3.0.3
   TargetRailsVersion: 7.0.1
 
+CUL/CapybaraScreenshots:
+  Description: 'Disallow calls to save_screenshot in feature specs.'
+  Enabled: true
+  VersionAdded: '3.2.2'
+  Include:
+    - 'spec/**/*'
+
 Layout/IndentationConsistency:
   EnforcedStyle: indented_internal_methods
+
+Rails/DynamicFindBy:
+  Whitelist:
+    - find_by_uid!
+    - find_by_uid
+    - find_by_path_traversal
+    - find_by_sparql_relationship
+    - find_by_string_key
 
 Rails/Presence:
   Enabled: false
@@ -18,21 +33,6 @@ RSpec/DescribedClass:
 
 RSpec/ExampleLength:
   Max: 7
-
-CUL/CapybaraScreenshots:
-  Description: 'Disallow calls to save_screenshot in feature specs.'
-  Enabled: true
-  VersionAdded: '3.2.2'
-  Include:
-    - 'spec/**/*'
-
-Rails/DynamicFindBy:
-  Whitelist:
-    - find_by_uid!
-    - find_by_uid
-    - find_by_path_traversal
-    - find_by_sparql_relationship
-    - find_by_string_key
 
 RSpec/PredicateMatcher:
   Enabled: false

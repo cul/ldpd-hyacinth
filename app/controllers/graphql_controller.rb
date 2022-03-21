@@ -7,11 +7,7 @@ class GraphqlController < ApplicationController
     variables = ensure_hash(params[:variables])
     query = params[:query]
     operation_name = params[:operationName]
-    context = {
-      # Query context goes here, for example:
-      current_user: current_user,
-      ability: current_ability
-    }
+    context = generate_context
     result = HyacinthSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
     render json: result
   rescue => e
@@ -20,6 +16,14 @@ class GraphqlController < ApplicationController
   end
 
   private
+
+    def generate_context
+      {
+        current_user: current_user,
+        ability: current_ability,
+        sign_in_lambda: ->(user) { sign_in(:user, user) }
+      }
+    end
 
     # Handle form data, JSON body, or a blank value
     def ensure_hash(ambiguous_param)
