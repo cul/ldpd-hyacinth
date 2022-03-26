@@ -17,6 +17,7 @@ import { getUserQuery, updateUserMutation } from '../../graphql/users';
 import Checkbox from '../shared/forms/inputs/Checkbox';
 
 import BooleanRadioButtons from '../shared/forms/inputs/BooleanRadioButtons';
+import SwitchToUserButton from './SwitchToUserButton';
 
 function UserEdit() {
   const { uid: id } = useParams();
@@ -108,6 +109,7 @@ function UserEdit() {
       variables: userData,
     });
   };
+
   if (gqlResponse.loading) return (<></>);
   if (gqlResponse.error) return (<GraphQLErrors errors={gqlResponse.error} />);
 
@@ -294,6 +296,13 @@ function UserEdit() {
 
         <FormButtons onSave={onSave} formType="edit" />
       </Form>
+      {/* Admins have the ability to switch to a different user */}
+      <Can I="manage" a="all">
+        <hr />
+        <p>
+          <SwitchToUserButton userId={id} />
+        </p>
+      </Can>
     </>
   );
 }

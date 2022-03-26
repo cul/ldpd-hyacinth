@@ -48,6 +48,14 @@ export const updateUserMutation = gql`
   }
 `;
 
+export const switchToUserMutation = gql`
+  mutation SwitchToUser($input: SwitchToUserInput!){
+    switchToUser(input: $input){
+      success
+    }
+  }
+`;
+
 export const getAuthenticatedUserQuery = gql`
   query AuthenticatedUser {
     authenticatedUser {
