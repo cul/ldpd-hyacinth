@@ -280,13 +280,11 @@ module DigitalObject::Fedora
         )
         @fedora_object.add_datastream(captions_ds)
       end
-      # Only update content if it has changed
       new_content = IO.read(captions_location)
       new_content_checksum = Digest::MD5.hexdigest(new_content)
-      if new_content_checksum != captions_ds.checksum
-        captions_ds.content = new_content
-        yield(new_content) if block_given?
-      end
+      content_changed = new_content_checksum != captions_ds.checksum
+      captions_ds.content = new_content if content_changed
+      yield(new_content, content_changed) if block_given?
     end
 
     def save_synchronized_transcript_datastream
