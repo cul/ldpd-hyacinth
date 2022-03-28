@@ -262,9 +262,14 @@ class DigitalObject::Asset < DigitalObject::Base
     save_synchronized_transcript_datastream
     save_chapters_datastream
     save_transcript_datastream
-    save_captions_datastream do |new_content|
-      companion_file_path = File.join(Hyacinth::Utils::PathUtils.access_directory_path_for_uuid!(self.uuid), 'access.vtt')
-      open(companion_file_path, 'wb') { |io| io.write(new_content) }
+    save_captions_datastream do |new_content, content_changed|
+      # companion_file_path is derived from access copy path since these files need to be next to each other.
+      # companion_file_path is the access copy path with the original extension replaced with "vtt".
+      access_path = self.access_copy_location
+      companion_file_path = access_path[0..access_path.rindex('.')] + 'vtt'
+      if content_changed || !File.exist?(companion_file_path)
+        open(companion_file_path, 'wb') { |io| io.write(new_content) }
+      end
     end
     true
   end
