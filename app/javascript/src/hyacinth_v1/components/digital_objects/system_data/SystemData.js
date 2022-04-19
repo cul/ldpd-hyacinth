@@ -113,9 +113,9 @@ function SystemData(props) {
         <Col as="dd" lg={10} sm={8}>{firstPublishedAt || '-- Assigned After Publish --'}</Col>
       </Row>
       <hr />
-      { canUpdateObject ? <ProjectsEdit digitalObject={digitalObject} /> : <ProjectsShow digitalObject={digitalObject} /> }
-      { state === 'ACTIVE' && renderDeleteSection() }
-      { renderPurgeSection() }
+      {canUpdateObject ? <ProjectsEdit digitalObject={digitalObject} /> : <ProjectsShow digitalObject={digitalObject} />}
+      {state === 'ACTIVE' && renderDeleteSection()}
+      {renderPurgeSection()}
     </DigitalObjectInterface>
   );
 }

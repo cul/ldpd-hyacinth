@@ -34,8 +34,6 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-      - name: Print bundler env info
-        run: bundle env
       - name: Set up Java
         uses: actions/setup-java@v2
         with:

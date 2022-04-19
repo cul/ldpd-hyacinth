@@ -27,7 +27,7 @@ module ResourceRequests
 
         log_response(response, resource_request.digital_object_uid, resource_request.job_type, options)
 
-        resource_request.update_attribute!(status: response.status == 200 ? 'success' : 'failure')
+        resource_request.update!(status: response.status == 200 ? 'success' : 'failure')
       end
     rescue Faraday::ConnectionFailed
       Rails.logger.info("Unable to connect to Triclops, so #{resource_request.job_type} resource request for #{resource_request.digital_object_uid} was skipped.")
