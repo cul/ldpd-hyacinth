@@ -4,7 +4,7 @@ default: &default
   verbose: false
   managed: true
   solr_options:
-    "addlopts" : "-Djetty.host=127.0.0.1"
+    "addlopts" : "-Xss1024k -Djetty.host=127.0.0.1"
 
 development:
   <<: *default
