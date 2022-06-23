@@ -7,6 +7,7 @@ default: &default
     - "-XX:MaxPermSize=128m"
     - "-Xmx256m"
     - "-Djetty.host=127.0.0.1"
+    - "-Xss1024k" # Required if using Azul Zulu OpenJDK
 
 development:
   <<: *default
