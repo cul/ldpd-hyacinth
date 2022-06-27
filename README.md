@@ -44,7 +44,7 @@ rails s -p 3000
 And for faster React app recompiling during development, run this in a separate terminal window:
 
 ```
-./bin/webpack-dev-server
+./bin/webpacker-dev-server
 ```
 
 Then navigate to http://localhost:3000 in your browser and sign in using the "Email" method.
@@ -126,7 +126,7 @@ bundle exec rake hyacinth:ci
 
 If you *are* working on the js app, you can build and analyze the production packs from your development machine:
 ```bash
-NODE_ENV=production RAILS_ENV=production bin/webpack --profile --json > tmp/webpack-stats.json
+NODE_ENV=production RAILS_ENV=production bin/webpacker --profile --json > tmp/webpack-stats.json
 npx webpack-bundle-analyzer tmp/webpack-stats.json public/packs
 ```
 This will open a browser window with a treemap of chunked dependencies and size information.

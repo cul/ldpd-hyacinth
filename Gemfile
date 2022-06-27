@@ -31,9 +31,9 @@ gem 'rainbow', '~> 3.0'
 gem 'resque', '~> 2.0'
 gem 'rsolr', '~> 2.3'
 gem 'sass-rails', '~> 5.0' # TODO: Maybe remove?
+gem 'shakapacker', '6.4.1'
 gem 'timecop', '~> 0.9.1'
 gem 'uglifier', '>= 1.3.0'
-gem 'webpacker'
 
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
