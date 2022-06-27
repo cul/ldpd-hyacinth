@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         ruby-version: ['3.0.3']
-        node: ['10', '12']
+        node: ['12']
     env:
       RAILS_ENV: test
       NOKOGIRI_USE_SYSTEM_LIBRARIES: true
@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: ['10', '12']
+        node: ['12']
 
     steps:
       - uses: actions/checkout@v2
