@@ -1,8 +1,6 @@
 // const { webpackConfig, merge } = require('@rails/webpacker');
 const { webpackConfig, merge } = require('shakapacker');
 
-// const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-
 const customConfig = {
   resolve: {
     extensions: ['.js', '.jsx', '.css', '.scss'],
@@ -17,11 +15,6 @@ const customConfig = {
           fullySpecified: false,
         },
       },
-      // // Add CSS/SASS/SCSS rule with loaders
-      // {
-      //   test: /\.s[ac]ss$/i,
-      //   use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
-      // },
     ],
   },
 };
