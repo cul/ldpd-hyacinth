@@ -15,8 +15,9 @@ namespace :hyacinth do
   end
 
   task purge_all_digital_objects: :environment do
-    puts Rainbow("This will delete ALL digital objects in the selected Rails environment (#{Rails.env}) and cannot be undone. "\
-      "Please confirm that you want to continue by typing in the selected Rails environment (#{Rails.env}):").red.bright
+    puts Rainbow("This will delete ALL digital objects in the selected Rails "\
+      "environment (#{Rails.env}) and cannot be undone. Please confirm that you want to "\
+      "continue by typing the name of the selected Rails environment (#{Rails.env}):").red.bright
     print '> '
     response = ENV['rails_env_confirmation'] || $stdin.gets.chomp
 

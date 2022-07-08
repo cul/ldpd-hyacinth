@@ -13,9 +13,9 @@ namespace :hyacinth do
   require 'rubocop/rake_task'
   require 'rubocop/cul'
   desc 'Run style checker'
-  RuboCop::RakeTask.new(:rubocop) do |task|
-    task.requires << 'rubocop-rspec'
-    task.fail_on_error = true
+  RuboCop::RakeTask.new(:rubocop) do |t|
+    t.options = ['--display-cop-names']
+    t.fail_on_error = true
   end
 
   desc 'CI build without rubocop'
@@ -31,8 +31,9 @@ namespace :hyacinth do
     rspec_system_exit_failure_exception = nil
 
     task_stack = ['hyacinth:rspec']
-    task_stack.prepend('hyacinth:solr_wrapper') if includes.include?('solr')
-    task_stack.prepend('hyacinth:fedora_wrapper') if includes.include?('fedora')
+    # task_stack.prepend('hyacinth:solr_wrapper') if includes.include?('solr')
+    # task_stack.prepend('hyacinth:fedora_wrapper') if includes.include?('fedora')
+    task_stack.prepend('hyacinth:docker_wrapper') if (includes & ['solr', 'fedora']).present?
 
     duration = Benchmark.realtime do
       ENV['RAILS_ENV'] = 'test'
@@ -66,55 +67,80 @@ namespace :hyacinth do
     raise rspec_system_exit_failure_exception unless rspec_system_exit_failure_exception.nil?
   end
 
-  task :solr_wrapper, [:task_stack] => [:environment] do |task, args|
-    rspec_system_exit_failure_exception = nil
+  task :docker_wrapper, [:task_stack] => [:environment] do |task, args|
+    unless Rails.env.test?
+      raise 'This task should only be run in the test environment (because it clears docker volumes)'
+    end
+
     task_stack = args[:task_stack]
-    solr_wrapper_config = Rails.application.config_for(:solr_wrapper).deep_symbolize_keys
 
-    if File.exist?(solr_wrapper_config[:instance_dir])
-      # Delete old solr if it exists because we want a fresh solr instance
-      puts "Deleting old test solr instance at #{solr_wrapper_config[:instance_dir]}...\n"
-      FileUtils.rm_rf(solr_wrapper_config[:instance_dir])
+    # stop docker if it's currently running (so we can delete any old volumes)
+    Rake::Task['hyacinth:docker:stop'].invoke
+
+    ENV['rails_env_confirmation'] = Rails.env # setting this to skip prompt in volume deletion task
+    Rake::Task['hyacinth:docker:delete_volumes'].invoke
+
+    Rake::Task['hyacinth:docker:start'].invoke
+    begin
+      Rake::Task[task_stack.shift].invoke(task_stack) while task_stack.present?
+    rescue SystemExit => e
+      rspec_system_exit_failure_exception = e
     end
+    Rake::Task['hyacinth:docker:stop'].invoke
 
-    puts "Unzipping and starting new solr instance...\n"
-    SolrWrapper.wrap(solr_wrapper_config) do |solr_wrapper_instance|
-      # Create collections
-      # create is stricter about solr options being in [c,d,n,p,shards,replicationFactor]
-      original_solr_options = solr_wrapper_instance.config.static_config.options[:solr_options].dup
-      allowed_create_options = [:c, :d, :n, :p, :shards, :replicationFactor]
-      solr_wrapper_instance.config.static_config.options[:solr_options]&.delete_if { |k, v| !allowed_create_options.include?(k) }
-      solr_wrapper_config[:collection].each do |c|
-        solr_wrapper_instance.create(c)
-      end
-      solr_wrapper_instance.config.static_config.options[:solr_options] = original_solr_options
-      begin
-        Rake::Task[task_stack.shift].invoke(task_stack)
-      rescue SystemExit => e
-        rspec_system_exit_failure_exception = e
-      end
-
-      print 'Stopping solr...'
-    end
-    puts 'stopped.'
     raise rspec_system_exit_failure_exception if rspec_system_exit_failure_exception
   end
 
-  task :fedora_wrapper, [:task_stack] => [:environment] do |task, args|
-    rspec_system_exit_failure_exception = nil
-    task_stack = args[:task_stack]
+  # task :solr_wrapper, [:task_stack] => [:environment] do |task, args|
+  #   rspec_system_exit_failure_exception = nil
+  #   task_stack = args[:task_stack]
+  #   solr_wrapper_config = Rails.application.config_for(:solr_wrapper).deep_symbolize_keys
 
-    Jettywrapper.jetty_dir = Rails.root.join('tmp', 'jetty-test').to_s
+  #   if File.exist?(solr_wrapper_config[:instance_dir])
+  #     # Delete old solr if it exists because we want a fresh solr instance
+  #     puts "Deleting old test solr instance at #{solr_wrapper_config[:instance_dir]}...\n"
+  #     FileUtils.rm_rf(solr_wrapper_config[:instance_dir])
+  #   end
 
-    puts "Starting fedora wrapper...\n"
-    Rake::Task['jetty:clean'].invoke
-    rspec_system_exit_failure_exception = Jettywrapper.wrap(Rails.application.config_for(:jetty).symbolize_keys.merge({ jetty_home: Jettywrapper.jetty_dir })) do
-      print "Starting fedora\n...#{Rails.application.config_for(:jetty)}\n"
-      Rake::Task[task_stack.shift].invoke(task_stack)
-      print 'Stopping fedora...'
-    end
-    raise rspec_system_exit_failure_exception if rspec_system_exit_failure_exception
-  end
+  #   puts "Unzipping and starting new solr instance...\n"
+  #   SolrWrapper.wrap(solr_wrapper_config) do |solr_wrapper_instance|
+  #     # Create collections
+  #     # create is stricter about solr options being in [c,d,n,p,shards,replicationFactor]
+  #     original_solr_options = solr_wrapper_instance.config.static_config.options[:solr_options].dup
+  #     allowed_create_options = [:c, :d, :n, :p, :shards, :replicationFactor]
+  #     solr_wrapper_instance.config.static_config.options[:solr_options]&.delete_if { |k, v| !allowed_create_options.include?(k) }
+  #     solr_wrapper_config[:collection].each do |c|
+  #       solr_wrapper_instance.create(c)
+  #     end
+  #     solr_wrapper_instance.config.static_config.options[:solr_options] = original_solr_options
+  #     begin
+  #       Rake::Task[task_stack.shift].invoke(task_stack)
+  #     rescue SystemExit => e
+  #       rspec_system_exit_failure_exception = e
+  #     end
+
+  #     print 'Stopping solr...'
+  #   end
+  #   puts 'stopped.'
+  #   raise rspec_system_exit_failure_exception if rspec_system_exit_failure_exception
+  # end
+
+  # task :fedora_wrapper, [:task_stack] => [:environment] do |task, args|
+  #   rspec_system_exit_failure_exception = nil
+  #   task_stack = args[:task_stack]
+
+  #   Jettywrapper.jetty_dir = Rails.root.join('tmp', 'jetty-test').to_s
+
+  #   puts "Starting fedora wrapper...\n"
+  #   Rake::Task['jetty:clean'].invoke
+  #   rspec_system_exit_failure_exception = Jettywrapper.wrap(Rails.application.config_for(:jetty).symbolize_keys.merge({ jetty_home: Jettywrapper.jetty_dir })) do
+  #     print "Starting fedora\n...#{Rails.application.config_for(:jetty)}\n"
+  #     Rake::Task[task_stack.shift].invoke(task_stack)
+  #     print 'Stopping fedora...'
+  #   end
+  #   raise rspec_system_exit_failure_exception if rspec_system_exit_failure_exception
+  # end
+
 rescue LoadError => e
   # Be prepared to rescue so that this rake file can exist in environments where RSpec is unavailable (i.e. production environments).
   puts '[Warning] Exception creating ci/rubocop/rspec rake tasks. '\
