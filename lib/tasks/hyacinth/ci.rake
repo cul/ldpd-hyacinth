@@ -31,8 +31,6 @@ namespace :hyacinth do
     rspec_system_exit_failure_exception = nil
 
     task_stack = ['hyacinth:rspec']
-    # task_stack.prepend('hyacinth:solr_wrapper') if includes.include?('solr')
-    # task_stack.prepend('hyacinth:fedora_wrapper') if includes.include?('fedora')
     task_stack.prepend('hyacinth:docker_wrapper') if (includes & ['solr', 'fedora']).present?
 
     duration = Benchmark.realtime do
@@ -76,6 +74,8 @@ namespace :hyacinth do
 
     # stop docker if it's currently running (so we can delete any old volumes)
     Rake::Task['hyacinth:docker:stop'].invoke
+    # rake tasks must be re-enabled if you want to call them again later during the same run
+    Rake::Task['hyacinth:docker:stop'].reenable
 
     ENV['rails_env_confirmation'] = Rails.env # setting this to skip prompt in volume deletion task
     Rake::Task['hyacinth:docker:delete_volumes'].invoke
@@ -87,7 +87,6 @@ namespace :hyacinth do
       rspec_system_exit_failure_exception = e
     end
     Rake::Task['hyacinth:docker:stop'].invoke
-
     raise rspec_system_exit_failure_exception if rspec_system_exit_failure_exception
   end
 

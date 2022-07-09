@@ -3,6 +3,8 @@
 # 1) That image isn't built for ARM
 # 2) That image references a much slower sourceforge download link (we use GitHub instead).
 # 3) We want to run on a different port (8080)
+# 4) We want to enable the resource index (ri.enabled=true in install.properties)
+# 5) We want to enable authentication with the default username/password (apia.auth.required=true in install.properties)
 
 FROM amazoncorretto:8
 

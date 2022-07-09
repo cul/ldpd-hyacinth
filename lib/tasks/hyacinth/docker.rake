@@ -20,7 +20,10 @@ namespace :hyacinth do
       if running?
         puts "\nAlready running."
       else
-        `docker compose -f #{docker_compose_file_path} up --build --detach`
+        # NOTE: This command rebuilds the container images before each run, to ensure they're
+        # always up to date. In most cases, the overhead is minimal if the Dockerfile for an image
+        # hasn't changed since the last build.
+        `docker compose -f #{docker_compose_file_path} up --build --detach --wait`
         puts "\nStarted."
       end
     end
