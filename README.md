@@ -11,11 +11,12 @@ Your friendly neighborhood digital object management system.
 
 ## Requirements
 
-- Ruby 2.6
+- Ruby 3.0
 - Sqlite3 or MySQL (tested with MySQL 5.5)
-- Apache Solr 6.3
-- Fedora 3.8.1 (for publishing)
-- Java 8 (for Solr)
+- Redis 4/5/6/7 (provided by Docker)
+- Apache Solr 6.3 (provided by Docker)
+- Fedora 3.8.1 (provided by Docker, only required for publishing)
+- Docker (for development environment and running tests)
 
 ## First-Time Setup (for developers)
 
@@ -28,20 +29,17 @@ bundle install # Install gem dependencies
 yarn install # this assumes you have node and yarn installed (tested with Node 8 and Node 10)
 
 # This next line does A LOT (see development.rake file for full details).
-# It's completely safe to run for a brand new setup, but note that it will drop and recreate your currently-configured development database.
-# It will also automatically start a copy of solr by internally running `bundle exec rake solr:start`.
+# It's completely safe to run for a brand new setup, but note that it will drop and recreate your currently-configured development database in an existing setup.
+# It will also automatically start a copy of Redis/Solr/Fedora by internally running `bundle exec rake hyacinth:docker:start`.
 bundle exec rake hyacinth:development:reset
 
-# This is optional. Creates 21 basic sample records.
+# This is optional. Creates some sample projects, sample publish targets, and 21 basic sample records.
 bundle exec rake hyacinth:sample_content:create
-
-# Start a local jetty server for Fedora 3 in the background (only required if you want to preserve/publish records during development)
-bundle exec rake jetty:start
 
 # Start the application using rails server
 rails s -p 3000
 ```
-And for faster React app recompiling during development, run this in a separate terminal window:
+And, in separate terminal windows, run this to start the webpack dev server:
 
 ```
 ./bin/webpacker-dev-server
@@ -162,11 +160,11 @@ rubocop --auto-gen-config --auto-gen-only-exclude --exclude-limit 10000
 ## Development / Running Local Development Solr While Running CI Tests
 During development, it's often convenient to use the built-in solr rake task to run a local solr instance:
 ```
-# start development solr
-bundle exec rake solr:start
+# start development Redis / Solr / Fedora
+bundle exec rake hyacinth:docker:start
 
-# stop development solr
-bundle exec rake solr:stop
+# stop development Redis / Solr / Fedora
+bundle exec rake hyacinth:docker:stop
 ```
 
 This development solr runs on a port specified in config/solr_wrapper.yml (8983 by default).

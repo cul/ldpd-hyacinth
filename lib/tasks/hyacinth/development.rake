@@ -9,23 +9,25 @@ namespace :hyacinth do
         next
       end
 
+      Rake::Task['hyacinth:setup:config_files'].invoke
+      Rake::Task['hyacinth:docker:setup_config_files'].invoke
+
       begin
         Hyacinth::Config.digital_object_search_adapter.search({})
       rescue Errno::ECONNREFUSED
-        # Solr isn't running so we'll start it
-        Rake::Task['solr:start'].invoke
+        # Solr isn't running so we'll start it (using the docker task)
+        Rake::Task['hyacinth:docker:start'].invoke
       end
 
       ENV['rails_env_confirmation'] = 'development' # allow automatic prompt confirmation in purge task
       Rake::Task['hyacinth:purge_all_digital_objects'].invoke
-      ENV.delete('yes') # done with this env variable
+      ENV.delete('rails_env_confirmation') # done with this env variable
 
       Rake::Task['db:environment:set'].invoke
       Rake::Task['db:drop'].invoke
       Rake::Task['db:create'].invoke
       Rake::Task['db:migrate'].invoke
 
-      Rake::Task['hyacinth:setup:config_files'].invoke
       Rake::Task['hyacinth:setup:default_users'].invoke
       Rake::Task['hyacinth:rights_fields:load'].invoke
     end

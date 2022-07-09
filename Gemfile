@@ -38,9 +38,7 @@ gem 'uglifier', '>= 1.3.0'
 group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   gem 'equivalent-xml'
-  gem 'jettywrapper', git: 'https://github.com/cul/jettywrapper.git', branch: 'ruby-3'
   gem 'rubocul', '~> 4.0.5'
-  gem 'solr_wrapper', '~> 3.1.3'
 end
 
 group :development do

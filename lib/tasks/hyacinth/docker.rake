@@ -10,9 +10,38 @@ namespace :hyacinth do
       YAML.load_file(docker_compose_file_path)
     end
 
+    def wait_for_solr_cores_to_load
+      expected_port = docker_compose_config['services']['solr']['ports'][0].split(':')[0]
+      Timeout.timeout(10, Timeout::Error, 'Timed out during solr startup check.') do
+        loop do
+          sleep 0.25
+          status_code = Net::HTTP.get_response(URI("http://localhost:#{expected_port}/solr/hyacinth/update?wt=json")).code
+          break if status_code != '503'
+        rescue EOFError, Errno::ECONNRESET
+          next
+        end
+      end
+    end
+
     def running?
       status = `docker compose -f #{Rails.root.join(docker_compose_file_path)} ps`
       status.split("n").count > 1
+    end
+
+    task setup_config_files: :environment do
+      docker_compose_template_dir = Rails.root.join('docker/templates')
+      docker_compose_dest_dir = Rails.root.join('docker')
+      Dir.foreach(docker_compose_template_dir) do |entry|
+        next unless entry.end_with?('.yml')
+        src_path = File.join(docker_compose_template_dir, entry)
+        dst_path = File.join(docker_compose_dest_dir, entry.gsub('.template', ''))
+        if File.exist?(dst_path)
+          puts Rainbow("File already exists (skipping): #{dst_path}").blue.bright + "\n"
+        else
+          FileUtils.cp(src_path, dst_path)
+          puts Rainbow("Created file at: #{dst_path}").green
+        end
+      end
     end
 
     task start: :environment do
@@ -24,6 +53,7 @@ namespace :hyacinth do
         # always up to date. In most cases, the overhead is minimal if the Dockerfile for an image
         # hasn't changed since the last build.
         `docker compose -f #{docker_compose_file_path} up --build --detach --wait`
+        wait_for_solr_cores_to_load
         puts "\nStarted."
       end
     end
@@ -37,6 +67,11 @@ namespace :hyacinth do
       else
         puts "Already stopped."
       end
+    end
+
+    task restart: :environment do
+      Rake::Task['hyacinth:docker:stop'].invoke
+      Rake::Task['hyacinth:docker:start'].invoke
     end
 
     task status: :environment do
