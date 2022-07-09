@@ -15,4 +15,4 @@ development:
 
 test:
   <<: *default
-  jetty_port: 9090
+  jetty_port: 8081

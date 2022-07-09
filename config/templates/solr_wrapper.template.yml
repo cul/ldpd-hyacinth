@@ -18,7 +18,7 @@ development:
 
 test:
   <<: *default
-  port: 8993
+  port: 8984
   instance_dir: <%= Rails.root.join('tmp', 'solr-test') %>
   collection:
     - name: 'hyacinth-test'

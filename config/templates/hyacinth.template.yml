@@ -129,14 +129,14 @@ test:
     lock_timeout: 30
   digital_object_search_adapter:
     type: Solr
-    url: http://localhost:8993/solr/hyacinth
+    url: http://localhost:8984/solr/hyacinth
     commit_after_change: true
     search_ui:
       facet_page_size: 10
   preservation_persistence:
     adapters:
       - type: Fedora3
-        url: http://localhost:9090/fedora
+        url: http://localhost:8081/fedora
         user: fedoraAdmin
         password: fedoraAdmin
         time_zone: America/New_York
@@ -149,5 +149,5 @@ test:
     type: Memory
   term_search_adapter:
     type: Solr
-    url: http://localhost:8993/solr/terms
+    url: http://localhost:8984/solr/terms
     commit_after_change: true
