@@ -12,6 +12,7 @@ Your friendly neighborhood digital object management system.
 ## Requirements
 
 - Ruby 3.0
+- Node 12
 - Sqlite3 or MySQL (tested with MySQL 5.5)
 - Redis 4/5/6/7 (provided by Docker)
 - Apache Solr 6.3 (provided by Docker)
@@ -39,7 +40,7 @@ bundle exec rake hyacinth:sample_content:create
 # Start the application using rails server
 rails s -p 3000
 ```
-And, in separate terminal windows, run this to start the webpack dev server:
+And, in a separate terminal window, run this to start the webpack dev server:
 
 ```
 ./bin/webpacker-dev-server
@@ -55,23 +56,23 @@ Then navigate to http://localhost:3000 in your browser and sign in using the "Em
 ### And when you're done developing for the day, run:
 
 ```
-bundle exec rake solr:stop # Stop local solr
-bundle exec rake jetty:stop # Stop local jetty / Fedora 3 (if running)
+bundle exec rake hyacinth:docker:stop # Stop Redis/Solr/Fedora
 ```
 
 ## To run Hyacinth locally again after the first time setup, all you need to do is run:
 
 ```
-bundle exec rake solr:start # Start a local solr server in the background
-bundle exec rake jetty:start # Start a local jetty server for Fedora 3 in the background
+bundle exec rake hyacinth:docker:start # Start Redis/Solr/Fedora in the background
 rails s -p 3000 # Start the application using rails server
+
+# In a separate terminal window:
+./bin/webpacker-dev-server # Start the webpack dev server
 ```
 
-### And if you want to wipe our your local solr core and Fedora 3 instance, run:
+### And if you want to wipe our your local Solr cores, Fedora 3 data, and Redis data, run:
 
 ```
-bundle exec rake solr:clean # Wipe out and regenerate solr
-bundle exec rake jetty:clean # Wipe out and regenerate jetty / Fedora 3
+bundle exec rake hyacinth:docker:delete_volumes
 ```
 
 ### But it's usually better to use the hyacinth:development:reset task if you want to clear out all data and star from a fresh state:
