@@ -49,6 +49,11 @@ redis.yml
 resque.yml
 secrets.yml
 fedora.yml
+
+# Docker ignores (so these can be customized per-development-environment if needed)
+/docker/docker-compose.*.yml
+
+# legacy ignores (so they don't accidentally committed if they're still in the workspace)
 solr_wrapper.yml
 jetty.yml
 

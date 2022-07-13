@@ -61,7 +61,7 @@ development:
     lock_timeout: 20
   digital_object_search_adapter:
     type: Solr
-    url: http://localhost:8983/solr/hyacinth-development
+    url: http://localhost:8983/solr/hyacinth
     commit_after_change: true
     search_ui:
       facet_page_size: 10
@@ -81,7 +81,7 @@ development:
     type: Memory
   term_search_adapter:
     type: Solr
-    url: http://localhost:8983/solr/terms-development
+    url: http://localhost:8983/solr/terms
     commit_after_change: true
 
 test:
@@ -129,14 +129,14 @@ test:
     lock_timeout: 30
   digital_object_search_adapter:
     type: Solr
-    url: http://localhost:8993/solr/hyacinth-test
+    url: http://localhost:9983/solr/hyacinth
     commit_after_change: true
     search_ui:
       facet_page_size: 10
   preservation_persistence:
     adapters:
       - type: Fedora3
-        url: http://localhost:9090/fedora
+        url: http://localhost:9080/fedora
         user: fedoraAdmin
         password: fedoraAdmin
         time_zone: America/New_York
@@ -149,5 +149,5 @@ test:
     type: Memory
   term_search_adapter:
     type: Solr
-    url: http://localhost:8993/solr/terms-test
+    url: http://localhost:9983/solr/terms
     commit_after_change: true
