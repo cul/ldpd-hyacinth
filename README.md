@@ -138,13 +138,10 @@ If you have an IDE that supports jsconfig.json files (e.g. Visual Studio Code), 
 {
   "compilerOptions": {
     "baseUrl": "app/javascript",
-    "module": "commonjs",
-    "target": "es2017",
     "jsx": "react",
-    "checkJs": true,
   },
   "include": [
-    "app/javascript"
+    "app/javascript/**/*"
   ]
 }
 ```
