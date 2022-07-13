@@ -8,10 +8,10 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <% # stylesheet_pack_tag is available as long as javascript_pack_tag includes at least one css file %>
-    <%= stylesheet_packs_with_chunks_tag 'hyacinth_v1' %>
+    <%= stylesheet_pack_tag 'hyacinth_v1' %>
   </head>
   <body class="hyacinth-ui-v1" data-hyacinth-version="<%= Hyacinth::Application.version %>">
     <%= yield %>
-    <%= javascript_packs_with_chunks_tag 'hyacinth_v1' %>
+    <%= javascript_pack_tag 'hyacinth_v1' %>
   </body>
 </html>

@@ -36,13 +36,13 @@ function ResultsPagingBar(props) {
     loading, error, data,
   } = useQuery(
     getDigitalObjectIDsQuery, {
-      variables: {
-        limit: 3,
-        offset: Number(newOffset),
-        searchParams,
-        orderBy: { field: orderField, direction: orderDirection },
-      },
+    variables: {
+      limit: 3,
+      offset: Number(newOffset),
+      searchParams,
+      orderBy: { field: orderField, direction: orderDirection },
     },
+  },
   );
 
   if (loading) return (<></>);
@@ -61,7 +61,7 @@ function ResultsPagingBar(props) {
 
   const [firstResult, secondResult, thirdResult] = uids;
   if (uidCurrent === firstResult) {
-  // uidPrev remains null for the first result
+    // uidPrev remains null for the first result
     uidNext = secondResult;
   } else {
     uidPrev = firstResult;
