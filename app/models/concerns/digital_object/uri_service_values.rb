@@ -59,7 +59,12 @@ module DigitalObject::UriServiceValues
   end
 
   def create_term(type, properties)
-    UriService.client.create_term(type, properties)
+    # If too many solr commits happen simultaneously, solr will respond with an error:
+    # "Error opening new searcher. exceeded limit of maxWarmingSearchers"
+    # So in those cases, we'll retry.
+    Retriable.retriable on: [RSolr::Error::Http], tries: 3, base_interval: 1 do
+      UriService.client.create_term(type, properties)
+    end
   end
 
   def add_extra_controlled_term_uri_data_to_dynamic_field_data!(dynamic_field_data)
