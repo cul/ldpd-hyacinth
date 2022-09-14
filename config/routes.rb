@@ -12,6 +12,7 @@ Hyacinth::Application.routes.draw do
   resources :controlled_vocabularies do
     member do
       get 'terms', action: 'terms', as: 'terms' # terms_controlled_vocabulary_path
+      get 'export', action: 'export', as: 'export'
       get 'term_additional_fields', action: 'term_additional_fields', as: 'term_additional_fields' # term_additional_fields_controlled_vocabulary_path
     end
     collection do
