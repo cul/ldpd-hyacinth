@@ -1,5 +1,7 @@
 class ControlledVocabulariesController < ApplicationController
-  before_action :set_controlled_vocabulary, only: [:show, :edit, :update, :destroy, :terms, :term_additional_fields]
+  include ActionController::Live
+
+  before_action :set_controlled_vocabulary, only: [:show, :edit, :update, :destroy, :terms, :export, :term_additional_fields]
   before_action :require_appropriate_permissions!
   before_action :set_contextual_nav_options
 
@@ -95,6 +97,40 @@ class ControlledVocabulariesController < ApplicationController
           more_available: (@terms.length > @per_page),
           current_user_can_add_terms: current_user.can_manage_controlled_vocabulary_terms?(@controlled_vocabulary)
         }
+      end
+    end
+  end
+
+  # An endpoint for exporting an entire controlled vocabulary
+  def export
+    respond_to do |format|
+      # This endpoint only responds to CSV
+      format.csv do
+        response.headers['Content-Type'] = 'text/csv'
+        response.headers['Content-Disposition'] = 'attachment; filename=export.csv'
+
+        vocabulary_additional_field_keys = TERM_ADDITIONAL_FIELDS.fetch(@controlled_vocabulary.string_key, {}).keys
+
+        page = 1
+        per_page = 250
+        begin
+          response.stream.write CSV.generate_line(['value', 'authority', 'type', 'uri'] + vocabulary_additional_field_keys)
+          loop do
+            terms = UriService.client.list_terms(@controlled_vocabulary.string_key, per_page, (page - 1) * per_page)
+            break if terms.blank?
+
+            terms.each do |term|
+              response.stream.write CSV.generate_line(
+                (['value', 'authority', 'type', 'uri'] + vocabulary_additional_field_keys).map { |field_key| term[field_key] }
+              )
+            end
+
+            page += 1
+            sleep 0.05 # sleep after each iteration so this endpoint doesn't overwhelm solr by making too many rapid queries
+          end
+        ensure
+          response.stream.close
+        end
       end
     end
   end
