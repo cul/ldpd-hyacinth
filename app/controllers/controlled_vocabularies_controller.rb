@@ -107,7 +107,7 @@ class ControlledVocabulariesController < ApplicationController
       # This endpoint only responds to CSV
       format.csv do
         response.headers['Content-Type'] = 'text/csv'
-        response.headers['Content-Disposition'] = 'attachment; filename=export.csv'
+        response.headers['Content-Disposition'] = "attachment; filename=#{@controlled_vocabulary.string_key}.csv"
 
         vocabulary_additional_field_keys = TERM_ADDITIONAL_FIELDS.fetch(@controlled_vocabulary.string_key, {}).keys
 
@@ -199,7 +199,7 @@ class ControlledVocabulariesController < ApplicationController
 
     def require_appropriate_permissions!
       case params[:action]
-      when 'index', 'terms', 'term_additional_fields'
+      when 'index', 'terms', 'term_additional_fields', 'export'
         # Do nothing
       else
         require_hyacinth_admin!
