@@ -119,7 +119,7 @@ gem 'best_type', '0.0.9'
 gem 'active_fedora_relsint', '>= 0.4.1'
 
 # URI Escaping
-gem 'addressable'
+gem 'addressable', '~> 2.7.0'
 
 # Use resque for background jobs
 # We're pinning resque to 1.26.x because 1.27 does an eager load operation
