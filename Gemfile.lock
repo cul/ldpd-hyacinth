@@ -578,7 +578,7 @@ PLATFORMS
 
 DEPENDENCIES
   active_fedora_relsint (>= 0.4.1)
-  addressable
+  addressable (~> 2.7.0)
   attr_encrypted (>= 1.3.3)
   autoprefixer-rails
   best_type (= 0.0.9)
