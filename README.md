@@ -80,8 +80,32 @@ Note 1: By default, jetty will run on port 8983 in the development environment a
 
 ### Other Development Notes
 
+# Intel MacOS Notes
 If you installed mysql on macOS using homebrew, you may need to install mysql2 0.4.x with this command, otherwise you'll get an error (`dyld: lazy symbol binding failed: Symbol not found: _mysql_server_init`):
 
 ```
 gem install mysql2 -v '0.4.10' -- --with-ldflags=-L/usr/local/opt/openssl/lib --with-cppflags=-I/usr/local/opt/openssl/include
 ```
+
+# ARM (M1/M2) MacOS Notes:
+
+You need to install Ruby 2.4.1 using this syntax:
+
+`CFLAGS="-Wno-error=implicit-function-declaration" rvm install 2.4.1`
+
+# Ubuntu 22 setup notes
+
+On Ubuntu 22, Ruby 2.4.1 will fail to install because Ubuntu comes with OpenSSL 3 and our dependencies require OpenSSL 1.  To solve this problem, you need to install Ruby 2.4.1 with an RVM-provided version of OpenSSL:
+
+```
+rvm pkg install openssl
+rvm uninstall 2.4.1 # if you previously tried to install it and it failed to install properly
+rvm install 2.4.1 --with-openssl-dir=$HOME/.rvm/usr
+```
+
+You'll also need to install these apt packages:
+```
+libmysql-client-dev openjdk-8-jre
+```
+
+Maybe also `python2`, but try without it first.

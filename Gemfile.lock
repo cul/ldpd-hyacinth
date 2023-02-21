@@ -282,7 +282,7 @@ GEM
       activerecord
       kaminari-core (= 1.1.1)
     kaminari-core (1.1.1)
-    libv8 (8.4.255.0)
+    libv8-node (15.14.0.1)
     link_header (0.0.8)
     linkeddata (1.1.2)
       equivalent-xml (~> 0.4)
@@ -312,6 +312,8 @@ GEM
     mime-types-data (3.2016.0521)
     mini_mime (1.0.2)
     mini_portile2 (2.3.0)
+    mini_racer (0.4.0)
+      libv8-node (~> 15.14.0.0)
     minitest (5.14.2)
     mods (2.3.1)
       edtf
@@ -607,9 +609,9 @@ DEPENDENCIES
   jquery-ui-rails
   jquery.fileupload-rails
   kaminari
-  libv8 (>= 8.4.255.0)
   loofah (>= 2.2.1)
   mime-types
+  mini_racer
   mysql2 (~> 0.5.2)
   net-ssh (>= 4.2)
   noid (>= 0.7.1)
