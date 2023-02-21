@@ -109,3 +109,11 @@ libmysql-client-dev openjdk-8-jre
 ```
 
 Maybe also `python2`, but try without it first.
+
+# Testing out GitHub Actions locally (with `act`)
+
+See: https://github.com/nektos/act
+
+Quick setup:
+- Download act with `brew install act`
+- Run `act --container-architecture linux/amd64` on an M1 mac or just `act` on an x86_64 machine
