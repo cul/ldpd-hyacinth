@@ -91,7 +91,7 @@ end
 gem 'kaminari'
 
 # For building and parsing XML
-gem 'nokogiri', '~> 1.8.1'
+gem 'nokogiri', '~> 1.10.10'
 
 # For authentication
 gem 'devise', '>= 3.4.1'

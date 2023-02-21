@@ -326,8 +326,8 @@ GEM
     net-ssh (4.2.0)
     netrc (0.11.0)
     noid (0.7.1)
-    nokogiri (1.8.5)
-      mini_portile2 (~> 2.3.0)
+    nokogiri (1.10.10)
+      mini_portile2 (~> 2.4.0)
     nom-xml (0.6.0)
       activesupport (>= 3.2.18)
       i18n
@@ -611,7 +611,7 @@ DEPENDENCIES
   mysql2 (~> 0.5.2)
   net-ssh (>= 4.2)
   noid (>= 0.7.1)
-  nokogiri (~> 1.8.1)
+  nokogiri (~> 1.10.10)
   puma
   rack-protection (>= 1.5.5)
   rails (~> 4.2.11)
