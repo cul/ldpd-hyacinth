@@ -237,5 +237,61 @@ RSpec.describe "DigitalObjects", :type => :request do
         end
       end
     end
+
+    describe "PUT /digital_objects/:id/upload_access_copy" do
+      let(:asset_digital_object_data) {
+        dod = JSON.parse( fixture('sample_digital_object_data/new_asset.json').read )
+        dod['import_file']['import_type'] = 'internal'
+        dod['import_file']['import_path'] = fixture('sample_assets/sample_text_file.txt').path
+        dod['publish_targets'] = []
+        dod
+      }
+
+      let(:asset) {
+        # Create a new asset
+        asset = DigitalObject::Asset.new
+        allow(asset).to receive(:update_index).and_return(nil)
+        asset.set_digital_object_data(asset_digital_object_data, false)
+        result = asset.save
+        puts 'save result: ' + result.inspect
+        puts 'save errors: ' + asset.errors.inspect
+        asset
+      }
+
+      it "returns the expected response when the upload is successful" do
+        # Perform first-time upload
+        put upload_access_copy_digital_object_path(id: asset.pid),
+          file: Rack::Test::UploadedFile.new(fixture('sample_upload_files/lincoln.jpg').path, "image/jpeg")
+
+        expect(response.status).to be(200)
+        response_json = JSON.parse(response.body)
+        expect(response_json).to eq({'success' => true, 'size' => 37692})
+
+        # Perform access copy replacement upload
+        put upload_access_copy_digital_object_path(id: asset.pid),
+          file: Rack::Test::UploadedFile.new(fixture('sample_upload_files/cat.jpg').path, "image/jpeg")
+
+        expect(response.status).to be(200)
+        response_json = JSON.parse(response.body)
+        expect(response_json).to eq({'success' => true, 'size' => 228093})
+      end
+
+      it "returns the expected error response when a file is missing or sent with the wrong param name" do
+        # Case 1: Missing file
+        put upload_access_copy_digital_object_path(id: asset.pid)
+
+        expect(response.status).to be(400)
+        response_json = JSON.parse(response.body)
+        expect(response_json).to eq({'errors' => ['Missing multipart/form-data file upload data with name: file']})
+
+        # Case 2: Incorrect file param name
+        put upload_access_copy_digital_object_path(id: asset.pid),
+          filezzzzzzzzzzzzzzz: Rack::Test::UploadedFile.new(fixture('sample_upload_files/lincoln.jpg').path, "image/jpeg")
+
+          expect(response.status).to be(400)
+          response_json = JSON.parse(response.body)
+          expect(response_json).to eq({'errors' => ['Missing multipart/form-data file upload data with name: file']})
+      end
+    end
   end
 end

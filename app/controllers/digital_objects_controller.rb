@@ -14,7 +14,8 @@ class DigitalObjectsController < ApplicationController
     :download_transcript, :update_transcript,
     :download_index_document, :update_index_document,
     :download_captions, :update_captions,
-    :download_synchronized_transcript, :update_synchronized_transcript, :clear_synchronized_transcript_and_reimport_transcript
+    :download_synchronized_transcript, :update_synchronized_transcript, :clear_synchronized_transcript_and_reimport_transcript,
+    :upload_access_copy
   ]
   before_action :set_digital_object_for_data_for_editor_action, only: [:data_for_editor]
   before_action :set_contextual_nav_options
@@ -276,6 +277,37 @@ class DigitalObjectsController < ApplicationController
     end
   end
 
+  def upload_access_copy
+    if @digital_object.is_a?(DigitalObject::Asset)
+      if params[:file].blank?
+        render status: :bad_request, json: { errors: ['Missing multipart/form-data file upload data with name: file'] }
+        return
+      end
+
+      @digital_object_data = {}
+      @digital_object_data['import_file'] = posted_file_data(DigitalObject::Asset::IMPORT_TYPE_POST_DATA)
+      @digital_object.set_digital_object_data({
+        'import_file' => {
+          'access_copy_import_path' => params[:file].tempfile.path
+        }
+      }, true)
+      @digital_object.updated_by = current_user
+
+      if @digital_object.save
+        render json: { success: true, size: @digital_object.access_copy_file_size_in_bytes.to_i }
+      else
+        render json: { errors: ['An error occurred during access copy upload.'] }
+      end
+    else
+      render json: { errors: ["This action is only allowed for Assets.  This object has type: #{@digital_object.digital_object_type.display_label}"] }
+    end
+  ensure
+    if params[:file].present?
+      params[:file].tempfile.close
+      params[:file].tempfile.unlink
+    end
+  end
+
   private
 
     # Use callbacks to share common setup or constraints between actions.
@@ -320,7 +352,7 @@ class DigitalObjectsController < ApplicationController
         associated_project = Project.find_by(project_find_criteria)
         publish_requirements << :create
         require_project_permission!(associated_project, publish_requirements)
-      when 'update', 'reorder_child_digital_objects', 'add_parent', 'remove_parents', 'rotate_image', 'swap_order_of_first_two_child_assets', 'update_transcript', 'update_index_document', 'update_captions', 'update_synchronized_transcript', 'clear_synchronized_transcript_and_reimport_transcript'
+      when 'update', 'reorder_child_digital_objects', 'add_parent', 'remove_parents', 'rotate_image', 'swap_order_of_first_two_child_assets', 'update_transcript', 'update_index_document', 'update_captions', 'update_synchronized_transcript', 'clear_synchronized_transcript_and_reimport_transcript', 'upload_access_copy'
         require_project_permission!(@digital_object.project, :update)
         # Also require publish permission if params[:publish] is set to true (note: applies to the 'update' action)
         publish_requirements << :update

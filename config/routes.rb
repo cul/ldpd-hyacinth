@@ -77,6 +77,7 @@ Hyacinth::Application.routes.draw do
       put 'remove_parents', action: 'remove_parents'
       post 'rotate_image', action: 'rotate_image'
       post 'swap_order_of_first_two_child_assets', action: 'swap_order_of_first_two_child_assets'
+      put 'upload_access_copy'
     end
   end
 
