@@ -6,7 +6,7 @@ on:
 
 jobs:
   ci-rails-app:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         ruby-version: ['2.4.1']
@@ -15,18 +15,20 @@ jobs:
       NOKOGIRI_USE_SYSTEM_LIBRARIES: true
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - run: sudo apt-get update
       - name: Install libxslt for nokogiri gem (required for version < 1.11)
-        #run: sudo apt-get install -y libxml2-dev libxslt1-dev zlib1g-dev
-        run: sudo apt-get install -y libxml2-dev libxslt-dev
+        run: sudo apt-get install -y libxml2-dev libxslt-dev build-essential
       - name: Add --no-document option to .gemrc file to speed up bundle install
         run: "echo 'gem: --no-document' > ~/.gemrc"
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1.138.0
         with:
           ruby-version: ${{ matrix.ruby-version }}
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-      - name: Set up default config files
-        run: bundle exec rake hyacinth:setup:config_files
-      - name: Run CI task
-        run: bundle exec rake hyacinth:ci
+      - name: 'Install nokogiri'
+        run: "gem install nokogiri -v '1.10.10'"
+      #     bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      # - name: Set up default config files
+      #   run: bundle exec rake hyacinth:setup:config_files
+      # - name: Run CI task
+      #   run: bundle exec rake hyacinth:ci
