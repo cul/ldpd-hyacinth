@@ -253,8 +253,6 @@ RSpec.describe "DigitalObjects", :type => :request do
         allow(asset).to receive(:update_index).and_return(nil)
         asset.set_digital_object_data(asset_digital_object_data, false)
         result = asset.save
-        puts 'save result: ' + result.inspect
-        puts 'save errors: ' + asset.errors.inspect
         asset
       }
 
