@@ -220,7 +220,7 @@ GEM
       railties (>= 3.0.0)
     faker (1.4.3)
       i18n (~> 0.5)
-    ffi (1.9.25)
+    ffi (1.15.5)
     font-awesome-rails (4.7.0.4)
       railties (>= 3.2, < 6.0)
     globalid (0.4.2)
@@ -310,7 +310,7 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
     mini_mime (1.0.2)
-    mini_portile2 (2.3.0)
+    mini_portile2 (2.4.0)
     minitest (5.14.2)
     mods (2.3.1)
       edtf
@@ -608,7 +608,7 @@ DEPENDENCIES
   kaminari
   loofah (>= 2.2.1)
   mime-types
-  mysql2 (~> 0.5.2)
+  mysql2 (~> 0.5.3)
   net-ssh (>= 4.2)
   noid (>= 0.7.1)
   nokogiri (~> 1.10.10)

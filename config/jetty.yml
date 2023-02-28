@@ -11,7 +11,7 @@ default:
     - "-Xmx256m"
     - "-Djetty.host=127.0.0.1"
 test:
-  startup_wait: 120
+  startup_wait: 180
   jetty_port: 9983
   java_version: ">= 1.7"
   java_opts:

@@ -5,7 +5,7 @@ gem 'rails', '~> 4.2.11'
 
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3', '~> 1.3.10'
-gem 'mysql2', '~> 0.5.2'
+gem 'mysql2', '~> 0.5.3'
 
 # Lock rake due to rspec/rubocop v11 incompatibilities
 gem 'rake', '~> 10.0'
@@ -91,7 +91,7 @@ end
 gem 'kaminari'
 
 # For building and parsing XML
-gem 'nokogiri', '~> 1.10.10'
+gem 'nokogiri', '~> 1.10.10'  # can't update to 1.11 because our server version of GLIBC is too old
 
 # For authentication
 gem 'devise', '>= 3.4.1'
