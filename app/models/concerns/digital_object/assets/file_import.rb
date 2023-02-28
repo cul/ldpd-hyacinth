@@ -59,18 +59,39 @@ module DigitalObject::Assets::FileImport
   end
 
   def do_access_copy_import
-    access_filename = File.basename(@access_copy_import_path)
+    access_filename = 'access' + File.extname(@access_copy_import_path)
     dest_dir = Hyacinth::Utils::PathUtils.access_directory_path_for_uuid!(self.uuid)
-    dest_file_path = File.join(dest_dir, 'access' + File.extname(access_filename))
+    dest_file_path = File.join(dest_dir, access_filename)
     FileUtils.cp(@access_copy_import_path, dest_file_path)
     access_ds_location = filesystem_path_to_ds_location(dest_file_path)
-    access_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, 'access', controlGroup: 'E', mimeType: BestType.mime_type.for_file_name(access_filename), dsLabel: access_filename, versionable: true)
-    access_ds.dsLocation = access_ds_location
-    # Store access copy file size on datastream
+
+    # Create access datastream if it doesn't already exist
+    access_ds = @fedora_object.datastreams['access']
+    if access_ds.blank?
+      access_ds = @fedora_object.create_datastream(
+        ActiveFedora::Datastream,
+        'access',
+        controlGroup: 'E',
+        mimeType: BestType.mime_type.for_file_name(access_filename),
+        dsLabel: access_filename,
+        versionable: true
+      )
+      access_ds.dsLocation = access_ds_location
+      @fedora_object.add_datastream(access_ds)
+    else
+      access_ds.dsLocation = access_ds_location
+      access_ds.mimeType = BestType.mime_type.for_file_name(access_filename)
+      access_ds.dsLabel = access_filename
+    end
+
+    # Clear old rels_int values if present
+    fedora_object.rels_int.clear_relationship(access_ds, :extent)
+    fedora_object.rels_int.clear_relationship(access_ds, :rdf_type)
+
+    # Set rels_int values
     @fedora_object.rels_int.add_relationship(access_ds, :extent, File.size(@access_copy_import_path).to_s, true) # last param *true* means that this is a literal value rather than a relationship
     # TODO: It seems incorrect to call the access copy the 'service file', but we've been doing this for a while in Derivativo, so might as well be consistent until we change this practice everywhere
     @fedora_object.rels_int.add_relationship(access_ds, :rdf_type, "http://pcdm.org/use#ServiceFile") # last param *true* means that this is a literal value rather than a relationship
-    @fedora_object.add_datastream(access_ds)
   end
 
   def filesystem_path_to_ds_location(path)

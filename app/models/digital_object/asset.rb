@@ -53,7 +53,7 @@ class DigitalObject::Asset < DigitalObject::Base
     super
     # For new DigitalObjects, we want to import a file as part of our save operation (assuming that this new object doesn't already have an associated Fedora object with a 'content' datastream)
     do_file_import if self.new_record? && @fedora_object.present? && @fedora_object.datastreams['content'].blank?
-    do_access_copy_import if @access_copy_import_path.present? && self.access_copy_location.blank?
+    do_access_copy_import if @access_copy_import_path.present? # && self.access_copy_location.blank?
     do_service_copy_import if @service_copy_import_path.present? && self.service_copy_location.blank?
 
     self.dc_type = BestType.dc_type.for_file_name(original_filename) if self.dc_type == 'Unknown' # Attempt to correct dc_type for 'Unknown' dc_type DigitalObjects

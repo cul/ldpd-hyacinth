@@ -79,11 +79,12 @@ Metrics/MethodLength:
 Metrics/ClassLength:
   Exclude: []
   CountComments: false  # count full line comments?
-  Max: 275
+  Max: 300
 
 Metrics/ModuleLength:
   Exclude:
     - 'app/models/concerns/digital_object/fedora.rb'
+    - 'app/models/concerns/digital_object/assets/file_import.rb'
   CountComments: false
   Max: 110
 

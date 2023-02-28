@@ -21,7 +21,7 @@ jobs:
       - name: Add --no-document option to .gemrc file to speed up bundle install
         run: "echo 'gem: --no-document' > ~/.gemrc"
       - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@v1.138.0
         with:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
