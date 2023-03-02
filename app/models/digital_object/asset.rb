@@ -368,6 +368,10 @@ class DigitalObject::Asset < DigitalObject::Base
     doc['original_file_path_sim'] = original_file_path
     doc['access_copy_location_sim'] = access_copy_location
     doc['service_copy_location_sim'] = service_copy_location
+
+    doc['file_size_in_bytes_isi'] = file_size_in_bytes
+    doc['service_copy_file_size_in_bytes_isi'] = service_copy_file_size_in_bytes
+    doc['access_copy_file_size_in_bytes_isi'] = access_copy_file_size_in_bytes
     doc
   end
 
