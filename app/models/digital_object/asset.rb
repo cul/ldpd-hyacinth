@@ -341,6 +341,14 @@ class DigitalObject::Asset < DigitalObject::Base
     end
   end
 
+  def player_mime_type
+    if HYACINTH.fetch('media_streaming', {})['wowza'].present?
+      'application/x-mpegURL'
+    else
+      'video/mp4'
+    end
+  end
+
   def player_url(client_ip = nil)
     return nil if access_copy_location.blank?
 
