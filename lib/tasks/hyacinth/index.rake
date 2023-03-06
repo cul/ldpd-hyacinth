@@ -91,8 +91,12 @@ namespace :hyacinth do
     end
 
     task :reindex_by_pid => :environment do
+      async = ENV['ASYNC'] == 'true'
+
       if ENV['PIDS'].present?
         pids = ENV['PIDS'].split(',')
+      elsif ENV['PIDLIST'].present?
+        pids = open(ENV['PIDLIST'],'r').map(&:strip)
       else
         puts 'Error: Please supply a value for PIDS (one or more comma-separated Hyacinth PIDs)'
         next
@@ -104,7 +108,11 @@ namespace :hyacinth do
 
       pids.each do |pid|
         begin
-          DigitalObject::Base.find(pid).update_index(false) # Passing false here so that we don't do one solr commit per update
+          if async
+            Hyacinth::Queue.reindex_digital_object(pid)
+          else
+            DigitalObject::Base.find(pid).update_index(false) # Passing false here so that we don't do one solr commit per update
+          end
         rescue RestClient::Unauthorized, Rubydora::RubydoraError => e
           Rails.logger.error('Error: Skipping ' + digital_object_record.pid + "\nException: #{e.class}, Message: #{e.message}")
         end
