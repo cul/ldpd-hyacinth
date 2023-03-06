@@ -369,9 +369,9 @@ class DigitalObject::Asset < DigitalObject::Base
     doc['access_copy_location_sim'] = access_copy_location
     doc['service_copy_location_sim'] = service_copy_location
 
-    doc['file_size_in_bytes_isi'] = file_size_in_bytes&.to_i
-    doc['service_copy_file_size_in_bytes_isi'] = service_copy_file_size_in_bytes&.to_i
-    doc['access_copy_file_size_in_bytes_isi'] = access_copy_file_size_in_bytes&.to_i
+    doc['file_size_in_bytes_ltsi'] = file_size_in_bytes&.to_i
+    doc['service_copy_file_size_in_bytes_ltsi'] = service_copy_file_size_in_bytes&.to_i
+    doc['access_copy_file_size_in_bytes_ltsi'] = access_copy_file_size_in_bytes&.to_i
     doc
   end
 
