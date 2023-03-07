@@ -124,3 +124,12 @@ h2 {
          -o-animation: fadeIt 2s ease-in-out;
             animation: fadeIt 2s ease-in-out;
 }
+
+#videojs-player {
+  .vjs-big-play-button {
+      left: 50%;
+      margin-left: -1.5em;
+      margin-top: -0.81666em;
+      top: 50%;
+  }
+}

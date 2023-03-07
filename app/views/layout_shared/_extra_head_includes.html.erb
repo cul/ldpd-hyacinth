@@ -7,6 +7,9 @@
 <%= stylesheet_link_tag "/synchronizer-module/css/ableplayer.min.css" %>
 <%= stylesheet_link_tag "/synchronizer-module/css/style.css" %>
 
+<!-- Video player for non-synchronizer scenarios -->
+<%= stylesheet_link_tag "/video-js-7.21.0/video-js.min.css" %>
+
 <% unless Rails.env.test? %>
   <% # Don't want feature tests to time out if these external resources are unavailable (or taking too long to load) %>
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -27,6 +30,7 @@
 <!-- OHSynchronizer -->
 <%= javascript_include_tag "/synchronizer-module/js/ableplayer.min.js" %>
 <%= javascript_include_tag "/synchronizer-module/js/hls.min.js" %>
+<%= javascript_include_tag "/video-js-7.21.0/video.min.js" %>
 <%= javascript_include_tag "/synchronizer-module/js/ohsynchronizer.js" %>
 <%= javascript_include_tag "/synchronizer-module/js/js.cookie.2.2.0.min.js" %>
 

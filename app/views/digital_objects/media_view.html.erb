@@ -45,20 +45,28 @@
     <div class="loading-message">Loading...</div>
   </div>
 <% elsif ['Sound','MovingImage'].include? @digital_object.dc_type %>
+  <% media_url = @digital_object.player_url(request.remote_ip) %>
+  <% media_mime_type = @digital_object.player_mime_type %>
   <div id="media-content" style="width: 800px; height: 600px;">
-    <video id="video-player" data-able-player preload="auto">
-      <% media_url = @digital_object.player_url(request.remote_ip) %>
+    <video id="videojs-player" class="video-js" preload="auto">
       <source src="<%= media_url %>" />
     </video>
     <script>
-       var video = $('#video-player')[0];
-       var mediaUrl = $('#video-player source')[0].src;
-       var match = new URL(mediaUrl).pathname.match(/.m3u8$/i);
-       if (new URL(mediaUrl).pathname.match(/.m3u8$/i)) {
-         var hls = new Hls();
-         hls.loadSource(mediaUrl);
-         hls.attachMedia(video);
-       }
+      const optionsForVideo = {
+            autoplay: false,
+            controls: true,
+            responsive: true,
+            fluid: true,
+            playbackRates: [0.5, 1, 1.5, 2],
+            sources: [{
+              src: '<%= media_url.html_safe %>',
+              type: '<%= media_mime_type %>',
+          }],
+        };
+
+        videojs('videojs-player', optionsForVideo, () => {
+            //console.log("player is ready");
+        });
     </script>
   </div>
 <% else %>
