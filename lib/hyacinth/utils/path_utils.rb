@@ -28,7 +28,10 @@ class Hyacinth::Utils::PathUtils
 
   def self.access_directory_path_for_uuid!(uuid)
     dest_dir = access_directory_path_for_uuid(uuid)
-    FileUtils.mkdir_p(dest_dir)
+    # Make sure that any recursively generated new directories have group permissions set
+    # to rwx (using 0770 permissions).
+    # When Derivativo 1.5 is released, this can change to 0750 permissions.
+    FileUtils.mkdir_p(dest_dir, mode: 0770)
     dest_dir
   end
 end

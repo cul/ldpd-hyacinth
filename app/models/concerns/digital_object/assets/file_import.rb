@@ -63,6 +63,10 @@ module DigitalObject::Assets::FileImport
     dest_dir = Hyacinth::Utils::PathUtils.access_directory_path_for_uuid!(self.uuid)
     dest_file_path = File.join(dest_dir, access_filename)
     FileUtils.cp(@access_copy_import_path, dest_file_path)
+    # Make sure the new file's group permissions are set to rw (using 0660 permissions).
+    # When Derivativo 1.5 is released, this can change to 0640 permissions.
+    FileUtils.chmod(0660, dest_file_path)
+
     access_ds_location = filesystem_path_to_ds_location(dest_file_path)
 
     # Create access datastream if it doesn't already exist
