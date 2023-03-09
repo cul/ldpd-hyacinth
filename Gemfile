@@ -130,8 +130,9 @@ gem 'redis', '< 4' # Need to lock to earlier version of redis gem because resque
 # For unique, opaque id generation
 gem 'noid', '>= 0.7.1'
 
-# Gem min versions that are only specified here because of vulnerabilities in earlier versions:
 gem 'rubyzip', '>= 1.2.1'
+
+# Gem min versions that are only specified here because of vulnerabilities in earlier versions:
 gem 'rack-protection', '>= 1.5.5'
 gem 'loofah', '>= 2.2.1'
 gem 'rails-html-sanitizer', '>= 1.0.4'

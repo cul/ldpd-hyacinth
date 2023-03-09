@@ -56,4 +56,4 @@ config/subs.yml
 /coverage
 
 # Ignore local rake tasks
-lib/tasks/hyacinth/local.rake
+/lib/tasks/hyacinth/local.rake
