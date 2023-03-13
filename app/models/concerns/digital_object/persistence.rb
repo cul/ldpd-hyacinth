@@ -65,7 +65,12 @@ module DigitalObject::Persistence
 
       add_pid_and_uuid_identifiers
 
-      run_post_validation_pre_save_logic
+      begin
+        run_post_validation_pre_save_logic
+      rescue Hyacinth::Exceptions::ZeroByteFileError => e
+        @errors.add(:import_file, e.message)
+        raise ActiveRecord::Rollback # Force rollback (Note: This error won't be passed upward by the transaction.)
+      end
 
       set_data_to_sources
 

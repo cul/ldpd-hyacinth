@@ -11,6 +11,21 @@ RSpec.describe DigitalObject::Asset, :type => :model do
       dod
     }
 
+    it "returns an error when the uploaded file is 0 bytes" do
+      asset = DigitalObject::Asset.new
+      allow(asset).to receive(:allowed_publish_targets).and_return([])
+      allow(asset).to receive(:next_pid).and_return('some:pid')
+      allow(asset).to receive(:set_data_to_sources).and_return(nil)
+      allow_any_instance_of(DigitalObjectRecord).to receive(:save!).and_return(true)
+      allow_any_instance_of(GenericResource).to receive(:save).and_return(true)
+      allow(asset).to receive(:update_index).and_return(nil)
+      digital_object_data['import_file']['import_path'] = fixture('sample_assets/empty_file.txt').path
+      asset.set_digital_object_data(digital_object_data, false)
+      save_result = asset.save
+      expect(asset.errors.messages).to eq({import_file: ['Original file file size is 0 bytes. File must contain data.']})
+      expect(save_result).to eq(false)
+    end
+
     it "stores an asset's checksum in :has_message_digest relationship on the 'content' datastream, and can retrieve that checksum using the #checksum method" do
       asset = DigitalObject::Asset.new
       allow(asset).to receive(:allowed_publish_targets).and_return([])

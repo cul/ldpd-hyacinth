@@ -13,6 +13,7 @@ module DigitalObject::Assets::FileImport
     # If this is an internal file, also copy the file to its internal destination
     File.open(@import_file_import_path, 'rb') do |import_file| # 'r' == write, 'b' == binary mode
       import_file_size = import_file.size
+      raise Hyacinth::Exceptions::ZeroByteFileError, 'Original file file size is 0 bytes. File must contain data.' if import_file_size == 0
 
       copy_results = copy_and_verify_file(import_file)
 
