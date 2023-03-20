@@ -9,6 +9,7 @@ module Hyacinth::Exceptions
   class ProjectNotFoundError < NotFoundError; end
   class PublishTargetNotFoundError < NotFoundError; end
   class BuilderPathNotFoundError < NotFoundError; end
+  class InvalidUtf8DetectedError < NotFoundError; end
 
   class InvalidDigitalObjectTypeError < HyacinthError; end
   class MalformedControlledTermFieldValue < HyacinthError; end
