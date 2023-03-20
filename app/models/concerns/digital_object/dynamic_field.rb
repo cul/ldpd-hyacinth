@@ -12,6 +12,8 @@ module DigitalObject::DynamicField
     # TODO: Field validation
     # validate_dynamic_field_data_fields(new_dynamic_field_data)
 
+    raise_exception_if_dynamic_field_data_contains_invalid_utf8!(new_dynamic_field_data)
+
     if merge
       # During a merge, new top level key-value pairs are added and existing top level keys have their values replace by new values
       @dynamic_field_data.merge!(new_dynamic_field_data)
@@ -89,6 +91,16 @@ module DigitalObject::DynamicField
         "" # we want to completely eliminate the unwanted control character
       end
     end
+  end
+
+  def raise_exception_if_dynamic_field_data_contains_invalid_utf8!(df_data)
+    return if df_data.nil?
+    # If JSON.generate() encounters invalid UTF-8, it raises an Encoding::UndefinedConversionError.
+    # So we can use the JSON.generate() function as a convenient, pre-existing shortcut for
+    # detecting invalid UTF-8 in dynamic field data.
+    JSON.generate(df_data)
+  rescue Encoding::UndefinedConversionError => e
+    raise Hyacinth::Exceptions::InvalidUtf8DetectedError, "Invalid UTF-8 detected: #{e.message}"
   end
 
   def remove_dynamic_field_data_key!(dynamic_field_or_field_group_name, df_data = @dynamic_field_data)

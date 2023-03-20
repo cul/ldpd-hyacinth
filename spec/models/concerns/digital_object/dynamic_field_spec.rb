@@ -117,6 +117,24 @@ describe DigitalObject::DynamicField, :type => :unit do
         digital_object.update_dynamic_field_data(hsh2, false)
         expect(digital_object.dynamic_field_data).to eq(hsh2)
       end
+
+      it "throws an exception if the dynamic field data contains invalid UTF-8 characters" do
+        dfd = {
+          "some_field" => [
+            {
+              # Note: The sequence below is an opening Windows-1252 smart quote, followed by "ABC",
+              # followed by another closing Windows-1252 smart quote.  The smart quote characters
+              # do not properly convert to UTF-8 and will result in UTF-8 parsing errors.
+              "value_with_invalid_utf8_field" => [0x93, 65, 66, 67, 0x94].pack('c*')
+            }
+          ],
+        }
+
+        expect { digital_object.update_dynamic_field_data(dfd, false) }.to raise_error(
+          Hyacinth::Exceptions::InvalidUtf8DetectedError,
+          'Invalid UTF-8 detected: "\x93" from ASCII-8BIT to UTF-8'
+        )
+      end
     end
 
     describe "#remove_blank_fields_from_dynamic_field_data" do
