@@ -34,7 +34,7 @@ describe DigitalObject::DynamicField, :type => :unit do
             }
           ]
         }
-    
+
         hsh2 = {
           "alternate_title" => [
             {
@@ -52,7 +52,7 @@ describe DigitalObject::DynamicField, :type => :unit do
             }
           ]
         }
-    
+
         merged_hsh = {
           "alternate_title" => [
             {
@@ -85,7 +85,7 @@ describe DigitalObject::DynamicField, :type => :unit do
         expect(digital_object.dynamic_field_data).to eq(merged_hsh)
       end
 
-      it "overwrites all existing dynamic_field_data with new data when false argument is passed for merge param" do  
+      it "overwrites all existing dynamic_field_data with new data when false argument is passed for merge param" do
         hsh1 = {
           "alternate_title" => [
             {
@@ -99,7 +99,7 @@ describe DigitalObject::DynamicField, :type => :unit do
             }
           ]
         }
-    
+
         hsh2 = {
           "note" => [
             {
@@ -108,19 +108,19 @@ describe DigitalObject::DynamicField, :type => :unit do
             }
           ]
         }
-    
+
         #Initial set of data
         digital_object.update_dynamic_field_data(hsh1, false)
         expect(digital_object.dynamic_field_data).to eq(hsh1)
-    
+
         #Secondary set of data to merge
         digital_object.update_dynamic_field_data(hsh2, false)
         expect(digital_object.dynamic_field_data).to eq(hsh2)
       end
     end
-    
+
     describe "#remove_blank_fields_from_dynamic_field_data" do
-      it "can recursively remove all blank fields from dynamic field data" do    
+      it "can recursively remove all blank fields from dynamic field data" do
         new_dynamic_field_data = {
           "alternate_title" => [
             {
@@ -158,7 +158,7 @@ describe DigitalObject::DynamicField, :type => :unit do
             }
           ]
         }
-    
+
         expected = {
           "alternate_title" => [
             {
@@ -171,14 +171,14 @@ describe DigitalObject::DynamicField, :type => :unit do
             }
           ]
         }
-        
+
         digital_object.remove_blank_fields_from_dynamic_field_data!(new_dynamic_field_data)
         expect(new_dynamic_field_data).to eq(expected)
       end
     end
-    
-    describe "#trim_whitespace_for_dynamic_field_data!" do
-      it "can recursively trim whitespace in dynamic field data" do    
+
+    describe "#trim_whitespace_and_clean_control_characters_for_dynamic_field_data!" do
+      it "can recursively trim whitespace in dynamic field data" do
         new_dynamic_field_data = {
           "alternate_title" => [
             {
@@ -209,7 +209,7 @@ describe DigitalObject::DynamicField, :type => :unit do
             }
           ]
         }
-    
+
         expected = {
           "alternate_title" => [
             {
@@ -241,15 +241,41 @@ describe DigitalObject::DynamicField, :type => :unit do
           ]
         }
 
-        puts '------------------------------------'
-        digital_object.trim_whitespace_for_dynamic_field_data!(new_dynamic_field_data)
+        digital_object.trim_whitespace_and_clean_control_characters_for_dynamic_field_data!(new_dynamic_field_data)
         expect(new_dynamic_field_data).to eq(expected)
-    
+      end
+
+      it "cleans control characters that are NOT tab, new line, or carriage return" do
+        new_dynamic_field_data = {
+          "example_field_1" => [
+            { "example_field_1_value" => "Control characters \t\r\n in the middle of the string that should be kept" }
+          ],
+          "example_field_2" => [
+            { "example_field_2_value" => "And some other control characters #{[7].pack('c*')} that should be removed #{[27].pack('c*')} because they're not useful in Hyacinth" }
+          ],
+          "example_field_3" => [
+            { "example_field_3_value" => "This line has a mix of control characters to keep (\n) and to remove (#{[27].pack('c*')})" }
+          ]
+        }
+
+        expected = {
+          "example_field_1" => [
+            { "example_field_1_value" => "Control characters \t\r\n in the middle of the string that should be kept" }
+          ],
+          "example_field_2" => [
+            { "example_field_2_value" => "And some other control characters  that should be removed  because they're not useful in Hyacinth" }
+          ],
+          "example_field_3" => [
+            { "example_field_3_value" => "This line has a mix of control characters to keep (\n) and to remove ()" }
+          ]
+        }
+        digital_object.trim_whitespace_and_clean_control_characters_for_dynamic_field_data!(new_dynamic_field_data)
+        expect(new_dynamic_field_data).to eq(expected)
       end
     end
-  
+
     describe "#remove_dynamic_field_data_key!" do
-      it "can remove one or more specific keys, at varying levels, within the dynamic_field_data" do  
+      it "can remove one or more specific keys, at varying levels, within the dynamic_field_data" do
         new_dynamic_field_data = {
           "alternate_title" => [
             {
@@ -268,7 +294,7 @@ describe DigitalObject::DynamicField, :type => :unit do
             }
           ]
         }
-  
+
         expected = {
           "note" => [
             {
@@ -279,14 +305,14 @@ describe DigitalObject::DynamicField, :type => :unit do
             }
           ]
         }
-  
+
         digital_object.update_dynamic_field_data(new_dynamic_field_data, false)
         digital_object.remove_dynamic_field_data_key!('alternate_title')
         digital_object.remove_dynamic_field_data_key!('note_type')
         expect(digital_object.dynamic_field_data).to eq(expected)
       end
-  
-      it "clears empty parent elements after perfoming a key deletion" do  
+
+      it "clears empty parent elements after perfoming a key deletion" do
         new_dynamic_field_data = {
           "name" => [
             {
@@ -307,13 +333,13 @@ describe DigitalObject::DynamicField, :type => :unit do
             }
           ]
         }
-  
+
         digital_object.update_dynamic_field_data(new_dynamic_field_data, false)
         digital_object.remove_dynamic_field_data_key!('name_role_value')
         expect(digital_object.dynamic_field_data).to eq(expected)
       end
     end
-    
+
     describe ".recursively_generate_flattened_dynamic_field_data" do
       it "works as expected" do
         new_dynamic_field_data = {
@@ -344,7 +370,7 @@ describe DigitalObject::DynamicField, :type => :unit do
             }
           ]
         }
-        
+
         flattened_dynamic_field_data = {
           'title_non_sort_portion' => ['The'],
           "title_sort_portion" => ["Catcher in the Rye"],
@@ -353,11 +379,11 @@ describe DigitalObject::DynamicField, :type => :unit do
           "name_value" => ["My name"],
           "name_role_value" => ["Great Note"]
         }
-        
+
         expect(DigitalObject::Base.recursively_generate_flattened_dynamic_field_data(new_dynamic_field_data)).to eq(flattened_dynamic_field_data)
       end
     end
-    
+
     describe ".recursively_generate_csv_style_flattened_dynamic_field_data" do
       let(:flattened_csv_style_dynamic_field_data) do
         {
@@ -449,7 +475,7 @@ describe DigitalObject::DynamicField, :type => :unit do
         }
       end
 
-      it "works as expected" do     
+      it "works as expected" do
         expect(test_class.recursively_generate_csv_style_flattened_dynamic_field_data(new_dynamic_field_data)).to eq(flattened_csv_style_dynamic_field_data)
       end
       context "only the keys" do
