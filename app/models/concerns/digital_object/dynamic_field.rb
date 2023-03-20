@@ -24,7 +24,7 @@ module DigitalObject::DynamicField
     remove_blank_fields_from_dynamic_field_data!(@dynamic_field_data)
 
     # Trim whitespace for all remaining String fields
-    trim_whitespace_for_dynamic_field_data!(@dynamic_field_data)
+    trim_whitespace_and_clean_control_characters_for_dynamic_field_data!(@dynamic_field_data)
 
     # Handle URI fields:
 
@@ -65,15 +65,28 @@ module DigitalObject::DynamicField
     df_data.delete_if { |_key, value| value.blank? }
   end
 
-  def trim_whitespace_for_dynamic_field_data!(df_data = @dynamic_field_data)
-    # Step 1: Recursively handle values on lower levels
-    df_data.each do |_key, value|
+  def trim_whitespace_and_clean_control_characters_for_dynamic_field_data!(df_data = @dynamic_field_data)
+    df_data.each do |key, value|
       if value.is_a?(Array)
-        value.each { |element| trim_whitespace_for_dynamic_field_data!(element) }
+        value.each { |element| trim_whitespace_and_clean_control_characters_for_dynamic_field_data!(element) }
       elsif value.is_a?(Hash)
-        trim_whitespace_for_dynamic_field_data!(value)
+        trim_whitespace_and_clean_control_characters_for_dynamic_field_data!(value)
       elsif value.is_a?(String)
-        value.strip!
+        next if df_data.frozen? # can't modify a frozen hash, so we won't try to (this generally applies to controlled term values)
+        df_data[key] = clean_control_characters(value).strip
+      end
+    end
+  end
+
+  # The control character cleaning logic below is based on:
+  # https://github.com/ndlib/curate_nd/blob/4c19def027b062ee3b17e8eac77a51cde2dbb30f/lib/curate/sanitize_control_characters_for_indexing.rb#L11
+  def clean_control_characters(str)
+    str.gsub(/[[:cntrl:]]/) do |character|
+      case character
+      when "\t", "\n", "\r"
+        character
+      else
+        "" # we want to completely eliminate the unwanted control character
       end
     end
   end
