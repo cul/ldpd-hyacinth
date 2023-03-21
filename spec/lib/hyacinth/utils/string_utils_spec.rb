@@ -11,6 +11,12 @@ RSpec.describe Hyacinth::Utils::StringUtils do
       it "generates the expected string" do
         expect(described_class.escape_four_byte_utf8_characters_as_html_entities(original)).to eq(expected)
       end
+
+      it "generates an encoded string that can be easily converted back into the original value" do
+        expect(CGI.unescape_html(
+          described_class.escape_four_byte_utf8_characters_as_html_entities(original)
+        )).to eq(original)
+      end
     end
   end
 end
