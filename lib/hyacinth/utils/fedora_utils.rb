@@ -53,7 +53,9 @@ module Hyacinth::Utils::FedoraUtils
     rescue ActiveFedora::ObjectNotFoundError
       # Create top_level_all_content_fedora_object if it wasn't found
       namespace_fedora_object = BagAggregator.new(pid: namespace_pid)
-      namespace_fedora_object.label = 'Top level object for the ' + namespace_string + ' namespace'
+      namespace_fedora_object.label = Hyacinth::Utils::StringUtils.escape_four_byte_utf8_characters_as_html_entities(
+        'Top level object for the ' + namespace_string + ' namespace'
+      )
       namespace_fedora_object.datastreams["DC"].dc_identifier = namespace_string + '_namespace'
       namespace_fedora_object.save(update_index: false)
     end

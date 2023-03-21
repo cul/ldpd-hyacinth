@@ -42,7 +42,7 @@ class Project < ActiveRecord::Base
     fedora_object.datastreams["DC"].dc_identifier = [pid]
     fedora_object.datastreams["DC"].dc_type = 'Project'
     fedora_object.datastreams["DC"].dc_title = display_label
-    fedora_object.label = display_label
+    fedora_object.label = Hyacinth::Utils::StringUtils.escape_four_byte_utf8_characters_as_html_entities(display_label)
     fedora_object.save(update_index: false)
   end
 

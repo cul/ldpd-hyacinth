@@ -108,7 +108,7 @@ module DigitalObject::Fedora
 
     def set_fedora_object_dc_title_and_label
       title = get_title
-      @fedora_object.label = title
+      @fedora_object.label = Hyacinth::Utils::StringUtils.escape_four_byte_utf8_characters_as_html_entities(title)
       @fedora_object.datastreams["DC"].dc_title = title
     end
 

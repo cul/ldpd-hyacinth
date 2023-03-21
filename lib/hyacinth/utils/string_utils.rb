@@ -82,4 +82,13 @@ module Hyacinth::Utils::StringUtils
     end
     source
   end
+
+  def self.escape_four_byte_utf8_characters_as_html_entities(str)
+    str.split('').map do |char|
+      # If char has fewer than 4 bytes, return without modification
+      next char if char.bytes.length < 4
+      # Otherwise encode as decimal value html entity
+      '&#' + char.ord.to_s + ';'
+    end.join('')
+  end
 end
