@@ -116,7 +116,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.prototype.createSynchro
         }],
       };
 
-      videojs(element, optionsForVideo, () => {
+      videojs(element, optionsForVideo, function() {
           //console.log("player is ready");
       });
     }

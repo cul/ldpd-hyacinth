@@ -117,7 +117,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.c
         }],
       };
 
-      videojs(element, optionsForVideo, () => {
+      videojs(element, optionsForVideo, function() {
           //console.log("player is ready");
       });
     }
