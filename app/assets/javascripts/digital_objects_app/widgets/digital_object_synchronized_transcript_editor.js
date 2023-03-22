@@ -105,7 +105,6 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.c
   this.$containerElement.find('video, audio').filter('.video-js[src]').each(function (index, element) {
     if (!$(element).attr('data-initialized')) {
       $(element).attr('data-initialized', 'true');
-      console.log("element.src is: " + element.src);
       const optionsForVideo = {
         autoplay: false,
         controls: true,
@@ -114,11 +113,11 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.c
         playbackRates: [0.5, 1, 1.5, 2],
         sources: [{
           src: element.src,
-          type: element.src.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4',
+          type: element.src.includes('.m3u8') || element.src.includes('blob:') ? 'application/x-mpegURL' : 'video/mp4',
         }],
       };
 
-      videojs(element, optionsForVideo, function () {
+      videojs(element, optionsForVideo, function() {
         //console.log("player is ready");
       });
     }

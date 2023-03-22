@@ -112,7 +112,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.prototype.createSynchro
         playbackRates: [0.5, 1, 1.5, 2],
         sources: [{
           src: element.src,
-          type: element.src.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4',
+          type: element.src.includes('.m3u8') || element.src.includes('blob:') ? 'application/x-mpegURL' : 'video/mp4',
         }],
       };
 
