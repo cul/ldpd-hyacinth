@@ -1,4 +1,4 @@
-Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor = function(containerElementId, options) {
+Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor = function (containerElementId, options) {
 
   this.$containerElement = $('#' + containerElementId);
   this.digitalObject = options['digitalObject'];
@@ -17,7 +17,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor = function(
 Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.SYNCHRONIZED_TRANSCRIPT_EDITOR_ELEMENT_CLASS = 'digital-object-synchronized-transcript-editor';
 Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.SYNCHRONIZED_TRANSCRIPT_EDITOR_DATA_KEY = 'synchronized_transcript_editor';
 
-Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.getEditorInstanceForElement = function(element) {
+Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.getEditorInstanceForElement = function (element) {
   return $(element).closest('.' + Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.SYNCHRONIZED_TRANSCRIPT_EDITOR_ELEMENT_CLASS).data(Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.SYNCHRONIZED_TRANSCRIPT_EDITOR_DATA_KEY);
 };
 
@@ -31,12 +31,12 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.getEditorIn
  * Setup / Cleanup *
  *******************/
 
-Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.init = function() {
+Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.init = function () {
 
   this.$containerElement.addClass(Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.SYNCHRONIZED_TRANSCRIPT_EDITOR_ELEMENT_CLASS); //Add class to container element
   this.$containerElement.data(Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.SYNCHRONIZED_TRANSCRIPT_EDITOR_DATA_KEY, this); //Assign this editor object as data to the container element so that we can access it later
 
-  if(['MovingImage', 'Sound'].indexOf(this.digitalObject.getDcType()) > -1) {
+  if (['MovingImage', 'Sound'].indexOf(this.digitalObject.getDcType()) > -1) {
     this.$containerElement.html(
       Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_synchronized_transcript_editor/oh_synchronizer_transcript_mode.ejs', {
         digitalObject: this.digitalObject,
@@ -57,18 +57,18 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.i
   }
 };
 
-Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.dispose = function() {
-  if(this.synchronizerWidget) {
+Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.dispose = function () {
+  if (this.synchronizerWidget) {
     this.synchronizerWidget.dispose();
     this.synchronizerWidget = null;
   }
 }
 
-Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.createSynchronizerWidget = function(){
+Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.createSynchronizerWidget = function () {
   var widgetOptions = {
     player: {
       type: 'video',
-  		url: this.playerUrl
+      url: this.playerUrl
     },
     transcript: {
       id: 'input-transcript',
@@ -80,9 +80,9 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.c
     }
   };
 
-	this.synchronizerWidget = new OHSynchronizer(widgetOptions);
+  this.synchronizerWidget = new OHSynchronizer(widgetOptions);
   OHSynchronizer.playerControls.bindNavControls(); //bind modal forward/back/etc. nav controls. TODO: Move this to widget js instead of Hyacinth js
-  OHSynchronizer.errorHandler = function(e) {
+  OHSynchronizer.errorHandler = function (e) {
     Hyacinth.addAlert(e, 'danger');
   }
 
@@ -90,21 +90,22 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.c
 
   // TODO: Move code below into synchronizer widget?
   //////////////////////////////////////////////
-	if (widgetOptions.options.previewOnly) {
-		this.$containerElement.find('.preview-button').hide();
+  if (widgetOptions.options.previewOnly) {
+    this.$containerElement.find('.preview-button').hide();
     this.$containerElement.find('#sync-controls').hide();
     this.$containerElement.find('.save-synchronized-transcript-button').hide();
     this.$containerElement.find('#sync-roll').val('0'); // no sync time offset when in captions preview mode
-	} else {
-		$('.preview-button').on('click', function() {
-			this.synchronizerWidget.transcript.preview();
-		}.bind(this));
-	}
+  } else {
+    $('.preview-button').on('click', function () {
+      this.synchronizerWidget.transcript.preview();
+    }.bind(this));
+  }
 
   // Manually initialize the widget's player because it normally relies on jQuery's document ready
   this.$containerElement.find('video, audio').filter('.video-js[src]').each(function (index, element) {
     if (!$(element).attr('data-initialized')) {
       $(element).attr('data-initialized', 'true');
+      console.log("element.src is: " + element.src);
       const optionsForVideo = {
         autoplay: false,
         controls: true,
@@ -117,17 +118,17 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.c
         }],
       };
 
-      videojs(element, optionsForVideo, function() {
-          //console.log("player is ready");
+      videojs(element, optionsForVideo, function () {
+        //console.log("player is ready");
       });
     }
   });
   //////////////////////////////////////////////
 };
 
-Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.saveSynchronizedTranscript = function() {
+Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.saveSynchronizedTranscript = function () {
   var vttExport = this.synchronizerWidget.transcript.exportVTT();
-  if(vttExport === false) {
+  if (vttExport === false) {
     Hyacinth.addAlert('An error occurred during VTT export.', 'danger');
     return;
   }
@@ -139,21 +140,21 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.s
       'synchronized_transcript_text': vttExport
     },
     cache: false
-  }).done(function(transcriptPutResponse){
+  }).done(function (transcriptPutResponse) {
     if (transcriptPutResponse['success']) {
       Hyacinth.addAlert('Synchronized transcript updated.', 'info');
     } else {
       alert(Hyacinth.unexpectedAjaxErrorMessage);
     }
-  }).fail(function(){
+  }).fail(function () {
     alert(Hyacinth.unexpectedAjaxErrorMessage);
   });
 };
 
 //Clean up event handlers
-Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.dispose = function() {
+Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.dispose = function () {
   this.$containerElement.removeData(Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.SYNCHRONIZED_TRANSCRIPT_EDITOR_DATA_KEY) // Break this (circular) reference.  This is important!
-  if(this.$containerElement.find('.save-transcript-button').length > 0) {
+  if (this.$containerElement.find('.save-transcript-button').length > 0) {
     this.$containerElement.find('.save-transcript-button').off('click');
   }
 };
