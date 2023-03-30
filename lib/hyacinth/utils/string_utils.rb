@@ -82,4 +82,8 @@ module Hyacinth::Utils::StringUtils
     end
     source
   end
+
+  def self.escape_four_byte_utf8_characters_as_html_entities(str)
+    str.gsub(/[\u{10000}-\u{10ffff}]/) { |mb4| "&#x#{mb4.ord.to_s(16)};" }
+  end
 end

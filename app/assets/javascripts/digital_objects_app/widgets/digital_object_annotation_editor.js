@@ -101,9 +101,24 @@ Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.prototype.createSynchro
 	}
 
   // Manually initialize the widget's player because it normally relies on jQuery's document ready
-  this.$containerElement.find('video, audio').filter('[data-able-player]').each(function (index, element) {
-    if ($(element).data('able-player') !== undefined) {
-      new AblePlayer($(this),$(element));
+  this.$containerElement.find('video, audio').filter('.video-js[src]').each(function (index, element) {
+    if (!$(element).attr('data-initialized')) {
+      $(element).attr('data-initialized', 'true');
+      const optionsForVideo = {
+        autoplay: false,
+        controls: true,
+        responsive: true,
+        fluid: true,
+        playbackRates: [0.5, 1, 1.5, 2],
+        sources: [{
+          src: element.src,
+          type: element.src.includes('.m3u8') || element.src.includes('blob:') ? 'application/x-mpegURL' : 'video/mp4',
+        }],
+      };
+
+      videojs(element, optionsForVideo, function() {
+          //console.log("player is ready");
+      });
     }
   });
   //////////////////////////////////////////////

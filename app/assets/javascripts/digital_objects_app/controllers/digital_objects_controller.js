@@ -741,14 +741,26 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.handleUploadRespon
 
   var $uploadedFilesTableBody = $('.uploaded-files-table tbody');
 
-  var name = response_data?.uploaded_file_confirmation?.name;
-  var size = response_data?.uploaded_file_confirmation?.size;
-  var errors = response_data?.errors;
+  var name;
+  var size;
+  var errors;
+
+  if(response_data) {
+    errors = response_data.errors;
+    if(response_data.uploaded_file_confirmation) {
+      name = response_data.uploaded_file_confirmation.name;
+      size = response_data.uploaded_file_confirmation.size;
+    }
+  }
 
   if (errors && Object.keys(errors).length > 0) {
-    var formattedErrors = Object.entries(errors).forEach(([key, errorMessages]) => {
-      Hyacinth.addAlert(`${key}: ${errorMessages.join(', ')}`, 'danger');
-    });
+    var formattedErrors = [];
+    var errorEntries = Object.entries(errors);
+    for(var i = 0; i < errorEntries.length; i++) {
+      var key = errorEntries[i][0];
+      var errorMessages = errorEntries[i][1];
+      Hyacinth.addAlert(key + ': ' + errorMessages.join(', '), 'danger');
+    }
   } else {
     var fileSize = size;
     var fileSizeDisplayValue = null;

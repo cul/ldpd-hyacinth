@@ -125,7 +125,10 @@ h2 {
             animation: fadeIt 2s ease-in-out;
 }
 
-#videojs-player {
+#videojs-player, .video-js {
+  /* Show current time while video is playing */
+  .vjs-current-time { display: block; }
+
   .vjs-big-play-button {
       left: 50%;
       margin-left: -1.5em;
