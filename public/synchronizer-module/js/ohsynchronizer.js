@@ -173,7 +173,7 @@ OHSynchronizer.Import.mediaFromUrl = function (url, options = {}) {
 	// Determine what type of URL we're working with
 	var lowerCaseUrl = url.toLowerCase();
 	if (lowerCaseUrl.indexOf('playlist.m3u8') > -1) {
-		OHSynchronizer.Import.renderHLS(url);
+		OHSynchronizer.Import.renderHLS(url, options);
 		OHSynchronizer.playerControls = new OHSynchronizer.VideoJsPlayer();
 	} else if (lowerCaseUrl.indexOf('manifest.mpd') > -1) {
 		OHSynchronizer.errorHandler(new Error("MPEG-Dash is not currently supported. Use HLS for streaming sources."));
@@ -246,31 +246,10 @@ OHSynchronizer.Import.checkExt = function (ext) {
 
 /** Rendering Functions **/
 // Here we load HLS playlists
-OHSynchronizer.Import.renderHLS = function (url) {
-	var player = document.querySelector('video');
-	var hls = new Hls();
-	hls.loadSource(url);
-	hls.attachMedia(player);
-	hls.on(Hls.Events.MANIFEST_PARSED, function () {
-		OHSynchronizer.playerControls = new OHSynchronizer.VideoJsPlayer();
-		OHSynchronizer.playerControls.bindNavControls();
-		// Watch the VideoJsPlayer time status for Transcript Syncing
-		// Must set before video plays
-		$("#video-player").on('timeupdate', function () { OHSynchronizer.playerControls.transcriptTimestamp() });
-		$("#audio-player").on('timeupdate', function () { OHSynchronizer.playerControls.transcriptTimestamp() });
-		video.play();
-	});
-	$("#media-upload").hide();
-	// hide audio
-	$("#audio").hide();
-	// show video
-	$("#video").show();
-	// show segment controls
-	$(".tag-add-segment").show();
-	$("#finish-area").show();
-	if ($('#transcript')[0] && $('#transcript')[0].innerHTML != '') { $("#sync-controls").show(); }
-	OHSynchronizer.Events.hlssuccess(new CustomEvent("hlssuccess", { detail: url }));
-	OHSynchronizer.Index.closeButtons();
+OHSynchronizer.Import.renderHLS = function (url, options = { type: 'video' }) {
+	// This used to be more complicated, but after the VideoJS update we can just
+	// delegate to the regular renderMediaUrl function.
+	this.renderMediaURL(url, options);
 }
 
 OHSynchronizer.Import.renderMediaURL = function (url, options = { type: 'video' }) {
