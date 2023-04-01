@@ -24,6 +24,10 @@
     <%= f.label(:require_controlled_vocabulary_manager_permission, (f.check_box(:require_controlled_vocabulary_manager_permission)).html_safe + ' Require Controlled Vocabulary Manager Permission') %>
   </div>
 
+  <div class="field">
+    <%= f.label(:prohibit_temp_terms, (f.check_box(:prohibit_temp_terms)).html_safe + ' Prohibit Temp Term Creation') %>
+  </div>
+
   <div class="actions">
     <%= f.submit('Save', class: 'btn btn-primary') %>
   </div>
