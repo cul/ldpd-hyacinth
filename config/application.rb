@@ -38,5 +38,7 @@ module Hyacinth
       paths.add "local/tasks", glob: "**/*.rake"
       paths["local/tasks"].existent.sort.each { |ext| load(ext) }
     end
+    # use Resque for ActiveJob
+    config.active_job.queue_adapter = :resque
   end
 end

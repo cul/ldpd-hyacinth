@@ -294,7 +294,7 @@ class DigitalObjectsController < ApplicationController
       @digital_object.updated_by = current_user
 
       if @digital_object.save
-        Resque.enqueue(RepublishAssetJob, @digital_object.pid)
+        RepublishAssetJob.perform_later(@digital_object.pid)
         render json: { success: true, size: @digital_object.access_copy_file_size_in_bytes.to_i }
       else
         render json: { errors: ['An error occurred during access copy upload.'] }
