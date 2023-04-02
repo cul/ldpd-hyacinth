@@ -1,12 +1,12 @@
 module DigitalObject::Publishing
   extend ActiveSupport::Concern
 
-  def publish
+  def publish(preserve = true)
     before_publish
 
     # Save with retry after Fedora timeouts / unreachable host
     Retriable.retriable DigitalObject::Base::RETRY_OPTIONS do
-      fedora_object.save(update_index: false)
+      fedora_object.save(update_index: false) if preserve
     end
     allowed_publish_target_pids = allowed_publish_targets.map { |pub_target_data| pub_target_data['pid'] }
     inactive_publish_target_pids = allowed_publish_target_pids - publish_target_pids
