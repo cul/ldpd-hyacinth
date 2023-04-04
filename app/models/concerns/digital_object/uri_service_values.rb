@@ -62,7 +62,7 @@ module DigitalObject::UriServiceValues
     if type == UriService::TermType::TEMPORARY
       cv = controlled_vocabulary_cache[properties[:vocabulary_string_key]]
       if cv && cv.prohibit_temp_terms
-        raise "#{properties[:vocabulary_string_key]} vocabulary does not allow temp terms; submit term URI for \"#{properties[:value]}\""
+        raise Hyacinth::Exceptions::MalformedControlledTermFieldValue,  "#{properties[:vocabulary_string_key]} vocabulary does not allow temp terms; submit term URI for \"#{properties[:value]}\""
       end
     end
     # If too many solr commits happen simultaneously, solr will respond with an error:
