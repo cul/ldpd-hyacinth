@@ -3,6 +3,9 @@ source 'https://rubygems.org'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 4.2.11'
 
+# BigDecimal bridge for later ruby while on Rails 4.2
+gem 'bigdecimal', '~> 1.4.2'
+
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3', '~> 1.3.10'
 gem 'mysql2', '~> 0.5.3'
