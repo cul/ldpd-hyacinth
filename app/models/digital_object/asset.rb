@@ -2,6 +2,7 @@ require 'addressable/uri'
 
 class DigitalObject::Asset < DigitalObject::Base
   include DigitalObject::Assets::Validations
+  include DigitalObject::Assets::FeaturedRegion
   include DigitalObject::Assets::FileImport
   include DigitalObject::Assets::Transcript
   include DigitalObject::Assets::IndexDocument

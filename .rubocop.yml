@@ -77,7 +77,8 @@ Metrics/MethodLength:
   Enabled: false
 
 Metrics/ClassLength:
-  Exclude: []
+  Exclude:
+    - 'app/controllers/digital_objects_controller.rb'
   CountComments: false  # count full line comments?
   Max: 300
 

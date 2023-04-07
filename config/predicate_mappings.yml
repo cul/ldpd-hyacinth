@@ -106,3 +106,4 @@
     :ldp_contains: contains
   http://iiif.io/api/image/2#:
     :region_featured: regionFeatured
+    :region_selection_event: regionSelectionEvent
