@@ -246,8 +246,7 @@ class DigitalObjectsController < ApplicationController
   end
 
   def saveable?(errors = nil)
-    return false if errors.present?
-    params['test'].blank? || params['test'].to_s != 'true'
+    errors.blank? && (params['test'].blank? || params['test'].to_s != 'true')
   end
 
   def rotate_image
@@ -335,9 +334,7 @@ class DigitalObjectsController < ApplicationController
     end
 
     def publish_requirements_from_params
-      publish_requirements = []
-      publish_requirements << :publish if params[:publish].to_s == 'true'
-      publish_requirements
+      params[:publish].to_s == 'true' ? [:publish] : []
     end
 
     def require_appropriate_project_permissions!
