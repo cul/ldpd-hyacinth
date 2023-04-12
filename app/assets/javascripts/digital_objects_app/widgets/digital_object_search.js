@@ -244,8 +244,11 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearch.prototype.init = function() {
       }).done(function(rotationResponse){
         $thumbnailImg.css('opacity', '1');
         if (rotationResponse['success']) {
-          $thumbnailImg.attr('src', $thumbnailImg.attr('src') + '?' + new Date().getTime());
-          Hyacinth.addAlert('Image has been rotated and queued for derivative regeneration.<br /><br /><strong>Note:</strong> A hard page refresh will be required to view the change globally (because of browser caching).', 'info');
+          // Re-fetch the image with {cache: 'reload'} to bust the local browser cache
+          fetch($thumbnailImg.attr('src'), {method:'GET', cache: 'reload'}).then(function(){
+            $thumbnailImg.attr('src', $thumbnailImg.attr('src'));
+            Hyacinth.addAlert('Image has been rotated and queued for derivative regeneration.<br /><br /><strong>Note:</strong> A hard page might be required to view the change globally (because of browser caching).', 'info');
+          });
         } else {
           Hyacinth.addAlert('An error occurred during the rotation attempt:<br />' + rotationResponse['errors'].join(', '), 'danger');
         }
