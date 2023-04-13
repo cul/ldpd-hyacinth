@@ -33,4 +33,7 @@ Hyacinth::Application.configure do
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
+
+  # Use the test queue adapter, which permits inspection but does not execute
+  config.active_job.queue_adapter = :test
 end
