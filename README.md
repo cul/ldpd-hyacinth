@@ -78,22 +78,75 @@ bundle exec rake hyacinth:ci
 
 Note 1: By default, jetty will run on port 8983 in the development environment and 9983 in the test environment.
 
+#### Testing out GitHub Actions locally (with `act`)
+
+See: https://github.com/nektos/act
+
+Quick setup:
+- Download act with `brew install act`
+- Run `act --container-architecture linux/amd64` on an M1 mac or just `act` on an x86_64 machine
+
 ### Other Development Notes
 
-# Intel MacOS Notes
+#### You can't use modern JS
+
+Unfortunately, Hyacinth 2 is using an old version of Rails, and also an old version of the Uglifier JS compiler.  We'll be doing much more modern things in Hyacinth 3.  But for now, this means that if you try to use modern js (arrow functions, template literals, etc.), then Uglifier will raise an exception.  This happens when `rake assets:precompile` runs in production mode, during deployment.  When developing locally, you can troubleshoot issues with modern JS by running this in the Rails console:
+
+```
+2.6.10 :001 > Dir[Rails.root.join('app/assets/javascripts/**/*')].each {|file| next unless file.to_s.ends_with?('.js'); puts "Parsing #{file}"; Uglifier.compile(File.read(file)) }
+```
+
+The above line will iterate over all of the js files under `app/assets/javascripts` and try to run Uglifier on them.  If Uglifier runs into a file that can't be parsed, it'll raise an exception with info about where it got stuck.  Here's some example output:
+
+```
+...
+...
+...
+Parsing /Users/elo2112/Columbia/Columbia-Projects/repositories/hyacinth-24-current/app/assets/javascripts/digital_objects_app/widgets/digital_object_synchronized_transcript_editor.js
+Parsing /Users/elo2112/Columbia/Columbia-Projects/repositories/hyacinth-24-current/app/assets/javascripts/digital_objects_app/widgets/digital_object_transcript_editor.js
+Parsing /Users/elo2112/Columbia/Columbia-Projects/repositories/hyacinth-24-current/app/assets/javascripts/digital_objects_app/widgets/digital_object_search.js
+Traceback (most recent call last):
+       16: from (irb):20:in `each'
+       15: from (irb):20:in `block in irb_binding'
+       14: from /Users/elo2112/.rvm/gems/ruby-2.6.10/gems/uglifier-2.7.0/lib/uglifier.rb:150:in `compile'
+       13: from /Users/elo2112/.rvm/gems/ruby-2.6.10/gems/uglifier-2.7.0/lib/uglifier.rb:178:in `compile'
+       12: from /Users/elo2112/.rvm/gems/ruby-2.6.10/gems/uglifier-2.7.0/lib/uglifier.rb:200:in `run_uglifyjs'
+       11: from /Users/elo2112/.rvm/gems/ruby-2.6.10/gems/execjs-2.7.0/lib/execjs/external_runtime.rb:39:in `exec'
+       10: from block_ ((execjs):2359:24599)
+        9: from (execjs):2359:19957
+        8: from (execjs):2359:20553
+        7: from simple_statement ((execjs):2359:22580)
+        6: from semicolon ((execjs):2359:19784)
+        5: from unexpected ((execjs):2359:19311)
+        4: from token_error ((execjs):2359:19223)
+        3: from croak ((execjs):2359:19086)
+        2: from js_error ((execjs):2359:10842)
+        1: from new JS_Parse_Error ((execjs):2359:10623)
+ExecJS::ProgramError (Unexpected token: name (a) (line: 256, col: 8, pos: 11480))
+...
+...
+...
+```
+
+So in the above case, this means that we need to take a look at `/Users/elo2112/Columbia/Columbia-Projects/repositories/hyacinth-24-current/app/assets/javascripts/digital_objects_app/widgets/digital_object_search.js` because there was a parsing error on line `256`.
+
+
+#### Intel MacOS Notes
 If you installed mysql on macOS using homebrew, you may need to install mysql2 0.4.x with this command, otherwise you'll get an error (`dyld: lazy symbol binding failed: Symbol not found: _mysql_server_init`):
 
 ```
 gem install mysql2 -v '0.4.10' -- --with-ldflags=-L/usr/local/opt/openssl/lib --with-cppflags=-I/usr/local/opt/openssl/include
 ```
 
-# ARM (M1/M2) MacOS Notes:
+#### ARM (M1/M2) MacOS Notes:
 
-You need to install Ruby 2.4.1 using this syntax:
+If Ruby 2.6.10 doesn't install for you, you may need to install it using this syntax:
 
-`CFLAGS="-Wno-error=implicit-function-declaration" rvm install 2.4.1`
+`CFLAGS="-Wno-error=implicit-function-declaration" rvm install 2.6.10`
 
-# Ubuntu 22 setup notes
+This was more of a problem with Ruby 2.4, so it may not be necessary for Ruby 2.6.
+
+#### Ubuntu 22 setup notes
 
 On Ubuntu 22, Ruby 2.4.1 will fail to install because Ubuntu comes with OpenSSL 3 and our dependencies require OpenSSL 1.  To solve this problem, you need to install Ruby 2.4.1 with an RVM-provided version of OpenSSL:
 
@@ -109,11 +162,3 @@ libmysql-client-dev openjdk-8-jre
 ```
 
 Maybe also `python2`, but try without it first.
-
-# Testing out GitHub Actions locally (with `act`)
-
-See: https://github.com/nektos/act
-
-Quick setup:
-- Download act with `brew install act`
-- Run `act --container-architecture linux/amd64` on an M1 mac or just `act` on an x86_64 machine
