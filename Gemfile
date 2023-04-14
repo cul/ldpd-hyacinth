@@ -56,8 +56,8 @@ gem 'rubyXL'
 # Multithreaded tasks
 gem 'thread'
 
-# Use Uglifier as compressor for JavaScript assets
-gem 'uglifier', '>= 1.3.0'
+# Use terser as compressor for JavaScript assets
+gem 'terser'
 
 # Use CoffeeScript for .js.coffee assets and views
 gem 'coffee-rails'
