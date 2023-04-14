@@ -25,7 +25,7 @@ module DigitalObject::Assets::FeaturedRegion
   def region_selection_event
     rels = @fedora_object&.relationships(:region_selection_event)
     current_value = rels.first.value if rels.present?
-    JSON.load(current_value)
+    JSON.load(current_value) || { 'updatedBy' => I18n.t('email.automatic_process'), 'updatedAt' => updated_at.iso8601 }
   end
 
   def asset_image_width

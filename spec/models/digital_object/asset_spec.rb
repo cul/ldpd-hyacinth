@@ -146,17 +146,29 @@ RSpec.describe DigitalObject::Asset, :type => :model do
   describe 'region_selection_event' do
     let(:well_known_pid) { 'some:asset' }
     let(:test_user) { 'test@hyacinth.org' }
+    let(:last_updated) { (Time.now - 1.day).utc }
+    let(:digital_object_record) { DigitalObjectRecord.new(updated_at: last_updated) }
     let(:generic_resource) { GenericResource.new(pid: well_known_pid) }
     let(:asset) { DigitalObject::Asset.new }
     let(:rels_ext_value) { asset.fedora_object.relationships(:region_selection_event).first.value }
     before do
       asset.instance_variable_set(:@fedora_object, generic_resource)
-      asset.region_selection_event = {'updatedBy': test_user}
+      asset.instance_variable_set(:@db_record, digital_object_record)
     end
-    it 'serializes to RELS-EXT with a timestamp' do
-      json = JSON.load(rels_ext_value)
-      expect(json['updatedBy']).to eql(test_user)
-      expect(json['updatedAt']).to be_present
+    it 'falls back to last object update if unassigned' do
+      json = asset.region_selection_event
+      expect(json['updatedAt']).to eql(last_updated.iso8601)
+      expect(json['updatedBy']).to eql("automatic-process@library.columbia.edu")
+    end
+    context 'is assigned' do
+      before do
+        asset.region_selection_event = {'updatedBy': test_user}
+      end
+      it 'serializes to RELS-EXT with a timestamp' do
+        json = JSON.load(rels_ext_value)
+        expect(json['updatedBy']).to eql(test_user)
+        expect(json['updatedAt']).to be_present
+      end
     end
   end
 end

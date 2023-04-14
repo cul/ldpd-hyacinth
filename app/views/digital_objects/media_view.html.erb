@@ -20,17 +20,94 @@
           showNavigator:  true,
           showRotationControl: true,
           initialPage: initialPage,
-          //zoomInButton:   "zoom-in-control",
-          //zoomOutButton:  "zoom-out-control",
-          //homeButton:     "zoom-home-control",
-          //fullPageButton: "zoom-full-control",
-          //nextButton:     "zoom-next-control",
-          //previousButton: "zoom-prev-control",
+          zoomInButton: 'fr-zoomin',
+          zoomOutButton:'fr-zoomout',
+          homeButton:'fr-home',
+          fullPageButton:'fr-fullpage',
+          rotateLeftButton:'fr-rotleft',
+          rotateRightButton:'fr-rotright',
           showSequenceControl:  (tileSources.length > 1)
         });
 
+      if (tileSources.length == 1) {
+        OpenSeadragon.FeaturedRegion.for(Hyacinth.openSeaDragonViewer);
+        const resetButton = document.getElementById('reset-featured-region');
+        resetButton.addEventListener('click', function(event){
+          const valueWidget = document.getElementById('featured-region');
+          valueWidget.value = event.target.dataset.savedregion || event.target.parentElement.dataset.savedregion;
+          valueWidget.dispatchEvent(new Event("input"));
+        });
+        const setFeaturedRegionMode = function(newMode) {
+          const mode = document.getElementById('featured-region-mode-' + newMode);
+          $('.featured-region-button.active').removeClass('active');
+          mode.parentElement.dispatchEvent(new Event('click'));
+          mode.parentElement.classList.add('active');
+          mode.dispatchEvent(new Event("click"));
+          mode.dispatchEvent(new Event('input'));
+        }
+        //Bind featured region handlers
+        $('label.featured-region-button').on('click', function(e){
+          const radioId = e.target.getAttribute('for') || e.target.parentElement.getAttribute('for');
+          if (radioId) document.getElementById(radioId).dispatchEvent(new Event("input"));
+        });
+        $('#save-featured-region').on('click', function(e){
+          e.preventDefault();
+          var newRegion = $('#featured-region').val();
+          var oldRegion = $('#reset-featured-region').attr('data-savedregion');
+          if (newRegion == oldRegion) return;
+          OpenSeadragon.FeaturedRegion.dismissableBootstrapAlert(Hyacinth.openSeaDragonViewer, 'Saving region information...', 'info');
+          $.ajax({
+            url: '/digital_objects/<%= @digital_object.pid %>/featured_region',
+            type: 'POST',
+            data: {
+              region: newRegion
+            },
+            cache: false
+          }).done(function(updateResponse){
+            if (updateResponse['success']) {
+              document.getElementById('reset-featured-region').dataset.savedregion = newRegion;
+              setFeaturedRegionMode('show');
+              const successMessage = 'Featured region updated at ' + updateResponse['updatedAt'];
+              OpenSeadragon.FeaturedRegion.dismissableBootstrapAlert(Hyacinth.openSeaDragonViewer, successMessage, 'success');
+            } else {
+              setFeaturedRegionMode('hide');
+              const errorMessage = 'An error occurred during the region save attempt:<br />' + updateResponse['errors'].join(', ');
+              OpenSeadragon.FeaturedRegion.dismissableBootstrapAlert(Hyacinth.openSeaDragonViewer, errorMessage, 'danger');
+            }
+          }).fail(function(){
+            alert(Hyacinth.unexpectedAjaxErrorMessage);
+          });
+        });
+        $('#query-featured-region').on('click', function(e){
+          e.preventDefault();
+          $.ajax({
+            url: '/digital_objects/<%= @digital_object.pid %>/featured_region',
+            type: 'GET',
+            cache: false
+          }).done(function(queryResponse){
+            if (queryResponse['success']) {
+              const successMessage = [
+                'Featured region updated to', queryResponse['region'],
+                'by', queryResponse['updatedBy'],
+                'at', queryResponse['updatedAt']].join(' ');
+              OpenSeadragon.FeaturedRegion.dismissableBootstrapAlert(Hyacinth.openSeaDragonViewer, successMessage, 'info');
+            } else {
+              const errorMessage = 'An error occurred during the region query attempt:<br />' + queryResponse['errors'].join(', ');
+              OpenSeadragon.FeaturedRegion.dismissableBootstrapAlert(Hyacinth.openSeaDragonViewer, errorMessage, 'danger');
+            }
+          }).fail(function(){
+            alert(Hyacinth.unexpectedAjaxErrorMessage);
+          });
+        });
+      }
+
       Hyacinth.openSeaDragonViewer.addHandler('open',function(){
         $('#zoom-content .loading-message').remove();
+        if (tileSources.length != 1) {
+          $('.featured-region-controls').remove();
+        } else {
+          // set up the save button onclick
+        }
       },null);
 
       //Resize immediately
@@ -43,6 +120,39 @@
   </script>
   <div id="zoom-content" style="width: 800px; height: 600px;">
     <div class="loading-message">Loading...</div>
+    <div class="input-group input-group-sm">
+      <div class="input-group-btn btn-group-sm">
+        <button class="btn btn-primary featured-region-button" id="fr-zoomin"><span class="fa fa-search-plus" title="Zoom In"></span></button>
+        <button class="btn btn-primary featured-region-button" id="fr-zoomout"><span class="fa fa-search-minus" title="Zoom Out"></span></button>
+        <button class="btn btn-primary featured-region-button" id="fr-home"><span class="fa fa-home" title="Go Home"></span></button>
+        <button class="btn btn-primary featured-region-button" id="fr-fullpage"><span class="fa fa-television" title="ToggleFull Page"></span></button>
+        <button class="btn btn-primary featured-region-button" id="fr-rotleft"><span class="fa fa-reply" title="Rotate Left"></span></button>
+        <button class="btn btn-primary featured-region-button" id="fr-rotright"><span class="fa fa-share" title="Rotate Right"></span></button>
+      </div>
+      <div class="input-group-btn btn-group-sm featured-region-controls" data-toggle="buttons">
+        <label class="btn btn-default featured-region-button active" for="featured-region-mode-hide">
+          <input type="radio" name="featured-region-mode" id="featured-region-mode-hide" value="hide" checked><span class="fa fa-eye-slash" title="Hide Featured Region"></span>
+        </label>
+        <label class="btn btn-default featured-region-button" for="featured-region-mode-show">
+          <input type="radio" name="featured-region-mode" id="featured-region-mode-show" value="show"><span class="fa fa-eye" title="Show Featured Region"></span>
+        </label>
+        <label class="btn btn-default featured-region-button" for="featured-region-mode-resize">
+          <input type="radio" name="featured-region-mode" id="featured-region-mode-resize" value="resize"><span class="fa fa-crop" title="Resize Featured Region"></span>
+        </label>
+        <label class="btn btn-default featured-region-button" for="featured-region-mode-move">
+          <input type="radio" name="featured-region-mode" id="featured-region-mode-move" value="move"><span class="fa fa-arrows" title="Move Featured Region"></span>
+        </label>
+      </div>
+      <span class="input-group-addon featured-region-controls">
+        <label for="featured-region" style="margin-bottom:auto;">Featured Region</label>
+      </span>
+      <input type="text" class="form-control featured-region-controls" readonly value="<%= @digital_object.featured_region %>" aria-label="Current Region" id="featured-region" />
+      <span class="input-group-btn btn-group-sm featured-region-controls">
+        <button class="btn btn-default featured-region-button" type="button" id="query-featured-region"><span class="fa fa-question-circle" title="About Saved Region"></span></button>
+        <button class="btn btn-info featured-region-button" type="button" data-savedregion="<%= @digital_object.featured_region %>" id="reset-featured-region"><span class="fa fa-refresh" title="Reset to Saved Region"></span></button>
+        <button class="btn btn-warning featured-region-button" type="button" id="save-featured-region"><span class="fa fa-cloud-upload" title="Save New Featured Region"></span></button>
+      </span>
+    </div>
   </div>
 <% elsif ['Sound','MovingImage'].include? @digital_object.dc_type %>
   <% media_url = @digital_object.player_url(request.remote_ip) %>

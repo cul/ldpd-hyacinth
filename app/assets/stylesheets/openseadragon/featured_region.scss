@@ -1,0 +1,24 @@
+.featured-region-move, .featured-region-resize {
+  background: rgba(0, 255, 0, 0.3);
+  box-shadow: 0 0 0 100vh rgba(255, 255, 255, .7);
+}
+.featured-region-show {
+  background: transparent !important;
+  box-shadow: 0 0 0 100vh rgba(0, 0, 0, .7);
+}
+.featured-region-move {
+  pointer-events: auto;
+  cursor: grab;
+}
+.featured-region-hide {
+  display: none !important;
+}
+.featured-region-button {
+  float: none !important;
+}
+.featured-region-button .fa {
+  line-height: inherit;
+}
+.osd-alert {
+  width: 84%;
+}

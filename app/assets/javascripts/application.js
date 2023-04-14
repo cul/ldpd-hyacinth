@@ -19,6 +19,7 @@
 //= require bootstrap-sprockets
 //### require turbolinks
 //= require openseadragon
+//= require_tree './openseadragon'
 // We want hyacinth.js to be loaded before all other Hyacinth JS files
 //= require './general/hyacinth.js'
 // Now we'll require everything else
