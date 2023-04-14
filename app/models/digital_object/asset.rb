@@ -266,6 +266,7 @@ class DigitalObject::Asset < DigitalObject::Base
       # companion_file_path is derived from access copy path since these files need to be next to each other.
       # companion_file_path is the access copy path with the original extension replaced with "vtt".
       access_path = self.access_copy_location
+      next if access_path.nil? # skip writing out vtt file if there is no access file to place it next to
       companion_file_path = access_path[0..access_path.rindex('.')] + 'vtt'
       if content_changed || !File.exist?(companion_file_path)
         open(companion_file_path, 'wb') { |io| io.write(new_content) }
