@@ -19,7 +19,7 @@ module DigitalObject::Assets::Validations
     #    @errors.add(:parent_digital_object_pids, 'Assets are only allowed to be children of Items.  Found parent of type: ' + parent_digital_object.digital_object_type.display_label)
     #  end
     # }
-
+    validate_featured_region
     @errors.blank?
   end
 
@@ -96,6 +96,30 @@ module DigitalObject::Assets::Validations
     # Check for invalid characters in import path.  Reject if non-utf8.
     # If we get weird characters (like "\xC2"), Ruby will die a horrible death.  Let's keep Ruby alive.
     raise "Invalid UTF-8 characters found in file path.  Unable to upload." if import_file_import_path != Hyacinth::Utils::StringUtils.clean_utf8_string(import_file_import_path)
+  end
+
+  def validate_featured_region
+    value_to_validate = featured_region
+    return if value_to_validate.blank?
+
+    unless pid.blank?
+      dims_oriented = (fedora_object.orientation / 10).even?
+      original_image_width = dims_oriented ? asset_image_width : asset_image_height
+      original_image_height = dims_oriented ? asset_image_height : asset_image_width
+    end
+    unless original_image_width && original_image_height
+      @errors.add(:featured_region, "Original asset has not yet been analyzed; cannot reassign featured region")
+      return
+    end
+
+    left, top, width, height = value_to_validate.to_s.split(',').map(&:to_i)
+    unless (top >= 0) &&(left >= 0) && (width >= 768) && (width == height)
+      @errors.add(:featured_region, "region must describe a square within image of at least 768px side (given region '#{value_to_validate}')")
+    end
+
+    unless (original_image_width >= left + width) && (original_image_height >= top + height)
+      @errors.add(:featured_region, "region #{value_to_validate} is not within original image dimensions #{original_image_width}x#{original_image_height}")
+    end
   end
 
   def log_import_file_data_errors_for_user(current_user, import_file_data_param, file_param)

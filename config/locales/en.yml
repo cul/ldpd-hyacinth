@@ -21,3 +21,5 @@
 
 en:
   hello: "Hello world"
+  email:
+    automatic_process: "automatic-process@library.columbia.edu"

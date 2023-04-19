@@ -55,5 +55,16 @@ RSpec.describe DigitalObjectsController, :type => :routing do
       expect(:put => "/digital_objects/1/synchronized_transcript").to route_to("digital_objects#update_synchronized_transcript", :id => "1")
     end
 
+    it "routes to #rotate_image" do
+      expect(:post => "/digital_objects/1/rotate_image").to route_to("digital_objects#rotate_image", :id => "1")
+    end
+
+    it "routes to #query_featured_region" do
+      expect(:get => "/digital_objects/1/featured_region").to route_to("digital_objects#query_featured_region", :id => "1")
+    end
+
+    it "routes to #update_featured_region" do
+      expect(:post => "/digital_objects/1/featured_region").to route_to("digital_objects#update_featured_region", :id => "1")
+    end
   end
 end

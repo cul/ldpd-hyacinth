@@ -15,7 +15,7 @@ class DigitalObjectsController < ApplicationController
     :download_index_document, :update_index_document,
     :download_captions, :update_captions,
     :download_synchronized_transcript, :update_synchronized_transcript, :clear_synchronized_transcript_and_reimport_transcript,
-    :upload_access_copy
+    :upload_access_copy, :update_featured_region, :query_featured_region
   ]
   before_action :set_digital_object_for_data_for_editor_action, only: [:data_for_editor]
   before_action :set_contextual_nav_options
@@ -246,22 +246,53 @@ class DigitalObjectsController < ApplicationController
   end
 
   def saveable?(errors = nil)
-    return false if errors.present?
-    params['test'].blank? || params['test'].to_s != 'true'
+    errors.blank? && (params['test'].blank? || params['test'].to_s != 'true')
   end
 
   def rotate_image
-    if @digital_object.is_a?(DigitalObject::Asset) && @digital_object.dc_type == 'StillImage'
-      rotate_by = params[:rotate_by].to_i
-      @digital_object.fedora_object.orientation -= rotate_by
-      if @digital_object.save && @digital_object.destroy_and_regenerate_derivatives!
-        render json: { success: true }
-      else
-        render json: { errors: ['An error occurred during image regeneration.'] }
-      end
-    else
+    unless @digital_object.is_a?(DigitalObject::Asset) && @digital_object.dc_type == 'StillImage'
       render json: { errors: ["Only Assets of type StillImage can be rotated.  This is a #{@digital_object.digital_object_type.display_label} of type #{@digital_object.dc_type}"] }
+      return
     end
+
+    rotate_by = params[:rotate_by].to_i
+    @digital_object.fedora_object.orientation -= rotate_by
+    @digital_object.featured_region = @digital_object.rotated_region(rotate_by) if @digital_object.featured_region.present?
+
+    if @digital_object.save && @digital_object.destroy_and_regenerate_derivatives!
+      render json: { success: true }
+    else
+      render json: { errors: ['An error occurred during image regeneration.'] }
+    end
+  end
+
+  def update_featured_region
+    unless @digital_object.is_a?(DigitalObject::Asset)
+      render json: { errors: ["Only Assets can have featured regions.  This is a #{@digital_object.digital_object_type.display_label} of type #{@digital_object.dc_type}"] }
+      return
+    end
+    unless params[:region].to_s =~ /(\d+,){3}\d+/
+      render json: { errors: ["Featured regions must be a valid IIIF region.  Given #{params[:region]}"] }
+      return
+    end
+
+    @digital_object.featured_region = params[:region]
+    @digital_object.region_selection_event = { 'updatedBy' => current_user.email }
+    if @digital_object.save && @digital_object.destroy_and_regenerate_derivatives!
+      render json: { success: true }.merge(@digital_object.region_selection_event)
+    else
+      errors = @digital_object.errors[:featured_region]
+      errors = ['An error occurred during image regeneration.'] if errors.blank?
+      render json: { errors: errors }
+    end
+  end
+
+  def query_featured_region
+    unless @digital_object.is_a?(DigitalObject::Asset)
+      render json: { errors: ["Only Assets can have featured regions.  This is a #{@digital_object.digital_object_type.display_label} of type #{@digital_object.dc_type}"] }
+      return
+    end
+    render json: { success: true }.merge(@digital_object.region_selection_event).merge('region' => @digital_object.featured_region)
   end
 
   def swap_order_of_first_two_child_assets
@@ -335,9 +366,7 @@ class DigitalObjectsController < ApplicationController
     end
 
     def publish_requirements_from_params
-      publish_requirements = []
-      publish_requirements << :publish if params[:publish].to_s == 'true'
-      publish_requirements
+      params[:publish].to_s == 'true' ? [:publish] : []
     end
 
     def require_appropriate_project_permissions!
