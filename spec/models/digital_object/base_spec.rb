@@ -130,6 +130,36 @@ RSpec.describe DigitalObject::Base, :type => :model do
         end
       end
 
+      context "raises an exception for prohibited temp term field data" do
+        # this controlled vocabulary and dynamic field groupis set up in the create_core_objects db migration
+        let(:controlled_vocabulary) { ControlledVocabulary.find_by(string_key: 'collection') }
+        before do
+          if controlled_vocabulary
+            @original_temp_flag = controlled_vocabulary.prohibit_temp_terms
+            controlled_vocabulary.prohibit_temp_terms = true
+            controlled_vocabulary.save
+          end
+        end
+        after do
+          if controlled_vocabulary
+            controlled_vocabulary.prohibit_temp_terms = @original_temp_flag
+            controlled_vocabulary.save
+          end
+        end
+        it "rejects controlled term data that lacks a uri and has a value field" do
+          new_item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+          sample_item_digital_object_data['dynamic_field_data']['collection'] = [
+            {
+              "collection_term" => {
+                "value" => "prohibited_temp_terms_value",
+              }
+            }
+          ]
+          expect {
+            new_item.set_digital_object_data(sample_item_digital_object_data, false)
+          }.to raise_error(Hyacinth::Exceptions::MalformedControlledTermFieldValue)
+        end
+      end
     end
 
     describe "for DigitalObject::Group" do

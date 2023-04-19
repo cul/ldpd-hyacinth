@@ -51,6 +51,7 @@ ActiveRecord::Schema.define(version: 20190612145152) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "require_controlled_vocabulary_manager_permission", default: false, null: false
+    t.boolean  "prohibit_temp_terms", default: false, null: false
   end
 
   create_table "csv_exports", force: :cascade do |t|

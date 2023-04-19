@@ -59,6 +59,12 @@ module DigitalObject::UriServiceValues
   end
 
   def create_term(type, properties)
+    if type == UriService::TermType::TEMPORARY
+      cv = controlled_vocabulary_cache[properties[:vocabulary_string_key]]
+      if cv && cv.prohibit_temp_terms
+        raise Hyacinth::Exceptions::MalformedControlledTermFieldValue,  "#{properties[:vocabulary_string_key]} vocabulary does not allow temp terms; submit term URI for \"#{properties[:value]}\""
+      end
+    end
     # If too many solr commits happen simultaneously, solr will respond with an error:
     # "Error opening new searcher. exceeded limit of maxWarmingSearchers"
     # So in those cases, we'll retry.
@@ -108,4 +114,9 @@ module DigitalObject::UriServiceValues
       end
     end
   end
+
+  private
+    def controlled_vocabulary_cache
+      @controlled_vocabulary_cache ||= Hash.new { |cache, string_key| cache[string_key] = ControlledVocabulary.find_by(string_key: string_key) }
+    end
 end
