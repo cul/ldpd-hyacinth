@@ -44,7 +44,8 @@ ezid.yml
 # subs.yml doesn't need to be stored here because it's not currently related to Hyacinth
 config/subs.yml
 
-# Ignore hydra-jetty
+# Ignore hydra-jetty (no longer used, but we want to make sure that no one accidentally
+# commits it now that it's gone, in case they still have a local copy).
 /jetty
 /jetty-test
 

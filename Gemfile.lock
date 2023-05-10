@@ -24,17 +24,6 @@ GIT
       rdf-rdfa (~> 1.1, >= 1.1.4.1)
       rdf-xsd (~> 1.1)
 
-GIT
-  remote: https://github.com/samvera-deprecated/jettywrapper.git
-  revision: 6b03c21726a83dcecf09d9b20683bfcd63f106d1
-  branch: master
-  specs:
-    jettywrapper (2.0.5)
-      activesupport (>= 3.0.0)
-      childprocess
-      i18n
-      rubyzip (~> 1.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -258,6 +247,11 @@ GEM
     jbuilder (1.5.3)
       activesupport (>= 3.0.0)
       multi_json (>= 1.2.0)
+    jettywrapper (2.0.5)
+      activesupport (>= 3.0.0)
+      childprocess
+      i18n
+      rubyzip (~> 1.0)
     jquery-rails (4.3.1)
       rails-dom-testing (>= 1, < 3)
       railties (>= 4.2.0)
@@ -602,7 +596,6 @@ DEPENDENCIES
   faker
   font-awesome-rails (~> 4.7.0)
   jbuilder (~> 1.2)
-  jettywrapper (>= 1.5.1)!
   jquery-rails (>= 4.0.4)
   jquery-ui-rails
   jquery.fileupload-rails
