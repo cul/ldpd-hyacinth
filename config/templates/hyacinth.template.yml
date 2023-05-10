@@ -1,0 +1,30 @@
+development:
+  solr_url: http://localhost:8983/solr/hyacinth
+  default_pid_generator_namespace: cul
+  digital_object_data_directory: <%= Rails.root.join('tmp', 'development', 'data') %>
+  default_asset_home: <%= Rails.root.join('tmp', 'development', 'asset_home') %>
+  default_service_copy_home: <%= Rails.root.join('tmp', 'development', 'service_copy_home') %>
+  access_copy_directory: <%= Rails.root.join('tmp', 'development', 'access') %>
+  upload_directory: <%= Rails.root.join('tmp', 'development', 'upload') %>
+  csv_export_directory: <%= Rails.root.join('tmp', 'development', 'csv_exports') %>
+  processed_csv_import_directory: <%= Rails.root.join('tmp', 'development', 'processed_csv_imports') %>
+  publish_target_api_key_encryption_key: some_encryption_key
+  treat_fedora_resource_index_updates_as_immediate: false
+  queue_long_jobs: false
+  time_zone: America/New_York
+  solr_commit_after_each_csv_import_row: true
+test:
+  solr_url: http://localhost:9983/solr/hyacinth
+  default_pid_generator_namespace: cul
+  digital_object_data_directory: <%= Rails.root.join('tmp', 'test', 'data') %>
+  default_asset_home: <%= Rails.root.join('tmp', 'test', 'asset_home') %>
+  default_service_copy_home: <%= Rails.root.join('tmp', 'test', 'service_copy_home') %>
+  access_copy_directory: <%= Rails.root.join('tmp', 'test', 'access') %>
+  upload_directory: <%= Rails.root.join('tmp', 'test', 'upload') %>
+  csv_export_directory: <%= Rails.root.join('tmp', 'test', 'csv_exports') %>
+  processed_csv_import_directory: <%= Rails.root.join('tmp', 'test', 'processed_csv_imports') %>
+  publish_target_api_key_encryption_key: some_encryption_key
+  treat_fedora_resource_index_updates_as_immediate: false
+  queue_long_jobs: false
+  time_zone: America/New_York
+  solr_commit_after_each_csv_import_row: true

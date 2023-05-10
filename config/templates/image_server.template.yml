@@ -1,0 +1,8 @@
+development:
+  url: http://localhost:3001
+  username: fake_user
+  password: fake_password
+test:
+  url: http://localhost:4001
+  username: fake_user
+  password: fake_password

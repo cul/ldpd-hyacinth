@@ -1,0 +1,32 @@
+version: "3.9"
+
+# Although a name isn't required for docker to work, we want to explicitly specify it so we know
+# which prefix is used for the volumes that we create.
+name: 'hyacinth2-development'
+
+volumes:
+  redis-data:
+  solr-cores:
+  fedora-data:
+services:
+  redis:
+    build: ./redis
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis-data:/data
+  solr:
+    build: ./solr
+    restart: always
+    ports:
+      - '8983:8983'
+    volumes:
+      - solr-cores:/data
+  fedora:
+    build: ./fedora
+    restart: always
+    ports:
+      - '8080:8080'
+    volumes:
+      - fedora-data:/opt/fedora/data

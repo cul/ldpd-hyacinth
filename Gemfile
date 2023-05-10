@@ -135,6 +135,8 @@ gem 'noid', '>= 0.7.1'
 
 gem 'rubyzip', '>= 1.2.1'
 
+gem 'rainbow', '~> 3.0'
+
 # Gem min versions that are only specified here because of vulnerabilities in earlier versions:
 gem 'rack-protection', '>= 1.5.5'
 gem 'loofah', '>= 2.2.1'

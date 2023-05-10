@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190612145152) do
+ActiveRecord::Schema.define(version: 20230327200000) do
 
   create_table "archived_assignments", force: :cascade do |t|
     t.integer "original_assignment_id",                  null: false
@@ -51,7 +51,7 @@ ActiveRecord::Schema.define(version: 20190612145152) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "require_controlled_vocabulary_manager_permission", default: false, null: false
-    t.boolean  "prohibit_temp_terms", default: false, null: false
+    t.boolean  "prohibit_temp_terms",                              default: false, null: false
   end
 
   create_table "csv_exports", force: :cascade do |t|

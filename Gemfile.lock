@@ -617,6 +617,7 @@ DEPENDENCIES
   rack-protection (>= 1.5.5)
   rails (~> 4.2.11)
   rails-html-sanitizer (>= 1.0.4)
+  rainbow (~> 3.0)
   rake (~> 10.0)
   random-word
   rdf-rdfxml!

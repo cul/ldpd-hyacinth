@@ -1,7 +1,8 @@
 HYACINTH = {
   'publish_enabled' => true, # default
-}.merge!(YAML.load_file("#{Rails.root}/config/hyacinth.yml")[Rails.env])
-EZID = HashWithIndifferentAccess.new(YAML.load_file("#{Rails.root}/config/ezid.yml")[Rails.env])
+}.merge!(Rails.application.config_for(:hyacinth))
+
+EZID = HashWithIndifferentAccess.new(Rails.application.config_for(:ezid))
 
 Hyacinth::Utils::Logger.logger.tap do |logger|
   logger.info '---------------------------'

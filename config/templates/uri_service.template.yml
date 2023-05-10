@@ -1,0 +1,24 @@
+development:
+  local_uri_base: http://id.library.columbia.edu/term/
+  temporary_uri_base: 'temp:'
+  solr:
+    url: http://localhost:8983/solr/uri_service
+    pool_size: 5
+    pool_timeout: 5000
+  database:
+    adapter: sqlite
+    database: db/uri_service_development.sqlite3
+    max_connections: 5
+    pool_timeout: 5000
+test:
+  local_uri_base: http://id.library.columbia.edu/term/
+  temporary_uri_base: 'temp:'
+  solr:
+    url: http://localhost:9983/solr/uri_service
+    pool_size: 5
+    pool_timeout: 5000
+  database:
+    adapter: sqlite
+    database: db/uri_service_test.sqlite3
+    max_connections: 5
+    pool_timeout: 5000

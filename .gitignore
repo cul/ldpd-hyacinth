@@ -22,6 +22,9 @@
 *~
 \#*\#
 
+# Docker ignores (so these can be customized per-development-environment if needed)
+/docker/docker-compose.*.yml
+
 # Ignore config files with sensitive data
 database.yml
 datacite.yml
