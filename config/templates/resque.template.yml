@@ -1,0 +1,4 @@
+development:
+  workers: 1
+test:
+  workers: 1

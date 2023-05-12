@@ -1,0 +1,4 @@
+development:
+  url: http://localhost:8983/solr/hyacinth_hydra
+test:
+  url: http://localhost:9983/solr/hyacinth_hydra

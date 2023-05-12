@@ -1,0 +1,8 @@
+development:
+  host: localhost
+  port: 6379
+  namespace: hyacinth_local_development
+test:
+  host: localhost
+  port: 7379
+  namespace: hyacinth_local_test
