@@ -113,7 +113,7 @@ gem 'solrizer', '>= 3.4.1'
 gem 'wowza-secure_token', '0.0.1'
 
 gem 'best_type', '~> 1.0'
-#gem 'best_type', path: '../best_type'
+# gem 'best_type', path: '../best_type'
 
 # Specify min version for active_fedora_relsint because of a needed fix
 gem 'active_fedora_relsint', '>= 0.4.1'
