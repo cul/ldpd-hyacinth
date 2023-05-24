@@ -82,9 +82,10 @@ module DigitalObject::Persistence
           @fedora_object.save(update_index: false)
         end
       rescue Rubydora::FedoraInvalidRequest, RestClient::RequestTimeout,
-             RestClient::Unauthorized, Errno::EHOSTUNREACH => e
+             RestClient::NotFound, RestClient::Unauthorized, Errno::EHOSTUNREACH => e
         # Rubydora::FedoraInvalidRequest is raised when we run into unexpected Fedora issues
         @errors.add(:fedora_error, e.message)
+        Rails.logger.error("Received error from Fedora while attempting to save #{@fedora_object.pid}: #{e.message}")
         raise ActiveRecord::Rollback # Force rollback (Note: This error won't be passed upward by the transaction.)
       end
 
