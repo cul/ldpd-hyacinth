@@ -56,9 +56,20 @@ bundle exec rake hyacinth:docker:start # Start docker
 rails s -p 3000 # Start the application using rails server
 ```
 
-### A Note About Image Thumbnails:
+### Derivativo derivative generation and image thumbnails:
 
 Hyacinth delegates image generation to a separate, asynchronous image processing application called "Derivativo," which can be found here: https://github.com/cul/ren-derivativo
+
+Note: Hyacinth 2 is only compatible with Derivativo 1.x (NOT Derivativo 2.x).
+
+If you want to run Derivativo locally, you'll need to modify your docker-compose.development.yml so that Fedora can read from your Hyacinth local file storage.  This is necessary because Derivativo 1.x reads 'content' and 'access' datastreams from Fedora and Fedora can't serve the content of these datastreams for files that exist outside of the Fedora docker development container.  Mounting your Hyacinth data directory in the Fedora docker container will fix this.  For example:
+
+```
+volumes:
+  - fedora-data:/opt/fedora/data
+  # Mount the Hyacinth development data directory (read-only) so that Fedora can read Hyacinth-managed files
+  - /Users/elo2112/projects/hyacinth2/tmp/development:/Users/elo2112/projects/hyacinth2/tmp/development:ro
+```
 
 ### Sqlite and UriService/Rails:
 
