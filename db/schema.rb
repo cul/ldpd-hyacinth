@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20230327200000) do
+ActiveRecord::Schema.define(version: 20230814140221) do
 
   create_table "archived_assignments", force: :cascade do |t|
     t.integer "original_assignment_id",                  null: false
@@ -93,8 +93,10 @@ ActiveRecord::Schema.define(version: 20230327200000) do
     t.datetime "updated_at"
     t.datetime "first_published_at"
     t.string   "uuid"
+    t.boolean  "perform_derivative_processing", default: false, null: false
   end
 
+  add_index "digital_object_records", ["perform_derivative_processing"], name: "index_digital_object_records_on_perform_derivative_processing"
   add_index "digital_object_records", ["pid"], name: "index_digital_object_records_on_pid", unique: true
   add_index "digital_object_records", ["uuid"], name: "index_digital_object_records_on_uuid", unique: true
 

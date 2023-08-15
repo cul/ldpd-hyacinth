@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe DigitalObject::Asset, :type => :model do
-
   context "checksum storage and retrieval" do
     let(:digital_object_data) {
       dod = JSON.parse( fixture('sample_digital_object_data/new_asset.json').read )
@@ -169,6 +168,19 @@ RSpec.describe DigitalObject::Asset, :type => :model do
         expect(json['updatedBy']).to eql(test_user)
         expect(json['updatedAt']).to be_present
       end
+    end
+  end
+
+  describe '#perform_derivative_processing' do
+    it 'defaults to true for a new asset' do
+      asset = DigitalObject::Asset.new
+      expect(asset.perform_derivative_processing).to eq(true)
+    end
+
+    it 'can be set and the set value can be retrieved' do
+      asset = DigitalObject::Asset.new
+      asset.perform_derivative_processing = false
+      expect(asset.perform_derivative_processing).to eq(false)
     end
   end
 end

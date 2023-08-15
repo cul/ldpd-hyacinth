@@ -26,6 +26,14 @@ module Hyacinth::DigitalObjects::Downloads
     end
   end
 
+  def download_poster
+    if @digital_object.is_a?(DigitalObject::Asset)
+        send_file @digital_object.poster_location, filename: @digital_object.fedora_object.datastreams['poster'].dsLabel
+    else
+      render text: @digital_object.digital_object_type.display_label.pluralize + ' do not have download URLs.  Try downloading an Asset poster instead.'
+    end
+  end
+
   # download_access_copy offers the ability to stream files using range requests
   # because access copies are sometimes played in a video player
   def download_access_copy

@@ -33,11 +33,16 @@ class DigitalObject::Asset < DigitalObject::Base
     @import_file_import_path = nil
     @import_file_original_file_path = nil
     @access_copy_import_path = nil
+    @poster_import_path = nil
     @service_copy_import_type = nil
     @service_copy_import_path = nil
 
     @restricted_size_image = false
     @restricted_onsite = false
+
+    # We default to `true` for Asset derivative processing,
+    # assuming that all new Assets will require some type of processing.
+    @perform_derivative_processing = true
 
     # Default to 'Unknown' dc_type.  We expect other code to properly set this
     # once the asset file type is known, but this avoid a blank value for dc_type
@@ -54,19 +59,22 @@ class DigitalObject::Asset < DigitalObject::Base
     super
     # For new DigitalObjects, we want to import a file as part of our save operation (assuming that this new object doesn't already have an associated Fedora object with a 'content' datastream)
     do_file_import if self.new_record? && @fedora_object.present? && @fedora_object.datastreams['content'].blank?
-    do_access_copy_import if @access_copy_import_path.present? # && self.access_copy_location.blank?
+    do_access_copy_import if @access_copy_import_path.present?
+    do_poster_import if @poster_import_path.present?
     do_service_copy_import if @service_copy_import_path.present? && self.service_copy_location.blank?
 
     self.dc_type = BestType.dc_type.for_file_name(original_filename) if self.dc_type == 'Unknown' # Attempt to correct dc_type for 'Unknown' dc_type DigitalObjects
   end
 
   def run_after_create_logic
-    # For new Hyacinth assets, queue derivative generation (image derivatives, audio derivatives, video derivatives, fulltext extraction, etc.)
-    generate_derivatives
+    # Nothing right now!
   end
 
   def run_after_save_logic
-    regenerate_image_server_cached_properties!
+    # Conditionally run derivative processing on save
+    RequestDerivativesJob.perform_later(self.pid) if self.perform_derivative_processing
+    # Always update the image service on save, regardless of whether derivatives are ready
+    UpdateImageServiceJob.perform_later(self.pid)
   end
 
   def convert_upload_import_to_internal!
@@ -87,6 +95,12 @@ class DigitalObject::Asset < DigitalObject::Base
     access_ds = @fedora_object.datastreams['access']
     return nil unless access_ds.present?
     Addressable::URI.unencode(access_ds.dsLocation).gsub(/^file:/, '')
+  end
+
+  def poster_location
+    poster_ds = @fedora_object.datastreams['poster']
+    return nil unless poster_ds.present?
+    Addressable::URI.unencode(poster_ds.dsLocation).gsub(/^file:/, '')
   end
 
   def service_copy_location
@@ -118,6 +132,11 @@ class DigitalObject::Asset < DigitalObject::Base
   def access_copy_file_size_in_bytes
     access_ds = @fedora_object.datastreams['access']
     first_relationship_object_for_datastream(access_ds, :extent)
+  end
+
+  def poster_file_size_in_bytes
+    poster_ds = @fedora_object.datastreams['poster']
+    first_relationship_object_for_datastream(poster_ds, :extent)
   end
 
   def service_copy_file_size_in_bytes
@@ -165,8 +184,11 @@ class DigitalObject::Asset < DigitalObject::Base
     # File upload (for NEW assets only, and only if this object's current data validates successfully)
     handle_new_file_upload(digital_object_data['import_file']) if self.new_record? && digital_object_data['import_file'].present?
 
-    # Access copy upload (only if an object doesn't already have an access copy)
+    # Access copy upload
     handle_access_copy_upload(digital_object_data['import_file']) if digital_object_data.fetch('import_file', {})['access_copy_import_path'].present?
+
+    # Poster upload
+    handle_poster_upload(digital_object_data['import_file']) if digital_object_data.fetch('import_file', {})['poster_import_path'].present?
 
     # Service copy upload (only if an object doesn't already have an service copy)
     handle_service_copy_upload(digital_object_data['import_file']) if digital_object_data.fetch('import_file', {})['service_copy_import_path'].present?
@@ -219,6 +241,14 @@ class DigitalObject::Asset < DigitalObject::Base
       # Get access copy import path
       @access_copy_import_path = import_file_data['access_copy_import_path']
       raise 'File paths cannot contain: "..". Please specify a full path.' if @access_copy_import_path.index('/..') || @access_copy_import_path.index('../')
+    end
+  end
+
+  def handle_poster_upload(import_file_data)
+    if import_file_data['poster_import_path'].present?
+      # Get access copy import path
+      @poster_import_path = import_file_data['poster_import_path']
+      raise 'File paths cannot contain: "..". Please specify a full path.' if @poster_import_path.index('/..') || @poster_import_path.index('../')
     end
   end
 
@@ -377,11 +407,13 @@ class DigitalObject::Asset < DigitalObject::Base
     doc['original_filename_sim'] = original_filename
     doc['original_file_path_sim'] = original_file_path
     doc['access_copy_location_sim'] = access_copy_location
+    doc['poster_location_sim'] = poster_location
     doc['service_copy_location_sim'] = service_copy_location
 
     doc['file_size_in_bytes_ltsi'] = file_size_in_bytes&.to_i
     doc['service_copy_file_size_in_bytes_ltsi'] = service_copy_file_size_in_bytes&.to_i
     doc['access_copy_file_size_in_bytes_ltsi'] = access_copy_file_size_in_bytes&.to_i
+    doc['poster_file_size_in_bytes_ltsi'] = poster_file_size_in_bytes&.to_i
     doc
   end
 
@@ -397,6 +429,8 @@ class DigitalObject::Asset < DigitalObject::Base
       original_file_path: original_file_path,
       access_copy_location: access_copy_location,
       access_copy_file_size_in_bytes: access_copy_file_size_in_bytes,
+      poster_location: poster_location,
+      poster_file_size_in_bytes: poster_file_size_in_bytes,
       service_copy_location: service_copy_location,
       service_copy_file_size_in_bytes: service_copy_file_size_in_bytes
     }

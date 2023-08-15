@@ -542,4 +542,17 @@ RSpec.describe DigitalObject::Base, :type => :model do
       expect(item.send :internal_fields).to include(expected_internal_field_values)
     end
   end
+
+  describe '#perform_derivative_processing' do
+    it 'defaults to false for a non-Asset digital object' do
+      item = DigitalObject::Item.new
+      expect(item.perform_derivative_processing).to eq(false)
+    end
+
+    it 'can be set and the set value can be retrieved' do
+      item = DigitalObject::Item.new
+      item.perform_derivative_processing = true
+      expect(item.perform_derivative_processing).to eq(true)
+    end
+  end
 end

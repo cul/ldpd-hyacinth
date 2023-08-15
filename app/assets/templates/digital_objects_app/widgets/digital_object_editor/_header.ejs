@@ -232,6 +232,27 @@
                 <%= digitalObject.getAccessCopyLocation() == null ? 'N/A' : digitalObject.getAccessCopyLocation() %>
               </div>
             </div>
+            <div class="form-group">
+              <label class="col-sm-3">
+                Download Poster:
+              </label>
+              <div class="col-sm-9">
+                <% if(digitalObject.getPosterLocation() == null) { %>
+                  N/A
+                <% } else { %>
+                  <a href="<%= Hyacinth.getLocationOrigin() + '/digital_objects/' + digitalObject.getPid() + '/download_poster' %>" target="_blank"><span class="glyphicon glyphicon-download"></span> Download</a>
+                  (<%= digitalObject.getPosterFileSizeString() %>) [<%= digitalObject.getPosterFileSizeInBytes() %> bytes]
+                  <% } %>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-3">
+                Poster Location:
+              </label>
+              <div class="col-sm-9">
+                <%= digitalObject.getPosterLocation() == null ? 'N/A' : digitalObject.getPosterLocation() %>
+              </div>
+            </div>
 
             <div class="form-group">
               <label class="col-sm-3">
