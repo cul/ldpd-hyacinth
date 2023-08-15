@@ -90,8 +90,8 @@ module DigitalObject::Assets::FileImport
     end
 
     # Clear old rels_int values if present
-    fedora_object.rels_int.clear_relationship(access_ds, :extent)
-    fedora_object.rels_int.clear_relationship(access_ds, :rdf_type)
+    @fedora_object.rels_int.clear_relationship(access_ds, :extent)
+    @fedora_object.rels_int.clear_relationship(access_ds, :rdf_type)
 
     # Set rels_int values
     @fedora_object.rels_int.add_relationship(access_ds, :extent, File.size(@access_copy_import_path).to_s, true) # last param *true* means that this is a literal value rather than a relationship
@@ -131,6 +131,44 @@ module DigitalObject::Assets::FileImport
     # Store service copy file size on datastream
     @fedora_object.rels_int.add_relationship(service_ds, :extent, File.size(@service_copy_import_path).to_s, true) # last param *true* means that this is a literal value rather than a relationship
     @fedora_object.add_datastream(service_ds)
+  end
+
+  def do_poster_import
+    poster_filename = 'poster' + File.extname(@poster_import_path)
+    dest_dir = Hyacinth::Utils::PathUtils.access_directory_path_for_uuid!(self.uuid)
+    dest_file_path = File.join(dest_dir, poster_filename)
+    FileUtils.cp(@poster_import_path, dest_file_path)
+    # Make sure the new file's group permissions are set to rw (using 0660 permissions).
+    # When Derivativo 1.5 is released, this can change to 0640 permissions.
+    FileUtils.chmod(0660, dest_file_path)
+
+    poster_ds_location = filesystem_path_to_ds_location(dest_file_path)
+
+    # Create poster datastream if it doesn't already exist
+    poster_ds = @fedora_object.datastreams['poster']
+    if poster_ds.blank?
+      poster_ds = @fedora_object.create_datastream(
+        ActiveFedora::Datastream,
+        'poster',
+        controlGroup: 'E',
+        mimeType: BestType.mime_type.for_file_name(poster_filename),
+        dsLabel: poster_filename,
+        versionable: true
+      )
+      poster_ds.dsLocation = poster_ds_location
+      @fedora_object.add_datastream(poster_ds)
+    else
+      poster_ds.dsLocation = poster_ds_location
+      poster_ds.mimeType = BestType.mime_type.for_file_name(poster_filename)
+      poster_ds.dsLabel = poster_filename
+    end
+
+    # Clear old rels_int values if present
+    @fedora_object.rels_int.clear_relationship(poster_ds, :extent)
+    @fedora_object.rels_int.clear_relationship(poster_ds, :rdf_type)
+
+    # Set rels_int values
+    @fedora_object.rels_int.add_relationship(poster_ds, :extent, File.size(@poster_import_path).to_s, true) # last param *true* means that this is a literal value rather than a relationship
   end
 
   def copy_and_verify_file(import_file)

@@ -1,7 +1,8 @@
 datastreams_to_asset_file_location_heading_names = {
   'master' => '_asset_data.filesystem_location',
   'service' => '_asset_data.service_copy_location',
-  'access' => '_asset_data.access_copy_location'
+  'access' => '_asset_data.access_copy_location',
+  'poster' => '_asset_data.poster_location',
 }
 
 require 'csv'

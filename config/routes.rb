@@ -59,6 +59,7 @@ Hyacinth::Application.routes.draw do
       get 'data_for_ordered_child_editor'
       get 'download'
       get 'download_access_copy'
+      get 'download_poster'
       get 'download_service_copy'
       get 'transcript', action: 'download_transcript'
       put 'transcript', action: 'update_transcript'
@@ -80,6 +81,7 @@ Hyacinth::Application.routes.draw do
       post 'featured_region', action: 'update_featured_region'
       post 'swap_order_of_first_two_child_assets', action: 'swap_order_of_first_two_child_assets'
       put 'upload_access_copy'
+      put 'upload_poster'
     end
   end
 

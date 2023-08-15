@@ -9,13 +9,14 @@ class DigitalObjectsController < ApplicationController
   include Hyacinth::DigitalObjects::IndexDocument
   include Hyacinth::DigitalObjects::Captions
 
-  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor, :download, :download_access_copy, :download_service_copy,
+  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor,
+    :download, :download_access_copy, :download_poster, :download_service_copy,
     :add_parent, :remove_parents, :mods, :xacml, :media_view, :rotate_image, :swap_order_of_first_two_child_assets,
     :download_transcript, :update_transcript,
     :download_index_document, :update_index_document,
     :download_captions, :update_captions,
     :download_synchronized_transcript, :update_synchronized_transcript, :clear_synchronized_transcript_and_reimport_transcript,
-    :upload_access_copy, :update_featured_region, :query_featured_region
+    :upload_access_copy, :upload_poster, :update_featured_region, :query_featured_region
   ]
   before_action :set_digital_object_for_data_for_editor_action, only: [:data_for_editor]
   before_action :set_contextual_nav_options
@@ -340,6 +341,38 @@ class DigitalObjectsController < ApplicationController
     end
   end
 
+  def upload_poster
+    if @digital_object.is_a?(DigitalObject::Asset)
+      if params[:file].blank?
+        render status: :bad_request, json: { errors: ['Missing multipart/form-data file upload data with name: file'] }
+        return
+      end
+
+      @digital_object_data = {}
+      @digital_object_data['import_file'] = posted_file_data(DigitalObject::Asset::IMPORT_TYPE_POST_DATA)
+      @digital_object.set_digital_object_data({
+        'import_file' => {
+          'poster_import_path' => params[:file].tempfile.path
+        }
+      }, true)
+      @digital_object.updated_by = current_user
+
+      if @digital_object.save
+        RepublishAssetJob.perform_later(@digital_object.pid)
+        render json: { success: true, size: @digital_object.poster_file_size_in_bytes.to_i }
+      else
+        render json: { errors: ['An error occurred during poster upload.'] }
+      end
+    else
+      render json: { errors: ["This action is only allowed for Assets.  This object has type: #{@digital_object.digital_object_type.display_label}"] }
+    end
+  ensure
+    if params[:file].present?
+      params[:file].tempfile.close
+      params[:file].tempfile.unlink
+    end
+  end
+
   private
 
     # Use callbacks to share common setup or constraints between actions.
@@ -374,7 +407,7 @@ class DigitalObjectsController < ApplicationController
       case params[:action]
       when 'index', 'search', 'upload_directory_listing', 'titles_for_pids', 'search_results_to_csv'
         # Do nothing.  These actions are open to all logged-in users.
-      when 'show', 'data_for_editor', 'mods', 'download', 'data_for_ordered_child_editor', 'media_view', 'download_transcript', 'download_index_document', 'download_captions', 'download_synchronized_transcript', 'download_access_copy', 'download_service_copy', 'download'
+      when 'show', 'data_for_editor', 'mods', 'download', 'data_for_ordered_child_editor', 'media_view', 'download_transcript', 'download_index_document', 'download_captions', 'download_synchronized_transcript', 'download_access_copy', 'download_poster', 'download_service_copy', 'download'
         require_project_permission!(@digital_object.project, :read)
       when 'create'
         # Access logic inside action method

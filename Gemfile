@@ -148,9 +148,9 @@ group :development, :test do
   gem 'rspec-rails', '~> 3.3'
   gem 'capybara', '~> 3.32'
   # For testing with chromedriver
-  gem 'selenium-webdriver', '~> 3.142'
+  gem 'selenium-webdriver', '~> 4.0'
   # For automatically updating chromedriver
-  gem 'webdrivers', '~> 4.0', require: false
+  gem 'webdrivers', '~> 5.3.0', require: false
   gem 'factory_girl_rails', '>= 4.4.1'
   gem 'rubocop', '~> 0.58.2', require: false
   gem 'rubocop-rspec', '>= 1.20.1', require: false
