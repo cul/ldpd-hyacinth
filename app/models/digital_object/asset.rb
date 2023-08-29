@@ -92,12 +92,14 @@ class DigitalObject::Asset < DigitalObject::Base
   end
 
   def access_copy_location
+    return nil if @fedora_object.blank?
     access_ds = @fedora_object.datastreams['access']
     return nil unless access_ds.present?
     Addressable::URI.unencode(access_ds.dsLocation).gsub(/^file:/, '')
   end
 
   def poster_location
+    return nil if @fedora_object.blank?
     poster_ds = @fedora_object.datastreams['poster']
     return nil unless poster_ds.present?
     Addressable::URI.unencode(poster_ds.dsLocation).gsub(/^file:/, '')
@@ -237,6 +239,7 @@ class DigitalObject::Asset < DigitalObject::Base
   end
 
   def handle_access_copy_upload(import_file_data)
+    puts import_file_data.inspect
     if import_file_data['access_copy_import_path'].present?
       # Get access copy import path
       @access_copy_import_path = import_file_data['access_copy_import_path']
@@ -263,21 +266,22 @@ class DigitalObject::Asset < DigitalObject::Base
   end
 
   def destroy_and_regenerate_derivatives!
-    generate_derivatives(true)
+    raise 'TODO: Reimplement'
+    #generate_derivatives(true)
   end
 
-  def generate_derivatives(delete_existing_derivatives = false)
-    credentials = ActionController::HttpAuthentication::Token.encode_credentials(IMAGE_SERVER_CONFIG['remote_request_api_key'])
-    resource_url = IMAGE_SERVER_CONFIG['url'] + "/resources/#{pid}"
-    # Destroy old derivatives if requested
-    destroy_response = JSON(RestClient.delete(resource_url, Authorization: credentials)) if delete_existing_derivatives
-    # Queue creation of new derivatives
-    queue_response = JSON(RestClient.put(resource_url, {}, { Authorization: credentials }))
-    queue_response['success'].to_s == 'true' && (!delete_existing_derivatives || destroy_response['success'].to_s == 'true')
-  rescue Errno::ECONNREFUSED, RestClient::InternalServerError, SocketError, RestClient::NotFound, RestClient::Unauthorized
-    Hyacinth::Utils::Logger.logger.error("Tried to regenerate derivatives for #{pid}, but could not connect to image server at: #{IMAGE_SERVER_CONFIG['url']}")
-    false
-  end
+  # def generate_derivatives(delete_existing_derivatives = false)
+  #   credentials = ActionController::HttpAuthentication::Token.encode_credentials(IMAGE_SERVER_CONFIG['remote_request_api_key'])
+  #   resource_url = IMAGE_SERVER_CONFIG['url'] + "/resources/#{pid}"
+  #   # Destroy old derivatives if requested
+  #   destroy_response = JSON(RestClient.delete(resource_url, Authorization: credentials)) if delete_existing_derivatives
+  #   # Queue creation of new derivatives
+  #   queue_response = JSON(RestClient.put(resource_url, {}, { Authorization: credentials }))
+  #   queue_response['success'].to_s == 'true' && (!delete_existing_derivatives || destroy_response['success'].to_s == 'true')
+  # rescue Errno::ECONNREFUSED, RestClient::InternalServerError, SocketError, RestClient::NotFound, RestClient::Unauthorized
+  #   Hyacinth::Utils::Logger.logger.error("Tried to regenerate derivatives for #{pid}, but could not connect to image server at: #{IMAGE_SERVER_CONFIG['url']}")
+  #   false
+  # end
 
   def regenerate_image_server_cached_properties!
     credentials = ActionController::HttpAuthentication::Token.encode_credentials(IMAGE_SERVER_CONFIG['remote_request_api_key'])

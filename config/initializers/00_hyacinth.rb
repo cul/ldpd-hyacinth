@@ -36,3 +36,5 @@ Rails.backtrace_cleaner.remove_silencers! if Rails.env.development?
     raise "Missing required Hyacinth config key: #{required_config_key}"
   end
 end
+
+Rails.application.config.active_job.queue_adapter = :inline unless HYACINTH['queue_long_jobs']

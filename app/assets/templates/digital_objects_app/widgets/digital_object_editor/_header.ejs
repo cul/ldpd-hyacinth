@@ -152,6 +152,15 @@
                 <%= digitalObject.getFirstPublished() || '- Assigned After Publish to Primary Publish Target -' %>
               </div>
             </div>
+
+            <div class="form-group">
+              <label class="col-sm-3">
+                Perform derivative processing on save?
+              </label>
+              <div class="col-sm-9">
+                <%= digitalObject.getPerformDerivativeProcessing() %>
+              </div>
+            </div>
           </div>
 
           <% if ( digitalObject instanceof Hyacinth.DigitalObjectsApp.DigitalObject.Asset) { %>

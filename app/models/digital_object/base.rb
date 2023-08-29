@@ -128,6 +128,9 @@ class DigitalObject::Base
     # Allow setting of first_published_at if the field isn't blank
     @first_published_at = digital_object_data['first_published'] if digital_object_data['first_published'].present?
 
+    # Set perform_derivative_processing field if it has been provided
+    @perform_derivative_processing = digital_object_data['perform_derivative_processing'] if digital_object_data.key?('perform_derivative_processing')
+
     # Project (only one) -- Only allow setting this if this DigitalObject is a new record
     self.project = project_from_data(digital_object_data) if self.new_record?
 

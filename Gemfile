@@ -179,6 +179,6 @@ end
 
 
 # Alternate development webserver
-gem 'puma', group: :development
+gem 'puma', '~> 5.2', group: :development
 # gem 'thin', group: :development
 # gem 'unicorn', group: :development

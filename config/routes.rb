@@ -80,8 +80,6 @@ Hyacinth::Application.routes.draw do
       get 'featured_region', action: 'query_featured_region'
       post 'featured_region', action: 'update_featured_region'
       post 'swap_order_of_first_two_child_assets', action: 'swap_order_of_first_two_child_assets'
-      put 'upload_access_copy'
-      put 'upload_poster'
     end
   end
 

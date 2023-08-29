@@ -16,7 +16,7 @@ class DigitalObjectsController < ApplicationController
     :download_index_document, :update_index_document,
     :download_captions, :update_captions,
     :download_synchronized_transcript, :update_synchronized_transcript, :clear_synchronized_transcript_and_reimport_transcript,
-    :upload_access_copy, :upload_poster, :update_featured_region, :query_featured_region
+    :update_featured_region, :query_featured_region
   ]
   before_action :set_digital_object_for_data_for_editor_action, only: [:data_for_editor]
   before_action :set_contextual_nav_options
@@ -29,12 +29,7 @@ class DigitalObjectsController < ApplicationController
   end
 
   def set_var_digital_object_data_or_render_error
-    if params[:digital_object_data_json].blank?
-      render json: { success: false, errors: ['Missing param digital_object_data_json'] }
-      return false
-    end
-
-    @digital_object_data = convert_digital_object_data_json(params[:digital_object_data_json])
+    @digital_object_data = params[:digital_object_data_json].blank? ? {} : convert_digital_object_data_json(params[:digital_object_data_json])
     true
   end
 
@@ -59,18 +54,6 @@ class DigitalObjectsController < ApplicationController
     rescue Hyacinth::Exceptions::InvalidDigitalObjectTypeError
       return ["Invalid digital_object_type specified: digital_object_type => #{@digital_object_data['digital_object_type'].inspect}"]
     end
-
-    # We need to do two things here for Asset uploads:
-    # 1) Make sure that non-admins can only do uploads via post data or upload directory
-    # 2) Transform @digital_object_data['import_file'] value for post data uploads so that we reference the temp file that Rails created during the upload.
-    return nil unless @digital_object.is_a?(DigitalObject::Asset)
-
-    data_errors = @digital_object.log_import_file_data_errors_for_user(current_user, @digital_object_data['import_file'], params[:file])
-
-    return data_errors if data_errors.present? || @digital_object_data['import_file'].blank?
-
-    # Now we'll transform @digital_object_data['import_file'] if this is a post data upload
-    @digital_object_data['import_file'] = posted_file_data(@digital_object_data['import_file']['import_type'])
     nil
   end
 
@@ -87,7 +70,14 @@ class DigitalObjectsController < ApplicationController
       render json: { success: false, errors: initialization_errors }
       return
     end
-
+    handle_direct_file_uploads!(@digital_object_data)
+    if @digital_object.is_a?(DigitalObject::Asset)
+      master_file_import_errors = validate_master_file_import_params(@digital_object_data, current_user.admin?)
+      if master_file_import_errors.present?
+        render json: { success: false, errors: master_file_import_errors }
+        return
+      end
+    end
     @digital_object.set_digital_object_data(@digital_object_data, false)
 
     @digital_object.created_by = current_user
@@ -109,17 +99,22 @@ class DigitalObjectsController < ApplicationController
   rescue Hyacinth::Exceptions::NotFoundError, Hyacinth::Exceptions::MalformedControlledTermFieldValue => e
     render json: { success: false, errors: [e.message] }
   ensure
-    # If we're dealing with a file upload (which isn't always the case), make sure to close the file when we're done
-    # Immediately unlink the uploaded file.  This is recommended for POSIX systems,
-    # but the code below should still work on non-POSIX systems (like Windows).
-    # Why do we do this?  Cleans up temp files as quickly as possible so they
-    # don't wait around to be garbage collected.  With lots of file uploads,
-    # accumulation of too many temp files could be problematic.
-    # Recommended here: http://www.ruby-doc.org/stdlib-1.9.3/libdoc/tempfile/rdoc/Tempfile.html (See: "Unlink after creation")
-    # And here: http://docs.ruby-lang.org/en/2.1.0/Tempfile.html (See: "Unlink-before-close")
-    if params[:file].present?
-      params[:file].tempfile.close
-      params[:file].tempfile.unlink
+    close_and_unlink_direct_file_uploads
+  end
+
+  def validate_master_file_import_params(digital_object_data, is_admin)
+    data_errors = []
+    if digital_object_data['import_file'].blank?
+      data_errors << 'Missing digital_object_data_json[import_file] for new Asset'
+      return data_errors
+    end
+    import_type = digital_object_data['import_file']['import_type']
+    import_file = digital_object_data['import_file']['import_file']
+    if import_type == DigitalObject::Asset::IMPORT_TYPE_POST_DATA && !import_file
+      data_errors << "An attached file is required in the request data for imports of type: #{import_type}"
+    end
+    if import_type == DigitalObject::Asset::IMPORT_TYPE_EXTERNAL && !is_admin
+      data_errors << "Only admins can perform external file imports."
     end
   end
 
@@ -137,8 +132,8 @@ class DigitalObjectsController < ApplicationController
   def update
     # Default behavior is to merge dynamic fields by default, unless told not to.
     merge_dynamic_fields = params['merge_dynamic_fields'].to_s != 'false'
-
     begin
+      handle_direct_file_uploads!(@digital_object_data) if @digital_object.is_a?(DigitalObject::Asset)
       @digital_object.set_digital_object_data(@digital_object_data, merge_dynamic_fields)
     rescue Hyacinth::Exceptions::NotFoundError, Hyacinth::Exceptions::MalformedControlledTermFieldValue => e
       render json: { success: false, errors: [e.message] }
@@ -152,14 +147,25 @@ class DigitalObjectsController < ApplicationController
     handle_publish_param(@digital_object, params)
     handle_mint_reserved_doi_param(@digital_object, params)
 
+    previous_access_copy_location = @digital_object.access_copy_location
+    previous_poster_location = @digital_object.poster_location
+
     if test_mode ? @digital_object.valid? : @digital_object.save
       render_json = { success: true, pid: @digital_object.pid }.merge(test_mode ? { 'test' => true } : {})
+
+      # Whenever an access copy or poster are added, that triggers a republish so that DLC
+      # can reindex the object with the access/poster info.
+      access_copy_changed = previous_access_copy_location != @digital_object.access_copy_location
+      poster_changed = previous_poster_location != @digital_object.poster_location
+      RepublishAssetJob.perform_later(@digital_object.pid) if access_copy_changed || poster_changed
     else
       render_json = { errors: @digital_object.errors }
     end
     respond_to do |format|
       format.json { render json: render_json }
     end
+  ensure
+    close_and_unlink_direct_file_uploads
   end
 
   # PUT /digital_objects/1/undelete.json
@@ -309,69 +315,63 @@ class DigitalObjectsController < ApplicationController
     end
   end
 
-  def upload_access_copy
-    if @digital_object.is_a?(DigitalObject::Asset)
-      if params[:file].blank?
-        render status: :bad_request, json: { errors: ['Missing multipart/form-data file upload data with name: file'] }
-        return
-      end
+  # def upload_access_copy
+  #   if @digital_object.is_a?(DigitalObject::Asset)
+  #     if params[:file].blank?
+  #       render status: :bad_request, json: { errors: ['Missing multipart/form-data file upload data with name: file'] }
+  #       return
+  #     end
 
-      @digital_object_data = {}
-      @digital_object_data['import_file'] = posted_file_data(DigitalObject::Asset::IMPORT_TYPE_POST_DATA)
-      @digital_object.set_digital_object_data({
-        'import_file' => {
-          'access_copy_import_path' => params[:file].tempfile.path
-        }
-      }, true)
-      @digital_object.updated_by = current_user
+  #     @digital_object_data = {}
+  #     @digital_object_data['import_file'] = posted_file_data(DigitalObject::Asset::IMPORT_TYPE_POST_DATA)
+  #     @digital_object.set_digital_object_data({
+  #       'import_file' => {
+  #         'access_copy_import_path' => params[:file].tempfile.path
+  #       }
+  #     }, true)
+  #     @digital_object.updated_by = current_user
 
-      if @digital_object.save
-        RepublishAssetJob.perform_later(@digital_object.pid)
-        render json: { success: true, size: @digital_object.access_copy_file_size_in_bytes.to_i }
-      else
-        render json: { errors: ['An error occurred during access copy upload.'] }
-      end
-    else
-      render json: { errors: ["This action is only allowed for Assets.  This object has type: #{@digital_object.digital_object_type.display_label}"] }
-    end
-  ensure
-    if params[:file].present?
-      params[:file].tempfile.close
-      params[:file].tempfile.unlink
-    end
-  end
+  #     if @digital_object.save
+  #       RepublishAssetJob.perform_later(@digital_object.pid)
+  #       render json: { success: true, size: @digital_object.access_copy_file_size_in_bytes.to_i }
+  #     else
+  #       render json: { errors: ['An error occurred during access copy upload.'] }
+  #     end
+  #   else
+  #     render json: { errors: ["This action is only allowed for Assets.  This object has type: #{@digital_object.digital_object_type.display_label}"] }
+  #   end
+  # ensure
+  #   close_and_unlink_direct_file_uploads
+  # end
 
-  def upload_poster
-    if @digital_object.is_a?(DigitalObject::Asset)
-      if params[:file].blank?
-        render status: :bad_request, json: { errors: ['Missing multipart/form-data file upload data with name: file'] }
-        return
-      end
+  # def upload_poster
+  #   if @digital_object.is_a?(DigitalObject::Asset)
+  #     if params[:file].blank?
+  #       render status: :bad_request, json: { errors: ['Missing multipart/form-data file upload data with name: file'] }
+  #       return
+  #     end
 
-      @digital_object_data = {}
-      @digital_object_data['import_file'] = posted_file_data(DigitalObject::Asset::IMPORT_TYPE_POST_DATA)
-      @digital_object.set_digital_object_data({
-        'import_file' => {
-          'poster_import_path' => params[:file].tempfile.path
-        }
-      }, true)
-      @digital_object.updated_by = current_user
+  #     @digital_object_data = {}
+  #     @digital_object_data['import_file'] = posted_file_data(DigitalObject::Asset::IMPORT_TYPE_POST_DATA)
+  #     @digital_object.set_digital_object_data({
+  #       'import_file' => {
+  #         'poster_import_path' => params[:file].tempfile.path
+  #       }
+  #     }, true)
+  #     @digital_object.updated_by = current_user
 
-      if @digital_object.save
-        RepublishAssetJob.perform_later(@digital_object.pid)
-        render json: { success: true, size: @digital_object.poster_file_size_in_bytes.to_i }
-      else
-        render json: { errors: ['An error occurred during poster upload.'] }
-      end
-    else
-      render json: { errors: ["This action is only allowed for Assets.  This object has type: #{@digital_object.digital_object_type.display_label}"] }
-    end
-  ensure
-    if params[:file].present?
-      params[:file].tempfile.close
-      params[:file].tempfile.unlink
-    end
-  end
+  #     if @digital_object.save
+  #       RepublishAssetJob.perform_later(@digital_object.pid)
+  #       render json: { success: true, size: @digital_object.poster_file_size_in_bytes.to_i }
+  #     else
+  #       render json: { errors: ['An error occurred during poster upload.'] }
+  #     end
+  #   else
+  #     render json: { errors: ["This action is only allowed for Assets.  This object has type: #{@digital_object.digital_object_type.display_label}"] }
+  #   end
+  # ensure
+  #   close_and_unlink_direct_file_uploads
+  # end
 
   private
 
@@ -415,7 +415,7 @@ class DigitalObjectsController < ApplicationController
         associated_project = Project.find_by(project_find_criteria)
         publish_requirements << :create
         require_project_permission!(associated_project, publish_requirements)
-      when 'update', 'reorder_child_digital_objects', 'add_parent', 'remove_parents', 'rotate_image', 'swap_order_of_first_two_child_assets', 'update_transcript', 'update_index_document', 'update_captions', 'update_synchronized_transcript', 'clear_synchronized_transcript_and_reimport_transcript', 'upload_access_copy'
+      when 'update', 'reorder_child_digital_objects', 'add_parent', 'remove_parents', 'rotate_image', 'swap_order_of_first_two_child_assets', 'update_transcript', 'update_index_document', 'update_captions', 'update_synchronized_transcript', 'clear_synchronized_transcript_and_reimport_transcript',
         require_project_permission!(@digital_object.project, :update)
         # Also require publish permission if params[:publish] is set to true (note: applies to the 'update' action)
         publish_requirements << :update
@@ -441,5 +441,46 @@ class DigitalObjectsController < ApplicationController
 
     def handle_mint_reserved_doi_param(digital_object, prms)
       digital_object.mint_reserved_doi_before_save = (prms['mint_reserved_doi'].to_s == 'true') if prms.key?('mint_reserved_doi')
+    end
+
+    # Modifies the given digital_object_data object, setting it up for file uploads if the
+    # appropriate file data is in the request params.
+    def handle_direct_file_uploads!(digital_object_data)
+      direct_upload_file_param_names = [:file, :access_copy_file, :poster_file]
+      return unless direct_upload_file_param_names.find { |param_name| params[param_name].present? }
+
+      digital_object_data['import_file'] ||= {}
+      import_file_data = digital_object_data['import_file']
+      direct_upload_file_param_names.each do |file_param_name|
+        next unless params[file_param_name].present?
+
+        upload = params[file_param_name]
+        if file_param_name == :file
+          import_file_data['import_path'] = upload.tempfile.path
+          import_file_data['import_type'] = DigitalObject::Asset::IMPORT_TYPE_POST_DATA
+          import_file_data['original_file_path'] = upload.original_filename
+        else
+          import_file_data["#{file_param_name.to_s.gsub(/_file$/, '')}_import_path"] = params[file_param_name].tempfile.path
+        end
+      end
+    end
+
+    def close_and_unlink_direct_file_uploads
+      # If we're dealing with any file uploads (which isn't always the case), make sure to close the
+      # files when we're done.
+      # Immediately unlink the uploaded files.  This is recommended for POSIX systems,
+      # but the code below should still work on non-POSIX systems (like Windows).
+      # Why do we do this?  Cleans up temp files as quickly as possible so they
+      # don't wait around to be garbage collected.  With lots of file uploads,
+      # accumulation of too many temp files could be problematic.
+      # Recommended here: http://www.ruby-doc.org/stdlib-1.9.3/libdoc/tempfile/rdoc/Tempfile.html (See: "Unlink after creation")
+      # And here: http://docs.ruby-lang.org/en/2.1.0/Tempfile.html (See: "Unlink-before-close")
+      direct_upload_file_param_names = [:file, :access_copy_file, :poster_file]
+      direct_upload_file_param_names.each do |file_param_name|
+        if params[file_param_name].present?
+          params[file_param_name].tempfile.close
+          params[file_param_name].tempfile.unlink
+        end
+      end
     end
 end

@@ -66,12 +66,15 @@ Metrics/CyclomaticComplexity:
     - 'lib/hyacinth/xml_generator/element.rb'
     - 'app/jobs/process_digital_object_import_job.rb'
     - 'app/models/concerns/digital_object/persistence.rb'
+    - 'app/controllers/digital_objects_controller.rb'
+    - 'app/models/digital_object/base.rb'
 
 Metrics/PerceivedComplexity:
   Exclude:
     - 'lib/hyacinth/xml_generator/element.rb'
     - 'app/jobs/process_digital_object_import_job.rb'
     - 'app/models/concerns/digital_object/persistence.rb'
+    - 'app/controllers/digital_objects_controller.rb'
 
 Metrics/MethodLength:
   Enabled: false
