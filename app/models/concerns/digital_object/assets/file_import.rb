@@ -38,7 +38,7 @@ module DigitalObject::Assets::FileImport
     # Line below will create paths like "file:/this%23_and_%26_also_something%20great/here.txt"
     # We DO NOT want a double slash at the beginnings of these paths.
     # We need to manually escape ampersands (%26) and pound signs (%23) because these are not always handled by Addressable::URI.encode()
-    ds_location = filesystem_path_to_ds_location(path_to_final_save_location)
+    ds_location = Hyacinth::Utils::PathUtils.filesystem_path_to_ds_location(path_to_final_save_location)
     content_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, 'content', controlGroup: 'E', mimeType: BestType.mime_type.for_file_name(original_filename), dsLabel: original_filename, versionable: true)
     content_ds.dsLocation = ds_location
     @fedora_object.datastreams["DC"].dc_source = path_to_final_save_location
@@ -68,7 +68,7 @@ module DigitalObject::Assets::FileImport
     # When Derivativo 1.5 is released, this can change to 0640 permissions.
     FileUtils.chmod(0660, dest_file_path)
 
-    access_ds_location = filesystem_path_to_ds_location(dest_file_path)
+    access_ds_location = Hyacinth::Utils::PathUtils.filesystem_path_to_ds_location(dest_file_path)
 
     # Create access datastream if it doesn't already exist
     access_ds = @fedora_object.datastreams['access']
@@ -99,14 +99,6 @@ module DigitalObject::Assets::FileImport
     @fedora_object.rels_int.add_relationship(access_ds, :rdf_type, "http://pcdm.org/use#ServiceFile") # last param *true* means that this is a literal value rather than a relationship
   end
 
-  def filesystem_path_to_ds_location(path)
-    Addressable::URI.encode('file:' + path).gsub('&', '%26').gsub('#', '%23')
-  end
-
-  def self.ds_location_to_filesystem_path(ds_location)
-    Addressable::URI.unencode(ds_location).gsub(/^file:/, '')
-  end
-
   def do_service_copy_import
     service_filename = File.basename(@service_copy_import_path)
 
@@ -117,10 +109,10 @@ module DigitalObject::Assets::FileImport
       FileUtils.mkdir_p(dest_dir)
       dest_file_path = File.join(dest_dir, 'service' + File.extname(service_filename))
       FileUtils.cp(@service_copy_import_path, dest_file_path)
-      service_ds_location = filesystem_path_to_ds_location(dest_file_path)
+      service_ds_location = Hyacinth::Utils::PathUtils.filesystem_path_to_ds_location(dest_file_path)
     when DigitalObject::Asset::IMPORT_TYPE_EXTERNAL
       # track file where it is
-      service_ds_location = filesystem_path_to_ds_location(@service_copy_import_path)
+      service_ds_location = Hyacinth::Utils::PathUtils.filesystem_path_to_ds_location(@service_copy_import_path)
     else
       raise "Currently unimplemented import mechanism for service copy: #{@service_copy_import_type}"
     end
@@ -142,7 +134,7 @@ module DigitalObject::Assets::FileImport
     # When Derivativo 1.5 is released, this can change to 0640 permissions.
     FileUtils.chmod(0660, dest_file_path)
 
-    poster_ds_location = filesystem_path_to_ds_location(dest_file_path)
+    poster_ds_location = Hyacinth::Utils::PathUtils.filesystem_path_to_ds_location(dest_file_path)
 
     # Create poster datastream if it doesn't already exist
     poster_ds = @fedora_object.datastreams['poster']

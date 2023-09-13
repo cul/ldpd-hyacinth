@@ -34,82 +34,51 @@ module Hyacinth::DigitalObjects::Downloads
     end
   end
 
-  # download_access_copy offers the ability to stream files using range requests
-  # because access copies are sometimes played in a video player
+  # The download_access_copy action offers the ability to stream files using range requests (for progressive
+  # download) because access copies are sometimes played in a video player.
   def download_access_copy
     if @digital_object.is_a?(DigitalObject::Asset)
-      # Support range requests for progressive download
+      access_ds = @digital_object.fedora_object&.datastreams&.fetch('access')
+      raise Hyacinth::Exceptions::NotFoundError, "No access copy location available for #{@digital_object.pid}" unless access_ds.dsLocation
+      access_file_path = Hyacinth::Utils::PathUtils.ds_location_to_filesystem_path(access_ds.dsLocation)
+      raise Hyacinth::Exceptions::NotFoundError, "Access copy file not found at expected location for #{@digital_object.pid}" unless File.exist?(access_file_path)
 
+      label = access_ds.dsLabel.present? ? access_ds.dsLabel.split('/').last : 'file' # Use dsLabel as download label if available
+      response.headers["Content-Disposition"] = label_to_content_disposition(label, (params['download'].to_s == 'true'))
+      response.headers["Content-Type"] = BestType.mime_type.for_file_name(access_file_path)
       response.headers["Last-Modified"] = Time.now.httpdate
-      ds_parms = { pid: @digital_object.pid, dsid: 'access' }
 
-      # Get connection to Fedora
-      repo = ActiveFedora::Base.connection_for_pid(ds_parms[:pid])
-      ds = Cul::Hydra::Fedora.ds_for_opts(ds_parms)
+      file_size = File.size(access_file_path)
 
-      # Get size, label and mimetype for this datastream
-      size = params[:file_size] || params['file_size']
-      size ||= ds.dsSize
-      if size.blank? || size == 0
-        # Get size of this datastream if we haven't already.  Note: dsSize property won't work for external datastreams
-        # From: https://github.com/samvera/rubydora/blob/1e6980aa1ae605677a5ab43df991578695393d86/lib/rubydora/datastream.rb#L423-L428
-        repo.datastream_dissemination(ds_parms.merge(method: :head)) do |resp|
-          if content_length = resp['Content-Length']
-            size = content_length.to_i
-          else
-            size = resp.body.length
-          end
-        end
-      end
-      label = ds.dsLabel.present? ? ds.dsLabel.split('/').last : 'file'
-      if label
-        response.headers["Content-Disposition"] = label_to_content_disposition(label, (params['download'].to_s == 'true'))
-      end
-      response.headers["Content-Type"] = ds.mimeType
-
-      # Handle range requests
+      # Handle range requests, for progressive download
       response.headers['Accept-Ranges'] = 'bytes' # Inform client that we accept range requests
-      length = size # no length specified by default
-      content_headers_for_fedora = {}
-      success = 200
+      from = 0
+      to = file_size - 1
+      success_status = :ok
       if request.headers['Range'].present?
         # Example Range header value: "bytes=18022400-37581888"
         range_matchdata = request.headers['Range'].match(/bytes=(\d+)-(\d+)*/)
         if range_matchdata
           from = range_matchdata.captures[0].to_i
-          to = size - 1 # position for full size assumed by default
           if range_matchdata.captures.length > 1 && range_matchdata.captures[1].present?
             to = range_matchdata.captures[1].to_i
           end
           length = (to - from) + 1 # Adding 1 because to and from are zero-indexed
-          success = 206
-          content_headers_for_fedora = { 'Range' => "bytes=#{from}-#{to}" }
-          response.headers["Content-Range"] = "bytes #{from}-#{to}/#{size}"
-          response.headers["Cache-Control"] = 'no-cache'
+          success_status = :partial_content # override success status because we will only be returning partial content (i.e. a range)
+          response.headers["Content-Range"] = "bytes #{from}-#{to}/#{file_size}"
+          response.headers["Cache-Control"] = 'no-cache' # don't cache range requests
         end
       end
 
-      response.headers["Content-Length"] = length.to_s
-      response.status = success
-
-      # Rails 4 Streaming method
-      repo.datastream_dissemination(ds_parms.merge(headers: content_headers_for_fedora)) do |resp|
-        begin
-          total = 0
-          resp.read_body do |seg|
-            total += seg.length
-            response.stream.write seg
-          end
-        ensure
-          response.stream.close
-        end
-      end
-
-      # TODO: For externally managed files, eventually do a file read instead of a fedora stream
-      # response.stream.write IO.binread(@digital_object.filesystem_location, length, from)
+      content_length = to - from + 1
+      response.headers['Content-Length'] = content_length
+      response.status = success_status
+      response.stream.write IO.binread(access_file_path, content_length, from)
     else
       render text: @digital_object.digital_object_type.display_label.pluralize + ' do not have download URLs.  Try downloading an Asset instead.'
     end
+  ensure
+    response.stream.close
   end
 
   private

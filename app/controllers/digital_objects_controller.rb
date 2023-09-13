@@ -9,6 +9,8 @@ class DigitalObjectsController < ApplicationController
   include Hyacinth::DigitalObjects::IndexDocument
   include Hyacinth::DigitalObjects::Captions
 
+  DIRECT_UPLOAD_FILE_PARAM_NAMES = [:file, :access_copy_file, :poster_file]
+
   before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor,
     :download, :download_access_copy, :download_poster, :download_service_copy,
     :add_parent, :remove_parents, :mods, :xacml, :media_view, :rotate_image, :swap_order_of_first_two_child_assets,
@@ -147,17 +149,13 @@ class DigitalObjectsController < ApplicationController
     handle_publish_param(@digital_object, params)
     handle_mint_reserved_doi_param(@digital_object, params)
 
-    previous_access_copy_location = @digital_object.access_copy_location
-    previous_poster_location = @digital_object.poster_location
+    # Whenever a direct file upload occurs, that triggers a republish so that DLC
+    # can reindex the object with the access/poster info.
+    republish_after_save = @digital_object.is_a?(DigitalObject::Asset) && request_includes_direct_upload_file_param?
 
     if test_mode ? @digital_object.valid? : @digital_object.save
       render_json = { success: true, pid: @digital_object.pid }.merge(test_mode ? { 'test' => true } : {})
-
-      # Whenever an access copy or poster are added, that triggers a republish so that DLC
-      # can reindex the object with the access/poster info.
-      access_copy_changed = previous_access_copy_location != @digital_object.access_copy_location
-      poster_changed = previous_poster_location != @digital_object.poster_location
-      RepublishAssetJob.perform_later(@digital_object.pid) if access_copy_changed || poster_changed
+      RepublishAssetJob.perform_later(@digital_object.pid) if republish_after_save
     else
       render_json = { errors: @digital_object.errors }
     end
@@ -443,15 +441,18 @@ class DigitalObjectsController < ApplicationController
       digital_object.mint_reserved_doi_before_save = (prms['mint_reserved_doi'].to_s == 'true') if prms.key?('mint_reserved_doi')
     end
 
+    def request_includes_direct_upload_file_param?
+      DIRECT_UPLOAD_FILE_PARAM_NAMES.find { |param_name| params[param_name].present? }
+    end
+
     # Modifies the given digital_object_data object, setting it up for file uploads if the
     # appropriate file data is in the request params.
     def handle_direct_file_uploads!(digital_object_data)
-      direct_upload_file_param_names = [:file, :access_copy_file, :poster_file]
-      return unless direct_upload_file_param_names.find { |param_name| params[param_name].present? }
+      return unless request_includes_direct_upload_file_param?
 
       digital_object_data['import_file'] ||= {}
       import_file_data = digital_object_data['import_file']
-      direct_upload_file_param_names.each do |file_param_name|
+      DIRECT_UPLOAD_FILE_PARAM_NAMES.each do |file_param_name|
         next unless params[file_param_name].present?
 
         upload = params[file_param_name]
@@ -475,8 +476,7 @@ class DigitalObjectsController < ApplicationController
       # accumulation of too many temp files could be problematic.
       # Recommended here: http://www.ruby-doc.org/stdlib-1.9.3/libdoc/tempfile/rdoc/Tempfile.html (See: "Unlink after creation")
       # And here: http://docs.ruby-lang.org/en/2.1.0/Tempfile.html (See: "Unlink-before-close")
-      direct_upload_file_param_names = [:file, :access_copy_file, :poster_file]
-      direct_upload_file_param_names.each do |file_param_name|
+      DIRECT_UPLOAD_FILE_PARAM_NAMES.each do |file_param_name|
         if params[file_param_name].present?
           params[file_param_name].tempfile.close
           params[file_param_name].tempfile.unlink

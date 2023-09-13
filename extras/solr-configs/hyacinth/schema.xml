@@ -172,6 +172,9 @@
     <dynamicField name="*_llsi" type="location" stored="true" indexed="true" multiValued="false"/>
     <dynamicField name="*_llsim" type="location" stored="true" indexed="true" multiValued="true"/>
 
+    <!-- basic text storage field -->
+    <dynamicField name="*_tenas" type="text_no_analysis" stored="true" indexed="false" multiValued="false" large="true" />
+
     <!-- you must define copyField source and dest fields explicity or schemaBrowser doesn't work -->
     <field name="all_text_timv" type="text" stored="false" indexed="true" multiValued="true" termVectors="true" termPositions="true" termOffsets="true"/>
 
@@ -376,6 +379,13 @@
         <filter class="solr.ICUFoldingFilterFactory"/>  <!-- NFKC, case folding, diacritics removed -->
         <filter class="solr.TrimFilterFactory"/>
       </analyzer>
+    </fieldType>
+
+    <fieldType name="text_no_analysis" class="solr.TextField" omitNorms="true" omitTermFreqAndPositions="true">
+      <!--
+        Note that this fieldType has no <analyzer> section.  It should only be used when you want
+        to store and retrieve text, but never search on that text.
+      -->
     </fieldType>
 
     <!-- A text field that only splits on whitespace for exact matching of words -->

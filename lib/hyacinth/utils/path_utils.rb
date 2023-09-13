@@ -34,4 +34,14 @@ class Hyacinth::Utils::PathUtils
     FileUtils.mkdir_p(dest_dir, mode: 0770)
     dest_dir
   end
+
+  # Converts a file path to a Fedora datastream dsLocation value
+  def self.filesystem_path_to_ds_location(path)
+    Addressable::URI.encode('file:' + path).gsub('&', '%26').gsub('#', '%23')
+  end
+
+  # Converts a Fedora datastream dsLocation value to a file path
+  def self.ds_location_to_filesystem_path(ds_location)
+    Addressable::URI.unencode(ds_location).gsub(/^file:/, '')
+  end
 end

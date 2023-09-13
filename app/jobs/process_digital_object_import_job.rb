@@ -7,7 +7,6 @@ class ProcessDigitalObjectImportJob
     # Retrieve DigitalObjectImport instance from table
     # If we encounter an error (e.g. Mysql2::Error), wait and try again.
     digital_object_import = find_digital_object_import_with_retry(digital_object_import_id)
-
     # If prerequisite check fails, return immediately.
     # Re-queueing or mark-as-failure logic is handled by the prerequisite_row_check method.
     return unless prerequisite_row_check(digital_object_import)
@@ -16,7 +15,6 @@ class ProcessDigitalObjectImportJob
     digital_object_data = JSON.parse(digital_object_import.digital_object_data)
 
     digital_object = find_or_create_digital_object(digital_object_data, user, digital_object_import)
-
     result = assign_data(digital_object, digital_object_data, digital_object_import)
 
     3.times do

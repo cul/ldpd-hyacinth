@@ -32,6 +32,7 @@ RSpec.describe DigitalObject::Asset, :type => :model do
       allow(asset).to receive(:set_data_to_sources).and_return(nil)
       allow_any_instance_of(DigitalObjectRecord).to receive(:save!).and_return(true)
       allow_any_instance_of(GenericResource).to receive(:save).and_return(true)
+      allow_any_instance_of(UpdateImageServiceJob).to receive(:perform)
       allow(asset).to receive(:update_index).and_return(nil)
       asset.set_digital_object_data(digital_object_data, false)
       asset.save

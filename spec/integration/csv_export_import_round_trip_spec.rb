@@ -134,7 +134,6 @@ describe "CSV Export-Import Round Trip" do
       ExportSearchResultsToCsvJob.perform(second_csv_export.id)
       second_csv_export.reload # Reload the ActiveRecord object, getting the latest data in the DB (so we have the path to the csv file)
       path_to_second_csv_file = second_csv_export.path_to_csv_file
-
       expect(CSV.read(path_to_first_csv_file)).to eq(CSV.read(path_to_second_csv_file))
     end
   end

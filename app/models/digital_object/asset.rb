@@ -239,7 +239,6 @@ class DigitalObject::Asset < DigitalObject::Base
   end
 
   def handle_access_copy_upload(import_file_data)
-    puts import_file_data.inspect
     if import_file_data['access_copy_import_path'].present?
       # Get access copy import path
       @access_copy_import_path = import_file_data['access_copy_import_path']

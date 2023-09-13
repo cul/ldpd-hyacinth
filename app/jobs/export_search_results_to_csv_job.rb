@@ -9,6 +9,7 @@ class ExportSearchResultsToCsvJob
     '_import_file.access_copy_import_path',
     '_import_file.poster_import_path',
     '_restrictions.restricted_size_image', '_restrictions.restricted_onsite',
+    '_perform_derivative_processing',
     /^_publish_target_data\.(string_key|publish_url|api_key|representative_image_pid|short_title|short_description|full_description|restricted|slug|site_url)$/,
     /^_parent_digital_objects-\d+\.(identifier|pid)$/, /^_identifiers-\d+$/, /^_project\.(string_key|pid)$/,
     /^_publish_targets-\d+\.(string_key|pid)$/, /^_parent_digital_objects-\d+\.(identifier|pid)$/
