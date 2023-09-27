@@ -22,9 +22,9 @@ class RequestDerivativesJob < ActiveJob::Base
 
     if requested_derivatives.present?
       response = RestClient.post(
-        IMAGE_SERVER_CONFIG['url'] + '/api/v1/derivative_requests.json',
+        "#{DERIVATIVE_SERVER_CONFIG['url']}/api/v1/derivative_requests.json",
         request_payload,
-        Authorization: "Bearer #{IMAGE_SERVER_CONFIG['token']}"
+        Authorization: "Bearer #{DERIVATIVE_SERVER_CONFIG['token']}"
       )
     end
   rescue RestClient::BadRequest => e

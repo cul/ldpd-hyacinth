@@ -4,6 +4,9 @@ HYACINTH = {
 
 EZID = HashWithIndifferentAccess.new(Rails.application.config_for(:ezid))
 
+IMAGE_SERVER_CONFIG = YAML.load_file("#{Rails.root}/config/image_server.yml")[Rails.env]
+DERIVATIVE_SERVER_CONFIG = YAML.load_file("#{Rails.root}/config/derivative_server.yml")[Rails.env]
+
 Hyacinth::Utils::Logger.logger.tap do |logger|
   logger.info '---------------------------'
   logger.info 'Initializing Hyacinth in environment: ' + Rails.env

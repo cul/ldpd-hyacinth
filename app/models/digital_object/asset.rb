@@ -282,14 +282,14 @@ class DigitalObject::Asset < DigitalObject::Base
   #   false
   # end
 
-  def regenerate_image_server_cached_properties!
-    credentials = ActionController::HttpAuthentication::Token.encode_credentials(IMAGE_SERVER_CONFIG['remote_request_api_key'])
-    response = JSON(RestClient.delete(IMAGE_SERVER_CONFIG['url'] + "/resources/#{pid}/destroy_cachable_properties", Authorization: credentials))
-    response['success'].to_s == 'true'
-  rescue Errno::ECONNREFUSED, RestClient::InternalServerError, SocketError, RestClient::NotFound, RestClient::Unauthorized
-    Hyacinth::Utils::Logger.logger.error("Tried to regenerate cached image properties for #{pid}, but could not connect to image server at: #{IMAGE_SERVER_CONFIG['url']}")
-    false
-  end
+  # def regenerate_image_server_cached_properties!
+  #   credentials = ActionController::HttpAuthentication::Token.encode_credentials(IMAGE_SERVER_CONFIG['remote_request_api_key'])
+  #   response = JSON(RestClient.delete(IMAGE_SERVER_CONFIG['url'] + "/resources/#{pid}/destroy_cachable_properties", Authorization: credentials))
+  #   response['success'].to_s == 'true'
+  # rescue Errno::ECONNREFUSED, RestClient::InternalServerError, SocketError, RestClient::NotFound, RestClient::Unauthorized
+  #   Hyacinth::Utils::Logger.logger.error("Tried to regenerate cached image properties for #{pid}, but could not connect to image server at: #{IMAGE_SERVER_CONFIG['url']}")
+  #   false
+  # end
 
   def save_datastreams
     super
