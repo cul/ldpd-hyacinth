@@ -6,6 +6,7 @@ class RequestDerivativesJob < ActiveJob::Base
     return unless eligible_asset?(asset)
 
     requested_derivatives = required_derivatives_for_asset(asset)
+    return if requested_derivatives.empty?
 
     request_payload = {
       derivative_request: {
@@ -49,9 +50,12 @@ class RequestDerivativesJob < ActiveJob::Base
 
   def required_derivatives_for_asset(asset)
     required_derivatives = []
+    # We attempt to generate an access copy for all asset types
     required_derivatives << 'access' if asset.access_copy_location.nil?
-    # Note: Image resources do not need a poster image
+    # Note: Image assets do not need a poster image
     required_derivatives << 'poster' if asset.poster_location.nil? && asset.dc_type != 'StillImage'
+    # Get featured region
+    required_derivatives << 'featured_region' if asset.featured_region.nil?
     required_derivatives
   end
 end

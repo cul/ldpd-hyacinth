@@ -194,6 +194,9 @@ class DigitalObject::Asset < DigitalObject::Base
 
     # Service copy upload (only if an object doesn't already have an service copy)
     handle_service_copy_upload(digital_object_data['import_file']) if digital_object_data.fetch('import_file', {})['service_copy_import_path'].present?
+
+    # Featured region
+    handle_featured_region(digital_object_data['featured_region']) if digital_object_data['featured_region'].present?
   end
 
   def onsite_restriction_value_changed?(digital_object_data)
@@ -217,6 +220,10 @@ class DigitalObject::Asset < DigitalObject::Base
     end
 
     self.restricted_onsite = onsite_restriction_value_from_digital_object_data(digital_object_data)
+  end
+
+  def handle_featured_region(region)
+    self.featured_region = region
   end
 
   def handle_blank_asset_title
@@ -402,7 +409,10 @@ class DigitalObject::Asset < DigitalObject::Base
       endtime: Time.now.to_i + wowza_config['token_lifetime'].to_i,
       prefix: wowza_config['token_prefix']
     }).to_url_with_token_hash(wowza_config['host'], wowza_config['ssl_port'], 'hls-ssl')
+  end
 
+  def pcdm_type
+    BestType.pcdm_type.for_file_name(filesystem_location)
   end
 
   def to_solr
@@ -441,6 +451,8 @@ class DigitalObject::Asset < DigitalObject::Base
     json['restrictions'] ||= {}
     json['restrictions']['restricted_size_image'] = restricted_size_image
     json['restrictions']['restricted_onsite'] = restricted_onsite
+    json['featured_region'] = self.featured_region
+
     json
   end
 

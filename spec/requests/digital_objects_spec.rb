@@ -298,6 +298,35 @@ RSpec.describe "DigitalObjects", type: :request do
           expect(DigitalObject::Base.find(asset.pid).poster_location).to be_present
         end
       end
+
+      describe "set featured_region" do
+        let(:asset_digital_object_data) {
+          dod = JSON.parse( fixture('sample_digital_object_data/new_asset.json').read )
+          dod['import_file']['import_type'] = 'internal'
+          dod['import_file']['import_path'] = fixture('sample_assets/sample_text_file.txt').path
+          dod['publish_targets'] = []
+          dod
+        }
+
+        let(:asset) {
+          # Create a new asset
+          asset = DigitalObject::Asset.new
+          allow(asset).to receive(:update_index).and_return(nil)
+          asset.set_digital_object_data(asset_digital_object_data, false)
+          result = asset.save
+          asset
+        }
+
+        let(:featured_region) { '402,59,238,238' }
+
+        it "assigns the expected value" do
+          # Perform first-time upload
+          put "/digital_objects/#{asset.pid}.json", digital_object_data_json: { featured_region: featured_region }.to_json
+
+          expect(response.status).to be(200)
+          expect(DigitalObject::Base.find(asset.pid).featured_region).to eq(featured_region)
+        end
+      end
     end
   end
 end

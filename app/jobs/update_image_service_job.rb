@@ -7,8 +7,10 @@ class UpdateImageServiceJob < ActiveJob::Base
 
     request_payload = {
       resource: {
-        source_uri: image_source_uri_for_digital_object(digital_object),
-        featured_region: asset.featured_region
+        source_uri: image_source_uri_for_digital_object(asset),
+        featured_region: asset.featured_region,
+        # Supply pcdm type for MAIN resource (not access / poster)
+        pcdm_type: asset.pcdm_type
       }
     }
 
@@ -17,19 +19,21 @@ class UpdateImageServiceJob < ActiveJob::Base
       request_payload,
       Authorization: "Bearer #{IMAGE_SERVER_CONFIG['token']}"
     )
+    Rails.logger.error response.body.inspect
   rescue RestClient::BadRequest => e
     Rails.logger.error('Received Bad Request response from the image server: ' + JSON.parse(e.http_body)['errors'].inspect)
   rescue Errno::ECONNREFUSED
     # Silently fail because the image server is currently unavailable and there is nothing we can do.
   end
 
-  def image_source_uri_for_digital_object(digital_object)
-    source_location = nil
+  def image_source_uri_for_digital_object(asset)
     return nil unless asset.is_a?(DigitalObject::Asset)
     return Addressable::URI.encode("file://#{asset.poster_location}") unless asset.poster_location.nil?
     return nil if asset.access_copy_location.nil?
+    # Note that in the line below
     return Addressable::URI.encode("file://#{asset.access_copy_location}") if
       BestType.pcdm_type.for_file_name(asset.access_copy_location) == BestType::PcdmTypeLookup::IMAGE
+    nil
   end
 
   def eligible_asset?(asset)
