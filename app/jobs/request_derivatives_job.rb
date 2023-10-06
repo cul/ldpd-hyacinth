@@ -8,7 +8,21 @@ class RequestDerivativesJob < ActiveJob::Base
     requested_derivatives = required_derivatives_for_asset(asset)
     return if requested_derivatives.empty?
 
-    request_payload = {
+    if requested_derivatives.present?
+      response = RestClient.post(
+        "#{DERIVATIVE_SERVER_CONFIG['url']}/api/v1/derivative_requests.json",
+        payload_for_derivative_request(asset, requested_derivatives),
+        Authorization: "Bearer #{DERIVATIVE_SERVER_CONFIG['token']}"
+      )
+    end
+  rescue RestClient::BadRequest => e
+    Rails.logger.error('Received Bad Request response from the derivative server: ' + JSON.parse(e.http_body)['errors'].inspect)
+  rescue Errno::ECONNREFUSED
+    # Silently fail because the derivative server is currently unavailable and there is nothing we can do.
+  end
+
+  def payload_for_derivative_request(asset, requested_derivatives)
+    {
       derivative_request: {
         identifier: asset.pid,
         delivery_target: 'hyacinth2',
@@ -20,18 +34,6 @@ class RequestDerivativesJob < ActiveJob::Base
         poster_uri: asset.poster_location.nil? ? nil : Addressable::URI.encode("file://#{asset.poster_location}")
       }
     }
-
-    if requested_derivatives.present?
-      response = RestClient.post(
-        "#{DERIVATIVE_SERVER_CONFIG['url']}/api/v1/derivative_requests.json",
-        request_payload,
-        Authorization: "Bearer #{DERIVATIVE_SERVER_CONFIG['token']}"
-      )
-    end
-  rescue RestClient::BadRequest => e
-    Rails.logger.error('Received Bad Request response from the derivative server: ' + JSON.parse(e.http_body)['errors'].inspect)
-  rescue Errno::ECONNREFUSED
-    # Silently fail because the derivative server is currently unavailable and there is nothing we can do.
   end
 
   def eligible_asset?(asset)
