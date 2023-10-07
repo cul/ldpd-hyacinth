@@ -98,9 +98,11 @@ gem 'nokogiri', '~> 1.10.10'  # can't update to 1.11 because our server version 
 
 # For authentication
 gem 'devise', '>= 3.4.1'
+gem 'childprocess', '~> 2.0'
 
 # CUL Fedora Dependencies and Content Models
-gem 'cul_hydra', '~> 1.5.0'
+gem 'cul_hydra', '~> 1.8.0'
+# gem 'cul_hydra', path: '../cul_hydra'
 gem 'rubydora', git: 'https://github.com/elohanlon/rubydora', branch: 'datastream_dissemination_with_headers'
 # gem 'cul_hydra', path: '../cul_hydra'
 # Temporarily use specific commit because new version of gem hasn't been released yet.  Latest is 1.1.3.

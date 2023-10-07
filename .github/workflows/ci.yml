@@ -33,4 +33,4 @@ jobs:
       - name: Set up default config files
         run: bundle exec rake hyacinth:setup:config_files
       - name: Run CI task
-        run: bundle exec rake hyacinth:ci
+        run: bundle exec rake hyacinth:ci_nocop

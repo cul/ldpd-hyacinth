@@ -49,7 +49,7 @@ class PidGenerator < ActiveRecord::Base
 
     begin
       pid_minter = Noid::Minter.new(template: namespace + ':' + template)
-    rescue
+    rescue StandardError
       raise 'PID Generator ' + namespace + ' has run out of unique ids.  Please use a different PID Generator for future Digital Objects.'
     end
 

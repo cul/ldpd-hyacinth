@@ -114,7 +114,7 @@ GEM
       sass (>= 3.3.4)
     builder (3.2.4)
     byebug (9.0.6)
-    cancancan (1.12.0)
+    cancancan (3.5.0)
     capistrano (3.5.0)
       airbrussh (>= 1.0.0)
       capistrano-harrow
@@ -142,7 +142,8 @@ GEM
       regexp_parser (~> 1.5)
       xpath (~> 3.2)
     charlock_holmes (0.7.6)
-    childprocess (4.1.0)
+    childprocess (2.0.0)
+      rake (< 13.0)
     chosen-rails (1.5.2)
       coffee-rails (>= 3.2)
       railties (>= 3.0)
@@ -158,14 +159,13 @@ GEM
     concurrent-ruby (1.1.7)
     connection_pool (2.2.1)
     crass (1.0.6)
-    cul_hydra (1.5.0)
-      active-fedora (~> 7.0)
+    cul_hydra (1.8.0)
+      active-fedora (>= 7.3.1)
       active-triples (~> 0.2.2)
       active_fedora_finders (>= 0.5.0)
       active_fedora_relsint (~> 0.4)
-      autoprefixer-rails (<= 6.1.1)
       blacklight
-      cancancan (~> 1.12.0)
+      bootstrap-sass (~> 3.3.7)
       cul_image_props
       httpclient
       hydra-head (~> 7)
@@ -174,7 +174,8 @@ GEM
       rake (<= 11.3)
       rdf (>= 1.1.5)
       rubydora (~> 2.0.0)
-      sparql (= 1.1.4)
+      sparql
+      sprockets (~> 3.0)
       thread
     cul_image_props (0.3.6)
       nokogiri
@@ -195,8 +196,8 @@ GEM
     ebnf (0.3.9)
       rdf (~> 1.1)
       sxp (~> 0.1, >= 0.1.3)
-    edtf (3.0.4)
-      activesupport (>= 3.0, < 6.0)
+    edtf (3.1.1)
+      activesupport (>= 3.0, < 8.0)
     encryptor (1.3.0)
     equivalent-xml (0.6.0)
       nokogiri (>= 1.4.3)
@@ -241,7 +242,7 @@ GEM
       rails (>= 3.2.6)
     i18n (0.9.5)
       concurrent-ruby (~> 1.0)
-    iso-639 (0.2.8)
+    iso-639 (0.3.6)
     jaro_winkler (1.5.1)
     jbuilder (1.5.3)
       activesupport (>= 3.0.0)
@@ -588,10 +589,11 @@ DEPENDENCIES
   capistrano-rvm (~> 0.1)
   capybara (~> 3.32)
   charlock_holmes
+  childprocess (~> 2.0)
   chosen-rails
   coderay
   coffee-rails
-  cul_hydra (~> 1.5.0)
+  cul_hydra (~> 1.8.0)
   devise (>= 3.4.1)
   diffy (~> 3.1)
   equivalent-xml

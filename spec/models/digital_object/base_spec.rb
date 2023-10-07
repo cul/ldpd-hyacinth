@@ -131,7 +131,8 @@ RSpec.describe DigitalObject::Base, :type => :model do
       end
 
       context "raises an exception for prohibited temp term field data" do
-        # this controlled vocabulary and dynamic field groupis set up in the create_core_objects db migration
+        # These tests assume that these controlled vocabulary and dynamic field groups were
+        # already set up by the hyacinth:setup:core_records rake task.
         let(:controlled_vocabulary) { ControlledVocabulary.find_by(string_key: 'collection') }
         before do
           if controlled_vocabulary

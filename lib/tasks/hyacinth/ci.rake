@@ -41,21 +41,35 @@ if ['development', 'test'].include?(Rails.env)
 
       docker_wrapper do
         duration = Benchmark.realtime do
+          puts 'got here 0'
           Rake::Task["hyacinth:fedora:reload_cmodels"].invoke
+          puts 'got here 1'
           Rake::Task["uri_service:db:drop_tables_and_clear_solr"].invoke
+          puts 'got here 2'
           Rake::Task["hyacinth:test:clear_default_asset_home_content"].invoke
+          puts 'got here 3'
           Rake::Task["hyacinth:test:clear_default_service_copy_home_content"].invoke
+          puts 'got here 4'
           Rake::Task["hyacinth:test:clear_access_copy_content"].invoke
+          puts 'got here 5'
           Rake::Task["uri_service:db:setup"].invoke
+          puts 'got here 6'
           Rake::Task["db:drop"].invoke
+          puts 'got here 7'
           Rake::Task["db:create"].invoke
+          puts 'got here 8'
           Rake::Task["db:migrate"].invoke
-          Rake::Task["db:seed"].invoke
+          puts 'got here 9'
+          Rake::Task["hyacinth:setup:core_records"].invoke
+          puts 'got here 10'
           ENV['CLEAR'] = 'true' # Set ENV variable for reindex task
           Rake::Task['hyacinth:index:reindex'].invoke
+          puts 'got here 11'
           ENV['CLEAR'] = nil  # Clear ENV variable because we're done with it
           Rake::Task['hyacinth:test:setup_test_project'].invoke
+          puts 'got here 12'
           Rake::Task['hyacinth:rspec'].invoke
+          puts 'got here 13'
         end
         puts "\nCI run finished in #{duration} seconds."
       end
@@ -77,6 +91,12 @@ if ['development', 'test'].include?(Rails.env)
       Rake::Task['hyacinth:docker:start'].invoke
       begin
         block.call
+      rescue => e
+        puts "-> This is the exception: #{e.inspect}"
+        puts "-> Exception class is: #{e.class.name}"
+        puts "-> Exception message is: #{e.message}"
+        puts "-> Exception backtrace is: #{e.backtrace ? "\n\t" + e.backtrace.join("\n\t") : e.backtrace}"
+        raise e
       ensure
         Rake::Task['hyacinth:docker:stop'].invoke
       end

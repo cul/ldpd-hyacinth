@@ -94,7 +94,7 @@ RSpec.describe ProcessDigitalObjectImportJob, :type => :job do
     let(:e) {
       begin
         raise StandardError, 'Some error message'
-      rescue => err
+      rescue StandardError => err
         err
       end
     }
