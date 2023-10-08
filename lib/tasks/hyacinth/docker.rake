@@ -19,12 +19,12 @@ namespace :hyacinth do
           begin
             sleep 0.25
             status_code = Net::HTTP.get_response(URI(url_to_check)).code
-            if status_code == '200'
+            if status_code == '200' # Solr is ready to receive requests
               puts 'Solr is available.'
               break
             end
           rescue EOFError, Errno::ECONNRESET => e
-            # puts "Received #{e.class.name}.  Trying again."
+            # Try again in response to the above error types
             next
           end
         end
@@ -35,17 +35,17 @@ namespace :hyacinth do
       expected_port = docker_compose_config['services']['fedora']['ports'][0].split(':')[0]
       url_to_check = "http://localhost:#{expected_port}/fedora/describe"
       puts "Waiting for Fedora to become available (at #{url_to_check})..."
-      Timeout.timeout(240, Timeout::Error, 'Timed out during Fedora startup check.') do
+      Timeout.timeout(20, Timeout::Error, 'Timed out during Fedora startup check.') do
         loop do
           begin
             sleep 0.25
             status_code = Net::HTTP.get_response(URI(url_to_check)).code
-            if status_code == '401'
+            if status_code == '401' # Fedora is ready and prompting for authentication
               puts 'Fedora is available.'
               break
             end
           rescue EOFError, Errno::ECONNRESET, Errno::ECONNREFUSED => e
-            # puts "Received #{e.class.name}.  Trying again."
+            # Try again in response to the above error types
             next
           end
         end
