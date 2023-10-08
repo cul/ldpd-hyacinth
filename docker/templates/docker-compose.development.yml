@@ -7,7 +7,7 @@ name: 'hyacinth2-development'
 volumes:
   redis-data:
   solr-cores:
-  fedora-data:
+  fedora-install-dir:
 services:
   redis:
     build: ./redis
@@ -29,4 +29,4 @@ services:
     ports:
       - '8080:8080'
     volumes:
-      - fedora-data:/opt/fedora/data
+      - fedora-install-dir:/opt/fedora

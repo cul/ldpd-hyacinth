@@ -35,6 +35,8 @@ jobs:
       # - name: Run CI task
       #   run: bundle exec rake hyacinth:ci_nocop
       # Temporary: for testing
+      - name: Copy docker template file
+        run: cp docker/templates/docker-compose.test.yml docker/docker-compose.test.yml
       - name: Start docker
         run: docker compose -f docker/docker-compose.test.yml up --build --detach --wait
       - name: Wait 10 seconds
