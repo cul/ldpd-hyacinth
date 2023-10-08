@@ -73,10 +73,6 @@ namespace :hyacinth do
       end
     end
 
-    task test: :environment do
-      wait_for_fedora_to_load
-    end
-
     task start: :environment do
       puts "Starting...\n"
       if running?
