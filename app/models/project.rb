@@ -35,28 +35,15 @@ class Project < ActiveRecord::Base
     pid = next_pid
     concept = Concept.new(pid: pid)
     @fedora_object = concept
-    puts "Creating Fedora object with pid: #{@fedora_object.pid}"
     self.pid = @fedora_object.pid
   end
 
   def update_fedora_object!
-    puts 'got here 1'
     fedora_object.datastreams["DC"].dc_identifier = [pid]
-    puts 'got here 2'
     fedora_object.datastreams["DC"].dc_type = 'Project'
-    puts 'got here 3'
     fedora_object.datastreams["DC"].dc_title = display_label
-    puts 'got here 4'
     fedora_object.label = Hyacinth::Utils::StringUtils.escape_four_byte_utf8_characters_as_html_entities(display_label)
-    puts 'got here 5'
-    begin
-      fedora_object.save(update_index: false)
-    rescue => e
-      puts "Problem during fobj save: #{e.message}"
-      puts "Problem during fobj save: #{e.backtrace}"
-      raise e
-    end
-    puts 'got here 6'
+    fedora_object.save(update_index: false)
     fedora_object
   end
 
@@ -83,11 +70,9 @@ class Project < ActiveRecord::Base
   end
 
   def ensure_that_title_fields_are_enabled_and_required
-    puts 'got here too 1'
     changes_require_save = false
 
     # For all DigitalObjectTypes that contain ANY enabled dynamic fields, ensure that the title fields are always enabled (and that title_non_sort_portion is always required)
-
     DigitalObjectType.all.find_each do |digital_object_type|
       # If enabled_dynamic_fields_for_type includes the title fields, make sure that they're set as *required*
       # If not, enable them and set them as required

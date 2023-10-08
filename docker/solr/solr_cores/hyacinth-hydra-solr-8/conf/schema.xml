@@ -320,10 +320,15 @@
    <dynamicField name="*_is"    type="pint"       stored="true"  indexed="false" multiValued="false" />
    <dynamicField name="*_ii"    type="pint"       stored="false" indexed="true"  multiValued="false" />
    <dynamicField name="*_isi"   type="pint"       stored="true"  indexed="true"  multiValued="false" />
-   <dynamicField name="*_drsi"  type="drange"     stored="true"  indexed="true"  multiValued="false"  />
+   <dynamicField name="*_drsi"  type="drange"     stored="true"  indexed="true"  multiValued="false" />
    <dynamicField name="*_drsim" type="drange"     stored="true"  indexed="true"  multiValued="true"  />
-   <dynamicField name="*_lsi"   type="location"   stored="true"  indexed="true"  multiValued="false"  />
+   <dynamicField name="*_lsi"   type="location"   stored="true"  indexed="true"  multiValued="false" />
    <dynamicField name="*_lsim"  type="location"   stored="true"  indexed="true"  multiValued="true"  />
+
+   <!-- In addition to some of the above fields, these additional fields are also required if using cul_hydra v1.8 -->
+   <dynamicField name="*_dtsi" type="pdate" stored="true" indexed="true" multiValued="false"/>
+   <dynamicField name="*_ss" type="string" stored="true" indexed="false" multiValued="false"/>
+   <dynamicField name="*_bsi" type="boolean" stored="true" indexed="true" multiValued="false"/>
  </fields>
 
  <!-- Field to use to determine and enforce document uniqueness.

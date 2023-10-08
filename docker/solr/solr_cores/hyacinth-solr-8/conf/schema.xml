@@ -277,7 +277,7 @@
    -->
 
    <!-- NOTE: this is not a full list of fields in the index; dynamic fields are also used -->
-   <field name="id" type="string" indexed="true" stored="true" required="true" />
+   <!-- <field name="id" type="string" indexed="true" stored="true" required="true" /> -->
    <field name="_version_" type="plong" indexed="true" stored="true" multiValued="false" />
    <field name="timestamp" type="pdate" indexed="true" stored="true" default="NOW" multiValued="false"/>
    <!-- default, catch all search field, also used for search term highlighting (requires stored="true") -->
@@ -320,16 +320,24 @@
    <dynamicField name="*_is"    type="pint"       stored="true"  indexed="false" multiValued="false" />
    <dynamicField name="*_ii"    type="pint"       stored="false" indexed="true"  multiValued="false" />
    <dynamicField name="*_isi"   type="pint"       stored="true"  indexed="true"  multiValued="false" />
-   <dynamicField name="*_drsi"  type="drange"     stored="true"  indexed="true"  multiValued="false"  />
+   <dynamicField name="*_drsi"  type="drange"     stored="true"  indexed="true"  multiValued="false" />
    <dynamicField name="*_drsim" type="drange"     stored="true"  indexed="true"  multiValued="true"  />
-   <dynamicField name="*_lsi"   type="location"   stored="true"  indexed="true"  multiValued="false"  />
+   <dynamicField name="*_lsi"   type="location"   stored="true"  indexed="true"  multiValued="false" />
    <dynamicField name="*_lsim"  type="location"   stored="true"  indexed="true"  multiValued="true"  />
+
+   <!-- In addition to some of the above fields, these additional fields are also required for the Hyacinth core -->
+
+   <field name="pid" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+   <dynamicField name="*_ssort" type="alphaNumericSort" stored="false" indexed="true" multiValued="false"/>
+   <dynamicField name="*_bi" type="boolean" stored="false" indexed="true" multiValued="false"/>
+   <dynamicField name="*_ts" type="text" stored="true" indexed="false" multiValued="false"/>
+   <dynamicField name="*_ltsi" type="plong" stored="true" indexed="true" multiValued="false"/>
  </fields>
 
  <!-- Field to use to determine and enforce document uniqueness.
       Unless this field is marked with required="false", it will be a required field
    -->
- <uniqueKey>id</uniqueKey>
+ <uniqueKey>pid</uniqueKey>
 
 
   <!-- copyField commands copy one field to another at the time a document

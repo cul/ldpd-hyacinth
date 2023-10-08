@@ -28,7 +28,7 @@ namespace :hyacinth do
     end
 
     desc "Set up hyacinth core records (DigitalObjectType, User, XmlDatastream, etc.) "
-    task :core_records do
+    task core_records: :environment do
       # If there are no DigitalObjectTypes the system, run the setup code below.
       # This check is in place to ensure that this task is never run for an environment that
       # already ran the core record setup (because running it twice would be bad!).
