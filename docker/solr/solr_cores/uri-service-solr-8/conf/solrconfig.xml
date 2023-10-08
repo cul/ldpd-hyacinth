@@ -310,13 +310,17 @@
 
   <requestHandler name="/suggest" class="solr.SearchHandler" startup="lazy">
     <lst name="defaults">
-      <str name="suggest">true</str>
-      <str name="suggest.count">5</str>
-      <str name="suggest.dictionary">mySuggester</str>
+      <str name="echoParams">explicit</str>
+      <str name="defType">edismax</str>
+      <str name="rows">10</str>
+      <str name="qf">value_suggest^30 value_suggest_ngram^50.0 uri^60.0</str>
+      <str name="pf">value_suggest_edge^50.0</str>
+      <str name="sort">score desc,value_ssort asc</str>
+      <str name="fl">
+        *,
+        score
+      </str>
     </lst>
-    <arr name="components">
-      <str>suggest</str>
-    </arr>
   </requestHandler>
 
 </config>
