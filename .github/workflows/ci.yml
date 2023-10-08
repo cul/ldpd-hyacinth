@@ -16,21 +16,34 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Install libxslt for nokogiri gem (required for version < 1.11)
-        run: sudo apt-get install -y libxml2-dev libxslt-dev
-      - name: Add --no-document option to .gemrc file to speed up bundle install
-        run: "echo 'gem: --no-document' > ~/.gemrc"
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1.138.0
-        with:
-          ruby-version: ${{ matrix.ruby-version }}
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-      - name: Set up Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'adopt-hotspot'
-          java-version: '8'
-      - name: Set up default config files
-        run: bundle exec rake hyacinth:setup:config_files
-      - name: Run CI task
-        run: bundle exec rake hyacinth:ci_nocop
+      # - name: Install libxslt for nokogiri gem (required for version < 1.11)
+      #   run: sudo apt-get install -y libxml2-dev libxslt-dev
+      # - name: Add --no-document option to .gemrc file to speed up bundle install
+      #   run: "echo 'gem: --no-document' > ~/.gemrc"
+      # - name: Set up Ruby
+      #   uses: ruby/setup-ruby@v1.138.0
+      #   with:
+      #     ruby-version: ${{ matrix.ruby-version }}
+      #     bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      # - name: Set up Java
+      #   uses: actions/setup-java@v3
+      #   with:
+      #     distribution: 'adopt-hotspot'
+      #     java-version: '8'
+      # - name: Set up default config files
+      #   run: bundle exec rake hyacinth:setup:config_files
+      # - name: Run CI task
+      #   run: bundle exec rake hyacinth:ci_nocop
+      # Temporary: for testing
+      - name: Start docker
+        run: docker compose -f docker/docker-compose.test.yml up --build --detach --wait
+      - name: Wait 10 seconds
+        run: sleep 10
+      - name: Output docker logs
+        run: docker compose -f docker/docker-compose.test.yml logs
+      - name: Check if Solr is running after 10 seconds
+        run: curl -I 'http://localhost:9983/solr/hyacinth/admin/system'
+      - name: Check if Fedora is running after 10 seconds
+        run: curl -I 'http://localhost:9080/fedora/describe'
+      - name: Stop docker
+        run: docker compose -f docker/docker-compose.test.yml down
