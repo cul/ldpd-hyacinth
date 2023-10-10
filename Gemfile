@@ -107,7 +107,7 @@ gem 'rubydora', git: 'https://github.com/elohanlon/rubydora', branch: 'datastrea
 # gem 'cul_hydra', path: '../cul_hydra'
 # Temporarily use specific commit because new version of gem hasn't been released yet.  Latest is 1.1.3.
 gem 'rdf-rdfxml', git: 'https://github.com/ruby-rdf/rdf-rdfxml', ref: '78c13fe5dbcecaf1f56abe9535d00f16c670a764'
-gem 'uri_service', '0.5.5'
+gem 'uri_service', '0.6.0'
 # gem 'uri_service', path: '../uri_service'
 gem 'solrizer', '>= 3.4.1'
 

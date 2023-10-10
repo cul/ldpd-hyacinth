@@ -329,7 +329,7 @@
 
    <dynamicField name="*_sort" type="alphaNumericSort" indexed="true" stored="false" multiValued="false" />
    <dynamicField name="*spell" type="textSpell" indexed="true" stored="false" multiValued="true" />
-   <dynamicField name="*suggest" type="textSuggest" indexed="true" stored="false" multiValued="true" />
+   <!-- <dynamicField name="*suggest" type="textSuggest" indexed="true" stored="false" multiValued="true" /> -->
 
    <!-- uncomment the following to ignore any fields that don't already match an existing
         field name or dynamic field, rather than reporting them as an error.
@@ -385,19 +385,19 @@
    <!-- Copy Fields -->
 
    <!-- field-based searches -->
-   <copyField source="normalized_title_ssm" dest="normalized_title_teim"/>
+   <!-- <copyField source="normalized_title_ssm" dest="normalized_title_teim"/>
    <copyField source="places_ssim" dest="place_teim"/>
    <copyField source="names_ssim" dest="name_teim"/>
-   <copyField source="access_subjects_ssim" dest="subject_teim"/>
+   <copyField source="access_subjects_ssim" dest="subject_teim"/> -->
 
    <!-- The catch all `text` field -->
    <!-- grab the fielded searches -->
-   <copyField source="normalized_title_ssm" dest="text" />
+   <!-- <copyField source="normalized_title_ssm" dest="text" />
    <copyField source="places_ssim" dest="text" />
    <copyField source="names_ssim" dest="text" />
-   <copyField source="access_subjects_ssim" dest="text" />
+   <copyField source="access_subjects_ssim" dest="text" /> -->
    <!-- grab the searchable notes -->
-   <copyField source="abstract_tesim" dest="text" />
+   <!-- <copyField source="abstract_tesim" dest="text" />
    <copyField source="accessrestricct_tesim" dest="text" />
    <copyField source="accruals_tesim" dest="text" />
    <copyField source="acqinfo_tesim" dest="text" />
@@ -420,26 +420,33 @@
    <copyField source="relatedmaterial_tesim" dest="text" />
    <copyField source="scopecontent_tesim" dest="text" />
    <copyField source="separatedmaterial_tesim" dest="text" />
-   <copyField source="userestrict_tesim" dest="text" />
+   <copyField source="userestrict_tesim" dest="text" /> -->
    <!-- grab structured data that's important -->
-   <copyField source="unitid_ssm" dest="text" />
-   <copyField source="unitid_ssm" dest="unitid_identifier_match" />
+   <!-- <copyField source="unitid_ssm" dest="text" />
+   <copyField source="unitid_ssm" dest="unitid_identifier_match" /> -->
 
    <!-- sort fields -->
-   <copyField source="normalized_title_ssm" dest="title_sort"/> <!-- TODO: assumes single values -->
-   <copyField source="normalized_date_ssm" dest="date_sort"/> <!-- TODO: assumes single values -->
+   <!-- <copyField source="normalized_title_ssm" dest="title_sort"/> --> <!-- TODO: assumes single values -->
+   <!-- <copyField source="normalized_date_ssm" dest="date_sort"/> --> <!-- TODO: assumes single values -->
 
    <!-- spellcheck fields -->
    <!-- default spell check;  should match fields for default request handler -->
    <!-- it won't work with a copy of a copy field -->
-   <copyField source="*_t" dest="spell"/>
+   <!-- <copyField source="*_t" dest="spell"/> -->
 
    <!-- for suggestions -->
-   <copyField source="normalized_title_ssm" dest="suggest"/>
+   <!-- <copyField source="normalized_title_ssm" dest="suggest"/>
    <copyField source="collection_ssim" dest="suggest"/>
    <copyField source="names_ssim" dest="suggest"/>
    <copyField source="repository_ssim" dest="suggest"/>
    <copyField source="places_ssim" dest="suggest"/>
-   <copyField source="access_subjects_ssim" dest="suggest"/>
+   <copyField source="access_subjects_ssim" dest="suggest"/> -->
+
+   <!-- suggest copyFields -->
+  <copyField source="value" dest="value_suggest" />
+  <copyField source="value" dest="value_suggest_edge" />
+  <copyField source="value" dest="value_suggest_ngram" />
+  <!-- sort copyFields -->
+  <copyField source="value" dest="value_ssort" />
 
 </schema>

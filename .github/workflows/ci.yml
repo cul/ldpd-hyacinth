@@ -28,7 +28,7 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          distribution: 'adopt-hotspot'
+          distribution: 'zulu'
           java-version: '8'
       - name: Set up default config files
         run: bundle exec rake hyacinth:setup:config_files

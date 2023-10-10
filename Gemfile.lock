@@ -157,7 +157,7 @@ GEM
       execjs
     coffee-script-source (1.9.1)
     concurrent-ruby (1.1.7)
-    connection_pool (2.2.1)
+    connection_pool (2.4.1)
     crass (1.0.6)
     cul_hydra (1.8.0)
       active-fedora (>= 7.3.1)
@@ -492,7 +492,8 @@ GEM
       childprocess (>= 0.5, < 5.0)
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2)
-    sequel (5.8.0)
+    sequel (5.73.0)
+      bigdecimal
     sinatra (1.4.8)
       rack (~> 1.5)
       rack-protection (~> 1.4)
@@ -546,7 +547,7 @@ GEM
       unf_ext
     unf_ext (0.0.7.5)
     unicode-display_width (1.4.0)
-    uri_service (0.5.5)
+    uri_service (0.6.0)
       activesupport
       connection_pool
       rdf
@@ -640,7 +641,7 @@ DEPENDENCIES
   terser
   thread
   underscore-rails
-  uri_service (= 0.5.5)
+  uri_service (= 0.6.0)
   web-console (~> 2.0)
   webdrivers (~> 5.3.0)
   wowza-secure_token (= 0.0.1)

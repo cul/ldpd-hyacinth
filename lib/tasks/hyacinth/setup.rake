@@ -212,18 +212,14 @@ namespace :hyacinth do
       if DigitalObjectType.find_by(string_key: 'publish_target').nil?
         puts 'Creating default publish targets...'
         DigitalObjectType.create!(string_key: 'publish_target', display_label: 'Publish Target', sort_order: 4)
-        puts '---> 1'
         publish_targets_project = Project.new(string_key: 'publish_targets', display_label: 'Publish Targets', pid_generator: PidGenerator.default_pid_generator)
         publish_targets_project.save
-        # puts '---> 2'
         # # Enable title field for publish targets
-        # dot_publish_target = DigitalObjectType.find_by(string_key: 'publish_target')
-        # puts '---> 3'
-        # # Enable title fields for Items, Groups and Assets
-        # (DynamicFieldGroup.find_by(string_key: 'title').dynamic_fields).each do |dynamic_field|
-        #   publish_targets_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: dynamic_field, digital_object_type: dot_publish_target)
-        # end
-        puts '---> 4'
+        dot_publish_target = DigitalObjectType.find_by(string_key: 'publish_target')
+        # Enable title fields for Items, Groups and Assets
+        (DynamicFieldGroup.find_by(string_key: 'title').dynamic_fields).each do |dynamic_field|
+          publish_targets_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: dynamic_field, digital_object_type: dot_publish_target)
+        end
       end
     end
 

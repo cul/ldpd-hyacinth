@@ -37,8 +37,6 @@ if ['development', 'test'].include?(Rails.env)
 
     desc 'CI build just running specs'
     task ci_specs: :environment do
-      rspec_system_exit_failure_exception = nil
-
       docker_wrapper do
         duration = Benchmark.realtime do
           Rake::Task["hyacinth:fedora:reload_cmodels"].invoke
