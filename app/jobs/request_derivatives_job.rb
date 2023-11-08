@@ -9,7 +9,7 @@ class RequestDerivativesJob < ActiveJob::Base
     return if requested_derivatives.empty?
 
     if requested_derivatives.present?
-      response = RestClient.post(
+      RestClient.post(
         "#{DERIVATIVE_SERVER_CONFIG['url']}/api/v1/derivative_requests.json",
         payload_for_derivative_request(asset, requested_derivatives),
         Authorization: "Bearer #{DERIVATIVE_SERVER_CONFIG['token']}"
