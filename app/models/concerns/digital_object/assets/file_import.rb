@@ -59,14 +59,19 @@ module DigitalObject::Assets::FileImport
     self.original_file_path = (@import_file_original_file_path || @import_file_import_path) # This also updates the 'content' datastream label
   end
 
+  def copy_access_copy_to_save_destination(source_path, dest_path)
+    FileUtils.cp(source_path, dest_path)
+    # Optionally set file's group
+    FileUtils.chown(nil, HYACINTH['access_copy_file_group'], dest_path) if HYACINTH['access_copy_file_group'].present?
+    # Optionally set file's permissions
+    FileUtils.chmod(HYACINTH['access_copy_file_permissions'], dest_path) if HYACINTH['access_copy_file_permissions'].present?
+  end
+
   def do_access_copy_import
     access_filename = 'access' + File.extname(@access_copy_import_path)
     dest_dir = Hyacinth::Utils::PathUtils.access_directory_path_for_uuid!(self.uuid)
     dest_file_path = File.join(dest_dir, access_filename)
-    FileUtils.cp(@access_copy_import_path, dest_file_path)
-    # Make sure the new file's group permissions are set to rw (using 0660 permissions).
-    # When Derivativo 1.5 is released, this can change to 0640 permissions.
-    FileUtils.chmod(0660, dest_file_path)
+    copy_access_copy_to_save_destination(@access_copy_import_path, dest_file_path)
 
     access_ds_location = Hyacinth::Utils::PathUtils.filesystem_path_to_ds_location(dest_file_path)
 
