@@ -64,7 +64,7 @@ module DigitalObject::Assets::FileImport
     # Optionally set file's group
     FileUtils.chown(nil, HYACINTH['access_copy_file_group'], dest_path) if HYACINTH['access_copy_file_group'].present?
     # Optionally set file's permissions
-    FileUtils.chmod(HYACINTH['access_copy_file_permissions'], dest_path) if HYACINTH['access_copy_file_permissions'].present?
+    FileUtils.chmod(HYACINTH['access_copy_file_permissions'].to_i(8), dest_path) if HYACINTH['access_copy_file_permissions'].present?
   end
 
   def do_access_copy_import

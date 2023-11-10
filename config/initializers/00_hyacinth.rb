@@ -41,3 +41,12 @@ raise 'Error: Please set a value for publish_target_api_key_encryption_key in yo
 end
 
 Rails.application.config.active_job.queue_adapter = :inline unless HYACINTH['queue_long_jobs']
+
+# Validate access_copy_file_permissions if set
+if HYACINTH['access_copy_file_permissions'].present?
+  mode = HYACINTH['access_copy_file_permissions']
+  unless mode.is_a?(String) && mode =~ /^0[0-7]{3}$/
+    raise "Invalid value supplied for HYACINTH['access_copy_file_permissions'] configuration.  "\
+      "Must be a String like '0777' or '0640'."
+  end
+end
