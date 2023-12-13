@@ -159,6 +159,11 @@
               </label>
               <div class="col-sm-9">
                 <%= digitalObject.getPerformDerivativeProcessing() %>
+                <% if(!digitalObject.getPerformDerivativeProcessing()) { %>
+                    <button type="button" class="regenerate-access-copy-button btn btn-link btn-xs">
+                      <span class="glyphicon glyphicon-refresh"></span> Regenerate access copy
+                    </button>
+                <% } %>
               </div>
             </div>
           </div>

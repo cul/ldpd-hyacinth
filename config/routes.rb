@@ -77,6 +77,7 @@ Hyacinth::Application.routes.draw do
       put 'add_parent', action: 'add_parent'
       put 'remove_parents', action: 'remove_parents'
       post 'rotate_image', action: 'rotate_image'
+      post 'regenerate_access_copy', action: 'regenerate_access_copy'
       get 'featured_region', action: 'query_featured_region'
       post 'featured_region', action: 'update_featured_region'
       post 'swap_order_of_first_two_child_assets', action: 'swap_order_of_first_two_child_assets'

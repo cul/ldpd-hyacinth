@@ -71,6 +71,10 @@ class DigitalObject::Asset < DigitalObject::Base
   end
 
   def run_after_save_logic
+    run_derivative_updates_if_necessary
+  end
+
+  def run_derivative_updates_if_necessary
     # Conditionally run derivative processing on save
     RequestDerivativesJob.perform_later(self.pid) if self.perform_derivative_processing
     # Always update the image service on save, regardless of whether derivatives are ready
@@ -271,9 +275,27 @@ class DigitalObject::Asset < DigitalObject::Base
     end
   end
 
-  def destroy_and_regenerate_derivatives!
-    raise 'TODO: Reimplement'
-    #generate_derivatives(true)
+  def regenerate_derivatives!(access_copy:, image_server_cache:)
+    destroy_access_copy! if access_copy
+    destroy_image_server_cache! if image_server_cache
+    self.perform_derivative_processing = true
+    self.save
+  end
+
+  def destroy_access_copy!
+    if self.access_copy_location && File.exist?(self.access_copy_location)
+      File.delete(self.access_copy_location)
+    end
+    if @fedora_object.datastreams['access']
+      @fedora_object.datastreams['access'].delete
+    end
+  end
+
+  def destroy_image_server_cache!
+    RestClient.delete(
+      "#{IMAGE_SERVER_CONFIG['url']}/api/v1/resources/#{self.pid}",
+      Authorization: "Bearer #{IMAGE_SERVER_CONFIG['token']}"
+    )
   end
 
   # def generate_derivatives(delete_existing_derivatives = false)

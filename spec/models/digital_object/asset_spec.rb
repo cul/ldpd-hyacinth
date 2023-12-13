@@ -112,7 +112,7 @@ RSpec.describe DigitalObject::Asset, :type => :model do
         asset.validate_featured_region
         expect(asset.errors).not_to be_empty
       end
-      it "rotates a region appropriately when image is rotated" do
+      pending "rotates a region appropriately when image is rotated" do
         asset.featured_region = good_region
         region_params = good_region.split(',')
         # get a rotated value for 90 more degrees

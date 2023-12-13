@@ -13,7 +13,7 @@ class DigitalObjectsController < ApplicationController
 
   before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor,
     :download, :download_access_copy, :download_poster, :download_service_copy,
-    :add_parent, :remove_parents, :mods, :xacml, :media_view, :rotate_image, :swap_order_of_first_two_child_assets,
+    :add_parent, :remove_parents, :mods, :xacml, :media_view, :rotate_image, :regenerate_access_copy, :swap_order_of_first_two_child_assets,
     :download_transcript, :update_transcript,
     :download_index_document, :update_index_document,
     :download_captions, :update_captions,
@@ -261,13 +261,30 @@ class DigitalObjectsController < ApplicationController
     end
 
     rotate_by = params[:rotate_by].to_i
-    @digital_object.fedora_object.orientation -= rotate_by
-    @digital_object.featured_region = @digital_object.rotated_region(rotate_by) if @digital_object.featured_region.present?
+    @digital_object.fedora_object.orientation += rotate_by
+    # TODO: Maybe later, preserve and rotate previous region if image is rotated.
+    # For now, don't worry about it and just CLEAR the previous region.  Users almost never select a
+    # region BEFORE rotating an image.
+    @digital_object.featured_region = nil
+    # @digital_object.featured_region = @digital_object.rotated_region(rotate_by) if @digital_object.featured_region.present?
 
-    if @digital_object.save && @digital_object.destroy_and_regenerate_derivatives!
+    if @digital_object.save && @digital_object.regenerate_derivatives!(access_copy: true, image_server_cache: true)
       render json: { success: true }
     else
       render json: { errors: ['An error occurred during image regeneration.'] }
+    end
+  end
+
+  def regenerate_access_copy
+    unless @digital_object.is_a?(DigitalObject::Asset)
+      render json: { errors: ["Only Assets have access copies.  This is a #{@digital_object.digital_object_type.display_label}."] }
+      return
+    end
+
+    if @digital_object.regenerate_derivatives!(access_copy: true, image_server_cache: true)
+      render json: { success: true }
+    else
+      render json: { errors: ['An error occurred during access copy regeneration.'] }
     end
   end
 
@@ -283,7 +300,7 @@ class DigitalObjectsController < ApplicationController
 
     @digital_object.featured_region = params[:region]
     @digital_object.region_selection_event = { 'updatedBy' => current_user.email }
-    if @digital_object.save && @digital_object.destroy_and_regenerate_derivatives!
+    if @digital_object.save && @digital_object.regenerate_derivatives!(access_copy: false, image_server_cache: true)
       render json: { success: true }.merge(@digital_object.region_selection_event)
     else
       errors = @digital_object.errors[:featured_region]
@@ -413,7 +430,7 @@ class DigitalObjectsController < ApplicationController
         associated_project = Project.find_by(project_find_criteria)
         publish_requirements << :create
         require_project_permission!(associated_project, publish_requirements)
-      when 'update', 'reorder_child_digital_objects', 'add_parent', 'remove_parents', 'rotate_image', 'swap_order_of_first_two_child_assets', 'update_transcript', 'update_index_document', 'update_captions', 'update_synchronized_transcript', 'clear_synchronized_transcript_and_reimport_transcript',
+      when 'update', 'reorder_child_digital_objects', 'add_parent', 'remove_parents', 'rotate_image', 'regenerate_access_copy', 'swap_order_of_first_two_child_assets', 'update_transcript', 'update_index_document', 'update_captions', 'update_synchronized_transcript', 'clear_synchronized_transcript_and_reimport_transcript',
         require_project_permission!(@digital_object.project, :update)
         # Also require publish permission if params[:publish] is set to true (note: applies to the 'update' action)
         publish_requirements << :update

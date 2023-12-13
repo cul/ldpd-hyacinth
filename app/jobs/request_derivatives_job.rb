@@ -26,6 +26,7 @@ class RequestDerivativesJob < ActiveJob::Base
       derivative_request: {
         identifier: asset.pid,
         delivery_target: 'hyacinth2',
+        adjust_orientation: asset.fedora_object.orientation,
         main_uri: Addressable::URI.encode("file://#{asset.filesystem_location}"),
         requested_derivatives: requested_derivatives,
         # access_uri can be nil, if no access copy currently exists

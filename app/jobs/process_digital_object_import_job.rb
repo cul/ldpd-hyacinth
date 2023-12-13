@@ -4,6 +4,9 @@ class ProcessDigitalObjectImportJob
   FIND_DIGITAL_OBJECT_IMPORT_RETRY_DELAY = 10
 
   def self.perform(digital_object_import_id)
+    # If the import job was previously deleted (and does not exist in the database), return immediately
+    return unless DigitalObjectImport.exists?(digital_object_import_id)
+
     # Retrieve DigitalObjectImport instance from table
     # If we encounter an error (e.g. Mysql2::Error), wait and try again.
     digital_object_import = find_digital_object_import_with_retry(digital_object_import_id)

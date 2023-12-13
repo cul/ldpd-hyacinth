@@ -327,8 +327,10 @@ RSpec.describe ProcessDigitalObjectImportJob, :type => :job do
 
   describe ".perform" do
     let(:digital_object_import_id) {
-      allow(DigitalObjectImport).to receive(:find).with(12345).and_return(digital_object_import)
-      12345
+      import_id = 12345
+      allow(DigitalObjectImport).to receive(:find).with(import_id).and_return(digital_object_import)
+      allow(DigitalObjectImport).to receive(:exists?).with(import_id).and_return(true)
+      import_id
     }
     let(:import_job) {
       import_job = ImportJob.new
