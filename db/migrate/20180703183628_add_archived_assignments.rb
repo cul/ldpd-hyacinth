@@ -1,4 +1,4 @@
-class AddArchivedAssignments < ActiveRecord::Migration
+class AddArchivedAssignments < ActiveRecord::Migration[4.2]
   def change
     create_table :archived_assignments do |t|
       t.integer :original_assignment_id, null: false

@@ -1,4 +1,4 @@
-class AddRequireControlledVocabularyManagerPermissionToControlledVocabularies < ActiveRecord::Migration
+class AddRequireControlledVocabularyManagerPermissionToControlledVocabularies < ActiveRecord::Migration[4.2]
   def change
     change_table(:controlled_vocabularies) do |t|
       t.remove :only_managed_by_admins

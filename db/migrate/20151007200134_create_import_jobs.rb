@@ -1,4 +1,4 @@
-class CreateImportJobs < ActiveRecord::Migration
+class CreateImportJobs < ActiveRecord::Migration[4.2]
 
   def change
 

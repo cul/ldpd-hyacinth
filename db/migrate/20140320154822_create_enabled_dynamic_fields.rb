@@ -1,4 +1,4 @@
-class CreateEnabledDynamicFields < ActiveRecord::Migration
+class CreateEnabledDynamicFields < ActiveRecord::Migration[4.2]
   def change
     create_table :enabled_dynamic_fields do |t|
       t.references :project, null: false, index: true

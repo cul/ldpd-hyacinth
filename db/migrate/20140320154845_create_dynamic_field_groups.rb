@@ -1,4 +1,4 @@
-class CreateDynamicFieldGroups < ActiveRecord::Migration
+class CreateDynamicFieldGroups < ActiveRecord::Migration[4.2]
   def change
     create_table :dynamic_field_groups do |t|
       t.string :string_key, index: true, null: false
