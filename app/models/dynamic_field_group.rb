@@ -1,4 +1,4 @@
-class DynamicFieldGroup < ActiveRecord::Base
+class DynamicFieldGroup < ApplicationRecord
   include DynamicFieldAndDynamicFieldGroup::SharedValidations
 
   default_scope { order(sort_order: :asc) }

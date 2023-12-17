@@ -1,4 +1,4 @@
-class ImportJob < ActiveRecord::Base
+class ImportJob < ApplicationRecord
   after_destroy :delete_associated_file_if_exists
 
   enum priority: [ :low, :medium, :high ]

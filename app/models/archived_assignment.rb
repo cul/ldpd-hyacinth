@@ -1,4 +1,4 @@
-class ArchivedAssignment < ActiveRecord::Base
+class ArchivedAssignment < ApplicationRecord
   include Assignments::Enums
 
   belongs_to :project

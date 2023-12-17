@@ -1,4 +1,4 @@
-class DigitalObjectType < ActiveRecord::Base
+class DigitalObjectType < ApplicationRecord
   has_many :enabled_dynamic_fields, dependent: :destroy
   default_scope { order('sort_order') }
 

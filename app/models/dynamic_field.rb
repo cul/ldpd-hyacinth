@@ -1,4 +1,4 @@
-class DynamicField < ActiveRecord::Base
+class DynamicField < ApplicationRecord
   include DynamicFieldAndDynamicFieldGroup::SharedValidations
 
   module Type

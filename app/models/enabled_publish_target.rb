@@ -1,4 +1,4 @@
-class EnabledPublishTarget < ActiveRecord::Base
+class EnabledPublishTarget < ApplicationRecord
   belongs_to :project
   belongs_to :publish_target
 

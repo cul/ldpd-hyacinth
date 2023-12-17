@@ -1,4 +1,4 @@
-class Project < ActiveRecord::Base
+class Project < ApplicationRecord
   has_many :enabled_dynamic_fields, dependent: :destroy
   accepts_nested_attributes_for :enabled_dynamic_fields, allow_destroy: true
 

@@ -1,4 +1,4 @@
-class ControlledVocabulary < ActiveRecord::Base
+class ControlledVocabulary < ApplicationRecord
   before_create :create_corresponding_uri_service_vocabulary, unless: :corresponding_uri_service_vocabulary_exists?
   after_destroy :delete_corresponding_uri_service_vocabulary, unless: :corresponding_uri_service_vocabulary_has_terms?
 

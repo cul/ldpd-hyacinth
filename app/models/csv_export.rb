@@ -1,4 +1,4 @@
-class CsvExport < ActiveRecord::Base
+class CsvExport < ApplicationRecord
   after_destroy :delete_associated_file_if_exists
 
   belongs_to :user

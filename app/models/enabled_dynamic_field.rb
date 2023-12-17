@@ -1,4 +1,4 @@
-class EnabledDynamicField < ActiveRecord::Base
+class EnabledDynamicField < ApplicationRecord
   belongs_to :project
   belongs_to :dynamic_field
   belongs_to :digital_object_type

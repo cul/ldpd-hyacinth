@@ -1,4 +1,4 @@
-class ProjectPermission < ActiveRecord::Base
+class ProjectPermission < ApplicationRecord
   belongs_to :project
   belongs_to :user
 
