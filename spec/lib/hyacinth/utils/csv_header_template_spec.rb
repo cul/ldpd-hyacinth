@@ -43,39 +43,33 @@ RSpec.describe Hyacinth::Utils::CsvHeaderTemplate do
     @dot_asset = DigitalObjectType.find_by(string_key: 'asset')
     @dfg_category = DynamicFieldGroupCategory.create!(id: 2016,
                                                       display_label: 'CSV Header')
-    @df_1 = DynamicField.new(id: 2016,
-                             string_key: 'csv_header_df_one',
-                             display_label: 'Test CSV Header Template DF 1',
-                             dynamic_field_type: DynamicField::Type::STRING)
-    @df_2 = DynamicField.new(id: 2017,
-                             string_key: 'csv_header_df_two',
-                             display_label: 'Test CSV Header Template DF 2',
-                             dynamic_field_type: DynamicField::Type::STRING)
-    @ct_df_3 = DynamicField.new(id: 2018,
-                                string_key: 'csv_header_ct_df_three',
-                                display_label: 'Test CSV Header Template DF 3 Controlled Term',
-                                dynamic_field_type: DynamicField::Type::CONTROLLED_TERM,
-                                controlled_vocabulary_string_key: 'collection')
-    @df_4 = DynamicField.new(id: 2019,
-                             string_key: 'csv_header_df_four',
-                             display_label: 'Test CSV Header Template DF 4',
-                             dynamic_field_type: DynamicField::Type::DATE)
     @dfg_2 = DynamicFieldGroup.create!(id: 2017,
                                        string_key: 'csv_header_dfg_two',
                                        display_label: 'Test CSV Header Template DFG 2',
-                                       dynamic_field_group_category: @dfg_category,
-                                       dynamic_fields: [@df_4]
-                                       )
+                                       dynamic_field_group_category: @dfg_category)
+    @df_4 = @dfg_2.dynamic_fields.create!(id: 2019,
+                                          string_key: 'csv_header_df_four',
+                                          display_label: 'Test CSV Header Template DF 4',
+                                          dynamic_field_type: DynamicField::Type::DATE)
+
     @dfg_1 = DynamicFieldGroup.create!(id: 2016,
                                        string_key: 'csv_header_dfg_one',
                                        display_label: 'Test CSV Header Template DFG 1',
-                                       parent_dynamic_field_group: @dfg_2,
-                                       dynamic_fields: [
-                                                        @df_1,
-                                                        @df_2,
-                                                        @ct_df_3
-                                                       ]
-                                       )
+                                       parent_dynamic_field_group: @dfg_2)
+    @df_1 = @dfg_1.dynamic_fields.create!(id: 2016,
+                                          string_key: 'csv_header_df_one',
+                                          display_label: 'Test CSV Header Template DF 1',
+                                          dynamic_field_type: DynamicField::Type::STRING)
+    @df_2 = @dfg_1.dynamic_fields.create!(id: 2017,
+                                          string_key: 'csv_header_df_two',
+                                          display_label: 'Test CSV Header Template DF 2',
+                                          dynamic_field_type: DynamicField::Type::STRING)
+    @ct_df_3 = @dfg_1.dynamic_fields.create!(id: 2018,
+                                             string_key: 'csv_header_ct_df_three',
+                                             display_label: 'Test CSV Header Template DF 3 Controlled Term',
+                                             dynamic_field_type: DynamicField::Type::CONTROLLED_TERM,
+                                             controlled_vocabulary_string_key: 'collection')
+
     @csv_header_project = Project.create!(id: 2016,
                                           string_key: 'csv_header_project',
                                           display_label: 'Test CSV Header Template Project',

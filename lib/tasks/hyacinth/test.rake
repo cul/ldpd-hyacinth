@@ -61,13 +61,8 @@ namespace :hyacinth do
 
       # Create test DynamicFieldGroup and DynamicField
 
-      test_dynamic_field = DynamicField.new(string_key: 'test_field', display_label: 'Test Field', dynamic_field_type: DynamicField::Type::STRING)
-      test_dynamic_feld_group = DynamicFieldGroup.create!(string_key: 'test_field_group', display_label: 'Test Field Group', dynamic_field_group_category: test_dynamic_field_group_category,
-        dynamic_fields: [
-          test_dynamic_field
-        ]
-      )
-
+      test_dynamic_feld_group = DynamicFieldGroup.create!(string_key: 'test_field_group', display_label: 'Test Field Group', dynamic_field_group_category: test_dynamic_field_group_category)
+      test_dynamic_field = test_dynamic_feld_group.dynamic_fields.create!(string_key: 'test_field', display_label: 'Test Field', dynamic_field_type: DynamicField::Type::STRING)
       # Enable certain fields for various digital_object_types in test_project
 
       (DynamicFieldGroup.find_by(string_key: 'test_field_group').dynamic_fields + DynamicFieldGroup.find_by(string_key: 'title').dynamic_fields).each do |dynamic_field|
