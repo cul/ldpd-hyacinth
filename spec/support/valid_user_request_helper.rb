@@ -2,7 +2,8 @@
 module ValidUserRequestHelper
   def request_spec_sign_in_admin_user
       @user_for_request ||= FactoryGirl.create(:admin_user)
-      post_via_redirect user_session_path, 'user[email]' => @user_for_request.email, 'user[password]' => @user_for_request.password
+      post user_session_path, params: { 'user[email]' => @user_for_request.email, 'user[password]' => @user_for_request.password }
+      follow_redirect!
   end
 end
 
