@@ -1,14 +1,12 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2.0'
+gem 'rails', '~> 6.0.0'
 gem 'bootsnap', require: false
-gem 'responders', '~> 2.4.0' # for rails 5.2.x
-# BigDecimal bridge for later ruby while on Rails 4.2
-gem 'bigdecimal', '~> 1.4.2'
+gem 'responders'
 
 # Use sqlite3 as the database for Active Record
-gem 'sqlite3', '~> 1.3.10'
+gem 'sqlite3', '~> 1.4'
 gem 'mysql2', '~> 0.5.3'
 
 # Lock rake due to rspec/rubocop v11 incompatibilities
@@ -102,7 +100,7 @@ gem 'devise', '>= 3.4.1'
 gem 'childprocess', '~> 2.0'
 
 # CUL Fedora Dependencies and Content Models
-gem 'cul_hydra', '~> 1.10.0'
+gem 'cul_hydra', git: 'https://github.com/cul/cul_hydra', ref: 'master'
 gem 'active-fedora', '8.6.0'
 # gem 'cul_hydra', path: '../cul_hydra'
 gem 'rubydora'
@@ -145,12 +143,12 @@ gem 'rainbow', '~> 3.0'
 # Gem min versions that are only specified here because of vulnerabilities in earlier versions:
 gem 'rack-protection', '>= 1.5.5'
 gem 'loofah', '~> 2.20.0'
-gem 'rails-html-sanitizer', '>= 1.0.4'
+gem 'rails-html-sanitizer', '>= 1.2'
 
 # Development and testing!
 group :development, :test do
   gem 'byebug'
-  gem 'rspec-rails', '~> 3.3'
+  gem 'rspec-rails', '~> 4.0'
   gem 'rails-controller-testing'
   gem 'capybara', '~> 3.32'
   # For testing with chromedriver
@@ -186,3 +184,5 @@ end
 gem 'puma', '~> 5.2', group: :development
 # gem 'thin', group: :development
 # gem 'unicorn', group: :development
+
+gem "ejs", "~> 1.1"
