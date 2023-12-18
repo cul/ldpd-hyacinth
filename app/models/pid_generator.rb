@@ -73,7 +73,9 @@ class PidGenerator < ApplicationRecord
   def set_template_if_blank_and_get_seed
     self.template = DEFAULT_TEMPLATE if template.blank?
     minter = Noid::Minter.new(template: namespace + ':' + template)
-    self.seed = minter.seed.seed # Doing .seed.seed because the first .seed call actually returns a Random object instance
+    # removed legacy behavior called no arguments - which is the same as generating a new seed
+    # Doing .seed.seed because the first .seed call actually returns a Random object instance
+    self.seed = minter.seed(Random.new_seed, 0).seed
   end
 
   def validate_sample_mint
