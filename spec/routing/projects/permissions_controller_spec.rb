@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe Projects::PermissionsController, type: :routing do
-  routes { Hyacinth::Application.routes }
+  routes { Rails.application.routes }
   let(:path_params) { { controller: 'projects/permissions', id: '1' } }
   let(:params) { path_params.merge(action: action) }
 

@@ -6,4 +6,4 @@ Rake.application.options.trace = true
 
 require File.expand_path('../config/application', __FILE__)
 
-Hyacinth::Application.load_tasks
+Rails.application.load_tasks

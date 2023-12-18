@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe Projects::DynamicFieldsController, type: :routing do
-  routes { Hyacinth::Application.routes }
+  routes { Rails.application.routes }
   let(:path_params) { { controller: 'projects/dynamic_fields', id: '1', digital_object_type_id: 2 } }
   let(:base_params) { path_params.merge(action: action) }
   let(:request_params) { base_params.merge( digital_object_type_id: '2') }
