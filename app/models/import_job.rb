@@ -6,7 +6,7 @@ class ImportJob < ApplicationRecord
   # the name attribute will be the csv filename, and thus may not be unique
   validates :name, presence: true
   has_many :digital_object_imports, dependent: :destroy
-  belongs_to :user, required: true
+  belongs_to :user
 
   def success?
     digital_object_imports.where(status: [DigitalObjectImport.statuses[:pending], DigitalObjectImport.statuses[:failure]]).empty?

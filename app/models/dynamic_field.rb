@@ -22,8 +22,8 @@ class DynamicField < ApplicationRecord
   }
 
   belongs_to :parent_dynamic_field_group, class_name: 'DynamicFieldGroup'
-  belongs_to :created_by, class_name: 'User'
-  belongs_to :updated_by, class_name: 'User'
+  belongs_to :created_by, class_name: 'User', optional: true
+  belongs_to :updated_by, class_name: 'User', optional: true
   has_many :enabled_dynamic_fields, dependent: :destroy
 
   before_save :set_defaults_for_blank_fields
