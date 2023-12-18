@@ -1,8 +1,9 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 4.2.11'
-
+gem 'rails', '~> 5.2.0'
+gem 'bootsnap', require: false
+gem 'responders', '~> 2.4.0' # for rails 5.2.x
 # BigDecimal bridge for later ruby while on Rails 4.2
 gem 'bigdecimal', '~> 1.4.2'
 
@@ -18,7 +19,7 @@ gem 'sass'
 gem 'sass-rails'
 
 # Bootstrap include
-gem 'bootstrap-sass', '~> 3.3'
+gem 'bootstrap-sass', '~> 3.4.1'
 gem 'autoprefixer-rails' # Recommended by bootstrap-sass
 
 # OHSynchronizer Dependencies
@@ -45,7 +46,7 @@ gem 'attr_encrypted', '>= 1.3.3'
 
 # Mime Type detection
 gem 'mime-types'
-
+gem 'mime-types-data'
 # Character encoding detection
 gem 'charlock_holmes'
 
@@ -77,7 +78,7 @@ gem 'underscore-rails'
 # gem 'turbolinks'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 1.2'
+gem 'jbuilder'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.
@@ -101,12 +102,14 @@ gem 'devise', '>= 3.4.1'
 gem 'childprocess', '~> 2.0'
 
 # CUL Fedora Dependencies and Content Models
-gem 'cul_hydra', '~> 1.8.0'
+gem 'cul_hydra', '~> 1.10.0'
+gem 'active-fedora', '8.6.0'
 # gem 'cul_hydra', path: '../cul_hydra'
-gem 'rubydora', git: 'https://github.com/elohanlon/rubydora', branch: 'datastream_dissemination_with_headers'
+gem 'rubydora'
 # gem 'cul_hydra', path: '../cul_hydra'
 # Temporarily use specific commit because new version of gem hasn't been released yet.  Latest is 1.1.3.
-gem 'rdf-rdfxml', git: 'https://github.com/ruby-rdf/rdf-rdfxml', ref: '78c13fe5dbcecaf1f56abe9535d00f16c670a764'
+gem 'rdf', '>= 1.1.5'
+gem 'rdf-vocab'
 gem 'uri_service', '0.6.0'
 # gem 'uri_service', path: '../uri_service'
 gem 'solrizer', '>= 3.4.1'
@@ -118,7 +121,7 @@ gem 'best_type', '~> 1.0'
 # gem 'best_type', path: '../best_type'
 
 # Specify min version for active_fedora_relsint because of a needed fix
-gem 'active_fedora_relsint', '>= 0.4.1'
+gem 'active_fedora_relsint', git: 'https://github.com/cul/active_fedora_relsint', ref: '91114c78c9af344673f1e899624031da79b72693'
 
 # URI Escaping
 gem 'addressable', '~> 2.7.0'
@@ -141,23 +144,25 @@ gem 'rainbow', '~> 3.0'
 
 # Gem min versions that are only specified here because of vulnerabilities in earlier versions:
 gem 'rack-protection', '>= 1.5.5'
-gem 'loofah', '>= 2.2.1'
+gem 'loofah', '~> 2.20.0'
 gem 'rails-html-sanitizer', '>= 1.0.4'
 
 # Development and testing!
 group :development, :test do
   gem 'byebug'
   gem 'rspec-rails', '~> 3.3'
+  gem 'rails-controller-testing'
   gem 'capybara', '~> 3.32'
   # For testing with chromedriver
   gem 'selenium-webdriver', '~> 4.0'
   # For automatically updating chromedriver
   gem 'webdrivers', '~> 5.3.0', require: false
   gem 'factory_girl_rails', '>= 4.4.1'
-  gem 'rubocop', '~> 0.58.2', require: false
-  gem 'rubocop-rspec', '>= 1.20.1', require: false
-  gem 'rubocop-rails_config', '>= 0.2.2', require: false
+  gem 'rubocop', '~> 0.67.0', require: false
+  gem 'rubocop-rspec', '~> 1.26.0', require: false
+  gem 'rubocop-rails_config', '~> 0.1.3', require: false
   gem 'equivalent-xml'
+  gem 'listen'
 end
 
 # Development!
@@ -174,9 +179,6 @@ group :development do
   gem 'capistrano-passenger', '~> 0.1', require: false
   # Use net-ssh >= 4.2 to prevent warnings with Ruby 2.4
   gem 'net-ssh', '>= 4.2'
-
-  # Access an IRB console on exception pages or by using <%= console %> in views
-  gem 'web-console', '~> 2.0'
 end
 
 
