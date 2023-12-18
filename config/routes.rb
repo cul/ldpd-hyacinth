@@ -1,6 +1,6 @@
 require 'resque/server'
 
-Hyacinth::Application.routes.draw do
+Rails.application.routes.draw do
   resources :csv_exports, only: [:index, :create, :show, :destroy] do
     member do
       get 'download'
