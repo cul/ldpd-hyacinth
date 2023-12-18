@@ -132,7 +132,7 @@ describe DigitalObject::DynamicField, :type => :unit do
 
         expect { digital_object.update_dynamic_field_data(dfd, false) }.to raise_error(
           Hyacinth::Exceptions::InvalidUtf8DetectedError,
-          'Invalid UTF-8 detected: "\x93" from ASCII-8BIT to UTF-8'
+          /Invalid UTF-8 detected/
         )
       end
     end

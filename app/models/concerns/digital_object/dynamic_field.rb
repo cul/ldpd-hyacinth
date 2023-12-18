@@ -101,6 +101,12 @@ module DigitalObject::DynamicField
     JSON.generate(df_data)
   rescue Encoding::UndefinedConversionError => e
     raise Hyacinth::Exceptions::InvalidUtf8DetectedError, "Invalid UTF-8 detected: #{e.message}"
+  rescue JSON::GeneratorError => e
+    if e.message =~ /malformed.utf/
+      raise Hyacinth::Exceptions::InvalidUtf8DetectedError, "Invalid UTF-8 detected: #{e.message}"
+    else
+      raise
+    end
   end
 
   def remove_dynamic_field_data_key!(dynamic_field_or_field_group_name, df_data = @dynamic_field_data)
