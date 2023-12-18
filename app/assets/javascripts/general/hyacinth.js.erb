@@ -3,8 +3,8 @@
 var Hyacinth = {};
 
 Hyacinth.unexpectedAjaxErrorMessage = 'An unexpected error occurred while connecting to the server.  Please try your request again.';
-<% if IMAGE_SERVER_CONFIG['url'].present? %>
-  Hyacinth.imageServerUrl = "<%= IMAGE_SERVER_CONFIG['url'] %>";
+<% if IMAGE_SERVER_CONFIG[:url].present? %>
+  Hyacinth.imageServerUrl = "<%= IMAGE_SERVER_CONFIG[:url] %>";
 <% else %>
   Hyacinth.imageServerUrl = null;
 <% end %>

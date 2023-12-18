@@ -24,7 +24,7 @@ class ExportSearchResultsToCsvJob
     csv_export = CsvExport.find(csv_export_id)
     user = csv_export.user
     search_params = JSON.parse(csv_export.search_params)
-    path_to_csv_file = File.join(HYACINTH['csv_export_directory'], "export-#{csv_export.id}-#{Time.now.strftime('%Y%m%d_%H%M%S')}.csv")
+    path_to_csv_file = File.join(HYACINTH[:csv_export_directory], "export-#{csv_export.id}-#{Time.now.strftime('%Y%m%d_%H%M%S')}.csv")
 
     temp_field_indexes = {}
 

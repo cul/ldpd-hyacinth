@@ -440,14 +440,14 @@ RSpec.describe DigitalObject::Base, :type => :model do
         item
       }
 
-      context "when HYACINTH['publish_enabled'] equals false" do
-        let(:original_publish_enabled_value) { HYACINTH['publish_enabled'] }
+      context "when HYACINTH[:publish_enabled] equals false" do
+        let(:original_publish_enabled_value) { HYACINTH[:publish_enabled] }
         before {
           original_publish_enabled_value # invoke let variable to set it
-          HYACINTH['publish_enabled'] = false
+          HYACINTH[:publish_enabled] = false
         }
         after {
-          HYACINTH['publish_enabled'] = original_publish_enabled_value
+          HYACINTH[:publish_enabled] = original_publish_enabled_value
         }
         it "does not save or publish and adds an error" do
           item.publish_after_save = true

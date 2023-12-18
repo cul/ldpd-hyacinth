@@ -70,7 +70,7 @@ module DigitalObject::Assets::Validations
 
     # Make sure that the file exists and is readable
     if import_file_import_type == DigitalObject::Asset::IMPORT_TYPE_UPLOAD_DIRECTORY
-      actual_path_to_validate = File.join(HYACINTH['upload_directory'], import_file_import_path)
+      actual_path_to_validate = File.join(HYACINTH[:upload_directory], import_file_import_path)
     else
       actual_path_to_validate = import_file_import_path
     end

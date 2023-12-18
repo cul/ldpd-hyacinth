@@ -85,7 +85,7 @@ class DigitalObject::Asset < DigitalObject::Base
     return unless @import_file_import_type == IMPORT_TYPE_UPLOAD_DIRECTORY
     # If this is an upload directory import, we'll adjust the import file path
     # and pretend that it's actually an internal file import
-    @import_file_import_path = File.join(HYACINTH['upload_directory'], @import_file_import_path)
+    @import_file_import_path = File.join(HYACINTH[:upload_directory], @import_file_import_path)
     @import_file_import_type = IMPORT_TYPE_INTERNAL
   end
 
@@ -293,30 +293,30 @@ class DigitalObject::Asset < DigitalObject::Base
 
   def destroy_image_server_cache!
     RestClient.delete(
-      "#{IMAGE_SERVER_CONFIG['url']}/api/v1/resources/#{self.pid}",
-      Authorization: "Bearer #{IMAGE_SERVER_CONFIG['token']}"
+      "#{IMAGE_SERVER_CONFIG[:url]}/api/v1/resources/#{self.pid}",
+      Authorization: "Bearer #{IMAGE_SERVER_CONFIG[:token]}"
     )
   end
 
   # def generate_derivatives(delete_existing_derivatives = false)
-  #   credentials = ActionController::HttpAuthentication::Token.encode_credentials(IMAGE_SERVER_CONFIG['remote_request_api_key'])
-  #   resource_url = IMAGE_SERVER_CONFIG['url'] + "/resources/#{pid}"
+  #   credentials = ActionController::HttpAuthentication::Token.encode_credentials(IMAGE_SERVER_CONFIG[:remote_request_api_key])
+  #   resource_url = IMAGE_SERVER_CONFIG[:url] + "/resources/#{pid}"
   #   # Destroy old derivatives if requested
   #   destroy_response = JSON(RestClient.delete(resource_url, Authorization: credentials)) if delete_existing_derivatives
   #   # Queue creation of new derivatives
   #   queue_response = JSON(RestClient.put(resource_url, {}, { Authorization: credentials }))
   #   queue_response['success'].to_s == 'true' && (!delete_existing_derivatives || destroy_response['success'].to_s == 'true')
   # rescue Errno::ECONNREFUSED, RestClient::InternalServerError, SocketError, RestClient::NotFound, RestClient::Unauthorized
-  #   Hyacinth::Utils::Logger.logger.error("Tried to regenerate derivatives for #{pid}, but could not connect to image server at: #{IMAGE_SERVER_CONFIG['url']}")
+  #   Hyacinth::Utils::Logger.logger.error("Tried to regenerate derivatives for #{pid}, but could not connect to image server at: #{IMAGE_SERVER_CONFIG[:url]}")
   #   false
   # end
 
   # def regenerate_image_server_cached_properties!
-  #   credentials = ActionController::HttpAuthentication::Token.encode_credentials(IMAGE_SERVER_CONFIG['remote_request_api_key'])
-  #   response = JSON(RestClient.delete(IMAGE_SERVER_CONFIG['url'] + "/resources/#{pid}/destroy_cachable_properties", Authorization: credentials))
+  #   credentials = ActionController::HttpAuthentication::Token.encode_credentials(IMAGE_SERVER_CONFIG[:remote_request_api_key])
+  #   response = JSON(RestClient.delete(IMAGE_SERVER_CONFIG[:url] + "/resources/#{pid}/destroy_cachable_properties", Authorization: credentials))
   #   response['success'].to_s == 'true'
   # rescue Errno::ECONNREFUSED, RestClient::InternalServerError, SocketError, RestClient::NotFound, RestClient::Unauthorized
-  #   Hyacinth::Utils::Logger.logger.error("Tried to regenerate cached image properties for #{pid}, but could not connect to image server at: #{IMAGE_SERVER_CONFIG['url']}")
+  #   Hyacinth::Utils::Logger.logger.error("Tried to regenerate cached image properties for #{pid}, but could not connect to image server at: #{IMAGE_SERVER_CONFIG[:url]}")
   #   false
   # end
 
@@ -406,7 +406,7 @@ class DigitalObject::Asset < DigitalObject::Base
   end
 
   def player_mime_type
-    if HYACINTH.fetch('media_streaming', {})['wowza'].present?
+    if HYACINTH.fetch(:media_streaming, {})['wowza'].present?
       'application/x-mpegURL'
     else
       'video/mp4'
@@ -417,12 +417,13 @@ class DigitalObject::Asset < DigitalObject::Base
     return nil if access_copy_location.blank?
 
     # if no media_streaming config is present for wowza, always default to progressive download for the player URL
-    return '/digital_objects/' + self.pid + '/download_access_copy' unless HYACINTH.fetch('media_streaming', {})['wowza'].present?
+    return '/digital_objects/' + self.pid + '/download_access_copy' unless HYACINTH.fetch(:media_streaming, {})['wowza'].present?
 
     # use the media streaming config. only wowza is currently supported as a streaming source.
-    raise 'Unsupported media_streaming config: ' + HYACINTH['media_streaming'].inspect unless HYACINTH['media_streaming']['wowza'].present?
+    # TODO: This is unreachable code
+    raise 'Unsupported media_streaming config: ' + HYACINTH[:media_streaming].inspect unless HYACINTH[:media_streaming]['wowza'].present?
 
-    wowza_config = HYACINTH['media_streaming']['wowza']
+    wowza_config = HYACINTH[:media_streaming]['wowza']
     Wowza::SecureToken::Params.new({
       stream: wowza_config['application'] + '/_definst_/' + (access_copy_location.downcase.index('.mp3') ? 'mp3:' : 'mp4:') + access_copy_location.gsub(/^\//, ''),
       secret: wowza_config['shared_secret'],

@@ -6,9 +6,9 @@ class UpdateImageServiceJob < ActiveJob::Base
     return unless eligible_asset?(asset)
 
     RestClient.put(
-      "#{IMAGE_SERVER_CONFIG['url']}/api/v1/resources/#{asset.pid}",
+      "#{IMAGE_SERVER_CONFIG[:url]}/api/v1/resources/#{asset.pid}",
       payload_for_image_service_update_request(asset),
-      Authorization: "Bearer #{IMAGE_SERVER_CONFIG['token']}"
+      Authorization: "Bearer #{IMAGE_SERVER_CONFIG[:token]}"
     )
   rescue RestClient::BadRequest => e
     Rails.logger.error('Received Bad Request response from the image server: ' + JSON.parse(e.http_body)['errors'].inspect)

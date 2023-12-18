@@ -19,11 +19,11 @@ class Hyacinth::Utils::PathUtils
   end
 
   def self.data_directory_path_for_uuid(uuid)
-    File.join(HYACINTH['digital_object_data_directory'], uuid_pairtree(uuid), uuid)
+    File.join(HYACINTH[:digital_object_data_directory], uuid_pairtree(uuid), uuid)
   end
 
   def self.access_directory_path_for_uuid(uuid)
-    File.join(HYACINTH['access_copy_directory'], uuid_pairtree(uuid), uuid)
+    File.join(HYACINTH[:access_copy_directory], uuid_pairtree(uuid), uuid)
   end
 
   def self.access_directory_path_for_uuid!(uuid)

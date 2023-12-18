@@ -9,7 +9,7 @@ namespace :hyacinth do
         next
       end
 
-      default_asset_home_directory = File.join(HYACINTH['default_asset_home'])
+      default_asset_home_directory = File.join(HYACINTH[:default_asset_home])
 
       puts "Deleting test environment default asset home content: #{default_asset_home_directory}..."
       FileUtils.rm_rf(default_asset_home_directory)
@@ -23,7 +23,7 @@ namespace :hyacinth do
         next
       end
 
-      default_service_copy_home_directory = File.join(HYACINTH['default_service_copy_home'])
+      default_service_copy_home_directory = File.join(HYACINTH[:default_service_copy_home])
 
       puts "Deleting test environment default asset home content: #{default_service_copy_home_directory}..."
       FileUtils.rm_rf(default_service_copy_home_directory)
@@ -37,7 +37,7 @@ namespace :hyacinth do
         next
       end
 
-      access_copy_directory = File.join(HYACINTH['access_copy_directory'])
+      access_copy_directory = File.join(HYACINTH[:access_copy_directory])
 
       puts "Deleting test environment access copy content: #{access_copy_directory}..."
       FileUtils.rm_rf(access_copy_directory)

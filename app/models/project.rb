@@ -65,7 +65,7 @@ class Project < ApplicationRecord
     if full_path_to_custom_asset_directory.present?
       full_path_to_custom_asset_directory
     else
-      File.join(HYACINTH['default_asset_home'], string_key)
+      File.join(HYACINTH[:default_asset_home], string_key)
     end
   end
 

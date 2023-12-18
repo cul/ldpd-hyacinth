@@ -10,7 +10,7 @@ class PidGenerator < ApplicationRecord
   validate :validate_sample_mint
 
   def self.default_pid_generator
-    @default_pid_generator || PidGenerator.find_by(namespace: HYACINTH['default_pid_generator_namespace'])
+    @default_pid_generator || PidGenerator.find_by(namespace: HYACINTH[:default_pid_generator_namespace])
   end
 
   def self.get_namespace_from_pid(pid)

@@ -35,7 +35,7 @@ namespace :hyacinth do
       if DigitalObjectType.count == 0
         # Create default PidGenerator
         puts 'Creating default PidGenerator...'
-        PidGenerator.create!(namespace: HYACINTH['default_pid_generator_namespace'])
+        PidGenerator.create!(namespace: HYACINTH[:default_pid_generator_namespace])
 
         puts 'Creating default DigitalObjectTypes...'
         # Create DigitalObjectTypes

@@ -79,7 +79,7 @@ RSpec.describe "DigitalObjects", type: :request do
 
           # Copy fixture file to upload directory file path
           upload_directory_file_path = 'some_dir/lincoln.jpg'
-          dest_path = File.join(HYACINTH['upload_directory'], upload_directory_file_path)
+          dest_path = File.join(HYACINTH[:upload_directory], upload_directory_file_path)
           FileUtils.mkdir_p(File.dirname(dest_path)) # Make path if it doesn't exist
           FileUtils.cp(fixture('sample_upload_files/lincoln.jpg').path, dest_path) # Copy fixture
 
@@ -122,7 +122,7 @@ RSpec.describe "DigitalObjects", type: :request do
 
           # Make sure that path to DigitalObject::Asset is internal, and stored within the hyacinth asset directory
           digital_object = DigitalObject::Base.find(response_json['pid'])
-          expect(digital_object.filesystem_location).to start_with(HYACINTH['default_asset_home'])
+          expect(digital_object.filesystem_location).to start_with(HYACINTH[:default_asset_home])
           expect(digital_object.original_file_path).to eq(path_to_fixture_file)
         end
 
