@@ -29,7 +29,7 @@ RSpec.describe "DigitalObjects", type: :request do
 
         sample_item_digital_object_data['digital_object_type']['string_key'] = 'invalid_type'
 
-        post(digital_objects_path, {
+        post(digital_objects_path, params: {
           digital_object_data_json: JSON.generate(sample_item_digital_object_data)
         })
 
@@ -42,7 +42,7 @@ RSpec.describe "DigitalObjects", type: :request do
       end
 
       it "successfully creates an Item when the correct set of parameters are supplied" do
-        post(digital_objects_path, {
+        post(digital_objects_path, params: {
           digital_object_data_json: JSON.generate(sample_item_digital_object_data)
         })
 
@@ -63,7 +63,7 @@ RSpec.describe "DigitalObjects", type: :request do
             'import_type' => DigitalObject::Asset::IMPORT_TYPE_POST_DATA
           }
 
-          post(digital_objects_path, {
+          post(digital_objects_path, params: {
             digital_object_data_json: JSON.generate(sample_asset_digital_object_data),
             file: fixture_file_upload('/sample_upload_files/lincoln.jpg', 'image/jpeg')
           })
@@ -90,7 +90,7 @@ RSpec.describe "DigitalObjects", type: :request do
             'original_file_path' => upload_directory_file_path
           }
 
-          post(digital_objects_path, {
+          post(digital_objects_path, params: {
             digital_object_data_json: JSON.generate(sample_asset_digital_object_data)
           })
 
@@ -111,7 +111,7 @@ RSpec.describe "DigitalObjects", type: :request do
             'original_file_path' => path_to_fixture_file
           }
 
-          post(digital_objects_path, {
+          post(digital_objects_path, params: {
             digital_object_data_json: JSON.generate(sample_asset_digital_object_data)
           })
 
@@ -137,7 +137,7 @@ RSpec.describe "DigitalObjects", type: :request do
             'original_file_path' => path_to_fixture_file
           }
 
-          post(digital_objects_path, {
+          post(digital_objects_path, params: {
             digital_object_data_json: JSON.generate(sample_asset_digital_object_data)
           })
 
@@ -163,7 +163,7 @@ RSpec.describe "DigitalObjects", type: :request do
         destroy_all_hyacinth_groups_items_and_assets() # delete all current item records
 
         # create new item record
-        post(digital_objects_path, {
+        post(digital_objects_path, params: {
           digital_object_data_json: JSON.generate(sample_item_digital_object_data)
         })
       end
@@ -185,11 +185,12 @@ RSpec.describe "DigitalObjects", type: :request do
       let(:generated_pid) { csv[2][0] }
       context "search request method is GET" do
         before {
-          get search_results_to_csv_digital_objects_path, {format: 'json',
+          get search_results_to_csv_digital_objects_path, params: {
+            format: 'json',
             search: {
               'fq' => { 'hyacinth_type_sim' => [{ 'does_not_equal' => 'publish_target' }] }
             }
-          }
+          }, as: :json
         }
 
         it do
@@ -207,11 +208,12 @@ RSpec.describe "DigitalObjects", type: :request do
 
       context "search request method is POST" do
         before {
-          post search_results_to_csv_digital_objects_path, {format: 'json',
+          post search_results_to_csv_digital_objects_path, params: {
+            format: 'json',
             search: {
               'fq' => { 'hyacinth_type_sim' => [{ 'does_not_equal' => 'publish_target' }] }
             }
-          }
+          }, as: :json
         }
 
         it do
@@ -250,14 +252,18 @@ RSpec.describe "DigitalObjects", type: :request do
         it "returns the expected response when the upload is successful" do
           # Perform first-time upload
           put "/digital_objects/#{asset.pid}.json",
-            access_copy_file: Rack::Test::UploadedFile.new(fixture('sample_upload_files/lincoln.jpg').path, "image/jpeg")
+            params: {
+              access_copy_file: Rack::Test::UploadedFile.new(fixture('sample_upload_files/lincoln.jpg').path, "image/jpeg")
+            }
 
           expect(response.status).to be(200)
           expect(DigitalObject::Base.find(asset.pid).access_copy_location).to be_present
 
           # Perform access copy replacement upload
           put "/digital_objects/#{asset.pid}.json",
-            access_copy_file: Rack::Test::UploadedFile.new(fixture('sample_upload_files/cat.jpg').path, "image/jpeg")
+            params: {
+              access_copy_file: Rack::Test::UploadedFile.new(fixture('sample_upload_files/cat.jpg').path, "image/jpeg")
+            }
 
           expect(response.status).to be(200)
           expect(DigitalObject::Base.find(asset.pid).access_copy_location).to be_present
@@ -285,14 +291,18 @@ RSpec.describe "DigitalObjects", type: :request do
         it "returns the expected response when the upload is successful" do
           # Perform first-time upload
           put "/digital_objects/#{asset.pid}.json",
-            poster_file: Rack::Test::UploadedFile.new(fixture('sample_upload_files/lincoln.jpg').path, "image/jpeg")
+            params: {
+              poster_file: Rack::Test::UploadedFile.new(fixture('sample_upload_files/lincoln.jpg').path, "image/jpeg")
+            }
 
           expect(response.status).to be(200)
           expect(DigitalObject::Base.find(asset.pid).poster_location).to be_present
 
           # Perform poster replacement upload
           put "/digital_objects/#{asset.pid}.json",
-            poster_file: Rack::Test::UploadedFile.new(fixture('sample_upload_files/cat.jpg').path, "image/jpeg")
+            params: {
+              poster_file: Rack::Test::UploadedFile.new(fixture('sample_upload_files/cat.jpg').path, "image/jpeg")
+            }
 
           expect(response.status).to be(200)
           expect(DigitalObject::Base.find(asset.pid).poster_location).to be_present
@@ -321,7 +331,9 @@ RSpec.describe "DigitalObjects", type: :request do
 
         it "assigns the expected value" do
           # Perform first-time upload
-          put "/digital_objects/#{asset.pid}.json", digital_object_data_json: { featured_region: featured_region }.to_json
+          put "/digital_objects/#{asset.pid}.json", params: {
+            digital_object_data_json: { featured_region: featured_region }.to_json
+          }
 
           expect(response.status).to be(200)
           expect(DigitalObject::Base.find(asset.pid).featured_region).to eq(featured_region)
