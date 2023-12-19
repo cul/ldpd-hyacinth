@@ -93,7 +93,7 @@ end
 gem 'kaminari'
 
 # For building and parsing XML
-gem 'nokogiri', '~> 1.10.10'  # can't update to 1.11 because our server version of GLIBC is too old
+gem 'nokogiri', '~> 1.15.5'
 
 # For authentication
 gem 'devise', '>= 3.4.1'
