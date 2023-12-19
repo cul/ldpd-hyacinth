@@ -35,7 +35,7 @@ module Hyacinth
             self.class.new(generator, ng_element, value, df_data).generate
           elsif value.has_key?('val') # Render string value in next text node, performing DynamicField value substitution for variables
             processed_val = value_with_substitutions(value['val'])
-            ng_element.add_child(Nokogiri::XML::Text.new(processed_val, generator.document))
+            ng_element.add_child(Nokogiri::XML::Text.new(processed_val, parent_element.document))
           end
         end
       end
@@ -62,7 +62,7 @@ module Hyacinth
     def create_ng_element
       element_name = xml_translation.fetch('element', nil)
       raise ArgumentError, "element key cannot be blank" if element_name.blank?
-      @ng_element = generator.document.create_element(element_name)
+      @ng_element = parent_element.document.create_element(element_name)
     end
 
     # Add attributes (including namespace definitions) to this element

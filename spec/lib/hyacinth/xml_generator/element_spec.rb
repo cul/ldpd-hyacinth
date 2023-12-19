@@ -10,11 +10,11 @@ describe Hyacinth::XMLGenerator::Element do
   end
 
   let(:df_data) { dynamic_field_data["name"][0] }
-  let(:element) { described_class.new(generator, nil, xml_translation, df_data) }
+  let(:document) { Nokogiri::XML::Document.new }
+  let(:element) { described_class.new(generator, document, xml_translation, df_data) }
 
   describe '#add_attributes' do
     before do
-      allow(generator).to receive(:document).and_return(Nokogiri::XML::Document.new)
       element.create_ng_element
       element.add_attributes
     end
