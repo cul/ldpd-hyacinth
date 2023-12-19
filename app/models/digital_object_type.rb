@@ -1,6 +1,8 @@
 class DigitalObjectType < ApplicationRecord
   has_many :enabled_dynamic_fields, dependent: :destroy
-  default_scope { order('sort_order') }
+
+  # default_scope { order('sort_order') }
+  self.implicit_order_column = 'sort_order'
 
   def self.get_model_for_string_key(string_key)
     case string_key

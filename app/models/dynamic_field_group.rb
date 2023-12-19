@@ -1,7 +1,8 @@
 class DynamicFieldGroup < ApplicationRecord
   include DynamicFieldAndDynamicFieldGroup::SharedValidations
 
-  default_scope { order(sort_order: :asc) }
+  # default_scope { order(sort_order: :asc) }
+  self.implicit_order_column = 'sort_order'
 
   has_many :dynamic_fields, class_name: 'DynamicField', foreign_key: 'parent_dynamic_field_group_id'
 
