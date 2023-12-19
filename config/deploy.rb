@@ -78,22 +78,22 @@ set :default_env, NODE_ENV: 'production'
 # Uncomment the following to require manually verifying the host key before first deploy.
 # set :ssh_options, verify_host_key: :secure
 
-after 'deploy:finished', 'triclops:restart_resque_workers'
+# after 'deploy:finished', 'hyacinth:restart_resque_workers'
 
-namespace :triclops do
-  desc 'Restart the resque workers'
-  task :restart_resque_workers do
-    on roles(:web) do
-      within release_path do
-        with rails_env: fetch(:rails_env) do
-          resque_restart_err_and_out_log = './log/resque_restart_err_and_out.log'
-          # With Ruby > 3.0, we need to redirect stdout and stderr to a file, otherwise
-          # capistrano hangs on this task (waiting for more output).
-          execute :rake, 'resque:restart_workers', '>', resque_restart_err_and_out_log, '2>&1'
-          # Show the restart log output
-          execute :cat, resque_restart_err_and_out_log
-        end
-      end
-    end
-  end
-end
+# namespace :hyacinth do
+#   desc 'Restart the resque workers'
+#   task :restart_resque_workers do
+#     on roles(:web) do
+#       within release_path do
+#         with rails_env: fetch(:rails_env) do
+#           resque_restart_err_and_out_log = './log/resque_restart_err_and_out.log'
+#           # With Ruby > 3.0, we need to redirect stdout and stderr to a file, otherwise
+#           # capistrano hangs on this task (waiting for more output).
+#           #execute :rake, 'resque:restart_workers', '>', resque_restart_err_and_out_log, '2>&1'
+#           # Show the restart log output
+#           execute :cat, resque_restart_err_and_out_log
+#         end
+#       end
+#     end
+#   end
+# end
