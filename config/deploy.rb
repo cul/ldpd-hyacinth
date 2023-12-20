@@ -45,6 +45,17 @@ set :keep_releases, 3
 # Set default log level (which can be overridden by other environments)
 set :log_level, :info
 
+# NVM Setup, for selecting the correct node version
+# NOTE: This NVM configuration MUST be configured before the RVM setup steps because:
+# This works:
+# nvm exec 16 ~/.rvm-alma8/bin/rvm example_app_dev do node --version
+# But this does not work:
+# ~/.rvm-alma8/bin/rvm example_app_dev do nvm exec 16 node --version
+set :nvm_node_version, fetch(:deploy_name) # This NVM alias must exist on the server
+[:rake, :node, :npm, :yarn].each do |command_to_prefix|
+  SSHKit.config.command_map.prefix[command_to_prefix].push("nvm exec #{fetch(:nvm_node_version)}")
+end
+
 # RVM Setup, for selecting the correct ruby version (instead of capistrano-rvm gem)
 set :rvm_ruby_version, fetch(:deploy_name) # This RVM alias must exist on the server
 [:rake, :gem, :bundle, :ruby].each do |command_to_prefix|
