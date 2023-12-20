@@ -4,7 +4,7 @@ module Hyacinth::DigitalObjects::Captions
     if @digital_object.is_a?(DigitalObject::Asset)
       send_data @digital_object.captions, filename: 'captions.vtt'
     else
-      render text: @digital_object.digital_object_type.display_label.pluralize + ' do not have captions.  Try downloading captions for an Asset instead.', status: 404
+      render plain: @digital_object.digital_object_type.display_label.pluralize + ' do not have captions.  Try downloading captions for an Asset instead.', status: 404
     end
   end
 
@@ -35,7 +35,7 @@ module Hyacinth::DigitalObjects::Captions
     if @digital_object.is_a?(DigitalObject::Asset)
       send_data @digital_object.synchronized_transcript, filename: 'synchronized_transcript.vtt'
     else
-      render text: @digital_object.digital_object_type.display_label.pluralize + ' do not have synchronized transcripts.  Try downloading from an Asset instead.', status: 404
+      render plain: @digital_object.digital_object_type.display_label.pluralize + ' do not have synchronized transcripts.  Try downloading from an Asset instead.', status: 404
     end
   end
 

@@ -231,7 +231,7 @@ class DigitalObjectsController < ApplicationController
     xml_output = @digital_object.render_xml_datastream(XmlDatastream.find_by(string_key: 'descMetadata'))
 
     respond_to do |format|
-      format.xml { render text: xml_output, content_type: 'text/xml' }
+      format.xml { render plain: xml_output, content_type: 'text/xml' }
     end
   end
 
@@ -239,7 +239,7 @@ class DigitalObjectsController < ApplicationController
     xml_output = @digital_object.render_xml_datastream(XmlDatastream.find_by(string_key: 'accessControlMetadata'))
 
     respond_to do |format|
-      format.xml { render text: xml_output, content_type: 'text/xml' }
+      format.xml { render plain: xml_output, content_type: 'text/xml' }
     end
   end
 

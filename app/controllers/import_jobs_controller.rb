@@ -70,7 +70,7 @@ class ImportJobsController < ApplicationController
     if @import_job.path_to_csv_file.present?
       send_file @import_job.path_to_csv_file, filename: File.basename(@import_job.name)
     else
-      render text: 'No CSV file available for this import job.'
+      render plain: 'No CSV file available for this import job.'
     end
   end
 
@@ -97,7 +97,7 @@ class ImportJobsController < ApplicationController
 
       send_data(csv_data_string, type: 'text/csv', filename: 'without-successful-rows-' + File.basename(@import_job.name))
     else
-      render text: 'No CSV file available for this import job.'
+      render plain: 'No CSV file available for this import job.'
     end
   end
 

@@ -24,7 +24,7 @@ class CsvExportsController < ApplicationController
     if @csv_export.success?
       send_file @csv_export.path_to_csv_file, filename: File.basename(@csv_export.path_to_csv_file)
     else
-      render text: 'No download is available for this export job because the job has a status of: ' + @csv_export.status
+      render plain: 'No download is available for this export job because the job has a status of: ' + @csv_export.status
     end
   end
 

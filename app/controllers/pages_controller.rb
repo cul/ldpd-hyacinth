@@ -7,9 +7,9 @@ class PagesController < ApplicationController
   # GET /login_check
   def login_check
     if user_signed_in?
-      render text: 'true'
+      render plain: 'true'
     else
-      render text: 'false'
+      render plain: 'false'
     end
   end
 

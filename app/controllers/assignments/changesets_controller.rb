@@ -3,7 +3,7 @@ class Assignments::ChangesetsController < ApplicationController
   before_action :set_contextual_nav_options
 
   def proposed
-    render text: @assignment.proposed.present? ? @assignment.proposed : @assignment.original
+    render plain: @assignment.proposed.present? ? @assignment.proposed : @assignment.original
   end
 
   # GET /assignments/1/changeset/edit
