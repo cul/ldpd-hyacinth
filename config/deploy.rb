@@ -89,7 +89,7 @@ namespace :hyacinth do
           resque_restart_err_and_out_log = './log/resque_restart_err_and_out.log'
           # With Ruby > 3.0, we need to redirect stdout and stderr to a file, otherwise
           # capistrano hangs on this task (waiting for more output).
-          #execute :rake, 'resque:restart_workers', '>', resque_restart_err_and_out_log, '2>&1'
+          execute :rake, 'resque:restart_workers', '>', resque_restart_err_and_out_log, '2>&1'
           # Show the restart log output
           execute :cat, resque_restart_err_and_out_log
         end
