@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
-  protect_from_forgery
+  protect_from_forgery prepend: true
   # For JSON api, recommended by: http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection.html
   skip_before_action :verify_authenticity_token, if: :json_request?
 

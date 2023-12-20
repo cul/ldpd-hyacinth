@@ -6,6 +6,9 @@ class PagesController < ApplicationController
 
   # GET /login_check
   def login_check
+    # user = User.where(email: 'hyacinth-admin@library.columbia.edu').first
+    # sign_in user, :bypass => true
+    # raise user.errors.inspect
     if user_signed_in?
       render plain: 'true'
     else

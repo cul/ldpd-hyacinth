@@ -1,13 +1,13 @@
 <meta charset="utf-8" />
 <link rel="shortcut icon" href="<%= image_path('favicon.png') %>" type="image/png" />
 
-<%= stylesheet_link_tag "/bootstrap-multiselect-0.9.2/css/bootstrap-multiselect" %>
+<%#= stylesheet_link_tag "/bootstrap-multiselect-0.9.2/css/bootstrap-multiselect" %>
 
 <!-- OHSynchronizer -->
-<%= stylesheet_link_tag "/synchronizer-module/css/style.css" %>
+<%#= stylesheet_link_tag "/synchronizer-module/css/style.css" %>
 
 <!-- Video player for non-synchronizer scenarios -->
-<%= stylesheet_link_tag "/video-js-8.2.1/video-js.min.css" %>
+<%#= stylesheet_link_tag "/video-js-8.2.1/video-js.min.css" %>
 
 <% unless Rails.env.test? %>
   <% # Don't want feature tests to time out if these external resources are unavailable (or taking too long to load) %>
@@ -18,17 +18,17 @@
   <![endif]-->
 <% end %>
 
-<%= stylesheet_link_tag    "application", media: "all" %>
+<%#= stylesheet_link_tag    "application", media: "all" %>
 
-<%= javascript_include_tag "application" %>
-<%= javascript_include_tag "digital_objects_app" %>
-<%= javascript_include_tag "/bootstrap-multiselect-0.9.2/js/bootstrap-multiselect" %>
-<%= javascript_include_tag "/ace-1.1.8-min-noconflict/ace.js" %>
-<%= javascript_include_tag "/ace-1.1.8-min-noconflict/ext-beautify.js" %>
+<%#= javascript_include_tag "application" %>
+<%#= javascript_include_tag "digital_objects_app" %>
+<%#= javascript_include_tag "/bootstrap-multiselect-0.9.2/js/bootstrap-multiselect" %>
+<%#= javascript_include_tag "/ace-1.1.8-min-noconflict/ace.js" %>
+<%#= javascript_include_tag "/ace-1.1.8-min-noconflict/ext-beautify.js" %>
 
 <!-- OHSynchronizer -->
-<%= javascript_include_tag "/video-js-8.2.1/video.min.js" %>
-<%= javascript_include_tag "/synchronizer-module/js/ohsynchronizer.js" %>
-<%= javascript_include_tag "/synchronizer-module/js/js.cookie.2.2.0.min.js" %>
+<%#= javascript_include_tag "/video-js-8.2.1/video.min.js" %>
+<%#= javascript_include_tag "/synchronizer-module/js/ohsynchronizer.js" %>
+<%#= javascript_include_tag "/synchronizer-module/js/js.cookie.2.2.0.min.js" %>
 
 <%= csrf_meta_tags %>

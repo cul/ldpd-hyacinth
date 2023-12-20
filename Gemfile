@@ -91,7 +91,7 @@ gem 'kaminari'
 gem 'nokogiri', '~> 1.15.5'
 
 # For authentication
-gem 'devise', '>= 3.4.1'
+gem 'devise', '~> 4.9.3'
 gem 'childprocess', '~> 2.0'
 
 # CUL Fedora Dependencies and Content Models
@@ -137,6 +137,9 @@ gem 'rainbow', '~> 3.0'
 
 # Forcing psych 3 (not 4) so that yaml aliases can be used with Rails 6.0
 gem 'psych', '<4'
+
+# For css and js compilation
+gem 'vite_rails', '~> 3.0.17'
 
 # Gem min versions that are only specified here because of vulnerabilities in earlier versions:
 gem 'rack-protection', '>= 1.5.5'
