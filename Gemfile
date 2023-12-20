@@ -12,9 +12,8 @@ gem 'mysql2', '~> 0.5.3'
 # Lock rake due to rspec/rubocop v11 incompatibilities
 gem 'rake', '~> 10.0'
 
-# Use SCSS for stylesheets
-gem 'sass'
-gem 'sass-rails'
+# The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
+gem 'sprockets-rails'
 
 # Bootstrap include
 gem 'bootstrap-sass', '~> 3.4.1'

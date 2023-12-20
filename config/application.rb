@@ -20,7 +20,7 @@ module Hyacinth
     end
 
     # Custom directories with classes and modules you want to be autoloadable.
-    config.eager_load_paths += %W(#{config.root}/lib)
+    config.eager_load_paths << Rails.root.join('lib')
     # Hyacinth Note - See: http://stackoverflow.com/questions/4928664/trying-to-implement-a-module-using-namespaces
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.

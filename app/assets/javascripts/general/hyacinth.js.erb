@@ -1,6 +1,6 @@
 // Hyacinth: Application-wide JS
 // All this logic will automatically be available in application.js.
-var Hyacinth = {};
+var Hyacinth = Hyacinth || {};
 
 Hyacinth.unexpectedAjaxErrorMessage = 'An unexpected error occurred while connecting to the server.  Please try your request again.';
 <% if IMAGE_SERVER_CONFIG[:url].present? %>
@@ -9,7 +9,7 @@ Hyacinth.unexpectedAjaxErrorMessage = 'An unexpected error occurred while connec
   Hyacinth.imageServerUrl = null;
 <% end %>
 
-Hyacinth.AssignmentTaskTypes = <%= Assignment.tasks.keys.map{|task| [task, task] }.to_h.to_json %>;
+//Hyacinth.AssignmentTaskTypes = <%#= Assignment.tasks.keys.map{|task| [task, task] }.to_h.to_json %>;
 
 $(document).ready(function(){
   Hyacinth.setupMultiselectWidgets();
