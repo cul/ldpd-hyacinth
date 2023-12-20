@@ -78,11 +78,6 @@ gem 'underscore-rails'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 gem 'jbuilder'
 
-group :doc do
-  # bundle exec rake doc:rails generates the API under doc/api.
-  gem 'sdoc', require: false
-end
-
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby'
 
@@ -139,6 +134,9 @@ gem 'noid', '>= 0.7.1'
 gem 'rubyzip', '>= 1.2.1'
 
 gem 'rainbow', '~> 3.0'
+
+# Forcing psych 3 (not 4) so that yaml aliases can be used with Rails 6.0
+gem 'psych', '<4'
 
 # Gem min versions that are only specified here because of vulnerabilities in earlier versions:
 gem 'rack-protection', '>= 1.5.5'

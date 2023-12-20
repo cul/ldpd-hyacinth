@@ -330,8 +330,7 @@ GEM
     parser (3.2.2.4)
       ast (~> 2.4.1)
       racc
-    psych (5.1.1.1)
-      stringio
+    psych (3.3.4)
     public_suffix (4.0.7)
     puma (5.6.7)
       nio4r (~> 2.0)
@@ -397,8 +396,6 @@ GEM
       rdf (~> 1.1, >= 1.1.10)
     rdf-xsd (1.99.0)
       rdf (~> 1.99)
-    rdoc (6.6.2)
-      psych (>= 4.0.0)
     redis (3.3.5)
     redis-namespace (1.8.2)
       redis (>= 3.0.4)
@@ -483,8 +480,6 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
-    sdoc (2.6.1)
-      rdoc (>= 5.0)
     selenium-webdriver (4.9.0)
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
@@ -527,7 +522,6 @@ GEM
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
     stomp (1.4.10)
-    stringio (3.1.0)
     sxp (0.1.5)
     temple (0.10.3)
     terser (1.1.20)
@@ -615,6 +609,7 @@ DEPENDENCIES
   net-ssh (>= 4.2)
   noid (>= 0.7.1)
   nokogiri (~> 1.15.5)
+  psych (< 4)
   puma (~> 5.2)
   rack-protection (>= 1.5.5)
   rails (~> 6.0.0)
@@ -639,7 +634,6 @@ DEPENDENCIES
   rubyzip (>= 1.2.1)
   sass
   sass-rails
-  sdoc
   selenium-webdriver (~> 4.0)
   solrizer (>= 3.4.1)
   spreadsheet
