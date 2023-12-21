@@ -9,14 +9,13 @@ GIT
 
 GIT
   remote: https://github.com/cul/cul_hydra
-  revision: eed9abddd10b341ccc26b753353966efaf533736
-  ref: master
+  revision: 30a3ef5dce579bb63c6a3b3ff00ca9ab9480d5c9
+  ref: remove_blacklight
   specs:
     cul_hydra (1.12.0.dev)
       active-fedora (>= 8.0, < 8.7.0)
       active-triples (~> 0.4.0)
       active_fedora_finders (>= 0.5.0)
-      blacklight (~> 7.0)
       httpclient
       json (>= 1.8.3)
       mods
@@ -119,16 +118,6 @@ GEM
     best_type (1.0.0)
       mime-types (~> 3.4)
     bigdecimal (3.1.5)
-    blacklight (7.35.0)
-      deprecation
-      globalid
-      hashdiff
-      i18n (>= 1.7.0)
-      jbuilder (~> 2.7)
-      kaminari (>= 0.15)
-      ostruct (>= 0.3.2)
-      rails (>= 5.1, < 7.2)
-      view_component (>= 2.66, < 4)
     bootsnap (1.17.0)
       msgpack (~> 1.2)
     bootstrap-sass (3.4.1)
@@ -214,7 +203,7 @@ GEM
       railties (>= 3.0.0)
     faker (3.2.2)
       i18n (>= 1.8.11, < 2)
-    faraday (2.7.12)
+    faraday (2.8.1)
       base64
       faraday-net_http (>= 2.0, < 3.1)
       ruby2_keywords (>= 0.0.4)
@@ -227,7 +216,6 @@ GEM
     haml (5.2.2)
       temple (>= 0.8.0)
       tilt
-    hashdiff (1.1.0)
     hooks (0.4.1)
       uber (~> 0.0.14)
     htmlentities (4.3.4)
@@ -324,7 +312,6 @@ GEM
       nokogiri (>= 1.4.2)
       solrizer (~> 3.3)
     orm_adapter (0.5.0)
-    ostruct (0.6.0)
     parallel (1.24.0)
     parser (3.2.2.4)
       ast (~> 2.4.1)
@@ -538,10 +525,6 @@ GEM
       sequel (>= 4.26.0)
     vegas (0.1.11)
       rack (>= 1.0.0)
-    view_component (3.8.0)
-      activesupport (>= 5.2.0, < 8.0)
-      concurrent-ruby (~> 1.0)
-      method_source (~> 1.0)
     vite_rails (3.0.17)
       railties (>= 5.1, < 8)
       vite_ruby (~> 3.0, >= 3.2.2)

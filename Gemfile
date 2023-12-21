@@ -91,8 +91,7 @@ gem 'devise', '~> 4.9.3'
 # gem 'childprocess', '~> 2.0'
 
 # CUL Fedora Dependencies and Content Models
-gem 'cul_hydra', git: 'https://github.com/cul/cul_hydra', ref: 'master'
-# gem 'cul_hydra', path: '../cul_hydra'
+gem 'cul_hydra', git: 'https://github.com/cul/cul_hydra', ref: 'remove_blacklight'
 gem 'active-fedora', '8.6.0'
 gem 'rubydora'
 # Temporarily use specific commit because new version of gem hasn't been released yet.  Latest is 1.1.3.

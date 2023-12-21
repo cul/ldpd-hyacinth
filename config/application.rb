@@ -13,7 +13,6 @@ module Hyacinth
     # -- all .rb files in that directory are automatically loaded.
 
     config.load_defaults 6.0
-    config.autoloader = :classic # need this because of "RDF::CUL" naming in cul_hydra gem
 
     config.generators do |g|
       g.test_framework :rspec, spec: true
