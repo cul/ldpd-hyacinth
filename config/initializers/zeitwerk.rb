@@ -9,7 +9,6 @@ Rails.autoloaders.each do |autoloader|
     'ore' => 'ORE',
     'pimo' => 'PIMO',
     'rdf' => 'RDF',
-    'sc' => 'SC',
-    'xml_generator' => 'XMLGenerator'
+    'sc' => 'SC'
   )
 end
