@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   # Using a random string here so that I can run my unit tests locally without having to clear the database
   o = [('a'..'z'), ('A'..'Z')].map { |i| i.to_a }.flatten
