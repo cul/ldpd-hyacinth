@@ -2,7 +2,7 @@ require "find"
 require 'digest/sha1'
 
 class Hyacinth::Utils::BagIt
-  extend Logger::Behavior
+  extend Hyacinth::Utils::Logger::Behavior
 
   PAYLOAD_COMPARISON_PROGRESS = 'Comparing payload manifest sha1 checksums to on-disk file checksums... %f2%'
 
