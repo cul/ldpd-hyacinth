@@ -91,8 +91,7 @@ gem 'devise', '~> 4.9.3'
 # gem 'childprocess', '~> 2.0'
 
 # CUL Fedora Dependencies and Content Models
-gem 'cul_hydra', git: 'https://github.com/cul/cul_hydra', ref: 'master'
-# gem 'cul_hydra', path: '../cul_hydra'
+gem 'cul_hydra', git: 'https://github.com/cul/cul_hydra', ref: 'remove_blacklight'
 gem 'active-fedora', '8.6.0'
 gem 'rubydora'
 # Temporarily use specific commit because new version of gem hasn't been released yet.  Latest is 1.1.3.
@@ -151,10 +150,10 @@ group :development, :test do
   gem 'selenium-webdriver', '~> 4.0'
   # For automatically updating chromedriver
   gem 'webdrivers', '~> 5.3.0', require: false
-  gem 'factory_girl_rails', '>= 4.4.1'
+  gem 'factory_bot_rails', '~> 4.9'
   gem 'rubocop', '~> 0.67.0', require: false
   gem 'rubocop-rspec', '~> 1.26.0', require: false
-  gem 'rubocop-rails_config', '~> 0.1.3', require: false
+  gem 'rubocop-rails_config', '~> 0.2.3', require: false
   gem 'equivalent-xml'
   gem 'listen'
 end

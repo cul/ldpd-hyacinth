@@ -33,9 +33,9 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = false # We don't want to run specs in transactions because this will cause DigitalObject DB/Fedora/Solr records to get out of sync
 
-  # additional factory_girl configuration
+  # additional factory_bot configuration
   config.before(:suite) do
-    FactoryGirl.lint
+    FactoryBot.lint
   end
 
   # RSpec Rails can automatically mix in different behaviours to your tests
@@ -56,7 +56,7 @@ RSpec.configure do |config|
   # Added so that we can test Devise logins
   config.include Devise::Test::ControllerHelpers, :type => :controller # Cannot use this for request/feature specs
   def sign_in_admin_user_controller_spec()
-    sign_in(FactoryGirl.create(:admin_user))
+    sign_in(FactoryBot.create(:admin_user))
   end
 
   ## Set Warden (which backs devise) in test mode for
