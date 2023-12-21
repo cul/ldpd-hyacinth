@@ -166,8 +166,6 @@ GEM
       regexp_parser (>= 1.5, < 3.0)
       xpath (~> 3.2)
     charlock_holmes (0.7.7)
-    childprocess (2.0.0)
-      rake (< 13.0)
     chosen-rails (1.10.0)
       coffee-rails (>= 3.2)
       railties (>= 3.0)
@@ -587,10 +585,8 @@ DEPENDENCIES
   capistrano-rails (~> 1.4)
   capybara (~> 3.32)
   charlock_holmes
-  childprocess (~> 2.0)
   chosen-rails
   coderay
-  coffee-rails
   cul_hydra!
   devise (~> 4.9.3)
   diffy (~> 3.1)
@@ -624,7 +620,6 @@ DEPENDENCIES
   rdf (>= 1.1.5)
   rdf-vocab
   redis (< 4)
-  responders
   resque (~> 1.26.0)
   retriable (~> 2.1)
   rspec-rails (~> 4.0)

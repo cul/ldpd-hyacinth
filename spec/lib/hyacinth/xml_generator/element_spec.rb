@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-describe Hyacinth::XMLGenerator::Element do
+describe Hyacinth::XmlGenerator::Element do
   let(:internal_fields) { { 'project.display_label' => 'Test Project', 'project.string_key' => 'test_project' } }
   let(:xml_translation) { {} }
-  let(:generator) { Hyacinth::XMLGenerator.new(nil, nil, nil, internal_fields) }
+  let(:generator) { Hyacinth::XmlGenerator.new(nil, nil, nil, internal_fields) }
 
   let(:dynamic_field_data) do
     JSON.parse(fixture('lib/hyacinth/xml_generator/test_dynamic_field_data.json').read)

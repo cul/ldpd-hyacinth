@@ -1,5 +1,5 @@
 module Hyacinth
-  class XMLGenerator::Element
+  class XmlGenerator::Element
     attr_reader :generator, :parent_element, :xml_translation, :df_data,
                 :dynamic_fields_groups_map, :ng_element
 

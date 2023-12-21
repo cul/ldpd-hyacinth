@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hyacinth::XMLGenerator do
+describe Hyacinth::XmlGenerator do
   let(:dynamic_field_data) do
     JSON.parse(fixture('lib/hyacinth/xml_generator/test_dynamic_field_data.json').read)
   end
@@ -202,7 +202,7 @@ describe Hyacinth::XMLGenerator do
   let(:internal_fields) { {'uuid' => "89dcca6c-87b3-46d5-a1fd-1264ae7488c2"} }
 
   let(:xml_generator) do
-    Hyacinth::XMLGenerator.new(dynamic_field_data, base_xml_translation, xml_translation_map, internal_fields)
+    Hyacinth::XmlGenerator.new(dynamic_field_data, base_xml_translation, xml_translation_map, internal_fields)
   end
 
   describe '#generate' do

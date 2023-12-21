@@ -3,7 +3,7 @@ source 'https://rubygems.org'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 6.0.0'
 gem 'bootsnap', require: false
-gem 'responders'
+# gem 'responders'
 
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3', '~> 1.4'
@@ -57,9 +57,6 @@ gem 'thread'
 # Use terser as compressor for JavaScript assets
 gem 'terser'
 
-# Use CoffeeScript for .js.coffee assets and views
-gem 'coffee-rails'
-
 # Use jquery as the JavaScript library
 gem 'jquery-rails', '>= 4.0.4'
 
@@ -91,14 +88,13 @@ gem 'nokogiri', '~> 1.15.5'
 
 # For authentication
 gem 'devise', '~> 4.9.3'
-gem 'childprocess', '~> 2.0'
+# gem 'childprocess', '~> 2.0'
 
 # CUL Fedora Dependencies and Content Models
 gem 'cul_hydra', git: 'https://github.com/cul/cul_hydra', ref: 'master'
+# gem 'cul_hydra', path: '../cul_hydra'
 gem 'active-fedora', '8.6.0'
-# gem 'cul_hydra', path: '../cul_hydra'
 gem 'rubydora'
-# gem 'cul_hydra', path: '../cul_hydra'
 # Temporarily use specific commit because new version of gem hasn't been released yet.  Latest is 1.1.3.
 gem 'rdf', '>= 1.1.5'
 gem 'rdf-vocab'

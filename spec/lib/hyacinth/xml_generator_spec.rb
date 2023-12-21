@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Hyacinth::XMLGenerator do
+describe Hyacinth::XmlGenerator do
   let(:dynamic_field_data) do
     JSON.parse(fixture('lib/hyacinth/xml_generator/test_dynamic_field_data.json').read)
   end
@@ -76,7 +76,7 @@ describe Hyacinth::XMLGenerator do
   end
 
   let(:xml_generator) do
-    Hyacinth::XMLGenerator.new(dynamic_field_data, base_xml_translation, xml_translation_map)
+    Hyacinth::XmlGenerator.new(dynamic_field_data, base_xml_translation, xml_translation_map)
   end
 
   let(:expected_mods) do

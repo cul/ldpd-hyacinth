@@ -1,5 +1,5 @@
 module Hyacinth
-  class XMLGenerator
+  class XmlGenerator
     attr_reader :dynamic_fields_groups_map, :internal_fields
 
     def initialize(digital_object_data, base_xml_translation, dynamic_fields_groups_map, internal_fields = {})
