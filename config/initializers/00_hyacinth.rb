@@ -7,18 +7,6 @@ EZID = HashWithIndifferentAccess.new(Rails.application.config_for(:ezid))
 IMAGE_SERVER_CONFIG = Rails.application.config_for(:image_server)
 DERIVATIVE_SERVER_CONFIG = Rails.application.config_for(:derivative_server)
 
-Hyacinth::Utils::Logger.logger.tap do |logger|
-  logger.info '---------------------------'
-  logger.info 'Initializing Hyacinth in environment: ' + Rails.env
-  logger.info '---------------------------'
-  logger.info 'Rails ENV: ' + Rails.env
-  logger.info 'Fedora URL: ' + ActiveFedora.config.credentials[:url]
-  logger.info 'Hydra Solr URL: ' + ActiveFedora.solr_config[:url]
-  logger.info 'Hyacinth Solr URL: ' + HYACINTH[:solr_url]
-  logger.info '---------------------------'
-  logger.info ''
-end
-
 raise 'Error: Please set a value for publish_target_api_key_encryption_key in your hyacinth.yml file' if HYACINTH[:publish_target_api_key_encryption_key].blank?
 
 # For EXTREME debugging with full stack traces.  Woo!
@@ -42,5 +30,22 @@ if HYACINTH[:access_copy_file_permissions].present?
   unless mode.is_a?(String) && mode =~ /^0[0-7]{3}$/
     raise "Invalid value supplied for HYACINTH[:access_copy_file_permissions] configuration.  "\
       "Must be a String like '0777' or '0640'."
+  end
+end
+
+Rails.application.config.after_initialize do
+  # We need to run this after_initialize because at least one of our validations depends on
+  # a constant from an auto-loaded file, and modules are only auto-loaded after initialization.
+
+  Hyacinth::Utils::Logger.logger.tap do |logger|
+    logger.info '---------------------------'
+    logger.info 'Initializing Hyacinth in environment: ' + Rails.env
+    logger.info '---------------------------'
+    logger.info 'Rails ENV: ' + Rails.env
+    logger.info 'Fedora URL: ' + ActiveFedora.config.credentials[:url]
+    logger.info 'Hydra Solr URL: ' + ActiveFedora.solr_config[:url]
+    logger.info 'Hyacinth Solr URL: ' + HYACINTH[:solr_url]
+    logger.info '---------------------------'
+    logger.info ''
   end
 end
