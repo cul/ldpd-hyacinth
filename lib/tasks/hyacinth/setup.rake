@@ -15,16 +15,6 @@ namespace :hyacinth do
           puts Rainbow("Created file at: #{dst_path}").green
         end
       end
-
-      # And create secrets.yml if it doesn't exist
-      puts 'Checking for secrets.yml file...'
-      secrets_yml_file_path = File.join(Rails.root, 'config/secrets.yml')
-      if File.exist?(secrets_yml_file_path)
-        puts Rainbow("File already exists (skipping): #{secrets_yml_file_path}").blue.bright + "\n"
-      else
-        File.open(secrets_yml_file_path, 'w') {|f| f.write generate_new_secrets_yml_content.to_yaml }
-        puts Rainbow("Created file at: #{secrets_yml_file_path}").green
-      end
     end
 
     desc "Set up hyacinth core records (DigitalObjectType, User, XmlDatastream, etc.) "
@@ -203,17 +193,6 @@ namespace :hyacinth do
           publish_targets_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: dynamic_field, digital_object_type: dot_publish_target)
         end
       end
-    end
-
-    def generate_new_secrets_yml_content
-      secrets_yml_content = {}
-      ['development', 'test'].each do |env_name|
-        secrets_yml_content[env_name] = {
-          'secret_key_base' => SecureRandom.hex(64),
-          'session_store_key' =>  '_hyacinth_' + env_name + '_session_key'
-        }
-      end
-      secrets_yml_content
     end
   end
 end

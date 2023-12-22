@@ -26,6 +26,7 @@
 /docker/docker-compose.*.yml
 
 # Ignore config files with sensitive data
+master.key
 database.yml
 datacite.yml
 fedora.yml
@@ -69,4 +70,3 @@ node_modules
 # Vite uses dotenv and suggests to ignore local-only env files. See
 # https://vitejs.dev/guide/env-and-mode.html#env-files
 *.local
-
