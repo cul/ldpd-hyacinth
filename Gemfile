@@ -1,16 +1,13 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.0.0'
+gem 'rails', '~> 6.1.0'
 gem 'bootsnap', require: false
 # gem 'responders'
 
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3', '~> 1.4'
 gem 'mysql2', '~> 0.5.3'
-
-# Lock rake due to rspec/rubocop v11 incompatibilities
-gem 'rake', '~> 10.0'
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem 'sprockets-rails'
