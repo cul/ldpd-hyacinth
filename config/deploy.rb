@@ -21,6 +21,7 @@ set :deploy_to, "/opt/passenger/#{fetch(:deploy_name)}"
 
 # Default value for :linked_files is []
 append  :linked_files,
+        'config/master.key',
         'config/database.yml',
         'config/fedora.yml',
         'config/hyacinth.yml',
@@ -28,7 +29,6 @@ append  :linked_files,
         'config/derivative_server.yml',
         'config/redis.yml',
         'config/resque.yml',
-        'config/secrets.yml',
         'config/solr.yml',
         'config/term_additional_fields.yml',
         'config/uri_service.yml',
