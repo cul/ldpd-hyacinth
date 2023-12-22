@@ -65,7 +65,8 @@ RSpec.describe "DigitalObjects", type: :request do
 
           post(digital_objects_path, params: {
             digital_object_data_json: JSON.generate(sample_asset_digital_object_data),
-            file: fixture_file_upload('/sample_upload_files/lincoln.jpg', 'image/jpeg')
+            # NOTE: fixture_file_upload references files at "#{fixture_path}/files"
+            file: fixture_file_upload('lincoln.jpg', 'image/jpeg')
           })
 
           expect(response.status).to be(200)
@@ -81,7 +82,7 @@ RSpec.describe "DigitalObjects", type: :request do
           upload_directory_file_path = 'some_dir/lincoln.jpg'
           dest_path = File.join(HYACINTH[:upload_directory], upload_directory_file_path)
           FileUtils.mkdir_p(File.dirname(dest_path)) # Make path if it doesn't exist
-          FileUtils.cp(fixture('sample_upload_files/lincoln.jpg').path, dest_path) # Copy fixture
+          FileUtils.cp(fixture('files/lincoln.jpg').path, dest_path) # Copy fixture
 
           # Manually override import_file settings to set the fixture to type == post data
           asset_digital_object_data['import_file'] = {
@@ -103,7 +104,7 @@ RSpec.describe "DigitalObjects", type: :request do
         it "works via filesystem upload (upload type: internal), copying the target file to the Hyacinth internal data store" do
           asset_digital_object_data = sample_asset_digital_object_data
 
-          path_to_fixture_file = fixture('sample_upload_files/lincoln.jpg').path
+          path_to_fixture_file = fixture('files/lincoln.jpg').path
           # Manually override import_file settings to set the fixture to type == post data
           asset_digital_object_data['import_file'] = {
             'import_type' => DigitalObject::Asset::IMPORT_TYPE_INTERNAL,
@@ -129,7 +130,7 @@ RSpec.describe "DigitalObjects", type: :request do
         it "works via filesystem upload (upload type: external), referencing the target external file instead of copying the file to the Hyacinth internal data store" do
           asset_digital_object_data = sample_asset_digital_object_data
 
-          path_to_fixture_file = fixture('sample_upload_files/lincoln.jpg').path
+          path_to_fixture_file = fixture('files/lincoln.jpg').path
           # Manually override import_file settings to set the fixture to type == post data
           asset_digital_object_data['import_file'] = {
             'import_type' => DigitalObject::Asset::IMPORT_TYPE_EXTERNAL,
@@ -253,7 +254,7 @@ RSpec.describe "DigitalObjects", type: :request do
           # Perform first-time upload
           put "/digital_objects/#{asset.pid}.json",
             params: {
-              access_copy_file: Rack::Test::UploadedFile.new(fixture('sample_upload_files/lincoln.jpg').path, "image/jpeg")
+              access_copy_file: Rack::Test::UploadedFile.new(fixture('files/lincoln.jpg').path, "image/jpeg")
             }
 
           expect(response.status).to be(200)
@@ -262,7 +263,7 @@ RSpec.describe "DigitalObjects", type: :request do
           # Perform access copy replacement upload
           put "/digital_objects/#{asset.pid}.json",
             params: {
-              access_copy_file: Rack::Test::UploadedFile.new(fixture('sample_upload_files/cat.jpg').path, "image/jpeg")
+              access_copy_file: Rack::Test::UploadedFile.new(fixture('files/cat.jpg').path, "image/jpeg")
             }
 
           expect(response.status).to be(200)
@@ -292,7 +293,7 @@ RSpec.describe "DigitalObjects", type: :request do
           # Perform first-time upload
           put "/digital_objects/#{asset.pid}.json",
             params: {
-              poster_file: Rack::Test::UploadedFile.new(fixture('sample_upload_files/lincoln.jpg').path, "image/jpeg")
+              poster_file: Rack::Test::UploadedFile.new(fixture('files/lincoln.jpg').path, "image/jpeg")
             }
 
           expect(response.status).to be(200)
@@ -301,7 +302,7 @@ RSpec.describe "DigitalObjects", type: :request do
           # Perform poster replacement upload
           put "/digital_objects/#{asset.pid}.json",
             params: {
-              poster_file: Rack::Test::UploadedFile.new(fixture('sample_upload_files/cat.jpg').path, "image/jpeg")
+              poster_file: Rack::Test::UploadedFile.new(fixture('files/cat.jpg').path, "image/jpeg")
             }
 
           expect(response.status).to be(200)

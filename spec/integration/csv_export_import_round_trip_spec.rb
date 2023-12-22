@@ -18,7 +18,7 @@ describe "CSV Export-Import Round Trip" do
 
     let(:asset_digital_object_data) {
       dod = JSON.parse( fixture('sample_digital_object_data/new_asset.json').read )
-      file_path = File.join(fixture_path(), '/sample_upload_files/lincoln.jpg')
+      file_path = File.join(fixture_path(), '/files/lincoln.jpg')
       # Manually override import_file settings in the dummy fixture
       dod['import_file'] = {
         'import_type' => DigitalObject::Asset::IMPORT_TYPE_INTERNAL,

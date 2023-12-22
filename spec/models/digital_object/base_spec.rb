@@ -12,7 +12,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
     dod = JSON.parse( fixture('sample_digital_object_data/new_asset.json').read )
     dod['identifiers'] = ['asset.' + SecureRandom.uuid] # random identifer to avoid collisions
 
-    file_path = File.join(fixture_path(), '/sample_upload_files/lincoln.jpg')
+    file_path = File.join(fixture_path(), '/files/lincoln.jpg')
 
     # Manually override import_file settings in the dummy fixture
     dod['import_file'] = {

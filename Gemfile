@@ -140,7 +140,7 @@ gem 'rails-html-sanitizer', '>= 1.2'
 # Development and testing!
 group :development, :test do
   gem 'byebug'
-  gem 'rspec-rails', '~> 4.0'
+  gem 'rspec-rails', '~> 5.0'
   gem 'rails-controller-testing'
   gem 'capybara', '~> 3.32'
   # For testing with chromedriver
