@@ -137,6 +137,12 @@ gem 'vite_rails', '~> 3.0.17'
 # And this: https://github.com/ruby/net-imap/issues/16#issuecomment-803086765
 gem 'net-http'
 
+# Require uri gem explicitly and match the default.standard gem that comes with Ruby 2.7.8
+# (otherwise we'll get an error about the bundle version not matching the installed version).
+# See: https://stdgems.org/2.7.8/
+# NOTE: This should be changed if you update to a newer version of ruby.
+gem 'uri', '0.10.0'
+
 # Gem min versions that are only specified here because of vulnerabilities in earlier versions:
 gem 'rack-protection', '>= 1.5.5'
 gem 'loofah', '~> 2.20.0'

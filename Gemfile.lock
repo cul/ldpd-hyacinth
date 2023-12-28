@@ -522,7 +522,7 @@ GEM
     uber (0.0.15)
     underscore-rails (1.8.3)
     unicode-display_width (1.5.0)
-    uri (0.13.0)
+    uri (0.10.0)
     uri_service (0.6.0)
       activesupport
       connection_pool
@@ -626,6 +626,7 @@ DEPENDENCIES
   terser
   thread
   underscore-rails
+  uri (= 0.10.0)
   uri_service (= 0.6.0)
   vite_rails (~> 3.0.17)
   webdrivers (~> 5.3.0)
