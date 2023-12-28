@@ -132,6 +132,11 @@ gem 'psych', '<4'
 # For css and js compilation
 gem 'vite_rails', '~> 3.0.17'
 
+# Require net-http gem explicitly (and allow any version) to fix an issue where the net-protocol
+# dependency is loaded twice.  See this: https://stackoverflow.com/a/75105591
+# And this: https://github.com/ruby/net-imap/issues/16#issuecomment-803086765
+gem 'net-http'
+
 # Gem min versions that are only specified here because of vulnerabilities in earlier versions:
 gem 'rack-protection', '>= 1.5.5'
 gem 'loofah', '~> 2.20.0'
@@ -162,10 +167,6 @@ group :development do
   gem 'capistrano-cul', require: false
   gem 'capistrano-passenger', '~> 0.1', require: false
   gem 'capistrano-rails', '~> 1.4', require: false
-
-
-  # Use net-ssh >= 4.2 to prevent warnings with Ruby 2.4
-  gem 'net-ssh', '>= 4.2'
 end
 
 
