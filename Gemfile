@@ -141,7 +141,7 @@ gem 'net-http'
 # (otherwise we'll get an error about the bundle version not matching the installed version).
 # See: https://stdgems.org/2.7.8/
 # NOTE: This should be changed if you update to a newer version of ruby.
-gem 'uri', '0.10.0'
+gem 'uri', '0.10.0.2'
 
 # Gem min versions that are only specified here because of vulnerabilities in earlier versions:
 gem 'rack-protection', '>= 1.5.5'
