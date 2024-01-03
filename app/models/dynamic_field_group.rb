@@ -1,17 +1,18 @@
-class DynamicFieldGroup < ActiveRecord::Base
+class DynamicFieldGroup < ApplicationRecord
   include DynamicFieldAndDynamicFieldGroup::SharedValidations
 
-  default_scope { order(sort_order: :asc) }
+  # default_scope { order(sort_order: :asc) }
+  self.implicit_order_column = 'sort_order'
 
   has_many :dynamic_fields, class_name: 'DynamicField', foreign_key: 'parent_dynamic_field_group_id'
 
-  belongs_to :dynamic_field_group_category
+  belongs_to :dynamic_field_group_category, optional: true
 
-  belongs_to :parent_dynamic_field_group, class_name: 'DynamicFieldGroup'
+  belongs_to :parent_dynamic_field_group, class_name: 'DynamicFieldGroup', optional: true
   has_many :child_dynamic_field_groups, class_name: 'DynamicFieldGroup', foreign_key: 'parent_dynamic_field_group_id'
 
-  belongs_to :created_by, class_name: 'User'
-  belongs_to :updated_by, class_name: 'User'
+  belongs_to :created_by, class_name: 'User', optional: true
+  belongs_to :updated_by, class_name: 'User', optional: true
 
   validate :validate_json_fields, :validate_dynamic_field_group_category
 

@@ -1,20 +1,20 @@
 require 'rails_helper'
 
-describe Hyacinth::XMLGenerator::Element do
+describe Hyacinth::XmlGenerator::Element do
   let(:internal_fields) { { 'project.display_label' => 'Test Project', 'project.string_key' => 'test_project' } }
   let(:xml_translation) { {} }
-  let(:generator) { Hyacinth::XMLGenerator.new(nil, nil, nil, internal_fields) }
+  let(:generator) { Hyacinth::XmlGenerator.new(nil, nil, nil, internal_fields) }
 
   let(:dynamic_field_data) do
     JSON.parse(fixture('lib/hyacinth/xml_generator/test_dynamic_field_data.json').read)
   end
 
   let(:df_data) { dynamic_field_data["name"][0] }
-  let(:element) { described_class.new(generator, nil, xml_translation, df_data) }
+  let(:document) { Nokogiri::XML::Document.new }
+  let(:element) { described_class.new(generator, document, xml_translation, df_data) }
 
   describe '#add_attributes' do
     before do
-      allow(generator).to receive(:document).and_return(Nokogiri::XML::Document.new)
       element.create_ng_element
       element.add_attributes
     end

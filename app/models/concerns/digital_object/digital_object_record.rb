@@ -9,6 +9,9 @@ module DigitalObject::DigitalObjectRecord
     @created_by = @db_record.created_by
     @updated_by = @db_record.updated_by
     @first_published_at = @db_record.first_published_at
+    # For perform_derivative_processing, if a db record for this resource has been previously saved,
+    # use that value. Otherwise just use default value set by the DigitalObject::Base or its subclass.
+    @perform_derivative_processing = @db_record.new_record? ? @perform_derivative_processing : @db_record.perform_derivative_processing
   end
 
   ##################################
@@ -23,6 +26,10 @@ module DigitalObject::DigitalObjectRecord
 
     @db_record.updated_by = @updated_by
     @db_record.updated_at = Time.now # Always setting this manually just in case there aren't any other changes to @db_record (becase otherwise the record's updated_at time wouldn't change automatically)
+  end
+
+  def set_perform_derivative_processing
+    @db_record.perform_derivative_processing = @perform_derivative_processing
   end
 
   def set_first_published_at

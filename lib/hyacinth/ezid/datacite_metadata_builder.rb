@@ -55,14 +55,18 @@ module Hyacinth::Ezid
     end
 
     def add_resource_type(xml)
-      hyacinth_genre_uri = @hyacinth_metadata_retrieval.genre_uri
+      hyacinth_genre_uri = @hyacinth_metadata_retrieval.genre_uri.to_sym
+      return unless EZID[:datacite][:genre_to_resource_type_mapping].key? hyacinth_genre_uri
+
       xml.resourceType('resourceTypeGeneral' =>
                        "#{EZID[:datacite][:genre_to_resource_type_mapping][hyacinth_genre_uri][:attribute_general]}") do
         xml.text "#{EZID[:datacite][:genre_to_resource_type_mapping][hyacinth_genre_uri][:content]}"
-      end if EZID[:datacite][:genre_to_resource_type_mapping].key? hyacinth_genre_uri
+      end
     end
 
     def add_related_identifiers(xml)
+      return if @hyacinth_metadata_retrieval.parent_publication_issn.blank?
+
       xml.relatedIdentifiers do
         xml.relatedIdentifier('relatedIdentifierType' => 'ISSN',
                               'relationType' => 'IsPartOf') { xml.text @hyacinth_metadata_retrieval.parent_publication_issn }
@@ -70,13 +74,15 @@ module Hyacinth::Ezid
                               'relationType' => 'IsPartOf') { xml.text @hyacinth_metadata_retrieval.parent_publication_isbn }
         xml.relatedIdentifier('relatedIdentifierType' => 'DOI',
                               'relationType' => 'IsVariantFormOf') { xml.text @hyacinth_metadata_retrieval.parent_publication_doi }
-      end unless @hyacinth_metadata_retrieval.parent_publication_issn.blank?
+      end
     end
 
     def add_subjects(xml)
+      return if @hyacinth_metadata_retrieval.subjects_topic.empty?
+
       xml.subjects do
         @hyacinth_metadata_retrieval.subjects_topic.each { |topic| xml.subject topic }
-      end unless @hyacinth_metadata_retrieval.subjects_topic.empty?
+      end
     end
 
     # required field

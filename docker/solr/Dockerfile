@@ -1,21 +1,16 @@
-FROM solr:6.3.0
+FROM solr:8.11.2
 
 WORKDIR /data
 
-# Set up template cores in image
+COPY ./setup-and-start.sh .
 
-COPY ./start.sh .
-
-COPY --chown=solr:solr './solr_cores/hyacinth-solr-6-3' /template-cores/hyacinth
+COPY --chown=solr:solr './solr_cores/hyacinth-solr-8' /template-cores/hyacinth
 RUN echo 'name=hyacinth' > /template-cores/hyacinth/core.properties
 
-COPY --chown=solr:solr './solr_cores/hyacinth-hydra-solr-6-3' /template-cores/hyacinth_hydra
+COPY --chown=solr:solr './solr_cores/hyacinth-hydra-solr-8' /template-cores/hyacinth_hydra
 RUN echo 'name=hyacinth_hydra' > /template-cores/hyacinth_hydra/core.properties
 
-COPY --chown=solr:solr './solr_cores/uri-service-solr-6-3' /template-cores/uri_service
+COPY --chown=solr:solr './solr_cores/uri-service-solr-8' /template-cores/uri_service
 RUN echo 'name=uri_service' > /template-cores/uri_service/core.properties
 
-# When image runs, the command below will copy template cores to final location (on mounted docker
-#  volume) if they don't already exist, and then will start solr.
-
-CMD /bin/bash ./start.sh
+CMD /bin/bash ./setup-and-start.sh

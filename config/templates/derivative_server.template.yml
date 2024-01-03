@@ -1,0 +1,6 @@
+development:
+  url: http://localhost:4000
+  token: changethis
+test:
+  url: http://localhost:4001
+  token: changethis

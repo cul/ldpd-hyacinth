@@ -26,7 +26,7 @@ describe PidGenerator do
       while minter.mint do
         counter += 1
       end
-    rescue Exception => ex
+    rescue StandardError => ex
       # The minter throws an exception when it runs out of mints
     end
 

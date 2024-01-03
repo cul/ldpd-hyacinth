@@ -1,4 +1,4 @@
-class CreatePidGenerators < ActiveRecord::Migration
+class CreatePidGenerators < ActiveRecord::Migration[4.2]
   def change
     create_table :pid_generators do |t|
       t.string :namespace

@@ -37,8 +37,6 @@ if ['development', 'test'].include?(Rails.env)
 
     desc 'CI build just running specs'
     task ci_specs: :environment do
-      rspec_system_exit_failure_exception = nil
-
       docker_wrapper do
         duration = Benchmark.realtime do
           Rake::Task["hyacinth:fedora:reload_cmodels"].invoke
@@ -50,7 +48,7 @@ if ['development', 'test'].include?(Rails.env)
           Rake::Task["db:drop"].invoke
           Rake::Task["db:create"].invoke
           Rake::Task["db:migrate"].invoke
-          Rake::Task["db:seed"].invoke
+          Rake::Task["hyacinth:setup:core_records"].invoke
           ENV['CLEAR'] = 'true' # Set ENV variable for reindex task
           Rake::Task['hyacinth:index:reindex'].invoke
           ENV['CLEAR'] = nil  # Clear ENV variable because we're done with it

@@ -24,7 +24,7 @@ namespace :resque do
 
   desc "Start workers"
   task :start_workers => :environment do
-    run_workers(Hyacinth::Queue::QUEUES_IN_DESCENDING_PRIORITY_ORDER, RESQUE_CONFIG['workers'] || 1)
+    run_workers(Hyacinth::Queue::QUEUES_IN_DESCENDING_PRIORITY_ORDER, RESQUE_CONFIG[:workers] || 1)
   end
 
   def store_pids(pids, mode)

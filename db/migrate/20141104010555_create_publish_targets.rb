@@ -1,4 +1,4 @@
-class CreatePublishTargets < ActiveRecord::Migration
+class CreatePublishTargets < ActiveRecord::Migration[4.2]
   def change
     create_table :publish_targets do |t|
       t.string :pid

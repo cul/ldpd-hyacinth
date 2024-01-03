@@ -8,7 +8,7 @@ Rails:
   Enabled: true
 
 AllCops:
-  TargetRubyVersion: 2.4.2
+  TargetRubyVersion: 2.5.9
   TargetRailsVersion: 4.10
   DisplayCopNames: true
   Exclude:
@@ -66,12 +66,18 @@ Metrics/CyclomaticComplexity:
     - 'lib/hyacinth/xml_generator/element.rb'
     - 'app/jobs/process_digital_object_import_job.rb'
     - 'app/models/concerns/digital_object/persistence.rb'
+    - 'app/controllers/digital_objects_controller.rb'
+    - 'app/models/digital_object/base.rb'
+    - 'app/models/concerns/digital_object/publishing.rb'
 
 Metrics/PerceivedComplexity:
   Exclude:
     - 'lib/hyacinth/xml_generator/element.rb'
     - 'app/jobs/process_digital_object_import_job.rb'
     - 'app/models/concerns/digital_object/persistence.rb'
+    - 'app/controllers/digital_objects_controller.rb'
+    - 'app/models/digital_object/base.rb'
+    - 'app/models/concerns/digital_object/publishing.rb'
 
 Metrics/MethodLength:
   Enabled: false

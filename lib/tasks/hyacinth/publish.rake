@@ -8,7 +8,7 @@ namespace :hyacinth do
       begin
         obj = DigitalObject::Base.find(pid)
         obj.publish
-      rescue => e
+      rescue StandardError => e
         # Errors raised on different threads won't show up on the console, so we need to print them.
         error_message = 'Publish Error: Skipping ' + pid + "\nException: #{e.class}, Message: #{e.message}"
         puts error_message
@@ -41,7 +41,7 @@ namespace :hyacinth do
       else
         start_at = 0
       end
-      
+
       # We run into autoloading issues when running in a multithreaded context,
       # so we'll have the application eager load all classes now.
       puts 'Eager loading application classes to avoid multithreading issues...'

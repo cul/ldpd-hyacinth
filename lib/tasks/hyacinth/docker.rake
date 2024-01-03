@@ -12,13 +12,42 @@ namespace :hyacinth do
 
     def wait_for_solr_cores_to_load
       expected_port = docker_compose_config['services']['solr']['ports'][0].split(':')[0]
-      Timeout.timeout(10, Timeout::Error, 'Timed out during solr startup check.') do
+      url_to_check = "http://localhost:#{expected_port}/solr/hyacinth/admin/system"
+      puts "Waiting for Solr to become available (at #{url_to_check})..."
+      Timeout.timeout(20, Timeout::Error, 'Timed out during Solr startup check.') do
         loop do
-          sleep 0.25
-          status_code = Net::HTTP.get_response(URI("http://localhost:#{expected_port}/solr/hyacinth/update?wt=json")).code
-          break if status_code != '503'
-        rescue EOFError, Errno::ECONNRESET
-          next
+          begin
+            sleep 0.25
+            status_code = Net::HTTP.get_response(URI(url_to_check)).code
+            if status_code == '200' # Solr is ready to receive requests
+              puts 'Solr is available.'
+              break
+            end
+          rescue EOFError, Errno::ECONNRESET => e
+            # Try again in response to the above error types
+            next
+          end
+        end
+      end
+    end
+
+    def wait_for_fedora_to_load
+      expected_port = docker_compose_config['services']['fedora']['ports'][0].split(':')[0]
+      url_to_check = "http://localhost:#{expected_port}/fedora/describe"
+      puts "Waiting for Fedora to become available (at #{url_to_check})..."
+      Timeout.timeout(20, Timeout::Error, 'Timed out during Fedora startup check.') do
+        loop do
+          begin
+            sleep 0.25
+            status_code = Net::HTTP.get_response(URI(url_to_check)).code
+            if status_code == '401' # Fedora is ready and prompting for authentication
+              puts 'Fedora is available.'
+              break
+            end
+          rescue EOFError, Errno::ECONNRESET, Errno::ECONNREFUSED => e
+            # Try again in response to the above error types
+            next
+          end
         end
       end
     end
@@ -54,6 +83,7 @@ namespace :hyacinth do
         # hasn't changed since the last build.
         `docker compose -f #{docker_compose_file_path} up --build --detach --wait`
         wait_for_solr_cores_to_load
+        wait_for_fedora_to_load
         puts "\nStarted."
       end
     end

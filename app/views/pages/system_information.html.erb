@@ -4,12 +4,12 @@
   stats = {
     'Version' => File.read(File.join(Rails.root, '/VERSION')).strip,
     'App Filesystem Location' => Rails.root,
-    'Hyacinth Solr URL' => HYACINTH['solr_url'],
+    'Hyacinth Solr URL' => HYACINTH[:solr_url],
     'Hydra Solr URL' => ActiveFedora.solr_config[:url],
     'Fedora URL' => ActiveFedora.config.credentials[:url],
-    'Default Asset Home' => HYACINTH['default_asset_home'],
-    'Default Service Copy Home' => HYACINTH['default_service_copy_home'],
-    'Access Copy Directory' => HYACINTH['access_copy_directory'],
+    'Default Asset Home' => HYACINTH[:default_asset_home],
+    'Default Service Copy Home' => HYACINTH[:default_service_copy_home],
+    'Access Copy Directory' => HYACINTH[:access_copy_directory],
   }
 %>
 

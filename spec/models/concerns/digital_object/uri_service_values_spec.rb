@@ -14,7 +14,7 @@ describe DigitalObject::UriServiceValues do
   describe "#create_term" do
     let(:controlled_vocabulary_string_key) { "uri_service_values_spec" }
     let(:controlled_vocabulary_display_label) { "Uri Service Values Spec" }
-    let(:controlled_vocabulary) { FactoryGirl.create(:controlled_vocabulary, string_key: controlled_vocabulary_string_key) }
+    let(:controlled_vocabulary) { FactoryBot.create(:controlled_vocabulary, string_key: controlled_vocabulary_string_key) }
     let(:created_term) { digital_object.create_term(term_type, term_data) }
     let(:term_value) { "Test Term Value" }
     let(:uri_service_client) { double(UriService::Client) }
@@ -38,7 +38,7 @@ describe DigitalObject::UriServiceValues do
 
       context "and vocabulary prohibits temp terms" do
         let(:controlled_vocabulary_string_key) { "uri_service_values_spec_no_temp" }
-        let(:controlled_vocabulary) { FactoryGirl.create(:controlled_vocabulary, :prohibit_temp_terms, string_key: controlled_vocabulary_string_key) }
+        let(:controlled_vocabulary) { FactoryBot.create(:controlled_vocabulary, :prohibit_temp_terms, string_key: controlled_vocabulary_string_key) }
 
         it "raises an error and does not create term" do
           expect(controlled_vocabulary.prohibit_temp_terms).to be true

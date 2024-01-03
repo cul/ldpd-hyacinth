@@ -1,4 +1,4 @@
-class Project < ActiveRecord::Base
+class Project < ApplicationRecord
   has_many :enabled_dynamic_fields, dependent: :destroy
   accepts_nested_attributes_for :enabled_dynamic_fields, allow_destroy: true
 
@@ -44,6 +44,7 @@ class Project < ActiveRecord::Base
     fedora_object.datastreams["DC"].dc_title = display_label
     fedora_object.label = Hyacinth::Utils::StringUtils.escape_four_byte_utf8_characters_as_html_entities(display_label)
     fedora_object.save(update_index: false)
+    fedora_object
   end
 
   def mark_fedora_object_as_deleted!
@@ -64,7 +65,7 @@ class Project < ActiveRecord::Base
     if full_path_to_custom_asset_directory.present?
       full_path_to_custom_asset_directory
     else
-      File.join(HYACINTH['default_asset_home'], string_key)
+      File.join(HYACINTH[:default_asset_home], string_key)
     end
   end
 
@@ -72,7 +73,6 @@ class Project < ActiveRecord::Base
     changes_require_save = false
 
     # For all DigitalObjectTypes that contain ANY enabled dynamic fields, ensure that the title fields are always enabled (and that title_non_sort_portion is always required)
-
     DigitalObjectType.all.find_each do |digital_object_type|
       # If enabled_dynamic_fields_for_type includes the title fields, make sure that they're set as *required*
       # If not, enable them and set them as required

@@ -1,24 +1,19 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 4.2.11'
-
-# BigDecimal bridge for later ruby while on Rails 4.2
-gem 'bigdecimal', '~> 1.4.2'
+gem 'rails', '~> 6.1.0'
+gem 'bootsnap', require: false
+# gem 'responders'
 
 # Use sqlite3 as the database for Active Record
-gem 'sqlite3', '~> 1.3.10'
+gem 'sqlite3', '~> 1.4'
 gem 'mysql2', '~> 0.5.3'
 
-# Lock rake due to rspec/rubocop v11 incompatibilities
-gem 'rake', '~> 10.0'
-
-# Use SCSS for stylesheets
-gem 'sass'
-gem 'sass-rails'
+# The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
+gem 'sprockets-rails'
 
 # Bootstrap include
-gem 'bootstrap-sass', '~> 3.3'
+gem 'bootstrap-sass', '~> 3.4.1'
 gem 'autoprefixer-rails' # Recommended by bootstrap-sass
 
 # OHSynchronizer Dependencies
@@ -45,7 +40,7 @@ gem 'attr_encrypted', '>= 1.3.3'
 
 # Mime Type detection
 gem 'mime-types'
-
+gem 'mime-types-data'
 # Character encoding detection
 gem 'charlock_holmes'
 
@@ -58,9 +53,6 @@ gem 'thread'
 
 # Use terser as compressor for JavaScript assets
 gem 'terser'
-
-# Use CoffeeScript for .js.coffee assets and views
-gem 'coffee-rails'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails', '>= 4.0.4'
@@ -77,12 +69,7 @@ gem 'underscore-rails'
 # gem 'turbolinks'
 
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 1.2'
-
-group :doc do
-  # bundle exec rake doc:rails generates the API under doc/api.
-  gem 'sdoc', require: false
-end
+gem 'jbuilder'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt-ruby'
@@ -94,18 +81,20 @@ end
 gem 'kaminari'
 
 # For building and parsing XML
-gem 'nokogiri', '~> 1.10.10'  # can't update to 1.11 because our server version of GLIBC is too old
+gem 'nokogiri', '~> 1.15.5'
 
 # For authentication
-gem 'devise', '>= 3.4.1'
+gem 'devise', '~> 4.9.3'
+# gem 'childprocess', '~> 2.0'
 
 # CUL Fedora Dependencies and Content Models
-gem 'cul_hydra', '~> 1.5.0'
-gem 'rubydora', git: 'https://github.com/elohanlon/rubydora', branch: 'datastream_dissemination_with_headers'
-# gem 'cul_hydra', path: '../cul_hydra'
+gem 'cul_hydra', git: 'https://github.com/cul/cul_hydra', ref: 'remove_blacklight'
+gem 'active-fedora', '8.6.0'
+gem 'rubydora'
 # Temporarily use specific commit because new version of gem hasn't been released yet.  Latest is 1.1.3.
-gem 'rdf-rdfxml', git: 'https://github.com/ruby-rdf/rdf-rdfxml', ref: '78c13fe5dbcecaf1f56abe9535d00f16c670a764'
-gem 'uri_service', '0.5.5'
+gem 'rdf', '>= 1.1.5'
+gem 'rdf-vocab'
+gem 'uri_service', '0.6.0'
 # gem 'uri_service', path: '../uri_service'
 gem 'solrizer', '>= 3.4.1'
 
@@ -116,7 +105,7 @@ gem 'best_type', '~> 1.0'
 # gem 'best_type', path: '../best_type'
 
 # Specify min version for active_fedora_relsint because of a needed fix
-gem 'active_fedora_relsint', '>= 0.4.1'
+gem 'active_fedora_relsint', git: 'https://github.com/cul/active_fedora_relsint', ref: '91114c78c9af344673f1e899624031da79b72693'
 
 # URI Escaping
 gem 'addressable', '~> 2.7.0'
@@ -137,48 +126,59 @@ gem 'rubyzip', '>= 1.2.1'
 
 gem 'rainbow', '~> 3.0'
 
+# Forcing psych 3 (not 4) so that yaml aliases can be used with Rails 6.0
+gem 'psych', '<4'
+
+# For css and js compilation
+gem 'vite_rails', '~> 3.0.17'
+
+# Require net-http gem explicitly (and allow any version) to fix an issue where the net-protocol
+# dependency is loaded twice.  See this: https://stackoverflow.com/a/75105591
+# And this: https://github.com/ruby/net-imap/issues/16#issuecomment-803086765
+gem 'net-http'
+
+# Require uri gem explicitly and match the default.standard gem that comes with Ruby 2.7.8
+# (otherwise we'll get an error about the bundle version not matching the installed version).
+# See: https://stdgems.org/2.7.8/
+# NOTE: This should be changed if you update to a newer version of ruby.
+gem 'uri', '0.10.0.2'
+
 # Gem min versions that are only specified here because of vulnerabilities in earlier versions:
 gem 'rack-protection', '>= 1.5.5'
-gem 'loofah', '>= 2.2.1'
-gem 'rails-html-sanitizer', '>= 1.0.4'
+gem 'loofah', '~> 2.20.0'
+gem 'rails-html-sanitizer', '>= 1.2'
 
 # Development and testing!
 group :development, :test do
   gem 'byebug'
-  gem 'rspec-rails', '~> 3.3'
+  gem 'rspec-rails', '~> 5.0'
+  gem 'rails-controller-testing'
   gem 'capybara', '~> 3.32'
   # For testing with chromedriver
-  gem 'selenium-webdriver', '~> 3.142'
+  gem 'selenium-webdriver', '~> 4.0'
   # For automatically updating chromedriver
-  gem 'webdrivers', '~> 4.0', require: false
-  gem 'factory_girl_rails', '>= 4.4.1'
-  gem 'rubocop', '~> 0.58.2', require: false
-  gem 'rubocop-rspec', '>= 1.20.1', require: false
-  gem 'rubocop-rails_config', '>= 0.2.2', require: false
+  gem 'webdrivers', '~> 5.3.0', require: false
+  gem 'factory_bot_rails', '~> 4.9'
+  gem 'rubocop', '~> 0.67.0', require: false
+  gem 'rubocop-rspec', '~> 1.26.0', require: false
+  gem 'rubocop-rails_config', '~> 0.2.3', require: false
   gem 'equivalent-xml'
+  gem 'listen'
 end
 
 # Development!
 group :development do
   # Use Capistrano for deployment
-  gem 'capistrano', '~> 3.5.0', require: false
-  # Rails and Bundler integrations were moved out from Capistrano 3
-  gem 'capistrano-rails', '~> 1.1', require: false
-  gem 'capistrano-bundler', '~> 1.1', require: false
-  # "idiomatic support for your preferred ruby version manager"
-  gem 'capistrano-rvm', '~> 0.1', require: false
-  # The `deploy:restart` hook for passenger applications is now in a separate gem
-  # Just add it to your Gemfile and require it in your Capfile.
+  gem 'capistrano', '~> 3.18.0', require: false
+  gem 'capistrano-cul', require: false
   gem 'capistrano-passenger', '~> 0.1', require: false
-  # Use net-ssh >= 4.2 to prevent warnings with Ruby 2.4
-  gem 'net-ssh', '>= 4.2'
-
-  # Access an IRB console on exception pages or by using <%= console %> in views
-  gem 'web-console', '~> 2.0'
+  gem 'capistrano-rails', '~> 1.4', require: false
 end
 
 
 # Alternate development webserver
-gem 'puma', group: :development
+gem 'puma', '~> 5.2', group: :development
 # gem 'thin', group: :development
 # gem 'unicorn', group: :development
+
+gem "ejs", "~> 1.1"

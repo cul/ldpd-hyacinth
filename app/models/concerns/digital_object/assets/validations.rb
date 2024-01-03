@@ -51,14 +51,12 @@ module DigitalObject::Assets::Validations
     true
   end
 
-  def validate_import_file_type(import_file_import_type, no_admin = false)
+  def validate_import_file_type(import_file_import_type)
     raise "Missing type for import_file: digital_object_data['import_file']['import_type']" if import_file_import_type.blank?
 
     raise "Invalid type for import_file: digital_object_data['import_file']['import_type']: #{import_file_import_type.inspect}" unless DigitalObject::Asset::VALID_FILE_IMPORT_TYPES.include?(import_file_import_type)
 
     return if import_file_import_type == DigitalObject::Asset::IMPORT_TYPE_UPLOAD_DIRECTORY
-
-    raise "Only admins can perform file imports of type: #{import_file_import_type}" if no_admin && admin_required_for_type?(import_file_import_type)
   end
 
   def validate_import_file_data(import_file_data)
@@ -72,7 +70,7 @@ module DigitalObject::Assets::Validations
 
     # Make sure that the file exists and is readable
     if import_file_import_type == DigitalObject::Asset::IMPORT_TYPE_UPLOAD_DIRECTORY
-      actual_path_to_validate = File.join(HYACINTH['upload_directory'], import_file_import_path)
+      actual_path_to_validate = File.join(HYACINTH[:upload_directory], import_file_import_path)
     else
       actual_path_to_validate = import_file_import_path
     end
@@ -120,24 +118,5 @@ module DigitalObject::Assets::Validations
     unless (original_image_width >= left + width) && (original_image_height >= top + height)
       @errors.add(:featured_region, "region #{value_to_validate} is not within original image dimensions #{original_image_width}x#{original_image_height}")
     end
-  end
-
-  def log_import_file_data_errors_for_user(current_user, import_file_data_param, file_param)
-    data_errors = []
-    data_errors << 'Missing digital_object_data_json[import_file] for new Asset' if import_file_data_param.blank?
-
-    import_type = import_file_data_param['import_type']
-
-    begin
-      validate_import_file_type(import_type, current_user && !current_user.admin?)
-    rescue StandardError => e
-      data_errors << e.message
-    end
-
-    if import_type == DigitalObject::Asset::IMPORT_TYPE_POST_DATA
-      data_errors << "An attached file is required in the request data for imports of type: #{import_type}" if file_param.blank?
-    end
-
-    data_errors
   end
 end

@@ -19,11 +19,11 @@ class Hyacinth::Utils::PathUtils
   end
 
   def self.data_directory_path_for_uuid(uuid)
-    File.join(HYACINTH['digital_object_data_directory'], uuid_pairtree(uuid), uuid)
+    File.join(HYACINTH[:digital_object_data_directory], uuid_pairtree(uuid), uuid)
   end
 
   def self.access_directory_path_for_uuid(uuid)
-    File.join(HYACINTH['access_copy_directory'], uuid_pairtree(uuid), uuid)
+    File.join(HYACINTH[:access_copy_directory], uuid_pairtree(uuid), uuid)
   end
 
   def self.access_directory_path_for_uuid!(uuid)
@@ -33,5 +33,15 @@ class Hyacinth::Utils::PathUtils
     # When Derivativo 1.5 is released, this can change to 0750 permissions.
     FileUtils.mkdir_p(dest_dir, mode: 0770)
     dest_dir
+  end
+
+  # Converts a file path to a Fedora datastream dsLocation value
+  def self.filesystem_path_to_ds_location(path)
+    Addressable::URI.encode('file:' + path).gsub('&', '%26').gsub('#', '%23')
+  end
+
+  # Converts a Fedora datastream dsLocation value to a file path
+  def self.ds_location_to_filesystem_path(ds_location)
+    Addressable::URI.unencode(ds_location).gsub(/^file:/, '')
   end
 end

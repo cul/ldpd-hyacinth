@@ -5,7 +5,7 @@ module DigitalObject::XmlDatastreamRendering
     base_translation_logic = JSON(xml_datastream.xml_translation)
     dynamic_field_group_map = Hash[DynamicFieldGroup.all.map { |dfg| [dfg.string_key, dfg.xml_translation] }]
 
-    Hyacinth::XMLGenerator
+    Hyacinth::XmlGenerator
       .new(self.dynamic_field_data, base_translation_logic, dynamic_field_group_map, internal_fields)
       .generate
       .to_xml(indent: 2)

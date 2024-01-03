@@ -1,4 +1,4 @@
-class XmlDatastream < ActiveRecord::Base
+class XmlDatastream < ApplicationRecord
   validate :validate_json_fields
   before_save :prettify_json
 

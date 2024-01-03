@@ -15,7 +15,7 @@
   }).done(function(data_for_editor){
 
     var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
-    var assignment = digitalObject.hasAssignment(Hyacinth.AssignmentTaskTypes.annotate);
+    var assignment = digitalObject.hasAssignment(Hyacinth.AssignmentTaskTypes.annotate_object);
 
     $('#widget-template-container').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/digital_objects/manage_annotation.ejs', {digitalObject: digitalObject}));
     var annotationEditor = new Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor('digital-object-annotation-editor', {

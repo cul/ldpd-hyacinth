@@ -4,10 +4,12 @@ class ProcessDigitalObjectImportJob
   FIND_DIGITAL_OBJECT_IMPORT_RETRY_DELAY = 10
 
   def self.perform(digital_object_import_id)
+    # If the import job was previously deleted (and does not exist in the database), return immediately
+    return unless DigitalObjectImport.exists?(digital_object_import_id)
+
     # Retrieve DigitalObjectImport instance from table
     # If we encounter an error (e.g. Mysql2::Error), wait and try again.
     digital_object_import = find_digital_object_import_with_retry(digital_object_import_id)
-
     # If prerequisite check fails, return immediately.
     # Re-queueing or mark-as-failure logic is handled by the prerequisite_row_check method.
     return unless prerequisite_row_check(digital_object_import)
@@ -16,7 +18,6 @@ class ProcessDigitalObjectImportJob
     digital_object_data = JSON.parse(digital_object_import.digital_object_data)
 
     digital_object = find_or_create_digital_object(digital_object_data, user, digital_object_import)
-
     result = assign_data(digital_object, digital_object_data, digital_object_import)
 
     3.times do
@@ -37,7 +38,7 @@ class ProcessDigitalObjectImportJob
       digital_object_import.save!
       return
     else
-      handle_success_or_failure(result, digital_object, digital_object_import, HYACINTH['solr_commit_after_each_csv_import_row'])
+      handle_success_or_failure(result, digital_object, digital_object_import, HYACINTH[:solr_commit_after_each_csv_import_row])
     end
   rescue StandardError => e
     handle_unexpected_processing_error(digital_object_import_id, e)
@@ -56,7 +57,7 @@ class ProcessDigitalObjectImportJob
   # digital_object_import instance because when it's called, we can't guarantee
   # that we were able to successfully obtain a digital_object_import instance.
   # We try multiple times, within this method, to obtain an instance.
-  def self.handle_unexpected_processing_error(digital_object_import_id, e, queue_long_jobs = HYACINTH['queue_long_jobs'])
+  def self.handle_unexpected_processing_error(digital_object_import_id, e, queue_long_jobs = HYACINTH[:queue_long_jobs])
     # In the case of some unexpected, otherwise unhandled error, mark this job
     # as a failure so that it doesn't get stuck as pending forever, causing
     # other jobs that depend on it to be requeued forever.
@@ -135,7 +136,7 @@ class ProcessDigitalObjectImportJob
   # If prerequisite rows are pending, then this digital_object_import will be requeued.
   # If prerequisite rows failed, then this digital_object_import will also fail with
   # a prerequisite-related error message.
-  def self.prerequisite_row_check(digital_object_import, queue_long_jobs = HYACINTH['queue_long_jobs'])
+  def self.prerequisite_row_check(digital_object_import, queue_long_jobs = HYACINTH[:queue_long_jobs])
     # If this import has prerequisite_csv_row_numbers, make sure that the job
     # with that prerequisite_csv_row_numbers has been completed.  If it hasn't,
     # we'll re-queue this job.

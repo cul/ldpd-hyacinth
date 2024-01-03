@@ -41,7 +41,7 @@ RSpec.describe XmlDatastreamsController, :type => :controller do
   describe "GET index" do
     it "assigns all xml_datastreams as @xml_datastreams" do
       xml_datastream = XmlDatastream.create! valid_attributes
-      get :index, {}, valid_session
+      get :index, session: valid_session
       expect(assigns(:xml_datastreams)).to eq([xml_datastream])
     end
   end
@@ -49,14 +49,14 @@ RSpec.describe XmlDatastreamsController, :type => :controller do
   describe "GET show" do
     it "assigns the requested xml_datastream as @xml_datastream" do
       xml_datastream = XmlDatastream.create! valid_attributes
-      get :show, {:id => xml_datastream.to_param}, valid_session
+      get :show, params: { id: xml_datastream.to_param }, session: valid_session
       expect(assigns(:xml_datastream)).to eq(xml_datastream)
     end
   end
 
   describe "GET new" do
     it "assigns a new xml_datastream as @xml_datastream" do
-      get :new, {}, valid_session
+      get :new, session: valid_session
       expect(assigns(:xml_datastream)).to be_a_new(XmlDatastream)
     end
   end
@@ -64,7 +64,7 @@ RSpec.describe XmlDatastreamsController, :type => :controller do
   describe "GET edit" do
     it "assigns the requested xml_datastream as @xml_datastream" do
       xml_datastream = XmlDatastream.create! valid_attributes
-      get :edit, {:id => xml_datastream.to_param}, valid_session
+      get :edit, params: { id: xml_datastream.to_param }, session: valid_session
       expect(assigns(:xml_datastream)).to eq(xml_datastream)
     end
   end
@@ -73,7 +73,7 @@ RSpec.describe XmlDatastreamsController, :type => :controller do
     describe "with valid params" do
       it "creates a new XmlDatastream" do
         expect {
-          post :create, {:xml_datastream => valid_attributes}, valid_session
+          post :create, params: { xml_datastream: valid_attributes}, session: valid_session
         }.to change(XmlDatastream, :count).by(1)
       end
 
@@ -84,19 +84,19 @@ RSpec.describe XmlDatastreamsController, :type => :controller do
       end
 
       it "redirects to the created xml_datastream" do
-        post :create, {:xml_datastream => valid_attributes}, valid_session
+        post :create, params: { xml_datastream: valid_attributes }, session: valid_session
         expect(response).to redirect_to(XmlDatastream.last)
       end
     end
 
     describe "with invalid params" do
       it "assigns a newly created but unsaved xml_datastream as @xml_datastream" do
-        post :create, {:xml_datastream => invalid_attributes}, valid_session
+        post :create, params: { xml_datastream: invalid_attributes }, session: valid_session
         expect(assigns(:xml_datastream)).to be_a_new(XmlDatastream)
       end
 
       it "re-renders the 'new' template" do
-        post :create, {:xml_datastream => invalid_attributes}, valid_session
+        post :create, params: { xml_datastream: invalid_attributes}, session: valid_session
         expect(response).to render_template("new")
       end
     end
@@ -110,20 +110,20 @@ RSpec.describe XmlDatastreamsController, :type => :controller do
 
       it "updates the requested xml_datastream" do
         xml_datastream = XmlDatastream.create! valid_attributes
-        put :update, {:id => xml_datastream.to_param, :xml_datastream => new_attributes}, valid_session
+        put :update, params: { id: xml_datastream.to_param, xml_datastream: new_attributes }, session: valid_session
         xml_datastream.reload
         skip("Add assertions for updated state")
       end
 
       it "assigns the requested xml_datastream as @xml_datastream" do
         xml_datastream = XmlDatastream.create! valid_attributes
-        put :update, {:id => xml_datastream.to_param, :xml_datastream => valid_attributes}, valid_session
+        put :update, params: { id: xml_datastream.to_param, xml_datastream: valid_attributes }, session: valid_session
         expect(assigns(:xml_datastream)).to eq(xml_datastream)
       end
 
       it "redirects to the xml_datastream" do
         xml_datastream = XmlDatastream.create! valid_attributes
-        put :update, {:id => xml_datastream.to_param, :xml_datastream => valid_attributes}, valid_session
+        put :update, params: { id: xml_datastream.to_param, xml_datastream: valid_attributes }, session: valid_session
         expect(response).to redirect_to(xml_datastream)
       end
     end
@@ -131,13 +131,13 @@ RSpec.describe XmlDatastreamsController, :type => :controller do
     describe "with invalid params" do
       it "assigns the xml_datastream as @xml_datastream" do
         xml_datastream = XmlDatastream.create! valid_attributes
-        put :update, {:id => xml_datastream.to_param, :xml_datastream => invalid_attributes}, valid_session
+        put :update, params: { id: xml_datastream.to_param, xml_datastream: invalid_attributes}, session: valid_session
         expect(assigns(:xml_datastream)).to eq(xml_datastream)
       end
 
       it "re-renders the 'edit' template" do
         xml_datastream = XmlDatastream.create! valid_attributes
-        put :update, {:id => xml_datastream.to_param, :xml_datastream => invalid_attributes}, valid_session
+        put :update, params: { id: xml_datastream.to_param, xml_datastream: invalid_attributes}, session: valid_session
         expect(response).to render_template("edit")
       end
     end
@@ -147,13 +147,13 @@ RSpec.describe XmlDatastreamsController, :type => :controller do
     it "destroys the requested xml_datastream" do
       xml_datastream = XmlDatastream.create! valid_attributes
       expect {
-        delete :destroy, {:id => xml_datastream.to_param}, valid_session
+      delete :destroy, params: { id: xml_datastream.to_param}, session: valid_session
       }.to change(XmlDatastream, :count).by(-1)
     end
 
     it "redirects to the xml_datastreams list" do
       xml_datastream = XmlDatastream.create! valid_attributes
-      delete :destroy, {:id => xml_datastream.to_param}, valid_session
+      delete :destroy, params: { id: xml_datastream.to_param}, session: valid_session
       expect(response).to redirect_to(xml_datastreams_url)
     end
   end

@@ -1,4 +1,4 @@
-class CreateDigitalObjectRecords < ActiveRecord::Migration
+class CreateDigitalObjectRecords < ActiveRecord::Migration[4.2]
   def change
     create_table :digital_object_records do |t|
       t.string :pid, unique: true

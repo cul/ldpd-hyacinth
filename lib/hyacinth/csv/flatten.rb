@@ -47,7 +47,7 @@ module Hyacinth::Csv::Flatten
     end
 
     def pointer_for_value(key, value, omit_blank_values, prefix = [])
-      return nil if omit_blank_values && value.blank?
+      return nil if omit_blank_values && !value.is_a?(TrueClass) && !value.is_a?(FalseClass) && value.blank?
       prefix + [key]
     end
 

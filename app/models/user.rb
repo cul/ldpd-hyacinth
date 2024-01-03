@@ -1,9 +1,9 @@
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   CONTROLLED_VOCABULARIES_JOIN = 'INNER JOIN dynamic_fields ON dynamic_fields.id = enabled_dynamic_fields.dynamic_field_id ' \
     'INNER JOIN controlled_vocabularies ON controlled_vocabularies.string_key = dynamic_fields.controlled_vocabulary_string_key'
 
-  has_many :projects, through: :project_permissions
   has_many :project_permissions, dependent: :destroy
+  has_many :projects, through: :project_permissions
   # has_many :job_managers
 
   # Include default devise modules. Others available are:

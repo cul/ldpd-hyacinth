@@ -1,4 +1,4 @@
-class AddDurationAndNumberOfRecordsProcessedToCsvExports < ActiveRecord::Migration
+class AddDurationAndNumberOfRecordsProcessedToCsvExports < ActiveRecord::Migration[4.2]
   def change
     change_table(:csv_exports) do |t|
       t.integer :duration, :null => false, :default => 0

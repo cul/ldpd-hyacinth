@@ -1,4 +1,4 @@
-class AddStringKeyToPublishTargets < ActiveRecord::Migration
+class AddStringKeyToPublishTargets < ActiveRecord::Migration[4.2]
   def change
     change_table(:publish_targets) do |t|
       t.string :string_key, null: true

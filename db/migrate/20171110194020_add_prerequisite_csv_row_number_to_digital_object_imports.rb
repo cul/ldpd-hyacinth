@@ -1,4 +1,4 @@
-class AddPrerequisiteCsvRowNumberToDigitalObjectImports < ActiveRecord::Migration
+class AddPrerequisiteCsvRowNumberToDigitalObjectImports < ActiveRecord::Migration[4.2]
   def change
     change_table(:digital_object_imports) do |t|
       t.text :prerequisite_csv_row_numbers, null: true

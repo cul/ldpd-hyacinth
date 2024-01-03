@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<!--
+ This is a stripped down config file used for a simple example...
+ It is *not* a good example to work from.
+-->
+<config>
+
+  <!-- Controls what version of Lucene various components of Solr
+       adhere to.  Generally, you want to use the latest version to
+       get all bug fixes and improvements. It is highly recommended
+       that you fully re-index after changing this setting as it can
+       affect both how text is indexed and queried.
+  -->
+  <luceneMatchVersion>8.2.0</luceneMatchVersion>
+
+  <!-- <lib dir="${solr.install.dir:../../../..}/modules/analysis-extras/lib" /> -->
+  <lib dir="${solr.install.dir:../../../..}/contrib/analysis-extras/lib" />
+  <lib dir="${solr.install.dir:../../../..}/contrib/analysis-extras/lucene-libs" />
+
+  <!-- <lib dir="${solr.install.dir:../../../..}/modules/analysis-extras/lib" regex=".*\.jar" /> -->
+  <!-- <lib dir="${solr.install.dir:../../../..}/contrib/analysis-extras/lib" regex=".*\.jar" /> -->
+  <!-- <lib dir="${solr.install.dir:../../../..}/contrib/analysis-extras/lucene-libs" regex=".*\.jar" /> -->
+
+  <directoryFactory name="DirectoryFactory"
+                    class="${solr.directoryFactory:solr.NRTCachingDirectoryFactory}">
+  </directoryFactory>
+
+  <codecFactory class="solr.SchemaCodecFactory"/>
+
+  <schemaFactory class="ClassicIndexSchemaFactory"/>
+
+
+  <dataDir>${solr.data.dir:}</dataDir>
+
+  <requestDispatcher handleSelect="true" >
+    <requestParsers enableRemoteStreaming="false" multipartUploadLimitInKB="2048" />
+  </requestDispatcher>
+
+  <requestHandler name="/analysis/field" startup="lazy" class="solr.FieldAnalysisRequestHandler" />
+
+  <!-- config for the admin interface -->
+  <admin>
+    <defaultQuery>*:*</defaultQuery>
+  </admin>
+
+  <!-- The default high-performance update handler -->
+  <updateHandler class="solr.DirectUpdateHandler2">
+    <!-- Enables a transaction log, used for real-time get, durability, and
+         and solr cloud replica recovery.  The log can grow as big as
+         uncommitted changes to the index, so use of a hard autoCommit
+         is recommended (see below).
+         "dir" - the target directory for transaction logs, defaults to the
+                solr data directory.
+         "numVersionBuckets" - sets the number of buckets used to keep
+                track of max version values when checking for re-ordered
+                updates; increase this value to reduce the cost of
+                synchronizing access to version buckets during high-volume
+                indexing, this requires 8 bytes (long) * numVersionBuckets
+                of heap space per Solr core.
+    -->
+    <updateLog>
+      <str name="dir">${solr.ulog.dir:}</str>
+      <int name="numVersionBuckets">${solr.ulog.numVersionBuckets:65536}</int>
+    </updateLog>
+
+    <!-- AutoCommit
+
+         Perform a hard commit automatically under certain conditions.
+         Instead of enabling autoCommit, consider using "commitWithin"
+         when adding documents.
+
+         http://wiki.apache.org/solr/UpdateXmlMessages
+
+         maxDocs - Maximum number of documents to add since the last
+                   commit before automatically triggering a new commit.
+
+         maxTime - Maximum amount of time in ms that is allowed to pass
+                   since a document was added before automatically
+                   triggering a new commit.
+         openSearcher - if false, the commit causes recent index changes
+           to be flushed to stable storage, but does not cause a new
+           searcher to be opened to make those changes visible.
+
+         If the updateLog is enabled, then it's highly recommended to
+         have some sort of hard autoCommit to limit the log size.
+      -->
+    <autoCommit>
+      <maxTime>${solr.autoCommit.maxTime:30000}</maxTime>
+      <openSearcher>false</openSearcher>
+    </autoCommit>
+
+    <!-- softAutoCommit is like autoCommit except it causes a
+         'soft' commit which only ensures that changes are visible
+         but does not ensure that data is synced to disk.  This is
+         faster and more near-realtime friendly than a hard commit.
+      -->
+
+    <autoSoftCommit>
+      <maxTime>${solr.autoSoftCommit.maxTime:15000}</maxTime>
+    </autoSoftCommit>
+
+    <!-- Update Related Event Listeners
+
+         Various IndexWriter related events can trigger Listeners to
+         take actions.
+
+         postCommit - fired after every commit or optimize command
+         postOptimize - fired after every optimize command
+      -->
+    <!-- The RunExecutableListener executes an external command from a
+         hook such as postCommit or postOptimize.
+
+         exe - the name of the executable to run
+         dir - dir to use as the current working directory. (default=".")
+         wait - the calling thread waits until the executable returns.
+                (default="true")
+         args - the arguments to pass to the program.  (default is none)
+         env - environment variables to set.  (default is none)
+      -->
+    <!-- This example shows how RunExecutableListener could be used
+         with the script based replication...
+         http://wiki.apache.org/solr/CollectionDistribution
+      -->
+    <!--
+       <listener event="postCommit" class="solr.RunExecutableListener">
+         <str name="exe">solr/bin/snapshooter</str>
+         <str name="dir">.</str>
+         <bool name="wait">true</bool>
+         <arr name="args"> <str>arg1</str> <str>arg2</str> </arr>
+         <arr name="env"> <str>MYVAR=val1</str> </arr>
+       </listener>
+      -->
+  </updateHandler>
+
+  <!-- SearchHandler
+
+       http://wiki.apache.org/solr/SearchHandler
+
+       For processing Search Queries, the primary Request Handler
+       provided with Solr is "SearchHandler" It delegates to a sequent
+       of SearchComponents (see below) and supports distributed
+       queries across multiple shards
+    -->
+  <requestHandler name="search" class="solr.SearchHandler" default="true">
+    <!-- default values for query parameters can be specified, these
+         will be overridden by parameters in the request
+      -->
+     <lst name="defaults">
+       <str name="defType">edismax</str>
+       <str name="echoParams">explicit</str>
+       <int name="rows">10</int>
+
+       <str name="q.alt">*:*</str>
+       <str name="mm">2&lt;-1 5&lt;-2 6&lt;90%</str>
+
+       <str name="df">text</str>
+
+       <!-- this qf and pf are used by default, if not otherwise specified by
+            client. The default blacklight_config will use these for the
+            "keywords" search. See the author_qf/author_pf, title_qf, etc
+            below, which the default blacklight_config will specify for
+            those searches. You may also be interested in:
+            http://wiki.apache.org/solr/LocalParams
+       -->
+
+       <!-- HYACINTH: COMMENTING THIS OUT -->
+       <!--
+       <str name="qf">
+         collection_title_tesim^150
+         title_tesim^100
+         normalized_title_teim^100
+         unitid_identifier_match^40
+         name_teim^10
+         place_teim^10
+         subject_teim^2
+         text
+       </str>
+       <str name="pf">
+         collection_title_tesim^150
+         title_tesim^100
+         normalized_title_teim^100
+         unitid_identifier_match^40
+         name_teim^10
+         place_teim^10
+         subject_teim^2
+         text
+       </str>
+
+       <str name="qf_name">
+         name_teim
+       </str>
+       <str name="pf_name">
+         name_teim
+       </str>
+       <str name="qf_place">
+         place_teim
+       </str>
+       <str name="pf_place">
+         place_teim
+       </str>
+       <str name="qf_subject">
+         subject_teim
+       </str>
+       <str name="pf_subject">
+         subject_teim
+       </str>
+       <str name="qf_title">
+         title_tesim
+         normalized_title_teim
+       </str>
+       <str name="pf_title">
+         title_tesim
+         normalized_title_teim
+       </str>
+
+       <int name="ps">3</int>
+       <float name="tie">0.01</float>
+
+       <str name="fl">
+         id,
+         score,
+         abstract_html_tesm,
+         accessrestrict_html_tesm,
+         child_component_count_isi,
+         containers_ssim,
+         creator_ssm,
+         extent_ssm,
+         geogname_ssm,
+         has_online_content_ssim,
+         language_ssim,
+         level_ssm,
+         repository_ssm,
+         scopecontent_html_tesm,
+         title_ssm,
+         normalized_title_ssm,
+         normalized_date_ssm,
+         unitid_ssm,
+         parent_ssim,
+         parent_unittitles_ssm,
+         ead_ssi,
+         ref_ssm,
+         component_level_isim,
+         parent_access_restrict_tesm,
+         parent_access_terms_tesm,
+         names_coll_ssim
+         places_ssim
+       </str>
+
+       <str name="facet">true</str>
+       <str name="facet.mincount">1</str>
+       <str name="facet.field">level_ssim</str>
+       <str name="facet.field">creator_ssim</str>
+       <str name="facet.field">date_range_ssim</str>
+       <str name="facet.field">names_ssim</str>
+       <str name="facet.field">geogname_ssim</str>
+       <str name="facet.field">access_subjects_ssim</str>
+       <str name="facet.field">repository_ssim</str>
+       <str name="facet.field">collection_ssim</str>
+
+       <str name="spellcheck">true</str>
+       <str name="spellcheck.dictionary">default</str>
+       <str name="spellcheck.onlyMorePopular">true</str>
+       <str name="spellcheck.extendedResults">true</str>
+       <str name="spellcheck.collate">false</str>
+       <str name="spellcheck.count">5</str>
+
+       -->
+     </lst>
+    <arr name="last-components">
+      <str>spellcheck</str>
+    </arr>
+  </requestHandler>
+
+  <!-- for requests to get a single document; use id=666 instead of q=id:666 -->
+  <requestHandler name="document" class="solr.SearchHandler" >
+    <lst name="defaults">
+      <str name="echoParams">all</str>
+      <str name="fl">*</str>
+      <str name="rows">1</str>
+      <str name="q">{!term f=id v=$id}</str> <!-- use id=666 instead of q=id:666 -->
+    </lst>
+  </requestHandler>
+
+<!-- Spell Check
+
+        The spell check component can return a list of alternative spelling
+        suggestions.
+
+        http://wiki.apache.org/solr/SpellCheckComponent
+     -->
+  <searchComponent name="spellcheck" class="solr.SpellCheckComponent">
+
+    <str name="queryAnalyzerFieldType">textSpell</str>
+
+    <!-- Multiple "Spell Checkers" can be declared and used by this
+         component
+      -->
+
+    <!-- a spellchecker built from a field of the main index, and
+         written to disk
+      -->
+    <lst name="spellchecker">
+      <str name="name">default</str>
+      <str name="field">spell</str>
+      <str name="spellcheckIndexDir">./spell</str>
+      <str name="buildOnOptimize">true</str>
+    </lst>
+    <lst name="spellchecker">
+      <str name="name">author</str>
+      <str name="field">author_spell</str>
+      <str name="spellcheckIndexDir">./spell_author</str>
+      <str name="accuracy">0.7</str>
+      <str name="buildOnOptimize">true</str>
+    </lst>
+    <lst name="spellchecker">
+      <str name="name">subject</str>
+      <str name="field">subject_spell</str>
+      <str name="spellcheckIndexDir">./spell_subject</str>
+      <str name="accuracy">0.7</str>
+      <str name="buildOnOptimize">true</str>
+    </lst>
+    <lst name="spellchecker">
+      <str name="name">title</str>
+      <str name="field">title_spell</str>
+      <str name="spellcheckIndexDir">./spell_title</str>
+      <str name="accuracy">0.7</str>
+      <str name="buildOnOptimize">true</str>
+    </lst>
+
+    <!-- a spellchecker that uses a different distance measure -->
+    <!--
+       <lst name="spellchecker">
+         <str name="name">jarowinkler</str>
+         <str name="field">spell</str>
+         <str name="distanceMeasure">
+           org.apache.lucene.search.spell.JaroWinklerDistance
+         </str>
+         <str name="spellcheckIndexDir">spellcheckerJaro</str>
+       </lst>
+     -->
+
+    <!-- a spellchecker that use an alternate comparator
+
+         comparatorClass be one of:
+          1. score (default)
+          2. freq (Frequency first, then score)
+          3. A fully qualified class name
+      -->
+    <!--
+       <lst name="spellchecker">
+         <str name="name">freq</str>
+         <str name="field">lowerfilt</str>
+         <str name="spellcheckIndexDir">spellcheckerFreq</str>
+         <str name="comparatorClass">freq</str>
+         <str name="buildOnCommit">true</str>
+      -->
+
+    <!-- A spellchecker that reads the list of words from a file -->
+    <!--
+       <lst name="spellchecker">
+         <str name="classname">solr.FileBasedSpellChecker</str>
+         <str name="name">file</str>
+         <str name="sourceLocation">spellings.txt</str>
+         <str name="characterEncoding">UTF-8</str>
+         <str name="spellcheckIndexDir">spellcheckerFile</str>
+       </lst>
+      -->
+  </searchComponent>
+
+  <searchComponent name="suggest" class="solr.SuggestComponent">
+    <lst name="suggester">
+      <str name="name">mySuggester</str>
+      <str name="lookupImpl">AnalyzingInfixLookupFactory</str>
+      <str name="indexPath">suggester_infix_dir</str>
+      <str name="highlight">false</str>
+      <str name="suggestAnalyzerFieldType">text</str>
+      <str name="buildOnCommit">false</str>
+      <str name="buildOnStartup">false</str>
+      <str name="field">suggest</str>
+    </lst>
+  </searchComponent>
+
+  <requestHandler name="/suggest" class="solr.SearchHandler" startup="lazy">
+    <lst name="defaults">
+      <str name="suggest">true</str>
+      <str name="suggest.count">5</str>
+      <str name="suggest.dictionary">mySuggester</str>
+    </lst>
+    <arr name="components">
+      <str>suggest</str>
+    </arr>
+  </requestHandler>
+
+</config>

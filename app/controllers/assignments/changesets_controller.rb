@@ -3,7 +3,7 @@ class Assignments::ChangesetsController < ApplicationController
   before_action :set_contextual_nav_options
 
   def proposed
-    render text: @assignment.proposed.present? ? @assignment.proposed : @assignment.original
+    render plain: @assignment.proposed.present? ? @assignment.proposed : @assignment.original
   end
 
   # GET /assignments/1/changeset/edit
@@ -34,7 +34,7 @@ class Assignments::ChangesetsController < ApplicationController
         }
         return
       end
-    when 'annotate'
+    when 'annotate_object'
       if index_document_params[:index_document_text]
         if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
           create_or_update_annotate_changeset(@assignment, digital_object, index_document_params[:index_document_text])

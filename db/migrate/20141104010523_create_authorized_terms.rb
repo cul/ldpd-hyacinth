@@ -1,4 +1,4 @@
-class CreateAuthorizedTerms < ActiveRecord::Migration
+class CreateAuthorizedTerms < ActiveRecord::Migration[4.2]
   def change
     
     # This entire table will be deleted in the future

@@ -1,4 +1,4 @@
-class DynamicFieldGroupCategory < ActiveRecord::Base
+class DynamicFieldGroupCategory < ApplicationRecord
   has_many :dynamic_field_groups
 
   before_save :set_sort_order_if_blank

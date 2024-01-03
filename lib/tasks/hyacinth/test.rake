@@ -9,7 +9,7 @@ namespace :hyacinth do
         next
       end
 
-      default_asset_home_directory = File.join(HYACINTH['default_asset_home'])
+      default_asset_home_directory = File.join(HYACINTH[:default_asset_home])
 
       puts "Deleting test environment default asset home content: #{default_asset_home_directory}..."
       FileUtils.rm_rf(default_asset_home_directory)
@@ -23,7 +23,7 @@ namespace :hyacinth do
         next
       end
 
-      default_service_copy_home_directory = File.join(HYACINTH['default_service_copy_home'])
+      default_service_copy_home_directory = File.join(HYACINTH[:default_service_copy_home])
 
       puts "Deleting test environment default asset home content: #{default_service_copy_home_directory}..."
       FileUtils.rm_rf(default_service_copy_home_directory)
@@ -37,7 +37,7 @@ namespace :hyacinth do
         next
       end
 
-      access_copy_directory = File.join(HYACINTH['access_copy_directory'])
+      access_copy_directory = File.join(HYACINTH[:access_copy_directory])
 
       puts "Deleting test environment access copy content: #{access_copy_directory}..."
       FileUtils.rm_rf(access_copy_directory)
@@ -61,13 +61,8 @@ namespace :hyacinth do
 
       # Create test DynamicFieldGroup and DynamicField
 
-      test_dynamic_field = DynamicField.new(string_key: 'test_field', display_label: 'Test Field', dynamic_field_type: DynamicField::Type::STRING)
-      test_dynamic_feld_group = DynamicFieldGroup.create!(string_key: 'test_field_group', display_label: 'Test Field Group', dynamic_field_group_category: test_dynamic_field_group_category,
-        dynamic_fields: [
-          test_dynamic_field
-        ]
-      )
-
+      test_dynamic_feld_group = DynamicFieldGroup.create!(string_key: 'test_field_group', display_label: 'Test Field Group', dynamic_field_group_category: test_dynamic_field_group_category)
+      test_dynamic_field = test_dynamic_feld_group.dynamic_fields.create!(string_key: 'test_field', display_label: 'Test Field', dynamic_field_type: DynamicField::Type::STRING)
       # Enable certain fields for various digital_object_types in test_project
 
       (DynamicFieldGroup.find_by(string_key: 'test_field_group').dynamic_fields + DynamicFieldGroup.find_by(string_key: 'title').dynamic_fields).each do |dynamic_field|

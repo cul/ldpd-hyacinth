@@ -1,4 +1,4 @@
-class CreateControlledVocabularies < ActiveRecord::Migration
+class CreateControlledVocabularies < ActiveRecord::Migration[4.2]
   def change
     create_table :controlled_vocabularies do |t|
       t.string :string_key

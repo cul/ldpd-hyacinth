@@ -18,7 +18,7 @@ describe "CSV Export-Import Round Trip" do
 
     let(:asset_digital_object_data) {
       dod = JSON.parse( fixture('sample_digital_object_data/new_asset.json').read )
-      file_path = File.join(fixture_path(), '/sample_upload_files/lincoln.jpg')
+      file_path = File.join(fixture_path(), '/files/lincoln.jpg')
       # Manually override import_file settings in the dummy fixture
       dod['import_file'] = {
         'import_type' => DigitalObject::Asset::IMPORT_TYPE_INTERNAL,
@@ -134,7 +134,6 @@ describe "CSV Export-Import Round Trip" do
       ExportSearchResultsToCsvJob.perform(second_csv_export.id)
       second_csv_export.reload # Reload the ActiveRecord object, getting the latest data in the DB (so we have the path to the csv file)
       path_to_second_csv_file = second_csv_export.path_to_csv_file
-
       expect(CSV.read(path_to_first_csv_file)).to eq(CSV.read(path_to_second_csv_file))
     end
   end

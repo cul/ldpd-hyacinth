@@ -12,7 +12,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
     dod = JSON.parse( fixture('sample_digital_object_data/new_asset.json').read )
     dod['identifiers'] = ['asset.' + SecureRandom.uuid] # random identifer to avoid collisions
 
-    file_path = File.join(fixture_path(), '/sample_upload_files/lincoln.jpg')
+    file_path = File.join(fixture_path(), '/files/lincoln.jpg')
 
     # Manually override import_file settings in the dummy fixture
     dod['import_file'] = {
@@ -131,7 +131,8 @@ RSpec.describe DigitalObject::Base, :type => :model do
       end
 
       context "raises an exception for prohibited temp term field data" do
-        # this controlled vocabulary and dynamic field groupis set up in the create_core_objects db migration
+        # These tests assume that these controlled vocabulary and dynamic field groups were
+        # already set up by the hyacinth:setup:core_records rake task.
         let(:controlled_vocabulary) { ControlledVocabulary.find_by(string_key: 'collection') }
         before do
           if controlled_vocabulary
@@ -439,14 +440,14 @@ RSpec.describe DigitalObject::Base, :type => :model do
         item
       }
 
-      context "when HYACINTH['publish_enabled'] equals false" do
-        let(:original_publish_enabled_value) { HYACINTH['publish_enabled'] }
+      context "when HYACINTH[:publish_enabled] equals false" do
+        let(:original_publish_enabled_value) { HYACINTH[:publish_enabled] }
         before {
           original_publish_enabled_value # invoke let variable to set it
-          HYACINTH['publish_enabled'] = false
+          HYACINTH[:publish_enabled] = false
         }
         after {
-          HYACINTH['publish_enabled'] = original_publish_enabled_value
+          HYACINTH[:publish_enabled] = original_publish_enabled_value
         }
         it "does not save or publish and adds an error" do
           item.publish_after_save = true
@@ -540,6 +541,19 @@ RSpec.describe DigitalObject::Base, :type => :model do
     end
     it 'includes project fields' do
       expect(item.send :internal_fields).to include(expected_internal_field_values)
+    end
+  end
+
+  describe '#perform_derivative_processing' do
+    it 'defaults to false for a non-Asset digital object' do
+      item = DigitalObject::Item.new
+      expect(item.perform_derivative_processing).to eq(false)
+    end
+
+    it 'can be set and the set value can be retrieved' do
+      item = DigitalObject::Item.new
+      item.perform_derivative_processing = true
+      expect(item.perform_derivative_processing).to eq(true)
     end
   end
 end

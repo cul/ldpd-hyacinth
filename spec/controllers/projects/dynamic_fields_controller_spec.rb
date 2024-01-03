@@ -29,7 +29,7 @@ RSpec.describe Projects::DynamicFieldsController, :type => :controller do
     before do
       allow(Project).to receive(:find).with(project_id).and_return(project)
       allow(DigitalObjectType).to receive(:find).with(digital_object_type_id).and_return(digital_object_type)
-      get :edit, {id: project_id, digital_object_type_id: digital_object_type_id }, valid_session
+      get :edit, params: {id: project_id, digital_object_type_id: digital_object_type_id }, session: valid_session
     end
     it { expect(assigns(:project)).to eql(project) }
     it { expect(assigns(:digital_object_type)).to eql(digital_object_type) }
@@ -40,7 +40,7 @@ RSpec.describe Projects::DynamicFieldsController, :type => :controller do
       allow(Project).to receive(:find).with(project_id).and_return(project)
       allow(project).to receive(:update).with({}).and_return(true)
       allow(DigitalObjectType).to receive(:find).with(digital_object_type_id).and_return(digital_object_type)
-      patch :update, {id: project_id, digital_object_type_id: digital_object_type_id, project: {a: :b} }, valid_session
+      patch :update, params: {id: project_id, digital_object_type_id: digital_object_type_id, project: {a: :b} }, session: valid_session
     end
     it { expect(response).to redirect_to("/projects/#{project_id}/dynamic_fields/edit?digital_object_type_id=#{digital_object_type_id}")}
   end

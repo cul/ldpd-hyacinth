@@ -12,12 +12,11 @@ ENV FEDORA_HOME /opt/fedora
 ENV CATALINA_HOME /opt/fedora/tomcat
 ENV PATH $CATALINA_HOME/bin:$PATH
 
-RUN curl -L https://github.com/fcrepo3/fcrepo/releases/download/v3.8.1/fcrepo-installer-3.8.1.jar -o /opt/fcrepo-installer.jar
+WORKDIR /opt
 
 COPY ./install.properties /opt/install.properties
-RUN java -jar /opt/fcrepo-installer.jar /opt/install.properties
+COPY ./setup-and-start.sh /opt/setup-and-start.sh
 
-EXPOSE 8080
-WORKDIR $FEDORA_HOME
+RUN curl -L https://github.com/fcrepo3/fcrepo/releases/download/v3.8.1/fcrepo-installer-3.8.1.jar -o /opt/fcrepo-installer.jar
 
-CMD ["catalina.sh", "run"]
+CMD /bin/bash ./setup-and-start.sh

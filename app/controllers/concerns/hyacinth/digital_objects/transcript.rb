@@ -4,7 +4,7 @@ module Hyacinth::DigitalObjects::Transcript
     if @digital_object.is_a?(DigitalObject::Asset)
       send_data @digital_object.transcript, filename: 'transcript.txt'
     else
-      render text: @digital_object.digital_object_type.display_label.pluralize + ' do not have a transcript.  Try downloading an Asset transcript instead.', status: 404
+      render plain: @digital_object.digital_object_type.display_label.pluralize + ' do not have a transcript.  Try downloading an Asset transcript instead.', status: 404
     end
   end
 

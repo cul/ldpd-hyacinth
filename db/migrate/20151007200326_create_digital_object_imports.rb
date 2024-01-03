@@ -1,4 +1,4 @@
-class CreateDigitalObjectImports < ActiveRecord::Migration
+class CreateDigitalObjectImports < ActiveRecord::Migration[4.2]
 
   def change
 

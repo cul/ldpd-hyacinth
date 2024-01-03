@@ -20,7 +20,7 @@ class DigitalObject::Base
   # For ActiveModel::Dirty
   define_attribute_methods :parent_digital_object_pids, :obsolete_parent_digital_object_pids, :ordered_child_digital_object_pids
 
-  attr_accessor :project, :publish_target_pids, :identifiers, :created_by, :updated_by, :first_published_at, :state, :dc_type, :ordered_child_digital_object_pids, :publish_after_save, :mint_reserved_doi_before_save, :doi
+  attr_accessor :project, :publish_target_pids, :identifiers, :created_by, :updated_by, :first_published_at, :state, :dc_type, :ordered_child_digital_object_pids, :publish_after_save, :mint_reserved_doi_before_save, :doi, :perform_derivative_processing
   attr_reader :errors, :fedora_object, :parent_digital_object_pids, :db_record
 
   delegate :created_at, :new_record?, :updated_at, :uuid, :data_file_path, to: :@db_record
@@ -48,6 +48,8 @@ class DigitalObject::Base
     @errors = ActiveModel::Errors.new(self)
     @publish_after_save = false
     @doi = nil
+    # base object does not require derivative processing (but this will be overridden in Asset subclass)
+    @perform_derivative_processing = false
   end
 
   def init_from_digital_object_record_and_fedora_object(digital_object_record, fedora_obj)
@@ -78,6 +80,7 @@ class DigitalObject::Base
   def set_data_to_sources
     set_created_and_updated_data_from_db_record
     set_first_published_at
+    set_perform_derivative_processing
     set_fedora_hyacinth_ds_data
     set_fedora_project_and_publisher_relationships
     set_fedora_object_state
@@ -124,6 +127,11 @@ class DigitalObject::Base
 
     # Allow setting of first_published_at if the field isn't blank
     @first_published_at = digital_object_data['first_published'] if digital_object_data['first_published'].present?
+
+    # Set perform_derivative_processing field if it has been provided
+    if digital_object_data.key?('perform_derivative_processing') && digital_object_data['perform_derivative_processing'] != ''
+      @perform_derivative_processing = digital_object_data['perform_derivative_processing'].to_s.downcase == 'true'
+    end
 
     # Project (only one) -- Only allow setting this if this DigitalObject is a new record
     self.project = project_from_data(digital_object_data) if self.new_record?

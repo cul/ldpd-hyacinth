@@ -63,7 +63,8 @@ module DigitalObject::IndexAndSearch::Index
 
     # Special indexing additions for Assets
     if self.is_a?(DigitalObject::Asset)
-      doc[:asset_dc_type_sim] = dc_type # This is a special Asset-only facet field
+      doc[:asset_dc_type_sim] = dc_type
+      doc[:asset_pcdm_type_sim] = pcdm_type
     end
 
     doc

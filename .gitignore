@@ -26,6 +26,7 @@
 /docker/docker-compose.*.yml
 
 # Ignore config files with sensitive data
+master.key
 database.yml
 datacite.yml
 fedora.yml
@@ -33,6 +34,7 @@ hyacinth.yml
 secrets.yml
 solr.yml
 image_server.yml
+derivative_server.yml
 uri_service.yml
 term_additional_fields.yml
 resque.yml
@@ -61,3 +63,10 @@ config/subs.yml
 
 # Ignore local rake tasks
 /lib/tasks/hyacinth/local.rake
+
+# Vite Ruby
+/public/vite*
+node_modules
+# Vite uses dotenv and suggests to ignore local-only env files. See
+# https://vitejs.dev/guide/env-and-mode.html#env-files
+*.local

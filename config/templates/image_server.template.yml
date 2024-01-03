@@ -1,8 +1,6 @@
 development:
-  url: http://localhost:3001
-  username: fake_user
-  password: fake_password
+  url: http://localhost:5000
+  token: changethis
 test:
-  url: http://localhost:4001
-  username: fake_user
-  password: fake_password
+  url: http://localhost:5001
+  token: changethis
