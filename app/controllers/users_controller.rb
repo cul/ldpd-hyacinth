@@ -80,7 +80,7 @@ class UsersController < ApplicationController
     email_addresses = User.all.map(&:email)
     respond_to do |format|
       format.json { render json: email_addresses }
-      format.html { render text: email_addresses.join(',') }
+      format.html { render plain: email_addresses.join(',') }
     end
   end
 

@@ -1,6 +1,6 @@
 require 'securerandom'
 
-class AddUuidAndDataFilePathToDigitalObjectRecords < ActiveRecord::Migration
+class AddUuidAndDataFilePathToDigitalObjectRecords < ActiveRecord::Migration[4.2]
   def change
     change_table(:digital_object_records) do |t|
       t.string :uuid, null: true, length: 36

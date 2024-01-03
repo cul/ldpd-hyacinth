@@ -1,4 +1,4 @@
-class Project < ActiveRecord::Base
+class Project < ApplicationRecord
   has_many :enabled_dynamic_fields, dependent: :destroy
   accepts_nested_attributes_for :enabled_dynamic_fields, allow_destroy: true
 
@@ -65,7 +65,7 @@ class Project < ActiveRecord::Base
     if full_path_to_custom_asset_directory.present?
       full_path_to_custom_asset_directory
     else
-      File.join(HYACINTH['default_asset_home'], string_key)
+      File.join(HYACINTH[:default_asset_home], string_key)
     end
   end
 

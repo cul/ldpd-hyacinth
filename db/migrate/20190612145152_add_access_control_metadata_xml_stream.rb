@@ -1,4 +1,4 @@
-class AddAccessControlMetadataXmlStream < ActiveRecord::Migration
+class AddAccessControlMetadataXmlStream < ActiveRecord::Migration[4.2]
   def change
       puts 'Creating authorization XmlDatastream...'
       # Create XmlDatastreams

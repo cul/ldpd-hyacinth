@@ -1,7 +1,7 @@
 require "rails_helper"
 
 describe Projects::PublishTargetsController, type: :routing do
-  routes { Hyacinth::Application.routes }
+  routes { Rails.application.routes }
   let(:path_params) { { controller: 'projects/publish_targets', id: '1' } }
   let(:params) { path_params.merge(action: action) }
 

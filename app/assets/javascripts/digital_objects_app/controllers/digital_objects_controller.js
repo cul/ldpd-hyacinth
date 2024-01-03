@@ -420,7 +420,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_annotation 
   }).done(function (data_for_editor) {
 
     var digitalObject = Hyacinth.DigitalObjectsApp.DigitalObject.Base.instantiateDigitalObjectFromData(data_for_editor['digital_object']);
-    var assignment = digitalObject.hasAssignment(Hyacinth.AssignmentTaskTypes.annotate);
+    var assignment = digitalObject.hasAssignment(Hyacinth.AssignmentTaskTypes.annotate_object);
     var mode = 'view'; //default
 
     if (!assignment && Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_update')) {

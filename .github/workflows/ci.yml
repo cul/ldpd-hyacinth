@@ -9,7 +9,8 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        ruby-version: ['2.6.10']
+        ruby-version: ['2.7.8']
+        node: ['20']
     env:
       RAILS_ENV: test
       NOKOGIRI_USE_SYSTEM_LIBRARIES: true
@@ -32,5 +33,11 @@ jobs:
           java-version: '8'
       - name: Set up default config files
         run: bundle exec rake hyacinth:setup:config_files
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm install -g yarn
+      - run: yarn install
       - name: Run CI task
         run: bundle exec rake hyacinth:ci

@@ -21,7 +21,7 @@ module Hyacinth::Queue
     digital_object_import_id = digital_object_import.id
     priority = digital_object_import.import_job.priority.to_sym
 
-    if HYACINTH['queue_long_jobs']
+    if HYACINTH[:queue_long_jobs]
       case priority
       when :low
         queue_name = Hyacinth::Queue::DIGITAL_OBJECT_IMPORT_LOW
@@ -40,7 +40,7 @@ module Hyacinth::Queue
   end
 
   def self.export_search_results_to_csv(csv_export_id)
-    if HYACINTH['queue_long_jobs']
+    if HYACINTH[:queue_long_jobs]
       Resque.enqueue(ExportSearchResultsToCsvJob, csv_export_id)
     else
       ExportSearchResultsToCsvJob.perform(csv_export_id)
@@ -48,7 +48,7 @@ module Hyacinth::Queue
   end
 
   def self.reindex_digital_object(digital_object_pid)
-    if HYACINTH['queue_long_jobs']
+    if HYACINTH[:queue_long_jobs]
       Resque.enqueue(ReindexDigitalObjectJob, digital_object_pid)
     else
       ReindexDigitalObjectJob.perform(digital_object_pid)

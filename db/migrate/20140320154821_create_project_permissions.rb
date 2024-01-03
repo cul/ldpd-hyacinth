@@ -1,4 +1,4 @@
-class CreateProjectPermissions < ActiveRecord::Migration
+class CreateProjectPermissions < ActiveRecord::Migration[4.2]
   def change
     create_table :project_permissions do |t|
       t.references :project, index: true

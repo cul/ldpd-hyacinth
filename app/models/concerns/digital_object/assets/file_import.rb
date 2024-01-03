@@ -62,9 +62,9 @@ module DigitalObject::Assets::FileImport
   def copy_access_copy_to_save_destination(source_path, dest_path)
     FileUtils.cp(source_path, dest_path)
     # Optionally set file's group
-    FileUtils.chown(nil, HYACINTH['access_copy_file_group'], dest_path) if HYACINTH['access_copy_file_group'].present?
+    FileUtils.chown(nil, HYACINTH[:access_copy_file_group], dest_path) if HYACINTH[:access_copy_file_group].present?
     # Optionally set file's permissions
-    FileUtils.chmod(HYACINTH['access_copy_file_permissions'].to_i(8), dest_path) if HYACINTH['access_copy_file_permissions'].present?
+    FileUtils.chmod(HYACINTH[:access_copy_file_permissions].to_i(8), dest_path) if HYACINTH[:access_copy_file_permissions].present?
   end
 
   def do_access_copy_import
@@ -110,7 +110,7 @@ module DigitalObject::Assets::FileImport
     case @service_copy_import_type
     when DigitalObject::Asset::IMPORT_TYPE_INTERNAL
       # copy file into internal storage
-      dest_dir = File.join(HYACINTH['default_service_copy_home'], Hyacinth::Utils::PathUtils.uuid_pairtree(self.uuid))
+      dest_dir = File.join(HYACINTH[:default_service_copy_home], Hyacinth::Utils::PathUtils.uuid_pairtree(self.uuid))
       FileUtils.mkdir_p(dest_dir)
       dest_file_path = File.join(dest_dir, 'service' + File.extname(service_filename))
       FileUtils.cp(@service_copy_import_path, dest_file_path)

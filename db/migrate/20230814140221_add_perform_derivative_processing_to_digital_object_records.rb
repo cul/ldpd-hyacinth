@@ -1,4 +1,4 @@
-class AddPerformDerivativeProcessingToDigitalObjectRecords < ActiveRecord::Migration
+class AddPerformDerivativeProcessingToDigitalObjectRecords < ActiveRecord::Migration[4.2]
   def change
     change_table(:digital_object_records) do |t|
       t.boolean :perform_derivative_processing, null: false, default: false

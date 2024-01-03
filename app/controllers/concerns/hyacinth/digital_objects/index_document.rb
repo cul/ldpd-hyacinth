@@ -4,7 +4,7 @@ module Hyacinth::DigitalObjects::IndexDocument
     if @digital_object.is_a?(DigitalObject::Asset)
       send_data @digital_object.index_document, filename: 'index_document.txt'
     else
-      render text: @digital_object.digital_object_type.display_label.pluralize + ' do not have a index document.  Try downloading an Asset index document instead.', status: 404
+      render plain: @digital_object.digital_object_type.display_label.pluralize + ' do not have a index document.  Try downloading an Asset index document instead.', status: 404
     end
   end
 

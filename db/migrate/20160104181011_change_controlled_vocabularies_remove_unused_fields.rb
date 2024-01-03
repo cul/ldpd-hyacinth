@@ -1,4 +1,4 @@
-class ChangeControlledVocabulariesRemoveUnusedFields < ActiveRecord::Migration
+class ChangeControlledVocabulariesRemoveUnusedFields < ActiveRecord::Migration[4.2]
   def change
     change_table :controlled_vocabularies do |t|
       t.remove :pid

@@ -1,4 +1,4 @@
-class CreateEnabledDynamicFieldsFieldsets < ActiveRecord::Migration
+class CreateEnabledDynamicFieldsFieldsets < ActiveRecord::Migration[4.2]
   def change
     create_table :enabled_dynamic_fields_fieldsets, id: false do |t|
       t.references :enabled_dynamic_field

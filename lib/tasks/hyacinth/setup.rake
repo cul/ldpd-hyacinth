@@ -15,16 +15,6 @@ namespace :hyacinth do
           puts Rainbow("Created file at: #{dst_path}").green
         end
       end
-
-      # And create secrets.yml if it doesn't exist
-      puts 'Checking for secrets.yml file...'
-      secrets_yml_file_path = File.join(Rails.root, 'config/secrets.yml')
-      if File.exist?(secrets_yml_file_path)
-        puts Rainbow("File already exists (skipping): #{secrets_yml_file_path}").blue.bright + "\n"
-      else
-        File.open(secrets_yml_file_path, 'w') {|f| f.write generate_new_secrets_yml_content.to_yaml }
-        puts Rainbow("Created file at: #{secrets_yml_file_path}").green
-      end
     end
 
     desc "Set up hyacinth core records (DigitalObjectType, User, XmlDatastream, etc.) "
@@ -35,7 +25,7 @@ namespace :hyacinth do
       if DigitalObjectType.count == 0
         # Create default PidGenerator
         puts 'Creating default PidGenerator...'
-        PidGenerator.create!(namespace: HYACINTH['default_pid_generator_namespace'])
+        PidGenerator.create!(namespace: HYACINTH[:default_pid_generator_namespace])
 
         puts 'Creating default DigitalObjectTypes...'
         # Create DigitalObjectTypes
@@ -101,10 +91,6 @@ namespace :hyacinth do
         puts 'Creating default DynamicFieldGroups, DynamicFields and controlled vocabularies...'
         # Create core DynamicFieldGroups and DynamicFields
         title = DynamicFieldGroup.create!(string_key: 'title', display_label: 'Title', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: false,
-          dynamic_fields: [
-            DynamicField.new(string_key: 'title_non_sort_portion', display_label: 'Non-Sort Portion', dynamic_field_type: DynamicField::Type::STRING),
-            DynamicField.new(string_key: 'title_sort_portion', display_label: 'Sort Portion', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_searchable_title_field: true)
-          ],
           xml_translation: {
             "element" => "mods:titleInfo",
             "content" => [
@@ -119,6 +105,8 @@ namespace :hyacinth do
             ]
           }.to_json
         )
+        title.dynamic_fields.create!(string_key: 'title_non_sort_portion', display_label: 'Non-Sort Portion', dynamic_field_type: DynamicField::Type::STRING)
+        title.dynamic_fields.create!(string_key: 'title_sort_portion', display_label: 'Sort Portion', dynamic_field_type: DynamicField::Type::STRING, is_keyword_searchable: true, is_searchable_title_field: true)
 
         # Create various controlled vocabularies if they don't already exist
         {
@@ -144,35 +132,19 @@ namespace :hyacinth do
         end
 
         #collection
-        collection = DynamicFieldGroup.create!(string_key: 'collection', display_label: 'Collection', dynamic_field_group_category: dfc_descriptive_metadata,
-          dynamic_fields: [
-            DynamicField.new(string_key: 'collection_term', display_label: 'Value', dynamic_field_type: DynamicField::Type::CONTROLLED_TERM, controlled_vocabulary_string_key: 'collection', is_facet_field: true, is_single_field_searchable: true, standalone_field_label: 'Collection'),
-            #DynamicField.new(string_key: 'collection_preferred_label', display_label: 'Preferred Label', dynamic_field_type: DynamicField::Type::STRING),
-          ]
-        )
+        collection = DynamicFieldGroup.create!(string_key: 'collection', display_label: 'Collection', dynamic_field_group_category: dfc_descriptive_metadata)
+        collection.dynamic_fields.create!(string_key: 'collection_term', display_label: 'Value', dynamic_field_type: DynamicField::Type::CONTROLLED_TERM, controlled_vocabulary_string_key: 'collection', is_facet_field: true, is_single_field_searchable: true, standalone_field_label: 'Collection')
 
         #form
-        form = DynamicFieldGroup.create!(string_key: 'form', display_label: 'Form', dynamic_field_group_category: dfc_physical_information, is_repeatable: true,
-          dynamic_fields: [
-            DynamicField.new(string_key: 'form_term', display_label: 'Value', dynamic_field_type: DynamicField::Type::CONTROLLED_TERM, controlled_vocabulary_string_key: 'form', is_facet_field: true, standalone_field_label: 'Format'),
-            #DynamicField.new(string_key: 'form_preferred_label', display_label: 'Preferred Label', dynamic_field_type: DynamicField::Type::STRING),
-          ]
-        )
+        form = DynamicFieldGroup.create!(string_key: 'form', display_label: 'Form', dynamic_field_group_category: dfc_physical_information, is_repeatable: true)
+        form.dynamic_fields.create!(string_key: 'form_term', display_label: 'Value', dynamic_field_type: DynamicField::Type::CONTROLLED_TERM, controlled_vocabulary_string_key: 'form', is_facet_field: true, standalone_field_label: 'Format')
 
         #location
-        location = DynamicFieldGroup.create!(string_key: 'location', display_label: 'Location', dynamic_field_group_category: dfc_location_and_holdings, is_repeatable: true,
-          dynamic_fields: [
-            DynamicField.new(string_key: 'location_term', display_label: 'Value', dynamic_field_type: DynamicField::Type::CONTROLLED_TERM, controlled_vocabulary_string_key: 'location', is_facet_field: true, standalone_field_label: 'Location'),
-            #DynamicField.new(string_key: 'location_preferred_label', display_label: 'Preferred Label', dynamic_field_type: DynamicField::Type::STRING),
-          ]
-        )
+        location = DynamicFieldGroup.create!(string_key: 'location', display_label: 'Location', dynamic_field_group_category: dfc_location_and_holdings, is_repeatable: true)
+        location.dynamic_fields.create!(string_key: 'location_term', display_label: 'Value', dynamic_field_type: DynamicField::Type::CONTROLLED_TERM, controlled_vocabulary_string_key: 'location', is_facet_field: true, standalone_field_label: 'Location')
 
         #name
         name = DynamicFieldGroup.create!(string_key: 'name', display_label: 'Name', dynamic_field_group_category: dfc_descriptive_metadata, is_repeatable: true,
-          dynamic_fields: [
-            DynamicField.new(string_key: 'name_term', display_label: 'Value', dynamic_field_type: DynamicField::Type::CONTROLLED_TERM, controlled_vocabulary_string_key: 'name', is_facet_field: true, standalone_field_label: 'Name'),
-            #DynamicField.new(string_key: 'name_preferred_label', display_label: 'Preferred Label', dynamic_field_type: DynamicField::Type::STRING),
-          ],
           xml_translation: {
             "element" => "mods:name",
             "attrs" => {
@@ -189,11 +161,9 @@ namespace :hyacinth do
             ]
           }.to_json
         )
+        name.dynamic_fields.create!(string_key: 'name_term', display_label: 'Value', dynamic_field_type: DynamicField::Type::CONTROLLED_TERM, controlled_vocabulary_string_key: 'name', is_facet_field: true, standalone_field_label: 'Name')
         # --> Child DynamicFieldGroups for name
-        DynamicFieldGroup.create!(string_key: 'name_role', display_label: 'Role', is_repeatable: true, parent_dynamic_field_group: name,
-          dynamic_fields: [
-            DynamicField.new(string_key: 'name_role_term', display_label: 'Value', dynamic_field_type: DynamicField::Type::CONTROLLED_TERM, controlled_vocabulary_string_key: 'name_role')
-          ],
+        name_role = DynamicFieldGroup.create!(string_key: 'name_role', display_label: 'Role', is_repeatable: true, parent_dynamic_field_group: name,
           xml_translation: {
             "element" => "mods:role",
             "content" => [
@@ -207,6 +177,8 @@ namespace :hyacinth do
             ]
           }.to_json
         )
+        name_role.dynamic_fields.create!(string_key: 'name_role_term', display_label: 'Value', dynamic_field_type: DynamicField::Type::CONTROLLED_TERM, controlled_vocabulary_string_key: 'name_role')
+
       end
 
       if DigitalObjectType.find_by(string_key: 'publish_target').nil?
@@ -221,17 +193,6 @@ namespace :hyacinth do
           publish_targets_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: dynamic_field, digital_object_type: dot_publish_target)
         end
       end
-    end
-
-    def generate_new_secrets_yml_content
-      secrets_yml_content = {}
-      ['development', 'test'].each do |env_name|
-        secrets_yml_content[env_name] = {
-          'secret_key_base' => SecureRandom.hex(64),
-          'session_store_key' =>  '_hyacinth_' + env_name + '_session_key'
-        }
-      end
-      secrets_yml_content
     end
   end
 end

@@ -1,4 +1,4 @@
-class ChangeDynamicFieldsAddControlledVocabularyStringKey < ActiveRecord::Migration
+class ChangeDynamicFieldsAddControlledVocabularyStringKey < ActiveRecord::Migration[4.2]
   def change
     change_table :dynamic_fields do |t|
       t.remove_references :controlled_vocabulary

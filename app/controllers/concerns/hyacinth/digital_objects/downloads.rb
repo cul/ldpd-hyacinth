@@ -9,7 +9,7 @@ module Hyacinth::DigitalObjects::Downloads
         send_file @digital_object.filesystem_location, filename: @digital_object.original_filename
       end
     else
-      render text: @digital_object.digital_object_type.display_label.pluralize + ' do not have download URLs.  Try downloading an Asset instead.'
+      render plain: @digital_object.digital_object_type.display_label.pluralize + ' do not have download URLs.  Try downloading an Asset instead.'
     end
   end
 
@@ -22,7 +22,7 @@ module Hyacinth::DigitalObjects::Downloads
         send_file @digital_object.service_copy_location, filename: @digital_object.fedora_object.datastreams['service'].dsLabel
       end
     else
-      render text: @digital_object.digital_object_type.display_label.pluralize + ' do not have download URLs.  Try downloading an Asset service copy instead.'
+      render plain: @digital_object.digital_object_type.display_label.pluralize + ' do not have download URLs.  Try downloading an Asset service copy instead.'
     end
   end
 
@@ -30,7 +30,7 @@ module Hyacinth::DigitalObjects::Downloads
     if @digital_object.is_a?(DigitalObject::Asset)
         send_file @digital_object.poster_location, filename: @digital_object.fedora_object.datastreams['poster'].dsLabel
     else
-      render text: @digital_object.digital_object_type.display_label.pluralize + ' do not have download URLs.  Try downloading an Asset poster instead.'
+      render plain: @digital_object.digital_object_type.display_label.pluralize + ' do not have download URLs.  Try downloading an Asset poster instead.'
     end
   end
 
@@ -75,7 +75,7 @@ module Hyacinth::DigitalObjects::Downloads
       response.status = success_status
       response.stream.write IO.binread(access_file_path, content_length, from)
     else
-      render text: @digital_object.digital_object_type.display_label.pluralize + ' do not have download URLs.  Try downloading an Asset instead.'
+      render plain: @digital_object.digital_object_type.display_label.pluralize + ' do not have download URLs.  Try downloading an Asset instead.'
     end
   ensure
     response.stream.close

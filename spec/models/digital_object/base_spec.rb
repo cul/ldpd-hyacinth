@@ -12,7 +12,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
     dod = JSON.parse( fixture('sample_digital_object_data/new_asset.json').read )
     dod['identifiers'] = ['asset.' + SecureRandom.uuid] # random identifer to avoid collisions
 
-    file_path = File.join(fixture_path(), '/sample_upload_files/lincoln.jpg')
+    file_path = File.join(fixture_path(), '/files/lincoln.jpg')
 
     # Manually override import_file settings in the dummy fixture
     dod['import_file'] = {
@@ -440,14 +440,14 @@ RSpec.describe DigitalObject::Base, :type => :model do
         item
       }
 
-      context "when HYACINTH['publish_enabled'] equals false" do
-        let(:original_publish_enabled_value) { HYACINTH['publish_enabled'] }
+      context "when HYACINTH[:publish_enabled] equals false" do
+        let(:original_publish_enabled_value) { HYACINTH[:publish_enabled] }
         before {
           original_publish_enabled_value # invoke let variable to set it
-          HYACINTH['publish_enabled'] = false
+          HYACINTH[:publish_enabled] = false
         }
         after {
-          HYACINTH['publish_enabled'] = original_publish_enabled_value
+          HYACINTH[:publish_enabled] = original_publish_enabled_value
         }
         it "does not save or publish and adds an error" do
           item.publish_after_save = true

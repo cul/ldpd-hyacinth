@@ -13,7 +13,7 @@ module Hyacinth::DigitalObjects::UploadsEditorBehavior
     end
 
     # Get list of files contained within directory_path
-    full_path_to_directory = File.join(HYACINTH['upload_directory'], directory_path)
+    full_path_to_directory = File.join(HYACINTH[:upload_directory], directory_path)
     entries = Dir.entries(full_path_to_directory)
 
     directory_data = []

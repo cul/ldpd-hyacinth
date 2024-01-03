@@ -182,7 +182,10 @@ class DigitalObjectsController < ApplicationController
   end
 
   def search_results_to_csv
-    csv_export = CsvExport.create(user: current_user, search_params: JSON.generate(params['search'].present? ? params['search'] : {}))
+    # these params are stringified unless they are permitted
+    permitted = params.permit('search' => {})
+    search_param = permitted.to_h['search']
+    csv_export = CsvExport.create(user: current_user, search_params: JSON.generate(search_param))
 
     Hyacinth::Queue.export_search_results_to_csv(csv_export.id)
 
@@ -192,12 +195,16 @@ class DigitalObjectsController < ApplicationController
   end
 
   def search
+    # these params are stringified unless they are permitted
+    permitted = params.permit('search' => {}, 'facet' => {})
+    search_param = permitted.to_h['search']
+    facet_param = permitted.to_h['facet']
     respond_to do |format|
       format.json do
         search_response = DigitalObject::Base.search(
-          params['search'].present? ? params['search'] : {},
+          search_param.present? ? search_param : {},
           current_user,
-          params['facet'].present? ? params['facet'] : {}
+          facet_param.present? ? facet_param : {}
         )
         if params['include_single_field_searchable_field_list'] && params['include_single_field_searchable_field_list'].to_s == 'true'
           search_response['single_field_searchable_fields'] = Hash[DynamicField.where(is_single_field_searchable: true).order([:standalone_field_label, :string_key]).map { |dynamic_field| [dynamic_field.string_key, dynamic_field.standalone_field_label] }]
@@ -224,7 +231,7 @@ class DigitalObjectsController < ApplicationController
     xml_output = @digital_object.render_xml_datastream(XmlDatastream.find_by(string_key: 'descMetadata'))
 
     respond_to do |format|
-      format.xml { render text: xml_output, content_type: 'text/xml' }
+      format.xml { render plain: xml_output, content_type: 'text/xml' }
     end
   end
 
@@ -232,7 +239,7 @@ class DigitalObjectsController < ApplicationController
     xml_output = @digital_object.render_xml_datastream(XmlDatastream.find_by(string_key: 'accessControlMetadata'))
 
     respond_to do |format|
-      format.xml { render text: xml_output, content_type: 'text/xml' }
+      format.xml { render plain: xml_output, content_type: 'text/xml' }
     end
   end
 

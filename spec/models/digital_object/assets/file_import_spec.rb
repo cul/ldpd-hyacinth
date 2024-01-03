@@ -12,8 +12,8 @@ RSpec.describe DigitalObject::Asset, :type => :model do
         stub_const(
           "HYACINTH",
           HYACINTH.dup.merge(
-            'access_copy_file_group' => expected_file_group,
-            'access_copy_file_permissions' => expected_file_permissions
+            access_copy_file_group: expected_file_group,
+            access_copy_file_permissions: expected_file_permissions
           )
         )
       end
@@ -31,8 +31,8 @@ RSpec.describe DigitalObject::Asset, :type => :model do
         stub_const(
           "HYACINTH",
           HYACINTH.dup.merge(
-            'access_copy_file_group' => nil,
-            'access_copy_file_permissions' => nil
+            access_copy_file_group: nil,
+            access_copy_file_permissions: nil
           )
         )
       end

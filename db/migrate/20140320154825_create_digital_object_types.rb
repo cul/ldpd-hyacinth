@@ -1,4 +1,4 @@
-class CreateDigitalObjectTypes < ActiveRecord::Migration
+class CreateDigitalObjectTypes < ActiveRecord::Migration[4.2]
   def change
     create_table :digital_object_types do |t|
       t.string :string_key

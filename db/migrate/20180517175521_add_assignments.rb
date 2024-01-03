@@ -1,4 +1,4 @@
-class AddAssignments < ActiveRecord::Migration
+class AddAssignments < ActiveRecord::Migration[4.2]
   def change
     create_table :assignments do |t|
       t.string :digital_object_pid, null: false

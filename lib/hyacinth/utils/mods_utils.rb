@@ -1,5 +1,5 @@
 class Hyacinth::Utils::ModsUtils
-  extend Logger::Behavior
+  extend Hyacinth::Utils::Logger::Behavior
 
   def self.create_element_path_in_doc(xml_doc, arr_path_to_element)
     current_path = ''

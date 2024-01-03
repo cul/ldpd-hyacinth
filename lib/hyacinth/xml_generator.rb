@@ -1,6 +1,6 @@
 module Hyacinth
-  class XMLGenerator
-    attr_reader :dynamic_fields_groups_map, :internal_fields, :document
+  class XmlGenerator
+    attr_reader :dynamic_fields_groups_map, :internal_fields
 
     def initialize(digital_object_data, base_xml_translation, dynamic_fields_groups_map, internal_fields = {})
       @dynamic_fields_groups_map = dynamic_fields_groups_map # Map of dynamic field group keys to their xml_translation
@@ -11,9 +11,15 @@ module Hyacinth
 
     def generate
       @document = Nokogiri::XML::Document.new
-      Element.new(self, document, @base_xml_translation, @digital_object_data).generate
-      recursively_remove_blank_xml_elements!(document)
-      document
+
+      # For backwards compatibility with Nokogiri versions < 1.12, we are reverting to the
+      # 1.11-and-earlier default behavior of having namespace inheritance enabled for documents.
+      # https://nokogiri.org/rdoc/Nokogiri/XML/Document#attribute-i-namespace_inheritance
+      @document.namespace_inheritance = true
+
+      Element.new(self, @document, @base_xml_translation, @digital_object_data).generate
+      recursively_remove_blank_xml_elements!(@document)
+      @document
     end
 
     def recursively_remove_blank_xml_elements!(ng_xml_doc)

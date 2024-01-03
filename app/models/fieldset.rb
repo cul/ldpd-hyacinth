@@ -1,5 +1,5 @@
-class Fieldset < ActiveRecord::Base
-  belongs_to :project
+class Fieldset < ApplicationRecord
+  belongs_to :project, optional: true
   has_many :enabled_dynamic_fields_fieldsets
   has_many :enabled_dynamic_fields, through: :enabled_dynamic_fields_fieldsets
 

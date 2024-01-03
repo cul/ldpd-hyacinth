@@ -2,13 +2,13 @@
 case @assignment.task
 when 'transcribe'
   render partial: 'assignments/changesets/widgets/transcript'
-when 'annotate'
+when 'annotate_object'
   render partial: 'assignments/changesets/widgets/index_document'
 when 'synchronize'
   render partial: 'assignments/changesets/widgets/synchronized_transcript'
 when 'describe'
   render partial: 'assignments/changesets/widgets/description'
 else
-  render text: 'Unsupported task type.'
+  render plain: 'Unsupported task type.'
 end
 %>

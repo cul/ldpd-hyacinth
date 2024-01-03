@@ -125,7 +125,7 @@ class Hyacinth::Utils::CsvImportExportUtils
 
       # Concatenate upload directory path with import_file_path if this file comes from the upload directory
       if import_file_type == DigitalObject::Asset::IMPORT_TYPE_UPLOAD_DIRECTORY
-        import_file_path = File.join(HYACINTH['upload_directory'], import_file_path)
+        import_file_path = File.join(HYACINTH[:upload_directory], import_file_path)
       end
 
       # Check to see if a file exists at import_file_path
@@ -158,7 +158,7 @@ class Hyacinth::Utils::CsvImportExportUtils
       import_job.save # Save the import job so that we generate a unique ID for the job
 
       # Use the import job ID to generate the file path to the saved csv file
-      path_to_csv_file = File.join(HYACINTH['processed_csv_import_directory'], "import-#{import_job.id}-#{Time.now.strftime('%Y%m%d_%H%M%S')}.csv")
+      path_to_csv_file = File.join(HYACINTH[:processed_csv_import_directory], "import-#{import_job.id}-#{Time.now.strftime('%Y%m%d_%H%M%S')}.csv")
       import_job.path_to_csv_file = path_to_csv_file
       import_job.save # Save the import_job again so that the path_to_csv_file is persisted to the database
 

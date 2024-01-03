@@ -32,7 +32,7 @@ class AssignmentsController < ApplicationController
       @assignment.original = @digital_object.transcript || ''
       # also store current state of transcript in *proposed* field as starting point for editing
       @assignment.proposed = @assignment.original
-    when 'annotate'
+    when 'annotate_object'
       # store current state of transcript in *original* field
       if ['MovingImage', 'Sound'].include?(@digital_object.dc_type)
         @assignment.original = @digital_object.index_document
@@ -122,7 +122,7 @@ class AssignmentsController < ApplicationController
     case @assignment.task
     when 'transcribe'
       digital_object.transcript = @assignment.proposed
-    when 'annotate'
+    when 'annotate_object'
       # TODO: Probably change index_document to annotation
       if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
         digital_object.index_document = @assignment.proposed

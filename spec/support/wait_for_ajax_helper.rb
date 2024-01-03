@@ -7,7 +7,7 @@ module WaitForAjaxHelper
   end
 
   def finished_all_ajax_requests?
-    page.evaluate_script("(typeof jQuery !== \"undefined\") ? jQuery.active : 0").zero?
+    page.evaluate_script("(typeof jQuery !== \"undefined\") ? jQuery.active : 0")&.zero?
   end
 end
 

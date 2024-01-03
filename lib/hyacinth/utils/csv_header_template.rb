@@ -33,7 +33,7 @@ class Hyacinth::Utils::CsvHeaderTemplate
     ]
     if TERM_ADDITIONAL_FIELDS[arg_df.controlled_vocabulary_string_key].present?
       TERM_ADDITIONAL_FIELDS[arg_df.controlled_vocabulary_string_key].each do |custom_field_key, _custom_field_data|
-        df_controlled_term_headers << path_string + arg_df.string_key + '.' + custom_field_key
+        df_controlled_term_headers << path_string + arg_df.string_key + '.' + custom_field_key.to_s
       end
     end
     df_controlled_term_headers
