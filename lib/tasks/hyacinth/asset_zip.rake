@@ -15,8 +15,8 @@ namespace :hyacinth do
 
       hyacinth_csv_file_path = ENV['hyacinth_csv_file_path']
       puts 'Missing required parameter: hyacinth_csv_file_path' if hyacinth_csv_file_path.nil?
-      zip_output_file_path = ENV['zip_output_file_path']
-      puts 'Missing required parameter: zip_output_file_path' if zip_output_file_path.nil?
+      output_file_path = ENV['output_file_path']
+      puts 'Missing required parameter: output_file_path' if output_file_path.nil?
       datastream = ENV['datastream']
       if datastream.nil?
         puts 'Missing required parameter: datastream'
@@ -24,7 +24,7 @@ namespace :hyacinth do
         puts "Invalid value supplies for parameter datastream.  Must be one of: #{datastreams_to_asset_file_location_heading_names.keys.join(', ')}"
         datastream = nil
       end
-      next if hyacinth_csv_file_path.nil? || zip_output_file_path.nil? || datastream.nil?
+      next if hyacinth_csv_file_path.nil? || output_file_path.nil? || datastream.nil?
 
       raise "File not found: #{hyacinth_csv_file_path}" unless File.exist?(hyacinth_csv_file_path)
 
@@ -73,29 +73,48 @@ namespace :hyacinth do
         file_locations_to_file_names[file_location] = new_file_name
       end
 
-      puts "Found #{file_locations_to_file_names.length} records"
-
-      # If zip output file already exists, prompt to delete
-      if File.exist?(zip_output_file_path)
-        print "An existing file was found at: #{zip_output_file_path}.  Okay to delete it? (y/n) "
-        if(STDIN.gets.strip != 'y')
-          puts 'A value other than "y" was entered.  Exiting.'
-          exit
+      if output_file_path.end_with?('.zip')
+        # If zip output file already exists, prompt to delete
+        if File.exist?(output_file_path)
+          print "An existing file was found at: #{output_file_path}.  Okay to delete it? (y/n) "
+          if(STDIN.gets.strip != 'y')
+            puts 'A value other than "y" was entered.  Exiting.'
+            exit
+          end
+          puts "Deleted #{output_file_path}"
+          File.delete(output_file_path)
         end
-        puts "Deleted #{zip_output_file_path}"
-        File.delete(zip_output_file_path)
-      end
 
-      puts "Writing assets to #{zip_output_file_path} ..."
+        puts "Writing assets to zip file: #{output_file_path} ..."
 
-      Zip::File.open(zip_output_file_path, Zip::File::CREATE) do |zipfile|
-        file_locations_to_file_names.each do |file_path, new_filename_in_archive|
-          # Two arguments:
-          # - The name of the file as it will appear in the archive
-          # - The original file, including the path to find it
-          puts "Adding: #{file_path} as #{new_filename_in_archive}"
-          zipfile.add(new_filename_in_archive, file_path)
+        Zip::File.open(output_file_path, Zip::File::CREATE) do |zipfile|
+          file_locations_to_file_names.each do |file_path, new_filename_in_archive|
+            # Two arguments:
+            # - The name of the file as it will appear in the archive
+            # - The original file, including the path to find it
+            puts "Adding: #{file_path} as #{new_filename_in_archive}"
+            zipfile.add(new_filename_in_archive, file_path)
+          end
         end
+      else
+        # If directory already exists at this location, confirm action
+        if Dir.exist?(output_file_path)
+          print "An existing directory was found at: #{output_file_path}.  Continue anyway? (y/n) "
+          if(STDIN.gets.strip != 'y')
+            puts 'A value other than "y" was entered.  Exiting.'
+            exit
+          end
+        end
+
+        puts "Writing assets to directory: #{output_file_path} ..."
+        FileUtils.mkdir_p(output_file_path)
+
+        puts 'Writing asset files to folder...'
+
+	file_locations_to_file_names.each do |file_path, new_filename_in_directory|
+	  puts "Copying: #{file_path} as #{new_filename_in_directory}"
+	  FileUtils.cp(file_path, File.join(output_file_path, new_filename_in_directory))
+	end
       end
 
       puts "Done!"
