@@ -22,7 +22,13 @@ module ResourceRequests
 
         log_response(response, resource_request.digital_object_uid, resource_request.job_type, options)
 
-        resource_request.update!(status: response.status == 200 ? 'success' : 'failure')
+        if response.status == 200
+          digital_object.iiif_registered_at = nil
+          digital_object.save
+          resource_request.success!
+        else
+          resource_request.failure!
+        end
       end
     rescue Faraday::ConnectionFailed
       Rails.logger.info("Unable to connect to Triclops, so #{resource_request.job_type} resource request for #{resource_request.digital_object_uid} was skipped.")
@@ -30,6 +36,8 @@ module ResourceRequests
 
     def self.eligible_object?(digital_object)
       return false unless digital_object&.is_a?(::DigitalObject::Asset)
+      return false unless digital_object.iiif_registered_at
+      true
     end
   end
 end

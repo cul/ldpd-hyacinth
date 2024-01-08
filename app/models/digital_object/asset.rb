@@ -24,6 +24,7 @@ class DigitalObject::Asset < DigitalObject
   before_destroy :request_iiif_deregistration, unless: :skip_resource_request_callbacks
 
   metadata_attribute :asset_type, Hyacinth::DigitalObject::TypeDef::String.new
+  metadata_attribute :iiif_registered_at, Hyacinth::DigitalObject::TypeDef::DateTime.new
   metadata_attribute :exif_orientation, Hyacinth::DigitalObject::TypeDef::Integer.new.default(-> { 1 }) # Value of 1-8, describing orientation, based on EXIF standard
   metadata_attribute :featured_thumbnail_region, Hyacinth::DigitalObject::TypeDef::String.new
 
