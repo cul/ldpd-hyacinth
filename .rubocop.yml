@@ -4,8 +4,17 @@ inherit_gem:
 inherit_from: .rubocop_todo.yml
 
 AllCops:
-  TargetRubyVersion: 3.0.3
+  TargetRubyVersion: 3.1.4
   TargetRailsVersion: 7.0.1
+  Exclude:
+    - 'bin/**/*'
+    - 'db/**/*'
+    - 'node_modules/**/*'
+    - 'script/**/*'
+    - 'spec/**/*'
+    - 'tmp/**/*'
+    - 'vendor/**/*'
+    - 'lib/tasks/**/*'
 
 CUL/CapybaraScreenshots:
   Description: 'Disallow calls to save_screenshot in feature specs.'

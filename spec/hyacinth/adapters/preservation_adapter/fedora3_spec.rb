@@ -31,7 +31,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
   before do
     allow(connection).to receive(:client).and_return(resource)
     allow(request).to receive(:redirection_history).and_return []
-    allow(connection).to receive(:datastream_dissemination).with(dsid: 'DC', pid: object_pid).and_return(dc_xml_src)
+    allow(connection).to receive(:datastream_dissemination).with({dsid: 'DC', pid: object_pid}).and_return(dc_xml_src)
   end
 
   describe "#location_uri_to_fedora3_pid" do
@@ -120,7 +120,7 @@ describe Hyacinth::Adapters::PreservationAdapter::Fedora3 do
     before do
       expect(connection).to receive(:find_or_initialize).with(object_pid).and_return(rubydora_object)
       expect(connection).to receive(:object_profile).with(object_pid, nil).and_return(profile_xml)
-      expect(connection).to receive(:datastreams).with(pid: object_pid, profiles: "true").and_return(datastreams_xml)
+      expect(connection).to receive(:datastreams).with({pid: object_pid, profiles: "true"}).and_return(datastreams_xml)
       dsids.each do |dsid|
         expect(connection).to receive(:datastream_profile).with(object_pid, dsid, nil, nil).and_return({})
       end

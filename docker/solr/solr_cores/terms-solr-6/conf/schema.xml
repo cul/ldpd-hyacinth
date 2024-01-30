@@ -108,18 +108,6 @@
     </analyzer>
   </fieldType>
 
-  <!-- Text suggest: For partial matches that will be boosted lower than exact or left-edge matches, e.g. match 'bro' in "A brown fox". -->
-  <fieldType name="text_suggest_ngram" class="solr.TextField">
-    <analyzer>
-      <tokenizer class="solr.ICUTokenizerFactory"/>
-      <filter class="solr.ICUFoldingFilterFactory"/>  <!-- NFKC, case folding, diacritics removed -->
-      <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0" splitOnCaseChange="1"/>
-      <filter class="solr.TrimFilterFactory"/>
-
-      <filter class="solr.NGramFilterFactory" minGramSize="3" maxGramSize="50"/>
-    </analyzer>
-  </fieldType>
-
   <fieldType name="alphaNumericSort" class="solr.TextField" sortMissingLast="true" omitNorms="true">
     <analyzer>
       <tokenizer class="solr.KeywordTokenizerFactory"/>
@@ -133,6 +121,19 @@
       />
     </analyzer>
   </fieldType>
+
+  <!-- Text suggest: For partial matches that will be boosted lower than exact or left-edge matches, e.g. match 'bro' in "A brown fox". -->
+  <fieldType name="text_suggest_ngram" class="solr.TextField">
+    <analyzer>
+      <tokenizer class="solr.ICUTokenizerFactory"/>
+      <filter class="solr.ICUFoldingFilterFactory"/>  <!-- NFKC, case folding, diacritics removed -->
+      <filter class="solr.WordDelimiterFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0" splitOnCaseChange="1"/>
+      <filter class="solr.TrimFilterFactory"/>
+
+      <filter class="solr.NGramFilterFactory" minGramSize="3" maxGramSize="50"/>
+    </analyzer>
+  </fieldType>
+
 
   <!-- Text Suggest: For left-edge matches, e.g. match 'A bro' but not 'brown' in "A brown fox". -->
 

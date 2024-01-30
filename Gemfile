@@ -24,7 +24,7 @@ gem 'graphql', '~> 2.0.0'
 # Explicitly including io-wait dependency to match default version of the gem that comes with Ruby 3.0.
 gem 'io-wait', '0.2.0'
 gem 'json_csv', '~> 1.0.0'
-gem 'nokogiri', '~> 1.10.10' # can't update to 1.11 because our server version of GLIBC is too old
+gem 'nokogiri', '~> 1.15.5'
 gem 'olive_branch', '~> 4.0.1'
 gem 'puma', '~> 5.2'
 gem 'rainbow', '~> 3.0'
@@ -42,11 +42,11 @@ group :development, :test do
 end
 
 group :development do
-  gem 'capistrano', '~> 3.17.0', require: false
+  # Use Capistrano for deployment
+  gem 'capistrano', '~> 3.18.0', require: false
   gem 'capistrano-cul', require: false
   gem 'capistrano-passenger', '~> 0.1', require: false
   gem 'capistrano-rails', '~> 1.4', require: false
-  gem 'capistrano-rvm', '~> 0.1', require: false
 
   gem 'graphiql-rails'
 
@@ -60,10 +60,10 @@ group :test do
   gem 'json_spec'
   gem 'rspec', '>= 3.11'
   gem 'rspec-its'
-  gem 'rspec-rails', '~> 5.1'
-  gem 'selenium-webdriver', '~> 3.142'
+  gem 'rspec-rails', '~> 6.1'
   gem 'simplecov', require: false
-  gem 'webdrivers', '~> 4.0', require: false
+  # For testing with chromedriver
+  gem 'selenium-webdriver', '~> 4.11'
   gem 'webmock'
 end
 
