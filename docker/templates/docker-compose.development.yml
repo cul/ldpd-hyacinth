@@ -2,12 +2,12 @@ version: "3.9"
 
 # Although a name isn't required for docker to work, we want to explicitly specify it so we know
 # which prefix is used for the volumes that we create.
-name: 'hyacinth-development'
+name: 'hyacinth3-development'
 
 volumes:
   redis-data:
   solr-cores:
-  fedora-data:
+  fedora-install-dir:
 services:
   redis:
     build: ./redis
@@ -29,4 +29,4 @@ services:
     ports:
       - '8080:8080'
     volumes:
-      - fedora-data:/opt/fedora/data
+      - fedora-install-dir:/opt/fedora

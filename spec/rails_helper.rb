@@ -7,8 +7,6 @@ require File.expand_path('../config/environment', __dir__)
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'rspec/rails'
-# Require 'webdrivers/chromedriver' so that chromedriver is automatically installed/updated
-require 'webdrivers/chromedriver'
 # Add additional requires below this line. Rails is not loaded until this point!
 require 'webmock/rspec'
 # Disable network connections because we want to mock them instead, but allow connections to
@@ -17,7 +15,7 @@ require 'webmock/rspec'
 # https://github.com/bblimke/webmock/blob/master/README.md#connecting-on-nethttpstart
 WebMock.disable_net_connect!(
   allow_localhost: true,
-  allow: 'chromedriver.storage.googleapis.com',
+  # allow: 'chromedriver.storage.googleapis.com', # TODO: Is this still needed now that the webdrivers gem is gone?
   net_http_connect_on_start: true
 )
 
