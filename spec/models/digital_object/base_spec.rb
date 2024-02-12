@@ -162,6 +162,21 @@ RSpec.describe DigitalObject::Base, :type => :model do
       end
     end
 
+    describe "for any valid DigitalObject" do
+      it "sets @mint_reserved_doi_before_save to true when {'mint_reserved_doi' => true} is present in the digital object data" do
+        item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+        item.set_digital_object_data(sample_item_digital_object_data.merge({'mint_reserved_doi' => true}), false)
+        expect(item.mint_reserved_doi_before_save).to eq(true)
+
+        # Reset the value
+        item.mint_reserved_doi_before_save = false
+
+        # Verify that it also works with a string (for CSV import scenarios)
+        item.set_digital_object_data(sample_item_digital_object_data.merge({'mint_reserved_doi' => 'TRUE'}), false)
+        expect(item.mint_reserved_doi_before_save).to eq(true)
+      end
+    end
+
     describe "for DigitalObject::Group" do
 
       it "works for a Group that does not have a parent object" do
