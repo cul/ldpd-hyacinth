@@ -48,6 +48,7 @@ class DigitalObject::Base
     @errors = ActiveModel::Errors.new(self)
     @publish_after_save = false
     @doi = nil
+    @mint_reserved_doi_before_save = false
     # base object does not require derivative processing (but this will be overridden in Asset subclass)
     @perform_derivative_processing = false
   end
@@ -111,6 +112,7 @@ class DigitalObject::Base
   # Updates the DigitalObject with the given digital_object_data
   def set_digital_object_data(digital_object_data, merge_dynamic_fields)
     publish_after_save_from_data(digital_object_data)
+    mint_reserved_doi_from_data(digital_object_data)
 
     create_or_validate_pid_from_data(pid, digital_object_data)
 
@@ -214,6 +216,11 @@ class DigitalObject::Base
   def publish_after_save_from_data(digital_object_data)
     # If a user sets the publish field to "true", set the publish_after_save flag
     @publish_after_save = digital_object_data['publish'].to_s.match?(/true/i) if digital_object_data.key?('publish')
+  end
+
+  def mint_reserved_doi_from_data(digital_object_data)
+    # If a user sets the mint_reserved_doi field to "true", set the mint_reserved_doi flag
+    @mint_reserved_doi_before_save = digital_object_data['mint_reserved_doi'].to_s.match?(/true/i) if digital_object_data.key?('mint_reserved_doi')
   end
 
   # Getters
