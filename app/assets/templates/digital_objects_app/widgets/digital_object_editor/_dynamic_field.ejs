@@ -64,6 +64,15 @@ var fieldsetIds = associatedEnabledDynamicField ? associatedEnabledDynamicField[
         case 'string':
           %><input type="text" name="<%= dynamic_field['string_key'] %>" class="form-field-element <%= dynamic_field['dynamic_field_type'] %>_field form-control input-sm clearable tabable <%= mode == 'show' || fieldIsLocked ? 'hidden' : '' %>"/><%
           break;
+        case 'view_limitation':
+          %>
+          <select name="<%= dynamic_field['string_key'] %>" class="form-field-element form-control input-sm clearable tabable <%= mode == 'show' || fieldIsLocked ? 'hidden' : '' %>">
+            <% for(var i = 0; i < dynamic_field['view_limitation_options'].length; i++) { %>
+              <option value="<%= dynamic_field['view_limitation_options'][i]['value'] %>"><%= dynamic_field['view_limitation_options'][i]['display_label'] %></option>
+            <% } %>
+          </select>
+          <%
+          break;
         default:
           %>Unknown field type: <%= dynamic_field['dynamic_field_type'] %><%
         }

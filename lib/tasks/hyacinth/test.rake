@@ -81,6 +81,11 @@ namespace :hyacinth do
         test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: dynamic_field, digital_object_type: dot_item)
       end
 
+      # Only enable authorization_limit fields for the asset type
+      DynamicFieldGroup.find_by(string_key: 'authorization_limit').dynamic_fields.each do |dynamic_field|
+        test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: dynamic_field, digital_object_type: dot_asset)
+      end
+
       # Let's create a test fieldset too
       fieldset1 = Fieldset.create!(display_label: 'Test Fieldset', project: test_project)
 

@@ -9,6 +9,7 @@ class DynamicField < ApplicationRecord
     SELECT = 'select'
     DATE = 'date'
     CONTROLLED_TERM = 'controlled_term'
+    VIEW_LIMITATION = 'view_limitation'
   end
 
   TYPES_TO_LABELS = {
@@ -18,7 +19,8 @@ class DynamicField < ApplicationRecord
     DynamicField::Type::BOOLEAN => 'Boolean',
     DynamicField::Type::SELECT => 'Select',
     DynamicField::Type::DATE => 'Date',
-    DynamicField::Type::CONTROLLED_TERM => 'Controlled Term'
+    DynamicField::Type::CONTROLLED_TERM => 'Controlled Term',
+    DynamicField::Type::VIEW_LIMITATION => 'View Limitation'
   }
 
   belongs_to :parent_dynamic_field_group, class_name: 'DynamicFieldGroup'
@@ -45,6 +47,12 @@ class DynamicField < ApplicationRecord
     if dynamic_field_type == self.class::Type::SELECT
       additional_data = self.additional_data
       hash_to_return[:select_options] = additional_data['select_options'].present? ? additional_data['select_options'] : {}
+    elsif dynamic_field_type == self.class::Type::VIEW_LIMITATION
+      hash_to_return[:view_limitation_options] = [
+        {value: '', display_label: '- Default (none specified) -'},
+        {value: 'full', display_label: 'Full Quality'},
+        {value: 'reduced', display_label: 'Reduced Quality'}
+      ]
     elsif dynamic_field_type == self.class::Type::CONTROLLED_TERM
       hash_to_return[:controlled_vocabulary] = {}
       controlled_vocabulary = ControlledVocabulary.find_by(string_key: controlled_vocabulary_string_key)

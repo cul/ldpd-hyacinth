@@ -14,6 +14,9 @@ class UpdateImageServiceJob < ActiveJob::Base
     Rails.logger.error('Received Bad Request response from the image server: ' + JSON.parse(e.http_body)['errors'].inspect)
   rescue Errno::ECONNREFUSED
     # Silently fail because the image server is currently unavailable and there is nothing we can do.
+  rescue RestClient::InternalServerError => e
+    # Silently fail because the image server is currently unavailable and there is nothing we can do.
+    Rails.logger.error "Received 500 response from the image server when making a request for #{asset.pid}."
   end
 
   def payload_for_image_service_update_request(asset)

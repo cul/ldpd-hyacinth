@@ -58,7 +58,6 @@ class ApplicationController < ActionController::Base
       format.html { render 'pages/forbidden', status: :forbidden }
       format.all { render json: { error: 'Forbidden' }, status: :forbidden }
     end
-    throw(:abort)
   end
 
   def render_unauthorized!
@@ -66,7 +65,6 @@ class ApplicationController < ActionController::Base
       format.html { render 'pages/unauthorized', status: :unauthorized }
       format.all { render json: { error: 'Unauthorized' }, status: :unauthorized }
     end
-    throw(:abort)
   end
 
   def require_hyacinth_admin!

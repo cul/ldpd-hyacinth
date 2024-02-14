@@ -87,6 +87,7 @@ namespace :hyacinth do
         dfc_record_info = DynamicFieldGroupCategory.create!(display_label: 'Record Information')
         dfc_other = DynamicFieldGroupCategory.create!(display_label: 'Other')
         dfc_asset_data = DynamicFieldGroupCategory.create!(display_label: 'Asset Data')
+        dfc_published_access_control = DynamicFieldGroupCategory.create!(display_label: 'Published Access Control')
 
         puts 'Creating default DynamicFieldGroups, DynamicFields and controlled vocabularies...'
         # Create core DynamicFieldGroups and DynamicFields
@@ -179,6 +180,10 @@ namespace :hyacinth do
         )
         name_role.dynamic_fields.create!(string_key: 'name_role_term', display_label: 'Value', dynamic_field_type: DynamicField::Type::CONTROLLED_TERM, controlled_vocabulary_string_key: 'name_role')
 
+        #restriction_on_access -> authorization_limit -> view_authorization_limit_value
+        restriction_on_access = DynamicFieldGroup.create!(string_key: 'restriction_on_access', display_label: 'Restriction on Access', dynamic_field_group_category: dfc_published_access_control)
+        authorization_limit = DynamicFieldGroup.create!(parent_dynamic_field_group_id: restriction_on_access.id, string_key: 'authorization_limit', display_label: 'Authorization Limit')
+        authorization_limit.dynamic_fields.create!(string_key: 'view_authorization_limit_value', display_label: 'View Limitation', dynamic_field_type: DynamicField::Type::VIEW_LIMITATION, is_facet_field: true, is_single_field_searchable: true, standalone_field_label: 'View Limitation')
       end
 
       if DigitalObjectType.find_by(string_key: 'publish_target').nil?
