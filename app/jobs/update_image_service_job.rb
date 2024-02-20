@@ -25,7 +25,9 @@ class UpdateImageServiceJob < ActiveJob::Base
         source_uri: image_source_uri_for_digital_object(asset),
         featured_region: asset.featured_region,
         # Supply pcdm type for MAIN resource (not access / poster)
-        pcdm_type: asset.pcdm_type
+        pcdm_type: asset.pcdm_type,
+        # We need to let the image server know whether or not this is a protected image
+        has_view_limitation: asset.has_view_limitation_field?
       }
     }
   end

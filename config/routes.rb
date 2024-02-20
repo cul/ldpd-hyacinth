@@ -1,6 +1,8 @@
 require 'resque/server'
 
 Rails.application.routes.draw do
+  get '/image_proxy/iiif/2/*path', to: 'image_proxy#raster', constraints: {all: /.+/}
+
   resources :csv_exports, only: [:index, :create, :show, :destroy] do
     member do
       get 'download'

@@ -203,4 +203,16 @@ module DigitalObject::DynamicField
       flat_hash
     end
   end
+
+  # Returns true if this DigitalObject has at least one field value
+  # for a DynamicField::Type::VIEW_LIMITATION field.
+  def has_view_limitation_field?
+    view_limitation_field_string_keys = ::DynamicField.where(dynamic_field_type: DynamicField::Type::VIEW_LIMITATION).pluck(:string_key)
+    view_limitation_field_string_keys.each do |view_limitation_field_string_key|
+      results = Hyacinth::Utils::HashUtils.find_nested_hashes_that_contain_key(self.dynamic_field_data, view_limitation_field_string_key)
+      return true if results.present?
+    end
+
+    false
+  end
 end
