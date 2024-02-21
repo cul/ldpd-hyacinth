@@ -5,5 +5,5 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Item = function(digital_object_data){
 Hyacinth.extendClass(Hyacinth.DigitalObjectsApp.DigitalObject.Item, Hyacinth.DigitalObjectsApp.DigitalObject.Base); //Extend
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Item.prototype.hasImage = function (){
-  return Hyacinth.imageServerUrl && this.ordered_child_digital_object_pids.length > 0;
+  return Hyacinth.imageServerProxyPath && this.ordered_child_digital_object_pids.length > 0;
 };

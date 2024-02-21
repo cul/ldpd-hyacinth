@@ -24,7 +24,7 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.getImageUrl = function (pid, type,
   if (type == 'scaled') { type = 'full'; }
   if (type == 'square') { type = 'featured'; }
 
-  return Hyacinth.imageServerUrl + '/iiif/2/standard/' + pid + '/' + type + '/!' + size + ',' + size + '/0/default.jpg';
+  return Hyacinth.imageServerProxyPath + '/iiif/2/standard/' + pid + '/' + type + '/!' + size + ',' + size + '/0/default.jpg';
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.showMediaViewModal = function (pid) {
