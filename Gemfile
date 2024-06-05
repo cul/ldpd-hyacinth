@@ -112,8 +112,9 @@ gem 'solrizer', '>= 3.4.1'
 # Use wowza token gem for generating tokens
 gem 'wowza-secure_token', '0.0.1'
 
-gem 'best_type', '~> 1.0'
+# gem 'best_type', '~> 1.0'
 # gem 'best_type', path: '../best_type'
+gem 'best_type', git: 'https://github.com/cul/best_type.git', branch: 'LDPD-415-case-sensitive-comparisons'
 
 # Specify min version for active_fedora_relsint because of a needed fix
 gem 'active_fedora_relsint', '>= 0.4.1'

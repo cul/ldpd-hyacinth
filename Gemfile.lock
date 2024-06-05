@@ -1,4 +1,12 @@
 GIT
+  remote: https://github.com/cul/best_type.git
+  revision: ffd671c563729c7783a50f6e394c3a03aa3192ce
+  branch: LDPD-415-case-sensitive-comparisons
+  specs:
+    best_type (1.0.0)
+      mime-types (~> 3.4)
+
+GIT
   remote: https://github.com/elohanlon/rubydora
   revision: c8f06c80cdb9fea30bb9717e97743025913bb990
   branch: datastream_dissemination_with_headers
@@ -95,8 +103,6 @@ GEM
       execjs
       json
     bcrypt (3.1.13)
-    best_type (1.0.0)
-      mime-types (~> 3.4)
     bigdecimal (1.4.4)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
@@ -575,7 +581,7 @@ DEPENDENCIES
   addressable (~> 2.7.0)
   attr_encrypted (>= 1.3.3)
   autoprefixer-rails
-  best_type (~> 1.0)
+  best_type!
   bigdecimal (~> 1.4.2)
   bootstrap-sass (~> 3.3)
   byebug
