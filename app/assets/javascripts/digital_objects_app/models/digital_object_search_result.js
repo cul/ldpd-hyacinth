@@ -18,6 +18,14 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.getDcType = funct
   return this.dcType;
 };
 
+Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.isAudioMovingImage = function(){
+  return ['Audio','MovingImage', 'Sound', 'Video'].includes(this.dcType);
+};
+
+Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.isStillImage = function(){
+  return ['Image', 'StillImage'].includes(this.dcType);
+};
+
 Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.getPid = function(){
   return this.pid;
 };

@@ -1,4 +1,4 @@
-<% if @digital_object.dc_type == 'StillImage' %>
+<% if @digital_object.still_image? %>
 
   <script>
     $(document).ready(function(){
@@ -154,7 +154,7 @@
       </span>
     </div>
   </div>
-<% elsif ['Sound','MovingImage'].include? @digital_object.dc_type %>
+<% elsif @digital_object.audio_moving_image? %>
   <% media_url = @digital_object.player_url(request.remote_ip) %>
   <% media_mime_type = @digital_object.player_mime_type %>
   <div id="media-content" style="width: 800px; height: 600px;">

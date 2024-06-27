@@ -71,6 +71,14 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getDcType = function() {
   return this.dc_type;
 };
 
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.isAudioMovingImage = function(){
+  return ['Audio','MovingImage', 'Sound', 'Video'].includes(this.dc_type);
+};
+
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.isStillImage = function(){
+  return ['Image','StillImage'].includes(this.dc_type);
+};
+
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getStateAsDisplayLabel = function(){
   var statesToDisplayLabels = {'A' : 'Active', 'D' : 'Deleted', 'I' : 'Inactive'}
   return statesToDisplayLabels[this.getState()];
