@@ -36,7 +36,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.prototype.init = functi
   this.$containerElement.addClass(Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.ANNOTATION_EDITOR_ELEMENT_CLASS); //Add class to container element
   this.$containerElement.data(Hyacinth.DigitalObjectsApp.DigitalObjectAnnotationEditor.ANNOTATION_EDITOR_DATA_KEY, this); //Assign this editor object as data to the container element so that we can access it later
 
-  if(['MovingImage', 'Sound'].indexOf(this.digitalObject.getDcType()) > -1) {
+  if(this.digitalObject.isAudioMovingImage()) {
     this.$containerElement.html(
       Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_annotation_editor/oh_synchronizer_index_mode.ejs', {
         digitalObject: this.digitalObject,
