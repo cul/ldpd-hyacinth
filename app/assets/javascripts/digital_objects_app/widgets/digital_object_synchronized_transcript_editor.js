@@ -36,7 +36,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.prototype.i
   this.$containerElement.addClass(Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.SYNCHRONIZED_TRANSCRIPT_EDITOR_ELEMENT_CLASS); //Add class to container element
   this.$containerElement.data(Hyacinth.DigitalObjectsApp.DigitalObjectSynchronizedTranscriptEditor.SYNCHRONIZED_TRANSCRIPT_EDITOR_DATA_KEY, this); //Assign this editor object as data to the container element so that we can access it later
 
-  if (['MovingImage', 'Sound'].indexOf(this.digitalObject.getDcType()) > -1) {
+  if(this.digitalObject.isAudioMovingImage()) {
     this.$containerElement.html(
       Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_synchronized_transcript_editor/oh_synchronizer_transcript_mode.ejs', {
         digitalObject: this.digitalObject,

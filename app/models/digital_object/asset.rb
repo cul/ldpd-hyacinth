@@ -9,8 +9,12 @@ class DigitalObject::Asset < DigitalObject::Base
   include DigitalObject::Assets::Captions
   include Hyacinth::Utils::StringUtils
 
-  UNKNOWN_DC_TYPE = 'Unknown'
-  VALID_DC_TYPES = [UNKNOWN_DC_TYPE, 'Dataset', 'MovingImage', 'Software', 'Sound', 'StillImage', 'Text']
+  UNKNOWN_DC_TYPE = BestType::PcdmTypeLookup::UNKNOWN
+  ASSET_DC_TYPES = ['Dataset', 'MovingImage', 'Software', 'Sound', 'StillImage', 'Text']
+  VALID_DC_TYPES = (BestType::PcdmTypeLookup::VALID_TYPES + ASSET_DC_TYPES).uniq
+  AMI_DC_TYPES = ['Audio', 'MovingImage', 'Sound', 'Video']
+  IMAGE_DC_TYPES = ['Image', 'StillImage']
+
   DIGITAL_OBJECT_TYPE_STRING_KEY = 'asset'
 
   DEFAULT_ASSET_NAME = 'Asset' # For when a title is not supplied and we're not doing with a filesystem upload
@@ -341,6 +345,14 @@ class DigitalObject::Asset < DigitalObject::Base
     if synchronized_transcript_changed?
       IO.write(self.synchronized_transcript_location, self.synchronized_transcript)
     end
+  end
+
+  def audio_moving_image?
+    AMI_DC_TYPES.include?(self.dc_type || BestType.dc_type.for_file_name(self.original_filename))
+  end
+
+  def still_image?
+    IMAGE_DC_TYPES.include?(self.dc_type || BestType.dc_type.for_file_name(self.original_filename))
   end
 
   def player_mime_type
