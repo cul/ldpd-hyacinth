@@ -262,7 +262,7 @@ class DigitalObjectsController < ApplicationController
   end
 
   def rotate_image
-    unless @digital_object.is_a?(DigitalObject::Asset) && @digital_object.dc_type == 'StillImage'
+    unless @digital_object.is_a?(DigitalObject::Asset) && @digital_object.still_image?
       render json: { errors: ["Only Assets of type StillImage can be rotated.  This is a #{@digital_object.digital_object_type.display_label} of type #{@digital_object.dc_type}"] }
       return
     end

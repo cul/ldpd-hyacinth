@@ -299,7 +299,7 @@
           <h4 class="preview-heading">Asset</h4>
           <img class="img-responsive thumbnail" src="<%= Hyacinth.DigitalObjectsApp.DigitalObject.Base.getImageUrl(digitalObject.getPid(), 'scaled', 256) %>" title="<%= digitalObject.getPid() %>" />
           <div class="caption">
-            <% if (digitalObject.getDcType() == 'StillImage') { %>
+            <% if (digitalObject.isStillImage()) { %>
               <a href="#" class="btn btn-block btn-primary btn-xs" onclick="Hyacinth.DigitalObjectsApp.DigitalObject.Base.showMediaViewModal('<%= digitalObject.getPid() %>'); return false;">View Zoomable Image</a>
               <% if (mode == 'show') { %>
                 <br />
@@ -314,7 +314,7 @@
                   </ul>
                 </div>
               <% } %>
-            <% } else if (['Sound','MovingImage'].includes(digitalObject.getDcType())) { %>
+            <% } else if (digitalObject.isAudioMovingImage()) { %>
               <a href="#" class="btn btn-block btn-primary btn-xs" onclick="Hyacinth.DigitalObjectsApp.DigitalObject.Base.showMediaViewModal('<%= digitalObject.getPid() %>'); return false;">View Media</a>
             <% } %>
           </div>

@@ -34,7 +34,7 @@ class AssignmentsController < ApplicationController
       @assignment.proposed = @assignment.original
     when 'annotate_object'
       # store current state of transcript in *original* field
-      if ['MovingImage', 'Sound'].include?(@digital_object.dc_type)
+      if @digital_object.audio_moving_image?
         @assignment.original = @digital_object.index_document
       else
         raise 'Not implemented yet'
@@ -43,7 +43,7 @@ class AssignmentsController < ApplicationController
       @assignment.proposed = @assignment.original
     when 'synchronize'
       # store current state of transcript in *original* field
-      if ['MovingImage', 'Sound'].include?(@digital_object.dc_type)
+      if @digital_object.audio_moving_image?
         @assignment.original = @digital_object.synchronized_transcript
       else
         raise 'Not implemented yet'
@@ -124,13 +124,13 @@ class AssignmentsController < ApplicationController
       digital_object.transcript = @assignment.proposed
     when 'annotate_object'
       # TODO: Probably change index_document to annotation
-      if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
+      if digital_object.audio_moving_image?
         digital_object.index_document = @assignment.proposed
       else
         raise 'Not implemented yet'
       end
     when 'synchronize'
-      if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
+      if digital_object.audio_moving_image?
         digital_object.synchronized_transcript = @assignment.proposed
       else
         raise "Cannot commit synchronized transcript for non-audiovisual resource (pid: #{digital_object.pid}, dc_type: #{digital_object.dc_type})"

@@ -259,6 +259,14 @@ class DigitalObject::Base
     self::VALID_DC_TYPES
   end
 
+  def audio_moving_image?
+    false
+  end
+
+  def still_image?
+    false
+  end
+
   def allowed_publish_targets
     DigitalObject::PublishTarget.basic_publish_target_data_from_solr(project.enabled_publish_target_pids)
   end

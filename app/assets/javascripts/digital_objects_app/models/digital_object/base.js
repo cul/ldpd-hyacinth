@@ -76,6 +76,14 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getStateAsDisplayLabel =
   return statesToDisplayLabels[this.getState()];
 };
 
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.isAudioMovingImage = function () {
+  return ['Audio','MovingImage', 'Sound', 'Video'].includes(this.dc_type);
+};
+
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.isStillImage = function () {
+  return ['Image','StillImage'].includes(this.dc_type);
+};
+
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.isNewRecord = function () {
   return (this.getPid() == null);
 };

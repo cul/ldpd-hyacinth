@@ -36,7 +36,7 @@ class Assignments::ChangesetsController < ApplicationController
       end
     when 'annotate_object'
       if index_document_params[:index_document_text]
-        if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
+        if digital_object.audio_moving_image?
           create_or_update_annotate_changeset(@assignment, digital_object, index_document_params[:index_document_text])
           @assignment.save
         else
@@ -45,7 +45,7 @@ class Assignments::ChangesetsController < ApplicationController
       end
     when 'synchronize'
       if synchronized_transcript_params[:synchronized_transcript_text]
-        if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
+        if digital_object.audio_moving_image?
           create_or_update_synchronize_changeset(@assignment, digital_object, synchronized_transcript_params[:synchronized_transcript_text])
           @assignment.save
         else
@@ -86,7 +86,7 @@ class Assignments::ChangesetsController < ApplicationController
     end
 
     def create_or_update_annotate_changeset(assignment, digital_object, new_content)
-      if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
+      if digital_object.audio_moving_image?
         assignment.original = digital_object.index_document if assignment.original.nil?
       else
         raise 'Not implemented yet'
@@ -95,7 +95,7 @@ class Assignments::ChangesetsController < ApplicationController
     end
 
     def create_or_update_synchronize_changeset(assignment, digital_object, new_content)
-      if ['MovingImage', 'Sound'].include?(digital_object.dc_type)
+      if digital_object.audio_moving_image?
         assignment.original = digital_object.synchronized_transcript if assignment.original.nil?
       else
         raise 'Not implemented yet'
