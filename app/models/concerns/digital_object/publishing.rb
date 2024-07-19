@@ -46,7 +46,8 @@ module DigitalObject::Publishing
     rescue Errno::ECONNREFUSED
       @errors.add(:publish_target, "Connection to server refused for Publish Target URL: #{publish_target.publish_target_field('publish_url')}")
     rescue RestClient::ExceptionWithResponse => e
-      @errors.add(:publish_target, "#{e.response.code} response received for Publish Target URL: #{publish_target.publish_target_field('publish_url')}")
+      response_code = response_code_for_exception(e)
+      @errors.add(:publish_target, "#{response_code} response received for Publish Target URL: #{publish_target.publish_target_field('publish_url')}")
     end
     success
   end
@@ -54,4 +55,10 @@ module DigitalObject::Publishing
   def publishing_to_primary_publish_target?
     @publish_after_save && publish_target_pids.include?(project.primary_publish_target_pid)
   end
+
+  private
+    def response_code_for_exception(e)
+      response_code = e.response.code if e.response
+      response_code || :nil
+    end
 end
