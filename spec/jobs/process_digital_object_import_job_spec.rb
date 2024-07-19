@@ -84,6 +84,18 @@ RSpec.describe ProcessDigitalObjectImportJob, :type => :job do
       expect(klass).to receive(:new_object)
       klass.find_or_create_digital_object(digital_object_data, user, digital_object_import)
     end
+    context "no digital_object_type given for a new object" do
+      let(:digital_object) { klass.find_or_create_digital_object(digital_object_data, user, digital_object_import) }
+      let(:expected_message) { "Invalid DigitalObjectType string key: missing" }
+      before do
+        digital_object_data.delete('digital_object_type')
+      end
+
+      it "fails with a legible error" do
+        expect(digital_object).to be_nil
+        expect(digital_object_import.digital_object_errors).to include(expected_message)
+      end
+    end
   end
 
   describe ".handle_unexpected_processing_error" do
