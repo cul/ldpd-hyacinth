@@ -9,10 +9,10 @@ Supported Browsers:
 - Internet Explorer: 11+
 
 ### Requirements
-Hyacinth has the following dependencies:
-- Ruby 2.6 (tested with ruby 2.6.10)
-- Sqlite3 or MySQL (tested with MySQL 5.7)
-- Apache Solr (tested with 6.3)
+Hyacinth 2.6.x has the following dependencies:
+- Ruby 2.7 (tested with ruby 2.7.8)
+- Sqlite3 or MySQL (tested with SQlite)
+- Apache Solr (tested with 8.11)
 - Fedora 3.8.x (though 3.8.1 is recommended because of a concurrent writing issue with 3.7 through 3.8.0)
 - Docker (for development and testing)
 
@@ -151,11 +151,11 @@ gem install mysql2 -v '0.4.10' -- --with-ldflags=-L/usr/local/opt/openssl/lib --
 
 #### ARM (M1/M2) MacOS Notes:
 
-If Ruby 2.6.10 doesn't install for you, you may need to install it using this syntax:
+If Ruby 2.7.8 doesn't install for you, you may need to install it using this syntax:
 
-`CFLAGS="-Wno-error=implicit-function-declaration" rvm install 2.6.10`
+`CFLAGS="-Wno-error=implicit-function-declaration" rvm install 2.7.8`
 
-This was more of a problem with Ruby 2.4, so it may not be necessary for Ruby 2.6.
+This was more of a problem with Ruby 2.4, so it may not be necessary for Ruby 2.7.
 
 #### Ubuntu 22 setup notes
 
