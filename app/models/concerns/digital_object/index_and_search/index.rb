@@ -51,6 +51,7 @@ module DigitalObject::IndexAndSearch::Index
 
     doc[:search_identifier_sim] << pid
     doc[:search_identifier_sim].push(*identifiers) # Also append all identifiers to the array
+    doc[:search_identifier_sim] << self.doi.sub(/^doi:/, '') if self.doi.present? # Also append DOI to the array
     doc[:search_keyword_teim] << pid
 
     if flattened_dynamic_field_data.present?
