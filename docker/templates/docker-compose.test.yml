@@ -30,3 +30,12 @@ services:
       - '9080:8080'
     volumes:
       - fedora-install-dir:/opt/fedora
+      - type: bind
+        source: ./fedora/apache-http
+        target: /opt/jars/apache-http
+      - type: bind
+        source: ./fedora/awssdk
+        target: /opt/jars/awssdk
+      - type: bind
+        source: ./fedora/cul
+        target: /opt/jars/cul
