@@ -26,6 +26,8 @@ services:
   fedora:
     build: ./fedora
     restart: always
+    env_file:
+      - ./fedora.development.env
     ports:
       - '8080:8080'
     volumes:

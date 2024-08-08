@@ -11,8 +11,6 @@ FROM amazoncorretto:8
 ENV FEDORA_HOME /opt/fedora
 ENV CATALINA_HOME /opt/fedora/tomcat
 ENV PATH $CATALINA_HOME/bin:$PATH
-ENV AWS_REGION us-west-2
-ENV AWS_OUTPUT json
 WORKDIR /opt
 
 COPY ./install.properties /opt/install.properties
