@@ -24,5 +24,6 @@ cp /opt/jars/awssdk/*.jar /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/
 cp /opt/jars/cul/fcrepo3-s3-server-1.0-SNAPSHOT.jar /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/
 echo "Done overriding Fedora 3 libraries; setting new FCFG config"
 cp /opt/fedora.delegating-external.fcfg /opt/fedora/server/config/fedora.fcfg
+cp /opt/permit-all-s3-resolution.xml /opt/fedora/data/fedora-xacml-policies/repository-policies/default/permit-all-s3-resolution.xml
 
 /opt/fedora/tomcat/bin/catalina.sh run

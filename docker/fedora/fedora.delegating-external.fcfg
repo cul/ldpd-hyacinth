@@ -499,13 +499,13 @@ https://wiki.duraspace.org/display/FEDORA36/Spring+Security
       <comment>set to true to enable s3 external content retrieval</comment>
     </param>
   </module>
-  <module role="org.fcrepo.server.storage.external.storage.HttpExternalContentDelegate" class="org.fcrepo.server.storage.external.http.HttpExternalContentManager">
+  <module role="org.fcrepo.server.storage.external.HttpExternalContentDelegate" class="org.fcrepo.server.storage.external.http.HttpExternalContentManager">
     <comment>This module is a delegate that facilitates obtaining external content via HTTP</comment>
   </module>
-  <module role="org.fcrepo.server.storage.external.storage.FileExternalContentDelegate" class="org.fcrepo.server.storage.external.file.FileExternalContentManager">
+  <module role="org.fcrepo.server.storage.external.FileExternalContentDelegate" class="org.fcrepo.server.storage.external.file.FileExternalContentManager">
     <comment>This module is a delegate that facilitates obtaining external content via file URIs</comment>
   </module>
-  <module role="org.fcrepo.server.storage.external.storage.S3ExternalContentDelegate" class="org.fcrepo.server.storage.external.s3.S3ExternalContentManager">
+  <module role="org.fcrepo.server.storage.external.S3ExternalContentDelegate" class="org.fcrepo.server.storage.external.s3.S3ExternalContentManager">
     <comment>This module is a delegate that facilitates obtaining external content via S3</comment>
   </module>
   <module role="org.fcrepo.server.management.Management" class="org.fcrepo.server.management.ManagementModule">
