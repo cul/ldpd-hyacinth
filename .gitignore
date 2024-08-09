@@ -24,6 +24,7 @@
 
 # Docker ignores (so these can be customized per-development-environment if needed)
 /docker/docker-compose.*.yml
+/docker/fedora.*.env
 
 # Ignore config files with sensitive data
 master.key

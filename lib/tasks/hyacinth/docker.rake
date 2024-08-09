@@ -61,7 +61,7 @@ namespace :hyacinth do
       docker_compose_template_dir = Rails.root.join('docker/templates')
       docker_compose_dest_dir = Rails.root.join('docker')
       Dir.foreach(docker_compose_template_dir) do |entry|
-        next unless entry.end_with?('.yml')
+        next unless entry.end_with?('.yml') || entry.end_with?('.env')
         src_path = File.join(docker_compose_template_dir, entry)
         dst_path = File.join(docker_compose_dest_dir, entry.gsub('.template', ''))
         if File.exist?(dst_path)
