@@ -49,7 +49,8 @@ class ProcessDigitalObjectImportJob
       # We're updating data for an existing object
       existing_object_for_update(digital_object_data, user)
     else
-      new_object(digital_object_data['digital_object_type']['string_key'], user, digital_object_import)
+      digital_object_type = digital_object_data['digital_object_type']['string_key'] if digital_object_data['digital_object_type']
+      new_object(digital_object_type, user, digital_object_import)
     end
   end
 
@@ -109,7 +110,7 @@ class ProcessDigitalObjectImportJob
   end
 
   def self.new_object(digital_object_type, user, digital_object_import)
-    digital_object = DigitalObjectType.get_model_for_string_key(digital_object_type).new
+    digital_object = DigitalObjectType.get_model_for_string_key(digital_object_type || :missing).new
     digital_object.created_by = user
     digital_object.updated_by = user
     digital_object

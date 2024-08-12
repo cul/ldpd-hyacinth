@@ -74,5 +74,18 @@ describe DigitalObject::Publishing do
     end
   end
 
-  describe '#execute_publish_action_for_target'
+  describe '#execute_publish_action_for_target' do
+    let(:pubtarget_pid) { 'pubtarget:c' }
+    let(:pubtarget) { instance_double(DigitalObject::PublishTarget, pid: pubtarget_pid) }
+    let(:success) { digital_object.execute_publish_action_for_target(:publish, pubtarget, true) }
+    context 'raises RestClient::ExceptionWithResponse with no response attribute' do
+      before do
+        allow(pubtarget).to receive(:publish_target_field).with('publish_url').and_return("http://localhost/publish")
+        allow(pubtarget).to receive(:publish_digital_object).and_raise(RestClient::ExceptionWithResponse)
+      end
+      it 'returns false' do
+        expect(success).to be false
+      end
+    end
+  end
 end
