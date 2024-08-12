@@ -103,7 +103,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata
     contributor_values = CONTRIBUTOR_ROLES.excluding(:author).map do |contributor_role|
       datacite_names_for_roles(contributor_role).each { |value| value.merge!(contributorType: contributor_role == :editor ? 'Editor' : 'Other') }
     end
-    return nil unless contributor_values.detect(&:present?)
+    return nil unless contributor_values.find(&:present?)
     contributor_values.flatten
   end
 
@@ -117,7 +117,7 @@ class Hyacinth::Adapters::ExternalIdentifierAdapter::HyacinthMetadata
   # @return nil or a hash {resourceTypeGeneral:, resourceType:, schemaOrg:, bibtex:, citeproc:, ris: }
   def datacite_types(data_mapping = {})
     unmapped_type = { resourceTypeGeneral: type_of_resource }.compact
-    [data_mapping.dig(:genre_uri, genre_uri&.to_sym), unmapped_type].detect(&:present?)
+    [data_mapping.dig(:genre_uri, genre_uri&.to_sym), unmapped_type].find(&:present?)
   end
 
   # @return nil or an array of {descriptionType:, description:, lang: }
