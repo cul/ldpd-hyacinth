@@ -2,6 +2,8 @@ development:
   solr_url: http://localhost:8983/solr/hyacinth
   default_pid_generator_namespace: cul
   digital_object_data_directory: <%= Rails.root.join('tmp', 'development', 'data') %>
+  default_asset_home_bucket_name: 'development-bucket'
+  default_asset_home_bucket_path_prefix: 'hyacinth_local_development/default_asset_home'
   default_asset_home: <%= Rails.root.join('tmp', 'development', 'asset_home') %>
   default_service_copy_home: <%= Rails.root.join('tmp', 'development', 'service_copy_home') %>
   access_copy_directory: <%= Rails.root.join('tmp', 'development', 'access') %>
@@ -19,6 +21,8 @@ test:
   solr_url: http://localhost:9983/solr/hyacinth
   default_pid_generator_namespace: cul
   digital_object_data_directory: <%= Rails.root.join('tmp', 'test', 'data') %>
+  default_asset_home_bucket_name: 'test-bucket'
+  default_asset_home_bucket_path_prefix: 'hyacinth_local_test/default_asset_home'
   default_asset_home: <%= Rails.root.join('tmp', 'test', 'asset_home') %>
   default_service_copy_home: <%= Rails.root.join('tmp', 'test', 'service_copy_home') %>
   access_copy_directory: <%= Rails.root.join('tmp', 'test', 'access') %>

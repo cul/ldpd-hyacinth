@@ -1,16 +1,41 @@
 module Hyacinth::DigitalObjects::Downloads
   include ActionController::Live
+
   def download
     if @digital_object.is_a?(DigitalObject::Asset)
-      if @digital_object.fedora_object.datastreams['content'].controlGroup == 'M'
-        send_data @digital_object.fedora_object.datastreams['content'].content,
-                  filename: @digital_object.fedora_object.datastreams['content'].dsLabel
-      else
-        send_file @digital_object.filesystem_location, filename: @digital_object.original_filename
+      # This endpoint should not support range requests.
+      if request.headers['Range'].present?
+        render plain: 'This endpoint does not allow range requests (using the http Range header).'
+        return
       end
+
+      storage_object = Hyacinth::Storage.storage_object_for(
+        Hyacinth::Utils::PathUtils.ds_location_to_decoded_location_uri(
+          @digital_object.fedora_object.datastreams['content'].dsLocation
+        )
+      )
+
+      response.headers['Content-Length'] = storage_object.size
+      response.status = 200
+      response.headers['Content-Type'] = storage_object.content_type
+      response.headers["Content-Disposition"] = label_to_content_disposition(storage_object.filename, true)
+      # Setting the Last-Modified header to fix streaming bug that affects Rails < 7.1 and rack gem 2.2.x?
+      # https://github.com/rack/rack/issues/1619#issuecomment-1510031078
+      response.headers["Last-Modified"] = Time.now.httpdate
+      storage_object.read do |chunk|
+        response.stream.write(chunk)
+        # Prevent server instance from sleeping forever if client disconnects during download.
+        # See: https://gist.github.com/njakobsen/6257887
+        # A value of 0.1 seems to be more reliable than smaller values.
+        sleep 0.1
+      end
+      puts "Done writing"
     else
       render plain: @digital_object.digital_object_type.display_label.pluralize + ' do not have download URLs.  Try downloading an Asset instead.'
     end
+  ensure
+    # Always close the stream, even if the client disconnects early.
+    response.stream.close
   end
 
   def download_service_copy

@@ -7,7 +7,7 @@ gem 'bootsnap', require: false
 
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3', '~> 1.4'
-gem 'mysql2', '~> 0.5.3'
+gem 'mysql2', '~> 0.5.6'
 
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem 'sprockets-rails'
@@ -109,7 +109,7 @@ gem 'best_type', git: 'https://github.com/cul/best_type.git', branch: 'LDPD-415-
 gem 'active_fedora_relsint', git: 'https://github.com/cul/active_fedora_relsint', ref: '91114c78c9af344673f1e899624031da79b72693'
 
 # URI Escaping
-gem 'addressable', '~> 2.7.0'
+gem 'addressable', '~> 2.8.0'
 
 # Use resque for background jobs
 # We're pinning resque to 1.26.x because 1.27 does an eager load operation
@@ -148,6 +148,13 @@ gem 'uri', '0.10.0.2'
 gem 'rack-protection', '>= 1.5.5'
 gem 'loofah', '~> 2.20.0'
 gem 'rails-html-sanitizer', '>= 1.2'
+
+# Amazon S3 SDK
+gem 'aws-sdk-s3', '~> 1'
+# Additional gem enabling the AWS SDK to calculate CRC32C checksums
+gem 'aws-crt', '~> 0.2.0'
+# Google Cloud Storage SDK
+gem 'google-cloud-storage', '~> 1.49'
 
 # Development and testing!
 group :development, :test do

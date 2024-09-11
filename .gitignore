@@ -41,6 +41,8 @@ term_additional_fields.yml
 resque.yml
 redis.yml
 ezid.yml
+aws.yml
+gcp.yml
 
 *_user_accounts.yml
 

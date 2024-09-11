@@ -11,6 +11,7 @@ class Project < ApplicationRecord
   belongs_to :pid_generator
 
   validates :display_label, :string_key, presence: true
+  validates :default_storage_type, inclusion: { in: Hyacinth::Storage::STORAGE_SCHEMES }
   validates :short_label, length: { maximum: 255 }, allow_blank: true
   validate :validate_custom_asset_directory
 

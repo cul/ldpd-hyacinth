@@ -1,0 +1,12 @@
+default: &default
+  aws_region: 'us-east-1'
+
+development:
+  <<: *default
+  aws_access_key_id: 'access_key_id'
+  aws_secret_access_key: 'secret_access_key'
+
+test:
+  <<: *default
+  aws_access_key_id: 'access_key_id'
+  aws_secret_access_key: 'secret_access_key'

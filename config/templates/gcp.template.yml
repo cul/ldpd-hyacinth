@@ -1,0 +1,36 @@
+default: &default
+  placeholder: 'placeholder'
+
+development:
+  <<: *default
+  project_id: 'example-project'
+  mock_credentials: true
+  credentials:
+    # Note: The lines below should be a line-for-line copy of what Google provides in a credentials.json key file
+    type: 'fill-this-in'
+    project_id: 'fill-this-in'
+    private_key_id: 'fill-this-in'
+    private_key: 'fill-this-in'
+    client_email: 'fill-this-in'
+    client_id: 'fill-this-in'
+    auth_uri: 'fill-this-in'
+    token_uri: 'fill-this-in'
+    auth_provider_x509_cert_url: 'fill-this-in'
+    client_x509_cert_url: 'fill-this-in'
+    universe_domain: 'fill-this-in'
+
+test:
+  <<: *default
+  project_id: 'example-project'
+  mock_credentials: true
+  credentials:
+    type: 'service_account'
+    project_id: 'cul-atc-test'
+    private_key_id: 'cul-atc-test-key-id'
+    private_key: 'fill-me-in'
+    client_email: 'atc@service-accounts.org'
+    client_id: 'cul-atc-test-client-id'
+    auth_uri: 'https://accounts.google.com/o/oauth2/auth'
+    token_uri: 'https://accounts.google.com/o/oauth2/token'
+    auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs'
+    client_x509_cert_url: 'https://www.googleapis.com/robot/v1/metadata/x509/atc@service-accounts.org'
