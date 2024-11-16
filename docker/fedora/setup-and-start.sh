@@ -20,10 +20,10 @@ rm /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/httpcore-4*.jar
 rm /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/httpclient-4*.jar
 cp /opt/jars/apache-http/*.jar /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/
 rm /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/s3-url-protocol-*.jar
-cp /opt/jars/cul/s3-url-protocol-0.1.jar /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/
+cp /opt/jars/cul/s3-url-protocol-*.jar /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/
 cp /opt/jars/awssdk/*.jar /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/
 rm /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/fcrepo3-s3-server-*.jar
-cp /opt/jars/cul/fcrepo3-s3-server-0.1.jar /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/
+cp /opt/jars/cul/fcrepo3-s3-server-*.jar /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/
 echo "Done overriding Fedora 3 libraries; setting new FCFG config"
 cp /opt/fedora.delegating-external.fcfg /opt/fedora/server/config/fedora.fcfg
 cp /opt/permit-all-s3-resolution.xml /opt/fedora/data/fedora-xacml-policies/repository-policies/default/permit-all-s3-resolution.xml
