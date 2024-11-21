@@ -9,7 +9,13 @@
         <AnySubject/>
     </Subjects>
     <Resources>
-      <AnyResource/>
+      <Resource>
+        <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:regexp-string-match">
+        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">^s3://.*$</AttributeValue>
+          <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:datastream:fileUri"
+            DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false" />
+        </ResourceMatch>
+      </Resource>
     </Resources>
     <Actions>
       <Action>
@@ -20,21 +26,14 @@
       </Action>
     </Actions>
   </Target>
-  <Rule RuleId="1" Effect="Permit">
-    <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:and">
-      <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:regexp-string-match">
-        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">^s3://.*$</AttributeValue>
-        <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
-          <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:datastream:fileUri"
-            DataType="http://www.w3.org/2001/XMLSchema#string"/>
-        </Apply>
-      </Apply>
+  <Rule RuleId="1" Effect="Deny">
+    <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:not">
       <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-is-in">
         <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">administrator</AttributeValue>
         <SubjectAttributeDesignator AttributeId="fedoraRole" DataType="http://www.w3.org/2001/XMLSchema#string"/>
       </Apply>
     </Condition>
   </Rule>
-  <Rule RuleId="2" Effect="Deny">
+  <Rule RuleId="2" Effect="Permit">
   </Rule>
 </Policy>
