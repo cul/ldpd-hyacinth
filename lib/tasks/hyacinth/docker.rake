@@ -35,7 +35,7 @@ namespace :hyacinth do
       expected_port = docker_compose_config['services']['fedora']['ports'][0].split(':')[0]
       url_to_check = "http://localhost:#{expected_port}/fedora/describe"
       puts "Waiting for Fedora to become available (at #{url_to_check})..."
-      Timeout.timeout(20, Timeout::Error, 'Timed out during Fedora startup check.') do
+      Timeout.timeout(60, Timeout::Error, 'Timed out during Fedora startup check.') do
         loop do
           begin
             sleep 0.25
@@ -61,7 +61,7 @@ namespace :hyacinth do
       docker_compose_template_dir = Rails.root.join('docker/templates')
       docker_compose_dest_dir = Rails.root.join('docker')
       Dir.foreach(docker_compose_template_dir) do |entry|
-        next unless entry.end_with?('.yml')
+        next unless entry.end_with?('.yml') || entry.end_with?('.env')
         src_path = File.join(docker_compose_template_dir, entry)
         dst_path = File.join(docker_compose_dest_dir, entry.gsub('.template', ''))
         if File.exist?(dst_path)
