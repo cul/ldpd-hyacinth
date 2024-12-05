@@ -33,6 +33,9 @@ services:
     volumes:
       - fedora-install-dir:/opt/fedora
       - type: bind
+        source: ../spec/fixtures
+        target: /opt/fixtures
+      - type: bind
         source: ./fedora/apache-http
         target: /opt/jars/apache-http
       - type: bind

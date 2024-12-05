@@ -3,15 +3,15 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         PolicyId="deny-file-resolve-if-not-allowed-dir"
         RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
-  <Description>deny any s3 datastream resolution if not in allowed URI patterns</Description>
+  <Description>deny any file datastream resolution if not in FEDORA_HOME/demo/succeed</Description>
   <Target>
     <Subjects>
-        <AnySubject/>
+      <AnySubject/>
     </Subjects>
     <Resources>
       <Resource>
         <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:regexp-string-match">
-        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">^s3://.*$</AttributeValue>
+        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">^file:/.*$</AttributeValue>
           <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:datastream:fileUri"
             DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false" />
         </ResourceMatch>
@@ -26,14 +26,17 @@
       </Action>
     </Actions>
   </Target>
-  <Rule RuleId="1" Effect="Deny">
-    <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:not">
-      <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-is-in">
-        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">administrator</AttributeValue>
-        <SubjectAttributeDesignator AttributeId="fedoraRole" DataType="http://www.w3.org/2001/XMLSchema#string"/>
-      </Apply>
+  <Rule RuleId="1" Effect="Permit">
+    <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:or">
+      <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:regexp-string-match">
+       <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">^file:/opt/fixtures/.*$</AttributeValue>
+       <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">s
+        <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:datastream:fileUri"
+            DataType="http://www.w3.org/2001/XMLSchema#string"/>
+       </Apply>
+     </Apply>
     </Condition>
   </Rule>
-  <Rule RuleId="2" Effect="Permit">
+  <Rule RuleId="2" Effect="Deny">
   </Rule>
 </Policy>

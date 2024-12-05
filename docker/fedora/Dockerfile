@@ -17,6 +17,7 @@ COPY ./install.properties /opt/install.properties
 COPY ./setup-and-start.sh /opt/setup-and-start.sh
 COPY ./fedora.delegating-external.fcfg /opt/fedora.delegating-external.fcfg
 COPY ./permit-all-s3-resolution.xml /opt/permit-all-s3-resolution.xml
+COPY ./deny-unallowed-file-resolution.xml /opt/deny-unallowed-file-resolution.xml
 
 RUN curl -L https://github.com/fcrepo3/fcrepo/releases/download/v3.8.1/fcrepo-installer-3.8.1.jar -o /opt/fcrepo-installer.jar
 
