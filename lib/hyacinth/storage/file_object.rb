@@ -19,7 +19,6 @@ class Hyacinth::Storage::FileObject < Hyacinth::Storage::AbstractObject
   end
 
   def size
-    raise "Path is: #{path}"
     File.size(self.path)
   end
 

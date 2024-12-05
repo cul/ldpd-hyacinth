@@ -26,7 +26,7 @@ module Hyacinth::Storage
       "#{scheme}://" +
       Hyacinth::Utils::PathUtils.path_to_asset_file(pid, project, File.basename(local_file_path))
     when S3_SCHEME
-      "#{scheme}://#{HYACINTH['default_asset_home_bucket_name']}/" +
+      "#{scheme}://#{HYACINTH['default_asset_home_bucket_name']}/"\
       "#{HYACINTH['default_asset_home_bucket_path_prefix']}/" +
       Hyacinth::Utils::PathUtils.path_to_asset_file(pid, project, File.basename(local_file_path))
     else

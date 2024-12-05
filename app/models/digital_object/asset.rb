@@ -67,7 +67,21 @@ class DigitalObject::Asset < DigitalObject::Base
     do_poster_import if @poster_import_path.present?
     do_service_copy_import if @service_copy_import_path.present? && self.service_copy_location.blank?
 
-    self.dc_type = BestType.dc_type.for_file_name(original_filename) if self.dc_type == 'Unknown' # Attempt to correct dc_type for 'Unknown' dc_type DigitalObjects
+    # Attempt to correct dc_type for 'Unknown' dc_type DigitalObjects, based on original filename
+    self.dc_type = BestType.dc_type.for_file_name(original_filename) if self.dc_type == 'Unknown'
+
+    # For ISO files, even the original filename can't tell us if they're possibly audio or video content,
+    # so if a service copy has been uploaded with the video then we'll determine dc type based on
+    # the extension of the service copy.
+    if self.dc_type == 'Unknown' && self.service_copy_location.present?
+      self.dc_type = BestType.dc_type.for_file_name(self.service_copy_location)
+    end
+
+    # If we still haven't been able to determine a dc type, see if we can get the
+    # information from an access copy file extension (if present)
+    if self.dc_type == 'Unknown' && self.access_copy_location.present?
+      self.dc_type = BestType.dc_type.for_file_name(self.access_copy_location)
+    end
   end
 
   def run_after_create_logic
@@ -96,7 +110,7 @@ class DigitalObject::Asset < DigitalObject::Base
   def filesystem_location
     content_ds = @fedora_object.datastreams['content']
     return nil unless content_ds.present?
-    Addressable::URI.unencode(content_ds.dsLocation).gsub(/^file:/, '')
+    Hyacinth::Utils::PathUtils.ds_location_to_decoded_location_uri(content_ds.dsLocation)
   end
 
   def access_copy_location

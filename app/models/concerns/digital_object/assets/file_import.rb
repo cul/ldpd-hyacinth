@@ -41,7 +41,7 @@ module DigitalObject::Assets::FileImport
     puts "final_save_location_uri is: #{final_save_location_uri}"
     content_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, 'content', controlGroup: 'E', mimeType: BestType.mime_type.for_file_name(original_filename), dsLabel: original_filename, versionable: true)
     content_ds.dsLocation = Hyacinth::Utils::PathUtils.location_uri_to_encoded_ds_location(final_save_location_uri)
-    @fedora_object.datastreams["DC"].dc_source = path_to_final_save_location
+    @fedora_object.datastreams["DC"].dc_source = final_save_location_uri
     @fedora_object.add_datastream(content_ds)
 
     # Add checksum property to content datastream using :has_message_digest predicate
