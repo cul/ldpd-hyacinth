@@ -9,6 +9,35 @@ require 'csv'
 require 'zip'
 
 namespace :hyacinth do
+  task :generate_source_csv_file_from_pids => :environment do
+    missing_params = ['pids', 'csv_out_path'].select { |required_param| ENV[required_param].blank? }
+    if missing_params.present?
+      puts "The following required parameters are missing: #{missing_params.join(', ')}"
+      next
+    end
+
+    pids = ENV['pids'].split(',').map(&:strip).to_set.to_a
+    csv_out_path = ENV['csv_out_path']
+
+    CSV.open(csv_out_path, 'wb') do |csv|
+      csv << ['_pid', '_digital_object_type.string_key', '_asset_data.access_copy_location', '_asset_data.original_filename']
+
+      pids.each do |pid|
+        dobj = DigitalObject::Base.find(pid)
+        if dobj.is_a?(DigitalObject::Asset)
+          csv << [dobj.pid, 'asset', dobj.access_copy_location, dobj.original_filename]
+        elsif dobj.is_a?(DigitalObject::Item)
+          dobj.ordered_child_digital_object_pids.each do |child_pid|
+            child_dobj = DigitalObject::Base.find(child_pid)
+            csv << [child_dobj.pid, 'asset', child_dobj.access_copy_location, child_dobj.original_filename]
+          end
+        else
+          raise "Unhandled digital object type: #{dobj.class.name}"
+        end
+      end
+    end
+  end
+
   namespace :asset_zip do
     task :from_hyacinth_csv_export => :environment do
       required_asset_zip_column_headings = ['_asset_data.original_filename']
