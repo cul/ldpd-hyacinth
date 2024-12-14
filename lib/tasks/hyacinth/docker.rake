@@ -14,7 +14,7 @@ namespace :hyacinth do
       expected_port = docker_compose_config['services']['solr']['ports'][0].split(':')[0]
       url_to_check = "http://localhost:#{expected_port}/solr/hyacinth/admin/system"
       puts "Waiting for Solr to become available (at #{url_to_check})..."
-      Timeout.timeout(20, Timeout::Error, 'Timed out during Solr startup check.') do
+      Timeout.timeout(30, Timeout::Error, 'Timed out during Solr startup check.') do
         loop do
           begin
             sleep 0.25
@@ -35,7 +35,7 @@ namespace :hyacinth do
       expected_port = docker_compose_config['services']['fedora']['ports'][0].split(':')[0]
       url_to_check = "http://localhost:#{expected_port}/fedora/describe"
       puts "Waiting for Fedora to become available (at #{url_to_check})..."
-      Timeout.timeout(60, Timeout::Error, 'Timed out during Fedora startup check.') do
+      Timeout.timeout(90, Timeout::Error, 'Timed out during Fedora startup check.') do
         loop do
           begin
             sleep 0.25
