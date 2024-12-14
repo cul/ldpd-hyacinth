@@ -466,6 +466,8 @@ class DigitalObject::Asset < DigitalObject::Base
 
   def to_solr
     doc = super
+    doc['filesystem_location_sim'] = filesystem_location
+
     doc['original_filename_sim'] = original_filename
     doc['original_file_path_sim'] = original_file_path
     doc['access_copy_location_sim'] = access_copy_location
