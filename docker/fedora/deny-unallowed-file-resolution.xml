@@ -30,7 +30,7 @@
     <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:or">
       <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:regexp-string-match">
        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">^file:/opt/fixtures/.*$</AttributeValue>
-       <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">s
+       <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
         <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:datastream:fileUri"
             DataType="http://www.w3.org/2001/XMLSchema#string"/>
        </Apply>
