@@ -21,14 +21,15 @@ if [ ! -f /opt/fedora/tomcat/bin/catalina.sh ]; then
   # # Start Fedora up for the first time (which sets up various files and directories)
   /opt/fedora/tomcat/bin/catalina.sh start
 
-  # # Give Fedora some time to start up (and create various first-time startup files)
-  sleep 10
+  # Give Fedora some time to start up and create various first-time startup files
+  # We're waiting until we get a 200 status (with maximum timeout wait time)
+  timeout 20s bash -c 'until curl --output /dev/null --silent --head --fail http://localhost:8081/fedora/; do sleep 1; done'
 
   # Stop Fedora so that we can apply some overrides
   /opt/fedora/tomcat/bin/catalina.sh stop
 
-  # Give Fedora some time to stop
-  sleep 10
+  # Give Fedora some time to stop (with maximum timeout wait time)
+  timeout 20s bash -c 'while pgrep "java" > /dev/null; do sleep 1; done'
 
   # Revert server.xml change so that Fedora will run on port 8080 the next time we start it up.
   rm /opt/fedora/tomcat/conf/server.xml

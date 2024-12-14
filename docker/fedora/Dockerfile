@@ -8,6 +8,9 @@
 
 FROM amazoncorretto:8
 
+# Enable use of the `ps` command
+RUN yum install -y procps
+
 ENV FEDORA_HOME /opt/fedora
 ENV CATALINA_HOME /opt/fedora/tomcat
 ENV PATH $CATALINA_HOME/bin:$PATH
