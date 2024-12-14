@@ -34,6 +34,9 @@ class Hyacinth::Storage::S3Object < Hyacinth::Storage::AbstractObject
   end
 
   def read
+    obj = S3_CLIENT.get_object({ bucket: self.bucket_name, key: self.key }) do |chunk, _headers|
+      yield chunk
+    end
   end
 
   def write(source_file_path)
@@ -64,7 +67,7 @@ class Hyacinth::Storage::S3Object < Hyacinth::Storage::AbstractObject
       }
     )
 
-    return if upload_result
+    return source_file_sha256_hexdigest if upload_result
 
     raise FileImportError,
           "Error during file upload. Did not receive confirmation from AWS."
