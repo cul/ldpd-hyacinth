@@ -57,7 +57,8 @@ class Hyacinth::Storage::FileObject < Hyacinth::Storage::AbstractObject
 
     if destination_file_sha256_hexdigest != source_file_sha256_hexdigest
       FileUtils.rm(self.path) # Delete new file because it is invalid
-      raise "Error during file copy.  Copied file checksum (#{destination_file_sha256_hexdigest}) did not match "\
+      raise FileImportError,
+            "Error during file copy.  Copied file checksum (#{destination_file_sha256_hexdigest}) did not match "\
             "source file checksum (#{source_file_sha256_hexdigest}).  Please retry your file import."
     end
 

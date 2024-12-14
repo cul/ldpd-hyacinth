@@ -24,11 +24,17 @@ module Hyacinth::Storage
     case scheme
     when FILE_SCHEME
       "#{scheme}://" +
-      Hyacinth::Utils::PathUtils.path_to_asset_file(pid, project, File.basename(local_file_path))
+      File.join(
+        HYACINTH[:default_asset_home],
+        Hyacinth::Utils::PathUtils.relative_path_to_asset_file(pid, project, File.basename(local_file_path))
+      )
     when S3_SCHEME
-      "#{scheme}://#{HYACINTH['default_asset_home_bucket_name']}/"\
-      "#{HYACINTH['default_asset_home_bucket_path_prefix']}/" +
-      Hyacinth::Utils::PathUtils.path_to_asset_file(pid, project, File.basename(local_file_path))
+      "#{scheme}://" +
+      File.join(
+        HYACINTH[:default_asset_home_bucket_name],
+        HYACINTH[:default_asset_home_bucket_path_prefix],
+        Hyacinth::Utils::PathUtils.relative_path_to_asset_file(pid, project, File.basename(local_file_path))
+      )
     else
       raise ArgumentError, "Unsupported scheme: #{scheme}"
     end

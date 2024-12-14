@@ -15,4 +15,7 @@ module Hyacinth::Exceptions
   class MalformedControlledTermFieldValue < HyacinthError; end
 
   class InvalidCsvHeader < HyacinthError; end
+
+  class FileOverwriteError < HyacinthError; end
+  class FileImportError < HyacinthError; end
 end

@@ -34,10 +34,10 @@ services:
       - fedora-install-dir:/opt/fedora
       - type: bind
         source: ./fedora/apache-http
-        target: /opt/jars/apache-http
+        target: /opt/s3-libs/apache-http
       - type: bind
         source: ./fedora/awssdk
-        target: /opt/jars/awssdk
+        target: /opt/s3-libs/awssdk
       - type: bind
         source: ./fedora/cul
-        target: /opt/jars/cul
+        target: /opt/s3-libs/cul
