@@ -129,8 +129,16 @@ class Hyacinth::Utils::CsvImportExportUtils
       end
 
       # Check to see if a file exists at import_file_path
-      unless File.file?(import_file_path)
-        import_job.errors.add(:file_not_found, "For CSV row #{csv_row_number}, could not find file at _import_file.import_path => " + import_file_path)
+      if import_file_path.start_with?('/')
+        import_job.errors.add(
+          :file_not_found,
+          "For CSV row #{csv_row_number}, could not find file at _import_file.import_path => " + import_file_path
+        ) unless File.file?(import_file_path)
+      elsif !import_file_path.start_with?('s3://')
+        import_job.errors.add(
+          :unhandled_import_path,
+          "For CSV row #{csv_row_number}, unable to handle value for _import_file.import_path => " + import_file_path
+        )
       end
     end
   end

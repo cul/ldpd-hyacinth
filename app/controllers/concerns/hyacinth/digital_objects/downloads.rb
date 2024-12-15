@@ -1,6 +1,4 @@
 module Hyacinth::DigitalObjects::Downloads
-  include ActionController::Live
-
   def download
     if @digital_object.is_a?(DigitalObject::Asset)
       # This endpoint should not support range requests.
@@ -15,26 +13,33 @@ module Hyacinth::DigitalObjects::Downloads
         )
       )
 
-      response.headers['Content-Length'] = storage_object.size
-      response.status = 200
-      response.headers['Content-Type'] = storage_object.content_type
-      response.headers["Content-Disposition"] = label_to_content_disposition(storage_object.filename, true)
-      # Setting the Last-Modified header to fix streaming bug that affects Rails < 7.1 and rack gem 2.2.x?
-      # https://github.com/rack/rack/issues/1619#issuecomment-1510031078
-      response.headers["Last-Modified"] = Time.now.httpdate
+      response.headers['Content-Disposition'] = label_to_content_disposition(storage_object.filename, true)
+      response.headers['Content-Type'] = 'text/event-stream'
+      response.headers['Last-Modified'] = Time.now.httpdate
+      response.headers['Cache-Control'] = 'no-cache'
+      # NOTE: Content-Length header can't be set for stream.  Even when it is set, Content-Length shows up as "0".
+      # response.headers['Content-Length'] = storage_object.size
+      response.status = :ok
+
       storage_object.read do |chunk|
+        # If client disconnects, stop streaming.  This prevents wasteful additional file reading,
+        # and for S3 streams it prevents a Aws::S3::Plugins::NonRetryableStreamingError.
+        break unless response.stream.connected?
         response.stream.write(chunk)
+
+        # NOTE: The section below is commented out for now because it might not be necessary after some
+        # recent gem updates and header updates, but I'm keeping it here for reference in case we
+        # run into issues and need to uncomment it again later.
         # Prevent server instance from sleeping forever if client disconnects during download.
         # See: https://gist.github.com/njakobsen/6257887
         # A value of 0.1 seems to be more reliable than smaller values.
-        sleep 0.1
+        # sleep 0.1
       end
-      puts "Done writing"
     else
       render plain: @digital_object.digital_object_type.display_label.pluralize + ' do not have download URLs.  Try downloading an Asset instead.'
     end
   ensure
-    # Always close the stream, even if the client disconnects early.
+    # Always close the stream, even if the client disconnects early
     response.stream.close
   end
 

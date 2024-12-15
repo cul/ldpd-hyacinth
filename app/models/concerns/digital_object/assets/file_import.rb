@@ -35,7 +35,7 @@ module DigitalObject::Assets::FileImport
     @fedora_object.add_datastream(content_ds)
 
     # Add checksum property to content datastream using :has_message_digest predicate
-    @fedora_object.rels_int.add_relationship(content_ds, :has_message_digest, "urn:#{checksum_hexdigest_uri}")
+    @fedora_object.rels_int.add_relationship(content_ds, :has_message_digest, "urn:#{checksum_hexdigest_uri}") unless checksum_hexdigest_uri.nil?
 
     # Add size property to content datastream using :extent predicate
     @fedora_object.rels_int.add_relationship(content_ds, :extent, import_file_size.to_s, true) # last param *true* means that this is a literal value rather than a relationship
@@ -51,6 +51,8 @@ module DigitalObject::Assets::FileImport
 
   # Verifies the existence of the source file and collects its whole file checksum
   def handle_external_import(import_file_import_path)
+    import_file_import_path = "file://#{Addressable::URI.encode(import_file_import_path)}" if import_file_import_path.start_with?('/')
+
     storage_object = Hyacinth::Storage.storage_object_for(import_file_import_path)
     raise "External file not found at: #{storage_object.path}" unless storage_object.exist?
 
@@ -71,7 +73,7 @@ module DigitalObject::Assets::FileImport
   def handle_internal_import(import_file_import_path)
     # We only support local file internal imports.  An S3 file cannot be the source of a local file import.
     unless @import_file_import_path.start_with?('/') && File.exist?(@import_file_import_path)
-      raise ArgumentError, 'Import file import path must refer to a locally-resolvable file.'
+      raise ArgumentError, 'Import file import path must refer to a locally-resolvable file for internal imports.'
     end
 
     import_file_size = File.size(@import_file_import_path)

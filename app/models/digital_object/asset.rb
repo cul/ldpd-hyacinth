@@ -254,7 +254,8 @@ class DigitalObject::Asset < DigitalObject::Base
 
   def handle_new_file_upload(import_file_data)
     validate_import_file_data(import_file_data)
-    # Check for presentce of import file original file path (which is optional, but may be set by the user)
+
+    # Set @import_file_original_file_path (which is optional, but may have been be set by the user)
     @import_file_original_file_path = import_file_data['original_file_path']
 
     # Determine import_file_import_type

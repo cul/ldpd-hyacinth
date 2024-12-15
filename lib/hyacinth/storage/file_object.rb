@@ -6,7 +6,9 @@ class Hyacinth::Storage::FileObject < Hyacinth::Storage::AbstractObject
 
   def initialize(location_uri)
     super(location_uri)
-    @path = URI(location_uri).path
+    # Note: Need to decode location URI in order to convert %20 to space,
+    # so that Ruby file operation methods can resolve paths.
+    @path = Addressable::URI.unencode(URI(location_uri).path)
   end
 
   def exist?

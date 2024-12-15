@@ -1,6 +1,9 @@
 # encoding: utf-8
 
 class DigitalObjectsController < ApplicationController
+  # ActionController::Live is used by the Downloads concern, but we ran into issues including it within the concern.
+  # Including ActionController::Live at the controller level works.
+  include ActionController::Live
   include Hyacinth::DigitalObjects::EditorBehavior
   include Hyacinth::DigitalObjects::ParentEditorBehavior
   include Hyacinth::DigitalObjects::UploadsEditorBehavior
