@@ -101,7 +101,7 @@ RSpec.describe "DigitalObjects", type: :request do
           expect(response_json['pid'].length).not_to eq(0)
         end
 
-        it "works via filesystem upload (upload type: internal), copying the target file to the Hyacinth internal data store", focus: true do
+        it "works via filesystem upload (upload type: internal), copying the target file to the Hyacinth internal data store" do
           asset_digital_object_data = sample_asset_digital_object_data
 
           path_to_fixture_file = fixture('files/lincoln.jpg').path
@@ -123,11 +123,11 @@ RSpec.describe "DigitalObjects", type: :request do
 
           # Make sure that path to DigitalObject::Asset is internal, and stored within the hyacinth asset directory
           digital_object = DigitalObject::Base.find(response_json['pid'])
-          expect(digital_object.filesystem_location).to start_with(HYACINTH[:default_asset_home])
+          expect(digital_object.filesystem_location).to start_with("file://#{HYACINTH[:default_asset_home]}")
           expect(digital_object.original_file_path).to eq(path_to_fixture_file)
         end
 
-        it "works via filesystem upload (upload type: external), referencing the target external file instead of copying the file to the Hyacinth internal data store", focus: true do
+        it "works via filesystem upload (upload type: external), referencing the target external file instead of copying the file to the Hyacinth internal data store" do
           asset_digital_object_data = sample_asset_digital_object_data
 
           path_to_fixture_file = fixture('files/lincoln.jpg').path
@@ -149,7 +149,7 @@ RSpec.describe "DigitalObjects", type: :request do
 
           # Make sure that path to DigitalObject::Asset is external, and continues to exist in the external directory referenced during the upload
           digital_object = DigitalObject::Base.find(response_json['pid'])
-          expect(digital_object.filesystem_location).to eq(path_to_fixture_file)
+          expect(digital_object.filesystem_location).to eq("file://#{path_to_fixture_file}")
           expect(digital_object.original_file_path).to eq(path_to_fixture_file)
         end
 

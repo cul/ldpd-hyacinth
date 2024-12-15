@@ -25,7 +25,7 @@ RSpec.describe DigitalObject::Asset, :type => :model do
       expect(save_result).to eq(false)
     end
 
-    it "stores an asset's checksum in :has_message_digest relationship on the 'content' datastream, and can retrieve that checksum using the #checksum method", focus: true do
+    it "stores an asset's checksum in :has_message_digest relationship on the 'content' datastream, and can retrieve that checksum using the #checksum method" do
       asset = DigitalObject::Asset.new
       allow(asset).to receive(:allowed_publish_targets).and_return([])
       allow(asset).to receive(:next_pid).and_return('some:pid')

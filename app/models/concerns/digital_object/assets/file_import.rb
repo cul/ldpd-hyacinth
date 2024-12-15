@@ -5,14 +5,9 @@ module DigitalObject::Assets::FileImport
   def do_file_import
     convert_upload_import_to_internal!
 
-    case @import_file_import_type
-    when DigitalObject::Asset::IMPORT_TYPE_INTERNAL, DigitalObject::Asset::IMPORT_TYPE_POST_DATA
-      final_save_location_uri, checksum_hexdigest_uri, import_file_size = handle_internal_import(@import_file_import_path)
-    when DigitalObject::Asset::IMPORT_TYPE_EXTERNAL
-      final_save_location_uri, checksum_hexdigest_uri, import_file_size = handle_external_import(@import_file_import_path)
-    else
-      raise "Unexpected @import_file_import_type: #{@import_file_import_type.inspect}"
-    end
+    final_save_location_uri, checksum_hexdigest_uri, import_file_size = handle_import_based_on_import_type(
+      @import_file_import_type, @import_file_import_path
+    )
 
     original_filename = File.basename(@import_file_original_file_path || @import_file_import_path)
 
@@ -49,12 +44,24 @@ module DigitalObject::Assets::FileImport
     self.original_file_path = (@import_file_original_file_path || @import_file_import_path) # This also updates the 'content' datastream label
   end
 
+  def handle_import_based_on_import_type(import_file_import_type, import_file_import_path)
+    case @import_file_import_type
+    when DigitalObject::Asset::IMPORT_TYPE_INTERNAL, DigitalObject::Asset::IMPORT_TYPE_POST_DATA
+      final_save_location_uri, checksum_hexdigest_uri, import_file_size = handle_internal_import(@import_file_import_path)
+    when DigitalObject::Asset::IMPORT_TYPE_EXTERNAL
+      final_save_location_uri, checksum_hexdigest_uri, import_file_size = handle_external_import(@import_file_import_path)
+    else
+      raise "Unexpected @import_file_import_type: #{@import_file_import_type.inspect}"
+    end
+  end
+
   # Verifies the existence of the source file and collects its whole file checksum
   def handle_external_import(import_file_import_path)
     import_file_import_path = "file://#{Addressable::URI.encode(import_file_import_path)}" if import_file_import_path.start_with?('/')
 
     storage_object = Hyacinth::Storage.storage_object_for(import_file_import_path)
     raise "External file not found at: #{storage_object.path}" unless storage_object.exist?
+    raise Hyacinth::Exceptions::ZeroByteFileError, 'Original file file size is 0 bytes. File must contain data.' if storage_object.size == 0
 
     case storage_object
     when Hyacinth::Storage::FileObject

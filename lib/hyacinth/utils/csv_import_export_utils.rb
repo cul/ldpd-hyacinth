@@ -118,28 +118,27 @@ class Hyacinth::Utils::CsvImportExportUtils
   end
 
   def self.validate_import_file_import_path_if_present(digital_object_data, csv_row_number, import_job)
-    if digital_object_data['import_file'].present? && digital_object_data['import_file']['import_path'].present?
+    return unless digital_object_data.dig('import_file', 'import_path').present?
 
-      import_file_type = digital_object_data['import_file']['import_type']
-      import_file_path = digital_object_data['import_file']['import_path']
+    import_file_type = digital_object_data['import_file']['import_type']
+    import_file_path = digital_object_data['import_file']['import_path']
 
-      # Concatenate upload directory path with import_file_path if this file comes from the upload directory
-      if import_file_type == DigitalObject::Asset::IMPORT_TYPE_UPLOAD_DIRECTORY
-        import_file_path = File.join(HYACINTH[:upload_directory], import_file_path)
-      end
+    # Concatenate upload directory path with import_file_path if this file comes from the upload directory
+    if import_file_type == DigitalObject::Asset::IMPORT_TYPE_UPLOAD_DIRECTORY
+      import_file_path = File.join(HYACINTH[:upload_directory], import_file_path)
+    end
 
-      # Check to see if a file exists at import_file_path
-      if import_file_path.start_with?('/')
-        import_job.errors.add(
-          :file_not_found,
-          "For CSV row #{csv_row_number}, could not find file at _import_file.import_path => " + import_file_path
-        ) unless File.file?(import_file_path)
-      elsif !import_file_path.start_with?('s3://')
-        import_job.errors.add(
-          :unhandled_import_path,
-          "For CSV row #{csv_row_number}, unable to handle value for _import_file.import_path => " + import_file_path
-        )
-      end
+    # Check to see if a file exists at import_file_path
+    if import_file_path.start_with?('/')
+      import_job.errors.add(
+        :file_not_found,
+        "For CSV row #{csv_row_number}, could not find file at _import_file.import_path => " + import_file_path
+      ) unless File.file?(import_file_path)
+    elsif !import_file_path.start_with?('s3://')
+      import_job.errors.add(
+        :unhandled_import_path,
+        "For CSV row #{csv_row_number}, unable to handle value for _import_file.import_path => " + import_file_path
+      )
     end
   end
 
