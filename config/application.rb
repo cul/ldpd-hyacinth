@@ -46,5 +46,7 @@ module Hyacinth
     end
     # use Resque for ActiveJob
     config.active_job.queue_adapter = :resque
+    config.active_job.queue_name_prefix = "hyacinth.#{Rails.env}"
+    config.active_job.queue_name_delimiter = '.'
   end
 end

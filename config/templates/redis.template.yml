@@ -1,8 +1,11 @@
-development:
+default: &default
   host: localhost
   port: 6379
-  namespace: hyacinth_local_development
+  password: null
+  namespace: <%= "#{Rails.application.class.module_parent_name}:#{Rails.env}" %>
+
+development:
+  <<: *default
+
 test:
-  host: localhost
-  port: 7379
-  namespace: hyacinth_local_test
+  <<: *default
