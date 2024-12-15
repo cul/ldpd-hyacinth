@@ -3,26 +3,16 @@ module DigitalObject::Assets::FileImport
 
   # Returns true if file import was successful, false otherwise
   def do_file_import
-    final_save_location_uri = nil
-    import_file_sha256_hexdigest = nil
-    import_file_size = nil
-
     convert_upload_import_to_internal!
 
-    # Generate checksum using 4096-byte buffered approach (to keep memory usage low for large files)
-    # If this is an internal file, also copy the file to its internal destination
-    File.open(@import_file_import_path, 'rb') do |import_file| # 'r' == write, 'b' == binary mode
-      import_file_size = import_file.size
-      raise Hyacinth::Exceptions::ZeroByteFileError, 'Original file file size is 0 bytes. File must contain data.' if import_file_size == 0
-
-      copy_results = verify_and_optionally_copy_file(import_file)
-
-      final_save_location_uri = copy_results[0]
-      import_file_sha256_hexdigest = copy_results[1]
+    case @import_file_import_type
+    when DigitalObject::Asset::IMPORT_TYPE_INTERNAL, DigitalObject::Asset::IMPORT_TYPE_POST_DATA
+      final_save_location_uri, checksum_hexdigest_uri, import_file_size = handle_internal_import(@import_file_import_path)
+    when DigitalObject::Asset::IMPORT_TYPE_EXTERNAL
+      final_save_location_uri, checksum_hexdigest_uri, import_file_size = handle_external_import(@import_file_import_path)
+    else
+      raise "Unexpected @import_file_import_type: #{@import_file_import_type.inspect}"
     end
-    # At this point, there is a file at final_save_location_uri,
-    # import_file_sha256_hexdigest has been calculated,
-    # and import_file_size has been set, regardless of import type.
 
     original_filename = File.basename(@import_file_original_file_path || @import_file_import_path)
 
@@ -38,14 +28,14 @@ module DigitalObject::Assets::FileImport
     # Line below will create paths like "file:/this%23_and_%26_also_something%20great/here.txt"
     # We DO NOT want a double slash at the beginnings of these paths.
     # We need to manually escape ampersands (%26) and pound signs (%23) because these are not always handled by Addressable::URI.encode()
-    puts "final_save_location_uri is: #{final_save_location_uri}"
+
     content_ds = @fedora_object.create_datastream(ActiveFedora::Datastream, 'content', controlGroup: 'E', mimeType: BestType.mime_type.for_file_name(original_filename), dsLabel: original_filename, versionable: true)
     content_ds.dsLocation = Hyacinth::Utils::PathUtils.location_uri_to_encoded_ds_location(final_save_location_uri)
     @fedora_object.datastreams["DC"].dc_source = final_save_location_uri
     @fedora_object.add_datastream(content_ds)
 
     # Add checksum property to content datastream using :has_message_digest predicate
-    @fedora_object.rels_int.add_relationship(content_ds, :has_message_digest, "urn:sha256:#{import_file_sha256_hexdigest}")
+    @fedora_object.rels_int.add_relationship(content_ds, :has_message_digest, "urn:#{checksum_hexdigest_uri}")
 
     # Add size property to content datastream using :extent predicate
     @fedora_object.rels_int.add_relationship(content_ds, :extent, import_file_size.to_s, true) # last param *true* means that this is a literal value rather than a relationship
@@ -57,6 +47,46 @@ module DigitalObject::Assets::FileImport
     @fedora_object.orientation = 0
 
     self.original_file_path = (@import_file_original_file_path || @import_file_import_path) # This also updates the 'content' datastream label
+  end
+
+  # Verifies the existence of the source file and collects its whole file checksum
+  def handle_external_import(import_file_import_path)
+    storage_object = Hyacinth::Storage.storage_object_for(import_file_import_path)
+    raise "External file not found at: #{storage_object.path}" unless storage_object.exist?
+
+    case storage_object
+    when Hyacinth::Storage::FileObject
+      # This is a file on the local filesystem.  We will need to calculate its checksum.
+      checksum_hexdigest_uri = "sha256:#{Digest::SHA256.file(storage_object.path).hexdigest}"
+    when Hyacinth::Storage::S3Object
+      # This is a file in S3.  We will retrieve its checksum from metadata.
+      checksum_hexdigest_uri = storage_object.checksum_uri_from_metadata
+    else
+      raise ArgumentError, "Unsupported URI scheme: #{location_uri}"
+    end
+    [storage_object.location_uri, checksum_hexdigest_uri, storage_object.size]
+  end
+
+  # Copies the source file to its internal Hyacinth storage destination
+  def handle_internal_import(import_file_import_path)
+    # We only support local file internal imports.  An S3 file cannot be the source of a local file import.
+    unless @import_file_import_path.start_with?('/') && File.exist?(@import_file_import_path)
+      raise ArgumentError, 'Import file import path must refer to a locally-resolvable file.'
+    end
+
+    import_file_size = File.size(@import_file_import_path)
+    raise Hyacinth::Exceptions::ZeroByteFileError, 'Original file file size is 0 bytes. File must contain data.' if import_file_size == 0
+
+    final_save_location_uri = Hyacinth::Storage.generate_location_uri_for(pid, project, File.basename(@import_file_import_path))
+    storage_object = Hyacinth::Storage.storage_object_for(final_save_location_uri)
+
+    if storage_object.exist?
+      raise 'Could not process new internally-stored file because an existing file was already found at target location: ' + final_save_location_uri
+    end
+
+    sha256_hexdigest = storage_object.write(import_file_import_path)
+
+    [storage_object.location_uri, "sha256:#{sha256_hexdigest}", import_file_size]
   end
 
   def copy_access_copy_to_save_destination(source_path, dest_path)
@@ -166,34 +196,5 @@ module DigitalObject::Assets::FileImport
 
     # Set rels_int values
     @fedora_object.rels_int.add_relationship(poster_ds, :extent, File.size(@poster_import_path).to_s, true) # last param *true* means that this is a literal value rather than a relationship
-  end
-
-  def verify_and_optionally_copy_file(import_file)
-    if [DigitalObject::Asset::IMPORT_TYPE_INTERNAL, DigitalObject::Asset::IMPORT_TYPE_POST_DATA].include? @import_file_import_type
-      return copy_and_verify_internal_file(import_file.path)
-    elsif @import_file_import_type == DigitalObject::Asset::IMPORT_TYPE_EXTERNAL
-      return verify_external_file(import_file.path)
-    end
-    raise "Did not expect @import_file_import_type: #{@import_file_import_type.inspect}"
-  end
-
-  def copy_and_verify_internal_file(import_file_path)
-    final_save_location_uri = Hyacinth::Storage.generate_location_uri_for(pid, project, File.basename(import_file_path))
-    storage_object = Hyacinth::Storage.storage_object_for(final_save_location_uri)
-
-    if storage_object.exist?
-      raise 'Could not upload new internally-stored file because existing file was already found at target location: ' + final_save_location_uri
-    end
-
-    sha256_hexdigest = storage_object.write(import_file_path)
-
-    [storage_object.location_uri, sha256_hexdigest]
-  end
-
-  def verify_external_file(external_file_path)
-    storage_object = Hyacinth::Storage.for("file://#{external_file_path}")
-    raise "External file not found at: #{storage_object.path}" unless storage_object.exist?
-    sha256_hexdigest = Digest::SHA256.file(storage_object.path).hexdigest
-    [storage_object.location_uri, sha256_hexdigest]
   end
 end

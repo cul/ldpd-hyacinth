@@ -2,6 +2,7 @@
 
 class Hyacinth::Storage::S3Object < Hyacinth::Storage::AbstractObject
   DEFAULT_MULTIPART_THRESHOLD = 50.megabytes
+  CHECKSUM_METADATA_KEY_PATTERN = /checksum-([^-]+)-hex/
 
   attr_reader :bucket_name, :key
 
@@ -15,6 +16,16 @@ class Hyacinth::Storage::S3Object < Hyacinth::Storage::AbstractObject
 
   def s3_object
     @s3_object ||= Aws::S3::Object.new(self.bucket_name, self.key, { client: S3_CLIENT })
+  end
+
+  # Retrieves this object's whole file checksum from the object metadata, if present.
+  # If no metadata checksum value is found, returns nil.
+  def checksum_uri_from_metadata
+    matching_metadata_pair = s3_object.metadata.find { |k, _v| k.match(CHECKSUM_METADATA_KEY_PATTERN) }
+    return nil if matching_metadata_pair.nil?
+    metadata_key, checksum_value = matching_metadata_pair
+    checksum_type = metadata_key.match(CHECKSUM_METADATA_KEY_PATTERN)[1]
+    "#{checksum_type}:#{checksum_value}" # NOTE: This is frequently sha256, but is not guaranteed to be sha256.
   end
 
   def exist?
@@ -48,7 +59,7 @@ class Hyacinth::Storage::S3Object < Hyacinth::Storage::AbstractObject
     Rails.logger.debug("Uploading file to S3 at location: #{s3_location}")
 
     # This object should NOT already exist.  If it does, that's a problem and we should raise an error.
-    raise FileOverwriteError, "Cancelling S3 write operation because a file already exists at: #{s3_location}" if self.s3_object.exists?
+    raise Hyacinth::Exceptions::FileOverwriteError, "Cancelling S3 write operation because a file already exists at: #{s3_location}" if self.s3_object.exists?
 
     upload_result = self.s3_object.upload_file(
       source_file_path,
@@ -69,7 +80,7 @@ class Hyacinth::Storage::S3Object < Hyacinth::Storage::AbstractObject
 
     return source_file_sha256_hexdigest if upload_result
 
-    raise FileImportError,
+    raise Hyacinth::Exceptions::FileImportError,
           "Error during file upload. Did not receive confirmation from AWS."
   end
 end

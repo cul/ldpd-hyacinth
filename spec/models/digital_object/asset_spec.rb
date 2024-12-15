@@ -25,7 +25,7 @@ RSpec.describe DigitalObject::Asset, :type => :model do
       expect(save_result).to eq(false)
     end
 
-    it "stores an asset's checksum in :has_message_digest relationship on the 'content' datastream, and can retrieve that checksum using the #checksum method" do
+    it "stores an asset's checksum in :has_message_digest relationship on the 'content' datastream, and can retrieve that checksum using the #checksum method", focus: true do
       asset = DigitalObject::Asset.new
       allow(asset).to receive(:allowed_publish_targets).and_return([])
       allow(asset).to receive(:next_pid).and_return('some:pid')
@@ -188,42 +188,42 @@ RSpec.describe DigitalObject::Asset, :type => :model do
     let(:asset) { DigitalObject::Asset.new }
     it "is true when appropriate dc_type value from DC" do
       asset.instance_variable_set(:@dc_type, 'MovingImage')
-      expect(asset.audio_moving_image?).to be true     
+      expect(asset.audio_moving_image?).to be true
       asset.instance_variable_set(:@dc_type, 'Sound')
-      expect(asset.audio_moving_image?).to be true    
-    end    
+      expect(asset.audio_moving_image?).to be true
+    end
     it "is false when inappropriate dc_type value from DC" do
       asset.instance_variable_set(:@dc_type, 'Dataset')
-      expect(asset.audio_moving_image?).to be false    
-    end    
+      expect(asset.audio_moving_image?).to be false
+    end
     it "is true when appropriate dc_type value from PCDM" do
       asset.instance_variable_set(:@dc_type, 'Audio')
-      expect(asset.audio_moving_image?).to be true     
+      expect(asset.audio_moving_image?).to be true
       asset.instance_variable_set(:@dc_type, 'Video')
-      expect(asset.audio_moving_image?).to be true    
-    end    
+      expect(asset.audio_moving_image?).to be true
+    end
     it "is false when inappropriate dc_type value from PCDM" do
       asset.instance_variable_set(:@dc_type, 'Spreadsheet')
-      expect(asset.audio_moving_image?).to be false    
-    end    
+      expect(asset.audio_moving_image?).to be false
+    end
   end
   describe 'still_image?' do
     let(:asset) { DigitalObject::Asset.new }
     it "is true when appropriate dc_type value from DC" do
       asset.instance_variable_set(:@dc_type, 'StillImage')
-      expect(asset.still_image?).to be true     
-    end    
+      expect(asset.still_image?).to be true
+    end
     it "is false when inappropriate dc_type value from DC" do
       asset.instance_variable_set(:@dc_type, 'MovingImage')
-      expect(asset.still_image?).to be false    
-    end    
+      expect(asset.still_image?).to be false
+    end
     it "is true when appropriate dc_type value from PCDM" do
       asset.instance_variable_set(:@dc_type, 'Image')
-      expect(asset.still_image?).to be true    
-    end    
+      expect(asset.still_image?).to be true
+    end
     it "is false when inappropriate dc_type value from PCDM" do
       asset.instance_variable_set(:@dc_type, 'Video')
-      expect(asset.still_image?).to be false    
-    end    
+      expect(asset.still_image?).to be false
+    end
   end
 end

@@ -101,7 +101,7 @@ RSpec.describe "DigitalObjects", type: :request do
           expect(response_json['pid'].length).not_to eq(0)
         end
 
-        it "works via filesystem upload (upload type: internal), copying the target file to the Hyacinth internal data store" do
+        it "works via filesystem upload (upload type: internal), copying the target file to the Hyacinth internal data store", focus: true do
           asset_digital_object_data = sample_asset_digital_object_data
 
           path_to_fixture_file = fixture('files/lincoln.jpg').path
@@ -127,7 +127,7 @@ RSpec.describe "DigitalObjects", type: :request do
           expect(digital_object.original_file_path).to eq(path_to_fixture_file)
         end
 
-        it "works via filesystem upload (upload type: external), referencing the target external file instead of copying the file to the Hyacinth internal data store" do
+        it "works via filesystem upload (upload type: external), referencing the target external file instead of copying the file to the Hyacinth internal data store", focus: true do
           asset_digital_object_data = sample_asset_digital_object_data
 
           path_to_fixture_file = fixture('files/lincoln.jpg').path

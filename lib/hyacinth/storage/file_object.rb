@@ -7,7 +7,6 @@ class Hyacinth::Storage::FileObject < Hyacinth::Storage::AbstractObject
   def initialize(location_uri)
     super(location_uri)
     @path = URI(location_uri).path
-    puts "Initialize with location_uri: #{location_uri} and path: #{@path}"
   end
 
   def exist?
@@ -28,7 +27,7 @@ class Hyacinth::Storage::FileObject < Hyacinth::Storage::AbstractObject
 
   def read
     File.open(self.path, 'rb') do |file|
-      buffer = String.new
+      buffer = +''
       while file.read(FILE_READ_CHUNK_SIZE, buffer) != nil
         yield buffer
       end
@@ -43,7 +42,7 @@ class Hyacinth::Storage::FileObject < Hyacinth::Storage::AbstractObject
     source_file_sha256 = Digest::SHA256.new
     File.open(source_file_path, 'rb') do |source_file| # 'r' == read, 'b' == binary mode
       File.open(self.path, 'wb') do |new_file| # 'w' == write, 'b' == binary mode
-        buff = String.new
+        buff = +''
         while source_file.read(4096, buff)
           source_file_sha256.update(buff)
           new_file.write(buff)
@@ -57,7 +56,7 @@ class Hyacinth::Storage::FileObject < Hyacinth::Storage::AbstractObject
 
     if destination_file_sha256_hexdigest != source_file_sha256_hexdigest
       FileUtils.rm(self.path) # Delete new file because it is invalid
-      raise FileImportError,
+      raise Hyacinth::Exceptions::FileImportError,
             "Error during file copy.  Copied file checksum (#{destination_file_sha256_hexdigest}) did not match "\
             "source file checksum (#{source_file_sha256_hexdigest}).  Please retry your file import."
     end
