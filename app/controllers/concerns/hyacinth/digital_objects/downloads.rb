@@ -13,34 +13,53 @@ module Hyacinth::DigitalObjects::Downloads
         )
       )
 
-      response.headers['Content-Disposition'] = label_to_content_disposition(storage_object.filename, true)
-      response.headers['Content-Type'] = 'text/event-stream'
-      response.headers['Last-Modified'] = Time.now.httpdate
-      response.headers['Cache-Control'] = 'no-cache'
-      # NOTE: Content-Length header can't be set for stream.  Even when it is set, Content-Length shows up as "0".
-      # response.headers['Content-Length'] = storage_object.size
-      response.status = :ok
-
-      storage_object.read do |chunk|
-        # If client disconnects, stop streaming.  This prevents wasteful additional file reading,
-        # and for S3 streams it prevents a Aws::S3::Plugins::NonRetryableStreamingError.
-        break unless response.stream.connected?
-        response.stream.write(chunk)
-
-        # NOTE: The section below is commented out for now because it might not be necessary after some
-        # recent gem updates and header updates, but I'm keeping it here for reference in case we
-        # run into issues and need to uncomment it again later.
-        # Prevent server instance from sleeping forever if client disconnects during download.
-        # See: https://gist.github.com/njakobsen/6257887
-        # A value of 0.1 seems to be more reliable than smaller values.
-        # sleep 0.1
+      if storage_object.is_a?(Hyacinth::Storage::FileObject)
+        use_send_file_for_storage_object(storage_object)
+      else
+        use_action_controller_live_streaming_for_storage_object(storage_object, response)
       end
     else
       render plain: @digital_object.digital_object_type.display_label.pluralize + ' do not have download URLs.  Try downloading an Asset instead.'
     end
+  end
+
+  # private
+  def use_send_file_for_storage_object(storage_object)
+    send_file storage_object.path, filename: storage_object.filename, type: storage_object.content_type
+  end
+
+  # private
+  def use_action_controller_live_streaming_for_storage_object(storage_object, resp)
+    # NOTE: Content-Length header can't be set for stream.  Even when it is set, Content-Length shows up as "0".
+    # resp.headers['Content-Length'] = storage_object.size
+    resp.headers['Content-Disposition'] = label_to_content_disposition(storage_object.filename, true)
+    # resp.headers['Content-Type'] = 'text/event-stream'
+    resp.headers['Content-Type'] = storage_object.content_type
+    resp.headers['Last-Modified'] = Time.now.httpdate
+    resp.headers['Cache-Control'] = 'no-cache'
+    resp.status = :ok
+
+    storage_object.read do |chunk|
+      # If client disconnects, stop streaming.  This prevents wasteful additional file reading,
+      # and for S3 streams it prevents a Aws::S3::Plugins::NonRetryableStreamingError.
+      break unless resp.stream.connected?
+      resp.stream.write(chunk)
+
+      # NOTE: The section below is commented out for now because it might not be necessary after some
+      # recent code updates and header updates, but I'm keeping it here for reference in case we
+      # run into issues and need to uncomment it again later.
+      # Sleeping doesn't appear to be necessary when streaming S3 objects, but does appear to be
+      # necessary when sending local files in chunks using the resp.stream.write method.  Since
+      # we're currently using send_file for Hyacinth::Storage::FileObject objects, it's probably
+      # okay to continue keeping this commented out.
+      # Prevent server instance from sleeping forever if client disconnects during download.
+      # See: https://gist.github.com/njakobsen/6257887
+      # A value of 0.1 seems to be more reliable than smaller values.
+      # sleep 0.1
+    end
   ensure
     # Always close the stream, even if the client disconnects early
-    response.stream.close
+    resp.stream.close
   end
 
   def download_service_copy
