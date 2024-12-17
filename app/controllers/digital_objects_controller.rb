@@ -151,7 +151,6 @@ class DigitalObjectsController < ApplicationController
 
     handle_publish_param(@digital_object, params)
     handle_mint_reserved_doi_param(@digital_object, params)
-
     # Whenever a direct file upload occurs, that triggers a republish so that DLC
     # can reindex the object with the access/poster info.
     republish_after_save = @digital_object.is_a?(DigitalObject::Asset) && request_includes_direct_upload_file_param?

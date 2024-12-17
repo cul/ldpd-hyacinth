@@ -107,30 +107,42 @@ class DigitalObject::Asset < DigitalObject::Base
     @import_file_import_type = IMPORT_TYPE_INTERNAL
   end
 
+  # If the given uri is a file URI, returns an unescaped path string.  Otherwise returns the provided uri value, unchanged.
+  def convert_location_uri_to_path_if_file_uri(uri)
+    return nil if uri.nil?
+    uri.start_with?('file:/') ? Hyacinth::Utils::UriUtils.location_uri_to_file_path(uri) : uri
+  end
+
+  def filesystem_location_uri
+    @fedora_object&.datastreams&.[]('content')&.dsLocation
+  end
+
   def filesystem_location
-    content_ds = @fedora_object.datastreams['content']
-    return nil unless content_ds.present?
-    Hyacinth::Utils::PathUtils.ds_location_to_decoded_location_uri(content_ds.dsLocation)
+    convert_location_uri_to_path_if_file_uri(filesystem_location_uri)
+  end
+
+  def access_copy_location_uri
+    @fedora_object&.datastreams&.[]('access')&.dsLocation
   end
 
   def access_copy_location
-    return nil if @fedora_object.blank?
-    access_ds = @fedora_object.datastreams['access']
-    return nil unless access_ds.present?
-    Addressable::URI.unencode(access_ds.dsLocation).gsub(/^file:/, '')
+    convert_location_uri_to_path_if_file_uri(access_copy_location_uri)
+  end
+
+  def poster_location_uri
+    @fedora_object&.datastreams&.[]('poster')&.dsLocation
   end
 
   def poster_location
-    return nil if @fedora_object.blank?
-    poster_ds = @fedora_object.datastreams['poster']
-    return nil unless poster_ds.present?
-    Addressable::URI.unencode(poster_ds.dsLocation).gsub(/^file:/, '')
+    convert_location_uri_to_path_if_file_uri(poster_location_uri)
+  end
+
+  def service_copy_location_uri
+    @fedora_object&.datastreams&.[]('service')&.dsLocation
   end
 
   def service_copy_location
-    service_ds = @fedora_object.datastreams['service']
-    return nil unless service_ds.present?
-    Addressable::URI.unencode(service_ds.dsLocation).gsub(/^file:/, '')
+    convert_location_uri_to_path_if_file_uri(service_copy_location_uri)
   end
 
   def checksum

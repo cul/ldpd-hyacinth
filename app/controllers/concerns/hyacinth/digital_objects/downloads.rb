@@ -8,13 +8,12 @@ module Hyacinth::DigitalObjects::Downloads
       end
 
       storage_object = Hyacinth::Storage.storage_object_for(
-        Hyacinth::Utils::PathUtils.ds_location_to_decoded_location_uri(
-          @digital_object.fedora_object.datastreams['content'].dsLocation
-        )
+        @digital_object.fedora_object.datastreams['content'].dsLocation
       )
 
       if storage_object.is_a?(Hyacinth::Storage::FileObject)
-        use_send_file_for_storage_object(storage_object)
+        # use_send_file_for_storage_object(storage_object)
+        use_action_controller_live_streaming_for_storage_object(storage_object, response)
       else
         use_action_controller_live_streaming_for_storage_object(storage_object, response)
       end
@@ -45,17 +44,11 @@ module Hyacinth::DigitalObjects::Downloads
       break unless resp.stream.connected?
       resp.stream.write(chunk)
 
-      # NOTE: The section below is commented out for now because it might not be necessary after some
-      # recent code updates and header updates, but I'm keeping it here for reference in case we
-      # run into issues and need to uncomment it again later.
-      # Sleeping doesn't appear to be necessary when streaming S3 objects, but does appear to be
-      # necessary when sending local files in chunks using the resp.stream.write method.  Since
-      # we're currently using send_file for Hyacinth::Storage::FileObject objects, it's probably
-      # okay to continue keeping this commented out.
-      # Prevent server instance from sleeping forever if client disconnects during download.
+      # Fix for local file downloads hanging when using local Puma rails server. Allow thread to switch as needed
+      # during the download.  Also prevents server instance from sleeping forever if client disconnects during download.
       # See: https://gist.github.com/njakobsen/6257887
-      # A value of 0.1 seems to be more reliable than smaller values.
-      # sleep 0.1
+      # Note: Thread.pass doesn't appear to be necessary when streaming S3 objects. Only local files.
+      Thread.pass
     end
   ensure
     # Always close the stream, even if the client disconnects early
@@ -89,7 +82,7 @@ module Hyacinth::DigitalObjects::Downloads
     if @digital_object.is_a?(DigitalObject::Asset)
       access_ds = @digital_object.fedora_object&.datastreams&.fetch('access')
       raise Hyacinth::Exceptions::NotFoundError, "No access copy location available for #{@digital_object.pid}" unless access_ds.dsLocation
-      access_file_path = Hyacinth::Utils::PathUtils.ds_location_to_filesystem_path(access_ds.dsLocation)
+      access_file_path = Hyacinth::Utils::UriUtils.location_uri_to_file_path(access_ds.dsLocation)
       raise Hyacinth::Exceptions::NotFoundError, "Access copy file not found at expected location for #{@digital_object.pid}" unless File.exist?(access_file_path)
 
       label = access_ds.dsLabel.present? ? access_ds.dsLabel.split('/').last : 'file' # Use dsLabel as download label if available

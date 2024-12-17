@@ -12,6 +12,8 @@ class UpdateImageServiceJob < ActiveJob::Base
     )
   rescue RestClient::BadRequest => e
     Rails.logger.error('Received Bad Request response from the image server: ' + JSON.parse(e.http_body)['errors'].inspect)
+  # rescue RestClient::InternalServerError => e
+  #   Rails.logger.error('Received Internal Server Error response from the image server: ' + JSON.parse(e.http_body)['errors'].inspect)
   rescue Errno::ECONNREFUSED
     # Silently fail because the image server is currently unavailable and there is nothing we can do.
   end
@@ -22,7 +24,8 @@ class UpdateImageServiceJob < ActiveJob::Base
         source_uri: image_source_uri_for_digital_object(asset),
         featured_region: asset.featured_region,
         # Supply pcdm type for MAIN resource (not access / poster)
-        pcdm_type: asset.pcdm_type
+        pcdm_type: asset.pcdm_type,
+        has_view_limitation: asset.restricted_size_image
       }
     }
   end

@@ -233,7 +233,7 @@
                 <% if(digitalObject.getAccessCopyLocation() == null) { %>
                   N/A
                 <% } else { %>
-                  <a href="<%= Hyacinth.getLocationOrigin() + '/digital_objects/' + digitalObject.getPid() + '/download_access_copy' %>" target="_blank"><span class="glyphicon glyphicon-download"></span> Download</a>
+                  <a href="<%= Hyacinth.getLocationOrigin() + '/digital_objects/' + digitalObject.getPid() + '/download_access_copy?download=true' %>" target="_blank"><span class="glyphicon glyphicon-download"></span> Download</a>
                   (<%= digitalObject.getAccessCopyFileSizeString() %>) [<%= digitalObject.getAccessCopyFileSizeInBytes() %> bytes]
                   <% } %>
               </div>
