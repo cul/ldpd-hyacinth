@@ -70,7 +70,7 @@ Rails.application.configure do
     location: '/usr/sbin/sendmail',
     arguments: '-i -t'
   }
-  config.action_mailer.default_url_options = { host: 'berlioz.cul.columbia.edu' }
+  config.action_mailer.default_url_options = { host: 'hy-rails-test1.cul.columbia.edu' }
 
   # Enable locale fallbacks for I18n (makes lookups for any locale fall back to
   # the I18n.default_locale when a translation can not be found).
