@@ -21,6 +21,7 @@ set :deploy_to, "/opt/passenger/#{fetch(:deploy_name)}"
 # Default value for :linked_files is []
 append  :linked_files,
         'config/aws.yml',
+        'config/gcp.yml',
         'config/master.key',
         'config/database.yml',
         'config/fedora.yml',
