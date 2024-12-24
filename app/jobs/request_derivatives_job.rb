@@ -6,7 +6,13 @@ class RequestDerivativesJob < ActiveJob::Base
     return unless eligible_asset?(asset)
 
     requested_derivatives = required_derivatives_for_asset(asset)
-    return if requested_derivatives.empty?
+
+    # If no derivatives are needed, then we'll set perform_derivative_processing to false and return
+    if requested_derivatives.empty?
+      asset.perform_derivative_processing = false
+      asset.save
+      return
+    end
 
     if requested_derivatives.present?
       RestClient.post(
