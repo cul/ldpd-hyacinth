@@ -2,7 +2,8 @@
 
 # Set resque to log to a file
 Resque.logger = Logger.new(Rails.root.join('log', "#{Rails.env}_resque.log"))
-Resque.logger.level = Logger::INFO
+# Match the Rails logger level
+Resque.logger.level = Rails.logger.level
 
 redis_config = Rails.application.config_for(:redis)
 
