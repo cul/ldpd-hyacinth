@@ -1,5 +1,5 @@
 class RepublishAssetJob < ActiveJob::Base
-  queue_as Hyacinth::Queue::DIGITAL_OBJECT_IMPORT_LOW
+  queue_as Hyacinth::Queue::REPUBLISH_ASSET
 
   def perform(digital_object_pid)
     obj = DigitalObject::Base.find(digital_object_pid)
