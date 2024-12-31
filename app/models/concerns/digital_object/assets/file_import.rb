@@ -97,7 +97,7 @@ module DigitalObject::Assets::FileImport
     [storage_object.location_uri, "sha256:#{sha256_hexdigest}", import_file_size]
   end
 
-  def copy_access_copy_to_save_destination(source_path, dest_path)
+  def copy_file_and_apply_access_copy_permissions(source_path, dest_path)
     FileUtils.cp(source_path, dest_path)
     # Optionally set file's group
     FileUtils.chown(nil, HYACINTH[:access_copy_file_group], dest_path) if HYACINTH[:access_copy_file_group].present?
@@ -109,7 +109,7 @@ module DigitalObject::Assets::FileImport
     access_filename = 'access' + File.extname(@access_copy_import_path)
     dest_dir = Hyacinth::Utils::PathUtils.access_directory_path_for_uuid!(self.uuid)
     dest_file_path = File.join(dest_dir, access_filename)
-    copy_access_copy_to_save_destination(@access_copy_import_path, dest_file_path)
+    copy_file_and_apply_access_copy_permissions(@access_copy_import_path, dest_file_path)
 
     access_ds_location = Hyacinth::Utils::UriUtils.file_path_to_location_uri(dest_file_path)
 
@@ -172,10 +172,8 @@ module DigitalObject::Assets::FileImport
     poster_filename = 'poster' + File.extname(@poster_import_path)
     dest_dir = Hyacinth::Utils::PathUtils.access_directory_path_for_uuid!(self.uuid)
     dest_file_path = File.join(dest_dir, poster_filename)
-    FileUtils.cp(@poster_import_path, dest_file_path)
-    # Make sure the new file's group permissions are set to rw (using 0660 permissions).
-    # When Derivativo 1.5 is released, this can change to 0640 permissions.
-    FileUtils.chmod(0660, dest_file_path)
+    # NOTE: Poster files should have the same permissions as access copy files
+    copy_file_and_apply_access_copy_permissions(@poster_import_path, dest_file_path)
 
     poster_ds_location = Hyacinth::Utils::UriUtils.file_path_to_location_uri(dest_file_path)
 

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe DigitalObject::Asset, :type => :model do
-  describe "#copy_access_copy_to_save_destination" do
+  describe "#copy_file_and_apply_access_copy_permissions" do
     let(:src_path) { '/path/to/src.png' }
     let(:dest_path) { '/path/to/dest.png' }
     let(:expected_file_group) { 'digital-projects' }
@@ -22,7 +22,7 @@ RSpec.describe DigitalObject::Asset, :type => :model do
         expect(FileUtils).to receive(:chown).with(nil, expected_file_group, dest_path)
         expect(FileUtils).to receive(:chmod).with(expected_file_permissions.to_i(8), dest_path)
 
-        DigitalObject::Asset.new.copy_access_copy_to_save_destination(src_path, dest_path)
+        DigitalObject::Asset.new.copy_file_and_apply_access_copy_permissions(src_path, dest_path)
       end
     end
 
@@ -41,7 +41,7 @@ RSpec.describe DigitalObject::Asset, :type => :model do
         expect(FileUtils).not_to receive(:chown)
         expect(FileUtils).not_to receive(:chmod)
 
-        DigitalObject::Asset.new.copy_access_copy_to_save_destination(src_path, dest_path)
+        DigitalObject::Asset.new.copy_file_and_apply_access_copy_permissions(src_path, dest_path)
       end
     end
   end
