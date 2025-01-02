@@ -1,9 +1,10 @@
-class ProcessDigitalObjectImportJob
-  @queue = Hyacinth::Queue::DIGITAL_OBJECT_IMPORT_LOW
+class ProcessDigitalObjectImportJob < ActiveJob::Base
+  queue_as Hyacinth::Queue::DIGITAL_OBJECT_IMPORT_LOW
+
   UNEXPECTED_PROCESSING_ERROR_RETRY_DELAY = 60
   FIND_DIGITAL_OBJECT_IMPORT_RETRY_DELAY = 10
 
-  def self.perform(digital_object_import_id)
+  def perform(digital_object_import_id)
     # If the import job was previously deleted (and does not exist in the database), return immediately
     return unless DigitalObjectImport.exists?(digital_object_import_id)
 
@@ -44,7 +45,7 @@ class ProcessDigitalObjectImportJob
     handle_unexpected_processing_error(digital_object_import_id, e)
   end
 
-  def self.find_or_create_digital_object(digital_object_data, user, digital_object_import)
+  def find_or_create_digital_object(digital_object_data, user, digital_object_import)
     if existing_object?(digital_object_data)
       # We're updating data for an existing object
       existing_object_for_update(digital_object_data, user)
@@ -58,7 +59,7 @@ class ProcessDigitalObjectImportJob
   # digital_object_import instance because when it's called, we can't guarantee
   # that we were able to successfully obtain a digital_object_import instance.
   # We try multiple times, within this method, to obtain an instance.
-  def self.handle_unexpected_processing_error(digital_object_import_id, e, queue_long_jobs = HYACINTH[:queue_long_jobs])
+  def handle_unexpected_processing_error(digital_object_import_id, e, queue_long_jobs = HYACINTH[:queue_long_jobs])
     # In the case of some unexpected, otherwise unhandled error, mark this job
     # as a failure so that it doesn't get stuck as pending forever, causing
     # other jobs that depend on it to be requeued forever.
@@ -77,18 +78,18 @@ class ProcessDigitalObjectImportJob
     end
   end
 
-  def self.find_digital_object_import_with_retry(digital_object_import_id)
+  def find_digital_object_import_with_retry(digital_object_import_id)
     # Retry in case database is briefly unavailable
     Retriable.retriable(tries: 3, base_interval: FIND_DIGITAL_OBJECT_IMPORT_RETRY_DELAY) do
       return DigitalObjectImport.find(digital_object_import_id)
     end
   end
 
-  def self.existing_object?(digital_object_data)
+  def existing_object?(digital_object_data)
     digital_object_data['pid'].present? && DigitalObject::Base.exists?(digital_object_data['pid'])
   end
 
-  def self.assign_data(digital_object, digital_object_data, digital_object_import)
+  def assign_data(digital_object, digital_object_data, digital_object_import)
     digital_object.set_digital_object_data(digital_object_data, true)
     :success
   rescue Hyacinth::Exceptions::ParentDigitalObjectNotFoundError => e
@@ -99,17 +100,17 @@ class ProcessDigitalObjectImportJob
     :failure
   end
 
-  def self.exception_with_backtrace_as_error_message(e)
+  def exception_with_backtrace_as_error_message(e)
     e.message + "\n<span class=\"backtrace\">Backtrace:\n\t#{e.backtrace.join("\n\t")}</span>"
   end
 
-  def self.existing_object_for_update(digital_object_data, user)
+  def existing_object_for_update(digital_object_data, user)
     digital_object = DigitalObject::Base.find(digital_object_data['pid'])
     digital_object.updated_by = user
     digital_object
   end
 
-  def self.new_object(digital_object_type, user, digital_object_import)
+  def new_object(digital_object_type, user, digital_object_import)
     digital_object = DigitalObjectType.get_model_for_string_key(digital_object_type || :missing).new
     digital_object.created_by = user
     digital_object.updated_by = user
@@ -119,7 +120,7 @@ class ProcessDigitalObjectImportJob
     nil
   end
 
-  def self.handle_success_or_failure(status, digital_object, digital_object_import, do_solr_commit)
+  def handle_success_or_failure(status, digital_object, digital_object_import, do_solr_commit)
     if status == :success && digital_object.save(do_solr_commit)
       digital_object_import.digital_object_errors = []
       digital_object_import.status = :success
@@ -137,7 +138,7 @@ class ProcessDigitalObjectImportJob
   # If prerequisite rows are pending, then this digital_object_import will be requeued.
   # If prerequisite rows failed, then this digital_object_import will also fail with
   # a prerequisite-related error message.
-  def self.prerequisite_row_check(digital_object_import, queue_long_jobs = HYACINTH[:queue_long_jobs])
+  def prerequisite_row_check(digital_object_import, queue_long_jobs = HYACINTH[:queue_long_jobs])
     # If this import has prerequisite_csv_row_numbers, make sure that the job
     # with that prerequisite_csv_row_numbers has been completed.  If it hasn't,
     # we'll re-queue this job.
@@ -192,7 +193,7 @@ class ProcessDigitalObjectImportJob
     true
   end
 
-  def self.handle_remaining_prerequisite_case(digital_object_import, queue_long_jobs)
+  def handle_remaining_prerequisite_case(digital_object_import, queue_long_jobs)
     if queue_long_jobs
       # If prerequisite are still pending, then re-queue this import
       digital_object_import.digital_object_errors = [] # clear earlier errors if we're re-queueing

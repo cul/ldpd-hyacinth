@@ -10,12 +10,14 @@ describe ExportSearchResultsToCsvJob, :type => :unit do
   let(:user) { User.new }
   let(:search_params) { Hash.new }
 
+  let(:instance) { described_class.new }
+
   before do
     allow(DigitalObject::Base).to receive(:search_in_batches)
     .and_yield(doc1).and_yield(doc2)
   end
 
-  describe '.map_temp_field_indexes' do
+  describe '#map_temp_field_indexes' do
     let(:expected) do
       {
         '_pid' => 0,
@@ -27,7 +29,7 @@ describe ExportSearchResultsToCsvJob, :type => :unit do
       }
     end
 
-    subject { ExportSearchResultsToCsvJob.map_temp_field_indexes(search_params, user) }
+    subject { instance.map_temp_field_indexes(search_params, user) }
 
     it do
       is_expected.to eql expected
@@ -79,7 +81,7 @@ describe ExportSearchResultsToCsvJob, :type => :unit do
         allow(CsvExport).to receive(:find).with(export_id).and_return(export)
         allow(DigitalObject::Base).to receive(:search_in_batches).and_yield(sample_json_document)
         expect(export).to receive(:path_to_csv_file).and_call_original
-        described_class.perform(export_id)
+        instance.perform(export_id)
         expect(export.number_of_records_processed).to eq(1)
         actual_csv = CSV.read(export.path_to_csv_file)
 

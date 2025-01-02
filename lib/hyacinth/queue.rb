@@ -35,25 +35,25 @@ module Hyacinth::Queue
         raise 'Invalid priority: ' + priority.inspect
       end
 
-      Resque.enqueue_to(queue_name, ProcessDigitalObjectImportJob, digital_object_import_id)
+      ProcessDigitalObjectImportJob.set(queue: queue_name).perform_later(digital_object_import_id)
     else
-      ProcessDigitalObjectImportJob.perform(digital_object_import_id)
+      ProcessDigitalObjectImportJob.perform_now(digital_object_import_id)
     end
   end
 
   def self.export_search_results_to_csv(csv_export_id)
     if HYACINTH[:queue_long_jobs]
-      Resque.enqueue(ExportSearchResultsToCsvJob, csv_export_id)
+      ExportSearchResultsToCsvJob.perform_later(csv_export_id)
     else
-      ExportSearchResultsToCsvJob.perform(csv_export_id)
+      ExportSearchResultsToCsvJob.perform_now(csv_export_id)
     end
   end
 
   def self.reindex_digital_object(digital_object_pid)
     if HYACINTH[:queue_long_jobs]
-      Resque.enqueue(ReindexDigitalObjectJob, digital_object_pid)
+      ReindexDigitalObjectJob.perform_later(digital_object_pid)
     else
-      ReindexDigitalObjectJob.perform(digital_object_pid)
+      ReindexDigitalObjectJob.perform_now(digital_object_pid)
     end
   end
 end

@@ -9,6 +9,5 @@ describe "Digital Object Editor UI" do
 
   it "can create a new Digital Object", :js => true do
     expect(page).to have_content 'New Digital Object'
-
   end
 end
