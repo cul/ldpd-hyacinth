@@ -59,7 +59,7 @@ class ProcessDigitalObjectImportJob < ActiveJob::Base
   # digital_object_import instance because when it's called, we can't guarantee
   # that we were able to successfully obtain a digital_object_import instance.
   # We try multiple times, within this method, to obtain an instance.
-  def handle_unexpected_processing_error(digital_object_import_id, e, queue_long_jobs = HYACINTH[:queue_long_jobs])
+  def handle_unexpected_processing_error(digital_object_import_id, e)
     # In the case of some unexpected, otherwise unhandled error, mark this job
     # as a failure so that it doesn't get stuck as pending forever, causing
     # other jobs that depend on it to be requeued forever.

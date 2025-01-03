@@ -113,13 +113,13 @@ RSpec.describe ProcessDigitalObjectImportJob, type: :job do
     it "marks the DigitalObjectImport with given id as failure, and stores the exception object's message in the DigitalObjectImport's digital_object_errors" do
       allow(instance).to receive(:find_digital_object_import_with_retry).and_return(digital_object_import)
       expect(digital_object_import).to receive(:save!).once
-      instance.handle_unexpected_processing_error(digital_object_import_id, e, false)
+      instance.handle_unexpected_processing_error(digital_object_import_id, e)
       expect(digital_object_import.digital_object_errors).to eq([instance.exception_with_backtrace_as_error_message(e)])
     end
     it "when encountering an error retrieving or saving the DigitalObjectImport, retries retrieval/saving code three times, and then raises the error encountered on the final retry" do
       allow(instance).to receive(:find_digital_object_import_with_retry).and_raise(StandardError)
       expect(instance).to receive(:find_digital_object_import_with_retry).exactly(3).times
-      expect{instance.handle_unexpected_processing_error(digital_object_import_id, e, false)}.to raise_error(StandardError)
+      expect{instance.handle_unexpected_processing_error(digital_object_import_id, e)}.to raise_error(StandardError)
     end
   end
 

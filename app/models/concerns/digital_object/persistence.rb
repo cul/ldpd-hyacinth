@@ -137,6 +137,7 @@ module DigitalObject::Persistence
   # validation. This will delete a record without updating other records that reference it (i.e. child records).
   # NOTE: This method does NOT delete files on the filesystem.
   def destroy(purge = false, force = false)
+    result = false
     @db_record.with_lock do
       # Set state of 'D' for this object, which means "deleted" in Fedora
       self.state = 'D'
@@ -160,7 +161,7 @@ module DigitalObject::Persistence
           # Delete db record
           @db_record.destroy
 
-          return true
+          result = true
         else
           if @parent_digital_object_pids.present?
             # If present, convert this DigitalObject's parent membership relationships to obsolete parent relationships (for future auditing/troubleshooting purposes)
@@ -170,14 +171,14 @@ module DigitalObject::Persistence
             end
           end
 
-          return save
+          result = save
         end
       else
         Hyacinth::Utils::Logger.logger.error "Tried to delete Hyacinth record with pid #{pid}, but record was not valid. Errors: #{errors.messages.inspect}"
       end
     end
 
-    false
+    result
   end
 
   # Note: purge method is not currently implemented.  If implemented some day, this would completely delete all traces of an object from Fedora.

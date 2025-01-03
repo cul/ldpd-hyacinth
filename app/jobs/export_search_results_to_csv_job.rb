@@ -19,6 +19,7 @@ class ExportSearchResultsToCsvJob < ActiveJob::Base
   queue_as Hyacinth::Queue::DIGITAL_OBJECT_CSV_EXPORT
 
   def perform(csv_export_id)
+    Rails.logger.error "1233333 ExportSearchResultsToCsvJob is running!!!!!!!!!!!!"
     start_time = Time.now
 
     csv_export = CsvExport.find(csv_export_id)

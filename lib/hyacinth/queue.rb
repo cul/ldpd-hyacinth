@@ -23,37 +23,25 @@ module Hyacinth::Queue
     digital_object_import_id = digital_object_import.id
     priority = digital_object_import.import_job.priority.to_sym
 
-    if HYACINTH[:queue_long_jobs]
-      case priority
-      when :low
-        queue_name = Hyacinth::Queue::DIGITAL_OBJECT_IMPORT_LOW
-      when :medium
-        queue_name = Hyacinth::Queue::DIGITAL_OBJECT_IMPORT_MEDIUM
-      when :high
-        queue_name = Hyacinth::Queue::DIGITAL_OBJECT_IMPORT_HIGH
-      else
-        raise 'Invalid priority: ' + priority.inspect
-      end
-
-      ProcessDigitalObjectImportJob.set(queue: queue_name).perform_later(digital_object_import_id)
+    case priority
+    when :low
+      queue_name = Hyacinth::Queue::DIGITAL_OBJECT_IMPORT_LOW
+    when :medium
+      queue_name = Hyacinth::Queue::DIGITAL_OBJECT_IMPORT_MEDIUM
+    when :high
+      queue_name = Hyacinth::Queue::DIGITAL_OBJECT_IMPORT_HIGH
     else
-      ProcessDigitalObjectImportJob.perform_now(digital_object_import_id)
+      raise 'Invalid priority: ' + priority.inspect
     end
+
+    ProcessDigitalObjectImportJob.set(queue: queue_name).perform_later(digital_object_import_id)
   end
 
   def self.export_search_results_to_csv(csv_export_id)
-    if HYACINTH[:queue_long_jobs]
-      ExportSearchResultsToCsvJob.perform_later(csv_export_id)
-    else
-      ExportSearchResultsToCsvJob.perform_now(csv_export_id)
-    end
+    ExportSearchResultsToCsvJob.perform_later(csv_export_id)
   end
 
   def self.reindex_digital_object(digital_object_pid)
-    if HYACINTH[:queue_long_jobs]
-      ReindexDigitalObjectJob.perform_later(digital_object_pid)
-    else
-      ReindexDigitalObjectJob.perform_now(digital_object_pid)
-    end
+    ReindexDigitalObjectJob.perform_later(digital_object_pid)
   end
 end

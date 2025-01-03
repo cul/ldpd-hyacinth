@@ -195,6 +195,7 @@ RSpec.describe "DigitalObjects", type: :request do
         }
 
         it do
+          puts "Rails.application.config.active_job.queue_adapter: #{Rails.application.config.active_job.queue_adapter}"
           expect(response_status).to be(200)
           expect(response_json['success']).to eq(true)
           expect(export_id).to be_a(Integer)
