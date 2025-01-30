@@ -12,8 +12,7 @@ module Hyacinth::DigitalObjects::Downloads
       )
 
       if storage_object.is_a?(Hyacinth::Storage::FileObject)
-        # use_send_file_for_storage_object(storage_object)
-        use_action_controller_live_streaming_for_storage_object(storage_object, response)
+        use_send_file_for_local_file_storage_object(storage_object)
       else
         use_action_controller_live_streaming_for_storage_object(storage_object, response)
       end
@@ -23,11 +22,13 @@ module Hyacinth::DigitalObjects::Downloads
   end
 
   # private
-  def use_send_file_for_storage_object(storage_object)
+  def use_send_file_for_local_file_storage_object(storage_object)
     send_file storage_object.path, filename: storage_object.filename, type: storage_object.content_type
   end
 
   # private
+  # Note: This method has issues with downloading small local disk files, so we're using
+  # use_send_file_for_local_file_storage_object for local disk files.
   def use_action_controller_live_streaming_for_storage_object(storage_object, resp)
     # NOTE: Content-Length header can't be set for stream.  Even when it is set, Content-Length shows up as "0".
     # resp.headers['Content-Length'] = storage_object.size
@@ -38,6 +39,9 @@ module Hyacinth::DigitalObjects::Downloads
     resp.headers['Cache-Control'] = 'no-cache'
     resp.status = :ok
 
+    # The streaming implementation download implementation should be re-evaluated once we move to Rails 8.1.
+    # See: https://github.com/rack/rack/issues/1619
+    # Specifically: https://github.com/rack/rack/issues/1619#issuecomment-2479907019
     storage_object.read do |chunk|
       # If client disconnects, stop streaming.  This prevents wasteful additional file reading,
       # and for S3 streams it prevents a Aws::S3::Plugins::NonRetryableStreamingError.
