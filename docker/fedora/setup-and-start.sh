@@ -36,23 +36,36 @@ if [ ! -f /opt/fedora/tomcat/bin/catalina.sh ]; then
   mv /opt/fedora/tomcat/conf/server.xml.bak /opt/fedora/tomcat/conf/server.xml
 
   echo "Overriding Fedora 3 libraries"
+  mkdir /opt/fedora/install/s3-libs
+  cp -pr /opt/s3-libs/cul /opt/fedora/install/s3-libs/
+  cp -pr /opt/s3-libs/awssdk /opt/fedora/install/s3-libs/
+  cp -pr /opt/s3-libs/apache-http /opt/fedora/install/s3-libs/
+
+  cd /opt/fedora/tomcat/
+  rm webapps/fedora.war
   rm /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/httpclient-4*.jar
   rm /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/httpcore-4*.jar
-  rm /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/httpclient-4*.jar
-  cp /opt/jars/apache-http/*.jar /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/
-  rm /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/s3-url-protocol-*.jar
-  cp /opt/jars/cul/s3-url-protocol-*.jar /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/
-  cp /opt/jars/awssdk/*.jar /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/
-  rm /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/fcrepo3-s3-server-*.jar
-  cp /opt/jars/cul/fcrepo3-s3-server-*.jar /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/
+  rm /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/httpcore-nio-4*.jar # Note: This will be a no-op for a fresh installation
+  rm /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/httpmime-4*.jar
+
+  cp /opt/fedora/install/s3-libs/apache-http/http*.jar /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/
+
+  # The steps below, related to the "endorsed" directory, are required when running Fedora with Java 8
+  # (which is what we are currently doing).
+  mkdir /opt/fedora/tomcat/endorsed
+  rm /opt/fedora/tomcat/endorsed/s3-url-protocol-*.jar # Note: This will be a no-op for a fresh installation
+  cp /opt/fedora/install/s3-libs/cul/s3-url-protocol-*.jar /opt/fedora/tomcat/endorsed/
+
+  rm /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/fcrepo3-s3-server-*.jar # Note: This will be a no-op for a fresh installation
+  cp /opt/fedora/install/s3-libs/cul/fcrepo3-s3-server-*.jar /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/
+  cp /opt/fedora/install/s3-libs/awssdk/*.jar /opt/fedora/tomcat/webapps/fedora/WEB-INF/lib/
+
   echo "Done overriding Fedora 3 libraries; setting new FCFG config"
   cp /opt/fedora.delegating-external.fcfg /opt/fedora/server/config/fedora.fcfg
-
-  # NOTE: The /opt/fedora/data/fedora-xacml-policies/repository-policies/ directory and the default content
-  # inside of it doesn't exist immediately after Fedora installation. This content is created only after
-  # Fedora starts up for the first time.
-  cp /opt/permit-all-s3-resolution.xml /opt/fedora/data/fedora-xacml-policies/repository-policies/default/permit-all-s3-resolution.xml
-  cp /opt/deny-unallowed-file-resolution.xml /opt/fedora/data/fedora-xacml-policies/repository-policies/default/deny-unallowed-file-resolution.xml
+  cp /opt/permit-all-s3-resolution.xml /opt/fedora/data/fedora-xacml-policies/repository-policies/permit-all-s3-resolution.xml
+  # Remove the default deny-unallowed-file-resolution.xml file and replace it with our version (but ours will be above the "default" directory rather than inside it)
+  rm /opt/fedora/data/fedora-xacml-policies/repository-policies/default/deny-unallowed-file-resolution.xml
+  cp /opt/deny-unallowed-file-resolution.xml /opt/fedora/data/fedora-xacml-policies/repository-policies/deny-unallowed-file-resolution.xml
 fi
 
 # Start Fedora in the foreground

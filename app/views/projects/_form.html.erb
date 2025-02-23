@@ -27,7 +27,7 @@
       </div>
     </div>
   </div>
-    
+
   <div class="row">
     <div class="col-md-6">
       <div class="field">
@@ -62,8 +62,17 @@
   <div class="row">
     <div class="col-md-12">
       <div class="field">
-        <%= f.label :full_path_to_custom_asset_directory, 'Custom Asset Directory (leave blank for default)' %>
+        <%= f.label :full_path_to_custom_asset_directory, 'Custom Asset Directory (leave blank for project-string-key-based default)' %>
         <%= f.text_field :full_path_to_custom_asset_directory, {class: 'form-control', placeholder: 'Default: ' + File.join(HYACINTH[:default_asset_home], @project.new_record? ? '[ project string key ]' : @project.string_key)} %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="field">
+        <%= f.label :default_storage_type, 'Default Storage Type' %>
+        <%= f.select(:default_storage_type, Hyacinth::Storage::STORAGE_SCHEMES.sort, {}, {:class => 'form-control'}) %>
       </div>
     </div>
   </div>

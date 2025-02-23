@@ -501,7 +501,7 @@ describe DigitalObject::DynamicField, :type => :unit do
           _c = Class.new
           _c.send :include, Hyacinth::Csv::Flatten
         end
-        subject { test_class.keys_for_document('dynamic_field_data' => new_dynamic_field_data) }
+        subject { test_class.new.keys_for_document('dynamic_field_data' => new_dynamic_field_data) }
         it { is_expected.to eql(flattened_csv_style_dynamic_field_data.keys)}
       end
     end

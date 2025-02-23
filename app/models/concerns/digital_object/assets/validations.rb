@@ -68,14 +68,13 @@ module DigitalObject::Assets::Validations
     import_file_import_path = import_file_data['import_path']
     raise "Missing path for import_file: digital_object_data['import_file']['import_path']" if import_file_import_path.blank?
 
-    # Make sure that the file exists and is readable
+    # If the file is on local disk, make sure that the file exists and is readable
     if import_file_import_type == DigitalObject::Asset::IMPORT_TYPE_UPLOAD_DIRECTORY
       actual_path_to_validate = File.join(HYACINTH[:upload_directory], import_file_import_path)
     else
       actual_path_to_validate = import_file_import_path
     end
-
-    validate_full_file_path(actual_path_to_validate)
+    validate_full_file_path(actual_path_to_validate) if actual_path_to_validate.start_with?('/')
 
     # Also validate presence of access file, if given
     if import_file_data['access_copy_import_path'].present?

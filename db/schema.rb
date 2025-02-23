@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_12_21_222141) do
+ActiveRecord::Schema.define(version: 2024_08_05_103817) do
 
   create_table "archived_assignments", force: :cascade do |t|
     t.integer "original_assignment_id", null: false
@@ -244,6 +244,7 @@ ActiveRecord::Schema.define(version: 2023_12_21_222141) do
     t.string "short_label", limit: 255
     t.text "enabled_publish_target_pids"
     t.string "primary_publish_target_pid"
+    t.string "default_storage_type", default: "file", null: false
     t.index ["display_label"], name: "index_projects_on_display_label", unique: true
     t.index ["pid"], name: "index_projects_on_pid", unique: true
     t.index ["pid_generator_id"], name: "index_projects_on_pid_generator_id"

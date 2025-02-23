@@ -11,6 +11,7 @@ class Project < ApplicationRecord
   belongs_to :pid_generator
 
   validates :display_label, :string_key, presence: true
+  validates :default_storage_type, inclusion: { in: Hyacinth::Storage::STORAGE_SCHEMES }
   validates :short_label, length: { maximum: 255 }, allow_blank: true
   validate :validate_custom_asset_directory
 
@@ -61,12 +62,13 @@ class Project < ApplicationRecord
     enabled_dynamic_fields.select(:dynamic_field_id).distinct.pluck(:dynamic_field_id).to_a
   end
 
-  def asset_directory
-    if full_path_to_custom_asset_directory.present?
-      full_path_to_custom_asset_directory
-    else
-      File.join(HYACINTH[:default_asset_home], string_key)
-    end
+  def relative_asset_directory
+    # if full_path_to_custom_asset_directory.present?
+    #   full_path_to_custom_asset_directory
+    # else
+    #   File.join(HYACINTH[:default_asset_home], string_key)
+    # end
+    self.string_key
   end
 
   def ensure_that_title_fields_are_enabled_and_required

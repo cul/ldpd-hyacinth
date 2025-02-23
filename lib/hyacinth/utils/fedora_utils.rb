@@ -63,8 +63,9 @@ module Hyacinth::Utils::FedoraUtils
     namespace_fedora_object
   end
 
-  def self.find_object_pid_by_filesystem_path(full_filesystem_path)
+  def self.find_object_pid_by_filesystem_path(full_filesystem_path, active_only = true)
     query = "select $pid from <#ri> where $pid <http://purl.org/dc/elements/1.1/source> '#{full_filesystem_path.gsub(%q('), %q(\\\'))}'"
+    query += " and $pid <info:fedora/fedora-system:def/model#state> <fedora-model:Active>" if active_only
     ri_opts = {
       type: 'tuples',
       format: 'json',
@@ -83,6 +84,7 @@ module Hyacinth::Utils::FedoraUtils
       raise 'Unexpected result count for risearch.  Search returned ' + num_results.to_s + ' results.'
     end
   end
+
   def self.datastream_content(fedora_object_pid, dsid)
     fedora_object = ActiveFedora::Base.find(fedora_object_pid)
     fedora_object.datastreams[dsid].content if fedora_object.datastreams[dsid]

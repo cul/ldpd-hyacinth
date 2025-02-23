@@ -1,16 +1,62 @@
 module Hyacinth::DigitalObjects::Downloads
-  include ActionController::Live
   def download
     if @digital_object.is_a?(DigitalObject::Asset)
-      if @digital_object.fedora_object.datastreams['content'].controlGroup == 'M'
-        send_data @digital_object.fedora_object.datastreams['content'].content,
-                  filename: @digital_object.fedora_object.datastreams['content'].dsLabel
+      # This endpoint should not support range requests.
+      if request.headers['Range'].present?
+        render plain: 'This endpoint does not allow range requests (using the http Range header).'
+        return
+      end
+
+      storage_object = Hyacinth::Storage.storage_object_for(
+        @digital_object.fedora_object.datastreams['content'].dsLocation
+      )
+
+      if storage_object.is_a?(Hyacinth::Storage::FileObject)
+        use_send_file_for_local_file_storage_object(storage_object)
       else
-        send_file @digital_object.filesystem_location, filename: @digital_object.original_filename
+        use_action_controller_live_streaming_for_storage_object(storage_object, response)
       end
     else
       render plain: @digital_object.digital_object_type.display_label.pluralize + ' do not have download URLs.  Try downloading an Asset instead.'
     end
+  end
+
+  # private
+  def use_send_file_for_local_file_storage_object(storage_object)
+    send_file storage_object.path, filename: storage_object.filename, type: storage_object.content_type
+  end
+
+  # private
+  # Note: This method has issues with downloading small local disk files, so we're using
+  # use_send_file_for_local_file_storage_object for local disk files.
+  def use_action_controller_live_streaming_for_storage_object(storage_object, resp)
+    # NOTE: Content-Length header can't be set for stream.  Even when it is set, Content-Length shows up as "0".
+    # resp.headers['Content-Length'] = storage_object.size
+    resp.headers['Content-Disposition'] = label_to_content_disposition(storage_object.filename, true)
+    # resp.headers['Content-Type'] = 'text/event-stream'
+    resp.headers['Content-Type'] = storage_object.content_type
+    resp.headers['Last-Modified'] = Time.now.httpdate
+    resp.headers['Cache-Control'] = 'no-cache'
+    resp.status = :ok
+
+    # The streaming implementation download implementation should be re-evaluated once we move to Rails 8.1.
+    # See: https://github.com/rack/rack/issues/1619
+    # Specifically: https://github.com/rack/rack/issues/1619#issuecomment-2479907019
+    storage_object.read do |chunk|
+      # If client disconnects, stop streaming.  This prevents wasteful additional file reading,
+      # and for S3 streams it prevents a Aws::S3::Plugins::NonRetryableStreamingError.
+      break unless resp.stream.connected?
+      resp.stream.write(chunk)
+
+      # Fix for local file downloads hanging when using local Puma rails server. Allow thread to switch as needed
+      # during the download.  Also prevents server instance from sleeping forever if client disconnects during download.
+      # See: https://gist.github.com/njakobsen/6257887
+      # Note: Thread.pass doesn't appear to be necessary when streaming S3 objects. Only local files.
+      Thread.pass
+    end
+  ensure
+    # Always close the stream, even if the client disconnects early
+    resp.stream.close
   end
 
   def download_service_copy
@@ -40,7 +86,7 @@ module Hyacinth::DigitalObjects::Downloads
     if @digital_object.is_a?(DigitalObject::Asset)
       access_ds = @digital_object.fedora_object&.datastreams&.fetch('access')
       raise Hyacinth::Exceptions::NotFoundError, "No access copy location available for #{@digital_object.pid}" unless access_ds.dsLocation
-      access_file_path = Hyacinth::Utils::PathUtils.ds_location_to_filesystem_path(access_ds.dsLocation)
+      access_file_path = Hyacinth::Utils::UriUtils.location_uri_to_file_path(access_ds.dsLocation)
       raise Hyacinth::Exceptions::NotFoundError, "Access copy file not found at expected location for #{@digital_object.pid}" unless File.exist?(access_file_path)
 
       label = access_ds.dsLabel.present? ? access_ds.dsLabel.split('/').last : 'file' # Use dsLabel as download label if available

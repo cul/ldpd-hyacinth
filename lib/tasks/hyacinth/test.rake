@@ -56,6 +56,12 @@ namespace :hyacinth do
       # Create Test project
       test_project = Project.create!(string_key: 'test', uri: 'id.library.columbia.edu/fake/test_project_uri', display_label: 'Test', pid_generator: test_pid_generator)
 
+      # Create S3 Test project
+      s3_test_project = Project.create!(
+        string_key: 's3_test', uri: 'id.library.columbia.edu/fake/s3_test_project_uri', display_label: 'S3 Test', pid_generator: test_pid_generator,
+        default_storage_type: Hyacinth::Storage::S3_SCHEME
+      )
+
       # Create test DynamicFieldGroupCategory
       test_dynamic_field_group_category = DynamicFieldGroupCategory.create!(display_label: 'Test')
 
@@ -63,12 +69,16 @@ namespace :hyacinth do
 
       test_dynamic_feld_group = DynamicFieldGroup.create!(string_key: 'test_field_group', display_label: 'Test Field Group', dynamic_field_group_category: test_dynamic_field_group_category)
       test_dynamic_field = test_dynamic_feld_group.dynamic_fields.create!(string_key: 'test_field', display_label: 'Test Field', dynamic_field_type: DynamicField::Type::STRING)
-      # Enable certain fields for various digital_object_types in test_project
 
+      # Enable certain fields for various digital_object_types in test_project
       (DynamicFieldGroup.find_by(string_key: 'test_field_group').dynamic_fields + DynamicFieldGroup.find_by(string_key: 'title').dynamic_fields).each do |dynamic_field|
         test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: dynamic_field, digital_object_type: dot_item)
         test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: dynamic_field, digital_object_type: dot_asset)
         test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: dynamic_field, digital_object_type: dot_group)
+
+        s3_test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: dynamic_field, digital_object_type: dot_item)
+        s3_test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: dynamic_field, digital_object_type: dot_asset)
+        s3_test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: dynamic_field, digital_object_type: dot_group)
       end
 
       (
@@ -79,6 +89,7 @@ namespace :hyacinth do
        DynamicFieldGroup.find_by(string_key: 'location').dynamic_fields
       ).each do |dynamic_field|
         test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: dynamic_field, digital_object_type: dot_item)
+        s3_test_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: dynamic_field, digital_object_type: dot_item)
       end
 
       # Let's create a test fieldset too
@@ -126,9 +137,11 @@ namespace :hyacinth do
       )
       test_publish_target_2.save
 
-      # Enable test_publish_target_1 and test_publish_target_2 for test_project
+      # Enable test_publish_target_1 and test_publish_target_2 for test_project and s3_test_project
       test_project.enabled_publish_target_pids = [test_publish_target_1.pid, test_publish_target_2.pid]
       test_project.save
+      s3_test_project.enabled_publish_target_pids = [test_publish_target_1.pid, test_publish_target_2.pid]
+      s3_test_project.save
     end
 
   end

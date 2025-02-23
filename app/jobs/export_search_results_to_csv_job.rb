@@ -1,4 +1,4 @@
-class ExportSearchResultsToCsvJob
+class ExportSearchResultsToCsvJob < ActiveJob::Base
   include Hyacinth::Csv::Flatten
 
   SUPPRESSED_ON_EXPORT = ['_uuid', '_data_file_path', '_dc_type', '_state', '_title', '_created', '_modified', '_created_by', '_modified_by', '_project.uri', '_project.short_label']
@@ -16,9 +16,9 @@ class ExportSearchResultsToCsvJob
   ]
   CONTROLLED_TERM_CORE_SUBFIELDS_ALLOWED_ON_IMPORT = ['uri', 'value', 'authority', 'type']
 
-  @queue = Hyacinth::Queue::DIGITAL_OBJECT_CSV_EXPORT
+  queue_as Hyacinth::Queue::DIGITAL_OBJECT_CSV_EXPORT
 
-  def self.perform(csv_export_id)
+  def perform(csv_export_id)
     start_time = Time.now
 
     csv_export = CsvExport.find(csv_export_id)
@@ -59,7 +59,7 @@ class ExportSearchResultsToCsvJob
     csv_export.save
   end
 
-  def self.map_temp_field_indexes(search_params, user, map = {})
+  def map_temp_field_indexes(search_params, user, map = {})
     # Common fields to all objects
     map['_pid'] ||= map.length
     map['_project.string_key'] ||= map.length
@@ -111,7 +111,7 @@ class ExportSearchResultsToCsvJob
     map
   end
 
-  def self.write_csv(path_to_csv_file, field_list, field_index_map)
+  def write_csv(path_to_csv_file, field_list, field_index_map)
     # Open new CSV for writing
     CSV.open(path_to_csv_file, 'wb') do |final_csv|
       # Write out human-friendly column display labels

@@ -65,9 +65,9 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.getImageUrl = fun
   if(type == 'square') { type = 'featured'; }
 
   if(this.getHyacinthType() == 'asset') {
-    return Hyacinth.imageServerUrl + '/iiif/2/' + this.getPid() + '/' + type + '/!' + size + ',' + size + '/0/default.jpg';
+    return Hyacinth.imageServerUrl + '/iiif/2/limited/' + this.getPid() + '/' + type + '/!' + size + ',' + size + '/0/default.jpg';
   } else if (this.getHyacinthType() == 'item' && this.getOrderedChildDigitalObjectPids().length > 0) {
-    return Hyacinth.imageServerUrl + '/iiif/2/' + this.getOrderedChildDigitalObjectPids()[0] + '/' + type + '/!' + size + ',' + size + '/0/default.jpg';
+    return Hyacinth.imageServerUrl + '/iiif/2/limited/' + this.getOrderedChildDigitalObjectPids()[0] + '/' + type + '/!' + size + ',' + size + '/0/default.jpg';
   } else {
     return null;
   }

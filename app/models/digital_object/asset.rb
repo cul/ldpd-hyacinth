@@ -67,7 +67,21 @@ class DigitalObject::Asset < DigitalObject::Base
     do_poster_import if @poster_import_path.present?
     do_service_copy_import if @service_copy_import_path.present? && self.service_copy_location.blank?
 
-    self.dc_type = BestType.dc_type.for_file_name(original_filename) if self.dc_type == 'Unknown' # Attempt to correct dc_type for 'Unknown' dc_type DigitalObjects
+    # Attempt to correct dc_type for 'Unknown' dc_type DigitalObjects, based on original filename
+    self.dc_type = BestType.dc_type.for_file_name(original_filename) if self.dc_type == 'Unknown'
+
+    # For ISO files, even the original filename can't tell us if they're possibly audio or video content,
+    # so if a service copy has been uploaded with the video then we'll determine dc type based on
+    # the extension of the service copy.
+    if self.dc_type == 'Unknown' && self.service_copy_location.present?
+      self.dc_type = BestType.dc_type.for_file_name(self.service_copy_location)
+    end
+
+    # If we still haven't been able to determine a dc type, see if we can get the
+    # information from an access copy file extension (if present)
+    if self.dc_type == 'Unknown' && self.access_copy_location.present?
+      self.dc_type = BestType.dc_type.for_file_name(self.access_copy_location)
+    end
   end
 
   def run_after_create_logic
@@ -93,30 +107,42 @@ class DigitalObject::Asset < DigitalObject::Base
     @import_file_import_type = IMPORT_TYPE_INTERNAL
   end
 
+  # If the given uri is a file URI, returns an unescaped path string.  Otherwise returns the provided uri value, unchanged.
+  def convert_location_uri_to_path_if_file_uri(uri)
+    return nil if uri.nil?
+    uri.start_with?('file:/') ? Hyacinth::Utils::UriUtils.location_uri_to_file_path(uri) : uri
+  end
+
+  def filesystem_location_uri
+    @fedora_object&.datastreams&.[]('content')&.dsLocation
+  end
+
   def filesystem_location
-    content_ds = @fedora_object.datastreams['content']
-    return nil unless content_ds.present?
-    Addressable::URI.unencode(content_ds.dsLocation).gsub(/^file:/, '')
+    convert_location_uri_to_path_if_file_uri(filesystem_location_uri)
+  end
+
+  def access_copy_location_uri
+    @fedora_object&.datastreams&.[]('access')&.dsLocation
   end
 
   def access_copy_location
-    return nil if @fedora_object.blank?
-    access_ds = @fedora_object.datastreams['access']
-    return nil unless access_ds.present?
-    Addressable::URI.unencode(access_ds.dsLocation).gsub(/^file:/, '')
+    convert_location_uri_to_path_if_file_uri(access_copy_location_uri)
+  end
+
+  def poster_location_uri
+    @fedora_object&.datastreams&.[]('poster')&.dsLocation
   end
 
   def poster_location
-    return nil if @fedora_object.blank?
-    poster_ds = @fedora_object.datastreams['poster']
-    return nil unless poster_ds.present?
-    Addressable::URI.unencode(poster_ds.dsLocation).gsub(/^file:/, '')
+    convert_location_uri_to_path_if_file_uri(poster_location_uri)
+  end
+
+  def service_copy_location_uri
+    @fedora_object&.datastreams&.[]('service')&.dsLocation
   end
 
   def service_copy_location
-    service_ds = @fedora_object.datastreams['service']
-    return nil unless service_ds.present?
-    Addressable::URI.unencode(service_ds.dsLocation).gsub(/^file:/, '')
+    convert_location_uri_to_path_if_file_uri(service_copy_location_uri)
   end
 
   def checksum
@@ -240,7 +266,8 @@ class DigitalObject::Asset < DigitalObject::Base
 
   def handle_new_file_upload(import_file_data)
     validate_import_file_data(import_file_data)
-    # Check for presentce of import file original file path (which is optional, but may be set by the user)
+
+    # Set @import_file_original_file_path (which is optional, but may have been be set by the user)
     @import_file_original_file_path = import_file_data['original_file_path']
 
     # Determine import_file_import_type
@@ -452,6 +479,8 @@ class DigitalObject::Asset < DigitalObject::Base
 
   def to_solr
     doc = super
+    doc['filesystem_location_sim'] = filesystem_location
+
     doc['original_filename_sim'] = original_filename
     doc['original_file_path_sim'] = original_file_path
     doc['access_copy_location_sim'] = access_copy_location
