@@ -42,7 +42,7 @@ gem 'attr_encrypted', '>= 1.3.3'
 gem 'mime-types'
 gem 'mime-types-data'
 # Character encoding detection
-gem 'charlock_holmes'
+gem 'charlock_holmes', '~> 0.7.9'
 
 # Excel spreadsheets
 gem 'spreadsheet'
