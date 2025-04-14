@@ -47,7 +47,7 @@ module Hyacinth::Datacite
     # @api public
     # @return [true, false]
     # @note only returns the first title value
-    def has_related_item?
+    def related_item?
       @dfd.key? 'related_item'
     end
 

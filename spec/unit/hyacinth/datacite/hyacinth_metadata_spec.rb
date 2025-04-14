@@ -135,18 +135,16 @@ describe Hyacinth::Datacite::HyacinthMetadata do
     end
   end
 
-  context "#has_related_item?:" do
+  context "#related_item?:" do
     it "returns true if related item present" do
       local_metadata_retrieval = described_class.new dod
-      result = local_metadata_retrieval.has_related_item?
+      result = local_metadata_retrieval.related_item?
       expect(result).to be true
     end
-  end
 
-  context "#has_related_item?:" do
     it "returns false if no related item present" do
       local_metadata_retrieval = described_class.new dod_names_without_roles
-      result = local_metadata_retrieval.has_related_item?
+      result = local_metadata_retrieval.related_item?
       expect(result).to be false
     end
   end
