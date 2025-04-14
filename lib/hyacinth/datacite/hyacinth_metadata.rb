@@ -43,6 +43,23 @@ module Hyacinth::Datacite
       "#{non_sort_portion} #{sort_portion}"
     end
 
+    # existence of related item
+    # @api public
+    # @return [true, false]
+    # @note only returns the first title value
+    def has_related_item?
+      @dfd.key? 'related_item'
+    end
+
+    # the related item title for an item (if related item present)
+    # @api public
+    # @return [String, nil]
+    # @note It is assumed that the has_related_item? will be called first
+    def related_item_title(index)
+      return nil unless @dfd['related_item'][index].key? 'related_item_title'
+      @dfd['related_item'][index]['related_item_title']
+    end
+
     # the genre of an item
     # @api public
     # @return [String, nil]
