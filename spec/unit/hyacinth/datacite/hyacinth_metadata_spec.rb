@@ -4,19 +4,19 @@ require 'rails_helper'
 describe Hyacinth::Datacite::HyacinthMetadata do
 
   let(:dod) {
-    data = JSON.parse( fixture('lib/hyacinth/ezid/ezid_item.json').read )
+    data = JSON.parse( fixture('lib/hyacinth/datacite/hyacinth_item.json').read )
     data['identifiers'] = ['item.' + SecureRandom.uuid] # random identifer to avoid collisions
     data
   }
 
   let(:dod_empty_dfd) {
-    data = JSON.parse( fixture('lib/hyacinth/ezid/ezid_item_empty_dynamic_field_data.json').read )
+    data = JSON.parse( fixture('lib/hyacinth/datacite/hyacinth_item_empty_dynamic_field_data.json').read )
     data['identifiers'] = ['item.' + SecureRandom.uuid] # random identifer to avoid collisions
     data
   }
   
   let(:dod_names_without_roles) {
-    data = JSON.parse( fixture('lib/hyacinth/ezid/ezid_item_names_without_roles.json').read )
+    data = JSON.parse( fixture('lib/hyacinth/datacite/hyacinth_item_names_without_roles.json').read )
     data['identifiers'] = ['item.' + SecureRandom.uuid] # random identifer to avoid collisions
     data
   }
