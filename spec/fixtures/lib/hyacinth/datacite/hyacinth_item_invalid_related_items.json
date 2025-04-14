@@ -336,21 +336,11 @@
 	    {
 		"related_item_type":{
 		    "uri":"temp:0cd2d4169ded",
-		    "value":"IsCompiledBy",
+		    "value":"IsInvalid",
 		    "type":"temporary",
 		    "authority":"datacite",
 		    "vocabulary_string_key":"relation_type",
 		    "internal_id":1497570
-		},
-		"related_item_title":"The Related Item Sample Title",
-		"related_item_name":{
-		    "uri":"http://id.loc.gov/authorities/names/nr91044433",
-		    "value":"Bbbee, Aaaa",
-		    "type":"external",
-		    "authority":"naf",
-		    "vocabulary_string_key":"name",
-		    "internal_id":322840,
-		    "name_type":"personal"
 		},
 		"related_item_type_of_resource":{
 		    "uri":"http://id.library.columbia.edu/term/f44c5847",
@@ -362,17 +352,30 @@
 		},
 		"related_item_identifier":[
 		    {
-			"related_item_identifier_type":"isbn",
-			"related_item_identifier_value":"000-0-00-000000-0"
-		    },
-		    {
-			"related_item_identifier_type":"issn",
-			"related_item_identifier_value":"0000-0000"
-		    },
-		    {
-			"related_item_identifier_type":"url",
-			"related_item_identifier_value":"https://www.columbia.edu"
-		    },
+			"related_item_identifier_type":"doi",
+			"related_item_identifier_value":"10.33555/4363-BZ18"
+		    }
+		]
+	    },
+	    {
+		"related_item_type":{
+		    "uri":"temp:0cd2d4169ded",
+		    "value":"isCompiledBy",
+		    "type":"temporary",
+		    "authority":"datacite",
+		    "vocabulary_string_key":"relation_type",
+		    "internal_id":1497570
+		},
+		"related_item_title":"Related Item with Invalid Resource Type",
+		"related_item_type_of_resource":{
+		    "uri":"http://id.library.columbia.edu/term/f44c5847",
+		    "value":"InvalidImage",
+		    "type":"local",
+		    "authority":"datacite",
+		    "vocabulary_string_key":"type_of_resource",
+		    "internal_id":2075989
+		},
+		"related_item_identifier":[
 		    {
 			"related_item_identifier_type":"doi",
 			"related_item_identifier_value":"10.33555/4363-BZ18"
@@ -380,28 +383,79 @@
 		]
 	    },
 	    {
-		"related_item_identifier":[
-		    {
-			"related_item_identifier_type":"url",
-			"related_item_identifier_value":"https://medhealthhum.com/those-are-the-terms/"
-		    }
-		],
-		"related_item_type_of_resource":{
-		    "uri":"http://id.library.columbia.edu/term/201aa69a",
-		    "value":"Model",
-		    "type":"local",
-		    "authority":"datacite",
-		    "vocabulary_string_key":"type_of_resource",
-		    "internal_id":2075994
-		},
-		"related_item_title":"Those Are the Terms",
 		"related_item_type":{
-		    "uri":"temp:a6621364715d73",
-		    "value":"isVersionOf",
+		    "uri":"temp:0cd2d4169ded",
+		    "value":"isCompiledBy",
 		    "type":"temporary",
 		    "authority":"datacite",
 		    "vocabulary_string_key":"relation_type",
-		    "internal_id":1336190}
+		    "internal_id":1497570
+		},
+		"related_item_title":"Related Item with Invalid Resource Type authority",
+		"related_item_type_of_resource":{
+		    "uri":"http://id.library.columbia.edu/term/f44c5847",
+		    "value":"Image",
+		    "type":"local",
+		    "authority":"authorityinvalid",
+		    "vocabulary_string_key":"type_of_resource",
+		    "internal_id":2075989
+		},
+		"related_item_identifier":[
+		    {
+			"related_item_identifier_type":"doi",
+			"related_item_identifier_value":"10.33555/4363-BZ18"
+		    }
+		]
+	    },
+	    {
+		"related_item_type":{
+		    "uri":"temp:0cd2d4169ded",
+		    "value":"IsInvalid",
+		    "type":"temporary",
+		    "authority":"datacite",
+		    "vocabulary_string_key":"relation_type",
+		    "internal_id":1497570
+		},
+		"related_item_title":"Related Item with Invalid Relation Type",
+		"related_item_type_of_resource":{
+		    "uri":"http://id.library.columbia.edu/term/f44c5847",
+		    "value":"Image",
+		    "type":"local",
+		    "authority":"datacite",
+		    "vocabulary_string_key":"type_of_resource",
+		    "internal_id":2075989
+		},
+		"related_item_identifier":[
+		    {
+			"related_item_identifier_type":"doi",
+			"related_item_identifier_value":"10.33555/4363-BZ18"
+		    }
+		]
+	    },
+	    {
+		"related_item_type":{
+		    "uri":"temp:0cd2d4169ded",
+		    "value":"isCompiledBy",
+		    "type":"temporary",
+		    "authority":"invalidauthority",
+		    "vocabulary_string_key":"relation_type",
+		    "internal_id":1497570
+		},
+		"related_item_title":"Related Item with Invalid Relation Type authority",
+		"related_item_type_of_resource":{
+		    "uri":"http://id.library.columbia.edu/term/f44c5847",
+		    "value":"Image",
+		    "type":"local",
+		    "authority":"datacite",
+		    "vocabulary_string_key":"type_of_resource",
+		    "internal_id":2075989
+		},
+		"related_item_identifier":[
+		    {
+			"related_item_identifier_type":"doi",
+			"related_item_identifier_value":"10.33555/4363-BZ18"
+		    }
+		]
 	    }
 	]	
     }
