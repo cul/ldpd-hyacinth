@@ -94,6 +94,19 @@ module Hyacinth::Datacite
       identifiers
     end
 
+    # the license for an item (if related item present)
+    # @api public
+    # @return [Struct, nil]
+    def license(index)
+      return nil unless @dfd.key? 'license'
+      license = ControlledVocabEntry.new
+      license.uri = @dfd['license'][index]['license_term']['uri']
+      license.value = @dfd['license'][index]['license_term']['value']
+      license.type = @dfd['license'][index]['license_term']['type']
+      license.authority = @dfd['license'][index]['license_term']['authority']
+      license
+    end
+
     # the genre of an item
     # @api public
     # @return [String, nil]

@@ -172,6 +172,20 @@ describe Hyacinth::Datacite::HyacinthMetadata do
     end
   end
 
+  context "#license:" do
+    it "gets the license info (controlled vocabulary)" do
+      local_metadata_retrieval = described_class.new dod
+      actual_license =
+        local_metadata_retrieval.license(0)
+      expect(actual_license).to have_attributes(
+                                  uri: "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+                                  value: "CC BY-NC-SA 4.0",
+                                  type: "external",
+                                  authority: "creativecommon"
+                                )
+    end
+  end
+
   context "#related_item_identifiers:" do
     it "gets the related item identifier" do
       local_metadata_retrieval = described_class.new dod

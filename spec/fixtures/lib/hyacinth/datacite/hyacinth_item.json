@@ -288,6 +288,18 @@
 		}
 	    }
 	],
+        "license":[
+            {
+                "license_term":{
+                    "uri":"https://creativecommons.org/licenses/by-nc-sa/4.0/",
+		    "value":"CC BY-NC-SA 4.0",
+                    "type":"external",
+                    "authority":"creativecommons",
+                    "vocabulary_string_key":"license",
+                    "internal_id":991249
+                }
+            }
+        ],
 	"related_item":[
 	    {
 		"related_item_type":{
