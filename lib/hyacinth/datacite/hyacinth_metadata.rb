@@ -94,7 +94,7 @@ module Hyacinth::Datacite
       identifiers
     end
 
-    # the license for an item (if related item present)
+    # the license for an item
     # @api public
     # @return [Struct, nil]
     def license(index)
@@ -105,6 +105,23 @@ module Hyacinth::Datacite
       license.type = @dfd['license'][index]['license_term']['type']
       license.authority = @dfd['license'][index]['license_term']['authority']
       license
+    end
+
+    # the use and reproduction for an item
+    # @api public
+    # @return [Struct, nil]
+    def use_and_reproduction(index)
+      return nil unless @dfd.key? 'use_and_reproduction'
+      use_and_reproduction = ControlledVocabEntry.new
+      use_and_reproduction.uri =
+        @dfd['use_and_reproduction'][index]['use_and_reproduction_term']['uri']
+      use_and_reproduction.value =
+        @dfd['use_and_reproduction'][index]['use_and_reproduction_term']['value']
+      use_and_reproduction.type =
+        @dfd['use_and_reproduction'][index]['use_and_reproduction_term']['type']
+      use_and_reproduction.authority =
+        @dfd['use_and_reproduction'][index]['use_and_reproduction_term']['authority']
+      use_and_reproduction
     end
 
     # the genre of an item

@@ -300,6 +300,18 @@
                 }
             }
         ],
+        "use_and_reproduction":[
+            {
+                "use_and_reproduction_term":
+                {"uri":"http://rightsstatements.org/vocab/NoC-US/1.0/",
+                 "value":"No Copyright - United States",
+                 "type":"external",
+                 "authority":"rightsstatements",
+                 "vocabulary_string_key":"rights_statement",
+                 "internal_id":986779
+                }
+            }
+        ],
 	"related_item":[
 	    {
 		"related_item_type":{

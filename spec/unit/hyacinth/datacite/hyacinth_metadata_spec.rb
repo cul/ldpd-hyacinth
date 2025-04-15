@@ -181,8 +181,22 @@ describe Hyacinth::Datacite::HyacinthMetadata do
                                   uri: "https://creativecommons.org/licenses/by-nc-sa/4.0/",
                                   value: "CC BY-NC-SA 4.0",
                                   type: "external",
-                                  authority: "creativecommon"
+                                  authority: "creativecommons"
                                 )
+    end
+  end
+
+  context "#use_and_reproduction:" do
+    it "gets the use_and_reproduction info (controlled vocabulary)" do
+      local_metadata_retrieval = described_class.new dod
+      actual_use_and_reproduction =
+        local_metadata_retrieval.use_and_reproduction(0)
+      expect(actual_use_and_reproduction).to have_attributes(
+                                               uri: "http://rightsstatements.org/vocab/NoC-US/1.0/",
+                                               value: "No Copyright - United States",
+                                               type: "external",
+                                               authority: "rightsstatements"
+                                             )
     end
   end
 
