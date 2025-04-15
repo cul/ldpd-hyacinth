@@ -158,6 +158,30 @@ describe Hyacinth::Datacite::HyacinthMetadata do
     end
   end
 
+  context "#related_item_relation_type:" do
+    it "gets the related item relation type entry (controlled vocabulary)" do
+      local_metadata_retrieval = described_class.new dod
+      actual_related_item_relation_type =
+        local_metadata_retrieval.related_item_relation_type(0)
+      expect(actual_related_item_relation_type).to have_attributes(
+                                                     uri: "temp:0cd2d4169ded",
+                                                     value: "IsCompiledBy",
+                                                     type: "temporary",
+                                                     authority: "datacite"
+                                                   )
+    end
+  end
+
+  context "#related_item_identifiers:" do
+    it "gets the related item identifier" do
+      local_metadata_retrieval = described_class.new dod
+      actual_identifiers =
+        local_metadata_retrieval.related_item_identifiers(0)
+      expect(actual_identifiers.first[0]).to eq("url")
+      expect(actual_identifiers.first[1]).to eq("https://www.columbia.edu")
+    end
+  end
+
   context "#abstract:" do
     it "abstract" do
       local_metadata_retrieval = described_class.new dod

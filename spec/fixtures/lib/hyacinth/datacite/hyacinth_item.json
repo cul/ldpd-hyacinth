@@ -291,7 +291,7 @@
 	"related_item":[
 	    {
 		"related_item_type":{
-		    "uri":"temp:0cd2d4169ded8aaac0dfd8b72ba862190f20f3c6648b7707a93c1c90832c9b27",
+		    "uri":"temp:0cd2d4169ded",
 		    "value":"IsCompiledBy",
 		    "type":"temporary",
 		    "authority":"datacite",

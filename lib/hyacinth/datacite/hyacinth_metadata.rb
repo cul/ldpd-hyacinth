@@ -10,6 +10,8 @@ module Hyacinth::Datacite
     # @api public
     attr_reader :creators, :editors, :moderators, :contributors, :subjects_topic
 
+    ControlledVocabEntry = Struct.new(:uri, :value, :type, :authority)
+
     # parse metadata from Hyacinth Digital Objects Data
     # @param digital_object_data_arg [Hash]
     # @api public
@@ -54,10 +56,42 @@ module Hyacinth::Datacite
     # the related item title for an item (if related item present)
     # @api public
     # @return [String, nil]
-    # @note It is assumed that the has_related_item? will be called first
+    # @note It is assumed that the related_item? method will be called first
     def related_item_title(index)
       return nil unless @dfd['related_item'][index].key? 'related_item_title'
       @dfd['related_item'][index]['related_item_title']
+    end
+
+    # the related item relation type for an item (if related item present)
+    # @api public
+    # @return [Struct, nil]
+    # @note It is assumed that the related_item? method will be called first
+    def related_item_relation_type(index)
+      # Note: string key for this field is misnamed. The field contains the
+      # relation type, and uses the relation_type vocabulary
+      return nil unless @dfd['related_item'][index].key? 'related_item_type'
+      relation_type = ControlledVocabEntry.new
+      relation_type.uri = @dfd['related_item'][index]['related_item_type']['uri']
+      relation_type.value = @dfd['related_item'][index]['related_item_type']['value']
+      relation_type.type = @dfd['related_item'][index]['related_item_type']['type']
+      relation_type.authority = @dfd['related_item'][index]['related_item_type']['authority']
+      relation_type
+    end
+
+    # the related item identifier for an item (if related item present)
+    # @api public
+    # @return [(x,y), nil]
+    # @note It is assumed that the related_item? method will be called first
+    def related_item_identifiers(index)
+      return nil unless @dfd['related_item'][index].key? 'related_item_identifier'
+      identifiers = []
+      ids = @dfd['related_item'][index]['related_item_identifier']
+      for identifier in ids
+        identifier_type = identifier['related_item_identifier_type']
+        identifier_value = identifier['related_item_identifier_value']
+        identifiers.append [identifier_type, identifier_value]
+      end
+      identifiers
     end
 
     # the genre of an item
