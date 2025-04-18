@@ -362,6 +362,10 @@
 		},
 		"related_item_identifier":[
 		    {
+			"related_item_identifier_type":"isbn",
+			"related_item_identifier_value":"000-0-00-000000-0"
+		    },
+		    {
 			"related_item_identifier_type":"url",
 			"related_item_identifier_value":"https://www.columbia.edu"
 		    },

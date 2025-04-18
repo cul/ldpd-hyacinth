@@ -205,15 +205,42 @@ describe Hyacinth::Datacite::HyacinthMetadata do
     end
   end
 
+  context "#related_item_identifier_doi:" do
+    it "gets the related item doi identifier for the related item" do
+      local_metadata_retrieval = described_class.new dod
+      actual_identifier_doi = local_metadata_retrieval.related_item_identifier_doi(0)
+        expect(actual_identifier_doi).to eq("10.33555/4363-BZ18")
+    end
+  end
+
+  context "#related_item_identifier_url" do
+    it "gets the related item url identifier for the related item" do
+      local_metadata_retrieval = described_class.new dod
+      actual_identifier_url = local_metadata_retrieval.related_item_identifier_url(0)
+        expect(actual_identifier_url).to eq("https://www.columbia.edu")
+    end
+  end
+
+  context "#related_item_identifier_first" do
+    it "gets the first related item identifier for the related item" do
+      local_metadata_retrieval = described_class.new dod
+      expected_first_identifier = ['isbn', '000-0-00-000000-0']
+      actual_identifier_first = local_metadata_retrieval.related_item_identifier_first(0)
+        expect(actual_identifier_first).to eq(expected_first_identifier)
+    end
+  end
+
   context "#related_item_identifiers:" do
     it "gets the related item identifiers for the first related item" do
       local_metadata_retrieval = described_class.new dod
       actual_identifiers =
         local_metadata_retrieval.related_item_identifiers(0)
-      expect(actual_identifiers.first[0]).to eq("url")
-      expect(actual_identifiers.first[1]).to eq("https://www.columbia.edu")
-      expect(actual_identifiers.second[0]).to eq("doi")
-      expect(actual_identifiers.second[1]).to eq("10.33555/4363-BZ18")
+      expect(actual_identifiers.first[0]).to eq("isbn")
+      expect(actual_identifiers.first[1]).to eq("000-0-00-000000-0")
+      expect(actual_identifiers.second[0]).to eq("url")
+      expect(actual_identifiers.second[1]).to eq("https://www.columbia.edu")
+      expect(actual_identifiers.third[0]).to eq("doi")
+      expect(actual_identifiers.third[1]).to eq("10.33555/4363-BZ18")
     end
 
     it "gets the related item identifiers for the second related item" do

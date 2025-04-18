@@ -84,6 +84,43 @@ module Hyacinth::Datacite
       relation_type
     end
 
+    # the related item doi identifier for an item (if related item present)
+    # @api public
+    # @return [string, nil]
+    def related_item_identifier_doi(index)
+      return nil unless @dfd['related_item'][index].key? 'related_item_identifier'
+      ids = @dfd['related_item'][index]['related_item_identifier']
+      for id in ids
+        if id['related_item_identifier_type'] == 'doi'
+          return id['related_item_identifier_value']
+        end
+      end
+      nil
+    end
+
+    # the related item url identifier for an item (if related item present)
+    # @api public
+    # @return [string, nil]
+    def related_item_identifier_url(index)
+      return nil unless @dfd['related_item'][index].key? 'related_item_identifier'
+      ids = @dfd['related_item'][index]['related_item_identifier']
+      for id in ids
+        if id['related_item_identifier_type'] == 'url'
+          return id['related_item_identifier_value']
+        end
+      end
+      nil
+    end
+
+    # the related item url identifier for an item (if related item present)
+    # @api public
+    # @return [[string,string], nil]
+    def related_item_identifier_first(index)
+      return nil unless @dfd['related_item'][index].key? 'related_item_identifier'
+      id = @dfd['related_item'][index]['related_item_identifier'].first
+      [id['related_item_identifier_type'], id['related_item_identifier_value']]
+    end
+
     # the related item identifier for an item (if related item present)
     # @api public
     # @return [(x,y), nil]
