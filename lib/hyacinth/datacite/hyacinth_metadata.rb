@@ -96,32 +96,42 @@ module Hyacinth::Datacite
 
     # the license for an item
     # @api public
-    # @return [Struct, nil]
-    def license(index)
-      return nil unless @dfd.key? 'license'
-      license = ControlledVocabEntry.new
-      license.uri = @dfd['license'][index]['license_term']['uri']
-      license.value = @dfd['license'][index]['license_term']['value']
-      license.type = @dfd['license'][index]['license_term']['type']
-      license.authority = @dfd['license'][index]['license_term']['authority']
-      license
+    # @return [array of ControlledVocabEntry, empty array]
+    def license_info
+      license_info = []
+      if @dfd.key? 'license'
+        for a_license in @dfd['license']
+          license = ControlledVocabEntry.new
+          license.uri = a_license['license_term']['uri']
+          license.value = a_license['license_term']['value']
+          license.type = a_license['license_term']['type']
+          license.authority = a_license['license_term']['authority']
+          license_info.append license
+        end
+      end
+      license_info
     end
 
     # the use and reproduction for an item
     # @api public
-    # @return [Struct, nil]
-    def use_and_reproduction(index)
-      return nil unless @dfd.key? 'use_and_reproduction'
-      use_and_reproduction = ControlledVocabEntry.new
-      use_and_reproduction.uri =
-        @dfd['use_and_reproduction'][index]['use_and_reproduction_term']['uri']
-      use_and_reproduction.value =
-        @dfd['use_and_reproduction'][index]['use_and_reproduction_term']['value']
-      use_and_reproduction.type =
-        @dfd['use_and_reproduction'][index]['use_and_reproduction_term']['type']
-      use_and_reproduction.authority =
-        @dfd['use_and_reproduction'][index]['use_and_reproduction_term']['authority']
-      use_and_reproduction
+    # @return [array of ControlledVocabEntry, empty array]
+    def use_and_reproduction_info
+      use_and_reproduction_info = []
+      if @dfd.key? 'use_and_reproduction'
+        for a_use_reprod in @dfd['use_and_reproduction']
+          use_and_reproduction = ControlledVocabEntry.new
+          use_and_reproduction.uri =
+            a_use_reprod['use_and_reproduction_term']['uri']
+          use_and_reproduction.value =
+            a_use_reprod['use_and_reproduction_term']['value']
+          use_and_reproduction.type =
+            a_use_reprod['use_and_reproduction_term']['type']
+          use_and_reproduction.authority =
+            a_use_reprod['use_and_reproduction_term']['authority']
+          use_and_reproduction_info.append use_and_reproduction
+        end
+      end
+      use_and_reproduction_info
     end
 
     # the genre of an item

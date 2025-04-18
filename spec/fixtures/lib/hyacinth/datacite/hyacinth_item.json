@@ -298,19 +298,39 @@
                     "vocabulary_string_key":"license",
                     "internal_id":991249
                 }
-            }
+            },
+	    {
+		"license_term":{
+		    "uri":"https://creativecommons.org/publicdomain/zero/1.0/",
+		    "value":"CC0 1.0",
+		    "type":"external",
+		    "authority":"creativecommons",
+		    "vocabulary_string_key":"license",
+		    "internal_id":991245
+		}
+	    }
         ],
         "use_and_reproduction":[
             {
-                "use_and_reproduction_term":
-                {"uri":"http://rightsstatements.org/vocab/NoC-US/1.0/",
-                 "value":"No Copyright - United States",
-                 "type":"external",
-                 "authority":"rightsstatements",
-                 "vocabulary_string_key":"rights_statement",
-                 "internal_id":986779
+                "use_and_reproduction_term":{
+		    "uri":"http://rightsstatements.org/vocab/NoC-US/1.0/",
+                    "value":"No Copyright - United States",
+                    "type":"external",
+                    "authority":"rightsstatements",
+                    "vocabulary_string_key":"rights_statement",
+                    "internal_id":986779
                 }
-            }
+            },
+	    {
+		"use_and_reproduction_term":{
+		    "uri":"http://rightsstatements.org/vocab/NKC/1.0/",
+		    "value":"No Known Copyright",
+		    "type":"external",
+		    "authority":"rightsstatements",
+		    "vocabulary_string_key":"rights_statement",
+		    "internal_id":994484
+		}
+	    }
         ],
 	"related_item":[
 	    {

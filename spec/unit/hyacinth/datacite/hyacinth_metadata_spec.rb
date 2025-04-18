@@ -172,31 +172,43 @@ describe Hyacinth::Datacite::HyacinthMetadata do
     end
   end
 
-  context "#license:" do
-    it "gets the license info (controlled vocabulary)" do
+  context "#license_info:" do
+    it "gets the license info (controlled vocabulary) for 2 licenses" do
       local_metadata_retrieval = described_class.new dod
-      actual_license =
-        local_metadata_retrieval.license(0)
-      expect(actual_license).to have_attributes(
-                                  uri: "https://creativecommons.org/licenses/by-nc-sa/4.0/",
-                                  value: "CC BY-NC-SA 4.0",
-                                  type: "external",
-                                  authority: "creativecommons"
-                                )
+      actual_licenses =
+        local_metadata_retrieval.license_info
+      expect(actual_licenses.first).to have_attributes(
+                                         uri: "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+                                         value: "CC BY-NC-SA 4.0",
+                                         type: "external",
+                                         authority: "creativecommons"
+                                       )
+      expect(actual_licenses.second).to have_attributes(
+                                          uri: "https://creativecommons.org/publicdomain/zero/1.0/",
+                                          value: "CC0 1.0",
+                                          type: "external",
+                                          authority: "creativecommons"
+                                        )
     end
   end
 
-  context "#use_and_reproduction:" do
+  context "#use_and_reproduction_info:" do
     it "gets the use_and_reproduction info (controlled vocabulary)" do
       local_metadata_retrieval = described_class.new dod
-      actual_use_and_reproduction =
-        local_metadata_retrieval.use_and_reproduction(0)
-      expect(actual_use_and_reproduction).to have_attributes(
-                                               uri: "http://rightsstatements.org/vocab/NoC-US/1.0/",
-                                               value: "No Copyright - United States",
-                                               type: "external",
-                                               authority: "rightsstatements"
-                                             )
+      actual_use_and_reprod_info =
+        local_metadata_retrieval.use_and_reproduction_info
+      expect(actual_use_and_reprod_info.first).to have_attributes(
+                                                    uri: "http://rightsstatements.org/vocab/NoC-US/1.0/",
+                                                    value: "No Copyright - United States",
+                                                    type: "external",
+                                                    authority: "rightsstatements"
+                                                  )
+      expect(actual_use_and_reprod_info.second).to have_attributes(
+                                                     uri: "http://rightsstatements.org/vocab/NKC/1.0/",
+                                                     value: "No Known Copyright",
+                                                     type: "external",
+                                                     authority: "rightsstatements"
+                                                   )
     end
   end
 
