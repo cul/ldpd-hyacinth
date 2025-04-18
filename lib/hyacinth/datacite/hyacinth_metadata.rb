@@ -48,9 +48,15 @@ module Hyacinth::Datacite
     # existence of related item
     # @api public
     # @return [true, false]
-    # @note only returns the first title value
     def related_item?
       @dfd.key? 'related_item'
+    end
+
+    # existence of related item
+    # @api public
+    # @return [integer]
+    def num_related_items
+      (@dfd.key? 'related_item') ? @dfd['related_item'].count : 0
     end
 
     # the related item title for an item (if related item present)

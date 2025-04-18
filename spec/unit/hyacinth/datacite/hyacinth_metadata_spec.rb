@@ -149,17 +149,38 @@ describe Hyacinth::Datacite::HyacinthMetadata do
     end
   end
 
+  context "#num_related_items:" do
+    it "returns 2 if 2 related item present" do
+      local_metadata_retrieval = described_class.new dod
+      result = local_metadata_retrieval.num_related_items
+      expect(result).to eq(2)
+    end
+
+    it "returns 0 if no related item present" do
+      local_metadata_retrieval = described_class.new dod_names_without_roles
+      result = local_metadata_retrieval.num_related_items
+      expect(result).to eq(0)
+    end
+  end
+
   context "#related_item_title:" do
-    it "get the related item title" do
+    it "gets the title for the first related item" do
       local_metadata_retrieval = described_class.new dod
       expected_related_item_title = 'The Related Item Sample Title'
       actual_related_item_title = local_metadata_retrieval.related_item_title(0)
       expect(actual_related_item_title).to eq(expected_related_item_title)
     end
+
+    it "gets the title for the second related item" do
+      local_metadata_retrieval = described_class.new dod
+      expected_related_item_title = 'Those Are the Terms'
+      actual_related_item_title = local_metadata_retrieval.related_item_title(1)
+      expect(actual_related_item_title).to eq(expected_related_item_title)
+    end
   end
 
   context "#related_item_relation_type:" do
-    it "gets the related item relation type entry (controlled vocabulary)" do
+    it "gets the relation type for first related item (controlled vocabulary)" do
       local_metadata_retrieval = described_class.new dod
       actual_related_item_relation_type =
         local_metadata_retrieval.related_item_relation_type(0)
@@ -169,6 +190,38 @@ describe Hyacinth::Datacite::HyacinthMetadata do
                                                      type: "temporary",
                                                      authority: "datacite"
                                                    )
+    end
+
+    it "gets the relation type for the second related item (controlled vocabulary)" do
+      local_metadata_retrieval = described_class.new dod
+      actual_related_item_relation_type =
+        local_metadata_retrieval.related_item_relation_type(1)
+      expect(actual_related_item_relation_type).to have_attributes(
+                                                     uri: "temp:a6621364715d73",
+                                                     value: "isVersionOf",
+                                                     type: "temporary",
+                                                     authority: "datacite"
+                                                   )
+    end
+  end
+
+  context "#related_item_identifiers:" do
+    it "gets the related item identifiers for the first related item" do
+      local_metadata_retrieval = described_class.new dod
+      actual_identifiers =
+        local_metadata_retrieval.related_item_identifiers(0)
+      expect(actual_identifiers.first[0]).to eq("url")
+      expect(actual_identifiers.first[1]).to eq("https://www.columbia.edu")
+      expect(actual_identifiers.second[0]).to eq("doi")
+      expect(actual_identifiers.second[1]).to eq("10.33555/4363-BZ18")
+    end
+
+    it "gets the related item identifiers for the second related item" do
+      local_metadata_retrieval = described_class.new dod
+      actual_identifiers =
+        local_metadata_retrieval.related_item_identifiers(1)
+      expect(actual_identifiers.first[0]).to eq("url")
+      expect(actual_identifiers.first[1]).to eq("https://medhealthhum.com/those-are-the-terms/")
     end
   end
 
@@ -209,16 +262,6 @@ describe Hyacinth::Datacite::HyacinthMetadata do
                                                      type: "external",
                                                      authority: "rightsstatements"
                                                    )
-    end
-  end
-
-  context "#related_item_identifiers:" do
-    it "gets the related item identifier" do
-      local_metadata_retrieval = described_class.new dod
-      actual_identifiers =
-        local_metadata_retrieval.related_item_identifiers(0)
-      expect(actual_identifiers.first[0]).to eq("url")
-      expect(actual_identifiers.first[1]).to eq("https://www.columbia.edu")
     end
   end
 
