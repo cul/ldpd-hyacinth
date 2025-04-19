@@ -17,15 +17,15 @@ module Hyacinth::Datacite
     end
 
     def process_related_item_identifiers(index)
-      if (value = related_item_identifier_doi(index))
-        type = 'DOI'
-      elsif (value = related_item_identifier_url(index))
-        type = 'URL'
+      if (value = @hyacinth_metadata_retrieval.related_item_identifier_doi(index))
+        type = 'doi'
+      elsif (value = @hyacinth_metadata_retrieval.related_item_identifier_url(index))
+        type = 'url'
       else
         # only other 2 possible values, for now, are issn and isbn
-        type, value = related_item_identifier_first(index)
+        type, value = @hyacinth_metadata_retrieval.related_item_identifier_first(index)
       end
-      [type.upcase, value]
+      [type, value]
     end
 
     # required field

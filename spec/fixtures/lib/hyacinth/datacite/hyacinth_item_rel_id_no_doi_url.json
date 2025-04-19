@@ -368,14 +368,6 @@
 		    {
 			"related_item_identifier_type":"issn",
 			"related_item_identifier_value":"0000-0000"
-		    },
-		    {
-			"related_item_identifier_type":"url",
-			"related_item_identifier_value":"https://www.columbia.edu"
-		    },
-		    {
-			"related_item_identifier_type":"doi",
-			"related_item_identifier_value":"10.33555/4363-BZ18"
 		    }
 		]
 	    },
