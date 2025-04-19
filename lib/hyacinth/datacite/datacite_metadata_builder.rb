@@ -16,6 +16,18 @@ module Hyacinth::Datacite
       @attributes
     end
 
+    def process_related_item_identifiers(index)
+      if (value = related_item_identifier_doi(index))
+        type = 'DOI'
+      elsif (value = related_item_identifier_url(index))
+        type = 'URL'
+      else
+        # only other 2 possible values, for now, are issn and isbn
+        type, value = related_item_identifier_first(index)
+      end
+      [type.upcase, value]
+    end
+
     # required field
     # fcd1, 12/16/21: DataCite REST API compliant
     def add_title
