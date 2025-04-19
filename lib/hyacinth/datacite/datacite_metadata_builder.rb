@@ -25,7 +25,21 @@ module Hyacinth::Datacite
         # only other 2 possible values, for now, are issn and isbn
         type, value = @hyacinth_metadata_retrieval.related_item_identifier_first(index)
       end
-      [type, value]
+      [type.upcase, value]
+    end
+
+    def process_related_item(index)
+      title = @hyacinth_metadata_retrieval.related_item_title(index)
+      relation_type = @hyacinth_metadata_retrieval.related_item_relation_type(index)
+      id_type, id_value = process_related_item_identifiers(index)
+      related_item_hash = { titles: [ { title: title } ] }
+      related_item_hash[:relationType] = relation_type.value
+      if id_type && id_value
+        id_hash = { relatedItemIdentifier: id_value,
+                    relatedItemIdentifierType: id_type }
+        related_item_hash[:relatedItemIdentifier] = id_hash
+      end
+      related_item_hash
     end
 
     # required field

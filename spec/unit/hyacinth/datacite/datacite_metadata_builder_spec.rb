@@ -45,17 +45,32 @@ describe Hyacinth::Datacite::DataciteMetadataBuilder do
   context "process_related_item_identifiers" do
     it "retrieves DOI indentifier if related item has one" do
       actual_id = dc_metadata.process_related_item_identifiers(0)
-      expect(actual_id).to eq(["doi", "10.33555/4363-BZ18"])
+      expect(actual_id).to eq(["DOI", "10.33555/4363-BZ18"])
     end
 
     it "retrieves URL indentifier if related item no DOI but a URL identifier" do
       actual_id = dc_metadata_url_no_doi.process_related_item_identifiers(0)
-      expect(actual_id).to eq(["url", "https://www.columbia.edu"])
+      expect(actual_id).to eq(["URL", "https://www.columbia.edu"])
     end
 
     it "retrieves ISBN indentifier if related item no DOI or URL identifier" do
       actual_id = dc_metadata_no_doi_url.process_related_item_identifiers(0)
-      expect(actual_id).to eq(["isbn", "000-0-00-000000-0"])
+      expect(actual_id).to eq(["ISBN", "000-0-00-000000-0"])
+    end
+  end
+
+  context "process_related_item" do
+    it "creates the correct related item hash" do
+      expected_related_item = {
+        titles: [{ title: "The Related Item Sample Title" }],
+        relationType: "IsCompiledBy",
+        relatedItemIdentifier: {
+          relatedItemIdentifier: "10.33555/4363-BZ18",
+          relatedItemIdentifierType: "DOI"
+        }
+      }
+      actual_related_item = dc_metadata.process_related_item(0)
+      expect(actual_related_item).to eq(expected_related_item)
     end
   end
 end
