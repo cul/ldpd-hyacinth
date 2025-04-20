@@ -50,7 +50,7 @@ describe Hyacinth::Datacite::DataciteMetadataBuilder do
           },
           {
             titles: [{title: "Those Are the Terms"}],
-            relationType: "isVersionOf",
+            relationType: "IsVersionOf",
             relatedItemType: "Model",
             relatedItemIdentifier: {
               relatedItemIdentifier: "https://medhealthhum.com/those-are-the-terms/",
@@ -114,7 +114,7 @@ describe Hyacinth::Datacite::DataciteMetadataBuilder do
         },
         {
           titles: [{ title: "Those Are the Terms" }],
-          relationType: "isVersionOf",
+          relationType: "IsVersionOf",
           relatedItemType: "Model",
           relatedItemIdentifier: {
             relatedItemIdentifier: "https://medhealthhum.com/those-are-the-terms/",

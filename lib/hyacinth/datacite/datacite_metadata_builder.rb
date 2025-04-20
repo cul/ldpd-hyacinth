@@ -4,6 +4,47 @@ module Hyacinth::Datacite
   class DataciteMetadataBuilder
     attr_reader :attributes
 
+    DATACITE_RELATION_TYPE = [
+      'IsCitedBy',
+      'Cites',
+      'IsSupplementTo',
+      'IsSupplementedBy',
+      'IsContinuedBy',
+      'Continues',
+      'Describes',
+      'IsDescribedBy',
+      'HasMetadata',
+      'IsMetadataFor',
+      'HasVersion',
+      'IsVersionOf',
+      'IsNewVersionOf',
+      'IsPreviousVersionOf',
+      'IsPartOf',
+      'HasPart',
+      'IsPublishedIn',
+      'IsReferencedBy',
+      'References',
+      'IsDocumentedBy',
+      'Documents',
+      'IsCompiledBy',
+      'Compiles',
+      'IsVariantFormOf',
+      'IsOriginalFormOf',
+      'IsIdenticalTo',
+      'IsReviewedBy',
+      'Reviews',
+      'IsDerivedFrom',
+      'IsSourceOf',
+      'IsRequiredBy',
+      'Requires',
+      'Obsoletes',
+      'IsObsoletedBy',
+      'IsCollectedBy',
+      'Collects',
+      'IsTranslationOf',
+      'HasTranslation'
+    ]
+
     def initialize(hyacinth_metadata_retrieval_arg)
       @hyacinth_metadata_retrieval = hyacinth_metadata_retrieval_arg
       @attributes = {}
@@ -31,13 +72,22 @@ module Hyacinth::Datacite
       [type.upcase, value]
     end
 
+    # this method will return nil if the related item info in Hyacinth is invalid.
     def process_related_item(index)
       title = @hyacinth_metadata_retrieval.related_item_title(index)
+      return nil if title.blank?
+
       relation_type = @hyacinth_metadata_retrieval.related_item_relation_type(index)
+      # only accept controlled terms from the datacite authority
+      return nil unless relation_type.authority == 'datacite'
+      # DataCite capitilizes the first letter in the relation_type, Hyacinth does not
+      relation_type_value = relation_type.value.upcase_first
+      return nil unless DATACITE_RELATION_TYPE.include? relation_type_value
+
       resource_type = @hyacinth_metadata_retrieval.related_item_type_of_resource(index)
       id_type, id_value = process_related_item_identifiers(index)
       related_item_hash = { titles: [ { title: title } ] }
-      related_item_hash[:relationType] = relation_type.value
+      related_item_hash[:relationType] = relation_type_value
       related_item_hash[:relatedItemType] = resource_type.value
       if id_type && id_value
         id_hash = { relatedItemIdentifier: id_value,
