@@ -353,7 +353,7 @@
 		    "name_type":"personal"
 		},
 		"related_item_type_of_resource":{
-		    "uri":"http://id.library.columbia.edu/term/f44c5847-f489-4fa6-a82d-ef627e148330",
+		    "uri":"http://id.library.columbia.edu/term/f44c5847",
 		    "value":"Image",
 		    "type":"local",
 		    "authority":"datacite",
@@ -386,6 +386,14 @@
 			"related_item_identifier_value":"https://medhealthhum.com/those-are-the-terms/"
 		    }
 		],
+		"related_item_type_of_resource":{
+		    "uri":"http://id.library.columbia.edu/term/201aa69a",
+		    "value":"Model",
+		    "type":"local",
+		    "authority":"datacite",
+		    "vocabulary_string_key":"type_of_resource",
+		    "internal_id":2075994
+		},
 		"related_item_title":"Those Are the Terms",
 		"related_item_type":{
 		    "uri":"temp:a6621364715d73",

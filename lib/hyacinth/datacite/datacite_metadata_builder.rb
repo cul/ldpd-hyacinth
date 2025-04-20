@@ -31,9 +31,11 @@ module Hyacinth::Datacite
     def process_related_item(index)
       title = @hyacinth_metadata_retrieval.related_item_title(index)
       relation_type = @hyacinth_metadata_retrieval.related_item_relation_type(index)
+      resource_type = @hyacinth_metadata_retrieval.related_item_type_of_resource(index)
       id_type, id_value = process_related_item_identifiers(index)
       related_item_hash = { titles: [ { title: title } ] }
       related_item_hash[:relationType] = relation_type.value
+      related_item_hash[:relatedItemType] = resource_type.value
       if id_type && id_value
         id_hash = { relatedItemIdentifier: id_value,
                     relatedItemIdentifierType: id_type }

@@ -68,6 +68,20 @@ module Hyacinth::Datacite
       @dfd['related_item'][index]['related_item_title']
     end
 
+    # the related item type for an item (if related item present)
+    # @api public
+    # @return [Struct, nil]
+    # @note It is assumed that the related_item? method will be called first
+    def related_item_type_of_resource(index)
+      return nil unless @dfd['related_item'][index].key? 'related_item_type_of_resource'
+      related_item_res_type = ControlledVocabEntry.new
+      related_item_res_type.uri = @dfd['related_item'][index]['related_item_type_of_resource']['uri']
+      related_item_res_type.value = @dfd['related_item'][index]['related_item_type_of_resource']['value']
+      related_item_res_type.type = @dfd['related_item'][index]['related_item_type_of_resource']['type']
+      related_item_res_type.authority = @dfd['related_item'][index]['related_item_type_of_resource']['authority']
+      related_item_res_type
+    end
+
     # the related item relation type for an item (if related item present)
     # @api public
     # @return [Struct, nil]

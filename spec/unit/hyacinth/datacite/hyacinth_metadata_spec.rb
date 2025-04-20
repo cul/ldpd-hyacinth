@@ -179,6 +179,32 @@ describe Hyacinth::Datacite::HyacinthMetadata do
     end
   end
 
+  context "#related_item_type_of_resource:" do
+    it "gets the resource type for first related item (controlled vocabulary)" do
+      local_metadata_retrieval = described_class.new dod
+      actual_related_item_resource_type =
+        local_metadata_retrieval.related_item_type_of_resource(0)
+      expect(actual_related_item_resource_type).to have_attributes(
+                                                     uri: "http://id.library.columbia.edu/term/f44c5847",
+                                                     value: "Image",
+                                                     type: "local",
+                                                     authority: "datacite"
+                                                   )
+    end
+
+    it "gets the resource type for the second related item (controlled vocabulary)" do
+      local_metadata_retrieval = described_class.new dod
+      actual_related_item_resource_type =
+        local_metadata_retrieval.related_item_type_of_resource(1)
+      expect(actual_related_item_resource_type).to have_attributes(
+                                                     uri: "http://id.library.columbia.edu/term/201aa69a",
+                                                     value: "Model",
+                                                     type: "local",
+                                                     authority: "datacite"
+                                                   )
+    end
+  end
+
   context "#related_item_relation_type:" do
     it "gets the relation type for first related item (controlled vocabulary)" do
       local_metadata_retrieval = described_class.new dod
@@ -237,10 +263,12 @@ describe Hyacinth::Datacite::HyacinthMetadata do
         local_metadata_retrieval.related_item_identifiers(0)
       expect(actual_identifiers.first[0]).to eq("isbn")
       expect(actual_identifiers.first[1]).to eq("000-0-00-000000-0")
-      expect(actual_identifiers.second[0]).to eq("url")
-      expect(actual_identifiers.second[1]).to eq("https://www.columbia.edu")
-      expect(actual_identifiers.third[0]).to eq("doi")
-      expect(actual_identifiers.third[1]).to eq("10.33555/4363-BZ18")
+      expect(actual_identifiers.second[0]).to eq("issn")
+      expect(actual_identifiers.second[1]).to eq("0000-0000")
+      expect(actual_identifiers.third[0]).to eq("url")
+      expect(actual_identifiers.third[1]).to eq("https://www.columbia.edu")
+      expect(actual_identifiers.fourth[0]).to eq("doi")
+      expect(actual_identifiers.fourth[1]).to eq("10.33555/4363-BZ18")
     end
 
     it "gets the related item identifiers for the second related item" do

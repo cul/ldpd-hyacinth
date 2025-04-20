@@ -64,6 +64,7 @@ describe Hyacinth::Datacite::DataciteMetadataBuilder do
       expected_related_item = {
         titles: [{ title: "The Related Item Sample Title" }],
         relationType: "IsCompiledBy",
+        relatedItemType: "Image",
         relatedItemIdentifier: {
           relatedItemIdentifier: "10.33555/4363-BZ18",
           relatedItemIdentifierType: "DOI"
