@@ -2,6 +2,8 @@
 # containing the metadata, using the datacite metadata scheme
 module Hyacinth::Datacite
   class DataciteMetadataBuilder
+    attr_reader :attributes
+
     def initialize(hyacinth_metadata_retrieval_arg)
       @hyacinth_metadata_retrieval = hyacinth_metadata_retrieval_arg
       @attributes = {}
@@ -13,6 +15,7 @@ module Hyacinth::Datacite
       add_publication_year
       add_resource_type
       add_creators
+      add_related_items
       @attributes
     end
 
@@ -42,6 +45,16 @@ module Hyacinth::Datacite
         related_item_hash[:relatedItemIdentifier] = id_hash
       end
       related_item_hash
+    end
+
+    def add_related_items
+      if @hyacinth_metadata_retrieval.num_related_items
+        @attributes[:relatedItems] = []
+        (0...@hyacinth_metadata_retrieval.num_related_items).each do |i|
+          related_item = process_related_item(i)
+          @attributes[:relatedItems] << related_item if related_item
+        end
+      end
     end
 
     # required field

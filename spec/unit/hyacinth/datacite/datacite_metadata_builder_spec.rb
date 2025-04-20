@@ -29,11 +29,36 @@ describe Hyacinth::Datacite::DataciteMetadataBuilder do
 
   context "datacite_json" do
     let(:expected_attributes_hash) do
-      { titles: [{ title: "The Catcher in the Rye" }],
+      {
+        titles: [{title: "The Catcher in the Rye"}],
         publisher: "Columbia University",
         publicationYear: "1951",
-        types: { resourceTypeGeneral: "Text"},
-        creators: [{ name: "Salinger, J. D." }, { name: "Lincoln, Abraham" }] }
+        types: {resourceTypeGeneral: "Text"},
+        creators: [
+          {name: "Salinger, J. D."},
+          {name: "Lincoln, Abraham" }
+        ],
+        relatedItems: [
+          {
+            titles: [{title: "The Related Item Sample Title"}],
+            relationType: "IsCompiledBy",
+            relatedItemType: "Image",
+            relatedItemIdentifier: {
+              relatedItemIdentifier: "10.33555/4363-BZ18",
+              relatedItemIdentifierType: "DOI"
+            }
+          },
+          {
+            titles: [{title: "Those Are the Terms"}],
+            relationType: "isVersionOf",
+            relatedItemType: "Model",
+            relatedItemIdentifier: {
+              relatedItemIdentifier: "https://medhealthhum.com/those-are-the-terms/",
+              relatedItemIdentifierType: "URL"
+            }
+          }
+        ]
+      }
     end
 
     it "produces the expected hash" do
@@ -72,6 +97,35 @@ describe Hyacinth::Datacite::DataciteMetadataBuilder do
       }
       actual_related_item = dc_metadata.process_related_item(0)
       expect(actual_related_item).to eq(expected_related_item)
+    end
+  end
+
+  context "add_related_items" do
+    it "creates the correct related items hash" do
+      expected_related_items = [
+        {
+          titles: [{ title: "The Related Item Sample Title" }],
+          relationType: "IsCompiledBy",
+          relatedItemType: "Image",
+          relatedItemIdentifier: {
+            relatedItemIdentifier: "10.33555/4363-BZ18",
+            relatedItemIdentifierType: "DOI"
+          }
+        },
+        {
+          titles: [{ title: "Those Are the Terms" }],
+          relationType: "isVersionOf",
+          relatedItemType: "Model",
+          relatedItemIdentifier: {
+            relatedItemIdentifier: "https://medhealthhum.com/those-are-the-terms/",
+            relatedItemIdentifierType: "URL"
+          }
+        }
+      ]
+
+      dc_metadata.add_related_items
+      actual_related_items = dc_metadata.attributes[:relatedItems]
+      expect(actual_related_items).to eq(expected_related_items)
     end
   end
 end
