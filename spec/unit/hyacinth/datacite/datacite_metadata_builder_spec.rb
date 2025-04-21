@@ -10,6 +10,9 @@ describe Hyacinth::Datacite::DataciteMetadataBuilder do
   let(:dod_no_doi_url) do
     JSON.parse( fixture('lib/hyacinth/datacite/hyacinth_item_rel_id_no_doi_url.json').read )
   end
+  let(:dod_invalid_rel_items) do
+    JSON.parse( fixture('lib/hyacinth/datacite/hyacinth_item_invalid_related_items.json').read )
+  end
 
   let(:hyc_metadata) { Hyacinth::Datacite::HyacinthMetadata.new dod }
   let(:hyc_metadata_url_no_doi) do
@@ -18,6 +21,9 @@ describe Hyacinth::Datacite::DataciteMetadataBuilder do
   let(:hyc_metadata_no_doi_url) do
     Hyacinth::Datacite::HyacinthMetadata.new dod_no_doi_url
   end
+  let(:hyc_metadata_invalid_rel_items) do
+    Hyacinth::Datacite::HyacinthMetadata.new dod_invalid_rel_items
+  end
 
   let(:dc_metadata) { described_class.new hyc_metadata }
   let(:dc_metadata_url_no_doi) do
@@ -25,6 +31,9 @@ describe Hyacinth::Datacite::DataciteMetadataBuilder do
   end
   let(:dc_metadata_no_doi_url) do
     described_class.new hyc_metadata_no_doi_url
+  end
+  let(:dc_metadata_invalid_rel_items) do
+    described_class.new hyc_metadata_invalid_rel_items
   end
 
   context "datacite_json" do
@@ -84,8 +93,28 @@ describe Hyacinth::Datacite::DataciteMetadataBuilder do
     end
   end
 
+  context "related_item_hash" do
+    it "creates the correct hash for the given args" do
+      expected_related_item = {
+        titles: [{ title: "A Sample Title" }],
+        relationType: "Cites",
+        relatedItemType: "Book",
+        relatedItemIdentifier: {
+          relatedItemIdentifier: "10.33555/4363-BZZZ",
+          relatedItemIdentifierType: "DOI"
+        }
+      }
+      actual_related_item = dc_metadata.related_item_hash("A Sample Title",
+                                                          "Cites",
+                                                          "Book",
+                                                          "DOI",
+                                                          "10.33555/4363-BZZZ")
+      expect(actual_related_item).to eq(expected_related_item)
+    end
+  end
+
   context "process_related_item" do
-    it "creates the correct related item hash" do
+    it "returns the expected hash for the specified related item" do
       expected_related_item = {
         titles: [{ title: "The Related Item Sample Title" }],
         relationType: "IsCompiledBy",
@@ -98,10 +127,46 @@ describe Hyacinth::Datacite::DataciteMetadataBuilder do
       actual_related_item = dc_metadata.process_related_item(0)
       expect(actual_related_item).to eq(expected_related_item)
     end
+
+    context "returns nil and logs approriate error message" do
+      it "if the title of the related item is empty" do
+        expect(Hyacinth::Utils::Logger.logger).to receive(:error).with(include("Empty Title"))
+        actual_related_item = dc_metadata_invalid_rel_items.process_related_item(0)
+        expect(actual_related_item).to be_nil
+      end
+
+      it "if the related item type is invalid" do
+        expect(Hyacinth::Utils::Logger.logger).to receive(:error).with(
+                                                    include("'InvalidImage' for Related Item Type"))
+        actual_related_item = dc_metadata_invalid_rel_items.process_related_item(1)
+        expect(actual_related_item).to be_nil
+      end
+
+      it "if the related item type authority is invalid" do
+        expect(Hyacinth::Utils::Logger.logger).to receive(:error).with(
+                                                    include("Invalid authority 'authorityinvalid'"))
+        actual_related_item = dc_metadata_invalid_rel_items.process_related_item(2)
+        expect(actual_related_item).to be_nil
+      end
+
+      it "if the relation type is invalid" do
+        expect(Hyacinth::Utils::Logger.logger).to receive(:error).with(
+                                                    include("'IsInvalid' for Relation Type"))
+        actual_related_item = dc_metadata_invalid_rel_items.process_related_item(3)
+        expect(actual_related_item).to be_nil
+      end
+
+      it "if the related item type authority is invalid" do
+        expect(Hyacinth::Utils::Logger.logger).to receive(:error).with(
+                                                    include("Invalid authority 'invalidauthority'"))
+        actual_related_item = dc_metadata_invalid_rel_items.process_related_item(4)
+        expect(actual_related_item).to be_nil
+      end
+    end
   end
 
   context "add_related_items" do
-    it "creates the correct related items hash" do
+    it "returns the correct related items hash" do
       expected_related_items = [
         {
           titles: [{ title: "The Related Item Sample Title" }],

@@ -4,6 +4,39 @@ module Hyacinth::Datacite
   class DataciteMetadataBuilder
     attr_reader :attributes
 
+    DATACITE_RELATED_ITEM_TYPE = [
+      'Audiovisual',
+      'Book',
+      'BookChapter',
+      'Collection',
+      'ComputationalNotebook',
+      'ConferencePaper',
+      'ConferenceProceeding',
+      'DataPaper',
+      'Dataset',
+      'Dissertation',
+      'Event',
+      'Image',
+      'Instrument',
+      'InteractiveResource',
+      'Journal',
+      'JournalArticle',
+      'Model',
+      'Other',
+      'OutputManagementPlan',
+      'PeerReview',
+      'PhysicalObject',
+      'Preprint',
+      'Report',
+      'Service',
+      'Software',
+      'Sound',
+      'Standard',
+      'StudyRegistration',
+      'Text',
+      'Workflow',
+    ]
+
     DATACITE_RELATION_TYPE = [
       'IsCitedBy',
       'Cites',
@@ -72,29 +105,71 @@ module Hyacinth::Datacite
       [type.upcase, value]
     end
 
-    # this method will return nil if the related item info in Hyacinth is invalid.
-    def process_related_item(index)
-      title = @hyacinth_metadata_retrieval.related_item_title(index)
-      return nil if title.blank?
-
-      relation_type = @hyacinth_metadata_retrieval.related_item_relation_type(index)
-      # only accept controlled terms from the datacite authority
-      return nil unless relation_type.authority == 'datacite'
-      # DataCite capitilizes the first letter in the relation_type, Hyacinth does not
-      relation_type_value = relation_type.value.upcase_first
-      return nil unless DATACITE_RELATION_TYPE.include? relation_type_value
-
-      resource_type = @hyacinth_metadata_retrieval.related_item_type_of_resource(index)
-      id_type, id_value = process_related_item_identifiers(index)
-      related_item_hash = { titles: [ { title: title } ] }
-      related_item_hash[:relationType] = relation_type_value
-      related_item_hash[:relatedItemType] = resource_type.value
+    def related_item_hash(title,
+                          relation_type,
+                          related_item_type,
+                          id_type,
+                          id_value)
+      item_hash = { titles: [ { title: title } ] }
+      item_hash[:relationType] = relation_type
+      item_hash[:relatedItemType] = related_item_type
       if id_type && id_value
         id_hash = { relatedItemIdentifier: id_value,
                     relatedItemIdentifierType: id_type }
-        related_item_hash[:relatedItemIdentifier] = id_hash
+        item_hash[:relatedItemIdentifier] = id_hash
       end
-      related_item_hash
+      item_hash
+    end
+
+    # this method will return nil if the related item info in Hyacinth is invalid.
+    def process_related_item(index)
+      title = @hyacinth_metadata_retrieval.related_item_title(index)
+      if title.blank?
+        Hyacinth::Utils::Logger.logger.error("#process_related_item: Empty Title, ignoring Related Item.")
+        return nil
+      end
+
+      resource_type = @hyacinth_metadata_retrieval.related_item_type_of_resource(index)
+      # only accept controlled terms from the datacite authority
+      unless resource_type.authority == 'datacite'
+        Hyacinth::Utils::Logger.logger.error(
+          "#process_related_item: Invalid authority '#{resource_type.authority}' for Related Item Type,"\
+          " ignoring Related Item."
+        )
+        return nil
+      end
+      unless DATACITE_RELATED_ITEM_TYPE.include? resource_type.value
+        Hyacinth::Utils::Logger.logger.error(
+          "#process_related_item: Invalid value '#{resource_type.value}' for Related Item Type,"\
+          "ignoring Related Item."
+        )
+        return nil
+      end
+
+      relation_type = @hyacinth_metadata_retrieval.related_item_relation_type(index)
+      # only accept controlled terms from the datacite authority
+      unless relation_type.authority == 'datacite'
+        Hyacinth::Utils::Logger.logger.error(
+          "#process_related_item: Invalid authority '#{relation_type.authority}' for Relation Type,"\
+          " ignoring Related Item."
+        )
+        return nil
+      end
+      # DataCite capitilizes the first letter in the relation_type, Hyacinth does not
+      relation_type_value = relation_type.value.upcase_first
+      unless DATACITE_RELATION_TYPE.include? relation_type_value
+        Hyacinth::Utils::Logger.logger.error(
+          "#process_related_item: Invalid value '#{relation_type_value}' for Relation Type,"\
+          " ignoring Related Item.")
+        return nil
+      end
+
+      id_type, id_value = process_related_item_identifiers(index)
+      related_item_hash(title,
+                        relation_type_value,
+                        resource_type.value,
+                        id_type,
+                        id_value)
     end
 
     def add_related_items
