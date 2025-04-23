@@ -35,7 +35,7 @@ module Hyacinth::Datacite
       attributes_hash[:event] =  DOI_MINT_EVENT[doi_status] unless doi_status == :draft
       attributes_hash[:prefix] = prefix
       uri_path = '/dois'
-      uri = URI(EZID[:url] + uri_path)
+      uri = URI(DATACITE[:url] + uri_path)
       request = Net::HTTP::Post.new uri.request_uri
       begin
         response = call_api(uri, request, attributes_hash)
@@ -49,7 +49,7 @@ module Hyacinth::Datacite
         Hyacinth::Datacite::Doi.new(@last_response_from_server.doi,
                                     doi_status) unless @last_response_from_server.error?
       rescue Net::ReadTimeout, SocketError
-        Hyacinth::Utils::Logger.logger.error('#mint_identifier: EZID API call to mint identifier timed-out')
+        Hyacinth::Utils::Logger.logger.error('#mint_identifier: DATACITE API call to mint identifier timed-out')
         @timed_out = true
         nil
       end
@@ -61,10 +61,10 @@ module Hyacinth::Datacite
                           target_url = nil)
       attributes_hash[:url] = target_url unless target_url.nil?
       attributes_hash[:event] = DOI_MINT_EVENT[doi_status] unless doi_status == :draft
-      attributes_hash[:prefix] = EZID[:prefix]
+      attributes_hash[:prefix] = DATACITE[:prefix]
       attributes_hash[:schemaVersion] = 'http://datacite.org/schema/kernel-4'
       uri_path = '/dois/' + doi
-      uri = URI(EZID[:url] + uri_path)
+      uri = URI(DATACITE[:url] + uri_path)
       request = Net::HTTP::Put.new uri.request_uri
       begin
         response = call_api(uri, request, attributes_hash)
@@ -78,7 +78,7 @@ module Hyacinth::Datacite
         Hyacinth::Datacite::Doi.new(@last_response_from_server.doi,
                                 doi_status) unless @last_response_from_server.error?
       rescue Net::ReadTimeout, SocketError
-        Hyacinth::Utils::Logger.logger.error('modify_identifier: EZID API call to modify identifier timed-out')
+        Hyacinth::Utils::Logger.logger.error('modify_identifier: DATACITE API call to modify identifier timed-out')
         @timed_out = true
         false
       end
