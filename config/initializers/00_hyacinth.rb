@@ -2,7 +2,7 @@ HYACINTH = Rails.application.config_for(:hyacinth).tap do |config|
   config[:publish_enabled] = true if config[:publish_enabled].nil?
 end
 
-EZID = HashWithIndifferentAccess.new(Rails.application.config_for(:ezid))
+DATACITE = HashWithIndifferentAccess.new(Rails.application.config_for(:datacite))
 
 IMAGE_SERVER_CONFIG = Rails.application.config_for(:image_server)
 DERIVATIVE_SERVER_CONFIG = Rails.application.config_for(:derivative_server)

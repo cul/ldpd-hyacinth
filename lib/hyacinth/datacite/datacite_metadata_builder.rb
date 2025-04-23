@@ -230,7 +230,7 @@ module Hyacinth::Datacite
     # fcd1, 12/16/21: DataCite REST API compliant
     def add_publisher
       # fcd1, 12/16/21: same one-liner as existing code
-      @attributes[:publisher] = EZID[:ezid_publisher]
+      @attributes[:publisher] = DATACITE[:datacite_publisher]
     end
 
     # required field
@@ -247,8 +247,8 @@ module Hyacinth::Datacite
     # fcd1, 12/16/21: DataCite REST API compliant
     def add_resource_type
       hyacinth_genre_uri = @hyacinth_metadata_retrieval.genre_uri&.to_sym
-      if EZID[:datacite][:genre_to_resource_type_mapping].key? hyacinth_genre_uri
-        @attributes[:types] = { resourceTypeGeneral: "#{EZID[:datacite][:genre_to_resource_type_mapping][hyacinth_genre_uri][:attribute_general]}" }
+      if DATACITE[:datacite][:genre_to_resource_type_mapping].key? hyacinth_genre_uri
+        @attributes[:types] = { resourceTypeGeneral: "#{DATACITE[:datacite][:genre_to_resource_type_mapping][hyacinth_genre_uri][:attribute_general]}" }
       else
         # required element, but no content. If use ':unav', DataCite REST API generates error as follows:
         # The value ':unav' is not an element of the set {'Audiovisual', ....}

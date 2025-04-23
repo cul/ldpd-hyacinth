@@ -2,7 +2,7 @@ require 'rails_helper'
 require 'equivalent-xml'
 
 describe Hyacinth::Datacite::ApiSession do
-  subject { described_class.new(EZID[:user],EZID[:password]) }
+  subject { described_class.new(DATACITE[:user],DATACITE[:password]) }
 
   let(:data) {
     {"_status"=>"reserved"}
