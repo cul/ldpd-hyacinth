@@ -66,6 +66,16 @@ describe Hyacinth::Datacite::DataciteMetadataBuilder do
               relatedItemIdentifierType: "URL"
             }
           }
+        ],
+        rightsList: [
+          {
+            rights: "CC BY-NC-SA 4.0",
+            rightsUri: "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+          },
+          {
+            rights: "No Copyright - United States",
+            rightsUri: "http://rightsstatements.org/vocab/NoC-US/1.0/"
+          }
         ]
       }
     end
@@ -166,7 +176,7 @@ describe Hyacinth::Datacite::DataciteMetadataBuilder do
   end
 
   context "add_related_items" do
-    it "returns the correct related items hash" do
+    it "populates the DataCite related items hash correctly" do
       expected_related_items = [
         {
           titles: [{ title: "The Related Item Sample Title" }],
@@ -191,6 +201,25 @@ describe Hyacinth::Datacite::DataciteMetadataBuilder do
       dc_metadata.add_related_items
       actual_related_items = dc_metadata.attributes[:relatedItems]
       expect(actual_related_items).to eq(expected_related_items)
+    end
+  end
+
+  context "add_rights_list" do
+    it "populates the DataCite rights list hash correctly" do
+      expected_rights_list = [
+        {
+          rights: "CC BY-NC-SA 4.0",
+          rightsUri: "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+        },
+        {
+          rights: "No Copyright - United States",
+          rightsUri: "http://rightsstatements.org/vocab/NoC-US/1.0/"
+        }
+      ]
+
+      dc_metadata.add_rights_list
+      actual_rights_list = dc_metadata.attributes[:rightsList]
+      expect(actual_rights_list).to eq(expected_rights_list)
     end
   end
 end

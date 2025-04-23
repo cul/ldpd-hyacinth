@@ -90,7 +90,25 @@ module Hyacinth::Datacite
       add_resource_type
       add_creators
       add_related_items
+      add_rights_list
       @attributes
+    end
+
+    def add_rights_list
+      @attributes[:rightsList] = []
+      if @hyacinth_metadata_retrieval.license.present?
+        license = {
+          rights: @hyacinth_metadata_retrieval.license.value,
+          rightsUri: @hyacinth_metadata_retrieval.license.uri
+        }
+        @attributes[:rightsList].append license
+
+        use_and_reprod = {
+          rights: @hyacinth_metadata_retrieval.use_and_reproduction.value,
+          rightsUri: @hyacinth_metadata_retrieval.use_and_reproduction.uri
+        }
+        @attributes[:rightsList].append use_and_reprod
+      end
     end
 
     def process_related_item_identifiers(index)
