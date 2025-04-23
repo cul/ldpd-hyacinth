@@ -280,6 +280,20 @@ describe Hyacinth::Datacite::HyacinthMetadata do
     end
   end
 
+  context "#license:" do
+    it "gets the license (controlled vocabulary)" do
+      local_metadata_retrieval = described_class.new dod
+      actual_license =
+        local_metadata_retrieval.license
+      expect(actual_license).to have_attributes(
+                                  uri: "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+                                  value: "CC BY-NC-SA 4.0",
+                                  type: "external",
+                                  authority: "creativecommons"
+                                )
+    end
+  end
+
   context "#license_info:" do
     it "gets the license info (controlled vocabulary) for 2 licenses" do
       local_metadata_retrieval = described_class.new dod
@@ -297,6 +311,20 @@ describe Hyacinth::Datacite::HyacinthMetadata do
                                           type: "external",
                                           authority: "creativecommons"
                                         )
+    end
+  end
+
+  context "#use_and_reproduction:" do
+    it "gets the use_and_reproduction (controlled vocabulary)" do
+      local_metadata_retrieval = described_class.new dod
+      actual_use_and_reprod =
+        local_metadata_retrieval.use_and_reproduction
+      expect(actual_use_and_reprod).to have_attributes(
+                                         uri: "http://rightsstatements.org/vocab/NoC-US/1.0/",
+                                         value: "No Copyright - United States",
+                                         type: "external",
+                                         authority: "rightsstatements"
+                                       )
     end
   end
 

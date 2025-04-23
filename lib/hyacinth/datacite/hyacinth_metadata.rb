@@ -153,6 +153,20 @@ module Hyacinth::Datacite
 
     # the license for an item
     # @api public
+    # @return [ControlledVocabEntry, empty array]
+    def license
+      return nil unless @dfd.key? 'license'
+      hy_license = @dfd['license'].first
+      license = ControlledVocabEntry.new
+      license.uri = hy_license['license_term']['uri']
+      license.value = hy_license['license_term']['value']
+      license.type = hy_license['license_term']['type']
+      license.authority = hy_license['license_term']['authority']
+      license
+    end
+
+    # the license for an item
+    # @api public
     # @return [array of ControlledVocabEntry, empty array]
     def license_info
       license_info = []
@@ -167,6 +181,24 @@ module Hyacinth::Datacite
         end
       end
       license_info
+    end
+
+    # the use and reproduction for an item
+    # @api public
+    # @return [ControlledVocabEntry, empty array]
+    def use_and_reproduction
+      return nil unless @dfd.key? 'use_and_reproduction'
+      hy_use_repro = @dfd['use_and_reproduction'].first
+      use_and_reproduction = ControlledVocabEntry.new
+      use_and_reproduction.uri =
+        hy_use_repro['use_and_reproduction_term']['uri']
+      use_and_reproduction.value =
+        hy_use_repro['use_and_reproduction_term']['value']
+      use_and_reproduction.type =
+        hy_use_repro['use_and_reproduction_term']['type']
+      use_and_reproduction.authority =
+        hy_use_repro['use_and_reproduction_term']['authority']
+      use_and_reproduction
     end
 
     # the use and reproduction for an item
