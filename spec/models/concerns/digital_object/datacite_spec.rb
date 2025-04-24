@@ -26,8 +26,8 @@ describe DigitalObject::Datacite do
       allow_any_instance_of(Hyacinth::Datacite::ApiSession).to receive(:mint_identifier) do
         Hyacinth::Datacite::Doi.new('10.33555/5x55-t644')
       end
-      DATACITE[:user] = DATACITE[:ezid_test_user]
-      DATACITE[:password] = DATACITE[:ezid_test_password]
+      DATACITE[:user] = DATACITE[:datacite_test_user]
+      DATACITE[:password] = DATACITE[:datacite_test_password]
       DATACITE[:prefix] = DATACITE[:test_prefix]
       actual_datacite_doi = digital_object.mint_and_store_doi(Hyacinth::Datacite::Doi::IDENTIFIER_STATUS[:draft],
                                                               'http://www.columbia.edu')
@@ -41,8 +41,8 @@ describe DigitalObject::Datacite do
       allow_any_instance_of(Hyacinth::Datacite::ApiSession).to receive(:mint_identifier) do
         nil
       end
-      DATACITE[:user] = DATACITE[:ezid_test_user]
-      DATACITE[:password] = DATACITE[:ezid_test_password]
+      DATACITE[:user] = DATACITE[:datacite_test_user]
+      DATACITE[:password] = DATACITE[:datacite_test_password]
       DATACITE[:prefix] = DATACITE[:test_prefix]
       expect(Hyacinth::Utils::Logger.logger).to receive(:error).with("#mint_and_store_doi: DataCite REST API call to mint_identifier was unsuccessful.")
       actual_datacite_doi = digital_object.mint_and_store_doi(Hyacinth::Datacite::Doi::IDENTIFIER_STATUS[:draft],
@@ -55,8 +55,8 @@ describe DigitalObject::Datacite do
     it "change_doi_status_to_unavailable" do
       # stub out method wrapping API call to DataCite server, stub returns true (success)
       allow_any_instance_of(Hyacinth::Datacite::ApiSession).to receive(:modify_identifier) { true }
-      DATACITE[:user] = DATACITE[:ezid_test_user]
-      DATACITE[:password] = DATACITE[:ezid_test_password]
+      DATACITE[:user] = DATACITE[:datacite_test_user]
+      DATACITE[:password] = DATACITE[:datacite_test_password]
       DATACITE[:prefix] = DATACITE[:test_prefix]
       digital_object.instance_variable_set(:@doi,
                                            'doi:10.5072/FK2F47P06D')
@@ -69,8 +69,8 @@ describe DigitalObject::Datacite do
     it "updates the metadata" do
       # stub out method wrapping API call to DataCite server, stub returns true (success)
       allow_any_instance_of(Hyacinth::Datacite::ApiSession).to receive(:modify_identifier) { true }
-      DATACITE[:user] = DATACITE[:ezid_test_user]
-      DATACITE[:password] = DATACITE[:ezid_test_password]
+      DATACITE[:user] = DATACITE[:datacite_test_user]
+      DATACITE[:password] = DATACITE[:datacite_test_password]
       DATACITE[:prefix] = DATACITE[:test_prefix]
       digital_object.instance_variable_set(:@doi,
                                            '10.33555/5x55-t644')
@@ -83,8 +83,8 @@ describe DigitalObject::Datacite do
     it "updates the target url" do
       # stub out method wrapping API call to DataCite server, stub returns true (success)
       allow_any_instance_of(Hyacinth::Datacite::ApiSession).to receive(:modify_identifier) { true }
-      DATACITE[:user] = DATACITE[:ezid_test_user]
-      DATACITE[:password] = DATACITE[:ezid_test_password]
+      DATACITE[:user] = DATACITE[:datacite_test_user]
+      DATACITE[:password] = DATACITE[:datacite_test_password]
       DATACITE[:prefix] = DATACITE[:test_prefix]
       digital_object.instance_variable_set(:@doi,
                                            '10.33555/5x55-t644')

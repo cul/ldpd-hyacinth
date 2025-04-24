@@ -230,7 +230,7 @@ module Hyacinth::Datacite
     # fcd1, 12/16/21: DataCite REST API compliant
     def add_publisher
       # fcd1, 12/16/21: same one-liner as existing code
-      @attributes[:publisher] = DATACITE[:ezid_publisher]
+      @attributes[:publisher] = DATACITE[:datacite_publisher]
     end
 
     # required field
