@@ -18,9 +18,9 @@ module DigitalObject::Datacite
       metadata = datacite_metadata.datacite_attributes
     end
     # setup DataCite REST API info: credentials, url, etc.
-    datacite_rest_api_session = Hyacinth::Datacite::ApiSession.new(EZID[:user], EZID[:password])
+    datacite_rest_api_session = Hyacinth::Datacite::ApiSession.new(DATACITE[:user], DATACITE[:password])
     # mint_identifier returns a Hyacinth::Datacite::Doi
-    datacite_doi_instance = datacite_rest_api_session.mint_identifier(EZID[:prefix],
+    datacite_doi_instance = datacite_rest_api_session.mint_identifier(DATACITE[:prefix],
                                                                       identifier_status,
                                                                       target_url,
                                                                       metadata)
@@ -55,7 +55,7 @@ module DigitalObject::Datacite
     # This hash will be JSON'ifed in ApiSession#call_api
     datacite_metadata = Hyacinth::Datacite::DataciteMetadataBuilder.new hyacinth_metadata
     # setup DataCite REST API info: credentials, url, etc.
-    datacite_rest_api_session = Hyacinth::Datacite::ApiSession.new(EZID[:user], EZID[:password])
+    datacite_rest_api_session = Hyacinth::Datacite::ApiSession.new(DATACITE[:user], DATACITE[:password])
     # ApiSession#modify_identifier returns true if the response from the DataCite server indicated
     # success, else it returns false
     # fcd1, 12/21/21: @doi is in the EZID format, which includes the 'doi:' substring in front of the
@@ -78,7 +78,7 @@ module DigitalObject::Datacite
     # This hash will be JSON'ifed in ApiSession#call_api
     datacite_metadata = Hyacinth::Datacite::DataciteMetadataBuilder.new hyacinth_metadata
     # setup DataCite REST API info: credentials, url, etc.
-    datacite_rest_api_session = Hyacinth::Datacite::ApiSession.new(EZID[:user], EZID[:password])
+    datacite_rest_api_session = Hyacinth::Datacite::ApiSession.new(DATACITE[:user], DATACITE[:password])
     # ApiSession#modify_identifier returns true if the response from the DataCite server indicated
     # success, else it returns false
     # fcd1, 12/21/21: @doi is in the EZID format, which includes the 'doi:' substring in front of the
@@ -106,7 +106,7 @@ module DigitalObject::Datacite
     return false if @doi.nil?
     return false if target_url.nil?
     # setup DataCite REST API info: credentials, url, etc.
-    datacite_rest_api_session = Hyacinth::Datacite::ApiSession.new(EZID[:user], EZID[:password])
+    datacite_rest_api_session = Hyacinth::Datacite::ApiSession.new(DATACITE[:user], DATACITE[:password])
     # ApiSession#modify_identifier returns true if the response from the DataCite server indicated
     # success, else it returns false
     # fcd1, 12/21/21: @doi is in the EZID format, which includes the 'doi:' substring in front of the

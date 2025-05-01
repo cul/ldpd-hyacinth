@@ -4,19 +4,19 @@ require 'rails_helper'
 describe Hyacinth::Datacite::HyacinthMetadata do
 
   let(:dod) {
-    data = JSON.parse( fixture('lib/hyacinth/ezid/ezid_item.json').read )
+    data = JSON.parse( fixture('lib/hyacinth/datacite/hyacinth_item.json').read )
     data['identifiers'] = ['item.' + SecureRandom.uuid] # random identifer to avoid collisions
     data
   }
 
   let(:dod_empty_dfd) {
-    data = JSON.parse( fixture('lib/hyacinth/ezid/ezid_item_empty_dynamic_field_data.json').read )
+    data = JSON.parse( fixture('lib/hyacinth/datacite/hyacinth_item_empty_dynamic_field_data.json').read )
     data['identifiers'] = ['item.' + SecureRandom.uuid] # random identifer to avoid collisions
     data
   }
   
   let(:dod_names_without_roles) {
-    data = JSON.parse( fixture('lib/hyacinth/ezid/ezid_item_names_without_roles.json').read )
+    data = JSON.parse( fixture('lib/hyacinth/datacite/hyacinth_item_names_without_roles.json').read )
     data['identifiers'] = ['item.' + SecureRandom.uuid] # random identifer to avoid collisions
     data
   }
@@ -132,6 +132,219 @@ describe Hyacinth::Datacite::HyacinthMetadata do
       expected_full_title = 'The Catcher in the Rye'
       actual_full_title = local_metadata_retrieval.title
       expect(actual_full_title).to eq(expected_full_title)
+    end
+  end
+
+  context "#related_item?:" do
+    it "returns true if related item present" do
+      local_metadata_retrieval = described_class.new dod
+      result = local_metadata_retrieval.related_item?
+      expect(result).to be true
+    end
+
+    it "returns false if no related item present" do
+      local_metadata_retrieval = described_class.new dod_names_without_roles
+      result = local_metadata_retrieval.related_item?
+      expect(result).to be false
+    end
+  end
+
+  context "#num_related_items:" do
+    it "returns 2 if 2 related item present" do
+      local_metadata_retrieval = described_class.new dod
+      result = local_metadata_retrieval.num_related_items
+      expect(result).to eq(2)
+    end
+
+    it "returns 0 if no related item present" do
+      local_metadata_retrieval = described_class.new dod_names_without_roles
+      result = local_metadata_retrieval.num_related_items
+      expect(result).to eq(0)
+    end
+  end
+
+  context "#related_item_title:" do
+    it "gets the title for the first related item" do
+      local_metadata_retrieval = described_class.new dod
+      expected_related_item_title = 'The Related Item Sample Title'
+      actual_related_item_title = local_metadata_retrieval.related_item_title(0)
+      expect(actual_related_item_title).to eq(expected_related_item_title)
+    end
+
+    it "gets the title for the second related item" do
+      local_metadata_retrieval = described_class.new dod
+      expected_related_item_title = 'Those Are the Terms'
+      actual_related_item_title = local_metadata_retrieval.related_item_title(1)
+      expect(actual_related_item_title).to eq(expected_related_item_title)
+    end
+  end
+
+  context "#related_item_type_of_resource:" do
+    it "gets the resource type for first related item (controlled vocabulary)" do
+      local_metadata_retrieval = described_class.new dod
+      actual_related_item_resource_type =
+        local_metadata_retrieval.related_item_type_of_resource(0)
+      expect(actual_related_item_resource_type).to have_attributes(
+                                                     uri: "http://id.library.columbia.edu/term/f44c5847",
+                                                     value: "Image",
+                                                     type: "local",
+                                                     authority: "datacite"
+                                                   )
+    end
+
+    it "gets the resource type for the second related item (controlled vocabulary)" do
+      local_metadata_retrieval = described_class.new dod
+      actual_related_item_resource_type =
+        local_metadata_retrieval.related_item_type_of_resource(1)
+      expect(actual_related_item_resource_type).to have_attributes(
+                                                     uri: "http://id.library.columbia.edu/term/201aa69a",
+                                                     value: "Model",
+                                                     type: "local",
+                                                     authority: "datacite"
+                                                   )
+    end
+  end
+
+  context "#related_item_relation_type:" do
+    it "gets the relation type for first related item (controlled vocabulary)" do
+      local_metadata_retrieval = described_class.new dod
+      actual_related_item_relation_type =
+        local_metadata_retrieval.related_item_relation_type(0)
+      expect(actual_related_item_relation_type).to have_attributes(
+                                                     uri: "temp:0cd2d4169ded",
+                                                     value: "IsCompiledBy",
+                                                     type: "temporary",
+                                                     authority: "datacite"
+                                                   )
+    end
+
+    it "gets the relation type for the second related item (controlled vocabulary)" do
+      local_metadata_retrieval = described_class.new dod
+      actual_related_item_relation_type =
+        local_metadata_retrieval.related_item_relation_type(1)
+      expect(actual_related_item_relation_type).to have_attributes(
+                                                     uri: "temp:a6621364715d73",
+                                                     value: "isVersionOf",
+                                                     type: "temporary",
+                                                     authority: "datacite"
+                                                   )
+    end
+  end
+
+  context "#related_item_identifier_doi:" do
+    it "gets the related item doi identifier for the related item" do
+      local_metadata_retrieval = described_class.new dod
+      actual_identifier_doi = local_metadata_retrieval.related_item_identifier_doi(0)
+        expect(actual_identifier_doi).to eq("10.33555/4363-BZ18")
+    end
+  end
+
+  context "#related_item_identifier_url" do
+    it "gets the related item url identifier for the related item" do
+      local_metadata_retrieval = described_class.new dod
+      actual_identifier_url = local_metadata_retrieval.related_item_identifier_url(0)
+        expect(actual_identifier_url).to eq("https://www.columbia.edu")
+    end
+  end
+
+  context "#related_item_identifier_first" do
+    it "gets the first related item identifier for the related item" do
+      local_metadata_retrieval = described_class.new dod
+      expected_first_identifier = ['isbn', '000-0-00-000000-0']
+      actual_identifier_first = local_metadata_retrieval.related_item_identifier_first(0)
+        expect(actual_identifier_first).to eq(expected_first_identifier)
+    end
+  end
+
+  context "#related_item_identifiers:" do
+    it "gets the related item identifiers for the first related item" do
+      local_metadata_retrieval = described_class.new dod
+      actual_identifiers =
+        local_metadata_retrieval.related_item_identifiers(0)
+      expect(actual_identifiers.first[0]).to eq("isbn")
+      expect(actual_identifiers.first[1]).to eq("000-0-00-000000-0")
+      expect(actual_identifiers.second[0]).to eq("issn")
+      expect(actual_identifiers.second[1]).to eq("0000-0000")
+      expect(actual_identifiers.third[0]).to eq("url")
+      expect(actual_identifiers.third[1]).to eq("https://www.columbia.edu")
+      expect(actual_identifiers.fourth[0]).to eq("doi")
+      expect(actual_identifiers.fourth[1]).to eq("10.33555/4363-BZ18")
+    end
+
+    it "gets the related item identifiers for the second related item" do
+      local_metadata_retrieval = described_class.new dod
+      actual_identifiers =
+        local_metadata_retrieval.related_item_identifiers(1)
+      expect(actual_identifiers.first[0]).to eq("url")
+      expect(actual_identifiers.first[1]).to eq("https://medhealthhum.com/those-are-the-terms/")
+    end
+  end
+
+  context "#license:" do
+    it "gets the license (controlled vocabulary)" do
+      local_metadata_retrieval = described_class.new dod
+      actual_license =
+        local_metadata_retrieval.license
+      expect(actual_license).to have_attributes(
+                                  uri: "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+                                  value: "CC BY-NC-SA 4.0",
+                                  type: "external",
+                                  authority: "creativecommons"
+                                )
+    end
+  end
+
+  context "#license_info:" do
+    it "gets the license info (controlled vocabulary) for 2 licenses" do
+      local_metadata_retrieval = described_class.new dod
+      actual_licenses =
+        local_metadata_retrieval.license_info
+      expect(actual_licenses.first).to have_attributes(
+                                         uri: "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+                                         value: "CC BY-NC-SA 4.0",
+                                         type: "external",
+                                         authority: "creativecommons"
+                                       )
+      expect(actual_licenses.second).to have_attributes(
+                                          uri: "https://creativecommons.org/publicdomain/zero/1.0/",
+                                          value: "CC0 1.0",
+                                          type: "external",
+                                          authority: "creativecommons"
+                                        )
+    end
+  end
+
+  context "#use_and_reproduction:" do
+    it "gets the use_and_reproduction (controlled vocabulary)" do
+      local_metadata_retrieval = described_class.new dod
+      actual_use_and_reprod =
+        local_metadata_retrieval.use_and_reproduction
+      expect(actual_use_and_reprod).to have_attributes(
+                                         uri: "http://rightsstatements.org/vocab/NoC-US/1.0/",
+                                         value: "No Copyright - United States",
+                                         type: "external",
+                                         authority: "rightsstatements"
+                                       )
+    end
+  end
+
+  context "#use_and_reproduction_info:" do
+    it "gets the use_and_reproduction info (controlled vocabulary)" do
+      local_metadata_retrieval = described_class.new dod
+      actual_use_and_reprod_info =
+        local_metadata_retrieval.use_and_reproduction_info
+      expect(actual_use_and_reprod_info.first).to have_attributes(
+                                                    uri: "http://rightsstatements.org/vocab/NoC-US/1.0/",
+                                                    value: "No Copyright - United States",
+                                                    type: "external",
+                                                    authority: "rightsstatements"
+                                                  )
+      expect(actual_use_and_reprod_info.second).to have_attributes(
+                                                     uri: "http://rightsstatements.org/vocab/NKC/1.0/",
+                                                     value: "No Known Copyright",
+                                                     type: "external",
+                                                     authority: "rightsstatements"
+                                                   )
     end
   end
 

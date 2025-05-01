@@ -1,0 +1,26 @@
+development:
+  url: https://api.test.datacite.org
+  user: apitest
+  password: apitest
+  prefix: '10.33555'
+  datacite_test_user: apitest
+  datacite_test_password: apitest
+  datacite_publisher: Columbia University
+  datacite:
+    genre_to_resource_type_mapping:
+      http://vocab.getty.edu/aat/300048715:
+        attribute_general: Text
+        content: Article
+test:
+  url: https://api.test.datacite.org
+  user: apitest
+  password: apitest
+  prefix: '10.33555'
+  datacite_test_user: apitest
+  datacite_test_password: apitest
+  datacite_publisher: Columbia University
+  datacite:
+    genre_to_resource_type_mapping:
+      http://vocab.getty.edu/aat/300048715:
+        attribute_general: Text
+        content: Article

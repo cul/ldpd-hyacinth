@@ -10,6 +10,8 @@ module Hyacinth::Datacite
     # @api public
     attr_reader :creators, :editors, :moderators, :contributors, :subjects_topic
 
+    ControlledVocabEntry = Struct.new(:uri, :value, :type, :authority)
+
     # parse metadata from Hyacinth Digital Objects Data
     # @param digital_object_data_arg [Hash]
     # @api public
@@ -41,6 +43,184 @@ module Hyacinth::Datacite
       non_sort_portion = @dfd['title'][0]['title_non_sort_portion'] if @dfd['title'][0].key? 'title_non_sort_portion'
       sort_portion = @dfd['title'][0]['title_sort_portion'] if @dfd['title'][0].key? 'title_sort_portion'
       "#{non_sort_portion} #{sort_portion}"
+    end
+
+    # existence of related item
+    # @api public
+    # @return [true, false]
+    def related_item?
+      @dfd.key? 'related_item'
+    end
+
+    # existence of related item
+    # @api public
+    # @return [integer]
+    def num_related_items
+      (@dfd.key? 'related_item') ? @dfd['related_item'].count : 0
+    end
+
+    # the related item title for an item (if related item present)
+    # @api public
+    # @return [String, nil]
+    # @note It is assumed that the related_item? method will be called first
+    def related_item_title(index)
+      return nil unless @dfd['related_item'][index].key? 'related_item_title'
+      @dfd['related_item'][index]['related_item_title']
+    end
+
+    # the related item type for an item (if related item present)
+    # @api public
+    # @return [Struct, nil]
+    # @note It is assumed that the related_item? method will be called first
+    def related_item_type_of_resource(index)
+      return nil unless @dfd['related_item'][index].key? 'related_item_type_of_resource'
+      related_item_res_type = ControlledVocabEntry.new
+      related_item_res_type.uri = @dfd['related_item'][index]['related_item_type_of_resource']['uri']
+      related_item_res_type.value = @dfd['related_item'][index]['related_item_type_of_resource']['value']
+      related_item_res_type.type = @dfd['related_item'][index]['related_item_type_of_resource']['type']
+      related_item_res_type.authority = @dfd['related_item'][index]['related_item_type_of_resource']['authority']
+      related_item_res_type
+    end
+
+    # the related item relation type for an item (if related item present)
+    # @api public
+    # @return [Struct, nil]
+    # @note It is assumed that the related_item? method will be called first
+    def related_item_relation_type(index)
+      # Note: string key for this field is misnamed. The field contains the
+      # relation type, and uses the relation_type vocabulary
+      return nil unless @dfd['related_item'][index].key? 'related_item_type'
+      relation_type = ControlledVocabEntry.new
+      relation_type.uri = @dfd['related_item'][index]['related_item_type']['uri']
+      relation_type.value = @dfd['related_item'][index]['related_item_type']['value']
+      relation_type.type = @dfd['related_item'][index]['related_item_type']['type']
+      relation_type.authority = @dfd['related_item'][index]['related_item_type']['authority']
+      relation_type
+    end
+
+    # the related item doi identifier for an item (if related item present)
+    # @api public
+    # @return [string, nil]
+    def related_item_identifier_doi(index)
+      return nil unless @dfd['related_item'][index].key? 'related_item_identifier'
+      ids = @dfd['related_item'][index]['related_item_identifier']
+      for id in ids
+        if id['related_item_identifier_type'] == 'doi'
+          return id['related_item_identifier_value']
+        end
+      end
+      nil
+    end
+
+    # the related item url identifier for an item (if related item present)
+    # @api public
+    # @return [string, nil]
+    def related_item_identifier_url(index)
+      return nil unless @dfd['related_item'][index].key? 'related_item_identifier'
+      ids = @dfd['related_item'][index]['related_item_identifier']
+      for id in ids
+        if id['related_item_identifier_type'] == 'url'
+          return id['related_item_identifier_value']
+        end
+      end
+      nil
+    end
+
+    # the related item url identifier for an item (if related item present)
+    # @api public
+    # @return [[string,string], nil]
+    def related_item_identifier_first(index)
+      return nil unless @dfd['related_item'][index].key? 'related_item_identifier'
+      id = @dfd['related_item'][index]['related_item_identifier'].first
+      [id['related_item_identifier_type'], id['related_item_identifier_value']]
+    end
+
+    # the related item identifier for an item (if related item present)
+    # @api public
+    # @return [(x,y), nil]
+    # @note It is assumed that the related_item? method will be called first
+    def related_item_identifiers(index)
+      return nil unless @dfd['related_item'][index].key? 'related_item_identifier'
+      identifiers = []
+      ids = @dfd['related_item'][index]['related_item_identifier']
+      for identifier in ids
+        identifier_type = identifier['related_item_identifier_type']
+        identifier_value = identifier['related_item_identifier_value']
+        identifiers.append [identifier_type, identifier_value]
+      end
+      identifiers
+    end
+
+    # the license for an item
+    # @api public
+    # @return [ControlledVocabEntry, empty array]
+    def license
+      return nil unless @dfd.key? 'license'
+      hy_license = @dfd['license'].first
+      license = ControlledVocabEntry.new
+      license.uri = hy_license['license_term']['uri']
+      license.value = hy_license['license_term']['value']
+      license.type = hy_license['license_term']['type']
+      license.authority = hy_license['license_term']['authority']
+      license
+    end
+
+    # the license for an item
+    # @api public
+    # @return [array of ControlledVocabEntry, empty array]
+    def license_info
+      license_info = []
+      if @dfd.key? 'license'
+        for a_license in @dfd['license']
+          license = ControlledVocabEntry.new
+          license.uri = a_license['license_term']['uri']
+          license.value = a_license['license_term']['value']
+          license.type = a_license['license_term']['type']
+          license.authority = a_license['license_term']['authority']
+          license_info.append license
+        end
+      end
+      license_info
+    end
+
+    # the use and reproduction for an item
+    # @api public
+    # @return [ControlledVocabEntry, empty array]
+    def use_and_reproduction
+      return nil unless @dfd.key? 'use_and_reproduction'
+      hy_use_repro = @dfd['use_and_reproduction'].first
+      use_and_reproduction = ControlledVocabEntry.new
+      use_and_reproduction.uri =
+        hy_use_repro['use_and_reproduction_term']['uri']
+      use_and_reproduction.value =
+        hy_use_repro['use_and_reproduction_term']['value']
+      use_and_reproduction.type =
+        hy_use_repro['use_and_reproduction_term']['type']
+      use_and_reproduction.authority =
+        hy_use_repro['use_and_reproduction_term']['authority']
+      use_and_reproduction
+    end
+
+    # the use and reproduction for an item
+    # @api public
+    # @return [array of ControlledVocabEntry, empty array]
+    def use_and_reproduction_info
+      use_and_reproduction_info = []
+      if @dfd.key? 'use_and_reproduction'
+        for a_use_reprod in @dfd['use_and_reproduction']
+          use_and_reproduction = ControlledVocabEntry.new
+          use_and_reproduction.uri =
+            a_use_reprod['use_and_reproduction_term']['uri']
+          use_and_reproduction.value =
+            a_use_reprod['use_and_reproduction_term']['value']
+          use_and_reproduction.type =
+            a_use_reprod['use_and_reproduction_term']['type']
+          use_and_reproduction.authority =
+            a_use_reprod['use_and_reproduction_term']['authority']
+          use_and_reproduction_info.append use_and_reproduction
+        end
+      end
+      use_and_reproduction_info
     end
 
     # the genre of an item
