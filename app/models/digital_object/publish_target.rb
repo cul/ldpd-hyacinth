@@ -132,6 +132,9 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     )
     if do_ezid_update && !digital_object.doi.blank?
       # We need to change the state of this ezid to :unavailable
+      # PSEUDO CODE
+      # begin - rescue around the following call, rescue Hyacinth::Exceptions::DataciteError
+      # Question: What to do if above exception is recued/caught?
       success = digital_object.change_doi_status_to_unavailable
       digital_object.errors.add(:ezid_response, "An error occurred while attempting to set this digital object's ezid status to 'unavailable'.") unless success
     end
@@ -147,6 +150,9 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     if do_ezid_update && response.code == 200 && response.headers[:location].present?
       # By this point, all records should have an ezid. Let's update the status of
       # that ezid to :public, and send the latest published_object_url in case it changed.
+      # PSEUDO CODE
+      # begin - rescue around the following call, rescue Hyacinth::Exceptions::DataciteError
+      # Question: What to do if above exception is recued/caught?
       unless digital_object.update_doi_metadata(response.headers[:location])
         @errors.add(:ezid_response, "An error occurred while attempting to updated the ezid doi for this object.")
       end

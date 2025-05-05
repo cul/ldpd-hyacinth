@@ -39,6 +39,10 @@ module Hyacinth::Datacite
       request = Net::HTTP::Post.new uri.request_uri
       begin
         response = call_api(uri, request, attributes_hash)
+        # PSEUDO CODE
+        # Throw exception here in case JSON response contains 'errors' at top level
+        # format: {'errors': [{'status': 'XXX', 'title': 'A message.'}]}
+        # raise Hyacinth::Exceptions::DataciteError
         @last_response_from_server = Hyacinth::Datacite::ServerResponse.new response
         Hyacinth::Utils::Logger.logger.error("#mint_identifier: Response from DataCite server failed:\n" \
                                              "doi_status: #{doi_status}\n" \
@@ -68,6 +72,10 @@ module Hyacinth::Datacite
       request = Net::HTTP::Put.new uri.request_uri
       begin
         response = call_api(uri, request, attributes_hash)
+        # PSEUDO CODE
+        # Throw exception here in case JSON response contains 'errors' at top level:
+        # format: {'errors': [{'status': 'XXX', 'title': 'A message.'}]}
+        # raise Hyacinth::Exceptions::DataciteError
         @last_response_from_server = Hyacinth::Datacite::ServerResponse.new response
         Hyacinth::Utils::Logger.logger.error("#modify_identifier: Response from DataCite server failed:\n" \
                                              "doi_status: #{doi_status}\n" \
