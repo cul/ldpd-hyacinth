@@ -131,9 +131,11 @@ class DigitalObject::PublishTarget < DigitalObject::Base
       Authorization: "Token token=#{publish_target_field('api_key')}"
     )
     if do_ezid_update && !digital_object.doi.blank?
-      # We need to change the state of this ezid to :unavailable
-      success = digital_object.change_doi_status_to_unavailable
-      digital_object.errors.add(:ezid_response, "An error occurred while attempting to set this digital object's ezid status to 'unavailable'.") unless success
+      begin
+        digital_object.change_doi_status_to_unavailable
+      rescue DataciteErrorResponse, DataciteConnectionError, HyacinthError::DoiMissing => e
+        @errors.add(:datacite, e.message)
+      end
     end
     response
   end
@@ -147,8 +149,10 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     if do_ezid_update && response.code == 200 && response.headers[:location].present?
       # By this point, all records should have an ezid. Let's update the status of
       # that ezid to :public, and send the latest published_object_url in case it changed.
-      unless digital_object.update_doi_metadata(response.headers[:location])
-        @errors.add(:ezid_response, "An error occurred while attempting to updated the ezid doi for this object.")
+      begin
+        digital_object.update_doi_metadata(response.headers[:location])
+      rescue DataciteErrorResponse, DataciteConnectionError, HyacinthError::DoiMissing => e
+        @errors.add(:datacite, e.message)
       end
     end
     response

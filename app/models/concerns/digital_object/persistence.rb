@@ -43,6 +43,8 @@ module DigitalObject::Persistence
     # TODO: rewrite with ActiveRecord::Callbacks
     # To be overridden by subclasses
     mint_and_store_doi(Hyacinth::Datacite::Doi::IDENTIFIER_STATUS[:draft]) if @mint_reserved_doi_before_save || @publish_after_save
+  rescue DataciteErrorResponse, DataciteConnectionError, HyacinthError::DoiExists => e
+    @errors.add(:datacite, e.message)
   end
 
   def persist_to_stores

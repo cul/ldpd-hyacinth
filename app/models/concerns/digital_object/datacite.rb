@@ -4,7 +4,7 @@ module DigitalObject::Datacite
   # or nil if minting did not go through
   def mint_and_store_doi(identifier_status, target_url = nil)
     ## Skip if item already has a DOI
-    return nil if @doi.present?
+    raise Hyacinth::Exceptions::DoiExists, "DOI already exists, minting aborted" if @doi.present?
 
     if identifier_status == Hyacinth::Datacite::Doi::IDENTIFIER_STATUS[:draft]
       # Reserved DOI are not required to have datacite metadata.
@@ -20,26 +20,11 @@ module DigitalObject::Datacite
     # setup DataCite REST API info: credentials, url, etc.
     datacite_rest_api_session = Hyacinth::Datacite::ApiSession.new(DATACITE[:user], DATACITE[:password])
     # mint_identifier returns a Hyacinth::Datacite::Doi
+    # calling code will handle any exception thrown by datacite_rest_api_session.mint_identifier
     datacite_doi_instance = datacite_rest_api_session.mint_identifier(DATACITE[:prefix],
                                                                       identifier_status,
                                                                       target_url,
                                                                       metadata)
-    # if above method returned nil, call to DataCite REST API was unsuccessful. Return nil to indicate failure
-    # if unsuccessful because of timeout, log failure and return nil
-    if datacite_rest_api_session.timed_out?
-      Hyacinth::Utils::Logger.logger.error("#mint_and_store_doi: DataCite REST API call to mint_identifier timed-out.")
-      return nil
-    end
-    # if got a response from DataCite REST API server indicating failure, log info and return nil
-    if datacite_doi_instance.nil?
-      response = datacite_rest_api_session.last_response_from_server
-      Hyacinth::Utils::Logger.logger.error("#mint_and_store_doi: DataCite REST API call to mint_identifier was unsuccessful.")
-      Hyacinth::Utils::Logger.logger.error("#mint_and_store_doi: Response from DataCite server follows:\n" \
-                                          "HTTP status code: #{response.http_status_code}\n" \
-                                          "HTTP server message: #{response.http_server_message}\n" \
-                                          "response body: #{response.body}") unless response.nil?
-      return nil
-    end
     @doi = datacite_doi_instance.identifier
   end
 
@@ -48,7 +33,7 @@ module DigitalObject::Datacite
   # returns true if status change was successful
   # if not, returns false
   def change_doi_status_to_unavailable
-    return false if @doi.nil?
+    raise Hyacinth::Exceptions::MissingDoi, "Cannot change status of doi because doi is not present on digital object." if @doi.nil?
     # get the metadata from hyacinth
     hyacinth_metadata = Hyacinth::Datacite::HyacinthMetadata.new as_json
     # Prepare the metadata into an acceptable hash format for DataCite REST API
@@ -61,6 +46,7 @@ module DigitalObject::Datacite
     # fcd1, 12/21/21: @doi is in the EZID format, which includes the 'doi:' substring in front of the
     # actual DOI. So need to clean that up
     doi = @doi.sub('doi:', '')
+    # calling code will handle any exception thrown by datacite_rest_api_session.modify_identifier
     datacite_rest_api_session.modify_identifier(doi,
                                                 Hyacinth::Datacite::Doi::IDENTIFIER_STATUS[:registered],
                                                 datacite_metadata.datacite_attributes)
@@ -71,7 +57,7 @@ module DigitalObject::Datacite
   # Uses the modify identifier API call, returns true if metadata update was successful
   # if not, returns false
   def update_doi_metadata(target_url = nil)
-    return false if @doi.nil?
+    raise Hyacinth::Exceptions::MissingDoi, "Cannot update metadata of doi because doi is not present on digital object." if @doi.nil?
     # get the metadata from hyacinth
     hyacinth_metadata = Hyacinth::Datacite::HyacinthMetadata.new as_json
     # Prepare the metadata into an acceptable hash format for DataCite REST API
@@ -84,6 +70,7 @@ module DigitalObject::Datacite
     # fcd1, 12/21/21: @doi is in the EZID format, which includes the 'doi:' substring in front of the
     # actual DOI. So need to clean that up
     doi = @doi.sub('doi:', '')
+    # calling code will handle any exception thrown by datacite_rest_api_session.modify_identifier
     if target_url.nil?
       datacite_rest_api_session.modify_identifier(doi,
                                                   Hyacinth::Datacite::Doi::IDENTIFIER_STATUS[:findable],
@@ -103,8 +90,7 @@ module DigitalObject::Datacite
   # Uses the modify identifier API call, returns true if metadata update was successful
   # if not, returns false
   def update_doi_target_url(target_url)
-    return false if @doi.nil?
-    return false if target_url.nil?
+    raise Hyacinth::Exceptions::MissingDoi, "Cannot update metadata of doi because doi is not present on digital object." if @doi.nil?
     # setup DataCite REST API info: credentials, url, etc.
     datacite_rest_api_session = Hyacinth::Datacite::ApiSession.new(DATACITE[:user], DATACITE[:password])
     # ApiSession#modify_identifier returns true if the response from the DataCite server indicated
@@ -112,6 +98,7 @@ module DigitalObject::Datacite
     # fcd1, 12/21/21: @doi is in the EZID format, which includes the 'doi:' substring in front of the
     # actual DOI. So need to clean that up
     doi = @doi.sub('doi:', '')
+    # calling code will handle any exception thrown by datacite_rest_api_session.modify_identifier
     datacite_rest_api_session.modify_identifier(doi,
                                                 Hyacinth::Datacite::Doi::IDENTIFIER_STATUS[:findable],
                                                 target_url)
