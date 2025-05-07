@@ -10,7 +10,7 @@ module DigitalObject::Persistence
 
     before_save
 
-    return false unless self.valid?
+    return false unless @errors.blank? && self.valid?
 
     creating_new_record = self.new_record? # save creation info because after persist_to_stores is called, new_record? will return false
 

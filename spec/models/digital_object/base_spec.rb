@@ -334,6 +334,25 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(DigitalObject::Base.find(item.pid).pid).to eq(item.pid)
     end
 
+    it 'calls before_save' do
+      item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+      expect(item).to receive(:before_save)
+      item.set_digital_object_data(sample_item_digital_object_data, false)
+      item.save
+    end
+
+    context 'when before_save sets an error' do
+      it 'preserves the error and does not call persist_to_stores' do
+        item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+        allow(item).to receive(:before_save) {
+          item.errors.add(:some_error, 'This is an error message!')
+        }
+        item.set_digital_object_data(sample_item_digital_object_data, false)
+        expect(item.save).to eq(false)
+        expect(item.errors).to include(:some_error)
+      end
+    end
+
     context "when saving item, updates solr index" do
       let(:item) do
         item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
