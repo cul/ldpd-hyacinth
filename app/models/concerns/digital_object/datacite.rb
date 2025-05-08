@@ -1,7 +1,6 @@
 module DigitalObject::Datacite
   extend ActiveSupport::Concern
   # returns the DataCite DOI identifier string (with includes 'doi:' substring in front of actual DOI),
-  # or nil if minting did not go through
   def mint_and_store_doi(identifier_status, target_url = nil)
     ## Skip if item already has a DOI
     raise Hyacinth::Exceptions::DoiExists, "DOI already exists, minting aborted" if @doi.present?
@@ -31,7 +30,6 @@ module DigitalObject::Datacite
   # Following method will make a request to the DataCite REST API
   # to change the DOI status to 'registered'
   # returns true if status change was successful
-  # if not, returns false
   def change_doi_status_to_unavailable
     raise Hyacinth::Exceptions::MissingDoi, "Cannot change status of doi because doi is not present on digital object." if @doi.nil?
     # get the metadata from hyacinth
@@ -55,7 +53,6 @@ module DigitalObject::Datacite
   # Following method will make a request to the DataCite REST API to update the metadata associated with
   # the DataCite DOI on the server. If supplied, the target URL will also be updated.
   # Uses the modify identifier API call, returns true if metadata update was successful
-  # if not, returns false
   def update_doi_metadata(target_url = nil)
     raise Hyacinth::Exceptions::MissingDoi, "Cannot update metadata of doi because doi is not present on digital object." if @doi.nil?
     # get the metadata from hyacinth
@@ -88,7 +85,6 @@ module DigitalObject::Datacite
   # with the DataCite DOI on the server.
   # Note that for DataCite DOIs that are in the findable state, a target URL is required.
   # Uses the modify identifier API call, returns true if metadata update was successful
-  # if not, returns false
   def update_doi_target_url(target_url)
     raise Hyacinth::Exceptions::MissingDoi, "Cannot update metadata of doi because doi is not present on digital object." if @doi.nil?
     # setup DataCite REST API info: credentials, url, etc.

@@ -133,7 +133,9 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     if do_ezid_update && !digital_object.doi.blank?
       begin
         digital_object.change_doi_status_to_unavailable
-      rescue DataciteErrorResponse, DataciteConnectionError, HyacinthError::DoiMissing => e
+      rescue Hyacinth::Exceptions::DataciteErrorResponse,
+             Hyacinth::Exceptions::DataciteConnectionError,
+             Hyacinth::Exceptions::MissingDoi => e
         @errors.add(:datacite, e.message)
       end
     end
@@ -151,7 +153,9 @@ class DigitalObject::PublishTarget < DigitalObject::Base
       # that ezid to :public, and send the latest published_object_url in case it changed.
       begin
         digital_object.update_doi_metadata(response.headers[:location])
-      rescue DataciteErrorResponse, DataciteConnectionError, HyacinthError::DoiMissing => e
+      rescue Hyacinth::Exceptions::DataciteErrorResponse,
+             Hyacinth::Exceptions::DataciteConnectionError,
+             Hyacinth::Exceptions::MissingDoi => e
         @errors.add(:datacite, e.message)
       end
     end
