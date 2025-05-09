@@ -138,7 +138,7 @@ namespace :hyacinth do
               result = (ENV['include_metadata'] != 'TRUE') ? obj.update_doi_target_url(target) : obj.update_doi_metadata(target)
             rescue Hyacinth::Exceptions::DataciteErrorResponse,
                    Hyacinth::Exceptions::DataciteConnectionError,
-                   Hyacinth::Exceptions::HyacinthError::MissingDoi => e
+                   Hyacinth::Exceptions::MissingDoi => e
               result = false
             end
             puts result ? "SUCCESS: #{pid} #{obj.doi} to <#{target}>" : "FAILURE: #{pid} #{obj.doi} to <#{target}>"
