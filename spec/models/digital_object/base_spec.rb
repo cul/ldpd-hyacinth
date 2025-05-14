@@ -359,7 +359,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
         allow(item).to receive(:mint_and_store_doi).and_raise Hyacinth::Exceptions::DataciteErrorResponse
         item.set_digital_object_data(sample_item_digital_object_data, false)
         expect(item.save).to eq(false)
-        expect(item.errors).to include(:some_error)
+        expect(item.errors).to include(:datacite)
       end
     end
 
@@ -369,7 +369,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
         allow(item).to receive(:mint_and_store_doi).and_raise Hyacinth::Exceptions::DataciteConnectionError
         item.set_digital_object_data(sample_item_digital_object_data, false)
         expect(item.save).to eq(false)
-        expect(item.errors).to include(:some_error)
+        expect(item.errors).to include(:datacite)
       end
     end
 
@@ -379,7 +379,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
         allow(item).to receive(:mint_and_store_doi).and_raise Hyacinth::Exceptions::DoiExists
         item.set_digital_object_data(sample_item_digital_object_data, false)
         expect(item.save).to eq(false)
-        expect(item.errors).to include(:some_error)
+        expect(item.errors).to include(:datacite)
       end
     end
 
