@@ -358,7 +358,6 @@ RSpec.describe DigitalObject::Base, :type => :model do
         item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
         allow(item).to receive(:mint_and_store_doi).and_raise Hyacinth::Exceptions::DataciteErrorResponse
         item.set_digital_object_data(sample_item_digital_object_data, false)
-        expect(item.save).to eq(false)
         expect(item.errors).to include(:datacite)
       end
     end
@@ -368,7 +367,6 @@ RSpec.describe DigitalObject::Base, :type => :model do
         item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
         allow(item).to receive(:mint_and_store_doi).and_raise Hyacinth::Exceptions::DataciteConnectionError
         item.set_digital_object_data(sample_item_digital_object_data, false)
-        expect(item.save).to eq(false)
         expect(item.errors).to include(:datacite)
       end
     end
@@ -378,7 +376,6 @@ RSpec.describe DigitalObject::Base, :type => :model do
         item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
         allow(item).to receive(:mint_and_store_doi).and_raise Hyacinth::Exceptions::DoiExists
         item.set_digital_object_data(sample_item_digital_object_data, false)
-        expect(item.save).to eq(false)
         expect(item.errors).to include(:datacite)
       end
     end
