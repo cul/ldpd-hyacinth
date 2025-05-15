@@ -354,7 +354,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
     end
 
     context 'when Hyacinth::Exceptions::DataciteErrorResponse thrown' do
-      it 'preserves the error and does not call persist_to_stores' do
+      it 'preserves the error' do
         item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
         allow(item).to receive(:mint_and_store_doi).and_raise Hyacinth::Exceptions::DataciteErrorResponse
         item.set_digital_object_data(sample_item_digital_object_data, false)
@@ -365,7 +365,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
     end
 
     context 'when Hyacinth::Exceptions::DataciteConnectionError thrown' do
-      it 'preserves the error and does not call persist_to_stores' do
+      it 'preserves the error' do
         item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
         allow(item).to receive(:mint_and_store_doi).and_raise Hyacinth::Exceptions::DataciteConnectionError
         item.set_digital_object_data(sample_item_digital_object_data, false)
@@ -376,7 +376,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
     end
 
     context 'when Hyacinth::Exceptions::DoiExists thrown' do
-      it 'preserves the error and does not call persist_to_stores' do
+      it 'preserves the error' do
         item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
         allow(item).to receive(:mint_and_store_doi).and_raise Hyacinth::Exceptions::DoiExists
         item.set_digital_object_data(sample_item_digital_object_data, false)
