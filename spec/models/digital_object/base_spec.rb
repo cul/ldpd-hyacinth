@@ -354,7 +354,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
         end
       end
 
-      it "calls mint_and_store_doi when @mint_reserved_doi_before_save is true", focus: true do
+      it "calls mint_and_store_doi when @mint_reserved_doi_before_save is true" do
         item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new
         item.set_digital_object_data(sample_item_digital_object_data, false)
         item.mint_reserved_doi_before_save = true
@@ -362,7 +362,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(item.save).to eq(true)
       end
 
-      it "calls mint_and_store_doi when @publish_after_save is true and the digital object does not have a doi", focus: true do
+      it "calls mint_and_store_doi when @publish_after_save is true and the digital object does not have a doi" do
         item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new
         item.set_digital_object_data(sample_item_digital_object_data, false)
         item.publish_after_save = true
@@ -370,7 +370,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(item.save).to eq(true)
       end
 
-      it "does not call mint_and_store_doi when @publish_after_save is true and the digital object has a doi", focus: true do
+      it "does not call mint_and_store_doi when @publish_after_save is true and the digital object has a doi" do
         item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new
         item.set_digital_object_data(sample_item_digital_object_data, false)
         item.publish_after_save = true
@@ -380,32 +380,14 @@ RSpec.describe DigitalObject::Base, :type => :model do
       end
     end
 
-    context 'when Hyacinth::Exceptions::DataciteErrorResponse thrown' do
-      it 'preserves the error' do
+    [
+      Hyacinth::Exceptions::DataciteErrorResponse,
+      Hyacinth::Exceptions::DataciteConnectionError,
+      Hyacinth::Exceptions::DoiExists
+    ].each do |error_class|
+      it "preserves the error when #{error_class.name} is thrown", focus: true do
         item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
-        allow(item).to receive(:mint_and_store_doi).and_raise Hyacinth::Exceptions::DataciteErrorResponse
-        item.set_digital_object_data(sample_item_digital_object_data, false)
-        item.mint_reserved_doi_before_save = true
-        item.save
-        expect(item.errors.messages).to include(:datacite)
-      end
-    end
-
-    context 'when Hyacinth::Exceptions::DataciteConnectionError thrown' do
-      it 'preserves the error' do
-        item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
-        allow(item).to receive(:mint_and_store_doi).and_raise Hyacinth::Exceptions::DataciteConnectionError
-        item.set_digital_object_data(sample_item_digital_object_data, false)
-        item.mint_reserved_doi_before_save = true
-        item.save
-        expect(item.errors.messages).to include(:datacite)
-      end
-    end
-
-    context 'when Hyacinth::Exceptions::DoiExists thrown' do
-      it 'preserves the error' do
-        item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
-        allow(item).to receive(:mint_and_store_doi).and_raise Hyacinth::Exceptions::DoiExists
+        allow(item).to receive(:mint_and_store_doi).and_raise(error_class)
         item.set_digital_object_data(sample_item_digital_object_data, false)
         item.mint_reserved_doi_before_save = true
         item.save
