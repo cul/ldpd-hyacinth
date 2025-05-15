@@ -131,13 +131,7 @@ class DigitalObject::PublishTarget < DigitalObject::Base
       Authorization: "Token token=#{publish_target_field('api_key')}"
     )
     if do_ezid_update && !digital_object.doi.blank?
-      begin
-        digital_object.change_doi_status_to_unavailable
-      rescue Hyacinth::Exceptions::DataciteErrorResponse,
-             Hyacinth::Exceptions::DataciteConnectionError,
-             Hyacinth::Exceptions::MissingDoi => e
-        @errors.add(:datacite, e.message)
-      end
+      digital_object.change_doi_status_to_unavailable
     end
     response
   end
@@ -151,13 +145,7 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     if do_ezid_update && response.code == 200 && response.headers[:location].present?
       # By this point, all records should have an ezid. Let's update the status of
       # that ezid to :public, and send the latest published_object_url in case it changed.
-      begin
-        digital_object.update_doi_metadata(response.headers[:location])
-      rescue Hyacinth::Exceptions::DataciteErrorResponse,
-             Hyacinth::Exceptions::DataciteConnectionError,
-             Hyacinth::Exceptions::MissingDoi => e
-        @errors.add(:datacite, e.message)
-      end
+      digital_object.update_doi_metadata(response.headers[:location])
     end
     response
   end

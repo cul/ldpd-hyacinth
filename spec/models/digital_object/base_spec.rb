@@ -623,4 +623,45 @@ RSpec.describe DigitalObject::Base, :type => :model do
       expect(item.perform_derivative_processing).to eq(true)
     end
   end
+
+  describe "#execute_publish_action_for_target" do
+    let(:sample_publish_target_digital_object_data) {
+      JSON.parse( fixture('sample_digital_object_data/new_publish_target.json').read )
+    }
+
+    let(:publish_target) do
+      publish_target = DigitalObjectType.get_model_for_string_key(
+        sample_publish_target_digital_object_data['digital_object_type']['string_key']
+      ).new
+      publish_target.set_digital_object_data(sample_publish_target_digital_object_data, false)
+      publish_target.save
+      publish_target
+    end
+
+    context "handling doi errors" do
+      [
+        Hyacinth::Exceptions::DataciteErrorResponse,
+        Hyacinth::Exceptions::DataciteConnectionError,
+        Hyacinth::Exceptions::MissingDoi
+      ].each do |error_class|
+        context "when a publish operation throws a #{error_class.name}" do
+          it 'rescues the exception and stores the message in the digital object errors' do
+            item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new
+            allow(publish_target).to receive(:publish_digital_object).and_raise(error_class)
+            item.execute_publish_action_for_target(:publish, publish_target, true)
+            expect(item.errors.messages).to include(:datacite)
+          end
+        end
+
+        context "when an unpublish operation throws a #{error_class.name}" do
+          it 'rescues the exception and stores the message in the digital object errors' do
+            item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new
+            allow(publish_target).to receive(:unpublish_digital_object).and_raise(error_class)
+            item.execute_publish_action_for_target(:unpublish, publish_target, true)
+            expect(item.errors.messages).to include(:datacite)
+          end
+        end
+      end
+    end
+  end
 end
