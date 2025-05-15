@@ -18,4 +18,9 @@ module Hyacinth::Exceptions
 
   class FileOverwriteError < HyacinthError; end
   class FileImportError < HyacinthError; end
+
+  class DataciteConnectionError < HyacinthError; end
+  class DataciteErrorResponse < HyacinthError; end
+  class DoiExists < HyacinthError; end
+  class MissingDoi < HyacinthError; end
 end

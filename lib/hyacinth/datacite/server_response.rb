@@ -16,6 +16,14 @@ module Hyacinth::Datacite
       @response_body_hash.key? 'errors'
     end
 
+    def error_status
+      @response_body_hash['errors'].first['status']
+    end
+
+    def error_title
+      @response_body_hash['errors'].first['title']
+    end
+
     def doi
       datacite_doi = @response_body_hash.dig('data', 'attributes', 'doi')
       # fcd1, 12/19/21: Need to add 'doi:' to returned value in order to match

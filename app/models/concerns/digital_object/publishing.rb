@@ -51,6 +51,10 @@ module DigitalObject::Publishing
         "#{response&.code || 'Undefined'} response received for Publish Target URL: #{publish_target.publish_target_field('publish_url')}\n"\
         "Error message: #{e.message}"
       )
+    rescue  Hyacinth::Exceptions::DataciteErrorResponse,
+            Hyacinth::Exceptions::DataciteConnectionError,
+            Hyacinth::Exceptions::MissingDoi => e
+      @errors.add(:datacite, e.message)
     end
     success
   end

@@ -134,7 +134,13 @@ namespace :hyacinth do
             puts "must have _pid and _doi_target; skipping : #{row.headers} #{row}"
           else
             obj = DigitalObject::Base.find(pid)
-            result = (ENV['include_metadata'] != 'TRUE') ? obj.update_doi_target_url(target) : obj.update_doi_metadata(target)
+            begin
+              result = (ENV['include_metadata'] != 'TRUE') ? obj.update_doi_target_url(target) : obj.update_doi_metadata(target)
+            rescue Hyacinth::Exceptions::DataciteErrorResponse,
+                   Hyacinth::Exceptions::DataciteConnectionError,
+                   Hyacinth::Exceptions::MissingDoi => e
+              result = false
+            end
             puts result ? "SUCCESS: #{pid} #{obj.doi} to <#{target}>" : "FAILURE: #{pid} #{obj.doi} to <#{target}>"
           end
         end

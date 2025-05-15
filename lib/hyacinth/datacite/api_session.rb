@@ -40,18 +40,22 @@ module Hyacinth::Datacite
       begin
         response = call_api(uri, request, attributes_hash)
         @last_response_from_server = Hyacinth::Datacite::ServerResponse.new response
-        Hyacinth::Utils::Logger.logger.error("#mint_identifier: Response from DataCite server failed:\n" \
-                                             "doi_status: #{doi_status}\n" \
-                                             "target_url: #{target_url}\n" \
-                                             "url suffix: #{uri}\n" \
-                                             "datacite attributes: #{attributes_hash.inspect}\n" \
-                                             "response body: #{response.body}") if @last_response_from_server.error?
+        if @last_response_from_server.error?
+          Hyacinth::Utils::Logger.logger.error("#mint_identifier: Response from DataCite server failed:\n" \
+                                               "doi_status: #{doi_status}\n" \
+                                               "target_url: #{target_url}\n" \
+                                               "url suffix: #{uri}\n" \
+                                               "datacite attributes: #{attributes_hash.inspect}\n" \
+                                               "response body: #{response.body}")
+          raise Hyacinth::Exceptions::DataciteErrorResponse, "Received error response from DataCite REST API, "\
+                                                      "status: #{last_response_from_server.error_status}, "\
+                                                      "title: #{last_response_from_server.error_title}"
+        end
         Hyacinth::Datacite::Doi.new(@last_response_from_server.doi,
                                     doi_status) unless @last_response_from_server.error?
-      rescue Net::ReadTimeout, SocketError
+      rescue Net::ReadTimeout
         Hyacinth::Utils::Logger.logger.error('#mint_identifier: DATACITE API call to mint identifier timed-out')
-        @timed_out = true
-        nil
+        raise Hyacinth::Exceptions::DataciteConnectionError, "Mint DOI attempt,No response from DataCite REST API"
       end
     end
 
@@ -69,18 +73,24 @@ module Hyacinth::Datacite
       begin
         response = call_api(uri, request, attributes_hash)
         @last_response_from_server = Hyacinth::Datacite::ServerResponse.new response
-        Hyacinth::Utils::Logger.logger.error("#modify_identifier: Response from DataCite server failed:\n" \
-                                             "doi_status: #{doi_status}\n" \
-                                             "target_url: #{target_url}\n" \
-                                             "url suffix: #{uri}\n" \
-                                             "datacite attributes: #{attributes_hash.inspect}\n" \
-                                             "response body: #{response.body}") if @last_response_from_server.error?
+        if @last_response_from_server.error?
+          Hyacinth::Utils::Logger.logger.error("#modify_identifier: Response from DataCite server failed:\n" \
+                                               "doi_status: #{doi_status}\n" \
+                                               "target_url: #{target_url}\n" \
+                                               "url suffix: #{uri}\n" \
+                                               "datacite attributes: #{attributes_hash.inspect}\n" \
+                                               "response body: #{response.body}")
+          raise Hyacinth::Exceptions::DataciteErrorResponse, "Received error response from DataCite REST API, "\
+                                                             "status: #{last_response_from_server.error_status}, "\
+                                                             "title: #{last_response_from_server.error_title}"
+        end
         Hyacinth::Datacite::Doi.new(@last_response_from_server.doi,
                                 doi_status) unless @last_response_from_server.error?
-      rescue Net::ReadTimeout, SocketError
+      rescue Net::ReadTimeout
         Hyacinth::Utils::Logger.logger.error('modify_identifier: DATACITE API call to modify identifier timed-out')
-        @timed_out = true
-        false
+        raise Hyacinth::Exceptions::DataciteConnectionError, "Update DOI, No response from DataCite REST API"
+        # @timed_out = true
+        # false
       end
     end
 

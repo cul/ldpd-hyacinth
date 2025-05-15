@@ -1,0 +1,20 @@
+{
+  "identifiers": ["publish_target.001"],
+  "digital_object_type": {
+    "string_key": "publish_target"
+  },
+  "project": {
+    "string_key": "test"
+  },
+  "dynamic_field_data": {
+    "title": [
+      {
+        "title_sort_portion": "Publish Target",
+        "title_non_sort_portion": "The"
+      }
+    ]
+  },
+  "publish_target_data": {
+    "publish_url": "https://www.example.com"
+  }
+}

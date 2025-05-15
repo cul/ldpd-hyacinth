@@ -36,19 +36,50 @@ describe DigitalObject::Datacite do
   end
 
   context "#mint_and_store_doi:" do
-    it "mint_and_store_doi -- unsuccessful" do
-      # stub out method wrapping API call to DataCite server, stub return Doi instance
-      allow_any_instance_of(Hyacinth::Datacite::ApiSession).to receive(:mint_identifier) do
-        nil
-      end
+    it "raise exception if @doi already exists" do
       DATACITE[:user] = DATACITE[:datacite_test_user]
       DATACITE[:password] = DATACITE[:datacite_test_password]
       DATACITE[:prefix] = DATACITE[:test_prefix]
-      expect(Hyacinth::Utils::Logger.logger).to receive(:error).with("#mint_and_store_doi: DataCite REST API call to mint_identifier was unsuccessful.")
-      actual_datacite_doi = digital_object.mint_and_store_doi(Hyacinth::Datacite::Doi::IDENTIFIER_STATUS[:draft],
-                                                              'http://www.columbia.edu')
-      expect(actual_datacite_doi).to eq(nil)
-      end
+      digital_object.instance_variable_set(:@doi,
+                                           '10.33555/5x55-t644')
+      expect do
+        digital_object.mint_and_store_doi(Hyacinth::Datacite::Doi::IDENTIFIER_STATUS[:draft],
+                                          'http://www.columbia.edu')
+      end.to raise_error(/DOI already exists, minting aborted/)
+    end
+  end
+
+  context "change_doi_status_to_unavailable:" do
+    it "raise exception if @doi does not exists" do
+      DATACITE[:user] = DATACITE[:datacite_test_user]
+      DATACITE[:password] = DATACITE[:datacite_test_password]
+      DATACITE[:prefix] = DATACITE[:test_prefix]
+      expect do
+        digital_object.change_doi_status_to_unavailable
+      end.to raise_error(/doi is not present on digital object/)
+    end
+  end
+
+  context "update_doi_metadata:" do
+    it "raise exception if @doi does not exists" do
+      DATACITE[:user] = DATACITE[:datacite_test_user]
+      DATACITE[:password] = DATACITE[:datacite_test_password]
+      DATACITE[:prefix] = DATACITE[:test_prefix]
+      expect do
+        digital_object.update_doi_metadata
+      end.to raise_error(/doi is not present on digital object/)
+    end
+  end
+
+  context "update_doi_target_url:" do
+    it "raise exception if @doi does not exists" do
+      DATACITE[:user] = DATACITE[:datacite_test_user]
+      DATACITE[:password] = DATACITE[:datacite_test_password]
+      DATACITE[:prefix] = DATACITE[:test_prefix]
+      expect do
+        digital_object.update_doi_target_url 'http://www.columbia.edu'
+      end.to raise_error(/doi is not present on digital object/)
+    end
   end
 
   context "#change_doi_status_to_unavailable:" do

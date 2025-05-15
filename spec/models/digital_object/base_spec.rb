@@ -341,15 +341,57 @@ RSpec.describe DigitalObject::Base, :type => :model do
       item.save
     end
 
-    context 'when before_save sets an error' do
-      it 'preserves the error and does not call persist_to_stores' do
-        item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
-        allow(item).to receive(:before_save) {
-          item.errors.add(:some_error, 'This is an error message!')
-        }
+    describe "#before_save" do
+      context 'when before_save sets an error' do
+        it 'preserves the error and does not call persist_to_stores' do
+          item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+          allow(item).to receive(:before_save) {
+            item.errors.add(:some_error, 'This is an error message!')
+          }
+          item.set_digital_object_data(sample_item_digital_object_data, false)
+          expect(item.save).to eq(false)
+          expect(item.errors).to include(:some_error)
+        end
+      end
+
+      it "calls mint_and_store_doi when @mint_reserved_doi_before_save is true" do
+        item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new
         item.set_digital_object_data(sample_item_digital_object_data, false)
-        expect(item.save).to eq(false)
-        expect(item.errors).to include(:some_error)
+        item.mint_reserved_doi_before_save = true
+        expect(item).to receive(:mint_and_store_doi)
+        expect(item.save).to eq(true)
+      end
+
+      it "calls mint_and_store_doi when @publish_after_save is true and the digital object does not have a doi" do
+        item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new
+        item.set_digital_object_data(sample_item_digital_object_data, false)
+        item.publish_after_save = true
+        expect(item).to receive(:mint_and_store_doi)
+        expect(item.save).to eq(true)
+      end
+
+      it "does not call mint_and_store_doi when @publish_after_save is true and the digital object has a doi" do
+        item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new
+        item.set_digital_object_data(sample_item_digital_object_data, false)
+        item.publish_after_save = true
+        item.doi = 'doi:10.33555/abcd-1234'
+        expect(item).not_to receive(:mint_and_store_doi)
+        expect(item.save).to eq(true)
+      end
+    end
+
+    [
+      Hyacinth::Exceptions::DataciteErrorResponse,
+      Hyacinth::Exceptions::DataciteConnectionError,
+      Hyacinth::Exceptions::DoiExists
+    ].each do |error_class|
+      it "preserves the error when #{error_class.name} is thrown" do
+        item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+        allow(item).to receive(:mint_and_store_doi).and_raise(error_class)
+        item.set_digital_object_data(sample_item_digital_object_data, false)
+        item.mint_reserved_doi_before_save = true
+        item.save
+        expect(item.errors.messages).to include(:datacite)
       end
     end
 
@@ -588,6 +630,47 @@ RSpec.describe DigitalObject::Base, :type => :model do
       item = DigitalObject::Item.new
       item.perform_derivative_processing = true
       expect(item.perform_derivative_processing).to eq(true)
+    end
+  end
+
+  describe "#execute_publish_action_for_target" do
+    let(:sample_publish_target_digital_object_data) {
+      JSON.parse( fixture('sample_digital_object_data/new_publish_target.json').read )
+    }
+
+    let(:publish_target) do
+      publish_target = DigitalObjectType.get_model_for_string_key(
+        sample_publish_target_digital_object_data['digital_object_type']['string_key']
+      ).new
+      publish_target.set_digital_object_data(sample_publish_target_digital_object_data, false)
+      publish_target.save
+      publish_target
+    end
+
+    context "handling doi errors" do
+      [
+        Hyacinth::Exceptions::DataciteErrorResponse,
+        Hyacinth::Exceptions::DataciteConnectionError,
+        Hyacinth::Exceptions::MissingDoi
+      ].each do |error_class|
+        context "when a publish operation throws a #{error_class.name}" do
+          it 'rescues the exception and stores the message in the digital object errors' do
+            item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new
+            allow(publish_target).to receive(:publish_digital_object).and_raise(error_class)
+            item.execute_publish_action_for_target(:publish, publish_target, true)
+            expect(item.errors.messages).to include(:datacite)
+          end
+        end
+
+        context "when an unpublish operation throws a #{error_class.name}" do
+          it 'rescues the exception and stores the message in the digital object errors' do
+            item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new
+            allow(publish_target).to receive(:unpublish_digital_object).and_raise(error_class)
+            item.execute_publish_action_for_target(:unpublish, publish_target, true)
+            expect(item.errors.messages).to include(:datacite)
+          end
+        end
+      end
     end
   end
 end

@@ -19,11 +19,9 @@ module DigitalObject::Persistence
     # If we saved this object successfully in DB and Fedora, perform additional logic below, including:
     # - Updating the struct data of the parent objects (adding new children and removing old children)
     # - Updating the solr index
-    if @errors.present?
-      return false
-    else
-      persist_parent_changes
-    end
+    return false if @errors.present?
+
+    persist_parent_changes
 
     return false if @errors.present?
 
@@ -42,7 +40,11 @@ module DigitalObject::Persistence
   def before_save
     # TODO: rewrite with ActiveRecord::Callbacks
     # To be overridden by subclasses
-    mint_and_store_doi(Hyacinth::Datacite::Doi::IDENTIFIER_STATUS[:draft]) if @mint_reserved_doi_before_save || @publish_after_save
+    if @mint_reserved_doi_before_save || (@publish_after_save && self.doi.blank?)
+      mint_and_store_doi(Hyacinth::Datacite::Doi::IDENTIFIER_STATUS[:draft])
+    end
+  rescue Hyacinth::Exceptions::DataciteErrorResponse, Hyacinth::Exceptions::DataciteConnectionError, Hyacinth::Exceptions::DoiExists => e
+    @errors.add(:datacite, e.message)
   end
 
   def persist_to_stores
