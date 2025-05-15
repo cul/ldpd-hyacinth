@@ -341,15 +341,42 @@ RSpec.describe DigitalObject::Base, :type => :model do
       item.save
     end
 
-    context 'when before_save sets an error' do
-      it 'preserves the error and does not call persist_to_stores' do
-        item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
-        allow(item).to receive(:before_save) {
-          item.errors.add(:some_error, 'This is an error message!')
-        }
+    describe "#before_save" do
+      context 'when before_save sets an error' do
+        it 'preserves the error and does not call persist_to_stores' do
+          item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+          allow(item).to receive(:before_save) {
+            item.errors.add(:some_error, 'This is an error message!')
+          }
+          item.set_digital_object_data(sample_item_digital_object_data, false)
+          expect(item.save).to eq(false)
+          expect(item.errors).to include(:some_error)
+        end
+      end
+
+      it "calls mint_and_store_doi when @mint_reserved_doi_before_save is true", focus: true do
+        item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new
         item.set_digital_object_data(sample_item_digital_object_data, false)
-        expect(item.save).to eq(false)
-        expect(item.errors).to include(:some_error)
+        item.mint_reserved_doi_before_save = true
+        expect(item).to receive(:mint_and_store_doi)
+        expect(item.save).to eq(true)
+      end
+
+      it "calls mint_and_store_doi when @publish_after_save is true and the digital object does not have a doi", focus: true do
+        item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new
+        item.set_digital_object_data(sample_item_digital_object_data, false)
+        item.publish_after_save = true
+        expect(item).to receive(:mint_and_store_doi)
+        expect(item.save).to eq(true)
+      end
+
+      it "does not call mint_and_store_doi when @publish_after_save is true and the digital object has a doi", focus: true do
+        item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new
+        item.set_digital_object_data(sample_item_digital_object_data, false)
+        item.publish_after_save = true
+        item.doi = 'doi:10.33555/abcd-1234'
+        expect(item).not_to receive(:mint_and_store_doi)
+        expect(item.save).to eq(true)
       end
     end
 
