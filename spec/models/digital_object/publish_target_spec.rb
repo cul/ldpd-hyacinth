@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe DigitalObject::PublishTarget, :type => :model, focus: true do
+RSpec.describe DigitalObject::PublishTarget, :type => :model do
   let(:sample_publish_target_digital_object_data) {
     JSON.parse( fixture('sample_digital_object_data/new_publish_target.json').read )
   }

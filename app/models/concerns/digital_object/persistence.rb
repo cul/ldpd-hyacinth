@@ -19,11 +19,9 @@ module DigitalObject::Persistence
     # If we saved this object successfully in DB and Fedora, perform additional logic below, including:
     # - Updating the struct data of the parent objects (adding new children and removing old children)
     # - Updating the solr index
-    if @errors.present?
-      return false
-    else
-      persist_parent_changes
-    end
+    return false if @errors.present?
+
+    persist_parent_changes
 
     return false if @errors.present?
 
