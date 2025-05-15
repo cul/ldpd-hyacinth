@@ -56,8 +56,6 @@ module Hyacinth::Datacite
       rescue Net::ReadTimeout
         Hyacinth::Utils::Logger.logger.error('#mint_identifier: DATACITE API call to mint identifier timed-out')
         raise Hyacinth::Exceptions::DataciteConnectionError, "Mint DOI attempt,No response from DataCite REST API"
-        # @timed_out = true
-        # nil
       end
     end
 
