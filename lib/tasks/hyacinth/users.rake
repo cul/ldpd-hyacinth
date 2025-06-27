@@ -23,7 +23,7 @@ namespace :hyacinth do
       user_id = ENV['id']&.to_i
       unless user_id
         puts "call this task with id=INTEGERID"
-        break
+        abort
       end
       user = User.find(user_id)
       puts "Enter new password:"
