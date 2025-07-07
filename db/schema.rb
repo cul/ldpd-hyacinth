@@ -89,6 +89,7 @@ ActiveRecord::Schema[7.0].define(version: 2025_11_08_210214) do
     t.datetime "first_published_at", precision: nil
     t.string "uuid"
     t.boolean "perform_derivative_processing", default: false, null: false
+    t.string "digital_object_data_location_uri", limit: 1000
     t.index ["perform_derivative_processing"], name: "index_digital_object_records_on_perform_derivative_processing"
     t.index ["pid"], name: "index_digital_object_records_on_pid", unique: true
     t.index ["uuid"], name: "index_digital_object_records_on_uuid", unique: true

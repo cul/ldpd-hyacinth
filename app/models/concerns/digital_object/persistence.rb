@@ -48,26 +48,27 @@ module DigitalObject::Persistence
   end
 
   def persist_to_stores
-    @fedora_object ||= create_fedora_object if self.new_record? # do this outside of transaction because it also requires its own transaction
+    if self.new_record?
+      # Right now, a corresponding Fedora Object is required the first time any Hyacinth object is saved.
+      # One day, when Hyacinth is more decoupled from Fedora, this won't be necessary.
+      @fedora_object ||= create_fedora_object
+      @db_record.pid = @fedora_object.pid
+    end
 
     DigitalObjectRecord.transaction do
-      if self.new_record?
-        @db_record.pid = @fedora_object.pid
-      else
-        # Within the established transaction, lock on this object's row.
-        # For existing records, we always lock on @db_record during Fedora reads/writes (and wrap in a transaction)
-        # Remember: "lock!" also reloads object data from the db, so perform all @db_record modifications AFTER this call.
-        @db_record.lock!
-      end
+      # For existing records, we always lock on @db_record during Fedora reads/writes (and wrap in a transaction).
+      # This prevents two different users from trying to edit the same Hyacinth record at the same time.
+      # Remember: "lock!" also reloads object data from the db, so make sure to save the @db_record before this
+      # if you modify it in any way.
+      # We do NOT lock for new records, since there's no risk of simultaneous edit.  New records are also slow
+      # to save for the first time becuase they sometimes involve a large file upload, and the db lock might time out
+      # so it's good that we don't need to lock in that scenario.
+      @db_record.lock! unless self.new_record?
 
-      if @db_record.uuid.blank?
-        @db_record.uuid = SecureRandom.uuid
-      end
-
-      add_pid_and_uuid_identifiers
+      assign_pid_and_uuid_to_identifiers
 
       begin
-        run_post_validation_pre_save_logic
+        run_post_validation_pre_save_logic # Reminder: This method processes file imports
       rescue Hyacinth::Exceptions::ZeroByteFileError => e
         @errors.add(:import_file, e.message)
         raise ActiveRecord::Rollback # Force rollback (Note: This error won't be passed upward by the transaction.)
@@ -77,8 +78,14 @@ module DigitalObject::Persistence
 
       @db_record.save! # Save timestamps + updates to modifed_by, etc.
 
+      # Write to digital_object_data file
+      digital_object_data_file_path = Hyacinth::Utils::UriUtils.location_uri_to_file_path(@db_record.digital_object_data_location_uri)
+      FileUtils.mkdir_p(File.dirname(digital_object_data_file_path))
+      puts "Writing to: #{digital_object_data_file_path}"
+      IO.write(digital_object_data_file_path, self.to_json)
+
       begin
-        # Retry after Fedora timeouts / unreachable host
+        # This block is retriable just in case Fedora times out or is briefly unreachable
         Retriable.retriable DigitalObject::Base::RETRY_OPTIONS do
           @fedora_object.save(update_index: false)
         end
@@ -89,14 +96,10 @@ module DigitalObject::Persistence
         Rails.logger.error("Received error from Fedora while attempting to save #{@fedora_object.pid}: #{e.message}")
         raise ActiveRecord::Rollback # Force rollback (Note: This error won't be passed upward by the transaction.)
       end
-
-      # Write to data file
-      FileUtils.mkdir_p(File.dirname(@db_record.data_file_path))
-      IO.write(@db_record.data_file_path, self.as_hyacinth_3_json.to_json)
     end
   end
 
-  def add_pid_and_uuid_identifiers
+  def assign_pid_and_uuid_to_identifiers
     # Add pid to identifiers if not present
     @identifiers << @db_record.pid unless @identifiers.include?(@db_record.pid)
 

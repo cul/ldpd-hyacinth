@@ -27,6 +27,12 @@ class DigitalObject::Asset < DigitalObject::Base
   SIZE_RESTRICTION_LITERAL_VALUE = 'size restriction'
   ONSITE_RESTRICTION_LITERAL_VALUE = 'onsite restriction'
 
+  MAIN_RESOURCE_NAME = 'main'
+  SERVICE_RESOURCE_NAME = 'service'
+  ACCESS_RESOURCE_NAME = 'access'
+  POSTER_RESOURCE_NAME = 'poster'
+  VALID_RESOURCE_TYPES = [MAIN_RESOURCE_NAME, SERVICE_RESOURCE_NAME, ACCESS_RESOURCE_NAME, POSTER_RESOURCE_NAME]
+
   attr_accessor :restricted_size_image, :restricted_onsite
 
   def initialize
@@ -60,11 +66,7 @@ class DigitalObject::Asset < DigitalObject::Base
 
   def run_post_validation_pre_save_logic
     super
-    # For new DigitalObjects, we want to import a file as part of our save operation (assuming that this new object doesn't already have an associated Fedora object with a 'content' datastream)
-    do_file_import if self.new_record? && @fedora_object.present? && @fedora_object.datastreams['content'].blank?
-    do_access_copy_import if @access_copy_import_path.present?
-    do_poster_import if @poster_import_path.present?
-    do_service_copy_import if @service_copy_import_path.present? && self.service_copy_location.blank?
+    handle_file_imports
 
     # Attempt to correct dc_type for 'Unknown' dc_type DigitalObjects, based on original filename
     self.dc_type = BestType.dc_type.for_file_name(original_filename) if self.dc_type == 'Unknown'
@@ -96,14 +98,6 @@ class DigitalObject::Asset < DigitalObject::Base
     RequestDerivativesJob.perform_later(self.pid) if self.perform_derivative_processing
     # Always update the image service on save, regardless of whether derivatives are ready
     UpdateImageServiceJob.perform_later(self.pid)
-  end
-
-  def convert_upload_import_to_internal!
-    return unless @import_file_import_type == IMPORT_TYPE_UPLOAD_DIRECTORY
-    # If this is an upload directory import, we'll adjust the import file path
-    # and pretend that it's actually an internal file import
-    @import_file_import_path = File.join(HYACINTH[:upload_directory], @import_file_import_path)
-    @import_file_import_type = IMPORT_TYPE_INTERNAL
   end
 
   # If the given uri is a file URI, returns an unescaped path string.  Otherwise returns the provided uri value, unchanged.
