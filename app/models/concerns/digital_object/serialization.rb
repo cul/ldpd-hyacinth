@@ -9,7 +9,7 @@ module DigitalObject::Serialization
   def as_json(options = {})
     json = {
       pid: pid,
-      data_file_path: @db_record.data_file_path,
+      digital_object_data_location_uri: @db_record.digital_object_data_location_uri,
       uuid: @db_record.uuid,
       created: format_date(@db_record.created_at),
       modified: format_date(@db_record.updated_at),

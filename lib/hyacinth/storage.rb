@@ -18,25 +18,33 @@ module Hyacinth::Storage
     end
   end
 
-  def self.generate_location_uri_for(pid, project, local_file_path)
+  # Generates a path based on the given parameters.
+  # @param uuid [String] A DigitalObject uuid.
+  # @param project [Project] A project.
+  # @param original_filename [String] The extension from this file is used as the extension in the generated path.
+  # @resource_type [String] A resource type like 'main' or 'service'
+  def self.generate_location_uri_for(uuid, project, file_extension, resource_type)
+    raise "Unsupported resource_type: #{resource_type}" unless DigitalObject::Asset::VALID_RESOURCE_TYPES.include?(resource_type)
+
     scheme = project.default_storage_type
+    path_pieces = []
 
     case scheme
     when FILE_SCHEME
-      "#{scheme}://" +
-      File.join(
-        HYACINTH[:default_asset_home],
-        Hyacinth::Utils::PathUtils.relative_path_to_asset_file(pid, project, File.basename(local_file_path))
-      )
+      path_pieces << HYACINTH[:default_resource_storage_locations][resource_type.to_sym][:file][:base]
     when S3_SCHEME
-      "#{scheme}://" +
-      File.join(
-        HYACINTH[:default_asset_home_bucket_name],
-        HYACINTH[:default_asset_home_bucket_path_prefix],
-        Hyacinth::Utils::PathUtils.relative_path_to_asset_file(pid, project, File.basename(local_file_path))
-      )
+      path_pieces << HYACINTH[:default_resource_storage_locations][resource_type.to_sym][:cloud][:base]
     else
       raise ArgumentError, "Unsupported scheme: #{scheme}"
     end
+
+    path_pieces << Hyacinth::Utils::PathUtils.relative_resource_file_path_for_uuid(
+      uuid,
+      project,
+      "-#{resource_type}",
+      file_extension
+    )
+
+    File.join(*path_pieces)
   end
 end

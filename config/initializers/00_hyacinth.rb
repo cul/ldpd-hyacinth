@@ -12,16 +12,18 @@ raise 'Error: Please set a value for publish_target_api_key_encryption_key in yo
 # For EXTREME debugging with full stack traces.  Woo!
 # Rails.backtrace_cleaner.remove_silencers! if Rails.env.development?
 
+# TODO: Update config validations below to account for new config options
+
+# default_asset_home
+# default_asset_home_bucket_name
+# default_asset_home_bucket_path_prefix
+# default_service_copy_home
+# access_copy_directory
 %i(
   digital_object_data_directory
   upload_directory
-  default_asset_home
-  default_asset_home_bucket_name
-  default_asset_home_bucket_path_prefix
-  default_service_copy_home
   csv_export_directory
   processed_csv_import_directory
-  access_copy_directory
 ).each do |required_config_key|
   if HYACINTH[required_config_key].present?
     FileUtils.mkdir_p(HYACINTH[required_config_key.to_sym])

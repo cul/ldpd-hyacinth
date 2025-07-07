@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_08_05_103817) do
+ActiveRecord::Schema.define(version: 2025_04_06_150728) do
 
   create_table "archived_assignments", force: :cascade do |t|
     t.integer "original_assignment_id", null: false
@@ -90,6 +90,7 @@ ActiveRecord::Schema.define(version: 2024_08_05_103817) do
     t.datetime "first_published_at"
     t.string "uuid"
     t.boolean "perform_derivative_processing", default: false, null: false
+    t.string "digital_object_data_location_uri", limit: 1000
     t.index ["perform_derivative_processing"], name: "index_digital_object_records_on_perform_derivative_processing"
     t.index ["pid"], name: "index_digital_object_records_on_pid", unique: true
     t.index ["uuid"], name: "index_digital_object_records_on_uuid", unique: true
