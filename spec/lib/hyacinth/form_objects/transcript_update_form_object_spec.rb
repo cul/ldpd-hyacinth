@@ -1,37 +1,31 @@
 require 'rails_helper'
 
 describe Hyacinth::FormObjects::TranscriptUpdateFormObject do
-  context "UTF data" do
-    context "in utf8 with BOM" do
-      include_context 'utf bom example source'
-      let(:prefix) { Hyacinth::FormObjects::TranscriptUpdateFormObject::BOM_UTF_8 }
-      # <BOM>Q: This is Myrön
-      let(:input_source) { prefix + utf8_source }
-      include_examples "strips BOM and returns UTF8"
-    end
-    context "in utf8 without BOM" do
-      include_context 'utf bom example source'
-      let(:input_source) { utf8_source }
-      include_examples "strips BOM and returns UTF8"
-    end
-    context "in utf16-BE with BOM" do
-      include_context 'utf bom example source'
-      let(:prefix) { Hyacinth::FormObjects::TranscriptUpdateFormObject::BOM_UTF_16BE }
-      let(:input_source) { prefix + utf8_target.encode(Encoding::UTF_16BE).b }
-      include_examples "strips BOM and returns UTF8"
-    end
-    context "in ISO-8859-1" do
-      include_context 'utf bom example source'
-      let(:input_source) { utf8_target.encode(Encoding::ISO_8859_1).b }
-      include_examples "strips BOM and returns UTF8"
+  let(:utf8_content) { 'Good slice of 🍕!' }
+
+  describe "#transcript_content" do
+    subject { described_class.new }
+    before { subject.transcript_text = utf8_content }
+    it "returns the previously set utf-8 value" do
+      expect(subject.transcript_content).to eql(utf8_content)
     end
   end
-  describe "#transcript_content" do
-    include_context 'utf bom example source'
-    subject { described_class.new }
-    before { subject.transcript_text = utf8_source }
-    it "strips BOM and returns UTF8" do
-      expect(subject.transcript_content).to eql(utf8_target)
+
+  describe "validation" do
+    context 'encoding' do
+      context "for valid utf-8 content" do
+        before { subject.transcript_text = utf8_content }
+        it "passes validation" do
+          expect(subject.valid?).to be true
+        end
+      end
+      context "for invalid utf-8 content" do
+        before { subject.transcript_text = "This is áéíóú latin1 encoding!".encode('ISO-8859-1') }
+        it "does not passes validation and produces the expected error message" do
+          expect(subject.valid?).to be(false)
+        expect(subject.errors.messages[:base]).to include('Transcript must be valid UTF-8')
+        end
+      end
     end
   end
 end

@@ -53,31 +53,6 @@ RSpec.describe DigitalObject::Asset, :type => :model do
     end
   end
 
-  context "uploads of file data" do
-    context "in utf8 with BOM" do
-      include_context 'utf bom example source'
-      let(:prefix) { DigitalObject::Asset::BOM_UTF_8 }
-      # <BOM>Q: This is Myrön
-      let(:input_source) { prefix + utf8_source }
-      include_examples "strips BOM and returns UTF8"
-    end
-    context "in utf8 without BOM" do
-      include_context 'utf bom example source'
-      let(:input_source) { utf8_source }
-      include_examples "strips BOM and returns UTF8"
-    end
-    context "in utf16-BE with BOM" do
-      include_context 'utf bom example source'
-      let(:prefix) { DigitalObject::Asset::BOM_UTF_16BE }
-      let(:input_source) { prefix + utf8_target.encode(Encoding::UTF_16BE).b }
-      include_examples "strips BOM and returns UTF8"
-    end
-    context "in ISO-8859-1" do
-      include_context 'utf bom example source'
-      let(:input_source) { utf8_target.encode(Encoding::ISO_8859_1).b }
-      include_examples "strips BOM and returns UTF8"
-    end
-  end
   describe 'featured_region' do
     let(:well_known_pid) { 'some:asset' }
     let(:content_ds_uri) { "info:fedora/#{well_known_pid}/content" }

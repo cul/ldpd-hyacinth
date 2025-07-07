@@ -9,14 +9,14 @@
       </ul>
     </div>
   <% end %>
-  
+
   <% # Create params[:term]['additional_fields'] to allow for easier form value population below by handling absent params %>
   <% params[:term] = {} if params[:term].blank? %>
   <% params[:term]['additional_fields'] = {} if params[:term][:additional_fields].blank? %>
   <% is_temporary_term = ! @term.nil? && @term['type'] == UriService::TermType::TEMPORARY %>
-  
+
   <% if is_temporary_term %>
-    <div class="alert alert-info">Note: The "value" property for a temporary term cannot be changed. Delete unused temporary terms or create new ones.</div>
+    <div class="alert alert-info">Note: The "value" property for a temporary term cannot be changed. Please create a new temporary term instead.</div>
   <% end %>
 
   <div class="field">
@@ -30,7 +30,7 @@
     <%= label_tag 'term[controlled_vocabulary_string_key]', 'Controlled Vocabulary' %>
     <%= hidden_field_tag 'term[controlled_vocabulary_string_key]', @controlled_vocabulary.string_key %>
     <%= text_field_tag 'term[controlled_vocabulary_string_key]', @controlled_vocabulary.display_label, disabled: true, class: 'form-control' %>
-  </div>  
+  </div>
   <div class="field">
     <%= label_tag 'term[value]', 'Value' %><br>
     <%= text_field_tag 'term[value]', params[:term]['value'] || (@term.nil? ? '' : @term['value']) || '', {class: 'form-control', disabled: is_temporary_term } %>
@@ -39,7 +39,7 @@
     <%= label_tag 'term[authority]', 'Authority' %><br>
     <%= text_field_tag 'term[authority]', params[:term]['authority'] || (@term.nil? ? '' : @term['authority']) || '', {class: 'form-control'} %>
   </div>
-  
+
   <% if @term.nil? %>
     <div class="field term-uri-field">
       <%= label_tag 'term[uri]', 'URI' %><br>
@@ -52,7 +52,7 @@
       <%= text_field_tag 'term[uri]', @term['uri'], disabled: true, class: 'form-control' %>
     </div>
   <% end %>
-  
+
   <% if TERM_ADDITIONAL_FIELDS[@controlled_vocabulary.string_key] %>
     <% TERM_ADDITIONAL_FIELDS[@controlled_vocabulary.string_key].each do |field_name, field_config| %>
       <div class="field term-additional-field">

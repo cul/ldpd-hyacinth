@@ -7,7 +7,6 @@ class DigitalObject::Asset < DigitalObject::Base
   include DigitalObject::Assets::Transcript
   include DigitalObject::Assets::IndexDocument
   include DigitalObject::Assets::Captions
-  include Hyacinth::Utils::StringUtils
 
   UNKNOWN_DC_TYPE = BestType::PcdmTypeLookup::UNKNOWN
   ASSET_DC_TYPES = ['Dataset', 'MovingImage', 'Software', 'Sound', 'StillImage', 'Text']

@@ -92,11 +92,9 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
     end
 
     context "character encoding" do
-      it "properly interprets non-ASCII characters from a Latin1 CSV file" do
+      it "raises an exception if non-utf-8 CSV file data is provided" do
         csv_data = special_chars_csv_latin1_file.read
-        klass.csv_to_digital_object_data(csv_data) do |digital_object_data|
-          expect(digital_object_data['dynamic_field_data']['title'][0]['title_sort_portion']).to eq('Title with special chars † áéíøü')
-        end
+        expect { klass.csv_to_digital_object_data(csv_data) }.to raise_error(Hyacinth::Exceptions::InvalidUtf8DetectedError)
       end
 
       it "properly interprets non-ASCII characters from a UTF-8 CSV file" do

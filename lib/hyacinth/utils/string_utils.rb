@@ -1,87 +1,36 @@
 module Hyacinth::Utils::StringUtils
-  def self.ints_as_binstring(ints = [])
-    stub = "".force_encoding(Encoding::ASCII_8BIT)
-    ints.reduce(stub) { |m, c| m << c }
+  def self.string_valid_utf8?(str)
+    # Let's start off by asserting that this is a utf-8 string (regardless of whether or not it is).
+    # Note that we are duplicating the string because we do not want to modify the passed-in value.
+    str_with_utf8_assertion = str.dup.force_encoding('utf-8')
+    # Check if this string, which we are asserting is utf-8, only contains valid utf-8 characters.
+    str_with_utf8_assertion.valid_encoding?
   end
 
-  BOM_UTF_8 = ints_as_binstring([239, 187, 191])
-  BOM_UTF_16BE = ints_as_binstring([254, 255])
-  BOM_UTF_16LE = ints_as_binstring([255, 254])
-  BOM_UTF_32BE = ints_as_binstring([0, 0, 254, 255])
-  BOM_UTF_32LE = ints_as_binstring([255, 254, 0, 0])
+  def self.file_valid_utf8?(file_path)
+    content = File.binread(file_path)
+    string_valid_utf8?(content)
+  end
 
+  # There are some characters that are technically UTF-8, but that cause errors when string containing these characters
+  # are passed to certain string processing methods (like gsub).  This method removes those characters and returns a
+  # "clean" utf-8 string. Example cleaning: clean_utf8_string("abc\xC2abc") outputs "abcabc"
+  # NOTE: "\xC2", in the above example, is a control character.
+  # NOTE: This method was originally added when Hyacinth was running Ruby 2.4.  A lot has changed in newer versions
+  # of Ruby, so we should one day re-evaluate whether it's necessary.
   def self.clean_utf8_string(str)
-    # Weird character example that will fail in ruby: "\xC2".gsub('', '')
     str.chars.select(&:valid_encoding?).join.gsub('', '')
   end
 
-  def self.replace_non_ascii_characters(str)
-    # Replacing non-ASCII characters with '?' because ruby can't use string methods on some weird characters that STILL count as UTF-8.
-    # Weird character example that will fail in ruby: "\xC2".gsub('', '')
-    # \xC2 (used in the above example) is a control character.
-    str.encode('ASCII', invalid: :replace, undef: :replace)
-  end
-
-  def encoded_string(source, target_encoding = Encoding::UTF_8)
-    source_encoding = encoding_for_bom_indicator(source) || detected_encoding(source)
-    source = trim_bom(source, source_encoding)
-    if source.encoding == target_encoding
-      # just the trim, thanks
-      source
-    else
-      source = source.force_encoding(source_encoding) if source_encoding
-      source.encode(target_encoding)
-    end
-  end
-
-  def encoding_for_bom_indicator(source)
-    magic_bytes = source.each_byte.lazy.first(4)
-    magic_bytes = Hyacinth::Utils::StringUtils.ints_as_binstring(magic_bytes)
-    # these codepoint patterns indicate unicode data in an ASCII_8 string
-    case
-    when magic_bytes.start_with?(BOM_UTF_16BE)
-      source_encoding = Encoding::UTF_16BE
-    when magic_bytes.start_with?(BOM_UTF_16LE)
-      source_encoding = Encoding::UTF_16LE
-    when magic_bytes.start_with?(BOM_UTF_8)
-      source_encoding = Encoding::UTF_8
-    when magic_bytes.start_with?(BOM_UTF_32BE)
-      source_encoding = Encoding::UTF_32BE
-    when magic_bytes.start_with?(BOM_UTF_32LE)
-      source_encoding = Encoding::UTF_32LE
-    end
-
-    source_encoding
-  end
-
-  def detected_encoding(source)
-    detection = CharlockHolmes::EncodingDetector.detect(source)
-    detection[:encoding] ? Encoding.find(detection[:encoding]) : Encoding::ASCII_8BIT
-  end
-
-  def bom_prefix_for(encoding)
-    case encoding
-    when Encoding::UTF_16BE
-      BOM_UTF_16BE
-    when Encoding::UTF_16LE
-      BOM_UTF_16LE
-    when Encoding::UTF_8
-      BOM_UTF_8
-    when Encoding::UTF_32BE
-      BOM_UTF_32BE
-    when Encoding::UTF_32LE
-      BOM_UTF_32LE
-    end
-  end
-
-  def trim_bom(source, encoding)
-    return source unless encoding
-    prefix = bom_prefix_for(encoding)
-    if prefix && source.byteslice(0...prefix.length).b == prefix
-      source = source.byteslice(prefix.length..-1)
-    end
-    source
-  end
+  # # There are some characters that are technically UTF-8, but that cause errors when string containing these characters
+  # # are passed to certain string processing methods (like gsub).  This method removes those characters and replaces them
+  # # with a "?" character. Example: replace_non_ascii_characters("abc\xC2abc") outputs "abc?abc"
+  # # NOTE: "\xC2", in the above example, is a control character.
+  # # NOTE: This method was originally added when Hyacinth was running Ruby 2.4.  A lot has changed in newer versions
+  # # of Ruby, so we should one day re-evaluate whether it's necessary.
+  # def self.replace_non_ascii_characters(str)
+  #   str.encode('ASCII', invalid: :replace, undef: :replace)
+  # end
 
   def self.escape_four_byte_utf8_characters_as_html_entities(str)
     str.gsub(/[\u{10000}-\u{10ffff}]/) { |mb4| "&#x#{mb4.ord.to_s(16)};" }
