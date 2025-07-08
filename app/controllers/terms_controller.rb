@@ -35,7 +35,7 @@ class TermsController < ApplicationController
     unless @errors.present?
 
       type = term_prms.delete('type')
-      term_opts = flat_term_data_to_term_opts(term_prms)
+      term_opts = flat_term_data_to_term_opts(term_prms.to_unsafe_h)
 
       begin
         @term = UriService.client.create_term(type, term_opts)
@@ -63,7 +63,7 @@ class TermsController < ApplicationController
   # PATCH/PUT /terms/1.json
   def update
     @errors = []
-    term_opts = flat_term_data_to_term_opts(term_params)
+    term_opts = flat_term_data_to_term_opts(term_params.to_unsafe_h)
 
     begin
       @term = UriService.client.update_term(@term['uri'], term_opts)
