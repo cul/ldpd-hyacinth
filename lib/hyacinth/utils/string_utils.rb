@@ -23,18 +23,17 @@ module Hyacinth::Utils::StringUtils
   end
 
   def encoded_string(source, target_encoding = Encoding::UTF_8)
-    source_encoding = encoding_for_bom_indicator(source) || detected_encoding(source)
+    source_encoding = Hyacinth::Utils::StringUtils.detected_encoding(source)
     source = trim_bom(source, source_encoding)
     if source.encoding == target_encoding
       # just the trim, thanks
       source
     else
-      source = source.force_encoding(source_encoding) if source_encoding
-      source.encode(target_encoding)
+      source.encode(target_encoding, source_encoding || Encoding::ASCII_8BIT)
     end
   end
 
-  def encoding_for_bom_indicator(source)
+  def self.encoding_for_bom_indicator(source)
     magic_bytes = source.each_byte.lazy.first(4)
     magic_bytes = Hyacinth::Utils::StringUtils.ints_as_binstring(magic_bytes)
     # these codepoint patterns indicate unicode data in an ASCII_8 string
@@ -54,9 +53,17 @@ module Hyacinth::Utils::StringUtils
     source_encoding
   end
 
-  def detected_encoding(source)
-    detection = CharlockHolmes::EncodingDetector.detect(source)
-    detection[:encoding] ? Encoding.find(detection[:encoding]) : Encoding::ASCII_8BIT
+  def self.detected_encoding(source)
+    bom_indicated = encoding_for_bom_indicator(source)
+    return bom_indicated if bom_indicated
+
+    return Encoding::UTF_8 if source.force_encoding(Encoding::UTF_8).valid_encoding?
+
+    return Encoding::CP1252 if source.force_encoding(Encoding::CP1252).valid_encoding?
+
+    return Encoding::ISO_8859_1 if source.force_encoding(Encoding::ISO_8859_1).valid_encoding?
+
+    Encoding::ASCII_8BIT
   end
 
   def bom_prefix_for(encoding)

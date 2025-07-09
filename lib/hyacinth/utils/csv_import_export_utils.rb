@@ -12,9 +12,9 @@ class Hyacinth::Utils::CsvImportExportUtils
     # found_non_ascii_characters = contents.index(Regexp.new('[^\x00-\x7F]')).is_a?(Integer)
 
     # Convert CSV data to UTF-8 if it isn't already UTF-8
-    detection = CharlockHolmes::EncodingDetector.detect(csv_data_string)
-    if detection[:ruby_encoding] != Encoding::UTF_8.to_s || detection[:confidence] != 100
-      csv_data_string = CharlockHolmes::Converter.convert csv_data_string, detection[:encoding], Encoding::UTF_8.to_s # Convert to UTF-8
+    detected_encoding = Hyacinth::Utils::StringUtils.detected_encoding(csv_data_string)
+    if detected_encoding != Encoding::ASCII_8BIT
+      csv_data_string.encode!(Encoding::UTF_8, detected_encoding) unless detected_encoding == Encoding::UTF_8 # Convert to UTF-8
     else
       csv_data_string = csv_data_string.force_encoding(Encoding::UTF_8) # Force UTF-8 all the time because that's what Hyacinth uses internally
     end
