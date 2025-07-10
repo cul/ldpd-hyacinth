@@ -121,6 +121,7 @@ class TermsController < ApplicationController
       else
         addl_term_params = TERM_ADDITIONAL_FIELDS[params[:term]['controlled_vocabulary_string_key']].map { |key, _value| key.to_sym }
       end
+
       params.require(:term).permit([:controlled_vocabulary_string_key, :value, :uri, :type, :authority] + addl_term_params)
     end
 
@@ -156,7 +157,6 @@ class TermsController < ApplicationController
 
     def flat_term_data_to_term_opts(term_prms)
       term_prms = term_prms.dup # Don't modify originally passed-in value
-
       term_opts = {}
 
       term_prms.delete('type') # Delete type if present
