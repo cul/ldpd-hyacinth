@@ -11,9 +11,9 @@ module Hyacinth
 
       def captions_content
         if file.present?
-          @captions_content ||= file.tempfile.read
+          @captions_content ||= strip_utf8_bom(file.tempfile.read)
         else
-          @captions_content ||= captions_vtt
+          @captions_content ||= strip_utf8_bom(captions_vtt)
         end
       end
 
@@ -40,7 +40,7 @@ module Hyacinth
       end
 
       def validate_encoding
-        errors.add(:base, 'Captions data must be valid UTF-8') unless Hyacinth::Utils::StringUtils.string_valid_utf8?(captions_content)
+        errors.add(:base, 'Captions data must be valid UTF-8') unless Hyacinth::Utils::StringUtils.string_valid_utf8?(captions_content) if captions_content.present?
       end
     end
   end

@@ -11,9 +11,9 @@ module Hyacinth
 
       def transcript_content
         if file.present?
-          file.tempfile.read
+          strip_utf8_bom(file.tempfile.read)
         else
-          transcript_text
+          strip_utf8_bom(transcript_text)
         end
       end
 
