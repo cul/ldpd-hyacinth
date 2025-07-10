@@ -15,7 +15,7 @@ module DigitalObject::Assets::IndexDocument
 
   def index_document=(content)
     @index_document_changed = true
-    @index_document = encoded_string(content)
+    @index_document = content
   end
 
   def index_document_changed?

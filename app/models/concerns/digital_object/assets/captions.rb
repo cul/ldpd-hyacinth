@@ -15,7 +15,7 @@ module DigitalObject::Assets::Captions
 
   def captions=(content)
     @captions_changed = true
-    @captions = encoded_string(content)
+    @captions = content
   end
 
   def captions_changed?
@@ -36,7 +36,7 @@ module DigitalObject::Assets::Captions
 
   def synchronized_transcript=(content)
     @synchronized_transcript_changed = true
-    @synchronized_transcript = encoded_string(content)
+    @synchronized_transcript = content
   end
 
   def synchronized_transcript_changed?

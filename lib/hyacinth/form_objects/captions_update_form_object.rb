@@ -1,8 +1,8 @@
 module Hyacinth
   module FormObjects
     class CaptionsUpdateFormObject < Hyacinth::FormObjects::FormObject
-      include Hyacinth::Utils::StringUtils
       validate :validate_presence_of_file_or_captions_text
+      validate :validate_encoding
       validate :validate_file, if: -> { file.present? }
 
       attr_accessor :file, :captions_vtt
@@ -11,9 +11,9 @@ module Hyacinth
 
       def captions_content
         if file.present?
-          @captions_content ||= encoded_string(file.tempfile.read)
+          @captions_content ||= strip_utf8_bom(file.tempfile.read)
         else
-          @captions_content ||= encoded_string(captions_vtt)
+          @captions_content ||= strip_utf8_bom(captions_vtt)
         end
       end
 
@@ -37,6 +37,10 @@ module Hyacinth
         # validate mime type
         mime_type = BestType.mime_type.for_file_name(file.original_filename)
         errors.add(:base, "Only WebVTT files are allowed (detected MIME type #{mime_type}).") unless mime_type == 'text/vtt'
+      end
+
+      def validate_encoding
+        errors.add(:base, 'Captions data must be valid UTF-8') if captions_content.present? && !Hyacinth::Utils::StringUtils.string_valid_utf8?(captions_content)
       end
     end
   end

@@ -8,15 +8,9 @@ class Hyacinth::Utils::CsvImportExportUtils
   ##############################
 
   def self.csv_to_digital_object_data(csv_data_string)
-    ## Check whether this csv file contains non-ASCII character. If it does, it needs to be UTF-8 for us to handle those characters properly.
-    # found_non_ascii_characters = contents.index(Regexp.new('[^\x00-\x7F]')).is_a?(Integer)
-
-    # Convert CSV data to UTF-8 if it isn't already UTF-8
-    detection = CharlockHolmes::EncodingDetector.detect(csv_data_string)
-    if detection[:ruby_encoding] != Encoding::UTF_8.to_s || detection[:confidence] != 100
-      csv_data_string = CharlockHolmes::Converter.convert csv_data_string, detection[:encoding], Encoding::UTF_8.to_s # Convert to UTF-8
-    else
-      csv_data_string = csv_data_string.force_encoding(Encoding::UTF_8) # Force UTF-8 all the time because that's what Hyacinth uses internally
+    # Reject this CSV if it is not a UTF-8 CSV
+    unless Hyacinth::Utils::StringUtils.string_valid_utf8?(csv_data_string)
+      raise Hyacinth::Exceptions::InvalidUtf8DetectedError, 'CSV content is not valid UTF-8.'
     end
 
     header = Hyacinth::Csv::Header.new
