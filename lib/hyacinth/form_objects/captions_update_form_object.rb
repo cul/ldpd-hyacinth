@@ -40,7 +40,7 @@ module Hyacinth
       end
 
       def validate_encoding
-        errors.add(:base, 'Captions data must be valid UTF-8') unless Hyacinth::Utils::StringUtils.string_valid_utf8?(captions_content) if captions_content.present?
+        errors.add(:base, 'Captions data must be valid UTF-8') if captions_content.present? && !Hyacinth::Utils::StringUtils.string_valid_utf8?(captions_content)
       end
     end
   end
