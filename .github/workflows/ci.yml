@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby-version: ['2.7.8']
+        ruby-version: ['3.0.6']
         node: ['20']
     env:
       RAILS_ENV: test
