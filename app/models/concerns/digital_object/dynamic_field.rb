@@ -102,7 +102,7 @@ module DigitalObject::DynamicField
   rescue Encoding::UndefinedConversionError => e
     raise Hyacinth::Exceptions::InvalidUtf8DetectedError, "Invalid UTF-8 detected: #{e.message}"
   rescue JSON::GeneratorError => e
-    if e.message =~ /malformed.utf/
+    if e.message =~ /malformed.utf/ || e.message =~ /from\s.*\sto\sUTF-8/
       raise Hyacinth::Exceptions::InvalidUtf8DetectedError, "Invalid UTF-8 detected: #{e.message}"
     else
       raise
