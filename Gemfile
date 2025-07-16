@@ -171,7 +171,7 @@ end
 # Development!
 group :development do
   # Use Capistrano for deployment
-  gem 'capistrano', '~> 3.18.0', require: false
+  gem 'capistrano', '~> 3.19.2', require: false
   gem 'capistrano-cul', require: false
   gem 'capistrano-passenger', '~> 0.1', require: false
   gem 'capistrano-rails', '~> 1.4', require: false
