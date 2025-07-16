@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.1.0'
+gem 'rails', '~> 7.0.8'
 gem 'bootsnap', require: false
 # gem 'responders'
 
@@ -82,16 +82,18 @@ gem 'kaminari'
 gem 'nokogiri', '~> 1.15.5'
 
 # For authentication
-gem 'devise', '~> 4.9.3'
+gem 'devise', '~> 4.9'
 # gem 'childprocess', '~> 2.0'
 
 # CUL Fedora Dependencies and Content Models
 gem 'cul_hydra', git: 'https://github.com/cul/cul_hydra', ref: 'wip-upgrade-deps'
 gem 'active-fedora', git: 'https://github.com/cul/active_fedora', ref: 'remove_deprecation_lib'
+gem 'multi_json', '~> 1.14.0'
+gem 'ebnf', '~> 1.0.0'
 gem 'rubydora'
 # Temporarily use specific commit because new version of gem hasn't been released yet.  Latest is 1.1.3.
 gem 'rdf', '>= 1.1.5'
-gem 'rdf-vocab'
+gem 'rdf-vocab', '~>0.8.8'
 gem 'uri_service', '0.6.0'
 # gem 'uri_service', path: '../uri_service'
 gem 'solrizer', '>= 3.4.1'
@@ -123,7 +125,7 @@ gem 'rainbow', '~> 3.0'
 gem 'psych', '<4'
 
 # For css and js compilation
-gem 'vite_rails', '~> 3.0.17'
+gem 'vite_rails', '~> 3.0.19'
 
 # Require net-http gem explicitly (and allow any version) to fix an issue where the net-protocol
 # dependency is loaded twice.  See this: https://stackoverflow.com/a/75105591
@@ -151,7 +153,7 @@ gem 'google-cloud-storage', '~> 1.49'
 # Development and testing!
 group :development, :test do
   gem 'byebug'
-  gem 'rspec-rails', '~> 5.0'
+  gem 'rspec-rails', '~> 7.0'
   gem 'rails-controller-testing'
   gem 'capybara', '~> 3.32'
   # For testing with chromedriver
