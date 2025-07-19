@@ -103,11 +103,13 @@ module Hyacinth::Datacite
         }
         @attributes[:rightsList].append license
 
-        use_and_reprod = {
-          rights: @hyacinth_metadata_retrieval.use_and_reproduction.value,
-          rightsUri: @hyacinth_metadata_retrieval.use_and_reproduction.uri
-        }
-        @attributes[:rightsList].append use_and_reprod
+        unless @hyacinth_metadata_retrieval.use_and_reproduction.nil?
+          use_and_reprod = {
+            rights: @hyacinth_metadata_retrieval.use_and_reproduction.value,
+            rightsUri: @hyacinth_metadata_retrieval.use_and_reproduction.uri
+          }
+          @attributes[:rightsList].append use_and_reprod
+        end
       end
     end
 
@@ -149,16 +151,23 @@ module Hyacinth::Datacite
 
       resource_type = @hyacinth_metadata_retrieval.related_item_type_of_resource(index)
       # only accept controlled terms from the datacite authority
+      if resource_type.nil?
+        Hyacinth::Utils::Logger.logger.error(
+          "#process_related_item: No value for Related Item Type of Resource,"\
+          "ignoring Related Item."
+        )
+        return nil
+      end
       unless resource_type.authority == 'datacite'
         Hyacinth::Utils::Logger.logger.error(
-          "#process_related_item: Invalid authority '#{resource_type.authority}' for Related Item Type,"\
+          "#process_related_item: Invalid authority '#{resource_type.authority}' for Related Item Type of Resource,"\
           " ignoring Related Item."
         )
         return nil
       end
       unless DATACITE_RELATED_ITEM_TYPE.include? resource_type.value
         Hyacinth::Utils::Logger.logger.error(
-          "#process_related_item: Invalid value '#{resource_type.value}' for Related Item Type,"\
+          "#process_related_item: Invalid value '#{resource_type.value}' for Related Item Type of Resource,"\
           "ignoring Related Item."
         )
         return nil
@@ -166,6 +175,13 @@ module Hyacinth::Datacite
 
       relation_type = @hyacinth_metadata_retrieval.related_item_relation_type(index)
       # only accept controlled terms from the datacite authority
+      if relation_type.nil?
+        Hyacinth::Utils::Logger.logger.error(
+          "#process_related_item: No value for Relation Type,"\
+          "ignoring Related Item."
+        )
+        return nil
+      end
       unless relation_type.authority == 'datacite'
         Hyacinth::Utils::Logger.logger.error(
           "#process_related_item: Invalid authority '#{relation_type.authority}' for Relation Type,"\
@@ -191,7 +207,7 @@ module Hyacinth::Datacite
     end
 
     def add_related_items
-      if @hyacinth_metadata_retrieval.num_related_items
+      if @hyacinth_metadata_retrieval.num_related_items.positive?
         @attributes[:relatedItems] = []
         (0...@hyacinth_metadata_retrieval.num_related_items).each do |i|
           related_item = process_related_item(i)

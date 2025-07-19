@@ -145,28 +145,42 @@ describe Hyacinth::Datacite::DataciteMetadataBuilder do
         expect(actual_related_item).to be_nil
       end
 
-      it "if the related item type is invalid" do
+      it "if the Related Item Type of Resource is omitted" do
         expect(Hyacinth::Utils::Logger.logger).to receive(:error).with(
-                                                    include("'InvalidImage' for Related Item Type"))
+                                                    include("No value for Related Item Type of Resource"))
+        actual_related_item = dc_metadata_invalid_rel_items.process_related_item(5)
+        expect(actual_related_item).to be_nil
+      end
+
+      it "if the Related Item Type of Resource is invalid" do
+        expect(Hyacinth::Utils::Logger.logger).to receive(:error).with(
+                                                    include("'InvalidImage' for Related Item Type of Resource"))
         actual_related_item = dc_metadata_invalid_rel_items.process_related_item(1)
         expect(actual_related_item).to be_nil
       end
 
-      it "if the related item type authority is invalid" do
+      it "if the Related Item Type of Resource authority is invalid" do
         expect(Hyacinth::Utils::Logger.logger).to receive(:error).with(
                                                     include("Invalid authority 'authorityinvalid'"))
         actual_related_item = dc_metadata_invalid_rel_items.process_related_item(2)
         expect(actual_related_item).to be_nil
       end
 
-      it "if the relation type is invalid" do
+      it "if the Related Item Relation Type is omitted" do
+        expect(Hyacinth::Utils::Logger.logger).to receive(:error).with(
+                                                    include("No value for Relation Type"))
+        actual_related_item = dc_metadata_invalid_rel_items.process_related_item(6)
+        expect(actual_related_item).to be_nil
+      end
+
+      it "if the Related Item Relation Type is invalid" do
         expect(Hyacinth::Utils::Logger.logger).to receive(:error).with(
                                                     include("'IsInvalid' for Relation Type"))
         actual_related_item = dc_metadata_invalid_rel_items.process_related_item(3)
         expect(actual_related_item).to be_nil
       end
 
-      it "if the related item type authority is invalid" do
+      it "if the Related Item Relation Type authority is invalid" do
         expect(Hyacinth::Utils::Logger.logger).to receive(:error).with(
                                                     include("Invalid authority 'invalidauthority'"))
         actual_related_item = dc_metadata_invalid_rel_items.process_related_item(4)
@@ -220,6 +234,24 @@ describe Hyacinth::Datacite::DataciteMetadataBuilder do
       dc_metadata.add_rights_list
       actual_rights_list = dc_metadata.attributes[:rightsList]
       expect(actual_rights_list).to eq(expected_rights_list)
+    end
+
+    context "when use and reproduction info is not present" do
+      before do
+        hyacinth_metadata = dc_metadata.instance_variable_get(:@hyacinth_metadata_retrieval)
+        allow(hyacinth_metadata).to receive(:use_and_reproduction).and_return(nil)
+      end
+      it "still adds license info, but use and reproduction info is omitted" do
+        expected_rights_list = [
+          {
+            rights: "CC BY-NC-SA 4.0",
+            rightsUri: "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+          }
+        ]
+        dc_metadata.add_rights_list
+        actual_rights_list = dc_metadata.attributes[:rightsList]
+        expect(actual_rights_list).to eq(expected_rights_list)
+      end
     end
   end
 end

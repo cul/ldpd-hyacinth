@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Terms", type: :request, focus: true do
+RSpec.describe "Terms", type: :request do
   describe "POST /terms" do
     describe "when a user is not logged in" do
       it "returns a 401 (unauthorized)" do

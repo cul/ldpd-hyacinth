@@ -69,6 +69,7 @@ Metrics/CyclomaticComplexity:
     - 'app/controllers/digital_objects_controller.rb'
     - 'app/models/digital_object/base.rb'
     - 'app/models/concerns/digital_object/publishing.rb'
+    - 'lib/hyacinth/datacite/datacite_metadata_builder.rb'
 
 Metrics/PerceivedComplexity:
   Exclude:
@@ -78,6 +79,7 @@ Metrics/PerceivedComplexity:
     - 'app/controllers/digital_objects_controller.rb'
     - 'app/models/digital_object/base.rb'
     - 'app/models/concerns/digital_object/publishing.rb'
+    - 'lib/hyacinth/datacite/datacite_metadata_builder.rb'
 
 Metrics/MethodLength:
   Enabled: false
