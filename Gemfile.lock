@@ -27,7 +27,7 @@ GIT
 
 GIT
   remote: https://github.com/cul/cul_hydra
-  revision: 198fdd32f9293544aa51f6b75e55479e8e242d64
+  revision: 11aaaef959c8fd8f233f14130ced4e92389484e1
   ref: wip-upgrade-deps
   specs:
     cul_hydra (1.12.0.dev)
@@ -133,19 +133,19 @@ GEM
     aws-crt (0.4.0)
       ffi
     aws-eventstream (1.4.0)
-    aws-partitions (1.1129.0)
-    aws-sdk-core (3.226.2)
+    aws-partitions (1.1133.0)
+    aws-sdk-core (3.227.0)
       aws-eventstream (~> 1, >= 1.3.0)
       aws-partitions (~> 1, >= 1.992.0)
       aws-sigv4 (~> 1.9)
       base64
       jmespath (~> 1, >= 1.6.1)
       logger
-    aws-sdk-kms (1.106.0)
-      aws-sdk-core (~> 3, >= 3.225.0)
+    aws-sdk-kms (1.107.0)
+      aws-sdk-core (~> 3, >= 3.227.0)
       aws-sigv4 (~> 1.5)
-    aws-sdk-s3 (1.193.0)
-      aws-sdk-core (~> 3, >= 3.225.0)
+    aws-sdk-s3 (1.194.0)
+      aws-sdk-core (~> 3, >= 3.227.0)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.5)
     aws-sigv4 (1.12.1)
@@ -164,7 +164,7 @@ GEM
       autoprefixer-rails (>= 5.2.1)
       sassc (>= 2.0.0)
     builder (3.3.0)
-    byebug (11.1.3)
+    byebug (12.0.0)
     capistrano (3.18.1)
       airbrussh (>= 1.0.0)
       i18n
@@ -246,7 +246,7 @@ GEM
       railties (>= 3.0.0)
     faker (3.5.2)
       i18n (>= 1.8.11, < 2)
-    faraday (2.13.2)
+    faraday (2.13.3)
       faraday-net_http (>= 2.0, < 3.5)
       json
       logger
@@ -257,7 +257,7 @@ GEM
       railties (>= 3.2, < 9.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    google-apis-core (0.16.0)
+    google-apis-core (0.18.0)
       addressable (~> 2.5, >= 2.5.1)
       googleauth (~> 1.9)
       httpclient (>= 2.8.3, < 3.a)
@@ -265,14 +265,14 @@ GEM
       mutex_m
       representable (~> 3.0)
       retriable (>= 2.0, < 4.a)
-    google-apis-iamcredentials_v1 (0.23.0)
+    google-apis-iamcredentials_v1 (0.24.0)
       google-apis-core (>= 0.15.0, < 2.a)
-    google-apis-storage_v1 (0.50.0)
+    google-apis-storage_v1 (0.54.0)
       google-apis-core (>= 0.15.0, < 2.a)
     google-cloud-core (1.8.0)
       google-cloud-env (>= 1.0, < 3.a)
       google-cloud-errors (~> 1.0)
-    google-cloud-env (2.2.2)
+    google-cloud-env (2.3.1)
       base64 (~> 0.2)
       faraday (>= 1.0, < 3.a)
     google-cloud-errors (1.5.0)
@@ -285,7 +285,7 @@ GEM
       google-cloud-core (~> 1.6)
       googleauth (~> 1.9)
       mini_mime (~> 1.0)
-    google-logging-utils (0.1.0)
+    google-logging-utils (0.2.0)
     googleauth (1.14.0)
       faraday (>= 1.0, < 3.a)
       google-cloud-env (~> 2.2)
@@ -323,7 +323,7 @@ GEM
     jquery.fileupload-rails (1.11.0)
       jquery-ui-rails (~> 5.0)
       railties (>= 3.1)
-    json (2.12.2)
+    json (2.13.0)
     json-ld (1.99.2)
       multi_json (~> 1.11)
       rdf (~> 1.99)
@@ -381,7 +381,7 @@ GEM
     mime-types (3.7.0)
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
-    mime-types-data (3.2025.0708)
+    mime-types-data (3.2025.0715)
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
     minitest (5.25.5)
@@ -401,7 +401,7 @@ GEM
     net-http (0.6.0)
       uri
     net-http-persistent (2.9.4)
-    net-imap (0.4.22)
+    net-imap (0.5.9)
       date
       net-protocol
     net-pop (0.1.2)
@@ -431,7 +431,7 @@ GEM
       solrizer (~> 3.3)
     orm_adapter (0.5.0)
     os (1.1.4)
-    ostruct (0.6.2)
+    ostruct (0.6.3)
     parallel (1.27.0)
     parser (3.3.8.0)
       ast (~> 2.4.1)
@@ -623,7 +623,7 @@ GEM
       websocket (~> 1.0)
     sequel (5.94.0)
       bigdecimal
-    signet (0.19.0)
+    signet (0.20.0)
       addressable (~> 2.8)
       faraday (>= 0.17.5, < 3.a)
       jwt (>= 1.5, < 3.0)
@@ -676,7 +676,7 @@ GEM
     temple (0.10.3)
     terser (1.2.6)
       execjs (>= 0.3.0, < 3)
-    thor (1.3.2)
+    thor (1.4.0)
     thread (0.2.2)
     tilt (2.6.1)
     timeout (0.4.3)
