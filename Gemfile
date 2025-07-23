@@ -150,6 +150,10 @@ gem 'aws-crt'
 # Google Cloud Storage SDK
 gem 'google-cloud-storage', '~> 1.49'
 
+# Remove the pin below once you update to Rails 7.0 or later.
+# See: https://github.com/rails/rails/issues/54263
+gem 'concurrent-ruby', '1.3.4'
+
 # Development and testing!
 group :development, :test do
   gem 'byebug'
@@ -171,7 +175,7 @@ end
 # Development!
 group :development do
   # Use Capistrano for deployment
-  gem 'capistrano', '~> 3.18.0', require: false
+  gem 'capistrano', '~> 3.19.2', require: false
   gem 'capistrano-cul', require: false
   gem 'capistrano-passenger', '~> 0.1', require: false
   gem 'capistrano-rails', '~> 1.4', require: false
