@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_08_05_103817) do
-
+ActiveRecord::Schema[7.0].define(version: 2024_08_05_103817) do
   create_table "archived_assignments", force: :cascade do |t|
     t.integer "original_assignment_id", null: false
     t.string "digital_object_pid", null: false
@@ -32,8 +31,8 @@ ActiveRecord::Schema.define(version: 2024_08_05_103817) do
     t.integer "assignee_id", null: false
     t.integer "status"
     t.integer "task", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.text "original", limit: 16777215
     t.text "proposed", limit: 16777215
     t.text "note"
@@ -45,8 +44,8 @@ ActiveRecord::Schema.define(version: 2024_08_05_103817) do
 
   create_table "controlled_vocabularies", force: :cascade do |t|
     t.string "string_key"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.boolean "require_controlled_vocabulary_manager_permission", default: false, null: false
     t.boolean "prohibit_temp_terms", default: false, null: false
     t.index ["require_controlled_vocabulary_manager_permission"], name: "idx_controlled_vocabularies_require_manager_permission"
@@ -58,8 +57,8 @@ ActiveRecord::Schema.define(version: 2024_08_05_103817) do
     t.text "path_to_csv_file"
     t.text "export_errors"
     t.integer "status", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "duration", default: 0, null: false
     t.integer "number_of_records_processed", default: 0, null: false
     t.index ["status"], name: "index_csv_exports_on_status"
@@ -71,8 +70,8 @@ ActiveRecord::Schema.define(version: 2024_08_05_103817) do
     t.integer "status", default: 0, null: false
     t.text "digital_object_errors"
     t.integer "import_job_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "requeue_count", default: 0, null: false
     t.integer "csv_row_number"
     t.text "prerequisite_csv_row_numbers"
@@ -85,9 +84,9 @@ ActiveRecord::Schema.define(version: 2024_08_05_103817) do
     t.string "pid"
     t.integer "created_by_id"
     t.integer "updated_by_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.datetime "first_published_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
+    t.datetime "first_published_at", precision: nil
     t.string "uuid"
     t.boolean "perform_derivative_processing", default: false, null: false
     t.index ["perform_derivative_processing"], name: "index_digital_object_records_on_perform_derivative_processing"
@@ -99,16 +98,16 @@ ActiveRecord::Schema.define(version: 2024_08_05_103817) do
     t.string "string_key"
     t.string "display_label"
     t.integer "sort_order"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index ["sort_order"], name: "index_digital_object_types_on_sort_order"
   end
 
   create_table "dynamic_field_group_categories", force: :cascade do |t|
     t.string "display_label"
     t.integer "sort_order", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index ["display_label"], name: "index_dynamic_field_group_categories_on_display_label"
   end
 
@@ -122,8 +121,8 @@ ActiveRecord::Schema.define(version: 2024_08_05_103817) do
     t.integer "dynamic_field_group_category_id"
     t.integer "created_by_id"
     t.integer "updated_by_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index ["dynamic_field_group_category_id"], name: "index_dynamic_field_groups_on_dynamic_field_group_category_id"
     t.index ["parent_dynamic_field_group_id"], name: "index_dynamic_field_groups_on_parent_dynamic_field_group_id"
     t.index ["string_key", "parent_dynamic_field_group_id"], name: "unique_string_key_for_same_parent_dynamic_field_group", unique: true
@@ -146,8 +145,8 @@ ActiveRecord::Schema.define(version: 2024_08_05_103817) do
     t.boolean "is_single_field_searchable", default: false, null: false
     t.integer "created_by_id"
     t.integer "updated_by_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.string "controlled_vocabulary_string_key"
     t.index ["controlled_vocabulary_string_key"], name: "index_dynamic_fields_on_controlled_vocabulary_string_key"
     t.index ["parent_dynamic_field_group_id"], name: "index_dynamic_fields_on_parent_dynamic_field_group_id"
@@ -164,8 +163,8 @@ ActiveRecord::Schema.define(version: 2024_08_05_103817) do
     t.boolean "hidden", default: false, null: false
     t.boolean "only_save_dynamic_field_group_if_present", default: false, null: false
     t.text "default_value"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index ["digital_object_type_id"], name: "index_enabled_dynamic_fields_on_digital_object_type_id"
     t.index ["dynamic_field_id"], name: "index_enabled_dynamic_fields_on_dynamic_field_id"
     t.index ["project_id"], name: "index_enabled_dynamic_fields_on_project_id"
@@ -182,8 +181,8 @@ ActiveRecord::Schema.define(version: 2024_08_05_103817) do
   create_table "enabled_publish_targets", force: :cascade do |t|
     t.integer "project_id", null: false
     t.integer "publish_target_id", null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index ["project_id"], name: "index_enabled_publish_targets_on_project_id"
     t.index ["publish_target_id"], name: "index_enabled_publish_targets_on_publish_target_id"
   end
@@ -191,16 +190,16 @@ ActiveRecord::Schema.define(version: 2024_08_05_103817) do
   create_table "fieldsets", force: :cascade do |t|
     t.string "display_label"
     t.integer "project_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index ["project_id"], name: "index_fieldsets_on_project_id"
   end
 
   create_table "import_jobs", force: :cascade do |t|
     t.string "name", null: false
     t.integer "user_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.text "path_to_csv_file"
     t.integer "priority", default: 0, null: false
     t.index ["priority"], name: "index_import_jobs_on_priority"
@@ -212,8 +211,8 @@ ActiveRecord::Schema.define(version: 2024_08_05_103817) do
     t.string "template"
     t.string "seed"
     t.integer "sequence", default: 0, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.index ["namespace"], name: "index_pid_generators_on_namespace", unique: true
   end
 
@@ -225,8 +224,8 @@ ActiveRecord::Schema.define(version: 2024_08_05_103817) do
     t.boolean "can_update", default: false, null: false
     t.boolean "can_delete", default: false, null: false
     t.boolean "is_project_admin", default: false, null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.boolean "can_publish", default: false, null: false
     t.index ["project_id"], name: "index_project_permissions_on_project_id"
     t.index ["user_id"], name: "index_project_permissions_on_user_id"
@@ -238,8 +237,8 @@ ActiveRecord::Schema.define(version: 2024_08_05_103817) do
     t.string "display_label"
     t.string "string_key"
     t.text "full_path_to_custom_asset_directory"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.text "uri"
     t.string "short_label", limit: 255
     t.text "enabled_publish_target_pids"
@@ -255,16 +254,16 @@ ActiveRecord::Schema.define(version: 2024_08_05_103817) do
     t.string "first_name"
     t.string "last_name"
     t.boolean "is_admin"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at", precision: nil
+    t.datetime "remember_created_at", precision: nil
     t.integer "sign_in_count", default: 0
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
+    t.datetime "current_sign_in_at", precision: nil
+    t.datetime "last_sign_in_at", precision: nil
     t.string "current_sign_in_ip"
     t.string "last_sign_in_ip"
     t.boolean "can_manage_all_controlled_vocabularies", default: false, null: false
@@ -276,8 +275,8 @@ ActiveRecord::Schema.define(version: 2024_08_05_103817) do
     t.string "string_key", limit: 64
     t.string "display_label"
     t.text "xml_translation"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", precision: nil
+    t.datetime "updated_at", precision: nil
   end
 
   add_foreign_key "csv_exports", "users"

@@ -15,7 +15,9 @@ validate_gcp_config!
 
 class GcpMockCredentials < Google::Auth::Credentials
   def initialize(config, options = {})
-    verify_keyfile_provided! config
+    # verify_keyfile_provided! config
+    # inlining a check removed in googleauth 1.13.0
+    raise "The keyfile passed to Google::Auth::Credentials.new was nil." if config.nil?
     options = symbolize_hash_keys options
     @project_id = options[:project_id] || options[:project]
     @quota_project_id = options[:quota_project_id]

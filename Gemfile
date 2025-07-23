@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 6.1.0'
+gem 'rails', '~> 7.0.8'
 gem 'bootsnap', require: false
 # gem 'responders'
 
@@ -82,16 +82,18 @@ gem 'kaminari'
 gem 'nokogiri', '~> 1.15.5'
 
 # For authentication
-gem 'devise', '~> 4.9.3'
+gem 'devise', '~> 4.9'
 # gem 'childprocess', '~> 2.0'
 
 # CUL Fedora Dependencies and Content Models
-gem 'cul_hydra', git: 'https://github.com/cul/cul_hydra', ref: 'remove_blacklight'
-gem 'active-fedora', '8.6.0'
+gem 'cul_hydra', git: 'https://github.com/cul/cul_hydra', ref: 'wip-upgrade-deps'
+gem 'active-fedora', git: 'https://github.com/cul/active_fedora', ref: 'remove_deprecation_lib'
+gem 'multi_json', '~> 1.14.0'
+gem 'ebnf', '~> 1.0.0'
 gem 'rubydora'
 # Temporarily use specific commit because new version of gem hasn't been released yet.  Latest is 1.1.3.
 gem 'rdf', '>= 1.1.5'
-gem 'rdf-vocab'
+gem 'rdf-vocab', '~>0.8.8'
 gem 'uri_service', '0.6.0'
 # gem 'uri_service', path: '../uri_service'
 gem 'solrizer', '>= 3.4.1'
@@ -99,9 +101,7 @@ gem 'solrizer', '>= 3.4.1'
 # Use wowza token gem for generating tokens
 gem 'wowza-secure_token', '0.0.1'
 
-# gem 'best_type', '~> 1.0'
-# gem 'best_type', path: '../best_type'
-gem 'best_type', git: 'https://github.com/cul/best_type.git', branch: 'LDPD-415-case-sensitive-comparisons'
+gem 'best_type', '~>1.0.1'
 
 # Specify min version for active_fedora_relsint because of a needed fix
 gem 'active_fedora_relsint', git: 'https://github.com/cul/active_fedora_relsint', ref: '91114c78c9af344673f1e899624031da79b72693'
@@ -125,18 +125,18 @@ gem 'rainbow', '~> 3.0'
 gem 'psych', '<4'
 
 # For css and js compilation
-gem 'vite_rails', '~> 3.0.17'
+gem 'vite_rails', '~> 3.0.19'
 
 # Require net-http gem explicitly (and allow any version) to fix an issue where the net-protocol
 # dependency is loaded twice.  See this: https://stackoverflow.com/a/75105591
 # And this: https://github.com/ruby/net-imap/issues/16#issuecomment-803086765
 gem 'net-http'
 
-# Require uri gem explicitly and match the default.standard gem that comes with Ruby 2.7.8
+# Require uri gem explicitly and match the default.standard gem that comes with Ruby 3.0.4
 # (otherwise we'll get an error about the bundle version not matching the installed version).
-# See: https://stdgems.org/2.7.8/
+# See: https://stdgems.org/3.0.4/
 # NOTE: This should be changed if you update to a newer version of ruby.
-gem 'uri', '0.10.0.2'
+gem 'uri', '0.10.1'
 
 # Gem min versions that are only specified here because of vulnerabilities in earlier versions:
 gem 'rack-protection', '>= 1.5.5'
@@ -144,9 +144,9 @@ gem 'loofah', '~> 2.20.0'
 gem 'rails-html-sanitizer', '>= 1.2'
 
 # Amazon S3 SDK
-gem 'aws-sdk-s3', '~> 1'
+gem 'aws-sdk-s3', '~> 1.0'
 # Additional gem enabling the AWS SDK to calculate CRC32C checksums
-gem 'aws-crt', '~> 0.2.0'
+gem 'aws-crt'
 # Google Cloud Storage SDK
 gem 'google-cloud-storage', '~> 1.49'
 
@@ -157,7 +157,7 @@ gem 'concurrent-ruby', '1.3.4'
 # Development and testing!
 group :development, :test do
   gem 'byebug'
-  gem 'rspec-rails', '~> 5.0'
+  gem 'rspec-rails', '~> 7.0'
   gem 'rails-controller-testing'
   gem 'capybara', '~> 3.32'
   # For testing with chromedriver
