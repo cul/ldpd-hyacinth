@@ -9,9 +9,9 @@ Supported Browsers:
 - Internet Explorer: 11+
 
 ### Requirements
-Hyacinth 2.6.x has the following dependencies:
-- Ruby 2.7 (tested with ruby 2.7.8)
-- Sqlite3 or MySQL (tested with SQlite)
+Hyacinth 2.7.x has the following dependencies:
+- Ruby 3.1 (tested with ruby 3.1.4)
+- Sqlite3 or MySQL 8.x (tested with SQlite)
 - Apache Solr (tested with 8.11)
 - Fedora 3.8.x (though 3.8.1 is recommended because of a concurrent writing issue with 3.7 through 3.8.0)
 - Docker (for development and testing)
@@ -28,6 +28,7 @@ bundle exec rake hyacinth:docker:setup_config_files # Set up required Docker con
 bundle exec rake hyacinth:docker:start # Start docker (which includes Solr, Fedora, and Redis)
 bundle exec rake hyacinth:fedora:reload_cmodels # Import required content models into Fedora (Note: It is safe to ignore any "404 Resource Not Found" output messages encountered during this step. These are expected because the content models do not already exist in Fedora and therefore cannot be found.)
 bundle exec rake uri_service:db:setup # Set up required UriService tables
+bundle exec rake db:migrate # Run database migrations
 bundle exec rake db:migrate # Run database migrations
 bundle exec rake db:seed # Set up default data (including default users)
 bundle exec rake hyacinth:test:setup_test_project # Optional, but useful for setting up a test project
