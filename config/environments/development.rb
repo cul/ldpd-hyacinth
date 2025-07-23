@@ -6,6 +6,9 @@ Rails.application.configure do
   # Set to :debug to see everything in the log.
   config.log_level = :debug
 
+  # Raise deprecation warnings (so we can see a stack trace indicating where they came from)
+  # config.active_support.deprecation = :raise
+
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.

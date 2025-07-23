@@ -16,9 +16,11 @@ namespace :hyacinth do
       Rake::Task["uri_service:db:setup"].invoke
 
       # Reset Hyacinth stuff
-      Rake::Task["db:drop"].invoke
-      Rake::Task["db:create"].invoke
-      Rake::Task["db:migrate"].invoke
+      Rake::Task['db:environment:set'].invoke
+      Rake::Task['db:drop'].invoke
+      Rake::Task['db:create'].invoke
+      Rake::Task['db:migrate'].invoke
+
       Rake::Task["hyacinth:setup:core_records"].invoke
       ENV['CLEAR'] = 'true' # Set ENV variable for reindex task
       Rake::Task['hyacinth:index:reindex'].invoke
