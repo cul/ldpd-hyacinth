@@ -45,7 +45,7 @@ class ApplicationController < ActionController::Base
     if cookies[:signed_in_using_uni]
       # Log out of CAS sessions
       cookies.delete(:signed_in_using_uni)
-      'https://cas.columbia.edu/cas/logout?service=' + URI.escape(root_url)
+      'https://cas.columbia.edu/cas/logout?service=' + URI::DEFAULT_PARSER.escape(root_url)
     else
       root_url
     end

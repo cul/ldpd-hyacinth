@@ -85,4 +85,28 @@ RSpec.describe ApplicationController, type: :controller do
       expect(@application_controller.require_project_permission!("Test",["Read","Write"],:and)).to eq(nil)
     end
   end
+
+  describe 'after_sign_out_path_for' do
+    let(:cookies) { {} }
+    let(:well_known_cookie_value) { 'well_known_cookie_value' }
+    let(:_resource) { nil } #u nused param
+
+    subject(:returned_path) { controller.after_sign_out_path_for(_resource) }
+
+    before do
+      allow(controller).to receive(:cookies).and_return(cookies)
+    end
+
+    it 'returns the root_url' do
+      expect(returned_path).to eql(controller.root_url)
+    end
+
+    context 'signed_in_using_uni' do
+      let(:cookies) { { signed_in_using_uni: well_known_cookie_value } }
+      it 'deletes the cookie and returns a cas logout URL' do
+        expect(returned_path).to start_with('https://cas.columbia.edu/cas/logout?service=')
+        expect(cookies).not_to include(:signed_in_using_uni)
+      end
+    end
+  end
 end
