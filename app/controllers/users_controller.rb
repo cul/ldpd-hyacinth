@@ -6,6 +6,23 @@ class UsersController < ApplicationController
   # Note: To log a specific user in manually, use:
   # sign_in User.where(email: 'durst@library.columbia.edu').first, :bypass => true
 
+
+  # We'll validate the ticket against the wind server
+  def get_uni_from_cas(full_validate_uri)
+    uri = URI.parse(full_validate_uri)
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_NONE if Rails.env == 'development'
+
+    cas_request = Net::HTTP::Get.new(uri.request_uri)
+    response_body = http.request(cas_request).body
+
+    # We are always expecting an XML response
+    xml_response = Nokogiri::XML(response_body)
+    xpath_selection = xml_response.xpath('/cas:serviceResponse/cas:authenticationSuccess/cas:user', 'cas' => 'http://www.yale.edu/tp/cas')
+    xpath_selection.first.text if xpath_selection.present?
+  end
+
   # GET /users/do_cas_login
   def do_cas_login
     cas_server_uri = 'https://cas.columbia.edu'
@@ -21,28 +38,14 @@ class UsersController < ApplicationController
       # If ticket is NOT set, this means that the user hasn't gotten to the uni/password login page yet.  Let's send them there.
       # After they log in, they'll be redirected to this page and they'll continue with the authentication.
 
-      redirect_to(cas_login_uri + '?service=' + URI.escape(request.protocol + request.host_with_port + '/users/do_cas_login'))
+      redirect_to(cas_login_uri + '?service=' + URI::DEFAULT_PARSER.escape(request.protocol + request.host_with_port + '/users/do_cas_login'))
     else
       # Login: Part 2
       # If ticket is set, we'll use that ticket for login part 2.
 
-      # We'll validate the ticket against the wind server
-      full_validate_uri = cas_validate_uri + '?service=' + URI.escape(request.protocol + request.host_with_port + '/users/do_cas_login') + '&ticket=' + params['ticket']
+      full_validate_uri = cas_validate_uri + '?service=' + URI::DEFAULT_PARSER.escape(request.protocol + request.host_with_port + '/users/do_cas_login') + '&ticket=' + params['ticket']
 
-      uri = URI.parse(full_validate_uri)
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE if Rails.env == 'development'
-
-      cas_request = Net::HTTP::Get.new(uri.request_uri)
-      response_body = http.request(cas_request).body
-
-      user_uni = nil
-
-      # We are always expecting an XML response
-      xml_response = Nokogiri::XML(response_body)
-      xpath_selection = xml_response.xpath('/cas:serviceResponse/cas:authenticationSuccess/cas:user', 'cas' => 'http://www.yale.edu/tp/cas')
-      user_uni = xpath_selection.first.text if xpath_selection.present?
+      user_uni = get_uni_from_cas(full_validate_uri)
 
       identify_uni_user(user_uni, cas_logout_uri)
     end
@@ -62,7 +65,7 @@ class UsersController < ApplicationController
         flash[:notice] = 'The UNI ' + user_uni + ' is not authorized to log into Hyacinth (no account exists with email ' + user_uni + '@columbia.edu).  If you believe that you should have access, please contact an application administrator.'
 
         # Log this user out
-        redirect_to(cas_logout_uri + '?service=' + URI.escape(root_url))
+        redirect_to(cas_logout_uri + '?service=' + URI::DEFAULT_PARSER.escape(root_url))
       end
     else
       render inline: 'Wind Authentication failed, Please try again later.'
