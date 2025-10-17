@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/cul/active_fedora
-  revision: 6817c16f5f701601199172e6834def46d5985c94
+  revision: 4409f30dcb54e28670bea9dc945ee8e0fb27475a
   ref: remove_deprecation_lib
   specs:
     active-fedora (8.6.0)
@@ -8,7 +8,7 @@ GIT
       activemodel (>= 6.0.0, < 7.2.0)
       activesupport (>= 6.0.0, < 7.2.0)
       multi_json (~> 1.14.0)
-      nokogiri (~> 1.15.2)
+      nokogiri (~> 1.15)
       nom-xml (>= 0.5.1)
       om (~> 3.1)
       rdf (~> 1.1)
@@ -246,7 +246,7 @@ GEM
       railties (>= 3.0.0)
     faker (3.5.2)
       i18n (>= 1.8.11, < 2)
-    faraday (2.13.3)
+    faraday (2.14.0)
       faraday-net_http (>= 2.0, < 3.5)
       json
       logger
@@ -301,7 +301,7 @@ GEM
       uber (~> 0.0.14)
     htmlentities (4.3.4)
     http-accept (1.7.0)
-    http-cookie (1.0.8)
+    http-cookie (1.1.0)
       domain_name (~> 0.5)
     httpclient (2.9.0)
       mutex_m
@@ -323,7 +323,7 @@ GEM
     jquery.fileupload-rails (1.11.0)
       jquery-ui-rails (~> 5.0)
       railties (>= 3.1)
-    json (2.13.0)
+    json (2.15.1)
     json-ld (1.99.2)
       multi_json (~> 1.11)
       rdf (~> 1.99)
@@ -381,10 +381,10 @@ GEM
     mime-types (3.7.0)
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
-    mime-types-data (3.2025.0722)
+    mime-types-data (3.2025.0924)
     mini_mime (1.1.5)
     mini_portile2 (2.8.9)
-    minitest (5.25.5)
+    minitest (5.26.0)
     mods (3.0.5)
       csv (~> 3.3)
       edtf (~> 3.0)
@@ -418,7 +418,7 @@ GEM
     netrc (0.11.0)
     nio4r (2.7.4)
     noid (0.9.0)
-    nokogiri (1.15.7)
+    nokogiri (1.18.10)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     nom-xml (1.2.0)
@@ -559,7 +559,7 @@ GEM
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
     retriable (2.1.0)
-    rexml (3.4.1)
+    rexml (3.4.4)
     rsolr (2.6.0)
       builder (>= 2.1.2)
       faraday (>= 0.9, < 3, != 2.0.0)
@@ -673,7 +673,7 @@ GEM
       ostruct
     stomp (1.4.10)
     sxp (0.1.5)
-    temple (0.10.3)
+    temple (0.10.4)
     terser (1.2.6)
       execjs (>= 0.3.0, < 3)
     thor (1.4.0)
@@ -766,7 +766,7 @@ DEPENDENCIES
   mysql2 (~> 0.5.6)
   net-http
   noid (>= 0.7.1)
-  nokogiri (~> 1.15.5)
+  nokogiri (~> 1.18, >= 1.18.10)
   psych (< 4)
   puma (~> 6.5)
   rack-protection (>= 1.5.5)

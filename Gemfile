@@ -79,7 +79,7 @@ gem 'jbuilder'
 gem 'kaminari'
 
 # For building and parsing XML
-gem 'nokogiri', '~> 1.15.5'
+gem 'nokogiri', '~> 1.18', '>= 1.18.10', force_ruby_platform: true
 
 # For authentication
 gem 'devise', '~> 4.9'
