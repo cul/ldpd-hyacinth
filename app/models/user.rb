@@ -114,6 +114,18 @@ class User < ApplicationRecord
     false
   end
 
+  # The method is used by Devise when checking if a user is active.  See:
+  # https://github.com/heartcombo/devise/blob/c8207373ea9da4021a30d913b50c473fb8bcc396/lib/devise/models/authenticatable.rb#L36-L53
+  def active_for_authentication?
+    super && self.is_active
+  end
+
+  # The method is used by Devise when checking if a user is active.  See:
+  # https://github.com/heartcombo/devise/blob/c8207373ea9da4021a30d913b50c473fb8bcc396/lib/devise/models/authenticatable.rb#L36-L53
+  def inactive_message
+    "This account is no longer active.  If you believe that you should have access, please contact an application administrator."
+  end
+
   def as_json(_options = {})
     {
       id: id,

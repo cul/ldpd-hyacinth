@@ -20,5 +20,10 @@
   <%= @user.can_manage_all_controlled_vocabularies? %>
 </p>
 
+<p>
+  <strong>Is active:</strong>
+  <%= @user.is_active? %>
+</p>
+
 <%= link_to 'Edit', edit_user_path(@user) %> |
 <%= link_to 'Back', users_path %>

@@ -13,6 +13,7 @@ FactoryBot.define do
     last_name   { "User" }
     password    { "password" }
     password_confirmation    { "password" }
+    is_active    { true }
 
     factory :admin_user do
       is_admin { true }
@@ -21,5 +22,8 @@ FactoryBot.define do
       is_admin { false }
     end
 
+    factory :inactive_user do
+      is_active { false }
+    end
   end
 end

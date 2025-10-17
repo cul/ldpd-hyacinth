@@ -4,7 +4,7 @@ RSpec.describe UsersController, type: :controller do
   describe 'do_cas_login' do
     let(:action_url) { "#{request_host}/users/do_cas_login" }
     let(:cas_login_uri) { 'https://cas.columbia.edu/cas/login' }
-    let(:expected_redirect_url) { "#{cas_login_uri}?service=#{URI::DEFAULT_PARSER.escape(action_url)}" } 
+    let(:expected_redirect_url) { "#{cas_login_uri}?service=#{URI::DEFAULT_PARSER.escape(action_url)}" }
     let(:request_host) { request.protocol + request.host_with_port }
     let(:user_uni) { 'user_uni' }
     let(:well_known_ticket_value) { 'well_known_ticket_value' }
@@ -42,18 +42,34 @@ RSpec.describe UsersController, type: :controller do
     end
 
     context 'User is present' do
+      let(:is_active) { true }
+      let(:user_opts) do
+        { email: (user_uni + '@columbia.edu'), is_active: is_active }
+      end
+
       before do
-        FactoryBot.create(:non_admin_user, email: (user_uni + '@columbia.edu'))
+        FactoryBot.create(:non_admin_user, user_opts)
       end
 
       after do
-        User.find_by(email: (user_uni + '@columbia.edu')).destroy
+        User.find_by(email: user_opts[:email]).destroy
       end
 
-      it "redirects to root_path and returns a status of 302" do
-        expect(controller).to receive(:redirect_to).with(root_path, status: 302)
-        controller.identify_uni_user(user_uni, cas_logout_uri)
-        expect(controller.flash[:notice]).to eql 'You are now logged in.'
+      context 'user is active' do
+        it "redirects to root_path and returns a status of 302" do
+          expect(controller).to receive(:redirect_to).with(root_path, status: 302)
+          controller.identify_uni_user(user_uni, cas_logout_uri)
+          expect(controller.flash[:notice]).to eql 'You are now logged in.'
+        end
+      end
+
+      context 'user is inactive' do
+        let(:is_active) { false }
+
+        it "redirects to root_path and returns a status of 302" do
+          expect(controller).to receive(:redirect_to).with(expected_cas_logout)
+          controller.identify_uni_user(user_uni, cas_logout_uri)
+        end
       end
     end
   end

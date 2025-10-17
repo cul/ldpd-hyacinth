@@ -5,6 +5,7 @@
       <th>Email</th>
       <th>Is Admin</th>
       <th>Can Manage Vocabularies</th>
+      <th>Is Active</th>
     </tr>
   </thead>
 
@@ -15,6 +16,7 @@
         <td><%= user.email %></td>
         <td><%= user.is_admin ? 'true' : 'false' %></td>
         <td><%= user.can_manage_all_controlled_vocabularies? ? 'true' : 'false' %></td>
+        <td><%= user.is_active ? 'true' : 'false' %></td>
       </tr>
     <% end %>
   </tbody>
