@@ -55,17 +55,22 @@ class UsersController < ApplicationController
     if user_uni.present?
       possible_user = User.where(email: (user_uni + '@columbia.edu')).first
 
-      if possible_user.present?
+      if possible_user.nil?
+        flash[:notice] = 'The UNI ' + user_uni + ' is not authorized to log into Hyacinth (no account exists with email ' + user_uni + '@columbia.edu).  If you believe that you should have access, please contact an application administrator.'
+
+        # Log this user out
+        redirect_to(cas_logout_uri + '?service=' + URI::DEFAULT_PARSER.escape(root_url))
+      elsif !possible_user.is_active
+        flash[:notice] = 'The account for this user (' + user_uni + ') is no longer active.  If you believe that you should have access, please contact an application administrator.'
+
+        # Log this user out
+        redirect_to(cas_logout_uri + '?service=' + URI::DEFAULT_PARSER.escape(root_url))
+      else
         sign_in possible_user, bypass: true
         cookies[:signed_in_using_uni] = true # Use this cookie to know when to do a CAS logout upon Devise logout
         flash[:notice] = 'You are now logged in.'
 
         redirect_to root_path, status: 302
-      else
-        flash[:notice] = 'The UNI ' + user_uni + ' is not authorized to log into Hyacinth (no account exists with email ' + user_uni + '@columbia.edu).  If you believe that you should have access, please contact an application administrator.'
-
-        # Log this user out
-        redirect_to(cas_logout_uri + '?service=' + URI::DEFAULT_PARSER.escape(root_url))
       end
     else
       render inline: 'Wind Authentication failed, Please try again later.'
@@ -170,7 +175,7 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:email, :first_name, :last_name, :password, :password_confirmation, :current_password, :is_admin, :can_manage_all_controlled_vocabularies)
+      params.require(:user).permit(:email, :first_name, :last_name, :password, :password_confirmation, :current_password, :is_admin, :can_manage_all_controlled_vocabularies, :is_active)
     end
 
     def set_contextual_nav_options

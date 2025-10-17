@@ -70,6 +70,7 @@ RSpec.configure do |config|
 
   def feature_spec_sign_in_admin_user
     visit '/users/sign_in'
+    sleep 1
     within("#new_user") do
       fill_in 'user_email', :with => 'hyacinth-test@library.columbia.edu'
       fill_in 'user_password', :with => 'iamthetest'

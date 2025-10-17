@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_08_05_103817) do
+ActiveRecord::Schema[7.0].define(version: 2025_07_25_123053) do
   create_table "archived_assignments", force: :cascade do |t|
     t.integer "original_assignment_id", null: false
     t.string "digital_object_pid", null: false
@@ -267,6 +267,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_08_05_103817) do
     t.string "current_sign_in_ip"
     t.string "last_sign_in_ip"
     t.boolean "can_manage_all_controlled_vocabularies", default: false, null: false
+    t.boolean "is_active", default: true, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

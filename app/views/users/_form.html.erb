@@ -72,6 +72,9 @@
     <div class="field checkbox">
       <%= f.label(:can_manage_all_controlled_vocabularies, (f.check_box(:can_manage_all_controlled_vocabularies)).html_safe + 'Can Manage All Controlled Vocabularies') %><br>
     </div>
+    <div class="field checkbox">
+      <%= f.label(:is_active, (f.check_box(:is_active)).html_safe + 'Is Active') %><br>
+    </div>
   <% end %>
 
   <%= f.submit(:class => 'btn btn-primary btn-sm', :value => (@user.new_record? ? 'Create New User' : (params[:change_password] ? 'Change Password' : 'Update User'))) %>
