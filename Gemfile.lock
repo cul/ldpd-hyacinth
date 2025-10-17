@@ -132,6 +132,10 @@ GEM
       execjs (~> 2)
     aws-crt (0.4.0)
       ffi
+    aws-crt (0.4.0-arm64-darwin)
+      ffi
+    aws-crt (0.4.0-x86_64-linux)
+      ffi
     aws-eventstream (1.4.0)
     aws-partitions (1.1133.0)
     aws-sdk-core (3.227.0)
@@ -155,6 +159,7 @@ GEM
       i18n
     bcrypt (3.1.20)
     bcrypt_pbkdf (1.1.1)
+    bcrypt_pbkdf (1.1.1-arm64-darwin)
     best_type (1.0.1)
       mime-types (~> 3.4)
     bigdecimal (3.2.2)
@@ -253,6 +258,8 @@ GEM
     faraday-net_http (3.4.1)
       net-http (>= 0.5.0)
     ffi (1.17.2)
+    ffi (1.17.2-arm64-darwin)
+    ffi (1.17.2-x86_64-linux-gnu)
     font-awesome-rails (4.7.0.9)
       railties (>= 3.2, < 9.0)
     globalid (1.2.1)
@@ -394,7 +401,7 @@ GEM
     mono_logger (1.1.2)
     msgpack (1.8.0)
     multi_json (1.14.1)
-    mustermann (3.0.3)
+    mustermann (3.0.4)
       ruby2_keywords (~> 0.0.1)
     mutex_m (0.3.0)
     mysql2 (0.5.6)
@@ -441,7 +448,7 @@ GEM
     puma (6.6.0)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (2.2.17)
+    rack (2.2.20)
     rack-protection (3.2.0)
       base64 (>= 0.1.0)
       rack (~> 2.2, >= 2.2.4)
@@ -664,6 +671,8 @@ GEM
       sprockets (>= 3.0.0)
     sqlite3 (1.7.3)
       mini_portile2 (~> 2.8.0)
+    sqlite3 (1.7.3-arm64-darwin)
+    sqlite3 (1.7.3-x86_64-linux)
     sshkit (1.24.0)
       base64
       logger
@@ -721,7 +730,9 @@ GEM
     zeitwerk (2.6.18)
 
 PLATFORMS
+  arm64-darwin
   ruby
+  x86_64-linux
 
 DEPENDENCIES
   active-fedora!
