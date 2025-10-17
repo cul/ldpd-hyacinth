@@ -804,4 +804,4 @@ DEPENDENCIES
   wowza-secure_token (= 0.0.1)
 
 BUNDLED WITH
-   2.2.33
+   2.6.9
