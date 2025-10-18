@@ -149,6 +149,7 @@ gem 'google-cloud-storage', '~> 1.49'
 gem 'concurrent-ruby', '1.3.4'
 
 gem 'msgpack', '~> 1.7.2' # Currently having an issue building msgpack 1.8 on AlmaLinux 8 servers
+gem 'bigdecimal', '~> 3.1.6' # Currently having an issue building newer versions of bigdecimal on AlmaLinux 8 servers
 
 # Development and testing!
 group :development, :test do
