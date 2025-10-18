@@ -148,6 +148,8 @@ gem 'google-cloud-storage', '~> 1.49'
 # See: https://github.com/rails/rails/issues/54263
 gem 'concurrent-ruby', '1.3.4'
 
+gem 'msgpack', '~> 1.7.2' # Currently having an issue building msgpack 1.8 on AlmaLinux 8 servers
+
 # Development and testing!
 group :development, :test do
   gem 'byebug'
