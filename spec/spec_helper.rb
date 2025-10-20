@@ -83,7 +83,7 @@ RSpec.configure do |config|
 
   def fixture(file)
     path = File.join(File.dirname(__FILE__),'fixtures', file)
-    raise "No fixture file at #{path}" unless File.exists? path
+    raise "No fixture file at #{path}" unless File.exist? path
     return File.new(path)
   end
 

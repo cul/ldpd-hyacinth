@@ -71,7 +71,7 @@ namespace :hyacinth do
         durst_project = Project.create!(string_key: 'durst', display_label: 'Seymour B. Durst Old York Library', pid_generator: cul_pid_generator)
 
         possible_durst_user_file = File.join(Rails.root, '/config/durst_user_accounts.yml')
-        if File.exists?(possible_durst_user_file)
+        if File.exist?(possible_durst_user_file)
           YAML.load_file(possible_durst_user_file).each {|service_user_entry, service_user_info|
             User.create!(
               :email => service_user_info['email'],

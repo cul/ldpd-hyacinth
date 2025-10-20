@@ -263,7 +263,7 @@ module DigitalObject::Fedora
     end
 
     def save_captions_datastream(&block)
-      return unless File.exists?(captions_location)
+      return unless File.exist?(captions_location)
       captions_ds =
         @fedora_object.datastreams[CAPTIONS_DATASTREAM_NAME]
 
@@ -288,7 +288,7 @@ module DigitalObject::Fedora
     end
 
     def save_synchronized_transcript_datastream
-      return unless File.exists?(synchronized_transcript_location)
+      return unless File.exist?(synchronized_transcript_location)
       synchronized_transcript_ds =
         @fedora_object.datastreams[SYNCHRONIZED_TRANSCRIPT_DATASTREAM_NAME]
 
@@ -314,7 +314,7 @@ module DigitalObject::Fedora
     end
 
     def save_chapters_datastream
-      return unless File.exists?(index_document_location)
+      return unless File.exist?(index_document_location)
       chapters_ds = @fedora_object.datastreams[CHAPTERS_DATASTREAM_NAME]
 
       if chapters_ds.blank?
