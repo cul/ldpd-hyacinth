@@ -1,10 +1,17 @@
 class User < ApplicationRecord
+  RANDOM_PASSWORD_LENGTH = 32
   CONTROLLED_VOCABULARIES_JOIN = 'INNER JOIN dynamic_fields ON dynamic_fields.id = enabled_dynamic_fields.dynamic_field_id ' \
     'INNER JOIN controlled_vocabularies ON controlled_vocabularies.string_key = dynamic_fields.controlled_vocabulary_string_key'
 
   has_many :project_permissions, dependent: :destroy
   has_many :projects, through: :project_permissions
   # has_many :job_managers
+
+  # Intentionally disabling validations because we allow the api_key_digest field to be NULL in the database if an
+  # API key hasn't been set.  If we don't disable this validation, then an API key is required when a user is created.
+  # We also don't require a password validation field when updating api keys, so that's another reason validation is disabled.
+  has_secure_password :api_key, validations: false
+  validate :api_key_must_be_valid # Since default validations are skipped in the line above, we'll apply our own
 
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable,
@@ -15,6 +22,16 @@ class User < ApplicationRecord
 
   validates :email, :first_name, :last_name, presence: true
   validates :password, :password_confirmation, presence: true, on: :create
+
+  # Since we don't allow password-based login in this app, we assign a random
+  # password to new user accounts before they are created.
+  before_validation :assign_random_password_for_new_records
+
+  def assign_random_password_for_new_records
+    return unless self.new_record?
+    self.password = Devise.friendly_token(RANDOM_PASSWORD_LENGTH)
+    self.password_confirmation = self.password
+  end
 
   def full_name
     first_name + ' ' + last_name
@@ -124,6 +141,28 @@ class User < ApplicationRecord
   # https://github.com/heartcombo/devise/blob/c8207373ea9da4021a30d913b50c473fb8bcc396/lib/devise/models/authenticatable.rb#L36-L53
   def inactive_message
     "This account is no longer active.  If you believe that you should have access, please contact an application administrator."
+  end
+
+  # We're overriding Devise's valid_password? method because we don't allow password-based Devise login
+  # anymore for any accounts.  We only allow two other types of authentication:
+  # - Omniauth login (with CAS), which is handled by separate code
+  # - API access, which is handled elsewhere and doesn't follow the regular Devise login flow because we
+  #   don't want Devise to set a login cookie in response to API requests.
+  # We ONLY allow regular Devise login (which also means setting a login cookie that
+  # allows UI for  using API tokens supplied in the password field.
+  def valid_password?(password)
+    false
+  end
+
+  def api_key_must_be_valid
+    # API keys aren't required, so the API key might not be present.  Also: The api_key field will only be set
+    # when we are updating the value.
+    return unless self.api_key.present?
+
+    # Password cannot be greater than ActiveModel::SecurePassword::MAX_PASSWORD_LENGTH_ALLOWED bytes in length,
+    # due to bcrypt limitations.
+    # For more info, see: https://api.rubyonrails.org/v7.1.3.3/classes/ActiveModel/SecurePassword/ClassMethods.html
+    self.errors.add(:api_key, 'API key is too long') if self.api_key.bytes.length > ActiveModel::SecurePassword::MAX_PASSWORD_LENGTH_ALLOWED
   end
 
   def as_json(_options = {})

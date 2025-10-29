@@ -5,7 +5,9 @@ class ApplicationController < ActionController::Base
   # For JSON api, recommended by: http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection.html
   skip_before_action :verify_authenticity_token, if: :json_request?
 
-  before_action :set_start_time, :initialize_admin_contextual_menu, :require_authenticated_user!
+  before_action :set_start_time, :handle_token_auth!, :initialize_admin_contextual_menu, :require_authenticated_user!
+
+  add_flash_types :persistent_notice # A notice that must be closed by the user and won't auto-close
 
   def initialize_admin_contextual_menu
     @contextual_nav_options = {}
@@ -117,5 +119,33 @@ class ApplicationController < ActionController::Base
         return true if current_user.permitted_in_project?(project, permission)
       end
       false
+    end
+
+    # Our token auth uses Basic authentication and expects a user to pass a token in the Basic auth
+    # password field.  When users authenticate through this process, we do not create a Devise session
+    # (meaning we do not set a cookie).
+    def handle_token_auth!
+      return if user_signed_in? # No need to check for auth if the user is already signed in
+
+      # Our API auth uses the basic auth protocol, but expects an API key as a password.
+      basic_auth_match = request.authorization&.match(/^(Basic )(.+)/)
+      return unless basic_auth_match
+      basic_auth_credentials = Base64.strict_decode64(basic_auth_match[2]).split(':')
+      return unless basic_auth_credentials.length == 2
+
+      # TODO: Change this to User.find_by(uid: basic_auth_credentials[0]) once uid field is added later on.
+      possible_user = User.find_by(email: basic_auth_credentials[0])
+
+      # If this user has never set up an API key, do not allow them to log in.
+      if possible_user.api_key_digest.nil?
+        # TODO: Change user.email below to self.uid once we add that field
+        Rails.logger.error("User with email #{self.email} attempted to log in, but login was rejected because this user has not set up an API key.")
+        return
+      end
+
+      if possible_user && possible_user.authenticate_api_key(basic_auth_credentials[1])
+        request.session_options[:skip] = true # Skip Devise session.  Do not set a session cookie.
+        sign_in possible_user
+      end
     end
 end

@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  API_TOKEN_LENGTH = 32
+
   before_action :require_hyacinth_admin!, except: [:do_wind_login, :do_cas_login, :current_user_data]
   before_action :set_user, only: [:show, :edit, :update, :destroy]
   before_action :set_contextual_nav_options
@@ -134,13 +136,18 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1.json
   def update
     respond_to do |format|
-      if @user.update(user_params)
+      processed_user_params = user_params
+      generate_new_api_key = processed_user_params.delete(:generate_new_api_key)
+
+      if @user.update(
+        processed_user_params.merge(generate_new_api_key ? {api_key: Devise.friendly_token(API_TOKEN_LENGTH)} : {})
+      )
         format.html do
-          if params[:change_password]
-            redirect_to edit_user_url(@user), notice: 'Password successfully updated.'
-          else
-            redirect_to @user, notice: 'User was successfully updated.'
-          end
+          redirect_to(
+            @user,
+            notice: 'User was successfully updated.',
+            persistent_notice: @user.api_key.present? ? "Your new API key is:\n#{@user.api_key}.\nThis information will only be shown once." : nil
+          )
         end
         format.json { head :no_content }
       else
@@ -175,7 +182,11 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:email, :first_name, :last_name, :password, :password_confirmation, :current_password, :is_admin, :can_manage_all_controlled_vocabularies, :is_active)
+      params.require(:user).permit(
+        :email, :first_name, :last_name,
+        :is_admin, :can_manage_all_controlled_vocabularies, :is_active,
+        :generate_new_api_key
+      )
     end
 
     def set_contextual_nav_options

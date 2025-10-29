@@ -25,5 +25,10 @@
   <%= @user.is_active? %>
 </p>
 
+<p>
+  <strong>API Key:</strong>
+  <%= @user.api_key_digest.present? ? 'Yes' : 'No API key has been created for this user.' %>
+</p>
+
 <%= link_to 'Edit', edit_user_path(@user) %> |
 <%= link_to 'Back', users_path %>

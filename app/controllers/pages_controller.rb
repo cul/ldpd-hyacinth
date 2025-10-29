@@ -1,7 +1,11 @@
 class PagesController < ApplicationController
   # GET /home
   def home
-    redirect_to digital_objects_path if user_signed_in?
+    if user_signed_in?
+      redirect_to digital_objects_path
+    else
+      redirect_to new_user_session_path
+    end
   end
 
   # GET /login_check
