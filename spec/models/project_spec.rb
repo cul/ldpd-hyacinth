@@ -26,14 +26,14 @@ RSpec.describe Project, type: :model do
       @test_pid_generator = PidGenerator.find_or_create_by!(namespace: 'testingTheProjectModel')
       # Create Test project
       @test_project = Project.find_or_create_by!(string_key: 'testingTheProjectModel',display_label: 'Test the Project Model',pid_generator: @test_pid_generator)
-  
+
       # Create test DynamicFieldGroupCategory
       @test_dynamic_field_group_category = DynamicFieldGroupCategory.find_or_create_by!(display_label: 'Testing the Project Model')
     end
-  
+
     after(:context) do
       @test_pid_generator.destroy
-      @test_dynamic_field_group_category.destroy    
+      @test_dynamic_field_group_category.destroy
       @test_project.destroy
     end
 
@@ -91,20 +91,20 @@ RSpec.describe Project, type: :model do
         fedora_object = double(Concept).as_null_object
         allow(sample_project).to receive(:fedora_object).and_return(fedora_object)
         allow(sample_project).to receive(:"create_associated_fedora_object!")
-        
+
         sample_project.enabled_publish_target_pids = ['abc:123', 'def:456']
         sample_project.primary_publish_target_pid = 'abc:123'
         sample_project
     }
-    
+
     before do
       sample_project.save
     end
-    
+
     after do
       sample_project.destroy
     end
-    
+
     context 'sets primary_publish_target_pid field to nil when enabled_publish_target_pids is blank' do
       let(:sample_project_with_new_enabled_publish_target_pids) {
         sample_project.enabled_publish_target_pids = []
@@ -115,7 +115,7 @@ RSpec.describe Project, type: :model do
         expect(sample_project_with_new_enabled_publish_target_pids.primary_publish_target_pid).to be_nil
       end
     end
-    
+
     context 'sets the primary_publish_target_pid field to enabled_publish_target_pids.first when enabled_publish_target_pids is not blank and does not include primary_publish_target_pid' do
       let(:sample_project_with_new_enabled_publish_target_pids) {
         sample_project.enabled_publish_target_pids = ['zz:top', 'ac:dc']
@@ -126,7 +126,7 @@ RSpec.describe Project, type: :model do
         expect(sample_project_with_new_enabled_publish_target_pids.primary_publish_target_pid).to eq('zz:top')
       end
     end
-    
+
     context 'removes blank enabled_publish_target_pids on save' do
       let(:sample_project_with_new_enabled_publish_target_pids) {
         sample_project.enabled_publish_target_pids = ['', 'zz:top', '', 'ac:dc']
@@ -137,7 +137,7 @@ RSpec.describe Project, type: :model do
         expect(sample_project_with_new_enabled_publish_target_pids.enabled_publish_target_pids).to eq(['zz:top', 'ac:dc'])
       end
     end
-    
+
   end
 
 end

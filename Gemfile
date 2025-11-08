@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 7.0.10'
+gem 'rails', '~> 7.1.6'
 gem 'bootsnap', require: false
 # gem 'responders'
 
@@ -91,7 +91,7 @@ gem 'omniauth-cul', git: 'https://github.com/cul/omniauth-cul', ref: 'improved-i
 # gem 'childprocess', '~> 2.0'
 
 # CUL Fedora Dependencies and Content Models
-gem 'cul_hydra', git: 'https://github.com/cul/cul_hydra', ref: 'wip-upgrade-deps'
+gem 'cul_hydra', git: 'https://github.com/cul/cul_hydra', ref: 'wip-upgrade-deps-rails-7.1'
 gem 'active-fedora', git: 'https://github.com/cul/active_fedora', ref: 'remove_deprecation_lib'
 gem 'multi_json', '~> 1.14.0'
 gem 'ebnf', '~> 1.0.0'
@@ -136,11 +136,6 @@ gem 'vite_rails', '~> 3.0.19'
 # dependency is loaded twice.  See this: https://stackoverflow.com/a/75105591
 # And this: https://github.com/ruby/net-imap/issues/16#issuecomment-803086765
 gem 'net-http'
-
-# Gem min versions that are only specified here because of vulnerabilities in earlier versions:
-gem 'rack-protection', '>= 1.5.5'
-gem 'loofah', '~> 2.20.0'
-gem 'rails-html-sanitizer', '>= 1.2'
 
 # Amazon S3 SDK
 gem 'aws-sdk-s3', '~> 1.0'

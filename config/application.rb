@@ -1,6 +1,6 @@
-require_relative 'boot'
+require_relative "boot"
 
-require 'rails/all'
+require "rails/all"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -8,11 +8,23 @@ Bundler.require(*Rails.groups)
 
 module Hyacinth
   class Application < Rails::Application
-    # Settings in config/environments/* take precedence over those specified here.
-    # Application configuration should go into files in config/initializers
-    # -- all .rb files in that directory are automatically loaded.
+    # Initialize configuration defaults for originally generated Rails version.
+    config.load_defaults 7.1
 
-    config.load_defaults 6.1
+    # Please, add to the `ignore` list any other `lib` subdirectories that do
+    # not contain `.rb` files, or that should not be reloaded or eager loaded.
+    # Common ones are `templates`, `generators`, or `middleware`, for example.
+    config.autoload_lib(ignore: %w(assets tasks))
+
+    # Configuration for the application, engines, and railties goes here.
+    #
+    # These settings can be overridden in specific environments using the files
+    # in config/environments, which are processed later.
+
+    # Rails will use the Eastern time zone
+    # config.time_zone = 'Eastern Time (US & Canada)' # TODO: Enable this
+    # Database will store dates in UTC (which is the rails default behavior)
+    config.active_record.default_timezone = :utc
 
     config.generators do |g|
       g.test_framework :rspec, spec: true
@@ -21,14 +33,6 @@ module Hyacinth
     # Custom directories with classes and modules you want to be autoloadable.
     config.eager_load_paths << Rails.root.join('lib')
     # Hyacinth Note - See: http://stackoverflow.com/questions/4928664/trying-to-implement-a-module-using-namespaces
-
-    # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.
-    # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
-    # config.time_zone = 'Eastern Time (US & Canada)'
-
-    # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
-    # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
-    # config.i18n.default_locale = :de
 
     # Custom precompiled asset manifests
     config.assets.precompile += [

@@ -6,7 +6,7 @@ class Project < ApplicationRecord
   has_many :project_permissions, dependent: :destroy
   accepts_nested_attributes_for :project_permissions, allow_destroy: true, reject_if: proc { |attributes| attributes['id'].blank? && attributes['user_id'].blank? }
 
-  serialize :enabled_publish_target_pids, Array
+  serialize :enabled_publish_target_pids, type: Array, coder: YAML
 
   belongs_to :pid_generator
 

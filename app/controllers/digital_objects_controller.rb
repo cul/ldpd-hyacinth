@@ -14,7 +14,7 @@ class DigitalObjectsController < ApplicationController
 
   DIRECT_UPLOAD_FILE_PARAM_NAMES = [:file, :access_copy_file, :poster_file]
 
-  before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor,
+  before_action :set_digital_object, only: [:show, :update, :destroy, :undestroy, :data_for_ordered_child_editor,
     :download, :download_access_copy, :download_poster, :download_service_copy,
     :add_parent, :remove_parents, :mods, :xacml, :media_view, :rotate_image, :regenerate_access_copy, :swap_order_of_first_two_child_assets,
     :download_transcript, :update_transcript,

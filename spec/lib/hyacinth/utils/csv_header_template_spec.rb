@@ -24,7 +24,7 @@ RSpec.describe Hyacinth::Utils::CsvHeaderTemplate do
   let(:expected_array_headers) {
     ["_digital_object_type.string_key", "_identifiers-1", "_import_file.import_path", "_import_file.import_type",
      "_import_file.original_file_path", "_parent_digital_objects-1.identifier", "_project.string_key",
-     "csv_header_dfg_two-1:csv_header_df_four", 
+     "csv_header_dfg_two-1:csv_header_df_four",
      "csv_header_dfg_two-1:csv_header_dfg_one-1:csv_header_ct_df_three.authority",
      "csv_header_dfg_two-1:csv_header_dfg_one-1:csv_header_ct_df_three.clio_id",
      "csv_header_dfg_two-1:csv_header_dfg_one-1:csv_header_ct_df_three.uri",
@@ -32,11 +32,11 @@ RSpec.describe Hyacinth::Utils::CsvHeaderTemplate do
      "csv_header_dfg_two-1:csv_header_dfg_one-1:csv_header_df_one",
      "csv_header_dfg_two-1:csv_header_dfg_one-1:csv_header_df_two"]
   }
-  
-  let(:hash_preload_dfg) { 
+
+  let(:hash_preload_dfg) {
     Hash[DynamicFieldGroup.includes(:parent_dynamic_field_group).all.map { |dfg| [dfg.id, dfg] }]
     }
-  
+
   before(:context) do
 
     @dot_item = DigitalObjectType.find_by(string_key: 'item')
@@ -86,13 +86,13 @@ RSpec.describe Hyacinth::Utils::CsvHeaderTemplate do
     @df_2.destroy
     @df_1.destroy
     @dfg_category.destroy
-      
+
   end
 
   # ct = controlled term
   context "#dfg_header_string_non_ct: " do
-    
-    it "generates correct header string" do
+
+    it "generates correct header string", focus: true do
       expect(Hyacinth::Utils::CsvHeaderTemplate.df_header_string_non_ct(@df_1, hash_preload_dfg)).to eq(expected_header_string_df_1)
     end
 
@@ -111,8 +111,8 @@ RSpec.describe Hyacinth::Utils::CsvHeaderTemplate do
 
     it "generates correct headers for use case (duplicate dfs, nested dfg, controlled term)" do
 
-      # reset/deleted enabled dynamic fields for this project 
-      @csv_header_project.enabled_dynamic_fields = []     
+      # reset/deleted enabled dynamic fields for this project
+      @csv_header_project.enabled_dynamic_fields = []
 
       @csv_header_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: @df_1,
                                                                            digital_object_type: @dot_item)
@@ -127,13 +127,13 @@ RSpec.describe Hyacinth::Utils::CsvHeaderTemplate do
       @csv_header_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: @df_4,
                                                                            digital_object_type: @dot_item)
       expect(Hyacinth::Utils::CsvHeaderTemplate.array_dynamic_field_headers(@csv_header_project)).to eq(expected_array_headers)
-      
+
     end
-    
+
     it "generates correct headers (no duplicates) with same df enabled twice, for items and assets" do
 
-      # reset/deleted enabled dynamic fields for this project 
-      @csv_header_project.enabled_dynamic_fields = []     
+      # reset/deleted enabled dynamic fields for this project
+      @csv_header_project.enabled_dynamic_fields = []
 
       @csv_header_project.enabled_dynamic_fields << EnabledDynamicField.new(dynamic_field: @df_2,
                                                                           digital_object_type: @dot_item)

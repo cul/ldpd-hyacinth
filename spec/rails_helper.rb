@@ -19,19 +19,25 @@ Capybara.default_max_wait_time = 30 # Some ajax requests might take longer than 
 # option on the command line or in ~/.rspec, .rspec or `.rspec-local`.
 Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
-# Checks for pending migrations before tests are run.
-# If you are not using ActiveRecord, you can remove this line.
-ActiveRecord::Migration.check_pending! if defined?(ActiveRecord::Migration)
+# Checks for pending migrations and applies them before tests are run.
+# If you are not using ActiveRecord, you can remove these lines.
+begin
+  ActiveRecord::Migration.maintain_test_schema!
+rescue ActiveRecord::PendingMigrationError => e
+  puts e.to_s.strip
+  exit 1
+end
 
 RSpec.configure do |config|
-  # Remove these two lines if you're not using ActiveRecord or ActiveRecord fixtures
-  config.include ActionDispatch::TestProcess
-  config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
+  config.fixture_paths = [Rails.root.join('/spec/fixtures')]
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
-  config.use_transactional_fixtures = false # We don't want to run specs in transactions because this will cause DigitalObject DB/Fedora/Solr records to get out of sync
+  # NOTE: We don't want to run specs in transactions because this will cause DigitalObject DB/Fedora/Solr records
+  # to get out of sync.  We might enable this later on after we decouple Hyacinth and Fedora.
+  config.use_transactional_fixtures = false
 
   # additional factory_bot configuration
   config.before(:suite) do

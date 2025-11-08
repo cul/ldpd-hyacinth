@@ -1,10 +1,8 @@
 class ProjectsController < ApplicationController
   include Hyacinth::ProjectsBehavior
-  before_action :set_project, only: [:show, :edit, :update, :destroy, :enabled_dynamic_fields, :edit_enabled_dynamic_fields,
-                                     :update_enabled_dynamic_fields, :edit_project_permissions, :update_project_permissions,
-                                     :fieldsets, :edit_publish_targets, :update_publish_targets,
+  before_action :set_project, only: [:show, :edit, :update, :destroy,
                                      :select_dynamic_fields_for_csv_export, :select_dynamic_fields_csv_header_for_import,
-                                     :upload_import_csv_file, :process_import_csv_file, :generate_csv_header_template]
+                                     :generate_csv_header_template]
   before_action :require_appropriate_permissions!
   before_action :set_contextual_nav_options
 
@@ -156,9 +154,7 @@ class ProjectsController < ApplicationController
         unless current_user.admin_for_at_least_one_project?
           require_hyacinth_admin!
         end
-      when 'edit', 'update', 'destroy',
-        'edit_project_permissions', 'update_project_permissions',
-        'edit_enabled_dynamic_fields', 'update_enabled_dynamic_fields', 'fieldsets'
+      when 'edit', 'update', 'destroy'
         require_project_permission!(@project, :project_admin)
       else
         require_hyacinth_admin!
