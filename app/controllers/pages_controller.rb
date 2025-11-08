@@ -4,15 +4,12 @@ class PagesController < ApplicationController
     if user_signed_in?
       redirect_to digital_objects_path
     else
-      redirect_to new_user_session_path
+      redirect_to users_sign_in_path
     end
   end
 
   # GET /login_check
   def login_check
-    # user = User.where(email: 'hyacinth-admin@library.columbia.edu').first
-    # sign_in user, :bypass => true
-    # raise user.errors.inspect
     if user_signed_in?
       render plain: 'true'
     else

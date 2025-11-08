@@ -26,10 +26,10 @@ class ApplicationController < ActionController::Base
   end
 
   def require_authenticated_user!
-    return if user_signed_in? || params[:controller] == 'devise/sessions'
+    return if user_signed_in? || ['users/sessions', 'users/omniauth_callbacks'].include?(params[:controller])
+
     pre_authn_requests = {
       'pages' => ['home', 'login_check', 'csrf_token'],
-      'users' => ['do_wind_login', 'do_cas_login']
     }
 
     # Allow access to exempt requests
@@ -128,18 +128,14 @@ class ApplicationController < ActionController::Base
       return if user_signed_in? # No need to check for auth if the user is already signed in
 
       # Our API auth uses the basic auth protocol, but expects an API key as a password.
-      basic_auth_match = request.authorization&.match(/^(Basic )(.+)/)
-      return unless basic_auth_match
-      basic_auth_credentials = Base64.strict_decode64(basic_auth_match[2]).split(':')
-      return unless basic_auth_credentials.length == 2
+      basic_auth_credentials = extract_basic_auth_credentials_from_authorization_header(request.authorization)
+      return unless basic_auth_credentials
 
-      # TODO: Change this to User.find_by(uid: basic_auth_credentials[0]) once uid field is added later on.
-      possible_user = User.find_by(email: basic_auth_credentials[0])
+      possible_user = User.find_by(uid: basic_auth_credentials[0])
 
       # If this user has never set up an API key, do not allow them to log in.
       if possible_user.api_key_digest.nil?
-        # TODO: Change user.email below to self.uid once we add that field
-        Rails.logger.error("User with email #{self.email} attempted to log in, but login was rejected because this user has not set up an API key.")
+        Rails.logger.error("User #{self.uid} attempted to log in, but login was rejected because this user has not set up an API key.")
         return
       end
 
@@ -147,5 +143,14 @@ class ApplicationController < ActionController::Base
         request.session_options[:skip] = true # Skip Devise session.  Do not set a session cookie.
         sign_in possible_user
       end
+    end
+
+    def extract_basic_auth_credentials_from_authorization_header(authorization_header_value)
+      basic_auth_match = authorization_header_value&.match(/^(Basic )(.+)/)
+      return nil unless basic_auth_match
+      basic_auth_credentials = Base64.strict_decode64(basic_auth_match[2]).split(':')
+      return nil unless basic_auth_credentials.length == 2
+
+      basic_auth_credentials
     end
 end

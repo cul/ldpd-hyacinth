@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_10_17_160726) do
+ActiveRecord::Schema[7.0].define(version: 2025_11_07_134025) do
   create_table "archived_assignments", force: :cascade do |t|
     t.integer "original_assignment_id", null: false
     t.string "digital_object_pid", null: false
@@ -257,7 +257,6 @@ ActiveRecord::Schema[7.0].define(version: 2025_10_17_160726) do
     t.datetime "created_at", precision: nil
     t.datetime "updated_at", precision: nil
     t.string "email", default: "", null: false
-    t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at", precision: nil
     t.datetime "remember_created_at", precision: nil
@@ -269,9 +268,13 @@ ActiveRecord::Schema[7.0].define(version: 2025_10_17_160726) do
     t.boolean "can_manage_all_controlled_vocabularies", default: false, null: false
     t.boolean "is_active", default: true, null: false
     t.string "api_key_digest"
+    t.string "uid", null: false
+    t.integer "account_type", default: 0, null: false
+    t.index ["account_type"], name: "index_users_on_account_type"
     t.index ["api_key_digest"], name: "index_users_on_api_key_digest", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index ["uid"], name: "index_users_on_uid", unique: true
   end
 
   create_table "xml_datastreams", force: :cascade do |t|

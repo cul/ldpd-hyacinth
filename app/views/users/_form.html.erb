@@ -12,12 +12,16 @@
   <% end %>
 
   <div class="field">
-    <%= f.label :email %><br>
+    <%= f.label :uid %><br>
     <% if @user.new_record? %>
-      <%= f.text_field :email, :class => 'form-control' %>
+      <%= f.text_field :uid, :class => 'form-control' %>
     <% else %>
-      <%= @user.email %>
+      <%= @user.uid %>
     <% end %>
+  </div>
+  <div class="field">
+    <%= f.label :email %><br>
+    <%= f.text_field :email, :class => 'form-control' %>
   </div>
   <div class="field">
     <%= f.label :first_name %><br>
@@ -32,6 +36,10 @@
   </div>
   <div class="field checkbox">
     <%= f.label(:can_manage_all_controlled_vocabularies, (f.check_box(:can_manage_all_controlled_vocabularies)).html_safe + 'Can Manage All Controlled Vocabularies') %><br>
+  </div>
+  <div class="field">
+    <%= f.label :account_type %>
+    <%= f.select :account_type, User.account_types.keys.map { |account_type_key| [account_type_key.humanize, account_type_key] }, {}, {class: 'form-control'} %>
   </div>
   <div class="field checkbox">
     <%= f.label(:is_active, (f.check_box(:is_active)).html_safe + 'Is Active') %><br>

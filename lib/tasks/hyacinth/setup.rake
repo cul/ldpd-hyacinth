@@ -17,6 +17,35 @@ namespace :hyacinth do
       end
     end
 
+    desc "Set up hyacinth core records (DigitalObjectType, XmlDatastream, etc.) "
+    task default_users: :environment do
+        puts 'Creating default user accounts...'
+        YAML.load_file('config/default_user_accounts.yml').each {|user_entry, user_info|
+          user = User.create!(
+            uid: user_info['uid'],
+            email: user_info['email'],
+            first_name: user_info['first_name'],
+            last_name: user_info['last_name'],
+            # is_admin: user_info['is_admin'],
+            account_type: user_info['account_type']
+          )
+
+          user.reload
+          puts user.inspect
+        }
+
+        user = User.create!(
+          uid: 'abc123',
+          email: 'abc123@columbia.edu',
+          first_name: 'ABC',
+          last_name: '123',
+          is_admin: true,
+          account_type: 'service'
+        )
+        user.reload
+          puts user.inspect
+    end
+
     desc "Set up hyacinth core records (DigitalObjectType, User, XmlDatastream, etc.) "
     task core_records: :environment do
       # If there are no DigitalObjectTypes the system, run the setup code below.
@@ -33,19 +62,6 @@ namespace :hyacinth do
         DigitalObjectType.create!(string_key: 'group', display_label: 'Group', sort_order: 1)
         DigitalObjectType.create!(string_key: 'asset', display_label: 'Asset', sort_order: 2)
         DigitalObjectType.create!(string_key: 'file_system', display_label: 'FileSystem', sort_order: 3)
-
-        # Create default user accounts
-        puts 'Creating default user accounts...'
-        YAML.load_file('config/default_user_accounts.yml').each {|service_user_entry, service_user_info|
-          User.create!(
-            :email => service_user_info['email'],
-            :password => service_user_info['password'],
-            :password_confirmation => service_user_info['password'],
-            :first_name => service_user_info['first_name'],
-            :last_name => service_user_info['last_name'],
-            :is_admin => service_user_info['is_admin']
-          )
-        }
 
         puts 'Creating default XmlDatastream...'
         # Create XmlDatastreams

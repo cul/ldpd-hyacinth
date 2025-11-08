@@ -45,7 +45,7 @@
                 <li><%= link_to 'Historical Assignments', archived_assignments_path %></li>
                 <li><%= link_to 'System Information', system_information_path %></li>
               <% end %>
-              <li><%= link_to('Sign Out', destroy_user_session_path, {method: :delete}) %></li>
+              <li><%= link_to('Sign Out', users_sign_out_path, {method: :delete}) %></li>
             </ul>
           <% end %>
         </li>

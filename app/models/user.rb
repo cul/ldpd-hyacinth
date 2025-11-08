@@ -17,21 +17,29 @@ class User < ApplicationRecord
   # :token_authenticatable, :confirmable,
   # :lockable, :timeoutable, :omniauthable
   # :registerable, :recoverable
-  devise :database_authenticatable,
-         :rememberable, :trackable, :validatable
 
-  validates :email, :first_name, :last_name, presence: true
-  validates :password, :password_confirmation, presence: true, on: :create
+  # TODO: Determine whether we need :database_authenticatable, :rememberable
+  devise :trackable,
+          #:validatable,
+          #:database_authenticatable,
+          #:rememberable,
+          :omniauthable, omniauth_providers: Devise.omniauth_configs.keys
+
+  validates :uid, :email, :first_name, :last_name, presence: true
+  validates :uid, :email, uniqueness: true
+  # validates :password, :password_confirmation, presence: true, on: :create
 
   # Since we don't allow password-based login in this app, we assign a random
   # password to new user accounts before they are created.
-  before_validation :assign_random_password_for_new_records
+  # before_validation :assign_random_password_for_new_records
 
-  def assign_random_password_for_new_records
-    return unless self.new_record?
-    self.password = Devise.friendly_token(RANDOM_PASSWORD_LENGTH)
-    self.password_confirmation = self.password
-  end
+  enum :account_type, { standard: 0, service: 1 }
+
+  # def assign_random_password_for_new_records
+  #   return unless self.new_record?
+  #   self.password = Devise.friendly_token(RANDOM_PASSWORD_LENGTH)
+  #   self.password_confirmation = self.password
+  # end
 
   def full_name
     first_name + ' ' + last_name
@@ -146,13 +154,18 @@ class User < ApplicationRecord
   # We're overriding Devise's valid_password? method because we don't allow password-based Devise login
   # anymore for any accounts.  We only allow two other types of authentication:
   # - Omniauth login (with CAS), which is handled by separate code
-  # - API access, which is handled elsewhere and doesn't follow the regular Devise login flow because we
+  # - API access, which is handled by separate code and doesn't follow the regular Devise login flow because we
   #   don't want Devise to set a login cookie in response to API requests.
-  # We ONLY allow regular Devise login (which also means setting a login cookie that
-  # allows UI for  using API tokens supplied in the password field.
   def valid_password?(password)
     false
   end
+
+  # Since we don't have a password field on the user model, we're overriding Devise's password method to satisfy the
+  # requirements of the :validatable module (Devise::Models::Validatable), which expects user.password to return a
+  # valid value.  The random value returned by this method doesn't matter because it's not used anywhere else.
+  # def password
+  #   Devise.friendly_token(20)
+  # end
 
   def api_key_must_be_valid
     # API keys aren't required, so the API key might not be present.  Also: The api_key field will only be set

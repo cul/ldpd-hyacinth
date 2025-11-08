@@ -89,9 +89,11 @@ Rails.application.routes.draw do
   get '/home', to: 'pages#home', as: :home
   get '/system_information', to: 'pages#system_information', as: :system_information
 
-  get '/users/do_wind_login', to: 'users#do_wind_login', as: :user_do_wind_login
-  get '/users/do_cas_login', to: 'users#do_cas_login', as: :user_do_cas_login
-  devise_for :users
+  devise_for :users, controllers: { sessions: 'users/sessions', omniauth_callbacks: 'users/omniauth_callbacks' }
+  devise_scope :user do
+    get '/users/sign_in', to: 'users/sessions#new'
+    delete '/users/sign_out', to: 'users/sessions#destroy'
+  end
   resources :users do
     collection do
       get 'current_user_data'

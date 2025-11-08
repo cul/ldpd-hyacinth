@@ -1,13 +1,9 @@
 require 'rails_helper'
 
-describe "Digital Object Editor UI" do
-
-  before(:each) do
-    feature_spec_sign_in_admin_user
-    wait_for_ajax
-  end
-
-  it "can create a new Digital Object", :js => true do
+describe "Digital Object Editor UI", type: :feature do
+  before { sign_in_admin_user }
+  it "displays the expected welcome message", js: true do
+    visit('/digital_objects')
     expect(page).to have_content 'New Digital Object'
   end
 end

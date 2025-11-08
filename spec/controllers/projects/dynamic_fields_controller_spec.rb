@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Projects::DynamicFieldsController, :type => :controller do
-  before { sign_in_admin_user_controller_spec() }
+  before { sign_in_admin_user() }
 
   # This should return the set of valid attributes for update.
   let(:update_attributes) {

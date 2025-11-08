@@ -3,16 +3,15 @@ FactoryBot.define do
   o = [('a'..'z'), ('A'..'Z')].map { |i| i.to_a }.flatten
   random_string = (0...50).map { o[rand(o.length)] }.join
 
-  sequence :email do |n|
-    "test-#{random_string}-#{n}@library.columbia.edu"
+  sequence :uid do |n|
+    "test-#{random_string}-#{n}"
   end
 
   factory :user do
-    email
+    uid
+    email { "#{uid}@library.columbia.edu" }
     first_name  { "Test" }
     last_name   { "User" }
-    password    { "password" }
-    password_confirmation    { "password" }
     is_active    { true }
 
     factory :admin_user do
