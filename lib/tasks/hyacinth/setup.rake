@@ -26,24 +26,21 @@ namespace :hyacinth do
             email: user_info['email'],
             first_name: user_info['first_name'],
             last_name: user_info['last_name'],
-            # is_admin: user_info['is_admin'],
+            is_admin: user_info['is_admin'],
             account_type: user_info['account_type']
           )
-
-          user.reload
-          puts user.inspect
         }
 
-        user = User.create!(
-          uid: 'abc123',
-          email: 'abc123@columbia.edu',
-          first_name: 'ABC',
-          last_name: '123',
-          is_admin: true,
-          account_type: 'service'
-        )
-        user.reload
-          puts user.inspect
+        # user = User.create!(
+        #   uid: 'abc123',
+        #   email: 'abc123@columbia.edu',
+        #   first_name: 'ABC',
+        #   last_name: '123',
+        #   is_admin: true,
+        #   account_type: 'service'
+        # )
+        # user.reload
+        #   puts user.inspect
     end
 
     desc "Set up hyacinth core records (DigitalObjectType, User, XmlDatastream, etc.) "
