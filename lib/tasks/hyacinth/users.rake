@@ -43,17 +43,6 @@ namespace :hyacinth do
       user_params = ENV.slice(*required_params)
       puts "Creating user with params: #{user_params}"
       User.create!(user_params.merge({account_type: :service}))
-
-      user = User.create!(
-          uid: 'abc123',
-          email: 'abc123@columbia.edu',
-          first_name: 'ABC',
-          last_name: '123',
-          is_admin: true,
-          account_type: 'service'
-        )
-        user.reload
-          puts user.inspect
     end
 
     desc "Create admin user"
