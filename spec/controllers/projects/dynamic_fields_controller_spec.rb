@@ -31,7 +31,10 @@ RSpec.describe Projects::DynamicFieldsController, :type => :controller do
       allow(DigitalObjectType).to receive(:find).with(digital_object_type_id).and_return(digital_object_type)
       get :edit, params: {id: project_id, digital_object_type_id: digital_object_type_id }, session: valid_session
     end
-    it { expect(assigns(:project)).to eql(project) }
+    it 'assigns the project', focus: true do
+      expect(assigns(:project)).to eql(project)
+    end
+
     it { expect(assigns(:digital_object_type)).to eql(digital_object_type) }
   end
 

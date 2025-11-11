@@ -55,6 +55,8 @@ RSpec.configure do |config|
 
   # Allow us to call sign_in(user) before tests
   config.include Warden::Test::Helpers
+  # Include controller helpers for controller tests
+  config.include Devise::Test::ControllerHelpers, :type => :controller # Cannot use this for request/feature specs
   ## Set Warden (which backs devise) in test mode for
   config.before :suite do
    Warden.test_mode!

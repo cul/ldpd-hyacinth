@@ -19,11 +19,7 @@ class User < ApplicationRecord
   # :registerable, :recoverable
 
   # TODO: Determine whether we need :database_authenticatable, :rememberable
-  devise :trackable,
-          #:validatable,
-          #:database_authenticatable,
-          #:rememberable,
-          :omniauthable, omniauth_providers: Devise.omniauth_configs.keys
+  devise :trackable, :omniauthable, omniauth_providers: Devise.omniauth_configs.keys
 
   validates :uid, :email, :first_name, :last_name, presence: true
   validates :uid, :email, uniqueness: true

@@ -17,9 +17,11 @@
 # Ignore local space for temporary rake tasks, etc.
 /local
 /spec/local
+
 # Ignore editor files
 *~
 \#*\#
+.vscode
 
 # Docker ignores (so these can be customized per-development-environment if needed)
 /docker/docker-compose.*.yml

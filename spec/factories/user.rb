@@ -13,6 +13,7 @@ FactoryBot.define do
     first_name  { "Test" }
     last_name   { "User" }
     is_active    { true }
+    account_type    { 'standard' }
 
     factory :admin_user do
       is_admin { true }
