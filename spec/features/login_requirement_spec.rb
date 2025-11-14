@@ -4,7 +4,7 @@ describe "Login requirement", type: :feature do
   let(:page_that_requires_login_to_view) { '/digital_objects' }
 
   context "when a user is logged in" do
-    before { sign_in_admin_user }
+    before { request_test_sign_in_admin_user }
 
     it "displays the page content", js: true do
       visit(page_that_requires_login_to_view)

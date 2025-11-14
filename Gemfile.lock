@@ -812,7 +812,7 @@ DEPENDENCIES
   psych (< 4)
   puma (~> 7.1)
   rack-protection (>= 1.5.5)
-  rails (~> 7.0.8)
+  rails (~> 7.0.10)
   rails-controller-testing
   rails-html-sanitizer (>= 1.2)
   rainbow (~> 3.0)

@@ -5,7 +5,7 @@ RSpec.describe "XmlDatastreams", :type => :request do
   describe "GET /xml_datastreams" do
     it "returns a successful status" do
 
-      sign_in_admin_user
+      request_test_sign_in_admin_user
 
       get xml_datastreams_path
       expect(response.status).to be(200)

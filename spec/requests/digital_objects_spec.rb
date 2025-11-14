@@ -8,7 +8,7 @@ RSpec.describe "DigitalObjects", type: :request do
     end
 
     it "returns a 200 (success) status when a user IS logged in" do
-      sign_in_admin_user
+      request_test_sign_in_admin_user
 
       get digital_objects_path
       expect(response.status).to be(200)
@@ -21,7 +21,7 @@ RSpec.describe "DigitalObjects", type: :request do
     let(:sample_asset_digital_object_data) { JSON.parse( fixture('sample_digital_object_data/new_asset.json').read ) }
 
     before :example do
-      sign_in_admin_user
+      request_test_sign_in_admin_user
     end
 
     describe "POST /digital_objects" do
