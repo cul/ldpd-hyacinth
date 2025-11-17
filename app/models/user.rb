@@ -13,29 +13,12 @@ class User < ApplicationRecord
   has_secure_password :api_key, validations: false
   validate :api_key_must_be_valid # Since default validations are skipped in the line above, we'll apply our own
 
-  # Include default devise modules. Others available are:
-  # :token_authenticatable, :confirmable,
-  # :lockable, :timeoutable, :omniauthable
-  # :registerable, :recoverable
-
-  # TODO: Determine whether we need :database_authenticatable, :rememberable
   devise :trackable, :omniauthable, omniauth_providers: Devise.omniauth_configs.keys
 
   validates :uid, :email, :first_name, :last_name, presence: true
   validates :uid, :email, uniqueness: true
-  # validates :password, :password_confirmation, presence: true, on: :create
-
-  # Since we don't allow password-based login in this app, we assign a random
-  # password to new user accounts before they are created.
-  # before_validation :assign_random_password_for_new_records
 
   enum :account_type, { standard: 0, service: 1 }
-
-  # def assign_random_password_for_new_records
-  #   return unless self.new_record?
-  #   self.password = Devise.friendly_token(RANDOM_PASSWORD_LENGTH)
-  #   self.password_confirmation = self.password
-  # end
 
   def full_name
     first_name + ' ' + last_name
@@ -155,13 +138,6 @@ class User < ApplicationRecord
   def valid_password?(password)
     false
   end
-
-  # Since we don't have a password field on the user model, we're overriding Devise's password method to satisfy the
-  # requirements of the :validatable module (Devise::Models::Validatable), which expects user.password to return a
-  # valid value.  The random value returned by this method doesn't matter because it's not used anywhere else.
-  # def password
-  #   Devise.friendly_token(20)
-  # end
 
   def api_key_must_be_valid
     # API keys aren't required, so the API key might not be present.  Also: The api_key field will only be set

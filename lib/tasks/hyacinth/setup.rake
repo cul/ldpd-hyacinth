@@ -17,7 +17,7 @@ namespace :hyacinth do
       end
     end
 
-    desc "Set up hyacinth core records (DigitalObjectType, XmlDatastream, etc.) "
+    desc "Set up default users"
     task default_users: :environment do
         puts 'Creating default user accounts...'
         YAML.load_file('config/default_user_accounts.yml').each {|user_entry, user_info|
@@ -32,7 +32,7 @@ namespace :hyacinth do
         }
     end
 
-    desc "Set up hyacinth core records (DigitalObjectType, User, XmlDatastream, etc.) "
+    desc "Set up hyacinth core records (DigitalObjectType, XmlDatastream, etc.) "
     task core_records: :environment do
       # If there are no DigitalObjectTypes the system, run the setup code below.
       # This check is in place to ensure that this task is never run for an environment that

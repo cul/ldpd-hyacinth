@@ -22,7 +22,6 @@ namespace :hyacinth do
       Rake::Task['db:migrate'].invoke
 
       Rake::Task["hyacinth:setup:core_records"].invoke
-      sleep 2
       Rake::Task["hyacinth:setup:default_users"].invoke
       ENV['CLEAR'] = 'true' # Set ENV variable for reindex task
       Rake::Task['hyacinth:index:reindex'].invoke

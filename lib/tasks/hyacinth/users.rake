@@ -33,7 +33,7 @@ namespace :hyacinth do
       puts "User<#{user_id}> '#{user.email}' assigned new #{upw.bytesize}-byte password"
     end
 
-    desc "Create service account"
+    desc "Create a new user with account_type 'service'"
     task create_service_account: :environment do
       required_params = ['uid', 'email', 'first_name', 'last_name', 'api_key']
       missing_required_params = required_params - ENV.keys
@@ -45,7 +45,7 @@ namespace :hyacinth do
       User.create!(user_params.merge({account_type: :service}))
     end
 
-    desc "Create admin user"
+    desc "Create a new user with admin permission"
     task create_admin_user: :environment do
       required_params = ['uid', 'email', 'first_name', 'last_name']
       missing_required_params = required_params - ENV.keys
