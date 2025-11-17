@@ -1,6 +1,16 @@
 <h1 class="page-title">User: <%= @user.full_name %></h1>
 
 <p>
+  <strong>UID:</strong>
+  <%= @user.uid %>
+</p>
+
+<p>
+  <strong>Email:</strong>
+  <%= @user.email %>
+</p>
+
+<p>
   <strong>First name:</strong>
   <%= @user.first_name %>
 </p>
@@ -21,8 +31,18 @@
 </p>
 
 <p>
+  <strong>Account type:</strong>
+  <%= @user.account_type %>
+</p>
+
+<p>
   <strong>Is active:</strong>
   <%= @user.is_active? %>
+</p>
+
+<p>
+  <strong>API Key:</strong>
+  <%= @user.api_key_digest.present? ? 'Yes' : 'No API key has been created for this user.' %>
 </p>
 
 <%= link_to 'Edit', edit_user_path(@user) %> |

@@ -5,7 +5,9 @@ class ApplicationController < ActionController::Base
   # For JSON api, recommended by: http://api.rubyonrails.org/classes/ActionController/RequestForgeryProtection.html
   skip_before_action :verify_authenticity_token, if: :json_request?
 
-  before_action :set_start_time, :initialize_admin_contextual_menu, :require_authenticated_user!
+  before_action :set_start_time, :handle_token_auth!, :initialize_admin_contextual_menu, :require_authenticated_user!
+
+  add_flash_types :persistent_notice # A notice that must be closed by the user and won't auto-close
 
   def initialize_admin_contextual_menu
     @contextual_nav_options = {}
@@ -24,10 +26,10 @@ class ApplicationController < ActionController::Base
   end
 
   def require_authenticated_user!
-    return if user_signed_in? || params[:controller] == 'devise/sessions'
+    return if user_signed_in? || ['users/sessions', 'users/omniauth_callbacks'].include?(params[:controller])
+
     pre_authn_requests = {
       'pages' => ['home', 'login_check', 'csrf_token'],
-      'users' => ['do_wind_login', 'do_cas_login']
     }
 
     # Allow access to exempt requests
@@ -117,5 +119,45 @@ class ApplicationController < ActionController::Base
         return true if current_user.permitted_in_project?(project, permission)
       end
       false
+    end
+
+    # Our token auth uses Basic authentication and expects a user to pass a token in the Basic auth
+    # password field.  When users authenticate through this process, we do not create a Devise session
+    # (meaning we do not set a cookie).
+    def handle_token_auth! # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+      return if user_signed_in? # No need to check for auth if the user is already signed in
+
+      # Our API auth uses the basic auth protocol, but expects an API key as a password.
+      basic_auth_credentials = extract_basic_auth_credentials_from_authorization_header(request.authorization)
+      return unless basic_auth_credentials
+      possible_user = User.find_by(uid: basic_auth_credentials[0])
+
+      if possible_user.nil?
+        # Truncate provided uid before logging it, in case a ridiculously long value was given
+        truncated_given_uid = basic_auth_credentials[0].length > 255 ? "#{basic_auth_credentials[0][0...255]}..." : basic_auth_credentials[0]
+
+        Rails.logger.error(%(User "#{truncated_given_uid}" attempted to log in, but no user was found with that uid.))
+        return
+      end
+
+      # If this user has never set up an API key, do not allow them to log in.
+      if possible_user.api_key_digest.nil?
+        Rails.logger.error("User #{possible_user.uid} attempted to log in, but login was rejected because this user has not set up an API key.")
+        return
+      end
+
+      if possible_user && possible_user.authenticate_api_key(basic_auth_credentials[1])
+        request.session_options[:skip] = true # Skip Devise session.  Do not set a session cookie.
+        sign_in possible_user
+      end
+    end
+
+    def extract_basic_auth_credentials_from_authorization_header(authorization_header_value)
+      basic_auth_match = authorization_header_value&.match(/^(Basic )(.+)/)
+      return nil unless basic_auth_match
+      basic_auth_credentials = Base64.strict_decode64(basic_auth_match[2]).split(':')
+      return nil unless basic_auth_credentials.length == 2
+
+      basic_auth_credentials
     end
 end

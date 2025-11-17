@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 7.0.8'
+gem 'rails', '~> 7.0.10'
 gem 'bootsnap', require: false
 # gem 'responders'
 
@@ -83,6 +83,11 @@ gem 'nokogiri', '~> 1.18', '>= 1.18.10', force_ruby_platform: true
 
 # For authentication
 gem 'devise', '~> 4.9'
+gem 'omniauth', '~> 2.1'
+gem 'omniauth-rails_csrf_protection', '~> 1.0'
+# gem 'omniauth-cul', '~> 0.2.0'
+# gem 'omniauth-cul', path: '../omniauth-cul'
+gem 'omniauth-cul', git: 'https://github.com/cul/omniauth-cul', ref: 'improved-implementation'
 # gem 'childprocess', '~> 2.0'
 
 # CUL Fedora Dependencies and Content Models
@@ -153,11 +158,10 @@ group :development, :test do
   gem 'byebug'
   gem 'rspec-rails', '~> 7.0'
   gem 'rails-controller-testing'
-  gem 'capybara', '~> 3.32'
-  # For testing with chromedriver
-  gem 'selenium-webdriver', '~> 4.0'
-  # For automatically updating chromedriver
-  gem 'webdrivers', '~> 5.3.0', require: false
+  # For running feature tests with a browser
+  gem 'capybara', '~> 3.40'
+  # For running tests with chromedriver
+  gem 'selenium-webdriver', '~> 4.16'
   gem 'factory_bot_rails', '~> 4.9'
   gem 'rubocop', '~> 0.67.0', require: false
   gem 'rubocop-rspec', '~> 1.26.0', require: false
@@ -177,7 +181,7 @@ end
 
 
 # Alternate development webserver
-gem 'puma', '~> 6.5', group: :development
+gem 'puma', '~> 7.1', group: :development
 # gem 'thin', group: :development
 # gem 'unicorn', group: :development
 

@@ -1,13 +1,13 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= 'test'
-require 'spec_helper'
 require File.expand_path("../../config/environment", __FILE__)
+require 'spec_helper'
 require 'rspec/rails'
-require File.expand_path("../rails_4_ruby_26_fix", __FILE__)
-require 'webdrivers'
+require 'selenium-webdriver'
 require 'capybara/rails'
 
 Capybara.javascript_driver = :selenium_chrome_headless
+# Capybara.javascript_driver = :selenium_chrome # switch to this line if you want to see the browser while tests run
 Capybara.default_max_wait_time = 30 # Some ajax requests might take longer than the default waut time of 2 seconds.
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -53,29 +53,28 @@ RSpec.configure do |config|
   # https://relishapp.com/rspec/rspec-rails/docs
   config.infer_spec_type_from_file_location!
 
-  # Added so that we can test Devise logins
-  config.include Devise::Test::ControllerHelpers, :type => :controller # Cannot use this for request/feature specs
-  def sign_in_admin_user_controller_spec()
-    sign_in(FactoryBot.create(:admin_user))
+  # Allow us to call sign_in(user) before tests
+  config.include Warden::Test::Helpers
+  # Include controller helpers for controller tests
+  config.include Devise::Test::ControllerHelpers, type: :controller
+  ## Set Warden (which backs devise) in test mode for
+  config.before :suite do
+   Warden.test_mode!
+  end
+  config.after :each do
+    # Important: Automatically sign out after every test
+    Warden.test_reset!
+    # We need to sleep for a moment to allow Warden.test_reset! to sign the user out,
+    # otherwise the test might end too quickly and we'll still be logged in for the next test.
+    sleep 0.1
   end
 
-  ## Set Warden (which backs devise) in test mode for
-  #config.include Warden::Test::Helpers
-  #config.before :suite do
-  #  Warden.test_mode!
-  #end
-  #config.after :each do
-  #  Warden.test_reset!
-  #end
+  def controller_test_sign_in_admin_user
+    sign_in FactoryBot.create(:admin_user)
+  end
 
-  def feature_spec_sign_in_admin_user
-    visit '/users/sign_in'
-    sleep 1
-    within("#new_user") do
-      fill_in 'user_email', :with => 'hyacinth-test@library.columbia.edu'
-      fill_in 'user_password', :with => 'iamthetest'
-    end
-    click_button 'Sign in'
+  def request_test_sign_in_admin_user
+    login_as(FactoryBot.create(:admin_user))
   end
 
   def destroy_all_hyacinth_groups_items_and_assets

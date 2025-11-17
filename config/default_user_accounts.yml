@@ -1,15 +1,25 @@
 # Default user accounts.  These should be changed for apps in production.
 
 default_user_1:
-  email: 'hyacinth-admin@library.columbia.edu'
-  password: 'iamtheadmin'
+  uid: 'admin'
+  email: 'admin@example.com'
   first_name: 'Admin'
   last_name: 'User'
   is_admin: true
+  account_type: 'standard'
 
 default_user_2:
-  email: 'hyacinth-test@library.columbia.edu'
-  password: 'iamthetest'
+  uid: 'test'
+  email: 'test@example.com'
   first_name: 'Test'
   last_name: 'User'
   is_admin: false
+  account_type: 'standard'
+
+default_user_3:
+  uid: 'service'
+  email: 'service@example.com'
+  first_name: 'Service'
+  last_name: 'User'
+  is_admin: false
+  account_type: 'service'

@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe Projects::DynamicFieldsController, :type => :controller do
-  before { sign_in_admin_user_controller_spec() }
+  before { controller_test_sign_in_admin_user() }
 
   # This should return the set of valid attributes for update.
   let(:update_attributes) {
@@ -31,8 +31,18 @@ RSpec.describe Projects::DynamicFieldsController, :type => :controller do
       allow(DigitalObjectType).to receive(:find).with(digital_object_type_id).and_return(digital_object_type)
       get :edit, params: {id: project_id, digital_object_type_id: digital_object_type_id }, session: valid_session
     end
-    it { expect(assigns(:project)).to eql(project) }
-    it { expect(assigns(:digital_object_type)).to eql(digital_object_type) }
+
+    it 'returns the expected status' do
+      expect(response.status).to eq(200)
+    end
+
+    it 'assigns the expected project instance variable' do
+      expect(assigns(:project)).to eql(project)
+    end
+
+    it 'assigns the expected digital_object_type instance variable' do
+      expect(assigns(:digital_object_type)).to eql(digital_object_type)
+    end
   end
 
   describe '#update' do

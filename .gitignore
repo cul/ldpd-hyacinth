@@ -8,8 +8,7 @@
 /.bundle
 
 # Ignore the default SQLite database
-/db/*.sqlite3
-/db/*.sqlite3-journal
+/db/*.sqlite3*
 
 # Ignore all logfiles and tempfiles
 /log/*.log
@@ -18,9 +17,11 @@
 # Ignore local space for temporary rake tasks, etc.
 /local
 /spec/local
+
 # Ignore editor files
 *~
 \#*\#
+.vscode
 
 # Docker ignores (so these can be customized per-development-environment if needed)
 /docker/docker-compose.*.yml

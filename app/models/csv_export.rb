@@ -3,7 +3,7 @@ class CsvExport < ApplicationRecord
 
   belongs_to :user
 
-  enum status: { pending: 0, success: 1, failure: 2 }
+  enum :status, { pending: 0, success: 1, failure: 2 }
   serialize :export_errors, Array
 
   def delete_associated_file_if_exists

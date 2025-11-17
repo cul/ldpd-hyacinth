@@ -3,7 +3,9 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "start:dev": "./bin/vite dev"
+    "start:dev": "./bin/vite dev",
+    "start:dev:anyhostname": "VITE_RUBY_HOST=0.0.0.0 ./bin/vite dev",
+    "start:dev:anyhostname:ssl": "VITE_RUBY_HOST=0.0.0.0 VITE_RUBY_HTTPS=true ./bin/vite dev"
   },
   "devDependencies": {
     "vite": "^5.0.0",

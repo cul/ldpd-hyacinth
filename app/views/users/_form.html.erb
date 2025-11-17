@@ -11,71 +11,46 @@
     </div>
   <% end %>
 
-  <% if params[:change_password] %>
-
-    <%= hidden_field_tag 'change_password', true %>
-
-    <div class="field">
-      <%= f.label :password, 'New Password' %><br>
-      <%= f.password_field :password, :class => 'form-control' %>
-    </div>
-    <div class="field">
-      <%= f.label :password_confirmation, 'New Password Confirmation' %><br>
-      <%= f.password_field :password_confirmation, :class => 'form-control' %>
-    </div>
-
-  <% else %>
-
-    <div class="field">
-      <%= f.label :email %><br>
-      <% if @user.new_record? %>
-        <%= f.text_field :email, :class => 'form-control' %>
-      <% else %>
-        <%= @user.email %>
-      <% end %>
-    </div>
-    <div class="field">
-      <%= f.label :first_name %><br>
-      <%= f.text_field :first_name, :class => 'form-control' %>
-    </div>
-    <div class="field">
-      <%= f.label :last_name %><br>
-      <%= f.text_field :last_name, :class => 'form-control' %>
-    </div>
+  <div class="field">
+    <%= f.label :uid %><br>
     <% if @user.new_record? %>
-      <div class="field">
-        <%= f.label :password %><br>
-        <%= f.password_field :password, :class => 'form-control' %>
-      </div>
-      <div class="field">
-        <%= f.label :password_confirmation %><br>
-        <%= f.password_field :password_confirmation, :class => 'form-control' %>
-      </div>
-      <div class="field">
-        <%= label_tag 'Generate Random Password' %><br>
-        <div class="input-group">
-          <span class="input-group-btn">
-            <button class="btn btn-default" type="button" id="generate_random_password_button">Generate</button>
-          </span>
-          <%= text_field nil, nil, :class => 'form-control', :name => nil, :id => 'generated_random_password', :readonly => true %>
-        </div><!-- /input-group -->
-      </div>
+      <%= f.text_field :uid, :class => 'form-control' %>
     <% else %>
-      <div class="field">
-        <%= f.label :password %><br>
-        &bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull; &nbsp; <%= link_to 'Change Password', edit_user_path(@user, {:change_password => true}) %>
-      </div>
+      <%= @user.uid %>
     <% end %>
-    <div class="field checkbox">
-      <%= f.label(:is_admin, (f.check_box(:is_admin)).html_safe + 'Is Admin') %><br>
+  </div>
+  <div class="field">
+    <%= f.label :email %><br>
+    <%= f.text_field :email, :class => 'form-control' %>
+  </div>
+  <div class="field">
+    <%= f.label :first_name %><br>
+    <%= f.text_field :first_name, :class => 'form-control' %>
+  </div>
+  <div class="field">
+    <%= f.label :last_name %><br>
+    <%= f.text_field :last_name, :class => 'form-control' %>
+  </div>
+  <div class="field checkbox">
+    <%= f.label(:is_admin, (f.check_box(:is_admin)).html_safe + 'Is Admin') %><br>
+  </div>
+  <div class="field checkbox">
+    <%= f.label(:can_manage_all_controlled_vocabularies, (f.check_box(:can_manage_all_controlled_vocabularies)).html_safe + 'Can Manage All Controlled Vocabularies') %><br>
+  </div>
+  <div class="field">
+    <%= f.label :account_type %>
+    <%= f.select :account_type, User.account_types.keys.map { |account_type_key| [account_type_key.humanize, account_type_key] }, {}, {class: 'form-control'} %>
+  </div>
+  <div class="field checkbox">
+    <%= f.label(:is_active, (f.check_box(:is_active)).html_safe + 'Is Active') %><br>
+  </div>
+    <%= f.label :api_key, 'Set API Key' %><br>
+  <div class="field checkbox">
+    <%= f.label(:generate_new_api_key, (check_box_tag('user[generate_new_api_key]')).html_safe + 'Generate a new API key') %><br>
+    <div class="alert alert-info">
+      <%= @user.api_key_digest.nil? ? 'An API key is not currently set for this user.' : 'An API key was previously set for this user.  Generating a new key will replace the old one.' %>
     </div>
-    <div class="field checkbox">
-      <%= f.label(:can_manage_all_controlled_vocabularies, (f.check_box(:can_manage_all_controlled_vocabularies)).html_safe + 'Can Manage All Controlled Vocabularies') %><br>
-    </div>
-    <div class="field checkbox">
-      <%= f.label(:is_active, (f.check_box(:is_active)).html_safe + 'Is Active') %><br>
-    </div>
-  <% end %>
+  </div>
 
   <%= f.submit(:class => 'btn btn-primary btn-sm', :value => (@user.new_record? ? 'Create New User' : (params[:change_password] ? 'Change Password' : 'Update User'))) %>
   <%

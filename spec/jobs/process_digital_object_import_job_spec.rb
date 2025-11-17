@@ -10,8 +10,6 @@ RSpec.describe ProcessDigitalObjectImportJob, type: :job do
   let(:user) {
     User.new(
       :email => 'abc@example.com',
-      :password => 'password',
-      :password_confirmation => 'password',
       :first_name => 'Abraham',
       :last_name => 'Lincoln',
       :is_admin => 'false'

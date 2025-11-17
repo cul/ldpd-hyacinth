@@ -11,7 +11,7 @@ RSpec.describe "Terms", type: :request do
 
     context "when a user is logged in" do
       before :example do
-        request_spec_sign_in_admin_user()
+        request_test_sign_in_admin_user
       end
 
       let(:term_form_data) do
@@ -86,7 +86,7 @@ RSpec.describe "Terms", type: :request do
 
     context "when a user is logged in" do
       before :example do
-        request_spec_sign_in_admin_user()
+        request_test_sign_in_admin_user
       end
 
       let(:term_update_form_data) do

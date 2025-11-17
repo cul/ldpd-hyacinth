@@ -30,7 +30,6 @@ bundle exec rake hyacinth:fedora:reload_cmodels # Import required content models
 bundle exec rake uri_service:db:setup # Set up required UriService tables
 bundle exec rake db:migrate # Run database migrations
 bundle exec rake db:migrate # Run database migrations
-bundle exec rake db:seed # Set up default data (including default users)
 bundle exec rake hyacinth:test:setup_test_project # Optional, but useful for setting up a test project
 rails s -p 3000 # Start the application using rails server
 ```
