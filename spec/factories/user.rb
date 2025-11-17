@@ -14,6 +14,7 @@ FactoryBot.define do
     last_name   { "User" }
     is_active    { true }
     account_type    { 'standard' }
+    api_key { 'some-api-key' }
 
     factory :admin_user do
       is_admin { true }

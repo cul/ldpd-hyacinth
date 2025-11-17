@@ -124,18 +124,25 @@ class ApplicationController < ActionController::Base
     # Our token auth uses Basic authentication and expects a user to pass a token in the Basic auth
     # password field.  When users authenticate through this process, we do not create a Devise session
     # (meaning we do not set a cookie).
-    def handle_token_auth!
+    def handle_token_auth! # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       return if user_signed_in? # No need to check for auth if the user is already signed in
 
       # Our API auth uses the basic auth protocol, but expects an API key as a password.
       basic_auth_credentials = extract_basic_auth_credentials_from_authorization_header(request.authorization)
       return unless basic_auth_credentials
-
       possible_user = User.find_by(uid: basic_auth_credentials[0])
+
+      if possible_user.nil?
+        # Truncate provided uid before logging it, in case a ridiculously long value was given
+        truncated_given_uid = basic_auth_credentials[0].length > 255 ? "#{basic_auth_credentials[0][0...255]}..." : basic_auth_credentials[0]
+
+        Rails.logger.error(%(User "#{truncated_given_uid}" attempted to log in, but no user was found with that uid.))
+        return
+      end
 
       # If this user has never set up an API key, do not allow them to log in.
       if possible_user.api_key_digest.nil?
-        Rails.logger.error("User #{self.uid} attempted to log in, but login was rejected because this user has not set up an API key.")
+        Rails.logger.error("User #{possible_user.uid} attempted to log in, but login was rejected because this user has not set up an API key.")
         return
       end
 
