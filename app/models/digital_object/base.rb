@@ -135,8 +135,8 @@ class DigitalObject::Base
       @perform_derivative_processing = digital_object_data['perform_derivative_processing'].to_s.downcase == 'true'
     end
 
-    # Project (only one) -- Only allow setting this if this DigitalObject is a new record
-    self.project = project_from_data(digital_object_data) if self.new_record?
+    # Project (only one project is supported right now)
+    self.project = project_from_data(digital_object_data) || self.project
 
     # Publish Targets (multiple)
     publish_target_pids_from_data(digital_object_data) { |publish_target_pid| @publish_target_pids.push(publish_target_pid) }

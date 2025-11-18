@@ -7,6 +7,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor = function (containerElementId, o
   this.dynamicFieldHierarchy = options['dynamicFieldHierarchy'] || [];
   this.dynamicFieldIdsToEnabledDynamicFields = options['dynamicFieldIdsToEnabledDynamicFields'] || [];
   this.allowedPublishTargets = options['allowedPublishTargets'] || [];
+  this.allProjects = options['allProjects'] || [];
   this.globalTabIndex = 0;
   this.currentAuthorizedTermSelector = null;
   this.disallowNonDescriptionFieldEditing = options['disallowNonDescriptionFieldEditing'] || false;
@@ -309,6 +310,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.init = function () {
       dynamicFieldIdsToEnabledDynamicFields: this.dynamicFieldIdsToEnabledDynamicFields,
       digitalObject: this.digitalObject,
       allowedPublishTargets: this.allowedPublishTargets,
+      allProjects: this.allProjects,
       disallowNonDescriptionFieldEditing: this.disallowNonDescriptionFieldEditing,
       showPublishButton: this.showPublishButton
     })
@@ -662,6 +664,8 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.submitEditorForm = func
   if (this.digitalObject.isNewRecord()) {
     digitalObjectData['project'] = { string_key: this.digitalObject.project['string_key'] };
     digitalObjectData['parent_digital_objects'] = $.map(this.digitalObject.getParentDigitalObjectPids(), function (val) { return { pid: val } });
+  } else {
+    digitalObjectData['project'] = { string_key: $editorForm.find('select[name="project_string_key"]').val() };
   }
 
   //Handle restrictions

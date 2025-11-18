@@ -6,6 +6,7 @@
   //dynamicFieldIdsToEnabledDynamicFields
   //digitalObject
   //allowedPublishTargets
+  //allProjects
   //disallowNonDescriptionFieldEditing
   //showPublishButton
 %>
@@ -18,6 +19,27 @@
     <ul class="dropdown-menu dropdown-menu-right" role="menu">
     </ul>
   </div>
+
+  <% if (mode == 'edit' && !disallowNonDescriptionFieldEditing && !digitalObject.isNewRecord()) { %>
+  <div>
+    <strong>Project</strong>
+      <select class="form-control input-sm" name="project_string_key">
+      <%
+        const currentProject = digitalObject.getProject();
+        for (var i = 0; i < allProjects.length; i++) {
+            const project = allProjects[i];
+            %>
+            <option
+              <%= project['string_key'] === currentProject['string_key'] ? 'selected="selected"' : '' %>
+              value="<%= project['string_key'] %>">
+              <%= project['display_label'] %>
+            </option>
+            <%
+        }
+      %>
+    </select>
+  </div>
+  <% } %>
 
   <div class="errors"></div>
   <div class="dynamic_field_group_content">
