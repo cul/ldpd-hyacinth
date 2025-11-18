@@ -1,6 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe DigitalObject::Base, :type => :model do
+  let(:minimal_item_digital_object_data) {
+    dod = JSON.parse( fixture('sample_digital_object_data/minimal_item.json').read )
+    dod['identifiers'] = ['item.' + SecureRandom.uuid] # random identifer to avoid collisions
+    dod
+  }
 
   let(:sample_item_digital_object_data) {
     dod = JSON.parse( fixture('sample_digital_object_data/new_item.json').read )
@@ -175,6 +180,21 @@ RSpec.describe DigitalObject::Base, :type => :model do
         # Verify that it also works with a string (for CSV import scenarios)
         item.set_digital_object_data(sample_item_digital_object_data.merge({'mint_reserved_doi' => 'TRUE'}), false)
         expect(item.mint_reserved_doi_before_save).to eq(true)
+      end
+    end
+
+    describe "for an object that was previously saved" do
+      let(:new_project) { FactoryBot.create(:project) }
+      it "can update the project to a different value" do
+        item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+        item.set_digital_object_data(minimal_item_digital_object_data, false)
+        expect(item.save).to eq(true)
+        old_project = item.project
+        item.set_digital_object_data({'project' => {'string_key' => new_project.string_key}}, true)
+        item.save
+        expect(item.errors.messages).to eq({})
+        expect(item.project).to eq(new_project)
+        expect(old_project).not_to eq(new_project)
       end
     end
 
