@@ -166,6 +166,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.edit = function ()
       dynamicFieldHierarchy: data_for_editor['dynamic_field_hierarchy'],
       dynamicFieldIdsToEnabledDynamicFields: data_for_editor['dynamic_field_ids_to_enabled_dynamic_fields'],
       allowedPublishTargets: data_for_editor['allowed_publish_targets'],
+      allProjects: data_for_editor['all_projects'],
       assignment: assignment,
       showPublishButton: Hyacinth.DigitalObjectsApp.currentUser.hasProjectPermission(digitalObject.getProject()['pid'], 'can_publish')
     });
