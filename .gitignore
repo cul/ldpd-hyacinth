@@ -75,3 +75,16 @@ node_modules
 # https://vitejs.dev/guide/env-and-mode.html#env-files
 *.local
 .vite
+
+# Ignore development and test credentials
+/config/credentials/development.yml.enc
+/config/credentials/test.yml.enc
+
+# Ignore all credential keys
+/config/credentials/*.key
+
+/config/credentials/hyacinth_2_dev.key
+
+/config/credentials/hyacinth_2_test.key
+
+/config/credentials/hyacinth_2_prod.key

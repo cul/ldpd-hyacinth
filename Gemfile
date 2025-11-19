@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 7.1.6'
+gem 'rails', '~> 7.2.3'
 gem 'bootsnap', require: false
 # gem 'responders'
 
@@ -92,7 +92,7 @@ gem 'omniauth-cul', git: 'https://github.com/cul/omniauth-cul', ref: 'improved-i
 
 # CUL Fedora Dependencies and Content Models
 gem 'cul_hydra', git: 'https://github.com/cul/cul_hydra', ref: 'wip-upgrade-deps-rails-7.1'
-gem 'active-fedora', git: 'https://github.com/cul/active_fedora', ref: 'remove_deprecation_lib'
+gem 'active-fedora', git: 'https://github.com/cul/active_fedora', ref: 'remove_deprecation_lib-rails-7.2'
 gem 'multi_json', '~> 1.14.0'
 gem 'ebnf', '~> 1.0.0'
 gem 'rubydora'
