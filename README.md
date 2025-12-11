@@ -27,10 +27,7 @@ bundle exec rake hyacinth:setup:config_files # Set up required config files
 bundle exec rake hyacinth:docker:setup_config_files # Set up required Docker config files
 bundle exec rake hyacinth:docker:start # Start docker (which includes Solr, Fedora, and Redis)
 bundle exec rake hyacinth:fedora:reload_cmodels # Import required content models into Fedora (Note: It is safe to ignore any "404 Resource Not Found" output messages encountered during this step. These are expected because the content models do not already exist in Fedora and therefore cannot be found.)
-bundle exec rake uri_service:db:setup # Set up required UriService tables
-bundle exec rake db:migrate # Run database migrations
-bundle exec rake db:migrate # Run database migrations
-bundle exec rake hyacinth:test:setup_test_project # Optional, but useful for setting up a test project
+bundle exec rake hyacinth:development:reset # Runs a bunch of other rake tasks to set up Hyacinth core data, including test projects
 rails s -p 3000 # Start the application using rails server
 ```
 
