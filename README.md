@@ -33,13 +33,7 @@ rails s -p 3000 # Start the application using rails server
 
 The setup above should start up a working instance of the application, but you may run into issues if you have other services running that use the same ports as Hyacinth and its Docker dependencies.  Check out `docker/docker-compose.development.yml` and `docker/docker-compose.test.yml` to see what ports are used (or if you haven't run the `hyacinth:docker:config_files` rake task yet, check out `docker/templates/docker-compose.development.yml` and `docker/templates/docker-compose.test.yml`).  You can modify these ports if you run into issues -- but if you do, you'll also need to update corresponding config/*.yml files to reference the updated ports.
 
-Then navigate to http://localhost:3000 in your browser and sign in using the "Email" method.
-
-**Default admin credentials:**
-
-Email: hyacinth-admin@library.columbia.edu
-
-Password: iamtheadmin
+Then navigate to http://localhost:3000 in your browser and sign in using the "Sign in with Developer UID" method.  On the screen that follows, just enter "admin" and click "Sign In".
 
 **To stop docker later on, run:**
 
