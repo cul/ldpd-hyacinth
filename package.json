@@ -12,7 +12,13 @@
     "vite-plugin-ruby": "^5.1.0"
   },
   "dependencies": {
+    "bootstrap": "^5.3.8",
     "bootstrap-multiselect": "^0.9.15",
-    "video.js": "^7.17.0"
+    "@popperjs/core": "^2.11.8",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-bootstrap": "^2.10.10",
+    "video.js": "^7.17.0",
+    "sass": "^1.96.0"
   }
 }

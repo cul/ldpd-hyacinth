@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hyacinth<%= " (#{Rails.env})" unless Rails.env == 'hyacinth_prod' %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <%= vite_client_tag %>
+  <%= vite_typescript_tag 'ui_v2.tsx' %>
+  <%= vite_stylesheet_tag 'ui_v2.scss' %>
+</head>
+<body>
+  <%= yield %>
+</body>
+</html>
