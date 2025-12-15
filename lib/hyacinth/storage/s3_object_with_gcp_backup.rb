@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# NOTE: This class isn't currently being used, but we might use it later.
 class Hyacinth::Storage::S3ObjectWithGcpBackup < Hyacinth::Storage::S3Object
   def gcp_bucket
     @gcp_bucket ||= GCP_STORAGE_CLIENT.bucket(self.bucket_name)
@@ -15,7 +16,7 @@ class Hyacinth::Storage::S3ObjectWithGcpBackup < Hyacinth::Storage::S3Object
     # NOTE: Bucket#file returns nil if file is not found
     gcp_copy_exists = gcp_file(reload: true)&.exists?
     Rails.logger.error "AWS copy exists but GCP copy does not for: #{self.key}" if aws_copy_exists && !gcp_copy_exists
-    return aws_copy_exists # Since the AWS copy is the primary copy, this method
+    aws_copy_exists # Since the AWS copy is the primary copy, this method is the primary indicator of existence
   end
 
   def write(source_file_path)

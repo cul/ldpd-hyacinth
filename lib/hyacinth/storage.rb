@@ -12,7 +12,7 @@ module Hyacinth::Storage
     when FILE_SCHEME
       Hyacinth::Storage::FileObject.new(location_uri)
     when S3_SCHEME
-      Hyacinth::Storage::S3ObjectWithGcpBackup.new(location_uri)
+      Hyacinth::Storage::S3Object.new(location_uri)
     else
       raise ArgumentError, "Unsupported URI scheme: #{location_uri}"
     end
