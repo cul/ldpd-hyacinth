@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_11_08_210214) do
+ActiveRecord::Schema[7.0].define(version: 2025_12_15_140412) do
   create_table "archived_assignments", force: :cascade do |t|
     t.integer "original_assignment_id", null: false
     t.string "digital_object_pid", null: false
