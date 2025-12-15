@@ -100,7 +100,7 @@ module DigitalObject::Assets::FileImport
     when Hyacinth::Storage::FileObject
       # This is a file on the local filesystem.  We will need to calculate its checksum.
       checksum_hexdigest_uri = "sha256:#{Digest::SHA256.file(storage_object.path).hexdigest}"
-    when Hyacinth::Storage::S3ObjectWithGcpBackup
+    when Hyacinth::Storage::S3Object
       # This is a file in S3.  We will retrieve its checksum from metadata.
       checksum_hexdigest_uri = storage_object.checksum_uri_from_metadata
     else
