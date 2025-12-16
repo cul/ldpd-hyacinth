@@ -6,6 +6,7 @@ import { RouterProvider } from 'react-router/dom';
 import NotFoundRoute from './routes/not-found.tsx';
 
 import Test from '../components/test.tsx';
+import MainLayout from '../components/layouts/main-layout.tsx';
 // import { paths } from '../config/paths';
 
 // import {
@@ -16,25 +17,19 @@ function Root() {
   return (
     <div>
       <h1>Hello world</h1>
-      {/* TODO: Move outlet into layout or app */}
-      <Outlet /> 
     </div>
   );
 }
 
 export const createAppRouter = () =>
   createBrowserRouter([
-    // {
-    //     path: paths.home.path,
-    //     Component: Root,
-    //     loader: () => {
-    //         return ['hi'];
-    //     },
-    // },
     {
-      path: "/",
-      Component: Root,
+      Component: MainLayout,
       children: [
+        {
+          index: true,
+          Component: Root,
+        },
         {
           path: 'test',
           Component: Test,
