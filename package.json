@@ -8,17 +8,19 @@
     "start:dev:anyhostname:ssl": "VITE_RUBY_HOST=0.0.0.0 VITE_RUBY_HTTPS=true ./bin/vite dev"
   },
   "devDependencies": {
+    "@types/react-dom": "^19.2.3",
     "vite": "^5.0.0",
     "vite-plugin-ruby": "^5.1.0"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.8",
     "bootstrap-multiselect": "^0.9.15",
-    "@popperjs/core": "^2.11.8",
     "react": "^19.2.3",
-    "react-dom": "^19.2.3",
     "react-bootstrap": "^2.10.10",
-    "video.js": "^7.17.0",
-    "sass": "^1.96.0"
+    "react-dom": "^19.2.3",
+    "react-router": "7.10.1",
+    "sass": "^1.96.0",
+    "video.js": "^7.17.0"
   }
 }

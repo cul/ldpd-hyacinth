@@ -155,6 +155,7 @@ Rails.application.routes.draw do
 
   # WIP new React UI
   get '/ui/v2', to: 'ui#v2'
+  get '/ui/v2/*path', to: 'ui#v2'
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
