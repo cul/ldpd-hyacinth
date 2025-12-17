@@ -157,6 +157,13 @@ Rails.application.routes.draw do
   get '/ui/v2', to: 'ui#v2'
   get '/ui/v2/*path', to: 'ui#v2'
 
+  namespace :api do
+    namespace :v2 do
+      resources :users, only: [:index]  # specify only needed actions
+    end
+  end
+  
+
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 
