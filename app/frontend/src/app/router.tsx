@@ -3,48 +3,60 @@ import React from 'react';
 import { useMemo } from 'react';
 import { createBrowserRouter, Outlet } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
-import NotFoundRoute from './routes/not-found.tsx';
 
-import Test from '../components/test.tsx';
+import NotFoundRoute from './routes/not-found.tsx';
 import MainLayout from '../components/layouts/main-layout.tsx';
 // import { paths } from '../config/paths';
 
-// import {
-//   default as AppRoot,
-//   ErrorBoundary as AppRootErrorBoundary,
-// } from './routes/app/root';
+function AppErrorBoundary() {
+  return <div>Something went wrong! Displaying error message.</div>
+}
+
 function Root() {
   return (
     <div>
-      <h1>Hello world</h1>
+      <p>This is the root of the React app. Currently, nothing is rendered here.</p>
     </div>
   );
 }
 
+// TODO: Implement <ProtectedRoute />
 export const createAppRouter = () =>
   createBrowserRouter([
     {
       Component: MainLayout,
+      ErrorBoundary: AppErrorBoundary, // Catches everything but is the most disruptive, use more granular error boundaries where possible
       children: [
         {
           index: true,
           Component: Root,
         },
         {
-          path: 'test',
-          Component: Test,
+          path: 'users', // We might want to move user routes under their own layout (to replicate navbar with << Back to Users and other links) or use component composition
+          ErrorBoundary: () => <div>Users route error boundary</div>,
+          children: [
+            { index: true, Component: () => <div>Users Index</div> },
+            // Uncomment to test error boundary
+            // {
+            //   index: true, Component: () => {
+            //     throw new Error('Test error!');
+            //     return <div>Users Index</div>;
+            //   }
+            // },
+            { path: ':uid/edit', Component: () => <div>User Edit</div> },
+            { path: ':uid/edit/project-permissions', Component: () => <div>Edit Project Permissions For User</div> },
+            { path: 'new', Component: () => <div>New User</div> },
+          ]
         },
-
+        {
+          path: 'settings',
+          children: [
+            { index: true, Component: () => <div>Current User Edit</div> },
+            { path: 'project-permissions', Component: () => <div>Edit Current User Project Permissions</div> },
+          ]
+        }
       ],
     },
-    // {
-    //   path: paths.app.root.path,
-    //   element: (
-    //     <ProtectedRoute>
-    //       <AppRoot />
-    //     </ProtectedRoute>
-    //   ),
-    // },
     {
       path: '*',
       element: <NotFoundRoute />,
