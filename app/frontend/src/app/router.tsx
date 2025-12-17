@@ -6,6 +6,7 @@ import { RouterProvider } from 'react-router/dom';
 
 import NotFoundRoute from './routes/not-found.tsx';
 import MainLayout from '../components/layouts/main-layout.tsx';
+import UsersList from '../features/users/components/users-list.tsx';
 // import { paths } from '../config/paths';
 
 function AppErrorBoundary() {
@@ -35,7 +36,7 @@ export const createAppRouter = () =>
           path: 'users', // We might want to move user routes under their own layout (to replicate navbar with << Back to Users and other links) or use component composition
           ErrorBoundary: () => <div>Users route error boundary</div>,
           children: [
-            { index: true, Component: () => <div>Users Index</div> },
+            { index: true, Component: UsersList },
             // Uncomment to test error boundary
             // {
             //   index: true, Component: () => {
