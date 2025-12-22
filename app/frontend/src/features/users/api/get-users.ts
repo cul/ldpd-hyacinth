@@ -1,18 +1,28 @@
-// Test API call to get users, this would normally go through an api client with auth headers etc.
-export const getUsers = async (): Promise<any[]> => {
-  const url = 'http://localhost:3000/api/v2/users';
+import { queryOptions, useQuery } from '@tanstack/react-query';
+import { api } from '../../../lib/api-client';
+import { User } from '../../../types/api.ts';
+import { QueryConfig } from '../../../lib/react-query';
 
-  try {
-    const response = await fetch(url)
-    if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
-    }
+export const getUsers = async (): Promise<{ users: User[] }> => {
+  // Simulate network delay for testing isLoading
+  // await new Promise((resolve) => setTimeout(resolve, 2000));
+  return api.get('/users');
+};
 
-    const result = await response.json();
-    console.log(result);
-    return result.users;
-  } catch (error: any) {
-    console.error(error.message);
-    return [];
-  }
+export const getUsersQueryOptions = () => {
+  return queryOptions({
+    queryKey: ['users'],
+    queryFn: getUsers,
+  });
+};
+
+type UseUsersOptions = {
+  queryConfig?: QueryConfig<typeof getUsersQueryOptions>;
+};
+
+export const useUsers = ({ queryConfig }: UseUsersOptions = {}) => {
+  return useQuery({
+    ...getUsersQueryOptions(),
+    ...queryConfig,
+  });
 };

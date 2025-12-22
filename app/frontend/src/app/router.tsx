@@ -7,11 +7,6 @@ import { RouterProvider } from 'react-router/dom';
 import NotFoundRoute from './routes/not-found.tsx';
 import MainLayout from '../components/layouts/main-layout.tsx';
 import UsersList from '../features/users/components/users-list.tsx';
-// import { paths } from '../config/paths';
-
-function AppErrorBoundary() {
-  return <div>Something went wrong! Displaying error message.</div>
-}
 
 function Root() {
   return (
@@ -26,7 +21,6 @@ export const createAppRouter = () =>
   createBrowserRouter([
     {
       Component: MainLayout,
-      ErrorBoundary: AppErrorBoundary, // Catches everything but is the most disruptive, use more granular error boundaries where possible
       children: [
         {
           index: true,

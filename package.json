@@ -13,8 +13,11 @@
     "vite-plugin-ruby": "^5.1.0"
   },
   "dependencies": {
+    "@casl/ability": "^6.7.5",
+    "@casl/react": "^5.0.0",
     "@popperjs/core": "^2.11.8",
     "@tanstack/react-query": "^5.90.12",
+    "@tanstack/react-query-devtools": "^5.91.1",
     "@tanstack/react-table": "^8.21.3",
     "@types/react": "^19.2.7",
     "bootstrap": "^5.3.8",
@@ -22,6 +25,7 @@
     "react": "^19.2.3",
     "react-bootstrap": "^2.10.10",
     "react-dom": "^19.2.3",
+    "react-error-boundary": "^6.0.0",
     "react-router": "7.10.1",
     "sass": "^1.96.0",
     "video.js": "^7.17.0"

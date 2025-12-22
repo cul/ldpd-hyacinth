@@ -1,35 +1,32 @@
-import React, { useState } from 'react';
-
-import { useEffect } from "react";
-import { getUsers } from "../api/get-users";
+import React from 'react';
+import { useUsers } from "../api/get-users";
+import { Spinner } from 'react-bootstrap';
 
 const UsersList = () => {
-  const [users, setUsers] = useState<any[]>([]);
+  const usersQuery = useUsers();
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const users = await getUsers();
-      setUsers(users);
-      console.log(users);
-    };
+  if (usersQuery.isLoading) {
+    return <Spinner />
+  }
 
-    fetchUsers();
-  }, []);
+  const users = usersQuery.data?.users;
+  if (!users) return null;
 
-  return (<div>
-    <h1>Users List</h1>
-    {users.length === 0 ? (
-      <p>No users found.</p>
-    ) : (
-      <ul>
-        {users.map((user: any) => (
-          <li key={user.uid}>
-            {user.first_name} {user.last_name} ({user.email})
-          </li>
-        ))}
-      </ul>
-    )}
-  </div>
+  return (
+    <div>
+      <h1>Users List</h1>
+      {users.length === 0 ? (
+        <p>No users found.</p>
+      ) : (
+        <ul>
+          {users.map((user: any) => (
+            <li key={user.uid}>
+              {user.first_name} {user.last_name} ({user.email})
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 
