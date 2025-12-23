@@ -1,11 +1,15 @@
 import React from 'react'
-import { flexRender } from '@tanstack/react-table'
+import { flexRender, HeaderGroup } from '@tanstack/react-table'
 
-const TableHeader = ({ headerGroup }: any) => {
+interface TableHeaderProps<T> {
+  headerGroup: HeaderGroup<T>
+}
+
+function TableHeader<T>({ headerGroup }: TableHeaderProps<T>) {
   return (
     <thead>
       <tr key={headerGroup.id}>
-        {headerGroup.headers.map((header: any) => (
+        {headerGroup.headers.map((header) => (
           <th key={header.id}>
             {header.isPlaceholder
               ? null

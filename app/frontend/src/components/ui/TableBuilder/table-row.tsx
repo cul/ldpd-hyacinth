@@ -1,10 +1,14 @@
 import React from 'react'
-import { flexRender } from '@tanstack/react-table'
+import { flexRender, Row, Cell } from '@tanstack/react-table'
 
-const TableRow = ({ row }: any) => {
+interface TableRowProps<T> {
+  row: Row<T>
+}
+
+const TableRow = <T extends object>({ row }: TableRowProps<T>) => {
   return (
     <tr key={row.id}>
-      {row.getVisibleCells().map((cell: any) => (
+      {row.getVisibleCells().map((cell: Cell<T, unknown>) => (
         <td key={cell.id}>
           {flexRender(cell.column.columnDef.cell, cell.getContext())}
         </td>
