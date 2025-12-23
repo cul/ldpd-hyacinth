@@ -1,6 +1,7 @@
 import React from 'react';
 import { useUsers } from "../api/get-users";
 import { Spinner } from 'react-bootstrap';
+import TableBuilder from '../../../components/ui/TableBuilder/table-builder';
 
 const UsersList = () => {
   const usersQuery = useUsers();
@@ -26,6 +27,7 @@ const UsersList = () => {
           ))}
         </ul>
       )}
+      <TableBuilder data={users} />
     </div>
   );
 }
