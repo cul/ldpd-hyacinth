@@ -1,7 +1,11 @@
 import React from 'react';
-import { useUsers } from "../api/get-users";
+import type { ColumnDef } from '@tanstack/react-table';
 import { Spinner } from 'react-bootstrap';
+
 import TableBuilder from '../../../components/ui/TableBuilder/table-builder';
+import type { User } from '../../../types/api';
+import { useUsers } from "../api/get-users";
+import { columnDefs } from './columns.tsx'
 
 const UsersList = () => {
   const usersQuery = useUsers();
@@ -16,18 +20,7 @@ const UsersList = () => {
   return (
     <div>
       <h1>Users List</h1>
-      {users.length === 0 ? (
-        <p>No users found.</p>
-      ) : (
-        <ul>
-          {users.map((user: any) => (
-            <li key={user.uid}>
-              {user.first_name} {user.last_name} ({user.email})
-            </li>
-          ))}
-        </ul>
-      )}
-      <TableBuilder data={users} />
+      <TableBuilder data={users} columns={columnDefs as ColumnDef<User>[]} />
     </div>
   );
 }
