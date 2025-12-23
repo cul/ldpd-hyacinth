@@ -15,6 +15,9 @@ interface TableBuilderProps<T> {
   columns: ColumnDef<T>[]
 }
 
+// This is a generic table component that can be reused across different data types
+// When using this component, ensure you specify how to render each column in the column definitions
+// Docs: https://tanstack.com/table/latest/docs/guide/column-defs
 function TableBuilder<T extends object>({ data, columns }: TableBuilderProps<T>) {
   const table = useReactTable<T>({
     data,

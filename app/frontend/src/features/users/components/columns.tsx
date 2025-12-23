@@ -1,5 +1,7 @@
 // Where should this file live?
-import { createColumnHelper, ColumnDef } from '@tanstack/react-table'
+import React from 'react'
+import { createColumnHelper } from '@tanstack/react-table'
+import { Link } from 'react-router'
 import { User } from '../../../types/api'
 
 const columnHelper = createColumnHelper<User>()
@@ -7,7 +9,14 @@ const columnHelper = createColumnHelper<User>()
 export const columnDefs = [
   columnHelper.accessor('uid', {
     header: 'UID',
-    cell: (info) => info.getValue(),
+    cell: ({ row }) => (
+      <Link
+        to={{ pathname: `/users/${row.original.uid}/edit` }}
+        className="link-underline link-underline-opacity-0"
+      >
+        <span className="hover:underline">{row.original.uid}</span>
+      </Link>
+    )
   }),
   columnHelper.accessor((row) => `${row.first_name} ${row.last_name}`, {
     id: 'name',
