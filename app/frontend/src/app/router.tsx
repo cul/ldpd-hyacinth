@@ -1,12 +1,10 @@
-// import { QueryClient, useQueryClient } from '@tanstack/react-query';
-import React from 'react';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
+import { QueryClient, useQueryClient } from '@tanstack/react-query';
 import { createBrowserRouter, Outlet } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
 
 import NotFoundRoute from './routes/not-found.tsx';
 import MainLayout from '../components/layouts/main-layout.tsx';
-import UsersList from '../features/users/components/users-list.tsx';
 
 function Root() {
   return (
@@ -16,8 +14,20 @@ function Root() {
   );
 }
 
+// Convert a module with clientLoader/clientAction into a route object.
+// This allows loaders/actions to access the QueryClient for prefetching data
+const convert = (queryClient: QueryClient) => (m: any) => {
+  const { clientLoader, clientAction, default: Component, ...rest } = m;
+  return {
+    ...rest,
+    loader: clientLoader?.(queryClient),
+    action: clientAction?.(queryClient),
+    Component,
+  };
+};
+
 // TODO: Implement <ProtectedRoute />
-export const createAppRouter = () =>
+export const createAppRouter = (queryClient: QueryClient) =>
   createBrowserRouter([
     {
       Component: MainLayout,
@@ -30,14 +40,10 @@ export const createAppRouter = () =>
           path: 'users', // We might want to move user routes under their own layout (to replicate navbar with << Back to Users and other links) or use component composition
           ErrorBoundary: () => <div>Users route error boundary</div>,
           children: [
-            { index: true, Component: UsersList },
-            // Uncomment to test error boundary
-            // {
-            //   index: true, Component: () => {
-            //     throw new Error('Test error!');
-            //     return <div>Users Index</div>;
-            //   }
-            // },
+            {
+              index: true,
+              lazy: () => import('./routes/app/users').then(convert(queryClient)),
+            },
             { path: ':uid/edit', Component: () => <div>User Edit</div> },
             { path: ':uid/edit/project-permissions', Component: () => <div>Edit Project Permissions For User</div> },
             { path: 'new', Component: () => <div>New User</div> },
@@ -61,7 +67,9 @@ export const createAppRouter = () =>
   });
 
 export const AppRouter = () => {
-  const router = useMemo(() => createAppRouter(), []);
+  const queryClient = useQueryClient();
+
+  const router = useMemo(() => createAppRouter(queryClient), [queryClient]);
 
   return <RouterProvider router={router} />;
 };
