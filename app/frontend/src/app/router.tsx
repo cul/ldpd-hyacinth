@@ -2,9 +2,7 @@ import React, { useMemo } from 'react';
 import { QueryClient, useQueryClient } from '@tanstack/react-query';
 import { createBrowserRouter, Outlet } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
-
-import NotFoundRoute from './routes/not-found.tsx';
-import MainLayout from '../components/layouts/main-layout.tsx';
+import MainLayout from '@/components/layouts/main-layout';
 
 function Root() {
   return (
@@ -60,7 +58,7 @@ export const createAppRouter = (queryClient: QueryClient) =>
     },
     {
       path: '*',
-      element: <NotFoundRoute />,
+      lazy: () => import('./routes/not-found').then(convert(queryClient)),
     },
   ], {
     basename: '/ui/v2',

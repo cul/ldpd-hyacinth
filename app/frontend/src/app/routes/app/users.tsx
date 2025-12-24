@@ -1,7 +1,7 @@
 import React from 'react';
 import { QueryClient } from '@tanstack/react-query';
-import { getUsersQueryOptions } from '../../../features/users/api/get-users';
-import UsersList from '../../../features/users/components/users-list.tsx';
+import { getUsersQueryOptions } from '@/features/users/api/get-users';
+import UsersList from '@/features/users/components/users-list';
 
 export const clientLoader = (queryClient: QueryClient) => async () => {
   const query = getUsersQueryOptions();

@@ -1,7 +1,7 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
-import { api } from '../../../lib/api-client';
-import { User } from '../../../types/api.ts';
-import { QueryConfig } from '../../../lib/react-query';
+import { api } from '@/lib/api-client';
+import { QueryConfig } from '@/lib/react-query';
+import { User } from '@/types/api';
 
 export const getUsers = async (): Promise<{ users: User[] }> => {
   // Simulate network delay for testing isLoading

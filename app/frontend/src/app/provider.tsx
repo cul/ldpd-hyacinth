@@ -3,8 +3,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import Spinner from 'react-bootstrap/Spinner';
 import { ErrorBoundary } from 'react-error-boundary';
-import { MainErrorFallback } from '../components/errors/main';
-import { queryConfig } from '../lib/react-query';
+
+import { MainErrorFallback } from '@/components/errors/main';
+import { queryConfig } from '@/lib/react-query';
 
 export const AppProvider: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   const [queryClient] = React.useState(
@@ -24,7 +25,7 @@ export const AppProvider: React.FC<React.PropsWithChildren<unknown>> = ({ childr
     >
       <ErrorBoundary FallbackComponent={MainErrorFallback}>
         <QueryClientProvider client={queryClient}>
-          {<ReactQueryDevtools />}
+          {import.meta.env.DEV && <ReactQueryDevtools />}
           {children}
         </QueryClientProvider>
       </ErrorBoundary>

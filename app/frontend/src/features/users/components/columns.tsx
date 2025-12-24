@@ -1,8 +1,8 @@
 // Where should this file live?
 import React from 'react'
-import { createColumnHelper } from '@tanstack/react-table'
 import { Link } from 'react-router'
-import { User } from '../../../types/api'
+import { createColumnHelper } from '@tanstack/react-table'
+import { User } from '@/types/api'
 
 const columnHelper = createColumnHelper<User>()
 

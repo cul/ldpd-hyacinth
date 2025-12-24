@@ -1,7 +1,7 @@
 import React from 'react';
-import TopNavbar from '../topnavbar';
 import { Outlet } from 'react-router';
 import Container from 'react-bootstrap/Container';
+import TopNavbar from '@/components/top-navbar';
 
 const MainLayout = () => {
   return (

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Nav, Navbar, Offcanvas, NavDropdown, Container } from 'react-bootstrap';
 import { NavLink } from 'react-router';
-import { api } from '../lib/api-client';
+// import { api } from '@/lib/api-client';
 
 const NAVBAR_EXPAND_SIZE = 'lg';
 
