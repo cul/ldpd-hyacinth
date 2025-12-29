@@ -6,6 +6,22 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 import { MainErrorFallback } from '@/components/errors/main';
 import { queryConfig } from '@/lib/react-query';
+import { useUser } from '@/lib/auth';
+
+function AuthLoader({ children }: { children: React.ReactNode }) {
+  const { data: user, isLoading } = useUser();
+
+  if (isLoading) {
+    return <div>Loading user...</div>;
+  }
+
+  if (!user) {
+    window.location.href = '/users/sign_in';
+    return null;
+  }
+
+  return <>{children}</>;
+}
 
 export const AppProvider: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   const [queryClient] = React.useState(
@@ -26,7 +42,7 @@ export const AppProvider: React.FC<React.PropsWithChildren<unknown>> = ({ childr
       <ErrorBoundary FallbackComponent={MainErrorFallback}>
         <QueryClientProvider client={queryClient}>
           {import.meta.env.DEV && <ReactQueryDevtools />}
-          {children}
+          <AuthLoader>{children}</AuthLoader>
         </QueryClientProvider>
       </ErrorBoundary>
     </React.Suspense>

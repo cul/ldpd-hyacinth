@@ -3,10 +3,11 @@ import { api } from '@/lib/api-client';
 import { QueryConfig } from '@/lib/react-query';
 import { User } from '@/types/api';
 
-export const getUsers = async (): Promise<{ users: User[] }> => {
+export const getUsers = async (): Promise<{ users: User[] }>=> {
   // Simulate network delay for testing isLoading
   // await new Promise((resolve) => setTimeout(resolve, 2000));
-  return api.get('/users');
+  const res = await api.get<{ users: User[] }>('/users');
+  return res;
 };
 
 export const getUsersQueryOptions = () => {

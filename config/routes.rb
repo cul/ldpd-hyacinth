@@ -159,7 +159,12 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v2 do
-      resources :users, only: [:index]  # specify only needed actions
+      resources :users, only: [:index] do
+        collection do
+          get '_self'
+          # delete 'session', to: 'users#destroy_session'
+        end
+      end
     end
   end
   

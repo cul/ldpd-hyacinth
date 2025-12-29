@@ -1,18 +1,32 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Nav, Navbar, Offcanvas, NavDropdown, Container } from 'react-bootstrap';
 import { NavLink } from 'react-router';
-// import { api } from '@/lib/api-client';
+import { useUser, AUTH_QUERY_KEY } from '@/lib/auth';
+import { useQueryClient } from '@tanstack/react-query';
 
 const NAVBAR_EXPAND_SIZE = 'lg';
-
-// This will not work as-is because we don't get JSON responses from Rails for sign out requests
-// const logout = () => {
-//   api.delete('/users/sign_out');
-// };
 
 // Links to the old UI should be updated to use React Router navigation instead of full page loads
 // after their corresponding routes/components have been implemented in the new UI.
 export default function TopNavbar() {
+  // const { data: user } = useUser();
+  // const logout = useLogout();
+
+  // const handleLogout = async () => {
+  //   await logout();
+  // };
+
+  const user = useUser();
+  const queryClient = useQueryClient();
+  const logoutFormRef = useRef<HTMLFormElement>(null);
+
+  const handleLogout = () => {
+    queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY });
+    queryClient.clear();
+    
+    logoutFormRef.current?.submit();
+  };
+
   return (
     <Navbar key={NAVBAR_EXPAND_SIZE} expand={NAVBAR_EXPAND_SIZE} className="bg-body-tertiary mb-3" data-bs-theme="dark">
       <Container>
@@ -58,7 +72,7 @@ export default function TopNavbar() {
               </NavDropdown>
             </Nav>
             <Nav className="justify-content-end flex-grow-1">
-              <NavDropdown title="User UID">
+              <NavDropdown title={user?.data?.first_name || 'User'}>
                 {/* Use 'end' to ensure this link is only active on the exact /settings path */}
                 <NavDropdown.Item as={NavLink} to="/settings" end>
                   Settings
@@ -77,10 +91,22 @@ export default function TopNavbar() {
                 </NavDropdown.Item>
                 <NavDropdown.Divider />
 
-                {/* No href for logout */}
-                <NavDropdown.Item>
+                <NavDropdown.Item onClick={handleLogout}>
                   Sign Out
                 </NavDropdown.Item>
+                <form
+                  ref={logoutFormRef}
+                  action="/users/sign_out"
+                  method="post"
+                  style={{ display: 'none' }}
+                >
+                  <input type="hidden" name="_method" value="delete" />
+                  <input
+                    type="hidden"
+                    name="authenticity_token"
+                    value={document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''}
+                  />
+                </form>
               </NavDropdown>
             </Nav>
           </Offcanvas.Body>

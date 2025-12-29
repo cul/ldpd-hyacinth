@@ -60,4 +60,26 @@ class Api::V2::UsersController < Api::V2::BaseController
       ] 
     }
   end
+
+  def _self
+    respond_to do |format|
+      format.json do
+        if current_user
+          render json: { user: current_user }
+        else
+          render json: { user: nil }, status: :unauthorized
+        end
+      end
+    end
+  end
+
+  # Alternative to an autosubmitting form for logout
+  # def destroy_session
+  #   sign_out current_user if current_user
+  #   respond_to do |format|
+  #     format.json do
+  #       render json: { success: true, redirect_url: after_sign_out_path_for(:user) }
+  #     end
+  #   end
+  # end
 end
