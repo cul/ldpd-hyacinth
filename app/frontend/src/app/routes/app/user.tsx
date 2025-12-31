@@ -1,7 +1,7 @@
 import React from 'react';
 import { QueryClient } from '@tanstack/react-query';
 import { getUserQueryOptions } from '@/features/users/api/get-user';
-import { UserView } from '@/features/users/components/user-edit';
+import { UserEdit } from '@/features/users/components/user-edit';
 import { useParams, LoaderFunctionArgs } from 'react-router';
 
 export const clientLoader =
@@ -22,7 +22,7 @@ const UserRoute = () => {
   console.log('UserRoute params:', params);
   const userUid = params.userUid as string;
 
-  return <UserView userUid={userUid} />;
+  return <UserEdit userUid={userUid} />;
 };
 
 export default UserRoute;

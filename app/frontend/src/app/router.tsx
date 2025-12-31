@@ -3,6 +3,7 @@ import { QueryClient, useQueryClient } from '@tanstack/react-query';
 import { createBrowserRouter, Outlet } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
 import MainLayout from '@/components/layouts/main-layout';
+import { CreateUser } from '@/features/users/components/create-user';
 
 function Root() {
   return (
@@ -47,7 +48,7 @@ export const createAppRouter = (queryClient: QueryClient) =>
               lazy: () => import('./routes/app/user').then(convert(queryClient)) // TODO: Move under users/ directory
             },
             { path: ':userUid/edit/project-permissions', Component: () => <div>Edit Project Permissions For User</div> },
-            { path: 'new', Component: () => <div>New User</div> },
+            { path: 'new', Component: () => <CreateUser /> }, // For now render CreateUser directly
           ]
         },
         {

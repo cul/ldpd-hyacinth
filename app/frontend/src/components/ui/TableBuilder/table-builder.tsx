@@ -26,20 +26,18 @@ function TableBuilder<T extends object>({ data, columns }: TableBuilderProps<T>)
   })
 
   return (
-    <div className="p-2">
-      <BTable striped bordered hover responsive size="md">
-        {table.getHeaderGroups().map((headerGroup) => (
-          <TableHeader
-            key={headerGroup.id}
-            headerGroup={headerGroup} />
+    <BTable striped bordered hover responsive size="md">
+      {table.getHeaderGroups().map((headerGroup) => (
+        <TableHeader
+          key={headerGroup.id}
+          headerGroup={headerGroup} />
+      ))}
+      <tbody>
+        {table.getRowModel().rows.map((row) => (
+          <TableRow row={row} key={row.id} />
         ))}
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <TableRow row={row} key={row.id} />
-          ))}
-        </tbody>
-      </BTable>
-    </div>
+      </tbody>
+    </BTable>
   )
 }
 

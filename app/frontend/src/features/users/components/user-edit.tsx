@@ -1,8 +1,9 @@
 import { useUser } from '../api/get-user';
 import { useCreateUser } from '../api/create-user';
+import { UserForm } from './user-form';
 
 
-export const UserView = ({ userUid }: { userUid: string }) => {
+export const UserEdit = ({ userUid }: { userUid: string }) => {
   const userQuery = useUser({
     userUid,
   });
@@ -52,19 +53,9 @@ export const UserView = ({ userUid }: { userUid: string }) => {
 
   return (
     <div>
-      <span className="ml-2 text-sm font-bold">
-        {/* TODO: Create a user form */}
-        <div>UID: {user.uid}</div>
-        <div>Email: {user.email}</div>
-        <div>First Name: {user.first_name}</div>
-        <div>Last Name: {user.last_name}</div>
-        <div>Is admin: {user.is_admin ? 'Yes' : 'No'}</div>
-        <div>Can manage controlled vocabularies: {user.can_manage_all_controlled_vocabularies ? 'Yes' : 'No'}</div>
-        <div>Account type: {user.account_type}</div>
-        <div>Is active? {user.is_active ? 'Yes' : 'No'}</div>
+      <UserForm userUid={userUid} />
 
-        <button onClick={testCreateUser}>Test Create User</button>
-      </span>
+      <button onClick={testCreateUser}>Test Create User</button>
     </div>
   );
 };
