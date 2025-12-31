@@ -159,10 +159,13 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v2 do
-      resources :users, only: [:index] do
+      resources :users, only: [:index, :create], param: :uid do
         collection do
           get '_self'
-          # delete 'session', to: 'users#destroy_session'
+        end
+        member do
+          get '/', action: :show
+          patch '/', action: :update
         end
       end
     end

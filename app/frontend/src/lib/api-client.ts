@@ -3,7 +3,12 @@ const BASE_URL = '/api/v2';
 async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const config: RequestInit = {
     ...options,
-    // headers, credentials?
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      ...options?.headers,
+    },
+    credentials: 'include',
   };
 
   const response = await fetch(`${BASE_URL}${endpoint}`, config);

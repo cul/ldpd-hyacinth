@@ -42,8 +42,11 @@ export const createAppRouter = (queryClient: QueryClient) =>
               index: true,
               lazy: () => import('./routes/app/users').then(convert(queryClient)),
             },
-            { path: ':uid/edit', Component: () => <div>User Edit</div> },
-            { path: ':uid/edit/project-permissions', Component: () => <div>Edit Project Permissions For User</div> },
+            {
+              path: ':userUid/edit',
+              lazy: () => import('./routes/app/user').then(convert(queryClient)) // TODO: Move under users/ directory
+            },
+            { path: ':userUid/edit/project-permissions', Component: () => <div>Edit Project Permissions For User</div> },
             { path: 'new', Component: () => <div>New User</div> },
           ]
         },

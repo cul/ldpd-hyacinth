@@ -1,66 +1,33 @@
 class Api::V2::UsersController < Api::V2::BaseController
-  # Temporarily skip authentication since we're using mock data
-  skip_before_action :verify_authenticity_token
-  skip_before_action :require_authenticated_user!
+  before_action :set_user_by_uid, only: [:show, :update]
 
+  # GET /api/v2/users
   def index
-    render json: { 
-      users: [
-        {
-          uid: "admin",
-          first_name: "admin",
-          last_name: "role",
-          email: "admin@example.com",
-          is_admin: true,
-          is_active: true,
-          can_manage_all_controlled_vocabularies: true,
-          account_type: 0,
-          sign_in_count: 8,
-          current_sign_in_at: "2025-12-17T10:30:00Z",
-          last_sign_in_at: "2025-12-16T15:20:00Z",
-          current_sign_in_ip: "192.168.1.1",
-          last_sign_in_ip: "192.168.1.1",
-          created_at: "2024-01-15T08:00:00Z",
-          updated_at: "2025-12-17T10:30:00Z"
-        },
-        {
-          uid: "nonadmin1",
-          first_name: "nonadmin1",
-          last_name: "role",
-          email: "nonadmin1@example.com",
-          is_admin: false,
-          is_active: true,
-          can_manage_all_controlled_vocabularies: false,
-          account_type: 0,
-          sign_in_count: 15,
-          current_sign_in_at: "2025-12-15T14:00:00Z",
-          last_sign_in_at: "2025-12-10T09:00:00Z",
-          current_sign_in_ip: "192.168.1.2",
-          last_sign_in_ip: "192.168.1.2",
-          created_at: "2024-06-20T12:30:00Z",
-          updated_at: "2025-12-15T14:00:00Z"
-        },
-        {
-          uid: "service_user",
-          first_name: "service",
-          last_name: "user",
-          email: "service_user@example.com",
-          is_admin: false,
-          is_active: false,
-          can_manage_all_controlled_vocabularies: false,
-          account_type: 1,
-          sign_in_count: 3,
-          current_sign_in_at: "2025-10-01T11:15:00Z",
-          last_sign_in_at: "2025-09-28T16:30:00Z",
-          current_sign_in_ip: "192.168.1.3",
-          last_sign_in_ip: "192.168.1.3",
-          created_at: "2025-09-01T09:00:00Z",
-          updated_at: "2025-11-01T10:00:00Z"
-        }
-      ] 
-    }
+    authorize! :index, User
+    @users = User.all.order(uid: :asc)
+    render json: { users: @users.map { |user| user_json(user) } }
   end
 
+  # POST /api/v2/users
+  def create
+    authorize! :create, User
+    @user = User.new(user_params)
+
+    if @user.save
+      render json: { user: user_json(@user) }, status: :created
+    else
+      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  # GET /api/v2/users/:uid
+  # Admin or self
+  def show
+    authorize! :show, @user
+    render json: { user: user_json(@user) }
+  end
+
+  # GET /api/v2/users/_self
   def _self
     respond_to do |format|
       format.json do
@@ -73,13 +40,45 @@ class Api::V2::UsersController < Api::V2::BaseController
     end
   end
 
-  # Alternative to an autosubmitting form for logout
-  # def destroy_session
-  #   sign_out current_user if current_user
-  #   respond_to do |format|
-  #     format.json do
-  #       render json: { success: true, redirect_url: after_sign_out_path_for(:user) }
-  #     end
-  #   end
-  # end
+  # PATCH /api/v2/users/:uid
+  # Admin or self
+  def update
+    authorize! :update, @user
+    if @user.update(user_params)
+      render json: { user: user_json(@user) }
+    else
+      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  private
+
+  def set_user_by_uid
+    @user = User.find_by!(uid: params[:uid])
+  end
+
+  def user_params
+    # Admins can set all fields, regular users can only update their own non-privileged fields
+    if current_user.admin?
+      params.require(:user).permit(
+        :uid, :email, :first_name, :last_name,
+        :is_admin, :can_manage_all_controlled_vocabularies, :is_active, :account_type
+      )
+    else
+      params.require(:user).permit(:first_name, :last_name)
+    end
+  end
+
+  def user_json(user)
+    {
+      uid: user.uid,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      is_admin: user.is_admin,
+      is_active: user.is_active,
+      can_manage_all_controlled_vocabularies: user.can_manage_all_controlled_vocabularies,
+      account_type: user.account_type,
+    }
+  end
 end

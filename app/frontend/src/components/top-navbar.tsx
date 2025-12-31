@@ -9,14 +9,8 @@ const NAVBAR_EXPAND_SIZE = 'lg';
 // Links to the old UI should be updated to use React Router navigation instead of full page loads
 // after their corresponding routes/components have been implemented in the new UI.
 export default function TopNavbar() {
-  // const { data: user } = useUser();
-  // const logout = useLogout();
+  const { data: user } = useUser();
 
-  // const handleLogout = async () => {
-  //   await logout();
-  // };
-
-  const user = useUser();
   const queryClient = useQueryClient();
   const logoutFormRef = useRef<HTMLFormElement>(null);
 
@@ -72,7 +66,7 @@ export default function TopNavbar() {
               </NavDropdown>
             </Nav>
             <Nav className="justify-content-end flex-grow-1">
-              <NavDropdown title={user?.data?.first_name || 'User'}>
+              <NavDropdown title={user?.first_name || 'User'}>
                 {/* Use 'end' to ensure this link is only active on the exact /settings path */}
                 <NavDropdown.Item as={NavLink} to="/settings" end>
                   Settings
