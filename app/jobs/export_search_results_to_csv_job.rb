@@ -1,7 +1,11 @@
 class ExportSearchResultsToCsvJob < ActiveJob::Base
   include Hyacinth::Csv::Flatten
 
-  SUPPRESSED_ON_EXPORT = ['_uuid', '_dc_type', '_state', '_title', '_created', '_modified', '_created_by', '_modified_by', '_project.uri', '_project.short_label']
+  SUPPRESSED_ON_EXPORT = [
+    '_uuid', '_dc_type', '_state', '_title', '_created', '_modified', '_created_by', '_modified_by',
+    '_digital_object_data_location_uri',
+    '_project.uri', '_project.short_label'
+  ]
   INTERNAL_FIELD_REGEXES_ALLOWED_ON_IMPORT = [
     '_pid', '_doi', '_merge_dynamic_fields', '_publish', '_first_published', '_digital_object_type.string_key',
     '_import_file.import_type', '_import_file.import_path', '_import_file.original_file_path',

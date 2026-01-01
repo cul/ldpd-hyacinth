@@ -76,8 +76,6 @@ RSpec.describe "DigitalObjects", type: :request do
         end
 
         it "works via *upload directory* filesystem upload, copying the target file to the internal Hyacinth data store" do
-          asset_digital_object_data = sample_asset_digital_object_data
-
           # Copy fixture file to upload directory file path
           upload_directory_file_path = 'some_dir/lincoln.jpg'
           dest_path = File.join(HYACINTH[:upload_directory], upload_directory_file_path)
@@ -85,7 +83,7 @@ RSpec.describe "DigitalObjects", type: :request do
           FileUtils.cp(fixture('files/lincoln.jpg').path, dest_path) # Copy fixture
 
           # Manually override import_file settings to set the fixture to type == post data
-          asset_digital_object_data['import_file'] = {
+          sample_asset_digital_object_data['import_file'] = {
             'import_type' => DigitalObject::Asset::IMPORT_TYPE_UPLOAD_DIRECTORY,
             'import_path' => upload_directory_file_path,
             'original_file_path' => upload_directory_file_path
@@ -123,7 +121,7 @@ RSpec.describe "DigitalObjects", type: :request do
 
           # Make sure that path to DigitalObject::Asset is internal, and stored within the hyacinth asset directory
           digital_object = DigitalObject::Base.find(response_json['pid'])
-          expect(digital_object.filesystem_location).to start_with(HYACINTH[:default_asset_home])
+          expect(digital_object.filesystem_location_uri).to start_with(HYACINTH[:default_resource_storage_locations][:main][:file][:base])
           expect(digital_object.original_file_path).to eq(path_to_fixture_file)
         end
 
@@ -258,7 +256,7 @@ RSpec.describe "DigitalObjects", type: :request do
             }
 
           expect(response.status).to be(200)
-          expect(DigitalObject::Base.find(asset.pid).access_copy_location).to be_present
+          expect(DigitalObject::Base.find(asset.pid).location_for_resource('access')).to be_present
 
           # Perform access copy replacement upload
           put "/digital_objects/#{asset.pid}.json",
@@ -267,7 +265,7 @@ RSpec.describe "DigitalObjects", type: :request do
             }
 
           expect(response.status).to be(200)
-          expect(DigitalObject::Base.find(asset.pid).access_copy_location).to be_present
+          expect(DigitalObject::Base.find(asset.pid).location_for_resource('access')).to be_present
         end
       end
 
@@ -297,7 +295,7 @@ RSpec.describe "DigitalObjects", type: :request do
             }
 
           expect(response.status).to be(200)
-          expect(DigitalObject::Base.find(asset.pid).poster_location).to be_present
+          expect(DigitalObject::Base.find(asset.pid).location_uri_for_resource('poster')).to be_present
 
           # Perform poster replacement upload
           put "/digital_objects/#{asset.pid}.json",
@@ -306,7 +304,7 @@ RSpec.describe "DigitalObjects", type: :request do
             }
 
           expect(response.status).to be(200)
-          expect(DigitalObject::Base.find(asset.pid).poster_location).to be_present
+          expect(DigitalObject::Base.find(asset.pid).location_uri_for_resource('poster')).to be_present
         end
       end
 

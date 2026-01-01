@@ -4,7 +4,7 @@ RSpec.describe Hyacinth::Utils::PathUtils do
 
   describe "uuid methods" do
     let(:uuid) { 'cc092507-6baf-4c81-9cba-ea97cc0b30f2' }
-    let(:uuid_pair_tree) { ['cc', '09', '25', '07', '6b', 'af'] }
+    let(:uuid_pair_tree) { ['cc', '09', '25', '07'] }
 
     context ".uuid_pairtree" do
       it "returns the expected value" do

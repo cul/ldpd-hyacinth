@@ -23,3 +23,12 @@ default_user_3:
   last_name: 'User'
   is_admin: false
   account_type: 'service'
+
+default_user_4:
+  uid: 'derivativo'
+  email: 'derivativo@example.com'
+  first_name: 'Derivativo'
+  last_name: 'User'
+  is_admin: true
+  account_type: 'service'
+  api_key: 'derivativo-api-key'

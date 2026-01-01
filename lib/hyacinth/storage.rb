@@ -21,12 +21,14 @@ module Hyacinth::Storage
   # Generates a path based on the given parameters.
   # @param uuid [String] A DigitalObject uuid.
   # @param project [Project] A project.
-  # @param original_filename [String] The extension from this file is used as the extension in the generated path.
+  # @param file_extension [String] The extension from to use for the generated file path.
   # @resource_type [String] A resource type like 'main' or 'service'
   def self.generate_location_uri_for(uuid, project, file_extension, resource_type)
     raise "Unsupported resource_type: #{resource_type}" unless DigitalObject::Asset::VALID_RESOURCE_TYPES.include?(resource_type)
 
-    scheme = project.default_storage_type
+    scheme = [DigitalObject::Asset::ACCESS_RESOURCE_NAME, DigitalObject::Asset::POSTER_RESOURCE_NAME].include?(resource_type) ?
+              project.default_access_storage_type : project.default_storage_type
+
     path_pieces = []
 
     case scheme

@@ -194,7 +194,7 @@
                 Download Original:
               </label>
               <div class="col-sm-9">
-                <a href="<%= Hyacinth.getLocationOrigin() + '/digital_objects/' + digitalObject.getPid() + '/download' %>" target="_blank"><span class="glyphicon glyphicon-download"></span> Download</a>
+                <a href="<%= Hyacinth.getLocationOrigin() + '/digital_objects/' + digitalObject.getPid() + '/download?resource_name=main&download=true' %>" target="_blank"><span class="glyphicon glyphicon-download"></span> Download</a>
                 (<%= digitalObject.getFileSizeString() %>) [<%= digitalObject.getFileSizeInBytes() %> bytes]
               </div>
             </div>
@@ -214,7 +214,7 @@
                 <% if(digitalObject.getServiceCopyLocation() == null) { %>
                   N/A
                 <% } else { %>
-                  <a href="<%= Hyacinth.getLocationOrigin() + '/digital_objects/' + digitalObject.getPid() + '/download_service_copy' %>" target="_blank"><span class="glyphicon glyphicon-download"></span> Download</a>
+                  <a href="<%= Hyacinth.getLocationOrigin() + '/digital_objects/' + digitalObject.getPid() + '/download?resource_name=service&download=true' %>" target="_blank"><span class="glyphicon glyphicon-download"></span> Download</a>
                   (<%= digitalObject.getServiceCopyFileSizeString() %>) [<%= digitalObject.getServiceCopyFileSizeInBytes() %> bytes]
                   <% } %>
               </div>
@@ -235,7 +235,7 @@
                 <% if(digitalObject.getAccessCopyLocation() == null) { %>
                   N/A
                 <% } else { %>
-                  <a href="<%= Hyacinth.getLocationOrigin() + '/digital_objects/' + digitalObject.getPid() + '/download_access_copy?download=true' %>" target="_blank"><span class="glyphicon glyphicon-download"></span> Download</a>
+                  <a href="<%= Hyacinth.getLocationOrigin() + '/digital_objects/' + digitalObject.getPid() + '/download?resource_name=access&download=true' %>" target="_blank"><span class="glyphicon glyphicon-download"></span> Download</a>
                   (<%= digitalObject.getAccessCopyFileSizeString() %>) [<%= digitalObject.getAccessCopyFileSizeInBytes() %> bytes]
                   <% } %>
               </div>
@@ -256,7 +256,7 @@
                 <% if(digitalObject.getPosterLocation() == null) { %>
                   N/A
                 <% } else { %>
-                  <a href="<%= Hyacinth.getLocationOrigin() + '/digital_objects/' + digitalObject.getPid() + '/download_poster' %>" target="_blank"><span class="glyphicon glyphicon-download"></span> Download</a>
+                  <a href="<%= Hyacinth.getLocationOrigin() + '/digital_objects/' + digitalObject.getPid() + '/download?resource_name=poster&download=true' %>" target="_blank"><span class="glyphicon glyphicon-download"></span> Download</a>
                   (<%= digitalObject.getPosterFileSizeString() %>) [<%= digitalObject.getPosterFileSizeInBytes() %> bytes]
                   <% } %>
               </div>

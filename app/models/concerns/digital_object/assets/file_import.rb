@@ -4,7 +4,6 @@ module DigitalObject::Assets::FileImport
   VALID_FILE_URI_REGEX = /^file:(\/{2})*\/{1}[^\/].+$/
 
   def handle_file_imports
-    puts 'ran this 1'
     # TODO: Maybe change instance variable names below
     handle_main_file_import(@import_file_import_type, @import_file_import_path, @import_file_original_file_path)
     handle_service_copy_import(@service_copy_import_type, @service_copy_import_path)
@@ -19,7 +18,7 @@ module DigitalObject::Assets::FileImport
     # to the upload directory and then it can be treated as the same as an internal file import.
     # Some users have more limited permissions and are only allowed to upload files from the upload directory,
     # so that's why they might perform an import of type DigitalObject::Asset::IMPORT_TYPE_UPLOAD_DIRECTORY.
-    [File.join(HYACINTH[:upload_directory], import_location), DigitalObject::Asset::IMPORT_TYPE_UPLOAD_DIRECTORY]
+    [DigitalObject::Asset::IMPORT_TYPE_INTERNAL, File.join(HYACINTH[:upload_directory], import_location)]
   end
 
   def perform_import(import_type, import_location, resource_type, allow_overwrite:)
@@ -36,7 +35,7 @@ module DigitalObject::Assets::FileImport
   end
 
   # Copies the source file to its internal Hyacinth storage destination
-  def handle_internal_import(import_location, resource_type, allow_overwrite: false)
+  def handle_internal_import(import_location, resource_type, allow_overwrite: false) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     # If import_location is a file URI, then we'll convert it to a regular file path.  This allows us to support
     # either a file URI or an absolute file paths during imports.  Note that we do not support internal imports
     # from other sources like 's3://' at this time.
@@ -120,7 +119,6 @@ module DigitalObject::Assets::FileImport
   def assign_properties_after_main_file_import(
     import_location, original_file_path, final_save_location_uri, checksum_hexdigest_uri, import_file_size
   )
-    puts 'ran this 3'
     original_filename = File.basename(original_file_path || import_location)
 
     # If the title of this Asset is the DEFAULT_ASSET_NAME, use the original filename as the title.
@@ -154,18 +152,15 @@ module DigitalObject::Assets::FileImport
 
     # This also updates the 'content' datastream label
     self.original_file_path = original_file_path || import_location
-    puts "self.original_file_path set to: #{self.original_file_path}"
   end
 
   def handle_main_file_import(import_type, import_location, original_file_path)
-    puts 'ran this 2'
-
     # NOTE: We don't allow users to set a new main file for an Asset.  An Asset is linked to a specific main file.
     # If you want to change the main file, then you need to create a new Asset.
     # NOTE: A Fedora object should have been generated for this new Asset.
     # NOTE: The Fedora object should not already have a 'content' datastream.
     return if !self.new_record? || @fedora_object.nil? || @fedora_object.datastreams['content'].present?
-    puts 'ran this 2.5'
+
     final_save_location_uri, checksum_hexdigest_uri, import_file_size = perform_import(import_type, import_location, DigitalObject::Asset::MAIN_RESOURCE_NAME, allow_overwrite: false)
 
     assign_properties_after_main_file_import(import_location, original_file_path, final_save_location_uri, checksum_hexdigest_uri, import_file_size)

@@ -45,8 +45,18 @@ class Hyacinth::Storage::S3Object < Hyacinth::Storage::AbstractObject
     self.s3_object.content_type
   end
 
-  def read
-    obj = S3_CLIENT.get_object({ bucket: self.bucket_name, key: self.key }) do |chunk, _headers|
+  def read(&block)
+    read_range(0, &block)
+  end
+
+  def read_range(from, to = nil, &block)
+    opts =  { bucket: self.bucket_name, key: self.key }
+
+    if from > 0 || to.present?
+      opts[:range] = "bytes=#{from}-#{to || ''}"
+    end
+
+    S3_CLIENT.get_object(opts) do |chunk, _headers|
       yield chunk
     end
   end

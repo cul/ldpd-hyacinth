@@ -2,46 +2,27 @@ namespace :hyacinth do
 
   namespace :test do
 
-    task :clear_default_asset_home_content => :environment do
-
+    task :clear_local_default_resource_storage_content => :environment do
       unless Rails.env == 'test'
         puts 'This task is only meant for the test environment.'
         next
       end
 
-      default_asset_home_directory = File.join(HYACINTH[:default_asset_home])
+      resource_types = [
+        :main,
+        :service,
+        :access,
+        :poster
+      ]
 
-      puts "Deleting test environment default asset home content: #{default_asset_home_directory}..."
-      FileUtils.rm_rf(default_asset_home_directory)
-      puts "Test environment default asset home content has been deleted."
-    end
-
-    task :clear_default_service_copy_home_content => :environment do
-
-      unless Rails.env == 'test'
-        puts 'This task is only meant for the test environment.'
-        next
+      resource_types.each do |resource_type|
+        location_uri = HYACINTH[:default_resource_storage_locations][resource_type][:file][:base]
+        raise "Missing file storage configuration for: #{resource_type}" if location_uri.blank?
+        directory = Hyacinth::Utils::UriUtils.location_uri_to_file_path(location_uri)
+        puts "Deleting test HYACINTH[:default_resource_storage_locations][:#{resource_type}][:file][:base] files: #{directory}..."
+        FileUtils.rm_rf(directory)
       end
-
-      default_service_copy_home_directory = File.join(HYACINTH[:default_service_copy_home])
-
-      puts "Deleting test environment default asset home content: #{default_service_copy_home_directory}..."
-      FileUtils.rm_rf(default_service_copy_home_directory)
-      puts "Test environment default service copy home content has been deleted."
-    end
-
-    task :clear_access_copy_content => :environment do
-
-      unless Rails.env == 'test'
-        puts 'This task is only meant for the test environment.'
-        next
-      end
-
-      access_copy_directory = File.join(HYACINTH[:access_copy_directory])
-
-      puts "Deleting test environment access copy content: #{access_copy_directory}..."
-      FileUtils.rm_rf(access_copy_directory)
-      puts "Test environment access copy content has been deleted."
+      puts "Test environment default resource storage has been deleted."
     end
 
     task :setup_test_project => :environment do
@@ -59,7 +40,8 @@ namespace :hyacinth do
       # Create S3 Test project
       s3_test_project = Project.create!(
         string_key: 's3_test', uri: 'id.library.columbia.edu/fake/s3_test_project_uri', display_label: 'S3 Test', pid_generator: test_pid_generator,
-        default_storage_type: Hyacinth::Storage::S3_SCHEME
+        default_storage_type: Hyacinth::Storage::S3_SCHEME,
+        default_access_storage_type: Hyacinth::Storage::FILE_SCHEME,
       )
 
       # Create test DynamicFieldGroupCategory

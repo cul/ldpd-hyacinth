@@ -81,7 +81,7 @@ module DigitalObject::Persistence
       # Write to digital_object_data file
       digital_object_data_file_path = Hyacinth::Utils::UriUtils.location_uri_to_file_path(@db_record.digital_object_data_location_uri)
       FileUtils.mkdir_p(File.dirname(digital_object_data_file_path))
-      puts "Writing to: #{digital_object_data_file_path}"
+
       IO.write(digital_object_data_file_path, self.to_json)
 
       begin

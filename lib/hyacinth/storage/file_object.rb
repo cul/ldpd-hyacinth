@@ -27,11 +27,23 @@ class Hyacinth::Storage::FileObject < Hyacinth::Storage::AbstractObject
     BestType.mime_type.for_file_name(self.path)
   end
 
-  def read
+  def read(&block)
+    read_range(0, &block)
+  end
+
+  def read_range(from, to = nil, &block)
     File.open(self.path, 'rb') do |file|
+      file.seek(from) # Skip ahead and start reading at the `from` byte position
+
+      read_position = from
+
       buffer = +''
-      while file.read(FILE_READ_CHUNK_SIZE, buffer) != nil
+      loop do
+        size_of_next_chunk = to.nil? ? FILE_READ_CHUNK_SIZE : [FILE_READ_CHUNK_SIZE, (to - read_position + 1)].min
+        break if size_of_next_chunk.zero?
+        file.read(size_of_next_chunk, buffer)
         yield buffer
+        read_position += size_of_next_chunk
       end
     end
   end
@@ -64,5 +76,9 @@ class Hyacinth::Storage::FileObject < Hyacinth::Storage::AbstractObject
     end
 
     source_file_sha256_hexdigest
+  end
+
+  def delete!
+    File.delete(self.path)
   end
 end

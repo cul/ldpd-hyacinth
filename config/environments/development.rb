@@ -4,7 +4,7 @@ Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
   # Set to :debug to see everything in the log.
-  config.log_level = :debug
+  config.log_level = :error
 
   # Raise deprecation warnings (so we can see a stack trace indicating where they came from)
   # config.active_support.deprecation = :raise

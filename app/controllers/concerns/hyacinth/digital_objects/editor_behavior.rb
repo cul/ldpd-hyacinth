@@ -40,12 +40,31 @@ module Hyacinth::DigitalObjects::EditorBehavior
       child_pids = digital_object.ordered_child_digital_object_pids
 
       pids_to_search_results = {}
-      search_response = DigitalObject::Base.search({ 'pids' => child_pids, 'per_page' => 99_999 }, current_user)
-      if search_response['results'].present?
-        search_response['results'].each do |result|
-          pids_to_search_results[result['pid']] = result
+
+      # Retrieve child object data in chunks so that we don't exceed the solr max boolean clause limit
+      # (since we're generating queries that OR together the list of given PIDs, and that generates a lot of clauses).
+      chunk_size = 500
+      child_pids.each_slice(chunk_size).each do |subset_of_child_pids|
+        search_response = DigitalObject::Base.search({ 'pids' => subset_of_child_pids, 'per_page' => chunk_size }, current_user)
+        if search_response['results'].present?
+          search_response['results'].each do |result|
+            pids_to_search_results[result['pid']] = result
+          end
         end
       end
+
+      # pids_to_search_results = {}
+      # per_page = 500 # paginate so we stay below solr max boolean clause limit, since we're retrieving a list of PIDs
+      # page = 1
+      # loop do
+      #   search_response = DigitalObject::Base.search({ 'pids' => child_pids, 'per_page' => per_page, 'page' => page }, current_user)
+      #   break if search_response['results'].blank?
+
+      #   search_response['results'].each do |result|
+      #     pids_to_search_results[result['pid']] = result
+      #   end
+      #   page += 1
+      # end
 
       child_pids.each do |pid|
         ordered_child_search_results.push(pids_to_search_results[pid].present? ? pids_to_search_results[pid] : { 'pid' => pid, 'not_in_hyacinth' => true })

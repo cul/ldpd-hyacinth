@@ -2,7 +2,7 @@ class Hyacinth::Utils::PathUtils
   def self.uuid_pairtree(uuid)
     # uuid format: "cc092507-6baf-4c81-9cba-ea97cc0b30f2"
     # equivalent pairtree format /cc/09/25/07
-    # NOTE: This will result in the creation of a maximum of 65,536 pairtree intermediate directories (16^4).
+    # NOTE: This will result in the creation of a maximum of 4,228,250,625 pairtree intermediate directories (255^4).
     [uuid[0, 2], uuid[2, 2], uuid[4, 2], uuid[6, 2]]
   end
 

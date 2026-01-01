@@ -288,17 +288,15 @@ class DigitalObject::Base
     pids_to_titles = {}
 
     if pids.present?
-      search_response = DigitalObject::Base.search(
-        {
-          'pids' => pids,
-          'fl' => 'pid,title_ssm',
-          'per_page' => 99_999
-        },
-        user_for_access
-      )
-      if search_response['results'].present?
-        search_response['results'].each do |result|
-          pids_to_titles[result['pid']] = result['title_ssm'].first
+      # Retrieve object data in chunks so that we don't exceed the solr max boolean clause limit
+      # (since we're generating queries that OR together the list of given PIDs, and that generates a lot of clauses).
+      chunk_size = 500
+      pids.each_slice(chunk_size).each do |subset_of_pids|
+        search_response = DigitalObject::Base.search({ 'pids' => subset_of_pids, 'fl' => 'pid,title_ssm', 'per_page' => chunk_size }, user_for_access)
+        if search_response['results'].present?
+          search_response['results'].each do |result|
+            pids_to_titles[result['pid']] = result['title_ssm'].first
+          end
         end
       end
     end
@@ -315,17 +313,15 @@ class DigitalObject::Base
     pids_to_parent_pids = {}
 
     if pids.present?
-      search_response = DigitalObject::Base.search(
-        {
-          'pids' => pids,
-          'fl' => 'pid,parent_digital_object_pids_sim',
-          'per_page' => 99_999
-        },
-        user_for_access
-      )
-      if search_response['results'].present?
-        search_response['results'].each do |result|
-          pids_to_parent_pids[result['pid']] = result['parent_digital_object_pids_sim']
+      # Retrieve object data in chunks so that we don't exceed the solr max boolean clause limit
+      # (since we're generating queries that OR together the list of given PIDs, and that generates a lot of clauses).
+      chunk_size = 500
+      pids.each_slice(chunk_size).each do |subset_of_pids|
+        search_response = DigitalObject::Base.search({ 'pids' => subset_of_pids, 'fl' => 'pid,parent_digital_object_pids_sim', 'per_page' => chunk_size }, user_for_access)
+        if search_response['results'].present?
+          search_response['results'].each do |result|
+            pids_to_parent_pids[result['pid']] = result['parent_digital_object_pids_sim']
+          end
         end
       end
     end

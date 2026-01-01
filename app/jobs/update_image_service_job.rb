@@ -37,11 +37,14 @@ class UpdateImageServiceJob < ActiveJob::Base
     # successfully generated an access copy, but that access copy has not yet gone through
     # automatic featured region detection.
     return nil if asset.perform_derivative_processing
-    return Addressable::URI.encode("file://#{asset.poster_location}") unless asset.poster_location.nil?
-    return nil if asset.access_copy_location.nil?
+    return asset.location_uri_for_resource('poster') unless asset.location_uri_for_resource('poster').nil?
+    return nil if asset.location_uri_for_resource('access').nil?
     # Note that in the line below
-    return Addressable::URI.encode("file://#{asset.access_copy_location}") if
-      BestType.pcdm_type.for_file_name(asset.access_copy_location) == BestType::PcdmTypeLookup::IMAGE
+
+    if BestType.pcdm_type.for_file_name(asset.location_uri_for_resource('access')) == BestType::PcdmTypeLookup::IMAGE
+      return asset.location_uri_for_resource('access')
+    end
+
     nil
   end
 
