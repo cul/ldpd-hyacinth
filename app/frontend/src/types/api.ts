@@ -6,7 +6,7 @@ export interface User {
   is_admin: boolean;
   is_active: boolean;
   can_manage_all_controlled_vocabularies: boolean;
-  account_type: number;
+  account_type: string;
   sign_in_count: number;
   current_sign_in_at: string;
   last_sign_in_at: string;

@@ -7,19 +7,12 @@ import { User } from '@/types/api';
 
 import { getUsersQueryOptions } from './get-users';
 
-// export const createUserInputSchema = z.object({
-//   title: z.string().min(1, 'Required'),
-//   body: z.string().min(1, 'Required'),
-// });
-
-// export type CreateUserInput = z.infer<typeof createUserInputSchema>;
-
 export const createUser = ({
   data,
 }: {
-  data: any; // Replace 'any' with 'CreateUserInput' after defining the schema
-}): Promise<User> => {
-  return api.post(`/users`, data);
+  data: Partial<User>;
+}): Promise<{ user: User }> => {
+  return api.post(`/users`, { user: data });
 };
 
 type UseCreateUserOptions = {

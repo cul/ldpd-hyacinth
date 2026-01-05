@@ -45,7 +45,7 @@ export const UserEdit = ({ userUid }: { userUid: string }) => {
       is_admin: false,
       is_active: true,
       can_manage_all_controlled_vocabularies: false,
-      account_type: 0,
+      account_type: 'standard',
     };
 
     createUserMutation.mutate({ data: newUserData });

@@ -37,7 +37,7 @@ export const columnDefs = [
   }),
   columnHelper.accessor('account_type', {
     header: 'Account Type',
-    cell: (info) => info.getValue() === 1 ? 'service' : 'standard',
+    cell: (info) => info.getValue(),
   }),
   columnHelper.accessor('is_active', {
     header: 'Is Active',
