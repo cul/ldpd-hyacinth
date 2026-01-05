@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
 import { User } from '@/types/api';
-import { getUserQueryOptions } from './get-user';
+import { getUsersQueryOptions } from './get-users';
 
 export const updateUser = ({
   userUid,
@@ -29,7 +29,7 @@ export const useUpdateUser = ({
   return useMutation({
     onSuccess: (data, variables, ...args) => {
       queryClient.invalidateQueries({
-        queryKey: getUserQueryOptions(variables.userUid).queryKey,
+        queryKey: getUsersQueryOptions().queryKey,
       });
       onSuccess?.(data, variables, ...args);
     },

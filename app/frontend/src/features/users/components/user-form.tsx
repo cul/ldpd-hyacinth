@@ -27,13 +27,13 @@ export const UserForm = ({ userUid }: { userUid?: string }) => {
   // Use existing user data for edit mode or default empty values for create mode
   const initialUser = userQuery?.data?.user || {
     uid: '',
-    first_name: '',
-    last_name: '',
+    firstName: '',
+    lastName: '',
     email: '',
-    is_admin: false,
-    can_manage_all_controlled_vocabularies: false,
-    account_type: '',
-    is_active: true,
+    isAdmin: false,
+    canManageAllControlledVocabularies: false,
+    accountType: '',
+    isActive: true,
   };
 
   const [formData, setFormData] = useState(initialUser);
@@ -69,7 +69,7 @@ export const UserForm = ({ userUid }: { userUid?: string }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (userUid) {
       updateUserMutation.mutate({ userUid, data: formData });
     } else {
@@ -126,37 +126,48 @@ export const UserForm = ({ userUid }: { userUid?: string }) => {
               </Form.Group>
             </Row>
             <Row className="mb-3">
+              <Form.Group controlId="formGridIsActive">
+                <Form.Check
+                  type="checkbox"
+                  name="isActive"
+                  label="Is active?"
+                  checked={formData.isActive}
+                  onChange={handleInputChange}
+                />
+              </Form.Group>
+            </Row>
+            <Row className="mb-3">
               <Form.Group as={Col} controlId="formGridFirstName">
                 <Form.Label>First Name</Form.Label>
-                <Form.Control 
-                  type="text" 
-                  name="first_name"
-                  value={formData.first_name} 
+                <Form.Control
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
                   onChange={handleInputChange}
-                  placeholder="Enter first name" 
+                  placeholder="Enter first name"
                 />
               </Form.Group>
 
               <Form.Group as={Col} controlId="formGridLastName">
                 <Form.Label>Last Name</Form.Label>
-                <Form.Control 
-                  type="text" 
-                  name="last_name"
-                  value={formData.last_name} 
+                <Form.Control
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
                   onChange={handleInputChange}
-                  placeholder="Enter last name" 
+                  placeholder="Enter last name"
                 />
               </Form.Group>
             </Row>
 
             <Form.Group className="mb-3" controlId="formGridEmail">
               <Form.Label>Email</Form.Label>
-              <Form.Control 
-                type="email" 
+              <Form.Control
+                type="email"
                 name="email"
-                value={formData.email} 
+                value={formData.email}
                 onChange={handleInputChange}
-                placeholder="Email" 
+                placeholder="Email"
               />
             </Form.Group>
 
@@ -165,20 +176,20 @@ export const UserForm = ({ userUid }: { userUid?: string }) => {
                 <small>Permissions</small>
               </p>
               <Form.Group controlId="formGridIsAdmin">
-                <Form.Check 
-                  type="checkbox" 
-                  name="is_admin"
-                  label="Is admin?" 
-                  checked={formData.is_admin} 
+                <Form.Check
+                  type="checkbox"
+                  name="isAdmin"
+                  label="Is admin?"
+                  checked={formData.isAdmin}
                   onChange={handleInputChange}
                 />
               </Form.Group>
               <Form.Group controlId="formGridCanManageControlledVocabularies">
                 <Form.Check
                   type="checkbox"
-                  name="can_manage_all_controlled_vocabularies"
+                  name="canManageAllControlledVocabularies"
                   label="Can Manage Controlled Vocabularies?"
-                  checked={formData.can_manage_all_controlled_vocabularies}
+                  checked={formData.canManageAllControlledVocabularies}
                   onChange={handleInputChange}
                 />
               </Form.Group>
@@ -186,11 +197,11 @@ export const UserForm = ({ userUid }: { userUid?: string }) => {
 
             <Form.Group as={Col} className="mb-3" controlId="formGridAccountType">
               <Form.Label>Account Type</Form.Label>
-              <Form.Select 
-                aria-label="Account Type" 
-                className="mb-3" 
-                name="account_type"
-                value={formData.account_type}
+              <Form.Select
+                aria-label="Account Type"
+                className="mb-3"
+                name="accountType"
+                value={formData.accountType}
                 onChange={handleSelectChange}
               >
                 {!userUid && <option value="">Choose account type</option>}
@@ -198,9 +209,8 @@ export const UserForm = ({ userUid }: { userUid?: string }) => {
                 <option value="service">Service</option>
               </Form.Select>
             </Form.Group>
-
-            <Button 
-              variant="primary" 
+            <Button
+              variant="primary"
               type="submit"
               disabled={createUserMutation.isPending || updateUserMutation.isPending}
             >

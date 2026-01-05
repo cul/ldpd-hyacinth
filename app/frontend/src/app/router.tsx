@@ -54,7 +54,10 @@ export const createAppRouter = (queryClient: QueryClient) =>
         {
           path: 'settings',
           children: [
-            { index: true, Component: () => <div>Current User Edit</div> },
+            {
+              index: true,
+              lazy: () => import('./routes/app/settings').then(convert(queryClient))
+            },
             { path: 'project-permissions', Component: () => <div>Edit Current User Project Permissions</div> },
           ]
         }

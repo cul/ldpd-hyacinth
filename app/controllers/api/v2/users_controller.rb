@@ -32,7 +32,7 @@ class Api::V2::UsersController < Api::V2::BaseController
     respond_to do |format|
       format.json do
         if current_user
-          render json: { user: current_user }
+          render json: { user: user_json(current_user) }
         else
           render json: { user: nil }, status: :unauthorized
         end
@@ -72,13 +72,13 @@ class Api::V2::UsersController < Api::V2::BaseController
   def user_json(user)
     {
       uid: user.uid,
-      first_name: user.first_name,
-      last_name: user.last_name,
+      firstName: user.first_name,
+      lastName: user.last_name,
       email: user.email,
-      is_admin: user.is_admin,
-      is_active: user.is_active,
-      can_manage_all_controlled_vocabularies: user.can_manage_all_controlled_vocabularies,
-      account_type: user.account_type,
+      isAdmin: user.is_admin,
+      isActive: user.is_active,
+      canManageAllControlledVocabularies: user.can_manage_all_controlled_vocabularies,
+      accountType: user.account_type,
     }
   end
 end

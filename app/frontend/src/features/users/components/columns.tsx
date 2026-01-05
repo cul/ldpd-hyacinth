@@ -18,7 +18,7 @@ export const columnDefs = [
       </Link>
     )
   }),
-  columnHelper.accessor((row) => `${row.first_name} ${row.last_name}`, {
+  columnHelper.accessor((row) => `${row.firstName} ${row.lastName}`, {
     id: 'name',
     header: 'Name',
     cell: (info) => info.getValue(),
@@ -27,19 +27,19 @@ export const columnDefs = [
     header: 'Email',
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor('is_admin', {
+  columnHelper.accessor('isAdmin', {
     header: 'Is Admin',
     cell: (info) => info.getValue() ? 'true' : 'false',
   }),
-  columnHelper.accessor('can_manage_all_controlled_vocabularies', {
+  columnHelper.accessor('canManageAllControlledVocabularies', {
     header: 'Can Manage Vocabularies',
     cell: (info) => info.getValue() ? 'true' : 'false',
   }),
-  columnHelper.accessor('account_type', {
+  columnHelper.accessor('accountType', {
     header: 'Account Type',
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor('is_active', {
+  columnHelper.accessor('isActive', {
     header: 'Is Active',
     cell: (info) => info.getValue() ? 'true' : 'false',
   }),
