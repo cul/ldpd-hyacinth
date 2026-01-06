@@ -2,10 +2,13 @@ import React from 'react';
 import { QueryClient } from '@tanstack/react-query';
 import { getUsersQueryOptions } from '@/features/users/api/get-users';
 import UsersList from '@/features/users/components/users-list';
+import { requireAuthorization } from '@/lib/loader-authorization';
+import { ROLES } from '@/lib/authorization';
 
 export const clientLoader = (queryClient: QueryClient) => async () => {
+  await requireAuthorization(queryClient, [ROLES.ADMIN]);
+
   const query = getUsersQueryOptions();
-  console.log('Trying to get users data from queryClient cache', queryClient.getQueryData(query.queryKey));
 
   return (
     queryClient.getQueryData(query.queryKey) ??
@@ -13,9 +16,8 @@ export const clientLoader = (queryClient: QueryClient) => async () => {
   );
 };
 
-// Eventually, wrap this in a layout that checks for user permissions to view users
 const UsersRoute = () => {
-  return <UsersList />;
+  return <UsersList />
 };
 
 export default UsersRoute;

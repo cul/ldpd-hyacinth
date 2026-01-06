@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
 import { User } from '@/types/api';
 
@@ -13,12 +13,6 @@ async function getCurrentUser(): Promise<User | null> {
   }
 }
 
-// async function logout(): Promise<void> {
-//   await api.delete<{ success: boolean, redirect_url: string }>('/users/session');
-//   // After logout, redirect to the Rails login page
-//   window.location.href = '/users/sign_in';
-// }
-
 export function useUser() {
   return useQuery({
     queryKey: AUTH_QUERY_KEY,
@@ -27,12 +21,3 @@ export function useUser() {
     retry: false,
   });
 }
-
-// export function useLogout() {
-//   const queryClient = useQueryClient();
-  
-//   return async () => {
-//     await logout();
-//     queryClient.setQueryData(AUTH_QUERY_KEY, null);
-//   };
-// }

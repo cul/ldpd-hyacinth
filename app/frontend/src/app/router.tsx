@@ -1,9 +1,12 @@
 import React, { useMemo } from 'react';
 import { QueryClient, useQueryClient } from '@tanstack/react-query';
-import { createBrowserRouter, Outlet } from 'react-router';
+import { createBrowserRouter } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
+
+// Layouts and Components
 import MainLayout from '@/components/layouts/main-layout';
 import { CreateUser } from '@/features/users/components/create-user';
+import { AuthorizationErrorBoundary } from '@/components/errors/authorization-error';
 
 function Root() {
   return (
@@ -25,7 +28,6 @@ const convert = (queryClient: QueryClient) => (m: any) => {
   };
 };
 
-// TODO: Implement <ProtectedRoute />
 export const createAppRouter = (queryClient: QueryClient) =>
   createBrowserRouter([
     {
@@ -36,19 +38,25 @@ export const createAppRouter = (queryClient: QueryClient) =>
           Component: Root,
         },
         {
-          path: 'users', // We might want to move user routes under their own layout (to replicate navbar with << Back to Users and other links) or use component composition
-          ErrorBoundary: () => <div>Users route error boundary</div>,
+          path: 'users',
+          ErrorBoundary: AuthorizationErrorBoundary, // Catch authorization errors from loaders
           children: [
             {
               index: true,
-              lazy: () => import('./routes/app/users').then(convert(queryClient)),
+              lazy: () => import('./routes/users/users').then(convert(queryClient)),
             },
             {
               path: ':userUid/edit',
-              lazy: () => import('./routes/app/user').then(convert(queryClient)) // TODO: Move under users/ directory
+              lazy: () => import('./routes/users/user').then(convert(queryClient)),
             },
-            { path: ':userUid/edit/project-permissions', Component: () => <div>Edit Project Permissions For User</div> },
-            { path: 'new', Component: () => <CreateUser /> }, // For now render CreateUser directly
+            {
+              path: ':userUid/edit/project-permissions',
+              Component: () => <div>Edit Project Permissions For User</div>,
+            },
+            {
+              path: 'new',
+              Component: () => <CreateUser />,
+            },
           ]
         },
         {
@@ -56,7 +64,7 @@ export const createAppRouter = (queryClient: QueryClient) =>
           children: [
             {
               index: true,
-              lazy: () => import('./routes/app/settings').then(convert(queryClient))
+              lazy: () => import('./routes/settings').then(convert(queryClient))
             },
             { path: 'project-permissions', Component: () => <div>Edit Current User Project Permissions</div> },
           ]

@@ -3,6 +3,7 @@ import { Nav, Navbar, Offcanvas, NavDropdown, Container } from 'react-bootstrap'
 import { NavLink } from 'react-router';
 import { useUser, AUTH_QUERY_KEY } from '@/lib/auth';
 import { useQueryClient } from '@tanstack/react-query';
+import { Authorization, ROLES } from '@/lib/authorization';
 
 const NAVBAR_EXPAND_SIZE = 'lg';
 
@@ -58,15 +59,17 @@ export default function TopNavbar() {
                   Publish Targets
                 </NavDropdown.Item>
                 <NavDropdown.Item href="/pid_generators">PID Generators</NavDropdown.Item>
-                <NavDropdown.Item as={NavLink} to="/users">
-                  Users
-                </NavDropdown.Item>
+                <Authorization allowedRoles={[ROLES.ADMIN]}>
+                  <NavDropdown.Item as={NavLink} to="/users">
+                    Users
+                  </NavDropdown.Item>
+                </Authorization>
                 <NavDropdown.Item href="/import_jobs">Import Jobs</NavDropdown.Item>
                 <NavDropdown.Item href="/csv_exports">CSV Exports</NavDropdown.Item>
               </NavDropdown>
             </Nav>
             <Nav className="justify-content-end flex-grow-1">
-              <NavDropdown title={user?.first_name || 'User'}>
+              <NavDropdown title={user?.firstName || 'Profile'}>
                 {/* Use 'end' to ensure this link is only active on the exact /settings path */}
                 <NavDropdown.Item as={NavLink} to="/settings" end>
                   Settings
