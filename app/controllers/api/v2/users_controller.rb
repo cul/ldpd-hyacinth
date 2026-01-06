@@ -1,5 +1,7 @@
 class Api::V2::UsersController < Api::V2::BaseController
-  before_action :set_user_by_uid, only: [:show, :update]
+  API_TOKEN_LENGTH = 32
+
+  before_action :set_user_by_uid, only: [:show, :update, :generate_new_api_key]
 
   # GET /api/v2/users
   def index
@@ -57,7 +59,17 @@ class Api::V2::UsersController < Api::V2::BaseController
   # POST /api/v2/users/:uid/generate_new_api_key
   # Admin or self
   def generate_new_api_key
-    # TODO: Implement API key generation
+    authorize! :generate_api_key, @user
+
+    new_api_key = Devise.friendly_token(API_TOKEN_LENGTH)
+
+    if @user.update(api_key: new_api_key)
+      render json: { 
+        apiKey: new_api_key,
+      }, status: :ok
+    else
+      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+    end
   end
 
   private

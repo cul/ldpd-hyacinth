@@ -20,9 +20,10 @@ const UsersList = () => {
 
   return (
     <div>
-      <h1>Users List</h1>
       {/* TODO: Move "Create New User" link to its own layout if we want to replicate navbar with << Back to Users and other links */}
-      <Link to="/users/new">Create New User</Link> 
+      <div className="mb-2">
+        <Link to="/users/new" className='pb-4'>Create New User</Link>
+      </div>
       <TableBuilder data={users} columns={columnDefs as ColumnDef<User>[]} />
     </div>
   );

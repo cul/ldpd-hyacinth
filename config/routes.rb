@@ -166,6 +166,7 @@ Rails.application.routes.draw do
         member do
           get '/', action: :show
           patch '/', action: :update
+          post 'generate_new_api_key'
         end
       end
     end
