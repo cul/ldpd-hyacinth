@@ -43,12 +43,21 @@ class Api::V2::UsersController < Api::V2::BaseController
   # PATCH /api/v2/users/:uid
   # Admin or self
   def update
+    # Log incoming parameters for debugging
+    Rails.logger.debug("Updating user with params: #{params.inspect}")
+
     authorize! :update, @user
     if @user.update(user_params)
       render json: { user: user_json(@user) }
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
     end
+  end
+
+  # POST /api/v2/users/:uid/generate_new_api_key
+  # Admin or self
+  def generate_new_api_key
+    # TODO: Implement API key generation
   end
 
   private
@@ -62,10 +71,10 @@ class Api::V2::UsersController < Api::V2::BaseController
     if current_user.admin?
       params.require(:user).permit(
         :uid, :email, :first_name, :last_name,
-        :is_admin, :can_manage_all_controlled_vocabularies, :is_active, :account_type
+        :is_admin, :can_manage_all_controlled_vocabularies, :is_active, :account_type, :api_key_digest
       )
     else
-      params.require(:user).permit(:first_name, :last_name)
+      params.require(:user).permit(:first_name, :last_name, :api_key_digest)
     end
   end
 
@@ -79,6 +88,7 @@ class Api::V2::UsersController < Api::V2::BaseController
       isActive: user.is_active,
       canManageAllControlledVocabularies: user.can_manage_all_controlled_vocabularies,
       accountType: user.account_type,
+      apiKeyDigest: user.api_key_digest,
     }
   end
 end

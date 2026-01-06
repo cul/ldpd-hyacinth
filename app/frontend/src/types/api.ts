@@ -7,6 +7,7 @@ export interface User {
   isActive: boolean;
   canManageAllControlledVocabularies: boolean;
   accountType: string;
+  apiKeyDigest?: string | null;
   signInCount: number;
   currentSignInAt: string;
   lastSignInAt: string;
