@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { Nav, Navbar, Offcanvas, NavDropdown, Container } from 'react-bootstrap';
 import { NavLink } from 'react-router';
-import { useUser, AUTH_QUERY_KEY } from '@/lib/auth';
+import { useCurrentUser, AUTH_QUERY_KEY } from '@/lib/auth';
 import { useQueryClient } from '@tanstack/react-query';
 import { Authorization, ROLES } from '@/lib/authorization';
 
@@ -10,7 +10,7 @@ const NAVBAR_EXPAND_SIZE = 'lg';
 // Links to the old UI should be updated to use React Router navigation instead of full page loads
 // after their corresponding routes/components have been implemented in the new UI.
 export default function TopNavbar() {
-  const { data: user } = useUser();
+  const { data: user } = useCurrentUser();
 
   const queryClient = useQueryClient();
   const logoutFormRef = useRef<HTMLFormElement>(null);

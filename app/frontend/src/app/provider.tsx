@@ -6,10 +6,10 @@ import { ErrorBoundary } from 'react-error-boundary';
 
 import { MainErrorFallback } from '@/components/errors/main';
 import { queryConfig } from '@/lib/react-query';
-import { useUser } from '@/lib/auth';
+import { useCurrentUser } from '@/lib/auth';
 
 function AuthLoader({ children }: { children: React.ReactNode }) {
-  const { data: user, isLoading } = useUser();
+  const { data: user, isLoading } = useCurrentUser();
 
   if (isLoading) {
     return <div>Loading user...</div>;

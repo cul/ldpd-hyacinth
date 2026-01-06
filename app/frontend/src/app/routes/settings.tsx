@@ -1,7 +1,7 @@
 import { QueryClient } from '@tanstack/react-query';
 import { Row, Col, Container } from 'react-bootstrap';
 import { getUserQueryOptions } from '@/features/users/api/get-user';
-import { useUser } from '@/lib/auth';
+import { useCurrentUser } from '@/lib/auth';
 import { UserAPIKeyGenerationForm } from '@/features/users/components/user-api-key-generation-form';
 import { UserForm } from '@/features/users/components/user-form';
 
@@ -22,7 +22,7 @@ export const clientLoader = (queryClient: QueryClient) => async () => {
 };
 
 const SettingsRoute = () => {
-  const user = useUser();
+  const user = useCurrentUser();
 
   if (!user.data) return null;
 

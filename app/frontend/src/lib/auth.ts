@@ -13,7 +13,7 @@ async function getCurrentUser(): Promise<User | null> {
   }
 }
 
-export function useUser() {
+export function useCurrentUser() {
   return useQuery({
     queryKey: AUTH_QUERY_KEY,
     queryFn: getCurrentUser,

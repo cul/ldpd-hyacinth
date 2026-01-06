@@ -1,5 +1,5 @@
 import React from 'react';
-import { useUser } from './auth';
+import { useCurrentUser } from './auth';
 import { User } from '@/types/api';
 
 export enum ROLES {
@@ -34,7 +34,7 @@ export function hasRole(
 
 // Hook for authorization checks
 export function useAuthorization() {
-  const { data: user } = useUser();
+  const { data: user } = useCurrentUser();
 
   return {
     checkAccess: React.useCallback(
