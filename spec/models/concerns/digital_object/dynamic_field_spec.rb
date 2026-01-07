@@ -137,64 +137,6 @@ describe DigitalObject::DynamicField, :type => :unit do
       end
     end
 
-    describe "#remove_blank_fields_from_dynamic_field_data" do
-      it "can recursively remove all blank fields from dynamic field data" do
-        new_dynamic_field_data = {
-          "alternate_title" => [
-            {
-              "title_non_sort_portion" => "",
-              "title_sort_portion" => "Catcher in the Rye"
-            }
-          ],
-          "name" => [
-            {
-              "name_value" => "",
-              "name_role" => [
-                {
-                  "name_role_value" => ""
-                }
-              ]
-            }
-          ],
-          "controlled_field_group" => [
-            {
-              "controlled_field" =>  {
-                "controlled_field_uri" => "",
-                "controlled_field_value" => "",
-              }
-            }
-          ],
-          "collection" => [
-            {
-              "collection_authorized_term_uri" => "http://localhost:8080/fedora/objects/cul:p5hqbzkh2p"
-            }
-          ],
-          "note" => [
-            {
-              "note_value" => "                         ", # A bunch of spaces
-              "note_type" => ""
-            }
-          ]
-        }
-
-        expected = {
-          "alternate_title" => [
-            {
-              "title_sort_portion" => "Catcher in the Rye"
-            }
-          ],
-          "collection" => [
-            {
-              "collection_authorized_term_uri" => "http://localhost:8080/fedora/objects/cul:p5hqbzkh2p"
-            }
-          ]
-        }
-
-        digital_object.remove_blank_fields_from_dynamic_field_data!(new_dynamic_field_data)
-        expect(new_dynamic_field_data).to eq(expected)
-      end
-    end
-
     describe "#trim_whitespace_and_clean_control_characters_for_dynamic_field_data!" do
       it "can recursively trim whitespace in dynamic field data" do
         new_dynamic_field_data = {

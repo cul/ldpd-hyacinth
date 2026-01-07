@@ -191,7 +191,7 @@
             </div>
             <div class="form-group">
               <label class="col-sm-3">
-                Download Original:
+                Download Main File:
               </label>
               <div class="col-sm-9">
                 <a href="<%= Hyacinth.getLocationOrigin() + '/digital_objects/' + digitalObject.getPid() + '/download?resource_name=main&download=true' %>" target="_blank"><span class="glyphicon glyphicon-download"></span> Download</a>
@@ -200,7 +200,7 @@
             </div>
             <div class="form-group">
               <label class="col-sm-3">
-                Location:
+                Main File Location:
               </label>
               <div class="col-sm-9">
                 <%= digitalObject.getFilesystemLocation() %>
@@ -208,7 +208,7 @@
             </div>
             <div class="form-group">
               <label class="col-sm-3">
-                Download Service Copy:
+                Download Service File:
               </label>
               <div class="col-sm-9">
                 <% if(digitalObject.getServiceCopyLocation() == null) { %>
@@ -221,7 +221,7 @@
             </div>
             <div class="form-group">
               <label class="col-sm-3">
-                Service Copy Location:
+                Service File Location:
               </label>
               <div class="col-sm-9">
                 <%= digitalObject.getServiceCopyLocation() == null ? 'N/A' : digitalObject.getServiceCopyLocation() %>
@@ -229,7 +229,7 @@
             </div>
             <div class="form-group">
               <label class="col-sm-3">
-                Download Access Copy:
+                Download Access File:
               </label>
               <div class="col-sm-9">
                 <% if(digitalObject.getAccessCopyLocation() == null) { %>
@@ -242,7 +242,7 @@
             </div>
             <div class="form-group">
               <label class="col-sm-3">
-                Access Copy Location:
+                Access File Location:
               </label>
               <div class="col-sm-9">
                 <%= digitalObject.getAccessCopyLocation() == null ? 'N/A' : digitalObject.getAccessCopyLocation() %>
@@ -250,7 +250,7 @@
             </div>
             <div class="form-group">
               <label class="col-sm-3">
-                Download Poster:
+                Download Poster File:
               </label>
               <div class="col-sm-9">
                 <% if(digitalObject.getPosterLocation() == null) { %>
@@ -263,7 +263,7 @@
             </div>
             <div class="form-group">
               <label class="col-sm-3">
-                Poster Location:
+                Poster File Location:
               </label>
               <div class="col-sm-9">
                 <%= digitalObject.getPosterLocation() == null ? 'N/A' : digitalObject.getPosterLocation() %>

@@ -4,7 +4,7 @@
   <%= file_field_tag :import_file %>
   <br />
   <%= hidden_field_tag :project_id, params[:project_id]%>
-  Priority: <%= select_tag('priority', options_for_select(['low', 'medium', 'high'], 'low')) %>
+  Priority: <%= select_tag('priority', options_for_select(['low', 'medium', 'high'], 'medium')) %>
   <br /><br />
   <%= button_tag( "Import", type: 'submit', name: 'submit', value: 'import', class: 'btn btn-default btn-sm' ) %>
   <%= button_tag( "Validate", type: 'submit', name: 'submit', value: 'validate', class: 'btn btn-default btn-sm' ) %>

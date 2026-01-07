@@ -21,9 +21,11 @@ RSpec.describe DigitalObject::Base, :type => :model do
 
     # Manually override import_file settings in the dummy fixture
     dod['import_file'] = {
-      'import_type' => DigitalObject::Asset::IMPORT_TYPE_INTERNAL,
-      'import_path' => file_path,
-      'original_file_path' => file_path
+      'main' => {
+        'import_type' => DigitalObject::Asset::IMPORT_TYPE_INTERNAL,
+        'import_location' => file_path,
+        'original_file_path' => file_path
+      }
     }
 
     dod

@@ -60,7 +60,9 @@ RSpec.describe "DigitalObjects", type: :request do
 
           # Manually override import_file settings to set the fixture to type == post data
           asset_digital_object_data['import_file'] = {
-            'import_type' => DigitalObject::Asset::IMPORT_TYPE_POST_DATA
+            'main' => {
+              'import_type' => DigitalObject::Asset::IMPORT_TYPE_POST_DATA
+            }
           }
 
           post(digital_objects_path, params: {
@@ -84,9 +86,11 @@ RSpec.describe "DigitalObjects", type: :request do
 
           # Manually override import_file settings to set the fixture to type == post data
           sample_asset_digital_object_data['import_file'] = {
-            'import_type' => DigitalObject::Asset::IMPORT_TYPE_UPLOAD_DIRECTORY,
-            'import_path' => upload_directory_file_path,
-            'original_file_path' => upload_directory_file_path
+            'main' => {
+              'import_type' => DigitalObject::Asset::IMPORT_TYPE_UPLOAD_DIRECTORY,
+              'import_location' => upload_directory_file_path,
+              'original_file_path' => upload_directory_file_path
+            }
           }
 
           post(digital_objects_path, params: {
@@ -105,9 +109,11 @@ RSpec.describe "DigitalObjects", type: :request do
           path_to_fixture_file = fixture('files/lincoln.jpg').path
           # Manually override import_file settings to set the fixture to type == post data
           asset_digital_object_data['import_file'] = {
-            'import_type' => DigitalObject::Asset::IMPORT_TYPE_INTERNAL,
-            'import_path' => path_to_fixture_file,
-            'original_file_path' => path_to_fixture_file
+            'main' => {
+              'import_type' => DigitalObject::Asset::IMPORT_TYPE_INTERNAL,
+              'import_location' => path_to_fixture_file,
+              'original_file_path' => path_to_fixture_file
+            }
           }
 
           post(digital_objects_path, params: {
@@ -131,9 +137,11 @@ RSpec.describe "DigitalObjects", type: :request do
           path_to_fixture_file = fixture('files/lincoln.jpg').path
           # Manually override import_file settings to set the fixture to type == post data
           asset_digital_object_data['import_file'] = {
-            'import_type' => DigitalObject::Asset::IMPORT_TYPE_EXTERNAL,
-            'import_path' => path_to_fixture_file,
-            'original_file_path' => path_to_fixture_file
+            'main' => {
+              'import_type' => DigitalObject::Asset::IMPORT_TYPE_EXTERNAL,
+              'import_location' => path_to_fixture_file,
+              'original_file_path' => path_to_fixture_file
+            }
           }
 
           post(digital_objects_path, params: {
@@ -233,8 +241,8 @@ RSpec.describe "DigitalObjects", type: :request do
       describe "upload access copy" do
         let(:asset_digital_object_data) {
           dod = JSON.parse( fixture('sample_digital_object_data/new_asset.json').read )
-          dod['import_file']['import_type'] = 'internal'
-          dod['import_file']['import_path'] = fixture('sample_assets/sample_text_file.txt').path
+          dod['import_file']['main']['import_type'] = 'internal'
+          dod['import_file']['main']['import_location'] = fixture('sample_assets/sample_text_file.txt').path
           dod['publish_targets'] = []
           dod
         }
@@ -252,7 +260,7 @@ RSpec.describe "DigitalObjects", type: :request do
           # Perform first-time upload
           put "/digital_objects/#{asset.pid}.json",
             params: {
-              access_copy_file: Rack::Test::UploadedFile.new(fixture('files/lincoln.jpg').path, "image/jpeg")
+              access_file: Rack::Test::UploadedFile.new(fixture('files/lincoln.jpg').path, "image/jpeg")
             }
 
           expect(response.status).to be(200)
@@ -261,7 +269,7 @@ RSpec.describe "DigitalObjects", type: :request do
           # Perform access copy replacement upload
           put "/digital_objects/#{asset.pid}.json",
             params: {
-              access_copy_file: Rack::Test::UploadedFile.new(fixture('files/cat.jpg').path, "image/jpeg")
+              access_file: Rack::Test::UploadedFile.new(fixture('files/cat.jpg').path, "image/jpeg")
             }
 
           expect(response.status).to be(200)
@@ -272,8 +280,8 @@ RSpec.describe "DigitalObjects", type: :request do
       describe "upload poster" do
         let(:asset_digital_object_data) {
           dod = JSON.parse( fixture('sample_digital_object_data/new_asset.json').read )
-          dod['import_file']['import_type'] = 'internal'
-          dod['import_file']['import_path'] = fixture('sample_assets/sample_text_file.txt').path
+          dod['import_file']['main']['import_type'] = 'internal'
+          dod['import_file']['main']['import_location'] = fixture('sample_assets/sample_text_file.txt').path
           dod['publish_targets'] = []
           dod
         }
@@ -311,8 +319,8 @@ RSpec.describe "DigitalObjects", type: :request do
       describe "set featured_region" do
         let(:asset_digital_object_data) {
           dod = JSON.parse( fixture('sample_digital_object_data/new_asset.json').read )
-          dod['import_file']['import_type'] = 'internal'
-          dod['import_file']['import_path'] = fixture('sample_assets/sample_text_file.txt').path
+          dod['import_file']['main']['import_type'] = 'internal'
+          dod['import_file']['main']['import_location'] = fixture('sample_assets/sample_text_file.txt').path
           dod['publish_targets'] = []
           dod
         }
@@ -322,7 +330,8 @@ RSpec.describe "DigitalObjects", type: :request do
           asset = DigitalObject::Asset.new
           allow(asset).to receive(:update_index).and_return(nil)
           asset.set_digital_object_data(asset_digital_object_data, false)
-          result = asset.save
+          asset.save
+          puts "asset errors: #{asset.errors.inspect}" if asset.errors.present?
           asset
         }
 

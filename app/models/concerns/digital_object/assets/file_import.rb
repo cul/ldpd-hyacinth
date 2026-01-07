@@ -3,27 +3,43 @@ module DigitalObject::Assets::FileImport
 
   VALID_FILE_URI_REGEX = /^file:(\/{2})*\/{1}[^\/].+$/
 
-  def handle_file_imports
-    # TODO: Maybe change instance variable names below
-    handle_main_file_import(@import_file_import_type, @import_file_import_path, @import_file_original_file_path)
-    handle_service_copy_import(@service_copy_import_type, @service_copy_import_path)
-    handle_access_copy_import(DigitalObject::Asset::IMPORT_TYPE_INTERNAL, @access_copy_import_path)
-    handle_poster_import(DigitalObject::Asset::IMPORT_TYPE_INTERNAL, @poster_import_path)
+  def process_import_file_data_if_present
+    import_data_for_main_resource = @import_file_data[DigitalObject::Asset::MAIN_RESOURCE_NAME]
+    import_data_for_service_resource = @import_file_data[DigitalObject::Asset::SERVICE_RESOURCE_NAME]
+    # If import data is present for an access resource, set import_type to internal
+    import_data_for_access_resource = @import_file_data[DigitalObject::Asset::ACCESS_RESOURCE_NAME]&.merge({ 'import_type' => DigitalObject::Asset::IMPORT_TYPE_INTERNAL })
+    # If import data is present for a poster resource, set import_type to internal
+    import_data_for_poster_resource = @import_file_data[DigitalObject::Asset::POSTER_RESOURCE_NAME]&.merge({ 'import_type' => DigitalObject::Asset::IMPORT_TYPE_INTERNAL })
+
+    [
+      import_data_for_main_resource,
+      import_data_for_service_resource,
+      import_data_for_access_resource,
+      import_data_for_poster_resource
+    ].each do |import_data_for_resource|
+      normalize_import_type_and_import_location!(import_data_for_resource) if import_data_for_resource.present?
+    end
+
+    # TODO: Later on, see if we can make the four methods below more similar in implementation.  Maybe similar enough to be one shared method?
+    # This is probably something that we'll need to do after decoupling Hyacinth from Fedora more, since right now
+    # we set different properties on different Fedora datastreams based on the resource type.
+    handle_main_file_import(import_data_for_main_resource) if import_data_for_main_resource.present?
+    handle_service_copy_import(import_data_for_service_resource) if import_data_for_service_resource.present?
+    handle_access_copy_import(import_data_for_access_resource) if import_data_for_access_resource.present?
+    handle_poster_import(import_data_for_poster_resource) if import_data_for_poster_resource.present?
   end
 
-  def normalize_import_type_and_import_location(import_type, import_location)
-    return [import_type, import_location] unless @import_file_import_type == DigitalObject::Asset::IMPORT_TYPE_UPLOAD_DIRECTORY
+  def normalize_import_type_and_import_location!(import_data_for_resource)
+    # We only need to make a change if this is an upload directory import type
+    return unless import_data_for_resource['import_type'] == DigitalObject::Asset::IMPORT_TYPE_UPLOAD_DIRECTORY
 
     # If this is an upload directory import, we'll adjust the import file path by prepending the full path
     # to the upload directory and then it can be treated as the same as an internal file import.
-    # Some users have more limited permissions and are only allowed to upload files from the upload directory,
-    # so that's why they might perform an import of type DigitalObject::Asset::IMPORT_TYPE_UPLOAD_DIRECTORY.
-    [DigitalObject::Asset::IMPORT_TYPE_INTERNAL, File.join(HYACINTH[:upload_directory], import_location)]
+    import_data_for_resource['import_location'] = File.join(HYACINTH[:upload_directory], import_data_for_resource['import_location'])
+    import_data_for_resource['import_type'] = DigitalObject::Asset::IMPORT_TYPE_INTERNAL
   end
 
   def perform_import(import_type, import_location, resource_type, allow_overwrite:)
-    import_type, import_location = normalize_import_type_and_import_location(import_type, import_location)
-
     case import_type
     when DigitalObject::Asset::IMPORT_TYPE_INTERNAL, DigitalObject::Asset::IMPORT_TYPE_POST_DATA
       final_save_location_uri, checksum_hexdigest_uri, import_file_size = handle_internal_import(import_location, resource_type, allow_overwrite: allow_overwrite)
@@ -32,6 +48,8 @@ module DigitalObject::Assets::FileImport
     else
       raise "Unexpected import_type: #{import_type.inspect}"
     end
+
+    [final_save_location_uri, checksum_hexdigest_uri, import_file_size]
   end
 
   # Copies the source file to its internal Hyacinth storage destination
@@ -89,8 +107,7 @@ module DigitalObject::Assets::FileImport
   def handle_external_import(import_location)
     # If import_location is a file path, then we'll convert it to a file URI.  This allows us to support
     # either an absolute file file path or a file URI during imports.  We also support S3 URIs.
-    import_location_uri = Hyacinth::Utils::UriUtils.file_path_to_location_uri(import_location) if import_location.start_with?('/')
-
+    import_location_uri = import_location.start_with?('/') ? Hyacinth::Utils::UriUtils.file_path_to_location_uri(import_location) : import_location
     storage_object = Hyacinth::Storage.storage_object_for(import_location_uri)
     raise "External file not found at: #{storage_object.path}" unless storage_object.exist?
     raise Hyacinth::Exceptions::ZeroByteFileError, 'Original file file size is 0 bytes. File must contain data.' if storage_object.size == 0
@@ -154,21 +171,27 @@ module DigitalObject::Assets::FileImport
     self.original_file_path = original_file_path || import_location
   end
 
-  def handle_main_file_import(import_type, import_location, original_file_path)
-    # NOTE: We don't allow users to set a new main file for an Asset.  An Asset is linked to a specific main file.
-    # If you want to change the main file, then you need to create a new Asset.
-    # NOTE: A Fedora object should have been generated for this new Asset.
-    # NOTE: The Fedora object should not already have a 'content' datastream.
-    return if !self.new_record? || @fedora_object.nil? || @fedora_object.datastreams['content'].present?
+  def handle_main_file_import(import_data_for_main_resource)
+    import_type = import_data_for_main_resource['import_type']
+    import_location = import_data_for_main_resource['import_location']
+    original_file_path = import_data_for_main_resource['original_file_path']
+
+    # We don't allow users to set a new main file for an Asset.  An Asset is linked to a specific main file.
+    # If a user wants an Asset that references a different location, they need to create a new Asset.
+    # Raise an exception if this method is ever run for an object that already has a main resource.
+    raise 'Cannot import a new main file that replaces an existing main file.' if self.location_uri_for_resource(DigitalObject::Asset::MAIN_RESOURCE_NAME).present?
 
     final_save_location_uri, checksum_hexdigest_uri, import_file_size = perform_import(import_type, import_location, DigitalObject::Asset::MAIN_RESOURCE_NAME, allow_overwrite: false)
 
     assign_properties_after_main_file_import(import_location, original_file_path, final_save_location_uri, checksum_hexdigest_uri, import_file_size)
   end
 
-  def handle_service_copy_import(import_type, import_location)
+  def handle_service_copy_import(import_data_for_service_resource)
+    import_type = import_data_for_service_resource['import_type']
+    import_location = import_data_for_service_resource['import_location']
+
     return if import_location.blank?
-    final_save_location_uri, checksum_hexdigest_uri, import_file_size = perform_import(import_type, import_location, DigitalObject::Asset::SERVICE_RESOURCE_NAME, allow_overwrite: true)
+    final_save_location_uri, _checksum_hexdigest_uri, import_file_size = perform_import(import_type, import_location, DigitalObject::Asset::SERVICE_RESOURCE_NAME, allow_overwrite: true)
 
     service_ds = @fedora_object.create_datastream(
       ActiveFedora::Datastream, 'service', controlGroup: 'E',
@@ -182,9 +205,12 @@ module DigitalObject::Assets::FileImport
     @fedora_object.rels_int.add_relationship(service_ds, :extent, import_file_size.to_s, true)
   end
 
-  def handle_access_copy_import(import_type, import_location)
+  def handle_access_copy_import(import_data_for_access_resource)
+    import_type = import_data_for_access_resource['import_type']
+    import_location = import_data_for_access_resource['import_location']
+
     return if import_location.blank?
-    final_save_location_uri, checksum_hexdigest_uri, import_file_size = perform_import(import_type, import_location, DigitalObject::Asset::ACCESS_RESOURCE_NAME, allow_overwrite: true)
+    final_save_location_uri, _checksum_hexdigest_uri, import_file_size = perform_import(import_type, import_location, DigitalObject::Asset::ACCESS_RESOURCE_NAME, allow_overwrite: true)
 
     access_ds = @fedora_object.datastreams['access']
     if access_ds.blank?
@@ -205,18 +231,21 @@ module DigitalObject::Assets::FileImport
     @fedora_object.rels_int.clear_relationship(access_ds, :extent)
     @fedora_object.rels_int.clear_relationship(access_ds, :rdf_type)
 
-    @fedora_object.rels_int.add_relationship(access_ds, :extent, import_file_size.to_s, true)
     # Set new rels_int values
-    @fedora_object.rels_int.add_relationship(access_ds, :extent, File.size(@access_copy_import_path).to_s, true)
+    @fedora_object.rels_int.add_relationship(access_ds, :extent, import_file_size.to_s, true)
+
     # TODO: It seems a little strange to describe the access copy as a 'service file', but we've been doing this for
     # a while in Derivativo.  Might as well be consistent until we change this practice everywhere (and confirm that
     # nothing relies on it).
     @fedora_object.rels_int.add_relationship(access_ds, :rdf_type, "http://pcdm.org/use#ServiceFile")
   end
 
-  def handle_poster_import(import_type, import_location)
+  def handle_poster_import(import_data_for_poster_resource)
+    import_type = import_data_for_poster_resource['import_type']
+    import_location = import_data_for_poster_resource['import_location']
+
     return if import_location.blank?
-    final_save_location_uri, checksum_hexdigest_uri, import_file_size = perform_import(import_type, import_location, DigitalObject::Asset::POSTER_RESOURCE_NAME, allow_overwrite: true)
+    final_save_location_uri, _checksum_hexdigest_uri, import_file_size = perform_import(import_type, import_location, DigitalObject::Asset::POSTER_RESOURCE_NAME, allow_overwrite: true)
 
     # Create poster datastream if it doesn't already exist
     poster_ds = @fedora_object.datastreams['poster']

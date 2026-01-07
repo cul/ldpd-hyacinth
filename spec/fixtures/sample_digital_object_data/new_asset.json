@@ -12,9 +12,11 @@
       }
    ],
    "import_file": {
-      "import_type" : "internal",
-      "import_path" : "/a/b/c",
-      "original_file_path" : "/original/filesystem/path"
+      "main": {
+         "import_type" : "internal",
+         "import_location" : "/a/b/c",
+         "original_file_path" : "/original/filesystem/path"
+      }
    },
    "dynamic_field_data": {
       "title":[

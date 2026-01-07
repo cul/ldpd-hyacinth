@@ -32,19 +32,23 @@ class DigitalObject::Asset < DigitalObject::Base
   ACCESS_RESOURCE_NAME = 'access'
   POSTER_RESOURCE_NAME = 'poster'
   VALID_RESOURCE_TYPES = [MAIN_RESOURCE_NAME, SERVICE_RESOURCE_NAME, ACCESS_RESOURCE_NAME, POSTER_RESOURCE_NAME]
+  VALID_FILE_IMPORT_RESOURCE_TYPES = VALID_RESOURCE_TYPES # At this time, all resource types can be imported by users
 
   attr_accessor :restricted_size_image, :restricted_onsite
 
   def initialize
     super
 
-    @import_file_import_type = nil
-    @import_file_import_path = nil
-    @import_file_original_file_path = nil
-    @access_copy_import_path = nil
-    @poster_import_path = nil
-    @service_copy_import_type = nil
-    @service_copy_import_path = nil
+    # TODO: Make sure none of these variables are used anymore
+    # @import_file_import_type = nil
+    # @import_file_import_path = nil
+    # @import_file_original_file_path = nil
+    # @access_copy_import_path = nil
+    # @poster_import_path = nil
+    # @service_copy_import_type = nil
+    # @service_copy_import_path = nil
+
+    @import_file_data = {}
 
     @restricted_size_image = false
     @restricted_onsite = false
@@ -66,7 +70,7 @@ class DigitalObject::Asset < DigitalObject::Base
 
   def run_post_validation_pre_save_logic
     super
-    handle_file_imports
+    process_import_file_data_if_present
 
     # Attempt to correct dc_type for 'Unknown' dc_type DigitalObjects, based on original filename
     self.dc_type = BestType.dc_type.for_file_name(original_filename) if self.dc_type == 'Unknown'
@@ -141,42 +145,6 @@ class DigitalObject::Asset < DigitalObject::Base
     convert_location_uri_to_path_if_file_uri(filesystem_location_uri)
   end
 
-  # # TODO: Replace calls to this method with: location_uri_for_resource('access'),
-  # # and then delete this method.
-  # def access_copy_location_uri
-  #   location_uri_for_resource('access')
-  # end
-
-  # # TODO: Look into removing this method if possible, and only using access_copy_location_uri.
-  # # This method only works for file:// URIs.
-  # def access_copy_location
-  #   convert_location_uri_to_path_if_file_uri(access_copy_location_uri)
-  # end
-
-  # # TODO: Replace calls to this method with: location_uri_for_resource('poster'),
-  # # and then delete this method.
-  # def poster_location_uri
-  #   location_uri_for_resource('poster')
-  # end
-
-  # # TODO: Look into removing this method if possible, and only using poster_location_uri.
-  # # NOTE: This method only works for file:// URIs.
-  # def poster_location
-  #   convert_location_uri_to_path_if_file_uri(poster_location_uri)
-  # end
-
-  # # TODO: Replace calls to this method with: location_uri_for_resource('service'),
-  # # and then delete this method.
-  # def service_copy_location_uri
-  #   location_uri_for_resource('service')
-  # end
-
-  # # TODO: Look into removing this method if possible, and only using service_copy_location_uri.
-  # # NOTE: This method only works for file:// URIs.
-  # def service_copy_location
-  #   convert_location_uri_to_path_if_file_uri(service_copy_location_uri)
-  # end
-
   def checksum
     return nil unless @fedora_object.present? && @fedora_object.datastreams['content'].present?
     content_ds = @fedora_object.datastreams['content']
@@ -192,7 +160,12 @@ class DigitalObject::Asset < DigitalObject::Base
     nil
   end
 
+  # TODO: Replace occurrences of this method with main_resource_file_size_in_bytes
   def file_size_in_bytes
+    main_resource_file_size_in_bytes
+  end
+
+  def main_resource_file_size_in_bytes
     content_ds = @fedora_object.datastreams['content']
     first_relationship_object_for_datastream(content_ds, :extent)
   end
@@ -249,20 +222,16 @@ class DigitalObject::Asset < DigitalObject::Base
 
     handle_restriction_properties(digital_object_data)
 
-    # File upload (for NEW assets only, and only if this object's current data validates successfully)
-    handle_new_file_upload(digital_object_data['import_file']) if self.new_record? && digital_object_data['import_file'].present?
-
-    # Access copy upload
-    handle_access_copy_upload(digital_object_data['import_file']) if digital_object_data.fetch('import_file', {})['access_copy_import_path'].present?
-
-    # Poster upload
-    handle_poster_upload(digital_object_data['import_file']) if digital_object_data.fetch('import_file', {})['poster_import_path'].present?
-
-    # Service copy upload (only if an object doesn't already have an service copy)
-    handle_service_copy_upload(digital_object_data['import_file']) if digital_object_data.fetch('import_file', {})['service_copy_import_path'].present?
+    handle_import_file_data(digital_object_data['import_file']) if digital_object_data['import_file'].present?
 
     # Featured region
     handle_featured_region(digital_object_data['featured_region']) if digital_object_data['featured_region'].present?
+  end
+
+  def handle_import_file_data(import_file_data)
+    # Remove all blank values before assigning data to import_file_data variable (so that subsequent operations
+    # only act on values that are actually present).
+    @import_file_data = Hyacinth::Utils::HashUtils.recursively_remove_blank_fields_from_hash(import_file_data)
   end
 
   def onsite_restriction_value_changed?(digital_object_data)
@@ -294,48 +263,6 @@ class DigitalObject::Asset < DigitalObject::Base
 
   def handle_blank_asset_title
     set_title('', DigitalObject::Asset::DEFAULT_ASSET_NAME) if get_title.blank?
-  end
-
-  def handle_new_file_upload(import_file_data)
-    validate_import_file_data(import_file_data)
-
-    # Set @import_file_original_file_path (which is optional, but may have been be set by the user)
-    @import_file_original_file_path = import_file_data['original_file_path']
-
-    # Determine import_file_import_type
-    @import_file_import_type = import_file_data['import_type']
-
-    # Get import file path
-    @import_file_import_path = import_file_data['import_path']
-
-    # Paths cannot contain "/.." or "../"
-    raise 'File paths cannot contain: "..". Please specify a full path.' if @import_file_import_path.index('/..') || @import_file_import_path.index('../')
-  end
-
-  def handle_access_copy_upload(import_file_data)
-    if import_file_data['access_copy_import_path'].present?
-      # Get access copy import path
-      @access_copy_import_path = import_file_data['access_copy_import_path']
-      raise 'File paths cannot contain: "..". Please specify a full path.' if @access_copy_import_path.index('/..') || @access_copy_import_path.index('../')
-    end
-  end
-
-  def handle_poster_upload(import_file_data)
-    if import_file_data['poster_import_path'].present?
-      # Get access copy import path
-      @poster_import_path = import_file_data['poster_import_path']
-      raise 'File paths cannot contain: "..". Please specify a full path.' if @poster_import_path.index('/..') || @poster_import_path.index('../')
-    end
-  end
-
-  def handle_service_copy_upload(import_file_data)
-    if import_file_data['service_copy_import_path'].present?
-      # Get service copy import path
-      @service_copy_import_path = import_file_data['service_copy_import_path']
-      @service_copy_import_type = import_file_data['service_copy_import_type']
-      raise 'File paths cannot contain: "..". Please specify a full path.' if @service_copy_import_path.index('/..') || @service_copy_import_path.index('../')
-      raise "Must specify import type (#{VALID_FILE_IMPORT_TYPES.join(', ')}) for service copy." unless VALID_FILE_IMPORT_TYPES.include?(@service_copy_import_type)
-    end
   end
 
   def regenerate_derivatives!(access_copy:, image_server_cache:)
@@ -525,7 +452,7 @@ class DigitalObject::Asset < DigitalObject::Base
   end
 
   def pcdm_type
-    BestType.pcdm_type.for_file_name(filesystem_location)
+    BestType.pcdm_type.for_file_name(location_for_resource('main'))
   end
 
   def to_solr
@@ -533,13 +460,17 @@ class DigitalObject::Asset < DigitalObject::Base
     doc['original_filename_sim'] = original_filename
     doc['original_file_path_sim'] = original_file_path
 
-    # TODO: Eventually update the names of these fields to follow the pattern "#{resource_name}_resource_location_sim" (or maybe ssim)
+    # TODO: Eventually update the names of these fields to
+    # follow the pattern "#{resource_name}_resource_location_sim" (or maybe ssim)
+    # OR maybe "resources_#{resource_name}_location_sim"
     doc['filesystem_location_sim'] = location_for_resource('main')
     doc['access_copy_location_sim'] = location_for_resource('access')
     doc['poster_location_sim'] = location_for_resource('poster')
     doc['service_copy_location_sim'] = location_for_resource('service')
 
-    # TODO: Eventually update the names of these fields to follow the pattern "#{resource_name}_resource_size_in_bytes_ltsi"
+    # TODO: Eventually update the names of these fields to
+    # follow the pattern "#{resource_name}_resource_size_in_bytes_ltsi" (or maybe ssim)
+    # OR maybe "resources_#{resource_name}_size_in_bytes_ltsi"
     doc['file_size_in_bytes_ltsi'] = file_size_in_bytes&.to_i
     doc['service_copy_file_size_in_bytes_ltsi'] = service_copy_file_size_in_bytes&.to_i
     doc['access_copy_file_size_in_bytes_ltsi'] = access_copy_file_size_in_bytes&.to_i
@@ -552,17 +483,31 @@ class DigitalObject::Asset < DigitalObject::Base
     json = super(options)
 
     json['asset_data'] = {
-      filesystem_location: location_for_resource('main'),
-      checksum: checksum,
-      file_size_in_bytes: file_size_in_bytes,
+      filesystem_location: location_for_resource('main'), # TODO: remove in favor of newly added fields
+      checksum: checksum, # TODO: nest this under 'main' resource and remove in favor of newly added fields
+      file_size_in_bytes: file_size_in_bytes, # TODO: remove in favor of newly added fields
       original_filename: original_filename,
       original_file_path: original_file_path,
-      access_copy_location: location_for_resource('access'),
-      access_copy_file_size_in_bytes: access_copy_file_size_in_bytes,
-      poster_location: location_for_resource('poster'),
-      poster_file_size_in_bytes: poster_file_size_in_bytes,
-      service_copy_location: location_for_resource('service'),
-      service_copy_file_size_in_bytes: service_copy_file_size_in_bytes
+      access_copy_location: location_for_resource('access'), # TODO: remove in favor of newly added fields
+      access_copy_file_size_in_bytes: access_copy_file_size_in_bytes, # TODO: remove in favor of newly added fields
+      poster_location: location_for_resource('poster'), # TODO: remove in favor of newly added fields
+      poster_file_size_in_bytes: poster_file_size_in_bytes, # TODO: remove in favor of newly added fields
+      service_copy_location: location_for_resource('service'), # TODO: remove in favor of newly added fields
+      service_copy_file_size_in_bytes: service_copy_file_size_in_bytes, # TODO: remove in favor of newly added fields
+
+      # TODO: After updating above fields, might need to update to_solr logic to extract resource locations and size info
+
+      # New fields (which will eventually replace some of the above ones)
+      # TODO: Maybe nest these under a 'resources' key, and then have keys for each resource name under that?
+      #       That might be the preferred future structure.
+      main_resource_location: location_for_resource('main'),
+      main_resource_file_size_in_bytes: main_resource_file_size_in_bytes,
+      service_resource_location: location_for_resource('service'),
+      service_resource_file_size_in_bytes: service_copy_file_size_in_bytes,
+      access_resource_location: location_for_resource('access'),
+      access_resource_file_size_in_bytes: access_copy_file_size_in_bytes,
+      poster_resource_location: location_for_resource('poster'),
+      poster_resource_file_size_in_bytes: poster_file_size_in_bytes,
     }
 
     json['restrictions'] ||= {}

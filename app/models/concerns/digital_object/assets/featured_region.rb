@@ -28,19 +28,19 @@ module DigitalObject::Assets::FeaturedRegion
     JSON.load(current_value) || { 'updatedBy' => I18n.t('email.automatic_process'), 'updatedAt' => updated_at.iso8601 }
   end
 
-  def asset_image_width
-    return nil unless @fedora_object
-    width_val = @fedora_object.relationships(:image_width).first
-    width_val ||= @fedora_object.rels_int.relationships(@fedora_object.datastreams['content'], :image_width).first&.object
-    width_val.to_s.to_i
-  end
+  # def asset_image_width
+  #   return nil unless @fedora_object
+  #   width_val = @fedora_object.relationships(:image_width).first
+  #   width_val ||= @fedora_object.rels_int.relationships(@fedora_object.datastreams['content'], :image_width).first&.object
+  #   width_val.to_s.to_i
+  # end
 
-  def asset_image_height
-    return nil unless @fedora_object
-    width_val = @fedora_object.relationships(:image_length).first
-    width_val ||= @fedora_object.rels_int.relationships(@fedora_object.datastreams['content'], :image_length).first&.object
-    width_val.to_s.to_i
-  end
+  # def asset_image_height
+  #   return nil unless @fedora_object
+  #   width_val = @fedora_object.relationships(:image_length).first
+  #   width_val ||= @fedora_object.rels_int.relationships(@fedora_object.datastreams['content'], :image_length).first&.object
+  #   width_val.to_s.to_i
+  # end
 
   # NOTE: Commenting out this method for now because it isn't being used, but it might be again in the near future.
   # def rotated_region(rotate_by)
