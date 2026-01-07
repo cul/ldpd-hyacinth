@@ -5,7 +5,6 @@ import { RouterProvider } from 'react-router/dom';
 
 // Layouts and Components
 import MainLayout from '@/components/layouts/main-layout';
-import { CreateUser } from '@/features/users/components/create-user';
 import { AuthorizationErrorBoundary } from '@/components/errors/authorization-error';
 
 function Root() {
@@ -55,7 +54,7 @@ export const createAppRouter = (queryClient: QueryClient) =>
             },
             {
               path: 'new',
-              Component: () => <CreateUser />,
+              lazy: () => import('./routes/users/new-user').then(convert(queryClient)),
             },
           ]
         },
