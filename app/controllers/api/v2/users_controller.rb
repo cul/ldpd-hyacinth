@@ -45,9 +45,6 @@ class Api::V2::UsersController < Api::V2::BaseController
   # PATCH /api/v2/users/:uid
   # Admin or self
   def update
-    # Log incoming parameters for debugging
-    Rails.logger.debug("Updating user with params: #{params.inspect}")
-
     authorize! :update, @user
     if @user.update(user_params)
       render json: { user: user_json(@user) }

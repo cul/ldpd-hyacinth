@@ -12,7 +12,6 @@ export const UserAPIKeyGenerationForm: React.FC<UserAPIKeyGenerationFormProps> =
   const generateApiKeyMutation = useGenerateUserApiKey({
     mutationConfig: {
       onSuccess: (data) => {
-        console.log('Generated API Key:', data);
         setNewApiKey(data.apiKey);
       },
       onError: (error: any) => {

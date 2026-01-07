@@ -66,7 +66,6 @@ export const Authorization = ({
   const { checkAccess } = useAuthorization();
 
   const canAccess = checkAccess(allowedRoles);
-  console.log('Authorization: canAccess=', canAccess, 'for roles=', allowedRoles);
 
   return <>{canAccess ? children : forbiddenFallback}</>;
 };
