@@ -2,13 +2,27 @@ development:
   solr_url: http://localhost:8983/solr/hyacinth
   default_pid_generator_namespace: cul
   digital_object_data_directory: <%= Rails.root.join('tmp', 'development', 'data') %>
-  default_asset_home_bucket_name: 'development-bucket'
-  default_asset_home_bucket_path_prefix: 'hyacinth/local_development/default_asset_home'
-  default_asset_home: <%= Rails.root.join('tmp', 'development', 'asset_home') %>
-  default_service_copy_home: <%= Rails.root.join('tmp', 'development', 'service_copy_home') %>
-  access_copy_directory: <%= Rails.root.join('tmp', 'development', 'access') %>
-  # access_copy_file_group: 'digital-projects'
-  # access_copy_file_permissions: '0640'
+  default_resource_storage_locations:
+    main:
+      file:
+        base: <%= "file://#{Rails.root.join('tmp', 'development', 'resources')}" %>
+      cloud:
+        base: 's3://example-dev-bucket/hyacinth/local_development/resources'
+    service:
+      file:
+        base: <%= "file://#{Rails.root.join('tmp', 'development', 'resources')}" %>
+      cloud:
+        base: 's3://example-dev-bucket/hyacinth/local_development/resources'
+    access:
+      file:
+        base: <%= "file://#{Rails.root.join('tmp', 'development', 'resources')}" %>
+      cloud:
+        base: 's3://example-dev-bucket/hyacinth/local_development/resources'
+    poster:
+      file:
+        base: <%= "file://#{Rails.root.join('tmp', 'development', 'resources')}" %>
+      cloud:
+        base: 's3://example-dev-bucket/hyacinth/local_development/resources'
   upload_directory: <%= Rails.root.join('tmp', 'development', 'upload') %>
   csv_export_directory: <%= Rails.root.join('tmp', 'development', 'csv_exports') %>
   processed_csv_import_directory: <%= Rails.root.join('tmp', 'development', 'processed_csv_imports') %>
@@ -21,13 +35,27 @@ test:
   solr_url: http://localhost:9983/solr/hyacinth
   default_pid_generator_namespace: cul
   digital_object_data_directory: <%= Rails.root.join('tmp', 'test', 'data') %>
-  default_asset_home_bucket_name: 'test-bucket'
-  default_asset_home_bucket_path_prefix: 'hyacinth/local_test/default_asset_home'
-  default_asset_home: <%= Rails.root.join('tmp', 'test', 'asset_home') %>
-  default_service_copy_home: <%= Rails.root.join('tmp', 'test', 'service_copy_home') %>
-  access_copy_directory: <%= Rails.root.join('tmp', 'test', 'access') %>
-  # access_copy_file_group: 'digital-projects'
-  # access_copy_file_permissions: '0640'
+  default_resource_storage_locations:
+    main:
+      file:
+        base: <%= "file://#{Rails.root.join('tmp', 'test', 'resources')}" %>
+      cloud:
+        base: 's3://example-test-bucket/hyacinth/local_test/resources'
+    service:
+      file:
+        base: <%= "file://#{Rails.root.join('tmp', 'test', 'resources')}" %>
+      cloud:
+        base: 's3://example-test-bucket/hyacinth/local_test/resources'
+    access:
+      file:
+        base: <%= "file://#{Rails.root.join('tmp', 'test', 'resources')}" %>
+      cloud:
+        base: 's3://example-test-bucket/hyacinth/local_test/resources'
+    poster:
+      file:
+        base: <%= "file://#{Rails.root.join('tmp', 'test', 'resources')}" %>
+      cloud:
+        base: 's3://example-test-bucket/hyacinth/local_test/resources'
   upload_directory: <%= Rails.root.join('tmp', 'test', 'upload') %>
   csv_export_directory: <%= Rails.root.join('tmp', 'test', 'csv_exports') %>
   processed_csv_import_directory: <%= Rails.root.join('tmp', 'test', 'processed_csv_imports') %>
