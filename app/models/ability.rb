@@ -13,7 +13,7 @@ class Ability
     else
       # Non-admin users can only view and update their own user record
       # Explicitly using :show and :update (not :read) so :index is not included
-      can [:show, :update, :generate_api_key], User, id: user.id
+      can [:show, :update, :generate_api_key, :project_permissions], User, id: user.id
     end
   end
 end

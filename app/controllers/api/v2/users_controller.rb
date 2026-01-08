@@ -1,7 +1,7 @@
 class Api::V2::UsersController < Api::V2::BaseController
   API_TOKEN_LENGTH = 32
 
-  before_action :set_user_by_uid, only: [:show, :update, :generate_new_api_key]
+  before_action :set_user_by_uid, only: [:show, :update, :generate_new_api_key, :project_permissions]
 
   # GET /api/v2/users
   def index
@@ -67,6 +67,14 @@ class Api::V2::UsersController < Api::V2::BaseController
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
     end
+  end
+
+  # GET /api/v2/users/:uid/project_permissions
+  # Admin or self
+  def project_permissions
+    authorize! :project_permissions, @user
+
+    render json: { projectPermissions: @user.permissions }, status: :ok
   end
 
   private

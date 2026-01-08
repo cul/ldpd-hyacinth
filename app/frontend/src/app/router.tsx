@@ -44,13 +44,14 @@ export const createAppRouter = (queryClient: QueryClient) =>
               index: true,
               lazy: () => import('./routes/users/users').then(convert(queryClient)),
             },
+            // Move to a nested route under :userUid, maybe add layout with tabs
+            {
+              path: ':userUid/edit/project-permissions',
+              lazy: () => import('./routes/users/project-permissions').then(convert(queryClient)),
+            },
             {
               path: ':userUid/edit',
               lazy: () => import('./routes/users/user').then(convert(queryClient)),
-            },
-            {
-              path: ':userUid/edit/project-permissions',
-              Component: () => <div>Edit Project Permissions For User</div>,
             },
             {
               path: 'new',
@@ -63,7 +64,7 @@ export const createAppRouter = (queryClient: QueryClient) =>
           children: [
             {
               index: true,
-              lazy: () => import('./routes/settings').then(convert(queryClient))
+              lazy: () => import('./routes/settings/settings').then(convert(queryClient))
             },
             { path: 'project-permissions', Component: () => <div>Edit Current User Project Permissions</div> },
           ]

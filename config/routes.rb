@@ -167,6 +167,7 @@ Rails.application.routes.draw do
           get '/', action: :show
           patch '/', action: :update
           post 'generate_new_api_key'
+          get 'project_permissions', action: :project_permissions
         end
       end
     end

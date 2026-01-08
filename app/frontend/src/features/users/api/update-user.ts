@@ -4,6 +4,7 @@ import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
 import { User } from '@/types/api';
 import { getUsersQueryOptions } from './get-users';
+import { AUTH_QUERY_KEY } from '@/lib/auth';
 
 export const updateUser = ({
   userUid,
@@ -31,6 +32,13 @@ export const useUpdateUser = ({
       queryClient.invalidateQueries({
         queryKey: getUsersQueryOptions().queryKey,
       });
+
+      // If updating current user, refresh auth state
+      const currentUser = queryClient.getQueryData(AUTH_QUERY_KEY) as any;
+      if (currentUser?.uid === variables.userUid) {
+        queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY });
+      }
+
       onSuccess?.(data, variables, ...args);
     },
     ...restConfig,

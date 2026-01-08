@@ -17,7 +17,8 @@ export function useCurrentUser() {
   return useQuery({
     queryKey: AUTH_QUERY_KEY,
     queryFn: getCurrentUser,
-    staleTime: 0, // Always check auth state freshness
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes cache garbage collection
     retry: false,
   });
 }
