@@ -22,12 +22,11 @@ export const clientLoader = (queryClient: QueryClient) => async ({ params }: { p
 };
 
 const UserProjectsRoute = () => {
-    const params = useParams();
-    const userUid = params.userUid as string;
+  const params = useParams();
+  const userUid = params.userUid as string;
 
   return (
     <div>
-      <h3>User Projects</h3>
       <UserProjectPermissionsForm userUid={userUid} />
     </div>
   )

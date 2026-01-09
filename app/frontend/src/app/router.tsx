@@ -5,6 +5,7 @@ import { RouterProvider } from 'react-router/dom';
 
 // Layouts and Components
 import MainLayout from '@/components/layouts/main-layout';
+import UserLayout from '@/components/layouts/user-layout';
 import { AuthorizationErrorBoundary } from '@/components/errors/authorization-error';
 
 function Root() {
@@ -44,15 +45,29 @@ export const createAppRouter = (queryClient: QueryClient) =>
               index: true,
               lazy: () => import('./routes/users/users').then(convert(queryClient)),
             },
+            {
+              path: ':userUid',
+              Component: UserLayout,
+              children: [
+                {
+                  path: 'edit', // maybe this should be the default (index) route under :userUid
+                  lazy: () => import('./routes/users/user').then(convert(queryClient)),
+                },
+                {
+                  path: 'project-permissions/edit',
+                  lazy: () => import('./routes/users/project-permissions').then(convert(queryClient)),
+                },
+              ]
+            },
             // Move to a nested route under :userUid, maybe add layout with tabs
-            {
-              path: ':userUid/edit/project-permissions',
-              lazy: () => import('./routes/users/project-permissions').then(convert(queryClient)),
-            },
-            {
-              path: ':userUid/edit',
-              lazy: () => import('./routes/users/user').then(convert(queryClient)),
-            },
+            // {
+            //   path: ':userUid/edit/project-permissions',
+            //   lazy: () => import('./routes/users/project-permissions').then(convert(queryClient)),
+            // },
+            // {
+            //   path: ':userUid/edit',
+            //   lazy: () => import('./routes/users/user').then(convert(queryClient)),
+            // },
             {
               path: 'new',
               lazy: () => import('./routes/users/new-user').then(convert(queryClient)),

@@ -74,7 +74,7 @@ class Api::V2::UsersController < Api::V2::BaseController
   def project_permissions
     authorize! :project_permissions, @user
 
-    render json: { projectPermissions: @user.permissions }, status: :ok
+    render json: { permissions: @user.permissions }, status: :ok
   end
 
   private

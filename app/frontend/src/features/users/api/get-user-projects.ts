@@ -1,12 +1,13 @@
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
 import { QueryConfig } from '@/lib/react-query';
+import { ProjectPermission } from '@/types/api';
 
 // TODO: Add project type
-export const getUserProjects = async (userUid: string): Promise<{ projectPermissions: any }> => {
-  const res = await api.get<{ projectPermissions: any }>(`/users/${userUid}/project_permissions`);
+export const getUserProjects = async (userUid: string): Promise<ProjectPermission[]> => {
+  const res = await api.get<{ permissions: any }>(`/users/${userUid}/project_permissions`);
   // TODO: Handle gracefully if no permissions are found
-  return res.projectPermissions.projects;
+  return res.permissions?.projects || [];
 };
 
 export const getUserProjectsQueryOptions = (userUid: string) => {
