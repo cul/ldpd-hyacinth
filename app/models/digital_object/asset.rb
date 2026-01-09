@@ -127,6 +127,21 @@ class DigitalObject::Asset < DigitalObject::Base
     end
   end
 
+  def file_size_for_resource(resource_name)
+    case resource_name
+    when 'access'
+      first_relationship_object_for_datastream(@fedora_object&.datastreams&.[]('access'), :extent)
+    when 'poster'
+      first_relationship_object_for_datastream(@fedora_object&.datastreams&.[]('poster'), :extent)
+    when 'main'
+      first_relationship_object_for_datastream(@fedora_object&.datastreams&.[]('content'), :extent)
+    when 'service'
+      first_relationship_object_for_datastream(@fedora_object&.datastreams&.[]('service'), :extent)
+    else
+      raise ArgumentError, "Unsupported resource: #{resource_name}"
+    end
+  end
+
   # TODO: Use this method in other places rather than directly calling the other
   # underlying methods (filesystem_location_uri, service_copy_location_uri, etc.)
   def location_for_resource(resource_name)
@@ -160,29 +175,29 @@ class DigitalObject::Asset < DigitalObject::Base
     nil
   end
 
-  # TODO: Replace occurrences of this method with main_resource_file_size_in_bytes
+  # TODO: Replace occurrences of this method with `file_size_for_resource('main')`
   def file_size_in_bytes
-    main_resource_file_size_in_bytes
+    file_size_for_resource('main')
   end
 
+  # TODO: Replace occurrences of this method with `file_size_for_resource('main')`
   def main_resource_file_size_in_bytes
-    content_ds = @fedora_object.datastreams['content']
-    first_relationship_object_for_datastream(content_ds, :extent)
+    file_size_for_resource('main')
   end
 
+  # TODO: Replace occurrences of this method with `file_size_for_resource('access')`
   def access_copy_file_size_in_bytes
-    access_ds = @fedora_object.datastreams['access']
-    first_relationship_object_for_datastream(access_ds, :extent)
+    file_size_for_resource('access')
   end
 
+  # TODO: Replace occurrences of this method with `file_size_for_resource('poster')`
   def poster_file_size_in_bytes
-    poster_ds = @fedora_object.datastreams['poster']
-    first_relationship_object_for_datastream(poster_ds, :extent)
+    file_size_for_resource('poster')
   end
 
+  # TODO: Replace occurrences of this method with `file_size_for_resource('service')`
   def service_copy_file_size_in_bytes
-    service_ds = @fedora_object.datastreams['service']
-    first_relationship_object_for_datastream(service_ds, :extent)
+    file_size_for_resource('service')
   end
 
   def original_filename
@@ -457,24 +472,24 @@ class DigitalObject::Asset < DigitalObject::Base
 
   def to_solr
     doc = super
-    doc['original_filename_sim'] = original_filename
-    doc['original_file_path_sim'] = original_file_path
+    doc['original_filename_si'] = original_filename
+    doc['original_file_path_si'] = original_file_path
 
-    # TODO: Eventually update the names of these fields to
-    # follow the pattern "#{resource_name}_resource_location_sim" (or maybe ssim)
-    # OR maybe "resources_#{resource_name}_location_sim"
-    doc['filesystem_location_sim'] = location_for_resource('main')
-    doc['access_copy_location_sim'] = location_for_resource('access')
-    doc['poster_location_sim'] = location_for_resource('poster')
-    doc['service_copy_location_sim'] = location_for_resource('service')
+    doc['resource_main_location_si'] = location_for_resource('main')
+    doc['resource_service_location_si'] = location_for_resource('service')
+    doc['resource_access_location_si'] = location_for_resource('access')
+    doc['resource_poster_location_si'] = location_for_resource('poster')
 
-    # TODO: Eventually update the names of these fields to
-    # follow the pattern "#{resource_name}_resource_size_in_bytes_ltsi" (or maybe ssim)
-    # OR maybe "resources_#{resource_name}_size_in_bytes_ltsi"
-    doc['file_size_in_bytes_ltsi'] = file_size_in_bytes&.to_i
-    doc['service_copy_file_size_in_bytes_ltsi'] = service_copy_file_size_in_bytes&.to_i
-    doc['access_copy_file_size_in_bytes_ltsi'] = access_copy_file_size_in_bytes&.to_i
-    doc['poster_file_size_in_bytes_ltsi'] = poster_file_size_in_bytes&.to_i
+    doc['resource_main_size_in_bytes_lsi'] = file_size_for_resource('main')
+    doc['resource_service_size_in_bytes_lsi'] = file_size_for_resource('service')
+    doc['resource_access_size_in_bytes_lsi'] = file_size_for_resource('access')
+    doc['resource_poster_size_in_bytes_lsi'] = file_size_for_resource('poster')
+
+    # doc['file_size_in_bytes_ltsi'] = file_size_in_bytes&.to_i
+    # doc['service_copy_file_size_in_bytes_ltsi'] = service_copy_file_size_in_bytes&.to_i
+    # doc['access_copy_file_size_in_bytes_ltsi'] = access_copy_file_size_in_bytes&.to_i
+    # doc['poster_file_size_in_bytes_ltsi'] = poster_file_size_in_bytes&.to_i
+
     doc
   end
 
@@ -483,31 +498,31 @@ class DigitalObject::Asset < DigitalObject::Base
     json = super(options)
 
     json['asset_data'] = {
-      filesystem_location: location_for_resource('main'), # TODO: remove in favor of newly added fields
+      # filesystem_location: location_for_resource('main'), # TODO: remove in favor of newly added fields
       checksum: checksum, # TODO: nest this under 'main' resource and remove in favor of newly added fields
-      file_size_in_bytes: file_size_in_bytes, # TODO: remove in favor of newly added fields
+      # file_size_in_bytes: file_size_in_bytes, # TODO: remove in favor of newly added fields
       original_filename: original_filename,
       original_file_path: original_file_path,
-      access_copy_location: location_for_resource('access'), # TODO: remove in favor of newly added fields
-      access_copy_file_size_in_bytes: access_copy_file_size_in_bytes, # TODO: remove in favor of newly added fields
-      poster_location: location_for_resource('poster'), # TODO: remove in favor of newly added fields
-      poster_file_size_in_bytes: poster_file_size_in_bytes, # TODO: remove in favor of newly added fields
-      service_copy_location: location_for_resource('service'), # TODO: remove in favor of newly added fields
-      service_copy_file_size_in_bytes: service_copy_file_size_in_bytes, # TODO: remove in favor of newly added fields
+      # access_copy_location: location_for_resource('access'), # TODO: remove in favor of newly added fields
+      # access_copy_file_size_in_bytes: access_copy_file_size_in_bytes, # TODO: remove in favor of newly added fields
+      # poster_location: location_for_resource('poster'), # TODO: remove in favor of newly added fields
+      # poster_file_size_in_bytes: poster_file_size_in_bytes, # TODO: remove in favor of newly added fields
+      # service_copy_location: location_for_resource('service'), # TODO: remove in favor of newly added fields
+      # service_copy_file_size_in_bytes: service_copy_file_size_in_bytes, # TODO: remove in favor of newly added fields
 
       # TODO: After updating above fields, might need to update to_solr logic to extract resource locations and size info
 
       # New fields (which will eventually replace some of the above ones)
       # TODO: Maybe nest these under a 'resources' key, and then have keys for each resource name under that?
       #       That might be the preferred future structure.
-      main_resource_location: location_for_resource('main'),
-      main_resource_file_size_in_bytes: main_resource_file_size_in_bytes,
-      service_resource_location: location_for_resource('service'),
-      service_resource_file_size_in_bytes: service_copy_file_size_in_bytes,
-      access_resource_location: location_for_resource('access'),
-      access_resource_file_size_in_bytes: access_copy_file_size_in_bytes,
-      poster_resource_location: location_for_resource('poster'),
-      poster_resource_file_size_in_bytes: poster_file_size_in_bytes,
+      resource_main_location: location_for_resource('main'),
+      resource_main_file_size_in_bytes: file_size_for_resource('main'),
+      resource_service_location: location_for_resource('service'),
+      resource_service_file_size_in_bytes: file_size_for_resource('service'),
+      resource_access_location: location_for_resource('access'),
+      resource_access_file_size_in_bytes: file_size_for_resource('access'),
+      resource_poster_location: location_for_resource('poster'),
+      resource_poster_file_size_in_bytes: file_size_for_resource('poster'),
     }
 
     json['restrictions'] ||= {}

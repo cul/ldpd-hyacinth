@@ -89,12 +89,6 @@ class ExportSearchResultsToCsvJob < ActiveJob::Base
         map["_publish_targets-#{index + 1}.string_key"] ||= map.length
       end
 
-      # asset-only fields
-      unless digital_object_data['asset_data'].blank?
-        map['_asset_data.filesystem_location'] ||= map.length
-        map['_asset_data.checksum'] ||= map.length
-      end
-
       ### Handle dynamic fields
       # For controlled fields, skip the 'vocabulary_string_key', 'type' and
       # 'internal_id' fields because they're not helpful

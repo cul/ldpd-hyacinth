@@ -11,11 +11,11 @@ module DigitalObject::IndexAndSearch::Index
     object_as_json = to_json(assignments: false)
 
     doc = {
-      pid: pid,
+      id: self.uuid,
+      pid: self.pid,
       identifiers_sim: identifiers,
       title_ssm: get_title(placeholder_if_blank: true),
       sort_title_si: get_sort_title, # For sorting by all characters
-      sort_title_ssort: get_sort_title, # For sorting by alpha-only characters. Maybe remove this.
       parent_digital_object_pids_ssm: parent_digital_object_pids,
       parent_digital_object_pids_sim: parent_digital_object_pids,
       ordered_child_digital_object_pids_ssm: ordered_child_digital_object_pids,

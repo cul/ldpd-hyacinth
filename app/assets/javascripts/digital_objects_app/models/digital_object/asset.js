@@ -7,19 +7,19 @@ Hyacinth.extendClass(Hyacinth.DigitalObjectsApp.DigitalObject.Asset, Hyacinth.Di
 
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getFilesystemLocation = function () {
-  return this.assetData['filesystem_location'];
+  return this.assetData['resource_main_location'];
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getAccessCopyLocation = function () {
-  return this.assetData['access_copy_location'];
+  return this.assetData['resource_access_location'];
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getPosterLocation = function () {
-  return this.assetData['poster_location'];
+  return this.assetData['resource_poster_location'];
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getServiceCopyLocation = function () {
-  return this.assetData['service_copy_location'];
+  return this.assetData['resource_service_location'];
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getFileChecksum = function () {
@@ -27,19 +27,19 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getFileChecksum = funct
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getFileSizeInBytes = function () {
-  return this.assetData['file_size_in_bytes'];
+  return this.assetData['resource_main_file_size_in_bytes'];
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getAccessCopyFileSizeInBytes = function () {
-  return this.assetData['access_copy_file_size_in_bytes'];
+  return this.assetData['resource_access_file_size_in_bytes'];
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getPosterFileSizeInBytes = function () {
-  return this.assetData['poster_file_size_in_bytes'];
+  return this.assetData['resource_poster_file_size_in_bytes'];
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getServiceCopyFileSizeInBytes = function () {
-  return this.assetData['service_copy_file_size_in_bytes'];
+  return this.assetData['resource_service_file_size_in_bytes'];
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Asset.prototype.getFileSizeString = function () {
