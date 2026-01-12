@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Spinner, Button, Form } from 'react-bootstrap';
+import { Spinner, Button, Form, Alert } from 'react-bootstrap';
 import { useUserProjects } from '../api/get-user-projects';
+import { useUpdateUserProjectPermissions } from '../api/update-user-projects';
 import { ProjectPermission } from '@/types/api';
 import {
   useReactTable,
@@ -22,19 +23,30 @@ const columnHelper = createColumnHelper<ProjectPermission>();
 export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => {
   const userPermissionsQuery = useUserProjects({ userUid });
   const [data, setData] = useState<ProjectPermission[]>([]);
+  const [hasChanges, setHasChanges] = useState(false);
+
+  const updatePermissionsMutation = useUpdateUserProjectPermissions({
+    mutationConfig: {
+      onSuccess: () => {
+        setHasChanges(false);
+      },
+    },
+  });
+
 
   React.useEffect(() => {
     if (userPermissionsQuery.data) {
       setData(userPermissionsQuery.data);
+      setHasChanges(false);
     }
   }, [userPermissionsQuery.data]);
 
   const columns = [
-    columnHelper.accessor('project_string_key', {
+    columnHelper.accessor('projectDisplayLabel', {
       header: 'Project',
       cell: (info) => info.getValue(),
     }),
-    columnHelper.accessor('can_read', {
+    columnHelper.accessor('canRead', {
       header: 'Can Read',
       cell: (info) => {
         const value = info.getValue();
@@ -51,8 +63,59 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
         );
       },
     }),
-    columnHelper.accessor('can_update', {
+    columnHelper.accessor('canUpdate', {
       header: 'Can Update',
+      cell: (info) => {
+        const value = info.getValue();
+        const updateData = info.table.options.meta?.updateData;
+
+        return (
+          <Form.Check
+            type="checkbox"
+            checked={value}
+            onChange={(e) => {
+              updateData?.(info.row.index, info.column.id, e.target.checked);
+            }}
+          />
+        );
+      },
+    }),
+    columnHelper.accessor('canCreate', {
+      header: 'Can Create',
+      cell: (info) => {
+        const value = info.getValue();
+        const updateData = info.table.options.meta?.updateData;
+
+        return (
+          <Form.Check
+            type="checkbox"
+            checked={value}
+            onChange={(e) => {
+              updateData?.(info.row.index, info.column.id, e.target.checked);
+            }}
+          />
+        );
+      },
+    }),
+    columnHelper.accessor('canPublish', {
+      header: 'Can Publish',
+      cell: (info) => {
+        const value = info.getValue();
+        const updateData = info.table.options.meta?.updateData;
+
+        return (
+          <Form.Check
+            type="checkbox"
+            checked={value}
+            onChange={(e) => {
+              updateData?.(info.row.index, info.column.id, e.target.checked);
+            }}
+          />
+        );
+      },
+    }),
+    columnHelper.accessor('isProjectAdmin', {
+      header: 'Is Project Admin',
       cell: (info) => {
         const value = info.getValue();
         const updateData = info.table.options.meta?.updateData;
@@ -87,17 +150,32 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
             return row;
           })
         );
+        // TODO: Only set hasChanges to true if the new data is different from the original data
+        setHasChanges(true); 
       },
     },
   });
 
-  // TODO: Send data to API
+
   const handleSave = () => {
     console.log('Saving data:', data);
+    updatePermissionsMutation.mutate({
+      userUid,
+      projectPermissions: data,
+    });
   };
 
   if (userPermissionsQuery.isLoading) {
     return <Spinner />;
+  }
+
+  const addNewRow = () => {
+    const newRow: any = {
+      project_string_key: 'new_project',
+      can_read: false,
+      can_update: false,
+    };
+    setData((old) => [...old, newRow]);
   }
 
   return (
@@ -131,11 +209,22 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
           ))}
         </tbody>
         {/* TODO: Allow user to add new project permissions */}
+        {/* <button onClick={addNewRow}>Add row</button> */}
       </BTable>
 
-      <Button variant="primary" onClick={handleSave}>
-        Save Changes
-      </Button>
+      <div className="d-flex gap-2 align-items-center">
+        <Button
+          variant="primary"
+          onClick={handleSave}
+          disabled={!hasChanges || updatePermissionsMutation.isPending}
+        >
+          {updatePermissionsMutation.isPending ? 'Saving...' : 'Save Changes'}
+        </Button>
+
+        {hasChanges && (
+          <small className="text-muted">You have unsaved changes</small>
+        )}
+      </div>
     </div>
   );
 };

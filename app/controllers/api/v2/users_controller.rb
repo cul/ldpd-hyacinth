@@ -1,7 +1,7 @@
 class Api::V2::UsersController < Api::V2::BaseController
   API_TOKEN_LENGTH = 32
 
-  before_action :set_user_by_uid, only: [:show, :update, :generate_new_api_key, :project_permissions]
+  before_action :set_user_by_uid, only: [:show, :update, :generate_new_api_key, :project_permissions, :update_project_permissions]
 
   # GET /api/v2/users
   def index
@@ -70,12 +70,58 @@ class Api::V2::UsersController < Api::V2::BaseController
   end
 
   # GET /api/v2/users/:uid/project_permissions
-  # Admin or self
+  # Admin or self (read-only for self)
   def project_permissions
-    authorize! :project_permissions, @user
+    authorize! :read_project_permissions, @user
 
-    render json: { permissions: @user.permissions }, status: :ok
+    project_permissions = user_project_permissions_json(@user)
+
+    render json: { projectPermissions: project_permissions }, status: :ok
   end
+
+  # PUT /api/v2/users/:uid/project_permissions
+  # Admin only
+  def update_project_permissions
+    authorize! :update_project_permissions, @user
+
+    User.transaction do
+      @user.project_permissions.destroy_all
+      permissions_data = params.require(:project_permissions)
+
+      new_permissions = permissions_data.map do |permission_params|
+        {
+          user_id: @user.id,
+          project_id: permission_params[:project_id],
+          can_read: permission_params[:can_read] || false,
+          can_create: permission_params[:can_create] || false,
+          can_update: permission_params[:can_update] || false,
+          can_delete: permission_params[:can_delete] || false,
+          can_publish: permission_params[:can_publish] || false,
+          is_project_admin: permission_params[:is_project_admin] || false,
+        }
+      end
+
+      # Validate that all projects exist before inserting
+      project_ids = new_permissions.map { |p| p[:project_id] }
+      existing_project_ids = Project.where(id: project_ids).pluck(:id)
+      missing_project_ids = project_ids - existing_project_ids
+      
+      if missing_project_ids.any?
+        render json: { errors: ["Projects not found: #{missing_project_ids.join(', ')}"] }, status: :not_found
+        raise ActiveRecord::Rollback
+      end
+
+      ProjectPermission.insert_all(new_permissions) if new_permissions.any?
+      updated_permissions = user_project_permissions_json(@user)
+
+      render json: { projectPermissions: updated_permissions }, status: :ok
+    end
+  rescue ActiveRecord::RecordNotFound => e
+    render json: { errors: ["Project not found: #{e.message}"] }, status: :not_found
+  rescue ActionController::ParameterMissing => e
+    render json: { errors: ["Missing required parameter: #{e.param}"] }, status: :bad_request
+  end
+
 
   private
 
@@ -107,5 +153,22 @@ class Api::V2::UsersController < Api::V2::BaseController
       accountType: user.account_type,
       apiKeyDigest: user.api_key_digest,
     }
+  end
+
+  def user_project_permissions_json(user)
+    user.project_permissions.includes(:project).map do |pp|
+      {
+        id: pp.id,
+        projectId: pp.project_id,
+        projectStringKey: pp.project.string_key,
+        projectDisplayLabel: pp.project.display_label,
+        canRead: pp.can_read,
+        canCreate: pp.can_create,
+        canUpdate: pp.can_update,
+        canDelete: pp.can_delete,
+        canPublish: pp.can_publish,
+        isProjectAdmin: pp.is_project_admin
+      }
+    end
   end
 end

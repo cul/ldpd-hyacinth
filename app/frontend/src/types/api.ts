@@ -18,11 +18,12 @@ export interface User {
 }
 
 export interface ProjectPermission {
-  project_pid: string;
-  project_string_key: string;
-  can_read: boolean;
-  can_update: boolean;
-  can_create: boolean;
-  can_publish: boolean;
-  is_project_admin: boolean;
+  projectDisplayLabel: string;
+  projectPid: string;
+  projectStringKey: string;
+  canRead: boolean;
+  canUpdate: boolean;
+  canCreate: boolean;
+  canPublish: boolean;
+  isProjectAdmin: boolean;
 }

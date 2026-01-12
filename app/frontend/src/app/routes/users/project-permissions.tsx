@@ -27,6 +27,7 @@ const UserProjectsRoute = () => {
 
   return (
     <div>
+      {/* TODO: If user is an admin, render a message saying "Admins have full permissions and do not need project-specific permissions." */}
       <UserProjectPermissionsForm userUid={userUid} />
     </div>
   )
