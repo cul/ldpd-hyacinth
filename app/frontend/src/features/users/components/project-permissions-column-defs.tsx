@@ -1,6 +1,6 @@
 import React from 'react'
 import { createColumnHelper } from '@tanstack/react-table'
-import { Form } from 'react-bootstrap';
+import { Form, Button } from 'react-bootstrap';
 import { ProjectPermission } from '@/types/api'
 
 const columnHelper = createColumnHelper<ProjectPermission>()
@@ -55,5 +55,18 @@ export const columnDefs = [
   columnHelper.accessor('isProjectAdmin', {
     header: 'Is Project Admin',
     cell: (info) => cellAsEditableCheckbox(info),
+  }),
+  columnHelper.display({
+    id: 'actions',
+    header: 'Actions',
+    cell: props => (
+      <Button
+        variant="outline-secondary"
+        size="sm"
+        onClick={() => props.table.options.meta?.removeRow(props.row.index)}
+      >
+        Delete
+      </Button>
+    )
   }),
 ];

@@ -14,6 +14,7 @@ import TableHeader from '@/components/ui/TableBuilder/table-header';
 declare module '@tanstack/react-table' {
   interface TableMeta<TData> {
     updateData: (rowIndex: number, columnId: string, value: boolean) => void;
+    removeRow: (rowIndex: number) => void;
   }
 }
 
@@ -70,6 +71,10 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
         // TODO: Only set hasChanges to true if the new data is different from the original data
         setHasChanges(true);
       },
+      removeRow: (rowIndex: number) => {
+        setData((old) => old.filter((_, index) => index !== rowIndex));
+        setHasChanges(true);
+      }
     },
   });
 
@@ -103,11 +108,6 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
       setHasChanges(true);
     }
   };
-
-  const handleDeleteProject = (projectId: number) => {
-    setData((old) => old.filter((perm) => perm.projectId !== projectId));
-    setHasChanges(true);
-  }
 
   if (userPermissionsQuery.isLoading || projectsQuery.isLoading) {
     return <Spinner animation="border" />;
@@ -182,15 +182,6 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
                   disabled={!selectedProjectId}
                 >
                   Add Project
-                </Button>
-              </td>
-              <td colSpan={7}>
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  onClick={() => handleDeleteProject(parseInt('3'))}
-                >
-                  Delete Project
                 </Button>
               </td>
             </tr>
