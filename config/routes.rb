@@ -171,6 +171,8 @@ Rails.application.routes.draw do
           put 'project_permissions', action: :update_project_permissions
         end
       end
+
+      resources :projects, only: [:index]
     end
   end
   
