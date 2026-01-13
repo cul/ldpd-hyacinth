@@ -21,7 +21,7 @@ module DigitalObject::IndexAndSearch::SolrParams
         solr_params['rows'] = 0
         solr_params['facet'] = false
         # And guarantee no results with fq tat will return zero results
-        solr_params['fq'] << 'hyacinth_type_sim:none'
+        solr_params['fq'] << 'hyacinth_type_si:none'
       end
     end
 
@@ -39,7 +39,7 @@ module DigitalObject::IndexAndSearch::SolrParams
           # Set up default facet fields
           facet_fields = []
           # Manually add certain non-dynamic-field facets
-          facet_fields += ['project_display_label_sim', 'digital_object_type_display_label_sim', 'enabled_publish_target_display_label_sim', 'asset_dc_type_sim', 'asset_pcdm_type_sim', 'has_child_digital_objects_bi']
+          facet_fields += ['project_display_label_sim', 'digital_object_type_display_label_si', 'enabled_publish_target_display_label_sim', 'asset_dc_type_sim', 'asset_pcdm_type_sim', 'has_child_digital_objects_bi']
           ::DynamicField.find_each do |dynamic_field|
             dynamic_field_string_keys_to_dynamic_fields[dynamic_field.string_key] = dynamic_field
             facet_fields << 'df_' + dynamic_field.string_key + '_sim' if dynamic_field.is_facet_field
@@ -61,7 +61,7 @@ module DigitalObject::IndexAndSearch::SolrParams
 
     def set_filter_queries_for(user_search_params, solr_params)
       # Only retrieve active ('A') items
-      solr_params['fq'] << 'state_sim:A'
+      solr_params['fq'] << 'state_si:A'
 
       # Looking for specific set of PIDs
       solr_params['fq'] << 'pid:("' + user_search_params['pids'].join('" OR "') + '")' if user_search_params['pids'].present?

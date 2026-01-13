@@ -149,10 +149,6 @@ gem 'aws-crt'
 # Google Cloud Storage SDK
 gem 'google-cloud-storage', '~> 1.49'
 
-# Remove the pin below once you update to Rails 7.0 or later.
-# See: https://github.com/rails/rails/issues/54263
-gem 'concurrent-ruby', '1.3.4'
-
 # Development and testing!
 group :development, :test do
   gem 'byebug'

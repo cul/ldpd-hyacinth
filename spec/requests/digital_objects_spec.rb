@@ -195,7 +195,7 @@ RSpec.describe "DigitalObjects", type: :request do
           get search_results_to_csv_digital_objects_path, params: {
             format: 'json',
             search: {
-              'fq' => { 'hyacinth_type_sim' => [{ 'does_not_equal' => 'publish_target' }] }
+              'fq' => { 'hyacinth_type_si' => [{ 'does_not_equal' => 'publish_target' }] }
             }
           }, as: :json
         }
@@ -218,7 +218,7 @@ RSpec.describe "DigitalObjects", type: :request do
           post search_results_to_csv_digital_objects_path, params: {
             format: 'json',
             search: {
-              'fq' => { 'hyacinth_type_sim' => [{ 'does_not_equal' => 'publish_target' }] }
+              'fq' => { 'hyacinth_type_si' => [{ 'does_not_equal' => 'publish_target' }] }
             }
           }, as: :json
         }

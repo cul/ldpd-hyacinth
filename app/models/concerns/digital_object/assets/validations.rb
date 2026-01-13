@@ -48,7 +48,15 @@ module DigitalObject::Assets::Validations
 
         # Make sure that there isn't already another Asset with a main file that points to this same file
         pid = Hyacinth::Utils::FedoraUtils.find_object_pid_by_filesystem_path(import_location)
-        @errors.add(:import_file, "Found existing Asset (#{pid}) with main file path: #{import_location}") if pid.present?
+        if pid.present?
+          # If this object is in Fedora but isn't in Hyacinth, then there's no problem here.
+          # But if it's in Hyacinth AND that Hyacinth object is active, then that is a problem
+          # and we should prevent a duplicate import.
+          possible_hyacinth_object = DigitalObject::Base.find_by_pid(pid)
+          if possible_hyacinth_object.present? && possible_hyacinth_object.state == ::DigitialObject::Base::STATE_ACTIVE
+            @errors.add(:import_file, "Found existing active Hyacinth Asset (#{pid}) with main file path: #{import_location}")
+          end
+        end
       end
 
       if [::DigitalObject::Asset::MAIN_RESOURCE_NAME, ::DigitalObject::Asset::SERVICE_RESOURCE_NAME].include?(resource_name)

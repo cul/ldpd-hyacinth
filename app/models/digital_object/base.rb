@@ -28,6 +28,9 @@ class DigitalObject::Base
   delegate :next_pid, to: :project
 
   VALID_DC_TYPES = [] # There are no valid dc types for DigitalObject::Base
+  STATE_ACTIVE = 'A'
+  STATE_INACTIVE = 'I' # We used to use this in Fedora, but Hyacinth doesn't assign objects a state of Inactive
+  STATE_DELETED = 'D'
 
   def require_subclass_override!
     raise 'This method must be overridden by a subclass'
@@ -44,7 +47,7 @@ class DigitalObject::Base
     @obsolete_parent_digital_object_pids = []
     @ordered_child_digital_object_pids = []
     @dynamic_field_data = {}
-    @state = 'A'
+    @state = STATE_ACTIVE
     @errors = ActiveModel::Errors.new(self)
     @publish_after_save = false
     @doi = nil
@@ -176,7 +179,10 @@ class DigitalObject::Base
   end
 
   def add_parent_digital_object(parent_digital_object)
-    return if parent_digital_object.nil?
+    if parent_digital_object.nil?
+      self.errors.add(:parent_digital_objects, "Tried to add a parent digital object that could not be found.")
+      return
+    end
 
     new_parent_digital_object_pid = parent_digital_object.pid
 
@@ -292,10 +298,10 @@ class DigitalObject::Base
       # (since we're generating queries that OR together the list of given PIDs, and that generates a lot of clauses).
       chunk_size = 500
       pids.each_slice(chunk_size).each do |subset_of_pids|
-        search_response = DigitalObject::Base.search({ 'pids' => subset_of_pids, 'fl' => 'pid,title_ssm', 'per_page' => chunk_size }, user_for_access)
+        search_response = DigitalObject::Base.search({ 'pids' => subset_of_pids, 'fl' => 'pid,title_ss', 'per_page' => chunk_size }, user_for_access)
         if search_response['results'].present?
           search_response['results'].each do |result|
-            pids_to_titles[result['pid']] = result['title_ssm'].first
+            pids_to_titles[result['pid']] = result['title_ss'].first
           end
         end
       end

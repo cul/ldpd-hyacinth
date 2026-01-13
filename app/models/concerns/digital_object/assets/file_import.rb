@@ -109,7 +109,7 @@ module DigitalObject::Assets::FileImport
     # either an absolute file file path or a file URI during imports.  We also support S3 URIs.
     import_location_uri = import_location.start_with?('/') ? Hyacinth::Utils::UriUtils.file_path_to_location_uri(import_location) : import_location
     storage_object = Hyacinth::Storage.storage_object_for(import_location_uri)
-    raise "External file not found at: #{storage_object.path}" unless storage_object.exist?
+    raise "External file not found at: #{import_location}" unless storage_object.exist?
     raise Hyacinth::Exceptions::ZeroByteFileError, 'Original file file size is 0 bytes. File must contain data.' if storage_object.size == 0
 
     case storage_object

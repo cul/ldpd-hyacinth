@@ -94,7 +94,7 @@ describe "CSV Export-Import Round Trip" do
       first_csv_export = CsvExport.create(
         user: User.find_by(is_admin: true), # Admin users have access to all records
         search_params: JSON.generate({
-          'fq' => { 'hyacinth_type_sim' => [{ 'does_not_equal' => 'publish_target' }] }
+          'fq' => { 'hyacinth_type_si' => [{ 'does_not_equal' => 'publish_target' }] }
         })
       )
       ExportSearchResultsToCsvJob.perform_now(first_csv_export.id)
@@ -132,7 +132,7 @@ describe "CSV Export-Import Round Trip" do
       second_csv_export = CsvExport.create(
         user: User.find_by(is_admin: true), # Admin users have access to all records
         search_params: JSON.generate({
-          'fq' => { 'hyacinth_type_sim' => [{ 'does_not_equal' => 'publish_target' }] }
+          'fq' => { 'hyacinth_type_si' => [{ 'does_not_equal' => 'publish_target' }] }
         })
       )
       ExportSearchResultsToCsvJob.perform_now(second_csv_export.id)
