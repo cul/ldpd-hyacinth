@@ -84,9 +84,22 @@ class Api::V2::UsersController < Api::V2::BaseController
   def update_project_permissions
     authorize! :update_project_permissions, @user
 
-    User.transaction do
+    # Check that the key exists (even if empty)
+    unless params.key?(:project_permissions)
+      render json: { errors: ["Missing required parameter: project_permissions"] }, status: :bad_request
+      return
+    end
+
+    updated_permissions = []
+
+    @user.transaction do
       @user.project_permissions.destroy_all
-      permissions_data = params.require(:project_permissions)
+      permissions_data = params[:project_permissions] || []
+
+      # If empty, we're done - user has no project permissions
+      if permissions_data.empty?
+        next
+      end
 
       new_permissions = permissions_data.map do |permission_params|
         {
@@ -111,17 +124,13 @@ class Api::V2::UsersController < Api::V2::BaseController
         raise ActiveRecord::Rollback
       end
 
-      ProjectPermission.insert_all(new_permissions) if new_permissions.any?
+      ProjectPermission.insert_all(new_permissions)
       updated_permissions = user_project_permissions_json(@user)
-
-      render json: { projectPermissions: updated_permissions }, status: :ok
     end
+    render json: { projectPermissions: updated_permissions }, status: :ok
   rescue ActiveRecord::RecordNotFound => e
     render json: { errors: ["Project not found: #{e.message}"] }, status: :not_found
-  rescue ActionController::ParameterMissing => e
-    render json: { errors: ["Missing required parameter: #{e.param}"] }, status: :bad_request
   end
-
 
   private
 

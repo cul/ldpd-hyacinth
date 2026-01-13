@@ -104,6 +104,11 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
     }
   };
 
+  const handleDeleteProject = (projectId: number) => {
+    setData((old) => old.filter((perm) => perm.projectId !== projectId));
+    setHasChanges(true);
+  }
+
   if (userPermissionsQuery.isLoading || projectsQuery.isLoading) {
     return <Spinner animation="border" />;
   }
@@ -177,6 +182,15 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
                   disabled={!selectedProjectId}
                 >
                   Add Project
+                </Button>
+              </td>
+              <td colSpan={7}>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => handleDeleteProject(parseInt('3'))}
+                >
+                  Delete Project
                 </Button>
               </td>
             </tr>
