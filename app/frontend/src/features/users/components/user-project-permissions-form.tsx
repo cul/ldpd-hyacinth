@@ -5,11 +5,13 @@ import { useReactTable, getCoreRowModel } from '@tanstack/react-table';
 // Hooks and components
 import TableRow from '@/components/ui/TableBuilder/table-row';
 import { useProjects } from '@/features/projects/api/get-projects';
+import { useUsers } from '../api/get-users';
 import { useUserProjects } from '../api/get-user-projects';
 import { useUpdateUserProjectPermissions } from '../api/update-user-projects';
 import { ProjectPermission } from '@/types/api';
 import { columnDefs } from './project-permissions-column-defs';
 import TableHeader from '@/components/ui/TableBuilder/table-header';
+import { CopyOtherPermissionsDisplay } from './copy-other-user-permissions-display';
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData> {
@@ -21,10 +23,20 @@ declare module '@tanstack/react-table' {
 export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => {
   const userPermissionsQuery = useUserProjects({ userUid });
   const projectsQuery = useProjects();
+  const usersQuery = useUsers();
 
   const [data, setData] = useState<ProjectPermission[]>([]);
   const [hasChanges, setHasChanges] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
+  const [selectedUserUid, setSelectedUserUid] = useState<string>('');
+
+  // Fetch selected user's permissions only when a user is selected
+  const selectedUserPermissionsQuery = useUserProjects({
+    userUid: selectedUserUid,
+    queryConfig: {
+      enabled: !!selectedUserUid,
+    }
+  });
 
   const updatePermissionsMutation = useUpdateUserProjectPermissions({
     mutationConfig: {
@@ -85,6 +97,25 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
     });
   };
 
+  const mergeUserPermissions = () => {
+    if (!selectedUserUid || !selectedUserPermissionsQuery.data) return;
+
+    const selectedPermissions = selectedUserPermissionsQuery.data;
+
+    // Merge permissions: add new projects, preserve existing ones
+    const mergedData = [...data];
+    selectedPermissions.forEach(permission => {
+      const existingIndex = mergedData.findIndex(p => p.projectId === permission.projectId);
+      if (existingIndex === -1) {
+        mergedData.push(permission);
+      }
+    });
+
+    setData(mergedData);
+    setHasChanges(true);
+    setSelectedUserUid('');
+  };
+
   const handleAddProject = () => {
     if (!selectedProjectId) return;
 
@@ -143,7 +174,13 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
         </Alert>
       )}
 
-      {/* TODO: Allow for copying different user's project permissions */}
+      <CopyOtherPermissionsDisplay
+        onSelectUser={(uid: string) => setSelectedUserUid(uid)}
+        selectedUserUid={selectedUserUid}
+        usersList={usersQuery.data?.users || []}
+        userUid={userUid}
+        mergeUserPermissions={mergeUserPermissions}
+      />
 
       <BTable striped bordered hover responsive size="md">
         {table.getHeaderGroups().map((headerGroup) => (

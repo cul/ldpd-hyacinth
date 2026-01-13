@@ -1,11 +1,14 @@
 import React from 'react';
 import { QueryClient } from '@tanstack/react-query';
+import { useParams } from 'react-router';
+
+// APIs
+import { ROLES } from '@/lib/authorization';
+import { requireAuthorization } from '@/lib/loader-authorization';
 import { getUserProjectsQueryOptions } from '@/features/users/api/get-user-projects';
 import { getProjectsQueryOptions } from '@/features/projects/api/get-projects';
-import { requireAuthorization } from '@/lib/loader-authorization';
-import { ROLES } from '@/lib/authorization';
 import { UserProjectPermissionsForm } from '@/features/users/components/user-project-permissions-form';
-import { useParams } from 'react-router';
+import { getUsersQueryOptions } from '@/features/users/api/get-users';
 
 export const clientLoader = (queryClient: QueryClient) => async ({ params }: { params: { userUid: string } }) => {
   await requireAuthorization(queryClient, [ROLES.ADMIN]);
@@ -13,12 +16,13 @@ export const clientLoader = (queryClient: QueryClient) => async ({ params }: { p
   const userUid = params.userUid as string;
   
   // Preload both user project permissions and all projects (for the dropdown of unassigned projects)
-  const [userPermissions, projects] = await Promise.all([
+  const [userPermissions, projects, users] = await Promise.all([
     queryClient.ensureQueryData(getUserProjectsQueryOptions(userUid)),
     queryClient.ensureQueryData(getProjectsQueryOptions()),
+    queryClient.ensureQueryData(getUsersQueryOptions()),
   ]);
 
-  return { userPermissions, projects };
+  return { userPermissions, projects, users };
 };
 
 const UserProjectsRoute = () => {
