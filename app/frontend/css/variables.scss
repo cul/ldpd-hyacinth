@@ -2,3 +2,30 @@
 
 // Bootstrap overrides
 $primary: #a33dbf; // temporary override for testing purposes
+
+// React-Select custom styles to match Bootstrap select size
+.react-select__control {
+  min-height: 18px;
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  font-size: 15px;
+}
+
+.react-select__menu {
+  margin-top: 0;
+  border-radius: 0.25rem;
+}
+
+.react-select__menu-list {
+  padding: 0;
+  margin: 0;
+  font-size: 14px;
+}
+
+.react-select__value-container {
+  padding: 0 4px;
+}
+
+.react-select__indicators svg {
+  height: 18px;
+}

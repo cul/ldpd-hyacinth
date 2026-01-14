@@ -1,6 +1,7 @@
 import React from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import { User } from '@/types/api';
+import { AutocompleteSelect } from '@/components/ui/autocomplete-select';
 
 interface CopyOtherPermissionsDisplayProps {
   onSelectUser: (uid: string) => void;
@@ -24,30 +25,23 @@ export const CopyOtherPermissionsDisplay = ({
         <br />
         Don't worry, you can still make individual adjustments before saving.
       </p>
-      <Row>
-        <Col md={6}>
-          <Form.Select
-            size="sm"
-            className="mt-2"
-            value={selectedUserUid}
-            onChange={(e) => onSelectUser(e.target.value)}
-          >
-            <option value="">- Select a user -</option>
-            {usersList.map((user) => {
-              if (user.uid === userUid) return null;
-              return (
-                <option key={user.uid} value={user.uid}>
-                  {user.firstName} {user.lastName} ({user.email})
-                </option>
-              );
-            })}
-          </Form.Select>
+      <Row className="g-2 align-items-center">
+        <Col md={4}>
+          <AutocompleteSelect
+            options={usersList.map((user) => ({
+              value: user.uid,
+              label: `${user.firstName} ${user.lastName} (${user.email})`,
+            }))}
+            placeholder='Select a user'
+            value={selectedUserUid || null}
+            onChange={(value) => onSelectUser(value || '')}
+          />
         </Col>
-        <Col md={2}>
+        <Col md="auto">
           <Button
             size="sm"
             variant="secondary"
-            className="mt-2"
+            className="ms-2"
             onClick={mergeUserPermissions}
             disabled={!selectedUserUid}
           >
