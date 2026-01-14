@@ -28,6 +28,7 @@
     "react-dom": "^19.2.3",
     "react-error-boundary": "^6.0.0",
     "react-router": "7.10.1",
+    "react-select": "^5.10.2",
     "sass": "^1.96.0",
     "video.js": "^7.17.0"
   }

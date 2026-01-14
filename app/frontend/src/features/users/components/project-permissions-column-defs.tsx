@@ -24,6 +24,7 @@ export const columnDefs = [
   columnHelper.accessor('projectDisplayLabel', {
     header: 'Project',
     cell: (info) => info.getValue(),
+    // enableSorting: true # TODO: Enable sorting
   }),
   columnHelper.accessor('canRead', {
     header: 'Can Read',

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Spinner, Button, Form, Alert, Table as BTable } from 'react-bootstrap';
+import { Spinner, Button, Alert, Table as BTable } from 'react-bootstrap';
 import { useReactTable, getCoreRowModel } from '@tanstack/react-table';
 
 // Hooks and components
@@ -12,6 +12,7 @@ import { ProjectPermission } from '@/types/api';
 import { columnDefs } from './project-permissions-column-defs';
 import TableHeader from '@/components/ui/TableBuilder/table-header';
 import { CopyOtherPermissionsDisplay } from './copy-other-user-permissions-display';
+import { AutocompleteSelect } from '@/components/ui/autocomplete-select';
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData> {
@@ -19,7 +20,11 @@ declare module '@tanstack/react-table' {
     removeRow: (rowIndex: number) => void;
   }
 }
-
+/*
+This component uses TanStack table to render and manage user project permissions
+We already have a non-editable TableBuilder component, but since this form requires editable cells 
+and custom actions, we implement the table logic directly here
+*/
 export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => {
   const userPermissionsQuery = useUserProjects({ userUid });
   const projectsQuery = useProjects();
@@ -182,7 +187,17 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
         mergeUserPermissions={mergeUserPermissions}
       />
 
-      <BTable striped bordered hover responsive size="md">
+      <BTable striped bordered hover responsive size="sm" style={{ overflow: 'visible' }}>
+        <colgroup>
+          <col style={{ width: '250px' }} />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+          <col />
+        </colgroup>
         {table.getHeaderGroups().map((headerGroup) => (
           <TableHeader
             key={headerGroup.id}
@@ -194,24 +209,20 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
             <TableRow row={row} key={row.id} />
           ))}
 
-          {/* TODO: This dropdown should allow searching/filtering but Bootstrap dropdowns don't support it out of the box */}
           {unassignedProjects.length > 0 && (
             <tr>
-              <td>
-                <Form.Select
-                  size="sm"
-                  value={selectedProjectId}
-                  onChange={(e) => setSelectedProjectId(e.target.value)}
-                >
-                  <option value="">- Select a project -</option>
-                  {unassignedProjects.map((project) => (
-                    <option key={project.id} value={project.id}>
-                      {project.displayLabel}
-                    </option>
-                  ))}
-                </Form.Select>
+              <td style={{ borderRight: 'none', padding: '0.5rem' }}>
+                <AutocompleteSelect
+                  options={unassignedProjects.map((project) => ({
+                    value: project.id.toString(),
+                    label: project.displayLabel,
+                  }))}
+                  value={selectedProjectId || null}
+                  onChange={(value) => setSelectedProjectId(value || '')}
+                  placeholder='Select a project'
+                />
               </td>
-              <td colSpan={7}>
+              <td colSpan={7} style={{ verticalAlign: 'middle', borderLeft: 'none' }}>
                 <Button
                   size="sm"
                   variant="secondary"
