@@ -26,7 +26,7 @@ export const UserEdit = ({ userUid }: { userUid: string }) => {
         <Col md={7}>
           <UserForm user={user} />
         </Col>
-        <Col md={{ span: 4, offset: 1 }} style={{ borderLeft: '1px solid #ddd', paddingLeft: '20px' }}>
+        <Col md={{ span: 4, offset: 1 }} className="border-start ps-4">
           <UserAPIKeyGenerationForm userUid={user.uid} apiKeyDigest={user.apiKeyDigest} />
         </Col>
       </Row>

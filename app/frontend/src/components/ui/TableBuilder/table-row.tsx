@@ -7,7 +7,7 @@ interface TableRowProps<T> {
 
 const TableRow = <T extends object>({ row }: TableRowProps<T>) => {
   return (
-    <tr key={row.id} style={{ verticalAlign: 'middle' }}>
+    <tr key={row.id} className="align-middle">
       {row.getVisibleCells().map((cell: Cell<T, unknown>) => (
         <td key={cell.id}>
           {flexRender(cell.column.columnDef.cell, cell.getContext())}

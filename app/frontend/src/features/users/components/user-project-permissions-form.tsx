@@ -69,6 +69,10 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
     );
   }, [projectsQuery.data?.projects, data]);
 
+  const nonAdminUsers = useMemo(() => {
+    return usersQuery.data?.users?.filter(user => !user.isAdmin) || [];
+  }, [usersQuery.data?.users]);
+
   const table = useReactTable({
     data,
     columns: editableColumnDefs,
@@ -183,12 +187,11 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
       <CopyOtherPermissionsDisplay
         onSelectUser={(uid: string) => setSelectedUserUid(uid)}
         selectedUserUid={selectedUserUid}
-        usersList={usersQuery.data?.users || []}
-        userUid={userUid}
+        usersList={nonAdminUsers}
         mergeUserPermissions={mergeUserPermissions}
       />
 
-      <BTable striped bordered hover responsive size="md" style={{ overflow: 'visible' }} className="mt-3">
+      <BTable striped bordered hover responsive size="md" className="overflow-visible mt-3">
         <colgroup>
           <col style={{ width: '250px' }} />
           <col />
@@ -206,20 +209,9 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
           />
         ))}
         <tbody>
-          {data.length === 0 && (
-            <tr>
-              <td colSpan={8} className="text-center">
-                No project permissions assigned.
-              </td>
-            </tr>
-          )}
-          {table.getRowModel().rows.map((row) => (
-            <TableRow row={row} key={row.id} />
-          ))}
-
           {unassignedProjects.length > 0 && (
             <tr>
-              <td style={{ borderRight: 'none', padding: '0.5rem' }}>
+              <td className="border-end-0 px-2 py-3 align-middle">
                 <AutocompleteSelect
                   options={unassignedProjects.map((project) => ({
                     value: project.id.toString(),
@@ -230,7 +222,7 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
                   placeholder='Select a project'
                 />
               </td>
-              <td colSpan={7} style={{ verticalAlign: 'middle', borderLeft: 'none' }}>
+              <td colSpan={7} className="align-middle border-start-0">
                 <Button
                   size="sm"
                   variant="secondary"
@@ -242,10 +234,21 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
               </td>
             </tr>
           )}
+          {data.length === 0 && (
+            <tr>
+              <td colSpan={8} className="text-center text-muted py-4">
+                No project permissions assigned.
+              </td>
+            </tr>
+          )}
+          {table.getRowModel().rows.map((row) => (
+            <TableRow row={row} key={row.id} />
+          ))}
         </tbody>
       </BTable>
 
-      <div className="d-flex gap-2 align-items-center">
+      {/* Save button should remain above the fold, in case we have a long list of projects */}
+      <div className="d-flex align-items-center sticky-bottom gap-2 py-3 bg-white">
         <Button
           variant="primary"
           onClick={handleSave}

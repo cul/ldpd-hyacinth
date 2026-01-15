@@ -26,7 +26,7 @@ function TableBuilder<T extends object>({ data, columns }: TableBuilderProps<T>)
   })
 
   return (
-    <BTable striped bordered hover responsive size="md">
+    <BTable striped bordered hover responsive size="md" className="rounded-4">
       {table.getHeaderGroups().map((headerGroup) => (
         <TableHeader
           key={headerGroup.id}

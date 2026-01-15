@@ -39,28 +39,28 @@ export const editableColumnDefs = [
     cell: (info) => info.getValue(),
   }),
   columnHelper.accessor('canRead', {
-    header: 'Can Read',
+    header: 'Read',
     // Read permission is always true and not editable
     cell: (info) => cellAsReadOnlyCheckbox(info),
   }),
   columnHelper.accessor('canUpdate', {
-    header: 'Can Update',
+    header: 'Update',
     cell: (info) => cellAsEditableCheckbox(info),
   }),
   columnHelper.accessor('canCreate', {
-    header: 'Can Create',
+    header: 'Create',
     cell: (info) => cellAsEditableCheckbox(info),
   }),
   columnHelper.accessor('canDelete', {
-    header: 'Can Delete',
+    header: 'Delete',
     cell: (info) => cellAsEditableCheckbox(info),
   }),
   columnHelper.accessor('canPublish', {
-    header: 'Can Publish',
+    header: 'Publish',
     cell: (info) => cellAsEditableCheckbox(info),
   }),
   columnHelper.accessor('isProjectAdmin', {
-    header: 'Is Project Admin',
+    header: 'Project Admin',
     cell: (info) => cellAsEditableCheckbox(info),
   }),
   columnHelper.display({
@@ -85,27 +85,27 @@ export const readOnlyColumnDefs = [
     cell: (info) => info.getValue(),
   }),
   columnHelper.accessor('canRead', {
-    header: 'Can Read',
+    header: 'Read',
     cell: (info) => cellAsReadOnlyCheckbox(info),
   }),
   columnHelper.accessor('canUpdate', {
-    header: 'Can Update',
+    header: 'Update',
     cell: (info) => cellAsReadOnlyCheckbox(info),
   }),
   columnHelper.accessor('canCreate', {
-    header: 'Can Create',
+    header: 'Create',
     cell: (info) => cellAsReadOnlyCheckbox(info),
   }),
   columnHelper.accessor('canDelete', {
-    header: 'Can Delete',
+    header: 'Delete',
     cell: (info) => cellAsReadOnlyCheckbox(info),
   }),
   columnHelper.accessor('canPublish', {
-    header: 'Can Publish',
+    header: 'Publish',
     cell: (info) => cellAsReadOnlyCheckbox(info),
   }),
   columnHelper.accessor('isProjectAdmin', {
-    header: 'Is Project Admin',
+    header: 'Project Admin',
     cell: (info) => cellAsReadOnlyCheckbox(info),
   }),
 ];

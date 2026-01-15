@@ -7,7 +7,6 @@ interface CopyOtherPermissionsDisplayProps {
   onSelectUser: (uid: string) => void;
   selectedUserUid: string;
   usersList: User[];
-  userUid: string;
   mergeUserPermissions: () => void;
 }
 
@@ -16,7 +15,6 @@ export const CopyOtherPermissionsDisplay = ({
   onSelectUser,
   selectedUserUid,
   usersList,
-  userUid,
   mergeUserPermissions
 }: CopyOtherPermissionsDisplayProps) => {
   return (
