@@ -3,7 +3,6 @@ class ExportSearchResultsToCsvJob < ActiveJob::Base
 
   SUPPRESSED_ON_EXPORT = [
     '_dc_type', '_state', '_title', '_created', '_modified', '_created_by', '_modified_by',
-    '_digital_object_data_location_uri',
     '_project.uri', '_project.short_label'
   ]
   INTERNAL_FIELD_REGEXES_ALLOWED_ON_IMPORT = [

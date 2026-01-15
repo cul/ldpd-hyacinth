@@ -79,9 +79,10 @@ module DigitalObject::Persistence
       @db_record.save! # Save timestamps + updates to modifed_by, etc.
 
       # Write to digital_object_data file
-      digital_object_data_file_path = Hyacinth::Utils::UriUtils.location_uri_to_file_path(@db_record.digital_object_data_location_uri)
+      # NOTE: This file is being written to, but isn't being read by any processes right now.  It's something that
+      # we will potentially use more later on when we decouple Hyacinth from Fedora.
+      digital_object_data_file_path = Hyacinth::Utils::PathUtils.data_file_path_for_uuid(self.uuid)
       FileUtils.mkdir_p(File.dirname(digital_object_data_file_path))
-
       IO.write(digital_object_data_file_path, self.to_json)
 
       begin
