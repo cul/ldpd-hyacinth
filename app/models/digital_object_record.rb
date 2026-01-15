@@ -4,6 +4,9 @@ class DigitalObjectRecord < ApplicationRecord
 
   after_initialize :assign_uuid_and_digital_object_data_location_uri!, if: :new_record?
 
+  # DB column currently has a limit of 1000, so this validation should match
+  validates :digital_object_data_location_uri, length: { maximum: 1000 }
+
   # def data_file_path
   #   self.uuid.present? ? Hyacinth::Utils::PathUtils.data_file_path_for_uuid(self.uuid) : nil
   # end
