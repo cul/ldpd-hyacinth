@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { Spinner, Button, Alert, Table as BTable } from 'react-bootstrap';
 import { useReactTable, getCoreRowModel } from '@tanstack/react-table';
 
@@ -13,6 +13,7 @@ import { ProjectPermission } from '@/types/api';
 import { editableColumnDefs } from './project-permissions-column-defs';
 import { CopyOtherPermissionsDisplay } from './copy-other-user-permissions-display';
 import { AutocompleteSelect } from '@/components/ui/autocomplete-select';
+import { arePermissionArraysEqual } from '../utils/permissions';
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData> {
@@ -32,9 +33,11 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
   const usersQuery = useUsers();
 
   const [data, setData] = useState<ProjectPermission[]>([]);
-  const [hasChanges, setHasChanges] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
   const [selectedUserUid, setSelectedUserUid] = useState<string>('');
+
+  // Keep track of original data to compare for changes
+  const originalDataRef = useRef<ProjectPermission[]>([]);
 
   // Fetch selected user's permissions only when a user is selected
   const selectedUserPermissionsQuery = useUserProjects({
@@ -47,7 +50,7 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
   const updatePermissionsMutation = useUpdateUserProjectPermissions({
     mutationConfig: {
       onSuccess: () => {
-        setHasChanges(false);
+        originalDataRef.current = data;
       },
     },
   });
@@ -55,7 +58,7 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
   React.useEffect(() => {
     if (userPermissionsQuery.data) {
       setData(userPermissionsQuery.data);
-      setHasChanges(false);
+      originalDataRef.current = userPermissionsQuery.data;
     }
   }, [userPermissionsQuery.data]);
 
@@ -90,15 +93,16 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
             return row;
           })
         );
-        // TODO: Only set hasChanges to true if the new data is different from the original data
-        setHasChanges(true);
       },
       removeRow: (rowIndex: number) => {
         setData((old) => old.filter((_, index) => index !== rowIndex));
-        setHasChanges(true);
       }
     },
   });
+
+  const hasChanges = useMemo(() => {
+    return !arePermissionArraysEqual(data, originalDataRef.current);
+  }, [data]);
 
   const handleSave = () => {
     updatePermissionsMutation.mutate({
@@ -122,7 +126,6 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
     });
 
     setData(mergedData);
-    setHasChanges(true);
     setSelectedUserUid('');
   };
 
@@ -146,7 +149,6 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
 
       setData((old) => [...old, newPermission]);
       setSelectedProjectId('');
-      setHasChanges(true);
     }
   };
 
