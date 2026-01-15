@@ -27,6 +27,8 @@ class Hyacinth::Utils::CsvImportExportUtils
       unless found_header_row
         if row[0].start_with?('_')
           # found header row
+
+          convert_legacy_headers_to_modern_headers!(row)
           header.fields = row.map { |header_data| header_to_input_field(header_data) }
           found_header_row = true
         end
@@ -36,6 +38,31 @@ class Hyacinth::Utils::CsvImportExportUtils
       # process the rest of the lines ...
       yield header.document_for(row), csv_row_number
     end
+  end
+
+  def self.convert_legacy_headers_to_modern_headers!(header_row)
+    # For (temporary) backwards compatibility purposes, we will convert certain old headers to new headers.
+
+    # NOTE: The conversion rules below were added on 2026-01-14.
+    header_row.map! do |header_row_cell_value|
+      # Main file headers
+      if header_row_cell_value == '_import_file.import_type'
+        next '_import_file.main.import_type'
+      elsif header_row_cell_value == '_import_file.import_path'
+        next '_import_file.main.import_location'
+      elsif header_row_cell_value == '_import_file.original_file_path'
+        next '_import_file.main.original_file_path'
+      # Service copy headers
+      elsif header_row_cell_value == '_import_file.service_copy_import_type'
+        next '_import_file.service.import_type'
+      elsif header_row_cell_value == '_import_file.service_copy_import_path'
+        next '_import_file.service.import_location'
+      end
+
+      header_row_cell_value
+    end
+
+    header_row
   end
 
   def self.header_to_input_field(header_data)

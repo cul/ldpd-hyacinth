@@ -16,7 +16,9 @@ class ExportSearchResultsToCsvJob < ActiveJob::Base
     *DigitalObject::Asset::MAIN_RESOURCE_NAME.yield_self { |resource_type_name| ["_import_file.#{resource_type_name}.import_type", "_import_file.#{resource_type_name}.import_location", "_import_file.#{resource_type_name}.original_file_path"] },
     *DigitalObject::Asset::SERVICE_RESOURCE_NAME.yield_self { |resource_type_name| ["_import_file.#{resource_type_name}.import_type", "_import_file.#{resource_type_name}.import_location"] },
     *DigitalObject::Asset::ACCESS_RESOURCE_NAME.yield_self { |resource_type_name| "_import_file.#{resource_type_name}.import_location" },
-    *DigitalObject::Asset::POSTER_RESOURCE_NAME.yield_self { |resource_type_name| "_import_file.#{resource_type_name}.import_location" }
+    *DigitalObject::Asset::POSTER_RESOURCE_NAME.yield_self { |resource_type_name| "_import_file.#{resource_type_name}.import_location" },
+    # NOTE: As of 2026-01-14, we are continuing to allow old import file fields below, for backwards compatibility.  We will remove support for these headers some time in the future.
+    '_import_file.import_type', '_import_file.import_path', '_import_file.original_file_path', '_import_file.service_copy_import_type', '_import_file.service_copy_import_path'
   ]
   CONTROLLED_TERM_CORE_SUBFIELDS_ALLOWED_ON_IMPORT = ['uri', 'value', 'authority', 'type']
 
