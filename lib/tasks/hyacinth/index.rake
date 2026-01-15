@@ -201,7 +201,10 @@ namespace :hyacinth do
       pool = Concurrent::ThreadPoolExecutor.new(
         min_threads: thread_pool_size,
         max_threads: thread_pool_size,
-        max_queue: 0, # Don't build up tasks in a queue. Wait until a pool worker is available.
+        # Don't build up tasks in a queue. Wait until a pool worker is available.
+        # It's important to set some value here because a value of 0 appears to allow
+        # the queue to grow infinitely, which leads to very high memory usage over time.
+        max_queue: 5,
         fallback_policy: :caller_runs # If the queue is full and we try to add a task to it, run the operation synchronously
       )
 

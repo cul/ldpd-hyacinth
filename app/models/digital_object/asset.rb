@@ -430,7 +430,7 @@ class DigitalObject::Asset < DigitalObject::Base
   end
 
   def player_mime_type
-    if HYACINTH.fetch(:media_streaming, {})['wowza'].present?
+    if HYACINTH.fetch(:media_streaming, {})[:wowza].present?
       'application/x-mpegURL'
     else
       'video/mp4'
@@ -441,11 +441,11 @@ class DigitalObject::Asset < DigitalObject::Base
     return nil if location_uri_for_resource('access').blank?
 
     # if no media_streaming config is present for wowza, always default to progressive download for the player URL
-    return '/digital_objects/' + self.pid + '/download?resource_name=access' unless HYACINTH.fetch(:media_streaming, {})['wowza'].present?
+    return '/digital_objects/' + self.pid + '/download?resource_name=access' unless HYACINTH.fetch(:media_streaming, {})[:wowza].present?
 
     # use the media streaming config. only wowza is currently supported as a streaming source.
     # TODO: This is unreachable code
-    raise 'Unsupported media_streaming config: ' + HYACINTH[:media_streaming].inspect unless HYACINTH[:media_streaming]['wowza'].present?
+    raise 'Unsupported media_streaming config: ' + HYACINTH[:media_streaming].inspect unless HYACINTH[:media_streaming][:wowza].present?
 
     access_copy_storage_object = Hyacinth::Storage.storage_object_for(location_uri_for_resource('access'))
     unless access_copy_storage_object.is_a?(Hyacinth::Storage::FileObject)
@@ -455,15 +455,15 @@ class DigitalObject::Asset < DigitalObject::Base
 
     local_access_path = access_copy_storage_object.path
 
-    wowza_config = HYACINTH[:media_streaming]['wowza']
+    wowza_config = HYACINTH[:media_streaming][:wowza]
     Wowza::SecureToken::Params.new({
-      stream: wowza_config['application'] + '/_definst_/' + (local_access_path.downcase.index('.mp3') ? 'mp3:' : 'mp4:') + local_access_path.gsub(/^\//, ''),
-      secret: wowza_config['shared_secret'],
+      stream: wowza_config[:application] + '/_definst_/' + (local_access_path.downcase.index('.mp3') ? 'mp3:' : 'mp4:') + local_access_path.gsub(/^\//, ''),
+      secret: wowza_config[:shared_secret],
       client_ip: client_ip,
       starttime: Time.now.to_i,
-      endtime: Time.now.to_i + wowza_config['token_lifetime'].to_i,
-      prefix: wowza_config['token_prefix']
-    }).to_url_with_token_hash(wowza_config['host'], wowza_config['ssl_port'], 'hls-ssl')
+      endtime: Time.now.to_i + wowza_config[:token_lifetime].to_i,
+      prefix: wowza_config[:token_prefix]
+    }).to_url_with_token_hash(wowza_config[:host], wowza_config[:ssl_port], 'hls-ssl')
   end
 
   def pcdm_type
