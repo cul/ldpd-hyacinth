@@ -3,14 +3,14 @@ import { Spinner, Button, Alert, Table as BTable } from 'react-bootstrap';
 import { useReactTable, getCoreRowModel } from '@tanstack/react-table';
 
 // Hooks and components
+import TableHeader from '@/components/ui/TableBuilder/table-header';
 import TableRow from '@/components/ui/TableBuilder/table-row';
 import { useProjects } from '@/features/projects/api/get-projects';
 import { useUsers } from '../api/get-users';
 import { useUserProjects } from '../api/get-user-projects';
 import { useUpdateUserProjectPermissions } from '../api/update-user-projects';
 import { ProjectPermission } from '@/types/api';
-import { columnDefs } from './project-permissions-column-defs';
-import TableHeader from '@/components/ui/TableBuilder/table-header';
+import { editableColumnDefs } from './project-permissions-column-defs';
 import { CopyOtherPermissionsDisplay } from './copy-other-user-permissions-display';
 import { AutocompleteSelect } from '@/components/ui/autocomplete-select';
 
@@ -20,6 +20,7 @@ declare module '@tanstack/react-table' {
     removeRow: (rowIndex: number) => void;
   }
 }
+
 /*
 This component uses TanStack table to render and manage user project permissions
 We already have a non-editable TableBuilder component, but since this form requires editable cells 
@@ -70,7 +71,7 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
 
   const table = useReactTable({
     data,
-    columns: columnDefs,
+    columns: editableColumnDefs,
     getCoreRowModel: getCoreRowModel(),
     meta: {
       updateData: (rowIndex: number, columnId: string, value: boolean) => {
@@ -187,7 +188,7 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
         mergeUserPermissions={mergeUserPermissions}
       />
 
-      <BTable striped bordered hover responsive size="sm" style={{ overflow: 'visible' }}>
+      <BTable striped bordered hover responsive size="md" style={{ overflow: 'visible' }} className="mt-3">
         <colgroup>
           <col style={{ width: '250px' }} />
           <col />
@@ -205,6 +206,13 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
           />
         ))}
         <tbody>
+          {data.length === 0 && (
+            <tr>
+              <td colSpan={8} className="text-center">
+                No project permissions assigned.
+              </td>
+            </tr>
+          )}
           {table.getRowModel().rows.map((row) => (
             <TableRow row={row} key={row.id} />
           ))}

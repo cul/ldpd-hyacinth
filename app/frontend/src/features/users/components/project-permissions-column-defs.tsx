@@ -20,22 +20,28 @@ const cellAsEditableCheckbox = (info: any) => {
   )
 }
 
-export const columnDefs = [
+const cellAsReadOnlyCheckbox = (info: any) => {
+  const value = info.getValue()
+
+  return (
+    <Form.Check
+      type="checkbox"
+      checked={value}
+      disabled
+    />
+  )
+}
+
+// Column definitions for editable user project permissions table
+export const editableColumnDefs = [
   columnHelper.accessor('projectDisplayLabel', {
     header: 'Project',
     cell: (info) => info.getValue(),
-    // enableSorting: true # TODO: Enable sorting
   }),
   columnHelper.accessor('canRead', {
     header: 'Can Read',
     // Read permission is always true and not editable
-    cell: (info) => (
-      <Form.Check
-        type="checkbox"
-        checked={info.getValue()}
-        disabled
-      />
-    ),
+    cell: (info) => cellAsReadOnlyCheckbox(info),
   }),
   columnHelper.accessor('canUpdate', {
     header: 'Can Update',
@@ -69,5 +75,37 @@ export const columnDefs = [
         Delete
       </Button>
     )
+  }),
+];
+
+// Column definitions for read-only user project permissions table (rendered in settings)
+export const readOnlyColumnDefs = [
+  columnHelper.accessor('projectDisplayLabel', {
+    header: 'Project',
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor('canRead', {
+    header: 'Can Read',
+    cell: (info) => cellAsReadOnlyCheckbox(info),
+  }),
+  columnHelper.accessor('canUpdate', {
+    header: 'Can Update',
+    cell: (info) => cellAsReadOnlyCheckbox(info),
+  }),
+  columnHelper.accessor('canCreate', {
+    header: 'Can Create',
+    cell: (info) => cellAsReadOnlyCheckbox(info),
+  }),
+  columnHelper.accessor('canDelete', {
+    header: 'Can Delete',
+    cell: (info) => cellAsReadOnlyCheckbox(info),
+  }),
+  columnHelper.accessor('canPublish', {
+    header: 'Can Publish',
+    cell: (info) => cellAsReadOnlyCheckbox(info),
+  }),
+  columnHelper.accessor('isProjectAdmin', {
+    header: 'Is Project Admin',
+    cell: (info) => cellAsReadOnlyCheckbox(info),
   }),
 ];

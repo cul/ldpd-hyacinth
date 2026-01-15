@@ -20,7 +20,7 @@ export const CopyOtherPermissionsDisplay = ({
   mergeUserPermissions
 }: CopyOtherPermissionsDisplayProps) => {
   return (
-    <div className="mb-4">
+    <div className="mb-4" style={{ borderBottom: '1px solid #dee2e6', paddingBottom: '1.5rem' }}>
       <p>You can copy another user's project permissions by selecting their name from a dropdown. The permissions will be merged with any existing permissions.
         <br />
         Don't worry, you can still make individual adjustments before saving.

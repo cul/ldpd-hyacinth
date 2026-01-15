@@ -59,15 +59,6 @@ export const createAppRouter = (queryClient: QueryClient) =>
                 },
               ]
             },
-            // Move to a nested route under :userUid, maybe add layout with tabs
-            // {
-            //   path: ':userUid/edit/project-permissions',
-            //   lazy: () => import('./routes/users/project-permissions').then(convert(queryClient)),
-            // },
-            // {
-            //   path: ':userUid/edit',
-            //   lazy: () => import('./routes/users/user').then(convert(queryClient)),
-            // },
             {
               path: 'new',
               lazy: () => import('./routes/users/new-user').then(convert(queryClient)),
@@ -81,7 +72,10 @@ export const createAppRouter = (queryClient: QueryClient) =>
               index: true,
               lazy: () => import('./routes/settings/settings').then(convert(queryClient))
             },
-            { path: 'project-permissions', Component: () => <div>Edit Current User Project Permissions</div> },
+            {
+              path: 'project-permissions',
+              lazy: () => import('./routes/settings/project-permissions').then(convert(queryClient))
+            },
           ]
         }
       ],
