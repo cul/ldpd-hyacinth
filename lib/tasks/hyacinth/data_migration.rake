@@ -62,5 +62,23 @@ namespace :hyacinth do
         end
       end
     end
+
+    task :add_digital_object_data_location_uri_values_where_missing => :environment do
+      number_of_objects_updated = 0
+      batch_size = 1000
+      DigitalObjectRecord.where(digital_object_data_location_uri: nil).find_in_batches(batch_size: batch_size).with_index do |batch, batch_number|
+        batch.each do |digital_object_record|
+          if digital_object_record.digital_object_data_location_uri.nil?
+            digital_object_record.digital_object_data_location_uri = Hyacinth::Utils::UriUtils.file_path_to_location_uri(
+              Hyacinth::Utils::PathUtils.data_file_path_for_uuid(digital_object_record.uuid)
+            )
+            digital_object_record.save!
+            number_of_objects_updated += 1
+          end
+        end
+        puts "Updated #{(batch_size * batch_number) + batch.size} objects."
+      end
+      puts "Done. Updated: #{number_of_objects_updated} DigitalObjectRecords"
+    end
   end
 end
