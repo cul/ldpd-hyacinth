@@ -1,11 +1,13 @@
 {
    "pid":"cul:bg79cnp5k9",
+   "uuid":"5bac4062-5e09-4f50-9b48-ac931d269a7d",
    "created":"2015-02-02T17:57:55Z",
    "modified":"2016-07-28T00:46:25Z",
    "created_by":"Durst Service Account",
    "modified_by":"Durst Service Account",
    "identifiers":[
-      "cul:bg79cnp5k9"
+      "cul:bg79cnp5k9",
+      "5bac4062-5e09-4f50-9b48-ac931d269a7d"
    ],
    "title":"Petition no. 2 : CP 19302 : zoning map 10b",
    "state":"A",

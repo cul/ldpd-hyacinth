@@ -2,12 +2,12 @@ class ExportSearchResultsToCsvJob < ActiveJob::Base
   include Hyacinth::Csv::Flatten
 
   SUPPRESSED_ON_EXPORT = [
-    '_uuid', '_dc_type', '_state', '_title', '_created', '_modified', '_created_by', '_modified_by',
+    '_dc_type', '_state', '_title', '_created', '_modified', '_created_by', '_modified_by',
     '_digital_object_data_location_uri',
     '_project.uri', '_project.short_label'
   ]
   INTERNAL_FIELD_REGEXES_ALLOWED_ON_IMPORT = [
-    '_pid', '_doi', '_merge_dynamic_fields', '_publish', '_first_published', '_digital_object_type.string_key',
+    '_pid', '_uuid', '_doi', '_merge_dynamic_fields', '_publish', '_first_published', '_digital_object_type.string_key',
     '_restrictions.restricted_size_image', '_restrictions.restricted_onsite',
     '_perform_derivative_processing', '_mint_reserved_doi',
     /^_publish_target_data\.(string_key|publish_url|api_key|representative_image_pid|short_title|short_description|full_description|restricted|slug|site_url)$/,
@@ -66,12 +66,13 @@ class ExportSearchResultsToCsvJob < ActiveJob::Base
   def map_temp_field_indexes(search_params, user, map = {})
     # Common fields to all objects
     map['_pid'] ||= map.length
+    map['_uuid'] ||= map.length
     map['_project.string_key'] ||= map.length
     map['_digital_object_type.string_key'] ||= map.length
     DigitalObject::Base.search_in_batches(search_params, user, 50) do |digital_object_data|
       ### Handle core fields
 
-      # identifiers, except for the pid or uuid which are shown in their own columns (note: uuid isn't currently shown in CSV, but will be at some point)
+      # identifiers, except for the pid or uuid which are shown in their own columns
       digital_object_data.fetch('identifiers', []).reject! do |identifier|
         identifier == digital_object_data['pid'] || identifier == digital_object_data['uuid']
       end
@@ -113,7 +114,10 @@ class ExportSearchResultsToCsvJob < ActiveJob::Base
     # Open new CSV for writing
     CSV.open(path_to_csv_file, 'wb') do |final_csv|
       # Write out human-friendly column display labels
-      final_csv << Hyacinth::Utils::CsvFriendlyHeaders.hyacinth_headers_to_friendly_headers(field_list)
+      # NOTE: Disabling this now because nobody really cares about the "friendly headers" and it's inconvenient to have
+      # two header rows when viewing a csv in a csv editing program.
+      # TODO: Clean up "friendly header" code later on since it's not needed anymore.
+      # final_csv << Hyacinth::Utils::CsvFriendlyHeaders.hyacinth_headers_to_friendly_headers(field_list)
 
       # Write out column headers
       final_csv << field_list

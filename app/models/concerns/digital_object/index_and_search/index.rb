@@ -20,8 +20,8 @@ module DigitalObject::IndexAndSearch::Index
       parent_digital_object_pids_sim: parent_digital_object_pids,
       ordered_child_digital_object_pids_ssm: ordered_child_digital_object_pids,
       ordered_child_digital_object_pids_sim: ordered_child_digital_object_pids,
-      number_of_ordered_child_digital_object_pids_ssm: ordered_child_digital_object_pids.length,
-      number_of_ordered_child_digital_object_pids_sim: ordered_child_digital_object_pids.length,
+      number_of_ordered_child_digital_object_pids_is: ordered_child_digital_object_pids.length,
+      number_of_ordered_child_digital_object_pids_ii: ordered_child_digital_object_pids.length,
       has_child_digital_objects_bi: ordered_child_digital_object_pids.length > 0,
       hyacinth_type_si: digital_object_type.string_key,
       hyacinth_type_ss: digital_object_type.string_key,
@@ -63,7 +63,7 @@ module DigitalObject::IndexAndSearch::Index
       doc[:flattened_dynamic_field_data_ts] = {}
     end
 
-    doc[:dc_type_ssm] = dc_type # Store dc_type for all records, assets or not
+    doc[:dc_type_ss] = dc_type # Store dc_type for all records, assets or not
 
     # Special indexing additions for Assets
     if self.is_a?(DigitalObject::Asset)

@@ -176,10 +176,7 @@ RSpec.describe "DigitalObjects", type: :request do
       end
 
       let(:sample_item_as_csv_export) {
-        csv_data = CSV.parse( fixture('sample_digital_object_data/sample_item_as_csv_export.csv').read )
-        # Update fixture first-row headings so that we match the headers of the generated csv
-        csv_data[0] = Hyacinth::Utils::CsvFriendlyHeaders.hyacinth_headers_to_friendly_headers(csv_data[1])
-        csv_data
+        CSV.parse( fixture('sample_digital_object_data/sample_item_as_csv_export.csv').read )
       }
 
       let(:response_status) { response.status }
@@ -189,7 +186,8 @@ RSpec.describe "DigitalObjects", type: :request do
       # Get download location from csv_export record
       let(:path_to_csv_file) { csv_export.path_to_csv_file }
       let(:csv) { CSV.read(path_to_csv_file) }
-      let(:generated_pid) { csv[2][0] }
+      let(:generated_pid) { csv[1][0] }
+      let(:generated_uuid) { csv[1][1] }
       context "search request method is GET" do
         before {
           get search_results_to_csv_digital_objects_path, params: {
@@ -206,9 +204,12 @@ RSpec.describe "DigitalObjects", type: :request do
           expect(export_id).to be_a(Integer)
           # Test environment processes jobs immediately, so the export should be done and should have a status of "success"
           expect(csv_export.success?).to eq(true)
-          expect(csv[1][0]).to eq('_pid')
+          expect(csv[0][0]).to eq('_pid')
+          expect(csv[0][1]).to eq('_uuid')
           # The PID field is randomly generated, so we'll copy the pid from the result to the csv fixture that we're testing against
-          sample_item_as_csv_export[2][0] = generated_pid
+          sample_item_as_csv_export[1][0] = generated_pid
+          # The UUID field is randomly generated, so we'll copy the uuid from the result to the csv fixture that we're testing against
+          sample_item_as_csv_export[1][1] = generated_uuid
           expect(csv).to eq(sample_item_as_csv_export)
         end
       end
@@ -229,9 +230,12 @@ RSpec.describe "DigitalObjects", type: :request do
           expect(export_id).to be_a(Integer)
           # Text environment processes jobs immediately, so the export should be done and should have a status of "success"
           expect(csv_export.success?).to eq(true)
-          expect(csv[1][0]).to eq('_pid')
+          expect(csv[0][0]).to eq('_pid')
+          expect(csv[0][1]).to eq('_uuid')
           # The PID field is randomly generated, so we'll copy the pid from the result to the csv fixture that we're testing against
-          sample_item_as_csv_export[2][0] = generated_pid
+          sample_item_as_csv_export[1][0] = generated_pid
+          # The UUID field is randomly generated, so we'll copy the uuid from the result to the csv fixture that we're testing against
+          sample_item_as_csv_export[1][1] = generated_uuid
           expect(csv).to eq(sample_item_as_csv_export)
         end
       end

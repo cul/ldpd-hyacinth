@@ -21,11 +21,12 @@ describe ExportSearchResultsToCsvJob, :type => :unit do
     let(:expected) do
       {
         '_pid' => 0,
-        '_project.string_key' => 1,
-        '_digital_object_type.string_key' => 2,
-        '_something-1' => 3,
-        'characteristic' => 4,
-        '_something-2' => 5
+        '_uuid' => 1,
+        '_project.string_key' => 2,
+        '_digital_object_type.string_key' => 3,
+        '_something-1' => 4,
+        'characteristic' => 5,
+        '_something-2' => 6
       }
     end
 
@@ -86,9 +87,9 @@ describe ExportSearchResultsToCsvJob, :type => :unit do
         actual_csv = CSV.read(export.path_to_csv_file)
 
         # hyacinth header row
-        expect(actual_csv[1]).to eq(expected_csv[1])
+        expect(actual_csv[0]).to eq(expected_csv[0])
         # data values for single record
-        expect(actual_csv[2]).to eq(expected_csv[2])
+        expect(actual_csv[0]).to eq(expected_csv[0])
       end
     end
   end

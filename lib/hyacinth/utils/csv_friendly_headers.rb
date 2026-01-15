@@ -1,10 +1,10 @@
 class Hyacinth::Utils::CsvFriendlyHeaders
   CORE_FIELD_LABEL_MAPPING = {
-    '_pid' => 'PID',
-    '_digital_object_type.string_key' => 'Digital Object Type > String Key',
-    '_digital_object_type.pid' => 'Digital Object Type > PID',
-    '_project.string_key' => 'Project > String Key',
-    '_project.pid' => 'Project > PID',
+    # '_pid' => 'PID',
+    # '_digital_object_type.string_key' => 'Digital Object Type > String Key',
+    # '_digital_object_type.pid' => 'Digital Object Type > PID',
+    # '_project.string_key' => 'Project > String Key',
+    # '_project.pid' => 'Project > PID',
     # '_asset_data.checksum' => 'Asset Data > Checksum',
     # '_asset_data.file_size_in_bytes' => 'Asset Data > File Size In Bytes',
     # '_asset_data.filesystem_location' => 'Asset Data > Filesystem Location',

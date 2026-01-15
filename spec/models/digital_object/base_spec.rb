@@ -431,13 +431,13 @@ RSpec.describe DigitalObject::Base, :type => :model do
 
       it "returns a document with valid fields" do
         expect(subject).to include(
-          "title_ss" => ["The Catcher in the Rye"],
-          "number_of_ordered_child_digital_object_pids_ssm" => ["0"],
-          "hyacinth_type_ss" => ["item"],
-          "state_ss" => ["A"],
-          "digital_object_type_display_label_ss" => ["Item"],
+          "title_ss" => "The Catcher in the Rye",
+          "number_of_ordered_child_digital_object_pids_is" => 0,
+          "hyacinth_type_ss" => "item",
+          "state_ss" => "A",
+          "digital_object_type_display_label_ss" => "Item",
           "project_display_label_ssm" => ["Test"],
-          "dc_type_ssm" => ["InteractiveResource"],
+          "dc_type_ss" => "InteractiveResource",
         )
       end
 

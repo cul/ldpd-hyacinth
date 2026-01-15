@@ -10,7 +10,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult = function (searchResultDat
   this.digitalObjectTypeDisplayLabel = searchResultData['digital_object_type_display_label_ss'];
   this.parentDigitalObjectPids = searchResultData['parent_digital_object_pids_ssm'] || [];
   this.orderedChildDigitalObjectPids = searchResultData['ordered_child_digital_object_pids_ssm'] || [];
-  this.dcType = searchResultData['dc_type_ssm'] || '';
+  this.dcType = searchResultData['dc_type_ss'] || '';
   this.hyacinthType = searchResultData['hyacinth_type_ss'] || '';
 };
 
