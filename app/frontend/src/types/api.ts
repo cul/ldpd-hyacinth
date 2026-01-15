@@ -17,6 +17,13 @@ export interface User {
   updatedAt: string;
 }
 
+export interface Project {
+  id: number;
+  stringKey: string;
+  displayLabel: string;
+  pid: string;
+}
+
 export interface ProjectPermission {
   projectId: number;
   projectDisplayLabel: string;

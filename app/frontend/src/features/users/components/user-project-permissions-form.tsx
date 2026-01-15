@@ -12,8 +12,8 @@ import { useUpdateUserProjectPermissions } from '../api/update-user-projects';
 import { ProjectPermission } from '@/types/api';
 import { editableColumnDefs } from './project-permissions-column-defs';
 import { CopyOtherPermissionsDisplay } from './copy-other-user-permissions-display';
-import { AutocompleteSelect } from '@/components/ui/autocomplete-select';
 import { arePermissionArraysEqual } from '../utils/permissions';
+import { AddProjectPermissionRow } from './add-project-permission-row';
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData> {
@@ -33,7 +33,6 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
   const usersQuery = useUsers();
 
   const [data, setData] = useState<ProjectPermission[]>([]);
-  const [selectedProjectId, setSelectedProjectId] = useState<string>('');
   const [selectedUserUid, setSelectedUserUid] = useState<string>('');
 
   // Keep track of original data to compare for changes
@@ -47,6 +46,7 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
     }
   });
 
+  // TODO: Extract form logic into a custom hook
   const updatePermissionsMutation = useUpdateUserProjectPermissions({
     mutationConfig: {
       onSuccess: () => {
@@ -129,27 +129,8 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
     setSelectedUserUid('');
   };
 
-  const handleAddProject = () => {
-    if (!selectedProjectId) return;
-
-    const project = unassignedProjects.find((project) => project.id === parseInt(selectedProjectId));
-
-    if (project) {
-      const newPermission: ProjectPermission = {
-        projectId: project.id,
-        projectStringKey: project.stringKey,
-        projectDisplayLabel: project.displayLabel,
-        canRead: true,
-        canCreate: false,
-        canUpdate: false,
-        canDelete: false,
-        canPublish: false,
-        isProjectAdmin: false,
-      };
-
-      setData((old) => [...old, newPermission]);
-      setSelectedProjectId('');
-    }
+  const handleAddProject = (newPermission: ProjectPermission) => {
+    setData((old) => [...old, newPermission]);
   };
 
   if (userPermissionsQuery.isLoading || projectsQuery.isLoading) {
@@ -211,31 +192,10 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
           />
         ))}
         <tbody>
-          {unassignedProjects.length > 0 && (
-            <tr>
-              <td className="border-end-0 px-2 py-3 align-middle">
-                <AutocompleteSelect
-                  options={unassignedProjects.map((project) => ({
-                    value: project.id.toString(),
-                    label: project.displayLabel,
-                  }))}
-                  value={selectedProjectId || null}
-                  onChange={(value) => setSelectedProjectId(value || '')}
-                  placeholder='Select a project'
-                />
-              </td>
-              <td colSpan={7} className="align-middle border-start-0">
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  onClick={handleAddProject}
-                  disabled={!selectedProjectId}
-                >
-                  Add Project
-                </Button>
-              </td>
-            </tr>
-          )}
+          <AddProjectPermissionRow
+            unassignedProjects={unassignedProjects}
+            onAddProject={(newPermission) => handleAddProject(newPermission)}
+          />
           {data.length === 0 && (
             <tr>
               <td colSpan={8} className="text-center text-muted py-4">

@@ -69,7 +69,7 @@ export default function TopNavbar() {
               </NavDropdown>
             </Nav>
             <Nav className="justify-content-end flex-grow-1">
-              <NavDropdown title={user?.firstName || 'Profile'}>
+              <NavDropdown title={user?.firstName || 'Profile'} align="end">
                 {/* Use 'end' to ensure this link is only active on the exact /settings path */}
                 <NavDropdown.Item as={NavLink} to="/settings" end>
                   Settings
@@ -95,7 +95,7 @@ export default function TopNavbar() {
                   ref={logoutFormRef}
                   action="/users/sign_out"
                   method="post"
-                  style={{ display: 'none' }}
+                  className="d-none"
                 >
                   <input type="hidden" name="_method" value="delete" />
                   <input
