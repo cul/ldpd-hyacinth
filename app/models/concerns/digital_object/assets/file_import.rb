@@ -89,7 +89,7 @@ module DigitalObject::Assets::FileImport
     # file if our HYACINTH configuration specifies that we should do so.
     if final_save_location_uri.start_with?('file:')
       file_config = HYACINTH[:default_resource_storage_locations][resource_type.to_sym][:file]
-      apply_permissions_to_local_file(storage_object.path, file_config['group'], file_config['permissions'])
+      apply_permissions_to_local_file(storage_object.path, file_config[:group], file_config[:permissions])
     end
 
     [storage_object.location_uri, "sha256:#{sha256_hexdigest}", import_file_size]

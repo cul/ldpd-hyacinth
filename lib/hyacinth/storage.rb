@@ -42,7 +42,6 @@ module Hyacinth::Storage
 
     path_pieces << Hyacinth::Utils::PathUtils.relative_resource_file_path_for_uuid(
       uuid,
-      project,
       "-#{resource_type}",
       file_extension
     )

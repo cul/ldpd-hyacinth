@@ -62,10 +62,6 @@ class Project < ApplicationRecord
     enabled_dynamic_fields.select(:dynamic_field_id).distinct.pluck(:dynamic_field_id).to_a
   end
 
-  def relative_asset_directory
-    self.string_key
-  end
-
   def ensure_that_title_fields_are_enabled_and_required
     changes_require_save = false
 

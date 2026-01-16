@@ -17,19 +17,18 @@ class Hyacinth::Utils::PathUtils
     [uuid[0, 2], uuid[2, 2], uuid[4, 2], uuid[6, 2], uuid[9, 2], uuid[11, 2]]
   end
 
-  def self.relative_resource_file_path_for_uuid(uuid, project, suffix, extension, mkdir: false)
+  def self.relative_resource_file_path_for_uuid(uuid, suffix, extension, mkdir: false)
     # Clean the extension so it only contains periods, letters a-z and A-Z, and numbers
     clean_extension = extension.downcase.gsub(/[^\.a-z0-9]/, '')
     # Remove any leading period (in case the caller supplied a period)
     clean_extension = clean_extension.sub(/^\./, '')
     filename = "#{uuid}#{suffix}.#{clean_extension}"
 
-    File.join(relative_resource_directory_path_for_uuid(uuid, project), filename)
+    File.join(relative_resource_directory_path_for_uuid(uuid), filename)
   end
 
-  def self.relative_resource_directory_path_for_uuid(uuid, project)
+  def self.relative_resource_directory_path_for_uuid(uuid)
     File.join(
-      project.relative_asset_directory,
       uuid_pairtree(uuid),
       uuid
     )
