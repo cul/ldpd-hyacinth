@@ -43,15 +43,6 @@ GIT
       sparql
       thread
 
-GIT
-  remote: https://github.com/cul/omniauth-cul
-  revision: 6fb91e21311244c476ecc61fdfad51bb1f93ee81
-  ref: improved-implementation
-  specs:
-    omniauth-cul (0.2.0)
-      devise (>= 4.9)
-      omniauth (>= 2.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -462,9 +453,9 @@ GEM
       logger
       rack (>= 2.2.3)
       rack-protection
-    omniauth-rails_csrf_protection (1.0.2)
-      actionpack (>= 4.2)
-      omniauth (~> 2.0)
+    omniauth-cul (0.3.0)
+      devise (>= 4.9)
+      omniauth (>= 2.0)
     orm_adapter (0.5.0)
     os (1.1.4)
     ostruct (0.6.3)
@@ -806,8 +797,7 @@ DEPENDENCIES
   noid (>= 0.7.1)
   nokogiri (~> 1.18, >= 1.18.10)
   omniauth (~> 2.1)
-  omniauth-cul!
-  omniauth-rails_csrf_protection (~> 1.0)
+  omniauth-cul (~> 0.3.0)
   psych (< 4)
   puma (~> 7.1)
   rack-protection (>= 1.5.5)

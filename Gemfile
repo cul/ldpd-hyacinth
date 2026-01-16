@@ -84,11 +84,8 @@ gem 'nokogiri', '~> 1.18', '>= 1.18.10', force_ruby_platform: true
 # For authentication
 gem 'devise', '~> 4.9'
 gem 'omniauth', '~> 2.1'
-gem 'omniauth-rails_csrf_protection', '~> 1.0'
-# gem 'omniauth-cul', '~> 0.2.0'
+gem 'omniauth-cul', '~> 0.3.0'
 # gem 'omniauth-cul', path: '../omniauth-cul'
-gem 'omniauth-cul', git: 'https://github.com/cul/omniauth-cul', ref: 'improved-implementation'
-# gem 'childprocess', '~> 2.0'
 
 # CUL Fedora Dependencies and Content Models
 gem 'cul_hydra', git: 'https://github.com/cul/cul_hydra', ref: 'wip-upgrade-deps'
