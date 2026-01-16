@@ -299,9 +299,10 @@ class DigitalObject::Base
       chunk_size = 500
       pids.each_slice(chunk_size).each do |subset_of_pids|
         search_response = DigitalObject::Base.search({ 'pids' => subset_of_pids, 'fl' => 'pid,title_ss', 'per_page' => chunk_size }, user_for_access)
+
         if search_response['results'].present?
           search_response['results'].each do |result|
-            pids_to_titles[result['pid']] = result['title_ss'].first
+            pids_to_titles[result['pid']] = result['title_ss']
           end
         end
       end
