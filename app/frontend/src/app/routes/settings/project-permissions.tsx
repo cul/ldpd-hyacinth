@@ -13,8 +13,10 @@ import { requireAuthorization } from '@/lib/loader-authorization';
 export const clientLoader = (queryClient: QueryClient) => async () => {
   const currentUser = await requireAuthorization(queryClient);
 
-  // Prefetch user's project permissions
-  await queryClient.ensureQueryData(getUserProjectsQueryOptions(currentUser.uid));
+  // Only prefetch if user is not an admin
+  if (!currentUser.isAdmin) {
+    await queryClient.ensureQueryData(getUserProjectsQueryOptions(currentUser.uid));
+  }
 
   return { userUid: currentUser.uid };
 };
@@ -22,12 +24,17 @@ export const clientLoader = (queryClient: QueryClient) => async () => {
 const SettingsProjectPermissionsRoute = () => {
   const { data: currentUser } = useCurrentUser();
   const { data: projectPermissions, isLoading } = useUserProjects({
-    userUid: currentUser!.uid
+    userUid: currentUser!.uid,
+    queryConfig: {
+      enabled: !currentUser?.isAdmin,
+    },
   });
 
-  if (isLoading || !projectPermissions) {
+  if (!currentUser?.isAdmin && (isLoading || !projectPermissions)) {
     return <div>Loading permissions...</div>;
   }
+
+  console.log('Current User:', currentUser);
 
   return (
     <Container>
@@ -35,8 +42,11 @@ const SettingsProjectPermissionsRoute = () => {
         <Col>
           <h3 className="mb-4">My Project Permissions</h3>
 
-          {/* Read-only display of permissions */}
-          <TableBuilder data={projectPermissions} columns={readOnlyColumnDefs as ColumnDef<ProjectPermission>[]} />
+          {currentUser?.isAdmin ? (
+            <p>As an admin, you have full permissions for all projects.</p>
+          ) : (
+            <TableBuilder data={projectPermissions!} columns={readOnlyColumnDefs as ColumnDef<ProjectPermission>[]} />
+          )}
         </Col>
       </Row>
     </Container>

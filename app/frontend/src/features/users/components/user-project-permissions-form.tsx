@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useMemo } from 'react';
 import { Spinner, Button, Alert, Table as BTable } from 'react-bootstrap';
 import { useReactTable, getCoreRowModel } from '@tanstack/react-table';
 
@@ -7,13 +7,10 @@ import TableHeader from '@/components/ui/TableBuilder/table-header';
 import TableRow from '@/components/ui/TableBuilder/table-row';
 import { useProjects } from '@/features/projects/api/get-projects';
 import { useUsers } from '../api/get-users';
-import { useUserProjects } from '../api/get-user-projects';
-import { useUpdateUserProjectPermissions } from '../api/update-user-projects';
-import { ProjectPermission } from '@/types/api';
 import { editableColumnDefs } from './project-permissions-column-defs';
 import { CopyOtherPermissionsDisplay } from './copy-other-user-permissions-display';
-import { arePermissionArraysEqual } from '../utils/permissions';
 import { AddProjectPermissionRow } from './add-project-permission-row';
+import { useProjectPermissionsForm } from '../hooks/use-project-permissions-form';
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData> {
@@ -28,39 +25,25 @@ We already have a non-editable TableBuilder component, but since this form requi
 and custom actions, we implement the table logic directly here
 */
 export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => {
-  const userPermissionsQuery = useUserProjects({ userUid });
   const projectsQuery = useProjects();
   const usersQuery = useUsers();
 
-  const [data, setData] = useState<ProjectPermission[]>([]);
-  const [selectedUserUid, setSelectedUserUid] = useState<string>('');
-
-  // Keep track of original data to compare for changes
-  const originalDataRef = useRef<ProjectPermission[]>([]);
-
-  // Fetch selected user's permissions only when a user is selected
-  const selectedUserPermissionsQuery = useUserProjects({
-    userUid: selectedUserUid,
-    queryConfig: {
-      enabled: !!selectedUserUid,
-    }
-  });
-
-  // TODO: Extract form logic into a custom hook
-  const updatePermissionsMutation = useUpdateUserProjectPermissions({
-    mutationConfig: {
-      onSuccess: () => {
-        originalDataRef.current = data;
-      },
-    },
-  });
-
-  React.useEffect(() => {
-    if (userPermissionsQuery.data) {
-      setData(userPermissionsQuery.data);
-      originalDataRef.current = userPermissionsQuery.data;
-    }
-  }, [userPermissionsQuery.data]);
+  const {
+    data,
+    addPermission,
+    updatePermission,
+    removePermission,
+    hasChanges,
+    handleSave,
+    isError,
+    isLoading,
+    error,
+    mutation,
+    // Copy permissions state
+    selectedUserUid,
+    setSelectedUserUid,
+    mergePermissions,
+  } = useProjectPermissionsForm({ userUid });
 
   // Calculate unassigned projects client-side
   const unassignedProjects = useMemo(() => {
@@ -82,65 +65,22 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
     getCoreRowModel: getCoreRowModel(),
     meta: {
       updateData: (rowIndex: number, columnId: string, value: boolean) => {
-        setData((old) =>
-          old.map((row, index) => {
-            if (index === rowIndex) {
-              return {
-                ...row,
-                [columnId]: value,
-              };
-            }
-            return row;
-          })
-        );
+        updatePermission(rowIndex, columnId, value);
       },
       removeRow: (rowIndex: number) => {
-        setData((old) => old.filter((_, index) => index !== rowIndex));
+        removePermission(rowIndex);
       }
     },
   });
 
-  const hasChanges = useMemo(() => {
-    return !arePermissionArraysEqual(data, originalDataRef.current);
-  }, [data]);
-
-  const handleSave = () => {
-    updatePermissionsMutation.mutate({
-      userUid,
-      projectPermissions: data,
-    });
-  };
-
-  const mergeUserPermissions = () => {
-    if (!selectedUserUid || !selectedUserPermissionsQuery.data) return;
-
-    const selectedPermissions = selectedUserPermissionsQuery.data;
-
-    // Merge permissions: add new projects, preserve existing ones
-    const mergedData = [...data];
-    selectedPermissions.forEach(permission => {
-      const existingIndex = mergedData.findIndex(p => p.projectId === permission.projectId);
-      if (existingIndex === -1) {
-        mergedData.push(permission);
-      }
-    });
-
-    setData(mergedData);
-    setSelectedUserUid('');
-  };
-
-  const handleAddProject = (newPermission: ProjectPermission) => {
-    setData((old) => [...old, newPermission]);
-  };
-
-  if (userPermissionsQuery.isLoading || projectsQuery.isLoading) {
+  if (isLoading || projectsQuery.isLoading) {
     return <Spinner animation="border" />;
   }
 
-  if (userPermissionsQuery.isError) {
+  if (isError) {
     return (
       <Alert variant="danger">
-        Error loading permissions: {userPermissionsQuery.error?.message}
+        Error loading permissions: {error?.message}
       </Alert>
     );
   }
@@ -155,14 +95,14 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
 
   return (
     <div>
-      {updatePermissionsMutation.isError && (
-        <Alert variant="danger" dismissible onClose={() => updatePermissionsMutation.reset()}>
-          Error saving permissions: {updatePermissionsMutation.error?.message}
+      {mutation.isError && (
+        <Alert variant="danger" dismissible onClose={() => mutation.reset()}>
+          Error saving permissions: {mutation.error?.message}
         </Alert>
       )}
 
-      {updatePermissionsMutation.isSuccess && (
-        <Alert variant="success" dismissible onClose={() => updatePermissionsMutation.reset()}>
+      {mutation.isSuccess && (
+        <Alert variant="success" dismissible onClose={() => mutation.reset()}>
           Permissions saved successfully!
         </Alert>
       )}
@@ -171,9 +111,10 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
         onSelectUser={(uid: string) => setSelectedUserUid(uid)}
         selectedUserUid={selectedUserUid}
         usersList={nonAdminUsers}
-        mergeUserPermissions={mergeUserPermissions}
+        mergeUserPermissions={mergePermissions}
       />
 
+      {/* TODO: Extract */}
       <BTable striped bordered hover responsive size="md" className="overflow-visible mt-3">
         <colgroup>
           <col style={{ width: '250px' }} />
@@ -194,7 +135,7 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
         <tbody>
           <AddProjectPermissionRow
             unassignedProjects={unassignedProjects}
-            onAddProject={(newPermission) => handleAddProject(newPermission)}
+            onAddProject={(newPermission) => addPermission(newPermission)}
           />
           {data.length === 0 && (
             <tr>
@@ -214,9 +155,9 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
         <Button
           variant="primary"
           onClick={handleSave}
-          disabled={!hasChanges || updatePermissionsMutation.isPending}
+          disabled={!hasChanges || mutation.isPending}
         >
-          {updatePermissionsMutation.isPending ? 'Saving...' : 'Save Changes'}
+          {mutation.isPending ? 'Saving...' : 'Save Changes'}
         </Button>
 
         {hasChanges && (
