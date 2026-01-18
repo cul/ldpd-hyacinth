@@ -56,5 +56,62 @@ namespace :hyacinth do
       puts "Creating user with params: #{user_params}"
       User.create!(user_params.merge({account_type: :standard}))
     end
+
+    task list_user_permissions: :environment do
+      puts '------------------------------'
+
+      uid = ENV['uid']
+
+      if uid.blank?
+        puts "Please supply a uid"
+        next
+      end
+
+      user = User.find_by(uid: uid)
+      if user.blank?
+        puts "Could not find a user with uid: #{uid}"
+        next
+      end
+
+      puts "User: #{user.full_name} (#{user.uid})\n\n"
+
+      if user.is_admin
+        puts 'This user is an admin, so they have full access to all projects.'
+      else
+        project_permissions_for_projects_where_user_has_access = []
+        projects_where_user_does_not_have_permissions = []
+        Project.order(:display_label).each do |project|
+          permissions = ProjectPermission.find_by(project: project, user: user)
+
+          if permissions
+            project_permissions_for_projects_where_user_has_access << permissions
+          else
+            projects_where_user_does_not_have_permissions << project
+          end
+        end
+
+        if project_permissions_for_projects_where_user_has_access.present?
+          puts 'Projects this user has access to:'
+          project_permissions_for_projects_where_user_has_access.each do |project_permission|
+            project = project_permission.project
+            permission_string = 'read'
+            permission_string += ', create' if project_permission.can_create
+            permission_string += ', update' if project_permission.can_update
+            permission_string += ', delete' if project_permission.can_delete
+            permission_string += ', publish' if project_permission.can_publish
+            permission_string += ', project admin' if project_permission.is_project_admin
+            puts "- #{project.display_label} (#{project.string_key}): #{permission_string}"
+          end
+          puts ''
+        end
+
+        if projects_where_user_does_not_have_permissions.present?
+          puts "Projects this user does NOT have access to:"
+          projects_where_user_does_not_have_permissions.each do |project|
+            puts "- #{project.display_label} (#{project.string_key})"
+          end
+        end
+      end
+    end
   end
 end
