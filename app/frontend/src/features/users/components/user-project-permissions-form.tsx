@@ -11,6 +11,7 @@ import { editableColumnDefs } from './project-permissions-column-defs';
 import { CopyOtherPermissionsDisplay } from './copy-other-user-permissions-display';
 import { AddProjectPermissionRow } from './add-project-permission-row';
 import { useProjectPermissionsForm } from '../hooks/use-project-permissions-form';
+import { MutationAlerts } from './mutation-alerts';
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData> {
@@ -95,17 +96,11 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
 
   return (
     <div>
-      {mutation.isError && (
-        <Alert variant="danger" dismissible onClose={() => mutation.reset()}>
-          Error saving permissions: {mutation.error?.message}
-        </Alert>
-      )}
-
-      {mutation.isSuccess && (
-        <Alert variant="success" dismissible onClose={() => mutation.reset()}>
-          Permissions saved successfully!
-        </Alert>
-      )}
+      <MutationAlerts
+        mutation={mutation}
+        successMessage="Permissions saved successfully!"
+        errorMessage="Error saving permissions"
+      />
 
       <CopyOtherPermissionsDisplay
         onSelectUser={(uid: string) => setSelectedUserUid(uid)}

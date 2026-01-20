@@ -5,6 +5,7 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import { useCreateUser } from '../api/create-user';
 import { useUpdateUser } from '../api/update-user';
+import { MutationAlerts } from './mutation-alerts';
 
 type UserFormProps = {
   user?: {
@@ -33,6 +34,8 @@ export const UserForm = ({ user }: UserFormProps) => {
   };
 
   const [formData, setFormData] = useState(initialUser);
+  const createUserMutation = useCreateUser();
+  const updateUserMutation = useUpdateUser();
 
   // Update form data when user data is loaded
   useEffect(() => {
@@ -40,28 +43,6 @@ export const UserForm = ({ user }: UserFormProps) => {
       setFormData(user);
     }
   }, [user]);
-
-  const createUserMutation = useCreateUser({
-    mutationConfig: {
-      onSuccess: () => {
-        alert('User created successfully!');
-      },
-      onError: (error: any) => {
-        alert(`Error creating user: ${error.message || 'Unknown error'}`);
-      },
-    },
-  });
-
-  const updateUserMutation = useUpdateUser({
-    mutationConfig: {
-      onSuccess: () => {
-        alert('User updated successfully!');
-      },
-      onError: (error: any) => {
-        alert(`Error updating user: ${error.message || 'Unknown error'}`);
-      },
-    },
-  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,114 +71,121 @@ export const UserForm = ({ user }: UserFormProps) => {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <p className="text-muted fw-bold text-uppercase">
-        <small>User information</small>
-      </p>
-      <Row className="mb-3">
-        <Form.Group as={Col} md={6} controlId="formGridUID">
-          <Form.Label>UID</Form.Label>
-          <Form.Control
-            type="text"
-            name="uid"
-            placeholder="UID"
-            value={formData.uid}
-            onChange={handleInputChange}
-            readOnly={!!user}
-            disabled={!!user}
-          />
-        </Form.Group>
-      </Row>
-      <Row className="mb-3">
-        <Form.Group controlId="formGridIsActive">
-          <Form.Check
-            type="checkbox"
-            name="isActive"
-            label="Is active?"
-            checked={formData.isActive}
-            onChange={handleInputChange}
-          />
-        </Form.Group>
-      </Row>
-      <Row className="mb-3">
-        <Form.Group as={Col} controlId="formGridFirstName">
-          <Form.Label>First Name</Form.Label>
-          <Form.Control
-            type="text"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleInputChange}
-            placeholder="Enter first name"
-          />
-        </Form.Group>
-
-        <Form.Group as={Col} controlId="formGridLastName">
-          <Form.Label>Last Name</Form.Label>
-          <Form.Control
-            type="text"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleInputChange}
-            placeholder="Enter last name"
-          />
-        </Form.Group>
-      </Row>
-
-      <Form.Group className="mb-3" controlId="formGridEmail">
-        <Form.Label>Email</Form.Label>
-        <Form.Control
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleInputChange}
-          placeholder="Email"
-        />
-      </Form.Group>
-
-      <Row className="mb-3">
+    <>
+      <MutationAlerts
+        mutation={user ? updateUserMutation : createUserMutation}
+        successMessage={user ? "User updated successfully!" : "User created successfully!"}
+        errorMessage={user ? "Error updating user" : "Error creating user"}
+      />
+      <Form onSubmit={handleSubmit}>
         <p className="text-muted fw-bold text-uppercase">
-          <small>Permissions</small>
+          <small>User information</small>
         </p>
-        <Form.Group controlId="formGridIsAdmin">
-          <Form.Check
-            type="checkbox"
-            name="isAdmin"
-            label="Is admin?"
-            checked={formData.isAdmin}
-            onChange={handleInputChange}
-          />
-        </Form.Group>
-        <Form.Group controlId="formGridCanManageControlledVocabularies">
-          <Form.Check
-            type="checkbox"
-            name="canManageAllControlledVocabularies"
-            label="Can Manage Controlled Vocabularies?"
-            checked={formData.canManageAllControlledVocabularies}
-            onChange={handleInputChange}
-          />
-        </Form.Group>
-      </Row>
+        <Row className="mb-3">
+          <Form.Group as={Col} md={6} controlId="formGridUID">
+            <Form.Label>UID</Form.Label>
+            <Form.Control
+              type="text"
+              name="uid"
+              placeholder="UID"
+              value={formData.uid}
+              onChange={handleInputChange}
+              readOnly={!!user}
+              disabled={!!user}
+            />
+          </Form.Group>
+        </Row>
+        <Row className="mb-3">
+          <Form.Group controlId="formGridIsActive">
+            <Form.Check
+              type="checkbox"
+              name="isActive"
+              label="Is active?"
+              checked={formData.isActive}
+              onChange={handleInputChange}
+            />
+          </Form.Group>
+        </Row>
+        <Row className="mb-3">
+          <Form.Group as={Col} controlId="formGridFirstName">
+            <Form.Label>First Name</Form.Label>
+            <Form.Control
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleInputChange}
+              placeholder="Enter first name"
+            />
+          </Form.Group>
 
-      <Form.Group className="mb-3" controlId="formGridAccountType">
-        <Form.Label>Account Type</Form.Label>
-        <Form.Select
-          aria-label="Account Type"
-          name="accountType"
-          value={formData.accountType}
-          onChange={handleSelectChange}
+          <Form.Group as={Col} controlId="formGridLastName">
+            <Form.Label>Last Name</Form.Label>
+            <Form.Control
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleInputChange}
+              placeholder="Enter last name"
+            />
+          </Form.Group>
+        </Row>
+
+        <Form.Group className="mb-3" controlId="formGridEmail">
+          <Form.Label>Email</Form.Label>
+          <Form.Control
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            placeholder="Email"
+          />
+        </Form.Group>
+
+        <Row className="mb-3">
+          <p className="text-muted fw-bold text-uppercase">
+            <small>Permissions</small>
+          </p>
+          <Form.Group controlId="formGridIsAdmin">
+            <Form.Check
+              type="checkbox"
+              name="isAdmin"
+              label="Is admin?"
+              checked={formData.isAdmin}
+              onChange={handleInputChange}
+            />
+          </Form.Group>
+          <Form.Group controlId="formGridCanManageControlledVocabularies">
+            <Form.Check
+              type="checkbox"
+              name="canManageAllControlledVocabularies"
+              label="Can Manage Controlled Vocabularies?"
+              checked={formData.canManageAllControlledVocabularies}
+              onChange={handleInputChange}
+            />
+          </Form.Group>
+        </Row>
+
+        <Form.Group className="mb-3" controlId="formGridAccountType">
+          <Form.Label>Account Type</Form.Label>
+          <Form.Select
+            aria-label="Account Type"
+            name="accountType"
+            value={formData.accountType}
+            onChange={handleSelectChange}
+          >
+            {!user && <option value="">Choose account type</option>}
+            <option value="standard">Standard</option>
+            <option value="service">Service</option>
+          </Form.Select>
+        </Form.Group>
+        <Button
+          variant="primary"
+          type="submit"
+          disabled={createUserMutation.isPending || updateUserMutation.isPending}
         >
-          {!user && <option value="">Choose account type</option>}
-          <option value="standard">Standard</option>
-          <option value="service">Service</option>
-        </Form.Select>
-      </Form.Group>
-      <Button
-        variant="primary"
-        type="submit"
-        disabled={createUserMutation.isPending || updateUserMutation.isPending}
-      >
-        {createUserMutation.isPending || updateUserMutation.isPending ? 'Saving...' : 'Save'}
-      </Button>
-    </Form>
+          {createUserMutation.isPending || updateUserMutation.isPending ? 'Saving...' : 'Save'}
+        </Button>
+      </Form>
+    </>
   );
 }
