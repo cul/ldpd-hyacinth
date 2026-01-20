@@ -1,6 +1,5 @@
-import React from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { arePermissionArraysEqual } from '../utils/permissions';
-import { useState, useMemo, useRef } from 'react';
 import { ProjectPermission } from '@/types/api';
 import { useUserProjects } from '../api/get-user-projects';
 import { useUpdateUserProjectPermissions } from '../api/update-user-projects';
@@ -72,7 +71,7 @@ export const useProjectPermissionsForm = ({ userUid }: UseProjectPermissionsForm
     setSelectedUserUid('');
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (userPermissionsQuery.data) {
       setData(userPermissionsQuery.data);
       originalDataRef.current = userPermissionsQuery.data;

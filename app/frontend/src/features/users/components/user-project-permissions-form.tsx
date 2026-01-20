@@ -1,17 +1,13 @@
-import React, { useMemo } from 'react';
-import { Spinner, Button, Alert, Table as BTable } from 'react-bootstrap';
-import { useReactTable, getCoreRowModel } from '@tanstack/react-table';
+import { useMemo } from 'react';
+import { Spinner, Button, Alert } from 'react-bootstrap';
 
 // Hooks and components
-import TableHeader from '@/components/ui/TableBuilder/table-header';
-import TableRow from '@/components/ui/TableBuilder/table-row';
 import { useProjects } from '@/features/projects/api/get-projects';
 import { useUsers } from '../api/get-users';
-import { editableColumnDefs } from './project-permissions-column-defs';
 import { CopyOtherPermissionsDisplay } from './copy-other-user-permissions-display';
-import { AddProjectPermissionRow } from './add-project-permission-row';
 import { useProjectPermissionsForm } from '../hooks/use-project-permissions-form';
 import { MutationAlerts } from './mutation-alerts';
+import { ProjectPermissionsTable } from './project-permissions-table';
 
 declare module '@tanstack/react-table' {
   interface TableMeta<TData> {
@@ -60,24 +56,12 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
     return usersQuery.data?.users?.filter(user => !user.isAdmin) || [];
   }, [usersQuery.data?.users]);
 
-  const table = useReactTable({
-    data,
-    columns: editableColumnDefs,
-    getCoreRowModel: getCoreRowModel(),
-    meta: {
-      updateData: (rowIndex: number, columnId: string, value: boolean) => {
-        updatePermission(rowIndex, columnId, value);
-      },
-      removeRow: (rowIndex: number) => {
-        removePermission(rowIndex);
-      }
-    },
-  });
-
+  // Loading states
   if (isLoading || projectsQuery.isLoading) {
     return <Spinner animation="border" />;
   }
 
+  // Error states
   if (isError) {
     return (
       <Alert variant="danger">
@@ -109,41 +93,13 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
         mergeUserPermissions={mergePermissions}
       />
 
-      {/* TODO: Extract */}
-      <BTable striped bordered hover responsive size="md" className="overflow-visible mt-3">
-        <colgroup>
-          <col style={{ width: '250px' }} />
-          <col />
-          <col />
-          <col />
-          <col />
-          <col />
-          <col />
-          <col />
-        </colgroup>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <TableHeader
-            key={headerGroup.id}
-            headerGroup={headerGroup}
-          />
-        ))}
-        <tbody>
-          <AddProjectPermissionRow
-            unassignedProjects={unassignedProjects}
-            onAddProject={(newPermission) => addPermission(newPermission)}
-          />
-          {data.length === 0 && (
-            <tr>
-              <td colSpan={8} className="text-center text-muted py-4">
-                No project permissions assigned.
-              </td>
-            </tr>
-          )}
-          {table.getRowModel().rows.map((row) => (
-            <TableRow row={row} key={row.id} />
-          ))}
-        </tbody>
-      </BTable>
+      <ProjectPermissionsTable
+        data={data}
+        unassignedProjects={unassignedProjects}
+        onUpdatePermission={updatePermission}
+        onRemovePermission={removePermission}
+        onAddPermission={addPermission}
+      />
 
       {/* Save button should remain above the fold, in case we have a long list of projects */}
       <div className="d-flex align-items-center sticky-bottom gap-2 py-3 bg-white">
