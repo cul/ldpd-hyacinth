@@ -165,7 +165,7 @@ class Api::V2::UsersController < Api::V2::BaseController
   end
 
   def user_project_permissions_json(user)
-    user.project_permissions.includes(:project).map do |pp|
+    user.project_permissions.includes(:project).order('projects.display_label').map do |pp|
       {
         id: pp.id,
         projectId: pp.project_id,
