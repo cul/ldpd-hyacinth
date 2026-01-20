@@ -33,9 +33,6 @@ const SettingsProjectPermissionsRoute = () => {
   if (!currentUser?.isAdmin && (isLoading || !projectPermissions)) {
     return <div>Loading permissions...</div>;
   }
-
-  console.log('Current User:', currentUser);
-
   return (
     <Container>
       <Row>
@@ -43,7 +40,12 @@ const SettingsProjectPermissionsRoute = () => {
           <h3 className="mb-4">My Project Permissions</h3>
 
           {currentUser?.isAdmin ? (
-            <p>As an admin, you have full permissions for all projects.</p>
+            <div className="alert alert-info">
+              <h5>Admin User</h5>
+              <p>
+                As an admin, you have full permissions for all projects and do not need project-specific permissions.
+              </p>
+            </div>
           ) : (
             <TableBuilder data={projectPermissions!} columns={readOnlyColumnDefs as ColumnDef<ProjectPermission>[]} />
           )}

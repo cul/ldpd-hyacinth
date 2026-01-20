@@ -46,7 +46,7 @@ export const useProjectPermissionsForm = ({ userUid }: UseProjectPermissionsForm
   };
 
   const addPermission = (newPermission: ProjectPermission) => {
-    setData((old) => [...old, newPermission]);
+    setData((old) => [newPermission, ...old]);
   };
 
   const removePermission = (rowIndex: number) => {

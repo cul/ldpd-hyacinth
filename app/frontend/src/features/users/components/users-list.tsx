@@ -12,7 +12,7 @@ const UsersList = () => {
   const usersQuery = useUsers();
 
   if (usersQuery.isLoading) {
-    return <Spinner />
+    return <Spinner />;
   }
 
   const users = usersQuery.data?.users;

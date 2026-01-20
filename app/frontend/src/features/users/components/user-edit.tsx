@@ -1,4 +1,4 @@
-import { Row, Col, Container } from 'react-bootstrap';
+import { Row, Col, Container, Spinner } from 'react-bootstrap';
 import { useUser } from '../api/get-user';
 import { UserForm } from './user-form';
 import { UserAPIKeyGenerationForm } from './user-api-key-generation-form';
@@ -9,11 +9,7 @@ export const UserEdit = ({ userUid }: { userUid: string }) => {
   });
 
   if (userQuery.isLoading) {
-    return (
-      <div>
-        Loading...
-      </div>
-    );
+    return <Spinner />;
   }
 
   const user = userQuery?.data?.user;
