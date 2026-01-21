@@ -1,6 +1,5 @@
 import React from 'react';
 import { NavLink, Outlet, useParams, useLocation } from 'react-router';
-import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 
 const UserLayout = () => {
@@ -9,7 +8,7 @@ const UserLayout = () => {
   const userUid = params.userUid as string;
 
   return (
-    <Container>
+    <>
       <Nav variant="tabs" className="mb-4" activeKey={location.pathname}>
         <Nav.Item>
           <Nav.Link 
@@ -32,7 +31,7 @@ const UserLayout = () => {
         </Nav.Item>
       </Nav>
       <Outlet />
-    </Container>
+    </>
   );
 }
 

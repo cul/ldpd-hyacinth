@@ -19,13 +19,7 @@ const UsersList = () => {
   if (!users) return null;
 
   return (
-    <div>
-      {/* TODO: Move "Create New User" link to its own layout if we want to replicate navbar with << Back to Users and other links */}
-      <div className="mb-2">
-        <Link to="/users/new" className='pb-4'>Create New User</Link>
-      </div>
-      <TableBuilder data={users} columns={columnDefs as ColumnDef<User>[]} />
-    </div>
+    <TableBuilder data={users} columns={columnDefs as ColumnDef<User>[]} />
   );
 }
 

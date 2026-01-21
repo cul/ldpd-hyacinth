@@ -1,5 +1,5 @@
-import React from 'react'
 import { flexRender, HeaderGroup } from '@tanstack/react-table'
+import { ArrowUp, ArrowDown, ArrowDownUp } from 'react-bootstrap-icons'
 
 interface TableHeaderProps<T> {
   headerGroup: HeaderGroup<T>
@@ -7,25 +7,13 @@ interface TableHeaderProps<T> {
 
 function TableHeader<T>({ headerGroup }: TableHeaderProps<T>) {
   const renderSortingIcon = (sortDirection: 'asc' | 'desc' | null) => {
-    // const iconMapping = {
-      //   asc: 'fa-arrow-up',
-      //   desc: 'fa-arrow-down',
-      //   inactive: 'fa-arrow-down-up inactive',
-      // }
-      
-    // TODO: Change to use FontAwesome icons after we change how FontAwesome is imported
-    // (from using Ruby gem to using npm package)
-    const iconMapping = {
-      asc: '\u2191',
-      desc: '\u2193',
-      inactive: '\u2195',
+    if (sortDirection === 'asc') {
+      return <ArrowUp className="ms-2" size={14} />
     }
-
-    const iconClass = sortDirection ? iconMapping[sortDirection] : iconMapping['inactive']
-    const isInactive = !sortDirection
-
-    // return <i className={`fa-solid ${iconClass} ms-1`} />
-    return <span className={`ms-2 ${isInactive ? 'text-muted' : ''}`}>{iconClass}</span>
+    if (sortDirection === 'desc') {
+      return <ArrowDown className="ms-2" size={14} />
+    }
+    return <ArrowDownUp className="ms-2" style={{color: '#b5b5b5ff'}} size={14} />
   }
 
   const createColumnHeader = (header: any) => {

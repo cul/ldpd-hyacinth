@@ -25,6 +25,7 @@
     "bootstrap-multiselect": "^0.9.15",
     "react": "^19.2.3",
     "react-bootstrap": "^2.10.10",
+    "react-bootstrap-icons": "^1.11.6",
     "react-dom": "^19.2.3",
     "react-error-boundary": "^6.0.0",
     "react-router": "7.10.1",

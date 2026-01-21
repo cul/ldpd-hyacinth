@@ -5,6 +5,7 @@ import { RouterProvider } from 'react-router/dom';
 
 // Layouts and Components
 import MainLayout from '@/components/layouts/main-layout';
+import UsersLayout from '@/components/layouts/users-layout';
 import UserLayout from '@/components/layouts/user-layout';
 import { AuthorizationErrorBoundary } from '@/components/errors/authorization-error';
 
@@ -39,6 +40,7 @@ export const createAppRouter = (queryClient: QueryClient) =>
         },
         {
           path: 'users',
+          Component: UsersLayout, // Wraps all users routes with shared navigation
           ErrorBoundary: AuthorizationErrorBoundary, // Catch authorization errors from loaders
           children: [
             {
