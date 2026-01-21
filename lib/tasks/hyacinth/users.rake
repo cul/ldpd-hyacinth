@@ -113,5 +113,52 @@ namespace :hyacinth do
         end
       end
     end
+
+    # Fully replace to_user_uid user's permissions with from_user_uid user's permissions
+    task copy_project_permissions: :environment do
+      from_user_uid = ENV['from_user_uid']
+      to_user_uid = ENV['to_user_uid']
+
+      if from_user_uid.blank?
+        puts "Please supply a from_user_uid"
+        next
+      end
+      if to_user_uid.blank?
+        puts "Please supply a to_user_uid"
+        next
+      end
+
+      from_user = User.find_by(uid: from_user_uid)
+      to_user = User.find_by(uid: to_user_uid)
+      if from_user.blank?
+        puts "Could not find user with uid: #{from_user_uid}"
+        next
+      end
+      if to_user.blank?
+        puts "Could not find user with uid: #{to_user_uid}"
+        next
+      end
+
+      puts "\nReminder: This rake task only copies project permissions.  No other types of permissions are copied.\n\n"
+
+      puts "Step 1: Deleting all project permissions currently assigned to user #{to_user.uid}..."
+      ProjectPermission.where(user: to_user).destroy_all
+
+      puts "Step 2: Copying all project permissions from user #{from_user.uid} to user #{to_user.uid}..."
+
+      ProjectPermission.where(user: from_user).find_each do |project_permission|
+        ProjectPermission.create!(
+          user: to_user,
+          project: project_permission.project,
+          can_create: project_permission.can_create,
+          can_update: project_permission.can_update,
+          can_delete: project_permission.can_delete,
+          can_publish: project_permission.can_publish,
+          is_project_admin: project_permission.is_project_admin
+        )
+      end
+
+      puts "Done!"
+    end
   end
 end
