@@ -7,6 +7,7 @@ module DigitalObject::FinderMethods
     # Returns true if the given pid exists or if all pids in the given array exist
     def exists?(pids)
       pids = Array(pids)
+      return false if pids.empty? || pids.include?(nil)
       pids.length == ::DigitalObjectRecord.where(pid: pids).count
     end
 

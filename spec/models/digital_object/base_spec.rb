@@ -695,4 +695,53 @@ RSpec.describe DigitalObject::Base, :type => :model do
       end
     end
   end
+
+  describe ".exists?" do
+    let(:existing_object_pid) { 'abc:exists' }
+    let(:non_existing_object_pid) { 'abc:doesnotexist' }
+
+    context "when an object with the given pid exists" do
+      before {
+        result = instance_double(ActiveRecord::Relation)
+        allow(result).to receive(:count).and_return(1)
+        allow(DigitalObjectRecord).to receive(:where).with(pid: [existing_object_pid]).and_return(result)
+      }
+
+      it "returns true" do
+        expect(described_class.exists?(existing_object_pid)).to eq(true)
+      end
+    end
+
+    context "when an object with the given pid does not exist" do
+      before {
+        result = instance_double(ActiveRecord::Relation)
+        allow(result).to receive(:count).and_return(0)
+        allow(DigitalObjectRecord).to receive(:where).with(pid: [non_existing_object_pid]).and_return(result)
+      }
+
+      it "returns false" do
+        expect(described_class.exists?(non_existing_object_pid)).to eq(false)
+      end
+    end
+
+    context "when two pids are given, and one exists and the other does not" do
+      before {
+        result = instance_double(ActiveRecord::Relation)
+        allow(result).to receive(:count).and_return(1)
+        allow(DigitalObjectRecord).to receive(:where).with(pid: [existing_object_pid, non_existing_object_pid]).and_return(result)
+      }
+
+      it "returns false" do
+        expect(described_class.exists?([existing_object_pid, non_existing_object_pid])).to eq(false)
+      end
+    end
+
+    it 'returns false when nil is passed in as an argument' do
+      expect(described_class.exists?(nil)).to eq(false)
+    end
+
+    it 'returns false when an array containing a nil value is passed in as an argument' do
+      expect(described_class.exists?([nil, existing_object_pid])).to eq(false)
+    end
+  end
 end
