@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { Table as BTable } from 'react-bootstrap';
-import { useReactTable, getCoreRowModel } from '@tanstack/react-table';
+import { useReactTable, getCoreRowModel, getSortedRowModel, SortingState } from '@tanstack/react-table';
 import { editableColumnDefs } from './project-permissions-column-defs';
 import { AddProjectPermissionRow } from './add-project-permission-row';
 import TableHeader from '@/components/ui/TableBuilder/table-header';
@@ -22,6 +23,8 @@ export const ProjectPermissionsTable = ({
   onRemovePermission,
   onAddPermission,
 }: PermissionsTableProps) => {
+  const [sorting, setSorting] = useState<SortingState>([])
+
   const table = useReactTable({
     data,
     columns: editableColumnDefs,
@@ -30,6 +33,11 @@ export const ProjectPermissionsTable = ({
       updateData: onUpdatePermission,
       removeRow: onRemovePermission,
     },
+    state: {
+      sorting,
+    },
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSorting,
   });
 
   return (

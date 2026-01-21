@@ -1,8 +1,5 @@
 import { useState, useEffect } from 'react';
-import Button from 'react-bootstrap/Button';
-import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import Row from 'react-bootstrap/Row';
+import { Button, Col, Form, Row } from 'react-bootstrap';
 import { useCreateUser } from '../api/create-user';
 import { useUpdateUser } from '../api/update-user';
 import { MutationAlerts } from './mutation-alerts';
@@ -18,9 +15,10 @@ type UserFormProps = {
     accountType: string;
     isActive: boolean;
   };
+  isEditingSelf?: boolean;
 };
 
-export const UserForm = ({ user }: UserFormProps) => {
+export const UserForm = ({ user, isEditingSelf }: UserFormProps) => {
   // Use existing user data for edit mode or default empty values for create mode
   const initialUser = user || {
     uid: '',
@@ -50,6 +48,7 @@ export const UserForm = ({ user }: UserFormProps) => {
     if (user) {
       updateUserMutation.mutate({ userUid: user.uid, data: formData });
     } else {
+      // ? Redirect to user list or detail page)
       createUserMutation.mutate({ data: formData });
     }
   };
@@ -103,6 +102,7 @@ export const UserForm = ({ user }: UserFormProps) => {
               label="Is active?"
               checked={formData.isActive}
               onChange={handleInputChange}
+              disabled={isEditingSelf}
             />
           </Form.Group>
         </Row>
@@ -152,7 +152,15 @@ export const UserForm = ({ user }: UserFormProps) => {
               label="Is admin?"
               checked={formData.isAdmin}
               onChange={handleInputChange}
+              disabled={isEditingSelf}
             />
+            {(isEditingSelf && formData.isAdmin) && (
+              <div className="text-muted mb-2">
+                <Form.Text>
+                  You cannot remove your own admin status.
+                </Form.Text>
+              </div>
+            )}
           </Form.Group>
           <Form.Group controlId="formGridCanManageControlledVocabularies">
             <Form.Check

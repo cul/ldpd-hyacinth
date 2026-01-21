@@ -42,26 +42,32 @@ export const editableColumnDefs = [
     header: 'Read',
     // Read permission is always true and not editable
     cell: (info) => cellAsReadOnlyCheckbox(info),
+    enableSorting: false,
   }),
   columnHelper.accessor('canUpdate', {
     header: 'Update',
     cell: (info) => cellAsEditableCheckbox(info),
+    enableSorting: false,
   }),
   columnHelper.accessor('canCreate', {
     header: 'Create',
     cell: (info) => cellAsEditableCheckbox(info),
+    enableSorting: false,
   }),
   columnHelper.accessor('canDelete', {
     header: 'Delete',
     cell: (info) => cellAsEditableCheckbox(info),
+    enableSorting: false,
   }),
   columnHelper.accessor('canPublish', {
     header: 'Publish',
     cell: (info) => cellAsEditableCheckbox(info),
+    enableSorting: false,
   }),
   columnHelper.accessor('isProjectAdmin', {
     header: 'Project Admin',
     cell: (info) => cellAsEditableCheckbox(info),
+    enableSorting: false,
   }),
   columnHelper.display({
     id: 'actions',
@@ -74,7 +80,8 @@ export const editableColumnDefs = [
       >
         Delete
       </Button>
-    )
+    ),
+    enableSorting: false,
   }),
 ];
 
