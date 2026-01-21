@@ -155,7 +155,7 @@ group :development, :test do
   gem 'capybara', '~> 3.40'
   # For running tests with chromedriver
   gem 'selenium-webdriver', '~> 4.16'
-  gem 'factory_bot_rails', '~> 4.9'
+  gem 'factory_bot_rails', '~> 6.5'
   gem 'rubocop', '~> 0.67.0', require: false
   gem 'rubocop-rspec', '~> 1.26.0', require: false
   gem 'rubocop-rails_config', '~> 0.2.3', require: false
