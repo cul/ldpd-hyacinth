@@ -2,7 +2,7 @@ import React from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Spinner } from 'react-bootstrap';
 
-import TableBuilder from '@/components/ui/TableBuilder/table-builder';
+import TableBuilder from '@/components/ui/table-builder/table-builder';
 import { User } from '@/types/api';
 import { useUsers } from '@/features/users/api/get-users';
 import { columnDefs } from './columns'

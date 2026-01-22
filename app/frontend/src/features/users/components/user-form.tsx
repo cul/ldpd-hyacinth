@@ -3,6 +3,7 @@ import { Button, Col, Form, Row } from 'react-bootstrap';
 import { useCreateUser } from '../api/create-user';
 import { useUpdateUser } from '../api/update-user';
 import { MutationAlerts } from './mutation-alerts';
+import { Input, Select } from '@/components/ui/form';
 
 type UserFormProps = {
   user?: {
@@ -92,22 +93,17 @@ export const UserForm = ({ user, isEditingSelf }: UserFormProps) => {
             <small>User information</small>
           </p>
           <Row className="mb-3">
-            <Form.Group as={Col} md={6} controlId="formGridUID">
-              <Form.Label>UID</Form.Label>
-              <Form.Control
-                type="text"
-                name="uid"
-                placeholder="UID"
-                value={formData.uid}
-                onChange={handleInputChange}
-                readOnly={!!user}
-                disabled={!!user}
-                isInvalid={!!fieldErrors.uid}
-              />
-              <Form.Control.Feedback type="invalid">
-                {fieldErrors.uid?.join(', ')}
-              </Form.Control.Feedback>
-            </Form.Group>
+            <Input
+              label="UID"
+              type="text"
+              value={formData.uid}
+              onChange={handleInputChange}
+              error={fieldErrors.uid}
+              name="uid"
+              md={6}
+              disabled={!!user}
+              required
+            />
           </Row>
           <Row className="mb-3">
             <Form.Group controlId="formGridIsActive">
@@ -122,68 +118,53 @@ export const UserForm = ({ user, isEditingSelf }: UserFormProps) => {
             </Form.Group>
           </Row>
           <Row className="mb-3">
-            <Form.Group as={Col} controlId="formGridFirstName">
-              <Form.Label>First Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleInputChange}
-                placeholder="Enter first name"
-                isInvalid={!!fieldErrors.firstName}
-              />
-              <Form.Control.Feedback type="invalid">
-                {fieldErrors.firstName?.join(', ')}
-              </Form.Control.Feedback>
-            </Form.Group>
-
-            <Form.Group as={Col} controlId="formGridLastName">
-              <Form.Label>Last Name</Form.Label>
-              <Form.Control
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleInputChange}
-                placeholder="Enter last name"
-                isInvalid={!!fieldErrors.lastName}
-              />
-              <Form.Control.Feedback type="invalid">
-                {fieldErrors.lastName?.join(', ')}
-              </Form.Control.Feedback>
-            </Form.Group>
+            <Input 
+              label="First Name"
+              type="text"
+              value={formData.firstName}
+              onChange={handleInputChange}
+              error={fieldErrors.firstName}
+              name="firstName"
+              md={6}
+              required
+            />
+            <Input
+              label="Last Name"
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleInputChange}
+              error={fieldErrors.lastName}
+              md={6}
+              required
+            />
           </Row>
 
-          <Form.Group className="mb-3" controlId="formGridEmail">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
+          <Row className="mb-3">
+            <Input
+              label="Email"
               type="email"
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              placeholder="Email"
-              isInvalid={!!fieldErrors.email}
+              error={fieldErrors.email}
+              disabled={isEditingSelf && !initialUser.isAdmin}
+              required
             />
-            <Form.Control.Feedback type="invalid">
-              {fieldErrors.email?.join(', ')}
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formGridAccountType">
-            <Form.Label>Account Type</Form.Label>
-            <Form.Select
-              aria-label="Account Type"
-              name="accountType"
-              value={formData.accountType}
-              onChange={handleSelectChange}
-              isInvalid={!!fieldErrors.accountType}
-            >
-              {!user && <option value="">Choose account type</option>}
-              <option value="standard">Standard</option>
-              <option value="service">Service</option>
-            </Form.Select>
-            <Form.Control.Feedback type="invalid">
-              {fieldErrors.accountType?.join(', ')}
-            </Form.Control.Feedback>
-          </Form.Group>
+          </Row>
+
+          <Select
+            label="Account Type"
+            name="accountType"
+            value={formData.accountType}
+            onChange={handleSelectChange}
+            error={fieldErrors.accountType}
+            disabled={isEditingSelf && !initialUser.isAdmin}
+          >
+            {!user && <option value="">Choose account type</option>}
+            <option value="standard">Standard</option>
+            <option value="service">Service</option>
+          </Select>
         </div>
 
         <Row className="mb-4">
@@ -214,6 +195,7 @@ export const UserForm = ({ user, isEditingSelf }: UserFormProps) => {
               label="Can Manage Controlled Vocabularies?"
               checked={formData.canManageAllControlledVocabularies}
               onChange={handleInputChange}
+              disabled={isEditingSelf}
             />
           </Form.Group>
         </Row>

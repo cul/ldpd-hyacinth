@@ -2,7 +2,7 @@ import { Row, Col, Container } from 'react-bootstrap';
 import { QueryClient } from '@tanstack/react-query';
 import { ColumnDef } from '@tanstack/react-table';
 
-import TableBuilder from '@/components/ui/TableBuilder/table-builder';
+import TableBuilder from '@/components/ui/table-builder/table-builder';
 import { useCurrentUser } from '@/lib/auth';
 import { ProjectPermission } from '@/types/api';
 import { getUserProjectsQueryOptions } from '@/features/users/api/get-user-projects';

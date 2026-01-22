@@ -3,8 +3,8 @@ import { Table as BTable } from 'react-bootstrap';
 import { useReactTable, getCoreRowModel, getSortedRowModel, SortingState } from '@tanstack/react-table';
 import { editableColumnDefs } from './project-permissions-column-defs';
 import { AddProjectPermissionRow } from './add-project-permission-row';
-import TableHeader from '@/components/ui/TableBuilder/table-header';
-import TableRow from '@/components/ui/TableBuilder/table-row';
+import TableHeader from '@/components/ui/table-builder/table-header';
+import TableRow from '@/components/ui/table-builder/table-row';
 import { Project, ProjectPermission } from '@/types/api';
 
 interface PermissionsTableProps {

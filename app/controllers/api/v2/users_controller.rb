@@ -48,7 +48,7 @@ class Api::V2::UsersController < Api::V2::BaseController
     authorize! :update, @user
     
     # Prevent admins from changing their own is_admin status
-    if current_user.admin? && @user.id == current_user.id && user_params.key?(:is_admin)
+    if current_user.admin? && @user.id == current_user.id && user_params.key?(:is_admin) != @user.is_admin
       authorize! :update_is_admin, @user
     end
     
