@@ -22,12 +22,12 @@ class ProcessDigitalObjectImportJob < ActiveJob::Base
     result = assign_data(digital_object, digital_object_data, digital_object_import)
 
     3.times do
-      digital_object_import.digital_object_errors = [] # clear errors from any earlier attempts
       break if result != :parent_not_found
 
-      # If the parent wasn't found, wait 30 seconds (three times, with 10 second pauses)
-      # in case the parent is currently being processed, or if solr hasn't auto-committed yet.
+      # If the parent wasn't found, we'll wait and retry (up to 3 times).  A parent record may have been
+      # recently created, but the solr index hasn't updated yet (via auto-commit, which runs on a timer).
       sleep 10
+      digital_object_import.digital_object_errors = [] # clear errors from any earlier attempts
       result = assign_data(digital_object, digital_object_data, digital_object_import)
     end
 
