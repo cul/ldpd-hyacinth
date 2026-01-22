@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Spinner } from 'react-bootstrap';
 

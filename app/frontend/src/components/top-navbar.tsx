@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 import { Nav, Navbar, Offcanvas, NavDropdown, Container } from 'react-bootstrap';
 import { NavLink } from 'react-router';
 import { useCurrentUser, AUTH_QUERY_KEY } from '@/lib/auth';
@@ -60,7 +60,7 @@ export default function TopNavbar() {
                 </NavDropdown.Item>
                 <NavDropdown.Item href="/pid_generators">PID Generators</NavDropdown.Item>
                 <Authorization allowedRoles={[ROLES.ADMIN]}>
-                  <NavDropdown.Item as={NavLink} to="/users">
+                  <NavDropdown.Item as={NavLink} to="/users" end>
                     Users
                   </NavDropdown.Item>
                 </Authorization>
@@ -69,7 +69,7 @@ export default function TopNavbar() {
               </NavDropdown>
             </Nav>
             <Nav className="justify-content-end flex-grow-1">
-              <NavDropdown title={user?.firstName || 'Profile'} align="end">
+              <NavDropdown title={`${user?.firstName} ${user?.lastName}` || 'Profile'} align="end">
                 {/* Use 'end' to ensure this link is only active on the exact /settings path */}
                 <NavDropdown.Item as={NavLink} to="/settings" end>
                   Settings

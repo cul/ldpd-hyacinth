@@ -18,7 +18,7 @@ class Api::V2::UsersController < Api::V2::BaseController
     if @user.save
       render json: { user: user_json(@user) }, status: :created
     else
-      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: format_errors(@user.errors) }, status: :unprocessable_entity
     end
   end
 
@@ -55,7 +55,7 @@ class Api::V2::UsersController < Api::V2::BaseController
     if @user.update(user_params)
       render json: { user: user_json(@user) }
     else
-      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: format_errors(@user.errors) }, status: :unprocessable_entity
     end
   end
 
@@ -185,5 +185,10 @@ class Api::V2::UsersController < Api::V2::BaseController
         isProjectAdmin: pp.is_project_admin
       }
     end
+  end
+
+  # Format errors for display in frontend forms
+  def format_errors(errors)
+    errors.messages.transform_keys { |key| key.to_s.camelize(:lower) }
   end
 end

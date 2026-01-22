@@ -13,22 +13,28 @@ function TableHeader<T>({ headerGroup }: TableHeaderProps<T>) {
     if (sortDirection === 'desc') {
       return <ArrowDown className="ms-2" size={14} />
     }
-    return <ArrowDownUp className="ms-2" style={{color: '#b5b5b5ff'}} size={14} />
+    return <ArrowDownUp className="ms-2" style={{ color: '#b5b5b5ff' }} size={14} />
   }
 
   const createColumnHeader = (header: any) => {
-    const columnData = header.column
+    if (header.isPlaceholder) return null
 
-    return (
-      <button
-        className="btn btn-sort d-flex justify-content-between m-0 p-0 align-items-center"
-        onClick={columnData.getToggleSortingHandler()}
-      >
-        {!header.isPlaceholder &&
-          flexRender(columnData.columnDef.header, header.getContext())}
-        {columnData.getCanSort() && renderSortingIcon(columnData.getIsSorted())}
-      </button>
-    )
+    const sharedClassNames = 'fw-semibold d-flex justify-content-between m-0 p-0 align-items-center'
+    const headerText = flexRender(header.column.columnDef.header, header.getContext())
+
+    if (header.column.getCanSort()) {
+      return (
+        <button
+          className={`btn ${sharedClassNames}`}
+          onClick={header.column.getToggleSortingHandler()}
+        >
+          {headerText}
+          {renderSortingIcon(header.column.getIsSorted())}
+        </button>
+      )
+    }
+
+    return <div className={sharedClassNames}>{headerText}</div>
   }
 
   return (

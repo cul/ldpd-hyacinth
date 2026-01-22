@@ -8,7 +8,7 @@ const UsersLayout = () => {
   const isIndexPage = location.pathname === '/users';
 
   return (
-    <Container className="py-4">
+    <Container className="py-2">
       <div className="d-flex justify-content-between align-items-center mb-4">
         {isIndexPage ? (
           <Button
