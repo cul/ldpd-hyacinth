@@ -11,12 +11,18 @@ import { useCurrentUser } from '@/lib/auth';
 function AuthLoader({ children }: { children: React.ReactNode }) {
   const { data: user, isLoading } = useCurrentUser();
 
+  // Side effects like modifying window.location should be done in useEffect
+  React.useEffect(() => {
+    if (!isLoading && !user) {
+      window.location.href = '/users/sign_in';
+    }
+  }, [user, isLoading]);
+
   if (isLoading) {
     return <div>Loading user...</div>;
   }
 
   if (!user) {
-    window.location.href = '/users/sign_in';
     return null;
   }
 

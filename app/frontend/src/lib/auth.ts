@@ -9,6 +9,7 @@ async function getCurrentUser(): Promise<User | null> {
     const response = await api.get<{ user: User | null }>('/users/_self');
     return response.user;
   } catch (error) {
+    console.error('Error fetching current user:', error);
     return null; // Not authenticated
   }
 }

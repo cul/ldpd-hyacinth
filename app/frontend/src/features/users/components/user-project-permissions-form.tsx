@@ -9,13 +9,6 @@ import { useProjectPermissionsForm } from '../hooks/use-project-permissions-form
 import { MutationAlerts } from './mutation-alerts';
 import { ProjectPermissionsTable } from './project-permissions-table';
 
-declare module '@tanstack/react-table' {
-  interface TableMeta<TData> {
-    updateData: (rowIndex: number, columnId: string, value: boolean) => void;
-    removeRow: (rowIndex: number) => void;
-  }
-}
-
 /*
 This component uses TanStack table to render and manage user project permissions
 We already have a non-editable TableBuilder component, but since this form requires editable cells 
@@ -50,7 +43,7 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
     return projectsQuery.data.projects.filter(
       project => !assignedProjectIds.has(project.id)
     );
-  }, [projectsQuery.data?.projects, data]);
+  }, [projectsQuery.data, data]);
 
   const nonAdminUsers = useMemo(() => {
     return usersQuery.data?.users?.filter(user => !user.isAdmin) || [];

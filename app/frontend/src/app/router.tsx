@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { QueryClient, useQueryClient } from '@tanstack/react-query';
-import { createBrowserRouter } from 'react-router';
+import { createBrowserRouter, LoaderFunction, ActionFunction } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
 
 // Layouts and Components
@@ -17,9 +17,16 @@ function Root() {
   );
 }
 
+interface RouteModule {
+  default: React.ComponentType;
+  clientLoader?: (queryClient: QueryClient) => LoaderFunction;
+  clientAction?: (queryClient: QueryClient) => ActionFunction;
+  [key: string]: unknown;
+}
+
 // Convert a module with clientLoader/clientAction into a route object.
 // This allows loaders/actions to access the QueryClient for prefetching data
-const convert = (queryClient: QueryClient) => (m: any) => {
+const convert = (queryClient: QueryClient) => (m: RouteModule) => {
   const { clientLoader, clientAction, default: Component, ...rest } = m;
   return {
     ...rest,

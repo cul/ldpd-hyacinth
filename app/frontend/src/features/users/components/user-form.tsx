@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Button, Col, Form, Row } from 'react-bootstrap';
+import { useState } from 'react';
+import { Button, Form, Row } from 'react-bootstrap';
 import { useCreateUser } from '../api/create-user';
 import { useUpdateUser } from '../api/update-user';
 import { MutationAlerts } from './mutation-alerts';
@@ -38,14 +38,7 @@ export const UserForm = ({ user, isEditingSelf }: UserFormProps) => {
 
   // Get the appropriate mutation and field errors based on mode
   const mutation = user ? updateUserMutation : createUserMutation;
-  const fieldErrors = (mutation.error as any)?.response?.errors || {};
-
-  // Update form data when user data is loaded
-  useEffect(() => {
-    if (user) {
-      setFormData(user);
-    }
-  }, [user]);
+  const fieldErrors = mutation.error?.response?.errors || {};
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

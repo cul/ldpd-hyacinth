@@ -69,7 +69,7 @@ export default function TopNavbar() {
               </NavDropdown>
             </Nav>
             <Nav className="justify-content-end flex-grow-1">
-              <NavDropdown title={`${user?.firstName} ${user?.lastName}` || 'Profile'} align="end">
+                <NavDropdown title={`${user?.firstName} ${user?.lastName}`} align="end">
                 {/* Use 'end' to ensure this link is only active on the exact /settings path */}
                 <NavDropdown.Item as={NavLink} to="/settings" end>
                   Settings

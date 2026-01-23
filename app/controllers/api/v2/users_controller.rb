@@ -164,7 +164,7 @@ class Api::V2::UsersController < Api::V2::BaseController
       email: user.email,
       isAdmin: user.is_admin,
       isActive: user.is_active,
-      canManageAllControlledVocabularies: user.can_manage_all_controlled_vocabularies,
+      canManageAllControlledVocabularies: user.can_manage_all_controlled_vocabularies?,
       accountType: user.account_type,
       apiKeyDigest: user.api_key_digest,
     }

@@ -1,15 +1,24 @@
 {
   "name": "hyacinth",
   "private": true,
+  "type": "module",
   "license": "UNLICENSED",
   "scripts": {
     "start:dev": "./bin/vite dev",
     "start:dev:anyhostname": "VITE_RUBY_HOST=0.0.0.0 ./bin/vite dev",
-    "start:dev:anyhostname:ssl": "VITE_RUBY_HOST=0.0.0.0 VITE_RUBY_HTTPS=true ./bin/vite dev"
+    "start:dev:anyhostname:ssl": "VITE_RUBY_HOST=0.0.0.0 VITE_RUBY_HTTPS=true ./bin/vite dev",
+    "lint": "eslint app/frontend",
+    "lint:fix": "eslint app/frontend --fix"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
     "@types/node": "^25.0.3",
     "@types/react-dom": "^19.2.3",
+    "eslint": "^9.39.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.53.1",
     "vite": "^5.0.0",
     "vite-plugin-ruby": "^5.1.0"
   },

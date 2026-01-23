@@ -3,7 +3,7 @@ import { Alert } from 'react-bootstrap';
 import { UseMutationResult } from '@tanstack/react-query';
 
 interface MutationAlertsProps {
-  mutation: UseMutationResult<any, Error, any>;
+  mutation: UseMutationResult;
   successMessage?: string;
   errorMessage?: string;
 }

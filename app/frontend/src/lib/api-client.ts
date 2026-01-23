@@ -18,7 +18,7 @@ async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
     console.error('API Error:', errorData);
     
     // Throw the parsed error data so React Query can access it
-    const error = new Error(response.statusText) as any;
+    const error = new Error(response.statusText);
     error.response = errorData;
     throw error;
   }
@@ -30,19 +30,19 @@ export const api = {
   get: <T>(endpoint: string) =>
     request<T>(endpoint, { method: 'GET' }),
 
-  post: <T>(endpoint: string, data?: any) =>
+  post: <T>(endpoint: string, data?: unknown) =>
     request<T>(endpoint, {
       method: 'POST',
       body: JSON.stringify(data)
     }),
 
-  put: <T>(endpoint: string, data?: any) =>
+  put: <T>(endpoint: string, data?: unknown) =>
     request<T>(endpoint, {
       method: 'PUT',
       body: JSON.stringify(data)
     }),
 
-  patch: <T>(endpoint: string, data?: any) =>
+  patch: <T>(endpoint: string, data?: unknown) =>
     request<T>(endpoint, {
       method: 'PATCH',
       body: JSON.stringify(data)

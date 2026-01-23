@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useRef } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { arePermissionArraysEqual } from '../utils/permissions';
 import { ProjectPermission } from '@/types/api';
 import { useUserProjects } from '../api/get-user-projects';
@@ -13,7 +13,7 @@ export const useProjectPermissionsForm = ({ userUid }: UseProjectPermissionsForm
   const userPermissionsQuery = useUserProjects({ userUid });
   const [data, setData] = useState<ProjectPermission[]>([]);
   const [selectedUserUid, setSelectedUserUid] = useState<string>('');
-  const originalDataRef = useRef<ProjectPermission[]>([]); // Keep track of original data to compare for changes
+  const [originalData, setOriginalData] = useState<ProjectPermission[]>([]); // Keep track of original data to compare for changes
 
   // Fetch selected user's permissions only when a user is selected
   const selectedUserPermissionsQuery = useUserProjects({
@@ -26,7 +26,7 @@ export const useProjectPermissionsForm = ({ userUid }: UseProjectPermissionsForm
   const updatePermissionsMutation = useUpdateUserProjectPermissions({
     mutationConfig: {
       onSuccess: () => {
-        originalDataRef.current = data;
+        setOriginalData(data);
       },
     },
   });
@@ -73,14 +73,15 @@ export const useProjectPermissionsForm = ({ userUid }: UseProjectPermissionsForm
 
   useEffect(() => {
     if (userPermissionsQuery.data) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setData(userPermissionsQuery.data);
-      originalDataRef.current = userPermissionsQuery.data;
+      setOriginalData(userPermissionsQuery.data);
     }
   }, [userPermissionsQuery.data]);
 
   const hasChanges = useMemo(() => {
-    return !arePermissionArraysEqual(data, originalDataRef.current);
-  }, [data]);
+    return !arePermissionArraysEqual(data, originalData);
+  }, [data, originalData]);
 
   const handleSave = () => {
     updatePermissionsMutation.mutate({

@@ -7,6 +7,13 @@ import TableHeader from '@/components/ui/table-builder/table-header';
 import TableRow from '@/components/ui/table-builder/table-row';
 import { Project, ProjectPermission } from '@/types/api';
 
+declare module '@tanstack/react-table' {
+  interface TableMeta {
+    updateData: (rowIndex: number, columnId: string, value: boolean) => void;
+    removeRow: (rowIndex: number) => void;
+  }
+}
+
 interface PermissionsTableProps {
   data: ProjectPermission[];
   unassignedProjects: Project[];

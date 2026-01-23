@@ -19,9 +19,9 @@ export const CopyOtherPermissionsDisplay = ({
 }: CopyOtherPermissionsDisplayProps) => {
   return (
     <div className="mb-4" style={{ borderBottom: '1px solid #dee2e6', paddingBottom: '1.5rem' }}>
-      <p>You can copy another user's project permissions by selecting their name from a dropdown. The permissions will be merged with any existing permissions.
+      <p>You can copy another user&apos;s project permissions by selecting their name from a dropdown. The permissions will be merged with any existing permissions.
         <br />
-        Don't worry, you can still make individual adjustments before saving.
+        Don&apos;t worry, you can still make individual adjustments before saving.
       </p>
       <Row className="g-2 align-items-center">
         <Col md={4}>

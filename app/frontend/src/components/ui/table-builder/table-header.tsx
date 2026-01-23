@@ -16,7 +16,7 @@ function TableHeader<T>({ headerGroup }: TableHeaderProps<T>) {
     return <ArrowDownUp className="ms-2" style={{ color: '#b5b5b5ff' }} size={14} />
   }
 
-  const createColumnHeader = (header: any) => {
+  const createColumnHeader = (header: HeaderGroup<T>) => {
     if (header.isPlaceholder) return null
 
     const sharedClassNames = 'fw-semibold d-flex justify-content-between m-0 p-0 align-items-center'

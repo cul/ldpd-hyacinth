@@ -1,11 +1,11 @@
 import React from 'react'
-import { createColumnHelper } from '@tanstack/react-table'
+import { createColumnHelper, CellContext } from '@tanstack/react-table'
 import { Form, Button } from 'react-bootstrap';
 import { ProjectPermission } from '@/types/api'
 
 const columnHelper = createColumnHelper<ProjectPermission>()
 
-const cellAsEditableCheckbox = (info: any) => {
+const cellAsEditableCheckbox = (info: CellContext) => {
   const value = info.getValue()
   const updateData = info.table.options.meta?.updateData
 
@@ -20,7 +20,7 @@ const cellAsEditableCheckbox = (info: any) => {
   )
 }
 
-const cellAsReadOnlyCheckbox = (info: any) => {
+const cellAsReadOnlyCheckbox = (info: CellContext) => {
   const value = info.getValue()
 
   return (
