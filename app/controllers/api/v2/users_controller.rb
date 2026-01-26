@@ -165,6 +165,8 @@ class Api::V2::UsersController < Api::V2::BaseController
       isAdmin: user.is_admin,
       isActive: user.is_active,
       canManageAllControlledVocabularies: user.can_manage_all_controlled_vocabularies?,
+      adminForAtLeastOneProject: user.admin_for_at_least_one_project?,
+      canEditAtLeastOneControlledVocabulary: user.can_edit_at_least_one_controlled_vocabulary?,
       accountType: user.account_type,
       apiKeyDigest: user.api_key_digest,
     }

@@ -6,6 +6,8 @@ export interface User {
   isAdmin: boolean;
   isActive: boolean;
   canManageAllControlledVocabularies: boolean;
+  adminForAtLeastOneProject: boolean;
+  canEditAtLeastOneControlledVocabulary: boolean;
   accountType: string;
   apiKeyDigest?: string | null;
   signInCount: number;

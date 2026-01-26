@@ -46,8 +46,8 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
   }, [projectsQuery.data, data]);
 
   const nonAdminUsers = useMemo(() => {
-    return usersQuery.data?.users?.filter(user => !user.isAdmin) || [];
-  }, [usersQuery.data?.users]);
+    return usersQuery.data?.users?.filter(user => !user.isAdmin && user.uid !== userUid) || [];
+  }, [usersQuery.data?.users, userUid]);
 
   // Loading states
   if (isLoading || projectsQuery.isLoading) {

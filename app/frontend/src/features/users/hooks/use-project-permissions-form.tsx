@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { arePermissionArraysEqual } from '../utils/permissions';
 import { ProjectPermission } from '@/types/api';
 import { useUserProjects } from '../api/get-user-projects';
@@ -8,7 +8,6 @@ interface UseProjectPermissionsFormProps {
   userUid: string;
 }
 
-// TODO: Update functions to use useCallback where appropriate
 export const useProjectPermissionsForm = ({ userUid }: UseProjectPermissionsFormProps) => {
   const userPermissionsQuery = useUserProjects({ userUid });
   const [data, setData] = useState<ProjectPermission[]>([]);
@@ -31,7 +30,7 @@ export const useProjectPermissionsForm = ({ userUid }: UseProjectPermissionsForm
     },
   });
 
-  const updatePermission = (rowIndex: number, columnId: string, value: boolean) => {
+  const updatePermission = useCallback((rowIndex: number, columnId: string, value: boolean) => {
     setData((old) =>
       old.map((row, index) => {
         if (index === rowIndex) {
@@ -43,17 +42,17 @@ export const useProjectPermissionsForm = ({ userUid }: UseProjectPermissionsForm
         return row;
       })
     );
-  };
+  }, []);
 
-  const addPermission = (newPermission: ProjectPermission) => {
+  const addPermission = useCallback((newPermission: ProjectPermission) => {
     setData((old) => [newPermission, ...old]);
-  };
+  }, []);
 
-  const removePermission = (rowIndex: number) => {
+  const removePermission = useCallback((rowIndex: number) => {
     setData((old) => old.filter((_, index) => index !== rowIndex));
-  };
+  }, []);
 
-  const mergePermissions = () => {
+  const mergePermissions = useCallback(() => {
     if (!selectedUserUid || !selectedUserPermissionsQuery.data) return;
 
     const selectedPermissions = selectedUserPermissionsQuery.data;
@@ -69,7 +68,7 @@ export const useProjectPermissionsForm = ({ userUid }: UseProjectPermissionsForm
 
     setData(mergedData);
     setSelectedUserUid('');
-  };
+  }, [selectedUserUid, selectedUserPermissionsQuery.data, data]);
 
   useEffect(() => {
     if (userPermissionsQuery.data) {
