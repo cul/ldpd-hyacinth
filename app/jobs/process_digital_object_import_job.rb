@@ -26,7 +26,7 @@ class ProcessDigitalObjectImportJob < ActiveJob::Base
 
       # If the parent wasn't found, we'll wait and retry (up to 3 times).  A parent record may have been
       # recently created, but the solr index hasn't updated yet (via auto-commit, which runs on a timer).
-      sleep 10
+      sleep 6
       digital_object_import.digital_object_errors = [] # clear errors from any earlier attempts
       result = assign_data(digital_object, digital_object_data, digital_object_import)
     end
