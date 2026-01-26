@@ -238,7 +238,7 @@ limitations under the License.
       -->
     <autoCommit>
       <maxTime>${solr.autoCommit.maxTime:15000}</maxTime>
-      <openSearcher>false</openSearcher>
+      <openSearcher>true</openSearcher>
     </autoCommit>
 
     <!-- autoSoftCommit is like autoCommit except it causes a
