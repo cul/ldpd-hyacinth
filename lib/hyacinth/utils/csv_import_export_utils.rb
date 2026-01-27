@@ -8,11 +8,6 @@ class Hyacinth::Utils::CsvImportExportUtils
   ##############################
 
   def self.csv_to_digital_object_data(csv_data_string)
-    # Reject this CSV if it is not a UTF-8 CSV
-    unless Hyacinth::Utils::StringUtils.string_valid_utf8?(csv_data_string)
-      raise Hyacinth::Exceptions::InvalidUtf8DetectedError, 'CSV content is not valid UTF-8.'
-    end
-
     header = Hyacinth::Csv::Header.new
 
     csv_row_number = -1
@@ -108,6 +103,16 @@ class Hyacinth::Utils::CsvImportExportUtils
   end
 
   def self.validate_import_job_csv_data(csv_data_string, user, import_job)
+    # Reject this CSV if it is not a UTF-8 CSV
+    unless Hyacinth::Utils::StringUtils.string_valid_utf8?(csv_data_string)
+      import_job.errors.add(:csv_character_encoding, 'not valid UTF-8')
+      # If the CSV is invalid UTF-8, then we won't perform any other validations on the bad data
+      return
+    end
+
+    # Now that we're certain this is a UTF-8 csv, force UTF-8 encoding
+    csv_data_string.force_encoding('UTF-8')
+
     # Validate csv headers to make sure that all fields exist
     validate_csv_headers(csv_data_string, import_job)
 
