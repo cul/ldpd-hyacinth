@@ -94,25 +94,31 @@ export const readOnlyColumnDefs = [
   columnHelper.accessor('canRead', {
     header: 'Read',
     cell: (info) => cellAsReadOnlyCheckbox(info),
+    enableSorting: false,
   }),
   columnHelper.accessor('canUpdate', {
     header: 'Update',
     cell: (info) => cellAsReadOnlyCheckbox(info),
+    enableSorting: false,
   }),
   columnHelper.accessor('canCreate', {
     header: 'Create',
     cell: (info) => cellAsReadOnlyCheckbox(info),
+    enableSorting: false,
   }),
   columnHelper.accessor('canDelete', {
     header: 'Delete',
     cell: (info) => cellAsReadOnlyCheckbox(info),
+    enableSorting: false,
   }),
   columnHelper.accessor('canPublish', {
     header: 'Publish',
     cell: (info) => cellAsReadOnlyCheckbox(info),
+    enableSorting: false,
   }),
   columnHelper.accessor('isProjectAdmin', {
     header: 'Project Admin',
     cell: (info) => cellAsReadOnlyCheckbox(info),
+    enableSorting: false,
   }),
 ];

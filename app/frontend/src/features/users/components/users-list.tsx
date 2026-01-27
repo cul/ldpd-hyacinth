@@ -5,7 +5,7 @@ import { Spinner } from 'react-bootstrap';
 import TableBuilder from '@/components/ui/table-builder/table-builder';
 import { User } from '@/types/api';
 import { useUsers } from '@/features/users/api/get-users';
-import { columnDefs } from './columns'
+import { columnDefs } from './users-list-column-defs';
 
 const UsersList = () => {
   const usersQuery = useUsers();
