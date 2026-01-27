@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+ contributor license agreements.  See the NOTICE file distributed with
+ this work for additional information regarding copyright ownership.
+ The ASF licenses this file to You under the Apache License, Version 2.0
+ (the "License"); you may not use this file except in compliance with
+ the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+
+<!--  The configuration below is the base CUL configuration for solr apps.  Individual apps may have different
+      needs, and we'll note those needs in each app's modified schema.xml file.
+-->
+
+<!--  NOTE: Many unused configuration options are absent from this file.
+      To find out more about other available configurations, please refer to http://wiki.apache.org/solr/SchemaXml
+      and the default schema file included with Solr.
+-->
+
+<schema name="Hyacinth Schema" version="1.7">
+  <!-- attribute "name" is the name of this schema and is only used for display purposes.
+      version="x.y" is Solr's version number for the schema syntax and
+      semantics.  It should not normally be changed by applications.
+
+      1.0: multiValued attribute did not exist, all fields are multiValued
+          by nature
+      1.1: multiValued attribute introduced, false by default
+      1.2: omitTermFreqAndPositions attribute introduced, true by default
+          except for text fields.
+      1.3: removed optional field compress feature
+      1.4: autoGeneratePhraseQueries attribute introduced to drive QueryParser
+          behavior when a single string produces multiple tokens.  Defaults
+          to off for version >= 1.4
+      1.5: omitNorms defaults to true for primitive field types
+          (int, float, boolean, string...)
+      1.6: useDocValuesAsStored defaults to true.
+      1.7: docValues defaults to true, uninvertible defaults to false.
+  -->
+
+  <!--
+    *****************************
+    * EXPLICITLY DEFINED FIELDS *
+    *****************************
+  -->
+
+  <!--  Field to use to determine and enforce document uniqueness.
+        Unless this field is marked with required="false", it will be a required field. -->
+  <uniqueKey>id</uniqueKey>
+
+  <!-- The id field is required because we are using it as our uniqueKey. -->
+  <field name="id" type="string" indexed="true" stored="true" required="true" multiValued="false" />
+
+  <!--  The _version_ field is an internal Solr field.  NOTE: docValues are enabled by default for the long type,
+        so we don't need to index the version field. -->
+  <field name="_version_" type="plong" indexed="false" stored="false"/>
+
+  <!-- If you don't use child/nested documents, then you should remove the next three fields: -->
+  <!-- for nested documents (minimal; points to root document) -->
+  <field name="_root_" type="string" indexed="true" stored="false" />
+  <!-- for nested documents (relationship tracking) -->
+  <field name="_nest_path_" type="_nest_path_" indexed="true" stored="true" />
+  <!-- for nested documents (reference to parent) -->
+  <field name="_nest_parent_" type="string" indexed="true" stored="true" multiValued="false" />
+
+  <!-- Timestamp field to indicate when this document was last updated. -->
+  <field name="timestamp" type="pdate" indexed="true" stored="true" default="NOW" multiValued="false"/>
+
+  <!-- Default, catch-all search field, also used for search term highlighting.  Highlighting requires stored="true". -->
+  <!-- If you would prefer to define your own catch-all text field (or if you don't need one), then you can delete this field. -->
+  <!-- NOTE: Some example copy fields are defined later in this schema.xml file and they copy text to this all_text field. -->
+  <field name="all_text" type="text_general" indexed="true" stored="true" multiValued="true" />
+
+  <!-- Default, catch-all identifier field. -->
+  <!-- If you would prefer to define your own identifier field (or if you don't need one), then you can delete this field. -->
+  <!-- NOTE: Some example copy fields are defined later in this schema.xml file and they copy text to this identifiers field. -->
+  <field name="identifiers" type="string" indexed="true" stored="true" multiValued="true" />
+
+  <!-- BEGIN: Hyacinth explicitly defined fields -->
+    <!-- Fedora pid field -->
+    <field name="pid" type="string" indexed="true" stored="true" />
+  <!-- END: Hyacinth explicitly defined fields -->
+
+  <!--
+    ******************
+    * DYNAMIC FIELDS *
+    ******************
+    NOTE:  not all possible Solr field types are represented in the dynamic fields.
+  -->
+
+  <dynamicField name="*_is"     type="pint"          stored="true"   indexed="false"  multiValued="false" />
+  <dynamicField name="*_ii"     type="pint"          stored="false"  indexed="true"   multiValued="false" />
+  <dynamicField name="*_ism"    type="pint"          stored="true"   indexed="false"  multiValued="true"  />
+  <dynamicField name="*_iim"    type="pint"          stored="false"  indexed="true"   multiValued="true"  />
+  <dynamicField name="*_isi"    type="pint"          stored="true"   indexed="true"   multiValued="false"  />
+  <dynamicField name="*_isim"   type="pint"          stored="true"   indexed="true"   multiValued="true"  />
+  <dynamicField name="*_ss"     type="string"        stored="true"   indexed="false"  multiValued="false" />
+  <dynamicField name="*_si"     type="string"        stored="false"  indexed="true"   multiValued="false" />
+  <dynamicField name="*_ssm"    type="string"        stored="true"   indexed="false"  multiValued="true"  />
+  <dynamicField name="*_sim"    type="string"        stored="false"  indexed="true"   multiValued="true"  />
+  <dynamicField name="*_ssi"    type="string"        stored="true"   indexed="true"   multiValued="false"  />
+  <dynamicField name="*_ssim"   type="string"        stored="true"   indexed="true"   multiValued="true"  />
+  <dynamicField name="*_ls"     type="plong"         stored="true"   indexed="false"  multiValued="false" />
+  <dynamicField name="*_li"     type="plong"         stored="false"  indexed="true"   multiValued="false" />
+  <dynamicField name="*_lsm"    type="plong"         stored="true"   indexed="false"  multiValued="true"  />
+  <dynamicField name="*_lim"    type="plong"         stored="false"  indexed="true"   multiValued="true"  />
+  <dynamicField name="*_lsi"    type="plong"         stored="true"   indexed="true"   multiValued="false"  />
+  <dynamicField name="*_lsim"   type="plong"         stored="true"   indexed="true"   multiValued="true"  />
+  <dynamicField name="*_bs"     type="boolean"       stored="true"   indexed="false"  multiValued="false" />
+  <dynamicField name="*_bi"     type="boolean"       stored="false"  indexed="true"   multiValued="false" />
+  <dynamicField name="*_bsm"    type="boolean"       stored="true"   indexed="false"  multiValued="true"  />
+  <dynamicField name="*_bim"    type="boolean"       stored="false"  indexed="true"   multiValued="true"  />
+  <dynamicField name="*_bsi"    type="boolean"       stored="true"   indexed="true"   multiValued="false"  />
+  <dynamicField name="*_bsim"   type="boolean"       stored="true"   indexed="true"   multiValued="true"  />
+  <dynamicField name="*_fs"     type="pfloat"        stored="true"   indexed="false"  multiValued="false" />
+  <dynamicField name="*_fi"     type="pfloat"        stored="false"  indexed="true"   multiValued="false" />
+  <dynamicField name="*_fsm"    type="pfloat"        stored="true"   indexed="false"  multiValued="true"  />
+  <dynamicField name="*_fim"    type="pfloat"        stored="false"  indexed="true"   multiValued="true"  />
+  <dynamicField name="*_fsi"    type="pfloat"        stored="true"   indexed="true"   multiValued="false"  />
+  <dynamicField name="*_fsim"   type="pfloat"        stored="true"   indexed="true"   multiValued="true"  />
+  <dynamicField name="*_ds"     type="pdouble"       stored="true"   indexed="false"  multiValued="false" />
+  <dynamicField name="*_di"     type="pdouble"       stored="false"  indexed="true"   multiValued="false" />
+  <dynamicField name="*_dsm"    type="pdouble"       stored="true"   indexed="false"  multiValued="true"  />
+  <dynamicField name="*_dim"    type="pdouble"       stored="false"  indexed="true"   multiValued="true"  />
+  <dynamicField name="*_dsi"    type="pdouble"       stored="true"   indexed="true"   multiValued="false"  />
+  <dynamicField name="*_dsim"   type="pdouble"       stored="true"   indexed="true"   multiValued="true"  />
+  <dynamicField name="*_dts"    type="pdate"         stored="true"   indexed="false"  multiValued="false" />
+  <dynamicField name="*_dti"    type="pdate"         stored="false"  indexed="true"   multiValued="false" />
+  <dynamicField name="*_dtsm"   type="pdate"         stored="true"   indexed="false"  multiValued="true"  />
+  <dynamicField name="*_dtim"   type="pdate"         stored="false"  indexed="true"   multiValued="true"  />
+  <dynamicField name="*_dtsi"   type="pdate"         stored="true"   indexed="true"   multiValued="false"  />
+  <dynamicField name="*_dtsim"  type="pdate"         stored="true"   indexed="true"   multiValued="true"  />
+  <dynamicField name="*_dri"    type="dateRange"     stored="false"  indexed="true"   multiValued="false" /> <!-- dateRange always needs to be indexed to be compatible with omitNorms="true" -->
+  <dynamicField name="*_drim"   type="dateRange"     stored="false"  indexed="true"   multiValued="true"  /> <!-- dateRange always needs to be indexed to be compatible with omitNorms="true" -->
+  <dynamicField name="*_drsi"   type="dateRange"     stored="true"   indexed="true"   multiValued="false"  /> <!-- dateRange always needs to be indexed to be compatible with omitNorms="true" -->
+  <dynamicField name="*_drsim"  type="dateRange"     stored="true"   indexed="true"   multiValued="true"  /> <!-- dateRange always needs to be indexed to be compatible with omitNorms="true" -->
+  <dynamicField name="*_ts"     type="text_general"  stored="true"   indexed="false"  multiValued="false" />
+  <dynamicField name="*_ti"     type="text_general"  stored="true"   indexed="true"   multiValued="false" />
+  <dynamicField name="*_tsm"    type="text_general"  stored="true"   indexed="false"  multiValued="true"  />
+  <dynamicField name="*_tim"    type="text_general"  stored="true"   indexed="true"   multiValued="true"  />
+  <dynamicField name="*_tsi"    type="text_general"  stored="true"   indexed="true"   multiValued="false"  />
+  <dynamicField name="*_tsim"   type="text_general"  stored="true"   indexed="true"   multiValued="true"  />
+  <dynamicField name="*_tes"    type="text_en"       stored="true"   indexed="false"  multiValued="false" />
+  <dynamicField name="*_tei"    type="text_en"       stored="true"   indexed="true"   multiValued="false" />
+  <dynamicField name="*_tesm"   type="text_en"       stored="true"   indexed="false"  multiValued="true"  />
+  <dynamicField name="*_teim"   type="text_en"       stored="true"   indexed="true"   multiValued="true"  />
+  <dynamicField name="*_tesi"   type="text_en"       stored="true"   indexed="true"   multiValued="false"  />
+  <dynamicField name="*_tesim"  type="text_en"       stored="true"   indexed="true"   multiValued="true"  />
+  <dynamicField name="*_tesplits"    type="text_en_splitting"  stored="true"   indexed="false"  multiValued="false" />
+  <dynamicField name="*_tespliti"    type="text_en_splitting"  stored="true"   indexed="true"   multiValued="false" />
+  <dynamicField name="*_tesplitsm"   type="text_en_splitting"  stored="true"   indexed="false"  multiValued="true"  />
+  <dynamicField name="*_tesplitim"   type="text_en_splitting"  stored="true"   indexed="true"   multiValued="true"  />
+  <dynamicField name="*_tesplitsi"   type="text_en_splitting"  stored="true"   indexed="true"   multiValued="false"  />
+  <dynamicField name="*_tesplitsim"  type="text_en_splitting"  stored="true"   indexed="true"   multiValued="true"  />
+
+  <!-- If you're not using lat/long coordinates, then you can remove the next two fields: -->
+  <dynamicField name="*_locsi"   type="location"   stored="true"  indexed="true"  multiValued="false" />
+  <dynamicField name="*_locsim"  type="location"   stored="true"  indexed="true"  multiValued="true"  />
+
+  <!-- If you don't need to sort records randomly, then you can remove this field: -->
+  <dynamicField name="random_*" type="random"        stored="true"   indexed="true" multiValued="false"   />
+
+  <!-- If you're not using vector embedding search, then you can remove the next four fields: -->
+  <dynamicField name="*_vector768si" type="knn768_vector"  indexed="true"  stored="true" />
+  <dynamicField name="*_vector768i" type="knn768_vector"  indexed="true"  stored="false" />
+  <dynamicField name="*_vector1024si" type="knn1024_vector"  indexed="true"  stored="true" />
+  <dynamicField name="*_vector1024i" type="knn1024_vector"  indexed="true"  stored="false" />
+
+  <dynamicField name="*_sort" type="alphaNumericSort" />
+  <dynamicField name="*spell" type="textSpell" indexed="true" stored="false" multiValued="true" />
+  <dynamicField name="*suggest" type="textSuggest" indexed="true" stored="false" multiValued="true" />
+
+  <!-- BEGIN: Hyacinth dynamic fields -->
+
+  <!-- END: Hyacinth dynamic fields -->
+
+  <!--
+    ***************
+    * COPY FIELDS *
+    ***************
+
+    Copy fields copy data from one field to another at the time a document is added to the index.
+    They're used either to index the same field differently, or to add multiple fields to the same
+    field for easier/faster searching.  The copy fields below are currently commented out because
+    they refer to field names that you might not have defined in your version of this schema.xml
+    file.  You will probably need to modify these values if you uncomment the fields.
+    If you don't need any copy fields, you can remove all of the copyField elements defined below.
+    the copyField elements defined below.
+  -->
+
+  <copyField source="id"                   dest="identifiers" />
+  <!-- <copyField source="uuid"                 dest="identifiers" /> -->
+  <!-- <copyField source="doi"                  dest="identifiers" /> -->
+
+  <!-- <copyField source="normalized_title_ss"  dest="all_text" /> -->
+  <!-- <copyField source="authors_ssm"          dest="all_text" /> -->
+
+  <!-- spellcheck fields -->
+  <!-- Default spell check.  Should match fields for default request handler. -->
+  <!-- NOTE: It won't work with a copy of a copy field. -->
+  <!-- <copyField source="*_t"                  dest="spell"/> --> <!-- Uncomment this if you want to use spelling features. -->
+
+  <!-- for suggestions -->
+  <!-- <copyField source="collection_ssim"      dest="suggest"/> --> <!-- Uncomment this if you want to use suggest features. -->
+
+  <!-- sort fields -->
+  <!-- <copyField source="field1_ss"  dest="field1_sort" /> --> <!-- NOTE: this field assumes a single value -->
+  <!-- <copyField source="field2_ss"   dest="field2_sort"  /> --> <!-- NOTE: this field assumes a single value -->
+
+  <!-- BEGIN: Hyacinth copy fields -->
+
+  <!-- END: Hyacinth copy fields -->
+
+  <!--
+    ***************
+    * FIELD TYPES *
+    ***************
+  -->
+
+  <!-- If you're not using vector embedding search, then you can remove the next two field types: -->
+  <fieldType name="knn768_vector"  class="solr.DenseVectorField" vectorDimension="768"  similarityFunction="cosine" />
+  <fieldType name="knn1024_vector" class="solr.DenseVectorField" vectorDimension="1024" similarityFunction="cosine" />
+
+  <!--  sortMissingLast and sortMissingFirst attributes are optional attributes are
+        currently supported on types that are sorted internally as strings
+        and on numeric types.
+        This includes "string", "boolean", "pint", "pfloat", "plong", "pdate", "pdouble".
+        - If sortMissingLast="true", then a sort on this field will cause documents
+          without the field to come after documents with the field,
+          regardless of the requested sort order (asc or desc).
+        - If sortMissingFirst="true", then a sort on this field will cause documents
+          without the field to come before documents with the field,
+          regardless of the requested sort order.
+        - If sortMissingLast="false" and sortMissingFirst="false" (the default),
+          then default lucene sorting will be used which places docs without the
+          field first in an ascending sort and last in a descending sort.
+  -->
+
+  <!-- The StrField type is not analyzed, but indexed/stored verbatim. -->
+  <fieldType name="string" class="solr.StrField" sortMissingLast="true" />
+
+  <!-- boolean type: "true" or "false" -->
+  <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
+
+  <!--
+    Numeric field types that index values using KD-trees.
+    Point fields don't support FieldCache, so they must have docValues enabled if needed for sorting, faceting, functions, etc.
+    This is the default, so it does not need to be set explicitly.
+  -->
+  <fieldType name="pint" class="solr.IntPointField"/>
+  <fieldType name="pfloat" class="solr.FloatPointField"/>
+  <fieldType name="plong" class="solr.LongPointField"/>
+  <fieldType name="pdouble" class="solr.DoublePointField"/>
+
+  <fieldType name="dateRange" class="solr.DateRangeField" omitNorms="true"/>
+
+  <fieldType name="random" class="solr.RandomSortField"/>
+
+  <!-- The format for this date field is of the form 1995-12-31T23:59:59Z, and
+        is a more restricted form of the canonical representation of dateTime
+        http://www.w3.org/TR/xmlschema-2/#dateTime
+        The trailing "Z" designates UTC time and is mandatory.
+        Optional fractional seconds are allowed: 1995-12-31T23:59:59.999Z
+        All other components are mandatory.
+
+        Expressions can also be used to denote calculations that should be
+        performed relative to "NOW" to determine the value, ie...
+
+          NOW/HOUR
+            ... Round to the start of the current hour
+          NOW-1DAY
+            ... Exactly 1 day prior to now
+          NOW/DAY+6MONTHS+3DAYS
+            ... 6 months and 3 days in the future from the start of
+                the current day
+
+  -->
+  <!-- KD-tree versions of date fields -->
+  <fieldType name="pdate" class="solr.DatePointField"/>
+
+  <!-- Binary data type. The data should be sent/retrieved in as Base64 encoded Strings -->
+  <fieldType name="binary" class="solr.BinaryField"/>
+
+  <!-- For nested document relationship tracking -->
+  <fieldType name="_nest_path_" class="solr.NestPathField" />
+
+  <!-- solr.TextField allows the specification of custom text analyzers
+        specified as a tokenizer and a list of token filters. Different
+        analyzers may be specified for indexing and querying.
+
+        The optional positionIncrementGap puts space between multiple fields of
+        this type on the same document, with the purpose of preventing false phrase
+        matching across fields.
+
+        For more info on customizing your analyzer chain, please see
+        https://solr.apache.org/guide/solr/latest/indexing-guide/document-analysis.html#using-analyzers-tokenizers-and-filters
+    -->
+
+  <!-- One can also specify an existing Analyzer class that has a
+        default constructor via the class attribute on the analyzer element.
+        Example:
+      <fieldType name="text_greek" class="solr.TextField">
+        <analyzer class="org.apache.lucene.analysis.el.GreekAnalyzer"/>
+      </fieldType>
+  -->
+
+  <!-- A general text field that has reasonable, generic
+        cross-language defaults: it tokenizes with StandardTokenizer,
+        removes stop words from case-insensitive "stopwords.txt"
+        (empty by default), and down cases.  At query time only, it
+        also applies synonyms.
+  -->
+  <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100" multiValued="true">
+    <analyzer>
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords_en.txt"/>
+      <filter class="solr.ICUFoldingFilterFactory" />
+      <filter class="solr.SnowballPorterFilterFactory" language="English" />
+    </analyzer>
+  </fieldType>
+
+  <!-- A text field with defaults appropriate for English: it tokenizes with StandardTokenizer,
+        removes English stop words (lang/stopwords_en.txt), down cases, protects words from protwords.txt, and
+        finally applies Porter's stemming.  The query time analyzer also applies synonyms from synonyms.txt. -->
+  <fieldType name="text_en" class="solr.TextField" positionIncrementGap="100">
+    <analyzer type="index">
+      <tokenizer name="standard"/>
+      <!-- in this example, we will only use synonyms at query time
+      <filter name="synonymGraph" synonyms="index_synonyms.txt" ignoreCase="true" expand="false"/>
+      <filter name="flattenGraph"/>
+      -->
+      <!-- Case insensitive stop word removal.
+      -->
+      <filter name="stop"
+              ignoreCase="true"
+              words="lang/stopwords_en.txt"
+      />
+      <filter name="lowercase"/>
+      <filter name="englishPossessive"/>
+      <filter name="keywordMarker" protected="protwords.txt"/>
+      <!-- Optionally you may want to use this less aggressive stemmer instead of PorterStemFilterFactory:
+      <filter name="englishMinimalStem"/>
+      -->
+      <filter name="porterStem"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer name="standard"/>
+      <filter name="synonymGraph" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+      <filter name="stop"
+              ignoreCase="true"
+              words="lang/stopwords_en.txt"
+      />
+      <filter name="lowercase"/>
+      <filter name="englishPossessive"/>
+      <filter name="keywordMarker" protected="protwords.txt"/>
+      <!-- Optionally you may want to use this less aggressive stemmer instead of PorterStemFilterFactory:
+      <filter name="englishMinimalStem"/>
+      -->
+      <filter name="porterStem"/>
+    </analyzer>
+  </fieldType>
+
+  <!-- A text field with defaults appropriate for English, plus
+        aggressive word-splitting and autophrase features enabled.
+        This field is just like text_en, except it adds
+        WordDelimiterGraphFilter to enable splitting and matching of
+        words on case-change, alpha numeric boundaries, and
+        non-alphanumeric chars.  This means certain compound word
+        cases will work, for example query "wi fi" will match
+        document "WiFi" or "wi-fi".
+  -->
+  <fieldType name="text_en_splitting" class="solr.TextField" positionIncrementGap="100" autoGeneratePhraseQueries="true">
+    <analyzer type="index">
+      <tokenizer name="whitespace"/>
+      <!-- in this example, we will only use synonyms at query time
+        <filter name="synonymGraph" synonyms="index_synonyms.txt" ignoreCase="true" expand="false"/>
+      -->
+      <!-- Case insensitive stop word removal. -->
+      <filter name="stop"
+              ignoreCase="true"
+              words="lang/stopwords_en.txt"
+      />
+      <filter name="wordDelimiterGraph" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="0" splitOnCaseChange="1"/>
+      <filter name="lowercase"/>
+      <filter name="keywordMarker" protected="protwords.txt"/>
+      <filter name="porterStem"/>
+      <filter name="flattenGraph" />
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer name="whitespace"/>
+      <filter name="synonymGraph" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+      <filter name="stop"
+              ignoreCase="true"
+              words="lang/stopwords_en.txt"
+      />
+      <filter name="wordDelimiterGraph" generateWordParts="1" generateNumberParts="1" catenateWords="0" catenateNumbers="0" catenateAll="0" splitOnCaseChange="1"/>
+      <filter name="lowercase"/>
+      <filter name="keywordMarker" protected="protwords.txt"/>
+      <filter name="porterStem"/>
+    </analyzer>
+  </fieldType>
+
+  <!-- This point type indexes the coordinates as separate fields (subFields)
+    If subFieldType is defined, it references a type, and a dynamic field
+    definition is created matching *___<typename>.  Alternately, if
+    subFieldSuffix is defined, that is used to create the subFields.
+    Example: if subFieldType="double", then the coordinates would be
+      indexed in fields myloc_0___double,myloc_1___double.
+    Example: if subFieldSuffix="_d" then the coordinates would be indexed
+      in fields myloc_0_d,myloc_1_d
+    The subFields are an implementation detail of the fieldType, and end
+    users normally should not need to know about them.
+    -->
+  <!-- <fieldType name="point" class="solr.PointType" dimension="2" subFieldSuffix="_d"/> -->
+
+  <!-- A specialized field for geospatial search filters and distance sorting. -->
+  <fieldType name="location" class="solr.LatLonPointSpatialField"/>
+
+  <!-- A geospatial field type that supports multiValued and polygon shapes.
+    For more information about this and other spatial fields see:
+    https://solr.apache.org/guide/solr/latest/query-guide/spatial-search.html
+  -->
+  <fieldType name="location_rpt" class="solr.SpatialRecursivePrefixTreeFieldType"
+              geo="true" distErrPct="0.025" maxDistErr="0.001" distanceUnits="kilometers" />
+
+  <!-- This is an example of using the KeywordTokenizer along
+        With various TokenFilterFactories to produce a sortable field
+        that does not include some properties of the source text
+    -->
+  <fieldType name="alphaNumericSort" class="solr.TextField" sortMissingLast="true" omitNorms="true" indexed="true" stored="false" multiValued="false" uninvertible="true">
+    <analyzer>
+      <!-- KeywordTokenizer does no actual tokenizing, so the entire
+            input string is preserved as a single token
+        -->
+      <tokenizer class="solr.KeywordTokenizerFactory"/>
+      <!-- The LowerCase TokenFilter does what you expect, which can be
+            when you want your sorting to be case insensitive
+        -->
+      <filter class="solr.LowerCaseFilterFactory" />
+      <!-- The TrimFilter removes any leading or trailing whitespace -->
+      <filter class="solr.TrimFilterFactory" />
+      <!-- The PatternReplaceFilter gives you the flexibility to use
+            Java Regular expression to replace any sequence of characters
+            matching a pattern with an arbitrary replacement string,
+            which may include back references to portions of the original
+            string matched by the pattern.
+
+            See the Java Regular Expression documentation for more
+            information on pattern and replacement string syntax.
+
+            http://java.sun.com/j2se/1.5.0/docs/api/java/util/regex/package-summary.html
+        -->
+      <filter class="solr.PatternReplaceFilterFactory"
+              pattern="([^a-z0-9])" replacement="" replace="all"
+      />
+    </analyzer>
+  </fieldType>
+
+  <fieldType name="textSpell" class="solr.TextField" positionIncrementGap="100" >
+    <analyzer>
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+      <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+    </analyzer>
+  </fieldType>
+
+  <fieldType name="textSuggest" class="solr.TextField" positionIncrementGap="100">
+      <analyzer>
+        <tokenizer class="solr.KeywordTokenizerFactory"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+        <filter class="solr.RemoveDuplicatesTokenFilterFactory"/>
+      </analyzer>
+  </fieldType>
+
+  <!--
+    ************************************
+    * SIMILARITY SCORING CONFIGURATION *
+    ************************************
+  -->
+
+  <!-- Similarity is the scoring routine for each document vs. a query.
+      A custom Similarity or SimilarityFactory may be specified here, but
+      the default is fine for most applications.
+      For more info: https://solr.apache.org/guide/solr/latest/indexing-guide/schema-elements.html#similarity
+  -->
+  <!--
+    <similarity class="com.example.solr.CustomSimilarityFactory">
+      <str name="paramkey">param value</str>
+    </similarity>
+  -->
+</schema>

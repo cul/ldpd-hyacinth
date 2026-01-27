@@ -27,11 +27,11 @@ namespace :hyacinth do
         pids.each do |pid|
           dobj = DigitalObject::Base.find(pid)
           if dobj.is_a?(DigitalObject::Asset)
-            csv << [dobj.pid, 'asset', dobj.access_copy_location, dobj.original_filename]
+            csv << [dobj.pid, 'asset', dobj.location_for_resource('access'), dobj.original_filename]
           elsif dobj.is_a?(DigitalObject::Item)
             dobj.ordered_child_digital_object_pids.each do |child_pid|
               child_dobj = DigitalObject::Base.find(child_pid)
-              csv << [child_dobj.pid, 'asset', child_dobj.access_copy_location, child_dobj.original_filename]
+              csv << [child_dobj.pid, 'asset', child_dobj.location_for_resource('access'), child_dobj.original_filename]
             end
           else
             raise "Unhandled digital object type: #{dobj.class.name}"

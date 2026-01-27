@@ -14,7 +14,8 @@ class Hyacinth::Storage::S3Object < Hyacinth::Storage::AbstractObject
     @key = uri.path.gsub(/^\//, '') # Remove leading slash if present
   end
 
-  def s3_object
+  def s3_object(reload: false)
+    @s3_object = nil if reload
     @s3_object ||= Aws::S3::Object.new(self.bucket_name, self.key, { client: S3_CLIENT })
   end
 
@@ -29,7 +30,7 @@ class Hyacinth::Storage::S3Object < Hyacinth::Storage::AbstractObject
   end
 
   def exist?
-    self.s3_object.exists?
+    self.s3_object(reload: true).exists?
   end
 
   def filename
@@ -44,8 +45,18 @@ class Hyacinth::Storage::S3Object < Hyacinth::Storage::AbstractObject
     self.s3_object.content_type
   end
 
-  def read
-    obj = S3_CLIENT.get_object({ bucket: self.bucket_name, key: self.key }) do |chunk, _headers|
+  def read(&block)
+    read_range(0, &block)
+  end
+
+  def read_range(from, to = nil, &block)
+    opts =  { bucket: self.bucket_name, key: self.key }
+
+    if from > 0 || to.present?
+      opts[:range] = "bytes=#{from}-#{to || ''}"
+    end
+
+    S3_CLIENT.get_object(opts) do |chunk, _headers|
       yield chunk
     end
   end
@@ -82,5 +93,12 @@ class Hyacinth::Storage::S3Object < Hyacinth::Storage::AbstractObject
 
     raise Hyacinth::Exceptions::FileImportError,
           "Error during file upload. Did not receive confirmation from AWS."
+  end
+
+  def delete!
+    if self.s3_object(reload: true).exists?
+      self.s3_object.delete
+      Rails.logger.info "Deleted S3 object (bucket=#{self.bucket_name}, key=#{self.key})"
+    end
   end
 end

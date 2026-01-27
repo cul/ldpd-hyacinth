@@ -1,34 +1,27 @@
 require 'rails_helper'
 require 'equivalent-xml'
 
-context 'Hyacinth::Utils::HashUtils' do
+describe Hyacinth::Utils::HashUtils do
+  describe ".find_nested_hash_values" do
 
-  before(:all) do
-  end
-
-  before(:each) do
-  end
-
-  describe "::find_nested_hash_values" do
-    
     it "works for top level keys in a simple hash" do
       hsh = {
         'a' => 'b',
         'c' => 'd',
         'e' => 'f'
       }
-      expect(Hyacinth::Utils::HashUtils::find_nested_hash_values(hsh, 'c')).to eq(['d'])
+      expect(Hyacinth::Utils::HashUtils.find_nested_hash_values(hsh, 'c')).to eq(['d'])
     end
-    
+
     it "it dfferentiates between strings and symbols in a regular hash" do
       hsh = {
         'a' => 'y',
         :a => :z
       }
-      expect(Hyacinth::Utils::HashUtils::find_nested_hash_values(hsh, 'a')).to eq(['y'])
-      expect(Hyacinth::Utils::HashUtils::find_nested_hash_values(hsh, :a)).to eq([:z])
+      expect(Hyacinth::Utils::HashUtils.find_nested_hash_values(hsh, 'a')).to eq(['y'])
+      expect(Hyacinth::Utils::HashUtils.find_nested_hash_values(hsh, :a)).to eq([:z])
     end
-    
+
     it "works for deeply nested keys" do
       hsh = {
         'a' => 'b',
@@ -43,9 +36,9 @@ context 'Hyacinth::Utils::HashUtils' do
           }
         }
       }
-      expect(Hyacinth::Utils::HashUtils::find_nested_hash_values(hsh, 'ccc')).to eq(['ddd'])
+      expect(Hyacinth::Utils::HashUtils.find_nested_hash_values(hsh, 'ccc')).to eq(['ddd'])
     end
-    
+
     it "can delve through mixed layers of hashes and arrays" do
       hsh = {
         'a' => 'b',
@@ -68,9 +61,9 @@ context 'Hyacinth::Utils::HashUtils' do
           }
         ]
       }
-      expect(Hyacinth::Utils::HashUtils::find_nested_hash_values(hsh, 'eee')).to eq(['fff'])
+      expect(Hyacinth::Utils::HashUtils.find_nested_hash_values(hsh, 'eee')).to eq(['fff'])
     end
-    
+
     it "will return multiple results when present" do
       hsh = {
         'name' => [
@@ -95,9 +88,9 @@ context 'Hyacinth::Utils::HashUtils' do
           }
         ]
       }
-      expect(Hyacinth::Utils::HashUtils::find_nested_hash_values(hsh, 'name_role_value')).to eq(['Author', 'Illustrator', 'Photographer'])
+      expect(Hyacinth::Utils::HashUtils.find_nested_hash_values(hsh, 'name_role_value')).to eq(['Author', 'Illustrator', 'Photographer'])
     end
-    
+
     it "it returns elements by reference rather than making a copy of them" do
       hsh = {
         'a' => {
@@ -119,7 +112,7 @@ context 'Hyacinth::Utils::HashUtils' do
           }
         }
       }
-      
+
       expected = {
         'a' => {
           'aa' => 'bb',
@@ -140,37 +133,37 @@ context 'Hyacinth::Utils::HashUtils' do
           }
         }
       }
-      
-      objects = Hyacinth::Utils::HashUtils::find_nested_hash_values(hsh, 'cc')
+
+      objects = Hyacinth::Utils::HashUtils.find_nested_hash_values(hsh, 'cc')
       objects.each_with_index do |obj, i|
         obj['value'] = 'change' + i.to_s
       end
-      
+
       expect(hsh).to eq(expected)
     end
-    
+
   end
-  
-  describe "::find_nested_hashes_that_contain_key" do
-    
+
+  describe ".find_nested_hashes_that_contain_key" do
+
     it "works for top level keys in a simple hash" do
       hsh = {
         'a' => 'b',
         'c' => 'd',
         'e' => 'f'
       }
-      expect(Hyacinth::Utils::HashUtils::find_nested_hashes_that_contain_key(hsh, 'c')).to eq([hsh])
+      expect(Hyacinth::Utils::HashUtils.find_nested_hashes_that_contain_key(hsh, 'c')).to eq([hsh])
     end
-    
+
     it "it dfferentiates between strings and symbols in a regular hash" do
       hsh = {
         'a' => 'y',
         :a => :z
       }
-      expect(Hyacinth::Utils::HashUtils::find_nested_hashes_that_contain_key(hsh, 'a')).to eq([hsh])
-      expect(Hyacinth::Utils::HashUtils::find_nested_hashes_that_contain_key(hsh, :a)).to eq([hsh])
+      expect(Hyacinth::Utils::HashUtils.find_nested_hashes_that_contain_key(hsh, 'a')).to eq([hsh])
+      expect(Hyacinth::Utils::HashUtils.find_nested_hashes_that_contain_key(hsh, :a)).to eq([hsh])
     end
-    
+
     it "works for deeply nested keys" do
       hsh = {
         'a' => 'b',
@@ -190,9 +183,9 @@ context 'Hyacinth::Utils::HashUtils' do
         'ccc' => 'ddd',
         'eee' => 'fff'
       }]
-      expect(Hyacinth::Utils::HashUtils::find_nested_hashes_that_contain_key(hsh, 'ccc')).to eq(expected)
+      expect(Hyacinth::Utils::HashUtils.find_nested_hashes_that_contain_key(hsh, 'ccc')).to eq(expected)
     end
-    
+
     it "can delve through mixed layers of hashes and arrays" do
       hsh = {
         'a' => 'b',
@@ -220,9 +213,9 @@ context 'Hyacinth::Utils::HashUtils' do
         'ccc' => 'ddd',
         'eee' => 'fff'
       }]
-      expect(Hyacinth::Utils::HashUtils::find_nested_hashes_that_contain_key(hsh, 'eee')).to eq(expected)
+      expect(Hyacinth::Utils::HashUtils.find_nested_hashes_that_contain_key(hsh, 'eee')).to eq(expected)
     end
-    
+
     it "will return multiple results when present" do
       hsh = {
         'name' => [
@@ -247,7 +240,7 @@ context 'Hyacinth::Utils::HashUtils' do
           }
         ]
       }
-      
+
       expected = [
         {
           'name_role_value' => 'Author'
@@ -259,9 +252,9 @@ context 'Hyacinth::Utils::HashUtils' do
           'name_role_value' => 'Photographer'
         }
       ]
-      expect(Hyacinth::Utils::HashUtils::find_nested_hashes_that_contain_key(hsh, 'name_role_value')).to eq(expected)
+      expect(Hyacinth::Utils::HashUtils.find_nested_hashes_that_contain_key(hsh, 'name_role_value')).to eq(expected)
     end
-    
+
     it "it returns elements by reference rather than making a copy of them" do
       hsh = {
         'a' => {
@@ -283,7 +276,7 @@ context 'Hyacinth::Utils::HashUtils' do
           }
         }
       }
-      
+
       expected = {
         'a' => {
           'aa' => 'bb',
@@ -304,15 +297,132 @@ context 'Hyacinth::Utils::HashUtils' do
           }
         }
       }
-      
-      objects = Hyacinth::Utils::HashUtils::find_nested_hashes_that_contain_key(hsh, 'value')
+
+      objects = Hyacinth::Utils::HashUtils.find_nested_hashes_that_contain_key(hsh, 'value')
       objects.each_with_index do |obj, i|
         obj['value'] = 'change' + i.to_s
       end
-      
+
       expect(hsh).to eq(expected)
     end
-    
   end
 
+  describe ".recursively_remove_blank_fields_from_hash!" do
+    it "modifies the given hash and recursively removes all blank fields" do
+      hsh = {
+        "alternate_title" => [
+          {
+            "title_non_sort_portion" => "",
+            "title_sort_portion" => "Catcher in the Rye"
+          }
+        ],
+        "name" => [
+          {
+            "name_value" => "",
+            "name_role" => [
+              {
+                "name_role_value" => ""
+              }
+            ]
+          }
+        ],
+        "controlled_field_group" => [
+          {
+            "controlled_field" =>  {
+              "controlled_field_uri" => "",
+              "controlled_field_value" => "",
+            }
+          }
+        ],
+        "collection" => [
+          {
+            "collection_authorized_term_uri" => "http://localhost:8080/fedora/objects/cul:p5hqbzkh2p"
+          }
+        ],
+        "note" => [
+          {
+            "note_value" => "                         ", # A bunch of spaces
+            "note_type" => ""
+          }
+        ]
+      }
+
+      expected = {
+        "alternate_title" => [
+          {
+            "title_sort_portion" => "Catcher in the Rye"
+          }
+        ],
+        "collection" => [
+          {
+            "collection_authorized_term_uri" => "http://localhost:8080/fedora/objects/cul:p5hqbzkh2p"
+          }
+        ]
+      }
+
+      described_class.recursively_remove_blank_fields_from_hash!(hsh)
+      expect(hsh).to eq(expected)
+    end
+  end
+
+  describe ".recursively_remove_blank_fields_from_hash" do
+    it "returns a new hash with all blank fields recursively removed, and does not modify the original hash" do
+      hsh = {
+        "alternate_title" => [
+          {
+            "title_non_sort_portion" => "",
+            "title_sort_portion" => "Catcher in the Rye"
+          }
+        ],
+        "name" => [
+          {
+            "name_value" => "",
+            "name_role" => [
+              {
+                "name_role_value" => ""
+              }
+            ]
+          }
+        ],
+        "controlled_field_group" => [
+          {
+            "controlled_field" =>  {
+              "controlled_field_uri" => "",
+              "controlled_field_value" => "",
+            }
+          }
+        ],
+        "collection" => [
+          {
+            "collection_authorized_term_uri" => "http://localhost:8080/fedora/objects/cul:p5hqbzkh2p"
+          }
+        ],
+        "note" => [
+          {
+            "note_value" => "                         ", # A bunch of spaces
+            "note_type" => ""
+          }
+        ]
+      }
+
+      expected = {
+        "alternate_title" => [
+          {
+            "title_sort_portion" => "Catcher in the Rye"
+          }
+        ],
+        "collection" => [
+          {
+            "collection_authorized_term_uri" => "http://localhost:8080/fedora/objects/cul:p5hqbzkh2p"
+          }
+        ]
+      }
+
+      new_hsh = described_class.recursively_remove_blank_fields_from_hash(hsh)
+      # New hash should have blank values recursively removed
+      expect(new_hsh).to eq(expected)
+      # New hash should not equal old hash, since old hash should not have been modified
+      expect(new_hsh).not_to eq(hsh)
+    end
+  end
 end

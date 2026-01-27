@@ -3,7 +3,7 @@ class Hyacinth::Utils::CsvHeaderTemplate
   # template. PLEASE NOTE that we do not include all internal fields in the template,
   CSV_HEADER_TEMPLATE_INTERNAL_FIELDS =
     ["_digital_object_type.string_key", "_identifiers-1", "_parent_digital_objects-1.identifier",
-     "_project.string_key", "_import_file.import_path", "_import_file.original_file_path", "_import_file.import_type"]
+     "_project.string_key", "_import_file.main.import_location", "_import_file.main.original_file_path", "_import_file.main.import_type"]
 
   # generates the CSV header for a DynamicField that IS NOT a
   # Controlled Term (ct)

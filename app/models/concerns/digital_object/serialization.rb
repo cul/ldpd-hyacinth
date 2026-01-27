@@ -9,7 +9,6 @@ module DigitalObject::Serialization
   def as_json(options = {})
     json = {
       pid: pid,
-      data_file_path: @db_record.data_file_path,
       uuid: @db_record.uuid,
       created: format_date(@db_record.created_at),
       modified: format_date(@db_record.updated_at),
@@ -31,14 +30,6 @@ module DigitalObject::Serialization
     }
     json[:assignments] = Assignment.where(digital_object_pid: pid) unless options[:assignments] === false
     json
-  end
-
-  def as_hyacinth_3_json(_options = {})
-    # TODO: Add other fields once Hyacinth 3 data file format is finalized
-    {
-      uuid: @db_record.uuid,
-      data_file_path: @db_record.data_file_path,
-    }
   end
 
   # Returns: Hash of data confirming creation

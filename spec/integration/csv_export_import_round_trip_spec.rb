@@ -21,9 +21,11 @@ describe "CSV Export-Import Round Trip" do
       file_path = File.join(fixture_path(), '/files/lincoln.jpg')
       # Manually override import_file settings in the dummy fixture
       dod['import_file'] = {
-        'import_type' => DigitalObject::Asset::IMPORT_TYPE_INTERNAL,
-        'import_path' => file_path,
-        'original_file_path' => file_path
+        'main' => {
+          'import_type' => DigitalObject::Asset::IMPORT_TYPE_INTERNAL,
+          'import_location' => file_path,
+          'original_file_path' => file_path
+        }
       }
       dod
     }
@@ -92,7 +94,7 @@ describe "CSV Export-Import Round Trip" do
       first_csv_export = CsvExport.create(
         user: User.find_by(is_admin: true), # Admin users have access to all records
         search_params: JSON.generate({
-          'fq' => { 'hyacinth_type_sim' => [{ 'does_not_equal' => 'publish_target' }] }
+          'fq' => { 'hyacinth_type_si' => [{ 'does_not_equal' => 'publish_target' }] }
         })
       )
       ExportSearchResultsToCsvJob.perform_now(first_csv_export.id)
@@ -101,6 +103,8 @@ describe "CSV Export-Import Round Trip" do
 
       # Now we'll clear all DynamicFieldData, Publish Targets and Identifiers from the records
       newly_created_digital_objects.each do |digital_object|
+        # Re-fetch the object so that we're not using a version that has previous file import data
+        digital_object = DigitalObject::Base.find(digital_object.pid)
         digital_object.set_digital_object_data({
           'identifiers' => [], # Note: Clearing identifiers still leaves the pid as an identifier, which is fine
           'publish_targets' => [],
@@ -128,7 +132,7 @@ describe "CSV Export-Import Round Trip" do
       second_csv_export = CsvExport.create(
         user: User.find_by(is_admin: true), # Admin users have access to all records
         search_params: JSON.generate({
-          'fq' => { 'hyacinth_type_sim' => [{ 'does_not_equal' => 'publish_target' }] }
+          'fq' => { 'hyacinth_type_si' => [{ 'does_not_equal' => 'publish_target' }] }
         })
       )
       ExportSearchResultsToCsvJob.perform_now(second_csv_export.id)

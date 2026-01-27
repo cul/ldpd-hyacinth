@@ -1,27 +1,35 @@
 require 'rails_helper'
 
 RSpec.describe Hyacinth::Utils::PathUtils do
-  describe '.pairtree' do
-    let(:digest) { '3bf637408200bd7f04873f03a7aa5c97a792e2c9c89ce6b5d688fbc8353edfeb' }
-    let(:original_filename) { 'example.tiff' }
-    let(:original_filename_with_capital_letters_in_extension) { 'example.TiFf' }
-    let(:original_filename_with_invalid_chars_in_extension) { 'example.jå¥pg' }
+  describe '.relative_resource_file_path_for_uuid' do
+    let(:uuid) { '3229414b-50be-4137-a360-fa97f043e2f5' }
+    let(:suffix) { '-access' }
+    let(:extension) { 'tiff' }
+    let(:extension_with_leading_period) { '.tiff' }
+    let(:extension_with_capital_letters) { 'TiFf' }
+    let(:extension_with_invalid_chars) { 'jå¥pg' }
 
-    it 'works as expected for a simple filename' do
-      expect(described_class.pairtree(digest, original_filename)).to eq(
-        ["3b", "f6", "37", "40", "3bf637408200bd7f04873f03a7aa5c97a792e2c9c89ce6b5d688fbc8353edfeb.tiff"]
+    it 'works as expected for a simple extension' do
+      expect(described_class.relative_resource_file_path_for_uuid(uuid, suffix, extension)).to eq(
+        '32/29/41/4b/50/be/3229414b-50be-4137-a360-fa97f043e2f5/3229414b-50be-4137-a360-fa97f043e2f5-access.tiff'
+      )
+    end
+
+    it 'works as expected when a leading period is provided with the extension' do
+      expect(described_class.relative_resource_file_path_for_uuid(uuid, suffix, extension_with_leading_period)).to eq(
+        '32/29/41/4b/50/be/3229414b-50be-4137-a360-fa97f043e2f5/3229414b-50be-4137-a360-fa97f043e2f5-access.tiff'
       )
     end
 
     it 'downcases file extensions' do
-      expect(described_class.pairtree(digest, original_filename_with_capital_letters_in_extension)).to eq(
-        ["3b", "f6", "37", "40", "3bf637408200bd7f04873f03a7aa5c97a792e2c9c89ce6b5d688fbc8353edfeb.tiff"]
+      expect(described_class.relative_resource_file_path_for_uuid(uuid, suffix, extension_with_capital_letters)).to eq(
+        '32/29/41/4b/50/be/3229414b-50be-4137-a360-fa97f043e2f5/3229414b-50be-4137-a360-fa97f043e2f5-access.tiff'
       )
     end
 
     it 'cleans file extensions to only allow periods, letters a-z and A-Z, and numbers' do
-      expect(described_class.pairtree(digest, original_filename_with_invalid_chars_in_extension)).to eq(
-        ["3b", "f6", "37", "40", "3bf637408200bd7f04873f03a7aa5c97a792e2c9c89ce6b5d688fbc8353edfeb.jpg"]
+      expect(described_class.relative_resource_file_path_for_uuid(uuid, suffix, extension_with_invalid_chars)).to eq(
+        '32/29/41/4b/50/be/3229414b-50be-4137-a360-fa97f043e2f5/3229414b-50be-4137-a360-fa97f043e2f5-access.jpg'
       )
     end
   end

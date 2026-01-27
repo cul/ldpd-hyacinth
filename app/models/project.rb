@@ -12,8 +12,8 @@ class Project < ApplicationRecord
 
   validates :display_label, :string_key, presence: true
   validates :default_storage_type, inclusion: { in: Hyacinth::Storage::STORAGE_SCHEMES }
+  validates :default_access_storage_type, inclusion: { in: Hyacinth::Storage::STORAGE_SCHEMES }
   validates :short_label, length: { maximum: 255 }, allow_blank: true
-  validate :validate_custom_asset_directory
 
   before_create :create_associated_fedora_object!
   before_save :fill_in_short_label_if_blank!
@@ -60,15 +60,6 @@ class Project < ApplicationRecord
   # Get dynamic_field_ids for enabled dynamic fields, irregardless of object type, no duplicates
   def enabled_dynamic_field_ids
     enabled_dynamic_fields.select(:dynamic_field_id).distinct.pluck(:dynamic_field_id).to_a
-  end
-
-  def relative_asset_directory
-    # if full_path_to_custom_asset_directory.present?
-    #   full_path_to_custom_asset_directory
-    # else
-    #   File.join(HYACINTH[:default_asset_home], string_key)
-    # end
-    self.string_key
   end
 
   def ensure_that_title_fields_are_enabled_and_required
@@ -143,15 +134,4 @@ class Project < ApplicationRecord
       string_key: string_key
     }
   end
-
-  private
-
-    def validate_custom_asset_directory
-      return unless full_path_to_custom_asset_directory.present?
-
-      all_permissions = File.exist?(asset_directory) &&
-                        File.readable?(asset_directory) &&
-                        File.writable?(asset_directory)
-      errors.add(:full_path_to_custom_asset_directory, 'could not be written to.  Ensure that the path exists and has the correct read/write permissions: "' + full_path_to_custom_asset_directory + '"') unless all_permissions
-    end
 end

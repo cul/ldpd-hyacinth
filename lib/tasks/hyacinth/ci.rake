@@ -41,9 +41,7 @@ if ['development', 'test'].include?(Rails.env)
         duration = Benchmark.realtime do
           Rake::Task["hyacinth:fedora:reload_cmodels"].invoke
           Rake::Task["uri_service:db:drop_tables_and_clear_solr"].invoke
-          Rake::Task["hyacinth:test:clear_default_asset_home_content"].invoke
-          Rake::Task["hyacinth:test:clear_default_service_copy_home_content"].invoke
-          Rake::Task["hyacinth:test:clear_access_copy_content"].invoke
+          Rake::Task["hyacinth:test:clear_local_default_resource_storage_content"].invoke
           Rake::Task["uri_service:db:setup"].invoke
           Rake::Task['db:environment:set'].invoke
           Rake::Task['db:drop'].invoke

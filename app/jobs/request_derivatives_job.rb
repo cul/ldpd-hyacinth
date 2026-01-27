@@ -33,12 +33,14 @@ class RequestDerivativesJob < ActiveJob::Base
         identifier: asset.pid,
         delivery_target: 'hyacinth2',
         adjust_orientation: asset.fedora_object.orientation,
-        main_uri: asset.filesystem_location_uri,
+        main_uri: asset.location_uri_for_resource('main'),
         requested_derivatives: requested_derivatives,
+        # service_uri can be nil, if no service copy currently exists
+        service_uri: asset.location_uri_for_resource('service'),
         # access_uri can be nil, if no access copy currently exists
-        access_uri: asset.access_copy_location_uri,
+        access_uri: asset.location_uri_for_resource('access'),
         # poster_uri can be nil, if no poster currently exists
-        poster_uri: asset.poster_location_uri
+        poster_uri: asset.location_uri_for_resource('poster')
       }
     }
   end
@@ -60,9 +62,9 @@ class RequestDerivativesJob < ActiveJob::Base
   def required_derivatives_for_asset(asset)
     required_derivatives = []
     # We attempt to generate an access copy for all asset types
-    required_derivatives << 'access' if asset.access_copy_location.nil?
+    required_derivatives << 'access' if asset.location_uri_for_resource('access').nil?
     # We attempt to generate a poster for all asset types EXCEPT Image assets, since they don't need a poster
-    required_derivatives << 'poster' if asset.poster_location.nil? && asset.dc_type != 'StillImage'
+    required_derivatives << 'poster' if asset.location_uri_for_resource('poster').nil? && asset.dc_type != 'StillImage'
     # Get featured region
     required_derivatives << 'featured_region' if asset.featured_region.nil?
     required_derivatives

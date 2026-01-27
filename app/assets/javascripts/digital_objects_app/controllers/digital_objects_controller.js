@@ -645,8 +645,10 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.upload_assets = fu
       Hyacinth.addAlert('Performing upload...', 'info');
 
       digital_object_data_for_new_asset['import_file'] = {
-        import_type: "upload_directory",
-        import_path: fileBrowserWidget.getPathFieldValue()
+        main: {
+          import_type: "upload_directory",
+          import_location: fileBrowserWidget.getPathFieldValue()
+        }
       }
 
       var filename = fileBrowserWidget.getPathFieldValue().replace(/^.*[\\\/]/, '');
@@ -671,8 +673,10 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.upload_assets = fu
     var $uploadForm = $('.digital-object-asset-upload-form');
 
     digital_object_data_for_new_asset['import_file'] = {
-      import_type: "post_data",
-      import_path: fileBrowserWidget.getPathFieldValue()
+      main: {
+        import_type: "post_data",
+        import_location: fileBrowserWidget.getPathFieldValue()
+      }
     }
 
     $uploadForm.fileupload({

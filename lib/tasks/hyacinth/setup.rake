@@ -27,7 +27,8 @@ namespace :hyacinth do
             first_name: user_info['first_name'],
             last_name: user_info['last_name'],
             is_admin: user_info['is_admin'],
-            account_type: user_info['account_type']
+            account_type: user_info['account_type'],
+            api_key: user_info['api_key']
           )
         }
     end

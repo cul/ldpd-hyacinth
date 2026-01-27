@@ -80,7 +80,7 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     search_results = search(
       {
         'fl' => 'pid',
-        'fq' => { 'hyacinth_type_sim' => [{ 'equals' => 'publish_target' }] },
+        'fq' => { 'hyacinth_type_si' => [{ 'equals' => 'publish_target' }] },
         'per_page' => 99_999
       },
       nil,
@@ -107,7 +107,7 @@ class DigitalObject::PublishTarget < DigitalObject::Base
 
     search_results = search(
       {
-        'fl' => 'pid, title_ssm, digital_object_data_ts',
+        'fl' => 'pid, title_ss, digital_object_data_ts',
         'pids' => publish_target_pids
       },
       nil,
@@ -119,7 +119,7 @@ class DigitalObject::PublishTarget < DigitalObject::Base
       digital_object_data = JSON.parse(publish_target_solr_doc.fetch('digital_object_data_ts'))
       {
         'pid' => publish_target_solr_doc['pid'],
-        'display_label' => publish_target_solr_doc['title_ssm'].first,
+        'display_label' => publish_target_solr_doc['title_ss'],
         'string_key' => digital_object_data.fetch('publish_target_data', {}).present? ? JSON.parse(publish_target_solr_doc['digital_object_data_ts'])['publish_target_data']['string_key'] : ''
       }
     end

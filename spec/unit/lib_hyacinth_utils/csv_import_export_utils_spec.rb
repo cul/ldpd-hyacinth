@@ -1,9 +1,7 @@
 require 'rails_helper'
 
-context 'Hyacinth::Utils::CsvImportExportUtils' do
-
+context Hyacinth::Utils::CsvImportExportUtils do
   let(:new_digital_object_data) { {} }
-  let(:klass) { Hyacinth::Utils::CsvImportExportUtils }
 
   let(:builder_path_test_object) {
     {
@@ -53,25 +51,25 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
     let(:special_chars_csv_latin1_file) { fixture('sample_digital_object_data/special_char_csv_fixtures/special_chars_csv_latin1.csv') }
 
     it "converts properly for a new item" do
-      klass.csv_to_digital_object_data(expected_new_item_csv_data) do |digital_object_data|
+      described_class.csv_to_digital_object_data(expected_new_item_csv_data) do |digital_object_data|
         expect(digital_object_data).to eq(expected_new_item)
       end
     end
 
     it "converts properly for a new item csv when there is only one header row (i.e. no human-friendly header row)" do
-      klass.csv_to_digital_object_data(expected_new_item_csv_data_with_single_header) do |digital_object_data|
+      described_class.csv_to_digital_object_data(expected_new_item_csv_data_with_single_header) do |digital_object_data|
         expect(digital_object_data).to eq(expected_new_item)
       end
     end
 
     it "converts properly for a new asset" do
-      klass.csv_to_digital_object_data(expected_new_asset_csv_data) do |digital_object_data|
+      described_class.csv_to_digital_object_data(expected_new_asset_csv_data) do |digital_object_data|
         expect(digital_object_data).to eq(expected_new_asset)
       end
     end
 
     it "converts properly for an existing item" do
-      klass.csv_to_digital_object_data(expected_existing_item_csv_data) do |digital_object_data|
+      described_class.csv_to_digital_object_data(expected_existing_item_csv_data) do |digital_object_data|
         expect(digital_object_data).to eq(expected_existing_item)
       end
     end
@@ -79,14 +77,14 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
     it "converts properly for multiple digital objects in the same spreadsheet" do
       counter = 0
 
-      klass.csv_to_digital_object_data(expected_multiple_digital_objects_csv_data) do |digital_object_data|
+      described_class.csv_to_digital_object_data(expected_multiple_digital_objects_csv_data) do |digital_object_data|
         expect(digital_object_data).to eq(expected_multiple_digital_objects[counter])
         counter += 1
       end
     end
 
     it "ignores columns with an empty hyacinth string key column header" do
-      klass.csv_to_digital_object_data(new_item_with_blank_column_header_csv_data) do |digital_object_data|
+      described_class.csv_to_digital_object_data(new_item_with_blank_column_header_csv_data) do |digital_object_data|
         expect(digital_object_data.sort).to eq(new_item_with_blank_column_header_json.sort)
       end
     end
@@ -94,12 +92,12 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
     context "character encoding" do
       it "raises an exception if non-utf-8 CSV file data is provided" do
         csv_data = special_chars_csv_latin1_file.read
-        expect { klass.csv_to_digital_object_data(csv_data) }.to raise_error(Hyacinth::Exceptions::InvalidUtf8DetectedError)
+        expect { described_class.csv_to_digital_object_data(csv_data) }.to raise_error(Hyacinth::Exceptions::InvalidUtf8DetectedError)
       end
 
       it "properly interprets non-ASCII characters from a UTF-8 CSV file" do
         csv_data = special_chars_csv_utf8_file.read
-        klass.csv_to_digital_object_data(csv_data) do |digital_object_data|
+        described_class.csv_to_digital_object_data(csv_data) do |digital_object_data|
           expect(digital_object_data['dynamic_field_data']['title'][0]['title_sort_portion']).to eq('Title with special chars † áéíøü')
         end
       end
@@ -111,17 +109,17 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
 
     it "raises an exception if a supplied field name does not begin with an underscore ('_')" do
       expect {
-        klass.process_internal_field_value(new_digital_object_data, 'zzz', 'field_name_that_does_not_start_with_an_underscore')
+        described_class.process_internal_field_value(new_digital_object_data, 'zzz', 'field_name_that_does_not_start_with_an_underscore')
       }.to raise_error("Internal field header names must begin with an underscore ('_')")
     end
 
     it "properly handles a non-blank field value" do
-      klass.process_internal_field_value(new_digital_object_data, 'abc:123', '_pid')
+      described_class.process_internal_field_value(new_digital_object_data, 'abc:123', '_pid')
       expect(new_digital_object_data).to eq({'pid' => 'abc:123'})
     end
 
     it "properly handles a non-blank field value that uses dot-notation" do
-      klass.process_internal_field_value(new_digital_object_data, 'item', '_type.string_key')
+      described_class.process_internal_field_value(new_digital_object_data, 'item', '_type.string_key')
       expect(new_digital_object_data).to eq(
         {
           'type' => {
@@ -132,19 +130,19 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
     end
 
     it "properly handles a blank field value for a simple field name" do
-      klass.process_internal_field_value(new_digital_object_data, '', '_pid')
+      described_class.process_internal_field_value(new_digital_object_data, '', '_pid')
       expect(new_digital_object_data).to eq({'pid' => ''})
     end
 
     it "properly handles a blank field value for a multivalued field" do
-      klass.process_internal_field_value(new_digital_object_data, '', '_identifier-1')
-      klass.process_internal_field_value(new_digital_object_data, '', '_identifier-2')
+      described_class.process_internal_field_value(new_digital_object_data, '', '_identifier-1')
+      described_class.process_internal_field_value(new_digital_object_data, '', '_identifier-2')
       expect(new_digital_object_data).to eq({'identifier' => ['', '']})
     end
 
     it "properly handles a blank field value for a multivalued field that uses dot-notation" do
-      klass.process_internal_field_value(new_digital_object_data, '', '_publish_target-1.string_key')
-      klass.process_internal_field_value(new_digital_object_data, '', '_publish_target-2.string_key')
+      described_class.process_internal_field_value(new_digital_object_data, '', '_publish_target-1.string_key')
+      described_class.process_internal_field_value(new_digital_object_data, '', '_publish_target-2.string_key')
       expect(new_digital_object_data).to eq(
         {
           'publish_target' => [
@@ -161,7 +159,7 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
 
     it "raises an exception if a 0-indexed internal field header is supplied (because headers should be 1-indexed)" do
       expect {
-        klass.process_internal_field_value(new_digital_object_data, 'value', '_publish_target-0.string_key')
+        described_class.process_internal_field_value(new_digital_object_data, 'value', '_publish_target-0.string_key')
       }.to raise_error('Internal field header names cannot be 0-indexed. Must be 1-indexed.')
     end
   end
@@ -177,17 +175,17 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
         },
         "name_role_type" => "text"
       }
-      expect(klass.get_object_at_builder_path(builder_path_test_object, builder_path)).to eq(expected)
+      expect(described_class.get_object_at_builder_path(builder_path_test_object, builder_path)).to eq(expected)
     end
 
     it "returns nil when a path cannot be found" do
       builder_path = ['name', 0, 'WRONG', 0]
-      expect(klass.get_object_at_builder_path(builder_path_test_object, builder_path)).to eq(nil)
+      expect(described_class.get_object_at_builder_path(builder_path_test_object, builder_path)).to eq(nil)
     end
 
     it "returns the given object if the supplied builder_path is an empty array" do
       builder_path = []
-      expect(klass.get_object_at_builder_path(builder_path_test_object, builder_path)).to eq(builder_path_test_object)
+      expect(described_class.get_object_at_builder_path(builder_path_test_object, builder_path)).to eq(builder_path_test_object)
     end
 
   end
@@ -198,7 +196,7 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
       it "raises an exception if the given builder path doesn't exist and create_missing_path == false" do
         non_existent_path = ['banana', 4, 'chair']
         expect {
-          klass.put_object_at_builder_path(builder_path_test_object, non_existent_path, {'something' => 'cool'}, false)
+          described_class.put_object_at_builder_path(builder_path_test_object, non_existent_path, {'something' => 'cool'}, false)
         }.to raise_error('Path not found.  To create path, pass a value true to the create_missing_path method parameter.')
       end
 
@@ -218,7 +216,7 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
           }
         }
 
-        klass.put_object_at_builder_path(object_to_modify, builder_path, object_to_add, true)
+        described_class.put_object_at_builder_path(object_to_modify, builder_path, object_to_add, true)
 
         expect(object_to_modify).to eq(expected)
       end
@@ -239,7 +237,7 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
           }
         ]
 
-        klass.put_object_at_builder_path(object_to_modify, builder_path, object_to_add, true)
+        described_class.put_object_at_builder_path(object_to_modify, builder_path, object_to_add, true)
 
         expect(object_to_modify).to eq(expected)
       end
@@ -260,7 +258,7 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
           }
         }
 
-        klass.put_object_at_builder_path(object_to_modify, builder_path, object_to_add, true)
+        described_class.put_object_at_builder_path(object_to_modify, builder_path, object_to_add, true)
         expect(object_to_modify).to eq(expected)
       end
 
@@ -280,7 +278,7 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
           ]
         ]
 
-        klass.put_object_at_builder_path(object_to_modify, builder_path, object_to_add, true)
+        described_class.put_object_at_builder_path(object_to_modify, builder_path, object_to_add, true)
         expect(object_to_modify).to eq(expected)
       end
 
@@ -311,8 +309,8 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
           ]
         }
 
-        klass.put_object_at_builder_path(object_to_modify, builder_path_1, obj1, true)
-        klass.put_object_at_builder_path(object_to_modify, builder_path_2, obj2, true)
+        described_class.put_object_at_builder_path(object_to_modify, builder_path_1, obj1, true)
+        described_class.put_object_at_builder_path(object_to_modify, builder_path_2, obj2, true)
 
         expect(object_to_modify).to eq(expected)
       end
@@ -348,8 +346,8 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
           ]
         }
 
-        klass.put_object_at_builder_path(object_to_modify, builder_path_1, obj1, true)
-        klass.put_object_at_builder_path(object_to_modify, builder_path_2, obj2, true)
+        described_class.put_object_at_builder_path(object_to_modify, builder_path_1, obj1, true)
+        described_class.put_object_at_builder_path(object_to_modify, builder_path_2, obj2, true)
 
         expect(object_to_modify).to eq(expected)
       end
@@ -393,7 +391,7 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
             }
           ]
         }
-        klass.put_object_at_builder_path(two_name_object, valid_path, 'value1', true)
+        described_class.put_object_at_builder_path(two_name_object, valid_path, 'value1', true)
         expect( two_name_object ).to eq( expected )
       end
 
@@ -410,7 +408,7 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
         }
 
         expect {
-          klass.put_object_at_builder_path(object_to_modify, builder_path, object_to_add, true)
+          described_class.put_object_at_builder_path(object_to_modify, builder_path, object_to_add, true)
         }.to raise_error(Hyacinth::Exceptions::BuilderPathNotFoundError)
 
       end
@@ -453,7 +451,7 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
             }
           ]
         }
-        klass.put_object_at_builder_path(two_name_object, valid_path, 'type3', false)
+        described_class.put_object_at_builder_path(two_name_object, valid_path, 'type3', false)
         expect( two_name_object ).to eq( expected )
       end
 
@@ -482,7 +480,7 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
             "name_other_field" => "other_value"
           }
         ]
-        klass.put_object_at_builder_path(two_name_object, valid_path, new_value, false)
+        described_class.put_object_at_builder_path(two_name_object, valid_path, new_value, false)
         expect( two_name_object['name'][1]['name_role'][0] ).to eq( new_value )
       end
 
@@ -494,8 +492,8 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
 
     it "properly handles a non-blank field value" do
       current_builder_path = []
-      klass.process_dynamic_field_value(new_digital_object_data, 'The', 'title-1:title_non_sort_portion', current_builder_path)
-      klass.process_dynamic_field_value(new_digital_object_data, 'Catcher in the Rye', 'title-1:title_sort_portion', current_builder_path)
+      described_class.process_dynamic_field_value(new_digital_object_data, 'The', 'title-1:title_non_sort_portion', current_builder_path)
+      described_class.process_dynamic_field_value(new_digital_object_data, 'Catcher in the Rye', 'title-1:title_sort_portion', current_builder_path)
       expected = {
         "dynamic_field_data" => {
           "title" => [
@@ -511,8 +509,8 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
 
     it "properly handles a dot-notated field" do
       current_builder_path = []
-      klass.process_dynamic_field_value(new_digital_object_data, 'Salinger, J. D.', 'name-1:name_value.value', current_builder_path)
-      klass.process_dynamic_field_value(new_digital_object_data, 'http://id.loc.gov/authorities/names/n50016589', 'name-1:name_value.uri', current_builder_path)
+      described_class.process_dynamic_field_value(new_digital_object_data, 'Salinger, J. D.', 'name-1:name_value.value', current_builder_path)
+      described_class.process_dynamic_field_value(new_digital_object_data, 'http://id.loc.gov/authorities/names/n50016589', 'name-1:name_value.uri', current_builder_path)
       expected = {
         "dynamic_field_data" => {
           "name" => [
@@ -530,8 +528,8 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
 
     it "properly handles a dot-notated field with a blank value" do
       current_builder_path = []
-      klass.process_dynamic_field_value(new_digital_object_data, '', 'name-1:name_value.value', current_builder_path)
-      klass.process_dynamic_field_value(new_digital_object_data, '', 'name-1:name_value.uri', current_builder_path)
+      described_class.process_dynamic_field_value(new_digital_object_data, '', 'name-1:name_value.value', current_builder_path)
+      described_class.process_dynamic_field_value(new_digital_object_data, '', 'name-1:name_value.uri', current_builder_path)
       expected = {
         "dynamic_field_data" => {
           "name" => [
@@ -549,7 +547,7 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
 
     it "properly handles a blank field value (as an empty string)" do
       current_builder_path = []
-      klass.process_dynamic_field_value(new_digital_object_data, '', 'title-1:title_sort_portion', current_builder_path)
+      described_class.process_dynamic_field_value(new_digital_object_data, '', 'title-1:title_sort_portion', current_builder_path)
       expected = {
         "dynamic_field_data" => {
           "title" => [
@@ -565,14 +563,14 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
     it "raises an exception if a 0-indexed dynamic field header is supplied (because headers should be 1-indexed)" do
       current_builder_path = []
       expect {
-        klass.process_dynamic_field_value(new_digital_object_data, 'Catcher in the Rye', 'title-0:title_sort_portion', current_builder_path)
+        described_class.process_dynamic_field_value(new_digital_object_data, 'Catcher in the Rye', 'title-0:title_sort_portion', current_builder_path)
       }.to raise_error('Dynamic field header names cannot be 0-indexed. Must be 1-indexed.')
     end
   end
 
   describe ".identifiers_to_row_numbers_for_csv_data" do
     subject {
-      klass.identifiers_to_row_numbers_for_csv_data(csv_data)
+      described_class.identifiers_to_row_numbers_for_csv_data(csv_data)
     }
 
     context "retuns an empty map when pid and identifier columns aren't present" do
@@ -652,16 +650,16 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
     let(:parent_identifier_in_map) { 'item_1' }
     let(:parent_identifier_not_in_map) { 'identifier_not_in_map' }
     it "returns a numeric value if parent_identifier is a key in the map identifiers_to_row_numbers" do
-      expect(klass.parent_row_number_or_placeholder_value(parent_identifier_in_map, identifiers_to_row_numbers)).to eq(4)
+      expect(described_class.parent_row_number_or_placeholder_value(parent_identifier_in_map, identifiers_to_row_numbers)).to eq(4)
     end
     it "returns a specifically-prefixed string value if parent_identifier is NOT a key in the map identifiers_to_row_numbers" do
-      expect(klass.parent_row_number_or_placeholder_value(parent_identifier_not_in_map, identifiers_to_row_numbers)).to eq(klass::NOT_IN_SPREADSHEET_PREFIX + parent_identifier_not_in_map)
+      expect(described_class.parent_row_number_or_placeholder_value(parent_identifier_not_in_map, identifiers_to_row_numbers)).to eq(described_class::NOT_IN_SPREADSHEET_PREFIX + parent_identifier_not_in_map)
     end
   end
 
   describe ".prerequisite_row_map_for_csv_data" do
     subject {
-      klass.prerequisite_row_map_for_csv_data(csv_data)
+      described_class.prerequisite_row_map_for_csv_data(csv_data)
     }
 
     context "retuns the correct mapping even when all csv data rows have PIDs, since for now we can't assume that presence of a PID means that the record is in Hyacinth (because of object in Fedora, but not in Hyacinth)" do
@@ -806,5 +804,38 @@ context 'Hyacinth::Utils::CsvImportExportUtils' do
       end
     end
 
+  end
+
+  describe '.convert_legacy_headers_to_modern_headers!' do
+    let(:header_row) {
+      [
+        '_parent_digital_objects-1.pid',
+        '_digital_object_type.string_key',
+        '_project.string_key',
+        '_import_file.import_type',
+        '_import_file.import_path',
+        '_import_file.original_file_path',
+        '_import_file.service_copy_import_type',
+        '_import_file.service_copy_import_path',
+      ]
+    }
+
+    let(:expected) {
+      [
+        '_parent_digital_objects-1.pid',
+        '_digital_object_type.string_key',
+        '_project.string_key',
+        '_import_file.main.import_type',
+        '_import_file.main.import_location',
+        '_import_file.main.original_file_path',
+        '_import_file.service.import_type',
+        '_import_file.service.import_location',
+      ]
+    }
+
+    it 'converts as expected' do
+      described_class.convert_legacy_headers_to_modern_headers!(header_row)
+      expect(header_row).to eq(expected)
+    end
   end
 end

@@ -84,11 +84,8 @@ gem 'nokogiri', '~> 1.18', '>= 1.18.10', force_ruby_platform: true
 # For authentication
 gem 'devise', '~> 4.9'
 gem 'omniauth', '~> 2.1'
-gem 'omniauth-rails_csrf_protection', '~> 1.0'
-# gem 'omniauth-cul', '~> 0.2.0'
+gem 'omniauth-cul', '~> 0.3.0'
 # gem 'omniauth-cul', path: '../omniauth-cul'
-gem 'omniauth-cul', git: 'https://github.com/cul/omniauth-cul', ref: 'improved-implementation'
-# gem 'childprocess', '~> 2.0'
 
 # CUL Fedora Dependencies and Content Models
 gem 'cul_hydra', git: 'https://github.com/cul/cul_hydra', ref: 'wip-upgrade-deps'
@@ -149,10 +146,6 @@ gem 'aws-crt'
 # Google Cloud Storage SDK
 gem 'google-cloud-storage', '~> 1.49'
 
-# Remove the pin below once you update to Rails 7.0 or later.
-# See: https://github.com/rails/rails/issues/54263
-gem 'concurrent-ruby', '1.3.4'
-
 # Development and testing!
 group :development, :test do
   gem 'byebug'
@@ -162,7 +155,7 @@ group :development, :test do
   gem 'capybara', '~> 3.40'
   # For running tests with chromedriver
   gem 'selenium-webdriver', '~> 4.16'
-  gem 'factory_bot_rails', '~> 4.9'
+  gem 'factory_bot_rails', '~> 6.5'
   gem 'rubocop', '~> 0.67.0', require: false
   gem 'rubocop-rspec', '~> 1.26.0', require: false
   gem 'rubocop-rails_config', '~> 0.2.3', require: false

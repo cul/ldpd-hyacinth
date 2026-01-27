@@ -27,4 +27,36 @@ class Hyacinth::Utils::HashUtils
 
     values
   end
+
+  def self.recursively_remove_blank_fields_from_hash!(hsh)
+    return if hsh.frozen? # We can't modify a frozen hash (e.g. uri-based controlled vocabulary field), so we won't.
+
+    # Step 1: Recursively handle values on lower levels
+    hsh.each do |_key, value|
+      if value.is_a?(Array)
+        # Recurse through non-empty elements
+        value.each do |element|
+          recursively_remove_blank_fields_from_hash!(element)
+        end
+
+        # Delete blank array element values on this array level (including empty object ({}) values)
+        value.delete_if(&:blank?)
+      elsif value.is_a?(Hash)
+        # This code will run when we're dealing with something like a controlled
+        # term field, which is a hash that contains a hash as a value.
+        recursively_remove_blank_fields_from_hash!(value)
+      end
+    end
+
+    # Step 2: Delete blank values on this object level
+    hsh.delete_if { |_key, value| value.blank? }
+
+    hsh
+  end
+
+  def self.recursively_remove_blank_fields_from_hash(hsh)
+    hsh_copy = hsh.dup
+    recursively_remove_blank_fields_from_hash!(hsh_copy)
+  end
+
 end

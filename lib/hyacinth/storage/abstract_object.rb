@@ -20,7 +20,9 @@ module Hyacinth::Storage
     def size; raise NotImplementedError; end
     def content_type; raise NotImplementedError; end
     def read(&block); raise NotImplementedError; end
+    def read_range(from, to, &block); raise NotImplementedError; end
     # Copies the file at source_file_path to storage and returns a SHA256 hexdigest checksum of the file content.
     def write(source_file_path); raise NotImplementedError; end
+    def delete!; raise NotImplementedError; end
   end
 end

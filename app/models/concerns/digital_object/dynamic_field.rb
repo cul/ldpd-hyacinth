@@ -23,7 +23,7 @@ module DigitalObject::DynamicField
     end
 
     # Remove blank fields (all-whitespace fields DO count as blank)
-    remove_blank_fields_from_dynamic_field_data!(@dynamic_field_data)
+    Hyacinth::Utils::HashUtils.recursively_remove_blank_fields_from_hash!(@dynamic_field_data)
 
     # Trim whitespace for all remaining String fields
     trim_whitespace_and_clean_control_characters_for_dynamic_field_data!(@dynamic_field_data)
@@ -41,30 +41,6 @@ module DigitalObject::DynamicField
     # add_extra_controlled_term_uri_data_to_dynamic_field_data!()
     remove_extra_controlled_term_uri_data_from_dynamic_field_data!(@dynamic_field_data)
     add_extra_controlled_term_uri_data_to_dynamic_field_data!(@dynamic_field_data)
-  end
-
-  def remove_blank_fields_from_dynamic_field_data!(df_data = @dynamic_field_data)
-    return if df_data.frozen? # We can't modify a frozen hash (e.g. uri-based controlled vocabulary field), so we won't.
-
-    # Step 1: Recursively handle values on lower levels
-    df_data.each do |_key, value|
-      if value.is_a?(Array)
-        # Recurse through non-empty elements
-        value.each do |element|
-          remove_blank_fields_from_dynamic_field_data!(element)
-        end
-
-        # Delete blank array element values on this array level (including empty object ({}) values)
-        value.delete_if(&:blank?)
-      elsif value.is_a?(Hash)
-        # This code will run when we're dealing with something like a controlled
-        # term field, which is a hash that contains a hash as a value.
-        remove_blank_fields_from_dynamic_field_data!(value)
-      end
-    end
-
-    # Step 2: Delete blank values on this object level
-    df_data.delete_if { |_key, value| value.blank? }
   end
 
   def trim_whitespace_and_clean_control_characters_for_dynamic_field_data!(df_data = @dynamic_field_data)
@@ -124,7 +100,7 @@ module DigitalObject::DynamicField
     end
 
     # Step 3: Clean up any blank fields that were created as a result of the deletion
-    remove_blank_fields_from_dynamic_field_data!(df_data)
+    Hyacinth::Utils::HashUtils.recursively_remove_blank_fields_from_hash!(df_data)
   end
 
   #################################

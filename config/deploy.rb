@@ -9,7 +9,7 @@ lock '~> 3.19.2'
 set :rvm_custom_path, '~/.rvm-alma8'
 
 set :remote_user, 'ldpdserv'
-set :application, 'hyacinth_2'
+set :application, 'hyacinth'
 set :repo_url, "git@github.com:cul/ldpd-hyacinth.git"
 set :deploy_name, "#{fetch(:application)}_#{fetch(:stage)}"
 # used to run rake db:migrate, etc

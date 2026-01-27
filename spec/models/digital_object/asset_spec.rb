@@ -5,8 +5,8 @@ RSpec.describe DigitalObject::Asset, :type => :model do
     let(:digital_object_data) {
       dod = JSON.parse( fixture('sample_digital_object_data/new_asset.json').read )
       dod['publish_targets'] = []
-      dod['import_file']['import_type'] = 'external'
-      dod['import_file']['import_path'] = fixture('sample_assets/sample_text_file.txt').path
+      dod['import_file']['main']['import_type'] = 'external'
+      dod['import_file']['main']['import_location'] = fixture('sample_assets/sample_text_file.txt').path
       dod
     }
 
@@ -18,7 +18,7 @@ RSpec.describe DigitalObject::Asset, :type => :model do
       allow_any_instance_of(DigitalObjectRecord).to receive(:save!).and_return(true)
       allow_any_instance_of(GenericResource).to receive(:save).and_return(true)
       allow(asset).to receive(:update_index).and_return(nil)
-      digital_object_data['import_file']['import_path'] = fixture('sample_assets/empty_file.txt').path
+      digital_object_data['import_file']['main']['import_location'] = fixture('sample_assets/empty_file.txt').path
       asset.set_digital_object_data(digital_object_data, false)
       save_result = asset.save
       expect(asset.errors.messages).to eq({import_file: ['Original file file size is 0 bytes. File must contain data.']})
@@ -55,69 +55,47 @@ RSpec.describe DigitalObject::Asset, :type => :model do
 
   describe 'featured_region' do
     let(:well_known_pid) { 'some:asset' }
-    let(:content_ds_uri) { "info:fedora/#{well_known_pid}/content" }
+    let(:generic_resource) { GenericResource.new(pid: well_known_pid) }
     let(:content_ds) { ActiveFedora::Datastream.new(generic_resource, 'content') }
     let(:asset) { DigitalObject::Asset.new }
-    let(:generic_resource) { GenericResource.new(pid: well_known_pid) }
-    let(:image_width) { 3000 }
-    let(:image_length) { 4000 }
-    let(:region_right) { 100 }
-    let(:region_width) { image_width - region_right }
-    let(:region_bottom) { image_length - region_width }
-    let(:good_region) { "0,0,#{region_width},#{region_width}" }
-    let(:good_if_rotated_region) { "#{image_length - image_width},0,#{region_width},#{region_width}" }
+    let(:region) { '100,150,512,512' }
+    let(:bad_region) { 'NOT A VALID REGION' }
+
     before do
       generic_resource.add_datastream(content_ds)
       asset.instance_variable_set(:@fedora_object, generic_resource)
     end
-    shared_examples "a region validator" do
-      it "is valid with good region" do
-        asset.featured_region = good_region
-        asset.validate_featured_region
-        expect(asset.errors).to be_empty
-      end
-      it "is valid with good region contingent on rotation" do
-        asset.featured_region = good_if_rotated_region
-        generic_resource.orientation = 90
-        asset.validate_featured_region
-        expect(asset.errors).to be_empty
-      end
-      it "is not valid with bad region" do
-        asset.featured_region = good_if_rotated_region
-        asset.validate_featured_region
-        expect(asset.errors).not_to be_empty
-      end
-      pending "rotates a region appropriately when image is rotated" do
-        asset.featured_region = good_region
-        region_params = good_region.split(',')
-        # get a rotated value for 90 more degrees
-        rotated_region = asset.rotated_region(90)
-        expect(rotated_region).to eql("#{region_bottom},#{region_params[0]},#{region_width},#{region_width}")
-        rotated_region = asset.rotated_region(180)
-        expect(rotated_region).to eql("#{region_right},#{region_bottom},#{region_width},#{region_width}")
-        rotated_region = asset.rotated_region(270)
-        expect(rotated_region).to eql("#{0},#{region_right},#{region_width},#{region_width}")
-        asset.featured_region = rotated_region
-        generic_resource.orientation = 270
-        asset.validate_featured_region
-        expect(asset.errors).to be_empty
+
+    describe '#featured_region=' do
+      let(:region) { '100,150,512,512'  }
+      it "successfully assigns a region" do
+        asset.featured_region = region
+        expect(generic_resource.relationships(:region_featured).first.object).to eq(region)
       end
     end
-    context "asset had RELS-EXT width and length" do
-      before do
-        generic_resource.add_relationship(:image_width, image_width, true)
-        generic_resource.add_relationship(:image_length, image_length, true)
+
+    describe '#featured_region' do
+      it "successfully returns a previously assigned region" do
+        asset.featured_region = region
+        expect(asset.featured_region).to eq(region)
       end
-      it_behaves_like "a region validator"
     end
-    context "asset had RELS-INT width and length" do
-      before do
-        generic_resource.rels_int.add_relationship(content_ds, :image_width, image_width, true)
-        generic_resource.rels_int.add_relationship(content_ds, :image_length, image_length, true)
+
+    describe 'validation' do
+      it 'passes when the region is a good format' do
+        asset.featured_region = region
+        asset.validate_featured_region_if_present
+        expect(asset.errors).to be_empty
       end
-      it_behaves_like "a region validator"
+
+      it 'fails when the region is a bad format' do
+        asset.featured_region = bad_region
+        asset.validate_featured_region_if_present
+        expect(asset.errors).to have_key(:featured_region)
+      end
     end
   end
+
   describe 'region_selection_event' do
     let(:well_known_pid) { 'some:asset' }
     let(:test_user) { 'test@hyacinth.org' }

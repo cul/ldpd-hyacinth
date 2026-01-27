@@ -23,6 +23,10 @@ services:
       - '9983:8983'
     volumes:
       - solr-cores:/data
+    environment:
+      # In a Docker environment we enable the analysis-extras module via SOLR_OPTS, but in a production
+      # environment we're more likely to set `SOLR_MODULES=analysis-extras` in solr.in.sh.
+      - SOLR_OPTS=-Dsolr.modules=analysis-extras
   fedora:
     build: ./fedora
     restart: always

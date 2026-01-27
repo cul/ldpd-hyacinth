@@ -17,6 +17,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Update apt package list
+        run: sudo apt-get update
       - name: Install libxslt for nokogiri gem (required for version < 1.11)
         run: sudo apt-get install -y libxml2-dev libxslt-dev
       - name: Add --no-document option to .gemrc file to speed up bundle install

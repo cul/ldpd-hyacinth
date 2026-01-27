@@ -41,8 +41,12 @@
           {value: 'sort_title_si asc', displayLabel: 'Sort: Title (A-Z)'},
           {value: 'sort_title_si desc', displayLabel: 'Sort: Title (Z-A)'},
           {value: 'score desc', displayLabel: 'Sort: Relevance'},
-          {value: 'timestamp desc', displayLabel: 'Sort: Most Recently Modified First'},
-          {value: 'timestamp asc', displayLabel: 'Sort: Least Recently Modified First'}
+          {value: 'created_at_dtsi desc', displayLabel: 'Sort: Creation Date (Recent First)'},
+          {value: 'created_at_dtsi asc', displayLabel: 'Sort: Creation Date (Oldest First'},
+          {value: 'updated_at_dtsi desc', displayLabel: 'Sort: Modification Date (Recent First)'},
+          {value: 'updated_at_dtsi asc', displayLabel: 'Sort: Modification Date (Oldest First'},
+          {value: 'first_published_at_dtsi desc', displayLabel: 'Sort: First Published Date (Recent First)'},
+          {value: 'first_published_at_dtsi asc', displayLabel: 'Sort: First Published Date (Oldest First)'},
         ]
       %>
       <select name="sort" class="form-control input-sm">

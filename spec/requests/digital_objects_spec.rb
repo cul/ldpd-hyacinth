@@ -60,7 +60,9 @@ RSpec.describe "DigitalObjects", type: :request do
 
           # Manually override import_file settings to set the fixture to type == post data
           asset_digital_object_data['import_file'] = {
-            'import_type' => DigitalObject::Asset::IMPORT_TYPE_POST_DATA
+            'main' => {
+              'import_type' => DigitalObject::Asset::IMPORT_TYPE_POST_DATA
+            }
           }
 
           post(digital_objects_path, params: {
@@ -76,8 +78,6 @@ RSpec.describe "DigitalObjects", type: :request do
         end
 
         it "works via *upload directory* filesystem upload, copying the target file to the internal Hyacinth data store" do
-          asset_digital_object_data = sample_asset_digital_object_data
-
           # Copy fixture file to upload directory file path
           upload_directory_file_path = 'some_dir/lincoln.jpg'
           dest_path = File.join(HYACINTH[:upload_directory], upload_directory_file_path)
@@ -85,10 +85,12 @@ RSpec.describe "DigitalObjects", type: :request do
           FileUtils.cp(fixture('files/lincoln.jpg').path, dest_path) # Copy fixture
 
           # Manually override import_file settings to set the fixture to type == post data
-          asset_digital_object_data['import_file'] = {
-            'import_type' => DigitalObject::Asset::IMPORT_TYPE_UPLOAD_DIRECTORY,
-            'import_path' => upload_directory_file_path,
-            'original_file_path' => upload_directory_file_path
+          sample_asset_digital_object_data['import_file'] = {
+            'main' => {
+              'import_type' => DigitalObject::Asset::IMPORT_TYPE_UPLOAD_DIRECTORY,
+              'import_location' => upload_directory_file_path,
+              'original_file_path' => upload_directory_file_path
+            }
           }
 
           post(digital_objects_path, params: {
@@ -107,9 +109,11 @@ RSpec.describe "DigitalObjects", type: :request do
           path_to_fixture_file = fixture('files/lincoln.jpg').path
           # Manually override import_file settings to set the fixture to type == post data
           asset_digital_object_data['import_file'] = {
-            'import_type' => DigitalObject::Asset::IMPORT_TYPE_INTERNAL,
-            'import_path' => path_to_fixture_file,
-            'original_file_path' => path_to_fixture_file
+            'main' => {
+              'import_type' => DigitalObject::Asset::IMPORT_TYPE_INTERNAL,
+              'import_location' => path_to_fixture_file,
+              'original_file_path' => path_to_fixture_file
+            }
           }
 
           post(digital_objects_path, params: {
@@ -123,7 +127,7 @@ RSpec.describe "DigitalObjects", type: :request do
 
           # Make sure that path to DigitalObject::Asset is internal, and stored within the hyacinth asset directory
           digital_object = DigitalObject::Base.find(response_json['pid'])
-          expect(digital_object.filesystem_location).to start_with(HYACINTH[:default_asset_home])
+          expect(digital_object.filesystem_location_uri).to start_with(HYACINTH[:default_resource_storage_locations][:main][:file][:base])
           expect(digital_object.original_file_path).to eq(path_to_fixture_file)
         end
 
@@ -133,9 +137,11 @@ RSpec.describe "DigitalObjects", type: :request do
           path_to_fixture_file = fixture('files/lincoln.jpg').path
           # Manually override import_file settings to set the fixture to type == post data
           asset_digital_object_data['import_file'] = {
-            'import_type' => DigitalObject::Asset::IMPORT_TYPE_EXTERNAL,
-            'import_path' => path_to_fixture_file,
-            'original_file_path' => path_to_fixture_file
+            'main' => {
+              'import_type' => DigitalObject::Asset::IMPORT_TYPE_EXTERNAL,
+              'import_location' => path_to_fixture_file,
+              'original_file_path' => path_to_fixture_file
+            }
           }
 
           post(digital_objects_path, params: {
@@ -170,10 +176,7 @@ RSpec.describe "DigitalObjects", type: :request do
       end
 
       let(:sample_item_as_csv_export) {
-        csv_data = CSV.parse( fixture('sample_digital_object_data/sample_item_as_csv_export.csv').read )
-        # Update fixture first-row headings so that we match the headers of the generated csv
-        csv_data[0] = Hyacinth::Utils::CsvFriendlyHeaders.hyacinth_headers_to_friendly_headers(csv_data[1])
-        csv_data
+        CSV.parse( fixture('sample_digital_object_data/sample_item_as_csv_export.csv').read )
       }
 
       let(:response_status) { response.status }
@@ -183,13 +186,14 @@ RSpec.describe "DigitalObjects", type: :request do
       # Get download location from csv_export record
       let(:path_to_csv_file) { csv_export.path_to_csv_file }
       let(:csv) { CSV.read(path_to_csv_file) }
-      let(:generated_pid) { csv[2][0] }
+      let(:generated_pid) { csv[1][0] }
+      let(:generated_uuid) { csv[1][1] }
       context "search request method is GET" do
         before {
           get search_results_to_csv_digital_objects_path, params: {
             format: 'json',
             search: {
-              'fq' => { 'hyacinth_type_sim' => [{ 'does_not_equal' => 'publish_target' }] }
+              'fq' => { 'hyacinth_type_si' => [{ 'does_not_equal' => 'publish_target' }] }
             }
           }, as: :json
         }
@@ -200,9 +204,12 @@ RSpec.describe "DigitalObjects", type: :request do
           expect(export_id).to be_a(Integer)
           # Test environment processes jobs immediately, so the export should be done and should have a status of "success"
           expect(csv_export.success?).to eq(true)
-          expect(csv[1][0]).to eq('_pid')
+          expect(csv[0][0]).to eq('_pid')
+          expect(csv[0][1]).to eq('_uuid')
           # The PID field is randomly generated, so we'll copy the pid from the result to the csv fixture that we're testing against
-          sample_item_as_csv_export[2][0] = generated_pid
+          sample_item_as_csv_export[1][0] = generated_pid
+          # The UUID field is randomly generated, so we'll copy the uuid from the result to the csv fixture that we're testing against
+          sample_item_as_csv_export[1][1] = generated_uuid
           expect(csv).to eq(sample_item_as_csv_export)
         end
       end
@@ -212,7 +219,7 @@ RSpec.describe "DigitalObjects", type: :request do
           post search_results_to_csv_digital_objects_path, params: {
             format: 'json',
             search: {
-              'fq' => { 'hyacinth_type_sim' => [{ 'does_not_equal' => 'publish_target' }] }
+              'fq' => { 'hyacinth_type_si' => [{ 'does_not_equal' => 'publish_target' }] }
             }
           }, as: :json
         }
@@ -223,9 +230,12 @@ RSpec.describe "DigitalObjects", type: :request do
           expect(export_id).to be_a(Integer)
           # Text environment processes jobs immediately, so the export should be done and should have a status of "success"
           expect(csv_export.success?).to eq(true)
-          expect(csv[1][0]).to eq('_pid')
+          expect(csv[0][0]).to eq('_pid')
+          expect(csv[0][1]).to eq('_uuid')
           # The PID field is randomly generated, so we'll copy the pid from the result to the csv fixture that we're testing against
-          sample_item_as_csv_export[2][0] = generated_pid
+          sample_item_as_csv_export[1][0] = generated_pid
+          # The UUID field is randomly generated, so we'll copy the uuid from the result to the csv fixture that we're testing against
+          sample_item_as_csv_export[1][1] = generated_uuid
           expect(csv).to eq(sample_item_as_csv_export)
         end
       end
@@ -235,8 +245,8 @@ RSpec.describe "DigitalObjects", type: :request do
       describe "upload access copy" do
         let(:asset_digital_object_data) {
           dod = JSON.parse( fixture('sample_digital_object_data/new_asset.json').read )
-          dod['import_file']['import_type'] = 'internal'
-          dod['import_file']['import_path'] = fixture('sample_assets/sample_text_file.txt').path
+          dod['import_file']['main']['import_type'] = 'internal'
+          dod['import_file']['main']['import_location'] = fixture('sample_assets/sample_text_file.txt').path
           dod['publish_targets'] = []
           dod
         }
@@ -254,28 +264,28 @@ RSpec.describe "DigitalObjects", type: :request do
           # Perform first-time upload
           put "/digital_objects/#{asset.pid}.json",
             params: {
-              access_copy_file: Rack::Test::UploadedFile.new(fixture('files/lincoln.jpg').path, "image/jpeg")
+              access_file: Rack::Test::UploadedFile.new(fixture('files/lincoln.jpg').path, "image/jpeg")
             }
 
           expect(response.status).to be(200)
-          expect(DigitalObject::Base.find(asset.pid).access_copy_location).to be_present
+          expect(DigitalObject::Base.find(asset.pid).location_for_resource('access')).to be_present
 
           # Perform access copy replacement upload
           put "/digital_objects/#{asset.pid}.json",
             params: {
-              access_copy_file: Rack::Test::UploadedFile.new(fixture('files/cat.jpg').path, "image/jpeg")
+              access_file: Rack::Test::UploadedFile.new(fixture('files/cat.jpg').path, "image/jpeg")
             }
 
           expect(response.status).to be(200)
-          expect(DigitalObject::Base.find(asset.pid).access_copy_location).to be_present
+          expect(DigitalObject::Base.find(asset.pid).location_for_resource('access')).to be_present
         end
       end
 
       describe "upload poster" do
         let(:asset_digital_object_data) {
           dod = JSON.parse( fixture('sample_digital_object_data/new_asset.json').read )
-          dod['import_file']['import_type'] = 'internal'
-          dod['import_file']['import_path'] = fixture('sample_assets/sample_text_file.txt').path
+          dod['import_file']['main']['import_type'] = 'internal'
+          dod['import_file']['main']['import_location'] = fixture('sample_assets/sample_text_file.txt').path
           dod['publish_targets'] = []
           dod
         }
@@ -297,7 +307,7 @@ RSpec.describe "DigitalObjects", type: :request do
             }
 
           expect(response.status).to be(200)
-          expect(DigitalObject::Base.find(asset.pid).poster_location).to be_present
+          expect(DigitalObject::Base.find(asset.pid).location_uri_for_resource('poster')).to be_present
 
           # Perform poster replacement upload
           put "/digital_objects/#{asset.pid}.json",
@@ -306,15 +316,15 @@ RSpec.describe "DigitalObjects", type: :request do
             }
 
           expect(response.status).to be(200)
-          expect(DigitalObject::Base.find(asset.pid).poster_location).to be_present
+          expect(DigitalObject::Base.find(asset.pid).location_uri_for_resource('poster')).to be_present
         end
       end
 
       describe "set featured_region" do
         let(:asset_digital_object_data) {
           dod = JSON.parse( fixture('sample_digital_object_data/new_asset.json').read )
-          dod['import_file']['import_type'] = 'internal'
-          dod['import_file']['import_path'] = fixture('sample_assets/sample_text_file.txt').path
+          dod['import_file']['main']['import_type'] = 'internal'
+          dod['import_file']['main']['import_location'] = fixture('sample_assets/sample_text_file.txt').path
           dod['publish_targets'] = []
           dod
         }
@@ -324,7 +334,8 @@ RSpec.describe "DigitalObjects", type: :request do
           asset = DigitalObject::Asset.new
           allow(asset).to receive(:update_index).and_return(nil)
           asset.set_digital_object_data(asset_digital_object_data, false)
-          result = asset.save
+          asset.save
+          puts "asset errors: #{asset.errors.inspect}" if asset.errors.present?
           asset
         }
 

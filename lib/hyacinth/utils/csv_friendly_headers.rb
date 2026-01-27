@@ -1,18 +1,18 @@
 class Hyacinth::Utils::CsvFriendlyHeaders
   CORE_FIELD_LABEL_MAPPING = {
-    '_pid' => 'PID',
-    '_digital_object_type.string_key' => 'Digital Object Type > String Key',
-    '_digital_object_type.pid' => 'Digital Object Type > PID',
-    '_project.string_key' => 'Project > String Key',
-    '_project.pid' => 'Project > PID',
-    '_asset_data.checksum' => 'Asset Data > Checksum',
-    '_asset_data.file_size_in_bytes' => 'Asset Data > File Size In Bytes',
-    '_asset_data.filesystem_location' => 'Asset Data > Filesystem Location',
-    '_asset_data.original_file_path' => 'Asset Data > Original File Path',
-    '_asset_data.original_filename' => 'Asset Data > Original Filename',
-    '_import_file.import_path' => 'Import File > Import Path',
-    '_import_file.import_type' => 'Import File > Import Type',
-    '_import_file.original_file_path' => 'Import File > Import Original File Path'
+    # '_pid' => 'PID',
+    # '_digital_object_type.string_key' => 'Digital Object Type > String Key',
+    # '_digital_object_type.pid' => 'Digital Object Type > PID',
+    # '_project.string_key' => 'Project > String Key',
+    # '_project.pid' => 'Project > PID',
+    # '_asset_data.checksum' => 'Asset Data > Checksum',
+    # '_asset_data.file_size_in_bytes' => 'Asset Data > File Size In Bytes',
+    # '_asset_data.filesystem_location' => 'Asset Data > Filesystem Location',
+    # '_asset_data.original_file_path' => 'Asset Data > Original File Path',
+    # '_asset_data.original_filename' => 'Asset Data > Original Filename',
+    # '_import_file.main.import_location' => 'Import File > Main > Import Location',
+    # '_import_file.main.import_type' => 'Import File > Main > Import Type',
+    # '_import_file.main.original_file_path' => 'Import File > Main > Import Original File Path'
   }
 
   CONTROLLED_TERM_CORE_SUBFIELD_LABEL_MAPPING = {

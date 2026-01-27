@@ -54,6 +54,7 @@ RSpec.configure do |config|
   # test failures related to randomization by passing the same `--seed` value
   # as the one that triggered the failure.
   Kernel.srand config.seed
+=end
 
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
@@ -62,9 +63,10 @@ RSpec.configure do |config|
     # Enable only the newer, non-monkey-patching expect syntax.
     # For more details, see:
     #   - http://myronmars.to/n/dev-blog/2012/06/rspecs-new-expectation-syntax
-    expectations.syntax = :expect
+    # expectations.syntax = :expect
+
+    expectations.max_formatted_output_length = 10_000
   end
-=end
 
   # rspec-mocks config goes here. You can use an alternate test double
   # library (such as bogus or mocha) by changing the `mock_with` option here.

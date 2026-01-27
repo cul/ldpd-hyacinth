@@ -12,7 +12,7 @@ class DigitalObjectsController < ApplicationController
   include Hyacinth::DigitalObjects::IndexDocument
   include Hyacinth::DigitalObjects::Captions
 
-  DIRECT_UPLOAD_FILE_PARAM_NAMES = [:file, :access_copy_file, :poster_file]
+  DIRECT_UPLOAD_FILE_PARAM_NAMES = [:file, :access_file, :poster_file]
 
   before_action :set_digital_object, only: [:show, :edit, :update, :destroy, :undestroy, :data_for_ordered_child_editor,
     :download, :download_access_copy, :download_poster, :download_service_copy,
@@ -43,9 +43,11 @@ class DigitalObjectsController < ApplicationController
     upload = params[:file]
 
     {
-      'import_type' => DigitalObject::Asset::IMPORT_TYPE_POST_DATA,
-      'import_path' => upload.tempfile.path,
-      'original_file_path' => upload.original_filename
+      'main' => {
+        'import_type' => DigitalObject::Asset::IMPORT_TYPE_POST_DATA,
+        'import_location' => upload.tempfile.path,
+        'original_file_path' => upload.original_filename
+      }
     }
   end
 
@@ -76,13 +78,6 @@ class DigitalObjectsController < ApplicationController
       return
     end
     handle_direct_file_uploads!(@digital_object_data)
-    if @digital_object.is_a?(DigitalObject::Asset)
-      master_file_import_errors = validate_master_file_import_params(@digital_object_data, current_user.admin?)
-      if master_file_import_errors.present?
-        render json: { success: false, errors: master_file_import_errors }
-        return
-      end
-    end
     @digital_object.set_digital_object_data(@digital_object_data, false)
 
     @digital_object.created_by = current_user
@@ -105,22 +100,6 @@ class DigitalObjectsController < ApplicationController
     render json: { success: false, errors: [e.message] }
   ensure
     close_and_unlink_direct_file_uploads
-  end
-
-  def validate_master_file_import_params(digital_object_data, is_admin)
-    data_errors = []
-    if digital_object_data['import_file'].blank?
-      data_errors << 'Missing digital_object_data_json[import_file] for new Asset'
-      return data_errors
-    end
-    import_type = digital_object_data['import_file']['import_type']
-    import_file = digital_object_data['import_file']['import_file']
-    if import_type == DigitalObject::Asset::IMPORT_TYPE_POST_DATA && !import_file
-      data_errors << "An attached file is required in the request data for imports of type: #{import_type}"
-    end
-    if import_type == DigitalObject::Asset::IMPORT_TYPE_EXTERNAL && !is_admin
-      data_errors << "Only admins can perform external file imports."
-    end
   end
 
   # DELETE /digital_objects/1
@@ -151,6 +130,7 @@ class DigitalObjectsController < ApplicationController
 
     handle_publish_param(@digital_object, params)
     handle_mint_reserved_doi_param(@digital_object, params)
+
     # Whenever a direct file upload occurs, that triggers a republish so that DLC
     # can reindex the object with the access/poster info.
     republish_after_save = @digital_object.is_a?(DigitalObject::Asset) && request_includes_direct_upload_file_param?
@@ -339,64 +319,6 @@ class DigitalObjectsController < ApplicationController
     end
   end
 
-  # def upload_access_copy
-  #   if @digital_object.is_a?(DigitalObject::Asset)
-  #     if params[:file].blank?
-  #       render status: :bad_request, json: { errors: ['Missing multipart/form-data file upload data with name: file'] }
-  #       return
-  #     end
-
-  #     @digital_object_data = {}
-  #     @digital_object_data['import_file'] = posted_file_data(DigitalObject::Asset::IMPORT_TYPE_POST_DATA)
-  #     @digital_object.set_digital_object_data({
-  #       'import_file' => {
-  #         'access_copy_import_path' => params[:file].tempfile.path
-  #       }
-  #     }, true)
-  #     @digital_object.updated_by = current_user
-
-  #     if @digital_object.save
-  #       RepublishAssetJob.perform_later(@digital_object.pid)
-  #       render json: { success: true, size: @digital_object.access_copy_file_size_in_bytes.to_i }
-  #     else
-  #       render json: { errors: ['An error occurred during access copy upload.'] }
-  #     end
-  #   else
-  #     render json: { errors: ["This action is only allowed for Assets.  This object has type: #{@digital_object.digital_object_type.display_label}"] }
-  #   end
-  # ensure
-  #   close_and_unlink_direct_file_uploads
-  # end
-
-  # def upload_poster
-  #   if @digital_object.is_a?(DigitalObject::Asset)
-  #     if params[:file].blank?
-  #       render status: :bad_request, json: { errors: ['Missing multipart/form-data file upload data with name: file'] }
-  #       return
-  #     end
-
-  #     @digital_object_data = {}
-  #     @digital_object_data['import_file'] = posted_file_data(DigitalObject::Asset::IMPORT_TYPE_POST_DATA)
-  #     @digital_object.set_digital_object_data({
-  #       'import_file' => {
-  #         'poster_import_path' => params[:file].tempfile.path
-  #       }
-  #     }, true)
-  #     @digital_object.updated_by = current_user
-
-  #     if @digital_object.save
-  #       RepublishAssetJob.perform_later(@digital_object.pid)
-  #       render json: { success: true, size: @digital_object.poster_file_size_in_bytes.to_i }
-  #     else
-  #       render json: { errors: ['An error occurred during poster upload.'] }
-  #     end
-  #   else
-  #     render json: { errors: ["This action is only allowed for Assets.  This object has type: #{@digital_object.digital_object_type.display_label}"] }
-  #   end
-  # ensure
-  #   close_and_unlink_direct_file_uploads
-  # end
-
   private
 
     # Use callbacks to share common setup or constraints between actions.
@@ -483,11 +405,15 @@ class DigitalObjectsController < ApplicationController
 
         upload = params[file_param_name]
         if file_param_name == :file
-          import_file_data['import_path'] = upload.tempfile.path
-          import_file_data['import_type'] = DigitalObject::Asset::IMPORT_TYPE_POST_DATA
-          import_file_data['original_file_path'] = upload.original_filename
+          import_file_data['main'] = {
+            'import_location' => upload.tempfile.path,
+            'import_type' => DigitalObject::Asset::IMPORT_TYPE_POST_DATA,
+            'original_file_path' => upload.original_filename
+          }
         else
-          import_file_data["#{file_param_name.to_s.gsub(/_file$/, '')}_import_path"] = params[file_param_name].tempfile.path
+          import_file_data["#{file_param_name.to_s.gsub(/_file$/, '')}"] = {
+              'import_location' => params[file_param_name].tempfile.path
+          }
         end
       end
     end

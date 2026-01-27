@@ -252,7 +252,9 @@ module Hyacinth::Datacite
     # required field
     # fcd1, 12/16/21: DataCite REST API compliant
     def add_publication_year
-      if @hyacinth_metadata_retrieval.date_issued_start_year.present?
+      # NOTE: If the date_issued_start year is not a YYYY-formatted date (e.g. "190u" or "18uu" date that expresses
+      # uncertainty), DataCite will reject it.  In cases like this, we fall back to the digital object creation date.
+      if @hyacinth_metadata_retrieval.date_issued_start_year.present? && @hyacinth_metadata_retrieval.date_issued_start_year =~ /^\d{4}$/
         @attributes[:publicationYear] = @hyacinth_metadata_retrieval.date_issued_start_year
       else
         @attributes[:publicationYear] = @hyacinth_metadata_retrieval.source[:created][0..3]

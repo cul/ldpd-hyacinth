@@ -40,13 +40,14 @@
 <h3>Custom Filter</h3>
 
 <form class="custom-filter-form">
-
   <div class="row">
     <div class="col-xs-12">
       <select class="form-control input-sm custom_filter_field" name="custom_filter_field">
         <option value="">- Select A Field -</option>
         <option disabled="disabled">- Core Fields -</option>
-        <option value="original_file_path_sim">Original File Path</options>
+        <option value="original_file_path_si">Original File Path</options>
+        <option value="resource_main_location_si">Main Resource Location</options>
+        <option value="resource_service_location_si">Service Resource Location</options>
         <option value="sort_title_si">Title (Sort Portion)</options>
         <option disabled="disabled">- Dynamic Fields -</option>
         <% $.each(searchResponse['single_field_searchable_fields'],function(dynamic_field_string_key, standalone_field_label){ %>
