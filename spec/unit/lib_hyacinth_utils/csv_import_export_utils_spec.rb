@@ -90,11 +90,6 @@ context Hyacinth::Utils::CsvImportExportUtils do
     end
 
     context "character encoding" do
-      it "raises an exception if non-utf-8 CSV file data is provided" do
-        csv_data = special_chars_csv_latin1_file.read
-        expect { described_class.csv_to_digital_object_data(csv_data) }.to raise_error(Hyacinth::Exceptions::InvalidUtf8DetectedError)
-      end
-
       it "properly interprets non-ASCII characters from a UTF-8 CSV file" do
         csv_data = special_chars_csv_utf8_file.read
         described_class.csv_to_digital_object_data(csv_data) do |digital_object_data|
@@ -104,8 +99,31 @@ context Hyacinth::Utils::CsvImportExportUtils do
     end
   end
 
-  describe ".process_internal_field_value" do
+  describe ".validate_import_job_csv_data" do
+    let(:expected_new_item_csv_data) { fixture('lib/hyacinth/utils/csv_import_export/csv_to_json/new_item_example.csv').read }
+    let(:special_chars_csv_latin1_file) { fixture('sample_digital_object_data/special_char_csv_fixtures/special_chars_csv_latin1.csv') }
 
+    let(:user) { FactoryBot.create(:admin_user) }
+    let(:import_job) { ImportJob.new }
+
+    it "does not add any errors for valid csv data" do
+      described_class.validate_import_job_csv_data(expected_new_item_csv_data, user, import_job)
+      expect(import_job.errors.full_messages).to eq([])
+    end
+
+    it "adds an error for csv data that contains an invalid header" do
+      described_class.validate_import_job_csv_data(expected_new_item_csv_data.sub('_digital_object_type', '_digitalllllll_object_type'), user, import_job)
+      expect(import_job.errors.full_messages).to eq(['Invalid csv header _digitalllllll_object_type.string_key'])
+    end
+
+    it "adds an error for csv data that is invalid UTF-8" do
+      csv_data = special_chars_csv_latin1_file.read
+      described_class.validate_import_job_csv_data(csv_data, user, import_job)
+      expect(import_job.errors.full_messages).to eq(['Csv character encoding not valid UTF-8'])
+    end
+  end
+
+  describe ".process_internal_field_value" do
 
     it "raises an exception if a supplied field name does not begin with an underscore ('_')" do
       expect {
