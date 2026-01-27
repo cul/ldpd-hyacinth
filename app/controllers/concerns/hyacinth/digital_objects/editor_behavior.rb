@@ -53,19 +53,6 @@ module Hyacinth::DigitalObjects::EditorBehavior
         end
       end
 
-      # pids_to_search_results = {}
-      # per_page = 500 # paginate so we stay below solr max boolean clause limit, since we're retrieving a list of PIDs
-      # page = 1
-      # loop do
-      #   search_response = DigitalObject::Base.search({ 'pids' => child_pids, 'per_page' => per_page, 'page' => page }, current_user)
-      #   break if search_response['results'].blank?
-
-      #   search_response['results'].each do |result|
-      #     pids_to_search_results[result['pid']] = result
-      #   end
-      #   page += 1
-      # end
-
       child_pids.each do |pid|
         ordered_child_search_results.push(pids_to_search_results[pid].present? ? pids_to_search_results[pid] : { 'pid' => pid, 'not_in_hyacinth' => true })
       end

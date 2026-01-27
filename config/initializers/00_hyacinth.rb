@@ -2,46 +2,60 @@ HYACINTH = Rails.application.config_for(:hyacinth).tap do |config|
   config[:publish_enabled] = true if config[:publish_enabled].nil?
 end
 
-DATACITE = HashWithIndifferentAccess.new(Rails.application.config_for(:datacite))
+class HyacinthConfigValidator
+  def self.validate!(config)
+    errors = []
 
-IMAGE_SERVER_CONFIG = Rails.application.config_for(:image_server)
-DERIVATIVE_SERVER_CONFIG = Rails.application.config_for(:derivative_server)
+    # Validate top level keys
+    %i[
+      solr_url
+      default_pid_generator_namespace
+      digital_object_data_directory
+      default_resource_storage_locations
+      upload_directory
+      csv_export_directory
+      processed_csv_import_directory
+      publish_target_api_key_encryption_key
+      treat_fedora_resource_index_updates_as_immediate
+      queue_long_jobs
+      time_zone
+      solr_commit_after_each_csv_import_row
+    ].each do |required_config_key|
+      errors << "Missing #{required_config_key.inspect}" if HYACINTH[required_config_key].nil?
+    end
 
-raise 'Error: Please set a value for publish_target_api_key_encryption_key in your hyacinth.yml file' if HYACINTH[:publish_target_api_key_encryption_key].blank?
+    # Validate storage location file permissions if set
+    HYACINTH[:default_resource_storage_locations].each do |resource_name, opts|
+      if opts.dig(:file, :permissions).present?
+        mode = opts.dig(:file, :permissions)
+        unless mode.is_a?(String) && mode =~ /^0[0-7]{3}$/
+          errors << "Invalid value supplied for HYACINTH[:#{resource_name}][:file][:permissions]. "\
+            "Must be a String like '0777' or '0640'."
+        end
+      end
+    end
 
-# For EXTREME debugging with full stack traces.  Woo!
-# Rails.backtrace_cleaner.remove_silencers! if Rails.env.development?
+    raise "Your hyacinth.yml config file is not valid due to the following errors:\n- #{errors.join("\n- ")}" if errors.present?
+  end
+end
 
-# TODO: Update config validations below to account for new config options
+HyacinthConfigValidator.validate!(HYACINTH)
 
-# default_asset_home
-# default_asset_home_bucket_name
-# default_asset_home_bucket_path_prefix
-# default_service_copy_home
-# access_copy_directory
-%i(
+# Create config-defined directories if they do not exist
+%i[
   digital_object_data_directory
   upload_directory
   csv_export_directory
   processed_csv_import_directory
-).each do |required_config_key|
-  if HYACINTH[required_config_key].present?
-    FileUtils.mkdir_p(HYACINTH[required_config_key.to_sym])
-  else
-    raise "Missing required Hyacinth config key: #{required_config_key}"
-  end
+].each do |directory_name|
+  FileUtils.mkdir_p(HYACINTH[directory_name.to_sym])
 end
 
 Rails.application.config.active_job.queue_adapter = :inline unless HYACINTH[:queue_long_jobs]
 
-# Validate access_copy_file_permissions if set
-if HYACINTH[:access_copy_file_permissions].present?
-  mode = HYACINTH[:access_copy_file_permissions]
-  unless mode.is_a?(String) && mode =~ /^0[0-7]{3}$/
-    raise "Invalid value supplied for HYACINTH[:access_copy_file_permissions] configuration.  "\
-      "Must be a String like '0777' or '0640'."
-  end
-end
+DATACITE = HashWithIndifferentAccess.new(Rails.application.config_for(:datacite))
+IMAGE_SERVER_CONFIG = Rails.application.config_for(:image_server)
+DERIVATIVE_SERVER_CONFIG = Rails.application.config_for(:derivative_server)
 
 Rails.application.config.after_initialize do
   # We need to run this after_initialize because at least one of our validations depends on

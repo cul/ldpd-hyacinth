@@ -77,30 +77,5 @@ module DigitalObject::Assets::Validations
     unless value_to_validate =~ /\d+,\d+,\d+,\d+/
       @errors.add(:featured_region, "Invalid featured region format: '#{value_to_validate}')")
     end
-
-    ### Commenting out the validation below because this is no longer a limitation we need to worry about.  The image server handles smaller images properly.
-
-    # left, top, width, height = value_to_validate.to_s.split(',').map(&:to_i)
-
-    # unless (top >= 0) &&(left >= 0) && (width >= 768) && (width == height)
-    #   @errors.add(:featured_region, "region must describe a square within image of at least 768px side (given region '#{value_to_validate}')")
-    # end
-
-    ### Commenting out the validation below because the featured region isn't always based on the original image dimensions.
-
-    # unless pid.blank?
-    #   dims_oriented = (fedora_object.orientation / 10).even?
-    #   original_image_width = dims_oriented ? asset_image_width : asset_image_height
-    #   original_image_height = dims_oriented ? asset_image_height : asset_image_width
-    # end
-    # unless original_image_width&.positive? && original_image_height&.positive?
-    #   @errors.add(:featured_region, "Original asset has not yet been analyzed; cannot reassign featured region")
-    #   return
-    # end
-    #
-    # It can be based on a service copy or poster.
-    # unless (original_image_width >= left + width) && (original_image_height >= top + height)
-    #   @errors.add(:featured_region, "region #{value_to_validate} is not within original image dimensions #{original_image_width}x#{original_image_height}")
-    # end
   end
 end

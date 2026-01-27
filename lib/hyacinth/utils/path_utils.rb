@@ -8,7 +8,7 @@ class Hyacinth::Utils::PathUtils
     # Rather than going four levels deep in the code above, we're going to go six directory levels deep to maintain
     # compatibility with an earlier version of Hyacinth.  We probably don't need that many levels, and it creates
     # a lot of extra intermediate directories, but compatibility is important.
-    # Later on, if we switch to four directory levels deep, we can write a script to moves files around appropriately.
+    # Later on, if we switch to four directory levels deep, we can write a script to move files around appropriately.
 
     # uuid format: "cc092507-6baf-4c81-9cba-ea97cc0b30f2"
     # equivalent pairtree format /cc/09/25/07/6b/af/
@@ -34,19 +34,6 @@ class Hyacinth::Utils::PathUtils
     )
   end
 
-  # def self.asset_file_pairtree(digest, suffix, extension)
-  #   # Clean the extension so it only contains periods, letters a-z and A-Z, and numbers
-  #   clean_extension = extension.downcase.gsub(/[^\.a-z0-9]/, '')
-  #   # Remove any leading period (in case the caller supplied a period)
-  #   clean_extension = clean_extension.sub(/^\./, '')
-  #   stored_filename = "#{digest}#{suffix}.#{clean_extension}"
-  #   [digest[0, 2], digest[2, 2], digest[4, 2], digest[6, 2], stored_filename]
-  # end
-
-
-
-
-
   def self.data_file_path_for_uuid(uuid)
     File.join(data_directory_path_for_uuid(uuid), uuid + '.json')
   end
@@ -54,16 +41,4 @@ class Hyacinth::Utils::PathUtils
   def self.data_directory_path_for_uuid(uuid)
     File.join(HYACINTH[:digital_object_data_directory], uuid_pairtree(uuid), uuid)
   end
-
-  # def self.access_directory_path_for_uuid(uuid)
-  #   File.join(HYACINTH[:access_copy_directory], uuid_pairtree(uuid), uuid)
-  # end
-
-  # def self.access_directory_path_for_uuid!(uuid)
-  #   dest_dir = access_directory_path_for_uuid(uuid)
-  #   # Make sure that any recursively generated new directories have group permissions set to 0775.
-  #   # When Derivativo 3 is released and Derivativo 1 is retired, this can change to 0755 permissions.
-  #   FileUtils.mkdir_p(dest_dir, mode: 0755)
-  #   dest_dir
-  # end
 end
