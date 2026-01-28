@@ -1,7 +1,7 @@
 import { QueryClient } from '@tanstack/react-query';
 import { AUTH_QUERY_KEY } from './auth';
 import { User } from '@/types/api';
-import { ROLES, hasRole } from './authorization';
+import { ROLES, hasAnyRole } from './authorization';
 
 type RoleTypes = keyof typeof ROLES;
 
@@ -59,10 +59,10 @@ export async function requireAuthorization(
   }
 
   // Check if user has any of the required roles
-  if (!hasRole(user, allowedRoles)) {
+  if (!hasAnyRole(user, allowedRoles)) {
     // Throw an authorization error that can be caught by error boundaries
     throw createAuthorizationError(
-      `User does not have required roles: ${allowedRoles.join(', ')}`,
+      `Access denied.  User must have at least one of the following roles: ${allowedRoles.join(', ')}`,
       allowedRoles
     );
   }

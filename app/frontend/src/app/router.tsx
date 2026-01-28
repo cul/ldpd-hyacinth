@@ -42,11 +42,11 @@ export const createAppRouter = (queryClient: QueryClient) =>
           children: [
             {
               index: true,
-              lazy: () => import('./routes/users/users').then(convert(queryClient)),
+              lazy: () => import('./routes/users').then(convert(queryClient)),
             },
             {
               path: ':userUid/edit',
-              lazy: () => import('./routes/users/user').then(convert(queryClient)),
+              lazy: () => import('./routes/users/edit').then(convert(queryClient)),
             },
             {
               path: ':userUid/edit/project-permissions',
@@ -54,7 +54,7 @@ export const createAppRouter = (queryClient: QueryClient) =>
             },
             {
               path: 'new',
-              lazy: () => import('./routes/users/new-user').then(convert(queryClient)),
+              lazy: () => import('./routes/users/new').then(convert(queryClient)),
             },
           ]
         },

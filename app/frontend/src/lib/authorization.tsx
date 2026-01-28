@@ -22,7 +22,7 @@ export function getUserRoles(user: User | null | undefined): RoleTypes[] {
 }
 
 // Helper function to check if user has any of the specified roles
-export function hasRole(
+export function hasAnyRole(
   user: User | null | undefined,
   allowedRoles: RoleTypes[]
 ): boolean {
@@ -40,7 +40,7 @@ export function useAuthorization() {
     checkAccess: React.useCallback(
       (allowedRoles?: RoleTypes[]) => {
         if (!allowedRoles) return true;
-        return hasRole(user, allowedRoles);
+        return hasAnyRole(user, allowedRoles);
       },
       [user]
     ),
@@ -52,7 +52,7 @@ export function useAuthorization() {
 
 type AuthorizationProps = {
   children: React.ReactNode;
-  allowedRoles?: RoleTypes[];
+  allowedRoles: RoleTypes[];
   forbiddenFallback?: React.ReactNode;
 };
 

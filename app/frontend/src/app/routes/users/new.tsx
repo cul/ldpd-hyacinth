@@ -9,8 +9,8 @@ export const clientLoader = (queryClient: QueryClient) => async () => {
   return null;
 };
 
-const NewUserRoute = () => {
+const UsersNewRoute = () => {
   return <CreateUser />;
 };
 
-export default NewUserRoute;
+export default UsersNewRoute;
