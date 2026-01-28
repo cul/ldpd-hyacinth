@@ -116,4 +116,32 @@ namespace :resque do
 
     store_pids(pids, :append)
   end
+
+  desc 'List the jobs in the queues'
+  task list_jobs_in_queues: :environment do
+    # First list jobs in all custom queues
+    queues = Resque.queues
+
+    queues.each do |queue_name|
+      queue_size = Resque.size(queue_name)
+      puts "------------------------------"
+      puts "Queue: #{queue_name}"
+      puts "Number of jobs in queue: #{queue_size}"
+      puts "------------------------------"
+
+      Resque.peek(queue_name, 0, queue_size).each do |job, _details|
+        puts "-> #{job.dig('args', 0, 'job_class')} | #{job.dig('args', 0, 'arguments')}"
+      end
+    end
+
+    # Then list jobs in failed queue
+    number_of_failed_jobs = Resque::Failure.count
+    puts 'Queue: failure'
+    puts "Number of jobs in queue: #{number_of_failed_jobs}"
+
+    Resque::Failure.all(0, number_of_failed_jobs).each do |failed_job|
+      job_payload = failed_job['payload']
+      puts "-> #{job_payload.dig('args', 0, 'job_class')} | #{job_payload.dig('args', 0, 'arguments')}"
+    end
+  end
 end
