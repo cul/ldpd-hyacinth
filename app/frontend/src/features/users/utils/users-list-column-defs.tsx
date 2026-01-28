@@ -1,5 +1,3 @@
-// Where should this file live?
-import React from 'react'
 import { Link } from 'react-router'
 import { createColumnHelper } from '@tanstack/react-table'
 import { User } from '@/types/api'
