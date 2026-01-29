@@ -16,8 +16,8 @@ export const clientLoader = (queryClient: QueryClient) => async () => {
   );
 };
 
-const UsersRoute = () => {
+const UsersIndexRoute = () => {
   return <UsersList />
 };
 
-export default UsersRoute;
+export default UsersIndexRoute;

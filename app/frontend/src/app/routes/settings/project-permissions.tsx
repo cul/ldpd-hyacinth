@@ -6,7 +6,7 @@ import TableBuilder from '@/components/ui/table-builder/table-builder';
 import { useCurrentUser } from '@/lib/auth';
 import { ProjectPermission } from '@/types/api';
 import { getUserProjectsQueryOptions } from '@/features/users/api/get-user-projects';
-import { readOnlyColumnDefs } from '@/features/users/components/project-permissions-column-defs';
+import { readOnlyColumnDefs } from '@/features/users/utils/project-permissions-column-defs';
 import { useUserProjects } from '@/features/users/api/get-user-projects';
 import { requireAuthorization } from '@/lib/loader-authorization';
 

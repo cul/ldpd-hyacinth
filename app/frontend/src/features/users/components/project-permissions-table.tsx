@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Table as BTable } from 'react-bootstrap';
 import { useReactTable, getCoreRowModel, getSortedRowModel, SortingState } from '@tanstack/react-table';
-import { editableColumnDefs } from './project-permissions-column-defs';
+import { editableColumnDefs } from '../utils/project-permissions-column-defs';
 import { AddProjectPermissionRow } from './add-project-permission-row';
 import TableHeader from '@/components/ui/table-builder/table-header';
 import TableRow from '@/components/ui/table-builder/table-row';

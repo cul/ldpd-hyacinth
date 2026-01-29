@@ -52,7 +52,7 @@ export const createAppRouter = (queryClient: QueryClient) =>
           children: [
             {
               index: true,
-              lazy: () => import('./routes/users/users').then(convert(queryClient)),
+              lazy: () => import('./routes/users').then(convert(queryClient)),
             },
             {
               path: ':userUid',
@@ -60,7 +60,7 @@ export const createAppRouter = (queryClient: QueryClient) =>
               children: [
                 {
                   path: 'edit', // maybe this should be the default (index) route under :userUid
-                  lazy: () => import('./routes/users/user').then(convert(queryClient)),
+                  lazy: () => import('./routes/users/edit').then(convert(queryClient)),
                 },
                 {
                   path: 'project-permissions/edit',
@@ -70,7 +70,7 @@ export const createAppRouter = (queryClient: QueryClient) =>
             },
             {
               path: 'new',
-              lazy: () => import('./routes/users/new-user').then(convert(queryClient)),
+              lazy: () => import('./routes/users/new').then(convert(queryClient)),
             },
           ]
         },

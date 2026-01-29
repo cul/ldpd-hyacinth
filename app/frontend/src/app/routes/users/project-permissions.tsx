@@ -1,6 +1,6 @@
 import React from 'react';
 import { QueryClient } from '@tanstack/react-query';
-import { useParams } from 'react-router';
+import { useParams, LoaderFunctionArgs } from 'react-router';
 
 // APIs
 import { ROLES } from '@/lib/authorization';
@@ -11,7 +11,7 @@ import { UserProjectPermissionsForm } from '@/features/users/components/user-pro
 import { getUsersQueryOptions } from '@/features/users/api/get-users';
 import { getUserQueryOptions, useUser } from '@/features/users/api/get-user';
 
-export const clientLoader = (queryClient: QueryClient) => async ({ params }: { params: { userUid: string } }) => {
+export const clientLoader = (queryClient: QueryClient) => async ({ params }: LoaderFunctionArgs) => {
   await requireAuthorization(queryClient, [ROLES.ADMIN]);
 
   const userUid = params.userUid as string;

@@ -5,7 +5,7 @@ import { ProjectPermission } from '@/types/api'
 
 const columnHelper = createColumnHelper<ProjectPermission>()
 
-const cellAsEditableCheckbox = (info: CellContext) => {
+const cellAsEditableCheckbox = (info: CellContext<ProjectPermission, boolean>) => {
   const value = info.getValue()
   const updateData = info.table.options.meta?.updateData
 
@@ -20,7 +20,7 @@ const cellAsEditableCheckbox = (info: CellContext) => {
   )
 }
 
-const cellAsReadOnlyCheckbox = (info: CellContext) => {
+const cellAsReadOnlyCheckbox = (info: CellContext<ProjectPermission, boolean>) => {
   const value = info.getValue()
 
   return (

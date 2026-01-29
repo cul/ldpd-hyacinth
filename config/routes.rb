@@ -157,7 +157,7 @@ Rails.application.routes.draw do
   get '/ui/v2', to: 'ui#v2'
   get '/ui/v2/*path', to: 'ui#v2'
 
-  namespace :api do
+  namespace :api, defaults: { format: :json } do
     namespace :v2 do
       resources :users, only: [:index, :create], param: :uid do
         collection do

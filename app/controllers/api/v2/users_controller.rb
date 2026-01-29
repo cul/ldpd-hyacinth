@@ -31,14 +31,10 @@ class Api::V2::UsersController < Api::V2::BaseController
 
   # GET /api/v2/users/_self
   def _self
-    respond_to do |format|
-      format.json do
-        if current_user
-          render json: { user: user_json(current_user) }
-        else
-          render json: { user: nil }, status: :unauthorized
-        end
-      end
+    if current_user
+      render json: { user: user_json(current_user) }
+    else
+      render json: { user: nil }, status: :unauthorized
     end
   end
 

@@ -9,7 +9,7 @@ export const clientLoader = (queryClient: QueryClient) => async () => {
   return null;
 };
 
-const NewUserRoute = () => {
+const UsersNewRoute = () => {
   return (
     <Container>
       <Row>
@@ -17,8 +17,7 @@ const NewUserRoute = () => {
           <UserForm />
         </Col>
       </Row>
-    </Container>
-  )
+    </Container>);
 };
 
-export default NewUserRoute;
+export default UsersNewRoute;

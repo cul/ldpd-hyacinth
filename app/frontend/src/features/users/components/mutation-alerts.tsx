@@ -1,9 +1,13 @@
 import React from 'react';
 import { Alert } from 'react-bootstrap';
-import { UseMutationResult } from '@tanstack/react-query';
 
 interface MutationAlertsProps {
-  mutation: UseMutationResult;
+  mutation: {
+    isError: boolean;
+    isSuccess: boolean;
+    error: Error | null;
+    reset: () => void;
+  };
   successMessage?: string;
   errorMessage?: string;
 }

@@ -16,17 +16,15 @@ export const clientLoader = (queryClient: QueryClient) => async ({ params }: Loa
   }
 
   const userQuery = getUserQueryOptions(userUid);
-  return (
-    queryClient.getQueryData(userQuery.queryKey) ??
-    (await queryClient.fetchQuery(userQuery))
-  );
+
+  return await queryClient.ensureQueryData(userQuery);
 };
 
-const UserRoute = () => {
+const UsersEditRoute = () => {
   const params = useParams();
   const userUid = params.userUid as string;
 
   return <UserEdit userUid={userUid} />;
 };
 
-export default UserRoute;
+export default UsersEditRoute;
