@@ -1,7 +1,7 @@
 import React from 'react';
 import { QueryClient } from '@tanstack/react-query';
 import { getUsersQueryOptions } from '@/features/users/api/get-users';
-import UsersList from '@/features/users/components/users-list';
+import UsersList from '@/features/users/components/UsersList';
 import { requireAuthorization } from '@/lib/loader-authorization';
 import { ROLES } from '@/lib/authorization';
 

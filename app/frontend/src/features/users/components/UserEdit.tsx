@@ -1,9 +1,9 @@
 import { Row, Col, Container, Spinner } from 'react-bootstrap';
 import { useUser } from '../api/get-user';
-import { UserForm } from './user-form';
-import { UserAPIKeyGenerationForm } from './user-api-key-generation-form';
+import UserForm from './UserForm';
+import UserAPIKeyGenerationForm from './UserApiKeyGenerationForm';
 
-export const UserEdit = ({ userUid }: { userUid: string }) => {
+export default function UserEdit({ userUid }: { userUid: string }) {
   const userQuery = useUser({
     userUid,
   });

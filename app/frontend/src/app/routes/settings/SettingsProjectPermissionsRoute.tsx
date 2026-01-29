@@ -2,7 +2,7 @@ import { Row, Col, Container } from 'react-bootstrap';
 import { QueryClient } from '@tanstack/react-query';
 import { ColumnDef } from '@tanstack/react-table';
 
-import TableBuilder from '@/components/ui/table-builder/table-builder';
+import TableBuilder from '@/components/ui/table-builder/TableBuilder';
 import { useCurrentUser } from '@/lib/auth';
 import { ProjectPermission } from '@/types/api';
 import { getUserProjectsQueryOptions } from '@/features/users/api/get-user-projects';
@@ -21,7 +21,7 @@ export const clientLoader = (queryClient: QueryClient) => async () => {
   return { userUid: currentUser.uid };
 };
 
-const SettingsProjectPermissionsRoute = () => {
+export default function SettingsProjectPermissionsRoute() {
   const { data: currentUser } = useCurrentUser();
   const { data: projectPermissions, isLoading } = useUserProjects({
     userUid: currentUser!.uid,
@@ -54,5 +54,3 @@ const SettingsProjectPermissionsRoute = () => {
     </Container>
   );
 };
-
-export default SettingsProjectPermissionsRoute;

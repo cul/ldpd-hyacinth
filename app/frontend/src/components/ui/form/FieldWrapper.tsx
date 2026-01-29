@@ -20,14 +20,14 @@ export type FieldWrapperProps = {
  */
 export type FieldWrapperPassThroughProps = Omit<FieldWrapperProps, 'children'>;
 
-export const FieldWrapper = ({
+export default function FieldWrapper({
   label,
   error,
   children,
   md,
   className,
   controlId,
-}: FieldWrapperProps) => {
+}: FieldWrapperProps) {
   return (
     <Form.Group
       as={Col}
@@ -44,4 +44,4 @@ export const FieldWrapper = ({
       )}
     </Form.Group>
   );
-};
+}

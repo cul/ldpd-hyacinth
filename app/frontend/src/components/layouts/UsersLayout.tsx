@@ -2,7 +2,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router';
 import { Container, Button } from 'react-bootstrap';
 import { ArrowLeft, Plus } from 'react-bootstrap-icons';
 
-const UsersLayout = () => {
+export default function UsersLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const isIndexPage = location.pathname === '/users';
@@ -34,5 +34,3 @@ const UsersLayout = () => {
     </Container>
   );
 };
-
-export default UsersLayout;

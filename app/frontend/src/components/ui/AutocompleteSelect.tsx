@@ -1,4 +1,3 @@
-import React from 'react';
 import Select, { SingleValue } from 'react-select';
 
 export interface SelectOption {
@@ -13,12 +12,12 @@ interface AutocompleteSelectProps {
   placeholder?: string;
 }
 
-export const AutocompleteSelect = ({ 
+export default function AutocompleteSelect({
   options, 
   value, 
   onChange,
   placeholder = 'Select...'
-}: AutocompleteSelectProps) => {
+}: AutocompleteSelectProps) {
   const selectedOption = value ? options.find(option => option.value === value) : null;
 
   const handleChange = (newValue: SingleValue<SelectOption>) => {

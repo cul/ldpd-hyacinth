@@ -2,19 +2,19 @@ import { useMemo } from 'react';
 import { Spinner, Button, Alert } from 'react-bootstrap';
 
 // Hooks and components
+import CopyOtherPermissionsDisplay from './CopyOtherPermissionsDisplay';
+import MutationAlerts from './MutationAlerts';
+import ProjectPermissionsTable from './ProjectPermissionsTable';
 import { useProjects } from '@/features/projects/api/get-projects';
 import { useUsers } from '../api/get-users';
-import { CopyOtherPermissionsDisplay } from './copy-other-user-permissions-display';
 import { useProjectPermissionsForm } from '../hooks/use-project-permissions-form';
-import { MutationAlerts } from './mutation-alerts';
-import { ProjectPermissionsTable } from './project-permissions-table';
 
 /*
 This component uses TanStack table to render and manage user project permissions
 We already have a non-editable TableBuilder component, but since this form requires editable cells 
 and custom actions, we implement the table logic directly here
 */
-export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => {
+export default function UserProjectPermissionsForm({ userUid }: { userUid: string }) {
   const projectsQuery = useProjects();
   const usersQuery = useUsers();
 

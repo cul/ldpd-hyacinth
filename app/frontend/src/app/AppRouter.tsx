@@ -4,10 +4,10 @@ import { createBrowserRouter, LoaderFunction, ActionFunction } from 'react-route
 import { RouterProvider } from 'react-router/dom';
 
 // Layouts and Components
-import MainLayout from '@/components/layouts/main-layout';
-import UsersLayout from '@/components/layouts/users-layout';
-import UserLayout from '@/components/layouts/user-layout';
-import { AuthorizationErrorBoundary } from '@/components/errors/authorization-error';
+import MainLayout from '@/components/layouts/MainLayout';
+import UsersLayout from '@/components/layouts/UsersLayout';
+import UserLayout from '@/components/layouts/UserLayout';
+import AuthorizationErrorBoundary from '@/components/errors/AuthorizationErrorBoundary';
 
 function Root() {
   return (
@@ -52,7 +52,7 @@ export const createAppRouter = (queryClient: QueryClient) =>
           children: [
             {
               index: true,
-              lazy: () => import('./routes/users').then(convert(queryClient)),
+              lazy: () => import('./routes/users/UsersIndexRoute').then(convert(queryClient)),
             },
             {
               path: ':userUid',
@@ -60,17 +60,17 @@ export const createAppRouter = (queryClient: QueryClient) =>
               children: [
                 {
                   path: 'edit', // maybe this should be the default (index) route under :userUid
-                  lazy: () => import('./routes/users/edit').then(convert(queryClient)),
+                  lazy: () => import('./routes/users/UsersEditRoute').then(convert(queryClient)),
                 },
                 {
                   path: 'project-permissions/edit',
-                  lazy: () => import('./routes/users/project-permissions').then(convert(queryClient)),
+                  lazy: () => import('./routes/users/UsersProjectPermissionsRoute').then(convert(queryClient)),
                 },
               ]
             },
             {
               path: 'new',
-              lazy: () => import('./routes/users/new').then(convert(queryClient)),
+              lazy: () => import('./routes/users/UsersNewRoute').then(convert(queryClient)),
             },
           ]
         },
@@ -79,11 +79,11 @@ export const createAppRouter = (queryClient: QueryClient) =>
           children: [
             {
               index: true,
-              lazy: () => import('./routes/settings/settings').then(convert(queryClient))
+              lazy: () => import('./routes/settings/SettingsIndexRoute').then(convert(queryClient))
             },
             {
               path: 'project-permissions',
-              lazy: () => import('./routes/settings/project-permissions').then(convert(queryClient))
+              lazy: () => import('./routes/settings/SettingsProjectPermissionsRoute').then(convert(queryClient))
             },
           ]
         }
@@ -91,13 +91,13 @@ export const createAppRouter = (queryClient: QueryClient) =>
     },
     {
       path: '*',
-      lazy: () => import('./routes/not-found').then(convert(queryClient)),
+      lazy: () => import('./routes/NotFound').then(convert(queryClient)),
     },
   ], {
     basename: '/ui/v2',
   });
 
-export const AppRouter = () => {
+export default function AppRouter() {
   const queryClient = useQueryClient();
 
   const router = useMemo(() => createAppRouter(queryClient), [queryClient]);

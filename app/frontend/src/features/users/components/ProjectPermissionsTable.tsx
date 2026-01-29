@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { Table as BTable } from 'react-bootstrap';
 import { useReactTable, getCoreRowModel, getSortedRowModel, SortingState } from '@tanstack/react-table';
 import { editableColumnDefs } from '../utils/project-permissions-column-defs';
-import { AddProjectPermissionRow } from './add-project-permission-row';
-import TableHeader from '@/components/ui/table-builder/table-header';
-import TableRow from '@/components/ui/table-builder/table-row';
+import AddProjectPermissionRow from './AddProjectPermissionRow';
+import TableHeader from '@/components/ui/table-builder/TableHeader';
+import TableRow from '@/components/ui/table-builder/TableRow';
 import { Project, ProjectPermission } from '@/types/api';
 
 declare module '@tanstack/react-table' {
@@ -23,13 +23,13 @@ interface PermissionsTableProps {
 }
 
 // Editable TanStack Table for managing user project permissions
-export const ProjectPermissionsTable = ({
+export default function ProjectPermissionsTable({
   data,
   unassignedProjects,
   onUpdatePermission,
   onRemovePermission,
   onAddPermission,
-}: PermissionsTableProps) => {
+}: PermissionsTableProps) {
   const [sorting, setSorting] = useState<SortingState>([])
 
   const table = useReactTable({

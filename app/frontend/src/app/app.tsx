@@ -1,13 +1,10 @@
-import React from 'react';
-import { AppRouter } from './router';
-import { AppProvider } from './provider';
+import AppRouter from './AppRouter';
+import AppProvider from './AppProvider';
 
-const App = () => {
+export default function App() {
   return (
     <AppProvider>
       <AppRouter />
     </AppProvider>
   );
-};
-
-export default App;
+}

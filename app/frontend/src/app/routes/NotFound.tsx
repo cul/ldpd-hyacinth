@@ -1,4 +1,4 @@
-const NotFoundRoute = () => {
+export default function NotFoundRoute() {
   return (
     <div className="mt-2 d-flex flex-column align-items-center text-center">
       <h1>404 - Not Found</h1>
@@ -6,5 +6,3 @@ const NotFoundRoute = () => {
     </div>
   );
 };
-
-export default NotFoundRoute;

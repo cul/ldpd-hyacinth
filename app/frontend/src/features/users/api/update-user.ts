@@ -34,7 +34,7 @@ export const useUpdateUser = ({
       });
 
       // If updating current user, refresh auth state
-      const currentUser = queryClient.getQueryData(AUTH_QUERY_KEY);
+      const currentUser = queryClient.getQueryData<User>(AUTH_QUERY_KEY);
       if (currentUser?.uid === variables.userUid) {
         queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY });
       }

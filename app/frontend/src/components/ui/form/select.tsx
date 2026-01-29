@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form } from 'react-bootstrap';
-import { FieldWrapper, type FieldWrapperPassThroughProps } from './field-wrapper';
+import FieldWrapper, {FieldWrapperPassThroughProps } from './FieldWrapper';
 
 // Omit 'size' (conflicting with HTML attribute) and 'onChange' to redefine them later
 type BaseSelectProps = Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'size' | 'onChange'>;
@@ -21,19 +21,21 @@ export type SelectProps = BaseSelectProps &
     size?: 'sm' | 'lg';
   };
 
-export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
-  ({ label, error, md, controlId: customControlId, children, ...props }, ref) => {
-    const controlId = customControlId || `formGrid${props.name.charAt(0).toUpperCase()}${props.name.slice(1)}`;
+export default function Select({
+  label,
+  error,
+  md,
+  controlId: customControlId,
+  children,
+  ...props
+}: SelectProps, ref: React.Ref<HTMLSelectElement>) {
+  const controlId = customControlId || `formGrid${props.name.charAt(0).toUpperCase()}${props.name.slice(1)}`;
 
-    return (
-      <FieldWrapper label={label} error={error} md={md} controlId={controlId}>
-        <Form.Select ref={ref} isInvalid={!!error} {...props}>
-          {children}
-        </Form.Select>
-      </FieldWrapper>
-    );
-  }
-);
-
-Select.displayName = 'Select';
-
+  return (
+    <FieldWrapper label={label} error={error} md={md} controlId={controlId}>
+      <Form.Select ref={ref} isInvalid={!!error} {...props}>
+        {children}
+      </Form.Select>
+    </FieldWrapper>
+  );
+}

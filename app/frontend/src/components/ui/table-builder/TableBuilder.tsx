@@ -9,8 +9,8 @@ import {
 } from '@tanstack/react-table'
 import { Table as BTable } from 'react-bootstrap'
 
-import TableHeader from './table-header'
-import TableRow from './table-row'
+import TableHeader from './TableHeader'
+import TableRow from './TableRow'
 
 interface TableBuilderProps<T> {
   data: T[]
@@ -20,7 +20,7 @@ interface TableBuilderProps<T> {
 // This is a generic table component that can be reused across different data types
 // When using this component, ensure you specify how to render each column in the column definitions
 // Docs: https://tanstack.com/table/latest/docs/guide/column-defs
-function TableBuilder<T extends object>({ data, columns }: TableBuilderProps<T>) {
+export default function TableBuilder<T extends object>({ data, columns }: TableBuilderProps<T>) {
   // You can disable sorting specific columns or specify custom sorting functions in the column definitions
   // Docs: https://tanstack.com/table/latest/docs/api/features/sorting#column-def-options
   const [sorting, setSorting] = useState<SortingState>([])
@@ -51,5 +51,3 @@ function TableBuilder<T extends object>({ data, columns }: TableBuilderProps<T>)
     </BTable>
   )
 }
-
-export default TableBuilder;

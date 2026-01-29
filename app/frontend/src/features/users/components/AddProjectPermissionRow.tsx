@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Button } from 'react-bootstrap';
-import { AutocompleteSelect } from '@/components/ui/autocomplete-select';
+import AutocompleteSelect from '@/components/ui/AutocompleteSelect';
 import { Project, ProjectPermission } from '@/types/api';
 
 type AddProjectPermissionRowProps = {
@@ -8,7 +8,7 @@ type AddProjectPermissionRowProps = {
   unassignedProjects: Project[];
 };
 
-export const AddProjectPermissionRow = ({ unassignedProjects, onAddProject }: AddProjectPermissionRowProps) => {
+export default function AddProjectPermissionRow({ unassignedProjects, onAddProject }: AddProjectPermissionRowProps) {
   const [selectedProjectId, setSelectedProjectId] = useState<string>('');
 
   const handleAddProject = () => {

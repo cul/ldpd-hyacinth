@@ -1,4 +1,3 @@
-import React from 'react';
 import Alert from 'react-bootstrap/Alert';
 import { useRouteError, isRouteErrorResponse } from 'react-router';
 import { isAuthorizationError } from '@/lib/loader-authorization';
@@ -12,7 +11,7 @@ const ErrorDisplay = ({ title, message }: { title: string; message: string }) =>
   </div>
 );
 
-export const AuthorizationErrorBoundary: React.FC = () => {
+export default function AuthorizationErrorBoundary() {
   const error = useRouteError();
 
   // Check if it's an authorization error

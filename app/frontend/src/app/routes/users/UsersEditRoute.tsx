@@ -1,7 +1,7 @@
+import { useParams, LoaderFunctionArgs, redirect } from 'react-router';
 import { QueryClient } from '@tanstack/react-query';
 import { getUserQueryOptions } from '@/features/users/api/get-user';
-import { UserEdit } from '@/features/users/components/user-edit';
-import { useParams, LoaderFunctionArgs, redirect } from 'react-router';
+import UserEdit from '@/features/users/components/UserEdit';
 import { requireAuthorization } from '@/lib/loader-authorization';
 import { ROLES } from '@/lib/authorization';
 

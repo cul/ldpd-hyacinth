@@ -1,9 +1,8 @@
-import React from 'react';
 import { Outlet } from 'react-router';
 import Container from 'react-bootstrap/Container';
-import TopNavbar from '@/components/top-navbar';
+import TopNavbar from '@/components/TopNavbar';
 
-const MainLayout = () => {
+export default function MainLayout() {
   return (
     <>
       <TopNavbar />
@@ -15,5 +14,3 @@ const MainLayout = () => {
     </>
   );
 }
-
-export default MainLayout;

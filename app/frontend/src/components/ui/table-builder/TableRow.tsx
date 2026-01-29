@@ -1,11 +1,10 @@
-import React from 'react'
 import { flexRender, Row, Cell } from '@tanstack/react-table'
 
 interface TableRowProps<T> {
   row: Row<T>
 }
 
-const TableRow = <T extends object>({ row }: TableRowProps<T>) => {
+export default function TableRow<T extends object>({ row }: TableRowProps<T>) {
   return (
     <tr key={row.id} className="align-middle">
       {row.getVisibleCells().map((cell: Cell<T, unknown>) => (
@@ -16,5 +15,3 @@ const TableRow = <T extends object>({ row }: TableRowProps<T>) => {
     </tr>
   )
 }
-
-export default TableRow;

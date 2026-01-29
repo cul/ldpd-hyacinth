@@ -7,7 +7,7 @@ type UserAPIKeyGenerationFormProps = {
   apiKeyDigest?: string | null;
 };
 
-export const UserAPIKeyGenerationForm: React.FC<UserAPIKeyGenerationFormProps> = ({ userUid, apiKeyDigest }) => {
+export default function UserApiKeyGenerationForm({ userUid, apiKeyDigest }: UserAPIKeyGenerationFormProps) {
   const hasApiKey = !!apiKeyDigest;
   const generateApiKeyMutation = useGenerateUserApiKey({
     mutationConfig: {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Row, Col } from 'react-bootstrap';
 import { User } from '@/types/api';
-import { AutocompleteSelect } from '@/components/ui/autocomplete-select';
+import AutocompleteSelect from '@/components/ui/AutocompleteSelect';
 
 interface CopyOtherPermissionsDisplayProps {
   onSelectUser: (uid: string) => void;
@@ -11,12 +11,12 @@ interface CopyOtherPermissionsDisplayProps {
 }
 
 // ? Better name for this component?
-export const CopyOtherPermissionsDisplay = ({
+export default function CopyOtherPermissionsDisplay({
   onSelectUser,
   selectedUserUid,
   usersList,
   mergeUserPermissions
-}: CopyOtherPermissionsDisplayProps) => {
+}: CopyOtherPermissionsDisplayProps) {
   return (
     <div className="mb-4" style={{ borderBottom: '1px solid #dee2e6', paddingBottom: '1.5rem' }}>
       <p>You can copy another user&apos;s project permissions by selecting their name from a dropdown. The permissions will be merged with any existing permissions.

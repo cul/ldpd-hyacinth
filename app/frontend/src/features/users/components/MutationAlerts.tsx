@@ -13,11 +13,11 @@ interface MutationAlertsProps {
 }
 
 // ? Move to a common components folder if used in multiple places
-export const MutationAlerts = ({
+export default function MutationAlerts({
   mutation,
   successMessage = 'Operation completed successfully!',
   errorMessage = 'An error occurred',
-}: MutationAlertsProps) => {
+}: MutationAlertsProps) {
   if (!mutation.isError && !mutation.isSuccess) return null;
 
   return (

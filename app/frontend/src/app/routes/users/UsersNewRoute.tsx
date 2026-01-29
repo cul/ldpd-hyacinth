@@ -1,19 +1,19 @@
 import { QueryClient } from '@tanstack/react-query';
 import { Col, Container, Row } from 'react-bootstrap';
-import { UserForm } from '@/features/users/components/user-form';
 import { requireAuthorization } from '@/lib/loader-authorization';
 import { ROLES } from '@/lib/authorization';
+import UserForm from '@/features/users/components/UserForm';
 
 export const clientLoader = (queryClient: QueryClient) => async () => {
   await requireAuthorization(queryClient, [ROLES.ADMIN]);
   return null;
 };
 
-const UsersNewRoute = () => {
+export const UsersNewRoute = () => {
   return (
     <Container>
       <Row>
-        <Col md={8}>
+        <Col md={8} className="px-0">
           <UserForm />
         </Col>
       </Row>

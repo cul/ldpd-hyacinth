@@ -1,13 +1,11 @@
-import React from 'react';
 import { QueryClient } from '@tanstack/react-query';
 import { useParams, LoaderFunctionArgs } from 'react-router';
 
-// APIs
+import UserProjectPermissionsForm from '@/features/users/components/UserProjectPermissionsForm';
 import { ROLES } from '@/lib/authorization';
 import { requireAuthorization } from '@/lib/loader-authorization';
 import { getUserProjectsQueryOptions } from '@/features/users/api/get-user-projects';
 import { getProjectsQueryOptions } from '@/features/projects/api/get-projects';
-import { UserProjectPermissionsForm } from '@/features/users/components/user-project-permissions-form';
 import { getUsersQueryOptions } from '@/features/users/api/get-users';
 import { getUserQueryOptions, useUser } from '@/features/users/api/get-user';
 
@@ -32,7 +30,7 @@ export const clientLoader = (queryClient: QueryClient) => async ({ params }: Loa
   return { user, userPermissions, projects, users };
 };
 
-const UserProjectsRoute = () => {
+export const UsersProjectPermissionsRoute = () => {
   const params = useParams();
   const userUid = params.userUid as string;
 
@@ -62,4 +60,4 @@ const UserProjectsRoute = () => {
   );
 };
 
-export default UserProjectsRoute;
+export default UsersProjectPermissionsRoute;

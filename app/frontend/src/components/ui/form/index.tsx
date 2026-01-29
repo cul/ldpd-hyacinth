@@ -1,3 +1,5 @@
-export { Input } from './input';
-export { Select } from './select';
-export { FieldWrapper } from './field-wrapper';
+import Input from './Input';
+import Select from './Select';
+import FieldWrapper from './FieldWrapper';
+
+export { Input, Select, FieldWrapper };

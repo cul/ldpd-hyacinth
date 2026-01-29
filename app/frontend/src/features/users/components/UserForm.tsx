@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button, Form, Row } from 'react-bootstrap';
 import { useCreateUser } from '../api/create-user';
 import { useUpdateUser } from '../api/update-user';
-import { MutationAlerts } from './mutation-alerts';
+import MutationAlerts from './MutationAlerts';
 import { Input, Select } from '@/components/ui/form';
 
 type UserFormProps = {
@@ -19,7 +19,7 @@ type UserFormProps = {
   isEditingSelf?: boolean;
 };
 
-export const UserForm = ({ user, isEditingSelf }: UserFormProps) => {
+export default function UserForm({ user, isEditingSelf }: UserFormProps) {
   // Use existing user data for edit mode or default empty values for create mode
   const initialUser = user || {
     uid: '',

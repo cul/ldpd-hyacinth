@@ -1,4 +1,4 @@
-export const MainErrorFallback = () => {
+export default function MainErrorFallback() {
   return (
     <div>
       <h2>Ooops, something went wrong</h2>

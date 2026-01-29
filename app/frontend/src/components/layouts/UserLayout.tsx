@@ -1,8 +1,7 @@
-import React from 'react';
 import { NavLink, Outlet, useParams, useLocation } from 'react-router';
 import Nav from 'react-bootstrap/Nav';
 
-const UserLayout = () => {
+export default function UserLayout() {
   const params = useParams();
   const location = useLocation();
   const userUid = params.userUid as string;
@@ -34,5 +33,3 @@ const UserLayout = () => {
     </>
   );
 }
-
-export default UserLayout;

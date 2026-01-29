@@ -1,12 +1,12 @@
-import { flexRender, HeaderGroup } from '@tanstack/react-table'
+import { flexRender, Header, HeaderGroup, SortDirection } from '@tanstack/react-table'
 import { ArrowUp, ArrowDown, ArrowDownUp } from 'react-bootstrap-icons'
 
 interface TableHeaderProps<T> {
   headerGroup: HeaderGroup<T>
 }
 
-function TableHeader<T>({ headerGroup }: TableHeaderProps<T>) {
-  const renderSortingIcon = (sortDirection: 'asc' | 'desc' | null) => {
+export default function TableHeader<T>({ headerGroup }: TableHeaderProps<T>) {
+  const renderSortingIcon = (sortDirection: SortDirection | false) => {
     if (sortDirection === 'asc') {
       return <ArrowUp className="ms-2" size={14} />
     }
@@ -16,7 +16,7 @@ function TableHeader<T>({ headerGroup }: TableHeaderProps<T>) {
     return <ArrowDownUp className="ms-2" style={{ color: '#b5b5b5ff' }} size={14} />
   }
 
-  const createColumnHeader = (header: HeaderGroup<T>) => {
+  const createColumnHeader = (header: Header<T, unknown>) => {
     if (header.isPlaceholder) return null
 
     const sharedClassNames = 'fw-semibold d-flex justify-content-between m-0 p-0 align-items-center'
@@ -49,5 +49,3 @@ function TableHeader<T>({ headerGroup }: TableHeaderProps<T>) {
     </thead>
   )
 }
-
-export default TableHeader;

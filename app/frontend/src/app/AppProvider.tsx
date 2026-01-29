@@ -4,7 +4,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import Spinner from 'react-bootstrap/Spinner';
 import { ErrorBoundary } from 'react-error-boundary';
 
-import { MainErrorFallback } from '@/components/errors/main';
+import MainErrorFallback from '@/components/errors/MainErrorFallback';
 import { queryConfig } from '@/lib/react-query';
 import { useCurrentUser } from '@/lib/auth';
 
@@ -29,7 +29,7 @@ function AuthLoader({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
-export const AppProvider: FC<PropsWithChildren<unknown>> = ({ children }) => {
+const AppProvider: FC<PropsWithChildren<unknown>> = ({ children }) => {
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -54,3 +54,5 @@ export const AppProvider: FC<PropsWithChildren<unknown>> = ({ children }) => {
     </Suspense>
   );
 }
+
+export default AppProvider;
