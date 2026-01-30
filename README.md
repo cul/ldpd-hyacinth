@@ -29,6 +29,8 @@ bundle exec rake hyacinth:docker:start # Start docker (which includes Solr, Fedo
 bundle exec rake hyacinth:fedora:reload_cmodels # Import required content models into Fedora (Note: It is safe to ignore any "404 Resource Not Found" output messages encountered during this step. These are expected because the content models do not already exist in Fedora and therefore cannot be found.)
 bundle exec rake hyacinth:development:reset # Runs a bunch of other rake tasks to set up Hyacinth core data, including test projects
 rails s -p 3000 # Start the application using rails server
+yarn install # Install frontend dependencies
+yarn start:dev # Start the Vite server
 ```
 
 The setup above should start up a working instance of the application, but you may run into issues if you have other services running that use the same ports as Hyacinth and its Docker dependencies.  Check out `docker/docker-compose.development.yml` and `docker/docker-compose.test.yml` to see what ports are used (or if you haven't run the `hyacinth:docker:config_files` rake task yet, check out `docker/templates/docker-compose.development.yml` and `docker/templates/docker-compose.test.yml`).  You can modify these ports if you run into issues -- but if you do, you'll also need to update corresponding config/*.yml files to reference the updated ports.
@@ -45,6 +47,7 @@ bundle exec rake hyacinth:docker:stop
 ```sh
 bundle exec rake hyacinth:docker:start # Start docker
 rails s -p 3000 # Start the application using rails server
+yarn start:dev # Start the Vite server
 ```
 
 ### Derivativo derivative generation and image thumbnails:
