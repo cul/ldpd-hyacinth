@@ -11,7 +11,12 @@ import { UserProjectPermissionsForm } from '@/features/users/components/user-pro
 import { getUsersQueryOptions } from '@/features/users/api/get-users';
 import { getUserQueryOptions, useUser } from '@/features/users/api/get-user';
 
+function delay(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export const clientLoader = (queryClient: QueryClient) => async ({ params }: LoaderFunctionArgs) => {
+  console.log("Loading...");
   await requireAuthorization(queryClient, [ROLES.ADMIN]);
 
   const userUid = params.userUid as string;
@@ -29,6 +34,8 @@ export const clientLoader = (queryClient: QueryClient) => async ({ params }: Loa
     queryClient.ensureQueryData(getUsersQueryOptions()),
   ]);
 
+  await (delay(3000));
+  console.log("Done!");
   return { user, userPermissions, projects, users };
 };
 
