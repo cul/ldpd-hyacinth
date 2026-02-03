@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { FC, PropsWithChildren, ReactNode, Suspense, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import Spinner from 'react-bootstrap/Spinner';
@@ -8,23 +8,29 @@ import { MainErrorFallback } from '@/components/errors/main';
 import { queryConfig } from '@/lib/react-query';
 import { useCurrentUser } from '@/lib/auth';
 
-function AuthLoader({ children }: { children: React.ReactNode }) {
+function AuthLoader({ children }: { children: ReactNode }) {
   const { data: user, isLoading } = useCurrentUser();
+
+  // Side effects like modifying window.location should be done in useEffect
+  useEffect(() => {
+    if (!isLoading && !user) {
+      window.location.href = '/users/sign_in';
+    }
+  }, [user, isLoading]);
 
   if (isLoading) {
     return <div>Loading user...</div>;
   }
 
   if (!user) {
-    window.location.href = '/users/sign_in';
     return null;
   }
 
   return <>{children}</>;
 }
 
-export const AppProvider: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => {
-  const [queryClient] = React.useState(
+export const AppProvider: FC<PropsWithChildren<unknown>> = ({ children }) => {
+  const [queryClient] = useState(
     () =>
       new QueryClient({
         defaultOptions: queryConfig,
@@ -32,7 +38,7 @@ export const AppProvider: React.FC<React.PropsWithChildren<unknown>> = ({ childr
   );
 
   return (
-    <React.Suspense
+    <Suspense
       fallback={
         <div className="flex h-screen w-screen items-center justify-center">
           <Spinner />
@@ -45,6 +51,6 @@ export const AppProvider: React.FC<React.PropsWithChildren<unknown>> = ({ childr
           <AuthLoader>{children}</AuthLoader>
         </QueryClientProvider>
       </ErrorBoundary>
-    </React.Suspense>
+    </Suspense>
   );
 }

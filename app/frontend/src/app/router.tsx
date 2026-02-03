@@ -1,10 +1,12 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { QueryClient, useQueryClient } from '@tanstack/react-query';
-import { createBrowserRouter } from 'react-router';
+import { createBrowserRouter, LoaderFunction, ActionFunction } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
 
 // Layouts and Components
 import MainLayout from '@/components/layouts/main-layout';
+import UsersLayout from '@/components/layouts/users-layout';
+import UserLayout from '@/components/layouts/user-layout';
 import { AuthorizationErrorBoundary } from '@/components/errors/authorization-error';
 
 function Root() {
@@ -15,9 +17,16 @@ function Root() {
   );
 }
 
+interface RouteModule {
+  default: React.ComponentType;
+  clientLoader?: (queryClient: QueryClient) => LoaderFunction;
+  clientAction?: (queryClient: QueryClient) => ActionFunction;
+  [key: string]: unknown;
+}
+
 // Convert a module with clientLoader/clientAction into a route object.
 // This allows loaders/actions to access the QueryClient for prefetching data
-const convert = (queryClient: QueryClient) => (m: any) => {
+const convert = (queryClient: QueryClient) => (m: RouteModule) => {
   const { clientLoader, clientAction, default: Component, ...rest } = m;
   return {
     ...rest,
@@ -38,6 +47,7 @@ export const createAppRouter = (queryClient: QueryClient) =>
         },
         {
           path: 'users',
+          Component: UsersLayout, // Wraps all users routes with shared navigation
           ErrorBoundary: AuthorizationErrorBoundary, // Catch authorization errors from loaders
           children: [
             {
@@ -45,12 +55,18 @@ export const createAppRouter = (queryClient: QueryClient) =>
               lazy: () => import('./routes/users').then(convert(queryClient)),
             },
             {
-              path: ':userUid/edit',
-              lazy: () => import('./routes/users/edit').then(convert(queryClient)),
-            },
-            {
-              path: ':userUid/edit/project-permissions',
-              Component: () => <div>Edit Project Permissions For User</div>,
+              path: ':userUid',
+              Component: UserLayout,
+              children: [
+                {
+                  path: 'edit', // maybe this should be the default (index) route under :userUid
+                  lazy: () => import('./routes/users/edit').then(convert(queryClient)),
+                },
+                {
+                  path: 'project-permissions/edit',
+                  lazy: () => import('./routes/users/project-permissions').then(convert(queryClient)),
+                },
+              ]
             },
             {
               path: 'new',
@@ -63,9 +79,12 @@ export const createAppRouter = (queryClient: QueryClient) =>
           children: [
             {
               index: true,
-              lazy: () => import('./routes/settings').then(convert(queryClient))
+              lazy: () => import('./routes/settings/settings').then(convert(queryClient))
             },
-            { path: 'project-permissions', Component: () => <div>Edit Current User Project Permissions</div> },
+            {
+              path: 'project-permissions',
+              lazy: () => import('./routes/settings/project-permissions').then(convert(queryClient))
+            },
           ]
         }
       ],

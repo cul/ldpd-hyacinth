@@ -1,4 +1,4 @@
-import React from 'react';
+import { useCallback, ReactNode } from 'react';
 import { useCurrentUser } from './auth';
 import { User } from '@/types/api';
 
@@ -37,7 +37,7 @@ export function useAuthorization() {
   const { data: user } = useCurrentUser();
 
   return {
-    checkAccess: React.useCallback(
+    checkAccess: useCallback(
       (allowedRoles?: RoleTypes[]) => {
         if (!allowedRoles) return true;
         return hasAnyRole(user, allowedRoles);
@@ -53,7 +53,7 @@ export function useAuthorization() {
 type AuthorizationProps = {
   children: React.ReactNode;
   allowedRoles: RoleTypes[];
-  forbiddenFallback?: React.ReactNode;
+  forbiddenFallback?: ReactNode;
 };
 
 // Component for conditional rendering based on authorization

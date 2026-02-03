@@ -14,7 +14,7 @@ export const UserAPIKeyGenerationForm: React.FC<UserAPIKeyGenerationFormProps> =
       onSuccess: (data) => {
         setNewApiKey(data.apiKey);
       },
-      onError: (error: any) => {
+      onError: (error) => {
         alert(`Error generating API key: ${error.message || 'Unknown error'}`);
       },
     },

@@ -2,11 +2,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
 
-export const generateUserApiKey = ({
-  userUid,
-}: {
-  userUid: string;
-}): any => {
+type GenerateApiKeyResponse = {
+  apiKey: string;
+};
+
+export const generateUserApiKey = ({userUid}: {userUid: string;}): Promise<GenerateApiKeyResponse> => {
   return api.post(`/users/${userUid}/generate_new_api_key`);
 };
 

@@ -1,7 +1,7 @@
 class Api::V2::UsersController < Api::V2::BaseController
   API_TOKEN_LENGTH = 32
 
-  before_action :set_user_by_uid, only: [:show, :update, :generate_new_api_key]
+  before_action :set_user_by_uid, only: [:show, :update, :generate_new_api_key, :project_permissions, :update_project_permissions]
 
   # GET /api/v2/users
   def index
@@ -18,7 +18,7 @@ class Api::V2::UsersController < Api::V2::BaseController
     if @user.save
       render json: { user: user_json(@user) }, status: :created
     else
-      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: format_errors(@user.errors) }, status: :unprocessable_entity
     end
   end
 
@@ -42,10 +42,16 @@ class Api::V2::UsersController < Api::V2::BaseController
   # Admin or self
   def update
     authorize! :update, @user
+    
+    # Prevent admins from changing their own is_admin status
+    if current_user.admin? && @user.id == current_user.id && user_params.key?(:is_admin) != @user.is_admin
+      authorize! :update_is_admin, @user
+    end
+    
     if @user.update(user_params)
       render json: { user: user_json(@user) }
     else
-      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: format_errors(@user.errors) }, status: :unprocessable_entity
     end
   end
 
@@ -63,6 +69,69 @@ class Api::V2::UsersController < Api::V2::BaseController
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
     end
+  end
+
+  # GET /api/v2/users/:uid/project_permissions
+  # Admins can retrieve projects permissions for any user.  Non-admins can only retrieve project permissions for their own uid.
+  def project_permissions
+    authorize! :read_project_permissions, @user
+
+    project_permissions = user_project_permissions_json(@user)
+
+    render json: { projectPermissions: project_permissions }, status: :ok
+  end
+
+  # PUT /api/v2/users/:uid/project_permissions
+  # Admin only
+  def update_project_permissions
+    authorize! :update_project_permissions, @user
+
+    # Check that the key exists (even if empty)
+    unless params.key?(:project_permissions)
+      render json: { errors: ["Missing required parameter: project_permissions"] }, status: :bad_request
+      return
+    end
+
+    updated_permissions = []
+
+    @user.transaction do
+      @user.project_permissions.destroy_all
+      permissions_data = project_permissions_params
+
+      # If empty, we're done - user has no project permissions
+      if permissions_data.empty?
+        next
+      end
+
+      new_permissions = permissions_data.map do |permission_attrs|
+        {
+          user_id: @user.id,
+          project_id: permission_attrs[:project_id],
+          can_read: permission_attrs[:can_read] || false,
+          can_create: permission_attrs[:can_create] || false,
+          can_update: permission_attrs[:can_update] || false,
+          can_delete: permission_attrs[:can_delete] || false,
+          can_publish: permission_attrs[:can_publish] || false,
+          is_project_admin: permission_attrs[:is_project_admin] || false,
+        }
+      end
+
+      # Validate that all projects exist before inserting
+      project_ids = new_permissions.map { |p| p[:project_id] }
+      existing_project_ids = Project.where(id: project_ids).pluck(:id)
+      missing_project_ids = project_ids - existing_project_ids
+      
+      if missing_project_ids.present?
+        render json: { errors: ["Projects not found: #{missing_project_ids.join(', ')}"] }, status: :not_found
+        raise ActiveRecord::Rollback
+      end
+
+      ProjectPermission.insert_all(new_permissions)
+      updated_permissions = user_project_permissions_json(@user)
+    end
+    render json: { projectPermissions: updated_permissions }, status: :ok
+  rescue ActiveRecord::RecordNotFound => e
+    render json: { errors: ["Project not found: #{e.message}"] }, status: :not_found
   end
 
   private
@@ -83,6 +152,14 @@ class Api::V2::UsersController < Api::V2::BaseController
     end
   end
 
+  def project_permissions_params
+    return [] unless params[:project_permissions].present?
+
+    params.require(:project_permissions).map do |permission|
+      permission.permit(:project_id, :can_read, :can_create, :can_update, :can_delete, :can_publish, :is_project_admin)
+    end
+  end
+
   def user_json(user)
     {
       uid: user.uid,
@@ -91,9 +168,33 @@ class Api::V2::UsersController < Api::V2::BaseController
       email: user.email,
       isAdmin: user.is_admin,
       isActive: user.is_active,
-      canManageAllControlledVocabularies: user.can_manage_all_controlled_vocabularies,
+      canManageAllControlledVocabularies: user.can_manage_all_controlled_vocabularies?,
+      adminForAtLeastOneProject: user.admin_for_at_least_one_project?,
+      canEditAtLeastOneControlledVocabulary: user.can_edit_at_least_one_controlled_vocabulary?,
       accountType: user.account_type,
       apiKeyDigest: user.api_key_digest,
     }
+  end
+
+  def user_project_permissions_json(user)
+    user.project_permissions.includes(:project).order('projects.display_label').map do |pp|
+      {
+        id: pp.id,
+        projectId: pp.project_id,
+        projectStringKey: pp.project.string_key,
+        projectDisplayLabel: pp.project.display_label,
+        canRead: pp.can_read,
+        canCreate: pp.can_create,
+        canUpdate: pp.can_update,
+        canDelete: pp.can_delete,
+        canPublish: pp.can_publish,
+        isProjectAdmin: pp.is_project_admin
+      }
+    end
+  end
+
+  # Format errors for display in frontend forms
+  def format_errors(errors)
+    errors.messages.transform_keys { |key| key.to_s.camelize(:lower) }
   end
 end
