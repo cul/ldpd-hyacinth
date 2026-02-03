@@ -10,19 +10,19 @@ class Api::V2::ProjectsController < Api::V2::BaseController
       projects = Project.where(id: project_ids).order(:display_label)
     end
 
-    render json: { 
+    render json: {
       projects: projects.map { |project| project_json(project) }
     }, status: :ok
   end
 
   private
 
-  def project_json(project)
-    {
-      id: project.id,
-      stringKey: project.string_key,
-      displayLabel: project.display_label,
-      pid: project.pid
-    }
-  end
+    def project_json(project)
+      {
+        id: project.id,
+        stringKey: project.string_key,
+        displayLabel: project.display_label,
+        pid: project.pid
+      }
+    end
 end

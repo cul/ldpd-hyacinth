@@ -42,12 +42,12 @@ class Api::V2::UsersController < Api::V2::BaseController
   # Admin or self
   def update
     authorize! :update, @user
-    
+
     # Prevent admins from changing their own is_admin status
     if current_user.admin? && @user.id == current_user.id && user_params.key?(:is_admin) != @user.is_admin
       authorize! :update_is_admin, @user
     end
-    
+
     if @user.update(user_params)
       render json: { user: user_json(@user) }
     else
@@ -63,7 +63,7 @@ class Api::V2::UsersController < Api::V2::BaseController
     new_api_key = Devise.friendly_token(API_TOKEN_LENGTH)
 
     if @user.update(api_key: new_api_key)
-      render json: { 
+      render json: {
         apiKey: new_api_key,
       }, status: :ok
     else
@@ -120,7 +120,7 @@ class Api::V2::UsersController < Api::V2::BaseController
       project_ids = new_permissions.map { |p| p[:project_id] }
       existing_project_ids = Project.where(id: project_ids).pluck(:id)
       missing_project_ids = project_ids - existing_project_ids
-      
+
       if missing_project_ids.present?
         render json: { errors: ["Projects not found: #{missing_project_ids.join(', ')}"] }, status: :not_found
         raise ActiveRecord::Rollback
@@ -136,65 +136,65 @@ class Api::V2::UsersController < Api::V2::BaseController
 
   private
 
-  def set_user_by_uid
-    @user = User.find_by!(uid: params[:uid])
-  end
-
-  def user_params
-    # Admins can set all fields, regular users can only update their own non-privileged fields
-    if current_user.admin?
-      params.require(:user).permit(
-        :uid, :email, :first_name, :last_name,
-        :is_admin, :can_manage_all_controlled_vocabularies, :is_active, :account_type, :api_key_digest
-      )
-    else
-      params.require(:user).permit(:first_name, :last_name, :api_key_digest)
+    def set_user_by_uid
+      @user = User.find_by!(uid: params[:uid])
     end
-  end
 
-  def project_permissions_params
-    return [] unless params[:project_permissions].present?
-
-    params.require(:project_permissions).map do |permission|
-      permission.permit(:project_id, :can_read, :can_create, :can_update, :can_delete, :can_publish, :is_project_admin)
+    def user_params
+      # Admins can set all fields, regular users can only update their own non-privileged fields
+      if current_user.admin?
+        params.require(:user).permit(
+          :uid, :email, :first_name, :last_name,
+          :is_admin, :can_manage_all_controlled_vocabularies, :is_active, :account_type, :api_key_digest
+        )
+      else
+        params.require(:user).permit(:first_name, :last_name, :api_key_digest)
+      end
     end
-  end
 
-  def user_json(user)
-    {
-      uid: user.uid,
-      firstName: user.first_name,
-      lastName: user.last_name,
-      email: user.email,
-      isAdmin: user.is_admin,
-      isActive: user.is_active,
-      canManageAllControlledVocabularies: user.can_manage_all_controlled_vocabularies?,
-      adminForAtLeastOneProject: user.admin_for_at_least_one_project?,
-      canEditAtLeastOneControlledVocabulary: user.can_edit_at_least_one_controlled_vocabulary?,
-      accountType: user.account_type,
-      apiKeyDigest: user.api_key_digest,
-    }
-  end
+    def project_permissions_params
+      return [] unless params[:project_permissions].present?
 
-  def user_project_permissions_json(user)
-    user.project_permissions.includes(:project).order('projects.display_label').map do |pp|
+      params.require(:project_permissions).map do |permission|
+        permission.permit(:project_id, :can_read, :can_create, :can_update, :can_delete, :can_publish, :is_project_admin)
+      end
+    end
+
+    def user_json(user)
       {
-        id: pp.id,
-        projectId: pp.project_id,
-        projectStringKey: pp.project.string_key,
-        projectDisplayLabel: pp.project.display_label,
-        canRead: pp.can_read,
-        canCreate: pp.can_create,
-        canUpdate: pp.can_update,
-        canDelete: pp.can_delete,
-        canPublish: pp.can_publish,
-        isProjectAdmin: pp.is_project_admin
+        uid: user.uid,
+        firstName: user.first_name,
+        lastName: user.last_name,
+        email: user.email,
+        isAdmin: user.is_admin,
+        isActive: user.is_active,
+        canManageAllControlledVocabularies: user.can_manage_all_controlled_vocabularies?,
+        adminForAtLeastOneProject: user.admin_for_at_least_one_project?,
+        canEditAtLeastOneControlledVocabulary: user.can_edit_at_least_one_controlled_vocabulary?,
+        accountType: user.account_type,
+        apiKeyDigest: user.api_key_digest,
       }
     end
-  end
 
-  # Format errors for display in frontend forms
-  def format_errors(errors)
-    errors.messages.transform_keys { |key| key.to_s.camelize(:lower) }
-  end
+    def user_project_permissions_json(user)
+      user.project_permissions.includes(:project).order('projects.display_label').map do |pp|
+        {
+          id: pp.id,
+          projectId: pp.project_id,
+          projectStringKey: pp.project.string_key,
+          projectDisplayLabel: pp.project.display_label,
+          canRead: pp.can_read,
+          canCreate: pp.can_create,
+          canUpdate: pp.can_update,
+          canDelete: pp.can_delete,
+          canPublish: pp.can_publish,
+          isProjectAdmin: pp.is_project_admin
+        }
+      end
+    end
+
+    # Format errors for display in frontend forms
+    def format_errors(errors)
+      errors.messages.transform_keys { |key| key.to_s.camelize(:lower) }
+    end
 end
