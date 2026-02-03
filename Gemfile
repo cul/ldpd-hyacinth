@@ -111,6 +111,8 @@ gem 'active_fedora_relsint', git: 'https://github.com/cul/active_fedora_relsint'
 # URI Escaping
 gem 'addressable', '~> 2.8.0'
 
+gem 'cancancan'
+
 gem 'redis', '~> 4.8' # NOTE: Updating the redis gem to v5 breaks the current redis namespace setup
 gem 'redis-namespace', '~> 1.11'
 # Resque for queued jobs

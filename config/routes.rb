@@ -153,6 +153,26 @@ Rails.application.routes.draw do
   # You can have the root of your site routed with "root"
   root 'pages#home'
 
+  # WIP new React UI
+  get '/ui/v2', to: 'ui#v2'
+  get '/ui/v2/*path', to: 'ui#v2'
+
+  namespace :api, defaults: { format: :json } do
+    namespace :v2 do
+      resources :users, only: [:index, :create], param: :uid do
+        collection do
+          get '_self'
+        end
+        member do
+          get '/', action: :show
+          patch '/', action: :update
+          post 'generate_new_api_key'
+        end
+      end
+    end
+  end
+  
+
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
 

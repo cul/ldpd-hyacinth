@@ -179,6 +179,7 @@ GEM
       sassc (>= 2.0.0)
     builder (3.3.0)
     byebug (12.0.0)
+    cancancan (3.6.1)
     capistrano (3.19.2)
       airbrussh (>= 1.0.0)
       i18n
@@ -765,6 +766,7 @@ DEPENDENCIES
   bootsnap
   bootstrap-sass (~> 3.4.1)
   byebug
+  cancancan
   capistrano (~> 3.19.2)
   capistrano-cul
   capistrano-passenger (~> 0.1)
