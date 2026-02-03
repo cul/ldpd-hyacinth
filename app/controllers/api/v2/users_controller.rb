@@ -72,7 +72,7 @@ class Api::V2::UsersController < Api::V2::BaseController
   end
 
   # GET /api/v2/users/:uid/project_permissions
-  # Admin or self (read-only for self)
+  # Admins can retrieve projects permissions for any user.  Non-admins can only retrieve project permissions for their own uid.
   def project_permissions
     authorize! :read_project_permissions, @user
 
@@ -96,23 +96,23 @@ class Api::V2::UsersController < Api::V2::BaseController
 
     @user.transaction do
       @user.project_permissions.destroy_all
-      permissions_data = params[:project_permissions] || []
+      permissions_data = project_permissions_params
 
       # If empty, we're done - user has no project permissions
       if permissions_data.empty?
         next
       end
 
-      new_permissions = permissions_data.map do |permission_params|
+      new_permissions = permissions_data.map do |permission_attrs|
         {
           user_id: @user.id,
-          project_id: permission_params[:project_id],
-          can_read: permission_params[:can_read] || false,
-          can_create: permission_params[:can_create] || false,
-          can_update: permission_params[:can_update] || false,
-          can_delete: permission_params[:can_delete] || false,
-          can_publish: permission_params[:can_publish] || false,
-          is_project_admin: permission_params[:is_project_admin] || false,
+          project_id: permission_attrs[:project_id],
+          can_read: permission_attrs[:can_read] || false,
+          can_create: permission_attrs[:can_create] || false,
+          can_update: permission_attrs[:can_update] || false,
+          can_delete: permission_attrs[:can_delete] || false,
+          can_publish: permission_attrs[:can_publish] || false,
+          is_project_admin: permission_attrs[:is_project_admin] || false,
         }
       end
 
@@ -121,7 +121,7 @@ class Api::V2::UsersController < Api::V2::BaseController
       existing_project_ids = Project.where(id: project_ids).pluck(:id)
       missing_project_ids = project_ids - existing_project_ids
       
-      if missing_project_ids.any?
+      if missing_project_ids.present?
         render json: { errors: ["Projects not found: #{missing_project_ids.join(', ')}"] }, status: :not_found
         raise ActiveRecord::Rollback
       end
@@ -149,6 +149,14 @@ class Api::V2::UsersController < Api::V2::BaseController
       )
     else
       params.require(:user).permit(:first_name, :last_name, :api_key_digest)
+    end
+  end
+
+  def project_permissions_params
+    return [] unless params[:project_permissions].present?
+
+    params.require(:project_permissions).map do |permission|
+      permission.permit(:project_id, :can_read, :can_create, :can_update, :can_delete, :can_publish, :is_project_admin)
     end
   end
 

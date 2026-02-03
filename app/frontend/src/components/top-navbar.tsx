@@ -59,7 +59,6 @@ export default function TopNavbar() {
                   <NavDropdown.Item href="/dynamic_field_group_categories">
                     Dynamic Field Categories
                   </NavDropdown.Item>
-                  {/* TODO: Add query params */}
                   <NavDropdown.Item href='/digital_objects'>
                     Publish Targets
                   </NavDropdown.Item>
