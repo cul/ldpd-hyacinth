@@ -4,6 +4,7 @@ import { NavLink } from 'react-router';
 import { useCurrentUser, AUTH_QUERY_KEY } from '@/lib/auth';
 import { useQueryClient } from '@tanstack/react-query';
 import { Authorization, ROLES } from '@/lib/authorization';
+import hyacinthLogo from '../assets/hyacinth-logo.png';
 
 const NAVBAR_EXPAND_SIZE = 'lg';
 
@@ -18,7 +19,7 @@ export default function TopNavbar() {
   const handleLogout = () => {
     queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY });
     queryClient.clear();
-    
+
     logoutFormRef.current?.submit();
   };
 
@@ -27,10 +28,10 @@ export default function TopNavbar() {
       <Container>
         <Navbar.Brand as={NavLink} to="/">
           <img
-            src="/../assets/hyacinth-logo.png"
+            src={hyacinthLogo}
             width="30"
             height="30"
-            className="d-inline-block align-top"
+            className="d-inline-block align-top me-1"
             alt="Hyacinth logo"
           />
           Hyacinth
