@@ -13,11 +13,11 @@ import {
   createMemoryRouter,
   type RouteObject,
 } from 'react-router';
-import { db } from '@/testing/mocks/db';
-import { createUser as generateUser } from './data-generators';
-import { setAuthenticatedUser } from './mocks/handlers/users';
 import { AUTH_QUERY_KEY } from '@/lib/auth';
 import type { User } from '@/types/api';
+
+export { buildUser } from './data-generators';
+export { mockApi } from './mock-api';
 
 const createTestQueryClient = () =>
   new QueryClient({
@@ -29,100 +29,75 @@ const createTestQueryClient = () =>
     },
   });
 
-export const createUser = (userProperties?: Partial<User>): User => {
-  const user = generateUser(userProperties) as User;
-  db.user.create({ ...user });
-  return user;
-};
 
-export const loginAsUser = (user: User) => {
-  setAuthenticatedUser(user.uid);
-  return user;
-};
+/*
+  renderApp
 
-export const logout = () => {
-  setAuthenticatedUser(null);
-};
+  Renders a component inside a QueryClient + MemoryRouter.
+*/
 
-const initializeUser = (user?: User | null) => {
-  if (user === null) {
-    // Explicitly unauthenticated
-    return null;
-  }
-
-  if (typeof user === 'undefined') {
-    // Create and login a default user
-    const newUser = createUser();
-    return loginAsUser(newUser);
-  }
-
-  // Login the provided user
-  return loginAsUser(user);
-};
+interface RenderAppOptions {
+  url?: string;
+  path?: string;
+  [key: string]: unknown;
+}
 
 export const renderApp = async (
   ui: React.ReactElement,
-  { user, url = '/', path = '/', ...renderOptions }: Record<string, any> = {},
+  { url = '/', path = '/', ...renderOptions }: RenderAppOptions = {},
 ) => {
-  // If you want to render the app unauthenticated then pass "null" as the user
-  const initializedUser = initializeUser(user);
-
   const queryClient = createTestQueryClient();
 
-  // Keeps the history of your "URL" in memory (does not read or write to the address bar)
   const router = createMemoryRouter(
-    [
-      {
-        path: path,
-        element: ui,
-      },
-    ],
+    [{ path, element: ui }],
     {
       initialEntries: url ? ['/', url] : ['/'],
       initialIndex: url ? 1 : 0,
     },
   );
 
-  const returnValue = {
-    user: initializedUser,
-    ...rtlRender(
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-      </QueryClientProvider>,
-      renderOptions,
-    ),
-  };
-
-  return returnValue;
+  return rtlRender(
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>,
+    renderOptions,
+  );
 };
 
-// Render with custom routes - useful for testing loaders, error boundaries, etc.
-// The routesFactory receives the queryClient so loaders can be properly initialized
+/*
+  renderWithRoutes
+
+  For testing loaders, error boundaries, or full route trees.
+  The routesFactory receives the QueryClient so loaders can prefetch data.
+*/
+
+interface RenderWithRoutesOptions {
+  user?: User | null;
+  url?: string;
+  [key: string]: unknown;
+}
+
 export const renderWithRoutes = async (
   routesFactory: (queryClient: QueryClient) => RouteObject[],
   {
     user,
     url = '/',
     ...renderOptions
-  }: { user?: User | null; url?: string; [key: string]: unknown } = {},
+  }: RenderWithRoutesOptions = {},
 ) => {
-  const initializedUser = initializeUser(user);
-
   const queryClient = createTestQueryClient();
 
   // Pre-populate the auth query cache so loaders can access the user
-  if (initializedUser) {
-    queryClient.setQueryData(AUTH_QUERY_KEY, initializedUser);
+  if (user) {
+    queryClient.setQueryData(AUTH_QUERY_KEY, user);
   }
 
   const routes = routesFactory(queryClient);
-
   const router = createMemoryRouter(routes, {
     initialEntries: [url],
   });
 
   const returnValue = {
-    user: initializedUser,
     queryClient,
     ...rtlRender(
       <QueryClientProvider client={queryClient}>

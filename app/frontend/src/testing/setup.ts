@@ -1,8 +1,6 @@
 import { beforeAll, afterEach, afterAll } from 'vitest';
 import '@testing-library/jest-dom/vitest';
-import { server } from './mocks/server';
-import { db } from './mocks/db';
-import { setAuthenticatedUser } from './mocks/handlers/users';
+import { server } from './mock-api';
 
 // Start MSW server before all tests
 beforeAll(() => {
@@ -12,8 +10,6 @@ beforeAll(() => {
 // Reset handlers and clear database after each test
 afterEach(() => {
   server.resetHandlers();
-  db.user.clear();
-  setAuthenticatedUser(null);
 });
 
 // Close MSW server after all tests

@@ -1,7 +1,7 @@
-// Integration test file for users index route
 import { describe, it, expect, vi, beforeAll, afterAll, type Mock } from 'vitest';
 import {
-  createUser,
+  buildUser,
+  mockApi,
   renderApp,
   screen,
   within,
@@ -10,7 +10,7 @@ import UsersList from '@/features/users/components/users-list';
 import UsersLayout from '@/components/layouts/users-layout';
 
 beforeAll(() => {
-  vi.spyOn(console, 'error').mockImplementation(() => {});
+  vi.spyOn(console, 'error').mockImplementation(() => { });
 });
 
 afterAll(() => {
@@ -19,36 +19,27 @@ afterAll(() => {
 
 describe('Users Index Route', () => {
   it('should display users list in a table with correct data from API', async () => {
-    // Create test users in the mock database
-    const user1 = createUser({
+    const user1 = buildUser({
       uid: 'johndoe',
       firstName: 'John',
       lastName: 'Doe',
       email: 'john@example.com',
-      isAdmin: true,
-      isActive: true,
-      canManageAllControlledVocabularies: true,
-      accountType: 'standard',
     });
 
-    const _user2 = createUser({
+    const user2 = buildUser({
       uid: 'hyacinthservice',
       firstName: 'Hyacinth',
       lastName: 'Service',
       email: 'hyacinth.service@example.com',
-      isAdmin: false,
-      isActive: true,
-      canManageAllControlledVocabularies: false,
-      accountType: 'service',
     });
 
-    await renderApp(<UsersList />, { user: user1, path: '/users', url: '/users' });
+    mockApi('get', '/users', { users: [user1, user2] });
 
-    // Wait for users to be loaded and rendered
+    await renderApp(<UsersList />, { path: '/users', url: '/users' });
+
     expect(await screen.findByText('johndoe')).toBeInTheDocument();
     expect(await screen.findByText('hyacinthservice')).toBeInTheDocument();
 
-    // Check user data is rendered correctly
     expect(screen.getByText('John Doe')).toBeInTheDocument();
     expect(screen.getByText('Hyacinth Service')).toBeInTheDocument();
     expect(screen.getByText('john@example.com')).toBeInTheDocument();
@@ -56,8 +47,11 @@ describe('Users Index Route', () => {
   });
 
   it('should display correct column headers', async () => {
-    const user = createUser({ uid: 'test-user' });
-    await renderApp(<UsersList />, { user, path: '/users', url: '/users' });
+    const user = buildUser({ uid: 'test-user' });
+
+    mockApi('get', '/users', { users: [user] });
+
+    await renderApp(<UsersList />, { path: '/users', url: '/users' });
 
     await screen.findByRole('table');
 
@@ -77,50 +71,28 @@ describe('Users Index Route', () => {
   });
 
   it('should display data sorted in ascending order by UID', async () => {
-    // Create users with different UIDs
-    createUser({
-      uid: 'charlie',
-      firstName: 'Charlie',
-      lastName: 'Clark',
-      email: 'charlie@example.com',
-    });
+    const alice = buildUser({ uid: 'alice', firstName: 'Alice', lastName: 'Anderson', email: 'alice@example.com' });
+    const charlie = buildUser({ uid: 'charlie', firstName: 'Charlie', lastName: 'Clark', email: 'charlie@example.com' });
+    const bob = buildUser({ uid: 'bob', firstName: 'Bob', lastName: 'Brown', email: 'bob@example.com' });
 
-    createUser({
-      uid: 'alice',
-      firstName: 'Alice',
-      lastName: 'Anderson',
-      email: 'alice@example.com',
-    });
+    mockApi('get', '/users', { users: [alice, bob, charlie] });
 
-    createUser({
-      uid: 'bob',
-      firstName: 'Bob',
-      lastName: 'Brown',
-      email: 'bob@example.com',
-    });
-
-    await renderApp(<UsersList />, { user: null, path: '/users', url: '/users' });
+    await renderApp(<UsersList />, { path: '/users', url: '/users' });
 
     await screen.findByRole('table');
 
-    // Get all cells in UID column and verify ascending order
     const rows = screen.getAllByRole('row');
-    // Skip header row
-    const uidCells = rows.slice(1).map((row) => within(row).getAllByRole('cell')[0]);
-    const uids = uidCells.map((cell) => cell.textContent);
+    const uids = rows.slice(1).map((row) => within(row).getAllByRole('cell')[0].textContent);
 
-    // Should be sorted ascending by UID
     expect(uids).toEqual(['alice', 'bob', 'charlie']);
   });
 
   it('should render UID as a link to the edit user page', async () => {
-    const user = createUser({
-      uid: 'test-user-uid',
-      firstName: 'Test',
-      lastName: 'User',
-    });
+    const user = buildUser({ uid: 'test-user-uid', firstName: 'Test', lastName: 'User' });
 
-    await renderApp(<UsersList />, { user, path: '/users', url: '/users' });
+    mockApi('get', '/users', { users: [user] });
+
+    await renderApp(<UsersList />, { path: '/users', url: '/users' });
 
     const uidLink = await screen.findByRole('link', { name: 'test-user-uid' });
 
@@ -128,15 +100,15 @@ describe('Users Index Route', () => {
     expect(uidLink).toHaveAttribute('href', '/users/test-user-uid/edit');
   });
 
-  // ? Should this be moved to a different test file since it's about the layout?
   it('should display the Create New User button', async () => {
-    const user = createUser({ uid: 'admin-user' });
+    const user = buildUser({ uid: 'admin-user' });
 
-    await renderApp(<UsersLayout />, { user, path: '/users', url: '/users' });
+    mockApi('get', '/users', { users: [user] });
+
+    await renderApp(<UsersLayout />, { path: '/users', url: '/users' });
 
     const createButton = await screen.findByRole('button', { name: /create new user/i });
 
     expect(createButton).toBeInTheDocument();
   });
 });
-
