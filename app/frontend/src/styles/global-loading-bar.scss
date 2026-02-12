@@ -1,0 +1,43 @@
+// TODO: Eventually refactor to styled-components format
+.global-loading-bar {
+  position: absolute;
+  z-index: 999999;
+  width: 100%;
+  height: 0;
+
+  .outer-bar {
+    position: relative;
+    height: 5px;
+    width: 100%;
+  }
+
+  .inner-bar {
+    height: 100%;
+    width: 0%;
+    background-color: #9999cc;
+    box-shadow: 1px 1px 3px #aaaadd;
+  }
+
+  &.Idle {
+    .inner-bar {
+      width: 0%;
+      background-color: transparent;
+      box-shadow: 1px 1px 3px transparent;
+      transition: width 0s ease-in-out 1s, background-color 0.25s linear 0s, box-shadow 0.25s linear 0s;
+    }
+  }
+
+  &.Loading {
+    .inner-bar {
+      width: 75%;
+      transition: width 4s ease-in-out;
+    }
+  }
+
+  &.Complete {
+    .inner-bar {
+      width: 100%;
+      transition: width 0.25s ease-in-out;
+    }
+  }
+}
