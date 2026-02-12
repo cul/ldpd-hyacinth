@@ -16,7 +16,7 @@ import {
 import { AUTH_QUERY_KEY } from '@/lib/auth';
 import type { User } from '@/types/api';
 
-export { buildUser } from './data-generators';
+export { buildUser, buildProjectPermission } from './data-generators';
 export { mockApi } from './mock-api';
 
 const createTestQueryClient = () =>
@@ -44,7 +44,11 @@ interface RenderAppOptions {
 
 export const renderApp = async (
   ui: React.ReactElement,
-  { url = '/', path = '/', ...renderOptions }: RenderAppOptions = {},
+  {
+    url = '/', // route pattern React Router uses for matching and resolving params (e.g. '/users/:userUid/edit')
+    path = '/', // simulated browser location to navigate to (e.g. '/users/janedoe/edit')
+    ...renderOptions
+  }: RenderAppOptions = {},
 ) => {
   const queryClient = createTestQueryClient();
 

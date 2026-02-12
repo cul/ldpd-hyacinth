@@ -1,4 +1,4 @@
-import type { User } from '@/types/api';
+import type { ProjectPermission, User } from '@/types/api';
 
 // Generate user
 const USER_DEFAULTS: User = {
@@ -27,3 +27,21 @@ export const buildUser = (overrides?: Partial<User>): User => {
 
 
 // Generate project permission
+const PROJECT_PERMISSION_DEFAULTS: ProjectPermission = {
+  projectId: 1,
+  projectDisplayLabel: 'Test Project Alpha',
+  projectStringKey: 'test-project-alpha',
+  canRead: true,
+  canUpdate: false,
+  canCreate: false,
+  canDelete: false,
+  canPublish: false,
+  isProjectAdmin: false,
+};
+
+export const buildProjectPermission = (overrides?: Partial<ProjectPermission>): ProjectPermission => {
+  return {
+    ...PROJECT_PERMISSION_DEFAULTS,
+    ...overrides,
+  };
+}
