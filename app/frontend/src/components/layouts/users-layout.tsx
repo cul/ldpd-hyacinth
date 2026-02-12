@@ -9,6 +9,14 @@ const UsersLayout = () => {
 
   return (
     <Container className="py-2">
+      {/* TODO: Delete this button once you're done testing! */}
+      <Button
+        variant="primary"
+        onClick={() => navigate(`/users?page=${Math.random()}`)}
+        className="d-flex align-items-center gap-1 mb-2"
+      >
+        Temporary button for testing query string navigation
+      </Button>
       <div className="d-flex justify-content-between align-items-center mb-4">
         {isIndexPage ? (
           <Button
