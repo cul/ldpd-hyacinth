@@ -12,7 +12,7 @@ import * as UsersIndexModule from '@/app/routes/users/index';
 import * as UsersEditModule from '@/app/routes/users/edit';
 import * as UsersNewModule from '@/app/routes/users/new';
 import * as UsersProjectPermissionsModule from '@/app/routes/users/project-permissions';
-import * as SettingsModule from '@/app/routes/settings/settings';
+import * as SettingsModule from '@/app/routes/settings';
 
 beforeAll(() => {
   vi.spyOn(console, 'error').mockImplementation(() => { });

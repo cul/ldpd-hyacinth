@@ -79,7 +79,7 @@ export const createAppRouter = (queryClient: QueryClient) =>
           children: [
             {
               index: true,
-              lazy: () => import('./routes/settings/settings').then(convert(queryClient))
+              lazy: () => import('./routes/settings').then(convert(queryClient))
             },
             {
               path: 'project-permissions',

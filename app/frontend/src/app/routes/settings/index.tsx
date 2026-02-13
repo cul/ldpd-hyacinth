@@ -3,7 +3,7 @@ import { useCurrentUser } from '@/lib/auth';
 import { UserAPIKeyGenerationForm } from '@/features/users/components/user-api-key-generation-form';
 import { UserForm } from '@/features/users/components/user-form';
 
-const SettingsRoute = () => {
+const SettingsIndexRoute = () => {
   const user = useCurrentUser();
 
   if (!user.data) return null;
@@ -23,4 +23,4 @@ const SettingsRoute = () => {
   );
 };
 
-export default SettingsRoute;
+export default SettingsIndexRoute;

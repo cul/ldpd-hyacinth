@@ -39,18 +39,25 @@ const createTestQueryClient = () =>
 interface RenderAppOptions {
   url?: string;
   path?: string;
+  user?: User | null;
   [key: string]: unknown;
 }
 
 export const renderApp = async (
   ui: React.ReactElement,
   {
-    url = '/', // route pattern React Router uses for matching and resolving params (e.g. '/users/:userUid/edit')
-    path = '/', // simulated browser location to navigate to (e.g. '/users/janedoe/edit')
+    url = '/', // simulated browser location to navigate to (e.g. '/users/janedoe/edit')
+    path = '/', // route pattern React Router uses for matching and resolving params (e.g. '/users/:userUid/edit')
+    user,
     ...renderOptions
   }: RenderAppOptions = {},
 ) => {
   const queryClient = createTestQueryClient();
+
+  // Pre-populate the auth query cache so components can access the user immediately
+  if (user) {
+    queryClient.setQueryData(AUTH_QUERY_KEY, user);
+  }
 
   const router = createMemoryRouter(
     [{ path, element: ui }],
