@@ -39,7 +39,7 @@ const createTestQueryClient = () =>
 interface RenderAppOptions {
   url?: string;
   path?: string;
-  user?: User | null;
+  user?: User;
   [key: string]: unknown;
 }
 
@@ -47,20 +47,23 @@ export const renderApp = async (
   ui: React.ReactElement,
   {
     url = '/', // simulated browser location to navigate to (e.g. '/users/janedoe/edit')
-    path = '/', // route pattern React Router uses for matching and resolving params (e.g. '/users/:userUid/edit')
+    path, // route pattern React Router uses for matching and resolving params (e.g. '/users/:userUid/edit')
     user,
     ...renderOptions
   }: RenderAppOptions = {},
 ) => {
   const queryClient = createTestQueryClient();
+  const routePath = path ?? url; // defaults to url — only pass path for parameterized routes
 
-  // Pre-populate the auth query cache so components can access the user immediately
+  // Pre-populate the auth query cache when a user is provided.
+  // This mirrors what the clientLoader does via requireAuthorization.
+  // Components that assume auth data is pre-loaded (no loading guard) need this.
   if (user) {
     queryClient.setQueryData(AUTH_QUERY_KEY, user);
   }
 
   const router = createMemoryRouter(
-    [{ path, element: ui }],
+    [{ path: routePath, element: ui }],
     {
       initialEntries: url ? ['/', url] : ['/'],
       initialIndex: url ? 1 : 0,

@@ -35,7 +35,7 @@ describe('Users Index Route', () => {
 
     mockApi('get', '/users', { users: [user1, user2] });
 
-    await renderApp(<UsersList />, { path: '/users', url: '/users' });
+    await renderApp(<UsersList />, {  url: '/users' });
 
     expect(await screen.findByText('johndoe')).toBeInTheDocument();
     expect(await screen.findByText('hyacinthservice')).toBeInTheDocument();
@@ -51,7 +51,7 @@ describe('Users Index Route', () => {
 
     mockApi('get', '/users', { users: [user] });
 
-    await renderApp(<UsersList />, { path: '/users', url: '/users' });
+    await renderApp(<UsersList />, {  url: '/users' });
 
     await screen.findByRole('table');
 
@@ -77,7 +77,7 @@ describe('Users Index Route', () => {
 
     mockApi('get', '/users', { users: [alice, bob, charlie] });
 
-    await renderApp(<UsersList />, { path: '/users', url: '/users' });
+    await renderApp(<UsersList />, {  url: '/users' });
 
     await screen.findByRole('table');
 
@@ -92,7 +92,7 @@ describe('Users Index Route', () => {
 
     mockApi('get', '/users', { users: [user] });
 
-    await renderApp(<UsersList />, { path: '/users', url: '/users' });
+    await renderApp(<UsersList />, {  url: '/users' });
 
     const uidLink = await screen.findByRole('link', { name: 'test-user-uid' });
 
@@ -105,7 +105,7 @@ describe('Users Index Route', () => {
 
     mockApi('get', '/users', { users: [user] });
 
-    await renderApp(<UsersLayout />, { path: '/users', url: '/users' });
+    await renderApp(<UsersLayout />, {  url: '/users' });
 
     const createButton = await screen.findByRole('button', { name: /create new user/i });
 

@@ -19,10 +19,7 @@ afterAll(() => {
 
 describe('Users New Route', () => {
   beforeEach(async () => {
-    await renderApp(<UsersNewRoute />, {
-      path: '/users/new',
-      url: '/users/new',
-    });
+    await renderApp(<UsersNewRoute />, { url: '/users/new' });
   });
 
   it('should render an empty user creation form', async () => {

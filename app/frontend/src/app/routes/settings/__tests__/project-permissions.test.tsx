@@ -23,7 +23,6 @@ describe('Settings Project Permissions Route', () => {
 
       await renderApp(<SettingsProjectPermissionsRoute />, {
         url: '/settings/project-permissions',
-        path: '/settings/project-permissions',
         user: adminUser,
       });
 
@@ -35,7 +34,6 @@ describe('Settings Project Permissions Route', () => {
 
       await renderApp(<SettingsProjectPermissionsRoute />, {
         url: '/settings/project-permissions',
-        path: '/settings/project-permissions',
         user: adminUser,
       });
 
@@ -53,7 +51,6 @@ describe('Settings Project Permissions Route', () => {
 
       await renderApp(<SettingsProjectPermissionsRoute />, {
         url: '/settings/project-permissions',
-        path: '/settings/project-permissions',
         user,
       });
 
@@ -69,7 +66,6 @@ describe('Settings Project Permissions Route', () => {
 
       await renderApp(<SettingsProjectPermissionsRoute />, {
         url: '/settings/project-permissions',
-        path: '/settings/project-permissions',
         user,
       });
 
@@ -110,7 +106,6 @@ describe('Settings Project Permissions Route', () => {
 
       await renderApp(<SettingsProjectPermissionsRoute />, {
         url: '/settings/project-permissions',
-        path: '/settings/project-permissions',
         user,
       });
 
@@ -139,7 +134,6 @@ describe('Settings Project Permissions Route', () => {
 
       await renderApp(<SettingsProjectPermissionsRoute />, {
         url: '/settings/project-permissions',
-        path: '/settings/project-permissions',
         user,
       });
 
@@ -186,7 +180,6 @@ describe('Settings Project Permissions Route', () => {
 
       await renderApp(<SettingsProjectPermissionsRoute />, {
         url: '/settings/project-permissions',
-        path: '/settings/project-permissions',
         user,
       });
 
@@ -219,7 +212,6 @@ describe('Settings Project Permissions Route', () => {
 
       await renderApp(<SettingsProjectPermissionsRoute />, {
         url: '/settings/project-permissions',
-        path: '/settings/project-permissions',
         user,
       });
 

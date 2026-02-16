@@ -28,7 +28,7 @@ describe('Settings Index Route', () => {
 
       mockApi('get', '/users/_self', { user });
 
-      await renderApp(<SettingsIndexRoute />, { url: '/settings', path: '/settings' });
+      await renderApp(<SettingsIndexRoute />, { url: '/settings' });
 
       expect(await screen.findByDisplayValue('Current')).toBeInTheDocument();
       expect(screen.getByDisplayValue('User')).toBeInTheDocument();
@@ -43,7 +43,7 @@ describe('Settings Index Route', () => {
 
       mockApi('get', '/users/_self', { user });
 
-      await renderApp(<SettingsIndexRoute />, { url: '/settings', path: '/settings' });
+      await renderApp(<SettingsIndexRoute />, { url: '/settings' });
 
       expect(await screen.findByDisplayValue('currentuser')).toBeDisabled();
       expect(screen.getByLabelText(/is active/i)).toBeDisabled();
@@ -60,7 +60,7 @@ describe('Settings Index Route', () => {
 
       mockApi('get', '/users/_self', { user });
 
-      await renderApp(<SettingsIndexRoute />, { url: '/settings', path: '/settings' });
+      await renderApp(<SettingsIndexRoute />, { url: '/settings' });
 
       expect(await screen.findByRole('button', { name: /generate api key/i }),).toBeInTheDocument();
       expect(screen.getByText(/api key has not been generated/i),).toBeInTheDocument();
@@ -76,7 +76,7 @@ describe('Settings Index Route', () => {
 
       mockApi('get', '/users/_self', { user });
 
-      await renderApp(<SettingsIndexRoute />, { url: '/settings', path: '/settings' });
+      await renderApp(<SettingsIndexRoute />, { url: '/settings' });
 
       await screen.findByDisplayValue('currentuser');
       expect(await screen.findByLabelText(/email/i)).toBeDisabled();
@@ -93,7 +93,7 @@ describe('Settings Index Route', () => {
 
       mockApi('get', '/users/_self', { user });
 
-      await renderApp(<SettingsIndexRoute />, { url: '/settings', path: '/settings' });
+      await renderApp(<SettingsIndexRoute />, { url: '/settings' });
       
       const firstNameInput = await screen.findByDisplayValue('Current');
       const lastNameInput = screen.getByDisplayValue('User');
@@ -115,7 +115,7 @@ describe('Settings Index Route', () => {
       mockApi('get', '/users/_self', { user });
       mockApi('patch', '/users/currentuser', { user: { ...user, firstName: 'Updated' } });
 
-      await renderApp(<SettingsIndexRoute />, { url: '/settings', path: '/settings' });
+      await renderApp(<SettingsIndexRoute />, { url: '/settings' });
 
       const firstNameInput = await screen.findByDisplayValue('Current');
 
@@ -138,7 +138,7 @@ describe('Settings Index Route', () => {
       mockApi('get', '/users/_self', { user });
       mockApi('patch', '/users/currentuser', { message: 'Update failed' }, 422);
 
-      await renderApp(<SettingsIndexRoute />, { url: '/settings', path: '/settings' });
+      await renderApp(<SettingsIndexRoute />, { url: '/settings' });
 
       const firstNameInput = await screen.findByDisplayValue('Current');
 
