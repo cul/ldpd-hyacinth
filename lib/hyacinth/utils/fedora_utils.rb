@@ -63,8 +63,12 @@ module Hyacinth::Utils::FedoraUtils
     namespace_fedora_object
   end
 
+  def self.escape_path_or_uri_for_risearch_query(path_or_uri)
+    path_or_uri.gsub(%q('), %q(\\\')).gsub(%q(:), %q(\\\:))
+  end
+
   def self.find_object_pid_by_filesystem_path(full_filesystem_path, active_only = true)
-    query = "select $pid from <#ri> where $pid <http://purl.org/dc/elements/1.1/source> '#{full_filesystem_path.gsub(%q('), %q(\\\'))}'"
+    query = "select $pid from <#ri> where $pid <http://purl.org/dc/elements/1.1/source> '#{escape_path_or_uri_for_risearch_query(full_filesystem_path)}'"
     query += " and $pid <info:fedora/fedora-system:def/model#state> <fedora-model:Active>" if active_only
     ri_opts = {
       type: 'tuples',
