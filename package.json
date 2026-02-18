@@ -7,20 +7,28 @@
     "start:dev": "./bin/vite dev",
     "start:dev:anyhostname": "VITE_RUBY_HOST=0.0.0.0 ./bin/vite dev",
     "start:dev:anyhostname:ssl": "VITE_RUBY_HOST=0.0.0.0 VITE_RUBY_HTTPS=true ./bin/vite dev",
+    "test": "vitest",
     "lint": "eslint app/frontend",
     "lint:fix": "eslint app/frontend --fix"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^25.0.3",
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
+    "jsdom": "^28.0.0",
+    "msw": "^2.12.8",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.53.1",
-    "vite": "^5.0.0",
-    "vite-plugin-ruby": "^5.1.0"
+    "vite": "^6.4.1",
+    "vite-plugin-ruby": "^5.1.0",
+    "vitest": "^4.0.18"
   },
   "dependencies": {
     "@casl/ability": "^6.7.5",

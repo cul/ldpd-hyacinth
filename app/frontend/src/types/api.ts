@@ -10,13 +10,6 @@ export interface User {
   canEditAtLeastOneControlledVocabulary: boolean;
   accountType: string;
   apiKeyDigest?: string | null;
-  signInCount: number;
-  currentSignInAt: string;
-  lastSignInAt: string;
-  currentSignInIp: string;
-  lastSignInIp: string;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface Project {

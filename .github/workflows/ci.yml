@@ -41,5 +41,7 @@ jobs:
           node-version: ${{ matrix.node }}
       - run: npm install -g yarn
       - run: yarn install
+      - name: Run frontend tests
+        run: yarn test --run
       - name: Run CI task
         run: bundle exec rake hyacinth:ci
