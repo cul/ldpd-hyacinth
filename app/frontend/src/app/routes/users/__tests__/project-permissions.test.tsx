@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeAll, afterAll, type Mock } from 'vitest
 import {
   buildUser,
   buildProjectPermission,
-  mockApi,
+  mockApiV2,
   renderApp,
   screen,
   userEvent,
@@ -34,10 +34,10 @@ const mockNonAdminPermissionsAPIs = (
 ) => {
   const user = buildUser({ uid: userUid, isAdmin: false });
 
-  mockApi('get', `/users/${userUid}`, { user });
-  mockApi('get', `/users/${userUid}/project_permissions`, { projectPermissions: permissions });
-  mockApi('get', '/projects', { projects });
-  mockApi('get', '/users', { users: [user, ...users] });
+  mockApiV2('get', `/users/${userUid}`, { user });
+  mockApiV2('get', `/users/${userUid}/project_permissions`, { projectPermissions: permissions });
+  mockApiV2('get', '/projects', { projects });
+  mockApiV2('get', '/users', { users: [user, ...users] });
 
   return user;
 };
@@ -47,7 +47,7 @@ describe('User Project Permissions Route', () => {
     it('should display admin info message', async () => {
       const adminUser = buildUser({ uid: 'admin-user', isAdmin: true });
 
-      mockApi('get', '/users/admin-user', { user: adminUser });
+      mockApiV2('get', '/users/admin-user', { user: adminUser });
 
       await renderApp(<UserProjectsRoute />, {
         path: '/users/:userUid/project-permissions/edit',
@@ -63,7 +63,7 @@ describe('User Project Permissions Route', () => {
     it('should not display the permissions form', async () => {
       const adminUser = buildUser({ uid: 'admin-user', isAdmin: true });
 
-      mockApi('get', '/users/admin-user', { user: adminUser });
+      mockApiV2('get', '/users/admin-user', { user: adminUser });
 
       await renderApp(<UserProjectsRoute />, {
         path: '/users/:userUid/project-permissions/edit',
@@ -177,7 +177,7 @@ describe('User Project Permissions Route', () => {
         const permissions = [buildProjectPermission()];
 
         mockNonAdminPermissionsAPIs('regular-user', { permissions });
-        mockApi('put', '/users/regular-user/project_permissions', {
+        mockApiV2('put', '/users/regular-user/project_permissions', {
           projectPermissions: [buildProjectPermission({ canUpdate: true })],
         });
 
@@ -204,7 +204,7 @@ describe('User Project Permissions Route', () => {
         const permissions = [buildProjectPermission()];
 
         mockNonAdminPermissionsAPIs('regular-user', { permissions });
-        mockApi('put', '/users/regular-user/project_permissions', { error: 'Save failed' }, 422);
+        mockApiV2('put', '/users/regular-user/project_permissions', { error: 'Save failed' }, 422);
 
         await renderApp(<UserProjectsRoute />, {
           path: '/users/:userUid/project-permissions/edit',

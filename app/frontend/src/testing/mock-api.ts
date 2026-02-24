@@ -7,7 +7,7 @@ type HttpMethod = 'get' | 'post' | 'put' | 'delete' | 'patch';
 
 // Register a mock API response for a single endpoint. Call once per endpoint per test.
 // Overrides are cleared automatically by `server.resetHandlers()` in the global `afterEach`.
-export const mockApi = (
+export const mockApiV2 = (
   method: HttpMethod,
   path: string,
   body: JsonBodyType,

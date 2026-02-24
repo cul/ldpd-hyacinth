@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeAll, afterAll, type Mock, beforeEach } from 'vitest';
 import {
   buildUser,
-  mockApi,
+  mockApiV2,
   renderApp,
   screen,
   userEvent,
@@ -56,7 +56,7 @@ describe('Users New Route', () => {
       accountType: 'standard',
     });
 
-    mockApi('post', '/users', { user: newUser }, 201);
+    mockApiV2('post', '/users', { user: newUser }, 201);
 
     await userEvent.type(screen.getByLabelText(/uid/i), 'newuser');
     await userEvent.type(screen.getByLabelText(/first name/i), 'New');
@@ -77,7 +77,7 @@ describe('Users New Route', () => {
   });
 
   it('should show error alert when creation fails', async () => {
-    mockApi('post', '/users', { error: 'UID already taken' }, 422);
+    mockApiV2('post', '/users', { error: 'UID already taken' }, 422);
 
     // Fill minimum required fields
     await userEvent.type(screen.getByLabelText(/uid/i), 'duplicate');

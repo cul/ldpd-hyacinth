@@ -30,6 +30,15 @@ describe('requireAuthorization', () => {
     expect(result).toEqual(adminUser);
   });
 
+  it('should perform OR-based role check (user needs only one of the required roles)', async () => {
+    const regularUser = buildUser({ isAdmin: false });
+    const queryClient = createQueryClientWithUser(regularUser);
+
+    const result = await requireAuthorization(queryClient, [ROLES.ADMIN, ROLES.USER]);
+
+    expect(result).toEqual(regularUser);
+  });
+
   it('should throw an authorization error when user lacks the required role', async () => {
     const regularUser = buildUser({ isAdmin: false });
     const queryClient = createQueryClientWithUser(regularUser);

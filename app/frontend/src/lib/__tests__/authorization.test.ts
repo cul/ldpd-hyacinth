@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeAll, afterAll, type Mock } from 'vitest
 import { QueryClient } from '@tanstack/react-query';
 import {
   buildUser,
-  mockApi,
+  mockApiV2,
   renderWithRoutes,
   screen,
 } from '@/testing/test-utils';
@@ -105,7 +105,7 @@ describe('Users route authorization', () => {
     it('should render the users list on /users', async () => {
       const adminUser = buildUser({ uid: 'admin', isAdmin: true });
 
-      mockApi('get', '/users', { users: [adminUser] });
+      mockApiV2('get', '/users', { users: [adminUser] });
 
       await renderWithRoutes(
         (queryClient: QueryClient) => [

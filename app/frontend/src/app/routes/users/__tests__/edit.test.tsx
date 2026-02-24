@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeAll, afterAll, type Mock } from 'vitest';
 import {
   buildUser,
-  mockApi,
+  mockApiV2,
   renderApp,
   screen,
   userEvent,
@@ -30,7 +30,7 @@ describe('Users Edit Route', () => {
         accountType: 'standard',
       });
 
-      mockApi('get', '/users/janedoe', { user });
+      mockApiV2('get', '/users/janedoe', { user });
 
       await renderApp(<UsersEditRoute />, {
         path: '/users/:userUid/edit',
@@ -45,7 +45,7 @@ describe('Users Edit Route', () => {
     it('should disable the UID field in edit mode', async () => {
       const user = buildUser({ uid: 'janedoe' });
 
-      mockApi('get', '/users/janedoe', { user });
+      mockApiV2('get', '/users/janedoe', { user });
 
       await renderApp(<UsersEditRoute />, {
         path: '/users/:userUid/edit',
@@ -66,8 +66,8 @@ describe('Users Edit Route', () => {
         email: 'jane@example.com',
       });
 
-      mockApi('get', '/users/janedoe', { user });
-      mockApi('patch', '/users/janedoe', {
+      mockApiV2('get', '/users/janedoe', { user });
+      mockApiV2('patch', '/users/janedoe', {
         user: { ...user, firstName: 'Janet' },
       });
 
@@ -95,8 +95,8 @@ describe('Users Edit Route', () => {
         lastName: 'Doe',
       });
 
-      mockApi('get', '/users/janedoe', { user });
-      mockApi('patch', '/users/janedoe', { error: 'Update failed' }, 422);
+      mockApiV2('get', '/users/janedoe', { user });
+      mockApiV2('patch', '/users/janedoe', { error: 'Update failed' }, 422);
 
       await renderApp(<UsersEditRoute />, {
         path: '/users/:userUid/edit',
@@ -117,7 +117,7 @@ describe('Users Edit Route', () => {
     it('should show "Generate API Key" when no key exists', async () => {
       const user = buildUser({ uid: 'janedoe', apiKeyDigest: null });
 
-      mockApi('get', '/users/janedoe', { user });
+      mockApiV2('get', '/users/janedoe', { user });
 
       await renderApp(<UsersEditRoute />, {
         path: '/users/:userUid/edit',
@@ -135,7 +135,7 @@ describe('Users Edit Route', () => {
     it('should show "Regenerate API Key" when a key already exists', async () => {
       const user = buildUser({ uid: 'janedoe', apiKeyDigest: 'abc123digest' });
 
-      mockApi('get', '/users/janedoe', { user });
+      mockApiV2('get', '/users/janedoe', { user });
 
       await renderApp(<UsersEditRoute />, {
         path: '/users/:userUid/edit',
@@ -153,8 +153,8 @@ describe('Users Edit Route', () => {
     it('should display the new API key after generation', async () => {
       const user = buildUser({ uid: 'janedoe', apiKeyDigest: null });
 
-      mockApi('get', '/users/janedoe', { user });
-      mockApi('post', '/users/janedoe/generate_new_api_key', {
+      mockApiV2('get', '/users/janedoe', { user });
+      mockApiV2('post', '/users/janedoe/generate_new_api_key', {
         apiKey: 'new-secret-key-12345',
       });
 

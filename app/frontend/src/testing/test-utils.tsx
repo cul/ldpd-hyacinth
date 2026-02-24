@@ -17,7 +17,7 @@ import { AUTH_QUERY_KEY } from '@/lib/auth';
 import type { User } from '@/types/api';
 
 export { buildUser, buildProjectPermission } from './data-generators';
-export { mockApi } from './mock-api';
+export { mockApiV2 } from './mock-api';
 
 const createTestQueryClient = () =>
   new QueryClient({

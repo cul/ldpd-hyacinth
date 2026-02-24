@@ -5,7 +5,7 @@ describe 'React application rendering', type: :feature, js: true do
     it 'shows "Not Signed In" when visiting /ui/v2' do
       visit '/ui/v2'
 
-      expect(page).to have_content 'Signed In'
+      expect(page).to have_content 'Not Signed In'
       expect(page).to have_content 'You must be signed in to view this page.'
     end
 

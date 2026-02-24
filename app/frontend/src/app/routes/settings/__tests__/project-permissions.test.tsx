@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeAll, afterAll, type Mock } from 'vitest';
 import {
   buildUser,
-  mockApi,
+  mockApiV2,
   renderApp,
   screen,
   within,
@@ -47,7 +47,7 @@ describe('Settings Project Permissions Route', () => {
     it('should display the page heading', async () => {
       const user = buildUser({ uid: 'regularuser', isAdmin: false });
 
-      mockApi('get', '/users/regularuser/project_permissions', { projectPermissions: [] });
+      mockApiV2('get', '/users/regularuser/project_permissions', { projectPermissions: [] });
 
       await renderApp(<SettingsProjectPermissionsRoute />, {
         url: '/settings/project-permissions',
@@ -62,7 +62,7 @@ describe('Settings Project Permissions Route', () => {
     it('should not show the admin info message', async () => {
       const user = buildUser({ uid: 'regularuser', isAdmin: false });
 
-      mockApi('get', '/users/regularuser/project_permissions', { projectPermissions: [] });
+      mockApiV2('get', '/users/regularuser/project_permissions', { projectPermissions: [] });
 
       await renderApp(<SettingsProjectPermissionsRoute />, {
         url: '/settings/project-permissions',
@@ -102,7 +102,7 @@ describe('Settings Project Permissions Route', () => {
         },
       ];
 
-      mockApi('get', '/users/regularuser/project_permissions', { projectPermissions: permissions });
+      mockApiV2('get', '/users/regularuser/project_permissions', { projectPermissions: permissions });
 
       await renderApp(<SettingsProjectPermissionsRoute />, {
         url: '/settings/project-permissions',
@@ -116,7 +116,7 @@ describe('Settings Project Permissions Route', () => {
     it('should display correct read-only column headers without Actions', async () => {
       const user = buildUser({ uid: 'regularuser', isAdmin: false });
 
-      mockApi('get', '/users/regularuser/project_permissions', {
+      mockApiV2('get', '/users/regularuser/project_permissions', {
         projectPermissions: [
           {
             projectId: 1,
@@ -162,7 +162,7 @@ describe('Settings Project Permissions Route', () => {
     it('should render all permission checkboxes as disabled', async () => {
       const user = buildUser({ uid: 'regularuser', isAdmin: false });
 
-      mockApi('get', '/users/regularuser/project_permissions', {
+      mockApiV2('get', '/users/regularuser/project_permissions', {
         projectPermissions: [
           {
             projectId: 1,
@@ -194,7 +194,7 @@ describe('Settings Project Permissions Route', () => {
     it('should not render any Delete buttons or Save button', async () => {
       const user = buildUser({ uid: 'regularuser', isAdmin: false });
 
-      mockApi('get', '/users/regularuser/project_permissions', {
+      mockApiV2('get', '/users/regularuser/project_permissions', {
         projectPermissions: [
           {
             projectId: 1,

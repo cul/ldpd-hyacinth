@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeAll, afterAll, type Mock } from 'vitest';
 import {
   buildUser,
-  mockApi,
+  mockApiV2,
   renderApp,
   screen,
   within,
@@ -33,7 +33,7 @@ describe('Users Index Route', () => {
       email: 'hyacinth.service@example.com',
     });
 
-    mockApi('get', '/users', { users: [user1, user2] });
+    mockApiV2('get', '/users', { users: [user1, user2] });
 
     await renderApp(<UsersList />, {  url: '/users' });
 
@@ -49,7 +49,7 @@ describe('Users Index Route', () => {
   it('should display correct column headers', async () => {
     const user = buildUser({ uid: 'test-user' });
 
-    mockApi('get', '/users', { users: [user] });
+    mockApiV2('get', '/users', { users: [user] });
 
     await renderApp(<UsersList />, {  url: '/users' });
 
@@ -75,7 +75,7 @@ describe('Users Index Route', () => {
     const charlie = buildUser({ uid: 'charlie', firstName: 'Charlie', lastName: 'Clark', email: 'charlie@example.com' });
     const bob = buildUser({ uid: 'bob', firstName: 'Bob', lastName: 'Brown', email: 'bob@example.com' });
 
-    mockApi('get', '/users', { users: [alice, bob, charlie] });
+    mockApiV2('get', '/users', { users: [alice, bob, charlie] });
 
     await renderApp(<UsersList />, {  url: '/users' });
 
@@ -90,7 +90,7 @@ describe('Users Index Route', () => {
   it('should render UID as a link to the edit user page', async () => {
     const user = buildUser({ uid: 'test-user-uid', firstName: 'Test', lastName: 'User' });
 
-    mockApi('get', '/users', { users: [user] });
+    mockApiV2('get', '/users', { users: [user] });
 
     await renderApp(<UsersList />, {  url: '/users' });
 
@@ -103,7 +103,7 @@ describe('Users Index Route', () => {
   it('should display the Create New User button', async () => {
     const user = buildUser({ uid: 'admin-user' });
 
-    mockApi('get', '/users', { users: [user] });
+    mockApiV2('get', '/users', { users: [user] });
 
     await renderApp(<UsersLayout />, {  url: '/users' });
 

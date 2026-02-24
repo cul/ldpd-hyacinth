@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeAll, afterAll, type Mock } from 'vitest';
 import {
   buildUser,
-  mockApi,
+  mockApiV2,
   renderApp,
   screen,
   userEvent,
@@ -26,7 +26,7 @@ describe('Settings Index Route', () => {
         email: 'currentuser@example.com',
       });
 
-      mockApi('get', '/users/_self', { user });
+      mockApiV2('get', '/users/_self', { user });
 
       await renderApp(<SettingsIndexRoute />, { url: '/settings' });
 
@@ -35,13 +35,13 @@ describe('Settings Index Route', () => {
       expect(screen.getByDisplayValue('currentuser@example.com')).toBeInTheDocument();
     });
 
-    it('should disabled UID, Is Active and permission checkboxes when editing own settings', async () => {
+    it('should disable UID, Is Active and permission checkboxes when editing own settings', async () => {
       const user = buildUser({
         uid: 'currentuser',
         isAdmin: false,
       });
 
-      mockApi('get', '/users/_self', { user });
+      mockApiV2('get', '/users/_self', { user });
 
       await renderApp(<SettingsIndexRoute />, { url: '/settings' });
 
@@ -58,7 +58,7 @@ describe('Settings Index Route', () => {
         apiKeyDigest: null
       });
 
-      mockApi('get', '/users/_self', { user });
+      mockApiV2('get', '/users/_self', { user });
 
       await renderApp(<SettingsIndexRoute />, { url: '/settings' });
 
@@ -74,7 +74,7 @@ describe('Settings Index Route', () => {
         isAdmin: false,
       });
 
-      mockApi('get', '/users/_self', { user });
+      mockApiV2('get', '/users/_self', { user });
 
       await renderApp(<SettingsIndexRoute />, { url: '/settings' });
 
@@ -91,7 +91,7 @@ describe('Settings Index Route', () => {
         lastName: 'User',
       });
 
-      mockApi('get', '/users/_self', { user });
+      mockApiV2('get', '/users/_self', { user });
 
       await renderApp(<SettingsIndexRoute />, { url: '/settings' });
       
@@ -112,8 +112,8 @@ describe('Settings Index Route', () => {
         lastName: 'User',
       });
 
-      mockApi('get', '/users/_self', { user });
-      mockApi('patch', '/users/currentuser', { user: { ...user, firstName: 'Updated' } });
+      mockApiV2('get', '/users/_self', { user });
+      mockApiV2('patch', '/users/currentuser', { user: { ...user, firstName: 'Updated' } });
 
       await renderApp(<SettingsIndexRoute />, { url: '/settings' });
 
@@ -135,8 +135,8 @@ describe('Settings Index Route', () => {
         lastName: 'User',
       });
 
-      mockApi('get', '/users/_self', { user });
-      mockApi('patch', '/users/currentuser', { message: 'Update failed' }, 422);
+      mockApiV2('get', '/users/_self', { user });
+      mockApiV2('patch', '/users/currentuser', { message: 'Update failed' }, 422);
 
       await renderApp(<SettingsIndexRoute />, { url: '/settings' });
 
