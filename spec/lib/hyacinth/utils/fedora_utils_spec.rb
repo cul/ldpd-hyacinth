@@ -1,8 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Hyacinth::Utils::FedoraUtils do
-
-  context ".find_object_pid_by_filesystem_path" do
+  describe ".find_object_pid_by_filesystem_path" do
     it "escapes single quotes in file paths" do
       full_filesystem_path = %q(/some/path/cool-o'something-irish-filename.pdf)
       escaped_full_filesystem_path = %q(/some/path/cool-o\\'something-irish-filename.pdf)
@@ -31,4 +30,29 @@ RSpec.describe Hyacinth::Utils::FedoraUtils do
     end
   end
 
+  describe '.escape_path_or_uri_for_risearch_query' do
+    it 'does not modify a path with safe characters' do
+      expect(
+        described_class.escape_path_or_uri_for_risearch_query("/path/to/file.tiff")
+      ).to eq(
+        "/path/to/file.tiff"
+      )
+    end
+
+    it 'escapes a single quote in a path that contains single quote' do
+      expect(
+        described_class.escape_path_or_uri_for_risearch_query("/path/to/someone's-file.tiff")
+      ).to eq(
+        "/path/to/someone\\'s-file.tiff"
+      )
+    end
+
+    it 'escapes a colon in a path that contains a colon' do
+      expect(
+        described_class.escape_path_or_uri_for_risearch_query('s3://bucket_name/path/to/file.tiff')
+      ).to eq(
+        "s3\\://bucket_name/path/to/file.tiff"
+      )
+    end
+  end
 end

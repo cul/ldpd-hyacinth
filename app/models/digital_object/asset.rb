@@ -36,6 +36,18 @@ class DigitalObject::Asset < DigitalObject::Base
 
   attr_accessor :restricted_size_image, :restricted_onsite
 
+
+  def self.find_by_resource_location_uri(resource_name, location_uri)
+    pid_for_possible_asset = DigitalObject::Base.search(
+      'fq' => {"resource_#{resource_name}_location_si" => [{'equals' =>  location_uri}]},'fl' => 'pid','per_page' => 1
+    ).dig('results', 0, 'pid')
+
+    return nil if pid_for_possible_asset.nil?
+    asset = DigitalObject::Base.find_by_pid(pid_for_possible_asset)
+
+    asset.state == ::DigitalObject::Base::STATE_ACTIVE ? asset : nil
+  end
+
   def initialize
     super
 

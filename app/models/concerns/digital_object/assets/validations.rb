@@ -46,16 +46,11 @@ module DigitalObject::Assets::Validations
           @errors.add(:import_file, "import_file.#{resource_name}.original_file_path contains invalid UTF-8 characters.")
         end
 
-        # Make sure that there isn't already another Asset with a main file that points to this same file
-        pid = Hyacinth::Utils::FedoraUtils.find_object_pid_by_filesystem_path(import_location)
-        if pid.present?
-          # If this object is in Fedora but isn't in Hyacinth, then there's no problem here.
-          # But if it's in Hyacinth AND that Hyacinth object is active, then that is a problem
-          # and we should prevent a duplicate import.
-          possible_hyacinth_object = DigitalObject::Base.find_by_pid(pid)
-          if possible_hyacinth_object.present? && possible_hyacinth_object.state == ::DigitialObject::Base::STATE_ACTIVE
-            @errors.add(:import_file, "Found existing active Hyacinth Asset (#{pid}) with main file path: #{import_location}")
-          end
+        # Make sure that there isn't already another active Asset in Hyacinth with a main file that points to this same file
+        import_location_as_uri = import_location.start_with?('/') ? Hyacinth::Utils::UriUtils.file_path_to_location_uri(import_location) : import_location
+        possible_asset = DigitalObject::Asset.find_by_resource_location_uri(::DigitalObject::Asset::MAIN_RESOURCE_NAME, import_location_as_uri)
+        if possible_asset.present? && possible_asset.state == ::DigitalObject::Base::STATE_ACTIVE
+          @errors.add(:import_file, "Found existing active Hyacinth Asset (#{possible_asset.pid}) with main file path: #{possible_asset.location_uri_for_resource(::DigitalObject::Asset::MAIN_RESOURCE_NAME)}")
         end
       end
 
