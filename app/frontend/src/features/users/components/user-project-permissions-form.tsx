@@ -87,7 +87,7 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
         mergeUserPermissions={mergePermissions}
       />
 
-      <div className="d-flex justify-content-end">
+      <div className="d-flex justify-content-end pt-2">
         <Button
           variant="btn btn-sm btn-outline-secondary"
           onClick={removeAllPermissions}
