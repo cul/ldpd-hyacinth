@@ -5,3 +5,11 @@
 .letter-spacing-wide {
   letter-spacing: 0.4px;
 }
+
+.border-start-md {
+  border-left: none !important;
+
+  @media (min-width: 768px) {
+    border-left: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color) !important;
+  }
+}

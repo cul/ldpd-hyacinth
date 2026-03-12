@@ -15,7 +15,7 @@ const SettingsIndexRoute = () => {
         <Col md={7}>
           <UserForm user={user.data} isEditingSelf={true} />
         </Col>
-        <Col md={{ span: 4, offset: 1 }} style={{ borderLeft: '1px solid #ddd', paddingLeft: '20px' }}>
+        <Col md={{ span: 4, offset: 1 }} className="border-start-md pt-4 pt-md-0 ps-md-4">
           <UserAPIKeyGenerationForm userUid={user.data.uid} apiKeyDigest={user.data.apiKeyDigest} />
         </Col>
       </Row>

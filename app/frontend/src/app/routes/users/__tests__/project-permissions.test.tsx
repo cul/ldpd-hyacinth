@@ -225,7 +225,7 @@ describe('User Project Permissions Route', () => {
       });
     });
 
-    describe('removing permissions', () => {
+    describe('removing individual permissions', () => {
       it('should remove a project row when clicking Delete', async () => {
         const permissions = [
           buildProjectPermission({ projectId: 1, projectDisplayLabel: 'Project To Keep', projectStringKey: 'keep' }),
@@ -247,6 +247,83 @@ describe('User Project Permissions Route', () => {
         expect(screen.queryByText('Project To Remove')).not.toBeInTheDocument();
         expect(screen.getByText('Project To Keep')).toBeInTheDocument();
         expect(screen.getByText(/you have unsaved changes/i)).toBeInTheDocument();
+      });
+    });
+
+    describe('clearing all permissions', () => {
+      it('should disable the Remove All button when user has no permissions', async () => {
+        mockNonAdminPermissionsAPIs('regular-user');
+
+        await renderApp(<UserProjectsRoute />, {
+          path: '/users/:userUid/project-permissions/edit',
+          url: '/users/regular-user/project-permissions/edit',
+        });
+
+        await screen.findByRole('button', { name: /save changes/i });
+
+        expect(
+          screen.getByRole('button', { name: /remove all project permissions/i }),
+        ).toBeDisabled();
+      });
+
+      it('should enable the Remove All button when user has permissions', async () => {
+        const permissions = [buildProjectPermission()];
+
+        mockNonAdminPermissionsAPIs('regular-user', { permissions });
+
+        await renderApp(<UserProjectsRoute />, {
+          path: '/users/:userUid/project-permissions/edit',
+          url: '/users/regular-user/project-permissions/edit',
+        });
+
+        await screen.findByText('Test Project Alpha');
+
+        expect(
+          screen.getByRole('button', { name: /remove all project permissions/i }),
+        ).toBeEnabled();
+      });
+
+      it('should remove all project rows when clicking Remove All', async () => {
+        const permissions = [
+          buildProjectPermission({ projectId: 1, projectDisplayLabel: 'Project One', projectStringKey: 'one' }),
+          buildProjectPermission({ projectId: 2, projectDisplayLabel: 'Project Two', projectStringKey: 'two' }),
+        ];
+
+        mockNonAdminPermissionsAPIs('regular-user', { permissions });
+
+        await renderApp(<UserProjectsRoute />, {
+          path: '/users/:userUid/project-permissions/edit',
+          url: '/users/regular-user/project-permissions/edit',
+        });
+
+        await screen.findByText('Project One');
+        expect(screen.getByText('Project Two')).toBeInTheDocument();
+
+        await userEvent.click(
+          screen.getByRole('button', { name: /remove all project permissions/i }),
+        );
+
+        expect(screen.queryByText('Project One')).not.toBeInTheDocument();
+        expect(screen.queryByText('Project Two')).not.toBeInTheDocument();
+        expect(screen.getByText(/no project permissions assigned/i)).toBeInTheDocument();
+      });
+
+      it('should disable the Remove All button after clearing all permissions', async () => {
+        const permissions = [buildProjectPermission()];
+
+        mockNonAdminPermissionsAPIs('regular-user', { permissions });
+
+        await renderApp(<UserProjectsRoute />, {
+          path: '/users/:userUid/project-permissions/edit',
+          url: '/users/regular-user/project-permissions/edit',
+        });
+
+        await screen.findByText('Test Project Alpha');
+
+        const clearAllButton = screen.getByRole('button', { name: /remove all project permissions/i });
+        await userEvent.click(clearAllButton);
+
+        expect(clearAllButton).toBeDisabled();
       });
     });
   });
