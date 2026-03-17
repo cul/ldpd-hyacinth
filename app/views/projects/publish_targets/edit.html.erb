@@ -16,7 +16,7 @@
     </div>
   <% end %>
 
-  <%# WIP Migrating to new PublishTarget implementation %>
+  <%# Old PublishTarget implementation that relies on EnabledPublishTargets table %>
   <% if false %>
     <% all_publish_target_pids = DigitalObject::PublishTarget.all_pids %>
     <% enabled_publish_target_pids = @project.enabled_publish_target_pids %>
@@ -32,5 +32,16 @@
       <%= f.submit('Save', class: 'btn btn-primary') %>
     </div>
   <% end %>
+
+  <%# WIP: Migrating to new PublishTarget implementation %>
+  <%= f.collection_select(:publish_target_ids, PublishTarget.all.order(:display_label), :id, :display_label,
+      {},
+      { multiple: true, class: 'chosen-select', 'data-placeholder': 'Type or click to select a publish target...' })
+  %>
+
+  <br /><br />
+  <div class="actions">
+    <%= f.submit('Save', class: 'btn btn-primary') %>
+  </div>
 
 <% end %>

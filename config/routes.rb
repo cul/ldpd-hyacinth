@@ -173,6 +173,8 @@ Rails.application.routes.draw do
       end
 
       resources :projects, only: [:index]
+
+      resources :publish_targets, only: [:index, :show, :create, :update, :destroy], param: :string_key
     end
   end
 
