@@ -8,6 +8,9 @@ class Project < ApplicationRecord
 
   has_and_belongs_to_many :publish_targets
 
+  # TODO: Remove after fully migrating to the new PublishTarget implementation (projects_publish_targets join table).
+  serialize :enabled_publish_target_pids, Array
+
   belongs_to :pid_generator
 
   validates :display_label, :string_key, presence: true
@@ -17,7 +20,9 @@ class Project < ApplicationRecord
 
   before_create :create_associated_fedora_object!
   before_save :fill_in_short_label_if_blank!
-  # before_validation :set_valid_primary_publish_target_pid!
+
+  # TODO: Remove after fully migrating to the new PublishTarget implementation (projects_publish_targets join table).
+  before_validation :set_valid_primary_publish_target_pid!
   after_save :update_fedora_object!, :ensure_that_title_fields_are_enabled_and_required
   after_destroy :mark_fedora_object_as_deleted!
 
@@ -110,20 +115,22 @@ class Project < ApplicationRecord
     self.short_label = display_label if short_label.blank?
   end
 
-  # def set_valid_primary_publish_target_pid!
-  #   clear_blank_publish_target_values! # Eliminates first blank element submitted by multi-select in project edit form
+  # TODO: Remove after fully migrating to the new PublishTarget implementation (projects_publish_targets join table).
+  def set_valid_primary_publish_target_pid!
+    clear_blank_publish_target_values! # Eliminates first blank element submitted by multi-select in project edit form
 
-  #   if enabled_publish_target_pids.blank?
-  #     self.primary_publish_target_pid = nil
-  #   elsif !enabled_publish_target_pids.include?(primary_publish_target_pid)
-  #     self.primary_publish_target_pid = enabled_publish_target_pids.first
-  #   end
-  #   true
-  # end
+    if enabled_publish_target_pids.blank?
+      self.primary_publish_target_pid = nil
+    elsif !enabled_publish_target_pids.include?(primary_publish_target_pid)
+      self.primary_publish_target_pid = enabled_publish_target_pids.first
+    end
+    true
+  end
 
-  # def clear_blank_publish_target_values!
-  #   enabled_publish_target_pids.delete_if(&:blank?) unless enabled_publish_target_pids.nil?
-  # end
+  # TODO: Remove after fully migrating to the new PublishTarget implementation (projects_publish_targets join table).
+  def clear_blank_publish_target_values!
+    enabled_publish_target_pids.delete_if(&:blank?) unless enabled_publish_target_pids.nil?
+  end
 
   def as_json(_options = {})
     {

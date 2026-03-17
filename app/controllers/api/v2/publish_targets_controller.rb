@@ -15,7 +15,6 @@ class Api::V2::PublishTargetsController < Api::V2::BaseController
   end
 
   # POST /api/v2/publish_targets
-  # TODO: This endpoint should also accept an array of project ids to associate the publish target with those projects
   def create
     authorize! :create, PublishTarget
     @publish_target = PublishTarget.new(publish_target_params)
@@ -28,7 +27,6 @@ class Api::V2::PublishTargetsController < Api::V2::BaseController
   end
 
   # PATCH /api/v2/publish_targets/:string_key
-  # TODO: This endpoint should also accept an array of project ids to associate the publish target with those projects
   # Note: string_key is not updatable
   def update
     authorize! :update, @publish_target
@@ -66,7 +64,6 @@ class Api::V2::PublishTargetsController < Api::V2::BaseController
         displayLabel: publish_target.display_label,
         publishUrl: publish_target.publish_url,
         apiKey: publish_target.api_key,
-        # ? Return an array of project string keys or of the full project details here?
         projects: publish_target.projects.map { |project| { id: project.id, stringKey: project.string_key, displayLabel: project.display_label } }
       }
     end
