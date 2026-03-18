@@ -5,13 +5,13 @@ class Api::V2::PublishTargetsController < Api::V2::BaseController
   def index
     authorize! :index, PublishTarget
     @publish_targets = PublishTarget.all.order(display_label: :asc)
-    render json: { publish_targets: @publish_targets.map { |publish_target| publish_target_json(publish_target) } }
+    render_json({ publish_targets: @publish_targets.map { |publish_target| publish_target_json(publish_target) } })
   end
 
   # GET /api/v2/publish_targets/:string_key
   def show
     authorize! :show, @publish_target
-    render json: { publish_target: publish_target_json(@publish_target) }
+    render_json({ publish_target: publish_target_json(@publish_target) })
   end
 
   # POST /api/v2/publish_targets
@@ -20,9 +20,9 @@ class Api::V2::PublishTargetsController < Api::V2::BaseController
     @publish_target = PublishTarget.new(publish_target_params)
 
     if @publish_target.save
-      render json: { publish_target: publish_target_json(@publish_target) }, status: :created
+      render_json({ publish_target: publish_target_json(@publish_target) }, status: :created)
     else
-      render json: { errors: format_errors(@publish_target.errors) }, status: :unprocessable_entity
+      render_json({ errors: format_errors(@publish_target.errors) }, status: :unprocessable_entity)
     end
   end
 
@@ -30,9 +30,9 @@ class Api::V2::PublishTargetsController < Api::V2::BaseController
   def update
     authorize! :update, @publish_target
     if @publish_target.update(publish_target_params)
-      render json: { publish_target: publish_target_json(@publish_target) }
+      render_json({ publish_target: publish_target_json(@publish_target) })
     else
-      render json: { errors: format_errors(@publish_target.errors) }, status: :unprocessable_entity
+      render_json({ errors: format_errors(@publish_target.errors) }, status: :unprocessable_entity)
     end
   end
 
@@ -41,12 +41,12 @@ class Api::V2::PublishTargetsController < Api::V2::BaseController
     authorize! :destroy, @publish_target
 
     if @publish_target.digital_object_records.any?
-      render json: { errors: { base: ['Cannot delete a publish target that has associated digital object records'] } }, status: :unprocessable_entity
+      render_json({ errors: { base: ['Cannot delete a publish target that has associated digital object records'] } }, status: :unprocessable_entity)
       return
     end
 
     @publish_target.destroy
-    render json: {}, status: :no_content
+    render_json({}, status: :no_content)
   end
 
   private
@@ -59,11 +59,12 @@ class Api::V2::PublishTargetsController < Api::V2::BaseController
 
     def publish_target_json(publish_target)
       {
-        stringKey: publish_target.string_key,
-        displayLabel: publish_target.display_label,
-        publishUrl: publish_target.publish_url,
-        apiKey: "#{publish_target.api_key[0, 2]}...#{publish_target.api_key[-2..-1]}",
-        projects: publish_target.projects.map { |project| { id: project.id, stringKey: project.string_key, displayLabel: project.display_label } }
+        id: publish_target.id,
+        string_key: publish_target.string_key,
+        display_label: publish_target.display_label,
+        publish_url: publish_target.publish_url,
+        api_key: "#{publish_target.api_key[0, 2]}...#{publish_target.api_key[-2..-1]}",
+        projects: publish_target.projects.map { |project| { id: project.id, string_key: project.string_key, display_label: project.display_label } }
       }
     end
 

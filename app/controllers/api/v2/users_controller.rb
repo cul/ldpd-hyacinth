@@ -7,7 +7,7 @@ class Api::V2::UsersController < Api::V2::BaseController
   def index
     authorize! :index, User
     @users = User.all.order(uid: :asc)
-    render json: { users: @users.map { |user| user_json(user) } }
+    render_json({ users: @users.map { |user| user_json(user) } })
   end
 
   # POST /api/v2/users
@@ -16,9 +16,9 @@ class Api::V2::UsersController < Api::V2::BaseController
     @user = User.new(user_params)
 
     if @user.save
-      render json: { user: user_json(@user) }, status: :created
+      render_json({ user: user_json(@user) }, status: :created)
     else
-      render json: { errors: format_errors(@user.errors) }, status: :unprocessable_entity
+      render_json({ errors: format_errors(@user.errors) }, status: :unprocessable_entity)
     end
   end
 
@@ -26,15 +26,15 @@ class Api::V2::UsersController < Api::V2::BaseController
   # Admin or self
   def show
     authorize! :show, @user
-    render json: { user: user_json(@user) }
+    render_json({ user: user_json(@user) })
   end
 
   # GET /api/v2/users/_self
   def _self
     if current_user
-      render json: { user: user_json(current_user) }
+      render_json({ user: user_json(current_user) })
     else
-      render json: { user: nil }, status: :unauthorized
+      render_json({ user: nil }, status: :unauthorized)
     end
   end
 
@@ -49,9 +49,9 @@ class Api::V2::UsersController < Api::V2::BaseController
     end
 
     if @user.update(user_params)
-      render json: { user: user_json(@user) }
+      render_json({ user: user_json(@user) })
     else
-      render json: { errors: format_errors(@user.errors) }, status: :unprocessable_entity
+      render_json({ errors: format_errors(@user.errors) }, status: :unprocessable_entity)
     end
   end
 
@@ -63,11 +63,9 @@ class Api::V2::UsersController < Api::V2::BaseController
     new_api_key = Devise.friendly_token(API_TOKEN_LENGTH)
 
     if @user.update(api_key: new_api_key)
-      render json: {
-        apiKey: new_api_key,
-      }, status: :ok
+      render_json({ api_key: new_api_key }, status: :ok)
     else
-      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+      render_json({ errors: @user.errors.full_messages }, status: :unprocessable_entity)
     end
   end
 
@@ -78,7 +76,7 @@ class Api::V2::UsersController < Api::V2::BaseController
 
     project_permissions = user_project_permissions_json(@user)
 
-    render json: { projectPermissions: project_permissions }, status: :ok
+    render_json({ project_permissions: project_permissions }, status: :ok)
   end
 
   # PUT /api/v2/users/:uid/project_permissions
@@ -88,7 +86,7 @@ class Api::V2::UsersController < Api::V2::BaseController
 
     # Check that the key exists (even if empty)
     unless params.key?(:project_permissions)
-      render json: { errors: ["Missing required parameter: project_permissions"] }, status: :bad_request
+      render_json({ errors: ["Missing required parameter: project_permissions"] }, status: :bad_request)
       return
     end
 
@@ -122,16 +120,16 @@ class Api::V2::UsersController < Api::V2::BaseController
       missing_project_ids = project_ids - existing_project_ids
 
       if missing_project_ids.present?
-        render json: { errors: ["Projects not found: #{missing_project_ids.join(', ')}"] }, status: :not_found
+        render_json({ errors: ["Projects not found: #{missing_project_ids.join(', ')}"] }, status: :not_found)
         raise ActiveRecord::Rollback
       end
 
       ProjectPermission.insert_all(new_permissions)
       updated_permissions = user_project_permissions_json(@user)
     end
-    render json: { projectPermissions: updated_permissions }, status: :ok
+    render_json({ project_permissions: updated_permissions }, status: :ok)
   rescue ActiveRecord::RecordNotFound => e
-    render json: { errors: ["Project not found: #{e.message}"] }, status: :not_found
+    render_json({ errors: ["Project not found: #{e.message}"] }, status: :not_found)
   end
 
   private
@@ -163,16 +161,16 @@ class Api::V2::UsersController < Api::V2::BaseController
     def user_json(user)
       {
         uid: user.uid,
-        firstName: user.first_name,
-        lastName: user.last_name,
+        first_name: user.first_name,
+        last_name: user.last_name,
         email: user.email,
-        isAdmin: user.is_admin,
-        isActive: user.is_active,
-        canManageAllControlledVocabularies: user.can_manage_all_controlled_vocabularies?,
-        adminForAtLeastOneProject: user.admin_for_at_least_one_project?,
-        canEditAtLeastOneControlledVocabulary: user.can_edit_at_least_one_controlled_vocabulary?,
-        accountType: user.account_type,
-        apiKeyDigest: user.api_key_digest,
+        is_admin: user.is_admin,
+        is_active: user.is_active,
+        can_manage_all_controlled_vocabularies: user.can_manage_all_controlled_vocabularies?,
+        admin_for_at_least_one_project: user.admin_for_at_least_one_project?,
+        can_edit_at_least_one_controlled_vocabulary: user.can_edit_at_least_one_controlled_vocabulary?,
+        account_type: user.account_type,
+        api_key_digest: user.api_key_digest,
       }
     end
 
@@ -180,15 +178,15 @@ class Api::V2::UsersController < Api::V2::BaseController
       user.project_permissions.includes(:project).order('projects.display_label').map do |pp|
         {
           id: pp.id,
-          projectId: pp.project_id,
-          projectStringKey: pp.project.string_key,
-          projectDisplayLabel: pp.project.display_label,
-          canRead: pp.can_read,
-          canCreate: pp.can_create,
-          canUpdate: pp.can_update,
-          canDelete: pp.can_delete,
-          canPublish: pp.can_publish,
-          isProjectAdmin: pp.is_project_admin
+          project_id: pp.project_id,
+          project_string_key: pp.project.string_key,
+          project_display_label: pp.project.display_label,
+          can_read: pp.can_read,
+          can_create: pp.can_create,
+          can_update: pp.can_update,
+          can_delete: pp.can_delete,
+          can_publish: pp.can_publish,
+          is_project_admin: pp.is_project_admin
         }
       end
     end
