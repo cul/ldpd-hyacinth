@@ -192,9 +192,4 @@ class Api::V2::UsersController < Api::V2::BaseController
         }
       end
     end
-
-    # Format errors for display in frontend forms
-    def format_errors(errors)
-      errors.messages.transform_keys { |key| key.to_s.camelize(:lower) }
-    end
 end

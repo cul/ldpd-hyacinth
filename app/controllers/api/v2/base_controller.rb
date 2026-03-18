@@ -30,4 +30,9 @@ class Api::V2::BaseController < ApplicationController
       data.deep_transform_keys!(&:underscore)
       params.merge!(data.with_indifferent_access)
     end
+
+    # Format errors for display in frontend forms
+    def format_errors(errors)
+      errors.messages.transform_keys { |key| key.to_s.camelize(:lower) }
+    end
 end

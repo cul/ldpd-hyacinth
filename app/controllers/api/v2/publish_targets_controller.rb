@@ -27,7 +27,6 @@ class Api::V2::PublishTargetsController < Api::V2::BaseController
   end
 
   # PATCH /api/v2/publish_targets/:string_key
-  # Note: string_key is not updatable
   def update
     authorize! :update, @publish_target
     if @publish_target.update(publish_target_params)
@@ -63,18 +62,12 @@ class Api::V2::PublishTargetsController < Api::V2::BaseController
         stringKey: publish_target.string_key,
         displayLabel: publish_target.display_label,
         publishUrl: publish_target.publish_url,
-        apiKey: publish_target.api_key,
+        apiKey: "#{publish_target.api_key[0, 2]}...#{publish_target.api_key[-2..-1]}",
         projects: publish_target.projects.map { |project| { id: project.id, stringKey: project.string_key, displayLabel: project.display_label } }
       }
     end
 
     def set_publish_target_by_string_key
       @publish_target = PublishTarget.find_by!(string_key: params[:string_key])
-    end
-
-    # Format errors for display in frontend forms
-    # ? Move to the BaseController?
-    def format_errors(errors)
-      errors.messages.transform_keys { |key| key.to_s.camelize(:lower) }
     end
 end
