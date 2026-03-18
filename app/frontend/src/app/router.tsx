@@ -75,6 +75,20 @@ export const createAppRouter = (queryClient: QueryClient) =>
           ]
         },
         {
+          path: 'publish-targets',
+          ErrorBoundary: AuthorizationErrorBoundary, // Catch authorization errors from loaders
+           children: [
+            {
+              index: true,
+              lazy: () => import('./routes/publish-targets').then(convert(queryClient)),
+            },
+            {
+              path: 'new',
+              lazy: () => import('./routes/publish-targets/new').then(convert(queryClient)),
+            },
+          ]
+        },
+        {
           path: 'settings',
           children: [
             {

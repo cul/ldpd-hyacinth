@@ -60,7 +60,7 @@ export default function TopNavbar() {
                   <NavDropdown.Item href="/dynamic_field_group_categories">
                     Dynamic Field Categories
                   </NavDropdown.Item>
-                  <NavDropdown.Item href='/digital_objects'>
+                   <NavDropdown.Item as={NavLink} to="/publish-targets" end>
                     Publish Targets
                   </NavDropdown.Item>
                   <NavDropdown.Item href="/pid_generators">PID Generators</NavDropdown.Item>
