@@ -1,4 +1,3 @@
-import { Row, Col, Container } from 'react-bootstrap';
 import { requireAuthorization } from '@/lib/loader-authorization';
 import { ROLES } from '@/lib/authorization';
 import { QueryClient } from '@tanstack/react-query';
@@ -18,12 +17,7 @@ export const clientLoader = (queryClient: QueryClient) => async () => {
 
 const PublishTargetsIndexRoute = () => {
   return (
-    <Container>
-      <Row>
-        <h3 className="mb-4">Publish Targets</h3>
-        <PublishTargetsList />
-      </Row>
-    </Container>
+    <PublishTargetsList />
   );
 };
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Alert } from 'react-bootstrap';
 
 interface MutationAlertsProps {
@@ -12,7 +11,6 @@ interface MutationAlertsProps {
   errorMessage?: string;
 }
 
-// ? Move to a common components folder if used in multiple places
 export const MutationAlerts = ({
   mutation,
   successMessage = 'Operation completed successfully!',

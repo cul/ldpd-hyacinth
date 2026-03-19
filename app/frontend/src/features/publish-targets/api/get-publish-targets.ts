@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
+import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
 import { QueryConfig } from '@/lib/react-query';
 import { PublishTarget } from '@/types/api';
@@ -19,8 +19,8 @@ type UsePublishTargetsOptions = {
   queryConfig?: QueryConfig<typeof getPublishTargetsQueryOptions>;
 };
 
-export const usePublishTargets = ({ queryConfig }: UsePublishTargetsOptions = {}) => {
-  return useQuery({
+export const usePublishTargetsSuspense = ({ queryConfig }: UsePublishTargetsOptions = {}) => {
+  return useSuspenseQuery({
     ...getPublishTargetsQueryOptions(),
     ...queryConfig,
   });

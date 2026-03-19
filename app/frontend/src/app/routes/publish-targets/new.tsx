@@ -11,13 +11,9 @@ export const clientLoader = (queryClient: QueryClient) => async () => {
 
 const PublishTargetsNewRoute = () => {
   return (
-    <Container>
-      <Row>
-        <Col md={8}>
+
           <PublishTargetForm />
-        </Col>
-      </Row>
-    </Container>);
+);
 };
 
 export default PublishTargetsNewRoute;
