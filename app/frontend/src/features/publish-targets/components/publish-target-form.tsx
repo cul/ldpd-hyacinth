@@ -1,17 +1,16 @@
 import { useState } from 'react';
 import { Button, Form, Row } from 'react-bootstrap';
-// import { MutationAlerts } from './mutation-alerts';
 import { Input } from '@/components/ui/form';
+import { MutationAlerts } from '@/components/ui/mutation-alerts';
 import { useCreatePublishTarget } from '../api/create-publish-target';
+import { useUpdatePublishTarget } from '../api/update-publish-target';
+import { PublishTarget } from '@/types/api';
 
-// TODO
-// type PublishTargetFormProps = {
-//   publishTarget?: {
-//   }
-// };
+type PublishTargetFormProps = {
+  publishTarget?: PublishTarget;
+};
 
-// WIP - currently only supports create mode
-export const PublishTargetForm = ({ publishTarget }: any) => {
+export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => {
   // Use existing publish target data for edit mode or default empty values for create mode
   const initialPublishTarget = publishTarget || {
     stringKey: '',
@@ -23,20 +22,18 @@ export const PublishTargetForm = ({ publishTarget }: any) => {
 
   const [formData, setFormData] = useState(initialPublishTarget);
   const createPublishTargetMutation = useCreatePublishTarget();
-  // const updatePublishTargetMutation = useUpdatePublishTarget();
+  const updatePublishTargetMutation = useUpdatePublishTarget();
 
   // Get the appropriate mutation and field errors based on mode
-  // const mutation = publishTarget ? updatePublishTargetMutation : createPublishTargetMutation;
-  const mutation = createPublishTargetMutation;
+  const mutation = publishTarget ? updatePublishTargetMutation : createPublishTargetMutation;
   const fieldErrors = mutation.error?.response?.errors || {};
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (publishTarget) {
-      // TODO
+      updatePublishTargetMutation.mutate({ publishTargetStringKey: publishTarget.stringKey, data: formData });
     } else {
-      // ? Redirect to publish target list or detail page)
       createPublishTargetMutation.mutate({ data: formData });
     }
   };
@@ -57,11 +54,11 @@ export const PublishTargetForm = ({ publishTarget }: any) => {
 
   return (
     <>
-      {/* <MutationAlerts
+      <MutationAlerts
         mutation={publishTarget ? updatePublishTargetMutation : createPublishTargetMutation}
         successMessage={publishTarget ? "Publish target updated successfully!" : "Publish target created successfully!"}
         errorMessage={publishTarget ? "Error updating publish target" : "Error creating publish target"}
-      /> */}
+      />
       <Form onSubmit={handleSubmit}>
         <p className="text-muted fw-bold text-uppercase letter-spacing-wide mb-3">
           <small>Publish Target information</small>
@@ -129,7 +126,7 @@ export const PublishTargetForm = ({ publishTarget }: any) => {
           type="submit"
           disabled={mutation.isPending}
         >
-          {mutation.isPending ? 'Saving...' : 'Save'}
+          {mutation.isPending ? 'Saving...' : publishTarget ? 'Save' : 'Create a New Publish Target'}
         </Button>
       </Form>
     </>
