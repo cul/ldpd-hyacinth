@@ -85,6 +85,10 @@ export const createAppRouter = (queryClient: QueryClient) =>
               lazy: () => import('./routes/publish-targets').then(convert(queryClient)),
             },
             {
+              path: ':publishTargetStringKey/edit',
+              lazy: () => import('./routes/publish-targets/edit').then(convert(queryClient)),
+            },
+            {
               path: 'new',
               lazy: () => import('./routes/publish-targets/new').then(convert(queryClient)),
             },

@@ -10,7 +10,7 @@ export const getPublishTargets = async (): Promise<{ publishTargets: PublishTarg
 
 export const getPublishTargetsQueryOptions = () => {
   return queryOptions({
-    queryKey: ['publishTargets'],
+    queryKey: ['publish-targets'],
     queryFn: getPublishTargets,
   });
 };

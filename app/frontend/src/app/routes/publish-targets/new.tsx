@@ -1,5 +1,4 @@
 import { QueryClient } from '@tanstack/react-query';
-import { Col, Container, Row } from 'react-bootstrap';
 import { requireAuthorization } from '@/lib/loader-authorization';
 import { ROLES } from '@/lib/authorization';
 import { PublishTargetForm } from '@/features/publish-targets/components/publish-target-form';
@@ -11,9 +10,8 @@ export const clientLoader = (queryClient: QueryClient) => async () => {
 
 const PublishTargetsNewRoute = () => {
   return (
-
-          <PublishTargetForm />
-);
+    <PublishTargetForm />
+  );
 };
 
 export default PublishTargetsNewRoute;
