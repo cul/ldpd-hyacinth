@@ -1,0 +1,27 @@
+import { AutocompleteMultiSelect } from '@/components/ui/autocomplete-multi-select';
+import { useProjectsSuspense } from '@/features/projects/api/get-projects';
+
+type ProjectsMultiSelectProps = {
+  selectedProjectIds: number[];
+  onChange: (ids: number[]) => void;
+};
+
+const ProjectsForTargetSelector = ({ selectedProjectIds, onChange }: ProjectsMultiSelectProps) => {
+  const { data } = useProjectsSuspense();
+
+  const options = data.projects.map(project => ({
+    value: project.id.toString(),
+    label: project.displayLabel,
+  }));
+
+  return (
+    <AutocompleteMultiSelect
+      options={options}
+      value={selectedProjectIds.map(String)}
+      onChange={(values) => onChange(values.map(Number))}
+      placeholder="Search projects..."
+    />
+  );
+};
+
+export default ProjectsForTargetSelector;

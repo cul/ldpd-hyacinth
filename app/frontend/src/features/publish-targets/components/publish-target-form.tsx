@@ -1,26 +1,26 @@
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { Button, Form, Row } from 'react-bootstrap';
 import { Input } from '@/components/ui/form';
 import { MutationAlerts } from '@/components/ui/mutation-alerts';
 import { useCreatePublishTarget } from '../api/create-publish-target';
 import { useUpdatePublishTarget } from '../api/update-publish-target';
 import { PublishTarget } from '@/types/api';
+import ProjectsForTargetSelector from './projects-for-target-selector';
 
 type PublishTargetFormProps = {
   publishTarget?: PublishTarget;
 };
 
 export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => {
-  // Use existing publish target data for edit mode or default empty values for create mode
-  const initialPublishTarget = publishTarget || {
-    stringKey: '',
-    displayLabel: '',
-    publishUrl: '',
-    apiKey: '',
-    projects: [],
-  };
+  const [formData, setFormData] = useState({
+    stringKey: publishTarget?.stringKey || '',
+    displayLabel: publishTarget?.displayLabel || '',
+    publishUrl: publishTarget?.publishUrl || '',
+    apiKey: publishTarget?.apiKey || '',
+    projectIds: publishTarget?.projects?.map(p => p.id) || [],
+  });
+  const [selectedProjectIds, setSelectedProjectIds] = useState<number[]>(publishTarget?.projects?.map(p => p.id) || []);
 
-  const [formData, setFormData] = useState(initialPublishTarget);
   const createPublishTargetMutation = useCreatePublishTarget();
   const updatePublishTargetMutation = useUpdatePublishTarget();
 
@@ -30,11 +30,15 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const payload = {
+      ...formData,
+      projectIds: selectedProjectIds,
+    };
 
     if (publishTarget) {
-      updatePublishTargetMutation.mutate({ publishTargetStringKey: publishTarget.stringKey, data: formData });
+      updatePublishTargetMutation.mutate({ publishTargetStringKey: publishTarget.stringKey, data: payload });
     } else {
-      createPublishTargetMutation.mutate({ data: formData });
+      createPublishTargetMutation.mutate({ data: payload });
     }
   };
 
@@ -88,7 +92,6 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
             required
           />
         </Row>
-
         <Row className="mb-3">
           <Input
             label="Publish URL"
@@ -100,7 +103,6 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
             required
           />
         </Row>
-
         <Row className="mb-3">
           <Input
             label="API Key"
@@ -113,12 +115,17 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
           />
         </Row>
 
-
         <div className="mb-3">
           <p className="text-muted fw-bold text-uppercase letter-spacing-wide mb-3">
             <small>Associated Projects</small>
           </p>
-          {/* TODO: Projects will go here */}
+          <Suspense fallback={<p className="text-muted">Loading projects...</p>}>
+            {/* ? Is this the best way to display this data? */}
+            <ProjectsForTargetSelector
+              selectedProjectIds={selectedProjectIds}
+              onChange={setSelectedProjectIds}
+            />
+          </Suspense>
         </div>
 
         <Button

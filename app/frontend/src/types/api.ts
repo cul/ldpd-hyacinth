@@ -42,3 +42,15 @@ export interface PublishTarget {
     displayLabel: string;
   }[];
 }
+
+/* 
+Payload types
+*/
+
+export interface PublishTarget {
+  stringKey: string;
+  displayLabel: string;
+  publishUrl: string;
+  apiKey: string;
+  projectIds: number[];
+}

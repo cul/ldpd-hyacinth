@@ -1,4 +1,4 @@
-import { queryOptions, useQuery } from '@tanstack/react-query';
+import { queryOptions, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
 import { QueryConfig } from '@/lib/react-query';
 
@@ -30,6 +30,13 @@ type UseProjectsOptions = {
 
 export const useProjects = ({ queryConfig }: UseProjectsOptions = {}) => {
   return useQuery({
+    ...getProjectsQueryOptions(),
+    ...queryConfig,
+  });
+};
+
+export const useProjectsSuspense = ({ queryConfig }: UseProjectsOptions = {}) => {
+  return useSuspenseQuery({
     ...getProjectsQueryOptions(),
     ...queryConfig,
   });
