@@ -15,12 +15,16 @@ async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
 
   if (!response.ok) {
     const errorData = await response.json().catch(() => null);
-    console.error('API Error:', errorData);
     
     // Throw the parsed error data so React Query can access it
     const error = new Error(response.statusText);
     error.response = errorData;
     throw error;
+  }
+
+  // Handle cases where the response has no content (like delete operations)
+  if (response.status === 204 || response.headers.get('Content-Length') === '0') {
+    return {} as T;
   }
 
   return response.json();

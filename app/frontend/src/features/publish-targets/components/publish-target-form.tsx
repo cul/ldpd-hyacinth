@@ -5,13 +5,16 @@ import { MutationAlerts } from '@/components/ui/mutation-alerts';
 import { useCreatePublishTarget } from '../api/create-publish-target';
 import { useUpdatePublishTarget } from '../api/update-publish-target';
 import { PublishTarget } from '@/types/api';
+import { useDeletePublishTarget } from '../api/delete-publish-target';
 import ProjectsForTargetSelector from './projects-for-target-selector';
+import { useNavigate } from 'react-router';
 
 type PublishTargetFormProps = {
   publishTarget?: PublishTarget;
 };
 
 export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     stringKey: publishTarget?.stringKey || '',
     displayLabel: publishTarget?.displayLabel || '',
@@ -20,9 +23,15 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
     projectIds: publishTarget?.projects?.map(p => p.id) || [],
   });
   const [selectedProjectIds, setSelectedProjectIds] = useState<number[]>(publishTarget?.projects?.map(p => p.id) || []);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   const createPublishTargetMutation = useCreatePublishTarget();
   const updatePublishTargetMutation = useUpdatePublishTarget();
+  const deletePublishTargetMutation = useDeletePublishTarget({
+    mutationConfig: {
+      onSuccess: () => navigate('/publish-targets')
+    },
+  });
 
   // Get the appropriate mutation and field errors based on mode
   const mutation = publishTarget ? updatePublishTargetMutation : createPublishTargetMutation;
@@ -41,6 +50,17 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
       createPublishTargetMutation.mutate({ data: payload });
     }
   };
+
+  const handleDeleteClick = () => {
+    if (!confirmingDelete) {
+      setConfirmingDelete(true);
+      return;
+    }
+    deletePublishTargetMutation.mutate({
+      publishTargetStringKey: publishTarget!.stringKey,
+    });
+  };
+
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -100,6 +120,7 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
             value={formData.publishUrl}
             onChange={handleInputChange}
             error={fieldErrors.publishUrl}
+            md={6}
             required
           />
         </Row>
@@ -111,11 +132,12 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
             value={formData.apiKey}
             onChange={handleInputChange}
             error={fieldErrors.apiKey}
+            md={6}
             required
           />
         </Row>
 
-        <div className="mb-3">
+        <Row className="mb-4">
           <p className="text-muted fw-bold text-uppercase letter-spacing-wide mb-3">
             <small>Associated Projects</small>
           </p>
@@ -126,7 +148,38 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
               onChange={setSelectedProjectIds}
             />
           </Suspense>
-        </div>
+        </Row>
+
+        {/* TODO: WIP find a better way to confirm delete operation */}
+        {publishTarget && (
+          <div className="d-flex align-items-center gap-2">
+            {confirmingDelete && (
+              <div className="text-danger">
+                <small>Are you sure?</small>
+              </div>
+            )}
+            <Button
+              variant={confirmingDelete ? 'danger' : 'outline-danger'}
+              onClick={handleDeleteClick}
+              disabled={deletePublishTargetMutation.isPending}
+            >
+              {deletePublishTargetMutation.isPending
+                ? 'Deleting...'
+                : confirmingDelete
+                  ? 'Confirm Delete'
+                  : 'Delete Publish Target'}
+            </Button>
+            {confirmingDelete && (
+              <Button
+                variant="outline-secondary"
+                onClick={() => setConfirmingDelete(false)}
+                disabled={deletePublishTargetMutation.isPending}
+              >
+                Cancel
+              </Button>
+            )}
+          </div>
+        )}
 
         <Button
           variant="primary"
