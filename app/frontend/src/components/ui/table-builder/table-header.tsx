@@ -7,19 +7,21 @@ interface TableHeaderProps<T> {
 
 function TableHeader<T>({ headerGroup }: TableHeaderProps<T>) {
   const renderSortingIcon = (sortDirection: 'asc' | 'desc' | null) => {
+    const sharedClassNames = 'ms-2 flex-shrink-0 mt-1'
+
     if (sortDirection === 'asc') {
-      return <ArrowUp className="ms-2" size={14} />
+      return <ArrowUp className={sharedClassNames} size={14} />
     }
     if (sortDirection === 'desc') {
-      return <ArrowDown className="ms-2" size={14} />
+      return <ArrowDown className={sharedClassNames} size={14} />
     }
-    return <ArrowDownUp className="ms-2" style={{ color: '#b5b5b5ff' }} size={14} />
+    return <ArrowDownUp className={sharedClassNames} style={{ color: '#b5b5b5ff' }} size={14} />
   }
 
   const createColumnHeader = (header: HeaderGroup<T>) => {
     if (header.isPlaceholder) return null
 
-    const sharedClassNames = 'fw-semibold d-flex justify-content-between m-0 p-0 align-items-center'
+    const sharedClassNames = 'fw-semibold d-inline-flex m-0 p-0 align-items-start text-start'
     const headerText = flexRender(header.column.columnDef.header, header.getContext())
 
     if (header.column.getCanSort()) {
