@@ -52,6 +52,10 @@ export const useProjectPermissionsForm = ({ userUid }: UseProjectPermissionsForm
     setData((old) => old.filter((_, index) => index !== rowIndex));
   }, []);
 
+  const removeAllPermissions = useCallback(() => {
+    setData([]);
+  }, []);
+
   const mergePermissions = useCallback(() => {
     if (!selectedUserUid || !selectedUserPermissionsQuery.data) return;
 
@@ -98,6 +102,7 @@ export const useProjectPermissionsForm = ({ userUid }: UseProjectPermissionsForm
     addPermission,
     updatePermission,
     removePermission,
+    removeAllPermissions,
     handleSave,
     mutation: updatePermissionsMutation,
     // Copy permissions from another user

@@ -23,6 +23,7 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
     addPermission,
     updatePermission,
     removePermission,
+    removeAllPermissions,
     hasChanges,
     handleSave,
     isError,
@@ -85,6 +86,16 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
         usersList={nonAdminUsers}
         mergeUserPermissions={mergePermissions}
       />
+
+      <div className="d-flex justify-content-end pt-2">
+        <Button
+          variant="btn btn-sm btn-outline-secondary"
+          onClick={removeAllPermissions}
+          disabled={data.length === 0 || mutation.isPending}
+        >
+          Remove All Project Permissions
+        </Button>
+      </div>
 
       <ProjectPermissionsTable
         data={data}

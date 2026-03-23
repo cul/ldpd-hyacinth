@@ -33,7 +33,7 @@ class Api::V2::BaseController < ApplicationController
 
     # Renders a JSON response with all keys deep-transformed to camelCase.
     # Use in place of `render json:` throughout API v2 controllers.
-    def render_json(data, **options)
+    def render_camelized_json(data, **options)
       render json: deep_camelize(data), **options
     end
 

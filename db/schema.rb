@@ -98,7 +98,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_13_175337) do
     t.integer "digital_object_record_id", null: false
     t.integer "publish_target_id", null: false
     t.index ["digital_object_record_id", "publish_target_id"], name: "unique_digital_object_record_id_and_publish_target_id", unique: true
-    t.index ["publish_target_id", "digital_object_record_id"], name: "index_publish_target_id_and_digital_object_record_id"
+    t.index ["publish_target_id"], name: "index_dor_publish_targets_on_publish_target_id"
   end
 
   create_table "digital_object_types", force: :cascade do |t|
@@ -261,7 +261,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_13_175337) do
     t.integer "project_id", null: false
     t.integer "publish_target_id", null: false
     t.index ["project_id", "publish_target_id"], name: "unique_project_id_and_publish_target_id", unique: true
-    t.index ["publish_target_id", "project_id"], name: "index_publish_target_id_and_project_id"
+    t.index ["publish_target_id"], name: "index_projects_publish_targets_on_publish_target_id"
   end
 
   create_table "publish_targets", force: :cascade do |t|

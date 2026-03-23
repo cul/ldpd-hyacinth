@@ -7,7 +7,7 @@ class Api::V2::UsersController < Api::V2::BaseController
   def index
     authorize! :index, User
     @users = User.all.order(uid: :asc)
-    render_json({ users: @users.map { |user| user_json(user) } })
+    render_camelized_json({ users: @users.map { |user| user_json(user) } })
   end
 
   # POST /api/v2/users
@@ -16,9 +16,9 @@ class Api::V2::UsersController < Api::V2::BaseController
     @user = User.new(user_params)
 
     if @user.save
-      render_json({ user: user_json(@user) }, status: :created)
+      render_camelized_json({ user: user_json(@user) }, status: :created)
     else
-      render_json({ errors: format_errors(@user.errors) }, status: :unprocessable_entity)
+      render_camelized_json({ errors: format_errors(@user.errors) }, status: :unprocessable_entity)
     end
   end
 
@@ -26,15 +26,15 @@ class Api::V2::UsersController < Api::V2::BaseController
   # Admin or self
   def show
     authorize! :show, @user
-    render_json({ user: user_json(@user) })
+    render_camelized_json({ user: user_json(@user) })
   end
 
   # GET /api/v2/users/_self
   def _self
     if current_user
-      render_json({ user: user_json(current_user) })
+      render_camelized_json({ user: user_json(current_user) })
     else
-      render_json({ user: nil }, status: :unauthorized)
+      render_camelized_json({ user: nil }, status: :unauthorized)
     end
   end
 
@@ -49,9 +49,9 @@ class Api::V2::UsersController < Api::V2::BaseController
     end
 
     if @user.update(user_params)
-      render_json({ user: user_json(@user) })
+      render_camelized_json({ user: user_json(@user) })
     else
-      render_json({ errors: format_errors(@user.errors) }, status: :unprocessable_entity)
+      render_camelized_json({ errors: format_errors(@user.errors) }, status: :unprocessable_entity)
     end
   end
 
@@ -63,9 +63,9 @@ class Api::V2::UsersController < Api::V2::BaseController
     new_api_key = Devise.friendly_token(API_TOKEN_LENGTH)
 
     if @user.update(api_key: new_api_key)
-      render_json({ api_key: new_api_key }, status: :ok)
+      render_camelized_json({ api_key: new_api_key }, status: :ok)
     else
-      render_json({ errors: @user.errors.full_messages }, status: :unprocessable_entity)
+      render_camelized_json({ errors: @user.errors.full_messages }, status: :unprocessable_entity)
     end
   end
 
@@ -76,7 +76,7 @@ class Api::V2::UsersController < Api::V2::BaseController
 
     project_permissions = user_project_permissions_json(@user)
 
-    render_json({ project_permissions: project_permissions }, status: :ok)
+    render_camelized_json({ project_permissions: project_permissions }, status: :ok)
   end
 
   # PUT /api/v2/users/:uid/project_permissions
@@ -86,7 +86,7 @@ class Api::V2::UsersController < Api::V2::BaseController
 
     # Check that the key exists (even if empty)
     unless params.key?(:project_permissions)
-      render_json({ errors: ["Missing required parameter: project_permissions"] }, status: :bad_request)
+      render_camelized_json({ errors: ["Missing required parameter: project_permissions"] }, status: :bad_request)
       return
     end
 
@@ -120,16 +120,16 @@ class Api::V2::UsersController < Api::V2::BaseController
       missing_project_ids = project_ids - existing_project_ids
 
       if missing_project_ids.present?
-        render_json({ errors: ["Projects not found: #{missing_project_ids.join(', ')}"] }, status: :not_found)
+        render_camelized_json({ errors: ["Projects not found: #{missing_project_ids.join(', ')}"] }, status: :not_found)
         raise ActiveRecord::Rollback
       end
 
       ProjectPermission.insert_all(new_permissions)
       updated_permissions = user_project_permissions_json(@user)
     end
-    render_json({ project_permissions: updated_permissions }, status: :ok)
+    render_camelized_json({ project_permissions: updated_permissions }, status: :ok)
   rescue ActiveRecord::RecordNotFound => e
-    render_json({ errors: ["Project not found: #{e.message}"] }, status: :not_found)
+    render_camelized_json({ errors: ["Project not found: #{e.message}"] }, status: :not_found)
   end
 
   private
