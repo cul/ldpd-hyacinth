@@ -7,9 +7,10 @@ class Ability
     return unless user.present?
 
     if user.admin?
-      # Hyacinth admins can perform any action on any User record
+      # Hyacinth admins can perform any action on any User or PublishTarget record
       # :manage includes :index, :show, :create, :update, :destroy, etc.
       can :manage, User
+      can :manage, PublishTarget
 
       # Admins cannot change their own is_admin status as a safe guard
       cannot :update_is_admin, User, id: user.id

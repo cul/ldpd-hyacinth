@@ -10,9 +10,9 @@ class Api::V2::ProjectsController < Api::V2::BaseController
       projects = Project.where(id: project_ids).order(:display_label)
     end
 
-    render json: {
+    render_camelized_json({
       projects: projects.map { |project| project_json(project) }
-    }, status: :ok
+    }, status: :ok)
   end
 
   private
@@ -20,8 +20,8 @@ class Api::V2::ProjectsController < Api::V2::BaseController
     def project_json(project)
       {
         id: project.id,
-        stringKey: project.string_key,
-        displayLabel: project.display_label,
+        string_key: project.string_key,
+        display_label: project.display_label,
         pid: project.pid
       }
     end

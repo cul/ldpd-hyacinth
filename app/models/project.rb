@@ -6,6 +6,9 @@ class Project < ApplicationRecord
   has_many :project_permissions, dependent: :destroy
   accepts_nested_attributes_for :project_permissions, allow_destroy: true, reject_if: proc { |attributes| attributes['id'].blank? && attributes['user_id'].blank? }
 
+  has_and_belongs_to_many :publish_targets
+
+  # TODO: Remove after fully migrating to the new PublishTarget implementation (projects_publish_targets join table).
   serialize :enabled_publish_target_pids, Array
 
   belongs_to :pid_generator
@@ -17,6 +20,8 @@ class Project < ApplicationRecord
 
   before_create :create_associated_fedora_object!
   before_save :fill_in_short_label_if_blank!
+
+  # TODO: Remove after fully migrating to the new PublishTarget implementation (projects_publish_targets join table).
   before_validation :set_valid_primary_publish_target_pid!
   after_save :update_fedora_object!, :ensure_that_title_fields_are_enabled_and_required
   after_destroy :mark_fedora_object_as_deleted!
@@ -110,6 +115,7 @@ class Project < ApplicationRecord
     self.short_label = display_label if short_label.blank?
   end
 
+  # TODO: Remove after fully migrating to the new PublishTarget implementation (projects_publish_targets join table).
   def set_valid_primary_publish_target_pid!
     clear_blank_publish_target_values! # Eliminates first blank element submitted by multi-select in project edit form
 
@@ -121,6 +127,7 @@ class Project < ApplicationRecord
     true
   end
 
+  # TODO: Remove after fully migrating to the new PublishTarget implementation (projects_publish_targets join table).
   def clear_blank_publish_target_values!
     enabled_publish_target_pids.delete_if(&:blank?) unless enabled_publish_target_pids.nil?
   end

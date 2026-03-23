@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2025_12_15_165203) do
+ActiveRecord::Schema[7.0].define(version: 2026_03_13_175337) do
   create_table "archived_assignments", force: :cascade do |t|
     t.integer "original_assignment_id", null: false
     t.string "digital_object_pid", null: false
@@ -92,6 +92,13 @@ ActiveRecord::Schema[7.0].define(version: 2025_12_15_165203) do
     t.index ["perform_derivative_processing"], name: "index_digital_object_records_on_perform_derivative_processing"
     t.index ["pid"], name: "index_digital_object_records_on_pid", unique: true
     t.index ["uuid"], name: "index_digital_object_records_on_uuid", unique: true
+  end
+
+  create_table "digital_object_records_publish_targets", id: false, force: :cascade do |t|
+    t.integer "digital_object_record_id", null: false
+    t.integer "publish_target_id", null: false
+    t.index ["digital_object_record_id", "publish_target_id"], name: "unique_digital_object_record_id_and_publish_target_id", unique: true
+    t.index ["publish_target_id"], name: "index_dor_publish_targets_on_publish_target_id"
   end
 
   create_table "digital_object_types", force: :cascade do |t|
@@ -248,6 +255,23 @@ ActiveRecord::Schema[7.0].define(version: 2025_12_15_165203) do
     t.index ["pid"], name: "index_projects_on_pid", unique: true
     t.index ["pid_generator_id"], name: "index_projects_on_pid_generator_id"
     t.index ["string_key"], name: "index_projects_on_string_key", unique: true
+  end
+
+  create_table "projects_publish_targets", id: false, force: :cascade do |t|
+    t.integer "project_id", null: false
+    t.integer "publish_target_id", null: false
+    t.index ["project_id", "publish_target_id"], name: "unique_project_id_and_publish_target_id", unique: true
+    t.index ["publish_target_id"], name: "index_projects_publish_targets_on_publish_target_id"
+  end
+
+  create_table "publish_targets", force: :cascade do |t|
+    t.string "string_key", null: false
+    t.string "display_label", null: false
+    t.string "publish_url", null: false
+    t.string "api_key", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.index ["string_key"], name: "index_publish_targets_on_string_key", unique: true
   end
 
   create_table "users", force: :cascade do |t|
