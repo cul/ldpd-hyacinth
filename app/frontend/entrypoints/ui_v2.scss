@@ -9,7 +9,7 @@
 .border-start-md {
   border-left: none !important;
 
-  @media (min-width: 768px) {
+  @include media-breakpoint-up(md) {
     border-left: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color) !important;
   }
 }
