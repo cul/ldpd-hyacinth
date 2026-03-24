@@ -8,6 +8,7 @@ import { PublishTarget } from '@/types/api';
 import { useDeletePublishTarget } from '../api/delete-publish-target';
 import ProjectsForTargetSelector from './projects-for-target-selector';
 import { useNavigate } from 'react-router';
+import { useNotifications } from '@/stores/notifications';
 
 type PublishTargetFormProps = {
   publishTarget?: PublishTarget;
@@ -15,6 +16,8 @@ type PublishTargetFormProps = {
 
 export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => {
   const navigate = useNavigate();
+  const addNotification = useNotifications(state => state.addNotification);
+
   const [formData, setFormData] = useState({
     stringKey: publishTarget?.stringKey || '',
     displayLabel: publishTarget?.displayLabel || '',
@@ -24,12 +27,14 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
   });
   const [selectedProjectIds, setSelectedProjectIds] = useState<number[]>(publishTarget?.projects?.map(p => p.id) || []);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
-
   const createPublishTargetMutation = useCreatePublishTarget();
   const updatePublishTargetMutation = useUpdatePublishTarget();
   const deletePublishTargetMutation = useDeletePublishTarget({
     mutationConfig: {
-      onSuccess: () => navigate('/publish-targets')
+      onSuccess: () => {
+        addNotification({ type: 'success', title: 'Publish target deleted', message: `"${publishTarget?.displayLabel}" was successfully deleted.` });
+        navigate('/publish-targets');
+      },
     },
   });
 
@@ -95,10 +100,17 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
             onChange={handleInputChange}
             error={fieldErrors.stringKey}
             name="stringKey"
-            md={6}
+            md={7}
             disabled={!!publishTarget}
             required
           />
+          {!publishTarget && (
+            <div className="text-muted">
+              <small>
+                Can only contain lowercase letters, numbers, and underscores.
+              </small>
+            </div>
+          )}
         </Row>
         <Row className="mb-3">
           <Input
@@ -108,7 +120,7 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
             onChange={handleInputChange}
             error={fieldErrors.displayLabel}
             name="displayLabel"
-            md={6}
+            md={7}
             required
           />
         </Row>
@@ -120,7 +132,7 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
             value={formData.publishUrl}
             onChange={handleInputChange}
             error={fieldErrors.publishUrl}
-            md={6}
+            md={7}
             required
           />
         </Row>
@@ -132,7 +144,7 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
             value={formData.apiKey}
             onChange={handleInputChange}
             error={fieldErrors.apiKey}
-            md={6}
+            md={7}
             required
           />
         </Row>

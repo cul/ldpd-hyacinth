@@ -27,9 +27,7 @@ const PublishTargetsEditRoute = () => {
   const publishTarget = publishTargetQuery?.data?.publishTarget;
 
   return (
-    <div>
-      <PublishTargetForm publishTarget={publishTarget} />
-    </div>
+    <PublishTargetForm publishTarget={publishTarget} />
   )
 };
 
