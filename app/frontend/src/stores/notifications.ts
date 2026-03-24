@@ -19,7 +19,15 @@ export const useNotifications = create<NotificationsStore>((set) => ({
     type: 'success',
     title: 'Welcome to Hyacinth!',
     message: 'This is a sample notification. Click the X to dismiss it.',
-  }],
+  },
+  {
+    id: crypto.randomUUID(),
+    type: 'error',
+    title: 'Error notification',
+    message: 'This is an error notification.',
+  }
+
+],
   addNotification: (notification) =>
     set((state) => ({
       notifications: [...state.notifications, { ...notification, id: crypto.randomUUID() }],

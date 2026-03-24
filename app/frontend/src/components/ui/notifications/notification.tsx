@@ -1,16 +1,33 @@
 import { Toast } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCircleCheck,
+  faOctagonXmark,
+  faTriangleExclamation,
+  faCircleInfo,
+} from "@fortawesome/pro-regular-svg-icons";
+import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
-const VARIANT_MAP = {
-  success: 'success',
-  error: 'danger',
-  warning: 'warning',
-  info: 'info',
-} as const;
+type NotificationType = "success" | "error" | "warning" | "info";
+
+const VARIANT_MAP: Record<NotificationType, string> = {
+  success: "success",
+  error: "danger",
+  warning: "warning",
+  info: "info",
+};
+
+const ICON_MAP: Record<NotificationType, IconDefinition> = {
+  success: faCircleCheck,
+  error: faOctagonXmark,
+  warning: faTriangleExclamation,
+  info: faCircleInfo,
+};
 
 export type NotificationProps = {
   notification: {
     id: string;
-    type: 'success' | 'error' | 'warning' | 'info';
+    type: NotificationType;
     title: string;
     message?: string;
   };
@@ -19,22 +36,28 @@ export type NotificationProps = {
 
 export const Notification = ({
   notification: { id, type, title, message },
-  onDismiss
+  onDismiss,
 }: NotificationProps) => {
+  const variant = VARIANT_MAP[type];
+
   return (
     <Toast
       key={id}
       onClose={() => onDismiss(id)}
-      // TODO: Improve styling
-      bg={VARIANT_MAP[type]}
-      // autohide
-      // delay={5000}
+      className={`bg-${variant}-subtle border-${variant}`}
     >
-      <Toast.Header>
-        <strong className="me-auto">{title}</strong>
+      <Toast.Header
+        className={`bg-transparent border-${variant} border-opacity-25`}
+      >
+        <FontAwesomeIcon
+          icon={ICON_MAP[type]}
+          className={`me-2 text-${variant}-emphasis`}
+        />
+        <strong className={`me-auto text-${variant}-emphasis`}>{title}</strong>
       </Toast.Header>
-      {message && <Toast.Body>{message}</Toast.Body>}
+      {message && (
+        <Toast.Body className="text-body-secondary">{message}</Toast.Body>
+      )}
     </Toast>
   );
-}
-
+};

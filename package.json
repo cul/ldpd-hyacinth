@@ -33,6 +33,10 @@
   "dependencies": {
     "@casl/ability": "^6.7.5",
     "@casl/react": "^5.0.0",
+    "@fortawesome/fontawesome-svg-core": "6.7.2",
+    "@fortawesome/free-regular-svg-icons": "6.7.2",
+    "@fortawesome/pro-regular-svg-icons": "6.7.2",
+    "@fortawesome/react-fontawesome": "^3.3.0",
     "@popperjs/core": "^2.11.8",
     "@tanstack/react-query": "^5.90.12",
     "@tanstack/react-query-devtools": "^5.91.1",
