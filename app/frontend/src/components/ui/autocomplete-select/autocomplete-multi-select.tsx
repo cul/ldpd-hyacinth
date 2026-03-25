@@ -1,7 +1,8 @@
 import Select, { MultiValue } from 'react-select';
-import { SelectOption } from './autocomplete-select';
+import { sharedStyles } from './shared-styles';
+import { SelectOption } from './types';
 
-interface AutocompleteMultiSelectProps {
+type AutocompleteMultiSelectProps = {
   options: SelectOption[];
   value: string[];
   onChange: (values: string[]) => void;
@@ -32,22 +33,7 @@ export const AutocompleteMultiSelect = ({
       // especially when used in tables
       menuPortalTarget={document.body}
       menuPosition="fixed"
-      styles={{
-        control: (base, state) => ({
-          ...base,
-          borderColor: state.isFocused ? '#d19edf' : '#dee2e6',
-          boxShadow: state.isFocused ? '0 0 0 0.25rem rgba(209, 158, 223, 0.25)' : 'none',
-
-          '&:hover': {
-            borderColor: 'none',
-          },
-          "&--is-focused": {
-            borderColor: 'none',
-            boxShadow: '0 0 0 0.25rem rgba(163, 61, 191, 0.25)',
-          },
-        }),
-        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-      }}
+      styles={sharedStyles}
     />
   );
 };

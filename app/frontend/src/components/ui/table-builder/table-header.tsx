@@ -1,4 +1,4 @@
-import { flexRender, HeaderGroup } from '@tanstack/react-table'
+import { flexRender, Header, HeaderGroup } from '@tanstack/react-table'
 import { ArrowUp, ArrowDown, ArrowDownUp } from 'react-bootstrap-icons'
 
 interface TableHeaderProps<T> {
@@ -18,7 +18,7 @@ function TableHeader<T>({ headerGroup }: TableHeaderProps<T>) {
     return <ArrowDownUp className={sharedClassNames} style={{ color: '#b5b5b5ff' }} size={14} />
   }
 
-  const createColumnHeader = (header: HeaderGroup<T>) => {
+  const createColumnHeader = (header: Header<T, unknown>) => {
     if (header.isPlaceholder) return null
 
     const sharedClassNames = 'fw-semibold d-inline-flex m-0 p-0 align-items-start text-start'
@@ -31,7 +31,7 @@ function TableHeader<T>({ headerGroup }: TableHeaderProps<T>) {
           onClick={header.column.getToggleSortingHandler()}
         >
           {headerText}
-          {renderSortingIcon(header.column.getIsSorted())}
+          {renderSortingIcon(header.column.getIsSorted() || null)}
         </button>
       )
     }

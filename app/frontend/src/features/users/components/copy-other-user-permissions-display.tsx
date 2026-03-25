@@ -1,6 +1,6 @@
 import { Button, Row, Col } from 'react-bootstrap';
 import { User } from '@/types/api';
-import { AutocompleteSelect } from '@/components/ui/autocomplete-select';
+import { AutocompleteSingleSelect } from '@/components/ui/autocomplete-select';
 
 interface CopyOtherPermissionsDisplayProps {
   onSelectUser: (uid: string) => void;
@@ -22,7 +22,7 @@ export const CopyOtherPermissionsDisplay = ({
       </p>
       <Row className="g-2 align-items-center">
         <Col md={4}>
-          <AutocompleteSelect
+          <AutocompleteSingleSelect
             options={usersList.map((user) => ({
               value: user.uid,
               label: `${user.firstName} ${user.lastName} (${user.email})`,

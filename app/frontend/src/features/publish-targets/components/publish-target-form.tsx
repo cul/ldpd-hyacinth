@@ -1,12 +1,14 @@
 import { Suspense, useState } from 'react';
-import { Button, Form, Row } from 'react-bootstrap';
+import { Button, Col, Form, Row } from 'react-bootstrap';
 import { Input } from '@/components/ui/form';
 import { MutationAlerts } from '@/components/ui/mutation-alerts';
 import { useCreatePublishTarget } from '../api/create-publish-target';
 import { useUpdatePublishTarget } from '../api/update-publish-target';
 import { PublishTarget } from '@/types/api';
-import ProjectsForTargetSelector from './projects-for-target-selector';
+import { ProjectsForTargetSelector } from './projects-for-target-selector';
 import { DeletePublishTargetModal } from './delete-publish-target-modal';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/pro-regular-svg-icons';
 
 type PublishTargetFormProps = {
   publishTarget?: PublishTarget;
@@ -127,38 +129,52 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
         </Row>
 
         <Row className="mb-4">
-          <p className="text-muted fw-bold text-uppercase letter-spacing-wide mb-3">
-            <small>Associated Projects</small>
-          </p>
-          <Suspense fallback={<p className="text-muted">Loading projects...</p>}>
-            {/* ? Is this the best way to display this data? */}
-            <ProjectsForTargetSelector
-              selectedProjectIds={selectedProjectIds}
-              onChange={setSelectedProjectIds}
-            />
-          </Suspense>
+          <Col md={9}>
+            <p className="text-muted fw-bold text-uppercase letter-spacing-wide mb-3">
+              <small>Associated Projects</small>
+            </p>
+            <Suspense fallback={<p className="text-muted">Loading projects...</p>}>
+              <ProjectsForTargetSelector
+                selectedProjectIds={selectedProjectIds}
+                onChange={setSelectedProjectIds}
+              />
+            </Suspense>
+          </Col>
         </Row>
 
-        <div className="d-flex align-items-center justify-content-between">
-          <Button
-            variant="primary"
-            type="submit"
-            disabled={mutation.isPending}
-          >
-            {mutation.isPending ? 'Saving...' : publishTarget ? 'Save' : 'Create a New Publish Target'}
-          </Button>
-
-          {publishTarget && (
+        <Row className="mb-4">
+          <Col md={7}>
             <Button
-              variant="outline-danger"
-              onClick={() => setShowDeleteModal(true)}
+              variant="primary"
+              type="submit"
+              disabled={mutation.isPending}
+              className="px-3"
             >
-              Delete Publish Target
+              {mutation.isPending ? 'Saving...' : publishTarget ? 'Save' : 'Create a New Publish Target'}
             </Button>
-          )}
-        </div>
+          </Col>
+        </Row>
       </Form>
-      
+
+      {publishTarget && (
+        <>
+          <hr className="my-4" />
+          <p className="text-muted fw-bold text-uppercase letter-spacing-wide mb-1">
+            <small>Danger Zone</small>
+          </p>
+          <p className="text-muted mb-3">
+            <small>Deleting this publish target is permanent and cannot be undone.</small>
+          </p>
+          <Button
+            variant="outline-danger"
+            onClick={() => setShowDeleteModal(true)}
+          >
+            <FontAwesomeIcon icon={faTrash} className="me-2" />
+            Delete {publishTarget.displayLabel}
+          </Button>
+        </>
+      )}
+
       {publishTarget && (
         <DeletePublishTargetModal
           show={showDeleteModal}

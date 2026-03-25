@@ -1,21 +1,17 @@
-import React from 'react';
 import Select, { SingleValue } from 'react-select';
+import { sharedStyles } from './shared-styles';
+import { SelectOption } from './types';
 
-export interface SelectOption {
-  value: string;
-  label: string;
-}
-
-interface AutocompleteSelectProps {
+type AutocompleteSelectProps = {
   options: SelectOption[];
   value?: string | null;
   onChange?: (value: string | null) => void;
   placeholder?: string;
 }
 
-export const AutocompleteSelect = ({ 
-  options, 
-  value, 
+export const AutocompleteSingleSelect = ({
+  options,
+  value,
   onChange,
   placeholder = 'Select...'
 }: AutocompleteSelectProps) => {
@@ -37,9 +33,7 @@ export const AutocompleteSelect = ({
       // especially when used in tables
       menuPortalTarget={document.body}
       menuPosition="fixed"
-      styles={{
-        menuPortal: (base) => ({ ...base, zIndex: 9999 }),
-      }}
+      styles={sharedStyles}
     />
   );
 }
