@@ -33,6 +33,19 @@ export const AutocompleteMultiSelect = ({
       menuPortalTarget={document.body}
       menuPosition="fixed"
       styles={{
+        control: (base, state) => ({
+          ...base,
+          borderColor: state.isFocused ? '#d19edf' : '#dee2e6',
+          boxShadow: state.isFocused ? '0 0 0 0.25rem rgba(209, 158, 223, 0.25)' : 'none',
+
+          '&:hover': {
+            borderColor: 'none',
+          },
+          "&--is-focused": {
+            borderColor: 'none',
+            boxShadow: '0 0 0 0.25rem rgba(163, 61, 191, 0.25)',
+          },
+        }),
         menuPortal: (base) => ({ ...base, zIndex: 9999 }),
       }}
     />

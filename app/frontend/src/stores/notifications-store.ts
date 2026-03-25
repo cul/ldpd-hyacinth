@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 export type Notification = {
   id: string;
-  type: 'success' | 'error' | 'info';
+  type: 'success' | 'error' | 'info' | 'warning';
   title: string;
   message?: string;
 };
@@ -25,9 +25,19 @@ export const useNotifications = create<NotificationsStore>((set) => ({
     type: 'error',
     title: 'Error notification',
     message: 'This is an error notification.',
-  }
-
-],
+  },
+  {
+    id: crypto.randomUUID(),
+    type: 'info',
+    title: 'Info notification',
+    message: 'This is an info notification.',
+  },
+  {
+    id: crypto.randomUUID(),
+    type: 'warning',
+    title: 'Warning notification',
+    message: 'This is a warning notification.',
+  }],
   addNotification: (notification) =>
     set((state) => ({
       notifications: [...state.notifications, { ...notification, id: crypto.randomUUID() }],

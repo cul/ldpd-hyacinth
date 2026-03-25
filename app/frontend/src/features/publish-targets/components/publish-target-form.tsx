@@ -5,19 +5,14 @@ import { MutationAlerts } from '@/components/ui/mutation-alerts';
 import { useCreatePublishTarget } from '../api/create-publish-target';
 import { useUpdatePublishTarget } from '../api/update-publish-target';
 import { PublishTarget } from '@/types/api';
-import { useDeletePublishTarget } from '../api/delete-publish-target';
 import ProjectsForTargetSelector from './projects-for-target-selector';
-import { useNavigate } from 'react-router';
-import { useNotifications } from '@/stores/notifications';
+import { DeletePublishTargetModal } from './delete-publish-target-modal';
 
 type PublishTargetFormProps = {
   publishTarget?: PublishTarget;
 };
 
 export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => {
-  const navigate = useNavigate();
-  const addNotification = useNotifications(state => state.addNotification);
-
   const [formData, setFormData] = useState({
     stringKey: publishTarget?.stringKey || '',
     displayLabel: publishTarget?.displayLabel || '',
@@ -26,17 +21,10 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
     projectIds: publishTarget?.projects?.map(p => p.id) || [],
   });
   const [selectedProjectIds, setSelectedProjectIds] = useState<number[]>(publishTarget?.projects?.map(p => p.id) || []);
-  const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const createPublishTargetMutation = useCreatePublishTarget();
   const updatePublishTargetMutation = useUpdatePublishTarget();
-  const deletePublishTargetMutation = useDeletePublishTarget({
-    mutationConfig: {
-      onSuccess: () => {
-        addNotification({ type: 'success', title: 'Publish target deleted', message: `"${publishTarget?.displayLabel}" was successfully deleted.` });
-        navigate('/publish-targets');
-      },
-    },
-  });
 
   // Get the appropriate mutation and field errors based on mode
   const mutation = publishTarget ? updatePublishTargetMutation : createPublishTargetMutation;
@@ -55,17 +43,6 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
       createPublishTargetMutation.mutate({ data: payload });
     }
   };
-
-  const handleDeleteClick = () => {
-    if (!confirmingDelete) {
-      setConfirmingDelete(true);
-      return;
-    }
-    deletePublishTargetMutation.mutate({
-      publishTargetStringKey: publishTarget!.stringKey,
-    });
-  };
-
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -162,45 +139,34 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
           </Suspense>
         </Row>
 
-        {/* TODO: WIP find a better way to confirm delete operation */}
-        {publishTarget && (
-          <div className="d-flex align-items-center gap-2">
-            {confirmingDelete && (
-              <div className="text-danger">
-                <small>Are you sure?</small>
-              </div>
-            )}
-            <Button
-              variant={confirmingDelete ? 'danger' : 'outline-danger'}
-              onClick={handleDeleteClick}
-              disabled={deletePublishTargetMutation.isPending}
-            >
-              {deletePublishTargetMutation.isPending
-                ? 'Deleting...'
-                : confirmingDelete
-                  ? 'Confirm Delete'
-                  : 'Delete Publish Target'}
-            </Button>
-            {confirmingDelete && (
-              <Button
-                variant="outline-secondary"
-                onClick={() => setConfirmingDelete(false)}
-                disabled={deletePublishTargetMutation.isPending}
-              >
-                Cancel
-              </Button>
-            )}
-          </div>
-        )}
+        <div className="d-flex align-items-center justify-content-between">
+          <Button
+            variant="primary"
+            type="submit"
+            disabled={mutation.isPending}
+          >
+            {mutation.isPending ? 'Saving...' : publishTarget ? 'Save' : 'Create a New Publish Target'}
+          </Button>
 
-        <Button
-          variant="primary"
-          type="submit"
-          disabled={mutation.isPending}
-        >
-          {mutation.isPending ? 'Saving...' : publishTarget ? 'Save' : 'Create a New Publish Target'}
-        </Button>
+          {publishTarget && (
+            <Button
+              variant="outline-danger"
+              onClick={() => setShowDeleteModal(true)}
+            >
+              Delete Publish Target
+            </Button>
+          )}
+        </div>
       </Form>
+      
+      {publishTarget && (
+        <DeletePublishTargetModal
+          show={showDeleteModal}
+          onHide={() => setShowDeleteModal(false)}
+          publishTargetStringKey={publishTarget.stringKey}
+          publishTargetDisplayLabel={publishTarget.displayLabel}
+        />
+      )}
     </>
   );
 }

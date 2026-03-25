@@ -13,3 +13,8 @@
     border-left: var(--bs-border-width) var(--bs-border-style) var(--bs-border-color) !important;
   }
 }
+
+.toast .btn-close {
+  font-size: 0.75rem;
+  padding-right: 0.5rem;
+}

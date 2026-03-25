@@ -44,6 +44,13 @@ function TableBuilder<T extends object>({ data, columns }: TableBuilderProps<T>)
           headerGroup={headerGroup} />
       ))}
       <tbody>
+        {table.getRowModel().rows.length === 0 && (
+          <tr>
+            <td colSpan={columns.length} className="text-center py-3">
+              No entries found.
+            </td>
+          </tr>
+        )}
         {table.getRowModel().rows.map((row) => (
           <TableRow row={row} key={row.id} />
         ))}
