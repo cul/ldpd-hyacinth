@@ -13,31 +13,14 @@ type NotificationsStore = {
   dismissNotification: (id: string) => void;
 };
 
+/**
+ * Use this hook to manage global notifications across the app. Generally, we prefer to use alerts closer 
+ * to the source of the event (e.g. within a form or component), but this store is useful for triggering notifications 
+ * from non-component code (e.g. utility functions, API clients) or for displaying messages when the form or component is unmounted 
+ * (e.g. successful deletion of a resource that triggers a redirect).
+ */
 export const useNotifications = create<NotificationsStore>((set) => ({
-  notifications: [{
-    id: crypto.randomUUID(),
-    type: 'success',
-    title: 'Welcome to Hyacinth!',
-    message: 'This is a sample notification. Click the X to dismiss it.',
-  },
-  {
-    id: crypto.randomUUID(),
-    type: 'error',
-    title: 'Error notification',
-    message: 'This is an error notification.',
-  },
-  {
-    id: crypto.randomUUID(),
-    type: 'info',
-    title: 'Info notification',
-    message: 'This is an info notification.',
-  },
-  {
-    id: crypto.randomUUID(),
-    type: 'warning',
-    title: 'Warning notification',
-    message: 'This is a warning notification.',
-  }],
+  notifications: [],
   addNotification: (notification) =>
     set((state) => ({
       notifications: [...state.notifications, { ...notification, id: crypto.randomUUID() }],

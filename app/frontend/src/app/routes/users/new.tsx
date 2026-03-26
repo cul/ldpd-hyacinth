@@ -13,11 +13,12 @@ const UsersNewRoute = () => {
   return (
     <Container>
       <Row>
-        <Col md={8}>
+        <Col md={8} className='g-0'>
           <UserForm />
         </Col>
       </Row>
-    </Container>);
+    </Container>
+  );
 };
 
 export default UsersNewRoute;

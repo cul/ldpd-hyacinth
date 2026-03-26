@@ -8,11 +8,7 @@ export const clientLoader = (queryClient: QueryClient) => async () => {
   await requireAuthorization(queryClient, [ROLES.ADMIN]);
 
   const query = getPublishTargetsQueryOptions();
-
-  return (
-    queryClient.getQueryData(query.queryKey) ??
-    (await queryClient.fetchQuery(query))
-  );
+  return await queryClient.ensureQueryData(query);
 };
 
 const PublishTargetsIndexRoute = () => {

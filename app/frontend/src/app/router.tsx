@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { QueryClient, useQueryClient } from '@tanstack/react-query';
 import { createBrowserRouter, LoaderFunction, ActionFunction } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
+import { Spinner } from 'react-bootstrap';
 
 // Layouts and Components
 import MainLayout from '@/components/layouts/main-layout';
@@ -41,6 +42,7 @@ export const createAppRouter = (queryClient: QueryClient) =>
   createBrowserRouter([
     {
       Component: MainLayout,
+      hydrateFallbackElement: <Spinner animation="border" role="status" />,
       children: [
         {
           index: true,

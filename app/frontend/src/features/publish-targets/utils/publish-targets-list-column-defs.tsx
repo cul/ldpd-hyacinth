@@ -10,9 +10,9 @@ export const columnDefs = [
     cell: ({ row }) => (
       <Link
         to={{ pathname: `/publish-targets/${row.original.stringKey}/edit` }}
-        className="link-underline link-underline-opacity-0"
+        className="link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
       >
-        <span className="hover:underline">{row.original.displayLabel}</span>
+        <span>{row.original.displayLabel}</span>
       </Link>
     )
   }),

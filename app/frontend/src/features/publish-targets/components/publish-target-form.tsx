@@ -172,16 +172,14 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
             <FontAwesomeIcon icon={faTrash} className="me-2" />
             Delete {publishTarget.displayLabel}
           </Button>
-        </>
-      )}
 
-      {publishTarget && (
-        <DeletePublishTargetModal
-          show={showDeleteModal}
-          onHide={() => setShowDeleteModal(false)}
-          publishTargetStringKey={publishTarget.stringKey}
-          publishTargetDisplayLabel={publishTarget.displayLabel}
-        />
+          <DeletePublishTargetModal
+            show={showDeleteModal}
+            onHide={() => setShowDeleteModal(false)}
+            publishTargetStringKey={publishTarget.stringKey}
+            publishTargetDisplayLabel={publishTarget.displayLabel}
+          />
+        </>
       )}
     </>
   );
