@@ -45,8 +45,8 @@ export const Notification = ({
       key={id}
       onClose={() => onDismiss(id)}
       className={`bg-${variant}-subtle border-${variant}`}
-      // autohide
-      // delay={5000}
+      autohide
+      delay={5000}
     >
       <Toast.Header
         className={`bg-transparent border-${variant} border-opacity-25`}
