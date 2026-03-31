@@ -63,7 +63,7 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
   return (
     <>
       <MutationAlerts
-        mutation={publishTarget ? updatePublishTargetMutation : createPublishTargetMutation}
+        mutation={mutation}
         successMessage={publishTarget ? "Publish target updated successfully!" : "Publish target created successfully!"}
         errorMessage={publishTarget ? "Error updating publish target" : "Error creating publish target"}
       />

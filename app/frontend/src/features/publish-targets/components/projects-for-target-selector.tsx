@@ -1,5 +1,5 @@
 import { AutocompleteMultiSelect } from '@/components/ui/autocomplete-select';
-import { useProjectsSuspense } from '@/features/projects/api/get-projects';
+import { useProjectsSuspenseQuery } from '@/features/projects/api/get-projects';
 
 type ProjectsMultiSelectProps = {
   selectedProjectIds: number[];
@@ -7,7 +7,7 @@ type ProjectsMultiSelectProps = {
 };
 
 export const ProjectsForTargetSelector = ({ selectedProjectIds, onChange }: ProjectsMultiSelectProps) => {
-  const { data } = useProjectsSuspense();
+  const { data } = useProjectsSuspenseQuery();
 
   const options = data.projects.map(project => ({
     value: project.id.toString(),

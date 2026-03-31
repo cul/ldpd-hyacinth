@@ -2,10 +2,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
-import { PublishTarget } from '@/types/api';
+import { PublishTarget, PublishTargetPayload } from '@/types/api';
 import { getPublishTargetsQueryOptions } from './get-publish-targets';
 
-export const createPublishTarget = ({ data }: { data: Partial<PublishTarget> }): Promise<{ publishTarget: PublishTarget }> => {
+export const createPublishTarget = ({ data }: { data: Partial<PublishTargetPayload> }): Promise<{ publishTarget: PublishTarget }> => {
   return api.post(`/publish_targets`, { publishTarget: data });
 };
 

@@ -47,7 +47,7 @@ export interface PublishTarget {
 Payload types
 */
 
-export interface PublishTarget {
+export interface PublishTargetPayload {
   stringKey: string;
   displayLabel: string;
   publishUrl: string;

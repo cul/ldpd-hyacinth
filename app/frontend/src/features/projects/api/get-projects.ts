@@ -35,7 +35,7 @@ export const useProjects = ({ queryConfig }: UseProjectsOptions = {}) => {
   });
 };
 
-export const useProjectsSuspense = ({ queryConfig }: UseProjectsOptions = {}) => {
+export const useProjectsSuspenseQuery = ({ queryConfig }: UseProjectsOptions = {}) => {
   return useSuspenseQuery({
     ...getProjectsQueryOptions(),
     ...queryConfig,

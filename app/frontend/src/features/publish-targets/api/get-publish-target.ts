@@ -20,7 +20,7 @@ type UsePublishTargetOptions = {
   queryConfig?: QueryConfig<typeof getPublishTargetQueryOptions>;
 };
 
-export const usePublishTargetSuspense = ({ publishTargetStringKey, queryConfig }: UsePublishTargetOptions) => {
+export const usePublishTargetSuspenseQuery = ({ publishTargetStringKey, queryConfig }: UsePublishTargetOptions) => {
   return useSuspenseQuery({
     ...getPublishTargetQueryOptions(publishTargetStringKey!),
     ...queryConfig,

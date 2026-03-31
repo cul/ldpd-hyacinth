@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
-import { PublishTarget } from '@/types/api';
+import { PublishTarget, PublishTargetPayload } from '@/types/api';
 import { getPublishTargetsQueryOptions } from './get-publish-targets';
 
 export const updatePublishTarget = ({
@@ -10,7 +10,7 @@ export const updatePublishTarget = ({
   data,
 }: {
   publishTargetStringKey: string;
-  data: Partial<PublishTarget>;
+  data: Partial<PublishTargetPayload>;
 }): Promise<{ publishTarget: PublishTarget }> => {
   return api.patch(`/publish_targets/${publishTargetStringKey}`, { publishTarget: data });
 };

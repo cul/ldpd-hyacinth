@@ -10,8 +10,6 @@ export const clientLoader = (queryClient: QueryClient) => async () => {
 
   // No need to wait on this data as it's only needed for the projects dropdown
   queryClient.prefetchQuery(getProjectsQueryOptions());
-
-  return null;
 };
 
 const PublishTargetsNewRoute = () => {
