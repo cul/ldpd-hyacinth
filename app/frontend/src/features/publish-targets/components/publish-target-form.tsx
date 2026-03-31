@@ -1,7 +1,8 @@
 import { Suspense, useState } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
+import { useNavigate } from 'react-router';
 import { Input } from '@/components/ui/form';
-import { MutationAlerts } from '@/components/ui/mutation-alerts';
+import { MutationErrorAlert, MutationSuccessAlert } from '@/components/ui/mutation-alerts';
 import { useCreatePublishTarget } from '../api/create-publish-target';
 import { useUpdatePublishTarget } from '../api/update-publish-target';
 import { PublishTarget } from '@/types/api';
@@ -9,12 +10,16 @@ import { ProjectsForTargetSelector } from './projects-for-target-selector';
 import { DeletePublishTargetModal } from './delete-publish-target-modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/pro-regular-svg-icons';
+import { useNotifications } from '@/stores/notifications-store';
 
 type PublishTargetFormProps = {
   publishTarget?: PublishTarget;
 };
 
 export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => {
+  const navigate = useNavigate();
+  const addNotification = useNotifications(state => state.addNotification);
+
   const [formData, setFormData] = useState({
     stringKey: publishTarget?.stringKey || '',
     displayLabel: publishTarget?.displayLabel || '',
@@ -25,8 +30,19 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
   const [selectedProjectIds, setSelectedProjectIds] = useState<number[]>(publishTarget?.projects?.map(p => p.id) || []);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const createPublishTargetMutation = useCreatePublishTarget();
   const updatePublishTargetMutation = useUpdatePublishTarget();
+  const createPublishTargetMutation = useCreatePublishTarget({
+    mutationConfig: {
+      onSuccess: (data) => {
+        addNotification({
+          type: 'success',
+          title: 'Publish target created',
+          message: `"${data.publishTarget.displayLabel}" was successfully created.`,
+        });
+        navigate(`/publish-targets/${data.publishTarget.stringKey}/edit`);
+      },
+    },
+  });
 
   // Get the appropriate mutation and field errors based on mode
   const mutation = publishTarget ? updatePublishTargetMutation : createPublishTargetMutation;
@@ -62,11 +78,16 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
 
   return (
     <>
-      <MutationAlerts
+      <MutationErrorAlert
         mutation={mutation}
-        successMessage={publishTarget ? "Publish target updated successfully!" : "Publish target created successfully!"}
-        errorMessage={publishTarget ? "Error updating publish target" : "Error creating publish target"}
+        message={publishTarget ? "Error updating publish target" : "Error creating publish target"}
       />
+      {publishTarget && (
+        <MutationSuccessAlert
+          mutation={updatePublishTargetMutation}
+          message="Publish target updated successfully!"
+        />
+      )}
       <Form onSubmit={handleSubmit}>
         <p className="text-muted fw-bold text-uppercase letter-spacing-wide mb-3">
           <small>Publish Target information</small>

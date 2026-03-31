@@ -6,7 +6,7 @@ import { useProjects } from '@/features/projects/api/get-projects';
 import { useUsers } from '../api/get-users';
 import { CopyOtherPermissionsDisplay } from './copy-other-user-permissions-display';
 import { useProjectPermissionsForm } from '../hooks/use-project-permissions-form';
-import { MutationAlerts } from '@/components/ui/mutation-alerts';
+import { MutationErrorAlert, MutationSuccessAlert } from '@/components/ui/mutation-alerts';
 import { ProjectPermissionsTable } from './project-permissions-table';
 
 /*
@@ -74,10 +74,13 @@ export const UserProjectPermissionsForm = ({ userUid }: { userUid: string }) => 
 
   return (
     <div>
-      <MutationAlerts
+      <MutationErrorAlert
         mutation={mutation}
-        successMessage="Permissions saved successfully!"
-        errorMessage="Error saving permissions"
+        message="Error saving permissions"
+      />
+      <MutationSuccessAlert
+        mutation={mutation}
+        message="Permissions saved successfully!"
       />
 
       <CopyOtherPermissionsDisplay

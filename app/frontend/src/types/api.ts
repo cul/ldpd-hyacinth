@@ -36,11 +36,7 @@ export interface PublishTarget {
   displayLabel: string;
   publishUrl: string;
   apiKey: string;
-  projects: {
-    id: number;
-    stringKey: string;
-    displayLabel: string;
-  }[];
+  projects: Project[];
 }
 
 /* 

@@ -1,21 +1,16 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import { Button, Form, Row } from 'react-bootstrap';
 import { useCreateUser } from '../api/create-user';
 import { useUpdateUser } from '../api/update-user';
-import { MutationAlerts } from '@/components/ui/mutation-alerts';
+import { MutationErrorAlert } from '@/components/ui/mutation-alerts/mutation-error-alert';
+import { MutationSuccessAlert } from '@/components/ui/mutation-alerts/mutation-success-alert';
 import { Input, Select } from '@/components/ui/form';
+import { useNotifications } from '@/stores/notifications-store';
+import { User } from '@/types/api';
 
 type UserFormProps = {
-  user?: {
-    uid: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    isAdmin: boolean;
-    canManageAllControlledVocabularies: boolean;
-    accountType: string;
-    isActive: boolean;
-  };
+  user?: User;
   isEditingSelf?: boolean;
 };
 
@@ -31,9 +26,22 @@ export const UserForm = ({ user, isEditingSelf }: UserFormProps) => {
     accountType: '',
     isActive: true,
   };
+  const navigate = useNavigate();
+  const addNotification = useNotifications(state => state.addNotification);
 
   const [formData, setFormData] = useState(initialUser);
-  const createUserMutation = useCreateUser();
+  const createUserMutation = useCreateUser({
+    mutationConfig: {
+      onSuccess: (data) => {
+        addNotification({
+          type: 'success',
+          title: 'User created',
+          message: `"${data.user.firstName} ${data.user.lastName}" was successfully created.`,
+        });
+        navigate(`/users/${data.user.uid}/edit`);
+      },
+    },
+  });
   const updateUserMutation = useUpdateUser();
 
   // Get the appropriate mutation and field errors based on mode
@@ -46,7 +54,6 @@ export const UserForm = ({ user, isEditingSelf }: UserFormProps) => {
     if (user) {
       updateUserMutation.mutate({ userUid: user.uid, data: formData });
     } else {
-      // ? Redirect to user list or detail page)
       createUserMutation.mutate({ data: formData });
     }
   };
@@ -75,11 +82,16 @@ export const UserForm = ({ user, isEditingSelf }: UserFormProps) => {
 
   return (
     <>
-      <MutationAlerts
-        mutation={user ? updateUserMutation : createUserMutation}
-        successMessage={user ? "User updated successfully!" : "User created successfully!"}
-        errorMessage={user ? "Error updating user" : "Error creating user"}
+      <MutationErrorAlert
+        mutation={mutation}
+        message={user ? "Error updating user" : "Error creating user"}
       />
+      {user && (
+        <MutationSuccessAlert
+          mutation={updateUserMutation}
+          message="User updated successfully!"
+        />
+      )}
       <Form onSubmit={handleSubmit}>
         <div className="mb-3">
           <p className="text-muted fw-bold text-uppercase letter-spacing-wide mb-3">
@@ -111,7 +123,7 @@ export const UserForm = ({ user, isEditingSelf }: UserFormProps) => {
             </Form.Group>
           </Row>
           <Row className="mb-3">
-            <Input 
+            <Input
               label="First Name"
               type="text"
               value={formData.firstName}
@@ -198,7 +210,7 @@ export const UserForm = ({ user, isEditingSelf }: UserFormProps) => {
           type="submit"
           disabled={mutation.isPending}
         >
-          {mutation.isPending ? 'Saving...' : 'Save'}
+          {mutation.isPending ? 'Saving...' : user ? 'Save' : 'Create a New User'}
         </Button>
       </Form>
     </>

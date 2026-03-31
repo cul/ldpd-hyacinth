@@ -69,10 +69,10 @@ describe('Users New Route', () => {
       'standard',
     );
 
-    await userEvent.click(screen.getByRole('button', { name: 'Save' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Create a New User' }));
 
     expect(
-      await screen.findByText(/user created successfully/i),
+      await screen.findByText(/was successfully created/i),
     ).toBeInTheDocument();
   });
 
@@ -85,7 +85,7 @@ describe('Users New Route', () => {
     await userEvent.type(screen.getByLabelText(/last name/i), 'User');
     await userEvent.type(screen.getByLabelText(/email/i), 'test@example.com');
 
-    await userEvent.click(screen.getByRole('button', { name: 'Save' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Create a New User' }));
 
     expect(
       await screen.findByText(/error creating user/i),
