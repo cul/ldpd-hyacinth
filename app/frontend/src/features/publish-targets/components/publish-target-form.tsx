@@ -149,7 +149,7 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
           />
         </Row>
 
-        <p className="text-muted fw-bold text-uppercase letter-spacing-wide mb-3 pt-2">
+        <p className="text-muted fw-bold text-uppercase letter-spacing-wide mb-2 pt-2">
           <small>Associated Projects</small>
         </p>
         <Suspense fallback={<p className="text-muted">Loading projects...</p>}>

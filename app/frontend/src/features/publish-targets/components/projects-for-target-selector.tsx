@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react';
-import { Button,Table as BTable } from 'react-bootstrap';
+import { Button, Table as BTable } from 'react-bootstrap';
 import { useReactTable, getCoreRowModel, getSortedRowModel, SortingState } from '@tanstack/react-table';
-import { AutocompleteSingleSelect } from '@/components/ui/autocomplete-select';
 import { useProjectsSuspenseQuery } from '@/features/projects/api/get-projects';
 import { columnDefs } from '../utils/target-projects-column-defs';
+import AddItemTableRow from '@/components/ui/table-builder/add-item-table-row';
 import TableHeader from '@/components/ui/table-builder/table-header';
 import TableRow from '@/components/ui/table-builder/table-row';
 
@@ -14,7 +14,6 @@ type ProjectsForTargetSelectorProps = {
 
 export const ProjectsForTargetSelector = ({ selectedProjectIds, onChange }: ProjectsForTargetSelectorProps) => {
   const { data } = useProjectsSuspenseQuery();
-  const [selectedProjectToAdd, setSelectedProjectToAdd] = useState<string>('');
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const selectedProjects = useMemo(() => {
@@ -26,12 +25,9 @@ export const ProjectsForTargetSelector = ({ selectedProjectIds, onChange }: Proj
     return data.projects.filter(p => !assignedIds.has(p.id));
   }, [data.projects, selectedProjectIds]);
 
-  const handleAddProject = () => {
-    if (!selectedProjectToAdd) return;
-
-    const projectId = Number(selectedProjectToAdd);
+  const handleAddProject = (selectedValue: string) => {
+    const projectId = Number(selectedValue);
     onChange([...selectedProjectIds, projectId]);
-    setSelectedProjectToAdd('');
   };
 
   const handleRemoveProject = (rowIndex: number) => {
@@ -76,36 +72,25 @@ export const ProjectsForTargetSelector = ({ selectedProjectIds, onChange }: Proj
       </div>
 
       <BTable striped bordered hover responsive size="sm">
+        <colgroup>
+          <col style={{ width: '50%' }} />
+          <col />
+          <col style={{ width: '100px' }} />
+        </colgroup>
         {table.getHeaderGroups().map((headerGroup) => (
           <TableHeader key={headerGroup.id} headerGroup={headerGroup} />
         ))}
         <tbody>
-          {unassignedProjects.length > 0 && (
-            <tr>
-              <td className="border-end-0 px-2 py-3 align-middle w-50">
-                <AutocompleteSingleSelect
-                  options={unassignedProjects.map(p => ({
-                    value: p.id.toString(),
-                    label: p.displayLabel,
-                  }))}
-                  value={selectedProjectToAdd || null}
-                  onChange={(value) => setSelectedProjectToAdd(value || '')}
-                  placeholder="Search projects to add..."
-                />
-              </td>
-
-              <td colSpan={7} className="align-middle border-start-0">
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  onClick={handleAddProject}
-                  disabled={!selectedProjectToAdd}
-                >
-                  Add Project
-                </Button>
-              </td>
-            </tr>
-          )}
+          <AddItemTableRow
+            options={unassignedProjects.map(p => ({
+              value: p.id.toString(),
+              label: p.displayLabel,
+            }))}
+            onAdd={handleAddProject}
+            placeholder="Search projects to add..."
+            buttonLabel="Add Project"
+            remainingColSpan={2}
+          />
 
           {selectedProjects.length === 0 && (
             <tr>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Table as BTable } from 'react-bootstrap';
-import { useReactTable, getCoreRowModel, getSortedRowModel, SortingState } from '@tanstack/react-table';
+import { RowData, useReactTable, getCoreRowModel, getSortedRowModel, SortingState } from '@tanstack/react-table';
 import { editableColumnDefs } from '../utils/project-permissions-column-defs';
 import { AddProjectPermissionRow } from './add-project-permission-row';
 import TableHeader from '@/components/ui/table-builder/table-header';
@@ -8,9 +8,10 @@ import TableRow from '@/components/ui/table-builder/table-row';
 import { Project, ProjectPermission } from '@/types/api';
 
 declare module '@tanstack/react-table' {
-  interface TableMeta {
-    updateData: (rowIndex: number, columnId: string, value: boolean) => void;
-    removeRow: (rowIndex: number) => void;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface TableMeta<TData extends RowData> {
+    updateData?: (rowIndex: number, columnId: string, value: boolean) => void;
+    removeRow?: (rowIndex: number) => void;
   }
 }
 

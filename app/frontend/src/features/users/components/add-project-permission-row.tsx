@@ -1,6 +1,4 @@
-import { useState } from 'react'
-import { Button } from 'react-bootstrap';
-import { AutocompleteSingleSelect } from '@/components/ui/autocomplete-select';
+import AddItemTableRow from '@/components/ui/table-builder/add-item-table-row';
 import { Project, ProjectPermission } from '@/types/api';
 
 type AddProjectPermissionRowProps = {
@@ -9,11 +7,7 @@ type AddProjectPermissionRowProps = {
 };
 
 export const AddProjectPermissionRow = ({ unassignedProjects, onAddProject }: AddProjectPermissionRowProps) => {
-  const [selectedProjectId, setSelectedProjectId] = useState<string>('');
-
-  const handleAddProject = () => {
-    if (!selectedProjectId) return;
-
+  const handleAddProject = (selectedProjectId: string) => {
     const project = unassignedProjects.find((project) => project.id === parseInt(selectedProjectId));
 
     if (project) {
@@ -30,35 +24,19 @@ export const AddProjectPermissionRow = ({ unassignedProjects, onAddProject }: Ad
       };
 
       onAddProject(newPermission);
-      setSelectedProjectId('');
     }
   };
 
-  if (unassignedProjects.length === 0) return null;
-
   return (
-    <tr>
-      <td className="border-end-0 px-2 py-3 align-middle">
-        <AutocompleteSingleSelect
-          options={unassignedProjects.map((project) => ({
-            value: project.id.toString(),
-            label: project.displayLabel,
-          }))}
-          value={selectedProjectId || null}
-          onChange={(value) => setSelectedProjectId(value || '')}
-          placeholder='Select a project'
-        />
-      </td>
-      <td colSpan={7} className="align-middle border-start-0">
-        <Button
-          size="sm"
-          variant="secondary"
-          onClick={handleAddProject}
-          disabled={!selectedProjectId}
-        >
-          Add Project
-        </Button>
-      </td>
-    </tr>
+    <AddItemTableRow
+      options={unassignedProjects.map((project) => ({
+        value: project.id.toString(),
+        label: project.displayLabel,
+      }))}
+      onAdd={handleAddProject}
+      placeholder="Select a project"
+      buttonLabel="Add Project"
+      remainingColSpan={7}
+    />
   );
 }
