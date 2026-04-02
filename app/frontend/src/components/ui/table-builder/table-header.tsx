@@ -27,6 +27,7 @@ function TableHeader<T>({ headerGroup }: TableHeaderProps<T>) {
     if (header.column.getCanSort()) {
       return (
         <button
+          type="button"
           className={`btn ${sharedClassNames}`}
           onClick={header.column.getToggleSortingHandler()}
         >
