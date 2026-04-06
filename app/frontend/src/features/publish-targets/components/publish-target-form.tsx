@@ -88,7 +88,7 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
           message="Publish target updated successfully!"
         />
       )}
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} className="mb-8">
         <p className="text-muted fw-bold text-uppercase letter-spacing-wide mb-3">
           <small>Publish Target information</small>
         </p>
@@ -149,21 +149,17 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
           />
         </Row>
 
-        <Row className="mb-4">
-          <Col md={9}>
-            <p className="text-muted fw-bold text-uppercase letter-spacing-wide mb-3">
-              <small>Associated Projects</small>
-            </p>
-            <Suspense fallback={<p className="text-muted">Loading projects...</p>}>
-              <ProjectsForTargetSelector
-                selectedProjectIds={selectedProjectIds}
-                onChange={setSelectedProjectIds}
-              />
-            </Suspense>
-          </Col>
-        </Row>
+        <p className="text-muted fw-bold text-uppercase letter-spacing-wide mb-2 pt-2">
+          <small>Associated Projects</small>
+        </p>
+        <Suspense fallback={<p className="text-muted">Loading projects...</p>}>
+          <ProjectsForTargetSelector
+            selectedProjectIds={selectedProjectIds}
+            onChange={setSelectedProjectIds}
+          />
+        </Suspense>
 
-        <Row className="mb-4">
+        <Row className="mb-4 mt-2">
           <Col md={7}>
             <Button
               variant="primary"
