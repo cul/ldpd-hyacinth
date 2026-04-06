@@ -14,6 +14,7 @@ import {
   type RouteObject,
 } from 'react-router';
 import { AUTH_QUERY_KEY } from '@/lib/auth';
+import { Notifications } from '@/components/ui/notifications/notifications';
 import type { User } from '@/types/api';
 
 export { buildUser, buildProjectPermission } from './data-generators';
@@ -72,6 +73,7 @@ export const renderApp = async (
 
   return rtlRender(
     <QueryClientProvider client={queryClient}>
+      <Notifications />
       <RouterProvider router={router} />
     </QueryClientProvider>,
     renderOptions,
@@ -115,6 +117,7 @@ export const renderWithRoutes = async (
     queryClient,
     ...rtlRender(
       <QueryClientProvider client={queryClient}>
+        <Notifications />
         <RouterProvider router={router} />
       </QueryClientProvider>,
       renderOptions,
