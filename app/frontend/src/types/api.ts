@@ -30,3 +30,27 @@ export interface ProjectPermission {
   canPublish: boolean;
   isProjectAdmin: boolean;
 }
+
+export interface PublishTarget {
+  stringKey: string;
+  displayLabel: string;
+  publishUrl: string;
+  apiKey: string;
+  projects: {
+    id: number;
+    stringKey: string;
+    displayLabel: string;
+  }[];
+}
+
+/* 
+Payload types
+*/
+
+export interface PublishTargetPayload {
+  stringKey: string;
+  displayLabel: string;
+  publishUrl: string;
+  apiKey: string;
+  projectIds: number[];
+}

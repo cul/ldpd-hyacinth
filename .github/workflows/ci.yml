@@ -40,6 +40,8 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - run: npm install -g yarn
+      - name: Set up .npmrc
+        run: echo -e "@fortawesome:registry=https://npm.fontawesome.com/\n//npm.fontawesome.com/:_authToken=${{secrets.FONT_AWESOME_TOKEN}}" > .npmrc
       - run: yarn install
       - name: Run frontend tests
         run: yarn test --run

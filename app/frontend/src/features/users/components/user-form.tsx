@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button, Form, Row } from 'react-bootstrap';
 import { useCreateUser } from '../api/create-user';
 import { useUpdateUser } from '../api/update-user';
-import { MutationAlerts } from './mutation-alerts';
+import { MutationAlerts } from '@/components/ui/mutation-alerts';
 import { Input, Select } from '@/components/ui/form';
 
 type UserFormProps = {

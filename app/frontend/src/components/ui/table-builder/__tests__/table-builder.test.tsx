@@ -90,13 +90,14 @@ describe('TableBuilder', () => {
       expect(seasonalValues).toContain('No');
     });
 
-    it('should render headers but no data rows when data is empty', () => {
+    it('should render headers and a no data row when data is empty', () => {
       renderTable([]);
 
       expect(screen.getByRole('columnheader', { name: /name/i })).toBeInTheDocument();
 
       const rows = screen.getAllByRole('row');
-      expect(rows).toHaveLength(1); // header only
+      expect(rows).toHaveLength(2); // header + no data row
+      expect(screen.getByText(/no entries found/i)).toBeInTheDocument();
     });
   });
 

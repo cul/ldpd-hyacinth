@@ -63,7 +63,7 @@ class Api::V2::PublishTargetsController < Api::V2::BaseController
         string_key: publish_target.string_key,
         display_label: publish_target.display_label,
         publish_url: publish_target.publish_url,
-        api_key: "#{publish_target.api_key[0, 2]}...#{publish_target.api_key[-2..-1]}",
+        api_key: publish_target.api_key,
         projects: publish_target.projects.map { |project| { id: project.id, string_key: project.string_key, display_label: project.display_label } }
       }
     end

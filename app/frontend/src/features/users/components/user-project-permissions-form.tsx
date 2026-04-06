@@ -6,7 +6,7 @@ import { useProjects } from '@/features/projects/api/get-projects';
 import { useUsers } from '../api/get-users';
 import { CopyOtherPermissionsDisplay } from './copy-other-user-permissions-display';
 import { useProjectPermissionsForm } from '../hooks/use-project-permissions-form';
-import { MutationAlerts } from './mutation-alerts';
+import { MutationAlerts } from '@/components/ui/mutation-alerts';
 import { ProjectPermissionsTable } from './project-permissions-table';
 
 /*

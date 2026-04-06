@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Button } from 'react-bootstrap';
-import { AutocompleteSelect } from '@/components/ui/autocomplete-select';
+import { AutocompleteSingleSelect } from '@/components/ui/autocomplete-select';
 import { Project, ProjectPermission } from '@/types/api';
 
 type AddProjectPermissionRowProps = {
@@ -39,7 +39,7 @@ export const AddProjectPermissionRow = ({ unassignedProjects, onAddProject }: Ad
   return (
     <tr>
       <td className="border-end-0 px-2 py-3 align-middle">
-        <AutocompleteSelect
+        <AutocompleteSingleSelect
           options={unassignedProjects.map((project) => ({
             value: project.id.toString(),
             label: project.displayLabel,

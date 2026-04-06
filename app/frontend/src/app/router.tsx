@@ -2,10 +2,12 @@ import { useMemo } from 'react';
 import { QueryClient, useQueryClient } from '@tanstack/react-query';
 import { createBrowserRouter, LoaderFunction, ActionFunction } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
+import { Spinner } from 'react-bootstrap';
 
 // Layouts and Components
 import MainLayout from '@/components/layouts/main-layout';
 import UsersLayout from '@/components/layouts/users-layout';
+import PublishTargetsLayout from '@/components/layouts/publish-targets-layout';
 import UserLayout from '@/components/layouts/user-layout';
 import { AuthorizationErrorBoundary } from '@/components/errors/authorization-error';
 
@@ -40,6 +42,7 @@ export const createAppRouter = (queryClient: QueryClient) =>
   createBrowserRouter([
     {
       Component: MainLayout,
+      hydrateFallbackElement: <Spinner animation="border" role="status" />,
       children: [
         {
           index: true,
@@ -71,6 +74,25 @@ export const createAppRouter = (queryClient: QueryClient) =>
             {
               path: 'new',
               lazy: () => import('./routes/users/new').then(convert(queryClient)),
+            },
+          ]
+        },
+        {
+          path: 'publish-targets',
+          Component: PublishTargetsLayout, // Wraps all publish targets routes with shared navigation
+          ErrorBoundary: AuthorizationErrorBoundary, // Catch authorization errors from loaders
+           children: [
+            {
+              index: true,
+              lazy: () => import('./routes/publish-targets').then(convert(queryClient)),
+            },
+            {
+              path: ':publishTargetStringKey/edit',
+              lazy: () => import('./routes/publish-targets/edit').then(convert(queryClient)),
+            },
+            {
+              path: 'new',
+              lazy: () => import('./routes/publish-targets/new').then(convert(queryClient)),
             },
           ]
         },

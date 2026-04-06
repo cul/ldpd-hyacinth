@@ -29,6 +29,7 @@ bundle exec rake hyacinth:docker:start # Start docker (which includes Solr, Fedo
 bundle exec rake hyacinth:fedora:reload_cmodels # Import required content models into Fedora (Note: It is safe to ignore any "404 Resource Not Found" output messages encountered during this step. These are expected because the content models do not already exist in Fedora and therefore cannot be found.)
 bundle exec rake hyacinth:development:reset # Runs a bunch of other rake tasks to set up Hyacinth core data, including test projects
 rails s -p 3000 # Start the application using rails server
+echo -e "@fortawesome:registry=https://npm.fontawesome.com/\n//npm.fontawesome.com/:_authToken={YOUR_TOKEN}" > .npmrc # Replace {YOUR_TOKEN} with a FontAwesome Pro token
 yarn install # Install frontend dependencies
 yarn start:dev # Start the Vite server
 ```
