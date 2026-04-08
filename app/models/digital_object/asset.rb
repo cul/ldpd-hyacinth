@@ -106,6 +106,8 @@ class DigitalObject::Asset < DigitalObject::Base
   end
 
   def run_after_save_logic
+    # After a save, clear @import_file_data
+    @import_file_data = {}
     run_derivative_updates_if_necessary
   end
 
@@ -293,20 +295,31 @@ class DigitalObject::Asset < DigitalObject::Base
   end
 
   def regenerate_derivatives!(access_copy:, image_server_cache:)
-    destroy_access_copy! if access_copy
+    destroy_access_copy! && destroy_poster! if access_copy # Poster is derived from access copy, so destroying access means destroying poster
     destroy_image_server_cache! if image_server_cache
     self.perform_derivative_processing = true
     self.save
   end
 
   def destroy_access_copy!
-    access_copy_location_uri = location_uri_for_resource('access')
+    access_copy_location_uri = location_uri_for_resource(ACCESS_RESOURCE_NAME)
     if access_copy_location_uri.present?
       access_copy_storage_object = Hyacinth::Storage.storage_object_for(access_copy_location_uri)
       access_copy_storage_object.delete!
     end
-    if @fedora_object.datastreams['access']
-      @fedora_object.datastreams['access'].delete
+    if @fedora_object.datastreams[ACCESS_RESOURCE_NAME]
+      @fedora_object.datastreams[ACCESS_RESOURCE_NAME].delete
+    end
+  end
+
+  def destroy_poster!
+    poster_location_uri = location_uri_for_resource(POSTER_RESOURCE_NAME)
+    if poster_location_uri.present?
+      poster_storage_object = Hyacinth::Storage.storage_object_for(poster_location_uri)
+      poster_storage_object.delete!
+    end
+    if @fedora_object.datastreams[POSTER_RESOURCE_NAME]
+      @fedora_object.datastreams[POSTER_RESOURCE_NAME].delete
     end
   end
 
@@ -348,7 +361,15 @@ class DigitalObject::Asset < DigitalObject::Base
       # companion_file_path is derived from access copy path since these files need to be next to each other.
       # companion_file_path is the access copy path with the original extension replaced with "vtt".
 
-      access_copy_storage_object = Hyacinth::Storage.storage_object_for(location_uri_for_resource('access'))
+      access_resouce_location_uri = location_uri_for_resource('access')
+      if access_resouce_location_uri.blank?
+        Rails.logger.error(
+          "Skipping access directory serialization of caption companion file for Asset with UUID #{self.uuid} because "\
+          " there no access copy is present.  Access copies must accompany caption files.")
+        next
+      end
+
+      access_copy_storage_object = Hyacinth::Storage.storage_object_for(access_resouce_location_uri)
 
       if access_copy_storage_object.is_a?(Hyacinth::Storage::FileObject)
         local_access_path = access_copy_storage_object.path

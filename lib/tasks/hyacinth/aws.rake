@@ -1,24 +1,32 @@
+require 'aws-sdk-s3'
+
 namespace :hyacinth do
-  namespace :aws do
-    task :restore_archived_s3_objects => :environment do
-      if ENV['PIDS'].present?
-        pids = ENV['PIDS'].split(',')
-      elsif ENV['PIDLIST'].present?
-        pids = open(ENV['PIDLIST'],'r').map(&:strip)
-      else
-        puts 'Error: Please supply a value for PIDS (one or more comma-separated Hyacinth PIDs)'
-        next
-      end
+	namespace :aws do
+		task :restore_archived_s3_objects => :environment do
+			if ENV['PIDS'].present?
+				pids = ENV['PIDS'].split(',')
+			elsif ENV['PIDLIST'].present?
+				pids = open(ENV['PIDLIST'],'r').map(&:strip)
+			else
+				puts 'Error: Please supply a value for PIDS (one or more comma-separated Hyacinth PIDs)'
+				next
+			end
 
-      pids.each_with_index do |pid|
-        print "Checking #{pid}... "
+			size_of_restored_content = 0
+			number_of_objects_restored = 0
 
-        dobj = DigitalObject::Base.find(pid)
-        raise "Only Assets can be restored.  Type of digital object with PID #{pid} is: #{dobj.class.name}" unless dobj.is_a?(DigitalObject::Asset)
+			pids.each_with_index do |pid|
+				print "Checking #{pid}... "
 
-        location_uri = dobj.location_uri_for_resource(DigitalObject::Asset::MAIN_RESOURCE_NAME)
+				dobj = DigitalObject::Base.find(pid)
+				raise "Only Assets can be restored.  Type of digital object with PID #{pid} is: #{dobj.class.name}" unless dobj.is_a?(DigitalObject::Asset)
+
+				location_uri = dobj.location_uri_for_resource(DigitalObject::Asset::MAIN_RESOURCE_NAME)
 				storage_object = Hyacinth::Storage.storage_object_for(location_uri)
+
 				if storage_object.is_a?(Hyacinth::Storage::S3Object)
+					size_of_restored_content += storage_object.size
+					number_of_objects_restored += 1
 					# NOTE: storage_object.s3_object.restore will return nil if the object has not been restored yet,
 					# but it will return a string if a restore operation has already been run on the object and it is
 					# in the process of being restored.
@@ -40,11 +48,11 @@ namespace :hyacinth do
 									# No further configuration is needed.
 									restore_request: {}
 								})
-                if storage_object.s3_object.archive_status == 'ARCHIVE_ACCESS'
-								  puts "---> Object restoration request submitted!  The object should be available within 3-5 hours because it was in the ARCHIVE_ACCESS tier."
-                else
-                  puts "---> Object restoration request submitted!  The object should be available within 12 hours because it was in the DEEP_ARCHIVE_ACCESS tier."
-                end
+								if storage_object.s3_object.archive_status == 'ARCHIVE_ACCESS'
+									puts "---> Object restoration request submitted!  The object should be available within 3-5 hours because it was in the ARCHIVE_ACCESS tier."
+								else
+									puts "---> Object restoration request submitted!  The object should be available within 12 hours because it was in the DEEP_ARCHIVE_ACCESS tier."
+								end
 							rescue Aws::S3::Errors::ServiceError => e
 								puts "---> An unexpected error occurred while attempting to restore the object: #{e.message}"
 							end
@@ -61,7 +69,34 @@ namespace :hyacinth do
 				else
 					puts "Ignoring unknown object type: #{storage_object.class.name}"
 				end
-      end
-    end
-  end
+			end
+
+			puts "Number of objects restored: #{number_of_objects_restored}"
+			puts "Size of restored content : #{size_of_restored_content} bytes"
+		end
+
+		task :generate_presigned_s3_download_url => :environment do
+			unless ENV['bucket_name'].present?
+				puts "Please supply a bucket_name"
+				next
+			end
+			bucket_name = ENV['bucket_name']
+
+			unless ENV['object_key'].present?
+				puts "Please supply an object_key"
+				next
+			end
+			object_key = ENV['object_key']
+
+			current_time = Time.current
+
+			expires_in = 30.seconds
+			presigner = Aws::S3::Presigner.new(client: S3_CLIENT)
+			presigned_url = presigner.presigned_url(:get_object, bucket: bucket_name, key: object_key, expires_in: 30)
+
+			puts "presigned_url: #{presigned_url}"
+			puts "generated at: #{current_time}"
+			puts "expires at: #{current_time + expires_in}"
+		end
+	end
 end
