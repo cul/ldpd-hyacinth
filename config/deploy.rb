@@ -35,7 +35,7 @@ append  :linked_files,
         'config/term_additional_fields.yml',
         'config/uri_service.yml',
         'config/ezid.yml',
-        '.npmrc'
+        '.yarnrc.yml'
 
 # Default value for linked_dirs is []
 append :linked_dirs, 'log', 'tmp/pids', 'node_modules'
