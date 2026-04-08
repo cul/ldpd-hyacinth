@@ -24,7 +24,7 @@ export default function TopNavbar() {
   };
 
   return (
-    <Navbar key={NAVBAR_EXPAND_SIZE} expand={NAVBAR_EXPAND_SIZE} className="bg-body-tertiary mb-3" data-bs-theme="dark">
+    <Navbar key={NAVBAR_EXPAND_SIZE} expand={NAVBAR_EXPAND_SIZE} className="bg-black mb-3" data-bs-theme="dark">
       <Container>
         <Navbar.Brand as={NavLink} to="/">
           <img
