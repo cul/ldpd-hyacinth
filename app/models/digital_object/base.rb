@@ -206,13 +206,12 @@ class DigitalObject::Base
     @obsolete_parent_digital_object_pids << deleted_pid unless @obsolete_parent_digital_object_pids.include?(deleted_pid)
   end
 
-  # This method is only required for when the ResourceIndex doesn't have immediate updates turned on
+  # This is required for when the ResourceIndex doesn't have immediate updates turned on
   def remove_ordered_child_digital_object_pid(digital_object_pid)
     return unless @ordered_child_digital_object_pids.include?(digital_object_pid)
     @ordered_child_digital_object_pids.delete(digital_object_pid)
   end
 
-  # This method is only required for when the ResourceIndex doesn't have immediate updates turned on
   def add_ordered_child_digital_object(new_child)
     return if new_child.nil? || @ordered_child_digital_object_pids.include?(new_child.pid)
 

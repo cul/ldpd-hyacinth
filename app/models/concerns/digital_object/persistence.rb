@@ -121,7 +121,6 @@ module DigitalObject::Persistence
     # after object modification, we can use the lines below,
     # simply re-saving each affected parent.  If not, this is unsafe to use.
     # Resource Update flush settings must be configured in fedora.fcfg.
-
     (removed_parents + new_parents).each do |digital_obj_pid|
       parent_obj = DigitalObject::Base.find_by_pid(digital_obj_pid)
 

@@ -20,30 +20,30 @@ module Hyacinth::Utils::FedoraUtils
     end
   end
 
-  def self.immediate_member_of_parent?(child_fedora_object_pid, parent_fedora_object_pid)
-    immediate_member_query = 'select $pid from <#ri>
-    where
-    $pid <http://purl.oclc.org/NET/CUL/memberOf> <info:fedora/' + parent_fedora_object_pid + '>
-    and
-    $pid <mulgara:is> <info:fedora/' + child_fedora_object_pid + '>'
-    ri_opts = {
-      type: 'tuples',
-      format: 'json',
-      limit: '',
-      stream: 'on',
-      flush: 'true'
-    }
-    search_response = Cul::Hydra::Fedora.repository.find_by_itql(immediate_member_query, ri_opts)
-    search_response = JSON(search_response)
-    num_results = search_response['results'].length
-    if num_results == 1
-      return true
-    elsif num_results == 0
-      return false
-    else
-      raise 'Unexpected result count for risearch.  Search returned ' + num_results.to_s + ' results.'
-    end
-  end
+  # def self.immediate_member_of_parent?(child_fedora_object_pid, parent_fedora_object_pid)
+  #   immediate_member_query = 'select $pid from <#ri>
+  #   where
+  #   $pid <http://purl.oclc.org/NET/CUL/memberOf> <info:fedora/' + parent_fedora_object_pid + '>
+  #   and
+  #   $pid <mulgara:is> <info:fedora/' + child_fedora_object_pid + '>'
+  #   ri_opts = {
+  #     type: 'tuples',
+  #     format: 'json',
+  #     limit: '',
+  #     stream: 'on',
+  #     flush: 'true'
+  #   }
+  #   search_response = Cul::Hydra::Fedora.repository.find_by_itql(immediate_member_query, ri_opts)
+  #   search_response = JSON(search_response)
+  #   num_results = search_response['results'].length
+  #   if num_results == 1
+  #     return true
+  #   elsif num_results == 0
+  #     return false
+  #   else
+  #     raise 'Unexpected result count for risearch.  Search returned ' + num_results.to_s + ' results.'
+  #   end
+  # end
 
   def self.get_or_create_namespace_object(namespace_string)
     namespace_pid = namespace_string + ':namespace'
@@ -63,31 +63,31 @@ module Hyacinth::Utils::FedoraUtils
     namespace_fedora_object
   end
 
-  def self.escape_path_or_uri_for_risearch_query(path_or_uri)
-    path_or_uri.gsub(%q('), %q(\\\')).gsub(%q(:), %q(\\\:))
-  end
+  # def self.escape_path_or_uri_for_risearch_query(path_or_uri)
+  #   path_or_uri.gsub(%q('), %q(\\\')).gsub(%q(:), %q(\\\:))
+  # end
 
-  def self.find_object_pid_by_filesystem_path(full_filesystem_path, active_only = true)
-    query = "select $pid from <#ri> where $pid <http://purl.org/dc/elements/1.1/source> '#{escape_path_or_uri_for_risearch_query(full_filesystem_path)}'"
-    query += " and $pid <info:fedora/fedora-system:def/model#state> <fedora-model:Active>" if active_only
-    ri_opts = {
-      type: 'tuples',
-      format: 'json',
-      limit: '',
-      stream: 'on',
-      flush: 'true'
-    }
-    search_response = Cul::Hydra::Fedora.repository.find_by_itql(query, ri_opts)
-    search_response = JSON(search_response)
-    num_results = search_response['results'].length
-    if num_results == 1
-      return search_response['results'][0]['pid'].gsub('info:fedora/', '')
-    elsif num_results == 0
-      return nil
-    else
-      raise 'Unexpected result count for risearch.  Search returned ' + num_results.to_s + ' results.'
-    end
-  end
+  # def self.find_object_pid_by_filesystem_path(full_filesystem_path, active_only = true)
+  #   query = "select $pid from <#ri> where $pid <http://purl.org/dc/elements/1.1/source> '#{escape_path_or_uri_for_risearch_query(full_filesystem_path)}'"
+  #   query += " and $pid <info:fedora/fedora-system:def/model#state> <fedora-model:Active>" if active_only
+  #   ri_opts = {
+  #     type: 'tuples',
+  #     format: 'json',
+  #     limit: '',
+  #     stream: 'on',
+  #     flush: 'true'
+  #   }
+  #   search_response = Cul::Hydra::Fedora.repository.find_by_itql(query, ri_opts)
+  #   search_response = JSON(search_response)
+  #   num_results = search_response['results'].length
+  #   if num_results == 1
+  #     return search_response['results'][0]['pid'].gsub('info:fedora/', '')
+  #   elsif num_results == 0
+  #     return nil
+  #   else
+  #     raise 'Unexpected result count for risearch.  Search returned ' + num_results.to_s + ' results.'
+  #   end
+  # end
 
   def self.datastream_content(fedora_object_pid, dsid)
     fedora_object = ActiveFedora::Base.find(fedora_object_pid)
