@@ -38,7 +38,7 @@ append  :linked_files,
         '.yarnrc.yml'
 
 # Default value for linked_dirs is []
-append :linked_dirs, 'log', 'tmp/pids', 'node_modules'
+append :linked_dirs, 'log', 'tmp/pids'
 
 set :passenger_restart_with_touch, true
 
