@@ -1,13 +1,14 @@
-import { Suspense, useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 import { Input } from '@/components/ui/form';
 import { MutationErrorAlert, MutationSuccessAlert } from '@/components/ui/mutation-alerts';
 import { useCreateXmlDatastream } from '../api/create-xml-datastream';
-// import { useUpdateXmlDatastream } from '../api/update-xml-datastream';
+import { useUpdateXmlDatastream } from '../api/update-xml-datastream';
 import { XmlDatastream } from '@/types/api';
 import { useNotifications } from '@/stores/notifications-store';
 import { Editor } from './editor'
+import type { editor } from 'monaco-editor';
 
 type XmlDatastreamFormProps = {
   xmlDatastream?: XmlDatastream;
@@ -17,16 +18,7 @@ export const XmlDatastreamForm = ({ xmlDatastream }: XmlDatastreamFormProps) => 
   const navigate = useNavigate();
   const addNotification = useNotifications(state => state.addNotification);
 
-  const testVal = "{\n  \"render_if\": {\n    \"present\": [\n      \"restriction_on_access\"\n    ]\n  },\n  \"element\": \"xacml:Policy\",\n  \"attrs\": {\n    \"xmlns:xacml\": \"urn:oasis:names:tc:xacml:3.0:core:schema:wd-17\",\n    \"xmlns:xsi\": \"http://www.w3.org/2001/XMLSchema-instance\",\n    \"PolicyId\": \"policy:{{$uuid}}\",\n    \"RuleCombiningAlgId\": \"urn:oasis:names:tc:xacml:3.0:rule-combining-algorithm:deny-unless-permit\"\n  },\n  \"content\": [\n    {\n      \"element\": \"xacml:Target\",\n      \"content\": [\n        {\n          \"element\": \"xacml:AnyOf\",\n          \"content\": [\n            {\n              \"element\": \"xacml:AllOf\",\n              \"content\": [\n                {\n                  \"element\": \"xacml:Match\",\n                  \"attrs\": {\n                    \"MatchId\": \"urn:oasis:names:tc:xacml:1.0:function:string-equal\"\n                  },\n                  \"content\": [\n                    {\n                      \"element\": \"xacml:AttributeValue\",\n                      \"attrs\": {\n                        \"DataType\": \"http://www.w3.org/2001/XMLSchema#string\"\n                      },\n                      \"content\": {\n                        \"val\": \"GET\"\n                      }\n                    },\n                    {\n                      \"element\": \"xacml:AttributeDesignator\",\n                      \"attrs\": {\n                        \"MustBePresent\": \"false\",\n                        \"Category\": \"urn:oasis:names:tc:xacml:3.0:attribute-category:action\",\n                        \"AttributeId\": \"urn:oasis:names:tc:xacml:1.0:action:action-id\",\n                        \"DataType\": \"http://www.w3.org/2001/XMLSchema#string\"\n                      }\n                    }\n                  ]\n                }\n              ]\n            }\n          ]\n        }\n      ]\n    },\n    {\n      \"yield\": \"restriction_on_access\"\n    }\n  ]\n}"
-
-
-  const [formData, setFormData] = useState({
-    stringKey: xmlDatastream?.stringKey || '',
-    displayLabel: xmlDatastream?.displayLabel || '',
-    xmlTranslation: xmlDatastream?.xmlTranslation || '',
-  });
-
-  // const updateXmlDatastreamMutation = useUpdateXmlDatastream();
+  const updateXmlDatastreamMutation = useUpdateXmlDatastream();
   const createXmlDatastreamMutation = useCreateXmlDatastream({
     mutationConfig: {
       onSuccess: (data) => {
@@ -41,9 +33,27 @@ export const XmlDatastreamForm = ({ xmlDatastream }: XmlDatastreamFormProps) => 
   });
 
   // Get the appropriate mutation and field errors based on mode
-  // const mutation = xmlDatastream ? updateXmlDatastreamMutation : createXmlDatastreamMutation;
-  const mutation = createXmlDatastreamMutation;
+  const mutation = xmlDatastream ? updateXmlDatastreamMutation : createXmlDatastreamMutation;
   const fieldErrors = mutation.error?.response?.errors || {};
+
+  const [formData, setFormData] = useState({
+    stringKey: xmlDatastream?.stringKey || '',
+    displayLabel: xmlDatastream?.displayLabel || '',
+    xmlTranslation: xmlDatastream?.xmlTranslation || '',
+  });
+
+  const [jsonMarkers, setJsonMarkers] = useState<editor.IMarker[]>([]);
+  console.log(jsonMarkers)
+
+  // JSON is considered valid when the field is empty or when Monaco reports no markers
+  const isJsonValid = formData.xmlTranslation === '' || jsonMarkers.length === 0;
+
+  const handleEditorChange = useCallback((value: string) => {
+    if (mutation.isError) mutation.reset();
+
+    setFormData(prev => ({ ...prev, xmlTranslation: value }));
+  }, [mutation]);
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,11 +61,11 @@ export const XmlDatastreamForm = ({ xmlDatastream }: XmlDatastreamFormProps) => 
       ...formData,
     };
 
-    // if (xmlDatastream) {
-    //   updateXmlDatastreamMutation.mutate({ xmlDatastreamStringKey: xmlDatastream.stringKey, data: payload });
-    // } else {
-    createXmlDatastreamMutation.mutate({ data: payload });
-    // }
+    if (xmlDatastream) {
+      updateXmlDatastreamMutation.mutate({ xmlDatastreamStringKey: xmlDatastream.stringKey, data: payload });
+    } else {
+      createXmlDatastreamMutation.mutate({ data: payload });
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,10 +130,29 @@ export const XmlDatastreamForm = ({ xmlDatastream }: XmlDatastreamFormProps) => 
             required
           />
         </Row>
-        {/* WIP, change to a controlled input */}
         <Editor
-          value={formData.xmlTranslation || testVal}
+          value={formData.xmlTranslation}
+          onChange={handleEditorChange}
+          onValidate={setJsonMarkers}
         />
+        {!isJsonValid && (
+          <div className="text-danger mt-1">
+            <small>XML Translation must be valid JSON.</small>
+          </div>
+        )}
+
+        <Row className="mb-4 mt-2">
+          <Col md={7}>
+            <Button
+              variant="primary"
+              type="submit"
+              disabled={mutation.isPending || !isJsonValid}
+              className="px-3"
+            >
+              {mutation.isPending ? 'Saving...' : xmlDatastream ? 'Save' : 'Create a New XML Datastream'}
+            </Button>
+          </Col>
+        </Row>
       </Form>
     </>
   );

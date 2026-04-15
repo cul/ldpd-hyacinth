@@ -1,9 +1,10 @@
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
 import { QueryConfig } from '@/lib/react-query';
+import { XmlDatastream } from '@/types/api';
 
-export const getXmlDatastreams = async (): Promise<{ xmlDatastreams: unknown[] }>=> {
-  const res = await api.get<{ xmlDatastreams: unknown[] }>('/xml_datastreams');
+export const getXmlDatastreams = async (): Promise<{ xmlDatastreams: XmlDatastream[] }> => {
+  const res = await api.get<{ xmlDatastreams: XmlDatastream[] }>('/xml_datastreams');
   return res;
 };
 
