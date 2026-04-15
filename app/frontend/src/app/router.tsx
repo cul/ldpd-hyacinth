@@ -97,6 +97,16 @@ export const createAppRouter = (queryClient: QueryClient) =>
           ]
         },
         {
+          path: 'xml-datastreams',
+          ErrorBoundary: AuthorizationErrorBoundary, // Catch authorization errors from loaders
+          children: [
+            {
+              index: true,
+              lazy: () => import('./routes/xml-datastreams').then(convert(queryClient)),
+            },
+          ],
+        },
+        {
           path: 'settings',
           children: [
             {

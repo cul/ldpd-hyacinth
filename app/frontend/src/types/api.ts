@@ -39,6 +39,13 @@ export interface PublishTarget {
   projects: Project[];
 }
 
+export interface XmlDatastream {
+  stringKey: string;
+  displayLabel: string;
+  xmlTranslation: string;
+}
+
+
 /* 
 Payload types
 */
