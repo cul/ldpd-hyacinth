@@ -20,13 +20,24 @@ class Api::V2::XmlDatastreamsController < Api::V2::BaseController
   def update
     authorize! :update, @xml_datastream
 
-    # TODO: Implement update logic
+    if @xml_datastream.update(xml_datastream_params)
+      render_camelized_json({ xml_datastream: xml_datastream_json(@xml_datastream) })
+    else
+      render_camelized_json({ errors: @xml_datastream.errors.full_messages }, :unprocessable_entity)
+    end
   end
 
+  # POST /api/v2/xml_datastreams
   def create
     authorize! :create, XmlDatastream
 
-    # TODO: Implement create logic
+    @xml_datastream = XmlDatastream.new(xml_datastream_params)
+
+    if @xml_datastream.save
+      render_camelized_json({ xml_datastream: xml_datastream_json(@xml_datastream) }, :created)
+    else
+      render_camelized_json({ errors: @xml_datastream.errors.full_messages }, :unprocessable_entity)
+    end
   end
 
 
@@ -42,9 +53,8 @@ class Api::V2::XmlDatastreamsController < Api::V2::BaseController
     end
 
     def xml_datastream_params
-      #  TODO
+      params.require(:xml_datastream).permit(:string_key, :display_label, :xml_translation)
     end
-
 
     def set_xml_datastream_by_string_key
       @xml_datastream = XmlDatastream.find_by!(string_key: params[:string_key])

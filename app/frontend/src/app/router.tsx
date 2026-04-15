@@ -104,6 +104,10 @@ export const createAppRouter = (queryClient: QueryClient) =>
               index: true,
               lazy: () => import('./routes/xml-datastreams').then(convert(queryClient)),
             },
+            {
+              path: 'new',
+              lazy: () => import('./routes/xml-datastreams/new').then(convert(queryClient)),
+            }
           ],
         },
         {
