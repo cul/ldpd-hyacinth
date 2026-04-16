@@ -7,7 +7,7 @@ import { useCreateXmlDatastream } from '../api/create-xml-datastream';
 import { useUpdateXmlDatastream } from '../api/update-xml-datastream';
 import { XmlDatastream } from '@/types/api';
 import { useNotifications } from '@/stores/notifications-store';
-import { Editor } from './editor'
+import { JSONEditor } from '@/components/ui/json-editor/json-editor'
 import type { editor } from 'monaco-editor';
 
 type XmlDatastreamFormProps = {
@@ -110,13 +110,6 @@ export const XmlDatastreamForm = ({ xmlDatastream }: XmlDatastreamFormProps) => 
             disabled={!!xmlDatastream}
             required
           />
-          {!xmlDatastream && (
-            <div className="text-muted">
-              <small>
-                Can only contain lowercase letters, numbers, and underscores.
-              </small>
-            </div>
-          )}
         </Row>
         <Row className="mb-3">
           <Input
@@ -130,17 +123,20 @@ export const XmlDatastreamForm = ({ xmlDatastream }: XmlDatastreamFormProps) => 
             required
           />
         </Row>
-        <Editor
-          value={formData.xmlTranslation}
-          onChange={handleEditorChange}
-          onValidate={setJsonMarkers}
-        />
-        {!isJsonValid && (
-          <div className="text-danger mt-1">
-            <small>XML Translation must be valid JSON.</small>
-          </div>
-        )}
-
+        <Row className="mb-3">
+          <Form.Label>XML Translation</Form.Label>
+          <JSONEditor
+            value={formData.xmlTranslation}
+            onChange={handleEditorChange}
+            onValidate={setJsonMarkers}
+            className={!isJsonValid ? 'border-danger' : ''}
+          />
+          {!isJsonValid && (
+            <div className="text-danger mt-1">
+              <small>XML Translation must be valid JSON.</small>
+            </div>
+          )}
+        </Row>
         <Row className="mb-4 mt-2">
           <Col md={7}>
             <Button

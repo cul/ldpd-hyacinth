@@ -6,8 +6,7 @@ import { Spinner } from 'react-bootstrap';
 
 // Layouts and Components
 import MainLayout from '@/components/layouts/main-layout';
-import UsersLayout from '@/components/layouts/users-layout';
-import PublishTargetsLayout from '@/components/layouts/publish-targets-layout';
+import FeatureLayout from '@/components/layouts/feature-layout';
 import UserLayout from '@/components/layouts/user-layout';
 import { AuthorizationErrorBoundary } from '@/components/errors/authorization-error';
 
@@ -50,7 +49,7 @@ export const createAppRouter = (queryClient: QueryClient) =>
         },
         {
           path: 'users',
-          Component: UsersLayout, // Wraps all users routes with shared navigation
+          Component: () => <FeatureLayout featureName="User"/>, // Wraps all users routes with shared navigation
           ErrorBoundary: AuthorizationErrorBoundary, // Catch authorization errors from loaders
           children: [
             {
@@ -79,7 +78,7 @@ export const createAppRouter = (queryClient: QueryClient) =>
         },
         {
           path: 'publish-targets',
-          Component: PublishTargetsLayout, // Wraps all publish targets routes with shared navigation
+          Component: () => <FeatureLayout featureName="Publish Target" />, // Wraps all publish targets routes with shared navigation
           ErrorBoundary: AuthorizationErrorBoundary, // Catch authorization errors from loaders
            children: [
             {
@@ -99,10 +98,15 @@ export const createAppRouter = (queryClient: QueryClient) =>
         {
           path: 'xml-datastreams',
           ErrorBoundary: AuthorizationErrorBoundary, // Catch authorization errors from loaders
+          Component: () => <FeatureLayout featureName="XML Datastream" />,
           children: [
             {
               index: true,
               lazy: () => import('./routes/xml-datastreams').then(convert(queryClient)),
+            },
+            {
+              path: ':xmlDatastreamStringKey/edit',
+              lazy: () => import('./routes/xml-datastreams/edit').then(convert(queryClient)),
             },
             {
               path: 'new',
