@@ -7,7 +7,7 @@ import {
   within,
 } from '@/testing/test-utils';
 import UsersList from '@/features/users/components/users-list';
-import UsersLayout from '@/components/layouts/users-layout';
+import FeatureLayout from '@/components/layouts/feature-layout';
 
 beforeAll(() => {
   vi.spyOn(console, 'error').mockImplementation(() => { });
@@ -105,7 +105,7 @@ describe('Users Index Route', () => {
 
     mockApiV2('get', '/users', { users: [user] });
 
-    await renderApp(<UsersLayout />, {  url: '/users' });
+    await renderApp(<FeatureLayout featureName="User" />, {  url: '/users' });
 
     const createButton = await screen.findByRole('button', { name: /create new user/i });
 
