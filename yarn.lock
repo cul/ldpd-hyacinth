@@ -783,12 +783,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fortawesome/pro-regular-svg-icons@npm:6.7.2":
+"@fortawesome/free-solid-svg-icons@npm:6.7.2":
   version: 6.7.2
-  resolution: "@fortawesome/pro-regular-svg-icons@npm:6.7.2"
+  resolution: "@fortawesome/free-solid-svg-icons@npm:6.7.2"
   dependencies:
     "@fortawesome/fontawesome-common-types": "npm:6.7.2"
-  checksum: 10c0/23b7ce4f18b8751025431020d4c59344919794ebf0ace7d36ed2d50b5b78b10ed18dcf6e3951a3d80a3718769b5a862b84642f64389483edd0e30f825c04a735
+  checksum: 10c0/e900f3bb7b7d821421f11439ff78cd2b3c98ca31e848e1afebf7caa578d29a31fb6cf8ef283d4df342de777126a71fcbb154dd395b9d9ab6914a40a86df81413
   languageName: node
   linkType: hard
 
@@ -3544,7 +3544,7 @@ __metadata:
     "@eslint/js": "npm:^9.39.2"
     "@fortawesome/fontawesome-svg-core": "npm:6.7.2"
     "@fortawesome/free-regular-svg-icons": "npm:6.7.2"
-    "@fortawesome/pro-regular-svg-icons": "npm:6.7.2"
+    "@fortawesome/free-solid-svg-icons": "npm:6.7.2"
     "@fortawesome/react-fontawesome": "npm:^3.3.0"
     "@popperjs/core": "npm:^2.11.8"
     "@tanstack/react-query": "npm:^5.90.12"

@@ -31,23 +31,11 @@ bundle exec rake hyacinth:fedora:reload_cmodels # Import required content models
 bundle exec rake hyacinth:development:reset # Runs a bunch of other rake tasks to set up Hyacinth core data, including test projects
 ```
 
-Then create a `.yarnrc.yml` file by running this command:
+Optionally, create a `.yarnrc.yml` file if you want to change the default Yarn nodeLinker setting:
 ```
-echo -e "npmScopes:\n  fortawesome:\n    npmAlwaysAuth: true\n    npmAuthToken: {YOUR_TOKEN}\n    npmRegistryServer: https://npm.fontawesome.com/" > .yarnrc.yml
-```
-Or manually create a `.yarnrc.yml` file and copy/paste these lines into it:
-```
-# Uncomment the line below if you want to generate a node_modules directory instead of using Yarn PnP (which can resolve un-findable module warnings in some IDEs).
+# Uncomment the line below to generate a node_modules directory instead of using Yarn PnP.  This can resolve un-findable module warnings in some IDEs.
 # nodeLinker: node-modules
-
-npmScopes:
-  fortawesome:
-    npmAlwaysAuth: true
-    npmAuthToken: {YOUR_TOKEN}
-    npmRegistryServer: https://npm.fontawesome.com/
 ```
-
-In your `.yarnrc.yml` file, replace `{YOUR_TOKEN}` with your FontAwesome Pro token.
 
 Then install JavaScript dependenices and start the Vite dev server:
 

@@ -2,10 +2,12 @@ import { Toast } from "react-bootstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleCheck,
-  faOctagonXmark,
+  faCircleXmark,
+} from "@fortawesome/free-regular-svg-icons";
+import {
   faTriangleExclamation,
-  faCircleInfo,
-} from "@fortawesome/pro-regular-svg-icons";
+  faCircleInfo
+} from "@fortawesome/free-solid-svg-icons";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 type NotificationType = "success" | "error" | "warning" | "info";
@@ -19,7 +21,7 @@ const VARIANT_MAP: Record<NotificationType, string> = {
 
 const ICON_MAP: Record<NotificationType, IconDefinition> = {
   success: faCircleCheck,
-  error: faOctagonXmark,
+  error: faCircleXmark,
   warning: faTriangleExclamation,
   info: faCircleInfo,
 };
