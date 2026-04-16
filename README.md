@@ -19,6 +19,7 @@ Hyacinth 2.7.x has the following dependencies:
 Note: The Fedora ResourceIndex module must be turned on.  It is on by default in the docker image used by Hyacinth in development and test environments.
 
 ### First Time Setup:
+
 ```sh
 git clone https://github.com/cul/hyacinth.git # Clone the repo
 cd hyacinth # Switch to the application directory
@@ -28,10 +29,37 @@ bundle exec rake hyacinth:docker:setup_config_files # Set up required Docker con
 bundle exec rake hyacinth:docker:start # Start docker (which includes Solr, Fedora, and Redis)
 bundle exec rake hyacinth:fedora:reload_cmodels # Import required content models into Fedora (Note: It is safe to ignore any "404 Resource Not Found" output messages encountered during this step. These are expected because the content models do not already exist in Fedora and therefore cannot be found.)
 bundle exec rake hyacinth:development:reset # Runs a bunch of other rake tasks to set up Hyacinth core data, including test projects
-rails s -p 3000 # Start the application using rails server
-echo -e "@fortawesome:registry=https://npm.fontawesome.com/\n//npm.fontawesome.com/:_authToken={YOUR_TOKEN}" > .npmrc # Replace {YOUR_TOKEN} with a FontAwesome Pro token
+```
+
+Then create a `.yarnrc.yml` file by running this command:
+```
+echo -e "npmScopes:\n  fortawesome:\n    npmAlwaysAuth: true\n    npmAuthToken: {YOUR_TOKEN}\n    npmRegistryServer: https://npm.fontawesome.com/" > .yarnrc.yml
+```
+Or manually create a `.yarnrc.yml` file and copy/paste these lines into it:
+```
+# Uncomment the line below if you want to generate a node_modules directory instead of using Yarn PnP (which can resolve un-findable module warnings in some IDEs).
+# nodeLinker: node-modules
+
+npmScopes:
+  fortawesome:
+    npmAlwaysAuth: true
+    npmAuthToken: {YOUR_TOKEN}
+    npmRegistryServer: https://npm.fontawesome.com/
+```
+
+In your `.yarnrc.yml` file, replace `{YOUR_TOKEN}` with your FontAwesome Pro token.
+
+Then install JavaScript dependenices and start the Vite dev server:
+
+```
 yarn install # Install frontend dependencies
 yarn start:dev # Start the Vite server
+```
+
+And in a separate terminal window, start the Rails server:
+
+```
+rails s -p 3000 # Start the application using rails server
 ```
 
 The setup above should start up a working instance of the application, but you may run into issues if you have other services running that use the same ports as Hyacinth and its Docker dependencies.  Check out `docker/docker-compose.development.yml` and `docker/docker-compose.test.yml` to see what ports are used (or if you haven't run the `hyacinth:docker:config_files` rake task yet, check out `docker/templates/docker-compose.development.yml` and `docker/templates/docker-compose.test.yml`).  You can modify these ports if you run into issues -- but if you do, you'll also need to update corresponding config/*.yml files to reference the updated ports.

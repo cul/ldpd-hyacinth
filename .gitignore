@@ -76,3 +76,8 @@ node_modules
 # https://vitejs.dev/guide/env-and-mode.html#env-files
 *.local
 .vite
+
+# Yarn files (NOTE: we are not currently using yarn "Zero-Installs")
+.yarnrc.yml
+.pnp.*
+.yarn/*
