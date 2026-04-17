@@ -21,7 +21,8 @@ namespace :hyacinth do
 				dobj = DigitalObject::Base.find(pid)
 				raise "Only Assets can be restored.  Type of digital object with PID #{pid} is: #{dobj.class.name}" unless dobj.is_a?(DigitalObject::Asset)
 
-				location_uri = dobj.location_uri_for_resource(DigitalObject::Asset::MAIN_RESOURCE_NAME)
+				location_uri = dobj.location_uri_for_resource(DigitalObject::Asset::SERVICE_RESOURCE_NAME) # Try service first
+				location_uri ||= dobj.location_uri_for_resource(DigitalObject::Asset::MAIN_RESOURCE_NAME) # Fall back to main if service is absent
 				storage_object = Hyacinth::Storage.storage_object_for(location_uri)
 
 				if storage_object.is_a?(Hyacinth::Storage::S3Object)
