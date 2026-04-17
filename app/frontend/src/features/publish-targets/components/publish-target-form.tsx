@@ -9,7 +9,7 @@ import { PublishTarget } from '@/types/api';
 import { ProjectsForTargetSelector } from './projects-for-target-selector';
 import { DeletePublishTargetModal } from './delete-publish-target-modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrash } from '@fortawesome/pro-regular-svg-icons';
+import { faTrashCan } from '@fortawesome/free-regular-svg-icons';
 import { useNotifications } from '@/stores/notifications-store';
 
 type PublishTargetFormProps = {
@@ -186,7 +186,7 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
             variant="outline-danger"
             onClick={() => setShowDeleteModal(true)}
           >
-            <FontAwesomeIcon icon={faTrash} className="me-2" />
+            <FontAwesomeIcon icon={faTrashCan} className="me-2" />
             Delete {publishTarget.displayLabel}
           </Button>
 
