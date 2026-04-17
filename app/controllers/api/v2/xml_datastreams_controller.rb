@@ -6,7 +6,7 @@ class Api::V2::XmlDatastreamsController < Api::V2::BaseController
   # GET /api/v2/xml_datastreams
   def index
     authorize! :index, XmlDatastream
-    @xml_datastreams = XmlDatastream.all
+    @xml_datastreams = XmlDatastream.all.order(:display_label)
     render_camelized_json({ xml_datastreams: @xml_datastreams.map { |xml_datastream| xml_datastream_json(xml_datastream) } })
   end
 
@@ -23,7 +23,7 @@ class Api::V2::XmlDatastreamsController < Api::V2::BaseController
     if @xml_datastream.update(xml_datastream_params)
       render_camelized_json({ xml_datastream: xml_datastream_json(@xml_datastream) })
     else
-      render_camelized_json({ errors: @xml_datastream.errors.full_messages }, :unprocessable_entity)
+      render_camelized_json({ errors: @xml_datastream.errors.full_messages }, status: :unprocessable_entity)
     end
   end
 
@@ -34,12 +34,11 @@ class Api::V2::XmlDatastreamsController < Api::V2::BaseController
     @xml_datastream = XmlDatastream.new(xml_datastream_params)
 
     if @xml_datastream.save
-      render_camelized_json({ xml_datastream: xml_datastream_json(@xml_datastream) }, :created)
+      render_camelized_json({ xml_datastream: xml_datastream_json(@xml_datastream) }, status: :created)
     else
-      render_camelized_json({ errors: @xml_datastream.errors.full_messages }, :unprocessable_entity)
+      render_camelized_json({ errors: @xml_datastream.errors.full_messages }, status: :unprocessable_entity)
     end
   end
-
 
   private
 

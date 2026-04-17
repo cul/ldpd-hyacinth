@@ -8,9 +8,7 @@ export const clientLoader = (queryClient: QueryClient) => async () => {
 };
 
 const XmlDatastreamsNewRoute = () => {
-  return (
-    <XmlDatastreamForm />
-  );
+  return <XmlDatastreamForm />
 };
 
 export default XmlDatastreamsNewRoute;

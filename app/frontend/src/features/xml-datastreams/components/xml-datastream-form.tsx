@@ -39,14 +39,11 @@ export const XmlDatastreamForm = ({ xmlDatastream }: XmlDatastreamFormProps) => 
   const [formData, setFormData] = useState({
     stringKey: xmlDatastream?.stringKey || '',
     displayLabel: xmlDatastream?.displayLabel || '',
-    xmlTranslation: xmlDatastream?.xmlTranslation || '',
+    xmlTranslation: xmlDatastream?.xmlTranslation || '{}',
   });
 
   const [jsonMarkers, setJsonMarkers] = useState<editor.IMarker[]>([]);
-  console.log(jsonMarkers)
-
-  // JSON is considered valid when the field is empty or when Monaco reports no markers
-  const isJsonValid = formData.xmlTranslation === '' || jsonMarkers.length === 0;
+  const isJsonValid = jsonMarkers.length === 0;
 
   const handleEditorChange = useCallback((value: string) => {
     if (mutation.isError) mutation.reset();

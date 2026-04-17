@@ -17,7 +17,7 @@ import { AUTH_QUERY_KEY } from '@/lib/auth';
 import { Notifications } from '@/components/ui/notifications/notifications';
 import type { User } from '@/types/api';
 
-export { buildUser, buildProjectPermission } from './data-generators';
+export { buildUser, buildProjectPermission, buildXmlDatastream } from './data-generators';
 export { mockApiV2 } from './mock-api';
 
 const createTestQueryClient = () =>

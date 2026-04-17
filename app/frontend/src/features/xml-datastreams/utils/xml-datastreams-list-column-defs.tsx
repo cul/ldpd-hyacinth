@@ -6,7 +6,7 @@ const columnHelper = createColumnHelper<XmlDatastream>()
 
 export const columnDefs = [
   columnHelper.accessor('displayLabel', {
-    header: 'Name',
+    header: 'Display Label',
     cell: ({ row }) => (
       <Link
         to={{ pathname: `/xml-datastreams/${row.original.stringKey}/edit` }}
