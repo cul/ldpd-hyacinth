@@ -173,6 +173,7 @@ module DigitalObject::Persistence
             @parent_digital_object_pids.each do |parent_digital_object_pid|
               obj = DigitalObject::Base.find(parent_digital_object_pid)
               remove_parent_digital_object_by_pid(obj.pid)
+            rescue Hyacinth::Exceptions::DigitalObjectNotFoundError # If the parent can't be found, there's nothing to do here
             end
           end
 
