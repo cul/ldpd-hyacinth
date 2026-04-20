@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_03_13_175337) do
+ActiveRecord::Schema[7.0].define(version: 2026_04_20_174506) do
   create_table "archived_assignments", force: :cascade do |t|
     t.integer "original_assignment_id", null: false
     t.string "digital_object_pid", null: false
@@ -299,11 +299,12 @@ ActiveRecord::Schema[7.0].define(version: 2026_03_13_175337) do
   end
 
   create_table "xml_datastreams", force: :cascade do |t|
-    t.string "string_key", limit: 64
-    t.string "display_label"
-    t.text "xml_translation"
+    t.string "string_key", limit: 64, null: false
+    t.string "display_label", null: false
+    t.text "xml_translation", null: false
     t.datetime "created_at", precision: nil
     t.datetime "updated_at", precision: nil
+    t.index ["string_key"], name: "index_xml_datastreams_on_string_key", unique: true
   end
 
   add_foreign_key "csv_exports", "users"

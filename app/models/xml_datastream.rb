@@ -1,4 +1,11 @@
 class XmlDatastream < ApplicationRecord
+  validates :string_key, presence: true, uniqueness: true, format: {
+    with: /\A[a-zA-Z]+\z/,
+    message: 'only allows letters (a-z, A-Z)'
+  }
+  validates :display_label, presence: true
+  validates :xml_translation, presence: true
+
   validate :validate_json_fields
   before_save :prettify_json
 

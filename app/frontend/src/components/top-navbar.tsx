@@ -54,7 +54,7 @@ export default function TopNavbar() {
               <NavDropdown title="Manage">
                 <Authorization allowedRoles={[ROLES.ADMIN]}>
                   <NavDropdown.Item href="/dynamic_fields">Dynamic Fields</NavDropdown.Item>
-                  <NavDropdown.Item href="/xml_datastreams">
+                  <NavDropdown.Item as={NavLink} to="/xml-datastreams" end>
                     XML Datastreams
                   </NavDropdown.Item>
                   <NavDropdown.Item href="/dynamic_field_group_categories">

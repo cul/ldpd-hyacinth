@@ -1,4 +1,4 @@
-import type { ProjectPermission, User } from '@/types/api';
+import type { ProjectPermission, User, XmlDatastream } from '@/types/api';
 
 // Generate user
 const USER_DEFAULTS: User = {
@@ -42,6 +42,20 @@ const PROJECT_PERMISSION_DEFAULTS: ProjectPermission = {
 export const buildProjectPermission = (overrides?: Partial<ProjectPermission>): ProjectPermission => {
   return {
     ...PROJECT_PERMISSION_DEFAULTS,
+    ...overrides,
+  };
+}
+
+// Generate XML Datastream
+const XML_DATASTREAM_DEFAULTS: XmlDatastream = {
+  stringKey: 'test-datastream',
+  displayLabel: 'Test Datastream',
+  xmlTranslation: '{}',
+};
+
+export const buildXmlDatastream = (overrides?: Partial<XmlDatastream>): XmlDatastream => {
+  return {
+    ...XML_DATASTREAM_DEFAULTS,
     ...overrides,
   };
 }
