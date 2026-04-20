@@ -23,7 +23,7 @@ class Api::V2::XmlDatastreamsController < Api::V2::BaseController
     if @xml_datastream.update(xml_datastream_params)
       render_camelized_json({ xml_datastream: xml_datastream_json(@xml_datastream) })
     else
-      render_camelized_json({ errors: @xml_datastream.errors.full_messages }, status: :unprocessable_entity)
+      render_camelized_json({ errors: format_errors(@xml_datastream.errors) }, status: :unprocessable_entity)
     end
   end
 
@@ -36,7 +36,7 @@ class Api::V2::XmlDatastreamsController < Api::V2::BaseController
     if @xml_datastream.save
       render_camelized_json({ xml_datastream: xml_datastream_json(@xml_datastream) }, status: :created)
     else
-      render_camelized_json({ errors: @xml_datastream.errors.full_messages }, status: :unprocessable_entity)
+      render_camelized_json({ errors: format_errors(@xml_datastream.errors) }, status: :unprocessable_entity)
     end
   end
 
