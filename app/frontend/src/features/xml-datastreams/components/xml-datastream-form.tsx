@@ -127,6 +127,7 @@ export const XmlDatastreamForm = ({ xmlDatastream }: XmlDatastreamFormProps) => 
             onChange={handleEditorChange}
             onValidate={setJsonMarkers}
             className={!isJsonValid ? 'border-danger' : ''}
+            ariaLabel="XML Translation"
           />
           {!isJsonValid && (
             <div className="text-danger mt-1">

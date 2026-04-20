@@ -6,9 +6,10 @@ type JSONEditorProps = {
   onChange: (value: string) => void;
   onValidate?: OnValidate;
   className?: string;
+  ariaLabel?: string;
 };
 
-export const JSONEditor = ({ value, onChange, onValidate, className }: JSONEditorProps) => {
+export const JSONEditor = ({ value, onChange, onValidate, className, ariaLabel }: JSONEditorProps) => {
   return (
     <Editor
       className={`border w-100 ${className ?? ''}`}
@@ -21,6 +22,7 @@ export const JSONEditor = ({ value, onChange, onValidate, className }: JSONEdito
       options={{
         minimap: { enabled: false },
         fontSize: 14,
+        ariaLabel: ariaLabel
       }}
     />
   );

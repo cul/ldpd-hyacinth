@@ -8,16 +8,9 @@ import {
 } from '@/testing/test-utils';
 import XmlDatastreamsNewRoute from '@/app/routes/xml-datastreams/new';
 
-// Mock Monaco Editor since it doesn't work in jsdom
-vi.mock('@monaco-editor/react', () => ({
-  Editor: ({ value, onChange, onValidate, ...props }: any) => (
-    <textarea
-      data-testid="json-editor"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-    />
-  ),
-}));
+vi.mock('@monaco-editor/react', async () => {
+  return await import('@/testing/mocks/json-editor');
+});
 
 beforeAll(() => {
   vi.spyOn(console, 'error').mockImplementation(() => { });
@@ -35,7 +28,7 @@ describe('XML Datastreams New Route', () => {
   it('should render an empty xml datastream creation form', async () => {
     expect(screen.getByLabelText(/string key/i)).toHaveValue('');
     expect(screen.getByLabelText(/display label/i)).toHaveValue('');
-    expect(screen.getByTestId('json-editor')).toHaveValue('{}');
+    expect(screen.getByRole('textbox', { name: 'XML Translation' })).toHaveValue('{}');
   });
 
   it('should keep the String Key field enabled in creation mode', async () => {
