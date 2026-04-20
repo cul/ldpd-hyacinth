@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         ruby-version: ['3.3.7']
-        node: ['20']
+        node: ['22']
     env:
       RAILS_ENV: test
       NOKOGIRI_USE_SYSTEM_LIBRARIES: true
@@ -39,9 +39,10 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-      - run: npm install -g yarn
-      - name: Set up .npmrc
-        run: echo -e "@fortawesome:registry=https://npm.fontawesome.com/\n//npm.fontawesome.com/:_authToken=${{secrets.FONT_AWESOME_TOKEN}}" > .npmrc
+      - run: corepack enable
+      - name: Set up .yarnrc.yml
+        run: >
+          echo -e "npmScopes:\n  fortawesome:\n    npmAlwaysAuth: true\n    npmAuthToken: ${{secrets.FONT_AWESOME_TOKEN}}\n    npmRegistryServer: https://npm.fontawesome.com/" > .yarnrc.yml
       - run: yarn install
       - name: Run frontend tests
         run: yarn test --run

@@ -56,5 +56,6 @@
     "sass": "^1.96.0",
     "video.js": "^7.17.0",
     "zustand": "^5.0.12"
-  }
+  },
+  "packageManager": "yarn@4.13.0"
 }
