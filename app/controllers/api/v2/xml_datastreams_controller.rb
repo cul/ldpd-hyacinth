@@ -1,8 +1,6 @@
 class Api::V2::XmlDatastreamsController < Api::V2::BaseController
   before_action :set_xml_datastream_by_string_key, only: [:show, :update]
 
-  # All actions below should be available to Hyacinth admins only
-
   # GET /api/v2/xml_datastreams
   def index
     authorize! :index, XmlDatastream
