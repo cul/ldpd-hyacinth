@@ -1,7 +1,7 @@
 import { Button, Modal, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTriangleExclamation } from '@fortawesome/pro-regular-svg-icons';
+import { faTriangleExclamation } from '@fortawesome/free-solid-svg-icons';
 import { useNotifications } from '@/stores/notifications-store';
 import { useDeletePublishTarget } from '../api/delete-publish-target';
 
