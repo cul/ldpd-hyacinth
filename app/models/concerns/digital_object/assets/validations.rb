@@ -29,6 +29,7 @@ module DigitalObject::Assets::Validations
 
       if import_location.blank?
         @errors.add(:import_file, "Missing import_file.#{resource_name}.import_location")
+        next
       end
 
       if import_location.index('/..') || import_location.index('../')
