@@ -1,5 +1,26 @@
 <%= paginate @import_jobs %>
 
+<h2>Current Import Job Activity (for all Hyacinth users)</h2>
+<div>
+  <table class="table table-condensed table-bordered table-striped">
+    <thead>
+      <tr>
+        <% @import_job_queue_counts.keys.each do |priority| %>
+          <th><%= priority.capitalize %> priority queue</th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <% @import_job_queue_counts.values.each do |count| %>
+          <th><%= count %></th>
+        <% end %>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<h2>Import Jobs</h2>
 <table class="table table-condensed table-bordered table-striped">
   <thead>
     <tr>

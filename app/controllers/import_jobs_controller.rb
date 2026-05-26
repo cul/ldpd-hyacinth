@@ -7,6 +7,13 @@ class ImportJobsController < ApplicationController
     page = params[:page]
     per_page = 20
 
+    @import_job_queue_counts = [:low, :medium, :high].map do |priority|
+      [
+        priority,
+        DigitalObjectImport.joins(:import_job).where(status: :pending, import_jobs: { priority: priority }).count
+      ]
+    end.to_h
+
     if current_user.admin?
       @import_jobs = ImportJob.all.order(id: :desc).page(page).per(per_page)
     else
