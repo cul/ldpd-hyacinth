@@ -177,6 +177,8 @@ Rails.application.routes.draw do
       resources :publish_targets, only: [:index, :show, :create, :update, :destroy], param: :string_key
 
       resources :xml_datastreams, only: [:index, :show, :create, :update], param: :string_key
+
+      resources :import_jobs, only: [:create]
     end
   end
 

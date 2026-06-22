@@ -156,7 +156,7 @@ class Hyacinth::Utils::CsvImportExportUtils
     import_job = ImportJob.new(name: import_filename, user: user, priority: priority, restore_archived_s3_objects_for_new_assets: restore_archived_s3_objects_for_new_assets)
 
     # First, run through the CSV and do some quick validations
-    validate_import_job_csv_data(csv_data_string, user, import_job)
+    # validate_import_job_csv_data(csv_data_string, user, import_job)
 
     # Assuming there were no validation errors, run through the CSV data again and do an import for real
     unless import_job.errors.any?

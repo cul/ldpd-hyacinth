@@ -38,104 +38,123 @@ const convert = (queryClient: QueryClient) => (m: RouteModule) => {
 };
 
 export const createAppRouter = (queryClient: QueryClient) =>
-  createBrowserRouter([
+  createBrowserRouter(
+    [
+      {
+        Component: MainLayout,
+        hydrateFallbackElement: <Spinner animation="border" role="status" />,
+        children: [
+          {
+            index: true,
+            Component: Root,
+          },
+          {
+            path: 'users',
+            Component: () => <FeatureLayout featureName="User" />, // Wraps all users routes with shared navigation
+            ErrorBoundary: AuthorizationErrorBoundary, // Catch authorization errors from loaders
+            children: [
+              {
+                index: true,
+                lazy: () => import('./routes/users').then(convert(queryClient)),
+              },
+              {
+                path: ':userUid',
+                Component: UserLayout,
+                children: [
+                  {
+                    path: 'edit', // maybe this should be the default (index) route under :userUid
+                    lazy: () => import('./routes/users/edit').then(convert(queryClient)),
+                  },
+                  {
+                    path: 'project-permissions/edit',
+                    lazy: () =>
+                      import('./routes/users/project-permissions').then(convert(queryClient)),
+                  },
+                ],
+              },
+              {
+                path: 'new',
+                lazy: () => import('./routes/users/new').then(convert(queryClient)),
+              },
+            ],
+          },
+          {
+            path: 'publish-targets',
+            Component: () => <FeatureLayout featureName="Publish Target" />, // Wraps all publish targets routes with shared navigation
+            ErrorBoundary: AuthorizationErrorBoundary, // Catch authorization errors from loaders
+            children: [
+              {
+                index: true,
+                lazy: () => import('./routes/publish-targets').then(convert(queryClient)),
+              },
+              {
+                path: ':publishTargetStringKey/edit',
+                lazy: () => import('./routes/publish-targets/edit').then(convert(queryClient)),
+              },
+              {
+                path: 'new',
+                lazy: () => import('./routes/publish-targets/new').then(convert(queryClient)),
+              },
+            ],
+          },
+          {
+            path: 'xml-datastreams',
+            ErrorBoundary: AuthorizationErrorBoundary, // Catch authorization errors from loaders
+            Component: () => <FeatureLayout featureName="XML Datastream" />,
+            children: [
+              {
+                index: true,
+                lazy: () => import('./routes/xml-datastreams').then(convert(queryClient)),
+              },
+              {
+                path: ':xmlDatastreamStringKey/edit',
+                lazy: () => import('./routes/xml-datastreams/edit').then(convert(queryClient)),
+              },
+              {
+                path: 'new',
+                lazy: () => import('./routes/xml-datastreams/new').then(convert(queryClient)),
+              },
+            ],
+          },
+          {
+            path: 'import-jobs',
+            Component: () => <FeatureLayout featureName="Import Job" />,
+            children: [
+              {
+                index: true,
+                lazy: () => import('./routes/import-jobs').then(convert(queryClient)),
+              },
+              {
+                path: 'new',
+                lazy: () => import('./routes/import-jobs/new').then(convert(queryClient)),
+              },
+            ],
+          },
+          {
+            path: 'settings',
+            children: [
+              {
+                index: true,
+                lazy: () => import('./routes/settings').then(convert(queryClient)),
+              },
+              {
+                path: 'project-permissions',
+                lazy: () =>
+                  import('./routes/settings/project-permissions').then(convert(queryClient)),
+              },
+            ],
+          },
+        ],
+      },
+      {
+        path: '*',
+        lazy: () => import('./routes/not-found').then(convert(queryClient)),
+      },
+    ],
     {
-      Component: MainLayout,
-      hydrateFallbackElement: <Spinner animation="border" role="status" />,
-      children: [
-        {
-          index: true,
-          Component: Root,
-        },
-        {
-          path: 'users',
-          Component: () => <FeatureLayout featureName="User"/>, // Wraps all users routes with shared navigation
-          ErrorBoundary: AuthorizationErrorBoundary, // Catch authorization errors from loaders
-          children: [
-            {
-              index: true,
-              lazy: () => import('./routes/users').then(convert(queryClient)),
-            },
-            {
-              path: ':userUid',
-              Component: UserLayout,
-              children: [
-                {
-                  path: 'edit', // maybe this should be the default (index) route under :userUid
-                  lazy: () => import('./routes/users/edit').then(convert(queryClient)),
-                },
-                {
-                  path: 'project-permissions/edit',
-                  lazy: () => import('./routes/users/project-permissions').then(convert(queryClient)),
-                },
-              ]
-            },
-            {
-              path: 'new',
-              lazy: () => import('./routes/users/new').then(convert(queryClient)),
-            },
-          ]
-        },
-        {
-          path: 'publish-targets',
-          Component: () => <FeatureLayout featureName="Publish Target" />, // Wraps all publish targets routes with shared navigation
-          ErrorBoundary: AuthorizationErrorBoundary, // Catch authorization errors from loaders
-           children: [
-            {
-              index: true,
-              lazy: () => import('./routes/publish-targets').then(convert(queryClient)),
-            },
-            {
-              path: ':publishTargetStringKey/edit',
-              lazy: () => import('./routes/publish-targets/edit').then(convert(queryClient)),
-            },
-            {
-              path: 'new',
-              lazy: () => import('./routes/publish-targets/new').then(convert(queryClient)),
-            },
-          ]
-        },
-        {
-          path: 'xml-datastreams',
-          ErrorBoundary: AuthorizationErrorBoundary, // Catch authorization errors from loaders
-          Component: () => <FeatureLayout featureName="XML Datastream" />,
-          children: [
-            {
-              index: true,
-              lazy: () => import('./routes/xml-datastreams').then(convert(queryClient)),
-            },
-            {
-              path: ':xmlDatastreamStringKey/edit',
-              lazy: () => import('./routes/xml-datastreams/edit').then(convert(queryClient)),
-            },
-            {
-              path: 'new',
-              lazy: () => import('./routes/xml-datastreams/new').then(convert(queryClient)),
-            }
-          ],
-        },
-        {
-          path: 'settings',
-          children: [
-            {
-              index: true,
-              lazy: () => import('./routes/settings').then(convert(queryClient))
-            },
-            {
-              path: 'project-permissions',
-              lazy: () => import('./routes/settings/project-permissions').then(convert(queryClient))
-            },
-          ]
-        }
-      ],
+      basename: '/ui/v2',
     },
-    {
-      path: '*',
-      lazy: () => import('./routes/not-found').then(convert(queryClient)),
-    },
-  ], {
-    basename: '/ui/v2',
-  });
+  );
 
 export const AppRouter = () => {
   const queryClient = useQueryClient();
