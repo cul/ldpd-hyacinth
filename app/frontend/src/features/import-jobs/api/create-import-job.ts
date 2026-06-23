@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
 
-export const createimportJob = ({
+export const createImportJob = ({
   data,
 }: {
   data: { file: File; priority: string };
@@ -15,11 +15,11 @@ export const createimportJob = ({
   return api.post(`/import_jobs`, formData);
 };
 
-type UseCreateimportJobOptions = {
-  mutationConfig?: MutationConfig<typeof createimportJob>;
+type UseCreateImportJobOptions = {
+  mutationConfig?: MutationConfig<typeof createImportJob>;
 };
 
-export const useCreateImportJob = ({ mutationConfig }: UseCreateimportJobOptions = {}) => {
+export const useCreateImportJob = ({ mutationConfig }: UseCreateImportJobOptions = {}) => {
   const queryClient = useQueryClient();
 
   const { onSuccess, ...restConfig } = mutationConfig || {};
@@ -32,6 +32,6 @@ export const useCreateImportJob = ({ mutationConfig }: UseCreateimportJobOptions
       onSuccess?.(...args);
     },
     ...restConfig,
-    mutationFn: createimportJob,
+    mutationFn: createImportJob,
   });
 };

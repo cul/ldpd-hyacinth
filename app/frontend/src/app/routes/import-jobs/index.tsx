@@ -4,7 +4,7 @@ import { getImportJobsQueryOptions } from '@/features/import-jobs/api/get-import
 
 export const clientLoader = (queryClient: QueryClient) => async () => {
   const query = getImportJobsQueryOptions();
-  return await queryClient.ensureQueryData(query);
+  await queryClient.ensureQueryData(query);
 };
 
 const ImportJobsIndexRoute = () => {

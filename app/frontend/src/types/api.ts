@@ -56,6 +56,10 @@ export interface ImportJob {
   pendingCount: number;
   createdAt: string;
   updatedAt: string;
+  user: {
+    email: string;
+    fullName: string;
+  };
 }
 
 /* 

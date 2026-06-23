@@ -29,10 +29,10 @@ export const columnDefs = [
     header: 'Submitted At',
     cell: (info) => info.getValue() || 'Unknown',
   }),
-  // columnHelper.accessor('createdBy', {
-  //   header: 'Submitted By',
-  //   cell: (info) => info.getValue() || 'Unknown',
-  // }), // TODO: get the user who submitted the import job
+  columnHelper.accessor('user.email', {
+    header: 'Submitted By',
+    cell: (info) => info.getValue() || 'Unknown',
+  }),
   columnHelper.display({
     id: 'actions',
     header: 'Actions',
