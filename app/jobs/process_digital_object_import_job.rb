@@ -235,6 +235,8 @@ class ProcessDigitalObjectImportJob < ActiveJob::Base
       storage_object = Hyacinth::Storage.storage_object_for(s3_uri)
       if storage_object.requires_restoration?
         storage_object.request_restoration!
+        # After requesting restoration, we'll log this in the CreateS3RestorationRequest table
+        S3RestorationRequest.create!(s3_uri: storage_object.location_uri, object_size: storage_object.size)
         true
       elsif storage_object.restoration_in_progress?
         true
