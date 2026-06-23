@@ -229,9 +229,9 @@ class ProcessDigitalObjectImportJob < ActiveJob::Base
       # NOTE: As of 2026-01-14, we are continuing to allow old import file fields below, for backwards compatibility.  We will remove support for these headers some time in the future.
       digital_object_data.dig('import_file', 'import_path'),
       digital_object_data.dig('import_file', 'service_copy_import_path')
-    ].compact.select { |import_location|
+    ].compact.select do |import_location|
       import_location.start_with?('s3://')
-    }.select { |s3_uri|
+    end.select do |s3_uri|
       storage_object = Hyacinth::Storage.storage_object_for(s3_uri)
       if storage_object.requires_restoration?
         storage_object.request_restoration!
@@ -243,7 +243,7 @@ class ProcessDigitalObjectImportJob < ActiveJob::Base
       else
         false
       end
-    }
+    end
 
     queued_s3_files.present?
   end
