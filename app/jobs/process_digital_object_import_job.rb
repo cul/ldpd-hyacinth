@@ -220,9 +220,11 @@ class ProcessDigitalObjectImportJob < ActiveJob::Base
   end
 
   def queue_s3_restoration_if_required!(digital_object_data)
-    return false unless digital_object_data['_pid'].blank? # Only restore for new records
+    return false unless digital_object_data['pid'].blank? # Only restore for new records
+    return false unless digital_object_data['uuid'].blank? # Only restore for new records
     return false unless digital_object_data.dig('digital_object_type', 'string_key') == 'asset' # Only restore for assets
 
+    # Only perform restoration if S3 import files are present
     queued_s3_files = [
       digital_object_data.dig('import_file', 'main', 'import_location'),
       digital_object_data.dig('import_file', 'service', 'import_location'),
