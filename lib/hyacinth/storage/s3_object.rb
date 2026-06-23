@@ -101,4 +101,26 @@ class Hyacinth::Storage::S3Object < Hyacinth::Storage::AbstractObject
       Rails.logger.info "Deleted S3 object (bucket=#{self.bucket_name}, key=#{self.key})"
     end
   end
+
+  def requires_restoration?
+    self.s3_object.storage_class == 'INTELLIGENT_TIERING' && self.s3_object.archive_status != nil && self.s3_object.restore.nil?
+  end
+
+  def restoration_in_progress?
+    self.s3_object.restore&.match?(/ongoing-request="true"/) || false
+  end
+
+  def request_restoration!
+    raise "Unhandled storage class: #{self.s3_object.storage_class}" unless self.s3_object.storage_class == 'INTELLIGENT_TIERING'
+    self.s3_object.restore_object({
+      bucket: self.bucket_name,
+      key: self.key,
+      # To restore an Intelligent Tiering object that has an archival storage class, we just pass an empty hash here.
+      # No further configuration is needed.
+      restore_request: {}
+    })
+    true
+  rescue Aws::S3::Errors::RestoreAlreadyInProgress
+    true
+  end
 end

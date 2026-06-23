@@ -8,16 +8,25 @@ class ProcessDigitalObjectImportJob < ActiveJob::Base
     # If the import job was previously deleted (and does not exist in the database), return immediately
     return unless DigitalObjectImport.exists?(digital_object_import_id)
 
-    # Retrieve DigitalObjectImport instance from table
+    # Load DigitalObjectImport instance
     # If we encounter an error (e.g. Mysql2::Error), wait and try again.
     digital_object_import = find_digital_object_import_with_retry(digital_object_import_id)
+    digital_object_data = JSON.parse(digital_object_import.digital_object_data)
+
+    if queue_s3_restoration_if_required!(digital_object_data)
+      # TODO: Maybe one day we'll re-queue this job for 12 hours later, but we don't currently have the ability to
+      # schedule Resque jobs. We should look into using resque-scheduler for this.
+      digital_object_import.digital_object_errors << "Failed because the associated S3 object is in an archived state. The S3 object has been queued for restoration and should be available in 12 hours. Please re-run this import after at least 12 hours have passed."
+      digital_object_import.status = :failure
+      digital_object_import.save!
+      return
+    end
+
     # If prerequisite check fails, return immediately.
     # Re-queueing or mark-as-failure logic is handled by the prerequisite_row_check method.
     return unless prerequisite_row_check(digital_object_import)
 
     user = digital_object_import.import_job.user
-    digital_object_data = JSON.parse(digital_object_import.digital_object_data)
-
     digital_object = find_or_create_digital_object(digital_object_data, user, digital_object_import)
     result = assign_data(digital_object, digital_object_data, digital_object_import)
 
@@ -41,6 +50,10 @@ class ProcessDigitalObjectImportJob < ActiveJob::Base
     else
       handle_success_or_failure(result, digital_object, digital_object_import, HYACINTH[:solr_commit_after_each_csv_import_row])
     end
+  rescue Aws::S3::Errors::NotFound => e
+    digital_object_import.digital_object_errors << "Failed because the referenced S3 object could not be found."
+    digital_object_import.status = :failure
+    digital_object_import.save!
   rescue StandardError => e
     handle_unexpected_processing_error(digital_object_import_id, e)
   end
@@ -204,5 +217,32 @@ class ProcessDigitalObjectImportJob < ActiveJob::Base
       digital_object_import.status = :failure
       digital_object_import.save!
     end
+  end
+
+  def queue_s3_restoration_if_required!(digital_object_data)
+    return false unless digital_object_data['_pid'].blank? # Only restore for new records
+    return false unless digital_object_data.dig('digital_object_type', 'string_key') == 'asset' # Only restore for assets
+
+    queued_s3_files = [
+      digital_object_data.dig('import_file', 'main', 'import_location'),
+      digital_object_data.dig('import_file', 'service', 'import_location'),
+      # NOTE: As of 2026-01-14, we are continuing to allow old import file fields below, for backwards compatibility.  We will remove support for these headers some time in the future.
+      digital_object_data.dig('import_file', 'import_path'),
+      digital_object_data.dig('import_file', 'service_copy_import_path')
+    ].compact.select { |import_location|
+      import_location.start_with?('s3://')
+    }.select { |s3_uri|
+      storage_object = Hyacinth::Storage.storage_object_for(s3_uri)
+      if storage_object.requires_restoration?
+        storage_object.request_restoration!
+        true
+      elsif storage_object.restoration_in_progress?
+        true
+      else
+        false
+      end
+    }
+
+    queued_s3_files.present?
   end
 end
