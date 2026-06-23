@@ -1,17 +1,10 @@
 class Api::V2::ImportJobsController < Api::V2::BaseController
-  before_action :set_import_job, only: [:show, :download_original_csv]
+  before_action :set_import_job, only: [:show, :download_original_csv, :destroy]
 
   # GET /import_jobs
   def index
     page = params[:page]
     per_page = 20
-
-    # @import_job_queue_counts = [:low, :medium, :high].map do |priority|
-    #   [
-    #     priority,
-    #     DigitalObjectImport.joins(:import_job).where(status: :pending, import_jobs: { priority: priority }).count
-    #   ]
-    # end.to_h
 
     if current_user.admin?
       @import_jobs = ImportJob.includes(:user).order(id: :desc).page(page).per(per_page)
@@ -65,10 +58,31 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
     render_camelized_json({ import_job: import_job_json(@import_job) })
   end
 
+  # GET /api/v2/import_jobs/queue_activity
+  def queue_activity
+    puts "In queue_activity action"
+    counts = [:low, :medium, :high].map do |priority|
+      [
+        priority,
+        DigitalObjectImport
+          .joins(:import_job)
+          .where(status: :pending, import_jobs: { priority: priority })
+          .count
+      ]
+    end.to_h
+
+    render_camelized_json({ queue_activity: counts })
+  end
+
   def download_original_csv
     if @import_job.path_to_csv_file.present?
       # TODO
     end
+  end
+
+  # DELETE /api/v2/import_jobs/:id
+  def destroy
+    @import_job.destroy
   end
 
   private
@@ -99,8 +113,6 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
     end
 
     def set_import_job
-      puts "Params:"
-      puts params
       @import_job = ImportJob.find(params[:id])
     end
 

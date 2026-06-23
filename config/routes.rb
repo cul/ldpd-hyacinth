@@ -178,9 +178,10 @@ Rails.application.routes.draw do
 
       resources :xml_datastreams, only: [:index, :show, :create, :update], param: :string_key
 
-      resources :import_jobs, only: [:index, :create, :show], param: :id do
+      resources :import_jobs, only: [:index, :create, :show, :destroy], param: :id do
         collection do
           post 'validate'
+          get 'queue_activity'
         end
       end
     end

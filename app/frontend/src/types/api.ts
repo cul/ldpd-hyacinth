@@ -62,6 +62,12 @@ export interface ImportJob {
   };
 }
 
+export interface QueueActivity {
+  low: number;
+  medium: number;
+  high: number;
+}
+
 /* 
 Payload types
 */
