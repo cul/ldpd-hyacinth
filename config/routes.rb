@@ -178,7 +178,7 @@ Rails.application.routes.draw do
 
       resources :xml_datastreams, only: [:index, :show, :create, :update], param: :string_key
 
-      resources :import_jobs, only: [:create]
+      resources :import_jobs, only: [:index, :create, :show], param: :id
     end
   end
 

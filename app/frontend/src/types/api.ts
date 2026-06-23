@@ -45,6 +45,18 @@ export interface XmlDatastream {
   xmlTranslation: string;
 }
 
+export interface ImportJob {
+  id: number;
+  name: string;
+  priority: string;
+  pathToCsvFile: string;
+  status: string;
+  successCount: number;
+  failureCount: number;
+  pendingCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
 
 /* 
 Payload types

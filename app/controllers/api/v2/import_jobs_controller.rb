@@ -1,6 +1,37 @@
 class Api::V2::ImportJobsController < Api::V2::BaseController
+  before_action :set_import_job, only: [:show]
+
+  # GET /import_jobs
+  def index
+    page = params[:page]
+    per_page = 20
+
+    # @import_job_queue_counts = [:low, :medium, :high].map do |priority|
+    #   [
+    #     priority,
+    #     DigitalObjectImport.joins(:import_job).where(status: :pending, import_jobs: { priority: priority }).count
+    #   ]
+    # end.to_h
+
+    if current_user.admin?
+      puts "Admin user"
+      res = ImportJob.all.order(id: :desc).page(page).per(per_page)
+      puts res.inspect
+      @import_jobs = ImportJob.all.order(id: :desc).page(page).per(per_page)
+      render_camelized_json({ import_jobs: @import_jobs.map do |import_job|
+        import_job.user = User.find(import_job.user_id)
+        puts "Import job user: #{import_job.user.inspect}"
+        import_job_json(import_job)
+      end })
+    else
+      @import_jobs = ImportJob.where(user: current_user).order(id: :desc).page(page).per(per_page)
+      render_camelized_json({ import_jobs: @import_jobs.map { |import_job| import_job_json(import_job) } })
+    end
+  end
+
   # POST /api/v2/import_jobs
   def create 
+    # TODO: Validate params
     puts "In import jobs controller"
     @import_job = build_import_job_from_upload
  
@@ -12,7 +43,12 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
       render_camelized_json({ import_job: import_job_json(@import_job) }, status: :created)
     end
   end
- 
+
+  def show
+    # authorize! :show, @import_job
+    render_camelized_json({ import_job: import_job_json(@import_job) })
+  end
+
   private
  
     def build_import_job_from_upload
@@ -66,6 +102,12 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
 
     def requested_priority
       params.fetch(:priority, 'low')
+    end
+
+    def set_import_job
+      puts "Params:"
+      puts params
+      @import_job = ImportJob.find(params[:id])
     end
 
     def import_job_json(import_job)

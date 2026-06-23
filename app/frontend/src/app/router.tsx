@@ -125,6 +125,10 @@ export const createAppRouter = (queryClient: QueryClient) =>
                 lazy: () => import('./routes/import-jobs').then(convert(queryClient)),
               },
               {
+                path: ':importJobId',
+                lazy: () => import('./routes/import-jobs/view').then(convert(queryClient)),
+              },
+              {
                 path: 'new',
                 lazy: () => import('./routes/import-jobs/new').then(convert(queryClient)),
               },
