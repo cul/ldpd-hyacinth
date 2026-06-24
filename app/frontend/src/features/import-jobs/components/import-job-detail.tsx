@@ -1,5 +1,6 @@
 import { ImportJob } from '@/types/api';
 import { Table as BTable } from 'react-bootstrap';
+import { Link } from 'react-router';
 
 interface ImportJobDetailProps {
   importJob: ImportJob;
@@ -64,7 +65,14 @@ export const ImportJobDetail = ({ importJob }: ImportJobDetailProps) => {
             <td>{importJob.pendingCount}</td>
             <td>{importJob.successCount}</td>
             <td>{importJob.failureCount}</td>
-            <td>{importJob.pendingCount + importJob.successCount + importJob.failureCount}</td>
+            <td>
+              <Link
+                to={{ pathname: `digital-object-imports` }}
+                className="link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+              >
+                {importJob.pendingCount + importJob.successCount + importJob.failureCount}
+              </Link>
+            </td>
           </tr>
         </tbody>
       </BTable>

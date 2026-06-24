@@ -3,16 +3,19 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
 
   # GET /import_jobs
   def index
-    page = params[:page]
-    per_page = 20
+    scope = current_user.admin? ? ImportJob.all : ImportJob.where(user: current_user)
+    per_page = 5 # temp
 
-    if current_user.admin?
-      @import_jobs = ImportJob.includes(:user).order(id: :desc).page(page).per(per_page)
-      render_camelized_json({ import_jobs: @import_jobs.map { |import_job| import_job_json(import_job) } })
-    else
-      @import_jobs = ImportJob.includes(:user).where(user: current_user).order(id: :desc).page(page).per(per_page)
-      render_camelized_json({ import_jobs: @import_jobs.map { |import_job| import_job_json(import_job) } })
-    end
+    @import_jobs = scope
+      .includes(:user)
+      .order(id: :desc)
+      .page(params[:page])
+      .per(per_page)
+
+    render_camelized_json({
+      import_jobs: @import_jobs.map { |import_job| import_job_json(import_job) },
+      pagination: pagination_data(@import_jobs)
+    })
   end
 
   # POST /api/v2/import_jobs
@@ -116,6 +119,17 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
       @import_job = ImportJob.find(params[:id])
     end
 
+    def pagination_data(scope)
+    {
+      current_page: scope.current_page,
+      per_page: scope.limit_value,
+      total_pages: scope.total_pages,
+      total_count: scope.total_count
+    }
+    end
+
+    # TODO: Import jobs displayed in the UI don't need success/pending/failure coounts. Create a separate json response for index action 
+    # that doesn't include those counts
     def import_job_json(import_job)
       {
         id: import_job.id,

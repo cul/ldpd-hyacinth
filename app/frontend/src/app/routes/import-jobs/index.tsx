@@ -4,10 +4,12 @@ import { getImportJobsQueryOptions } from '@/features/import-jobs/api/get-import
 import { QueueActivityDisplay } from '@/features/import-jobs/components/queue-activity-display';
 import ImportJobsList from '@/features/import-jobs/components/import-jobs-list';
 
-export const clientLoader = (queryClient: QueryClient) => async () => {
-  const query = getImportJobsQueryOptions();
-  await queryClient.ensureQueryData(query);
-};
+export const clientLoader =
+  (queryClient: QueryClient) =>
+  async ({ request }: any) => {
+    const page = Number(new URL(request.url).searchParams.get('page')) || 1;
+    await queryClient.ensureQueryData(getImportJobsQueryOptions(page));
+  };
 
 const ImportJobsIndexRoute = () => {
   return (
