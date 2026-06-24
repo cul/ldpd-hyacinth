@@ -45,21 +45,24 @@ export interface XmlDatastream {
   xmlTranslation: string;
 }
 
-export interface ImportJob {
+export interface ImportJobSummary {
   id: number;
   name: string;
   priority: string;
-  pathToCsvFile: string;
   status: string;
-  successCount: number;
-  failureCount: number;
-  pendingCount: number;
   createdAt: string;
-  updatedAt: string;
   user: {
     email: string;
     fullName: string;
   };
+}
+
+export interface ImportJob extends ImportJobSummary {
+  pathToCsvFile: string;
+  pendingCount: number;
+  successCount: number;
+  failureCount: number;
+  updatedAt: string;
 }
 
 export interface QueueActivity {

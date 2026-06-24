@@ -51,7 +51,7 @@ export const ImportJobDetail = ({ importJob }: ImportJobDetailProps) => {
         </div>
       </div>
 
-      <BTable striped bordered hover responsive>
+      <BTable striped bordered responsive>
         <thead>
           <tr>
             <th>Pending rows</th>

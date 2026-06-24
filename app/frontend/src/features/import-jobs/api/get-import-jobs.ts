@@ -1,7 +1,7 @@
 import { queryOptions, useSuspenseQuery, keepPreviousData } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
 import { QueryConfig } from '@/lib/react-query';
-import { ImportJob } from '@/types/api';
+import { ImportJobSummary } from '@/types/api';
 
 export interface Pagination {
   currentPage: number;
@@ -11,7 +11,7 @@ export interface Pagination {
 }
 
 export interface ImportJobsResponse {
-  importJobs: ImportJob[];
+  importJobs: ImportJobSummary[];
   pagination: Pagination;
 }
 

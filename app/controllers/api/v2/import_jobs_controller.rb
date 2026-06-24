@@ -13,7 +13,7 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
       .per(per_page)
 
     render_camelized_json({
-      import_jobs: @import_jobs.map { |import_job| import_job_json(import_job) },
+      import_jobs: @import_jobs.map { |import_job| import_job_list_json(import_job) },
       pagination: pagination_data(@import_jobs)
     })
   end
@@ -46,7 +46,6 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
     Hyacinth::Utils::CsvImportExportUtils.validate_import_job_csv_data(
       uploaded_csv_file.read, current_user, import_job
     )
-    puts "Validated import job: #{import_job.inspect}"
 
     if import_job.errors.any?
       render_camelized_json({ valid: false, errors: format_errors(import_job.errors) }, status: :unprocessable_entity)
@@ -58,12 +57,11 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
   # GET /api/v2/import_jobs/:id
   def show
     # authorize! :show, @import_job
-    render_camelized_json({ import_job: import_job_json(@import_job) })
+    render_camelized_json({ import_job: import_job_detail_json(@import_job) })
   end
 
   # GET /api/v2/import_jobs/queue_activity
   def queue_activity
-    puts "In queue_activity action"
     counts = [:low, :medium, :high].map do |priority|
       [
         priority,
@@ -120,17 +118,29 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
     end
 
     def pagination_data(scope)
-    {
-      current_page: scope.current_page,
-      per_page: scope.limit_value,
-      total_pages: scope.total_pages,
-      total_count: scope.total_count
-    }
+      {
+        current_page: scope.current_page,
+        per_page: scope.limit_value,
+        total_pages: scope.total_pages,
+        total_count: scope.total_count
+      }
     end
 
-    # TODO: Import jobs displayed in the UI don't need success/pending/failure coounts. Create a separate json response for index action 
-    # that doesn't include those counts
-    def import_job_json(import_job)
+    def import_job_list_json(import_job)
+      {
+        id: import_job.id,
+        name: import_job.name,
+        priority: import_job.priority,
+        status: import_job.status_string,
+        created_at: import_job.created_at,
+        user: {
+          email: import_job.user.email,
+          full_name: "#{import_job.user.first_name} #{import_job.user.last_name}".strip
+        }
+      }
+    end
+
+    def import_job_detail_json(import_job)
       {
         id: import_job.id,
         name: import_job.name,

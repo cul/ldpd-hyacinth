@@ -1,9 +1,9 @@
 import { Link } from 'react-router';
-import { ImportJob } from '@/types/api';
+import { ImportJobSummary } from '@/types/api';
 import { createColumnHelper } from '@tanstack/react-table';
-import Button from 'react-bootstrap/esm/Button';
+import { Button } from 'react-bootstrap';
 
-const columnHelper = createColumnHelper<ImportJob>();
+const columnHelper = createColumnHelper<ImportJobSummary>();
 
 export const columnDefs = [
   columnHelper.accessor('id', {
