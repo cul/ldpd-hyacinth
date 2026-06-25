@@ -144,4 +144,60 @@ namespace :resque do
       puts "-> #{job_payload.dig('args', 0, 'job_class')} | #{job_payload.dig('args', 0, 'arguments')}"
     end
   end
+
+  desc 'Search the queues for a particular digital_object_import_id'
+  task find_digital_object_import_resque_job: :environment do
+    digital_object_import_id = ENV['digital_object_import_id']
+
+    if digital_object_import_id.blank?
+      puts "Please supply a digital_object_import_id"
+      next
+    end
+
+    puts "Searching for ProcessDigitalObjectImportJob #{digital_object_import_id}..."
+
+    found_in_queue = nil
+    found_job_details = nil
+    queues = Resque.queues
+    queues.each do |queue_name|
+      break if found_in_queue
+      queue_size = Resque.size(queue_name)
+
+      Resque.peek(queue_name, 0, queue_size).each do |job, _details|
+        break if found_in_queue
+        job_class = job.dig('args', 0, 'job_class')
+        first_argument = job.dig('args', 0, 'arguments').first.to_s
+
+        # puts "Does #{job_class} match ProcessDigitalObjectImportJob (#{job_class == 'ProcessDigitalObjectImportJob'}) and #{first_argument} match #{digital_object_import_id} (#{first_argument == digital_object_import_id})?"
+
+        if job_class == 'ProcessDigitalObjectImportJob' && first_argument == digital_object_import_id
+          found_in_queue = queue_name
+          found_job_details = job
+        end
+      end
+    end
+
+    unless found_in_queue
+      number_of_failed_jobs = Resque::Failure.count
+      Resque::Failure.all(0, number_of_failed_jobs).each do |failed_job|
+        job_payload = failed_job['payload']
+        job_class = job_payload.dig('args', 0, 'job_class')
+        first_argument = job_payload.dig('args', 0, 'arguments').first.to_s
+
+        # puts "Does #{job_class} match ProcessDigitalObjectImportJob (#{job_class == 'ProcessDigitalObjectImportJob'}) and #{first_argument} match #{digital_object_import_id} (#{first_argument == digital_object_import_id})?"
+
+        if job_class == 'ProcessDigitalObjectImportJob' && first_argument == digital_object_import_id
+          found_in_queue = 'failed'
+          found_job_details = job_payload
+        end
+      end
+    end
+
+    if found_in_queue
+      puts "Found ProcessDigitalObjectImportJob in queue: #{found_in_queue}"
+      puts "Job details: #{found_job_details.inspect}"
+    else
+      puts "Did NOT find ProcessDigitalObjectImportJob in any queues."
+    end
+  end
 end
