@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
-import { ImportJobSummary } from '@/types/api';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Button } from 'react-bootstrap';
+import { ImportJobSummary } from '@/types/api';
 
 const columnHelper = createColumnHelper<ImportJobSummary>();
 
@@ -36,11 +36,11 @@ export const columnDefs = [
   columnHelper.display({
     id: 'actions',
     header: 'Actions',
-    cell: (props) => (
+    cell: ({ row, table }) => (
       <Button
         variant="outline-secondary"
         size="sm"
-        // onClick={() => props.table.options.meta?.removeRow(props.row.index)} // TODO
+        onClick={() => table.options.meta?.onDeleteRow?.(row.original)}
       >
         Delete
       </Button>

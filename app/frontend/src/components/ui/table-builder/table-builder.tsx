@@ -8,6 +8,7 @@ import {
   SortingState,
   PaginationState,
   OnChangeFn,
+  TableMeta,
 } from '@tanstack/react-table';
 import { Table as BTable } from 'react-bootstrap';
 
@@ -19,6 +20,7 @@ interface TableBuilderProps<T> {
   data: T[];
   columns: ColumnDef<T>[];
   pagination?: ServerPagination;
+  meta?: TableMeta<T>; // Used to pass additional data or functions
 }
 
 interface ServerPagination {
@@ -30,7 +32,7 @@ interface ServerPagination {
 // This is a generic table component that can be reused across different data types
 // When using this component, ensure you specify how to render each column in the column definitions
 // Docs: https://tanstack.com/table/latest/docs/guide/column-defs
-function TableBuilder<T extends object>({ data, columns, pagination }: TableBuilderProps<T>) {
+function TableBuilder<T extends object>({ data, columns, pagination, meta }: TableBuilderProps<T>) {
   // You can disable sorting specific columns or specify custom sorting functions in the column definitions
   // Docs: https://tanstack.com/table/latest/docs/api/features/sorting#column-def-options
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -47,6 +49,7 @@ function TableBuilder<T extends object>({ data, columns, pagination }: TableBuil
     enableSorting: pagination ? false : true,
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
+    meta,
     ...(pagination
       ? {
           manualPagination: true,

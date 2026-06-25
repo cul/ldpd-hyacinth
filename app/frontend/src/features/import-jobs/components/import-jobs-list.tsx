@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useSearchParams } from 'react-router';
 import type { ColumnDef, PaginationState, Updater } from '@tanstack/react-table';
 
@@ -5,6 +6,7 @@ import TableBuilder from '@/components/ui/table-builder/table-builder';
 import { columnDefs } from '../utils/import-jobs-list-column-defs';
 import { useImportJobsSuspenseQuery } from '../api/get-import-jobs';
 import { ImportJobSummary } from '@/types/api';
+import { DeleteImportJobModal } from './delete-import-job-modal';
 
 const ImportJobsList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -13,7 +15,8 @@ const ImportJobsList = () => {
   const importJobsQuery = useImportJobsSuspenseQuery({ page });
   const { importJobs, pagination } = importJobsQuery.data;
 
-  // TanStack is zero-based; URL is one-based.
+  const [jobToDelete, setJobToDelete] = useState<ImportJobSummary | null>(null);
+
   const paginationState: PaginationState = {
     pageIndex: page - 1,
     pageSize: pagination.perPage,
@@ -29,8 +32,6 @@ const ImportJobsList = () => {
 
   return (
     <>
-      {/* <DeleteImportJobModal /> */}
-
       <TableBuilder
         data={importJobs}
         columns={columnDefs as ColumnDef<ImportJobSummary>[]}
@@ -39,6 +40,14 @@ const ImportJobsList = () => {
           onPaginationChange: handlePaginationChange,
           rowCount: pagination.totalCount,
         }}
+        meta={{ onDeleteRow: setJobToDelete }}
+      />
+
+      <DeleteImportJobModal
+        show={jobToDelete !== null}
+        onHide={() => setJobToDelete(null)}
+        importJobId={jobToDelete ? String(jobToDelete.id) : ''}
+        importJobName={jobToDelete?.name ?? ''}
       />
     </>
   );
