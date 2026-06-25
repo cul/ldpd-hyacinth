@@ -13,7 +13,7 @@ class Api::V2::DigitalObjectImportsController < Api::V2::BaseController
     @digital_object_imports = scope
       .order(csv_row_number: :asc)
       .page(params[:page])
-      .per(50)
+      .per(2) # temp
 
     render_camelized_json({
       digital_object_imports: @digital_object_imports.map { |doi| digital_object_import_list_json(doi) },

@@ -75,6 +75,7 @@ export interface DigitalObjectImportSummary {
   id: number;
   importJobId: number;
   status: string;
+  csvRowNumber: number;
   createdAt: string;
   updatedAt: string;
 }
