@@ -71,6 +71,14 @@ export interface QueueActivity {
   high: number;
 }
 
+export interface DigitalObjectImportSummary {
+  id: number;
+  importJobId: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 /* 
 Payload types
 */

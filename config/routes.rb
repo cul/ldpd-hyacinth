@@ -44,6 +44,7 @@ Rails.application.routes.draw do
     resources :digital_object_imports, only: [:index, :show]
   end
 
+  # ? Should this be deleted since it's the same resource as the one nested under import_jobs?
   resources :digital_object_imports, only: [:index, :show]
 
   resources :digital_objects do
@@ -183,6 +184,8 @@ Rails.application.routes.draw do
           post 'validate'
           get 'queue_activity'
         end
+
+        resources :digital_object_imports, only: [:index, :show]
       end
     end
   end
