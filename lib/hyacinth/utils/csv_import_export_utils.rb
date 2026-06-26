@@ -152,8 +152,8 @@ class Hyacinth::Utils::CsvImportExportUtils
     end
   end
 
-  def self.create_import_job_from_csv_data(csv_data_string, import_filename, user, priority = :low)
-    import_job = ImportJob.new(name: import_filename, user: user, priority: priority)
+  def self.create_import_job_from_csv_data(csv_data_string, import_filename, user, priority = :low, restore_archived_s3_objects_for_new_assets = false)
+    import_job = ImportJob.new(name: import_filename, user: user, priority: priority, restore_archived_s3_objects_for_new_assets: restore_archived_s3_objects_for_new_assets)
 
     # First, run through the CSV and do some quick validations
     validate_import_job_csv_data(csv_data_string, user, import_job)

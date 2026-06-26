@@ -5,11 +5,15 @@
 </p>
 <p>
   <strong>User:</strong>
-  <%= @import_job.user.first_name %> <%= @import_job.user.last_name %></h1>
+  <%= @import_job.user.first_name %> <%= @import_job.user.last_name %> (<%= @import_job.user.uid %>)</h1>
 </p>
 <p>
-  <strong>Email:</strong>
-  <%= @import_job.user.email %></h1>
+  <strong>Priority:</strong>
+  <%= @import_job.priority %></h1>
+</p>
+<p>
+  <strong>Restore archived S3 objects for new assets:</strong>
+  <%= @import_job.restore_archived_s3_objects_for_new_assets %></h1>
 </p>
 <% if @import_job.path_to_csv_file.present? %>
 <p>

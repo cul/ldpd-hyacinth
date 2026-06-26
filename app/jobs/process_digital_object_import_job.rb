@@ -13,7 +13,7 @@ class ProcessDigitalObjectImportJob < ActiveJob::Base
     digital_object_import = find_digital_object_import_with_retry(digital_object_import_id)
     digital_object_data = JSON.parse(digital_object_import.digital_object_data)
 
-    if queue_s3_restoration_if_required!(digital_object_data)
+    if digital_object_import.import_job.restore_archived_s3_objects_for_new_assets && queue_s3_restoration_if_required!(digital_object_data)
       # TODO: Maybe one day we'll re-queue this job for 12 hours later, but we don't currently have the ability to
       # schedule Resque jobs. We should look into using resque-scheduler for this.
       digital_object_import.digital_object_errors << "Failed because the associated S3 object is in an archived state. The S3 object has been queued for restoration and should be available in 12 hours. Please re-run the failed rows of this import after at least 12 hours have passed."

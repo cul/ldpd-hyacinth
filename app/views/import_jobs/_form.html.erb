@@ -6,6 +6,9 @@
   <%= hidden_field_tag :project_id, params[:project_id]%>
   Priority: <%= select_tag('priority', options_for_select(['low', 'medium', 'high'], 'medium')) %>
   <br /><br />
+  <%= check_box_tag :restore_archived_s3_objects_for_new_assets, "true", false, class: "css-style-class" %>
+  <%= label_tag :restore_archived_s3_objects_for_new_assets, "Restore archived S3 objects for new assets?", style: 'font-weight: normal;' %>
+  <br /><br />
   <%= button_tag( "Import", type: 'submit', name: 'submit', value: 'import', class: 'btn btn-default btn-sm' ) %>
   <%= button_tag( "Validate", type: 'submit', name: 'submit', value: 'validate', class: 'btn btn-default btn-sm' ) %>
 <% end %>

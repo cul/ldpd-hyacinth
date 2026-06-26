@@ -32,6 +32,7 @@ class ImportJobsController < ApplicationController
   def new
   end
 
+  # rubocop:disable Metrics/PerceivedComplexity
   def import_job_for_params(params)
     if params[:import_file]
       import_file = params[:import_file]
@@ -44,7 +45,9 @@ class ImportJobsController < ApplicationController
         import_job = ImportJob.new
         Hyacinth::Utils::CsvImportExportUtils.validate_import_job_csv_data(import_file.read, current_user, import_job)
       else
-        import_job = Hyacinth::Utils::CsvImportExportUtils.create_import_job_from_csv_data(import_file.read, import_file.original_filename, current_user, priority.to_sym)
+        args = [import_file.read, import_file.original_filename, current_user, priority.to_sym]
+        args << true if params[:restore_archived_s3_objects_for_new_assets] == 'true'
+        import_job = Hyacinth::Utils::CsvImportExportUtils.create_import_job_from_csv_data(*args)
       end
     else
       import_job = ImportJob.new
@@ -52,6 +55,7 @@ class ImportJobsController < ApplicationController
     end
     import_job
   end
+  # rubocop:enable Metrics/PerceivedComplexity
 
   # POST /import_jobs
   def create

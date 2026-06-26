@@ -27,6 +27,7 @@
       <th>Import Job ID</th>
       <th>Name</th>
       <th>Status</th>
+      <th>Priority</th>
       <th>Submitted at</th>
       <th>Submitted by</th>
       <th>Delete?</th>
@@ -39,8 +40,9 @@
         <td><%= import_job.id %></td>
         <td><%= link_to import_job.name, import_job_path(import_job) %></td>
         <td><%= import_job.status_string %></td>
+        <td><%= import_job.priority %></td>
         <td><%= import_job.created_at.localtime %></td>
-        <td><%= import_job.user.email %></td>
+        <td><%= import_job.user.uid %></td>
 				<td>
 					<% if import_job.complete? %>
 						<%= link_to('Delete', import_job, method: :delete, data: { confirm: 'Are you sure?' }) %>

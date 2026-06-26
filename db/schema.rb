@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_06_23_005637) do
+ActiveRecord::Schema[7.0].define(version: 2026_06_26_125157) do
   create_table "archived_assignments", force: :cascade do |t|
     t.integer "original_assignment_id", null: false
     t.string "digital_object_pid", null: false
@@ -209,6 +209,7 @@ ActiveRecord::Schema[7.0].define(version: 2026_06_23_005637) do
     t.datetime "updated_at", precision: nil, null: false
     t.text "path_to_csv_file"
     t.integer "priority", default: 0, null: false
+    t.boolean "restore_archived_s3_objects_for_new_assets", default: false, null: false
     t.index ["priority"], name: "index_import_jobs_on_priority"
     t.index ["user_id"], name: "index_import_jobs_on_user_id"
   end
