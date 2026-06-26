@@ -10,11 +10,15 @@
 
     <div class="col-xs-9">
       <div class="search-result-summary">
-        <div>
-          <a href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: searchResult.getPid(), searchResultNumber: searchResultNumber}) %>"><%= searchResult.getPid() %></a>
+        <div class="title-display">
+          <a href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: searchResult.getPid(), searchResultNumber: searchResultNumber}) %>">
+            <%- searchResult.getTitle() %>
+          </a>
         </div>
-        <div class="title-display"><strong>Title:</strong> <%- searchResult.getTitle() %></div>
-        <div><small><strong>UUID:</strong> <%- searchResult.getUuid() %></small></div>
+
+        <br />
+        <div><small><strong>PID:</strong> <%= searchResult.getPid() %></small></div>
+        <div><small><strong>UUID:</strong> <%= searchResult.getUuid() %></small></div>
 
         <%
         var parent_pids = searchResult.getParentDigitalObjectPids();
@@ -60,10 +64,14 @@
     <div class="clearfix"></div>
   </div>
 
-  <div class="footer-label">
-    <span class="label label-default"><%- searchResult.getDigitalObjectTypeDisplayLabel() %></span>
-    <span class="label label-primary"><%- searchResult.getProjectDisplayLabel() %></span>
-    <span class="label"><a href="/assignments/new?assignment[digital_object_pid]=<%= searchResult.getPid() %>">Assign this</a></span>
+  <div class="footer-label row">
+      <div class="col-sm-8">
+        <span class="label label-default"><%- searchResult.getDigitalObjectTypeDisplayLabel() %></span>
+        <span class="label label-primary"><%- searchResult.getProjectDisplayLabel() %></span>
+        <span class="label"><a href="/assignments/new?assignment[digital_object_pid]=<%= searchResult.getPid() %>">Assign this</a></span>
+      </div>
+      <div class="col-sm-4 text-right">
+        <a class="btn btn-default btn-xs" href="<%= '#' + Hyacinth.DigitalObjectsApp.paramsToHashValue({controller: 'digital_objects', action: 'show', pid: searchResult.getPid(), searchResultNumber: searchResultNumber}) %>">View</a>
+      </div>
   </div>
-
 </div>
