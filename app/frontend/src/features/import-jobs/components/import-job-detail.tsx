@@ -1,5 +1,5 @@
 import { ImportJob } from '@/types/api';
-import { Table as BTable } from 'react-bootstrap';
+import { Table as BTable, Card, Col, Row } from 'react-bootstrap';
 import { Link } from 'react-router';
 
 interface ImportJobDetailProps {
@@ -9,7 +9,10 @@ interface ImportJobDetailProps {
 export const ImportJobDetail = ({ importJob }: ImportJobDetailProps) => {
   return (
     <div>
-      <h2>{importJob.name}</h2>
+      <div className="d-flex align-items-center gap-2 mb-4">
+        <h2 className="mb-0">{importJob.name}</h2>
+        <span className="text-muted">#{importJob.id}</span>
+      </div>
 
       {/* TODO: Extract into separate components */}
       <div className="mb-4">
@@ -20,12 +23,22 @@ export const ImportJobDetail = ({ importJob }: ImportJobDetailProps) => {
 
         <div className="mb-3">
           <dt className="fw-semibold text-secondary small text-uppercase mb-1">User</dt>
-          <dd className="mb-0">{importJob.user.fullName}</dd>
+          <dd className="mb-0">
+            {importJob.user.fullName} ({importJob.user.uid})
+          </dd>
         </div>
 
         <div className="mb-3">
-          <dt className="fw-semibold text-secondary small text-uppercase mb-1">Email</dt>
-          <dd className="mb-0">{importJob.user.email}</dd>
+          <dt className="fw-semibold text-secondary small text-uppercase mb-1">Priority</dt>
+          <dd className="mb-0">{importJob.priority}</dd>
+        </div>
+
+        {/* TODO: Include restore_archived_s3_objects_for_new_assets boolean */}
+        <div className="mb-3">
+          <dt className="fw-semibold text-secondary small text-uppercase mb-1">
+            Restore archived S3 objects for new assets
+          </dt>
+          <dd className="mb-0">TODO</dd>
         </div>
 
         <div className="mb-3">

@@ -8,6 +8,7 @@ export interface DigitalObjectImportsResponse {
   digitalObjectImports: DigitalObjectImportSummary[];
   pagination: Pagination;
   statusFilter: string | null;
+  importJobName: string;
 }
 
 interface DigitalObjectImportsQueryParams {

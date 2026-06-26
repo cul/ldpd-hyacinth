@@ -19,12 +19,15 @@ class Api::V2::DigitalObjectImportsController < Api::V2::BaseController
       digital_object_imports: @digital_object_imports.map { |doi| digital_object_import_list_json(doi) },
       pagination: pagination_data(@digital_object_imports),
       status_filter: status_filter,
+      import_job_name: @import_job.name,
     })
   end
 
   # GET /api/v2/import_jobs/:import_job_id/digital_object_imports/:id
   def show
-    render_camelized_json({ digital_object_import: digital_object_import_detail_json(@digital_object_import) })
+    render_camelized_json({
+      digital_object_import: digital_object_import_detail_json(@digital_object_import, @import_job)
+    })
   end
 
   private
@@ -61,16 +64,16 @@ class Api::V2::DigitalObjectImportsController < Api::V2::BaseController
       }
     end
 
-    def digital_object_import_detail_json(doi)
+    def digital_object_import_detail_json(doi, import_job)
       {
         id: doi.id,
         import_job_id: doi.import_job_id,
+        import_job_name: import_job.name,
         csv_row_number: doi.csv_row_number,
         status: doi.status,
         digital_object_data: doi.digital_object_data,
         digital_object_errors: doi.digital_object_errors,
         prerequisite_csv_row_numbers: doi.prerequisite_csv_row_numbers,
-        # requeue_count: doi.requeue_count, // not displayed in old UI
         created_at: doi.created_at,
         updated_at: doi.updated_at,
       }

@@ -18,7 +18,7 @@ export const DigitalObjectImportsList = ({ importJobId }: DigitalObjectImportsLi
   const status = searchParams.get('status') ?? undefined;
 
   const query = useDigitalObjectImportsSuspenseQuery({ importJobId, page, status });
-  const { digitalObjectImports, pagination } = query.data;
+  const { digitalObjectImports, pagination, importJobName } = query.data;
 
   // same logic as in import-jobs-list.tsx, could this be refactored/extracted?
   const paginationState: PaginationState = {
@@ -49,6 +49,8 @@ export const DigitalObjectImportsList = ({ importJobId }: DigitalObjectImportsLi
 
   return (
     <>
+      <h2 className="mb-4">Digital Object Imports for {importJobName}</h2>
+
       {/* TODO: This component shares the navigation that import-jobs-list.tsx uses, change it so the back button leads to the import job details */}
       <StatusFilter active={status ?? null} options={options} onChange={handleStatusChange} />
 

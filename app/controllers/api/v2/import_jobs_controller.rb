@@ -134,6 +134,7 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
         status: import_job.status_string,
         created_at: import_job.created_at,
         user: {
+          uid: import_job.user.uid,
           email: import_job.user.email,
           full_name: "#{import_job.user.first_name} #{import_job.user.last_name}".strip
         }
@@ -153,8 +154,9 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
         created_at: import_job.created_at,
         updated_at: import_job.updated_at,
         user: {
+          uid: import_job.user.uid,
           email: import_job.user.email,
-          full_name: "#{import_job.user.first_name} #{import_job.user.last_name}".strip
+          full_name: "#{import_job.user.first_name} #{import_job.user.last_name}".strip,
         }
       }
     end

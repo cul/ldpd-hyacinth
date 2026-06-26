@@ -25,14 +25,20 @@ export const columnDefs = [
     header: 'Status',
     cell: (info) => info.getValue(),
   }),
+  columnHelper.accessor('priority', {
+    header: 'Priority',
+    cell: (info) => info.getValue(),
+  }),
   columnHelper.accessor('createdAt', {
     header: 'Submitted At',
     cell: (info) => info.getValue() || 'Unknown',
   }),
-  columnHelper.accessor('user.email', {
+  columnHelper.accessor('user.uid', {
     header: 'Submitted By',
     cell: (info) => info.getValue() || 'Unknown',
   }),
+  // TODO: Show delete link for completed jobs only
+  // Otherwise display "Job not complete" and allow force delete for *admin users only*
   columnHelper.display({
     id: 'actions',
     header: 'Actions',

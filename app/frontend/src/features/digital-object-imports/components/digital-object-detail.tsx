@@ -17,6 +17,7 @@ export const DigitalObjectDetail = ({ digitalObjectImport }: DigitalObjectDetail
   const {
     id,
     importJobId,
+    importJobName,
     csvRowNumber,
     status,
     digitalObjectData,
@@ -57,10 +58,10 @@ export const DigitalObjectDetail = ({ digitalObjectImport }: DigitalObjectDetail
               <dd className="mb-0">{csvRowNumber}</dd>
             </Col>
             <Col md={4}>
-              <dt className="fw-semibold text-secondary small text-uppercase mb-1">
-                View import job
-              </dt>
-              <Link to={`/import-jobs/${importJobId}`}>View import job</Link>
+              <dt className="fw-semibold text-secondary small text-uppercase mb-1">Import Job</dt>
+              <dd className="mb-0">
+                <Link to={`/import-jobs/${importJobId}`}>{importJobName}</Link>
+              </dd>
             </Col>
             <Col md={4}>
               <dt className="fw-semibold text-secondary small text-uppercase mb-1">

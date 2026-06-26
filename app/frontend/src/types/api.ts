@@ -52,6 +52,7 @@ export interface ImportJobSummary {
   status: string;
   createdAt: string;
   user: {
+    uid: string;
     email: string;
     fullName: string;
   };
@@ -81,6 +82,7 @@ export interface DigitalObjectImportSummary {
 }
 
 export interface DigitalObjectImport extends DigitalObjectImportSummary {
+  importJobName: string;
   digitalObjectData: any;
   digitalObjectErrors: string[];
   prerequisiteCsvRowNumbers: number[];
