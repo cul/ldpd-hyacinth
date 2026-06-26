@@ -77,11 +77,11 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getStateAsDisplayLabel =
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.isAudioMovingImage = function () {
-  return ['Audio','MovingImage', 'Sound', 'Video'].includes(this.dc_type);
+  return ['Audio', 'MovingImage', 'Sound', 'Video'].includes(this.dc_type);
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.isStillImage = function () {
-  return ['Image','StillImage'].includes(this.dc_type);
+  return ['Image', 'StillImage'].includes(this.dc_type);
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.isNewRecord = function () {
@@ -99,6 +99,10 @@ Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getTitle = function () {
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getPid = function () {
   return this.pid;
+};
+
+Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getUuid = function () {
+  return this.uuid;
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObject.Base.prototype.getProject = function () {

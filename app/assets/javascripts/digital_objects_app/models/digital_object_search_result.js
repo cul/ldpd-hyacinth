@@ -2,6 +2,7 @@
 Hyacinth.defineNamespace('Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult');
 
 Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult = function (searchResultData) {
+  this.uuid = searchResultData['id'];
   this.pid = searchResultData['pid'];
   this.title = searchResultData['title_ss'];
   this.flattenedDynamicFieldData = JSON.parse(searchResultData['flattened_dynamic_field_data_ts']);
@@ -28,6 +29,10 @@ Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.isStillImage = fu
 
 Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.getPid = function () {
   return this.pid;
+};
+
+Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.getUuid = function () {
+  return this.uuid;
 };
 
 Hyacinth.DigitalObjectsApp.DigitalObjectSearchResult.prototype.getTitle = function () {
