@@ -1,10 +1,10 @@
 import { useSearchParams } from 'react-router';
-import { Button, ButtonGroup } from 'react-bootstrap';
 import type { ColumnDef, PaginationState, Updater } from '@tanstack/react-table';
 import TableBuilder from '@/components/ui/table-builder/table-builder';
 import { columnDefs } from '../utils/digital-object-imports-column-defs';
 import { useDigitalObjectImportsSuspenseQuery } from '../api/get-digital-object-imports';
 import { DigitalObjectImportSummary } from '@/types/api';
+import { StatusFilter } from './status-filter';
 
 interface DigitalObjectImportsListProps {
   importJobId: string;
@@ -50,25 +50,7 @@ export const DigitalObjectImportsList = ({ importJobId }: DigitalObjectImportsLi
   return (
     <>
       {/* TODO: This component shares the navigation that import-jobs-list.tsx uses, change it so the back button leads to the import job details */}
-      {/* TODO: Make it a separate component */}
-      <ButtonGroup className="mb-3" size="sm">
-        <Button
-          variant={status === null ? 'secondary' : 'outline-secondary'}
-          onClick={() => handleStatusChange(null)}
-        >
-          All
-        </Button>
-        {options.map((statusOption) => (
-          <Button
-            key={statusOption}
-            variant={status === statusOption ? 'secondary' : 'outline-secondary'}
-            onClick={() => handleStatusChange(statusOption)}
-            className="text-capitalize"
-          >
-            {statusOption}
-          </Button>
-        ))}
-      </ButtonGroup>
+      <StatusFilter active={status ?? null} options={options} onChange={handleStatusChange} />
 
       <TableBuilder
         data={digitalObjectImports}

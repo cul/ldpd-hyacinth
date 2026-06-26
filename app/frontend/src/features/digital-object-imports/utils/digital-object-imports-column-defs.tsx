@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { DigitalObjectImportSummary } from '@/types/api';
 
@@ -6,7 +7,14 @@ const columnHelper = createColumnHelper<DigitalObjectImportSummary>();
 export const columnDefs = [
   columnHelper.accessor('id', {
     header: 'Id',
-    cell: (info) => info.getValue(), // TODO: add link to digital object import details page
+    cell: ({ row }) => (
+      <Link
+        to={{ pathname: `${row.original.id}` }}
+        className="link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+      >
+        <span>{row.original.id}</span>
+      </Link>
+    ),
   }),
   columnHelper.accessor('csvRowNumber', {
     header: 'CSV Row Number',

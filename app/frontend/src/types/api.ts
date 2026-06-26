@@ -80,6 +80,12 @@ export interface DigitalObjectImportSummary {
   updatedAt: string;
 }
 
+export interface DigitalObjectImport extends DigitalObjectImportSummary {
+  digitalObjectData: any;
+  digitalObjectErrors: string[];
+  prerequisiteCsvRowNumbers: number[];
+}
+
 /* 
 Payload types
 */

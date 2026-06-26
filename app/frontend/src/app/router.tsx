@@ -134,6 +134,13 @@ export const createAppRouter = (queryClient: QueryClient) =>
                   import('./routes/import-jobs/digital-object-imports').then(convert(queryClient)),
               },
               {
+                path: ':importJobId/digital-object-imports/:digitalObjectImportId',
+                lazy: () =>
+                  import('./routes/import-jobs/digital-object-imports/view').then(
+                    convert(queryClient),
+                  ),
+              },
+              {
                 path: 'new',
                 lazy: () => import('./routes/import-jobs/new').then(convert(queryClient)),
               },

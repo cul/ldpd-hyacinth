@@ -64,6 +64,7 @@ class Api::V2::DigitalObjectImportsController < Api::V2::BaseController
     def digital_object_import_detail_json(doi)
       {
         id: doi.id,
+        import_job_id: doi.import_job_id,
         csv_row_number: doi.csv_row_number,
         status: doi.status,
         digital_object_data: doi.digital_object_data,
@@ -72,7 +73,6 @@ class Api::V2::DigitalObjectImportsController < Api::V2::BaseController
         # requeue_count: doi.requeue_count, // not displayed in old UI
         created_at: doi.created_at,
         updated_at: doi.updated_at,
-        import_job_id: doi.import_job_id
       }
     end
 end
