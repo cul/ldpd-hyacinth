@@ -1,16 +1,17 @@
 import { QueryClient } from '@tanstack/react-query';
-// import { ImportJobDetail } from '@/features/import-jobs/components/import-job-detail';
+import { useParams } from 'react-router';
 import {
   getDigitalObjectImportQueryOptions,
   useDigitalObjectImportSuspenseQuery,
 } from '@/features/digital-object-imports/api/get-digital-object-import';
-import { useParams } from 'react-router';
+import { DigitalObjectDetail } from '@/features/digital-object-imports/components/digital-object-detail';
 
 export const clientLoader =
   (queryClient: QueryClient) =>
-  async ({ params, request }: any) => {
+  async ({ params }: any) => {
     const importJobId = params.importJobId as string;
     const digitalObjectImportId = params.digitalObjectImportId as string;
+
     await queryClient.ensureQueryData(
       getDigitalObjectImportQueryOptions({ importJobId, digitalObjectImportId }),
     );
@@ -21,9 +22,9 @@ const DigitalObjectImportsViewRoute = () => {
   const importJobId = params.importJobId as string;
   const digitalObjectImportId = params.digitalObjectImportId as string;
 
-  const data = useDigitalObjectImportSuspenseQuery({ importJobId, digitalObjectImportId });
-  console.log('data', data);
-  return <div>Hii</div>;
+  const { data } = useDigitalObjectImportSuspenseQuery({ importJobId, digitalObjectImportId });
+
+  return <DigitalObjectDetail digitalObjectImport={data.digitalObjectImport} />;
 };
 
 export default DigitalObjectImportsViewRoute;

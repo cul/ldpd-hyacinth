@@ -3,8 +3,8 @@ class Api::V2::DigitalObjectImportsController < Api::V2::BaseController
   before_action :set_digital_object_import, only: [:show]
 
   # GET /api/v2/import_jobs/:import_job_id/digital_object_imports
-  # Optional query params: 
-  # - ?status=pending|success|failure 
+  # Optional query params:
+  # - ?status=pending|success|failure
   # - ?page=N
   def index
     scope = @import_job.digital_object_imports
