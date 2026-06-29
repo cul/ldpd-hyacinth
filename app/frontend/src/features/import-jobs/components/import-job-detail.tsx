@@ -1,5 +1,5 @@
 import { ImportJob } from '@/types/api';
-import { Table as BTable, Card, Col, Row } from 'react-bootstrap';
+import { Table as BTable } from 'react-bootstrap';
 import { Link } from 'react-router';
 
 interface ImportJobDetailProps {

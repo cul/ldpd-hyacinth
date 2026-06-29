@@ -1,4 +1,4 @@
-import { useSearchParams } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import type { ColumnDef, PaginationState, Updater } from '@tanstack/react-table';
 import TableBuilder from '@/components/ui/table-builder/table-builder';
 import { columnDefs } from '../utils/digital-object-imports-column-defs';
@@ -49,7 +49,9 @@ export const DigitalObjectImportsList = ({ importJobId }: DigitalObjectImportsLi
 
   return (
     <>
-      <h2 className="mb-4">Digital Object Imports for {importJobName}</h2>
+      <h2 className="mb-4">
+        Digital Object Imports for <Link to={`/import-jobs/${importJobId}`}>{importJobName}</Link>
+      </h2>
 
       {/* TODO: This component shares the navigation that import-jobs-list.tsx uses, change it so the back button leads to the import job details */}
       <StatusFilter active={status ?? null} options={options} onChange={handleStatusChange} />

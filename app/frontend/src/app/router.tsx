@@ -118,15 +118,23 @@ export const createAppRouter = (queryClient: QueryClient) =>
           },
           {
             path: 'import-jobs',
-            Component: () => <FeatureLayout featureName="Import Job" />,
             children: [
               {
-                index: true,
-                lazy: () => import('./routes/import-jobs').then(convert(queryClient)),
-              },
-              {
-                path: ':importJobId',
-                lazy: () => import('./routes/import-jobs/view').then(convert(queryClient)),
+                Component: () => <FeatureLayout featureName="Import Job" />,
+                children: [
+                  {
+                    index: true,
+                    lazy: () => import('./routes/import-jobs').then(convert(queryClient)),
+                  },
+                  {
+                    path: ':importJobId',
+                    lazy: () => import('./routes/import-jobs/view').then(convert(queryClient)),
+                  },
+                  {
+                    path: 'new',
+                    lazy: () => import('./routes/import-jobs/new').then(convert(queryClient)),
+                  },
+                ],
               },
               {
                 path: ':importJobId/digital-object-imports',
@@ -139,10 +147,6 @@ export const createAppRouter = (queryClient: QueryClient) =>
                   import('./routes/import-jobs/digital-object-imports/view').then(
                     convert(queryClient),
                   ),
-              },
-              {
-                path: 'new',
-                lazy: () => import('./routes/import-jobs/new').then(convert(queryClient)),
               },
             ],
           },
