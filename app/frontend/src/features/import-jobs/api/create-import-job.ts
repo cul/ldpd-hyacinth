@@ -2,17 +2,28 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { api } from '@/lib/api-client';
 import { MutationConfig } from '@/lib/react-query';
+import { ImportJobSummary } from '@/types/api';
+
+export type CreateImportJobInput = {
+  data: {
+    file: File;
+    priority: string;
+    restoreArchivedS3ObjectsForNewAssets: boolean;
+  };
+};
 
 export const createImportJob = ({
   data,
-}: {
-  data: { file: File; priority: string };
-}): Promise<{ importJob: any }> => {
+}: CreateImportJobInput): Promise<{ importJob: ImportJobSummary }> => {
   const formData = new FormData();
   formData.append('import_file', data.file);
-  formData.append('import_job[priority]', data.priority);
+  formData.append('priority', data.priority);
+  formData.append(
+    'restore_archived_s3_objects_for_new_assets',
+    String(data.restoreArchivedS3ObjectsForNewAssets),
+  );
 
-  return api.post(`/import_jobs`, formData);
+  return api.post('/import_jobs', formData);
 };
 
 type UseCreateImportJobOptions = {

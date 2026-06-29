@@ -38,7 +38,7 @@ export const ImportJobDetail = ({ importJob }: ImportJobDetailProps) => {
           <dt className="fw-semibold text-secondary small text-uppercase mb-1">
             Restore archived S3 objects for new assets
           </dt>
-          <dd className="mb-0">TODO</dd>
+          <dd className="mb-0">{importJob.restoreArchivedS3ObjectsForNewAssets ? 'Yes' : 'No'}</dd>
         </div>
 
         <div className="mb-3">

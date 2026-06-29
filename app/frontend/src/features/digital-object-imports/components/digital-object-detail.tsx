@@ -1,7 +1,8 @@
-import { Link } from 'react-router';
-import { Badge, Card, Col, Row } from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router';
+import { Badge, Button, Card, Col, Row } from 'react-bootstrap';
 import { JSONEditor } from '@/components/ui/json-editor/json-editor';
 import { DigitalObjectImport } from '@/types/api';
+import { ArrowLeft } from 'react-bootstrap-icons';
 
 const STATUS_VARIANT: Record<string, string> = {
   pending: 'secondary',
@@ -38,9 +39,21 @@ export const DigitalObjectDetail = ({ digitalObjectImport }: DigitalObjectDetail
   const hasErrors = digitalObjectErrors && digitalObjectErrors.length > 0;
   const formatted = formatDigitalObjectData(digitalObjectData);
 
+  const navigate = useNavigate();
+
   return (
     <div>
-      <div className="d-flex align-items-center gap-2 mb-4">
+      <Button
+        variant="outline-secondary"
+        size="sm"
+        className="d-flex align-items-center gap-1"
+        onClick={() => navigate('..', { relative: 'path' })}
+      >
+        <ArrowLeft size={18} />
+        Back to the list of digital object imports
+      </Button>
+
+      <div className="d-flex align-items-center gap-2 my-4">
         <h2 className="mb-0">Digital Object Import</h2>
         <span className="text-muted">#{id}</span>
         <Badge bg={STATUS_VARIANT[status]} className="ms-1 text-capitalize">

@@ -13,7 +13,7 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
       .per(per_page)
 
     render_camelized_json({
-      import_jobs: @import_jobs.map { |import_job| import_job_list_json(import_job) },
+      import_jobs: @import_jobs.map { |import_job| import_job_summary_json(import_job) },
       pagination: pagination_data(@import_jobs)
     })
   end
@@ -23,17 +23,20 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
     return render_missing_file_error if uploaded_csv_file.blank?
     return render_invalid_priority_error unless valid_priority?
 
-    @import_job = Hyacinth::Utils::CsvImportExportUtils.create_import_job_from_csv_data(
+    args = [
       uploaded_csv_file.read,
       uploaded_csv_file.original_filename,
       current_user,
       requested_priority.to_sym
-    )
+    ]
+    args << true if params[:restore_archived_s3_objects_for_new_assets] == 'true'
+
+    @import_job = Hyacinth::Utils::CsvImportExportUtils.create_import_job_from_csv_data(*args)
 
     if @import_job.errors.any?
       render_camelized_json({ errors: format_errors(@import_job.errors) }, status: :unprocessable_entity)
     else
-      render_camelized_json({ import_job: import_job_json(@import_job) }, status: :created)
+      render_camelized_json({ import_job: import_job_summary_json(@import_job) }, status: :created)
     end
   end
 
@@ -126,7 +129,7 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
       }
     end
 
-    def import_job_list_json(import_job)
+    def import_job_summary_json(import_job)
       {
         id: import_job.id,
         name: import_job.name,
@@ -146,6 +149,7 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
         id: import_job.id,
         name: import_job.name,
         priority: import_job.priority,
+        restore_archived_s3_objects_for_new_assets: import_job.restore_archived_s3_objects_for_new_assets,
         status: import_job.status_string,
         pending_count: import_job.count_pending_digital_object_imports,
         success_count: import_job.count_successful_digital_object_imports,

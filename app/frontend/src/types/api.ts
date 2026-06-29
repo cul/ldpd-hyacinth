@@ -60,6 +60,7 @@ export interface ImportJobSummary {
 
 export interface ImportJob extends ImportJobSummary {
   pathToCsvFile: string;
+  restoreArchivedS3ObjectsForNewAssets: boolean;
   pendingCount: number;
   successCount: number;
   failureCount: number;
