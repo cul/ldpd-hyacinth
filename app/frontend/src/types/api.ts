@@ -90,6 +90,13 @@ export interface DigitalObjectImport extends DigitalObjectImportSummary {
   prerequisiteCsvRowNumbers: number[];
 }
 
+export interface Pagination {
+  currentPage: number;
+  perPage: number;
+  totalPages: number;
+  totalCount: number;
+}
+
 /* 
 Payload types
 */

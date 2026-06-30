@@ -33,7 +33,7 @@ const ImportJobsList = () => {
   };
 
   return (
-    <>
+    <div className="mt-4">
       <TableBuilder
         data={importJobs}
         columns={columnDefs as ColumnDef<ImportJobSummary>[]}
@@ -51,7 +51,7 @@ const ImportJobsList = () => {
         importJobId={jobToDelete ? String(jobToDelete.id) : ''}
         importJobName={jobToDelete?.name ?? ''}
       />
-    </>
+    </div>
   );
 };
 

@@ -1,8 +1,6 @@
 import { queryOptions, useSuspenseQuery, keepPreviousData } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
-import { DigitalObjectImportSummary } from '@/types/api';
-// TODO: Move pagination into a shared type file since it's used in multiple places
-import { Pagination } from '@/features/import-jobs/api/get-import-jobs';
+import { DigitalObjectImportSummary, Pagination } from '@/types/api';
 
 export interface DigitalObjectImportsResponse {
   digitalObjectImports: DigitalObjectImportSummary[];
@@ -43,7 +41,7 @@ export const getDigitalObjectImportsQueryOptions = ({
 
 export const useDigitalObjectImportsSuspenseQuery = (params: DigitalObjectImportsQueryParams) => {
   return useSuspenseQuery({
+    placeholderData: keepPreviousData,
     ...getDigitalObjectImportsQueryOptions(params),
-    // placeholderData: keepPreviousData,
   });
 };

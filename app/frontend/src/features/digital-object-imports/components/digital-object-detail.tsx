@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { Badge, Button, Card, Col, Row } from 'react-bootstrap';
 import { ArrowLeft } from 'react-bootstrap-icons';
@@ -41,6 +42,14 @@ export const DigitalObjectDetail = ({ digitalObjectImport }: DigitalObjectDetail
   const formatted = formatDigitalObjectData(digitalObjectData);
 
   const navigate = useNavigate();
+
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(formatted);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div>
@@ -114,13 +123,21 @@ export const DigitalObjectDetail = ({ digitalObjectImport }: DigitalObjectDetail
         </Card>
       )}
 
-      {/* TODO: Add copy to clipboard */}
       <Card>
         <Card.Header className="d-flex align-items-center justify-content-between">
           <span className="fw-semibold">Digital Object Data (read only)</span>
-          <Badge bg="light" text="dark">
-            JSON
-          </Badge>
+          <div className="d-flex align-items-center gap-2">
+            <Button
+              variant={copied ? 'success' : 'outline-secondary'}
+              size="sm"
+              onClick={handleCopy}
+            >
+              {copied ? 'Copied!' : 'Copy JSON to Clipboard'}
+            </Button>
+            <Badge bg="light" text="dark">
+              JSON
+            </Badge>
+          </div>
         </Card.Header>
         <Card.Body className="p-0">
           <JSONEditor

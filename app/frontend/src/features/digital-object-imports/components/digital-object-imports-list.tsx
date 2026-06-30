@@ -20,13 +20,13 @@ export const DigitalObjectImportsList = ({ importJobId }: DigitalObjectImportsLi
   const query = useDigitalObjectImportsSuspenseQuery({ importJobId, page, status });
   const { digitalObjectImports, pagination, importJobName } = query.data;
 
-  // same logic as in import-jobs-list.tsx, could this be refactored/extracted?
+  // TODO: This is the same logic as in import-jobs-list.tsx; might work well as a custom hook
   const paginationState: PaginationState = {
     pageIndex: page - 1,
     pageSize: pagination.perPage,
   };
 
-  // same logic as in import-jobs-list.tsx, could this be refactored/extracted?
+  // TODO: This is the same logic as in import-jobs-list.tsx; might work well as a custom hook
   const handlePaginationChange = (updater: Updater<PaginationState>) => {
     const next = typeof updater === 'function' ? updater(paginationState) : updater;
     setSearchParams((prev) => {
@@ -53,7 +53,6 @@ export const DigitalObjectImportsList = ({ importJobId }: DigitalObjectImportsLi
         Digital Object Imports for <Link to={`/import-jobs/${importJobId}`}>{importJobName}</Link>
       </h2>
 
-      {/* TODO: This component shares the navigation that import-jobs-list.tsx uses, change it so the back button leads to the import job details */}
       <StatusFilter active={status ?? null} options={options} onChange={handleStatusChange} />
 
       <TableBuilder

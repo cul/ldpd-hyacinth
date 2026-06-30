@@ -1,5 +1,5 @@
 class Api::V2::ImportJobsController < Api::V2::BaseController
-  before_action :set_import_job, only: [:show, :download_original_csv, :destroy]
+  before_action :set_import_job, only: [:show, :download_original_csv, :download_csv_without_successful_rows, :destroy]
 
   # GET /import_jobs
   def index
@@ -79,11 +79,43 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
     render_camelized_json({ queue_activity: counts })
   end
 
+  # GET /api/v2/import_jobs/:id/download_original_csv
   def download_original_csv
     authorize! :show, @import_job
+
     if @import_job.path_to_csv_file.present?
-      # TODO
+      send_file @import_job.path_to_csv_file, filename: File.basename(@import_job.name)
+    else
+      render_camelized_json({ errors: { file: ['No CSV file available for this import job.'] } }, status: :not_found)
     end
+  end
+
+  # GET /api/v2/import_jobs/:id/download_csv_without_successful_rows
+  def download_csv_without_successful_rows
+    authorize! :show, @import_job
+
+    return render_camelized_json(
+      { errors: { file: ['No CSV file available for this import job.'] } },
+      status: :not_found
+    ) if @import_job.path_to_csv_file.blank?
+
+    csv_rows_to_collect = @import_job.csv_row_numbers_for_all_non_successful_digital_object_imports.to_set
+    csv_data_string = ''
+    csv_row_counter = 1
+    found_header_row = false
+
+    CSV.foreach(@import_job.path_to_csv_file) do |row|
+      if !found_header_row
+        csv_data_string << CSV.generate_line(row)
+        found_header_row = true if row[0].start_with?('_')
+      elsif csv_rows_to_collect.include?(csv_row_counter)
+        csv_data_string << CSV.generate_line(row)
+      end
+
+      csv_row_counter += 1
+    end
+
+    send_data(csv_data_string, type: 'text/csv', filename: "without-successful-rows-#{File.basename(@import_job.name)}")
   end
 
   # DELETE /api/v2/import_jobs/:id

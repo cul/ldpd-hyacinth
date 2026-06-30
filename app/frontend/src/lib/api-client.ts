@@ -1,4 +1,4 @@
-const BASE_URL = '/api/v2';
+export const BASE_URL = '/api/v2';
 
 export type ApiErrorResponse = {
   errors?: Record<string, string[]>;

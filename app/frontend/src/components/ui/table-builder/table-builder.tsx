@@ -21,6 +21,7 @@ interface TableBuilderProps<T> {
   columns: ColumnDef<T>[];
   pagination?: ServerPagination;
   meta?: TableMeta<T>; // Used to pass additional data or functions
+  size?: 'sm' | 'md';
 }
 
 interface ServerPagination {
@@ -32,7 +33,13 @@ interface ServerPagination {
 // This is a generic table component that can be reused across different data types
 // When using this component, ensure you specify how to render each column in the column definitions
 // Docs: https://tanstack.com/table/latest/docs/guide/column-defs
-function TableBuilder<T extends object>({ data, columns, pagination, meta }: TableBuilderProps<T>) {
+function TableBuilder<T extends object>({
+  data,
+  columns,
+  pagination,
+  meta,
+  size = 'md',
+}: TableBuilderProps<T>) {
   // You can disable sorting specific columns or specify custom sorting functions in the column definitions
   // Docs: https://tanstack.com/table/latest/docs/api/features/sorting#column-def-options
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -63,7 +70,7 @@ function TableBuilder<T extends object>({ data, columns, pagination, meta }: Tab
     <>
       {pagination && <TablePagination table={table} />}
 
-      <BTable striped bordered hover responsive size="md" className="rounded-4">
+      <BTable striped bordered hover responsive size={size} className="rounded-4">
         {table.getHeaderGroups().map((headerGroup) => (
           <TableHeader key={headerGroup.id} headerGroup={headerGroup} />
         ))}

@@ -38,7 +38,7 @@ export const useCreateImportJob = ({ mutationConfig }: UseCreateImportJobOptions
   return useMutation({
     onSuccess: (...args) => {
       queryClient.invalidateQueries({
-        queryKey: ['import-jobs'], // TODO: replace with const
+        queryKey: ['import-jobs'],
       });
       onSuccess?.(...args);
     },

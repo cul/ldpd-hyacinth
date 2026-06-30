@@ -1,7 +1,11 @@
-import { Table as BTable } from 'react-bootstrap';
+import { Table as BTable, Button } from 'react-bootstrap';
 import { Link } from 'react-router';
 import { ImportJob } from '@/types/api';
 import { formatLocalDateTime } from '@/utils/format';
+import {
+  getCsvWithoutSuccessfulRowsDownloadUrl,
+  getOriginalCsvDownloadUrl,
+} from '../api/download-csv';
 
 interface ImportJobDetailProps {
   importJob: ImportJob;
@@ -41,27 +45,41 @@ export const ImportJobDetail = ({ importJob }: ImportJobDetailProps) => {
           <dd className="mb-0">{importJob.restoreArchivedS3ObjectsForNewAssets ? 'Yes' : 'No'}</dd>
         </div>
 
-        <div className="mb-3">
-          <dt className="fw-semibold text-secondary small text-uppercase mb-1">
-            Download Original CSV File
-          </dt>
-          <dd className="mb-0">
-            {/* <a href={importJob.originalCsvUrl} download>
-            Download
-          </a> */}
-          </dd>
-        </div>
+        {importJob.pathToCsvFile && (
+          <>
+            <div className="mb-3">
+              <dt className="fw-semibold text-secondary small text-uppercase mb-1">
+                Download Original CSV File
+              </dt>
+              <dd className="mb-0">
+                <Button
+                  as="a"
+                  href={getOriginalCsvDownloadUrl(importJob.id)}
+                  variant="link"
+                  className="p-0"
+                >
+                  Download
+                </Button>
+              </dd>
+            </div>
 
-        <div className="mb-3">
-          <dt className="fw-semibold text-secondary small text-uppercase mb-1">
-            Download CSV File Without Successful Rows
-          </dt>
-          <dd className="mb-0">
-            {/* <a href={importJob.csvWithoutSuccessfulRowsUrl} download>
-            Download
-          </a> */}
-          </dd>
-        </div>
+            <div className="mb-3">
+              <dt className="fw-semibold text-secondary small text-uppercase mb-1">
+                Download CSV File Without Successful Rows
+              </dt>
+              <dd className="mb-0">
+                <Button
+                  as="a"
+                  href={getCsvWithoutSuccessfulRowsDownloadUrl(importJob.id)}
+                  variant="link"
+                  className="p-0"
+                >
+                  Download
+                </Button>
+              </dd>
+            </div>
+          </>
+        )}
       </div>
 
       <BTable striped bordered responsive>

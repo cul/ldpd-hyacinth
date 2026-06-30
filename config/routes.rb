@@ -185,6 +185,11 @@ Rails.application.routes.draw do
           get 'queue_activity'
         end
 
+        member do
+          get 'download_original_csv'
+          get 'download_csv_without_successful_rows'
+        end
+
         resources :digital_object_imports, only: [:index, :show]
       end
     end
