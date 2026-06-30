@@ -4,7 +4,7 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
   # GET /import_jobs
   def index
     authorize! :index, ImportJob
-    per_page = 5 # temp
+    per_page = 20
 
     # CanCanCan already filters the import jobs based on the current user's permissions
     @import_jobs = ImportJob.accessible_by(current_ability)

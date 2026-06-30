@@ -1,12 +1,12 @@
 import { Suspense } from 'react';
 import { QueryClient } from '@tanstack/react-query';
-import { useParams } from 'react-router';
+import { useParams, LoaderFunctionArgs } from 'react-router';
 import { getDigitalObjectImportsQueryOptions } from '@/features/digital-object-imports/api/get-digital-object-imports';
 import { DigitalObjectImportsList } from '@/features/digital-object-imports/components/digital-object-imports-list';
 
 export const clientLoader =
   (queryClient: QueryClient) =>
-  async ({ params, request }: any) => {
+  async ({ params, request }: LoaderFunctionArgs) => {
     const importJobId = params.importJobId as string;
     const url = new URL(request.url);
     const page = Number(url.searchParams.get('page')) || 1;

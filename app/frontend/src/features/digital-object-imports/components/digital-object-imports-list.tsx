@@ -48,22 +48,33 @@ export const DigitalObjectImportsList = ({ importJobId }: DigitalObjectImportsLi
   };
 
   return (
-    <>
-      <h2 className="mb-4">
-        Digital Object Imports for <Link to={`/import-jobs/${importJobId}`}>{importJobName}</Link>
-      </h2>
+    <div>
+      <div className="mb-4">
+        <div className="text-secondary small text-uppercase fw-semibold mb-1">
+          Digital object imports
+        </div>
+        <h2 className="mb-0">
+          <Link
+            to={`/import-jobs/${importJobId}`}
+            className="link-underline link-underline-opacity-0 link-underline-opacity-75-hover"
+          >
+            {importJobName}
+          </Link>
+        </h2>
+      </div>
 
       <StatusFilter active={status ?? null} options={options} onChange={handleStatusChange} />
 
       <TableBuilder
         data={digitalObjectImports}
         columns={columnDefs as ColumnDef<DigitalObjectImportSummary>[]}
+        size="sm"
         pagination={{
           state: paginationState,
           onPaginationChange: handlePaginationChange,
           rowCount: pagination.totalCount,
         }}
       />
-    </>
+    </div>
   );
 };

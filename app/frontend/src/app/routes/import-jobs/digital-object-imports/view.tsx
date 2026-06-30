@@ -1,5 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
-import { useParams } from 'react-router';
+import { useParams, LoaderFunctionArgs } from 'react-router';
 import {
   getDigitalObjectImportQueryOptions,
   useDigitalObjectImportSuspenseQuery,
@@ -8,7 +8,7 @@ import { DigitalObjectDetail } from '@/features/digital-object-imports/component
 
 export const clientLoader =
   (queryClient: QueryClient) =>
-  async ({ params }: any) => {
+  async ({ params }: LoaderFunctionArgs) => {
     const importJobId = params.importJobId as string;
     const digitalObjectImportId = params.digitalObjectImportId as string;
 

@@ -22,7 +22,7 @@ export const ImportJobForm = () => {
 
   const [formData, setFormData] = useState<ImportJobFormData>({
     file: null,
-    priority: 'low',
+    priority: 'medium',
     restoreArchivedS3ObjectsForNewAssets: false,
   });
 
