@@ -1,8 +1,9 @@
 import { Link, useNavigate } from 'react-router';
 import { Badge, Button, Card, Col, Row } from 'react-bootstrap';
+import { ArrowLeft } from 'react-bootstrap-icons';
 import { JSONEditor } from '@/components/ui/json-editor/json-editor';
 import { DigitalObjectImport } from '@/types/api';
-import { ArrowLeft } from 'react-bootstrap-icons';
+import { formatLocalDateTime } from '@/utils/format';
 
 const STATUS_VARIANT: Record<string, string> = {
   pending: 'secondary',
@@ -88,11 +89,11 @@ export const DigitalObjectDetail = ({ digitalObjectImport }: DigitalObjectDetail
             </Col>
             <Col md={4}>
               <dt className="fw-semibold text-secondary small text-uppercase mb-1">Created</dt>
-              <dd className="mb-0">{createdAt}</dd>
+              <dd className="mb-0">{formatLocalDateTime(createdAt)}</dd>
             </Col>
             <Col md={4}>
               <dt className="fw-semibold text-secondary small text-uppercase mb-1">Updated</dt>
-              <dd className="mb-0">{updatedAt}</dd>
+              <dd className="mb-0">{formatLocalDateTime(updatedAt)}</dd>
             </Col>
           </Row>
         </Card.Body>

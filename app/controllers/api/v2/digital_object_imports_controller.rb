@@ -34,6 +34,10 @@ class Api::V2::DigitalObjectImportsController < Api::V2::BaseController
 
     def set_import_job
       @import_job = ImportJob.find(params[:import_job_id])
+
+      # If the user is not authorized to view this import job, we also want to prevent them 
+      # from viewing the digital object imports that belong to this import job.
+      authorize! :show, @import_job
     end
 
     def set_digital_object_import

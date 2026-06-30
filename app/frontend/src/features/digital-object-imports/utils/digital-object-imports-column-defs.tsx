@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { DigitalObjectImportSummary } from '@/types/api';
+import { formatLocalDateTime } from '@/utils/format';
 
 const columnHelper = createColumnHelper<DigitalObjectImportSummary>();
 
@@ -26,10 +27,10 @@ export const columnDefs = [
   }),
   columnHelper.accessor('createdAt', {
     header: 'Created At',
-    cell: (info) => info.getValue(),
+    cell: (info) => formatLocalDateTime(info.getValue() || '') || 'Unknown',
   }),
   columnHelper.accessor('updatedAt', {
     header: 'Updated At',
-    cell: (info) => info.getValue(),
+    cell: (info) => formatLocalDateTime(info.getValue() || '') || 'Unknown',
   }),
 ];

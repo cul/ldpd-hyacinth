@@ -2,8 +2,40 @@ import { Link } from 'react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Button } from 'react-bootstrap';
 import { ImportJobSummary } from '@/types/api';
+import { formatLocalDateTime } from '@/utils/format';
+import { User } from '@/types/api';
 
 const columnHelper = createColumnHelper<ImportJobSummary>();
+
+const renderDeleteButton = (
+  row: ImportJobSummary,
+  currentUser: User | undefined,
+  onDeleteRow?: (row: ImportJobSummary) => void,
+) => {
+  const onDelete = () => onDeleteRow?.(row);
+
+  if (row.complete) {
+    return (
+      <Button variant="outline-secondary" size="sm" onClick={onDelete}>
+        Delete
+      </Button>
+    );
+  }
+
+  return (
+    <div>
+      Job not complete
+      {currentUser?.isAdmin && (
+        <>
+          <br />
+          <Button variant="outline-secondary" size="sm" onClick={onDelete}>
+            Force delete
+          </Button>
+        </>
+      )}
+    </div>
+  );
+};
 
 export const columnDefs = [
   columnHelper.accessor('id', {
@@ -31,26 +63,22 @@ export const columnDefs = [
   }),
   columnHelper.accessor('createdAt', {
     header: 'Submitted At',
-    cell: (info) => info.getValue() || 'Unknown',
+    cell: (info) => formatLocalDateTime(info.getValue() || '') || 'Unknown',
   }),
   columnHelper.accessor('user.uid', {
     header: 'Submitted By',
     cell: (info) => info.getValue() || 'Unknown',
   }),
-  // TODO: Show delete link for completed jobs only
-  // Otherwise display "Job not complete" and allow force delete for *admin users only*
   columnHelper.display({
     id: 'actions',
     header: 'Actions',
-    cell: ({ row, table }) => (
-      <Button
-        variant="outline-secondary"
-        size="sm"
-        onClick={() => table.options.meta?.onDeleteRow?.(row.original)}
-      >
-        Delete
-      </Button>
-    ),
     enableSorting: false,
+    cell: ({ row, table }) => {
+      const job = row.original;
+      const currentUser = table.options.meta?.currentUser;
+      const onDelete = () => table.options.meta?.onDeleteRow?.(job);
+
+      return renderDeleteButton(job, currentUser, onDelete);
+    },
   }),
 ];

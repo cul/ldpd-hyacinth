@@ -20,7 +20,6 @@ const ImportJobsViewRoute = () => {
 
   const importJobQuery = useImportJobSuspenseQuery({ importJobId });
   const importJob = importJobQuery.data.importJob;
-  console.log('ImportJobsViewRoute importJob:', importJob);
 
   return <ImportJobDetail importJob={importJob} />;
 };

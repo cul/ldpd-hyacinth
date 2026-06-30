@@ -118,6 +118,7 @@ export const createAppRouter = (queryClient: QueryClient) =>
           },
           {
             path: 'import-jobs',
+            ErrorBoundary: AuthorizationErrorBoundary, // Catch authorization errors from loaders
             children: [
               {
                 Component: () => <FeatureLayout featureName="Import Job" />,

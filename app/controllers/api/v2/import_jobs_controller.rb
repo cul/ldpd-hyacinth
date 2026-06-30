@@ -3,10 +3,11 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
 
   # GET /import_jobs
   def index
-    scope = current_user.admin? ? ImportJob.all : ImportJob.where(user: current_user)
+    authorize! :index, ImportJob
     per_page = 5 # temp
 
-    @import_jobs = scope
+    # CanCanCan already filters the import jobs based on the current user's permissions
+    @import_jobs = ImportJob.accessible_by(current_ability)
       .includes(:user)
       .order(id: :desc)
       .page(params[:page])
@@ -59,7 +60,7 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
 
   # GET /api/v2/import_jobs/:id
   def show
-    # authorize! :show, @import_job
+    authorize! :show, @import_job
     render_camelized_json({ import_job: import_job_detail_json(@import_job) })
   end
 
@@ -79,6 +80,7 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
   end
 
   def download_original_csv
+    authorize! :show, @import_job
     if @import_job.path_to_csv_file.present?
       # TODO
     end
@@ -86,6 +88,7 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
 
   # DELETE /api/v2/import_jobs/:id
   def destroy
+    authorize! :destroy, @import_job
     @import_job.destroy
   end
 
@@ -135,6 +138,7 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
         name: import_job.name,
         priority: import_job.priority,
         status: import_job.status_string,
+        complete: import_job.complete?,
         created_at: import_job.created_at,
         user: {
           uid: import_job.user.uid,

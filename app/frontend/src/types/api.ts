@@ -51,6 +51,7 @@ export interface ImportJobSummary {
   priority: string;
   status: string;
   createdAt: string;
+  complete: boolean;
   user: {
     uid: string;
     email: string;
@@ -84,7 +85,7 @@ export interface DigitalObjectImportSummary {
 
 export interface DigitalObjectImport extends DigitalObjectImportSummary {
   importJobName: string;
-  digitalObjectData: any;
+  digitalObjectData: string;
   digitalObjectErrors: string[];
   prerequisiteCsvRowNumbers: number[];
 }

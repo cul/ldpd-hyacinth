@@ -7,10 +7,12 @@ import { columnDefs } from '../utils/import-jobs-list-column-defs';
 import { useImportJobsSuspenseQuery } from '../api/get-import-jobs';
 import { ImportJobSummary } from '@/types/api';
 import { DeleteImportJobModal } from './delete-import-job-modal';
+import { useCurrentUser } from '@/lib/auth';
 
 const ImportJobsList = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get('page')) || 1;
+  const { data: currentUser } = useCurrentUser();
 
   const importJobsQuery = useImportJobsSuspenseQuery({ page });
   const { importJobs, pagination } = importJobsQuery.data;
@@ -40,7 +42,7 @@ const ImportJobsList = () => {
           onPaginationChange: handlePaginationChange,
           rowCount: pagination.totalCount,
         }}
-        meta={{ onDeleteRow: setJobToDelete }}
+        meta={{ currentUser: currentUser ?? undefined, onDeleteRow: setJobToDelete }}
       />
 
       <DeleteImportJobModal

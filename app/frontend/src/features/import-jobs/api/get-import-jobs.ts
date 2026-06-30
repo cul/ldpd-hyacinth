@@ -17,7 +17,6 @@ export interface ImportJobsResponse {
 
 export const getImportJobs = async (page: number): Promise<ImportJobsResponse> => {
   const res = await api.get<ImportJobsResponse>(`/import_jobs?page=${page}`);
-  console.log('getImportJobs response:', res);
   return res;
 };
 

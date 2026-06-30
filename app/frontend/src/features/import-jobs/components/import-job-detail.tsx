@@ -1,6 +1,7 @@
-import { ImportJob } from '@/types/api';
 import { Table as BTable } from 'react-bootstrap';
 import { Link } from 'react-router';
+import { ImportJob } from '@/types/api';
+import { formatLocalDateTime } from '@/utils/format';
 
 interface ImportJobDetailProps {
   importJob: ImportJob;
@@ -18,7 +19,7 @@ export const ImportJobDetail = ({ importJob }: ImportJobDetailProps) => {
       <div className="mb-4">
         <div className="mb-3">
           <dt className="fw-semibold text-secondary small text-uppercase mb-1">Created on</dt>
-          <dd className="mb-0">{importJob.createdAt}</dd>
+          <dd className="mb-0">{formatLocalDateTime(importJob.createdAt)}</dd>
         </div>
 
         <div className="mb-3">
@@ -33,7 +34,6 @@ export const ImportJobDetail = ({ importJob }: ImportJobDetailProps) => {
           <dd className="mb-0">{importJob.priority}</dd>
         </div>
 
-        {/* TODO: Include restore_archived_s3_objects_for_new_assets boolean */}
         <div className="mb-3">
           <dt className="fw-semibold text-secondary small text-uppercase mb-1">
             Restore archived S3 objects for new assets
