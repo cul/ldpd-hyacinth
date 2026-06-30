@@ -44,6 +44,7 @@ Rails.application.routes.draw do
     resources :digital_object_imports, only: [:index, :show]
   end
 
+  # ? Should this be deleted since it's the same resource as the one nested under import_jobs?
   resources :digital_object_imports, only: [:index, :show]
 
   resources :digital_objects do
@@ -177,6 +178,20 @@ Rails.application.routes.draw do
       resources :publish_targets, only: [:index, :show, :create, :update, :destroy], param: :string_key
 
       resources :xml_datastreams, only: [:index, :show, :create, :update], param: :string_key
+
+      resources :import_jobs, only: [:index, :create, :show, :destroy], param: :id do
+        collection do
+          post 'validate'
+          get 'queue_activity'
+        end
+
+        member do
+          get 'download_original_csv'
+          get 'download_csv_without_successful_rows'
+        end
+
+        resources :digital_object_imports, only: [:index, :show]
+      end
     end
   end
 

@@ -45,6 +45,57 @@ export interface XmlDatastream {
   xmlTranslation: string;
 }
 
+export interface ImportJobSummary {
+  id: number;
+  name: string;
+  priority: string;
+  status: string;
+  createdAt: string;
+  complete: boolean;
+  user: {
+    uid: string;
+    email: string;
+    fullName: string;
+  };
+}
+
+export interface ImportJob extends ImportJobSummary {
+  pathToCsvFile: string;
+  restoreArchivedS3ObjectsForNewAssets: boolean;
+  pendingCount: number;
+  successCount: number;
+  failureCount: number;
+  updatedAt: string;
+}
+
+export interface QueueActivity {
+  low: number;
+  medium: number;
+  high: number;
+}
+
+export interface DigitalObjectImportSummary {
+  id: number;
+  importJobId: number;
+  status: string;
+  csvRowNumber: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface DigitalObjectImport extends DigitalObjectImportSummary {
+  importJobName: string;
+  digitalObjectData: string;
+  digitalObjectErrors: string[];
+  prerequisiteCsvRowNumbers: number[];
+}
+
+export interface Pagination {
+  currentPage: number;
+  perPage: number;
+  totalPages: number;
+  totalCount: number;
+}
 
 /* 
 Payload types
