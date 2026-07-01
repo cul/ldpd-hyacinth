@@ -193,7 +193,11 @@ Rails.application.routes.draw do
         resources :digital_object_imports, only: [:index, :show]
       end
 
-      resources :export_jobs, only: [:index, :destroy], param: :id
+      resources :csv_exports, only: [:index, :destroy], param: :id do
+        member do
+          get 'download'
+        end
+      end
     end
   end
 

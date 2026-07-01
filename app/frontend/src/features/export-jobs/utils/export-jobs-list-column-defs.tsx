@@ -2,6 +2,8 @@ import { Link } from 'react-router';
 import { createColumnHelper } from '@tanstack/react-table';
 import { formatLocalDateTime } from '@/utils/format';
 import { ExportJob } from '@/types/api';
+import { getCsvExportDownloadUrl } from '@/features/export-jobs/api/download-csv-export';
+import { Button } from 'react-bootstrap';
 
 const columnHelper = createColumnHelper<ExportJob>();
 
@@ -32,18 +34,20 @@ export const columnDefs = [
     cell: (info) => info.getValue(),
   }),
   // The column below depends on if the job was successful or not
-  // columnHelper.display({
-  //   id: 'download',
-  //   header: 'Download',
-  //   enableSorting: false,
-  //   cell: ({ row, table }) => {
-  //     const job = row.original;
-  //     const currentUser = table.options.meta?.currentUser;
-  //     const onDelete = () => table.options.meta?.onDeleteRow?.(job);
+  columnHelper.display({
+    id: 'download',
+    header: 'Download',
+    enableSorting: false,
+    cell: ({ row }) => {
+      const job = row.original;
 
-  //     return renderDeleteButton(job, currentUser, onDelete);
-  //   },
-  // }),
+      return (
+        <Button as="a" href={getCsvExportDownloadUrl(job.id)} variant="link" className="p-0">
+          Download
+        </Button>
+      );
+    },
+  }),
   // columnHelper.display({
   //   id: 'delete',
   //   header: 'Delete',

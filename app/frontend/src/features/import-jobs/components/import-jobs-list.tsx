@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { useSearchParams } from 'react-router';
-import type { ColumnDef, PaginationState, Updater } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 
 import TableBuilder from '@/components/ui/table-builder/table-builder';
 import { columnDefs } from '../utils/import-jobs-list-column-defs';
@@ -8,40 +7,23 @@ import { useImportJobsSuspenseQuery } from '../api/get-import-jobs';
 import { ImportJobSummary } from '@/types/api';
 import { DeleteImportJobModal } from './delete-import-job-modal';
 import { useCurrentUser } from '@/lib/auth';
+import { useTablePagination } from '@/hooks/use-table-pagination';
 
 const ImportJobsList = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = Number(searchParams.get('page')) || 1;
-  const { data: currentUser } = useCurrentUser();
-
+  const { page, getPaginationProps } = useTablePagination();
   const importJobsQuery = useImportJobsSuspenseQuery({ page });
   const { importJobs, pagination } = importJobsQuery.data;
 
+  const { data: currentUser } = useCurrentUser();
+
   const [jobToDelete, setJobToDelete] = useState<ImportJobSummary | null>(null);
-
-  const paginationState: PaginationState = {
-    pageIndex: page - 1,
-    pageSize: pagination.perPage,
-  };
-
-  const handlePaginationChange = (updater: Updater<PaginationState>) => {
-    const next = typeof updater === 'function' ? updater(paginationState) : updater;
-    setSearchParams((prev) => {
-      prev.set('page', String(next.pageIndex + 1));
-      return prev;
-    });
-  };
 
   return (
     <div className="mt-4">
       <TableBuilder
         data={importJobs}
         columns={columnDefs as ColumnDef<ImportJobSummary>[]}
-        pagination={{
-          state: paginationState,
-          onPaginationChange: handlePaginationChange,
-          rowCount: pagination.totalCount,
-        }}
+        pagination={getPaginationProps(pagination)}
         meta={{ currentUser: currentUser ?? undefined, onDeleteRow: setJobToDelete }}
       />
 
