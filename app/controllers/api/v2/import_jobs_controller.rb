@@ -175,7 +175,7 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
         user: {
           uid: import_job.user.uid,
           email: import_job.user.email,
-          full_name: "#{import_job.user.first_name} #{import_job.user.last_name}".strip
+          full_name: import_job.user.full_name
         }
       }
     end
@@ -196,7 +196,7 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
         user: {
           uid: import_job.user.uid,
           email: import_job.user.email,
-          full_name: "#{import_job.user.first_name} #{import_job.user.last_name}".strip,
+          full_name: import_job.user.full_name
         }
       }
     end
