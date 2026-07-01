@@ -9,7 +9,7 @@ export interface ExportJobsResponse {
 }
 
 export const getExportJobs = async (page: number): Promise<ExportJobsResponse> => {
-  const res = await api.get<ExportJobsResponse>(`/export_jobs?page=${page}`);
+  const res = await api.get<ExportJobsResponse>(`/csv_exports?page=${page}`);
   return res;
 };
 
