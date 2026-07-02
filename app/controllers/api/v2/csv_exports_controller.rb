@@ -1,9 +1,7 @@
-
-# Old controller was called CsvExportsController, maybe we should keep that name for consistency with the model name?
 class Api::V2::CsvExportsController < Api::V2::BaseController
-  # :show, :edit, :update,
   before_action :set_csv_export, only: [:destroy, :download]
 
+  # GET /api/v2/csv_exports
   def index
     authorize! :index, CsvExport
     per_page = 20
@@ -20,6 +18,7 @@ class Api::V2::CsvExportsController < Api::V2::BaseController
     })
   end
 
+  # DELETE /api/v2/csv_exports/:id
   def destroy
     authorize! :destroy, @csv_export
 
@@ -27,6 +26,7 @@ class Api::V2::CsvExportsController < Api::V2::BaseController
     render_camelized_json({}, status: :no_content)
   end
 
+  # GET /api/v2/csv_exports/:id/download
   def download
     if @csv_export.success?
       send_file @csv_export.path_to_csv_file, filename: File.basename(@csv_export.path_to_csv_file)
@@ -38,21 +38,17 @@ class Api::V2::CsvExportsController < Api::V2::BaseController
   end
 
   ######
-  # POST /csv_exports
-  # NOT USED
-  # def create
-  #   @csv_export = CsvExport.new(csv_export_params)
+  # POST /api/v2/csv_exports
+  # This endpoint is not currently used by the front-end.
+  def create
+    @csv_export = CsvExport.new(csv_export_params)
 
-  #   respond_to do |format|
-  #     if @csv_export.save
-  #       format.html { redirect_to @csv_export, notice: 'Csv export was successfully created.' }
-  #       format.json { render action: 'show', status: :created, location: @csv_export }
-  #     else
-  #       format.html { render action: 'new' }
-  #       format.json { render json: @csv_export.errors, status: :unprocessable_entity }
-  #     end
-  #   end
-  # end
+    if @csv_export.save
+      render_camelized_json({ export_job: export_job_json(@csv_export) }, status: :created)
+    else
+      render_camelized_json({ errors: format_errors(@csv_export.errors) }, status: :unprocessable_entity)
+    end
+  end
 
   private
 
@@ -60,6 +56,9 @@ class Api::V2::CsvExportsController < Api::V2::BaseController
       @csv_export = CsvExport.find(params[:id])
     end
 
+    def csv_export_params
+      params.require(:csv_export).permit(:search_params, :user_id, :path_to_csv_file, :status)
+    end
 
     def pagination_data(scope)
       {
