@@ -1,55 +1,69 @@
 import { useState } from 'react';
-import { useSearchParams } from 'react-router';
-import type { ColumnDef, PaginationState, Updater } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 
 import TableBuilder from '@/components/ui/table-builder/table-builder';
+import { ConfirmDeleteModal } from '@/components/ui/modals/confirm-delete-modal/confirm-delete-modal';
 import { columnDefs } from '../utils/import-jobs-list-column-defs';
 import { useImportJobsSuspenseQuery } from '../api/get-import-jobs';
+import { useDeleteImportJob } from '../api/delete-import-job';
 import { ImportJobSummary } from '@/types/api';
-import { DeleteImportJobModal } from './delete-import-job-modal';
 import { useCurrentUser } from '@/lib/auth';
+import { useNotifications } from '@/stores/notifications-store';
+import { useTablePagination } from '@/hooks/use-table-pagination';
 
 const ImportJobsList = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const page = Number(searchParams.get('page')) || 1;
-  const { data: currentUser } = useCurrentUser();
-
+  const { page, getPaginationProps } = useTablePagination();
   const importJobsQuery = useImportJobsSuspenseQuery({ page });
   const { importJobs, pagination } = importJobsQuery.data;
 
+  const { data: currentUser } = useCurrentUser();
+  const addNotification = useNotifications((state) => state.addNotification);
+
   const [jobToDelete, setJobToDelete] = useState<ImportJobSummary | null>(null);
 
-  const paginationState: PaginationState = {
-    pageIndex: page - 1,
-    pageSize: pagination.perPage,
+  const deleteImportJobMutation = useDeleteImportJob({
+    mutationConfig: {
+      onSuccess: () => {
+        addNotification({
+          type: 'success',
+          title: 'Import job deleted',
+          message: `"${jobToDelete?.name}" was successfully deleted.`,
+        });
+        setJobToDelete(null);
+      },
+    },
+  });
+
+  const handleDismiss = () => {
+    if (deleteImportJobMutation.isPending) return;
+    deleteImportJobMutation.reset();
+    setJobToDelete(null);
   };
 
-  const handlePaginationChange = (updater: Updater<PaginationState>) => {
-    const next = typeof updater === 'function' ? updater(paginationState) : updater;
-    setSearchParams((prev) => {
-      prev.set('page', String(next.pageIndex + 1));
-      return prev;
-    });
+  const handleConfirmDelete = () => {
+    if (!jobToDelete) return;
+    deleteImportJobMutation.mutate({ importJobId: String(jobToDelete.id) });
   };
+
+  const apiError = deleteImportJobMutation.error?.response?.errors?.base?.[0];
 
   return (
     <div className="mt-4">
       <TableBuilder
         data={importJobs}
         columns={columnDefs as ColumnDef<ImportJobSummary>[]}
-        pagination={{
-          state: paginationState,
-          onPaginationChange: handlePaginationChange,
-          rowCount: pagination.totalCount,
-        }}
+        pagination={getPaginationProps(pagination)}
         meta={{ currentUser: currentUser ?? undefined, onDeleteRow: setJobToDelete }}
       />
 
-      <DeleteImportJobModal
+      <ConfirmDeleteModal
         show={jobToDelete !== null}
-        onHide={() => setJobToDelete(null)}
-        importJobId={jobToDelete ? String(jobToDelete.id) : ''}
-        importJobName={jobToDelete?.name ?? ''}
+        onHide={handleDismiss}
+        onConfirm={handleConfirmDelete}
+        title="Delete Import Job"
+        resourceName={jobToDelete?.name ?? ''}
+        isPending={deleteImportJobMutation.isPending}
+        errorMessage={apiError}
       />
     </div>
   );
