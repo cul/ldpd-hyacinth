@@ -9,6 +9,11 @@ MAX_WAIT_TIME_TO_KILL_WORKERS = 120
 PIDFILE_PATH = 'tmp/pids/resque.pid'
 
 namespace :resque do
+  desc 'Delete the pidfile where worker pids are stored'
+  task delete_pidfile: :environment do
+    File.delete(File.expand_path(PIDFILE_PATH, Rails.root))
+  end
+
   desc 'Stop current workers and start new workers'
   task restart_workers: :environment do
     Rake::Task['resque:stop_workers'].invoke
