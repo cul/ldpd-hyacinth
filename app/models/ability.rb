@@ -13,6 +13,7 @@ class Ability
       can :manage, PublishTarget
       can :manage, XmlDatastream
       can :manage, ImportJob
+      can :manage, CsvExport
 
       # Admins cannot change their own is_admin status as a safe guard
       cannot :update_is_admin, User, id: user.id
@@ -24,8 +25,9 @@ class Ability
       # Only Hyacinth admins can update project permissions
       cannot :update_project_permissions, User
 
-      # Non-admin users can only view and delete their own import jobs
+      # Non-admin users can only view and delete their own import and export jobs
       can [:index, :show, :destroy], ImportJob, user_id: user.id
+      can [:index, :show, :destroy], CsvExport, user_id: user.id
     end
   end
 end

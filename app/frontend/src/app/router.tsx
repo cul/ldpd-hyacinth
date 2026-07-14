@@ -152,6 +152,16 @@ export const createAppRouter = (queryClient: QueryClient) =>
             ],
           },
           {
+            path: 'export-jobs',
+            ErrorBoundary: AuthorizationErrorBoundary, // Catch authorization errors from loaders
+            children: [
+              {
+                index: true,
+                lazy: () => import('./routes/export-jobs').then(convert(queryClient)),
+              },
+            ],
+          },
+          {
             path: 'settings',
             children: [
               {

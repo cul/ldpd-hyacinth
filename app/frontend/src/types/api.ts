@@ -90,6 +90,19 @@ export interface DigitalObjectImport extends DigitalObjectImportSummary {
   prerequisiteCsvRowNumbers: number[];
 }
 
+export interface ExportJob {
+  id: number;
+  searchParams: string;
+  numberOfRecordsProcessed: number;
+  status: string;
+  pathToCsvFile: string;
+  duration: number;
+  createdAt: string;
+  user: {
+    fullName: string;
+  };
+}
+
 export interface Pagination {
   currentPage: number;
   perPage: number;

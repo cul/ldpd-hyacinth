@@ -74,7 +74,9 @@ export default function TopNavbar() {
                 <NavDropdown.Item as={NavLink} to="/import-jobs" end>
                   Import Jobs
                 </NavDropdown.Item>
-                <NavDropdown.Item href="/csv_exports">CSV Exports</NavDropdown.Item>
+                <NavDropdown.Item as={NavLink} to="/export-jobs" end>
+                  Export Jobs
+                </NavDropdown.Item>
               </NavDropdown>
             </Nav>
             <Nav className="justify-content-end flex-grow-1">
