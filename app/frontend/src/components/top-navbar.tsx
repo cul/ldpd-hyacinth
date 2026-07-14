@@ -24,7 +24,12 @@ export default function TopNavbar() {
   };
 
   return (
-    <Navbar key={NAVBAR_EXPAND_SIZE} expand={NAVBAR_EXPAND_SIZE} className="bg-body-tertiary mb-3" data-bs-theme="dark">
+    <Navbar
+      key={NAVBAR_EXPAND_SIZE}
+      expand={NAVBAR_EXPAND_SIZE}
+      className="bg-body-tertiary mb-3"
+      data-bs-theme="dark"
+    >
       <Container>
         <Navbar.Brand as={NavLink} to="/">
           <img
@@ -45,9 +50,7 @@ export default function TopNavbar() {
           <Offcanvas.Body>
             <Nav>
               <Nav.Link href="/digital_objects">Digital Objects</Nav.Link>
-              {user?.adminForAtLeastOneProject && (
-                <Nav.Link href="/projects">Projects</Nav.Link>
-              )}
+              {user?.adminForAtLeastOneProject && <Nav.Link href="/projects">Projects</Nav.Link>}
               {user?.canEditAtLeastOneControlledVocabulary && (
                 <Nav.Link href="/controlled_vocabularies">Controlled Vocabularies</Nav.Link>
               )}
@@ -68,7 +71,9 @@ export default function TopNavbar() {
                     Users
                   </NavDropdown.Item>
                 </Authorization>
-                <NavDropdown.Item href="/import_jobs">Import Jobs</NavDropdown.Item>
+                <NavDropdown.Item as={NavLink} to="/import-jobs" end>
+                  Import Jobs
+                </NavDropdown.Item>
                 <NavDropdown.Item href="/csv_exports">CSV Exports</NavDropdown.Item>
               </NavDropdown>
             </Nav>
@@ -81,32 +86,24 @@ export default function TopNavbar() {
                 <NavDropdown.Item as={NavLink} to="/settings/project-permissions">
                   Project Permissions
                 </NavDropdown.Item>
-                <NavDropdown.Item href="/assignments">
-                  Assignments
-                </NavDropdown.Item>
+                <NavDropdown.Item href="/assignments">Assignments</NavDropdown.Item>
                 <Authorization allowedRoles={[ROLES.ADMIN]}>
                   <NavDropdown.Item href="/archived_assignments">
                     Historical Assignments
                   </NavDropdown.Item>
-                  <NavDropdown.Item href="/system_information">
-                    System Information
-                  </NavDropdown.Item>
+                  <NavDropdown.Item href="/system_information">System Information</NavDropdown.Item>
                   <NavDropdown.Divider />
                 </Authorization>
-                <NavDropdown.Item onClick={handleLogout}>
-                  Sign Out
-                </NavDropdown.Item>
-                <form
-                  ref={logoutFormRef}
-                  action="/users/sign_out"
-                  method="post"
-                  className="d-none"
-                >
+                <NavDropdown.Item onClick={handleLogout}>Sign Out</NavDropdown.Item>
+                <form ref={logoutFormRef} action="/users/sign_out" method="post" className="d-none">
                   <input type="hidden" name="_method" value="delete" />
                   <input
                     type="hidden"
                     name="authenticity_token"
-                    value={document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''}
+                    value={
+                      document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
+                      ''
+                    }
                   />
                 </form>
               </NavDropdown>
@@ -115,5 +112,5 @@ export default function TopNavbar() {
         </Navbar.Offcanvas>
       </Container>
     </Navbar>
-  )
+  );
 }
