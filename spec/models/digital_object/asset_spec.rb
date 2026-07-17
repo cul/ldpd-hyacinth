@@ -1,6 +1,73 @@
 require 'rails_helper'
 
 RSpec.describe DigitalObject::Asset, :type => :model do
+  context "successful asset creation" do
+    let(:digital_object_data) do
+      dod = JSON.parse( fixture('sample_digital_object_data/new_asset.json').read )
+      dod['publish_targets'] = []
+      dod['import_file']['main']['import_type'] = 'external'
+      dod['import_file']['main']['import_location'] = fixture('sample_assets/sample_text_file.txt').path
+      dod['import_file']['main']['original_file_path'] = 'sample_assets/sample_text_file.txt'
+      dod
+    end
+
+    let(:asset) do
+      asset = DigitalObject::Asset.new
+      allow(asset).to receive(:allowed_publish_targets).and_return([])
+      allow(asset).to receive(:next_pid).and_return('some:pid')
+      allow(asset).to receive(:set_data_to_sources).and_return(nil)
+      allow_any_instance_of(DigitalObjectRecord).to receive(:save!).and_return(true)
+      allow_any_instance_of(GenericResource).to receive(:save).and_return(true)
+      allow_any_instance_of(UpdateImageServiceJob).to receive(:perform)
+      allow(asset).to receive(:update_index).and_return(nil)
+      asset
+    end
+
+    it "creates an asset" do
+      asset.set_digital_object_data(digital_object_data, false)
+      asset.save
+      expect(asset.save).to eq(true)
+    end
+
+    it "sets the expected dc_type" do
+      asset.set_digital_object_data(digital_object_data, false)
+      asset.save
+      expect(asset.dc_type).to eq('Text')
+    end
+
+    it "favors the service copy extension over the main file extension when determining dc_type" do
+      # iso extension for main file
+      digital_object_data['import_file']['main']['import_type'] = 'external'
+      digital_object_data['import_file']['main']['import_location'] = fixture('sample_assets/fake_iso_file.iso').path
+      digital_object_data['import_file']['main']['original_file_path'] = 'sample_assets/fake_iso_file.iso'
+      # mp4 extension for service file
+      digital_object_data['import_file']['service'] = {
+        'import_type' => 'external',
+        'import_location' => fixture('sample_assets/fake_mp4_file.mp4').path
+      }
+
+      asset.set_digital_object_data(digital_object_data, false)
+      asset.save
+      expect(asset.dc_type).to eq('MovingImage')
+    end
+
+    it "favors the access copy extension over the main file extension when determining dc_type" do
+      # iso extension for main file
+      digital_object_data['import_file']['main']['import_type'] = 'external'
+      digital_object_data['import_file']['main']['import_location'] = fixture('sample_assets/fake_iso_file.iso').path
+      digital_object_data['import_file']['main']['original_file_path'] = 'sample_assets/fake_iso_file.iso'
+      # mp4 extension for access file
+      digital_object_data['import_file']['access'] = {
+        'import_type' => 'internal',
+        'import_location' => fixture('sample_assets/fake_mp4_file.mp4').path
+      }
+
+      asset.set_digital_object_data(digital_object_data, false)
+      asset.save
+      expect(asset.dc_type).to eq('MovingImage')
+    end
+  end
+
   context "checksum storage and retrieval" do
     let(:digital_object_data) {
       dod = JSON.parse( fixture('sample_digital_object_data/new_asset.json').read )

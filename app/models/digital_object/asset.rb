@@ -83,20 +83,23 @@ class DigitalObject::Asset < DigitalObject::Base
   def run_post_validation_pre_save_logic
     super
     process_import_file_data_if_present
+    set_dc_type_from_original_filename_or_resource_filenames!
+  end
 
+  def set_dc_type_from_original_filename_or_resource_filenames!
     # Attempt to correct dc_type for 'Unknown' dc_type DigitalObjects, based on original filename
-    self.dc_type = BestType.dc_type.for_file_name(original_filename) if self.dc_type == 'Unknown'
+    self.dc_type = BestType.dc_type.for_file_name(self.original_filename) if self.dc_type == 'Unknown'
 
-    # For ISO files, even the original filename can't tell us if they're possibly audio or video content,
-    # so if a service copy has been uploaded with the video then we'll determine dc type based on
-    # the extension of the service copy.
-    if self.dc_type == 'Unknown' && self.location_uri_for_resource('service').present?
+    # For ".iso" files (which are detected as dc_type "Software") and similar container files, the original filename
+    # can't tell us if they're possibly audio or video content, so if a service copy has been uploaded with the video
+    # then we'll determine dc type based on the extension of the service copy.
+    if (self.dc_type == 'Unknown' || self.dc_type == 'Software') && self.location_uri_for_resource('service').present?
       self.dc_type = BestType.dc_type.for_file_name(self.location_uri_for_resource('service'))
     end
 
     # If we still haven't been able to determine a dc type, see if we can get the
     # information from an access copy file extension (if present)
-    if self.dc_type == 'Unknown' && self.location_uri_for_resource('access').present?
+    if (self.dc_type == 'Unknown' || self.dc_type == 'Software') && self.location_uri_for_resource('access').present?
       self.dc_type = BestType.dc_type.for_file_name(self.location_uri_for_resource('access'))
     end
   end
