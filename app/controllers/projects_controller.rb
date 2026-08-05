@@ -35,7 +35,10 @@ class ProjectsController < ApplicationController
 
   # GET /projects/new
   def new
-    @project = Project.new
+    @project = Project.new(
+      default_storage_type: HYACINTH[:default_storage_type] || Hyacinth::Storage::STORAGE_SCHEMES.first,
+      default_access_storage_type: HYACINTH[:default_access_storage_type] || Hyacinth::Storage::STORAGE_SCHEMES.first,
+    )
   end
 
   # GET /projects/1/edit/:type

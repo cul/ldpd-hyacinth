@@ -2,6 +2,8 @@ development:
   solr_url: http://localhost:8983/solr/hyacinth
   default_pid_generator_namespace: cul
   digital_object_data_directory: <%= Rails.root.join('tmp', 'development', 'data') %>
+  default_storage_type: 'file' # 's3' is another option
+  default_access_storage_type: 'file' # 's3' is another option
   default_resource_storage_locations:
     main:
       file:
@@ -35,6 +37,8 @@ test:
   solr_url: http://localhost:9983/solr/hyacinth
   default_pid_generator_namespace: cul
   digital_object_data_directory: <%= Rails.root.join('tmp', 'test', 'data') %>
+  default_storage_type: 'file' # 's3' is another option
+  default_access_storage_type: 'file' # 's3' is another option
   default_resource_storage_locations:
     main:
       file:
