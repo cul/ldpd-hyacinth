@@ -11,6 +11,20 @@ class ProcessDigitalObjectImportJob < ActiveJob::Base
     # Load DigitalObjectImport instance
     # If we encounter an error (e.g. Mysql2::Error), wait and try again.
     digital_object_import = find_digital_object_import_with_retry(digital_object_import_id)
+
+    # If the import job was previously cancelled, return immediately
+    return if digital_object_import.cancelled?
+
+    # If the import job is being processed (which shouldn't happen unless a developer manually re-queued it), return immediately
+    if digital_object_import.processing?
+      digital_object_import.digital_object_errors << "This import job was skipped because its state was already 'processing'."\
+                                                      "This was done to prevent duplicate processing. This scenario is only expected"\
+                                                      "to come up when an interrupted job is manually re-queued (which should be avoided)."
+      digital_object_import.status = :failure
+      digital_object_import.save!
+      return
+    end
+
     digital_object_data = JSON.parse(digital_object_import.digital_object_data)
 
     if digital_object_import.import_job.restore_archived_s3_objects_for_new_assets && queue_s3_restoration_if_required!(digital_object_data)
@@ -25,6 +39,9 @@ class ProcessDigitalObjectImportJob < ActiveJob::Base
     # If prerequisite check fails, return immediately.
     # Re-queueing or mark-as-failure logic is handled by the prerequisite_row_check method.
     return unless prerequisite_row_check(digital_object_import)
+
+    # Update the import record to indicate that is is now being processed
+    digital_object_import.processing!
 
     user = digital_object_import.import_job.user
     digital_object = find_or_create_digital_object(digital_object_data, user, digital_object_import)

@@ -5,10 +5,16 @@ RSpec.describe ProcessDigitalObjectImportJob, type: :job do
     stub_const("ProcessDigitalObjectImportJob::UNEXPECTED_PROCESSING_ERROR_RETRY_DELAY", 0) # Make tests run more quickly
     stub_const("ProcessDigitalObjectImportJob::FIND_DIGITAL_OBJECT_IMPORT_RETRY_DELAY", 0) # Make tests run more quickly
   }
+  after(:example) {
+    user.destroy
+    DigitalObjectImport.delete_all
+    ImportJob.delete_all
+  }
 
   let (:instance) { described_class.new }
   let(:user) {
     User.new(
+      :uid => 'abc',
       :email => 'abc@example.com',
       :first_name => 'Abraham',
       :last_name => 'Lincoln',
@@ -234,7 +240,7 @@ RSpec.describe ProcessDigitalObjectImportJob, type: :job do
       import_job
     }
     let(:digital_object_import) {
-      DigitalObjectImport.new(id: 12345, import_job: import_job)
+      DigitalObjectImport.create!(id: 12345, import_job: import_job)
     }
     context "clears errors on the digital_object_import and requeues on correct queue when queue_long_jobs arg is set to true" do
       let(:queue_long_jobs) { true }
@@ -337,23 +343,33 @@ RSpec.describe ProcessDigitalObjectImportJob, type: :job do
 
   describe "#perform" do
     let(:digital_object_import_id) {
-      import_id = 12345
-      allow(DigitalObjectImport).to receive(:find).with(import_id).and_return(digital_object_import)
-      allow(DigitalObjectImport).to receive(:exists?).with(import_id).and_return(true)
-      import_id
+      12345
     }
     let(:import_job) {
-      import_job = ImportJob.new
-      import_job.user = user
-      import_job.priority = :low
-      import_job
+      ImportJob.create!(name: 'Example Import Job', user: user, priority: :low)
     }
     let(:digital_object_import) {
-      digital_object_import = DigitalObjectImport.new
-      digital_object_import.import_job = import_job
-      digital_object_import.digital_object_data = digital_object_data.to_json
-      digital_object_import
+      DigitalObjectImport.create!(
+        import_job: import_job,
+        digital_object_data: digital_object_data.to_json
+      )
     }
+    before do
+      allow(DigitalObjectImport).to receive(:find).with(digital_object_import_id).and_return(digital_object_import)
+      allow(DigitalObjectImport).to receive(:exists?).with(digital_object_import_id).and_return(true)
+    end
+    it "exits early and take no action if the import job has been cancelled" do
+      digital_object_import.status = :cancelled
+      expect(digital_object_import).not_to receive(:processing!)
+      instance.perform(digital_object_import_id)
+    end
+    it "exits early and take no action if the import job is already in a processing state before processing begins" do
+      digital_object_import.status = :processing
+      expect(digital_object_import).not_to receive(:processing!)
+      instance.perform(digital_object_import_id)
+      expect(digital_object_import.status).to eq('failure')
+      expect(digital_object_import.digital_object_errors.first).to match(/This import job was skipped/)
+    end
     it "calls .handle_unexpected_processing_error when an unexpected error occurs" do
       expect(instance).to receive(:handle_unexpected_processing_error)
       allow(instance).to receive(:find_digital_object_import_with_retry).and_raise(StandardError)
