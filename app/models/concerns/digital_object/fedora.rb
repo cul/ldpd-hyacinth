@@ -147,10 +147,7 @@ module DigitalObject::Fedora
 
     def set_fedora_project_and_publisher_relationships
       set_fedora_object_relationship(PROJECT_MEMBERSHIP_PREDICATE, @project.fedora_object.internal_uri)
-      # Retrieve publish targets before setting in order to verify that they exist
-      # TODO: Do this through solr rather than Fedora because it's faster
-      publish_targets = @publish_target_pids.map { |publish_target_pid| DigitalObject::Base.find(publish_target_pid) }
-      values = publish_targets.map { |publish_target| publish_target.fedora_object.internal_uri }
+      values = @publish_target_pids.map { |publish_target_pid| "info:fedora/#{publish_target_pid}" }
       set_fedora_object_relationship(:publisher, values)
     end
 
