@@ -30,7 +30,7 @@
       <th>Priority</th>
       <th>Submitted at</th>
       <th>Submitted by</th>
-      <th>Delete?</th>
+      <th class="text-center">Cancel / Delete?</th>
     </tr>
   </thead>
 
@@ -45,11 +45,12 @@
         <td><%= import_job.user.uid %></td>
 				<td>
 					<% if import_job.complete? %>
-						<%= link_to('Delete', import_job, method: :delete, data: { confirm: 'Are you sure?' }) %>
+						<%= link_to('Delete', import_job, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger mt-3') %>
 					<% else %>
 						Job not complete
+						<br /><%= link_to('Cancel', cancel_import_job_path(import_job), method: :patch, data: { confirm: 'Are you sure you want to cancel this job?' }, class: 'btn btn-sm btn-default') %>
 						<% if current_user.is_admin? %>
-							<br /><%= link_to('Force Delete', import_job, method: :delete, data: { confirm: 'Are you sure?' }) %>
+							<%= link_to('Force Delete', import_job, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-sm btn-danger mt-3') %>
 						<% end %>
 					<% end %>
 				</td>

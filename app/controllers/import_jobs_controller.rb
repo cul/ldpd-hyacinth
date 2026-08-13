@@ -1,5 +1,5 @@
 class ImportJobsController < ApplicationController
-  before_action :set_import_job, only: [:show, :download_original_csv, :download_csv_without_successful_rows, :destroy]
+  before_action :set_import_job, only: [:show, :download_original_csv, :download_csv_without_successful_rows, :destroy, :cancel]
   before_action :set_contextual_nav_options
 
   # GET /import_jobs
@@ -26,7 +26,8 @@ class ImportJobsController < ApplicationController
     @count_pending = @import_job.count_pending_digital_object_imports
     @count_success = @import_job.count_successful_digital_object_imports
     @count_failure = @import_job.count_failed_digital_object_imports
-    @count_total = @count_pending + @count_success + @count_failure
+    @count_cancelled = @import_job.count_cancelled_digital_object_imports
+    @count_total = @count_pending + @count_success + @count_failure + @count_cancelled
   end
 
   def new
@@ -72,9 +73,24 @@ class ImportJobsController < ApplicationController
     end
   end
 
+  def cancel
+    if current_user.admin? || @import_job.user == current_user
+      @import_job.cancel
+      redirect_to import_jobs_path(@import_job)
+    else
+      flash[:notice] = 'You do not have permission to cancel this import job.'
+      redirect_to import_jobs_path
+    end
+  end
+
   def destroy
-    @import_job.destroy
-    redirect_to import_jobs_path
+    if current_user.admin? || @import_job.user == current_user
+      @import_job.destroy
+      redirect_to import_jobs_path
+    else
+      flash[:notice] = 'You do not have permission to delete this import job.'
+      redirect_to import_jobs_path
+    end
   end
 
   def download_original_csv

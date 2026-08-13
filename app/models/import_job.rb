@@ -19,6 +19,8 @@ class ImportJob < ApplicationRecord
   def status_string
     if count_pending_digital_object_imports.nonzero?
       'Incomplete'
+    elsif count_cancelled_digital_object_imports.nonzero?
+      'Complete with Cancellations / Failures'
     elsif count_failed_digital_object_imports.nonzero?
       'Complete with Failures'
     else
@@ -38,6 +40,10 @@ class ImportJob < ApplicationRecord
     digital_object_imports.where(status: DigitalObjectImport.statuses[:failure])
   end
 
+  def cancelled_digital_object_imports
+    digital_object_imports.where(status: DigitalObjectImport.statuses[:cancelled])
+  end
+
   def count_pending_digital_object_imports
     pending_digital_object_imports.count
   end
@@ -50,6 +56,10 @@ class ImportJob < ApplicationRecord
     failed_digital_object_imports.count
   end
 
+  def count_cancelled_digital_object_imports
+    cancelled_digital_object_imports.count
+  end
+
   def return_pending_digital_object_imports
     pending_digital_object_imports.to_a
   end
@@ -60,6 +70,10 @@ class ImportJob < ApplicationRecord
 
   def return_failed_digital_object_imports
     failed_digital_object_imports.to_a
+  end
+
+  def cancel
+    digital_object_imports.where(status: :pending).update_all(status: :cancelled)
   end
 
   def delete_associated_file_if_exists
