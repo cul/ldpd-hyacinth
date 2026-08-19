@@ -288,7 +288,7 @@ RSpec.describe ProcessDigitalObjectImportJob, type: :job do
         expect(instance.prerequisite_row_check(digital_object_import, queue_long_jobs)).to eq(true)
       end
     end
-    context "returns true if digital_object_import has prerequisite rows that have already been successfully processed" do
+    context "returns true if digital_object_import has prerequisite rows that have all already been successfully processed" do
       let(:digital_object_import) { digital_object_import_2 }
       let(:prerequisite_digital_object_imports) {
         digital_object_import_1.status = :success # Mark dependent job as successfully completed
@@ -324,6 +324,20 @@ RSpec.describe ProcessDigitalObjectImportJob, type: :job do
         expect(instance.prerequisite_row_check(digital_object_import, queue_long_jobs)).to eq(false)
       end
     end
+
+    context "returns false if any of this digital_object_import's prerequisite rows are processing, and calls method handle_remaining_prerequisite_case with expected arguments" do
+      let(:digital_object_import) { digital_object_import_2 }
+      let(:prerequisite_digital_object_imports) {
+        digital_object_import_1.status = :processing
+        [digital_object_import_1]
+      }
+      it do
+        allow(DigitalObjectImport).to receive(:where).and_return(prerequisite_digital_object_imports)
+        expect(instance).to receive(:handle_remaining_prerequisite_case).with(digital_object_import, queue_long_jobs)
+        expect(instance.prerequisite_row_check(digital_object_import, queue_long_jobs)).to eq(false)
+      end
+    end
+
     context "returns false if any of this digital_object_import's prerequisite rows have failed, and also adds an error to this digital_object_import that describes the failure, and marks the digital_object_import as a failure" do
       let(:digital_object_import) { digital_object_import_2 }
       let(:prerequisite_digital_object_imports) {
@@ -337,6 +351,39 @@ RSpec.describe ProcessDigitalObjectImportJob, type: :job do
         expect(digital_object_import.status).to eq('failure')
         expect(digital_object_import.digital_object_errors.length).to eq(1)
         expect(digital_object_import.digital_object_errors[0]).to eq("Failed because prerequisite row 1 failed to import properly")
+      end
+    end
+
+    context "returns false if any of this digital_object_import's prerequisite rows have been cancelled, and also adds an error to this digital_object_import that describes the failure, and marks the digital_object_import as a failure" do
+      let(:digital_object_import) { digital_object_import_2 }
+      let(:prerequisite_digital_object_imports) {
+        digital_object_import_1.status = :cancelled
+        [digital_object_import_1]
+      }
+      it do
+        allow(DigitalObjectImport).to receive(:where).and_return(prerequisite_digital_object_imports)
+        allow_any_instance_of(DigitalObjectImport).to receive(:save!).and_return(true)
+        expect(instance.prerequisite_row_check(digital_object_import, queue_long_jobs)).to eq(false)
+        expect(digital_object_import.status).to eq('failure')
+        expect(digital_object_import.digital_object_errors.length).to eq(1)
+        expect(digital_object_import.digital_object_errors[0]).to eq("Failed because prerequisite row 1 was cancelled")
+      end
+    end
+
+    context "returns false if any of this digital_object_import's prerequisite rows have an unhandled status, and also adds an error to this digital_object_import that describes the failure, and marks the digital_object_import as a failure" do
+      let(:digital_object_import) { digital_object_import_2 }
+      let(:prerequisite_digital_object_imports) {
+        allow(digital_object_import_1).to receive(:status).and_return('unexpected_new_status_that_the_code_does_not_account_for')
+        allow(digital_object_import_1).to receive(:pending?).and_return(false)
+        [digital_object_import_1]
+      }
+      it do
+        allow(DigitalObjectImport).to receive(:where).and_return(prerequisite_digital_object_imports)
+        allow_any_instance_of(DigitalObjectImport).to receive(:save!).and_return(true)
+        expect(instance.prerequisite_row_check(digital_object_import, queue_long_jobs)).to eq(false)
+        expect(digital_object_import.status).to eq('failure')
+        expect(digital_object_import.digital_object_errors.length).to eq(1)
+        expect(digital_object_import.digital_object_errors[0]).to eq("Failed because prerequisite row 1 had an unhandled status value: unexpected_new_status_that_the_code_does_not_account_for")
       end
     end
   end

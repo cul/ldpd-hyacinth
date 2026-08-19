@@ -196,11 +196,21 @@ class ProcessDigitalObjectImportJob < ActiveJob::Base
       num_pending_prerequisites = 0
 
       prerequisite_digital_object_imports.each do |prerequisite_digital_object_import|
-        if prerequisite_digital_object_import.failure?
+        if prerequisite_digital_object_import.success?
+          next
+        elsif prerequisite_digital_object_import.failure?
           num_failed_prerequisites += 1
           digital_object_import.digital_object_errors << "Failed because prerequisite row #{prerequisite_digital_object_import.csv_row_number} failed to import properly"
+        elsif prerequisite_digital_object_import.cancelled?
+          num_failed_prerequisites += 1
+          digital_object_import.digital_object_errors << "Failed because prerequisite row #{prerequisite_digital_object_import.csv_row_number} was cancelled"
+        elsif prerequisite_digital_object_import.pending? || prerequisite_digital_object_import.processing?
+          num_pending_prerequisites += 1
+        else
+          # To be on the safe side, any other condition should count as a failure
+          num_failed_prerequisites += 1
+          digital_object_import.digital_object_errors << "Failed because prerequisite row #{prerequisite_digital_object_import.csv_row_number} had an unhandled status value: #{prerequisite_digital_object_import.status}"
         end
-        num_pending_prerequisites += 1 if prerequisite_digital_object_import.pending?
       end
 
       if num_failed_prerequisites > 0
