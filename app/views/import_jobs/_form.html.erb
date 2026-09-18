@@ -4,7 +4,7 @@
   <%= file_field_tag :import_file %>
   <br />
   <%= hidden_field_tag :project_id, params[:project_id]%>
-  Priority: <%= select_tag('priority', options_for_select(['low', 'medium', 'high'], 'medium')) %>
+  Priority: <%= select_tag('priority', options_for_select(['high', 'medium', 'low'], 'medium')) %>
   <br /><br />
   <%= check_box_tag :restore_archived_s3_objects_for_new_assets, "true", false, class: "css-style-class" %>
   <%= label_tag :restore_archived_s3_objects_for_new_assets, "Restore archived S3 objects for new assets?", style: 'font-weight: normal;' %>
