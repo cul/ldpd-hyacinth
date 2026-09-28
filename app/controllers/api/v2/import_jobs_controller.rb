@@ -188,6 +188,7 @@ class Api::V2::ImportJobsController < Api::V2::BaseController
         restore_archived_s3_objects_for_new_assets: import_job.restore_archived_s3_objects_for_new_assets,
         status: import_job.status_string,
         pending_count: import_job.count_pending_digital_object_imports,
+        processing_count: import_job.count_processing_digital_object_imports,
         success_count: import_job.count_successful_digital_object_imports,
         failure_count: import_job.count_failed_digital_object_imports,
         path_to_csv_file: import_job.path_to_csv_file,

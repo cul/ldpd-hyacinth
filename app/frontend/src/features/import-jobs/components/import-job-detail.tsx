@@ -19,12 +19,13 @@ const statusVariant = (status: string): string =>
   })[status?.toLowerCase()] ?? 'secondary';
 
 export const ImportJobDetail = ({ importJob }: ImportJobDetailProps) => {
-  const { pendingCount, successCount, failureCount } = importJob;
-  const totalCount = pendingCount + successCount + failureCount;
+  const { pendingCount, processingCount, successCount, failureCount } = importJob;
+  const totalCount = pendingCount + processingCount + successCount + failureCount;
 
   const stats = [
     { label: 'Successful', count: successCount, variant: 'success', filterName: 'success' },
     { label: 'Pending', count: pendingCount, variant: 'secondary', filterName: 'pending' },
+    { label: 'Processing', count: processingCount, variant: 'secondary', filterName: 'processing' },
     { label: 'Failed', count: failureCount, variant: 'danger', filterName: 'failure' },
   ];
 

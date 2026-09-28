@@ -1,30 +1,20 @@
 require 'rails_helper'
 
-RSpec.describe ImportJob, :type => :model do
-
-  let(:test_id) { i = 77 }
-  let(:test_id_2) { i = 78 }
-
+RSpec.describe ImportJob, type: :model do
   before(:context) do
-
-    # @test_user = User.create!(id: 1966, name:'Test User')
-    @test_user = User.find_by_first_name('Test')
+    @test_user = FactoryBot.create(:user)
     @test_import_job = ImportJob.create!(id: 1966, name: 'Test Import Job', user: @test_user)
     @test_digital_object_import_1 = DigitalObjectImport.create!(id: 1966, import_job: @test_import_job)
     @test_digital_object_import_2 = DigitalObjectImport.create!(id: 1967, import_job: @test_import_job)
     @test_digital_object_import_3 = DigitalObjectImport.create!(id: 1968, import_job: @test_import_job)
-
   end
 
   after(:context) do
-
     @test_digital_object_import_1.destroy
     @test_digital_object_import_2.destroy
     @test_digital_object_import_3.destroy
     @test_import_job.destroy
-    # @test_user.destroy
-
-      
+    @test_user&.destroy
   end
 
   before(:example) do
@@ -43,7 +33,7 @@ RSpec.describe ImportJob, :type => :model do
 
       association = ImportJob.reflect_on_association(:digital_object_imports)
       expect(association.options[:dependent]).to eq(:destroy)
-      
+
     end
 
   end
@@ -92,7 +82,7 @@ RSpec.describe ImportJob, :type => :model do
 
     end
 
-  end  
+  end
 
   context "#success?: " do
 
@@ -101,13 +91,13 @@ RSpec.describe ImportJob, :type => :model do
       expect(@test_import_job.success?).to eq(false)
 
     end
- 
+
     it "returns true if all DigitalObjectimports belonging to it were successful" do
 
       @test_import_job.digital_object_imports.each do |digital_object_import|
 
         digital_object_import.success!
-        
+
       end
 
       expect(@test_import_job.success?).to eq(true)
@@ -119,14 +109,14 @@ RSpec.describe ImportJob, :type => :model do
       @test_import_job.digital_object_imports.each do |digital_object_import|
 
         digital_object_import.success!
-        
+
       end
 
       # change the first on to a failure
       @test_import_job.digital_object_imports.first.failure!
 
       expect(@test_import_job.success?).to eq(false)
-      
+
     end
 
   end
@@ -136,7 +126,7 @@ RSpec.describe ImportJob, :type => :model do
     it "returns false for the newly created ImportJob containing 3 DigitalObjectImports in pending state" do
       expect(@test_import_job.complete?).to eq(false)
     end
- 
+
     it "returns true if all imports for the job were successful expect one (a failure)" do
       @test_import_job.digital_object_imports.each do |digital_object_import|
         digital_object_import.success!
@@ -193,32 +183,49 @@ RSpec.describe ImportJob, :type => :model do
   end
 
   context "#count_of_pending_digital_object_imports:" do
-
     it "all DigitalObjectImports are pending, count is 3" do
-
       expect(@test_import_job.count_pending_digital_object_imports).to eq(3)
-
     end
 
     it "all DigitalObjectImports are success, count is 0" do
-
       @test_import_job.digital_object_imports.each do |digital_object_import|
-
         digital_object_import.success!
-        
       end
 
       expect(@test_import_job.count_pending_digital_object_imports).to eq(0)
-
     end
 
     it "all DigitalObjectImports are pending except for one failure, count is 2" do
-
       @test_import_job.digital_object_imports.second.failure!
       expect(@test_import_job.count_pending_digital_object_imports).to eq(2)
+    end
+  end
 
+  context "#count_processing_digital_object_imports:" do
+
+    it "all DigitalObjectImports are processing, count is 3" do
+      @test_import_job.digital_object_imports.each do |digital_object_import|
+        digital_object_import.processing!
+      end
+
+      expect(@test_import_job.count_processing_digital_object_imports).to eq(3)
     end
 
+    it "all DigitalObjectImports are success, count is 0" do
+      @test_import_job.digital_object_imports.each do |digital_object_import|
+        digital_object_import.success!
+      end
+
+      expect(@test_import_job.count_processing_digital_object_imports).to eq(0)
+    end
+
+    it "all DigitalObjectImports are processing except for one failure, count is 2" do
+      @test_import_job.digital_object_imports.each do |digital_object_import|
+        digital_object_import.processing!
+      end
+      @test_import_job.digital_object_imports.second.failure!
+      expect(@test_import_job.count_processing_digital_object_imports).to eq(2)
+    end
   end
 
   context "#count_of_successful_digital_object_imports:" do
@@ -228,7 +235,7 @@ RSpec.describe ImportJob, :type => :model do
       @test_import_job.digital_object_imports.each do |digital_object_import|
 
         digital_object_import.success!
-        
+
       end
 
       expect(@test_import_job.count_successful_digital_object_imports).to eq(3)
@@ -246,7 +253,7 @@ RSpec.describe ImportJob, :type => :model do
       @test_import_job.digital_object_imports.each do |digital_object_import|
 
         digital_object_import.success!
-        
+
       end
 
       @test_import_job.digital_object_imports.second.failure!
@@ -264,7 +271,7 @@ RSpec.describe ImportJob, :type => :model do
       @test_import_job.digital_object_imports.each do |digital_object_import|
 
         digital_object_import.failure!
-        
+
       end
 
       expect(@test_import_job.count_failed_digital_object_imports).to eq(3)
@@ -282,7 +289,7 @@ RSpec.describe ImportJob, :type => :model do
       @test_import_job.digital_object_imports.each do |digital_object_import|
 
         digital_object_import.failure!
-        
+
       end
 
       @test_import_job.digital_object_imports.second.success!
@@ -294,35 +301,24 @@ RSpec.describe ImportJob, :type => :model do
   end
 
   context "#status_string:" do
-
     it "all DigitalObjectImports are failures, status string is 'Complete with Failures'" do
-
       @test_import_job.digital_object_imports.each do |digital_object_import|
-
         digital_object_import.failure!
-        
       end
 
       expect(@test_import_job.status_string).to eq('Complete with Failures')
-
     end
 
     it "all DigitalObjectImports are pending, status string is 'Incomplete'" do
-
       expect(@test_import_job.status_string).to eq('Incomplete')
-
     end
 
     it "all DigitalObjectImports are success, status string is 'Successfully Completed'" do
-
       @test_import_job.digital_object_imports.each do |digital_object_import|
-
         digital_object_import.success!
-        
       end
 
       expect(@test_import_job.status_string).to eq('Successfully Completed')
-
     end
 
     it "All DigitalObjectImports are success except for one pending, status string is 'Incomplete'" do
@@ -330,7 +326,7 @@ RSpec.describe ImportJob, :type => :model do
       @test_import_job.digital_object_imports.each do |digital_object_import|
 
         digital_object_import.success!
-        
+
       end
 
       @test_import_job.digital_object_imports.first.pending!
@@ -344,7 +340,7 @@ RSpec.describe ImportJob, :type => :model do
       @test_import_job.digital_object_imports.each do |digital_object_import|
 
         digital_object_import.success!
-        
+
       end
 
       @test_import_job.digital_object_imports.second.failure!

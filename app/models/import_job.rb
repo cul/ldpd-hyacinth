@@ -9,15 +9,15 @@ class ImportJob < ApplicationRecord
   belongs_to :user
 
   def success?
-    digital_object_imports.where(status: [DigitalObjectImport.statuses[:pending], DigitalObjectImport.statuses[:failure]]).empty?
+    digital_object_imports.where(status: [DigitalObjectImport.statuses[:pending], DigitalObjectImport.statuses[:failure], DigitalObjectImport.statuses[:processing]]).empty?
   end
 
   def complete?
-    count_pending_digital_object_imports.zero?
+    digital_object_imports.where(status: [DigitalObjectImport.statuses[:pending], DigitalObjectImport.statuses[:processing]]).empty?
   end
 
   def status_string
-    if count_pending_digital_object_imports.nonzero?
+    if count_pending_digital_object_imports.nonzero? || count_processing_digital_object_imports.nonzero?
       'Incomplete'
     elsif count_cancelled_digital_object_imports.nonzero?
       'Complete with Cancellations / Failures'
@@ -30,6 +30,10 @@ class ImportJob < ApplicationRecord
 
   def pending_digital_object_imports
     digital_object_imports.where(status: DigitalObjectImport.statuses[:pending])
+  end
+
+  def processing_digital_object_imports
+    digital_object_imports.where(status: DigitalObjectImport.statuses[:processing])
   end
 
   def successful_digital_object_imports
@@ -46,6 +50,10 @@ class ImportJob < ApplicationRecord
 
   def count_pending_digital_object_imports
     pending_digital_object_imports.count
+  end
+
+  def count_processing_digital_object_imports
+    processing_digital_object_imports.count
   end
 
   def count_successful_digital_object_imports

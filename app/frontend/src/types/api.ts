@@ -63,6 +63,7 @@ export interface ImportJob extends ImportJobSummary {
   pathToCsvFile: string;
   restoreArchivedS3ObjectsForNewAssets: boolean;
   pendingCount: number;
+  processingCount: number;
   successCount: number;
   failureCount: number;
   updatedAt: string;
@@ -110,7 +111,7 @@ export interface Pagination {
   totalCount: number;
 }
 
-/* 
+/*
 Payload types
 */
 

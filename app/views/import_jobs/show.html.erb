@@ -28,17 +28,19 @@
 <table class="table table-condensed table-bordered table-striped">
   <thead>
     <tr>
-      <th>Pending rows</th>
-      <th>Succesful row imports</th>
-      <th>Failed row imports</th>
-      <th>Cancelled rows</th>
-      <th>Total number of rows</th>
+      <th>Pending</th>
+      <th>Processing</th>
+      <th>Succesful</th>
+      <th>Failed</th>
+      <th>Cancelled</th>
+      <th>Total</th>
     </tr>
   </thead>
 
   <tbody>
       <tr>
         <td><%= @count_pending %></td>
+        <td><%= @count_processing %></td>
         <td><%= @count_success %></td>
         <td><%= @count_failure %></td>
         <td><%= @count_cancelled %></td>

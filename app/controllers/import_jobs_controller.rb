@@ -24,10 +24,11 @@ class ImportJobsController < ApplicationController
   # GET /import_jobs/1
   def show
     @count_pending = @import_job.count_pending_digital_object_imports
+    @count_processing = @import_job.count_processing_digital_object_imports
     @count_success = @import_job.count_successful_digital_object_imports
     @count_failure = @import_job.count_failed_digital_object_imports
     @count_cancelled = @import_job.count_cancelled_digital_object_imports
-    @count_total = @count_pending + @count_success + @count_failure + @count_cancelled
+    @count_total = @count_pending + @count_processing + @count_success + @count_failure + @count_cancelled
   end
 
   def new
