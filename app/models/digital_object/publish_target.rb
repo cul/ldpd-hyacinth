@@ -137,6 +137,8 @@ class DigitalObject::PublishTarget < DigitalObject::Base
   end
 
   def publish_digital_object(digital_object, do_ezid_update)
+    #  publish_target_field('publish_url') needs to be swapped with the value from the new Publish Target model
+    puts "Publish url: #{publish_target_field('publish_url')}"
     response = RestClient.put(
       publish_target_field('publish_url') + '/' + digital_object.pid,
       {},
@@ -145,7 +147,10 @@ class DigitalObject::PublishTarget < DigitalObject::Base
     if do_ezid_update && response.code == 200 && response.headers[:location].present?
       # By this point, all records should have an ezid. Let's update the status of
       # that ezid to :public, and send the latest published_object_url in case it changed.
-      digital_object.update_doi_metadata(response.headers[:location])
+      puts "response headers: #{response.headers}"
+      puts "response code: #{response.code}"
+      puts "response body: #{response.body}"
+      # digital_object.update_doi_metadata(response.headers[:location])
     end
     response
   end

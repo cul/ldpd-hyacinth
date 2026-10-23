@@ -12,13 +12,14 @@ module DigitalObject::DigitalObjectRecord
     # For perform_derivative_processing, if a db record for this resource has been previously saved,
     # use that value. Otherwise just use default value set by the DigitalObject::Base or its subclass.
     @perform_derivative_processing = @db_record.new_record? ? @perform_derivative_processing : @db_record.perform_derivative_processing
+    @publish_target_string_keys = self.db_record.publish_targets.map { |publish_target| publish_target.string_key }
   end
 
   ##################################
   # DB object data writing methods #
   ##################################
 
-  def set_created_and_updated_data_from_db_record
+  def save_data_to_db_record
     if self.new_record?
       @db_record.created_by = @created_by
       @db_record.created_at = @created_at
@@ -26,6 +27,12 @@ module DigitalObject::DigitalObjectRecord
 
     @db_record.updated_by = @updated_by
     @db_record.updated_at = Time.now # Always setting this manually just in case there aren't any other changes to @db_record (becase otherwise the record's updated_at time wouldn't change automatically)
+
+    found_publish_targets = PublishTarget.where(string_key: @publish_target_string_keys)
+    missing_publish_targets = @publish_target_string_keys - found_publish_targets.map(&:string_key)
+    raise Hyacinth::Exceptions::PublishTargetNotFoundError, "Could not find publish targets: #{missing_publish_targets.join(', ')}" if missing_publish_targets.present?
+
+    self.db_record.publish_targets = found_publish_targets
   end
 
   def set_perform_derivative_processing
@@ -35,7 +42,9 @@ module DigitalObject::DigitalObjectRecord
   def set_first_published_at
     # Save _first_published_at date, if we are going to attempt to publish to
     # primary publish target. Otherwise, convert date if it is a String
-    if @first_published_at.blank? && publishing_to_primary_publish_target?
+
+    # Note from Eric: From now on, @first_published_at can be the first time we publish to ANY publish target for the first time
+    if @first_published_at.blank? # && publishing_to_primary_publish_target? 
       @first_published_at = Time.current
     elsif @first_published_at.is_a?(String)
       begin

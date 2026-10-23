@@ -643,7 +643,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.submitEditorForm = func
   var publishTargets = [];
   $editorForm.find('.publish-targets .publish-target-checkbox').each(function () {
     if ($(this).prop('checked')) {
-      publishTargets.push({ pid: $(this).val() })
+      publishTargets.push({ string_key: $(this).val() })
     }
   });
 

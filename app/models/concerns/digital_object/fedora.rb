@@ -92,8 +92,9 @@ module DigitalObject::Fedora
       Hyacinth::Utils::Logger.logger.info "Missing project for DigitalObject #{project_pid}. This needs to be fixed." if project_pid.nil?
       @project = project_pid.nil? ? nil : Project.find_by(pid: project_pid)
 
+      # TODO: This probably should be removed
       # Get publish target relationships
-      @publish_target_pids = @fedora_object.relationships(:publisher).to_a.map { |val| val.gsub('info:fedora/', '') }
+      # @publish_target_pids = @fedora_object.relationships(:publisher).to_a.map { |val| val.gsub('info:fedora/', '') }
     end
 
     def load_ezid_from_fedora_object!
@@ -145,10 +146,13 @@ module DigitalObject::Fedora
       set_fedora_object_relationship(:cul_obsolete_from, values)
     end
 
+    # TODO: change this method name to "set_fedora_project_relationship" because we are removing logic related to publish targets
     def set_fedora_project_and_publisher_relationships
       set_fedora_object_relationship(PROJECT_MEMBERSHIP_PREDICATE, @project.fedora_object.internal_uri)
-      values = @publish_target_pids.map { |publish_target_pid| "info:fedora/#{publish_target_pid}" }
-      set_fedora_object_relationship(:publisher, values)
+
+      # NOTE from Eric: For this PR, we can delete these lines because DLC no longer relies on this information for building subsites.
+      # values = @publish_target_pids.map { |publish_target_pid| "info:fedora/#{publish_target_pid}" }
+      # set_fedora_object_relationship(:publisher, values)
     end
 
     def set_fedora_object_ezid_doi

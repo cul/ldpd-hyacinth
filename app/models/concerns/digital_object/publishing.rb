@@ -17,10 +17,18 @@ module DigitalObject::Publishing
     # publish targets, just in case multiple publish targets have the same publish URL.
     ordered_publish_target_pids = inactive_publish_target_pids + active_publish_target_pids
 
+    # Edit below
+    # highest_priority_publish_target = self.get_highest_priority_publish_target
+    # This has to rely on the string_key instead of pid
     ordered_publish_target_pids.each do |publish_target_pid|
       publish_action = inactive_publish_target_pids.include?(publish_target_pid) ? :unpublish : :publish
       publish_target = DigitalObject::Base.find(publish_target_pid)
       do_ezid_update = publish_target.pid == primary_publish_target_pid
+
+      # TODO: Rename "do_ezid_update" occurrences in this file to "do_doi_update"
+      # TODO: For the new priority field on the PublishTarget model, we should call it "doi_priority"
+      # do_ezid_update =  == highest_priority_publish_target
+
       execute_publish_action_for_target(publish_action, publish_target, do_ezid_update)
     end
 
@@ -28,7 +36,7 @@ module DigitalObject::Publishing
   end
 
   def unpublish_all
-    @publish_target_pids = []
+    @publish_target_string_keys = []
     publish
   end
 

@@ -20,7 +20,7 @@ module DigitalObject::Serialization
       state: @fedora_object ? @fedora_object.state : 'A',
       dc_type: dc_type,
       project: project,
-      publish_targets: publish_target_data,
+      publish_targets: self.publish_targets.map { |publish_target| publish_target.as_json({only: [:id, :string_key, :display_label]}) },
       digital_object_type: { string_key: digital_object_type.string_key, display_label: digital_object_type.display_label },
       dynamic_field_data: @dynamic_field_data,
       ordered_child_digital_objects: ordered_child_digital_object_pids.map { |the_pid| { pid: the_pid } },

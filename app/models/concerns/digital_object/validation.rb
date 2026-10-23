@@ -41,15 +41,14 @@ module DigitalObject::Validation
     # Make sure that none of the identifiers conflict with the PID of another existing Fedora object
     @identifiers.each { |identifier| validate_identifier(identifier) }
 
-    # validate allowed publish targets
-    allowed_publish_target_pids = allowed_publish_targets.map { |pub_target_data| pub_target_data['pid'] }
-    active_publish_target_pids = publish_target_pids
-
-    # If any of the active publish targets aren't allowed by the project, notify the user
-    active_publish_target_pids.each do |active_publish_target_pid|
-      unless allowed_publish_target_pids.include?(active_publish_target_pid)
-        publish_target = DigitalObject::Base.find(active_publish_target_pid)
-        @errors.add(:publish_target, "Publish target #{publish_target.get_title} (#{publish_target.publish_target_field('string_key')} / #{publish_target.pid}) is not enabled for this project. You'll need to remove it or enable it.")
+    # A user may have tried to add a publish target that is not allowed for this digital object's project.
+    # If so, we'll add an error to the @errors object and notify the user.
+    allowed_publish_target_string_keys = allowed_publish_targets.map { |pub_target_data| pub_target_data[:string_key] }
+    active_publish_target_string_keys = @publish_target_string_keys
+    active_publish_target_string_keys.each do |active_publish_target_string_key|
+      unless allowed_publish_target_string_keys.include?(active_publish_target_string_key)
+        publish_target = PublishTarget.find_by(string_key: active_publish_target_string_key)
+        @errors.add(:publish_target, "Publish target #{publish_target.display_label} (#{publish_target.string_key}) is not enabled for this project. You'll need to remove it or enable it.")
       end
     end
 

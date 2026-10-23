@@ -115,7 +115,7 @@
     <h2 class="editor-form-header">Publish Targets</h2>
     <div class="publish-targets">
 
-      <% activePublishTargetPids = _.map(digitalObject.publish_targets, function(pub_tar){ return pub_tar['pid']; }); %>
+      <% activePublishTargetStringKeys = _.map(digitalObject.publish_targets, function(pub_tar){ return pub_tar['string_key']; }); %>
       <%
         var activeAndAllowedPublishTargets = digitalObject.publish_targets.concat(allowedPublishTargets);
         var uniqueSortedActiveAndAllowedPublishTargets = [];
@@ -124,7 +124,7 @@
           return publishTarget['display_label'];
         }).forEach(function(publishTarget){
           //Collect only unique publish targets
-          if (_.find(uniqueSortedActiveAndAllowedPublishTargets, function(pubTar){ return pubTar['pid'] == publishTarget['pid']; }) === undefined) {
+          if (_.find(uniqueSortedActiveAndAllowedPublishTargets, function(pubTar){ return pubTar['string_key'] == publishTarget['string_key']; }) === undefined) {
             uniqueSortedActiveAndAllowedPublishTargets.push(publishTarget);
           }
         });
@@ -134,11 +134,11 @@
         <% if (mode == 'edit' && showPublishButton) { %>
           <div class="checkbox">
             <label>
-              <input type="checkbox" class="publish-target-checkbox" value="<%= publishTarget['pid'] %>" <%= activePublishTargetPids.indexOf(publishTarget['pid']) > -1 ? 'checked="checked"' : '' %> /> <%= publishTarget['display_label'] %>
+              <input type="checkbox" class="publish-target-checkbox" value="<%= publishTarget['string_key'] %>" <%= activePublishTargetStringKeys.indexOf(publishTarget['string_key']) > -1 ? 'checked="checked"' : '' %> /> <%= publishTarget['display_label'] %>
             </label>
           </div>
         <% } else { %>
-          <% if(activePublishTargetPids.indexOf(publishTarget['pid']) > -1) { %>
+          <% if(activePublishTargetStringKeys.indexOf(publishTarget['string_key']) > -1) { %>
             <div>
               &check; <%= publishTarget['display_label'] %>
             </div>
@@ -160,6 +160,7 @@
     </div>
   <% } %>
 
+  <!-- It's here! -->
   <% if (mode == 'edit') { %>
     <div class="alignright">
       <p>
@@ -173,7 +174,7 @@
       </p>
       <p>
       <% if(showPublishButton) { %>
-      <input type="submit" class="btn btn-primary editor-submit-and-publish-button" value="Save And Publish" />
+      <input type="submit" class="btn btn-primary editor-submit-and-publish-button" value="Save And Publish!!!" />
       <% } %>
       <div class="clearfix"></div>
       </p>

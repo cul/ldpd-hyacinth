@@ -81,6 +81,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.new_setup = functi
 };
 
 //New Action - Create A New Digital Object
+// !! HERE WE LOAD THE EDITOR FOR A NEW DIGITAL OBJECT
 Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.new = function () {
 
   var that = this;
@@ -530,6 +531,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.manage_synchronize
 };
 
 //Publish Target Fields Action - Edit fields for a publish target
+// TODO: Probably not needed
 Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.publish_target_fields = function () {
 
   var that = this;

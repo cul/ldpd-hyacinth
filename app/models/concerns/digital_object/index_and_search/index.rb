@@ -40,11 +40,14 @@ module DigitalObject::IndexAndSearch::Index
       digital_object_data_ts: object_as_json
     }
 
-    pub_target_data = publish_target_data
-    doc[:enabled_publish_target_pid_sim] = pub_target_data.map { |data| data['pid'] }
-    doc[:enabled_publish_target_pid_ssm] = pub_target_data.map { |data| data['pid'] }
-    doc[:enabled_publish_target_string_key_sim] = pub_target_data.map { |data| data['string_key'] }
-    doc[:enabled_publish_target_display_label_sim] = (pub_target_data.blank?) ? '[None]' : pub_target_data.map { |data| data['display_label'] }
+    # TODO: Replace the code below with data from db
+    # pub_target_data = publish_target_data
+    pub_target_data = self.publish_targets
+    # doc[:enabled_publish_target_pid_sim] = pub_target_data.map { |data| data['pid'] }
+    # doc[:enabled_publish_target_pid_ssm] = pub_target_data.map { |data| data['pid'] }
+    # doc[:enabled_publish_target_string_key_sim] = pub_target_data.map { |data| data['string_key'] }
+    doc[:enabled_publish_target_string_key_sim] = pub_target_data.map { |data| data.string_key }
+    doc[:enabled_publish_target_display_label_sim] = (pub_target_data.blank?) ? '[None]' : pub_target_data.map { |data| data.display_label }
 
     doc[:search_keyword_teim] = []
     doc[:search_identifier_sim] = []

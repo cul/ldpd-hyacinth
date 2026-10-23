@@ -11,7 +11,7 @@ module Hyacinth::DigitalObjects::EditorBehavior
       dynamic_field_hierarchy: dynamic_field_hierarchy,
       fieldsets: fieldsets,
       dynamic_field_ids_to_enabled_dynamic_fields: dynamic_field_ids_to_enabled_dynamic_fields,
-      allowed_publish_targets: digital_object.allowed_publish_targets,
+      allowed_publish_targets: digital_object.allowed_publish_targets, # should be publish targets that are assigned to this object's project
       all_projects: Project.all.order(:display_label)
     }
 

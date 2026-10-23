@@ -20,7 +20,7 @@ class DigitalObject::Base
   # For ActiveModel::Dirty
   define_attribute_methods :parent_digital_object_pids, :obsolete_parent_digital_object_pids, :ordered_child_digital_object_pids
 
-  attr_accessor :project, :publish_target_pids, :identifiers, :created_by, :updated_by, :first_published_at, :state, :dc_type, :ordered_child_digital_object_pids, :publish_after_save, :mint_reserved_doi_before_save, :doi, :perform_derivative_processing
+  attr_accessor :project, :publish_target_string_keys, :identifiers, :created_by, :updated_by, :first_published_at, :state, :dc_type, :ordered_child_digital_object_pids, :publish_after_save, :mint_reserved_doi_before_save, :doi, :perform_derivative_processing
   attr_reader :errors, :fedora_object, :parent_digital_object_pids, :db_record
 
   delegate :created_at, :new_record?, :updated_at, :uuid, :data_file_path, to: :@db_record
@@ -41,7 +41,7 @@ class DigitalObject::Base
     @db_record = ::DigitalObjectRecord.new
     @fedora_object = nil
     @project = nil
-    @publish_target_pids = []
+    @publish_target_string_keys = []
     @identifiers = []
     @parent_digital_object_pids = []
     @obsolete_parent_digital_object_pids = []
@@ -82,7 +82,7 @@ class DigitalObject::Base
   end
 
   def set_data_to_sources
-    set_created_and_updated_data_from_db_record
+    save_data_to_db_record
     set_first_published_at
     set_perform_derivative_processing
     set_fedora_hyacinth_ds_data
@@ -109,7 +109,7 @@ class DigitalObject::Base
     end
 
     @identifiers = [] if digital_object_data.key?('identifiers')
-    @publish_target_pids = [] if digital_object_data.key?('publish_targets')
+    @publish_target_string_keys = [] if digital_object_data.key?('publish_targets')
   end
 
   # Updates the DigitalObject with the given digital_object_data
@@ -142,7 +142,8 @@ class DigitalObject::Base
     self.project = project_from_data(digital_object_data) || self.project
 
     # Publish Targets (multiple)
-    publish_target_pids_from_data(digital_object_data) { |publish_target_pid| @publish_target_pids.push(publish_target_pid) }
+    # publish_target_pids_from_data(digital_object_data) { |publish_target_pid| @publish_target_string_keys.push(publish_target_pid) }
+    @publish_target_string_keys = digital_object_data["publish_targets"].map { |target| target["string_key"] }
 
     # Ordered child Digital Objects (PID or Identifier)
     ordered_child_digital_objects_from_data(digital_object_data) { |digital_object| add_ordered_child_digital_object(digital_object) }
@@ -272,17 +273,27 @@ class DigitalObject::Base
     false
   end
 
+  # This should be probably modified to use new implementation of Publish targets
   def allowed_publish_targets
-    DigitalObject::PublishTarget.basic_publish_target_data_from_solr(project.enabled_publish_target_pids)
+    # DigitalObject::PublishTarget.basic_publish_target_data_from_solr(project.enabled_publish_target_pids)
+    puts "Targets: #{self.project.publish_targets.inspect}"
+    self.project.publish_targets.map do |publish_target|
+      {
+        string_key: publish_target.string_key,
+        display_label: publish_target.display_label
+      }
+    end
   end
 
-  def publish_target_data
-    DigitalObject::PublishTarget.basic_publish_target_data_from_solr(@publish_target_pids)
-  end
+  # def publish_target_data
+  #   # TODO: Change to get publish target data wi
+  #   DigitalObject::PublishTarget.basic_publish_target_data_from_solr(@publish_target_string_keys)
+  # end
 
   def publish_targets
-    return [] if @publish_target_pids.blank?
-    @publish_target_pids.map { |publish_target_pid| DigitalObject::Base.find(publish_target_pid) }
+    # TODO: Instead of the lines below, we may want to call self.db_record.publish_targets
+    return [] if @publish_target_string_keys.blank?
+    @publish_target_string_keys.map { |publish_target_string_key| PublishTarget.find_by(string_key: publish_target_string_key) }
   end
 
   def self.title_for_pid(pid, user_for_access)
