@@ -24,6 +24,10 @@ export const columnDefs = [
     header: 'Publish URL',
     cell: (info) => info.getValue(),
   }),
+  columnHelper.accessor('doiPriority', {
+    header: 'DOI Priority',
+    cell: (info) => info.getValue() ?? '—',
+  }),
   columnHelper.accessor('projects', {
     header: 'Number of Projects Assigned',
     cell: (info) => info.getValue()?.length || 'No Projects Assigned',

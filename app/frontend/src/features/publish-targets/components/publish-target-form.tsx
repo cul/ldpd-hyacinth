@@ -25,6 +25,7 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
     displayLabel: publishTarget?.displayLabel || '',
     publishUrl: publishTarget?.publishUrl || '',
     apiKey: publishTarget?.apiKey || '',
+    doiPriority: publishTarget?.doiPriority?.toString() ?? '',
     projectIds: publishTarget?.projects?.map(p => p.id) || [],
   });
   const [selectedProjectIds, setSelectedProjectIds] = useState<number[]>(publishTarget?.projects?.map(p => p.id) || []);
@@ -52,6 +53,7 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
     e.preventDefault();
     const payload = {
       ...formData,
+      doiPriority: formData.doiPriority === '' ? null : Number(formData.doiPriority),
       projectIds: selectedProjectIds,
     };
 
@@ -147,6 +149,24 @@ export const PublishTargetForm = ({ publishTarget }: PublishTargetFormProps) => 
             md={7}
             required
           />
+        </Row>
+        <Row className="mb-3">
+          <Input
+            label="DOI Priority"
+            type="number"
+            step={1}
+            name="doiPriority"
+            value={formData.doiPriority}
+            onChange={handleInputChange}
+            error={fieldErrors.doiPriority}
+            md={7}
+          />
+          <div className="text-muted">
+            <small>
+              When a digital object is published to several targets, only the target with the lowest number updates
+              the DOI.
+            </small>
+          </div>
         </Row>
 
         <p className="text-muted fw-bold text-uppercase letter-spacing-wide mb-2 pt-2">

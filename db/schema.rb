@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_06_26_125157) do
+ActiveRecord::Schema[7.0].define(version: 2026_10_26_141025) do
   create_table "archived_assignments", force: :cascade do |t|
     t.integer "original_assignment_id", null: false
     t.string "digital_object_pid", null: false
@@ -272,6 +272,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_06_26_125157) do
     t.string "api_key", null: false
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
+    t.integer "doi_priority"
+    t.index ["doi_priority"], name: "index_publish_targets_on_doi_priority", unique: true
     t.index ["string_key"], name: "index_publish_targets_on_string_key", unique: true
   end
 

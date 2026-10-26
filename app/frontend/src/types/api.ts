@@ -36,6 +36,7 @@ export interface PublishTarget {
   displayLabel: string;
   publishUrl: string;
   apiKey: string;
+  doiPriority: number | null;
   projects: Project[];
 }
 
@@ -120,5 +121,6 @@ export interface PublishTargetPayload {
   displayLabel: string;
   publishUrl: string;
   apiKey: string;
+  doiPriority: number | null;
   projectIds: number[];
 }

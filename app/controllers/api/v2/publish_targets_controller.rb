@@ -52,7 +52,7 @@ class Api::V2::PublishTargetsController < Api::V2::BaseController
   private
 
     def publish_target_params
-      permitted = [:display_label, :publish_url, :api_key, project_ids: []]
+      permitted = [:display_label, :publish_url, :api_key, :doi_priority, project_ids: []]
       permitted << :string_key if action_name == 'create'
       params.require(:publish_target).permit(permitted)
     end
@@ -64,6 +64,7 @@ class Api::V2::PublishTargetsController < Api::V2::BaseController
         display_label: publish_target.display_label,
         publish_url: publish_target.publish_url,
         api_key: publish_target.api_key,
+        doi_priority: publish_target.doi_priority,
         projects: publish_target.projects.map { |project| { id: project.id, string_key: project.string_key, display_label: project.display_label } }
       }
     end
