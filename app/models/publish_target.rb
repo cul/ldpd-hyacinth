@@ -13,4 +13,19 @@ class PublishTarget < ApplicationRecord
   validates :doi_priority, allow_nil: true, numericality: { only_integer: true }, uniqueness: {
     message: 'is already used by another publish target'
   }
+
+  def publish_digital_object(digital_object_pid)
+    puts "Making a request to: #{"#{publish_url}/#{digital_object_pid}"}, authorization header is #{authorization_header}"
+    RestClient.put("#{publish_url}/#{digital_object_pid}", {}, authorization_header)
+  end
+
+  def unpublish_digital_object(digital_object_pid)
+    RestClient.delete("#{publish_url}/#{digital_object_pid}", authorization_header)
+  end
+
+  private
+
+    def authorization_header
+      { Authorization: "Token token=#{api_key}" }
+    end
 end

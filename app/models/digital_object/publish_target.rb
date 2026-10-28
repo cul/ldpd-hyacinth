@@ -103,6 +103,7 @@ class DigitalObject::PublishTarget < DigitalObject::Base
 
   # Returns a minimal set of publish target data (pid, string_key and title), generally used by Groups, Items or Assets
   def self.basic_publish_target_data_from_solr(publish_target_pids)
+    puts "Im called!"
     return [] if publish_target_pids.blank?
 
     search_results = search(
@@ -123,36 +124,6 @@ class DigitalObject::PublishTarget < DigitalObject::Base
         'string_key' => digital_object_data.fetch('publish_target_data', {}).present? ? JSON.parse(publish_target_solr_doc['digital_object_data_ts'])['publish_target_data']['string_key'] : ''
       }
     end
-  end
-
-  def unpublish_digital_object(digital_object, do_ezid_update)
-    response = RestClient.delete(
-      publish_target_field('publish_url') + '/' + digital_object.pid,
-      Authorization: "Token token=#{publish_target_field('api_key')}"
-    )
-    if do_ezid_update && !digital_object.doi.blank?
-      digital_object.change_doi_status_to_unavailable
-    end
-    response
-  end
-
-  def publish_digital_object(digital_object, do_ezid_update)
-    #  publish_target_field('publish_url') needs to be swapped with the value from the new Publish Target model
-    puts "Publish url: #{publish_target_field('publish_url')}"
-    response = RestClient.put(
-      publish_target_field('publish_url') + '/' + digital_object.pid,
-      {},
-      { Authorization: "Token token=#{publish_target_field('api_key')}" }
-    )
-    if do_ezid_update && response.code == 200 && response.headers[:location].present?
-      # By this point, all records should have an ezid. Let's update the status of
-      # that ezid to :public, and send the latest published_object_url in case it changed.
-      puts "response headers: #{response.headers}"
-      puts "response code: #{response.code}"
-      puts "response body: #{response.body}"
-      # digital_object.update_doi_metadata(response.headers[:location])
-    end
-    response
   end
 
   def to_solr
