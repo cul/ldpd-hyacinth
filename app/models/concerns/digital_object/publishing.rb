@@ -79,7 +79,7 @@ module DigitalObject::Publishing
     success ? response : nil
   end
 
-  def publishing_to_primary_publish_target?
-    @publish_after_save && publish_target_pids.include?(project.primary_publish_target_pid)
+  def publishing_to_any_publish_target?
+    @publish_after_save && @publish_target_string_keys.present?
   end
 end

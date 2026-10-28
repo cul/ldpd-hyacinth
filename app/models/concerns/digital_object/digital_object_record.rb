@@ -41,10 +41,8 @@ module DigitalObject::DigitalObjectRecord
 
   def set_first_published_at
     # Save _first_published_at date, if we are going to attempt to publish to
-    # primary publish target. Otherwise, convert date if it is a String
-
-    # Note from Eric: From now on, @first_published_at can be the first time we publish to ANY publish target for the first time
-    if @first_published_at.blank? # && publishing_to_primary_publish_target? 
+    # any publish target for the first time. Otherwise, convert date if it is a String
+    if @first_published_at.blank? && publishing_to_any_publish_target?
       @first_published_at = Time.current
     elsif @first_published_at.is_a?(String)
       begin
