@@ -707,7 +707,7 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.submitEditorForm = func
     data: data,
     cache: false
   }).done(function (digitalObjectCreationResponse) {
-    if (digitalObjectCreationResponse['errors'] && Object.keys(digitalObjectCreationResponse['errors']).length > 0) {
+    if (!digitalObjectCreationResponse['publish_failed'] && digitalObjectCreationResponse['errors'] && Object.keys(digitalObjectCreationResponse['errors']).length > 0) {
       Hyacinth.addAlert('Errors encountered during save. Please review your fields and try again.', 'danger');
       $.each(digitalObjectCreationResponse['errors'], function (error_key, error_message) {
         var errorWithPossibleNumberIndicator = error_key.split('.');
@@ -721,7 +721,14 @@ Hyacinth.DigitalObjectsApp.DigitalObjectEditor.prototype.submitEditorForm = func
       $editorForm.find('.errors').html(Hyacinth.DigitalObjectsApp.renderTemplate('digital_objects_app/widgets/digital_object_editor/_errors.ejs', { errors: digitalObjectCreationResponse['errors'] }));
       Hyacinth.scrollToTopOfWindow();
     } else {
-      Hyacinth.addAlert('Digital Object saved' + (publish ? ' and <strong>published</strong>.' : '.'), 'success');
+      if (digitalObjectCreationResponse['publish_failed']) {
+        // The object was saved but not published, so we leave the editor to prevent users from saving a new record again, which would create a duplicate.
+        var publishErrors = $.map(digitalObjectCreationResponse['errors'], function (messages) { return messages; });
+        var publishErrorsHtml = $.map(publishErrors, function (message) { return '<li>' + _.escape(message) + '</li>'; }).join('');
+        Hyacinth.addAlert('Digital Object saved, but <strong>publishing failed</strong>:<ul>' + publishErrorsHtml + '</ul>', 'warning');
+      } else {
+        Hyacinth.addAlert('Digital Object saved' + (publish ? ' and <strong>published</strong>.' : '.'), 'success');
+      }
 
       //For NEW records, upon successful save, redirect to edit view for new pid
       if (that.digitalObject.isNewRecord()) {
