@@ -14,7 +14,8 @@ module DigitalObject::Publishing
       fedora_object.save(update_index: false) if preserve
     end
     active_publish_targets = PublishTarget.where(string_key: @publish_target_string_keys).to_a
-    inactive_publish_targets = project.publish_targets.to_a - active_publish_targets
+    # Only unpublish from targets that were previously selected
+    inactive_publish_targets = PublishTarget.where(string_key: @previous_publish_target_string_keys - @publish_target_string_keys).to_a
     # The DOI should point to the active publish target with the highest priority
     doi_publish_target = active_publish_targets.select(&:doi_priority).min_by(&:doi_priority)
 
@@ -27,7 +28,6 @@ module DigitalObject::Publishing
     should_unpublish_from_doi_priority_target = false
     inactive_publish_targets.each do |publish_target|
       response = execute_publish_action_for_target(:unpublish, publish_target)
-      puts "Unpublish response #{response}"
       should_unpublish_from_doi_priority_target = true if response && publish_target.doi_priority
     end
 
@@ -36,7 +36,6 @@ module DigitalObject::Publishing
 
     active_publish_targets.each do |publish_target|
       response = execute_publish_action_for_target(:publish, publish_target)
-      puts "Publish response #{response}"
       doi_publish_target_response = response if publish_target == doi_publish_target
       published_to_any_target = true if response
     end

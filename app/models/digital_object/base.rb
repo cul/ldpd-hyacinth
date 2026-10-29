@@ -42,6 +42,7 @@ class DigitalObject::Base
     @fedora_object = nil
     @project = nil
     @publish_target_string_keys = []
+    @previous_publish_target_string_keys = []
     @identifiers = []
     @parent_digital_object_pids = []
     @obsolete_parent_digital_object_pids = []

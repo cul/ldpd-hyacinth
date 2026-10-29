@@ -13,6 +13,8 @@ module DigitalObject::DigitalObjectRecord
     # use that value. Otherwise just use default value set by the DigitalObject::Base or its subclass.
     @perform_derivative_processing = @db_record.new_record? ? @perform_derivative_processing : @db_record.perform_derivative_processing
     @publish_target_string_keys = self.db_record.publish_targets.map { |publish_target| publish_target.string_key }
+    # Preserve publish targets so we can determine later which targets to unpublish from
+    @previous_publish_target_string_keys = @publish_target_string_keys.dup
   end
 
   ##################################
