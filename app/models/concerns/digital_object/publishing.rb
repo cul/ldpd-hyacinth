@@ -2,6 +2,11 @@ module DigitalObject::Publishing
   extend ActiveSupport::Concern
 
   def publish(preserve = true)
+    # Set first_published_at before setting descMetadata fields so we don't send an empty date.
+    # Save it to the db if publishing succeeds.
+    first_publish = @first_published_at.blank? && @publish_target_string_keys.present?
+    @first_published_at = Time.current if first_publish
+
     before_publish
 
     # Save with retry after Fedora timeouts / unreachable host
@@ -27,10 +32,19 @@ module DigitalObject::Publishing
     end
 
     doi_publish_target_response = nil
+    published_to_any_target = false
+
     active_publish_targets.each do |publish_target|
       response = execute_publish_action_for_target(:publish, publish_target)
       puts "Publish response #{response}"
       doi_publish_target_response = response if publish_target == doi_publish_target
+      published_to_any_target = true if response
+    end
+
+    if first_publish && published_to_any_target
+      record_first_published_at
+    elsif first_publish
+      @first_published_at = nil
     end
 
     update_doi_after_publishing(doi_publish_target, doi_publish_target_response, should_unpublish_from_doi_priority_target)
@@ -79,7 +93,9 @@ module DigitalObject::Publishing
     success ? response : nil
   end
 
-  def publishing_to_any_publish_target?
-    @publish_after_save && @publish_target_string_keys.present?
+  def record_first_published_at
+    @db_record.update_column(:first_published_at, @first_published_at)
+    # Solr was updated before publishing
+    update_index
   end
 end

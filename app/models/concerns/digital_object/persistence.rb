@@ -46,7 +46,6 @@ module DigitalObject::Persistence
   def before_save
     # TODO: rewrite with ActiveRecord::Callbacks
     # To be overridden by subclasses
-    # Skipping locally
     if @mint_reserved_doi_before_save || (@publish_after_save && self.doi.blank?)
       mint_and_store_doi(Hyacinth::Datacite::Doi::IDENTIFIER_STATUS[:draft])
     end

@@ -40,11 +40,8 @@ module DigitalObject::DigitalObjectRecord
   end
 
   def set_first_published_at
-    # Save _first_published_at date, if we are going to attempt to publish to
-    # any publish target for the first time. Otherwise, convert date if it is a String
-    if @first_published_at.blank? && publishing_to_any_publish_target?
-      @first_published_at = Time.current
-    elsif @first_published_at.is_a?(String)
+    # Convert date if it is a String (first_published_at is otherwise set after a successful publish)
+    if @first_published_at.is_a?(String)
       begin
         @first_published_at = Time.iso8601(@first_published_at)
       rescue ArgumentError
