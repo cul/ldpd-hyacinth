@@ -162,9 +162,9 @@ module DigitalObject::Persistence
 
       if valid? || force
         # Unpublish items from active publish targets.
-        unpublish_all
+        unpublished = unpublish_all
 
-        if purge
+        if purge && unpublished
           # We're going to delete everything associated with this record
 
           # Delete from Solr
@@ -180,7 +180,7 @@ module DigitalObject::Persistence
           @db_record.destroy
 
           result = true
-        else
+        elsif !purge
           if @parent_digital_object_pids.present?
             # If present, convert this DigitalObject's parent membership relationships to obsolete parent relationships (for future auditing/troubleshooting purposes)
             @parent_digital_object_pids.each do |parent_digital_object_pid|

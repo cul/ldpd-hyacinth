@@ -142,7 +142,6 @@ class DigitalObject::Base
     self.project = project_from_data(digital_object_data) || self.project
 
     # Publish Targets (multiple)
-    # publish_target_pids_from_data(digital_object_data) { |publish_target_pid| @publish_target_string_keys.push(publish_target_pid) }
     @publish_target_string_keys = digital_object_data["publish_targets"].map { |target| target["string_key"] }
 
     # Ordered child Digital Objects (PID or Identifier)
