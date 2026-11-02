@@ -14,8 +14,9 @@ module DigitalObject::Publishing
       fedora_object.save(update_index: false) if preserve
     end
     active_publish_targets = PublishTarget.where(string_key: @publish_target_string_keys).to_a
-    # Only unpublish from targets that were previously selected
-    inactive_publish_targets = PublishTarget.where(string_key: @previous_publish_target_string_keys - @publish_target_string_keys).to_a
+    # Only unpublish from deselected targets that the object may still be published to
+    possibly_published_target_ids = @db_record.publications.where.not(status: :unpublished).select(:publish_target_id)
+    inactive_publish_targets = PublishTarget.where(id: possibly_published_target_ids).where.not(string_key: @publish_target_string_keys).to_a
     # The DOI should point to the active publish target with the highest priority
     doi_publish_target = active_publish_targets.select(&:doi_priority).min_by(&:doi_priority)
 
@@ -23,8 +24,6 @@ module DigitalObject::Publishing
     puts "Inactive publish targets #{inactive_publish_targets}"
     puts "DOI publish target #{doi_publish_target}"
 
-    # - Make sure to unpublish from INACTIVE publish targets before doing publishing to active
-    # publish targets, just in case multiple publish targets have the same publish URL.
     should_unpublish_from_doi_priority_target = false
     inactive_publish_targets.each do |publish_target|
       response = execute_publish_action_for_target(:unpublish, publish_target)
@@ -71,7 +70,11 @@ module DigitalObject::Publishing
   end
 
   def execute_publish_action_for_target(publish_action, publish_target)
+    publication = @db_record.publications.find_or_initialize_by(publish_target: publish_target)
+    publication.update!(status: publish_action == :publish ? :publish_pending : :unpublish_pending)
+
     success = false
+    error_message = nil
     begin
       if publish_action == :unpublish
         response = publish_target.unpublish_digital_object(pid)
@@ -79,15 +82,25 @@ module DigitalObject::Publishing
         response = publish_target.publish_digital_object(pid)
       end
       success = response.code == 200
-      @errors.add(:publish_target, "Error encountered while #{publish_action}ing to #{publish_target.display_label}") unless success
+      error_message = "Error encountered while #{publish_action}ing to #{publish_target.display_label}" unless success
     rescue Errno::ECONNREFUSED
-      @errors.add(:publish_target, "Connection to server refused for Publish Target URL: #{publish_target.publish_url}")
+      error_message = "Connection to server refused for Publish Target URL: #{publish_target.publish_url}"
     rescue RestClient::ExceptionWithResponse => e
-      @errors.add(
-        :publish_target,
-        "#{e.response&.code || 'Undefined'} response received for Publish Target URL: #{publish_target.publish_url}\n"\
-        "Error message: #{e.message}"
-      )
+      if publish_action == :unpublish && e.http_code == 404
+        # The object is already absent from the publish target
+        response = e.response
+        success = true
+      else
+        error_message = "#{e.response&.code || 'Undefined'} response received for Publish Target URL: #{publish_target.publish_url}\n"\
+                        "Error message: #{e.message}"
+      end
+    end
+
+    if success
+      publication.update!(status: publish_action == :publish ? :published : :unpublished, error_message: nil)
+    else
+      @errors.add(:publish_target, error_message)
+      publication.update!(error_message: error_message)
     end
     success ? response : nil
   end

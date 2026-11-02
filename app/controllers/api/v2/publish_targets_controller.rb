@@ -45,6 +45,12 @@ class Api::V2::PublishTargetsController < Api::V2::BaseController
       return
     end
 
+    # Include pending statuses because a failed request may have left the digital object published
+    if @publish_target.publications.where.not(status: :unpublished).exists?
+      render_camelized_json({ errors: { base: ['Cannot delete a publish target that may still have published digital objects'] } }, status: :unprocessable_entity)
+      return
+    end
+
     @publish_target.destroy
     render_camelized_json({}, status: :no_content)
   end
