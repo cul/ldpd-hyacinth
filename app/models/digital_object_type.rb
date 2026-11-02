@@ -14,8 +14,6 @@ class DigitalObjectType < ApplicationRecord
       DigitalObject::FileSystem
     when 'asset'
       DigitalObject::Asset
-    when 'publish_target'
-      DigitalObject::PublishTarget
     else
       raise Hyacinth::Exceptions::InvalidDigitalObjectTypeError, "Invalid DigitalObjectType string key: #{string_key}"
     end

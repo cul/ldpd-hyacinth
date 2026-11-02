@@ -146,13 +146,8 @@ module DigitalObject::Fedora
       set_fedora_object_relationship(:cul_obsolete_from, values)
     end
 
-    # TODO: change this method name to "set_fedora_project_relationship" because we are removing logic related to publish targets
-    def set_fedora_project_and_publisher_relationships
+    def set_fedora_project_relationship
       set_fedora_object_relationship(PROJECT_MEMBERSHIP_PREDICATE, @project.fedora_object.internal_uri)
-
-      # NOTE from Eric: For this PR, we can delete these lines because DLC no longer relies on this information for building subsites.
-      # values = @publish_target_pids.map { |publish_target_pid| "info:fedora/#{publish_target_pid}" }
-      # set_fedora_object_relationship(:publisher, values)
     end
 
     def set_fedora_object_ezid_doi

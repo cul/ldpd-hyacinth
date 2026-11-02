@@ -3,6 +3,7 @@ class DigitalObjectRecord < ApplicationRecord
   belongs_to :updated_by, class_name: 'User', optional: true
 
   has_and_belongs_to_many :publish_targets
+  has_many :publications, dependent: :destroy
 
   after_initialize :assign_uuid!, if: :new_record?
 

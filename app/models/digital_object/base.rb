@@ -87,7 +87,7 @@ class DigitalObject::Base
     set_first_published_at
     set_perform_derivative_processing
     set_fedora_hyacinth_ds_data
-    set_fedora_project_and_publisher_relationships
+    set_fedora_project_relationship
     set_fedora_object_state
     set_fedora_object_dc_type
     set_fedora_object_dc_identifiers
@@ -143,7 +143,7 @@ class DigitalObject::Base
     self.project = project_from_data(digital_object_data) || self.project
 
     # Publish Targets (multiple)
-    @publish_target_string_keys = digital_object_data["publish_targets"].map { |target| target["string_key"] }
+    @publish_target_string_keys = digital_object_data["publish_targets"].map { |target| target["string_key"] } if digital_object_data["publish_targets"]
 
     # Ordered child Digital Objects (PID or Identifier)
     ordered_child_digital_objects_from_data(digital_object_data) { |digital_object| add_ordered_child_digital_object(digital_object) }

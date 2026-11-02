@@ -48,7 +48,11 @@ module DigitalObject::Validation
     active_publish_target_string_keys.each do |active_publish_target_string_key|
       unless allowed_publish_target_string_keys.include?(active_publish_target_string_key)
         publish_target = PublishTarget.find_by(string_key: active_publish_target_string_key)
-        @errors.add(:publish_target, "Publish target #{publish_target.display_label} (#{publish_target.string_key}) is not enabled for this project. You'll need to remove it or enable it.")
+        if publish_target.nil?
+          @errors.add(:publish_target, "Could not find publish target with string key: #{active_publish_target_string_key}")
+        else
+          @errors.add(:publish_target, "Publish target #{publish_target.display_label} (#{publish_target.string_key}) is not enabled for this project. You'll need to remove it or enable it.")
+        end
       end
     end
 
