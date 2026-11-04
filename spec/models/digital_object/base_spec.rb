@@ -41,6 +41,10 @@ RSpec.describe DigitalObject::Base, :type => :model do
     dod
   }
 
+  before do
+    allow_any_instance_of(PublishTarget).to receive(:publish_digital_object).and_return(double(code: 200, headers: {}))
+  end
+
   describe "#initialize" do
     it "has a default dynamic_field_data value of {}" do
       digital_object = DigitalObject::Item.new()
@@ -97,20 +101,6 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect {
           new_item.set_digital_object_data(sample_item_digital_object_data, false)
         }.to raise_error(Hyacinth::Exceptions::ProjectNotFoundError)
-      end
-
-      it "raises an exception for an object that references a publish target that doesn't exist" do
-        # Set publish target for new item data
-        sample_item_digital_object_data['publish_targets'] = [
-          {
-            'string_key' => 'zzzzzzzzzz_does_not_exist_zzzzzzzzzz'
-          }
-        ]
-
-        new_item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
-        expect {
-          new_item.set_digital_object_data(sample_item_digital_object_data, false)
-        }.to raise_error(Hyacinth::Exceptions::PublishTargetNotFoundError)
       end
 
       it "raises an exception for a new object that references a pid that cannot be resolved to an existing Fedora object" do
@@ -185,6 +175,19 @@ RSpec.describe DigitalObject::Base, :type => :model do
       end
     end
 
+    it "adds a validation error for an object that references a publish target that doesn't exist" do
+      sample_item_digital_object_data['publish_targets'] = [
+        {
+          'string_key' => 'zzzzzzzzzz_does_not_exist_zzzzzzzzzz'
+        }
+      ]
+
+      new_item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new()
+      new_item.set_digital_object_data(sample_item_digital_object_data, false)
+      expect(new_item.valid?).to eq(false)
+      expect(new_item.errors[:publish_target]).to include('Could not find publish target with string key: zzzzzzzzzz_does_not_exist_zzzzzzzzzz')
+    end
+
     describe "for an object that was previously saved" do
       let(:new_project) { FactoryBot.create(:project) }
       it "can update the project to a different value" do
@@ -209,7 +212,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(group).to be_instance_of(DigitalObject::Group)
         expect(group.identifiers).to eq(sample_group_digital_object_data['identifiers'])
         expect(group.project.string_key).to eq('test')
-        expect(group.publish_targets.map{|publish_target| publish_target.publish_target_field('string_key')}.sort).to eq(['test_publish_target_1'])
+        expect(group.publish_targets.map(&:string_key).sort).to eq(['test_publish_target_1'])
         expect(group.dynamic_field_data).to eq(sample_group_digital_object_data['dynamic_field_data'])
 
         expect(group.created_by).to be_nil # Because we didn't set created_by
@@ -240,7 +243,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(new_group_with_parent_group.identifiers).to eq(second_sample_group_digital_object_data['identifiers'])
         expect(new_group_with_parent_group.parent_digital_object_pids).to eq([parent_group_pid])
         expect(new_group_with_parent_group.project.string_key).to eq('test')
-        expect(new_group_with_parent_group.publish_targets.map{|publish_target| publish_target.publish_target_field('string_key')}.sort).to eq(['test_publish_target_1'])
+        expect(new_group_with_parent_group.publish_targets.map(&:string_key).sort).to eq(['test_publish_target_1'])
         expect(new_group_with_parent_group.dynamic_field_data).to eq(second_sample_group_digital_object_data['dynamic_field_data'])
 
         expect(new_group_with_parent_group.created_by).to be_nil # Because we didn't set created_by
@@ -257,7 +260,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(item).to be_instance_of(DigitalObject::Item)
         expect(item.identifiers).to eq(sample_item_digital_object_data['identifiers'])
         expect(item.project.string_key).to eq('test')
-        expect(item.publish_targets.map{|publish_target| publish_target.publish_target_field('string_key')}.sort).to eq(['test_publish_target_1', 'test_publish_target_2'])
+        expect(item.publish_targets.map(&:string_key).sort).to eq(['test_publish_target_1', 'test_publish_target_2'])
         expect(item.dynamic_field_data).to eq(sample_item_digital_object_data['dynamic_field_data'])
 
         expect(item.created_by).to be_nil # Because we didn't set created_by
@@ -288,7 +291,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(new_item_with_parent_group.identifiers).to eq(sample_item_digital_object_data['identifiers'])
         expect(new_item_with_parent_group.parent_digital_object_pids).to eq([parent_group_pid])
         expect(new_item_with_parent_group.project.string_key).to eq('test')
-        expect(new_item_with_parent_group.publish_targets.map{|publish_target| publish_target.publish_target_field('string_key')}.sort).to eq(['test_publish_target_1', 'test_publish_target_2'])
+        expect(new_item_with_parent_group.publish_targets.map(&:string_key).sort).to eq(['test_publish_target_1', 'test_publish_target_2'])
         expect(new_item_with_parent_group.dynamic_field_data).to eq(sample_item_digital_object_data['dynamic_field_data'])
 
         expect(new_item_with_parent_group.created_by).to be_nil # Because we didn't set created_by
@@ -305,7 +308,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(asset).to be_instance_of(DigitalObject::Asset)
         expect(asset.identifiers).to eq(sample_asset_digital_object_data['identifiers'])
         expect(asset.project.string_key).to eq('test')
-        expect(asset.publish_targets.map{|publish_target| publish_target.publish_target_field('string_key')}.sort).to eq(['test_publish_target_2'])
+        expect(asset.publish_targets.map(&:string_key).sort).to eq(['test_publish_target_2'])
         expect(asset.dynamic_field_data).to eq(sample_asset_digital_object_data['dynamic_field_data'])
 
         expect(asset.created_by).to be_nil # Because we didn't set created_by
@@ -339,7 +342,7 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(new_asset_with_parent_item.identifiers).to eq(sample_asset_digital_object_data['identifiers'])
         expect(new_asset_with_parent_item.parent_digital_object_pids).to eq([parent_item_pid])
         expect(new_asset_with_parent_item.project.string_key).to eq('test')
-        expect(new_asset_with_parent_item.publish_targets.map{|publish_target| publish_target.publish_target_field('string_key')}.sort).to eq(['test_publish_target_2'])
+        expect(new_asset_with_parent_item.publish_targets.map(&:string_key).sort).to eq(['test_publish_target_2'])
         expect(new_asset_with_parent_item.dynamic_field_data).to eq(sample_asset_digital_object_data['dynamic_field_data'])
 
         expect(new_asset_with_parent_item.created_by).to be_nil # Because we didn't set created_by
@@ -441,8 +444,9 @@ RSpec.describe DigitalObject::Base, :type => :model do
         )
       end
 
-      it "returns a document with two enabled publish targets" do
-        expect(subject["enabled_publish_target_pid_ssm"].count).to eql 2
+      it "indexes both publish targets" do
+        params = { q: "pid:\"#{item.pid}\"", fq: 'enabled_publish_target_string_key_sim:(test_publish_target_1 AND test_publish_target_2)' }
+        expect(Hyacinth::Utils::SolrUtils.solr.get('select', params: params)['response']['numFound']).to eq(1)
       end
     end
 
@@ -486,30 +490,16 @@ RSpec.describe DigitalObject::Base, :type => :model do
       end
     end
 
-    it "can create a new DigitalObject for an existing Fedora object that isn't being tracked by Hyacinth, and preserves identifiers, parents and publish targets from that Fedora object" do
+    it "can create a new DigitalObject for an existing Fedora object that isn't being tracked by Hyacinth, and preserves identifiers and parents from that Fedora object" do
         existing_parent_object_pid = 'test:existing_parent_object'
         existing_parent_object = Collection.new(:pid => existing_parent_object_pid)
         existing_parent_object.save
-
-        first_publish_target_result = DigitalObject::Base.search(
-          {
-            'per_page' => 1,
-            'fl' => 'pid',
-            'fq' => { 'hyacinth_type_si' => [{ 'equals' => 'publish_target' }] }
-          },
-          nil,
-          {}
-        )
-
-        publish_target = DigitalObject::Base.find(first_publish_target_result['results'].first['pid'])
-        publish_target_fedora_object = publish_target.fedora_object
 
         existing_object_pid = 'test:existingobject'
         existing_object_identifier = 'custom_identifier'
         content_aggregator = ContentAggregator.new(:pid => existing_object_pid)
         content_aggregator.datastreams['DC'].dc_identifier = [existing_object_identifier]
         content_aggregator.add_relationship(:cul_member_of, existing_parent_object.internal_uri)
-        content_aggregator.add_relationship(:publisher, publish_target_fedora_object.internal_uri)
         content_aggregator.save
 
         expect(content_aggregator.pid).to eq(existing_object_pid) # New Fedora object has been assigned given pid
@@ -527,7 +517,6 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(item.fedora_object).to eq(content_aggregator)
         expect(item.fedora_object.datastreams['DC'].dc_identifier.include?(existing_object_identifier)).to be(true)
         expect(item.parent_digital_object_pids.include?(existing_parent_object_pid)).to be(true)
-        expect(item.publish_targets.map{ |pub_target| pub_target.pid }.include?(publish_target.pid)).to be(true)
     end
 
     context "when publishing after saving" do
@@ -655,19 +644,10 @@ RSpec.describe DigitalObject::Base, :type => :model do
     end
   end
 
-  describe "#execute_publish_action_for_target" do
-    let(:sample_publish_target_digital_object_data) {
-      JSON.parse( fixture('sample_digital_object_data/new_publish_target.json').read )
-    }
-
-    let(:publish_target) do
-      publish_target = DigitalObjectType.get_model_for_string_key(
-        sample_publish_target_digital_object_data['digital_object_type']['string_key']
-      ).new
-      publish_target.set_digital_object_data(sample_publish_target_digital_object_data, false)
-      publish_target.save
-      publish_target
-    end
+  describe "#update_doi_after_publishing" do
+    let(:item) { DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new }
+    let(:doi_publish_target) { instance_double(PublishTarget) }
+    let(:doi_publish_target_response) { double(headers: { location: 'http://localhost/item' }) }
 
     context "handling doi errors" do
       [
@@ -675,20 +655,19 @@ RSpec.describe DigitalObject::Base, :type => :model do
         Hyacinth::Exceptions::DataciteConnectionError,
         Hyacinth::Exceptions::MissingDoi
       ].each do |error_class|
-        context "when a publish operation throws a #{error_class.name}" do
+        context "when updating the doi after publishing throws a #{error_class.name}" do
           it 'rescues the exception and stores the message in the digital object errors' do
-            item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new
-            allow(publish_target).to receive(:publish_digital_object).and_raise(error_class)
-            item.execute_publish_action_for_target(:publish, publish_target, true)
+            allow(item).to receive(:update_doi_metadata).and_raise(error_class)
+            item.update_doi_after_publishing(doi_publish_target, doi_publish_target_response, false)
             expect(item.errors.messages).to include(:datacite)
           end
         end
 
-        context "when an unpublish operation throws a #{error_class.name}" do
+        context "when making the doi unavailable after unpublishing throws a #{error_class.name}" do
           it 'rescues the exception and stores the message in the digital object errors' do
-            item = DigitalObjectType.get_model_for_string_key(sample_item_digital_object_data['digital_object_type']['string_key']).new
-            allow(publish_target).to receive(:unpublish_digital_object).and_raise(error_class)
-            item.execute_publish_action_for_target(:unpublish, publish_target, true)
+            item.doi = 'doi:10.33555/abcd-1234'
+            allow(item).to receive(:change_doi_status_to_unavailable).and_raise(error_class)
+            item.update_doi_after_publishing(nil, nil, true)
             expect(item.errors.messages).to include(:datacite)
           end
         end
