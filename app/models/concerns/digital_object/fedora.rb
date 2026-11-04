@@ -91,10 +91,6 @@ module DigitalObject::Fedora
       project_pid = @fedora_object.relationships(PROJECT_MEMBERSHIP_PREDICATE).map { |val| val.gsub('info:fedora/', '') }.first
       Hyacinth::Utils::Logger.logger.info "Missing project for DigitalObject #{project_pid}. This needs to be fixed." if project_pid.nil?
       @project = project_pid.nil? ? nil : Project.find_by(pid: project_pid)
-
-      # TODO: This probably should be removed
-      # Get publish target relationships
-      # @publish_target_pids = @fedora_object.relationships(:publisher).to_a.map { |val| val.gsub('info:fedora/', '') }
     end
 
     def load_ezid_from_fedora_object!

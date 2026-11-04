@@ -20,10 +20,6 @@ module DigitalObject::Publishing
     # The DOI should point to the active publish target with the highest priority
     doi_publish_target = active_publish_targets.select(&:doi_priority).min_by(&:doi_priority)
 
-    puts "Active publish targets: #{active_publish_targets}"
-    puts "Inactive publish targets #{inactive_publish_targets}"
-    puts "DOI publish target #{doi_publish_target}"
-
     should_unpublish_from_doi_priority_target = false
     inactive_publish_targets.each do |publish_target|
       response = execute_publish_action_for_target(:unpublish, publish_target)
@@ -53,7 +49,6 @@ module DigitalObject::Publishing
   def update_doi_after_publishing(doi_publish_target, doi_publish_target_response, should_unpublish_from_doi_priority_target)
     if doi_publish_target
       location = doi_publish_target_response&.headers&.dig(:location)
-      puts "Location: #{location}"
       update_doi_metadata(location) if location.present?
     elsif should_unpublish_from_doi_priority_target && doi.present?
       change_doi_status_to_unavailable

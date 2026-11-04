@@ -103,7 +103,6 @@ class DigitalObject::PublishTarget < DigitalObject::Base
 
   # Returns a minimal set of publish target data (pid, string_key and title), generally used by Groups, Items or Assets
   def self.basic_publish_target_data_from_solr(publish_target_pids)
-    puts "Im called!"
     return [] if publish_target_pids.blank?
 
     search_results = search(

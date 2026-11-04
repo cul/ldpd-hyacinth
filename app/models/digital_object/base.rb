@@ -272,10 +272,7 @@ class DigitalObject::Base
     false
   end
 
-  # This should be probably modified to use new implementation of Publish targets
   def allowed_publish_targets
-    # DigitalObject::PublishTarget.basic_publish_target_data_from_solr(project.enabled_publish_target_pids)
-    puts "Targets: #{self.project.publish_targets.inspect}"
     self.project.publish_targets.map do |publish_target|
       {
         string_key: publish_target.string_key,
@@ -284,13 +281,7 @@ class DigitalObject::Base
     end
   end
 
-  # def publish_target_data
-  #   # TODO: Change to get publish target data wi
-  #   DigitalObject::PublishTarget.basic_publish_target_data_from_solr(@publish_target_string_keys)
-  # end
-
   def publish_targets
-    # TODO: Instead of the lines below, we may want to call self.db_record.publish_targets
     return [] if @publish_target_string_keys.blank?
     @publish_target_string_keys.map { |publish_target_string_key| PublishTarget.find_by(string_key: publish_target_string_key) }
   end

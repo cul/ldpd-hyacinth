@@ -98,6 +98,7 @@ Metrics/ModuleLength:
   Exclude:
     - 'app/models/concerns/digital_object/fedora.rb'
     - 'app/models/concerns/digital_object/assets/file_import.rb'
+    - 'app/models/concerns/digital_object/persistence.rb'
   CountComments: false
   Max: 110
 
