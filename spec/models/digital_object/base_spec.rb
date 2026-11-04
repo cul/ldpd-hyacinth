@@ -188,6 +188,20 @@ RSpec.describe DigitalObject::Base, :type => :model do
       expect(new_item.errors[:publish_target]).to include('Could not find publish target with string key: zzzzzzzzzz_does_not_exist_zzzzzzzzzz')
     end
 
+    context "with a publish target that isn't assigned to the object's project" do
+      let!(:unassigned_publish_target) do
+        PublishTarget.create!(string_key: 'base_spec_unassigned', display_label: 'Unassigned Publish Target', publish_url: 'http://localhost/publish', api_key: 'test_api_key')
+      end
+      after { unassigned_publish_target.destroy }
+
+      it "adds a validation error" do
+        new_item = DigitalObject::Item.new
+        new_item.set_digital_object_data(minimal_item_digital_object_data.merge('publish_targets' => [{ 'string_key' => 'base_spec_unassigned' }]), false)
+        expect(new_item.valid?).to eq(false)
+        expect(new_item.errors[:publish_target].first).to include('is not enabled for this project')
+      end
+    end
+
     describe "for an object that was previously saved" do
       let(:new_project) { FactoryBot.create(:project) }
       it "can update the project to a different value" do
@@ -357,6 +371,17 @@ RSpec.describe DigitalObject::Base, :type => :model do
         item.set_digital_object_data(sample_item_digital_object_data, false)
         item.save
         expect(DigitalObject::Base.find(item.pid).pid).to eq(item.pid)
+    end
+
+    it "saves the selected publish targets and removes deselected ones" do
+      item = DigitalObject::Item.new
+      item.set_digital_object_data(minimal_item_digital_object_data.merge('publish_targets' => [{ 'string_key' => 'test_publish_target_1' }, { 'string_key' => 'test_publish_target_2' }]), false)
+      expect(item.save).to eq(true)
+      expect(DigitalObject::Base.find(item.pid).publish_target_string_keys).to contain_exactly('test_publish_target_1', 'test_publish_target_2')
+
+      item.set_digital_object_data({ 'publish_targets' => [{ 'string_key' => 'test_publish_target_2' }] }, true)
+      expect(item.save).to eq(true)
+      expect(DigitalObject::Base.find(item.pid).publish_target_string_keys).to eq(['test_publish_target_2'])
     end
 
     it 'calls before_save' do
@@ -565,6 +590,17 @@ RSpec.describe DigitalObject::Base, :type => :model do
         expect(item.first_published_at).to be_within(10.seconds).of(Time.current)
         expect(item.instance_variable_get(:@db_record).first_published_at).to be_within(10.seconds).of(Time.current)
       end
+    end
+  end
+
+  describe "#destroy" do
+    it "does not purge an object if unpublishing fails" do
+      item = DigitalObject::Item.new
+      item.set_digital_object_data(minimal_item_digital_object_data, false)
+      expect(item.save).to eq(true)
+      allow(item).to receive(:unpublish_all).and_return(false)
+      expect(item.destroy(true)).to eq(false)
+      expect(DigitalObjectRecord.exists?(pid: item.pid)).to eq(true)
     end
   end
 

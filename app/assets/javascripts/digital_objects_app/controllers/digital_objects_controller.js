@@ -81,7 +81,6 @@ Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.new_setup = functi
 };
 
 //New Action - Create A New Digital Object
-// !! HERE WE LOAD THE EDITOR FOR A NEW DIGITAL OBJECT
 Hyacinth.DigitalObjectsApp.DigitalObjectsController.prototype.new = function () {
 
   var that = this;

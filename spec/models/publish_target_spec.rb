@@ -30,4 +30,19 @@ RSpec.describe PublishTarget, type: :model do
       expect(publish_target.errors[:doi_priority]).to be_present
     end
   end
+
+  describe 'publish requests' do
+    let(:publish_target) { described_class.new(base_attributes.merge(string_key: 'doi_priority_spec_a')) }
+    let(:authorization_header) { { Authorization: 'Token token=test_api_key' } }
+
+    it 'publishes a digital object with a PUT request to the publish url' do
+      expect(RestClient).to receive(:put).with('http://localhost/publish/test:123', {}, authorization_header)
+      publish_target.publish_digital_object('test:123')
+    end
+
+    it 'unpublishes a digital object with a DELETE request to the publish url' do
+      expect(RestClient).to receive(:delete).with('http://localhost/publish/test:123', authorization_header)
+      publish_target.unpublish_digital_object('test:123')
+    end
+  end
 end
