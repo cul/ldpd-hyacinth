@@ -78,6 +78,8 @@ RSpec.configure do |config|
   end
 
   def destroy_all_hyacinth_groups_items_and_assets
+    # Treat unpublish requests as successful since test publish targets don't point to real servers
+    allow_any_instance_of(PublishTarget).to receive(:unpublish_digital_object).and_return(double(code: 200))
     DigitalObjectRecord.all.each do |digital_object_record|
       begin
         digital_object = DigitalObject::Base.find(digital_object_record.pid)

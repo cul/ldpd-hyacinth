@@ -162,7 +162,8 @@ module DigitalObject::Persistence
 
       if valid? || force
         # Unpublish items from active publish targets.
-        unpublished = unpublish_all
+        unpublish_all
+        unpublished = @db_record.publications.where.not(status: :unpublished).none?
 
         if purge && unpublished
           # We're going to delete everything associated with this record

@@ -598,7 +598,8 @@ RSpec.describe DigitalObject::Base, :type => :model do
       item = DigitalObject::Item.new
       item.set_digital_object_data(minimal_item_digital_object_data, false)
       expect(item.save).to eq(true)
-      allow(item).to receive(:unpublish_all).and_return(false)
+      item.db_record.publications.create!(publish_target: PublishTarget.find_by!(string_key: 'test_publish_target_1'), status: :published)
+      allow_any_instance_of(PublishTarget).to receive(:unpublish_digital_object).and_raise(Errno::ECONNREFUSED)
       expect(item.destroy(true)).to eq(false)
       expect(DigitalObjectRecord.exists?(pid: item.pid)).to eq(true)
     end
